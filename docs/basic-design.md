@@ -353,6 +353,7 @@ Result の共通要素:
 interface OperationResult {
   schemaVersion: string;
   diagnostics: readonly Diagnostic[];
+  diagnosticsTruncated: boolean;
   ok: boolean;
 }
 ```
@@ -364,6 +365,8 @@ Rules:
 - library API は `process.exit` しない
 - syntax error や user document error を exception にしない
 - programmer error と不変条件違反だけを exception にする
+- `maxDiagnostics`はdefault 100、1..1000とし、超過時はsource順の先頭を返して`diagnosticsTruncated=true`にする
+- parse errorがある場合はfield/graph phaseへ進まず、派生diagnosticを抑制する
 
 ## 9. 処理フロー
 

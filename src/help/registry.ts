@@ -328,9 +328,30 @@ const nodes: readonly HelpNode[] = [
     id: "errors",
     title: "Diagnostics",
     summary: "Stable code、source span、局所help topicで問題を報告します。",
-    quick: [],
-    detail: [],
-    syntax: [],
+    quick: [
+      {
+        id: "recovery",
+        title: "Error recovery",
+        body: "独立した構文errorは可能な範囲で複数返し、同じinvalid blockの子行は1 error regionとして抑制します。",
+      },
+    ],
+    detail: [
+      {
+        id: "phases",
+        title: "Phase suppression",
+        body: "parse errorがある文書ではfield/graph validationを実行せず、原因を直す前の派生PTSEM/PTDAG diagnosticを返しません。",
+      },
+      {
+        id: "limit",
+        title: "Diagnostic limit",
+        body: "--max-diagnosticsは1..1000、default 100です。上限超過はdiagnostics_truncatedで確認できます。",
+      },
+    ],
+    syntax: [
+      "perttool dsl check FILE --max-diagnostics 20 --format json",
+      "perttool dag analyze FILE --max-diagnostics 20 --format json",
+      "perttool dag next FILE --max-diagnostics 20 --format json",
+    ],
     examples: [],
     related: ["syntax"],
   },

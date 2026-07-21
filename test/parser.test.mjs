@@ -100,3 +100,60 @@ test("point projects and time projects enforce velocity constraints", () => {
     assert.ok(result.diagnostics.some((diagnostic) => diagnostic.code === code));
   }
 });
+
+test("parser recovers independent syntax errors and suppresses downstream phases", async () => {
+  const text = await readFile(
+    path.join(testDirectory, "fixtures/invalid/multiple-syntax-errors.pert"),
+    "utf8",
+  );
+  const parsed = parseDocument(text);
+  assert.equal(parsed.diagnosticsTruncated, false);
+  assert.deepEqual(
+    parsed.diagnostics.map(({ code }) => code),
+    ["PTDSL-006", "PTDSL-003", "PTDSL-012", "PTDSL-005", "PTDSL-007", "PTDSL-002"],
+  );
+  assert.deepEqual(
+    parsed.document.declarations.map(({ id }) => id),
+    ["RECOVERY", "DEVELOPERS", "NOW", "DONE", "WORK"],
+  );
+  assert.equal(
+    parsed.diagnostics.some(({ message }) => message.includes("still ignored")),
+    false,
+  );
+
+  const checked = checkDocument(text);
+  assert.deepEqual(checked.diagnostics, parsed.diagnostics);
+  assert.equal(
+    checked.diagnostics.some(({ code }) => code.startsWith("PTSEM-") || code.startsWith("PTDAG-")),
+    false,
+  );
+});
+
+test("parser and check callers can cap diagnostics with an explicit truncation flag", async () => {
+  const text = await readFile(
+    path.join(testDirectory, "fixtures/invalid/multiple-syntax-errors.pert"),
+    "utf8",
+  );
+  const parsed = parseDocument(text, { maxDiagnostics: 3 });
+  assert.equal(parsed.diagnostics.length, 3);
+  assert.equal(parsed.diagnosticsTruncated, true);
+
+  const checked = checkDocument(text, { maxDiagnostics: 2 });
+  assert.equal(checked.diagnostics.length, 2);
+  assert.equal(checked.diagnosticsTruncated, true);
+  assert.equal(checked.summary.errors, 6);
+  assert.equal(checked.ok, false);
+  assert.throws(() => parseDocument(text, { maxDiagnostics: 0 }), /maxDiagnostics/);
+});
+
+test("empty block text reports one syntax cause without an empty-text semantic cascade", () => {
+  const text = `project EMPTY_TEXT:\n  title "empty text"\n  description |\n  duration_unit day\n  finish DONE\n\nmilestone DONE:\n  title "done"\n  state reached\n`;
+  const result = checkDocument(text);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTDSL-010"]);
+});
+
+test("invalid block text indentation is one recovered error region", () => {
+  const text = `project BAD_TEXT_INDENT:\n  title "bad text"\n  description |\n   bad indent\n   second line in same region\n  duration_unit day\n  finish DONE\n\nmilestone DONE:\n  title "done"\n  state reached\n`;
+  const result = checkDocument(text);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTDSL-010"]);
+});

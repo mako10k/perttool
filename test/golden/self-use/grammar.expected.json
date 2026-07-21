@@ -8,27 +8,26 @@
       "tasks": 6,
       "gates": 5,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "8",
+    "precedence_makespan": "7",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "8/1",
+    "precedence_forecast": "7/1",
     "precedence_critical_tasks": [
-      "ERROR_RECOVERY",
+      "BLOCK_TEXT_SPANS",
+      "FIELD_FIXTURES",
       "FORMATTER_IMPLEMENT",
       "FORMATTER_ROUNDTRIP"
     ],
-    "resource_makespan": "10",
-    "resource_forecast": "10/1",
-    "resource_delay": "2",
-    "resource_arcs": [
-      "resource:ERROR_RECOVERY:FIELD_FIXTURES"
-    ],
+    "resource_makespan": "7",
+    "resource_forecast": "7/1",
+    "resource_delay": "0",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "ERROR_RECOVERY",
+      "BLOCK_TEXT_SPANS",
       "FIELD_FIXTURES",
       "FORMATTER_IMPLEMENT",
       "FORMATTER_ROUNDTRIP"
@@ -38,12 +37,11 @@
     "groups": {
       "active": [],
       "ready": [
-        "ERROR_RECOVERY",
         "FIELD_FIXTURES",
         "BLOCK_TEXT_SPANS"
       ],
       "runnable_now": [
-        "ERROR_RECOVERY",
+        "FIELD_FIXTURES",
         "BLOCK_TEXT_SPANS"
       ],
       "blocked_now": [],
@@ -53,13 +51,6 @@
         "HELP_FIXTURE_SYNC"
       ]
     },
-    "resource_rejection": {
-      "task_id": "FIELD_FIXTURES",
-      "resource_id": "GRAMMAR_REVIEW",
-      "capacity": 1,
-      "earlier_selected_task_ids": [
-        "ERROR_RECOVERY"
-      ]
-    }
+    "resource_rejection": null
   }
 }

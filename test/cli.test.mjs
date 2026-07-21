@@ -67,6 +67,37 @@ test("invalid document returns exit 1 and one-based JSON span", () => {
   assert.ok(diagnostic.span.start.column >= 1);
 });
 
+test("diagnostic limit is stable across read-only document commands", () => {
+  for (const command of [
+    ["dsl", "check"],
+    ["dag", "analyze"],
+    ["dag", "next"],
+  ]) {
+    const result = run([
+      ...command,
+      "test/fixtures/invalid/multiple-syntax-errors.pert",
+      "--max-diagnostics=2",
+      "--format=json",
+    ]);
+    assert.equal(result.status, 1);
+    assert.equal(result.stderr, "");
+    const json = JSON.parse(result.stdout);
+    assert.equal(json.diagnostics.length, 2);
+    assert.equal(json.diagnostics_truncated, true);
+    assert.deepEqual(json.diagnostics.map(({ code }) => code), ["PTDSL-006", "PTDSL-003"]);
+  }
+
+  const text = run([
+    "dsl",
+    "check",
+    "test/fixtures/invalid/multiple-syntax-errors.pert",
+    "--max-diagnostics=2",
+    "--color=never",
+  ]);
+  assert.equal(text.status, 1);
+  assert.match(text.stderr, /DIAGNOSTICS_TRUNCATED true limit=2/);
+});
+
 test("warnings-as-errors returns exit 1 without a success result", () => {
   const result = run([
     "dsl",
@@ -403,6 +434,20 @@ test("analysis help documents exact arithmetic and capacity what-if", () => {
   ]);
   assert.equal(resources.status, 0);
   assert.ok(JSON.parse(resources.stdout).sections.some(({ id }) => id === "witness"));
+});
+
+test("diagnostic help documents recovery, phase suppression, and limits", () => {
+  const result = run([
+    "dsl",
+    "help",
+    "errors",
+    "--level=detail",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  const json = JSON.parse(result.stdout);
+  assert.deepEqual(json.sections.map(({ id }) => id), ["recovery", "phases", "limit"]);
+  assert.ok(json.syntax.some((line) => line.includes("--max-diagnostics")));
 });
 
 test("unknown command is a usage error", () => {

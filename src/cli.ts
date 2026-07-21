@@ -52,6 +52,7 @@ function commandHelp(resource: string, action: string): string {
     return [
       "Usage: perttool dsl check <file>",
       "  [--warnings-as-errors]",
+      "  [--max-diagnostics <integer>]",
       "  [--format text|json]",
       "  [--color auto|always|never]",
     ].join("\n");
@@ -67,6 +68,7 @@ function commandHelp(resource: string, action: string): string {
     "  [--schedule precedence|resource|both]",
     "  [--capacity <resource-id>=<integer>]...",
     "  [--max-paths <integer>] [--precision <integer>]",
+    "  [--max-diagnostics <integer>]",
     "  [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
@@ -74,6 +76,7 @@ function commandHelp(resource: string, action: string): string {
     "Usage: perttool dag next <file>",
     "  [--capacity <resource-id>=<integer>]...",
     "  [--explain-depth <integer>] [--precision <integer>]",
+    "  [--max-diagnostics <integer>]",
     "  [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
@@ -285,7 +288,7 @@ function cliError(
 async function runCheck(args: readonly string[]): Promise<number> {
   const parsed = parseOptions(
     args,
-    new Set(["format", "color"]),
+    new Set(["format", "color", "max-diagnostics"]),
     new Set(["warnings-as-errors"]),
   );
   if (parsed.positionals.length !== 1) {
@@ -294,6 +297,13 @@ async function runCheck(args: readonly string[]): Promise<number> {
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
   const sourceOperand = parsed.positionals[0]!;
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
   let input: Awaited<ReturnType<typeof readDocument>>;
   try {
@@ -306,7 +316,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
       format === "json",
     );
   }
-  const result = checkDocument(input.text);
+  const result = checkDocument(input.text, { maxDiagnostics });
   const warningsAsErrors = parsed.flags.has("warnings-as-errors");
   const warningFailure = warningsAsErrors && result.summary.warnings > 0;
   const ok = result.ok && !warningFailure;
@@ -320,6 +330,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
       source,
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
       grammar_version: result.grammarVersion,
       summary: result.summary,
     });
@@ -331,6 +342,9 @@ async function runCheck(args: readonly string[]): Promise<number> {
     }
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
     }
   }
   return ok ? 0 : 1;
@@ -726,7 +740,14 @@ function renderAnalysisText(
 async function runAnalyze(args: readonly string[]): Promise<number> {
   const parsed = parseOptions(
     args,
-    new Set(["schedule", "max-paths", "precision", "format", "color"]),
+    new Set([
+      "schedule",
+      "max-paths",
+      "precision",
+      "max-diagnostics",
+      "format",
+      "color",
+    ]),
     new Set(["warnings-as-errors"]),
     new Set(["capacity"]),
   );
@@ -738,6 +759,13 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   const mode = analysisMode(parsed.values.get("schedule"));
   const maxPaths = boundedInteger(parsed.values.get("max-paths"), "max-paths", 1, 0, 1000);
   const precision = boundedInteger(parsed.values.get("precision"), "precision", 3, 0, 9);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
   const overrides = capacityOverrides(parsed.repeatedValues.get("capacity") ?? []);
   const sourceOperand = parsed.positionals[0]!;
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
@@ -757,10 +785,12 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
     capacityOverrides: overrides,
     maxPaths,
     precision,
+    maxDiagnostics,
   });
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
-    result.diagnostics.some((diagnostic) => diagnostic.severity === "warning");
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
@@ -772,6 +802,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
       source,
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
       mode: result.mode,
       precision: result.precision,
       ...(result.durationUnit === null
@@ -799,6 +830,9 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
     if (ok) process.stdout.write(renderAnalysisText(result));
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
     }
   }
   return ok ? 0 : 1;
@@ -1001,7 +1035,7 @@ function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
 async function runNext(args: readonly string[]): Promise<number> {
   const parsed = parseOptions(
     args,
-    new Set(["explain-depth", "precision", "format", "color"]),
+    new Set(["explain-depth", "precision", "max-diagnostics", "format", "color"]),
     new Set(["warnings-as-errors"]),
     new Set(["capacity"]),
   );
@@ -1018,6 +1052,13 @@ async function runNext(args: readonly string[]): Promise<number> {
     32,
   );
   const precision = boundedInteger(parsed.values.get("precision"), "precision", 3, 0, 9);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
   const overrides = capacityOverrides(parsed.repeatedValues.get("capacity") ?? []);
   const sourceOperand = parsed.positionals[0]!;
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
@@ -1036,10 +1077,12 @@ async function runNext(args: readonly string[]): Promise<number> {
     capacityOverrides: overrides,
     explainDepth,
     precision,
+    maxDiagnostics,
   });
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
-    result.diagnostics.some((diagnostic) => diagnostic.severity === "warning");
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
@@ -1051,12 +1094,16 @@ async function runNext(args: readonly string[]): Promise<number> {
       source,
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
       ...(result.durationUnit === null ? {} : nextJson(result)),
     });
   } else {
     if (ok) process.stdout.write(renderNextText(result));
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
     }
   }
   return ok ? 0 : 1;

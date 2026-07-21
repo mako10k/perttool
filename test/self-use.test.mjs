@@ -33,7 +33,6 @@ test("grammar plan check/analyze/next matches the read-only self-use golden", as
   assert.ok(analyzed.resource);
   const rejectionTask = next.tasks.find(({ id }) => id === "FIELD_FIXTURES");
   assert.ok(rejectionTask);
-  assert.equal(rejectionTask.resourceRejections.length, 1);
   const rejection = rejectionTask.resourceRejections[0];
   const actual = {
     check: {
@@ -67,12 +66,15 @@ test("grammar plan check/analyze/next matches the read-only self-use golden", as
         blocked_now: next.groups.blockedNow,
         upcoming: next.groups.upcoming,
       },
-      resource_rejection: {
-        task_id: rejectionTask.id,
-        resource_id: rejection.resourceId,
-        capacity: rejection.capacity,
-        earlier_selected_task_ids: rejection.earlierSelectedTaskIds,
-      },
+      resource_rejection:
+        rejection === undefined
+          ? null
+          : {
+              task_id: rejectionTask.id,
+              resource_id: rejection.resourceId,
+              capacity: rejection.capacity,
+              earlier_selected_task_ids: rejection.earlierSelectedTaskIds,
+            },
     },
   };
   assert.deepEqual(actual, expected);

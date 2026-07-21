@@ -58,6 +58,7 @@ task FIELD_FIXTURES NOW -> FIELDS_VERIFIED:
 task ERROR_RECOVERY NOW -> RECOVERY_VERIFIED:
   title "複数error recoveryとdiagnostic suppressionを検査する"
   duration 3p
+  status done
   priority 40
   requires:
     DEVELOPERS 1

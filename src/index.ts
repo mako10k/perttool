@@ -5,11 +5,15 @@ export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js
 export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
 export { getHelp } from "./help/registry.js";
+export {
+  DEFAULT_MAX_DIAGNOSTICS,
+  MAX_DIAGNOSTICS_LIMIT,
+} from "./model/diagnostics.js";
 export * from "./model/rational.js";
 export * from "./model/units.js";
 export { parseDocument } from "./parser/document-parser.js";
 export { validateDocument } from "./semantic/validator.js";
-export type { CheckResult, CheckSummary } from "./application/check.js";
+export type { CheckOptions, CheckResult, CheckSummary } from "./application/check.js";
 export type {
   AnalysisMode,
   AnalysisResult,
@@ -48,7 +52,12 @@ export type {
   ScheduledTask,
   SchedulePath,
 } from "./analysis/resource.js";
-export type { Diagnostic, SourcePosition, SourceSpan } from "./model/diagnostics.js";
+export type {
+  Diagnostic,
+  DiagnosticCounts,
+  SourcePosition,
+  SourceSpan,
+} from "./model/diagnostics.js";
 export type {
   DocumentNode,
   DeclarationNode,
@@ -56,3 +65,4 @@ export type {
   TriviaNode,
   VelocityValue,
 } from "./model/syntax.js";
+export type { ParseOptions } from "./parser/document-parser.js";

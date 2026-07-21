@@ -58,6 +58,7 @@ npm run test:e2e
 npm run build
 node dist/cli.js --help
 node dist/cli.js dsl check docs/examples/parallel.pert
+node dist/cli.js dsl check PLAN.pert --max-diagnostics 20 --format json
 node dist/cli.js dsl help syntax estimate --level detail --format json
 node dist/cli.js dsl help syntax velocity --level detail --format json
 node dist/cli.js dag analyze docs/examples/point-velocity.pert --format json

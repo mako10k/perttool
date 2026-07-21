@@ -160,3 +160,26 @@ test("E2E-006: AI can validate point estimates and consume explicit velocity for
   assert.equal(implement.expected.display, "10");
   assert.equal(implement.forecast_expected.display, "5");
 });
+
+test("E2E-007: multiple syntax errors recover without semantic cascades", () => {
+  const source = "test/fixtures/invalid/multiple-syntax-errors.pert";
+  for (const command of [
+    ["dsl", "check"],
+    ["dag", "analyze"],
+    ["dag", "next"],
+  ]) {
+    const result = runJson([...command, source, "--max-diagnostics=3"], 1);
+    assert.equal(result.ok, false);
+    assert.equal(result.diagnostics.length, 3);
+    assert.equal(result.diagnostics_truncated, true);
+    assert.deepEqual(result.diagnostics.map(({ code }) => code), [
+      "PTDSL-006",
+      "PTDSL-003",
+      "PTDSL-012",
+    ]);
+    assert.equal(
+      result.diagnostics.some(({ code }) => code.startsWith("PTSEM-") || code.startsWith("PTDAG-")),
+      false,
+    );
+  }
+});

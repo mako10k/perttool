@@ -1,5 +1,10 @@
 import type { Diagnostic, RelatedLocation } from "../model/diagnostics.js";
-import { hasErrors, sortDiagnostics } from "../model/diagnostics.js";
+import {
+  hasErrors,
+  limitDiagnostics,
+  normalizeMaxDiagnostics,
+  sortDiagnostics,
+} from "../model/diagnostics.js";
 import { fieldNamed } from "../model/syntax.js";
 import type { DocumentNode, RequirementValue } from "../model/syntax.js";
 import { buildResidualGraph } from "../analysis/graph.js";
@@ -20,6 +25,7 @@ export interface AnalyzeOptions {
   readonly capacityOverrides?: ReadonlyMap<string, number>;
   readonly maxPaths?: number;
   readonly precision?: number;
+  readonly maxDiagnostics?: number;
 }
 
 export interface AnalysisResult {
@@ -27,6 +33,7 @@ export interface AnalysisResult {
   readonly document: DocumentNode;
   readonly documentId: string | null;
   readonly diagnostics: readonly Diagnostic[];
+  readonly diagnosticsTruncated: boolean;
   readonly mode: AnalysisMode;
   readonly precision: number;
   readonly capacityOverrides: ReadonlyMap<string, number>;
@@ -123,15 +130,17 @@ export function analyzeDocument(
   const mode = options.mode ?? "both";
   const maxPaths = options.maxPaths ?? 1;
   const precision = options.precision ?? 3;
+  const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
   const overrides = options.capacityOverrides ?? new Map<string, number>();
-  const checked = checkDocument(text);
+  const checked = checkDocument(text, { maxDiagnostics });
   const diagnostics: Diagnostic[] = [...checked.diagnostics];
-  if (hasErrors(diagnostics)) {
+  if (!checked.ok) {
     return {
       ok: false,
       document: checked.document,
       documentId: checked.documentId,
       diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
       mode,
       precision,
       capacityOverrides: overrides,
@@ -146,11 +155,13 @@ export function analyzeDocument(
   const graph = buildResidualGraph(checked.document);
   diagnostics.push(...validateCapacityOverrides(graph, overrides));
   if (hasErrors(diagnostics)) {
+    const limited = limitDiagnostics(sortDiagnostics(diagnostics), maxDiagnostics);
     return {
       ok: false,
       document: checked.document,
       documentId: checked.documentId,
-      diagnostics: sortDiagnostics(diagnostics),
+      diagnostics: limited.diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated || limited.truncated,
       mode,
       precision,
       capacityOverrides: overrides,
@@ -190,11 +201,13 @@ export function analyzeDocument(
       ),
     );
   }
+  const limited = limitDiagnostics(sortDiagnostics(diagnostics), maxDiagnostics);
   return {
     ok: !hasErrors(diagnostics),
     document: checked.document,
     documentId: checked.documentId,
-    diagnostics: sortDiagnostics(diagnostics),
+    diagnostics: limited.diagnostics,
+    diagnosticsTruncated: checked.diagnosticsTruncated || limited.truncated,
     mode,
     precision,
     capacityOverrides: overrides,

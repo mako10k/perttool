@@ -937,6 +937,7 @@ export function validateDocument(
   parseDiagnostics: readonly Diagnostic[] = [],
 ): readonly Diagnostic[] {
   const diagnostics = [...parseDiagnostics];
+  if (hasErrors(diagnostics)) return sortDiagnostics(diagnostics);
   validateFieldConstraints(document, diagnostics);
   if (!hasErrors(diagnostics)) validateGraph(document, diagnostics);
   return sortDiagnostics(diagnostics);

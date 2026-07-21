@@ -76,6 +76,7 @@ export interface NextOptions {
   readonly capacityOverrides?: ReadonlyMap<string, number>;
   readonly explainDepth?: number;
   readonly precision?: number;
+  readonly maxDiagnostics?: number;
 }
 
 export interface NextResult {
@@ -83,6 +84,7 @@ export interface NextResult {
   readonly document: DocumentNode;
   readonly documentId: string | null;
   readonly diagnostics: readonly Diagnostic[];
+  readonly diagnosticsTruncated: boolean;
   readonly precision: number;
   readonly durationUnit: DurationUnit | null;
   readonly velocity: Velocity | null;
@@ -272,14 +274,18 @@ export function selectNextTasks(
     capacityOverrides,
     precision,
     maxPaths: 0,
+    ...(options.maxDiagnostics === undefined
+      ? {}
+      : { maxDiagnostics: options.maxDiagnostics }),
   });
   const diagnostics = analysis.diagnostics.filter((diagnostic) => diagnostic.code !== "PTDAG-302");
-  if (hasErrors(diagnostics) || analysis.precedence === null || analysis.resource === null) {
+  if (!analysis.ok || analysis.precedence === null || analysis.resource === null) {
     return {
       ok: false,
       document: analysis.document,
       documentId: analysis.documentId,
       diagnostics: sortDiagnostics(diagnostics),
+      diagnosticsTruncated: analysis.diagnosticsTruncated,
       precision,
       durationUnit: analysis.durationUnit,
       velocity: analysis.velocity,
@@ -364,6 +370,7 @@ export function selectNextTasks(
     document: analysis.document,
     documentId: analysis.documentId,
     diagnostics: sortDiagnostics(diagnostics),
+    diagnosticsTruncated: analysis.diagnosticsTruncated,
     precision,
     durationUnit: graph.durationUnit,
     velocity: graph.velocity,

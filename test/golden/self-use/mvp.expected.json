@@ -12,7 +12,7 @@
     }
   },
   "analyze": {
-    "precedence_makespan": "29",
+    "precedence_makespan": "26",
     "precedence_critical_tasks": [
       "GRAMMAR_WORK_PACKAGE",
       "FORMATTER_CORE",
@@ -23,7 +23,7 @@
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "30",
+    "resource_makespan": "27",
     "resource_delay": "1",
     "resource_arcs": [
       "resource:ADVANCE:MERMAID_ROUNDTRIP",

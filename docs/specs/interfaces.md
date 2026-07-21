@@ -85,10 +85,12 @@ Resultを返すcommandは次を使用する。
 | `--format` | `text` or `json` | `text` | CLI result serialization |
 | `--color` | `auto`, `always`, `never` | `auto` | text diagnosticのANSI color |
 | `--warnings-as-errors` | flag | off | warningが1件以上ならexit 1 |
+| `--max-diagnostics` | integer | `100` | 1..1000。返すdocument diagnostic件数の上限 |
 
 `--format json`では`--color always`をusage errorとする。JSONへANSI escapeを含めない。`--color auto`はstdout/stderrそれぞれがTTYかを独立に判定する。
 
 `--warnings-as-errors`は`dsl help`以外のdocument-processing commandで受理する。Help commandにはdocument warningがないため指定をusage errorとする。
+`--max-diagnostics`もdocument-processing commandだけで受理し、`dsl help`ではusage errorとする。
 
 ### 3.4 command helpとdomain help
 
@@ -136,6 +138,7 @@ perttool resource remove <file> <id>
 ```text
 perttool dsl check <file>
   [--warnings-as-errors]
+  [--max-diagnostics <integer>]
   [--format text|json]
   [--color auto|always|never]
 ```
@@ -204,6 +207,7 @@ perttool dag analyze <file>
   [--capacity <resource-id>=<integer>]...
   [--max-paths <integer>]
   [--precision <integer>]
+  [--max-diagnostics <integer>]
   [--warnings-as-errors]
   [--format text|json]
   [--color auto|always|never]
@@ -224,6 +228,7 @@ perttool dag next <file>
   [--capacity <resource-id>=<integer>]...
   [--explain-depth <integer>]
   [--precision <integer>]
+  [--max-diagnostics <integer>]
   [--warnings-as-errors]
   [--format text|json]
   [--color auto|always|never]
@@ -532,9 +537,12 @@ document_id     string|null
 source          string   operand spellingまたは"<stdin>"
 source_digest   string|null
 diagnostics     Diagnostic[]
+diagnostics_truncated boolean
 ```
 
 `schema_version`はresult typeとmajor versionを同時に識別する。`tool_version`をschema互換性判断に使用しない。
+
+`diagnostics_truncated=true`の場合、`diagnostics`はsource順の先頭`--max-diagnostics`件だけを持つ。Text出力はdiagnostic末尾へ`DIAGNOSTICS_TRUNCATED true limit=<N>`を出し、打ち切りを黙って成功扱いにしない。
 
 ### 11.3 source location
 
@@ -599,6 +607,7 @@ summary:
 ```
 
 Parse不能でcountを信頼できない場合は各entity countを0、`grammar_version=null`とする。
+`summary.errors`と`summary.warnings`は上限適用前の総数とし、`diagnostics.length`より大きい場合がある。
 
 ### 12.2 AnalysisResult
 

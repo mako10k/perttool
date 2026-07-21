@@ -3,7 +3,12 @@ import type {
   SourcePosition,
   SourceSpan,
 } from "../model/diagnostics.js";
-import { sortDiagnostics } from "../model/diagnostics.js";
+import {
+  countDiagnostics,
+  limitDiagnostics,
+  normalizeMaxDiagnostics,
+  sortDiagnostics,
+} from "../model/diagnostics.js";
 import type {
   DeclarationKind,
   DeclarationNode,
@@ -22,6 +27,10 @@ interface SourceLine {
   readonly end: number;
   readonly line: number;
   readonly prefixLength: number;
+}
+
+export interface ParseOptions {
+  readonly maxDiagnostics?: number;
 }
 
 const identifierPattern = /^[A-Za-z][A-Za-z0-9_-]*$/;
@@ -318,6 +327,7 @@ function parseNestedEstimate(
         ),
       );
       index += 1;
+      if (indent > 4) index = skipIndentedRegion(lines, index, 4);
       continue;
     }
     const content = line.text.slice(4).trimEnd();
@@ -400,6 +410,7 @@ function parseNestedRequirements(
         ),
       );
       index += 1;
+      if (indent > 4) index = skipIndentedRegion(lines, index, 4);
       continue;
     }
     const content = line.text.slice(4).trimEnd();
@@ -455,6 +466,7 @@ function parseBlockText(
   let index = startIndex;
   let endSpan = lineSpan(lines[startIndex - 1]!);
   let sawContent = false;
+  let sawSyntaxError = false;
   while (index < lines.length) {
     const line = lines[index]!;
     if (line.text.trim() === "") {
@@ -474,8 +486,10 @@ function parseBlockText(
           "syntax.text",
         ),
       );
-      index += 1;
-      continue;
+      sawSyntaxError = true;
+      endSpan = lineSpan(line);
+      index = skipIndentedRegion(lines, index + 1, 2);
+      break;
     }
     contentLines.push(line.text.slice(4));
     sawContent ||= line.text.slice(4).trim() !== "";
@@ -483,11 +497,71 @@ function parseBlockText(
     index += 1;
   }
   while (contentLines.at(-1) === "") contentLines.pop();
+  if (!sawContent && !sawSyntaxError) {
+    diagnostics.push(
+      diagnostic(
+        "PTDSL-010",
+        "block textは1行以上のnonblank contentを必要とします",
+        lineSpan(lines[startIndex - 1]!),
+        "syntax.text",
+      ),
+    );
+  }
   return {
     value: sawContent ? contentLines.join("\n") : "",
     nextIndex: index,
     endSpan,
   };
+}
+
+function skipIndentedRegion(
+  lines: readonly SourceLine[],
+  startIndex: number,
+  parentIndent: number,
+): number {
+  let index = startIndex;
+  while (index < lines.length) {
+    const line = lines[index]!;
+    if (line.text.trim() === "") {
+      index += 1;
+      continue;
+    }
+    if (leadingIndent(line).indent <= parentIndent) break;
+    index += 1;
+  }
+  return index;
+}
+
+function isKnownDeclarationHeader(text: string): boolean {
+  return (
+    /^(?:project|resource|milestone) [A-Za-z][A-Za-z0-9_-]*:$/.test(text) ||
+    /^(?:task|gate) [A-Za-z][A-Za-z0-9_-]* [A-Za-z][A-Za-z0-9_-]* -> [A-Za-z][A-Za-z0-9_-]*:$/.test(text)
+  );
+}
+
+function skipInvalidTopLevelRegion(
+  lines: readonly SourceLine[],
+  startIndex: number,
+  trivia: TriviaNode[],
+): number {
+  let index = startIndex;
+  while (index < lines.length) {
+    const line = lines[index]!;
+    const trimmed = line.text.trim();
+    if (trimmed === "" || trimmed.startsWith("#")) {
+      trivia.push({
+        kind: trimmed === "" ? "blank" : "comment",
+        text: line.text,
+        span: lineSpan(line),
+      });
+      index += 1;
+      continue;
+    }
+    const indentation = leadingIndent(line);
+    if (indentation.indent === 0 && isKnownDeclarationHeader(line.text)) break;
+    index += 1;
+  }
+  return index;
 }
 
 function parseDeclarationHeader(
@@ -544,7 +618,8 @@ function parseDeclarationHeader(
   return undefined;
 }
 
-export function parseDocument(text: string): ParseResult {
+export function parseDocument(text: string, options: ParseOptions = {}): ParseResult {
+  const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
   const diagnostics: Diagnostic[] = [];
   const declarations: DeclarationNode[] = [];
   const trivia: TriviaNode[] = [];
@@ -577,7 +652,10 @@ export function parseDocument(text: string): ParseResult {
     }
     const header = parseDeclarationHeader(headerLine, diagnostics);
     index += 1;
-    if (header === undefined) continue;
+    if (header === undefined) {
+      index = skipInvalidTopLevelRegion(lines, index, trivia);
+      continue;
+    }
     const fields: FieldNode[] = [];
     let declarationEnd = header.headerSpan;
     while (index < lines.length) {
@@ -606,26 +684,31 @@ export function parseDocument(text: string): ParseResult {
           ),
         );
         index += 1;
+        if (indentation.indent > 2) {
+          index = skipIndentedRegion(lines, index, 2);
+        }
         continue;
       }
       const content = line.text.slice(2).trimEnd();
-      const blockMatch = /^(estimate|requires):$/.exec(content);
+      const blockMatch = /^([a-z_]+):$/.exec(content);
       if (blockMatch !== null) {
         const name = blockMatch[1]!;
-        const keywordStart = 2;
-        if (!allowedFields[header.kind].has(name)) {
+        const isKnownBlock = name === "estimate" || name === "requires";
+        if (!isKnownBlock || !allowedFields[header.kind].has(name)) {
           diagnostics.push(
             diagnostic(
               "PTDSL-005",
-              `${header.kind}に${name} fieldは使用できません`,
-              lineSpan(line),
+              `${header.kind}にunknown block field ${name}があります`,
+              span(line, 2, 2 + name.length),
               `syntax.${header.kind}`,
               header.id,
             ),
           );
           index += 1;
+          index = skipIndentedRegion(lines, index, 2);
           continue;
         }
+        const keywordStart = 2;
         if (name === "estimate") {
           const parsed = parseNestedEstimate(lines, index + 1, diagnostics, trivia);
           fields.push({
@@ -711,6 +794,7 @@ export function parseDocument(text: string): ParseResult {
           ),
         );
         index += 1;
+        if (rawValue === "|") index = skipIndentedRegion(lines, index, 2);
         continue;
       }
       const parsed = scalarFieldValue(name, rawValue);
@@ -742,5 +826,12 @@ export function parseDocument(text: string): ParseResult {
     });
   }
   const document: DocumentNode = { text, declarations, trivia };
-  return { document, diagnostics: sortDiagnostics(diagnostics) };
+  const sortedDiagnostics = sortDiagnostics(diagnostics);
+  const limited = limitDiagnostics(sortedDiagnostics, maxDiagnostics);
+  return {
+    document,
+    diagnostics: limited.diagnostics,
+    diagnosticCounts: countDiagnostics(sortedDiagnostics),
+    diagnosticsTruncated: limited.truncated,
+  };
 }

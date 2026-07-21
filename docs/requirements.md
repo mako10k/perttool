@@ -752,6 +752,8 @@ Must:
 - 構文エラーで全文 help を再掲せず、局所 help へ誘導すること
 - text と JSON の診断が同じ意味を持つこと
 - warning を成功扱いにするか失敗扱いにするか、CLI option で制御できること
+- 複数の独立した構文エラーを回収し、同じerror regionと後続validation phaseの派生diagnosticを抑制すること
+- diagnostic件数上限を指定でき、打ち切りをtext/JSONで明示すること
 
 例:
 
@@ -956,6 +958,6 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 5. [x] [ADR 0001](adr/0001-activity-on-arrow.md): task=edge の設計判断
 6. [ ] parser/validator の最小実装と golden tests
 
-項目6は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapは存在するが、grammar acceptance全項目を満たすまでは完了扱いにしない。
+項目6は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
 Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`でStage 1のread-only自己利用を行っている。

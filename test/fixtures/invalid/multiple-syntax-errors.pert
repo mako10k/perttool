@@ -1,0 +1,31 @@
+project RECOVERY:
+  version 1
+  title unquoted
+  duration_unit day
+  finish DONE
+
+extension FUTURE:
+  ignored_block:
+    still ignored
+  title "also ignored"
+
+resource DEVELOPERS:
+  title "developers"
+  capacity many
+
+milestone NOW:
+  title "now"
+  state reached
+
+milestone DONE:
+  title "done"
+
+task WORK NOW -> DONE:
+  title "work"
+  experimental:
+    first invalid
+    second invalid
+  duration manyd
+  requires:
+      DEVELOPERS 1
+      DEVELOPERS 2

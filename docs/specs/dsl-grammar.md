@@ -695,12 +695,14 @@ parser は1件のerrorで文書全体を捨てず、独立した問題を可能�
 
 - invalid top-level line は次の column 0 の既知 declaration header まで読み飛ばす
 - invalid line が colon で終わる場合、その下の indented block も同じ error region として読み飛ばす
+- 同じerror region内の行を個別のtop-level/indentation errorとして重複報告しない
 - project がない場合も、後続 declaration を recovery AST として収集できる
 
 ### 16.2 declaration recovery
 
 - invalid field line は現在 block の次の同 level field/comment/blank lineへ同期する
 - invalid field が nested block を開始した場合、その DEDENT まで読み飛ばす
+- unknown nested blockはblock名へ1件の`PTDSL-005`を返し、子行を個別診断しない
 - estimate/requires 内では4-space levelの次 entryまたは所有blockのDEDENTへ同期する
 - block text error は所有 field の次の structural lineへ同期する
 
@@ -709,8 +711,10 @@ parser は1件のerrorで文書全体を捨てず、独立した問題を可能�
 - lexical errorを原因とする同一 token のparser errorは重複報告しない
 - headerが回復不能なdeclarationについてrequired field errorを追加しない
 - invalid duration tokenについてpositive/unit mismatchを追加しない
+- parse errorが1件以上ある文書ではfield validatorとgraph validatorを実行せず、`PTSEM-*`/`PTDAG-*`の派生diagnosticを追加しない
 - parse errorがある文書ではgraph diagnosticを生成しない
-- callerは最大diagnostic件数を指定でき、打ち切りを明示する
+- callerは`maxDiagnostics`で1..1000件、default 100件の最大diagnostic件数を指定できる
+- 上限を超えた`ParseResult`/`CheckResult`は`diagnosticsTruncated=true`を返し、CLI JSONは`diagnostics_truncated=true`を返す
 
 ## 17. formatter contract
 
@@ -932,7 +936,7 @@ parser実装時は最低限、次を自動検査する。
 8. commentとblank lineをCST round-tripで保持する
 9. block textのparagraphとcommon indentを保持する
 10. source spanがUTF-16 code unit基準で一致する
-11. error recoveryが独立した複数errorを返す
+11. error recoveryが独立した複数errorを返し、同じerror regionと後続phaseの派生diagnosticを抑制し、上限超過を明示する
 12. formatterがidempotentでAST同値を保つ
 13. help sampleとparser fixtureのdriftを検出する
 14. resource capacity、requires、priorityをparse/validateできる

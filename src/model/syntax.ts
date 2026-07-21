@@ -1,4 +1,4 @@
-import type { Diagnostic, SourceSpan } from "./diagnostics.js";
+import type { Diagnostic, DiagnosticCounts, SourceSpan } from "./diagnostics.js";
 
 export type DeclarationKind =
   | "project"
@@ -66,6 +66,8 @@ export interface DocumentNode {
 export interface ParseResult {
   readonly document: DocumentNode;
   readonly diagnostics: readonly Diagnostic[];
+  readonly diagnosticCounts: DiagnosticCounts;
+  readonly diagnosticsTruncated: boolean;
 }
 
 export function fieldsNamed(

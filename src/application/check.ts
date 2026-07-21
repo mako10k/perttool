@@ -1,5 +1,10 @@
 import type { Diagnostic } from "../model/diagnostics.js";
-import { hasErrors } from "../model/diagnostics.js";
+import {
+  countDiagnostics,
+  hasErrors,
+  limitDiagnostics,
+  normalizeMaxDiagnostics,
+} from "../model/diagnostics.js";
 import type { DocumentNode } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import { parseDocument } from "../parser/document-parser.js";
@@ -20,15 +25,26 @@ export interface CheckResult {
   readonly documentId: string | null;
   readonly grammarVersion: number | null;
   readonly diagnostics: readonly Diagnostic[];
+  readonly diagnosticsTruncated: boolean;
   readonly summary: CheckSummary;
 }
 
-export function checkDocument(text: string): CheckResult {
-  const parsed = parseDocument(text);
-  const diagnostics = validateDocument(parsed.document, parsed.diagnostics);
+export interface CheckOptions {
+  readonly maxDiagnostics?: number;
+}
+
+export function checkDocument(text: string, options: CheckOptions = {}): CheckResult {
+  const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
+  const parsed = parseDocument(text, { maxDiagnostics });
+  const validatedDiagnostics = validateDocument(parsed.document, parsed.diagnostics);
+  const limited = limitDiagnostics(validatedDiagnostics, maxDiagnostics);
+  const diagnostics = limited.diagnostics;
   const parseFailed = parsed.diagnostics.some(
     (diagnostic) => diagnostic.severity === "error",
   );
+  const diagnosticCounts = parseFailed
+    ? parsed.diagnosticCounts
+    : countDiagnostics(validatedDiagnostics);
   const project = parsed.document.declarations.find(
     (declaration) => declaration.kind === "project",
   );
@@ -46,15 +62,16 @@ export function checkDocument(text: string): CheckResult {
     gates: parseFailed
       ? 0
       : parsed.document.declarations.filter((declaration) => declaration.kind === "gate").length,
-    errors: diagnostics.filter((diagnostic) => diagnostic.severity === "error").length,
-    warnings: diagnostics.filter((diagnostic) => diagnostic.severity === "warning").length,
+    errors: diagnosticCounts.errors,
+    warnings: diagnosticCounts.warnings,
   };
   return {
-    ok: !hasErrors(diagnostics),
+    ok: !hasErrors(validatedDiagnostics),
     document: parsed.document,
     documentId: project?.id ?? null,
     grammarVersion: parseFailed ? null : typeof version === "number" ? version : 1,
     diagnostics,
+    diagnosticsTruncated: parsed.diagnosticsTruncated || limited.truncated,
     summary,
   };
 }
