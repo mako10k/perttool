@@ -36,13 +36,13 @@ for required in \
   package/dist/index.js \
   package/dist/index.d.ts
 do
-  if ! rg -Fxq "$required" "$archive_list"; then
+  if ! grep -Fqx "$required" "$archive_list"; then
     printf 'release tarball is missing %s\n' "$required" >&2
     exit 1
   fi
 done
 
-if rg -q '^package/(src|test|docs|plans|scripts|\.github|\.codex)(/|$)|^package/AGENTS\.md$' "$archive_list"; then
+if grep -Eq '^package/(src|test|docs|plans|scripts|\.github|\.codex)(/|$)|^package/AGENTS\.md$' "$archive_list"; then
   printf 'release tarball contains repository-only files\n' >&2
   exit 1
 fi
