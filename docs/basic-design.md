@@ -1,0 +1,918 @@
+# perttool 基本設計
+
+- 文書状態: Draft 0.1
+- 作成日: 2026-07-21
+- 対応要件: [requirements.md](requirements.md)
+- 自己利用計画: [process/self-use.md](process/self-use.md)
+
+## 1. 目的
+
+本書は、要件で定めた `perttool` を実装へ移せる粒度まで分解し、共通コア、データ表現、処理フロー、外部インターフェース、安全な文書更新、テスト境界を定義する。
+
+完全な DSL grammar、JSON Schema、Mermaid profile は個別仕様で固定する。本書では、それらを実装するモジュール境界と契約を扱う。
+
+## 2. 基本方針
+
+### 2.1 採用する方針
+
+- 実装言語は TypeScript とする
+- Node.js 上で動作する CLI とライブラリを同一 package から提供する
+- task を edge、milestone を node とする Activity-on-Arrow を中核モデルとする
+- `.pert` 文書を正本とし、通常の解析はローカルで完結させる
+- parser、意味検査、PERT/CPM 計算は共通コアへ集約する
+- CLI、MCP、将来の LSP/エディタは共通コアの adapter とする
+- 文書編集は source span に対する差分として計画し、再 parse・再検査後にだけ適用する
+- 人間向け text と機械向け JSON は、同じ結果 object から描画する
+- すべての計算と並び順を決定的にする
+
+TypeScript を選ぶ理由は次のとおりである。
+
+- CLI、MCP、VS Code 系 adapter を同じ型と実装から提供しやすい
+- Mermaid/HTML/SVG などの可視化 adapter と統合しやすい
+- `llmthink` で採用済みの、共通コアと薄い複数 UI という構成を踏襲できる
+- JSON Schema と TypeScript type の対応を管理しやすい
+
+Node.js と依存 package の具体的な対応バージョンは実装 scaffold 時に固定し、package manifest と CI matrix を正本とする。
+
+### 2.2 採用しない方針
+
+- CLI から MCP server を呼び出す構成にはしない
+- UI ごとに parser や PERT 計算を実装しない
+- AST を毎回全量 serialize して局所編集する方式を既定にしない
+- 浮動小数点値を計算上の正本にしない
+- Mermaid AST を内部の正規 graph model にしない
+- LLM の応答を解析結果として扱わない
+- 初期実装で resource leveling、calendar、外部 issue 同期を混在させない
+
+## 3. システム構成
+
+```mermaid
+flowchart LR
+  FILE[.pert document] --> APP[Application service]
+  TEXT[DSL text] --> APP
+
+  APP --> SYNTAX[Syntax core<br/>CST / AST / formatter]
+  APP --> SEMANTIC[Semantic core<br/>resolver / validator]
+  SEMANTIC --> GRAPH[Graph model]
+  GRAPH --> ANALYZER[PERT / CPM analyzer]
+  GRAPH --> NEXT[Next-task selector]
+  GRAPH --> TRANSFORM[Mutation / advance planner]
+  GRAPH --> CONVERTER[Mermaid / JSON converter]
+
+  CLI[CLI adapter] --> APP
+  MCP[MCP adapter] --> APP
+  LSP[Future LSP adapter] --> APP
+
+  HELP[Help registry] --> CLI
+  HELP --> MCP
+  HELP --> LSP
+```
+
+### 3.1 dependency rule
+
+依存方向は外側から内側への一方向にする。
+
+```text
+CLI / MCP / LSP / filesystem
+             |
+             v
+      application services
+             |
+             v
+syntax / semantic / graph / analyzer / transform
+```
+
+Core layer は次へ依存してはならない。
+
+- filesystem
+- network
+- process environment
+- terminal width や color
+- MCP transport
+- editor API
+- wall clock
+
+基準日時、file path、表示桁、critical epsilon などは明示的な引数として渡す。
+
+## 4. リポジトリ構成
+
+初期実装では次の配置を採用する。
+
+```text
+perttool/
+  README.md
+  package.json
+  tsconfig.json
+  src/
+    model/
+      syntax.ts
+      graph.ts
+      analysis.ts
+      diagnostics.ts
+      rational.ts
+    parser/
+      lexer.ts
+      parser.ts
+      ast.ts
+      formatter.ts
+    semantic/
+      resolver.ts
+      validator.ts
+      graph-builder.ts
+      reachability.ts
+    analyzer/
+      topological.ts
+      schedule.ts
+      critical.ts
+      next.ts
+    transform/
+      text-edit.ts
+      task-mutation.ts
+      milestone-mutation.ts
+      advance.ts
+    converter/
+      mermaid-export.ts
+      mermaid-import.ts
+      json.ts
+    help/
+      registry.ts
+      render-text.ts
+      render-json.ts
+    application/
+      check.ts
+      analyze.ts
+      next.ts
+      mutate.ts
+      render.ts
+    adapters/
+      filesystem.ts
+      atomic-write.ts
+      cli.ts
+      mcp.ts
+    index.ts
+  schemas/
+  docs/
+    basic-design.md
+    requirements.md
+    specs/
+    adr/
+    process/
+    examples/
+  plans/
+  tests/
+    unit/
+    fixtures/
+    golden/
+    integration/
+```
+
+配置は責務を表す。小規模な初期段階で空 directory を先に量産せず、実装 slice に応じて追加する。
+
+## 5. 文書表現の3層
+
+文書を `CST -> AST -> Graph` の3層で扱う。
+
+### 5.1 CST
+
+CST は元テキストの編集可能性を保持する。
+
+保持する情報:
+
+- token kind と raw text
+- UTF-16 code unit offset
+- line と column
+- indentation
+- 空行
+- 独立行 comment
+- block の開始・終了 span
+- field value の span
+- 改行形式
+
+内部 offset、line、column は 0 始まりとし、offset と column は JavaScript/LSP と整合する UTF-16 code unit 基準とする。CLI の source location は 1 始まりへ変換して表示する。filesystem digest と file size だけは UTF-8 byte 列を対象にする。
+
+CST の目的:
+
+- task の 1 field だけを変更する
+- comment と宣言順を保持する
+- source diagnostic を正確に示す
+- editor rename や code action の基盤にする
+
+### 5.2 AST
+
+AST は DSL の構文上の意味を表す。
+
+初期 node:
+
+- `ProjectDecl`
+- `MilestoneDecl`
+- `TaskDecl`
+- `GateDecl`
+- `DurationLiteral`
+- `EstimateDecl`
+- `TextField`
+- `ListField`
+
+各 node は最低限、次を持つ。
+
+```text
+kind
+id or field name
+normalized value
+source span
+CST node reference
+```
+
+AST の時点では、参照先の存在、cycle、finish 到達性を確定しない。
+
+### 5.3 Graph model
+
+Graph model は参照解決済みの解析用表現である。
+
+```ts
+interface PertGraph {
+  project: ProjectModel;
+  milestones: ReadonlyMap<MilestoneId, MilestoneModel>;
+  edges: ReadonlyMap<EdgeId, TaskEdge | GateEdge>;
+  incoming: ReadonlyMap<MilestoneId, readonly EdgeId[]>;
+  outgoing: ReadonlyMap<MilestoneId, readonly EdgeId[]>;
+  topologicalOrder: readonly MilestoneId[];
+}
+```
+
+Graph model の条件:
+
+- ID が一意である
+- endpoint が解決済みである
+- self-loop がない
+- DAG である
+- adjacency の edge ID は決定的な順で並ぶ
+- 入力 AST への source reference を保持する
+
+解析器は無効な Graph を受け取らない。構造エラーがある場合は `SemanticResult` が diagnostics を返し、Graph の生成を完了扱いにしない。
+
+## 6. 数値表現
+
+### 6.1 Rational
+
+duration、expected、variance、float は内部で正規化した有理数として扱う。
+
+```ts
+interface Rational {
+  numerator: bigint;
+  denominator: bigint;
+}
+```
+
+Rules:
+
+- denominator は常に正数
+- numerator と denominator は最大公約数で約分する
+- DSL の有限小数は正確な分数へ変換する
+- PERT の `/ 6` を正確に保持する
+- 表示時だけ指定桁へ丸める
+- JSON では decimal string と、必要に応じて numerator/denominator string を返す
+
+これにより、critical 判定と tie-break が runtime の浮動小数点差に左右されることを避ける。
+
+### 6.2 duration unit
+
+MVP では 1 文書内の duration unit を統一する。
+
+- `duration_unit day` なら `d`
+- `duration_unit hour` なら `h`
+- 異なる unit の混在は semantic error
+- calendar 変換は行わない
+- variance の unit は duration unit の二乗として metadata に示す
+
+## 7. 診断モデル
+
+すべての layer は共通の `Diagnostic` を返す。
+
+```ts
+interface Diagnostic {
+  code: string;
+  severity: "error" | "warning" | "info";
+  message: string;
+  span?: SourceSpan;
+  related?: readonly RelatedLocation[];
+  helpTopic?: string;
+  expectedSyntax?: string;
+  fixes?: readonly SuggestedFix[];
+}
+```
+
+code namespace:
+
+- `PTDSL-*`: lexical/parser/field syntax
+- `PTSEM-*`: reference、state、duration、graph constraint
+- `PTDAG-*`: cycle、reachability、schedule
+- `PTMUT-*`: mutation、optimistic lock、unsafe removal
+- `PTCNV-*`: import/export/loss report
+- `PTCLI-*`: CLI usage
+
+Rules:
+
+- 同じ原因から CLI と MCP で異なる code を作らない
+- parse recovery 後の二次 error を抑制できること
+- cycle は少なくとも 1 本の witness path を related location 付きで返す
+- ID 重複は先行宣言と重複宣言の両方を示す
+- error の並び順は source position、code、ID の順で安定化する
+
+## 8. Core API
+
+公開 library API は I/O を含まない pure function を基本とする。
+
+```ts
+parseDocument(text, options): ParseResult
+buildGraph(document, options): SemanticResult
+checkDocument(text, options): CheckResult
+analyzeDocument(text, options): AnalysisResult
+selectNextTasks(text, options): NextResult
+planMutation(text, mutation, options): MutationResult
+planAdvance(text, options): MutationResult
+exportMermaid(text, options): ExportResult
+importMermaid(text, options): ImportResult
+getHelp(request): HelpResult
+```
+
+Result の共通要素:
+
+```ts
+interface OperationResult {
+  schemaVersion: string;
+  diagnostics: readonly Diagnostic[];
+  ok: boolean;
+}
+```
+
+Rules:
+
+- error diagnostic が 1 件以上あれば `ok=false`
+- warning の fail 条件は caller option で決める
+- library API は `process.exit` しない
+- syntax error や user document error を exception にしない
+- programmer error と不変条件違反だけを exception にする
+
+## 9. 処理フロー
+
+### 9.1 check
+
+```text
+text
+ -> lex / parse
+ -> AST field validation
+ -> reference resolution
+ -> graph construction
+ -> cycle detection
+ -> reached/frontier validation
+ -> finish reachability validation
+ -> diagnostics sort
+```
+
+Graph 構築ができない error がある場合、後続の schedule analysis は行わない。
+
+### 9.2 analyze
+
+```text
+check
+ -> effective reached closure
+ -> remaining edge weight
+ -> topological forward pass
+ -> reverse backward pass
+ -> float calculation
+ -> critical subgraph
+ -> representative critical path
+ -> blocked schedule qualification
+ -> AnalysisResult
+```
+
+#### effective reached closure
+
+1. 明示 `reached` milestone を queue に入れる
+2. 始点が reached の `done` task を satisfied edge とする
+3. 始点が reached の gate を satisfied edge とする
+4. incoming edge を1本以上持ち、そのすべてが satisfied になった milestone を reached にする
+5. 新たに reached になった milestone から、外向きの done task と gate の satisfaction を伝播する
+
+DAG なのでトポロジカル順または入次数 counter で決定的に処理できる。
+
+#### edge weight
+
+- `done` task: 0
+- deterministic task: duration
+- PERT task: `(o + 4m + p) / 6`
+- gate: 0
+
+blocked task の作業時間は通常どおり重みに含めるが、外部待ち時間は含めない。結果全体に `conditionalOnBlocksResolved=true` を立て、該当 task ID を返す。
+
+### 9.3 next
+
+`next` は `analyze` の結果を再利用する。
+
+```text
+active:
+  status == active
+
+ready:
+  status == planned
+  and effectiveReached(from)
+
+blocked_now:
+  status == blocked
+  and effectiveReached(from)
+
+upcoming:
+  unfinished
+  and not active / ready / blocked_now
+```
+
+ready sort key:
+
+```text
+critical desc
+totalFloat asc
+earliestStart asc
+taskId asc
+```
+
+upcoming の explanation は、直接の `from` milestone と、その milestone を未達にしている unsatisfied incoming edge を返す。最初から全祖先を展開せず、API option で explanation depth を制御する。
+
+### 9.4 mutation
+
+```text
+text + mutation request
+ -> check existing document
+ -> resolve exactly one target
+ -> build TextEdit[]
+ -> verify edits do not overlap
+ -> apply edits in descending offset order
+ -> parse and check candidate text
+ -> build unified diff
+ -> MutationResult
+```
+
+`MutationResult`:
+
+```ts
+interface MutationResult extends OperationResult {
+  originalDigest: string;
+  updatedDigest?: string;
+  updatedText?: string;
+  diff?: string;
+  edits: readonly TextEdit[];
+}
+```
+
+Core はファイルを書かない。CLI/MCP adapter が `MutationResult` を受け、安全条件を満たした場合だけ write する。
+
+### 9.5 advance
+
+advance は通常 mutation より強い graph rewrite なので、専用 planner とする。
+
+初期アルゴリズム:
+
+1. effective reached closure を求める
+2. 新たに reached となった milestone を frontier candidate とする
+3. finish へ至る未完了 edge を逆向きに辿り、未来に必要な subgraph を求める
+4. 合流判定にまだ必要な `done` task を保持する
+5. reached frontier より完全に過去で、未来 subgraph の条件に不要な edge/node を削除対象にする
+6. candidate 文書を再 parse・再分析する
+7. next result が advance 前後で意味的に矛盾しないことを確認する
+
+advance の完全な削除条件は `docs/specs/graph-semantics.md` で形式化する。形式仕様が完成するまでは write action を公開しない。
+
+### 9.6 Mermaid export/import
+
+export:
+
+```text
+Graph + optional AnalysisResult
+ -> stable node/edge ordering
+ -> perttool metadata records
+ -> Mermaid flowchart declarations
+ -> optional style declarations
+```
+
+import:
+
+```text
+Mermaid text
+ -> supported-profile parser
+ -> perttool metadata decode
+ -> graph reconstruction
+ -> semantic validation
+ -> DSL formatter
+ -> loss report
+```
+
+Mermaid adapter は analysis や validation を再実装しない。一般 Mermaid の best-effort import と、`perttool` profile の lossless import を別 mode として扱う。
+
+## 10. Graph algorithm
+
+### 10.1 topological sort と cycle witness
+
+- Kahn algorithm で安定 topological order を作る
+- 同時に処理可能な milestone は ID 辞書順の priority queue から取る
+- 全 node を処理できなければ cycle error
+- 未処理 subgraph に DFS を行い、1 本以上の cycle witness を返す
+
+### 10.2 finish reachability
+
+- finish から reverse traversal する
+- reverse traversal で到達しない未完了 edge/node を `finish_unreachable` とする
+- 過去を表すためだけの孤立 done subgraph は許容せず、advance 候補として診断する
+
+### 10.3 forward pass
+
+- effective reached milestone の earliest は 0
+- milestone は topological order で処理する
+- non-reached milestone の earliest は incoming edge EF の最大値
+- 比較と加算は Rational で行う
+
+### 10.4 backward pass
+
+- finish の latest は finish earliest
+- reverse topological order で処理する
+- milestone latest は outgoing edge LS の最小値
+- finish へ到達しない要素は事前検査で除外されていることを前提にする
+
+### 10.5 critical subgraph
+
+- `abs(totalFloat) <= criticalEpsilon` を critical とする
+- critical edge の集合を primary result とする
+- path 全列挙を primary result にしない
+- representative path は各分岐で edge ID の辞書順を tie-break とする
+- 全列挙 option には `maxPaths` を必須または既定上限付きにする
+
+## 11. CLI 設計
+
+CLI は resource-first とする。
+
+```text
+perttool dsl check <file>
+perttool dsl format <file>
+perttool dsl help [topic] [subtopic] [index|quick|detail]
+
+perttool dag analyze <file>
+perttool dag next <file>
+perttool dag render <file> --format mermaid|json
+perttool dag import <file> --format mermaid
+perttool dag advance <file>
+
+perttool task add|set|remove|finish ...
+perttool milestone add|set|remove ...
+```
+
+CLI adapter の責務:
+
+- argv parse
+- file read
+- Core API call
+- text/JSON render
+- exit code mapping
+- explicit write option の処理
+- terminal color の制御
+
+CLI adapter が持たない責務:
+
+- DSL parse rule
+- graph validation rule
+- PERT/CPM formula
+- next task ranking
+- mutation target resolution
+
+### 11.1 output
+
+- stdout: request された result data
+- stderr: diagnostic、write summary、non-data message
+- `--format text`: 人間向け既定出力
+- `--format json`: schema に従う機械可読出力
+- color は TTY の text 出力だけで既定有効
+- JSON に ANSI escape を含めない
+
+### 11.2 write safety
+
+変更 command は既定で preview とする。
+
+```text
+default: updated text or diff only
+--out: new fileへ出力
+--write: input fileを更新
+--expect-digest: optimistic lock
+```
+
+`--write` の処理:
+
+1. 読み取り時 digest を保持
+2. mutation result を生成
+3. 書き込み直前に現在 file digest を再確認
+4. 同 directory に temporary file を作成
+5. temporary file を flush/fsync してから atomic rename
+6. 対応可能な環境では親 directory も fsync
+7. rename 後の file を再 parse して digest を確認
+
+## 12. MCP 設計
+
+MCP は CLI と同じ application service を呼ぶ。
+
+初期 tool:
+
+- `dsl`
+- `dag`
+- `task`
+- `milestone`
+
+MCP request は原則として document text を受け取る。file path を受ける action は adapter の追加機能とし、Core API と分離する。
+
+Response:
+
+```ts
+interface ToolResponse<T> {
+  summary: string;
+  result: T;
+  diagnostics: readonly Diagnostic[];
+}
+```
+
+Rules:
+
+- schema で action enum と必須 field を閉じる
+- unknown field の扱いを action ごとに統一する
+- edit action は既定で updated text と diff を返す
+- write action を実装する場合は `write=true` と `expectedDigest` を必須にする
+- MCP layer で診断 severity や解析値を変更しない
+
+## 13. Help 設計
+
+help を code 内の散在文字列にせず、共通 registry として持つ。
+
+```ts
+interface HelpNode {
+  id: string;
+  title: string;
+  summary: string;
+  quick: readonly HelpSection[];
+  detail: readonly HelpSection[];
+  syntax?: readonly string[];
+  examples?: readonly HelpExample[];
+  related: readonly string[];
+}
+```
+
+初期 topic:
+
+- `syntax`
+- `syntax.project`
+- `syntax.milestone`
+- `syntax.task`
+- `syntax.gate`
+- `syntax.duration`
+- `analysis`
+- `next`
+- `editing`
+- `mermaid`
+- `workflows`
+- `errors`
+- `samples`
+
+同じ registry から次を生成する。
+
+- CLI text help
+- CLI JSON help
+- MCP help result
+- LSP hover/completion documentation
+- parse diagnostic の help link
+
+grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自己完結した operational guidance を提供するが、完全 EBNF の複製を正本にはしない。grammar、parser、formatter、help sample の整合性は fixture から検査する。
+
+## 14. Schema と versioning
+
+初期 schema:
+
+- `Perttool.CheckResult.v1`
+- `Perttool.AnalysisResult.v1`
+- `Perttool.NextResult.v1`
+- `Perttool.MutationResult.v1`
+- `Perttool.ConversionLossReport.v1`
+
+Rules:
+
+- TypeScript type と JSON Schema を同一変更で更新する
+- root に `schema_version` と `tool_version` を持つ
+- optional field の追加は同一 major schema 内で許容する
+- field 削除、意味変更、enum narrowing は major schema を上げる
+- golden JSON は stable key order で出力する
+
+DSL version は project block の optional field として将来導入できるよう予約する。MVP で省略された場合は version 1 grammar として扱う。
+
+## 15. テスト設計
+
+### 15.1 unit test
+
+- indentation/tokenization
+- quoted text/block text
+- duration parse と Rational
+- PERT expected/variance
+- topological sort
+- cycle witness
+- reachability
+- forward/backward pass
+- total/free float
+- next classification/ranking
+- TextEdit overlap detection
+
+### 15.2 fixture/golden test
+
+最低限の fixture:
+
+- minimal linear graph
+- parallel diamond
+- task と gate の合流
+- multiple frontier
+- duplicate ID
+- undefined endpoint
+- self-loop
+- multi-node cycle
+- unreachable finish
+- invalid estimate order
+- mixed duration unit
+- active from unreached
+- blocked ready task
+- retained done task at merge
+- advance-safe graph
+- advance-unsafe graph
+- multiple critical path
+- Mermaid lossless round-trip
+- general Mermaid lossy import
+
+Golden artifacts:
+
+- formatted DSL
+- diagnostics text/JSON
+- analysis text/JSON
+- next text/JSON
+- mutation diff
+- Mermaid output
+- loss report
+
+### 15.3 property test
+
+Should:
+
+- `parse(format(parse(text)))` の AST 同値性
+- formatter idempotence
+- DAG generator に対する topological order validity
+- nonnegative task duration での earliest monotonicity
+- mutation 後の target field 一致と他 field 不変性
+- lossless Mermaid profile の semantic round-trip
+
+### 15.4 adapter parity
+
+同一 fixture に対し、library、CLI JSON、MCP result の semantic payload が一致することを検査する。presentation 固有 field は比較対象から明示的に除外する。
+
+## 16. 自己利用設計
+
+自己利用の詳細な gate と運用は [process/self-use.md](process/self-use.md) を正とする。
+
+### 16.1 最初の対象
+
+最初の自己利用対象は DSL 文法の設計・実装タスクとする。
+
+- 規範的な grammar 内容: `docs/specs/dsl-grammar.md`
+- 現在・未来の grammar 作業計画: `plans/grammar.pert`
+- 過去の作業計画: Git history
+
+`.pert` は grammar を表現する言語ではなく、grammar を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
+
+### 16.2 bootstrap gate
+
+`plans/grammar.pert` を作成して CI 対象にする前に、次を満たす。
+
+- project/milestone/task/gate の parser がある
+- ID と endpoint の意味検査がある
+- cycle と finish reachability の検査がある
+- `perttool dsl check` がある
+- `perttool dag analyze` の基本 forward/backward pass がある
+- `perttool dag next` が決定的な結果を返す
+- 正常/失敗 fixture が自動テストされる
+
+この段階では read-only の自己利用を開始する。formatter、mutation、advance の write path は使用しない。
+
+### 16.3 write gate
+
+自己利用文書へ `format --write` や task mutation を適用するには、さらに次を満たす。
+
+- formatter idempotence
+- comment と宣言順の保持
+- preview diff
+- candidate text の再 parse・再検査
+- atomic write
+- optimistic lock
+- grammar plan fixture に対する round-trip regression
+
+### 16.4 failure policy
+
+- tool の bug に合わせて grammar plan を不正に書き換えない
+- Markdown grammar と golden fixture を bootstrap 時の判断根拠として残す
+- 自己利用文書が parse 不能になった場合、直前の Git revision と read-only check から復旧する
+- tool upgrade と `plans/grammar.pert` の破壊的変更を同一 commit に混在させる場合は、旧版と新版の検査証跡を残す
+
+## 17. 実装 slice
+
+### Slice 0: design baseline
+
+- 基本設計
+- DSL grammar spec
+- graph semantics spec
+- analysis spec
+- interface spec
+- ADR
+
+Exit:
+
+- parser が実装できる完全 EBNF と error policy がある
+- reached/ready/done/gate/advance の意味が例で確認できる
+
+### Slice 1: syntax and check
+
+- TypeScript scaffold
+- lexer/parser/CST/AST
+- diagnostics
+- resolver/validator
+- `dsl check`
+- `dsl help syntax`
+
+Exit:
+
+- minimal/invalid fixture が固定される
+- source span 付き error が text/JSON で出る
+
+### Slice 2: analysis and next
+
+- Rational
+- topological/cycle/reachability
+- forward/backward pass
+- critical subgraph
+- reached closure
+- next classification/ranking
+- `dag analyze` / `dag next`
+
+Exit:
+
+- bootstrap gate を満たす
+- `plans/grammar.pert` の read-only 自己利用を開始する
+
+### Slice 3: safe formatting and mutation
+
+- source-preserving formatter
+- task/milestone mutation
+- preview diff
+- atomic write/optimistic lock
+
+Exit:
+
+- write gate を満たす
+- grammar plan の安全な更新に使用する
+
+### Slice 4: advance and Mermaid
+
+- advance planner
+- Mermaid lossless profile
+- general Mermaid loss report
+- SVG/HTML preview の基礎
+
+### Slice 5: MCP and editor
+
+- MCP adapter
+- adapter parity tests
+- LSP diagnostics/completion/definition/rename の基礎
+
+## 18. 詳細設計へ送る事項
+
+次は本書で方向だけを定め、個別仕様または ADR で確定する。
+
+1. DSL 完全 EBNF と error recovery
+2. CST の trivia/comment 所有規則
+3. formatter の canonical whitespace
+4. advance の最小 frontier cut
+5. multiple critical path の path count 表示
+6. Mermaid metadata record schema
+7. JSON Schema の具体的 field
+8. CLI option の完全一覧
+9. MCP write action の有無
+10. package/runtime/test dependency の選定
+
+## 19. 要件トレーサビリティ
+
+| 基本設計 | 主な対応要件 |
+| --- | --- |
+| CST/AST/Graph 3層 | 8、12、16、17章 |
+| Rational | 10章 |
+| Graph algorithm | 9、10、11章 |
+| Pure Core API | 2.2、15、17章 |
+| CLI/MCP adapter | 15、17章 |
+| Help registry | 16章 |
+| Mutation/atomic write | 9.3、12、20.1節 |
+| Mermaid adapter | 13、14章 |
+| Test design | 20.3、21章 |
+| Grammar-first self-use | 19章、本書16章 |

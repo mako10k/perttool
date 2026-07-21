@@ -1,6 +1,6 @@
 # perttool 要件定義
 
-- 文書状態: Draft 0.1
+- 文書状態: Draft 0.2
 - 作成日: 2026-07-21
 - 対象: MVP と、その後の拡張境界
 - 想定ファイル拡張子: `.pert`（暫定）
@@ -732,6 +732,19 @@ Could:
 - 2 つの Git revision 間で critical path と expected duration の変化を比較すること
 - `perttool dag diff <old> <new>` で構造差分を表示すること
 
+### 19.1 自己利用
+
+Must:
+
+- parser、構造検査、基本分析、next 判定が安定した時点で、DSL 文法の設計・実装タスクから自己利用を開始すること
+- 規範文法は `docs/specs/dsl-grammar.md`、現在・未来の文法作業計画は `plans/grammar.pert`、過去は Git history として分離すること
+- 最初の自己利用は check/analyze/next の read-only operation に限定すること
+- formatter と mutation の write 利用は、comment 保持、round-trip、preview、再検査、atomic write の回帰試験後に解禁すること
+- advance の自己利用は、done 合流と frontier 圧縮の回帰試験後に解禁すること
+- tool の不具合に合わせて規範文法や有効な計画を歪めないこと
+
+自己利用の段階と gate は [process/self-use.md](process/self-use.md) を正とする。
+
 ## 20. 品質要件
 
 ### 20.1 安全性
@@ -796,7 +809,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 | 6. 文書ベースで再計算する | 2.2、18、19 |
 | 7. 次のタスクを分かりやすくする | 11 |
 | 8. 現在・未来を表し、過去は Git で補足する | 2.3、9、19 |
-| 9. 既存 DSL ツールのヘルプ・AI 導線を踏襲する | 15、16、17 |
+| 9. 既存 DSL ツールのヘルプ・AI 導線を踏襲する | 15、16、17、19.1 |
 
 ## 23. MVP 後へ保留する事項
 
@@ -815,7 +828,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 実装開始前に、次を ADR または個別仕様で固定する。
 
-1. 実装言語と配布形態
+1. Node.js 対応バージョン、package 配布形態、依存 package。実装言語は [基本設計](basic-design.md) で TypeScript に決定済み
 2. `.pert` の完全 EBNF、文字列 escape、コメント保持規則
 3. duration の内部表現と単位変換規則
 4. `advance` の正規化アルゴリズムと残す frontier の最小形
