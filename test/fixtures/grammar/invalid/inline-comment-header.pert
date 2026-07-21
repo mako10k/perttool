@@ -1,0 +1,8 @@
+project INLINE_HEADER: # unsupported
+  title "inline header"
+  duration_unit day
+  finish DONE
+
+milestone DONE:
+  title "done"
+  state reached

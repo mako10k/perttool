@@ -1,0 +1,15 @@
+project INLINE_COMMENT:
+  title "inline comment"
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "now"
+  state reached
+
+milestone DONE:
+  title "done"
+
+task WORK NOW -> DONE:
+  title "work"
+  duration 1d # unsupported

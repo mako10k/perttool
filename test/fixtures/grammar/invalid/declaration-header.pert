@@ -1,0 +1,10 @@
+project INVALID_HEADER:
+  title "invalid declaration header"
+  duration_unit day
+  finish DONE
+
+milestone 1BAD:
+  title "invalid identifier"
+
+milestone DONE:
+  title "done"

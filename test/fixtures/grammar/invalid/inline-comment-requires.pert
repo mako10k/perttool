@@ -1,0 +1,21 @@
+project INLINE_REQUIRES:
+  title "inline requires"
+  duration_unit day
+  finish DONE
+
+resource WORKERS:
+  title "workers"
+  capacity 1
+
+milestone NOW:
+  title "now"
+  state reached
+
+milestone DONE:
+  title "done"
+
+task WORK NOW -> DONE:
+  title "work"
+  duration 1d
+  requires:
+    WORKERS 1 # unsupported

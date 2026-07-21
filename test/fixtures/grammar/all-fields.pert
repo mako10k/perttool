@@ -1,0 +1,51 @@
+project ALL_FIELDS:
+  version 1
+  title "all declaration fields"
+  description "project description"
+  as_of 2026-07-21T20:00:00+09:00
+  duration_unit point
+  velocity 10p/5d
+  finish DONE
+  critical_epsilon 0p
+  target_duration 20p
+
+resource REVIEWERS:
+  title "reviewers"
+  description "exclusive grammar review"
+  capacity 1
+  tags [review, "grammar team"]
+
+milestone NOW:
+  title "now"
+  description "current frontier"
+  state reached
+  tags [current]
+
+milestone REVIEWED:
+  title "reviewed"
+
+milestone DONE:
+  title "done"
+
+task REVIEW NOW -> REVIEWED:
+  title "review every task field"
+  description "task description"
+  estimate:
+    optimistic 1p
+    most_likely 2p
+    pessimistic 3p
+  status blocked
+  priority 40
+  requires:
+    REVIEWERS 1
+  owner "team-a"
+  tags [parser, "field matrix"]
+  blocked_reason "external approval"
+  source "issue:FIELD-1"
+
+task COMPLETE REVIEWED -> DONE:
+  title "cover duration"
+  duration 1p
+
+gate RELEASE_GATE REVIEWED -> DONE:
+  reason "review completion is required"

@@ -1,0 +1,12 @@
+project INVALID_INTEGER:
+  title "invalid integer"
+  duration_unit day
+  finish DONE
+
+resource WORKERS:
+  title "workers"
+  capacity many
+
+milestone DONE:
+  title "done"
+  state reached

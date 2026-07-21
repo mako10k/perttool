@@ -1,0 +1,16 @@
+project INVALID_DATE:
+  title "invalid date"
+  as_of 2026-02-30
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "now"
+  state reached
+
+milestone DONE:
+  title "done"
+
+task WORK NOW -> DONE:
+  title "work"
+  duration 1d

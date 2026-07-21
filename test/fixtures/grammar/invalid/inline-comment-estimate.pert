@@ -1,0 +1,18 @@
+project INLINE_ESTIMATE:
+  title "inline estimate"
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "now"
+  state reached
+
+milestone DONE:
+  title "done"
+
+task WORK NOW -> DONE:
+  title "work"
+  estimate:
+    optimistic 1d # unsupported
+    most_likely 2d
+    pessimistic 3d

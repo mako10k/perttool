@@ -8,7 +8,7 @@
       "tasks": 6,
       "gates": 5,
       "errors": 0,
-      "warnings": 1
+      "warnings": 2
     }
   },
   "analyze": {
@@ -18,7 +18,6 @@
     "precedence_forecast": "7/1",
     "precedence_critical_tasks": [
       "BLOCK_TEXT_SPANS",
-      "FIELD_FIXTURES",
       "FORMATTER_IMPLEMENT",
       "FORMATTER_ROUNDTRIP"
     ],
@@ -28,7 +27,6 @@
     "resource_arcs": [],
     "schedule_critical_tasks": [
       "BLOCK_TEXT_SPANS",
-      "FIELD_FIXTURES",
       "FORMATTER_IMPLEMENT",
       "FORMATTER_ROUNDTRIP"
     ]
@@ -37,11 +35,9 @@
     "groups": {
       "active": [],
       "ready": [
-        "FIELD_FIXTURES",
         "BLOCK_TEXT_SPANS"
       ],
       "runnable_now": [
-        "FIELD_FIXTURES",
         "BLOCK_TEXT_SPANS"
       ],
       "blocked_now": [],

@@ -1,0 +1,15 @@
+project INVALID_DURATION:
+  title "invalid duration"
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "now"
+  state reached
+
+milestone DONE:
+  title "done"
+
+task WORK NOW -> DONE:
+  title "work"
+  duration someday

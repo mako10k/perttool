@@ -199,6 +199,44 @@ function parseString(raw: string): string | undefined {
   }
 }
 
+function findInlineCommentStart(text: string): number | undefined {
+  let quoted = false;
+  let escaped = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index]!;
+    if (quoted) {
+      if (escaped) {
+        escaped = false;
+      } else if (character === "\\") {
+        escaped = true;
+      } else if (character === '"') {
+        quoted = false;
+      }
+      continue;
+    }
+    if (character === '"') {
+      quoted = true;
+    } else if (character === "#") {
+      return index;
+    }
+  }
+  return undefined;
+}
+
+function inlineCommentDiagnostic(
+  line: SourceLine,
+  start: number,
+  entityId?: string,
+): Diagnostic {
+  return diagnostic(
+    "PTDSL-011",
+    "inline commentは使用できません",
+    span(line, start, line.text.length),
+    "syntax.comments",
+    entityId,
+  );
+}
+
 function splitTagItems(raw: string): readonly string[] | undefined {
   if (!raw.startsWith("[") || !raw.endsWith("]")) return undefined;
   const body = raw.slice(1, -1).trim();
@@ -331,6 +369,12 @@ function parseNestedEstimate(
       continue;
     }
     const content = line.text.slice(4).trimEnd();
+    const inlineCommentStart = findInlineCommentStart(content);
+    if (inlineCommentStart !== undefined) {
+      diagnostics.push(inlineCommentDiagnostic(line, 4 + inlineCommentStart));
+      index += 1;
+      continue;
+    }
     const match = /^(optimistic|most_likely|pessimistic) (.+)$/.exec(content);
     if (match === null) {
       diagnostics.push(
@@ -414,6 +458,12 @@ function parseNestedRequirements(
       continue;
     }
     const content = line.text.slice(4).trimEnd();
+    const inlineCommentStart = findInlineCommentStart(content);
+    if (inlineCommentStart !== undefined) {
+      diagnostics.push(inlineCommentDiagnostic(line, 4 + inlineCommentStart));
+      index += 1;
+      continue;
+    }
     const match = /^([A-Za-z][A-Za-z0-9_-]*) ([0-9]+)$/.exec(content);
     if (match === null) {
       diagnostics.push(
@@ -650,6 +700,13 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
       index += 1;
       continue;
     }
+    const headerInlineCommentStart = findInlineCommentStart(headerLine.text);
+    if (headerInlineCommentStart !== undefined) {
+      diagnostics.push(inlineCommentDiagnostic(headerLine, headerInlineCommentStart));
+      index += 1;
+      index = skipInvalidTopLevelRegion(lines, index, trivia);
+      continue;
+    }
     const header = parseDeclarationHeader(headerLine, diagnostics);
     index += 1;
     if (header === undefined) {
@@ -690,6 +747,12 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         continue;
       }
       const content = line.text.slice(2).trimEnd();
+      const inlineCommentStart = findInlineCommentStart(content);
+      if (inlineCommentStart !== undefined) {
+        diagnostics.push(inlineCommentDiagnostic(line, 2 + inlineCommentStart, header.id));
+        index += 1;
+        continue;
+      }
       const blockMatch = /^([a-z_]+):$/.exec(content);
       if (blockMatch !== null) {
         const name = blockMatch[1]!;

@@ -1,0 +1,16 @@
+project INVALID_LIST:
+  title "invalid list"
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "now"
+  state reached
+  tags [alpha,, beta]
+
+milestone DONE:
+  title "done"
+
+task WORK NOW -> DONE:
+  title "work"
+  duration 1d

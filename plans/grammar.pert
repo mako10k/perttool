@@ -50,6 +50,7 @@ milestone GRAMMAR_READY:
 task FIELD_FIXTURES NOW -> FIELDS_VERIFIED:
   title "全declaration fieldとinvalid tokenのfixtureを揃える"
   duration 2p
+  status done
   priority 30
   requires:
     DEVELOPERS 1

@@ -17,7 +17,7 @@
 | `docs/specs/dsl-grammar.md` | DSL の規範文法、EBNF、例、error policy | Markdown 文書 |
 | `plans/mvp.pert` | MVP全体のmacro milestoneとwork package | `.pert` 文書 |
 | `plans/grammar.pert` | 文法作業の現在・未来 DAG | `.pert` 文書 |
-| `tests/fixtures/grammar/` | parser が受理・拒否すべき具体例 | fixture/golden |
+| `test/fixtures/grammar/` | parser が受理・拒否すべき具体例 | fixture/golden |
 | Git history | 過去の計画、仕様、実装 | commit history |
 
 `plans/grammar.pert` に EBNF そのものを埋め込んで規範仕様の代用にしない。
@@ -66,6 +66,8 @@ Exit criteria:
 2026-07-21のPoint/velocity導入後、最初の対象である`plans/grammar.pert`を`duration_unit point`へ移行した。既存10d resource baselineを初期calibrationとして`velocity 10p/10d`を置き、PERT/CPMの基準値を8p/10p、velocity forecastを8d/10dとして分離してgoldenへ固定した。Velocityの変更履歴と将来の再calibrationはGitで追跡する。
 
 同日に`ERROR_RECOVERY`を完了し、複数syntax error、phase suppression、diagnostic上限をfixture/CLI E2Eで固定した。完了taskは未実装のadvanceで安全に圧縮できるまで`done`で保持する。残計画はprecedence/resourceとも7p、velocity forecast 7dとなり、次の`FIELD_FIXTURES`と`BLOCK_TEXT_SPANS`は同時にrunnableである。
+
+続いて`FIELD_FIXTURES`を完了し、project/resource/milestone/task/gateの全fieldを1つの正常fixtureで検査した。Identifier、string、duration、velocity、date、list、integer、enum、inline commentの異常fixtureと、missing/duplicate/field combinationの境界も独立入力へ固定した。仕様に存在した`PTDSL-011`の未到達を修正し、quoted string、tag list、block text内の`#`とinline commentを区別した。現在のrunnable taskは`BLOCK_TEXT_SPANS`だけである。
 
 この段階で許可する操作:
 
@@ -215,5 +217,6 @@ Stage 1開始時の証跡:
 - next gate: `parallel next selects a deterministic runnable subset`、classification/depth unit test、text/JSON CLI integration test
 - self-use golden: grammar planとMVP planのcheck/analyze/next projection test
 - Point self-use gate: grammar planの基準unit、velocity forecast unit、precedence/resource forecastをgoldenで分離して検査する
+- field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、両planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

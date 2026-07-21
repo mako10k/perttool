@@ -1,0 +1,8 @@
+project INVALID_STRING:
+  title "unterminated
+  duration_unit day
+  finish DONE
+
+milestone DONE:
+  title "done"
+  state reached

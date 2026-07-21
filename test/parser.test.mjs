@@ -38,6 +38,146 @@ test("parallel example preserves AoA declarations and nested requirements", asyn
   );
 });
 
+test("all declaration fields parse from the grammar acceptance fixture", async () => {
+  const text = await readFile(path.join(testDirectory, "fixtures/grammar/all-fields.pert"), "utf8");
+  const checked = checkDocument(text);
+  assert.equal(
+    checked.ok,
+    true,
+    checked.diagnostics.map(({ code, message }) => `${code} ${message}`).join("; "),
+  );
+  assert.deepEqual(checked.summary, {
+    resources: 1,
+    milestones: 3,
+    tasks: 2,
+    gates: 1,
+    errors: 0,
+    warnings: 0,
+  });
+
+  const parsed = parseDocument(text);
+  const expectedFields = {
+    project: [
+      "as_of",
+      "critical_epsilon",
+      "description",
+      "duration_unit",
+      "finish",
+      "target_duration",
+      "title",
+      "velocity",
+      "version",
+    ],
+    resource: ["capacity", "description", "tags", "title"],
+    milestone: ["description", "state", "tags", "title"],
+    task: [
+      "blocked_reason",
+      "description",
+      "duration",
+      "estimate",
+      "owner",
+      "priority",
+      "requires",
+      "source",
+      "status",
+      "tags",
+      "title",
+    ],
+    gate: ["reason"],
+  };
+  for (const [kind, expected] of Object.entries(expectedFields)) {
+    const actual = [
+      ...new Set(
+        parsed.document.declarations
+          .filter((declaration) => declaration.kind === kind)
+          .flatMap((declaration) => declaration.fields.map(({ name }) => name)),
+      ),
+    ].sort();
+    assert.deepEqual(actual, expected, kind);
+  }
+
+  const project = parsed.document.declarations.find(({ kind }) => kind === "project");
+  const velocity = project.fields.find(({ name }) => name === "velocity").value;
+  assert.deepEqual([velocity.points.text, velocity.period.text], ["10p", "5d"]);
+  const review = parsed.document.declarations.find(({ id }) => id === "REVIEW");
+  const estimate = review.fields.find(({ name }) => name === "estimate");
+  assert.deepEqual(
+    estimate.children.map(({ name, value }) => [name, value.text]),
+    [
+      ["optimistic", "1p"],
+      ["most_likely", "2p"],
+      ["pessimistic", "3p"],
+    ],
+  );
+  const requirements = review.fields.find(({ name }) => name === "requires").value;
+  assert.deepEqual(
+    requirements.map(({ resourceId, units }) => [resourceId, units]),
+    [["REVIEWERS", 1]],
+  );
+});
+
+for (const [fixture, code] of [
+  ["declaration-header.pert", "PTDSL-004"],
+  ["unknown-field.pert", "PTDSL-005"],
+  ["string-token.pert", "PTDSL-006"],
+  ["duration-token.pert", "PTDSL-007"],
+  ["velocity-token.pert", "PTDSL-007"],
+  ["date-token.pert", "PTDSL-008"],
+  ["list-token.pert", "PTDSL-009"],
+  ["inline-comment.pert", "PTDSL-011"],
+  ["inline-comment-header.pert", "PTDSL-011"],
+  ["inline-comment-estimate.pert", "PTDSL-011"],
+  ["inline-comment-requires.pert", "PTDSL-011"],
+  ["enum-token.pert", "PTDSL-012"],
+  ["integer-token.pert", "PTDSL-012"],
+  ["missing-field.pert", "PTSEM-101"],
+  ["duplicate-field.pert", "PTSEM-102"],
+  ["field-combination.pert", "PTSEM-103"],
+]) {
+  test(`grammar fixture ${fixture} reports only ${code}`, async () => {
+    const text = await readFile(
+      path.join(testDirectory, "fixtures/grammar/invalid", fixture),
+      "utf8",
+    );
+    const result = checkDocument(text);
+    assert.equal(result.ok, false);
+    assert.deepEqual(result.diagnostics.map(({ code: actual }) => actual), [code]);
+  });
+}
+
+test("inline comment diagnostic selects the unsupported suffix", async () => {
+  const text = await readFile(
+    path.join(testDirectory, "fixtures/grammar/invalid/inline-comment.pert"),
+    "utf8",
+  );
+  const result = checkDocument(text);
+  const [diagnostic] = result.diagnostics;
+  assert.equal(diagnostic.helpTopic, "syntax.comments");
+  assert.equal(text.slice(diagnostic.span.start.offset, diagnostic.span.end.offset), "# unsupported");
+});
+
+test("duplicate field diagnostic points from the later field to the first", async () => {
+  const text = await readFile(
+    path.join(testDirectory, "fixtures/grammar/invalid/duplicate-field.pert"),
+    "utf8",
+  );
+  const result = checkDocument(text);
+  const [diagnostic] = result.diagnostics;
+  assert.equal(diagnostic.span.start.line, 2);
+  assert.equal(diagnostic.related.length, 1);
+  assert.equal(diagnostic.related[0].span.start.line, 1);
+});
+
+test("hash characters in strings, lists, and block text are content", () => {
+  const text = `project HASH_CONTENT:\n  title "# is string content"\n  description |\n    # is block text content\n  duration_unit day\n  finish DONE\n\nmilestone NOW:\n  title "now"\n  state reached\n  tags ["#tag"]\n\nmilestone DONE:\n  title "done"\n\ntask WORK NOW -> DONE:\n  title "work"\n  duration 1d\n`;
+  const result = checkDocument(text);
+  assert.equal(
+    result.ok,
+    true,
+    result.diagnostics.map(({ code, message }) => `${code} ${message}`).join("; "),
+  );
+});
+
 for (const [fixture, code] of [
   ["duplicate-id.pert", "PTSEM-201"],
   ["undefined-endpoint.pert", "PTSEM-204"],

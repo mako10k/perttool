@@ -1,0 +1,9 @@
+project UNKNOWN_FIELD:
+  title "unknown field"
+  unsupported "value"
+  duration_unit day
+  finish DONE
+
+milestone DONE:
+  title "done"
+  state reached

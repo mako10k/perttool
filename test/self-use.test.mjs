@@ -31,9 +31,8 @@ test("grammar plan check/analyze/next matches the read-only self-use golden", as
   assert.equal(next.ok, true);
   assert.ok(analyzed.precedence);
   assert.ok(analyzed.resource);
-  const rejectionTask = next.tasks.find(({ id }) => id === "FIELD_FIXTURES");
-  assert.ok(rejectionTask);
-  const rejection = rejectionTask.resourceRejections[0];
+  const rejectionTask = next.tasks.find(({ resourceRejections }) => resourceRejections.length > 0);
+  const rejection = rejectionTask?.resourceRejections[0];
   const actual = {
     check: {
       document_id: checked.documentId,
