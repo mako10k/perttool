@@ -1,1 +1,14 @@
 .perttool/
+
+# Node.js / TypeScript implementation artifacts
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local worktrees, environment, and generated reports
+.worktree/
+.env
+.env.*
+!.env.example
+report/

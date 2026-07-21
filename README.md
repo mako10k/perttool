@@ -9,6 +9,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [DSL 文法仕様](docs/specs/dsl-grammar.md)
 - [DSL サンプル](docs/examples/README.md)
 - [自己利用計画](docs/process/self-use.md)
+- [AI 開発ガイド](docs/process/ai-development.md)
 
 基本方針は次のとおりです。
 
@@ -19,3 +20,9 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - Mermaid との相互変換、CLI、構造化ヘルプ、AI/MCP 操作導線を同じ共通コア上に提供する
 - 現行文書は現在と未来を表し、過去は Git 履歴で追跡する
 - parser・check・analyze・next が安定した時点で、文法作業の計画から自己利用を開始する
+
+現在のrepository checkは次で実行できます。
+
+```sh
+bash scripts/check-docs.sh
+```
