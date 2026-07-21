@@ -62,3 +62,44 @@ test("grammar plan check/analyze/next matches the read-only self-use golden", as
   };
   assert.deepEqual(actual, expected);
 });
+
+test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {
+  const text = await readFile(path.join(root, "plans/mvp.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/mvp.expected.json"),
+    "utf8",
+  ));
+  const checked = checkDocument(text);
+  const analyzed = analyzeDocument(text);
+  const next = selectNextTasks(text);
+  assert.equal(checked.ok, true);
+  assert.equal(analyzed.ok, true);
+  assert.equal(next.ok, true);
+  assert.ok(analyzed.precedence);
+  assert.ok(analyzed.resource);
+  const actual = {
+    check: {
+      document_id: checked.documentId,
+      grammar_version: checked.grammarVersion,
+      summary: checked.summary,
+    },
+    analyze: {
+      precedence_makespan: analyzed.precedence.makespan.numerator.toString(),
+      precedence_critical_tasks: analyzed.precedence.critical.taskIds,
+      resource_makespan: analyzed.resource.makespan.numerator.toString(),
+      resource_delay: analyzed.resource.resourceDelay.numerator.toString(),
+      resource_arcs: analyzed.resource.resourceArcs.map(({ id }) => id),
+      schedule_critical_tasks: analyzed.resource.scheduleCritical.taskIds,
+    },
+    next: {
+      groups: {
+        active: next.groups.active,
+        ready: next.groups.ready,
+        runnable_now: next.groups.runnableNow,
+        blocked_now: next.groups.blockedNow,
+        upcoming: next.groups.upcoming,
+      },
+    },
+  };
+  assert.deepEqual(actual, expected);
+});

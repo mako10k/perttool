@@ -116,6 +116,8 @@ perttool/
     basic-design.md
     requirements.md
   plans/
+    grammar.pert
+    mvp.pert
   scripts/
     check-docs.sh
     check-self-use.sh
@@ -825,6 +827,8 @@ MVPでは同一fixtureに対し、library resultとCLI JSONのsemantic payload�
 - 規範的な grammar 内容: `docs/specs/dsl-grammar.md`
 - 現在・未来の grammar 作業計画: `plans/grammar.pert`
 - 過去の作業計画: Git history
+
+MVP全体のstage gateは`plans/mvp.pert`、現在sliceの実装taskは`plans/grammar.pert`で分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。
 
 `.pert` は grammar を表現する言語ではなく、grammar を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
 

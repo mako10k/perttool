@@ -1,0 +1,136 @@
+project PERTTOOL_MVP:
+  version 1
+  title "perttool MVPマイルストーン計画"
+  description |
+    MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
+    grammar sliceの詳細な作業状態はplans/grammar.pertを正とする。
+  as_of 2026-07-21
+  duration_unit day
+  finish M6_MVP_RELEASED
+
+resource DEVELOPERS:
+  title "実装担当枠"
+  capacity 2
+
+resource REVIEWERS:
+  title "設計・安全性レビュー枠"
+  description "仕様判断と安全性gateは同時に1件だけレビューする"
+  capacity 1
+
+milestone NOW:
+  title "read-only core完成"
+  state reached
+
+milestone M1_GRAMMAR_ACCEPTED:
+  title "M1 文法受け入れ完了"
+
+milestone FORMATTER_READY:
+  title "formatter基礎完了"
+
+milestone MUTATION_PREVIEW_READY:
+  title "構造編集preview完了"
+
+milestone M2_EDIT_PREVIEW_READY:
+  title "M2 安全な編集preview完了"
+
+milestone M3_SAFE_WRITE_READY:
+  title "M3 安全なwrite完了"
+
+milestone M4_ADVANCE_READY:
+  title "M4 過去圧縮advance完了"
+
+milestone MERMAID_PROFILE_DEFINED:
+  title "Mermaid lossless profile確定"
+
+milestone MERMAID_EXPORT_READY:
+  title "Mermaid export完了"
+
+milestone M5_MERMAID_ROUNDTRIP_READY:
+  title "M5 Mermaid相互変換完了"
+
+milestone RELEASE_READY:
+  title "MVP release検証可能"
+
+milestone M6_MVP_RELEASED:
+  title "M6 MVPリリース"
+
+task GRAMMAR_WORK_PACKAGE NOW -> M1_GRAMMAR_ACCEPTED:
+  title "grammar planの残作業を完了する"
+  description "詳細日程はplans/grammar.pertのresource makespan 10dを使用する"
+  duration 10d
+  priority 50
+  requires:
+    DEVELOPERS 1
+
+task FORMATTER_CORE M1_GRAMMAR_ACCEPTED -> FORMATTER_READY:
+  title "source-preserving formatterを実装する"
+  duration 4d
+  priority 40
+  requires:
+    DEVELOPERS 1
+
+task MUTATION_PREVIEW M1_GRAMMAR_ACCEPTED -> MUTATION_PREVIEW_READY:
+  title "task、milestone、resource編集previewを実装する"
+  duration 4d
+  priority 40
+  requires:
+    DEVELOPERS 1
+
+gate FORMATTER_EDIT_GATE FORMATTER_READY -> M2_EDIT_PREVIEW_READY:
+  reason "編集previewにはformatterが必要"
+
+gate MUTATION_EDIT_GATE MUTATION_PREVIEW_READY -> M2_EDIT_PREVIEW_READY:
+  reason "編集previewにはmutation plannerが必要"
+
+task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
+  title "再検査、atomic write、optimistic lockを実装する"
+  duration 3d
+  priority 30
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task ADVANCE M3_SAFE_WRITE_READY -> M4_ADVANCE_READY:
+  title "合流を保持するadvance plannerを実装する"
+  duration 4d
+  priority 20
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task MERMAID_PROFILE M3_SAFE_WRITE_READY -> MERMAID_PROFILE_DEFINED:
+  title "Mermaid lossless metadata schemaを確定する"
+  duration 2d
+  priority 20
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task MERMAID_EXPORT MERMAID_PROFILE_DEFINED -> MERMAID_EXPORT_READY:
+  title "AoA DAGをMermaidへexportする"
+  duration 3d
+  priority 15
+  requires:
+    DEVELOPERS 1
+
+task MERMAID_ROUNDTRIP MERMAID_EXPORT_READY -> M5_MERMAID_ROUNDTRIP_READY:
+  title "lossless importとround-trip検査を実装する"
+  duration 5d
+  priority 10
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+gate ADVANCE_RELEASE_GATE M4_ADVANCE_READY -> RELEASE_READY:
+  reason "MVPにはadvance完了が必要"
+
+gate MERMAID_RELEASE_GATE M5_MERMAID_ROUNDTRIP_READY -> RELEASE_READY:
+  reason "MVPにはMermaid相互変換完了が必要"
+
+task RELEASE_E2E RELEASE_READY -> M6_MVP_RELEASED:
+  title "MVP E2E、help、配布物を検証する"
+  duration 2d
+  priority 5
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1

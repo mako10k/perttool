@@ -13,6 +13,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)
 - [自己利用計画](docs/process/self-use.md)
+- [MVPマイルストーン計画](plans/mvp.pert)
 - [現在の文法作業計画](plans/grammar.pert)
 - [AI 開発ガイド](docs/process/ai-development.md)
 
@@ -57,4 +58,4 @@ node dist/cli.js dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
-現在は[文法作業計画](plans/grammar.pert)を`check`、`analyze`、`next`するStage 1のread-only自己利用を開始しています。Formatterやmutationによるwriteは、専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)を現在sliceの詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。Formatterやmutationによるwriteは、専用gateを満たすまで使用しません。

@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 0.6
+- 文書状態: Active Stage 1 / Revision 0.7
 - 作成日: 2026-07-21
 - 関連設計: [../basic-design.md](../basic-design.md)
 
@@ -15,6 +15,7 @@
 | Artifact | 役割 | 正本 |
 | --- | --- | --- |
 | `docs/specs/dsl-grammar.md` | DSL の規範文法、EBNF、例、error policy | Markdown 文書 |
+| `plans/mvp.pert` | MVP全体のmacro milestoneとwork package | `.pert` 文書 |
 | `plans/grammar.pert` | 文法作業の現在・未来 DAG | `.pert` 文書 |
 | `tests/fixtures/grammar/` | parser が受理・拒否すべき具体例 | fixture/golden |
 | Git history | 過去の計画、仕様、実装 | commit history |
@@ -34,7 +35,7 @@ Exit criteria:
 
 ## 4. Stage 1: read-only self-use
 
-現在の段階。2026-07-21に開始条件を満たし、[grammar plan](../../plans/grammar.pert)をread-onlyの正本計画として追加した。
+現在の段階。2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用する。
 
 開始条件:
 
@@ -52,7 +53,7 @@ Exit criteria:
 3. `perttool dag analyze plans/grammar.pert` を実行した
 4. `perttool dag next plans/grammar.pert` を実行した
 5. 3 commandを`npm run check:self-use`経由でCIのrequired checkへ追加した
-6. check/analyze/nextのprojectionを[golden result](../../test/golden/self-use/grammar.expected.json)へ固定した
+6. check/analyze/nextのprojectionを[grammar golden](../../test/golden/self-use/grammar.expected.json)と[MVP golden](../../test/golden/self-use/mvp.expected.json)へ固定した
 
 開始時の機械的な結果:
 
@@ -97,6 +98,14 @@ Exit criteria:
 - help sample 同期
 
 すでに完了している作業を履歴再現のためだけに追加しない。必要な過去情報は Git から参照する。
+
+### 5.1 MVP macro planとの関係
+
+`plans/mvp.pert`はM1からM6までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`のdurationは`plans/grammar.pert`のresource makespanをroll-upするが、内部taskの状態を重複管理しない。
+
+- macro milestoneと全体critical path: `mvp.pert`
+- 現在の実装taskとresource待ち: `grammar.pert`
+- grammar slice完了時にだけmacro taskをdoneへ更新し、次の詳細planへ切り替える
 
 ## 6. Stage 2: safe-write self-use
 
@@ -150,7 +159,7 @@ advance 運用:
 
 ## 8. Stage 4: 対象拡大
 
-grammar plan で安定運用できた後、次の順に自己利用対象を広げる。
+MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planで安定運用できた後、実装taskまで分解する詳細planを次の順に広げる。
 
 1. graph semantics
 2. PERT/CPM analyzer
@@ -200,6 +209,6 @@ Stage 1開始時の証跡:
 - parser/check gate: `all normative examples parse and validate`、各invalid fixture diagnostic test、`resource requirements do not become precedence edges`
 - analyze gate: precedence、capacity override、active allocation、resource witness、schedule critical pathを固定する`analysis.test.mjs`
 - next gate: `parallel next selects a deterministic runnable subset`、classification/depth unit test、text/JSON CLI integration test
-- self-use golden: `grammar plan check/analyze/next matches the read-only self-use golden`
-- CI entrypoint: `npm run check`から`npm run check:self-use`を実行する
+- self-use golden: grammar planとMVP planのcheck/analyze/next projection test
+- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、両planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

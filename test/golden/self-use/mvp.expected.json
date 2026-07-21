@@ -1,0 +1,65 @@
+{
+  "check": {
+    "document_id": "PERTTOOL_MVP",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 2,
+      "milestones": 12,
+      "tasks": 9,
+      "gates": 4,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "precedence_makespan": "29",
+    "precedence_critical_tasks": [
+      "GRAMMAR_WORK_PACKAGE",
+      "FORMATTER_CORE",
+      "MUTATION_PREVIEW",
+      "WRITE_SAFETY",
+      "MERMAID_PROFILE",
+      "MERMAID_EXPORT",
+      "MERMAID_ROUNDTRIP",
+      "RELEASE_E2E"
+    ],
+    "resource_makespan": "30",
+    "resource_delay": "1",
+    "resource_arcs": [
+      "resource:ADVANCE:MERMAID_ROUNDTRIP",
+      "resource:MERMAID_PROFILE:ADVANCE"
+    ],
+    "schedule_critical_tasks": [
+      "GRAMMAR_WORK_PACKAGE",
+      "FORMATTER_CORE",
+      "MUTATION_PREVIEW",
+      "WRITE_SAFETY",
+      "MERMAID_PROFILE",
+      "ADVANCE",
+      "MERMAID_ROUNDTRIP",
+      "RELEASE_E2E"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "GRAMMAR_WORK_PACKAGE"
+      ],
+      "runnable_now": [
+        "GRAMMAR_WORK_PACKAGE"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "FORMATTER_CORE",
+        "MUTATION_PREVIEW",
+        "WRITE_SAFETY",
+        "MERMAID_PROFILE",
+        "ADVANCE",
+        "MERMAID_EXPORT",
+        "MERMAID_ROUNDTRIP",
+        "RELEASE_E2E"
+      ]
+    }
+  }
+}
