@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Draft 0.2
+- 文書状態: Draft 0.3
 - 作成日: 2026-07-21
 - 関連設計: [../basic-design.md](../basic-design.md)
 
@@ -60,7 +60,7 @@ Exit criteria:
 - check
 - analyze
 - next
-- JSON export
+- CLI JSONによるcheck/analyze/next result
 - Mermaid export が read-only で利用可能なら preview
 
 この段階で禁止する操作:
@@ -70,7 +70,6 @@ Exit criteria:
 - `milestone ... --write`
 - `resource ... --write`
 - `dag advance --write`
-- MCP からの file write
 
 ## 5. 最初の grammar plan
 
@@ -150,8 +149,8 @@ grammar plan で安定運用できた後、次の順に自己利用対象を広�
 2. PERT/CPM analyzer
 3. mutation/advance
 4. Mermaid conversion
-5. MCP/LSP
-6. perttool 全体の release plan
+5. perttool全体のMVP release plan
+6. MVP後のMCP/LSP adapter
 
 各 plan は現在・未来だけを持ち、完了部分は advance と Git history で管理する。
 

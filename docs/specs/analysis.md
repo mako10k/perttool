@@ -1,6 +1,6 @@
 # perttool Analysis仕様
 
-- 文書状態: Draft 0.1
+- 文書状態: Draft 0.2
 - Analysis version: 1
 - Scheduler: `parallel-sgs` version 1
 - 作成日: 2026-07-21
@@ -42,7 +42,7 @@
 - consumable resource、preemption、途中のrequirement増減
 - exact solverをMVP既定経路にすること
 - target duration完了確率、Monte Carlo simulation、複数pathの厳密な完了確率
-- JSON Schema、CLI option spelling、MCP wire contract
+- JSON Schema、CLI option spelling、post-MVP adapter wire contract
 
 ## 3. Analysis input view
 
@@ -823,13 +823,6 @@ MVP acceptanceはこのadapterを要求しない。
 
 Analysis version 1はgrammar version 1、semantics version 1を対象とする。
 
-次の`docs/specs/interfaces.md`で固定する事項:
-
-- AnalysisResult/ResourceScheduleResult/NextResult JSON Schema
-- exact Rationalとrounded display field名
-- CLI option、exit code、text layout
-- path enumeration request/response
-- capacity override syntax
-- MCP actionとschema parity
+AnalysisResult/ResourceScheduleResult/NextResult JSON、exact Rationalとdisplay field、CLI option、exit code、text layout、path enumeration、capacity overrideは[CLI Interface仕様](interfaces.md)で固定した。MCP actionとschema parityはMVP対象外であり、将来adapterの別仕様へ送る。
 
 Analysis ruleを破壊的に変更する場合はanalysis versionとscheduler versionのどちらが変わるかを区別する。候補順位、event order、witness選択を変える場合はscheduler versionを上げ、同じversionで別scheduleを返してはならない。

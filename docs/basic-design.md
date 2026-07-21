@@ -1,17 +1,18 @@
 # perttool 基本設計
 
-- 文書状態: Draft 0.4
+- 文書状態: Draft 0.5
 - 作成日: 2026-07-21
 - 対応要件: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
+- CLI interface: [specs/interfaces.md](specs/interfaces.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
 
 ## 1. 目的
 
 本書は、要件で定めた `perttool` を実装へ移せる粒度まで分解し、共通コア、データ表現、処理フロー、外部インターフェース、安全な文書更新、テスト境界を定義する。
 
-完全な DSL grammar、JSON Schema、Mermaid profile は個別仕様で固定する。本書では、それらを実装するモジュール境界と契約を扱う。
+完全なDSL grammarとCLI/JSON contractは個別仕様で固定した。Mermaid profileは今後の個別仕様で固定する。本書では、それらを実装するモジュール境界と契約を扱う。
 
 ## 2. 基本方針
 
@@ -22,14 +23,14 @@
 - task を edge、milestone を node とする Activity-on-Arrow を中核モデルとする
 - `.pert` 文書を正本とし、通常の解析はローカルで完結させる
 - parser、意味検査、PERT/CPM 計算は共通コアへ集約する
-- CLI、MCP、将来の LSP/エディタは共通コアの adapter とする
+- MVPはCLIをprimary adapterとし、MCP、LSP/エディタはMVP後に共通コアへ追加する
 - 文書編集は source span に対する差分として計画し、再 parse・再検査後にだけ適用する
 - 人間向け text と機械向け JSON は、同じ結果 object から描画する
 - すべての計算と並び順を決定的にする
 
 TypeScript を選ぶ理由は次のとおりである。
 
-- CLI、MCP、VS Code 系 adapter を同じ型と実装から提供しやすい
+- CLIと将来のMCP、VS Code系adapterを同じ型と実装から提供しやすい
 - Mermaid/HTML/SVG などの可視化 adapter と統合しやすい
 - `llmthink` で採用済みの、共通コアと薄い複数 UI という構成を踏襲できる
 - JSON Schema と TypeScript type の対応を管理しやすい
@@ -63,12 +64,12 @@ flowchart LR
   GRAPH --> CONVERTER[Mermaid / JSON converter]
 
   CLI[CLI adapter] --> APP
-  MCP[MCP adapter] --> APP
-  LSP[Future LSP adapter] --> APP
+  MCP[Post-MVP MCP adapter] -.-> APP
+  LSP[Post-MVP LSP adapter] -.-> APP
 
   HELP[Help registry] --> CLI
-  HELP --> MCP
-  HELP --> LSP
+  HELP -.-> MCP
+  HELP -.-> LSP
 ```
 
 ### 3.1 dependency rule
@@ -76,7 +77,7 @@ flowchart LR
 依存方向は外側から内側への一方向にする。
 
 ```text
-CLI / MCP / LSP / filesystem
+CLI / future MCP / LSP / filesystem
              |
              v
       application services
@@ -154,7 +155,6 @@ perttool/
       filesystem.ts
       atomic-write.ts
       cli.ts
-      mcp.ts
     index.ts
   schemas/
   docs/
@@ -334,7 +334,7 @@ code namespace:
 
 Rules:
 
-- 同じ原因から CLI と MCP で異なる code を作らない
+- 同じ原因からCore APIとCLIで異なるcodeを作らない。将来adapterも同じdiagnosticを再利用する
 - parse recovery 後の二次 error を抑制できること
 - cycle は少なくとも 1 本の witness path を related location 付きで返す
 - ID 重複は先行宣言と重複宣言の両方を示す
@@ -497,7 +497,7 @@ interface MutationResult extends OperationResult {
 }
 ```
 
-Core はファイルを書かない。CLI/MCP adapter が `MutationResult` を受け、安全条件を満たした場合だけ write する。
+Coreはファイルを書かない。MVPではCLI adapterが`MutationResult`を受け、安全条件を満たした場合だけwriteする。将来adapterにも同じ境界を適用する。
 
 ### 9.5 advance
 
@@ -616,18 +616,18 @@ resource待ちを説明するため、task開始時にcapacityを解放して開
 
 ## 11. CLI 設計
 
-CLI は resource-first とする。
+CLIはresource-firstとする。Command、option、stream、exit code、JSON fieldの規範は[CLI Interface仕様](specs/interfaces.md)を正とする。
 
 ```text
 perttool dsl check <file>
 perttool dsl format <file>
-perttool dsl help [topic] [subtopic] [index|quick|detail]
+perttool dsl help [topic] [subtopic] [--level index|quick|detail]
 
 perttool dag analyze <file> [--schedule precedence|resource|both]
 perttool dag analyze <file> --capacity <resource-id>=<integer>
 perttool dag next <file>
-perttool dag render <file> --format mermaid|json
-perttool dag import <file> --format mermaid
+perttool dag render <file> --to mermaid|svg|json
+perttool dag import <file> --from mermaid
 perttool dag advance <file>
 
 perttool task add|set|remove|finish ...
@@ -683,37 +683,11 @@ default: updated text or diff only
 6. 対応可能な環境では親 directory も fsync
 7. rename 後の file を再 parse して digest を確認
 
-## 12. MCP 設計
+## 12. Post-MVP adapter境界
 
-MCP は CLI と同じ application service を呼ぶ。
+MCP、LSP、editor adapterはMVP対象外である。MVP repository構成、package dependency、acceptance testへMCP serverやSDKを含めない。
 
-初期 tool:
-
-- `dsl`
-- `dag`
-- `task`
-- `milestone`
-- `resource`
-
-MCP request は原則として document text を受け取る。file path を受ける action は adapter の追加機能とし、Core API と分離する。
-
-Response:
-
-```ts
-interface ToolResponse<T> {
-  summary: string;
-  result: T;
-  diagnostics: readonly Diagnostic[];
-}
-```
-
-Rules:
-
-- schema で action enum と必須 field を閉じる
-- unknown field の扱いを action ごとに統一する
-- edit action は既定で updated text と diff を返す
-- write action を実装する場合は `write=true` と `expectedDigest` を必須にする
-- MCP layer で診断 severity や解析値を変更しない
+将来adapterを追加する場合はCLI subprocessを呼ばず、同じapplication serviceを直接利用する。Adapter固有transport、request/response schema、write authorityはCLI Interface仕様と分離したversioned仕様で固定する。
 
 ## 13. Help 設計
 
@@ -754,8 +728,8 @@ interface HelpNode {
 
 - CLI text help
 - CLI JSON help
-- MCP help result
-- LSP hover/completion documentation
+- 将来のMCP help result
+- 将来のLSP hover/completion documentation
 - parse diagnostic の help link
 
 grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自己完結した operational guidance を提供するが、完全 EBNF の複製を正本にはしない。grammar、parser、formatter、help sample の整合性は fixture から検査する。
@@ -770,6 +744,10 @@ grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自�
 - `Perttool.NextResult.v1`
 - `Perttool.MutationResult.v1`
 - `Perttool.ConversionLossReport.v1`
+- `Perttool.HelpResult.v1`
+- `Perttool.ExportResult.v1`
+- `Perttool.ImportResult.v1`
+- `Perttool.CliError.v1`
 
 Rules:
 
@@ -850,7 +828,7 @@ Should:
 
 ### 15.4 adapter parity
 
-同一 fixture に対し、library、CLI JSON、MCP result の semantic payload が一致することを検査する。presentation 固有 field は比較対象から明示的に除外する。
+MVPでは同一fixtureに対し、library resultとCLI JSONのsemantic payloadが一致することを検査する。Presentation固有fieldは比較対象から明示的に除外する。MCP parityはMCP adapter追加時のtestとする。
 
 ## 16. 自己利用設計
 
@@ -966,7 +944,7 @@ Exit:
 - general Mermaid loss report
 - SVG/HTML preview の基礎
 
-### Slice 5: MCP and editor
+### Post-MVP Slice 5: MCP and editor
 
 - MCP adapter
 - adapter parity tests
@@ -974,15 +952,12 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)で初期決定した。残る事項は個別仕様またはADRで確定する。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、CLI/JSON/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で初期決定した。残る事項は個別仕様またはADRで確定する。
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細
 3. Mermaid metadata record schema
-4. JSON Schema の具体的 field
-5. CLI option の完全一覧
-6. MCP write action の有無
-7. package/runtime/test dependency の選定
+4. package/runtime/test dependency の選定
 
 ## 19. 要件トレーサビリティ
 
@@ -993,7 +968,7 @@ DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reach
 | Graph algorithm | 9、10、11章 |
 | Resource scheduler | 7.2、7.4、10.6、11章 |
 | Pure Core API | 2.2、15、17章 |
-| CLI/MCP adapter | 15、17章 |
+| CLI adapter | 15、17章 |
 | Help registry | 16章 |
 | Mutation/atomic write | 9.3、12、20.1節 |
 | Mermaid adapter | 13、14章 |

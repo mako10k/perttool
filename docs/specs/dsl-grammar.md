@@ -1,10 +1,11 @@
 # perttool DSL 文法仕様
 
-- 文書状態: Draft 0.1
+- 文書状態: Draft 0.2
 - Grammar version: 1
 - 作成日: 2026-07-21
 - 対応要件: [../requirements.md](../requirements.md)
 - 対応基本設計: [../basic-design.md](../basic-design.md)
+- CLI interface: [interfaces.md](interfaces.md)
 
 ## 1. 目的
 
@@ -23,7 +24,7 @@
 2. 本書の grammar、field table、validation rule
 3. `docs/basic-design.md` の実装構造
 4. `docs/examples/*.pert`
-5. CLI/MCP help の表示内容
+5. CLI helpと将来adapter helpの表示内容
 
 不一致を発見した場合は、低い順位の artifact だけを場当たり的に直さず、同じ変更で必要な artifact と test を同期する。
 

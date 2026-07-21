@@ -1,6 +1,6 @@
 # perttool 要件定義
 
-- 文書状態: Draft 0.5
+- 文書状態: Draft 0.6
 - 作成日: 2026-07-21
 - 対象: MVP と、その後の拡張境界
 - 想定ファイル拡張子: `.pert`（暫定）
@@ -17,7 +17,7 @@
 - クリティカルなタスクと余裕時間の抽出
 - 現時点で着手可能な「次のタスク」の抽出
 - Mermaid などの可視化形式への変換
-- CLI、CI、エディタ、AI エージェントからの同一操作
+- CLI、CI、CLI JSONを使うAIエージェントからの同一操作。MCP/エディタadapterはMVP後に追加する
 
 本書では要求を `Must`、`Should`、`Could` に分類する。
 
@@ -585,7 +585,7 @@ Must:
 MVP で、次の操作を提供する。
 
 ```text
-perttool task add <file> --id <id> --from <milestone> --to <milestone> ...
+perttool task add <file> <id> <from> <to> --title <text> ...
 perttool task set <file> <task-id> --status active
 perttool task set <file> <task-id> --from <id> --to <id>
 perttool task remove <file> <task-id>
@@ -674,17 +674,19 @@ Should:
 
 既存 DSL ツールの resource-first パターンを踏襲し、top-level resource と action を分ける。
 
+Command、option、stream、exit code、JSON fieldの規範は[CLI Interface仕様](specs/interfaces.md)を正とする。
+
 初期 command surface:
 
 ```text
 perttool dsl check <file>
 perttool dsl format <file>
-perttool dsl help [topic] [subtopic] [index|quick|detail]
+perttool dsl help [topic] [subtopic] [--level index|quick|detail]
 
 perttool dag analyze <file>
 perttool dag next <file>
-perttool dag render <file> --format mermaid|svg|json
-perttool dag import <file.mmd> --format mermaid
+perttool dag render <file> --to mermaid|svg|json
+perttool dag import <file> --from mermaid
 perttool dag advance <file>
 
 perttool task add|set|remove|finish ...
@@ -724,7 +726,7 @@ Must:
 - `perttool dsl help` を DSL 学習の入口にすること
 - help topic を少なくとも `syntax`、`analysis`、`next`、`editing`、`mermaid`、`workflows`、`errors`、`samples` に分けること
 - topic ごとに index、quick、detail の情報量を選べること
-- CLI、MCP、エディタが同じ help registry を共有すること
+- CLI textとCLI JSONが同じ help registryを共有し、将来adapterからも再利用できること
 - `--format json` で topic、要約、構文、例、related topic を取得できること
 - sample を固定絶対パスではなく安定 sample ID で参照すること
 
@@ -743,10 +745,10 @@ Must:
 ```text
 PTDSL-012 error: task REQ の estimate は optimistic <= most_likely <= pessimistic を満たしていません
   --> plan.pert:24:5
-  help: perttool dsl help syntax estimate quick
+  help: perttool dsl help syntax estimate --level quick
 ```
 
-## 17. AI / MCP / エディタ操作導線
+## 17. AI / CLI / 将来adapter操作導線
 
 ### 17.1 共通コア
 
@@ -756,49 +758,36 @@ PTDSL-012 error: task REQ の estimate は optimistic <= most_likely <= pessimis
 flowchart TD
   DOC[.pert document] --> CORE[Parser / Semantic Model / Analyzer]
   CORE --> CLI[CLI]
-  CORE --> MCP[MCP]
-  CORE --> EDITOR[Editor / LSP]
+  CLI --> AI[AI agent via JSON]
+  CORE -. post-MVP .-> MCP[MCP]
+  CORE -. post-MVP .-> EDITOR[Editor / LSP]
   CORE --> CONVERT[Mermaid / JSON / SVG]
 ```
 
 Must:
 
-- CLI、MCP、エディタは共通コアを直接利用する薄い adapter とすること
+- CLIは共通コアを直接利用する薄いadapterとすること
 - CLI 利用に MCP server の起動を要求しないこと
-- MCP tool の action 名を CLI の resource/action と可能な限り一致させること
-- AI が PERT 計算値を自由文で生成せず、解析 action の結果を利用できること
+- AIがCLI JSONの解析結果を利用でき、PERT計算値を自由文で生成する必要がないこと
+- 将来adapterも同じ共通コアを利用し、計算・検査規則を再実装しないこと
 
-### 17.2 MCP tool
+### 17.2 MCP / LSP（MVP対象外）
 
-初期 tool surface:
+MCP server、MCP tool schema、MCP file write、LSP/editor integrationはMVP受け入れ条件に含めない。MVP実装へMCP SDKやtransport dependencyを追加しない。
 
-- `dsl`: `action=help|check|format`
-- `dag`: `action=analyze|next|render|import|advance`
-- `task`: `action=add|set|remove|finish`
-- `milestone`: `action=add|set|remove`
-- `resource`: `action=add|set|remove`
+MVP後にadapterを追加する場合は、CLI processをsubprocessとして包まず、共通Application/Core APIを直接利用する。MCP固有のaction名、tool schema、write safety、CLI parityは、その時点の別versioned仕様で固定する。
 
-Must:
-
-- read-only action は文書 text を直接受け取れること
-- edit action は既定で変更後 text と unified diff を返し、ファイルを書き換えないこと
-- 結果に structured data と短い人間向け summary を含めること
-- action schema、enum、必須 field を tool schema で公開すること
-- help action から DSL の局所 guidance を取得できること
-
-Should:
-
-- ファイル書き込みを提供する場合は `write=true` と期待 digest の両方を要求すること
-- LSP diagnostics、completion、hover、go-to-definition、rename ID を提供すること
-- preview 上の要素から DSL source span へ移動できること
+Future候補はMCP read-only analysis/help、MCP preview mutation、LSP diagnostics/completion/definition/renameである。実装順とsurfaceはMVP完了後に判断する。
 
 ## 18. JSON とスキーマ
+
+CLI JSON envelope、diagnostic、Rational、analysis、next、mutation、help、conversion fieldは[CLI Interface仕様](specs/interfaces.md)を正とする。
 
 Must:
 
 - parse/validation report、analysis result、next result、conversion loss report に JSON Schema を用意すること
 - JSON の field 名と enum をバージョン管理すること
-- JSON 出力に少なくとも `schema_version`、`tool_version`、`document_id` を含めること
+- documentを処理するJSON出力に少なくとも`schema_version`、`tool_version`、`document_id`を含めること。Help/CLI usage resultはdocument fieldを持たなくてよい
 - 表示用に丸めた値と計算用の値を混同しないこと
 - JSON field の破壊的変更には schema version の変更を伴うこと
 
@@ -876,7 +865,7 @@ Must:
 - 正常例と失敗例を manifest と golden output で固定すること
 - cycle、diamond、複数 critical path、ゼロ時間 gate、blocked、done 合流、advance を個別にテストすること
 - 排他resource、capacity 2以上、複数resource同時要求、active oversubscription、capacity変更によるschedule差を個別にテストすること
-- CLI と MCP が同じ入力へ意味的に同じ結果を返すことを検証すること
+- CLI JSONと直接Core APIが同じ入力へ意味的に同じpayloadを返すことを検証すること
 - Mermaid round-trip の lossless profile を回帰テストすること
 
 ## 21. MVP 受け入れ条件
@@ -895,7 +884,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 10. Mermaid profile へ export し、生成 Mermaid を意味損失なく import できる
 11. DSL help が topic/index/quick/detail と JSON で取得できる
 12. parse error から該当 help topic へ辿れる
-13. CLI と MCP が共通 parser/analyzer を利用する
+13. CLI text/JSONが共通parser/analyzerを利用し、同じdiagnosticと解析値を返す
 14. 主要な正常例、失敗例、round-trip が自動テストで固定される
 
 ## 22. 初期要求との対応
@@ -926,6 +915,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 - 任意 Mermaid 構文の広範な import
 - Monte Carlo simulation によるプロジェクト完了確率
 - 外部 issue tracker との双方向同期
+- MCP server、MCP tool schema、MCP file write、LSP/editor adapter
 
 ## 24. 未確定の設計判断
 
@@ -933,9 +923,6 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 1. Node.js 対応バージョン、package 配布形態、依存 package。実装言語は [基本設計](basic-design.md) で TypeScript に決定済み
 2. Mermaid profile の `%% perttool:` メタデータ schema
-3. analysis/next/diagnostic JSON Schema
-4. help registry の内部表現
-5. MCP の書き込み機能を MVP に含めるか、preview のみに限定するか
 
 ## 25. 推奨する次の仕様作業
 
@@ -944,6 +931,6 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 1. [x] `docs/specs/dsl-grammar.md`: 完全 EBNF、resource構文、正規サンプル
 2. [x] [Graph Semantics仕様](specs/graph-semantics.md): reached、ready、done、gate、advance、resourceの形式定義
 3. [x] [Analysis仕様](specs/analysis.md): PERT/CPM、resource schedule、resource arc、tie-break
-4. [ ] `docs/specs/interfaces.md`: CLI、JSON Schema、MCP action
+4. [x] [CLI Interface仕様](specs/interfaces.md): CLI、JSON Schema、help、write safety。MCPはMVP対象外
 5. [ ] `docs/adr/0001-activity-on-arrow.md`: task=edge の設計判断
 6. [ ] parser/validator の最小実装と golden tests

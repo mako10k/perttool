@@ -1,6 +1,6 @@
 # perttool Graph Semantics仕様
 
-- 文書状態: Draft 0.1
+- 文書状態: Draft 0.2
 - Semantics version: 1
 - 作成日: 2026-07-21
 - 対応要件: [../requirements.md](../requirements.md)
@@ -48,7 +48,7 @@ PERT/CPMの数式、resource scheduleのevent生成、capacity 2以上のresourc
 - resource waitを説明するresource arcの選択
 - formatterのcomment移動規則
 - file write、atomic replace、optimistic lock
-- Mermaid metadata、JSON Schema、MCP wire contract
+- Mermaid metadata、CLI JSON Schema、post-MVP adapter wire contract
 
 ## 4. 正規graph model
 
@@ -613,6 +613,6 @@ Canonical advanceは`BRANCH_A`を過去として削除するが、未到達`JOIN
 
 Semantics version 1はgrammar version 1を対象とする。
 
-本書の有効graphを入力とするduration、PERT/CPM、resource schedule、`runnable_now`、resource arc、schedule critical path、rounding、tie-breakは[Analysis仕様](analysis.md)で固定した。次は`docs/specs/interfaces.md`で外部resultと操作契約を固定する。
+本書の有効graphを入力とするduration、PERT/CPM、resource schedule、`runnable_now`、resource arc、schedule critical path、rounding、tie-breakは[Analysis仕様](analysis.md)、外部resultとCLI操作契約は[CLI Interface仕様](interfaces.md)で固定した。
 
 Graph semanticsを破壊的に変更する場合は、grammar変更の有無にかかわらずsemantics version、fixture、migration影響を明示する。
