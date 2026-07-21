@@ -741,6 +741,8 @@ explanation           ExplanationNode[]
 
 `classification`は`active|ready|blocked_now|upcoming`である。`runnable_now`はready taskへの直交booleanであり、classification enumへ混ぜない。
 
+`title`はstring、`status`はtask status、`priority`はinteger、`owner`と`blocked_reason`はstringまたは`null`とする。`expected`、`total_float`、`earliest_start`は`RationalValue`である。
+
 `tasks`と`groups`はunfinished taskだけを対象とし、retained `done` taskを次task候補へ含めない。
 
 `ResourceRejection`:
@@ -750,6 +752,28 @@ resource_id capacity active_usage earlier_selected_usage
 used_before_decision required available deficit
 active_task_ids earlier_selected_task_ids
 ```
+
+`ExplanationNode`:
+
+```text
+milestone_id          string
+reached               boolean
+unsatisfied_edges     UnsatisfiedEdge[]
+children              ExplanationNode[]
+truncated             boolean
+```
+
+`UnsatisfiedEdge`:
+
+```text
+edge_id               string
+kind                  "task" | "gate"
+status                task status | null
+source_milestone_id   string
+source_reached        boolean
+```
+
+Upcoming taskの`explanation`はtaskの直接`from` milestoneをrootとする。Rootではunsatisfied incoming edgeを常に返し、`--explain-depth 0`はそこで停止する。Depthを1増やすごとに、unsatisfied edgeの未到達source milestoneをID辞書順で`children`へ追加する。上限で未展開sourceが残るnodeは`truncated=true`とする。DAG上の同一pathで同じmilestoneを再訪しない。
 
 ### 12.4 MutationResult
 

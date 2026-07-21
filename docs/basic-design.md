@@ -124,6 +124,7 @@ perttool/
     application/
       analyze.ts
       check.ts
+      next.ts
     analysis/
       graph.ts
       precedence.ts
@@ -144,6 +145,7 @@ perttool/
   test/
     analysis.test.mjs
     cli.test.mjs
+    next.test.mjs
     parser.test.mjs
     fixtures/
 ```

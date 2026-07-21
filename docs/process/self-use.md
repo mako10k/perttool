@@ -23,7 +23,7 @@
 
 ## 3. Stage 0: bootstrap
 
-現在の段階。TypeScript CLI bootstrap、`dsl check`、`dag analyze`は存在するが、`dag next`がないためread-only self-useは開始しない。
+TypeScript CLI bootstrap、`dsl check`、`dag analyze`、`dag next`は揃った。bootstrap gateの検証と自己利用開始commitを完了するまではStage 0として扱う。
 
 - requirements と basic design は Markdown で管理する
 - grammar plan はまだ `.pert` で作成しない

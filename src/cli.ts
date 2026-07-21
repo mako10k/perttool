@@ -7,6 +7,7 @@ import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
 import { analyzeDocument } from "./application/analyze.js";
 import { checkDocument } from "./application/check.js";
+import { selectNextTasks } from "./application/next.js";
 import type { HelpLevel } from "./help/registry.js";
 import { getHelp } from "./help/registry.js";
 import type { Diagnostic, SourceSpan } from "./model/diagnostics.js";
@@ -38,8 +39,9 @@ function topLevelHelp(): string {
     "  perttool dsl check <file> [--format text|json]",
     "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
     "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
+    "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
     "",
-    "The current bootstrap implements dsl check, dsl help, and dag analyze.",
+    "The current bootstrap implements dsl check, dsl help, dag analyze, and dag next.",
   ].join("\n");
 }
 
@@ -58,11 +60,18 @@ function commandHelp(resource: string, action: string): string {
     "  [--format text|json]",
     "  [--color auto|always|never]",
   ].join("\n");
-  return [
+  if (action === "analyze") return [
     "Usage: perttool dag analyze <file>",
     "  [--schedule precedence|resource|both]",
     "  [--capacity <resource-id>=<integer>]...",
     "  [--max-paths <integer>] [--precision <integer>]",
+    "  [--warnings-as-errors]",
+    "  [--format text|json] [--color auto|always|never]",
+  ].join("\n");
+  return [
+    "Usage: perttool dag next <file>",
+    "  [--capacity <resource-id>=<integer>]...",
+    "  [--explain-depth <integer>] [--precision <integer>]",
     "  [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
@@ -723,6 +732,216 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
+function explanationJson(
+  node: ReturnType<typeof selectNextTasks>["tasks"][number]["explanation"][number],
+): Readonly<Record<string, unknown>> {
+  return {
+    milestone_id: node.milestoneId,
+    reached: node.reached,
+    unsatisfied_edges: node.unsatisfiedEdges.map((edge) => ({
+      edge_id: edge.edgeId,
+      kind: edge.kind,
+      status: edge.status,
+      source_milestone_id: edge.sourceMilestoneId,
+      source_reached: edge.sourceReached,
+    })),
+    children: node.children.map(explanationJson),
+    truncated: node.truncated,
+  };
+}
+
+function nextJson(
+  result: ReturnType<typeof selectNextTasks>,
+): Readonly<Record<string, unknown>> {
+  const unit = result.durationUnit!;
+  return {
+    precision: result.precision,
+    duration_unit: unit,
+    capacity_overrides: [...result.capacityOverrides]
+      .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
+      .map(([resourceId, capacity]) => ({ resource_id: resourceId, capacity })),
+    groups: {
+      active: result.groups.active,
+      ready: result.groups.ready,
+      runnable_now: result.groups.runnableNow,
+      blocked_now: result.groups.blockedNow,
+      upcoming: result.groups.upcoming,
+    },
+    tasks: result.tasks.map((task) => ({
+      id: task.id,
+      title: task.title,
+      status: task.status,
+      classification: task.classification,
+      runnable_now: task.runnableNow,
+      priority: task.priority,
+      owner: task.owner,
+      blocked_reason: task.blockedReason,
+      expected: rationalJson(task.expected, unit, result.precision),
+      total_float: rationalJson(task.totalFloat, unit, result.precision),
+      earliest_start: rationalJson(task.earliestStart, unit, result.precision),
+      precedence_critical: task.precedenceCritical,
+      schedule_critical: task.scheduleCritical,
+      requirements: task.requirements.map((requirement) => ({
+        resource_id: requirement.resourceId,
+        units: requirement.units,
+      })),
+      resource_rejections: task.resourceRejections.map((rejection) => ({
+        resource_id: rejection.resourceId,
+        capacity: rejection.capacity,
+        active_usage: rejection.activeUsage,
+        earlier_selected_usage: rejection.earlierSelectedUsage,
+        used_before_decision: rejection.usedBeforeDecision,
+        required: rejection.required,
+        available: rejection.available,
+        deficit: rejection.deficit,
+        active_task_ids: rejection.activeTaskIds,
+        earlier_selected_task_ids: rejection.earlierSelectedTaskIds,
+      })),
+      explanation: task.explanation.map(explanationJson),
+    })),
+  };
+}
+
+function renderNextTask(
+  task: ReturnType<typeof selectNextTasks>["tasks"][number],
+  unit: "day" | "hour",
+  precision: number,
+): string {
+  const resources = task.requirements
+    .map((requirement) => `${requirement.resourceId}=${requirement.units}`)
+    .join(",");
+  return [
+    task.id,
+    `priority=${task.priority}`,
+    `expected=${durationText(task.expected, unit, precision)}`,
+    `TF=${durationText(task.totalFloat, unit, precision)}`,
+    `precedence_critical=${task.precedenceCritical}`,
+    `schedule_critical=${task.scheduleCritical}`,
+    `owner=${task.owner ?? "-"}`,
+    `resources=${resources || "-"}`,
+  ].join(" ");
+}
+
+function renderExplanation(
+  node: ReturnType<typeof selectNextTasks>["tasks"][number]["explanation"][number],
+  indent: string,
+): readonly string[] {
+  const edges = node.unsatisfiedEdges.map((edge) => edge.edgeId).join(",") || "-";
+  const lines = [
+    `${indent}waiting milestone=${node.milestoneId} unsatisfied=${edges} truncated=${node.truncated}`,
+  ];
+  for (const child of node.children) lines.push(...renderExplanation(child, `${indent}  `));
+  return lines;
+}
+
+function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
+  const unit = result.durationUnit!;
+  const taskById = new Map(result.tasks.map((task) => [task.id, task]));
+  const lines = [`PERTTOOL NEXT ${result.documentId ?? "-"}`];
+  const section = (title: string, ids: readonly string[], details: "none" | "rejection" | "blocked" | "explanation" = "none"): void => {
+    lines.push("", title);
+    if (ids.length === 0) {
+      lines.push("-");
+      return;
+    }
+    for (const id of ids) {
+      const task = taskById.get(id)!;
+      lines.push(renderNextTask(task, unit, result.precision));
+      if (details === "rejection") {
+        for (const rejection of task.resourceRejections) {
+          const occupants = [
+            ...rejection.activeTaskIds,
+            ...rejection.earlierSelectedTaskIds,
+          ].join(",") || "-";
+          lines.push(
+            `  ${rejection.resourceId} capacity=${rejection.capacity} used=${rejection.usedBeforeDecision} required=${rejection.required} available=${rejection.available} deficit=${rejection.deficit} occupants=${occupants}`,
+          );
+        }
+      } else if (details === "blocked") {
+        lines.push(`  blocked_reason=${task.blockedReason ?? "-"}`);
+      } else if (details === "explanation") {
+        for (const explanation of task.explanation) {
+          lines.push(...renderExplanation(explanation, "  "));
+        }
+      }
+    }
+  };
+  section("ACTIVE", result.groups.active);
+  section("RUNNABLE NOW", result.groups.runnableNow);
+  section(
+    "READY / WAITING RESOURCE",
+    result.groups.ready.filter((id) => !result.groups.runnableNow.includes(id)),
+    "rejection",
+  );
+  section("BLOCKED NOW", result.groups.blockedNow, "blocked");
+  section("UPCOMING", result.groups.upcoming, "explanation");
+  return `${lines.join("\n")}\n`;
+}
+
+async function runNext(args: readonly string[]): Promise<number> {
+  const parsed = parseOptions(
+    args,
+    new Set(["explain-depth", "precision", "format", "color"]),
+    new Set(["warnings-as-errors"]),
+    new Set(["capacity"]),
+  );
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("dag next requires exactly one <file>");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const explainDepth = boundedInteger(
+    parsed.values.get("explain-depth"),
+    "explain-depth",
+    1,
+    0,
+    32,
+  );
+  const precision = boundedInteger(parsed.values.get("precision"), "precision", 3, 0, 9);
+  const overrides = capacityOverrides(parsed.repeatedValues.get("capacity") ?? []);
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "dag.next",
+      format === "json",
+    );
+  }
+  const result = selectNextTasks(input.text, {
+    capacityOverrides: overrides,
+    explainDepth,
+    precision,
+  });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    result.diagnostics.some((diagnostic) => diagnostic.severity === "warning");
+  const ok = result.ok && !warningFailure;
+  if (format === "json") {
+    writeJson({
+      schema_version: "Perttool.NextResult.v1",
+      tool_version: TOOL_VERSION,
+      operation: "dag.next",
+      ok,
+      document_id: result.documentId,
+      source,
+      source_digest: input.digest,
+      diagnostics: result.diagnostics.map(jsonDiagnostic),
+      ...(result.durationUnit === null ? {} : nextJson(result)),
+    });
+  } else {
+    if (ok) process.stdout.write(renderNextText(result));
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+  }
+  return ok ? 0 : 1;
+}
+
 function renderHelpText(result: ReturnType<typeof getHelp>): string {
   const lines = [result.title, "", result.summary];
   if (result.topics.length > 0) {
@@ -798,13 +1017,16 @@ async function main(argv: readonly string[]): Promise<number> {
     argv.length === 3 &&
     argv[2] === "--help" &&
     ((resource === "dsl" && ["check", "help"].includes(action)) ||
-      (resource === "dag" && action === "analyze"))
+      (resource === "dag" && ["analyze", "next"].includes(action)))
   ) {
     process.stdout.write(`${commandHelp(resource, action)}\n`);
     return 0;
   }
   if (resource === "dag" && action === "analyze") {
     return runAnalyze(argv.slice(2));
+  }
+  if (resource === "dag" && action === "next") {
+    return runNext(argv.slice(2));
   }
   if (resource !== "dsl" || (action !== "check" && action !== "help")) {
     throw new UsageError(`unknown or not-yet-implemented command: ${resource} ${action}`);

@@ -5,7 +5,7 @@
 Mandatory summary:
 
 - 利用者から指定がない限り、日本語で応答する。
-- 現在はTypeScript CLI実装段階であり、実装済み`dsl check`/`dsl help`/`dag analyze`と未実装`dag next`/write/conversion surfaceを区別する。
+- 現在はTypeScript CLI実装段階であり、実装済み`dsl check`/`dsl help`/`dag analyze`/`dag next`と未実装write/conversion surfaceを区別する。
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
 - 「次のタスク」は未解決仕様とcritical pathから提案し、着手しやすさだけで選ばない。

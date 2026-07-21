@@ -1,5 +1,6 @@
 export { checkDocument } from "./application/check.js";
 export { analyzeDocument } from "./application/analyze.js";
+export { selectNextTasks } from "./application/next.js";
 export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js";
 export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
@@ -13,6 +14,16 @@ export type {
   AnalysisResult,
   AnalyzeOptions,
 } from "./application/analyze.js";
+export type {
+  ExplanationNode,
+  NextGroups,
+  NextOptions,
+  NextResult,
+  NextTask,
+  ResourceRejection,
+  TaskClassification,
+  UnsatisfiedEdgeExplanation,
+} from "./application/next.js";
 export type {
   AnalysisEdge,
   AnalysisResource,

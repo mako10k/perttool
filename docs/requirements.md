@@ -941,4 +941,4 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 項目6は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapは存在するが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
-Analysis実装は`dag analyze`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathをtext/JSONで返せる。Slice 2全体は`dag next`とrunnable-now説明が未実装のため完了扱いにしない。
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateはread-only自己利用開始commitの証跡をもって完了扱いにする。

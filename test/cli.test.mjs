@@ -203,6 +203,98 @@ test("capacity overrides change resource schedule without changing precedence", 
   assert.deepEqual(json.resource.resource_arcs, []);
 });
 
+test("dag next JSON separates readiness from the runnable resource subset", () => {
+  const result = run([
+    "dag",
+    "next",
+    "docs/examples/parallel.pert",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, "");
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.schema_version, "Perttool.NextResult.v1");
+  assert.deepEqual(json.groups, {
+    active: [],
+    ready: ["CORE", "CLI", "DOCS"],
+    runnable_now: ["CORE", "CLI"],
+    blocked_now: [],
+    upcoming: ["TEST", "PACKAGE"],
+  });
+  const docs = json.tasks.find(({ id }) => id === "DOCS");
+  assert.equal(docs.classification, "ready");
+  assert.equal(docs.runnable_now, false);
+  assert.deepEqual(docs.resource_rejections, [{
+    resource_id: "DEVELOPERS",
+    capacity: 2,
+    active_usage: 0,
+    earlier_selected_usage: 2,
+    used_before_decision: 2,
+    required: 1,
+    available: 0,
+    deficit: 1,
+    active_task_ids: [],
+    earlier_selected_task_ids: ["CORE", "CLI"],
+  }]);
+});
+
+test("dag next text uses stable operational sections and explanations", () => {
+  const result = run([
+    "dag",
+    "next",
+    "docs/examples/parallel.pert",
+    "--color=never",
+  ]);
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, "");
+  const sections = [
+    "ACTIVE",
+    "RUNNABLE NOW",
+    "READY / WAITING RESOURCE",
+    "BLOCKED NOW",
+    "UPCOMING",
+  ];
+  let previous = -1;
+  for (const section of sections) {
+    const index = result.stdout.indexOf(`\n${section}\n`);
+    assert.ok(index > previous, `${section} must follow the previous section`);
+    previous = index;
+  }
+  assert.match(result.stdout, /DEVELOPERS capacity=2 used=2 .*occupants=CORE,CLI/);
+  assert.match(result.stdout, /waiting milestone=INTEGRATION_READY unsatisfied=CLI_READY,CORE_READY,DOCS_READY/);
+});
+
+test("dag next capacity override changes runnable membership but not readiness", () => {
+  const result = run([
+    "dag",
+    "next",
+    "docs/examples/parallel.pert",
+    "--capacity=DEVELOPERS=3",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  const json = JSON.parse(result.stdout);
+  assert.deepEqual(json.groups.ready, ["CORE", "CLI", "DOCS"]);
+  assert.deepEqual(json.groups.runnable_now, ["CORE", "CLI", "DOCS"]);
+});
+
+test("dag next accepts stdin and rejects an invalid explanation depth", async () => {
+  const text = await readFile(path.join(root, "docs/examples/minimal.pert"), "utf8");
+  const fromStdin = run(["dag", "next", "-", "--format=json"], { input: text });
+  assert.equal(fromStdin.status, 0);
+  assert.equal(JSON.parse(fromStdin.stdout).source, "<stdin>");
+
+  const invalid = run([
+    "dag",
+    "next",
+    "docs/examples/minimal.pert",
+    "--explain-depth=33",
+    "--format=json",
+  ]);
+  assert.equal(invalid.status, 2);
+  assert.equal(JSON.parse(invalid.stdout).diagnostics[0].code, "PTCLI-001");
+});
+
 test("invalid capacity override is a usage or analysis error at the correct boundary", () => {
   const duplicate = run([
     "dag",
@@ -250,7 +342,7 @@ test("analysis help documents exact arithmetic and capacity what-if", () => {
 });
 
 test("unknown command is a usage error", () => {
-  const result = run(["dag", "next", "docs/examples/minimal.pert", "--format=json"]);
+  const result = run(["dag", "render", "docs/examples/minimal.pert", "--format=json"]);
   assert.equal(result.status, 2);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.CliError.v1");

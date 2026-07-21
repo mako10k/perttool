@@ -225,11 +225,37 @@ const nodes: readonly HelpNode[] = [
     id: "next",
     title: "Next tasks",
     summary: "active、ready、runnable_now、blocked_now、upcomingを返します。",
-    quick: [],
-    detail: [],
-    syntax: ["perttool dag next FILE"],
-    examples: [],
-    related: ["analysis"],
+    quick: [
+      {
+        id: "classification",
+        title: "Task classification",
+        body: "readyは依存関係上開始可能なplanned task、runnable_nowは現在のactive allocationを差し引いて同時開始できるreadyの部分集合です。",
+      },
+    ],
+    detail: [
+      {
+        id: "selection",
+        title: "Resource selection",
+        body: "runnable_nowはpriority、precedence total float、expected duration、task IDのscheduler順で1回scanして選びます。表示順はこの選択順とは独立です。",
+      },
+      {
+        id: "explanation",
+        title: "Upcoming explanation",
+        body: "upcomingは未到達の開始milestoneとunsatisfied incoming edgeを返します。--explain-depthは0..32、default 1です。",
+      },
+    ],
+    syntax: [
+      "perttool dag next FILE [--capacity RESOURCE=COUNT]...",
+      "  [--explain-depth 0..32] [--precision 0..9] [--format text|json]",
+    ],
+    examples: [
+      {
+        id: "parallel-next",
+        title: "Current runnable subset",
+        text: "perttool dag next docs/examples/parallel.pert",
+      },
+    ],
+    related: ["analysis", "analysis.resources"],
   },
   {
     id: "editing",
