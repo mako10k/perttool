@@ -613,15 +613,6 @@ Canonical advanceは`BRANCH_A`を過去として削除するが、未到達`JOIN
 
 Semantics version 1はgrammar version 1を対象とする。
 
-次の`docs/specs/analysis.md`で固定する事項:
-
-- duration、PERT expected、varianceのRational演算
-- forward/backward passとfloat
-- precedence critical subgraph
-- deterministic resource schedule event model
-- runnable_nowのresource選択と説明
-- capacity 2以上を含むresource arc
-- schedule critical path
-- resultのroundingとtie-break
+本書の有効graphを入力とするduration、PERT/CPM、resource schedule、`runnable_now`、resource arc、schedule critical path、rounding、tie-breakは[Analysis仕様](analysis.md)で固定した。次は`docs/specs/interfaces.md`で外部resultと操作契約を固定する。
 
 Graph semanticsを破壊的に変更する場合は、grammar変更の有無にかかわらずsemantics version、fixture、migration影響を明示する。

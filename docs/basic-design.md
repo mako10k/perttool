@@ -1,9 +1,10 @@
 # perttool 基本設計
 
-- 文書状態: Draft 0.3
+- 文書状態: Draft 0.4
 - 作成日: 2026-07-21
 - 対応要件: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
+- Analysis: [specs/analysis.md](specs/analysis.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
 
 ## 1. 目的
@@ -577,6 +578,7 @@ resource requirementはDAGのdependency edgeではないため、通常flowchart
 - critical edge の集合を primary result とする
 - path 全列挙を primary result にしない
 - representative path は各分岐で edge ID の辞書順を tie-break とする
+- exact driving path数はBigIntで数え、列挙数と分離する
 - 全列挙 option には `maxPaths` を必須または既定上限付きにする
 
 ### 10.6 resource schedule
@@ -608,7 +610,7 @@ Rules:
 - done taskとgateはresourceを消費しない
 - resultにheuristic名とversionを含める
 
-resource待ちを説明するため、task開始時に直前までcapacityを占有して開始を遅らせたtaskとの間に`resource arc`候補を記録する。resource arcで拡張したschedule graphから、選択schedule上のcritical pathを求める。capacityが2以上の場合のresource arc選択とschedule criticalの厳密定義はanalysis仕様で固定する。
+resource待ちを説明するため、task開始時にcapacityを解放して開始を可能にしたtaskとの間に`resource arc`を記録する。capacity 2以上と複数resourceを含むwitness選択、schedule graph replay、schedule critical pathの厳密な規則は[Analysis仕様](specs/analysis.md)を正とする。
 
 このheuristicは実行可能scheduleを返すが、最小makespanを保証しない。exact solverは別adapterとして将来追加し、lower bound、best found、gap、timeoutを明示する。
 
@@ -972,18 +974,15 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)で初期決定した。次は本書で方向だけを定め、個別仕様またはADRで確定する。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)で初期決定した。残る事項は個別仕様またはADRで確定する。
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細
-3. multiple critical path の path count 表示
-4. renewable resource scheduleとresource arcの厳密定義
-5. exact solverを追加する場合のadapter境界
-6. Mermaid metadata record schema
-7. JSON Schema の具体的 field
-8. CLI option の完全一覧
-9. MCP write action の有無
-10. package/runtime/test dependency の選定
+3. Mermaid metadata record schema
+4. JSON Schema の具体的 field
+5. CLI option の完全一覧
+6. MCP write action の有無
+7. package/runtime/test dependency の選定
 
 ## 19. 要件トレーサビリティ
 

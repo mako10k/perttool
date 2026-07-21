@@ -1,6 +1,6 @@
 # perttool 要件定義
 
-- 文書状態: Draft 0.4
+- 文書状態: Draft 0.5
 - 作成日: 2026-07-21
 - 対象: MVP と、その後の拡張境界
 - 想定ファイル拡張子: `.pert`（暫定）
@@ -152,7 +152,7 @@ Optional fields:
 
 - `as_of`: スナップショットの基準日または日時
 - `description`: 複数行説明
-- `critical_epsilon`: 浮動小数点計算で critical とみなす許容誤差
+- `critical_epsilon`: exact Rational計算でnear-criticalをcritical表示へ含める許容誤差
 - `target_duration`: 現在境界から finish までの目標所要時間
 
 ### 7.2 Resource
@@ -406,6 +406,8 @@ Must:
 ## 10. 機械的分析要件
 
 LLM は文書編集や説明を補助してよいが、以下の計算結果を生成してはならない。計算は共通解析コアが行う。
+
+数値表現、PERT/CPM、resource schedule、resource arc、schedule critical pathの規範は[Analysis仕様](specs/analysis.md)を正とする。
 
 ### 10.1 構造検査
 
@@ -930,12 +932,10 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 実装開始前に、次を ADR または個別仕様で固定する。
 
 1. Node.js 対応バージョン、package 配布形態、依存 package。実装言語は [基本設計](basic-design.md) で TypeScript に決定済み
-2. duration/varianceとresource scheduleの完全なanalysis契約
-3. capacity 2以上でのresource arcとschedule critical pathの定義
-4. Mermaid profile の `%% perttool:` メタデータ schema
-5. analysis/next/diagnostic JSON Schema
-6. help registry の内部表現
-7. MCP の書き込み機能を MVP に含めるか、preview のみに限定するか
+2. Mermaid profile の `%% perttool:` メタデータ schema
+3. analysis/next/diagnostic JSON Schema
+4. help registry の内部表現
+5. MCP の書き込み機能を MVP に含めるか、preview のみに限定するか
 
 ## 25. 推奨する次の仕様作業
 
@@ -943,7 +943,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 1. [x] `docs/specs/dsl-grammar.md`: 完全 EBNF、resource構文、正規サンプル
 2. [x] [Graph Semantics仕様](specs/graph-semantics.md): reached、ready、done、gate、advance、resourceの形式定義
-3. [ ] `docs/specs/analysis.md`: PERT/CPM、resource schedule、resource arc、tie-break
+3. [x] [Analysis仕様](specs/analysis.md): PERT/CPM、resource schedule、resource arc、tie-break
 4. [ ] `docs/specs/interfaces.md`: CLI、JSON Schema、MCP action
 5. [ ] `docs/adr/0001-activity-on-arrow.md`: task=edge の設計判断
 6. [ ] parser/validator の最小実装と golden tests
