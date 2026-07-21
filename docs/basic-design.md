@@ -120,6 +120,7 @@ perttool/
     mvp.pert
   scripts/
     check-docs.sh
+    check-npm-link.sh
     check-self-use.sh
   README.md
   package.json

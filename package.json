@@ -15,12 +15,14 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test test/*.test.mjs",
     "test:e2e": "npm run build && node --test test/e2e.test.mjs",
     "check:docs": "bash scripts/check-docs.sh",
+    "check:link": "bash scripts/check-npm-link.sh",
     "check:self-use": "bash scripts/check-self-use.sh",
-    "check": "npm run typecheck && npm test && npm run check:docs && npm run check:self-use"
+    "check": "npm run typecheck && npm test && npm run check:docs && npm run check:self-use && npm run check:link"
   },
   "devDependencies": {
     "@types/node": "24.13.3",

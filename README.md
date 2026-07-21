@@ -35,6 +35,16 @@ npm ci
 npm run check
 ```
 
+ローカルcheckoutを現在のNode.jsユーザー環境へlinkする場合:
+
+```sh
+npm ci
+npm link
+perttool --version
+```
+
+`prepare` lifecycleが`dist/`をbuildしてから、`perttool` binaryを現在のnpm global prefixへsymlinkします。System領域へsudoでinstallせず、NVMなどuser-ownedのnpm prefixを使用してください。解除はcheckoutで`npm unlink --global perttool`を実行します。
+
 実CLI processを使うE2Eシナリオだけを実行する場合:
 
 ```sh

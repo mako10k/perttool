@@ -112,7 +112,7 @@ tool出力は選択根拠であり、task完了の独立証拠ではない。完
 TypeScript scaffoldでは次を固定した。
 
 - Node.js 24以上、npm、ESM、TypeScript 7.0系
-- `npm ci`、`npm run build`、`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run check`
+- `npm ci`、`npm run build`、`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run check:link`、`npm run check`
 - CIはNode.js 24で`npm run check`
 - sourceは`src/`、test/fixtureは`test/`、生成物は`dist/`
 - `node_modules/`、`dist/`、coverage、tsbuildinfoはGit管理外
