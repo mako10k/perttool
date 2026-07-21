@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Draft 0.4
+- 文書状態: Draft 0.5
 - 作成日: 2026-07-21
 - 関連設計: [../basic-design.md](../basic-design.md)
 
@@ -23,7 +23,7 @@
 
 ## 3. Stage 0: bootstrap
 
-現在の段階。TypeScript CLI bootstrapと`dsl check`は存在するが、`analyze`/`next`がないためread-only self-useは開始しない。
+現在の段階。TypeScript CLI bootstrap、`dsl check`、`dag analyze`は存在するが、`dag next`がないためread-only self-useは開始しない。
 
 - requirements と basic design は Markdown で管理する
 - grammar plan はまだ `.pert` で作成しない

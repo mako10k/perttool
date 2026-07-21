@@ -102,76 +102,50 @@ Core layer は次へ依存してはならない。
 
 ## 4. リポジトリ構成
 
-初期実装では次の配置を採用する。
+現在の実装では次の配置を採用する。未実装moduleを先行して配置しない。
 
 ```text
 perttool/
+  .github/
+    workflows/
+  docs/
+    adr/
+    examples/
+    process/
+    specs/
+    basic-design.md
+    requirements.md
+  plans/
+  scripts/
   README.md
   package.json
   tsconfig.json
   src/
+    application/
+      analyze.ts
+      check.ts
+    analysis/
+      graph.ts
+      precedence.ts
+      resource.ts
+    help/
+      registry.ts
     model/
       syntax.ts
-      graph.ts
-      resource.ts
-      analysis.ts
       diagnostics.ts
       rational.ts
     parser/
-      lexer.ts
-      parser.ts
-      ast.ts
-      formatter.ts
+      document-parser.ts
     semantic/
-      resolver.ts
       validator.ts
-      graph-builder.ts
-      reachability.ts
-    analyzer/
-      topological.ts
-      schedule.ts
-      critical.ts
-      resource-schedule.ts
-      next.ts
-    transform/
-      text-edit.ts
-      task-mutation.ts
-      milestone-mutation.ts
-      resource-mutation.ts
-      advance.ts
-    converter/
-      mermaid-export.ts
-      mermaid-import.ts
-      json.ts
-    help/
-      registry.ts
-      render-text.ts
-      render-json.ts
-    application/
-      check.ts
-      analyze.ts
-      next.ts
-      mutate.ts
-      render.ts
-    adapters/
-      filesystem.ts
-      atomic-write.ts
-      cli.ts
+    cli.ts
     index.ts
-  schemas/
-  docs/
-    basic-design.md
-    requirements.md
-    specs/
-    adr/
-    process/
-    examples/
-  plans/
-  tests/
-    unit/
+    version.ts
+  test/
+    analysis.test.mjs
+    cli.test.mjs
+    parser.test.mjs
     fixtures/
-    golden/
-    integration/
 ```
 
 配置は責務を表す。小規模な初期段階で空 directory を先に量産せず、実装 slice に応じて追加する。

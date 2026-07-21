@@ -153,20 +153,72 @@ const nodes: readonly HelpNode[] = [
     id: "analysis",
     title: "Analysis",
     summary: "PERT/CPM precedence resultとresource scheduleを分離して返します。",
-    quick: [],
-    detail: [],
-    syntax: ["perttool dag analyze FILE"],
-    examples: [],
+    quick: [
+      {
+        id: "results",
+        title: "Separated results",
+        body: "precedence makespanはresourceを無視した下限、resource makespanはcapacityを守る決定的heuristic resultです。",
+      },
+    ],
+    detail: [
+      {
+        id: "exact",
+        title: "Exact arithmetic",
+        body: "expected、variance、float、makespanはexact Rationalで計算し、displayだけを--precisionで丸めます。",
+      },
+      {
+        id: "paths",
+        title: "Critical paths",
+        body: "near-critical subgraphとexact driving pathを区別し、path countは列挙上限と独立に返します。",
+      },
+    ],
+    syntax: [
+      "perttool dag analyze FILE [--schedule precedence|resource|both]",
+      "  [--capacity RESOURCE=COUNT]... [--max-paths 0..1000] [--precision 0..9]",
+    ],
+    examples: [
+      {
+        id: "parallel-analysis",
+        title: "Precedence and resource schedule",
+        text: "perttool dag analyze docs/examples/parallel.pert",
+      },
+    ],
     related: ["analysis.resources", "next"],
   },
   {
     id: "analysis.resources",
     title: "Resource analysis",
     summary: "Renewable capacityを守る決定的heuristic scheduleです。",
-    quick: [],
-    detail: [],
-    syntax: ["perttool dag analyze FILE --capacity RESOURCE=COUNT"],
-    examples: [],
+    quick: [
+      {
+        id: "capacity",
+        title: "Capacity override",
+        body: "--capacityはwhat-if入力であり、source documentを書き換えません。",
+      },
+    ],
+    detail: [
+      {
+        id: "algorithm",
+        title: "parallel-sgs v1",
+        body: "priority、precedence float、expected duration、task IDの順でcandidateをscanします。optimal=falseです。",
+      },
+      {
+        id: "witness",
+        title: "Resource witness",
+        body: "resource待ちはrelease taskから開始taskへのanalysis-only resource arcで説明し、正本DAGへ保存しません。",
+      },
+    ],
+    syntax: [
+      "perttool dag analyze FILE --capacity RESOURCE=COUNT",
+      "perttool dag analyze FILE --schedule resource --format json",
+    ],
+    examples: [
+      {
+        id: "parallel-capacity",
+        title: "Capacity what-if",
+        text: "perttool dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3",
+      },
+    ],
     related: ["analysis", "next"],
   },
   {

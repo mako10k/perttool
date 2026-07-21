@@ -4,10 +4,14 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import process from "node:process";
 import { TextDecoder } from "node:util";
+import type { AnalysisMode } from "./application/analyze.js";
+import { analyzeDocument } from "./application/analyze.js";
 import { checkDocument } from "./application/check.js";
 import type { HelpLevel } from "./help/registry.js";
 import { getHelp } from "./help/registry.js";
 import type { Diagnostic, SourceSpan } from "./model/diagnostics.js";
+import type { Rational } from "./model/rational.js";
+import { formatDecimal } from "./model/rational.js";
 import { TOOL_VERSION } from "./version.js";
 
 type OutputFormat = "text" | "json";
@@ -16,6 +20,7 @@ type ColorMode = "auto" | "always" | "never";
 interface ParsedOptions {
   readonly positionals: readonly string[];
   readonly values: ReadonlyMap<string, string>;
+  readonly repeatedValues: ReadonlyMap<string, readonly string[]>;
   readonly flags: ReadonlySet<string>;
 }
 
@@ -32,13 +37,14 @@ function topLevelHelp(): string {
     "  perttool --help",
     "  perttool dsl check <file> [--format text|json]",
     "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
+    "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
     "",
-    "The current bootstrap implements dsl check and dsl help.",
+    "The current bootstrap implements dsl check, dsl help, and dag analyze.",
   ].join("\n");
 }
 
-function commandHelp(action: string): string {
-  if (action === "check") {
+function commandHelp(resource: string, action: string): string {
+  if (resource === "dsl" && action === "check") {
     return [
       "Usage: perttool dsl check <file>",
       "  [--warnings-as-errors]",
@@ -46,11 +52,19 @@ function commandHelp(action: string): string {
       "  [--color auto|always|never]",
     ].join("\n");
   }
-  return [
+  if (resource === "dsl" && action === "help") return [
     "Usage: perttool dsl help [topic [subtopic]]",
     "  [--level index|quick|detail]",
     "  [--format text|json]",
     "  [--color auto|always|never]",
+  ].join("\n");
+  return [
+    "Usage: perttool dag analyze <file>",
+    "  [--schedule precedence|resource|both]",
+    "  [--capacity <resource-id>=<integer>]...",
+    "  [--max-paths <integer>] [--precision <integer>]",
+    "  [--warnings-as-errors]",
+    "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
 }
 
@@ -58,9 +72,11 @@ function parseOptions(
   args: readonly string[],
   valueOptions: ReadonlySet<string>,
   flagOptions: ReadonlySet<string>,
+  repeatableOptions: ReadonlySet<string> = new Set(),
 ): ParsedOptions {
   const positionals: string[] = [];
   const values = new Map<string, string>();
+  const repeatedValues = new Map<string, string[]>();
   const flags = new Set<string>();
   let optionsEnded = false;
   for (let index = 0; index < args.length; index += 1) {
@@ -81,16 +97,25 @@ function parseOptions(
       flags.add(name);
       continue;
     }
-    if (!valueOptions.has(name)) throw new UsageError(`unknown option --${name}`);
+    if (!valueOptions.has(name) && !repeatableOptions.has(name)) {
+      throw new UsageError(`unknown option --${name}`);
+    }
+    const isRepeatable = repeatableOptions.has(name);
     if (values.has(name)) throw new UsageError(`duplicate option --${name}`);
     const value = equals === -1 ? args[index + 1] : argument.slice(equals + 1);
     if (value === undefined || value.startsWith("--")) {
       throw new UsageError(`option --${name} requires a value`);
     }
     if (equals === -1) index += 1;
-    values.set(name, value);
+    if (isRepeatable) {
+      const entries = repeatedValues.get(name) ?? [];
+      entries.push(value);
+      repeatedValues.set(name, entries);
+    } else {
+      values.set(name, value);
+    }
   }
-  return { positionals, values, flags };
+  return { positionals, values, repeatedValues, flags };
 }
 
 function outputFormat(value: string | undefined): OutputFormat {
@@ -300,6 +325,404 @@ async function runCheck(args: readonly string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
+function boundedInteger(
+  raw: string | undefined,
+  option: string,
+  defaultValue: number,
+  minimum: number,
+  maximum: number,
+): number {
+  if (raw === undefined) return defaultValue;
+  if (!/^[0-9]+$/.test(raw)) {
+    throw new UsageError(`--${option} must be an integer from ${minimum} to ${maximum}`);
+  }
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value < minimum || value > maximum) {
+    throw new UsageError(`--${option} must be an integer from ${minimum} to ${maximum}`);
+  }
+  return value;
+}
+
+function analysisMode(raw: string | undefined): AnalysisMode {
+  if (raw === undefined || raw === "both") return "both";
+  if (raw === "precedence" || raw === "resource") return raw;
+  throw new UsageError("--schedule must be precedence, resource, or both");
+}
+
+function capacityOverrides(values: readonly string[]): ReadonlyMap<string, number> {
+  const overrides = new Map<string, number>();
+  for (const value of values) {
+    const match = /^([A-Za-z][A-Za-z0-9_-]*)=([0-9]+)$/.exec(value);
+    if (match === null) {
+      throw new UsageError("--capacity must be <resource-id>=<integer>");
+    }
+    const id = match[1]!;
+    const capacity = Number(match[2]!);
+    if (!Number.isSafeInteger(capacity) || capacity < 1 || capacity > 2_147_483_647) {
+      throw new UsageError("--capacity integer must be from 1 to 2147483647");
+    }
+    if (overrides.has(id)) throw new UsageError(`duplicate --capacity for ${id}`);
+    overrides.set(id, capacity);
+  }
+  return overrides;
+}
+
+type RationalUnit = "day" | "hour" | "day^2" | "hour^2" | "ratio";
+
+function rationalJson(
+  value: Rational,
+  unit: RationalUnit,
+  precision: number,
+): Readonly<Record<string, string>> {
+  return {
+    numerator: value.numerator.toString(),
+    denominator: value.denominator.toString(),
+    unit,
+    display: formatDecimal(value, precision),
+  };
+}
+
+function precedenceJson(
+  result: NonNullable<ReturnType<typeof analyzeDocument>["precedence"]>,
+  unit: "day" | "hour",
+  precision: number,
+): Readonly<Record<string, unknown>> {
+  const varianceUnit = `${unit}^2` as "day^2" | "hour^2";
+  const path = (value: typeof result.critical.representativePath) => ({
+    edge_ids: value.edgeIds,
+    task_ids: value.taskIds,
+    gate_ids: value.gateIds,
+    variance: rationalJson(value.variance, varianceUnit, precision),
+  });
+  return {
+    makespan: rationalJson(result.makespan, unit, precision),
+    conditional_on_blocks_resolved: result.conditionalOnBlocksResolved,
+    blocked_task_ids: result.blockedTaskIds,
+    milestones: result.milestones.map((milestone) => ({
+      id: milestone.id,
+      earliest: rationalJson(milestone.earliest, unit, precision),
+      latest: rationalJson(milestone.latest, unit, precision),
+      slack: rationalJson(milestone.slack, unit, precision),
+    })),
+    edges: result.edges.map((edge) => ({
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      kind: edge.kind,
+      status: edge.status,
+      expected: rationalJson(edge.expected, unit, precision),
+      variance: rationalJson(edge.variance, varianceUnit, precision),
+      es: rationalJson(edge.es, unit, precision),
+      ef: rationalJson(edge.ef, unit, precision),
+      ls: rationalJson(edge.ls, unit, precision),
+      lf: rationalJson(edge.lf, unit, precision),
+      total_float: rationalJson(edge.totalFloat, unit, precision),
+      free_float: rationalJson(edge.freeFloat, unit, precision),
+      is_critical: edge.isCritical,
+      is_driving: edge.isDriving,
+    })),
+    critical: {
+      milestone_ids: result.critical.milestoneIds,
+      task_ids: result.critical.taskIds,
+      gate_ids: result.critical.gateIds,
+      driving_edge_ids: result.critical.drivingEdgeIds,
+      representative_path: path(result.critical.representativePath),
+      path_count: result.critical.pathCount.toString(),
+      paths: result.critical.paths.map(path),
+      paths_truncated: result.critical.pathsTruncated,
+    },
+  };
+}
+
+function resourceJson(
+  result: NonNullable<ReturnType<typeof analyzeDocument>["resource"]>,
+  unit: "day" | "hour",
+  precision: number,
+): Readonly<Record<string, unknown>> {
+  const varianceUnit = `${unit}^2` as "day^2" | "hour^2";
+  const schedulePath = (path: typeof result.scheduleCritical.representativePath) => ({
+    task_ids: path.taskIds,
+    constraints: path.constraints.map((constraint) => ({
+      from_task_id: constraint.fromTaskId,
+      to_task_id: constraint.toTaskId,
+      kind: constraint.kind,
+      resource_arc_id: constraint.resourceArcId,
+    })),
+    connector_ids: path.connectorIds,
+  });
+  return {
+    algorithm: result.algorithm,
+    conditional_on_blocks_resolved: result.conditionalOnBlocksResolved,
+    blocked_task_ids: result.blockedTaskIds,
+    capacities: result.capacities.map((capacity) => ({
+      id: capacity.id,
+      declared: capacity.declared,
+      override: capacity.override,
+      effective: capacity.effective,
+    })),
+    precedence_lower_bound: rationalJson(result.precedenceLowerBound, unit, precision),
+    makespan: rationalJson(result.makespan, unit, precision),
+    resource_delay: rationalJson(result.resourceDelay, unit, precision),
+    tasks: result.tasks.map((task) => ({
+      id: task.id,
+      status: task.status,
+      expected: rationalJson(task.expected, unit, precision),
+      variance: rationalJson(task.variance, varianceUnit, precision),
+      eligible_time: rationalJson(task.eligibleTime, unit, precision),
+      start: rationalJson(task.start, unit, precision),
+      finish: rationalJson(task.finish, unit, precision),
+      resource_wait: rationalJson(task.resourceWait, unit, precision),
+      requirements: task.requirements.map((requirement) => ({
+        resource_id: requirement.resourceId,
+        units: requirement.units,
+      })),
+      priority_key: {
+        priority: task.priorityKey.priority,
+        precedence_total_float: rationalJson(task.priorityKey.precedenceTotalFloat, unit, precision),
+        expected: rationalJson(task.priorityKey.expected, unit, precision),
+        task_id: task.priorityKey.taskId,
+      },
+      conditional_blocked: task.conditionalBlocked,
+    })),
+    resources: result.resources.map((resource) => ({
+      id: resource.id,
+      capacity: resource.capacity,
+      amount_time: rationalJson(resource.amountTime, unit, precision),
+      utilization: rationalJson(resource.utilization, "ratio", precision),
+      peak_usage: resource.peakUsage,
+      last_release: rationalJson(resource.lastRelease, unit, precision),
+      timeline: resource.timeline.map((entry) => ({
+        task_id: entry.taskId,
+        start: rationalJson(entry.start, unit, precision),
+        finish: rationalJson(entry.finish, unit, precision),
+        units: entry.units,
+      })),
+    })),
+    resource_arcs: result.resourceArcs.map((arc) => ({
+      id: arc.id,
+      from_task_id: arc.fromTaskId,
+      to_task_id: arc.toTaskId,
+      at_time: rationalJson(arc.atTime, unit, precision),
+      wait_from: rationalJson(arc.waitFrom, unit, precision),
+      resources: [...arc.resources]
+        .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
+        .map(([resourceId, contributedUnits]) => ({
+          resource_id: resourceId,
+          contributed_units: contributedUnits,
+        })),
+      schedule_float: rationalJson(arc.scheduleFloat, unit, precision),
+      is_critical: arc.isCritical,
+      is_driving: arc.isDriving,
+    })),
+    constraint_graph_replay: result.constraintGraphReplay,
+    schedule_critical: {
+      task_ids: result.scheduleCritical.taskIds,
+      resource_arc_ids: result.scheduleCritical.resourceArcIds,
+      driving_constraint_ids: result.scheduleCritical.drivingConstraintIds,
+      representative_path: schedulePath(result.scheduleCritical.representativePath),
+      path_count: result.scheduleCritical.pathCount.toString(),
+      paths: result.scheduleCritical.paths.map(schedulePath),
+      paths_truncated: result.scheduleCritical.pathsTruncated,
+    },
+  };
+}
+
+function durationText(value: Rational, unit: "day" | "hour", precision: number): string {
+  return `${formatDecimal(value, precision)}${unit === "day" ? "d" : "h"}`;
+}
+
+function renderAnalysisText(
+  result: ReturnType<typeof analyzeDocument>,
+): string {
+  const unit = result.durationUnit!;
+  const lines = [`PERTTOOL ANALYSIS ${result.documentId ?? "-"}`, "", "QUALIFIERS"];
+  const conditional =
+    result.precedence?.conditionalOnBlocksResolved === true ||
+    result.resource?.conditionalOnBlocksResolved === true;
+  const blockedTaskIds =
+    result.precedence?.blockedTaskIds ?? result.resource?.blockedTaskIds ?? [];
+  const pathsTruncated =
+    result.precedence?.critical.pathsTruncated === true ||
+    result.resource?.scheduleCritical.pathsTruncated === true;
+  const overrides = [...result.capacityOverrides]
+    .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0));
+  lines.push(
+    `CONDITIONAL_ON_BLOCKS_RESOLVED ${conditional}`,
+    `BLOCKED_TASKS ${blockedTaskIds.join(", ") || "-"}`,
+    `PATHS_TRUNCATED ${pathsTruncated}`,
+    `CAPACITY_OVERRIDES ${overrides.map(([id, capacity]) => `${id}=${capacity}`).join(", ") || "-"}`,
+  );
+  if (result.precedence !== null) {
+    const precedence = result.precedence;
+    lines.push(
+      "",
+      "PRECEDENCE",
+      `MAKESPAN ${durationText(precedence.makespan, unit, result.precision)}`,
+      "EDGES",
+      "ID EXPECTED ES EF LS LF TF FF CRITICAL",
+    );
+    for (const edge of precedence.edges) {
+      lines.push(
+        [
+          edge.id,
+          durationText(edge.expected, unit, result.precision),
+          durationText(edge.es, unit, result.precision),
+          durationText(edge.ef, unit, result.precision),
+          durationText(edge.ls, unit, result.precision),
+          durationText(edge.lf, unit, result.precision),
+          durationText(edge.totalFloat, unit, result.precision),
+          durationText(edge.freeFloat, unit, result.precision),
+          edge.isCritical ? "yes" : "no",
+        ].join(" "),
+      );
+    }
+    lines.push(
+      "",
+      "PRECEDENCE CRITICAL",
+      `TASKS ${precedence.critical.taskIds.join(", ") || "-"}`,
+      `GATES ${precedence.critical.gateIds.join(", ") || "-"}`,
+      `REPRESENTATIVE PATH ${precedence.critical.representativePath.edgeIds.join(" -> ") || "(complete)"}`,
+      `PATH COUNT ${precedence.critical.pathCount.toString()}${precedence.critical.pathsTruncated ? " (truncated)" : ""}`,
+    );
+  }
+  if (result.resource !== null) {
+    const resource = result.resource;
+    lines.push(
+      "",
+      "RESOURCE SCHEDULE",
+      `ALGORITHM ${resource.algorithm.id}@${resource.algorithm.version} optimal=${resource.algorithm.optimal}`,
+      `PRECEDENCE LOWER BOUND ${durationText(resource.precedenceLowerBound, unit, result.precision)}`,
+      `MAKESPAN ${durationText(resource.makespan, unit, result.precision)}`,
+      `DELAY ${durationText(resource.resourceDelay, unit, result.precision)}`,
+      "TASKS",
+      "ID ELIGIBLE START FINISH WAIT REQUIREMENTS",
+    );
+    for (const task of resource.tasks) {
+      lines.push(
+        [
+          task.id,
+          durationText(task.eligibleTime, unit, result.precision),
+          durationText(task.start, unit, result.precision),
+          durationText(task.finish, unit, result.precision),
+          durationText(task.resourceWait, unit, result.precision),
+          task.requirements.map((requirement) => `${requirement.resourceId}=${requirement.units}`).join(",") || "-",
+        ].join(" "),
+      );
+    }
+    lines.push("RESOURCE ARCS");
+    for (const arc of resource.resourceArcs) {
+      lines.push(
+        `${arc.id} at=${durationText(arc.atTime, unit, result.precision)} resources=${[...arc.resources].map(([id, units]) => `${id}=${units}`).join(",")}`,
+      );
+    }
+    if (resource.resourceArcs.length === 0) lines.push("-");
+    lines.push(
+      "",
+      "RESOURCE CRITICAL",
+      `TASKS ${resource.scheduleCritical.taskIds.join(", ") || "-"}`,
+      `RESOURCE ARCS ${resource.scheduleCritical.resourceArcIds.join(", ") || "-"}`,
+      `REPRESENTATIVE PATH ${resource.scheduleCritical.representativePath.taskIds.join(" -> ") || "(complete)"}`,
+      `PATH COUNT ${resource.scheduleCritical.pathCount.toString()}${resource.scheduleCritical.pathsTruncated ? " (truncated)" : ""}`,
+      "",
+      "RESOURCE UTILIZATION",
+      "ID CAPACITY AMOUNT_TIME UTILIZATION PEAK LAST_RELEASE",
+    );
+    for (const statistic of resource.resources) {
+      lines.push(
+        [
+          statistic.id,
+          statistic.capacity.toString(),
+          durationText(statistic.amountTime, unit, result.precision),
+          formatDecimal(statistic.utilization, result.precision),
+          statistic.peakUsage.toString(),
+          durationText(statistic.lastRelease, unit, result.precision),
+        ].join(" "),
+      );
+    }
+    if (resource.resources.length === 0) lines.push("-");
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+async function runAnalyze(args: readonly string[]): Promise<number> {
+  const parsed = parseOptions(
+    args,
+    new Set(["schedule", "max-paths", "precision", "format", "color"]),
+    new Set(["warnings-as-errors"]),
+    new Set(["capacity"]),
+  );
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("dag analyze requires exactly one <file>");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const mode = analysisMode(parsed.values.get("schedule"));
+  const maxPaths = boundedInteger(parsed.values.get("max-paths"), "max-paths", 1, 0, 1000);
+  const precision = boundedInteger(parsed.values.get("precision"), "precision", 3, 0, 9);
+  const overrides = capacityOverrides(parsed.repeatedValues.get("capacity") ?? []);
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "dag.analyze",
+      format === "json",
+    );
+  }
+  const result = analyzeDocument(input.text, {
+    mode,
+    capacityOverrides: overrides,
+    maxPaths,
+    precision,
+  });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    result.diagnostics.some((diagnostic) => diagnostic.severity === "warning");
+  const ok = result.ok && !warningFailure;
+  if (format === "json") {
+    writeJson({
+      schema_version: "Perttool.AnalysisResult.v1",
+      tool_version: TOOL_VERSION,
+      operation: "dag.analyze",
+      ok,
+      document_id: result.documentId,
+      source,
+      source_digest: input.digest,
+      diagnostics: result.diagnostics.map(jsonDiagnostic),
+      mode: result.mode,
+      precision: result.precision,
+      ...(result.durationUnit === null
+        ? {}
+        : {
+            duration_unit: result.durationUnit,
+            critical_epsilon: rationalJson(
+              result.criticalEpsilon!,
+              result.durationUnit,
+              result.precision,
+            ),
+          }),
+      precedence:
+        result.precedence === null || result.durationUnit === null
+          ? null
+          : precedenceJson(result.precedence, result.durationUnit, result.precision),
+      resource:
+        result.resource === null || result.durationUnit === null
+          ? null
+          : resourceJson(result.resource, result.durationUnit, result.precision),
+    });
+  } else {
+    if (ok) process.stdout.write(renderAnalysisText(result));
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+  }
+  return ok ? 0 : 1;
+}
+
 function renderHelpText(result: ReturnType<typeof getHelp>): string {
   const lines = [result.title, "", result.summary];
   if (result.topics.length > 0) {
@@ -371,9 +794,17 @@ async function main(argv: readonly string[]): Promise<number> {
   if (argv.length < 2) throw new UsageError("expected <resource> <action>");
   const resource = argv[0]!;
   const action = argv[1]!;
-  if (argv.length === 3 && argv[2] === "--help" && resource === "dsl" && ["check", "help"].includes(action)) {
-    process.stdout.write(`${commandHelp(action)}\n`);
+  if (
+    argv.length === 3 &&
+    argv[2] === "--help" &&
+    ((resource === "dsl" && ["check", "help"].includes(action)) ||
+      (resource === "dag" && action === "analyze"))
+  ) {
+    process.stdout.write(`${commandHelp(resource, action)}\n`);
     return 0;
+  }
+  if (resource === "dag" && action === "analyze") {
+    return runAnalyze(argv.slice(2));
   }
   if (resource !== "dsl" || (action !== "check" && action !== "help")) {
     throw new UsageError(`unknown or not-yet-implemented command: ${resource} ${action}`);

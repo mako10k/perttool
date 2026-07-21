@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI（実装bootstrap段階）。
 
-現在はNode.js 24以上のTypeScript CLIとして実装を開始しています。`dsl check`と`dsl help`が最初の実装済みsurfaceで、PERT分析とmutationはまだ未実装です。正本は次の文書です。
+現在はNode.js 24以上のTypeScript CLIとして実装中です。`dsl check`、`dsl help`、`dag analyze`が実装済みで、`dag next`、formatter、mutation、Mermaid変換はまだ未実装です。正本は次の文書です。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -40,4 +40,8 @@ npm run build
 node dist/cli.js --help
 node dist/cli.js dsl check docs/examples/parallel.pert
 node dist/cli.js dsl help syntax estimate --level detail --format json
+node dist/cli.js dag analyze docs/examples/parallel.pert
+node dist/cli.js dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3 --capacity TEST_ENV=2 --format json
 ```
+
+`dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。

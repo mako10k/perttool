@@ -111,8 +111,146 @@ test("dsl help exposes the estimate topic as JSON", () => {
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
 
+test("dag analyze defaults to separate precedence and resource JSON results", () => {
+  const result = run([
+    "dag",
+    "analyze",
+    "docs/examples/parallel.pert",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, "");
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.schema_version, "Perttool.AnalysisResult.v1");
+  assert.equal(json.mode, "both");
+  assert.equal(json.precedence.makespan.numerator, "6");
+  assert.equal(json.resource.makespan.numerator, "8");
+  assert.equal(json.resource.algorithm.optimal, false);
+  assert.deepEqual(json.resource.resource_arcs.map(({ id }) => id), [
+    "resource:CLI:DOCS",
+    "resource:TEST:PACKAGE",
+  ]);
+});
+
+test("dag analyze text keeps precedence and heuristic resource sections distinct", () => {
+  const result = run([
+    "dag",
+    "analyze",
+    "docs/examples/parallel.pert",
+    "--color=never",
+  ]);
+  assert.equal(result.status, 0);
+  assert.equal(result.stderr, "");
+  for (const section of [
+    "QUALIFIERS",
+    "PRECEDENCE",
+    "PRECEDENCE CRITICAL",
+    "RESOURCE SCHEDULE",
+    "RESOURCE CRITICAL",
+    "RESOURCE UTILIZATION",
+  ]) {
+    assert.match(result.stdout, new RegExp(`^${section}$`, "m"));
+  }
+  assert.match(result.stdout, /^ALGORITHM parallel-sgs@1 optimal=false$/m);
+});
+
+test("dag analyze warnings-as-errors suppresses the text success result", () => {
+  const result = run([
+    "dag",
+    "analyze",
+    "docs/examples/advance-partial-before.pert",
+    "--warnings-as-errors",
+    "--color=never",
+  ]);
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, "");
+  assert.match(result.stderr, /PTDAG-208 warning:/);
+});
+
+test("dag analyze preserves exact PERT values in precedence mode", () => {
+  const result = run([
+    "dag",
+    "analyze",
+    "docs/examples/pert-estimate.pert",
+    "--schedule=precedence",
+    "--precision=2",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  const json = JSON.parse(result.stdout);
+  const design = json.precedence.edges.find(({ id }) => id === "DESIGN");
+  assert.deepEqual(
+    [design.expected.numerator, design.expected.denominator, design.expected.display],
+    ["13", "6", "2.17"],
+  );
+  assert.equal(json.resource, null);
+});
+
+test("capacity overrides change resource schedule without changing precedence", () => {
+  const result = run([
+    "dag",
+    "analyze",
+    "docs/examples/parallel.pert",
+    "--capacity",
+    "DEVELOPERS=3",
+    "--capacity=TEST_ENV=2",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.precedence.makespan.display, "6");
+  assert.equal(json.resource.makespan.display, "6");
+  assert.deepEqual(json.resource.resource_arcs, []);
+});
+
+test("invalid capacity override is a usage or analysis error at the correct boundary", () => {
+  const duplicate = run([
+    "dag",
+    "analyze",
+    "docs/examples/parallel.pert",
+    "--capacity=DEVELOPERS=2",
+    "--capacity=DEVELOPERS=3",
+    "--format=json",
+  ]);
+  assert.equal(duplicate.status, 2);
+  assert.equal(JSON.parse(duplicate.stdout).diagnostics[0].code, "PTCLI-001");
+
+  const unknown = run([
+    "dag",
+    "analyze",
+    "docs/examples/parallel.pert",
+    "--capacity=UNKNOWN=1",
+    "--format=json",
+  ]);
+  assert.equal(unknown.status, 1);
+  assert.equal(JSON.parse(unknown.stdout).diagnostics[0].code, "PTSEM-206");
+});
+
+test("analysis help documents exact arithmetic and capacity what-if", () => {
+  const analysis = run([
+    "dsl",
+    "help",
+    "analysis",
+    "--level=detail",
+    "--format=json",
+  ]);
+  assert.equal(analysis.status, 0);
+  assert.ok(JSON.parse(analysis.stdout).sections.some(({ id }) => id === "exact"));
+
+  const resources = run([
+    "dsl",
+    "help",
+    "analysis",
+    "resources",
+    "--level=detail",
+    "--format=json",
+  ]);
+  assert.equal(resources.status, 0);
+  assert.ok(JSON.parse(resources.stdout).sections.some(({ id }) => id === "witness"));
+});
+
 test("unknown command is a usage error", () => {
-  const result = run(["dag", "analyze", "docs/examples/minimal.pert", "--format=json"]);
+  const result = run(["dag", "next", "docs/examples/minimal.pert", "--format=json"]);
   assert.equal(result.status, 2);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.CliError.v1");
