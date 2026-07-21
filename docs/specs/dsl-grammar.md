@@ -636,10 +636,10 @@ parseまたはfield validationにerrorがある文書から、解析可能なGra
 | `PTSEM-106` | empty text | 対応する `syntax.*` |
 | `PTSEM-107` | duplicate tag | `syntax.tags` |
 | `PTSEM-108` | unsupported grammar version | `syntax.project` |
-| `PTSEM-109` | resource capacity/requirement量不正 | `syntax.resource` |
+| `PTSEM-109` | resource capacity/requirement量の正数・範囲constraint不正 | `syntax.resource` |
 | `PTSEM-110` | duplicate resource requirement | `syntax.task` |
 
-Graph diagnostic code は `docs/specs/graph-semantics.md` で固定する。
+Graph diagnostic codeは[Graph Semantics仕様](graph-semantics.md)で固定する。
 
 ## 15. source span
 

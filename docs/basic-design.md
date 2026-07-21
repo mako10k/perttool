@@ -1,8 +1,9 @@
 # perttool 基本設計
 
-- 文書状態: Draft 0.2
+- 文書状態: Draft 0.3
 - 作成日: 2026-07-21
 - 対応要件: [requirements.md](requirements.md)
+- Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
 
 ## 1. 目的
@@ -511,7 +512,7 @@ advance は通常 mutation より強い graph rewrite なので、専用 planner
 6. candidate 文書を再 parse・再分析する
 7. next result が advance 前後で意味的に矛盾しないことを確認する
 
-advance の完全な削除条件は `docs/specs/graph-semantics.md` で形式化する。形式仕様が完成するまでは write action を公開しない。
+advanceの完全な削除条件は[Graph Semantics仕様](specs/graph-semantics.md)を正とする。要約すると、targetがeffective reachedのedgeを過去として除去し、targetが未到達のedgeをunfinished workまたは部分合流条件として保持する。write actionはsafe-writeとadvanceの自己利用gateを満たすまで公開しない。
 
 ### 9.6 Mermaid export/import
 
@@ -603,7 +604,7 @@ Rules:
 - 同時刻の完了処理と開始処理は、先に完了・解放、次に開始とする
 - requirementが確保できない上位taskがあっても、後続taskがcapacity内なら開始できる
 - expected durationを使用する
-- blocked taskは即時解消を仮定したconditional scheduleとして別途flagする
+- blocked taskは時刻0にresourceを占有せず、即時解消を仮定したconditional scheduleとして別途flagする
 - done taskとgateはresourceを消費しない
 - resultにheuristic名とversionを含める
 
@@ -971,19 +972,18 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)で初期決定した。次は本書で方向だけを定め、個別仕様またはADRで確定する。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)で初期決定した。次は本書で方向だけを定め、個別仕様またはADRで確定する。
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細
-3. advance の最小 frontier cut
-4. multiple critical path の path count 表示
-5. renewable resource scheduleとresource arcの厳密定義
-6. exact solverを追加する場合のadapter境界
-7. Mermaid metadata record schema
-8. JSON Schema の具体的 field
-9. CLI option の完全一覧
-10. MCP write action の有無
-11. package/runtime/test dependency の選定
+3. multiple critical path の path count 表示
+4. renewable resource scheduleとresource arcの厳密定義
+5. exact solverを追加する場合のadapter境界
+6. Mermaid metadata record schema
+7. JSON Schema の具体的 field
+8. CLI option の完全一覧
+9. MCP write action の有無
+10. package/runtime/test dependency の選定
 
 ## 19. 要件トレーサビリティ
 

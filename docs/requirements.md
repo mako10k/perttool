@@ -1,6 +1,6 @@
 # perttool 要件定義
 
-- 文書状態: Draft 0.3
+- 文書状態: Draft 0.4
 - 作成日: 2026-07-21
 - 対象: MVP と、その後の拡張境界
 - 想定ファイル拡張子: `.pert`（暫定）
@@ -364,6 +364,8 @@ Must:
 
 ## 9. 状態と現在境界の意味論
 
+本章の形式定義、diagnostic、canonical advance規則は[Graph Semantics仕様](specs/graph-semantics.md)を正とする。
+
 ### 9.1 milestone 到達判定
 
 解析器は、次の規則を DAG のトポロジカル順に適用して milestone の実効状態を導出する。
@@ -386,6 +388,8 @@ Must:
 | `done` | 作業条件を満たした | 0 |
 
 `ready` は保存状態ではなく、依存関係と保存状態から導出する。
+
+Task statusは排他的であり、snapshot時刻0にresourceを占有するのは`active`だけとする。`blocked`は実行しておらずresourceを占有しない。停止中もresourceを保持する作業や`active`と`blocked`の同時表現はgrammar version 1の対象外とする。
 
 ### 9.3 advance
 
@@ -928,18 +932,17 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 1. Node.js 対応バージョン、package 配布形態、依存 package。実装言語は [基本設計](basic-design.md) で TypeScript に決定済み
 2. duration/varianceとresource scheduleの完全なanalysis契約
 3. capacity 2以上でのresource arcとschedule critical pathの定義
-4. `advance` の正規化アルゴリズムと残す frontier の最小形
-5. Mermaid profile の `%% perttool:` メタデータ schema
-6. analysis/next/diagnostic JSON Schema
-7. help registry の内部表現
-8. MCP の書き込み機能を MVP に含めるか、preview のみに限定するか
+4. Mermaid profile の `%% perttool:` メタデータ schema
+5. analysis/next/diagnostic JSON Schema
+6. help registry の内部表現
+7. MCP の書き込み機能を MVP に含めるか、preview のみに限定するか
 
 ## 25. 推奨する次の仕様作業
 
 実装へ入る前に、次の順で仕様を分離する。
 
 1. [x] `docs/specs/dsl-grammar.md`: 完全 EBNF、resource構文、正規サンプル
-2. [ ] `docs/specs/graph-semantics.md`: reached、ready、done、gate、advance、resourceの形式定義
+2. [x] [Graph Semantics仕様](specs/graph-semantics.md): reached、ready、done、gate、advance、resourceの形式定義
 3. [ ] `docs/specs/analysis.md`: PERT/CPM、resource schedule、resource arc、tie-break
 4. [ ] `docs/specs/interfaces.md`: CLI、JSON Schema、MCP action
 5. [ ] `docs/adr/0001-activity-on-arrow.md`: task=edge の設計判断

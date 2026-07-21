@@ -1,0 +1,37 @@
+project ADVANCE_PARTIAL:
+  version 1
+  title "部分合流のadvance前"
+  duration_unit day
+  finish RELEASED
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone A_DONE:
+  title "A側の前作業完了"
+
+milestone JOINED:
+  title "A/B合流"
+
+milestone RELEASED:
+  title "リリース"
+
+task BRANCH_A NOW -> A_DONE:
+  title "A側の前作業"
+  duration 1d
+  status done
+
+task A_JOIN_WORK A_DONE -> JOINED:
+  title "A側の合流作業"
+  duration 1d
+  status done
+
+task BRANCH_B NOW -> JOINED:
+  title "B側の作業"
+  duration 3d
+  status active
+
+task RELEASE JOINED -> RELEASED:
+  title "リリースする"
+  duration 1d
