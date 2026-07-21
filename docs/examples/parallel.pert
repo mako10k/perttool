@@ -1,0 +1,91 @@
+project PARALLEL:
+  version 1
+  title "共有resourceを含む並行計画"
+  description |
+    dependency上は同時実行可能でも、resource capacityによって
+    実際の開始順とschedule critical pathが変わる例。
+  as_of 2026-07-21
+  duration_unit day
+  finish RELEASED
+
+resource DEVELOPERS:
+  title "開発担当枠"
+  capacity 2
+
+resource TEST_ENV:
+  title "共有試験環境"
+  description "同時に1taskだけが使用できる"
+  capacity 1
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone CORE_DONE:
+  title "コア実装完了"
+
+milestone CLI_DONE:
+  title "CLI実装完了"
+
+milestone DOCS_DONE:
+  title "文書作成完了"
+
+milestone INTEGRATION_READY:
+  title "統合可能"
+
+milestone TEST_DONE:
+  title "試験完了"
+
+milestone PACKAGE_DONE:
+  title "パッケージ完了"
+
+milestone RELEASED:
+  title "リリース"
+
+task CORE NOW -> CORE_DONE:
+  title "コアを実装する"
+  duration 4d
+  priority 20
+  requires:
+    DEVELOPERS 1
+
+task CLI NOW -> CLI_DONE:
+  title "CLIを実装する"
+  duration 3d
+  priority 10
+  requires:
+    DEVELOPERS 1
+
+task DOCS NOW -> DOCS_DONE:
+  title "利用文書を書く"
+  duration 2d
+  requires:
+    DEVELOPERS 1
+
+gate CORE_READY CORE_DONE -> INTEGRATION_READY:
+  reason "統合にはコアが必要"
+
+gate CLI_READY CLI_DONE -> INTEGRATION_READY:
+  reason "統合にはCLIが必要"
+
+gate DOCS_READY DOCS_DONE -> INTEGRATION_READY:
+  reason "リリースには文書が必要"
+
+task TEST INTEGRATION_READY -> TEST_DONE:
+  title "共有環境で試験する"
+  duration 2d
+  priority 10
+  requires:
+    TEST_ENV 1
+
+task PACKAGE INTEGRATION_READY -> PACKAGE_DONE:
+  title "共有環境でパッケージを作る"
+  duration 1d
+  requires:
+    TEST_ENV 1
+
+gate TEST_RELEASE_GATE TEST_DONE -> RELEASED:
+  reason "試験完了が必要"
+
+gate PACKAGE_RELEASE_GATE PACKAGE_DONE -> RELEASED:
+  reason "パッケージ完了が必要"

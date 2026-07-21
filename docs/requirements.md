@@ -1,6 +1,6 @@
 # perttool 要件定義
 
-- 文書状態: Draft 0.2
+- 文書状態: Draft 0.3
 - 作成日: 2026-07-21
 - 対象: MVP と、その後の拡張境界
 - 想定ファイル拡張子: `.pert`（暫定）
@@ -13,6 +13,7 @@
 
 - DAG としての構造検査
 - PERT/CPM に基づく日程分析
+- 共有resource容量を考慮した実行可能日程の生成
 - クリティカルなタスクと余裕時間の抽出
 - 現時点で着手可能な「次のタスク」の抽出
 - Mermaid などの可視化形式への変換
@@ -77,7 +78,8 @@ Must:
 MVP では次を目的としない。
 
 - 汎用プロジェクト管理 SaaS の置き換え
-- リソース競合を考慮した自動レベリング
+- MVPで資源制約付き日程の厳密な全探索最適解を保証すること
+- shift、休日、skill、setup timeを含む汎用resource calendar
 - 勤怠、工数請求、原価、予算の管理
 - チャット、通知、承認ワークフロー
 - Git 履歴を使わず、全過去状態を単一 `.pert` 文書へ保存すること
@@ -91,6 +93,7 @@ MVP では次を目的としない。
 
 - マイルストーンとタスクをテキストで追加する
 - 三点見積りを記述する
+- 排他設備や担当枠をresourceとして宣言する
 - 構文、参照、循環、到達不能部分を検査する
 - Mermaid 図を生成し、レビューする
 
@@ -98,6 +101,7 @@ MVP では次を目的としない。
 
 - 現在着手中のタスクを確認する
 - 現時点で着手可能なタスクを確認する
+- 現在のresource空き状況で同時に開始できるtask集合を確認する
 - ブロック理由とクリティカル度を確認する
 - タスクの状態、見積り、担当、接続先を変更する
 - 完了後に現在境界を前進させる
@@ -106,6 +110,7 @@ MVP では次を目的としない。
 
 - Git diff から計画変更を確認する
 - 変更後のクリティカルパス、完了見込み、余裕時間を再計算する
+- resource capacityを変えたときの並列実行数と完了見込みを比較する
 - Mermaid 図と機械可読 JSON の両方を利用する
 
 ### 5.4 AI エージェント
@@ -123,10 +128,12 @@ MVP では次を目的としない。
 | Milestone | タスクの開始または終了を表す DAG ノード |
 | Task | 作業を表す、正の所要時間を持つ DAG エッジ |
 | Gate | 依存だけを表す、所要時間 0 の非タスクエッジ |
+| Resource | task実行中に容量を占有し、完了時に返却される共有資源 |
 | Frontier | 現在到達済みで、未来計画の入口となる milestone 集合 |
 | Reached | milestone の条件が満たされ、そこから先へ進める状態 |
 | Ready | 依存が満たされ、ブロックされておらず、未着手の task から導出される状態 |
 | Critical | total float が許容誤差以下の task または gate |
+| Schedule Critical | resource待ちを含む実行可能schedule上で完了時刻を拘束するtask列 |
 | Snapshot | 特定時点の現在・未来を表す `.pert` 文書 |
 | Advance | 完了条件を反映して frontier を進め、不要な過去部分を除去する操作 |
 
@@ -148,7 +155,28 @@ Optional fields:
 - `critical_epsilon`: 浮動小数点計算で critical とみなす許容誤差
 - `target_duration`: 現在境界から finish までの目標所要時間
 
-### 7.2 Milestone
+### 7.2 Resource
+
+Resource は task 実行中に占有され、完了時に返却される renewable resource とする。
+
+Must fields:
+
+- `id`: 文書内で一意な安定識別子
+- `title`: 人間向け名称
+- `capacity`: 同時使用可能な正の整数。`1` は排他実行を表す
+
+Optional fields:
+
+- `description`: 複数行説明
+- `tags`: 検索、表示用の文字列集合
+
+Constraints:
+
+- capacity は1以上2147483647以下とする
+- consumable resource、shift、calendar、途中でのcapacity変化はMVP対象外とする
+- resourceを使用するtaskは実行区間全体で宣言量を保持する
+
+### 7.3 Milestone
 
 Must fields:
 
@@ -168,7 +196,7 @@ Constraints:
 - `reached` milestone に未完了の入 edge がある場合は状態矛盾として検出する
 - 明示的な `reached` milestone より前にある、現在判定に不要な部分は残さないことを推奨する
 
-### 7.3 Task
+### 7.4 Task
 
 Must fields:
 
@@ -183,6 +211,8 @@ Optional fields:
 
 - `description`: 完了条件を含む複数行説明
 - `owner`: 担当者または担当グループ
+- `priority`: resource競合時の明示優先度。省略時は0
+- `requires`: resource IDと必要量の組。省略時はresource占有なし
 - `tags`: 文字列集合
 - `blocked_reason`: `blocked` の理由
 - `source`: チケットや設計文書などの参照先
@@ -194,13 +224,17 @@ Constraints:
 - `estimate` は `optimistic <= most_likely <= pessimistic` を満たさなければならない
 - `duration` と `estimate` を同時に指定してはならない
 - `blocked` task には `blocked_reason` が必要である
+- priorityは0以上2147483647以下とする
+- requiresの必要量は1以上かつ参照resourceのcapacity以下でなければならない
+- taskは要求した全resourceを同時に確保できた場合だけ開始できる
+- 同一task内で同じresourceを重複指定してはならない
 - `active` または `done` task の始点 milestone は実効 reached でなければならない
 - `done` task は現在の合流判定に必要な間だけ残すことを推奨する
 - task ID は名称や接続先を変更しても維持できること
 
 進行中 task の `duration` または `estimate` は、現行スナップショット時点の残所要時間を表す。過去の見積りは Git 履歴で確認する。
 
-### 7.4 Gate
+### 7.5 Gate
 
 Gate は AoA で依存だけを表すためのダミーエッジであり、task ではない。
 
@@ -209,9 +243,6 @@ Must fields:
 - `id`: 文書内で一意な安定識別子
 - `from`: 始点 milestone ID
 - `to`: 終点 milestone ID
-
-Optional fields:
-
 - `reason`: なぜこの依存が必要か
 
 Constraints:
@@ -236,6 +267,7 @@ Must:
 - 独立行コメントを記述でき、通常の編集操作で保持されること
 - 宣言順は意味に影響しないこと
 - 1 task の定義が 1 か所にまとまり、接続先、見積り、状態を局所編集できること
+- resource capacityとtask requirementを安定IDで局所編集できること
 
 Should:
 
@@ -246,18 +278,27 @@ Should:
 
 MVP の duration literal は `2d`、`4h` のように単位 suffix を必須とする。少なくとも `day`/`d` と `hour`/`h` を認識するが、calendar 変換規則がない文書での単位混在はエラーとする。
 
-### 8.2 暫定構文
+### 8.2 文法仕様と代表構文
 
-次は grammar 文書を作成するための基準となる暫定形である。
+完全EBNF、字句規則、field、既定値、error recovery、formatter契約は[DSL文法仕様](specs/dsl-grammar.md)を正とする。次は代表構文である。
 
 ```pert
 project PERTTOOL_MVP:
+  version 1
   title "perttool MVP"
   description |
     文書ベースの PERT タスク管理ツールを作る。
   as_of 2026-07-21
   duration_unit day
   finish RELEASED
+
+resource DEVELOPERS:
+  title "開発担当"
+  capacity 2
+
+resource RELEASE_ENV:
+  title "リリース環境"
+  capacity 1
 
 milestone NOW:
   title "現在"
@@ -288,6 +329,8 @@ task CORE REQUIREMENTS_DONE -> CORE_DONE:
   title "PERT/CPM 解析コアを実装する"
   duration 5d
   status planned
+  requires:
+    DEVELOPERS 1
 
 task CONVERT REQUIREMENTS_DONE -> CONVERTERS_DONE:
   title "Mermaid 相互変換を実装する"
@@ -296,33 +339,26 @@ task CONVERT REQUIREMENTS_DONE -> CONVERTERS_DONE:
     most_likely 3d
     pessimistic 6d
   status planned
+  requires:
+    DEVELOPERS 1
 
 task INTEGRATE CORE_DONE -> RELEASED:
   title "CLI と解析コアを統合する"
   duration 2d
   status planned
+  requires:
+    DEVELOPERS 1
+    RELEASE_ENV 1
 
 gate CONVERTER_RELEASE_GATE CONVERTERS_DONE -> RELEASED:
   reason "リリースには相互変換も必要"
 ```
 
-### 8.3 暫定 EBNF の範囲
-
-詳細 grammar は別文書で固定するが、MVP parser は少なくとも次を扱う。
-
-```ebnf
-Document       = ProjectDecl, { MilestoneDecl | TaskDecl | GateDecl | Comment } ;
-ProjectDecl    = "project", Identifier, ":", Block ;
-MilestoneDecl  = "milestone", Identifier, ":", Block ;
-TaskDecl       = "task", Identifier, Identifier, "->", Identifier, ":", Block ;
-GateDecl       = "gate", Identifier, Identifier, "->", Identifier, ":", Block ;
-EstimateDecl   = "estimate", ":", EstimateBlock ;
-EstimateBlock  = Optimistic, MostLikely, Pessimistic ;
-Comment        = Indent, "#", Text, Newline ;
-```
+### 8.3 文法契約
 
 Must:
 
+- `project`、`resource`、`milestone`、`task`、`gate`、`estimate`、`requires`を文法仕様どおり扱うこと
 - grammar、parser、formatter、syntax help の差分が自動テストで検出されること
 - 文法の破壊的変更はバージョンと移行手順を伴うこと
 
@@ -446,6 +482,51 @@ Must:
 - path 全列挙と描画レイアウトを除く構造検査と基本分析は `O(V + E)` を目標とすること
 - wall clock、乱数、ネットワーク応答に依存して分析結果を変えないこと
 
+### 10.6 Resource-constrained schedule
+
+通常のCPMは依存関係だけを扱い、resource競合を無視した理論上の下限を返す。resourceを宣言した文書では、これと区別して実行可能scheduleも生成する。
+
+Must:
+
+- `precedence schedule` と `resource schedule` を別resultとして返すこと
+- DAG edgeはhard precedence、task priorityはsoft preferenceとして区別すること
+- dependencyで接続されていないtaskの順序は固定せず、resource capacityとpriority ruleから実行時に選ぶこと
+- precedence scheduleのmakespanをresource制約なしの下限として返すこと
+- taskはnon-preemptiveとし、開始から完了まで全required resourceを保持すること
+- resource scheduleでは任意時刻の使用量合計がcapacityを超えないこと
+- PERT taskのresource scheduleにはexpected durationを使用すること
+- `active` taskは時刻0から残durationの間resourceを占有すること
+- 同時に存在するactive taskのresource使用量がcapacityを超える場合はerrorにすること
+- `done` taskとgateはresourceを占有しないこと
+- blocked taskの外部待ち時間を推測せず、scheduleがblock即時解消を仮定した条件付き結果であると示すこと
+- 同じ入力、capacity、scheduler versionから同じscheduleを生成すること
+- MVPでは決定的なheuristic scheduleを生成し、最適解と表示しないこと
+- resource待ち時間、resource別使用率、resource makespan、precedence lower boundとの差を返すこと
+- 選択したschedule上のresource待ちを仮想的なresource依存として表現し、`schedule critical path`を返すこと
+- 仮想resource依存を正本DSLのhard dependencyへ自動保存しないこと
+- precedence critical pathとschedule critical pathを混同しないこと
+- capacity変更によりschedule critical pathが変化し得ることを出力契約で表現すること
+
+初期heuristicの優先規則:
+
+1. task `priority` の大きい順
+2. precedence total float の小さい順
+3. expected duration の大きい順
+4. task ID の辞書順
+
+同一時刻にeligibleなtaskをこの順で走査し、必要resourceを確保できるtaskを可能な限り開始する。確保できないtaskがあっても、後続candidateが空きcapacity内で実行可能なら開始を許可する。
+
+Should:
+
+- CLI optionによりresource capacityを一時上書きし、文書を書き換えずwhat-if分析できること
+- capacityごとのmakespanとschedule critical pathの差を比較できること
+- heuristic名とversionをresultへ含めること
+
+Could:
+
+- bounded problemに対しCP-SAT/MILP等のexact/near-optimal solverを選択できること
+- lower bound、best found、optimality gap、timeoutを報告できること
+
 ## 11. 「次のタスク」判定
 
 `perttool dag next` は、少なくとも次の分類を返す。
@@ -455,16 +536,20 @@ Must:
 3. `blocked_now`: 始点 milestone は実効 reached だが、状態が `blocked`
 4. `upcoming`: まだ ready ではない未完了 task
 
+resourceを使用する文書では、`ready`から現在のactive taskによる占有を差し引き、同時に開始可能な部分集合を`runnable_now`として返す。
+
 Must:
 
 - ready 判定を保存済みラベルではなく DAG と状態から導出すること
 - `done` task を次タスク候補へ含めないこと
-- ready task ごとに、critical 判定、total float、期待所要時間、owner、block 情報を返すこと
+- ready task ごとに、precedence/schedule critical判定、priority、total float、期待所要時間、owner、block、resource要求を返すこと
+- runnable_nowに含まれないready taskについて、不足resourceと現在の占有taskを説明すること
 - ready task の既定順序を次の優先順位にすること
-  1. critical
-  2. total float の小さい順
-  3. earliest start の小さい順
-  4. task ID の辞書順
+  1. priority の大きい順
+  2. precedence critical
+  3. total float の小さい順
+  4. earliest start の小さい順
+  5. task ID の辞書順
 - upcoming task について、未達の直接 milestone と未完了の上流 task を説明できること
 - 人間向け text と機械可読 JSON で同じ意味を返すこと
 
@@ -474,7 +559,7 @@ Should:
 - 「なぜ ready でないか」を task ごとに説明すること
 - `advance` 可能な milestone がある場合、次タスクより先にその事実を案内すること
 
-MVP の next 判定は依存関係と明示 block のみを扱う。担当者の同時作業数や設備競合は考慮しない。
+MVP の next 判定は依存関係、明示block、宣言されたrenewable resource capacityを扱う。`owner`だけからcapacityや同時作業数を推測しない。
 
 ## 12. タスクと DAG の編集要件
 
@@ -486,6 +571,7 @@ Must:
 - task の `from` または `to` の変更だけで接続を変更できること
 - task ID を変えずに title、見積り、状態、担当を変更できること
 - task ブロックの削除により edge を削除できること
+- resource blockとtask requiresを局所的に追加・変更・削除できること
 - 編集後の不正参照、循環、到達不能を診断できること
 
 ### 12.2 CLI による構造編集
@@ -499,6 +585,7 @@ perttool task set <file> <task-id> --from <id> --to <id>
 perttool task remove <file> <task-id>
 perttool task finish <file> <task-id>
 perttool milestone add|set|remove ...
+perttool resource add|set|remove ...
 perttool dag advance <file>
 ```
 
@@ -527,10 +614,13 @@ Must:
 - critical task、active task、blocked task、done task、gate を視覚的に区別できること
 - 同じ意味モデルから Mermaid と他の出力形式を生成すること
 - 描画都合の座標を DSL の意味モデルへ要求しないこと
+- resource共有関係をdependency edgeと誤認しない別表現で可視化できること
+- resource viewでcapacity、task requirement、選択scheduleの占有区間を確認できること
 
 Should:
 
 - 大規模 DAG では critical、ready、owner、tag による部分グラフ表示ができること
+- resource IDによるtask強調と、capacity別what-if結果の比較ができること
 - SVG または HTML preview から source span へ移動できること
 - レイアウトエンジンを意味解析コアから分離すること
 
@@ -543,6 +633,7 @@ Must:
 - `flowchart LR` を基本とした Mermaid を生成できること
 - milestone ID を Mermaid node ID として安定利用すること
 - task と gate の ID、title、状態、計算結果を表現できること
+- resource capacity、task requirement、priorityを予約metadataへ保持できること
 - Mermaid のラベルに使用できない文字を正しく escape すること
 - 同じ入力とオプションから安定した出力を生成すること
 
@@ -564,7 +655,7 @@ Must:
 - `perttool` が export した profile は DSL へ lossless に戻せること
 - lossless round-trip に必要な情報を予約コメント `%% perttool:` 配下の機械可読メタデータとして保持できること
 - 一般的な `flowchart` の node と directed edge を best-effort で import できること
-- 復元できない見積り、状態、task/gate 区別などを loss report に列挙すること
+- 復元できない見積り、状態、task/gate区別、resource requirementなどをloss reportに列挙すること
 - 不明な情報を推測して無言で補完しないこと
 - 自動採番した ID と元要素の対応を報告すること
 
@@ -592,6 +683,7 @@ perttool dag advance <file>
 
 perttool task add|set|remove|finish ...
 perttool milestone add|set|remove ...
+perttool resource add|set|remove ...
 ```
 
 Must:
@@ -678,6 +770,7 @@ Must:
 - `dag`: `action=analyze|next|render|import|advance`
 - `task`: `action=add|set|remove|finish`
 - `milestone`: `action=add|set|remove`
+- `resource`: `action=add|set|remove`
 
 Must:
 
@@ -776,6 +869,7 @@ Must:
 - parser、validator、analyzer、formatter、converter を UI なしでテストできること
 - 正常例と失敗例を manifest と golden output で固定すること
 - cycle、diamond、複数 critical path、ゼロ時間 gate、blocked、done 合流、advance を個別にテストすること
+- 排他resource、capacity 2以上、複数resource同時要求、active oversubscription、capacity変更によるschedule差を個別にテストすること
 - CLI と MCP が同じ入力へ意味的に同じ結果を返すことを検証すること
 - Mermaid round-trip の lossless profile を回帰テストすること
 
@@ -784,18 +878,19 @@ Must:
 MVP 完了には、少なくとも以下をすべて満たすことを要求する。
 
 1. サンプル `.pert` を parse し、AST と source span を生成できる
-2. task が edge、milestone が node、gate がゼロ時間 edge として graph 化される
+2. task が edge、milestone が node、gate がゼロ時間 edge、resourceが容量制約としてgraph化される
 3. 重複 ID、未定義参照、cycle、finish 到達不能、見積り不正を検出できる
 4. forward/backward pass、expected、variance、total/free float、critical subgraph を計算できる
-5. active、ready、blocked_now、upcoming を決定的に分類できる
-6. text と JSON で分析結果と next 結果を出せる
-7. task の add/set/remove/finish をプレビューし、安全に書き込める
-8. advance が合流判定に必要な done task を保持し、不要になった過去部分だけを除去できる
-9. Mermaid profile へ export し、生成 Mermaid を意味損失なく import できる
-10. DSL help が topic/index/quick/detail と JSON で取得できる
-11. parse error から該当 help topic へ辿れる
-12. CLI と MCP が共通 parser/analyzer を利用する
-13. 主要な正常例、失敗例、round-trip が自動テストで固定される
+5. renewable resource capacityを守る決定的なheuristic scheduleとschedule critical pathを生成できる
+6. active、ready、runnable_now、blocked_now、upcoming を決定的に分類できる
+7. text と JSON で分析結果と next 結果を出せる
+8. task、milestone、resourceの構造編集をプレビューし、安全に書き込める
+9. advance が合流判定に必要な done task を保持し、不要になった過去部分だけを除去できる
+10. Mermaid profile へ export し、生成 Mermaid を意味損失なく import できる
+11. DSL help が topic/index/quick/detail と JSON で取得できる
+12. parse error から該当 help topic へ辿れる
+13. CLI と MCP が共通 parser/analyzer を利用する
+14. 主要な正常例、失敗例、round-trip が自動テストで固定される
 
 ## 22. 初期要求との対応
 
@@ -803,19 +898,21 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 | --- | --- |
 | 1. DAG 生成記法の定義 | 2、6、7、8 |
 | 2. PERT 分析を機械的に行う | 10 |
-| 3. task edge を容易に変更する | 7.3、8、12 |
+| 3. task edge を容易に変更する | 7.4、8、12 |
 | 4. DAG 記法を可視化しやすくする | 2.1、8、13 |
 | 5. Mermaid などと相互変換する | 14 |
 | 6. 文書ベースで再計算する | 2.2、18、19 |
 | 7. 次のタスクを分かりやすくする | 11 |
 | 8. 現在・未来を表し、過去は Git で補足する | 2.3、9、19 |
 | 9. 既存 DSL ツールのヘルプ・AI 導線を踏襲する | 15、16、17、19.1 |
+| 10. resource共有、排他実行、並列数で変化する日程を扱う | 7.2、7.4、10.6、11 |
 
 ## 23. MVP 後へ保留する事項
 
 - 営業日、休日、勤務時間を持つ calendar
 - task ごとの calendar と timezone
-- resource leveling と担当者 capacity
+- shift、skill、担当者calendarを含む高度なresource modeling
+- resource-constrained scheduleの厳密最適化
 - 複数プロジェクト文書の include/import
 - 実績時間と予測精度の統計分析
 - Git revision 間の計画差分分析
@@ -829,8 +926,8 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 実装開始前に、次を ADR または個別仕様で固定する。
 
 1. Node.js 対応バージョン、package 配布形態、依存 package。実装言語は [基本設計](basic-design.md) で TypeScript に決定済み
-2. `.pert` の完全 EBNF、文字列 escape、コメント保持規則
-3. duration の内部表現と単位変換規則
+2. duration/varianceとresource scheduleの完全なanalysis契約
+3. capacity 2以上でのresource arcとschedule critical pathの定義
 4. `advance` の正規化アルゴリズムと残す frontier の最小形
 5. Mermaid profile の `%% perttool:` メタデータ schema
 6. analysis/next/diagnostic JSON Schema
@@ -841,9 +938,9 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 実装へ入る前に、次の順で仕様を分離する。
 
-1. `docs/specs/dsl-grammar.md`: 完全 EBNF と正規サンプル
-2. `docs/specs/graph-semantics.md`: reached、ready、done、gate、advance の形式定義
-3. `docs/specs/analysis.md`: PERT/CPM の数式、丸め、tie-break、複数経路
-4. `docs/specs/interfaces.md`: CLI、JSON Schema、MCP action
-5. `docs/adr/0001-activity-on-arrow.md`: task=edge の設計判断
-6. parser/validator の最小実装と golden tests
+1. [x] `docs/specs/dsl-grammar.md`: 完全 EBNF、resource構文、正規サンプル
+2. [ ] `docs/specs/graph-semantics.md`: reached、ready、done、gate、advance、resourceの形式定義
+3. [ ] `docs/specs/analysis.md`: PERT/CPM、resource schedule、resource arc、tie-break
+4. [ ] `docs/specs/interfaces.md`: CLI、JSON Schema、MCP action
+5. [ ] `docs/adr/0001-activity-on-arrow.md`: task=edge の設計判断
+6. [ ] parser/validator の最小実装と golden tests

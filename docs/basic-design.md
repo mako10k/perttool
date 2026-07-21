@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 0.1
+- 文書状態: Draft 0.2
 - 作成日: 2026-07-21
 - 対応要件: [requirements.md](requirements.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
@@ -42,7 +42,7 @@ Node.js と依存 package の具体的な対応バージョンは実装 scaffold
 - 浮動小数点値を計算上の正本にしない
 - Mermaid AST を内部の正規 graph model にしない
 - LLM の応答を解析結果として扱わない
-- 初期実装で resource leveling、calendar、外部 issue 同期を混在させない
+- 初期実装で厳密最適resource leveling、calendar、skill、外部issue同期を混在させない
 
 ## 3. システム構成
 
@@ -55,6 +55,7 @@ flowchart LR
   APP --> SEMANTIC[Semantic core<br/>resolver / validator]
   SEMANTIC --> GRAPH[Graph model]
   GRAPH --> ANALYZER[PERT / CPM analyzer]
+  GRAPH --> SCHEDULER[Resource scheduler]
   GRAPH --> NEXT[Next-task selector]
   GRAPH --> TRANSFORM[Mutation / advance planner]
   GRAPH --> CONVERTER[Mermaid / JSON converter]
@@ -107,6 +108,7 @@ perttool/
     model/
       syntax.ts
       graph.ts
+      resource.ts
       analysis.ts
       diagnostics.ts
       rational.ts
@@ -124,11 +126,13 @@ perttool/
       topological.ts
       schedule.ts
       critical.ts
+      resource-schedule.ts
       next.ts
     transform/
       text-edit.ts
       task-mutation.ts
       milestone-mutation.ts
+      resource-mutation.ts
       advance.ts
     converter/
       mermaid-export.ts
@@ -204,11 +208,13 @@ AST は DSL の構文上の意味を表す。
 初期 node:
 
 - `ProjectDecl`
+- `ResourceDecl`
 - `MilestoneDecl`
 - `TaskDecl`
 - `GateDecl`
 - `DurationLiteral`
 - `EstimateDecl`
+- `RequirementsDecl`
 - `TextField`
 - `ListField`
 
@@ -231,6 +237,7 @@ Graph model は参照解決済みの解析用表現である。
 ```ts
 interface PertGraph {
   project: ProjectModel;
+  resources: ReadonlyMap<ResourceId, ResourceModel>;
   milestones: ReadonlyMap<MilestoneId, MilestoneModel>;
   edges: ReadonlyMap<EdgeId, TaskEdge | GateEdge>;
   incoming: ReadonlyMap<MilestoneId, readonly EdgeId[]>;
@@ -243,6 +250,7 @@ Graph model の条件:
 
 - ID が一意である
 - endpoint が解決済みである
+- taskのresource requirementが解決済みでcapacity内である
 - self-loop がない
 - DAG である
 - adjacency の edge ID は決定的な順で並ぶ
@@ -284,6 +292,17 @@ MVP では 1 文書内の duration unit を統一する。
 - calendar 変換は行わない
 - variance の unit は duration unit の二乗として metadata に示す
 
+### 6.3 resource quantity
+
+resource capacity、task requirement量、priorityは安全な範囲の非負Integerとして扱う。
+
+- capacityは1以上
+- requirement量は1以上かつcapacity以下
+- priorityは0以上、既定値0
+- 最大値は2147483647
+- quantityはdurationのRationalと混在させない
+- active taskの同時requirement合計がcapacityを超える場合はanalysis error
+
 ## 7. 診断モデル
 
 すべての layer は共通の `Diagnostic` を返す。
@@ -306,6 +325,7 @@ code namespace:
 - `PTDSL-*`: lexical/parser/field syntax
 - `PTSEM-*`: reference、state、duration、graph constraint
 - `PTDAG-*`: cycle、reachability、schedule
+- `PTRES-*`: resource capacity、allocation、resource schedule
 - `PTMUT-*`: mutation、optimistic lock、unsafe removal
 - `PTCNV-*`: import/export/loss report
 - `PTCLI-*`: CLI usage
@@ -382,6 +402,9 @@ check
  -> float calculation
  -> critical subgraph
  -> representative critical path
+ -> resource-capacity validation
+ -> deterministic resource schedule
+ -> resource waits / schedule critical path
  -> blocked schedule qualification
  -> AnalysisResult
 ```
@@ -405,6 +428,8 @@ DAG なのでトポロジカル順または入次数 counter で決定的に処�
 
 blocked task の作業時間は通常どおり重みに含めるが、外部待ち時間は含めない。結果全体に `conditionalOnBlocksResolved=true` を立て、該当 task ID を返す。
 
+analysis resultは、resourceを無視した`precedence`と、capacityを守る`resource`を分離する。precedence makespanは理論下限、resource makespanは選択したheuristicによる実行可能値であり、最適値とは表示しない。
+
 ### 9.3 next
 
 `next` は `analyze` の結果を再利用する。
@@ -416,6 +441,10 @@ active:
 ready:
   status == planned
   and effectiveReached(from)
+
+runnable_now:
+  ready
+  and selected by current resource capacity after active allocation
 
 blocked_now:
   status == blocked
@@ -429,11 +458,14 @@ upcoming:
 ready sort key:
 
 ```text
-critical desc
+priority desc
+precedenceCritical desc
 totalFloat asc
 earliestStart asc
 taskId asc
 ```
+
+resourceを要求しないready taskはrunnable candidateになる。resourceを要求するtaskはactive taskの時刻0占有量を差し引き、resource scheduleと同じpriority ruleで可能な限り選択する。選ばれなかったready taskには不足resource、capacity、使用量、占有taskを付ける。
 
 upcoming の explanation は、直接の `from` milestone と、その milestone を未達にしている unsatisfied incoming edge を返す。最初から全祖先を展開せず、API option で explanation depth を制御する。
 
@@ -507,6 +539,8 @@ Mermaid text
 
 Mermaid adapter は analysis や validation を再実装しない。一般 Mermaid の best-effort import と、`perttool` profile の lossless import を別 mode として扱う。
 
+resource requirementはDAGのdependency edgeではないため、通常flowchartへresource nodeを直結してprecedenceと混同させない。resource共有はtask style/annotation、別のresource bipartite view、またはschedule timelineで表現する。
+
 ## 10. Graph algorithm
 
 ### 10.1 topological sort と cycle witness
@@ -544,6 +578,39 @@ Mermaid adapter は analysis や validation を再実装しない。一般 Merma
 - representative path は各分岐で edge ID の辞書順を tie-break とする
 - 全列挙 option には `maxPaths` を必須または既定上限付きにする
 
+### 10.6 resource schedule
+
+MVPはrenewable resourceに対するdeterministic parallel schedule generation schemeを使用する。
+
+```text
+t = 0
+active taskをrunningへ登録してresourceを確保
+
+while unfinished taskがある:
+  precedence上eligibleなtaskを集める
+  priority desc, totalFloat asc, expectedDuration desc, id ascでsort
+  sort順に、全resourceを確保できるtaskを可能な限り開始
+  開始できるtaskがなくなったら次のtask完了時刻へtを進める
+  完了taskのresourceを返却し、milestone到達を伝播
+```
+
+Rules:
+
+- DAG edgeはhard precedence、priorityはsoft preference、resource arcは選択scheduleの説明用派生情報とする
+- taskはnon-preemptive
+- taskは全required resourceを同時取得する
+- allocation区間は`[start, finish)`
+- 同時刻の完了処理と開始処理は、先に完了・解放、次に開始とする
+- requirementが確保できない上位taskがあっても、後続taskがcapacity内なら開始できる
+- expected durationを使用する
+- blocked taskは即時解消を仮定したconditional scheduleとして別途flagする
+- done taskとgateはresourceを消費しない
+- resultにheuristic名とversionを含める
+
+resource待ちを説明するため、task開始時に直前までcapacityを占有して開始を遅らせたtaskとの間に`resource arc`候補を記録する。resource arcで拡張したschedule graphから、選択schedule上のcritical pathを求める。capacityが2以上の場合のresource arc選択とschedule criticalの厳密定義はanalysis仕様で固定する。
+
+このheuristicは実行可能scheduleを返すが、最小makespanを保証しない。exact solverは別adapterとして将来追加し、lower bound、best found、gap、timeoutを明示する。
+
 ## 11. CLI 設計
 
 CLI は resource-first とする。
@@ -553,7 +620,8 @@ perttool dsl check <file>
 perttool dsl format <file>
 perttool dsl help [topic] [subtopic] [index|quick|detail]
 
-perttool dag analyze <file>
+perttool dag analyze <file> [--schedule precedence|resource|both]
+perttool dag analyze <file> --capacity <resource-id>=<integer>
 perttool dag next <file>
 perttool dag render <file> --format mermaid|json
 perttool dag import <file> --format mermaid
@@ -561,6 +629,7 @@ perttool dag advance <file>
 
 perttool task add|set|remove|finish ...
 perttool milestone add|set|remove ...
+perttool resource add|set|remove ...
 ```
 
 CLI adapter の責務:
@@ -621,6 +690,7 @@ MCP は CLI と同じ application service を呼ぶ。
 - `dag`
 - `task`
 - `milestone`
+- `resource`
 
 MCP request は原則として document text を受け取る。file path を受ける action は adapter の追加機能とし、Core API と分離する。
 
@@ -663,11 +733,13 @@ interface HelpNode {
 
 - `syntax`
 - `syntax.project`
+- `syntax.resource`
 - `syntax.milestone`
 - `syntax.task`
 - `syntax.gate`
 - `syntax.duration`
 - `analysis`
+- `analysis.resources`
 - `next`
 - `editing`
 - `mermaid`
@@ -691,6 +763,7 @@ grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自�
 
 - `Perttool.CheckResult.v1`
 - `Perttool.AnalysisResult.v1`
+- `Perttool.ResourceScheduleResult.v1`
 - `Perttool.NextResult.v1`
 - `Perttool.MutationResult.v1`
 - `Perttool.ConversionLossReport.v1`
@@ -742,6 +815,12 @@ DSL version は project block の optional field として将来導入できる�
 - advance-safe graph
 - advance-unsafe graph
 - multiple critical path
+- exclusive resource capacity 1
+- parallel resource capacity 2
+- multi-resource task
+- active resource oversubscription
+- priority tie-break
+- capacity変更でmakespan/critical pathが変わるgraph
 - Mermaid lossless round-trip
 - general Mermaid lossy import
 
@@ -788,11 +867,12 @@ Should:
 
 `plans/grammar.pert` を作成して CI 対象にする前に、次を満たす。
 
-- project/milestone/task/gate の parser がある
+- project/resource/milestone/task/gate の parser がある
 - ID と endpoint の意味検査がある
 - cycle と finish reachability の検査がある
 - `perttool dsl check` がある
 - `perttool dag analyze` の基本 forward/backward pass がある
+- renewable resource capacityを守るdeterministic scheduleがある
 - `perttool dag next` が決定的な結果を返す
 - 正常/失敗 fixture が自動テストされる
 
@@ -853,6 +933,8 @@ Exit:
 - topological/cycle/reachability
 - forward/backward pass
 - critical subgraph
+- renewable resource scheduler
+- runnable_now/resource wait explanation
 - reached closure
 - next classification/ranking
 - `dag analyze` / `dag next`
@@ -889,18 +971,19 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-次は本書で方向だけを定め、個別仕様または ADR で確定する。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)で初期決定した。次は本書で方向だけを定め、個別仕様またはADRで確定する。
 
-1. DSL 完全 EBNF と error recovery
-2. CST の trivia/comment 所有規則
-3. formatter の canonical whitespace
-4. advance の最小 frontier cut
-5. multiple critical path の path count 表示
-6. Mermaid metadata record schema
-7. JSON Schema の具体的 field
-8. CLI option の完全一覧
-9. MCP write action の有無
-10. package/runtime/test dependency の選定
+1. CST の trivia/comment 所有規則の実装詳細
+2. formatter の canonical whitespace 実装詳細
+3. advance の最小 frontier cut
+4. multiple critical path の path count 表示
+5. renewable resource scheduleとresource arcの厳密定義
+6. exact solverを追加する場合のadapter境界
+7. Mermaid metadata record schema
+8. JSON Schema の具体的 field
+9. CLI option の完全一覧
+10. MCP write action の有無
+11. package/runtime/test dependency の選定
 
 ## 19. 要件トレーサビリティ
 
@@ -909,6 +992,7 @@ Exit:
 | CST/AST/Graph 3層 | 8、12、16、17章 |
 | Rational | 10章 |
 | Graph algorithm | 9、10、11章 |
+| Resource scheduler | 7.2、7.4、10.6、11章 |
 | Pure Core API | 2.2、15、17章 |
 | CLI/MCP adapter | 15、17章 |
 | Help registry | 16章 |

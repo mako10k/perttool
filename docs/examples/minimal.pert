@@ -1,0 +1,16 @@
+project MINIMAL:
+  version 1
+  title "最小のPERT計画"
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone DONE:
+  title "完了"
+
+task WORK NOW -> DONE:
+  title "作業する"
+  duration 1d

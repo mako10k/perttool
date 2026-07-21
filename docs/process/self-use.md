@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Draft 0.1
+- 文書状態: Draft 0.2
 - 作成日: 2026-07-21
 - 関連設計: [../basic-design.md](../basic-design.md)
 
@@ -40,10 +40,10 @@ Exit criteria:
 開始条件:
 
 - `perttool dsl check <file>` が動く
-- project、milestone、task、gate を parse できる
+- project、resource、milestone、task、gate を parse できる
 - duplicate ID、undefined endpoint、self-loop、cycle、finish unreachable を検出できる
-- `perttool dag analyze <file>` が expected と float を計算できる
-- `perttool dag next <file>` が active/ready/blocked_now/upcoming を返す
+- `perttool dag analyze <file>` が expected、float、resource scheduleを計算できる
+- `perttool dag next <file>` が active/ready/runnable_now/blocked_now/upcoming を返す
 - text と JSON の fixture test が通る
 
 開始操作:
@@ -68,6 +68,7 @@ Exit criteria:
 - `format --write`
 - `task ... --write`
 - `milestone ... --write`
+- `resource ... --write`
 - `dag advance --write`
 - MCP からの file write
 
@@ -82,6 +83,7 @@ Exit criteria:
 - identifier/string/comment rule の確定
 - project/milestone/task/gate grammar の確定
 - duration/estimate grammar の確定
+- resource/capacity/requires/priority grammar の確定
 - EBNF と sample の整合
 - parser error recovery
 - source span
@@ -108,6 +110,7 @@ Exit criteria:
 - `dsl format --write`
 - `task add|set|remove|finish --write`
 - `milestone add|set|remove --write`
+- `resource add|set|remove --write`
 
 運用:
 
