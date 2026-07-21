@@ -1,0 +1,107 @@
+project GRAMMAR:
+  version 1
+  title "DSL文法の受け入れ作業"
+  description |
+    現在から先に残るparser、formatter、help同期の作業を管理する。
+    完了済みのbootstrap実装はGit履歴を参照する。
+  as_of 2026-07-21
+  duration_unit day
+  finish GRAMMAR_READY
+
+resource DEVELOPERS:
+  title "実装担当枠"
+  capacity 2
+
+resource GRAMMAR_REVIEW:
+  title "文法レビュー枠"
+  description "受け入れfixtureの基準判断は同時に1件だけ行う"
+  capacity 1
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone FIELDS_VERIFIED:
+  title "各fieldの受け入れ確認完了"
+
+milestone RECOVERY_VERIFIED:
+  title "error recovery確認完了"
+
+milestone TEXT_SPANS_VERIFIED:
+  title "block textとsource span確認完了"
+
+milestone PARSER_ACCEPTED:
+  title "parser受け入れ完了"
+
+milestone FORMATTER_IMPLEMENTED:
+  title "formatter実装完了"
+
+milestone FORMATTER_ACCEPTED:
+  title "formatter受け入れ完了"
+
+milestone HELP_SYNCHRONIZED:
+  title "helpとfixtureの同期完了"
+
+milestone GRAMMAR_READY:
+  title "文法slice完了"
+
+task FIELD_FIXTURES NOW -> FIELDS_VERIFIED:
+  title "全declaration fieldとinvalid tokenのfixtureを揃える"
+  duration 2d
+  priority 30
+  requires:
+    DEVELOPERS 1
+    GRAMMAR_REVIEW 1
+
+task ERROR_RECOVERY NOW -> RECOVERY_VERIFIED:
+  title "複数error recoveryとdiagnostic suppressionを検査する"
+  duration 3d
+  priority 40
+  requires:
+    DEVELOPERS 1
+    GRAMMAR_REVIEW 1
+
+task BLOCK_TEXT_SPANS NOW -> TEXT_SPANS_VERIFIED:
+  title "block textのcommon indentとUTF-16 spanを検査する"
+  duration 2d
+  priority 20
+  requires:
+    DEVELOPERS 1
+
+gate FIELDS_ACCEPTANCE FIELDS_VERIFIED -> PARSER_ACCEPTED:
+  reason "全fieldの受け入れ確認が必要"
+
+gate RECOVERY_ACCEPTANCE RECOVERY_VERIFIED -> PARSER_ACCEPTED:
+  reason "error recoveryの受け入れ確認が必要"
+
+gate TEXT_SPANS_ACCEPTANCE TEXT_SPANS_VERIFIED -> PARSER_ACCEPTED:
+  reason "block textとsource spanの受け入れ確認が必要"
+
+task FORMATTER_IMPLEMENT PARSER_ACCEPTED -> FORMATTER_IMPLEMENTED:
+  title "source-preserving formatterを実装する"
+  duration 3d
+  priority 20
+  requires:
+    DEVELOPERS 1
+
+task HELP_FIXTURE_SYNC PARSER_ACCEPTED -> HELP_SYNCHRONIZED:
+  title "syntax help sampleとparser fixtureのdrift検査を追加する"
+  duration 1d
+  priority 10
+  requires:
+    DEVELOPERS 1
+    GRAMMAR_REVIEW 1
+
+task FORMATTER_ROUNDTRIP FORMATTER_IMPLEMENTED -> FORMATTER_ACCEPTED:
+  title "formatterのidempotenceとAST同値をgoldenで検査する"
+  duration 2d
+  priority 30
+  requires:
+    DEVELOPERS 1
+    GRAMMAR_REVIEW 1
+
+gate FORMATTER_READY FORMATTER_ACCEPTED -> GRAMMAR_READY:
+  reason "formatterの受け入れ完了が必要"
+
+gate HELP_READY HELP_SYNCHRONIZED -> GRAMMAR_READY:
+  reason "helpとfixtureの同期完了が必要"

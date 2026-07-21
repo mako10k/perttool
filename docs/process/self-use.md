@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Draft 0.5
+- 文書状態: Active Stage 1 / Revision 0.6
 - 作成日: 2026-07-21
 - 関連設計: [../basic-design.md](../basic-design.md)
 
@@ -21,14 +21,11 @@
 
 `plans/grammar.pert` に EBNF そのものを埋め込んで規範仕様の代用にしない。
 
-## 3. Stage 0: bootstrap
+## 3. Stage 0: bootstrap（完了）
 
-TypeScript CLI bootstrap、`dsl check`、`dag analyze`、`dag next`は揃った。bootstrap gateの検証と自己利用開始commitを完了するまではStage 0として扱う。
+TypeScript CLI bootstrap、`dsl check`、`dag analyze`、`dag next`とbootstrap gateの検証を完了した。
 
-- requirements と basic design は Markdown で管理する
-- grammar plan はまだ `.pert` で作成しない
-- grammarの完全仕様とparser fixtureを拡充する
-- tool がない状態で、自己利用済みとみなさない
+Stage 0ではrequirementsとbasic designをMarkdownで管理し、grammar planを`.pert`で作成せず、toolがない状態を自己利用済みとはみなさなかった。
 
 Exit criteria:
 
@@ -36,6 +33,8 @@ Exit criteria:
 - minimal valid/invalid fixture がレビューできる
 
 ## 4. Stage 1: read-only self-use
+
+現在の段階。2026-07-21に開始条件を満たし、[grammar plan](../../plans/grammar.pert)をread-onlyの正本計画として追加した。
 
 開始条件:
 
@@ -46,14 +45,22 @@ Exit criteria:
 - `perttool dag next <file>` が active/ready/runnable_now/blocked_now/upcoming を返す
 - text と JSON の fixture test が通る
 
-開始操作:
+開始時に実施した操作:
 
-1. 手作業で `plans/grammar.pert` を作る
-2. `perttool dsl check plans/grammar.pert` を実行する
-3. `perttool dag analyze plans/grammar.pert` を実行する
-4. `perttool dag next plans/grammar.pert` を実行する
-5. 3 command を CI の required check に追加する
-6. grammar 作業を始めるときに next result を確認する
+1. 手作業で `plans/grammar.pert` を作成した
+2. `perttool dsl check plans/grammar.pert` を実行した
+3. `perttool dag analyze plans/grammar.pert` を実行した
+4. `perttool dag next plans/grammar.pert` を実行した
+5. 3 commandを`npm run check:self-use`経由でCIのrequired checkへ追加した
+6. check/analyze/nextのprojectionを[golden result](../../test/golden/self-use/grammar.expected.json)へ固定した
+
+開始時の機械的な結果:
+
+- precedence makespan: 8d
+- resource-constrained makespan: 10d
+- ready: `ERROR_RECOVERY`、`FIELD_FIXTURES`、`BLOCK_TEXT_SPANS`
+- runnable_now: `ERROR_RECOVERY`、`BLOCK_TEXT_SPANS`
+- `FIELD_FIXTURES`は`GRAMMAR_REVIEW` capacity 1を`ERROR_RECOVERY`が先に仮取得するためresource待ち
 
 この段階で許可する操作:
 
@@ -187,3 +194,12 @@ grammar plan で安定運用できた後、次の順に自己利用対象を広�
 - read-only で開始したこと
 
 safe-write と advance を解禁する commit でも、それぞれの gate を満たした test と golden を残す。
+
+Stage 1開始時の証跡:
+
+- parser/check gate: `all normative examples parse and validate`、各invalid fixture diagnostic test、`resource requirements do not become precedence edges`
+- analyze gate: precedence、capacity override、active allocation、resource witness、schedule critical pathを固定する`analysis.test.mjs`
+- next gate: `parallel next selects a deterministic runnable subset`、classification/depth unit test、text/JSON CLI integration test
+- self-use golden: `grammar plan check/analyze/next matches the read-only self-use golden`
+- CI entrypoint: `npm run check`から`npm run check:self-use`を実行する
+- write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

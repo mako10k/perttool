@@ -18,7 +18,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test test/*.test.mjs",
     "check:docs": "bash scripts/check-docs.sh",
-    "check": "npm run typecheck && npm test && npm run check:docs"
+    "check:self-use": "bash scripts/check-self-use.sh",
+    "check": "npm run typecheck && npm test && npm run check:docs && npm run check:self-use"
   },
   "devDependencies": {
     "@types/node": "24.13.3",

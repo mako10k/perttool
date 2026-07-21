@@ -1,6 +1,6 @@
 # perttool
 
-PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI（実装bootstrap段階）。
+PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI（read-only自己利用段階）。
 
 現在はNode.js 24以上のTypeScript CLIとして実装中です。`dsl check`、`dsl help`、`dag analyze`、`dag next`が実装済みで、formatter、mutation、Mermaid変換はまだ未実装です。正本は次の文書です。
 
@@ -13,6 +13,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)
 - [自己利用計画](docs/process/self-use.md)
+- [現在の文法作業計画](plans/grammar.pert)
 - [AI 開発ガイド](docs/process/ai-development.md)
 
 基本方針は次のとおりです。
@@ -49,3 +50,5 @@ node dist/cli.js dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --
 `dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
+
+現在は[文法作業計画](plans/grammar.pert)を`check`、`analyze`、`next`するStage 1のread-only自己利用を開始しています。Formatterやmutationによるwriteは、専用gateを満たすまで使用しません。

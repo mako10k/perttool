@@ -117,6 +117,8 @@ perttool/
     requirements.md
   plans/
   scripts/
+    check-docs.sh
+    check-self-use.sh
   README.md
   package.json
   tsconfig.json
@@ -147,7 +149,9 @@ perttool/
     cli.test.mjs
     next.test.mjs
     parser.test.mjs
+    self-use.test.mjs
     fixtures/
+    golden/
 ```
 
 配置は責務を表す。小規模な初期段階で空 directory を先に量産せず、実装 slice に応じて追加する。

@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`は実装済み、write/conversion surfaceは未実装である。実在するcommandと未実装surfaceを区別し、helpや文書へ未実装機能を実装済みとして載せない。
+perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`は実装済みで、`plans/grammar.pert`をread-only自己利用中である。Write/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -33,7 +33,7 @@ perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl 
 - `docs/adr/`: 採用済みarchitecture/runtime判断。
 - `docs/examples/`: parserとanalysisの規範sample。
 - `docs/process/`: 自己利用とAI開発の運用手順。
-- `plans/`: perttool自身の現在・未来の計画。自己利用gateを満たすまで`.pert`計画を作らない。
+- `plans/`: perttool自身の現在・未来の計画。現在は`grammar.pert`をread-onlyで使用する。
 - `scripts/`: repository-local verification command。
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
@@ -70,7 +70,7 @@ perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl 
 
 ## Validation
 
-現在のrepository checkはNode.js 24以上でrootから実行する。
+現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はgrammar planのcheck/analyze/nextも含む。
 
 ```sh
 npm ci

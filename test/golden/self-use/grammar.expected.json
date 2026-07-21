@@ -1,0 +1,61 @@
+{
+  "check": {
+    "document_id": "GRAMMAR",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 2,
+      "milestones": 9,
+      "tasks": 6,
+      "gates": 5,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "precedence_makespan": "8",
+    "precedence_critical_tasks": [
+      "ERROR_RECOVERY",
+      "FORMATTER_IMPLEMENT",
+      "FORMATTER_ROUNDTRIP"
+    ],
+    "resource_makespan": "10",
+    "resource_delay": "2",
+    "resource_arcs": [
+      "resource:ERROR_RECOVERY:FIELD_FIXTURES"
+    ],
+    "schedule_critical_tasks": [
+      "ERROR_RECOVERY",
+      "FIELD_FIXTURES",
+      "FORMATTER_IMPLEMENT",
+      "FORMATTER_ROUNDTRIP"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "ERROR_RECOVERY",
+        "FIELD_FIXTURES",
+        "BLOCK_TEXT_SPANS"
+      ],
+      "runnable_now": [
+        "ERROR_RECOVERY",
+        "BLOCK_TEXT_SPANS"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "FORMATTER_ROUNDTRIP",
+        "FORMATTER_IMPLEMENT",
+        "HELP_FIXTURE_SYNC"
+      ]
+    },
+    "resource_rejection": {
+      "task_id": "FIELD_FIXTURES",
+      "resource_id": "GRAMMAR_REVIEW",
+      "capacity": 1,
+      "earlier_selected_task_ids": [
+        "ERROR_RECOVERY"
+      ]
+    }
+  }
+}
