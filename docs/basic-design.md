@@ -6,6 +6,8 @@
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
+- AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
+- Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
 
 ## 1. 目的
@@ -35,7 +37,7 @@ TypeScript を選ぶ理由は次のとおりである。
 - `llmthink` で採用済みの、共通コアと薄い複数 UI という構成を踏襲できる
 - JSON Schema と TypeScript type の対応を管理しやすい
 
-Node.js と依存 package の具体的な対応バージョンは実装 scaffold 時に固定し、package manifest と CI matrix を正本とする。
+RuntimeはNode.js 24以上、package managerはnpm、module形式はESMとする。詳細は[ADR 0002](adr/0002-node-typescript-package.md)、具体versionは`package.json`と`package-lock.json`、CI baselineはworkflowを正本とする。
 
 ### 2.2 採用しない方針
 
@@ -331,6 +333,7 @@ code namespace:
 - `PTMUT-*`: mutation、optimistic lock、unsafe removal
 - `PTCNV-*`: import/export/loss report
 - `PTCLI-*`: CLI usage
+- `PTHLP-*`: help registry lookup
 
 Rules:
 

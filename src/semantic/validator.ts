@@ -1,0 +1,882 @@
+import type {
+  Diagnostic,
+  RelatedLocation,
+  SourceSpan,
+} from "../model/diagnostics.js";
+import {
+  compareStableStrings,
+  hasErrors,
+  sortDiagnostics,
+} from "../model/diagnostics.js";
+import type {
+  DeclarationNode,
+  DocumentNode,
+  DurationValue,
+  FieldNode,
+  RequirementValue,
+} from "../model/syntax.js";
+import {
+  compareDurations,
+  fieldNamed,
+  fieldsNamed,
+  isZeroDuration,
+} from "../model/syntax.js";
+
+const reservedWords = new Set([
+  "project",
+  "resource",
+  "milestone",
+  "task",
+  "gate",
+  "version",
+  "title",
+  "description",
+  "as_of",
+  "duration_unit",
+  "finish",
+  "critical_epsilon",
+  "target_duration",
+  "state",
+  "tags",
+  "duration",
+  "estimate",
+  "optimistic",
+  "most_likely",
+  "pessimistic",
+  "status",
+  "priority",
+  "owner",
+  "blocked_reason",
+  "source",
+  "reason",
+  "capacity",
+  "requires",
+  "planned",
+  "reached",
+  "active",
+  "blocked",
+  "done",
+  "day",
+  "hour",
+]);
+
+interface Edge {
+  readonly declaration: DeclarationNode;
+  readonly id: string;
+  readonly source: string;
+  readonly target: string;
+}
+
+function makeDiagnostic(
+  code: string,
+  severity: "error" | "warning",
+  message: string,
+  diagnosticSpan: SourceSpan,
+  helpTopic: string,
+  entityId?: string,
+  related?: readonly RelatedLocation[],
+): Diagnostic {
+  return {
+    code,
+    severity,
+    message,
+    span: diagnosticSpan,
+    helpTopic,
+    ...(entityId === undefined ? {} : { entityId }),
+    ...(related === undefined || related.length === 0 ? {} : { related }),
+  };
+}
+
+function zeroSpan(document: DocumentNode): SourceSpan {
+  return {
+    start: { offset: 0, line: 0, column: 0 },
+    end: { offset: document.text.length === 0 ? 0 : 1, line: 0, column: document.text.length === 0 ? 0 : 1 },
+  };
+}
+
+function requireField(
+  declaration: DeclarationNode,
+  fieldName: string,
+  diagnostics: Diagnostic[],
+): FieldNode | undefined {
+  const fields = fieldsNamed(declaration, fieldName);
+  if (fields.length === 0) {
+    diagnostics.push(
+      makeDiagnostic(
+        "PTSEM-101",
+        "error",
+        `${declaration.kind} ${declaration.id}にrequired field ${fieldName}がありません`,
+        declaration.idSpan,
+        `syntax.${declaration.kind}`,
+        declaration.id,
+      ),
+    );
+    return undefined;
+  }
+  return fields[0];
+}
+
+function validateDuplicateFields(
+  declaration: DeclarationNode,
+  diagnostics: Diagnostic[],
+): void {
+  const firstByName = new Map<string, FieldNode>();
+  for (const field of declaration.fields) {
+    const first = firstByName.get(field.name);
+    if (first === undefined) {
+      firstByName.set(field.name, field);
+      continue;
+    }
+    diagnostics.push(
+      makeDiagnostic(
+        "PTSEM-102",
+        "error",
+        `${declaration.kind} ${declaration.id}でfield ${field.name}が重複しています`,
+        field.span,
+        `syntax.${declaration.kind}`,
+        declaration.id,
+        [{ message: "最初のfield", span: first.span }],
+      ),
+    );
+  }
+}
+
+function durationValue(field: FieldNode | undefined): DurationValue | undefined {
+  if (field === undefined || typeof field.value !== "object" || field.value === null) {
+    return undefined;
+  }
+  return "digits" in field.value && "suffix" in field.value
+    ? (field.value as DurationValue)
+    : undefined;
+}
+
+function validateNonemptyText(
+  declaration: DeclarationNode,
+  fieldName: string,
+  diagnostics: Diagnostic[],
+): void {
+  const field = fieldNamed(declaration, fieldName);
+  if (field !== undefined && typeof field.value === "string" && field.value.length === 0) {
+    diagnostics.push(
+      makeDiagnostic(
+        "PTSEM-106",
+        "error",
+        `${fieldName}は空にできません`,
+        field.valueSpan,
+        `syntax.${declaration.kind}`,
+        declaration.id,
+      ),
+    );
+  }
+}
+
+function validateTags(
+  declaration: DeclarationNode,
+  diagnostics: Diagnostic[],
+): void {
+  const field = fieldNamed(declaration, "tags");
+  if (field === undefined || !Array.isArray(field.value)) return;
+  const seen = new Set<string>();
+  for (const tag of field.value) {
+    if (typeof tag !== "string") continue;
+    if (seen.has(tag)) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTSEM-107",
+          "error",
+          `tag ${tag}が重複しています`,
+          field.valueSpan,
+          "syntax.tags",
+          declaration.id,
+        ),
+      );
+      return;
+    }
+    seen.add(tag);
+  }
+}
+
+function isValidIsoDate(raw: string): boolean {
+  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
+  if (dateMatch !== null) {
+    const year = Number(dateMatch[1]);
+    const month = Number(dateMatch[2]);
+    const day = Number(dateMatch[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return (
+      date.getUTCFullYear() === year &&
+      date.getUTCMonth() === month - 1 &&
+      date.getUTCDate() === day
+    );
+  }
+  return (
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(raw) &&
+    !Number.isNaN(Date.parse(raw))
+  );
+}
+
+function validateFieldConstraints(
+  document: DocumentNode,
+  diagnostics: Diagnostic[],
+): void {
+  const projects = document.declarations.filter((declaration) => declaration.kind === "project");
+  if (projects.length === 0) {
+    diagnostics.push(
+      makeDiagnostic(
+        "PTSEM-101",
+        "error",
+        "project declarationがありません",
+        zeroSpan(document),
+        "syntax.project",
+      ),
+    );
+  }
+  if (projects.length > 1) {
+    const first = projects[0]!;
+    for (const project of projects.slice(1)) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTSEM-201",
+          "error",
+          "project declarationはexactly oneです",
+          project.idSpan,
+          "syntax.project",
+          project.id,
+          [{ message: "最初のproject", span: first.idSpan }],
+        ),
+      );
+    }
+  }
+  const firstDeclaration = document.declarations[0];
+  if (firstDeclaration !== undefined && firstDeclaration.kind !== "project") {
+    diagnostics.push(
+      makeDiagnostic(
+        "PTDSL-003",
+        "error",
+        "projectは最初のdeclarationでなければなりません",
+        firstDeclaration.idSpan,
+        "syntax.top-level",
+        firstDeclaration.id,
+      ),
+    );
+  }
+
+  for (const declaration of document.declarations) {
+    validateDuplicateFields(declaration, diagnostics);
+    validateTags(declaration, diagnostics);
+    validateNonemptyText(declaration, "title", diagnostics);
+    validateNonemptyText(declaration, "description", diagnostics);
+    if (declaration.kind === "project") {
+      const title = requireField(declaration, "title", diagnostics);
+      const durationUnit = requireField(declaration, "duration_unit", diagnostics);
+      requireField(declaration, "finish", diagnostics);
+      const version = fieldNamed(declaration, "version");
+      if (version !== undefined && version.value !== 1) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-108",
+            "error",
+            "grammar version 1だけを受理します",
+            version.valueSpan,
+            "syntax.project",
+            declaration.id,
+          ),
+        );
+      }
+      const asOf = fieldNamed(declaration, "as_of");
+      if (asOf !== undefined && typeof asOf.value === "string" && !isValidIsoDate(asOf.value)) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTDSL-008",
+            "error",
+            "as_ofが有効なISO date/date-timeではありません",
+            asOf.valueSpan,
+            "syntax.project",
+            declaration.id,
+          ),
+        );
+      }
+      const criticalEpsilon = durationValue(fieldNamed(declaration, "critical_epsilon"));
+      const targetDuration = durationValue(fieldNamed(declaration, "target_duration"));
+      if (targetDuration !== undefined && isZeroDuration(targetDuration)) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-104",
+            "error",
+            "target_durationは0より大きくしてください",
+            fieldNamed(declaration, "target_duration")!.valueSpan,
+            "syntax.duration",
+            declaration.id,
+          ),
+        );
+      }
+      void title;
+      void criticalEpsilon;
+      if (durationUnit !== undefined && typeof durationUnit.value === "string") {
+        const expectedSuffix = durationUnit.value === "day" ? "d" : "h";
+        for (const candidate of document.declarations) {
+          for (const field of candidate.fields) {
+            const values = field.children ?? [field];
+            for (const valueField of values) {
+              const value = durationValue(valueField);
+              if (value !== undefined && value.suffix !== expectedSuffix) {
+                diagnostics.push(
+                  makeDiagnostic(
+                    "PTSEM-105",
+                    "error",
+                    `project unit ${durationUnit.value}とduration suffixが一致しません`,
+                    valueField.valueSpan,
+                    "syntax.duration",
+                    candidate.id,
+                  ),
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+    if (declaration.kind === "resource") {
+      requireField(declaration, "title", diagnostics);
+      const capacity = requireField(declaration, "capacity", diagnostics);
+      if (capacity !== undefined && typeof capacity.value === "number" && capacity.value < 1) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-109",
+            "error",
+            "resource capacityは1以上です",
+            capacity.valueSpan,
+            "syntax.resource",
+            declaration.id,
+          ),
+        );
+      }
+    }
+    if (declaration.kind === "milestone") {
+      requireField(declaration, "title", diagnostics);
+    }
+    if (declaration.kind === "task") {
+      requireField(declaration, "title", diagnostics);
+      const durations = fieldsNamed(declaration, "duration");
+      const estimates = fieldsNamed(declaration, "estimate");
+      if (durations.length + estimates.length !== 1) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-103",
+            "error",
+            "taskはdurationまたはestimateのどちらかexactly oneを必要とします",
+            declaration.idSpan,
+            "syntax.task",
+            declaration.id,
+          ),
+        );
+      }
+      const duration = durationValue(durations[0]);
+      if (duration !== undefined && isZeroDuration(duration)) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-104",
+            "error",
+            "task durationは0より大きくしてください",
+            durations[0]!.valueSpan,
+            "syntax.duration",
+            declaration.id,
+          ),
+        );
+      }
+      const estimate = estimates[0];
+      if (estimate !== undefined) {
+        const children = estimate.children ?? [];
+        for (const name of ["optimistic", "most_likely", "pessimistic"]) {
+          const matching = children.filter((child) => child.name === name);
+          if (matching.length !== 1) {
+            diagnostics.push(
+              makeDiagnostic(
+                matching.length === 0 ? "PTSEM-101" : "PTSEM-102",
+                "error",
+                `estimate ${name}はexactly one必要です`,
+                estimate.span,
+                "syntax.estimate",
+                declaration.id,
+              ),
+            );
+          }
+        }
+        const optimistic = durationValue(children.find((child) => child.name === "optimistic"));
+        const mostLikely = durationValue(children.find((child) => child.name === "most_likely"));
+        const pessimistic = durationValue(children.find((child) => child.name === "pessimistic"));
+        if (
+          optimistic !== undefined &&
+          mostLikely !== undefined &&
+          pessimistic !== undefined &&
+          (compareDurations(optimistic, mostLikely) > 0 ||
+            compareDurations(mostLikely, pessimistic) > 0 ||
+            isZeroDuration(pessimistic))
+        ) {
+          diagnostics.push(
+            makeDiagnostic(
+              "PTSEM-104",
+              "error",
+              "estimateはoptimistic <= most_likely <= pessimisticかつpessimistic > 0を満たしてください",
+              estimate.span,
+              "syntax.estimate",
+              declaration.id,
+            ),
+          );
+        }
+      }
+      const status = fieldNamed(declaration, "status")?.value ?? "planned";
+      const blockedReason = fieldNamed(declaration, "blocked_reason");
+      if ((status === "blocked") !== (blockedReason !== undefined)) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-103",
+            "error",
+            "blocked_reasonはstatus=blockedの場合だけ必須です",
+            blockedReason?.span ?? fieldNamed(declaration, "status")?.span ?? declaration.idSpan,
+            "syntax.task",
+            declaration.id,
+          ),
+        );
+      }
+      validateNonemptyText(declaration, "blocked_reason", diagnostics);
+      const requirements = fieldNamed(declaration, "requires");
+      if (requirements !== undefined && Array.isArray(requirements.value)) {
+        if (requirements.value.length === 0) {
+          diagnostics.push(
+            makeDiagnostic(
+              "PTSEM-101",
+              "error",
+              "requires blockは1件以上必要です",
+              requirements.span,
+              "syntax.task",
+              declaration.id,
+            ),
+          );
+        }
+        const seen = new Map<string, RequirementValue>();
+        for (const requirement of requirements.value as readonly RequirementValue[]) {
+          const first = seen.get(requirement.resourceId);
+          if (first !== undefined) {
+            diagnostics.push(
+              makeDiagnostic(
+                "PTSEM-110",
+                "error",
+                `resource requirement ${requirement.resourceId}が重複しています`,
+                requirement.resourceSpan,
+                "syntax.task",
+                declaration.id,
+                [{ message: "最初のrequirement", span: first.resourceSpan }],
+              ),
+            );
+          } else {
+            seen.set(requirement.resourceId, requirement);
+          }
+          if (requirement.units < 1) {
+            diagnostics.push(
+              makeDiagnostic(
+                "PTSEM-109",
+                "error",
+                "requirement unitsは1以上です",
+                requirement.unitsSpan,
+                "syntax.resource",
+                declaration.id,
+              ),
+            );
+          }
+        }
+      }
+    }
+    if (declaration.kind === "gate") {
+      requireField(declaration, "reason", diagnostics);
+      validateNonemptyText(declaration, "reason", diagnostics);
+    }
+  }
+}
+
+function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void {
+  const firstById = new Map<string, DeclarationNode>();
+  for (const declaration of document.declarations) {
+    if (reservedWords.has(declaration.id)) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTSEM-202",
+          "error",
+          `reserved word ${declaration.id}はentity IDに使用できません`,
+          declaration.idSpan,
+          "syntax",
+          declaration.id,
+        ),
+      );
+    }
+    const first = firstById.get(declaration.id);
+    if (first !== undefined) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTSEM-201",
+          "error",
+          `entity ID ${declaration.id}が重複しています`,
+          declaration.idSpan,
+          "errors",
+          declaration.id,
+          [{ message: "最初のdeclaration", span: first.idSpan }],
+        ),
+      );
+    } else {
+      firstById.set(declaration.id, declaration);
+    }
+  }
+  if (hasErrors(diagnostics)) return;
+
+  const project = document.declarations.find((declaration) => declaration.kind === "project")!;
+  const milestones = new Map(
+    document.declarations
+      .filter((declaration) => declaration.kind === "milestone")
+      .map((declaration) => [declaration.id, declaration]),
+  );
+  const resources = new Map(
+    document.declarations
+      .filter((declaration) => declaration.kind === "resource")
+      .map((declaration) => [declaration.id, declaration]),
+  );
+  const edges: Edge[] = document.declarations
+    .filter((declaration) => declaration.kind === "task" || declaration.kind === "gate")
+    .map((declaration) => ({
+      declaration,
+      id: declaration.id,
+      source: declaration.from!,
+      target: declaration.to!,
+    }));
+
+  const finishField = fieldNamed(project, "finish")!;
+  const finish = finishField.value as string;
+  const finishEntity = firstById.get(finish);
+  if (finishEntity === undefined) {
+    diagnostics.push(
+      makeDiagnostic(
+        "PTSEM-203",
+        "error",
+        `project.finish ${finish}が未定義です`,
+        finishField.valueSpan,
+        "syntax.project",
+        project.id,
+      ),
+    );
+  } else if (finishEntity.kind !== "milestone") {
+    diagnostics.push(
+      makeDiagnostic(
+        "PTSEM-205",
+        "error",
+        `project.finish ${finish}はmilestoneではありません`,
+        finishField.valueSpan,
+        "syntax.project",
+        project.id,
+      ),
+    );
+  }
+
+  for (const edge of edges) {
+    for (const [endpoint, endpointSpan] of [
+      [edge.source, edge.declaration.fromSpan!],
+      [edge.target, edge.declaration.toSpan!],
+    ] as const) {
+      const entity = firstById.get(endpoint);
+      if (entity === undefined) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-204",
+            "error",
+            `endpoint ${endpoint}が未定義です`,
+            endpointSpan,
+            `syntax.${edge.declaration.kind}`,
+            edge.id,
+          ),
+        );
+      } else if (entity.kind !== "milestone") {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-205",
+            "error",
+            `endpoint ${endpoint}はmilestoneではありません`,
+            endpointSpan,
+            `syntax.${edge.declaration.kind}`,
+            edge.id,
+          ),
+        );
+      }
+    }
+    if (edge.source === edge.target) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTDAG-201",
+          "error",
+          `edge ${edge.id}はself-loopです`,
+          edge.declaration.arrowSpan!,
+          "errors",
+          edge.id,
+        ),
+      );
+    }
+  }
+
+  for (const task of document.declarations.filter((declaration) => declaration.kind === "task")) {
+    const requirements = fieldNamed(task, "requires")?.value;
+    if (!Array.isArray(requirements)) continue;
+    for (const requirement of requirements as readonly RequirementValue[]) {
+      const entity = firstById.get(requirement.resourceId);
+      if (entity === undefined) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-206",
+            "error",
+            `resource ${requirement.resourceId}が未定義です`,
+            requirement.resourceSpan,
+            "syntax.resource",
+            task.id,
+          ),
+        );
+      } else if (entity.kind !== "resource") {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-207",
+            "error",
+            `${requirement.resourceId}はresourceではありません`,
+            requirement.resourceSpan,
+            "syntax.resource",
+            task.id,
+          ),
+        );
+      } else {
+        const capacity = fieldNamed(entity, "capacity")!.value as number;
+        if (requirement.units > capacity) {
+          diagnostics.push(
+            makeDiagnostic(
+              "PTSEM-208",
+              "error",
+              `requirement ${requirement.units}がcapacity ${capacity}を超えています`,
+              requirement.unitsSpan,
+              "syntax.resource",
+              task.id,
+            ),
+          );
+        }
+      }
+    }
+  }
+  if (hasErrors(diagnostics)) return;
+
+  const outgoing = new Map<string, Edge[]>();
+  const incoming = new Map<string, Edge[]>();
+  for (const milestone of milestones.keys()) {
+    outgoing.set(milestone, []);
+    incoming.set(milestone, []);
+  }
+  for (const edge of edges) {
+    outgoing.get(edge.source)!.push(edge);
+    incoming.get(edge.target)!.push(edge);
+  }
+  for (const list of [...outgoing.values(), ...incoming.values()]) {
+    list.sort((left, right) => compareStableStrings(left.id, right.id));
+  }
+
+  const indegree = new Map([...milestones.keys()].map((id) => [id, incoming.get(id)!.length]));
+  const available = [...indegree].filter(([, degree]) => degree === 0).map(([id]) => id).sort();
+  let processed = 0;
+  while (available.length > 0) {
+    const milestone = available.shift()!;
+    processed += 1;
+    for (const edge of outgoing.get(milestone)!) {
+      const next = indegree.get(edge.target)! - 1;
+      indegree.set(edge.target, next);
+      if (next === 0) {
+        available.push(edge.target);
+        available.sort(compareStableStrings);
+      }
+    }
+  }
+  if (processed !== milestones.size) {
+    const cycleEdge = edges
+      .filter((edge) => (indegree.get(edge.source) ?? 0) > 0 && (indegree.get(edge.target) ?? 0) > 0)
+      .sort((left, right) => compareStableStrings(left.id, right.id))[0];
+    diagnostics.push(
+      makeDiagnostic(
+        "PTDAG-202",
+        "error",
+        "directed cycleを検出しました",
+        cycleEdge?.declaration.headerSpan ?? project.idSpan,
+        "errors",
+        cycleEdge?.id,
+      ),
+    );
+    return;
+  }
+
+  if (finishEntity?.kind === "milestone" && outgoing.get(finish)!.length > 0) {
+    const firstOutgoing = outgoing.get(finish)![0]!;
+    diagnostics.push(
+      makeDiagnostic(
+        "PTDAG-203",
+        "error",
+        `finish milestone ${finish}にoutgoing edgeがあります`,
+        firstOutgoing.declaration.headerSpan,
+        "errors",
+        firstOutgoing.id,
+      ),
+    );
+  }
+
+  if (finishEntity?.kind === "milestone") {
+    const canReachFinish = new Set<string>([finish]);
+    const queue = [finish];
+    while (queue.length > 0) {
+      const target = queue.shift()!;
+      for (const edge of incoming.get(target)!) {
+        if (!canReachFinish.has(edge.source)) {
+          canReachFinish.add(edge.source);
+          queue.push(edge.source);
+        }
+      }
+    }
+    for (const milestone of milestones.values()) {
+      if (!canReachFinish.has(milestone.id)) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTDAG-204",
+            "error",
+            `milestone ${milestone.id}はfinishへ到達できません`,
+            milestone.idSpan,
+            "errors",
+            milestone.id,
+          ),
+        );
+      }
+    }
+  }
+
+  const explicitReached = new Set(
+    [...milestones.values()]
+      .filter((milestone) => fieldNamed(milestone, "state")?.value === "reached")
+      .map((milestone) => milestone.id),
+  );
+  for (const milestone of milestones.values()) {
+    if (incoming.get(milestone.id)!.length === 0 && !explicitReached.has(milestone.id)) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTDAG-205",
+          "error",
+          `root milestone ${milestone.id}はstate reachedでなければなりません`,
+          fieldNamed(milestone, "state")?.valueSpan ?? milestone.idSpan,
+          "errors",
+          milestone.id,
+        ),
+      );
+    }
+  }
+  if (hasErrors(diagnostics)) return;
+
+  const reached = new Set(explicitReached);
+  const satisfied = (edge: Edge): boolean => {
+    if (!reached.has(edge.source)) return false;
+    if (edge.declaration.kind === "gate") return true;
+    return (fieldNamed(edge.declaration, "status")?.value ?? "planned") === "done";
+  };
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const milestone of milestones.values()) {
+      if (reached.has(milestone.id)) continue;
+      const edgesIn = incoming.get(milestone.id)!;
+      if (edgesIn.length > 0 && edgesIn.every(satisfied)) {
+        reached.add(milestone.id);
+        changed = true;
+      }
+    }
+  }
+  for (const milestoneId of explicitReached) {
+    const edgesIn = incoming.get(milestoneId)!;
+    if (edgesIn.length > 0 && !edgesIn.every(satisfied)) {
+      const milestone = milestones.get(milestoneId)!;
+      diagnostics.push(
+        makeDiagnostic(
+          "PTDAG-206",
+          "error",
+          `reached milestone ${milestoneId}にunsatisfied incoming edgeがあります`,
+          fieldNamed(milestone, "state")?.valueSpan ?? milestone.idSpan,
+          "errors",
+          milestoneId,
+        ),
+      );
+    }
+  }
+  for (const task of document.declarations.filter((declaration) => declaration.kind === "task")) {
+    const status = fieldNamed(task, "status")?.value ?? "planned";
+    if ((status === "active" || status === "done") && !reached.has(task.from!)) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTDAG-207",
+          "error",
+          `${status} task ${task.id}のsourceがreachedではありません`,
+          fieldNamed(task, "status")?.valueSpan ?? task.idSpan,
+          "errors",
+          task.id,
+        ),
+      );
+    }
+  }
+  for (const milestoneId of [...reached].sort()) {
+    const milestone = milestones.get(milestoneId)!;
+    if (!explicitReached.has(milestoneId)) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTDAG-208",
+          "warning",
+          `milestone ${milestoneId}はclosureでreachedです。advanceを検討してください`,
+          milestone.idSpan,
+          "workflows",
+          milestoneId,
+        ),
+      );
+    }
+  }
+
+  for (const resource of resources.values()) {
+    const capacity = fieldNamed(resource, "capacity")!.value as number;
+    const activeTasks: DeclarationNode[] = [];
+    let usage = 0;
+    for (const task of document.declarations.filter((declaration) => declaration.kind === "task")) {
+      if ((fieldNamed(task, "status")?.value ?? "planned") !== "active") continue;
+      const requirements = fieldNamed(task, "requires")?.value;
+      if (!Array.isArray(requirements)) continue;
+      const requirement = (requirements as readonly RequirementValue[]).find(
+        (candidate) => candidate.resourceId === resource.id,
+      );
+      if (requirement !== undefined) {
+        usage += requirement.units;
+        activeTasks.push(task);
+      }
+    }
+    if (usage > capacity) {
+      diagnostics.push(
+        makeDiagnostic(
+          "PTRES-201",
+          "error",
+          `active usage ${usage}がresource ${resource.id} capacity ${capacity}を超えています`,
+          fieldNamed(resource, "capacity")!.valueSpan,
+          "analysis.resources",
+          resource.id,
+          activeTasks.map((task) => ({ message: `active task ${task.id}`, span: task.idSpan })),
+        ),
+      );
+    }
+  }
+}
+
+export function validateDocument(
+  document: DocumentNode,
+  parseDiagnostics: readonly Diagnostic[] = [],
+): readonly Diagnostic[] {
+  const diagnostics = [...parseDiagnostics];
+  validateFieldConstraints(document, diagnostics);
+  if (!hasErrors(diagnostics)) validateGraph(document, diagnostics);
+  return sortDiagnostics(diagnostics);
+}

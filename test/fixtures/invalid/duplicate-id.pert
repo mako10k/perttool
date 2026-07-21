@@ -1,0 +1,19 @@
+project DUPLICATE:
+  title "重複ID"
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone DONE:
+  title "完了"
+
+task WORK NOW -> DONE:
+  title "作業1"
+  duration 1d
+
+task WORK NOW -> DONE:
+  title "作業2"
+  duration 1d

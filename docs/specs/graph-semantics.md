@@ -466,8 +466,8 @@ Grammar version 1の表現力では、`E_keep`の各edgeは未到達targetのinc
 
 Diagnosticは次のkeyで並べる。
 
-1. severity: error、warning、info
-2. primary span start offset
+1. primary span start offset。Spanなしはspan付きの後
+2. severity: error、warning、info
 3. diagnostic code
 4. entity ID
 

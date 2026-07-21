@@ -1,0 +1,18 @@
+project ESTIMATE_ORDER:
+  title "不正な三点見積り"
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone DONE:
+  title "完了"
+
+task WORK NOW -> DONE:
+  title "作業"
+  estimate:
+    optimistic 3d
+    most_likely 2d
+    pessimistic 4d

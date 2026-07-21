@@ -921,8 +921,12 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 実装開始前に、次を ADR または個別仕様で固定する。
 
-1. Node.js 対応バージョン、package 配布形態、依存 package。実装言語は [基本設計](basic-design.md) で TypeScript に決定済み
-2. Mermaid profile の `%% perttool:` メタデータ schema
+1. Mermaid profile の `%% perttool:` メタデータ schema
+
+解決済みの設計判断:
+
+- task=edgeのAoA採用: [ADR 0001](adr/0001-activity-on-arrow.md)
+- Node.js 24以上、npm、TypeScript ESM package: [ADR 0002](adr/0002-node-typescript-package.md)
 
 ## 25. 推奨する次の仕様作業
 
@@ -932,5 +936,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 2. [x] [Graph Semantics仕様](specs/graph-semantics.md): reached、ready、done、gate、advance、resourceの形式定義
 3. [x] [Analysis仕様](specs/analysis.md): PERT/CPM、resource schedule、resource arc、tie-break
 4. [x] [CLI Interface仕様](specs/interfaces.md): CLI、JSON Schema、help、write safety。MCPはMVP対象外
-5. [ ] `docs/adr/0001-activity-on-arrow.md`: task=edge の設計判断
+5. [x] [ADR 0001](adr/0001-activity-on-arrow.md): task=edge の設計判断
 6. [ ] parser/validator の最小実装と golden tests
+
+項目6は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapは存在するが、grammar acceptance全項目を満たすまでは完了扱いにしない。

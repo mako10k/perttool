@@ -567,6 +567,8 @@ Diagnostic:
 
 `data`はdiagnostic code固有の安定fieldだけを持ち、free-form stack traceを含めない。Internal errorのstack traceは通常出力せず、明示的debug modeは将来仕様とする。
 
+Help registry lookup diagnosticは`PTHLP-*` namespaceを使用する。Unknown topicは`PTHLP-001`、exit 1とする。
+
 ### 11.5 Rational value
 
 ```text

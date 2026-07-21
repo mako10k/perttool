@@ -1,8 +1,8 @@
 # perttool
 
-PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理ツール（構想段階）。
+PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI（実装bootstrap段階）。
 
-現在は基本設計フェーズです。正本は次の文書です。
+現在はNode.js 24以上のTypeScript CLIとして実装を開始しています。`dsl check`と`dsl help`が最初の実装済みsurfaceで、PERT分析とmutationはまだ未実装です。正本は次の文書です。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -10,6 +10,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [Graph Semantics 仕様](docs/specs/graph-semantics.md)
 - [Analysis 仕様](docs/specs/analysis.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
+- [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)
 - [自己利用計画](docs/process/self-use.md)
 - [AI 開発ガイド](docs/process/ai-development.md)
@@ -25,8 +26,18 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - 現行文書は現在と未来を表し、過去は Git 履歴で追跡する
 - parser・check・analyze・next が安定した時点で、文法作業の計画から自己利用を開始する
 
-現在のrepository checkは次で実行できます。
+Setupとrepository check:
 
 ```sh
-bash scripts/check-docs.sh
+npm ci
+npm run check
+```
+
+現在のCLI bootstrap:
+
+```sh
+npm run build
+node dist/cli.js --help
+node dist/cli.js dsl check docs/examples/parallel.pert
+node dist/cli.js dsl help syntax estimate --level detail --format json
 ```

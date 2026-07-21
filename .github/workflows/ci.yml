@@ -15,12 +15,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  documentation:
+  repository:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check repository documents and DSL examples
-        run: bash scripts/check-docs.sh
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck, test, and check repository documents
+        run: npm run check

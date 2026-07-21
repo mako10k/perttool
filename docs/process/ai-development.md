@@ -38,8 +38,10 @@ AGENTS.md                         shared canonical guidance
 ├── .github/copilot-instructions.md  Copilot entrypoint and mandatory summary
 ├── .codex/config.toml               conservative project-local defaults
 ├── docs/process/ai-development.md   rationale and operating workflow
-└── scripts/check-docs.sh            executable repository check
-    └── .github/workflows/ci.yml     same check in CI
+├── package.json                     executable repository check
+│   └── npm run check                typecheck、test、docs
+├── scripts/check-docs.sh            documentation sub-check
+└── .github/workflows/ci.yml         same npm check in CI
 ```
 
 規則を追加する場合は、違反を検出できるtestまたは具体的なreview checkpointを優先する。単なる心構えを増やして`AGENTS.md`を長くしない。
@@ -67,9 +69,12 @@ AGENTS.md                         shared canonical guidance
 現段階の共通check:
 
 ```sh
-bash scripts/check-docs.sh
+npm ci
+npm run check
 git diff --check
 ```
+
+変更範囲に応じて`npm run typecheck`、`npm test`、`npm run check:docs`をnarrow checkとして先に実行する。
 
 その後、`git diff -- <対象file>`で次を確認する。
 
@@ -104,13 +109,13 @@ tool出力は選択根拠であり、task完了の独立証拠ではない。完
 
 ## 6. Evolution rule
 
-TypeScript scaffoldを追加するchangeで、次を同時に更新する。
+TypeScript scaffoldでは次を固定した。
 
-- 実際のNode.jsとpackage manager version
-- install、build、lint、typecheck、test command
-- CI cacheとrequired check
-- source/test directoryを含むproject map
-- generated fileとlocal cacheの`.gitignore`
-- 必要になった場合だけcustom agentまたはskill
+- Node.js 24以上、npm、ESM、TypeScript 7.0系
+- `npm ci`、`npm run build`、`npm run typecheck`、`npm test`、`npm run check`
+- CIはNode.js 24で`npm run check`
+- sourceは`src/`、test/fixtureは`test/`、生成物は`dist/`
+- `node_modules/`、`dist/`、coverage、tsbuildinfoはGit管理外
+- runtime dependencyは現時点で0。必要になった場合だけ追加判断する
 
 AI設定だけが実装workflowより先に複雑化しないようにする。

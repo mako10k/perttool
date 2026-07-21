@@ -1,0 +1,27 @@
+{
+  "name": "perttool",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "description": "Document-based PERT/CPM and resource scheduling CLI",
+  "type": "module",
+  "bin": {
+    "perttool": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "check:docs": "bash scripts/check-docs.sh",
+    "check": "npm run typecheck && npm test && npm run check:docs"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "typescript": "7.0.2"
+  }
+}

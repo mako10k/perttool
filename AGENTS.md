@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、要件・基本設計・詳細仕様を固めている段階である。実装済みCLIやpackage構成が存在する前提で作業してはならない。
+perttoolは現在、設計baselineを終えてTypeScript CLIの実装を開始した段階である。実在するcommandと未実装surfaceを区別し、helpや文書へ未実装機能を実装済みとして載せない。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -30,11 +30,15 @@ perttoolは現在、要件・基本設計・詳細仕様を固めている段階
 - `docs/requirements.md`: product要求とMVP境界。
 - `docs/basic-design.md`: architecture、module境界、実装slice。
 - `docs/specs/`: grammar、graph semantics、analysis、interfaceの規範仕様。
+- `docs/adr/`: 採用済みarchitecture/runtime判断。
 - `docs/examples/`: parserとanalysisの規範sample。
 - `docs/process/`: 自己利用とAI開発の運用手順。
 - `plans/`: perttool自身の現在・未来の計画。自己利用gateを満たすまで`.pert`計画を作らない。
 - `scripts/`: repository-local verification command。
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
+- `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
+- `test/`: Node.js built-in test runnerのfixture、unit/integration test。
+- `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
 
 実装を追加した時点で、実際のdirectoryとcommandに合わせてこのmapを更新する。
 
@@ -65,19 +69,22 @@ perttoolは現在、要件・基本設計・詳細仕様を固めている段階
 
 ## Validation
 
-現在のrepository checkはrootから実行する。
+現在のrepository checkはNode.js 24以上でrootから実行する。
 
 ```sh
-bash scripts/check-docs.sh
+npm ci
+npm run check
 git diff --check
 ```
+
+Narrow checkは`npm run typecheck`、`npm test`、`npm run check:docs`を使用する。`bash scripts/check-docs.sh`はdocumentationだけの下位入口である。
 
 - 文書だけの変更でも、local link、Markdown fence、規範`.pert` sampleのbootstrap検査を実行する。
 - grammar変更ではvalid/invalid example、field table、EBNF、diagnostic、formatter契約を一緒に確認する。
 - analysis変更では小さなgolden graphを使い、precedence結果とresource schedule結果を別々に検証する。
 - implementation追加後は、実在するnarrow testを先に実行し、共有coreに触れた場合だけ広いsuiteへ進む。
 - 実行していないtestを成功したと報告しない。失敗や環境不足はcommandとともに明記する。
-- package managerやbuild commandが決まったら、正確なcommandを本節、`docs/process/ai-development.md`、CIへ同時に追加する。
+- package/runtime方針は`docs/adr/0002-node-typescript-package.md`を正とし、command変更時は本節、`docs/process/ai-development.md`、CIを同時に更新する。
 
 ## Review and durable guidance
 
