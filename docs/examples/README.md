@@ -2,6 +2,7 @@
 
 - [minimal.pert](minimal.pert): resourceを使わない最小の直線DAG
 - [pert-estimate.pert](pert-estimate.pert): 三点見積りのexact expected/varianceを確認する直線DAG
+- [point-velocity.pert](point-velocity.pert): Pointを基準にPERT計算し、project-wide velocityでday予測を得る並行DAG
 - [parallel.pert](parallel.pert): dependency上は並行可能なtask、capacity 2の担当枠、capacity 1の排他設備を含むDAG
 - [advance-partial-before.pert](advance-partial-before.pert): done branchとactive branchが未到達milestoneへ合流するadvance前のDAG
 - [advance-partial-after.pert](advance-partial-after.pert): 過去edgeだけを削除し、合流に必要なdone taskを保持したcanonical advance結果
@@ -9,6 +10,8 @@
 これらはgrammar version 1、semantics version 1、analysis version 1の規範サンプルであり、parser/analyzer実装後は同じ内容をfixture/golden testから検証する。
 
 `pert-estimate.pert`では`DESIGN`のexpectedは`13/6d`、varianceは`1/4d^2`である。`BUILD`を含むprecedence makespanは`31/6d`、代表critical task列は`[DESIGN, BUILD]`になる。
+
+`point-velocity.pert`では基準値のprecedence makespanは`10p`、capacity 1でのresource makespanは`15p`である。`velocity 20p/10d`によるforecastはそれぞれ`5d`、`7.5d`となる。基準値とforecastはCLI JSONで別fieldとして返す。
 
 `parallel.pert` のexpected durationに対する初期heuristicの期待値:
 

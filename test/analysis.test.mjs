@@ -10,6 +10,7 @@ import {
   analyzeResources,
   buildResidualGraph,
   checkDocument,
+  convertWithVelocity,
   formatDecimal,
   rational,
 } from "../dist/index.js";
@@ -36,6 +37,44 @@ test("Rational arithmetic is canonical and display rounding is derived", () => {
   });
   assert.equal(formatDecimal(rational(13n, 6n), 3), "2.167");
   assert.equal(formatDecimal(rational(-1n, 8n), 2), "-0.13");
+});
+
+test("point analysis stays in points and produces exact day forecasts", async () => {
+  const text = await readFile(path.join(root, "docs/examples/point-velocity.pert"), "utf8");
+  const result = analyzeDocument(text);
+  assert.equal(result.ok, true);
+  assert.equal(result.durationUnit, "point");
+  assert.deepEqual(result.velocity, {
+    points: rational(20n),
+    period: rational(10n),
+    periodUnit: "day",
+  });
+  assert.equal(result.velocityForecast.targetUnit, "day");
+  assert.equal(exact(result.velocityForecast.targetPerSource), "1/2");
+  assert.equal(exact(result.precedence.makespan), "10/1");
+  assert.equal(exact(result.resource.makespan), "15/1");
+  assert.equal(
+    exact(convertWithVelocity(result.precedence.makespan, result.velocityForecast)),
+    "5/1",
+  );
+  assert.equal(
+    exact(convertWithVelocity(result.resource.makespan, result.velocityForecast)),
+    "15/2",
+  );
+  const design = result.precedence.edges.find(({ id }) => id === "DESIGN");
+  assert.equal(exact(design.expected), "5/1");
+  assert.equal(exact(design.variance), "4/9");
+});
+
+test("time estimates convert back to points with the same velocity", () => {
+  const text = `project TIME_TO_POINT:\n  title "time to point"\n  duration_unit day\n  velocity 20p/10d\n  finish DONE\n\nmilestone NOW:\n  title "now"\n  state reached\n\nmilestone DONE:\n  title "done"\n\ntask WORK NOW -> DONE:\n  title "work"\n  duration 3d\n`;
+  const result = analyzeDocument(text);
+  assert.equal(result.ok, true);
+  assert.equal(result.velocityForecast.targetUnit, "point");
+  assert.equal(
+    exact(convertWithVelocity(result.precedence.makespan, result.velocityForecast)),
+    "6/1",
+  );
 });
 
 test("PERT example preserves exact expected duration and variance", async () => {

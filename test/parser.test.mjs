@@ -11,7 +11,7 @@ const root = path.resolve(testDirectory, "..");
 test("all normative examples parse and validate", async () => {
   const examplesDirectory = path.join(root, "docs/examples");
   const names = (await readdir(examplesDirectory)).filter((name) => name.endsWith(".pert"));
-  assert.equal(names.length, 5);
+  assert.equal(names.length, 6);
   for (const name of names) {
     const text = await readFile(path.join(examplesDirectory, name), "utf8");
     const result = checkDocument(text);
@@ -67,5 +67,36 @@ test("source-backed CST records blank and comment trivia spans", () => {
   assert.equal(parsed.document.trivia.some(({ kind }) => kind === "blank"), true);
   for (const trivia of parsed.document.trivia) {
     assert.ok(trivia.span.end.offset >= trivia.span.start.offset);
+  }
+});
+
+test("point duration and project velocity parse as exact structured values", async () => {
+  const text = await readFile(path.join(root, "docs/examples/point-velocity.pert"), "utf8");
+  const parsed = parseDocument(text);
+  assert.equal(parsed.diagnostics.length, 0);
+  const project = parsed.document.declarations.find(({ kind }) => kind === "project");
+  const velocity = project.fields.find(({ name }) => name === "velocity").value;
+  assert.deepEqual(
+    [velocity.points.digits, velocity.points.scale, velocity.points.suffix],
+    [20n, 0, "p"],
+  );
+  assert.deepEqual(
+    [velocity.period.digits, velocity.period.scale, velocity.period.suffix],
+    [10n, 0, "d"],
+  );
+});
+
+test("point projects and time projects enforce velocity constraints", () => {
+  const document = (durationUnit, velocity, duration) =>
+    `project VELOCITY_RULE:\n  title "velocity"\n  duration_unit ${durationUnit}\n${velocity === null ? "" : `  velocity ${velocity}\n`}  finish DONE\n\nmilestone NOW:\n  title "now"\n  state reached\n\nmilestone DONE:\n  title "done"\n\ntask WORK NOW -> DONE:\n  title "work"\n  duration ${duration}\n`;
+
+  for (const [text, code] of [
+    [document("point", null, "1p"), "PTSEM-111"],
+    [document("point", "0p/1d", "1p"), "PTSEM-111"],
+    [document("day", "10p/8h", "1d"), "PTSEM-111"],
+  ]) {
+    const result = checkDocument(text);
+    assert.equal(result.ok, false);
+    assert.ok(result.diagnostics.some((diagnostic) => diagnostic.code === code));
   }
 });

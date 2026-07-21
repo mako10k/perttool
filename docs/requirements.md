@@ -134,6 +134,9 @@ MVP では次を目的としない。
 | Ready | 依存が満たされ、ブロックされておらず、未着手の task から導出される状態 |
 | Critical | total float が許容誤差以下の task または gate |
 | Schedule Critical | resource待ちを含む実行可能schedule上で完了時刻を拘束するtask列 |
+| Point | AIや人が相対的な作業規模を見積もるための独自単位 `p`。時間そのものではない |
+| Velocity | 一定期間に完了できるPoint量を表すproject-wide比率。例: `20p/10d` |
+| Velocity Forecast | Pointとday/hourをVelocityで換算した予測値。宣言したPERT値とは区別する |
 | Snapshot | 特定時点の現在・未来を表す `.pert` 文書 |
 | Advance | 完了条件を反映して frontier を進め、不要な過去部分を除去する操作 |
 
@@ -146,7 +149,7 @@ Must fields:
 - `id`: 文書内で一意な安定識別子
 - `title`: 人間向け名称
 - `finish`: 最終 milestone の ID
-- `duration_unit`: 分析と表示に使うプロジェクト共通の時間単位
+- `duration_unit`: 分析と表示に使うプロジェクト共通の基準単位。`day`、`hour`、`point`のいずれか
 
 Optional fields:
 
@@ -154,6 +157,16 @@ Optional fields:
 - `description`: 複数行説明
 - `critical_epsilon`: exact Rational計算でnear-criticalをcritical表示へ含める許容誤差
 - `target_duration`: 現在境界から finish までの目標所要時間
+- `velocity`: Pointとday/hourを相互換算するproject-wide比率。`duration_unit point`では必須
+
+Constraints:
+
+- taskのduration/estimate、`critical_epsilon`、`target_duration`はprojectの基準単位へ統一する
+- `velocity`は正のPoint量と正の期間を`<points>p/<period>d`または`<points>p/<period>h`で表す
+- `duration_unit day|hour`でvelocityを指定する場合、期間suffixはprojectの基準単位と一致させる
+- `duration_unit point`ではvelocityの期間suffixが換算先の`day`または`hour`を決める
+- velocity換算値は`velocity_forecast`と明示し、宣言したPERT値を置き換えない
+- `1d`と`1h`の関係、営業日、勤務時間はvelocityから推測しない
 
 ### 7.2 Resource
 
@@ -276,7 +289,7 @@ Should:
 - Markdown の fenced code block で言語名 `pert` を使用できること
 - 不明な将来フィールドを黙って無視せず、明示的な診断にすること
 
-MVP の duration literal は `2d`、`4h` のように単位 suffix を必須とする。少なくとも `day`/`d` と `hour`/`h` を認識するが、calendar 変換規則がない文書での単位混在はエラーとする。
+MVP の duration literal は `2d`、`4h`、`3p` のように単位 suffix を必須とする。`day`/`d`、`hour`/`h`、`point`/`p`を認識し、1文書のtask見積りはprojectの基準単位へ統一する。Pointとday/hourの換算は明示されたvelocityだけで行い、calendar変換規則がない文書での単位混在はエラーとする。
 
 ### 8.2 文法仕様と代表構文
 
@@ -769,6 +782,7 @@ Must:
 - CLIは共通コアを直接利用する薄いadapterとすること
 - CLI 利用に MCP server の起動を要求しないこと
 - AIがCLI JSONの解析結果を利用でき、PERT計算値を自由文で生成する必要がないこと
+- AIがPointを時間と誤認しないよう、基準単位のexact Rationalとvelocity forecastを別fieldで取得できること
 - 将来adapterも同じ共通コアを利用し、計算・検査規則を再実装しないこと
 
 ### 17.2 MCP / LSP（MVP対象外）
@@ -886,6 +900,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 12. parse error から該当 help topic へ辿れる
 13. CLI text/JSONが共通parser/analyzerを利用し、同じdiagnosticと解析値を返す
 14. 主要な正常例、失敗例、round-trip が自動テストで固定される
+15. Point見積りをexact PERT値として計算し、宣言velocityによるday/hour予測をtext/JSONで区別して返せる
 
 ## 22. 初期要求との対応
 
@@ -901,6 +916,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 | 8. 現在・未来を表し、過去は Git で補足する | 2.3、9、19 |
 | 9. 既存 DSL ツールのヘルプ・AI 導線を踏襲する | 15、16、17、19.1 |
 | 10. resource共有、排他実行、並列数で変化する日程を扱う | 7.2、7.4、10.6、11 |
+| 11. 独自PointとVelocityでAIの見積りを時間予測へ変換する | 6、7.1、8、10、17 |
 
 ## 23. MVP 後へ保留する事項
 
@@ -910,6 +926,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 - resource-constrained scheduleの厳密最適化
 - 複数プロジェクト文書の include/import
 - 実績時間と予測精度の統計分析
+- team/resource別、期間別、履歴ベースのvelocity
 - Git revision 間の計画差分分析
 - Web UI と共同編集
 - 任意 Mermaid 構文の広範な import

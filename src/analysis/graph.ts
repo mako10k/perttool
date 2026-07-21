@@ -1,4 +1,10 @@
-import type { DeclarationNode, DocumentNode, DurationValue, RequirementValue } from "../model/syntax.js";
+import type {
+  DeclarationNode,
+  DocumentNode,
+  DurationValue,
+  RequirementValue,
+  VelocityValue,
+} from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import type { Rational } from "../model/rational.js";
@@ -12,8 +18,8 @@ import {
   square,
   subtract,
 } from "../model/rational.js";
+import type { DurationUnit, Velocity } from "../model/units.js";
 
-export type DurationUnit = "day" | "hour";
 export type TaskStatus = "planned" | "active" | "blocked" | "done";
 
 export interface AnalysisResource {
@@ -40,6 +46,7 @@ export interface ResidualGraph {
   readonly project: DeclarationNode;
   readonly finish: string;
   readonly durationUnit: DurationUnit;
+  readonly velocity: Velocity | null;
   readonly criticalEpsilon: Rational;
   readonly vertices: ReadonlyMap<string, DeclarationNode>;
   readonly resources: ReadonlyMap<string, AnalysisResource>;
@@ -170,6 +177,16 @@ export function buildResidualGraph(document: DocumentNode): ResidualGraph {
   if (project === undefined) throw new Error("validated document has no project");
   const finish = fieldNamed(project, "finish")!.value as string;
   const durationUnit = fieldNamed(project, "duration_unit")!.value as DurationUnit;
+  const velocityField = fieldNamed(project, "velocity");
+  const velocityValue = velocityField?.value as VelocityValue | undefined;
+  const velocity: Velocity | null =
+    velocityValue === undefined
+      ? null
+      : {
+          points: rationalFromDuration(velocityValue.points),
+          period: rationalFromDuration(velocityValue.period),
+          periodUnit: velocityValue.period.suffix === "d" ? "day" : "hour",
+        };
   const epsilonField = fieldNamed(project, "critical_epsilon");
   const criticalEpsilon =
     epsilonField === undefined
@@ -251,6 +268,7 @@ export function buildResidualGraph(document: DocumentNode): ResidualGraph {
     project,
     finish,
     durationUnit,
+    velocity,
     criticalEpsilon,
     vertices,
     resources,

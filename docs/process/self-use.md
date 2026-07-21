@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 0.7
+- 文書状態: Active Stage 1 / Revision 0.8
 - 作成日: 2026-07-21
 - 関連設計: [../basic-design.md](../basic-design.md)
 
@@ -62,6 +62,8 @@ Exit criteria:
 - ready: `ERROR_RECOVERY`、`FIELD_FIXTURES`、`BLOCK_TEXT_SPANS`
 - runnable_now: `ERROR_RECOVERY`、`BLOCK_TEXT_SPANS`
 - `FIELD_FIXTURES`は`GRAMMAR_REVIEW` capacity 1を`ERROR_RECOVERY`が先に仮取得するためresource待ち
+
+2026-07-21のPoint/velocity導入後、最初の対象である`plans/grammar.pert`を`duration_unit point`へ移行した。既存10d resource baselineを初期calibrationとして`velocity 10p/10d`を置き、PERT/CPMの基準値を8p/10p、velocity forecastを8d/10dとして分離してgoldenへ固定した。Velocityの変更履歴と将来の再calibrationはGitで追跡する。
 
 この段階で許可する操作:
 
@@ -210,5 +212,6 @@ Stage 1開始時の証跡:
 - analyze gate: precedence、capacity override、active allocation、resource witness、schedule critical pathを固定する`analysis.test.mjs`
 - next gate: `parallel next selects a deterministic runnable subset`、classification/depth unit test、text/JSON CLI integration test
 - self-use golden: grammar planとMVP planのcheck/analyze/next projection test
+- Point self-use gate: grammar planの基準unit、velocity forecast unit、precedence/resource forecastをgoldenで分離して検査する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、両planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

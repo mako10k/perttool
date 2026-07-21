@@ -3,12 +3,14 @@ import { hasErrors, sortDiagnostics } from "../model/diagnostics.js";
 import { fieldNamed } from "../model/syntax.js";
 import type { DocumentNode, RequirementValue } from "../model/syntax.js";
 import { buildResidualGraph } from "../analysis/graph.js";
-import type { DurationUnit, ResidualGraph } from "../analysis/graph.js";
+import type { ResidualGraph } from "../analysis/graph.js";
 import { analyzePrecedence } from "../analysis/precedence.js";
 import type { PrecedenceResult } from "../analysis/precedence.js";
 import { analyzeResources } from "../analysis/resource.js";
 import type { ResourceScheduleResult } from "../analysis/resource.js";
 import type { Rational } from "../model/rational.js";
+import type { DurationUnit, Velocity, VelocityConversion } from "../model/units.js";
+import { createVelocityConversion } from "../model/units.js";
 import { checkDocument } from "./check.js";
 
 export type AnalysisMode = "precedence" | "resource" | "both";
@@ -29,6 +31,8 @@ export interface AnalysisResult {
   readonly precision: number;
   readonly capacityOverrides: ReadonlyMap<string, number>;
   readonly durationUnit: DurationUnit | null;
+  readonly velocity: Velocity | null;
+  readonly velocityForecast: VelocityConversion | null;
   readonly criticalEpsilon: Rational | null;
   readonly precedence: PrecedenceResult | null;
   readonly resource: ResourceScheduleResult | null;
@@ -132,6 +136,8 @@ export function analyzeDocument(
       precision,
       capacityOverrides: overrides,
       durationUnit: null,
+      velocity: null,
+      velocityForecast: null,
       criticalEpsilon: null,
       precedence: null,
       resource: null,
@@ -149,6 +155,8 @@ export function analyzeDocument(
       precision,
       capacityOverrides: overrides,
       durationUnit: graph.durationUnit,
+      velocity: graph.velocity,
+      velocityForecast: createVelocityConversion(graph.durationUnit, graph.velocity),
       criticalEpsilon: graph.criticalEpsilon,
       precedence: null,
       resource: null,
@@ -191,6 +199,8 @@ export function analyzeDocument(
     precision,
     capacityOverrides: overrides,
     durationUnit: graph.durationUnit,
+    velocity: graph.velocity,
+    velocityForecast: createVelocityConversion(graph.durationUnit, graph.velocity),
     criticalEpsilon: graph.criticalEpsilon,
     precedence,
     resource,

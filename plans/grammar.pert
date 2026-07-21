@@ -4,8 +4,10 @@ project GRAMMAR:
   description |
     現在から先に残るparser、formatter、help同期の作業を管理する。
     完了済みのbootstrap実装はGit履歴を参照する。
+    相対規模をPointで保持し、初期baseline 10p/10dで日数を予測する。
   as_of 2026-07-21
-  duration_unit day
+  duration_unit point
+  velocity 10p/10d
   finish GRAMMAR_READY
 
 resource DEVELOPERS:
@@ -47,7 +49,7 @@ milestone GRAMMAR_READY:
 
 task FIELD_FIXTURES NOW -> FIELDS_VERIFIED:
   title "全declaration fieldとinvalid tokenのfixtureを揃える"
-  duration 2d
+  duration 2p
   priority 30
   requires:
     DEVELOPERS 1
@@ -55,7 +57,7 @@ task FIELD_FIXTURES NOW -> FIELDS_VERIFIED:
 
 task ERROR_RECOVERY NOW -> RECOVERY_VERIFIED:
   title "複数error recoveryとdiagnostic suppressionを検査する"
-  duration 3d
+  duration 3p
   priority 40
   requires:
     DEVELOPERS 1
@@ -63,7 +65,7 @@ task ERROR_RECOVERY NOW -> RECOVERY_VERIFIED:
 
 task BLOCK_TEXT_SPANS NOW -> TEXT_SPANS_VERIFIED:
   title "block textのcommon indentとUTF-16 spanを検査する"
-  duration 2d
+  duration 2p
   priority 20
   requires:
     DEVELOPERS 1
@@ -79,14 +81,14 @@ gate TEXT_SPANS_ACCEPTANCE TEXT_SPANS_VERIFIED -> PARSER_ACCEPTED:
 
 task FORMATTER_IMPLEMENT PARSER_ACCEPTED -> FORMATTER_IMPLEMENTED:
   title "source-preserving formatterを実装する"
-  duration 3d
+  duration 3p
   priority 20
   requires:
     DEVELOPERS 1
 
 task HELP_FIXTURE_SYNC PARSER_ACCEPTED -> HELP_SYNCHRONIZED:
   title "syntax help sampleとparser fixtureのdrift検査を追加する"
-  duration 1d
+  duration 1p
   priority 10
   requires:
     DEVELOPERS 1
@@ -94,7 +96,7 @@ task HELP_FIXTURE_SYNC PARSER_ACCEPTED -> HELP_SYNCHRONIZED:
 
 task FORMATTER_ROUNDTRIP FORMATTER_IMPLEMENTED -> FORMATTER_ACCEPTED:
   title "formatterのidempotenceとAST同値をgoldenで検査する"
-  duration 2d
+  duration 2p
   priority 30
   requires:
     DEVELOPERS 1

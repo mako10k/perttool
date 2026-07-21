@@ -13,6 +13,7 @@ import type {
   ParseResult,
   RequirementValue,
   TriviaNode,
+  VelocityValue,
 } from "../model/syntax.js";
 
 interface SourceLine {
@@ -39,6 +40,7 @@ const allowedFields: Readonly<Record<DeclarationKind, ReadonlySet<string>>> = {
     "description",
     "as_of",
     "duration_unit",
+    "velocity",
     "finish",
     "critical_epsilon",
     "target_duration",
@@ -142,18 +144,33 @@ function diagnostic(
 }
 
 function parseDuration(raw: string): DurationValue | undefined {
-  const match = /^([0-9]+)(?:\.([0-9]+))?([dh])$/.exec(raw);
+  const match = /^([0-9]+)(?:\.([0-9]+))?([dhp])$/.exec(raw);
   if (match === null) return undefined;
   const whole = match[1];
   if (whole === undefined) return undefined;
   const fraction = match[2] ?? "";
   const suffix = match[3];
-  if (suffix !== "d" && suffix !== "h") return undefined;
+  if (suffix !== "d" && suffix !== "h" && suffix !== "p") return undefined;
   return {
     text: raw,
     digits: BigInt(`${whole}${fraction}`),
     scale: fraction.length,
     suffix,
+  };
+}
+
+function parseVelocity(raw: string): VelocityValue | undefined {
+  const match = /^([0-9]+(?:\.[0-9]+)?p)\/([0-9]+(?:\.[0-9]+)?[dh])$/.exec(raw);
+  if (match === null) return undefined;
+  const points = parseDuration(match[1]!);
+  const period = parseDuration(match[2]!);
+  if (points?.suffix !== "p" || (period?.suffix !== "d" && period?.suffix !== "h")) {
+    return undefined;
+  }
+  return {
+    text: raw,
+    points: points as DurationValue & { readonly suffix: "p" },
+    period: period as DurationValue & { readonly suffix: "d" | "h" },
   };
 }
 
@@ -231,13 +248,19 @@ function scalarFieldValue(
       ? { value: rawValue, code: "PTDSL-007", topic: "syntax.duration" }
       : { value };
   }
+  if (name === "velocity") {
+    const value = parseVelocity(rawValue);
+    return value === undefined
+      ? { value: rawValue, code: "PTDSL-007", topic: "syntax.velocity" }
+      : { value };
+  }
   if (name === "finish") {
     return identifierPattern.test(rawValue)
       ? { value: rawValue }
       : { value: rawValue, code: "PTDSL-004", topic: "syntax.project" };
   }
   if (name === "duration_unit") {
-    return rawValue === "day" || rawValue === "hour"
+    return rawValue === "day" || rawValue === "hour" || rawValue === "point"
       ? { value: rawValue }
       : { value: rawValue, code: "PTDSL-012", topic: "syntax.duration" };
   }

@@ -111,6 +111,22 @@ test("dsl help exposes the estimate topic as JSON", () => {
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
 
+test("dsl help exposes point velocity syntax for AI clients", () => {
+  const result = run([
+    "dsl",
+    "help",
+    "syntax",
+    "velocity",
+    "--level=detail",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.topic_id, "syntax.velocity");
+  assert.ok(json.syntax.includes("  velocity 20p/10d"));
+  assert.ok(json.sections.some(({ id }) => id === "scope"));
+});
+
 test("dag analyze defaults to separate precedence and resource JSON results", () => {
   const result = run([
     "dag",
@@ -121,7 +137,7 @@ test("dag analyze defaults to separate precedence and resource JSON results", ()
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.AnalysisResult.v1");
+  assert.equal(json.schema_version, "Perttool.AnalysisResult.v2");
   assert.equal(json.mode, "both");
   assert.equal(json.precedence.makespan.numerator, "6");
   assert.equal(json.resource.makespan.numerator, "8");
@@ -152,6 +168,36 @@ test("dag analyze text keeps precedence and heuristic resource sections distinct
     assert.match(result.stdout, new RegExp(`^${section}$`, "m"));
   }
   assert.match(result.stdout, /^ALGORITHM parallel-sgs@1 optimal=false$/m);
+});
+
+test("dag analyze returns point values and separate velocity forecasts", () => {
+  const result = run([
+    "dag",
+    "analyze",
+    "docs/examples/point-velocity.pert",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.duration_unit, "point");
+  assert.equal(json.velocity.points.display, "20");
+  assert.equal(json.velocity.period.unit, "day");
+  assert.equal(json.precedence.makespan.unit, "point");
+  assert.equal(json.precedence.makespan.display, "10");
+  assert.equal(json.resource.makespan.display, "15");
+  assert.equal(json.velocity_forecast.qualifier, "velocity_forecast");
+  assert.equal(json.velocity_forecast.precedence_makespan.display, "5");
+  assert.equal(json.velocity_forecast.resource_makespan.display, "7.5");
+
+  const text = run([
+    "dag",
+    "analyze",
+    "docs/examples/point-velocity.pert",
+    "--color=never",
+  ]);
+  assert.equal(text.status, 0);
+  assert.match(text.stdout, /^VELOCITY 20p\/10d$/m);
+  assert.match(text.stdout, /^VELOCITY FORECAST 7\.5d$/m);
 });
 
 test("dag analyze warnings-as-errors suppresses the text success result", () => {
@@ -213,7 +259,7 @@ test("dag next JSON separates readiness from the runnable resource subset", () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v1");
+  assert.equal(json.schema_version, "Perttool.NextResult.v2");
   assert.deepEqual(json.groups, {
     active: [],
     ready: ["CORE", "CLI", "DOCS"],
@@ -236,6 +282,24 @@ test("dag next JSON separates readiness from the runnable resource subset", () =
     active_task_ids: [],
     earlier_selected_task_ids: ["CORE", "CLI"],
   }]);
+});
+
+test("dag next includes per-task velocity forecasts without replacing point estimates", () => {
+  const result = run([
+    "dag",
+    "next",
+    "docs/examples/point-velocity.pert",
+    "--format=json",
+  ]);
+  assert.equal(result.status, 0);
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.duration_unit, "point");
+  assert.equal(json.velocity_forecast.target_unit, "day");
+  const design = json.tasks.find(({ id }) => id === "DESIGN");
+  assert.equal(design.expected.unit, "point");
+  assert.equal(design.expected.display, "5");
+  assert.equal(design.forecast_expected.unit, "day");
+  assert.equal(design.forecast_expected.display, "2.5");
 });
 
 test("dag next text uses stable operational sections and explanations", () => {

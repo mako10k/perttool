@@ -11,7 +11,13 @@ export interface DurationValue {
   readonly text: string;
   readonly digits: bigint;
   readonly scale: number;
-  readonly suffix: "d" | "h";
+  readonly suffix: "d" | "h" | "p";
+}
+
+export interface VelocityValue {
+  readonly text: string;
+  readonly points: DurationValue & { readonly suffix: "p" };
+  readonly period: DurationValue & { readonly suffix: "d" | "h" };
 }
 
 export interface RequirementValue {

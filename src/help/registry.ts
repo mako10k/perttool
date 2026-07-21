@@ -72,7 +72,7 @@ const nodes: readonly HelpNode[] = [
         text: "docs/examples/minimal.pert",
       },
     ],
-    related: ["syntax.task", "syntax.estimate", "analysis", "errors"],
+    related: ["syntax.task", "syntax.estimate", "syntax.velocity", "analysis", "errors"],
   },
   {
     id: "syntax.task",
@@ -111,7 +111,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "unit",
         title: "Duration unit",
-        body: "3値は同じsuffixを使い、project duration_unitと一致させます。",
+        body: "3値は同じsuffixを使い、project duration_unit（day/hour/point）と一致させます。",
       },
     ],
     syntax: [
@@ -132,12 +132,49 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.duration",
     title: "Duration syntax",
-    summary: "Finite decimalにproject unit suffix dまたはhを付けます。",
+    summary: "Finite decimalにproject unit suffix d、h、pのいずれかを付けます。",
     quick: [],
     detail: [],
-    syntax: ["1d", "2.5h", "0d"],
+    syntax: ["1d", "2.5h", "3p", "0d"],
     examples: [],
-    related: ["syntax.estimate", "analysis"],
+    related: ["syntax.estimate", "syntax.velocity", "analysis"],
+  },
+  {
+    id: "syntax.velocity",
+    title: "Velocity syntax",
+    summary: "Pointとday/hourを相互換算するproject-wide velocityを記述します。",
+    quick: [
+      {
+        id: "forecast",
+        title: "Velocity forecast",
+        body: "duration_unit pointではvelocityが必須です。PERT値はpのまま計算し、換算値をvelocity forecastとして別に返します。",
+      },
+    ],
+    detail: [
+      {
+        id: "units",
+        title: "Units",
+        body: "20p/10dまたは20p/80hの形式です。dayとhourの関係は暗黙に推測しません。",
+      },
+      {
+        id: "scope",
+        title: "MVP scope",
+        body: "velocityはproject全体で一定です。team別、resource別、期間別velocityはMVP対象外です。",
+      },
+    ],
+    syntax: [
+      "project ID:",
+      "  duration_unit point",
+      "  velocity 20p/10d",
+    ],
+    examples: [
+      {
+        id: "point-velocity",
+        title: "Point estimate and velocity forecast",
+        text: "docs/examples/point-velocity.pert",
+      },
+    ],
+    related: ["syntax.duration", "syntax.estimate", "analysis"],
   },
   {
     id: "syntax.indentation",
@@ -164,7 +201,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "exact",
         title: "Exact arithmetic",
-        body: "expected、variance、float、makespanはexact Rationalで計算し、displayだけを--precisionで丸めます。",
+        body: "expected、variance、float、makespanはexact Rationalで計算し、displayだけを--precisionで丸めます。Point文書ではvelocity forecastもexact換算します。",
       },
       {
         id: "paths",
@@ -306,6 +343,7 @@ const nodes: readonly HelpNode[] = [
     syntax: [],
     examples: [
       { id: "minimal", title: "Minimal", text: "docs/examples/minimal.pert" },
+      { id: "point-velocity", title: "Point and velocity", text: "docs/examples/point-velocity.pert" },
       { id: "parallel", title: "Resources", text: "docs/examples/parallel.pert" },
     ],
     related: ["syntax", "analysis"],

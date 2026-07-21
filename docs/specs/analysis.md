@@ -144,10 +144,21 @@ rational    = integer(digits) / 10^scale
 ```text
 numerator: signed decimal integer string
 denominator: positive decimal integer string
-unit: day | hour | day^2 | hour^2 | ratio
+unit: day | hour | point | day^2 | hour^2 | point^2 | ratio
 ```
 
 人間向けdecimalは派生表示であり、比較、critical判定、tie-breakへ再利用しない。
+
+### 4.5 velocity conversion
+
+Project velocityを`P point / T calendar-unit`とする。基準単位がpointならcalendar forecastは`x * T / P`、基準単位がvelocity期間と同じday/hourならpoint forecastは`x * P / T`でexact計算する。
+
+- `P`と`T`はともに正のRational
+- 換算途中で丸めない
+- source unitとtarget unitをresultへ明示する
+- 換算値には`velocity_forecast` qualifierを付け、PERT/CPMとresource scheduleは基準単位の値で実行する
+- varianceは基準単位の二乗で保持する。MVPのvelocity forecastはduration/expected/float/makespanを対象とし、forecast varianceは出力しない
+- day/hour間をvelocity経由または固定比率で暗黙換算しない
 
 ## 5. Duration and variance
 
@@ -176,7 +187,7 @@ variance = ((P - O) / 6)^2
 - 計算途中で丸めない
 - deterministic taskのvarianceは0
 - gateとdone taskの残varianceは0
-- variance unitはproject duration unitの二乗
+- variance unitはproject duration unitの二乗。pointなら`point^2`
 - path varianceはtaskが独立である近似の下でtask varianceを加算する
 - blocked外部待ち時間のmean/varianceを推測しない
 

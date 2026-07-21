@@ -14,6 +14,7 @@ import type {
   DurationValue,
   FieldNode,
   RequirementValue,
+  VelocityValue,
 } from "../model/syntax.js";
 import {
   compareDurations,
@@ -33,6 +34,7 @@ const reservedWords = new Set([
   "description",
   "as_of",
   "duration_unit",
+  "velocity",
   "finish",
   "critical_epsilon",
   "target_duration",
@@ -58,6 +60,7 @@ const reservedWords = new Set([
   "done",
   "day",
   "hour",
+  "point",
 ]);
 
 interface Edge {
@@ -147,6 +150,15 @@ function durationValue(field: FieldNode | undefined): DurationValue | undefined 
   }
   return "digits" in field.value && "suffix" in field.value
     ? (field.value as DurationValue)
+    : undefined;
+}
+
+function velocityValue(field: FieldNode | undefined): VelocityValue | undefined {
+  if (field === undefined || typeof field.value !== "object" || field.value === null) {
+    return undefined;
+  }
+  return "points" in field.value && "period" in field.value
+    ? (field.value as VelocityValue)
     : undefined;
 }
 
@@ -269,6 +281,8 @@ function validateFieldConstraints(
     if (declaration.kind === "project") {
       const title = requireField(declaration, "title", diagnostics);
       const durationUnit = requireField(declaration, "duration_unit", diagnostics);
+      const velocityField = fieldNamed(declaration, "velocity");
+      const velocity = velocityValue(velocityField);
       requireField(declaration, "finish", diagnostics);
       const version = fieldNamed(declaration, "version");
       if (version !== undefined && version.value !== 1) {
@@ -312,8 +326,14 @@ function validateFieldConstraints(
       }
       void title;
       void criticalEpsilon;
-      if (durationUnit !== undefined && typeof durationUnit.value === "string") {
-        const expectedSuffix = durationUnit.value === "day" ? "d" : "h";
+      if (
+        durationUnit !== undefined &&
+        (durationUnit.value === "day" ||
+          durationUnit.value === "hour" ||
+          durationUnit.value === "point")
+      ) {
+        const expectedSuffix =
+          durationUnit.value === "day" ? "d" : durationUnit.value === "hour" ? "h" : "p";
         for (const candidate of document.declarations) {
           for (const field of candidate.fields) {
             const values = field.children ?? [field];
@@ -332,6 +352,47 @@ function validateFieldConstraints(
                 );
               }
             }
+          }
+        }
+        if (durationUnit.value === "point" && velocityField === undefined) {
+          diagnostics.push(
+            makeDiagnostic(
+              "PTSEM-111",
+              "error",
+              "duration_unit pointにはvelocityが必要です",
+              durationUnit.valueSpan,
+              "syntax.velocity",
+              declaration.id,
+            ),
+          );
+        }
+        if (velocity !== undefined) {
+          if (isZeroDuration(velocity.points) || isZeroDuration(velocity.period)) {
+            diagnostics.push(
+              makeDiagnostic(
+                "PTSEM-111",
+                "error",
+                "velocityのPoint量と期間量は0より大きくしてください",
+                velocityField!.valueSpan,
+                "syntax.velocity",
+                declaration.id,
+              ),
+            );
+          }
+          if (
+            durationUnit.value !== "point" &&
+            velocity.period.suffix !== expectedSuffix
+          ) {
+            diagnostics.push(
+              makeDiagnostic(
+                "PTSEM-111",
+                "error",
+                `project unit ${durationUnit.value}とvelocity期間suffixが一致しません`,
+                velocityField!.valueSpan,
+                "syntax.velocity",
+                declaration.id,
+              ),
+            );
           }
         }
       }

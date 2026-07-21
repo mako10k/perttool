@@ -1,8 +1,8 @@
 # perttool CLI Interface仕様
 
-- 文書状態: Draft 0.1
-- Interface version: 1
-- CLI contract version: 1
+- 文書状態: Draft 0.2
+- Interface version: 2
+- CLI contract version: 2
 - 作成日: 2026-07-21
 - 対応要件: [../requirements.md](../requirements.md)
 - 文法仕様: [dsl-grammar.md](dsl-grammar.md)
@@ -575,7 +575,7 @@ Help registry lookup diagnosticは`PTHLP-*` namespaceを使用する。Unknown t
 RationalValue:
   numerator       signed decimal integer string
   denominator     positive decimal integer string
-  unit            "day" | "hour" | "day^2" | "hour^2" | "ratio"
+  unit            "day" | "hour" | "point" | "day^2" | "hour^2" | "point^2" | "ratio"
   display         decimal string rounded by --precision
 ```
 
@@ -602,18 +602,41 @@ Parse不能でcountを信頼できない場合は各entity countを0、`grammar_
 
 ### 12.2 AnalysisResult
 
-`schema_version = "Perttool.AnalysisResult.v1"`
+`schema_version = "Perttool.AnalysisResult.v2"`
+
+Version 2は`duration_unit point`、`velocity`、`velocity_forecast`を追加する。Version 1の`duration_unit` enumを拡張するためmajorを更新し、Version 2 producerはday/hour文書にもVersion 2を返す。
 
 Root:
 
 ```text
 mode              "precedence" | "resource" | "both"
 precision         integer
-duration_unit     "day" | "hour"
+duration_unit     "day" | "hour" | "point"
 critical_epsilon  RationalValue
+velocity          Velocity|null
+velocity_forecast AnalysisVelocityForecast|null
 precedence        PrecedenceResult|null
 resource          ResourceScheduleResult|null
 ```
+
+`Velocity`:
+
+```text
+points             RationalValue  unit=point
+period             RationalValue  unit=day|hour
+```
+
+`AnalysisVelocityForecast`:
+
+```text
+qualifier           "velocity_forecast"
+source_unit         "day" | "hour" | "point"
+target_unit         "day" | "hour" | "point"
+precedence_makespan RationalValue|null
+resource_makespan   RationalValue|null
+```
+
+Velocity forecastは基準単位のresultを置き換えない。`precedence_makespan`と`resource_makespan`は対応する基準resultが生成された場合だけnon-nullとする。
 
 `PrecedenceResult`:
 
@@ -712,11 +735,26 @@ connector_ids        string[]
 
 ### 12.3 NextResult
 
-`schema_version = "Perttool.NextResult.v1"`
+`schema_version = "Perttool.NextResult.v2"`
 
 ```text
 precision             integer
-duration_unit         "day" | "hour"
+duration_unit         "day" | "hour" | "point"
+velocity              Velocity|null
+velocity_forecast      NextVelocityForecast|null
+```
+
+`NextVelocityForecast`:
+
+```text
+  qualifier            "velocity_forecast"
+  source_unit          "day" | "hour" | "point"
+  target_unit          "day" | "hour" | "point"
+```
+
+NextResult rootの続き:
+
+```text
 capacity_overrides    [{resource_id, capacity}]
 groups:
   active              string[]
@@ -733,6 +771,7 @@ tasks                 NextTask[]
 id title status classification runnable_now
 priority owner blocked_reason
 expected total_float earliest_start
+forecast_expected forecast_total_float forecast_earliest_start
 precedence_critical schedule_critical
 requirements          [{resource_id, units}]
 resource_rejections   ResourceRejection[]
@@ -741,7 +780,7 @@ explanation           ExplanationNode[]
 
 `classification`は`active|ready|blocked_now|upcoming`である。`runnable_now`はready taskへの直交booleanであり、classification enumへ混ぜない。
 
-`title`はstring、`status`はtask status、`priority`はinteger、`owner`と`blocked_reason`はstringまたは`null`とする。`expected`、`total_float`、`earliest_start`は`RationalValue`である。
+`title`はstring、`status`はtask status、`priority`はinteger、`owner`と`blocked_reason`はstringまたは`null`とする。`expected`、`total_float`、`earliest_start`は基準単位の`RationalValue`である。`forecast_*`はvelocityがある場合だけtarget unitの`RationalValue`、それ以外は`null`とする。
 
 `tasks`と`groups`はunfinished taskだけを対象とし、retained `done` taskを次task候補へ含めない。
 

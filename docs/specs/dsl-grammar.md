@@ -1,6 +1,6 @@
 # perttool DSL 文法仕様
 
-- 文書状態: Draft 0.2
+- 文書状態: Draft 0.3
 - Grammar version: 1
 - 作成日: 2026-07-21
 - 対応要件: [../requirements.md](../requirements.md)
@@ -156,13 +156,13 @@ Rules:
 
 ```text
 project resource milestone task gate
-version title description as_of duration_unit finish
+version title description as_of duration_unit velocity finish
 critical_epsilon target_duration state tags
 duration estimate optimistic most_likely pessimistic
 status priority owner blocked_reason source reason
 capacity requires
 planned reached active blocked done
-day hour
+day hour point
 ```
 
 ### 7.2 Integer
@@ -205,17 +205,29 @@ Decimal は有限10進数から正確な Rational へ変換する。
 
 ```ebnf
 Duration = Decimal, DurationSuffix ;
-DurationSuffix = "d" | "h" ;
+DurationSuffix = "d" | "h" | "p" ;
 ```
 
 - suffix は必須とする
 - space を Decimal と suffix の間に置かない
-- `d` は `duration_unit day`、`h` は `duration_unit hour` に対応する
-- `0d` と `0h` は lexical/syntax 上は有効とする
+- `d` は `duration_unit day`、`h` は `duration_unit hour`、`p`は`duration_unit point`に対応する
+- `0d`、`0h`、`0p`は lexical/syntax 上は有効とする
 - task duration と estimate の正値条件は field validation で検査する
 - 文書の project unit と異なる suffix は semantic error とする
 
-### 7.5 String
+### 7.5 Velocity
+
+```ebnf
+Velocity = Decimal, "p", "/", Decimal, ( "d" | "h" ) ;
+```
+
+- Point量と期間量の間に`/`を1個置き、空白を入れない
+- 両方のDecimalはfield validationで0より大きいことを要求する
+- `duration_unit point`ではrequired fieldとし、期間suffixがforecast unitを決める
+- `duration_unit day|hour`ではoptionalとし、期間suffixはproject unitと一致させる
+- velocityはproject-wide constantであり、task、resource、期間別のoverrideはgrammar version 1に含めない
+
+### 7.6 String
 
 String は JSON string literal と同じ double-quoted 形式を使う。
 
@@ -235,7 +247,7 @@ Rules:
 - decoded string は Unicode normalization しない
 - canonical formatter は JSON escaping を使う
 
-### 7.6 ISO date/date-time
+### 7.7 ISO date/date-time
 
 ```ebnf
 IsoDate     = Year, "-", Month, "-", Day ;
@@ -259,7 +271,7 @@ Rules:
 - leap second は grammar version 1 では許可しない
 - `as_of` は date または date-time を取る
 
-### 7.7 TagList
+### 7.8 TagList
 
 ```ebnf
 TagList = "[", OWS, [ Tag, { OWS, ",", OWS, Tag } ], OWS, "]" ;
@@ -353,6 +365,7 @@ ProjectField = VersionField
              | DescriptionField
              | AsOfField
              | DurationUnitField
+             | VelocityField
              | FinishField
              | CriticalEpsilonField
              | TargetDurationField ;
@@ -361,7 +374,8 @@ VersionField = "version", HSPACE, Integer, NEWLINE ;
 TitleField = "title", HSPACE, String, NEWLINE ;
 DescriptionField = "description", HSPACE, TextValue ;
 AsOfField = "as_of", HSPACE, ( IsoDateTime | IsoDate ), NEWLINE ;
-DurationUnitField = "duration_unit", HSPACE, ( "day" | "hour" ), NEWLINE ;
+DurationUnitField = "duration_unit", HSPACE, ( "day" | "hour" | "point" ), NEWLINE ;
+VelocityField = "velocity", HSPACE, Velocity, NEWLINE ;
 FinishField = "finish", HSPACE, Identifier, NEWLINE ;
 CriticalEpsilonField = "critical_epsilon", HSPACE, Duration, NEWLINE ;
 TargetDurationField = "target_duration", HSPACE, Duration, NEWLINE ;
@@ -435,7 +449,8 @@ TextValue = String, NEWLINE | "|", NEWLINE, BLOCK_TEXT ;
 TagList = "[", OWS, [ Tag, { OWS, ",", OWS, Tag } ], OWS, "]" ;
 Tag = Identifier | String ;
 
-Duration = Decimal, ( "d" | "h" ) ;
+Duration = Decimal, ( "d" | "h" | "p" ) ;
+Velocity = Decimal, "p", "/", Decimal, ( "d" | "h" ) ;
 Decimal = Digit, { Digit }, [ ".", Digit, { Digit } ] ;
 Integer = Digit, { Digit } ;
 Identifier = ASCIIAlpha, { ASCIIAlpha | Digit | "-" | "_" } ;
@@ -480,7 +495,8 @@ OWS = { " " } ;
 | `title` | 1 | String | decoded text は nonempty |
 | `description` | 0..1 | TextValue | 指定時 nonempty |
 | `as_of` | 0..1 | ISO date/date-time | 実在する日時 |
-| `duration_unit` | 1 | `day` or `hour` | 文書内 duration suffix と一致 |
+| `duration_unit` | 1 | `day`、`hour`、`point` | 文書内 duration suffix と一致 |
+| `velocity` | 0..1 | Velocity | `point`では必須。正のPoint量/正の期間量 |
 | `finish` | 1 | Identifier | milestone を参照 |
 | `critical_epsilon` | 0..1 | Duration | 省略時 project unit の0。0以上 |
 | `target_duration` | 0..1 | Duration | 指定時0より大きい |
@@ -592,6 +608,7 @@ gate は duration、estimate、status を持てない。
 - resource capacity、task priority、requirement unitsのInteger constraint
 - 同一task内のduplicate resource requirement
 - project unit と duration suffix の不一致
+- point projectのvelocity不足、velocityのzero値、time projectとの期間suffix不一致
 - version 不一致
 - calendar 上不正な as_of
 
@@ -623,7 +640,7 @@ parseまたはfield validationにerrorがある文書から、解析可能なGra
 | `PTDSL-004` | declaration header不正 | `syntax` |
 | `PTDSL-005` | unknown field | 対応する `syntax.*` |
 | `PTDSL-006` | invalid string/escape | `syntax.string` |
-| `PTDSL-007` | invalid duration/decimal | `syntax.duration` |
+| `PTDSL-007` | invalid duration/velocity/decimal | `syntax.duration`または`syntax.velocity` |
 | `PTDSL-008` | invalid date/date-time | `syntax.project` |
 | `PTDSL-009` | invalid list | `syntax.tags` |
 | `PTDSL-010` | invalid block text | `syntax.text` |
@@ -639,6 +656,7 @@ parseまたはfield validationにerrorがある文書から、解析可能なGra
 | `PTSEM-108` | unsupported grammar version | `syntax.project` |
 | `PTSEM-109` | resource capacity/requirement量の正数・範囲constraint不正 | `syntax.resource` |
 | `PTSEM-110` | duplicate resource requirement | `syntax.task` |
+| `PTSEM-111` | velocity constraint不正 | `syntax.velocity` |
 
 Graph diagnostic codeは[Graph Semantics仕様](graph-semantics.md)で固定する。
 
@@ -729,7 +747,7 @@ field order:
 
 ```text
 project:
-  version, title, description, as_of, duration_unit, finish,
+  version, title, description, as_of, duration_unit, velocity, finish,
   critical_epsilon, target_duration
 
 milestone:

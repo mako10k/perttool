@@ -13,6 +13,8 @@ import { getHelp } from "./help/registry.js";
 import type { Diagnostic, SourceSpan } from "./model/diagnostics.js";
 import type { Rational } from "./model/rational.js";
 import { formatDecimal } from "./model/rational.js";
+import type { DurationUnit, Velocity } from "./model/units.js";
+import { convertWithVelocity, durationSuffix } from "./model/units.js";
 import { TOOL_VERSION } from "./version.js";
 
 type OutputFormat = "text" | "json";
@@ -376,7 +378,12 @@ function capacityOverrides(values: readonly string[]): ReadonlyMap<string, numbe
   return overrides;
 }
 
-type RationalUnit = "day" | "hour" | "day^2" | "hour^2" | "ratio";
+type RationalUnit =
+  | DurationUnit
+  | "day^2"
+  | "hour^2"
+  | "point^2"
+  | "ratio";
 
 function rationalJson(
   value: Rational,
@@ -393,10 +400,10 @@ function rationalJson(
 
 function precedenceJson(
   result: NonNullable<ReturnType<typeof analyzeDocument>["precedence"]>,
-  unit: "day" | "hour",
+  unit: DurationUnit,
   precision: number,
 ): Readonly<Record<string, unknown>> {
-  const varianceUnit = `${unit}^2` as "day^2" | "hour^2";
+  const varianceUnit = `${unit}^2` as "day^2" | "hour^2" | "point^2";
   const path = (value: typeof result.critical.representativePath) => ({
     edge_ids: value.edgeIds,
     task_ids: value.taskIds,
@@ -445,10 +452,10 @@ function precedenceJson(
 
 function resourceJson(
   result: NonNullable<ReturnType<typeof analyzeDocument>["resource"]>,
-  unit: "day" | "hour",
+  unit: DurationUnit,
   precision: number,
 ): Readonly<Record<string, unknown>> {
-  const varianceUnit = `${unit}^2` as "day^2" | "hour^2";
+  const varianceUnit = `${unit}^2` as "day^2" | "hour^2" | "point^2";
   const schedulePath = (path: typeof result.scheduleCritical.representativePath) => ({
     task_ids: path.taskIds,
     constraints: path.constraints.map((constraint) => ({
@@ -536,8 +543,51 @@ function resourceJson(
   };
 }
 
-function durationText(value: Rational, unit: "day" | "hour", precision: number): string {
-  return `${formatDecimal(value, precision)}${unit === "day" ? "d" : "h"}`;
+function durationText(value: Rational, unit: DurationUnit, precision: number): string {
+  return `${formatDecimal(value, precision)}${durationSuffix(unit)}`;
+}
+
+function velocityJson(
+  velocity: Velocity | null,
+  precision: number,
+): Readonly<Record<string, unknown>> | null {
+  if (velocity === null) return null;
+  return {
+    points: rationalJson(velocity.points, "point", precision),
+    period: rationalJson(velocity.period, velocity.periodUnit, precision),
+  };
+}
+
+function velocityText(velocity: Velocity, precision: number): string {
+  return `${durationText(velocity.points, "point", precision)}/${durationText(velocity.period, velocity.periodUnit, precision)}`;
+}
+
+function analysisVelocityForecastJson(
+  result: ReturnType<typeof analyzeDocument>,
+): Readonly<Record<string, unknown>> | null {
+  const forecast = result.velocityForecast;
+  if (forecast === null) return null;
+  return {
+    qualifier: forecast.qualifier,
+    source_unit: forecast.sourceUnit,
+    target_unit: forecast.targetUnit,
+    precedence_makespan:
+      result.precedence === null
+        ? null
+        : rationalJson(
+            convertWithVelocity(result.precedence.makespan, forecast),
+            forecast.targetUnit,
+            result.precision,
+          ),
+    resource_makespan:
+      result.resource === null
+        ? null
+        : rationalJson(
+            convertWithVelocity(result.resource.makespan, forecast),
+            forecast.targetUnit,
+            result.precision,
+          ),
+  };
 }
 
 function renderAnalysisText(
@@ -560,6 +610,8 @@ function renderAnalysisText(
     `BLOCKED_TASKS ${blockedTaskIds.join(", ") || "-"}`,
     `PATHS_TRUNCATED ${pathsTruncated}`,
     `CAPACITY_OVERRIDES ${overrides.map(([id, capacity]) => `${id}=${capacity}`).join(", ") || "-"}`,
+    `VELOCITY ${result.velocity === null ? "-" : velocityText(result.velocity, result.precision)}`,
+    `VELOCITY_FORECAST_UNIT ${result.velocityForecast?.targetUnit ?? "-"}`,
   );
   if (result.precedence !== null) {
     const precedence = result.precedence;
@@ -567,6 +619,15 @@ function renderAnalysisText(
       "",
       "PRECEDENCE",
       `MAKESPAN ${durationText(precedence.makespan, unit, result.precision)}`,
+      ...(result.velocityForecast === null
+        ? []
+        : [
+            `VELOCITY FORECAST ${durationText(
+              convertWithVelocity(precedence.makespan, result.velocityForecast),
+              result.velocityForecast.targetUnit,
+              result.precision,
+            )}`,
+          ]),
       "EDGES",
       "ID EXPECTED ES EF LS LF TF FF CRITICAL",
     );
@@ -602,6 +663,15 @@ function renderAnalysisText(
       `ALGORITHM ${resource.algorithm.id}@${resource.algorithm.version} optimal=${resource.algorithm.optimal}`,
       `PRECEDENCE LOWER BOUND ${durationText(resource.precedenceLowerBound, unit, result.precision)}`,
       `MAKESPAN ${durationText(resource.makespan, unit, result.precision)}`,
+      ...(result.velocityForecast === null
+        ? []
+        : [
+            `VELOCITY FORECAST ${durationText(
+              convertWithVelocity(resource.makespan, result.velocityForecast),
+              result.velocityForecast.targetUnit,
+              result.precision,
+            )}`,
+          ]),
       `DELAY ${durationText(resource.resourceDelay, unit, result.precision)}`,
       "TASKS",
       "ID ELIGIBLE START FINISH WAIT REQUIREMENTS",
@@ -694,7 +764,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.AnalysisResult.v1",
+      schema_version: "Perttool.AnalysisResult.v2",
       tool_version: TOOL_VERSION,
       operation: "dag.analyze",
       ok,
@@ -713,6 +783,8 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
               result.durationUnit,
               result.precision,
             ),
+            velocity: velocityJson(result.velocity, result.precision),
+            velocity_forecast: analysisVelocityForecastJson(result),
           }),
       precedence:
         result.precedence === null || result.durationUnit === null
@@ -757,6 +829,15 @@ function nextJson(
   return {
     precision: result.precision,
     duration_unit: unit,
+    velocity: velocityJson(result.velocity, result.precision),
+    velocity_forecast:
+      result.velocityForecast === null
+        ? null
+        : {
+            qualifier: result.velocityForecast.qualifier,
+            source_unit: result.velocityForecast.sourceUnit,
+            target_unit: result.velocityForecast.targetUnit,
+          },
     capacity_overrides: [...result.capacityOverrides]
       .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
       .map(([resourceId, capacity]) => ({ resource_id: resourceId, capacity })),
@@ -779,6 +860,30 @@ function nextJson(
       expected: rationalJson(task.expected, unit, result.precision),
       total_float: rationalJson(task.totalFloat, unit, result.precision),
       earliest_start: rationalJson(task.earliestStart, unit, result.precision),
+      forecast_expected:
+        task.forecastExpected === null || result.velocityForecast === null
+          ? null
+          : rationalJson(
+              task.forecastExpected,
+              result.velocityForecast.targetUnit,
+              result.precision,
+            ),
+      forecast_total_float:
+        task.forecastTotalFloat === null || result.velocityForecast === null
+          ? null
+          : rationalJson(
+              task.forecastTotalFloat,
+              result.velocityForecast.targetUnit,
+              result.precision,
+            ),
+      forecast_earliest_start:
+        task.forecastEarliestStart === null || result.velocityForecast === null
+          ? null
+          : rationalJson(
+              task.forecastEarliestStart,
+              result.velocityForecast.targetUnit,
+              result.precision,
+            ),
       precedence_critical: task.precedenceCritical,
       schedule_critical: task.scheduleCritical,
       requirements: task.requirements.map((requirement) => ({
@@ -804,8 +909,9 @@ function nextJson(
 
 function renderNextTask(
   task: ReturnType<typeof selectNextTasks>["tasks"][number],
-  unit: "day" | "hour",
+  unit: DurationUnit,
   precision: number,
+  forecastUnit: DurationUnit | null,
 ): string {
   const resources = task.requirements
     .map((requirement) => `${requirement.resourceId}=${requirement.units}`)
@@ -814,6 +920,9 @@ function renderNextTask(
     task.id,
     `priority=${task.priority}`,
     `expected=${durationText(task.expected, unit, precision)}`,
+    ...(task.forecastExpected === null || forecastUnit === null
+      ? []
+      : [`forecast=${durationText(task.forecastExpected, forecastUnit, precision)}`]),
     `TF=${durationText(task.totalFloat, unit, precision)}`,
     `precedence_critical=${task.precedenceCritical}`,
     `schedule_critical=${task.scheduleCritical}`,
@@ -837,7 +946,11 @@ function renderExplanation(
 function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
   const unit = result.durationUnit!;
   const taskById = new Map(result.tasks.map((task) => [task.id, task]));
-  const lines = [`PERTTOOL NEXT ${result.documentId ?? "-"}`];
+  const lines = [
+    `PERTTOOL NEXT ${result.documentId ?? "-"}`,
+    `VELOCITY ${result.velocity === null ? "-" : velocityText(result.velocity, result.precision)}`,
+    `VELOCITY_FORECAST_UNIT ${result.velocityForecast?.targetUnit ?? "-"}`,
+  ];
   const section = (title: string, ids: readonly string[], details: "none" | "rejection" | "blocked" | "explanation" = "none"): void => {
     lines.push("", title);
     if (ids.length === 0) {
@@ -846,7 +959,14 @@ function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
     }
     for (const id of ids) {
       const task = taskById.get(id)!;
-      lines.push(renderNextTask(task, unit, result.precision));
+      lines.push(
+        renderNextTask(
+          task,
+          unit,
+          result.precision,
+          result.velocityForecast?.targetUnit ?? null,
+        ),
+      );
       if (details === "rejection") {
         for (const rejection of task.resourceRejections) {
           const occupants = [
@@ -923,7 +1043,7 @@ async function runNext(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.NextResult.v1",
+      schema_version: "Perttool.NextResult.v2",
       tool_version: TOOL_VERSION,
       operation: "dag.next",
       ok,

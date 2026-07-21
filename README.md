@@ -22,6 +22,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - Activity-on-Arrow とし、タスクを DAG のエッジ、マイルストーンをノードとして扱う
 - 独自 DSL 文書をプロジェクト状態の正本とする
 - PERT/CPM 計算と「次のタスク」の判定を機械的かつ決定的に行う
+- 相対見積り`p`を基準に保持し、明示したproject-wide velocityで`d`または`h`の予測へexact換算する
 - 共有resourceのcapacityから排他実行と並列実行可能数を扱う
 - Mermaid との相互変換、CLI、構造化ヘルプ、AI向けJSON操作導線を同じ共通コア上に提供する
 - MVPはCLIをprimary interfaceとし、MCP/LSP adapterはMVP後に追加する
@@ -58,14 +59,16 @@ npm run build
 node dist/cli.js --help
 node dist/cli.js dsl check docs/examples/parallel.pert
 node dist/cli.js dsl help syntax estimate --level detail --format json
+node dist/cli.js dsl help syntax velocity --level detail --format json
+node dist/cli.js dag analyze docs/examples/point-velocity.pert --format json
 node dist/cli.js dag analyze docs/examples/parallel.pert
 node dist/cli.js dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3 --capacity TEST_ENV=2 --format json
 node dist/cli.js dag next docs/examples/parallel.pert
 node dist/cli.js dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format json
 ```
 
-`dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。
+`dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。`duration_unit point`では`velocity 20p/10d`のように宣言し、基準のPoint値とday/hourの`velocity_forecast`を分離して返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)を現在sliceの詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。Formatterやmutationによるwriteは、専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)を現在sliceの詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。文法作業計画はPointを基準値、velocity換算したdayを予測値として使用しています。Formatterやmutationによるwriteは、専用gateを満たすまで使用しません。

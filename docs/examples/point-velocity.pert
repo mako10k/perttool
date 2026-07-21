@@ -1,0 +1,49 @@
+project POINT_VELOCITY:
+  version 1
+  title "Point見積りとVelocity予測"
+  description |
+    相対規模はPointで見積もり、20p/10dのVelocityで日数予測を得る。
+    PERT/CPMとresource scheduleの基準値はPointのまま保持する。
+  duration_unit point
+  velocity 20p/10d
+  finish RELEASED
+
+resource DEVELOPERS:
+  title "開発担当枠"
+  capacity 1
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone DESIGNED:
+  title "設計完了"
+
+milestone IMPLEMENTED:
+  title "実装完了"
+
+milestone RELEASED:
+  title "リリース"
+
+task DESIGN NOW -> DESIGNED:
+  title "設計する"
+  estimate:
+    optimistic 3p
+    most_likely 5p
+    pessimistic 7p
+  priority 10
+  requires:
+    DEVELOPERS 1
+
+task IMPLEMENT NOW -> IMPLEMENTED:
+  title "実装する"
+  duration 10p
+  priority 20
+  requires:
+    DEVELOPERS 1
+
+gate DESIGN_RELEASE DESIGNED -> RELEASED:
+  reason "設計完了が必要"
+
+gate IMPLEMENT_RELEASE IMPLEMENTED -> RELEASED:
+  reason "実装完了が必要"

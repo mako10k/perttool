@@ -140,3 +140,23 @@ test("E2E-005: all read-only document commands reject an undefined resource", ()
     assert.ok(result.diagnostics.some(({ code }) => code === "PTSEM-206"));
   }
 });
+
+test("E2E-006: AI can validate point estimates and consume explicit velocity forecasts", () => {
+  const source = "docs/examples/point-velocity.pert";
+  const checked = runJson(["dsl", "check", source]);
+  assert.equal(checked.ok, true);
+
+  const analyzed = runJson(["dag", "analyze", source]);
+  assert.equal(analyzed.duration_unit, "point");
+  assert.equal(analyzed.precedence.makespan.display, "10");
+  assert.equal(analyzed.resource.makespan.display, "15");
+  assert.equal(analyzed.velocity_forecast.precedence_makespan.display, "5");
+  assert.equal(analyzed.velocity_forecast.resource_makespan.display, "7.5");
+
+  const next = runJson(["dag", "next", source]);
+  assert.deepEqual(next.groups.ready, ["IMPLEMENT", "DESIGN"]);
+  assert.deepEqual(next.groups.runnable_now, ["IMPLEMENT"]);
+  const implement = next.tasks.find(({ id }) => id === "IMPLEMENT");
+  assert.equal(implement.expected.display, "10");
+  assert.equal(implement.forecast_expected.display, "5");
+});

@@ -1,6 +1,6 @@
 # E2Eシナリオテスト
 
-- 文書状態: Active 1.0
+- 文書状態: Active 1.1
 - 作成日: 2026-07-21
 - 対象surface: `dsl help`、`dsl check`、`dag analyze`、`dag next`
 
@@ -19,6 +19,7 @@ Core APIを直接呼ぶunit testとは分離し、`dist/cli.js`をsubprocessと�
 | E2E-003 | 外部承認でblocked taskがある | check → analyze → next → warnings-as-errors | blocked_nowとupcomingを区別し、分析が外部block解消を条件とすることをwarningで明示する |
 | E2E-004 | task完了を文書へ反映して再計算する | before/afterをcheck → analyze → next | done taskを候補から除外し、下流taskをreadyにし、残durationを5dから3dへ更新する。到達済み部分にはadvance案内を返す |
 | E2E-005 | 不正なresource参照を安全に拒否する | check → analyze → next | 全commandがexit 1と同じstable diagnosticを返し、成功resultを出さない |
+| E2E-006 | AIがPoint見積りとVelocity予測を利用する | help → check → analyze → next | PERT値をpで保持し、20p/10dのvelocity forecastをdayで別fieldに返す。Resource makespan 15pは7.5dになる |
 
 Fixtureは`test/fixtures/e2e/`へ置き、過去状態を正本計画へ混ぜず、before/afterを独立した入力として比較する。
 

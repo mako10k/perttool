@@ -56,7 +56,7 @@ milestone M6_MVP_RELEASED:
 
 task GRAMMAR_WORK_PACKAGE NOW -> M1_GRAMMAR_ACCEPTED:
   title "grammar planの残作業を完了する"
-  description "詳細日程はplans/grammar.pertのresource makespan 10dを使用する"
+  description "詳細日程はplans/grammar.pertのresource makespan 10p、velocity forecast 10dを使用する"
   duration 10d
   priority 50
   requires:

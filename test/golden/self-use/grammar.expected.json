@@ -12,13 +12,17 @@
     }
   },
   "analyze": {
+    "duration_unit": "point",
     "precedence_makespan": "8",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "8/1",
     "precedence_critical_tasks": [
       "ERROR_RECOVERY",
       "FORMATTER_IMPLEMENT",
       "FORMATTER_ROUNDTRIP"
     ],
     "resource_makespan": "10",
+    "resource_forecast": "10/1",
     "resource_delay": "2",
     "resource_arcs": [
       "resource:ERROR_RECOVERY:FIELD_FIXTURES"

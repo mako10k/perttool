@@ -6,8 +6,10 @@ import { compare } from "../model/rational.js";
 import type { DeclarationNode, DocumentNode, RequirementValue } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import { buildResidualGraph } from "../analysis/graph.js";
-import type { DurationUnit, TaskStatus } from "../analysis/graph.js";
+import type { TaskStatus } from "../analysis/graph.js";
 import type { EdgeTiming } from "../analysis/precedence.js";
+import type { DurationUnit, Velocity, VelocityConversion } from "../model/units.js";
+import { convertWithVelocity } from "../model/units.js";
 
 export type TaskClassification = "active" | "ready" | "blocked_now" | "upcoming";
 
@@ -52,6 +54,9 @@ export interface NextTask {
   readonly expected: Rational;
   readonly totalFloat: Rational;
   readonly earliestStart: Rational;
+  readonly forecastExpected: Rational | null;
+  readonly forecastTotalFloat: Rational | null;
+  readonly forecastEarliestStart: Rational | null;
   readonly precedenceCritical: boolean;
   readonly scheduleCritical: boolean;
   readonly requirements: readonly RequirementValue[];
@@ -80,6 +85,8 @@ export interface NextResult {
   readonly diagnostics: readonly Diagnostic[];
   readonly precision: number;
   readonly durationUnit: DurationUnit | null;
+  readonly velocity: Velocity | null;
+  readonly velocityForecast: VelocityConversion | null;
   readonly capacityOverrides: ReadonlyMap<string, number>;
   readonly groups: NextGroups;
   readonly tasks: readonly NextTask[];
@@ -275,6 +282,8 @@ export function selectNextTasks(
       diagnostics: sortDiagnostics(diagnostics),
       precision,
       durationUnit: analysis.durationUnit,
+      velocity: analysis.velocity,
+      velocityForecast: analysis.velocityForecast,
       capacityOverrides,
       groups: emptyGroups,
       tasks: [],
@@ -320,6 +329,18 @@ export function selectNextTasks(
     expected: task.timing.expected,
     totalFloat: task.timing.totalFloat,
     earliestStart: task.timing.es,
+    forecastExpected:
+      analysis.velocityForecast === null
+        ? null
+        : convertWithVelocity(task.timing.expected, analysis.velocityForecast),
+    forecastTotalFloat:
+      analysis.velocityForecast === null
+        ? null
+        : convertWithVelocity(task.timing.totalFloat, analysis.velocityForecast),
+    forecastEarliestStart:
+      analysis.velocityForecast === null
+        ? null
+        : convertWithVelocity(task.timing.es, analysis.velocityForecast),
     precedenceCritical: task.timing.isCritical,
     scheduleCritical: scheduleCritical.has(task.declaration.id),
     requirements: task.requirements,
@@ -345,6 +366,8 @@ export function selectNextTasks(
     diagnostics: sortDiagnostics(diagnostics),
     precision,
     durationUnit: graph.durationUnit,
+    velocity: graph.velocity,
+    velocityForecast: analysis.velocityForecast,
     capacityOverrides,
     groups: {
       active: ids("active"),

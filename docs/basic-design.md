@@ -270,14 +270,17 @@ Rules:
 
 これにより、critical 判定と tie-break が runtime の浮動小数点差に左右されることを避ける。
 
-### 6.2 duration unit
+### 6.2 duration unitとvelocity
 
 MVP では 1 文書内の duration unit を統一する。
 
 - `duration_unit day` なら `d`
 - `duration_unit hour` なら `h`
+- `duration_unit point`なら`p`。`velocity <points>p/<period>d|h`を必須とする
 - 異なる unit の混在は semantic error
-- calendar 変換は行わない
+- Pointとday/hourはproject-wide velocityでexact Rational換算する
+- 換算値はvelocity forecastとして基準PERT値と別に保持する
+- day/hour間のcalendar変換は行わない
 - variance の unit は duration unit の二乗として metadata に示す
 
 ### 6.3 resource quantity
@@ -726,9 +729,9 @@ grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自�
 初期 schema:
 
 - `Perttool.CheckResult.v1`
-- `Perttool.AnalysisResult.v1`
+- `Perttool.AnalysisResult.v2`
 - `Perttool.ResourceScheduleResult.v1`
-- `Perttool.NextResult.v1`
+- `Perttool.NextResult.v2`
 - `Perttool.MutationResult.v1`
 - `Perttool.ConversionLossReport.v1`
 - `Perttool.HelpResult.v1`

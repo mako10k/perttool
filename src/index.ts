@@ -6,6 +6,7 @@ export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
 export { getHelp } from "./help/registry.js";
 export * from "./model/rational.js";
+export * from "./model/units.js";
 export { parseDocument } from "./parser/document-parser.js";
 export { validateDocument } from "./semantic/validator.js";
 export type { CheckResult, CheckSummary } from "./application/check.js";
@@ -27,7 +28,6 @@ export type {
 export type {
   AnalysisEdge,
   AnalysisResource,
-  DurationUnit,
   ResidualGraph,
   TaskStatus,
 } from "./analysis/graph.js";
@@ -54,4 +54,5 @@ export type {
   DeclarationNode,
   FieldNode,
   TriviaNode,
+  VelocityValue,
 } from "./model/syntax.js";
