@@ -1,0 +1,64 @@
+project LIVE_INCIDENT:
+  version 1
+  title "障害対応中の排他resource"
+  as_of 2026-07-21
+  duration_unit day
+  finish CLOSED
+
+resource OPERATORS:
+  title "運用担当枠"
+  capacity 1
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone MITIGATION_DONE:
+  title "暫定対処完了"
+
+milestone RUNBOOK_DONE:
+  title "手順書更新完了"
+
+milestone UPDATE_DONE:
+  title "状況報告完了"
+
+milestone RESPONSE_READY:
+  title "確認可能"
+
+milestone CLOSED:
+  title "対応完了"
+
+task MITIGATE NOW -> MITIGATION_DONE:
+  title "暫定対処を実行する"
+  duration 2d
+  status active
+  priority 30
+  requires:
+    OPERATORS 1
+
+task STATUS_UPDATE NOW -> UPDATE_DONE:
+  title "関係者へ状況を報告する"
+  duration 1d
+  priority 20
+
+task RUNBOOK NOW -> RUNBOOK_DONE:
+  title "復旧手順を更新する"
+  duration 1d
+  priority 10
+  requires:
+    OPERATORS 1
+
+gate MITIGATION_READY MITIGATION_DONE -> RESPONSE_READY:
+  reason "暫定対処完了が必要"
+
+gate RUNBOOK_READY RUNBOOK_DONE -> RESPONSE_READY:
+  reason "手順書更新完了が必要"
+
+gate UPDATE_READY UPDATE_DONE -> RESPONSE_READY:
+  reason "状況報告完了が必要"
+
+task VERIFY RESPONSE_READY -> CLOSED:
+  title "復旧を確認する"
+  duration 1d
+  requires:
+    OPERATORS 1

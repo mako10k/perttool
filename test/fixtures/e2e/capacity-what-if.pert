@@ -1,0 +1,50 @@
+project RELEASE_CAPACITY:
+  version 1
+  title "開発人数のwhat-if"
+  as_of 2026-07-21
+  duration_unit day
+  finish RELEASED
+
+resource ENGINEERS:
+  title "開発担当枠"
+  capacity 1
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone API_DONE:
+  title "API完了"
+
+milestone UI_DONE:
+  title "UI完了"
+
+milestone RELEASE_READY:
+  title "リリース準備完了"
+
+milestone RELEASED:
+  title "リリース完了"
+
+task API NOW -> API_DONE:
+  title "APIを実装する"
+  duration 4d
+  priority 20
+  requires:
+    ENGINEERS 1
+
+task UI NOW -> UI_DONE:
+  title "UIを実装する"
+  duration 3d
+  priority 10
+  requires:
+    ENGINEERS 1
+
+gate API_READY API_DONE -> RELEASE_READY:
+  reason "API完了が必要"
+
+gate UI_READY UI_DONE -> RELEASE_READY:
+  reason "UI完了が必要"
+
+task RELEASE RELEASE_READY -> RELEASED:
+  title "リリースする"
+  duration 1d

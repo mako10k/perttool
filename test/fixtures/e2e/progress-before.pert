@@ -1,0 +1,26 @@
+project PROGRESS:
+  version 1
+  title "進捗反映前"
+  as_of 2026-07-21
+  duration_unit day
+  finish SHIPPED
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone DESIGN_DONE:
+  title "設計完了"
+
+milestone SHIPPED:
+  title "提供完了"
+
+task DESIGN NOW -> DESIGN_DONE:
+  title "設計する"
+  duration 2d
+  priority 20
+
+task IMPLEMENT DESIGN_DONE -> SHIPPED:
+  title "実装して提供する"
+  duration 3d
+  priority 10

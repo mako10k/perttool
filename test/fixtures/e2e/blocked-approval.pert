@@ -1,0 +1,50 @@
+project APPROVAL_RELEASE:
+  version 1
+  title "外部承認を含むリリース"
+  as_of 2026-07-21
+  duration_unit day
+  finish RELEASED
+
+resource DEVELOPERS:
+  title "開発担当枠"
+  capacity 1
+
+milestone NOW:
+  title "現在"
+  state reached
+
+milestone SECURITY_APPROVED:
+  title "セキュリティ承認済み"
+
+milestone IMPLEMENTED:
+  title "実装完了"
+
+milestone RELEASE_READY:
+  title "リリース可能"
+
+milestone RELEASED:
+  title "リリース完了"
+
+task SECURITY_REVIEW NOW -> SECURITY_APPROVED:
+  title "外部セキュリティ審査を受ける"
+  duration 2d
+  status blocked
+  blocked_reason "審査会社の回答待ち"
+  priority 30
+
+task IMPLEMENT NOW -> IMPLEMENTED:
+  title "指摘対応を実装する"
+  duration 2d
+  priority 20
+  requires:
+    DEVELOPERS 1
+
+gate SECURITY_READY SECURITY_APPROVED -> RELEASE_READY:
+  reason "外部承認が必要"
+
+gate IMPLEMENT_READY IMPLEMENTED -> RELEASE_READY:
+  reason "実装完了が必要"
+
+task RELEASE RELEASE_READY -> RELEASED:
+  title "リリースする"
+  duration 1d

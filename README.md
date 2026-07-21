@@ -34,6 +34,12 @@ npm ci
 npm run check
 ```
 
+実CLI processを使うE2Eシナリオだけを実行する場合:
+
+```sh
+npm run test:e2e
+```
+
 現在のCLI bootstrap:
 
 ```sh

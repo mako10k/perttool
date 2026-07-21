@@ -147,6 +147,7 @@ perttool/
   test/
     analysis.test.mjs
     cli.test.mjs
+    e2e.test.mjs
     next.test.mjs
     parser.test.mjs
     self-use.test.mjs
