@@ -78,7 +78,7 @@ npm run check
 git diff --check
 ```
 
-Narrow checkは`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run check:docs`、`npm run check:link`を使用する。`check:link`は一時user prefixへlinkしてCLIを検査し、実user prefixは変更しない。`bash scripts/check-docs.sh`はdocumentationだけの下位入口である。
+Narrow checkは`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run check:docs`、`npm run check:link`、`npm run check:package`を使用する。`check:link`は一時user prefixへlinkしてCLIを検査し、実user prefixは変更しない。`check:package`は一時directoryでrelease tarballを作成し、repository-only fileの除外と隔離prefixへのinstallを検査する。`bash scripts/check-docs.sh`はdocumentationだけの下位入口である。
 
 - 文書だけの変更でも、local link、Markdown fence、規範`.pert` sampleのbootstrap検査を実行する。
 - grammar変更ではvalid/invalid example、field table、EBNF、diagnostic、formatter契約を一緒に確認する。

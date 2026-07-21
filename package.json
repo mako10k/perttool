@@ -1,14 +1,38 @@
 {
   "name": "perttool",
-  "version": "0.1.0-dev.0",
-  "private": true,
+  "version": "0.1.0-alpha.1",
   "description": "Document-based PERT/CPM and resource scheduling CLI",
+  "keywords": [
+    "pert",
+    "cpm",
+    "dag",
+    "task-management",
+    "cli"
+  ],
+  "homepage": "https://github.com/mako10k/perttool#readme",
+  "bugs": {
+    "url": "https://github.com/mako10k/perttool/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mako10k/perttool.git"
+  },
+  "license": "MIT",
   "type": "module",
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
   "bin": {
     "perttool": "./dist/cli.js"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "engines": {
     "node": ">=24"
@@ -21,8 +45,9 @@
     "test:e2e": "npm run build && node --test test/e2e.test.mjs",
     "check:docs": "bash scripts/check-docs.sh",
     "check:link": "bash scripts/check-npm-link.sh",
+    "check:package": "bash scripts/check-package.sh",
     "check:self-use": "bash scripts/check-self-use.sh",
-    "check": "npm run typecheck && npm test && npm run check:docs && npm run check:self-use && npm run check:link"
+    "check": "npm run typecheck && npm test && npm run check:docs && npm run check:self-use && npm run check:link && npm run check:package"
   },
   "devDependencies": {
     "@types/node": "24.13.3",

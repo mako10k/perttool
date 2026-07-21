@@ -1,8 +1,8 @@
 # perttool
 
-PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI（read-only自己利用段階）。
+PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-現在はNode.js 24以上のTypeScript CLIとして実装中です。`dsl check`、`dsl help`、`dag analyze`、`dag next`が実装済みで、formatter、mutation、Mermaid変換はまだ未実装です。正本は次の文書です。
+`v0.1.0-alpha.1`はread-only CLIの公開開発プレビューです。`dsl check`、`dsl help`、`dag analyze`、`dag next`が実装済みで、formatter、mutation、Mermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -29,16 +29,20 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - 現行文書は現在と未来を表し、過去は Git 履歴で追跡する
 - parser・check・analyze・next が安定した時点で、文法作業の計画から自己利用を開始する
 
-Setupとrepository check:
+## Install
+
+現在はnpm registryへpublishしていません。GitHub Releaseのtarballからuser-owned npm prefixへ導入します。
 
 ```sh
-npm ci
-npm run check
+npm install --global https://github.com/mako10k/perttool/releases/download/v0.1.0-alpha.1/perttool-0.1.0-alpha.1.tgz
+perttool --version
 ```
 
-ローカルcheckoutを現在のNode.jsユーザー環境へlinkする場合:
+ローカルcheckoutを開発中のNode.jsユーザー環境へlinkする場合:
 
 ```sh
+git clone https://github.com/mako10k/perttool.git
+cd perttool
 npm ci
 npm link
 perttool --version
@@ -46,26 +50,34 @@ perttool --version
 
 `prepare` lifecycleが`dist/`をbuildしてから、`perttool` binaryを現在のnpm global prefixへsymlinkします。System領域へsudoでinstallせず、NVMなどuser-ownedのnpm prefixを使用してください。解除はcheckoutで`npm unlink --global perttool`を実行します。
 
+## Development
+
+Setupとrepository check:
+
+```sh
+npm ci
+npm run check
+```
+
 実CLI processを使うE2Eシナリオだけを実行する場合:
 
 ```sh
 npm run test:e2e
 ```
 
-現在のCLI bootstrap:
+## CLI examples
 
 ```sh
-npm run build
-node dist/cli.js --help
-node dist/cli.js dsl check docs/examples/parallel.pert
-node dist/cli.js dsl check PLAN.pert --max-diagnostics 20 --format json
-node dist/cli.js dsl help syntax estimate --level detail --format json
-node dist/cli.js dsl help syntax velocity --level detail --format json
-node dist/cli.js dag analyze docs/examples/point-velocity.pert --format json
-node dist/cli.js dag analyze docs/examples/parallel.pert
-node dist/cli.js dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3 --capacity TEST_ENV=2 --format json
-node dist/cli.js dag next docs/examples/parallel.pert
-node dist/cli.js dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format json
+perttool --help
+perttool dsl check docs/examples/parallel.pert
+perttool dsl check PLAN.pert --max-diagnostics 20 --format json
+perttool dsl help syntax estimate --level detail --format json
+perttool dsl help syntax velocity --level detail --format json
+perttool dag analyze docs/examples/point-velocity.pert --format json
+perttool dag analyze docs/examples/parallel.pert
+perttool dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3 --capacity TEST_ENV=2 --format json
+perttool dag next docs/examples/parallel.pert
+perttool dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format json
 ```
 
 `dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。`duration_unit point`では`velocity 20p/10d`のように宣言し、基準のPoint値とday/hourの`velocity_forecast`を分離して返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。
@@ -73,3 +85,7 @@ node dist/cli.js dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
 現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)を現在sliceの詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。文法作業計画はPointを基準値、velocity換算したdayを予測値として使用しています。Formatterやmutationによるwriteは、専用gateを満たすまで使用しません。
+
+## Security and license
+
+脆弱性は[Security Policy](SECURITY.md)に従って非公開で報告してください。本ソフトウェアは[MIT License](LICENSE)で公開します。変更履歴と既知の制約は[CHANGELOG](CHANGELOG.md)を参照してください。

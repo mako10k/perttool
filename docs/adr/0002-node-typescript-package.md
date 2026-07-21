@@ -21,7 +21,7 @@ MVPはローカルCLIをprimary interfaceとし、同じCore APIをlibrary、tes
 - TypeScript compilerは7.0系をlockfileで固定し、`module`/`moduleResolution`は`NodeNext`
 - test runnerはNode.js built-in test runner
 - MVP scaffoldはruntime dependencyを持たず、Node.js標準APIだけを使用する
-- pre-release中は`private: true`とし、公開release判断は別途行う
+- 公開判断までは`private: true`とし、公開後のpackage tarballはruntimeに必要な`dist/`と利用者向け文書だけを含める
 - MCP SDK、transport、server packageをMVP dependencyへ追加しない
 
 ## Consequences
@@ -31,6 +31,16 @@ MVPはローカルCLIをprimary interfaceとし、同じCore APIをlibrary、tes
 - build artifactは`dist/`へ出力しGit管理しない
 - TypeScript type、CLI JSON、JSON Schemaは同じlogical changeで更新する
 - Node.js 24より古いruntimeはMVP support対象外
+- `npm run check:package`でpack内容、CLI実行権限、version、最小文書の検査を行う
+
+## Public alpha decision
+
+2026-07-21にMIT LicenseでGitHub repositoryをpublic化し、`v0.1.0-alpha.1`をGitHub prereleaseとして配布する判断を行った。これはread-only CLIの評価版であり、MVP stable releaseではない。
+
+- npm registryにはこの時点ではpublishしない
+- GitHub Releaseへ`npm pack`で生成したtarballを添付する
+- package metadataから`private`を外すが、publishは別の明示操作と認証を必要とする
+- stable `v0.1.0`はformatter、mutation、Mermaid、release E2Eを含むMVP gate完了後に判断する
 
 ## Dependency policy
 
