@@ -158,6 +158,7 @@ task MERMAID_PROFILE M3_SAFE_WRITE_READY -> MERMAID_PROFILE_DEFINED:
 task MERMAID_EXPORT MERMAID_PROFILE_DEFINED -> MERMAID_EXPORT_READY:
   title "AoA DAGをMermaidへexportする"
   duration 3d
+  status done
   priority 15
   requires:
     DEVELOPERS 1

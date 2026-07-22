@@ -104,7 +104,9 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`MERMAID_PROFILE`を完了した。[Mermaid Profile仕様](../specs/mermaid-profile.md)でdefault適用後の完全なsemantic record、canonical JSON、metadata/projection SHA-256、stable node/edge mapping、fail-closed import、plain importのloss code、security境界を固定した。[規範例](../examples/mermaid-profile.md)のsource DSL、record count、canonical JSON、両digestをcontract testへ固定し、helpは設計済みprofileと未実装commandを区別する。`plans/mvp.pert`はpreview diffとexpected digestを確認してから`task finish --write`で更新した。残りprecedence/resource makespanは10d、resource delayは0dである。`ADVANCE`と`MERMAID_EXPORT`はともにreadyかつ`runnable_now`だが、precedence/schedule criticalなのは`MERMAID_EXPORT`である。
 
-Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のmacro CPは`MERMAID_EXPORT`である。Issue #3はMVP外の将来設計のままとする。
+続いて`MERMAID_EXPORT`を完了した。`exportMermaid`はdefault適用後の全semantic record、canonical decimal/velocity、stable projection、metadata/projection digestを生成し、`dag render --to mermaid`はprofile/plain、precedence/resource annotation、capacity override、text/JSON、`PTCNV-206`、`--strict-loss`、exclusive `--out`を公開した。規範artifactとCoreをbyte一致させ、unit、CLI、E2E、link、packageを検査した後、`plans/mvp.pert`のpreview diffと`sha256:38b2337f81702d6e93e00819c72c6a33d189ad343969a561a033b3ecaa5db626`を確認して`task finish --write`した。残るprecedence makespanは7d、resource makespanは7.333333d、resource delayは0.333333dである。`ADVANCE`とprecedence CP上の`MERMAID_ROUNDTRIP`がreadyだが、priority 20の`ADVANCE`が`REVIEWERS` capacity 1を先に確保するため、`runnable_now`は`ADVANCE`だけである。詳細planでは`ADVANCE_PLANNER`が唯一のready、precedence/schedule critical、`runnable_now`である。Mermaid macroはday見積りでPoint実績ではないため、操作系Velocity標本は`18p/1d`のままとする。
+
+Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のprecedence CPは`MERMAID_ROUNDTRIP`、現行schedulerの次のrunnable work packageは`ADVANCE`である。Issue #3はMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
 
@@ -183,7 +185,7 @@ Stage 1で禁止した操作:
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation previewとsafe writeは完了し、Stage 2へ移行した
-- `MERMAID_PROFILE`は完了し、現在のmacro CPかつrunnable work packageは`MERMAID_EXPORT`である。`ADVANCE`とdetail `ADVANCE_PLANNER`もrunnableだがcriticalではない
+- `MERMAID_PROFILE`と`MERMAID_EXPORT`は完了した。現在のmacro precedence CPは`MERMAID_ROUNDTRIP`だが、priorityとreviewer競合を反映した`runnable_now`は`ADVANCE`だけで、detailの次taskは`ADVANCE_PLANNER`である
 - recommendation実装とIssue #2は`M3_SAFE_WRITE_READY`後に詳細化可能だが、macro planへ追加するまでは着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
