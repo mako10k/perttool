@@ -4,7 +4,7 @@ project GRAMMAR:
   description |
     現在から先に残るparser、formatter、help同期の作業を管理する。
     完了済みのbootstrap実装はGit履歴を参照する。
-    相対規模をPointで保持し、2026-07-21の完了2 task、5p、1 active dayの
+    相対規模をPointで保持し、2026-07-22の直近完了2 task、5p、1 active dayの
     実測Velocityで日数を予測する。
   as_of 2026-07-22
   duration_unit point
@@ -86,6 +86,7 @@ gate TEXT_SPANS_ACCEPTANCE TEXT_SPANS_VERIFIED -> PARSER_ACCEPTED:
 task FORMATTER_IMPLEMENT PARSER_ACCEPTED -> FORMATTER_IMPLEMENTED:
   title "source-preserving formatterを実装する"
   duration 3p
+  status done
   priority 20
   requires:
     DEVELOPERS 1

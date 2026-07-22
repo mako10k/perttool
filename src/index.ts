@@ -5,6 +5,7 @@ export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js
 export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
 export { getHelp } from "./help/registry.js";
+export { formatDocument } from "./formatter/source-formatter.js";
 export {
   DEFAULT_MAX_DIAGNOSTICS,
   MAX_DIAGNOSTICS_LIMIT,
@@ -66,3 +67,8 @@ export type {
   VelocityValue,
 } from "./model/syntax.js";
 export type { ParseOptions } from "./parser/document-parser.js";
+export type {
+  FormatOptions,
+  FormatResult,
+  TextEdit,
+} from "./formatter/source-formatter.js";

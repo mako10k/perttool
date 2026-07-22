@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 1.4
+- 文書状態: Draft 1.5
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
@@ -354,6 +354,7 @@ Rules:
 parseDocument(text, options): ParseResult
 buildGraph(document, options): SemanticResult
 checkDocument(text, options): CheckResult
+formatDocument(text, options): FormatResult
 analyzeDocument(text, options): AnalysisResult
 selectNextTasks(text, options): NextResult
 planMutation(text, mutation, options): MutationResult
@@ -371,6 +372,19 @@ interface OperationResult {
   diagnostics: readonly Diagnostic[];
   diagnosticsTruncated: boolean;
   ok: boolean;
+}
+```
+
+Source-preserving formatter Coreは次を返す。`formattedText`と`edits`は有効な候補を生成できた場合だけ提供し、I/O、diff、write modeは後続のapplication/CLI layerで付与する。
+
+```ts
+interface FormatResult {
+  ok: boolean;
+  changed: boolean;
+  formattedText: string | null;
+  edits: readonly TextEdit[];
+  diagnostics: readonly Diagnostic[];
+  diagnosticsTruncated: boolean;
 }
 ```
 

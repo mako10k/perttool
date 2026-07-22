@@ -1,6 +1,6 @@
 # perttool DSL 文法仕様
 
-- 文書状態: Draft 0.4
+- 文書状態: Draft 0.5
 - Grammar version: 1
 - 作成日: 2026-07-21
 - 対応要件: [../requirements.md](../requirements.md)
@@ -732,6 +732,8 @@ parser は1件のerrorで文書全体を捨てず、独立した問題を可能�
 - block textのdecoded content
 - BOMの有無
 - 主要line ending
+
+主要line endingはLFとCRLFの出現数が多い方とし、同数なら最初に現れるline ending、line endingがなければLFとする。Core `formatDocument`はI/O、diff、writeを行わず、0-based UTF-16 offsetの重ならない`TextEdit`と候補文書を返す。
 
 次を正規化する。
 

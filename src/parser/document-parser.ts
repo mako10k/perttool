@@ -381,7 +381,7 @@ function parseNestedEstimate(
       index += 1;
       continue;
     }
-    const match = /^(optimistic|most_likely|pessimistic) (.+)$/.exec(content);
+    const match = /^(optimistic|most_likely|pessimistic) +(.+)$/.exec(content);
     if (match === null) {
       diagnostics.push(
         diagnostic(
@@ -470,7 +470,7 @@ function parseNestedRequirements(
       index += 1;
       continue;
     }
-    const match = /^([A-Za-z][A-Za-z0-9_-]*) ([0-9]+)$/.exec(content);
+    const match = /^([A-Za-z][A-Za-z0-9_-]*) +([0-9]+)$/.exec(content);
     if (match === null) {
       diagnostics.push(
         diagnostic(
@@ -628,9 +628,10 @@ function skipIndentedRegion(
 }
 
 function isKnownDeclarationHeader(text: string): boolean {
+  const normalized = text.trimEnd();
   return (
-    /^(?:project|resource|milestone) [A-Za-z][A-Za-z0-9_-]*:$/.test(text) ||
-    /^(?:task|gate) [A-Za-z][A-Za-z0-9_-]* [A-Za-z][A-Za-z0-9_-]* -> [A-Za-z][A-Za-z0-9_-]*:$/.test(text)
+    /^(?:project|resource|milestone) +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized) ||
+    /^(?:task|gate) +[A-Za-z][A-Za-z0-9_-]* +[A-Za-z][A-Za-z0-9_-]* +-> +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized)
   );
 }
 
@@ -663,8 +664,9 @@ function parseDeclarationHeader(
   line: SourceLine,
   diagnostics: Diagnostic[],
 ): Omit<DeclarationNode, "span" | "fields"> | undefined {
-  const edge = /^(task|gate) ([A-Za-z][A-Za-z0-9_-]*) ([A-Za-z][A-Za-z0-9_-]*) -> ([A-Za-z][A-Za-z0-9_-]*):$/.exec(
-    line.text,
+  const normalized = line.text.trimEnd();
+  const edge = /^(task|gate) +([A-Za-z][A-Za-z0-9_-]*) +([A-Za-z][A-Za-z0-9_-]*) +-> +([A-Za-z][A-Za-z0-9_-]*):$/.exec(
+    normalized,
   );
   if (edge !== null) {
     const kind = edge[1] as "task" | "gate";
@@ -687,8 +689,8 @@ function parseDeclarationHeader(
       arrowSpan: span(line, arrowStart, arrowStart + 2),
     };
   }
-  const simple = /^(project|resource|milestone) ([A-Za-z][A-Za-z0-9_-]*):$/.exec(
-    line.text,
+  const simple = /^(project|resource|milestone) +([A-Za-z][A-Za-z0-9_-]*):$/.exec(
+    normalized,
   );
   if (simple !== null) {
     const kind = simple[1] as "project" | "resource" | "milestone";
@@ -843,7 +845,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         index = parsed.nextIndex;
         continue;
       }
-      const textBlockMatch = /^(description|blocked_reason|reason) \|$/.exec(content);
+      const textBlockMatch = /^(description|blocked_reason|reason) +\|$/.exec(content);
       if (textBlockMatch !== null) {
         const name = textBlockMatch[1]!;
         if (!allowedFields[header.kind].has(name)) {
@@ -874,7 +876,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         index = parsed.nextIndex;
         continue;
       }
-      const scalar = /^([a-z_]+) (.+)$/.exec(content);
+      const scalar = /^([a-z_]+) +(.+)$/.exec(content);
       if (scalar === null) {
         diagnostics.push(
           diagnostic(

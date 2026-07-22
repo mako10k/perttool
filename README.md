@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.1`はread-only CLIの公開開発プレビューです。`dsl check`、`dsl help`、`dag analyze`、`dag next`が実装済みで、formatter、mutation、Mermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+`v0.1.0-alpha.1`はread-only CLIの公開開発プレビューです。`dsl check`、`dsl help`、`dag analyze`、`dag next`とlibraryのsource-preserving formatter Coreが実装済みで、`dsl format` command、mutation、Mermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)

@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`は実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`をread-only自己利用中である。Write/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`とsource-preserving formatter Coreは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`をread-only自己利用中である。`dsl format` commandを含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -38,6 +38,7 @@ perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl 
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
 - `src/analysis/`: exact Rationalを使うresidual graph、precedence CPM、resource schedule実装。
+- `src/formatter/`: source-preserving formatter CoreとUTF-16 TextEdit生成。
 - `test/`: Node.js built-in test runnerのfixture、analysis/next unit test、CLI integration test。
 - `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
 
