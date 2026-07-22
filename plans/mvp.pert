@@ -187,3 +187,12 @@ task RELEASE_E2E RELEASE_READY -> M6_MVP_RELEASED:
   requires:
     DEVELOPERS 1
     REVIEWERS 1
+
+task RECOMMENDATION_IMPLEMENTATION M3_SAFE_WRITE_READY -> RELEASE_READY:
+  title "説明可能なrecommendationを実装し自己利用へ採用する"
+  description "plans/recommendation.pertのMIG-01からMIG-07、22p resource forecastをoperations実測24p/1dで0.916667dへroll-upする"
+  duration 0.916667d
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1

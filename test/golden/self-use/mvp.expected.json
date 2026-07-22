@@ -5,21 +5,23 @@
     "summary": {
       "resources": 2,
       "milestones": 15,
-      "tasks": 11,
+      "tasks": 12,
       "gates": 6,
       "errors": 0,
-      "warnings": 13
+      "warnings": 12
     }
   },
   "analyze": {
-    "precedence_makespan": "2/1",
+    "precedence_makespan": "2916667/1000000",
     "precedence_critical_tasks": [
+      "RECOMMENDATION_IMPLEMENTATION",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "2/1",
+    "resource_makespan": "2916667/1000000",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
+      "RECOMMENDATION_IMPLEMENTATION",
       "RELEASE_E2E"
     ]
   },
@@ -27,13 +29,15 @@
     "groups": {
       "active": [],
       "ready": [
-        "RELEASE_E2E"
+        "RECOMMENDATION_IMPLEMENTATION"
       ],
       "runnable_now": [
-        "RELEASE_E2E"
+        "RECOMMENDATION_IMPLEMENTATION"
       ],
       "blocked_now": [],
-      "upcoming": []
+      "upcoming": [
+        "RELEASE_E2E"
+      ]
     }
   }
 }

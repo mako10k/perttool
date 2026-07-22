@@ -924,9 +924,10 @@ MVPでは同一fixtureに対し、library resultとCLI JSONのsemantic payload�
 - 現在・未来の grammar 作業計画: `plans/grammar.pert`
 - Issue #1のAI工程制御設計計画: `plans/control-plane.pert`
 - M1からM4の操作系実装計画: `plans/operations.pert`
+- MVP recommendation実装計画: `plans/recommendation.pert`
 - 過去の作業計画: Git history
 
-MVP全体のstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。2026-07-22時点ではgrammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`、操作系M1-M4を`plans/operations.pert`で管理する。
+MVP全体のstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。2026-07-22時点ではgrammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`、操作系M1-M4を`plans/operations.pert`、MVP recommendation実装を`plans/recommendation.pert`で管理する。
 
 `.pert` は仕様内容そのものではなく、仕様を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
 
@@ -1041,7 +1042,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進んだ。全24pを完了し、操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了し、残るprecedence/resource makespanはともに2d、resource delayは0dである。唯一のreadyかつrunnableなcritical work packageは`RELEASE_E2E`である。RecommendationとIssue #2を含むM3後のresource順は、macro planと明示的なprocessから判定する。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定し、全24pを完了して操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了した。Release readiness監査ではMVP受け入れ条件16のrecommendation実装が欠落しているため`RELEASE_E2E`を完了せず、[Recommendation実装plan](../plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化した。Operations実測`24p/1d`を初期値にしたmacro残存precedence/resource makespanは`2.916667d`、resource delayは0dで、唯一のreadyかつrunnableなcritical work packageは`RECOMMENDATION_IMPLEMENTATION`である。
 
 ### Slice 4: advance and Mermaid
 

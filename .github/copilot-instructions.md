@@ -5,7 +5,7 @@
 Mandatory summary:
 
 - 利用者から指定がない限り、日本語で応答する。
-- 現在はTypeScript CLIのMVP release検証段階であり、実装済み`dsl check`/`dsl format`/`dsl help`/`dag analyze`/`dag next`/`dag advance`/`dag render --to mermaid`/`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteでmacro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をStage 3のpreview-first advance手順で自己利用中。現行macroで唯一の未完了work packageは`RELEASE_E2E`である。
+- 現在はTypeScript CLIのMVP recommendation実装段階である。`dag next`はまだ`Perttool.NextResult.v2`であり、recommendationとして再解釈しない。Release readiness監査でMVP受け入れ条件16の未実装を確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3で自己利用中。`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつcriticalなmacro work packageで、`RELEASE_E2E`はupcomingである。
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
 - 「次のタスク」はmacroでworkstreamを選んでから対応する詳細planのcritical pathから提案し、着手しやすさだけで選ばない。

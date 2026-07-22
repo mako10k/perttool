@@ -1,0 +1,65 @@
+{
+  "check": {
+    "document_id": "RECOMMENDATION_IMPLEMENTATION",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 2,
+      "milestones": 9,
+      "tasks": 7,
+      "gates": 2,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "19/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "19/24",
+    "precedence_critical_tasks": [
+      "FIXTURE_BASELINE",
+      "RANKING_CORE",
+      "EXPLANATION_CORE",
+      "NEXT_V3_PUBLICATION",
+      "SELF_USE_SHADOW",
+      "AUTHORITY_ADOPTION"
+    ],
+    "resource_makespan": "22/1",
+    "resource_forecast": "11/12",
+    "resource_delay": "3/1",
+    "resource_arcs": [
+      "resource:OVERRIDE_VALIDATION:AUTHORITY_ADOPTION",
+      "resource:SELF_USE_SHADOW:OVERRIDE_VALIDATION"
+    ],
+    "schedule_critical_tasks": [
+      "FIXTURE_BASELINE",
+      "RANKING_CORE",
+      "EXPLANATION_CORE",
+      "NEXT_V3_PUBLICATION",
+      "SELF_USE_SHADOW",
+      "OVERRIDE_VALIDATION",
+      "AUTHORITY_ADOPTION"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "FIXTURE_BASELINE"
+      ],
+      "runnable_now": [
+        "FIXTURE_BASELINE"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "RANKING_CORE",
+        "EXPLANATION_CORE",
+        "NEXT_V3_PUBLICATION",
+        "SELF_USE_SHADOW",
+        "OVERRIDE_VALIDATION",
+        "AUTHORITY_ADOPTION"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

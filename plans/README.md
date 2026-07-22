@@ -8,10 +8,11 @@
 - [grammar.pert](grammar.pert): 現在のgrammar sliceを実装taskまで分解した詳細計画
 - [control-plane.pert](control-plane.pert): [Issue #1](https://github.com/mako10k/perttool/issues/1)のAI工程制御設計を完了条件まで分解した詳細計画
 - [operations.pert](operations.pert): formatter preview、mutation preview、safe write、advanceを実ファイル境界とnarrow testへ分解したM1-M4詳細計画
+- [recommendation.pert](recommendation.pert): MIG-01からMIG-07のrecommendation実装、shadow、normal authority adoptionを分解した詳細計画
 
-4計画ともself-use gateを満たしており、`dsl check`、`dag analyze`、`dag next`の入力として使用する。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本へ適用できる。詳細planはPointを基準値、velocity換算したdayを日程予測として自己利用する。Macro計画のwork packageは対応する詳細planのresource forecastをroll-upし、日々のtask選択では先に`mvp.pert`でworkstreamを選び、その後に対応する詳細planを参照する。段階的なwrite解禁条件は[自己利用計画](../docs/process/self-use.md)を参照する。
+5計画ともself-use gateを満たしており、`dsl check`、`dag analyze`、`dag next`の入力として使用する。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本へ適用できる。詳細planはPointを基準値、velocity換算したdayを日程予測として自己利用する。Macro計画のwork packageは対応する詳細planのresource forecastをroll-upし、日々のtask選択では先に`mvp.pert`でworkstreamを選び、その後に対応する詳細planを参照する。段階的なwrite解禁条件は[自己利用計画](../docs/process/self-use.md)を参照する。
 
-2026-07-22時点でMermaid round-tripまで完了し、macroの残るprecedence/resource makespanはともに2d、resource delayは0dである。`RELEASE_E2E`が唯一のready、`runnable_now`、precedence/schedule critical work packageである。
+2026-07-22のrelease readiness監査でMVP受け入れ条件16のrecommendation未実装を確認した。Recommendation detailはprecedence 19p、resource 22p、resource delay 3pで、operations実測`24p/1d`を初期Velocityとする。Macroへ`0.916667d`をroll-upした後の残るprecedence/resource makespanは`2.916667d`、resource delayは0dである。`RECOMMENDATION_IMPLEMENTATION`が唯一のready、`runnable_now`、precedence/schedule critical work packageで、detailの次taskは`FIXTURE_BASELINE`である。
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22時点の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系がformatter/mutation preview 12p、safe write 6p、advance 6pの合計24pによる`24p/1d`である。いずれも1 active dayだけの暫定標本であり、次の同種task完了時にplan単位で再calibrationする。算定根拠、暫定性、macroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

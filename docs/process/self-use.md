@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 3 / Revision 2.15
+- 文書状態: Active Stage 3 / Revision 2.16
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -20,6 +20,7 @@
 | `plans/grammar.pert` | 文法作業の現在・未来 DAG | `.pert` 文書 |
 | `plans/control-plane.pert` | Issue #1のAI工程制御設計の現在・未来 DAG | `.pert` 文書 |
 | `plans/operations.pert` | formatter previewからadvanceまでの現在・未来 DAG | `.pert` 文書 |
+| `plans/recommendation.pert` | MIG-01からMIG-07の実装・shadow・adoption DAG | `.pert` 文書 |
 | `test/fixtures/grammar/` | parser が受理・拒否すべき具体例 | fixture/golden |
 | Git history | 過去の計画、仕様、実装 | commit history |
 
@@ -112,7 +113,9 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`MERMAID_ROUNDTRIP`を完了した。`importMermaid`と`dag import --from mermaid`はprofileのcanonical JSON、record順、metadata/projection digest、意味model、projection対応をfail-closedで検査し、canonical DSLを復元する。Plain inputは限定subsetだけをstable generated IDと`PTCNV-201`から`PTCNV-205`のloss report付きで変換し、実行可能directiveとraw HTMLを拒否する。Strict loss、exclusive `--out`、Core/CLI/package parity、PERT/velocity保持、改変拒否をunit/CLI/E2Eへ固定し、全167 test、文書、4自己利用plan、link、package検査を通した。`plans/mvp.pert`はpreview diffと`sha256:8de200ead6689709245d94c1473804cd28dca361397193fab8f8f1ea979acb96`を確認して`task finish --write`した。Macroの残るprecedence/resource makespanはともに2d、resource delayは0dで、唯一のreadyかつ`runnable_now`なprecedence/schedule critical work packageは`RELEASE_E2E`である。Mermaid taskはday見積りのmacro標本なので、Point基準の操作系Velocityは`24p/1d`のままとする。
 
-Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerをMVP release検証と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`とStage 3へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のprecedence/schedule CPと次のrunnable work packageは`RELEASE_E2E`である。Issue #3はMVP外の将来設計のままとする。
+続いて`RELEASE_E2E`の受け入れ監査を開始したが、[MVP受け入れ条件16](../requirements.md#21-mvp-受け入れ条件)のrecommendation tier、recommended set、structured explanation、higher-priority comparisonが未実装であることを確認した。`dag next` v2のoperational groupをrecommendationへ再解釈せず、`RELEASE_E2E`は未完了のまま保持する。[Recommendation実装plan](../../plans/recommendation.pert)へMIG-01からMIG-07を22pで分解し、operations実測`24p/1d`によるresource forecast `11/12d`をmacroへ`0.916667d`としてroll-upした。Macro残存precedence/resource makespanは`2.916667d`、resource delayは0dで、`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつ`runnable_now`なprecedence/schedule critical work package、`RELEASE_E2E`はupcomingとなった。Detailでは`FIXTURE_BASELINE`が唯一のready、precedence/schedule critical、`runnable_now`である。監査根拠と再開条件は[release readiness記録](mvp-release-readiness.md)を正とする。
+
+Issue #2はrecommendation publication後のprovider別guideとしてhelp surfaceとreviewerを共有するが、現行macroへwork packageを追加していない。Issue #3もMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
 
@@ -138,6 +141,8 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
 Operationsはformatter/mutation preview 12p、safe write 6p、advance 6pの同日完了を累計し、実測`24p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系taskを詳細planへ追加して完了実績が生じた時点で独立再calibrationする。Macroはday単位しか持たないため、未完了work packageでは`p/velocity`を6 decimal dayへroundする。現在のdetail残作業とresource delayは0pである。
+
+Recommendation実装にはまだ完了標本がない。TypeScript Core、CLI、help、testを同じlogical changeで扱うwork typeが操作系に最も近いため、`recommendation.pert`は操作系の暫定実測`24p/1d`を初期値として明示的に借用する。これはrecommendation固有の実測値ではなく、最初の完了taskが生じた時点で独立再calibrationする。
 
 Stage 1で許可した操作:
 
@@ -181,18 +186,20 @@ Stage 1で禁止した操作:
 
 ### 5.2 MVP macro planとの関係
 
-`plans/mvp.pert`はM1からM6までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`は`plans/grammar.pert`、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`は`plans/control-plane.pert`、M1からM4の操作系work packageは`plans/operations.pert`のresource makespanとvelocity forecastをroll-upするが、内部taskの状態を重複管理しない。
+`plans/mvp.pert`はM1からM6までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`は`plans/grammar.pert`、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`は`plans/control-plane.pert`、M1からM4の操作系work packageは`plans/operations.pert`、`RECOMMENDATION_IMPLEMENTATION`は`plans/recommendation.pert`のresource makespanとvelocity forecastをroll-upするが、内部taskの状態を重複管理しない。
 
 - macro milestoneと全体critical path: `mvp.pert`
 - 現在のgrammar実装taskとresource待ち: `grammar.pert`
 - 現在のAI工程制御設計taskとresource待ち: `control-plane.pert`
 - 現在の操作系実装taskとresource待ち: `operations.pert`
+- 現在のrecommendation実装taskとresource待ち: `recommendation.pert`
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
-- `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RELEASE_E2E`で、操作系detailに未完了taskはない
-- recommendation実装とIssue #2は`M3_SAFE_WRITE_READY`後に詳細化可能だが、macro planへ追加するまでは着手順を推測しない
+- `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
+- 現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RECOMMENDATION_IMPLEMENTATION`、detailでは`FIXTURE_BASELINE`である。`RELEASE_E2E`はupcomingで、操作系detailに未完了taskはない
+- Issue #2はmacro planへ追加するまで着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
 ### 5.3 AI工程制御設計plan
@@ -332,8 +339,8 @@ Stage 1開始時の証跡:
 - parser/check gate: `all normative examples parse and validate`、各invalid fixture diagnostic test、`resource requirements do not become precedence edges`
 - analyze gate: precedence、capacity override、active allocation、resource witness、schedule critical pathを固定する`analysis.test.mjs`
 - next gate: `parallel next selects a deterministic runnable subset`、classification/depth unit test、text/JSON CLI integration test
-- self-use golden: grammar、control-plane、operations、MVP planのcheck/analyze/next projection test
-- Point self-use gate: grammar/control-plane/operations planの基準unit、実測または明示した初期velocity、precedence/resource forecastをgoldenで分離して検査する
+- self-use golden: grammar、control-plane、operations、recommendation、MVP planのcheck/analyze/next projection test
+- Point self-use gate: grammar/control-plane/operations/recommendation planの基準unit、実測または明示した初期velocity、precedence/resource forecastをgoldenで分離して検査する
 - field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
 - block text/span gate: common indent、paragraph、tab/末尾space、leading/trailing trivia、UTF-16 marker/content spanをparser testと専用fixtureへ固定する
 - formatter Core gate: HSPACE入力、source構造保持、lexical normalization、UTF-16 non-overlap edit、invalid input拒否をformatter testへ固定する
@@ -352,5 +359,7 @@ Stage 1開始時の証跡:
 - advance CLI gate: default preview、diff、advance固有JSON、削除entityとfrontier/ready比較、partial join、digest付きwrite、再実行no-opをCLI/E2E/self-use testへ固定する
 - operations calibration gate: 完了9 taskの24p/1 active dayから実測Velocity `24p/1d`、残るprecedence/resource forecast 0と0p resource delayをgoldenへ固定する
 - Mermaid profile contract gate: 全semantic record、canonical JSON、metadata/projection digest、fail-closed import、stable loss code、security境界、規範artifactを仕様/help/testへ固定する
-- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、4 planを検査する
+- release readiness gate: MVP condition 1から16を個別監査し、未実装conditionを既存fieldの再解釈でPassにせず、recommendation detail/macro gateと再開条件へ固定する
+- recommendation planning gate: MIG-01からMIG-07を22p、precedence 19p、resource 22p、初期forecast `11/12d`へ分解し、最初の`FIXTURE_BASELINE`をgoldenへ固定する
+- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、5 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

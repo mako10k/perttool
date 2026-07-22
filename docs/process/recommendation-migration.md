@@ -1,6 +1,6 @@
 # Recommendation実装・自己利用migration
 
-- 文書状態: Active 1.1
+- 文書状態: Active 1.2
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 基本設計: [../basic-design.md](../basic-design.md)
@@ -50,11 +50,11 @@
 4. 各unitへduration、acceptance、narrow test、並行可否を付ける
 5. `plans/mvp.pert`の`M1_ROADMAP_UPDATE`を完了してからproduct implementationへ着手する
 
-実行順は[操作系詳細plan](../../plans/operations.pert)へ固定した。Formatter preview 3pとmutation preview 9pを並行branchとし、両方の受け入れ後にsafe write 6p、その後にadvance 6pを完了した。初期baselineはVelocity `3p/1d`、critical/resource makespan 21p、7dだった。全24p完了後の実測は`24p/1d`で、detailの残作業とforecastは0である。M3、Stage 3、Mermaid profile設計、Mermaid export/import round-tripへ到達し、現行macroの唯一のreadyかつ`runnable_now`なcritical work packageは`RELEASE_E2E`である。MIG-01以降のwork packageをmacro planへ追加するまでは着手順を推測しない。
+実行順は[操作系詳細plan](../../plans/operations.pert)へ固定し、全24pを完了した。M3、Stage 3、Mermaid profile設計、Mermaid export/import round-tripへ到達した後、[MVP release readiness監査](mvp-release-readiness.md)で受け入れ条件16の未実装を確認した。MIG-01からMIG-07は[Recommendation実装plan](../../plans/recommendation.pert)へ22p、precedence 19p、resource 22pとして詳細化し、operations実測`24p/1d`を初期Velocityに使用する。Macroでは`RECOMMENDATION_IMPLEMENTATION`をrelease hard predecessorへ追加し、`RELEASE_E2E`をupcomingへ戻した。
 
-MIG-01からMIG-07のside trackは、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`へ到達したため開始時期の下限は閉じたが、recommendation側のtask別durationとfile ownershipはまだ詳細plan化していない。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とする。Mermaid、advance、recommendation、Issue #2のresource順は、局所priorityではなくMVP全体完了を短縮するmacro schedule結果に従う。
+MIG-01からMIG-07は、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を共有する。Task別duration、file ownership、acceptance、narrow testは`plans/recommendation.pert`を正とする。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とし、MVP後の独立work packageのままとする。Issue #2もhelp surfaceとreviewerを共有するが、macroへ追加するまでは実装順を推測しない。
 
-本設計taskではrecommendation migrationのduration、担当、parallel可否を先行決定しない。Issue #2をIssue #1またはM1の意味上のpredecessorにせず、実装時に共有help surfaceを調整する独立featureとして扱う。
+Roadmap再構成前はrecommendation migrationのduration、担当、parallel可否を先行決定しなかった。2026-07-22のrelease readiness監査で再構成gateを開き、実moduleとverification matrixから初期見積りを固定した。Issue #2をMVP recommendation実装の意味上のpredecessorにせず、共有help surfaceを調整する独立featureとして扱う。
 
 ## 4. 実装migration unit
 

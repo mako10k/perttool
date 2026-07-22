@@ -136,6 +136,15 @@ test("operations plan has a valid idempotent advance candidate", async () => {
   assert.deepEqual(repeated.edits, []);
 });
 
+test("recommendation plan matches the MIG-01 to MIG-07 implementation roadmap", async () => {
+  const text = await readFile(path.join(root, "plans/recommendation.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/recommendation.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {
   const text = await readFile(path.join(root, "plans/mvp.pert"), "utf8");
   const expected = JSON.parse(await readFile(

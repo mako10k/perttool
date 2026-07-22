@@ -1,0 +1,118 @@
+project RECOMMENDATION_IMPLEMENTATION:
+  version 1
+  title "Recommendation実装と自己利用移行"
+  description |
+    docs/process/recommendation-migration.mdのMIG-01からMIG-07を、
+    MVP受け入れ条件16のread-only recommendationとnormal authority adoptionまで実装する。
+    Pointはこのroadmap再構成時の相対見積りであり、TypeScript Core/CLI実装に最も近い
+    operations.pertの実測Velocity 24p/1dを初期値として暫定利用する。
+    MIG-08のoverride applyとdurable auditはMVP後の独立work packageとする。
+  as_of 2026-07-22
+  duration_unit point
+  velocity 24p/1d
+  finish RECOMMENDATION_MVP_READY
+
+resource DEVELOPERS:
+  title "Recommendation実装担当枠"
+  capacity 2
+
+resource REVIEWERS:
+  title "仕様・公開・自己利用レビュー枠"
+  capacity 1
+
+milestone NOW:
+  title "Recommendation設計受け入れとStage 3完了"
+  state reached
+
+milestone FIXTURE_BASELINE_READY:
+  title "MIG-01 v2互換fixture baseline完了"
+
+milestone RANKING_CORE_READY:
+  title "MIG-02 rankingとtier Core完了"
+
+milestone EXPLANATION_CORE_READY:
+  title "MIG-03 explanation graph Core完了"
+
+milestone NEXT_V3_PUBLISHED:
+  title "MIG-04 NextResult.v3公開完了"
+
+milestone OVERRIDE_VALIDATION_READY:
+  title "MIG-05 read-only override検証完了"
+
+milestone SHADOW_ACCEPTED:
+  title "MIG-06 self-use shadow受け入れ完了"
+
+milestone NORMAL_AUTHORITY_ADOPTED:
+  title "MIG-07 normal recommendation authority採用"
+
+milestone RECOMMENDATION_MVP_READY:
+  title "MVP recommendation受け入れ完了"
+
+task FIXTURE_BASELINE NOW -> FIXTURE_BASELINE_READY:
+  title "規範caseとv2互換baselineをfixture化する"
+  description "REC-001からREC-011をtest/fixtures/recommendationとgoldenへ固定し、public schemaは変更しない"
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task RANKING_CORE FIXTURE_BASELINE_READY -> RANKING_CORE_READY:
+  title "candidate fact、ranking、tier Coreを実装する"
+  description "src/recommendationでselection horizon、complete order、joint-feasible recommended setをpure実装し、exact/stable unit testを追加する"
+  duration 4p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task EXPLANATION_CORE RANKING_CORE_READY -> EXPLANATION_CORE_READY:
+  title "構造化explanation graphとinvariantを実装する"
+  description "typed fact、expression、comparison、decision trace、canonical descriptionとPTREC failureをCore/testへ固定する"
+  duration 5p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task NEXT_V3_PUBLICATION EXPLANATION_CORE_READY -> NEXT_V3_PUBLISHED:
+  title "NextResult.v3をCore、CLI、helpへatomic公開する"
+  description "src/application/next.ts、src/cli.ts、src/index.ts、help、README、CHANGELOG、consumer guide、Core/CLI/package testを同じbreaking changeで更新する"
+  duration 4p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task SELF_USE_SHADOW NEXT_V3_PUBLISHED -> SHADOW_ACCEPTED:
+  title "5 planでrecommendation shadow評価を行う"
+  description "byte determinism、complete graph、resource feasibility、v2 operational field互換、なぜAでBではないかをself-use goldenで検査する"
+  duration 2p
+  priority 60
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task OVERRIDE_VALIDATION NEXT_V3_PUBLISHED -> OVERRIDE_VALIDATION_READY:
+  title "read-only override validationを実装する"
+  description "pure validateOverride、PTOVR result、feasible replacement、canonical artifact IDをfilesystem/Git/network side effectなしで検査する"
+  duration 3p
+  priority 50
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task AUTHORITY_ADOPTION SHADOW_ACCEPTED -> NORMAL_AUTHORITY_ADOPTED:
+  title "normal recommendationをAI task selection authorityへ採用する"
+  description "AGENTS.md、Copilot指示、AI開発ガイド、helpをv3 consumer ruleへ同期し、unknown version safe stopをdry-runする"
+  duration 2p
+  priority 40
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+gate AUTHORITY_MVP_GATE NORMAL_AUTHORITY_ADOPTED -> RECOMMENDATION_MVP_READY:
+  reason "MVPにはnormal recommendation authorityのshadow受け入れと採用が必要"
+
+gate OVERRIDE_MVP_GATE OVERRIDE_VALIDATION_READY -> RECOMMENDATION_MVP_READY:
+  reason "MVPにはhuman overrideを明示できるread-only validationが必要"

@@ -21,6 +21,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [Mermaid Profile 規範例](docs/examples/mermaid-profile.md)
 - [Recommendation 実装・自己利用migration](docs/process/recommendation-migration.md)
 - [Recommendation 設計受け入れレビュー](docs/process/recommendation-design-review.md)
+- [MVP release readiness監査](docs/process/mvp-release-readiness.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)
@@ -29,6 +30,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [現在の文法作業計画](plans/grammar.pert)
 - [AI工程制御設計計画](plans/control-plane.pert)
 - [操作系M1-M4実装計画](plans/operations.pert)
+- [Recommendation実装計画](plans/recommendation.pert)
 - [AI 開発ガイド](docs/process/ai-development.md)
 
 基本方針は次のとおりです。
@@ -120,7 +122,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとするStage 3のpreview-first advance自己利用を行っています。操作系24pはすべて完了し、実測Velocityは`24p/1d`です。Mermaid round-trip完了後のmacro残存precedence/resource makespanはともに2d、resource delayは0dで、唯一のreadyかつ`runnable_now`なcritical work packageは`RELEASE_E2E`です。Day見積りのMermaid macro taskは操作系のPoint標本へ混ぜません。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後に詳細化可能ですが、macro planへ追加するまでは着手順を推測しません。Issue #3のmulti-plan compositionはMVP後の将来構想です。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。初期Velocityは近いTypeScript Core/CLI実装の暫定実測`24p/1d`を使い、macro残存precedence/resource makespanはともに`2.916667d`、resource delayは0dです。唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`で、`RELEASE_E2E`はupcomingです。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
 
 ## Security and license
 
