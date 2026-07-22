@@ -62,6 +62,7 @@ task VISION_REQUIREMENTS NOW -> VISION_DEFINED:
   title "AI Project Control Planeの目的と境界を要件化する"
   description "source of truth、global objective、determinism、non-goalをrequirementsへ定義する"
   duration 2p
+  status done
   priority 100
   requires:
     DESIGNERS 1

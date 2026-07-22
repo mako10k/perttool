@@ -1,13 +1,16 @@
 # perttool 要件定義
 
-- 文書状態: Draft 0.6
+- 文書状態: Draft 0.7
 - 作成日: 2026-07-21
+- 更新日: 2026-07-22
 - 対象: MVP と、その後の拡張境界
 - 想定ファイル拡張子: `.pert`（暫定）
 
 ## 1. 文書の目的
 
 本書は、PERT 線図を使ってプロジェクトの現在状態と将来計画を管理する `perttool` の要求を定義する。
+
+`perttool`の中心的な使命は、PERT解析そのものではなく、明示されたproject planからAI開発の優先判断を再現し、局所的には妥当でも全体工程を遅らせるtask選択を抑止する **AI Project Control Plane** を提供することである。PERT/CPM、resource schedule、gate、milestoneは、この工程制御判断をproject factsから導出するための基盤である。
 
 `perttool` は、独自 DSL で記述された文書を正本とし、その文書から次を再現可能にする。
 
@@ -16,6 +19,7 @@
 - 共有resource容量を考慮した実行可能日程の生成
 - クリティカルなタスクと余裕時間の抽出
 - 現時点で着手可能な「次のタスク」の抽出
+- 現在の工程で優先すべきtaskと、他の実行可能taskより優先する理由の導出
 - Mermaid などの可視化形式への変換
 - CLI、CI、CLI JSONを使うAIエージェントからの同一操作。MCP/エディタadapterはMVP後に追加する
 
@@ -63,6 +67,28 @@ Must:
 
 この前進操作を本書では `advance` と呼ぶ。`advance` 前後の差分と履歴は Git で確認する。
 
+### 2.4 AI Project Control Planeを中心目的とする
+
+`perttool`は、単に実行可能taskを列挙するのではなく、project全体の現在状態から、AIまたは人間が今どのworkを優先すべきかを判断するcontrol planeである。目的は完了task数を最大化することではなく、依存関係、resource容量、明示priority、gate、milestoneを尊重しながら、宣言されたproject finishまでの期間短縮に寄与するworkを優先することである。
+
+Must:
+
+- task、dependency、milestone、gate、resource、state、明示priorityを持つproject planを優先判断のsource of truthとすること
+- 「現在実行できるtask」と「現在の工程で優先すべきtask」を別の判断として扱うこと
+- AIはprojectが決めた許可・推奨範囲でworkを実行し、会話上の興味、実装容易性、局所的な改善だけを理由にproject priorityを再定義しないこと
+- recommendationを、critical path、float、resource制約、後続依存、gateまたはmilestoneなど、project modelに明示されたfactから導出すること
+- 推奨taskだけでなく、他の実行可能taskがより優先されない理由も機械可読なproject factで説明できること
+- 同じdocument、option、algorithm versionから同じrecommendationと順序を返すこと
+- recommendation algorithmとresource scheduleがheuristicである場合、証明していないglobal optimumとして表示しないこと
+- rework risk、情報不足、release固有の意味など、現在のproject modelに存在しないfactをchat contextから推測してrankingへ混入させないこと
+- 人間がrecommendationから意図的に逸脱できること。逸脱を禁止するのではなく、overrideであることと理由を明示できる契約を持つこと
+- MVPではread-onlyのCore/CLI analysisとしてrecommendationを取得できること。overrideの永続化はwrite safety gateを越えるまで要求しないこと
+
+Should:
+
+- task完了、block、capacity、overrideなどproject stateが変わった後に全体を再解析し、古いrecommendationを継続利用しないこと
+- CLI以外の将来adapterも同じCore recommendationを利用し、provider固有のpriority判断を再実装しないこと
+
 ## 3. 解決したい問題
 
 - タスク一覧だけでは依存関係と着手順が見えにくい
@@ -70,6 +96,9 @@ Must:
 - 図を直接編集すると、図と計画データが分離または不整合になる
 - タスク追加時に、既存の依存関係を壊したことへ気づきにくい
 - 「今できるタスク」と「将来のタスク」が混ざる
+- 「今できるtask」と「今やるべきtask」が区別されず、AIが着手しやすい枝taskへ局所最適化する
+- project intentとtask選択理由がprompt、chat history、issue discussionへ分散し、同じplanから同じ判断を再現できない
+- optional featureや置換予定の改善を先行し、critical dependencyやgate直前のworkが後回しになる
 - GUI や外部サービスがなければ再計算できない計画は、Git と自動化に載せにくい
 - 人間向けヘルプと AI 向け操作契約が別々に実装されると挙動がずれる
 
@@ -86,6 +115,12 @@ MVP では次を目的としない。
 - Mermaid を正本として、Mermaid の全構文を解釈すること
 - 複数クリティカルパスが競合するネットワークについて、厳密な完了確率を保証すること
 - LLM に PERT/CPM の計算そのものを委ねること
+- AIがtask、dependency、milestone、priorityを自律的に発明するplanning system
+- codeの面白さ、品質、一般的価値をproject plan外から評価してpriorityを決めること
+- opaqueなAI/ML scoreだけでrecommendationを決めること
+- heuristic scheduleまたはrecommendationについて、厳密なglobal optimumを保証すること
+- project modelにないrisk、情報、release semanticsをchatから推測して正本factとして扱うこと
+- 人間がrecommendationから逸脱することを禁止すること
 
 ## 5. 想定利用者と主要ユースケース
 
@@ -116,7 +151,9 @@ MVP では次を目的としない。
 ### 5.4 AI エージェント
 
 - 構造化ヘルプから DSL と操作契約を発見する
-- 文書を検査、分析し、次タスク候補を取得する
+- 文書を検査、分析し、実行可能taskと推奨taskを区別して取得する
+- recommendationのreasonと上位taskを確認し、projectが許可・推奨する範囲からworkを選ぶ
+- recommendation外のtaskを人間の指示で選ぶ場合は、overrideであることと理由を明示する
 - タスク編集をプレビューし、差分を提示する
 - 明示された許可と競合検査なしにファイルを書き換えない
 
@@ -134,6 +171,8 @@ MVP では次を目的としない。
 | Ready | 依存が満たされ、ブロックされておらず、未着手の task から導出される状態 |
 | Critical | total float が許容誤差以下の task または gate |
 | Schedule Critical | resource待ちを含む実行可能schedule上で完了時刻を拘束するtask列 |
+| Recommendation | project modelに明示されたfactから導出する、現在優先すべきworkとその説明 |
+| Override | 人間がrecommendationと異なるworkを意図的に選び、その事実と理由を明示する判断 |
 | Point | AIや人が相対的な作業規模を見積もるための独自単位 `p`。時間そのものではない |
 | Velocity | 一定期間に完了できるPoint量を表すproject-wide比率。例: `20p/10d` |
 | Velocity Forecast | Pointとday/hourをVelocityで換算した予測値。宣言したPERT値とは区別する |
@@ -785,6 +824,7 @@ Must:
 - CLI 利用に MCP server の起動を要求しないこと
 - AIがCLI JSONの解析結果を利用でき、PERT計算値を自由文で生成する必要がないこと
 - AIがPointを時間と誤認しないよう、基準単位のexact Rationalとvelocity forecastを別fieldで取得できること
+- AIが実行可能task、推奨task、推奨理由、より優先されるtaskをCLI JSONから取得でき、自由文だけでpriorityを再判断する必要がないこと
 - 将来adapterも同じ共通コアを利用し、計算・検査規則を再実装しないこと
 
 ### 17.2 MCP / LSP（MVP対象外）
@@ -903,6 +943,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 13. CLI text/JSONが共通parser/analyzerを利用し、同じdiagnosticと解析値を返す
 14. 主要な正常例、失敗例、round-trip が自動テストで固定される
 15. Point見積りをexact PERT値として計算し、宣言velocityによるday/hour予測をtext/JSONで区別して返せる
+16. project factsから現在優先すべきtaskと理由を決定的なtext/JSONで返し、実行可能だが推奨されないtaskについて、より優先されるtaskを説明できる
 
 ## 22. 初期要求との対応
 
@@ -914,11 +955,12 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 | 4. DAG 記法を可視化しやすくする | 2.1、8、13 |
 | 5. Mermaid などと相互変換する | 14 |
 | 6. 文書ベースで再計算する | 2.2、18、19 |
-| 7. 次のタスクを分かりやすくする | 11 |
+| 7. 次のタスクを分かりやすくする | 2.4、11 |
 | 8. 現在・未来を表し、過去は Git で補足する | 2.3、9、19 |
 | 9. 既存 DSL ツールのヘルプ・AI 導線を踏襲する | 15、16、17、19.1 |
 | 10. resource共有、排他実行、並列数で変化する日程を扱う | 7.2、7.4、10.6、11 |
 | 11. 独自PointとVelocityでAIの見積りを時間予測へ変換する | 6、7.1、8、10、17 |
+| 12. AIの局所最適化と工程逸脱を検出・抑止する | 1、2.4、3、4、5.4、11、17、21 |
 
 ## 23. MVP 後へ保留する事項
 
@@ -940,7 +982,11 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 実装開始前に、次を ADR または個別仕様で固定する。
 
-1. Mermaid profile の `%% perttool:` メタデータ schema
+1. recommendationの実行可否・推奨度modelと各状態の形式的意味
+2. ranking input、優先規則、完全なtie-break、algorithm version
+3. stable reason code、関連fact、text/JSON interface、schema migration
+4. human overrideの意味、理由、audit先、再解析契約
+5. Mermaid profile の `%% perttool:` メタデータ schema
 
 解決済みの設計判断:
 
@@ -956,8 +1002,14 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 3. [x] [Analysis仕様](specs/analysis.md): PERT/CPM、resource schedule、resource arc、tie-break
 4. [x] [CLI Interface仕様](specs/interfaces.md): CLI、JSON Schema、help、write safety。MCPはMVP対象外
 5. [x] [ADR 0001](adr/0001-activity-on-arrow.md): task=edge の設計判断
-6. [ ] parser/validator の最小実装と golden tests
+6. [ ] [Issue #1](https://github.com/mako10k/perttool/issues/1): AI Project Control Planeのrecommendation契約
+   - [x] product vision、source of truth、global objective、determinism、non-goal
+   - [ ] 実行可否と推奨度のmodel
+   - [ ] deterministic ranking policyとstable reason code
+   - [ ] Core、text、JSON、human override契約
+   - [ ] normative example、test観点、self-use migration
+7. [ ] parser/validator の最小実装と golden tests
 
-項目6は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
+項目7は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
-Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。AI工程制御planeのproduct要件とrecommendation契約はIssue #1の設計plan、AI Agent Guidance RegistryはIssue #2のfeature scopeとして未確定事項を管理し、設計完了前に本要件へ推測で固定しない。
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct visionと要件境界は項目6の最初のsliceとして確定した。次は実行可否と推奨度modelを規範仕様へ定義する。ranking、reason code、interface、overrideの詳細と、Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。

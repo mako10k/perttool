@@ -8,16 +8,15 @@
       "tasks": 9,
       "gates": 6,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "11",
+    "precedence_makespan": "9",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "11/1",
+    "precedence_forecast": "9/1",
     "precedence_critical_tasks": [
-      "VISION_REQUIREMENTS",
       "RECOMMENDATION_MODEL",
       "RANKING_POLICY",
       "REASON_CODE_TAXONOMY",
@@ -25,15 +24,14 @@
       "NORMATIVE_EXAMPLES",
       "DESIGN_REVIEW"
     ],
-    "resource_makespan": "11",
-    "resource_forecast": "11/1",
+    "resource_makespan": "9",
+    "resource_forecast": "9/1",
     "resource_delay": "0",
     "resource_arcs": [
       "resource:RANKING_POLICY:HUMAN_OVERRIDE_CONTRACT",
       "resource:REASON_CODE_TAXONOMY:HUMAN_OVERRIDE_CONTRACT"
     ],
     "schedule_critical_tasks": [
-      "VISION_REQUIREMENTS",
       "RECOMMENDATION_MODEL",
       "RANKING_POLICY",
       "REASON_CODE_TAXONOMY",
@@ -46,14 +44,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "VISION_REQUIREMENTS"
+        "RECOMMENDATION_MODEL"
       ],
       "runnable_now": [
-        "VISION_REQUIREMENTS"
+        "RECOMMENDATION_MODEL"
       ],
       "blocked_now": [],
       "upcoming": [
-        "RECOMMENDATION_MODEL",
         "RANKING_POLICY",
         "REASON_CODE_TAXONOMY",
         "INTERFACE_CONTRACT",
