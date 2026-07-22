@@ -6,6 +6,7 @@ import type {
   RequirementValue,
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
+import { mutationDiagnostic } from "./diagnostics.js";
 import type {
   AddTaskMutation,
   SetTaskMutation,
@@ -15,18 +16,26 @@ import type {
   TaskMutation,
   TaskRequirementInput,
 } from "./types.js";
+import {
+  appendDeclarationEdit,
+  contentEndOffset,
+  contentTextEndOffset,
+  deleteDeclarationEdit,
+  deleteFieldEdit,
+  fieldInsertionOffset,
+  insertionText,
+  leadingCommentStart,
+  lineIndexAt,
+  majorLineEnding,
+  serializeTags,
+  serializeTextField,
+  splitPhysicalLines,
+} from "./source.js";
 import type { TextEdit } from "./text-edits.js";
 
 export interface TaskMutationPlan {
   readonly edits: readonly TextEdit[];
   readonly diagnostic?: Diagnostic;
-}
-
-interface PhysicalLine {
-  readonly text: string;
-  readonly start: number;
-  readonly end: number;
-  readonly endWithEnding: number;
 }
 
 const fieldOrder = [
@@ -48,7 +57,6 @@ const fieldRank = new Map<string, number>(
 );
 fieldRank.set("duration", 2);
 
-const bareTagPattern = /^[A-Za-z][A-Za-z0-9_-]*$/;
 const taskStatuses = new Set(["planned", "active", "blocked", "done"]);
 const clearableFields = new Set([
   "description",
@@ -136,20 +144,6 @@ function taskDefinitionError(value: unknown): string | undefined {
   return undefined;
 }
 
-function mutationDiagnostic(
-  code: "PTMUT-301" | "PTMUT-302" | "PTMUT-303" | "PTMUT-304",
-  message: string,
-  entity?: DeclarationNode,
-): Diagnostic {
-  return {
-    code,
-    severity: "error",
-    message,
-    helpTopic: "editing",
-    ...(entity === undefined ? {} : { entityId: entity.id, span: entity.idSpan }),
-  };
-}
-
 function taskMutationRequestError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return "mutation requestがobjectではありません";
@@ -188,158 +182,12 @@ function taskMutationRequestError(value: unknown): string | undefined {
   return undefined;
 }
 
-function splitPhysicalLines(text: string): readonly PhysicalLine[] {
-  if (text.length === 0) return [];
-  const lines: PhysicalLine[] = [];
-  let start = 0;
-  while (start < text.length) {
-    const newline = text.indexOf("\n", start);
-    if (newline === -1) {
-      lines.push({ text: text.slice(start), start, end: text.length, endWithEnding: text.length });
-      break;
-    }
-    const end = newline > start && text[newline - 1] === "\r" ? newline - 1 : newline;
-    lines.push({ text: text.slice(start, end), start, end, endWithEnding: newline + 1 });
-    start = newline + 1;
-  }
-  return lines;
-}
-
-function majorLineEnding(text: string): "\n" | "\r\n" {
-  let lf = 0;
-  let crlf = 0;
-  let first: "\n" | "\r\n" | undefined;
-  for (let index = 0; index < text.length; index += 1) {
-    if (text[index] !== "\n") continue;
-    const ending = index > 0 && text[index - 1] === "\r" ? "\r\n" : "\n";
-    first ??= ending;
-    if (ending === "\r\n") crlf += 1;
-    else lf += 1;
-  }
-  if (lf === crlf) return first ?? "\n";
-  return crlf > lf ? "\r\n" : "\n";
-}
-
-function lineIndexAt(lines: readonly PhysicalLine[], offset: number): number {
-  const index = lines.findIndex(
-    (line, lineIndex) =>
-      offset >= line.start &&
-      (offset < line.endWithEnding ||
-        (lineIndex === lines.length - 1 && offset === line.endWithEnding)),
-  );
-  if (index === -1) throw new Error("mutation span does not resolve to a physical line");
-  return index;
-}
-
-function contentEndOffset(
-  field: FieldNode,
-  lines: readonly PhysicalLine[],
-): number {
-  let offset = field.span.end.offset;
-  if (field.children !== undefined && field.children.length > 0) {
-    offset = field.children[field.children.length - 1]!.span.end.offset;
-  } else if (field.name === "requires" && Array.isArray(field.value) && field.value.length > 0) {
-    offset = (field.value[field.value.length - 1] as RequirementValue).span.end.offset;
-  } else if (field.contentSpan !== undefined) {
-    offset = field.contentSpan.end.offset;
-  }
-  return lines[lineIndexAt(lines, offset)]!.endWithEnding;
-}
-
-function contentTextEndOffset(
-  field: FieldNode,
-  lines: readonly PhysicalLine[],
-): number {
-  let offset = field.span.end.offset;
-  if (field.children !== undefined && field.children.length > 0) {
-    offset = field.children[field.children.length - 1]!.span.end.offset;
-  } else if (field.name === "requires" && Array.isArray(field.value) && field.value.length > 0) {
-    offset = (field.value[field.value.length - 1] as RequirementValue).span.end.offset;
-  } else if (field.contentSpan !== undefined) {
-    offset = field.contentSpan.end.offset;
-  }
-  return lines[lineIndexAt(lines, offset)]!.end;
-}
-
-function declarationContentEndOffset(
-  declaration: DeclarationNode,
-  lines: readonly PhysicalLine[],
-): number {
-  const lastField = declaration.fields[declaration.fields.length - 1];
-  const offset = lastField?.span.end.offset ?? declaration.headerSpan.end.offset;
-  return lastField === undefined
-    ? lines[lineIndexAt(lines, offset)]!.endWithEnding
-    : contentEndOffset(lastField, lines);
-}
-
-function leadingCommentStart(
-  lines: readonly PhysicalLine[],
-  elementStart: number,
-  indentation: number,
-): number {
-  let index = lineIndexAt(lines, elementStart) - 1;
-  let start = elementStart;
-  while (index >= 0) {
-    const line = lines[index]!;
-    const match = /^( *)(#.*)$/.exec(line.text);
-    if (match === null || match[1]!.length !== indentation) break;
-    start = line.start;
-    index -= 1;
-  }
-  return start;
-}
-
-function deleteFieldEdit(
-  field: FieldNode,
-  lines: readonly PhysicalLine[],
-): TextEdit {
-  return {
-    startOffset: leadingCommentStart(lines, field.span.start.offset, 2),
-    endOffset: contentEndOffset(field, lines),
-    replacement: "",
-  };
-}
-
-function deleteDeclarationEdit(
-  declaration: DeclarationNode,
-  lines: readonly PhysicalLine[],
-): TextEdit {
-  return {
-    startOffset: leadingCommentStart(lines, declaration.headerSpan.start.offset, 0),
-    endOffset: declarationContentEndOffset(declaration, lines),
-    replacement: "",
-  };
-}
-
 function canonicalDuration(value: string): string {
   const match = /^(\d+)(?:\.(\d+))?([dhp])$/.exec(value);
   if (match === null) return value;
   const whole = match[1]!.replace(/^0+(?=\d)/, "");
   const fraction = (match[2] ?? "").replace(/0+$/, "");
   return `${whole}${fraction === "" ? "" : `.${fraction}`}${match[3]}`;
-}
-
-function serializeTag(tag: string): string {
-  return bareTagPattern.test(tag) ? tag : JSON.stringify(tag);
-}
-
-function serializeTags(tags: readonly string[]): string {
-  return `[${tags.map(serializeTag).join(", ")}]`;
-}
-
-function serializeTextField(name: string, value: string, lineEnding: string): string {
-  if (
-    !value.includes("\n") ||
-    value.includes("\r") ||
-    value.startsWith("\n") ||
-    value.endsWith("\n")
-  ) {
-    return `  ${name} ${JSON.stringify(value)}`;
-  }
-  return [
-    `  ${name} |`,
-    ...value.split("\n").map((line) => (line === "" ? "" : `    ${line}`)),
-  ].join(lineEnding);
 }
 
 function serializeEstimate(estimate: TaskEstimateInput, lineEnding: string): string {
@@ -438,22 +286,8 @@ function addTaskPlan(text: string, mutation: AddTaskMutation): TaskMutationPlan 
     };
   }
   const lineEnding = majorLineEnding(text);
-  const lines = splitPhysicalLines(text);
-  const trailingBlank =
-    text.endsWith("\n") && lines.length > 0 && lines[lines.length - 1]!.text.trim() === "";
-  const prefix = text.length === 0
-    ? ""
-    : trailingBlank
-      ? ""
-      : text.endsWith("\n")
-        ? lineEnding
-        : `${lineEnding}${lineEnding}`;
   return {
-    edits: [{
-      startOffset: text.length,
-      endOffset: text.length,
-      replacement: `${prefix}${serializeTask(mutation, lineEnding)}${lineEnding}`,
-    }],
+    edits: [appendDeclarationEdit(text, serializeTask(mutation, lineEnding), lineEnding)],
   };
 }
 
@@ -590,35 +424,6 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
   return undefined;
 }
 
-function fieldInsertionOffset(
-  declaration: DeclarationNode,
-  name: string,
-  deleted: ReadonlySet<string>,
-  lines: readonly PhysicalLine[],
-): number {
-  const rank = fieldRank.get(name)!;
-  const later = declaration.fields.find(
-    (field) => !deleted.has(field.name) && (fieldRank.get(field.name) ?? 99) > rank,
-  );
-  if (later !== undefined) {
-    return leadingCommentStart(lines, later.span.start.offset, 2);
-  }
-  const surviving = declaration.fields.filter((field) => !deleted.has(field.name)).at(-1);
-  if (surviving === undefined) throw new Error("task mutation removed every field");
-  return contentEndOffset(surviving, lines);
-}
-
-function insertionText(
-  text: string,
-  offset: number,
-  serializedFields: readonly string[],
-  lineEnding: string,
-): string {
-  const prefix = offset > 0 && text[offset - 1] !== "\n" ? lineEnding : "";
-  const suffix = offset < text.length || text.endsWith("\n") ? lineEnding : "";
-  return `${prefix}${serializedFields.join(lineEnding)}${suffix}`;
-}
-
 function currentTags(task: DeclarationNode): readonly string[] {
   const value = fieldNamed(task, "tags")?.value;
   return Array.isArray(value)
@@ -649,7 +454,7 @@ function planSetTask(
   const additions = new Map<number, Array<{ name: string; serialized: string }>>();
 
   const queueAddition = (name: string, value: unknown): void => {
-    const offset = fieldInsertionOffset(task, name, deleted, lines);
+    const offset = fieldInsertionOffset(task, name, deleted, lines, fieldRank);
     const entries = additions.get(offset) ?? [];
     entries.push({ name, serialized: serializeField(name, value, lineEnding) });
     additions.set(offset, entries);

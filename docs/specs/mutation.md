@@ -1,6 +1,6 @@
 # perttool Mutation Semantics仕様
 
-- 文書状態: Draft 0.1
+- 文書状態: Draft 0.2
 - Mutation semantics version: 1
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
@@ -13,7 +13,7 @@
 
 本書は`.pert`文書に対するsource-preserving mutationのCore契約を定義する。Mutationは既存文書を直接書かず、局所的なUTF-16 `TextEdit`、再検査済みcandidate、digest、unified diffを返す。
 
-Mutation semantics version 1の最初の実装scopeはtaskの`add`、`set`、`remove`、`finish`である。Milestone/resource mutation、filesystem write、`dag advance`は本書の共通不変条件を再利用する後続sliceとし、今回のtask Core実装には含めない。
+Mutation semantics version 1の実装scopeはtaskの`add`、`set`、`remove`、`finish`、milestone/resourceの`add`、`set`、`remove`、複数atomic mutationを1 candidateへ適用する`batch`である。Filesystem writeと`dag advance`は本書の共通不変条件を再利用する後続sliceとする。
 
 ## 2. 規範の優先順位
 
@@ -33,7 +33,7 @@ CLIは本書のCore requestへoptionを投影する。CLI adapterがtarget解決
 ```ts
 planMutation(
   text: string,
-  mutation: TaskMutation,
+  mutation: Mutation,
   options?: MutationOptions,
 ): MutationResult
 ```
@@ -43,7 +43,7 @@ planMutation(
 Conceptual request model:
 
 ```ts
-type TaskMutation =
+type AtomicMutation =
   | {
       kind: "task.add";
       id: string;
@@ -64,7 +64,37 @@ type TaskMutation =
       removeRequirements?: string[];
     }
   | { kind: "task.remove"; id: string }
-  | { kind: "task.finish"; id: string };
+  | { kind: "task.finish"; id: string }
+  | {
+      kind: "milestone.add";
+      id: string;
+      milestone: MilestoneDefinition;
+    }
+  | {
+      kind: "milestone.set";
+      id: string;
+      set?: MilestoneFieldSet;
+      clear?: ("description" | "state" | "tags")[];
+      addTags?: string[];
+      removeTags?: string[];
+    }
+  | { kind: "milestone.remove"; id: string }
+  | {
+      kind: "resource.add";
+      id: string;
+      resource: ResourceDefinition;
+    }
+  | {
+      kind: "resource.set";
+      id: string;
+      set?: ResourceFieldSet;
+      clear?: "description"[];
+    }
+  | { kind: "resource.remove"; id: string };
+
+type Mutation =
+  | AtomicMutation
+  | { kind: "batch"; mutations: AtomicMutation[] };
 ```
 
 `TaskDefinition`は`title`と、`duration`または`estimate`のexactly oneを必須とする。Optional fieldは`description`、`status`、`priority`、`requirements`、`owner`、`tags`、`blockedReason`、`source`である。
@@ -72,6 +102,8 @@ type TaskMutation =
 `TaskFieldSet`は`title`、`description`、`duration`または`estimate`、`status`、`priority`、`owner`、`blockedReason`、`source`を持てる。Clear対象はCLI契約と同じ`description`、`status`、`priority`、`owner`、`blocked_reason`、`source`、`tags`、`requires`である。
 
 `estimate`は`optimistic`、`mostLikely`、`pessimistic`をすべて持つ。Requirementは`resourceId`と`units`を持つ。Durationはsuffixを含むDSL literalとして受け取り、candidate parserとvalidatorがproject unitを検査する。
+
+`MilestoneDefinition`は`title`を必須とし、`description`、`state`、`tags`を持てる。`MilestoneFieldSet`は`title`、`description`、`state`を持つ。`ResourceDefinition`は`title`と`capacity`を必須とし、`description`を持てる。`ResourceFieldSet`は`title`、`description`、`capacity`を持つ。Resourceの`tags`はDSL fieldとして保持するが、version 1のresource mutation requestでは変更対象にしない。
 
 Request modelに存在しない`kind`またはfield、型の異なるfieldは`PTMUT-301`とする。JavaScript callerからの入力も例外で中断せず、同じrequest diagnostic境界で扱う。
 
@@ -83,11 +115,12 @@ Request modelに存在しない`kind`またはfield、型の異なるfieldは`PT
 2. UTF-8 byte列のSHA-256を`originalDigest`とする
 3. request shapeと競合optionを検査する
 4. targetをexactly one解決する
-5. source spanに対するTextEditを作る
-6. editを`startOffset`、`endOffset`の昇順へ正規化し、overlapを拒否する
-7. editをoffset降順で適用する
-8. candidateを`checkDocument`する
-9. candidateがvalidな場合だけupdated text、digest、diff、editを公開する
+5. source spanに対するTextEditを作る。Batchでは全atomic mutationを同じoriginal spanへ計画する
+6. 同じdocument末尾へのbatch insertionをrequest順に結合する
+7. editを`startOffset`、`endOffset`の昇順へ正規化し、overlapを拒否する
+8. editをoffset降順で適用する
+9. 最終candidateを`checkDocument`する
+10. candidateがvalidな場合だけupdated text、digest、diff、editを公開する
 
 Core result:
 
@@ -115,6 +148,7 @@ Rules:
 - digest表現は`sha256:<64 lowercase hex digits>`とする
 - `TextEdit`のoffsetは0-based UTF-16 code unitで、rangeは半開区間とする
 - I/O、path解決、write mode、optimistic lockはCoreに含めない
+- batch内のatomic mutationを途中状態ごとにvalidationしない。最終candidateだけをvalidationする
 
 Unified diffはLFでserializeし、最初に`--- <originalLabel>`、`+++ <updatedLabel>`を置く。変更領域の前後3行をcontextとする1 hunkを返す。同じ入力、request、optionからbyte-identicalなdiffを返す。
 
@@ -152,6 +186,8 @@ Declarationまたはfieldの直前にあり、blank lineを挟まない同一str
 - duration decimalの不要なleading/trailing zeroを除く
 - bare tagにできないtagはStringとしてserializeする
 - task field orderは`title`、`description`、`duration|estimate`、`status`、`priority`、`requires`、`owner`、`tags`、`blocked_reason`、`source`
+- milestone field orderは`title`、`description`、`state`、`tags`
+- resource field orderは`title`、`description`、`capacity`、`tags`
 - estimate orderは`optimistic`、`most_likely`、`pessimistic`
 - requirement orderはrequestまたは既存sourceの順を保持する
 
@@ -203,18 +239,47 @@ Candidateの`status=blocked`と`blocked_reason`、required field、DAG、resourc
 
 `task.finish`はstatusを`done`へ設定する。Status fieldがなければcanonical positionへ追加する。既存`blocked_reason`は`done`と両立しないため同じmutationで削除する。すでに`done`で`blocked_reason`がなければvalidなno-opとする。
 
-## 9. Mutation diagnostic
+## 9. Milestone/resource mutationとbatch
+
+### 9.1 milestone
+
+- `milestone.add`は`title`を必須とし、document末尾へcanonical declarationを追加する
+- `milestone.set`は少なくとも1変更を必要とし、title、description、state、tagを局所変更する
+- `milestone.remove`はmilestoneとleading commentだけを削除し、task/gate endpointやproject finishをcascade変更しない
+- standalone add/removeの最終candidateがreachability、root、finish、参照規則に違反する場合は既存graph diagnosticで拒否する
+
+### 9.2 resource
+
+- `resource.add`は`title`と`capacity`を必須とし、document末尾へcanonical declarationを追加する
+- `resource.set`は少なくとも1変更を必要とし、title、description、capacityを局所変更する
+- `resource.remove`はresourceとleading commentだけを削除し、task requirementをcascade変更しない
+- capacity変更後のrequirementとactive allocationはcandidate validatorで再検査する
+- 既存resource tagsは他field変更時もbyte-preservingで保持する
+
+### 9.3 batch
+
+Milestoneと接続edgeを順番に追加すると、どちらを先に実行してもundefined endpointまたはfinishへ到達不能な中間文書になる。このため、構造変更は必要に応じて`batch`で1 candidateへまとめる。
+
+- batchは1件以上のatomic mutationをrequest順に持つ
+- nested batchと、同じentity IDを複数回変更するbatchを拒否する
+- 各atomic mutationはoriginal document上のtargetを解決する。Batch内で追加したentityを同じbatchでset/removeしない
+- batch内で新規追加したmilestone/resourceは、同じbatchのtask add/setから参照できる
+- declaration addが同じdocument末尾offsetへ集中した場合はrequest順に1 editへ結合する。同じoffsetに既存末尾declarationのfield追加もある場合はfieldを先、新規top-level declarationを後に置く
+- atomic edit rangeが競合する場合は`PTMUT-301`でbatch全体を拒否する
+- 途中状態は公開もvalidationもせず、最終candidateだけを通常のdocument validatorへ渡す
+
+## 10. Mutation diagnostic
 
 | Code | Severity | Meaning |
 | --- | --- | --- |
 | `PTMUT-301` | error | request shape不正、変更指定なし、相互排他違反 |
 | `PTMUT-302` | error | target IDが存在しない |
-| `PTMUT-303` | error | target IDは存在するがtaskではない |
+| `PTMUT-303` | error | target IDは存在するがrequest対象のentity kindではない |
 | `PTMUT-304` | error | addするIDが既存entityと重複する |
 
 `PTMUT-*`はmutation request/targetのerrorだけに使用する。Candidateのsyntax、field、graph errorを`PTMUT-*`へ包み直さず、既存`PTDSL-*`、`PTSEM-*`、`PTDAG-*`を保持する。
 
-## 10. Acceptance invariants
+## 11. Acceptance invariants
 
 最低限次を自動検査する。
 
@@ -228,3 +293,7 @@ Candidateの`status=blocked`と`blocked_reason`、required field、DAG、resourc
 8. candidateのtarget fieldがrequestと一致し、無関係declaration/fieldのsemantic valueが不変である
 9. TextEditがUTF-16 offsetで昇順、非重複で、適用結果が`updatedText`と一致する
 10. digestとunified diffが同じinput/request/optionsから決定的に再現される
+11. milestone/resource setが無関係なdeclaration、field、comment、順序を保持する
+12. milestone/resource removeがcascadeせず、参照またはcapacity制約を壊すcandidateを拒否する
+13. batchがconnected milestone追加、path置換、resourceとrequirementの同時追加をvalidな1 candidateとして返す
+14. empty/nested/duplicate-target/conflicting-edit batchを`PTMUT-301`で拒否する

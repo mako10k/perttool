@@ -12,22 +12,22 @@
     }
   },
   "analyze": {
-    "precedence_makespan": "59/4",
+    "precedence_makespan": "3357143/250000",
     "precedence_critical_tasks": [
-      "MUTATION_PREVIEW",
+      "FORMATTER_CORE",
       "WRITE_SAFETY",
       "MERMAID_PROFILE",
       "MERMAID_EXPORT",
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "59/4",
+    "resource_makespan": "3357143/250000",
     "resource_delay": "0/1",
     "resource_arcs": [
       "resource:MERMAID_PROFILE:ADVANCE"
     ],
     "schedule_critical_tasks": [
-      "MUTATION_PREVIEW",
+      "FORMATTER_CORE",
       "WRITE_SAFETY",
       "MERMAID_PROFILE",
       "MERMAID_EXPORT",

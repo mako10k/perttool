@@ -480,19 +480,19 @@ const nodes: readonly HelpNode[] = [
   {
     id: "editing",
     title: "Safe editing",
-    summary: "Libraryのtask mutation Coreはpreview候補を生成します。CLI commandとwriteはまだ未実装です。",
+    summary: "Libraryのtask/milestone/resource mutation Coreとatomic batchはpreview候補を生成します。CLI commandとwriteはまだ未実装です。",
     quick: [
       {
         id: "current-surface",
         title: "Current surface",
-        body: "planMutationはtask add/set/remove/finishの局所TextEdit、再検査済みcandidate、digest、diffを返し、fileは変更しません。",
+        body: "planMutationはtask/milestone/resource変更とbatchの局所TextEdit、再検査済みcandidate、digest、diffを返し、fileは変更しません。",
       },
     ],
     detail: [
       {
         id: "write-gate",
         title: "Write gate",
-        body: "task CLI、milestone/resource mutation、--write/--outは後続実装です。現在のCLIで存在するcommandとして扱わないでください。",
+        body: "dsl formatと全mutation CLI、--write/--outは後続実装です。現在のCLIで存在するcommandとして扱わないでください。",
       },
     ],
     syntax: [],

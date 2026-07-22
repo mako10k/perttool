@@ -3,14 +3,15 @@ project OPERATIONS:
   title "操作系M1-M4実装計画"
   description |
     formatter preview、構造編集preview、safe write、advanceを実装する詳細plan。
-    Pointは相対規模を表す。2026-07-22にTASK_MUTATION_CORE 4pを1 active dayで
-    完了した最初の操作系標本から、実測Velocityを4p/1dへcalibrationした。
+    Pointは相対規模を表す。2026-07-22にTASK_MUTATION_CORE 4pと
+    ENTITY_MUTATION_CORE 3pを1 active dayで完了した操作系標本から、
+    実測Velocityを7p/1dへcalibrationした。
     recommendationとAI Agent Guidance Registryは、このplanのM3 safe-write milestoneを
     遅らせないことを立証するまで並行実装しない。Multi-plan compositionは独立した
     MVP後の将来backlogとして扱う。
   as_of 2026-07-22
   duration_unit point
-  velocity 4p/1d
+  velocity 7p/1d
   finish OPERATIONS_READY
 
 resource DEVELOPERS:
@@ -109,12 +110,13 @@ task TASK_MUTATION_CORE NOW -> TASK_MUTATION_READY:
 task ENTITY_MUTATION_CORE TASK_MUTATION_READY -> ENTITY_MUTATION_READY:
   title "milestone・resource mutationを実装する"
   description |
-    Create: src/mutation/milestone.ts、src/mutation/resource.ts。
-    Modify: src/application/mutate.ts、test/mutation.test.mjs。
-    Accept: milestone/resource add/set/removeが宣言順、comment、無関係fieldを保持し、暗黙cascadeを行わない。
+    Create: src/mutation/milestone.ts、src/mutation/resource.ts、src/mutation/source.ts、src/mutation/entity-editor.ts、src/mutation/diagnostics.ts。
+    Modify: src/mutation/types.ts、src/application/mutate.ts、test/mutation.test.mjs。
+    Accept: milestone/resource add/set/removeが宣言順、comment、無関係fieldを保持し、暗黙cascadeを行わない。Connected milestoneやresource requirementはatomic batchの最終candidateで検査する。
     Test: npm run build && node --test test/mutation.test.mjs。
     Parallel: formatter branchとは並行可能で、task mutationの共通plannerを再利用するためTASK_MUTATION_CORE後に行う。
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

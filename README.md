@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.1`はread-only CLIの公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl help`、`dag analyze`、`dag next`、libraryのsource-preserving formatter Coreとtask mutation Coreが実装済みです。`dsl format` command、task mutation CLI、milestone/resource mutation、filesystem write、Mermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+`v0.1.0-alpha.1`はread-only CLIの公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl help`、`dag analyze`、`dag next`、libraryのsource-preserving formatter Core、task/milestone/resource mutation Core、atomic batchが実装済みです。`dsl format` command、mutation CLI、filesystem write、Mermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -96,7 +96,7 @@ perttool dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format j
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。M1 roadmap再構成、grammar受け入れ、`TASK_MUTATION_CORE`は完了しました。操作系の最初の実測値は`4p/1d`で、残るcritical pathは17p、forecastは`17/4d`です。次のcriticalかつ`runnable_now`は`ENTITY_MUTATION_CORE`で、非criticalな`FORMAT_APPLICATION`も並行可能です。Macroのresource makespanは`59/4d`です。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後までbacklogとして保持し、Issue #3のmulti-plan compositionはMVP後の将来構想として扱います。Writeは専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。M1 roadmap再構成、grammar受け入れ、`TASK_MUTATION_CORE`、`ENTITY_MUTATION_CORE`は完了しました。操作系の実測値は`7p/1d`で、残るprecedence makespanは15p（`15/7d`）、resource makespanは16p（`16/7d`）です。Macroのmakespanは`13.428572d`です。次のmacro CPは`FORMATTER_CORE`、詳細planではprecedence CPの`FORMAT_APPLICATION`とschedule CPの`MUTATION_CLI_PREVIEW`がともに`runnable_now`です。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後までbacklogとして保持し、Issue #3のmulti-plan compositionはMVP後の将来構想として扱います。Writeは専用gateを満たすまで使用しません。
 
 ## Security and license
 

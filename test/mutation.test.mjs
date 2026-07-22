@@ -40,6 +40,49 @@ const linear = [
   "",
 ].join("\n");
 
+const entityPlan = [
+  "project ENTITY_MUTATION:",
+  "  title \"entity mutation\"",
+  "  duration_unit day",
+  "  finish DONE",
+  "",
+  "resource DEV:",
+  "  title \"developers\"",
+  "  # capacity context",
+  "  description \"shared\"",
+  "  capacity 2",
+  "  tags [preserve]",
+  "",
+  "# unused resource documentation",
+  "resource UNUSED:",
+  "  title \"unused\"",
+  "  capacity 1",
+  "",
+  "milestone NOW:",
+  "  title \"now\"",
+  "  state reached",
+  "",
+  "milestone MID:",
+  "  title \"middle\"",
+  "  # description context",
+  "  description \"old description\"",
+  "  tags [old, keep]",
+  "",
+  "milestone DONE:",
+  "  title \"done\"",
+  "",
+  "task FIRST NOW -> MID:",
+  "  title \"first\"",
+  "  duration 1d",
+  "  requires:",
+  "    DEV 2",
+  "",
+  "task SECOND MID -> DONE:",
+  "  title \"second\"",
+  "  duration 1d",
+  "",
+].join("\n");
+
 test("task add appends one canonical declaration and preserves source trivia", () => {
   const input = [
     "\uFEFFproject ADD:",
@@ -277,6 +320,189 @@ test("task remove deletes only the task and its leading comments", () => {
   assert.equal(result.updatedText.includes("remove documentation"), false);
   assert.ok(result.updatedText.includes("task KEEP NOW -> DONE:"));
   assertValid(result.updatedText);
+});
+
+test("milestone set emits local field and tag edits without changing edges", () => {
+  const before = assertValid(entityPlan);
+  const firstTask = entityPlan.slice(entityPlan.indexOf("task FIRST"));
+  const result = planMutation(entityPlan, {
+    kind: "milestone.set",
+    id: "MID",
+    set: {
+      title: "reviewed",
+      description: "first\nsecond",
+      state: "planned",
+    },
+    addTags: ["new"],
+    removeTags: ["old"],
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(applyEdits(entityPlan, result.edits), result.updatedText);
+  assert.ok(result.updatedText.includes("  title \"reviewed\"\n"));
+  assert.ok(result.updatedText.includes("  # description context\n  description |\n    first\n    second\n"));
+  assert.ok(result.updatedText.includes("  state planned\n  tags [keep, new]\n"));
+  assert.ok(result.updatedText.includes(firstTask));
+  const after = assertValid(result.updatedText);
+  const beforeFirst = before.document.declarations.find(({ id }) => id === "FIRST");
+  const afterFirst = after.document.declarations.find(({ id }) => id === "FIRST");
+  assert.equal(beforeFirst.from, afterFirst.from);
+  assert.equal(beforeFirst.to, afterFirst.to);
+
+  const cleared = planMutation(result.updatedText, {
+    kind: "milestone.set",
+    id: "MID",
+    clear: ["state", "tags"],
+  });
+  assert.equal(cleared.ok, true);
+  assert.equal(cleared.updatedText.includes("  state planned\n"), false);
+  assert.equal(cleared.updatedText.includes("  tags [keep, new]\n"), false);
+  assertValid(cleared.updatedText);
+});
+
+test("resource add set and remove preserve unsupported fields and owned comments", () => {
+  const added = planMutation(entityPlan, {
+    kind: "resource.add",
+    id: "QA",
+    resource: { title: "quality", description: "checks", capacity: 3 },
+  });
+  assert.equal(added.ok, true);
+  assert.ok(added.updatedText.endsWith([
+    "resource QA:",
+    "  title \"quality\"",
+    "  description \"checks\"",
+    "  capacity 3",
+    "",
+  ].join("\n")));
+  assertValid(added.updatedText);
+
+  const set = planMutation(entityPlan, {
+    kind: "resource.set",
+    id: "DEV",
+    set: { title: "engineering", capacity: 3 },
+    clear: ["description"],
+  });
+  assert.equal(set.ok, true);
+  assert.ok(set.updatedText.includes("resource DEV:\n  title \"engineering\"\n  capacity 3\n  tags [preserve]\n"));
+  assert.equal(set.updatedText.includes("capacity context"), false);
+  assertValid(set.updatedText);
+
+  const removed = planMutation(entityPlan, { kind: "resource.remove", id: "UNUSED" });
+  assert.equal(removed.ok, true);
+  assert.equal(removed.updatedText.includes("resource UNUSED"), false);
+  assert.equal(removed.updatedText.includes("unused resource documentation"), false);
+  assertValid(removed.updatedText);
+});
+
+test("batch adds a connected milestone and removes a path without invalid intermediate states", () => {
+  const added = planMutation(entityPlan, {
+    kind: "batch",
+    mutations: [
+      {
+        kind: "milestone.add",
+        id: "EXTRA",
+        milestone: { title: "extra", tags: ["batch"] },
+      },
+      {
+        kind: "task.add",
+        id: "EXTRA_IN",
+        from: "NOW",
+        to: "EXTRA",
+        task: { title: "enter extra", duration: "1d" },
+      },
+      {
+        kind: "task.add",
+        id: "EXTRA_OUT",
+        from: "EXTRA",
+        to: "DONE",
+        task: { title: "leave extra", duration: "1d" },
+      },
+    ],
+  });
+  assert.equal(added.ok, true);
+  assert.equal(added.edits.length, 1);
+  assert.ok(added.updatedText.indexOf("milestone EXTRA:") < added.updatedText.indexOf("task EXTRA_IN"));
+  assert.ok(added.updatedText.indexOf("task EXTRA_IN") < added.updatedText.indexOf("task EXTRA_OUT"));
+  assertValid(added.updatedText);
+
+  const replaced = planMutation(entityPlan, {
+    kind: "batch",
+    mutations: [
+      { kind: "task.remove", id: "FIRST" },
+      { kind: "task.remove", id: "SECOND" },
+      { kind: "milestone.remove", id: "MID" },
+      {
+        kind: "task.add",
+        id: "DIRECT",
+        from: "NOW",
+        to: "DONE",
+        task: { title: "direct", duration: "1d" },
+      },
+    ],
+  });
+  assert.equal(replaced.ok, true);
+  assert.equal(replaced.updatedText.includes("milestone MID"), false);
+  assert.equal(replaced.updatedText.includes("task FIRST"), false);
+  assert.equal(replaced.updatedText.includes("task SECOND"), false);
+  assert.ok(replaced.updatedText.includes("task DIRECT NOW -> DONE:"));
+  assertValid(replaced.updatedText);
+
+  const resourceAndRequirement = planMutation(entityPlan, {
+    kind: "batch",
+    mutations: [
+      {
+        kind: "resource.add",
+        id: "QA",
+        resource: { title: "quality", capacity: 1 },
+      },
+      {
+        kind: "task.set",
+        id: "SECOND",
+        upsertRequirements: [{ resourceId: "QA", units: 1 }],
+      },
+    ],
+  });
+  assert.equal(resourceAndRequirement.ok, true);
+  assert.ok(resourceAndRequirement.updatedText.includes("resource QA:"));
+  assert.ok(resourceAndRequirement.updatedText.includes("task SECOND MID -> DONE:\n  title \"second\"\n  duration 1d\n  requires:\n    QA 1\n"));
+  assertValid(resourceAndRequirement.updatedText);
+});
+
+test("entity mutation rejects unsafe standalone changes and malformed requests", () => {
+  for (const [mutation, code] of [
+    [{ kind: "milestone.set", id: "MID" }, "PTMUT-301"],
+    [{ kind: "milestone.set", id: "MISSING", set: { title: "x" } }, "PTMUT-302"],
+    [{ kind: "milestone.remove", id: "DEV" }, "PTMUT-303"],
+    [{ kind: "milestone.add", id: "MID", milestone: { title: "x" } }, "PTMUT-304"],
+    [{ kind: "resource.set", id: "DEV" }, "PTMUT-301"],
+    [{ kind: "resource.set", id: "MISSING", set: { capacity: 2 } }, "PTMUT-302"],
+    [{ kind: "resource.remove", id: "MID" }, "PTMUT-303"],
+    [{ kind: "resource.add", id: "DEV", resource: { title: "x", capacity: 1 } }, "PTMUT-304"],
+    [{ kind: "batch", mutations: [] }, "PTMUT-301"],
+    [{ kind: "batch", mutations: [
+      { kind: "resource.set", id: "DEV", set: { capacity: 3 } },
+      { kind: "resource.set", id: "DEV", set: { title: "duplicate" } },
+    ] }, "PTMUT-301"],
+  ]) {
+    const result = planMutation(entityPlan, mutation);
+    assert.equal(result.ok, false);
+    assert.ok(result.diagnostics.some(({ code: actual }) => actual === code));
+    assert.equal(result.updatedText, null);
+    assert.deepEqual(result.edits, []);
+  }
+
+  for (const mutation of [
+    { kind: "milestone.add", id: "ISOLATED", milestone: { title: "isolated" } },
+    { kind: "milestone.remove", id: "MID" },
+    { kind: "resource.remove", id: "DEV" },
+    { kind: "resource.set", id: "DEV", set: { capacity: 1 } },
+  ]) {
+    const result = planMutation(entityPlan, mutation);
+    assert.equal(result.ok, false);
+    assert.equal(result.updatedText, null);
+    assert.deepEqual(result.edits, []);
+    assert.ok(result.diagnostics.some(({ severity }) => severity === "error"));
+  }
 });
 
 test("task mutation rejects request, target, original, and candidate errors", () => {

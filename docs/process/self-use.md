@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 2.6
+- 文書状態: Active Stage 1 / Revision 2.7
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -92,6 +92,8 @@ Exit criteria:
 
 続いて`TASK_MUTATION_CORE`を完了した。[Mutation Semantics仕様](../specs/mutation.md)を正本として、task add/set/remove/finishをsource spanへ局所化した非重複UTF-16 `TextEdit`、再検査済みcandidate、SHA-256 digest、deterministic unified diffとして返すpure library Coreを実装した。Comment所有、BOM、主要line ending、trailing trivia、duration/estimate切替、tag/requirement局所更新、invalid candidate抑止を専用testへ固定し、I/OとCLI公開は追加していない。最初の操作系標本4pをAsia/Tokyoの1 active dayで完了したため、Velocityを実測`4p/1d`へ再calibrationした。残るprecedence/resource makespanは17p、forecastは`17/4d`で、次のcriticalかつ`runnable_now`は`ENTITY_MUTATION_CORE`、並行可能な非critical taskは`FORMAT_APPLICATION`である。Macroのresource makespanは`59/4d`となる。
 
+続いて`ENTITY_MUTATION_CORE`を完了した。Milestone/resource add/set/removeをtaskと同じsource-preserving pathへ統合し、comment所有、無関係field、既存resource tags、declaration順を保持する。単独milestone addではvalidな中間DAGを作れない仕様穴を解消するため、複数atomic mutationをoriginal spanへ計画して最終candidateだけを検査するbatch契約を追加した。Connected milestone追加、path置換、resourceとtask requirementの同時追加をtestへ固定し、standaloneの参照破壊、孤立milestone、capacity縮小はcandidate diagnosticで拒否する。操作系の同日完了標本は累計7p/1 active dayとなり、Velocityを`7p/1d`へ再calibrationした。残るprecedence makespanは15p（`15/7d`）、resource makespanは16p（`16/7d`）、resource delayは1pである。Macroは6 decimal dayへのdeterministic roundを使い、makespanは`13.428572d`となる。Macro CPは`FORMATTER_CORE`、詳細planでは`FORMAT_APPLICATION`がprecedence critical、`MUTATION_CLI_PREVIEW`がschedule criticalで、両方とも`runnable_now`である。
+
 Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。Recommendation側はtask別durationと所有fileが未詳細化で、M3より前に操作系を遅らせないwork-package単位の並行化を立証できないため、`M3_SAFE_WRITE_READY`以降へ送る。Issue #3はMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
@@ -111,13 +113,13 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | --- | --- | ---: | ---: | --- | --- |
 | `grammar.pert` | `FORMATTER_ROUNDTRIP`、`HELP_FIXTURE_SYNC` | 3p | 1d | `3p/1d` | 0p |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
-| `operations.pert` | `TASK_MUTATION_CORE` | 4p | 1d | `4p/1d` | critical 17p = `17/4d` |
+| `operations.pert` | `TASK_MUTATION_CORE`、`ENTITY_MUTATION_CORE` | 7p | 1d | `7p/1d` | precedence 15p = `15/7d`、resource 16p = `16/7d` |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。3標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
-Operationsは`TASK_MUTATION_CORE` 4pの完了を最初の標本として、grammarから暫定継承していた`3p/1d`を実測`4p/1d`へ置き換えた。まだ1 task、1 active dayだけの暫定値であり、次の操作系completion commit時に`plans/operations.pert`だけを独立再calibrationする。
+Operationsは`TASK_MUTATION_CORE` 4pと`ENTITY_MUTATION_CORE` 3pの同日完了を累計し、実測`7p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系completion commit時に`plans/operations.pert`だけを独立再calibrationする。Macroはday単位しか持たないため、`p/velocity`を6 decimal dayへroundし、detail resource scheduleで生じる1pのCLI/reviewer待ちも`FORMATTER_CORE`のroll-upへ含める。
 
 この段階で許可する操作:
 
@@ -168,7 +170,7 @@ Operationsは`TASK_MUTATION_CORE` 4pの完了を最初の標本として、gramm
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
-- `TASK_MUTATION_CORE`は完了し、次のcritical taskは`ENTITY_MUTATION_CORE`、並行可能な非critical taskは`FORMAT_APPLICATION`である
+- `TASK_MUTATION_CORE`と`ENTITY_MUTATION_CORE`は完了し、次はprecedence criticalな`FORMAT_APPLICATION`とschedule criticalな`MUTATION_CLI_PREVIEW`が並行可能である
 - recommendation実装とIssue #2は共有CLI・reviewerの競合により`M3_SAFE_WRITE_READY`以降へ送る
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -313,6 +315,7 @@ Stage 1開始時の証跡:
 - control-plane planning gate: Issue #1の設計17p完了、残り0p、ready taskなし、設計受け入れ記録をgoldenと文書へ固定する
 - operations planning gate: M1-M4の24pをfile ownership、acceptance、narrow testへ分解し、critical/resource makespan 21p、初期forecast 7d、runnable frontierをgoldenへ固定する
 - task mutation Core gate: add/set/remove/finish、UTF-16局所edit、comment所有、candidate再検査、digest、unified diff、invalid result抑止をmutation testへ固定する
-- operations calibration gate: `TASK_MUTATION_CORE` 4p/1 active dayから実測Velocity `4p/1d`、残るcritical/resource forecast `17/4d`をgoldenへ固定する
+- entity mutation Core gate: milestone/resource add/set/remove、atomic batch、connected milestone、path置換、resource requirement同時追加、非cascade拒否をmutation testへ固定する
+- operations calibration gate: mutation Core 2 taskの7p/1 active dayから実測Velocity `7p/1d`、残るprecedence/resource forecast `15/7d`/`16/7d`と1p resource delayをgoldenへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、4 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

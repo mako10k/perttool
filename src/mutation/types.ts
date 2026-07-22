@@ -92,6 +92,94 @@ export type TaskMutation =
   | RemoveTaskMutation
   | FinishTaskMutation;
 
+export type MilestoneMutationState = "planned" | "reached";
+
+export interface MilestoneDefinition {
+  readonly title: string;
+  readonly description?: string;
+  readonly state?: MilestoneMutationState;
+  readonly tags?: readonly string[];
+}
+
+export interface MilestoneFieldSet {
+  readonly title?: string;
+  readonly description?: string;
+  readonly state?: MilestoneMutationState;
+}
+
+export type MilestoneClearableField = "description" | "state" | "tags";
+
+export interface AddMilestoneMutation {
+  readonly kind: "milestone.add";
+  readonly id: string;
+  readonly milestone: MilestoneDefinition;
+}
+
+export interface SetMilestoneMutation {
+  readonly kind: "milestone.set";
+  readonly id: string;
+  readonly set?: MilestoneFieldSet;
+  readonly clear?: readonly MilestoneClearableField[];
+  readonly addTags?: readonly string[];
+  readonly removeTags?: readonly string[];
+}
+
+export interface RemoveMilestoneMutation {
+  readonly kind: "milestone.remove";
+  readonly id: string;
+}
+
+export type MilestoneMutation =
+  | AddMilestoneMutation
+  | SetMilestoneMutation
+  | RemoveMilestoneMutation;
+
+export interface ResourceDefinition {
+  readonly title: string;
+  readonly capacity: number;
+  readonly description?: string;
+}
+
+export interface ResourceFieldSet {
+  readonly title?: string;
+  readonly description?: string;
+  readonly capacity?: number;
+}
+
+export type ResourceClearableField = "description";
+
+export interface AddResourceMutation {
+  readonly kind: "resource.add";
+  readonly id: string;
+  readonly resource: ResourceDefinition;
+}
+
+export interface SetResourceMutation {
+  readonly kind: "resource.set";
+  readonly id: string;
+  readonly set?: ResourceFieldSet;
+  readonly clear?: readonly ResourceClearableField[];
+}
+
+export interface RemoveResourceMutation {
+  readonly kind: "resource.remove";
+  readonly id: string;
+}
+
+export type ResourceMutation =
+  | AddResourceMutation
+  | SetResourceMutation
+  | RemoveResourceMutation;
+
+export type AtomicMutation = TaskMutation | MilestoneMutation | ResourceMutation;
+
+export interface BatchMutation {
+  readonly kind: "batch";
+  readonly mutations: readonly AtomicMutation[];
+}
+
+export type Mutation = AtomicMutation | BatchMutation;
+
 export interface MutationOptions extends CheckOptions {
   readonly originalLabel?: string;
   readonly updatedLabel?: string;

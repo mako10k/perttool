@@ -8,29 +8,31 @@
       "tasks": 9,
       "gates": 2,
       "errors": 0,
-      "warnings": 1
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "17/1",
+    "precedence_makespan": "15/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "17/4",
+    "precedence_forecast": "15/7",
     "precedence_critical_tasks": [
-      "ENTITY_MUTATION_CORE",
-      "MUTATION_CLI_PREVIEW",
+      "FORMAT_APPLICATION",
+      "FORMAT_CLI_PREVIEW",
       "SAFE_WRITE_ADAPTER",
       "SAFE_WRITE_ACCEPTANCE",
       "ADVANCE_PLANNER",
       "ADVANCE_CLI_ACCEPTANCE"
     ],
-    "resource_makespan": "17/1",
-    "resource_forecast": "17/4",
-    "resource_delay": "0/1",
-    "resource_arcs": [],
+    "resource_makespan": "16/1",
+    "resource_forecast": "16/7",
+    "resource_delay": "1/1",
+    "resource_arcs": [
+      "resource:MUTATION_CLI_PREVIEW:FORMAT_CLI_PREVIEW"
+    ],
     "schedule_critical_tasks": [
-      "ENTITY_MUTATION_CORE",
       "MUTATION_CLI_PREVIEW",
+      "FORMAT_CLI_PREVIEW",
       "SAFE_WRITE_ADAPTER",
       "SAFE_WRITE_ACCEPTANCE",
       "ADVANCE_PLANNER",
@@ -41,16 +43,15 @@
     "groups": {
       "active": [],
       "ready": [
-        "ENTITY_MUTATION_CORE",
+        "MUTATION_CLI_PREVIEW",
         "FORMAT_APPLICATION"
       ],
       "runnable_now": [
-        "ENTITY_MUTATION_CORE",
+        "MUTATION_CLI_PREVIEW",
         "FORMAT_APPLICATION"
       ],
       "blocked_now": [],
       "upcoming": [
-        "MUTATION_CLI_PREVIEW",
         "SAFE_WRITE_ADAPTER",
         "SAFE_WRITE_ACCEPTANCE",
         "ADVANCE_PLANNER",

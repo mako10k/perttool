@@ -330,6 +330,15 @@ Rules:
 - action全体を1 mutationとして扱い、部分適用しない
 - 同じfieldへの矛盾するoptionはusage error
 
+複数entityを同じvalid candidateで変更する場合は、Mutation Semantics仕様の`batch` requestをJSONで受け取るpreview surfaceを提供する。
+
+```text
+perttool mutation apply <file> --request <json-file|->
+  [--diff] [--format text|json]
+```
+
+`--request -`は`<file>`がstdinでない場合だけ使用できる。Request JSONは`{ "kind": "batch", "mutations": [...] }`とし、nested batchと同じentity IDへの複数変更を拒否する。Filesystem write optionは他mutation commandと同じsafe-write gateまで公開しない。
+
 ### 7.2 task
 
 `task add`:
@@ -392,6 +401,8 @@ perttool milestone remove <file> <id>
 `milestone remove`はcascadeせず、endpoint/finish参照が残る場合は拒否する。
 
 `milestone set`は少なくとも1変更optionを必要とする。
+
+新規milestoneと接続taskを追加するなど、単独commandではinvalidな中間DAGになる操作は`mutation apply`のbatch requestへまとめる。`milestone add`単独でも最終candidate全体を検査し、孤立milestoneを受け入れない。
 
 ### 7.4 resource
 
