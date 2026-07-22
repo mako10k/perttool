@@ -9,6 +9,7 @@
 - 文法仕様: [dsl-grammar.md](dsl-grammar.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Analysis仕様: [analysis.md](analysis.md)
+- Mutation semantics: [mutation.md](mutation.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Recommendation reasons: [recommendation-reasons.md](recommendation-reasons.md)
@@ -301,6 +302,8 @@ perttool dag advance <file>
 Defaultはcandidate document previewである。削除対象task/milestone、advance前後のfrontier、ready set comparisonをresultへ含める。
 
 ## 7. Entity mutation commands
+
+Mutation request、target解決、source-preserving TextEdit、comment所有、candidate再検査は[Mutation Semantics仕様](mutation.md)を正とする。本書はCLI optionとresult serializationを固定する。
 
 ### 7.1 common mutation output options
 

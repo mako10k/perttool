@@ -5,7 +5,7 @@ project PERTTOOL_MVP:
     MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
     grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pert、
     M1からM4の操作系はplans/operations.pertを正とする。
-    操作系detail planの初期Velocityは近い実装標本の3p/1dを暫定継承し、
+    操作系detail planはTASK_MUTATION_COREの最初の実測Velocity 4p/1dを使用し、
     resource forecastをmacro work packageへroll-upした。
     recommendation実装とIssue #2は共有CLI・reviewerが競合するためM3後へ送り、
     Issue #3のmulti-plan compositionは独立した将来backlogとして扱う。
@@ -104,16 +104,16 @@ task M1_ROADMAP_UPDATE FOUNDATION_INPUTS_ACCEPTED -> M1_PRODUCT_FOUNDATION_READY
 
 task FORMATTER_CORE M1_PRODUCT_FOUNDATION_READY -> FORMATTER_READY:
   title "dsl format previewを公開する"
-  description "plans/operations.pertのFORMAT_APPLICATIONとFORMAT_CLI_PREVIEW、合計3pの初期velocity forecast 1dをroll-upする。formatter Coreは実装済み"
-  duration 1d
+  description "plans/operations.pertのFORMAT_APPLICATIONとFORMAT_CLI_PREVIEW、残り3pの実測velocity forecast 3/4dをroll-upする。formatter Coreとunified diffは実装済み"
+  duration 0.75d
   priority 90
   requires:
     DEVELOPERS 1
 
 task MUTATION_PREVIEW M1_PRODUCT_FOUNDATION_READY -> MUTATION_PREVIEW_READY:
   title "task、milestone、resource編集previewを実装する"
-  description "plans/operations.pertのTASK_MUTATION_CORE、ENTITY_MUTATION_CORE、MUTATION_CLI_PREVIEW、合計9pの初期velocity forecast 3dをroll-upする"
-  duration 3d
+  description "plans/operations.pertのTASK_MUTATION_CORE 4pは完了した。ENTITY_MUTATION_COREとMUTATION_CLI_PREVIEW、残り5pの実測velocity forecast 5/4dをroll-upする"
+  duration 1.25d
   priority 100
   requires:
     DEVELOPERS 1
@@ -126,8 +126,8 @@ gate MUTATION_EDIT_GATE MUTATION_PREVIEW_READY -> M2_EDIT_PREVIEW_READY:
 
 task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
   title "再検査、atomic write、optimistic lockを実装する"
-  description "plans/operations.pertのSAFE_WRITE_ADAPTERとSAFE_WRITE_ACCEPTANCE、合計6pの初期velocity forecast 2dをroll-upする"
-  duration 2d
+  description "plans/operations.pertのSAFE_WRITE_ADAPTERとSAFE_WRITE_ACCEPTANCE、合計6pの実測velocity forecast 3/2dをroll-upする"
+  duration 1.5d
   priority 90
   requires:
     DEVELOPERS 1
@@ -135,8 +135,8 @@ task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
 
 task ADVANCE M3_SAFE_WRITE_READY -> M4_ADVANCE_READY:
   title "合流を保持するadvance plannerを実装する"
-  description "plans/operations.pertのADVANCE_PLANNERとADVANCE_CLI_ACCEPTANCE、合計6pの初期velocity forecast 2dをroll-upする"
-  duration 2d
+  description "plans/operations.pertのADVANCE_PLANNERとADVANCE_CLI_ACCEPTANCE、合計6pの実測velocity forecast 3/2dをroll-upする"
+  duration 1.5d
   priority 20
   requires:
     DEVELOPERS 1

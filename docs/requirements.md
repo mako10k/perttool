@@ -841,7 +841,7 @@ Future候補はMCP read-only analysis/help、MCP preview mutation、LSP diagnost
 
 ## 18. JSON とスキーマ
 
-CLI JSON envelope、diagnostic、Rational、analysis、next、mutation、help、conversion fieldは[CLI Interface仕様](specs/interfaces.md)を正とする。
+MutationのCore request、局所TextEdit、comment所有、candidate再検査は[Mutation Semantics仕様](specs/mutation.md)、CLI JSON envelope、diagnostic、Rational、analysis、next、mutation、help、conversion fieldは[CLI Interface仕様](specs/interfaces.md)を正とする。
 
 Must:
 
@@ -1020,7 +1020,10 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
    - [x] [self-useと実装migration方針](process/recommendation-migration.md)
    - [x] [横断設計レビューと受け入れ記録](process/recommendation-design-review.md)
 7. [x] parser/validator の最小実装と golden tests
+8. [x] [Mutation Semantics仕様](specs/mutation.md): task add/set/remove/finish、UTF-16 TextEdit、comment所有、candidate再検査
 
 項目7は完了した。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`、複数error recovery、validation phase suppression、diagnostic上限、block textのcommon indentとUTF-16 span、source-preserving formatter Core、formatterのidempotenceとAST同値goldenに加え、syntax help sample、related link、diagnostic `helpTopic`とparser fixtureのdrift検査を固定し、grammar acceptance全項目を満たした。
 
-Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateとgrammar acceptanceを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は[横断設計レビュー](process/recommendation-design-review.md)で受け入れた。これは設計完了であり、recommendation機能の実装完了ではない。`M1_ROADMAP_UPDATE`ではformatter preview 3p、mutation preview 9p、safe write 6p、advance 6pを実ファイル境界、acceptance、narrow testへ分解し、操作系のcritical/resource makespanを21p、初期forecastを7dと確定した。次のcriticalかつ`runnable_now`のtaskは`TASK_MUTATION_CORE`であり、非criticalな`FORMAT_APPLICATION`もdeveloper capacity内で並行できる。Recommendation実装とIssue #2のAI Agent Guidance Registryは共有CLI・reviewerの競合によりM3後へ送り、Issue #3のbacklog階層・multi-plan compositionは独立した将来backlogとして保持する。
+項目8も`TASK_MUTATION_CORE`で完了した。Task mutation CLI、milestone/resource mutation、filesystem writeは後続項目であり、この完了には含めない。
+
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateとgrammar acceptanceを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は[横断設計レビュー](process/recommendation-design-review.md)で受け入れた。これは設計完了であり、recommendation機能の実装完了ではない。`M1_ROADMAP_UPDATE`で操作系を詳細化した後、`TASK_MUTATION_CORE` 4pを完了し、task add/set/remove/finishを非重複UTF-16 TextEdit、再検査済みcandidate、digest、unified diffとして返すpure library Coreを実装した。操作系Velocityは最初の実測`4p/1d`、残るcritical/resource makespanは17p、forecastは`17/4d`である。次のcriticalかつ`runnable_now`は`ENTITY_MUTATION_CORE`であり、非criticalな`FORMAT_APPLICATION`もdeveloper capacity内で並行できる。Task mutation CLI、milestone/resource mutation、filesystem writeは未実装である。Recommendation実装とIssue #2のAI Agent Guidance Registryは共有CLI・reviewerの競合によりM3後へ送り、Issue #3のbacklog階層・multi-plan compositionは独立した将来backlogとして保持する。

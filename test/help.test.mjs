@@ -44,6 +44,15 @@ test("help registry topics and related links resolve", () => {
   }
 });
 
+test("editing help distinguishes the library mutation Core from unavailable commands", () => {
+  const help = getHelp("editing", "detail");
+  assert.equal(help.ok, true);
+  assert.match(help.summary, /task mutation Core/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /planMutation/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /task CLI/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /--write\/--out/);
+});
+
 test("syntax help sample references stay synchronized with parser fixtures", async () => {
   const references = topicIds
     .filter((topicId) => topicId === "samples" || topicId.startsWith("syntax"))

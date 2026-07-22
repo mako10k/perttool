@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`、source-preserving formatter Core、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をread-only自己利用中である。`dsl format` commandを含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`、source-preserving formatter Core、task mutation Core、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をread-only自己利用中である。`dsl format` command、task mutation CLI、milestone/resource mutation、filesystem writeを含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -29,7 +29,7 @@ perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check
 
 - `docs/requirements.md`: product要求とMVP境界。
 - `docs/basic-design.md`: architecture、module境界、実装slice。
-- `docs/specs/`: grammar、graph semantics、analysis、interfaceの規範仕様。
+- `docs/specs/`: grammar、graph semantics、analysis、mutation、interfaceの規範仕様。
 - `docs/adr/`: 採用済みarchitecture/runtime判断。
 - `docs/examples/`: parserとanalysisの規範sample。
 - `docs/process/`: 自己利用とAI開発の運用手順。
@@ -38,8 +38,11 @@ perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
 - `src/analysis/`: exact Rationalを使うresidual graph、precedence CPM、resource schedule実装。
-- `src/formatter/`: source-preserving formatter CoreとUTF-16 TextEdit生成。
-- `test/`: Node.js built-in test runnerのfixture、analysis/next unit test、CLI integration test。
+- `src/editing/`: formatterとmutationが共有するdeterministic unified diff。
+- `src/formatter/`: source-preserving formatter Core。
+- `src/mutation/`: task mutation request、source-preserving UTF-16 TextEdit生成、適用規則。
+- `src/application/`: check/analyze/nextと、再検査済みmutation resultを返すpure service。
+- `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation unit test、CLI integration test。
 - `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
 
 実装を追加した時点で、実際のdirectoryとcommandに合わせてこのmapを更新する。

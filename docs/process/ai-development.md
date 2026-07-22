@@ -110,7 +110,7 @@ git diff --check
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装され、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、`M1_ROADMAP_UPDATE`は完了した。現在は[操作系詳細plan](../../plans/operations.pert)を選び、criticalな`TASK_MUTATION_CORE`を優先する。同時にdeveloper capacityが利用できる場合は、所有fileが分離された非criticalの`FORMAT_APPLICATION`も並行可能である。Recommendation実装とIssue #2は`src/cli.ts`、`src/index.ts`、reviewerを操作系と共有するため、`M3_SAFE_WRITE_READY`より前には並行実装しない。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、`M1_ROADMAP_UPDATE`、`TASK_MUTATION_CORE`は完了した。現在は[操作系詳細plan](../../plans/operations.pert)を選び、criticalな`ENTITY_MUTATION_CORE`を優先する。同時にdeveloper capacityが利用できる場合は、所有fileが分離された非criticalの`FORMAT_APPLICATION`も並行可能である。Recommendation実装とIssue #2は`src/cli.ts`、`src/index.ts`、reviewerを操作系と共有するため、`M3_SAFE_WRITE_READY`より前には並行実装しない。
 
 ### 5.1 Recommendation導入後のtask selection
 

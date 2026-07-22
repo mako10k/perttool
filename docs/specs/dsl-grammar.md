@@ -6,6 +6,7 @@
 - 対応要件: [../requirements.md](../requirements.md)
 - 対応基本設計: [../basic-design.md](../basic-design.md)
 - CLI interface: [interfaces.md](interfaces.md)
+- Mutation semantics: [mutation.md](mutation.md)
 
 ## 1. 目的
 
@@ -131,7 +132,7 @@ source-preserving edit では comment の位置を維持する。
 - declaration 直前の連続 comment はその declaration の leading trivia とする
 - field 直前の同一 block level の連続 comment はその field の leading trivia とする
 - declaration/field 後の comment はその位置の standalone trivia とする
-- element 削除時の comment 所有規則は mutation 仕様で確定する
+- element削除時は[Mutation Semantics仕様](mutation.md)のleading comment所有規則に従う
 
 ## 7. lexical token
 

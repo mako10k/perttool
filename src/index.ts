@@ -1,6 +1,7 @@
 export { checkDocument } from "./application/check.js";
 export { analyzeDocument } from "./application/analyze.js";
 export { selectNextTasks } from "./application/next.js";
+export { planMutation } from "./application/mutate.js";
 export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js";
 export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
@@ -70,5 +71,20 @@ export type { ParseOptions } from "./parser/document-parser.js";
 export type {
   FormatOptions,
   FormatResult,
-  TextEdit,
 } from "./formatter/source-formatter.js";
+export type { TextEdit } from "./mutation/text-edits.js";
+export type {
+  AddTaskMutation,
+  FinishTaskMutation,
+  MutationOptions,
+  MutationResult,
+  RemoveTaskMutation,
+  SetTaskMutation,
+  TaskClearableField,
+  TaskDefinition,
+  TaskEstimateInput,
+  TaskFieldSet,
+  TaskMutation,
+  TaskMutationStatus,
+  TaskRequirementInput,
+} from "./mutation/types.js";

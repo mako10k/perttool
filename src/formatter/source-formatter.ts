@@ -6,12 +6,12 @@ import type {
   RequirementValue,
   VelocityValue,
 } from "../model/syntax.js";
-
-export interface TextEdit {
-  readonly startOffset: number;
-  readonly endOffset: number;
-  readonly replacement: string;
-}
+import {
+  applyTextEdits,
+  normalizeTextEdits,
+  type TextEdit,
+} from "../mutation/text-edits.js";
+export type { TextEdit } from "../mutation/text-edits.js";
 
 export interface FormatOptions extends CheckOptions {}
 
@@ -142,28 +142,6 @@ function pushEdit(edits: TextEdit[], text: string, edit: TextEdit): void {
   if (text.slice(edit.startOffset, edit.endOffset) !== edit.replacement) edits.push(edit);
 }
 
-function normalizeEdits(edits: readonly TextEdit[]): readonly TextEdit[] {
-  const sorted = [...edits].sort(
-    (left, right) => left.startOffset - right.startOffset || left.endOffset - right.endOffset,
-  );
-  for (let index = 1; index < sorted.length; index += 1) {
-    const previous = sorted[index - 1]!;
-    const current = sorted[index]!;
-    if (current.startOffset < previous.endOffset) {
-      throw new Error("formatter generated overlapping TextEdit ranges");
-    }
-  }
-  return sorted;
-}
-
-function applyEdits(text: string, edits: readonly TextEdit[]): string {
-  let updated = text;
-  for (const edit of [...edits].reverse()) {
-    updated = `${updated.slice(0, edit.startOffset)}${edit.replacement}${updated.slice(edit.endOffset)}`;
-  }
-  return updated;
-}
-
 export function formatDocument(text: string, options: FormatOptions = {}): FormatResult {
   const checked = checkDocument(text, options);
   if (!checked.ok) {
@@ -259,8 +237,8 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
     edits.push({ startOffset: text.length, endOffset: text.length, replacement: lineEnding });
   }
 
-  const normalizedEdits = normalizeEdits(edits);
-  const formattedText = applyEdits(text, normalizedEdits);
+  const normalizedEdits = normalizeTextEdits(text, edits, "formatter");
+  const formattedText = applyTextEdits(text, normalizedEdits);
   const candidate = checkDocument(formattedText, options);
   if (!candidate.ok) throw new Error("formatter produced an invalid candidate document");
   return {

@@ -145,11 +145,16 @@ perttool/
     application/
       analyze.ts
       check.ts
+      mutate.ts
       next.ts
     analysis/
       graph.ts
       precedence.ts
       resource.ts
+    editing/
+      unified-diff.ts
+    formatter/
+      source-formatter.ts
     help/
       registry.ts
     model/
@@ -158,6 +163,10 @@ perttool/
       rational.ts
     parser/
       document-parser.ts
+    mutation/
+      task.ts
+      text-edits.ts
+      types.ts
     semantic/
       validator.ts
     cli.ts
@@ -169,6 +178,7 @@ perttool/
     e2e.test.mjs
     next.test.mjs
     parser.test.mjs
+    mutation.test.mjs
     self-use.test.mjs
     fixtures/
     golden/
@@ -999,7 +1009,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進む。初期Velocityは近い実装標本の`3p/1d`を暫定継承し、critical/resource makespanは21p、forecastは7dである。最初のcritical taskは`TASK_MUTATION_CORE`で、`FORMAT_APPLICATION`も同時にrunnableだが6pのfloatを持つ。Safe-write後のMermaid、recommendation、Issue #2とのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果へ従う。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進む。`TASK_MUTATION_CORE` 4pは完了し、最初の操作系実測値`4p/1d`へVelocityを再calibrationした。残るcritical/resource makespanは17p、forecastは`17/4d`である。次のcriticalかつ`runnable_now`は`ENTITY_MUTATION_CORE`で、`FORMAT_APPLICATION`も同時にrunnableである。Safe-write後のMermaid、recommendation、Issue #2とのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果へ従う。
 
 ### Slice 4: advance and Mermaid
 
@@ -1016,7 +1026,7 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。残る事項は個別仕様またはADRで確定する。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、task mutationのCore request、局所TextEdit、comment所有は[Mutation Semantics仕様](specs/mutation.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。残る事項は個別仕様またはADRで確定する。
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細
