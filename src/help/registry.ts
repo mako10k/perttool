@@ -519,7 +519,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "mermaid",
     title: "Mermaid conversion",
-    summary: "lossless Mermaid profileの設計契約を案内します。dag render/importはまだ未実装です。",
+    summary: "dag renderでlossless Mermaid profileを生成できます。dag importはまだ未実装です。",
     quick: [
       {
         id: "authority",
@@ -541,10 +541,15 @@ const nodes: readonly HelpNode[] = [
       {
         id: "availability",
         title: "Current availability",
-        body: "Perttool.MermaidProfile.v1は設計済みですが、dag renderとdag importのCLI/Core実装は後続sliceです。現在のCLI commandとして実行しないでください。",
+        body: "exportMermaid Coreとdag render --to mermaidは利用できます。perttool profileは復元用semantic metadataを保持し、plain profileはPTCNV-206のlossを返します。dag import、SVG、JSON targetは後続sliceです。",
       },
     ],
-    syntax: [],
+    syntax: [
+      "perttool dag render <file> --to mermaid",
+      "  [--profile perttool|plain] [--analysis none|precedence|resource|both]",
+      "  [--capacity <resource-id>=<integer>]... [--strict-loss] [--out <path>]",
+      "  [--max-diagnostics <integer>] [--warnings-as-errors] [--format text|json]",
+    ],
     examples: [
       {
         id: "mermaid-profile",

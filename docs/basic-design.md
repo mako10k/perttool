@@ -429,11 +429,12 @@ I/Oはpure Coreの外に置き、Coreが生成・再検査したcandidateをdocu
 readDocumentFile(path): Promise<DocumentContent>
 replaceDocumentFile(path, candidateText, { initialDigest, expectedDigest? }): Promise<DocumentWriteResult>
 createDocumentFile(path, candidateText, { mode? }): Promise<DocumentWriteResult>
+createArtifactFile(path, artifact, { mode? }): Promise<DocumentWriteResult>
 ```
 
 `DocumentContent`は所有するraw bytes、BOMを保持したUTF-8 text、raw-byte SHA-256 digestを持つ。In-place replaceはsymlinkとregular file以外を拒否し、`lstat`したpath identityと`O_NOFOLLOW`でopenしたfile identityを比較する。Initial digestをwrite前とrename直前に再確認し、同directoryのexclusive temporary fileへmodeを継承してwrite、file fsync、atomic rename、parent directory fsync、digestとdocument validityの再検査を行う。
 
-新規outputはrenameによる既存target上書きを避け、fsync済みtemporary fileから同一filesystemのexclusive hard linkでtargetを公開する。同時writer、既存file、symlinkはいずれも競合として拒否し、temporary entryを削除してparent directoryを再度fsyncする。Public resultはmode、target、candidate digest、byte数だけを返し、temporary pathやrandom tokenを返さない。
+新規outputはrenameによる既存target上書きを避け、fsync済みtemporary fileから同一filesystemのexclusive hard linkでtargetを公開する。同時writer、既存file、symlinkはいずれも競合として拒否し、temporary entryを削除してparent directoryを再度fsyncする。`createDocumentFile`はDSL候補を再検査し、`createArtifactFile`はMermaidなど別形式のUTF-8 byte列に対してdigest一致だけを再検査する。Public resultはmode、target、candidate digest、byte数だけを返し、temporary pathやrandom tokenを返さない。
 
 ## 9. 処理フロー
 
@@ -609,6 +610,8 @@ Mermaid text
 ```
 
 Mermaid adapter は analysis や validation を再実装しない。一般 Mermaid の best-effort import と、`perttool` profile の lossless import を別 mode として扱う。
+
+MVP exporterは`src/conversion/mermaid.ts`の`exportMermaid`として実装し、`checkDocument`または`analyzeDocument`の結果からprofile/plain artifactを決定的に生成する。CLIは`dag render --to mermaid`でtext/JSON、analysis/capacity option、strict loss、exclusive `--out`を投影する。`--to svg|json`と`dag import`は後続sliceのままとする。
 
 Lossless profileは[Mermaid Profile仕様](specs/mermaid-profile.md)を正とする。Default適用後の完全な意味値を`%% perttool:` canonical JSON recordへ保持し、visual flowchartを復元正本にしない。Profile headerを検出した後のrecord/digest/projection不正はfail closedとし、一般Mermaid importへ降格しない。Importerはmetadata decode後も通常のsemantic validationとcanonical DSLの再parseを通す。
 

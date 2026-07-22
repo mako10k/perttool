@@ -13,6 +13,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { exportMermaid } from "../dist/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -97,6 +98,17 @@ test("diagnostic limit is stable across read-only document commands", () => {
     assert.equal(json.diagnostics_truncated, true);
     assert.deepEqual(json.diagnostics.map(({ code }) => code), ["PTDSL-006", "PTDSL-003"]);
   }
+
+  const render = run([
+    "dag", "render", "test/fixtures/invalid/multiple-syntax-errors.pert",
+    "--to=mermaid", "--max-diagnostics=2", "--format=json",
+  ]);
+  assert.equal(render.status, 1);
+  const renderJson = JSON.parse(render.stdout);
+  assert.equal(renderJson.diagnostics.length, 2);
+  assert.equal(renderJson.diagnostics_truncated, true);
+  assert.equal(renderJson.artifact, null);
+  assert.deepEqual(renderJson.diagnostics.map(({ code }) => code), ["PTDSL-006", "PTDSL-003"]);
 
   const text = run([
     "dsl",
@@ -461,12 +473,128 @@ test("diagnostic help documents recovery, phase suppression, and limits", () => 
   assert.ok(json.syntax.some((line) => line.includes("--max-diagnostics")));
 });
 
-test("unknown command is a usage error", () => {
+test("dag render requires the explicit artifact target", () => {
   const result = run(["dag", "render", "docs/examples/minimal.pert", "--format=json"]);
   assert.equal(result.status, 2);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.CliError.v1");
   assert.equal(json.diagnostics[0].code, "PTCLI-001");
+});
+
+test("dag render exposes Core-identical Mermaid in text and JSON", () => {
+  const expected = exportMermaid(minimalText);
+  assert.equal(expected.ok, true);
+
+  const help = run(["dag", "render", "--help"]);
+  assert.equal(help.status, 0, help.stderr);
+  assert.match(help.stdout, /--to mermaid/);
+  assert.match(help.stdout, /--analysis none\|precedence\|resource\|both/);
+
+  const text = run([
+    "dag", "render", minimalPath, "--to", "mermaid", "--color=never",
+  ]);
+  assert.equal(text.status, 0, text.stderr);
+  assert.equal(text.stdout, expected.artifact);
+  assert.equal(text.stderr, "");
+
+  const jsonResult = run([
+    "dag", "render", minimalPath, "--to=mermaid", "--format=json",
+  ]);
+  assert.equal(jsonResult.status, 0, jsonResult.stderr);
+  const json = JSON.parse(jsonResult.stdout);
+  assert.equal(json.schema_version, "Perttool.ExportResult.v1");
+  assert.equal(json.operation, "dag.render");
+  assert.equal(json.artifact, expected.artifact);
+  assert.equal(json.artifact_digest, expected.artifactDigest);
+  assert.deepEqual(json.loss_report, { lossless: true, records: [] });
+  assert.deepEqual(json.generated_ids, []);
+  assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
+});
+
+test("dag render passes analysis and capacity options into the profile snapshot", () => {
+  const result = run([
+    "dag", "render", "docs/examples/parallel.pert", "--to=mermaid",
+    "--analysis=both", "--capacity=TEST_ENV=2", "--format=json",
+  ]);
+  assert.equal(result.status, 0, result.stderr);
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.analysis, "both");
+  assert.deepEqual(json.capacity_overrides, [
+    { resource_id: "TEST_ENV", capacity: 2 },
+  ]);
+  assert.match(json.artifact, /"analysis":"both"/);
+  assert.match(json.artifact, /CORE: .* \/ CP \/ S=0-4d/);
+
+  const invalid = run([
+    "dag", "render", minimalPath, "--to=mermaid",
+    "--capacity=DEVELOPERS=2", "--format=json",
+  ]);
+  assert.equal(invalid.status, 2);
+  assert.equal(JSON.parse(invalid.stdout).diagnostics[0].code, "PTCLI-001");
+});
+
+test("dag render reports plain-profile loss and strict-loss suppresses the artifact", () => {
+  const plain = run([
+    "dag", "render", minimalPath, "--to=mermaid", "--profile=plain",
+    "--format=json",
+  ]);
+  assert.equal(plain.status, 0, plain.stderr);
+  const plainJson = JSON.parse(plain.stdout);
+  assert.equal(plainJson.ok, true);
+  assert.equal(plainJson.loss_report.lossless, false);
+  assert.deepEqual(plainJson.loss_report.records.map(({ code }) => code), ["PTCNV-206"]);
+  assert.match(plainJson.artifact, /^flowchart LR\n/);
+
+  const strict = run([
+    "dag", "render", minimalPath, "--to=mermaid", "--profile=plain",
+    "--strict-loss", "--format=json",
+  ]);
+  assert.equal(strict.status, 4, strict.stderr);
+  const strictJson = JSON.parse(strict.stdout);
+  assert.equal(strictJson.ok, false);
+  assert.equal(strictJson.artifact, null);
+  assert.equal(strictJson.artifact_digest, null);
+  assert.equal(strictJson.write.written, false);
+});
+
+test("dag render suppresses invalid artifacts and writes output exclusively", (t) => {
+  const invalid = run([
+    "dag", "render", "test/fixtures/invalid/undefined-endpoint.pert",
+    "--to=mermaid", "--format=json",
+  ]);
+  assert.equal(invalid.status, 1, invalid.stderr);
+  const invalidJson = JSON.parse(invalid.stdout);
+  assert.equal(invalidJson.artifact, null);
+  assert.equal(invalidJson.loss_report.lossless, false);
+  assert.ok(invalidJson.diagnostics.some(({ code }) => code === "PTSEM-204"));
+
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-render-cli-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = path.join(directory, "minimal.mmd");
+  const written = run([
+    "dag", "render", minimalPath, "--to=mermaid", "--out", output,
+    "--format=json",
+  ]);
+  assert.equal(written.status, 0, written.stderr);
+  const writtenJson = JSON.parse(written.stdout);
+  assert.deepEqual(writtenJson.write, { mode: "out", target: output, written: true });
+  assert.equal(readFileSync(output, "utf8"), writtenJson.artifact);
+
+  const collision = run([
+    "dag", "render", minimalPath, "--to=mermaid", "--out", output,
+    "--format=json",
+  ]);
+  assert.equal(collision.status, 5, collision.stderr);
+  const collisionJson = JSON.parse(collision.stdout);
+  assert.equal(collisionJson.diagnostics[0].code, "PTIO-501");
+  assert.equal(collisionJson.diagnostics[0].data.reason, "target_exists");
+  assert.equal(readFileSync(output, "utf8"), writtenJson.artifact);
+
+  const emptyOut = run([
+    "dag", "render", minimalPath, "--to=mermaid", "--out=", "--format=json",
+  ]);
+  assert.equal(emptyOut.status, 2);
+  assert.equal(JSON.parse(emptyOut.stdout).diagnostics[0].code, "PTCLI-001");
 });
 
 test("dsl format exposes candidate, diff, JSON, and stdin previews", () => {

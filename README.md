@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`が実装済みです。`dag advance`とMermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag render --to mermaid`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`が実装済みです。`dag advance`とMermaid importはまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -95,6 +95,8 @@ perttool dag analyze docs/examples/parallel.pert
 perttool dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3 --capacity TEST_ENV=2 --format json
 perttool dag next docs/examples/parallel.pert
 perttool dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format json
+perttool dag render docs/examples/parallel.pert --to mermaid --analysis both
+perttool dag render docs/examples/parallel.pert --to mermaid --analysis resource --capacity TEST_ENV=2 --out parallel.mmd
 perttool task set docs/examples/minimal.pert WORK --status active --diff
 perttool task set PLAN.pert WORK --status active --write --expect-digest "$EXPECTED_DIGEST"
 perttool resource set docs/examples/parallel.pert TEST_ENV --capacity 2 --format json
@@ -105,6 +107,8 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 `dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。`duration_unit point`では`velocity 20p/10d`のように宣言し、基準のPoint値とday/hourの`velocity_forecast`を分離して返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
+
+`dag render --to mermaid`は既定でlosslessな`Perttool.MermaidProfile.v1`をstdoutへ生成します。`--analysis`でprecedence/resource解析値をprojectionへ注記でき、`--out`は既存targetを上書きしません。`--profile plain`はsemantic metadataを持たないため`PTCNV-206`を返し、`--strict-loss`でartifactを拒否できます。
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 

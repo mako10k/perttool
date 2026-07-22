@@ -58,6 +58,10 @@ export interface CreateDocumentOptions {
   readonly mode?: number;
 }
 
+export interface CreateArtifactOptions {
+  readonly mode?: number;
+}
+
 export interface DocumentWriteResult {
   readonly mode: "in_place" | "out";
   readonly target: string;
@@ -236,6 +240,19 @@ async function verifyWrittenDocument(
   }
 }
 
+async function verifyWrittenArtifact(
+  target: string,
+  candidateDigest: string,
+): Promise<void> {
+  const written = await readDocumentFile(target);
+  if (written.digest !== candidateDigest) {
+    throw new SafeWriteVerificationError(
+      "post_write_digest_mismatch",
+      `written artifact digestがcandidateと一致しません: ${target}`,
+    );
+  }
+}
+
 export async function replaceDocumentFile(
   target: string,
   candidateText: string,
@@ -345,6 +362,50 @@ export async function createDocumentFile(
     }
     await syncParentDirectory(target);
     await verifyWrittenDocument(target, candidateDigest);
+  } finally {
+    await unlink(temporaryPath).catch(() => undefined);
+    if (linked) await syncParentDirectory(target);
+  }
+
+  return {
+    mode: "out",
+    target,
+    digest: candidateDigest,
+    bytesWritten: candidateBytes.byteLength,
+    written: true,
+  };
+}
+
+export async function createArtifactFile(
+  target: string,
+  artifact: string,
+  options: CreateArtifactOptions = {},
+): Promise<DocumentWriteResult> {
+  const candidateBytes = Buffer.from(artifact, "utf8");
+  const candidateDigest = digestDocumentBytes(candidateBytes);
+  await assertTargetAbsent(target);
+  const temporaryPath = await writeAndSyncTemporary(
+    target,
+    candidateBytes,
+    options.mode ?? (0o666 & ~process.umask()),
+  );
+  let linked = false;
+  try {
+    await assertTargetAbsent(target);
+    try {
+      await link(temporaryPath, target);
+      linked = true;
+    } catch (error) {
+      if (errorCode(error) === "EEXIST") {
+        throw new SafeWriteConflictError(
+          "target_exists",
+          `--out targetがcommit前に作成されました: ${target}`,
+        );
+      }
+      throw error;
+    }
+    await syncParentDirectory(target);
+    await verifyWrittenArtifact(target, candidateDigest);
   } finally {
     await unlink(temporaryPath).catch(() => undefined);
     if (linked) await syncParentDirectory(target);

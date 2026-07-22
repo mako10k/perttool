@@ -53,7 +53,7 @@ gate RELEASE_GATE BUILT -> RELEASE:
 
 ```mermaid
 flowchart LR
-  %% perttool:profile {"schema_version":"Perttool.MermaidProfile.v1","profile":"perttool","source_fidelity":"semantic-v1","record_count":7,"metadata_digest":"sha256:24ab3cb9723cf5cbf77707b2cd6e0f37270f4d5d4baa67d12b1a10724a0f1c6c","projection_digest":"sha256:dd5f167f5548c988804b15914b68d711bf21becaf942da8892915bc55f44c3b6","projection":{"schema_version":"Perttool.MermaidProjection.v1","direction":"LR","analysis":"none","capacity_overrides":[]}}
+  %% perttool:profile {"schema_version":"Perttool.MermaidProfile.v1","profile":"perttool","source_fidelity":"semantic-v1","record_count":7,"metadata_digest":"sha256:24ab3cb9723cf5cbf77707b2cd6e0f37270f4d5d4baa67d12b1a10724a0f1c6c","projection_digest":"sha256:c565410b2030baa98379e677a30aa4bd345d0220cbfca2d230c2263850a0037f","projection":{"schema_version":"Perttool.MermaidProjection.v1","direction":"LR","analysis":"none","capacity_overrides":[]}}
   %% perttool:project {"id":"PROFILE_SAMPLE","version":1,"title":"Mermaid profile sample","description":null,"as_of":"2026-07-22","duration_unit":"day","velocity":null,"finish":"RELEASE","critical_epsilon":"0d","target_duration":null}
   %% perttool:resource {"id":"DEVELOPERS","title":"開発担当","description":null,"capacity":2,"tags":["implementation"]}
   %% perttool:milestone {"id":"BUILT","title":"実装完了","description":null,"state":"planned","tags":[]}
@@ -65,12 +65,18 @@ flowchart LR
   ptm_BUILT(("BUILT: 実装完了"))
   ptm_NOW(("NOW: 現在"))
   ptm_RELEASE(("RELEASE: リリース可能"))
-  ptm_NOW -->|"BUILD: 実装 #34;A#38;B#124;C#92;D#34;"| ptm_BUILT
+  ptm_NOW -->|"BUILD: 実装 #34;A#38;B#124;C#92;D#34; / owner=AI"| ptm_BUILT
   ptm_BUILT -.->|"RELEASE_GATE: gate"| ptm_RELEASE
+  classDef pt_milestone_planned fill:#ffffff,stroke:#566573,stroke-width:1px;
+  classDef pt_milestone_reached fill:#d5f5e3,stroke:#1e8449,stroke-width:2px;
+  class ptm_BUILT,ptm_RELEASE pt_milestone_planned;
+  class ptm_NOW pt_milestone_reached;
+  linkStyle 0 stroke:#34495e,stroke-width:2px;
+  linkStyle 1 stroke:#7f8c8d,stroke-width:1px,stroke-dasharray:3 3;
   %% perttool:projection-end
 ```
 
-`metadata_digest`は、`project {..}\n`から`gate {..}\n`までのcanonical record bodyを連結したUTF-8 byte列に対するSHA-256である。`projection_digest`はmarker間の5 physical lineをtwo-space indentationとLF込みで連結したbyte列に対するSHA-256である。
+`metadata_digest`は、`project {..}\n`から`gate {..}\n`までのcanonical record bodyを連結したUTF-8 byte列に対するSHA-256である。`projection_digest`はmarker間の11 physical lineをtwo-space indentationとLF込みで連結したbyte列に対するSHA-256である。
 
 ## 3. Expected import result
 

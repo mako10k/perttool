@@ -16,6 +16,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import {
+  createArtifactFile,
   createDocumentFile,
   documentContentFromBytes,
   readDocumentFile,
@@ -196,6 +197,26 @@ test("out safe write creates once, rejects existing paths and symlinks, and clea
     (error) => error instanceof SafeWriteConflictError && error.reason === "symlink",
   );
   assert.equal(lstatSync(symlink).isSymbolicLink(), true);
+  assert.deepEqual(temporaryFiles(directory), []);
+});
+
+test("artifact out uses the exclusive safe-write path without DSL validation", async (t) => {
+  const directory = workspace(t);
+  const output = path.join(directory, "plan.mmd");
+  const artifact = "flowchart LR\n  A --> B\n";
+  const result = await createArtifactFile(output, artifact, { mode: 0o600 });
+
+  assert.equal(result.mode, "out");
+  assert.equal(result.written, true);
+  assert.equal(result.bytesWritten, Buffer.byteLength(artifact));
+  assert.equal(readFileSync(output, "utf8"), artifact);
+  assert.equal(statSync(output).mode & 0o777, 0o600);
+
+  await assert.rejects(
+    createArtifactFile(output, "flowchart LR\n  B --> C\n"),
+    (error) => error instanceof SafeWriteConflictError && error.reason === "target_exists",
+  );
+  assert.equal(readFileSync(output, "utf8"), artifact);
   assert.deepEqual(temporaryFiles(directory), []);
 });
 

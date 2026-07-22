@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { checkDocument } from "../dist/index.js";
+import { checkDocument, exportMermaid } from "../dist/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -28,6 +28,7 @@ test("normative Mermaid profile example has valid source, record count, and dige
   assert.equal(checkDocument(source).ok, true);
 
   const artifact = fenced(text, "mermaid");
+  assert.equal(exportMermaid(source).artifact, artifact);
   const lines = artifact.split("\n");
   assert.equal(lines[0], "flowchart LR");
 

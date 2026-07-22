@@ -2,11 +2,11 @@
 
 - 文書状態: Active 1.3
 - 作成日: 2026-07-21
-- 対象surface: `dsl help`、`dsl check`、`dsl format`、mutation、`dag analyze`、`dag next`
+- 対象surface: `dsl help`、`dsl check`、`dsl format`、mutation、`dag analyze`、`dag next`、`dag render`
 
 ## 1. 目的
 
-利用者が作成した`.pert`文書を実際のCLI processへ渡し、文書検査、PERT/CPM分析、resource制約分析、次task判定までが一連の操作として成立することを確認する。
+利用者が作成した`.pert`文書を実際のCLI processへ渡し、文書検査、PERT/CPM分析、resource制約分析、次task判定、Mermaid exportまでが一連の操作として成立することを確認する。
 
 Core APIを直接呼ぶunit testとは分離し、`dist/cli.js`をsubprocessとして起動してexit code、stdout、stderr、JSON envelopeを検査する。
 
@@ -25,6 +25,7 @@ Core APIを直接呼ぶunit testとは分離し、`dist/cli.js`をsubprocessと�
 | E2E-009 | 中間状態を作らずpathを置換する | atomic batch preview → analyze | connected milestone追加とtask置換を1 candidateで検査し、そのまま解析できる |
 | E2E-010 | formatter previewを検査する | format preview → check → format --check | golden candidateがvalidかつidempotentで、原本fileを変更しない |
 | E2E-011 | 検査済みcandidateを安全に保存して再解析する | grammar temporary copy format --write → check → analyze → next、mutation --write → check → analyze → next | grammar planのround-tripが原文へ一致し、write後のformatter/mutation documentを全read-only commandが受理する |
+| E2E-012 | DSL意味と解析条件をMermaidでレビューする | help → render preview → render --out → strict plain | profile metadataはDSL意味値、headerはcapacity overrideを別々に保持し、exclusive outとstrict-lossを適用する |
 
 Fixtureは`test/fixtures/e2e/`へ置き、過去状態を正本計画へ混ぜず、before/afterを独立した入力として比較する。
 
@@ -44,4 +45,4 @@ npm run check
 
 ## 4. MVP境界
 
-E2E-004はadvance未実装のため、利用者がGit管理下の文書を手作業で更新した前後を再計算する。Formatterとmutationはpreviewに加えて、一時directory内のcopyだけを`--write`して検査する。正本planはE2Eから変更しない。Advance、Mermaid、MCPはこのE2E sliceの対象外とする。
+E2E-004はadvance未実装のため、利用者がGit管理下の文書を手作業で更新した前後を再計算する。Formatterとmutationはpreviewに加えて、一時directory内のcopyだけを`--write`して検査する。Mermaidも一時directoryだけを`--out`で検査する。正本planはE2Eから変更しない。AdvanceとMCPはこのE2E sliceの対象外とする。

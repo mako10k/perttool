@@ -9,6 +9,12 @@ import { checkDocument } from "./application/check.js";
 import { planFormat, type FormatPreviewResult } from "./application/format.js";
 import { planBatchMutation, planMutation } from "./application/mutate.js";
 import { selectNextTasks } from "./application/next.js";
+import {
+  exportMermaid,
+  type ConversionLoss,
+  type MermaidAnalysisMode,
+  type MermaidProfile,
+} from "./conversion/mermaid.js";
 import type { HelpLevel } from "./help/registry.js";
 import { getHelp } from "./help/registry.js";
 import {
@@ -16,6 +22,7 @@ import {
   readDocumentFile,
 } from "./io/document-file.js";
 import {
+  createArtifactFile,
   createDocumentFile,
   replaceDocumentFile,
   SafeWriteConflictError,
@@ -66,6 +73,7 @@ function topLevelHelp(): string {
     "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
     "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
     "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
+    "  perttool dag render <file> --to mermaid [--profile perttool|plain] [--format text|json]",
     "  perttool task add|set|remove|finish ...",
     "  perttool milestone add|set|remove ...",
     "  perttool resource add|set|remove ...",
@@ -113,6 +121,13 @@ function commandHelp(resource: string, action: string): string {
     "  [--explain-depth <integer>] [--precision <integer>]",
     "  [--max-diagnostics <integer>]",
     "  [--warnings-as-errors]",
+    "  [--format text|json] [--color auto|always|never]",
+  ].join("\n");
+  if (resource === "dag" && action === "render") return [
+    "Usage: perttool dag render <file> --to mermaid",
+    "  [--profile perttool|plain] [--analysis none|precedence|resource|both]",
+    "  [--capacity <resource-id>=<integer>]... [--strict-loss] [--out <path>]",
+    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
   const preview = "  [--diff] [--write [--expect-digest <digest>] | --out <path>] [--max-diagnostics <integer>] [--warnings-as-errors] [--format text|json] [--color auto|always|never]";
@@ -1703,6 +1718,169 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
+function conversionLossJson(loss: ConversionLoss): Readonly<Record<string, unknown>> {
+  return {
+    code: loss.code,
+    severity: loss.severity,
+    message: loss.message,
+    element_id: loss.elementId,
+    span: loss.span === null ? null : jsonSpan(loss.span),
+    lossy: loss.lossy,
+  };
+}
+
+function renderConversionLoss(
+  loss: ConversionLoss,
+  source: string,
+  color: ColorMode,
+): string {
+  return renderDiagnostic(
+    {
+      code: loss.code,
+      severity: loss.severity,
+      message: loss.message,
+      ...(loss.elementId === null ? {} : { entityId: loss.elementId }),
+      ...(loss.span === null ? {} : { span: loss.span }),
+      helpTopic: "mermaid",
+    },
+    source,
+    color,
+  );
+}
+
+async function runRender(args: readonly string[]): Promise<number> {
+  const parsed = parseOptions(
+    args,
+    new Set([
+      "to",
+      "profile",
+      "analysis",
+      "out",
+      "max-diagnostics",
+      "format",
+      "color",
+    ]),
+    new Set(["strict-loss", "warnings-as-errors"]),
+    new Set(["capacity"]),
+  );
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("dag render requires exactly one <file>");
+  }
+  enumOption(requiredOption(parsed, "to"), "to", new Set(["mermaid"]));
+  const profile = enumOption<MermaidProfile>(
+    parsed.values.get("profile"),
+    "profile",
+    new Set(["perttool", "plain"]),
+  ) ?? "perttool";
+  const analysis = enumOption<MermaidAnalysisMode>(
+    parsed.values.get("analysis"),
+    "analysis",
+    new Set(["none", "precedence", "resource", "both"]),
+  ) ?? "none";
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const overrides = capacityOverrides(parsed.repeatedValues.get("capacity") ?? []);
+  if (overrides.size > 0 && analysis !== "resource" && analysis !== "both") {
+    throw new UsageError("--capacity requires --analysis resource or both");
+  }
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  const out = parsed.values.get("out") ?? null;
+  if (out !== null && out.length === 0) {
+    throw new UsageError("--out path must not be empty");
+  }
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "dag.render",
+      format === "json",
+    );
+  }
+  const result = exportMermaid(input.text, {
+    profile,
+    analysis,
+    capacityOverrides: overrides,
+    maxDiagnostics,
+  });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
+  const strictFailure =
+    parsed.flags.has("strict-loss") &&
+    result.lossReport.records.some((record) => record.lossy);
+  const ok = result.ok && !warningFailure && !strictFailure;
+  const exposeArtifact = result.ok && !strictFailure;
+  let writeResult: DocumentWriteResult | null = null;
+  if (ok && out !== null) {
+    try {
+      writeResult = await createArtifactFile(out, result.artifact!);
+    } catch (error) {
+      return writeFailureExit(error, "dag.render", format === "json");
+    }
+  }
+  if (format === "json") {
+    writeJson({
+      schema_version: "Perttool.ExportResult.v1",
+      tool_version: TOOL_VERSION,
+      operation: "dag.render",
+      ok,
+      document_id: result.documentId,
+      source,
+      source_digest: input.digest,
+      diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
+      artifact_format: "mermaid",
+      profile: result.profile,
+      analysis: result.analysis,
+      capacity_overrides: [...result.capacityOverrides]
+        .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
+        .map(([resourceId, capacity]) => ({ resource_id: resourceId, capacity })),
+      artifact: exposeArtifact ? result.artifact : null,
+      artifact_digest: exposeArtifact ? result.artifactDigest : null,
+      loss_report: {
+        lossless: result.lossReport.lossless,
+        records: result.lossReport.records.map(conversionLossJson),
+      },
+      generated_ids: [],
+      write: {
+        mode: out === null ? "preview" : "out",
+        target: out,
+        written: writeResult?.written ?? false,
+      },
+    });
+  } else {
+    if (ok) {
+      if (writeResult === null) {
+        process.stdout.write(result.artifact!);
+      } else {
+        process.stderr.write(renderWriteSummary("dag.render", writeResult));
+      }
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    for (const loss of result.lossReport.records) {
+      process.stderr.write(`${renderConversionLoss(loss, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return strictFailure ? 4 : ok ? 0 : 1;
+}
+
 function explanationJson(
   node: ReturnType<typeof selectNextTasks>["tasks"][number]["explanation"][number],
 ): Readonly<Record<string, unknown>> {
@@ -2056,7 +2234,7 @@ async function main(argv: readonly string[]): Promise<number> {
     argv.length === 3 &&
     argv[2] === "--help" &&
     ((resource === "dsl" && ["check", "format", "help"].includes(action)) ||
-      (resource === "dag" && ["analyze", "next"].includes(action)) ||
+      (resource === "dag" && ["analyze", "next", "render"].includes(action)) ||
       isMutationCommand)
   ) {
     process.stdout.write(`${commandHelp(resource, action)}\n`);
@@ -2067,6 +2245,9 @@ async function main(argv: readonly string[]): Promise<number> {
   }
   if (resource === "dag" && action === "next") {
     return runNext(argv.slice(2));
+  }
+  if (resource === "dag" && action === "render") {
+    return runRender(argv.slice(2));
   }
   if (resource === "dsl" && action === "format") {
     return runFormat(argv.slice(2));

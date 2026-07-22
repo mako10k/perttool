@@ -9,7 +9,7 @@
 - [recommendation.md](recommendation.md): AI工程制御のranking、resource conflict、構造化説明、human overrideの規範caseとtest観点
 - [mermaid-profile.md](mermaid-profile.md): lossless `%% perttool:` semantic record、digest、projection、negative caseの規範例
 
-`.pert` fileはgrammar version 1、semantics version 1、analysis version 1の規範サンプルである。`recommendation.md`は未実装のRecommendation interface version 1へ向けた規範case、`mermaid-profile.md`は未実装のMermaid adapterへ向けたwire contract例であり、各実装sliceで同じ内容をfixture/golden testへ展開する。
+`.pert` fileはgrammar version 1、semantics version 1、analysis version 1の規範サンプルである。`recommendation.md`は未実装のRecommendation interface version 1へ向けた規範caseである。`mermaid-profile.md`はMermaid adapterのwire contractとexport goldenであり、`exportMermaid`と`dag render --to mermaid`のbyte出力をtestで固定する。Importのnegative caseは後続sliceで展開する。
 
 `pert-estimate.pert`では`DESIGN`のexpectedは`13/6d`、varianceは`1/4d^2`である。`BUILD`を含むprecedence makespanは`31/6d`、代表critical task列は`[DESIGN, BUILD]`になる。
 

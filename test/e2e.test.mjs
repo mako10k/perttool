@@ -142,11 +142,12 @@ test("E2E-004: recording completion recalculates the remaining frontier and dura
 test("E2E-005: all read-only document commands reject an undefined resource", () => {
   const source = fixture("invalid-resource");
   for (const command of [
-    ["dsl", "check"],
-    ["dag", "analyze"],
-    ["dag", "next"],
+    ["dsl", "check", source],
+    ["dag", "analyze", source],
+    ["dag", "next", source],
+    ["dag", "render", source, "--to=mermaid"],
   ]) {
-    const result = runJson([...command, source], 1);
+    const result = runJson(command, 1);
     assert.equal(result.ok, false);
     assert.ok(result.diagnostics.some(({ code }) => code === "PTSEM-206"));
   }
@@ -175,11 +176,12 @@ test("E2E-006: AI can validate point estimates and consume explicit velocity for
 test("E2E-007: multiple syntax errors recover without semantic cascades", () => {
   const source = "test/fixtures/invalid/multiple-syntax-errors.pert";
   for (const command of [
-    ["dsl", "check"],
-    ["dag", "analyze"],
-    ["dag", "next"],
+    ["dsl", "check", source],
+    ["dag", "analyze", source],
+    ["dag", "next", source],
+    ["dag", "render", source, "--to=mermaid"],
   ]) {
-    const result = runJson([...command, source, "--max-diagnostics=3"], 1);
+    const result = runJson([...command, "--max-diagnostics=3"], 1);
     assert.equal(result.ok, false);
     assert.equal(result.diagnostics.length, 3);
     assert.equal(result.diagnostics_truncated, true);
@@ -293,4 +295,39 @@ test("E2E-011: safe writes on temporary copies feed check, analyze, and next", (
   assert.equal(runJson(["dsl", "check", mutationCopy]).ok, true);
   assert.equal(runJson(["dag", "analyze", mutationCopy]).ok, true);
   assert.deepEqual(runJson(["dag", "next", mutationCopy]).groups.ready, ["WORK"]);
+});
+
+test("E2E-012: Mermaid export preserves semantics and analysis context", (t) => {
+  const help = runJson(["dsl", "help", "mermaid", "--level=detail"]);
+  assert.match(help.summary, /dag render/);
+  assert.ok(help.syntax.some((line) => line.includes("--to mermaid")));
+
+  const source = "docs/examples/parallel.pert";
+  const preview = runJson([
+    "dag", "render", source, "--to=mermaid", "--analysis=both",
+    "--capacity=TEST_ENV=2",
+  ]);
+  assert.equal(preview.ok, true);
+  assert.equal(preview.profile, "perttool");
+  assert.equal(preview.loss_report.lossless, true);
+  assert.match(preview.artifact, /%% perttool:profile/);
+  assert.match(preview.artifact, /"capacity_overrides":\[\{"resource_id":"TEST_ENV","capacity":2\}\]/);
+  assert.match(preview.artifact, /%% perttool:resource \{"id":"TEST_ENV"[^\n]*"capacity":1/);
+  assert.match(preview.artifact, /CORE: .* \/ CP \/ S=0-4d/);
+
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-mermaid-e2e-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = path.join(directory, "parallel.mmd");
+  const written = runJson([
+    "dag", "render", source, "--to=mermaid", "--analysis=both",
+    "--capacity=TEST_ENV=2", "--out", output,
+  ]);
+  assert.equal(written.write.written, true);
+  assert.equal(readFileSync(output, "utf8"), preview.artifact);
+
+  const strictPlain = runJson([
+    "dag", "render", source, "--to=mermaid", "--profile=plain", "--strict-loss",
+  ], 4);
+  assert.equal(strictPlain.artifact, null);
+  assert.deepEqual(strictPlain.loss_report.records.map(({ code }) => code), ["PTCNV-206"]);
 });

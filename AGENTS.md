@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をStage 2のpreview-first safe-writeで自己利用中である。`dag advance`とconversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag render --to mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をStage 2のpreview-first safe-writeで自己利用中である。`dag advance`とMermaid importは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -38,12 +38,13 @@ perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
 - `src/analysis/`: exact Rationalを使うresidual graph、precedence CPM、resource schedule実装。
+- `src/conversion/`: Mermaid profile/plain export、semantic metadata、projection生成。
 - `src/editing/`: formatterとmutationが共有するdeterministic unified diff。
 - `src/formatter/`: source-preserving formatter Core。
 - `src/io/`: raw-byte document read、digest、symlink/race拒否、atomic safe-write adapter。
 - `src/mutation/`: task/milestone/resourceとatomic batchのrequest、source-preserving UTF-16 TextEdit生成、適用規則。
 - `src/application/`: check/analyze/nextと、再検査済みmutation resultを返すpure service。
-- `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation/write-safety unit test、CLI integration test。
+- `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation/conversion/write-safety unit test、CLI integration/E2E test。
 - `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
 
 実装を追加した時点で、実際のdirectoryとcommandに合わせてこのmapを更新する。

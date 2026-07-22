@@ -3,6 +3,7 @@ export { analyzeDocument } from "./application/analyze.js";
 export { planFormat } from "./application/format.js";
 export { selectNextTasks } from "./application/next.js";
 export { planMutation } from "./application/mutate.js";
+export { exportMermaid } from "./conversion/mermaid.js";
 export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js";
 export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
@@ -14,6 +15,7 @@ export {
   readDocumentFile,
 } from "./io/document-file.js";
 export {
+  createArtifactFile,
   createDocumentFile,
   replaceDocumentFile,
   SafeWriteConflictError,
@@ -28,6 +30,14 @@ export * from "./model/units.js";
 export { parseDocument } from "./parser/document-parser.js";
 export { validateDocument } from "./semantic/validator.js";
 export type { CheckOptions, CheckResult, CheckSummary } from "./application/check.js";
+export type {
+  ConversionLoss,
+  ConversionLossReport,
+  MermaidAnalysisMode,
+  MermaidExportOptions,
+  MermaidExportResult,
+  MermaidProfile,
+} from "./conversion/mermaid.js";
 export type {
   FormatPreviewOptions,
   FormatPreviewResult,
@@ -91,6 +101,7 @@ export type {
 export type { TextEdit } from "./mutation/text-edits.js";
 export type { DocumentContent } from "./io/document-file.js";
 export type {
+  CreateArtifactOptions,
   CreateDocumentOptions,
   DocumentWriteResult,
   ReplaceDocumentOptions,

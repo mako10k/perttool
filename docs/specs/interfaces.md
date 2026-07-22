@@ -262,6 +262,7 @@ perttool dag render <file>
   [--capacity <resource-id>=<integer>]...
   [--strict-loss]
   [--out <path>]
+  [--max-diagnostics <integer>]
   [--warnings-as-errors]
   [--format text|json]
   [--color auto|always|never]
@@ -275,6 +276,7 @@ perttool dag render <file>
 - 既存`--out`を上書きしない
 - `--strict-loss`でlossy recordが1件以上ならartifactを書かずexit 4
 - `--to`はartifact種別、`--format`はCLI result serializationであり別概念
+- `--capacity`は`--analysis resource|both`とだけ併用できる
 
 ### 6.5 `dag import`
 
@@ -938,19 +940,25 @@ topics        [{id, title, summary}]
 
 Index levelでは`topics`を使用する。Sample参照はabsolute pathでなくstable example IDを使用する。
 
-### 12.6 ConversionResult
+### 12.7 ConversionResult
 
 Renderは`Perttool.ExportResult.v1`、importは`Perttool.ImportResult.v1`を使用する。
 
 ```text
 artifact_format  "mermaid" | "svg" | "json" | "pert"
 artifact         string|object|null
+artifact_digest  string|null
+profile          "perttool" | "plain"
+analysis         "none" | "precedence" | "resource" | "both"
+capacity_overrides [{resource_id, capacity}]
 loss_report:
   lossless       boolean
   records        ConversionLoss[]
 generated_ids    [{source_element, generated_id}]
 write            {mode, target, written}
 ```
+
+MVPの`dag render --to mermaid`は`artifact`をUTF-8 Mermaid string、`artifact_digest`をそのbyte列のSHA-256とする。Invalid documentまたはstrict-loss失敗では両方を`null`とする。`capacity_overrides`はresource ID昇順で、`generated_ids=[]`とする。
 
 `ConversionLoss`は`code`、`severity`、`message`、`element_id` nullable、`span` nullable、`lossy` booleanを持つ。
 

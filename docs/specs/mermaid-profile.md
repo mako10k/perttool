@@ -303,20 +303,40 @@ Gate:
   ptm_<FROM> -.->|"<ID>: gate"| ptm_<TO>
 ```
 
-Nodeはmilestone ID昇順で出力する。Optional annotationとstyle statementは`Perttool.MermaidProjection.v1`の一部としてexport実装時のgoldenで固定するが、semantic recordへ解析値を取り込まない。ImporterはannotationやstyleからDSL fieldを推測しない。
+Nodeはmilestone ID昇順で出力する。Task labelのannotationは次の順で、値が存在するものだけを` / `で連結する。
+
+1. `active|blocked|done`のstatus（`planned`は省略）
+2. `owner=<owner>`
+3. `E=<expected><unit>`
+4. `TF=<total float><unit>`
+5. precedence criticalの`CP`
+6. resource scheduleの`S=<start>-<finish><unit>`
+7. schedule criticalの`SCP`
+
+`E`と`TF`は`analysis=precedence|resource|both`、`CP`は`precedence|both`、`S`と`SCP`は`resource|both`で出力する。Rationalの表示precisionはv1で3とする。Semantic recordへ解析値を取り込まない。ImporterはannotationやstyleからDSL fieldを推測しない。
 
 ### 9.3 label escaping
 
 Labelはdouble-quoted formを使用し、decoded titleをUnicode normalizationせず保持する。次のUnicode scalarは`#<decimal code point>;`へ置換する。
 
-- `"`、`#`、`&`、`;`、`<`、`>`、`\\`、`|`
+- `"`、`#`、`&`、`;`、`<`、`>`、`\\`、`|`、`` ` ``
 - U+0000..U+001FとU+007F
 
 その他のscalarはUTF-8で直接出力する。CR/LFを含むdescriptionはlabelへ出さずmetadataだけに保持する。TitleはDSL grammar上literal newlineを持たない。
 
 ### 9.4 stateとanalysis
 
-Milestone state、task status、critical判定、expected、total float、ownerはstyleまたはannotationとして表示できる。表示値は共通CoreのDocument/AnalysisResultから生成し、Mermaid adapter内で再計算してはならない。
+Milestone stateとtask status/critical判定は次のstyle statementで固定する。表示値は共通CoreのDocument/AnalysisResultから生成し、Mermaid adapter内で再計算してはならない。
+
+```text
+  classDef pt_milestone_planned fill:#ffffff,stroke:#566573,stroke-width:1px;
+  classDef pt_milestone_reached fill:#d5f5e3,stroke:#1e8449,stroke-width:2px;
+  class ptm_<ID>,... pt_milestone_planned;
+  class ptm_<ID>,... pt_milestone_reached;
+  linkStyle <index> <task-or-gate-style>;
+```
+
+Milestone classはplanned、reachedの順とし、空集合の`class`は出力しない。Task styleはactive青、blocked黄破線、done灰、planned critical赤、その他を濃灰とする。Gateは灰破線とする。`linkStyle` indexはtask ID昇順、gate ID昇順のedge statement順に対応させる。Status styleはcritical styleより優先するが、`CP`/`SCP` annotationは維持する。
 
 Analysis annotationはprojectionであり、import後のDSLを変更しない。`analysis=resource|both`のcapacity overrideもheader option snapshotとして保持するだけで、resource capacity recordを変更しない。
 
@@ -376,6 +396,12 @@ Plain import loss:
 | `PTCNV-204` | DSL field unavailable in Mermaid |
 | `PTCNV-205` | unsupported Mermaid statement ignored |
 
+Export loss:
+
+| Code | Meaning |
+| --- | --- |
+| `PTCNV-206` | plain profile export omitted lossless semantic metadata |
+
 Codeの`message`は人間向け説明であり、consumerは分岐にcodeを使用する。新しいcaseへ既存codeの意味を流用しない。
 
 ## 13. Security and limits
@@ -415,6 +441,8 @@ Codeの`message`は人間向け説明であり、consumerは分岐にcodeを使�
 11. `--strict-loss`でlossy plain importのcandidate/writeを拒否する
 12. executable directive、raw HTML、unknown key、duplicate keyを拒否する
 13. Core result、CLI text/JSON、package entrypointで同じartifact/resultを返す
+
+Macro `MERMAID_EXPORT`は1から5、13のexport部分、plain exportの`PTCNV-206`、`--strict-loss`、exclusive `--out`を満たしたとき完了とする。6から12のimport/round-tripは後続の`MERMAID_ROUNDTRIP`の完了条件とする。
 
 `MERMAID_PROFILE`は本contractと規範例の横断整合をもって設計完了とする。Exporter、importer、SVG/HTML rendererの実装完了を意味しない。
 
