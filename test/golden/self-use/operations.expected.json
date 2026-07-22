@@ -1,0 +1,66 @@
+{
+  "check": {
+    "document_id": "OPERATIONS",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 4,
+      "milestones": 11,
+      "tasks": 9,
+      "gates": 2,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "21/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "7/1",
+    "precedence_critical_tasks": [
+      "TASK_MUTATION_CORE",
+      "ENTITY_MUTATION_CORE",
+      "MUTATION_CLI_PREVIEW",
+      "SAFE_WRITE_ADAPTER",
+      "SAFE_WRITE_ACCEPTANCE",
+      "ADVANCE_PLANNER",
+      "ADVANCE_CLI_ACCEPTANCE"
+    ],
+    "resource_makespan": "21/1",
+    "resource_forecast": "7/1",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
+    "schedule_critical_tasks": [
+      "TASK_MUTATION_CORE",
+      "ENTITY_MUTATION_CORE",
+      "MUTATION_CLI_PREVIEW",
+      "SAFE_WRITE_ADAPTER",
+      "SAFE_WRITE_ACCEPTANCE",
+      "ADVANCE_PLANNER",
+      "ADVANCE_CLI_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "TASK_MUTATION_CORE",
+        "FORMAT_APPLICATION"
+      ],
+      "runnable_now": [
+        "TASK_MUTATION_CORE",
+        "FORMAT_APPLICATION"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "ENTITY_MUTATION_CORE",
+        "MUTATION_CLI_PREVIEW",
+        "SAFE_WRITE_ADAPTER",
+        "SAFE_WRITE_ACCEPTANCE",
+        "ADVANCE_PLANNER",
+        "ADVANCE_CLI_ACCEPTANCE",
+        "FORMAT_CLI_PREVIEW"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

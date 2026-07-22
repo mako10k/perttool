@@ -91,6 +91,15 @@ test("control-plane plan matches the Issue #1 design roadmap golden", async () =
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("operations plan matches the M1-M4 implementation roadmap golden", async () => {
+  const text = await readFile(path.join(root, "plans/operations.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/operations.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {
   const text = await readFile(path.join(root, "plans/mvp.pert"), "utf8");
   const expected = JSON.parse(await readFile(

@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`、source-preserving formatter Core、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`をread-only自己利用中である。`dsl format` commandを含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`、source-preserving formatter Core、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をread-only自己利用中である。`dsl format` commandを含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -33,7 +33,7 @@ perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl 
 - `docs/adr/`: 採用済みarchitecture/runtime判断。
 - `docs/examples/`: parserとanalysisの規範sample。
 - `docs/process/`: 自己利用とAI開発の運用手順。
-- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をmacro roadmap、`grammar.pert`と`control-plane.pert`を現在sliceの詳細計画としてread-onlyで使用する。
+- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をmacro roadmap、`grammar.pert`、`control-plane.pert`、`operations.pert`を詳細計画としてread-onlyで使用する。
 - `scripts/`: repository-local verification command。
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
@@ -71,7 +71,7 @@ perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl 
 
 ## Validation
 
-現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar/control-plane planのcheck/analyze/nextも含む。
+現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar/control-plane/operations planのcheck/analyze/nextも含む。
 
 ```sh
 npm ci

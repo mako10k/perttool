@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 2.4
+- 文書状態: Active Stage 1 / Revision 2.5
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -19,6 +19,7 @@
 | `plans/mvp.pert` | MVP全体のmacro milestoneとwork package | `.pert` 文書 |
 | `plans/grammar.pert` | 文法作業の現在・未来 DAG | `.pert` 文書 |
 | `plans/control-plane.pert` | Issue #1のAI工程制御設計の現在・未来 DAG | `.pert` 文書 |
+| `plans/operations.pert` | formatter previewからadvanceまでの現在・未来 DAG | `.pert` 文書 |
 | `test/fixtures/grammar/` | parser が受理・拒否すべき具体例 | fixture/golden |
 | Git history | 過去の計画、仕様、実装 | commit history |
 
@@ -37,7 +38,7 @@ Exit criteria:
 
 ## 4. Stage 1: read-only self-use
 
-現在の段階。2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用し始めた。2026-07-22に[AI工程制御設計plan](../../plans/control-plane.pert)を2つ目の詳細planとして追加した。
+現在の段階。2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用し始めた。2026-07-22に[AI工程制御設計plan](../../plans/control-plane.pert)と[操作系詳細plan](../../plans/operations.pert)を追加した。
 
 開始条件:
 
@@ -85,6 +86,12 @@ Exit criteria:
 
 同日に[Issue #2「AI Agent Guidance Registryとprovider別helpを追加する」](https://github.com/mako10k/perttool/issues/2)を独立featureとして登録した。Issue #1が「何を今行うべきか」を扱うのに対し、Issue #2はその判断へ従うためのprompt、skill、agent、hookなどをprovider別に表示する方法を扱う。初期scopeはofflineかつread-onlyの`agent help`であり、audit、scaffold、hook enforcementは後続段階とする。Issue #2はM1のpredecessorにせず、操作系trackを遅らせないcapacityでだけ並行する独立backlogとして保持する。
 
+同日に[Issue #3「backlog階層とmulti-plan PERT compositionを統合する」](https://github.com/mako10k/perttool/issues/3)を将来構想として登録した。Product/Sprint Backlog、Sprint PERT、macro/detail PERTのownership、link、roll-up、include/referenceを設計対象とするが、grammar version 1やMVP操作系へ機能依存を追加しない独立backlogとして保持する。
+
+`M1_ROADMAP_UPDATE`では[操作系詳細plan](../../plans/operations.pert)を作成し、formatter preview 3p、mutation preview 9p、safe write 6p、advance 6pを実module/file、acceptance、narrow test、parallel可否へ割り付けた。操作系の完了標本はまだないため、近い実装作業であるgrammarの直近実測`3p/1d`を初期Velocityとして暫定継承する。Precedence/resource makespanはともに21p、forecast 7dで、最初のcriticalかつ`runnable_now`は`TASK_MUTATION_CORE`、6pのfloatを持つ`FORMAT_APPLICATION`も同時に`runnable_now`である。Macroは17d、resource delay 0dとなり、`MUTATION_PREVIEW`と`FORMATTER_CORE`が同時にrunnableである。
+
+Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。Recommendation側はtask別durationと所有fileが未詳細化で、M3より前に操作系を遅らせないwork-package単位の並行化を立証できないため、`M3_SAFE_WRITE_READY`以降へ送る。Issue #3はMVP外の将来設計のままとする。
+
 ### 4.1 Velocity実測calibration
 
 DSL version 1はworking calendar、pause、作業開始時刻を持たないため、commit timestamp間の数時間を暗黙のengineering-dayへ変換しない。自己利用planのVelocityは次の決定的なactive-day方式で測る。
@@ -106,6 +113,8 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。両標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装とcontrol-plane設計はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
+
+Operationsは完了taskが0件なので、`3p/1d`は操作系の実測値ではない。近い実装work typeであるgrammarからの初期値であり、最初の操作系completion commitを次回標本として、同じactive-day方式で`plans/operations.pert`だけを独立再calibrationする。
 
 この段階で許可する操作:
 
@@ -147,16 +156,17 @@ Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 
 
 ### 5.2 MVP macro planとの関係
 
-`plans/mvp.pert`はM1からM6までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`は`plans/grammar.pert`、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`は`plans/control-plane.pert`のresource makespanとvelocity forecastをroll-upするが、内部taskの状態を重複管理しない。
+`plans/mvp.pert`はM1からM6までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`は`plans/grammar.pert`、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`は`plans/control-plane.pert`、M1からM4の操作系work packageは`plans/operations.pert`のresource makespanとvelocity forecastをroll-upするが、内部taskの状態を重複管理しない。
 
 - macro milestoneと全体critical path: `mvp.pert`
 - 現在のgrammar実装taskとresource待ち: `grammar.pert`
 - 現在のAI工程制御設計taskとresource待ち: `control-plane.pert`
+- 現在の操作系実装taskとresource待ち: `operations.pert`
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
-- Issue #1の設計は受け入れ済みであり、grammar受け入れ後の`M1_ROADMAP_UPDATE`でformatter、mutation preview、safe write、advanceを最優先trackとして詳細化する
-- recommendation実装とIssue #2は、操作系のdeveloper、reviewer、file ownershipを競合させずmilestoneを遅らせない場合だけ並行する
-- roadmap再構成が完了するまでformatter以降へ進まない
+- `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
+- recommendation実装とIssue #2は共有CLI・reviewerの競合により`M3_SAFE_WRITE_READY`以降へ送る
+- Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
 ### 5.3 AI工程制御設計plan
 
@@ -236,15 +246,16 @@ advance 運用:
 
 ## 8. Stage 4: 対象拡大
 
-MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planでのread-only運用開始後、product方向を確定する必要からIssue #1のcontrol-plane設計planをStage 1で追加し、設計受け入れまで完了した。Issue #2は独立backlogとして保持し、まだ詳細planへ展開しない。Grammar受け入れ後の`M1_ROADMAP_UPDATE`では次の順で詳細化する。
+MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planでのread-only運用開始後、Issue #1のcontrol-plane設計planとM1-M4の操作系planをStage 1で追加した。Issue #2とIssue #3は独立backlogとして保持し、まだ詳細planへ展開しない。`M1_ROADMAP_UPDATE`で次の順を確定した。
 
 - formatterとmutation preview
 - safe write
 - advance
-- 操作系を遅らせない場合だけ、Issue #1の設計結果に基づくrecommendation実装
-- 操作系を遅らせない場合だけ、Issue #2のread-only AI Agent Guidance Registry
+- safe-write後に、Issue #1の設計結果に基づくrecommendation実装
+- safe-write後に、Issue #2のread-only AI Agent Guidance Registry
 - Mermaid conversion
 - perttool全体のMVP release plan
+- MVP後に、Issue #3のbacklog階層・multi-plan composition
 - MVP後のMCP/LSP adapter
 
 各 plan は現在・未来だけを持ち、完了部分は advance と Git history で管理する。
@@ -288,13 +299,14 @@ Stage 1開始時の証跡:
 - parser/check gate: `all normative examples parse and validate`、各invalid fixture diagnostic test、`resource requirements do not become precedence edges`
 - analyze gate: precedence、capacity override、active allocation、resource witness、schedule critical pathを固定する`analysis.test.mjs`
 - next gate: `parallel next selects a deterministic runnable subset`、classification/depth unit test、text/JSON CLI integration test
-- self-use golden: grammar、control-plane、MVP planのcheck/analyze/next projection test
-- Point self-use gate: grammar/control-plane planの基準unit、active-day実測velocity、precedence/resource forecastをgoldenで分離して検査する
+- self-use golden: grammar、control-plane、operations、MVP planのcheck/analyze/next projection test
+- Point self-use gate: grammar/control-plane/operations planの基準unit、実測または明示した初期velocity、precedence/resource forecastをgoldenで分離して検査する
 - field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
 - block text/span gate: common indent、paragraph、tab/末尾space、leading/trailing trivia、UTF-16 marker/content spanをparser testと専用fixtureへ固定する
 - formatter Core gate: HSPACE入力、source構造保持、lexical normalization、UTF-16 non-overlap edit、invalid input拒否をformatter testへ固定する
 - formatter round-trip gate: 全fieldのgolden一致、idempotence、exact値ベースのAST同値をformatter testへ固定する
 - help/fixture sync gate: registry related link、syntax/sample `.pert`参照、invalid fixture diagnosticのhelp topic解決をhelp testへ固定する
 - control-plane planning gate: Issue #1の設計17p完了、残り0p、ready taskなし、設計受け入れ記録をgoldenと文書へ固定する
-- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、3 planを検査する
+- operations planning gate: M1-M4の24pをfile ownership、acceptance、narrow testへ分解し、critical/resource makespan 21p、初期forecast 7d、runnable frontierをgoldenへ固定する
+- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、4 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

@@ -42,7 +42,7 @@
 
 ## 3. Roadmap再構成gate
 
-最初のproduct implementation taskと見積りは、次を満たした`M1_ROADMAP_UPDATE`でmacro/detail planへ追加する。
+最初のproduct implementation taskと見積りは、次を満たした`M1_ROADMAP_UPDATE`でmacro/detail planへ追加する。このgateは2026-07-22に完了した。
 
 1. `plans/control-plane.pert`の`DESIGN_REVIEW`が完了している
 2. `plans/grammar.pert`の受け入れが完了している
@@ -50,7 +50,9 @@
 4. 各unitへduration、acceptance、narrow test、並行可否を付ける
 5. `plans/mvp.pert`の`M1_ROADMAP_UPDATE`を完了してからproduct implementationへ着手する
 
-`M1_ROADMAP_UPDATE`では操作系を最優先trackとする。`FORMATTER_CORE`と`MUTATION_PREVIEW`を先行し、両方の受け入れ後に`WRITE_SAFETY`、その後に`ADVANCE`へ進む。本書のMIG-01からMIG-07とIssue #2は、操作系が使用するdeveloper、reviewer、file ownershipを競合させず、操作系のmilestoneを遅らせない場合だけ並行できる。競合する場合は`M3_SAFE_WRITE_READY`以降へ送る。MIG-08は常にsafe-write gateより後である。Safe-write後に並行可能となるMermaid trackとのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果に従う。
+実行順は[操作系詳細plan](../../plans/operations.pert)へ固定した。Formatter preview 3pとmutation preview 9pを並行branchとし、両方の受け入れ後にsafe write 6p、その後にadvance 6pへ進む。初期Velocity `3p/1d`でcritical/resource makespanは21p、7dである。最初のcritical taskは`TASK_MUTATION_CORE`で、`FORMAT_APPLICATION`もdeveloper capacity内で並行可能である。
+
+MIG-01からMIG-07のside trackは、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。Recommendation側のtask別durationとfile ownershipはまだ詳細plan化しておらず、このcapacityでは操作系milestoneを遅らせないwork-package単位の早期並行化を立証できないため、`M3_SAFE_WRITE_READY`以降へ送る。MIG-08は常にsafe-write gateより後である。Safe-write後に並行可能となるMermaid trackとのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果に従う。
 
 本設計taskではrecommendation migrationのduration、担当、parallel可否を先行決定しない。Issue #2をIssue #1またはM1の意味上のpredecessorにせず、実装時に共有help surfaceを調整する独立featureとして扱う。
 
@@ -219,7 +221,7 @@ MIG-01 fixtures -> MIG-02 ranking -> MIG-03 explanation|
                                   MIG-08 override apply
 ```
 
-MIG-01からMIG-07のside trackは、操作系と競合しないことを`M1_ROADMAP_UPDATE`で立証した場合だけ早期に開始する。MIG-05とMIG-06はv3 publication後に並行可能な候補だが、実際のresource、file ownership、Issue #2とのhelp共有をroadmap再構成時に確認する。Diagramは実装見積りやAgent並行実行の許可を意味しない。
+MIG-01からMIG-07のside trackは、`M1_ROADMAP_UPDATE`で共有CLI・reviewerの競合を確認したため、`M3_SAFE_WRITE_READY`より前には開始しない。MIG-05とMIG-06はv3 publication後に並行可能な候補だが、safe-write後のresource scheduleでMermaid、Issue #2との順序を再解析する。Diagramは実装見積りやAgent並行実行の許可を意味しない。
 
 ## 6. Consumer migration guide要件
 

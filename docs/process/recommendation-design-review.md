@@ -43,22 +43,22 @@ Issue #1の設計を受け入れる。要件、規範仕様、基本設計、規
 
 ## 4. 実装へ送る条件
 
-次のproduct implementationは、grammar acceptance後の`M1_ROADMAP_UPDATE`で詳細化する。
+次のproduct implementationは、grammar acceptance後の`M1_ROADMAP_UPDATE`で[操作系詳細plan](../../plans/operations.pert)へ詳細化した。
 
 1. `FORMATTER_CORE`と`MUTATION_PREVIEW`を最初の実装trackとする
 2. 両方の受け入れ後に`WRITE_SAFETY`を実装する
 3. safe-write後に`ADVANCE`を次の操作系taskとし、Mermaid trackとのresource順はMVP全体完了を短縮するschedule判断へ従う
-4. MIG-01からMIG-07とIssue #2は、操作系の共有developer、reviewer、file ownershipを奪わない場合だけ並行する
+4. MIG-01からMIG-07とIssue #2は共有CLI・reviewerが操作系と競合するため、`M3_SAFE_WRITE_READY`以降へ送る
 5. Human override applyであるMIG-08は`M3_SAFE_WRITE_READY`より前へ出さない
 
 この順序はrecommendation設計の不備を示すものではない。現在のread-only自己利用で不足している操作能力を先に解消するproduct priorityである。ただし、操作系内部の局所priorityを理由にMVP全体の完了予測を悪化させない。
 
 ## 5. 残事項
 
-- `plans/grammar.pert`の残作業とgrammar acceptance
-- 操作系の実装task、実測に基づく初期見積り、narrow acceptance testの詳細化
+- [操作系詳細plan](../../plans/operations.pert)の`TASK_MUTATION_CORE`以降の実装と、完了実績によるVelocity再calibration
 - MIG-01からMIG-08の実装
 - Issue #2のprovider別AI Agent Guidance Registry設計・実装
+- Issue #3のbacklog階層・multi-plan composition設計
 - Mermaid metadata schemaと変換実装
 
 これらは未実装または将来設計であり、Issue #1のrecommendation契約を受け入れるうえでの設計blockerではない。

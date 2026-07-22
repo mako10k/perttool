@@ -133,6 +133,7 @@ perttool/
     control-plane.pert
     grammar.pert
     mvp.pert
+    operations.pert
   scripts/
     check-docs.sh
     check-npm-link.sh
@@ -880,9 +881,10 @@ MVPでは同一fixtureに対し、library resultとCLI JSONのsemantic payload�
 - 規範的な grammar 内容: `docs/specs/dsl-grammar.md`
 - 現在・未来の grammar 作業計画: `plans/grammar.pert`
 - Issue #1のAI工程制御設計計画: `plans/control-plane.pert`
+- M1からM4の操作系実装計画: `plans/operations.pert`
 - 過去の作業計画: Git history
 
-MVP全体のstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。2026-07-22時点ではgrammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`で管理する。
+MVP全体のstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。2026-07-22時点ではgrammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`、操作系M1-M4を`plans/operations.pert`で管理する。
 
 `.pert` は仕様内容そのものではなく、仕様を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
 
@@ -983,7 +985,7 @@ Exit:
 - v2由来fieldの意味を維持し、breaking changeをconsumerへ明示する
 - AIがmacro/detail planの二段階でknown complete recommendationを選択authorityにできる
 
-Slice 2Rの実装taskと見積りは`M1_ROADMAP_UPDATE`以降に確定する。ただし、次のproduct implementation priorityはSlice 3である。Slice 2Rは、Slice 3のdeveloper、reviewer、file ownershipと競合せず、操作系milestoneを遅らせない場合だけ並行できる。競合する場合はsafe-write完了後へ送り、Human override applyはMIG-08として必ずsafe-write gate以降へ接続する。
+Slice 2Rの実装taskと見積りは、Slice 3が`M3_SAFE_WRITE_READY`へ到達した後に詳細化する。`M1_ROADMAP_UPDATE`のfile ownership確認では、Slice 2RとIssue #2がSlice 3と`src/cli.ts`、`src/index.ts`、reviewerを共有するため、早期並行化は操作系milestoneを遅らせる可能性があると判定した。Human override applyはMIG-08として必ずsafe-write gate以降へ接続する。
 
 ### Slice 3: safe formatting and mutation
 
@@ -997,7 +999,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`では、`FORMATTER_CORE`と`MUTATION_PREVIEW`を最初に詳細化し、両方の受け入れ後に`WRITE_SAFETY`、続いて`ADVANCE`へ進む。共有capacityが競合した場合、この操作系trackをrecommendation実装とIssue #2より優先する。Safe-write後のMermaid trackとのresource順は、操作系の局所priorityではなくMVP全体完了を短縮するschedule結果へ従う。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進む。初期Velocityは近い実装標本の`3p/1d`を暫定継承し、critical/resource makespanは21p、forecastは7dである。最初のcritical taskは`TASK_MUTATION_CORE`で、`FORMAT_APPLICATION`も同時にrunnableだが6pのfloatを持つ。Safe-write後のMermaid、recommendation、Issue #2とのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果へ従う。
 
 ### Slice 4: advance and Mermaid
 

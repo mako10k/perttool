@@ -1,0 +1,197 @@
+project OPERATIONS:
+  version 1
+  title "操作系M1-M4実装計画"
+  description |
+    formatter preview、構造編集preview、safe write、advanceを実装する詳細plan。
+    Pointは相対規模を表し、初期Velocityは最も近い実装標本であるgrammarの
+    2026-07-22実測3p/1dを暫定継承する。操作系taskの完了後に独立再calibrationする。
+    recommendationとAI Agent Guidance Registryは、このplanのM3 safe-write milestoneを
+    遅らせないことを立証するまで並行実装しない。Multi-plan compositionは独立した
+    MVP後の将来backlogとして扱う。
+  as_of 2026-07-22
+  duration_unit point
+  velocity 3p/1d
+  finish OPERATIONS_READY
+
+resource DEVELOPERS:
+  title "実装担当枠"
+  capacity 2
+
+resource REVIEWERS:
+  title "interface・安全性レビュー枠"
+  description "公開CLI契約とwrite safetyの受け入れ判断は同時に1件だけ行う"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "CLI公開surface所有枠"
+  description "現行のsrc/cli.ts、src/index.ts、CLI/help testを同時編集しない"
+  capacity 1
+
+resource FILESYSTEM_WRITE:
+  title "filesystem write経路所有枠"
+  description "digest、temporary file、fsync、atomic renameの変更を同時編集しない"
+  capacity 1
+
+milestone NOW:
+  title "操作系roadmap確定"
+  state reached
+
+milestone FORMAT_APPLICATION_READY:
+  title "formatter application service完了"
+
+milestone FORMAT_PREVIEW_READY:
+  title "dsl format preview受け入れ完了"
+
+milestone TASK_MUTATION_READY:
+  title "task mutation Core完了"
+
+milestone ENTITY_MUTATION_READY:
+  title "milestone・resource mutation Core完了"
+
+milestone MUTATION_PREVIEW_READY:
+  title "構造編集preview受け入れ完了"
+
+milestone EDIT_PREVIEW_READY:
+  title "M2 安全な編集preview完了"
+
+milestone WRITE_ADAPTER_READY:
+  title "safe-write adapter完了"
+
+milestone SAFE_WRITE_READY:
+  title "M3 safe-write受け入れ完了"
+
+milestone ADVANCE_PLANNER_READY:
+  title "advance planner完了"
+
+milestone OPERATIONS_READY:
+  title "M4 advance受け入れ完了"
+
+task FORMAT_APPLICATION NOW -> FORMAT_APPLICATION_READY:
+  title "formatter候補をpreview resultへ投影する"
+  description |
+    Create: src/application/format.ts、src/editing/unified-diff.ts。
+    Reuse: src/formatter/source-formatter.ts。I/Oとwriteは追加しない。
+    Accept: candidate、changed、UTF-16 TextEdit、unified diff、check判定を再検査済みresultから得る。
+    Test: npm run build && node --test test/formatter.test.mjs。
+    Parallel: TASK_MUTATION_COREと所有fileを共有しない。
+  duration 1p
+  priority 90
+  requires:
+    DEVELOPERS 1
+
+task FORMAT_CLI_PREVIEW FORMAT_APPLICATION_READY -> FORMAT_PREVIEW_READY:
+  title "dsl format preview commandを公開する"
+  description |
+    Modify: src/cli.ts、src/index.ts、test/cli.test.mjs、test/e2e.test.mjs。
+    Accept: default candidate、--diff、--check、text/JSON、stdinを公開し、--writeと--outはまだ拒否する。
+    Test: npm run build && node --test test/formatter.test.mjs test/cli.test.mjs test/e2e.test.mjs。
+    Parallel: mutation Coreとは並行可能だが、他のCLI公開taskとはCLI_SURFACEで直列化する。
+  duration 2p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+
+task TASK_MUTATION_CORE NOW -> TASK_MUTATION_READY:
+  title "task mutationを局所TextEditとして実装する"
+  description |
+    Create: src/mutation/types.ts、src/mutation/text-edits.ts、src/mutation/task.ts、src/application/mutate.ts、test/mutation.test.mjs。
+    Accept: task add/set/remove/finishがtargetをexactly-oneで解決し、非重複UTF-16 TextEditと再検査済みcandidateを返す。I/Oは行わない。
+    Test: npm run build && node --test test/mutation.test.mjs。
+    Parallel: FORMAT_APPLICATIONと所有fileを共有しない。
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+
+task ENTITY_MUTATION_CORE TASK_MUTATION_READY -> ENTITY_MUTATION_READY:
+  title "milestone・resource mutationを実装する"
+  description |
+    Create: src/mutation/milestone.ts、src/mutation/resource.ts。
+    Modify: src/application/mutate.ts、test/mutation.test.mjs。
+    Accept: milestone/resource add/set/removeが宣言順、comment、無関係fieldを保持し、暗黙cascadeを行わない。
+    Test: npm run build && node --test test/mutation.test.mjs。
+    Parallel: formatter branchとは並行可能で、task mutationの共通plannerを再利用するためTASK_MUTATION_CORE後に行う。
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+
+task MUTATION_CLI_PREVIEW ENTITY_MUTATION_READY -> MUTATION_PREVIEW_READY:
+  title "構造編集preview commandを公開する"
+  description |
+    Modify: src/cli.ts、src/index.ts、test/cli.test.mjs、test/e2e.test.mjs。
+    Accept: task/milestone/resource commandのdefault previewと--diffをtext/JSONで公開し、--writeと--outはまだ拒否する。
+    Test: npm run build && node --test test/mutation.test.mjs test/cli.test.mjs test/e2e.test.mjs。
+    Parallel: FORMAT_CLI_PREVIEWとはCLI_SURFACEとREVIEWERSで直列化する。
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+
+gate FORMAT_PREVIEW_GATE FORMAT_PREVIEW_READY -> EDIT_PREVIEW_READY:
+  reason "M2にはformatter previewの受け入れが必要"
+
+gate MUTATION_PREVIEW_GATE MUTATION_PREVIEW_READY -> EDIT_PREVIEW_READY:
+  reason "M2には構造編集previewの受け入れが必要"
+
+task SAFE_WRITE_ADAPTER EDIT_PREVIEW_READY -> WRITE_ADAPTER_READY:
+  title "digest検査とatomic write adapterを実装する"
+  description |
+    Create: src/io/document-file.ts、src/io/safe-write.ts、test/write-safety.test.mjs。
+    Refactor: src/cli.tsの既存raw-byte SHA-256読取を共通化する。
+    Accept: symlink拒否、expected digest再確認、同directory temporary file、flush/fsync、atomic rename、親directory fsync、rename後再検査を行う。
+    Test: npm run build && node --test test/write-safety.test.mjs test/cli.test.mjs。
+    Parallel: filesystem write経路はFILESYSTEM_WRITEで単独所有する。
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    FILESYSTEM_WRITE 1
+
+task SAFE_WRITE_ACCEPTANCE WRITE_ADAPTER_READY -> SAFE_WRITE_READY:
+  title "全編集commandのsafe-write gateを受け入れる"
+  description |
+    Modify: src/cli.ts、test/e2e.test.mjs、test/self-use.test.mjs。
+    Accept: dsl formatと全mutationの--write/--out/--expect-digest、race拒否、失敗時原本保持、grammar planのtemporary-copy round-tripを検査する。
+    Test: npm run build && node --test test/write-safety.test.mjs test/cli.test.mjs test/e2e.test.mjs test/self-use.test.mjs。
+    Exit: docs/process/self-use.mdのStage 2開始条件を満たす。正本planへのwriteはこのtask完了後まで行わない。
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    FILESYSTEM_WRITE 1
+
+task ADVANCE_PLANNER SAFE_WRITE_READY -> ADVANCE_PLANNER_READY:
+  title "合流を保持するadvance plannerを実装する"
+  description |
+    Create: src/mutation/advance.ts、test/advance.test.mjs。
+    Accept: canonical keep/remove set、部分合流条件、before/afterのeffective reached・ready一致、idempotenceをpure MutationResultとして返す。
+    Test: npm run build && node --test test/advance.test.mjs test/analysis.test.mjs test/next.test.mjs。
+    Parallel: safe-write後のMermaid作業とはfile ownership上は並行可能だが、macro resource scheduleに従う。
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+
+task ADVANCE_CLI_ACCEPTANCE ADVANCE_PLANNER_READY -> OPERATIONS_READY:
+  title "dag advanceをsafe-write経路で受け入れる"
+  description |
+    Modify: src/cli.ts、src/index.ts、test/cli.test.mjs、test/e2e.test.mjs、test/self-use.test.mjs。
+    Accept: default preview、--diff、--write、advance固有JSON、削除entity一覧、再実行時empty diff、partial join fixtureを検査する。
+    Test: npm run build && node --test test/advance.test.mjs test/cli.test.mjs test/e2e.test.mjs test/self-use.test.mjs。
+    Exit: docs/process/self-use.mdのStage 3開始条件を満たす。正本planへのadvance writeはこのtask完了後まで行わない。
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    FILESYSTEM_WRITE 1

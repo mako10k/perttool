@@ -25,6 +25,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [MVPマイルストーン計画](plans/mvp.pert)
 - [現在の文法作業計画](plans/grammar.pert)
 - [AI工程制御設計計画](plans/control-plane.pert)
+- [操作系M1-M4実装計画](plans/operations.pert)
 - [AI 開発ガイド](docs/process/ai-development.md)
 
 基本方針は次のとおりです。
@@ -94,7 +95,7 @@ perttool dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format j
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)と[AI工程制御設計計画](plans/control-plane.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。Issue #1の設計は受け入れ済みで、現在のcritical workstreamはgrammarです。詳細planはPointを基準値、velocity換算したdayを予測値として使用します。Grammar受け入れ後はformatter、mutation preview、safe write、advanceを優先し、writeは専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。M1 roadmap再構成とgrammar受け入れは完了し、現在のcritical workstreamはtask mutation Coreから始まる操作系です。操作系planは21p、近い実装標本から暫定継承した`3p/1d`で7dの初期forecastです。`FORMAT_APPLICATION`も並行可能ですが非criticalです。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後までbacklogとして保持し、Issue #3のmulti-plan compositionはMVP後の将来構想として扱います。Writeは専用gateを満たすまで使用しません。
 
 ## Security and license
 

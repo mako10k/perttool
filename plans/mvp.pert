@@ -3,10 +3,12 @@ project PERTTOOL_MVP:
   title "perttool MVPマイルストーン計画"
   description |
     MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
-    grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pertを正とする。
-    Issue #1の受け入れ済み設計とgrammarの受け入れを入力としてM1を確定する。
-    M1後はformatter、mutation preview、safe write、advanceの操作系を最優先し、
-    recommendation実装とIssue #2は操作系を遅らせないcapacityでだけ並行する。
+    grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pert、
+    M1からM4の操作系はplans/operations.pertを正とする。
+    操作系detail planの初期Velocityは近い実装標本の3p/1dを暫定継承し、
+    resource forecastをmacro work packageへroll-upした。
+    recommendation実装とIssue #2は共有CLI・reviewerが競合するためM3後へ送り、
+    Issue #3のmulti-plan compositionは独立した将来backlogとして扱う。
   as_of 2026-07-22
   duration_unit day
   finish M6_MVP_RELEASED
@@ -92,23 +94,26 @@ gate GRAMMAR_FOUNDATION_GATE GRAMMAR_ACCEPTED -> FOUNDATION_INPUTS_ACCEPTED:
 
 task M1_ROADMAP_UPDATE FOUNDATION_INPUTS_ACCEPTED -> M1_PRODUCT_FOUNDATION_READY:
   title "操作系優先でM1実装roadmapを確定する"
-  description "formatter、mutation preview、safe write、advanceを最優先trackとして詳細化する。recommendationとIssue #2はこのtrackを遅らせない場合だけ並行化する"
+  description "plans/operations.pertへ実ファイル境界、受け入れ条件、narrow test、resource、Pointを確定した。recommendationとIssue #2は共有CLI・reviewer競合のためM3後へ送る"
   duration 1d
+  status done
   priority 100
   requires:
     DEVELOPERS 1
     REVIEWERS 1
 
 task FORMATTER_CORE M1_PRODUCT_FOUNDATION_READY -> FORMATTER_READY:
-  title "source-preserving formatterを実装する"
-  duration 4d
-  priority 100
+  title "dsl format previewを公開する"
+  description "plans/operations.pertのFORMAT_APPLICATIONとFORMAT_CLI_PREVIEW、合計3pの初期velocity forecast 1dをroll-upする。formatter Coreは実装済み"
+  duration 1d
+  priority 90
   requires:
     DEVELOPERS 1
 
 task MUTATION_PREVIEW M1_PRODUCT_FOUNDATION_READY -> MUTATION_PREVIEW_READY:
   title "task、milestone、resource編集previewを実装する"
-  duration 4d
+  description "plans/operations.pertのTASK_MUTATION_CORE、ENTITY_MUTATION_CORE、MUTATION_CLI_PREVIEW、合計9pの初期velocity forecast 3dをroll-upする"
+  duration 3d
   priority 100
   requires:
     DEVELOPERS 1
@@ -121,7 +126,8 @@ gate MUTATION_EDIT_GATE MUTATION_PREVIEW_READY -> M2_EDIT_PREVIEW_READY:
 
 task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
   title "再検査、atomic write、optimistic lockを実装する"
-  duration 3d
+  description "plans/operations.pertのSAFE_WRITE_ADAPTERとSAFE_WRITE_ACCEPTANCE、合計6pの初期velocity forecast 2dをroll-upする"
+  duration 2d
   priority 90
   requires:
     DEVELOPERS 1
@@ -129,7 +135,8 @@ task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
 
 task ADVANCE M3_SAFE_WRITE_READY -> M4_ADVANCE_READY:
   title "合流を保持するadvance plannerを実装する"
-  duration 4d
+  description "plans/operations.pertのADVANCE_PLANNERとADVANCE_CLI_ACCEPTANCE、合計6pの初期velocity forecast 2dをroll-upする"
+  duration 2d
   priority 20
   requires:
     DEVELOPERS 1
