@@ -8,25 +8,22 @@
       "tasks": 6,
       "gates": 5,
       "errors": 0,
-      "warnings": 5
+      "warnings": 6
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "2/1",
+    "precedence_makespan": "1/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "2/5",
+    "precedence_forecast": "1/5",
     "precedence_critical_tasks": [
-      "FORMATTER_ROUNDTRIP"
+      "HELP_FIXTURE_SYNC"
     ],
-    "resource_makespan": "3/1",
-    "resource_forecast": "3/5",
-    "resource_delay": "1/1",
-    "resource_arcs": [
-      "resource:FORMATTER_ROUNDTRIP:HELP_FIXTURE_SYNC"
-    ],
+    "resource_makespan": "1/1",
+    "resource_forecast": "1/5",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "FORMATTER_ROUNDTRIP",
       "HELP_FIXTURE_SYNC"
     ]
   },
@@ -34,22 +31,14 @@
     "groups": {
       "active": [],
       "ready": [
-        "FORMATTER_ROUNDTRIP",
         "HELP_FIXTURE_SYNC"
       ],
       "runnable_now": [
-        "FORMATTER_ROUNDTRIP"
+        "HELP_FIXTURE_SYNC"
       ],
       "blocked_now": [],
       "upcoming": []
     },
-    "resource_rejection": {
-      "task_id": "HELP_FIXTURE_SYNC",
-      "resource_id": "GRAMMAR_REVIEW",
-      "capacity": 1,
-      "earlier_selected_task_ids": [
-        "FORMATTER_ROUNDTRIP"
-      ]
-    }
+    "resource_rejection": null
   }
 }

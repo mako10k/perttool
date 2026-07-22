@@ -1,6 +1,53 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
-import { formatDocument } from "../dist/index.js";
+import { fileURLToPath } from "node:url";
+import { checkDocument, formatDocument } from "../dist/index.js";
+
+const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+
+function semanticValue(value) {
+  if (typeof value === "bigint") return value.toString();
+  if (Array.isArray(value)) return value.map(semanticValue);
+  if (typeof value !== "object" || value === null) return value;
+  if (
+    typeof value.digits === "bigint" &&
+    typeof value.scale === "number" &&
+    typeof value.suffix === "string"
+  ) {
+    let digits = value.digits;
+    let scale = value.scale;
+    while (scale > 0 && digits % 10n === 0n) {
+      digits /= 10n;
+      scale -= 1;
+    }
+    return { digits: digits.toString(), scale, suffix: value.suffix };
+  }
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([key]) => key !== "text" && key !== "span" && !key.endsWith("Span"))
+      .map(([key, nested]) => [key, semanticValue(nested)]),
+  );
+}
+
+function semanticField(field) {
+  return {
+    name: field.name,
+    value: semanticValue(field.value),
+    children: field.children?.map(semanticField),
+  };
+}
+
+function semanticDocument(document) {
+  return document.declarations.map((declaration) => ({
+    kind: declaration.kind,
+    id: declaration.id,
+    from: declaration.from,
+    to: declaration.to,
+    fields: declaration.fields.map(semanticField),
+  }));
+}
 
 test("source formatter normalizes lexical forms while preserving source structure", () => {
   const input = [
@@ -108,4 +155,35 @@ test("source formatter rejects invalid input without producing a candidate", () 
   assert.equal(result.formattedText, null);
   assert.deepEqual(result.edits, []);
   assert.ok(result.diagnostics.some(({ severity }) => severity === "error"));
+});
+
+test("formatter golden is idempotent and preserves the semantic AST", async () => {
+  const source = await readFile(
+    path.join(testDirectory, "fixtures/grammar/formatter-roundtrip.pert"),
+    "utf8",
+  );
+  const golden = await readFile(
+    path.join(testDirectory, "golden/grammar/formatter-roundtrip.expected.pert"),
+    "utf8",
+  );
+  const before = checkDocument(source);
+  assert.equal(
+    before.ok,
+    true,
+    before.diagnostics.map(({ code, message }) => `${code} ${message}`).join("; "),
+  );
+
+  const formatted = formatDocument(source);
+  assert.equal(formatted.ok, true);
+  assert.equal(formatted.formattedText, golden);
+
+  const after = checkDocument(formatted.formattedText);
+  assert.equal(after.ok, true);
+  assert.deepEqual(semanticDocument(after.document), semanticDocument(before.document));
+
+  const repeated = formatDocument(formatted.formattedText);
+  assert.equal(repeated.ok, true);
+  assert.equal(repeated.changed, false);
+  assert.deepEqual(repeated.edits, []);
+  assert.equal(repeated.formattedText, golden);
 });

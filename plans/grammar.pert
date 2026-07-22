@@ -102,6 +102,7 @@ task HELP_FIXTURE_SYNC PARSER_ACCEPTED -> HELP_SYNCHRONIZED:
 task FORMATTER_ROUNDTRIP FORMATTER_IMPLEMENTED -> FORMATTER_ACCEPTED:
   title "formatterのidempotenceとAST同値をgoldenで検査する"
   duration 2p
+  status done
   priority 30
   requires:
     DEVELOPERS 1

@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 2.2
+- 文書状態: Active Stage 1 / Revision 2.3
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -75,6 +75,8 @@ Exit criteria:
 
 続いて`FORMATTER_IMPLEMENT`を完了し、有効文書からUTF-16 `TextEdit`と再検査済み候補を返すpure `formatDocument` Coreを実装した。HSPACE受理をEBNFへ揃え、declaration/field順、comment、blank、decoded block text、BOM、主要line endingを保持しながら、syntax spacing、Decimal、String、TagList、block common indent、末尾newlineを正規化する。残りprecedence makespanは2p、`GRAMMAR_REVIEW` capacityを考慮したresource makespanは3p、実測velocity forecastはそれぞれ2/5dと3/5dである。`FORMATTER_ROUNDTRIP`がcriticalかつ`runnable_now`、`HELP_FIXTURE_SYNC`はreadyだがreviewer競合のresource rejectionを持ち`runnable_now`には入らない。
 
+続いて`FORMATTER_ROUNDTRIP`を完了し、全declaration/field、comment、blank、block text、非canonicalなHSPACE、Decimal、String、TagListを含むsource fixtureとcanonical goldenを追加した。整形結果のgolden一致、再整形時のeditなし、source tokenとspanを除いたexact値ベースのAST同値を自動検査する。残りprecedence/resource makespanは`HELP_FIXTURE_SYNC`の1pだけで、実測velocity forecastは`1/5d`である。同taskが唯一のready、critical、`runnable_now`となり、完了するとgrammar acceptanceが成立する。
+
 2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。Issue #1の設計受け入れ後はcontrol-plane work packageをdoneとし、macroで残るreadyかつcriticalなwork packageは`GRAMMAR_WORK_PACKAGE`だけである。Grammar受け入れ後の`M1_ROADMAP_UPDATE`で操作系のdetail planを確定するまで、formatter以降はreadyにならない。
 
 [AI工程制御設計plan](../../plans/control-plane.pert)はIssue #1の設計範囲をPointとvelocity forecastへ分解する。`VISION_REQUIREMENTS`と`RECOMMENDATION_MODEL`に加え、`RANKING_POLICY`でselection horizon、完全tie-break、joint-feasibleなrecommended setを[Ranking Policy仕様](../specs/recommendation-ranking.md)、`REASON_CODE_TAXONOMY`でstable code、effect/role、typed fact category、entity referenceを[Reason Taxonomy仕様](../specs/recommendation-reasons.md)、`STRUCTURED_EXPLANATION_MODEL`でtyped fact、制限付きexpression、comparison、decision trace、description projectionを[Structured Explanation仕様](../specs/recommendation-explanation.md)、`INTERFACE_CONTRACT`でCore type、complete JSON、text summary、`NextResult.v3` migrationを[Recommendation Interface Contract仕様](../specs/recommendation-interface.md)、`HUMAN_OVERRIDE_CONTRACT`でfeasible replacement、human reason、Git audit artifact、single-use、再解析を[Recommendation Human Override Contract仕様](../specs/recommendation-override.md)へ確定した。`NORMATIVE_EXAMPLES`でcritical対priority、unlock、gate近傍、parallel recommendation、selected/active-only blocker、empty set、構造化description、human override境界を[Recommendation規範例](../examples/recommendation.md)、`PROCESS_MIGRATION`でCoreからv3 publication、shadow evaluation、normal authority、override applyまでのgateを[Recommendation実装・自己利用migration](recommendation-migration.md)へ固定した。最後の`DESIGN_REVIEW`は[設計受け入れ記録](recommendation-design-review.md)で横断整合を確認して完了した。全17pがdoneで、残りresource makespanとvelocity forecastは0であり、ready taskはない。Calibration時点で未完了だった`DESIGN_REVIEW`の1pは次回標本へ送る。Check/analyze/next projectionは[control-plane golden](../../test/golden/self-use/control-plane.expected.json)へ固定する。
@@ -96,12 +98,12 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 
 | Plan | Closed sample | Completed Point | Active day | Velocity | Remaining forecast |
 | --- | --- | ---: | ---: | --- | --- |
-| `grammar.pert` | `BLOCK_TEXT_SPANS`、`FORMATTER_IMPLEMENT` | 5p | 1d | `5p/1d` | 3p = `3/5d` |
+| `grammar.pert` | `BLOCK_TEXT_SPANS`、`FORMATTER_IMPLEMENT` | 5p | 1d | `5p/1d` | 1p = `1/5d` |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。両標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装とcontrol-plane設計はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
-Grammarは前回calibration後に2 task、5pが完了したため再calibrationし、`5p/1d`を再確認した。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
+Grammarの`FORMATTER_ROUNDTRIP` 2pは前回calibration後の新規標本がまだ1 taskのため、Velocityを`5p/1d`に維持して次回calibrationへ送る。Control-planeの`DESIGN_REVIEW` 1pも新規標本がまだ1 taskのため、次回calibrationへ送る。
 
 この段階で許可する操作:
 
@@ -289,6 +291,7 @@ Stage 1開始時の証跡:
 - field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
 - block text/span gate: common indent、paragraph、tab/末尾space、leading/trailing trivia、UTF-16 marker/content spanをparser testと専用fixtureへ固定する
 - formatter Core gate: HSPACE入力、source構造保持、lexical normalization、UTF-16 non-overlap edit、invalid input拒否をformatter testへ固定する
+- formatter round-trip gate: 全fieldのgolden一致、idempotence、exact値ベースのAST同値をformatter testへ固定する
 - control-plane planning gate: Issue #1の設計17p完了、残り0p、ready taskなし、設計受け入れ記録をgoldenと文書へ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、3 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

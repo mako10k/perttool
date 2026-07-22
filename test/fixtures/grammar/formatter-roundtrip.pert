@@ -1,0 +1,58 @@
+# formatter round-trip source
+project   FORMATTER_ROUNDTRIP:
+  version   0001
+  title "\u30d5\u30a9\u30fc\u30de\u30c3\u30bf\u30fc"
+  description   |
+      first line
+        nested
+
+      final 😀
+  as_of 2026-07-22T09:00:00+09:00
+  duration_unit point
+  velocity   010.0p/005.00d
+  finish DONE
+  critical_epsilon 000.00p
+  target_duration 020.0p
+
+resource  REVIEWERS:
+  title "reviewers"
+  # keep this field comment
+  description "exclusive grammar review"
+  capacity   0001
+  tags [ review , "grammar team" ]
+
+milestone NOW:
+  title "now"
+  description "current frontier"
+  state reached
+  tags [ current ]
+
+milestone REVIEWED:
+  title "reviewed"
+
+milestone DONE:
+  title "done"
+
+task   REVIEW  NOW   ->  REVIEWED:
+  title "review every task field"
+  description "task description"
+  estimate:
+    optimistic   01.00p
+    most_likely 002.0p
+    pessimistic   003p
+  status blocked
+  priority   0040
+  requires:
+    REVIEWERS   01
+  owner "team-a"
+  tags [ parser,"field matrix" ]
+  blocked_reason "\u5916\u90e8\u627f\u8a8d"
+  source "issue:FORMAT-1"
+
+task COMPLETE REVIEWED -> DONE:
+  title "cover duration"
+  duration   01.0p
+
+gate  RELEASE_GATE  REVIEWED  ->   DONE:
+  reason   |
+      review completion is required

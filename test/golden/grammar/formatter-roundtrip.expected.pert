@@ -1,0 +1,58 @@
+# formatter round-trip source
+project FORMATTER_ROUNDTRIP:
+  version 1
+  title "フォーマッター"
+  description |
+    first line
+      nested
+
+    final 😀
+  as_of 2026-07-22T09:00:00+09:00
+  duration_unit point
+  velocity 10p/5d
+  finish DONE
+  critical_epsilon 0p
+  target_duration 20p
+
+resource REVIEWERS:
+  title "reviewers"
+  # keep this field comment
+  description "exclusive grammar review"
+  capacity 1
+  tags [review, "grammar team"]
+
+milestone NOW:
+  title "now"
+  description "current frontier"
+  state reached
+  tags [current]
+
+milestone REVIEWED:
+  title "reviewed"
+
+milestone DONE:
+  title "done"
+
+task REVIEW NOW -> REVIEWED:
+  title "review every task field"
+  description "task description"
+  estimate:
+    optimistic 1p
+    most_likely 2p
+    pessimistic 3p
+  status blocked
+  priority 40
+  requires:
+    REVIEWERS 1
+  owner "team-a"
+  tags [parser, "field matrix"]
+  blocked_reason "外部承認"
+  source "issue:FORMAT-1"
+
+task COMPLETE REVIEWED -> DONE:
+  title "cover duration"
+  duration 1p
+
+gate RELEASE_GATE REVIEWED -> DONE:
+  reason |
+    review completion is required
