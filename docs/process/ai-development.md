@@ -173,7 +173,7 @@ Parallel trialは次をすべて満たした場合に成功とする。
 - repository全checkと再解析後のplan goldenが成功する
 - commit履歴がAgent成果とintegration changeのlogical unitを保つ
 
-Agentが失敗、timeout、scope逸脱した場合は、対象worktreeとbranchを保持してstatus/diffを確認する。Force-remove、force-delete、未レビューcommitの自動統合を行わない。成功後にcleanupする場合も、worktreeがcleanでbranch commitがmainへ統合済みであることを確認し、検証済み絶対pathに対する`git worktree remove`と、通常の`git branch -d`だけを使用する。Cherry-pick後はcommit hashが変わるためancestor判定だけに依存せず、`git cherry main agent/<task-id>`の対象commitが`-`であることと、main側の実diffを確認してpatch equivalenceを検証する。
+Agentが失敗、timeout、scope逸脱した場合は、対象worktreeとbranchを保持してstatus/diffを確認する。Force-remove、force-delete、未レビューcommitの自動統合を行わない。成功後にcleanupする場合も、worktreeがcleanでbranch commitがmainへ統合済みであることを確認し、検証済み絶対pathに対する`git worktree remove`と、通常の`git branch -d`だけを使用する。Cherry-pick後はcommit hashが変わるためancestor判定だけに依存せず、`git cherry main agent/<task-id>`の対象commitが`-`であることと、main側の実diffを確認してpatch equivalenceを検証する。この場合は通常の`git branch -d`がancestry上の未mergeとして削除を拒否し得る。`-D`へ自動切り替えせず、明示的な削除許可がなければsource branchを保持する。
 
 ### 6.6 2026-07-22 trial
 
@@ -181,7 +181,7 @@ Agentが失敗、timeout、scope逸脱した場合は、対象worktreeとbranch�
 
 Integration ownerは、reason taxonomyのrecommended taskに因果ranking reasonを必須化し、両仕様の規範参照、requirements、basic design、plan、goldenを調整した。`npm run check`は90 test、21 Markdown、3 self-use plan、link/package checkを含めて成功した。
 
-このtrialで、Agentの完了時間が異なってもmainと他worktreeをcleanに保てること、file conflictを防げることを確認した。一方で、仕様間のsemantic consistency、shared traceability、plan更新は自動的に解決しない。これらは引き続integration ownerの単一責務とする。
+このtrialで、Agentの完了時間が異なってもmainと他worktreeをcleanに保てること、file conflictを防げることを確認した。Patch equivalenceとclean statusの確認後、2worktreeは削除した。Source branchはcherry-pickによりancestry上は未mergeのため通常削除が拒否され、force-deleteせず保持した。一方で、仕様間のsemantic consistency、shared traceability、plan更新は自動的に解決しない。これらは引き続integration ownerの単一責務とする。
 
 ## 7. Evolution rule
 
