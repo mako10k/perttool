@@ -187,6 +187,7 @@ export interface MutationOptions extends CheckOptions {
 
 export interface MutationResult {
   readonly ok: boolean;
+  readonly documentId: string | null;
   readonly changed: boolean;
   readonly originalDigest: string;
   readonly updatedDigest: string | null;

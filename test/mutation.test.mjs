@@ -125,6 +125,7 @@ test("task add appends one canonical declaration and preserves source trivia", (
   );
 
   assert.equal(result.ok, true);
+  assert.equal(result.documentId, "ADD");
   assert.equal(result.changed, true);
   assert.equal(result.edits.length, 1);
   assert.equal(result.edits[0].startOffset, input.length);

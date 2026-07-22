@@ -27,6 +27,7 @@ function digest(text: string): string {
 
 function failure(
   originalDigest: string,
+  documentId: string | null,
   diagnostics: readonly Diagnostic[],
   maximum: number,
   alreadyTruncated: boolean,
@@ -34,6 +35,7 @@ function failure(
   const limited = limitDiagnostics(sortDiagnostics(diagnostics), maximum);
   return {
     ok: false,
+    documentId,
     changed: false,
     originalDigest,
     updatedDigest: null,
@@ -147,10 +149,11 @@ function planAllMutationEdits(
   return { edits: mergeBatchInsertions(edits) };
 }
 
-export function planMutation(
+function planMutationRequest(
   text: string,
-  mutation: Mutation,
+  mutation: unknown,
   options: MutationOptions = {},
+  batchOnly = false,
 ): MutationResult {
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
   const originalDigest = digest(text);
@@ -158,16 +161,31 @@ export function planMutation(
   if (!original.ok) {
     return failure(
       originalDigest,
+      original.documentId,
       original.diagnostics,
       maximum,
       original.diagnosticsTruncated,
     );
   }
 
-  const planned = planAllMutationEdits(text, original.document, mutation);
+  if (batchOnly && runtimeKind(mutation) !== "batch") {
+    return failure(
+      originalDigest,
+      original.documentId,
+      [
+        ...original.diagnostics,
+        mutationDiagnostic("PTMUT-301", "mutation applyはtop-level batch requestを必要とします"),
+      ],
+      maximum,
+      original.diagnosticsTruncated,
+    );
+  }
+
+  const planned = planAllMutationEdits(text, original.document, mutation as Mutation);
   if (planned.diagnostic !== undefined) {
     return failure(
       originalDigest,
+      original.documentId,
       [...original.diagnostics, planned.diagnostic],
       maximum,
       original.diagnosticsTruncated,
@@ -180,6 +198,7 @@ export function planMutation(
     if (runtimeKind(mutation) !== "batch") throw error;
     return failure(
       originalDigest,
+      original.documentId,
       [
         ...original.diagnostics,
         mutationDiagnostic("PTMUT-301", "batch mutationのTextEdit rangeが競合しています"),
@@ -193,6 +212,7 @@ export function planMutation(
   if (!candidate.ok) {
     return failure(
       originalDigest,
+      original.documentId,
       candidate.diagnostics,
       maximum,
       candidate.diagnosticsTruncated,
@@ -201,6 +221,7 @@ export function planMutation(
 
   return {
     ok: true,
+    documentId: original.documentId,
     changed: updatedText !== text,
     originalDigest,
     updatedDigest: digest(updatedText),
@@ -217,4 +238,20 @@ export function planMutation(
     diagnostics: candidate.diagnostics,
     diagnosticsTruncated: candidate.diagnosticsTruncated,
   };
+}
+
+export function planMutation(
+  text: string,
+  mutation: Mutation,
+  options: MutationOptions = {},
+): MutationResult {
+  return planMutationRequest(text, mutation, options);
+}
+
+export function planBatchMutation(
+  text: string,
+  mutation: unknown,
+  options: MutationOptions = {},
+): MutationResult {
+  return planMutationRequest(text, mutation, options, true);
 }

@@ -127,6 +127,7 @@ Core result:
 ```ts
 interface MutationResult {
   ok: boolean;
+  documentId: string | null;
   changed: boolean;
   originalDigest: string;
   updatedDigest: string | null;

@@ -312,6 +312,7 @@ Mutation request、target解決、source-preserving TextEdit、comment所有、c
 ```text
 [--diff]
 [--write [--expect-digest <digest>] | --out <path>]
+[--max-diagnostics <integer>]
 [--warnings-as-errors]
 [--format text|json]
 [--color auto|always|never]
@@ -334,7 +335,8 @@ Rules:
 
 ```text
 perttool mutation apply <file> --request <json-file|->
-  [--diff] [--format text|json]
+  [--diff] [--max-diagnostics <integer>] [--warnings-as-errors]
+  [--format text|json] [--color auto|always|never]
 ```
 
 `--request -`は`<file>`がstdinでない場合だけ使用できる。Request JSONは`{ "kind": "batch", "mutations": [...] }`とし、nested batchと同じentity IDへの複数変更を拒否する。Filesystem write optionは他mutation commandと同じsafe-write gateまで公開しない。
@@ -525,6 +527,7 @@ Section順は`ACTIVE`、`RUNNABLE NOW`、`READY / WAITING RESOURCE`、`BLOCKED N
 ### 10.6 mutation and conversion
 
 - preview default: candidate documentそのもの
+- mutationのdefault text previewはstdoutへcandidate、stderrへ`PREVIEW <operation> changed=<boolean> original_digest=<digest> updated_digest=<digest>`を返す
 - `--diff`: unified diff、path labelはinput operandとcandidate
 - `--write`/`--out`: stdout empty、stderrにtargetとdigest
 - import default: candidate DSL

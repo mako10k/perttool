@@ -7,7 +7,7 @@ import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
 import { analyzeDocument } from "./application/analyze.js";
 import { checkDocument } from "./application/check.js";
-import { planMutation } from "./application/mutate.js";
+import { planBatchMutation, planMutation } from "./application/mutate.js";
 import { selectNextTasks } from "./application/next.js";
 import type { HelpLevel } from "./help/registry.js";
 import { getHelp } from "./help/registry.js";
@@ -952,14 +952,6 @@ async function runMutation(
         format === "json",
       );
     }
-    if (
-      request === null ||
-      typeof request !== "object" ||
-      Array.isArray(request) ||
-      (request as Record<string, unknown>)["kind"] !== "batch"
-    ) {
-      throw new UsageError("mutation apply requires a batch request object");
-    }
     mutation = request as Mutation;
   } else {
     sourceOperand = parsed.positionals[0] ?? "";
@@ -983,11 +975,14 @@ async function runMutation(
       format === "json",
     );
   }
-  const result = planMutation(input.text, mutation, {
+  const mutationOptions = {
     maxDiagnostics,
     originalLabel: source,
     updatedLabel: "candidate",
-  });
+  };
+  const result = resource === "mutation"
+    ? planBatchMutation(input.text, mutation, mutationOptions)
+    : planMutation(input.text, mutation, mutationOptions);
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
     (result.diagnosticsTruncated ||
@@ -999,18 +994,23 @@ async function runMutation(
       tool_version: TOOL_VERSION,
       operation,
       ok,
-      document_id: null,
+      document_id: result.documentId,
       source,
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
       diagnostics_truncated: result.diagnosticsTruncated,
-      ...mutationResultJson(result, ok),
+      ...mutationResultJson(result, result.ok),
     });
   } else {
     if (ok) {
       process.stdout.write(
         parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
       );
+      if (!parsed.flags.has("diff")) {
+        process.stderr.write(
+          `PREVIEW ${operation} changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+        );
+      }
     }
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);

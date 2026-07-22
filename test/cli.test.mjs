@@ -463,6 +463,10 @@ test("unknown command is a usage error", () => {
 });
 
 test("task mutation commands expose candidate, diff, JSON, and stdin previews", () => {
+  const actionHelp = run(["task", "add", "--help"]);
+  assert.equal(actionHelp.status, 0, actionHelp.stderr);
+  assert.match(actionHelp.stdout, /perttool task add <file> <id> <from> <to>/);
+
   const defaultPreview = run([
     "task", "set", minimalPath, "WORK", "--title", "default preview", "--color=never",
   ]);
@@ -470,6 +474,10 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
   assert.match(defaultPreview.stdout, /^project MINIMAL:/);
   assert.match(defaultPreview.stdout, /title "default preview"/);
   assert.doesNotMatch(defaultPreview.stdout, /^--- /m);
+  assert.match(
+    defaultPreview.stderr,
+    /^PREVIEW task\.set changed=true original_digest=sha256:[0-9a-f]{64} updated_digest=sha256:[0-9a-f]{64}$/m,
+  );
 
   const added = run([
     "task", "add", minimalPath, "EXTRA", "NOW", "DONE",
@@ -479,6 +487,7 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
   const addedJson = JSON.parse(added.stdout);
   assert.equal(addedJson.schema_version, "Perttool.MutationResult.v1");
   assert.equal(addedJson.operation, "task.add");
+  assert.equal(addedJson.document_id, "MINIMAL");
   assert.equal(addedJson.write.mode, "preview");
   assert.equal(addedJson.write.written, false);
   assert.match(addedJson.updated_text, /task EXTRA NOW -> DONE:/);
@@ -645,10 +654,22 @@ test("mutation apply supports request or document stdin but rejects a shared std
   const nestedJson = JSON.parse(nested.stdout);
   assert.equal(nestedJson.diagnostics[0].code, "PTMUT-301");
   assert.equal(nestedJson.updated_text, null);
+
+  const nonBatch = run([
+    "mutation", "apply", minimalPath, "--request", "-", "--format=json",
+  ], { input: JSON.stringify({ kind: "task.finish", id: "WORK" }) });
+  assert.equal(nonBatch.status, 1);
+  const nonBatchJson = JSON.parse(nonBatch.stdout);
+  assert.equal(nonBatchJson.diagnostics[0].code, "PTMUT-301");
+  assert.equal(nonBatchJson.updated_text, null);
 });
 
 test("mutation preview rejects writes and suppresses failed candidates", () => {
-  for (const option of [["--write"], ["--out", "other.pert"]]) {
+  for (const option of [
+    ["--write"],
+    ["--out", "other.pert"],
+    ["--expect-digest", `sha256:${"0".repeat(64)}`],
+  ]) {
     const result = run([
       "task", "set", minimalPath, "WORK", "--title", "updated",
       ...option, "--format=json",
@@ -682,8 +703,9 @@ test("mutation preview rejects writes and suppresses failed candidates", () => {
   assert.equal(strict.status, 1);
   const strictJson = JSON.parse(strict.stdout);
   assert.equal(strictJson.ok, false);
-  assert.equal(strictJson.updated_text, null);
-  assert.equal(strictJson.diff, null);
+  assert.match(strictJson.updated_text, /status done/);
+  assert.match(strictJson.diff, /^--- docs\/examples\/minimal\.pert/m);
+  assert.ok(strictJson.edits.length > 0);
 
   const limited = run([
     "task", "set", "test/fixtures/invalid/multiple-syntax-errors.pert", "WORK",
