@@ -166,7 +166,9 @@ task MERMAID_EXPORT MERMAID_PROFILE_DEFINED -> MERMAID_EXPORT_READY:
 
 task MERMAID_ROUNDTRIP MERMAID_EXPORT_READY -> M5_MERMAID_ROUNDTRIP_READY:
   title "lossless importとround-trip検査を実装する"
+  description "importMermaidとdag importでfail-closed profile復元、plain loss report、strict loss、exclusive out、Core/CLI/E2E round-tripを実装した"
   duration 5d
+  status done
   priority 10
   requires:
     DEVELOPERS 1

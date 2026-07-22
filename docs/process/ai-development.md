@@ -110,7 +110,7 @@ git diff --check
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装され、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、`M1_ROADMAP_UPDATE`、formatter/mutation preview、safe write、[Mermaid profile設計](../specs/mermaid-profile.md)、Mermaid export、advance Core/CLIは完了し、Stage 3で自己利用している。操作系詳細planは全24pが完了し、ready taskはない。Macroの残るprecedence/resource makespanはともに7dで、唯一のreadyかつ`runnable_now`なcritical work packageは`MERMAID_ROUNDTRIP`である。Recommendation実装とIssue #2はM3後に詳細化可能だが、macro planへwork packageとresourceを追加するまでは着手順を推測しない。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、`M1_ROADMAP_UPDATE`、formatter/mutation preview、safe write、[Mermaid profile設計](../specs/mermaid-profile.md)、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。操作系詳細planは全24pが完了し、ready taskはない。Macroの残るprecedence/resource makespanはともに2dで、唯一のreadyかつ`runnable_now`なcritical work packageは`RELEASE_E2E`である。Recommendation実装とIssue #2はM3後に詳細化可能だが、macro planへwork packageとresourceを追加するまでは着手順を推測しない。
 
 ### 5.1 Recommendation導入後のtask selection
 

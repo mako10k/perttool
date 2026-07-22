@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 3 / Revision 2.14
+- 文書状態: Active Stage 3 / Revision 2.15
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -110,7 +110,9 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 最後に`ADVANCE_CLI_ACCEPTANCE`を完了した。`dag advance`は既定candidate、`--diff`、advance固有JSON、削除task/gate/milestone一覧、frontier/readyの前後比較を公開し、他のediting commandと同じatomic `--write`、exclusive `--out`、`--expect-digest`へ接続した。Partial joinのpreviewからcheck/analyze/next、一時copyへのdigest付きwrite、再実行no-opまでをE2Eへ固定し、全158 test、文書、4自己利用plan、link、package検査を通した。`plans/operations.pert`とmacro `ADVANCE`はpreview diffとinitial digestを確認してから`task finish --write`した。操作系の同日完了標本は全24p/1 active day、実測Velocityは`24p/1d`、残作業とforecastは0である。Macroの残るprecedence/resource makespanはともに7d、resource delayは0dとなり、唯一のreadyかつ`runnable_now`なprecedence/schedule critical work packageは`MERMAID_ROUNDTRIP`である。このgate成立によりStage 3へ移行した。
 
-Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`とStage 3へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のprecedence/schedule CPと次のrunnable work packageは`MERMAID_ROUNDTRIP`である。Issue #3はMVP外の将来設計のままとする。
+続いて`MERMAID_ROUNDTRIP`を完了した。`importMermaid`と`dag import --from mermaid`はprofileのcanonical JSON、record順、metadata/projection digest、意味model、projection対応をfail-closedで検査し、canonical DSLを復元する。Plain inputは限定subsetだけをstable generated IDと`PTCNV-201`から`PTCNV-205`のloss report付きで変換し、実行可能directiveとraw HTMLを拒否する。Strict loss、exclusive `--out`、Core/CLI/package parity、PERT/velocity保持、改変拒否をunit/CLI/E2Eへ固定し、全167 test、文書、4自己利用plan、link、package検査を通した。`plans/mvp.pert`はpreview diffと`sha256:8de200ead6689709245d94c1473804cd28dca361397193fab8f8f1ea979acb96`を確認して`task finish --write`した。Macroの残るprecedence/resource makespanはともに2d、resource delayは0dで、唯一のreadyかつ`runnable_now`なprecedence/schedule critical work packageは`RELEASE_E2E`である。Mermaid taskはday見積りのmacro標本なので、Point基準の操作系Velocityは`24p/1d`のままとする。
+
+Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerをMVP release検証と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`とStage 3へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のprecedence/schedule CPと次のrunnable work packageは`RELEASE_E2E`である。Issue #3はMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
 
@@ -189,7 +191,7 @@ Stage 1で禁止した操作:
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
-- `MERMAID_PROFILE`、`MERMAID_EXPORT`、`ADVANCE`は完了した。現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`MERMAID_ROUNDTRIP`で、操作系detailに未完了taskはない
+- `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RELEASE_E2E`で、操作系detailに未完了taskはない
 - recommendation実装とIssue #2は`M3_SAFE_WRITE_READY`後に詳細化可能だが、macro planへ追加するまでは着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 

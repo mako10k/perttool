@@ -120,7 +120,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとするStage 3のpreview-first advance自己利用を行っています。操作系24pはすべて完了し、実測Velocityは`24p/1d`です。Macroの残るprecedence/resource makespanはともに7d、resource delayは0dで、唯一のreadyかつ`runnable_now`なcritical work packageは`MERMAID_ROUNDTRIP`です。Day見積りのMermaid macro taskは操作系のPoint標本へ混ぜません。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後に詳細化可能ですが、macro planへ追加するまでは着手順を推測しません。Issue #3のmulti-plan compositionはMVP後の将来構想です。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとするStage 3のpreview-first advance自己利用を行っています。操作系24pはすべて完了し、実測Velocityは`24p/1d`です。Mermaid round-trip完了後のmacro残存precedence/resource makespanはともに2d、resource delayは0dで、唯一のreadyかつ`runnable_now`なcritical work packageは`RELEASE_E2E`です。Day見積りのMermaid macro taskは操作系のPoint標本へ混ぜません。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後に詳細化可能ですが、macro planへ追加するまでは着手順を推測しません。Issue #3のmulti-plan compositionはMVP後の将来構想です。
 
 ## Security and license
 

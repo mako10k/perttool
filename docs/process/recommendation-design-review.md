@@ -58,6 +58,5 @@ Issue #1の設計を受け入れる。要件、規範仕様、基本設計、規
 - MIG-01からMIG-08の実装
 - Issue #2のprovider別AI Agent Guidance Registry設計・実装
 - Issue #3のbacklog階層・multi-plan composition設計
-- Mermaid lossless importとround-trip検査
 
 これらは未実装または将来設計であり、Issue #1のrecommendation契約を受け入れるうえでの設計blockerではない。
