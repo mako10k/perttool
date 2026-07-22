@@ -147,6 +147,7 @@ task NORMATIVE_EXAMPLES VALIDATION_INPUT_READY -> NORMATIVE_EXAMPLES_DEFINED:
   title "競合ケースのnormative exampleとtest観点を定義する"
   description "critical対priority、resource競合、parallel推奨、gate近傍、全blockedと、なぜAでBではないかのdecision traceを含める"
   duration 2p
+  status done
   priority 50
   requires:
     DESIGNERS 1

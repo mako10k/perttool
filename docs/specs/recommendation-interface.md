@@ -630,6 +630,8 @@ Actual resultは`result_decision`、全ready task decision、step、fact、compa
 
 ### `NORMATIVE_EXAMPLES`
 
+[Recommendation規範例](../examples/recommendation.md)で次のgolden/test観点を固定した。
+
 - v3 complete JSON goldenとtext summary golden
 - critical対priority、parallel recommended、horizon外allowed
 - selected blockerとactive-only blockerを区別するresource conflict

@@ -6,8 +6,9 @@
 - [parallel.pert](parallel.pert): dependency上は並行可能なtask、capacity 2の担当枠、capacity 1の排他設備を含むDAG
 - [advance-partial-before.pert](advance-partial-before.pert): done branchとactive branchが未到達milestoneへ合流するadvance前のDAG
 - [advance-partial-after.pert](advance-partial-after.pert): 過去edgeだけを削除し、合流に必要なdone taskを保持したcanonical advance結果
+- [recommendation.md](recommendation.md): AI工程制御のranking、resource conflict、構造化説明、human overrideの規範caseとtest観点
 
-これらはgrammar version 1、semantics version 1、analysis version 1の規範サンプルであり、parser/analyzer実装後は同じ内容をfixture/golden testから検証する。
+`.pert` fileはgrammar version 1、semantics version 1、analysis version 1の規範サンプルである。`recommendation.md`は未実装のRecommendation interface version 1へ向けた規範caseであり、実装sliceで同じ内容をfixture/golden testへ展開する。
 
 `pert-estimate.pert`では`DESIGN`のexpectedは`13/6d`、varianceは`1/4d^2`である。`BUILD`を含むprecedence makespanは`31/6d`、代表critical task列は`[DESIGN, BUILD]`になる。
 

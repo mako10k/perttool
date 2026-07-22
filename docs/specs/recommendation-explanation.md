@@ -504,11 +504,13 @@ Description keyの追加はDescription registryのminor-compatibleな更新と�
 
 ### `NORMATIVE_EXAMPLES`
 
+[Recommendation規範例](../examples/recommendation.md)で次を固定した。
+
 - critical対priority、resource conflict、parallel recommended、horizon外allowed
 - active allocationだけのrejectでtask winnerを捏造しないcase
 - decisive ruleより前のtieと後のcontributing rule
 - description key/parameterからの派生text
-- truncated projectionとcomplete Core traceの分離
+- summary projectionとcomplete Core traceの分離
 
 ### [`HUMAN_OVERRIDE_CONTRACT`](recommendation-override.md)（確定）
 

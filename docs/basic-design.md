@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 1.0
+- 文書状態: Draft 1.1
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
@@ -12,6 +12,7 @@
 - Recommendation explanation: [specs/recommendation-explanation.md](specs/recommendation-explanation.md)
 - Recommendation interface: [specs/recommendation-interface.md](specs/recommendation-interface.md)
 - Recommendation override: [specs/recommendation-override.md](specs/recommendation-override.md)
+- Recommendation examples: [examples/recommendation.md](examples/recommendation.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
@@ -475,6 +476,8 @@ upcoming の explanation は、直接の `from` milestone と、その milestone
 Recommendationは既存classificationと`runnable_now`を置き換えず、新規start actionへのdecision authorityとして[Recommendation Semantics仕様](specs/recommendation.md)で分離する。Conceptual recommended setはready taskのsubsetであり、active allocationを含めてjointly resource-feasibleでなければならない。`recommended`、`allowed`、`deferred`、`discouraged`はready taskだけへ適用し、`blocked`をrecommendation tierとして使用しない。
 
 [Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)はactual ready taskからselection horizonとrecommended setを決定的に選び、[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)はset/tierの理由をstable code、typed fact、entity referenceへ分解する。[Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)はtyped fact、制限付きexpression、comparison、decision trace、description projectionを接続し、[Recommendation Interface Contract仕様](specs/recommendation-interface.md)はCore type、complete JSON、text summary、`NextResult.v3` migrationを固定する。[Recommendation Human Override Contract仕様](specs/recommendation-override.md)はnormal resultを変更せず、feasible replacement、human reason、audit artifact、再解析を分離する。現行実装は`NextResult.v2`のままであり、実装sliceがv3を一括導入するまで`runnable_now`の意味や既定sortを変更しない。
+
+競合境界と実装testへの入力は[Recommendation規範例](examples/recommendation.md)を使用する。Critical対priority、parallel recommendation、selected/active-only resource blocker、empty set、exact description、override必要性を同じcase IDでCore、JSON、text、override validationへ展開し、例の抜粋をcomplete resultとして扱わない。
 
 ### 9.4 mutation
 

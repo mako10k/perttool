@@ -487,7 +487,9 @@ Result:
 
 ### `NORMATIVE_EXAMPLES`
 
-- allowed replacement、deferred replacement、discouraged risk acceptance
+[Recommendation規範例](../examples/recommendation.md)で次を固定した。
+
+- allowed replacement、deferred replacement、将来modelでのdiscouraged risk acceptance
 - recommended subsetとadditional allowedでoverride不要となるcase
 - non-ready、active-only conflict、stale digestのreject
 - normal traceとoverride traceを分離したgolden artifact
