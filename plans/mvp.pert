@@ -147,7 +147,9 @@ task ADVANCE M3_SAFE_WRITE_READY -> M4_ADVANCE_READY:
 
 task MERMAID_PROFILE M3_SAFE_WRITE_READY -> MERMAID_PROFILE_DEFINED:
   title "Mermaid lossless metadata schemaを確定する"
+  description "Perttool.MermaidProfile.v1のsemantic record、canonical JSON、両digest、fail-closed importをdocs/specs/mermaid-profile.mdと規範例へ固定した"
   duration 2d
+  status done
   priority 20
   requires:
     DEVELOPERS 1

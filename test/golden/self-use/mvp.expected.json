@@ -8,24 +8,20 @@
       "tasks": 11,
       "gates": 6,
       "errors": 0,
-      "warnings": 8
+      "warnings": 9
     }
   },
   "analyze": {
-    "precedence_makespan": "12/1",
+    "precedence_makespan": "10/1",
     "precedence_critical_tasks": [
-      "MERMAID_PROFILE",
       "MERMAID_EXPORT",
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "12/1",
+    "resource_makespan": "10/1",
     "resource_delay": "0/1",
-    "resource_arcs": [
-      "resource:MERMAID_PROFILE:ADVANCE"
-    ],
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "MERMAID_PROFILE",
       "MERMAID_EXPORT",
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
@@ -35,15 +31,15 @@
     "groups": {
       "active": [],
       "ready": [
-        "MERMAID_PROFILE",
-        "ADVANCE"
+        "ADVANCE",
+        "MERMAID_EXPORT"
       ],
       "runnable_now": [
-        "MERMAID_PROFILE"
+        "ADVANCE",
+        "MERMAID_EXPORT"
       ],
       "blocked_now": [],
       "upcoming": [
-        "MERMAID_EXPORT",
         "MERMAID_ROUNDTRIP",
         "RELEASE_E2E"
       ]

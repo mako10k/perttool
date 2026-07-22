@@ -7,6 +7,7 @@
 ### Added
 
 - `dsl format`とtask/milestone/resource/batch mutationのatomic `--write`、exclusive `--out`、`--expect-digest`
+- `Perttool.MermaidProfile.v1`のsemantic record、integrity digest、fail-closed import設計契約と規範artifact
 
 ## [0.1.0-alpha.1] - 2026-07-21
 

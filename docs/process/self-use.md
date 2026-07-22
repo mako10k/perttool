@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 2 / Revision 2.11
+- 文書状態: Active Stage 2 / Revision 2.12
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -102,7 +102,9 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`SAFE_WRITE_ACCEPTANCE`を完了した。`dsl format`とtask/milestone/resource/batch mutationは既定previewを維持しながら、明示的な`--write`、exclusive `--out`、`--expect-digest`を共通safe-write pathへ接続した。No-op writeはlock検査後にfileを置換せず`written=false`、競合はstable `PTIO-501` reasonとexit 5で返す。一時copyだけを使うCLI/E2Eでrace・symlink・既存target・warning/invalid failure時の原本保持、grammar planのexact round-trip、write後のcheck/analyze/nextを固定した。Gate成立後、`plans/operations.pert`の完了状態はpreview diffを確認してからexpected digest付き`--write`で初めて正本へ反映した。操作系標本は累計18p/1 active day、実測Velocityは`18p/1d`、残るadvanceは6p、forecastは`1/3d`である。Macro `WRITE_SAFETY`はdone、残りmakespanは12dとなり、`MERMAID_PROFILE`がprecedence/schedule criticalかつ`runnable_now`、`ADVANCE`はreadyだが`REVIEWERS`競合で待機する。
 
-Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のmacro CPは`MERMAID_PROFILE`である。Issue #3はMVP外の将来設計のままとする。
+続いて`MERMAID_PROFILE`を完了した。[Mermaid Profile仕様](../specs/mermaid-profile.md)でdefault適用後の完全なsemantic record、canonical JSON、metadata/projection SHA-256、stable node/edge mapping、fail-closed import、plain importのloss code、security境界を固定した。[規範例](../examples/mermaid-profile.md)のsource DSL、record count、canonical JSON、両digestをcontract testへ固定し、helpは設計済みprofileと未実装commandを区別する。`plans/mvp.pert`はpreview diffとexpected digestを確認してから`task finish --write`で更新した。残りprecedence/resource makespanは10d、resource delayは0dである。`ADVANCE`と`MERMAID_EXPORT`はともにreadyかつ`runnable_now`だが、precedence/schedule criticalなのは`MERMAID_EXPORT`である。
+
+Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のmacro CPは`MERMAID_EXPORT`である。Issue #3はMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
 
@@ -181,7 +183,7 @@ Stage 1で禁止した操作:
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation previewとsafe writeは完了し、Stage 2へ移行した
-- 現在のmacro CPかつrunnable work packageは`MERMAID_PROFILE`である。Detail `ADVANCE_PLANNER`はreadyだが、macro `ADVANCE`は`REVIEWERS`競合でrunnableではない
+- `MERMAID_PROFILE`は完了し、現在のmacro CPかつrunnable work packageは`MERMAID_EXPORT`である。`ADVANCE`とdetail `ADVANCE_PLANNER`もrunnableだがcriticalではない
 - recommendation実装とIssue #2は`M3_SAFE_WRITE_READY`後に詳細化可能だが、macro planへ追加するまでは着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -337,5 +339,6 @@ Stage 1開始時の証跡:
 - safe-write adapter gate: raw-byte digest、symlink/非regular file拒否、expected/stale digest、mode継承、exclusive temporary、fsync、atomic replace、新規output同時writer拒否、再検査、cleanupをwrite-safety testへ固定する
 - safe-write CLI gate: formatter、entity/batch mutationの`--write`/`--out`/`--expect-digest`、no-op、競合reason、失敗時原本保持、grammar temporary-copy round-trip、write後再解析をCLI/E2E/self-use testへ固定する
 - operations calibration gate: 完了7 taskの18p/1 active dayから実測Velocity `18p/1d`、残るprecedence/resource forecast `1/3d`と0p resource delayをgoldenへ固定する
+- Mermaid profile contract gate: 全semantic record、canonical JSON、metadata/projection digest、fail-closed import、stable loss code、security境界、規範artifactを仕様/help/testへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、4 planを検査する
 - write状態: Stage 2のediting commandをpreview-first、expected digest、write後再解析の手順で解禁。`dag advance --write`はStage 3まで禁止する
