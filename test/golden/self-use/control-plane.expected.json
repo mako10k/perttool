@@ -8,16 +8,15 @@
       "tasks": 10,
       "gates": 7,
       "errors": 0,
-      "warnings": 1
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "11",
+    "precedence_makespan": "9",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "11/1",
+    "precedence_forecast": "9/1",
     "precedence_critical_tasks": [
-      "RECOMMENDATION_MODEL",
       "RANKING_POLICY",
       "REASON_CODE_TAXONOMY",
       "STRUCTURED_EXPLANATION_MODEL",
@@ -25,15 +24,14 @@
       "NORMATIVE_EXAMPLES",
       "DESIGN_REVIEW"
     ],
-    "resource_makespan": "11",
-    "resource_forecast": "11/1",
+    "resource_makespan": "9",
+    "resource_forecast": "9/1",
     "resource_delay": "0",
     "resource_arcs": [
       "resource:RANKING_POLICY:HUMAN_OVERRIDE_CONTRACT",
       "resource:REASON_CODE_TAXONOMY:HUMAN_OVERRIDE_CONTRACT"
     ],
     "schedule_critical_tasks": [
-      "RECOMMENDATION_MODEL",
       "RANKING_POLICY",
       "REASON_CODE_TAXONOMY",
       "STRUCTURED_EXPLANATION_MODEL",
@@ -46,23 +44,31 @@
     "groups": {
       "active": [],
       "ready": [
-        "RECOMMENDATION_MODEL"
+        "RANKING_POLICY",
+        "REASON_CODE_TAXONOMY",
+        "HUMAN_OVERRIDE_CONTRACT"
       ],
       "runnable_now": [
-        "RECOMMENDATION_MODEL"
+        "RANKING_POLICY",
+        "REASON_CODE_TAXONOMY"
       ],
       "blocked_now": [],
       "upcoming": [
-        "RANKING_POLICY",
-        "REASON_CODE_TAXONOMY",
         "STRUCTURED_EXPLANATION_MODEL",
         "INTERFACE_CONTRACT",
-        "HUMAN_OVERRIDE_CONTRACT",
         "NORMATIVE_EXAMPLES",
         "PROCESS_MIGRATION",
         "DESIGN_REVIEW"
       ]
     },
-    "resource_rejection": null
+    "resource_rejection": {
+      "task_id": "HUMAN_OVERRIDE_CONTRACT",
+      "resource_id": "DESIGNERS",
+      "capacity": 2,
+      "earlier_selected_task_ids": [
+        "RANKING_POLICY",
+        "REASON_CODE_TAXONOMY"
+      ]
+    }
   }
 }

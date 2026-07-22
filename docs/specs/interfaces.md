@@ -1,13 +1,15 @@
 # perttool CLI Interface仕様
 
-- 文書状態: Draft 0.2
+- 文書状態: Draft 0.3
 - Interface version: 2
 - CLI contract version: 2
 - 作成日: 2026-07-21
+- 更新日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 文法仕様: [dsl-grammar.md](dsl-grammar.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Analysis仕様: [analysis.md](analysis.md)
+- Recommendation semantics: [recommendation.md](recommendation.md)
 - 対応基本設計: [../basic-design.md](../basic-design.md)
 
 ## 1. 目的とMVP境界
@@ -788,6 +790,8 @@ explanation           ExplanationNode[]
 ```
 
 `classification`は`active|ready|blocked_now|upcoming`である。`runnable_now`はready taskへの直交booleanであり、classification enumへ混ぜない。
+
+`Perttool.NextResult.v2`はrecommendation tier、recommended set、recommendation explanationを持たない。[Recommendation Semantics仕様](recommendation.md)は将来interfaceの意味modelであり、本sectionのfieldや既存`explanation`を無言で再解釈しない。Schema version、field名、text layout、migrationは`INTERFACE_CONTRACT`で確定する。
 
 `title`はstring、`status`はtask status、`priority`はinteger、`owner`と`blocked_reason`はstringまたは`null`とする。`expected`、`total_float`、`earliest_start`は基準単位の`RationalValue`である。`forecast_*`はvelocityがある場合だけtarget unitの`RationalValue`、それ以外は`null`とする。
 

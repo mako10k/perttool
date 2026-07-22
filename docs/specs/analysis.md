@@ -1,11 +1,13 @@
 # perttool Analysis仕様
 
-- 文書状態: Draft 0.2
+- 文書状態: Draft 0.3
 - Analysis version: 1
 - Scheduler: `parallel-sgs` version 1
 - 作成日: 2026-07-21
+- 更新日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
+- Recommendation semantics: [recommendation.md](recommendation.md)
 - 文法仕様: [dsl-grammar.md](dsl-grammar.md)
 - 対応基本設計: [../basic-design.md](../basic-design.md)
 
@@ -523,6 +525,12 @@ Next resultの表示順はresource選択順と別に次を使用する。
 ```
 
 `runnable_now` membershipは表示sortで再計算しない。
+
+### 11.4 recommendation boundary
+
+`runnable_now`は現行scheduler candidate orderで選択したjointly feasible subsetであり、project control planeの推奨度ではない。新規start actionの`recommended`、`allowed`、`deferred`、`discouraged`は[Recommendation Semantics仕様](recommendation.md)を正とする。
+
+将来のrecommended setはready taskのsubsetとして独立に選び、active allocationを含めてjointly resource-feasibleでなければならない。現行`runnable_now`とrecommended setが異なる場合のranking、structured explanation、versioningは後続仕様で固定する。それまではscheduler version 1のcandidate orderと`runnable_now`を変更しない。
 
 ## 12. Resource release witness arcs
 

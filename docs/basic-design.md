@@ -1,10 +1,12 @@
 # perttool 基本設計
 
-- 文書状態: Draft 0.5
+- 文書状態: Draft 0.6
 - 作成日: 2026-07-21
+- 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
+- Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
@@ -464,6 +466,10 @@ taskId asc
 resourceを要求しないready taskはrunnable candidateになる。resourceを要求するtaskはactive taskの時刻0占有量を差し引き、resource scheduleと同じpriority ruleで可能な限り選択する。選ばれなかったready taskには不足resource、capacity、使用量、占有taskを付ける。
 
 upcoming の explanation は、直接の `from` milestone と、その milestone を未達にしている unsatisfied incoming edge を返す。最初から全祖先を展開せず、API option で explanation depth を制御する。
+
+Recommendationは既存classificationと`runnable_now`を置き換えず、新規start actionへのdecision authorityとして[Recommendation Semantics仕様](specs/recommendation.md)で分離する。Conceptual recommended setはready taskのsubsetであり、active allocationを含めてjointly resource-feasibleでなければならない。`recommended`、`allowed`、`deferred`、`discouraged`はready taskだけへ適用し、`blocked`をrecommendation tierとして使用しない。
+
+現行`NextResult.v2`へrecommendation fieldは存在しない。Ranking、structured explanation、schema migrationが受け入れられるまで、`runnable_now`の意味や既定sortを変更しない。
 
 ### 9.4 mutation
 
@@ -949,7 +955,7 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、CLI/JSON/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で初期決定した。残る事項は個別仕様またはADRで確定する。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、CLI/JSON/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。残る事項は個別仕様またはADRで確定する。
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細
@@ -964,6 +970,7 @@ DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reach
 | Rational | 10章 |
 | Graph algorithm | 9、10、11章 |
 | Resource scheduler | 7.2、7.4、10.6、11章 |
+| Recommendation model | 2.4、5.4、17、21章 |
 | Pure Core API | 2.2、15、17章 |
 | CLI adapter | 15、17章 |
 | Help registry | 16章 |

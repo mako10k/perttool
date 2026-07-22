@@ -9,6 +9,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [DSL 文法仕様](docs/specs/dsl-grammar.md)
 - [Graph Semantics 仕様](docs/specs/graph-semantics.md)
 - [Analysis 仕様](docs/specs/analysis.md)
+- [Recommendation Semantics 仕様](docs/specs/recommendation.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)

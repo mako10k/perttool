@@ -75,9 +75,10 @@ task VISION_REQUIREMENTS NOW -> VISION_DEFINED:
     DESIGNERS 1
 
 task RECOMMENDATION_MODEL VISION_DEFINED -> RECOMMENDATION_MODEL_DEFINED:
-  title "実行可否と推奨度の2軸modelを定義する"
-  description "recommendation tierとblocked_nowの衝突を解消し、各tierの形式的意味と構造化説明の必須性を固定する"
+  title "実行可否と推奨度のmodelを定義する"
+  description "lifecycle/eligibility、resource selection、recommendation tierを分離し、各tierの形式的意味と構造化説明の必須性を固定する"
   duration 2p
+  status done
   priority 90
   requires:
     DESIGNERS 1
