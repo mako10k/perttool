@@ -1,12 +1,12 @@
 # E2Eシナリオテスト
 
-- 文書状態: Active 1.4
+- 文書状態: Active 1.5
 - 作成日: 2026-07-21
-- 対象surface: `dsl help`、`dsl check`、`dsl format`、mutation、`dag analyze`、`dag next`、`dag advance`、`dag render`
+- 対象surface: `dsl help`、`dsl check`、`dsl format`、mutation、`dag analyze`、`dag next`、`dag advance`、`dag render`、`dag import`
 
 ## 1. 目的
 
-利用者が作成した`.pert`文書を実際のCLI processへ渡し、文書検査、PERT/CPM分析、resource制約分析、次task判定、advance、Mermaid exportまでが一連の操作として成立することを確認する。
+利用者が作成した`.pert`文書を実際のCLI processへ渡し、文書検査、PERT/CPM分析、resource制約分析、次task判定、advance、Mermaid round-tripまでが一連の操作として成立することを確認する。
 
 Core APIを直接呼ぶunit testとは分離し、`dist/cli.js`をsubprocessとして起動してexit code、stdout、stderr、JSON envelopeを検査する。
 
@@ -27,6 +27,7 @@ Core APIを直接呼ぶunit testとは分離し、`dist/cli.js`をsubprocessと�
 | E2E-011 | 検査済みcandidateを安全に保存して再解析する | grammar temporary copy format --write → check → analyze → next、mutation --write → check → analyze → next | grammar planのround-tripが原文へ一致し、write後のformatter/mutation documentを全read-only commandが受理する |
 | E2E-012 | DSL意味と解析条件をMermaidでレビューする | help → render preview → render --out → strict plain | profile metadataはDSL意味値、headerはcapacity overrideを別々に保持し、exclusive outとstrict-lossを適用する |
 | E2E-013 | partial joinを保持してadvanceする | preview → check/analyze/next → temporary copyへwrite → 再実行 | 過去taskだけを削除し、frontier/readyを維持し、2回目をno-opにする |
+| E2E-014 | Mermaid profileを意味同値で往復する | analyzed render → profile import → check/analyze → re-render、plain strict import | profileをbyte一致で再生成し、改変を拒否し、plain lossをcandidate/writeから分離する |
 
 Fixtureは`test/fixtures/e2e/`へ置き、過去状態を正本計画へ混ぜず、before/afterを独立した入力として比較する。
 
@@ -46,4 +47,4 @@ npm run check
 
 ## 4. MVP境界
 
-E2E-004はtask完了前後の解析差を固定し、E2E-013はpartial join fixtureのadvance previewと一時directory内copyへの`--write`、再実行no-opを検査する。Formatterとmutationもpreviewに加えて一時copyだけを`--write`し、Mermaidは一時directoryだけを`--out`で検査する。正本planはE2Eから変更しない。MCPはこのE2E sliceの対象外とする。
+E2E-004はtask完了前後の解析差を固定し、E2E-013はpartial join fixtureのadvance previewと一時directory内copyへの`--write`、再実行no-opを検査する。Formatterとmutationもpreviewに加えて一時copyだけを`--write`し、Mermaid render/importは一時directoryだけを`--out`で検査する。正本planはE2Eから変更しない。MCPはこのE2E sliceの対象外とする。

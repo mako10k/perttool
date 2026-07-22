@@ -9,6 +9,7 @@
 - `dsl format`とtask/milestone/resource/batch mutationのatomic `--write`、exclusive `--out`、`--expect-digest`
 - `Perttool.MermaidProfile.v1`のsemantic record、integrity digest、fail-closed import設計契約と規範artifact
 - `exportMermaid` Coreと`dag render --to mermaid`のlossless/plain profile、解析annotation、strict loss、exclusive `--out`
+- `importMermaid` Coreと`dag import --from mermaid`のfail-closed profile復元、plain loss report、strict loss、exclusive `--out`
 - canonical keep/remove set、partial join、idempotenceを保証するpure `planAdvance` Coreとpreview-first `dag advance` CLI
 
 ## [0.1.0-alpha.1] - 2026-07-21

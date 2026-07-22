@@ -520,7 +520,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "mermaid",
     title: "Mermaid conversion",
-    summary: "dag renderでlossless Mermaid profileを生成できます。dag importはまだ未実装です。",
+    summary: "dag renderとdag importでlossless Mermaid profileを往復でき、plain importの損失を明示できます。",
     quick: [
       {
         id: "authority",
@@ -542,7 +542,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "availability",
         title: "Current availability",
-        body: "exportMermaid Coreとdag render --to mermaidは利用できます。perttool profileは復元用semantic metadataを保持し、plain profileはPTCNV-206のlossを返します。dag import、SVG、JSON targetは後続sliceです。",
+        body: "exportMermaid/importMermaid Coreとdag render/importは利用できます。perttool profileは復元用semantic metadataをfail-closed検査し、plain import/exportはstable PTCNV lossを返します。SVG、JSON targetは後続sliceです。",
       },
     ],
     syntax: [
@@ -550,6 +550,9 @@ const nodes: readonly HelpNode[] = [
       "  [--profile perttool|plain] [--analysis none|precedence|resource|both]",
       "  [--capacity <resource-id>=<integer>]... [--strict-loss] [--out <path>]",
       "  [--max-diagnostics <integer>] [--warnings-as-errors] [--format text|json]",
+      "perttool dag import <file> --from mermaid",
+      "  [--strict-loss] [--out <path>] [--max-diagnostics <integer>]",
+      "  [--warnings-as-errors] [--format text|json]",
     ],
     examples: [
       {

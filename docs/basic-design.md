@@ -611,7 +611,7 @@ Mermaid text
 
 Mermaid adapter は analysis や validation を再実装しない。一般 Mermaid の best-effort import と、`perttool` profile の lossless import を別 mode として扱う。
 
-MVP exporterは`src/conversion/mermaid.ts`の`exportMermaid`として実装し、`checkDocument`または`analyzeDocument`の結果からprofile/plain artifactを決定的に生成する。CLIは`dag render --to mermaid`でtext/JSON、analysis/capacity option、strict loss、exclusive `--out`を投影する。`--to svg|json`と`dag import`は後続sliceのままとする。
+MVP exporterは`src/conversion/mermaid.ts`の`exportMermaid`として実装し、`checkDocument`または`analyzeDocument`の結果からprofile/plain artifactを決定的に生成する。Importerは`src/conversion/mermaid-import.ts`の`importMermaid`として実装し、perttool profileをfail-closedで復元し、plain入力ではstable generated IDとloss reportを返す。CLIは`dag render --to mermaid`と`dag import --from mermaid`でtext/JSON、strict loss、exclusive `--out`を投影する。`--to svg|json`は後続sliceのままとする。
 
 Lossless profileは[Mermaid Profile仕様](specs/mermaid-profile.md)を正とする。Default適用後の完全な意味値を`%% perttool:` canonical JSON recordへ保持し、visual flowchartを復元正本にしない。Profile headerを検出した後のrecord/digest/projection不正はfail closedとし、一般Mermaid importへ降格しない。Importerはmetadata decode後も通常のsemantic validationとcanonical DSLの再parseを通す。
 

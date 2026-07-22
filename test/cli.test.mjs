@@ -748,6 +748,99 @@ test("dag render suppresses invalid artifacts and writes output exclusively", (t
   assert.equal(JSON.parse(emptyOut.stdout).diagnostics[0].code, "PTCLI-001");
 });
 
+test("dag import restores a profile in text and JSON", () => {
+  const profile = exportMermaid(minimalText).artifact;
+  const help = run(["dag", "import", "--help"]);
+  assert.equal(help.status, 0, help.stderr);
+  assert.match(help.stdout, /perttool dag import <file> --from mermaid/);
+  assert.match(help.stdout, /--strict-loss/);
+
+  const text = run([
+    "dag", "import", "-", "--from=mermaid", "--color=never",
+  ], { input: profile });
+  assert.equal(text.status, 0, text.stderr);
+  assert.equal(JSON.parse(run(["dsl", "check", "-", "--format=json"], {
+    input: text.stdout,
+  }).stdout).ok, true);
+  assert.equal(exportMermaid(text.stdout).artifact, profile);
+
+  const jsonResult = run([
+    "dag", "import", "-", "--from", "mermaid", "--format=json",
+  ], { input: profile });
+  assert.equal(jsonResult.status, 0, jsonResult.stderr);
+  const json = JSON.parse(jsonResult.stdout);
+  assert.equal(json.schema_version, "Perttool.ImportResult.v1");
+  assert.equal(json.operation, "dag.import");
+  assert.equal(json.document_id, "MINIMAL");
+  assert.equal(json.profile, "perttool");
+  assert.equal(json.artifact_format, "pert");
+  assert.equal(json.loss_report.lossless, true);
+  assert.deepEqual(json.generated_ids, []);
+  assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
+  assert.equal(exportMermaid(json.artifact).artifact, profile);
+
+  const corrupted = run([
+    "dag", "import", "-", "--from=mermaid", "--format=json",
+  ], { input: profile.replace('"duration":"1d"', '"duration":"2d"') });
+  assert.equal(corrupted.status, 1, corrupted.stderr);
+  const corruptedJson = JSON.parse(corrupted.stdout);
+  assert.equal(corruptedJson.profile, "perttool");
+  assert.equal(corruptedJson.artifact, null);
+  assert.equal(corruptedJson.diagnostics[0].code, "PTCNV-104");
+});
+
+test("dag import reports plain loss, enforces strict-loss, and writes exclusively", (t) => {
+  const plain = exportMermaid(minimalText, { profile: "plain" }).artifact;
+  const preview = run([
+    "dag", "import", "-", "--from=mermaid", "--format=json",
+  ], { input: plain });
+  assert.equal(preview.status, 0, preview.stderr);
+  const previewJson = JSON.parse(preview.stdout);
+  assert.equal(previewJson.ok, true);
+  assert.equal(previewJson.profile, "plain");
+  assert.equal(previewJson.loss_report.lossless, false);
+  assert.ok(previewJson.loss_report.records.some(({ code }) => code === "PTCNV-203"));
+  assert.ok(previewJson.generated_ids.length > 0);
+
+  const strict = run([
+    "dag", "import", "-", "--from=mermaid", "--strict-loss", "--format=json",
+  ], { input: plain });
+  assert.equal(strict.status, 4, strict.stderr);
+  const strictJson = JSON.parse(strict.stdout);
+  assert.equal(strictJson.ok, false);
+  assert.equal(strictJson.artifact, null);
+  assert.equal(strictJson.write.written, false);
+
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-import-cli-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = path.join(directory, "minimal.pert");
+  const profile = exportMermaid(minimalText).artifact;
+  const written = run([
+    "dag", "import", "-", "--from=mermaid", "--out", output, "--format=json",
+  ], { input: profile });
+  assert.equal(written.status, 0, written.stderr);
+  const writtenJson = JSON.parse(written.stdout);
+  assert.deepEqual(writtenJson.write, { mode: "out", target: output, written: true });
+  assert.equal(readFileSync(output, "utf8"), writtenJson.artifact);
+  assert.equal(JSON.parse(run(["dsl", "check", output, "--format=json"]).stdout).ok, true);
+
+  const collision = run([
+    "dag", "import", "-", "--from=mermaid", "--out", output, "--format=json",
+  ], { input: profile });
+  assert.equal(collision.status, 5, collision.stderr);
+  assert.equal(JSON.parse(collision.stdout).diagnostics[0].data.reason, "target_exists");
+
+  for (const args of [
+    ["dag", "import", "-"],
+    ["dag", "import", "-", "--from=svg"],
+    ["dag", "import", "-", "--from=mermaid", "--write"],
+  ]) {
+    const invalid = run([...args, "--format=json"], { input: profile });
+    assert.equal(invalid.status, 2, invalid.stderr);
+    assert.equal(JSON.parse(invalid.stdout).diagnostics[0].code, "PTCLI-001");
+  }
+});
+
 test("dsl format exposes candidate, diff, JSON, and stdin previews", () => {
   const source = "test/fixtures/grammar/formatter-roundtrip.pert";
   const expected = readFileSync(

@@ -373,6 +373,22 @@ Profile headerがない`flowchart`はplain best-effort import候補である。P
 
 Plain modeで推測した値は必ずstable code、対象element、`lossy=true`を持つ。`--strict-loss`ではlossy recordが1件でもcandidateを返さない。Plain modeの詳細な対応subsetはimport実装sliceでfixtureとともに固定する。
 
+### 11.1 Plain import v1 subset
+
+Import実装sliceでは、plain modeの対応範囲を次へ固定する。
+
+- 先頭statementは`flowchart LR`
+- milestone nodeは`<source-id>(("<label>"))`
+- edgeは`<source-id> -->|"<label>"| <target-id>`または`<source-id> -.->|"<label>"| <target-id>`
+- `classDef`、`class`、`linkStyle`は生成済みprojectionの表示情報として無視する
+- label内の`#<decimal code point>;`をdecodeするが、labelからDSL ID、task/gate kind、status、durationなどをauthorityとして復元しない
+- その他の非実行statementは`PTCNV-205`を記録して無視する
+- front matter、init directive、`click`、link/callback、raw HTMLは`PTCNV-102`でcandidateなしに拒否する
+
+Source node IDのUnicode code point順でmilestoneへ`MILESTONE_001`から連番を付け、source edgeの物理順でtaskへ`TASK_001`から連番を付ける。Mappingは`generated_ids`と`PTCNV-201`へ返す。全edgeはkind不明のため、solid/dotted表示を問わずduration `1d`のtaskへ変換し、`PTCNV-203`と不足fieldの`PTCNV-204`を返す。Root milestoneは`reached`、単一sinkをproject finishとする。複数sinkの場合は`MERMAID_FINISH`とID順のzero-duration synthetic gateを追加し、その生成もloss reportへ記録する。
+
+ProjectはID `IMPORTED_MERMAID`、version 1、title `Imported Mermaid`、duration unit `day`を使用し、defaultまたは取得不能fieldを`PTCNV-202`へ記録する。Resource、capacity、requirement、taskのstatus/priority/owner/tag/sourceは復元せず`PTCNV-204`へ記録する。生成candidateは通常のsemantic validatorを通し、cycleなどでvalidなAoA DAGを構成できない場合は`PTCNV-106`としてcandidateを返さない。同じplain inputから同じDSL byte列、loss順、generated ID mappingを返さなければならない。
+
 ## 12. Stable diagnostic/loss code
 
 Profile validation error:

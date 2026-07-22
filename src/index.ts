@@ -5,6 +5,7 @@ export { selectNextTasks } from "./application/next.js";
 export { planMutation } from "./application/mutate.js";
 export { planAdvance } from "./mutation/advance.js";
 export { exportMermaid } from "./conversion/mermaid.js";
+export { importMermaid } from "./conversion/mermaid-import.js";
 export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js";
 export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
@@ -39,6 +40,11 @@ export type {
   MermaidExportResult,
   MermaidProfile,
 } from "./conversion/mermaid.js";
+export type {
+  GeneratedId,
+  MermaidImportOptions,
+  MermaidImportResult,
+} from "./conversion/mermaid-import.js";
 export type {
   FormatPreviewOptions,
   FormatPreviewResult,

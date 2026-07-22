@@ -43,6 +43,7 @@ test("E2E-001: discover commands, validate a plan, and compare capacity what-if"
   assert.match(help.stdout, /perttool dag analyze <file>/);
   assert.match(help.stdout, /perttool dag next <file>/);
   assert.match(help.stdout, /perttool dag advance <file>/);
+  assert.match(help.stdout, /perttool dag import <file> --from mermaid/);
   assert.match(help.stdout, /perttool task add\|set\|remove\|finish/);
   assert.match(help.stdout, /perttool mutation apply <file>/);
 
@@ -366,4 +367,48 @@ test("E2E-013: advance preview and safe write preserve a partial join", (t) => {
   assert.equal(repeated.changed, false);
   assert.equal(repeated.diff, "");
   assert.equal(repeated.write.written, false);
+});
+
+test("E2E-014: lossless Mermaid profile round-trips and plain import stays explicit", (t) => {
+  const source = "docs/examples/parallel.pert";
+  const rendered = runJson([
+    "dag", "render", source, "--to=mermaid", "--analysis=both",
+    "--capacity=TEST_ENV=2",
+  ]);
+  const imported = runJson([
+    "dag", "import", "-", "--from=mermaid",
+  ], 0, { input: rendered.artifact });
+  assert.equal(imported.profile, "perttool");
+  assert.equal(imported.loss_report.lossless, true);
+  assert.deepEqual(imported.generated_ids, []);
+  assert.equal(runJson(["dsl", "check", "-"], 0, { input: imported.artifact }).ok, true);
+  assert.equal(runJson([
+    "dag", "render", "-", "--to=mermaid", "--analysis=both",
+    "--capacity=TEST_ENV=2",
+  ], 0, { input: imported.artifact }).artifact, rendered.artifact);
+
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-mermaid-import-e2e-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const output = path.join(directory, "parallel.pert");
+  const written = runJson([
+    "dag", "import", "-", "--from=mermaid", "--out", output,
+  ], 0, { input: rendered.artifact });
+  assert.equal(written.write.written, true);
+  assert.equal(readFileSync(output, "utf8"), imported.artifact);
+  assert.equal(runJson(["dag", "analyze", output]).ok, true);
+
+  const corrupted = runJson([
+    "dag", "import", "-", "--from=mermaid",
+  ], 1, { input: rendered.artifact.replace("ptm_NOW -->", "ptm_RELEASED -->") });
+  assert.equal(corrupted.artifact, null);
+  assert.equal(corrupted.diagnostics[0].code, "PTCNV-105");
+
+  const plain = runJson([
+    "dag", "render", source, "--to=mermaid", "--profile=plain",
+  ]);
+  const strict = runJson([
+    "dag", "import", "-", "--from=mermaid", "--strict-loss",
+  ], 4, { input: plain.artifact });
+  assert.equal(strict.artifact, null);
+  assert.equal(strict.loss_report.lossless, false);
 });

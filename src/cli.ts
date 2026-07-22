@@ -15,6 +15,7 @@ import {
   type MermaidAnalysisMode,
   type MermaidProfile,
 } from "./conversion/mermaid.js";
+import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import { getHelp } from "./help/registry.js";
 import {
@@ -79,6 +80,7 @@ function topLevelHelp(): string {
     "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
     "  perttool dag advance <file> [--diff] [--write | --out <path>] [--format text|json]",
     "  perttool dag render <file> --to mermaid [--profile perttool|plain] [--format text|json]",
+    "  perttool dag import <file> --from mermaid [--strict-loss] [--out <path>] [--format text|json]",
     "  perttool task add|set|remove|finish ...",
     "  perttool milestone add|set|remove ...",
     "  perttool resource add|set|remove ...",
@@ -138,6 +140,12 @@ function commandHelp(resource: string, action: string): string {
     "Usage: perttool dag render <file> --to mermaid",
     "  [--profile perttool|plain] [--analysis none|precedence|resource|both]",
     "  [--capacity <resource-id>=<integer>]... [--strict-loss] [--out <path>]",
+    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
+    "  [--format text|json] [--color auto|always|never]",
+  ].join("\n");
+  if (resource === "dag" && action === "import") return [
+    "Usage: perttool dag import <file> --from mermaid",
+    "  [--strict-loss] [--out <path>]",
     "  [--max-diagnostics <integer>] [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
@@ -2010,6 +2018,114 @@ async function runRender(args: readonly string[]): Promise<number> {
   return strictFailure ? 4 : ok ? 0 : 1;
 }
 
+async function runImport(args: readonly string[]): Promise<number> {
+  const parsed = parseOptions(
+    args,
+    new Set(["from", "out", "max-diagnostics", "format", "color"]),
+    new Set(["strict-loss", "warnings-as-errors"]),
+  );
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("dag import requires exactly one <file>");
+  }
+  enumOption(requiredOption(parsed, "from"), "from", new Set(["mermaid"]));
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  const out = parsed.values.get("out") ?? null;
+  if (out !== null && out.length === 0) {
+    throw new UsageError("--out path must not be empty");
+  }
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "dag.import",
+      format === "json",
+    );
+  }
+  const result = importMermaid(input.text, { maxDiagnostics });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
+  const strictFailure =
+    parsed.flags.has("strict-loss") &&
+    result.lossReport.records.some((record) => record.lossy);
+  const ok = result.ok && !warningFailure && !strictFailure;
+  const exposeArtifact = result.ok && !strictFailure;
+  let writeResult: DocumentWriteResult | null = null;
+  if (ok && out !== null) {
+    try {
+      writeResult = await createDocumentFile(out, result.artifact!);
+    } catch (error) {
+      return writeFailureExit(error, "dag.import", format === "json");
+    }
+  }
+  if (format === "json") {
+    writeJson({
+      schema_version: "Perttool.ImportResult.v1",
+      tool_version: TOOL_VERSION,
+      operation: "dag.import",
+      ok,
+      document_id: result.documentId,
+      source,
+      source_digest: input.digest,
+      diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
+      artifact_format: "pert",
+      profile: result.profile,
+      analysis: result.analysis,
+      capacity_overrides: [...result.capacityOverrides]
+        .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
+        .map(([resourceId, capacity]) => ({ resource_id: resourceId, capacity })),
+      artifact: exposeArtifact ? result.artifact : null,
+      artifact_digest: exposeArtifact ? result.artifactDigest : null,
+      loss_report: {
+        lossless: result.lossReport.lossless,
+        records: result.lossReport.records.map(conversionLossJson),
+      },
+      generated_ids: result.generatedIds.map(({ sourceElement, generatedId }) => ({
+        source_element: sourceElement,
+        generated_id: generatedId,
+      })),
+      write: {
+        mode: out === null ? "preview" : "out",
+        target: out,
+        written: writeResult?.written ?? false,
+      },
+    });
+  } else {
+    if (ok) {
+      if (writeResult === null) {
+        process.stdout.write(result.artifact!);
+      } else {
+        process.stderr.write(renderWriteSummary("dag.import", writeResult));
+      }
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    for (const conversionLoss of result.lossReport.records) {
+      process.stderr.write(`${renderConversionLoss(conversionLoss, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return strictFailure ? 4 : ok ? 0 : 1;
+}
+
 function explanationJson(
   node: ReturnType<typeof selectNextTasks>["tasks"][number]["explanation"][number],
 ): Readonly<Record<string, unknown>> {
@@ -2363,7 +2479,7 @@ async function main(argv: readonly string[]): Promise<number> {
     argv.length === 3 &&
     argv[2] === "--help" &&
     ((resource === "dsl" && ["check", "format", "help"].includes(action)) ||
-      (resource === "dag" && ["analyze", "next", "advance", "render"].includes(action)) ||
+      (resource === "dag" && ["analyze", "next", "advance", "render", "import"].includes(action)) ||
       isMutationCommand)
   ) {
     process.stdout.write(`${commandHelp(resource, action)}\n`);
@@ -2380,6 +2496,9 @@ async function main(argv: readonly string[]): Promise<number> {
   }
   if (resource === "dag" && action === "render") {
     return runRender(argv.slice(2));
+  }
+  if (resource === "dag" && action === "import") {
+    return runImport(argv.slice(2));
   }
   if (resource === "dsl" && action === "format") {
     return runFormat(argv.slice(2));
