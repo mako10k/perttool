@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import process from "node:process";
 import { TextDecoder } from "node:util";
@@ -12,6 +11,10 @@ import { planBatchMutation, planMutation } from "./application/mutate.js";
 import { selectNextTasks } from "./application/next.js";
 import type { HelpLevel } from "./help/registry.js";
 import { getHelp } from "./help/registry.js";
+import {
+  documentContentFromBytes,
+  readDocumentFile,
+} from "./io/document-file.js";
 import type { Diagnostic, SourceSpan } from "./model/diagnostics.js";
 import type { Rational } from "./model/rational.js";
 import { formatDecimal } from "./model/rational.js";
@@ -317,11 +320,10 @@ async function readDocument(source: string): Promise<{
   readonly text: string;
   readonly digest: string;
 }> {
-  const bytes = source === "-" ? await readStdin() : await readFile(source);
-  const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
-  const text = decoder.decode(bytes);
-  const digest = `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
-  return { text, digest };
+  const content = source === "-"
+    ? documentContentFromBytes(await readStdin())
+    : await readDocumentFile(source);
+  return { text: content.text, digest: content.digest };
 }
 
 async function readStdin(): Promise<Buffer> {

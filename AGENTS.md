@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl format` preview、`dsl help`、`dag analyze`、`dag next`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、preview-only mutation CLI、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をread-only自己利用中である。Filesystem writeを含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl format` preview、`dsl help`、`dag analyze`、`dag next`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、preview-only mutation CLI、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をread-only自己利用中である。Filesystem writeのCLI公開を含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -40,9 +40,10 @@ perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check
 - `src/analysis/`: exact Rationalを使うresidual graph、precedence CPM、resource schedule実装。
 - `src/editing/`: formatterとmutationが共有するdeterministic unified diff。
 - `src/formatter/`: source-preserving formatter Core。
+- `src/io/`: raw-byte document read、digest、symlink/race拒否、atomic safe-write adapter。
 - `src/mutation/`: task/milestone/resourceとatomic batchのrequest、source-preserving UTF-16 TextEdit生成、適用規則。
 - `src/application/`: check/analyze/nextと、再検査済みmutation resultを返すpure service。
-- `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation unit test、CLI integration test。
+- `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation/write-safety unit test、CLI integration test。
 - `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
 
 実装を追加した時点で、実際のdirectoryとcommandに合わせてこのmapを更新する。

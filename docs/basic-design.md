@@ -158,6 +158,9 @@ perttool/
       source-formatter.ts
     help/
       registry.ts
+    io/
+      document-file.ts
+      safe-write.ts
     model/
       syntax.ts
       diagnostics.ts
@@ -415,6 +418,20 @@ Rules:
 - programmer error と不変条件違反だけを exception にする
 - `maxDiagnostics`はdefault 100、1..1000とし、超過時はsource順の先頭を返して`diagnosticsTruncated=true`にする
 - parse errorがある場合はfield/graph phaseへ進まず、派生diagnosticを抑制する
+
+### 8.1 Safe-write adapter
+
+I/Oはpure Coreの外に置き、Coreが生成・再検査したcandidateをdocument fileへcommitする境界だけを公開する。
+
+```ts
+readDocumentFile(path): Promise<DocumentContent>
+replaceDocumentFile(path, candidateText, { initialDigest, expectedDigest? }): Promise<DocumentWriteResult>
+createDocumentFile(path, candidateText, { mode? }): Promise<DocumentWriteResult>
+```
+
+`DocumentContent`は所有するraw bytes、BOMを保持したUTF-8 text、raw-byte SHA-256 digestを持つ。In-place replaceはsymlinkとregular file以外を拒否し、`lstat`したpath identityと`O_NOFOLLOW`でopenしたfile identityを比較する。Initial digestをwrite前とrename直前に再確認し、同directoryのexclusive temporary fileへmodeを継承してwrite、file fsync、atomic rename、parent directory fsync、digestとdocument validityの再検査を行う。
+
+新規outputはrenameによる既存target上書きを避け、fsync済みtemporary fileから同一filesystemのexclusive hard linkでtargetを公開する。同時writer、既存file、symlinkはいずれも競合として拒否し、temporary entryを削除してparent directoryを再度fsyncする。Public resultはmode、target、candidate digest、byte数だけを返し、temporary pathやrandom tokenを返さない。
 
 ## 9. 処理フロー
 

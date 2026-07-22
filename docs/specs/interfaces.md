@@ -446,6 +446,10 @@ In-place writeは次の順を必須とする。
 
 Symlink inputへの`--write`はMVPでは拒否する。`--out`もsymlink targetまたは既存pathを拒否する。Raceまたはdigest不一致はexit 5で、元fileを変更しない。
 
+I/O adapterは競合を`expected_digest_mismatch`、`source_changed`、`symlink`、`not_regular_file`、`target_exists`のstable reasonで区別する。Candidate検査またはrename後検査の失敗は競合と混同せず、`invalid_candidate`、`post_write_digest_mismatch`、`post_write_invalid`として区別する。Temporary pathとrandom tokenはpublic resultやdiagnosticへ含めない。
+
+`--out`は同directoryのexclusive temporary fileをflush/fsyncした後、既存targetを上書きしないatomic createで公開する。MVPの対応filesystemでは同一filesystem hard linkを使用し、同時writerの一方だけを成功させる。Target公開後にparent directoryをfsyncし、temporary entryを削除して再度parent directoryをfsyncする。
+
 ## 9. stdout、stderr、exit code
 
 ### 9.1 stream contract

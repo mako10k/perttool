@@ -5,7 +5,7 @@
 Mandatory summary:
 
 - 利用者から指定がない限り、日本語で応答する。
-- 現在はTypeScript CLIの操作系実装段階であり、実装済み`dsl check`/`dsl format` preview/`dsl help`/`dag analyze`/`dag next`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、preview-only mutation CLI、grammar acceptance suiteでmacro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をread-only自己利用中。Filesystem writeを含むwrite/conversion surfaceは未実装である。
+- 現在はTypeScript CLIの操作系実装段階であり、実装済み`dsl check`/`dsl format` preview/`dsl help`/`dag analyze`/`dag next`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、preview-only mutation CLI、grammar acceptance suiteでmacro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をread-only自己利用中。Filesystem writeのCLI公開を含むwrite/conversion surfaceは未実装である。
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
 - 「次のタスク」はmacroでworkstreamを選んでから対応する詳細planのcritical pathから提案し、着手しやすさだけで選ばない。

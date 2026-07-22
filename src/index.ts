@@ -9,6 +9,17 @@ export { analyzeResources } from "./analysis/resource.js";
 export { getHelp } from "./help/registry.js";
 export { formatDocument } from "./formatter/source-formatter.js";
 export {
+  digestDocumentBytes,
+  documentContentFromBytes,
+  readDocumentFile,
+} from "./io/document-file.js";
+export {
+  createDocumentFile,
+  replaceDocumentFile,
+  SafeWriteConflictError,
+  SafeWriteVerificationError,
+} from "./io/safe-write.js";
+export {
   DEFAULT_MAX_DIAGNOSTICS,
   MAX_DIAGNOSTICS_LIMIT,
 } from "./model/diagnostics.js";
@@ -78,6 +89,14 @@ export type {
   FormatResult,
 } from "./formatter/source-formatter.js";
 export type { TextEdit } from "./mutation/text-edits.js";
+export type { DocumentContent } from "./io/document-file.js";
+export type {
+  CreateDocumentOptions,
+  DocumentWriteResult,
+  ReplaceDocumentOptions,
+  SafeWriteConflictReason,
+  SafeWriteVerificationReason,
+} from "./io/safe-write.js";
 export type {
   AddMilestoneMutation,
   AddResourceMutation,
