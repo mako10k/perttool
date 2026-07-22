@@ -1,10 +1,11 @@
 # AI開発ガイド
 
-- 文書状態: Draft 0.2
+- 文書状態: Draft 0.3
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 共有指示: [../../AGENTS.md](../../AGENTS.md)
 - 自己利用計画: [self-use.md](self-use.md)
+- Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
 
 ## 1. 目的
 
@@ -106,7 +107,20 @@ git diff --check
 4. 外部blockと利用可能resourceを確認する
 5. 詳細planのcriticalまたはleast-slack frontierから作業を選ぶ
 
-異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装されるまでは、この選択規則を明示的なprocessとして維持する。
+異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装され、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
+
+### 5.1 Recommendation導入後のtask selection
+
+`Perttool.NextResult.v3`公開だけでは本節を有効化しない。Self-use shadow gateを満たし、`AGENTS.md`と`.github/copilot-instructions.md`を同じadoption changeで更新した後に、次へ切り替える。
+
+1. macro planのcomplete JSON recommendationからwork packageを選ぶ
+2. 選んだwork packageのdetail planを再解析し、そのcomplete JSON recommendationからtaskを選ぶ
+3. recommended taskのsubset、または`R`全件を維持してresource-feasibleなallowed taskを1件追加した集合だけをnormal authorityで選ぶ
+4. decisive step、higher-priority task、comparisonを確認し、選択理由をproject factから説明する
+5. unknown schema/version、incomplete trace、`PTREC-*`では自動選択を停止する
+6. detail taskのstart、completion、block、capacity変更後はそのdetail planを再解析し、macro work packageのstatus、roll-up duration、capacityが変わった場合はmacro planも再解析する
+
+`deferred`または`discouraged`を選ぶ人間指示はnormal recommendationと区別する。Override apply gateを満たすまでは適用済みartifactを捏造せず、AIは差と未解禁のaudit/apply境界を提示する。Provider別prompt、skill、agent、hookはIssue #2のguideから同じruleへ到達させ、provider固有のpriority規則を追加しない。
 
 tool出力は選択根拠であり、task完了の独立証拠ではない。完了は対応仕様、code、test結果で確認する。
 

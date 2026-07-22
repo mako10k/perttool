@@ -156,6 +156,7 @@ task PROCESS_MIGRATION VALIDATION_INPUT_READY -> PROCESS_MIGRATION_DEFINED:
   title "self-use flowと実装migration順序を設計する"
   description "basic designとAI processを整合し、設計後に実装planを再構成できる粒度へ分解する"
   duration 1p
+  status done
   priority 40
   requires:
     DESIGNERS 1

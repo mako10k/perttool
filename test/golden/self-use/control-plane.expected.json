@@ -8,24 +8,22 @@
       "tasks": 10,
       "gates": 7,
       "errors": 0,
-      "warnings": 11
+      "warnings": 13
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "2",
+    "precedence_makespan": "1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "2/1",
+    "precedence_forecast": "1/1",
     "precedence_critical_tasks": [
-      "PROCESS_MIGRATION",
       "DESIGN_REVIEW"
     ],
-    "resource_makespan": "2",
-    "resource_forecast": "2/1",
+    "resource_makespan": "1",
+    "resource_forecast": "1/1",
     "resource_delay": "0",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "PROCESS_MIGRATION",
       "DESIGN_REVIEW"
     ]
   },
@@ -33,15 +31,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "PROCESS_MIGRATION"
+        "DESIGN_REVIEW"
       ],
       "runnable_now": [
-        "PROCESS_MIGRATION"
+        "DESIGN_REVIEW"
       ],
       "blocked_now": [],
-      "upcoming": [
-        "DESIGN_REVIEW"
-      ]
+      "upcoming": []
     },
     "resource_rejection": null
   }

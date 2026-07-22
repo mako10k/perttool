@@ -642,9 +642,11 @@ Actual resultは`result_decision`、全ready task decision、step、fact、compa
 
 ### `PROCESS_MIGRATION`
 
+[Recommendation実装・自己利用migration](../process/recommendation-migration.md)で次を固定した。
+
 - recommendation実装sliceのCoreからadapterまでの順序
 - v3切替時のCHANGELOG、help、consumer migration guide
-- AI development flowでJSON recommendationをtask選択authorityにするgate
+- AI development flowでJSON recommendationをtask選択authorityにするshadow/adoption gate
 
 ### [`HUMAN_OVERRIDE_CONTRACT`](recommendation-override.md)（確定）
 

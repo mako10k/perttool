@@ -497,6 +497,8 @@ Result:
 
 ### `PROCESS_MIGRATION`
 
+[Recommendation実装・自己利用migration](../process/recommendation-migration.md)で次を固定した。
+
 - override validationをread-onlyで導入する順序
 - write gate後のstate transitionとaudit commit手順
 - AIがoverride artifactなしにdeferred/discouraged taskを開始しない運用gate

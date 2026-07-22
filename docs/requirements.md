@@ -1017,9 +1017,9 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
    - [x] [Core、text、JSON契約](specs/recommendation-interface.md)
    - [x] [human override契約](specs/recommendation-override.md)
    - [x] [normative exampleとtest観点](examples/recommendation.md)
-   - [ ] self-useと実装migration方針
+   - [x] [self-useと実装migration方針](process/recommendation-migration.md)
 7. [ ] parser/validator の最小実装と golden tests
 
 項目7は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
-Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative exampleとtest観点は確定した。次は`PROCESS_MIGRATION`を進める。Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は確定した。次は`DESIGN_REVIEW`で横断整合を確認する。Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。

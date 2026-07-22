@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 1.1
+- 文書状態: Draft 1.2
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
@@ -13,6 +13,7 @@
 - Recommendation interface: [specs/recommendation-interface.md](specs/recommendation-interface.md)
 - Recommendation override: [specs/recommendation-override.md](specs/recommendation-override.md)
 - Recommendation examples: [examples/recommendation.md](examples/recommendation.md)
+- Recommendation migration: [process/recommendation-migration.md](process/recommendation-migration.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
@@ -69,7 +70,11 @@ flowchart LR
   SEMANTIC --> GRAPH[Graph model]
   GRAPH --> ANALYZER[PERT / CPM analyzer]
   GRAPH --> SCHEDULER[Resource scheduler]
-  GRAPH --> NEXT[Next-task selector]
+  GRAPH --> NEXT[Operational next classifier]
+  ANALYZER --> NEXT
+  GRAPH --> RECOMMEND[Recommendation evaluator]
+  NEXT --> RECOMMEND
+  ANALYZER --> RECOMMEND
   GRAPH --> TRANSFORM[Mutation / advance planner]
   GRAPH --> CONVERTER[Mermaid / JSON converter]
 
@@ -93,7 +98,7 @@ CLI / future MCP / LSP / filesystem
       application services
              |
              v
-syntax / semantic / graph / analyzer / transform
+syntax / semantic / graph / analyzer / recommendation / transform
 ```
 
 Core layer は次へ依存してはならない。
@@ -479,6 +484,8 @@ Recommendationは既存classificationと`runnable_now`を置き換えず、新�
 
 競合境界と実装testへの入力は[Recommendation規範例](examples/recommendation.md)を使用する。Critical対priority、parallel recommendation、selected/active-only resource blocker、empty set、exact description、override必要性を同じcase IDでCore、JSON、text、override validationへ展開し、例の抜粋をcomplete resultとして扱わない。
 
+実装と自己利用への導入順序は[Recommendation実装・自己利用migration](process/recommendation-migration.md)を正とする。Candidate fact/ranking、explanation graph、adapter projectionをCore責務として段階実装し、公開時だけCore、CLI、help、golden、package documentationを`NextResult.v3`へ一括切替する。CLI、help、provider guideは同じCore resultを表示し、独自rankingを持たない。
+
 ### 9.4 mutation
 
 ```text
@@ -780,7 +787,7 @@ DSL version は project block の optional field として将来導入できる�
 - reachability
 - forward/backward pass
 - total/free float
-- next classification/ranking
+- next classification/operational sort
 - TextEdit overlap detection
 
 ### 15.2 fixture/golden test
@@ -928,13 +935,31 @@ Exit:
 - renewable resource scheduler
 - runnable_now/resource wait explanation
 - reached closure
-- next classification/ranking
+- next classification/operational sort
 - `dag analyze` / `dag next`
 
 Exit:
 
 - bootstrap gate を満たす
 - `plans/grammar.pert` の read-only 自己利用を開始する
+
+### Slice 2R: recommendation control plane
+
+- normative fixtureとv2 compatibility baseline
+- candidate fact、ranking、recommended set、tierのpure Core
+- structured explanation graph、invariant、canonical description
+- `Perttool.NextResult.v3`のCore/CLI/help atomic publication
+- read-only override validation
+- self-use shadow evaluationとnormal authority adoption
+
+Exit:
+
+- [Recommendation実装・自己利用migration](process/recommendation-migration.md)のMIG-01からMIG-07を満たす
+- 同じCore resultからcomplete JSONとsummary textを生成する
+- v2由来fieldの意味を維持し、breaking changeをconsumerへ明示する
+- AIがmacro/detail planの二段階でknown complete recommendationを選択authorityにできる
+
+Slice 2Rの実装task、見積り、Slice 3との順序は`RECOMMENDATION_ROADMAP_UPDATE`で確定する。Human override applyはsafe-write gateを必要とするためMIG-08としてSlice 3以降へ接続する。
 
 ### Slice 3: safe formatting and mutation
 

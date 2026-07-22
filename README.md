@@ -16,6 +16,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [Recommendation Interface Contract 仕様](docs/specs/recommendation-interface.md)
 - [Recommendation Human Override Contract 仕様](docs/specs/recommendation-override.md)
 - [Recommendation 規範例](docs/examples/recommendation.md)
+- [Recommendation 実装・自己利用migration](docs/process/recommendation-migration.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)

@@ -67,8 +67,8 @@ milestone M6_MVP_RELEASED:
 
 task CONTROL_PLANE_DESIGN_WORK_PACKAGE NOW -> CONTROL_PLANE_DESIGN_ACCEPTED:
   title "AI工程制御planeを設計する"
-  description "plans/control-plane.pertの未完了設計resource makespan 2p、velocity forecast 2dをroll-upする。構造化説明追加後のend-to-end forecastは13p"
-  duration 2d
+  description "plans/control-plane.pertの未完了設計resource makespan 1p、velocity forecast 1dをroll-upする。構造化説明追加後のend-to-end forecastは13p"
+  duration 1d
   priority 100
   requires:
     DEVELOPERS 1
