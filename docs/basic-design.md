@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 0.7
+- 文書状態: Draft 0.8
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
@@ -9,6 +9,7 @@
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
 - Recommendation ranking: [specs/recommendation-ranking.md](specs/recommendation-ranking.md)
 - Recommendation reasons: [specs/recommendation-reasons.md](specs/recommendation-reasons.md)
+- Recommendation explanation: [specs/recommendation-explanation.md](specs/recommendation-explanation.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
@@ -471,7 +472,7 @@ upcoming の explanation は、直接の `from` milestone と、その milestone
 
 Recommendationは既存classificationと`runnable_now`を置き換えず、新規start actionへのdecision authorityとして[Recommendation Semantics仕様](specs/recommendation.md)で分離する。Conceptual recommended setはready taskのsubsetであり、active allocationを含めてjointly resource-feasibleでなければならない。`recommended`、`allowed`、`deferred`、`discouraged`はready taskだけへ適用し、`blocked`をrecommendation tierとして使用しない。
 
-[Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)はactual ready taskからselection horizonとrecommended setを決定的に選び、[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)はset/tierの理由をstable code、typed fact、entity referenceへ分解する。現行`NextResult.v2`へrecommendation fieldは存在しない。Structured explanationとschema migrationが受け入れられるまで、`runnable_now`の意味や既定sortを変更しない。
+[Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)はactual ready taskからselection horizonとrecommended setを決定的に選び、[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)はset/tierの理由をstable code、typed fact、entity referenceへ分解する。[Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)はtyped fact、制限付きexpression、comparison、decision trace、description projectionを接続する。現行`NextResult.v2`へrecommendation fieldは存在しない。Interface Contractでschema migrationが受け入れられるまで、`runnable_now`の意味や既定sortを変更しない。
 
 ### 9.4 mutation
 
@@ -957,7 +958,7 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、CLI/JSON/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。残る事項は個別仕様またはADRで確定する。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、CLI/JSON/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。残る事項は個別仕様またはADRで確定する。
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細
@@ -973,7 +974,7 @@ DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reach
 | Graph algorithm | 9、10、11章 |
 | Resource scheduler | 7.2、7.4、10.6、11章 |
 | Recommendation model | 2.4、5.4、17、21章 |
-| Recommendation ranking/reasons | 2.4、5.4、17、21章 |
+| Recommendation ranking/reasons/explanation | 2.4、5.4、17、21章 |
 | Pure Core API | 2.2、15、17章 |
 | CLI adapter | 15、17章 |
 | Help registry | 16章 |

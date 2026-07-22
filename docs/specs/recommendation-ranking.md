@@ -5,6 +5,7 @@
 - Algorithm ID: `perttool.recommendation-ranking.lexicographic-frontier`
 - Algorithm version: `1`
 - 対象: AI Project Control Planeの決定的なrecommended set選択
+- Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -365,7 +366,7 @@ Resource schedule criticalityをranking inputにすると、candidate orderがsc
 
 ## 13. Decision traceへの出力契約
 
-本節は後続`STRUCTURED_EXPLANATION_MODEL`へ渡すsemantic inputを定義する。JSON field名やserialization schemaは固定しない。
+本節は[Recommendation Structured Explanation仕様](recommendation-explanation.md)へ渡すsemantic inputを定義する。JSON field名やserialization schemaは固定しない。
 
 ### 13.1 Stable rule ID
 
@@ -470,6 +471,6 @@ Version 1は、明示factだけで説明可能なbounded heuristicを優先す�
 - task IDまで含むcomplete tie-breakを固定した
 - algorithm ID/versionとversion変更条件を固定した
 - scheduler、schedule criticality、`runnable_now`との循環を排除した
-- winner、alternative、decisive ruleを後続decision traceへ渡す契約を定義した
+- winner、alternative、decisive ruleをstructured decision traceへ渡す契約を定義した
 - release semantics、rework risk、情報不足を推測していない
 - current interfaceとimplementationを変更していない

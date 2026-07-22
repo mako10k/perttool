@@ -6,6 +6,7 @@
 - 対応要件: [../requirements.md](../requirements.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
+- Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Analysis仕様: [analysis.md](analysis.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
@@ -22,7 +23,7 @@
 - recommended set選択と4 tierへの対応
 - 未model化factをreasonへ混入させない境界
 - taxonomyとunknown codeの互換性
-- 後続の構造化expression、decision trace、description projectionへ渡す入力
+- 構造化expression、decision trace、description projectionへ渡す入力
 
 Reason codeだけで「なぜこのtaskで別taskではないか」を説明したとはみなさない。Codeはreasonの分類であり、適用rule、typed fact、比較対象、決定条件を置き換えない。
 
@@ -34,7 +35,7 @@ Reason codeだけで「なぜこのtaskで別taskではないか」を説明し�
 2. [Recommendation Semantics仕様](recommendation.md)
 3. Rankingの意味は[Recommendation Ranking Policy仕様](recommendation-ranking.md)、reasonの意味は本仕様
 4. [Analysis仕様](analysis.md)
-5. 後続のStructured Explanation Model、Interface Contract
+5. [Recommendation Structured Explanation仕様](recommendation-explanation.md)、Interface Contract
 6. example、test、help、implementation
 
 対象:
@@ -254,7 +255,7 @@ Unknown fact kind、entity kind、rule IDについても同じ原則を適用す
 
 ## 11. Structured explanationへの入力境界
 
-後続Structured Explanation Modelは、本仕様から次を入力として受け取る。
+[Recommendation Structured Explanation仕様](recommendation-explanation.md)は、本仕様から次を入力として受け取る。
 
 - stable reason code
 - effectとactual decision role
@@ -265,7 +266,7 @@ Unknown fact kind、entity kind、rule IDについても同じ原則を適用す
 - set membershipとresource feasibility witness
 - Taxonomy versionとRanking algorithm versionの分離
 
-後続taskが固定するもの:
+Structured Explanation仕様と後続Interface Contractが固定するもの:
 
 - expression ASTのnode、operator、evaluation
 - reason occurrence間の親子関係とdecision trace
@@ -273,7 +274,7 @@ Unknown fact kind、entity kind、rule IDについても同じ原則を適用す
 - description key、parameter、template、locale、fallback text
 - JSON field、schema、ordering、deduplication、truncation
 
-後続taskはcodeの発生predicateやeffectを無言で変更してはならない。自然言語descriptionはcode、typed fact、comparison、decision traceから決定的に導出し、description textをranking inputへ戻してはならない。
+後続taskはcodeの発生predicateやeffectを無言で変更してはならない。自然言語descriptionは[Structured Explanation仕様](recommendation-explanation.md)に従い、code、typed fact、comparison、decision traceから決定的に導出し、description textをranking inputへ戻してはならない。
 
 ## 12. Invariants
 

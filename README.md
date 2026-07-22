@@ -12,6 +12,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [Recommendation Semantics 仕様](docs/specs/recommendation.md)
 - [Recommendation Ranking Policy 仕様](docs/specs/recommendation-ranking.md)
 - [Recommendation Reason Taxonomy 仕様](docs/specs/recommendation-reasons.md)
+- [Recommendation Structured Explanation 仕様](docs/specs/recommendation-explanation.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)

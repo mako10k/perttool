@@ -5,6 +5,7 @@
 - 対象: AI Project Control Planeの実行可否・推奨度model
 - Ranking policy: [recommendation-ranking.md](recommendation-ranking.md)
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
+- Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -250,7 +251,7 @@ Recommendationはtierだけを返して完了としてはならない。
 - resource feasibilityまたはconflict
 - 人間向けdescriptionを導出するstable keyとparameter
 
-Reason codeとtyped fact categoryは[Recommendation Reason Taxonomy仕様](recommendation-reasons.md)を正とする。制限付きexpression AST、decision trace、description projectionの具体的contractは後続`STRUCTURED_EXPLANATION_MODEL`、`INTERFACE_CONTRACT`で固定する。自然言語textだけを正本の理由にしない。
+Reason codeとtyped fact categoryは[Recommendation Reason Taxonomy仕様](recommendation-reasons.md)、制限付きexpression AST、decision trace、description projectionは[Recommendation Structured Explanation仕様](recommendation-explanation.md)を正とする。具体的なCore type、text/JSON field、schema migrationは`INTERFACE_CONTRACT`で固定する。自然言語textだけを正本の理由にしない。
 
 ## 12. Human override boundary
 
@@ -291,7 +292,7 @@ Recommendation resultはsource digest、capacity option、algorithm versionへ�
 - supporting、opposing、blockingのpolarity
 - fact IDと未model化factの扱い
 
-### `STRUCTURED_EXPLANATION_MODEL`
+### [`STRUCTURED_EXPLANATION_MODEL`](recommendation-explanation.md)
 
 - typed fact
 - 制限付きexpression AST

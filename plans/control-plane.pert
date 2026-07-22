@@ -119,6 +119,7 @@ task STRUCTURED_EXPLANATION_MODEL EXPLANATION_INPUT_READY -> STRUCTURED_EXPLANAT
   title "構造化reason descriptionとdecision traceを定義する"
   description "typed fact、制限付きexpression AST、comparison、decisive/supporting、description keyとparamsを固定し、自然言語textを派生表示とする"
   duration 2p
+  status done
   priority 75
   requires:
     DESIGNERS 1
