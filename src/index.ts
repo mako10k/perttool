@@ -1,5 +1,6 @@
 export { checkDocument } from "./application/check.js";
 export { analyzeDocument } from "./application/analyze.js";
+export { planFormat } from "./application/format.js";
 export { selectNextTasks } from "./application/next.js";
 export { planMutation } from "./application/mutate.js";
 export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js";
@@ -16,6 +17,10 @@ export * from "./model/units.js";
 export { parseDocument } from "./parser/document-parser.js";
 export { validateDocument } from "./semantic/validator.js";
 export type { CheckOptions, CheckResult, CheckSummary } from "./application/check.js";
+export type {
+  FormatPreviewOptions,
+  FormatPreviewResult,
+} from "./application/format.js";
 export type {
   AnalysisMode,
   AnalysisResult,

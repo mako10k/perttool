@@ -234,3 +234,24 @@ test("E2E-009: atomic batch replaces a path and feeds analysis without intermedi
   assert.equal(analyzed.ok, true);
   assert.equal(analyzed.precedence.makespan.display, "3");
 });
+
+test("E2E-010: formatter preview feeds validation and leaves the source unchanged", () => {
+  const source = "test/fixtures/grammar/formatter-roundtrip.pert";
+  const expected = readFileSync(
+    path.join(root, "test/golden/grammar/formatter-roundtrip.expected.pert"),
+    "utf8",
+  );
+  const before = readFileSync(path.join(root, source), "utf8");
+  const preview = runJson(["dsl", "format", source]);
+  assert.equal(preview.operation, "dsl.format");
+  assert.equal(preview.changed, true);
+  assert.equal(preview.updated_text, expected);
+  assert.deepEqual(preview.write, { mode: "preview", target: null, written: false });
+
+  const checked = runJson(["dsl", "check", "-"], 0, { input: preview.updated_text });
+  assert.equal(checked.document_id, "FORMATTER_ROUNDTRIP");
+  const stable = run(["dsl", "format", "-", "--check"], { input: preview.updated_text });
+  assert.equal(stable.status, 0, stable.stderr);
+  assert.equal(stable.stdout, "");
+  assert.equal(readFileSync(path.join(root, source), "utf8"), before);
+});

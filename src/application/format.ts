@@ -14,6 +14,7 @@ export interface FormatPreviewOptions extends FormatOptions {
 
 export interface FormatPreviewResult {
   readonly ok: boolean;
+  readonly documentId: string | null;
   readonly changed: boolean;
   readonly originalDigest: string;
   readonly updatedDigest: string | null;
@@ -41,6 +42,7 @@ export function planFormat(
   if (!formatted.ok) {
     return {
       ok: false,
+      documentId: formatted.documentId,
       changed: false,
       originalDigest,
       updatedDigest: null,
@@ -58,6 +60,7 @@ export function planFormat(
   const updatedText = formatted.formattedText;
   return {
     ok: true,
+    documentId: formatted.documentId,
     changed: formatted.changed,
     originalDigest,
     updatedDigest: digest(updatedText),

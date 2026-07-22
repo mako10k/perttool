@@ -159,6 +159,7 @@ perttool dsl format <file>
   [--check]
   [--diff]
   [--write [--expect-digest <digest>] | --out <path>]
+  [--max-diagnostics <integer>]
   [--warnings-as-errors]
   [--format text|json]
   [--color auto|always|never]
@@ -167,6 +168,8 @@ perttool dsl format <file>
 - defaultは候補documentをstdoutへ出すpreview
 - `--diff`は候補documentの代わりにunified diffをstdoutへ出す
 - `--check`は変更が必要ならexit 1とし、fileを書かない
+- textの`--check`単独はstdoutを空にする。`--diff`併用時はdiffをstdoutへ出す
+- JSONの`--check`はCLIの`ok`とexit codeだけを変更し、candidate生成成功時のcandidate、diff、editを隠さない
 - `--check`は`--write`、`--out`と併用不可
 - formatterはcandidateを再parse・再検査する
 - inputが既にcanonicalなら`changed=false`
@@ -848,7 +851,26 @@ source_reached        boolean
 
 Upcoming taskの`explanation`はtaskの直接`from` milestoneをrootとする。Rootではunsatisfied incoming edgeを常に返し、`--explain-depth 0`はそこで停止する。Depthを1増やすごとに、unsatisfied edgeの未到達source milestoneをID辞書順で`children`へ追加する。上限で未展開sourceが残るnodeは`truncated=true`とする。DAG上の同一pathで同じmilestoneを再訪しない。
 
-### 12.4 MutationResult
+### 12.4 FormatResult
+
+`schema_version = "Perttool.FormatResult.v1"`
+
+```text
+changed          boolean
+original_digest  string
+updated_digest   string|null
+updated_text     string|null
+diff             string|null
+edits            TextEdit[]
+write:
+  mode            "preview" | "out" | "in_place"
+  target          string|null
+  written         boolean
+```
+
+Candidate生成成功時、`--check`または`--warnings-as-errors`でCLIの`ok=false`となっても、JSONは`updated_text`、`diff`、`edits`を保持する。
+
+### 12.5 MutationResult
 
 `schema_version = "Perttool.MutationResult.v1"`
 
@@ -880,7 +902,7 @@ advance:
   ready_after
 ```
 
-### 12.5 HelpResult
+### 12.6 HelpResult
 
 `schema_version = "Perttool.HelpResult.v1"`
 

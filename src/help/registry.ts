@@ -480,22 +480,23 @@ const nodes: readonly HelpNode[] = [
   {
     id: "editing",
     title: "Safe editing",
-    summary: "task/milestone/resource mutationとatomic batchをpreviewし、検査済み候補またはdiffを取得できます。Writeはまだ未実装です。",
+    summary: "dsl format、task/milestone/resource mutation、atomic batchをpreviewし、検査済み候補またはdiffを取得できます。Writeはまだ未実装です。",
     quick: [
       {
         id: "current-surface",
         title: "Current surface",
-        body: "Entity commandとmutation applyはplanMutationの局所TextEdit、再検査済みcandidate、digest、diffをtext/JSONへ投影し、fileは変更しません。",
+        body: "dsl formatはplanFormat、Entity commandとmutation applyはplanMutationの再検査済みcandidate、UTF-16 TextEdit、digest、diffをtext/JSONへ投影し、fileは変更しません。",
       },
     ],
     detail: [
       {
         id: "write-gate",
         title: "Write gate",
-        body: "dsl format commandと、mutation commandの--write/--outは後続実装です。現在のmutation commandはpreview-onlyです。",
+        body: "dsl formatとmutation commandの--write/--outは後続実装です。現在のediting commandはpreview-onlyです。",
       },
     ],
     syntax: [
+      "perttool dsl format FILE [--check] [--diff]",
       "perttool task add|set|remove|finish ...",
       "perttool milestone add|set|remove ...",
       "perttool resource add|set|remove ...",

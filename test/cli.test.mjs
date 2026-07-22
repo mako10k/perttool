@@ -462,6 +462,114 @@ test("unknown command is a usage error", () => {
   assert.equal(json.diagnostics[0].code, "PTCLI-001");
 });
 
+test("dsl format exposes candidate, diff, JSON, and stdin previews", () => {
+  const source = "test/fixtures/grammar/formatter-roundtrip.pert";
+  const expected = readFileSync(
+    path.join(root, "test/golden/grammar/formatter-roundtrip.expected.pert"),
+    "utf8",
+  );
+  const sourceText = readFileSync(path.join(root, source), "utf8");
+
+  const help = run(["dsl", "format", "--help"]);
+  assert.equal(help.status, 0, help.stderr);
+  assert.match(help.stdout, /perttool dsl format <file>/);
+
+  const preview = run(["dsl", "format", source, "--color=never"]);
+  assert.equal(preview.status, 0, preview.stderr);
+  assert.equal(preview.stdout, expected);
+  assert.match(preview.stderr, /^PREVIEW dsl\.format changed=true /);
+
+  const diff = run(["dsl", "format", source, "--diff", "--color=never"]);
+  assert.equal(diff.status, 0, diff.stderr);
+  assert.match(diff.stdout, /^--- test\/fixtures\/grammar\/formatter-roundtrip\.pert$/m);
+  assert.match(diff.stdout, /^\+\+\+ candidate$/m);
+  assert.equal(diff.stderr, "");
+
+  const jsonResult = run(["dsl", "format", source, "--format=json"]);
+  assert.equal(jsonResult.status, 0, jsonResult.stderr);
+  const json = JSON.parse(jsonResult.stdout);
+  assert.equal(json.schema_version, "Perttool.FormatResult.v1");
+  assert.equal(json.operation, "dsl.format");
+  assert.equal(json.document_id, "FORMATTER_ROUNDTRIP");
+  assert.equal(json.updated_text, expected);
+  assert.match(json.diff, /^--- test\/fixtures\/grammar\/formatter-roundtrip\.pert/m);
+  assert.ok(json.edits.length > 0);
+  assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
+
+  const withBom = `\uFEFF${sourceText}`;
+  const stdin = run(["dsl", "format", "-", "--format=json"], { input: withBom });
+  assert.equal(stdin.status, 0, stdin.stderr);
+  const stdinJson = JSON.parse(stdin.stdout);
+  assert.equal(stdinJson.source, "<stdin>");
+  assert.equal(stdinJson.updated_text.startsWith("\uFEFF# formatter"), true);
+  assert.equal(stdinJson.source_digest, stdinJson.original_digest);
+});
+
+test("dsl format check mode reports drift without hiding a valid candidate", () => {
+  const source = "test/fixtures/grammar/formatter-roundtrip.pert";
+  const expected = "test/golden/grammar/formatter-roundtrip.expected.pert";
+
+  const changed = run(["dsl", "format", source, "--check", "--color=never"]);
+  assert.equal(changed.status, 1);
+  assert.equal(changed.stdout, "");
+  assert.equal(changed.stderr, "");
+
+  const changedDiff = run([
+    "dsl", "format", source, "--check", "--diff", "--color=never",
+  ]);
+  assert.equal(changedDiff.status, 1);
+  assert.match(changedDiff.stdout, /^--- test\/fixtures\/grammar\/formatter-roundtrip\.pert/m);
+
+  const changedJson = run(["dsl", "format", source, "--check", "--format=json"]);
+  assert.equal(changedJson.status, 1);
+  const json = JSON.parse(changedJson.stdout);
+  assert.equal(json.ok, false);
+  assert.equal(json.changed, true);
+  assert.match(json.updated_text, /^# formatter round-trip source/);
+  assert.match(json.diff, /^--- test\/fixtures\/grammar\/formatter-roundtrip\.pert/m);
+  assert.ok(json.edits.length > 0);
+
+  const canonical = run(["dsl", "format", expected, "--check", "--color=never"]);
+  assert.equal(canonical.status, 0, canonical.stderr);
+  assert.equal(canonical.stdout, "");
+});
+
+test("dsl format rejects unavailable writes and suppresses invalid candidates", () => {
+  const source = "test/fixtures/grammar/formatter-roundtrip.pert";
+  for (const option of [
+    ["--write"],
+    ["--out", "other.pert"],
+    ["--expect-digest", `sha256:${"0".repeat(64)}`],
+  ]) {
+    const result = run(["dsl", "format", source, ...option, "--format=json"]);
+    assert.equal(result.status, 2);
+    assert.match(JSON.parse(result.stdout).diagnostics[0].message, /not implemented/);
+  }
+
+  const invalid = run([
+    "dsl", "format", "test/fixtures/invalid/undefined-endpoint.pert", "--format=json",
+  ]);
+  assert.equal(invalid.status, 1);
+  const invalidJson = JSON.parse(invalid.stdout);
+  assert.equal(invalidJson.ok, false);
+  assert.equal(invalidJson.updated_text, null);
+  assert.equal(invalidJson.diff, null);
+  assert.deepEqual(invalidJson.edits, []);
+
+  const warningText = minimalText
+    .replace("project MINIMAL:", "project   MINIMAL:")
+    .replace("  duration 1d\n", "  duration 01.0d\n  status done\n");
+  const strict = run([
+    "dsl", "format", "-", "--warnings-as-errors", "--format=json",
+  ], { input: warningText });
+  assert.equal(strict.status, 1);
+  const strictJson = JSON.parse(strict.stdout);
+  assert.equal(strictJson.ok, false);
+  assert.match(strictJson.updated_text, /project MINIMAL:/);
+  assert.match(strictJson.diff, /^--- <stdin>/m);
+  assert.ok(strictJson.diagnostics.some(({ code }) => code === "PTDAG-208"));
+});
+
 test("task mutation commands expose candidate, diff, JSON, and stdin previews", () => {
   const actionHelp = run(["task", "add", "--help"]);
   assert.equal(actionHelp.status, 0, actionHelp.stderr);

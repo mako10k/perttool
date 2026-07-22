@@ -231,6 +231,7 @@ test("format application returns a rechecked candidate, UTF-16 edits, digests, a
     updatedLabel: "plan.pert (candidate)",
   });
   assert.equal(result.ok, true);
+  assert.equal(result.documentId, "FORMAT");
   assert.equal(result.changed, true);
   assert.equal(result.originalDigest, digest(input));
   assert.equal(result.updatedDigest, digest(result.updatedText));
@@ -283,6 +284,7 @@ test("format application returns the original candidate and empty diff for a no-
 
   const result = planFormat(input);
   assert.equal(result.ok, true);
+  assert.equal(result.documentId, "FORMAT");
   assert.equal(result.changed, false);
   assert.equal(result.updatedText, input);
   assert.equal(result.originalDigest, digest(input));
@@ -296,6 +298,7 @@ test("format application rejects invalid input without exposing a candidate", ()
   const input = `project INVALID:\n  title "invalid"\n  duration_unit day\n  finish MISSING\n`;
   const result = planFormat(input);
   assert.equal(result.ok, false);
+  assert.equal(result.documentId, "INVALID");
   assert.equal(result.changed, false);
   assert.equal(result.originalDigest, digest(input));
   assert.equal(result.updatedDigest, null);

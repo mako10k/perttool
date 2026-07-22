@@ -7,6 +7,7 @@ import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
 import { analyzeDocument } from "./application/analyze.js";
 import { checkDocument } from "./application/check.js";
+import { planFormat, type FormatPreviewResult } from "./application/format.js";
 import { planBatchMutation, planMutation } from "./application/mutate.js";
 import { selectNextTasks } from "./application/next.js";
 import type { HelpLevel } from "./help/registry.js";
@@ -51,6 +52,7 @@ function topLevelHelp(): string {
     "  perttool --version",
     "  perttool --help",
     "  perttool dsl check <file> [--format text|json]",
+    "  perttool dsl format <file> [--check] [--diff] [--format text|json]",
     "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
     "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
     "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
@@ -59,7 +61,7 @@ function topLevelHelp(): string {
     "  perttool resource add|set|remove ...",
     "  perttool mutation apply <file> --request <json-file|-> [--diff] [--format text|json]",
     "",
-    "Mutation commands are preview-only; --write and --out are not implemented yet.",
+    "Format and mutation commands are preview-only; --write and --out are not implemented yet.",
   ].join("\n");
 }
 
@@ -73,6 +75,13 @@ function commandHelp(resource: string, action: string): string {
       "  [--color auto|always|never]",
     ].join("\n");
   }
+  if (resource === "dsl" && action === "format") return [
+    "Usage: perttool dsl format <file>",
+    "  [--check] [--diff]",
+    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
+    "  [--format text|json] [--color auto|always|never]",
+    "  --write, --out, and --expect-digest are not implemented yet",
+  ].join("\n");
   if (resource === "dsl" && action === "help") return [
     "Usage: perttool dsl help [topic [subtopic]]",
     "  [--level index|quick|detail]",
@@ -469,6 +478,105 @@ const mutationCommonValueOptions = [
 ] as const;
 const mutationCommonFlagOptions = ["diff", "write", "warnings-as-errors"] as const;
 
+function rejectUnavailablePreviewWrite(
+  parsed: ParsedOptions,
+  surface: "format" | "mutation",
+): void {
+  if (parsed.flags.has("write")) {
+    throw new UsageError(`--write is not implemented; ${surface} commands are preview-only`);
+  }
+  if (parsed.values.has("out")) {
+    throw new UsageError(`--out is not implemented; ${surface} commands are preview-only`);
+  }
+  if (parsed.values.has("expect-digest")) {
+    throw new UsageError(
+      `--expect-digest is not implemented until ${surface} --write is available`,
+    );
+  }
+}
+
+async function runFormat(args: readonly string[]): Promise<number> {
+  const parsed = parseOptions(
+    args,
+    new Set(["format", "color", "max-diagnostics", "out", "expect-digest"]),
+    new Set(["check", "diff", "write", "warnings-as-errors"]),
+  );
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("dsl format requires exactly one <file>");
+  }
+  rejectUnavailablePreviewWrite(parsed, "format");
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "dsl.format",
+      format === "json",
+    );
+  }
+  const result = planFormat(input.text, {
+    maxDiagnostics,
+    originalLabel: source,
+    updatedLabel: "candidate",
+  });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
+  const checkFailure = parsed.flags.has("check") && result.ok && result.changed;
+  const ok = result.ok && !warningFailure && !checkFailure;
+  if (format === "json") {
+    writeJson({
+      schema_version: "Perttool.FormatResult.v1",
+      tool_version: TOOL_VERSION,
+      operation: "dsl.format",
+      ok,
+      document_id: result.documentId,
+      source,
+      source_digest: input.digest,
+      diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
+      ...previewResultJson(result, result.ok),
+    });
+  } else {
+    const candidateAllowed = result.ok && !warningFailure;
+    if (candidateAllowed) {
+      if (parsed.flags.has("check")) {
+        if (parsed.flags.has("diff")) process.stdout.write(result.diff ?? "");
+      } else {
+        process.stdout.write(
+          parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
+        );
+        if (!parsed.flags.has("diff")) {
+          process.stderr.write(
+            `PREVIEW dsl.format changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+          );
+        }
+      }
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return ok ? 0 : 1;
+}
+
 function mutationOptionSets(
   resource: string,
   action: string,
@@ -515,20 +623,6 @@ function mutationOptionSets(
     addValues("request");
   }
   return { values, flags, repeatable };
-}
-
-function rejectUnavailableMutationWrite(parsed: ParsedOptions): void {
-  if (parsed.flags.has("write")) {
-    throw new UsageError("--write is not implemented; mutation commands are preview-only");
-  }
-  if (parsed.values.has("out")) {
-    throw new UsageError("--out is not implemented; mutation commands are preview-only");
-  }
-  if (parsed.values.has("expect-digest")) {
-    throw new UsageError(
-      "--expect-digest is not implemented until mutation --write is available",
-    );
-  }
 }
 
 function requiredOption(parsed: ParsedOptions, name: string): string {
@@ -875,8 +969,8 @@ function resourceMutationFromOptions(action: string, parsed: ParsedOptions): Mut
   };
 }
 
-function mutationResultJson(
-  result: MutationResult,
+function previewResultJson(
+  result: MutationResult | FormatPreviewResult,
   exposeCandidate: boolean,
 ): Readonly<Record<string, unknown>> {
   return {
@@ -917,7 +1011,7 @@ async function runMutation(
 ): Promise<number> {
   const config = mutationOptionSets(resource, action);
   const parsed = parseOptions(args, config.values, config.flags, config.repeatable);
-  rejectUnavailableMutationWrite(parsed);
+  rejectUnavailablePreviewWrite(parsed, "mutation");
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
   const maxDiagnostics = boundedInteger(
@@ -999,7 +1093,7 @@ async function runMutation(
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
       diagnostics_truncated: result.diagnosticsTruncated,
-      ...mutationResultJson(result, result.ok),
+      ...previewResultJson(result, result.ok),
     });
   } else {
     if (ok) {
@@ -1820,7 +1914,7 @@ async function main(argv: readonly string[]): Promise<number> {
   if (
     argv.length === 3 &&
     argv[2] === "--help" &&
-    ((resource === "dsl" && ["check", "help"].includes(action)) ||
+    ((resource === "dsl" && ["check", "format", "help"].includes(action)) ||
       (resource === "dag" && ["analyze", "next"].includes(action)) ||
       isMutationCommand)
   ) {
@@ -1832,6 +1926,9 @@ async function main(argv: readonly string[]): Promise<number> {
   }
   if (resource === "dag" && action === "next") {
     return runNext(argv.slice(2));
+  }
+  if (resource === "dsl" && action === "format") {
+    return runFormat(argv.slice(2));
   }
   if (isMutationCommand) {
     return runMutation(

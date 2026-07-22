@@ -17,6 +17,7 @@ export interface FormatOptions extends CheckOptions {}
 
 export interface FormatResult {
   readonly ok: boolean;
+  readonly documentId: string | null;
   readonly changed: boolean;
   readonly formattedText: string | null;
   readonly edits: readonly TextEdit[];
@@ -147,6 +148,7 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
   if (!checked.ok) {
     return {
       ok: false,
+      documentId: checked.documentId,
       changed: false,
       formattedText: null,
       edits: [],
@@ -243,6 +245,7 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
   if (!candidate.ok) throw new Error("formatter produced an invalid candidate document");
   return {
     ok: true,
+    documentId: candidate.documentId,
     changed: formattedText !== text,
     formattedText,
     edits: normalizedEdits,

@@ -47,9 +47,12 @@ test("help registry topics and related links resolve", () => {
 test("editing help exposes preview commands and distinguishes unavailable writes", () => {
   const help = getHelp("editing", "detail");
   assert.equal(help.ok, true);
+  assert.match(help.summary, /dsl format/);
   assert.match(help.summary, /task\/milestone\/resource mutation/);
   assert.match(help.summary, /atomic batch/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /planFormat/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planMutation/);
+  assert.ok(help.syntax.some((line) => line.includes("dsl format")));
   assert.ok(help.syntax.some((line) => line.includes("mutation apply")));
   assert.match(help.sections.map(({ body }) => body).join("\n"), /preview-only/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--write\/--out/);

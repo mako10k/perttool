@@ -21,6 +21,9 @@ Core APIを直接呼ぶunit testとは分離し、`dist/cli.js`をsubprocessと�
 | E2E-005 | 不正なresource参照を安全に拒否する | check → analyze → next | 全commandがexit 1と同じstable diagnosticを返し、成功resultを出さない |
 | E2E-006 | AIがPoint見積りとVelocity予測を利用する | help → check → analyze → next | PERT値をpで保持し、20p/10dのvelocity forecastをdayで別fieldに返す。Resource makespan 15pは7.5dになる |
 | E2E-007 | 複数の構文errorをAIが修正する | check → analyze → next、diagnostic上限 | 独立errorをsource順で回収し、invalid blockの子行と後続semantic/graph diagnosticを抑制し、上限超過を明示する |
+| E2E-008 | mutation previewを次のcommandへ渡す | task set preview → check | 再検査済みcandidateがvalidで、原本fileを変更しない |
+| E2E-009 | 中間状態を作らずpathを置換する | atomic batch preview → analyze | connected milestone追加とtask置換を1 candidateで検査し、そのまま解析できる |
+| E2E-010 | formatter previewを検査する | format preview → check → format --check | golden candidateがvalidかつidempotentで、原本fileを変更しない |
 
 Fixtureは`test/fixtures/e2e/`へ置き、過去状態を正本計画へ混ぜず、before/afterを独立した入力として比較する。
 
@@ -40,4 +43,4 @@ npm run check
 
 ## 4. MVP境界
 
-MVPのwrite commandは未実装なので、E2E-004は利用者がGit管理下の文書を手作業で更新した前後を再計算する。Formatter、mutation、advance、Mermaid、MCPはこのE2E sliceの対象外とする。
+MVPのwrite commandは未実装なので、E2E-004は利用者がGit管理下の文書を手作業で更新した前後を再計算する。Formatterとmutationはpreview-onlyとして検査する。Advance、Mermaid、MCPはこのE2E sliceの対象外とする。
