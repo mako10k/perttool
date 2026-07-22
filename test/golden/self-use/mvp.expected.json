@@ -12,7 +12,7 @@
     }
   },
   "analyze": {
-    "precedence_makespan": "29",
+    "precedence_makespan": "31",
     "precedence_critical_tasks": [
       "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
       "RECOMMENDATION_ROADMAP_UPDATE",
@@ -24,7 +24,7 @@
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "30",
+    "resource_makespan": "32",
     "resource_delay": "1",
     "resource_arcs": [
       "resource:ADVANCE:MERMAID_ROUNDTRIP",

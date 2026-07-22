@@ -4,28 +4,29 @@
     "grammar_version": 1,
     "summary": {
       "resources": 2,
-      "milestones": 13,
-      "tasks": 9,
-      "gates": 6,
+      "milestones": 15,
+      "tasks": 10,
+      "gates": 7,
       "errors": 0,
       "warnings": 1
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "9",
+    "precedence_makespan": "11",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "9/1",
+    "precedence_forecast": "11/1",
     "precedence_critical_tasks": [
       "RECOMMENDATION_MODEL",
       "RANKING_POLICY",
       "REASON_CODE_TAXONOMY",
+      "STRUCTURED_EXPLANATION_MODEL",
       "INTERFACE_CONTRACT",
       "NORMATIVE_EXAMPLES",
       "DESIGN_REVIEW"
     ],
-    "resource_makespan": "9",
-    "resource_forecast": "9/1",
+    "resource_makespan": "11",
+    "resource_forecast": "11/1",
     "resource_delay": "0",
     "resource_arcs": [
       "resource:RANKING_POLICY:HUMAN_OVERRIDE_CONTRACT",
@@ -35,6 +36,7 @@
       "RECOMMENDATION_MODEL",
       "RANKING_POLICY",
       "REASON_CODE_TAXONOMY",
+      "STRUCTURED_EXPLANATION_MODEL",
       "INTERFACE_CONTRACT",
       "NORMATIVE_EXAMPLES",
       "DESIGN_REVIEW"
@@ -53,6 +55,7 @@
       "upcoming": [
         "RANKING_POLICY",
         "REASON_CODE_TAXONOMY",
+        "STRUCTURED_EXPLANATION_MODEL",
         "INTERFACE_CONTRACT",
         "HUMAN_OVERRIDE_CONTRACT",
         "NORMATIVE_EXAMPLES",

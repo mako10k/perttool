@@ -78,6 +78,8 @@ Must:
 - AIはprojectが決めた許可・推奨範囲でworkを実行し、会話上の興味、実装容易性、局所的な改善だけを理由にproject priorityを再定義しないこと
 - recommendationを、critical path、float、resource制約、後続依存、gateまたはmilestoneなど、project modelに明示されたfactから導出すること
 - 推奨taskだけでなく、他の実行可能taskがより優先されない理由も機械可読なproject factで説明できること
+- reason codeだけで結論を返さず、適用rule、typed fact、比較対象、決定に使った条件を構造化された説明として返し、AIがrankingを再推論せず「なぜこのtaskで別taskではないか」を回答できること
+- 人間向けreason descriptionはstable code、構造化fact、比較、decision traceから決定的に導出し、自然言語textだけを判断根拠の正本にしないこと
 - 同じdocument、option、algorithm versionから同じrecommendationと順序を返すこと
 - recommendation algorithmとresource scheduleがheuristicである場合、証明していないglobal optimumとして表示しないこと
 - rework risk、情報不足、release固有の意味など、現在のproject modelに存在しないfactをchat contextから推測してrankingへ混入させないこと
@@ -984,7 +986,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 1. recommendationの実行可否・推奨度modelと各状態の形式的意味
 2. ranking input、優先規則、完全なtie-break、algorithm version
-3. stable reason code、関連fact、text/JSON interface、schema migration
+3. stable reason code、typed fact、制限付き構造式、winner/alternative比較、decisive ruleを持つdecision trace、派生reason description、text/JSON interface、schema migration
 4. human overrideの意味、理由、audit先、再解析契約
 5. Mermaid profile の `%% perttool:` メタデータ schema
 
@@ -1006,10 +1008,11 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
    - [x] product vision、source of truth、global objective、determinism、non-goal
    - [ ] 実行可否と推奨度のmodel
    - [ ] deterministic ranking policyとstable reason code
+   - [ ] structured reason descriptionとdecision trace
    - [ ] Core、text、JSON、human override契約
    - [ ] normative example、test観点、self-use migration
 7. [ ] parser/validator の最小実装と golden tests
 
 項目7は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
-Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct visionと要件境界は項目6の最初のsliceとして確定した。次は実行可否と推奨度modelを規範仕様へ定義する。ranking、reason code、interface、overrideの詳細と、Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct visionと要件境界は項目6の最初のsliceとして確定した。次は実行可否と推奨度modelを規範仕様へ定義する。ranking、reason code、structured reason description、decision trace、interface、overrideの詳細と、Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。

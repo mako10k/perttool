@@ -4,7 +4,8 @@ project AI_CONTROL_PLANE_DESIGN:
   description |
     GitHub Issue #1を、実行可否と推奨度を分離した決定的かつ説明可能な
     task recommendation契約へ具体化する。今回は設計のみを扱い、実装は含めない。
-    Pointとvelocityは設計開始時の初期見積りであり、完了実績から再calibrationする。
+    Pointとvelocityは設計開始時の初期見積りを基準とし、構造化説明model追加後のend-to-end forecastは13pとする。
+    完了実績とscope変更はGitで追跡し、必要に応じて再calibrationする。
   as_of 2026-07-22
   duration_unit point
   velocity 11p/11d
@@ -33,6 +34,12 @@ milestone RANKING_POLICY_DEFINED:
 
 milestone REASON_CODES_DEFINED:
   title "stable reason code確定"
+
+milestone EXPLANATION_INPUT_READY:
+  title "構造化説明の設計入力確定"
+
+milestone STRUCTURED_EXPLANATION_DEFINED:
+  title "構造化reason descriptionとdecision trace確定"
 
 milestone CONTRACT_INPUT_READY:
   title "interface設計入力確定"
@@ -69,7 +76,7 @@ task VISION_REQUIREMENTS NOW -> VISION_DEFINED:
 
 task RECOMMENDATION_MODEL VISION_DEFINED -> RECOMMENDATION_MODEL_DEFINED:
   title "実行可否と推奨度の2軸modelを定義する"
-  description "recommendation tierとblocked_nowの衝突を解消し、各tierの形式的意味を固定する"
+  description "recommendation tierとblocked_nowの衝突を解消し、各tierの形式的意味と構造化説明の必須性を固定する"
   duration 2p
   priority 90
   requires:
@@ -77,7 +84,7 @@ task RECOMMENDATION_MODEL VISION_DEFINED -> RECOMMENDATION_MODEL_DEFINED:
 
 task RANKING_POLICY RECOMMENDATION_MODEL_DEFINED -> RANKING_POLICY_DEFINED:
   title "決定的なranking policyを定義する"
-  description "critical、float、priority、unlock、gate/milestone distance、resourceの優先規則と完全なtie-breakを固定する"
+  description "critical、float、priority、unlock、gate/milestone distance、resourceの優先規則、完全なtie-break、winner/alternativeと決定ruleのtraceを固定する"
   duration 2p
   priority 80
   requires:
@@ -99,15 +106,26 @@ task HUMAN_OVERRIDE_CONTRACT RECOMMENDATION_MODEL_DEFINED -> OVERRIDE_CONTRACT_D
   requires:
     DESIGNERS 1
 
-gate RANKING_CONTRACT_INPUT RANKING_POLICY_DEFINED -> CONTRACT_INPUT_READY:
-  reason "interface契約にはranking policyが必要"
+gate RANKING_EXPLANATION_INPUT RANKING_POLICY_DEFINED -> EXPLANATION_INPUT_READY:
+  reason "構造化decision traceにはranking policyが必要"
 
-gate REASON_CONTRACT_INPUT REASON_CODES_DEFINED -> CONTRACT_INPUT_READY:
-  reason "interface契約にはreason code taxonomyが必要"
+gate REASON_EXPLANATION_INPUT REASON_CODES_DEFINED -> EXPLANATION_INPUT_READY:
+  reason "構造化reason descriptionにはreason code taxonomyが必要"
+
+task STRUCTURED_EXPLANATION_MODEL EXPLANATION_INPUT_READY -> STRUCTURED_EXPLANATION_DEFINED:
+  title "構造化reason descriptionとdecision traceを定義する"
+  description "typed fact、制限付きexpression AST、comparison、decisive/supporting、description keyとparamsを固定し、自然言語textを派生表示とする"
+  duration 2p
+  priority 75
+  requires:
+    DESIGNERS 1
+
+gate EXPLANATION_CONTRACT_INPUT STRUCTURED_EXPLANATION_DEFINED -> CONTRACT_INPUT_READY:
+  reason "interface契約には構造化説明modelが必要"
 
 task INTERFACE_CONTRACT CONTRACT_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
   title "Core、text、JSONのrecommendation契約を定義する"
-  description "schema migration、algorithm version、higher-priority参照とadapter責務を固定する"
+  description "schema migration、algorithm version、higher-priority参照、decision trace、description projectionとadapter責務を固定する"
   duration 2p
   priority 70
   requires:
@@ -121,7 +139,7 @@ gate OVERRIDE_VALIDATION_INPUT OVERRIDE_CONTRACT_DEFINED -> VALIDATION_INPUT_REA
 
 task NORMATIVE_EXAMPLES VALIDATION_INPUT_READY -> NORMATIVE_EXAMPLES_DEFINED:
   title "競合ケースのnormative exampleとtest観点を定義する"
-  description "critical対priority、resource競合、parallel推奨、gate近傍、全blockedを含める"
+  description "critical対priority、resource競合、parallel推奨、gate近傍、全blockedと、なぜAでBではないかのdecision traceを含める"
   duration 2p
   priority 50
   requires:
