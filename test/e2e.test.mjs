@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -9,15 +10,16 @@ const root = path.resolve(testDirectory, "..");
 const cli = path.join(root, "dist/cli.js");
 const fixture = (name) => `test/fixtures/e2e/${name}.pert`;
 
-function run(args) {
+function run(args, options = {}) {
   return spawnSync(process.execPath, [cli, ...args], {
     cwd: root,
     encoding: "utf8",
+    ...options,
   });
 }
 
-function runJson(args, expectedStatus = 0) {
-  const result = run([...args, "--format=json"]);
+function runJson(args, expectedStatus = 0, options = {}) {
+  const result = run([...args, "--format=json"], options);
   assert.equal(
     result.status,
     expectedStatus,
@@ -33,6 +35,8 @@ test("E2E-001: discover commands, validate a plan, and compare capacity what-if"
   assert.equal(help.status, 0);
   assert.match(help.stdout, /perttool dag analyze <file>/);
   assert.match(help.stdout, /perttool dag next <file>/);
+  assert.match(help.stdout, /perttool task add\|set\|remove\|finish/);
+  assert.match(help.stdout, /perttool mutation apply <file>/);
 
   const nextHelp = runJson(["dsl", "help", "next", "--level=detail"]);
   assert.equal(nextHelp.topic_id, "next");
@@ -182,4 +186,51 @@ test("E2E-007: multiple syntax errors recover without semantic cascades", () => 
       false,
     );
   }
+});
+
+test("E2E-008: mutation preview is valid for the next command and leaves the source unchanged", () => {
+  const source = "docs/examples/minimal.pert";
+  const before = readFileSync(path.join(root, source), "utf8");
+  const preview = runJson([
+    "task", "set", source, "WORK", "--title", "implemented", "--duration", "2d",
+  ]);
+  assert.equal(preview.operation, "task.set");
+  assert.equal(preview.changed, true);
+  assert.equal(preview.write.mode, "preview");
+  assert.equal(preview.write.written, false);
+  assert.match(preview.updated_text, /title "implemented"/);
+  assert.match(preview.diff, /^--- docs\/examples\/minimal\.pert\n\+\+\+ candidate/m);
+
+  const checked = runJson(["dsl", "check", "-"], 0, { input: preview.updated_text });
+  assert.equal(checked.ok, true);
+  assert.equal(checked.document_id, "MINIMAL");
+  assert.equal(readFileSync(path.join(root, source), "utf8"), before);
+});
+
+test("E2E-009: atomic batch replaces a path and feeds analysis without intermediate writes", () => {
+  const request = {
+    kind: "batch",
+    mutations: [
+      { kind: "task.remove", id: "WORK" },
+      { kind: "milestone.add", id: "MID", milestone: { title: "middle" } },
+      {
+        kind: "task.add", id: "FIRST", from: "NOW", to: "MID",
+        task: { title: "first", duration: "1d" },
+      },
+      {
+        kind: "task.add", id: "SECOND", from: "MID", to: "DONE",
+        task: { title: "second", duration: "2d" },
+      },
+    ],
+  };
+  const preview = runJson([
+    "mutation", "apply", "docs/examples/minimal.pert", "--request", "-",
+  ], 0, { input: JSON.stringify(request) });
+  assert.equal(preview.ok, true);
+  assert.match(preview.updated_text, /task FIRST NOW -> MID:/);
+  assert.match(preview.updated_text, /task SECOND MID -> DONE:/);
+
+  const analyzed = runJson(["dag", "analyze", "-"], 0, { input: preview.updated_text });
+  assert.equal(analyzed.ok, true);
+  assert.equal(analyzed.precedence.makespan.display, "3");
 });

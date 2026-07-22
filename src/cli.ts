@@ -7,6 +7,7 @@ import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
 import { analyzeDocument } from "./application/analyze.js";
 import { checkDocument } from "./application/check.js";
+import { planMutation } from "./application/mutate.js";
 import { selectNextTasks } from "./application/next.js";
 import type { HelpLevel } from "./help/registry.js";
 import { getHelp } from "./help/registry.js";
@@ -15,6 +16,17 @@ import type { Rational } from "./model/rational.js";
 import { formatDecimal } from "./model/rational.js";
 import type { DurationUnit, Velocity } from "./model/units.js";
 import { convertWithVelocity, durationSuffix } from "./model/units.js";
+import type {
+  MilestoneClearableField,
+  MilestoneMutationState,
+  Mutation,
+  MutationResult,
+  ResourceClearableField,
+  TaskClearableField,
+  TaskEstimateInput,
+  TaskMutationStatus,
+  TaskRequirementInput,
+} from "./mutation/types.js";
 import { TOOL_VERSION } from "./version.js";
 
 type OutputFormat = "text" | "json";
@@ -42,8 +54,12 @@ function topLevelHelp(): string {
     "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
     "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
     "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
+    "  perttool task add|set|remove|finish ...",
+    "  perttool milestone add|set|remove ...",
+    "  perttool resource add|set|remove ...",
+    "  perttool mutation apply <file> --request <json-file|-> [--diff] [--format text|json]",
     "",
-    "The current bootstrap implements dsl check, dsl help, dag analyze, and dag next.",
+    "Mutation commands are preview-only; --write and --out are not implemented yet.",
   ].join("\n");
 }
 
@@ -63,7 +79,7 @@ function commandHelp(resource: string, action: string): string {
     "  [--format text|json]",
     "  [--color auto|always|never]",
   ].join("\n");
-  if (action === "analyze") return [
+  if (resource === "dag" && action === "analyze") return [
     "Usage: perttool dag analyze <file>",
     "  [--schedule precedence|resource|both]",
     "  [--capacity <resource-id>=<integer>]...",
@@ -72,13 +88,65 @@ function commandHelp(resource: string, action: string): string {
     "  [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
-  return [
+  if (resource === "dag" && action === "next") return [
     "Usage: perttool dag next <file>",
     "  [--capacity <resource-id>=<integer>]...",
     "  [--explain-depth <integer>] [--precision <integer>]",
     "  [--max-diagnostics <integer>]",
     "  [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
+  ].join("\n");
+  const preview = "  [--diff] [--max-diagnostics <integer>] [--warnings-as-errors] [--format text|json] [--color auto|always|never]";
+  if (resource === "task" && action === "add") return [
+    "Usage: perttool task add <file> <id> <from> <to>",
+    "  --title <text> (--duration <duration> | --optimistic <duration> --most-likely <duration> --pessimistic <duration>)",
+    "  [--description <text>] [--status planned|active|blocked|done] [--priority <integer>]",
+    "  [--owner <text>] [--blocked-reason <text>] [--source <text>] [--tag <tag>]... [--require <resource-id>=<integer>]...",
+    preview,
+  ].join("\n");
+  if (resource === "task" && action === "set") return [
+    "Usage: perttool task set <file> <id> [field options]",
+    "  [--from <id>] [--to <id>] [--title <text>] [--description <text>] [--duration <duration>]",
+    "  [--optimistic <duration> --most-likely <duration> --pessimistic <duration>]",
+    "  [--status planned|active|blocked|done] [--priority <integer>] [--owner <text>]",
+    "  [--blocked-reason <text>] [--source <text>] [--require <resource-id>=<integer>]...",
+    "  [--add-tag <tag>]... [--remove-tag <tag>]... [--remove-require <resource-id>]... [--clear <field>]...",
+    preview,
+  ].join("\n");
+  if (resource === "task") return [
+    `Usage: perttool task ${action} <file> <id>`,
+    preview,
+  ].join("\n");
+  if (resource === "milestone" && action === "add") return [
+    "Usage: perttool milestone add <file> <id> --title <text>",
+    "  [--description <text>] [--state planned|reached] [--tag <tag>]...",
+    preview,
+  ].join("\n");
+  if (resource === "milestone" && action === "set") return [
+    "Usage: perttool milestone set <file> <id> [--title <text>] [--description <text>] [--state planned|reached]",
+    "  [--add-tag <tag>]... [--remove-tag <tag>]... [--clear description|state|tags]...",
+    preview,
+  ].join("\n");
+  if (resource === "milestone") return [
+    `Usage: perttool milestone ${action} <file> <id>`,
+    preview,
+  ].join("\n");
+  if (resource === "resource" && action === "add") return [
+    "Usage: perttool resource add <file> <id> --title <text> --capacity <integer>",
+    "  [--description <text>]",
+    preview,
+  ].join("\n");
+  if (resource === "resource" && action === "set") return [
+    "Usage: perttool resource set <file> <id> [--title <text>] [--description <text>] [--capacity <integer>] [--clear description]",
+    preview,
+  ].join("\n");
+  if (resource === "resource") return [
+    `Usage: perttool resource ${action} <file> <id>`,
+    preview,
+  ].join("\n");
+  return [
+    "Usage: perttool mutation apply <file> --request <json-file|->",
+    preview,
   ].join("\n");
 }
 
@@ -390,6 +458,568 @@ function capacityOverrides(values: readonly string[]): ReadonlyMap<string, numbe
     overrides.set(id, capacity);
   }
   return overrides;
+}
+
+const mutationCommonValueOptions = [
+  "format",
+  "color",
+  "max-diagnostics",
+  "out",
+  "expect-digest",
+] as const;
+const mutationCommonFlagOptions = ["diff", "write", "warnings-as-errors"] as const;
+
+function mutationOptionSets(
+  resource: string,
+  action: string,
+): {
+  readonly values: ReadonlySet<string>;
+  readonly flags: ReadonlySet<string>;
+  readonly repeatable: ReadonlySet<string>;
+} {
+  const values = new Set<string>(mutationCommonValueOptions);
+  const flags = new Set<string>(mutationCommonFlagOptions);
+  const repeatable = new Set<string>();
+  const addValues = (...names: readonly string[]): void => {
+    for (const name of names) values.add(name);
+  };
+  const addRepeatable = (...names: readonly string[]): void => {
+    for (const name of names) repeatable.add(name);
+  };
+
+  if (resource === "task" && action === "add") {
+    addValues(
+      "title", "description", "duration", "optimistic", "most-likely",
+      "pessimistic", "status", "priority", "owner", "blocked-reason", "source",
+    );
+    addRepeatable("tag", "require");
+  } else if (resource === "task" && action === "set") {
+    addValues(
+      "from", "to", "title", "description", "duration", "optimistic",
+      "most-likely", "pessimistic", "status", "priority", "owner",
+      "blocked-reason", "source",
+    );
+    addRepeatable("require", "add-tag", "remove-tag", "remove-require", "clear");
+  } else if (resource === "milestone" && action === "add") {
+    addValues("title", "description", "state");
+    addRepeatable("tag");
+  } else if (resource === "milestone" && action === "set") {
+    addValues("title", "description", "state");
+    addRepeatable("add-tag", "remove-tag", "clear");
+  } else if (resource === "resource" && action === "add") {
+    addValues("title", "description", "capacity");
+  } else if (resource === "resource" && action === "set") {
+    addValues("title", "description", "capacity");
+    addRepeatable("clear");
+  } else if (resource === "mutation" && action === "apply") {
+    addValues("request");
+  }
+  return { values, flags, repeatable };
+}
+
+function rejectUnavailableMutationWrite(parsed: ParsedOptions): void {
+  if (parsed.flags.has("write")) {
+    throw new UsageError("--write is not implemented; mutation commands are preview-only");
+  }
+  if (parsed.values.has("out")) {
+    throw new UsageError("--out is not implemented; mutation commands are preview-only");
+  }
+  if (parsed.values.has("expect-digest")) {
+    throw new UsageError(
+      "--expect-digest is not implemented until mutation --write is available",
+    );
+  }
+}
+
+function requiredOption(parsed: ParsedOptions, name: string): string {
+  const value = parsed.values.get(name);
+  if (value === undefined) throw new UsageError(`option --${name} is required`);
+  return value;
+}
+
+function optionalInteger(
+  parsed: ParsedOptions,
+  name: string,
+  minimum: number,
+  maximum: number,
+): number | undefined {
+  const raw = parsed.values.get(name);
+  return raw === undefined
+    ? undefined
+    : boundedInteger(raw, name, minimum, minimum, maximum);
+}
+
+function enumOption<T extends string>(
+  raw: string | undefined,
+  option: string,
+  allowed: ReadonlySet<string>,
+): T | undefined {
+  if (raw === undefined) return undefined;
+  if (!allowed.has(raw)) {
+    throw new UsageError(`--${option} must be one of ${[...allowed].join(", ")}`);
+  }
+  return raw as T;
+}
+
+function uniqueRepeated(parsed: ParsedOptions, option: string): readonly string[] {
+  const values = parsed.repeatedValues.get(option) ?? [];
+  const seen = new Set<string>();
+  for (const value of values) {
+    if (seen.has(value)) throw new UsageError(`duplicate --${option} value ${value}`);
+    seen.add(value);
+  }
+  return values;
+}
+
+function enumRepeated<T extends string>(
+  parsed: ParsedOptions,
+  option: string,
+  allowed: ReadonlySet<string>,
+): readonly T[] {
+  return uniqueRepeated(parsed, option).map((value) => {
+    if (!allowed.has(value)) {
+      throw new UsageError(`--${option} must be one of ${[...allowed].join(", ")}`);
+    }
+    return value as T;
+  });
+}
+
+function ensureDisjoint(
+  left: readonly string[],
+  leftOption: string,
+  right: readonly string[],
+  rightOption: string,
+): void {
+  const rightSet = new Set(right);
+  const duplicate = left.find((value) => rightSet.has(value));
+  if (duplicate !== undefined) {
+    throw new UsageError(
+      `--${leftOption} and --${rightOption} conflict for ${duplicate}`,
+    );
+  }
+}
+
+function taskTiming(
+  parsed: ParsedOptions,
+  required: boolean,
+): { readonly duration: string } | { readonly estimate: TaskEstimateInput } | undefined {
+  const duration = parsed.values.get("duration");
+  const optimistic = parsed.values.get("optimistic");
+  const mostLikely = parsed.values.get("most-likely");
+  const pessimistic = parsed.values.get("pessimistic");
+  const estimateValues = [optimistic, mostLikely, pessimistic];
+  const hasEstimate = estimateValues.some((value) => value !== undefined);
+  if (duration !== undefined && hasEstimate) {
+    throw new UsageError("--duration and three-point estimate options are mutually exclusive");
+  }
+  if (hasEstimate && estimateValues.some((value) => value === undefined)) {
+    throw new UsageError(
+      "--optimistic, --most-likely, and --pessimistic must be specified together",
+    );
+  }
+  if (duration !== undefined) return { duration };
+  if (optimistic !== undefined && mostLikely !== undefined && pessimistic !== undefined) {
+    return { estimate: { optimistic, mostLikely, pessimistic } };
+  }
+  if (required) {
+    throw new UsageError("--duration or a complete three-point estimate is required");
+  }
+  return undefined;
+}
+
+function requirementOptions(parsed: ParsedOptions): readonly TaskRequirementInput[] {
+  const requirements: TaskRequirementInput[] = [];
+  const seen = new Set<string>();
+  for (const raw of parsed.repeatedValues.get("require") ?? []) {
+    const match = /^(.+)=([0-9]+)$/.exec(raw);
+    if (match === null) {
+      throw new UsageError("--require must be <resource-id>=<integer>");
+    }
+    const resourceId = match[1]!;
+    const units = Number(match[2]!);
+    if (!Number.isSafeInteger(units) || units < 1 || units > 2_147_483_647) {
+      throw new UsageError("--require integer must be from 1 to 2147483647");
+    }
+    if (seen.has(resourceId)) {
+      throw new UsageError(`duplicate --require for ${resourceId}`);
+    }
+    seen.add(resourceId);
+    requirements.push({ resourceId, units });
+  }
+  return requirements;
+}
+
+function taskMutationFromOptions(action: string, parsed: ParsedOptions): Mutation {
+  const expectedPositionals = action === "add" ? 4 : 2;
+  if (parsed.positionals.length !== expectedPositionals) {
+    throw new UsageError(
+      `task ${action} requires ${action === "add" ? "<file> <id> <from> <to>" : "<file> <id>"}`,
+    );
+  }
+  const id = parsed.positionals[1]!;
+  if (action === "remove") return { kind: "task.remove", id };
+  if (action === "finish") return { kind: "task.finish", id };
+
+  const status = enumOption<TaskMutationStatus>(
+    parsed.values.get("status"),
+    "status",
+    new Set(["planned", "active", "blocked", "done"]),
+  );
+  const priority = optionalInteger(parsed, "priority", 0, 2_147_483_647);
+  const timing = taskTiming(parsed, action === "add");
+  const requirements = requirementOptions(parsed);
+
+  if (action === "add") {
+    const title = requiredOption(parsed, "title");
+    return {
+      kind: "task.add",
+      id,
+      from: parsed.positionals[2]!,
+      to: parsed.positionals[3]!,
+      task: {
+        title,
+        ...timing!,
+        ...(parsed.values.get("description") === undefined
+          ? {}
+          : { description: parsed.values.get("description")! }),
+        ...(status === undefined ? {} : { status }),
+        ...(priority === undefined ? {} : { priority }),
+        ...(requirements.length === 0 ? {} : { requirements }),
+        ...(parsed.values.get("owner") === undefined
+          ? {}
+          : { owner: parsed.values.get("owner")! }),
+        ...((parsed.repeatedValues.get("tag") ?? []).length === 0
+          ? {}
+          : { tags: parsed.repeatedValues.get("tag")! }),
+        ...(parsed.values.get("blocked-reason") === undefined
+          ? {}
+          : { blockedReason: parsed.values.get("blocked-reason")! }),
+        ...(parsed.values.get("source") === undefined
+          ? {}
+          : { source: parsed.values.get("source")! }),
+      },
+    };
+  }
+
+  const clear = enumRepeated<TaskClearableField>(
+    parsed,
+    "clear",
+    new Set([
+      "description", "status", "priority", "owner", "blocked_reason", "source",
+      "tags", "requires",
+    ]),
+  );
+  const addTags = uniqueRepeated(parsed, "add-tag");
+  const removeTags = uniqueRepeated(parsed, "remove-tag");
+  const removeRequirements = uniqueRepeated(parsed, "remove-require");
+  ensureDisjoint(addTags, "add-tag", removeTags, "remove-tag");
+  ensureDisjoint(
+    requirements.map(({ resourceId }) => resourceId),
+    "require",
+    removeRequirements,
+    "remove-require",
+  );
+  const set = {
+    ...(parsed.values.get("title") === undefined
+      ? {}
+      : { title: parsed.values.get("title")! }),
+    ...(parsed.values.get("description") === undefined
+      ? {}
+      : { description: parsed.values.get("description")! }),
+    ...timing,
+    ...(status === undefined ? {} : { status }),
+    ...(priority === undefined ? {} : { priority }),
+    ...(parsed.values.get("owner") === undefined
+      ? {}
+      : { owner: parsed.values.get("owner")! }),
+    ...(parsed.values.get("blocked-reason") === undefined
+      ? {}
+      : { blockedReason: parsed.values.get("blocked-reason")! }),
+    ...(parsed.values.get("source") === undefined
+      ? {}
+      : { source: parsed.values.get("source")! }),
+  };
+  const clearConflicts = new Map<TaskClearableField, boolean>([
+    ["description", parsed.values.has("description")],
+    ["status", status !== undefined],
+    ["priority", priority !== undefined],
+    ["owner", parsed.values.has("owner")],
+    ["blocked_reason", parsed.values.has("blocked-reason")],
+    ["source", parsed.values.has("source")],
+    ["tags", addTags.length > 0 || removeTags.length > 0],
+    ["requires", requirements.length > 0 || removeRequirements.length > 0],
+  ]);
+  const conflict = clear.find((field) => clearConflicts.get(field) === true);
+  if (conflict !== undefined) {
+    throw new UsageError(`--clear ${conflict} conflicts with another field option`);
+  }
+  return {
+    kind: "task.set",
+    id,
+    ...(parsed.values.get("from") === undefined ? {} : { from: parsed.values.get("from")! }),
+    ...(parsed.values.get("to") === undefined ? {} : { to: parsed.values.get("to")! }),
+    ...(Object.keys(set).length === 0 ? {} : { set }),
+    ...(clear.length === 0 ? {} : { clear }),
+    ...(addTags.length === 0 ? {} : { addTags }),
+    ...(removeTags.length === 0 ? {} : { removeTags }),
+    ...(requirements.length === 0 ? {} : { upsertRequirements: requirements }),
+    ...(removeRequirements.length === 0 ? {} : { removeRequirements }),
+  };
+}
+
+function milestoneMutationFromOptions(action: string, parsed: ParsedOptions): Mutation {
+  if (parsed.positionals.length !== 2) {
+    throw new UsageError(`milestone ${action} requires <file> <id>`);
+  }
+  const id = parsed.positionals[1]!;
+  if (action === "remove") return { kind: "milestone.remove", id };
+  const state = enumOption<MilestoneMutationState>(
+    parsed.values.get("state"),
+    "state",
+    new Set(["planned", "reached"]),
+  );
+  if (action === "add") {
+    return {
+      kind: "milestone.add",
+      id,
+      milestone: {
+        title: requiredOption(parsed, "title"),
+        ...(parsed.values.get("description") === undefined
+          ? {}
+          : { description: parsed.values.get("description")! }),
+        ...(state === undefined ? {} : { state }),
+        ...((parsed.repeatedValues.get("tag") ?? []).length === 0
+          ? {}
+          : { tags: parsed.repeatedValues.get("tag")! }),
+      },
+    };
+  }
+  const clear = enumRepeated<MilestoneClearableField>(
+    parsed,
+    "clear",
+    new Set(["description", "state", "tags"]),
+  );
+  const addTags = uniqueRepeated(parsed, "add-tag");
+  const removeTags = uniqueRepeated(parsed, "remove-tag");
+  ensureDisjoint(addTags, "add-tag", removeTags, "remove-tag");
+  if (
+    clear.some((field) =>
+      (field === "description" && parsed.values.has("description")) ||
+      (field === "state" && state !== undefined) ||
+      (field === "tags" && (addTags.length > 0 || removeTags.length > 0)))
+  ) {
+    throw new UsageError("--clear conflicts with another milestone field option");
+  }
+  const set = {
+    ...(parsed.values.get("title") === undefined
+      ? {}
+      : { title: parsed.values.get("title")! }),
+    ...(parsed.values.get("description") === undefined
+      ? {}
+      : { description: parsed.values.get("description")! }),
+    ...(state === undefined ? {} : { state }),
+  };
+  return {
+    kind: "milestone.set",
+    id,
+    ...(Object.keys(set).length === 0 ? {} : { set }),
+    ...(clear.length === 0 ? {} : { clear }),
+    ...(addTags.length === 0 ? {} : { addTags }),
+    ...(removeTags.length === 0 ? {} : { removeTags }),
+  };
+}
+
+function resourceMutationFromOptions(action: string, parsed: ParsedOptions): Mutation {
+  if (parsed.positionals.length !== 2) {
+    throw new UsageError(`resource ${action} requires <file> <id>`);
+  }
+  const id = parsed.positionals[1]!;
+  if (action === "remove") return { kind: "resource.remove", id };
+  const capacity = optionalInteger(parsed, "capacity", 1, 2_147_483_647);
+  if (action === "add") {
+    if (capacity === undefined) throw new UsageError("option --capacity is required");
+    return {
+      kind: "resource.add",
+      id,
+      resource: {
+        title: requiredOption(parsed, "title"),
+        capacity,
+        ...(parsed.values.get("description") === undefined
+          ? {}
+          : { description: parsed.values.get("description")! }),
+      },
+    };
+  }
+  const clear = enumRepeated<ResourceClearableField>(
+    parsed,
+    "clear",
+    new Set(["description"]),
+  );
+  if (clear.length > 0 && parsed.values.has("description")) {
+    throw new UsageError("--clear description conflicts with --description");
+  }
+  const set = {
+    ...(parsed.values.get("title") === undefined
+      ? {}
+      : { title: parsed.values.get("title")! }),
+    ...(parsed.values.get("description") === undefined
+      ? {}
+      : { description: parsed.values.get("description")! }),
+    ...(capacity === undefined ? {} : { capacity }),
+  };
+  return {
+    kind: "resource.set",
+    id,
+    ...(Object.keys(set).length === 0 ? {} : { set }),
+    ...(clear.length === 0 ? {} : { clear }),
+  };
+}
+
+function mutationResultJson(
+  result: MutationResult,
+  exposeCandidate: boolean,
+): Readonly<Record<string, unknown>> {
+  return {
+    changed: exposeCandidate ? result.changed : false,
+    original_digest: result.originalDigest,
+    updated_digest: exposeCandidate ? result.updatedDigest : null,
+    updated_text: exposeCandidate ? result.updatedText : null,
+    diff: exposeCandidate ? result.diff : null,
+    edits: (exposeCandidate ? result.edits : []).map((edit) => ({
+      start_offset: edit.startOffset,
+      end_offset: edit.endOffset,
+      replacement: edit.replacement,
+    })),
+    write: {
+      mode: "preview",
+      target: null,
+      written: false,
+    },
+  };
+}
+
+async function readMutationRequest(source: string): Promise<unknown> {
+  const bytes = source === "-" ? await readStdin() : await readFile(source);
+  const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  try {
+    return JSON.parse(text) as unknown;
+  } catch (error) {
+    throw new UsageError(
+      `mutation request is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
+async function runMutation(
+  resource: "task" | "milestone" | "resource" | "mutation",
+  action: string,
+  args: readonly string[],
+): Promise<number> {
+  const config = mutationOptionSets(resource, action);
+  const parsed = parseOptions(args, config.values, config.flags, config.repeatable);
+  rejectUnavailableMutationWrite(parsed);
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const operation = `${resource}.${action}`;
+  let sourceOperand: string;
+  let mutation: Mutation;
+
+  if (resource === "mutation") {
+    if (parsed.positionals.length !== 1) {
+      throw new UsageError("mutation apply requires exactly one <file>");
+    }
+    sourceOperand = parsed.positionals[0]!;
+    const requestSource = requiredOption(parsed, "request");
+    if (sourceOperand === "-" && requestSource === "-") {
+      throw new UsageError("document and mutation request cannot both use stdin");
+    }
+    let request: unknown;
+    try {
+      request = await readMutationRequest(requestSource);
+    } catch (error) {
+      if (error instanceof UsageError) throw error;
+      return cliError(
+        error instanceof Error ? error : new Error(String(error)),
+        3,
+        operation,
+        format === "json",
+      );
+    }
+    if (
+      request === null ||
+      typeof request !== "object" ||
+      Array.isArray(request) ||
+      (request as Record<string, unknown>)["kind"] !== "batch"
+    ) {
+      throw new UsageError("mutation apply requires a batch request object");
+    }
+    mutation = request as Mutation;
+  } else {
+    sourceOperand = parsed.positionals[0] ?? "";
+    mutation =
+      resource === "task"
+        ? taskMutationFromOptions(action, parsed)
+        : resource === "milestone"
+          ? milestoneMutationFromOptions(action, parsed)
+          : resourceMutationFromOptions(action, parsed);
+  }
+
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      operation,
+      format === "json",
+    );
+  }
+  const result = planMutation(input.text, mutation, {
+    maxDiagnostics,
+    originalLabel: source,
+    updatedLabel: "candidate",
+  });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
+  const ok = result.ok && !warningFailure;
+  if (format === "json") {
+    writeJson({
+      schema_version: "Perttool.MutationResult.v1",
+      tool_version: TOOL_VERSION,
+      operation,
+      ok,
+      document_id: null,
+      source,
+      source_digest: input.digest,
+      diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
+      ...mutationResultJson(result, ok),
+    });
+  } else {
+    if (ok) {
+      process.stdout.write(
+        parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
+      );
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return ok ? 0 : 1;
 }
 
 type RationalUnit =
@@ -1180,11 +1810,19 @@ async function main(argv: readonly string[]): Promise<number> {
   if (argv.length < 2) throw new UsageError("expected <resource> <action>");
   const resource = argv[0]!;
   const action = argv[1]!;
+  const entityActions = new Map<string, ReadonlySet<string>>([
+    ["task", new Set(["add", "set", "remove", "finish"])],
+    ["milestone", new Set(["add", "set", "remove"])],
+    ["resource", new Set(["add", "set", "remove"])],
+    ["mutation", new Set(["apply"])],
+  ]);
+  const isMutationCommand = entityActions.get(resource)?.has(action) === true;
   if (
     argv.length === 3 &&
     argv[2] === "--help" &&
     ((resource === "dsl" && ["check", "help"].includes(action)) ||
-      (resource === "dag" && ["analyze", "next"].includes(action)))
+      (resource === "dag" && ["analyze", "next"].includes(action)) ||
+      isMutationCommand)
   ) {
     process.stdout.write(`${commandHelp(resource, action)}\n`);
     return 0;
@@ -1194,6 +1832,13 @@ async function main(argv: readonly string[]): Promise<number> {
   }
   if (resource === "dag" && action === "next") {
     return runNext(argv.slice(2));
+  }
+  if (isMutationCommand) {
+    return runMutation(
+      resource as "task" | "milestone" | "resource" | "mutation",
+      action,
+      argv.slice(2),
+    );
   }
   if (resource !== "dsl" || (action !== "check" && action !== "help")) {
     throw new UsageError(`unknown or not-yet-implemented command: ${resource} ${action}`);

@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
@@ -8,6 +10,8 @@ import { fileURLToPath } from "node:url";
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
 const cli = path.join(root, "dist/cli.js");
+const minimalPath = "docs/examples/minimal.pert";
+const minimalText = readFileSync(path.join(root, minimalPath), "utf8");
 
 function run(args, options = {}) {
   return spawnSync(process.execPath, [cli, ...args], {
@@ -456,4 +460,227 @@ test("unknown command is a usage error", () => {
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.CliError.v1");
   assert.equal(json.diagnostics[0].code, "PTCLI-001");
+});
+
+test("task mutation commands expose candidate, diff, JSON, and stdin previews", () => {
+  const defaultPreview = run([
+    "task", "set", minimalPath, "WORK", "--title", "default preview", "--color=never",
+  ]);
+  assert.equal(defaultPreview.status, 0, defaultPreview.stderr);
+  assert.match(defaultPreview.stdout, /^project MINIMAL:/);
+  assert.match(defaultPreview.stdout, /title "default preview"/);
+  assert.doesNotMatch(defaultPreview.stdout, /^--- /m);
+
+  const added = run([
+    "task", "add", minimalPath, "EXTRA", "NOW", "DONE",
+    "--title", "extra", "--duration", "2d", "--format=json",
+  ]);
+  assert.equal(added.status, 0, added.stderr);
+  const addedJson = JSON.parse(added.stdout);
+  assert.equal(addedJson.schema_version, "Perttool.MutationResult.v1");
+  assert.equal(addedJson.operation, "task.add");
+  assert.equal(addedJson.write.mode, "preview");
+  assert.equal(addedJson.write.written, false);
+  assert.match(addedJson.updated_text, /task EXTRA NOW -> DONE:/);
+  assert.match(addedJson.diff, /^--- docs\/examples\/minimal\.pert\n\+\+\+ candidate/m);
+  assert.ok(addedJson.edits.every(({ start_offset, end_offset }) =>
+    Number.isInteger(start_offset) && Number.isInteger(end_offset)));
+
+  const setFromStdin = run([
+    "task", "set", "-", "WORK", "--title", "updated", "--duration", "2d",
+    "--add-tag", "selected", "--format=json",
+  ], { input: minimalText });
+  assert.equal(setFromStdin.status, 0, setFromStdin.stderr);
+  const setJson = JSON.parse(setFromStdin.stdout);
+  assert.equal(setJson.source, "<stdin>");
+  assert.match(setJson.updated_text, /title "updated"/);
+  assert.match(setJson.updated_text, /duration 2d/);
+  assert.match(setJson.updated_text, /tags \[selected\]/);
+
+  const estimated = run([
+    "task", "set", "docs/examples/parallel.pert", "DOCS",
+    "--optimistic", "1d", "--most-likely", "2d", "--pessimistic", "3d",
+    "--priority", "4", "--owner", "agent", "--require", "DEVELOPERS=2",
+    "--source", "issue:preview", "--format=json",
+  ]);
+  assert.equal(estimated.status, 0, estimated.stderr);
+  const estimatedText = JSON.parse(estimated.stdout).updated_text;
+  assert.match(estimatedText, /estimate:\n    optimistic 1d\n    most_likely 2d\n    pessimistic 3d/);
+  assert.match(estimatedText, /priority 4/);
+  assert.match(estimatedText, /DEVELOPERS 2/);
+  assert.match(estimatedText, /owner "agent"/);
+  assert.match(estimatedText, /source "issue:preview"/);
+
+  const parallelTasks = minimalText.replace(
+    "task WORK NOW -> DONE:\n  title \"作業する\"\n  duration 1d\n",
+    [
+      "task FIRST NOW -> DONE:",
+      "  title \"first\"",
+      "  duration 1d",
+      "",
+      "task SECOND NOW -> DONE:",
+      "  title \"second\"",
+      "  duration 1d",
+      "",
+    ].join("\n"),
+  );
+  const removed = run([
+    "task", "remove", "-", "FIRST", "--format=json",
+  ], { input: parallelTasks });
+  assert.equal(removed.status, 0, removed.stderr);
+  assert.doesNotMatch(JSON.parse(removed.stdout).updated_text, /task FIRST/);
+  assert.match(JSON.parse(removed.stdout).updated_text, /task SECOND/);
+
+  const finished = run(["task", "finish", minimalPath, "WORK", "--diff", "--color=never"]);
+  assert.equal(finished.status, 0, finished.stderr);
+  assert.match(finished.stdout, /^--- docs\/examples\/minimal\.pert/m);
+  assert.match(finished.stdout, /^\+  status done$/m);
+});
+
+test("milestone and resource add set remove actions project to mutation Core", () => {
+  const milestoneSet = run([
+    "milestone", "set", minimalPath, "DONE", "--title", "completed", "--format=json",
+  ]);
+  assert.equal(milestoneSet.status, 0, milestoneSet.stderr);
+  assert.match(JSON.parse(milestoneSet.stdout).updated_text, /title "completed"/);
+
+  for (const args of [
+    ["milestone", "add", minimalPath, "ISOLATED", "--title", "isolated"],
+    ["milestone", "remove", minimalPath, "DONE"],
+  ]) {
+    const rejected = run([...args, "--format=json"]);
+    assert.equal(rejected.status, 1, rejected.stderr);
+    const json = JSON.parse(rejected.stdout);
+    assert.equal(json.schema_version, "Perttool.MutationResult.v1");
+    assert.equal(json.ok, false);
+    assert.equal(json.updated_text, null);
+    assert.equal(json.diff, null);
+    assert.deepEqual(json.edits, []);
+  }
+
+  const resourceAdd = run([
+    "resource", "add", minimalPath, "UNUSED", "--title", "unused",
+    "--capacity", "2", "--format=json",
+  ]);
+  assert.equal(resourceAdd.status, 0, resourceAdd.stderr);
+  assert.match(JSON.parse(resourceAdd.stdout).updated_text, /resource UNUSED:/);
+
+  const resourceSet = run([
+    "resource", "set", "docs/examples/parallel.pert", "TEST_ENV",
+    "--capacity", "2", "--description", "parallel tests", "--format=json",
+  ]);
+  assert.equal(resourceSet.status, 0, resourceSet.stderr);
+  assert.match(JSON.parse(resourceSet.stdout).updated_text, /description "parallel tests"/);
+  assert.match(JSON.parse(resourceSet.stdout).updated_text, /capacity 2/);
+
+  const withUnusedResource = minimalText.replace(
+    "\nmilestone NOW:",
+    "\nresource UNUSED:\n  title \"unused\"\n  capacity 1\n\nmilestone NOW:",
+  );
+  const resourceRemove = run([
+    "resource", "remove", "-", "UNUSED", "--format=json",
+  ], { input: withUnusedResource });
+  assert.equal(resourceRemove.status, 0, resourceRemove.stderr);
+  assert.doesNotMatch(JSON.parse(resourceRemove.stdout).updated_text, /resource UNUSED:/);
+});
+
+test("mutation apply supports request or document stdin but rejects a shared stdin", (t) => {
+  const request = {
+    kind: "batch",
+    mutations: [
+      { kind: "task.remove", id: "WORK" },
+      { kind: "milestone.add", id: "MID", milestone: { title: "middle" } },
+      {
+        kind: "task.add", id: "FIRST", from: "NOW", to: "MID",
+        task: { title: "first", duration: "1d" },
+      },
+      {
+        kind: "task.add", id: "SECOND", from: "MID", to: "DONE",
+        task: { title: "second", duration: "1d" },
+      },
+    ],
+  };
+  const requestText = JSON.stringify(request);
+  const requestFromStdin = run([
+    "mutation", "apply", minimalPath, "--request", "-", "--format=json",
+  ], { input: requestText });
+  assert.equal(requestFromStdin.status, 0, requestFromStdin.stderr);
+  const requestJson = JSON.parse(requestFromStdin.stdout);
+  assert.match(requestJson.updated_text, /milestone MID:/);
+  assert.match(requestJson.updated_text, /task SECOND MID -> DONE:/);
+
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-mutation-request-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const requestPath = path.join(directory, "request.json");
+  writeFileSync(requestPath, requestText, "utf8");
+  const documentFromStdin = run([
+    "mutation", "apply", "-", "--request", requestPath, "--format=json",
+  ], { input: minimalText });
+  assert.equal(documentFromStdin.status, 0, documentFromStdin.stderr);
+  assert.equal(JSON.parse(documentFromStdin.stdout).source, "<stdin>");
+
+  const conflict = run([
+    "mutation", "apply", "-", "--request", "-", "--format=json",
+  ]);
+  assert.equal(conflict.status, 2);
+  assert.match(JSON.parse(conflict.stdout).diagnostics[0].message, /cannot both use stdin/);
+
+  const nested = run([
+    "mutation", "apply", minimalPath, "--request", "-", "--format=json",
+  ], {
+    input: JSON.stringify({ kind: "batch", mutations: [{ kind: "batch", mutations: [] }] }),
+  });
+  assert.equal(nested.status, 1);
+  const nestedJson = JSON.parse(nested.stdout);
+  assert.equal(nestedJson.diagnostics[0].code, "PTMUT-301");
+  assert.equal(nestedJson.updated_text, null);
+});
+
+test("mutation preview rejects writes and suppresses failed candidates", () => {
+  for (const option of [["--write"], ["--out", "other.pert"]]) {
+    const result = run([
+      "task", "set", minimalPath, "WORK", "--title", "updated",
+      ...option, "--format=json",
+    ]);
+    assert.equal(result.status, 2);
+    const json = JSON.parse(result.stdout);
+    assert.equal(json.schema_version, "Perttool.CliError.v1");
+    assert.match(json.diagnostics[0].message, /not implemented/);
+  }
+
+  const invalidJson = run([
+    "task", "set", minimalPath, "WORK", "--status", "blocked", "--format=json",
+  ]);
+  assert.equal(invalidJson.status, 1);
+  const invalid = JSON.parse(invalidJson.stdout);
+  assert.equal(invalid.ok, false);
+  assert.equal(invalid.updated_text, null);
+  assert.equal(invalid.diff, null);
+  assert.deepEqual(invalid.edits, []);
+
+  const invalidText = run([
+    "task", "set", minimalPath, "WORK", "--status", "blocked", "--color=never",
+  ]);
+  assert.equal(invalidText.status, 1);
+  assert.equal(invalidText.stdout, "");
+  assert.match(invalidText.stderr, /blocked_reason/);
+
+  const strict = run([
+    "task", "finish", minimalPath, "WORK", "--warnings-as-errors", "--format=json",
+  ]);
+  assert.equal(strict.status, 1);
+  const strictJson = JSON.parse(strict.stdout);
+  assert.equal(strictJson.ok, false);
+  assert.equal(strictJson.updated_text, null);
+  assert.equal(strictJson.diff, null);
+
+  const limited = run([
+    "task", "set", "test/fixtures/invalid/multiple-syntax-errors.pert", "WORK",
+    "--title", "x", "--max-diagnostics=2", "--format=json",
+  ]);
+  assert.equal(limited.status, 1);
+  const limitedJson = JSON.parse(limited.stdout);
+  assert.equal(limitedJson.diagnostics.length, 2);
+  assert.equal(limitedJson.diagnostics_truncated, true);
+  assert.equal(limitedJson.updated_text, null);
 });
