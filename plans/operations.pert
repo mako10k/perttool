@@ -4,14 +4,15 @@ project OPERATIONS:
   description |
     formatter preview、構造編集preview、safe write、advanceを実装する詳細plan。
     Pointは相対規模を表す。2026-07-22にmutation Core 7p、
-    FORMAT_APPLICATION 1p、MUTATION_CLI_PREVIEW 2p、FORMAT_CLI_PREVIEW 2pを
-    1 active dayで完了した操作系標本から、実測Velocityを12p/1dへcalibrationした。
+    FORMAT_APPLICATION 1p、MUTATION_CLI_PREVIEW 2p、FORMAT_CLI_PREVIEW 2p、
+    SAFE_WRITE_ADAPTER 4pを1 active dayで完了した操作系標本から、
+    実測Velocityを16p/1dへcalibrationした。
     recommendationとAI Agent Guidance Registryは、このplanのM3 safe-write milestoneを
     遅らせないことを立証するまで並行実装しない。Multi-plan compositionは独立した
     MVP後の将来backlogとして扱う。
   as_of 2026-07-22
   duration_unit point
-  velocity 12p/1d
+  velocity 16p/1d
   finish OPERATIONS_READY
 
 resource DEVELOPERS:
@@ -153,6 +154,7 @@ task SAFE_WRITE_ADAPTER EDIT_PREVIEW_READY -> WRITE_ADAPTER_READY:
     Test: npm run build && node --test test/write-safety.test.mjs test/cli.test.mjs。
     Parallel: filesystem write経路はFILESYSTEM_WRITEで単独所有する。
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

@@ -12,7 +12,7 @@
     }
   },
   "analyze": {
-    "precedence_makespan": "25/2",
+    "precedence_makespan": "97/8",
     "precedence_critical_tasks": [
       "WRITE_SAFETY",
       "MERMAID_PROFILE",
@@ -20,7 +20,7 @@
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "25/2",
+    "resource_makespan": "97/8",
     "resource_delay": "0/1",
     "resource_arcs": [
       "resource:MERMAID_PROFILE:ADVANCE"

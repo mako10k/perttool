@@ -8,26 +8,24 @@
       "tasks": 9,
       "gates": 2,
       "errors": 0,
-      "warnings": 6
+      "warnings": 7
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "12/1",
+    "precedence_makespan": "8/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "1/1",
+    "precedence_forecast": "1/2",
     "precedence_critical_tasks": [
-      "SAFE_WRITE_ADAPTER",
       "SAFE_WRITE_ACCEPTANCE",
       "ADVANCE_PLANNER",
       "ADVANCE_CLI_ACCEPTANCE"
     ],
-    "resource_makespan": "12/1",
-    "resource_forecast": "1/1",
+    "resource_makespan": "8/1",
+    "resource_forecast": "1/2",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "SAFE_WRITE_ADAPTER",
       "SAFE_WRITE_ACCEPTANCE",
       "ADVANCE_PLANNER",
       "ADVANCE_CLI_ACCEPTANCE"
@@ -37,14 +35,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "SAFE_WRITE_ADAPTER"
+        "SAFE_WRITE_ACCEPTANCE"
       ],
       "runnable_now": [
-        "SAFE_WRITE_ADAPTER"
+        "SAFE_WRITE_ACCEPTANCE"
       ],
       "blocked_now": [],
       "upcoming": [
-        "SAFE_WRITE_ACCEPTANCE",
         "ADVANCE_PLANNER",
         "ADVANCE_CLI_ACCEPTANCE"
       ]

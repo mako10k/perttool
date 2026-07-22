@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、preview-onlyの`dsl format`、`dsl help`、`dag analyze`、`dag next`、libraryのsource-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、preview-only mutation CLIが実装済みです。Filesystem writeとMermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、preview-onlyの`dsl format`、`dsl help`、`dag analyze`、`dag next`、libraryのsource-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、preview-only mutation CLIが実装済みです。Filesystem writeのCLI公開とMermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -103,7 +103,7 @@ perttool mutation apply docs/examples/minimal.pert --request changes.json --diff
 
 `dsl format`とMutation commandは現在preview-onlyです。既定では検査済みcandidate、`--diff`ではunified diffを返し、`dsl format --check`では変更が必要なときだけexit 1を返します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digestを同じresultへ含めます。`--write`と`--out`はsafe-write gate完了まで拒否します。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。M1 roadmap再構成、grammar受け入れ、formatter/mutation previewは完了しました。操作系の実測値は`12p/1d`で、残るprecedence/resource makespanは12p、forecastは`1d`です。Macroのmakespanは`12.5d`です。次のmacro CPは`WRITE_SAFETY`、詳細planの次taskはprecedence/schedule criticalかつ`runnable_now`な`SAFE_WRITE_ADAPTER`です。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後までbacklogとして保持し、Issue #3のmulti-plan compositionはMVP後の将来構想として扱います。Writeは専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。M1 roadmap再構成、grammar受け入れ、formatter/mutation preview、safe-write adapterは完了しました。操作系の実測値は`16p/1d`で、残るprecedence/resource makespanは8p、forecastは`0.5d`です。Macroのmakespanは`12.125d`です。次のmacro CPは`WRITE_SAFETY`、詳細planの次taskはprecedence/schedule criticalかつ`runnable_now`な`SAFE_WRITE_ACCEPTANCE`です。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後までbacklogとして保持し、Issue #3のmulti-plan compositionはMVP後の将来構想として扱います。Writeは専用gateを満たすまで使用しません。
 
 ## Security and license
 
