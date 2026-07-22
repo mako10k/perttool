@@ -1041,7 +1041,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進む。Formatter/mutation preview 12p、safe write 6p、advance planner 4pを完了し、操作系実測値を`22p/1d`へ再calibrationした。残る`ADVANCE_CLI_ACCEPTANCE`のprecedence/resource makespanは2p、forecastは`1/11d`、resource delayは0pである。Macro `MERMAID_PROFILE`と`MERMAID_EXPORT`も完了し、残るprecedence makespanは7d、resource makespanは7.090909dとなった。`ADVANCE`と`MERMAID_ROUNDTRIP`はreadyだが、現行schedulerはpriorityとreviewer競合から`ADVANCE`だけをrunnableとする。RecommendationとIssue #2を含むM3後のresource順は、macro planと明示的なprocessから判定する。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進んだ。全24pを完了し、操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`ADVANCE`も完了し、残るprecedence/resource makespanはともに7d、resource delayは0dである。唯一のreadyかつrunnableなcritical work packageは`MERMAID_ROUNDTRIP`である。RecommendationとIssue #2を含むM3後のresource順は、macro planと明示的なprocessから判定する。
 
 ### Slice 4: advance and Mermaid
 

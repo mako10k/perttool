@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag render --to mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing CLIの`--write`/`--out`/`--expect-digest`、canonical advance planner Core、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をStage 2のpreview-first safe-writeで自己利用中である。`dag advance` CLIとMermaid importは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をStage 3のpreview-first advance自己利用で管理中である。Mermaid importは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -33,7 +33,7 @@ perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check
 - `docs/adr/`: 採用済みarchitecture/runtime判断。
 - `docs/examples/`: parserとanalysisの規範sample。
 - `docs/process/`: 自己利用とAI開発の運用手順。
-- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をmacro roadmap、`grammar.pert`、`control-plane.pert`、`operations.pert`を詳細計画としてread-onlyで使用する。
+- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をmacro roadmap、`grammar.pert`、`control-plane.pert`、`operations.pert`を詳細計画としてStage 3のpreview-first手順で使用する。
 - `scripts/`: repository-local verification command。
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
@@ -42,7 +42,7 @@ perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check
 - `src/editing/`: formatterとmutationが共有するdeterministic unified diff。
 - `src/formatter/`: source-preserving formatter Core。
 - `src/io/`: raw-byte document read、digest、symlink/race拒否、atomic safe-write adapter。
-- `src/mutation/`: task/milestone/resourceとatomic batchのrequest、source-preserving UTF-16 TextEdit生成、適用規則。
+- `src/mutation/`: task/milestone/resourceとatomic batchのrequest、canonical advance、source-preserving UTF-16 TextEdit生成、適用規則。
 - `src/application/`: check/analyze/nextと、再検査済みmutation resultを返すpure service。
 - `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation/conversion/write-safety unit test、CLI integration/E2E test。
 - `package.json`: Node.js 24以上、npm script、binary/library entrypoint。

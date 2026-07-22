@@ -8,34 +8,26 @@
       "tasks": 9,
       "gates": 2,
       "errors": 0,
-      "warnings": 9
+      "warnings": 10
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "2/1",
+    "precedence_makespan": "0/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "1/11",
-    "precedence_critical_tasks": [
-      "ADVANCE_CLI_ACCEPTANCE"
-    ],
-    "resource_makespan": "2/1",
-    "resource_forecast": "1/11",
+    "precedence_forecast": "0/1",
+    "precedence_critical_tasks": [],
+    "resource_makespan": "0/1",
+    "resource_forecast": "0/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
-    "schedule_critical_tasks": [
-      "ADVANCE_CLI_ACCEPTANCE"
-    ]
+    "schedule_critical_tasks": []
   },
   "next": {
     "groups": {
       "active": [],
-      "ready": [
-        "ADVANCE_CLI_ACCEPTANCE"
-      ],
-      "runnable_now": [
-        "ADVANCE_CLI_ACCEPTANCE"
-      ],
+      "ready": [],
+      "runnable_now": [],
       "blocked_now": [],
       "upcoming": []
     },

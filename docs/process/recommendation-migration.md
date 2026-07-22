@@ -35,7 +35,7 @@
 - `active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`は実装済み
 - recommendation tier、recommended set、structured explanationは未実装
 - override validation、apply、audit integrationは未実装
-- 自己利用はStage 2であり、editing writeはpreview、expected digest、write後再解析を必須とする。Override applyは未実装である
+- 自己利用はStage 3であり、editing/advance writeはpreview、expected digest、write後再解析を必須とする。Override applyは未実装である
 - AIのtask選択は[AI開発ガイド](ai-development.md)の明示手順をauthorityとする
 
 したがって、設計文書や規範例が存在することだけを理由に、現行v2 fieldをrecommendationとして解釈しない。実装途中の内部resultをCLI、help、AI promptへ公開しない。
@@ -50,7 +50,7 @@
 4. 各unitへduration、acceptance、narrow test、並行可否を付ける
 5. `plans/mvp.pert`の`M1_ROADMAP_UPDATE`を完了してからproduct implementationへ着手する
 
-実行順は[操作系詳細plan](../../plans/operations.pert)へ固定した。Formatter preview 3pとmutation preview 9pを並行branchとし、両方の受け入れ後にsafe write 6p、その後にadvance 6pへ進む。初期baselineはVelocity `3p/1d`、critical/resource makespan 21p、7dだった。Formatter/mutation preview、safe write、advance plannerの22p完了後は実測`22p/1d`、残る`ADVANCE_CLI_ACCEPTANCE`のprecedence/resource makespanは2p、forecast`1/11d`である。M3、Mermaid profile設計、Mermaid exportへ到達し、現行macro precedence CPは`MERMAID_ROUNDTRIP`である。ただしpriorityとreviewer競合を反映した`runnable_now`は`ADVANCE`だけである。MIG-01以降のwork packageをmacro planへ追加するまでは着手順を推測しない。
+実行順は[操作系詳細plan](../../plans/operations.pert)へ固定した。Formatter preview 3pとmutation preview 9pを並行branchとし、両方の受け入れ後にsafe write 6p、その後にadvance 6pを完了した。初期baselineはVelocity `3p/1d`、critical/resource makespan 21p、7dだった。全24p完了後の実測は`24p/1d`で、detailの残作業とforecastは0である。M3、Stage 3、Mermaid profile設計、Mermaid exportへ到達し、現行macroの唯一のreadyかつ`runnable_now`なcritical work packageは`MERMAID_ROUNDTRIP`である。MIG-01以降のwork packageをmacro planへ追加するまでは着手順を推測しない。
 
 MIG-01からMIG-07のside trackは、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`へ到達したため開始時期の下限は閉じたが、recommendation側のtask別durationとfile ownershipはまだ詳細plan化していない。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とする。Mermaid、advance、recommendation、Issue #2のresource順は、局所priorityではなくMVP全体完了を短縮するmacro schedule結果に従う。
 

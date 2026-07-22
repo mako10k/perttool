@@ -8,7 +8,7 @@
       "tasks": 11,
       "gates": 6,
       "errors": 0,
-      "warnings": 10
+      "warnings": 11
     }
   },
   "analyze": {
@@ -17,13 +17,10 @@
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "7090909/1000000",
-    "resource_delay": "90909/1000000",
-    "resource_arcs": [
-      "resource:ADVANCE:MERMAID_ROUNDTRIP"
-    ],
+    "resource_makespan": "7/1",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "ADVANCE",
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ]
@@ -32,11 +29,10 @@
     "groups": {
       "active": [],
       "ready": [
-        "ADVANCE",
         "MERMAID_ROUNDTRIP"
       ],
       "runnable_now": [
-        "ADVANCE"
+        "MERMAID_ROUNDTRIP"
       ],
       "blocked_now": [],
       "upcoming": [

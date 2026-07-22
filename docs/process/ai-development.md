@@ -100,7 +100,7 @@ git diff --check
 
 実装前は`docs/requirements.md`の推奨仕様作業と未確定事項を使う。「次のタスク」はcurrent checkoutでhard predecessorが閉じていることを確認してから提案する。
 
-`docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。Stage 2ではediting commandをpreview-first、expected digest、write後再解析の手順で正本writerとして使用できる。Task selectionは次の順で行う。
+`docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本writerとして使用できる。Task selectionは次の順で行う。
 
 1. `mvp.pert`と現在の詳細planを`perttool dsl check`し、計画が有効であることを確認する
 2. `mvp.pert`を`dag analyze`、`dag next`し、macro critical pathとrunnable work packageからworkstreamを選ぶ
@@ -110,7 +110,7 @@ git diff --check
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装され、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、`M1_ROADMAP_UPDATE`、formatter/mutation preview、safe write、[Mermaid profile設計](../specs/mermaid-profile.md)、Mermaid export、advance planner Coreは完了し、Stage 2で自己利用している。現在のmacro precedence CPは`MERMAID_ROUNDTRIP`である。一方、現行schedulerはpriority 20の`ADVANCE`に`REVIEWERS` capacityを先に割り当てるため、`runnable_now`は`ADVANCE`だけである。[操作系詳細plan](../../plans/operations.pert)では`ADVANCE_CLI_ACCEPTANCE`が唯一のreadyかつcriticalな次taskである。Recommendation実装とIssue #2はM3後に詳細化可能だが、macro planへwork packageとresourceを追加するまでは着手順を推測しない。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、`M1_ROADMAP_UPDATE`、formatter/mutation preview、safe write、[Mermaid profile設計](../specs/mermaid-profile.md)、Mermaid export、advance Core/CLIは完了し、Stage 3で自己利用している。操作系詳細planは全24pが完了し、ready taskはない。Macroの残るprecedence/resource makespanはともに7dで、唯一のreadyかつ`runnable_now`なcritical work packageは`MERMAID_ROUNDTRIP`である。Recommendation実装とIssue #2はM3後に詳細化可能だが、macro planへwork packageとresourceを追加するまでは着手順を推測しない。
 
 ### 5.1 Recommendation導入後のtask selection
 

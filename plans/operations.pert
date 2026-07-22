@@ -5,14 +5,15 @@ project OPERATIONS:
     formatter preview、構造編集preview、safe write、advanceを実装する詳細plan。
     Pointは相対規模を表す。2026-07-22にmutation Core 7p、
     FORMAT_APPLICATION 1p、MUTATION_CLI_PREVIEW 2p、FORMAT_CLI_PREVIEW 2p、
-    SAFE_WRITE_ADAPTER 4p、SAFE_WRITE_ACCEPTANCE 2p、ADVANCE_PLANNER 4pを
-    1 active dayで完了した操作系標本から、実測Velocityを22p/1dへcalibrationした。
-    recommendationとAI Agent Guidance Registryは、このplanのM3 safe-write milestoneを
-    遅らせないことを立証するまで並行実装しない。Multi-plan compositionは独立した
-    MVP後の将来backlogとして扱う。
+    SAFE_WRITE_ADAPTER 4p、SAFE_WRITE_ACCEPTANCE 2p、ADVANCE_PLANNER 4p、
+    ADVANCE_CLI_ACCEPTANCE 2pを1 active dayで完了した操作系標本から、
+    実測Velocityを24p/1dへcalibrationした。
+    recommendationとAI Agent Guidance RegistryのM3開始下限は閉じたが、macro planへ
+    work packageとresourceを追加するまでは着手順を推測しない。Multi-plan compositionは
+    独立したMVP後の将来backlogとして扱う。
   as_of 2026-07-22
   duration_unit point
-  velocity 22p/1d
+  velocity 24p/1d
   finish OPERATIONS_READY
 
 resource DEVELOPERS:
@@ -199,6 +200,7 @@ task ADVANCE_CLI_ACCEPTANCE ADVANCE_PLANNER_READY -> OPERATIONS_READY:
     Test: npm run build && node --test test/advance.test.mjs test/cli.test.mjs test/e2e.test.mjs test/self-use.test.mjs。
     Exit: docs/process/self-use.mdのStage 3開始条件を満たす。正本planへのadvance writeはこのtask完了後まで行わない。
   duration 2p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

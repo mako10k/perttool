@@ -55,10 +55,9 @@ Issue #1の設計を受け入れる。要件、規範仕様、基本設計、規
 
 ## 5. 残事項
 
-- [操作系詳細plan](../../plans/operations.pert)の`ADVANCE_CLI_ACCEPTANCE`以降の実装と、追加完了実績によるVelocity再calibration
 - MIG-01からMIG-08の実装
 - Issue #2のprovider別AI Agent Guidance Registry設計・実装
 - Issue #3のbacklog階層・multi-plan composition設計
-- Mermaid metadata schemaと変換実装
+- Mermaid lossless importとround-trip検査
 
 これらは未実装または将来設計であり、Issue #1のrecommendation契約を受け入れるうえでの設計blockerではない。
