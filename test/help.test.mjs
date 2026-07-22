@@ -44,7 +44,7 @@ test("help registry topics and related links resolve", () => {
   }
 });
 
-test("editing help exposes preview commands and distinguishes unavailable writes", () => {
+test("editing help exposes preview and explicit safe-write commands", () => {
   const help = getHelp("editing", "detail");
   assert.equal(help.ok, true);
   assert.match(help.summary, /dsl format/);
@@ -54,8 +54,10 @@ test("editing help exposes preview commands and distinguishes unavailable writes
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planMutation/);
   assert.ok(help.syntax.some((line) => line.includes("dsl format")));
   assert.ok(help.syntax.some((line) => line.includes("mutation apply")));
-  assert.match(help.sections.map(({ body }) => body).join("\n"), /preview-only/);
-  assert.match(help.sections.map(({ body }) => body).join("\n"), /--write\/--out/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /既定.*preview/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /--expect-digest/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /--out/);
+  assert.ok(help.syntax.every((line) => line.includes("--write")));
 });
 
 test("syntax help sample references stay synchronized with parser fixtures", async () => {

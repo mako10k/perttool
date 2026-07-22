@@ -63,6 +63,7 @@ export interface DocumentWriteResult {
   readonly target: string;
   readonly digest: string;
   readonly bytesWritten: number;
+  readonly written: boolean;
 }
 
 interface WritableSource {
@@ -260,6 +261,16 @@ export async function replaceDocumentFile(
     );
   }
 
+  if (candidateDigest === options.initialDigest) {
+    return {
+      mode: "in_place",
+      target,
+      digest: candidateDigest,
+      bytesWritten: 0,
+      written: false,
+    };
+  }
+
   const temporaryPath = await writeAndSyncTemporary(
     target,
     candidateBytes,
@@ -287,6 +298,7 @@ export async function replaceDocumentFile(
     target,
     digest: candidateDigest,
     bytesWritten: candidateBytes.byteLength,
+    written: true,
   };
 }
 
@@ -343,5 +355,6 @@ export async function createDocumentFile(
     target,
     digest: candidateDigest,
     bytesWritten: candidateBytes.byteLength,
+    written: true,
   };
 }

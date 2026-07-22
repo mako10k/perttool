@@ -13,7 +13,7 @@
 
 本書は`.pert`文書に対するsource-preserving mutationのCore契約を定義する。Mutationは既存文書を直接書かず、局所的なUTF-16 `TextEdit`、再検査済みcandidate、digest、unified diffを返す。
 
-Mutation semantics version 1の実装scopeはtaskの`add`、`set`、`remove`、`finish`、milestone/resourceの`add`、`set`、`remove`、複数atomic mutationを1 candidateへ適用する`batch`である。Filesystem writeと`dag advance`は本書の共通不変条件を再利用する後続sliceとする。
+Mutation semantics version 1の実装scopeはtaskの`add`、`set`、`remove`、`finish`、milestone/resourceの`add`、`set`、`remove`、複数atomic mutationを1 candidateへ適用する`batch`である。Filesystem writeは本書のcandidateをCLI Interface仕様のsafe-write adapterへ渡す。`dag advance`は本書の共通不変条件を再利用する後続sliceとする。
 
 ## 2. 規範の優先順位
 

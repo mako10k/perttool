@@ -480,33 +480,38 @@ const nodes: readonly HelpNode[] = [
   {
     id: "editing",
     title: "Safe editing",
-    summary: "dsl format、task/milestone/resource mutation、atomic batchをpreviewし、検査済み候補またはdiffを取得できます。Writeはまだ未実装です。",
+    summary: "dsl format、task/milestone/resource mutation、atomic batchをpreviewし、検査済み候補を安全にwriteできます。",
     quick: [
       {
         id: "current-surface",
         title: "Current surface",
-        body: "dsl formatはplanFormat、Entity commandとmutation applyはplanMutationの再検査済みcandidate、UTF-16 TextEdit、digest、diffをtext/JSONへ投影し、fileは変更しません。",
+        body: "dsl formatはplanFormat、Entity commandとmutation applyはplanMutationの再検査済みcandidate、UTF-16 TextEdit、digest、diffをtext/JSONへ投影します。既定はfileを変更しないpreviewです。",
       },
     ],
     detail: [
       {
         id: "write-gate",
-        title: "Write gate",
-        body: "dsl formatとmutation commandの--write/--outは後続実装です。現在のediting commandはpreview-onlyです。",
+        title: "Safe write",
+        body: "--writeは初回read digestとwrite直前digestを照合してatomic replaceし、--expect-digestでcaller lockを追加できます。--outは既存targetを上書きせず新規作成します。--diffはpreview専用です。",
       },
     ],
     syntax: [
-      "perttool dsl format FILE [--check] [--diff]",
-      "perttool task add|set|remove|finish ...",
-      "perttool milestone add|set|remove ...",
-      "perttool resource add|set|remove ...",
-      "perttool mutation apply FILE --request REQUEST.json",
+      "perttool dsl format FILE [--check] [--diff] [--write [--expect-digest DIGEST] | --out PATH]",
+      "perttool task add|set|remove|finish ... [--write [--expect-digest DIGEST] | --out PATH]",
+      "perttool milestone add|set|remove ... [--write [--expect-digest DIGEST] | --out PATH]",
+      "perttool resource add|set|remove ... [--write [--expect-digest DIGEST] | --out PATH]",
+      "perttool mutation apply FILE --request REQUEST.json [--write [--expect-digest DIGEST] | --out PATH]",
     ],
     examples: [
       {
         id: "task-preview",
         title: "Preview a task update",
         text: "perttool task set plan.pert TASK_ID --status active --diff",
+      },
+      {
+        id: "task-write",
+        title: "Commit a reviewed task update",
+        text: "perttool task set plan.pert TASK_ID --status active --write --expect-digest sha256:<64 lowercase hex digits>",
       },
     ],
     related: ["workflows"],

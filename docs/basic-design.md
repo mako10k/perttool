@@ -353,7 +353,8 @@ code namespace:
 - `PTSEM-*`: reference、state、duration、graph constraint
 - `PTDAG-*`: cycle、reachability、schedule
 - `PTRES-*`: resource capacity、allocation、resource schedule
-- `PTMUT-*`: mutation、optimistic lock、unsafe removal
+- `PTMUT-*`: mutation request、target resolution、unsafe removal
+- `PTIO-*`: safe-write conflict、post-write verification
 - `PTCNV-*`: import/export/loss report
 - `PTCLI-*`: CLI usage
 - `PTHLP-*`: help registry lookup

@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import {
+  copyFileSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -254,4 +261,36 @@ test("E2E-010: formatter preview feeds validation and leaves the source unchange
   assert.equal(stable.status, 0, stable.stderr);
   assert.equal(stable.stdout, "");
   assert.equal(readFileSync(path.join(root, source), "utf8"), before);
+});
+
+test("E2E-011: safe writes on temporary copies feed check, analyze, and next", (t) => {
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-safe-write-e2e-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+
+  const grammarOriginal = readFileSync(path.join(root, "plans/grammar.pert"), "utf8");
+  const grammarCopy = path.join(directory, "grammar.pert");
+  writeFileSync(
+    grammarCopy,
+    grammarOriginal.replace("project GRAMMAR:", "project   GRAMMAR:"),
+    "utf8",
+  );
+  const formatted = runJson(["dsl", "format", grammarCopy, "--write"]);
+  assert.equal(formatted.changed, true);
+  assert.equal(formatted.write.mode, "in_place");
+  assert.equal(formatted.write.written, true);
+  assert.equal(readFileSync(grammarCopy, "utf8"), grammarOriginal);
+  assert.equal(runJson(["dsl", "check", grammarCopy]).ok, true);
+  assert.equal(runJson(["dag", "analyze", grammarCopy]).ok, true);
+  assert.equal(runJson(["dag", "next", grammarCopy]).ok, true);
+
+  const mutationCopy = path.join(directory, "minimal.pert");
+  copyFileSync(path.join(root, "docs/examples/minimal.pert"), mutationCopy);
+  const mutated = runJson([
+    "task", "set", mutationCopy, "WORK", "--title", "implemented", "--write",
+  ]);
+  assert.equal(mutated.write.mode, "in_place");
+  assert.equal(mutated.write.written, true);
+  assert.equal(runJson(["dsl", "check", mutationCopy]).ok, true);
+  assert.equal(runJson(["dag", "analyze", mutationCopy]).ok, true);
+  assert.deepEqual(runJson(["dag", "next", mutationCopy]).groups.ready, ["WORK"]);
 });

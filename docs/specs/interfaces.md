@@ -338,11 +338,13 @@ Rules:
 
 ```text
 perttool mutation apply <file> --request <json-file|->
-  [--diff] [--max-diagnostics <integer>] [--warnings-as-errors]
+  [--diff]
+  [--write [--expect-digest <digest>] | --out <path>]
+  [--max-diagnostics <integer>] [--warnings-as-errors]
   [--format text|json] [--color auto|always|never]
 ```
 
-`--request -`は`<file>`がstdinでない場合だけ使用できる。Request JSONは`{ "kind": "batch", "mutations": [...] }`とし、nested batchと同じentity IDへの複数変更を拒否する。Filesystem write optionは他mutation commandと同じsafe-write gateまで公開しない。
+`--request -`は`<file>`がstdinでない場合だけ使用できる。Request JSONは`{ "kind": "batch", "mutations": [...] }`とし、nested batchと同じentity IDへの複数変更を拒否する。Filesystem write optionは他mutation commandと同じ規則を適用する。
 
 ### 7.2 task
 
@@ -446,7 +448,11 @@ In-place writeは次の順を必須とする。
 
 Symlink inputへの`--write`はMVPでは拒否する。`--out`もsymlink targetまたは既存pathを拒否する。Raceまたはdigest不一致はexit 5で、元fileを変更しない。
 
+Candidate digestがinitial digestと同じin-place `--write`はexpected/current digest検査を省略せず、fileを置換せずに`written=false`で成功する。`--out`はcandidateがinputと同じでも新規targetを作成する。
+
 I/O adapterは競合を`expected_digest_mismatch`、`source_changed`、`symlink`、`not_regular_file`、`target_exists`のstable reasonで区別する。Candidate検査またはrename後検査の失敗は競合と混同せず、`invalid_candidate`、`post_write_digest_mismatch`、`post_write_invalid`として区別する。Temporary pathとrandom tokenはpublic resultやdiagnosticへ含めない。
+
+CLIのwrite競合は`Perttool.CliError.v1`、diagnostic code `PTIO-501`、`data.reason`に上記のstable conflict reason、exit 5で返す。Adapter verification failureは`PTIO-502`、`data.reason`にverification reasonを持つinternal failureとしてexit 70で返す。その他のfilesystem I/O errorは`PTCLI-003`、exit 3とする。
 
 `--out`は同directoryのexclusive temporary fileをflush/fsyncした後、既存targetを上書きしないatomic createで公開する。MVPの対応filesystemでは同一filesystem hard linkを使用し、同時writerの一方だけを成功させる。Target公開後にparent directoryをfsyncし、temporary entryを削除して再度parent directoryをfsyncする。
 
@@ -537,6 +543,7 @@ Section順は`ACTIVE`、`RUNNABLE NOW`、`READY / WAITING RESOURCE`、`BLOCKED N
 - mutationのdefault text previewはstdoutへcandidate、stderrへ`PREVIEW <operation> changed=<boolean> original_digest=<digest> updated_digest=<digest>`を返す
 - `--diff`: unified diff、path labelはinput operandとcandidate
 - `--write`/`--out`: stdout empty、stderrにtargetとdigest
+- write成功summaryは`WRITE <operation> mode=<in_place|out> target=<path> digest=<digest> written=<true|false>`とする
 - import default: candidate DSL
 - render default: artifact body
 - JSON formatでは上記raw textの代わりに対応result envelopeを返す

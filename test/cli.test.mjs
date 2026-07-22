@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -534,16 +541,23 @@ test("dsl format check mode reports drift without hiding a valid candidate", () 
   assert.equal(canonical.stdout, "");
 });
 
-test("dsl format rejects unavailable writes and suppresses invalid candidates", () => {
+test("dsl format validates write option combinations and suppresses invalid candidates", () => {
   const source = "test/fixtures/grammar/formatter-roundtrip.pert";
-  for (const option of [
-    ["--write"],
-    ["--out", "other.pert"],
-    ["--expect-digest", `sha256:${"0".repeat(64)}`],
+  for (const options of [
+    [source, "--write", "--out", "other.pert"],
+    [source, "--check", "--write"],
+    [source, "--check", "--out", "other.pert"],
+    [source, "--diff", "--write"],
+    [source, "--diff", "--out", "other.pert"],
+    [source, "--expect-digest", `sha256:${"0".repeat(64)}`],
+    [source, "--write", "--expect-digest", "sha256:invalid"],
+    ["-", "--write"],
   ]) {
-    const result = run(["dsl", "format", source, ...option, "--format=json"]);
+    const result = run(["dsl", "format", ...options, "--format=json"], {
+      input: options[0] === "-" ? minimalText : undefined,
+    });
     assert.equal(result.status, 2);
-    assert.match(JSON.parse(result.stdout).diagnostics[0].message, /not implemented/);
+    assert.equal(JSON.parse(result.stdout).diagnostics[0].code, "PTCLI-001");
   }
 
   const invalid = run([
@@ -568,6 +582,72 @@ test("dsl format rejects unavailable writes and suppresses invalid candidates", 
   assert.match(strictJson.updated_text, /project MINIMAL:/);
   assert.match(strictJson.diff, /^--- <stdin>/m);
   assert.ok(strictJson.diagnostics.some(({ code }) => code === "PTDAG-208"));
+});
+
+test("dsl format safely writes in place and to a new output", (t) => {
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-format-write-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const source = path.join(directory, "plan.pert");
+  const canonical = readFileSync(
+    path.join(root, "test/golden/grammar/formatter-roundtrip.expected.pert"),
+    "utf8",
+  );
+  copyFileSync(path.join(root, "test/fixtures/grammar/formatter-roundtrip.pert"), source);
+
+  const written = run(["dsl", "format", source, "--write", "--format=json"]);
+  assert.equal(written.status, 0, written.stderr);
+  const writtenJson = JSON.parse(written.stdout);
+  assert.deepEqual(writtenJson.write, {
+    mode: "in_place",
+    target: source,
+    written: true,
+  });
+  assert.equal(readFileSync(source, "utf8"), canonical);
+
+  const noOp = run(["dsl", "format", source, "--write", "--format=json"]);
+  assert.equal(noOp.status, 0, noOp.stderr);
+  assert.deepEqual(JSON.parse(noOp.stdout).write, {
+    mode: "in_place",
+    target: source,
+    written: false,
+  });
+
+  const out = path.join(directory, "out.pert");
+  const outResult = run(["dsl", "format", "-", "--out", out, "--format=json"], {
+    input: canonical,
+  });
+  assert.equal(outResult.status, 0, outResult.stderr);
+  assert.deepEqual(JSON.parse(outResult.stdout).write, {
+    mode: "out",
+    target: out,
+    written: true,
+  });
+  assert.equal(readFileSync(out, "utf8"), canonical);
+
+  const existing = run(["dsl", "format", source, "--out", out, "--format=json"]);
+  assert.equal(existing.status, 5);
+  const existingJson = JSON.parse(existing.stdout);
+  assert.equal(existingJson.schema_version, "Perttool.CliError.v1");
+  assert.equal(existingJson.diagnostics[0].code, "PTIO-501");
+  assert.equal(existingJson.diagnostics[0].data.reason, "target_exists");
+
+  const beforeConflict = readFileSync(source, "utf8");
+  const stale = run([
+    "dsl", "format", source, "--write",
+    "--expect-digest", `sha256:${"0".repeat(64)}`, "--format=json",
+  ]);
+  assert.equal(stale.status, 5);
+  const staleJson = JSON.parse(stale.stdout);
+  assert.equal(staleJson.diagnostics[0].code, "PTIO-501");
+  assert.equal(staleJson.diagnostics[0].data.reason, "expected_digest_mismatch");
+  assert.equal(readFileSync(source, "utf8"), beforeConflict);
+
+  const symlink = path.join(directory, "linked.pert");
+  symlinkSync(source, symlink);
+  const linked = run(["dsl", "format", symlink, "--write", "--format=json"]);
+  assert.equal(linked.status, 5);
+  assert.equal(JSON.parse(linked.stdout).diagnostics[0].data.reason, "symlink");
+  assert.equal(readFileSync(source, "utf8"), beforeConflict);
 });
 
 test("task mutation commands expose candidate, diff, JSON, and stdin previews", () => {
@@ -772,20 +852,21 @@ test("mutation apply supports request or document stdin but rejects a shared std
   assert.equal(nonBatchJson.updated_text, null);
 });
 
-test("mutation preview rejects writes and suppresses failed candidates", () => {
-  for (const option of [
-    ["--write"],
-    ["--out", "other.pert"],
+test("mutation CLI validates write options and suppresses failed candidates", () => {
+  for (const options of [
+    ["--write", "--out", "other.pert"],
+    ["--diff", "--write"],
     ["--expect-digest", `sha256:${"0".repeat(64)}`],
+    ["--write", "--expect-digest", "sha256:invalid"],
   ]) {
     const result = run([
       "task", "set", minimalPath, "WORK", "--title", "updated",
-      ...option, "--format=json",
+      ...options, "--format=json",
     ]);
     assert.equal(result.status, 2);
     const json = JSON.parse(result.stdout);
     assert.equal(json.schema_version, "Perttool.CliError.v1");
-    assert.match(json.diagnostics[0].message, /not implemented/);
+    assert.equal(json.diagnostics[0].code, "PTCLI-001");
   }
 
   const invalidJson = run([
@@ -824,4 +905,93 @@ test("mutation preview rejects writes and suppresses failed candidates", () => {
   assert.equal(limitedJson.diagnostics.length, 2);
   assert.equal(limitedJson.diagnostics_truncated, true);
   assert.equal(limitedJson.updated_text, null);
+});
+
+test("entity and batch mutation commands share the safe-write path", (t) => {
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-mutation-write-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+
+  const taskPath = path.join(directory, "task.pert");
+  copyFileSync(path.join(root, minimalPath), taskPath);
+  const initialDigest = JSON.parse(run([
+    "dsl", "check", taskPath, "--format=json",
+  ]).stdout).source_digest;
+  const task = run([
+    "task", "set", taskPath, "WORK", "--title", "implemented", "--write",
+    "--expect-digest", initialDigest, "--format=json",
+  ]);
+  assert.equal(task.status, 0, task.stderr);
+  assert.deepEqual(JSON.parse(task.stdout).write, {
+    mode: "in_place",
+    target: taskPath,
+    written: true,
+  });
+  assert.match(readFileSync(taskPath, "utf8"), /title "implemented"/);
+
+  const milestonePath = path.join(directory, "milestone.pert");
+  copyFileSync(path.join(root, minimalPath), milestonePath);
+  const milestone = run([
+    "milestone", "set", milestonePath, "DONE", "--title", "released", "--write",
+    "--color=never",
+  ]);
+  assert.equal(milestone.status, 0, milestone.stderr);
+  assert.equal(milestone.stdout, "");
+  assert.match(
+    milestone.stderr,
+    new RegExp(`^WRITE milestone\\.set mode=in_place target=${milestonePath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} digest=sha256:[0-9a-f]{64} written=true\\n$`),
+  );
+  assert.match(readFileSync(milestonePath, "utf8"), /title "released"/);
+
+  const resourcePath = path.join(directory, "resource.pert");
+  copyFileSync(path.join(root, "docs/examples/parallel.pert"), resourcePath);
+  const resource = run([
+    "resource", "set", resourcePath, "DEVELOPERS", "--capacity", "3", "--write",
+    "--format=json",
+  ]);
+  assert.equal(resource.status, 0, resource.stderr);
+  assert.equal(JSON.parse(resource.stdout).write.written, true);
+  assert.match(readFileSync(resourcePath, "utf8"), /resource DEVELOPERS:[\s\S]*capacity 3/);
+
+  const batchPath = path.join(directory, "batch.pert");
+  copyFileSync(path.join(root, minimalPath), batchPath);
+  const request = {
+    kind: "batch",
+    mutations: [{ kind: "task.set", id: "WORK", set: { title: "batched" } }],
+  };
+  const batch = run([
+    "mutation", "apply", batchPath, "--request", "-", "--write", "--format=json",
+  ], { input: JSON.stringify(request) });
+  assert.equal(batch.status, 0, batch.stderr);
+  assert.equal(JSON.parse(batch.stdout).write.written, true);
+  assert.match(readFileSync(batchPath, "utf8"), /title "batched"/);
+
+  const outPath = path.join(directory, "out.pert");
+  const out = run([
+    "task", "set", minimalPath, "WORK", "--title", "copied", "--out", outPath,
+    "--format=json",
+  ]);
+  assert.equal(out.status, 0, out.stderr);
+  assert.deepEqual(JSON.parse(out.stdout).write, {
+    mode: "out",
+    target: outPath,
+    written: true,
+  });
+  assert.match(readFileSync(outPath, "utf8"), /title "copied"/);
+  assert.equal(readFileSync(path.join(root, minimalPath), "utf8"), minimalText);
+
+  const strictPath = path.join(directory, "strict.pert");
+  copyFileSync(path.join(root, minimalPath), strictPath);
+  const beforeStrict = readFileSync(strictPath, "utf8");
+  const strict = run([
+    "task", "finish", strictPath, "WORK", "--write", "--warnings-as-errors",
+    "--format=json",
+  ]);
+  assert.equal(strict.status, 1);
+  const strictJson = JSON.parse(strict.stdout);
+  assert.deepEqual(strictJson.write, {
+    mode: "in_place",
+    target: strictPath,
+    written: false,
+  });
+  assert.equal(readFileSync(strictPath, "utf8"), beforeStrict);
 });

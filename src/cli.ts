@@ -15,6 +15,13 @@ import {
   documentContentFromBytes,
   readDocumentFile,
 } from "./io/document-file.js";
+import {
+  createDocumentFile,
+  replaceDocumentFile,
+  SafeWriteConflictError,
+  SafeWriteVerificationError,
+  type DocumentWriteResult,
+} from "./io/safe-write.js";
 import type { Diagnostic, SourceSpan } from "./model/diagnostics.js";
 import type { Rational } from "./model/rational.js";
 import { formatDecimal } from "./model/rational.js";
@@ -64,7 +71,7 @@ function topLevelHelp(): string {
     "  perttool resource add|set|remove ...",
     "  perttool mutation apply <file> --request <json-file|-> [--diff] [--format text|json]",
     "",
-    "Format and mutation commands are preview-only; --write and --out are not implemented yet.",
+    "Format and mutation commands preview by default; use --write or --out for explicit writes.",
   ].join("\n");
 }
 
@@ -81,9 +88,9 @@ function commandHelp(resource: string, action: string): string {
   if (resource === "dsl" && action === "format") return [
     "Usage: perttool dsl format <file>",
     "  [--check] [--diff]",
+    "  [--write [--expect-digest <digest>] | --out <path>]",
     "  [--max-diagnostics <integer>] [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
-    "  --write, --out, and --expect-digest are not implemented yet",
   ].join("\n");
   if (resource === "dsl" && action === "help") return [
     "Usage: perttool dsl help [topic [subtopic]]",
@@ -108,7 +115,7 @@ function commandHelp(resource: string, action: string): string {
     "  [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
-  const preview = "  [--diff] [--max-diagnostics <integer>] [--warnings-as-errors] [--format text|json] [--color auto|always|never]";
+  const preview = "  [--diff] [--write [--expect-digest <digest>] | --out <path>] [--max-diagnostics <integer>] [--warnings-as-errors] [--format text|json] [--color auto|always|never]";
   if (resource === "task" && action === "add") return [
     "Usage: perttool task add <file> <id> <from> <to>",
     "  --title <text> (--duration <duration> | --optimistic <duration> --most-likely <duration> --pessimistic <duration>)",
@@ -344,11 +351,24 @@ function cliError(
   operation: string | null,
   json: boolean,
 ): number {
+  const code = error instanceof UsageError
+    ? error.code
+    : error instanceof SafeWriteConflictError
+      ? "PTIO-501"
+      : error instanceof SafeWriteVerificationError
+        ? "PTIO-502"
+        : exitCode === 3
+          ? "PTCLI-003"
+          : "PTCLI-070";
   const diagnostic: Diagnostic = {
-    code: error instanceof UsageError ? error.code : exitCode === 3 ? "PTCLI-003" : "PTCLI-070",
+    code,
     severity: "error",
     message: error.message,
     helpTopic: "errors",
+    ...((error instanceof SafeWriteConflictError ||
+      error instanceof SafeWriteVerificationError)
+      ? { data: { reason: error.reason } }
+      : {}),
   };
   if (json) {
     writeJson({
@@ -480,21 +500,104 @@ const mutationCommonValueOptions = [
 ] as const;
 const mutationCommonFlagOptions = ["diff", "write", "warnings-as-errors"] as const;
 
-function rejectUnavailablePreviewWrite(
+type EditingWriteRequest =
+  | { readonly mode: "preview"; readonly target: null }
+  | {
+      readonly mode: "in_place";
+      readonly target: string;
+      readonly expectedDigest?: string;
+    }
+  | { readonly mode: "out"; readonly target: string };
+
+function editingWriteRequest(
   parsed: ParsedOptions,
-  surface: "format" | "mutation",
+  sourceOperand: string,
+  check = false,
+): EditingWriteRequest {
+  const write = parsed.flags.has("write");
+  const out = parsed.values.get("out");
+  const expectedDigest = parsed.values.get("expect-digest");
+  if (write && out !== undefined) {
+    throw new UsageError("--write and --out are mutually exclusive");
+  }
+  if (check && (write || out !== undefined)) {
+    throw new UsageError("--check cannot be used with --write or --out");
+  }
+  if (parsed.flags.has("diff") && (write || out !== undefined)) {
+    throw new UsageError("--diff is preview-only and cannot be used with --write or --out");
+  }
+  if (expectedDigest !== undefined && !write) {
+    throw new UsageError("--expect-digest can only be used with --write");
+  }
+  if (expectedDigest !== undefined && !/^sha256:[0-9a-f]{64}$/.test(expectedDigest)) {
+    throw new UsageError("--expect-digest must be sha256 followed by 64 lowercase hex digits");
+  }
+  if (write && sourceOperand === "-") {
+    throw new UsageError("--write cannot be used with stdin");
+  }
+  if (out !== undefined && out.length === 0) {
+    throw new UsageError("--out path must not be empty");
+  }
+  if (write) {
+    return {
+      mode: "in_place",
+      target: sourceOperand,
+      ...(expectedDigest === undefined ? {} : { expectedDigest }),
+    };
+  }
+  if (out !== undefined) return { mode: "out", target: out };
+  return { mode: "preview", target: null };
+}
+
+function assertExpectedDigest(
+  request: EditingWriteRequest,
+  initialDigest: string,
 ): void {
-  if (parsed.flags.has("write")) {
-    throw new UsageError(`--write is not implemented; ${surface} commands are preview-only`);
-  }
-  if (parsed.values.has("out")) {
-    throw new UsageError(`--out is not implemented; ${surface} commands are preview-only`);
-  }
-  if (parsed.values.has("expect-digest")) {
-    throw new UsageError(
-      `--expect-digest is not implemented until ${surface} --write is available`,
+  if (
+    request.mode === "in_place" &&
+    request.expectedDigest !== undefined &&
+    request.expectedDigest !== initialDigest
+  ) {
+    throw new SafeWriteConflictError(
+      "expected_digest_mismatch",
+      "--expect-digestがinitial document digestと一致しません",
     );
   }
+}
+
+async function commitCandidate(
+  request: Exclude<EditingWriteRequest, { readonly mode: "preview" }>,
+  candidateText: string | null,
+  initialDigest: string,
+): Promise<DocumentWriteResult> {
+  if (candidateText === null) {
+    throw new SafeWriteVerificationError(
+      "invalid_candidate",
+      "successful editing resultにcandidate textがありません",
+    );
+  }
+  return request.mode === "in_place"
+    ? replaceDocumentFile(request.target, candidateText, {
+        initialDigest,
+        ...(request.expectedDigest === undefined
+          ? {}
+          : { expectedDigest: request.expectedDigest }),
+      })
+    : createDocumentFile(request.target, candidateText);
+}
+
+function writeFailureExit(error: unknown, operation: string, json: boolean): number {
+  const normalized = error instanceof Error ? error : new Error(String(error));
+  const exitCode = normalized instanceof SafeWriteConflictError
+    ? 5
+    : normalized instanceof SafeWriteVerificationError
+      ? 70
+      : 3;
+  return cliError(normalized, exitCode, operation, json);
+}
+
+function renderWriteSummary(operation: string, result: DocumentWriteResult): string {
+  return `WRITE ${operation} mode=${result.mode} target=${result.target} digest=${result.digest} written=${result.written}\n`;
 }
 
 async function runFormat(args: readonly string[]): Promise<number> {
@@ -506,7 +609,6 @@ async function runFormat(args: readonly string[]): Promise<number> {
   if (parsed.positionals.length !== 1) {
     throw new UsageError("dsl format requires exactly one <file>");
   }
-  rejectUnavailablePreviewWrite(parsed, "format");
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
   const maxDiagnostics = boundedInteger(
@@ -517,6 +619,11 @@ async function runFormat(args: readonly string[]): Promise<number> {
     1000,
   );
   const sourceOperand = parsed.positionals[0]!;
+  const writeRequest = editingWriteRequest(
+    parsed,
+    sourceOperand,
+    parsed.flags.has("check"),
+  );
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
   let input: Awaited<ReturnType<typeof readDocument>>;
   try {
@@ -540,6 +647,17 @@ async function runFormat(args: readonly string[]): Promise<number> {
       result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const checkFailure = parsed.flags.has("check") && result.ok && result.changed;
   const ok = result.ok && !warningFailure && !checkFailure;
+  let writeResult: DocumentWriteResult | null = null;
+  if (result.ok) {
+    try {
+      assertExpectedDigest(writeRequest, input.digest);
+      if (ok && writeRequest.mode !== "preview") {
+        writeResult = await commitCandidate(writeRequest, result.updatedText, input.digest);
+      }
+    } catch (error) {
+      return writeFailureExit(error, "dsl.format", format === "json");
+    }
+  }
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.FormatResult.v1",
@@ -551,12 +669,14 @@ async function runFormat(args: readonly string[]): Promise<number> {
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
       diagnostics_truncated: result.diagnosticsTruncated,
-      ...previewResultJson(result, result.ok),
+      ...previewResultJson(result, result.ok, writeRequest, writeResult),
     });
   } else {
     const candidateAllowed = result.ok && !warningFailure;
     if (candidateAllowed) {
-      if (parsed.flags.has("check")) {
+      if (writeResult !== null) {
+        process.stderr.write(renderWriteSummary("dsl.format", writeResult));
+      } else if (parsed.flags.has("check")) {
         if (parsed.flags.has("diff")) process.stdout.write(result.diff ?? "");
       } else {
         process.stdout.write(
@@ -974,6 +1094,8 @@ function resourceMutationFromOptions(action: string, parsed: ParsedOptions): Mut
 function previewResultJson(
   result: MutationResult | FormatPreviewResult,
   exposeCandidate: boolean,
+  writeRequest: EditingWriteRequest = { mode: "preview", target: null },
+  writeResult: DocumentWriteResult | null = null,
 ): Readonly<Record<string, unknown>> {
   return {
     changed: exposeCandidate ? result.changed : false,
@@ -987,9 +1109,9 @@ function previewResultJson(
       replacement: edit.replacement,
     })),
     write: {
-      mode: "preview",
-      target: null,
-      written: false,
+      mode: writeRequest.mode,
+      target: writeRequest.target,
+      written: writeResult?.written ?? false,
     },
   };
 }
@@ -1013,7 +1135,6 @@ async function runMutation(
 ): Promise<number> {
   const config = mutationOptionSets(resource, action);
   const parsed = parseOptions(args, config.values, config.flags, config.repeatable);
-  rejectUnavailablePreviewWrite(parsed, "mutation");
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
   const maxDiagnostics = boundedInteger(
@@ -1025,6 +1146,7 @@ async function runMutation(
   );
   const operation = `${resource}.${action}`;
   let sourceOperand: string;
+  let writeRequest: EditingWriteRequest;
   let mutation: Mutation;
 
   if (resource === "mutation") {
@@ -1032,6 +1154,7 @@ async function runMutation(
       throw new UsageError("mutation apply requires exactly one <file>");
     }
     sourceOperand = parsed.positionals[0]!;
+    writeRequest = editingWriteRequest(parsed, sourceOperand);
     const requestSource = requiredOption(parsed, "request");
     if (sourceOperand === "-" && requestSource === "-") {
       throw new UsageError("document and mutation request cannot both use stdin");
@@ -1050,13 +1173,14 @@ async function runMutation(
     }
     mutation = request as Mutation;
   } else {
-    sourceOperand = parsed.positionals[0] ?? "";
     mutation =
       resource === "task"
         ? taskMutationFromOptions(action, parsed)
         : resource === "milestone"
           ? milestoneMutationFromOptions(action, parsed)
           : resourceMutationFromOptions(action, parsed);
+    sourceOperand = parsed.positionals[0]!;
+    writeRequest = editingWriteRequest(parsed, sourceOperand);
   }
 
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
@@ -1084,6 +1208,17 @@ async function runMutation(
     (result.diagnosticsTruncated ||
       result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
+  let writeResult: DocumentWriteResult | null = null;
+  if (result.ok) {
+    try {
+      assertExpectedDigest(writeRequest, input.digest);
+      if (ok && writeRequest.mode !== "preview") {
+        writeResult = await commitCandidate(writeRequest, result.updatedText, input.digest);
+      }
+    } catch (error) {
+      return writeFailureExit(error, operation, format === "json");
+    }
+  }
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.MutationResult.v1",
@@ -1095,17 +1230,21 @@ async function runMutation(
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
       diagnostics_truncated: result.diagnosticsTruncated,
-      ...previewResultJson(result, result.ok),
+      ...previewResultJson(result, result.ok, writeRequest, writeResult),
     });
   } else {
     if (ok) {
-      process.stdout.write(
-        parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
-      );
-      if (!parsed.flags.has("diff")) {
-        process.stderr.write(
-          `PREVIEW ${operation} changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+      if (writeResult !== null) {
+        process.stderr.write(renderWriteSummary(operation, writeResult));
+      } else {
+        process.stdout.write(
+          parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
         );
+        if (!parsed.flags.has("diff")) {
+          process.stderr.write(
+            `PREVIEW ${operation} changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+          );
+        }
       }
     }
     for (const diagnostic of result.diagnostics) {

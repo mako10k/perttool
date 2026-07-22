@@ -7,6 +7,7 @@ import {
   analyzeDocument,
   checkDocument,
   convertWithVelocity,
+  planFormat,
   selectNextTasks,
 } from "../dist/index.js";
 
@@ -80,6 +81,19 @@ test("grammar plan check/analyze/next matches the read-only self-use golden", as
     "utf8",
   ));
   assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
+test("grammar plan is a stable formatter round-trip golden", async () => {
+  const text = await readFile(path.join(root, "plans/grammar.pert"), "utf8");
+  const first = planFormat(text);
+  assert.equal(first.ok, true);
+  assert.equal(first.changed, false);
+  assert.equal(first.updatedText, text);
+  assert.deepEqual(first.edits, []);
+  const repeated = planFormat(first.updatedText);
+  assert.equal(repeated.ok, true);
+  assert.equal(repeated.changed, false);
+  assert.equal(repeated.updatedText, text);
 });
 
 test("control-plane plan matches the Issue #1 design roadmap golden", async () => {

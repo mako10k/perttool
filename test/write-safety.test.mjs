@@ -77,10 +77,32 @@ test("in-place safe write preserves mode, atomically replaces, and verifies the 
     target: source,
     digest: (await readDocumentFile(source)).digest,
     bytesWritten: Buffer.byteLength(updated),
+    written: true,
   });
   assert.equal(readFileSync(source, "utf8"), updated);
   assert.equal(statSync(source).mode & 0o777, 0o640);
   assert.notEqual(statSync(source).ino, beforeInode);
+  assert.deepEqual(temporaryFiles(directory), []);
+});
+
+test("in-place no-op validates locks without replacing the file", async (t) => {
+  const directory = workspace(t);
+  const source = path.join(directory, "plan.pert");
+  writeFileSync(source, minimalText);
+  const initial = await readDocumentFile(source);
+  const inode = statSync(source).ino;
+  const result = await replaceDocumentFile(source, minimalText, {
+    initialDigest: initial.digest,
+    expectedDigest: initial.digest,
+  });
+  assert.deepEqual(result, {
+    mode: "in_place",
+    target: source,
+    digest: initial.digest,
+    bytesWritten: 0,
+    written: false,
+  });
+  assert.equal(statSync(source).ino, inode);
   assert.deepEqual(temporaryFiles(directory), []);
 });
 

@@ -2,6 +2,12 @@
 
 このプロジェクトの主な変更を記録する。形式は[Keep a Changelog](https://keepachangelog.com/ja/1.1.0/)を参考にし、versionは[Semantic Versioning](https://semver.org/lang/ja/)に従う。
 
+## [Unreleased]
+
+### Added
+
+- `dsl format`とtask/milestone/resource/batch mutationのatomic `--write`、exclusive `--out`、`--expect-digest`
+
 ## [0.1.0-alpha.1] - 2026-07-21
 
 最初の公開開発プレビュー。DSLとCLIの評価、read-onlyな計画検査・分析・次task選択を目的とする。stable MVPではなく、互換性のない変更が入る可能性がある。
