@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 2.7
+- 文書状態: Active Stage 1 / Revision 2.8
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -94,6 +94,8 @@ Exit criteria:
 
 続いて`ENTITY_MUTATION_CORE`を完了した。Milestone/resource add/set/removeをtaskと同じsource-preserving pathへ統合し、comment所有、無関係field、既存resource tags、declaration順を保持する。単独milestone addではvalidな中間DAGを作れない仕様穴を解消するため、複数atomic mutationをoriginal spanへ計画して最終candidateだけを検査するbatch契約を追加した。Connected milestone追加、path置換、resourceとtask requirementの同時追加をtestへ固定し、standaloneの参照破壊、孤立milestone、capacity縮小はcandidate diagnosticで拒否する。操作系の同日完了標本は累計7p/1 active dayとなり、Velocityを`7p/1d`へ再calibrationした。残るprecedence makespanは15p（`15/7d`）、resource makespanは16p（`16/7d`）、resource delayは1pである。Macroは6 decimal dayへのdeterministic roundを使い、makespanは`13.428572d`となる。Macro CPは`FORMATTER_CORE`、詳細planでは`FORMAT_APPLICATION`がprecedence critical、`MUTATION_CLI_PREVIEW`がschedule criticalで、両方とも`runnable_now`である。
 
+Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を分離worktreeのAgentで並行完了した。Formatterは再検査済みcandidate、UTF-16 TextEdit、digest、diffをpure application resultへ投影した。Mutation CLIはtask/milestone/resource actionとatomic batchをdefault candidateまたは`--diff`、text/JSONで公開し、BOM、stdin分離、error時の候補非公開、warning policy時のJSON candidate保持、document ID、preview summaryを受け入れtestへ固定した。Write optionはusage errorのままである。同日完了標本を累計10p/1 active dayへ更新し、残るprecedence/resource makespanは14p、forecastは1.4d、resource delayは0pとなった。Macro makespanは12.8dで、次はmacro `FORMATTER_CORE`に対応するdetail `FORMAT_CLI_PREVIEW`がprecedence/schedule criticalかつ`runnable_now`である。
+
 Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。Recommendation側はtask別durationと所有fileが未詳細化で、M3より前に操作系を遅らせないwork-package単位の並行化を立証できないため、`M3_SAFE_WRITE_READY`以降へ送る。Issue #3はMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
@@ -113,13 +115,13 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | --- | --- | ---: | ---: | --- | --- |
 | `grammar.pert` | `FORMATTER_ROUNDTRIP`、`HELP_FIXTURE_SYNC` | 3p | 1d | `3p/1d` | 0p |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
-| `operations.pert` | `TASK_MUTATION_CORE`、`ENTITY_MUTATION_CORE` | 7p | 1d | `7p/1d` | precedence 15p = `15/7d`、resource 16p = `16/7d` |
+| `operations.pert` | mutation Core、`FORMAT_APPLICATION`、`MUTATION_CLI_PREVIEW` | 10p | 1d | `10p/1d` | precedence/resource 14p = 1.4d |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。3標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
-Operationsは`TASK_MUTATION_CORE` 4pと`ENTITY_MUTATION_CORE` 3pの同日完了を累計し、実測`7p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系completion commit時に`plans/operations.pert`だけを独立再calibrationする。Macroはday単位しか持たないため、`p/velocity`を6 decimal dayへroundし、detail resource scheduleで生じる1pのCLI/reviewer待ちも`FORMATTER_CORE`のroll-upへ含める。
+Operationsはmutation Core 7p、`FORMAT_APPLICATION` 1p、`MUTATION_CLI_PREVIEW` 2pの同日完了を累計し、実測`10p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系completion commit時に`plans/operations.pert`だけを独立再calibrationする。Macroはday単位しか持たないため、`p/velocity`を6 decimal dayへroundする。現在のdetail resource delayは0pである。
 
 この段階で許可する操作:
 
@@ -127,6 +129,7 @@ Operationsは`TASK_MUTATION_CORE` 4pと`ENTITY_MUTATION_CORE` 3pの同日完了�
 - analyze
 - next
 - CLI JSONによるcheck/analyze/next result
+- task/milestone/resourceとatomic batchのpreview、diff、JSON result
 - Mermaid export が read-only で利用可能なら preview
 
 この段階で禁止する操作:
@@ -170,7 +173,7 @@ Operationsは`TASK_MUTATION_CORE` 4pと`ENTITY_MUTATION_CORE` 3pの同日完了�
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
-- `TASK_MUTATION_CORE`と`ENTITY_MUTATION_CORE`は完了し、次はprecedence criticalな`FORMAT_APPLICATION`とschedule criticalな`MUTATION_CLI_PREVIEW`が並行可能である
+- mutation Core、`FORMAT_APPLICATION`、`MUTATION_CLI_PREVIEW`は完了し、次は`FORMAT_CLI_PREVIEW`がprecedence/schedule criticalかつrunnableである
 - recommendation実装とIssue #2は共有CLI・reviewerの競合により`M3_SAFE_WRITE_READY`以降へ送る
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -316,6 +319,8 @@ Stage 1開始時の証跡:
 - operations planning gate: M1-M4の24pをfile ownership、acceptance、narrow testへ分解し、critical/resource makespan 21p、初期forecast 7d、runnable frontierをgoldenへ固定する
 - task mutation Core gate: add/set/remove/finish、UTF-16局所edit、comment所有、candidate再検査、digest、unified diff、invalid result抑止をmutation testへ固定する
 - entity mutation Core gate: milestone/resource add/set/remove、atomic batch、connected milestone、path置換、resource requirement同時追加、非cascade拒否をmutation testへ固定する
-- operations calibration gate: mutation Core 2 taskの7p/1 active dayから実測Velocity `7p/1d`、残るprecedence/resource forecast `15/7d`/`16/7d`と1p resource delayをgoldenへ固定する
+- formatter application gate: 再検査済みcandidate、UTF-16 edit、digest、unified diff、invalid/no-op resultをformatter testへ固定する
+- mutation CLI preview gate: entity/batch action、text/JSON、stdin分離、BOM、document ID、warning policy、preview-only write拒否をCLI/E2E testへ固定する
+- operations calibration gate: 完了4 taskの10p/1 active dayから実測Velocity `10p/1d`、残るprecedence/resource forecast 1.4dと0p resource delayをgoldenへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、4 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

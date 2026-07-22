@@ -50,7 +50,7 @@
 4. 各unitへduration、acceptance、narrow test、並行可否を付ける
 5. `plans/mvp.pert`の`M1_ROADMAP_UPDATE`を完了してからproduct implementationへ着手する
 
-実行順は[操作系詳細plan](../../plans/operations.pert)へ固定した。Formatter preview 3pとmutation preview 9pを並行branchとし、両方の受け入れ後にsafe write 6p、その後にadvance 6pへ進む。初期baselineはVelocity `3p/1d`、critical/resource makespan 21p、7dだった。Mutation Core 7p完了後は実測`7p/1d`、残るprecedence/resource makespan 15p/16p、forecast `15/7d`/`16/7d`である。次は`FORMAT_APPLICATION`がprecedence critical、`MUTATION_CLI_PREVIEW`がschedule criticalで、developer capacity内で並行可能である。
+実行順は[操作系詳細plan](../../plans/operations.pert)へ固定した。Formatter preview 3pとmutation preview 9pを並行branchとし、両方の受け入れ後にsafe write 6p、その後にadvance 6pへ進む。初期baselineはVelocity `3p/1d`、critical/resource makespan 21p、7dだった。Mutation Core 7p、`FORMAT_APPLICATION` 1p、`MUTATION_CLI_PREVIEW` 2p完了後は実測`10p/1d`、残るprecedence/resource makespan14p、forecast 1.4dである。次は`FORMAT_CLI_PREVIEW`がprecedence/schedule criticalかつrunnableである。
 
 MIG-01からMIG-07のside trackは、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。Recommendation側のtask別durationとfile ownershipはまだ詳細plan化しておらず、このcapacityでは操作系milestoneを遅らせないwork-package単位の早期並行化を立証できないため、`M3_SAFE_WRITE_READY`以降へ送る。MIG-08は常にsafe-write gateより後である。Safe-write後に並行可能となるMermaid trackとのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果に従う。
 

@@ -3,15 +3,15 @@ project OPERATIONS:
   title "操作系M1-M4実装計画"
   description |
     formatter preview、構造編集preview、safe write、advanceを実装する詳細plan。
-    Pointは相対規模を表す。2026-07-22にTASK_MUTATION_CORE 4pと
-    ENTITY_MUTATION_CORE 3pを1 active dayで完了した操作系標本から、
-    実測Velocityを7p/1dへcalibrationした。
+    Pointは相対規模を表す。2026-07-22にmutation Core 7p、
+    FORMAT_APPLICATION 1p、MUTATION_CLI_PREVIEW 2pを1 active dayで完了した
+    操作系標本から、実測Velocityを10p/1dへcalibrationした。
     recommendationとAI Agent Guidance Registryは、このplanのM3 safe-write milestoneを
     遅らせないことを立証するまで並行実装しない。Multi-plan compositionは独立した
     MVP後の将来backlogとして扱う。
   as_of 2026-07-22
   duration_unit point
-  velocity 7p/1d
+  velocity 10p/1d
   finish OPERATIONS_READY
 
 resource DEVELOPERS:
@@ -76,6 +76,7 @@ task FORMAT_APPLICATION NOW -> FORMAT_APPLICATION_READY:
     Test: npm run build && node --test test/formatter.test.mjs。
     Parallel: TASK_MUTATION_COREと所有fileを共有しない。
   duration 1p
+  status done
   priority 90
   requires:
     DEVELOPERS 1
@@ -129,6 +130,7 @@ task MUTATION_CLI_PREVIEW ENTITY_MUTATION_READY -> MUTATION_PREVIEW_READY:
     Test: npm run build && node --test test/mutation.test.mjs test/cli.test.mjs test/e2e.test.mjs。
     Parallel: FORMAT_CLI_PREVIEWとはCLI_SURFACEとREVIEWERSで直列化する。
   duration 2p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

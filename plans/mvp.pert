@@ -5,8 +5,8 @@ project PERTTOOL_MVP:
     MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
     grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pert、
     M1からM4の操作系はplans/operations.pertを正とする。
-    操作系detail planはTASK_MUTATION_COREとENTITY_MUTATION_COREの実測Velocity
-    7p/1dを使用し、resource forecastを6 decimal dayへroundしてmacro work packageへ
+    操作系detail planはmutation Core、FORMAT_APPLICATION、MUTATION_CLI_PREVIEWの
+    実測Velocity 10p/1dを使用し、resource forecastを6 decimal dayへroundしてmacro work packageへ
     roll-upした。
     recommendation実装とIssue #2は共有CLI・reviewerが競合するためM3後へ送り、
     Issue #3のmulti-plan compositionは独立した将来backlogとして扱う。
@@ -105,16 +105,17 @@ task M1_ROADMAP_UPDATE FOUNDATION_INPUTS_ACCEPTED -> M1_PRODUCT_FOUNDATION_READY
 
 task FORMATTER_CORE M1_PRODUCT_FOUNDATION_READY -> FORMATTER_READY:
   title "dsl format previewを公開する"
-  description "plans/operations.pertのFORMAT_APPLICATION 1p、FORMAT_CLI_PREVIEW 2pと、先行する高priority MUTATION_CLI_PREVIEWによる1pのresource待ちを含む4pの完了時刻を、実測velocityで0.571429dへroundしてroll-upする"
-  duration 0.571429d
+  description "plans/operations.pertのFORMAT_APPLICATION 1pは完了した。残るFORMAT_CLI_PREVIEW 2pの実測velocity forecast 0.2dをroll-upする"
+  duration 0.2d
   priority 90
   requires:
     DEVELOPERS 1
 
 task MUTATION_PREVIEW M1_PRODUCT_FOUNDATION_READY -> MUTATION_PREVIEW_READY:
   title "task、milestone、resource編集previewを実装する"
-  description "plans/operations.pertのTASK_MUTATION_CORE 4pとENTITY_MUTATION_CORE 3pは完了した。残るMUTATION_CLI_PREVIEW 2pの実測velocity forecast 2/7dを0.285714dへroundしてroll-upする"
+  description "plans/operations.pertのmutation Core 7pとMUTATION_CLI_PREVIEW 2pを完了し、source-preservingなentity/batch previewをtext/JSONで公開した"
   duration 0.285714d
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -127,8 +128,8 @@ gate MUTATION_EDIT_GATE MUTATION_PREVIEW_READY -> M2_EDIT_PREVIEW_READY:
 
 task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
   title "再検査、atomic write、optimistic lockを実装する"
-  description "plans/operations.pertのSAFE_WRITE_ADAPTERとSAFE_WRITE_ACCEPTANCE、合計6pの実測velocity forecast 6/7dを0.857143dへroundしてroll-upする"
-  duration 0.857143d
+  description "plans/operations.pertのSAFE_WRITE_ADAPTERとSAFE_WRITE_ACCEPTANCE、合計6pの実測velocity forecast 0.6dをroll-upする"
+  duration 0.6d
   priority 90
   requires:
     DEVELOPERS 1
@@ -136,8 +137,8 @@ task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
 
 task ADVANCE M3_SAFE_WRITE_READY -> M4_ADVANCE_READY:
   title "合流を保持するadvance plannerを実装する"
-  description "plans/operations.pertのADVANCE_PLANNERとADVANCE_CLI_ACCEPTANCE、合計6pの実測velocity forecast 6/7dを0.857143dへroundしてroll-upする"
-  duration 0.857143d
+  description "plans/operations.pertのADVANCE_PLANNERとADVANCE_CLI_ACCEPTANCE、合計6pの実測velocity forecast 0.6dをroll-upする"
+  duration 0.6d
   priority 20
   requires:
     DEVELOPERS 1
