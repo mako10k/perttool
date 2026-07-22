@@ -1,11 +1,28 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { planFormat } from "../dist/application/format.js";
 import { checkDocument, formatDocument } from "../dist/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+
+function digest(text) {
+  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
+}
+
+function applyEdits(text, edits) {
+  let candidate = text;
+  for (const edit of [...edits].reverse()) {
+    candidate =
+      candidate.slice(0, edit.startOffset) +
+      edit.replacement +
+      candidate.slice(edit.endOffset);
+  }
+  return candidate;
+}
 
 function semanticValue(value) {
   if (typeof value === "bigint") return value.toString();
@@ -186,4 +203,104 @@ test("formatter golden is idempotent and preserves the semantic AST", async () =
   assert.equal(repeated.changed, false);
   assert.deepEqual(repeated.edits, []);
   assert.equal(repeated.formattedText, golden);
+});
+
+test("format application returns a rechecked candidate, UTF-16 edits, digests, and diff", () => {
+  const input = [
+    "project   FORMAT:",
+    "  version 0001",
+    '  title "😀 plan"  ',
+    "  duration_unit day",
+    "  finish DONE",
+    "",
+    "milestone NOW:",
+    '  title "now"',
+    "  state reached",
+    "",
+    "milestone DONE:",
+    '  title "done"',
+    "",
+    "task   WORK   NOW  ->   DONE:",
+    '  title "work"',
+    "  duration 01.0d",
+    "  status done",
+  ].join("\n");
+
+  const result = planFormat(input, {
+    originalLabel: "plan.pert",
+    updatedLabel: "plan.pert (candidate)",
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.changed, true);
+  assert.equal(result.originalDigest, digest(input));
+  assert.equal(result.updatedDigest, digest(result.updatedText));
+  assert.notEqual(result.originalDigest, result.updatedDigest);
+  assert.ok(result.diff.startsWith("--- plan.pert\n+++ plan.pert (candidate)\n@@ "));
+  assert.equal(
+    result.diff,
+    planFormat(input, {
+      originalLabel: "plan.pert",
+      updatedLabel: "plan.pert (candidate)",
+    }).diff,
+  );
+  assert.ok(result.edits.length > 0);
+  assert.ok(
+    result.edits.some(
+      ({ startOffset }) => startOffset > input.indexOf("😀") + "😀".length,
+    ),
+  );
+  assert.equal(applyEdits(input, result.edits), result.updatedText);
+  for (let index = 1; index < result.edits.length; index += 1) {
+    assert.ok(result.edits[index].startOffset >= result.edits[index - 1].endOffset);
+  }
+
+  const candidate = checkDocument(result.updatedText);
+  assert.equal(candidate.ok, true);
+  assert.deepEqual(result.diagnostics, candidate.diagnostics);
+  assert.ok(result.diagnostics.some(({ code }) => code === "PTDAG-208"));
+});
+
+test("format application returns the original candidate and empty diff for a no-op", () => {
+  const input = [
+    "project FORMAT:",
+    "  version 1",
+    '  title "format"',
+    "  duration_unit day",
+    "  finish DONE",
+    "",
+    "milestone NOW:",
+    '  title "now"',
+    "  state reached",
+    "",
+    "milestone DONE:",
+    '  title "done"',
+    "",
+    "task WORK NOW -> DONE:",
+    '  title "work"',
+    "  duration 1d",
+    "",
+  ].join("\n");
+
+  const result = planFormat(input);
+  assert.equal(result.ok, true);
+  assert.equal(result.changed, false);
+  assert.equal(result.updatedText, input);
+  assert.equal(result.originalDigest, digest(input));
+  assert.equal(result.updatedDigest, result.originalDigest);
+  assert.equal(result.diff, "");
+  assert.deepEqual(result.edits, []);
+  assert.deepEqual(result.diagnostics, checkDocument(input).diagnostics);
+});
+
+test("format application rejects invalid input without exposing a candidate", () => {
+  const input = `project INVALID:\n  title "invalid"\n  duration_unit day\n  finish MISSING\n`;
+  const result = planFormat(input);
+  assert.equal(result.ok, false);
+  assert.equal(result.changed, false);
+  assert.equal(result.originalDigest, digest(input));
+  assert.equal(result.updatedDigest, null);
+  assert.equal(result.updatedText, null);
+  assert.equal(result.diff, null);
+  assert.deepEqual(result.edits, []);
+  assert.ok(result.diagnostics.some(({ severity }) => severity === "error"));
 });
