@@ -537,6 +537,17 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
   assert.match(finished.stdout, /^\+  status done$/m);
 });
 
+test("mutation preview preserves a UTF-8 BOM and hashes the same document bytes", () => {
+  const withBom = `\uFEFF${minimalText}`;
+  const result = run([
+    "task", "set", "-", "WORK", "--title", "BOM preserved", "--format=json",
+  ], { input: withBom });
+  assert.equal(result.status, 0, result.stderr);
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.updated_text.startsWith("\uFEFFproject MINIMAL:"), true);
+  assert.equal(json.original_digest, json.source_digest);
+});
+
 test("milestone and resource add set remove actions project to mutation Core", () => {
   const milestoneSet = run([
     "milestone", "set", minimalPath, "DONE", "--title", "completed", "--format=json",

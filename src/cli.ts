@@ -309,7 +309,7 @@ async function readDocument(source: string): Promise<{
   readonly digest: string;
 }> {
   const bytes = source === "-" ? await readStdin() : await readFile(source);
-  const decoder = new TextDecoder("utf-8", { fatal: true });
+  const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
   const text = decoder.decode(bytes);
   const digest = `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
   return { text, digest };
