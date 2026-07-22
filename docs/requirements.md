@@ -986,9 +986,8 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 実装開始前に、次を ADR または個別仕様で固定する。
 
-1. recommendation explanationのtext/JSON interface、schema migration、既定projection、size limit
-2. human overrideの意味、理由、audit先、再解析契約
-3. Mermaid profile の `%% perttool:` メタデータ schema
+1. human overrideの意味、理由、audit先、再解析契約
+2. Mermaid profile の `%% perttool:` メタデータ schema
 
 解決済みの設計判断:
 
@@ -998,6 +997,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 - ranking input、selection horizon、優先規則、完全tie-break、algorithm version: [Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)
 - stable reason code、effect/role、typed fact category、entity reference、taxonomy version: [Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)
 - typed fact、制限付きexpression、comparison、decision trace、description projection: [Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)
+- Core type、complete JSON、text summary、`NextResult.v3` migration: [Recommendation Interface Contract仕様](specs/recommendation-interface.md)
 
 ## 25. 推奨する次の仕様作業
 
@@ -1014,10 +1014,11 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
    - [x] [deterministic ranking policy](specs/recommendation-ranking.md)
    - [x] [stable reason code taxonomy](specs/recommendation-reasons.md)
    - [x] [structured reason descriptionとdecision trace](specs/recommendation-explanation.md)
-   - [ ] Core、text、JSON、human override契約
+   - [x] [Core、text、JSON契約](specs/recommendation-interface.md)
+   - [ ] human override契約
    - [ ] normative example、test観点、self-use migration
 7. [ ] parser/validator の最小実装と golden tests
 
 項目7は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
-Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured reason descriptionとdecision traceは確定した。次は`INTERFACE_CONTRACT`と`HUMAN_OVERRIDE_CONTRACT`を規範仕様へ定義する。Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interfaceは確定した。次は`HUMAN_OVERRIDE_CONTRACT`を規範仕様へ定義する。Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。

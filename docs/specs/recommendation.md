@@ -6,6 +6,7 @@
 - Ranking policy: [recommendation-ranking.md](recommendation-ranking.md)
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
+- Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -105,7 +106,7 @@ Recommendationを評価するtask集合`P`は、actual `ready` task集合であ�
 - `upcoming`: recommendationを持たない
 - `done`: resultへ含めない
 
-JSON上でtier非適用を`null`、field省略、別applicability fieldのどれで表すかはInterface Contractで固定する。`not_recommended`や`blocked`を便宜的なtierとして追加してはならない。
+JSONでは[Recommendation Interface Contract仕様](recommendation-interface.md)に従い、actual ready taskだけを`task_decisions`へ含め、non-ready taskのtier fieldを生成しない。`not_recommended`や`blocked`を便宜的なtierとして追加してはならない。
 
 ## 6. Resource feasibility
 
@@ -186,7 +187,7 @@ Task`t`がreadyであり、project modelに明示されたnegative factが現在
 - human overrideなしにAIが選択してはならない
 - override時もnegative factを消さず、判断根拠とともに表示する
 
-Grammar version 1にはrework risk、replacement intent、information sufficiency、release固有semanticsの正本fieldがない。このため、それらを根拠に`discouraged`を生成してはならない。最初のalgorithmが`discouraged`を出せるか、および最初のJSON enumへ含めるかは、対応するfact modelとInterface Contractで固定する。
+Grammar version 1にはrework risk、replacement intent、information sufficiency、release固有semanticsの正本fieldがない。このため、それらを根拠に`discouraged`を生成してはならない。Interface v1は将来のmodeled negative factへ備えてJSON enumに`discouraged`を含めるが、Taxonomy version 1.0のnormal producerは生成しない。
 
 ## 8. Formal classification order
 
@@ -234,7 +235,7 @@ Ready taskへtierがない状態、またはnon-ready taskへtierがある状態
 - `R`を導入するために`Perttool.NextResult.v2`の`runnable_now`を無言で再解釈しない
 - `L`と`R`が異なる場合、どのtaskを入れ替え、どのruleとfactで判断したかを構造化説明で返す
 
-Backward compatibility、schema version、field name、既定text表示はInterface Contractで固定する。それまでは現行CLI出力を変更しない。
+Backward compatibility、schema version、field name、既定text表示は[Recommendation Interface Contract仕様](recommendation-interface.md)を正とする。Recommendation実装までは現行CLI出力を変更しない。
 
 ## 11. Explainability invariant
 
@@ -251,7 +252,7 @@ Recommendationはtierだけを返して完了としてはならない。
 - resource feasibilityまたはconflict
 - 人間向けdescriptionを導出するstable keyとparameter
 
-Reason codeとtyped fact categoryは[Recommendation Reason Taxonomy仕様](recommendation-reasons.md)、制限付きexpression AST、decision trace、description projectionは[Recommendation Structured Explanation仕様](recommendation-explanation.md)を正とする。具体的なCore type、text/JSON field、schema migrationは`INTERFACE_CONTRACT`で固定する。自然言語textだけを正本の理由にしない。
+Reason codeとtyped fact categoryは[Recommendation Reason Taxonomy仕様](recommendation-reasons.md)、制限付きexpression AST、decision trace、description projectionは[Recommendation Structured Explanation仕様](recommendation-explanation.md)、具体的なCore type、text/JSON field、schema migrationは[Recommendation Interface Contract仕様](recommendation-interface.md)を正とする。自然言語textだけを正本の理由にしない。
 
 ## 12. Human override boundary
 
@@ -274,7 +275,7 @@ Overrideはnormal recommendationを過去に遡って変更しない。誰が、
 - human override
 - ranking algorithm version
 
-Recommendation resultはsource digest、capacity option、algorithm versionへ条件付けられる。具体的fieldはInterface Contractで固定する。
+Recommendation resultはsource digest、capacity option、algorithm versionへ条件付けられる。具体的fieldは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 ## 14. 後続設計taskへの入力
 
@@ -300,7 +301,7 @@ Recommendation resultはsource digest、capacity option、algorithm versionへ�
 - decisive/supporting rule
 - description key、parameter、派生text
 
-### `INTERFACE_CONTRACT`
+### [`INTERFACE_CONTRACT`](recommendation-interface.md)
 
 - Core typeとJSON schema
 - `NextResult.v2`からのmigration

@@ -6,6 +6,7 @@
 - Algorithm version: `1`
 - 対象: AI Project Control Planeの決定的なrecommended set選択
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
+- Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -83,7 +84,7 @@ optimal           = false
 - resource selection scanの変更
 - tie-breakの文字列比較規則変更
 
-Description文言、renderer layout、field encodingだけの変更はInterface Contractのversioning対象であり、ranking algorithm versionを自動的には変更しない。
+Description文言、renderer layout、field encodingだけの変更は[Recommendation Interface Contract仕様](recommendation-interface.md)のversioning対象であり、ranking algorithm versionを自動的には変更しない。
 
 ## 5. Ranking domain
 

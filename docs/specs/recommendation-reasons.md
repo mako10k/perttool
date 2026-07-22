@@ -7,6 +7,7 @@
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
+- Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Analysis仕様: [analysis.md](analysis.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
@@ -35,7 +36,7 @@ Reason codeだけで「なぜこのtaskで別taskではないか」を説明し�
 2. [Recommendation Semantics仕様](recommendation.md)
 3. Rankingの意味は[Recommendation Ranking Policy仕様](recommendation-ranking.md)、reasonの意味は本仕様
 4. [Analysis仕様](analysis.md)
-5. [Recommendation Structured Explanation仕様](recommendation-explanation.md)、Interface Contract
+5. [Recommendation Structured Explanation仕様](recommendation-explanation.md)、[Recommendation Interface Contract仕様](recommendation-interface.md)
 6. example、test、help、implementation
 
 対象:
@@ -72,7 +73,7 @@ reason occurrence
 └── entity references
 ```
 
-これはwire schemaではない。Field名、入れ子、配列、cardinalityはStructured Explanation ModelとInterface Contractで固定する。
+これはwire schemaではない。Field名、入れ子、配列、cardinalityはStructured Explanation Modelと[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 ### 3.1 Effect
 
@@ -184,7 +185,7 @@ Ranking factor名をreason codeへ埋め込まない。例えばcritical、float
 | `policy_defers_start` | `policyDefers(t) == true` | `blocking` | `decisive`、`contributing` | `policy_deferral(true)`と、その判断に使った`ranking_rule_application` | `deferred`のpolicy条件。先行するnegative factがある場合はcontributingになる |
 | `modeled_negative_fact_applies` | 登録済みnegative fact kindについて`explicitNegativeFact(t) == true` | `blocking` | `decisive` | 1件以上の`modeled_negative_fact`と適用rule | `discouraged`のnegative条件 |
 
-`recommended_set_resource_conflict`は、違反resourceを1件だけ代表表示してはならない。複数resourceがcapacity制約へ違反する場合、全witnessをtyped factとして保持する。Natural language表示での省略とtruncationはInterface Contractの責務である。
+`recommended_set_resource_conflict`は、違反resourceを1件だけ代表表示してはならない。複数resourceがcapacity制約へ違反する場合、全witnessをtyped factとして保持する。Natural language表示とcomplete JSONの境界は[Recommendation Interface Contract仕様](recommendation-interface.md)の責務である。
 
 ## 7. Set selectionとの対応
 
@@ -235,7 +236,7 @@ DSLの`gate`はmodel化されたdependency edgeだが、「release gate」とい
 
 ## 10. Versioningとunknown code互換性
 
-Taxonomy versionは`major.minor`で管理する。Versionをwire上のどのfieldで返すかはInterface Contractで固定する。
+Taxonomy versionは`major.minor`で管理する。Versionをwire上のどのfieldで返すかは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 - minor更新: 既存codeの意味を変えないcodeまたはfact kindの追加
 - major更新: code削除、発生predicate変更、effect変更、必須factの互換性を壊す変更
@@ -266,7 +267,7 @@ Unknown fact kind、entity kind、rule IDについても同じ原則を適用す
 - set membershipとresource feasibility witness
 - Taxonomy versionとRanking algorithm versionの分離
 
-Structured Explanation仕様と後続Interface Contractが固定するもの:
+Structured Explanation仕様と[Recommendation Interface Contract仕様](recommendation-interface.md)が固定するもの:
 
 - expression ASTのnode、operator、evaluation
 - reason occurrence間の親子関係とdecision trace
@@ -293,7 +294,7 @@ Reason生成は少なくとも次を検査する。
 11. 未登録negative factから`discouraged`を生成しない
 12. 同じsnapshot、options、Ranking algorithm version、Taxonomy versionから同じreason multisetとroleを返す
 
-違反はdescription欠落として黙って継続せず、analysis invariant failureとして扱う。具体的diagnostic codeと外部schemaは後続Interface Contractで固定する。
+違反はdescription欠落として黙って継続せず、analysis invariant failureとして扱う。具体的diagnostic codeと外部schemaは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 ## 13. 本sliceのacceptance
 

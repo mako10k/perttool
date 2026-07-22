@@ -9,6 +9,7 @@
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
+- Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -25,7 +26,7 @@
 - stable description keyとtyped parameterからの派生text
 - 決定性、versioning、integrity、truncationの境界
 
-本仕様はsemantic modelである。Core type名、JSON field名、text layout、CLI option、schema migrationは後続Interface Contractで固定する。
+本仕様はsemantic modelである。Core type名、JSON field名、text layout、CLI option、schema migrationは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 ## 2. 規範上の位置
 
@@ -102,7 +103,7 @@ Identityは次のsemantic componentから決定的に導出する。
 - alternative entityがある場合はそのstable ID
 - 同じsemantic keyが複数回出る場合はversioned ruleが定義するcanonical occurrence index
 
-Random UUID、arrayへの追加順、locale text、表示用decimal、memory addressをidentityに使用しない。外部文字列へのencodingはInterface Contractで固定する。
+Random UUID、arrayへの追加順、locale text、表示用decimal、memory addressをidentityに使用しない。外部文字列へのencodingは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 ## 6. Typed fact
 
@@ -148,7 +149,7 @@ Provenanceは値の導出元を次のいずれかとして示す。
 - `resource_snapshot`: applied capacity option、active allocation、selected set snapshot
 - `recommendation_model`: set membership、tier、derived invariant
 
-Provenanceはsource digest、関連entity reference、algorithm/model versionを、fact自身またはresult-level contextへの参照として特定できなければならない。Source spanを返すかはInterface Contractの表示契約とするが、document factかanalysis factかの区別は失ってはならない。
+Provenanceはsource digest、関連entity reference、algorithm/model versionを、fact自身またはresult-level contextへの参照として特定できなければならない。Source spanは[Recommendation Interface Contract仕様](recommendation-interface.md)に従ってdocument factだけへ適用できるが、document factかanalysis factかの区別は失ってはならない。
 
 ## 7. Restricted expression
 
@@ -319,7 +320,7 @@ Taxonomy version 1.0ではregistered negative factがないため、normal resul
 - active allocationだけのrejectはactive taskとresource witnessを持ち、ready-task winnerを持たない
 - negative factはrelevant fact/ruleを持ち、無関係な上位taskを指さない
 
-特定の2 task間の追加comparisonはRanking Policyのcomplete orderから決定的に導出できる。それを常にresultへ含めるか、query optionで返すかはInterface Contractで固定する。Minimal witnessを省略してconsumerへ全rankingの再推論を求めてはならない。
+特定の2 task間の追加comparisonはRanking Policyのcomplete orderから決定的に導出できる。[Recommendation Interface Contract仕様](recommendation-interface.md)のVersion 1 resultは、実際のset/tier判断で発生したcomparisonとminimal witnessを完全に含めるが、判断に使用しなかった全task pairの総当たりcomparisonやquery optionは持たない。Minimal witnessを省略してconsumerへ全rankingの再推論を求めてはならない。
 
 ## 10. Reason occurrence
 
@@ -328,24 +329,26 @@ Reason occurrenceは少なくとも次の意味を持つ。
 ```text
 reason_occurrence_id
 reason_code
-subject_task
+subject_entity
 effect
 role
 fact_references
 emission_expression
 decision_step_reference
 comparison_references
-description_projection
+description_projection_if_applicable
 ```
 
+- task-level reasonの`subject_entity`はtask、result-levelの`recommended_set_feasible`はderived set `R`とする
 - `reason_code`は宣言Taxonomy versionへ登録済みである
 - `effect`と`role`はcodeが許可する組み合わせである
 - `emission_expression`はfactからtrueへ再評価できる
 - `decisive`のreasonは必ずdecisive stepまたはそのancestor stepへ接続する
 - outcome codeと因果codeを同じoccurrenceへ混在させない
+- Version 1 registryに対応するreason-level description keyがある場合だけdescription projectionを要求する。Task decisionのsummary descriptionは常に要求する
 - 自然言語textをfact referenceやexpressionの代用にしない
 
-Reasonの発生順序はdecision phase、rule order、subject task ID、alternative task ID、reason code、occurrence IDの順に安定化する。
+Reasonの発生順序はdecision phase、rule order、subject entity kind、subject stable ID、alternative task ID、reason code、occurrence IDの順に安定化する。
 
 ## 11. Description projection
 
@@ -391,7 +394,7 @@ Rendererはdescription keyに対応するversioned templateにtyped parameterを
 - Templateまたはlocaleがない場合はraw keyとtyped parameterを表示可能にし、意味を捏造しない
 - textだけを保存してsource occurrenceとcomparisonを破棄しない
 
-Canonical default localeとtemplate文言、text/JSONの既定表示はInterface Contractで固定する。
+Canonical default localeとtemplate文言、text/JSONの既定表示は[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 ## 12. Deterministic orderingとdeduplication
 
@@ -410,7 +413,7 @@ Semantic modelのcanonical orderを次とする。
 
 Core semantic explanationは、第9.3節のtier必須traceと第9.4節のminimal comparison witnessを完全に持つ。Decisive chainの途中、必須fact、全resource conflict witnessを黙って省略しない。
 
-Adapterは後続Interface Contractが許可する場合だけ表示projectionをtruncateできる。その場合も次を満たす。
+Adapterは[Recommendation Interface Contract仕様](recommendation-interface.md)が許可する場合だけ表示projectionをtruncateできる。その場合も次を満たす。
 
 - source semantic modelは切り詰めない
 - truncationがあることと省略数を明示する
@@ -418,7 +421,7 @@ Adapterは後続Interface Contractが許可する場合だけ表示projectionを
 - 詳細を取得する手段を提供する
 - truncated textをcomplete decision traceと表示しない
 
-Size limit、explanation level、pagination、CLIのデフォルトはInterface Contractで固定する。
+Size limit、explanation level、pagination、CLIのデフォルトは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 ## 14. Integrityとre-analysis
 
@@ -433,11 +436,11 @@ Explanation producerは少なくとも次を検査する。
 7. comparisonのwinner/alternativeとRanking Policyのcomplete orderが一致する
 8. reason code、effect、role、必須factがTaxonomyと一致する
 9. task tierとset membershipがRecommendation Semanticsと一致する
-10. description keyの必須parameterが欠けていない
+10. task decisionにsummary descriptionがあり、適用されたdescription keyの必須parameterが欠けていない
 11. non-ready taskがtask recommendation decisionを持たない
 12. 同じsnapshot/options/versionから同じidentity、order、traceを返す
 
-違反をdescription欠落やunknown reasonとして黙って継続せず、analysis invariant failureとする。Diagnosticとexit codeはInterface Contractで固定する。
+違反をdescription欠落やunknown reasonとして黙って継続せず、analysis invariant failureとする。Diagnosticとexit codeは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 Recommendation Semantics仕様の再解析条件に加え、Ranking algorithm version、Taxonomy version、Explanation model version、Expression version、Description registry versionのいずれかが変わった場合は古いexplanationを再利用しない。Description templateだけの変更はdecision traceを無効にしないが、派生textは再生成する。
 
@@ -484,18 +487,19 @@ Rendererは例えば「TASK_Aはtotal float 0pで、TASK_Bの3pより小さい�
 
 - node、relation、value type、evaluation、depth制限の変更
 
-Description keyの追加はDescription registryのminor-compatibleな更新として扱えるが、既存keyの意味変更、削除、必須parameterの互換性を壊す変更はmajor更新とする。外部version表現はInterface Contractで固定する。
+Description keyの追加はDescription registryのminor-compatibleな更新として扱えるが、既存keyの意味変更、削除、必須parameterの互換性を壊す変更はmajor更新とする。外部version表現は[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
 
 ## 17. 後続設計taskへ送る事項
 
-### `INTERFACE_CONTRACT`
+### [`INTERFACE_CONTRACT`](recommendation-interface.md)（確定）
 
-- Core type名とserialization schema
-- `NextResult.v2`からのmigration
-- explanation level、pagination、size limit、truncation marker
-- text/JSONの既定projectionとlocale
+- Core type名と`NextResult.v3` serialization schema
+- `NextResult.v2`からのbreaking migration
+- complete JSONとsummary textの固定projection
+- canonical locale `en`とversion 1 template
+- pagination、size limit、JSON truncationをVersion 1へ入れない判断
 - unknown version/keyのadapter behavior
-- invariant failureのdiagnosticとexit code
+- `PTREC-*` invariant diagnosticとexit 70
 
 ### `NORMATIVE_EXAMPLES`
 

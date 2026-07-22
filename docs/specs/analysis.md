@@ -10,6 +10,7 @@
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Recommendation explanation: [recommendation-explanation.md](recommendation-explanation.md)
+- Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - 文法仕様: [dsl-grammar.md](dsl-grammar.md)
 - 対応基本設計: [../basic-design.md](../basic-design.md)
 
@@ -532,7 +533,7 @@ Next resultの表示順はresource選択順と別に次を使用する。
 
 `runnable_now`は現行scheduler candidate orderで選択したjointly feasible subsetであり、project control planeの推奨度ではない。新規start actionの`recommended`、`allowed`、`deferred`、`discouraged`は[Recommendation Semantics仕様](recommendation.md)を正とする。
 
-[Recommendation Ranking Policy仕様](recommendation-ranking.md)はrecommended setをready taskのsubsetとして独立に選び、active allocationを含めてjointly resource-feasibleにする。現行`runnable_now`とrecommended setが異なる場合の意味上の説明graphは[Recommendation Structured Explanation仕様](recommendation-explanation.md)を正とし、interface versioningは`INTERFACE_CONTRACT`で固定する。それまではscheduler version 1のcandidate orderと`runnable_now`を変更しない。
+[Recommendation Ranking Policy仕様](recommendation-ranking.md)はrecommended setをready taskのsubsetとして独立に選び、active allocationを含めてjointly resource-feasibleにする。現行`runnable_now`とrecommended setが異なる場合の意味上の説明graphは[Recommendation Structured Explanation仕様](recommendation-explanation.md)、interface versioningは[Recommendation Interface Contract仕様](recommendation-interface.md)を正とする。Recommendation実装まではscheduler version 1のcandidate orderと`runnable_now`を変更しない。
 
 ## 12. Resource release witness arcs
 

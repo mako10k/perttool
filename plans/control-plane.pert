@@ -131,6 +131,7 @@ task INTERFACE_CONTRACT CONTRACT_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
   title "Core、text、JSONのrecommendation契約を定義する"
   description "schema migration、algorithm version、higher-priority参照、decision trace、description projectionとadapter責務を固定する"
   duration 2p
+  status done
   priority 70
   requires:
     DESIGNERS 1
