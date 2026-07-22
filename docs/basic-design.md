@@ -397,6 +397,7 @@ Source-preserving formatter Coreは次を返す。`formattedText`と`edits`は�
 ```ts
 interface FormatResult {
   ok: boolean;
+  documentId: string | null;
   changed: boolean;
   formattedText: string | null;
   edits: readonly TextEdit[];
@@ -1016,7 +1017,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進む。Mutation Core 7p、`FORMAT_APPLICATION` 1p、`MUTATION_CLI_PREVIEW` 2pを完了し、操作系実測値を`10p/1d`へ再calibrationした。残るprecedence/resource makespanは14p、forecastは1.4d、resource delayは0pである。MacroのCPは`FORMATTER_CORE`、詳細planの次taskはprecedence/schedule criticalかつrunnableな`FORMAT_CLI_PREVIEW`である。Safe-write後のMermaid、recommendation、Issue #2とのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果へ従う。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進む。Formatter/mutation preview 12pを完了し、操作系実測値を`12p/1d`へ再calibrationした。残るprecedence/resource makespanは12p、forecastは1d、resource delayは0pである。MacroのCPは`WRITE_SAFETY`、詳細planの次taskはprecedence/schedule criticalかつrunnableな`SAFE_WRITE_ADAPTER`である。Safe-write後のMermaid、recommendation、Issue #2とのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果へ従う。
 
 ### Slice 4: advance and Mermaid
 

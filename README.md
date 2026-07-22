@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl help`、`dag analyze`、`dag next`、libraryのsource-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、preview-only mutation CLIが実装済みです。`dsl format` command、filesystem write、Mermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、preview-onlyの`dsl format`、`dsl help`、`dag analyze`、`dag next`、libraryのsource-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、preview-only mutation CLIが実装済みです。Filesystem writeとMermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -83,6 +83,8 @@ npm run test:e2e
 perttool --help
 perttool dsl check docs/examples/parallel.pert
 perttool dsl check PLAN.pert --max-diagnostics 20 --format json
+perttool dsl format PLAN.pert --check
+perttool dsl format PLAN.pert --diff
 perttool dsl help syntax estimate --level detail --format json
 perttool dsl help syntax velocity --level detail --format json
 perttool dag analyze docs/examples/point-velocity.pert --format json
@@ -99,9 +101,9 @@ perttool mutation apply docs/examples/minimal.pert --request changes.json --diff
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
-Mutation commandは現在preview-onlyです。既定では検査済みcandidate、`--diff`ではunified diffを返し、`--format json`ではcandidate、diff、UTF-16 TextEdit、digestを同じresultへ含めます。`--write`と`--out`はsafe-write gate完了まで拒否します。
+`dsl format`とMutation commandは現在preview-onlyです。既定では検査済みcandidate、`--diff`ではunified diffを返し、`dsl format --check`では変更が必要なときだけexit 1を返します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digestを同じresultへ含めます。`--write`と`--out`はsafe-write gate完了まで拒否します。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。M1 roadmap再構成、grammar受け入れ、mutation Core、`FORMAT_APPLICATION`、`MUTATION_CLI_PREVIEW`は完了しました。操作系の実測値は`10p/1d`で、残るprecedence/resource makespanは14p、forecastは`1.4d`です。Macroのmakespanは`12.8d`です。次のmacro CPは`FORMATTER_CORE`、詳細planの次taskはprecedence/schedule criticalかつ`runnable_now`な`FORMAT_CLI_PREVIEW`です。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後までbacklogとして保持し、Issue #3のmulti-plan compositionはMVP後の将来構想として扱います。Writeは専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。M1 roadmap再構成、grammar受け入れ、formatter/mutation previewは完了しました。操作系の実測値は`12p/1d`で、残るprecedence/resource makespanは12p、forecastは`1d`です。Macroのmakespanは`12.5d`です。次のmacro CPは`WRITE_SAFETY`、詳細planの次taskはprecedence/schedule criticalかつ`runnable_now`な`SAFE_WRITE_ADAPTER`です。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後までbacklogとして保持し、Issue #3のmulti-plan compositionはMVP後の将来構想として扱います。Writeは専用gateを満たすまで使用しません。
 
 ## Security and license
 
