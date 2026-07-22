@@ -1,7 +1,8 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 0.9
+- 文書状態: Active Stage 1 / Revision 1.0
 - 作成日: 2026-07-21
+- 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
 
 ## 1. 目的
@@ -17,6 +18,7 @@
 | `docs/specs/dsl-grammar.md` | DSL の規範文法、EBNF、例、error policy | Markdown 文書 |
 | `plans/mvp.pert` | MVP全体のmacro milestoneとwork package | `.pert` 文書 |
 | `plans/grammar.pert` | 文法作業の現在・未来 DAG | `.pert` 文書 |
+| `plans/control-plane.pert` | Issue #1のAI工程制御設計の現在・未来 DAG | `.pert` 文書 |
 | `test/fixtures/grammar/` | parser が受理・拒否すべき具体例 | fixture/golden |
 | Git history | 過去の計画、仕様、実装 | commit history |
 
@@ -35,7 +37,7 @@ Exit criteria:
 
 ## 4. Stage 1: read-only self-use
 
-現在の段階。2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用する。
+現在の段階。2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用し始めた。2026-07-22に[AI工程制御設計plan](../../plans/control-plane.pert)を2つ目の詳細planとして追加した。
 
 開始条件:
 
@@ -69,6 +71,12 @@ Exit criteria:
 
 続いて`FIELD_FIXTURES`を完了し、project/resource/milestone/task/gateの全fieldを1つの正常fixtureで検査した。Identifier、string、duration、velocity、date、list、integer、enum、inline commentの異常fixtureと、missing/duplicate/field combinationの境界も独立入力へ固定した。仕様に存在した`PTDSL-011`の未到達を修正し、quoted string、tag list、block text内の`#`とinline commentを区別した。現在のrunnable taskは`BLOCK_TEXT_SPANS`だけである。
 
+2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。その後の`RECOMMENDATION_ROADMAP_UPDATE`で設計結果をmacro/detail planへ反映してから`M1_PRODUCT_FOUNDATION_READY`へ進むため、再構成前にformatter以降はreadyにならない。Macroではcontrol-plane設計がprecedence/resource critical、grammar work packageはtotal float 4dであり、両方が`runnable_now`である。
+
+[AI工程制御設計plan](../../plans/control-plane.pert)はIssue #1の設計範囲だけを初期見積り11p、velocity forecast 11dへ分解する。現在taskは`VISION_REQUIREMENTS`である。Pointとvelocityは設計開始時の仮定であり、完了実績から再calibrationする。Recommendation実装のtaskと見積りは設計結果から決めるため先行追加せず、設計受け入れ後にmacro planを再構成する。check/analyze/next projectionは[control-plane golden](../../test/golden/self-use/control-plane.expected.json)へ固定する。
+
+同日に[Issue #2「AI Agent Guidance Registryとprovider別helpを追加する」](https://github.com/mako10k/perttool/issues/2)を独立featureとして登録した。Issue #1が「何を今行うべきか」を扱うのに対し、Issue #2はその判断へ従うためのprompt、skill、agent、hookなどをprovider別に表示する方法を扱う。初期scopeはofflineかつread-onlyの`agent help`であり、audit、scaffold、hook enforcementは後続段階とする。設計前にdurationや機能依存を捏造しないため、現時点では詳細planとwork packageを追加せず、`RECOMMENDATION_ROADMAP_UPDATE`の入力として実装順序、並行性、見積りを確定する。
+
 この段階で許可する操作:
 
 - check
@@ -85,7 +93,9 @@ Exit criteria:
 - `resource ... --write`
 - `dag advance --write`
 
-## 5. 最初の grammar plan
+## 5. 詳細planとmacroの関係
+
+### 5.1 最初のgrammar plan
 
 `plans/grammar.pert` は、作成時点で未完了の項目だけを含める。
 
@@ -105,13 +115,30 @@ Exit criteria:
 
 すでに完了している作業を履歴再現のためだけに追加しない。必要な過去情報は Git から参照する。
 
-### 5.1 MVP macro planとの関係
+### 5.2 MVP macro planとの関係
 
-`plans/mvp.pert`はM1からM6までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`のdurationは`plans/grammar.pert`のresource makespanをroll-upするが、内部taskの状態を重複管理しない。
+`plans/mvp.pert`はM1からM6までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`は`plans/grammar.pert`、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`は`plans/control-plane.pert`のresource makespanとvelocity forecastをroll-upするが、内部taskの状態を重複管理しない。
 
 - macro milestoneと全体critical path: `mvp.pert`
-- 現在の実装taskとresource待ち: `grammar.pert`
-- grammar slice完了時にだけmacro taskをdoneへ更新し、次の詳細planへ切り替える
+- 現在のgrammar実装taskとresource待ち: `grammar.pert`
+- 現在のAI工程制御設計taskとresource待ち: `control-plane.pert`
+- macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
+- 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
+- Issue #1とgrammarの受け入れ後、`RECOMMENDATION_ROADMAP_UPDATE`でIssue #1のrecommendation契約とIssue #2のread-only agent guidance scopeを統合し、実装順序、並行性、見積りをmacro/detail planへ追加する
+- roadmap再構成が完了するまでformatter以降へ進まない
+
+### 5.3 AI工程制御設計plan
+
+`plans/control-plane.pert`はIssue #1の設計完了条件を次の順序へ分解する。
+
+1. product visionとrequirement境界
+2. 実行可否と推奨度の2軸model
+3. deterministic ranking policy、stable reason code、human override契約
+4. Core、text、JSON interface契約
+5. normative example、test観点、self-useとmigration方針
+6. 横断design review
+
+規範となるrecommendation内容は`docs/requirements.md`と対応する`docs/specs/`へ置き、plan descriptionを仕様の代用にしない。今回のdetail planは設計のみであり、`dag next`やCore APIの実装変更を含めない。
 
 ## 6. Stage 2: safe-write self-use
 
@@ -165,14 +192,14 @@ advance 運用:
 
 ## 8. Stage 4: 対象拡大
 
-MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planで安定運用できた後、実装taskまで分解する詳細planを次の順に広げる。
+MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planでのread-only運用開始後、product方向を確定する必要からIssue #1のcontrol-plane設計planをStage 1で追加した。Issue #2はroadmap入力として保持し、まだ詳細planへ展開しない。今後は次の候補領域を詳細planへ展開するが、順序と並行性は`RECOMMENDATION_ROADMAP_UPDATE`で確定する。
 
-1. graph semantics
-2. PERT/CPM analyzer
-3. mutation/advance
-4. Mermaid conversion
-5. perttool全体のMVP release plan
-6. MVP後のMCP/LSP adapter
+- Issue #1の設計結果に基づくrecommendation実装
+- Issue #2のread-only AI Agent Guidance Registry
+- mutation/advance
+- Mermaid conversion
+- perttool全体のMVP release plan
+- MVP後のMCP/LSP adapter
 
 各 plan は現在・未来だけを持ち、完了部分は advance と Git history で管理する。
 
@@ -215,8 +242,9 @@ Stage 1開始時の証跡:
 - parser/check gate: `all normative examples parse and validate`、各invalid fixture diagnostic test、`resource requirements do not become precedence edges`
 - analyze gate: precedence、capacity override、active allocation、resource witness、schedule critical pathを固定する`analysis.test.mjs`
 - next gate: `parallel next selects a deterministic runnable subset`、classification/depth unit test、text/JSON CLI integration test
-- self-use golden: grammar planとMVP planのcheck/analyze/next projection test
+- self-use golden: grammar、control-plane、MVP planのcheck/analyze/next projection test
 - Point self-use gate: grammar planの基準unit、velocity forecast unit、precedence/resource forecastをgoldenで分離して検査する
 - field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
-- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、両planを検査する
+- control-plane planning gate: Issue #1の設計範囲、critical path、11p/11d forecast、`VISION_REQUIREMENTS` frontierをgoldenへ固定する
+- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、3 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

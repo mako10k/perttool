@@ -15,6 +15,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [自己利用計画](docs/process/self-use.md)
 - [MVPマイルストーン計画](plans/mvp.pert)
 - [現在の文法作業計画](plans/grammar.pert)
+- [AI工程制御設計計画](plans/control-plane.pert)
 - [AI 開発ガイド](docs/process/ai-development.md)
 
 基本方針は次のとおりです。
@@ -84,7 +85,7 @@ perttool dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format j
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)を現在sliceの詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。文法作業計画はPointを基準値、velocity換算したdayを予測値として使用しています。Formatterやmutationによるwriteは、専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)と[AI工程制御設計計画](plans/control-plane.pert)を現在sliceの詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。詳細planはPointを基準値、velocity換算したdayを予測値として使用します。Macroでworkstreamを選んでから対応する詳細planのtaskを選び、formatterやmutationによるwriteは専用gateを満たすまで使用しません。
 
 ## Security and license
 

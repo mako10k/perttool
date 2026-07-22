@@ -4,17 +4,18 @@
     "grammar_version": 1,
     "summary": {
       "resources": 2,
-      "milestones": 12,
-      "tasks": 9,
-      "gates": 4,
+      "milestones": 15,
+      "tasks": 11,
+      "gates": 6,
       "errors": 0,
       "warnings": 0
     }
   },
   "analyze": {
-    "precedence_makespan": "26",
+    "precedence_makespan": "31",
     "precedence_critical_tasks": [
-      "GRAMMAR_WORK_PACKAGE",
+      "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
+      "RECOMMENDATION_ROADMAP_UPDATE",
       "FORMATTER_CORE",
       "MUTATION_PREVIEW",
       "WRITE_SAFETY",
@@ -23,14 +24,15 @@
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "27",
+    "resource_makespan": "32",
     "resource_delay": "1",
     "resource_arcs": [
       "resource:ADVANCE:MERMAID_ROUNDTRIP",
       "resource:MERMAID_PROFILE:ADVANCE"
     ],
     "schedule_critical_tasks": [
-      "GRAMMAR_WORK_PACKAGE",
+      "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
+      "RECOMMENDATION_ROADMAP_UPDATE",
       "FORMATTER_CORE",
       "MUTATION_PREVIEW",
       "WRITE_SAFETY",
@@ -44,13 +46,16 @@
     "groups": {
       "active": [],
       "ready": [
+        "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
         "GRAMMAR_WORK_PACKAGE"
       ],
       "runnable_now": [
+        "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
         "GRAMMAR_WORK_PACKAGE"
       ],
       "blocked_now": [],
       "upcoming": [
+        "RECOMMENDATION_ROADMAP_UPDATE",
         "FORMATTER_CORE",
         "MUTATION_PREVIEW",
         "WRITE_SAFETY",

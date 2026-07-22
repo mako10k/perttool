@@ -1,0 +1,68 @@
+{
+  "check": {
+    "document_id": "AI_CONTROL_PLANE_DESIGN",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 2,
+      "milestones": 13,
+      "tasks": 9,
+      "gates": 6,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "11",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "11/1",
+    "precedence_critical_tasks": [
+      "VISION_REQUIREMENTS",
+      "RECOMMENDATION_MODEL",
+      "RANKING_POLICY",
+      "REASON_CODE_TAXONOMY",
+      "INTERFACE_CONTRACT",
+      "NORMATIVE_EXAMPLES",
+      "DESIGN_REVIEW"
+    ],
+    "resource_makespan": "11",
+    "resource_forecast": "11/1",
+    "resource_delay": "0",
+    "resource_arcs": [
+      "resource:RANKING_POLICY:HUMAN_OVERRIDE_CONTRACT",
+      "resource:REASON_CODE_TAXONOMY:HUMAN_OVERRIDE_CONTRACT"
+    ],
+    "schedule_critical_tasks": [
+      "VISION_REQUIREMENTS",
+      "RECOMMENDATION_MODEL",
+      "RANKING_POLICY",
+      "REASON_CODE_TAXONOMY",
+      "INTERFACE_CONTRACT",
+      "NORMATIVE_EXAMPLES",
+      "DESIGN_REVIEW"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "VISION_REQUIREMENTS"
+      ],
+      "runnable_now": [
+        "VISION_REQUIREMENTS"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "RECOMMENDATION_MODEL",
+        "RANKING_POLICY",
+        "REASON_CODE_TAXONOMY",
+        "INTERFACE_CONTRACT",
+        "HUMAN_OVERRIDE_CONTRACT",
+        "NORMATIVE_EXAMPLES",
+        "PROCESS_MIGRATION",
+        "DESIGN_REVIEW"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

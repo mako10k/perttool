@@ -1,0 +1,150 @@
+project AI_CONTROL_PLANE_DESIGN:
+  version 1
+  title "AI工程制御planeの設計"
+  description |
+    GitHub Issue #1を、実行可否と推奨度を分離した決定的かつ説明可能な
+    task recommendation契約へ具体化する。今回は設計のみを扱い、実装は含めない。
+    Pointとvelocityは設計開始時の初期見積りであり、完了実績から再calibrationする。
+  as_of 2026-07-22
+  duration_unit point
+  velocity 11p/11d
+  finish CONTROL_PLANE_DESIGN_ACCEPTED
+
+resource DESIGNERS:
+  title "要件・仕様設計枠"
+  capacity 2
+
+resource REVIEWERS:
+  title "設計受け入れレビュー枠"
+  capacity 1
+
+milestone NOW:
+  title "Issue #1起票済み"
+  state reached
+
+milestone VISION_DEFINED:
+  title "product visionと設計境界確定"
+
+milestone RECOMMENDATION_MODEL_DEFINED:
+  title "実行可否と推奨度model確定"
+
+milestone RANKING_POLICY_DEFINED:
+  title "deterministic ranking policy確定"
+
+milestone REASON_CODES_DEFINED:
+  title "stable reason code確定"
+
+milestone CONTRACT_INPUT_READY:
+  title "interface設計入力確定"
+
+milestone INTERFACE_CONTRACT_DEFINED:
+  title "textとJSONのinterface契約確定"
+
+milestone OVERRIDE_CONTRACT_DEFINED:
+  title "human override契約確定"
+
+milestone VALIDATION_INPUT_READY:
+  title "exampleとmigrationの設計入力確定"
+
+milestone NORMATIVE_EXAMPLES_DEFINED:
+  title "normative exampleとtest観点確定"
+
+milestone PROCESS_MIGRATION_DEFINED:
+  title "self-useとmigration方針確定"
+
+milestone DESIGN_REVIEW_READY:
+  title "設計受け入れレビュー可能"
+
+milestone CONTROL_PLANE_DESIGN_ACCEPTED:
+  title "Issue #1設計完了"
+
+task VISION_REQUIREMENTS NOW -> VISION_DEFINED:
+  title "AI Project Control Planeの目的と境界を要件化する"
+  description "source of truth、global objective、determinism、non-goalをrequirementsへ定義する"
+  duration 2p
+  priority 100
+  requires:
+    DESIGNERS 1
+
+task RECOMMENDATION_MODEL VISION_DEFINED -> RECOMMENDATION_MODEL_DEFINED:
+  title "実行可否と推奨度の2軸modelを定義する"
+  description "recommendation tierとblocked_nowの衝突を解消し、各tierの形式的意味を固定する"
+  duration 2p
+  priority 90
+  requires:
+    DESIGNERS 1
+
+task RANKING_POLICY RECOMMENDATION_MODEL_DEFINED -> RANKING_POLICY_DEFINED:
+  title "決定的なranking policyを定義する"
+  description "critical、float、priority、unlock、gate/milestone distance、resourceの優先規則と完全なtie-breakを固定する"
+  duration 2p
+  priority 80
+  requires:
+    DESIGNERS 1
+
+task REASON_CODE_TAXONOMY RECOMMENDATION_MODEL_DEFINED -> REASON_CODES_DEFINED:
+  title "stable reason code taxonomyを定義する"
+  description "各codeの発生条件、polarity、関連factと未model化情報の扱いを固定する"
+  duration 2p
+  priority 80
+  requires:
+    DESIGNERS 1
+
+task HUMAN_OVERRIDE_CONTRACT RECOMMENDATION_MODEL_DEFINED -> OVERRIDE_CONTRACT_DEFINED:
+  title "human overrideの意味とaudit方針を定義する"
+  description "write commandは実装せず、override reasonと再解析契約だけを設計する"
+  duration 1p
+  priority 60
+  requires:
+    DESIGNERS 1
+
+gate RANKING_CONTRACT_INPUT RANKING_POLICY_DEFINED -> CONTRACT_INPUT_READY:
+  reason "interface契約にはranking policyが必要"
+
+gate REASON_CONTRACT_INPUT REASON_CODES_DEFINED -> CONTRACT_INPUT_READY:
+  reason "interface契約にはreason code taxonomyが必要"
+
+task INTERFACE_CONTRACT CONTRACT_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
+  title "Core、text、JSONのrecommendation契約を定義する"
+  description "schema migration、algorithm version、higher-priority参照とadapter責務を固定する"
+  duration 2p
+  priority 70
+  requires:
+    DESIGNERS 1
+
+gate INTERFACE_VALIDATION_INPUT INTERFACE_CONTRACT_DEFINED -> VALIDATION_INPUT_READY:
+  reason "normative exampleとmigrationにはinterface契約が必要"
+
+gate OVERRIDE_VALIDATION_INPUT OVERRIDE_CONTRACT_DEFINED -> VALIDATION_INPUT_READY:
+  reason "normative exampleとmigrationにはoverride契約が必要"
+
+task NORMATIVE_EXAMPLES VALIDATION_INPUT_READY -> NORMATIVE_EXAMPLES_DEFINED:
+  title "競合ケースのnormative exampleとtest観点を定義する"
+  description "critical対priority、resource競合、parallel推奨、gate近傍、全blockedを含める"
+  duration 2p
+  priority 50
+  requires:
+    DESIGNERS 1
+
+task PROCESS_MIGRATION VALIDATION_INPUT_READY -> PROCESS_MIGRATION_DEFINED:
+  title "self-use flowと実装migration順序を設計する"
+  description "basic designとAI processを整合し、設計後に実装planを再構成できる粒度へ分解する"
+  duration 1p
+  priority 40
+  requires:
+    DESIGNERS 1
+
+gate EXAMPLES_REVIEW_INPUT NORMATIVE_EXAMPLES_DEFINED -> DESIGN_REVIEW_READY:
+  reason "設計受け入れにはnormative exampleが必要"
+
+gate PROCESS_REVIEW_INPUT PROCESS_MIGRATION_DEFINED -> DESIGN_REVIEW_READY:
+  reason "設計受け入れにはself-useとmigration方針が必要"
+
+task DESIGN_REVIEW DESIGN_REVIEW_READY -> CONTROL_PLANE_DESIGN_ACCEPTED:
+  title "Issue #1の設計完了条件を横断レビューする"
+  description "requirements、spec、design、example、process、interfaceの整合を確認する"
+  duration 1p
+  priority 30
+  requires:
+    DESIGNERS 1
+    REVIEWERS 1

@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`は実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`をread-only自己利用中である。Write/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`は実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`をread-only自己利用中である。Write/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -33,7 +33,7 @@ perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl 
 - `docs/adr/`: 採用済みarchitecture/runtime判断。
 - `docs/examples/`: parserとanalysisの規範sample。
 - `docs/process/`: 自己利用とAI開発の運用手順。
-- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をmacro roadmap、`grammar.pert`を現在sliceの詳細計画としてread-onlyで使用する。
+- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をmacro roadmap、`grammar.pert`と`control-plane.pert`を現在sliceの詳細計画としてread-onlyで使用する。
 - `scripts/`: repository-local verification command。
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
@@ -53,7 +53,7 @@ perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl 
 4. acceptance criteriaと明示的なnon-goal
 5. 実行する検証と予定する外部side effect
 
-利用者が「次のタスク」を求めた場合は、まず`docs/requirements.md`の推奨仕様作業、未解決事項、現在のGit状態から候補を提示する。自己利用Stage 1以降は、`mvp.pert`でmacro milestoneとcritical path、現在sliceの詳細planで実装taskを確認し、両方の`check`、`analyze`、`next`結果を候補選択の前提にする。単に編集しやすい項目をcritical-path作業の代わりに選ばない。
+利用者が「次のタスク」を求めた場合は、まず`docs/requirements.md`の推奨仕様作業、未解決事項、現在のGit状態から候補を提示する。自己利用Stage 1以降は、`mvp.pert`でmacro milestoneとcritical pathを確認してworkstreamを選び、対応する詳細planで設計・実装taskを確認する。Macroと対象詳細planの`check`、`analyze`、`next`結果を候補選択の前提にし、異なる詳細planのtaskをmacro判断なしに直接比較しない。単に編集しやすい項目をcritical-path作業の代わりに選ばない。
 
 正しさに影響する変更は、原則としてrequirements/specification、design、implementation、verificationの順に進める。実装中に仕様の穴を発見した場合は、推測をcodeだけへ固定せず、対応する正本を先に、または同じchangeで更新する。
 
@@ -70,7 +70,7 @@ perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl 
 
 ## Validation
 
-現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar planのcheck/analyze/nextも含む。
+現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar/control-plane planのcheck/analyze/nextも含む。
 
 ```sh
 npm ci

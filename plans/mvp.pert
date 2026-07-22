@@ -3,8 +3,10 @@ project PERTTOOL_MVP:
   title "perttool MVPマイルストーン計画"
   description |
     MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
-    grammar sliceの詳細な作業状態はplans/grammar.pertを正とする。
-  as_of 2026-07-21
+    grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pertを正とする。
+    Issue #1の設計、Issue #2のfeature scope、grammarの受け入れを入力として、
+    control-plane実装範囲とmacro日程を再構成してM1とする。
+  as_of 2026-07-22
   duration_unit day
   finish M6_MVP_RELEASED
 
@@ -21,8 +23,17 @@ milestone NOW:
   title "read-only core完成"
   state reached
 
-milestone M1_GRAMMAR_ACCEPTED:
-  title "M1 文法受け入れ完了"
+milestone GRAMMAR_ACCEPTED:
+  title "文法受け入れ完了"
+
+milestone CONTROL_PLANE_DESIGN_ACCEPTED:
+  title "AI工程制御設計受け入れ完了"
+
+milestone FOUNDATION_INPUTS_ACCEPTED:
+  title "product foundationの設計入力受け入れ完了"
+
+milestone M1_PRODUCT_FOUNDATION_READY:
+  title "M1 product foundationと実装roadmap確定"
 
 milestone FORMATTER_READY:
   title "formatter基礎完了"
@@ -54,7 +65,15 @@ milestone RELEASE_READY:
 milestone M6_MVP_RELEASED:
   title "M6 MVPリリース"
 
-task GRAMMAR_WORK_PACKAGE NOW -> M1_GRAMMAR_ACCEPTED:
+task CONTROL_PLANE_DESIGN_WORK_PACKAGE NOW -> CONTROL_PLANE_DESIGN_ACCEPTED:
+  title "AI工程制御planeを設計する"
+  description "Issue #1の設計完了条件をplans/control-plane.pertの初期見積り11p、velocity forecast 11dとしてroll-upする"
+  duration 11d
+  priority 100
+  requires:
+    DEVELOPERS 1
+
+task GRAMMAR_WORK_PACKAGE NOW -> GRAMMAR_ACCEPTED:
   title "grammar planの残作業を完了する"
   description "詳細日程はplans/grammar.pertのresource makespan 7p、velocity forecast 7dを使用する"
   duration 7d
@@ -62,14 +81,29 @@ task GRAMMAR_WORK_PACKAGE NOW -> M1_GRAMMAR_ACCEPTED:
   requires:
     DEVELOPERS 1
 
-task FORMATTER_CORE M1_GRAMMAR_ACCEPTED -> FORMATTER_READY:
+gate CONTROL_PLANE_FOUNDATION_GATE CONTROL_PLANE_DESIGN_ACCEPTED -> FOUNDATION_INPUTS_ACCEPTED:
+  reason "product foundationの再構成にはAI工程制御planeの設計受け入れが必要"
+
+gate GRAMMAR_FOUNDATION_GATE GRAMMAR_ACCEPTED -> FOUNDATION_INPUTS_ACCEPTED:
+  reason "product foundationの再構成には文法受け入れが必要"
+
+task RECOMMENDATION_ROADMAP_UPDATE FOUNDATION_INPUTS_ACCEPTED -> M1_PRODUCT_FOUNDATION_READY:
+  title "設計結果でAI control-plane実装roadmapを再構成する"
+  description "Issue #1のrecommendation契約とIssue #2のread-only agent guidance scopeからmacro/detail task、順序、見積りを更新する"
+  duration 1d
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task FORMATTER_CORE M1_PRODUCT_FOUNDATION_READY -> FORMATTER_READY:
   title "source-preserving formatterを実装する"
   duration 4d
   priority 40
   requires:
     DEVELOPERS 1
 
-task MUTATION_PREVIEW M1_GRAMMAR_ACCEPTED -> MUTATION_PREVIEW_READY:
+task MUTATION_PREVIEW M1_PRODUCT_FOUNDATION_READY -> MUTATION_PREVIEW_READY:
   title "task、milestone、resource編集previewを実装する"
   duration 4d
   priority 40

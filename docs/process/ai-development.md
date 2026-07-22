@@ -99,11 +99,13 @@ git diff --check
 
 `docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。その時点からは次の順で選択する。
 
-1. `perttool dsl check`で計画が有効であることを確認する
-2. `perttool dag analyze`でprecedence/resource結果を再計算する
-3. `perttool dag next`でrunnable frontierを取得する
+1. `mvp.pert`と現在の詳細planを`perttool dsl check`し、計画が有効であることを確認する
+2. `mvp.pert`を`dag analyze`、`dag next`し、macro critical pathとrunnable work packageからworkstreamを選ぶ
+3. 選んだwork packageに対応する詳細planを`dag analyze`、`dag next`し、runnable frontierを取得する
 4. 外部blockと利用可能resourceを確認する
-5. criticalまたはleast-slack frontierから作業を選ぶ
+5. 詳細planのcriticalまたはleast-slack frontierから作業を選ぶ
+
+異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装されるまでは、この選択規則を明示的なprocessとして維持する。
 
 tool出力は選択根拠であり、task完了の独立証拠ではない。完了は対応仕様、code、test結果で確認する。
 

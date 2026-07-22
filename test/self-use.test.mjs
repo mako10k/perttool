@@ -17,12 +17,7 @@ function exact(value) {
   return `${value.numerator}/${value.denominator}`;
 }
 
-test("grammar plan check/analyze/next matches the read-only self-use golden", async () => {
-  const text = await readFile(path.join(root, "plans/grammar.pert"), "utf8");
-  const expected = JSON.parse(await readFile(
-    path.join(testDirectory, "golden/self-use/grammar.expected.json"),
-    "utf8",
-  ));
+function detailedPlanProjection(text) {
   const checked = checkDocument(text);
   const analyzed = analyzeDocument(text);
   const next = selectNextTasks(text);
@@ -33,7 +28,7 @@ test("grammar plan check/analyze/next matches the read-only self-use golden", as
   assert.ok(analyzed.resource);
   const rejectionTask = next.tasks.find(({ resourceRejections }) => resourceRejections.length > 0);
   const rejection = rejectionTask?.resourceRejections[0];
-  const actual = {
+  return {
     check: {
       document_id: checked.documentId,
       grammar_version: checked.grammarVersion,
@@ -76,7 +71,24 @@ test("grammar plan check/analyze/next matches the read-only self-use golden", as
             },
     },
   };
-  assert.deepEqual(actual, expected);
+}
+
+test("grammar plan check/analyze/next matches the read-only self-use golden", async () => {
+  const text = await readFile(path.join(root, "plans/grammar.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/grammar.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
+test("control-plane plan matches the Issue #1 design roadmap golden", async () => {
+  const text = await readFile(path.join(root, "plans/control-plane.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/control-plane.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
 test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {

@@ -116,6 +116,7 @@ perttool/
     basic-design.md
     requirements.md
   plans/
+    control-plane.pert
     grammar.pert
     mvp.pert
   scripts/
@@ -833,11 +834,12 @@ MVPでは同一fixtureに対し、library resultとCLI JSONのsemantic payload�
 
 - 規範的な grammar 内容: `docs/specs/dsl-grammar.md`
 - 現在・未来の grammar 作業計画: `plans/grammar.pert`
+- Issue #1のAI工程制御設計計画: `plans/control-plane.pert`
 - 過去の作業計画: Git history
 
-MVP全体のstage gateは`plans/mvp.pert`、現在sliceの実装taskは`plans/grammar.pert`で分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。
+MVP全体のstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。2026-07-22時点ではgrammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`で管理する。
 
-`.pert` は grammar を表現する言語ではなく、grammar を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
+`.pert` は仕様内容そのものではなく、仕様を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
 
 ### 16.2 bootstrap gate
 

@@ -5,10 +5,10 @@
 Mandatory summary:
 
 - 利用者から指定がない限り、日本語で応答する。
-- 現在はTypeScript CLI実装段階であり、実装済み`dsl check`/`dsl help`/`dag analyze`/`dag next`でmacro `plans/mvp.pert`と詳細`plans/grammar.pert`をread-only自己利用中。Write/conversion surfaceは未実装である。
+- 現在はTypeScript CLI実装段階であり、実装済み`dsl check`/`dsl help`/`dag analyze`/`dag next`でmacro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`をread-only自己利用中。Write/conversion surfaceは未実装である。
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
-- 「次のタスク」は未解決仕様とcritical pathから提案し、着手しやすさだけで選ばない。
+- 「次のタスク」はmacroでworkstreamを選んでから対応する詳細planのcritical pathから提案し、着手しやすさだけで選ばない。
 - requirements/specification、design、implementation、verificationのtraceabilityを維持する。
 - task=edge、milestone=node、gate=zero-duration dependency edgeを維持し、resource共有をDAG dependencyへ変換しない。
 - precedence critical pathとresource schedule上のschedule critical pathを区別する。
