@@ -173,7 +173,7 @@ Parallel trialは次をすべて満たした場合に成功とする。
 - repository全checkと再解析後のplan goldenが成功する
 - commit履歴がAgent成果とintegration changeのlogical unitを保つ
 
-Agentが失敗、timeout、scope逸脱した場合は、対象worktreeとbranchを保持してstatus/diffを確認する。Force-remove、force-delete、未レビューcommitの自動統合を行わない。成功後にcleanupする場合も、worktreeがcleanでbranch commitがmainへ統合済みであることを確認し、検証済み絶対pathに対する`git worktree remove`と、通常の`git branch -d`だけを使用する。
+Agentが失敗、timeout、scope逸脱した場合は、対象worktreeとbranchを保持してstatus/diffを確認する。Force-remove、force-delete、未レビューcommitの自動統合を行わない。成功後にcleanupする場合も、worktreeがcleanでbranch commitがmainへ統合済みであることを確認し、検証済み絶対pathに対する`git worktree remove`と、通常の`git branch -d`だけを使用する。Cherry-pick後はcommit hashが変わるためancestor判定だけに依存せず、`git cherry main agent/<task-id>`の対象commitが`-`であることと、main側の実diffを確認してpatch equivalenceを検証する。
 
 ### 6.6 2026-07-22 trial
 
