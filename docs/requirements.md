@@ -71,7 +71,7 @@ Must:
 
 `perttool`は、単に実行可能taskを列挙するのではなく、project全体の現在状態から、AIまたは人間が今どのworkを優先すべきかを判断するcontrol planeである。目的は完了task数を最大化することではなく、依存関係、resource容量、明示priority、gate、milestoneを尊重しながら、宣言されたproject finishまでの期間短縮に寄与するworkを優先することである。
 
-実行可否、resource selection、推奨度の形式的な分離は[Recommendation Semantics仕様](specs/recommendation.md)を正とする。
+実行可否、resource selection、推奨度の形式的な分離は[Recommendation Semantics仕様](specs/recommendation.md)、決定的な推奨順は[Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)、機械可読な理由語彙は[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)を正とする。
 
 Must:
 
@@ -986,16 +986,17 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 実装開始前に、次を ADR または個別仕様で固定する。
 
-1. ranking input、優先規則、完全なtie-break、algorithm version
-2. stable reason code、typed fact、制限付き構造式、winner/alternative比較、decisive ruleを持つdecision trace、派生reason description、text/JSON interface、schema migration
-3. human overrideの意味、理由、audit先、再解析契約
-4. Mermaid profile の `%% perttool:` メタデータ schema
+1. typed fact、制限付き構造式、winner/alternative比較、decisive ruleを持つdecision trace、派生reason description、text/JSON interface、schema migration
+2. human overrideの意味、理由、audit先、再解析契約
+3. Mermaid profile の `%% perttool:` メタデータ schema
 
 解決済みの設計判断:
 
 - task=edgeのAoA採用: [ADR 0001](adr/0001-activity-on-arrow.md)
 - Node.js 24以上、npm、TypeScript ESM package: [ADR 0002](adr/0002-node-typescript-package.md)
 - 実行可否、resource selection、推奨度の分離とtier semantics: [Recommendation Semantics仕様](specs/recommendation.md)
+- ranking input、selection horizon、優先規則、完全tie-break、algorithm version: [Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)
+- stable reason code、effect/role、typed fact category、entity reference、taxonomy version: [Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)
 
 ## 25. 推奨する次の仕様作業
 
@@ -1009,7 +1010,8 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 6. [ ] [Issue #1](https://github.com/mako10k/perttool/issues/1): AI Project Control Planeのrecommendation契約
    - [x] product vision、source of truth、global objective、determinism、non-goal
    - [x] [実行可否と推奨度のmodel](specs/recommendation.md)
-   - [ ] deterministic ranking policyとstable reason code
+   - [x] [deterministic ranking policy](specs/recommendation-ranking.md)
+   - [x] [stable reason code taxonomy](specs/recommendation-reasons.md)
    - [ ] structured reason descriptionとdecision trace
    - [ ] Core、text、JSON、human override契約
    - [ ] normative example、test観点、self-use migration
@@ -1017,4 +1019,4 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 項目7は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
-Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度modelは確定した。次はranking policyとreason code taxonomyを規範仕様へ定義する。structured reason description、decision trace、interface、overrideの詳細と、Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomyは確定した。次はstructured reason descriptionとdecision trace、human override契約を規範仕様へ定義する。Interfaceの詳細とIssue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。

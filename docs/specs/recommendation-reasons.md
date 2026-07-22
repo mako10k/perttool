@@ -5,6 +5,7 @@
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
+- Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Analysis仕様: [analysis.md](analysis.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
@@ -31,9 +32,9 @@ Reason codeだけで「なぜこのtaskで別taskではないか」を説明し�
 
 1. `docs/requirements.md`のMust requirement
 2. [Recommendation Semantics仕様](recommendation.md)
-3. 本仕様
+3. Rankingの意味は[Recommendation Ranking Policy仕様](recommendation-ranking.md)、reasonの意味は本仕様
 4. [Analysis仕様](analysis.md)
-5. 後続のRanking Policy、Structured Explanation Model、Interface Contract
+5. 後続のStructured Explanation Model、Interface Contract
 6. example、test、help、implementation
 
 対象:
@@ -55,7 +56,7 @@ Reason codeだけで「なぜこのtaskで別taskではないか」を説明し�
 - lifecycle diagnostic、`blocked_reason`、`runnable_now`の既存resource rejectionの置換
 - interfaceまたは実装の変更
 
-Ranking factorの意味と比較規則はRanking Policyが固定する。本仕様は、それらを安定codeから参照するcategoryと、set/tier決定へ接続する条件を固定する。
+Ranking factorの意味と比較規則は[Recommendation Ranking Policy仕様](recommendation-ranking.md)が固定する。本仕様は、それらを安定codeから参照するcategoryと、set/tier決定へ接続する条件を固定する。
 
 ## 3. Reasonの構成
 
@@ -188,11 +189,11 @@ Ranking factor名をreason codeへ埋め込まない。例えばcritical、float
 
 Recommended set `R`について、次を満たす。
 
-1. `t in R`の各taskは`task_ready`と`recommended_set_selected`を持つ
+1. `t in R`の各taskは`task_ready`、`recommended_set_selected`、selection horizonへの所属またはscan選択を示す`ranking_rule_supports_task`を持つ
 2. `t not in R`の各ready taskは`task_ready`と`recommended_set_not_selected`を持つ
 3. Result全体は`recommended_set_feasible`を持つ
 4. `recommended_set_not_selected`には、少なくとも1件の`ranking_rule_opposes_task`、`policy_defers_start`、`recommended_set_resource_conflict`、`modeled_negative_fact_applies`のいずれかを伴う
-5. Ranking Policyが空の`R`を許す場合も、各ready taskの非選択に適用したversioned ruleを`ranking_rule_opposes_task`または`policy_defers_start`で示す
+5. Ranking Policyが空の`R`を許す場合も、各ready taskの非選択に適用したversioned ruleまたはresource witnessを`ranking_rule_opposes_task`、`policy_defers_start`、`recommended_set_resource_conflict`のいずれかで示す
 6. Set selectionが複数task間の比較に依存する場合、winnerとalternativeを同じ`ranking_comparison`で参照可能にする
 
 Membership outcomeだけ、task ID順だけ、opaque scoreだけを非選択理由としてはならない。Task ID tie-breakを使う場合、それ自体を登録済みpolicy rule/factorとして値とrelationを記録する。
@@ -203,7 +204,7 @@ Recommendation Semantics仕様のclassification orderに従い、各tierへ次�
 
 | Tier | 必須reason | 条件付きreason | 禁止される決定reason |
 | --- | --- | --- | --- |
-| `recommended` | `task_ready`、`recommended_set_selected`、result-levelの`recommended_set_feasible` | 0件以上の`ranking_rule_supports_task`または`ranking_rule_tied` | `recommended_set_not_selected`、`policy_defers_start`、`modeled_negative_fact_applies` |
+| `recommended` | `task_ready`、`recommended_set_selected`、`ranking_rule_supports_task`、result-levelの`recommended_set_feasible` | 0件以上の`ranking_rule_tied` | `recommended_set_not_selected`、`policy_defers_start`、`modeled_negative_fact_applies` |
 | `allowed` | `task_ready`、`recommended_set_not_selected`、`recommended_set_addition_feasible` | `ranking_rule_opposes_task`、`ranking_rule_tied` | `policy_defers_start`、`modeled_negative_fact_applies`、`recommended_set_resource_conflict` |
 | `deferred` | `task_ready`、`recommended_set_not_selected`と、`policy_defers_start`または`recommended_set_resource_conflict`の1件以上 | ranking evidence、addition feasibility | `modeled_negative_fact_applies`をdecisive reasonにすること |
 | `discouraged` | `task_ready`、`recommended_set_not_selected`、`modeled_negative_fact_applies` | ranking evidence、resource feasibility/conflict | なし。ただしnegative factがclassification order上のdecisive reasonであること |

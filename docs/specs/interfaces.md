@@ -10,6 +10,8 @@
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Analysis仕様: [analysis.md](analysis.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
+- Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
+- Recommendation reasons: [recommendation-reasons.md](recommendation-reasons.md)
 - 対応基本設計: [../basic-design.md](../basic-design.md)
 
 ## 1. 目的とMVP境界

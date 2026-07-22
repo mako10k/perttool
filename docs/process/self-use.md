@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 1.3
+- 文書状態: Active Stage 1 / Revision 1.4
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -71,9 +71,9 @@ Exit criteria:
 
 続いて`FIELD_FIXTURES`を完了し、project/resource/milestone/task/gateの全fieldを1つの正常fixtureで検査した。Identifier、string、duration、velocity、date、list、integer、enum、inline commentの異常fixtureと、missing/duplicate/field combinationの境界も独立入力へ固定した。仕様に存在した`PTDSL-011`の未到達を修正し、quoted string、tag list、block text内の`#`とinline commentを区別した。現在のrunnable taskは`BLOCK_TEXT_SPANS`だけである。
 
-2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。その後の`RECOMMENDATION_ROADMAP_UPDATE`で設計結果をmacro/detail planへ反映してから`M1_PRODUCT_FOUNDATION_READY`へ進むため、再構成前にformatter以降はreadyにならない。`RECOMMENDATION_MODEL`完了後もcontrol-plane設計がprecedence/resource criticalであり、grammar work packageはtotal float 2dである。両work packageは`runnable_now`である。
+2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。その後の`RECOMMENDATION_ROADMAP_UPDATE`で設計結果をmacro/detail planへ反映してから`M1_PRODUCT_FOUNDATION_READY`へ進むため、再構成前にformatter以降はreadyにならない。`RANKING_POLICY`と`REASON_CODE_TAXONOMY`完了後、control-plane設計とgrammar work packageはどちもprecedence/resource criticalでtotal float 0d、どちも`runnable_now`である。
 
-[AI工程制御設計plan](../../plans/control-plane.pert)はIssue #1の設計範囲をPointとvelocity forecastへ分解する。`VISION_REQUIREMENTS`でAI Project Control Planeの目的と境界を[要件](../requirements.md)へ確定し、`RECOMMENDATION_MODEL`でlifecycle/eligibility、resource selection、recommendation tierの分離と、ready taskのstart actionだけを対象にする4 tierの形式的意味を[Recommendation Semantics仕様](../specs/recommendation.md)へ確定した。Reason codeだけでなくtyped fact、制限付きexpression AST、winner/alternative比較、decisive/supporting rule、派生descriptionを返す`STRUCTURED_EXPLANATION_MODEL`を2pで追加済みである。完了済み4pを除くresource makespanは9p、velocity forecastは9dであり、現在のready taskは`RANKING_POLICY`、`REASON_CODE_TAXONOMY`、`HUMAN_OVERRIDE_CONTRACT`である。現行resource selectionでは前2件が`runnable_now`、`HUMAN_OVERRIDE_CONTRACT`がresource待ちになる。Recommendation実装のtaskと見積りは設計結果から決めるため先行追加せず、設計受け入れ後にmacro planを再構成する。check/analyze/next projectionは[control-plane golden](../../test/golden/self-use/control-plane.expected.json)へ固定する。
+[AI工程制御設計plan](../../plans/control-plane.pert)はIssue #1の設計範囲をPointとvelocity forecastへ分解する。`VISION_REQUIREMENTS`と`RECOMMENDATION_MODEL`に加え、`RANKING_POLICY`でselection horizon、完全tie-break、joint-feasibleなrecommended setを[Ranking Policy仕様](../specs/recommendation-ranking.md)、`REASON_CODE_TAXONOMY`でstable code、effect/role、typed fact category、entity referenceを[Reason Taxonomy仕様](../specs/recommendation-reasons.md)へ確定した。完了済み8pを除くresource makespanは7p、velocity forecastは7dであり、現在のreadyかつ`runnable_now`のtaskは`STRUCTURED_EXPLANATION_MODEL`と`HUMAN_OVERRIDE_CONTRACT`である。Recommendation実装のtaskと見積りは設計結果から決めるため先行追加せず、設計受け入れ後にmacro planを再構成する。check/analyze/next projectionは[control-plane golden](../../test/golden/self-use/control-plane.expected.json)へ固定する。
 
 同日に[Issue #2「AI Agent Guidance Registryとprovider別helpを追加する」](https://github.com/mako10k/perttool/issues/2)を独立featureとして登録した。Issue #1が「何を今行うべきか」を扱うのに対し、Issue #2はその判断へ従うためのprompt、skill、agent、hookなどをprovider別に表示する方法を扱う。初期scopeはofflineかつread-onlyの`agent help`であり、audit、scaffold、hook enforcementは後続段階とする。設計前にdurationや機能依存を捏造しないため、現時点では詳細planとwork packageを追加せず、`RECOMMENDATION_ROADMAP_UPDATE`の入力として実装順序、並行性、見積りを確定する。
 
@@ -246,6 +246,6 @@ Stage 1開始時の証跡:
 - self-use golden: grammar、control-plane、MVP planのcheck/analyze/next projection test
 - Point self-use gate: grammar planの基準unit、velocity forecast unit、precedence/resource forecastをgoldenで分離して検査する
 - field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
-- control-plane planning gate: Issue #1の設計範囲、構造化説明追加後の残り9p/9d forecast、`RANKING_POLICY`と`REASON_CODE_TAXONOMY`のrunnable frontier、`HUMAN_OVERRIDE_CONTRACT`のresource待ちをgoldenへ固定する
+- control-plane planning gate: Issue #1の設計範囲、構造化説明追加後の残り7p/7d forecast、`STRUCTURED_EXPLANATION_MODEL`と`HUMAN_OVERRIDE_CONTRACT`のrunnable frontierをgoldenへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、3 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

@@ -87,6 +87,7 @@ task RANKING_POLICY RECOMMENDATION_MODEL_DEFINED -> RANKING_POLICY_DEFINED:
   title "決定的なranking policyを定義する"
   description "critical、float、priority、unlock、gate/milestone distance、resourceの優先規則、完全なtie-break、winner/alternativeと決定ruleのtraceを固定する"
   duration 2p
+  status done
   priority 80
   requires:
     DESIGNERS 1
@@ -95,6 +96,7 @@ task REASON_CODE_TAXONOMY RECOMMENDATION_MODEL_DEFINED -> REASON_CODES_DEFINED:
   title "stable reason code taxonomyを定義する"
   description "各codeの発生条件、polarity、関連factと未model化情報の扱いを固定する"
   duration 2p
+  status done
   priority 80
   requires:
     DESIGNERS 1

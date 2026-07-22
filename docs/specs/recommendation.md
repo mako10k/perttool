@@ -3,6 +3,8 @@
 - 文書状態: Normative Draft 0.1
 - 作成日: 2026-07-22
 - 対象: AI Project Control Planeの実行可否・推奨度model
+- Ranking policy: [recommendation-ranking.md](recommendation-ranking.md)
+- Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -126,9 +128,9 @@ startFeasible(R) == true
 
 同じtaskを複数回数えない。Active taskは`R`へ含めず、`activeUsage`としてcapacityから差し引く。
 
-`R`の選択規則、空集合を許す条件、完全なtie-break、algorithm versionはRanking Policyで固定する。
+`R`の選択規則、空集合を許す条件、完全なtie-break、algorithm versionは[Recommendation Ranking Policy仕様](recommendation-ranking.md)で固定する。
 
-Ranking Policyは、ready task`t`を現在cycleで追加開始せず後続cycleへ送る明示判断`policyDefers(t)`も定義する。`policyDefers`はproject factとversioned ruleから決定的に導出し、hidden contextや自然言語だけに依存してはならない。
+Ranking Policyは、ready task`t`を現在cycleで追加開始せず後続cycleへ送る明示判断`policyDefers(t)`も定義する。Version 1では全taskについてfalseとし、selection horizon外でresource-feasibleなtaskを`allowed`として保持する。
 
 ## 7. Tier semantics
 
@@ -248,7 +250,7 @@ Recommendationはtierだけを返して完了としてはならない。
 - resource feasibilityまたはconflict
 - 人間向けdescriptionを導出するstable keyとparameter
 
-Reason code、制限付きexpression AST、decision trace、description projectionの具体的contractは後続`REASON_CODE_TAXONOMY`、`STRUCTURED_EXPLANATION_MODEL`、`INTERFACE_CONTRACT`で固定する。自然言語textだけを正本の理由にしない。
+Reason codeとtyped fact categoryは[Recommendation Reason Taxonomy仕様](recommendation-reasons.md)を正とする。制限付きexpression AST、decision trace、description projectionの具体的contractは後続`STRUCTURED_EXPLANATION_MODEL`、`INTERFACE_CONTRACT`で固定する。自然言語textだけを正本の理由にしない。
 
 ## 12. Human override boundary
 
@@ -275,7 +277,7 @@ Recommendation resultはsource digest、capacity option、algorithm versionへ�
 
 ## 14. 後続設計taskへの入力
 
-### `RANKING_POLICY`
+### [`RANKING_POLICY`](recommendation-ranking.md)
 
 - `R`を選ぶproject factと優先規則
 - selection horizon
@@ -283,7 +285,7 @@ Recommendation resultはsource digest、capacity option、algorithm versionへ�
 - complete tie-breakとalgorithm version
 - current scheduler orderとのmigration
 
-### `REASON_CODE_TAXONOMY`
+### [`REASON_CODE_TAXONOMY`](recommendation-reasons.md)
 
 - tier付与とset選択のstable reason code
 - supporting、opposing、blockingのpolarity

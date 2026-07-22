@@ -12,9 +12,10 @@
     }
   },
   "analyze": {
-    "precedence_makespan": "29",
+    "precedence_makespan": "27",
     "precedence_critical_tasks": [
       "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
+      "GRAMMAR_WORK_PACKAGE",
       "RECOMMENDATION_ROADMAP_UPDATE",
       "FORMATTER_CORE",
       "MUTATION_PREVIEW",
@@ -24,7 +25,7 @@
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "30",
+    "resource_makespan": "28",
     "resource_delay": "1",
     "resource_arcs": [
       "resource:ADVANCE:MERMAID_ROUNDTRIP",
@@ -32,6 +33,7 @@
     ],
     "schedule_critical_tasks": [
       "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
+      "GRAMMAR_WORK_PACKAGE",
       "RECOMMENDATION_ROADMAP_UPDATE",
       "FORMATTER_CORE",
       "MUTATION_PREVIEW",
