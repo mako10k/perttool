@@ -5,9 +5,8 @@ project PERTTOOL_MVP:
     MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
     grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pert、
     M1からM4の操作系はplans/operations.pertを正とする。
-    操作系detail planはformatter/mutation previewとSAFE_WRITE_ADAPTERの
-    実測Velocity 16p/1dを使用し、resource forecastを6 decimal dayへroundしてmacro work packageへ
-    roll-upした。
+    操作系detail planはsafe writeまでの実測Velocity 18p/1dを使用し、
+    resource forecastを6 decimal dayへroundしてmacro work packageへroll-upした。
     recommendation実装とIssue #2は共有CLI・reviewerが競合するためM3後へ送り、
     Issue #3のmulti-plan compositionは独立した将来backlogとして扱う。
   as_of 2026-07-22
@@ -129,8 +128,9 @@ gate MUTATION_EDIT_GATE MUTATION_PREVIEW_READY -> M2_EDIT_PREVIEW_READY:
 
 task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
   title "再検査、atomic write、optimistic lockを実装する"
-  description "plans/operations.pertのSAFE_WRITE_ADAPTER 4pは完了した。残るSAFE_WRITE_ACCEPTANCE 2pの実測velocity forecast 0.125dをroll-upする"
+  description "plans/operations.pertのsafe write 6pを完了した。durationは受け入れ直前にroll-upしたSAFE_WRITE_ACCEPTANCE 2pの実測velocity forecast 0.125dを保持する"
   duration 0.125d
+  status done
   priority 90
   requires:
     DEVELOPERS 1
@@ -138,8 +138,8 @@ task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
 
 task ADVANCE M3_SAFE_WRITE_READY -> M4_ADVANCE_READY:
   title "合流を保持するadvance plannerを実装する"
-  description "plans/operations.pertのADVANCE_PLANNERとADVANCE_CLI_ACCEPTANCE、合計6pの実測velocity forecast 0.375dをroll-upする"
-  duration 0.375d
+  description "plans/operations.pertのADVANCE_PLANNERとADVANCE_CLI_ACCEPTANCE、合計6pの実測velocity forecast 0.333333dをroll-upする"
+  duration 0.333333d
   priority 20
   requires:
     DEVELOPERS 1

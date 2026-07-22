@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、preview-onlyの`dsl format`、`dsl help`、`dag analyze`、`dag next`、libraryのsource-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、preview-only mutation CLIが実装済みです。Filesystem writeのCLI公開とMermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`が実装済みです。`dag advance`とMermaid変換はまだ未実装です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -85,6 +85,7 @@ perttool dsl check docs/examples/parallel.pert
 perttool dsl check PLAN.pert --max-diagnostics 20 --format json
 perttool dsl format PLAN.pert --check
 perttool dsl format PLAN.pert --diff
+perttool dsl format PLAN.pert --write --expect-digest "$EXPECTED_DIGEST"
 perttool dsl help syntax estimate --level detail --format json
 perttool dsl help syntax velocity --level detail --format json
 perttool dag analyze docs/examples/point-velocity.pert --format json
@@ -93,17 +94,19 @@ perttool dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3 --capac
 perttool dag next docs/examples/parallel.pert
 perttool dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format json
 perttool task set docs/examples/minimal.pert WORK --status active --diff
+perttool task set PLAN.pert WORK --status active --write --expect-digest "$EXPECTED_DIGEST"
 perttool resource set docs/examples/parallel.pert TEST_ENV --capacity 2 --format json
 perttool mutation apply docs/examples/minimal.pert --request changes.json --diff
+perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 ```
 
 `dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。`duration_unit point`では`velocity 20p/10d`のように宣言し、基準のPoint値とday/hourの`velocity_forecast`を分離して返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
-`dsl format`とMutation commandは現在preview-onlyです。既定では検査済みcandidate、`--diff`ではunified diffを返し、`dsl format --check`では変更が必要なときだけexit 1を返します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digestを同じresultへ含めます。`--write`と`--out`はsafe-write gate完了まで拒否します。
+`dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。M1 roadmap再構成、grammar受け入れ、formatter/mutation preview、safe-write adapterは完了しました。操作系の実測値は`16p/1d`で、残るprecedence/resource makespanは8p、forecastは`0.5d`です。Macroのmakespanは`12.125d`です。次のmacro CPは`WRITE_SAFETY`、詳細planの次taskはprecedence/schedule criticalかつ`runnable_now`な`SAFE_WRITE_ACCEPTANCE`です。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後までbacklogとして保持し、Issue #3のmulti-plan compositionはMVP後の将来構想として扱います。Writeは専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)、[AI工程制御設計計画](plans/control-plane.pert)、[操作系M1-M4実装計画](plans/operations.pert)を詳細planとするStage 2のpreview-first safe-write自己利用を行っています。Safe writeまで完了し、操作系の実測値は`18p/1d`、残るadvanceは6p、forecastは`1/3d`です。Macroのmakespanは12dで、次のmacro CPかつ`runnable_now`は`MERMAID_PROFILE`です。操作系の`ADVANCE_PLANNER`はreadyですが、macro `ADVANCE`は`REVIEWERS`競合で待機します。RecommendationとIssue #2のAI Agent Guidance RegistryはM3後に詳細化可能ですが、macro planへ追加するまでは着手順を推測しません。Issue #3のmulti-plan compositionはMVP後の将来構想です。
 
 ## Security and license
 

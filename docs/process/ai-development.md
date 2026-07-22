@@ -100,7 +100,7 @@ git diff --check
 
 実装前は`docs/requirements.md`の推奨仕様作業と未確定事項を使う。「次のタスク」はcurrent checkoutでhard predecessorが閉じていることを確認してから提案する。
 
-`docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。その時点からは次の順で選択する。
+`docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。Stage 2ではediting commandをpreview-first、expected digest、write後再解析の手順で正本writerとして使用できる。Task selectionは次の順で行う。
 
 1. `mvp.pert`と現在の詳細planを`perttool dsl check`し、計画が有効であることを確認する
 2. `mvp.pert`を`dag analyze`、`dag next`し、macro critical pathとrunnable work packageからworkstreamを選ぶ
@@ -110,7 +110,7 @@ git diff --check
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装され、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、`M1_ROADMAP_UPDATE`、formatter/mutation preview、`SAFE_WRITE_ADAPTER`は完了した。現在のmacro CPは`WRITE_SAFETY`である。対応する[操作系詳細plan](../../plans/operations.pert)では`SAFE_WRITE_ACCEPTANCE`がprecedence/schedule criticalかつ`runnable_now`である。Recommendation実装とIssue #2は`src/cli.ts`、`src/index.ts`、reviewerを操作系と共有するため、`M3_SAFE_WRITE_READY`より前には並行実装しない。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、`M1_ROADMAP_UPDATE`、formatter/mutation preview、safe writeは完了し、Stage 2へ移行した。現在のmacro CPかつ`runnable_now`は`MERMAID_PROFILE`である。[操作系詳細plan](../../plans/operations.pert)の`ADVANCE_PLANNER`はreadyだが、macro `ADVANCE`は`REVIEWERS`競合で待機する。Recommendation実装とIssue #2はM3後に詳細化可能だが、macro planへwork packageとresourceを追加するまでは着手順を推測しない。
 
 ### 5.1 Recommendation導入後のtask selection
 

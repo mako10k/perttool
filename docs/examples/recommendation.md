@@ -437,7 +437,7 @@ Valid requestについて次をgolden testへ固定する。
 5. normal reasonをcopyまたはhuman reasonへ変換せず、source record IDで参照する
 6. commit messageの`Perttool-Override`と`Perttool-Override-Record` trailerから同じIDを再計算できる
 
-Stage 1ではtrailerを実commitへ適用せず、fixture stringへのpure verificationだけを行う。
+MIG-08のoverride apply/audit gateを満たすまではtrailerを実commitへ適用せず、fixture stringへのpure verificationだけを行う。
 
 ## 6. Test観点とfixture対応
 

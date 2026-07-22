@@ -1035,7 +1035,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進む。Formatter/mutation preview 12pと`SAFE_WRITE_ADAPTER` 4pを完了し、操作系実測値を`16p/1d`へ再calibrationした。残るprecedence/resource makespanは8p、forecastは0.5d、resource delayは0pである。MacroのCPは`WRITE_SAFETY`、詳細planの次taskはprecedence/schedule criticalかつrunnableな`SAFE_WRITE_ACCEPTANCE`である。Safe-write後のMermaid、recommendation、Issue #2とのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果へ従う。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定した。既存formatter Coreを利用する`FORMAT_APPLICATION`/`FORMAT_CLI_PREVIEW` 3pと、task/milestone/resourceのmutation Core/CLI 9pを並行branchとし、合流後にsafe write 6p、advance 6pへ進む。Formatter/mutation preview 12pとsafe write 6pを完了し、操作系実測値を`18p/1d`へ再calibrationした。残るadvanceのprecedence/resource makespanは6p、forecastは`1/3d`、resource delayは0pである。MacroのCPかつrunnable work packageは`MERMAID_PROFILE`であり、`ADVANCE`はreadyだが`REVIEWERS`競合で待機する。RecommendationとIssue #2を含むM3後のresource順は、局所priorityではなくmacro planの全体schedule結果へ従う。
 
 ### Slice 4: advance and Mermaid
 

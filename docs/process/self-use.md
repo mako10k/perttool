@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 2.10
+- 文書状態: Active Stage 2 / Revision 2.11
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -38,7 +38,7 @@ Exit criteria:
 
 ## 4. Stage 1: read-only self-use
 
-現在の段階。2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用し始めた。2026-07-22に[AI工程制御設計plan](../../plans/control-plane.pert)と[操作系詳細plan](../../plans/operations.pert)を追加した。
+2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用し始めた。2026-07-22に[AI工程制御設計plan](../../plans/control-plane.pert)と[操作系詳細plan](../../plans/operations.pert)を追加し、同日にStage 2へ移行した。
 
 開始条件:
 
@@ -100,7 +100,9 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`SAFE_WRITE_ADAPTER`を完了した。Raw-byte document readerをCLIと共有し、in-place replaceはsymlink/非regular file拒否、initial/expected/commit直前digest照合、path identity確認、mode継承、同directory exclusive temporary、file fsync、atomic rename、parent directory fsync、rename後digest/document再検査を行う。新規outputはfsync済みtemporaryからexclusive hard linkで公開し、既存target、symlink、同時writerの上書きを拒否する。CLIのwrite optionは引き続きusage errorで、Stage 2はまだ開始しない。同日完了標本は累計16p/1 active day、実測Velocityは`16p/1d`となった。残るprecedence/resource makespanは8p、forecastは0.5d、resource delayは0pである。Macro makespanは12.125dで、macro `WRITE_SAFETY`とdetail `SAFE_WRITE_ACCEPTANCE`がprecedence/schedule criticalかつ`runnable_now`である。
 
-Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。Recommendation側はtask別durationと所有fileが未詳細化で、M3より前に操作系を遅らせないwork-package単位の並行化を立証できないため、`M3_SAFE_WRITE_READY`以降へ送る。Issue #3はMVP外の将来設計のままとする。
+続いて`SAFE_WRITE_ACCEPTANCE`を完了した。`dsl format`とtask/milestone/resource/batch mutationは既定previewを維持しながら、明示的な`--write`、exclusive `--out`、`--expect-digest`を共通safe-write pathへ接続した。No-op writeはlock検査後にfileを置換せず`written=false`、競合はstable `PTIO-501` reasonとexit 5で返す。一時copyだけを使うCLI/E2Eでrace・symlink・既存target・warning/invalid failure時の原本保持、grammar planのexact round-trip、write後のcheck/analyze/nextを固定した。Gate成立後、`plans/operations.pert`の完了状態はpreview diffを確認してからexpected digest付き`--write`で初めて正本へ反映した。操作系標本は累計18p/1 active day、実測Velocityは`18p/1d`、残るadvanceは6p、forecastは`1/3d`である。Macro `WRITE_SAFETY`はdone、残りmakespanは12dとなり、`MERMAID_PROFILE`がprecedence/schedule criticalかつ`runnable_now`、`ADVANCE`はreadyだが`REVIEWERS`競合で待機する。
+
+Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のmacro CPは`MERMAID_PROFILE`である。Issue #3はMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
 
@@ -119,15 +121,15 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | --- | --- | ---: | ---: | --- | --- |
 | `grammar.pert` | `FORMATTER_ROUNDTRIP`、`HELP_FIXTURE_SYNC` | 3p | 1d | `3p/1d` | 0p |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
-| `operations.pert` | formatter/mutation preview、`SAFE_WRITE_ADAPTER` | 16p | 1d | `16p/1d` | precedence/resource 8p = 0.5d |
+| `operations.pert` | formatter/mutation preview、safe write | 18p | 1d | `18p/1d` | precedence/resource 6p = `1/3d` |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。3標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
-Operationsはformatter/mutation preview 12pと`SAFE_WRITE_ADAPTER` 4pの同日完了を累計し、実測`16p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系completion commit時に`plans/operations.pert`だけを独立再calibrationする。Macroはday単位しか持たないため、`p/velocity`を6 decimal dayへroundする。現在のdetail resource delayは0pである。
+Operationsはformatter/mutation preview 12p、`SAFE_WRITE_ADAPTER` 4p、`SAFE_WRITE_ACCEPTANCE` 2pの同日完了を累計し、実測`18p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系completion commit時に`plans/operations.pert`だけを独立再calibrationする。Macroはday単位しか持たないため、`p/velocity`を6 decimal dayへroundする。現在のdetail resource delayは0pである。
 
-この段階で許可する操作:
+Stage 1で許可した操作:
 
 - check
 - analyze
@@ -137,7 +139,7 @@ Operationsはformatter/mutation preview 12pと`SAFE_WRITE_ADAPTER` 4pの同日�
 - task/milestone/resourceとatomic batchのpreview、diff、JSON result
 - Mermaid export が read-only で利用可能なら preview
 
-この段階で禁止する操作:
+Stage 1で禁止した操作:
 
 - `format --write`
 - `task ... --write`
@@ -178,8 +180,9 @@ Operationsはformatter/mutation preview 12pと`SAFE_WRITE_ADAPTER` 4pの同日�
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
-- formatter/mutation previewとsafe-write adapterは完了し、次はmacro `WRITE_SAFETY`に対応するdetail `SAFE_WRITE_ACCEPTANCE`がprecedence/schedule criticalかつrunnableである
-- recommendation実装とIssue #2は共有CLI・reviewerの競合により`M3_SAFE_WRITE_READY`以降へ送る
+- formatter/mutation previewとsafe writeは完了し、Stage 2へ移行した
+- 現在のmacro CPかつrunnable work packageは`MERMAID_PROFILE`である。Detail `ADVANCE_PLANNER`はreadyだが、macro `ADVANCE`は`REVIEWERS`競合でrunnableではない
+- recommendation実装とIssue #2は`M3_SAFE_WRITE_READY`後に詳細化可能だが、macro planへ追加するまでは着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
 ### 5.3 AI工程制御設計plan
@@ -206,9 +209,11 @@ Operationsはformatter/mutation preview 12pと`SAFE_WRITE_ADAPTER` 4pの同日�
 - normal recommendation authority adoption
 - safe-write後のoverride apply/audit adoption
 
-V3 publicationだけで現行Stage 1のtask selection ruleを置き換えない。Shadow gateと共有instruction更新が完了するまで[AI開発ガイド](ai-development.md)のmanual selectionを維持する。Override applyはsafe-write gateを満たすまで解禁しない。操作系とrecommendation実装がresourceまたはfile ownershipで競合する場合は、Stage 2とStage 3へ進む操作系を優先する。
+V3 publicationだけで現行のmanual task selection ruleを置き換えない。Shadow gateと共有instruction更新が完了するまで[AI開発ガイド](ai-development.md)のmanual selectionを維持する。Safe-write gateは成立したが、override applyはMIG-08の検証とaudit契約を満たすまで解禁しない。操作系とrecommendation実装がresourceまたはfile ownershipで競合する場合は、Stage 3へ進む操作系を含めmacro planで順序を判断する。
 
 ## 6. Stage 2: safe-write self-use
+
+2026-07-22に開始条件を満たして移行した。最初の正本writeとして、`SAFE_WRITE_ACCEPTANCE`のpreview diffとinitial digestを確認し、`plans/operations.pert`へexpected digest付き`task finish --write`を適用した。その後にcheck/analyze/nextとself-use goldenを更新した。
 
 開始条件:
 
@@ -227,6 +232,8 @@ V3 publicationだけで現行Stage 1のtask selection ruleを置き換えない�
 - `task add|set|remove|finish --write`
 - `milestone add|set|remove --write`
 - `resource add|set|remove --write`
+- `mutation apply --write`
+- 上記editing commandの`--out`と、in-place `--write`の`--expect-digest`
 
 運用:
 
@@ -328,6 +335,7 @@ Stage 1開始時の証跡:
 - mutation CLI preview gate: entity/batch action、text/JSON、stdin分離、BOM、document ID、warning policy、preview-only write拒否をCLI/E2E testへ固定する
 - formatter CLI preview gate: default candidate、diff、check、text/JSON、stdin、BOM、document ID、warning policy、preview-only write拒否をCLI/E2E testへ固定する
 - safe-write adapter gate: raw-byte digest、symlink/非regular file拒否、expected/stale digest、mode継承、exclusive temporary、fsync、atomic replace、新規output同時writer拒否、再検査、cleanupをwrite-safety testへ固定する
-- operations calibration gate: 完了6 taskの16p/1 active dayから実測Velocity `16p/1d`、残るprecedence/resource forecast 0.5dと0p resource delayをgoldenへ固定する
+- safe-write CLI gate: formatter、entity/batch mutationの`--write`/`--out`/`--expect-digest`、no-op、競合reason、失敗時原本保持、grammar temporary-copy round-trip、write後再解析をCLI/E2E/self-use testへ固定する
+- operations calibration gate: 完了7 taskの18p/1 active dayから実測Velocity `18p/1d`、残るprecedence/resource forecast `1/3d`と0p resource delayをgoldenへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、4 planを検査する
-- write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う
+- write状態: Stage 2のediting commandをpreview-first、expected digest、write後再解析の手順で解禁。`dag advance --write`はStage 3まで禁止する

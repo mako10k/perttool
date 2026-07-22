@@ -363,7 +363,7 @@ Rules:
 - perttoolはGitを自動実行せず、commit作成はhuman/execution workflowの責務とする
 - secretをcommit messageへ保存しない
 
-Write surfaceが未実装のStage 1ではoverride適用を自己利用へ解禁しない。本contractの存在だけでread-only gateを越えない。
+Stage 2では一般editing writeを解禁済みだが、override適用はMIG-08のvalidation、single-use、audit gateを満たすまで自己利用へ解禁しない。本contractやsafe-write surfaceの存在だけでoverride authorityを捏造しない。
 
 ### 11.3 External sink
 

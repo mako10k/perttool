@@ -51,11 +51,11 @@ Issue #1の設計を受け入れる。要件、規範仕様、基本設計、規
 4. MIG-01からMIG-07とIssue #2は共有CLI・reviewerが操作系と競合するため、`M3_SAFE_WRITE_READY`以降へ送る
 5. Human override applyであるMIG-08は`M3_SAFE_WRITE_READY`より前へ出さない
 
-この順序はrecommendation設計の不備を示すものではない。現在のread-only自己利用で不足している操作能力を先に解消するproduct priorityである。ただし、操作系内部の局所priorityを理由にMVP全体の完了予測を悪化させない。
+この順序はrecommendation設計の不備を示すものではない。Stage 1で不足していた操作能力を先に解消するproduct priorityであり、safe-write完了後はStage 2へ移行した。ただし、操作系内部の局所priorityを理由にMVP全体の完了予測を悪化させない。
 
 ## 5. 残事項
 
-- [操作系詳細plan](../../plans/operations.pert)の`SAFE_WRITE_ACCEPTANCE`以降の実装と、追加完了実績によるVelocity再calibration
+- [操作系詳細plan](../../plans/operations.pert)の`ADVANCE_PLANNER`以降の実装と、追加完了実績によるVelocity再calibration
 - MIG-01からMIG-08の実装
 - Issue #2のprovider別AI Agent Guidance Registry設計・実装
 - Issue #3のbacklog階層・multi-plan composition設計
