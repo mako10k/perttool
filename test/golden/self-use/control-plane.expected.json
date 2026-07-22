@@ -8,25 +8,23 @@
       "tasks": 10,
       "gates": 7,
       "errors": 0,
-      "warnings": 8
+      "warnings": 10
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "4",
+    "precedence_makespan": "3",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "4/1",
+    "precedence_forecast": "3/1",
     "precedence_critical_tasks": [
-      "HUMAN_OVERRIDE_CONTRACT",
       "NORMATIVE_EXAMPLES",
       "DESIGN_REVIEW"
     ],
-    "resource_makespan": "4",
-    "resource_forecast": "4/1",
+    "resource_makespan": "3",
+    "resource_forecast": "3/1",
     "resource_delay": "0",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "HUMAN_OVERRIDE_CONTRACT",
       "NORMATIVE_EXAMPLES",
       "DESIGN_REVIEW"
     ]
@@ -35,15 +33,15 @@
     "groups": {
       "active": [],
       "ready": [
-        "HUMAN_OVERRIDE_CONTRACT"
+        "NORMATIVE_EXAMPLES",
+        "PROCESS_MIGRATION"
       ],
       "runnable_now": [
-        "HUMAN_OVERRIDE_CONTRACT"
+        "NORMATIVE_EXAMPLES",
+        "PROCESS_MIGRATION"
       ],
       "blocked_now": [],
       "upcoming": [
-        "NORMATIVE_EXAMPLES",
-        "PROCESS_MIGRATION",
         "DESIGN_REVIEW"
       ]
     },

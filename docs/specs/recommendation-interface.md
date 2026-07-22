@@ -10,6 +10,7 @@
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
+- Human override: [recommendation-override.md](recommendation-override.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -643,7 +644,7 @@ Actual resultは`result_decision`、全ready task decision、step、fact、compa
 - v3切替時のCHANGELOG、help、consumer migration guide
 - AI development flowでJSON recommendationをtask選択authorityにするgate
 
-### `HUMAN_OVERRIDE_CONTRACT`
+### [`HUMAN_OVERRIDE_CONTRACT`](recommendation-override.md)（確定）
 
 - normal `recommendation` graphを変更せずoverrideを別resultへ接続する方法
 - actor、reason、selected task、source recommendation identityの型

@@ -7,6 +7,7 @@
 - 対象: AI Project Control Planeの決定的なrecommended set選択
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
+- Human override: [recommendation-override.md](recommendation-override.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的

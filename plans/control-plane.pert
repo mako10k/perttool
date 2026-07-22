@@ -105,6 +105,7 @@ task HUMAN_OVERRIDE_CONTRACT RECOMMENDATION_MODEL_DEFINED -> OVERRIDE_CONTRACT_D
   title "human overrideの意味とaudit方針を定義する"
   description "write commandは実装せず、override reasonと再解析契約だけを設計する"
   duration 1p
+  status done
   priority 60
   requires:
     DESIGNERS 1

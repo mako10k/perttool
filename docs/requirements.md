@@ -71,7 +71,7 @@ Must:
 
 `perttool`は、単に実行可能taskを列挙するのではなく、project全体の現在状態から、AIまたは人間が今どのworkを優先すべきかを判断するcontrol planeである。目的は完了task数を最大化することではなく、依存関係、resource容量、明示priority、gate、milestoneを尊重しながら、宣言されたproject finishまでの期間短縮に寄与するworkを優先することである。
 
-実行可否、resource selection、推奨度の形式的な分離は[Recommendation Semantics仕様](specs/recommendation.md)、決定的な推奨順は[Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)、機械可読な理由語彙は[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)、typed factから派生descriptionまでの説明graphは[Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)を正とする。
+実行可否、resource selection、推奨度の形式的な分離は[Recommendation Semantics仕様](specs/recommendation.md)、決定的な推奨順は[Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)、機械可読な理由語彙は[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)、typed factから派生descriptionまでの説明graphは[Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)、Core/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、人間の意図的逸脱は[Recommendation Human Override Contract仕様](specs/recommendation-override.md)を正とする。
 
 Must:
 
@@ -986,8 +986,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 実装開始前に、次を ADR または個別仕様で固定する。
 
-1. human overrideの意味、理由、audit先、再解析契約
-2. Mermaid profile の `%% perttool:` メタデータ schema
+1. Mermaid profile の `%% perttool:` メタデータ schema
 
 解決済みの設計判断:
 
@@ -998,6 +997,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 - stable reason code、effect/role、typed fact category、entity reference、taxonomy version: [Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)
 - typed fact、制限付きexpression、comparison、decision trace、description projection: [Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)
 - Core type、complete JSON、text summary、`NextResult.v3` migration: [Recommendation Interface Contract仕様](specs/recommendation-interface.md)
+- override requirement、feasible replacement、human reason、audit、再解析: [Recommendation Human Override Contract仕様](specs/recommendation-override.md)
 
 ## 25. 推奨する次の仕様作業
 
@@ -1015,10 +1015,10 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
    - [x] [stable reason code taxonomy](specs/recommendation-reasons.md)
    - [x] [structured reason descriptionとdecision trace](specs/recommendation-explanation.md)
    - [x] [Core、text、JSON契約](specs/recommendation-interface.md)
-   - [ ] human override契約
+   - [x] [human override契約](specs/recommendation-override.md)
    - [ ] normative example、test観点、self-use migration
 7. [ ] parser/validator の最小実装と golden tests
 
 項目7は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
-Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interfaceは確定した。次は`HUMAN_OVERRIDE_CONTRACT`を規範仕様へ定義する。Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contractは確定した。次は`NORMATIVE_EXAMPLES`と`PROCESS_MIGRATION`を進める。Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。

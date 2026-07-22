@@ -7,6 +7,7 @@
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
+- Human override: [recommendation-override.md](recommendation-override.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -262,7 +263,7 @@ Reason codeとtyped fact categoryは[Recommendation Reason Taxonomy仕様](recom
 - deferred taskを現在開始する
 - discouraged taskをnegative factを承知して開始する
 
-Overrideはnormal recommendationを過去に遡って変更しない。誰が、何を、なぜ選んだか、どこへ記録するか、override後の再解析、write safetyは`HUMAN_OVERRIDE_CONTRACT`で固定する。
+Overrideはnormal recommendationを過去に遡って変更しない。[Recommendation Human Override Contract仕様](recommendation-override.md)は、override必要/不要の条件、feasible replacement set、caller-asserted actor、human reason、Git audit artifact、single-use、override後の再解析を固定する。Overrideはnon-ready taskやcapacity violationをbypassしない。
 
 ## 13. Re-analysis
 
@@ -308,7 +309,7 @@ Recommendation resultはsource digest、capacity option、algorithm versionへ�
 - text sectionとordering
 - explanation level、size limit、truncation
 
-### `HUMAN_OVERRIDE_CONTRACT`
+### [`HUMAN_OVERRIDE_CONTRACT`](recommendation-override.md)
 
 - tierとoverride requirementの対応
 - override reasonとaudit

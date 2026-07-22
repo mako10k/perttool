@@ -10,6 +10,7 @@
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
+- Human override: [recommendation-override.md](recommendation-override.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. 目的
@@ -509,10 +510,12 @@ Description keyの追加はDescription registryのminor-compatibleな更新と�
 - description key/parameterからの派生text
 - truncated projectionとcomplete Core traceの分離
 
-### `HUMAN_OVERRIDE_CONTRACT`
+### [`HUMAN_OVERRIDE_CONTRACT`](recommendation-override.md)（確定）
 
-- normal recommendation traceとoverride decision traceの区別
-- override reasonの記録に本expression/description modelを利用するか
+- normal recommendation traceとoverride decision artifactを分離する
+- normal decision/reason/comparison IDをcopyせず参照する
+- replacement setのresource witnessに制限付きexpressionを使用する
+- human reason textをnormal ranking factへ戻さない
 
 ## 18. 本sliceのacceptance
 

@@ -8,6 +8,7 @@
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
+- Human override: [recommendation-override.md](recommendation-override.md)
 - Analysis仕様: [analysis.md](analysis.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
@@ -54,7 +55,7 @@ Reason codeだけで「なぜこのtaskで別taskではないか」を説明し�
 - 自然言語description、localization、template、message ID
 - expression AST、decision traceのnode構造と評価規則
 - Core type、JSON field、schema、text layout、ordering、size limit
-- human override reasonとaudit storage
+- human override reasonとaudit storage。[Recommendation Human Override Contract仕様](recommendation-override.md)を正とする
 - lifecycle diagnostic、`blocked_reason`、`runnable_now`の既存resource rejectionの置換
 - interfaceまたは実装の変更
 
