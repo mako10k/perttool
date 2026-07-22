@@ -45,6 +45,10 @@ import type {
   TaskMutationStatus,
   TaskRequirementInput,
 } from "./mutation/types.js";
+import {
+  planAdvance,
+  type AdvanceDetails,
+} from "./mutation/advance.js";
 import { TOOL_VERSION } from "./version.js";
 
 type OutputFormat = "text" | "json";
@@ -73,6 +77,7 @@ function topLevelHelp(): string {
     "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
     "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
     "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
+    "  perttool dag advance <file> [--diff] [--write | --out <path>] [--format text|json]",
     "  perttool dag render <file> --to mermaid [--profile perttool|plain] [--format text|json]",
     "  perttool task add|set|remove|finish ...",
     "  perttool milestone add|set|remove ...",
@@ -121,6 +126,12 @@ function commandHelp(resource: string, action: string): string {
     "  [--explain-depth <integer>] [--precision <integer>]",
     "  [--max-diagnostics <integer>]",
     "  [--warnings-as-errors]",
+    "  [--format text|json] [--color auto|always|never]",
+  ].join("\n");
+  if (resource === "dag" && action === "advance") return [
+    "Usage: perttool dag advance <file>",
+    "  [--diff] [--write [--expect-digest <digest>] | --out <path>]",
+    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
   if (resource === "dag" && action === "render") return [
@@ -1272,6 +1283,124 @@ async function runMutation(
   return ok ? 0 : 1;
 }
 
+function advanceResultJson(
+  details: AdvanceDetails | null,
+): Readonly<Record<string, unknown>> | null {
+  return details === null
+    ? null
+    : {
+        removed_task_ids: details.removedTaskIds,
+        removed_gate_ids: details.removedGateIds,
+        removed_milestone_ids: details.removedMilestoneIds,
+        frontier_before: details.frontierBefore,
+        frontier_after: details.frontierAfter,
+        ready_before: details.readyBefore,
+        ready_after: details.readyAfter,
+      };
+}
+
+function renderAdvanceSummary(details: AdvanceDetails): string {
+  const list = (ids: readonly string[]): string => ids.join(",") || "-";
+  return [
+    `ADVANCE removed_tasks=${list(details.removedTaskIds)} removed_gates=${list(details.removedGateIds)} removed_milestones=${list(details.removedMilestoneIds)}`,
+    `ADVANCE frontier_before=${list(details.frontierBefore)} frontier_after=${list(details.frontierAfter)} ready_before=${list(details.readyBefore)} ready_after=${list(details.readyAfter)}`,
+    "",
+  ].join("\n");
+}
+
+async function runAdvance(args: readonly string[]): Promise<number> {
+  const parsed = parseOptions(
+    args,
+    new Set(["format", "color", "max-diagnostics", "out", "expect-digest"]),
+    new Set(["diff", "write", "warnings-as-errors"]),
+  );
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("dag advance requires exactly one <file>");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const sourceOperand = parsed.positionals[0]!;
+  const writeRequest = editingWriteRequest(parsed, sourceOperand);
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "dag.advance",
+      format === "json",
+    );
+  }
+  const result = planAdvance(input.text, {
+    maxDiagnostics,
+    originalLabel: source,
+    updatedLabel: "candidate",
+  });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
+  const ok = result.ok && !warningFailure;
+  let writeResult: DocumentWriteResult | null = null;
+  if (result.ok) {
+    try {
+      assertExpectedDigest(writeRequest, input.digest);
+      if (ok && writeRequest.mode !== "preview") {
+        writeResult = await commitCandidate(writeRequest, result.updatedText, input.digest);
+      }
+    } catch (error) {
+      return writeFailureExit(error, "dag.advance", format === "json");
+    }
+  }
+  if (format === "json") {
+    writeJson({
+      schema_version: "Perttool.MutationResult.v1",
+      tool_version: TOOL_VERSION,
+      operation: "dag.advance",
+      ok,
+      document_id: result.documentId,
+      source,
+      source_digest: input.digest,
+      diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
+      ...previewResultJson(result, result.ok, writeRequest, writeResult),
+      advance: advanceResultJson(result.advance),
+    });
+  } else {
+    if (ok && result.advance !== null) {
+      if (writeResult !== null) {
+        process.stderr.write(renderWriteSummary("dag.advance", writeResult));
+      } else {
+        process.stdout.write(
+          parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
+        );
+        if (!parsed.flags.has("diff")) {
+          process.stderr.write(
+            `PREVIEW dag.advance changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+          );
+        }
+      }
+      process.stderr.write(renderAdvanceSummary(result.advance));
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return ok ? 0 : 1;
+}
+
 type RationalUnit =
   | DurationUnit
   | "day^2"
@@ -2234,7 +2363,7 @@ async function main(argv: readonly string[]): Promise<number> {
     argv.length === 3 &&
     argv[2] === "--help" &&
     ((resource === "dsl" && ["check", "format", "help"].includes(action)) ||
-      (resource === "dag" && ["analyze", "next", "render"].includes(action)) ||
+      (resource === "dag" && ["analyze", "next", "advance", "render"].includes(action)) ||
       isMutationCommand)
   ) {
     process.stdout.write(`${commandHelp(resource, action)}\n`);
@@ -2245,6 +2374,9 @@ async function main(argv: readonly string[]): Promise<number> {
   }
   if (resource === "dag" && action === "next") {
     return runNext(argv.slice(2));
+  }
+  if (resource === "dag" && action === "advance") {
+    return runAdvance(argv.slice(2));
   }
   if (resource === "dag" && action === "render") {
     return runRender(argv.slice(2));

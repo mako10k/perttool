@@ -8,6 +8,7 @@ import {
   checkDocument,
   convertWithVelocity,
   planFormat,
+  planAdvance,
   selectNextTasks,
 } from "../dist/index.js";
 
@@ -112,6 +113,25 @@ test("operations plan matches the M1-M4 implementation roadmap golden", async ()
     "utf8",
   ));
   assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
+test("operations plan has a valid idempotent advance candidate", async () => {
+  const text = await readFile(path.join(root, "plans/operations.pert"), "utf8");
+  const before = selectNextTasks(text);
+  const advanced = planAdvance(text);
+  assert.equal(advanced.ok, true);
+  assert.equal(advanced.changed, true);
+  assert.ok(advanced.advance.removedTaskIds.includes("ADVANCE_PLANNER"));
+  assert.equal(advanced.advance.removedTaskIds.includes("ADVANCE_CLI_ACCEPTANCE"), false);
+  assert.deepEqual(advanced.advance.readyBefore, ["ADVANCE_CLI_ACCEPTANCE"]);
+  assert.deepEqual(advanced.advance.readyAfter, ["ADVANCE_CLI_ACCEPTANCE"]);
+  assert.deepEqual(selectNextTasks(advanced.updatedText).groups, before.groups);
+
+  const repeated = planAdvance(advanced.updatedText);
+  assert.equal(repeated.ok, true);
+  assert.equal(repeated.changed, false);
+  assert.equal(repeated.diff, "");
+  assert.deepEqual(repeated.edits, []);
 });
 
 test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {

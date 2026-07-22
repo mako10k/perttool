@@ -3,6 +3,7 @@ export { analyzeDocument } from "./application/analyze.js";
 export { planFormat } from "./application/format.js";
 export { selectNextTasks } from "./application/next.js";
 export { planMutation } from "./application/mutate.js";
+export { planAdvance } from "./mutation/advance.js";
 export { exportMermaid } from "./conversion/mermaid.js";
 export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js";
 export { analyzePrecedence } from "./analysis/precedence.js";
@@ -99,6 +100,12 @@ export type {
   FormatResult,
 } from "./formatter/source-formatter.js";
 export type { TextEdit } from "./mutation/text-edits.js";
+export type {
+  AdvanceDetails,
+  AdvanceResult,
+  AdvanceRetainedEdge,
+  AdvanceRetentionReason,
+} from "./mutation/advance.js";
 export type { DocumentContent } from "./io/document-file.js";
 export type {
   CreateArtifactOptions,

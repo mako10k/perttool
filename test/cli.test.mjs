@@ -413,6 +413,157 @@ test("dag next accepts stdin and rejects an invalid explanation depth", async ()
   assert.equal(JSON.parse(invalid.stdout).diagnostics[0].code, "PTCLI-001");
 });
 
+test("dag advance exposes candidate, diff, structured summary, and stdin preview", () => {
+  const source = "docs/examples/advance-partial-before.pert";
+  const sourceText = readFileSync(path.join(root, source), "utf8");
+  const help = run(["dag", "advance", "--help"]);
+  assert.equal(help.status, 0, help.stderr);
+  assert.match(help.stdout, /perttool dag advance <file>/);
+  assert.match(help.stdout, /--expect-digest/);
+
+  const preview = run(["dag", "advance", source, "--color=never"]);
+  assert.equal(preview.status, 0, preview.stderr);
+  assert.match(preview.stdout, /^project ADVANCE_PARTIAL:/);
+  assert.doesNotMatch(preview.stdout, /task BRANCH_A /);
+  assert.match(preview.stdout, /milestone A_DONE:[\s\S]*?state reached/);
+  assert.match(preview.stderr, /^PREVIEW dag\.advance changed=true /m);
+  assert.match(preview.stderr, /^ADVANCE removed_tasks=BRANCH_A removed_gates=- removed_milestones=-$/m);
+  assert.match(preview.stderr, /^ADVANCE frontier_before=A_DONE,NOW frontier_after=A_DONE,NOW ready_before=- ready_after=-$/m);
+
+  const diff = run(["dag", "advance", source, "--diff", "--color=never"]);
+  assert.equal(diff.status, 0, diff.stderr);
+  assert.match(diff.stdout, /^--- docs\/examples\/advance-partial-before\.pert/m);
+  assert.match(diff.stdout, /^-task BRANCH_A NOW -> A_DONE:$/m);
+  assert.match(diff.stderr, /removed_tasks=BRANCH_A/);
+
+  const jsonResult = run(["dag", "advance", source, "--format=json"]);
+  assert.equal(jsonResult.status, 0, jsonResult.stderr);
+  const json = JSON.parse(jsonResult.stdout);
+  assert.equal(json.schema_version, "Perttool.MutationResult.v1");
+  assert.equal(json.operation, "dag.advance");
+  assert.equal(json.document_id, "ADVANCE_PARTIAL");
+  assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
+  assert.deepEqual(json.advance, {
+    removed_task_ids: ["BRANCH_A"],
+    removed_gate_ids: [],
+    removed_milestone_ids: [],
+    frontier_before: ["A_DONE", "NOW"],
+    frontier_after: ["A_DONE", "NOW"],
+    ready_before: [],
+    ready_after: [],
+  });
+  assert.match(json.updated_text, /^project ADVANCE_PARTIAL:/);
+  assert.match(json.diff, /^--- docs\/examples\/advance-partial-before\.pert/m);
+  assert.ok(json.edits.length > 0);
+
+  const completeText = [
+    "project COMPLETE_GATE:",
+    "  title \"complete gate\"",
+    "  duration_unit day",
+    "  finish DONE",
+    "",
+    "milestone NOW:",
+    "  title \"now\"",
+    "  state reached",
+    "",
+    "milestone MID:",
+    "  title \"middle\"",
+    "",
+    "milestone DONE:",
+    "  title \"done\"",
+    "",
+    "task WORK NOW -> MID:",
+    "  title \"work\"",
+    "  duration 1d",
+    "  status done",
+    "",
+    "gate RELEASE MID -> DONE:",
+    "  reason \"release\"",
+    "",
+  ].join("\n");
+  const complete = run(["dag", "advance", "-", "--format=json"], {
+    input: completeText,
+  });
+  assert.equal(complete.status, 0, complete.stderr);
+  assert.deepEqual(JSON.parse(complete.stdout).advance, {
+    removed_task_ids: ["WORK"],
+    removed_gate_ids: ["RELEASE"],
+    removed_milestone_ids: ["MID", "NOW"],
+    frontier_before: ["DONE"],
+    frontier_after: ["DONE"],
+    ready_before: [],
+    ready_after: [],
+  });
+
+  const stdin = run(["dag", "advance", "-", "--format=json"], { input: sourceText });
+  assert.equal(stdin.status, 0, stdin.stderr);
+  assert.equal(JSON.parse(stdin.stdout).source, "<stdin>");
+
+  const invalid = run([
+    "dag", "advance", "test/fixtures/invalid/undefined-endpoint.pert", "--format=json",
+  ]);
+  assert.equal(invalid.status, 1, invalid.stderr);
+  const invalidJson = JSON.parse(invalid.stdout);
+  assert.equal(invalidJson.ok, false);
+  assert.equal(invalidJson.updated_text, null);
+  assert.equal(invalidJson.advance, null);
+});
+
+test("dag advance shares safe-write locks and repeated write is a no-op", (t) => {
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-advance-write-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const source = path.join(directory, "partial.pert");
+  copyFileSync(path.join(root, "docs/examples/advance-partial-before.pert"), source);
+  const initialDigest = JSON.parse(run([
+    "dsl", "check", source, "--format=json",
+  ]).stdout).source_digest;
+
+  const written = run([
+    "dag", "advance", source, "--write", "--expect-digest", initialDigest,
+    "--format=json",
+  ]);
+  assert.equal(written.status, 0, written.stderr);
+  const writtenJson = JSON.parse(written.stdout);
+  assert.equal(writtenJson.write.mode, "in_place");
+  assert.equal(writtenJson.write.written, true);
+  assert.equal(readFileSync(source, "utf8"), writtenJson.updated_text);
+  assert.doesNotMatch(readFileSync(source, "utf8"), /task BRANCH_A /);
+
+  const repeated = run(["dag", "advance", source, "--write", "--format=json"]);
+  assert.equal(repeated.status, 0, repeated.stderr);
+  const repeatedJson = JSON.parse(repeated.stdout);
+  assert.equal(repeatedJson.changed, false);
+  assert.equal(repeatedJson.diff, "");
+  assert.deepEqual(repeatedJson.edits, []);
+  assert.equal(repeatedJson.write.written, false);
+  assert.deepEqual(repeatedJson.advance.removed_task_ids, []);
+
+  const outPath = path.join(directory, "candidate.pert");
+  const out = run([
+    "dag", "advance", "docs/examples/advance-partial-before.pert",
+    "--out", outPath, "--format=json",
+  ]);
+  assert.equal(out.status, 0, out.stderr);
+  assert.equal(JSON.parse(out.stdout).write.written, true);
+  assert.equal(readFileSync(outPath, "utf8"), JSON.parse(out.stdout).updated_text);
+
+  const stale = run([
+    "dag", "advance", source, "--write",
+    "--expect-digest", `sha256:${"0".repeat(64)}`, "--format=json",
+  ]);
+  assert.equal(stale.status, 5, stale.stderr);
+  assert.equal(JSON.parse(stale.stdout).diagnostics[0].data.reason, "expected_digest_mismatch");
+
+  for (const args of [
+    ["dag", "advance", source, "--diff", "--write"],
+    ["dag", "advance", "-", "--write"],
+  ]) {
+    const rejected = run([...args, "--format=json"]);
+    assert.equal(rejected.status, 2, rejected.stderr);
+    assert.equal(JSON.parse(rejected.stdout).diagnostics[0].code, "PTCLI-001");
+  }
+});
+
 test("invalid capacity override is a usage or analysis error at the correct boundary", () => {
   const duplicate = run([
     "dag",

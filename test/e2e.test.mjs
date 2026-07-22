@@ -42,6 +42,7 @@ test("E2E-001: discover commands, validate a plan, and compare capacity what-if"
   assert.equal(help.status, 0);
   assert.match(help.stdout, /perttool dag analyze <file>/);
   assert.match(help.stdout, /perttool dag next <file>/);
+  assert.match(help.stdout, /perttool dag advance <file>/);
   assert.match(help.stdout, /perttool task add\|set\|remove\|finish/);
   assert.match(help.stdout, /perttool mutation apply <file>/);
 
@@ -330,4 +331,39 @@ test("E2E-012: Mermaid export preserves semantics and analysis context", (t) => 
   ], 4);
   assert.equal(strictPlain.artifact, null);
   assert.deepEqual(strictPlain.loss_report.records.map(({ code }) => code), ["PTCNV-206"]);
+});
+
+test("E2E-013: advance preview and safe write preserve a partial join", (t) => {
+  const source = "docs/examples/advance-partial-before.pert";
+  const beforeText = readFileSync(path.join(root, source), "utf8");
+  const beforeNext = runJson(["dag", "next", source]);
+  const preview = runJson(["dag", "advance", source]);
+  assert.equal(preview.changed, true);
+  assert.deepEqual(preview.advance.removed_task_ids, ["BRANCH_A"]);
+  assert.deepEqual(preview.advance.frontier_before, ["A_DONE", "NOW"]);
+  assert.deepEqual(preview.advance.frontier_after, ["A_DONE", "NOW"]);
+  assert.equal(readFileSync(path.join(root, source), "utf8"), beforeText);
+
+  assert.equal(runJson(["dsl", "check", "-"], 0, { input: preview.updated_text }).ok, true);
+  assert.equal(runJson(["dag", "analyze", "-"], 0, { input: preview.updated_text }).ok, true);
+  const afterNext = runJson(["dag", "next", "-"], 0, { input: preview.updated_text });
+  assert.deepEqual(afterNext.groups, beforeNext.groups);
+
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-advance-e2e-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const copy = path.join(directory, "partial.pert");
+  copyFileSync(path.join(root, source), copy);
+  const digest = runJson(["dsl", "check", copy]).source_digest;
+  const written = runJson([
+    "dag", "advance", copy, "--write", "--expect-digest", digest,
+  ]);
+  assert.equal(written.write.written, true);
+  assert.equal(readFileSync(copy, "utf8"), preview.updated_text);
+  assert.equal(runJson(["dsl", "check", copy]).ok, true);
+  assert.deepEqual(runJson(["dag", "next", copy]).groups, beforeNext.groups);
+
+  const repeated = runJson(["dag", "advance", copy, "--write"]);
+  assert.equal(repeated.changed, false);
+  assert.equal(repeated.diff, "");
+  assert.equal(repeated.write.written, false);
 });

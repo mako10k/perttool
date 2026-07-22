@@ -50,10 +50,13 @@ test("editing help exposes preview and explicit safe-write commands", () => {
   assert.match(help.summary, /dsl format/);
   assert.match(help.summary, /task\/milestone\/resource mutation/);
   assert.match(help.summary, /atomic batch/);
+  assert.match(help.summary, /dag advance/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planFormat/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planMutation/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /planAdvance/);
   assert.ok(help.syntax.some((line) => line.includes("dsl format")));
   assert.ok(help.syntax.some((line) => line.includes("mutation apply")));
+  assert.ok(help.syntax.some((line) => line.includes("dag advance")));
   assert.match(help.sections.map(({ body }) => body).join("\n"), /既定.*preview/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--expect-digest/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--out/);
