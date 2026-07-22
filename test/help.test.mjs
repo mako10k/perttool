@@ -60,6 +60,24 @@ test("editing help exposes preview and explicit safe-write commands", () => {
   assert.ok(help.syntax.every((line) => line.includes("--write")));
 });
 
+test("mermaid help separates the designed profile from unavailable commands", () => {
+  const help = getHelp("mermaid", "detail");
+  assert.equal(help.ok, true);
+  assert.match(help.summary, /まだ未実装/);
+  assert.deepEqual(help.syntax, []);
+  const body = help.sections.map(({ body }) => body).join("\n");
+  assert.match(body, /%% perttool:/);
+  assert.match(body, /正規化意味同値/);
+  assert.match(body, /plain importへ黙って降格しません/);
+  assert.deepEqual(help.examples, [
+    {
+      id: "mermaid-profile",
+      title: "Normative profile",
+      text: "docs/examples/mermaid-profile.md",
+    },
+  ]);
+});
+
 test("syntax help sample references stay synchronized with parser fixtures", async () => {
   const references = topicIds
     .filter((topicId) => topicId === "samples" || topicId.startsWith("syntax"))

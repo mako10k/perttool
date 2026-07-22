@@ -10,6 +10,7 @@
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Analysis仕様: [analysis.md](analysis.md)
 - Mutation semantics: [mutation.md](mutation.md)
+- Mermaid profile: [mermaid-profile.md](mermaid-profile.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Recommendation reasons: [recommendation-reasons.md](recommendation-reasons.md)
@@ -251,6 +252,8 @@ perttool dag next <file>
 
 ### 6.4 `dag render`
 
+Mermaid選択時のartifact wire contractは[Mermaid Profile仕様](mermaid-profile.md)を正とする。
+
 ```text
 perttool dag render <file>
   --to mermaid|svg|json
@@ -274,6 +277,8 @@ perttool dag render <file>
 - `--to`はartifact種別、`--format`はCLI result serializationであり別概念
 
 ### 6.5 `dag import`
+
+Profile検出、fail-closed validation、plain best-effort境界は[Mermaid Profile仕様](mermaid-profile.md)を正とする。
 
 ```text
 perttool dag import <file>
@@ -479,7 +484,7 @@ JSON format:
 | Code | Stable meaning |
 | ---: | --- |
 | 0 | operation成功、または有効なdocument。warningはpolicy上許容 |
-| 1 | DSL/semantic/analysis/help lookup error、format check差分、またはwarnings-as-errors |
+| 1 | DSL/semantic/analysis/profile validation/help lookup error、format check差分、またはwarnings-as-errors |
 | 2 | CLI usage error |
 | 3 | input/output/encoding error |
 | 4 | strict conversionでlossを検出 |
@@ -948,6 +953,8 @@ write            {mode, target, written}
 ```
 
 `ConversionLoss`は`code`、`severity`、`message`、`element_id` nullable、`span` nullable、`lossy` booleanを持つ。
+
+Mermaid profile errorとplain import lossのstable `PTCNV-*` codeは[Mermaid Profile仕様](mermaid-profile.md)を正とする。Profile header検出後のvalidation errorはplain modeへ降格せず、candidateを返さない。
 
 `loss_report`の型schema IDは`Perttool.ConversionLossReport.v1`とし、Export/Import resultの`$defs`から同じ定義を参照する。
 

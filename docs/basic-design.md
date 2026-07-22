@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 1.6
+- 文書状態: Draft 1.7
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
@@ -16,6 +16,7 @@
 - Recommendation migration: [process/recommendation-migration.md](process/recommendation-migration.md)
 - Recommendation design review: [process/recommendation-design-review.md](process/recommendation-design-review.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
+- Mermaid profile: [specs/mermaid-profile.md](specs/mermaid-profile.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
@@ -24,7 +25,7 @@
 
 本書は、要件で定めた `perttool` を実装へ移せる粒度まで分解し、共通コア、データ表現、処理フロー、外部インターフェース、安全な文書更新、テスト境界を定義する。
 
-完全なDSL grammarとCLI/JSON contractは個別仕様で固定した。Mermaid profileは今後の個別仕様で固定する。本書では、それらを実装するモジュール境界と契約を扱う。
+完全なDSL grammar、CLI/JSON contract、Mermaid profileは個別仕様で固定した。本書では、それらを実装するモジュール境界と契約を扱う。
 
 ## 2. 基本方針
 
@@ -609,6 +610,8 @@ Mermaid text
 
 Mermaid adapter は analysis や validation を再実装しない。一般 Mermaid の best-effort import と、`perttool` profile の lossless import を別 mode として扱う。
 
+Lossless profileは[Mermaid Profile仕様](specs/mermaid-profile.md)を正とする。Default適用後の完全な意味値を`%% perttool:` canonical JSON recordへ保持し、visual flowchartを復元正本にしない。Profile headerを検出した後のrecord/digest/projection不正はfail closedとし、一般Mermaid importへ降格しない。Importerはmetadata decode後も通常のsemantic validationとcanonical DSLの再parseを通す。
+
 resource requirementはDAGのdependency edgeではないため、通常flowchartへresource nodeを直結してprecedenceと混同させない。resource共有はtask style/annotation、別のresource bipartite view、またはschedule timelineで表現する。
 
 ## 10. Graph algorithm
@@ -1041,6 +1044,7 @@ Exit:
 
 - advance planner
 - Mermaid lossless profile
+- `%% perttool:` semantic recordとprojection integrity
 - general Mermaid loss report
 - SVG/HTML preview の基礎
 
@@ -1056,8 +1060,7 @@ DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reach
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細
-3. Mermaid metadata record schema
-4. package/runtime/test dependency の選定
+3. package/runtime/test dependency の選定
 
 ## 19. 要件トレーサビリティ
 

@@ -1,6 +1,6 @@
 # perttool 要件定義
 
-- 文書状態: Draft 0.7
+- 文書状態: Draft 0.8
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対象: MVP と、その後の拡張境界
@@ -690,12 +690,14 @@ Should:
 
 ## 14. Mermaid 相互変換
 
+Profileのmachine metadata、canonical form、integrity、projection、import validationは[Mermaid Profile仕様](specs/mermaid-profile.md)を正とする。
+
 ### 14.1 export
 
 Must:
 
 - `flowchart LR` を基本とした Mermaid を生成できること
-- milestone ID を Mermaid node ID として安定利用すること
+- milestone ID から一意に導出した Mermaid node ID を安定利用すること
 - task と gate の ID、title、状態、計算結果を表現できること
 - resource capacity、task requirement、priorityを予約metadataへ保持できること
 - Mermaid のラベルに使用できない文字を正しく escape すること
@@ -705,9 +707,9 @@ Must:
 
 ```mermaid
 flowchart LR
-  NOW(("現在"))
-  REQUIREMENTS_DONE(("要件確定"))
-  NOW -->|"REQ: 要件と DSL を確定する / E=2.17d"| REQUIREMENTS_DONE
+  ptm_NOW(("NOW: 現在"))
+  ptm_REQUIREMENTS_DONE(("REQUIREMENTS_DONE: 要件確定"))
+  ptm_NOW -->|"REQ: 要件と DSL を確定する / E=2.17d"| ptm_REQUIREMENTS_DONE
 ```
 
 ### 14.2 import
@@ -718,6 +720,9 @@ Must:
 
 - `perttool` が export した profile は DSL へ lossless に戻せること
 - lossless round-trip に必要な情報を予約コメント `%% perttool:` 配下の機械可読メタデータとして保持できること
+- losslessをgrammar version 1の正規化意味モデル同値として定義し、source triviaやbyte同一性と混同しないこと
+- profile metadataとvisual projectionの完全性を検査できること
+- profile header検出後の破損を一般Mermaid importへ黙って降格しないこと
 - 一般的な `flowchart` の node と directed edge を best-effort で import できること
 - 復元できない見積り、状態、task/gate区別、resource requirementなどをloss reportに列挙すること
 - 不明な情報を推測して無言で補完しないこと
@@ -986,9 +991,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 ## 24. 未確定の設計判断
 
-実装開始前に、次を ADR または個別仕様で固定する。
-
-1. Mermaid profile の `%% perttool:` メタデータ schema
+現時点でMVP実装開始を妨げる未確定の設計判断はない。実装中に新しい意味判断が必要になった場合は、codeだけへ固定せずADRまたは個別仕様を先に更新する。
 
 解決済みの設計判断:
 
@@ -1000,6 +1003,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 - typed fact、制限付きexpression、comparison、decision trace、description projection: [Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)
 - Core type、complete JSON、text summary、`NextResult.v3` migration: [Recommendation Interface Contract仕様](specs/recommendation-interface.md)
 - override requirement、feasible replacement、human reason、audit、再解析: [Recommendation Human Override Contract仕様](specs/recommendation-override.md)
+- Mermaid semantic record、canonical JSON、digest、projection、fail-closed import: [Mermaid Profile仕様](specs/mermaid-profile.md)
 
 ## 25. 推奨する次の仕様作業
 
@@ -1023,6 +1027,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
    - [x] [横断設計レビューと受け入れ記録](process/recommendation-design-review.md)
 7. [x] parser/validator の最小実装と golden tests
 8. [x] [Mutation Semantics仕様](specs/mutation.md): task/milestone/resource mutation、atomic batch、UTF-16 TextEdit、comment所有、candidate再検査
+9. [x] [Mermaid Profile仕様](specs/mermaid-profile.md): `%% perttool:` semantic record、canonical JSON、integrity、projection、lossless import境界
 
 項目7は完了した。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`、複数error recovery、validation phase suppression、diagnostic上限、block textのcommon indentとUTF-16 span、source-preserving formatter Core、formatterのidempotenceとAST同値goldenに加え、syntax help sample、related link、diagnostic `helpTopic`とparser fixtureのdrift検査を固定し、grammar acceptance全項目を満たした。
 

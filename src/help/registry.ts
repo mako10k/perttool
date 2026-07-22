@@ -519,12 +519,40 @@ const nodes: readonly HelpNode[] = [
   {
     id: "mermaid",
     title: "Mermaid conversion",
-    summary: "AoA graphをMermaidへexportし、profileをlossless importします。",
-    quick: [],
-    detail: [],
-    syntax: ["perttool dag render FILE --to mermaid"],
-    examples: [],
-    related: ["syntax"],
+    summary: "lossless Mermaid profileの設計契約を案内します。dag render/importはまだ未実装です。",
+    quick: [
+      {
+        id: "authority",
+        title: "Profile authority",
+        body: "%% perttool: semantic recordが正規化DSL意味モデルの復元正本で、flowchart node/edgeは人間向けprojectionです。",
+      },
+    ],
+    detail: [
+      {
+        id: "fidelity",
+        title: "Lossless boundary",
+        body: "losslessはgrammar v1の正規化意味同値です。comment、blank line、field/declaration順、escape spelling、line endingのbyte同一性は対象外です。",
+      },
+      {
+        id: "integrity",
+        title: "Fail-closed validation",
+        body: "canonical JSON record、record count、metadata/projection SHA-256、node/edge対応を検査します。Profile header検出後の破損をplain importへ黙って降格しません。",
+      },
+      {
+        id: "availability",
+        title: "Current availability",
+        body: "Perttool.MermaidProfile.v1は設計済みですが、dag renderとdag importのCLI/Core実装は後続sliceです。現在のCLI commandとして実行しないでください。",
+      },
+    ],
+    syntax: [],
+    examples: [
+      {
+        id: "mermaid-profile",
+        title: "Normative profile",
+        text: "docs/examples/mermaid-profile.md",
+      },
+    ],
+    related: ["syntax", "analysis"],
   },
   {
     id: "workflows",
