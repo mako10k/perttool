@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`とsource-preserving formatter Coreは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`をread-only自己利用中である。`dsl format` commandを含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの実装段階である。`dsl check`、`dsl help`、`dag analyze`、`dag next`、source-preserving formatter Core、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`をread-only自己利用中である。`dsl format` commandを含むwrite/conversion surfaceは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 

@@ -77,8 +77,9 @@ task CONTROL_PLANE_DESIGN_WORK_PACKAGE NOW -> CONTROL_PLANE_DESIGN_ACCEPTED:
 
 task GRAMMAR_WORK_PACKAGE NOW -> GRAMMAR_ACCEPTED:
   title "grammar planの残作業を完了する"
-  description "詳細日程はplans/grammar.pertのresource makespan 1p、直近実測velocity forecast 1/5dを使用する"
+  description "plans/grammar.pertの全13pとgrammar acceptanceが完了した"
   duration 0.2d
+  status done
   priority 50
   requires:
     DEVELOPERS 1

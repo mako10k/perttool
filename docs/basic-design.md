@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 1.5
+- 文書状態: Draft 1.6
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
@@ -745,7 +745,15 @@ interface HelpNode {
 - `syntax.milestone`
 - `syntax.task`
 - `syntax.gate`
+- `syntax.estimate`
 - `syntax.duration`
+- `syntax.velocity`
+- `syntax.indentation`
+- `syntax.string`
+- `syntax.text`
+- `syntax.tags`
+- `syntax.comments`
+- `syntax.top-level`
 - `analysis`
 - `analysis.resources`
 - `next`
@@ -763,7 +771,7 @@ interface HelpNode {
 - 将来のLSP hover/completion documentation
 - parse diagnostic の help link
 
-grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自己完結した operational guidance を提供するが、完全 EBNF の複製を正本にはしない。grammar、parser、formatter、help sample の整合性は fixture から検査する。
+grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自己完結した operational guidance を提供するが、完全 EBNF の複製を正本にはしない。grammar、parser、formatter、help sample の整合性は fixture から検査する。Registryの全related IDとparser fixtureの全diagnostic `helpTopic`が解決でき、syntax/sample topicのstable `.pert`参照が存在してparseできることを自動検査する。
 
 ## 14. Schema と versioning
 

@@ -72,7 +72,82 @@ const nodes: readonly HelpNode[] = [
         text: "docs/examples/minimal.pert",
       },
     ],
-    related: ["syntax.task", "syntax.estimate", "syntax.velocity", "analysis", "errors"],
+    related: [
+      "syntax.project",
+      "syntax.resource",
+      "syntax.milestone",
+      "syntax.task",
+      "syntax.gate",
+      "syntax.estimate",
+      "syntax.velocity",
+      "analysis",
+      "errors",
+    ],
+  },
+  {
+    id: "syntax.project",
+    title: "Project syntax",
+    summary: "文書先頭にexactly one置くproject declarationです。",
+    quick: [
+      {
+        id: "required",
+        title: "Required fields",
+        body: "title、duration_unit、finishが必須です。Point文書では正のvelocityも必須です。",
+      },
+    ],
+    detail: [
+      {
+        id: "version",
+        title: "Grammar version",
+        body: "version省略時は1として扱い、指定する場合もversion 1だけを受理します。",
+      },
+    ],
+    syntax: [
+      "project ID:",
+      "  title \"...\"",
+      "  duration_unit day|hour|point",
+      "  finish MILESTONE_ID",
+    ],
+    examples: [
+      { id: "minimal", title: "Minimal project", text: "docs/examples/minimal.pert" },
+    ],
+    related: ["syntax", "syntax.duration", "syntax.velocity", "syntax.text"],
+  },
+  {
+    id: "syntax.resource",
+    title: "Resource syntax",
+    summary: "Renewable resourceと同時利用可能な整数capacityを宣言します。",
+    quick: [
+      {
+        id: "capacity",
+        title: "Capacity",
+        body: "titleと1以上のcapacityが必須です。Taskのrequiresからresource IDを参照します。",
+      },
+    ],
+    detail: [],
+    syntax: ["resource ID:", "  title \"...\"", "  capacity 1"],
+    examples: [
+      { id: "parallel", title: "Resource declarations", text: "docs/examples/parallel.pert" },
+    ],
+    related: ["syntax", "syntax.task", "syntax.tags", "syntax.text", "analysis.resources"],
+  },
+  {
+    id: "syntax.milestone",
+    title: "Milestone syntax",
+    summary: "AoA nodeと現在frontierのreached状態を宣言します。",
+    quick: [
+      {
+        id: "state",
+        title: "Milestone state",
+        body: "titleが必須です。stateはplannedまたはreachedで、readyは保存せず依存関係から導出します。",
+      },
+    ],
+    detail: [],
+    syntax: ["milestone ID:", "  title \"...\"", "  state reached"],
+    examples: [
+      { id: "minimal", title: "Reached frontier", text: "docs/examples/minimal.pert" },
+    ],
+    related: ["syntax", "syntax.task", "syntax.gate", "syntax.tags", "syntax.text"],
   },
   {
     id: "syntax.task",
@@ -93,8 +168,40 @@ const nodes: readonly HelpNode[] = [
       },
     ],
     syntax: ["task ID FROM -> TO:", "  title \"...\"", "  duration 1d"],
-    examples: [],
-    related: ["syntax", "syntax.duration", "syntax.estimate", "analysis.resources"],
+    examples: [
+      { id: "minimal", title: "Deterministic task", text: "docs/examples/minimal.pert" },
+    ],
+    related: [
+      "syntax",
+      "syntax.duration",
+      "syntax.estimate",
+      "syntax.resource",
+      "syntax.text",
+      "syntax.tags",
+      "analysis.resources",
+    ],
+  },
+  {
+    id: "syntax.gate",
+    title: "Gate syntax",
+    summary: "所要時間0のdependency edgeとしてmilestone間を接続します。",
+    quick: [
+      {
+        id: "reason",
+        title: "Reason",
+        body: "reasonが必須です。Gateはresourceを要求せず、task durationも持ちません。",
+      },
+    ],
+    detail: [],
+    syntax: ["gate ID FROM -> TO:", "  reason \"...\""],
+    examples: [
+      {
+        id: "point-velocity",
+        title: "Dependency gates",
+        text: "docs/examples/point-velocity.pert",
+      },
+    ],
+    related: ["syntax", "syntax.milestone", "syntax.text"],
   },
   {
     id: "syntax.estimate",
@@ -185,6 +292,82 @@ const nodes: readonly HelpNode[] = [
     syntax: ["field: 2 spaces", "nested field: 4 spaces"],
     examples: [],
     related: ["syntax"],
+  },
+  {
+    id: "syntax.string",
+    title: "String syntax",
+    summary: "JSON string literalと同じdouble-quoted textを使用します。",
+    quick: [],
+    detail: [
+      {
+        id: "unicode",
+        title: "Unicode and escapes",
+        body: "Unicodeは直接記述でき、escapeはJSON形式を使用します。Unpaired surrogateは受理しません。",
+      },
+    ],
+    syntax: ["\"text\"", "\"\\u65e5\\u672c\""],
+    examples: [],
+    related: ["syntax", "syntax.text", "syntax.tags"],
+  },
+  {
+    id: "syntax.text",
+    title: "Text field syntax",
+    summary: "description、blocked_reason、reasonはStringまたはblock textを取ります。",
+    quick: [],
+    detail: [
+      {
+        id: "block",
+        title: "Block text",
+        body: "nonblank contentのcommon indentを除去し、paragraph blankと残りのindentを保持します。",
+      },
+    ],
+    syntax: ["  description \"...\"", "  description |", "    first line"],
+    examples: [],
+    related: ["syntax", "syntax.string", "syntax.comments"],
+  },
+  {
+    id: "syntax.tags",
+    title: "Tag list syntax",
+    summary: "Bare IdentifierまたはStringを角括弧内へcomma区切りで記述します。",
+    quick: [],
+    detail: [],
+    syntax: ["  tags [alpha, \"two words\"]", "  tags []"],
+    examples: [],
+    related: ["syntax", "syntax.string"],
+  },
+  {
+    id: "syntax.comments",
+    title: "Comment syntax",
+    summary: "独立行の#以降をCST triviaとして保持します。",
+    quick: [
+      {
+        id: "standalone",
+        title: "Standalone only",
+        body: "grammar version 1ではinline commentを許可しません。Stringとblock text内の#はcontentです。",
+      },
+    ],
+    detail: [],
+    syntax: ["# top-level comment", "  # field comment"],
+    examples: [],
+    related: ["syntax", "syntax.text"],
+  },
+  {
+    id: "syntax.top-level",
+    title: "Top-level declaration syntax",
+    summary: "Projectを文書先頭に置き、各declarationをcolumn 0から開始します。",
+    quick: [],
+    detail: [],
+    syntax: [
+      "project ID:",
+      "resource ID:",
+      "milestone ID:",
+      "task ID FROM -> TO:",
+      "gate ID FROM -> TO:",
+    ],
+    examples: [
+      { id: "minimal", title: "Top-level declarations", text: "docs/examples/minimal.pert" },
+    ],
+    related: ["syntax", "syntax.project", "syntax.indentation"],
   },
   {
     id: "analysis",

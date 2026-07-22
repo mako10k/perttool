@@ -8,13 +8,12 @@
       "tasks": 11,
       "gates": 6,
       "errors": 0,
-      "warnings": 1
+      "warnings": 3
     }
   },
   "analyze": {
-    "precedence_makespan": "101/5",
+    "precedence_makespan": "20/1",
     "precedence_critical_tasks": [
-      "GRAMMAR_WORK_PACKAGE",
       "M1_ROADMAP_UPDATE",
       "FORMATTER_CORE",
       "MUTATION_PREVIEW",
@@ -24,14 +23,13 @@
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "106/5",
+    "resource_makespan": "21/1",
     "resource_delay": "1/1",
     "resource_arcs": [
       "resource:ADVANCE:MERMAID_ROUNDTRIP",
       "resource:MERMAID_PROFILE:ADVANCE"
     ],
     "schedule_critical_tasks": [
-      "GRAMMAR_WORK_PACKAGE",
       "M1_ROADMAP_UPDATE",
       "FORMATTER_CORE",
       "MUTATION_PREVIEW",
@@ -46,14 +44,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "GRAMMAR_WORK_PACKAGE"
+        "M1_ROADMAP_UPDATE"
       ],
       "runnable_now": [
-        "GRAMMAR_WORK_PACKAGE"
+        "M1_ROADMAP_UPDATE"
       ],
       "blocked_now": [],
       "upcoming": [
-        "M1_ROADMAP_UPDATE",
         "FORMATTER_CORE",
         "MUTATION_PREVIEW",
         "WRITE_SAFETY",
