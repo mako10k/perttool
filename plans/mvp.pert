@@ -4,8 +4,9 @@ project PERTTOOL_MVP:
   description |
     MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
     grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pertを正とする。
-    Issue #1の設計、Issue #2のfeature scope、grammarの受け入れを入力として、
-    control-plane実装範囲とmacro日程を再構成してM1とする。
+    Issue #1の受け入れ済み設計とgrammarの受け入れを入力としてM1を確定する。
+    M1後はformatter、mutation preview、safe write、advanceの操作系を最優先し、
+    recommendation実装とIssue #2は操作系を遅らせないcapacityでだけ並行する。
   as_of 2026-07-22
   duration_unit day
   finish M6_MVP_RELEASED
@@ -67,8 +68,9 @@ milestone M6_MVP_RELEASED:
 
 task CONTROL_PLANE_DESIGN_WORK_PACKAGE NOW -> CONTROL_PLANE_DESIGN_ACCEPTED:
   title "AI工程制御planeを設計する"
-  description "plans/control-plane.pertの未完了設計resource makespan 1p、実測velocity forecast 1/16dをroll-upする。構造化説明追加後のend-to-end forecastは13p"
+  description "plans/control-plane.pertのIssue #1設計17pを2026-07-22に受け入れた。durationは受け入れ前にroll-upした残り1pの実測velocity forecast 1/16dを保持する"
   duration 0.0625d
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -87,11 +89,11 @@ gate CONTROL_PLANE_FOUNDATION_GATE CONTROL_PLANE_DESIGN_ACCEPTED -> FOUNDATION_I
 gate GRAMMAR_FOUNDATION_GATE GRAMMAR_ACCEPTED -> FOUNDATION_INPUTS_ACCEPTED:
   reason "product foundationの再構成には文法受け入れが必要"
 
-task RECOMMENDATION_ROADMAP_UPDATE FOUNDATION_INPUTS_ACCEPTED -> M1_PRODUCT_FOUNDATION_READY:
-  title "設計結果でAI control-plane実装roadmapを再構成する"
-  description "Issue #1のrecommendation契約とIssue #2のread-only agent guidance scopeからmacro/detail task、順序、見積りを更新する"
+task M1_ROADMAP_UPDATE FOUNDATION_INPUTS_ACCEPTED -> M1_PRODUCT_FOUNDATION_READY:
+  title "操作系優先でM1実装roadmapを確定する"
+  description "formatter、mutation preview、safe write、advanceを最優先trackとして詳細化する。recommendationとIssue #2はこのtrackを遅らせない場合だけ並行化する"
   duration 1d
-  priority 90
+  priority 100
   requires:
     DEVELOPERS 1
     REVIEWERS 1
@@ -99,14 +101,14 @@ task RECOMMENDATION_ROADMAP_UPDATE FOUNDATION_INPUTS_ACCEPTED -> M1_PRODUCT_FOUN
 task FORMATTER_CORE M1_PRODUCT_FOUNDATION_READY -> FORMATTER_READY:
   title "source-preserving formatterを実装する"
   duration 4d
-  priority 40
+  priority 100
   requires:
     DEVELOPERS 1
 
 task MUTATION_PREVIEW M1_PRODUCT_FOUNDATION_READY -> MUTATION_PREVIEW_READY:
   title "task、milestone、resource編集previewを実装する"
   duration 4d
-  priority 40
+  priority 100
   requires:
     DEVELOPERS 1
 
@@ -119,7 +121,7 @@ gate MUTATION_EDIT_GATE MUTATION_PREVIEW_READY -> M2_EDIT_PREVIEW_READY:
 task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
   title "再検査、atomic write、optimistic lockを実装する"
   duration 3d
-  priority 30
+  priority 90
   requires:
     DEVELOPERS 1
     REVIEWERS 1

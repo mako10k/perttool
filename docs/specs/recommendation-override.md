@@ -1,6 +1,6 @@
 # Recommendation Human Override Contract 仕様
 
-- 文書状態: Normative Draft 0.1
+- 文書状態: Normative 1.0
 - Override contract version: 1
 - Override artifact schema: `Perttool.OverrideDecision.v1`
 - 作成日: 2026-07-22

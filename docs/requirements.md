@@ -1008,7 +1008,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 3. [x] [Analysis仕様](specs/analysis.md): PERT/CPM、resource schedule、resource arc、tie-break
 4. [x] [CLI Interface仕様](specs/interfaces.md): CLI、JSON Schema、help、write safety。MCPはMVP対象外
 5. [x] [ADR 0001](adr/0001-activity-on-arrow.md): task=edge の設計判断
-6. [ ] [Issue #1](https://github.com/mako10k/perttool/issues/1): AI Project Control Planeのrecommendation契約
+6. [x] [Issue #1](https://github.com/mako10k/perttool/issues/1): AI Project Control Planeのrecommendation契約
    - [x] product vision、source of truth、global objective、determinism、non-goal
    - [x] [実行可否と推奨度のmodel](specs/recommendation.md)
    - [x] [deterministic ranking policy](specs/recommendation-ranking.md)
@@ -1018,8 +1018,9 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
    - [x] [human override契約](specs/recommendation-override.md)
    - [x] [normative exampleとtest観点](examples/recommendation.md)
    - [x] [self-useと実装migration方針](process/recommendation-migration.md)
+   - [x] [横断設計レビューと受け入れ記録](process/recommendation-design-review.md)
 7. [ ] parser/validator の最小実装と golden tests
 
 項目7は実装中である。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`のbootstrapに加え、複数error recovery、validation phase suppression、diagnostic上限は実装済みだが、grammar acceptance全項目を満たすまでは完了扱いにしない。
 
-Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は確定した。次は`DESIGN_REVIEW`で横断整合を確認する。Issue #2のAI Agent Guidance Registryは未確定事項として管理し、対応する設計taskの完了前に推測で固定しない。
+Analysis実装は`dag next`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical pathに加え、next分類、`runnable_now`、resource rejection、upcoming explanationをtext/JSONで返せる。Slice 2のbootstrap gateを満たし、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`でStage 1のread-only自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は[横断設計レビュー](process/recommendation-design-review.md)で受け入れた。これは設計完了であり、recommendation機能の実装完了ではない。次のcritical workstreamはgrammarの`BLOCK_TEXT_SPANS`であり、grammar受け入れ後の`M1_ROADMAP_UPDATE`ではformatter、mutation preview、safe write、advanceの操作系を優先する。Issue #2のAI Agent Guidance Registryとrecommendation実装は、操作系を遅らせない場合だけ並行する。

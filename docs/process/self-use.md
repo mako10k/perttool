@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 1.9
+- 文書状態: Active Stage 1 / Revision 2.0
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -71,11 +71,11 @@ Exit criteria:
 
 続いて`FIELD_FIXTURES`を完了し、project/resource/milestone/task/gateの全fieldを1つの正常fixtureで検査した。Identifier、string、duration、velocity、date、list、integer、enum、inline commentの異常fixtureと、missing/duplicate/field combinationの境界も独立入力へ固定した。仕様に存在した`PTDSL-011`の未到達を修正し、quoted string、tag list、block text内の`#`とinline commentを区別した。現在のrunnable taskは`BLOCK_TEXT_SPANS`だけである。
 
-2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。その後の`RECOMMENDATION_ROADMAP_UPDATE`で設計結果をmacro/detail planへ反映してから`M1_PRODUCT_FOUNDATION_READY`へ進むため、再構成前にformatter以降はreadyにならない。実測Velocity反映後、grammar work packageがmacro planのprecedence/resource criticalであり、control-plane設計work packageには`107/80d`のtotal floatがある。両work packageは引き続き`runnable_now`である。
+2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。Issue #1の設計受け入れ後はcontrol-plane work packageをdoneとし、macroで残るreadyかつcriticalなwork packageは`GRAMMAR_WORK_PACKAGE`だけである。Grammar受け入れ後の`M1_ROADMAP_UPDATE`で操作系のdetail planを確定するまで、formatter以降はreadyにならない。
 
-[AI工程制御設計plan](../../plans/control-plane.pert)はIssue #1の設計範囲をPointとvelocity forecastへ分解する。`VISION_REQUIREMENTS`と`RECOMMENDATION_MODEL`に加え、`RANKING_POLICY`でselection horizon、完全tie-break、joint-feasibleなrecommended setを[Ranking Policy仕様](../specs/recommendation-ranking.md)、`REASON_CODE_TAXONOMY`でstable code、effect/role、typed fact category、entity referenceを[Reason Taxonomy仕様](../specs/recommendation-reasons.md)、`STRUCTURED_EXPLANATION_MODEL`でtyped fact、制限付きexpression、comparison、decision trace、description projectionを[Structured Explanation仕様](../specs/recommendation-explanation.md)、`INTERFACE_CONTRACT`でCore type、complete JSON、text summary、`NextResult.v3` migrationを[Recommendation Interface Contract仕様](../specs/recommendation-interface.md)、`HUMAN_OVERRIDE_CONTRACT`でfeasible replacement、human reason、Git audit artifact、single-use、再解析を[Recommendation Human Override Contract仕様](../specs/recommendation-override.md)へ確定した。`NORMATIVE_EXAMPLES`でcritical対priority、unlock、gate近傍、parallel recommendation、selected/active-only blocker、empty set、構造化description、human override境界を[Recommendation規範例](../examples/recommendation.md)、`PROCESS_MIGRATION`でCoreからv3 publication、shadow evaluation、normal authority、override applyまでのgateを[Recommendation実装・自己利用migration](recommendation-migration.md)へ固定した。完了済み16pを除くresource makespanは1p、実測velocity forecastは1/16dであり、現在のreadyかつ`runnable_now`のtaskは`DESIGN_REVIEW`である。Recommendation実装のtaskと見積りは設計受け入れ後の`RECOMMENDATION_ROADMAP_UPDATE`で決めるため先行追加しない。Check/analyze/next projectionは[control-plane golden](../../test/golden/self-use/control-plane.expected.json)へ固定する。
+[AI工程制御設計plan](../../plans/control-plane.pert)はIssue #1の設計範囲をPointとvelocity forecastへ分解する。`VISION_REQUIREMENTS`と`RECOMMENDATION_MODEL`に加え、`RANKING_POLICY`でselection horizon、完全tie-break、joint-feasibleなrecommended setを[Ranking Policy仕様](../specs/recommendation-ranking.md)、`REASON_CODE_TAXONOMY`でstable code、effect/role、typed fact category、entity referenceを[Reason Taxonomy仕様](../specs/recommendation-reasons.md)、`STRUCTURED_EXPLANATION_MODEL`でtyped fact、制限付きexpression、comparison、decision trace、description projectionを[Structured Explanation仕様](../specs/recommendation-explanation.md)、`INTERFACE_CONTRACT`でCore type、complete JSON、text summary、`NextResult.v3` migrationを[Recommendation Interface Contract仕様](../specs/recommendation-interface.md)、`HUMAN_OVERRIDE_CONTRACT`でfeasible replacement、human reason、Git audit artifact、single-use、再解析を[Recommendation Human Override Contract仕様](../specs/recommendation-override.md)へ確定した。`NORMATIVE_EXAMPLES`でcritical対priority、unlock、gate近傍、parallel recommendation、selected/active-only blocker、empty set、構造化description、human override境界を[Recommendation規範例](../examples/recommendation.md)、`PROCESS_MIGRATION`でCoreからv3 publication、shadow evaluation、normal authority、override applyまでのgateを[Recommendation実装・自己利用migration](recommendation-migration.md)へ固定した。最後の`DESIGN_REVIEW`は[設計受け入れ記録](recommendation-design-review.md)で横断整合を確認して完了した。全17pがdoneで、残りresource makespanとvelocity forecastは0であり、ready taskはない。Calibration時点で未完了だった`DESIGN_REVIEW`の1pは次回標本へ送る。Check/analyze/next projectionは[control-plane golden](../../test/golden/self-use/control-plane.expected.json)へ固定する。
 
-同日に[Issue #2「AI Agent Guidance Registryとprovider別helpを追加する」](https://github.com/mako10k/perttool/issues/2)を独立featureとして登録した。Issue #1が「何を今行うべきか」を扱うのに対し、Issue #2はその判断へ従うためのprompt、skill、agent、hookなどをprovider別に表示する方法を扱う。初期scopeはofflineかつread-onlyの`agent help`であり、audit、scaffold、hook enforcementは後続段階とする。設計前にdurationや機能依存を捏造しないため、現時点では詳細planとwork packageを追加せず、`RECOMMENDATION_ROADMAP_UPDATE`の入力として実装順序、並行性、見積りを確定する。
+同日に[Issue #2「AI Agent Guidance Registryとprovider別helpを追加する」](https://github.com/mako10k/perttool/issues/2)を独立featureとして登録した。Issue #1が「何を今行うべきか」を扱うのに対し、Issue #2はその判断へ従うためのprompt、skill、agent、hookなどをprovider別に表示する方法を扱う。初期scopeはofflineかつread-onlyの`agent help`であり、audit、scaffold、hook enforcementは後続段階とする。Issue #2はM1のpredecessorにせず、操作系trackを遅らせないcapacityでだけ並行する独立backlogとして保持する。
 
 ### 4.1 Velocity実測calibration
 
@@ -93,7 +93,7 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | Plan | Closed sample | Completed Point | Active day | Velocity | Remaining forecast |
 | --- | --- | ---: | ---: | --- | --- |
 | `grammar.pert` | `ERROR_RECOVERY`、`FIELD_FIXTURES` | 5p | 1d | `5p/1d` | 7p = `7/5d` |
-| `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | 1p = `1/16d` |
+| `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。両標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装とcontrol-plane設計はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
@@ -144,7 +144,8 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 - 現在のAI工程制御設計taskとresource待ち: `control-plane.pert`
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
-- Issue #1とgrammarの受け入れ後、`RECOMMENDATION_ROADMAP_UPDATE`でIssue #1のrecommendation契約とIssue #2のread-only agent guidance scopeを統合し、実装順序、並行性、見積りをmacro/detail planへ追加する
+- Issue #1の設計は受け入れ済みであり、grammar受け入れ後の`M1_ROADMAP_UPDATE`でformatter、mutation preview、safe write、advanceを最優先trackとして詳細化する
+- recommendation実装とIssue #2は、操作系のdeveloper、reviewer、file ownershipを競合させずmilestoneを遅らせない場合だけ並行する
 - roadmap再構成が完了するまでformatter以降へ進まない
 
 ### 5.3 AI工程制御設計plan
@@ -171,7 +172,7 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 - normal recommendation authority adoption
 - safe-write後のoverride apply/audit adoption
 
-V3 publicationだけで現行Stage 1のtask selection ruleを置き換えない。Shadow gateと共有instruction更新が完了するまで[AI開発ガイド](ai-development.md)のmanual selectionを維持する。Override applyはsafe-write gateを満たすまで解禁しない。
+V3 publicationだけで現行Stage 1のtask selection ruleを置き換えない。Shadow gateと共有instruction更新が完了するまで[AI開発ガイド](ai-development.md)のmanual selectionを維持する。Override applyはsafe-write gateを満たすまで解禁しない。操作系とrecommendation実装がresourceまたはfile ownershipで競合する場合は、Stage 2とStage 3へ進む操作系を優先する。
 
 ## 6. Stage 2: safe-write self-use
 
@@ -225,11 +226,13 @@ advance 運用:
 
 ## 8. Stage 4: 対象拡大
 
-MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planでのread-only運用開始後、product方向を確定する必要からIssue #1のcontrol-plane設計planをStage 1で追加した。Issue #2はroadmap入力として保持し、まだ詳細planへ展開しない。今後は次の候補領域を詳細planへ展開するが、順序と並行性は`RECOMMENDATION_ROADMAP_UPDATE`で確定する。
+MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planでのread-only運用開始後、product方向を確定する必要からIssue #1のcontrol-plane設計planをStage 1で追加し、設計受け入れまで完了した。Issue #2は独立backlogとして保持し、まだ詳細planへ展開しない。Grammar受け入れ後の`M1_ROADMAP_UPDATE`では次の順で詳細化する。
 
-- Issue #1の設計結果に基づくrecommendation実装
-- Issue #2のread-only AI Agent Guidance Registry
-- mutation/advance
+- formatterとmutation preview
+- safe write
+- advance
+- 操作系を遅らせない場合だけ、Issue #1の設計結果に基づくrecommendation実装
+- 操作系を遅らせない場合だけ、Issue #2のread-only AI Agent Guidance Registry
 - Mermaid conversion
 - perttool全体のMVP release plan
 - MVP後のMCP/LSP adapter
@@ -278,6 +281,6 @@ Stage 1開始時の証跡:
 - self-use golden: grammar、control-plane、MVP planのcheck/analyze/next projection test
 - Point self-use gate: grammar/control-plane planの基準unit、active-day実測velocity、precedence/resource forecastをgoldenで分離して検査する
 - field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
-- control-plane planning gate: Issue #1の設計範囲、migration確定後の残り1p、実測`1/16d` forecast、`DESIGN_REVIEW`のrunnable frontierをgoldenへ固定する
+- control-plane planning gate: Issue #1の設計17p完了、残り0p、ready taskなし、設計受け入れ記録をgoldenと文書へ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、3 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

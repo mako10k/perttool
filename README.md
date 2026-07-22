@@ -17,6 +17,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [Recommendation Human Override Contract 仕様](docs/specs/recommendation-override.md)
 - [Recommendation 規範例](docs/examples/recommendation.md)
 - [Recommendation 実装・自己利用migration](docs/process/recommendation-migration.md)
+- [Recommendation 設計受け入れレビュー](docs/process/recommendation-design-review.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)
@@ -93,7 +94,7 @@ perttool dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format j
 
 `dag next`は依存関係上の`ready`と、active taskの占有を差し引いて同時開始できる`runnable_now`を分離します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明を返します。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)と[AI工程制御設計計画](plans/control-plane.pert)を現在sliceの詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。詳細planはPointを基準値、velocity換算したdayを予測値として使用します。Macroでworkstreamを選んでから対応する詳細planのtaskを選び、formatterやmutationによるwriteは専用gateを満たすまで使用しません。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmap、[文法作業計画](plans/grammar.pert)と[AI工程制御設計計画](plans/control-plane.pert)を詳細planとして`check`、`analyze`、`next`するStage 1のread-only自己利用を行っています。Issue #1の設計は受け入れ済みで、現在のcritical workstreamはgrammarです。詳細planはPointを基準値、velocity換算したdayを予測値として使用します。Grammar受け入れ後はformatter、mutation preview、safe write、advanceを優先し、writeは専用gateを満たすまで使用しません。
 
 ## Security and license
 

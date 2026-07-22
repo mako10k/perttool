@@ -6,6 +6,7 @@
 - 共有指示: [../../AGENTS.md](../../AGENTS.md)
 - 自己利用計画: [self-use.md](self-use.md)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
+- Recommendation design review: [recommendation-design-review.md](recommendation-design-review.md)
 
 ## 1. 目的
 
@@ -108,6 +109,8 @@ git diff --check
 5. 詳細planのcriticalまたはleast-slack frontierから作業を選ぶ
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装され、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
+
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)後は、grammar受け入れと`M1_ROADMAP_UPDATE`を経て、formatter、mutation preview、safe write、advanceの操作系を最優先する。Recommendation実装とIssue #2は、操作系のdeveloper、reviewer、file ownershipを競合させず、操作系milestoneを遅らせない場合だけ並行候補にする。
 
 ### 5.1 Recommendation導入後のtask selection
 

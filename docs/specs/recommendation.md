@@ -1,6 +1,6 @@
 # Recommendation Semantics 仕様
 
-- 文書状態: Normative Draft 0.1
+- 文書状態: Normative 1.0
 - 作成日: 2026-07-22
 - 対象: AI Project Control Planeの実行可否・推奨度model
 - Ranking policy: [recommendation-ranking.md](recommendation-ranking.md)

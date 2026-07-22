@@ -1,6 +1,6 @@
 # Recommendation Structured Explanation 仕様
 
-- 文書状態: Normative Draft 0.1
+- 文書状態: Normative 1.0
 - Explanation model version: 1
 - Expression version: 1
 - Description registry version: 1

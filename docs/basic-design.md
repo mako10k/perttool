@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 1.2
+- 文書状態: Draft 1.3
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
@@ -14,6 +14,7 @@
 - Recommendation override: [specs/recommendation-override.md](specs/recommendation-override.md)
 - Recommendation examples: [examples/recommendation.md](examples/recommendation.md)
 - Recommendation migration: [process/recommendation-migration.md](process/recommendation-migration.md)
+- Recommendation design review: [process/recommendation-design-review.md](process/recommendation-design-review.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
@@ -959,7 +960,7 @@ Exit:
 - v2由来fieldの意味を維持し、breaking changeをconsumerへ明示する
 - AIがmacro/detail planの二段階でknown complete recommendationを選択authorityにできる
 
-Slice 2Rの実装task、見積り、Slice 3との順序は`RECOMMENDATION_ROADMAP_UPDATE`で確定する。Human override applyはsafe-write gateを必要とするためMIG-08としてSlice 3以降へ接続する。
+Slice 2Rの実装taskと見積りは`M1_ROADMAP_UPDATE`以降に確定する。ただし、次のproduct implementation priorityはSlice 3である。Slice 2Rは、Slice 3のdeveloper、reviewer、file ownershipと競合せず、操作系milestoneを遅らせない場合だけ並行できる。競合する場合はsafe-write完了後へ送り、Human override applyはMIG-08として必ずsafe-write gate以降へ接続する。
 
 ### Slice 3: safe formatting and mutation
 
@@ -972,6 +973,8 @@ Exit:
 
 - write gate を満たす
 - grammar plan の安全な更新に使用する
+
+`M1_ROADMAP_UPDATE`では、`FORMATTER_CORE`と`MUTATION_PREVIEW`を最初に詳細化し、両方の受け入れ後に`WRITE_SAFETY`、続いて`ADVANCE`へ進む。共有capacityが競合した場合、この操作系trackをrecommendation実装とIssue #2より優先する。Safe-write後のMermaid trackとのresource順は、操作系の局所priorityではなくMVP全体完了を短縮するschedule結果へ従う。
 
 ### Slice 4: advance and Mermaid
 

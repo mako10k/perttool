@@ -8,14 +8,14 @@
       "tasks": 11,
       "gates": 6,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
     "precedence_makespan": "107/5",
     "precedence_critical_tasks": [
       "GRAMMAR_WORK_PACKAGE",
-      "RECOMMENDATION_ROADMAP_UPDATE",
+      "M1_ROADMAP_UPDATE",
       "FORMATTER_CORE",
       "MUTATION_PREVIEW",
       "WRITE_SAFETY",
@@ -32,7 +32,7 @@
     ],
     "schedule_critical_tasks": [
       "GRAMMAR_WORK_PACKAGE",
-      "RECOMMENDATION_ROADMAP_UPDATE",
+      "M1_ROADMAP_UPDATE",
       "FORMATTER_CORE",
       "MUTATION_PREVIEW",
       "WRITE_SAFETY",
@@ -46,16 +46,14 @@
     "groups": {
       "active": [],
       "ready": [
-        "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
         "GRAMMAR_WORK_PACKAGE"
       ],
       "runnable_now": [
-        "CONTROL_PLANE_DESIGN_WORK_PACKAGE",
         "GRAMMAR_WORK_PACKAGE"
       ],
       "blocked_now": [],
       "upcoming": [
-        "RECOMMENDATION_ROADMAP_UPDATE",
+        "M1_ROADMAP_UPDATE",
         "FORMATTER_CORE",
         "MUTATION_PREVIEW",
         "WRITE_SAFETY",

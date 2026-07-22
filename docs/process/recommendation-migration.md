@@ -1,6 +1,6 @@
 # Recommendation実装・自己利用migration
 
-- 文書状態: Process Draft 0.1
+- 文書状態: Active 1.0
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 基本設計: [../basic-design.md](../basic-design.md)
@@ -10,6 +10,7 @@
 - AI開発ガイド: [ai-development.md](ai-development.md)
 - 自己利用計画: [self-use.md](self-use.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- 設計受け入れ記録: [recommendation-design-review.md](recommendation-design-review.md)
 
 ## 1. 目的
 
@@ -41,16 +42,17 @@
 
 ## 3. Roadmap再構成gate
 
-実装taskと見積りは、次を満たした`RECOMMENDATION_ROADMAP_UPDATE`でmacro/detail planへ追加する。
+最初のproduct implementation taskと見積りは、次を満たした`M1_ROADMAP_UPDATE`でmacro/detail planへ追加する。
 
 1. `plans/control-plane.pert`の`DESIGN_REVIEW`が完了している
 2. `plans/grammar.pert`の受け入れが完了している
-3. Issue #2のread-only AI Agent Guidance Registry scopeが設計入力として確定している
-4. 本書のmigration unitを、実際のmodule/file境界と担当resourceへ割り付ける
-5. 各unitへduration、acceptance、narrow test、並行可否を付ける
-6. `plans/mvp.pert`の`RECOMMENDATION_ROADMAP_UPDATE`を完了してから実装へ着手する
+3. formatter、mutation preview、safe write、advanceを、実際のmodule/file境界と担当resourceへ割り付ける
+4. 各unitへduration、acceptance、narrow test、並行可否を付ける
+5. `plans/mvp.pert`の`M1_ROADMAP_UPDATE`を完了してからproduct implementationへ着手する
 
-本設計taskではduration、担当、parallel可否を先行決定しない。Issue #2をIssue #1の意味上のpredecessorにせず、roadmap上で実装順と共有help surfaceを調整する入力として扱う。
+`M1_ROADMAP_UPDATE`では操作系を最優先trackとする。`FORMATTER_CORE`と`MUTATION_PREVIEW`を先行し、両方の受け入れ後に`WRITE_SAFETY`、その後に`ADVANCE`へ進む。本書のMIG-01からMIG-07とIssue #2は、操作系が使用するdeveloper、reviewer、file ownershipを競合させず、操作系のmilestoneを遅らせない場合だけ並行できる。競合する場合は`M3_SAFE_WRITE_READY`以降へ送る。MIG-08は常にsafe-write gateより後である。Safe-write後に並行可能となるMermaid trackとのresource順は、局所priorityではなくMVP全体完了を短縮するschedule結果に従う。
+
+本設計taskではrecommendation migrationのduration、担当、parallel可否を先行決定しない。Issue #2をIssue #1またはM1の意味上のpredecessorにせず、実装時に共有help surfaceを調整する独立featureとして扱う。
 
 ## 4. 実装migration unit
 
@@ -186,30 +188,38 @@ MIG-08までは`Perttool.OverrideDecision.v1`の生成が可能でも、file mut
 ## 5. Dependencyと公開境界
 
 ```text
-design review + grammar acceptance + Issue #2 scope
-                    |
-                    v
-          RECOMMENDATION_ROADMAP_UPDATE
-                    |
-                    v
-MIG-01 fixtures -> MIG-02 ranking -> MIG-03 explanation
-                                      |
-                                      v
-                              MIG-04 v3 publish
-                                  |          |
-                                  v          v
-                         MIG-05 override   MIG-06 shadow
-                                  |          |
-                                  |          v
+design review + grammar acceptance
+                  |
+                  v
+          M1_ROADMAP_UPDATE
+                  |
+                  v
+ FORMATTER_CORE + MUTATION_PREVIEW
+                  |
+                  v
+            WRITE_SAFETY ------------------------------+
+                  |                                    |
+                  v                                    |
+              ADVANCE                                  |
+                                                       |
+MIG-01 fixtures -> MIG-02 ranking -> MIG-03 explanation|
+                                      |                |
+                                      v                |
+                              MIG-04 v3 publish         |
+                                  |          |          |
+                                  v          v          |
+                         MIG-05 override   MIG-06 shadow|
+                                  |          |          |
+                                  |          v          |
                                   |      MIG-07 normal authority
-                                  |          |
-                    safe-write gate          |
-                                  \          /
-                                   v        v
-                              MIG-08 override apply
+                                  |          |          |
+                                  +----------+----------+
+                                             |
+                                             v
+                                  MIG-08 override apply
 ```
 
-MIG-05とMIG-06はv3 publication後に並行可能な候補だが、実際のresource、file ownership、Issue #2とのhelp共有をroadmap再構成時に確認する。Diagramは実装見積りやAgent並行実行の許可を意味しない。
+MIG-01からMIG-07のside trackは、操作系と競合しないことを`M1_ROADMAP_UPDATE`で立証した場合だけ早期に開始する。MIG-05とMIG-06はv3 publication後に並行可能な候補だが、実際のresource、file ownership、Issue #2とのhelp共有をroadmap再構成時に確認する。Diagramは実装見積りやAgent並行実行の許可を意味しない。
 
 ## 6. Consumer migration guide要件
 

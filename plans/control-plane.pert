@@ -6,7 +6,8 @@ project AI_CONTROL_PLANE_DESIGN:
     task recommendation契約へ具体化する。今回は設計のみを扱い、実装は含めない。
     Pointは設計開始時の相対見積りを保持し、構造化説明model追加後のend-to-end forecastは13pとする。
     Velocityは2026-07-22の完了9 task、16p、1 active dayの実測へrecalibrationした。
-    現在実施中のDESIGN_REVIEWは循環を避けるため標本に含めない。
+    2026-07-22のcalibration時点で未完了だったDESIGN_REVIEWは循環を避けて標本に含めず、
+    完了実績は次回calibrationの標本へ送る。
   as_of 2026-07-22
   duration_unit point
   velocity 16p/1d
@@ -172,6 +173,7 @@ task DESIGN_REVIEW DESIGN_REVIEW_READY -> CONTROL_PLANE_DESIGN_ACCEPTED:
   title "Issue #1の設計完了条件を横断レビューする"
   description "requirements、spec、design、example、process、interfaceの整合を確認する"
   duration 1p
+  status done
   priority 30
   requires:
     DESIGNERS 1

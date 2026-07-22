@@ -14,4 +14,4 @@ Velocityは初期見積りを固定し続けず、task完了commitのPointとAsi
 
 規範仕様は `plans/` ではなく `docs/specs/` に置く。`plans/` は作業状態、Git history は過去を担当する。Macro milestoneは`mvp.pert`、現在sliceの設計・実装状態は対応する詳細planへ記録し、同じtaskを両方で個別管理しない。Stage 1では手作業で編集し、perttoolによるwriteは行わない。
 
-[Issue #2](https://github.com/mako10k/perttool/issues/2)のAI Agent Guidance Registryは、Issue #1のrecommendation契約を各coding agentへ適用するための独立featureである。設計前のdurationや依存関係はplanへ推測で追加せず、`mvp.pert`の`RECOMMENDATION_ROADMAP_UPDATE`でread-only v1の実装順序、並行性、見積りを確定してから詳細planを作成する。
+[Issue #2](https://github.com/mako10k/perttool/issues/2)のAI Agent Guidance Registryは、Issue #1のrecommendation契約を各coding agentへ適用するための独立featureである。Issue #1の設計は2026-07-22に受け入れ済みだが、recommendationとIssue #2の実装durationや機能依存はまだ推測で追加しない。Grammar受け入れ後の`M1_ROADMAP_UPDATE`ではformatter、mutation preview、safe write、advanceを最優先trackとして詳細化し、recommendationとIssue #2は操作系を遅らせない場合だけ並行する。

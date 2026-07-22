@@ -1,6 +1,6 @@
 # Recommendation Interface Contract 仕様
 
-- 文書状態: Normative Draft 0.1
+- 文書状態: Normative 1.0
 - Recommendation interface version: 1
 - Target schema: `Perttool.NextResult.v3`
 - 作成日: 2026-07-22

@@ -1,6 +1,6 @@
 # Recommendation Reason Taxonomy 仕様
 
-- 文書状態: Normative Draft 0.1
+- 文書状態: Normative 1.0
 - Taxonomy version: 1.0
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
