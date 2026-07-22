@@ -17,8 +17,8 @@
       "MERMAID_ROUNDTRIP",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "7333333/1000000",
-    "resource_delay": "333333/1000000",
+    "resource_makespan": "7090909/1000000",
+    "resource_delay": "90909/1000000",
     "resource_arcs": [
       "resource:ADVANCE:MERMAID_ROUNDTRIP"
     ],

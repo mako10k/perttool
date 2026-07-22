@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag render --to mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をStage 2のpreview-first safe-writeで自己利用中である。`dag advance`とMermaid importは未実装なので、実在するcommandと未実装surfaceを区別する。
+perttoolは現在、TypeScript CLIの操作系実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag render --to mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing CLIの`--write`/`--out`/`--expect-digest`、canonical advance planner Core、grammar acceptance suiteは実装済みで、macro `plans/mvp.pert`と詳細`plans/grammar.pert`、`plans/control-plane.pert`、`plans/operations.pert`をStage 2のpreview-first safe-writeで自己利用中である。`dag advance` CLIとMermaid importは未実装なので、実在するcommandと未実装surfaceを区別する。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 

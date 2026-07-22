@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 2 / Revision 2.12
+- 文書状態: Active Stage 2 / Revision 2.13
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -106,6 +106,8 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`MERMAID_EXPORT`を完了した。`exportMermaid`はdefault適用後の全semantic record、canonical decimal/velocity、stable projection、metadata/projection digestを生成し、`dag render --to mermaid`はprofile/plain、precedence/resource annotation、capacity override、text/JSON、`PTCNV-206`、`--strict-loss`、exclusive `--out`を公開した。規範artifactとCoreをbyte一致させ、unit、CLI、E2E、link、packageを検査した後、`plans/mvp.pert`のpreview diffと`sha256:38b2337f81702d6e93e00819c72c6a33d189ad343969a561a033b3ecaa5db626`を確認して`task finish --write`した。残るprecedence makespanは7d、resource makespanは7.333333d、resource delayは0.333333dである。`ADVANCE`とprecedence CP上の`MERMAID_ROUNDTRIP`がreadyだが、priority 20の`ADVANCE`が`REVIEWERS` capacity 1を先に確保するため、`runnable_now`は`ADVANCE`だけである。詳細planでは`ADVANCE_PLANNER`が唯一のready、precedence/schedule critical、`runnable_now`である。Mermaid macroはday見積りでPoint実績ではないため、操作系Velocity標本は`18p/1d`のままとする。
 
+続いて`ADVANCE_PLANNER`を完了した。Pure `planAdvance` Coreはeffective reachedからcanonical keep/remove setを決定し、過去edgeと不要milestoneをsource-preserving `TextEdit`で除去する。未到達joinへ入るdone taskとsatisfied gateは`partial_satisfaction`理由付きで保持し、retained rootを明示`state reached`へ変換する。Candidate再検査、before/afterのeffective reached・task分類・residual analysis input・project completion一致、再実行時empty editをpostconditionとし、部分合流、complete project、BOM/CRLF、invalid inputを専用testへ固定した。CLIとfilesystem writeは後続taskへ分離した。`plans/operations.pert`はpreview diffと`sha256:ed7a1e02bc22cd076a52f11f0d2df69b2b5e92e0b9cc536992fc472f48cc5f93`を確認して`task finish --write`した。操作系の同日完了標本は累計22p/1 active day、実測Velocityは`22p/1d`、残る`ADVANCE_CLI_ACCEPTANCE`は2p、forecastは`1/11d`である。Macro `ADVANCE`は残作業を0.090909dへroll-upし、残るprecedence makespanは7d、resource makespanは7.090909d、resource delayは0.090909dとなった。Detailの唯一のready、precedence/schedule critical、`runnable_now`は`ADVANCE_CLI_ACCEPTANCE`である。
+
 Recommendation MIG-01からMIG-07のside trackはv3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、reviewerを操作系と共有し、Issue #2もhelp surfaceとreviewerを共有する。`M3_SAFE_WRITE_READY`へ到達したため詳細化の前提は満たしたが、現行macro planへwork packageとresourceを追加するまでは着手順を推測しない。現在のprecedence CPは`MERMAID_ROUNDTRIP`、現行schedulerの次のrunnable work packageは`ADVANCE`である。Issue #3はMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
@@ -125,13 +127,13 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | --- | --- | ---: | ---: | --- | --- |
 | `grammar.pert` | `FORMATTER_ROUNDTRIP`、`HELP_FIXTURE_SYNC` | 3p | 1d | `3p/1d` | 0p |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
-| `operations.pert` | formatter/mutation preview、safe write | 18p | 1d | `18p/1d` | precedence/resource 6p = `1/3d` |
+| `operations.pert` | formatter/mutation preview、safe write、advance planner | 22p | 1d | `22p/1d` | precedence/resource 2p = `1/11d` |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。3標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
-Operationsはformatter/mutation preview 12p、`SAFE_WRITE_ADAPTER` 4p、`SAFE_WRITE_ACCEPTANCE` 2pの同日完了を累計し、実測`18p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系completion commit時に`plans/operations.pert`だけを独立再calibrationする。Macroはday単位しか持たないため、`p/velocity`を6 decimal dayへroundする。現在のdetail resource delayは0pである。
+Operationsはformatter/mutation preview 12p、safe write 6p、`ADVANCE_PLANNER` 4pの同日完了を累計し、実測`22p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系completion commit時に`plans/operations.pert`だけを独立再calibrationする。Macroはday単位しか持たないため、`p/velocity`を6 decimal dayへroundする。現在のdetail resource delayは0pである。
 
 Stage 1で許可した操作:
 
@@ -185,7 +187,7 @@ Stage 1で禁止した操作:
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation previewとsafe writeは完了し、Stage 2へ移行した
-- `MERMAID_PROFILE`と`MERMAID_EXPORT`は完了した。現在のmacro precedence CPは`MERMAID_ROUNDTRIP`だが、priorityとreviewer競合を反映した`runnable_now`は`ADVANCE`だけで、detailの次taskは`ADVANCE_PLANNER`である
+- `MERMAID_PROFILE`、`MERMAID_EXPORT`、advance planner Coreは完了した。現在のmacro precedence CPは`MERMAID_ROUNDTRIP`だが、priorityとreviewer競合を反映した`runnable_now`は`ADVANCE`だけで、detailの次taskは`ADVANCE_CLI_ACCEPTANCE`である
 - recommendation実装とIssue #2は`M3_SAFE_WRITE_READY`後に詳細化可能だが、macro planへ追加するまでは着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -340,7 +342,8 @@ Stage 1開始時の証跡:
 - formatter CLI preview gate: default candidate、diff、check、text/JSON、stdin、BOM、document ID、warning policy、preview-only write拒否をCLI/E2E testへ固定する
 - safe-write adapter gate: raw-byte digest、symlink/非regular file拒否、expected/stale digest、mode継承、exclusive temporary、fsync、atomic replace、新規output同時writer拒否、再検査、cleanupをwrite-safety testへ固定する
 - safe-write CLI gate: formatter、entity/batch mutationの`--write`/`--out`/`--expect-digest`、no-op、競合reason、失敗時原本保持、grammar temporary-copy round-trip、write後再解析をCLI/E2E/self-use testへ固定する
-- operations calibration gate: 完了7 taskの18p/1 active dayから実測Velocity `18p/1d`、残るprecedence/resource forecast `1/3d`と0p resource delayをgoldenへ固定する
+- advance planner gate: canonical keep/remove set、partial joinのdone task/satisfied gate保持、explicit reached frontier、before/after不変条件、idempotence、invalid candidate抑止をadvance testへ固定する
+- operations calibration gate: 完了8 taskの22p/1 active dayから実測Velocity `22p/1d`、残るprecedence/resource forecast `1/11d`と0p resource delayをgoldenへ固定する
 - Mermaid profile contract gate: 全semantic record、canonical JSON、metadata/projection digest、fail-closed import、stable loss code、security境界、規範artifactを仕様/help/testへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、4 planを検査する
 - write状態: Stage 2のediting commandをpreview-first、expected digest、write後再解析の手順で解禁。`dag advance --write`はStage 3まで禁止する

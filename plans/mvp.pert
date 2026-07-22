@@ -5,7 +5,7 @@ project PERTTOOL_MVP:
     MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
     grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pert、
     M1からM4の操作系はplans/operations.pertを正とする。
-    操作系detail planはsafe writeまでの実測Velocity 18p/1dを使用し、
+    操作系detail planはsafe writeとadvance plannerの実測Velocity 22p/1dを使用し、
     resource forecastを6 decimal dayへroundしてmacro work packageへroll-upした。
     recommendation実装とIssue #2は共有CLI・reviewerが競合するためM3後へ送り、
     Issue #3のmulti-plan compositionは独立した将来backlogとして扱う。
@@ -138,8 +138,8 @@ task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
 
 task ADVANCE M3_SAFE_WRITE_READY -> M4_ADVANCE_READY:
   title "合流を保持するadvance plannerを実装する"
-  description "plans/operations.pertのADVANCE_PLANNERとADVANCE_CLI_ACCEPTANCE、合計6pの実測velocity forecast 0.333333dをroll-upする"
-  duration 0.333333d
+  description "plans/operations.pertのADVANCE_PLANNER 4pは完了した。残るADVANCE_CLI_ACCEPTANCE 2pの実測velocity forecast 0.090909dをroll-upする"
+  duration 0.090909d
   priority 20
   requires:
     DEVELOPERS 1
