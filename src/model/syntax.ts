@@ -34,6 +34,7 @@ export interface FieldNode {
   readonly value: unknown;
   readonly span: SourceSpan;
   readonly valueSpan: SourceSpan;
+  readonly contentSpan?: SourceSpan;
   readonly children?: readonly FieldNode[];
 }
 

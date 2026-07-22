@@ -135,6 +135,12 @@ function leadingIndent(line: SourceLine): { indent: number; hasTab: boolean } {
   return { indent, hasTab };
 }
 
+function leadingSpaces(line: SourceLine): number {
+  let spaces = 0;
+  while (line.text[spaces] === " ") spaces += 1;
+  return spaces;
+}
+
 function diagnostic(
   code: string,
   message: string,
@@ -511,56 +517,95 @@ function parseBlockText(
   lines: readonly SourceLine[],
   startIndex: number,
   diagnostics: Diagnostic[],
-): { value: string; nextIndex: number; endSpan: SourceSpan } {
-  const contentLines: string[] = [];
+): {
+  value: string;
+  nextIndex: number;
+  endSpan: SourceSpan;
+  contentSpan?: SourceSpan;
+  leadingTrivia: readonly TriviaNode[];
+} {
+  const markerSpan = lineSpan(lines[startIndex - 1]!);
+  const blockLines: Array<{
+    line: SourceLine;
+    sourceIndex: number;
+    spaces: number | undefined;
+  }> = [];
   let index = startIndex;
-  let endSpan = lineSpan(lines[startIndex - 1]!);
-  let sawContent = false;
-  let sawSyntaxError = false;
+  let errorEndSpan: SourceSpan | undefined;
   while (index < lines.length) {
     const line = lines[index]!;
     if (line.text.trim() === "") {
-      contentLines.push("");
-      endSpan = lineSpan(line);
+      blockLines.push({ line, sourceIndex: index, spaces: undefined });
       index += 1;
       continue;
     }
-    const { indent, hasTab } = leadingIndent(line);
-    if (indent <= 2) break;
-    if (hasTab || indent < 4) {
+    const spaces = leadingSpaces(line);
+    const tabBeforeContent = line.text[spaces] === "\t" && spaces < 4;
+    if (!tabBeforeContent && spaces <= 2) break;
+    if (tabBeforeContent || spaces < 4) {
       diagnostics.push(
         diagnostic(
-          hasTab ? "PTDSL-001" : "PTDSL-010",
+          tabBeforeContent ? "PTDSL-001" : "PTDSL-010",
           "block textはfieldより1 level以上深くindentしてください",
-          span(line, 0, indent),
+          span(line, 0, Math.max(spaces + (tabBeforeContent ? 1 : 0), 1)),
           "syntax.text",
         ),
       );
-      sawSyntaxError = true;
-      endSpan = lineSpan(line);
+      errorEndSpan = lineSpan(line);
       index = skipIndentedRegion(lines, index + 1, 2);
       break;
     }
-    contentLines.push(line.text.slice(4));
-    sawContent ||= line.text.slice(4).trim() !== "";
-    endSpan = lineSpan(line);
+    blockLines.push({ line, sourceIndex: index, spaces });
     index += 1;
   }
-  while (contentLines.at(-1) === "") contentLines.pop();
-  if (!sawContent && !sawSyntaxError) {
-    diagnostics.push(
-      diagnostic(
-        "PTDSL-010",
-        "block textは1行以上のnonblank contentを必要とします",
-        lineSpan(lines[startIndex - 1]!),
-        "syntax.text",
-      ),
-    );
+
+  const firstContentIndex = blockLines.findIndex(({ spaces }) => spaces !== undefined);
+  const lastContentIndex = blockLines.findLastIndex(({ spaces }) => spaces !== undefined);
+  const leadingTrivia = blockLines
+    .slice(0, firstContentIndex === -1 ? blockLines.length : firstContentIndex)
+    .map(({ line }) => ({
+      kind: "blank" as const,
+      text: line.text,
+      span: lineSpan(line),
+    }));
+
+  if (firstContentIndex === -1 || lastContentIndex === -1) {
+    if (errorEndSpan === undefined) {
+      diagnostics.push(
+        diagnostic(
+          "PTDSL-010",
+          "block textは1行以上のnonblank contentを必要とします",
+          markerSpan,
+          "syntax.text",
+        ),
+      );
+    }
+    return {
+      value: "",
+      nextIndex: index,
+      endSpan: errorEndSpan ?? markerSpan,
+      leadingTrivia,
+    };
   }
+
+  const contentRegion = blockLines.slice(firstContentIndex, lastContentIndex + 1);
+  const commonIndent = Math.min(
+    ...contentRegion.flatMap(({ spaces }) => (spaces === undefined ? [] : [spaces])),
+  );
+  const firstContentLine = blockLines[firstContentIndex]!.line;
+  const lastContent = blockLines[lastContentIndex]!;
+  const contentSpan: SourceSpan = {
+    start: position(firstContentLine, commonIndent),
+    end: position(lastContent.line, lastContent.line.text.length),
+  };
   return {
-    value: sawContent ? contentLines.join("\n") : "",
-    nextIndex: index,
-    endSpan,
+    value: contentRegion
+      .map(({ line, spaces }) => (spaces === undefined ? "" : line.text.slice(commonIndent)))
+      .join("\n"),
+    nextIndex: errorEndSpan === undefined ? lastContent.sourceIndex + 1 : index,
+    endSpan: errorEndSpan ?? lineSpan(lastContent.line),
+    contentSpan,
+    leadingTrivia,
   };
 }
 
@@ -816,12 +861,14 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         }
         const parsed = parseBlockText(lines, index + 1, diagnostics);
         const valueStart = line.text.lastIndexOf("|");
+        trivia.push(...parsed.leadingTrivia);
         fields.push({
           name,
           rawValue: "|",
           value: parsed.value,
           span: joinSpan(lineSpan(line), parsed.endSpan),
           valueSpan: span(line, valueStart, valueStart + 1),
+          ...(parsed.contentSpan === undefined ? {} : { contentSpan: parsed.contentSpan }),
         });
         declarationEnd = parsed.endSpan;
         index = parsed.nextIndex;

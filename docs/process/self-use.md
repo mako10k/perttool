@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 1 / Revision 2.0
+- 文書状態: Active Stage 1 / Revision 2.1
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -69,7 +69,9 @@ Exit criteria:
 
 同日に`ERROR_RECOVERY`を完了し、複数syntax error、phase suppression、diagnostic上限をfixture/CLI E2Eで固定した。完了taskは未実装のadvanceで安全に圧縮できるまで`done`で保持する。残計画はprecedence/resourceとも7p、velocity forecast 7dとなり、次の`FIELD_FIXTURES`と`BLOCK_TEXT_SPANS`は同時にrunnableである。
 
-続いて`FIELD_FIXTURES`を完了し、project/resource/milestone/task/gateの全fieldを1つの正常fixtureで検査した。Identifier、string、duration、velocity、date、list、integer、enum、inline commentの異常fixtureと、missing/duplicate/field combinationの境界も独立入力へ固定した。仕様に存在した`PTDSL-011`の未到達を修正し、quoted string、tag list、block text内の`#`とinline commentを区別した。現在のrunnable taskは`BLOCK_TEXT_SPANS`だけである。
+続いて`FIELD_FIXTURES`を完了し、project/resource/milestone/task/gateの全fieldを1つの正常fixtureで検査した。Identifier、string、duration、velocity、date、list、integer、enum、inline commentの異常fixtureと、missing/duplicate/field combinationの境界も独立入力へ固定した。仕様に存在した`PTDSL-011`の未到達を修正し、quoted string、tag list、block text内の`#`とinline commentを区別した。
+
+その後`BLOCK_TEXT_SPANS`を完了し、block textのcommon indent、paragraph blank、common indent後のtab、末尾spaceをdecoded valueへ保持した。`FieldNode.valueSpan`を`|` markerとして維持し、UTF-16 code unit基準の`contentSpan`を追加して、leading/trailing blankをCST triviaとして保持した。残計画はprecedence/resourceとも5p、直近実測velocityによるforecastは1dである。次のreadyかつ`runnable_now`は`FORMATTER_IMPLEMENT`と`HELP_FIXTURE_SYNC`であり、前者だけがprecedence/resource criticalである。
 
 2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。Issue #1の設計受け入れ後はcontrol-plane work packageをdoneとし、macroで残るreadyかつcriticalなwork packageは`GRAMMAR_WORK_PACKAGE`だけである。Grammar受け入れ後の`M1_ROADMAP_UPDATE`で操作系のdetail planを確定するまで、formatter以降はreadyにならない。
 
@@ -92,10 +94,12 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 
 | Plan | Closed sample | Completed Point | Active day | Velocity | Remaining forecast |
 | --- | --- | ---: | ---: | --- | --- |
-| `grammar.pert` | `ERROR_RECOVERY`、`FIELD_FIXTURES` | 5p | 1d | `5p/1d` | 7p = `7/5d` |
+| `grammar.pert` | `ERROR_RECOVERY`、`FIELD_FIXTURES` | 5p | 1d | `5p/1d` | calibration時点で7p = `7/5d` |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。両標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装とcontrol-plane設計はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
+
+`BLOCK_TEXT_SPANS`の2pと`DESIGN_REVIEW`の1pはこのcalibration後に完了した。各planで新規標本がまだ1 taskのため、既定Velocityは変更せず次回calibrationへ送る。
 
 この段階で許可する操作:
 
@@ -281,6 +285,7 @@ Stage 1開始時の証跡:
 - self-use golden: grammar、control-plane、MVP planのcheck/analyze/next projection test
 - Point self-use gate: grammar/control-plane planの基準unit、active-day実測velocity、precedence/resource forecastをgoldenで分離して検査する
 - field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
+- block text/span gate: common indent、paragraph、tab/末尾space、leading/trailing trivia、UTF-16 marker/content spanをparser testと専用fixtureへ固定する
 - control-plane planning gate: Issue #1の設計17p完了、残り0p、ready taskなし、設計受け入れ記録をgoldenと文書へ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、3 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

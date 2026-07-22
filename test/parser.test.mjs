@@ -178,6 +178,62 @@ test("hash characters in strings, lists, and block text are content", () => {
   );
 });
 
+test("block text removes common indent and retains paragraph trivia and UTF-16 spans", async () => {
+  const text = await readFile(
+    path.join(testDirectory, "fixtures/grammar/block-text-spans.pert"),
+    "utf8",
+  );
+  const parsed = parseDocument(text);
+  assert.equal(parsed.diagnostics.length, 0);
+
+  const project = parsed.document.declarations.find(({ kind }) => kind === "project");
+  const description = project.fields.find(({ name }) => name === "description");
+  assert.equal(description.value, "first line\n  nested\n\nfinal 😀");
+  assert.equal(text.slice(description.valueSpan.start.offset, description.valueSpan.end.offset), "|");
+  assert.ok(description.contentSpan);
+  assert.equal(description.contentSpan.start.offset, text.indexOf("first line"));
+  assert.equal(description.contentSpan.start.column, 6);
+  assert.equal(description.contentSpan.end.offset, text.indexOf("😀") + "😀".length);
+  assert.equal(description.contentSpan.end.column, "      final 😀".length);
+  assert.deepEqual(description.span.end, description.contentSpan.end);
+
+  const blankTriviaLines = parsed.document.trivia
+    .filter(({ kind }) => kind === "blank")
+    .map(({ span }) => span.start.line);
+  assert.ok(blankTriviaLines.includes(3), "leading blank line is structural trivia");
+  assert.equal(blankTriviaLines.includes(6), false, "paragraph blank line is block content");
+  assert.ok(blankTriviaLines.includes(8), "trailing blank line is structural trivia");
+});
+
+test("block text preserves a tab after common space indent", () => {
+  const text = [
+    "project BLOCK_TAB:",
+    "  title \"block tab\"",
+    "  description |",
+    "      plain  ",
+    "      \tkept",
+    "  duration_unit day",
+    "  finish DONE",
+    "",
+    "milestone DONE:",
+    "  title \"done\"",
+    "  state reached",
+    "",
+  ].join("\r\n");
+  const parsed = parseDocument(text);
+  assert.equal(parsed.diagnostics.length, 0);
+  const project = parsed.document.declarations.find(({ kind }) => kind === "project");
+  const description = project.fields.find(({ name }) => name === "description");
+  assert.equal(description.value, "plain  \n\tkept");
+  assert.equal(description.contentSpan.end.offset, text.indexOf("kept") + "kept".length);
+});
+
+test("tab inside required block indentation is a lexical error", () => {
+  const text = `project BAD_TEXT_TAB:\n  title "bad text"\n  description |\n  \tbad indent\n  duration_unit day\n  finish DONE\n\nmilestone DONE:\n  title "done"\n  state reached\n`;
+  const result = checkDocument(text);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTDSL-001"]);
+});
+
 for (const [fixture, code] of [
   ["duplicate-id.pert", "PTSEM-201"],
   ["undefined-endpoint.pert", "PTSEM-204"],
@@ -290,6 +346,16 @@ test("empty block text reports one syntax cause without an empty-text semantic c
   const text = `project EMPTY_TEXT:\n  title "empty text"\n  description |\n  duration_unit day\n  finish DONE\n\nmilestone DONE:\n  title "done"\n  state reached\n`;
   const result = checkDocument(text);
   assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTDSL-010"]);
+});
+
+test("blank lines around an empty block remain single CST trivia nodes", () => {
+  const text = `project EMPTY_TEXT_TRIVIA:\n  title "empty text"\n  description |\n\n  duration_unit day\n  finish DONE\n\nmilestone DONE:\n  title "done"\n  state reached\n`;
+  const parsed = parseDocument(text);
+  assert.deepEqual(parsed.diagnostics.map(({ code }) => code), ["PTDSL-010"]);
+  assert.equal(
+    parsed.document.trivia.filter(({ kind, span }) => kind === "blank" && span.start.line === 3).length,
+    1,
+  );
 });
 
 test("invalid block text indentation is one recovered error region", () => {

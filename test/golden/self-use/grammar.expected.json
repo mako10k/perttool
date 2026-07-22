@@ -8,25 +8,23 @@
       "tasks": 6,
       "gates": 5,
       "errors": 0,
-      "warnings": 2
+      "warnings": 4
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "7/1",
+    "precedence_makespan": "5/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "7/5",
+    "precedence_forecast": "1/1",
     "precedence_critical_tasks": [
-      "BLOCK_TEXT_SPANS",
       "FORMATTER_IMPLEMENT",
       "FORMATTER_ROUNDTRIP"
     ],
-    "resource_makespan": "7/1",
-    "resource_forecast": "7/5",
+    "resource_makespan": "5/1",
+    "resource_forecast": "1/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "BLOCK_TEXT_SPANS",
       "FORMATTER_IMPLEMENT",
       "FORMATTER_ROUNDTRIP"
     ]
@@ -35,16 +33,16 @@
     "groups": {
       "active": [],
       "ready": [
-        "BLOCK_TEXT_SPANS"
+        "FORMATTER_IMPLEMENT",
+        "HELP_FIXTURE_SYNC"
       ],
       "runnable_now": [
-        "BLOCK_TEXT_SPANS"
+        "FORMATTER_IMPLEMENT",
+        "HELP_FIXTURE_SYNC"
       ],
       "blocked_now": [],
       "upcoming": [
-        "FORMATTER_ROUNDTRIP",
-        "FORMATTER_IMPLEMENT",
-        "HELP_FIXTURE_SYNC"
+        "FORMATTER_ROUNDTRIP"
       ]
     },
     "resource_rejection": null

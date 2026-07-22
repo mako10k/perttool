@@ -69,6 +69,7 @@ task ERROR_RECOVERY NOW -> RECOVERY_VERIFIED:
 task BLOCK_TEXT_SPANS NOW -> TEXT_SPANS_VERIFIED:
   title "block textのcommon indentとUTF-16 spanを検査する"
   duration 2p
+  status done
   priority 20
   requires:
     DEVELOPERS 1

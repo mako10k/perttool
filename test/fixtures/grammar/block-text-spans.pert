@@ -1,0 +1,15 @@
+project BLOCK_TEXT_SPANS:
+  title "block text spans"
+  description |
+
+      first line
+        nested
+
+      final 😀
+
+  duration_unit day
+  finish DONE
+
+milestone DONE:
+  title "done"
+  state reached

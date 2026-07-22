@@ -1,6 +1,6 @@
 # perttool DSL 文法仕様
 
-- 文書状態: Draft 0.3
+- 文書状態: Draft 0.4
 - Grammar version: 1
 - 作成日: 2026-07-21
 - 対応要件: [../requirements.md](../requirements.md)
@@ -311,6 +311,9 @@ Rules:
 - 次の structural line 直前にある blank line は、後続に block content がなければ structural trivia とする
 - AST text は line を `\n` で結合し、terminal newline を保持しない
 - `#`、`:`、`->`、quote は block text 内で特別な意味を持たない
+- block textの`FieldNode.valueSpan`は`|` markerを指す
+- valid block textの`FieldNode.contentSpan`は、最初のnonblank lineのcommon indent直後から最後のnonblank line末尾までを指す
+- 最初のnonblank contentより前と最後のnonblank contentより後にあるblank lineはdecoded contentに含めず、CST triviaとして保持する
 
 ### 8.2 TextValue
 

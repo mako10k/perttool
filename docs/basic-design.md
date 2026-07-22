@@ -1,6 +1,6 @@
 # perttool 基本設計
 
-- 文書状態: Draft 1.3
+- 文書状態: Draft 1.4
 - 作成日: 2026-07-21
 - 更新日: 2026-07-22
 - 対応要件: [requirements.md](requirements.md)
@@ -193,6 +193,7 @@ CST は元テキストの編集可能性を保持する。
 - 独立行 comment
 - block の開始・終了 span
 - field value の span
+- block text marker と content の個別 span
 - 改行形式
 
 内部 offset、line、column は 0 始まりとし、offset と column は JavaScript/LSP と整合する UTF-16 code unit 基準とする。CLI の source location は 1 始まりへ変換して表示する。filesystem digest と file size だけは UTF-8 byte 列を対象にする。
