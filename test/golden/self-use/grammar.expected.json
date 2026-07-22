@@ -13,17 +13,17 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "7",
+    "precedence_makespan": "7/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "7/1",
+    "precedence_forecast": "7/5",
     "precedence_critical_tasks": [
       "BLOCK_TEXT_SPANS",
       "FORMATTER_IMPLEMENT",
       "FORMATTER_ROUNDTRIP"
     ],
-    "resource_makespan": "7",
-    "resource_forecast": "7/1",
-    "resource_delay": "0",
+    "resource_makespan": "7/1",
+    "resource_forecast": "7/5",
+    "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
       "BLOCK_TEXT_SPANS",

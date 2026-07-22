@@ -65,17 +65,37 @@ Exit criteria:
 - runnable_now: `ERROR_RECOVERY`、`BLOCK_TEXT_SPANS`
 - `FIELD_FIXTURES`は`GRAMMAR_REVIEW` capacity 1を`ERROR_RECOVERY`が先に仮取得するためresource待ち
 
-2026-07-21のPoint/velocity導入後、最初の対象である`plans/grammar.pert`を`duration_unit point`へ移行した。既存10d resource baselineを初期calibrationとして`velocity 10p/10d`を置き、PERT/CPMの基準値を8p/10p、velocity forecastを8d/10dとして分離してgoldenへ固定した。Velocityの変更履歴と将来の再calibrationはGitで追跡する。
+2026-07-21のPoint/velocity導入後、最初の対象である`plans/grammar.pert`を`duration_unit point`へ移行した。既存10d resource baselineを初期calibrationとして`velocity 10p/10d`を置き、PERT/CPMの基準値を8p/10p、velocity forecastを8d/10dとして分離してgoldenへ固定した。2026-07-22に完了実績から再calibrationし、詳細は本節の「Velocity実測calibration」に記録した。
 
 同日に`ERROR_RECOVERY`を完了し、複数syntax error、phase suppression、diagnostic上限をfixture/CLI E2Eで固定した。完了taskは未実装のadvanceで安全に圧縮できるまで`done`で保持する。残計画はprecedence/resourceとも7p、velocity forecast 7dとなり、次の`FIELD_FIXTURES`と`BLOCK_TEXT_SPANS`は同時にrunnableである。
 
 続いて`FIELD_FIXTURES`を完了し、project/resource/milestone/task/gateの全fieldを1つの正常fixtureで検査した。Identifier、string、duration、velocity、date、list、integer、enum、inline commentの異常fixtureと、missing/duplicate/field combinationの境界も独立入力へ固定した。仕様に存在した`PTDSL-011`の未到達を修正し、quoted string、tag list、block text内の`#`とinline commentを区別した。現在のrunnable taskは`BLOCK_TEXT_SPANS`だけである。
 
-2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。その後の`RECOMMENDATION_ROADMAP_UPDATE`で設計結果をmacro/detail planへ反映してから`M1_PRODUCT_FOUNDATION_READY`へ進むため、再構成前にformatter以降はreadyにならない。`PROCESS_MIGRATION`完了後、grammar work packageがmacro planのprecedence/resource criticalであり、control-plane設計work packageには6dのtotal floatがある。両work packageは引き続き`runnable_now`である。
+2026-07-22に[Issue #1「`dag next`をAI工程制御APIへ発展させる」](https://github.com/mako10k/perttool/issues/1)をmacro planへ反映した。機能依存を捏造せず、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`と`GRAMMAR_WORK_PACKAGE`を並行可能にし、両方の受け入れを`FOUNDATION_INPUTS_ACCEPTED`で合流させた。その後の`RECOMMENDATION_ROADMAP_UPDATE`で設計結果をmacro/detail planへ反映してから`M1_PRODUCT_FOUNDATION_READY`へ進むため、再構成前にformatter以降はreadyにならない。実測Velocity反映後、grammar work packageがmacro planのprecedence/resource criticalであり、control-plane設計work packageには`107/80d`のtotal floatがある。両work packageは引き続き`runnable_now`である。
 
-[AI工程制御設計plan](../../plans/control-plane.pert)はIssue #1の設計範囲をPointとvelocity forecastへ分解する。`VISION_REQUIREMENTS`と`RECOMMENDATION_MODEL`に加え、`RANKING_POLICY`でselection horizon、完全tie-break、joint-feasibleなrecommended setを[Ranking Policy仕様](../specs/recommendation-ranking.md)、`REASON_CODE_TAXONOMY`でstable code、effect/role、typed fact category、entity referenceを[Reason Taxonomy仕様](../specs/recommendation-reasons.md)、`STRUCTURED_EXPLANATION_MODEL`でtyped fact、制限付きexpression、comparison、decision trace、description projectionを[Structured Explanation仕様](../specs/recommendation-explanation.md)、`INTERFACE_CONTRACT`でCore type、complete JSON、text summary、`NextResult.v3` migrationを[Recommendation Interface Contract仕様](../specs/recommendation-interface.md)、`HUMAN_OVERRIDE_CONTRACT`でfeasible replacement、human reason、Git audit artifact、single-use、再解析を[Recommendation Human Override Contract仕様](../specs/recommendation-override.md)へ確定した。`NORMATIVE_EXAMPLES`でcritical対priority、unlock、gate近傍、parallel recommendation、selected/active-only blocker、empty set、構造化description、human override境界を[Recommendation規範例](../examples/recommendation.md)、`PROCESS_MIGRATION`でCoreからv3 publication、shadow evaluation、normal authority、override applyまでのgateを[Recommendation実装・自己利用migration](recommendation-migration.md)へ固定した。完了済み16pを除くresource makespanは1p、velocity forecastは1dであり、現在のreadyかつ`runnable_now`のtaskは`DESIGN_REVIEW`である。Recommendation実装のtaskと見積りは設計受け入れ後の`RECOMMENDATION_ROADMAP_UPDATE`で決めるため先行追加しない。Check/analyze/next projectionは[control-plane golden](../../test/golden/self-use/control-plane.expected.json)へ固定する。
+[AI工程制御設計plan](../../plans/control-plane.pert)はIssue #1の設計範囲をPointとvelocity forecastへ分解する。`VISION_REQUIREMENTS`と`RECOMMENDATION_MODEL`に加え、`RANKING_POLICY`でselection horizon、完全tie-break、joint-feasibleなrecommended setを[Ranking Policy仕様](../specs/recommendation-ranking.md)、`REASON_CODE_TAXONOMY`でstable code、effect/role、typed fact category、entity referenceを[Reason Taxonomy仕様](../specs/recommendation-reasons.md)、`STRUCTURED_EXPLANATION_MODEL`でtyped fact、制限付きexpression、comparison、decision trace、description projectionを[Structured Explanation仕様](../specs/recommendation-explanation.md)、`INTERFACE_CONTRACT`でCore type、complete JSON、text summary、`NextResult.v3` migrationを[Recommendation Interface Contract仕様](../specs/recommendation-interface.md)、`HUMAN_OVERRIDE_CONTRACT`でfeasible replacement、human reason、Git audit artifact、single-use、再解析を[Recommendation Human Override Contract仕様](../specs/recommendation-override.md)へ確定した。`NORMATIVE_EXAMPLES`でcritical対priority、unlock、gate近傍、parallel recommendation、selected/active-only blocker、empty set、構造化description、human override境界を[Recommendation規範例](../examples/recommendation.md)、`PROCESS_MIGRATION`でCoreからv3 publication、shadow evaluation、normal authority、override applyまでのgateを[Recommendation実装・自己利用migration](recommendation-migration.md)へ固定した。完了済み16pを除くresource makespanは1p、実測velocity forecastは1/16dであり、現在のreadyかつ`runnable_now`のtaskは`DESIGN_REVIEW`である。Recommendation実装のtaskと見積りは設計受け入れ後の`RECOMMENDATION_ROADMAP_UPDATE`で決めるため先行追加しない。Check/analyze/next projectionは[control-plane golden](../../test/golden/self-use/control-plane.expected.json)へ固定する。
 
 同日に[Issue #2「AI Agent Guidance Registryとprovider別helpを追加する」](https://github.com/mako10k/perttool/issues/2)を独立featureとして登録した。Issue #1が「何を今行うべきか」を扱うのに対し、Issue #2はその判断へ従うためのprompt、skill、agent、hookなどをprovider別に表示する方法を扱う。初期scopeはofflineかつread-onlyの`agent help`であり、audit、scaffold、hook enforcementは後続段階とする。設計前にdurationや機能依存を捏造しないため、現時点では詳細planとwork packageを追加せず、`RECOMMENDATION_ROADMAP_UPDATE`の入力として実装順序、並行性、見積りを確定する。
+
+### 4.1 Velocity実測calibration
+
+DSL version 1はworking calendar、pause、作業開始時刻を持たないため、commit timestamp間の数時間を暗黙のengineering-dayへ変換しない。自己利用planのVelocityは次の決定的なactive-day方式で測る。
+
+1. 対象planで、taskを`done`にしたcommitと同じlogical changeにacceptance artifactとtest結果があることを確認する
+2. 前回calibration後に完了したtaskの宣言Pointを合計する
+3. そのcompletion commitが属するAsia/Tokyoの異なる日付数をactive dayとして数える
+4. `completed points / active days`をproject-wide team Velocityとする
+5. 同日parallel workは二重にdayを数えず、Point合計へ反映する
+6. calibration自身が完了させるtaskは循環を避けて次回標本へ送る
+
+2026-07-22 recalibration:
+
+| Plan | Closed sample | Completed Point | Active day | Velocity | Remaining forecast |
+| --- | --- | ---: | ---: | --- | --- |
+| `grammar.pert` | `ERROR_RECOVERY`、`FIELD_FIXTURES` | 5p | 1d | `5p/1d` | 7p = `7/5d` |
+| `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | 1p = `1/16d` |
+
+これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。両標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装とcontrol-plane設計はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 この段階で許可する操作:
 
@@ -256,8 +276,8 @@ Stage 1開始時の証跡:
 - analyze gate: precedence、capacity override、active allocation、resource witness、schedule critical pathを固定する`analysis.test.mjs`
 - next gate: `parallel next selects a deterministic runnable subset`、classification/depth unit test、text/JSON CLI integration test
 - self-use golden: grammar、control-plane、MVP planのcheck/analyze/next projection test
-- Point self-use gate: grammar planの基準unit、velocity forecast unit、precedence/resource forecastをgoldenで分離して検査する
+- Point self-use gate: grammar/control-plane planの基準unit、active-day実測velocity、precedence/resource forecastをgoldenで分離して検査する
 - field fixture gate: `all declaration fields parse from the grammar acceptance fixture`と各`grammar fixture ... reports only ...` testでfield/token境界を固定する
-- control-plane planning gate: Issue #1の設計範囲、migration確定後の残り1p/1d forecast、`DESIGN_REVIEW`のrunnable frontierをgoldenへ固定する
+- control-plane planning gate: Issue #1の設計範囲、migration確定後の残り1p、実測`1/16d` forecast、`DESIGN_REVIEW`のrunnable frontierをgoldenへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、3 planを検査する
 - write状態: Stage 1では全面禁止。Planの変更は手作業とGit diffで行う

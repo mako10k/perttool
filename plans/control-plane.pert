@@ -4,11 +4,12 @@ project AI_CONTROL_PLANE_DESIGN:
   description |
     GitHub Issue #1を、実行可否と推奨度を分離した決定的かつ説明可能な
     task recommendation契約へ具体化する。今回は設計のみを扱い、実装は含めない。
-    Pointとvelocityは設計開始時の初期見積りを基準とし、構造化説明model追加後のend-to-end forecastは13pとする。
-    完了実績とscope変更はGitで追跡し、必要に応じて再calibrationする。
+    Pointは設計開始時の相対見積りを保持し、構造化説明model追加後のend-to-end forecastは13pとする。
+    Velocityは2026-07-22の完了9 task、16p、1 active dayの実測へrecalibrationした。
+    現在実施中のDESIGN_REVIEWは循環を避けるため標本に含めない。
   as_of 2026-07-22
   duration_unit point
-  velocity 11p/11d
+  velocity 16p/1d
   finish CONTROL_PLANE_DESIGN_ACCEPTED
 
 resource DESIGNERS:

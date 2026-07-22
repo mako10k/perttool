@@ -4,10 +4,11 @@ project GRAMMAR:
   description |
     現在から先に残るparser、formatter、help同期の作業を管理する。
     完了済みのbootstrap実装はGit履歴を参照する。
-    相対規模をPointで保持し、初期baseline 10p/10dで日数を予測する。
-  as_of 2026-07-21
+    相対規模をPointで保持し、2026-07-21の完了2 task、5p、1 active dayの
+    実測Velocityで日数を予測する。
+  as_of 2026-07-22
   duration_unit point
-  velocity 10p/10d
+  velocity 5p/1d
   finish GRAMMAR_READY
 
 resource DEVELOPERS:
