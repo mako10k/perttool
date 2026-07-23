@@ -1,10 +1,11 @@
 # Recommendation実装・自己利用migration
 
-- 文書状態: Active 1.5
+- 文書状態: Active 1.6
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 基本設計: [../basic-design.md](../basic-design.md)
 - Interface contract: [../specs/recommendation-interface.md](../specs/recommendation-interface.md)
+- V3 consumer guide: [next-v3-consumer-migration.md](next-v3-consumer-migration.md)
 - Human override: [../specs/recommendation-override.md](../specs/recommendation-override.md)
 - 規範例: [../examples/recommendation.md](../examples/recommendation.md)
 - AI開発ガイド: [ai-development.md](ai-development.md)
@@ -14,7 +15,7 @@
 
 ## 1. 目的
 
-本書は、設計済みのrecommendation契約を、現行`Perttool.NextResult.v2`の意味を途中で変えずにCore、CLI、自己利用へ導入する順序とgateを定義する。
+本書は、設計済みのrecommendation契約を、`Perttool.NextResult.v2`由来fieldの意味を途中で変えずにCore、CLI、自己利用へ導入する順序とgateを定義する。
 
 移行の目的は次である。
 
@@ -29,17 +30,17 @@
 
 ## 2. 現在の境界
 
-2026-07-22時点の実装は次である。
+2026-07-23時点の実装は次である。
 
-- `selectNextTasks`と`dag next`は`Perttool.NextResult.v2`を返す
+- `selectNextTasks`と`dag next`は`Perttool.NextResult.v3`とcomplete recommendation graphを返す
 - `active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`は実装済み
-- candidate fact、complete order、selection horizon、recommended set、tier、structured explanation、PTREC invariantのpure Coreは実装済み
-- `NextResult.v3`公開、override validation、shadow/adoptionは未実装
+- candidate fact、complete order、selection horizon、recommended set、tier、structured explanation、PTREC invariant、Core/CLI JSON/text/help/package publicationは実装済み
+- override validation、shadow/adoptionは未実装
 - override validation、apply、audit integrationは未実装
 - 自己利用はStage 3であり、editing/advance writeはpreview、expected digest、write後再解析を必須とする。Override applyは未実装である
 - AIのtask選択は[AI開発ガイド](ai-development.md)の明示手順をauthorityとする
 
-したがって、設計文書や規範例が存在することだけを理由に、現行v2 fieldをrecommendationとして解釈しない。実装途中の内部resultをCLI、help、AI promptへ公開しない。
+V2由来fieldをrecommendationとして解釈せず、root `recommendation`だけをnormal recommendationの正本とする。ただしshadow/adoption前なので、現行AI task selectionはmanual processをauthorityとして維持する。
 
 ## 3. Roadmap再構成gate
 
@@ -58,6 +59,8 @@
 同日にMIG-02を完了した。`src/recommendation/`へactual ready taskのcompletion counterfactual、structural distance、exact complete order、selection horizon、active allocation込みのjoint resource scan、tier、resource witnessをpure Coreとして実装した。REC-001からREC-007、全ranking rule、near-critical/minimum-float horizon、parallel/empty set、capacity override、selected/active-only blockerをunit testへ固定し、現行Core export、CLI、help、`NextResult.v2`は変更していない。累計6p/1 active dayからVelocityを`6p/1d`へ更新し、残るprecedence 13p、resource 16p、resource delay 3p、resource forecast `8/3d`となった。次taskは`EXPLANATION_CORE`である。
 
 同日にMIG-03を完了した。MIG-02 resultからexact typed fact、depth制限付きexpression、winner/alternative/decisive ruleを持つminimal comparison、phase順のdecision trace、taxonomy 1.0 reason occurrence、typed parameterからのcanonical English descriptionを構築する非公開pure Coreを実装した。Record ID、canonical order、reference closure、tier/set、expression再評価、version/rule/code/fact registry、description key/parameter/textを検査し、`PTREC-301`から`PTREC-303`へfail-closedで変換する。REC-001からREC-011、selected/active-only resource blocker、scan時点とfinal setのresource witness、ready 0件、exact Rational、各diagnostic破損をunit testへ固定し、全186 testで現行Core export、CLI、help、`NextResult.v2`が変わらないことを確認した。累計11p/1 active dayからVelocityを`11p/1d`へ更新し、残るprecedence 8p、resource 11p、resource delay 3p、resource forecast 1dとなった。次taskは`NEXT_V3_PUBLICATION`である。
+
+同日にMIG-04を完了した。`selectNextTasks`へranking/explanationを接続し、public `NextResultV3`型、snake_case JSON adapter、`dag next` v3 complete graph、4 tier text summary、structured help、consumer migration guide、CHANGELOG、Core/CLI/package parityを1つのbreaking changeへ含めた。V2 operational projectionを維持し、ready 0件でもresult decisionとjoint feasibility factを返す。累計15p/1 active dayからVelocityを`15p/1d`へ更新し、残るprecedence 4p、resource 7p、resource delay 3p、resource forecast `7/15d`となった。次のprecedence critical taskは`SELF_USE_SHADOW`で、`OVERRIDE_VALIDATION`は同じready frontierだがreviewer競合によりdeferredである。
 
 MIG-01からMIG-07は、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を共有する。Task別duration、file ownership、acceptance、narrow testは`plans/recommendation.pert`を正とする。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とし、MVP後の独立work packageのままとする。Issue #2もhelp surfaceとreviewerを共有するが、macroへ追加するまでは実装順を推測しない。
 
@@ -230,9 +233,9 @@ MIG-01 fixtures -> MIG-02 ranking -> MIG-03 explanation|
 
 MIG-01からMIG-07のside trackは、`M1_ROADMAP_UPDATE`で共有CLI・reviewerの競合を確認したため、`M3_SAFE_WRITE_READY`より前には開始しない。MIG-05とMIG-06はv3 publication後に並行可能な候補だが、safe-write後のresource scheduleでMermaid、Issue #2との順序を再解析する。Diagramは実装見積りやAgent並行実行の許可を意味しない。
 
-## 6. Consumer migration guide要件
+## 6. Consumer migration guide
 
-MIG-04で追加するconsumer guideは最低限次を含む。
+MIG-04で[consumer migration guide](next-v3-consumer-migration.md)を追加し、最低限次を固定した。
 
 - v2とv3のroot差分
 - `schema_version`先行検査
@@ -251,12 +254,13 @@ Provider別prompt、skill、agent、hook templateはIssue #2のscopeである。
 
 ### Publication前
 
-- default v2を維持する
+- MIG-04完了commitより前はdefault v2を維持する
 - internal ranking/explanation failureをv2 fieldへ混入させない
 - failed internal sliceをpublic helpへ掲載しない
 
 ### Publication後
 
+- defaultはv3だけを返し、v2 dual emissionを追加しない
 - v3 regression時はrecommendationをtask selectionへ使用せず、known-good Git revisionとgoldenで原因を分離する
 - `schema_version=v3`のままrecommendation rootを省略しない
 - failureを隠すためv3 fieldを空にしたsuccess resultを返さない

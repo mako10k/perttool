@@ -25,7 +25,7 @@
 - human overrideと再解析の境界
 - ranking、reason code、構造化説明、interfaceへ送る責務
 
-本仕様は設計契約である。現行`Perttool.NextResult.v2`へrecommendation fieldを追加したとはみなさない。
+本仕様はrecommendationの意味契約である。2026-07-23のMIG-04で`Perttool.NextResult.v3`へ実装されたが、既存classificationや`runnable_now`をrecommendation tierとして再解釈しない。
 
 ## 2. 規範上の位置
 

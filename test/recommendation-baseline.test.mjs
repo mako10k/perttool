@@ -44,7 +44,7 @@ function projectTaskFact(task) {
   };
 }
 
-function runV2(relativeFixture) {
+function runCurrent(relativeFixture) {
   const result = spawnSync(
     process.execPath,
     [cli, "dag", "next", `test/fixtures/recommendation/${relativeFixture}`, "--format=json"],
@@ -94,7 +94,7 @@ test("REC-001 through REC-011 have a complete fixture or unit-input baseline", a
       const checked = checkDocument(source);
       assert.equal(checked.ok, true, entry.case_id);
       assert.equal(checked.diagnostics.length, 0, entry.case_id);
-      const projection = runV2(entry.fixture);
+      const projection = runCurrent(entry.fixture);
       assert.deepEqual(
         [...projection.groups.ready].sort(),
         [...entry.expected.ready_task_ids].sort(),
@@ -170,16 +170,18 @@ test("REC-001 through REC-011 have a complete fixture or unit-input baseline", a
   assert.deepEqual(noCandidate.expected.recommended_task_ids, []);
 });
 
-test("recommendation fixtures preserve a stable NextResult.v2 operational baseline", async () => {
+test("NextResult.v3 preserves the stable v2 operational field baseline", async () => {
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
   const expected = JSON.parse(await readFile(goldenPath, "utf8"));
   const actual = Object.fromEntries(
     manifest.cases
       .filter(({ fixture }) => fixture !== undefined)
-      .map(({ case_id, fixture }) => [case_id, runV2(fixture)]),
+      .map(({ case_id, fixture }) => [case_id, runCurrent(fixture)]),
   );
-  assert.deepEqual(actual, expected);
-  for (const projection of Object.values(actual)) {
-    assert.equal(projection.schema_version, "Perttool.NextResult.v2");
+  for (const [caseId, projection] of Object.entries(actual)) {
+    assert.equal(projection.schema_version, "Perttool.NextResult.v3");
+    const { schema_version: _currentSchema, ...currentOperational } = projection;
+    const { schema_version: _baselineSchema, ...baselineOperational } = expected[caseId];
+    assert.deepEqual(currentOperational, baselineOperational, caseId);
   }
 });

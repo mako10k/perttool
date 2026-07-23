@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { analyzeDocument } from "./analyze.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import { compareStableStrings, hasErrors, sortDiagnostics } from "../model/diagnostics.js";
@@ -10,6 +11,9 @@ import type { TaskStatus } from "../analysis/graph.js";
 import type { EdgeTiming } from "../analysis/precedence.js";
 import type { DurationUnit, Velocity, VelocityConversion } from "../model/units.js";
 import { convertWithVelocity } from "../model/units.js";
+import { buildRecommendationExplanation } from "../recommendation/explanation.js";
+import type { RecommendationAnalysis } from "../recommendation/explanation-types.js";
+import { rankRecommendationCandidates } from "../recommendation/ranking.js";
 
 export type TaskClassification = "active" | "ready" | "blocked_now" | "upcoming";
 
@@ -77,9 +81,10 @@ export interface NextOptions {
   readonly explainDepth?: number;
   readonly precision?: number;
   readonly maxDiagnostics?: number;
+  readonly sourceDigest?: string;
 }
 
-export interface NextResult {
+export interface NextResultV3 {
   readonly ok: boolean;
   readonly document: DocumentNode;
   readonly documentId: string | null;
@@ -92,7 +97,10 @@ export interface NextResult {
   readonly capacityOverrides: ReadonlyMap<string, number>;
   readonly groups: NextGroups;
   readonly tasks: readonly NextTask[];
+  readonly recommendation: RecommendationAnalysis | null;
 }
+
+export type NextResult = NextResultV3;
 
 interface ClassifiedTask {
   readonly declaration: DeclarationNode;
@@ -265,10 +273,12 @@ function explanationForMilestone(
 export function selectNextTasks(
   text: string,
   options: NextOptions = {},
-): NextResult {
+): NextResultV3 {
   const precision = options.precision ?? 3;
   const explainDepth = options.explainDepth ?? 1;
   const capacityOverrides = options.capacityOverrides ?? new Map<string, number>();
+  const sourceDigest = options.sourceDigest ??
+    `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
   const analysis = analyzeDocument(text, {
     mode: "both",
     capacityOverrides,
@@ -293,9 +303,65 @@ export function selectNextTasks(
       capacityOverrides,
       groups: emptyGroups,
       tasks: [],
+      recommendation: null,
     };
   }
   const graph = buildResidualGraph(analysis.document);
+  let recommendation: RecommendationAnalysis;
+  try {
+    const ranking = rankRecommendationCandidates({
+      graph,
+      precedence: analysis.precedence,
+      appliedCapacities: capacityOverrides,
+    });
+    const explanation = buildRecommendationExplanation({
+      graph,
+      ranking,
+      sourceDigest,
+    });
+    if (!explanation.ok) {
+      return {
+        ok: false,
+        document: analysis.document,
+        documentId: analysis.documentId,
+        diagnostics: sortDiagnostics([...diagnostics, ...explanation.diagnostics]),
+        diagnosticsTruncated: analysis.diagnosticsTruncated,
+        precision,
+        durationUnit: graph.durationUnit,
+        velocity: graph.velocity,
+        velocityForecast: analysis.velocityForecast,
+        capacityOverrides,
+        groups: emptyGroups,
+        tasks: [],
+        recommendation: null,
+      };
+    }
+    recommendation = explanation.analysis;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      ok: false,
+      document: analysis.document,
+      documentId: analysis.documentId,
+      diagnostics: sortDiagnostics([
+        ...diagnostics,
+        {
+          code: "PTREC-301",
+          severity: "error",
+          message: `recommendation ranking invariant failure: ${message}`,
+        },
+      ]),
+      diagnosticsTruncated: analysis.diagnosticsTruncated,
+      precision,
+      durationUnit: graph.durationUnit,
+      velocity: graph.velocity,
+      velocityForecast: analysis.velocityForecast,
+      capacityOverrides,
+      groups: emptyGroups,
+      tasks: [],
+      recommendation: null,
+    };
+  }
   const timingById = new Map(analysis.precedence.edges.map((timing) => [timing.id, timing]));
   const classified: ClassifiedTask[] = analysis.document.declarations
     .filter((declaration) => declaration.kind === "task")
@@ -384,5 +450,6 @@ export function selectNextTasks(
       upcoming: ids("upcoming"),
     },
     tasks,
+    recommendation,
   };
 }

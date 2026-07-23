@@ -108,9 +108,9 @@ git diff --check
 4. 外部blockと利用可能resourceを確認する
 5. 詳細planのcriticalまたはleast-slack frontierから作業を選ぶ
 
-異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装され、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
+異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIはv3として公開済みだが、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)でMVP受け入れ条件16の未実装を確認したため、MIG-01からMIG-07を[Recommendation実装plan](../../plans/recommendation.pert)へ22pで詳細化し、macro release gateへ追加した。2026-07-23にMIG-01 fixture baseline 2p、MIG-02 ranking/tier Core 4p、MIG-03 structured explanation/invariant Core 5pを完了し、recommendation実測`11p/1d`で残るresource 11pを1dへforecastした。Macroの残るprecedence/resource makespanは3dで、`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつ`runnable_now`なcritical work package、detailの次taskは`NEXT_V3_PUBLICATION`、`RELEASE_E2E`はupcomingである。V3 shadow/adoption gateを満たすまでは本節のmanual selectionを維持する。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)でMVP受け入れ条件16の未実装を確認したため、MIG-01からMIG-07を[Recommendation実装plan](../../plans/recommendation.pert)へ22pで詳細化し、macro release gateへ追加した。2026-07-23にMIG-01からMIG-04の累計15pを完了し、recommendation実測`15p/1d`で残るresource 7pを`7/15d`へforecastした。Macroの残るprecedence/resource makespanは`2.466667d`で、`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつ`runnable_now`なcritical work package、detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`がdeferred、`RELEASE_E2E`はupcomingである。V3 shadow/adoption gateを満たすまでは本節のmanual selectionを維持する。
 
 ### 5.1 Recommendation導入後のtask selection
 

@@ -1,0 +1,252 @@
+{
+  "schema_version": "Perttool.NextResult.v3",
+  "recommendation_interface_version": 1,
+  "tool_version": "0.1.0-alpha.1",
+  "operation": "dag.next",
+  "ok": true,
+  "document_id": "REC_007_NO_READY",
+  "source": "test/fixtures/recommendation/rec-007-no-ready.pert",
+  "source_digest": "sha256:5ea2c1fc146c5a7582190068e6934f4dce1d1848ea7fdefc66c7eb59acd35e6d",
+  "diagnostics": [
+    {
+      "code": "PTRES-303",
+      "severity": "warning",
+      "message": "blocked taskは時刻0で解消する条件付きresource scheduleです",
+      "entity_id": "TASK_BLOCKED",
+      "span": null,
+      "related": [],
+      "help_topic": "analysis.resources",
+      "expected_syntax": null,
+      "fixes": [],
+      "data": {}
+    }
+  ],
+  "diagnostics_truncated": false,
+  "precision": 3,
+  "duration_unit": "point",
+  "velocity": {
+    "points": {
+      "numerator": "1",
+      "denominator": "1",
+      "unit": "point",
+      "display": "1"
+    },
+    "period": {
+      "numerator": "1",
+      "denominator": "1",
+      "unit": "day",
+      "display": "1"
+    }
+  },
+  "velocity_forecast": {
+    "qualifier": "velocity_forecast",
+    "source_unit": "point",
+    "target_unit": "day"
+  },
+  "capacity_overrides": [],
+  "recommendation": {
+    "action": "start",
+    "algorithm": {
+      "id": "perttool.recommendation-ranking.lexicographic-frontier",
+      "version": 1,
+      "optimal": false
+    },
+    "reason_taxonomy_version": "1.0",
+    "explanation_model_version": 1,
+    "expression_version": 1,
+    "description_registry_version": 1,
+    "description_locale": "en",
+    "recommended_task_ids": [],
+    "result_decision": {
+      "id": "rec:decision:result:R",
+      "action": "start",
+      "recommended_task_ids": [],
+      "joint_feasibility_fact_id": "rec:fact:R:set_start_feasibility:0",
+      "step_ids": [
+        "rec:step:R:resource_selection:joint_resource_feasibility:0"
+      ],
+      "reason_occurrence_ids": [
+        "rec:reason:R:recommended_set_feasible:context:0"
+      ]
+    },
+    "task_decisions": [],
+    "decision_steps": [
+      {
+        "id": "rec:step:R:resource_selection:joint_resource_feasibility:0",
+        "phase": "resource_selection",
+        "rule": {
+          "kind": "policy_rule",
+          "id": "joint_resource_feasibility"
+        },
+        "input_fact_ids": [
+          "rec:fact:R:set_start_feasibility:0"
+        ],
+        "expression": {
+          "kind": "compare",
+          "left": {
+            "kind": "fact",
+            "fact_id": "rec:fact:R:set_start_feasibility:0"
+          },
+          "relation": "equal",
+          "right": {
+            "kind": "literal",
+            "value": {
+              "type": "boolean",
+              "value": true
+            },
+            "unit": null
+          }
+        },
+        "result": true,
+        "effect": "neutral",
+        "role": "context",
+        "reason_occurrence_ids": [
+          "rec:reason:R:recommended_set_feasible:context:0"
+        ],
+        "comparison_ids": [],
+        "depends_on_step_ids": []
+      }
+    ],
+    "facts": [
+      {
+        "id": "rec:fact:R:set_start_feasibility:0",
+        "kind": "set_start_feasibility",
+        "subject": {
+          "kind": "derived_set",
+          "id": "R"
+        },
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "unit": null,
+        "provenance": {
+          "kind": "resource_snapshot",
+          "source_digest": "sha256:5ea2c1fc146c5a7582190068e6934f4dce1d1848ea7fdefc66c7eb59acd35e6d",
+          "entity_references": [
+            {
+              "kind": "derived_set",
+              "id": "R"
+            }
+          ],
+          "producer": {
+            "id": "perttool.recommendation-resource-snapshot",
+            "version": "1"
+          },
+          "source_span": null
+        }
+      }
+    ],
+    "comparisons": [],
+    "reason_occurrences": [
+      {
+        "id": "rec:reason:R:recommended_set_feasible:context:0",
+        "code": "recommended_set_feasible",
+        "subject": {
+          "kind": "derived_set",
+          "id": "R"
+        },
+        "effect": "neutral",
+        "role": "context",
+        "fact_ids": [
+          "rec:fact:R:set_start_feasibility:0"
+        ],
+        "emission_expression": {
+          "kind": "compare",
+          "left": {
+            "kind": "fact",
+            "fact_id": "rec:fact:R:set_start_feasibility:0"
+          },
+          "relation": "equal",
+          "right": {
+            "kind": "literal",
+            "value": {
+              "type": "boolean",
+              "value": true
+            },
+            "unit": null
+          }
+        },
+        "decision_step_id": "rec:step:R:resource_selection:joint_resource_feasibility:0",
+        "comparison_ids": [],
+        "description_id": null
+      }
+    ],
+    "descriptions": [],
+    "explanation_status": {
+      "level": "full",
+      "complete": true,
+      "decisive_chain_complete": true,
+      "truncated": false,
+      "omitted_counts": {
+        "decision_steps": 0,
+        "facts": 0,
+        "comparisons": 0,
+        "reason_occurrences": 0,
+        "descriptions": 0
+      }
+    }
+  },
+  "groups": {
+    "active": [],
+    "ready": [],
+    "runnable_now": [],
+    "blocked_now": [
+      "TASK_BLOCKED"
+    ],
+    "upcoming": []
+  },
+  "tasks": [
+    {
+      "id": "TASK_BLOCKED",
+      "title": "Task waiting for an external decision",
+      "status": "blocked",
+      "classification": "blocked_now",
+      "runnable_now": false,
+      "priority": 0,
+      "owner": null,
+      "blocked_reason": "external approval",
+      "expected": {
+        "numerator": "1",
+        "denominator": "1",
+        "unit": "point",
+        "display": "1"
+      },
+      "total_float": {
+        "numerator": "0",
+        "denominator": "1",
+        "unit": "point",
+        "display": "0"
+      },
+      "earliest_start": {
+        "numerator": "0",
+        "denominator": "1",
+        "unit": "point",
+        "display": "0"
+      },
+      "forecast_expected": {
+        "numerator": "1",
+        "denominator": "1",
+        "unit": "day",
+        "display": "1"
+      },
+      "forecast_total_float": {
+        "numerator": "0",
+        "denominator": "1",
+        "unit": "day",
+        "display": "0"
+      },
+      "forecast_earliest_start": {
+        "numerator": "0",
+        "denominator": "1",
+        "unit": "day",
+        "display": "0"
+      },
+      "precedence_critical": true,
+      "schedule_critical": true,
+      "requirements": [],
+      "resource_rejections": [],
+      "explanation": []
+    }
+  ]
+}

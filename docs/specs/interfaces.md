@@ -788,7 +788,9 @@ connector_ids        string[]
 
 ### 12.3 NextResult
 
-`schema_version = "Perttool.NextResult.v2"`
+`schema_version = "Perttool.NextResult.v3"`
+
+Recommendation固有の完全なwire schema、version identity、text summary、PTREC failureは[Recommendation Interface Contract仕様](recommendation-interface.md)を正とする。Rootは`recommendation_interface_version = 1`とrequired `recommendation`を持つ。
 
 ```text
 precision             integer
@@ -809,6 +811,7 @@ NextResult rootの続き:
 
 ```text
 capacity_overrides    [{resource_id, capacity}]
+recommendation        RecommendationAnalysis
 groups:
   active              string[]
   ready               string[]
@@ -833,7 +836,7 @@ explanation           ExplanationNode[]
 
 `classification`は`active|ready|blocked_now|upcoming`である。`runnable_now`はready taskへの直交booleanであり、classification enumへ混ぜない。
 
-`Perttool.NextResult.v2`はrecommendation tier、recommended set、recommendation explanationを持たない。[Recommendation Semantics仕様](recommendation.md)と[Recommendation Structured Explanation仕様](recommendation-explanation.md)は将来interfaceの意味modelであり、本sectionのfieldや既存`explanation`を無言で再解釈しない。将来のschema version、field、text layout、migrationは[Recommendation Interface Contract仕様](recommendation-interface.md)が`Perttool.NextResult.v3`として固定するが、実装sliceまでは本v2契約を変更しない。
+`recommendation`はactual ready taskだけを評価し、全ready taskのtier、recommended set、typed fact、comparison、decision trace、descriptionをcomplete graphとして返す。`groups`、`tasks[].resource_rejections`、upcoming `tasks[].explanation`はv2由来の意味を維持し、recommendationとして再解釈しない。V2からのbreaking migrationとconsumer safetyは[NextResult.v3 consumer migration guide](../process/next-v3-consumer-migration.md)を参照する。
 
 `title`はstring、`status`はtask status、`priority`はinteger、`owner`と`blocked_reason`はstringまたは`null`とする。`expected`、`total_float`、`earliest_start`は基準単位の`RationalValue`である。`forecast_*`はvelocityがある場合だけtarget unitの`RationalValue`、それ以外は`null`とする。
 

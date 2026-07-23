@@ -25,7 +25,7 @@
 - canonical description projection
 - human overrideが不要、必要、不可能となる境界
 
-表中のfact snapshotは既存DSLから導出されるanalysis projectionであり、新しいDSL構文ではない。`NextResult.v3`とoverride validationは未実装なので、本書のJSON fragmentを現在のCLI実行結果とはみなさない。実装sliceでは同じ意味を持つ最小`.pert` fixture、complete JSON golden、text goldenへ展開する。
+表中のfact snapshotは既存DSLから導出されるanalysis projectionであり、新しいDSL構文ではない。`NextResult.v3`は実装済みで、同じ意味を持つ最小`.pert` fixture、complete JSON golden、text goldenへ展開した。Override validationは未実装なので、本書のoverride fragmentを現在のCLI実行結果とはみなさない。
 
 ## 2. 共通条件
 
@@ -476,6 +476,8 @@ MIG-02の実体は`src/recommendation/`の非公開ranking pure Coreと`test/rec
 
 MIG-03の実体は`src/recommendation/explanation*.ts`と`test/recommendation-explanation.test.mjs`である。MIG-02結果からexact typed fact、制限付きexpression、minimal comparison、decision trace、reason occurrence、canonical English descriptionを構築し、reference/tier/expression不変条件を`PTREC-301`、version/rule/code/fact不変条件を`PTREC-302`、description不変条件を`PTREC-303`へ変換する。REC-001からREC-011、active-only reject、ready 0件、fail-closedを固定したが、MIG-04まではこの非公開Coreをpublic `NextResult.v3`として扱わない。
 
+MIG-04の実体は`src/application/next.ts`、`src/recommendation/json.ts`、`src/cli.ts`、`src/index.ts`、help、`test/recommendation-publication.test.mjs`、v3 JSON/text goldenである。Public `NextResultV3`、Core/CLI parity、complete empty graph、4 tier summary、byte determinism、PTREC partial result抑止、v2 operational projection維持、package-installed API/CLIを固定した。Consumerは[移行ガイド](../process/next-v3-consumer-migration.md)に従い、schemaとdecisive semanticsを先に検査する。
+
 ## 7. Acceptance
 
 - critical対priority、unlock、gate近傍、parallel recommendationを固定した
@@ -488,4 +490,4 @@ MIG-03の実体は`src/recommendation/explanation*.ts`と`test/recommendation-ex
 - v2 field維持と`PTREC-301`から`PTREC-303`のnegative testを固定した
 - override不要、allowed/deferred replacement、不可能、stale、audit identityを固定した
 - `discouraged`を現行versionで捏造せず、将来fixtureの有効化条件を固定した
-- current CLI、schema、implementation、write pathを変更していない
+- override apply、write path、provider固有adapterは変更していない

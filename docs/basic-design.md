@@ -534,11 +534,11 @@ upcoming の explanation は、直接の `from` milestone と、その milestone
 
 Recommendationは既存classificationと`runnable_now`を置き換えず、新規start actionへのdecision authorityとして[Recommendation Semantics仕様](specs/recommendation.md)で分離する。Conceptual recommended setはready taskのsubsetであり、active allocationを含めてjointly resource-feasibleでなければならない。`recommended`、`allowed`、`deferred`、`discouraged`はready taskだけへ適用し、`blocked`をrecommendation tierとして使用しない。
 
-[Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)はactual ready taskからselection horizonとrecommended setを決定的に選び、[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)はset/tierの理由をstable code、typed fact、entity referenceへ分解する。[Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)はtyped fact、制限付きexpression、comparison、decision trace、description projectionを接続し、[Recommendation Interface Contract仕様](specs/recommendation-interface.md)はCore type、complete JSON、text summary、`NextResult.v3` migrationを固定する。[Recommendation Human Override Contract仕様](specs/recommendation-override.md)はnormal resultを変更せず、feasible replacement、human reason、audit artifact、再解析を分離する。`src/recommendation/`の非公開pure Coreはcandidate fact、complete order、selection horizon、recommended set、tier、resource witnessに加え、complete explanation graph、canonical English description、PTREC invariant validationまで実装済みである。公開実装は`NextResult.v2`のままであり、v3を一括導入するまで`runnable_now`の意味や既定sortを変更しない。
+[Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)はactual ready taskからselection horizonとrecommended setを決定的に選び、[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)はset/tierの理由をstable code、typed fact、entity referenceへ分解する。[Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)はtyped fact、制限付きexpression、comparison、decision trace、description projectionを接続し、[Recommendation Interface Contract仕様](specs/recommendation-interface.md)はCore type、complete JSON、text summary、`NextResult.v3` migrationを固定する。[Recommendation Human Override Contract仕様](specs/recommendation-override.md)はnormal resultを変更せず、feasible replacement、human reason、audit artifact、再解析を分離する。`src/recommendation/`のpure Coreはcandidate fact、complete order、selection horizon、recommended set、tier、resource witness、complete explanation graph、canonical English description、PTREC invariant validationを実装し、`selectNextTasks`、public type、JSON adapter、CLI text/helpへatomicに公開した。V2由来の`runnable_now`とupcoming explanationの意味は維持する。
 
 競合境界と実装testへの入力は[Recommendation規範例](examples/recommendation.md)を使用する。Critical対priority、parallel recommendation、selected/active-only resource blocker、empty set、exact description、override必要性を同じcase IDでCore、JSON、text、override validationへ展開し、例の抜粋をcomplete resultとして扱わない。
 
-実装と自己利用への導入順序は[Recommendation実装・自己利用migration](process/recommendation-migration.md)を正とする。Candidate fact/ranking、explanation graph、adapter projectionをCore責務として段階実装し、公開時だけCore、CLI、help、golden、package documentationを`NextResult.v3`へ一括切替する。CLI、help、provider guideは同じCore resultを表示し、独自rankingを持たない。
+実装と自己利用への導入順序は[Recommendation実装・自己利用migration](process/recommendation-migration.md)を正とする。MIG-04でCore、CLI、help、golden、package documentationを`NextResult.v3`へ一括切替した。CLI、help、provider guideは同じCore resultを表示し、独自rankingを持たない。Shadow評価とauthority adoptionは公開後の独立gateである。
 
 ### 9.4 mutation
 
@@ -823,7 +823,7 @@ grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自�
 - `Perttool.CheckResult.v1`
 - `Perttool.AnalysisResult.v2`
 - `Perttool.ResourceScheduleResult.v1`
-- `Perttool.NextResult.v2`
+- `Perttool.NextResult.v3`
 - `Perttool.MutationResult.v1`
 - `Perttool.ConversionLossReport.v1`
 - `Perttool.HelpResult.v1`
@@ -1042,7 +1042,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定し、全24pを完了して操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了した。Release readiness監査ではMVP受け入れ条件16のrecommendation実装が欠落しているため`RELEASE_E2E`を完了せず、[Recommendation実装plan](../plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化した。MIG-01からMIG-03の累計11pを完了し、recommendation固有の暫定実測値を`11p/1d`へ再calibrationした。残るdetail resource forecastは11p = 1d、macro残存precedence/resource makespanは3dで、macroは`RECOMMENDATION_IMPLEMENTATION`、detailは`NEXT_V3_PUBLICATION`が唯一のreadyかつrunnableなcritical workである。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定し、全24pを完了して操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了した。Release readiness監査ではMVP受け入れ条件16のrecommendation実装が欠落しているため`RELEASE_E2E`を完了せず、[Recommendation実装plan](../plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化した。MIG-01からMIG-04の累計15pを完了し、recommendation固有の暫定実測値を`15p/1d`へ再calibrationした。残るdetail resource forecastは7p = `7/15d`、macro残存precedence/resource makespanは`2.466667d`である。Macroは`RECOMMENDATION_IMPLEMENTATION`、detailは`SELF_USE_SHADOW`がcriticalかつrecommendedで、`OVERRIDE_VALIDATION`は同じready frontierだがreviewer競合によりdeferredである。
 
 ### Slice 4: advance and Mermaid
 

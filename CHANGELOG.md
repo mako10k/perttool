@@ -11,6 +11,11 @@
 - `exportMermaid` Coreと`dag render --to mermaid`のlossless/plain profile、解析annotation、strict loss、exclusive `--out`
 - `importMermaid` Coreと`dag import --from mermaid`のfail-closed profile復元、plain loss report、strict loss、exclusive `--out`
 - canonical keep/remove set、partial join、idempotenceを保証するpure `planAdvance` Coreとpreview-first `dag advance` CLI
+- exact typed fact、comparison、decision trace、canonical descriptionを持つcomplete recommendation graphとpublic `NextResultV3` Core型
+
+### Changed
+
+- pre-release breaking changeとして`dag next`のdefault JSONを`Perttool.NextResult.v2`から`Perttool.NextResult.v3`へ変更し、Core、CLI JSON/text、help、packageをatomicに公開
 
 ## [0.1.0-alpha.1] - 2026-07-21
 

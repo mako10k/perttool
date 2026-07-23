@@ -64,5 +64,31 @@ if [[ "$actual_version" != "$expected_version" ]]; then
 fi
 
 "$installed_cli" dsl check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+"$installed_cli" dag next "$repo_root/docs/examples/minimal.pert" --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      if (
+        result.schema_version !== "Perttool.NextResult.v3" ||
+        result.recommendation_interface_version !== 1 ||
+        result.recommendation?.explanation_status?.complete !== true
+      ) process.exit(1);
+    });
+  '
 "$installed_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null
+installed_module="$install_prefix/lib/node_modules/$package_name/dist/index.js"
+node --input-type=module - "$installed_module" "$repo_root/docs/examples/minimal.pert" <<'NODE'
+import { readFile } from "node:fs/promises";
+import { pathToFileURL } from "node:url";
+
+const api = await import(pathToFileURL(process.argv[2]).href);
+const source = await readFile(process.argv[3], "utf8");
+const result = api.selectNextTasks(source);
+if (!result.ok || result.recommendation === null) process.exit(1);
+const json = api.recommendationAnalysisToJson(result.recommendation);
+if (json.explanation_status?.complete !== true) process.exit(1);
+NODE
 printf 'release package check passed (%s)\n' "$actual_version"

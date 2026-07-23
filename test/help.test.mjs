@@ -86,6 +86,18 @@ test("mermaid help exposes lossless export and fail-closed import", () => {
   ]);
 });
 
+test("next help exposes the v3 recommendation authority and consumer safety", () => {
+  const help = getHelp("next", "detail");
+  assert.equal(help.ok, true);
+  assert.match(help.summary, /NextResult\.v3/);
+  const body = help.sections.map(({ body }) => body).join("\n");
+  assert.match(body, /recommended、allowed、deferred、discouraged/);
+  assert.match(body, /schema_version/);
+  assert.match(body, /complete=false/);
+  assert.match(body, /未知.*自動開始しません/);
+  assert.ok(help.examples.some(({ text }) => text.endsWith("--format json")));
+});
+
 test("syntax help sample references stay synchronized with parser fixtures", async () => {
   const references = topicIds
     .filter((topicId) => topicId === "samples" || topicId.startsWith("syntax"))

@@ -254,6 +254,20 @@ export interface RecommendationExplanationTaskDecision {
   readonly descriptionIds: readonly string[];
 }
 
+export interface RecommendationExplanationStatus {
+  readonly level: "full";
+  readonly complete: true;
+  readonly decisiveChainComplete: true;
+  readonly truncated: false;
+  readonly omittedCounts: {
+    readonly decisionSteps: 0;
+    readonly facts: 0;
+    readonly comparisons: 0;
+    readonly reasonOccurrences: 0;
+    readonly descriptions: 0;
+  };
+}
+
 export interface RecommendationAnalysis {
   readonly action: "start";
   readonly algorithm: {
@@ -275,19 +289,7 @@ export interface RecommendationAnalysis {
   readonly comparisons: readonly RecommendationComparison[];
   readonly reasonOccurrences: readonly RecommendationReasonOccurrence[];
   readonly descriptions: readonly RecommendationDescription[];
-  readonly explanationStatus: {
-    readonly level: "full";
-    readonly complete: true;
-    readonly decisiveChainComplete: true;
-    readonly truncated: false;
-    readonly omittedCounts: {
-      readonly decisionSteps: 0;
-      readonly facts: 0;
-      readonly comparisons: 0;
-      readonly reasonOccurrences: 0;
-      readonly descriptions: 0;
-    };
-  };
+  readonly explanationStatus: RecommendationExplanationStatus;
 }
 
 export interface RecommendationExplanationInput {

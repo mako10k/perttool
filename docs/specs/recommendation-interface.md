@@ -27,7 +27,7 @@
 - `NextResult.v2`からのmigration
 - unknown version、invariant failure、determinismの境界
 
-本仕様は設計契約である。現行実装が`Perttool.NextResult.v3`を返す、またはrecommendationを計算するとはみなさない。
+本仕様は設計契約であり、2026-07-23のMIG-04でCore、CLI JSON/text、help、packageへatomicに実装された。Human override validationとAI task selection authorityへの採用は後続gateであり、v3公開だけで完了したとはみなさない。
 
 ## 2. 規範上の位置
 
@@ -666,3 +666,16 @@ Actual resultは`result_decision`、全ready task decision、step、fact、compa
 - recommendation invariant diagnosticとexit 70の境界を定義した
 - `NextResult.v2`からv3へのbreaking migrationを定義した
 - current interfaceとimplementationを変更していない
+
+## 19. Implementation status
+
+2026-07-23にMIG-04を完了した。
+
+- `selectNextTasks`はpublic `NextResultV3`とcomplete `RecommendationAnalysis`を返す
+- `recommendationAnalysisToJson`とCLIが同じsnake_case graphを返す
+- `dag next` default schemaを`Perttool.NextResult.v3`へ一回で切り替えた
+- textへ4 tier summary、`complete=false`、JSON導線を追加した
+- v2 operational fieldの意味をfixture baselineで維持した
+- complete empty JSON、text、Core/CLI parity、byte determinism、fail-closed、help、packageを自動検査へ固定した
+
+Section 18は仕様策定slice当時の受け入れ記録である。「current interfaceとimplementationを変更していない」はその時点の履歴であり、MIG-04後の実装状態は本sectionを正とする。

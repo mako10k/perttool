@@ -10,7 +10,7 @@
 
 Issue #1の設計を受け入れる。要件、規範仕様、基本設計、規範例、実装migrationは、実行可否と推奨度を分離した決定的かつ説明可能なrecommendation契約として横断整合している。
 
-この判定は設計完了を意味する。現行`selectNextTasks`と`dag next`は引き続き`Perttool.NextResult.v2`であり、recommendation tier、structured explanation、override validation/applyを実装済みとはみなさない。
+この判定は設計完了を意味する。受け入れ時点の`selectNextTasks`と`dag next`は`Perttool.NextResult.v2`であり、recommendation tier、structured explanation、override validation/applyを実装済みとはみなさなかった。2026-07-23のMIG-04でv3 publicationまでは完了したが、override validation/applyとshadow/adoptionは後続gateである。
 
 ## 2. レビュー対象
 

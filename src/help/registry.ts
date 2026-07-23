@@ -444,19 +444,29 @@ const nodes: readonly HelpNode[] = [
   {
     id: "next",
     title: "Next tasks",
-    summary: "active、ready、runnable_now、blocked_now、upcomingを返します。",
+    summary: "NextResult.v3で工程上の推奨taskと、active、ready、runnable_now、blocked_now、upcomingを返します。",
     quick: [
       {
         id: "classification",
         title: "Task classification",
         body: "readyは依存関係上開始可能なplanned task、runnable_nowは現在のactive allocationを差し引いて同時開始できるreadyの部分集合です。",
       },
+      {
+        id: "recommendation",
+        title: "Recommendation authority",
+        body: "recommendationはready taskをrecommended、allowed、deferred、discouragedへ分類します。recommended setは同時開始可能ですがheuristicであり、optimal=falseです。",
+      },
     ],
     detail: [
       {
+        id: "consumer-safety",
+        title: "Machine-readable explanation",
+        body: "--format jsonはcompleteなPerttool.NextResult.v3説明graphを返します。Consumerはschema_versionと各model versionを先に検査し、未知のdecisive semanticsではtaskを自動開始しません。Textはcomplete=falseのsummaryです。",
+      },
+      {
         id: "selection",
         title: "Resource selection",
-        body: "runnable_nowはpriority、precedence total float、expected duration、task IDのscheduler順で1回scanして選びます。表示順はこの選択順とは独立です。",
+        body: "runnable_nowは既存scheduler順で選ぶoperational subset、recommendationはversion付きranking policyで選ぶauthorityであり、同じ集合とは限りません。CLI rendererはrankingを再実装しません。",
       },
       {
         id: "explanation",
@@ -471,8 +481,8 @@ const nodes: readonly HelpNode[] = [
     examples: [
       {
         id: "parallel-next",
-        title: "Current runnable subset",
-        text: "perttool dag next docs/examples/parallel.pert",
+        title: "Complete recommendation graph",
+        text: "perttool dag next docs/examples/parallel.pert --format json",
       },
     ],
     related: ["analysis", "analysis.resources"],

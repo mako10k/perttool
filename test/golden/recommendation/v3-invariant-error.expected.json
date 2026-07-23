@@ -1,0 +1,20 @@
+{
+  "exit_code": 70,
+  "ok": false,
+  "recommendation": null,
+  "groups": {
+    "active": [],
+    "ready": [],
+    "runnable_now": [],
+    "blocked_now": [],
+    "upcoming": []
+  },
+  "tasks": [],
+  "diagnostics": [
+    {
+      "code": "PTREC-301",
+      "severity": "error",
+      "message": "recommendation source digest is invalid"
+    }
+  ]
+}

@@ -5,13 +5,14 @@ project RECOMMENDATION_IMPLEMENTATION:
     docs/process/recommendation-migration.mdのMIG-01からMIG-07を、
     MVP受け入れ条件16のread-only recommendationとnormal authority adoptionまで実装する。
     Pointはこのroadmap再構成時の相対見積りである。2026-07-23に
-    FIXTURE_BASELINE 2p、RANKING_CORE 4p、EXPLANATION_CORE 5pを
+    FIXTURE_BASELINE 2p、RANKING_CORE 4p、EXPLANATION_CORE 5p、
+    NEXT_V3_PUBLICATION 4pを
     1 active dayで完了した累計標本から、recommendation固有の
-    暫定実測Velocityを11p/1dへcalibrationした。
+    暫定実測Velocityを15p/1dへcalibrationした。
     MIG-08のoverride applyとdurable auditはMVP後の独立work packageとする。
   as_of 2026-07-23
   duration_unit point
-  velocity 11p/1d
+  velocity 15p/1d
   finish RECOMMENDATION_MVP_READY
 
 resource DEVELOPERS:
@@ -84,6 +85,7 @@ task NEXT_V3_PUBLICATION EXPLANATION_CORE_READY -> NEXT_V3_PUBLISHED:
   title "NextResult.v3をCore、CLI、helpへatomic公開する"
   description "src/application/next.ts、src/cli.ts、src/index.ts、help、README、CHANGELOG、consumer guide、Core/CLI/package testを同じbreaking changeで更新する"
   duration 4p
+  status done
   priority 70
   requires:
     DEVELOPERS 1

@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 3 / Revision 2.19
+- 文書状態: Active Stage 3 / Revision 2.20
 - 作成日: 2026-07-21
 - 更新日: 2026-07-23
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -121,6 +121,8 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`EXPLANATION_CORE`を完了した。MIG-02 resultからexact typed fact、最大depth 8の制限付きexpression、winner/alternative/decisive ruleを持つminimal comparison、phase順のdecision trace、taxonomy 1.0 reason occurrence、typed parameterからのcanonical English descriptionを構築する非公開pure Coreを実装した。Reference closure、tier/set、expression再評価、version/rule/code/fact registry、description key/parameter/textの破損を`PTREC-301`から`PTREC-303`へ変換し、partial resultを返さない。REC-001からREC-011、selected/active-only blocker、scan時点とfinal setのresource witness、ready 0件、exact Rational、各diagnostic破損を専用testへ固定し、全186 testで現行Core export、CLI、help、`Perttool.NextResult.v2`が変わらないことを確認した。`plans/recommendation.pert`はpreview source digest `sha256:6f29a90d7958dfe8101527afad0d06c111e86fe57a6285e72d4f50a8509f0c5c`を確認して`task finish --write`し、task finish直後のdigestは`sha256:f9ade5949069deec4164d5ee4b6bae5c396df6addd5bec00c5134fa34f8282e7`、Velocity反映後は`sha256:31985c15f5cb32a3340519b093eb6036606502e2026b33d5d8a145c5ca9cf700`となった。累計11p/1 active dayからVelocityを`11p/1d`へcalibrationし、残るprecedence 8p、resource 11p、resource delay 3p、resource forecast 1dとなった。Macroへ1dをroll-upした結果、残存precedence/resource makespanは3d、次のdetail critical taskは`NEXT_V3_PUBLICATION`である。
 
+続いて`NEXT_V3_PUBLICATION`を完了した。`selectNextTasks`へrankingとexplanation graphを接続し、public `NextResultV3`型、`recommendationAnalysisToJson`、`Perttool.NextResult.v3` CLI JSON、4 tier text summary、structured help、consumer migration guide、CHANGELOGをatomicに公開した。Core/CLI complete graph parity、ready 0件のcomplete JSON、text/error golden、byte determinism、raw BOM digest provenance、PTREC時のpartial result抑止とexit 70、v2 operational field維持、package-installed API/CLIを専用testへ固定し、全195 test、文書、5自己利用plan、local link、package検査を通した。`plans/recommendation.pert`はpreview source digest `sha256:31985c15f5cb32a3340519b093eb6036606502e2026b33d5d8a145c5ca9cf700`を確認して`task finish --write`し、task finish直後のdigestは`sha256:eeab2abcf0be0ca25fe8124dbea46c90dff130721f1ba43fcdf211569b924069`、Velocity反映後は`sha256:2271c43a68cc7eb0cd9286335a1020c1a1fb53af3d6a3167b86d8f2e02f3109d`となった。累計15p/1 active dayからVelocityを`15p/1d`へcalibrationし、残るprecedence 4p、resource 7p、resource delay 3p、resource forecast`7/15d`となった。Macroへ`0.466667d`をroll-upし、digestは`sha256:1bc4b4b9d16fe9ab6b96491e6270a8c9c9c3de19af2eddff5fc4d30a044556fd`、残存precedence/resource makespanは`2.466667d`となった。Detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`がreviewer競合でdeferredである。V3はshadow受け入れ前なのでmanual selectionをauthorityとして維持する。
+
 Issue #2はrecommendation publication後のprovider別guideとしてhelp surfaceとreviewerを共有するが、現行macroへwork packageを追加していない。Issue #3もMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
@@ -205,7 +207,7 @@ Stage 1で禁止した操作:
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
-- 現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RECOMMENDATION_IMPLEMENTATION`、detailでは`NEXT_V3_PUBLICATION`である。`RELEASE_E2E`はupcomingで、操作系detailに未完了taskはない
+- 現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RECOMMENDATION_IMPLEMENTATION`、detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`がdeferredである。`RELEASE_E2E`はupcomingで、操作系detailに未完了taskはない
 - Issue #2はmacro planへ追加するまで着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -367,6 +369,6 @@ Stage 1開始時の証跡:
 - operations calibration gate: 完了9 taskの24p/1 active dayから実測Velocity `24p/1d`、残るprecedence/resource forecast 0と0p resource delayをgoldenへ固定する
 - Mermaid profile contract gate: 全semantic record、canonical JSON、metadata/projection digest、fail-closed import、stable loss code、security境界、規範artifactを仕様/help/testへ固定する
 - release readiness gate: MVP condition 1から16を個別監査し、未実装conditionを既存fieldの再解釈でPassにせず、recommendation detail/macro gateと再開条件へ固定する
-- recommendation planning gate: MIG-01からMIG-07を22pへ分解し、`EXPLANATION_CORE`完了後は残るprecedence 8p、resource 11p、実測forecast 1dと次の`NEXT_V3_PUBLICATION`をgoldenへ固定する
+- recommendation planning gate: MIG-01からMIG-07を22pへ分解し、`NEXT_V3_PUBLICATION`完了後は残るprecedence 4p、resource 7p、実測forecast `7/15d`、recommended `SELF_USE_SHADOW`とdeferred `OVERRIDE_VALIDATION`をgoldenへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、5 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

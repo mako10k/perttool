@@ -35,6 +35,8 @@ import type { Rational } from "./model/rational.js";
 import { formatDecimal } from "./model/rational.js";
 import type { DurationUnit, Velocity } from "./model/units.js";
 import { convertWithVelocity, durationSuffix } from "./model/units.js";
+import { recommendationInvariantExitCode } from "./recommendation/failure.js";
+import { recommendationAnalysisToJson } from "./recommendation/json.js";
 import type {
   MilestoneClearableField,
   MilestoneMutationState,
@@ -129,6 +131,8 @@ function commandHelp(resource: string, action: string): string {
     "  [--max-diagnostics <integer>]",
     "  [--warnings-as-errors]",
     "  [--format text|json] [--color auto|always|never]",
+    "Output: Perttool.NextResult.v3 with a complete recommendation graph in JSON.",
+    "Consumers must inspect schema_version before using recommendation authority.",
   ].join("\n");
   if (resource === "dag" && action === "advance") return [
     "Usage: perttool dag advance <file>",
@@ -2163,6 +2167,7 @@ function nextJson(
     capacity_overrides: [...result.capacityOverrides]
       .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
       .map(([resourceId, capacity]) => ({ resource_id: resourceId, capacity })),
+    recommendation: recommendationAnalysisToJson(result.recommendation!),
     groups: {
       active: result.groups.active,
       ready: result.groups.ready,
@@ -2229,6 +2234,79 @@ function nextJson(
   };
 }
 
+function recommendationParameterTaskIds(
+  description: NonNullable<ReturnType<typeof selectNextTasks>["recommendation"]>["descriptions"][number],
+  name: string,
+): readonly string[] {
+  const parameter = description.parameters.find((item) => item.name === name);
+  if (parameter === undefined) return [];
+  if (parameter.value.type === "entity" && parameter.value.value.kind === "task") {
+    return [parameter.value.value.id];
+  }
+  if (parameter.value.type !== "list" && parameter.value.type !== "set") return [];
+  return parameter.value.items.flatMap((item) =>
+    item.type === "entity" && item.value.kind === "task" ? [item.value.id] : [],
+  );
+}
+
+function recommendationParameterEntityId(
+  description: NonNullable<ReturnType<typeof selectNextTasks>["recommendation"]>["descriptions"][number],
+  name: string,
+): string | null {
+  const parameter = description.parameters.find((item) => item.name === name);
+  return parameter?.value.type === "entity" ? parameter.value.value.id : null;
+}
+
+function renderRecommendationSummary(
+  recommendation: NonNullable<ReturnType<typeof selectNextTasks>["recommendation"]>,
+): readonly string[] {
+  const steps = new Map(recommendation.decisionSteps.map((step) => [step.id, step]));
+  const reasons = new Map(
+    recommendation.reasonOccurrences.map((reason) => [reason.id, reason]),
+  );
+  const descriptions = new Map(
+    recommendation.descriptions.map((description) => [description.id, description]),
+  );
+  const lines = [
+    "RECOMMENDATION",
+    `ALGORITHM ${recommendation.algorithm.id}@${recommendation.algorithm.version} optimal=${recommendation.algorithm.optimal}`,
+    'EXPLANATION detail=summary complete=false machine_trace="--format json"',
+    `RECOMMENDED SET ${recommendation.recommendedTaskIds.join(",") || "-"}`,
+  ];
+  const sections = [
+    ["RECOMMENDED START", "recommended"],
+    ["ALLOWED ADDITIONAL START", "allowed"],
+    ["DEFERRED START", "deferred"],
+    ["DISCOURAGED START", "discouraged"],
+  ] as const;
+  for (const [title, tier] of sections) {
+    lines.push("", title);
+    const decisions = recommendation.taskDecisions.filter(
+      (decision) => decision.tier === tier,
+    );
+    if (decisions.length === 0) {
+      lines.push("-");
+      continue;
+    }
+    for (const decision of decisions) {
+      const description = descriptions.get(decision.summaryDescriptionId)!;
+      const primaryReason = reasons.get(description.sourceReasonIds[0]!)!;
+      const rule = recommendationParameterEntityId(description, "decisive_rule_id") ??
+        steps.get(primaryReason.decisionStepId)!.rule.id;
+      const blockerIds = [
+        ...recommendationParameterTaskIds(description, "higher_priority_task_ids"),
+        ...recommendationParameterTaskIds(description, "active_blocker_task_ids"),
+      ];
+      lines.push(
+        `${decision.subjectTaskId} tier=${decision.tier} rule=${rule} higher_priority=${decision.primaryHigherPriorityTaskId ?? "-"} blockers=${blockerIds.join(",") || "-"}`,
+        `  reason=${primaryReason.code}`,
+        `  why: ${description.text}`,
+      );
+    }
+  }
+  return lines;
+}
+
 function renderNextTask(
   task: ReturnType<typeof selectNextTasks>["tasks"][number],
   unit: DurationUnit,
@@ -2273,6 +2351,7 @@ function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
     `VELOCITY ${result.velocity === null ? "-" : velocityText(result.velocity, result.precision)}`,
     `VELOCITY_FORECAST_UNIT ${result.velocityForecast?.targetUnit ?? "-"}`,
   ];
+  lines.push("", ...renderRecommendationSummary(result.recommendation!));
   const section = (title: string, ids: readonly string[], details: "none" | "rejection" | "blocked" | "explanation" = "none"): void => {
     lines.push("", title);
     if (ids.length === 0) {
@@ -2366,7 +2445,25 @@ async function runNext(args: readonly string[]): Promise<number> {
     explainDepth,
     precision,
     maxDiagnostics,
+    sourceDigest: input.digest,
   });
+  const invariantExitCode = recommendationInvariantExitCode(result.diagnostics);
+  if (invariantExitCode !== null) {
+    if (format === "json") {
+      writeJson({
+        schema_version: "Perttool.CliError.v1",
+        tool_version: TOOL_VERSION,
+        operation: "dag.next",
+        ok: false,
+        diagnostics: result.diagnostics.map(jsonDiagnostic),
+      });
+    } else {
+      for (const diagnostic of result.diagnostics) {
+        process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+      }
+    }
+    return invariantExitCode;
+  }
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
     (result.diagnosticsTruncated ||
@@ -2374,7 +2471,8 @@ async function runNext(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.NextResult.v2",
+      schema_version: "Perttool.NextResult.v3",
+      recommendation_interface_version: 1,
       tool_version: TOOL_VERSION,
       operation: "dag.next",
       ok,

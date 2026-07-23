@@ -1,0 +1,40 @@
+PERTTOOL NEXT REC_001_CRITICAL_PRIORITY
+VELOCITY 1p/1d
+VELOCITY_FORECAST_UNIT day
+
+RECOMMENDATION
+ALGORITHM perttool.recommendation-ranking.lexicographic-frontier@1 optimal=false
+EXPLANATION detail=summary complete=false machine_trace="--format json"
+RECOMMENDED SET CRITICAL_FIX
+
+RECOMMENDED START
+CRITICAL_FIX tier=recommended rule=selection_horizon higher_priority=- blockers=-
+  reason=ranking_rule_supports_task
+  why: CRITICAL_FIX is recommended by rule selection_horizon.
+
+ALLOWED ADDITIONAL START
+OPTIONAL_POLISH tier=allowed rule=critical_class higher_priority=CRITICAL_FIX blockers=-
+  reason=ranking_rule_opposes_task
+  why: OPTIONAL_POLISH is allowed as additional work, but CRITICAL_FIX ranks higher by rule critical_class.
+
+DEFERRED START
+-
+
+DISCOURAGED START
+-
+
+ACTIVE
+-
+
+RUNNABLE NOW
+OPTIONAL_POLISH priority=100 expected=0.5p forecast=0.5d TF=1.5p precedence_critical=false schedule_critical=false owner=- resources=-
+CRITICAL_FIX priority=10 expected=2p forecast=2d TF=0p precedence_critical=true schedule_critical=true owner=- resources=-
+
+READY / WAITING RESOURCE
+-
+
+BLOCKED NOW
+-
+
+UPCOMING
+-

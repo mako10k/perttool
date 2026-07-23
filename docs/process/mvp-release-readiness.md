@@ -9,9 +9,9 @@
 
 ## 1. 結論
 
-`RELEASE_E2E`は完了扱いにしない。受け入れ条件1から15には実装・自動検査の証跡があり、条件16のranking/tierとstructured explanation/invariant pure Coreまでは実装したが、public v3、override validation、shadow/adoptionが未実装である。
+`RELEASE_E2E`は完了扱いにしない。受け入れ条件1から15には実装・自動検査の証跡があり、条件16のranking/tier、structured explanation/invariant、public v3までは実装したが、override validation、shadow/adoptionが未実装である。
 
-現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v2`であり、`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を返す。これらをcondition 16のrecommendationとして再解釈してはならない。
+現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v3`であり、complete recommendation graphと、v2由来の`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を直交するfieldとして返す。V3はshadow受け入れ前なので、公開済みというだけでAI task selection authorityにしない。
 
 ## 2. 受け入れ証跡
 
@@ -23,7 +23,7 @@
 | 10 | Pass | Mermaid profile/export/import unit、CLI、E2E-012とE2E-014 |
 | 11-12 | Pass | help registry、fixture/help link test |
 | 13-15 | Pass | Core/CLI parity、normative example、Point/velocity analysis test |
-| 16 | Fail | ranking/tierとstructured explanation/invariant Core testはPass。`NextResult.v3`、override validation、shadow/adoptionが未実装 |
+| 16 | Fail | ranking/tier、structured explanation/invariant、`NextResult.v3` publication testはPass。override validation、shadow/adoptionが未実装 |
 
 `npm run check`が成功することはrepository regressionがない証拠であるが、未実装のcondition 16を自動的にPassへ変えない。
 
@@ -36,6 +36,8 @@
 同日にMIG-02 ranking/tier Core 4pを完了し、累計実測を`6p/1d`へ更新した。残るresource 16pのforecast `8/3d`をmacroへ`2.666667d`として再roll-upした。次のdetail taskは`EXPLANATION_CORE`であり、condition 16と`RELEASE_E2E`は引き続き未完了である。
 
 同日にMIG-03 structured explanation/invariant Core 5pを完了し、累計実測を`11p/1d`へ更新した。残るresource 11pのforecast 1dをmacroへ再roll-upした。次のdetail taskは`NEXT_V3_PUBLICATION`であり、public v3、override、shadow/adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
+
+同日にMIG-04 `NextResult.v3` atomic publication 4pを完了し、累計実測を`15p/1d`へ更新した。残るresource 7pのforecast `7/15d`をmacroへ`0.466667d`として再roll-upした。Detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`はreviewer競合でdeferredである。Override validation、shadow/adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
 
 MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではない。Read-only override validationであるMIG-05までをMVPへ含め、write authorityはMVP後も未解禁とする。
 

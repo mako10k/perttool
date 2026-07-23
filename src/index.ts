@@ -2,6 +2,7 @@ export { checkDocument } from "./application/check.js";
 export { analyzeDocument } from "./application/analyze.js";
 export { planFormat } from "./application/format.js";
 export { selectNextTasks } from "./application/next.js";
+export { recommendationAnalysisToJson } from "./recommendation/json.js";
 export { planMutation } from "./application/mutate.js";
 export { planAdvance } from "./mutation/advance.js";
 export { exportMermaid } from "./conversion/mermaid.js";
@@ -59,11 +60,45 @@ export type {
   NextGroups,
   NextOptions,
   NextResult,
+  NextResultV3,
   NextTask,
   ResourceRejection,
   TaskClassification,
   UnsatisfiedEdgeExplanation,
 } from "./application/next.js";
+export type {
+  RecommendationAnalysis,
+  RecommendationComparison,
+  RecommendationComparisonScope,
+  RecommendationDecisionPhase,
+  RecommendationDecisionRole,
+  RecommendationDecisionStep,
+  RecommendationDescription,
+  RecommendationDescriptionParameter,
+  RecommendationEntityKind,
+  RecommendationEntityReference,
+  RecommendationExplanationStatus,
+  RecommendationExplanationTaskDecision,
+  RecommendationExpression,
+  RecommendationExpressionTerm,
+  RecommendationFact,
+  RecommendationProvenance,
+  RecommendationProvenanceKind,
+  RecommendationReasonCode,
+  RecommendationReasonEffect,
+  RecommendationReasonOccurrence,
+  RecommendationRelation,
+  RecommendationResultDecision,
+  RecommendationScalarValue,
+  RecommendationUnit,
+  RecommendationValue,
+} from "./recommendation/explanation-types.js";
+export type {
+  RecommendationCriticalClass,
+  RecommendationDistance,
+  RecommendationRankingRuleId,
+  RecommendationTier,
+} from "./recommendation/types.js";
 export type {
   AnalysisEdge,
   AnalysisResource,
