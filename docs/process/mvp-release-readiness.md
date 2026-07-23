@@ -1,6 +1,6 @@
 # MVP release readiness監査
 
-- 文書状態: Not Ready 1.2
+- 文書状態: Not Ready 1.3
 - 監査日: 2026-07-22
 - 更新日: 2026-07-23
 - 対象: [MVP受け入れ条件](../requirements.md#21-mvp-受け入れ条件)
@@ -9,9 +9,9 @@
 
 ## 1. 結論
 
-`RELEASE_E2E`は完了扱いにしない。受け入れ条件1から15には実装・自動検査の証跡があり、条件16のranking/tier、structured explanation/invariant、public v3までは実装したが、override validation、shadow/adoptionが未実装である。
+`RELEASE_E2E`は完了扱いにしない。受け入れ条件1から15には実装・自動検査の証跡があり、条件16のranking/tier、structured explanation/invariant、public v3、5 plan self-use shadowまでは実装・受け入れ済みだが、override validationとnormal authority adoptionが未実装である。
 
-現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v3`であり、complete recommendation graphと、v2由来の`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を直交するfieldとして返す。V3はshadow受け入れ前なので、公開済みというだけでAI task selection authorityにしない。
+現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v3`であり、complete recommendation graphと、v2由来の`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を直交するfieldとして返す。V3のshadowは受け入れ済みだが、MIG-07のadoption change前なのでAI task selection authorityにはしない。
 
 ## 2. 受け入れ証跡
 
@@ -23,7 +23,7 @@
 | 10 | Pass | Mermaid profile/export/import unit、CLI、E2E-012とE2E-014 |
 | 11-12 | Pass | help registry、fixture/help link test |
 | 13-15 | Pass | Core/CLI parity、normative example、Point/velocity analysis test |
-| 16 | Fail | ranking/tier、structured explanation/invariant、`NextResult.v3` publication testはPass。override validation、shadow/adoptionが未実装 |
+| 16 | Fail | ranking/tier、structured explanation/invariant、`NextResult.v3` publication、5 plan shadow testはPass。override validationとnormal authority adoptionが未実装 |
 
 `npm run check`が成功することはrepository regressionがない証拠であるが、未実装のcondition 16を自動的にPassへ変えない。
 
@@ -38,6 +38,8 @@
 同日にMIG-03 structured explanation/invariant Core 5pを完了し、累計実測を`11p/1d`へ更新した。残るresource 11pのforecast 1dをmacroへ再roll-upした。次のdetail taskは`NEXT_V3_PUBLICATION`であり、public v3、override、shadow/adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
 
 同日にMIG-04 `NextResult.v3` atomic publication 4pを完了し、累計実測を`15p/1d`へ更新した。残るresource 7pのforecast `7/15d`をmacroへ`0.466667d`として再roll-upした。Detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`はreviewer競合でdeferredである。Override validation、shadow/adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
+
+同日にMIG-06 self-use shadow 2pを完了し、5 planのmanual selectionとv3 recommendationの一致、known contract、complete graph、byte determinism、joint feasibility、operational field互換、structured why-notを受け入れた。累計実測を`17p/1d`へ更新し、残るresource 5pのforecast `5/17d`をmacroへ`0.294118d`として再roll-upした。Detailでは`OVERRIDE_VALIDATION`がrecommended、`AUTHORITY_ADOPTION`はreviewer競合でdeferredである。Override validationとnormal authority adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
 
 MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではない。Read-only override validationであるMIG-05までをMVPへ含め、write authorityはMVP後も未解禁とする。
 

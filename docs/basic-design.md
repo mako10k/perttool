@@ -1042,7 +1042,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定し、全24pを完了して操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了した。Release readiness監査ではMVP受け入れ条件16のrecommendation実装が欠落しているため`RELEASE_E2E`を完了せず、[Recommendation実装plan](../plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化した。MIG-01からMIG-04の累計15pを完了し、recommendation固有の暫定実測値を`15p/1d`へ再calibrationした。残るdetail resource forecastは7p = `7/15d`、macro残存precedence/resource makespanは`2.466667d`である。Macroは`RECOMMENDATION_IMPLEMENTATION`、detailは`SELF_USE_SHADOW`がcriticalかつrecommendedで、`OVERRIDE_VALIDATION`は同じready frontierだがreviewer競合によりdeferredである。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定し、全24pを完了して操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了した。Release readiness監査ではMVP受け入れ条件16のrecommendation実装が欠落しているため`RELEASE_E2E`を完了せず、[Recommendation実装plan](../plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化した。MIG-01からMIG-04とMIG-06の累計17pを完了し、recommendation固有の暫定実測値を`17p/1d`へ再calibrationした。5 planのshadow評価は受け入れ済みだがnormal authorityへの採用前である。残るdetail resource forecastは5p = `5/17d`、macro残存precedence/resource makespanは`2.294118d`である。Macroは`RECOMMENDATION_IMPLEMENTATION`、detailは`OVERRIDE_VALIDATION`がcriticalかつrecommendedで、`AUTHORITY_ADOPTION`は同じready frontierだがreviewer競合によりdeferredである。
 
 ### Slice 4: advance and Mermaid
 

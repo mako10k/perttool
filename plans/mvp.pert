@@ -7,8 +7,8 @@ project PERTTOOL_MVP:
     M1からM4の操作系はplans/operations.pertを正とする。
     操作系detail planは全24p完了時の実測Velocity 24p/1dを使用し、
     resource forecastを6 decimal dayへroundしてmacro work packageへroll-upした。
-    recommendation実装はplans/recommendation.pertを正とし、累計完了標本15p/1dによる
-    残りresource forecast 7/15dをmacro work packageへroll-upした。npm publication
+    recommendation実装はplans/recommendation.pertを正とし、累計完了標本17p/1dによる
+    残りresource forecast 5/17dをmacro work packageへroll-upした。npm publication
     preparationは人間overrideで前倒ししたが、RELEASE_E2Eのstatusは変更しない。Issue #2のAI Agent
     Guidance RegistryとIssue #3のmulti-plan compositionは独立した将来backlogとして扱う。
   as_of 2026-07-23
@@ -193,8 +193,8 @@ task RELEASE_E2E RELEASE_READY -> M6_MVP_RELEASED:
 
 task RECOMMENDATION_IMPLEMENTATION M3_SAFE_WRITE_READY -> RELEASE_READY:
   title "説明可能なrecommendationを実装し自己利用へ採用する"
-  description "plans/recommendation.pertのMIG-05からMIG-07、残る7p resource forecastをrecommendation実測15p/1dで0.466667dへroll-upする"
-  duration 0.466667d
+  description "plans/recommendation.pertのMIG-05とMIG-07、残る5p resource forecastをrecommendation実測17p/1dで0.294118dへroll-upする"
+  duration 0.294118d
   priority 100
   requires:
     DEVELOPERS 1

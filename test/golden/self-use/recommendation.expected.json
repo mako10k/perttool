@@ -8,27 +8,24 @@
       "tasks": 7,
       "gates": 2,
       "errors": 0,
-      "warnings": 4
+      "warnings": 5
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "4/1",
+    "precedence_makespan": "3/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "4/15",
+    "precedence_forecast": "3/17",
     "precedence_critical_tasks": [
-      "SELF_USE_SHADOW",
-      "AUTHORITY_ADOPTION"
+      "OVERRIDE_VALIDATION"
     ],
-    "resource_makespan": "7/1",
-    "resource_forecast": "7/15",
-    "resource_delay": "3/1",
+    "resource_makespan": "5/1",
+    "resource_forecast": "5/17",
+    "resource_delay": "2/1",
     "resource_arcs": [
-      "resource:OVERRIDE_VALIDATION:AUTHORITY_ADOPTION",
-      "resource:SELF_USE_SHADOW:OVERRIDE_VALIDATION"
+      "resource:OVERRIDE_VALIDATION:AUTHORITY_ADOPTION"
     ],
     "schedule_critical_tasks": [
-      "SELF_USE_SHADOW",
       "OVERRIDE_VALIDATION",
       "AUTHORITY_ADOPTION"
     ]
@@ -37,23 +34,21 @@
     "groups": {
       "active": [],
       "ready": [
-        "SELF_USE_SHADOW",
-        "OVERRIDE_VALIDATION"
+        "OVERRIDE_VALIDATION",
+        "AUTHORITY_ADOPTION"
       ],
       "runnable_now": [
-        "SELF_USE_SHADOW"
+        "OVERRIDE_VALIDATION"
       ],
       "blocked_now": [],
-      "upcoming": [
-        "AUTHORITY_ADOPTION"
-      ]
+      "upcoming": []
     },
     "resource_rejection": {
-      "task_id": "OVERRIDE_VALIDATION",
+      "task_id": "AUTHORITY_ADOPTION",
       "resource_id": "REVIEWERS",
       "capacity": 1,
       "earlier_selected_task_ids": [
-        "SELF_USE_SHADOW"
+        "OVERRIDE_VALIDATION"
       ]
     }
   }

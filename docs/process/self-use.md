@@ -125,6 +125,8 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 2026-07-23に利用者がnpm publication preparationの前倒しを明示した。これはhuman overrideとして、`RELEASE_E2E`を開始・完了せずにpackage metadata、publish normalization dry-run、同一tarball publish guard、TOKEN注入手順だけを整備する。`NPM_ACCESS_TOKEN`はmaintainer domainで`NPM_TOKEN`へrenameし、旧名なし、新名あり、`npm whoami`成功を値非表示で確認した。現行`0.1.0-alpha.1`は既存Git tag/GitHub Releaseより後の内容なのでpublishせず、次期候補`0.1.0-alpha.2`へのversion更新、tag、GitHub asset、npm publish、registry installはrelease gate後に残す。Macro/detailのstatusとrecommendation結果は変更せず、次のnormal taskは`SELF_USE_SHADOW`のままとする。
 
+続いて`SELF_USE_SHADOW`を完了した。5 planの`dag next --format=json`を同一snapshotで2回実行し、known `Perttool.NextResult.v3` contract、complete graph、byte determinism、ready subset、recommended setのjoint resource feasibility、v2 operational field互換、`PTREC-*`不在を検査した。受け入れ前detail snapshotでは`SELF_USE_SHADOW`と`OVERRIDE_VALIDATION`の差をprimary comparison、`REVIEWERS` resource witness、canonical descriptionだけから説明でき、[shadow受け入れ記録](recommendation-shadow-review.md)へdigestと判定を固定した。`plans/recommendation.pert`はpreview source digest `sha256:2271c43a68cc7eb0cd9286335a1020c1a1fb53af3d6a3167b86d8f2e02f3109d`を確認してexpected digest付き`task finish --write`を行い、finish直後のdigestは`sha256:2494c60b92f70a8bb66ab35e05e789bac717cd06a2d00e3f2f8f15b1f78cc94d`となった。完了2pを同日の標本へ加えてVelocityを`17p/1d`へcalibrationし、残るprecedence 3p、resource 5p、resource delay 2p、resource forecast`5/17d`となった。Macroへ`0.294118d`をroll-upし、残存precedence/resource makespanは`2.294118d`となった。Detailでは`OVERRIDE_VALIDATION`がrecommended、`AUTHORITY_ADOPTION`がreviewer競合でdeferredである。MIG-07完了まではmanual selectionをauthorityとして維持する。
+
 Issue #2はrecommendation publication後のprovider別guideとしてhelp surfaceとreviewerを共有するが、現行macroへwork packageを追加していない。Issue #3もMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
@@ -145,7 +147,7 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | `grammar.pert` | `FORMATTER_ROUNDTRIP`、`HELP_FIXTURE_SYNC` | 3p | 1d | `3p/1d` | 0p |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
 | `operations.pert` | formatter/mutation preview、safe write、advance | 24p | 1d | `24p/1d` | 0p |
-| `recommendation.pert` | `FIXTURE_BASELINE`、`RANKING_CORE`、`EXPLANATION_CORE` | 11p | 1d | `11p/1d` | resource 11p = 1d |
+| `recommendation.pert` | `FIXTURE_BASELINE`、`RANKING_CORE`、`EXPLANATION_CORE`、`NEXT_V3_PUBLICATION`、`SELF_USE_SHADOW` | 17p | 1d | `17p/1d` | resource 5p = `5/17d` |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。4標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
@@ -153,7 +155,7 @@ Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 
 
 Operationsはformatter/mutation preview 12p、safe write 6p、advance 6pの同日完了を累計し、実測`24p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系taskを詳細planへ追加して完了実績が生じた時点で独立再calibrationする。Macroはday単位しか持たないため、未完了work packageでは`p/velocity`を6 decimal dayへroundする。現在のdetail残作業とresource delayは0pである。
 
-Recommendation実装は`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5pを2026-07-23の同じactive dayで完了したため、累計11p/1 active dayの暫定実測`11p/1d`へ更新した。残るresource makespan 11pのforecastは1dである。まだ1 active dayだけの標本なので、次の異なるactive dayまたは複数task完了時に再calibrationする。
+Recommendation実装は`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2pを2026-07-23の同じactive dayで完了したため、累計17p/1 active dayの暫定実測`17p/1d`へ更新した。残るresource makespan 5pのforecastは`5/17d`である。まだ1 active dayだけの標本なので、次の異なるactive dayまたは複数task完了時に再calibrationする。
 
 Stage 1で許可した操作:
 
@@ -209,7 +211,7 @@ Stage 1で禁止した操作:
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
-- 現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RECOMMENDATION_IMPLEMENTATION`、detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`がdeferredである。`RELEASE_E2E`はupcomingで、操作系detailに未完了taskはない
+- 現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RECOMMENDATION_IMPLEMENTATION`、detailでは`OVERRIDE_VALIDATION`がrecommended、`AUTHORITY_ADOPTION`がdeferredである。`RELEASE_E2E`はupcomingで、操作系detailに未完了taskはない
 - Issue #2はmacro planへ追加するまで着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -371,6 +373,6 @@ Stage 1開始時の証跡:
 - operations calibration gate: 完了9 taskの24p/1 active dayから実測Velocity `24p/1d`、残るprecedence/resource forecast 0と0p resource delayをgoldenへ固定する
 - Mermaid profile contract gate: 全semantic record、canonical JSON、metadata/projection digest、fail-closed import、stable loss code、security境界、規範artifactを仕様/help/testへ固定する
 - release readiness gate: MVP condition 1から16を個別監査し、未実装conditionを既存fieldの再解釈でPassにせず、recommendation detail/macro gateと再開条件へ固定する
-- recommendation planning gate: MIG-01からMIG-07を22pへ分解し、`NEXT_V3_PUBLICATION`完了後は残るprecedence 4p、resource 7p、実測forecast `7/15d`、recommended `SELF_USE_SHADOW`とdeferred `OVERRIDE_VALIDATION`をgoldenへ固定する
+- recommendation shadow gate: MIG-06完了後は残るprecedence 3p、resource 5p、実測forecast `5/17d`、recommended `OVERRIDE_VALIDATION`とdeferred `AUTHORITY_ADOPTION`をgoldenへ固定し、MIG-07まではmanual selectionをauthorityとして維持する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、5 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

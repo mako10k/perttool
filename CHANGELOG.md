@@ -12,6 +12,7 @@
 - `importMermaid` Coreと`dag import --from mermaid`のfail-closed profile復元、plain loss report、strict loss、exclusive `--out`
 - canonical keep/remove set、partial join、idempotenceを保証するpure `planAdvance` Coreとpreview-first `dag advance` CLI
 - exact typed fact、comparison、decision trace、canonical descriptionを持つcomplete recommendation graphとpublic `NextResultV3` Core型
+- 5つのself-use planでv3 contract、byte determinism、operational互換、structured why-notを検査するrecommendation shadow gateとgolden
 - npm publish normalizationを検査するpackage preflight、同一tarballをfail-closedでpublishするmaintainer script、`alpha` dist-tag固定
 
 ### Changed

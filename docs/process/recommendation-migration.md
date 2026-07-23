@@ -1,6 +1,6 @@
 # Recommendation実装・自己利用migration
 
-- 文書状態: Active 1.6
+- 文書状態: Active 1.7
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 基本設計: [../basic-design.md](../basic-design.md)
@@ -12,6 +12,7 @@
 - 自己利用計画: [self-use.md](self-use.md)
 - 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 - 設計受け入れ記録: [recommendation-design-review.md](recommendation-design-review.md)
+- Shadow受け入れ記録: [recommendation-shadow-review.md](recommendation-shadow-review.md)
 
 ## 1. 目的
 
@@ -35,12 +36,13 @@
 - `selectNextTasks`と`dag next`は`Perttool.NextResult.v3`とcomplete recommendation graphを返す
 - `active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`は実装済み
 - candidate fact、complete order、selection horizon、recommended set、tier、structured explanation、PTREC invariant、Core/CLI JSON/text/help/package publicationは実装済み
-- override validation、shadow/adoptionは未実装
+- self-use shadowは5 planで受け入れ済み
+- override validationとnormal authority adoptionは未実装
 - override validation、apply、audit integrationは未実装
 - 自己利用はStage 3であり、editing/advance writeはpreview、expected digest、write後再解析を必須とする。Override applyは未実装である
 - AIのtask選択は[AI開発ガイド](ai-development.md)の明示手順をauthorityとする
 
-V2由来fieldをrecommendationとして解釈せず、root `recommendation`だけをnormal recommendationの正本とする。ただしshadow/adoption前なので、現行AI task selectionはmanual processをauthorityとして維持する。
+V2由来fieldをrecommendationとして解釈せず、root `recommendation`だけをnormal recommendationの正本とする。Shadowは受け入れ済みだがadoption前なので、現行AI task selectionはmanual processをauthorityとして維持する。
 
 ## 3. Roadmap再構成gate
 
@@ -61,6 +63,8 @@ V2由来fieldをrecommendationとして解釈せず、root `recommendation`だ�
 同日にMIG-03を完了した。MIG-02 resultからexact typed fact、depth制限付きexpression、winner/alternative/decisive ruleを持つminimal comparison、phase順のdecision trace、taxonomy 1.0 reason occurrence、typed parameterからのcanonical English descriptionを構築する非公開pure Coreを実装した。Record ID、canonical order、reference closure、tier/set、expression再評価、version/rule/code/fact registry、description key/parameter/textを検査し、`PTREC-301`から`PTREC-303`へfail-closedで変換する。REC-001からREC-011、selected/active-only resource blocker、scan時点とfinal setのresource witness、ready 0件、exact Rational、各diagnostic破損をunit testへ固定し、全186 testで現行Core export、CLI、help、`NextResult.v2`が変わらないことを確認した。累計11p/1 active dayからVelocityを`11p/1d`へ更新し、残るprecedence 8p、resource 11p、resource delay 3p、resource forecast 1dとなった。次taskは`NEXT_V3_PUBLICATION`である。
 
 同日にMIG-04を完了した。`selectNextTasks`へranking/explanationを接続し、public `NextResultV3`型、snake_case JSON adapter、`dag next` v3 complete graph、4 tier text summary、structured help、consumer migration guide、CHANGELOG、Core/CLI/package parityを1つのbreaking changeへ含めた。V2 operational projectionを維持し、ready 0件でもresult decisionとjoint feasibility factを返す。累計15p/1 active dayからVelocityを`15p/1d`へ更新し、残るprecedence 4p、resource 7p、resource delay 3p、resource forecast `7/15d`となった。次のprecedence critical taskは`SELF_USE_SHADOW`で、`OVERRIDE_VALIDATION`は同じready frontierだがreviewer競合によりdeferredである。
+
+同日にMIG-06を完了した。5つのself-use planでknown v3 contract、complete graph、byte determinism、ready subset、joint resource feasibility、v2 operational field互換、`PTREC-*`不在を検査した。`SELF_USE_SHADOW`と`OVERRIDE_VALIDATION`の差をprimary comparison、resource witness、canonical descriptionだけから説明できることをgoldenへ固定し、[shadow受け入れ記録](recommendation-shadow-review.md)へ判定を残した。累計17p/1 active dayからVelocityを`17p/1d`へ更新し、残るprecedence 3p、resource 5p、resource delay 2p、resource forecast `5/17d`となった。次のprecedence criticalかつrecommended taskは`OVERRIDE_VALIDATION`で、`AUTHORITY_ADOPTION`は同じready frontierだがreviewer競合によりdeferredである。Shadow受け入れだけではnormal authorityへ昇格しない。
 
 MIG-01からMIG-07は、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を共有する。Task別duration、file ownership、acceptance、narrow testは`plans/recommendation.pert`を正とする。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とし、MVP後の独立work packageのままとする。Issue #2もhelp surfaceとreviewerを共有するが、macroへ追加するまでは実装順を推測しない。
 
@@ -157,6 +161,8 @@ Shadow gate:
 - v2由来のoperational groupとresource/upcoming explanationがmigration前と同じ意味である
 
 Shadow中は[AI開発ガイド](ai-development.md)の現行manual selection手順をauthorityとして維持し、差があればimplementation bug、spec gap、plan fact不足のどれかを切り分ける。Chat上の直感でgoldenをrecommendationへ合わせない。
+
+2026-07-23にこのgateを5 planで受け入れた。受け入れ前snapshotは[shadow受け入れ記録](recommendation-shadow-review.md)へ保存し、完了後のcurrent snapshotは[test](../../test/recommendation-self-use-shadow.test.mjs)と[golden](../../test/golden/self-use/recommendation-shadow.expected.json)で継続検査する。MIG-07まではmanual authorityを維持する。
 
 ### MIG-07 Normal recommendation authority adoption
 
