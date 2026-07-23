@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`を実装済みです。`dag next`はcompleteなrecommendation graphを持つ`Perttool.NextResult.v3`を返し、public Core型とCLI JSON/text/helpを同じ判断へ接続します。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+`v0.1.0-alpha.2`は公開開発プレビューです。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`を実装済みです。`dag next`はcompleteなrecommendation graphを持つ`Perttool.NextResult.v3`を返し、public Core型とCLI JSON/text/helpを同じ判断へ接続します。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -48,12 +48,10 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 
 ## Install
 
-現在はnpm registryへpublishしていません。GitHub Releaseのtarballからuser-owned npm prefixへ導入します。Recommendation受け入れは完了し、次期`0.1.0-alpha.2`を`alpha` dist-tagへpublishする`RELEASE_E2E`が次の工程です。Maintainer向けの安全境界は[npm publication手順](docs/process/npm-publication.md)を参照してください。
-
-公開済み`v0.1.0-alpha.1` assetは`NextResult.v3`より前の版である。Current checkoutのv3を検証する場合は後述のlocal linkを使用する。
+公開開発プレビューはnpm registryの`alpha` dist-tagとGitHub prereleaseから導入できます。Maintainer向けの安全境界は[npm publication手順](docs/process/npm-publication.md)を参照してください。
 
 ```sh
-npm install --global https://github.com/mako10k/perttool/releases/download/v0.1.0-alpha.1/perttool-0.1.0-alpha.1.tgz
+npm install --global perttool@alpha
 perttool --version
 ```
 

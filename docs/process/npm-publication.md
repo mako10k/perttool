@@ -9,9 +9,9 @@
 
 ## 1. 現在の状態
 
-`perttool`はnpm registryへまだpublishしていない。2026-07-23に`npm view perttool`が`E404`であること、`NPM_TOKEN`を`secdat`から注入した`npm whoami`がmaintainer accountで成功することを確認した。
+公開準備時点では`perttool`はnpm registryへ未公開だった。2026-07-23に`npm view perttool`が`E404`であること、`NPM_TOKEN`を`secdat`から注入した`npm whoami`がmaintainer accountで成功することを確認した。
 
-現行checkoutのversionは`0.1.0-alpha.1`だが、同名のGit tagとGitHub Releaseより後の変更を含む。このcheckoutを`0.1.0-alpha.1`としてpublishしてはならない。Recommendation受け入れは完了し、`RELEASE_E2E`が唯一のreadyかつrecommended work packageになったため、次のnpm候補`0.1.0-alpha.2`へのrelease changeを開始できる。
+公開準備時のcheckoutは`0.1.0-alpha.1`だったが、同名のGit tagとGitHub Releaseより後の変更を含んでいたため、そのversionではpublishしなかった。Recommendation受け入れ後に`RELEASE_E2E`が唯一のreadyかつrecommended work packageとなり、`0.1.0-alpha.2`をrelease versionとして選定した。
 
 2026-07-23の最初の人間overrideはpublish準備だけを前倒しし、当時の工程statusや外部publish authorityを変更しなかった。その後MIG-07まで完了し、利用者は`secdat exec`配下でのGit pushとnpm publishを明示許可した。この許可は同一tarball、release commit/tag、GitHub asset、registry未公開version、process限定TOKENという本書のgateを省略しない。
 

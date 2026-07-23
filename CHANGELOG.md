@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+## [0.1.0-alpha.2] - 2026-07-23
+
+2回目の公開開発プレビュー。安全な編集・進行操作、Mermaid相互変換、説明可能なtask recommendationを追加し、同じartifactをGitHub Releaseとnpmの`alpha` tagへ配布する。
+
 ### Added
 
 - `dsl format`とtask/milestone/resource/batch mutationのatomic `--write`、exclusive `--out`、`--expect-digest`
@@ -44,4 +48,6 @@
 - npm registryには未公開。GitHub Release assetを使用する
 - Node.js 24以上が必要
 
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.2...HEAD
+[0.1.0-alpha.2]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
 [0.1.0-alpha.1]: https://github.com/mako10k/perttool/releases/tag/v0.1.0-alpha.1
