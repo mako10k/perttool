@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.2`は公開開発プレビューです。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`を実装済みです。`dag next`はcompleteなrecommendation graphを持つ`Perttool.NextResult.v3`を返し、public Core型とCLI JSON/text/helpを同じ判断へ接続します。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+現在のcheckoutでは、`dsl check`、`dsl format`、`dsl help`、read-only `agent help`、`project show`、`project set`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなproject/task/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`を実装済みです。`project show`はvelocityを含むproject metadata一式、`dag next`はcompleteなrecommendation graphを持つ`Perttool.NextResult.v3`、`agent help`は5 providerのoffline profileをindex/quick/detailのtext/JSONで返します。いずれもpublic Core型とCLIを同じ判断へ接続します。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 次のreleaseはsuffixなし`0.1.0`で、`0.x.x`系列をbetaと定義します。Alphaからbetaへのstrict compatibilityは保証せず、Issue #2のread-only AI Agent Guidance Registryをbeta gateへ含めます。現在公開済みのversionは引き続き`v0.1.0-alpha.2`であり、betaはまだpublishしていません。
 
@@ -100,6 +100,11 @@ perttool dsl format PLAN.pert --diff
 perttool dsl format PLAN.pert --write --expect-digest "$EXPECTED_DIGEST"
 perttool dsl help syntax estimate --level detail --format json
 perttool dsl help syntax velocity --level detail --format json
+perttool agent help
+perttool agent help codex enforcement --level detail --format json
+perttool project show PLAN.pert --format json
+perttool project set PLAN.pert --velocity 20p/1d --diff
+perttool project set PLAN.pert --velocity 20p/1d --write --expect-digest "$EXPECTED_DIGEST"
 perttool dag analyze docs/examples/point-velocity.pert --format json
 perttool dag analyze docs/examples/parallel.pert
 perttool dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3 --capacity TEST_ENV=2 --format json
@@ -119,6 +124,8 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 ```
 
 `dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。`duration_unit point`では`velocity 20p/10d`のように宣言し、基準のPoint値とday/hourの`velocity_forecast`を分離して返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。
+
+`project show`はproject ID、version、title、description、as_of、duration_unit、velocity、finish、critical_epsilon、target_durationを固定順のtextまたは`Perttool.ProjectResult.v1` JSONで返します。`project set`は同じfieldをsource-preservingに変更し、optional fieldは`--clear`できます。既定は検査済みcandidateのpreviewで、永続化は他のediting commandと同じsafe-write optionを明示した場合だけです。Project-wide単位とtask durationを同時変更する場合は、`mutation apply`のatomic batchへ`project.set`と関連entity mutationを含めます。
 
 `dag next`は依存関係上の`ready`、既存schedulerが選ぶ`runnable_now`、工程authorityであるroot `recommendation`を分離します。JSONは全ready taskのtier、exact typed fact、comparison、decision trace、canonical descriptionをcomplete graphとして返し、textは4 tierの`complete=false` summaryとJSON導線を返します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明も従来どおり保持します。Consumerは[移行ガイド](docs/process/next-v3-consumer-migration.md)に従い、`schema_version`を最初に検査します。
 

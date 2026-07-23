@@ -1,6 +1,7 @@
 export { checkDocument } from "./application/check.js";
 export { analyzeDocument } from "./application/analyze.js";
 export { getAgentHelp } from "./application/agent-help.js";
+export { getProjectMetadata } from "./application/project.js";
 export { planFormat } from "./application/format.js";
 export { selectNextTasks } from "./application/next.js";
 export { recommendationAnalysisToJson } from "./recommendation/json.js";
@@ -68,6 +69,11 @@ export * from "./model/units.js";
 export { parseDocument } from "./parser/document-parser.js";
 export { validateDocument } from "./semantic/validator.js";
 export type { CheckOptions, CheckResult, CheckSummary } from "./application/check.js";
+export type {
+  ProjectMetadata,
+  ProjectMetadataDurationUnit,
+  ProjectMetadataResult,
+} from "./application/project.js";
 export {
   AGENT_GUIDANCE_DIRECTIVES,
   AGENT_GUIDANCE_ORIGINS,
@@ -273,11 +279,16 @@ export type {
   RemoveMilestoneMutation,
   RemoveResourceMutation,
   RemoveTaskMutation,
+  ProjectClearableField,
+  ProjectDurationUnit,
+  ProjectFieldSet,
+  ProjectMutation,
   ResourceClearableField,
   ResourceDefinition,
   ResourceFieldSet,
   ResourceMutation,
   SetMilestoneMutation,
+  SetProjectMutation,
   SetResourceMutation,
   SetTaskMutation,
   TaskClearableField,

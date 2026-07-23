@@ -527,7 +527,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "current-surface",
         title: "Current surface",
-        body: "dsl formatはplanFormat、Entity commandとmutation applyはplanMutation、dag advanceはplanAdvanceの再検査済みcandidate、UTF-16 TextEdit、digest、diffをtext/JSONへ投影します。既定はfileを変更しないpreviewです。",
+        body: "project showはproject metadataをread-onlyで返します。dsl formatはplanFormat、project/entity commandとmutation applyはplanMutation、dag advanceはplanAdvanceの再検査済みcandidate、UTF-16 TextEdit、digest、diffをtext/JSONへ投影します。既定はfileを変更しないpreviewです。",
       },
     ],
     detail: [
@@ -538,6 +538,8 @@ const nodes: readonly HelpNode[] = [
       },
     ],
     syntax: [
+      "perttool project show FILE [--format text|json]",
+      "perttool project set FILE [--velocity VELOCITY]... [--write [--expect-digest DIGEST] | --out PATH]",
       "perttool dsl format FILE [--check] [--diff] [--write [--expect-digest DIGEST] | --out PATH]",
       "perttool task add|set|remove|finish ... [--write [--expect-digest DIGEST] | --out PATH]",
       "perttool milestone add|set|remove ... [--write [--expect-digest DIGEST] | --out PATH]",
@@ -546,6 +548,11 @@ const nodes: readonly HelpNode[] = [
       "perttool dag advance FILE [--diff] [--write [--expect-digest DIGEST] | --out PATH]",
     ],
     examples: [
+      {
+        id: "project-velocity",
+        title: "Inspect and preview velocity",
+        text: "perttool project show plan.pert --format json\nperttool project set plan.pert --velocity 20p/1d --diff",
+      },
       {
         id: "task-preview",
         title: "Preview a task update",

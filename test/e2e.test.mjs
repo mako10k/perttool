@@ -47,6 +47,8 @@ test("E2E-001: discover commands, validate a plan, and compare capacity what-if"
   assert.match(help.stdout, /perttool task add\|set\|remove\|finish/);
   assert.match(help.stdout, /perttool mutation apply <file>/);
   assert.match(help.stdout, /perttool agent help \[provider \[surface\]\]/);
+  assert.match(help.stdout, /perttool project show <file>/);
+  assert.match(help.stdout, /perttool project set <file>/);
 
   const nextHelp = runJson(["dsl", "help", "next", "--level=detail"]);
   assert.equal(nextHelp.topic_id, "next");
@@ -75,6 +77,58 @@ test("E2E-001: discover commands, validate a plan, and compare capacity what-if"
   const overrideNext = runJson(["dag", "next", source, "--capacity=ENGINEERS=2"]);
   assert.deepEqual(overrideNext.groups.ready, ["API", "UI"]);
   assert.deepEqual(overrideNext.groups.runnable_now, ["API", "UI"]);
+});
+
+test("E2E-015: AI resolves provider guidance without reading a project document", () => {
+  const guidance = runJson([
+    "agent",
+    "help",
+    "grok",
+    "workflow",
+    "--level=detail",
+  ]);
+  assert.equal(guidance.schema_version, "Perttool.AgentGuidanceResult.v1");
+  assert.equal(guidance.operation, "agent.help");
+  assert.equal(guidance.query.canonical_provider_id, "grok-build");
+  assert.equal(guidance.query.alias_applied, true);
+  assert.equal(guidance.providers[0].surfaces[0].surface_id, "workflow");
+  assert.ok(
+    guidance.guidance_records.some(
+      ({ guidance_id: id }) => id === "consult_dag_next_before_start",
+    ),
+  );
+  assert.ok(
+    Object.values(guidance.capabilities).every((value) => value === false),
+  );
+});
+
+test("E2E-016: AI reads and updates velocity entirely through the CLI", (t) => {
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-project-cli-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const source = path.join(directory, "plan.pert");
+  copyFileSync(path.join(root, "test/fixtures/grammar/all-fields.pert"), source);
+
+  const before = runJson(["project", "show", source]);
+  assert.equal(before.project.velocity, "10p/5d");
+  const digest = before.source_digest;
+
+  const written = runJson([
+    "project",
+    "set",
+    source,
+    "--velocity=12p/5d",
+    "--as-of=2026-07-23",
+    "--write",
+    `--expect-digest=${digest}`,
+  ]);
+  assert.equal(written.operation, "project.set");
+  assert.equal(written.write.mode, "in_place");
+  assert.equal(written.write.written, true);
+
+  const after = runJson(["project", "show", source]);
+  assert.equal(after.project.velocity, "12p/5d");
+  assert.equal(after.project.as_of, "2026-07-23");
+  assert.equal(after.source_digest, written.updated_digest);
 });
 
 test("E2E-002: active allocation blocks only tasks requiring the occupied resource", () => {

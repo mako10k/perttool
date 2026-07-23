@@ -4,6 +4,36 @@ import type { TextEdit } from "./text-edits.js";
 
 export type TaskMutationStatus = "planned" | "active" | "blocked" | "done";
 
+export type ProjectDurationUnit = "day" | "hour" | "point";
+
+export interface ProjectFieldSet {
+  readonly id?: string;
+  readonly version?: number;
+  readonly title?: string;
+  readonly description?: string;
+  readonly asOf?: string;
+  readonly durationUnit?: ProjectDurationUnit;
+  readonly velocity?: string;
+  readonly finish?: string;
+  readonly criticalEpsilon?: string;
+  readonly targetDuration?: string;
+}
+
+export type ProjectClearableField =
+  | "description"
+  | "as_of"
+  | "velocity"
+  | "critical_epsilon"
+  | "target_duration";
+
+export interface SetProjectMutation {
+  readonly kind: "project.set";
+  readonly set?: ProjectFieldSet;
+  readonly clear?: readonly ProjectClearableField[];
+}
+
+export type ProjectMutation = SetProjectMutation;
+
 export interface TaskEstimateInput {
   readonly optimistic: string;
   readonly mostLikely: string;
@@ -171,7 +201,11 @@ export type ResourceMutation =
   | SetResourceMutation
   | RemoveResourceMutation;
 
-export type AtomicMutation = TaskMutation | MilestoneMutation | ResourceMutation;
+export type AtomicMutation =
+  | ProjectMutation
+  | TaskMutation
+  | MilestoneMutation
+  | ResourceMutation;
 
 export interface BatchMutation {
   readonly kind: "batch";

@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added
+
+- Codex、GitHub Copilot、Claude Code、Grok Build、Antigravityのoffline profileを同じCoreからindex/quick/detailのtext/JSONへ公開するread-only `agent help`
+- velocityを含むproject metadata一式をtext/JSONで取得する`project show`と、preview-firstで局所更新する`project set`、atomic batch用`project.set`
+- 最初のbeta後の独立backlogとして、LSP server、コードハイライト/LSP clientを持つVSIX、MCP serverを明文化
+
 ### Changed
 
 - 最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義し、alphaからのstrict compatibilityと追加soakをbeta gateから外した

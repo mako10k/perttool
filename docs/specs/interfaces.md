@@ -1,6 +1,6 @@
 # perttool CLI Interface仕様
 
-- 文書状態: Draft 0.3
+- 文書状態: Draft 0.4
 - Interface version: 2
 - CLI contract version: 2
 - 作成日: 2026-07-21
@@ -57,7 +57,7 @@ perttool <resource> <action> [operands] [options]
 perttool <resource> <action> --help
 ```
 
-MVP resourceは`dsl`、`dag`、`task`、`milestone`、`resource`である。Resource名、action名、option名はcase-sensitiveとする。
+MVP resourceは`dsl`、`project`、`dag`、`task`、`milestone`、`resource`である。最初のbetaは[AI Agent Guidance Registry仕様](agent-guidance.md)に従うread-only `agent help`を追加する。Resource名、action名、option名はcase-sensitiveとする。
 
 Rules:
 
@@ -117,6 +117,9 @@ Resultを返すcommandは次を使用する。
 perttool dsl check <file>
 perttool dsl format <file>
 perttool dsl help [<topic> [<subtopic>]]
+
+perttool project show <file>
+perttool project set <file>
 
 perttool dag analyze <file>
 perttool dag next <file>
@@ -198,9 +201,19 @@ perttool dsl help [<topic> [<subtopic>]]
 syntax analysis next editing mermaid workflows errors samples
 ```
 
-## 6. DAG commands
+## 6. Project and DAG commands
 
-### 6.1 shared analysis options
+### 6.1 `project show`
+
+```text
+perttool project show <file>
+  [--max-diagnostics <integer>] [--warnings-as-errors]
+  [--format text|json] [--color auto|always|never]
+```
+
+Valid documentのproject declarationを1件返す。ID、effective grammar version、title、description、as_of、duration_unit、velocity、finish、critical_epsilon、target_durationを固定順で表示する。Optional fieldが宣言されていない場合はJSONで`null`、textで`-`とする。Read-onlyでありfileを書き換えない。
+
+### 6.2 shared analysis options
 
 `dag analyze`と`dag next`は次を共有する。
 
@@ -211,7 +224,7 @@ syntax analysis next editing mermaid workflows errors samples
 
 同一resource IDへの`--capacity`重複はusage errorとする。Unknown resource ID、requirement未満のcapacity、active allocation超過はdocument/analysis errorである。Overrideはsource documentを書き換えない。
 
-### 6.2 `dag analyze`
+### 6.3 `dag analyze`
 
 ```text
 perttool dag analyze <file>
@@ -233,7 +246,7 @@ perttool dag analyze <file>
 - `resource`はfull precedence resultを表示しないが、resource result内にprecedence lower boundを保持する
 - `both`はprecedence/resource resultを分離して返す
 
-### 6.3 `dag next`
+### 6.4 `dag next`
 
 ```text
 perttool dag next <file>
@@ -251,7 +264,7 @@ perttool dag next <file>
 - capacity overrideは`runnable_now`とschedule annotationだけを変え、ready分類を変えない
 - 表示順とresource選択順を混同しない
 
-### 6.4 `dag render`
+### 6.5 `dag render`
 
 Mermaid選択時のartifact wire contractは[Mermaid Profile仕様](mermaid-profile.md)を正とする。
 
@@ -279,7 +292,7 @@ perttool dag render <file>
 - `--to`はartifact種別、`--format`はCLI result serializationであり別概念
 - `--capacity`は`--analysis resource|both`とだけ併用できる
 
-### 6.5 `dag import`
+### 6.6 `dag import`
 
 Profile検出、fail-closed validation、plain best-effort境界は[Mermaid Profile仕様](mermaid-profile.md)を正とする。
 
@@ -299,7 +312,7 @@ perttool dag import <file>
 - loss reportとgenerated ID mappingを常に生成する
 - `--strict-loss`でlossy recordが1件以上なら候補を書かずexit 4
 
-### 6.6 `dag advance`
+### 6.7 `dag advance`
 
 ```text
 perttool dag advance <file>
@@ -318,7 +331,7 @@ Mutation request、target解決、source-preserving TextEdit、comment所有、c
 
 ### 7.1 common mutation output options
 
-`task`、`milestone`、`resource`の全actionは次を受理する。
+`project set`と、`task`、`milestone`、`resource`の全mutation actionは次を受理する。
 
 ```text
 [--diff]
@@ -352,9 +365,23 @@ perttool mutation apply <file> --request <json-file|->
   [--format text|json] [--color auto|always|never]
 ```
 
-`--request -`は`<file>`がstdinでない場合だけ使用できる。Request JSONは`{ "kind": "batch", "mutations": [...] }`とし、nested batchと同じentity IDへの複数変更を拒否する。Filesystem write optionは他mutation commandと同じ規則を適用する。
+`--request -`は`<file>`がstdinでない場合だけ使用できる。Request JSONは`{ "kind": "batch", "mutations": [...] }`とし、nested batchと同じtargetへの複数変更を拒否する。Filesystem write optionは他mutation commandと同じ規則を適用する。
 
-### 7.2 task
+### 7.2 project
+
+```text
+perttool project set <file>
+  [--id <id>] [--version <integer>]
+  [--title <text>] [--description <text>] [--as-of <date-or-date-time>]
+  [--duration-unit day|hour|point] [--velocity <velocity>]
+  [--finish <milestone-id>]
+  [--critical-epsilon <duration>] [--target-duration <duration>]
+  [--clear description|as_of|velocity|critical_epsilon|target_duration]...
+```
+
+少なくとも1変更optionを必要とする。`--clear`と同じfieldのset optionは同時指定できない。Project declarationはexactly oneであるためtarget ID operandを取らない。`duration_unit`、velocity、全duration、finish参照を含む最終candidateを再検査する。関連taskの変更を同時に必要とするproject-wide単位変更は`mutation apply`のbatchへ`project.set`と他atomic mutationを含める。
+
+### 7.3 task
 
 `task add`:
 
@@ -395,7 +422,7 @@ perttool task set <file> <id>
 
 `task set`は少なくとも1変更optionを必要とする。`--status blocked`は同じcandidateで`blocked_reason`が存在することを要求する。`task remove`はcascade optionを持たず、削除後graphが無効なら拒否する。`task finish`はstatusを`done`へ変更し、同じsafe mutation pathを使う。
 
-### 7.3 milestone
+### 7.4 milestone
 
 ```text
 perttool milestone add <file> <id>
@@ -419,7 +446,7 @@ perttool milestone remove <file> <id>
 
 新規milestoneと接続taskを追加するなど、単独commandではinvalidな中間DAGになる操作は`mutation apply`のbatch requestへまとめる。`milestone add`単独でも最終candidate全体を検査し、孤立milestoneを受け入れない。
 
-### 7.4 resource
+### 7.5 resource
 
 ```text
 perttool resource add <file> <id>
@@ -523,7 +550,24 @@ OK plan.pert project=PLAN milestones=7 tasks=5 gates=4 resources=2
 
 Error時はstdoutを空にし、diagnosticをstderrへ出す。
 
-### 10.4 analyze
+### 10.4 project show
+
+Success stdout:
+
+```text
+PROJECT PLAN
+VERSION 1
+TITLE "Plan"
+DESCRIPTION -
+AS_OF 2026-07-23
+DURATION_UNIT point
+VELOCITY 20p/1d
+FINISH DONE
+CRITICAL_EPSILON -
+TARGET_DURATION -
+```
+
+### 10.5 analyze
 
 Section順:
 
@@ -541,11 +585,11 @@ RESOURCE UTILIZATION
 
 Heuristic schedule見出しには`algorithm@version`と`optimal=false`を必ず表示する。Blocked conditional、path truncation、capacity overrideは`QUALIFIERS`で隠さない。
 
-### 10.5 next
+### 10.6 next
 
 Section順は`ACTIVE`、`RUNNABLE NOW`、`READY / WAITING RESOURCE`、`BLOCKED NOW`、`UPCOMING`とする。各taskはpresentation orderで並べ、priority、critical、total float、expected、resource requirementを表示する。Runnableでないready taskは不足resourceとoccupantを直下へ表示する。
 
-### 10.6 mutation and conversion
+### 10.7 mutation and conversion
 
 - preview default: candidate documentそのもの
 - mutationのdefault text previewはstdoutへcandidate、stderrへ`PREVIEW <operation> changed=<boolean> original_digest=<digest> updated_digest=<digest>`を返す
@@ -892,7 +936,28 @@ write:
 
 Candidate生成成功時、`--check`または`--warnings-as-errors`でCLIの`ok=false`となっても、JSONは`updated_text`、`diff`、`edits`を保持する。
 
-### 12.5 MutationResult
+### 12.5 ProjectResult
+
+`schema_version = "Perttool.ProjectResult.v1"`
+
+```text
+grammar_version  integer
+project:
+  id                 string
+  version            integer
+  title              string
+  description        string|null
+  as_of              string|null
+  duration_unit      "day" | "hour" | "point"
+  velocity           string|null
+  finish             string
+  critical_epsilon   string|null
+  target_duration    string|null
+```
+
+共通rootの`document_id`、`source`、`source_digest`、`diagnostics`、`diagnostics_truncated`を持つ。Invalid documentでは`project=null`、`grammar_version=null`とする。
+
+### 12.6 MutationResult
 
 `schema_version = "Perttool.MutationResult.v1"`
 
@@ -924,7 +989,7 @@ advance:
   ready_after
 ```
 
-### 12.6 HelpResult
+### 12.7 HelpResult
 
 `schema_version = "Perttool.HelpResult.v1"`
 
@@ -944,7 +1009,7 @@ topics        [{id, title, summary}]
 
 Index levelでは`topics`を使用する。Sample参照はabsolute pathでなくstable example IDを使用する。
 
-### 12.7 ConversionResult
+### 12.8 ConversionResult
 
 Renderは`Perttool.ExportResult.v1`、importは`Perttool.ImportResult.v1`を使用する。
 
@@ -1022,6 +1087,8 @@ CLI実装時は最低限、次を自動検査する。
 20. CLI JSONと直接Core API resultのsemantic payloadが一致
 21. warning policyとexit codeの全組合せがgoldenと一致
 22. internal invariant failureをdocument errorまたはexit 0へ変換しない
+23. project showが全project metadataをtext/JSONで返し、project setが同じfieldをpreview/writeできる
+24. project.setを含むatomic batchがproject-wide unit変更の最終candidateだけを検査する
 
 MVP acceptanceにMCP server、MCP tool schema、CLI/MCP parity testを含めない。
 

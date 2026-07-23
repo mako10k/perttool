@@ -44,8 +44,8 @@ perttoolは現在、TypeScript CLIのMVP public alpha受け入れを完了し、
 - `src/formatter/`: source-preserving formatter Core。
 - `src/guidance/`: version付きoffline AI Agent Guidance profile、validator、query、index/quick/detail projection、deterministic JSON/textを提供するread-only pure Core。
 - `src/io/`: raw-byte document read、digest、symlink/race拒否、atomic safe-write adapter。
-- `src/mutation/`: task/milestone/resourceとatomic batchのrequest、canonical advance、source-preserving UTF-16 TextEdit生成、適用規則。
-- `src/application/`: check/analyze/nextと、再検査済みmutation resultを返すpure service。
+- `src/mutation/`: project/task/milestone/resourceとatomic batchのrequest、canonical advance、source-preserving UTF-16 TextEdit生成、適用規則。
+- `src/application/`: check/project metadata/analyze/nextと、再検査済みmutation resultを返すpure service。
 - `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation/conversion/write-safety unit test、CLI integration/E2E test。
 - `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
 
@@ -60,6 +60,8 @@ perttoolは現在、TypeScript CLIのMVP public alpha受け入れを完了し、
 3. 読んだ正本文書と、引き継いだ前提の有効性
 4. acceptance criteriaと明示的なnon-goal
 5. 実行する検証と予定する外部side effect
+
+Project ID、as_of、duration_unit、velocity、finishなどのmetadataは、通常はsource fileを直接閲覧せず`project show --format json`で確認する。変更は手編集でなく`project set`のpreview/diffを経て、Stage 3のsafe-write手順で適用する。
 
 利用者が「次のタスク」を求めた場合は、まず`docs/requirements.md`の推奨仕様作業、未解決事項、現在のGit状態から候補を提示する。自己利用Stage 1以降は、`mvp.pert`でmacro recommendationからworkstreamを選び、対応する詳細planを再解析してdetail recommendationからtaskを選ぶ。Macroと対象詳細planの`check`、`analyze`、`next --format json`結果を候補選択の前提にし、異なる詳細planのtaskをmacro判断なしに直接比較しない。
 

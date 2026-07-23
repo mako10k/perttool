@@ -10,6 +10,7 @@ import { applyTextEdits, normalizeTextEdits } from "../mutation/text-edits.js";
 import type { TextEdit } from "../mutation/text-edits.js";
 import { mutationDiagnostic, type MutationEditPlan } from "../mutation/diagnostics.js";
 import { planMilestoneMutationEdits } from "../mutation/milestone.js";
+import { planProjectMutationEdits } from "../mutation/project.js";
 import { planResourceMutationEdits } from "../mutation/resource.js";
 import { planTaskMutationEdits } from "../mutation/task.js";
 import type {
@@ -59,6 +60,13 @@ function planAtomicMutationEdits(
   mutation: AtomicMutation,
 ): MutationEditPlan {
   const kind = runtimeKind(mutation);
+  if (kind === "project.set") {
+    return planProjectMutationEdits(
+      text,
+      document,
+      mutation as Parameters<typeof planProjectMutationEdits>[2],
+    );
+  }
   if (typeof kind === "string" && kind.startsWith("milestone.")) {
     return planMilestoneMutationEdits(text, document, mutation as Parameters<typeof planMilestoneMutationEdits>[2]);
   }
@@ -83,16 +91,17 @@ function batchRequestError(value: unknown): string | undefined {
   if (request["mutations"].some((item) => runtimeKind(item) === "batch")) {
     return "batch mutationはnested batchを許可しません";
   }
-  const ids = request["mutations"].map((item) =>
-    item !== null && typeof item === "object"
-      ? (item as Record<string, unknown>)["id"]
-      : undefined,
-  );
-  if (ids.some((id) => typeof id !== "string")) {
-    return "batch内のatomic mutationはstring idを必要とします";
+  const targets = request["mutations"].map((item) => {
+    if (item === null || typeof item !== "object") return undefined;
+    const record = item as Record<string, unknown>;
+    if (record["kind"] === "project.set") return "project";
+    return typeof record["id"] === "string" ? `entity:${record["id"]}` : undefined;
+  });
+  if (targets.some((target) => target === undefined)) {
+    return "batch内のatomic mutationはproject targetまたはstring idを必要とします";
   }
-  if (new Set(ids).size !== ids.length) {
-    return "batch内で同じentity IDを複数回変更できません";
+  if (new Set(targets).size !== targets.length) {
+    return "batch内で同じtargetを複数回変更できません";
   }
   return undefined;
 }

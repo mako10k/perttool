@@ -1,6 +1,6 @@
 # perttool Mutation Semantics仕様
 
-- 文書状態: Draft 0.2
+- 文書状態: Draft 0.3
 - Mutation semantics version: 1
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
@@ -13,7 +13,7 @@
 
 本書は`.pert`文書に対するsource-preserving mutationのCore契約を定義する。Mutationは既存文書を直接書かず、局所的なUTF-16 `TextEdit`、再検査済みcandidate、digest、unified diffを返す。
 
-Mutation semantics version 1の実装scopeはtaskの`add`、`set`、`remove`、`finish`、milestone/resourceの`add`、`set`、`remove`、複数atomic mutationを1 candidateへ適用する`batch`である。Filesystem writeは本書のcandidateをCLI Interface仕様のsafe-write adapterへ渡す。`dag advance`は本書の共通不変条件を再利用する後続sliceとする。
+Mutation semantics version 1の実装scopeはprojectの`set`、taskの`add`、`set`、`remove`、`finish`、milestone/resourceの`add`、`set`、`remove`、複数atomic mutationを1 candidateへ適用する`batch`である。Filesystem writeは本書のcandidateをCLI Interface仕様のsafe-write adapterへ渡す。`dag advance`は本書の共通不変条件を再利用する後続sliceとする。
 
 ## 2. 規範の優先順位
 
@@ -44,6 +44,11 @@ Conceptual request model:
 
 ```ts
 type AtomicMutation =
+  | {
+      kind: "project.set";
+      set?: ProjectFieldSet;
+      clear?: ProjectClearableField[];
+    }
   | {
       kind: "task.add";
       id: string;
@@ -98,6 +103,8 @@ type Mutation =
 ```
 
 `TaskDefinition`は`title`と、`duration`または`estimate`のexactly oneを必須とする。Optional fieldは`description`、`status`、`priority`、`requirements`、`owner`、`tags`、`blockedReason`、`source`である。
+
+`ProjectFieldSet`は`id`、`version`、`title`、`description`、`asOf`、`durationUnit`、`velocity`、`finish`、`criticalEpsilon`、`targetDuration`を持てる。Clear対象は`description`、`as_of`、`velocity`、`critical_epsilon`、`target_duration`である。Projectはexactly oneであるためrequestにtarget IDを持たず、現在のproject declarationへ解決する。`id`を変更しても同じprojectを対象とする。
 
 `TaskFieldSet`は`title`、`description`、`duration`または`estimate`、`status`、`priority`、`owner`、`blockedReason`、`source`を持てる。Clear対象はCLI契約と同じ`description`、`status`、`priority`、`owner`、`blocked_reason`、`source`、`tags`、`requires`である。
 
@@ -257,12 +264,21 @@ Candidateの`status=blocked`と`blocked_reason`、required field、DAG、resourc
 - capacity変更後のrequirementとactive allocationはcandidate validatorで再検査する
 - 既存resource tagsは他field変更時もbyte-preservingで保持する
 
-### 9.3 batch
+### 9.3 project
+
+- `project.set`は少なくとも1変更を必要とする
+- project header IDと、全project fieldをsource spanで局所変更する
+- `title`、`duration_unit`、`finish`はclearできない。`version`はgrammarが受理する値だけをcandidate validationで許可する
+- `description`、`as_of`、`velocity`、`critical_epsilon`、`target_duration`はclearできる
+- `duration_unit`、`velocity`、duration field、`finish`の整合はcandidate parser/validatorで再検査し、不整合candidateを公開しない
+- 単独ではvalidにできないproject-wide unit変更は、関連taskのduration/estimate変更を含むbatchとして適用できる
+
+### 9.4 batch
 
 Milestoneと接続edgeを順番に追加すると、どちらを先に実行してもundefined endpointまたはfinishへ到達不能な中間文書になる。このため、構造変更は必要に応じて`batch`で1 candidateへまとめる。
 
 - batchは1件以上のatomic mutationをrequest順に持つ
-- nested batchと、同じentity IDを複数回変更するbatchを拒否する
+- nested batchと、同じtargetを複数回変更するbatchを拒否する。Project targetはexactly oneのproject declaration、他targetはentity IDで識別する
 - 各atomic mutationはoriginal document上のtargetを解決する。Batch内で追加したentityを同じbatchでset/removeしない
 - batch内で新規追加したmilestone/resourceは、同じbatchのtask add/setから参照できる
 - declaration addが同じdocument末尾offsetへ集中した場合はrequest順に1 editへ結合する。同じoffsetに既存末尾declarationのfield追加もある場合はfieldを先、新規top-level declarationを後に置く
@@ -298,3 +314,5 @@ Milestoneと接続edgeを順番に追加すると、どちらを先に実行し�
 12. milestone/resource removeがcascadeせず、参照またはcapacity制約を壊すcandidateを拒否する
 13. batchがconnected milestone追加、path置換、resourceとrequirementの同時追加をvalidな1 candidateとして返す
 14. empty/nested/duplicate-target/conflicting-edit batchを`PTMUT-301`で拒否する
+15. project setが全fieldの局所set/clear、header ID変更、no-opを決定的に扱う
+16. project-wide unit変更を関連entityと同じbatchへ含め、最終candidateだけを検査する

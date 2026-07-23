@@ -97,6 +97,50 @@ if [[ "$actual_version" != "$expected_version" ]]; then
 fi
 
 "$installed_cli" dsl check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+"$installed_cli" project show "$repo_root/docs/examples/minimal.pert" --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      if (
+        result.schema_version !== "Perttool.ProjectResult.v1" ||
+        result.project?.id !== "MINIMAL" ||
+        result.project?.velocity !== null
+      ) process.exit(1);
+    });
+  '
+"$installed_cli" project set "$repo_root/docs/examples/minimal.pert" \
+  --as-of 2026-07-23 --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      if (
+        result.schema_version !== "Perttool.MutationResult.v1" ||
+        result.operation !== "project.set" ||
+        !result.updated_text?.includes("  as_of 2026-07-23")
+      ) process.exit(1);
+    });
+  '
+"$installed_cli" agent help grok workflow --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      if (
+        result.schema_version !== "Perttool.AgentGuidanceResult.v1" ||
+        result.query?.canonical_provider_id !== "grok-build" ||
+        result.query?.alias_applied !== true ||
+        Object.values(result.capabilities ?? {}).some((value) => value !== false)
+      ) process.exit(1);
+    });
+  '
 "$installed_cli" dag next "$repo_root/docs/examples/minimal.pert" --format=json |
   node -e '
     let input = "";
@@ -116,12 +160,35 @@ installed_module="$install_prefix/lib/node_modules/$package_name/dist/index.js"
 node --input-type=module - \
   "$installed_module" \
   "$repo_root/docs/examples/minimal.pert" \
-  "$repo_root/test/fixtures/recommendation/rec-001-critical-priority.pert" <<'NODE'
+  "$repo_root/test/fixtures/recommendation/rec-001-critical-priority.pert" \
+  "$installed_cli" <<'NODE'
+import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
 const api = await import(pathToFileURL(process.argv[2]).href);
+const guidance = api.getAgentHelp({
+  providerId: "grok",
+  surfaceId: "workflow",
+});
+const guidanceCli = spawnSync(
+  process.argv[5],
+  ["agent", "help", "grok", "workflow", "--format=json"],
+  { encoding: "utf8" },
+);
+if (
+  guidanceCli.status !== 0 ||
+  guidanceCli.stderr !== "" ||
+  guidanceCli.stdout !== api.serializeAgentGuidanceResult(guidance)
+) process.exit(1);
+
 const source = await readFile(process.argv[3], "utf8");
+const project = api.getProjectMetadata(source);
+if (
+  !project.ok ||
+  project.project?.id !== "MINIMAL" ||
+  project.project?.velocity !== null
+) process.exit(1);
 const result = api.selectNextTasks(source);
 if (!result.ok || result.recommendation === null) process.exit(1);
 const json = api.recommendationAnalysisToJson(result.recommendation);

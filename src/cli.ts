@@ -9,6 +9,10 @@ import { checkDocument } from "./application/check.js";
 import { planFormat, type FormatPreviewResult } from "./application/format.js";
 import { planBatchMutation, planMutation } from "./application/mutate.js";
 import { selectNextTasks } from "./application/next.js";
+import {
+  getProjectMetadata,
+  type ProjectMetadata,
+} from "./application/project.js";
 import { getAgentHelp } from "./application/agent-help.js";
 import {
   exportMermaid,
@@ -51,6 +55,7 @@ import type {
   MilestoneMutationState,
   Mutation,
   MutationResult,
+  ProjectClearableField,
   ResourceClearableField,
   TaskClearableField,
   TaskEstimateInput,
@@ -88,6 +93,8 @@ function topLevelHelp(): string {
     "  perttool dsl format <file> [--check] [--diff] [--format text|json]",
     "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
     "  perttool agent help [provider [surface]] [--level index|quick|detail] [--format text|json]",
+    "  perttool project show <file> [--format text|json]",
+    "  perttool project set <file> [field options] [--diff] [--write | --out <path>]",
     "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
     "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
     "  perttool dag advance <file> [--diff] [--write | --out <path>] [--format text|json]",
@@ -127,6 +134,22 @@ function commandHelp(resource: string, action: string): string {
     "  [--level index|quick|detail]",
     "  [--format text|json]",
     "  [--color auto|always|never]",
+  ].join("\n");
+  if (resource === "project" && action === "show") return [
+    "Usage: perttool project show <file>",
+    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
+    "  [--format text|json] [--color auto|always|never]",
+  ].join("\n");
+  if (resource === "project" && action === "set") return [
+    "Usage: perttool project set <file> [field options]",
+    "  [--id <id>] [--version <integer>] [--title <text>] [--description <text>]",
+    "  [--as-of <date-or-date-time>] [--duration-unit day|hour|point]",
+    "  [--velocity <velocity>] [--finish <milestone-id>]",
+    "  [--critical-epsilon <duration>] [--target-duration <duration>]",
+    "  [--clear description|as_of|velocity|critical_epsilon|target_duration]...",
+    "  [--diff] [--write [--expect-digest <digest>] | --out <path>]",
+    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
+    "  [--format text|json] [--color auto|always|never]",
   ].join("\n");
   if (resource === "dag" && action === "analyze") return [
     "Usage: perttool dag analyze <file>",
@@ -500,6 +523,103 @@ async function runCheck(args: readonly string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
+function projectJson(project: ProjectMetadata): Readonly<Record<string, unknown>> {
+  return {
+    id: project.id,
+    version: project.version,
+    title: project.title,
+    description: project.description,
+    as_of: project.asOf,
+    duration_unit: project.durationUnit,
+    velocity: project.velocity,
+    finish: project.finish,
+    critical_epsilon: project.criticalEpsilon,
+    target_duration: project.targetDuration,
+  };
+}
+
+function renderProjectText(project: ProjectMetadata): string {
+  const optional = (value: string | null): string => value ?? "-";
+  return [
+    `PROJECT ${project.id}`,
+    `VERSION ${project.version}`,
+    `TITLE ${JSON.stringify(project.title)}`,
+    `DESCRIPTION ${project.description === null ? "-" : JSON.stringify(project.description)}`,
+    `AS_OF ${optional(project.asOf)}`,
+    `DURATION_UNIT ${project.durationUnit}`,
+    `VELOCITY ${optional(project.velocity)}`,
+    `FINISH ${project.finish}`,
+    `CRITICAL_EPSILON ${optional(project.criticalEpsilon)}`,
+    `TARGET_DURATION ${optional(project.targetDuration)}`,
+    "",
+  ].join("\n");
+}
+
+async function runProjectShow(args: readonly string[]): Promise<number> {
+  const parsed = parseOptions(
+    args,
+    new Set(["format", "color", "max-diagnostics"]),
+    new Set(["warnings-as-errors"]),
+  );
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("project show requires exactly one <file>");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "project.show",
+      format === "json",
+    );
+  }
+  const result = getProjectMetadata(input.text, { maxDiagnostics });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
+  const ok = result.ok && !warningFailure;
+  if (format === "json") {
+    writeJson({
+      schema_version: "Perttool.ProjectResult.v1",
+      tool_version: TOOL_VERSION,
+      operation: "project.show",
+      ok,
+      document_id: result.documentId,
+      source,
+      source_digest: input.digest,
+      diagnostics: result.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: result.diagnosticsTruncated,
+      grammar_version: result.grammarVersion,
+      project: result.project === null ? null : projectJson(result.project),
+    });
+  } else {
+    if (ok && result.project !== null) {
+      process.stdout.write(renderProjectText(result.project));
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return ok ? 0 : 1;
+}
+
 function boundedInteger(
   raw: string | undefined,
   option: string,
@@ -768,7 +888,21 @@ function mutationOptionSets(
     for (const name of names) repeatable.add(name);
   };
 
-  if (resource === "task" && action === "add") {
+  if (resource === "project" && action === "set") {
+    addValues(
+      "id",
+      "version",
+      "title",
+      "description",
+      "as-of",
+      "duration-unit",
+      "velocity",
+      "finish",
+      "critical-epsilon",
+      "target-duration",
+    );
+    addRepeatable("clear");
+  } else if (resource === "task" && action === "add") {
     addValues(
       "title", "description", "duration", "optimistic", "most-likely",
       "pessimistic", "status", "priority", "owner", "blocked-reason", "source",
@@ -1034,6 +1168,71 @@ function taskMutationFromOptions(action: string, parsed: ParsedOptions): Mutatio
   };
 }
 
+function projectMutationFromOptions(parsed: ParsedOptions): Mutation {
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("project set requires exactly one <file>");
+  }
+  const version = optionalInteger(parsed, "version", 0, 2_147_483_647);
+  const durationUnit = enumOption<"day" | "hour" | "point">(
+    parsed.values.get("duration-unit"),
+    "duration-unit",
+    new Set(["day", "hour", "point"]),
+  );
+  const clear = enumRepeated<ProjectClearableField>(
+    parsed,
+    "clear",
+    new Set([
+      "description",
+      "as_of",
+      "velocity",
+      "critical_epsilon",
+      "target_duration",
+    ]),
+  );
+  const conflicts = new Map<ProjectClearableField, boolean>([
+    ["description", parsed.values.has("description")],
+    ["as_of", parsed.values.has("as-of")],
+    ["velocity", parsed.values.has("velocity")],
+    ["critical_epsilon", parsed.values.has("critical-epsilon")],
+    ["target_duration", parsed.values.has("target-duration")],
+  ]);
+  const conflict = clear.find((field) => conflicts.get(field) === true);
+  if (conflict !== undefined) {
+    throw new UsageError(`--clear ${conflict} conflicts with another project field option`);
+  }
+  const set = {
+    ...(parsed.values.get("id") === undefined ? {} : { id: parsed.values.get("id")! }),
+    ...(version === undefined ? {} : { version }),
+    ...(parsed.values.get("title") === undefined
+      ? {}
+      : { title: parsed.values.get("title")! }),
+    ...(parsed.values.get("description") === undefined
+      ? {}
+      : { description: parsed.values.get("description")! }),
+    ...(parsed.values.get("as-of") === undefined
+      ? {}
+      : { asOf: parsed.values.get("as-of")! }),
+    ...(durationUnit === undefined ? {} : { durationUnit }),
+    ...(parsed.values.get("velocity") === undefined
+      ? {}
+      : { velocity: parsed.values.get("velocity")! }),
+    ...(parsed.values.get("finish") === undefined
+      ? {}
+      : { finish: parsed.values.get("finish")! }),
+    ...(parsed.values.get("critical-epsilon") === undefined
+      ? {}
+      : { criticalEpsilon: parsed.values.get("critical-epsilon")! }),
+    ...(parsed.values.get("target-duration") === undefined
+      ? {}
+      : { targetDuration: parsed.values.get("target-duration")! }),
+  };
+  return {
+    kind: "project.set",
+    ...(Object.keys(set).length === 0 ? {} : { set }),
+    ...(clear.length === 0 ? {} : { clear }),
+  };
+}
+
 function milestoneMutationFromOptions(action: string, parsed: ParsedOptions): Mutation {
   if (parsed.positionals.length !== 2) {
     throw new UsageError(`milestone ${action} requires <file> <id>`);
@@ -1180,7 +1379,7 @@ async function readMutationRequest(source: string): Promise<unknown> {
 }
 
 async function runMutation(
-  resource: "task" | "milestone" | "resource" | "mutation",
+  resource: "project" | "task" | "milestone" | "resource" | "mutation",
   action: string,
   args: readonly string[],
 ): Promise<number> {
@@ -1225,11 +1424,13 @@ async function runMutation(
     mutation = request as Mutation;
   } else {
     mutation =
-      resource === "task"
-        ? taskMutationFromOptions(action, parsed)
-        : resource === "milestone"
-          ? milestoneMutationFromOptions(action, parsed)
-          : resourceMutationFromOptions(action, parsed);
+      resource === "project"
+        ? projectMutationFromOptions(parsed)
+        : resource === "task"
+          ? taskMutationFromOptions(action, parsed)
+          : resource === "milestone"
+            ? milestoneMutationFromOptions(action, parsed)
+            : resourceMutationFromOptions(action, parsed);
     sourceOperand = parsed.positionals[0]!;
     writeRequest = editingWriteRequest(parsed, sourceOperand);
   }
@@ -2626,6 +2827,7 @@ async function main(argv: readonly string[]): Promise<number> {
   const resource = argv[0]!;
   const action = argv[1]!;
   const entityActions = new Map<string, ReadonlySet<string>>([
+    ["project", new Set(["set"])],
     ["task", new Set(["add", "set", "remove", "finish"])],
     ["milestone", new Set(["add", "set", "remove"])],
     ["resource", new Set(["add", "set", "remove"])],
@@ -2637,6 +2839,7 @@ async function main(argv: readonly string[]): Promise<number> {
     argv[2] === "--help" &&
     ((resource === "agent" && action === "help") ||
       (resource === "dsl" && ["check", "format", "help"].includes(action)) ||
+      (resource === "project" && action === "show") ||
       (resource === "dag" && ["analyze", "next", "advance", "render", "import"].includes(action)) ||
       isMutationCommand)
   ) {
@@ -2661,12 +2864,15 @@ async function main(argv: readonly string[]): Promise<number> {
   if (resource === "agent" && action === "help") {
     return runAgentHelp(argv.slice(2));
   }
+  if (resource === "project" && action === "show") {
+    return runProjectShow(argv.slice(2));
+  }
   if (resource === "dsl" && action === "format") {
     return runFormat(argv.slice(2));
   }
   if (isMutationCommand) {
     return runMutation(
-      resource as "task" | "milestone" | "resource" | "mutation",
+      resource as "project" | "task" | "milestone" | "resource" | "mutation",
       action,
       argv.slice(2),
     );

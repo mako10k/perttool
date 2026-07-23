@@ -54,13 +54,19 @@ test("editing help exposes preview and explicit safe-write commands", () => {
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planFormat/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planMutation/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planAdvance/);
+  assert.ok(help.syntax.some((line) => line.includes("project show")));
+  assert.ok(help.syntax.some((line) => line.includes("project set")));
   assert.ok(help.syntax.some((line) => line.includes("dsl format")));
   assert.ok(help.syntax.some((line) => line.includes("mutation apply")));
   assert.ok(help.syntax.some((line) => line.includes("dag advance")));
   assert.match(help.sections.map(({ body }) => body).join("\n"), /既定.*preview/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--expect-digest/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--out/);
-  assert.ok(help.syntax.every((line) => line.includes("--write")));
+  assert.ok(
+    help.syntax
+      .filter((line) => !line.includes("project show"))
+      .every((line) => line.includes("--write")),
+  );
 });
 
 test("mermaid help exposes lossless export and fail-closed import", () => {

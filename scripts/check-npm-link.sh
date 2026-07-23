@@ -35,6 +35,8 @@ fi
 (
   cd "$link_prefix"
   "$linked_cli" dsl check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+  "$linked_cli" project show "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+  "$linked_cli" agent help codex instruction --format=json >/dev/null
   "$linked_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null
 )
 

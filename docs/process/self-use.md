@@ -178,12 +178,14 @@ Stage 1で許可した操作:
 - next
 - CLI JSONによるcheck/analyze/next result
 - `dsl format`のpreview、diff、check、JSON result
+- `project show`のtext/JSON resultと`project set`のpreview、diff、JSON result
 - task/milestone/resourceとatomic batchのpreview、diff、JSON result
 - Mermaid export が read-only で利用可能なら preview
 
 Stage 1で禁止した操作:
 
 - `format --write`
+- `project set --write`
 - `task ... --write`
 - `milestone ... --write`
 - `resource ... --write`
@@ -275,6 +277,7 @@ V3 publicationだけで現行のmanual task selection ruleを置き換えない�
 追加で許可する操作:
 
 - `dsl format --write`
+- `project set --write`
 - `task add|set|remove|finish --write`
 - `milestone add|set|remove --write`
 - `resource add|set|remove --write`

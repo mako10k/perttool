@@ -641,6 +641,8 @@ Must:
 MVP で、次の操作を提供する。
 
 ```text
+perttool project show <file>
+perttool project set <file> --velocity <velocity> ...
 perttool task add <file> <id> <from> <to> --title <text> ...
 perttool task set <file> <task-id> --status active
 perttool task set <file> <task-id> --from <id> --to <id>
@@ -654,6 +656,8 @@ perttool dag advance <file>
 
 Must:
 
+- project ID、version、title、description、as_of、duration_unit、velocity、finish、critical_epsilon、target_durationを、source fileを直接閲覧せずCLIのtext/JSONから確認できること
+- project declarationの全fieldをCLIから局所変更でき、optional fieldを明示的にclearできること
 - 既定動作は stdout への変更後文書と stderr への要約、または明示的な diff とすること
 - `--write` 指定時だけ入力ファイルを更新すること
 - `--dry-run` または同等のプレビュー契約をすべての変更操作で提供すること
@@ -746,6 +750,9 @@ perttool dsl check <file>
 perttool dsl format <file>
 perttool dsl help [topic] [subtopic] [--level index|quick|detail]
 
+perttool project show <file>
+perttool project set <file> ...
+
 perttool dag analyze <file>
 perttool dag next <file>
 perttool dag render <file> --to mermaid|svg|json
@@ -766,6 +773,7 @@ Must:
 - CI で識別できる exit code を定義すること
 - 未知 option、必須引数不足、未知 action を黙って受理しないこと
 - エラー時は関係する help topic を表示すること
+- project metadataを確認・更新する通常workflowで`.pert` sourceの直接閲覧や手編集を必須にしないこと
 
 推奨 exit code:
 
@@ -952,7 +960,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 5. renewable resource capacityを守る決定的なheuristic scheduleとschedule critical pathを生成できる
 6. active、ready、runnable_now、blocked_now、upcoming を決定的に分類できる
 7. text と JSON で分析結果と next 結果を出せる
-8. task、milestone、resourceの構造編集をプレビューし、安全に書き込める
+8. project、task、milestone、resourceの構造編集をプレビューし、安全に書き込める
 9. advance が合流判定に必要な done task を保持し、不要になった過去部分だけを除去できる
 10. Mermaid profile へ export し、生成 Mermaid を意味損失なく import できる
 11. DSL help が topic/index/quick/detail と JSON で取得できる
@@ -1055,15 +1063,15 @@ Issue #3のbacklog階層・multi-plan composition、LSP server、VSIX、MCP serv
    - [x] [self-useと実装migration方針](process/recommendation-migration.md)
    - [x] [横断設計レビューと受け入れ記録](process/recommendation-design-review.md)
 7. [x] parser/validator の最小実装と golden tests
-8. [x] [Mutation Semantics仕様](specs/mutation.md): task/milestone/resource mutation、atomic batch、UTF-16 TextEdit、comment所有、candidate再検査
+8. [x] [Mutation Semantics仕様](specs/mutation.md): project/task/milestone/resource mutation、atomic batch、UTF-16 TextEdit、comment所有、candidate再検査
 9. [x] [Mermaid Profile仕様](specs/mermaid-profile.md): `%% perttool:` semantic record、canonical JSON、integrity、projection、lossless import境界
 10. [x] Mermaid export: `exportMermaid`、`dag render --to mermaid`、profile/plainのloss report、analysis annotation、exclusive `--out`
 11. [x] Mermaid import: `importMermaid`、`dag import --from mermaid`、fail-closed profile復元、plain loss report、round-trip E2E
 
 項目7は完了した。`dsl check`、source-backed CST/AST、resolver/validator、`dsl help syntax`、複数error recovery、validation phase suppression、diagnostic上限、block textのcommon indentとUTF-16 span、source-preserving formatter Core、formatterのidempotenceとAST同値goldenに加え、syntax help sample、related link、diagnostic `helpTopic`とparser fixtureのdrift検査を固定し、grammar acceptance全項目を満たした。
 
-項目8は`TASK_MUTATION_CORE`と`ENTITY_MUTATION_CORE`で完了した。単独ではvalidな中間DAGを作れないconnected milestone追加やpath置換のため、最終candidateだけを検査するatomic batchもCore契約へ追加した。後続の`MUTATION_CLI_PREVIEW`でentity commandと`mutation apply`をpreview-firstのtext/JSON surfaceへ公開し、`SAFE_WRITE_ACCEPTANCE`で同じcandidateをatomic `--write`、exclusive `--out`、`--expect-digest`へ接続した。項目10はprofileの全semantic record、安定projection、両digest、exact数値、text/JSON parityをgolden/unit/E2Eで固定した。項目11はprofileのcanonical JSON、record順、両digest、意味model、projection対応をfail-closedで検査し、plain入力のstable generated IDとloss report、strict-loss、exclusive `--out`をCore/CLI/E2Eへ固定した。
+項目8は`TASK_MUTATION_CORE`と`ENTITY_MUTATION_CORE`で基礎を完了し、project metadata拡張でread-only `project show`とsource-preserving `project set`を追加した。単独ではvalidな中間DAGを作れないconnected milestone追加、path置換、project-wide単位変更のため、最終candidateだけを検査するatomic batchもCore契約へ追加した。`MUTATION_CLI_PREVIEW`でentity commandと`mutation apply`をpreview-firstのtext/JSON surfaceへ公開し、`SAFE_WRITE_ACCEPTANCE`で同じcandidateをatomic `--write`、exclusive `--out`、`--expect-digest`へ接続した。項目10はprofileの全semantic record、安定projection、両digest、exact数値、text/JSON parityをgolden/unit/E2Eで固定した。項目11はprofileのcanonical JSON、record順、両digest、意味model、projection対応をfail-closedで検査し、plain入力のstable generated IDとloss report、strict-loss、exclusive `--out`をCore/CLI/E2Eへ固定した。
 
 Analysis実装は`dag next` v3とread-only `validateOverride`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical path、next分類、`runnable_now`、resource rejection、upcoming explanationに加え、normal recommendationのcomplete graphをCore、CLI JSON/text、help、packageへ、`Perttool.OverrideDecision.v1` validationをpublic libraryへ公開した。Slice 2のbootstrap gate、grammar acceptance、safe-write gate、advance gateを満たし、Stage 3のpreview-first advance自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は[横断設計レビュー](process/recommendation-design-review.md)で受け入れた。[MVP release readiness監査](process/mvp-release-readiness.md)で確認した受け入れ条件16の欠落は、[Recommendation実装plan](../plans/recommendation.pert)のMIG-01からMIG-07全22p、5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop dry-runで解消した。Recommendation固有の暫定実測Velocityは`22p/1d`、detail残作業は0pである。`v0.1.0-alpha.2`の同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registryからの隔離installまで完了したため、MVP public alpha受け入れは完了した。
 
-[ADR 0003](adr/0003-beta-versioning.md)により、最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義した。Beta gateへIssue #2のread-only AI Agent Guidance Registry v1を追加した。[5 provider baseline](process/agent-guidance-provider-baseline.md)を公式資料からoffline design inputへ固定し、[AI Agent Guidance Registry仕様](specs/agent-guidance.md)と[規範例](examples/agent-guidance.md)で公開contractを確定した。現在の工程、実測Velocity、残forecastは[詳細plan](../plans/agent-guidance.pert)と[自己利用手順](process/self-use.md)を正とする。Issue #3はbeta blockerに含めない。
+[ADR 0003](adr/0003-beta-versioning.md)により、最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義した。Beta gateへIssue #2のread-only AI Agent Guidance Registry v1を追加した。[5 provider baseline](process/agent-guidance-provider-baseline.md)を公式資料からoffline design inputへ固定し、[AI Agent Guidance Registry仕様](specs/agent-guidance.md)と[規範例](examples/agent-guidance.md)で公開contractを確定した。Version付きoffline profile、validator、query、index/quick/detail projection、deterministic JSON/text、structured command help、`agent help` CLI、package-installed Core/CLI parityは実装済みである。現在の工程、実測Velocity、残forecastは[詳細plan](../plans/agent-guidance.pert)と[自己利用手順](process/self-use.md)を正とする。Issue #3、LSP server、VSIX、MCP serverはbeta blockerに含めない。

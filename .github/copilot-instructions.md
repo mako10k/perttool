@@ -13,6 +13,7 @@ Mandatory summary:
 - task=edge、milestone=node、gate=zero-duration dependency edgeを維持し、resource共有をDAG dependencyへ変換しない。
 - precedence critical pathとresource schedule上のschedule critical pathを区別する。
 - `docs/process/self-use.md`のStage 3まで解禁済み。Editing/advance writeはpreview、diffと削除一覧の確認、expected digest、write後再解析を必須とする。
+- Project ID、as_of、duration_unit、velocity、finishなどのmetadataは`project show --format json`で確認し、変更は`project set`のpreview/diffとStage 3 safe-write手順を使う。通常workflowをsource fileの目視や手編集へ依存させない。
 - repository checkはNode.js 24以上で`npm ci`、`npm run check`、whitespace checkは`git diff --check`を使用する。
 - staging前にdiffとstatusを確認し、利用者の無関係な変更を含めない。
 - remote writeとGitHub操作には`secdat exec`を使い、破壊的Git操作には明示許可を得る。

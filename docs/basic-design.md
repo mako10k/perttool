@@ -716,6 +716,9 @@ perttool dsl check <file>
 perttool dsl format <file>
 perttool dsl help [topic] [subtopic] [--level index|quick|detail]
 
+perttool project show <file>
+perttool project set <file> ...
+
 perttool dag analyze <file> [--schedule precedence|resource|both]
 perttool dag analyze <file> --capacity <resource-id>=<integer>
 perttool dag next <file>
@@ -1054,7 +1057,7 @@ Slice 2Rの実装taskと見積りは、Slice 3が`M3_SAFE_WRITE_READY`へ到達�
 ### Slice 3: safe formatting and mutation
 
 - source-preserving formatter
-- task/milestone/resource mutationとatomic batch
+- project/task/milestone/resource mutationとatomic batch
 - preview diff
 - atomic write/optimistic lock
 
@@ -1091,11 +1094,19 @@ Exit:
 
 [AI Agent Guidance詳細plan](../plans/agent-guidance.pert)は全22pである。[Provider baseline](process/agent-guidance-provider-baseline.md)を設計入力、[AI Agent Guidance Registry仕様](specs/agent-guidance.md)と[規範例](examples/agent-guidance.md)を公開contractの正本とする。進捗、実測Velocity、残forecast、現在のrecommended taskは詳細planと[自己利用手順](process/self-use.md)を正とし、本設計へ変動値を重複固定しない。
 
-### Post-MVP Slice 5: MCP and editor
+`src/guidance/`はdocument application serviceから独立したpure Coreとする。`profile.ts`がversion付きoffline snapshot、`validator.ts`がversion、ordering、reference closure、description、digestをfail-closedで検査し、`query.ts`がexact lookupとalias normalization、`projection.ts`がindex/quick/detailとpublic JSON bytes、`text.ts`が同じresultからtext bytesとexit境界を導出する。Coreはfile、environment、network、clock、locale catalog、provider APIを参照しない。`GUIDANCE_CORE`でpublic library exportと専用goldenを、`AGENT_HELP_PUBLICATION`でstructured command help、CLI adapter、text/JSON、package-installed parityを実装した。
 
-- MCP adapter
-- adapter parity tests
-- LSP diagnostics/completion/definition/rename の基礎
+`src/application/project.ts`はvalid documentからproject metadataを抽出するread-only Coreとし、`project show`のtext/JSON adapterへ同じtyped resultを渡す。`src/mutation/project.ts`はexactly oneのproject declarationを対象とするsource-preserving `project.set`を提供する。Project単独ではvalidにならないunit変更はatomic batchへ関連entity mutationと一緒に含め、最終candidateだけを再検査する。これにより、velocityを含むproject metadataの通常の閲覧・編集はsource fileの直接閲覧や手編集を必要としない。
+
+### Post-MVP Slice 5: language tooling and MCP
+
+最初のbetaとは独立した将来backlogとして、次の3成果物へ分ける。
+
+- LSP server: `src/application/`、parser/validator、formatter、source-preserving TextEditを直接使い、diagnostics/completion/definition/rename/formattingを提供する
+- VSIX: `.pert`用TextMate grammarによるコードハイライトとLSP clientを提供する。semantic analysisをextension内へ複製せず、LSP serverを唯一のlanguage intelligence sourceとする
+- MCP server: read-only analysis/helpから開始し、preview mutationへ段階拡張する。CLI subprocessではなく共通Application/Core APIを直接使う
+
+LSP protocol capability、UTF-16 position mapping、VSIX packaging/workspace trust/server distribution、MCP tool schema/transport/write safetyは、それぞれ実装開始前のversioned仕様で固定する。AdapterごとにCore semantic parity testを持たせる。LSP serverをVSIXのpredecessorとし、MCP serverは独立workstreamとして計画できる。
 
 ## 18. 詳細設計へ送る事項
 

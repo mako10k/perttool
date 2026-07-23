@@ -82,6 +82,7 @@ test("invalid document returns exit 1 and one-based JSON span", () => {
 test("diagnostic limit is stable across read-only document commands", () => {
   for (const command of [
     ["dsl", "check"],
+    ["project", "show"],
     ["dag", "analyze"],
     ["dag", "next"],
   ]) {
@@ -1107,6 +1108,77 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
   assert.equal(finished.status, 0, finished.stderr);
   assert.match(finished.stdout, /^--- docs\/examples\/minimal\.pert/m);
   assert.match(finished.stdout, /^\+  status done$/m);
+});
+
+test("project show and set expose all metadata without direct source editing", () => {
+  const showHelp = run(["project", "show", "--help"]);
+  assert.equal(showHelp.status, 0, showHelp.stderr);
+  assert.match(showHelp.stdout, /perttool project show <file>/);
+  const setHelp = run(["project", "set", "--help"]);
+  assert.equal(setHelp.status, 0, setHelp.stderr);
+  assert.match(setHelp.stdout, /--velocity <velocity>/);
+  assert.match(setHelp.stdout, /--clear description\|as_of\|velocity/);
+
+  const shown = run([
+    "project", "show", "test/fixtures/grammar/all-fields.pert", "--format=json",
+  ]);
+  assert.equal(shown.status, 0, shown.stderr);
+  const shownJson = JSON.parse(shown.stdout);
+  assert.equal(shownJson.schema_version, "Perttool.ProjectResult.v1");
+  assert.equal(shownJson.operation, "project.show");
+  assert.equal(shownJson.document_id, "ALL_FIELDS");
+  assert.equal(shownJson.grammar_version, 1);
+  assert.deepEqual(shownJson.project, {
+    id: "ALL_FIELDS",
+    version: 1,
+    title: "all declaration fields",
+    description: "project description",
+    as_of: "2026-07-21T20:00:00+09:00",
+    duration_unit: "point",
+    velocity: "10p/5d",
+    finish: "DONE",
+    critical_epsilon: "0p",
+    target_duration: "20p",
+  });
+
+  const text = run([
+    "project", "show", "test/fixtures/grammar/all-fields.pert", "--color=never",
+  ]);
+  assert.equal(text.status, 0, text.stderr);
+  assert.match(text.stdout, /^PROJECT ALL_FIELDS\nVERSION 1\n/);
+  assert.match(text.stdout, /^VELOCITY 10p\/5d$/m);
+
+  const preview = run([
+    "project", "set", "-", "--id", "CLI_PROJECT", "--title", "CLI project",
+    "--as-of", "2026-07-23", "--velocity", "12p/5d",
+    "--critical-epsilon", "1p", "--target-duration", "25p",
+    "--clear", "description", "--format=json",
+  ], { input: readFileSync(path.join(root, "test/fixtures/grammar/all-fields.pert"), "utf8") });
+  assert.equal(preview.status, 0, preview.stderr);
+  const previewJson = JSON.parse(preview.stdout);
+  assert.equal(previewJson.schema_version, "Perttool.MutationResult.v1");
+  assert.equal(previewJson.operation, "project.set");
+  assert.equal(previewJson.source, "<stdin>");
+  assert.equal(previewJson.write.mode, "preview");
+  assert.match(previewJson.updated_text, /^project CLI_PROJECT:/);
+  assert.match(previewJson.updated_text, /  velocity 12p\/5d/);
+  assert.doesNotMatch(previewJson.updated_text, /project description/);
+
+  const conflict = run([
+    "project", "set", minimalPath, "--description", "set",
+    "--clear", "description", "--format=json",
+  ]);
+  assert.equal(conflict.status, 2);
+  assert.equal(JSON.parse(conflict.stdout).schema_version, "Perttool.CliError.v1");
+
+  const invalid = run([
+    "project", "set", minimalPath, "--duration-unit", "point",
+    "--velocity", "10p/1d", "--format=json",
+  ]);
+  assert.equal(invalid.status, 1, invalid.stderr);
+  const invalidJson = JSON.parse(invalid.stdout);
+  assert.equal(invalidJson.updated_text, null);
+  assert.deepEqual(invalidJson.edits, []);
 });
 
 test("mutation preview preserves a UTF-8 BOM and hashes the same document bytes", () => {

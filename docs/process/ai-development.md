@@ -106,12 +106,14 @@ npm publishは通常のclose outに含めない。Alphaは[npm publication記録
 
 `docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本writerとして使用できる。2026-07-23のMIG-07完了後、task selectionはcompleteかつknownな`Perttool.NextResult.v3`をnormal authorityとして次の順で行う。
 
-1. `mvp.pert`と現在の詳細planを`perttool dsl check`し、計画が有効であることを確認する
+1. `mvp.pert`と現在の詳細planを`perttool dsl check`し、計画が有効であることを確認する。Project ID、as_of、duration_unit、velocity、finishなどのmetadata確認にはsourceの直接閲覧でなく`perttool project show --format json`を使う
 2. `mvp.pert`を`dag analyze`、`dag next --format json`し、known version、complete trace、`PTREC-*`不在を確認してmacro recommended work packageからworkstreamを選ぶ
 3. 選んだwork packageに対応する詳細planを`dag analyze`、`dag next --format json`し、同じconsumer gateを確認してdetail recommended taskを選ぶ
 4. Recommended subset、またはrecommended set全件を維持してresource-feasibleな`allowed` taskを1件だけ追加した集合をnormal selectionとする
 5. decisive step、higher-priority task、comparisonをproject factから説明し、外部blockと利用可能resourceを確認する
 6. task start、completion、block、capacity変更後は同じresultを再利用せず、detailと必要なmacroを再解析する
+
+Project metadataを変更するときは`project set`のpreviewまたは`--diff`を確認し、永続化はStage 3のexpected digest付き`--write`手順を使う。Project-wide単位の変更でtask duration/estimateも同時に変える必要がある場合は、`project.set`と関連mutationを1つのatomic batchにまとめる。通常のmetadata閲覧・編集をsource fileの目視や手編集へ依存させない。
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。`groups.ready`、`groups.runnable_now`、text summaryをrecommendationの代用にしない。Unknown schema/model version、incomplete/truncated trace、unknown tier、`PTREC-*`ではtaskを開始せず、安全に停止する。`deferred`または`discouraged`をnormal authorityで開始しない。
 
