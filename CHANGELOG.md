@@ -14,6 +14,7 @@
 
 - 最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義し、alphaからのstrict compatibilityと追加soakをbeta gateから外した
 - Issue #2のread-only AI Agent Guidance Registryをbeta受け入れ条件とmacro/detail計画へ追加した
+- Adopted English as the canonical repository language without i18n and added a phased, post-beta migration plan for legacy Japanese surfaces
 
 ## [0.1.0-alpha.2] - 2026-07-23
 

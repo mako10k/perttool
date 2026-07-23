@@ -22,6 +22,7 @@
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
 - Beta versioning/release decision: [adr/0003-beta-versioning.md](adr/0003-beta-versioning.md)
+- Repository language decision: [adr/0004-english-repository-baseline.md](adr/0004-english-repository-baseline.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
 
 ## 1. 目的
@@ -43,6 +44,7 @@
 - 文書編集は source span に対する差分として計画し、再 parse・再検査後にだけ適用する
 - 人間向け text と機械向け JSON は、同じ結果 object から描画する
 - すべての計算と並び順を決定的にする
+- English is the canonical language for repository-maintained artifacts; runtime i18n is not part of the current architecture
 
 TypeScript を選ぶ理由は次のとおりである。
 
@@ -949,9 +951,10 @@ MVPでは同一fixtureに対し、library resultとCLI JSONのsemantic payload�
 - M1からM4の操作系実装計画: `plans/operations.pert`
 - MVP recommendation実装計画: `plans/recommendation.pert`
 - Beta AI Agent Guidance Registry実装計画: `plans/agent-guidance.pert`
+- Post-beta English repository baseline migration: `plans/english-baseline.pert`
 - 過去の作業計画: Git history
 
-MVPからbetaまでのstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。Grammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`、操作系M1-M4を`plans/operations.pert`、MVP recommendation実装を`plans/recommendation.pert`、betaのIssue #2を`plans/agent-guidance.pert`で管理する。
+MVPからbetaまでのstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。Grammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`、操作系M1-M4を`plans/operations.pert`、MVP recommendation実装を`plans/recommendation.pert`、betaのIssue #2を`plans/agent-guidance.pert`で管理する。The post-beta English migration remains independent in `plans/english-baseline.pert` until a later macro composition decision.
 
 `.pert` は仕様内容そのものではなく、仕様を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
 
@@ -1098,6 +1101,14 @@ Exit:
 
 `src/application/project.ts`はvalid documentからproject metadataを抽出するread-only Coreとし、`project show`のtext/JSON adapterへ同じtyped resultを渡す。`src/mutation/project.ts`はexactly oneのproject declarationを対象とするsource-preserving `project.set`を提供する。Project単独ではvalidにならないunit変更はatomic batchへ関連entity mutationと一緒に含め、最終candidateだけを再検査する。これにより、velocityを含むproject metadataの通常の閲覧・編集はsource fileの直接閲覧や手編集を必要としない。
 
+### Post-MVP Slice 4B: English repository baseline
+
+[ADR 0004](adr/0004-english-repository-baseline.md) makes English canonical for repository-maintained prose while keeping stable machine identifiers and user-authored Unicode content unchanged. Existing Japanese surfaces migrate after the first beta through the independent [`english-baseline.pert`](../plans/english-baseline.pert) plan.
+
+The migration is split into inventory, runtime messages, bundled help, normative documents, process and agent guidance, current PERT metadata, golden/Unicode audit, and final acceptance. Runtime locale negotiation, translation catalogs, a `--locale` option, and automatic translation of `.pert` content are outside this slice.
+
+The first task stays explicitly blocked until `plans/mvp.pert` reaches `M8_BETA_RELEASED`. This preserves the accepted beta critical path without hiding the migration in an untracked backlog. Because cross-plan dependencies are not yet implemented, the external gate is represented by a stable `blocked_reason` and the Stage 3 preview-first unblock procedure.
+
 ### Post-MVP Slice 5: language tooling and MCP
 
 最初のbetaとは独立した将来backlogとして、次の3成果物へ分ける。
@@ -1110,7 +1121,7 @@ LSP protocol capability、UTF-16 position mapping、VSIX packaging/workspace tru
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、task mutationのCore request、局所TextEdit、comment所有は[Mutation Semantics仕様](specs/mutation.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。Agent guidanceのprovider/surface/guidance/risk taxonomy、support根拠、profile、Core/text/JSON、diagnostic、migration境界は[AI Agent Guidance Registry仕様](specs/agent-guidance.md)を正とする。Beta versioningとrelease gateは[ADR 0003](adr/0003-beta-versioning.md)および[beta release手順](process/beta-release.md)を正とする。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、task mutationのCore request、局所TextEdit、comment所有は[Mutation Semantics仕様](specs/mutation.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。Agent guidanceのprovider/surface/guidance/risk taxonomy、support根拠、profile、Core/text/JSON、diagnostic、migration境界は[AI Agent Guidance Registry仕様](specs/agent-guidance.md)を正とする。Beta versioningとrelease gateは[ADR 0003](adr/0003-beta-versioning.md)および[beta release手順](process/beta-release.md)を正とする。Repository language baseline and migration boundary are defined by [ADR 0004](adr/0004-english-repository-baseline.md).
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細

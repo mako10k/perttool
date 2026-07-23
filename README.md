@@ -129,7 +129,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dag next`は依存関係上の`ready`、既存schedulerが選ぶ`runnable_now`、工程authorityであるroot `recommendation`を分離します。JSONは全ready taskのtier、exact typed fact、comparison、decision trace、canonical descriptionをcomplete graphとして返し、textは4 tierの`complete=false` summaryとJSON導線を返します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明も従来どおり保持します。Consumerは[移行ガイド](docs/process/next-v3-consumer-migration.md)に従い、`schema_version`を最初に検査します。
 
-既存5 planのshadowとMIG-07 safe-stop dry-runを経て、knownかつcompleteな`NextResult.v3`をperttool開発のnormal AI task selection authorityへ採用しました。現在はagent-guidance planを加えた6 planを検証対象とします。Macro recommendationからworkstreamを選んでdetailを再解析し、unknown version、incomplete trace、`PTREC-*`、deferred/discouraged selectionでは開始せず停止します。
+Known and complete `NextResult.v3` is the normal AI task-selection authority after the original five-plan shadow and the MIG-07 safe-stop dry run. The self-use gate now checks seven plans, including agent guidance and the explicitly blocked post-beta English-baseline migration. Select a workstream from the macro recommendation before analyzing its detail plan, and stop on unknown versions, incomplete traces, `PTREC-*`, or deferred/discouraged selections.
 
 Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhuman requestから、normal recommendationを変更せずdeterministicな`Perttool.OverrideDecision.v1`を生成します。これはread-only validationであり、task state、file、Git、networkを変更しません。Override applyとaudit writeのCLIは未実装です。
 

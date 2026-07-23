@@ -2,7 +2,9 @@
 
 ## Scope and communication
 
-この指示はリポジトリ全体に適用する。利用者向けの応答、要件、設計、運用文書は、利用者から指定がない限り日本語を基本とする。
+These instructions apply to the entire repository. English is the canonical language for tracked repository artifacts. New or substantively modified requirements, specifications, design text, process guidance, plan metadata, source comments, bundled help, and diagnostics use English. Existing Japanese content remains explicit migration debt in `plans/english-baseline.pert`; do not translate unrelated legacy text opportunistically.
+
+User communication is independent from the repository baseline. Unless the user requests otherwise, respond to the user in Japanese. Preserve user-authored `.pert` content and intentional Unicode fixtures. Do not add runtime i18n, locale negotiation, translation catalogs, or a `--locale` option without a new requirement and architecture decision.
 
 - 直接確認した事実、推論、未確認事項を区別する。
 - 現在のcheckout、正本文書、実行結果を確認してから判断する。
@@ -14,6 +16,8 @@
 perttoolは現在、TypeScript CLIのMVP public alphaとIssue #2のread-only AI Agent Guidance Registry v1を受け入れ、最初のbeta releaseへ進む段階である。`dsl check`、`dsl format`、`dsl help`、read-only `agent help`、`dag analyze`、`dag next` v3、read-only `validateOverride`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Recommendation MIG-01からMIG-07は完了し、5 plan shadow、unknown-version safe stop dry-run、共有指示同期を経て、completeかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`は同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registryからの隔離installまで検証済みである。最初のbetaはsuffixなし`0.1.0`、以後の`0.x.x`をbetaとし、alphaからのstrict compatibilityや追加soakをgateにしない。Issue #2は5 provider baseline、公開contract、version付きoffline profile、validator、query、index/quick/detail projection、deterministic JSON、text renderer、structured command help、`agent help` CLI、package-installed Core/CLI parity、security/package受け入れまで完了した。固有実測Velocityは全22p/1 active dayの`22p/1d`、詳細plan残作業は0pである。Macroの唯一のready、`runnable_now`、recommended taskは`BETA_RELEASE_E2E`で、残存makespanは1dである。Issue #3、LSP server、VSIX、MCP serverはbeta blockerではない。Human overrideのapply、durable audit、Git integrationはMIG-08まで未解禁である。
 
 また、velocityを含むproject metadata一式を返す`project show`、source-preservingな`project set`、atomic batchの`project.set`も実装済みである。操作系実測Velocityは2026-07-23の5pを加えた累計29p/2 active dayから`29p/2d`へ再calibrationした。
+
+ADR 0004 adopts English as the repository baseline. The 42p legacy-surface migration is tracked in `plans/english-baseline.pert` with a provisional `29p/2d` velocity. Its first task is explicitly blocked until `M8_BETA_RELEASED`, so the current macro recommendation remains `BETA_RELEASE_E2E`.
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -35,7 +39,7 @@ perttoolは現在、TypeScript CLIのMVP public alphaとIssue #2のread-only AI 
 - `docs/adr/`: 採用済みarchitecture/runtime判断。
 - `docs/examples/`: parserとanalysisの規範sample。
 - `docs/process/`: 自己利用とAI開発の運用手順。
-- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をMVPからbetaまでのmacro roadmap、`grammar.pert`、`control-plane.pert`、`operations.pert`、`recommendation.pert`、`agent-guidance.pert`を詳細計画としてStage 3のpreview-first手順で使用する。
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the macro roadmap through beta, and use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans.
 - `scripts/`: repository-local verification command。
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
@@ -84,7 +88,7 @@ Normal task selectionでは、known `Perttool.NextResult.v3`、recommendation in
 
 ## Validation
 
-現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar/control-plane/operations/recommendation/agent-guidance planのcheck/analyze/nextも含む。
+Run the repository checks from the root with Node.js 24 or later. `npm run check` includes check/analyze/next validation for the MVP, grammar, control-plane, operations, recommendation, agent-guidance, and English-baseline plans.
 
 ```sh
 npm ci

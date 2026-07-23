@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 3 / Revision 2.22
+- 文書状態: Active Stage 3 / Revision 2.23
 - 作成日: 2026-07-21
 - 更新日: 2026-07-23
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -22,6 +22,7 @@
 | `plans/operations.pert` | formatter previewからadvanceまでの現在・未来 DAG | `.pert` 文書 |
 | `plans/recommendation.pert` | MIG-01からMIG-07の実装・shadow・adoption DAG | `.pert` 文書 |
 | `plans/agent-guidance.pert` | Issue #2のprovider baseline、Core、`agent help`、beta受け入れ DAG | `.pert` 文書 |
+| `plans/english-baseline.pert` | Post-beta migration of maintained repository surfaces to canonical English | `.pert` document |
 | `test/fixtures/grammar/` | parser が受理・拒否すべき具体例 | fixture/golden |
 | Git history | 過去の計画、仕様、実装 | commit history |
 
@@ -41,6 +42,8 @@ Exit criteria:
 ## 4. Stage 1: read-only self-use
 
 2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用し始めた。2026-07-22に[AI工程制御設計plan](../../plans/control-plane.pert)と[操作系詳細plan](../../plans/operations.pert)を追加し、同日にStage 2、操作系完了後にStage 3へ移行した。2026-07-23にMVP public alpha受け入れ後のbeta gateとして[AI Agent Guidance詳細plan](../../plans/agent-guidance.pert)を追加した。
+
+On the same date, `english-baseline.pert` was added as an independent post-beta detail plan for the phased migration required by ADR 0004.
 
 開始条件:
 
@@ -171,6 +174,8 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。実測5標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装、agent guidanceはwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
+`english-baseline.pert` has no completed task sample yet. It provisionally uses the closest cross-cutting operations sample, `29p/2d`, which converts the 29p precedence path to 2d and the 32p resource schedule to `64/29d`. Recalibrate from this plan after its first completed tasks rather than treating the proxy as measured translation velocity.
+
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
 Operationsは2026-07-22のformatter/mutation preview 12p、safe write 6p、advance 6pに、2026-07-23の`PROJECT_METADATA_CLI` 5pを加えた。累計29p/2 active dayから実測Velocityを`29p/2d`へ再calibrationした。Project metadata taskのmacro durationは開始時に利用できた`24p/1d`から`5/24d`を6 decimalの`0.208333d`へroundして保持する。現在のdetail残作業とresource delayは0pである。
@@ -231,6 +236,7 @@ Stage 1で禁止した操作:
 - 現在の操作系実装taskとresource待ち: `operations.pert`
 - 現在のrecommendation実装taskとresource待ち: `recommendation.pert`
 - 現在のAI Agent Guidance実装taskとresource待ち: `agent-guidance.pert`
+- Post-beta English surface migration and its external gate: `english-baseline.pert`
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
@@ -241,6 +247,7 @@ Stage 1で禁止した操作:
 - Macroの唯一のready、`runnable_now`、recommendedは`BETA_RELEASE_E2E`である
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 - LSP server、VSIX、MCP serverは最初のbeta後の独立backlogであり、現行macroへwork packageを追加しない
+- The English-baseline migration is also independent of the beta macro. Keep `SURFACE_INVENTORY` blocked until `M8_BETA_RELEASED`; after beta, unblock it with a preview-first `task set`, expected digest, safe write, and fresh analysis.
 
 ### 5.3 AI工程制御設計plan
 
@@ -337,6 +344,7 @@ MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar 
 - perttool全体のMVP release plan
 - MVP public alpha後に、Issue #2のread-only AI Agent Guidance Registry
 - Issue #2受け入れ後に、suffixなし`0.1.0` beta release
+- After the suffix-free `0.1.0` beta release, migrate the repository to the English baseline
 - MVP後に、Issue #3のbacklog階層・multi-plan composition
 - 最初のbeta後に、LSP server
 - LSP server後に、コードハイライトとLSP clientを持つVSIX
@@ -413,5 +421,6 @@ Stage 1開始時の証跡:
 - agent guidance publication gate: 同じCore resultからdeterministic text/JSON、structured command help、`agent help` CLI、alias、unknown/usage diagnostic、read-only capability、legacy `dsl help` bytes、package-installed Core/CLI parityを固定し、累計実測`19p/1d`、残り3p = `3/19d`、次のrecommended task `GUIDANCE_ACCEPTANCE`をgoldenへ固定する
 - agent guidance acceptance gate: Issue #2の12 criteriaを仕様、Core、CLI、text/JSON、fixture/golden、package、securityへtraceし、全244 test、local link、release packageを受け入れる。累計実測`22p/1d`、detail残り0p、macroの次のrecommended task `BETA_RELEASE_E2E`をgoldenへ固定する
 - beta release gate: suffixなし`0.1.0`、GitHub prerelease、npm `beta`、既存`latest`不変、同一tarball、registry隔離installをIssue #2受け入れ後にだけ実行する
-- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、6 planを検査する
+- English-baseline planning gate: ADR 0004, eight tasks totaling 42p, conditional precedence 29p, resource makespan 32p, provisional `29p/2d` velocity, and the post-beta `SURFACE_INVENTORY` block are fixed in the seventh self-use plan
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all seven plans
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

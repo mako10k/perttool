@@ -93,6 +93,27 @@ Should:
 - task完了、block、capacity、overrideなどproject stateが変わった後に全体を再解析し、古いrecommendationを継続利用しないこと
 - CLI以外の将来adapterも同じCore recommendationを利用し、provider固有のpriority判断を再実装しないこと
 
+### 2.5 English is the repository baseline
+
+English is the canonical language for repository-maintained artifacts. This decision applies to requirements, specifications, design, examples, process documentation, current plan metadata, source comments, bundled help, and diagnostic messages.
+
+Must:
+
+- New or substantively modified repository prose uses English.
+- Stable command names, DSL keywords, JSON fields, enum values, schema identifiers, diagnostic codes, reason codes, and typed data remain the machine-readable authority. Natural-language messages alone must not become a machine contract.
+- Existing Japanese content remains explicit migration debt until the phased work in [`plans/english-baseline.pert`](../plans/english-baseline.pert) is accepted.
+- User-authored `.pert` titles, descriptions, source data, and intentional Unicode fixtures are preserved. The tool must not translate them automatically.
+- The language used to communicate with a human is independent from the repository baseline. An agent may answer a Japanese-speaking user in Japanese while writing tracked repository artifacts in English.
+- The same input, options, tool version, and fixed English description registry produce the same output regardless of the process locale.
+
+Current non-goals:
+
+- Runtime locale selection or a `--locale` option
+- Translation catalogs, gettext-style infrastructure, or environment-dependent message selection
+- Full translation of legacy Japanese artifacts in one change
+
+The baseline policy is effective immediately. Migration of existing surfaces is a separate, phased workstream after the first beta and does not expand the accepted `BETA_RELEASE_E2E` gate.
+
 ## 3. 解決したい問題
 
 - タスク一覧だけでは依存関係と着手順が見えにくい
@@ -125,6 +146,7 @@ MVP では次を目的としない。
 - heuristic scheduleまたはrecommendationについて、厳密なglobal optimumを保証すること
 - project modelにないrisk、情報、release semanticsをchatから推測して正本factとして扱うこと
 - 人間がrecommendationから逸脱することを禁止すること
+- runtime i18n, localization catalogs, or locale negotiation
 
 ## 5. 想定利用者と主要ユースケース
 
@@ -991,6 +1013,8 @@ Provider/surface/guidance/risk taxonomy、support statusの構造化根拠、off
 
 Issue #3のbacklog階層・multi-plan composition、LSP server、VSIX、MCP server、audit、scaffold、hook実行、enforcementは最初のbetaのblockerに含めない。
 
+Migration of legacy surfaces under the English repository baseline is also excluded from this release gate. It proceeds after beta through `plans/english-baseline.pert`.
+
 ## 22. 初期要求との対応
 
 | 初期要求 | 本書での対応 |
@@ -1007,6 +1031,7 @@ Issue #3のbacklog階層・multi-plan composition、LSP server、VSIX、MCP serv
 | 10. resource共有、排他実行、並列数で変化する日程を扱う | 7.2、7.4、10.6、11 |
 | 11. 独自PointとVelocityでAIの見積りを時間予測へ変換する | 6、7.1、8、10、17 |
 | 12. AIの局所最適化と工程逸脱を検出・抑止する | 1、2.4、3、4、5.4、11、17、21 |
+| 13. Use English as the canonical repository language without i18n | 2.5、4、21.1 |
 
 ## 23. MVP 後へ保留する事項
 
@@ -1033,6 +1058,7 @@ Issue #3のbacklog階層・multi-plan composition、LSP server、VSIX、MCP serv
 - task=edgeのAoA採用: [ADR 0001](adr/0001-activity-on-arrow.md)
 - Node.js 24以上、npm、TypeScript ESM package: [ADR 0002](adr/0002-node-typescript-package.md)
 - suffixなし`0.x.x` beta、alpha互換境界、beta release gate: [ADR 0003](adr/0003-beta-versioning.md)
+- English repository baseline, migration boundary, and current i18n non-goal: [ADR 0004](adr/0004-english-repository-baseline.md)
 - 実行可否、resource selection、推奨度の分離とtier semantics: [Recommendation Semantics仕様](specs/recommendation.md)
 - ranking input、selection horizon、優先規則、完全tie-break、algorithm version: [Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)
 - stable reason code、effect/role、typed fact category、entity reference、taxonomy version: [Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)

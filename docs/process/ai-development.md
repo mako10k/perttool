@@ -15,6 +15,14 @@ Codex、GitHub Copilot、その他のcoding agentが、同じ正本、作業境�
 
 AIごとに別のproduct判断を持たせず、project固有の意味は文書とtestへ、tool固有の入口だけを`AGENTS.md`、`.github/`、`.codex/`へ置く。
 
+### 1.1 Repository language
+
+English is the canonical language for tracked repository artifacts. New or substantively modified requirements, specifications, design text, process guidance, plan metadata, source comments, bundled help, and diagnostics use English.
+
+This rule does not force the conversation language. Agents continue to answer the user in the language requested by the user, including Japanese, while keeping committed artifacts in English. User-authored `.pert` content and explicit Unicode round-trip fixtures are never translated automatically.
+
+The repository does not currently implement i18n, locale negotiation, translation catalogs, or a `--locale` option. Stable codes, field names, enum values, typed facts, and schema versions are the machine contract; natural-language text is a deterministic projection. Existing Japanese content is migrated in bounded tasks from [`plans/english-baseline.pert`](../../plans/english-baseline.pert) after the first beta.
+
 ## 2. 参照したlocal repository
 
 `~/`直下の更新時刻が新しく、AI開発導線を持つcheckoutを2026-07-21に確認した。
@@ -120,6 +128,8 @@ Project metadataを変更するときは`project set`のpreviewまたは`--diff`
 2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`で、`v0.1.0-alpha.2`のGitHub/npm同一artifact配布とregistry installまで完了した。
 
 最初のbetaはsuffixなし`0.1.0`で、以後の`0.x.x`をbetaとする。Alphaからのstrict compatibilityと追加soakはgateにしない。Issue #2のread-only AI Agent Guidance Registry v1は[受け入れ済み](agent-guidance-acceptance.md)で、Provider baseline、公開contract、version付きoffline profile、validator、query、index/quick/detail projection、deterministic JSON/text、structured command help、`agent help` CLI、package-installed Core/CLI parity、security境界を全checkで検証した。固有実測Velocityは全22p/1 active dayの`22p/1d`、detail残作業は0pである。現在のmacroで唯一のready、`runnable_now`、recommended taskは`BETA_RELEASE_E2E`である。Issue #3、LSP server、VSIX、MCP serverはbeta blockerではない。
+
+ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`; its first task remains blocked until `M8_BETA_RELEASED`. Do not select that blocked task as an override of the current macro recommendation. After beta, unblock it only through a Stage 3 `task set` preview, expected digest, safe write, and fresh `check`/`analyze`/`next`.
 
 ### 5.1 採用済みRecommendation authority
 

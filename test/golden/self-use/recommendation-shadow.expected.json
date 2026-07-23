@@ -62,6 +62,42 @@
         "PTDAG-208"
       ]
     },
+    "english-baseline": {
+      "source_digest": "sha256:e2c9e5608d7f087457865c388fa1918b8bd03f145ff8e8ec5059884d2df038d8",
+      "groups": {
+        "active": [],
+        "ready": [],
+        "runnable_now": [],
+        "blocked_now": [
+          "SURFACE_INVENTORY"
+        ],
+        "upcoming": [
+          "GOLDEN_UNICODE_AUDIT",
+          "ENGLISH_ACCEPTANCE",
+          "RUNTIME_MESSAGES",
+          "HELP_AND_USAGE",
+          "NORMATIVE_DOCS",
+          "PROCESS_AND_GUIDANCE_DOCS",
+          "PERT_PLANS"
+        ]
+      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
+      "joint_resource_feasible": true,
+      "ready_tasks": [],
+      "record_counts": {
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
+        "comparisons": 0,
+        "reasons": 1,
+        "descriptions": 0
+      },
+      "diagnostic_codes": [
+        "PTRES-303"
+      ]
+    },
     "grammar": {
       "source_digest": "sha256:bbdeeb1636c0c3ca534d0f69b8a52c17f399a31c38aeecb2b7271f07812c909a",
       "groups": {

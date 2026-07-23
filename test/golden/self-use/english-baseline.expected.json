@@ -1,0 +1,62 @@
+{
+  "check": {
+    "document_id": "ENGLISH_BASELINE",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 4,
+      "milestones": 10,
+      "tasks": 8,
+      "gates": 4,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "29/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "2/1",
+    "precedence_critical_tasks": [
+      "SURFACE_INVENTORY",
+      "NORMATIVE_DOCS",
+      "PROCESS_AND_GUIDANCE_DOCS",
+      "GOLDEN_UNICODE_AUDIT",
+      "ENGLISH_ACCEPTANCE"
+    ],
+    "resource_makespan": "32/1",
+    "resource_forecast": "64/29",
+    "resource_delay": "3/1",
+    "resource_arcs": [
+      "resource:PROCESS_AND_GUIDANCE_DOCS:PERT_PLANS",
+      "resource:RUNTIME_MESSAGES:HELP_AND_USAGE"
+    ],
+    "schedule_critical_tasks": [
+      "SURFACE_INVENTORY",
+      "NORMATIVE_DOCS",
+      "PROCESS_AND_GUIDANCE_DOCS",
+      "PERT_PLANS",
+      "GOLDEN_UNICODE_AUDIT",
+      "ENGLISH_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [],
+      "runnable_now": [],
+      "blocked_now": [
+        "SURFACE_INVENTORY"
+      ],
+      "upcoming": [
+        "GOLDEN_UNICODE_AUDIT",
+        "ENGLISH_ACCEPTANCE",
+        "RUNTIME_MESSAGES",
+        "HELP_AND_USAGE",
+        "NORMATIVE_DOCS",
+        "PROCESS_AND_GUIDANCE_DOCS",
+        "PERT_PLANS"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

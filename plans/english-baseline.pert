@@ -1,0 +1,188 @@
+project ENGLISH_BASELINE:
+  version 1
+  title "English repository baseline migration"
+  description |
+    Migrate repository-maintained prose, bundled help, and diagnostics to the
+    English baseline adopted by ADR 0004. The first beta release remains the
+    current macro critical path. SURFACE_INVENTORY stays explicitly blocked
+    until plans/mvp.pert reaches M8_BETA_RELEASED. The initial velocity is the
+    provisional operations measurement of 29p/2d and must be recalibrated from
+    this workstream after its first completed tasks. Runtime i18n, translation
+    catalogs, locale negotiation, and translation of user-authored content are
+    outside this plan.
+  as_of 2026-07-23
+  duration_unit point
+  velocity 29p/2d
+  finish ENGLISH_BASELINE_ACCEPTED
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Normative meaning and compatibility review capacity"
+  description "Only one normative language or public-contract review runs at a time"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "CLI, help, and diagnostic surface ownership"
+  description "Avoid concurrent changes to shared public message and help surfaces"
+  capacity 1
+
+resource DOC_SURFACE:
+  title "Normative and process documentation ownership"
+  description "Avoid concurrent structural edits to shared documentation indexes and links"
+  capacity 1
+
+milestone LANGUAGE_POLICY_ADOPTED:
+  title "English baseline policy adopted"
+  description "ADR 0004 and repository guidance define English as canonical without i18n"
+  state reached
+
+milestone SURFACE_INVENTORY_READY:
+  title "Migration inventory and allowlist design ready"
+
+milestone RUNTIME_MESSAGES_READY:
+  title "Runtime messages migrated"
+
+milestone HELP_AND_USAGE_READY:
+  title "Bundled help and usage migrated"
+
+milestone NORMATIVE_DOCS_READY:
+  title "Normative documentation migrated"
+
+milestone PROCESS_GUIDANCE_READY:
+  title "Process and agent guidance migrated"
+
+milestone PERT_PLANS_READY:
+  title "Current PERT plans migrated"
+
+milestone ENGLISH_CONTENT_READY:
+  title "Canonical English content slices complete"
+
+milestone GOLDEN_UNICODE_READY:
+  title "Golden and Unicode audit complete"
+
+milestone ENGLISH_BASELINE_ACCEPTED:
+  title "English repository baseline accepted"
+
+task SURFACE_INVENTORY LANGUAGE_POLICY_ADOPTED -> SURFACE_INVENTORY_READY:
+  title "Inventory canonical language surfaces and define the Unicode allowlist"
+  description |
+    Re-run the repository inventory by product documentation, normative
+    specifications, process guidance, runtime messages, bundled help, tests,
+    fixtures, and current plans. Define which user-authored or Unicode
+    round-trip fixtures remain non-English. Record stable identifiers and
+    historical artifacts that must not be translated.
+  duration 2p
+  status blocked
+  blocked_reason "External gate: keep blocked until plans/mvp.pert reaches M8_BETA_RELEASED; then preview task set, clear blocked_reason, set status planned, and re-run check/analyze/next"
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+task RUNTIME_MESSAGES SURFACE_INVENTORY_READY -> RUNTIME_MESSAGES_READY:
+  title "Migrate runtime diagnostics and messages to English"
+  description |
+    Translate parser, semantic, application, mutation, conversion, and
+    safe-write messages without changing stable diagnostic codes, source spans,
+    JSON fields, schema shape, or error boundaries. Update focused tests and
+    byte-level expectations in the same logical changes.
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+
+task HELP_AND_USAGE SURFACE_INVENTORY_READY -> HELP_AND_USAGE_READY:
+  title "Migrate bundled help and usage text to English"
+  description |
+    Translate dsl help, structured command help, examples embedded in help,
+    usage diagnostics, and related golden files. Preserve command names, DSL
+    keywords, exit status, machine-readable capability data, and installed
+    package parity.
+  duration 5p
+  priority 95
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+
+task NORMATIVE_DOCS SURFACE_INVENTORY_READY -> NORMATIVE_DOCS_READY:
+  title "Migrate requirements, design, specifications, and examples"
+  description |
+    Translate the canonical product requirements, basic design, normative
+    specifications, examples, and ADR indexes in bounded document groups.
+    Preserve requirement strength, terminology, anchors, links, examples, and
+    machine contract identifiers. Run documentation checks for every group.
+  duration 13p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+task PROCESS_AND_GUIDANCE_DOCS NORMATIVE_DOCS_READY -> PROCESS_GUIDANCE_READY:
+  title "Migrate process documentation and coding-agent guidance"
+  description |
+    Translate README, CHANGELOG current guidance, AGENTS.md, Copilot
+    instructions, process runbooks, and provider-facing development guidance.
+    Historical release evidence remains source-faithful where translation would
+    alter the record. Keep all agent entrypoints aligned with ADR 0004.
+  duration 8p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+task PERT_PLANS SURFACE_INVENTORY_READY -> PERT_PLANS_READY:
+  title "Migrate current PERT plan metadata to English"
+  description |
+    Translate current and future project, resource, milestone, task, gate, and
+    evidence prose without changing IDs, topology, estimates, state, priority,
+    or resource requirements. Do not reconstruct completed history from Git.
+  duration 3p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+gate RUNTIME_CONTENT_GATE RUNTIME_MESSAGES_READY -> ENGLISH_CONTENT_READY:
+  reason "English acceptance requires runtime messages"
+
+gate HELP_CONTENT_GATE HELP_AND_USAGE_READY -> ENGLISH_CONTENT_READY:
+  reason "English acceptance requires bundled help and usage"
+
+gate PROCESS_CONTENT_GATE PROCESS_GUIDANCE_READY -> ENGLISH_CONTENT_READY:
+  reason "English acceptance requires normative and process documentation"
+
+gate PLAN_CONTENT_GATE PERT_PLANS_READY -> ENGLISH_CONTENT_READY:
+  reason "English acceptance requires current PERT plans"
+
+task GOLDEN_UNICODE_AUDIT ENGLISH_CONTENT_READY -> GOLDEN_UNICODE_READY:
+  title "Audit golden files and preserve intentional Unicode coverage"
+  description |
+    Update translated byte and JSON golden files, add a repository-local
+    Japanese-script check for canonical surfaces, and allowlist only explicit
+    user-authored, interoperability, or Unicode round-trip fixtures. Verify that
+    stable identifiers and structured data remain unchanged.
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+
+task ENGLISH_ACCEPTANCE GOLDEN_UNICODE_READY -> ENGLISH_BASELINE_ACCEPTED:
+  title "Accept the English repository baseline"
+  description |
+    Trace ADR 0004 through requirements, design, runtime, help, documentation,
+    plans, tests, package contents, and agent entrypoints. Run the full
+    repository, link, package, documentation, and language-surface checks.
+    Confirm that no runtime locale negotiation or translation catalog was added.
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1

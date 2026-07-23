@@ -4,7 +4,8 @@
 
 Mandatory summary:
 
-- 利用者から指定がない限り、日本語で応答する。
+- English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
+- ADR 0004 is active. Existing Japanese surfaces are migration debt in `plans/english-baseline.pert`; its first task stays blocked until `M8_BETA_RELEASED`, so `BETA_RELEASE_E2E` remains the current macro recommendation.
 - TypeScript CLIのMVP public alphaとIssue #2のread-only AI Agent Guidance Registry v1は受け入れ済みである。Recommendation MIG-01からMIG-07は完了し、5 plan shadowとunknown-version safe stop dry-runを経たcompleteかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`はGitHub prereleaseとnpm `alpha`へ同一artifactで公開・検証済みである。最初のbetaはsuffixなし`0.1.0`、以後の`0.x.x`をbetaとし、alphaからのstrict compatibilityや追加soakをgateにしない。Issue #2は5 provider baseline、公開contract、version付きoffline profile、validator、query、index/quick/detail projection、deterministic JSON/text、structured command help、read-only `agent help` CLI、package-installed Core/CLI parity、security/package受け入れまで完了した。固有実測Velocityは全22p/1 active dayの`22p/1d`、detail残作業は0pである。Macroの唯一のready、`runnable_now`、recommended taskは`BETA_RELEASE_E2E`で、残存makespanは1dである。Issue #3、LSP server、VSIX、MCP serverはbeta blockerではない。Human override apply/auditはMIG-08まで未解禁である。
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
