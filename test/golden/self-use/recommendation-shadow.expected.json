@@ -13,35 +13,34 @@
   },
   "plans": {
     "agent-guidance": {
-      "source_digest": "sha256:bf403deb5d8a39f186cd72fafcae3726187821255f0f7ca588ff4673b30d99d9",
+      "source_digest": "sha256:68596c119c9af06ee571f3081eacb50919e776a97f21cebe61097638f5916845",
       "groups": {
         "active": [],
         "ready": [
-          "GUIDANCE_CONTRACT"
+          "GUIDANCE_CORE"
         ],
         "runnable_now": [
-          "GUIDANCE_CONTRACT"
+          "GUIDANCE_CORE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "GUIDANCE_CORE",
           "AGENT_HELP_PUBLICATION",
           "GUIDANCE_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "GUIDANCE_CONTRACT"
+        "GUIDANCE_CORE"
       ],
       "manual_selected_task_ids": [
-        "GUIDANCE_CONTRACT"
+        "GUIDANCE_CORE"
       ],
       "tiers": {
-        "GUIDANCE_CONTRACT": "recommended"
+        "GUIDANCE_CORE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GUIDANCE_CONTRACT",
+          "id": "GUIDANCE_CORE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -166,7 +165,7 @@
       ]
     },
     "mvp": {
-      "source_digest": "sha256:ffc0d2197b5fe8f0237ad9cd10a25e58eb123f037df5974b69f3693fe6106af6",
+      "source_digest": "sha256:9153023d3e3d01e3dd8e065b79c8e616b3e949fc95eeca6c9d1f179fec46792e",
       "groups": {
         "active": [],
         "ready": [

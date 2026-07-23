@@ -1,8 +1,8 @@
 # perttool 基本設計
 
-- 文書状態: Draft 1.7
+- 文書状態: Draft 1.8
 - 作成日: 2026-07-21
-- 更新日: 2026-07-22
+- 更新日: 2026-07-23
 - 対応要件: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
@@ -13,6 +13,8 @@
 - Recommendation interface: [specs/recommendation-interface.md](specs/recommendation-interface.md)
 - Recommendation override: [specs/recommendation-override.md](specs/recommendation-override.md)
 - Recommendation examples: [examples/recommendation.md](examples/recommendation.md)
+- AI Agent Guidance Registry: [specs/agent-guidance.md](specs/agent-guidance.md)
+- AI Agent Guidance examples: [examples/agent-guidance.md](examples/agent-guidance.md)
 - Recommendation migration: [process/recommendation-migration.md](process/recommendation-migration.md)
 - Recommendation design review: [process/recommendation-design-review.md](process/recommendation-design-review.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
@@ -1060,7 +1062,7 @@ Exit:
 ### Post-MVP Slice 4A: AI Agent Guidance Registry and beta
 
 - provider別official baselineとversion付きoffline snapshot
-- instruction、workflow、delegated agent、enforcement、prompt、connectorの共通contract
+- [AI Agent Guidance Registry仕様](specs/agent-guidance.md)で固定したinstruction、workflow、delegated agent、enforcement、prompt、connectorの共通contract
 - deterministicな`Perttool.AgentGuidanceResult.v1` pure Core
 - read-only `agent help`のtext/JSON publication
 - provider drift、alias、unsupported/unknown、legacy help、package-installed CLIの受け入れtest
@@ -1073,7 +1075,7 @@ Exit:
 - hook実行、file生成、設定変更、network access、provider writeを行わない
 - alpha互換や追加soakをgateにせず、破壊的変更がある場合は仕様と移行情報を同時更新する
 
-[AI Agent Guidance詳細plan](../plans/agent-guidance.pert)は全22p、初期Velocity `22p/1d`、resource forecast 1dで開始した。[Provider baseline](process/agent-guidance-provider-baseline.md) 4pを最初のactive dayで完了し、固有実測Velocityを`4p/1d`へ再calibrationした。残る18pのresource forecastとMacro Issue #2 work packageは4.5d、beta release E2Eはalpha releaseの実績から1dである。現在のrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、詳細recommended taskは`GUIDANCE_CONTRACT`である。
+[AI Agent Guidance詳細plan](../plans/agent-guidance.pert)は全22pである。[Provider baseline](process/agent-guidance-provider-baseline.md)を設計入力、[AI Agent Guidance Registry仕様](specs/agent-guidance.md)と[規範例](examples/agent-guidance.md)を公開contractの正本とする。進捗、実測Velocity、残forecast、現在のrecommended taskは詳細planと[自己利用手順](process/self-use.md)を正とし、本設計へ変動値を重複固定しない。
 
 ### Post-MVP Slice 5: MCP and editor
 
@@ -1083,7 +1085,7 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、task mutationのCore request、局所TextEdit、comment所有は[Mutation Semantics仕様](specs/mutation.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。Beta versioningとrelease gateは[ADR 0003](adr/0003-beta-versioning.md)および[beta release手順](process/beta-release.md)を正とする。Agent guidanceのprovider snapshot、Core schema、CLI contractは`GUIDANCE_CONTRACT`で個別仕様へ固定し、設計前に存在しないcontractを実装へ先行させない。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、task mutationのCore request、局所TextEdit、comment所有は[Mutation Semantics仕様](specs/mutation.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。Agent guidanceのprovider/surface/guidance/risk taxonomy、support根拠、profile、Core/text/JSON、diagnostic、migration境界は[AI Agent Guidance Registry仕様](specs/agent-guidance.md)を正とする。Beta versioningとrelease gateは[ADR 0003](adr/0003-beta-versioning.md)および[beta release手順](process/beta-release.md)を正とする。
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細
@@ -1099,6 +1101,7 @@ DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reach
 | Resource scheduler | 7.2、7.4、10.6、11章 |
 | Recommendation model | 2.4、5.4、17、21章 |
 | Recommendation ranking/reasons/explanation/interface/override | 2.4、5.4、17、21章 |
+| AI Agent Guidance Registry | 17章、21.1節 |
 | Pure Core API | 2.2、15、17章 |
 | CLI adapter | 15、17章 |
 | Help registry | 16章 |

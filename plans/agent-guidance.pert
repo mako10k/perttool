@@ -6,12 +6,13 @@ project AGENT_GUIDANCE:
     read-only AI Agent Guidance Registry v1を設計・実装する。
     Provider固有概念を共通taxonomyへmappingし、offline deterministicな
     Core、agent help text/JSON、fixture、package acceptanceを同じregistryから提供する。
-    Pointは初期相対見積りである。PROVIDER_BASELINE 4pを2026-07-23の
-    1 active dayで完了した実測4p/1dを現在のVelocityとし、残る18pを予測する。
+    Pointは初期相対見積りである。PROVIDER_BASELINE 4pとGUIDANCE_CONTRACT 5pを
+    2026-07-23の1 active dayで完了した実測9p/1dを現在のVelocityとし、
+    残る13pを予測する。
     Audit、scaffold、hook実行、enforcement、runtime web refreshは対象外とする。
   as_of 2026-07-23
   duration_unit point
-  velocity 4p/1d
+  velocity 9p/1d
   finish GUIDANCE_ACCEPTED
 
 resource DEVELOPERS:
@@ -74,6 +75,7 @@ task GUIDANCE_CONTRACT PROVIDER_BASELINE_READY -> GUIDANCE_CONTRACT_READY:
     Compatibility: alpha全体のstrict compatibilityは要求しないが、採用したschemaを
     breaking変更する場合はversionを上げ、既存dsl helpの局所non-regressionを検査する。
   duration 5p
+  status done
   priority 90
   requires:
     DEVELOPERS 1

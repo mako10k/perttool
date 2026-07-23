@@ -1,8 +1,8 @@
 # perttool 要件定義
 
-- 文書状態: Draft 0.8
+- 文書状態: Draft 0.9
 - 作成日: 2026-07-21
-- 更新日: 2026-07-22
+- 更新日: 2026-07-23
 - 対象: MVP と、その後の拡張境界
 - 想定ファイル拡張子: `.pert`（暫定）
 
@@ -973,6 +973,8 @@ Alphaのdogfooding、local link、GitHub prerelease、npm registryからの隔�
 7. provider/source drift、alias、unsupported/unknown、同一入力のbyte determinism、package-installed CLIを自動testで固定する
 8. beta releaseでは同一tarballをpackage check、GitHub prerelease、npm `beta` dist-tag、registry隔離installへ使用し、既存`latest`を変更しない
 
+Provider/surface/guidance/risk taxonomy、support statusの構造化根拠、offline profile、Core/text/JSON、diagnostic、staleness、project guidance合成、read-only migration境界は[AI Agent Guidance Registry仕様](specs/agent-guidance.md)を正とし、競合caseは[規範例](examples/agent-guidance.md)で固定する。
+
 Issue #3のbacklog階層・multi-plan composition、MCP、audit、scaffold、hook実行、enforcementは最初のbetaのblockerに含めない。
 
 ## 22. 初期要求との対応
@@ -1024,6 +1026,7 @@ Issue #3のbacklog階層・multi-plan composition、MCP、audit、scaffold、hoo
 - Core type、complete JSON、text summary、`NextResult.v3` migration: [Recommendation Interface Contract仕様](specs/recommendation-interface.md)
 - override requirement、feasible replacement、human reason、audit、再解析: [Recommendation Human Override Contract仕様](specs/recommendation-override.md)
 - Mermaid semantic record、canonical JSON、digest、projection、fail-closed import: [Mermaid Profile仕様](specs/mermaid-profile.md)
+- provider/surface/guidance/risk taxonomy、support根拠、offline profile、Core/text/JSON契約: [AI Agent Guidance Registry仕様](specs/agent-guidance.md)
 
 ## 25. 推奨する次の仕様作業
 
@@ -1057,4 +1060,4 @@ Issue #3のbacklog階層・multi-plan composition、MCP、audit、scaffold、hoo
 
 Analysis実装は`dag next` v3とread-only `validateOverride`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical path、next分類、`runnable_now`、resource rejection、upcoming explanationに加え、normal recommendationのcomplete graphをCore、CLI JSON/text、help、packageへ、`Perttool.OverrideDecision.v1` validationをpublic libraryへ公開した。Slice 2のbootstrap gate、grammar acceptance、safe-write gate、advance gateを満たし、Stage 3のpreview-first advance自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は[横断設計レビュー](process/recommendation-design-review.md)で受け入れた。[MVP release readiness監査](process/mvp-release-readiness.md)で確認した受け入れ条件16の欠落は、[Recommendation実装plan](../plans/recommendation.pert)のMIG-01からMIG-07全22p、5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop dry-runで解消した。Recommendation固有の暫定実測Velocityは`22p/1d`、detail残作業は0pである。`v0.1.0-alpha.2`の同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registryからの隔離installまで完了したため、MVP public alpha受け入れは完了した。
 
-[ADR 0003](adr/0003-beta-versioning.md)により、最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義した。Beta gateへIssue #2のread-only AI Agent Guidance Registry v1を追加した。[5 provider baseline](process/agent-guidance-provider-baseline.md) 4pを公式資料からoffline design inputへ固定し、[詳細plan](../plans/agent-guidance.pert)の固有実測Velocityを`4p/1d`へ補正した。残る18pのmacro work packageは4.5dである。[Macro plan](../plans/mvp.pert)のrecommended taskは`AGENT_GUIDANCE_IMPLEMENTATION`、詳細planのrecommended taskは`GUIDANCE_CONTRACT`で、beta releaseまでのresource makespanは5.5dである。Issue #3はbeta blockerに含めない。
+[ADR 0003](adr/0003-beta-versioning.md)により、最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義した。Beta gateへIssue #2のread-only AI Agent Guidance Registry v1を追加した。[5 provider baseline](process/agent-guidance-provider-baseline.md)を公式資料からoffline design inputへ固定し、[AI Agent Guidance Registry仕様](specs/agent-guidance.md)と[規範例](examples/agent-guidance.md)で公開contractを確定した。現在の工程、実測Velocity、残forecastは[詳細plan](../plans/agent-guidance.pert)と[自己利用手順](process/self-use.md)を正とする。Issue #3はbeta blockerに含めない。

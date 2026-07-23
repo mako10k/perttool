@@ -7,9 +7,10 @@
 - [advance-partial-before.pert](advance-partial-before.pert): done branchとactive branchが未到達milestoneへ合流するadvance前のDAG
 - [advance-partial-after.pert](advance-partial-after.pert): 過去edgeだけを削除し、合流に必要なdone taskを保持したcanonical advance結果
 - [recommendation.md](recommendation.md): AI工程制御のranking、resource conflict、構造化説明、human overrideの規範caseとtest観点
+- [agent-guidance.md](agent-guidance.md): provider/surface taxonomy、support根拠、guidance合成、staleness、read-only境界の規範case
 - [mermaid-profile.md](mermaid-profile.md): lossless `%% perttool:` semantic record、digest、projection、negative caseの規範例
 
-`.pert` fileはgrammar version 1、semantics version 1、analysis version 1の規範サンプルである。`recommendation.md`は未実装のRecommendation interface version 1へ向けた規範caseである。`mermaid-profile.md`はMermaid adapterのwire contractとexport goldenであり、`exportMermaid`と`dag render --to mermaid`のbyte出力をtestで固定する。Importのnegative caseは後続sliceで展開する。
+`.pert` fileはgrammar version 1、semantics version 1、analysis version 1の規範サンプルである。`recommendation.md`は実装済みRecommendation interface version 1の規範case、`agent-guidance.md`は後続Core/CLI実装へ先行するAgent Guidance interface version 1の規範caseである。`mermaid-profile.md`はMermaid adapterのwire contractとexport goldenであり、`exportMermaid`と`dag render --to mermaid`のbyte出力をtestで固定する。
 
 `pert-estimate.pert`では`DESIGN`のexpectedは`13/6d`、varianceは`1/4d^2`である。`BUILD`を含むprecedence makespanは`31/6d`、代表critical task列は`[DESIGN, BUILD]`になる。
 

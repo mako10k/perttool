@@ -117,7 +117,7 @@ npm publishは通常のclose outに含めない。Alphaは[npm publication記録
 
 2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`で、`v0.1.0-alpha.2`のGitHub/npm同一artifact配布とregistry installまで完了した。
 
-最初のbetaはsuffixなし`0.1.0`で、以後の`0.x.x`をbetaとする。Alphaからのstrict compatibilityと追加soakはgateにせず、Issue #2のread-only AI Agent Guidance Registryをbeta受け入れへ追加した。[Provider baseline](agent-guidance-provider-baseline.md) 4pを完了し、固有実測Velocityを`4p/1d`へ補正した。現在のmacro recommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、[詳細plan](../../plans/agent-guidance.pert)のrecommended taskは`GUIDANCE_CONTRACT`である。Issue #3はbeta blockerではない。
+最初のbetaはsuffixなし`0.1.0`で、以後の`0.x.x`をbetaとする。Alphaからのstrict compatibilityと追加soakはgateにせず、Issue #2のread-only AI Agent Guidance Registryをbeta受け入れへ追加した。[Provider baseline](agent-guidance-provider-baseline.md)と[公開contract](../specs/agent-guidance.md)を完了し、固有実測Velocityを`9p/1d`へ補正した。現在のmacro recommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、[詳細plan](../../plans/agent-guidance.pert)のrecommended taskは`GUIDANCE_CORE`である。Issue #3はbeta blockerではない。
 
 ### 5.1 採用済みRecommendation authority
 

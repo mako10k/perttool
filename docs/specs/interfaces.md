@@ -4,7 +4,7 @@
 - Interface version: 2
 - CLI contract version: 2
 - 作成日: 2026-07-21
-- 更新日: 2026-07-22
+- 更新日: 2026-07-23
 - 対応要件: [../requirements.md](../requirements.md)
 - 文法仕様: [dsl-grammar.md](dsl-grammar.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
@@ -16,6 +16,7 @@
 - Recommendation reasons: [recommendation-reasons.md](recommendation-reasons.md)
 - Recommendation explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Future recommendation interface: [recommendation-interface.md](recommendation-interface.md)
+- Future AI Agent Guidance interface: [agent-guidance.md](agent-guidance.md)
 - 対応基本設計: [../basic-design.md](../basic-design.md)
 
 ## 1. 目的とMVP境界

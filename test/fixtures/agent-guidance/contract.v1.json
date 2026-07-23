@@ -1,0 +1,423 @@
+{
+  "contract_id": "perttool.agent-guidance.contract",
+  "contract_version": 1,
+  "result_schema_version": "Perttool.AgentGuidanceResult.v1",
+  "guidance_interface_version": 1,
+  "profile_schema_version": "Perttool.AgentGuidanceProfile.v1",
+  "profile_data_version": 1,
+  "guidance_taxonomy_version": 1,
+  "risk_taxonomy_version": 1,
+  "description_registry_version": 1,
+  "description_locale": "en",
+  "staleness_policy_version": 1,
+  "result_root_field_order": [
+    "schema_version",
+    "guidance_interface_version",
+    "profile_schema_version",
+    "profile_data_version",
+    "guidance_taxonomy_version",
+    "risk_taxonomy_version",
+    "description_registry_version",
+    "description_locale",
+    "staleness_policy_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "profile_digest",
+    "snapshot_as_of",
+    "query",
+    "providers",
+    "guidance_records",
+    "risk_records",
+    "sources",
+    "capabilities",
+    "diagnostics"
+  ],
+  "provider_order": [
+    "codex",
+    "github-copilot",
+    "claude-code",
+    "grok-build",
+    "antigravity"
+  ],
+  "aliases": [
+    {
+      "alias": "grok",
+      "provider_id": "grok-build"
+    }
+  ],
+  "surface_order": [
+    "instruction",
+    "workflow",
+    "delegated_agent",
+    "enforcement",
+    "prompt",
+    "connector"
+  ],
+  "support_status_order": [
+    "native",
+    "compatible",
+    "preview",
+    "deprecated",
+    "unsupported",
+    "unknown"
+  ],
+  "support_status_evidence": [
+    {
+      "support_status": "native",
+      "evidence_kind": "official_native_documentation"
+    },
+    {
+      "support_status": "compatible",
+      "evidence_kind": "official_compatibility_documentation"
+    },
+    {
+      "support_status": "preview",
+      "evidence_kind": "official_preview_notice"
+    },
+    {
+      "support_status": "deprecated",
+      "evidence_kind": "official_deprecation_notice"
+    },
+    {
+      "support_status": "unsupported",
+      "evidence_kind": "official_unsupported_notice"
+    },
+    {
+      "support_status": "unknown",
+      "evidence_kind": "insufficient_official_evidence"
+    }
+  ],
+  "artifact_resolution_order": [
+    "known",
+    "not_applicable",
+    "unknown"
+  ],
+  "scope_order": [
+    "repository",
+    "directory",
+    "workspace",
+    "user",
+    "organization",
+    "enterprise",
+    "managed",
+    "session",
+    "conversation",
+    "local",
+    "admin",
+    "system",
+    "plugin",
+    "compatibility"
+  ],
+  "composition_order": [
+    "project_control",
+    "common_surface",
+    "provider"
+  ],
+  "directive_order": [
+    "must",
+    "should",
+    "may"
+  ],
+  "guidance": [
+    {
+      "guidance_id": "project_plan_is_authority",
+      "origin": "project_control",
+      "directive": "must"
+    },
+    {
+      "guidance_id": "consult_dag_next_before_start",
+      "origin": "project_control",
+      "directive": "must"
+    },
+    {
+      "guidance_id": "recompute_after_state_change",
+      "origin": "project_control",
+      "directive": "must"
+    },
+    {
+      "guidance_id": "require_explicit_human_override",
+      "origin": "project_control",
+      "directive": "must"
+    },
+    {
+      "guidance_id": "keep_provider_priority_identical",
+      "origin": "project_control",
+      "directive": "must"
+    },
+    {
+      "guidance_id": "use_narrowest_durable_surface",
+      "origin": "common_surface",
+      "directive": "should"
+    },
+    {
+      "guidance_id": "preserve_scope_and_precedence",
+      "origin": "common_surface",
+      "directive": "must"
+    },
+    {
+      "guidance_id": "review_executable_customization",
+      "origin": "common_surface",
+      "directive": "must"
+    },
+    {
+      "guidance_id": "treat_unknown_as_unavailable",
+      "origin": "common_surface",
+      "directive": "must"
+    },
+    {
+      "guidance_id": "review_stale_profile_before_adoption",
+      "origin": "common_surface",
+      "directive": "should"
+    }
+  ],
+  "risk": [
+    {
+      "risk_id": "instruction_precedence_changes_effective_policy",
+      "kind": "scope",
+      "mitigation_guidance_ids": [
+        "preserve_scope_and_precedence"
+      ]
+    },
+    {
+      "risk_id": "instruction_truncation_hides_policy",
+      "kind": "scope",
+      "mitigation_guidance_ids": [
+        "use_narrowest_durable_surface"
+      ]
+    },
+    {
+      "risk_id": "workflow_executes_commands",
+      "kind": "execution",
+      "mitigation_guidance_ids": [
+        "review_executable_customization"
+      ]
+    },
+    {
+      "risk_id": "delegation_loses_parent_context",
+      "kind": "delegation",
+      "mitigation_guidance_ids": [
+        "project_plan_is_authority",
+        "consult_dag_next_before_start"
+      ]
+    },
+    {
+      "risk_id": "parallel_writes_conflict",
+      "kind": "delegation",
+      "mitigation_guidance_ids": [
+        "preserve_scope_and_precedence"
+      ]
+    },
+    {
+      "risk_id": "hook_executes_code",
+      "kind": "execution",
+      "mitigation_guidance_ids": [
+        "review_executable_customization"
+      ]
+    },
+    {
+      "risk_id": "hook_can_block_or_mutate_flow",
+      "kind": "execution",
+      "mitigation_guidance_ids": [
+        "review_executable_customization",
+        "require_explicit_human_override"
+      ]
+    },
+    {
+      "risk_id": "prompt_not_persistent",
+      "kind": "scope",
+      "mitigation_guidance_ids": [
+        "use_narrowest_durable_surface"
+      ]
+    },
+    {
+      "risk_id": "connector_accesses_external_data",
+      "kind": "external_access",
+      "mitigation_guidance_ids": [
+        "review_executable_customization"
+      ]
+    },
+    {
+      "risk_id": "connector_can_execute_external_action",
+      "kind": "external_access",
+      "mitigation_guidance_ids": [
+        "review_executable_customization",
+        "require_explicit_human_override"
+      ]
+    },
+    {
+      "risk_id": "provider_surface_availability_varies",
+      "kind": "compatibility",
+      "mitigation_guidance_ids": [
+        "treat_unknown_as_unavailable"
+      ]
+    },
+    {
+      "risk_id": "profile_may_be_stale",
+      "kind": "staleness",
+      "mitigation_guidance_ids": [
+        "review_stale_profile_before_adoption"
+      ]
+    },
+    {
+      "risk_id": "artifact_path_unknown",
+      "kind": "compatibility",
+      "mitigation_guidance_ids": [
+        "treat_unknown_as_unavailable"
+      ]
+    },
+    {
+      "risk_id": "compatibility_not_native",
+      "kind": "compatibility",
+      "mitigation_guidance_ids": [
+        "preserve_scope_and_precedence"
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "PTAGT-101",
+      "severity": "error",
+      "exit_code": 1,
+      "meaning": "unknown_provider"
+    },
+    {
+      "code": "PTAGT-102",
+      "severity": "error",
+      "exit_code": 1,
+      "meaning": "unknown_surface"
+    },
+    {
+      "code": "PTAGT-201",
+      "severity": "warning",
+      "exit_code": 0,
+      "meaning": "unknown_support_status"
+    },
+    {
+      "code": "PTAGT-202",
+      "severity": "warning",
+      "exit_code": 0,
+      "meaning": "profile_review_due"
+    },
+    {
+      "code": "PTAGT-203",
+      "severity": "warning",
+      "exit_code": 0,
+      "meaning": "profile_staleness_unknown"
+    },
+    {
+      "code": "PTAGT-301",
+      "severity": "error",
+      "exit_code": 1,
+      "meaning": "unsupported_profile_version"
+    },
+    {
+      "code": "PTAGT-302",
+      "severity": "error",
+      "exit_code": 70,
+      "meaning": "profile_reference_or_composition_invariant"
+    },
+    {
+      "code": "PTAGT-303",
+      "severity": "error",
+      "exit_code": 70,
+      "meaning": "profile_description_or_digest_invariant"
+    }
+  ],
+  "staleness_status_order": [
+    "verified",
+    "review_due",
+    "unknown"
+  ],
+  "capabilities": {
+    "reads_project_files": false,
+    "writes_files": false,
+    "executes_hooks": false,
+    "executes_commands": false,
+    "accesses_network": false,
+    "reads_provider_state": false,
+    "writes_provider_state": false
+  },
+  "normative_cases": [
+    {
+      "case_id": "AGT-001",
+      "expectation": "provider_and_surface_order"
+    },
+    {
+      "case_id": "AGT-002",
+      "expectation": "alias_canonicalization"
+    },
+    {
+      "case_id": "AGT-003",
+      "expectation": "noncanonical_alias_rejected"
+    },
+    {
+      "case_id": "AGT-004",
+      "expectation": "native_primary_compatible_secondary"
+    },
+    {
+      "case_id": "AGT-005",
+      "expectation": "preview_requires_official_notice"
+    },
+    {
+      "case_id": "AGT-006",
+      "expectation": "deprecated_keeps_replacement_separate"
+    },
+    {
+      "case_id": "AGT-007",
+      "expectation": "unsupported_and_unknown_are_distinct"
+    },
+    {
+      "case_id": "AGT-008",
+      "expectation": "support_and_artifact_resolution_are_orthogonal"
+    },
+    {
+      "case_id": "AGT-009",
+      "expectation": "project_common_provider_composition"
+    },
+    {
+      "case_id": "AGT-010",
+      "expectation": "canonical_description_projection"
+    },
+    {
+      "case_id": "AGT-011",
+      "expectation": "snapshot_relative_review_due"
+    },
+    {
+      "case_id": "AGT-012",
+      "expectation": "unknown_staleness"
+    },
+    {
+      "case_id": "AGT-013",
+      "expectation": "quick_text_json_parity"
+    },
+    {
+      "case_id": "AGT-014",
+      "expectation": "detail_source_projection"
+    },
+    {
+      "case_id": "AGT-015",
+      "expectation": "unknown_surface_error"
+    },
+    {
+      "case_id": "AGT-016",
+      "expectation": "usage_error_is_not_lookup_error"
+    },
+    {
+      "case_id": "AGT-017",
+      "expectation": "help_has_no_external_side_effect"
+    },
+    {
+      "case_id": "AGT-018",
+      "expectation": "audit_uses_separate_schema"
+    },
+    {
+      "case_id": "AGT-019",
+      "expectation": "scaffold_is_preview_first"
+    },
+    {
+      "case_id": "AGT-020",
+      "expectation": "enforcement_binds_recommendation"
+    }
+  ]
+}

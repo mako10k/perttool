@@ -5,12 +5,13 @@
 - 対象Issue: [#2 AI開発ガイドを出力する仕組み](https://github.com/mako10k/perttool/issues/2)
 - 実装計画: [../../plans/agent-guidance.pert](../../plans/agent-guidance.pert)
 - 機械可読入力: [../../test/fixtures/agent-guidance/provider-baseline.v1.json](../../test/fixtures/agent-guidance/provider-baseline.v1.json)
+- 公開contract: [../specs/agent-guidance.md](../specs/agent-guidance.md)
 
 ## 1. 目的
 
 Codex、GitHub Copilot、Claude Code、Grok Build、Antigravityの公式資料を同じ観点で再検証し、Issue #2の共通contractを設計するための入力を固定する。
 
-この文書とfixtureは規範interfaceではない。`provider_id`と6つの比較観点はIssue #2と実装計画を追跡するために固定するが、公開するsurface ID、support status、schema、projection、diagnosticは次工程`GUIDANCE_CONTRACT`で決める。ここにある`maturity_evidence`もperttoolによるsupport判定ではなく、公式資料が明示する現在の状態を記録した証拠である。
+この文書とfixtureは規範interfaceではない。公開するsurface ID、support status、schema、projection、diagnosticは後続の[AI Agent Guidance Registry仕様](../specs/agent-guidance.md)を正とする。ここにある`maturity_evidence`もperttoolによるsupport判定ではなく、公式資料が明示する調査時点の状態を記録した証拠である。
 
 ## 2. 調査方法と境界
 
@@ -55,7 +56,7 @@ Custom promptsは公式にdeprecatedで、Skillsが推奨されている。`prom
 
 ## 5. 後続contractへの入力
 
-`GUIDANCE_CONTRACT`は本baselineから次を明示的に決める。
+`GUIDANCE_CONTRACT`は本baselineから次を[公開contract](../specs/agent-guidance.md)へ確定した。
 
 1. provider、surface、guidance、risk、aliasのstable ID
 2. `native`、`compatible`、`preview`、`deprecated`、`unsupported`、`unknown`のsupport statusと、本baselineのmaturity evidenceとの変換規則
@@ -64,4 +65,4 @@ Custom promptsは公式にdeprecatedで、Skillsが推奨されている。`prom
 5. text/JSON projection、diagnostic、exit code
 6. read-only v1と、将来のaudit、scaffold、enforcement、runtime refreshの境界
 
-この工程では公開契約、Core、CLI、file生成、hook実行、provider connector接続は実装しない。
+本baseline工程では公開契約、Core、CLI、file生成、hook実行、provider connector接続を実装していない。公開contractは後続設計工程で追加したが、Core、CLI、file生成、hook実行、provider connector接続はさらに後続taskのままである。
