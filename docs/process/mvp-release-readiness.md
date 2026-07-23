@@ -1,6 +1,6 @@
 # MVP release readiness監査
 
-- 文書状態: Ready for RELEASE_E2E 1.5
+- 文書状態: Released 1.6
 - 監査日: 2026-07-22
 - 更新日: 2026-07-23
 - 対象: [MVP受け入れ条件](../requirements.md#21-mvp-受け入れ条件)
@@ -9,9 +9,9 @@
 
 ## 1. 結論
 
-`RELEASE_E2E`の再開条件を満たした。受け入れ条件1から16には実装・自動検査の証跡があり、condition 16のranking/tier、structured explanation/invariant、public v3、5 plan self-use shadow、read-only override validation、normal authority adoption、unknown-version safe stopまで受け入れ済みである。
+`RELEASE_E2E`を完了した。受け入れ条件1から16には実装・自動検査の証跡があり、condition 16のranking/tier、structured explanation/invariant、public v3、5 plan self-use shadow、read-only override validation、normal authority adoption、unknown-version safe stopまで受け入れ済みである。
 
-現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v3`であり、complete recommendation graphと、v2由来の`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を直交するfieldとして返す。KnownかつcompleteなV3をnormal AI task selection authorityへ採用した。Macroの次taskは`RELEASE_E2E`だが、同一artifactの配布とregistry検証を終えるまでMVP release完了とはみなさない。
+現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v3`であり、complete recommendation graphと、v2由来の`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を直交するfieldとして返す。KnownかつcompleteなV3をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`の同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、双方からのSHA-256一致と隔離installを確認した。Macroの全taskは完了し、次のrecommended taskは空である。
 
 ## 2. 受け入れ証跡
 
@@ -25,7 +25,7 @@
 | 13-15 | Pass | Core/CLI parity、normative example、Point/velocity analysis test |
 | 16 | Pass | ranking/tier、structured explanation/invariant、`NextResult.v3` publication、5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop |
 
-`npm run check`の成功とMIG-07 adoption evidenceを合わせてcondition 16をPassとした。Release artifactの公開とregistry installは別の`RELEASE_E2E`受け入れである。
+`npm run check`の成功とMIG-07 adoption evidenceを合わせてcondition 16をPassとした。さらにrelease artifactのGitHub/npm配布とregistry installを`RELEASE_E2E`で受け入れた。
 
 ## 3. 工程是正
 
@@ -55,7 +55,7 @@ MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではな�
 - `npm run check`がpackage-installed CLIを含め成功する
 - package smokeがcheck、analyze、next v3、editing preview、advance preview、Mermaid round-tripを隔離prefixで確認する
 
-2026-07-23のMIG-07 changeでこの条件を満たした。次にMVP受け入れ条件1から16をrelease artifactへ対して再監査し、`RELEASE_E2E`を完了する。
+2026-07-23のMIG-07 changeでこの条件を満たし、同日のrelease artifact再監査と公開後検証で`RELEASE_E2E`を完了した。
 
 ## 5. npm publication preparation
 
@@ -73,11 +73,12 @@ MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではな�
 - 同一tarball、clean worktree、local/remote tag、remote main、未公開versionを検査するfail-closed publish script
 - package checkへpublish normalization dry-runを追加
 
-未実施:
+実施結果:
 
-- `0.1.0-alpha.2`へのversion更新
-- release commit/tag/push、GitHub prerelease asset作成
-- npm registryへのexternal publish
-- registryからの隔離installとrelease記録
+- release commit `dd4fc3efc01945544a2dad7e1838fdd4d06d7275`を`origin/main`へpushし、同commitのannotated tag `v0.1.0-alpha.2`を作成
+- GitHub prereleaseへtarballと`SHA256SUMS`を添付し、公開assetのSHA-256 `aadb757a5d7bb82eed677158ce5c4b0672c5695a6dde97bec6f10c438711be8a`を確認
+- 同じtarballをnpmへ一度だけpublishし、`perttool@0.1.0-alpha.2`、`alpha` dist-tag、registry integrity、SHA-1 `d1bc681e68384d29b3130ba9a21c99e44605d51d`を確認
+- GitHub assetとregistry tarballのSHA-256一致、`perttool@alpha`の隔離install、`--version`、`dsl check`を確認
+- task finish previewのsource digest `sha256:741c027228dd13cfdf6bcdb6a4e0c0f6523848aba6f1c4f6e4d1f762433533bf`とcandidate digest `sha256:47937515ecbf024bd1dd23ca7d73e526e2fb25ae6fac27cc4ff179ece45d5217`を確認して`RELEASE_E2E`を完了
 
 実行順とTOKEN境界は[npm publication手順](npm-publication.md)を正とする。

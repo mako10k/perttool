@@ -186,6 +186,7 @@ task RELEASE_E2E RELEASE_READY -> M6_MVP_RELEASED:
   title "MVP E2Eと同一artifact配布を検証・公開する"
   description "受け入れ再監査、package smoke、annotated tag、GitHub prerelease asset、npm alpha publish、registry隔離installを同一tarballで検証する。前倒ししたnpm preflightだけでは完了しない"
   duration 2d
+  status done
   priority 5
   requires:
     DEVELOPERS 1

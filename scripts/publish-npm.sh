@@ -142,6 +142,21 @@ printf '%s\n' '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >"$npm_userconfig"
 npm_identity=$(npm whoami --userconfig="$npm_userconfig")
 printf 'npm identity: %s\n' "$npm_identity"
 
+dist_tags_before_path="$inspection_root/dist-tags-before.json"
+dist_tags_before_error="$inspection_root/dist-tags-before-error.txt"
+if npm view "$package_name" dist-tags --json --userconfig="$npm_userconfig" \
+  >"$dist_tags_before_path" 2>"$dist_tags_before_error"; then
+  latest_before=$(node -p \
+    'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).latest ?? ""' \
+    "$dist_tags_before_path")
+elif grep -Fq 'E404' "$dist_tags_before_error"; then
+  latest_before=""
+else
+  cat "$dist_tags_before_error" >&2
+  printf 'could not read the pre-publish dist-tags for %s\n' "$package_name" >&2
+  exit 1
+fi
+
 version_lookup="$inspection_root/version-lookup.txt"
 if npm view "$package_name@$package_version" version --json --userconfig="$npm_userconfig" >"$version_lookup" 2>&1; then
   printf 'refusing to republish existing version %s@%s\n' "$package_name" "$package_version" >&2
@@ -154,9 +169,47 @@ if ! grep -Fq 'E404' "$version_lookup"; then
 fi
 
 npm publish "$package_spec" --tag alpha --access public --userconfig="$npm_userconfig"
-published_version=$(npm view "$package_name@$package_version" version --json --userconfig="$npm_userconfig")
+published_version=""
+publish_verification_error="$inspection_root/publish-verification-error.txt"
+for attempt in 1 2 3 4 5; do
+  if published_version=$(npm view "$package_name@$package_version" version --json \
+    --userconfig="$npm_userconfig" 2>"$publish_verification_error"); then
+    break
+  fi
+  if ! grep -Fq 'E404' "$publish_verification_error"; then
+    cat "$publish_verification_error" >&2
+    printf 'published version verification failed without an E404 propagation response\n' >&2
+    exit 1
+  fi
+  if [[ "$attempt" -lt 5 ]]; then
+    sleep 2
+  fi
+done
 if [[ "$published_version" != "\"$package_version\"" ]]; then
-  printf 'published version verification failed: %s\n' "$published_version" >&2
+  cat "$publish_verification_error" >&2
+  printf 'published version verification did not become durable: %s\n' "$published_version" >&2
   exit 1
+fi
+
+dist_tags_after_path="$inspection_root/dist-tags-after.json"
+npm view "$package_name" dist-tags --json --userconfig="$npm_userconfig" >"$dist_tags_after_path"
+alpha_after=$(node -p \
+  'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).alpha ?? ""' \
+  "$dist_tags_after_path")
+latest_after=$(node -p \
+  'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).latest ?? ""' \
+  "$dist_tags_after_path")
+if [[ "$alpha_after" != "$package_version" ]]; then
+  printf 'alpha dist-tag verification failed: expected %s, got %s\n' \
+    "$package_version" "$alpha_after" >&2
+  exit 1
+fi
+if [[ -n "$latest_before" && "$latest_after" != "$latest_before" ]]; then
+  printf 'publish changed the existing latest dist-tag: %s -> %s\n' \
+    "$latest_before" "$latest_after" >&2
+  exit 1
+fi
+if [[ -z "$latest_before" && "$latest_after" == "$package_version" ]]; then
+  printf 'registry created the required initial latest dist-tag at %s\n' "$package_version"
 fi
 printf 'published and verified %s@%s with dist-tag alpha\n' "$package_name" "$package_version"

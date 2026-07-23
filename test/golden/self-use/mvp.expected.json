@@ -8,30 +8,22 @@
       "tasks": 12,
       "gates": 6,
       "errors": 0,
-      "warnings": 13
+      "warnings": 14
     }
   },
   "analyze": {
-    "precedence_makespan": "2/1",
-    "precedence_critical_tasks": [
-      "RELEASE_E2E"
-    ],
-    "resource_makespan": "2/1",
+    "precedence_makespan": "0/1",
+    "precedence_critical_tasks": [],
+    "resource_makespan": "0/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
-    "schedule_critical_tasks": [
-      "RELEASE_E2E"
-    ]
+    "schedule_critical_tasks": []
   },
   "next": {
     "groups": {
       "active": [],
-      "ready": [
-        "RELEASE_E2E"
-      ],
-      "runnable_now": [
-        "RELEASE_E2E"
-      ],
+      "ready": [],
+      "runnable_now": [],
       "blocked_now": [],
       "upcoming": []
     }

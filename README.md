@@ -127,7 +127,7 @@ Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhu
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Recommendation実装計画](plans/recommendation.pert)のMIG-01からMIG-07全22pを1 active dayで完了し、recommendation固有の暫定実測Velocityを`22p/1d`へ更新しました。Detail残作業は0pで、normal recommendation authorityを採用済みです。Macroの唯一のready、`runnable_now`、recommended、precedence/schedule critical work packageは`RELEASE_E2E`、残るmakespanは2dです。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first自己利用を行っています。[Recommendation実装計画](plans/recommendation.pert)のMIG-01からMIG-07全22pを1 active dayで完了し、recommendation固有の暫定実測Velocityを`22p/1d`へ更新しました。`v0.1.0-alpha.2`の同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registry installまで検証したため、macroの全taskとMVP受け入れは完了しています。現時点のrecommended taskは空で、Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionはmacroへ追加する前の独立backlogです。
 
 ## Security and license
 

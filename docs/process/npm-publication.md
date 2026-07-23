@@ -1,6 +1,6 @@
 # npm publication手順
 
-- 文書状態: Prepared 1.0
+- 文書状態: Published 1.1
 - 作成日: 2026-07-23
 - 対象registry: `https://registry.npmjs.org/`
 - 配布tag: `alpha`
@@ -15,10 +15,13 @@
 
 2026-07-23の最初の人間overrideはpublish準備だけを前倒しし、当時の工程statusや外部publish authorityを変更しなかった。その後MIG-07まで完了し、利用者は`secdat exec`配下でのGit pushとnpm publishを明示許可した。この許可は同一tarball、release commit/tag、GitHub asset、registry未公開version、process限定TOKENという本書のgateを省略しない。
 
+同日に`v0.1.0-alpha.2`をGitHub prereleaseとnpmへ公開し、registryからの隔離installまで完了した。公開artifactと検証値は第7節へ固定する。
+
 ## 2. 安全境界
 
 - npmへ送るtarballは、package checkとGitHub Release assetに使用したものと同一にする
-- prereleaseは必ず`alpha` dist-tagへpublishし、`latest`を変更しない
+- prereleaseは必ず`alpha` dist-tagへpublishし、既存packageではpublish前後の`latest`を一致させる
+- 初回package publishでregistryが必須の`latest`を同versionへ作成した場合は、削除を前提にせず例外としてrelease記録へ残す。利用者向け導線は`@alpha`を明示する
 - `package.json`、CLI `--version`、annotated Git tag、`origin/main`、tarball manifestのversionを一致させる
 - package manifestの`bin.perttool`はnpm publish normalization後も`dist/cli.js`でなければならない
 - TOKENをargument、tracked `.npmrc`、logへ書かない
@@ -87,7 +90,8 @@ secdat --dir /home/katsumata-m exec \
 4. local tag、remote annotated tag、`origin/main`がHEADと一致する
 5. `NPM_TOKEN`が存在し、`npm whoami`が成功する
 6. 同じversionがregistryに存在しない
-7. publish後にregistryから同じversionを取得できる
+7. publish後の伝播中`E404`をbounded pollingし、registryから同じversionを取得できる
+8. `alpha`が公開versionを指し、既存の`latest`がpublish前後で変わらない
 
 ## 6. 公開後検証
 
@@ -103,3 +107,17 @@ npm install --global --prefix "$PERTTOOL_VERIFY_PREFIX" perttool@VERSION
 ```
 
 検証結果、registry integrity、GitHub asset SHA-256、release URLをrelease記録へ残してから`RELEASE_E2E`を完了する。
+
+## 7. `v0.1.0-alpha.2` release記録
+
+- Release commit/tag: `dd4fc3efc01945544a2dad7e1838fdd4d06d7275` / `v0.1.0-alpha.2`
+- GitHub prerelease: <https://github.com/mako10k/perttool/releases/tag/v0.1.0-alpha.2>
+- GitHub/registry共通tarball SHA-256: `aadb757a5d7bb82eed677158ce5c4b0672c5695a6dde97bec6f10c438711be8a`
+- npm version/dist-tag: `perttool@0.1.0-alpha.2` / `alpha`
+- npm integrity: `sha512-jLwW2MDQbibQK8skb3qrIU7x5Ek+ZjDhesI8yPbb5SsKJqkX8tNqxhAoBukFgx8X1Kyv/9LuxgrwbPXTIGyBnA==`
+- npm SHA-1: `d1bc681e68384d29b3130ba9a21c99e44605d51d`
+- Verification: GitHub公開assetとregistry tarballのSHA-256一致、`perttool@alpha`の隔離install、`perttool 0.1.0-alpha.2`、`dsl check docs/examples/minimal.pert`
+
+Publish本体は成功応答を返したが、直後のregistry照会は伝播中の`E404`となった。再publishせずdurable stateを照会し、versionとintegrityを確認した。この観測に基づき、publish scriptは`E404`だけをbounded pollingする。
+
+初回package publishでは、明示した`alpha`に加えてregistryが`latest=0.1.0-alpha.2`を作成した。`npm dist-tag rm perttool latest`はregistryから`E400`で拒否されたため、破壊的なunpublishは行わず、初回package metadataの例外として保持する。今後のprereleaseではpublish前後の既存`latest`一致をguardし、READMEの導入例は`perttool@alpha`を明示する。

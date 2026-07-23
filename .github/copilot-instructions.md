@@ -5,7 +5,7 @@
 Mandatory summary:
 
 - 利用者から指定がない限り、日本語で応答する。
-- 現在はTypeScript CLIのMVP release受け入れ段階である。Recommendation MIG-01からMIG-07は完了し、5 plan shadowとunknown-version safe stop dry-runを経たcompleteかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。Macro `plans/mvp.pert`を含む5計画をStage 3で自己利用中で、次の唯一のcriticalかつrecommended work packageは`RELEASE_E2E`である。Human override apply/auditはMIG-08まで未解禁である。
+- TypeScript CLIのMVP public alpha受け入れは完了した。Recommendation MIG-01からMIG-07は完了し、5 plan shadowとunknown-version safe stop dry-runを経たcompleteかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`はGitHub prereleaseとnpm `alpha`へ同一artifactで公開・検証済みで、macroのrecommended taskは空である。Issue #2またはIssue #3をmacroへ追加するまでは着手順を推測しない。Human override apply/auditはMIG-08まで未解禁である。
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
 - 「次のタスク」はknown、complete、not-truncatedな`dag next --format json`をauthorityとし、macroのrecommended work packageからworkstreamを選んでから対応detailを再解析する。Recommended subset、またはrecommended set全件にresource-feasibleなallowed taskを1件だけ追加した集合だけをnormal selectionとする。Unknown version、incomplete trace、`PTREC-*`、deferred/discouragedでは開始せず、task stateやcapacity変更後は再解析する。

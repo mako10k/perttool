@@ -131,6 +131,8 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`AUTHORITY_ADOPTION`を完了した。`AGENTS.md`、Copilot指示、AI開発ガイド、consumer guide、helpへmacroからdetailのnormal selection ruleを同期し、recommended subset、recommended set全件とallowed 1件の追加、allowed replacement、deferred selection、empty recommendationをdry-runへ固定した。Schema、interface、algorithm、taxonomy、explanation、expression、description、locale、completeness、tier、decisive rule/reason/expression、`PTREC-*`の16境界では選択taskなしのsafe stopになる。`plans/recommendation.pert`はpreview source digest `sha256:bf9622a81219e4dceca2279305ed015da964680c6856d0e081f566224f679ac2`からexpected digest付き`task finish --write`を行い、finish直後は`sha256:bfe6fecde02b11cb14d451388c7bf234ee91029fef8e78a7d0a2caed592abdf3`、Velocity反映後は`sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464`となった。完了2pを同日の標本へ加えてVelocityを`22p/1d`へcalibrationし、detail残作業は0pとなった。Macro `RECOMMENDATION_IMPLEMENTATION`もsource digest `sha256:5006bf9b863538ec8404665c9150b8c40a048ddb1a4008591276117424c7cf21`からexpected digest付きで完了し、finish直後は`sha256:a3056f2c72554b2835acc6b48ec8db3a795c35a635f3af851e4262ab331ae075`、説明更新後は`sha256:741c027228dd13cfdf6bcdb6a4e0c0f6523848aba6f1c4f6e4d1f762433533bf`となった。`RELEASE_E2E`が唯一のready、`runnable_now`、recommended、precedence/schedule critical work packageで、残るmakespanは2dである。Override apply、audit write、Git operationはMIG-08まで未解禁のままである。
 
+続いて`RELEASE_E2E`を完了した。Version `0.1.0-alpha.2`、全206 test、文書、5 plan、local link、package install、publish normalizationを検証し、release commit `dd4fc3efc01945544a2dad7e1838fdd4d06d7275`を`origin/main`へpushして同commitへannotated tagを作成した。Worktree外で一度だけ生成したtarballをGitHub prerelease assetとnpm publishへ使用し、GitHub公開assetとregistry tarballのSHA-256 `aadb757a5d7bb82eed677158ce5c4b0672c5695a6dde97bec6f10c438711be8a`、npm integrity、`alpha=0.1.0-alpha.2`、隔離install、CLI version、`dsl check`を確認した。Publish直後のregistry `E404`では再試行せず、durable state照会で公開成功を確認した。初回publishでregistryが`latest`も同versionへ作成し、tag削除を`E400`で拒否したため、将来scriptへ伝播待ちと既存`latest`不変guardを追加し、初回例外をpublication記録へ残した。Macroはpreview source digest `sha256:741c027228dd13cfdf6bcdb6a4e0c0f6523848aba6f1c4f6e4d1f762433533bf`とcandidate digest `sha256:47937515ecbf024bd1dd23ca7d73e526e2fb25ae6fac27cc4ff179ece45d5217`を確認してexpected digest付き`task finish --write`を行った。全task完了後のprecedence/resource makespan、ready、recommendedは0である。
+
 Issue #2はrecommendation publication後のprovider別guideとしてhelp surfaceとreviewerを共有するが、現行macroへwork packageを追加していない。Issue #3もMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
@@ -215,7 +217,7 @@ Stage 1で禁止した操作:
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
-- 現在のmacro precedence/schedule CPかつ唯一のready、`runnable_now`、recommended taskは`RELEASE_E2E`である。Recommendationと操作系detailに未完了taskはない
+- `RELEASE_E2E`を含むMVP macroと全detail taskは完了した。現在のready、`runnable_now`、recommended taskは空である
 - Issue #2はmacro planへ追加するまで着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -377,6 +379,7 @@ Stage 1開始時の証跡:
 - operations calibration gate: 完了9 taskの24p/1 active dayから実測Velocity `24p/1d`、残るprecedence/resource forecast 0と0p resource delayをgoldenへ固定する
 - Mermaid profile contract gate: 全semantic record、canonical JSON、metadata/projection digest、fail-closed import、stable loss code、security境界、規範artifactを仕様/help/testへ固定する
 - release readiness gate: MVP condition 1から16を個別監査し、未実装conditionを既存fieldの再解釈でPassにせず、recommendation detail/macro gateと再開条件へ固定する
-- recommendation authority gate: MIG-07完了後はdetail残作業0p、実測Velocity `22p/1d`、macroの唯一のrecommended `RELEASE_E2E`をgoldenへ固定し、known/complete v3だけをnormal selection authorityとして使用する
+- recommendation authority gate: MIG-07完了後はdetail残作業0p、実測Velocity `22p/1d`、known/complete v3だけをnormal selection authorityとして使用する。`RELEASE_E2E`完了後はempty recommendationをgoldenへ固定する
+- release distribution gate: release commit、remote main、annotated tag、GitHub asset、npm publish、registry installを同一tarballで検査し、version、integrity、SHA-256、release URLを記録する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、5 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

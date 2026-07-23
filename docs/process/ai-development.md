@@ -114,7 +114,7 @@ npm publishは通常のclose outに含めない。[npm publication手順](npm-pu
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。`groups.ready`、`groups.runnable_now`、text summaryをrecommendationの代用にしない。Unknown schema/model version、incomplete/truncated trace、unknown tier、`PTREC-*`ではtaskを開始せず、安全に停止する。`deferred`または`discouraged`をnormal authorityで開始しない。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`、detail残作業は0pで、macroの次の唯一のreadyかつrecommended work packageは`RELEASE_E2E`、残るprecedence/resource makespanは2dである。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`で、`v0.1.0-alpha.2`のGitHub/npm同一artifact配布とregistry installまで完了した。Macroの残作業とrecommended taskは0であり、次のfeatureをmacroへ追加するまではbacklog間の着手順を推測しない。
 
 ### 5.1 採用済みRecommendation authority
 
