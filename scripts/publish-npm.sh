@@ -67,22 +67,36 @@ if [[ "$package_name" != "perttool" ]]; then
   printf 'unexpected package name: %s\n' "$package_name" >&2
   exit 1
 fi
-if [[ "$package_version" != *-* ]]; then
-  printf 'npm publication is limited to a prerelease version: %s\n' "$package_version" >&2
-  exit 1
-fi
 if [[ "$package_bin" != "dist/cli.js" ]]; then
   printf 'publishable CLI bin must be dist/cli.js, got %s\n' "$package_bin" >&2
   exit 1
 fi
-if [[ "$publish_access" != "public" || "$publish_registry" != "https://registry.npmjs.org/" || "$publish_tag" != "alpha" ]]; then
-  printf 'publishConfig must pin public access, the npmjs registry, and the alpha tag\n' >&2
+if [[ "$publish_access" != "public" || "$publish_registry" != "https://registry.npmjs.org/" ]]; then
+  printf 'publishConfig must pin public access and the npmjs registry\n' >&2
   exit 1
 fi
+case "$publish_tag" in
+  alpha)
+    if [[ "$package_version" != *-* ]]; then
+      printf 'alpha publication requires a prerelease version: %s\n' "$package_version" >&2
+      exit 1
+    fi
+    ;;
+  beta)
+    if [[ ! "$package_version" =~ ^0\.[0-9]+\.[0-9]+$ ]]; then
+      printf 'beta publication requires a suffix-free 0.x.x version: %s\n' "$package_version" >&2
+      exit 1
+    fi
+    ;;
+  *)
+    printf 'unsupported publishConfig tag: %s\n' "$publish_tag" >&2
+    exit 1
+    ;;
+esac
 
 publish_output="$inspection_root/npm-publish-output.txt"
 if [[ "$mode" == "--dry-run" ]]; then
-  if ! npm publish "$package_spec" --dry-run --tag alpha --access public --json >"$publish_output" 2>&1; then
+  if ! npm publish "$package_spec" --dry-run --tag "$publish_tag" --access public --json >"$publish_output" 2>&1; then
     cat "$publish_output" >&2
     exit 1
   fi
@@ -91,7 +105,8 @@ if [[ "$mode" == "--dry-run" ]]; then
     printf 'npm changed the package manifest during publish normalization\n' >&2
     exit 1
   fi
-  printf 'npm publish dry-run passed (%s@%s, tag alpha)\n' "$package_name" "$package_version"
+  printf 'npm publish dry-run passed (%s@%s, tag %s)\n' \
+    "$package_name" "$package_version" "$publish_tag"
   exit 0
 fi
 
@@ -168,7 +183,7 @@ if ! grep -Fq 'E404' "$version_lookup"; then
   exit 1
 fi
 
-npm publish "$package_spec" --tag alpha --access public --userconfig="$npm_userconfig"
+npm publish "$package_spec" --tag "$publish_tag" --access public --userconfig="$npm_userconfig"
 published_version=""
 publish_verification_error="$inspection_root/publish-verification-error.txt"
 for attempt in 1 2 3 4 5; do
@@ -193,15 +208,15 @@ fi
 
 dist_tags_after_path="$inspection_root/dist-tags-after.json"
 npm view "$package_name" dist-tags --json --userconfig="$npm_userconfig" >"$dist_tags_after_path"
-alpha_after=$(node -p \
-  'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).alpha ?? ""' \
-  "$dist_tags_after_path")
+published_tag_after=$(node -p \
+  'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))[process.argv[2]] ?? ""' \
+  "$dist_tags_after_path" "$publish_tag")
 latest_after=$(node -p \
   'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).latest ?? ""' \
   "$dist_tags_after_path")
-if [[ "$alpha_after" != "$package_version" ]]; then
-  printf 'alpha dist-tag verification failed: expected %s, got %s\n' \
-    "$package_version" "$alpha_after" >&2
+if [[ "$published_tag_after" != "$package_version" ]]; then
+  printf '%s dist-tag verification failed: expected %s, got %s\n' \
+    "$publish_tag" "$package_version" "$published_tag_after" >&2
   exit 1
 fi
 if [[ -n "$latest_before" && "$latest_after" != "$latest_before" ]]; then
@@ -212,4 +227,5 @@ fi
 if [[ -z "$latest_before" && "$latest_after" == "$package_version" ]]; then
   printf 'registry created the required initial latest dist-tag at %s\n' "$package_version"
 fi
-printf 'published and verified %s@%s with dist-tag alpha\n' "$package_name" "$package_version"
+printf 'published and verified %s@%s with dist-tag %s\n' \
+  "$package_name" "$package_version" "$publish_tag"

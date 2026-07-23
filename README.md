@@ -4,7 +4,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 
 現在のcheckoutでは、`dsl check`、`dsl format`、`dsl help`、read-only `agent help`、`project show`、`project set`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなproject/task/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`を実装済みです。`project show`はvelocityを含むproject metadata一式、`dag next`はcompleteなrecommendation graphを持つ`Perttool.NextResult.v3`、`agent help`は5 providerのoffline profileをindex/quick/detailのtext/JSONで返します。いずれもpublic Core型とCLIを同じ判断へ接続します。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
-次のreleaseはsuffixなし`0.1.0`で、`0.x.x`系列をbetaと定義します。Alphaからbetaへのstrict compatibilityは保証せず、Issue #2のread-only AI Agent Guidance Registryをbeta gateへ含めます。現在公開済みのversionは引き続き`v0.1.0-alpha.2`であり、betaはまだpublishしていません。
+`0.1.0` is the first beta release. Suffix-free `0.x.x` versions are the beta series, and strict compatibility with the alpha series is not guaranteed. This release includes the read-only AI Agent Guidance Registry from Issue #2.
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -29,6 +29,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [MVP release readiness監査](docs/process/mvp-release-readiness.md)
 - [Beta versioning ADR](docs/adr/0003-beta-versioning.md)
 - [Beta release手順](docs/process/beta-release.md)
+- [English repository baseline ADR](docs/adr/0004-english-repository-baseline.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)
@@ -39,6 +40,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [操作系M1-M4実装計画](plans/operations.pert)
 - [Recommendation実装計画](plans/recommendation.pert)
 - [AI Agent Guidance実装計画](plans/agent-guidance.pert)
+- [English baseline migration plan](plans/english-baseline.pert)
 - [AI 開発ガイド](docs/process/ai-development.md)
 
 基本方針は次のとおりです。
@@ -55,10 +57,10 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 
 ## Install
 
-公開開発プレビューはnpm registryの`alpha` dist-tagとGitHub prereleaseから導入できます。Maintainer向けの安全境界は[npm publication手順](docs/process/npm-publication.md)を参照してください。
+Install the current beta from the npm `beta` dist-tag. Maintainers must follow the [beta release procedure](docs/process/beta-release.md) and publish the exact release tarball without moving `latest`.
 
 ```sh
-npm install --global perttool@alpha
+npm install --global perttool@beta
 perttool --version
 ```
 

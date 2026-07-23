@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-07-23
+
+First beta release. This suffix-free `0.x.x` series remains prerelease product maturity, permits intentional alpha incompatibility, and publishes through the npm `beta` dist-tag without moving `latest`.
+
 ### Added
 
 - Codex、GitHub Copilot、Claude Code、Grok Build、Antigravityのoffline profileを同じCoreからindex/quick/detailのtext/JSONへ公開するread-only `agent help`
@@ -60,6 +64,7 @@
 - npm registryには未公開。GitHub Release assetを使用する
 - Node.js 24以上が必要
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.2...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.2...v0.1.0
 [0.1.0-alpha.2]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
 [0.1.0-alpha.1]: https://github.com/mako10k/perttool/releases/tag/v0.1.0-alpha.1
