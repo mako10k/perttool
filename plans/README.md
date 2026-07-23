@@ -12,7 +12,7 @@
 
 5計画ともself-use gateを満たしており、`dsl check`、`dag analyze`、`dag next`の入力として使用する。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本へ適用できる。詳細planはPointを基準値、velocity換算したdayを日程予測として自己利用する。Macro計画のwork packageは対応する詳細planのresource forecastをroll-upし、日々のtask選択では先に`mvp.pert`でworkstreamを選び、その後に対応する詳細planを参照する。段階的なwrite解禁条件は[自己利用計画](../docs/process/self-use.md)を参照する。
 
-2026-07-22のrelease readiness監査でMVP受け入れ条件16のrecommendation未実装を確認した。Recommendation detailはprecedence 19p、resource 22p、resource delay 3pで、operations実測`24p/1d`を初期Velocityとする。Macroへ`0.916667d`をroll-upした後の残るprecedence/resource makespanは`2.916667d`、resource delayは0dである。`RECOMMENDATION_IMPLEMENTATION`が唯一のready、`runnable_now`、precedence/schedule critical work packageで、detailの次taskは`FIXTURE_BASELINE`である。
+2026-07-23にRecommendation detailの`FIXTURE_BASELINE` 2pを完了し、初回標本1 active dayからrecommendation固有の暫定実測Velocityを`2p/1d`へ更新した。Detailの残りはprecedence 17p、resource 20p、resource delay 3p、resource forecast 10dである。Macroへ10dをroll-upした後の残るprecedence/resource makespanは12d、resource delayは0dである。`RECOMMENDATION_IMPLEMENTATION`が唯一のready、`runnable_now`、precedence/schedule critical work packageで、detailの次taskは`RANKING_CORE`である。
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22時点の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系がformatter/mutation preview 12p、safe write 6p、advance 6pの合計24pによる`24p/1d`である。いずれも1 active dayだけの暫定標本であり、次の同種task完了時にplan単位で再calibrationする。算定根拠、暫定性、macroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

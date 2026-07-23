@@ -1,0 +1,35 @@
+project REC_001_CRITICAL_PRIORITY:
+  version 1
+  title "Critical path precedes explicit priority"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+milestone NOW:
+  title "Current frontier"
+  state reached
+
+milestone CRITICAL_DONE:
+  title "Critical fix complete"
+
+milestone OPTIONAL_DONE:
+  title "Optional polish complete"
+
+milestone FINISH:
+  title "Project complete"
+
+task CRITICAL_FIX NOW -> CRITICAL_DONE:
+  title "Fix the critical path"
+  duration 2p
+  priority 10
+
+task OPTIONAL_POLISH NOW -> OPTIONAL_DONE:
+  title "Polish an optional component"
+  duration 0.5p
+  priority 100
+
+gate CRITICAL_GATE CRITICAL_DONE -> FINISH:
+  reason "Critical fix is required"
+
+gate OPTIONAL_GATE OPTIONAL_DONE -> FINISH:
+  reason "Optional polish remains in the project plan"

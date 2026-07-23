@@ -1,0 +1,78 @@
+project REC_002_GATE_DISTANCE:
+  version 1
+  title "Gate distance breaks a ranking tie"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+resource REVIEW:
+  title "Shared review slot"
+  capacity 1
+
+milestone NOW:
+  title "Current frontier"
+  state reached
+
+milestone NEAR_READY:
+  title "Near branch ready"
+
+milestone NEAR_GATE_SOURCE:
+  title "Near gate source"
+
+milestone NEAR_AFTER_GATE:
+  title "Near gate passed"
+
+milestone FAR_READY:
+  title "Far branch ready"
+
+milestone FAR_MID:
+  title "Far branch midpoint"
+
+milestone FAR_GATE_SOURCE:
+  title "Far gate source"
+
+milestone FAR_AFTER_GATE:
+  title "Far gate passed"
+
+milestone FINISH:
+  title "Project complete"
+
+task GATE_NEAR NOW -> NEAR_READY:
+  title "Start the branch near a gate"
+  duration 1p
+  priority 50
+  requires:
+    REVIEW 1
+
+task NEAR_STEP NEAR_READY -> NEAR_GATE_SOURCE:
+  title "Reach the near gate"
+  duration 2p
+
+gate NEAR_GATE NEAR_GATE_SOURCE -> NEAR_AFTER_GATE:
+  reason "Near branch gate"
+
+task NEAR_FINISH NEAR_AFTER_GATE -> FINISH:
+  title "Finish the near branch"
+  duration 1p
+
+task GATE_FAR NOW -> FAR_READY:
+  title "Start the branch farther from a gate"
+  duration 1p
+  priority 50
+  requires:
+    REVIEW 1
+
+task FAR_STEP_A FAR_READY -> FAR_MID:
+  title "Advance the far branch"
+  duration 1p
+
+task FAR_STEP_B FAR_MID -> FAR_GATE_SOURCE:
+  title "Reach the far gate"
+  duration 1p
+
+gate FAR_GATE FAR_GATE_SOURCE -> FAR_AFTER_GATE:
+  reason "Far branch gate"
+
+task FAR_FINISH FAR_AFTER_GATE -> FINISH:
+  title "Finish the far branch"
+  duration 1p

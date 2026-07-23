@@ -1,0 +1,41 @@
+project REC_004_PARALLEL_SET:
+  version 1
+  title "Jointly feasible parallel recommendation"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+resource DEV:
+  title "Developer slots"
+  capacity 2
+
+milestone NOW:
+  title "Current frontier"
+  state reached
+
+milestone A_DONE:
+  title "Parallel A complete"
+
+milestone B_DONE:
+  title "Parallel B complete"
+
+milestone FINISH:
+  title "Project complete"
+
+task PARALLEL_A NOW -> A_DONE:
+  title "Parallel work A"
+  duration 2p
+  requires:
+    DEV 1
+
+task PARALLEL_B NOW -> B_DONE:
+  title "Parallel work B"
+  duration 2p
+  requires:
+    DEV 1
+
+gate A_GATE A_DONE -> FINISH:
+  reason "Parallel A is required"
+
+gate B_GATE B_DONE -> FINISH:
+  reason "Parallel B is required"

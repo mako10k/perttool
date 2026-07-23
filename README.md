@@ -122,7 +122,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。初期Velocityは近いTypeScript Core/CLI実装の暫定実測`24p/1d`を使い、macro残存precedence/resource makespanはともに`2.916667d`、resource delayは0dです。唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`で、`RELEASE_E2E`はupcomingです。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。MIG-01 fixture baseline 2pを完了し、recommendation固有の暫定実測Velocityを`2p/1d`へ更新しました。残るresource forecastは20p = 10d、macro残存precedence/resource makespanはともに12dです。Macroの唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`、detailの次taskは`RANKING_CORE`で、`RELEASE_E2E`はupcomingです。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
 
 ## Security and license
 

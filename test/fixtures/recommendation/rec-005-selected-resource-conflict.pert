@@ -1,0 +1,43 @@
+project REC_005_SELECTED_RESOURCE_CONFLICT:
+  version 1
+  title "Selected task causes a resource conflict"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+resource ENV:
+  title "Exclusive environment"
+  capacity 1
+
+milestone NOW:
+  title "Current frontier"
+  state reached
+
+milestone HIGH_DONE:
+  title "High priority work complete"
+
+milestone LOW_DONE:
+  title "Low priority work complete"
+
+milestone FINISH:
+  title "Project complete"
+
+task ENV_HIGH NOW -> HIGH_DONE:
+  title "Use the environment for high priority work"
+  duration 2p
+  priority 20
+  requires:
+    ENV 1
+
+task ENV_LOW NOW -> LOW_DONE:
+  title "Use the environment for low priority work"
+  duration 2p
+  priority 10
+  requires:
+    ENV 1
+
+gate HIGH_GATE HIGH_DONE -> FINISH:
+  reason "High priority work is required"
+
+gate LOW_GATE LOW_DONE -> FINISH:
+  reason "Low priority work is required"

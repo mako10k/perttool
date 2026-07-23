@@ -1,0 +1,166 @@
+{
+  "schema_version": "Perttool.RecommendationFixtureBaseline.v1",
+  "algorithm_id": "perttool.recommendation-ranking.lexicographic-frontier",
+  "algorithm_version": 1,
+  "cases": [
+    {
+      "case_id": "REC-001",
+      "fixture": "rec-001-critical-priority.pert",
+      "candidate_facts": {
+        "CRITICAL_FIX": { "critical_class": "driving", "total_float": "0/1p", "priority": 10 },
+        "OPTIONAL_POLISH": { "critical_class": "non_critical", "total_float": "3/2p", "priority": 100 }
+      },
+      "expected": {
+        "ready_task_ids": ["CRITICAL_FIX", "OPTIONAL_POLISH"],
+        "horizon_task_ids": ["CRITICAL_FIX"],
+        "recommended_task_ids": ["CRITICAL_FIX"],
+        "tiers": { "CRITICAL_FIX": "recommended", "OPTIONAL_POLISH": "allowed" },
+        "decisive_rule_id": "critical_class",
+        "primary_higher_priority_task_ids": { "OPTIONAL_POLISH": "CRITICAL_FIX" }
+      }
+    },
+    {
+      "case_id": "REC-002",
+      "fixture": "rec-002-gate-distance.pert",
+      "candidate_facts": {
+        "GATE_NEAR": { "critical_class": "driving", "total_float": "0/1p", "priority": 50, "new_ready_task_count": 1, "new_satisfied_gate_count": 0, "new_reached_milestone_count": 1, "next_gate_task_distance": 1, "finish_task_distance": 2 },
+        "GATE_FAR": { "critical_class": "driving", "total_float": "0/1p", "priority": 50, "new_ready_task_count": 1, "new_satisfied_gate_count": 0, "new_reached_milestone_count": 1, "next_gate_task_distance": 2, "finish_task_distance": 3 }
+      },
+      "expected": {
+        "ready_task_ids": ["GATE_NEAR", "GATE_FAR"],
+        "horizon_task_ids": ["GATE_NEAR", "GATE_FAR"],
+        "recommended_task_ids": ["GATE_NEAR"],
+        "tiers": { "GATE_NEAR": "recommended", "GATE_FAR": "deferred" },
+        "prior_tied_rule_ids": ["critical_class", "lower_total_float", "higher_explicit_priority", "higher_new_ready_count", "higher_new_gate_count", "higher_new_milestone_count"],
+        "decisive_rule_id": "shorter_next_gate_distance",
+        "contributing_rule_ids": ["shorter_finish_distance"]
+      }
+    },
+    {
+      "case_id": "REC-003",
+      "fixture": "rec-003-successor-unlock.pert",
+      "candidate_facts": {
+        "UNLOCK_TWO": { "critical_class": "driving", "total_float": "0/1p", "priority": 0, "new_ready_task_count": 2 },
+        "UNLOCK_ONE": { "critical_class": "driving", "total_float": "0/1p", "priority": 0, "new_ready_task_count": 1 }
+      },
+      "expected": {
+        "ready_task_ids": ["UNLOCK_TWO", "UNLOCK_ONE"],
+        "horizon_task_ids": ["UNLOCK_TWO", "UNLOCK_ONE"],
+        "recommended_task_ids": ["UNLOCK_TWO", "UNLOCK_ONE"],
+        "tiers": { "UNLOCK_TWO": "recommended", "UNLOCK_ONE": "recommended" },
+        "decisive_rule_id": "higher_new_ready_count"
+      }
+    },
+    {
+      "case_id": "REC-004",
+      "fixture": "rec-004-parallel-set.pert",
+      "candidate_facts": {
+        "PARALLEL_A": { "critical_class": "driving", "requirements": { "DEV": 1 } },
+        "PARALLEL_B": { "critical_class": "driving", "requirements": { "DEV": 1 } }
+      },
+      "expected": {
+        "ready_task_ids": ["PARALLEL_A", "PARALLEL_B"],
+        "horizon_task_ids": ["PARALLEL_A", "PARALLEL_B"],
+        "recommended_task_ids": ["PARALLEL_A", "PARALLEL_B"],
+        "tiers": { "PARALLEL_A": "recommended", "PARALLEL_B": "recommended" },
+        "jointly_feasible": true
+      }
+    },
+    {
+      "case_id": "REC-005",
+      "fixture": "rec-005-selected-resource-conflict.pert",
+      "candidate_facts": {
+        "ENV_HIGH": { "critical_class": "driving", "total_float": "0/1p", "priority": 20, "requirements": { "ENV": 1 } },
+        "ENV_LOW": { "critical_class": "driving", "total_float": "0/1p", "priority": 10, "requirements": { "ENV": 1 } }
+      },
+      "expected": {
+        "ready_task_ids": ["ENV_HIGH", "ENV_LOW"],
+        "horizon_task_ids": ["ENV_HIGH", "ENV_LOW"],
+        "recommended_task_ids": ["ENV_HIGH"],
+        "tiers": { "ENV_HIGH": "recommended", "ENV_LOW": "deferred" },
+        "decisive_rule_id": "higher_explicit_priority",
+        "tier_reason_code": "recommended_set_resource_conflict",
+        "selected_blocker_task_ids": ["ENV_HIGH"],
+        "active_blocker_task_ids": []
+      }
+    },
+    {
+      "case_id": "REC-006",
+      "fixture": "rec-006-active-resource-empty.pert",
+      "candidate_facts": {
+        "FRONTIER_TEST": { "critical_class": "driving", "requirements": { "ENV": 1 } },
+        "SIDE_DOCS": { "critical_class": "non_critical", "requirements": {} },
+        "ENV": { "capacity": 1, "active_usage": 1, "active_task_ids": ["ACTIVE_TEST"] }
+      },
+      "expected": {
+        "ready_task_ids": ["FRONTIER_TEST", "SIDE_DOCS"],
+        "horizon_task_ids": ["FRONTIER_TEST"],
+        "recommended_task_ids": [],
+        "tiers": { "FRONTIER_TEST": "deferred", "SIDE_DOCS": "allowed" },
+        "resource_comparison_winner_task_id": null,
+        "primary_higher_priority_task_ids": { "SIDE_DOCS": "FRONTIER_TEST" },
+        "active_blocker_task_ids": ["ACTIVE_TEST"],
+        "selected_blocker_task_ids": []
+      }
+    },
+    {
+      "case_id": "REC-007",
+      "fixture": "rec-007-no-ready.pert",
+      "candidate_facts": {},
+      "expected": {
+        "ready_task_ids": [],
+        "horizon_task_ids": [],
+        "recommended_task_ids": [],
+        "tiers": {},
+        "jointly_feasible": true
+      }
+    },
+    {
+      "case_id": "REC-008",
+      "unit_input": {
+        "source_case_id": "REC-001",
+        "kind": "typed_ranking_comparison",
+        "winner_task_id": "CRITICAL_FIX",
+        "alternative_task_id": "OPTIONAL_POLISH",
+        "decisive_rule_id": "critical_class",
+        "relation": "less_than",
+        "fact_type": "enum",
+        "enum_type": "precedence_critical_class"
+      },
+      "expected": { "answerable_without_description_parsing": true }
+    },
+    {
+      "case_id": "REC-009",
+      "unit_input": {
+        "source_case_id": "REC-001",
+        "kind": "exact_rational_fact",
+        "task_id": "OPTIONAL_POLISH",
+        "value": { "type": "rational", "numerator": "3", "denominator": "2" },
+        "unit": { "kind": "duration", "value": "point" }
+      },
+      "expected": { "canonical_text": "3/2p", "binary_float_authoritative": false }
+    },
+    {
+      "case_id": "REC-010",
+      "unit_input": {
+        "source_case_id": "REC-001",
+        "kind": "projection_completeness",
+        "json": { "level": "full", "complete": true, "decisive_chain_complete": true, "truncated": false, "all_omitted_counts": 0 },
+        "text": { "detail": "summary", "complete": false, "machine_trace": "--format json" }
+      },
+      "expected": { "v2_operational_projection_unchanged": true }
+    },
+    {
+      "case_id": "REC-011",
+      "unit_input": {
+        "kind": "invariant_failures",
+        "variants": [
+          { "broken": "decision_or_reference_closure", "diagnostic": "PTREC-301" },
+          { "broken": "unknown_versioned_semantics", "diagnostic": "PTREC-302" },
+          { "broken": "description_rendering", "diagnostic": "PTREC-303" }
+        ]
+      },
+      "expected": { "successful_v3_result": false, "cli_exit": 70 }
+    }
+  ]
+}

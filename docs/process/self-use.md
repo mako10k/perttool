@@ -1,8 +1,8 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 3 / Revision 2.16
+- 文書状態: Active Stage 3 / Revision 2.17
 - 作成日: 2026-07-21
-- 更新日: 2026-07-22
+- 更新日: 2026-07-23
 - 関連設計: [../basic-design.md](../basic-design.md)
 
 ## 1. 目的
@@ -115,6 +115,8 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`RELEASE_E2E`の受け入れ監査を開始したが、[MVP受け入れ条件16](../requirements.md#21-mvp-受け入れ条件)のrecommendation tier、recommended set、structured explanation、higher-priority comparisonが未実装であることを確認した。`dag next` v2のoperational groupをrecommendationへ再解釈せず、`RELEASE_E2E`は未完了のまま保持する。[Recommendation実装plan](../../plans/recommendation.pert)へMIG-01からMIG-07を22pで分解し、operations実測`24p/1d`によるresource forecast `11/12d`をmacroへ`0.916667d`としてroll-upした。Macro残存precedence/resource makespanは`2.916667d`、resource delayは0dで、`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつ`runnable_now`なprecedence/schedule critical work package、`RELEASE_E2E`はupcomingとなった。Detailでは`FIXTURE_BASELINE`が唯一のready、precedence/schedule critical、`runnable_now`である。監査根拠と再開条件は[release readiness記録](mvp-release-readiness.md)を正とする。
 
+続いて`FIXTURE_BASELINE`を完了した。REC-001からREC-007を警告なしの最小`.pert`へ、REC-008からREC-011をunit inputへ展開し、将来のcandidate fact・期待判断と現行`Perttool.NextResult.v2`のgroups、tasks、resource rejection、upcoming explanationを分離してgolden化した。Gate距離0とnew satisfied gate count 0が両立しなかったREC-002は、先行ruleのtieを維持する規範距離1対2へ補正した。全170 testでpublic schema/text不変を確認し、`plans/recommendation.pert`はpreview diffと`sha256:920718d3f18cc45bb615488d986b4088dcff925ac20dc891d3ee42d10559c67a`を確認して`task finish --write`した。初回完了標本2p/1 active dayからrecommendation固有Velocityを`2p/1d`へcalibrationし、残るprecedence 17p、resource 20p、resource delay 3p、resource forecast 10dとなった。Macroへ10dをroll-upした結果、残存precedence/resource makespanは12d、次のdetail critical taskは`RANKING_CORE`である。
+
 Issue #2はrecommendation publication後のprovider別guideとしてhelp surfaceとreviewerを共有するが、現行macroへwork packageを追加していない。Issue #3もMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
@@ -128,21 +130,22 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 5. 同日parallel workは二重にdayを数えず、Point合計へ反映する
 6. calibration自身が完了させるtaskは循環を避けて次回標本へ送る
 
-2026-07-22 recalibration:
+2026-07-22から2026-07-23 recalibration:
 
 | Plan | Closed sample | Completed Point | Active day | Velocity | Remaining forecast |
 | --- | --- | ---: | ---: | --- | --- |
 | `grammar.pert` | `FORMATTER_ROUNDTRIP`、`HELP_FIXTURE_SYNC` | 3p | 1d | `3p/1d` | 0p |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
 | `operations.pert` | formatter/mutation preview、safe write、advance | 24p | 1d | `24p/1d` | 0p |
+| `recommendation.pert` | `FIXTURE_BASELINE` | 2p | 1d | `2p/1d` | resource 20p = 10d |
 
-これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。3標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
+これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。4標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
 Operationsはformatter/mutation preview 12p、safe write 6p、advance 6pの同日完了を累計し、実測`24p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系taskを詳細planへ追加して完了実績が生じた時点で独立再calibrationする。Macroはday単位しか持たないため、未完了work packageでは`p/velocity`を6 decimal dayへroundする。現在のdetail残作業とresource delayは0pである。
 
-Recommendation実装にはまだ完了標本がない。TypeScript Core、CLI、help、testを同じlogical changeで扱うwork typeが操作系に最も近いため、`recommendation.pert`は操作系の暫定実測`24p/1d`を初期値として明示的に借用する。これはrecommendation固有の実測値ではなく、最初の完了taskが生じた時点で独立再calibrationする。
+Recommendation実装は`FIXTURE_BASELINE` 2pを2026-07-23の1 active dayで完了したため、操作系から借用していた初期値を廃止し、recommendation固有の暫定実測`2p/1d`へ更新した。残るresource makespan 20pのforecastは10dである。1 taskだけの標本なので、`RANKING_CORE`完了時に累計Pointとactive dayを再計測する。
 
 Stage 1で許可した操作:
 
@@ -198,7 +201,7 @@ Stage 1で禁止した操作:
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
-- 現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RECOMMENDATION_IMPLEMENTATION`、detailでは`FIXTURE_BASELINE`である。`RELEASE_E2E`はupcomingで、操作系detailに未完了taskはない
+- 現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RECOMMENDATION_IMPLEMENTATION`、detailでは`RANKING_CORE`である。`RELEASE_E2E`はupcomingで、操作系detailに未完了taskはない
 - Issue #2はmacro planへ追加するまで着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -360,6 +363,6 @@ Stage 1開始時の証跡:
 - operations calibration gate: 完了9 taskの24p/1 active dayから実測Velocity `24p/1d`、残るprecedence/resource forecast 0と0p resource delayをgoldenへ固定する
 - Mermaid profile contract gate: 全semantic record、canonical JSON、metadata/projection digest、fail-closed import、stable loss code、security境界、規範artifactを仕様/help/testへ固定する
 - release readiness gate: MVP condition 1から16を個別監査し、未実装conditionを既存fieldの再解釈でPassにせず、recommendation detail/macro gateと再開条件へ固定する
-- recommendation planning gate: MIG-01からMIG-07を22p、precedence 19p、resource 22p、初期forecast `11/12d`へ分解し、最初の`FIXTURE_BASELINE`をgoldenへ固定する
+- recommendation planning gate: MIG-01からMIG-07を22pへ分解し、`FIXTURE_BASELINE`完了後は残るprecedence 17p、resource 20p、実測forecast 10dと次の`RANKING_CORE`をgoldenへ固定する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、5 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

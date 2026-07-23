@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v2、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Release readiness監査でMVP受け入れ条件16のrecommendationが未実装と確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3のpreview-first advance自己利用で管理中である。`RELEASE_E2E`はrecommendation受け入れ後までupcomingであり、完了扱いにしない。
+perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v2、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Release readiness監査でMVP受け入れ条件16のrecommendationが未実装と確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3のpreview-first advance自己利用で管理中である。MIG-01 fixture baselineは完了し、次の詳細taskは`RANKING_CORE`である。`RELEASE_E2E`はrecommendation受け入れ後までupcomingであり、完了扱いにしない。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -76,7 +76,7 @@ perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`
 
 ## Validation
 
-現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar/control-plane/operations planのcheck/analyze/nextも含む。
+現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar/control-plane/operations/recommendation planのcheck/analyze/nextも含む。
 
 ```sh
 npm ci

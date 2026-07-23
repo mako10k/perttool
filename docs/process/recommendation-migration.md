@@ -1,6 +1,6 @@
 # Recommendation実装・自己利用migration
 
-- 文書状態: Active 1.2
+- 文書状態: Active 1.3
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 基本設計: [../basic-design.md](../basic-design.md)
@@ -51,6 +51,8 @@
 5. `plans/mvp.pert`の`M1_ROADMAP_UPDATE`を完了してからproduct implementationへ着手する
 
 実行順は[操作系詳細plan](../../plans/operations.pert)へ固定し、全24pを完了した。M3、Stage 3、Mermaid profile設計、Mermaid export/import round-tripへ到達した後、[MVP release readiness監査](mvp-release-readiness.md)で受け入れ条件16の未実装を確認した。MIG-01からMIG-07は[Recommendation実装plan](../../plans/recommendation.pert)へ22p、precedence 19p、resource 22pとして詳細化し、operations実測`24p/1d`を初期Velocityに使用する。Macroでは`RECOMMENDATION_IMPLEMENTATION`をrelease hard predecessorへ追加し、`RELEASE_E2E`をupcomingへ戻した。
+
+2026-07-23にMIG-01を完了した。REC-001からREC-007の最小`.pert`、REC-008からREC-011のunit input、将来期待fact、現行`NextResult.v2`のgroups/tasks/resource rejection/upcoming explanation projectionをfixtureとgoldenへ固定した。REC-002はcompletion counterfactualとgate距離が両立するよう規範距離を補正した。初回完了標本2p/1 active dayからrecommendation固有Velocityを`2p/1d`へ更新し、残るprecedence 17p、resource 20p、resource delay 3p、resource forecast 10dとなった。次taskは`RANKING_CORE`である。
 
 MIG-01からMIG-07は、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を共有する。Task別duration、file ownership、acceptance、narrow testは`plans/recommendation.pert`を正とする。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とし、MVP後の独立work packageのままとする。Issue #2もhelp surfaceとreviewerを共有するが、macroへ追加するまでは実装順を推測しない。
 

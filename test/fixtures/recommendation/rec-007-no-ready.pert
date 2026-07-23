@@ -1,0 +1,19 @@
+project REC_007_NO_READY:
+  version 1
+  title "No ready recommendation candidate"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+milestone NOW:
+  title "Current frontier"
+  state reached
+
+milestone FINISH:
+  title "Project complete"
+
+task TASK_BLOCKED NOW -> FINISH:
+  title "Task waiting for an external decision"
+  duration 1p
+  status blocked
+  blocked_reason "external approval"

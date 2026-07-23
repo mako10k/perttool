@@ -1,0 +1,574 @@
+{
+  "REC-001": {
+    "schema_version": "Perttool.NextResult.v2",
+    "groups": {
+      "active": [],
+      "ready": [
+        "OPTIONAL_POLISH",
+        "CRITICAL_FIX"
+      ],
+      "runnable_now": [
+        "OPTIONAL_POLISH",
+        "CRITICAL_FIX"
+      ],
+      "blocked_now": [],
+      "upcoming": []
+    },
+    "tasks": [
+      {
+        "id": "OPTIONAL_POLISH",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 100,
+        "blocked_reason": null
+      },
+      {
+        "id": "CRITICAL_FIX",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 10,
+        "blocked_reason": null
+      }
+    ],
+    "task_facts": [
+      {
+        "id": "OPTIONAL_POLISH",
+        "expected": "1/2point",
+        "total_float": "3/2point",
+        "earliest_start": "0/1point",
+        "precedence_critical": false,
+        "schedule_critical": false,
+        "requirements": []
+      },
+      {
+        "id": "CRITICAL_FIX",
+        "expected": "2/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": []
+      }
+    ],
+    "resource_rejections": {},
+    "upcoming_explanations": {}
+  },
+  "REC-002": {
+    "schema_version": "Perttool.NextResult.v2",
+    "groups": {
+      "active": [],
+      "ready": [
+        "GATE_FAR",
+        "GATE_NEAR"
+      ],
+      "runnable_now": [
+        "GATE_FAR"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "FAR_STEP_A",
+        "NEAR_STEP",
+        "FAR_STEP_B",
+        "FAR_FINISH",
+        "NEAR_FINISH"
+      ]
+    },
+    "tasks": [
+      {
+        "id": "GATE_FAR",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 50,
+        "blocked_reason": null
+      },
+      {
+        "id": "GATE_NEAR",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": false,
+        "priority": 50,
+        "blocked_reason": null
+      },
+      {
+        "id": "FAR_STEP_A",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "NEAR_STEP",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "FAR_STEP_B",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "FAR_FINISH",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "NEAR_FINISH",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      }
+    ],
+    "task_facts": [
+      {
+        "id": "GATE_FAR",
+        "expected": "1/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": [
+          {
+            "resource_id": "REVIEW",
+            "units": 1
+          }
+        ]
+      },
+      {
+        "id": "GATE_NEAR",
+        "expected": "1/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": [
+          {
+            "resource_id": "REVIEW",
+            "units": 1
+          }
+        ]
+      }
+    ],
+    "resource_rejections": {
+      "GATE_NEAR": [
+        {
+          "resource_id": "REVIEW",
+          "capacity": 1,
+          "active_usage": 0,
+          "earlier_selected_usage": 1,
+          "used_before_decision": 1,
+          "required": 1,
+          "available": 0,
+          "deficit": 1,
+          "active_task_ids": [],
+          "earlier_selected_task_ids": [
+            "GATE_FAR"
+          ]
+        }
+      ]
+    },
+    "upcoming_explanations": {
+      "FAR_STEP_A": "[{\"milestone_id\":\"FAR_READY\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"GATE_FAR\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"NOW\",\"source_reached\":true}],\"children\":[],\"truncated\":false}]",
+      "NEAR_STEP": "[{\"milestone_id\":\"NEAR_READY\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"GATE_NEAR\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"NOW\",\"source_reached\":true}],\"children\":[],\"truncated\":false}]",
+      "FAR_STEP_B": "[{\"milestone_id\":\"FAR_MID\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"FAR_STEP_A\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"FAR_READY\",\"source_reached\":false}],\"children\":[{\"milestone_id\":\"FAR_READY\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"GATE_FAR\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"NOW\",\"source_reached\":true}],\"children\":[],\"truncated\":false}],\"truncated\":false}]",
+      "FAR_FINISH": "[{\"milestone_id\":\"FAR_AFTER_GATE\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"FAR_GATE\",\"kind\":\"gate\",\"status\":null,\"source_milestone_id\":\"FAR_GATE_SOURCE\",\"source_reached\":false}],\"children\":[{\"milestone_id\":\"FAR_GATE_SOURCE\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"FAR_STEP_B\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"FAR_MID\",\"source_reached\":false}],\"children\":[],\"truncated\":true}],\"truncated\":false}]",
+      "NEAR_FINISH": "[{\"milestone_id\":\"NEAR_AFTER_GATE\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"NEAR_GATE\",\"kind\":\"gate\",\"status\":null,\"source_milestone_id\":\"NEAR_GATE_SOURCE\",\"source_reached\":false}],\"children\":[{\"milestone_id\":\"NEAR_GATE_SOURCE\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"NEAR_STEP\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"NEAR_READY\",\"source_reached\":false}],\"children\":[],\"truncated\":true}],\"truncated\":false}]"
+    }
+  },
+  "REC-003": {
+    "schema_version": "Perttool.NextResult.v2",
+    "groups": {
+      "active": [],
+      "ready": [
+        "UNLOCK_ONE",
+        "UNLOCK_TWO"
+      ],
+      "runnable_now": [
+        "UNLOCK_ONE",
+        "UNLOCK_TWO"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "ONE_A",
+        "TWO_A",
+        "TWO_B",
+        "ONE_FINISH",
+        "TWO_FINISH"
+      ]
+    },
+    "tasks": [
+      {
+        "id": "UNLOCK_ONE",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "UNLOCK_TWO",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "ONE_A",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "TWO_A",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "TWO_B",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "ONE_FINISH",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "TWO_FINISH",
+        "status": "planned",
+        "classification": "upcoming",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      }
+    ],
+    "task_facts": [
+      {
+        "id": "UNLOCK_ONE",
+        "expected": "1/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": []
+      },
+      {
+        "id": "UNLOCK_TWO",
+        "expected": "1/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": []
+      }
+    ],
+    "resource_rejections": {},
+    "upcoming_explanations": {
+      "ONE_A": "[{\"milestone_id\":\"ONE_READY\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"UNLOCK_ONE\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"NOW\",\"source_reached\":true}],\"children\":[],\"truncated\":false}]",
+      "TWO_A": "[{\"milestone_id\":\"TWO_READY\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"UNLOCK_TWO\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"NOW\",\"source_reached\":true}],\"children\":[],\"truncated\":false}]",
+      "TWO_B": "[{\"milestone_id\":\"TWO_READY\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"UNLOCK_TWO\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"NOW\",\"source_reached\":true}],\"children\":[],\"truncated\":false}]",
+      "ONE_FINISH": "[{\"milestone_id\":\"ONE_DONE\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"ONE_A\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"ONE_READY\",\"source_reached\":false}],\"children\":[{\"milestone_id\":\"ONE_READY\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"UNLOCK_ONE\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"NOW\",\"source_reached\":true}],\"children\":[],\"truncated\":false}],\"truncated\":false}]",
+      "TWO_FINISH": "[{\"milestone_id\":\"TWO_JOIN\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"TWO_A_GATE\",\"kind\":\"gate\",\"status\":null,\"source_milestone_id\":\"TWO_A_DONE\",\"source_reached\":false},{\"edge_id\":\"TWO_B_GATE\",\"kind\":\"gate\",\"status\":null,\"source_milestone_id\":\"TWO_B_DONE\",\"source_reached\":false}],\"children\":[{\"milestone_id\":\"TWO_A_DONE\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"TWO_A\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"TWO_READY\",\"source_reached\":false}],\"children\":[],\"truncated\":true},{\"milestone_id\":\"TWO_B_DONE\",\"reached\":false,\"unsatisfied_edges\":[{\"edge_id\":\"TWO_B\",\"kind\":\"task\",\"status\":\"planned\",\"source_milestone_id\":\"TWO_READY\",\"source_reached\":false}],\"children\":[],\"truncated\":true}],\"truncated\":false}]"
+    }
+  },
+  "REC-004": {
+    "schema_version": "Perttool.NextResult.v2",
+    "groups": {
+      "active": [],
+      "ready": [
+        "PARALLEL_A",
+        "PARALLEL_B"
+      ],
+      "runnable_now": [
+        "PARALLEL_A",
+        "PARALLEL_B"
+      ],
+      "blocked_now": [],
+      "upcoming": []
+    },
+    "tasks": [
+      {
+        "id": "PARALLEL_A",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "PARALLEL_B",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 0,
+        "blocked_reason": null
+      }
+    ],
+    "task_facts": [
+      {
+        "id": "PARALLEL_A",
+        "expected": "2/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": [
+          {
+            "resource_id": "DEV",
+            "units": 1
+          }
+        ]
+      },
+      {
+        "id": "PARALLEL_B",
+        "expected": "2/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": [
+          {
+            "resource_id": "DEV",
+            "units": 1
+          }
+        ]
+      }
+    ],
+    "resource_rejections": {},
+    "upcoming_explanations": {}
+  },
+  "REC-005": {
+    "schema_version": "Perttool.NextResult.v2",
+    "groups": {
+      "active": [],
+      "ready": [
+        "ENV_HIGH",
+        "ENV_LOW"
+      ],
+      "runnable_now": [
+        "ENV_HIGH"
+      ],
+      "blocked_now": [],
+      "upcoming": []
+    },
+    "tasks": [
+      {
+        "id": "ENV_HIGH",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 20,
+        "blocked_reason": null
+      },
+      {
+        "id": "ENV_LOW",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": false,
+        "priority": 10,
+        "blocked_reason": null
+      }
+    ],
+    "task_facts": [
+      {
+        "id": "ENV_HIGH",
+        "expected": "2/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": [
+          {
+            "resource_id": "ENV",
+            "units": 1
+          }
+        ]
+      },
+      {
+        "id": "ENV_LOW",
+        "expected": "2/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": [
+          {
+            "resource_id": "ENV",
+            "units": 1
+          }
+        ]
+      }
+    ],
+    "resource_rejections": {
+      "ENV_LOW": [
+        {
+          "resource_id": "ENV",
+          "capacity": 1,
+          "active_usage": 0,
+          "earlier_selected_usage": 1,
+          "used_before_decision": 1,
+          "required": 1,
+          "available": 0,
+          "deficit": 1,
+          "active_task_ids": [],
+          "earlier_selected_task_ids": [
+            "ENV_HIGH"
+          ]
+        }
+      ]
+    },
+    "upcoming_explanations": {}
+  },
+  "REC-006": {
+    "schema_version": "Perttool.NextResult.v2",
+    "groups": {
+      "active": [
+        "ACTIVE_TEST"
+      ],
+      "ready": [
+        "FRONTIER_TEST",
+        "SIDE_DOCS"
+      ],
+      "runnable_now": [
+        "SIDE_DOCS"
+      ],
+      "blocked_now": [],
+      "upcoming": []
+    },
+    "tasks": [
+      {
+        "id": "FRONTIER_TEST",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "ACTIVE_TEST",
+        "status": "active",
+        "classification": "active",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": null
+      },
+      {
+        "id": "SIDE_DOCS",
+        "status": "planned",
+        "classification": "ready",
+        "runnable_now": true,
+        "priority": 0,
+        "blocked_reason": null
+      }
+    ],
+    "task_facts": [
+      {
+        "id": "FRONTIER_TEST",
+        "expected": "2/1point",
+        "total_float": "0/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": true,
+        "schedule_critical": true,
+        "requirements": [
+          {
+            "resource_id": "ENV",
+            "units": 1
+          }
+        ]
+      },
+      {
+        "id": "ACTIVE_TEST",
+        "expected": "1/1point",
+        "total_float": "1/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": false,
+        "schedule_critical": true,
+        "requirements": [
+          {
+            "resource_id": "ENV",
+            "units": 1
+          }
+        ]
+      },
+      {
+        "id": "SIDE_DOCS",
+        "expected": "1/1point",
+        "total_float": "1/1point",
+        "earliest_start": "0/1point",
+        "precedence_critical": false,
+        "schedule_critical": false,
+        "requirements": []
+      }
+    ],
+    "resource_rejections": {
+      "FRONTIER_TEST": [
+        {
+          "resource_id": "ENV",
+          "capacity": 1,
+          "active_usage": 1,
+          "earlier_selected_usage": 0,
+          "used_before_decision": 1,
+          "required": 1,
+          "available": 0,
+          "deficit": 1,
+          "active_task_ids": [
+            "ACTIVE_TEST"
+          ],
+          "earlier_selected_task_ids": []
+        }
+      ]
+    },
+    "upcoming_explanations": {}
+  },
+  "REC-007": {
+    "schema_version": "Perttool.NextResult.v2",
+    "groups": {
+      "active": [],
+      "ready": [],
+      "runnable_now": [],
+      "blocked_now": [
+        "TASK_BLOCKED"
+      ],
+      "upcoming": []
+    },
+    "tasks": [
+      {
+        "id": "TASK_BLOCKED",
+        "status": "blocked",
+        "classification": "blocked_now",
+        "runnable_now": false,
+        "priority": 0,
+        "blocked_reason": "external approval"
+      }
+    ],
+    "task_facts": [],
+    "resource_rejections": {},
+    "upcoming_explanations": {}
+  }
+}

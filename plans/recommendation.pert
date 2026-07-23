@@ -4,12 +4,13 @@ project RECOMMENDATION_IMPLEMENTATION:
   description |
     docs/process/recommendation-migration.mdのMIG-01からMIG-07を、
     MVP受け入れ条件16のread-only recommendationとnormal authority adoptionまで実装する。
-    Pointはこのroadmap再構成時の相対見積りであり、TypeScript Core/CLI実装に最も近い
-    operations.pertの実測Velocity 24p/1dを初期値として暫定利用する。
+    Pointはこのroadmap再構成時の相対見積りである。2026-07-23に
+    FIXTURE_BASELINE 2pを1 active dayで完了した初回標本から、
+    recommendation固有の暫定実測Velocityを2p/1dへcalibrationした。
     MIG-08のoverride applyとdurable auditはMVP後の独立work packageとする。
-  as_of 2026-07-22
+  as_of 2026-07-23
   duration_unit point
-  velocity 24p/1d
+  velocity 2p/1d
   finish RECOMMENDATION_MVP_READY
 
 resource DEVELOPERS:
@@ -52,6 +53,7 @@ task FIXTURE_BASELINE NOW -> FIXTURE_BASELINE_READY:
   title "規範caseとv2互換baselineをfixture化する"
   description "REC-001からREC-011をtest/fixtures/recommendationとgoldenへ固定し、public schemaは変更しない"
   duration 2p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

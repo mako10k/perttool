@@ -1,0 +1,52 @@
+project REC_006_ACTIVE_RESOURCE_EMPTY:
+  version 1
+  title "Active allocation leaves the recommendation set empty"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+resource ENV:
+  title "Exclusive environment"
+  capacity 1
+
+milestone NOW:
+  title "Current frontier"
+  state reached
+
+milestone ACTIVE_DONE:
+  title "Active test complete"
+
+milestone FRONTIER_DONE:
+  title "Frontier test complete"
+
+milestone DOCS_DONE:
+  title "Side documentation complete"
+
+milestone FINISH:
+  title "Project complete"
+
+task ACTIVE_TEST NOW -> ACTIVE_DONE:
+  title "Currently active environment test"
+  duration 1p
+  status active
+  requires:
+    ENV 1
+
+task FRONTIER_TEST NOW -> FRONTIER_DONE:
+  title "Critical frontier test"
+  duration 2p
+  requires:
+    ENV 1
+
+task SIDE_DOCS NOW -> DOCS_DONE:
+  title "Non-critical side documentation"
+  duration 1p
+
+gate ACTIVE_GATE ACTIVE_DONE -> FINISH:
+  reason "Active test is required"
+
+gate FRONTIER_GATE FRONTIER_DONE -> FINISH:
+  reason "Frontier test is required"
+
+gate DOCS_GATE DOCS_DONE -> FINISH:
+  reason "Side documentation remains in the plan"

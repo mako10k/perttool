@@ -1,0 +1,65 @@
+project REC_003_SUCCESSOR_UNLOCK:
+  version 1
+  title "Successor unlock count breaks a ranking tie"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+milestone NOW:
+  title "Current frontier"
+  state reached
+
+milestone TWO_READY:
+  title "Two successors ready"
+
+milestone TWO_A_DONE:
+  title "First successor complete"
+
+milestone TWO_B_DONE:
+  title "Second successor complete"
+
+milestone TWO_JOIN:
+  title "Two-successor branch joined"
+
+milestone ONE_READY:
+  title "One successor ready"
+
+milestone ONE_DONE:
+  title "Single successor complete"
+
+milestone FINISH:
+  title "Project complete"
+
+task UNLOCK_TWO NOW -> TWO_READY:
+  title "Unlock two successors"
+  duration 1p
+
+task TWO_A TWO_READY -> TWO_A_DONE:
+  title "First unlocked successor"
+  duration 1p
+
+task TWO_B TWO_READY -> TWO_B_DONE:
+  title "Second unlocked successor"
+  duration 1p
+
+gate TWO_A_GATE TWO_A_DONE -> TWO_JOIN:
+  reason "First successor is required"
+
+gate TWO_B_GATE TWO_B_DONE -> TWO_JOIN:
+  reason "Second successor is required"
+
+task TWO_FINISH TWO_JOIN -> FINISH:
+  title "Finish the two-successor branch"
+  duration 1p
+
+task UNLOCK_ONE NOW -> ONE_READY:
+  title "Unlock one successor"
+  duration 1p
+
+task ONE_A ONE_READY -> ONE_DONE:
+  title "Single unlocked successor"
+  duration 1p
+
+task ONE_FINISH ONE_DONE -> FINISH:
+  title "Finish the one-successor branch"
+  duration 1p

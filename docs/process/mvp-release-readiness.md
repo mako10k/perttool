@@ -1,7 +1,8 @@
 # MVP release readiness監査
 
-- 文書状態: Not Ready 1.0
+- 文書状態: Not Ready 1.1
 - 監査日: 2026-07-22
+- 更新日: 2026-07-23
 - 対象: [MVP受け入れ条件](../requirements.md#21-mvp-受け入れ条件)
 - Macro plan: [../../plans/mvp.pert](../../plans/mvp.pert)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
@@ -28,7 +29,9 @@
 
 ## 3. 工程是正
 
-[Recommendation実装plan](../../plans/recommendation.pert)へMIG-01からMIG-07を22pとして分解する。初期Velocityは、同じTypeScript Core/CLI実装に最も近い`operations.pert`の暫定実測`24p/1d`を使用する。Detail resource makespan 22pをmacroへ`0.916667d`としてroll-upし、`RECOMMENDATION_IMPLEMENTATION`を`RELEASE_READY`へ入るhard predecessorとして追加する。
+監査時に[Recommendation実装plan](../../plans/recommendation.pert)へMIG-01からMIG-07を22pとして分解した。初期Velocityは、同じTypeScript Core/CLI実装に最も近い`operations.pert`の暫定実測`24p/1d`を使用した。Detail resource makespan 22pをmacroへ`0.916667d`としてroll-upし、`RECOMMENDATION_IMPLEMENTATION`を`RELEASE_READY`へ入るhard predecessorとして追加した。
+
+2026-07-23にMIG-01 fixture baseline 2pを完了した。Recommendation固有の初回実測を`2p/1d`とし、残るresource 20pのforecast 10dをmacroへ再roll-upした。次のdetail taskは`RANKING_CORE`であり、condition 16と`RELEASE_E2E`は引き続き未完了である。
 
 MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではない。Read-only override validationであるMIG-05までをMVPへ含め、write authorityはMVP後も未解禁とする。
 

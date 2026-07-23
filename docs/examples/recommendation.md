@@ -1,6 +1,6 @@
 # Recommendation規範例
 
-- 文書状態: Normative 1.0
+- 文書状態: Normative 1.1
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - Recommendation semantics: [../specs/recommendation.md](../specs/recommendation.md)
@@ -98,8 +98,8 @@ primary_higher_priority_task_id(OPTIONAL_POLISH) = CRITICAL_FIX
 | New ready task count | 1 | 1 |
 | New satisfied gate count | 0 | 0 |
 | New reached milestone count | 1 | 1 |
-| Next gate task distance | 0 | 2 |
-| Finish task distance | 1 | 3 |
+| Next gate task distance | 1 | 2 |
+| Finish task distance | 2 | 3 |
 
 両taskは同じhorizonへ属する。Resource capacity 1で両方が同じresourceを1 unit要求するものとする。
 
@@ -127,7 +127,7 @@ decisive_rule_id = shorter_next_gate_distance
 contributing_rule_ids = [shorter_finish_distance]
 ```
 
-`shorter_finish_distance`はdecisive ruleより後にwinnerを補強するが、決定ruleへ昇格させない。Task titleやgate reasonの自然言語をgate近傍factとして使用しない。
+`shorter_finish_distance`はdecisive ruleより後にwinnerを補強するが、決定ruleへ昇格させない。両taskのdestinationから少なくとも1件のunfinished taskを経てgateへ到達するため、completion counterfactualのnew satisfied gate countは0のままtieになる。Task titleやgate reasonの自然言語をgate近傍factとして使用しない。
 
 ### REC-003 後続解放数が最初の差ならdecisiveになる
 
@@ -469,6 +469,8 @@ MIG-08のoverride apply/audit gateを満たすまではtrailerを実commitへ適
 | OVR-005 | future version only | feasible replacement | no | normal/override trace分離 | discouraged acknowledgement |
 
 実装時にfixtureを統合してもよいが、上表の観測点を失ってはならない。特にREC-006とREC-007を同じempty resultとして潰さず、「ready taskはあるがactive allocationで`R`がempty」と「ready task自体が0件」を別々に検査する。
+
+MIG-01の実体は`test/fixtures/recommendation/`のREC-001からREC-007 `.pert`、REC-008からREC-011 unit inputを含む`cases.json`、および`test/golden/recommendation/v2-projection.expected.json`である。Fixture baselineは将来の期待判断と現行`NextResult.v2` projectionを分離し、v3 publication前にpublic schemaやtextを変更しない。
 
 ## 7. Acceptance
 
