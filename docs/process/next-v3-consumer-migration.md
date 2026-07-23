@@ -3,6 +3,7 @@
 - 対象: `Perttool.NextResult.v2`を読むCLI／library consumer
 - 移行先: `Perttool.NextResult.v3`
 - 公開日: 2026-07-23
+- Normal authority採用日: 2026-07-23
 - 規範仕様: [Recommendation Interface Contract](../specs/recommendation-interface.md)
 
 ## 1. Breaking change
@@ -41,13 +42,19 @@ if (
   recommendation.reason_taxonomy_version !== "1.0" ||
   recommendation.explanation_model_version !== 1 ||
   recommendation.expression_version !== 1 ||
-  recommendation.description_registry_version !== 1
+  recommendation.description_registry_version !== 1 ||
+  recommendation.description_locale !== "en"
 ) {
   throw new Error("unsupported decisive recommendation semantics");
 }
 if (
   recommendation.explanation_status.complete !== true ||
-  recommendation.explanation_status.truncated !== false
+  recommendation.explanation_status.decisive_chain_complete !== true ||
+  recommendation.explanation_status.truncated !== false ||
+  Object.values(
+    recommendation.explanation_status.omitted_counts,
+  ).some((count) => count !== 0) ||
+  result.diagnostics.some(({ code }) => code.startsWith("PTREC-"))
 ) {
   throw new Error("incomplete recommendation graph");
 }
@@ -57,7 +64,7 @@ Unknown tier、decisive rule、reason code、expression nodeまたはmodel versi
 
 ## 3. 推奨taskを読む
 
-`recommended_task_ids`は現在cycleで同時開始できる集合である。配列順を実行順とみなさない。1 taskを開始したらproject stateを更新し、同じresultを再利用せず`dag next`を再実行する。
+`recommended_task_ids`は現在cycleで同時開始できる集合である。配列順を実行順とみなさない。Normal authorityではrecommended taskの1件以上のsubset、またはrecommended set全件を維持してresource-feasibleな`allowed` taskを1件だけ追加した集合を選べる。Allowed taskでrecommended taskを置き換える選択と、`deferred`または`discouraged`の選択はnormal authority外である。1 taskを開始したらproject stateを更新し、同じresultを再利用せず`dag next`を再実行する。
 
 Ready taskが0件でも`recommendation`、result decision、joint feasibility factは存在する。`recommended_task_ids=[]`は正常resultであり、errorではない。Ready taskが存在してもactive allocationによりrecommended setがemptyになる場合がある。
 
@@ -105,6 +112,8 @@ perttool dag next PLAN.pert --format json
 ```
 
 Recommendation invariant failureは成功したv3を返さず、`PTREC-301`から`PTREC-303`とexit `70`になる。Ready task 0件やempty recommended setとは区別する。
+
+Perttool自身のAI開発では、5 plan shadowとMIG-07 dry-runの受け入れ後、knownかつcompleteな本JSONをnormal task selection authorityとして採用した。Macro planのrecommendationでworkstreamを選んでから対応detail planを再解析し、異なるdetail planを直接比較しない。Unknownまたはincompleteなcontractではtask IDを返さず停止する。Human override apply/auditは別gateであり、read-only artifactだけから実行済みとみなさない。
 
 ## 6. Library consumer
 

@@ -1,0 +1,123 @@
+{
+  "normal_authority": {
+    "automatic_recommended": {
+      "status": "authorized",
+      "reason": "recommended_subset",
+      "selected_task_ids": [
+        "CRITICAL_FIX"
+      ]
+    },
+    "recommended_subset": {
+      "status": "authorized",
+      "reason": "recommended_subset",
+      "selected_task_ids": [
+        "PARALLEL_A"
+      ]
+    },
+    "recommended_plus_allowed": {
+      "status": "authorized",
+      "reason": "recommended_set_plus_one_allowed",
+      "selected_task_ids": [
+        "CRITICAL_FIX",
+        "OPTIONAL_POLISH"
+      ]
+    },
+    "allowed_replacement": {
+      "status": "safe_stop",
+      "reason": "override_required",
+      "selected_task_ids": []
+    },
+    "deferred_selection": {
+      "status": "safe_stop",
+      "reason": "override_required",
+      "selected_task_ids": []
+    },
+    "empty_recommendation": {
+      "status": "no_start",
+      "reason": "empty_selection",
+      "selected_task_ids": []
+    }
+  },
+  "safe_stop": {
+    "schema_version": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "recommendation_interface_version": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "algorithm_id": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "algorithm_version": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "reason_taxonomy_version": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "explanation_model_version": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "expression_version": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "description_registry_version": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "description_locale": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "incomplete": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "truncated": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "unknown_tier": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "unknown_decisive_rule": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "unknown_decisive_reason": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "unknown_expression_node": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    },
+    "ptrec_diagnostic": {
+      "status": "safe_stop",
+      "reason": "unknown_or_incomplete_contract",
+      "selected_task_ids": []
+    }
+  }
+}

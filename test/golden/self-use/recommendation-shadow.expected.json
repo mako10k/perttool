@@ -91,78 +91,57 @@
       ]
     },
     "recommendation": {
-      "source_digest": "sha256:bf9622a81219e4dceca2279305ed015da964680c6856d0e081f566224f679ac2",
+      "source_digest": "sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464",
       "groups": {
         "active": [],
-        "ready": [
-          "AUTHORITY_ADOPTION"
-        ],
-        "runnable_now": [
-          "AUTHORITY_ADOPTION"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": []
       },
-      "recommended_task_ids": [
-        "AUTHORITY_ADOPTION"
-      ],
-      "manual_selected_task_ids": [
-        "AUTHORITY_ADOPTION"
-      ],
-      "tiers": {
-        "AUTHORITY_ADOPTION": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "AUTHORITY_ADOPTION",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": [
         "PTDAG-208"
       ]
     },
     "mvp": {
-      "source_digest": "sha256:5006bf9b863538ec8404665c9150b8c40a048ddb1a4008591276117424c7cf21",
+      "source_digest": "sha256:741c027228dd13cfdf6bcdb6a4e0c0f6523848aba6f1c4f6e4d1f762433533bf",
       "groups": {
         "active": [],
         "ready": [
-          "RECOMMENDATION_IMPLEMENTATION"
+          "RELEASE_E2E"
         ],
         "runnable_now": [
-          "RECOMMENDATION_IMPLEMENTATION"
+          "RELEASE_E2E"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "RELEASE_E2E"
-        ]
+        "upcoming": []
       },
       "recommended_task_ids": [
-        "RECOMMENDATION_IMPLEMENTATION"
+        "RELEASE_E2E"
       ],
       "manual_selected_task_ids": [
-        "RECOMMENDATION_IMPLEMENTATION"
+        "RELEASE_E2E"
       ],
       "tiers": {
-        "RECOMMENDATION_IMPLEMENTATION": "recommended"
+        "RELEASE_E2E": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RECOMMENDATION_IMPLEMENTATION",
+          "id": "RELEASE_E2E",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

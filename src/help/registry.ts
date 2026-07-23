@@ -464,6 +464,11 @@ const nodes: readonly HelpNode[] = [
         body: "--format jsonはcompleteなPerttool.NextResult.v3説明graphを返します。Consumerはschema_versionと各model versionを先に検査し、未知のdecisive semanticsではtaskを自動開始しません。Textはcomplete=falseのsummaryです。",
       },
       {
+        id: "authority-adoption",
+        title: "AI task selection authority",
+        body: "AIは--format jsonのknown Perttool.NextResult.v3、recommendation interface 1、ranking algorithm 1、reason taxonomy 1.0、explanation/expression/description model 1、locale en、completeかつnot-truncatedなtraceだけをnormal start authorityとして使用します。Macroのrecommended work packageを選んでから対応detailを再解析し、recommended subset、またはrecommended set全件にallowedを1件だけ追加した集合を選びます。Unknown version、incomplete trace、PTREC diagnostic、deferred/discouraged selectionでは開始せず停止します。Task stateまたはcapacity変更後は再解析します。",
+      },
+      {
         id: "selection",
         title: "Resource selection",
         body: "runnable_nowは既存scheduler順で選ぶoperational subset、recommendationはversion付きranking policyで選ぶauthorityであり、同じ集合とは限りません。CLI rendererはrankingを再実装しません。",

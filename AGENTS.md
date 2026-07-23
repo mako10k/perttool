@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v3、read-only `validateOverride`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Release readiness監査でMVP受け入れ条件16のrecommendationが未実装と確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3のpreview-first advance自己利用で管理中である。MIG-01からMIG-06のうちfixture、ranking/tier、structured explanation/invariant、`NextResult.v3` atomic publication、read-only override validation、5 plan self-use shadow評価は完了した。Shadowは受け入れ済みだが、MIG-07を完了するまでV3をAI task selection authorityへ昇格せず、manual selectionを維持する。次の詳細criticalかつrecommended taskは`AUTHORITY_ADOPTION`である。`RELEASE_E2E`はrecommendation受け入れ後までupcomingとして完了扱いにしない。
+perttoolは現在、TypeScript CLIのMVP release受け入れ段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v3、read-only `validateOverride`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Recommendation MIG-01からMIG-07は完了し、5 plan shadow、unknown-version safe stop dry-run、共有指示同期を経て、completeかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。Macro `plans/mvp.pert`を含む5計画はStage 3のpreview-first advance自己利用で管理中で、次の唯一のcriticalかつrecommended work packageは`RELEASE_E2E`である。MVP受け入れ再監査、同一artifactのGitHub/npm配布、registry installを完了するまでrelease済みと扱わない。Human overrideのapply、durable audit、Git integrationはMIG-08まで未解禁である。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -38,14 +38,13 @@ perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
 - `src/analysis/`: exact Rationalを使うresidual graph、precedence CPM、resource schedule実装。
-- `src/recommendation/`: actual ready taskからcandidate fact、complete order、selection horizon、joint-feasible recommended set、tier、typed explanation graph、PTREC invariantを導出する非公開pure Core。
+- `src/recommendation/`: actual ready taskからcandidate fact、complete order、selection horizon、joint-feasible recommended set、tier、typed explanation graph、PTREC invariant、JSON projection、read-only override validationとcanonical artifactを導出するpure Core。
 - `src/conversion/`: Mermaid profile/plain export/import、semantic metadata、projection生成、fail-closed復元。
 - `src/editing/`: formatterとmutationが共有するdeterministic unified diff。
 - `src/formatter/`: source-preserving formatter Core。
 - `src/io/`: raw-byte document read、digest、symlink/race拒否、atomic safe-write adapter。
 - `src/mutation/`: task/milestone/resourceとatomic batchのrequest、canonical advance、source-preserving UTF-16 TextEdit生成、適用規則。
 - `src/application/`: check/analyze/nextと、再検査済みmutation resultを返すpure service。
-- `src/recommendation/`: ranking、structured explanation、invariant、JSON projection、read-only override validationとcanonical artifact実装。
 - `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation/conversion/write-safety unit test、CLI integration/E2E test。
 - `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
 
@@ -61,7 +60,9 @@ perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`
 4. acceptance criteriaと明示的なnon-goal
 5. 実行する検証と予定する外部side effect
 
-利用者が「次のタスク」を求めた場合は、まず`docs/requirements.md`の推奨仕様作業、未解決事項、現在のGit状態から候補を提示する。自己利用Stage 1以降は、`mvp.pert`でmacro milestoneとcritical pathを確認してworkstreamを選び、対応する詳細planで設計・実装taskを確認する。Macroと対象詳細planの`check`、`analyze`、`next`結果を候補選択の前提にし、異なる詳細planのtaskをmacro判断なしに直接比較しない。単に編集しやすい項目をcritical-path作業の代わりに選ばない。
+利用者が「次のタスク」を求めた場合は、まず`docs/requirements.md`の推奨仕様作業、未解決事項、現在のGit状態から候補を提示する。自己利用Stage 1以降は、`mvp.pert`でmacro recommendationからworkstreamを選び、対応する詳細planを再解析してdetail recommendationからtaskを選ぶ。Macroと対象詳細planの`check`、`analyze`、`next --format json`結果を候補選択の前提にし、異なる詳細planのtaskをmacro判断なしに直接比較しない。
+
+Normal task selectionでは、known `Perttool.NextResult.v3`、recommendation interface 1、ranking algorithm 1、reason taxonomy 1.0、explanation/expression/description model 1、locale `en`、completeかつnot-truncatedなtraceだけをauthorityとして使用する。Recommended taskのsubset、またはrecommended set全件を維持してresource-feasibleな`allowed` taskを1件だけ追加した集合を選べる。Unknown version、incomplete trace、`PTREC-*`、`deferred`/`discouraged` selectionでは開始せず、安全に停止する。Task start、completion、block、capacity変更後は同じresultを再利用せず再解析する。Human overrideを必要とする選択はMIG-08まで適用せず、normal recommendationとの差と未解禁のaudit/apply境界を報告する。
 
 正しさに影響する変更は、原則としてrequirements/specification、design、implementation、verificationの順に進める。実装中に仕様の穴を発見した場合は、推測をcodeだけへ固定せず、対応する正本を先に、または同じchangeで更新する。
 

@@ -129,6 +129,8 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`OVERRIDE_VALIDATION`を完了した。Pure `validateOverride`、public request/result型、snake_case projection、canonical artifactを実装し、OVR-001からOVR-004およびOVR-006のallowed/deferred replacement、normal-authority selection、stale/eligibility/resource failure、caller-asserted actor、explicit UTC time、evidence canonicalization、capacity override binding、normal trace reference、SHA-256 identityを専用testとpackage-installed APIへ固定した。OVR-005のdiscouraged fixtureはconcrete negative factを導入する将来versionまで予約のままである。Functionはsource resultとrequestだけを読み、task state、file、Git、networkを変更しない。`plans/recommendation.pert`はpreview source digest `sha256:f7b46fca9c5ce53f8cea57c2a12ecd38dcca33c542865fdb72dfac74da573507`を確認してexpected digest付き`task finish --write`を行い、finish直後のdigestは`sha256:2e1a1d0412230d60a805e17ee3f30a1308460142c0d1244d953c6e3ec1f53038`、Velocity反映後は`sha256:bf9622a81219e4dceca2279305ed015da964680c6856d0e081f566224f679ac2`となった。完了3pを同日の標本へ加えてVelocityを`20p/1d`へcalibrationし、残るprecedence/resource 2p、resource delay 0p、resource forecast`1/10d`となった。Macroへ`0.1d`をroll-upし、digestは`sha256:5006bf9b863538ec8404665c9150b8c40a048ddb1a4008591276117424c7cf21`、残存precedence/resource makespanは`2.1d`となった。Detailでは`AUTHORITY_ADOPTION`が唯一のready、recommended、critical taskである。Override apply、audit write、Git operationはMIG-08まで未解禁である。
 
+続いて`AUTHORITY_ADOPTION`を完了した。`AGENTS.md`、Copilot指示、AI開発ガイド、consumer guide、helpへmacroからdetailのnormal selection ruleを同期し、recommended subset、recommended set全件とallowed 1件の追加、allowed replacement、deferred selection、empty recommendationをdry-runへ固定した。Schema、interface、algorithm、taxonomy、explanation、expression、description、locale、completeness、tier、decisive rule/reason/expression、`PTREC-*`の16境界では選択taskなしのsafe stopになる。`plans/recommendation.pert`はpreview source digest `sha256:bf9622a81219e4dceca2279305ed015da964680c6856d0e081f566224f679ac2`からexpected digest付き`task finish --write`を行い、finish直後は`sha256:bfe6fecde02b11cb14d451388c7bf234ee91029fef8e78a7d0a2caed592abdf3`、Velocity反映後は`sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464`となった。完了2pを同日の標本へ加えてVelocityを`22p/1d`へcalibrationし、detail残作業は0pとなった。Macro `RECOMMENDATION_IMPLEMENTATION`もsource digest `sha256:5006bf9b863538ec8404665c9150b8c40a048ddb1a4008591276117424c7cf21`からexpected digest付きで完了し、finish直後は`sha256:a3056f2c72554b2835acc6b48ec8db3a795c35a635f3af851e4262ab331ae075`、説明更新後は`sha256:741c027228dd13cfdf6bcdb6a4e0c0f6523848aba6f1c4f6e4d1f762433533bf`となった。`RELEASE_E2E`が唯一のready、`runnable_now`、recommended、precedence/schedule critical work packageで、残るmakespanは2dである。Override apply、audit write、Git operationはMIG-08まで未解禁のままである。
+
 Issue #2はrecommendation publication後のprovider別guideとしてhelp surfaceとreviewerを共有するが、現行macroへwork packageを追加していない。Issue #3もMVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
@@ -149,7 +151,7 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | `grammar.pert` | `FORMATTER_ROUNDTRIP`、`HELP_FIXTURE_SYNC` | 3p | 1d | `3p/1d` | 0p |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
 | `operations.pert` | formatter/mutation preview、safe write、advance | 24p | 1d | `24p/1d` | 0p |
-| `recommendation.pert` | `FIXTURE_BASELINE`、`RANKING_CORE`、`EXPLANATION_CORE`、`NEXT_V3_PUBLICATION`、`SELF_USE_SHADOW`、`OVERRIDE_VALIDATION` | 20p | 1d | `20p/1d` | resource 2p = `1/10d` |
+| `recommendation.pert` | `FIXTURE_BASELINE`、`RANKING_CORE`、`EXPLANATION_CORE`、`NEXT_V3_PUBLICATION`、`SELF_USE_SHADOW`、`OVERRIDE_VALIDATION`、`AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。4標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
@@ -157,7 +159,7 @@ Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 
 
 Operationsはformatter/mutation preview 12p、safe write 6p、advance 6pの同日完了を累計し、実測`24p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系taskを詳細planへ追加して完了実績が生じた時点で独立再calibrationする。Macroはday単位しか持たないため、未完了work packageでは`p/velocity`を6 decimal dayへroundする。現在のdetail残作業とresource delayは0pである。
 
-Recommendation実装は`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2p、`OVERRIDE_VALIDATION` 3pを2026-07-23の同じactive dayで完了したため、累計20p/1 active dayの暫定実測`20p/1d`へ更新した。残るresource makespan 2pのforecastは`1/10d`である。まだ1 active dayだけの標本なので、次の異なるactive dayまたは複数task完了時に再calibrationする。
+Recommendation実装は`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2p、`OVERRIDE_VALIDATION` 3p、`AUTHORITY_ADOPTION` 2pを2026-07-23の同じactive dayで完了したため、累計22p/1 active dayの暫定実測`22p/1d`へ更新した。残るresource makespanは0pである。まだ1 active dayだけの標本なので、次の異なるactive dayまたは複数task完了時に再calibrationする。
 
 Stage 1で許可した操作:
 
@@ -213,7 +215,7 @@ Stage 1で禁止した操作:
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
-- 現在のmacro precedence/schedule CPかつ唯一の`runnable_now`は`RECOMMENDATION_IMPLEMENTATION`、detailでは`AUTHORITY_ADOPTION`が唯一のready、recommended、critical taskである。`RELEASE_E2E`はupcomingで、操作系detailに未完了taskはない
+- 現在のmacro precedence/schedule CPかつ唯一のready、`runnable_now`、recommended taskは`RELEASE_E2E`である。Recommendationと操作系detailに未完了taskはない
 - Issue #2はmacro planへ追加するまで着手順を推測しない
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -375,6 +377,6 @@ Stage 1開始時の証跡:
 - operations calibration gate: 完了9 taskの24p/1 active dayから実測Velocity `24p/1d`、残るprecedence/resource forecast 0と0p resource delayをgoldenへ固定する
 - Mermaid profile contract gate: 全semantic record、canonical JSON、metadata/projection digest、fail-closed import、stable loss code、security境界、規範artifactを仕様/help/testへ固定する
 - release readiness gate: MVP condition 1から16を個別監査し、未実装conditionを既存fieldの再解釈でPassにせず、recommendation detail/macro gateと再開条件へ固定する
-- recommendation override gate: MIG-05完了後は残るprecedence/resource 2p、resource delay 0p、実測forecast `1/10d`、唯一のrecommended `AUTHORITY_ADOPTION`をgoldenへ固定し、MIG-07まではmanual selectionをauthorityとして維持する
+- recommendation authority gate: MIG-07完了後はdetail残作業0p、実測Velocity `22p/1d`、macroの唯一のrecommended `RELEASE_E2E`をgoldenへ固定し、known/complete v3だけをnormal selection authorityとして使用する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、5 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

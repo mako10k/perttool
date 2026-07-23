@@ -1,6 +1,6 @@
 # Recommendation実装・自己利用migration
 
-- 文書状態: Active 1.8
+- 文書状態: MVP adoption complete 1.9
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 基本設計: [../basic-design.md](../basic-design.md)
@@ -38,12 +38,12 @@
 - candidate fact、complete order、selection horizon、recommended set、tier、structured explanation、PTREC invariant、Core/CLI JSON/text/help/package publicationは実装済み
 - self-use shadowは5 planで受け入れ済み
 - read-only override validationと`Perttool.OverrideDecision.v1` artifactはpublic library Coreへ実装済み
-- normal authority adoptionは未実装
+- normal authority adoptionは5 plan shadowとunknown-version safe stop dry-runを経て完了済み
 - override apply、audit integrationは未実装
 - 自己利用はStage 3であり、editing/advance writeはpreview、expected digest、write後再解析を必須とする。Override applyは未実装である
-- AIのtask選択は[AI開発ガイド](ai-development.md)の明示手順をauthorityとする
+- AIのnormal task選択は[AI開発ガイド](ai-development.md)に従いcompleteかつknownなv3 recommendationをauthorityとする
 
-V2由来fieldをrecommendationとして解釈せず、root `recommendation`だけをnormal recommendationの正本とする。Shadowは受け入れ済みだがadoption前なので、現行AI task selectionはmanual processをauthorityとして維持する。
+V2由来fieldをrecommendationとして解釈せず、root `recommendation`だけをnormal recommendationの正本とする。Unknown version、incomplete trace、`PTREC-*`ではtaskを開始せず、human override applyはMIG-08まで未解禁のままとする。
 
 ## 3. Roadmap再構成gate
 
@@ -68,6 +68,8 @@ V2由来fieldをrecommendationとして解釈せず、root `recommendation`だ�
 同日にMIG-06を完了した。5つのself-use planでknown v3 contract、complete graph、byte determinism、ready subset、joint resource feasibility、v2 operational field互換、`PTREC-*`不在を検査した。`SELF_USE_SHADOW`と`OVERRIDE_VALIDATION`の差をprimary comparison、resource witness、canonical descriptionだけから説明できることをgoldenへ固定し、[shadow受け入れ記録](recommendation-shadow-review.md)へ判定を残した。累計17p/1 active dayからVelocityを`17p/1d`へ更新し、残るprecedence 3p、resource 5p、resource delay 2p、resource forecast `5/17d`となった。次のprecedence criticalかつrecommended taskは`OVERRIDE_VALIDATION`で、`AUTHORITY_ADOPTION`は同じready frontierだがreviewer競合によりdeferredである。Shadow受け入れだけではnormal authorityへ昇格しない。
 
 同日にMIG-05を完了した。Pure `validateOverride`、public request/result型、`Perttool.OverrideDecision.v1` JSON projection、canonical artifactを実装し、allowed/deferred replacement、normal-authority selection、stale/eligibility/resource failure、caller-asserted actor、explicit UTC time、evidence canonicalization、capacity override binding、SHA-256 identityをOVR-001からOVR-004およびOVR-006へ固定した。OVR-005のdiscouraged fixtureはconcrete negative factを導入する将来versionまで予約のままである。Package-installed APIからも同じartifactを生成し、file、Git、network writeは追加していない。累計20p/1 active dayからVelocityを`20p/1d`へ更新し、残るprecedence/resource 2p、resource delay 0p、resource forecast `1/10d`となった。次の唯一のcriticalかつrecommended taskは`AUTHORITY_ADOPTION`である。
+
+同日にMIG-07を完了した。`AGENTS.md`、Copilot指示、AI開発ガイド、helpへmacroからdetailのnormal selection ruleを同期し、recommended subset、recommended set全件とallowed 1件の追加、allowed replacement、deferred selection、empty recommendationをdry-runへ固定した。Schema、interface、algorithm、taxonomy、explanation、expression、description、locale、completeness、tier、decisive rule/reason/expression、`PTREC-*`の16境界では選択taskなしのsafe stopになる。全22pを同じactive dayで完了したため暫定実測Velocityを`22p/1d`へ更新し、detail残作業は0pとなった。Normal recommendation authorityは採用済みで、次のmacro recommended work packageは`RELEASE_E2E`である。
 
 MIG-01からMIG-07は、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を共有する。Task別duration、file ownership、acceptance、narrow testは`plans/recommendation.pert`を正とする。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とし、MVP後の独立work packageのままとする。Issue #2もhelp surfaceとreviewerを共有するが、macroへ追加するまでは実装順を推測しない。
 
@@ -193,6 +195,8 @@ AIのnormal selection rule:
 複数planを1つのranking domainへ合成する機能はない。Macro planでworkstreamを選んでからdetail planを評価し、異なるdetail planのtaskを直接比較しない。
 
 MIG-07はnormal selectionだけを対象とする。Human overrideを必要とする選択は、MIG-08を満たすまでperttool自己利用上の適用済みoverrideとみなさず、AIはnormal recommendationと人間の指示の差を明示して停止する。人間の最終決定権は失われないが、未実装のaudit/applyを成功したと表示しない。
+
+2026-07-23にMIG-07を受け入れ、normal selection ruleを共有指示、AI開発ガイド、help、self-use evidenceへ同期した。Unknownまたはincompleteなcontractと`PTREC-*`でtask IDを返さないdry-runを自動testへ固定した。MIG-08のoverride apply/audit境界は変更していない。
 
 ### MIG-08 Override applyとaudit adoption
 

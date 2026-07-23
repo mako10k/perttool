@@ -1,6 +1,6 @@
 # MVP release readiness監査
 
-- 文書状態: Not Ready 1.4
+- 文書状態: Ready for RELEASE_E2E 1.5
 - 監査日: 2026-07-22
 - 更新日: 2026-07-23
 - 対象: [MVP受け入れ条件](../requirements.md#21-mvp-受け入れ条件)
@@ -9,9 +9,9 @@
 
 ## 1. 結論
 
-`RELEASE_E2E`は完了扱いにしない。受け入れ条件1から15には実装・自動検査の証跡があり、条件16のranking/tier、structured explanation/invariant、public v3、5 plan self-use shadow、read-only override validationまでは実装・受け入れ済みだが、normal authority adoptionが未実装である。
+`RELEASE_E2E`の再開条件を満たした。受け入れ条件1から16には実装・自動検査の証跡があり、condition 16のranking/tier、structured explanation/invariant、public v3、5 plan self-use shadow、read-only override validation、normal authority adoption、unknown-version safe stopまで受け入れ済みである。
 
-現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v3`であり、complete recommendation graphと、v2由来の`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を直交するfieldとして返す。V3のshadowは受け入れ済みだが、MIG-07のadoption change前なのでAI task selection authorityにはしない。
+現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v3`であり、complete recommendation graphと、v2由来の`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を直交するfieldとして返す。KnownかつcompleteなV3をnormal AI task selection authorityへ採用した。Macroの次taskは`RELEASE_E2E`だが、同一artifactの配布とregistry検証を終えるまでMVP release完了とはみなさない。
 
 ## 2. 受け入れ証跡
 
@@ -23,9 +23,9 @@
 | 10 | Pass | Mermaid profile/export/import unit、CLI、E2E-012とE2E-014 |
 | 11-12 | Pass | help registry、fixture/help link test |
 | 13-15 | Pass | Core/CLI parity、normative example、Point/velocity analysis test |
-| 16 | Fail | ranking/tier、structured explanation/invariant、`NextResult.v3` publication、5 plan shadow、read-only override validationはPass。normal authority adoptionが未実装 |
+| 16 | Pass | ranking/tier、structured explanation/invariant、`NextResult.v3` publication、5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop |
 
-`npm run check`が成功することはrepository regressionがない証拠であるが、未実装のcondition 16を自動的にPassへ変えない。
+`npm run check`の成功とMIG-07 adoption evidenceを合わせてcondition 16をPassとした。Release artifactの公開とregistry installは別の`RELEASE_E2E`受け入れである。
 
 ## 3. 工程是正
 
@@ -43,6 +43,8 @@
 
 同日にMIG-05 read-only override validation 3pを完了した。Pure `validateOverride`、`PTOVR-101`から`PTOVR-106`、feasible replacement、normal trace reference、caller-asserted actor、canonical evidence、capacity witness、deterministic `Perttool.OverrideDecision.v1` artifact、package-installed APIを検査した。累計実測を`20p/1d`へ更新し、残るresource 2pのforecast `1/10d`をmacroへ`0.1d`として再roll-upした。Detailでは`AUTHORITY_ADOPTION`が唯一のrecommended taskである。Normal authority adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
 
+同日にMIG-07 normal authority adoption 2pを完了した。共有指示、AI開発ガイド、consumer guide、helpへnormal selection ruleを同期し、recommended subset、allowed 1件追加、override-required selection、empty recommendationと16のunknown/incomplete/decisive-semantics境界をdry-runした。全22pの暫定実測を`22p/1d`へ更新し、detail残作業は0pとなった。Macro `RECOMMENDATION_IMPLEMENTATION`も完了し、condition 16をPassへ変更した。`RELEASE_E2E`が唯一のreadyかつrecommended taskで、残るmakespanは2dである。
+
 MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではない。Read-only override validationであるMIG-05までをMVPへ含め、write authorityはMVP後も未解禁とする。
 
 ## 4. `RELEASE_E2E`再開条件
@@ -53,11 +55,13 @@ MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではな�
 - `npm run check`がpackage-installed CLIを含め成功する
 - package smokeがcheck、analyze、next v3、editing preview、advance preview、Mermaid round-tripを隔離prefixで確認する
 
-この条件を満たしてからMVP受け入れ条件1から16を再監査し、`RELEASE_E2E`を完了する。
+2026-07-23のMIG-07 changeでこの条件を満たした。次にMVP受け入れ条件1から16をrelease artifactへ対して再監査し、`RELEASE_E2E`を完了する。
 
 ## 5. npm publication preparation
 
 2026-07-23に利用者の明示overrideでnpm publication preparationだけを前倒しした。この準備は`RELEASE_E2E`のpredecessorを満たさず、task status、recommendation authority、外部publish authorityを変更しない。
+
+その後MIG-07まで完了し、`RELEASE_E2E`がreadyになった時点で、利用者は`secdat exec`配下でのGit pushとnpm publishを明示許可した。Actual publishは[npm publication手順](npm-publication.md)の同一artifact gateを満たしてから一度だけ実行する。
 
 確認・整備済み:
 

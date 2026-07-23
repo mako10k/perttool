@@ -27,7 +27,7 @@
 - `NextResult.v2`からのmigration
 - unknown version、invariant failure、determinismの境界
 
-本仕様は設計契約であり、2026-07-23のMIG-04でCore、CLI JSON/text、help、packageへatomicに実装された。MIG-05のread-only human override validationもpublic library Coreへ実装済みだが、AI task selection authorityへの採用は後続gateであり、v3公開やoverride artifact生成だけで完了したとはみなさない。
+本仕様は設計契約であり、2026-07-23のMIG-04でCore、CLI JSON/text、help、packageへatomicに実装された。MIG-05のread-only human override validation、MIG-06の5 plan shadow、MIG-07のnormal AI task selection authority採用とunknown-version safe stop dry-runも完了した。Human override apply/auditは別gateであり、v3公開やoverride artifact生成だけから解禁しない。
 
 ## 2. 規範上の位置
 

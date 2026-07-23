@@ -1,6 +1,6 @@
 # AI開発ガイド
 
-- 文書状態: Draft 0.4
+- 文書状態: Active 0.5
 - 作成日: 2026-07-21
 - 更新日: 2026-07-23
 - 共有指示: [../../AGENTS.md](../../AGENTS.md)
@@ -103,21 +103,22 @@ npm publishは通常のclose outに含めない。[npm publication手順](npm-pu
 
 実装前は`docs/requirements.md`の推奨仕様作業と未確定事項を使う。「次のタスク」はcurrent checkoutでhard predecessorが閉じていることを確認してから提案する。
 
-`docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本writerとして使用できる。Task selectionは次の順で行う。
+`docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本writerとして使用できる。2026-07-23のMIG-07完了後、task selectionはcompleteかつknownな`Perttool.NextResult.v3`をnormal authorityとして次の順で行う。
 
 1. `mvp.pert`と現在の詳細planを`perttool dsl check`し、計画が有効であることを確認する
-2. `mvp.pert`を`dag analyze`、`dag next`し、macro critical pathとrunnable work packageからworkstreamを選ぶ
-3. 選んだwork packageに対応する詳細planを`dag analyze`、`dag next`し、runnable frontierを取得する
-4. 外部blockと利用可能resourceを確認する
-5. 詳細planのcriticalまたはleast-slack frontierから作業を選ぶ
+2. `mvp.pert`を`dag analyze`、`dag next --format json`し、known version、complete trace、`PTREC-*`不在を確認してmacro recommended work packageからworkstreamを選ぶ
+3. 選んだwork packageに対応する詳細planを`dag analyze`、`dag next --format json`し、同じconsumer gateを確認してdetail recommended taskを選ぶ
+4. Recommended subset、またはrecommended set全件を維持してresource-feasibleな`allowed` taskを1件だけ追加した集合をnormal selectionとする
+5. decisive step、higher-priority task、comparisonをproject factから説明し、外部blockと利用可能resourceを確認する
+6. task start、completion、block、capacity変更後は同じresultを再利用せず、detailと必要なmacroを再解析する
 
-異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIはv3として公開され、self-use shadow gateも受け入れ済みだが、[Recommendation migration](recommendation-migration.md)のadoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
+異なる詳細planのtaskをmacro判断なしに直接比較しない。`groups.ready`、`groups.runnable_now`、text summaryをrecommendationの代用にしない。Unknown schema/model version、incomplete/truncated trace、unknown tier、`PTREC-*`ではtaskを開始せず、安全に停止する。`deferred`または`discouraged`をnormal authorityで開始しない。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)でMVP受け入れ条件16の未実装を確認したため、MIG-01からMIG-07を[Recommendation実装plan](../../plans/recommendation.pert)へ22pで詳細化し、macro release gateへ追加した。2026-07-23にMIG-01からMIG-06のうち累計20pを完了し、recommendation実測`20p/1d`で残るresource 2pを`1/10d`へforecastした。[5 planのshadow評価](recommendation-shadow-review.md)とread-only override validationは完了済みである。Macroの残るprecedence/resource makespanは`2.1d`で、`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつ`runnable_now`なcritical work package、detailでは`AUTHORITY_ADOPTION`が唯一のrecommended task、`RELEASE_E2E`はupcomingである。V3 adoption gateを満たすまでは本節のmanual selectionを維持する。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`、detail残作業は0pで、macroの次の唯一のreadyかつrecommended work packageは`RELEASE_E2E`、残るprecedence/resource makespanは2dである。
 
-### 5.1 Recommendation導入後のtask selection
+### 5.1 採用済みRecommendation authority
 
-`Perttool.NextResult.v3`公開だけでは本節を有効化しない。Self-use shadow gateを満たし、`AGENTS.md`と`.github/copilot-instructions.md`を同じadoption changeで更新した後に、次へ切り替える。
+`Perttool.NextResult.v3`公開だけでは本節を有効化しなかった。Self-use shadow gateを満たし、`AGENTS.md`と`.github/copilot-instructions.md`、help、safe-stop testを同じMIG-07 adoption changeで更新したため、normal task selectionは次をauthorityとする。
 
 1. macro planのcomplete JSON recommendationからwork packageを選ぶ
 2. 選んだwork packageのdetail planを再解析し、そのcomplete JSON recommendationからtaskを選ぶ

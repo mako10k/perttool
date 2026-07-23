@@ -14,6 +14,7 @@
 - exact typed fact、comparison、decision trace、canonical descriptionを持つcomplete recommendation graphとpublic `NextResultV3` Core型
 - 5つのself-use planでv3 contract、byte determinism、operational互換、structured why-notを検査するrecommendation shadow gateとgolden
 - feasible replacement、`PTOVR-101`から`PTOVR-106`、caller-asserted human reason、normal trace reference、deterministic `Perttool.OverrideDecision.v1`を返すread-only `validateOverride` Core
+- completeかつknownな`NextResult.v3`をnormal AI task selection authorityへ採用する共有指示、help、unknown-version safe stop dry-run
 - npm publish normalizationを検査するpackage preflight、同一tarballをfail-closedでpublishするmaintainer script、`alpha` dist-tag固定
 
 ### Changed

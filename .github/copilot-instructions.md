@@ -5,10 +5,10 @@
 Mandatory summary:
 
 - 利用者から指定がない限り、日本語で応答する。
-- 現在はTypeScript CLIのMVP recommendation実装段階である。`dag next`はcomplete recommendation graphを持つ`Perttool.NextResult.v3`を公開し、read-only `validateOverride`と5 planのself-use shadow評価まで完了したが、MIG-07完了まではAI task selection authorityへ昇格せずmanual selectionを維持する。Release readiness監査でMVP受け入れ条件16の未実装を確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3で自己利用中。詳細の次criticalかつrecommended taskは`AUTHORITY_ADOPTION`である。`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつcriticalなmacro work packageで、`RELEASE_E2E`はupcomingである。
+- 現在はTypeScript CLIのMVP release受け入れ段階である。Recommendation MIG-01からMIG-07は完了し、5 plan shadowとunknown-version safe stop dry-runを経たcompleteかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。Macro `plans/mvp.pert`を含む5計画をStage 3で自己利用中で、次の唯一のcriticalかつrecommended work packageは`RELEASE_E2E`である。Human override apply/auditはMIG-08まで未解禁である。
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
-- 「次のタスク」はmacroでworkstreamを選んでから対応する詳細planのcritical pathから提案し、着手しやすさだけで選ばない。
+- 「次のタスク」はknown、complete、not-truncatedな`dag next --format json`をauthorityとし、macroのrecommended work packageからworkstreamを選んでから対応detailを再解析する。Recommended subset、またはrecommended set全件にresource-feasibleなallowed taskを1件だけ追加した集合だけをnormal selectionとする。Unknown version、incomplete trace、`PTREC-*`、deferred/discouragedでは開始せず、task stateやcapacity変更後は再解析する。
 - requirements/specification、design、implementation、verificationのtraceabilityを維持する。
 - task=edge、milestone=node、gate=zero-duration dependency edgeを維持し、resource共有をDAG dependencyへ変換しない。
 - precedence critical pathとresource schedule上のschedule critical pathを区別する。

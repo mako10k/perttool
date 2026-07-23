@@ -95,6 +95,17 @@ test("next help exposes the v3 recommendation authority and consumer safety", ()
   assert.match(body, /schema_version/);
   assert.match(body, /complete=false/);
   assert.match(body, /未知.*自動開始しません/);
+  assert.ok(
+    help.sections.some(
+      ({ title }) => title === "AI task selection authority",
+    ),
+  );
+  assert.match(body, /normal start authority/);
+  assert.match(body, /Macro.*detail/);
+  assert.match(body, /recommended subset/);
+  assert.match(body, /allowedを1件/);
+  assert.match(body, /Unknown version.*PTREC.*停止/);
+  assert.match(body, /Task state.*capacity変更後.*再解析/);
   assert.match(body, /validateOverride/);
   assert.match(body, /Perttool\.OverrideDecision\.v1/);
   assert.match(body, /secret、credential、token/);
