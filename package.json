@@ -18,13 +18,18 @@
     "url": "git+https://github.com/mako10k/perttool.git"
   },
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "alpha"
+  },
   "type": "module",
   "files": [
     "dist",
     "CHANGELOG.md"
   ],
   "bin": {
-    "perttool": "./dist/cli.js"
+    "perttool": "dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

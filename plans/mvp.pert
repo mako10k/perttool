@@ -7,8 +7,9 @@ project PERTTOOL_MVP:
     M1からM4の操作系はplans/operations.pertを正とする。
     操作系detail planは全24p完了時の実測Velocity 24p/1dを使用し、
     resource forecastを6 decimal dayへroundしてmacro work packageへroll-upした。
-    recommendation実装はplans/recommendation.pertを正とし、累計完了標本11p/1dによる
-    残りresource forecast 1dをmacro work packageへroll-upした。Issue #2のAI Agent
+    recommendation実装はplans/recommendation.pertを正とし、累計完了標本15p/1dによる
+    残りresource forecast 7/15dをmacro work packageへroll-upした。npm publication
+    preparationは人間overrideで前倒ししたが、RELEASE_E2Eのstatusは変更しない。Issue #2のAI Agent
     Guidance RegistryとIssue #3のmulti-plan compositionは独立した将来backlogとして扱う。
   as_of 2026-07-23
   duration_unit day
@@ -182,7 +183,8 @@ gate MERMAID_RELEASE_GATE M5_MERMAID_ROUNDTRIP_READY -> RELEASE_READY:
   reason "MVPにはMermaid相互変換完了が必要"
 
 task RELEASE_E2E RELEASE_READY -> M6_MVP_RELEASED:
-  title "MVP E2E、help、配布物を検証する"
+  title "MVP E2Eと同一artifact配布を検証・公開する"
+  description "受け入れ再監査、package smoke、annotated tag、GitHub prerelease asset、npm alpha publish、registry隔離installを同一tarballで検証する。前倒ししたnpm preflightだけでは完了しない"
   duration 2d
   priority 5
   requires:

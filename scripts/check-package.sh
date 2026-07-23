@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+if [[ $# -gt 1 ]]; then
+  printf 'Usage: bash scripts/check-package.sh [/absolute/path/to/perttool-VERSION.tgz]\n' >&2
+  exit 2
+fi
+
 repo_root=$(git rev-parse --show-toplevel)
 cd "$repo_root"
 
@@ -18,15 +23,43 @@ trap 'rm -rf -- "$package_root"' EXIT
 
 package_name=$(node -p 'require("./package.json").name')
 package_version=$(node -p 'require("./package.json").version')
-npm pack --pack-destination "$package_root" --foreground-scripts >"$package_root/pack-output.txt"
-tarball="$package_root/$package_name-$package_version.tgz"
+if [[ $# -eq 1 ]]; then
+  case "$1" in
+    /*) tarball=$1 ;;
+    *)
+      printf 'explicit release tarball must use an absolute path: %s\n' "$1" >&2
+      exit 2
+      ;;
+  esac
+else
+  npm pack --pack-destination "$package_root" --foreground-scripts >"$package_root/pack-output.txt"
+  tarball="$package_root/$package_name-$package_version.tgz"
+fi
 if [[ ! -f "$tarball" ]]; then
-  printf 'release tarball was not created: %s\n' "$tarball" >&2
+  printf 'release tarball does not exist: %s\n' "$tarball" >&2
   exit 1
 fi
 
+bash scripts/publish-npm.sh --dry-run "$tarball"
+
 archive_list="$package_root/archive-list.txt"
 tar -tzf "$tarball" >"$archive_list"
+# shellcheck disable=SC2016 # The JavaScript template literal is not shell syntax.
+packed_identity=$(tar -xOf "$tarball" package/package.json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const manifest = JSON.parse(input);
+      process.stdout.write(`${manifest.name}@${manifest.version}`);
+    });
+  ')
+if [[ "$packed_identity" != "$package_name@$package_version" ]]; then
+  printf 'release tarball identity mismatch: expected %s@%s, got %s\n' \
+    "$package_name" "$package_version" "$packed_identity" >&2
+  exit 1
+fi
 for required in \
   package/package.json \
   package/README.md \

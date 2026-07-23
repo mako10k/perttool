@@ -1,6 +1,6 @@
 # MVP release readiness監査
 
-- 文書状態: Not Ready 1.1
+- 文書状態: Not Ready 1.2
 - 監査日: 2026-07-22
 - 更新日: 2026-07-23
 - 対象: [MVP受け入れ条件](../requirements.md#21-mvp-受け入れ条件)
@@ -50,3 +50,26 @@ MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではな�
 - package smokeがcheck、analyze、next v3、editing preview、advance preview、Mermaid round-tripを隔離prefixで確認する
 
 この条件を満たしてからMVP受け入れ条件1から16を再監査し、`RELEASE_E2E`を完了する。
+
+## 5. npm publication preparation
+
+2026-07-23に利用者の明示overrideでnpm publication preparationだけを前倒しした。この準備は`RELEASE_E2E`のpredecessorを満たさず、task status、recommendation authority、外部publish authorityを変更しない。
+
+確認・整備済み:
+
+- npm registryの`perttool`は確認時点で`E404`
+- maintainerのsecretを`NPM_TOKEN`へ統一し、値を表示せず`npm whoami`成功
+- npm 11のdry-runで`./dist/cli.js`がpublish manifestから除去される問題を再現
+- `bin.perttool`を`dist/cli.js`へcanonical化
+- public npmjs registryと`alpha` dist-tagを`publishConfig`へ固定
+- 同一tarball、clean worktree、local/remote tag、remote main、未公開versionを検査するfail-closed publish script
+- package checkへpublish normalization dry-runを追加
+
+未実施:
+
+- `0.1.0-alpha.2`へのversion更新
+- release commit/tag/push、GitHub prerelease asset作成
+- npm registryへのexternal publish
+- registryからの隔離installとrelease記録
+
+実行順とTOKEN境界は[npm publication手順](npm-publication.md)を正とする。

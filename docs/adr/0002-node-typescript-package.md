@@ -42,6 +42,21 @@ MVPはローカルCLIをprimary interfaceとし、同じCore APIをlibrary、tes
 - package metadataから`private`を外すが、publishは別の明示操作と認証を必要とする
 - stable `v0.1.0`はformatter、mutation、Mermaid、release E2Eを含むMVP gate完了後に判断する
 
+## npm prerelease publication decision
+
+2026-07-23に、残るMVP gate完了後の次期prereleaseをnpm registryへもpublishする方針を採用した。準備を前倒ししても`RELEASE_E2E`やrecommendation taskを完了扱いにはしない。
+
+- 次の候補versionは`0.1.0-alpha.2`とし、現行checkoutを既存GitHub Releaseと同じ`0.1.0-alpha.1`としてpublishしない
+- prereleaseは`alpha` dist-tagを明示し、`latest`を変更しない
+- package check、GitHub Release asset、npm publishへ同一tarballを使用する
+- `package.json`の`publishConfig`でpublic access、npmjs registry、`alpha` tagを固定する
+- npmがpublish時にmanifestを自動補正しないことをdry-runで検査する
+- TOKENはtracked fileやargumentへ置かず、maintainerの`secdat`から`NPM_TOKEN`としてpublish processだけへ注入する
+- actual publishはcleanなrelease commit、同一commitのremote mainとannotated tag、GitHub Release asset、未公開versionを確認した後の明示操作とする
+- stable `latest`の設定とtrusted publishingへの移行は別判断とする
+
+詳細なpreflight、publish、公開後検証は[npm publication手順](../process/npm-publication.md)を正とする。
+
 ## Dependency policy
 
 Runtime dependency追加には次を要求する。

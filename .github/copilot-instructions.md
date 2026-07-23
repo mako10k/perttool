@@ -16,6 +16,7 @@ Mandatory summary:
 - repository checkはNode.js 24以上で`npm ci`、`npm run check`、whitespace checkは`git diff --check`を使用する。
 - staging前にdiffとstatusを確認し、利用者の無関係な変更を含めない。
 - remote writeとGitHub操作には`secdat exec`を使い、破壊的Git操作には明示許可を得る。
+- npm publishは`docs/process/npm-publication.md`のrelease gate、GitHub Releaseとの同一tarball、`alpha` tag、process限定`NPM_TOKEN`注入を守り、actual publish前に利用者の明示許可を得る。
 - sub-agentやparallel agent workは、利用者の明示要求または有効なruntime policy上の明示許可がある場合だけ使用する。
 
 詳細なproject map、domain invariant、validation、Git規則は`AGENTS.md`に従う。

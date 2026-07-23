@@ -48,7 +48,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 
 ## Install
 
-現在はnpm registryへpublishしていません。GitHub Releaseのtarballからuser-owned npm prefixへ導入します。
+現在はnpm registryへpublishしていません。GitHub Releaseのtarballからuser-owned npm prefixへ導入します。次期`0.1.0-alpha.2`を`alpha` dist-tagへpublishするpreflightは整備済みですが、recommendation受け入れと`RELEASE_E2E`が未完了なので外部publishはまだ行いません。Maintainer向けの安全境界は[npm publication手順](docs/process/npm-publication.md)を参照してください。
 
 公開済み`v0.1.0-alpha.1` assetは`NextResult.v3`より前の版である。Current checkoutのv3を検証する場合は後述のlocal linkを使用する。
 
@@ -125,7 +125,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。MIG-01からMIG-04の累計15pを1 active dayで完了し、recommendation固有の暫定実測Velocityを`15p/1d`へ更新しました。残るresource forecastは7p = `7/15d`、macro残存precedence/resource makespanは`2.466667d`です。Macroの唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`、detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`がresource競合でdeferredです。V3はまだshadow評価前なのでAI task selection authorityへ昇格しておらず、`RELEASE_E2E`はupcomingです。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。MIG-01からMIG-04の累計15pを1 active dayで完了し、recommendation固有の暫定実測Velocityを`15p/1d`へ更新しました。残るresource forecastは7p = `7/15d`、macro残存precedence/resource makespanは`2.466667d`です。Macroの唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`、detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`がresource競合でdeferredです。V3はまだshadow評価前なのでAI task selection authorityへ昇格しておらず、`RELEASE_E2E`はupcomingです。人間overrideでnpm publication preflightだけを前倒ししましたが、工程statusと外部publish authorityは変更していません。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
 
 ## Security and license
 

@@ -44,6 +44,7 @@ AGENTS.md                         shared canonical guidance
 ├── package.json                     executable repository check
 │   └── npm run check                typecheck、test、docs
 ├── scripts/check-docs.sh            documentation sub-check
+├── scripts/publish-npm.sh            npm dry-runと明示release tarball publish gate
 └── .github/workflows/ci.yml         same npm check in CI
 ```
 
@@ -95,6 +96,8 @@ git diff --check
 4. 実行したcheckと未実行checkを区別する
 5. remote writeは`secdat exec`経由で行う
 6. push後にlocal branchとremote tracking branchを確認する
+
+npm publishは通常のclose outに含めない。[npm publication手順](npm-publication.md)のrelease gate、同一tarball、remote commit/tag、registry上の未公開versionを確認し、利用者がactual publishを明示許可した場合だけ`secdat`から`NPM_TOKEN`をprocess限定で注入する。曖昧なpublish responseを確認せずretryしない。
 
 ## 5. Next-task selection and self-use
 

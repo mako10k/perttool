@@ -85,7 +85,7 @@ npm run check
 git diff --check
 ```
 
-Narrow checkは`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run check:docs`、`npm run check:link`、`npm run check:package`を使用する。`check:link`は一時user prefixへlinkしてCLIを検査し、実user prefixは変更しない。`check:package`は一時directoryでrelease tarballを作成し、repository-only fileの除外と隔離prefixへのinstallを検査する。`bash scripts/check-docs.sh`はdocumentationだけの下位入口である。
+Narrow checkは`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run check:docs`、`npm run check:link`、`npm run check:package`を使用する。`check:link`は一時user prefixへlinkしてCLIを検査し、実user prefixは変更しない。`check:package`は一時directoryでrelease tarballを作成し、repository-only fileの除外、npm publish normalization dry-run、隔離prefixへのinstallを検査する。`bash scripts/check-docs.sh`はdocumentationだけの下位入口である。
 
 - 文書だけの変更でも、local link、Markdown fence、規範`.pert` sampleのbootstrap検査を実行する。
 - grammar変更ではvalid/invalid example、field table、EBNF、diagnostic、formatter契約を一緒に確認する。
@@ -114,5 +114,6 @@ commit前に意図したdiffをfileまたはhunk単位で確認し、bug、regre
 - 利用者の未commit変更を保持し、今回のscopeに含まれるfileだけを明示的にstageする。
 - commitは1つのcoherent changeにし、簡潔な命令形subjectを使う。
 - remote設定を確認してからpushする。このrepositoryのremote writeは`secdat exec git push ...`、GitHub操作は`secdat exec gh ...`を使う。
+- npm publishは[publication手順](docs/process/npm-publication.md)のrelease gateを満たし、GitHub Releaseと同一の明示tarballを`alpha` tagへ送る。TOKENは`secdat`から`NPM_TOKEN`としてprocess限定で注入し、actual publishには利用者の明示許可を得る。
 - `git reset --hard`、`git clean`、force-push、共有historyのrewriteなどの破壊的操作は、対象と影響を示した明示許可なしに実行しない。
 - secret、credential、local cache、生成reportをcommitしない。

@@ -14,6 +14,8 @@
 
 2026-07-23にRecommendation detailの`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4pを完了し、累計1 active dayからrecommendation固有の暫定実測Velocityを`15p/1d`へ更新した。Detailの残りはprecedence 4p、resource 7p、resource delay 3p、resource forecast `7/15d`である。Macroへ`0.466667d`をroll-upした後の残るprecedence/resource makespanは`2.466667d`、resource delayは0dである。`RECOMMENDATION_IMPLEMENTATION`が唯一のready、`runnable_now`、precedence/schedule critical work packageで、detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`がdeferredである。
 
+同日に人間overrideでnpm publication preflightだけを前倒しした。これは`RELEASE_E2E`のstatusを変更せず、version/tag/GitHub asset/npm publish/registry installはrecommendation受け入れ後の同taskへ残す。通常のtask selectionは引き続き`SELF_USE_SHADOW`を選ぶ。
+
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22時点の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系がformatter/mutation preview 12p、safe write 6p、advance 6pの合計24pによる`24p/1d`である。いずれも1 active dayだけの暫定標本であり、次の同種task完了時にplan単位で再calibrationする。算定根拠、暫定性、macroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 
 規範仕様は `plans/` ではなく `docs/specs/` に置く。`plans/` は作業状態、Git history は過去を担当する。Macro milestoneは`mvp.pert`、現在sliceの設計・実装状態は対応する詳細planへ記録し、同じtaskを両方で個別管理しない。Stage 3のediting/advance write手順は[自己利用計画](../docs/process/self-use.md)を正とする。
