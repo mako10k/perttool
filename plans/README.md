@@ -17,9 +17,9 @@
 
 同日に人間overrideで前倒ししたnpm publication preflightを、normal recommendationで選ばれた`RELEASE_E2E`から実行した。`v0.1.0-alpha.2`のversion/tag、GitHub asset、npm publish、registry installを同一tarballで検証し、MVP macroを完了した。
 
-Issue #2を最初のbetaへ含め、`agent-guidance.pert`の5 task全22pとmacro `AGENT_GUIDANCE_IMPLEMENTATION` 1d、`BETA_RELEASE_E2E` 1dを追加した。Macroのrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、detailのrecommended taskは`PROVIDER_BASELINE`で、betaまでのprecedence/resource makespanは2dである。Issue #3はbeta blockerに含めない。
+Issue #2を最初のbetaへ含め、`agent-guidance.pert`の5 task全22pとmacro `AGENT_GUIDANCE_IMPLEMENTATION`、`BETA_RELEASE_E2E` 1dを追加した。2026-07-23に`PROVIDER_BASELINE` 4pを完了し、固有実測Velocityを`4p/1d`へ補正した。残る18pのmacro roll-upは4.5dである。Macroのrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、detailのrecommended taskは`GUIDANCE_CONTRACT`で、betaまでのprecedence/resource makespanは5.5dである。Issue #3はbeta blockerに含めない。
 
-Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`24p/1d`、recommendationが`22p/1d`である。Agent guidanceはCore/CLI/help/testが近いrecommendation実績を初期値として借用し、最初の完了taskで固有実測へ再calibrationする。いずれも暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
+Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`24p/1d`、recommendationが`22p/1d`、agent guidanceが`4p/1d`である。いずれも1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 
 規範仕様は `plans/` ではなく `docs/specs/` に置く。`plans/` は作業状態、Git history は過去を担当する。Macro milestoneは`mvp.pert`、現在sliceの設計・実装状態は対応する詳細planへ記録し、同じtaskを両方で個別管理しない。Stage 3のediting/advance write手順は[自己利用計画](../docs/process/self-use.md)を正とする。
 

@@ -1,0 +1,1460 @@
+{
+  "dataset_id": "perttool.agent-guidance.provider-baseline",
+  "dataset_version": 1,
+  "purpose": "design_input",
+  "verified_at": "2026-07-23",
+  "runtime_network": false,
+  "surface_order": [
+    "instruction",
+    "workflow",
+    "delegated_agent",
+    "enforcement",
+    "prompt",
+    "connector"
+  ],
+  "providers": [
+    {
+      "provider_id": "codex",
+      "display_name": "Codex",
+      "source_ids": [
+        "codex-agents-md",
+        "codex-skills",
+        "codex-subagents",
+        "codex-hooks",
+        "codex-custom-prompts",
+        "codex-mcp"
+      ],
+      "surfaces": [
+        {
+          "surface_id": "instruction",
+          "provider_terms": [
+            "AGENTS.md",
+            "AGENTS.override.md"
+          ],
+          "artifacts": [
+            {
+              "path": "AGENTS.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "AGENTS.override.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "~/.codex/AGENTS.md",
+              "scope": "user"
+            },
+            {
+              "path": "~/.codex/AGENTS.override.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Current Codex documentation defines global and project instruction discovery and precedence."
+          },
+          "risk_observations": [
+            "Nested overrides and the configured byte limit can change or truncate the effective instruction chain."
+          ],
+          "evidence": [
+            {
+              "source_id": "codex-agents-md",
+              "fact": "Codex reads one global instruction file and then one instruction file per directory from project root to the working directory."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "workflow",
+          "provider_terms": [
+            "Agent Skills"
+          ],
+          "artifacts": [
+            {
+              "path": ".agents/skills/<skill-name>/SKILL.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "~/.agents/skills/<skill-name>/SKILL.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user",
+            "admin",
+            "system",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Skills are the documented authoring format for reusable Codex workflows."
+          },
+          "risk_observations": [
+            "Skills may include scripts and external-system integrations, so reading SKILL.md alone does not bound all side effects."
+          ],
+          "evidence": [
+            {
+              "source_id": "codex-skills",
+              "fact": "Codex discovers SKILL.md packages from repository, user, admin, system, and plugin sources using progressive disclosure."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "delegated_agent",
+          "provider_terms": [
+            "subagent",
+            "custom agent"
+          ],
+          "artifacts": [
+            {
+              "path": ".codex/agents/<agent-name>.toml",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.codex/agents/<agent-name>.toml",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "session"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Current Codex releases document subagent workflows and project or user custom-agent TOML."
+          },
+          "risk_observations": [
+            "Parallel write-heavy agents can conflict, and custom agents can override model, sandbox, MCP, and skill settings."
+          ],
+          "evidence": [
+            {
+              "source_id": "codex-subagents",
+              "fact": "Codex can delegate independent work and loads standalone custom-agent TOML from project or user agent directories."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "enforcement",
+          "provider_terms": [
+            "hooks"
+          ],
+          "artifacts": [
+            {
+              "path": ".codex/hooks.json",
+              "scope": "repository"
+            },
+            {
+              "path": ".codex/config.toml",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.codex/hooks.json",
+              "scope": "user"
+            },
+            {
+              "path": "~/.codex/config.toml",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "managed",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Hooks are documented for active configuration layers and plugins."
+          },
+          "risk_observations": [
+            "Command hooks execute code; non-managed hooks require review and trust, and project hooks load only for trusted projects."
+          ],
+          "evidence": [
+            {
+              "source_id": "codex-hooks",
+              "fact": "Codex reads hooks.json or inline config.toml hooks and applies explicit trust handling to non-managed command hooks."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "prompt",
+          "provider_terms": [
+            "custom prompts"
+          ],
+          "artifacts": [
+            {
+              "path": "~/.codex/prompts/<prompt-name>.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "user"
+          ],
+          "maturity_evidence": {
+            "status": "deprecated",
+            "detail": "Official documentation marks custom prompts deprecated and recommends Skills."
+          },
+          "risk_observations": [
+            "A deprecated user-local prompt is not repository-shared and should not be presented as the preferred reusable workflow."
+          ],
+          "evidence": [
+            {
+              "source_id": "codex-custom-prompts",
+              "fact": "Custom prompts require explicit invocation, live under the user Codex home, and are deprecated."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "connector",
+          "provider_terms": [
+            "MCP"
+          ],
+          "artifacts": [
+            {
+              "path": ".codex/config.toml",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.codex/config.toml",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Codex documents local MCP servers in shared project or user config.toml."
+          },
+          "risk_observations": [
+            "MCP can expose external context and executable tools; project configuration is restricted to trusted projects."
+          ],
+          "evidence": [
+            {
+              "source_id": "codex-mcp",
+              "fact": "Codex stores MCP server definitions in project or user config.toml and can connect to local or remote servers."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        }
+      ]
+    },
+    {
+      "provider_id": "github-copilot",
+      "display_name": "GitHub Copilot",
+      "source_ids": [
+        "github-response-customization",
+        "github-agent-skills",
+        "github-custom-agents-cli",
+        "github-hooks",
+        "github-prompt-files",
+        "github-cli-config"
+      ],
+      "surfaces": [
+        {
+          "surface_id": "instruction",
+          "provider_terms": [
+            "repository custom instructions",
+            "path-specific custom instructions",
+            "agent instructions"
+          ],
+          "artifacts": [
+            {
+              "path": ".github/copilot-instructions.md",
+              "scope": "repository"
+            },
+            {
+              "path": ".github/instructions/<instruction-name>.instructions.md",
+              "scope": "repository_path"
+            },
+            {
+              "path": "AGENTS.md",
+              "scope": "repository_or_directory"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user",
+            "organization"
+          ],
+          "maturity_evidence": {
+            "status": "surface_specific",
+            "detail": "GitHub documents multiple instruction formats but notes that agent-instruction support varies by Copilot feature."
+          },
+          "risk_observations": [
+            "An instruction file supported by one Copilot surface may be ignored by another surface."
+          ],
+          "evidence": [
+            {
+              "source_id": "github-response-customization",
+              "fact": "Copilot supports repository, path-specific, and agent instruction files with feature-dependent availability."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "workflow",
+          "provider_terms": [
+            "Agent Skills"
+          ],
+          "artifacts": [
+            {
+              "path": ".github/skills/<skill-name>/SKILL.md",
+              "scope": "repository"
+            },
+            {
+              "path": ".agents/skills/<skill-name>/SKILL.md",
+              "scope": "repository"
+            },
+            {
+              "path": ".claude/skills/<skill-name>/SKILL.md",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.copilot/skills/<skill-name>/SKILL.md",
+              "scope": "user"
+            },
+            {
+              "path": "~/.agents/skills/<skill-name>/SKILL.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "organization"
+          ],
+          "maturity_evidence": {
+            "status": "surface_specific",
+            "detail": "GitHub documents skills across Coding Agent, code review, CLI, GitHub.com, and selected IDEs."
+          },
+          "risk_observations": [
+            "Skill discovery locations and invocation behavior vary across Copilot products and clients."
+          ],
+          "evidence": [
+            {
+              "source_id": "github-agent-skills",
+              "fact": "GitHub documents project and personal skill locations and lists the Copilot surfaces that can use skills."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "delegated_agent",
+          "provider_terms": [
+            "custom agent",
+            "subagent"
+          ],
+          "artifacts": [
+            {
+              "path": ".github/agents/<agent-name>.agent.md",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.copilot/agents/<agent-name>.agent.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "organization",
+            "enterprise",
+            "session"
+          ],
+          "maturity_evidence": {
+            "status": "surface_specific",
+            "detail": "Custom-agent availability, file naming, and subagent execution differ among Copilot CLI, Coding Agent, and IDE integrations."
+          },
+          "risk_observations": [
+            "Agent profiles can select tools and MCP servers, and parallel subagents operate in separate contexts."
+          ],
+          "evidence": [
+            {
+              "source_id": "github-custom-agents-cli",
+              "fact": "Copilot CLI documents project and user agent-profile directories and .agent.md files."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "enforcement",
+          "provider_terms": [
+            "hooks"
+          ],
+          "artifacts": [
+            {
+              "path": ".github/hooks/<hook-name>.json",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.copilot/hooks/<hook-name>.json",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user"
+          ],
+          "maturity_evidence": {
+            "status": "surface_specific",
+            "detail": "GitHub documents hooks for Copilot Coding Agent and Copilot CLI, not as a universal Copilot surface."
+          },
+          "risk_observations": [
+            "Hooks execute shell commands, and pre-tool hooks can allow or deny tool calls only on supported surfaces."
+          ],
+          "evidence": [
+            {
+              "source_id": "github-hooks",
+              "fact": "Copilot Coding Agent and CLI load repository or user hook JSON and can run lifecycle commands."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "prompt",
+          "provider_terms": [
+            "prompt files"
+          ],
+          "artifacts": [
+            {
+              "path": ".github/prompts/<prompt-name>.prompt.md",
+              "scope": "repository"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "workspace"
+          ],
+          "maturity_evidence": {
+            "status": "public_preview",
+            "detail": "GitHub documents prompt files as public preview in VS Code, Visual Studio, and JetBrains IDEs."
+          },
+          "risk_observations": [
+            "Prompt files are one-shot chat inputs and are unavailable in Copilot surfaces outside the documented IDE set."
+          ],
+          "evidence": [
+            {
+              "source_id": "github-prompt-files",
+              "fact": "Repository prompt files use the .github/prompts directory, a .prompt.md suffix, and slash invocation in supported IDEs."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "connector",
+          "provider_terms": [
+            "MCP"
+          ],
+          "artifacts": [
+            {
+              "path": ".mcp.json",
+              "scope": "repository"
+            },
+            {
+              "path": ".github/mcp.json",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.copilot/mcp-config.json",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "organization"
+          ],
+          "maturity_evidence": {
+            "status": "surface_specific",
+            "detail": "Copilot CLI uses workspace and user files while Copilot Coding Agent also supports repository settings on GitHub."
+          },
+          "risk_observations": [
+            "MCP servers can execute local or remote tools, and repository settings, CLI files, trust, and enterprise allowlists differ by surface."
+          ],
+          "evidence": [
+            {
+              "source_id": "github-cli-config",
+              "fact": "Copilot CLI loads workspace MCP files and a user mcp-config.json with explicit precedence and trust handling."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        }
+      ]
+    },
+    {
+      "provider_id": "claude-code",
+      "display_name": "Claude Code",
+      "source_ids": [
+        "claude-directory",
+        "claude-skills",
+        "claude-subagents",
+        "claude-hooks",
+        "claude-mcp"
+      ],
+      "surfaces": [
+        {
+          "surface_id": "instruction",
+          "provider_terms": [
+            "CLAUDE.md",
+            "rules"
+          ],
+          "artifacts": [
+            {
+              "path": "CLAUDE.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": ".claude/rules/<rule-name>.md",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.claude/CLAUDE.md",
+              "scope": "user"
+            },
+            {
+              "path": "~/.claude/rules/<rule-name>.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user",
+            "managed"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Claude Code documents project, user, and managed instruction scopes."
+          },
+          "risk_observations": [
+            "Managed, CLI, environment, project, and user layers have precedence that must be inspected before claiming an effective rule."
+          ],
+          "evidence": [
+            {
+              "source_id": "claude-directory",
+              "fact": "Claude Code loads CLAUDE.md and rule files from project and user configuration locations."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "workflow",
+          "provider_terms": [
+            "Skills"
+          ],
+          "artifacts": [
+            {
+              "path": ".claude/skills/<skill-name>/SKILL.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "~/.claude/skills/<skill-name>/SKILL.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user",
+            "enterprise",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Skills are the documented reusable-workflow format and implement the Agent Skills standard."
+          },
+          "risk_observations": [
+            "Skills can pre-approve tools or execute dynamic shell context after workspace trust, so content and frontmatter both affect authority."
+          ],
+          "evidence": [
+            {
+              "source_id": "claude-skills",
+              "fact": "Claude Code discovers project, personal, enterprise, and plugin SKILL.md packages."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "delegated_agent",
+          "provider_terms": [
+            "subagent"
+          ],
+          "artifacts": [
+            {
+              "path": ".claude/agents/<agent-name>.md",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.claude/agents/<agent-name>.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "session",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Claude Code documents built-in and custom subagents with isolated context."
+          },
+          "risk_observations": [
+            "Subagent definitions can grant tools and skills, and delegation creates an isolated context that may omit parent-conversation facts."
+          ],
+          "evidence": [
+            {
+              "source_id": "claude-subagents",
+              "fact": "Custom subagents are Markdown definitions in project or user agent directories."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "enforcement",
+          "provider_terms": [
+            "hooks",
+            "permissions"
+          ],
+          "artifacts": [
+            {
+              "path": ".claude/settings.json",
+              "scope": "repository"
+            },
+            {
+              "path": ".claude/settings.local.json",
+              "scope": "repository_user"
+            },
+            {
+              "path": "~/.claude/settings.json",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "managed",
+            "plugin",
+            "skill",
+            "agent"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Claude Code documents hooks in settings and plugin, skill, and agent scopes."
+          },
+          "risk_observations": [
+            "Hooks can execute commands or other handlers; there is no standalone .claude/hooks.json configuration file."
+          ],
+          "evidence": [
+            {
+              "source_id": "claude-hooks",
+              "fact": "Claude Code lifecycle hooks are configured through settings or scoped component configuration."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "prompt",
+          "provider_terms": [
+            "Skills",
+            "custom commands"
+          ],
+          "artifacts": [
+            {
+              "path": ".claude/skills/<skill-name>/SKILL.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": ".claude/commands/<command-name>.md",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.claude/skills/<skill-name>/SKILL.md",
+              "scope": "user"
+            },
+            {
+              "path": "~/.claude/commands/<command-name>.md",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Custom commands were merged into Skills; existing command files continue to work while Skills are recommended."
+          },
+          "risk_observations": [
+            "Slash-invoked content may execute dynamic context commands or gain pre-approved tools through skill frontmatter."
+          ],
+          "evidence": [
+            {
+              "source_id": "claude-skills",
+              "fact": "Skills and compatible command files create slash-invocable reusable prompts, with Skills as the recommended format."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "connector",
+          "provider_terms": [
+            "MCP"
+          ],
+          "artifacts": [
+            {
+              "path": ".mcp.json",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.claude.json",
+              "scope": "user_or_local"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "local",
+            "managed",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Claude Code documents project, user, local, managed, and plugin MCP scopes."
+          },
+          "risk_observations": [
+            "MCP may connect to local processes or remote services and can expose executable tools and credentials."
+          ],
+          "evidence": [
+            {
+              "source_id": "claude-mcp",
+              "fact": "Project MCP configuration is stored in .mcp.json while local-scope server configuration is stored in the user Claude state file."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        }
+      ]
+    },
+    {
+      "provider_id": "grok-build",
+      "display_name": "Grok Build",
+      "source_ids": [
+        "grok-extensions",
+        "grok-permissions",
+        "grok-mcp",
+        "grok-release-notes"
+      ],
+      "surfaces": [
+        {
+          "surface_id": "instruction",
+          "provider_terms": [
+            "AGENTS.md instruction-file family",
+            "Claude Code compatibility instructions"
+          ],
+          "artifacts": [
+            {
+              "path": "AGENTS.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "Agents.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "AGENT.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "CLAUDE.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": ".claude/rules/<rule-name>.md",
+              "scope": "repository_or_directory"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user",
+            "compatibility"
+          ],
+          "maturity_evidence": {
+            "status": "not_stated",
+            "detail": "The current feature page documents the behavior but does not state its maturity; release notes record that Grok Build was announced as beta."
+          },
+          "risk_observations": [
+            "Multiple native and compatibility instruction families can be discovered together and may express conflicting guidance."
+          ],
+          "evidence": [
+            {
+              "source_id": "grok-extensions",
+              "fact": "Grok walks the AGENTS.md family to the repository root and also reads Claude Code instruction artifacts."
+            },
+            {
+              "source_id": "grok-release-notes",
+              "fact": "Official release notes announced Grok Build as beta."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "workflow",
+          "provider_terms": [
+            "Skills"
+          ],
+          "artifacts": [
+            {
+              "path": ".grok/skills/<skill-name>/SKILL.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "~/.grok/skills/<skill-name>/SKILL.md",
+              "scope": "user"
+            },
+            {
+              "path": "~/.agents/skills/<skill-name>/SKILL.md",
+              "scope": "user_compatibility"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user",
+            "plugin",
+            "compatibility"
+          ],
+          "maturity_evidence": {
+            "status": "not_stated",
+            "detail": "The current feature page documents native and compatible Skills but does not state their maturity; release notes record that Grok Build was announced as beta."
+          },
+          "risk_observations": [
+            "Skills may contain scripts and resources, and native, plugin, and compatibility roots can all contribute discovered content."
+          ],
+          "evidence": [
+            {
+              "source_id": "grok-extensions",
+              "fact": "Grok discovers native project and user skills, plugin skills, extra configured paths, and compatible skill roots."
+            },
+            {
+              "source_id": "grok-release-notes",
+              "fact": "Official release notes announced Grok Build as beta."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "delegated_agent",
+          "provider_terms": [
+            "subagent",
+            "plugin agent",
+            "Claude Code compatible agent"
+          ],
+          "artifacts": [],
+          "scopes": [
+            "session",
+            "plugin",
+            "compatibility"
+          ],
+          "maturity_evidence": {
+            "status": "not_stated",
+            "detail": "Subagents and agent-bearing plugins are documented, but the source states neither current maturity nor a native loose-agent artifact path."
+          },
+          "risk_observations": [
+            "Subagents create independent child sessions; a native persistent custom-agent path must not be inferred from plugin or Claude compatibility."
+          ],
+          "evidence": [
+            {
+              "source_id": "grok-extensions",
+              "fact": "Grok documents subagents, plugin agents, and Claude Code agent compatibility without documenting a native loose-agent file path on this source."
+            },
+            {
+              "source_id": "grok-release-notes",
+              "fact": "Official release notes announced Grok Build as beta."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "enforcement",
+          "provider_terms": [
+            "hooks",
+            "permission rules"
+          ],
+          "artifacts": [
+            {
+              "path": ".grok/hooks/",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.grok/hooks/",
+              "scope": "user"
+            },
+            {
+              "path": "~/.grok/config.toml",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "managed",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "not_stated",
+            "detail": "The current feature pages document hooks, permissions, and managed requirements but do not state their maturity; release notes record that Grok Build was announced as beta."
+          },
+          "risk_observations": [
+            "Hooks run lifecycle scripts and project hooks require trust; permissive modes still need explicit deny rules for policy enforcement."
+          ],
+          "evidence": [
+            {
+              "source_id": "grok-permissions",
+              "fact": "Grok permission rules distinguish allow and deny behavior, with deny taking precedence."
+            },
+            {
+              "source_id": "grok-extensions",
+              "fact": "Grok discovers user, trusted project, and plugin hooks."
+            },
+            {
+              "source_id": "grok-release-notes",
+              "fact": "Official release notes announced Grok Build as beta."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "prompt",
+          "provider_terms": [
+            "user-invocable Skill",
+            "command"
+          ],
+          "artifacts": [
+            {
+              "path": ".grok/skills/<skill-name>/SKILL.md",
+              "scope": "repository_or_directory"
+            },
+            {
+              "path": "~/.grok/skills/<skill-name>/SKILL.md",
+              "scope": "user"
+            },
+            {
+              "path": "~/.agents/commands/<command-name>.md",
+              "scope": "user_compatibility"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "directory",
+            "user",
+            "compatibility"
+          ],
+          "maturity_evidence": {
+            "status": "not_stated",
+            "detail": "The current feature page documents user-invocable skills and compatible commands but does not state their maturity; release notes record that Grok Build was announced as beta."
+          },
+          "risk_observations": [
+            "A user-invocable skill can include executable resources; a command path documented only as compatibility must not be labeled native."
+          ],
+          "evidence": [
+            {
+              "source_id": "grok-extensions",
+              "fact": "User-invocable skills appear as slash commands and Grok discovers user commands from the Agent compatibility location."
+            },
+            {
+              "source_id": "grok-release-notes",
+              "fact": "Official release notes announced Grok Build as beta."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "connector",
+          "provider_terms": [
+            "MCP"
+          ],
+          "artifacts": [
+            {
+              "path": ".grok/config.toml",
+              "scope": "repository"
+            },
+            {
+              "path": "~/.grok/config.toml",
+              "scope": "user"
+            },
+            {
+              "path": ".mcp.json",
+              "scope": "repository_compatibility"
+            }
+          ],
+          "scopes": [
+            "repository",
+            "user",
+            "plugin",
+            "compatibility"
+          ],
+          "maturity_evidence": {
+            "status": "not_stated",
+            "detail": "The current feature page documents native config and compatible MCP sources but does not state their maturity; release notes record that Grok Build was announced as beta."
+          },
+          "risk_observations": [
+            "MCP servers can expose external context and tools, and merged native, plugin, and compatibility definitions need source inspection."
+          ],
+          "evidence": [
+            {
+              "source_id": "grok-mcp",
+              "fact": "Grok discovers MCP servers from project and user config, plugins, and compatible MCP files."
+            },
+            {
+              "source_id": "grok-release-notes",
+              "fact": "Official release notes announced Grok Build as beta."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        }
+      ]
+    },
+    {
+      "provider_id": "antigravity",
+      "display_name": "Antigravity",
+      "source_ids": [
+        "antigravity-rules-workflows",
+        "antigravity-skills",
+        "antigravity-subagents",
+        "antigravity-hooks",
+        "antigravity-mcp",
+        "antigravity-plugins"
+      ],
+      "surfaces": [
+        {
+          "surface_id": "instruction",
+          "provider_terms": [
+            "Global Rules",
+            "Workspace Rules"
+          ],
+          "artifacts": [
+            {
+              "path": "~/.gemini/GEMINI.md",
+              "scope": "user"
+            },
+            {
+              "path": ".agents/rules/<rule-name>.md",
+              "scope": "workspace"
+            },
+            {
+              "path": ".agent/rules/<rule-name>.md",
+              "scope": "workspace_legacy"
+            }
+          ],
+          "scopes": [
+            "workspace",
+            "user",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Antigravity 2.0 documentation defines global and workspace Rules and a legacy workspace path."
+          },
+          "risk_observations": [
+            "Rule activation can be manual, always-on, model-decided, or glob-based, so file presence alone does not prove application."
+          ],
+          "evidence": [
+            {
+              "source_id": "antigravity-rules-workflows",
+              "fact": "Global rules use GEMINI.md and workspace rules use .agents/rules with backward support for .agent/rules."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "workflow",
+          "provider_terms": [
+            "Agent Skills",
+            "Workflows"
+          ],
+          "artifacts": [
+            {
+              "path": ".agents/skills/<skill-name>/SKILL.md",
+              "scope": "workspace"
+            },
+            {
+              "path": "~/.gemini/config/skills/<skill-name>/SKILL.md",
+              "scope": "user"
+            },
+            {
+              "path": ".agent/skills/<skill-name>/SKILL.md",
+              "scope": "workspace_legacy"
+            }
+          ],
+          "scopes": [
+            "workspace",
+            "user",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Antigravity documents Skills and slash-invoked Workflows; only Skill storage paths are explicit in the inspected sources."
+          },
+          "risk_observations": [
+            "Skills can include scripts and resources, while Workflows can invoke other Workflows and perform actions."
+          ],
+          "evidence": [
+            {
+              "source_id": "antigravity-skills",
+              "fact": "Workspace and global Skills have explicit SKILL.md directories and legacy workspace compatibility."
+            },
+            {
+              "source_id": "antigravity-rules-workflows",
+              "fact": "Workflows are reusable Markdown sequences invoked with slash commands."
+            },
+            {
+              "source_id": "antigravity-plugins",
+              "fact": "Antigravity plugins can bundle Skills and Rules."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "delegated_agent",
+          "provider_terms": [
+            "asynchronous subagent",
+            "dynamic custom subagent"
+          ],
+          "artifacts": [],
+          "scopes": [
+            "conversation",
+            "workspace",
+            "worktree"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Custom subagents are defined dynamically for the conversation; no persistent custom-subagent artifact path is stated."
+          },
+          "risk_observations": [
+            "Subagents run concurrently with inherited safety scopes and may share a workspace or receive an isolated worktree."
+          ],
+          "evidence": [
+            {
+              "source_id": "antigravity-subagents",
+              "fact": "The parent invokes asynchronous subagents and can define a custom subagent dynamically for the remainder of the conversation."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "enforcement",
+          "provider_terms": [
+            "Hooks"
+          ],
+          "artifacts": [
+            {
+              "path": ".agents/hooks.json",
+              "scope": "workspace"
+            },
+            {
+              "path": "~/.gemini/config/hooks.json",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "workspace",
+            "user",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Antigravity documents lifecycle hook JSON in workspace and global customization directories."
+          },
+          "risk_observations": [
+            "Hooks execute custom scripts or shell commands before and after tools or model invocations."
+          ],
+          "evidence": [
+            {
+              "source_id": "antigravity-hooks",
+              "fact": "Antigravity loads hooks.json from workspace or user customization directories and supports command handlers."
+            },
+            {
+              "source_id": "antigravity-plugins",
+              "fact": "Antigravity plugins can bundle hooks."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "prompt",
+          "provider_terms": [
+            "Workflows"
+          ],
+          "artifacts": [],
+          "scopes": [
+            "workspace",
+            "user"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Workflows are documented as global or workspace Markdown invoked by slash command, but the inspected official page does not state their file-system path."
+          },
+          "risk_observations": [
+            "Workflow steps can perform actions and invoke other Workflows; an undocumented storage path must remain unknown."
+          ],
+          "evidence": [
+            {
+              "source_id": "antigravity-rules-workflows",
+              "fact": "Workflows are saved as Markdown, can be global or workspace-specific, and use slash invocation."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        },
+        {
+          "surface_id": "connector",
+          "provider_terms": [
+            "MCP"
+          ],
+          "artifacts": [
+            {
+              "path": ".agents/mcp_config.json",
+              "scope": "workspace"
+            },
+            {
+              "path": "~/.gemini/config/mcp_config.json",
+              "scope": "user"
+            }
+          ],
+          "scopes": [
+            "workspace",
+            "user",
+            "plugin"
+          ],
+          "maturity_evidence": {
+            "status": "documented",
+            "detail": "Antigravity documents workspace and global MCP configuration for IDE, CLI, and SDK discovery."
+          },
+          "risk_observations": [
+            "MCP can provide live external context and actions, and configuration may contain commands, remote endpoints, headers, or OAuth credentials."
+          ],
+          "evidence": [
+            {
+              "source_id": "antigravity-mcp",
+              "fact": "Antigravity reads workspace and global mcp_config.json and supports local and remote MCP servers."
+            },
+            {
+              "source_id": "antigravity-plugins",
+              "fact": "Antigravity plugins can bundle MCP server definitions."
+            }
+          ],
+          "verified_at": "2026-07-23"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "codex-agents-md",
+      "provider_id": "codex",
+      "title": "Custom instructions with AGENTS.md",
+      "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md.md",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "codex-skills",
+      "provider_id": "codex",
+      "title": "Build skills",
+      "url": "https://learn.chatgpt.com/docs/build-skills.md",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "codex-subagents",
+      "provider_id": "codex",
+      "title": "Subagents",
+      "url": "https://learn.chatgpt.com/docs/agent-configuration/subagents.md",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "codex-hooks",
+      "provider_id": "codex",
+      "title": "Hooks",
+      "url": "https://learn.chatgpt.com/docs/hooks.md",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "codex-custom-prompts",
+      "provider_id": "codex",
+      "title": "Custom Prompts",
+      "url": "https://learn.chatgpt.com/docs/custom-prompts.md",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "codex-mcp",
+      "provider_id": "codex",
+      "title": "Model Context Protocol",
+      "url": "https://learn.chatgpt.com/docs/extend/mcp.md",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "github-response-customization",
+      "provider_id": "github-copilot",
+      "title": "About customizing GitHub Copilot responses",
+      "url": "https://docs.github.com/en/copilot/concepts/prompting/response-customization",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "github-agent-skills",
+      "provider_id": "github-copilot",
+      "title": "About agent skills",
+      "url": "https://docs.github.com/en/copilot/concepts/agents/about-agent-skills",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "github-custom-agents-cli",
+      "provider_id": "github-copilot",
+      "title": "Creating and using custom agents for GitHub Copilot CLI",
+      "url": "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/create-custom-agents-for-cli",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "github-hooks",
+      "provider_id": "github-copilot",
+      "title": "About hooks",
+      "url": "https://docs.github.com/en/copilot/concepts/agents/hooks",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "github-prompt-files",
+      "provider_id": "github-copilot",
+      "title": "Adding repository custom instructions for GitHub Copilot in your IDE",
+      "url": "https://docs.github.com/en/copilot/how-tos/configure-custom-instructions-in-your-ide/add-repository-instructions-in-your-ide",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "github-cli-config",
+      "provider_id": "github-copilot",
+      "title": "GitHub Copilot CLI configuration directory",
+      "url": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-config-dir-reference",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "claude-directory",
+      "provider_id": "claude-code",
+      "title": "Explore the .claude directory",
+      "url": "https://code.claude.com/docs/en/claude-directory",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "claude-skills",
+      "provider_id": "claude-code",
+      "title": "Extend Claude with skills",
+      "url": "https://code.claude.com/docs/en/slash-commands",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "claude-subagents",
+      "provider_id": "claude-code",
+      "title": "Create custom subagents",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "claude-hooks",
+      "provider_id": "claude-code",
+      "title": "Hooks reference",
+      "url": "https://code.claude.com/docs/en/hooks",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "claude-mcp",
+      "provider_id": "claude-code",
+      "title": "Connect Claude Code to tools via MCP",
+      "url": "https://code.claude.com/docs/en/mcp",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "grok-extensions",
+      "provider_id": "grok-build",
+      "title": "Skills, Plugins and Marketplaces",
+      "url": "https://docs.x.ai/build/features/skills-plugins-marketplaces",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "grok-permissions",
+      "provider_id": "grok-build",
+      "title": "Permissions",
+      "url": "https://docs.x.ai/build/features/permissions",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "grok-mcp",
+      "provider_id": "grok-build",
+      "title": "MCP Servers",
+      "url": "https://docs.x.ai/build/features/mcp-servers",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "grok-release-notes",
+      "provider_id": "grok-build",
+      "title": "Release Notes",
+      "url": "https://docs.x.ai/developers/release-notes",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "antigravity-rules-workflows",
+      "provider_id": "antigravity",
+      "title": "Rules and Workflows",
+      "url": "https://www.antigravity.google/docs/rules-workflows",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "antigravity-skills",
+      "provider_id": "antigravity",
+      "title": "Agent Skills",
+      "url": "https://www.antigravity.google/docs/skills",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "antigravity-subagents",
+      "provider_id": "antigravity",
+      "title": "Asynchronous Subagents",
+      "url": "https://www.antigravity.google/docs/subagents",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "antigravity-hooks",
+      "provider_id": "antigravity",
+      "title": "Hooks",
+      "url": "https://www.antigravity.google/docs/hooks",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "antigravity-mcp",
+      "provider_id": "antigravity",
+      "title": "Model Context Protocol",
+      "url": "https://www.antigravity.google/docs/mcp",
+      "verified_at": "2026-07-23"
+    },
+    {
+      "source_id": "antigravity-plugins",
+      "provider_id": "antigravity",
+      "title": "Plugins",
+      "url": "https://www.antigravity.google/docs/plugins",
+      "verified_at": "2026-07-23"
+    }
+  ]
+}

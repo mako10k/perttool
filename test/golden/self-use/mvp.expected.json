@@ -12,12 +12,12 @@
     }
   },
   "analyze": {
-    "precedence_makespan": "2/1",
+    "precedence_makespan": "11/2",
     "precedence_critical_tasks": [
       "AGENT_GUIDANCE_IMPLEMENTATION",
       "BETA_RELEASE_E2E"
     ],
-    "resource_makespan": "2/1",
+    "resource_makespan": "11/2",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [

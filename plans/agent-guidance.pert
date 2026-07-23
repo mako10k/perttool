@@ -6,12 +6,12 @@ project AGENT_GUIDANCE:
     read-only AI Agent Guidance Registry v1を設計・実装する。
     Provider固有概念を共通taxonomyへmappingし、offline deterministicな
     Core、agent help text/JSON、fixture、package acceptanceを同じregistryから提供する。
-    Pointは初期相対見積りである。最も近いrecommendation Core/CLI/help実装の
-    暫定実測22p/1dを初期Velocityに使用し、最初の完了taskで再calibrationする。
+    Pointは初期相対見積りである。PROVIDER_BASELINE 4pを2026-07-23の
+    1 active dayで完了した実測4p/1dを現在のVelocityとし、残る18pを予測する。
     Audit、scaffold、hook実行、enforcement、runtime web refreshは対象外とする。
   as_of 2026-07-23
   duration_unit point
-  velocity 22p/1d
+  velocity 4p/1d
   finish GUIDANCE_ACCEPTED
 
 resource DEVELOPERS:
@@ -55,7 +55,10 @@ task PROVIDER_BASELINE NOW -> PROVIDER_BASELINE_READY:
     instruction、workflow、delegated_agent、enforcement、prompt、connectorの
     artifact path、scope、maturity、risk、verified_atを推測なしでfixture入力へ固定する。
     Security: webは設計時の確認だけに使用し、runtime registryはoffline snapshotとする。
+    Evidence: docs/process/agent-guidance-provider-baseline.mdと
+    test/fixtures/agent-guidance/provider-baseline.v1.jsonを専用testで検査する。
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

@@ -5,7 +5,7 @@
 Mandatory summary:
 
 - 利用者から指定がない限り、日本語で応答する。
-- TypeScript CLIのMVP public alpha受け入れは完了した。Recommendation MIG-01からMIG-07は完了し、5 plan shadowとunknown-version safe stop dry-runを経たcompleteかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`はGitHub prereleaseとnpm `alpha`へ同一artifactで公開・検証済みである。最初のbetaはsuffixなし`0.1.0`、以後の`0.x.x`をbetaとし、alphaからのstrict compatibilityや追加soakをgateにしない。Issue #2をbeta gateへ追加済みで、macroのrecommended taskは`AGENT_GUIDANCE_IMPLEMENTATION`、detailは`PROVIDER_BASELINE`である。Issue #3はbeta blockerではない。Human override apply/auditはMIG-08まで未解禁である。
+- TypeScript CLIのMVP public alpha受け入れは完了した。Recommendation MIG-01からMIG-07は完了し、5 plan shadowとunknown-version safe stop dry-runを経たcompleteかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`はGitHub prereleaseとnpm `alpha`へ同一artifactで公開・検証済みである。最初のbetaはsuffixなし`0.1.0`、以後の`0.x.x`をbetaとし、alphaからのstrict compatibilityや追加soakをgateにしない。Issue #2をbeta gateへ追加し、5 provider baselineを公式資料からoffline fixtureへ固定した。固有実測Velocityは`4p/1d`、残りは18p = 4.5dで、macroのrecommended taskは`AGENT_GUIDANCE_IMPLEMENTATION`、detailは`GUIDANCE_CONTRACT`である。Issue #3はbeta blockerではない。Human override apply/auditはMIG-08まで未解禁である。
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
 - 「次のタスク」はknown、complete、not-truncatedな`dag next --format json`をauthorityとし、macroのrecommended work packageからworkstreamを選んでから対応detailを再解析する。Recommended subset、またはrecommended set全件にresource-feasibleなallowed taskを1件だけ追加した集合だけをnormal selectionとする。Unknown version、incomplete trace、`PTREC-*`、deferred/discouragedでは開始せず、task stateやcapacity変更後は再解析する。

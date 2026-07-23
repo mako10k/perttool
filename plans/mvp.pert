@@ -10,8 +10,9 @@ project PERTTOOL_MVP:
     recommendation実装はplans/recommendation.pertを正とし、全22pを1 active dayで完了した。
     完了直前の残り2p resource forecast 0.1dをmacro work packageへ保持する。npm publication
     preparationは人間overrideで前倒しした後、RELEASE_E2Eで同一artifact公開を完了した。
-    BetaはIssue #2のplans/agent-guidance.pertを正とし、初期Velocity 22p/1dによる
-    resource forecast 1dをroll-upする。BETA_RELEASE_E2Eはalpha release実測1 active dayを
+    BetaはIssue #2のplans/agent-guidance.pertを正とし、最初の完了task 4p/1 active day
+    から再calibrationしたVelocity 4p/1dによる残り18pのresource forecast 4.5dを
+    roll-upする。BETA_RELEASE_E2Eはalpha release実測1 active dayを
     根拠に1dとする。Issue #3のmulti-plan compositionはbeta開始条件に含めない。
   as_of 2026-07-23
   duration_unit day
@@ -212,8 +213,8 @@ task RECOMMENDATION_IMPLEMENTATION M3_SAFE_WRITE_READY -> RELEASE_READY:
 
 task AGENT_GUIDANCE_IMPLEMENTATION M6_MVP_RELEASED -> M7_AGENT_GUIDANCE_READY:
   title "Issue #2 read-only AI Agent Guidance Registryを実装する"
-  description "plans/agent-guidance.pertの5 task全22pを、recommendation実装の暫定実測Velocity 22p/1dで1dへroll-upする"
-  duration 1d
+  description "plans/agent-guidance.pertのPROVIDER_BASELINE 4p完了後、固有実測Velocity 4p/1dで残る4 task 18pを4.5dへroll-upする"
+  duration 4.5d
   priority 100
   requires:
     DEVELOPERS 1

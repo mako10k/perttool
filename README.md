@@ -132,7 +132,7 @@ Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhu
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPからbetaへのmacro計画](plans/mvp.pert)をroadmapとするStage 3のpreview-first自己利用を行っています。MVP public alphaは受け入れ済みで、Issue #2のread-only AI Agent Guidance Registryをbeta gateへ追加しました。Macroのrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、[詳細plan](plans/agent-guidance.pert)のrecommended taskは`PROVIDER_BASELINE`です。詳細22pはrecommendation実績`22p/1d`を初期値として1d、beta release E2Eはalpha release実績から1dとし、betaまでのresource makespanは2dです。Issue #3のmulti-plan compositionはbeta blockerに含めません。
+現在は[MVPからbetaへのmacro計画](plans/mvp.pert)をroadmapとするStage 3のpreview-first自己利用を行っています。MVP public alphaは受け入れ済みで、Issue #2のread-only AI Agent Guidance Registryをbeta gateへ追加しました。[5 provider baseline](docs/process/agent-guidance-provider-baseline.md) 4pを完了し、固有実測Velocityを`4p/1d`へ補正しました。Macroのrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、[詳細plan](plans/agent-guidance.pert)のrecommended taskは`GUIDANCE_CONTRACT`です。詳細残り18pのforecastは4.5d、beta release E2Eはalpha release実績から1dで、betaまでのresource makespanは5.5dです。Issue #3のmulti-plan compositionはbeta blockerに含めません。
 
 ## Security and license
 

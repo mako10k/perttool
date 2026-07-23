@@ -136,6 +136,8 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 MVP public alpha受け入れ後、利用者判断でIssue #2を最初のbetaへ含めた。[ADR 0003](../adr/0003-beta-versioning.md)にsuffixなし`0.1.0`と`0.x.x` beta、alphaからのstrict compatibility不要、追加soak不要を固定し、[beta release手順](beta-release.md)へ工程を分離した。Issue #2は`plans/agent-guidance.pert`の5 task全22pへ分解し、recommendation実装の暫定実測`22p/1d`を初期Velocityとして1dへroll-upした。Macroには`AGENT_GUIDANCE_IMPLEMENTATION` 1dと、alpha release実績を根拠にした`BETA_RELEASE_E2E` 1dを直列に追加した。Issue #3はbeta blockerに含めず、MVP外の将来設計のままとする。
 
+続いて`PROVIDER_BASELINE`を完了した。Codex、GitHub Copilot、Claude Code、Grok Build、Antigravityの公式資料を2026-07-23時点で再検証し、instruction、workflow、delegated agent、enforcement、prompt、connectorのartifact、scope、maturity evidence、risk、sourceを[Provider baseline](agent-guidance-provider-baseline.md)とoffline fixtureへ固定した。公開schemaとsupport statusは後続contractへ残し、未記載pathは推測せず空配列にした。`plans/agent-guidance.pert`はpreview source digest `sha256:b39ceba34d6eee0b6d6c2a663d35bdbe95d89ea9172bfb977f839d0e715c2334`からexpected digest付き`task finish --write`を行い、finish直後は`sha256:c3ba8dc7d8d9cbf237c35e9ddd94d42477f442c89bd379b7ca4bddb9ce4eda9e`、Velocityとevidence反映後は`sha256:bf403deb5d8a39f186cd72fafcae3726187821255f0f7ca588ff4673b30d99d9`となった。最初の完了標本4p/1 active dayから固有実測Velocityを`4p/1d`へ補正し、残る18pのprecedence/resource forecastは4.5dである。Macro `AGENT_GUIDANCE_IMPLEMENTATION`も4.5dへroll-upし、beta releaseまでのmakespanは5.5dとなった。Detailの唯一のready、`runnable_now`、recommended taskは`GUIDANCE_CONTRACT`である。
+
 ### 4.1 Velocity実測calibration
 
 DSL version 1はworking calendar、pause、作業開始時刻を持たないため、commit timestamp間の数時間を暗黙のengineering-dayへ変換しない。自己利用planのVelocityは次の決定的なactive-day方式で測る。
@@ -155,15 +157,17 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
 | `operations.pert` | formatter/mutation preview、safe write、advance | 24p | 1d | `24p/1d` | 0p |
 | `recommendation.pert` | `FIXTURE_BASELINE`、`RANKING_CORE`、`EXPLANATION_CORE`、`NEXT_V3_PUBLICATION`、`SELF_USE_SHADOW`、`OVERRIDE_VALIDATION`、`AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
-| `agent-guidance.pert` | 完了標本なし。recommendation実装を近似work typeとして借用 | 0p | 0d | 初期値`22p/1d` | 22p = 1d |
+| `agent-guidance.pert` | `PROVIDER_BASELINE` | 4p | 1d | `4p/1d` | 18p = 4.5d |
 
-これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。実測4標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。Agent guidanceはCore/CLI/help/testを共有するrecommendation実装を近似標本として借用し、最初の完了taskで固有の実測値へ置き換える。
+これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。実測5標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装、agent guidanceはwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
 Operationsはformatter/mutation preview 12p、safe write 6p、advance 6pの同日完了を累計し、実測`24p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系taskを詳細planへ追加して完了実績が生じた時点で独立再calibrationする。Macroはday単位しか持たないため、未完了work packageでは`p/velocity`を6 decimal dayへroundする。現在のdetail残作業とresource delayは0pである。
 
 Recommendation実装は`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2p、`OVERRIDE_VALIDATION` 3p、`AUTHORITY_ADOPTION` 2pを2026-07-23の同じactive dayで完了したため、累計22p/1 active dayの暫定実測`22p/1d`へ更新した。残るresource makespanは0pである。まだ1 active dayだけの標本なので、次の異なるactive dayまたは複数task完了時に再calibrationする。
+
+Agent guidanceは借用した初期値`22p/1d`を、`PROVIDER_BASELINE` 4pを2026-07-23に完了した最初の固有標本`4p/1d`へ置き換えた。Provider横断調査、evidence fixture、専用test、計画再解析を含む1 active dayの標本で、残るresource makespanは18p、forecastは4.5dである。まだ1 taskかつ1 active dayだけなので、次の完了taskで累計Pointとactive dateから再calibrationする。
 
 Stage 1で許可した操作:
 
@@ -221,7 +225,7 @@ Stage 1で禁止した操作:
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
 - `RELEASE_E2E`を含むMVP public alphaは完了した
-- Macroのready、`runnable_now`、recommendedは`AGENT_GUIDANCE_IMPLEMENTATION`、detailは`PROVIDER_BASELINE`である
+- Macroのready、`runnable_now`、recommendedは`AGENT_GUIDANCE_IMPLEMENTATION`、detailは`GUIDANCE_CONTRACT`である
 - `AGENT_GUIDANCE_IMPLEMENTATION`完了後だけ`BETA_RELEASE_E2E`を開始する
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
@@ -387,6 +391,7 @@ Stage 1開始時の証跡:
 - recommendation authority gate: MIG-07完了後はdetail残作業0p、実測Velocity `22p/1d`、known/complete v3だけをnormal selection authorityとして使用する。`RELEASE_E2E`完了後はempty recommendationをgoldenへ固定する
 - release distribution gate: release commit、remote main、annotated tag、GitHub asset、npm publish、registry installを同一tarballで検査し、version、integrity、SHA-256、release URLを記録する
 - agent guidance planning gate: Issue #2をprovider baseline、common contract、deterministic Core、read-only publication、acceptanceへ分解し、初期Velocity `22p/1d`、resource forecast 1d、最初のrecommended task `PROVIDER_BASELINE`をgoldenへ固定する
+- agent guidance provider baseline gate: 5 provider x 6 surfaceの公式source、artifact、scope、maturity evidence、risk、verified_atをoffline design inputへ固定し、固有実測`4p/1d`、残り18p = 4.5d、次のrecommended task `GUIDANCE_CONTRACT`をgoldenへ固定する
 - beta release gate: suffixなし`0.1.0`、GitHub prerelease、npm `beta`、既存`latest`不変、同一tarball、registry隔離installをIssue #2受け入れ後にだけ実行する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、6 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

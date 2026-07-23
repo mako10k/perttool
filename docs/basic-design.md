@@ -1073,7 +1073,7 @@ Exit:
 - hook実行、file生成、設定変更、network access、provider writeを行わない
 - alpha互換や追加soakをgateにせず、破壊的変更がある場合は仕様と移行情報を同時更新する
 
-[AI Agent Guidance詳細plan](../plans/agent-guidance.pert)は全22p、初期Velocity `22p/1d`、resource forecast 1dで開始する。最初の完了taskでこの借用値を実測へ再calibrationする。MacroはIssue #2を1d、beta release E2Eをalpha releaseの実績から1dとし、現在のrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、詳細recommended taskは`PROVIDER_BASELINE`である。
+[AI Agent Guidance詳細plan](../plans/agent-guidance.pert)は全22p、初期Velocity `22p/1d`、resource forecast 1dで開始した。[Provider baseline](process/agent-guidance-provider-baseline.md) 4pを最初のactive dayで完了し、固有実測Velocityを`4p/1d`へ再calibrationした。残る18pのresource forecastとMacro Issue #2 work packageは4.5d、beta release E2Eはalpha releaseの実績から1dである。現在のrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、詳細recommended taskは`GUIDANCE_CONTRACT`である。
 
 ### Post-MVP Slice 5: MCP and editor
 
