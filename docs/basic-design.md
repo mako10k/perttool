@@ -1107,7 +1107,7 @@ Exit:
 
 The migration is split into inventory, runtime messages, bundled help, normative documents, process and agent guidance, current PERT metadata, golden/Unicode audit, and final acceptance. Runtime locale negotiation, translation catalogs, a `--locale` option, and automatic translation of `.pert` content are outside this slice.
 
-The first task stays explicitly blocked until `plans/mvp.pert` reaches `M8_BETA_RELEASED`. This preserves the accepted beta critical path without hiding the migration in an untracked backlog. Because cross-plan dependencies are not yet implemented, the external gate is represented by a stable `blocked_reason` and the Stage 3 preview-first unblock procedure.
+The first task remained explicitly blocked until `plans/mvp.pert` reached `M8_BETA_RELEASED`. Because cross-plan dependencies are not yet implemented, that external gate was represented by a stable `blocked_reason`. After beta acceptance, the Stage 3 preview-first unblock procedure removed the reason and changed `SURFACE_INVENTORY` to `planned`; fresh analysis now makes it the recommended entry task.
 
 ### Post-MVP Slice 5: language tooling and MCP
 

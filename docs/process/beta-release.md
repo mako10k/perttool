@@ -1,10 +1,11 @@
-# Beta移行とrelease手順
+# Beta Transition and Release Procedure
 
-- 文書状態: Planned 1.0
+- Status: Accepted 1.1
 - 決定日: 2026-07-23
 - Versioning: [ADR 0003](../adr/0003-beta-versioning.md)
 - Feature gate: [Issue #2](https://github.com/mako10k/perttool/issues/2)
 - Feature acceptance: [AI Agent Guidance Registry v1受け入れ記録](agent-guidance-acceptance.md)
+- Release acceptance: [`v0.1.0` beta release acceptance record](beta-release-acceptance.md)
 - Macro plan: [../../plans/mvp.pert](../../plans/mvp.pert)
 - Detail plan: [../../plans/agent-guidance.pert](../../plans/agent-guidance.pert)
 
@@ -47,3 +48,7 @@ Release commitで次を同時に更新する。
 8. Release記録を残して`BETA_RELEASE_E2E`を完了する
 
 Git push、GitHub操作、npm publishはrepository規則どおり`secdat exec`配下で行う。Actual publishはこの計画追加だけでは許可されない。
+
+## 5. Accepted outcome
+
+The procedure was completed on 2026-07-23. The immutable release tag, artifact identity, GitHub prerelease, npm dist-tags, isolated registry installation, verification results, and post-release plan transition are recorded in the [`v0.1.0` beta release acceptance record](beta-release-acceptance.md).

@@ -18,9 +18,11 @@ All seven plans pass the self-use gate and are used as inputs to `dsl check`, `d
 
 同日に人間overrideで前倒ししたnpm publication preflightを、normal recommendationで選ばれた`RELEASE_E2E`から実行した。`v0.1.0-alpha.2`のversion/tag、GitHub asset、npm publish、registry installを同一tarballで検証し、MVP macroを完了した。
 
-Issue #2を最初のbetaへ含め、`agent-guidance.pert`の5 task全22pとmacro `AGENT_GUIDANCE_IMPLEMENTATION`、`BETA_RELEASE_E2E` 1dを追加した。2026-07-23に全5 taskを1 active dayで完了し、[受け入れ記録](../docs/process/agent-guidance-acceptance.md)を固定して実測Velocityを`22p/1d`へ補正した。Detail planはadvance済みで残作業0pである。同日、利用者の明示指示で操作系`PROJECT_METADATA_CLI` 5pを先行完了し、操作系累計29p/2 active day、実測Velocity`29p/2d`へ補正した。MacroもM7のreached frontierまでadvanceし、唯一のready、`runnable_now`、recommended taskは`BETA_RELEASE_E2E`、precedence/resource makespanは1dである。Issue #3、LSP server、VSIX、MCP serverはbeta blockerに含めない。
+Issue #2 was included in the first beta and accepted after all five `agent-guidance.pert` tasks, totaling 22p, completed in one active day. The measured workstream velocity is `22p/1d`, and the detail plan has no remaining work. The operations velocity, including the explicitly advanced 5p `PROJECT_METADATA_CLI` task, is `29p/2d`.
 
-ADR 0004 adopts English as the canonical repository language without i18n. The new `english-baseline.pert` detail plan contains eight migration tasks totaling 42p. Its conditional precedence makespan is 29p, resource makespan is 32p, and provisional velocity forecast is `64/29d`. `SURFACE_INVENTORY` remains explicitly blocked until the first beta is complete, so this independent plan does not change the current macro recommendation or beta gate.
+The suffix-free `v0.1.0` beta was published and [accepted](../docs/process/beta-release-acceptance.md) on 2026-07-23. The macro plan is advanced to the reached `M8_BETA_RELEASED` frontier and has no remaining or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+
+ADR 0004 adopts English as the canonical repository language without i18n. The `english-baseline.pert` detail plan contains eight migration tasks totaling 42p. Its precedence makespan is 29p, resource makespan is 32p, and provisional resource forecast is `64/29d`. The beta gate is reached, so `SURFACE_INVENTORY` is now ready, runnable, and recommended.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

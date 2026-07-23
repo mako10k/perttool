@@ -42,11 +42,13 @@
   "next": {
     "groups": {
       "active": [],
-      "ready": [],
-      "runnable_now": [],
-      "blocked_now": [
+      "ready": [
         "SURFACE_INVENTORY"
       ],
+      "runnable_now": [
+        "SURFACE_INVENTORY"
+      ],
+      "blocked_now": [],
       "upcoming": [
         "GOLDEN_UNICODE_AUDIT",
         "ENGLISH_ACCEPTANCE",

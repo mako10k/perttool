@@ -1,15 +1,7 @@
 project ENGLISH_BASELINE:
   version 1
   title "English repository baseline migration"
-  description |
-    Migrate repository-maintained prose, bundled help, and diagnostics to the
-    English baseline adopted by ADR 0004. The first beta release remains the
-    current macro critical path. SURFACE_INVENTORY stays explicitly blocked
-    until plans/mvp.pert reaches M8_BETA_RELEASED. The initial velocity is the
-    provisional operations measurement of 29p/2d and must be recalibrated from
-    this workstream after its first completed tasks. Runtime i18n, translation
-    catalogs, locale negotiation, and translation of user-authored content are
-    outside this plan.
+  description "Migrate repository-maintained prose, bundled help, and diagnostics to the English baseline adopted by ADR 0004. The first beta release is accepted and SURFACE_INVENTORY is now the recommended entry task. The provisional velocity is 29p/2d and must be recalibrated from this workstream after its first completed tasks. Runtime i18n, translation catalogs, locale negotiation, and translation of user-authored content remain outside this plan."
   as_of 2026-07-23
   duration_unit point
   velocity 29p/2d
@@ -75,8 +67,7 @@ task SURFACE_INVENTORY LANGUAGE_POLICY_ADOPTED -> SURFACE_INVENTORY_READY:
     round-trip fixtures remain non-English. Record stable identifiers and
     historical artifacts that must not be translated.
   duration 2p
-  status blocked
-  blocked_reason "External gate: keep blocked until plans/mvp.pert reaches M8_BETA_RELEASED; then preview task set, clear blocked_reason, set status planned, and re-run check/analyze/next"
+  status planned
   priority 100
   requires:
     DEVELOPERS 1

@@ -1,7 +1,7 @@
 project PERTTOOL_MVP:
   version 1
-  title "perttool MVPからbetaへのmacro計画"
-  description "perttool最初のbetaへのcurrent/future macro PERT。MVP public alpha、Issue #2 read-only AI Agent Guidance Registry v1の全22p、project metadata CLIは受け入れ済みで、過去の詳細はGit historyと各詳細planを参照する。現在の残作業はBETA_RELEASE_E2E 1dだけで、suffixなし0.1.0、同一tarball、GitHub prerelease、npm beta、既存latest不変、registry隔離installを検証する。Alpha互換や追加soak、Issue #3、LSP server、VSIX、MCP serverはbeta開始条件に含めない。"
+  title "perttool macro roadmap through first beta"
+  description "Completed macro roadmap through the first suffix-free beta. Version 0.1.0 was published from one verified tarball to a GitHub prerelease and the npm beta dist-tag while latest remained 0.1.0-alpha.2. Post-beta workstreams are tracked in independent plans; release evidence is recorded in docs/process/beta-release-acceptance.md and Git history."
   as_of 2026-07-23
   duration_unit day
   finish M8_BETA_RELEASED
@@ -15,19 +15,7 @@ resource REVIEWERS:
   description "仕様判断と安全性gateは同時に1件だけレビューする"
   capacity 1
 
-milestone M7_AGENT_GUIDANCE_READY:
-  title "M7 beta feature受け入れ完了"
-  description "Issue #2 AI Agent Guidance Registryとproject metadata CLIの両方をbeta release前に受け入れる"
-  state reached
-
 milestone M8_BETA_RELEASED:
-  title "M8 0.x betaリリース"
-
-task BETA_RELEASE_E2E M7_AGENT_GUIDANCE_READY -> M8_BETA_RELEASED:
-  title "Suffixなし0.x betaを同一artifactで検証・公開する"
-  description "Issue #2受け入れ後、0.1.0、GitHub prerelease、npm beta dist-tag、latest不変、registry隔離installを同一tarballで検証する。Alpha互換や追加soakはgateにしない"
-  duration 1d
-  priority 5
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
+  title "M8 suffix-free 0.x beta released"
+  description "Version 0.1.0 release, registry installation, and artifact parity accepted"
+  state reached

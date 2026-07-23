@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 3 / Revision 2.23
+- 文書状態: Active Stage 3 / Revision 2.24
 - 作成日: 2026-07-21
 - 更新日: 2026-07-23
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -151,6 +151,8 @@ MVP public alpha受け入れ後、利用者判断でIssue #2を最初のbetaへ�
 
 同じlogical changeで、LSP server、コードハイライトとLSP clientを持つVSIX、MCP serverを最初のbeta後の独立backlogへ追加した。LSP serverをVSIXのpredecessorとし、MCP serverは独立workstreamとする。いずれも現行macroまたは最初のbetaのblockerへは追加しない。
 
+The `BETA_RELEASE_E2E` task then completed. Release commit `4ba630f39a727f40d10518e5ab9155f9fbc9a8f6` and annotated tag `v0.1.0` were pushed, and one tarball was published as a GitHub prerelease and to npm `beta`. The local, GitHub, and registry tarballs shared SHA-256 `a077b54d7b9a0f0c054ee1ce667a6784821af825954f350ce4f76bf43b11831c`; `latest=0.1.0-alpha.2` remained unchanged, and isolated GitHub and registry installations passed the CLI and Core smoke checks. The [beta acceptance record](beta-release-acceptance.md) fixes the full evidence. The macro plan was completed and advanced to an empty recommendation with final source digest `sha256:b9e296f1e398d40d3f9a862577c2034f371faf2b8592aa40d90fe3825a08e7a8`. The English-baseline external gate was removed through the Stage 3 preview-first workflow; final source digest `sha256:8bb1f1eca3563c093eb6cadb5155233791b2a91286e9f549e0823d3168a563bd`, and `SURFACE_INVENTORY` is now ready, runnable, and recommended.
+
 ### 4.1 Velocity実測calibration
 
 DSL version 1はworking calendar、pause、作業開始時刻を持たないため、commit timestamp間の数時間を暗黙のengineering-dayへ変換しない。自己利用planのVelocityは次の決定的なactive-day方式で測る。
@@ -236,7 +238,7 @@ Stage 1で禁止した操作:
 - 現在の操作系実装taskとresource待ち: `operations.pert`
 - 現在のrecommendation実装taskとresource待ち: `recommendation.pert`
 - 現在のAI Agent Guidance実装taskとresource待ち: `agent-guidance.pert`
-- Post-beta English surface migration and its external gate: `english-baseline.pert`
+- Active post-beta English surface migration: `english-baseline.pert`
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
@@ -244,10 +246,10 @@ Stage 1で禁止した操作:
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
 - `RELEASE_E2E`を含むMVP public alphaは完了した
 - Issue #2と`AGENT_GUIDANCE_IMPLEMENTATION`は受け入れ済みで、detail planは残作業0pまでadvanceした
-- Macroの唯一のready、`runnable_now`、recommendedは`BETA_RELEASE_E2E`である
+- The suffix-free `v0.1.0` beta is accepted, and the macro is advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 - LSP server、VSIX、MCP serverは最初のbeta後の独立backlogであり、現行macroへwork packageを追加しない
-- The English-baseline migration is also independent of the beta macro. Keep `SURFACE_INVENTORY` blocked until `M8_BETA_RELEASED`; after beta, unblock it with a preview-first `task set`, expected digest, safe write, and fresh analysis.
+- The independent English-baseline migration is unblocked after `M8_BETA_RELEASED`; `SURFACE_INVENTORY` is its current ready, runnable, and recommended task.
 
 ### 5.3 AI工程制御設計plan
 
@@ -420,7 +422,7 @@ Stage 1開始時の証跡:
 - agent guidance Core gate: version付きoffline profile、canonical digest、validator、exact lookupとalias、reference-closedなindex/quick/detail projection、deterministic JSON、6 statusとfixed-date staleness、no-side-effect capabilityをpublic libraryと専用testへ固定し、累計実測`14p/1d`、残り8p = `4/7d`、次のrecommended task `AGENT_HELP_PUBLICATION`をgoldenへ固定する
 - agent guidance publication gate: 同じCore resultからdeterministic text/JSON、structured command help、`agent help` CLI、alias、unknown/usage diagnostic、read-only capability、legacy `dsl help` bytes、package-installed Core/CLI parityを固定し、累計実測`19p/1d`、残り3p = `3/19d`、次のrecommended task `GUIDANCE_ACCEPTANCE`をgoldenへ固定する
 - agent guidance acceptance gate: Issue #2の12 criteriaを仕様、Core、CLI、text/JSON、fixture/golden、package、securityへtraceし、全244 test、local link、release packageを受け入れる。累計実測`22p/1d`、detail残り0p、macroの次のrecommended task `BETA_RELEASE_E2E`をgoldenへ固定する
-- beta release gate: suffixなし`0.1.0`、GitHub prerelease、npm `beta`、既存`latest`不変、同一tarball、registry隔離installをIssue #2受け入れ後にだけ実行する
-- English-baseline planning gate: ADR 0004, eight tasks totaling 42p, conditional precedence 29p, resource makespan 32p, provisional `29p/2d` velocity, and the post-beta `SURFACE_INVENTORY` block are fixed in the seventh self-use plan
+- beta release gate: accepted `v0.1.0` from one tarball after verifying the GitHub prerelease, npm `beta`, unchanged `latest`, artifact parity, and isolated registry installation
+- English-baseline planning gate: ADR 0004, eight tasks totaling 42p, precedence makespan 29p, resource makespan 32p, provisional `29p/2d` velocity, and the now-recommended `SURFACE_INVENTORY` task are fixed in the seventh self-use plan
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all seven plans
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

@@ -63,14 +63,16 @@
       ]
     },
     "english-baseline": {
-      "source_digest": "sha256:e2c9e5608d7f087457865c388fa1918b8bd03f145ff8e8ec5059884d2df038d8",
+      "source_digest": "sha256:8bb1f1eca3563c093eb6cadb5155233791b2a91286e9f549e0823d3168a563bd",
       "groups": {
         "active": [],
-        "ready": [],
-        "runnable_now": [],
-        "blocked_now": [
+        "ready": [
           "SURFACE_INVENTORY"
         ],
+        "runnable_now": [
+          "SURFACE_INVENTORY"
+        ],
+        "blocked_now": [],
         "upcoming": [
           "GOLDEN_UNICODE_AUDIT",
           "ENGLISH_ACCEPTANCE",
@@ -81,22 +83,35 @@
           "PERT_PLANS"
         ]
       },
-      "recommended_task_ids": [],
-      "manual_selected_task_ids": [],
-      "tiers": {},
-      "joint_resource_feasible": true,
-      "ready_tasks": [],
-      "record_counts": {
-        "task_decisions": 0,
-        "decision_steps": 1,
-        "facts": 1,
-        "comparisons": 0,
-        "reasons": 1,
-        "descriptions": 0
+      "recommended_task_ids": [
+        "SURFACE_INVENTORY"
+      ],
+      "manual_selected_task_ids": [
+        "SURFACE_INVENTORY"
+      ],
+      "tiers": {
+        "SURFACE_INVENTORY": "recommended"
       },
-      "diagnostic_codes": [
-        "PTRES-303"
-      ]
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "SURFACE_INVENTORY",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
     },
     "grammar": {
       "source_digest": "sha256:bbdeeb1636c0c3ca534d0f69b8a52c17f399a31c38aeecb2b7271f07812c909a",
@@ -177,45 +192,26 @@
       ]
     },
     "mvp": {
-      "source_digest": "sha256:b05c1c294f9349ee04e1cc158a53f18e108f33a5750ca6c1cb62e70efd3e5eb4",
+      "source_digest": "sha256:b9e296f1e398d40d3f9a862577c2034f371faf2b8592aa40d90fe3825a08e7a8",
       "groups": {
         "active": [],
-        "ready": [
-          "BETA_RELEASE_E2E"
-        ],
-        "runnable_now": [
-          "BETA_RELEASE_E2E"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": []
       },
-      "recommended_task_ids": [
-        "BETA_RELEASE_E2E"
-      ],
-      "manual_selected_task_ids": [
-        "BETA_RELEASE_E2E"
-      ],
-      "tiers": {
-        "BETA_RELEASE_E2E": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "BETA_RELEASE_E2E",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": []
     }

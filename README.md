@@ -28,7 +28,8 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [Recommendation 設計受け入れレビュー](docs/process/recommendation-design-review.md)
 - [MVP release readiness監査](docs/process/mvp-release-readiness.md)
 - [Beta versioning ADR](docs/adr/0003-beta-versioning.md)
-- [Beta release手順](docs/process/beta-release.md)
+- [Beta release procedure](docs/process/beta-release.md)
+- [`v0.1.0` beta release acceptance](docs/process/beta-release-acceptance.md)
 - [English repository baseline ADR](docs/adr/0004-english-repository-baseline.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
@@ -131,7 +132,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dag next`は依存関係上の`ready`、既存schedulerが選ぶ`runnable_now`、工程authorityであるroot `recommendation`を分離します。JSONは全ready taskのtier、exact typed fact、comparison、decision trace、canonical descriptionをcomplete graphとして返し、textは4 tierの`complete=false` summaryとJSON導線を返します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明も従来どおり保持します。Consumerは[移行ガイド](docs/process/next-v3-consumer-migration.md)に従い、`schema_version`を最初に検査します。
 
-Known and complete `NextResult.v3` is the normal AI task-selection authority after the original five-plan shadow and the MIG-07 safe-stop dry run. The self-use gate now checks seven plans, including agent guidance and the explicitly blocked post-beta English-baseline migration. Select a workstream from the macro recommendation before analyzing its detail plan, and stop on unknown versions, incomplete traces, `PTREC-*`, or deferred/discouraged selections.
+Known and complete `NextResult.v3` is the normal AI task-selection authority after the original five-plan shadow and the MIG-07 safe-stop dry run. The self-use gate checks seven plans, including agent guidance and the active post-beta English-baseline migration. Select a workstream from a non-empty macro recommendation before analyzing its detail plan, and stop on unknown versions, incomplete traces, `PTREC-*`, or deferred/discouraged selections. When a completed macro has no ready work package, use only an explicitly independent detail plan whose external gate is recorded as reached.
 
 Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhuman requestから、normal recommendationを変更せずdeterministicな`Perttool.OverrideDecision.v1`を生成します。これはread-only validationであり、task state、file、Git、networkを変更しません。Override applyとaudit writeのCLIは未実装です。
 
@@ -143,7 +144,7 @@ Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhu
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPからbetaへのmacro計画](plans/mvp.pert)をroadmapとするStage 3のpreview-first自己利用を行っています。MVP public alphaに続き、Issue #2のread-only AI Agent Guidance Registry v1も[受け入れました](docs/process/agent-guidance-acceptance.md)。5 provider baseline、公開contract、version付きoffline profile、validator、query、index/quick/detail projection、deterministic JSON/text、structured command help、`agent help` CLI、package-installed Core/CLI parity、security境界を全checkで検証し、固有実測Velocityを全22p/1 active dayの`22p/1d`へ補正しました。利用者の明示指示で先行した`PROJECT_METADATA_CLI`を含む操作系実測Velocityは29p/2 active dayの`29p/2d`です。Macroの唯一のready、`runnable_now`、recommended taskは`BETA_RELEASE_E2E`で、残存makespanは1dです。Issue #3、LSP server、VSIX、MCP serverはbeta blockerに含めません。
+The Stage 3 preview-first self-use workflow has completed the [macro roadmap through beta](plans/mvp.pert). The first suffix-free beta, `v0.1.0`, is [accepted](docs/process/beta-release-acceptance.md) after one tarball was verified across the GitHub prerelease, npm `beta`, and isolated registry installation while `latest` remained unchanged. The macro recommendation is now empty. The independent [English baseline migration plan](plans/english-baseline.pert) is unblocked and recommends `SURFACE_INVENTORY` with a provisional `29p/2d` velocity. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
 ## Security and license
 
