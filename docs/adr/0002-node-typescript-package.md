@@ -57,6 +57,8 @@ MVPはローカルCLIをprimary interfaceとし、同じCore APIをlibrary、tes
 
 この節はpublic alphaのrelease判断を記録する。最初のbeta以降のversionとdist-tagは[ADR 0003](0003-beta-versioning.md)および[beta release手順](../process/beta-release.md)を正とし、alpha用のpublication記録を新しいreleaseへ流用しない。
 
+The normalization dry-run may use npm `--force` only to bypass the duplicate-version rejection after publication. This does not authorize a write: actual publication never uses `--force` and retains the unpublished-version, clean commit, remote tag, and explicit approval gates.
+
 詳細なalpha preflight、publish、公開後検証は[npm publication手順](../process/npm-publication.md)を正とする。
 
 ## Dependency policy

@@ -38,7 +38,7 @@ bash scripts/publish-npm.sh --dry-run
 bash scripts/publish-npm.sh --dry-run /absolute/path/to/perttool-VERSION.tgz
 ```
 
-`npm run check:package`はtarballを作成し、内容、隔離prefixへのinstall、CLI/library smokeに加えて、このpublish normalization dry-runを実行する。npmがmanifestを自動補正した場合は失敗する。
+`npm run check:package` builds the tarball and verifies its contents, isolated installation, CLI/library smoke paths, and publish normalization. The dry-run alone uses npm `--force` so the check remains repeatable after the exact version has been published; actual publication never uses `--force`. Manifest auto-correction still fails the check.
 
 ## 4. Release artifact
 

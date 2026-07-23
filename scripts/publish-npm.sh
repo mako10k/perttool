@@ -96,7 +96,9 @@ esac
 
 publish_output="$inspection_root/npm-publish-output.txt"
 if [[ "$mode" == "--dry-run" ]]; then
-  if ! npm publish "$package_spec" --dry-run --tag "$publish_tag" --access public --json >"$publish_output" 2>&1; then
+  # --force is confined to dry-run so normalization remains repeatable after
+  # this exact version exists in the registry. Actual publication never uses it.
+  if ! npm publish "$package_spec" --dry-run --force --tag "$publish_tag" --access public --json >"$publish_output" 2>&1; then
     cat "$publish_output" >&2
     exit 1
   fi
