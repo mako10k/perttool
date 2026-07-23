@@ -5,12 +5,12 @@ project RECOMMENDATION_IMPLEMENTATION:
     docs/process/recommendation-migration.mdのMIG-01からMIG-07を、
     MVP受け入れ条件16のread-only recommendationとnormal authority adoptionまで実装する。
     Pointはこのroadmap再構成時の相対見積りである。2026-07-23に
-    FIXTURE_BASELINE 2pを1 active dayで完了した初回標本から、
-    recommendation固有の暫定実測Velocityを2p/1dへcalibrationした。
+    FIXTURE_BASELINE 2pとRANKING_CORE 4pを1 active dayで完了した累計標本から、
+    recommendation固有の暫定実測Velocityを6p/1dへcalibrationした。
     MIG-08のoverride applyとdurable auditはMVP後の独立work packageとする。
   as_of 2026-07-23
   duration_unit point
-  velocity 2p/1d
+  velocity 6p/1d
   finish RECOMMENDATION_MVP_READY
 
 resource DEVELOPERS:
@@ -63,6 +63,7 @@ task RANKING_CORE FIXTURE_BASELINE_READY -> RANKING_CORE_READY:
   title "candidate fact、ranking、tier Coreを実装する"
   description "src/recommendationでselection horizon、complete order、joint-feasible recommended setをpure実装し、exact/stable unit testを追加する"
   duration 4p
+  status done
   priority 90
   requires:
     DEVELOPERS 1

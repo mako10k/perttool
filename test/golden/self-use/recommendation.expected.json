@@ -8,30 +8,28 @@
       "tasks": 7,
       "gates": 2,
       "errors": 0,
-      "warnings": 1
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "17/1",
+    "precedence_makespan": "13/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "17/2",
+    "precedence_forecast": "13/6",
     "precedence_critical_tasks": [
-      "RANKING_CORE",
       "EXPLANATION_CORE",
       "NEXT_V3_PUBLICATION",
       "SELF_USE_SHADOW",
       "AUTHORITY_ADOPTION"
     ],
-    "resource_makespan": "20/1",
-    "resource_forecast": "10/1",
+    "resource_makespan": "16/1",
+    "resource_forecast": "8/3",
     "resource_delay": "3/1",
     "resource_arcs": [
       "resource:OVERRIDE_VALIDATION:AUTHORITY_ADOPTION",
       "resource:SELF_USE_SHADOW:OVERRIDE_VALIDATION"
     ],
     "schedule_critical_tasks": [
-      "RANKING_CORE",
       "EXPLANATION_CORE",
       "NEXT_V3_PUBLICATION",
       "SELF_USE_SHADOW",
@@ -43,14 +41,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "RANKING_CORE"
+        "EXPLANATION_CORE"
       ],
       "runnable_now": [
-        "RANKING_CORE"
+        "EXPLANATION_CORE"
       ],
       "blocked_now": [],
       "upcoming": [
-        "EXPLANATION_CORE",
         "NEXT_V3_PUBLICATION",
         "SELF_USE_SHADOW",
         "OVERRIDE_VALIDATION",

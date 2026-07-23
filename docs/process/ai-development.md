@@ -2,7 +2,7 @@
 
 - 文書状態: Draft 0.4
 - 作成日: 2026-07-21
-- 更新日: 2026-07-22
+- 更新日: 2026-07-23
 - 共有指示: [../../AGENTS.md](../../AGENTS.md)
 - 自己利用計画: [self-use.md](self-use.md)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
@@ -110,7 +110,7 @@ git diff --check
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。複数work packageがrunnableの場合はmacroのcritical判定、total float、明示priority、resource capacityを判断根拠とする。Issue #1のrecommendation APIが実装され、[Recommendation migration](recommendation-migration.md)のshadow/adoption gateを満たすまでは、この選択規則を明示的なprocessとして維持する。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)でMVP受け入れ条件16の未実装を確認したため、MIG-01からMIG-07を[Recommendation実装plan](../../plans/recommendation.pert)へ22pで詳細化し、macro release gateへ追加した。2026-07-23にMIG-01 fixture baseline 2pを完了し、recommendation実測`2p/1d`で残る20pを10dへforecastした。Macroの残るprecedence/resource makespanは12dで、`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつ`runnable_now`なcritical work package、detailの次taskは`RANKING_CORE`、`RELEASE_E2E`はupcomingである。V3 shadow/adoption gateを満たすまでは本節のmanual selectionを維持する。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)でMVP受け入れ条件16の未実装を確認したため、MIG-01からMIG-07を[Recommendation実装plan](../../plans/recommendation.pert)へ22pで詳細化し、macro release gateへ追加した。2026-07-23にMIG-01 fixture baseline 2pとMIG-02 ranking/tier Core 4pを完了し、recommendation実測`6p/1d`で残る16pを`8/3d`へforecastした。Macroの残るprecedence/resource makespanは`4.666667d`で、`RECOMMENDATION_IMPLEMENTATION`が唯一のreadyかつ`runnable_now`なcritical work package、detailの次taskは`EXPLANATION_CORE`、`RELEASE_E2E`はupcomingである。V3 shadow/adoption gateを満たすまでは本節のmanual selectionを維持する。
 
 ### 5.1 Recommendation導入後のtask selection
 

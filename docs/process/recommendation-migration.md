@@ -1,6 +1,6 @@
 # Recommendation実装・自己利用migration
 
-- 文書状態: Active 1.3
+- 文書状態: Active 1.4
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 基本設計: [../basic-design.md](../basic-design.md)
@@ -33,7 +33,8 @@
 
 - `selectNextTasks`と`dag next`は`Perttool.NextResult.v2`を返す
 - `active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`は実装済み
-- recommendation tier、recommended set、structured explanationは未実装
+- candidate fact、complete order、selection horizon、recommended set、tierのpure Coreは実装済み
+- structured explanation、`NextResult.v3`公開、override validation、shadow/adoptionは未実装
 - override validation、apply、audit integrationは未実装
 - 自己利用はStage 3であり、editing/advance writeはpreview、expected digest、write後再解析を必須とする。Override applyは未実装である
 - AIのtask選択は[AI開発ガイド](ai-development.md)の明示手順をauthorityとする
@@ -53,6 +54,8 @@
 実行順は[操作系詳細plan](../../plans/operations.pert)へ固定し、全24pを完了した。M3、Stage 3、Mermaid profile設計、Mermaid export/import round-tripへ到達した後、[MVP release readiness監査](mvp-release-readiness.md)で受け入れ条件16の未実装を確認した。MIG-01からMIG-07は[Recommendation実装plan](../../plans/recommendation.pert)へ22p、precedence 19p、resource 22pとして詳細化し、operations実測`24p/1d`を初期Velocityに使用する。Macroでは`RECOMMENDATION_IMPLEMENTATION`をrelease hard predecessorへ追加し、`RELEASE_E2E`をupcomingへ戻した。
 
 2026-07-23にMIG-01を完了した。REC-001からREC-007の最小`.pert`、REC-008からREC-011のunit input、将来期待fact、現行`NextResult.v2`のgroups/tasks/resource rejection/upcoming explanation projectionをfixtureとgoldenへ固定した。REC-002はcompletion counterfactualとgate距離が両立するよう規範距離を補正した。初回完了標本2p/1 active dayからrecommendation固有Velocityを`2p/1d`へ更新し、残るprecedence 17p、resource 20p、resource delay 3p、resource forecast 10dとなった。次taskは`RANKING_CORE`である。
+
+同日にMIG-02を完了した。`src/recommendation/`へactual ready taskのcompletion counterfactual、structural distance、exact complete order、selection horizon、active allocation込みのjoint resource scan、tier、resource witnessをpure Coreとして実装した。REC-001からREC-007、全ranking rule、near-critical/minimum-float horizon、parallel/empty set、capacity override、selected/active-only blockerをunit testへ固定し、現行Core export、CLI、help、`NextResult.v2`は変更していない。累計6p/1 active dayからVelocityを`6p/1d`へ更新し、残るprecedence 13p、resource 16p、resource delay 3p、resource forecast `8/3d`となった。次taskは`EXPLANATION_CORE`である。
 
 MIG-01からMIG-07は、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を共有する。Task別duration、file ownership、acceptance、narrow testは`plans/recommendation.pert`を正とする。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とし、MVP後の独立work packageのままとする。Issue #2もhelp surfaceとreviewerを共有するが、macroへ追加するまでは実装順を推測しない。
 

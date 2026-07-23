@@ -472,6 +472,8 @@ MIG-08のoverride apply/audit gateを満たすまではtrailerを実commitへ適
 
 MIG-01の実体は`test/fixtures/recommendation/`のREC-001からREC-007 `.pert`、REC-008からREC-011 unit inputを含む`cases.json`、および`test/golden/recommendation/v2-projection.expected.json`である。Fixture baselineは将来の期待判断と現行`NextResult.v2` projectionを分離し、v3 publication前にpublic schemaやtextを変更しない。
 
+MIG-02の実体は`src/recommendation/`の非公開pure Coreと`test/recommendation-ranking.test.mjs`である。REC-001からREC-007のcandidate fact、selection horizon、recommended set、tier、resource witnessに加え、全ranking rule、near-critical/minimum-float horizon、capacity overrideを固定する。MIG-03とMIG-04が完了するまで、このCoreをcomplete explanationまたはpublic `NextResult.v3`として扱わない。
+
 ## 7. Acceptance
 
 - critical対priority、unlock、gate近傍、parallel recommendationを固定した
