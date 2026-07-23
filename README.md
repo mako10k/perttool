@@ -58,10 +58,10 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 
 ## Install
 
-Install the current beta from the npm `beta` dist-tag. Maintainers must follow the [beta release procedure](docs/process/beta-release.md) and publish the exact release tarball without moving `latest`.
+Install the current recommended beta from npm. Both `latest` and `beta` currently resolve to `0.1.0`. Maintainers publish through the `beta` dist-tag without moving `latest`; a later `latest` promotion is a separately authorized post-acceptance operation.
 
 ```sh
-npm install --global perttool@beta
+npm install --global perttool
 perttool --version
 ```
 
@@ -144,7 +144,7 @@ Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhu
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-The Stage 3 preview-first self-use workflow has completed the [macro roadmap through beta](plans/mvp.pert). The first suffix-free beta, `v0.1.0`, is [accepted](docs/process/beta-release-acceptance.md) after one tarball was verified across the GitHub prerelease, npm `beta`, and isolated registry installation while `latest` remained unchanged. The macro recommendation is now empty. The independent [English baseline migration plan](plans/english-baseline.pert) is unblocked and recommends `SURFACE_INVENTORY` with a provisional `29p/2d` velocity. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+The Stage 3 preview-first self-use workflow has completed the [macro roadmap through beta](plans/mvp.pert). The first suffix-free beta, `v0.1.0`, is [accepted](docs/process/beta-release-acceptance.md) after one tarball was verified across the GitHub prerelease, npm `beta`, and isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro recommendation is now empty. The independent [English baseline migration plan](plans/english-baseline.pert) is unblocked and recommends `SURFACE_INVENTORY` with a provisional `29p/2d` velocity. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
 ## Security and license
 

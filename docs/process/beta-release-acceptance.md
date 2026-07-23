@@ -1,6 +1,6 @@
 # `v0.1.0` Beta Release Acceptance Record
 
-- Status: Accepted 1.0
+- Status: Accepted 1.1
 - Accepted on: 2026-07-23
 - Release commit: `4ba630f39a727f40d10518e5ab9155f9fbc9a8f6`
 - Annotated tag: `v0.1.0`
@@ -10,9 +10,9 @@
 
 ## 1. Decision
 
-Accept `v0.1.0` as the first suffix-free `0.x.x` beta release. The release includes the read-only AI Agent Guidance Registry v1 accepted for Issue #2. It is available from the npm `beta` dist-tag and as a GitHub prerelease.
+Accept `v0.1.0` as the first suffix-free `0.x.x` beta release. The release includes the read-only AI Agent Guidance Registry v1 accepted for Issue #2. It is available from npm `beta` and `latest` and as a GitHub prerelease.
 
-This acceptance closes `BETA_RELEASE_E2E` and reaches `M8_BETA_RELEASED`. It does not promote the package to npm `latest`, promise strict compatibility with alpha releases, or accept the post-beta Issue #3, LSP server, VSIX, MCP server, runtime i18n, or English-surface migration backlogs.
+This acceptance closes `BETA_RELEASE_E2E` and reaches `M8_BETA_RELEASED`. The later explicit `latest` promotion changes the default npm install target but does not change beta product maturity, promise strict compatibility with alpha releases, or accept the post-beta Issue #3, LSP server, VSIX, MCP server, runtime i18n, or English-surface migration backlogs.
 
 ## 2. Source and artifact identity
 
@@ -30,15 +30,15 @@ The public GitHub asset was downloaded and installed in an isolated prefix. The 
 
 ## 3. Distribution state
 
-The npm dist-tags after publication were:
+The current npm dist-tags after the post-acceptance promotion are:
 
 | Dist-tag | Version |
 | --- | --- |
 | `beta` | `0.1.0` |
 | `alpha` | `0.1.0-alpha.2` |
-| `latest` | `0.1.0-alpha.2` |
+| `latest` | `0.1.0` |
 
-The release script published exactly once through the repository-required `secdat` route. The existing `latest` value did not change.
+The release script published exactly once through the repository-required `secdat` route. That publish operation left `latest=0.1.0-alpha.2` unchanged. After acceptance, the user separately authorized one `npm dist-tag add perttool@0.1.0 latest` operation through `secdat`; prefer-online and direct registry metadata both confirmed `latest=0.1.0`.
 
 The GitHub release is public, non-draft, and marked as a prerelease. It contains the release tarball and `SHA256SUMS`.
 
@@ -65,6 +65,8 @@ The downloaded GitHub asset and `perttool@beta` registry installation passed:
 - public Core import and recommendation completion
 
 The registry installation reported `perttool 0.1.0`.
+
+After promotion, an isolated unqualified `npm install --global perttool` also resolved to `perttool 0.1.0`.
 
 ## 5. Plan transition
 

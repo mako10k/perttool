@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 3 / Revision 2.24
+- 文書状態: Active Stage 3 / Revision 2.25
 - 作成日: 2026-07-21
 - 更新日: 2026-07-23
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -151,7 +151,7 @@ MVP public alpha受け入れ後、利用者判断でIssue #2を最初のbetaへ�
 
 同じlogical changeで、LSP server、コードハイライトとLSP clientを持つVSIX、MCP serverを最初のbeta後の独立backlogへ追加した。LSP serverをVSIXのpredecessorとし、MCP serverは独立workstreamとする。いずれも現行macroまたは最初のbetaのblockerへは追加しない。
 
-The `BETA_RELEASE_E2E` task then completed. Release commit `4ba630f39a727f40d10518e5ab9155f9fbc9a8f6` and annotated tag `v0.1.0` were pushed, and one tarball was published as a GitHub prerelease and to npm `beta`. The local, GitHub, and registry tarballs shared SHA-256 `a077b54d7b9a0f0c054ee1ce667a6784821af825954f350ce4f76bf43b11831c`; `latest=0.1.0-alpha.2` remained unchanged, and isolated GitHub and registry installations passed the CLI and Core smoke checks. The [beta acceptance record](beta-release-acceptance.md) fixes the full evidence. The macro plan was completed and advanced to an empty recommendation with final source digest `sha256:b9e296f1e398d40d3f9a862577c2034f371faf2b8592aa40d90fe3825a08e7a8`. The English-baseline external gate was removed through the Stage 3 preview-first workflow; final source digest `sha256:8bb1f1eca3563c093eb6cadb5155233791b2a91286e9f549e0823d3168a563bd`, and `SURFACE_INVENTORY` is now ready, runnable, and recommended.
+The `BETA_RELEASE_E2E` task then completed. Release commit `4ba630f39a727f40d10518e5ab9155f9fbc9a8f6` and annotated tag `v0.1.0` were pushed, and one tarball was published as a GitHub prerelease and to npm `beta`. The local, GitHub, and registry tarballs shared SHA-256 `a077b54d7b9a0f0c054ee1ce667a6784821af825954f350ce4f76bf43b11831c`; the publish operation left `latest=0.1.0-alpha.2` unchanged, and isolated GitHub and registry installations passed the CLI and Core smoke checks. After acceptance, the user explicitly promoted `0.1.0` to npm `latest`; both `beta` and `latest` now resolve to `0.1.0`. The [beta acceptance record](beta-release-acceptance.md) fixes the full evidence. The macro plan was completed and advanced to an empty recommendation. Its post-promotion metadata update used the Stage 3 expected-digest write and produced source digest `sha256:689462cc4c8a3b5d860f50c9e9a8de3c42ae9caea8fea4cd293ef2076d8caf24`. The English-baseline external gate was removed through the Stage 3 preview-first workflow; final source digest `sha256:8bb1f1eca3563c093eb6cadb5155233791b2a91286e9f549e0823d3168a563bd`, and `SURFACE_INVENTORY` is now ready, runnable, and recommended.
 
 ### 4.1 Velocity実測calibration
 
@@ -422,7 +422,7 @@ Stage 1開始時の証跡:
 - agent guidance Core gate: version付きoffline profile、canonical digest、validator、exact lookupとalias、reference-closedなindex/quick/detail projection、deterministic JSON、6 statusとfixed-date staleness、no-side-effect capabilityをpublic libraryと専用testへ固定し、累計実測`14p/1d`、残り8p = `4/7d`、次のrecommended task `AGENT_HELP_PUBLICATION`をgoldenへ固定する
 - agent guidance publication gate: 同じCore resultからdeterministic text/JSON、structured command help、`agent help` CLI、alias、unknown/usage diagnostic、read-only capability、legacy `dsl help` bytes、package-installed Core/CLI parityを固定し、累計実測`19p/1d`、残り3p = `3/19d`、次のrecommended task `GUIDANCE_ACCEPTANCE`をgoldenへ固定する
 - agent guidance acceptance gate: Issue #2の12 criteriaを仕様、Core、CLI、text/JSON、fixture/golden、package、securityへtraceし、全244 test、local link、release packageを受け入れる。累計実測`22p/1d`、detail残り0p、macroの次のrecommended task `BETA_RELEASE_E2E`をgoldenへ固定する
-- beta release gate: accepted `v0.1.0` from one tarball after verifying the GitHub prerelease, npm `beta`, unchanged `latest`, artifact parity, and isolated registry installation
+- beta release gate: accepted `v0.1.0` from one tarball after verifying the GitHub prerelease, npm `beta`, unchanged `latest` during publication, artifact parity, and isolated registry installation; the later explicit promotion made `beta=latest=0.1.0`
 - English-baseline planning gate: ADR 0004, eight tasks totaling 42p, precedence makespan 29p, resource makespan 32p, provisional `29p/2d` velocity, and the now-recommended `SURFACE_INVENTORY` task are fixed in the seventh self-use plan
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all seven plans
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

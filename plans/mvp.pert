@@ -1,7 +1,7 @@
 project PERTTOOL_MVP:
   version 1
   title "perttool macro roadmap through first beta"
-  description "Completed macro roadmap through the first suffix-free beta. Version 0.1.0 was published from one verified tarball to a GitHub prerelease and the npm beta dist-tag while latest remained 0.1.0-alpha.2. Post-beta workstreams are tracked in independent plans; release evidence is recorded in docs/process/beta-release-acceptance.md and Git history."
+  description "Completed macro roadmap through the first suffix-free beta. Version 0.1.0 was published from one verified tarball to a GitHub prerelease and npm beta, then explicitly promoted to npm latest after acceptance. Post-beta workstreams are tracked in independent plans; release evidence is recorded in docs/process/beta-release-acceptance.md and Git history."
   as_of 2026-07-23
   duration_unit day
   finish M8_BETA_RELEASED

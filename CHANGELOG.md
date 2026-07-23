@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Promoted the accepted `perttool@0.1.0` beta to npm `latest` through an explicit post-release dist-tag operation. This changes the default install target without changing beta product maturity.
+
 ## [0.1.0] - 2026-07-23
 
 First beta release. This suffix-free `0.x.x` series remains prerelease product maturity, permits intentional alpha incompatibility, and publishes through the npm `beta` dist-tag without moving `latest`.

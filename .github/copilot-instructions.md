@@ -6,7 +6,7 @@ Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
 - ADR 0004 is active. Existing Japanese surfaces are migration debt in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached, and `SURFACE_INVENTORY` is the current recommended detail task.
-- The TypeScript CLI MVP, recommendation MIG-01 through MIG-07, and the read-only AI Agent Guidance Registry v1 are accepted. A complete and known `Perttool.NextResult.v3` is the normal AI task-selection authority. The first suffix-free beta, `v0.1.0`, was published from one verified tarball to a GitHub prerelease and npm `beta`; registry installation passed and `latest=0.1.0-alpha.2` remained unchanged. The macro plan is complete with no ready task. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply/audit remains unavailable until MIG-08.
+- The TypeScript CLI MVP, recommendation MIG-01 through MIG-07, and the read-only AI Agent Guidance Registry v1 are accepted. A complete and known `Perttool.NextResult.v3` is the normal AI task-selection authority. The first suffix-free beta, `v0.1.0`, was published from one verified tarball to a GitHub prerelease and npm `beta`, then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is complete with no ready task. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply/audit remains unavailable until MIG-08.
 - 正本の優先順は`docs/requirements.md`、`docs/specs/`、`docs/basic-design.md`、`docs/examples/`、`docs/process/`、`plans/`である。
 - non-trivialな変更前にcurrent checkout、目的、正本、acceptance criteria、non-goal、検証方法を確認する。
 - 「次のタスク」はknown、complete、not-truncatedな`dag next --format json`をauthorityとし、macroのrecommended work packageからworkstreamを選んでから対応detailを再解析する。Recommended subset、またはrecommended set全件にresource-feasibleなallowed taskを1件だけ追加した集合だけをnormal selectionとする。Unknown version、incomplete trace、`PTREC-*`、deferred/discouragedでは開始せず、task stateやcapacity変更後は再解析する。
@@ -18,7 +18,7 @@ Mandatory summary:
 - repository checkはNode.js 24以上で`npm ci`、`npm run check`、whitespace checkは`git diff --check`を使用する。
 - staging前にdiffとstatusを確認し、利用者の無関係な変更を含めない。
 - remote writeとGitHub操作には`secdat exec`を使い、破壊的Git操作には明示許可を得る。
-- npm publishはalphaの`docs/process/npm-publication.md`またはbetaの`docs/process/beta-release.md`のrelease gate、GitHub Releaseとの同一tarball、明示dist-tag、process限定`NPM_TOKEN`注入を守る。Betaは`beta` tagを使い既存`latest`を変更しない。Actual publish前に利用者の明示許可を得る。
+- Beta publication uses `beta` and does not itself change `latest`. A later `latest` promotion is a separate dist-tag mutation requiring an explicitly selected version and user permission. Use the release gates, the GitHub-identical tarball for publication, process-limited `NPM_TOKEN`, and the repository `secdat` route.
 - sub-agentやparallel agent workは、利用者の明示要求または有効なruntime policy上の明示許可がある場合だけ使用する。
 
 詳細なproject map、domain invariant、validation、Git規則は`AGENTS.md`に従う。

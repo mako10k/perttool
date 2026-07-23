@@ -1007,7 +1007,8 @@ Alphaのdogfooding、local link、GitHub prerelease、npm registryからの隔�
 5. offlineで完結し、hook実行、file生成、設定変更、network access、providerへのwriteを行わない
 6. legacy `dsl help`の意味と既存CLI surfaceを意図せず変更しない
 7. provider/source drift、alias、unsupported/unknown、同一入力のbyte determinism、package-installed CLIを自動testで固定する
-8. beta releaseでは同一tarballをpackage check、GitHub prerelease、npm `beta` dist-tag、registry隔離installへ使用し、既存`latest`を変更しない
+8. beta publicationでは同一tarballをpackage check、GitHub prerelease、npm `beta` dist-tag、registry隔離installへ使用し、そのpublish操作では既存`latest`を変更しない
+9. release受け入れ後の`latest`昇格は、利用者が対象versionを明示して許可する独立したdist-tag操作とし、publish retryやstable宣言として扱わない
 
 Provider/surface/guidance/risk taxonomy、support statusの構造化根拠、offline profile、Core/text/JSON、diagnostic、staleness、project guidance合成、read-only migration境界は[AI Agent Guidance Registry仕様](specs/agent-guidance.md)を正とし、競合caseは[規範例](examples/agent-guidance.md)で固定する。
 

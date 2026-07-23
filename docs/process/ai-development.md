@@ -106,7 +106,7 @@ git diff --check
 5. remote writeは`secdat exec`経由で行う
 6. push後にlocal branchとremote tracking branchを確認する
 
-npm publishは通常のclose outに含めない。Alphaは[npm publication記録](npm-publication.md)、betaは[beta release手順](beta-release.md)のrelease gate、同一tarball、remote commit/tag、registry上の未公開versionを確認し、利用者がactual publishを明示許可した場合だけ`secdat`から`NPM_TOKEN`をprocess限定で注入する。Betaは`beta` dist-tagを使い、既存`latest`を変更しない。曖昧なpublish responseを確認せずretryしない。
+npm publication is outside normal close out. Follow the alpha or beta release gate, verify the common tarball, remote commit/tag, and unpublished version, and inject `NPM_TOKEN` through `secdat` only after explicit user permission. Beta publication uses `beta` without moving `latest`. A later `latest` promotion is a separate, explicitly authorized dist-tag mutation. Never retry an ambiguous registry mutation before checking durable state.
 
 ## 5. Next-task selection and self-use
 
@@ -127,7 +127,7 @@ Project metadataを変更するときは`project set`のpreviewまたは`--diff`
 
 2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`で、`v0.1.0-alpha.2`のGitHub/npm同一artifact配布とregistry installまで完了した。
 
-The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation while `latest=0.1.0-alpha.2` remained unchanged. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
 ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached, and `SURFACE_INVENTORY` was unblocked through a Stage 3 `task set` preview, expected digest, safe write, and fresh `check`/`analyze`/`next`; it is now the recommended detail task.
 

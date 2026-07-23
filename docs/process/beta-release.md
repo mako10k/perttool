@@ -1,6 +1,6 @@
 # Beta Transition and Release Procedure
 
-- Status: Accepted 1.1
+- Status: Accepted 1.2
 - 決定日: 2026-07-23
 - Versioning: [ADR 0003](../adr/0003-beta-versioning.md)
 - Feature gate: [Issue #2](https://github.com/mako10k/perttool/issues/2)
@@ -32,9 +32,9 @@ Release commitで次を同時に更新する。
 - CHANGELOGとREADMEをbeta導線へ変更する
 - `publishConfig.tag`とpublish guardを`beta`へ変更する
 - publish scriptを明示channel parameterまたはmanifest channelから検証し、hard-coded `alpha`を残さない
-- `npm install --global perttool@beta`を規範install例にする
+- Use `npm install --global perttool@beta` before any separately authorized `latest` promotion; after promotion, the unqualified install is the primary example
 
-`0.1.0`はSemVer上suffixを持たないが、perttoolのproduct maturityではbetaである。GitHubではprereleaseとして公開し、npmの`latest`は変更しない。
+`0.1.0` is suffix-free but remains beta in perttool product maturity. Publish it as a GitHub prerelease and to npm `beta`. The publish operation must not change `latest`; any later promotion is an independent, explicitly authorized post-acceptance action.
 
 ## 4. Distribution gate
 
@@ -43,12 +43,13 @@ Release commitで次を同時に更新する。
 3. Worktree外でtarballを一度だけ生成してpackage検査する
 4. Tarballと`SHA256SUMS`をGitHub prereleaseへ添付し、公開assetから隔離installする
 5. 利用者のactual publish許可後、同じtarballを`secdat`のprocess限定`NPM_TOKEN`でnpm `beta`へ一度だけpublishする
-6. Registry tarball、GitHub asset、local artifactのdigest一致、`beta` dist-tag、既存`latest`不変を確認する
+6. Verify registry, GitHub, and local artifact identity, the `beta` dist-tag, and that the publish operation left the pre-existing `latest` value unchanged
 7. Registryから隔離installし、CLI version、help、`agent help`、既存command smokeを確認する
 8. Release記録を残して`BETA_RELEASE_E2E`を完了する
+9. If the user separately approves making the accepted beta the default install, move `latest` with one explicit dist-tag operation and verify registry metadata without retrying an ambiguous mutation
 
 Git push、GitHub操作、npm publishはrepository規則どおり`secdat exec`配下で行う。Actual publishはこの計画追加だけでは許可されない。
 
 ## 5. Accepted outcome
 
-The procedure was completed on 2026-07-23. The immutable release tag, artifact identity, GitHub prerelease, npm dist-tags, isolated registry installation, verification results, and post-release plan transition are recorded in the [`v0.1.0` beta release acceptance record](beta-release-acceptance.md).
+The procedure was completed on 2026-07-23. The immutable release tag, artifact identity, GitHub prerelease, npm dist-tags, isolated registry installation, explicit post-acceptance `latest` promotion, verification results, and plan transition are recorded in the [`v0.1.0` beta release acceptance record](beta-release-acceptance.md).

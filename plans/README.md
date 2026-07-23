@@ -20,7 +20,7 @@ All seven plans pass the self-use gate and are used as inputs to `dsl check`, `d
 
 Issue #2 was included in the first beta and accepted after all five `agent-guidance.pert` tasks, totaling 22p, completed in one active day. The measured workstream velocity is `22p/1d`, and the detail plan has no remaining work. The operations velocity, including the explicitly advanced 5p `PROJECT_METADATA_CLI` task, is `29p/2d`.
 
-The suffix-free `v0.1.0` beta was published and [accepted](../docs/process/beta-release-acceptance.md) on 2026-07-23. The macro plan is advanced to the reached `M8_BETA_RELEASED` frontier and has no remaining or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+The suffix-free `v0.1.0` beta was published and [accepted](../docs/process/beta-release-acceptance.md) on 2026-07-23, then explicitly promoted so npm `beta` and `latest` both resolve to `0.1.0`. The macro plan is advanced to the reached `M8_BETA_RELEASED` frontier and has no remaining or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
 ADR 0004 adopts English as the canonical repository language without i18n. The `english-baseline.pert` detail plan contains eight migration tasks totaling 42p. Its precedence makespan is 29p, resource makespan is 32p, and provisional resource forecast is `64/29d`. The beta gate is reached, so `SURFACE_INVENTORY` is now ready, runnable, and recommended.
 
