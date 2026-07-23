@@ -91,6 +91,9 @@ flowchart LR
   HELP[Help registry] --> CLI
   HELP -.-> MCP
   HELP -.-> LSP
+
+  PROFILE[Bundled agent guidance profile] --> GUIDANCE[Agent guidance Core]
+  GUIDANCE --> CLI
 ```
 
 ### 3.1 dependency rule
@@ -150,6 +153,7 @@ perttool/
   tsconfig.json
   src/
     application/
+      agent-help.ts
       analyze.ts
       check.ts
       format.ts
@@ -163,6 +167,13 @@ perttool/
       unified-diff.ts
     formatter/
       source-formatter.ts
+    guidance/
+      profile.ts
+      projection.ts
+      query.ts
+      text.ts
+      types.ts
+      validator.ts
     help/
       registry.ts
     io/
@@ -189,6 +200,8 @@ perttool/
     index.ts
     version.ts
   test/
+    agent-guidance-core.test.mjs
+    agent-guidance-publication.test.mjs
     analysis.test.mjs
     cli.test.mjs
     e2e.test.mjs

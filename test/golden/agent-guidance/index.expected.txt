@@ -1,0 +1,7 @@
+AGENT GUIDANCE schema=Perttool.AgentGuidanceResult.v1 profile=1 snapshot=2026-07-23
+PROVIDER codex aliases=- surfaces=instruction,workflow,delegated_agent,enforcement,prompt,connector
+PROVIDER github-copilot aliases=- surfaces=instruction,workflow,delegated_agent,enforcement,prompt,connector
+PROVIDER claude-code aliases=- surfaces=instruction,workflow,delegated_agent,enforcement,prompt,connector
+PROVIDER grok-build aliases=grok surfaces=instruction,workflow,delegated_agent,enforcement,prompt,connector
+PROVIDER antigravity aliases=- surfaces=instruction,workflow,delegated_agent,enforcement,prompt,connector
+READ-ONLY files=false hooks=false commands=false network=false provider-write=false

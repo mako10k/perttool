@@ -42,6 +42,7 @@ perttoolは現在、TypeScript CLIのMVP public alpha受け入れを完了し、
 - `src/conversion/`: Mermaid profile/plain export/import、semantic metadata、projection生成、fail-closed復元。
 - `src/editing/`: formatterとmutationが共有するdeterministic unified diff。
 - `src/formatter/`: source-preserving formatter Core。
+- `src/guidance/`: version付きoffline AI Agent Guidance profile、validator、query、index/quick/detail projection、deterministic JSON/textを提供するread-only pure Core。
 - `src/io/`: raw-byte document read、digest、symlink/race拒否、atomic safe-write adapter。
 - `src/mutation/`: task/milestone/resourceとatomic batchのrequest、canonical advance、source-preserving UTF-16 TextEdit生成、適用規則。
 - `src/application/`: check/analyze/nextと、再検査済みmutation resultを返すpure service。

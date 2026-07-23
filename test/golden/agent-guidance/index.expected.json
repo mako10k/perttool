@@ -1,0 +1,110 @@
+{
+  "schema_version": "Perttool.AgentGuidanceResult.v1",
+  "guidance_interface_version": 1,
+  "profile_schema_version": "Perttool.AgentGuidanceProfile.v1",
+  "profile_data_version": 1,
+  "guidance_taxonomy_version": 1,
+  "risk_taxonomy_version": 1,
+  "description_registry_version": 1,
+  "description_locale": "en",
+  "staleness_policy_version": 1,
+  "tool_version": "0.1.0-alpha.2",
+  "operation": "agent.help",
+  "ok": true,
+  "profile_digest": "sha256:6af09aec1cd44bc5f4de46fdd68d2035d31a7260bfb7d2e3c994fdd7fc302921",
+  "snapshot_as_of": "2026-07-23",
+  "query": {
+    "input_provider_id": null,
+    "canonical_provider_id": null,
+    "surface_id": null,
+    "level": "index",
+    "alias_applied": false
+  },
+  "providers": [
+    {
+      "provider_id": "codex",
+      "display_name": "Codex",
+      "aliases": [],
+      "available_surface_ids": [
+        "instruction",
+        "workflow",
+        "delegated_agent",
+        "enforcement",
+        "prompt",
+        "connector"
+      ],
+      "surfaces": []
+    },
+    {
+      "provider_id": "github-copilot",
+      "display_name": "GitHub Copilot",
+      "aliases": [],
+      "available_surface_ids": [
+        "instruction",
+        "workflow",
+        "delegated_agent",
+        "enforcement",
+        "prompt",
+        "connector"
+      ],
+      "surfaces": []
+    },
+    {
+      "provider_id": "claude-code",
+      "display_name": "Claude Code",
+      "aliases": [],
+      "available_surface_ids": [
+        "instruction",
+        "workflow",
+        "delegated_agent",
+        "enforcement",
+        "prompt",
+        "connector"
+      ],
+      "surfaces": []
+    },
+    {
+      "provider_id": "grok-build",
+      "display_name": "Grok Build",
+      "aliases": [
+        "grok"
+      ],
+      "available_surface_ids": [
+        "instruction",
+        "workflow",
+        "delegated_agent",
+        "enforcement",
+        "prompt",
+        "connector"
+      ],
+      "surfaces": []
+    },
+    {
+      "provider_id": "antigravity",
+      "display_name": "Antigravity",
+      "aliases": [],
+      "available_surface_ids": [
+        "instruction",
+        "workflow",
+        "delegated_agent",
+        "enforcement",
+        "prompt",
+        "connector"
+      ],
+      "surfaces": []
+    }
+  ],
+  "guidance_records": [],
+  "risk_records": [],
+  "sources": [],
+  "capabilities": {
+    "reads_project_files": false,
+    "writes_files": false,
+    "executes_hooks": false,
+    "executes_commands": false,
+    "accesses_network": false,
+    "reads_provider_state": false,
+    "writes_provider_state": false
+  },
+  "diagnostics": []
+}

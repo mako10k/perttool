@@ -9,6 +9,7 @@ import { checkDocument } from "./application/check.js";
 import { planFormat, type FormatPreviewResult } from "./application/format.js";
 import { planBatchMutation, planMutation } from "./application/mutate.js";
 import { selectNextTasks } from "./application/next.js";
+import { getAgentHelp } from "./application/agent-help.js";
 import {
   exportMermaid,
   type ConversionLoss,
@@ -17,7 +18,15 @@ import {
 } from "./conversion/mermaid.js";
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
-import { getHelp } from "./help/registry.js";
+import {
+  getAgentHelpCommandHelp,
+  getHelp,
+} from "./help/registry.js";
+import { serializeAgentGuidanceResult } from "./guidance/projection.js";
+import {
+  agentGuidanceExitCode,
+  renderAgentGuidanceText,
+} from "./guidance/text.js";
 import {
   documentContentFromBytes,
   readDocumentFile,
@@ -78,6 +87,7 @@ function topLevelHelp(): string {
     "  perttool dsl check <file> [--format text|json]",
     "  perttool dsl format <file> [--check] [--diff] [--format text|json]",
     "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
+    "  perttool agent help [provider [surface]] [--level index|quick|detail] [--format text|json]",
     "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
     "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
     "  perttool dag advance <file> [--diff] [--write | --out <path>] [--format text|json]",
@@ -93,6 +103,9 @@ function topLevelHelp(): string {
 }
 
 function commandHelp(resource: string, action: string): string {
+  if (resource === "agent" && action === "help") {
+    return getAgentHelpCommandHelp().syntax.join("\n");
+  }
   if (resource === "dsl" && action === "check") {
     return [
       "Usage: perttool dsl check <file>",
@@ -2554,6 +2567,52 @@ function runHelp(args: readonly string[]): number {
   return result.ok ? 0 : 1;
 }
 
+function runAgentHelp(args: readonly string[]): number {
+  const parsed = parseOptions(
+    args,
+    new Set(["level", "format", "color"]),
+    new Set(),
+  );
+  if (parsed.positionals.length > 2) {
+    throw new UsageError("agent help accepts at most <provider> <surface>");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const providerId = parsed.positionals[0] ?? null;
+  const surfaceId = parsed.positionals[1] ?? null;
+  const level = helpLevel(parsed.values.get("level"), providerId !== null);
+  const result = getAgentHelp({
+    providerId,
+    surfaceId,
+    level,
+  });
+  if (format === "json") {
+    process.stdout.write(serializeAgentGuidanceResult(result));
+  } else {
+    if (result.ok) {
+      process.stdout.write(renderAgentGuidanceText(result));
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(
+        `${renderDiagnostic(
+          {
+            code: diagnostic.code,
+            severity: diagnostic.severity,
+            message: diagnostic.message,
+            data: {
+              provider_id: diagnostic.providerId,
+              surface_id: diagnostic.surfaceId,
+            },
+          },
+          "<agent-guidance>",
+          color,
+        )}\n`,
+      );
+    }
+  }
+  return agentGuidanceExitCode(result.diagnostics);
+}
+
 async function main(argv: readonly string[]): Promise<number> {
   if (argv.length === 1 && argv[0] === "--version") {
     process.stdout.write(`perttool ${TOOL_VERSION}\n`);
@@ -2576,7 +2635,8 @@ async function main(argv: readonly string[]): Promise<number> {
   if (
     argv.length === 3 &&
     argv[2] === "--help" &&
-    ((resource === "dsl" && ["check", "format", "help"].includes(action)) ||
+    ((resource === "agent" && action === "help") ||
+      (resource === "dsl" && ["check", "format", "help"].includes(action)) ||
       (resource === "dag" && ["analyze", "next", "advance", "render", "import"].includes(action)) ||
       isMutationCommand)
   ) {
@@ -2597,6 +2657,9 @@ async function main(argv: readonly string[]): Promise<number> {
   }
   if (resource === "dag" && action === "import") {
     return runImport(argv.slice(2));
+  }
+  if (resource === "agent" && action === "help") {
+    return runAgentHelp(argv.slice(2));
   }
   if (resource === "dsl" && action === "format") {
     return runFormat(argv.slice(2));

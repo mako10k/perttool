@@ -1,0 +1,21 @@
+AGENT GUIDANCE schema=Perttool.AgentGuidanceResult.v1 profile=1 snapshot=2026-07-23
+QUERY provider=github-copilot surface=prompt level=quick alias=false
+PROVIDER github-copilot GitHub Copilot
+SURFACE prompt support=preview artifact=known
+ARTIFACT github-copilot.prompt.project-prompt primary=true scopes=repository,workspace status=preview path=.github/prompts/<prompt-name>.prompt.md
+GUIDANCE project_plan_is_authority directive=must
+GUIDANCE consult_dag_next_before_start directive=must
+GUIDANCE recompute_after_state_change directive=must
+GUIDANCE require_explicit_human_override directive=must
+GUIDANCE keep_provider_priority_identical directive=must
+GUIDANCE use_narrowest_durable_surface directive=should
+GUIDANCE preserve_scope_and_precedence directive=must
+GUIDANCE review_executable_customization directive=must
+GUIDANCE treat_unknown_as_unavailable directive=must
+GUIDANCE review_stale_profile_before_adoption directive=should
+RISK prompt_not_persistent kind=scope mitigated-by=use_narrowest_durable_surface
+RISK provider_surface_availability_varies kind=compatibility mitigated-by=treat_unknown_as_unavailable
+RISK profile_may_be_stale kind=staleness mitigated-by=review_stale_profile_before_adoption
+STALENESS status=verified verified-at=2026-07-23 review-after=2026-10-23 basis=2026-07-23
+EVIDENCE official_preview_notice sources=github-prompt-files
+READ-ONLY files=false hooks=false commands=false network=false provider-write=false

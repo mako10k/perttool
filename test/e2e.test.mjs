@@ -46,6 +46,7 @@ test("E2E-001: discover commands, validate a plan, and compare capacity what-if"
   assert.match(help.stdout, /perttool dag import <file> --from mermaid/);
   assert.match(help.stdout, /perttool task add\|set\|remove\|finish/);
   assert.match(help.stdout, /perttool mutation apply <file>/);
+  assert.match(help.stdout, /perttool agent help \[provider \[surface\]\]/);
 
   const nextHelp = runJson(["dsl", "help", "next", "--level=detail"]);
   assert.equal(nextHelp.topic_id, "next");

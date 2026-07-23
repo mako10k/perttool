@@ -70,7 +70,7 @@ Rules:
 - pathが`-`から始まる場合は`--`でoption parsingを終了できる
 - response file、暗黙のenvironment option、config file、network accessはMVPに含めない
 
-`--version`は`perttool <semantic-version>`と末尾newlineをstdoutへ出す。`--version`と`--help`はterminal optionであり、相互または他のoperand/optionと併用しない。Commandの`--help`は必須operandなしで使用でき、常にtextを返す。機械可読なdomain guidanceには`dsl help --format json`を使う。
+`--version`は`perttool <semantic-version>`と末尾newlineをstdoutへ出す。`--version`と`--help`はterminal optionであり、相互または他のoperand/optionと併用しない。Commandの`--help`は必須operandなしで使用でき、常にtextを返す。DSLの機械可読helpには`dsl help --format json`、provider別AI guidanceには`agent help --format json`を使う。
 
 ### 3.2 document input
 
