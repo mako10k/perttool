@@ -113,7 +113,10 @@ fi
   '
 "$installed_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null
 installed_module="$install_prefix/lib/node_modules/$package_name/dist/index.js"
-node --input-type=module - "$installed_module" "$repo_root/docs/examples/minimal.pert" <<'NODE'
+node --input-type=module - \
+  "$installed_module" \
+  "$repo_root/docs/examples/minimal.pert" \
+  "$repo_root/test/fixtures/recommendation/rec-001-critical-priority.pert" <<'NODE'
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
@@ -123,5 +126,31 @@ const result = api.selectNextTasks(source);
 if (!result.ok || result.recommendation === null) process.exit(1);
 const json = api.recommendationAnalysisToJson(result.recommendation);
 if (json.explanation_status?.complete !== true) process.exit(1);
+
+const overrideSource = await readFile(process.argv[4], "utf8");
+const overrideNext = api.selectNextTasks(overrideSource);
+if (!overrideNext.ok || overrideNext.recommendation === null) process.exit(1);
+const override = api.validateOverride(overrideNext, {
+  sourceSchemaVersion: "Perttool.NextResult.v3",
+  sourceDigest: overrideNext.recommendation.sourceDigest,
+  sourceResultDecisionId: overrideNext.recommendation.resultDecision.id,
+  selectedTaskIds: ["OPTIONAL_POLISH"],
+  actor: {
+    kind: "human",
+    id: "package-check",
+    authentication: "caller_asserted",
+  },
+  decidedAt: "2026-07-23T00:00:00Z",
+  reasonCode: "human_priority_decision",
+  reasonText: "Verify the installed read-only override API.",
+  evidenceReferences: [],
+  acknowledgedNegativeFactReasonIds: [],
+});
+const overrideJson = api.overrideValidationResultToJson(override);
+if (
+  !override.ok ||
+  overrideJson.schema_version !== "Perttool.OverrideDecision.v1" ||
+  !/^override:sha256:[0-9a-f]{64}$/.test(override.override.overrideId)
+) process.exit(1);
 NODE
 printf 'release package check passed (%s)\n' "$actual_version"

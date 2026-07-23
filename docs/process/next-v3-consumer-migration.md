@@ -121,3 +121,46 @@ const wireRecommendation = recommendationAnalysisToJson(result.recommendation);
 ```
 
 Filesystem bytesのdigestをroot resultと一致させるadapterは、`NextOptions.sourceDigest`へread時の`sha256:` digestを渡す。Stringだけを渡すlibrary callではUTF-8 textから決定的にdigestを生成する。
+
+## 7. Read-only human override validation
+
+`validateOverride`はsuccessfulかつcompleteな`NextResultV3`と明示requestだけを入力にし、normal recommendationを変更せず`Perttool.OverrideDecision.v1`を返す。Allowed replacement、deferred selection、将来のdiscouraged selectionだけがoverride triggerになり、normal authority内のselectionは`PTOVR-106`、non-readyは`PTOVR-103`、resource-infeasibleなreplacementは`PTOVR-104`でartifactを生成しない。
+
+```js
+import {
+  canonicalOverrideArtifact,
+  selectNextTasks,
+  validateOverride,
+} from "perttool";
+
+const source = selectNextTasks(sourceText);
+if (!source.ok || source.recommendation === null) {
+  throw new Error("complete source recommendation is required");
+}
+
+const validation = validateOverride(source, {
+  sourceSchemaVersion: "Perttool.NextResult.v3",
+  sourceDigest: source.recommendation.sourceDigest,
+  sourceResultDecisionId: source.recommendation.resultDecision.id,
+  selectedTaskIds: ["DEFERRED_TASK"],
+  actor: {
+    kind: "human",
+    id: "maintainer@example.com",
+    authentication: "caller_asserted",
+  },
+  decidedAt: "2026-07-23T12:34:56Z",
+  reasonCode: "human_priority_decision",
+  reasonText: "Explicitly choose this feasible replacement now.",
+  evidenceReferences: [{ kind: "issue", value: "ISSUE-123" }],
+  acknowledgedNegativeFactReasonIds: [],
+});
+
+if (!validation.ok) {
+  throw new Error(validation.diagnostics.map(({ code }) => code).join(","));
+}
+const canonicalRecord = canonicalOverrideArtifact(validation);
+```
+
+同じsourceとrequestは同じ`override_id`とcanonical recordを返す。Actorはperttool認証済みではなく`caller_asserted`であり、現在時刻を自動挿入しない。`reasonText`とevidenceへsecret、credential、tokenを含めてはならない。
+
+これはread-only Core APIである。Task state、file、Git、networkを変更せず、overrideを適用またはaudit sinkへ保存するCLIもまだ提供しない。MIG-08より前にcanonical artifactを実行許可や適用済みauditとして扱わない。

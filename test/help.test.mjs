@@ -95,6 +95,10 @@ test("next help exposes the v3 recommendation authority and consumer safety", ()
   assert.match(body, /schema_version/);
   assert.match(body, /complete=false/);
   assert.match(body, /未知.*自動開始しません/);
+  assert.match(body, /validateOverride/);
+  assert.match(body, /Perttool\.OverrideDecision\.v1/);
+  assert.match(body, /secret、credential、token/);
+  assert.match(body, /Override apply.*未実装/);
   assert.ok(help.examples.some(({ text }) => text.endsWith("--format json")));
 });
 

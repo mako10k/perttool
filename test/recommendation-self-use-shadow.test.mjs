@@ -101,7 +101,7 @@ function projectWhyNot(recommendation) {
     ({ primary_higher_priority_task_id }) =>
       primary_higher_priority_task_id !== null,
   );
-  assert.ok(alternative);
+  if (alternative === undefined) return null;
   const higherPriorityTaskId = alternative.primary_higher_priority_task_id;
   const rankingComparison = recommendation.comparisons.find(
     ({ scope, winner_task_id, loser_task_id }) =>

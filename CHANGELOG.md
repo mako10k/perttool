@@ -13,6 +13,7 @@
 - canonical keep/remove set、partial join、idempotenceを保証するpure `planAdvance` Coreとpreview-first `dag advance` CLI
 - exact typed fact、comparison、decision trace、canonical descriptionを持つcomplete recommendation graphとpublic `NextResultV3` Core型
 - 5つのself-use planでv3 contract、byte determinism、operational互換、structured why-notを検査するrecommendation shadow gateとgolden
+- feasible replacement、`PTOVR-101`から`PTOVR-106`、caller-asserted human reason、normal trace reference、deterministic `Perttool.OverrideDecision.v1`を返すread-only `validateOverride` Core
 - npm publish normalizationを検査するpackage preflight、同一tarballをfail-closedでpublishするmaintainer script、`alpha` dist-tag固定
 
 ### Changed

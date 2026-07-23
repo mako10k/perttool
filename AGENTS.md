@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v3、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Release readiness監査でMVP受け入れ条件16のrecommendationが未実装と確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3のpreview-first advance自己利用で管理中である。MIG-01からMIG-04のfixture、ranking/tier、structured explanation/invariant、`NextResult.v3` atomic publicationに加え、MIG-06の5 plan self-use shadow評価は完了した。Shadowは受け入れ済みだが、MIG-07を完了するまでV3をAI task selection authorityへ昇格せず、manual selectionを維持する。次の詳細critical taskは`OVERRIDE_VALIDATION`で、`AUTHORITY_ADOPTION`は同じready frontierだがresource競合でdeferredである。`RELEASE_E2E`はrecommendation受け入れ後までupcomingとして完了扱いにしない。
+perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v3、read-only `validateOverride`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Release readiness監査でMVP受け入れ条件16のrecommendationが未実装と確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3のpreview-first advance自己利用で管理中である。MIG-01からMIG-06のうちfixture、ranking/tier、structured explanation/invariant、`NextResult.v3` atomic publication、read-only override validation、5 plan self-use shadow評価は完了した。Shadowは受け入れ済みだが、MIG-07を完了するまでV3をAI task selection authorityへ昇格せず、manual selectionを維持する。次の詳細criticalかつrecommended taskは`AUTHORITY_ADOPTION`である。`RELEASE_E2E`はrecommendation受け入れ後までupcomingとして完了扱いにしない。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -45,6 +45,7 @@ perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`
 - `src/io/`: raw-byte document read、digest、symlink/race拒否、atomic safe-write adapter。
 - `src/mutation/`: task/milestone/resourceとatomic batchのrequest、canonical advance、source-preserving UTF-16 TextEdit生成、適用規則。
 - `src/application/`: check/analyze/nextと、再検査済みmutation resultを返すpure service。
+- `src/recommendation/`: ranking、structured explanation、invariant、JSON projection、read-only override validationとcanonical artifact実装。
 - `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation/conversion/write-safety unit test、CLI integration/E2E test。
 - `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
 

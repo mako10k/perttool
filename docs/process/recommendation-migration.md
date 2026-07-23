@@ -1,6 +1,6 @@
 # Recommendation実装・自己利用migration
 
-- 文書状態: Active 1.7
+- 文書状態: Active 1.8
 - 作成日: 2026-07-22
 - 対応要件: [../requirements.md](../requirements.md)
 - 基本設計: [../basic-design.md](../basic-design.md)
@@ -37,8 +37,9 @@
 - `active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`は実装済み
 - candidate fact、complete order、selection horizon、recommended set、tier、structured explanation、PTREC invariant、Core/CLI JSON/text/help/package publicationは実装済み
 - self-use shadowは5 planで受け入れ済み
-- override validationとnormal authority adoptionは未実装
-- override validation、apply、audit integrationは未実装
+- read-only override validationと`Perttool.OverrideDecision.v1` artifactはpublic library Coreへ実装済み
+- normal authority adoptionは未実装
+- override apply、audit integrationは未実装
 - 自己利用はStage 3であり、editing/advance writeはpreview、expected digest、write後再解析を必須とする。Override applyは未実装である
 - AIのtask選択は[AI開発ガイド](ai-development.md)の明示手順をauthorityとする
 
@@ -65,6 +66,8 @@ V2由来fieldをrecommendationとして解釈せず、root `recommendation`だ�
 同日にMIG-04を完了した。`selectNextTasks`へranking/explanationを接続し、public `NextResultV3`型、snake_case JSON adapter、`dag next` v3 complete graph、4 tier text summary、structured help、consumer migration guide、CHANGELOG、Core/CLI/package parityを1つのbreaking changeへ含めた。V2 operational projectionを維持し、ready 0件でもresult decisionとjoint feasibility factを返す。累計15p/1 active dayからVelocityを`15p/1d`へ更新し、残るprecedence 4p、resource 7p、resource delay 3p、resource forecast `7/15d`となった。次のprecedence critical taskは`SELF_USE_SHADOW`で、`OVERRIDE_VALIDATION`は同じready frontierだがreviewer競合によりdeferredである。
 
 同日にMIG-06を完了した。5つのself-use planでknown v3 contract、complete graph、byte determinism、ready subset、joint resource feasibility、v2 operational field互換、`PTREC-*`不在を検査した。`SELF_USE_SHADOW`と`OVERRIDE_VALIDATION`の差をprimary comparison、resource witness、canonical descriptionだけから説明できることをgoldenへ固定し、[shadow受け入れ記録](recommendation-shadow-review.md)へ判定を残した。累計17p/1 active dayからVelocityを`17p/1d`へ更新し、残るprecedence 3p、resource 5p、resource delay 2p、resource forecast `5/17d`となった。次のprecedence criticalかつrecommended taskは`OVERRIDE_VALIDATION`で、`AUTHORITY_ADOPTION`は同じready frontierだがreviewer競合によりdeferredである。Shadow受け入れだけではnormal authorityへ昇格しない。
+
+同日にMIG-05を完了した。Pure `validateOverride`、public request/result型、`Perttool.OverrideDecision.v1` JSON projection、canonical artifactを実装し、allowed/deferred replacement、normal-authority selection、stale/eligibility/resource failure、caller-asserted actor、explicit UTC time、evidence canonicalization、capacity override binding、SHA-256 identityをOVR-001からOVR-004およびOVR-006へ固定した。OVR-005のdiscouraged fixtureはconcrete negative factを導入する将来versionまで予約のままである。Package-installed APIからも同じartifactを生成し、file、Git、network writeは追加していない。累計20p/1 active dayからVelocityを`20p/1d`へ更新し、残るprecedence/resource 2p、resource delay 0p、resource forecast `1/10d`となった。次の唯一のcriticalかつrecommended taskは`AUTHORITY_ADOPTION`である。
 
 MIG-01からMIG-07は、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を共有する。Task別duration、file ownership、acceptance、narrow testは`plans/recommendation.pert`を正とする。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とし、MVP後の独立work packageのままとする。Issue #2もhelp surfaceとreviewerを共有するが、macroへ追加するまでは実装順を推測しない。
 
@@ -144,6 +147,8 @@ Exit:
 - filesystem、Git、network、task stateを変更しない
 
 MIG-05はv3 publication後に独立して実装できる。MIG-04のnormal recommendationをoverride applyやwrite実装へ依存させない。
+
+2026-07-23にMIG-05をpublic library Coreとして実装した。`validateOverride`はsource `NextResultV3`とrequestだけを読み、`PTOVR-101`から`PTOVR-106`またはcanonical artifactを返す。CLI command、task state mutation、audit write、Git operationはMIG-08まで追加しない。
 
 ### MIG-06 Self-use shadow evaluation
 
@@ -284,7 +289,7 @@ Recommendation failureはplan failureとは限らない。Check、precedence ana
 | MIG-03 | explanation/reference/invariant test | complete graph review |
 | MIG-04 | typecheck、Core/CLI parity、text/JSON E2E、help、package | `npm run check`、CHANGELOG、consumer guide |
 | MIG-05 | pure override unit、canonical hash、negative test | filesystem/Git side effectなし |
-| MIG-06 | 3 self-use plan、byte determinism、why A/B回答 | shadow evidence |
+| MIG-06 | 5 self-use plan、byte determinism、why A/B回答 | shadow evidence |
 | MIG-07 | AI workflow dry-run、unknown version safe stop | shared instructions同期 |
 | MIG-08 | stale、atomicity、audit trailer、re-analysis | safe-write/override adoption review |
 

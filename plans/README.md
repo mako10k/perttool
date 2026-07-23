@@ -12,9 +12,9 @@
 
 5計画ともself-use gateを満たしており、`dsl check`、`dag analyze`、`dag next`の入力として使用する。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本へ適用できる。詳細planはPointを基準値、velocity換算したdayを日程予測として自己利用する。Macro計画のwork packageは対応する詳細planのresource forecastをroll-upし、日々のtask選択では先に`mvp.pert`でworkstreamを選び、その後に対応する詳細planを参照する。段階的なwrite解禁条件は[自己利用計画](../docs/process/self-use.md)を参照する。
 
-2026-07-23にRecommendation detailの`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2pを完了し、累計1 active dayからrecommendation固有の暫定実測Velocityを`17p/1d`へ更新した。Detailの残りはprecedence 3p、resource 5p、resource delay 2p、resource forecast `5/17d`である。Macroへ`0.294118d`をroll-upした後の残るprecedence/resource makespanは`2.294118d`、resource delayは0dである。`RECOMMENDATION_IMPLEMENTATION`が唯一のready、`runnable_now`、precedence/schedule critical work packageで、detailでは`OVERRIDE_VALIDATION`がrecommended、`AUTHORITY_ADOPTION`がdeferredである。
+2026-07-23にRecommendation detailの`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2p、`OVERRIDE_VALIDATION` 3pを完了し、累計1 active dayからrecommendation固有の暫定実測Velocityを`20p/1d`へ更新した。Detailの残りはprecedence/resource 2p、resource delay 0p、resource forecast `1/10d`である。Macroへ`0.1d`をroll-upした後の残るprecedence/resource makespanは`2.1d`、resource delayは0dである。`RECOMMENDATION_IMPLEMENTATION`が唯一のready、`runnable_now`、precedence/schedule critical work packageで、detailでは`AUTHORITY_ADOPTION`が唯一のready、recommended、critical taskである。
 
-同日に人間overrideでnpm publication preflightだけを前倒しした。これは`RELEASE_E2E`のstatusを変更せず、version/tag/GitHub asset/npm publish/registry installはrecommendation受け入れ後の同taskへ残す。通常のtask selectionは`OVERRIDE_VALIDATION`を選び、MIG-07完了まではmanual processをauthorityとして維持する。
+同日に人間overrideでnpm publication preflightだけを前倒しした。これは`RELEASE_E2E`のstatusを変更せず、version/tag/GitHub asset/npm publish/registry installはrecommendation受け入れ後の同taskへ残す。通常のtask selectionは`AUTHORITY_ADOPTION`を選び、MIG-07完了まではmanual processをauthorityとして維持する。
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22時点の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系がformatter/mutation preview 12p、safe write 6p、advance 6pの合計24pによる`24p/1d`である。いずれも1 active dayだけの暫定標本であり、次の同種task完了時にplan単位で再calibrationする。算定根拠、暫定性、macroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

@@ -91,74 +91,52 @@
       ]
     },
     "recommendation": {
-      "source_digest": "sha256:f7b46fca9c5ce53f8cea57c2a12ecd38dcca33c542865fdb72dfac74da573507",
+      "source_digest": "sha256:bf9622a81219e4dceca2279305ed015da964680c6856d0e081f566224f679ac2",
       "groups": {
         "active": [],
         "ready": [
-          "OVERRIDE_VALIDATION",
           "AUTHORITY_ADOPTION"
         ],
         "runnable_now": [
-          "OVERRIDE_VALIDATION"
+          "AUTHORITY_ADOPTION"
         ],
         "blocked_now": [],
         "upcoming": []
       },
       "recommended_task_ids": [
-        "OVERRIDE_VALIDATION"
+        "AUTHORITY_ADOPTION"
       ],
       "manual_selected_task_ids": [
-        "OVERRIDE_VALIDATION"
+        "AUTHORITY_ADOPTION"
       ],
       "tiers": {
-        "OVERRIDE_VALIDATION": "recommended",
-        "AUTHORITY_ADOPTION": "deferred"
+        "AUTHORITY_ADOPTION": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "OVERRIDE_VALIDATION",
+          "id": "AUTHORITY_ADOPTION",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
-        },
-        {
-          "id": "AUTHORITY_ADOPTION",
-          "runnable_now": false,
-          "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "1/1",
-          "resource_rejections": [
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "OVERRIDE_VALIDATION"
-              ]
-            }
-          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 12,
-        "facts": 47,
-        "comparisons": 2,
-        "reasons": 8,
-        "descriptions": 4
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
       "diagnostic_codes": [
         "PTDAG-208"
       ]
     },
     "mvp": {
-      "source_digest": "sha256:7d0b54e1e45e9fb54d2e921a53a1d5f4d1f13bd36340c1b146132b8f8a7eda72",
+      "source_digest": "sha256:5006bf9b863538ec8404665c9150b8c40a048ddb1a4008591276117424c7cf21",
       "groups": {
         "active": [],
         "ready": [
@@ -205,34 +183,5 @@
       ]
     }
   },
-  "why_not": {
-    "subject_task_id": "AUTHORITY_ADOPTION",
-    "tier": "deferred",
-    "higher_priority_task_id": "OVERRIDE_VALIDATION",
-    "ranking_decisive_rule": "critical_class",
-    "resource_decisive_rule": "joint_resource_feasibility",
-    "resource_id": "REVIEWERS",
-    "resource_witness": {
-      "active_usage": "0",
-      "available": "0",
-      "capacity": "1",
-      "deficit": "1",
-      "required": "1",
-      "selected_usage": "1"
-    },
-    "descriptions": [
-      {
-        "key": "recommendation.reason.ranking_comparison",
-        "text": "OVERRIDE_VALIDATION ranks above AUTHORITY_ADOPTION by rule critical_class: driving less_than non_critical."
-      },
-      {
-        "key": "recommendation.reason.resource_conflict",
-        "text": "AUTHORITY_ADOPTION cannot be added on REVIEWERS: capacity 1 REVIEWERS-units, used 1 REVIEWERS-units, required 1 REVIEWERS-units, deficit 1 REVIEWERS-units, occupants [OVERRIDE_VALIDATION]."
-      },
-      {
-        "key": "recommendation.summary.deferred_resource",
-        "text": "AUTHORITY_ADOPTION is deferred because resources [REVIEWERS] cannot fit it with the recommended set; selected blockers: [OVERRIDE_VALIDATION]; active blockers: []."
-      }
-    ]
-  }
+  "why_not": null
 }

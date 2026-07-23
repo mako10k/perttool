@@ -8,25 +8,22 @@
       "tasks": 7,
       "gates": 2,
       "errors": 0,
-      "warnings": 5
+      "warnings": 6
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "3/1",
+    "precedence_makespan": "2/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "3/17",
+    "precedence_forecast": "1/10",
     "precedence_critical_tasks": [
-      "OVERRIDE_VALIDATION"
+      "AUTHORITY_ADOPTION"
     ],
-    "resource_makespan": "5/1",
-    "resource_forecast": "5/17",
-    "resource_delay": "2/1",
-    "resource_arcs": [
-      "resource:OVERRIDE_VALIDATION:AUTHORITY_ADOPTION"
-    ],
+    "resource_makespan": "2/1",
+    "resource_forecast": "1/10",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "OVERRIDE_VALIDATION",
       "AUTHORITY_ADOPTION"
     ]
   },
@@ -34,22 +31,14 @@
     "groups": {
       "active": [],
       "ready": [
-        "OVERRIDE_VALIDATION",
         "AUTHORITY_ADOPTION"
       ],
       "runnable_now": [
-        "OVERRIDE_VALIDATION"
+        "AUTHORITY_ADOPTION"
       ],
       "blocked_now": [],
       "upcoming": []
     },
-    "resource_rejection": {
-      "task_id": "AUTHORITY_ADOPTION",
-      "resource_id": "REVIEWERS",
-      "capacity": 1,
-      "earlier_selected_task_ids": [
-        "OVERRIDE_VALIDATION"
-      ]
-    }
+    "resource_rejection": null
   }
 }

@@ -25,7 +25,7 @@
 - canonical description projection
 - human overrideが不要、必要、不可能となる境界
 
-表中のfact snapshotは既存DSLから導出されるanalysis projectionであり、新しいDSL構文ではない。`NextResult.v3`は実装済みで、同じ意味を持つ最小`.pert` fixture、complete JSON golden、text goldenへ展開した。Override validationは未実装なので、本書のoverride fragmentを現在のCLI実行結果とはみなさない。
+表中のfact snapshotは既存DSLから導出されるanalysis projectionであり、新しいDSL構文ではない。`NextResult.v3`は実装済みで、同じ意味を持つ最小`.pert` fixture、complete JSON golden、text goldenへ展開した。Read-only override validationはpublic library Coreとgoldenへ実装済みだがCLI commandではないため、本書のoverride fragmentを現在のCLI実行結果とはみなさない。
 
 ## 2. 共通条件
 

@@ -3,6 +3,12 @@ export { analyzeDocument } from "./application/analyze.js";
 export { planFormat } from "./application/format.js";
 export { selectNextTasks } from "./application/next.js";
 export { recommendationAnalysisToJson } from "./recommendation/json.js";
+export {
+  canonicalOverrideArtifact,
+  humanOverrideDecisionToJson,
+  overrideValidationResultToJson,
+  validateOverride,
+} from "./recommendation/override.js";
 export { planMutation } from "./application/mutate.js";
 export { planAdvance } from "./mutation/advance.js";
 export { exportMermaid } from "./conversion/mermaid.js";
@@ -99,6 +105,22 @@ export type {
   RecommendationRankingRuleId,
   RecommendationTier,
 } from "./recommendation/types.js";
+export type {
+  HumanOverrideDecision,
+  HumanOverrideReasonCode,
+  OverrideActor,
+  OverrideDecisionSource,
+  OverrideEvidenceKind,
+  OverrideEvidenceReference,
+  OverrideFeasibility,
+  OverrideReason,
+  OverrideRequest,
+  OverrideResourceWitness,
+  OverrideSelection,
+  OverrideTaskDecision,
+  OverrideTriggerCode,
+  OverrideValidationResult,
+} from "./recommendation/override-types.js";
 export type {
   AnalysisEdge,
   AnalysisResource,

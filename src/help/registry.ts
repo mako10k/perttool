@@ -469,6 +469,11 @@ const nodes: readonly HelpNode[] = [
         body: "runnable_nowは既存scheduler順で選ぶoperational subset、recommendationはversion付きranking policyで選ぶauthorityであり、同じ集合とは限りません。CLI rendererはrankingを再実装しません。",
       },
       {
+        id: "override-validation",
+        title: "Human override validation",
+        body: "Public CoreのvalidateOverrideはcompleteなNextResult.v3と明示requestからPerttool.OverrideDecision.v1を決定的に生成します。これはread-only validationであり、task state、file、Git、networkを変更しません。reason_textとevidenceへsecret、credential、tokenを含めないでください。Override applyとaudit writeのCLIは未実装です。",
+      },
+      {
         id: "explanation",
         title: "Upcoming explanation",
         body: "upcomingは未到達の開始milestoneとunsatisfied incoming edgeを返します。--explain-depthは0..32、default 1です。",

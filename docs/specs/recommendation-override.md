@@ -29,7 +29,7 @@ Human overrideはproject modelの判断を消去または改ざんする機能�
 - Git historyを使うrepository-native audit方針
 - stale判定、single-use、state change後の全体再解析
 
-本仕様は設計契約である。Override command、task status mutation、Git commit、audit writeを実装したとはみなさない。
+本仕様は規範契約であり、2026-07-23のMIG-05でread-only `validateOverride`、public型、`Perttool.OverrideDecision.v1` JSON projection、canonical artifactをlibrary Coreへ実装した。Override command、task status mutation、Git commit、audit writeを実装したとはみなさない。
 
 ## 2. 規範上の位置
 

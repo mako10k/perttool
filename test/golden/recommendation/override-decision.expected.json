@@ -1,0 +1,93 @@
+{
+  "schema_version": "Perttool.OverrideDecision.v1",
+  "tool_version": "0.1.0-alpha.1",
+  "operation": "recommendation.override.validate",
+  "ok": true,
+  "diagnostics": [],
+  "diagnostics_truncated": false,
+  "override": {
+    "override_contract_version": 1,
+    "override_id": "override:sha256:1b3ca63a59858ce52c6930c2dcfcfcfb311b909c3b3c0ebb3a661443c989eed5",
+    "source": {
+      "schema_version": "Perttool.NextResult.v3",
+      "tool_version": "0.1.0-alpha.1",
+      "source_digest": "sha256:9e4f50ba3f0774b1e09d97185b413ddc8f3ccf3d7484f4b4cf315e116109d3bc",
+      "recommendation_interface_version": 1,
+      "ranking_algorithm_id": "perttool.recommendation-ranking.lexicographic-frontier",
+      "ranking_algorithm_version": 1,
+      "reason_taxonomy_version": "1.0",
+      "explanation_model_version": 1,
+      "expression_version": 1,
+      "description_registry_version": 1,
+      "result_decision_id": "rec:decision:result:R",
+      "recommended_task_ids": [
+        "CRITICAL_FIX"
+      ],
+      "capacity_overrides": []
+    },
+    "actor": {
+      "kind": "human",
+      "id": "maintainer@example.com",
+      "authentication": "caller_asserted"
+    },
+    "decided_at": "2026-07-23T12:34:56Z",
+    "reason": {
+      "code": "human_priority_decision",
+      "text": "Prioritize the bounded customer-visible polish now.",
+      "evidence_references": [
+        {
+          "kind": "issue",
+          "value": "https://github.com/mako10k/perttool/issues/1"
+        }
+      ]
+    },
+    "selection": {
+      "selected_task_ids": [
+        "OPTIONAL_POLISH"
+      ],
+      "retained_recommended_task_ids": [],
+      "displaced_recommended_task_ids": [
+        "CRITICAL_FIX"
+      ],
+      "selected_nonrecommended_task_ids": [
+        "OPTIONAL_POLISH"
+      ],
+      "trigger_codes": [
+        "allowed_replaces_recommended"
+      ]
+    },
+    "task_decisions": [
+      {
+        "task_id": "OPTIONAL_POLISH",
+        "normal_decision_id": "rec:decision:task:OPTIONAL_POLISH",
+        "normal_tier": "allowed",
+        "normal_decisive_step_id": "rec:step:OPTIONAL_POLISH:tier_classification:recommendation_tier:0",
+        "normal_reason_occurrence_ids": [
+          "rec:reason:OPTIONAL_POLISH:task_ready:context:0",
+          "rec:reason:OPTIONAL_POLISH:ranking_rule_opposes_task:decisive:0",
+          "rec:reason:OPTIONAL_POLISH:recommended_set_not_selected:decisive:0",
+          "rec:reason:OPTIONAL_POLISH:recommended_set_addition_feasible:decisive:0"
+        ],
+        "normal_comparison_ids": [
+          "rec:comparison:selection_horizon:CRITICAL_FIX:OPTIONAL_POLISH:critical_class:0"
+        ],
+        "override_selected": true,
+        "trigger_codes": [
+          "allowed_replaces_recommended"
+        ],
+        "acknowledged_negative_fact_reason_ids": []
+      }
+    ],
+    "feasibility": {
+      "selected_set_reference": {
+        "kind": "derived_set",
+        "id": "O"
+      },
+      "start_feasible": true,
+      "active_task_ids": [],
+      "resource_witnesses": [],
+      "expression": null
+    },
+    "single_use": true
+  }
+}

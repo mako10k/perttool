@@ -117,6 +117,8 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dag next`は依存関係上の`ready`、既存schedulerが選ぶ`runnable_now`、工程authorityであるroot `recommendation`を分離します。JSONは全ready taskのtier、exact typed fact、comparison、decision trace、canonical descriptionをcomplete graphとして返し、textは4 tierの`complete=false` summaryとJSON導線を返します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明も従来どおり保持します。Consumerは[移行ガイド](docs/process/next-v3-consumer-migration.md)に従い、`schema_version`を最初に検査します。
 
+Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhuman requestから、normal recommendationを変更せずdeterministicな`Perttool.OverrideDecision.v1`を生成します。これはread-only validationであり、task state、file、Git、networkを変更しません。Override applyとaudit writeのCLIは未実装です。
+
 `dag advance`はeffective reachedより過去のtask/gate/milestoneだけを除去し、未到達joinに必要なdone taskとsatisfied gateを保持します。既定はcandidate previewで、削除entityとfrontier/readyの前後比較をtext/JSONへ含めます。`--write`、`--out`、`--expect-digest`は他のediting commandと同じsafe-write経路を使います。
 
 `dag render --to mermaid`は既定でlosslessな`Perttool.MermaidProfile.v1`をstdoutへ生成します。`--analysis`でprecedence/resource解析値をprojectionへ注記でき、`--out`は既存targetを上書きしません。`--profile plain`はsemantic metadataを持たないため`PTCNV-206`を返し、`--strict-loss`でartifactを拒否できます。
@@ -125,7 +127,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。MIG-01からMIG-04とMIG-06の累計17pを1 active dayで完了し、recommendation固有の暫定実測Velocityを`17p/1d`へ更新しました。残るresource forecastは5p = `5/17d`、macro残存precedence/resource makespanは`2.294118d`です。Macroの唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`、detailでは`OVERRIDE_VALIDATION`がrecommended、`AUTHORITY_ADOPTION`がresource競合でdeferredです。[5 planのshadow評価](docs/process/recommendation-shadow-review.md)は受け入れ済みですが、MIG-07完了まではV3をAI task selection authorityへ昇格せず、`RELEASE_E2E`もupcomingです。人間overrideでnpm publication preflightだけを前倒ししましたが、工程statusと外部publish authorityは変更していません。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。MIG-01からMIG-06のうち累計20pを1 active dayで完了し、recommendation固有の暫定実測Velocityを`20p/1d`へ更新しました。残るresource forecastは2p = `1/10d`、macro残存precedence/resource makespanは`2.1d`です。Macroの唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`、detailでは`AUTHORITY_ADOPTION`が唯一のready、recommended、critical taskです。[5 planのshadow評価](docs/process/recommendation-shadow-review.md)は受け入れ済みですが、MIG-07完了まではV3をAI task selection authorityへ昇格せず、`RELEASE_E2E`もupcomingです。人間overrideでnpm publication preflightだけを前倒ししましたが、工程statusと外部publish authorityは変更していません。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
 
 ## Security and license
 
