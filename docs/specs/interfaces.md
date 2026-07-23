@@ -25,7 +25,7 @@
 
 MVPのprimary interfaceはローカルCLIとする。AI agentもMCPではなく、CLIの`--format json`を使用してcheck、analyze、next、preview mutationを実行する。
 
-MCP、LSP、editor adapterはMVP後とし、本書ではtool名、action schema、transport、server起動commandを定義しない。MVP実装へMCP SDKまたはserver dependencyを追加してはならない。
+MCP、LSP、VSIX/editor adapterはMVP後とし、本書ではtool名、action schema、transport、server起動commandを定義しない。MVP実装へMCP SDK、LSP transport、VS Code extension dependencyを追加してはならない。
 
 ## 2. 規範の優先順位と対象外
 
@@ -42,7 +42,7 @@ MCP、LSP、editor adapterはMVP後とし、本書ではtool名、action schema�
 
 - Node.js対応version、package manager、配布package名
 - shell completion、GUI、TUI、daemon、network API
-- MCP/LSP/editorのwire contract
+- MCP/LSP/VSIX/editorのwire contract
 - Mermaid lossless metadataの内部record schema
 - calendar、exact resource solver、target duration完了確率
 
@@ -1037,4 +1037,4 @@ Interface version 1はgrammar version 1、semantics version 1、analysis version
 - source position baseまたはdigest表現の変更
 - textをmachine interfaceとして保証する範囲の変更
 
-Future MCP adapterを追加する場合も、CLI processをsubprocessとして呼ぶのではなく同じApplication/Core APIを利用する。MCP固有summary、transport error、tool schemaは別versioned仕様で定義し、CLI MVPの完成条件へ遡及追加しない。
+Future MCP adapter、LSP server、VSIXを追加する場合も、CLI processをsubprocessとして呼んだり意味規則をadapterへ複製したりせず、同じApplication/Core APIを利用する。MCP固有summary、transport error、tool schema、LSP capability、VSIX packaging/server distributionは別versioned仕様で定義し、CLI MVPまたは最初のbetaの完成条件へ遡及追加しない。

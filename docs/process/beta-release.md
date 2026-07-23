@@ -9,7 +9,7 @@
 
 ## 1. Scope
 
-最初のbetaはsuffixなしの`0.1.0`とし、AI Agent Guidance Registryのread-only v1を含める。Provider固有設定の生成、hook実行、audit、scaffold、enforcement、Issue #3、MCP/LSPは含めない。
+最初のbetaはsuffixなしの`0.1.0`とし、AI Agent Guidance Registryのread-only v1を含める。Provider固有設定の生成、hook実行、audit、scaffold、enforcement、Issue #3、LSP server、VSIX、MCP serverは含めない。
 
 Alphaからbetaへのstrict compatibilityは要求しない。必要な破壊的変更は許容するが、schema version、仕様、migration、CHANGELOG、fixture、helpを同じchangeで更新する。Alphaのdogfoodingとlocal利用は十分であり、追加の利用期間をrelease gateにしない。
 

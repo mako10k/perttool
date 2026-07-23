@@ -838,13 +838,19 @@ Must:
 - AIが実行可能task、推奨task、推奨理由、より優先されるtaskをCLI JSONから取得でき、自由文だけでpriorityを再判断する必要がないこと
 - 将来adapterも同じ共通コアを利用し、計算・検査規則を再実装しないこと
 
-### 17.2 MCP / LSP（MVP対象外）
+### 17.2 MCP / LSP / VSIX（MVP対象外）
 
-MCP server、MCP tool schema、MCP file write、LSP/editor integrationはMVP受け入れ条件に含めない。MVP実装へMCP SDKやtransport dependencyを追加しない。
+MCP server、MCP tool schema、MCP file write、LSP server、VSIX/editor integrationはMVP受け入れ条件に含めない。MVP実装へMCP SDK、LSP transport、VS Code extension dependencyを追加しない。
 
 MVP後にadapterを追加する場合は、CLI processをsubprocessとして包まず、共通Application/Core APIを直接利用する。MCP固有のaction名、tool schema、write safety、CLI parityは、その時点の別versioned仕様で固定する。
 
-Future候補はMCP read-only analysis/help、MCP preview mutation、LSP diagnostics/completion/definition/renameである。実装順とsurfaceはMVP完了後に判断する。
+将来backlogを次の独立成果物として保持する。いずれも最初のbetaのblockerへは追加しない。
+
+1. **LSP server**: `.pert`のdiagnostics、completion、definition、rename、formattingを共通parser、validator、formatter、TextEditから提供する。LSP positionはUTF-16 code unit基準とし、protocol capabilityとdiagnostic mappingをversion付き仕様で固定する
+2. **VSIX**: TextMate grammarによるコードハイライトと、LSP clientとしてLSP serverを起動・接続するVS Code extensionを提供する。言語serverの意味規則をextension側へ複製せず、VSIX packaging、互換VS Code version、workspace trust、server配布方法を別途固定する
+3. **MCP server**: read-only analysis/helpから開始し、後続でpreview mutationを提供する。共通Application/Core APIを直接利用し、tool schema、transport、capability、write safety、CLI/Core parityをversion付き仕様で固定する
+
+LSP serverとVSIXはserver/clientの依存関係を持つ。MCP serverは両者から独立して設計・実装できる。各成果物の優先順位、milestone、見積りは、最初のbeta受け入れ後に将来planへ展開する。
 
 ## 18. JSON とスキーマ
 
@@ -975,7 +981,7 @@ Alphaのdogfooding、local link、GitHub prerelease、npm registryからの隔�
 
 Provider/surface/guidance/risk taxonomy、support statusの構造化根拠、offline profile、Core/text/JSON、diagnostic、staleness、project guidance合成、read-only migration境界は[AI Agent Guidance Registry仕様](specs/agent-guidance.md)を正とし、競合caseは[規範例](examples/agent-guidance.md)で固定する。
 
-Issue #3のbacklog階層・multi-plan composition、MCP、audit、scaffold、hook実行、enforcementは最初のbetaのblockerに含めない。
+Issue #3のbacklog階層・multi-plan composition、LSP server、VSIX、MCP server、audit、scaffold、hook実行、enforcementは最初のbetaのblockerに含めない。
 
 ## 22. 初期要求との対応
 
@@ -1008,7 +1014,7 @@ Issue #3のbacklog階層・multi-plan composition、MCP、audit、scaffold、hoo
 - 任意 Mermaid 構文の広範な import
 - Monte Carlo simulation によるプロジェクト完了確率
 - 外部 issue tracker との双方向同期
-- MCP server、MCP tool schema、MCP file write、LSP/editor adapter
+- MCP server、MCP tool schema、MCP file write、LSP server、VSIX/editor adapter
 
 ## 24. 未確定の設計判断
 

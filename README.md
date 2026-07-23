@@ -49,7 +49,7 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - 相対見積り`p`を基準に保持し、明示したproject-wide velocityで`d`または`h`の予測へexact換算する
 - 共有resourceのcapacityから排他実行と並列実行可能数を扱う
 - Mermaid との相互変換、CLI、構造化ヘルプ、AI向けJSON操作導線を同じ共通コア上に提供する
-- MVPはCLIをprimary interfaceとし、MCP/LSP adapterはMVP後に追加する
+- MVPはCLIをprimary interfaceとし、LSP server、コードハイライト/LSP clientを持つVSIX、MCP serverは最初のbeta後の独立backlogとして追加する
 - 現行文書は現在と未来を表し、過去は Git 履歴で追跡する
 - parser・check・analyze・next が安定した時点で、文法作業の計画から自己利用を開始する
 

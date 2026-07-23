@@ -39,7 +39,7 @@
 - task を edge、milestone を node とする Activity-on-Arrow を中核モデルとする
 - `.pert` 文書を正本とし、通常の解析はローカルで完結させる
 - parser、意味検査、PERT/CPM 計算は共通コアへ集約する
-- MVPはCLIをprimary adapterとし、MCP、LSP/エディタはMVP後に共通コアへ追加する
+- MVPはCLIをprimary adapterとし、LSP server、VSIX、MCP serverはMVP後に共通コアへ追加する
 - 文書編集は source span に対する差分として計画し、再 parse・再検査後にだけ適用する
 - 人間向け text と機械向け JSON は、同じ結果 object から描画する
 - すべての計算と並び順を決定的にする
@@ -85,7 +85,8 @@ flowchart LR
 
   CLI[CLI adapter] --> APP
   MCP[Post-MVP MCP adapter] -.-> APP
-  LSP[Post-MVP LSP adapter] -.-> APP
+  LSP[Post-MVP LSP server] -.-> APP
+  VSIX[Post-MVP VSIX] -.-> LSP
 
   HELP[Help registry] --> CLI
   HELP -.-> MCP
@@ -97,7 +98,7 @@ flowchart LR
 依存方向は外側から内側への一方向にする。
 
 ```text
-CLI / future MCP / LSP / filesystem
+CLI / future MCP / LSP / VSIX / filesystem
              |
              v
       application services
@@ -764,7 +765,7 @@ default: updated text or diff only
 
 ## 12. Post-MVP adapter境界
 
-MCP、LSP、editor adapterはMVP対象外である。MVP repository構成、package dependency、acceptance testへMCP serverやSDKを含めない。
+LSP server、VSIX/editor adapter、MCP serverはMVP対象外である。MVP repository構成、package dependency、acceptance testへLSP transport、VS Code extension、MCP serverやSDKを含めない。
 
 将来adapterを追加する場合はCLI subprocessを呼ばず、同じapplication serviceを直接利用する。Adapter固有transport、request/response schema、write authorityはCLI Interface仕様と分離したversioned仕様で固定する。
 

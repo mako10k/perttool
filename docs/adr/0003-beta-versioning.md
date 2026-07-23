@@ -20,7 +20,7 @@ SemVerのprerelease suffixを長期間運用すると、perttoolが定義するp
 - 破壊的変更では影響するschema version、仕様、migration、CHANGELOG、testを同じlogical changeで更新する
 - alphaのdogfooding、local link、GitHub/npm artifact install実績をbeta移行に十分な利用期間とみなし、追加のsoak期間を要求しない
 - beta scopeに[Issue #2](https://github.com/mako10k/perttool/issues/2)のread-only AI Agent Guidance Registry v1を含める
-- Issue #3のbacklog階層・multi-plan composition、MCP/LSP、guidance audit/scaffold/enforcementはbeta開始条件に含めない
+- Issue #3のbacklog階層・multi-plan composition、LSP server、VSIX、MCP server、guidance audit/scaffold/enforcementはbeta開始条件に含めない
 - npmでは`beta` dist-tagへpublishし、既存`latest`を変更しない。導入例は`perttool@beta`を明示する
 - suffixなしの`0.x.x`でもGitHub Releaseはproduct maturityに合わせてprereleaseとして公開する
 
