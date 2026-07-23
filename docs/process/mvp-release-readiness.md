@@ -9,7 +9,7 @@
 
 ## 1. 結論
 
-`RELEASE_E2E`は完了扱いにしない。受け入れ条件1から15には実装・自動検査の証跡があり、条件16のranking/tier pure Coreまでは実装したが、structured explanation、public v3、override validation、shadow/adoptionが未実装である。
+`RELEASE_E2E`は完了扱いにしない。受け入れ条件1から15には実装・自動検査の証跡があり、条件16のranking/tierとstructured explanation/invariant pure Coreまでは実装したが、public v3、override validation、shadow/adoptionが未実装である。
 
 現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v2`であり、`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を返す。これらをcondition 16のrecommendationとして再解釈してはならない。
 
@@ -23,7 +23,7 @@
 | 10 | Pass | Mermaid profile/export/import unit、CLI、E2E-012とE2E-014 |
 | 11-12 | Pass | help registry、fixture/help link test |
 | 13-15 | Pass | Core/CLI parity、normative example、Point/velocity analysis test |
-| 16 | Fail | ranking/tier Core testはPass。`NextResult.v3`、structured explanation、override validation、shadow/adoptionが未実装 |
+| 16 | Fail | ranking/tierとstructured explanation/invariant Core testはPass。`NextResult.v3`、override validation、shadow/adoptionが未実装 |
 
 `npm run check`が成功することはrepository regressionがない証拠であるが、未実装のcondition 16を自動的にPassへ変えない。
 
@@ -34,6 +34,8 @@
 2026-07-23にMIG-01 fixture baseline 2pを完了した。Recommendation固有の初回実測を`2p/1d`とし、残るresource 20pのforecast 10dをmacroへ再roll-upした。次のdetail taskは`RANKING_CORE`であり、condition 16と`RELEASE_E2E`は引き続き未完了である。
 
 同日にMIG-02 ranking/tier Core 4pを完了し、累計実測を`6p/1d`へ更新した。残るresource 16pのforecast `8/3d`をmacroへ`2.666667d`として再roll-upした。次のdetail taskは`EXPLANATION_CORE`であり、condition 16と`RELEASE_E2E`は引き続き未完了である。
+
+同日にMIG-03 structured explanation/invariant Core 5pを完了し、累計実測を`11p/1d`へ更新した。残るresource 11pのforecast 1dをmacroへ再roll-upした。次のdetail taskは`NEXT_V3_PUBLICATION`であり、public v3、override、shadow/adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
 
 MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではない。Read-only override validationであるMIG-05までをMVPへ含め、write authorityはMVP後も未解禁とする。
 

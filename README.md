@@ -2,7 +2,7 @@
 
 PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
 
-`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`に加え、非公開のrecommendation ranking/tier pure Coreが実装済みです。公開`dag next`は引き続き`Perttool.NextResult.v2`です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+`v0.1.0-alpha.1`は公開開発プレビューです。現在のcheckoutでは`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`に加え、非公開のrecommendation ranking/tier、structured explanation、PTREC invariant pure Coreが実装済みです。公開`dag next`は引き続き`Perttool.NextResult.v2`です。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
@@ -122,7 +122,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。MIG-01 fixture baseline 2pとMIG-02 ranking/tier Core 4pを完了し、recommendation固有の暫定実測Velocityを累計`6p/1d`へ更新しました。残るresource forecastは16p = `8/3d`、macro残存precedence/resource makespanはともに`4.666667d`です。Macroの唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`、detailの次taskは`EXPLANATION_CORE`で、`RELEASE_E2E`はupcomingです。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
+現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first advance自己利用を行っています。[Release readiness監査](docs/process/mvp-release-readiness.md)でMVP受け入れ条件16のrecommendationが未実装と確認したため、[Recommendation実装計画](plans/recommendation.pert)へMIG-01からMIG-07を22pで詳細化しました。MIG-01 fixture baseline 2p、MIG-02 ranking/tier Core 4p、MIG-03 structured explanation/invariant Core 5pを完了し、recommendation固有の暫定実測Velocityを累計`11p/1d`へ更新しました。残るresource forecastは11p = 1d、macro残存precedence/resource makespanはともに3dです。Macroの唯一のreadyかつ`runnable_now`なcritical work packageは`RECOMMENDATION_IMPLEMENTATION`、detailの次taskは`NEXT_V3_PUBLICATION`で、`RELEASE_E2E`はupcomingです。Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionは独立backlogのままです。
 
 ## Security and license
 

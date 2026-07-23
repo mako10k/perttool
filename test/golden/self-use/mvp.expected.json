@@ -12,12 +12,12 @@
     }
   },
   "analyze": {
-    "precedence_makespan": "4666667/1000000",
+    "precedence_makespan": "3/1",
     "precedence_critical_tasks": [
       "RECOMMENDATION_IMPLEMENTATION",
       "RELEASE_E2E"
     ],
-    "resource_makespan": "4666667/1000000",
+    "resource_makespan": "3/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [

@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v2、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Release readiness監査でMVP受け入れ条件16のrecommendationが未実装と確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3のpreview-first advance自己利用で管理中である。MIG-01 fixture baselineとMIG-02 ranking/tier pure Coreは完了し、次の詳細taskは`EXPLANATION_CORE`である。`dag next`は引き続きv2であり、`RELEASE_E2E`はrecommendation受け入れ後までupcomingとして完了扱いにしない。
+perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v2、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Release readiness監査でMVP受け入れ条件16のrecommendationが未実装と確認したため、macro `plans/mvp.pert`と詳細`plans/recommendation.pert`を含む5計画をStage 3のpreview-first advance自己利用で管理中である。MIG-01 fixture baseline、MIG-02 ranking/tier Core、MIG-03 structured explanation/invariant Coreは完了し、次の詳細taskは`NEXT_V3_PUBLICATION`である。`dag next`は引き続きv2であり、`RELEASE_E2E`はrecommendation受け入れ後までupcomingとして完了扱いにしない。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -38,7 +38,7 @@ perttoolは現在、TypeScript CLIのMVP recommendation実装段階である。`
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
 - `src/analysis/`: exact Rationalを使うresidual graph、precedence CPM、resource schedule実装。
-- `src/recommendation/`: actual ready taskからcandidate fact、complete order、selection horizon、joint-feasible recommended set、tierを導出する非公開pure Core。
+- `src/recommendation/`: actual ready taskからcandidate fact、complete order、selection horizon、joint-feasible recommended set、tier、typed explanation graph、PTREC invariantを導出する非公開pure Core。
 - `src/conversion/`: Mermaid profile/plain export/import、semantic metadata、projection生成、fail-closed復元。
 - `src/editing/`: formatterとmutationが共有するdeterministic unified diff。
 - `src/formatter/`: source-preserving formatter Core。

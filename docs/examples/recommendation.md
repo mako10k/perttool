@@ -472,7 +472,9 @@ MIG-08のoverride apply/audit gateを満たすまではtrailerを実commitへ適
 
 MIG-01の実体は`test/fixtures/recommendation/`のREC-001からREC-007 `.pert`、REC-008からREC-011 unit inputを含む`cases.json`、および`test/golden/recommendation/v2-projection.expected.json`である。Fixture baselineは将来の期待判断と現行`NextResult.v2` projectionを分離し、v3 publication前にpublic schemaやtextを変更しない。
 
-MIG-02の実体は`src/recommendation/`の非公開pure Coreと`test/recommendation-ranking.test.mjs`である。REC-001からREC-007のcandidate fact、selection horizon、recommended set、tier、resource witnessに加え、全ranking rule、near-critical/minimum-float horizon、capacity overrideを固定する。MIG-03とMIG-04が完了するまで、このCoreをcomplete explanationまたはpublic `NextResult.v3`として扱わない。
+MIG-02の実体は`src/recommendation/`の非公開ranking pure Coreと`test/recommendation-ranking.test.mjs`である。REC-001からREC-007のcandidate fact、selection horizon、recommended set、tier、resource witnessに加え、全ranking rule、near-critical/minimum-float horizon、capacity overrideを固定する。
+
+MIG-03の実体は`src/recommendation/explanation*.ts`と`test/recommendation-explanation.test.mjs`である。MIG-02結果からexact typed fact、制限付きexpression、minimal comparison、decision trace、reason occurrence、canonical English descriptionを構築し、reference/tier/expression不変条件を`PTREC-301`、version/rule/code/fact不変条件を`PTREC-302`、description不変条件を`PTREC-303`へ変換する。REC-001からREC-011、active-only reject、ready 0件、fail-closedを固定したが、MIG-04まではこの非公開Coreをpublic `NextResult.v3`として扱わない。
 
 ## 7. Acceptance
 
