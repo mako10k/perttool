@@ -1,19 +1,7 @@
 project PERTTOOL_MVP:
   version 1
   title "perttool MVPからbetaへのmacro計画"
-  description |
-    MVPから最初のbetaまでのmacro PERT。各durationはengineering-day見積りであり、
-    grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pert、
-    M1からM4とproject metadata CLIの操作系はplans/operations.pertを正とする。
-    PROJECT_METADATA_CLIは開始時の操作系Velocity 24p/1dで5/24dへroll-upし、
-    完了後の操作系累計29p/2 active dayからVelocityを29p/2dへ再calibrationした。
-    recommendation実装はplans/recommendation.pertを正とし、全22pを1 active dayで完了した。
-    完了直前の残り2p resource forecast 0.1dをmacro work packageへ保持する。npm publication
-    preparationは人間overrideで前倒しした後、RELEASE_E2Eで同一artifact公開を完了した。
-    BetaはIssue #2のplans/agent-guidance.pertを正とし、完了4 task 19p/1 active day
-    から再calibrationしたVelocity 19p/1dによる残り3pのresource forecast 3/19dを
-    0.157895dへroundしてroll-upする。BETA_RELEASE_E2Eはalpha release実測1 active dayを
-    根拠に1dとする。Issue #3のmulti-plan compositionはbeta開始条件に含めない。
+  description "perttool最初のbetaへのcurrent/future macro PERT。MVP public alpha、Issue #2 read-only AI Agent Guidance Registry v1の全22p、project metadata CLIは受け入れ済みで、過去の詳細はGit historyと各詳細planを参照する。現在の残作業はBETA_RELEASE_E2E 1dだけで、suffixなし0.1.0、同一tarball、GitHub prerelease、npm beta、既存latest不変、registry隔離installを検証する。Alpha互換や追加soak、Issue #3、LSP server、VSIX、MCP serverはbeta開始条件に含めない。"
   as_of 2026-07-23
   duration_unit day
   finish M8_BETA_RELEASED
@@ -27,215 +15,19 @@ resource REVIEWERS:
   description "仕様判断と安全性gateは同時に1件だけレビューする"
   capacity 1
 
-milestone NOW:
-  title "read-only core完成"
-  state reached
-
-milestone GRAMMAR_ACCEPTED:
-  title "文法受け入れ完了"
-
-milestone CONTROL_PLANE_DESIGN_ACCEPTED:
-  title "AI工程制御設計受け入れ完了"
-
-milestone FOUNDATION_INPUTS_ACCEPTED:
-  title "product foundationの設計入力受け入れ完了"
-
-milestone M1_PRODUCT_FOUNDATION_READY:
-  title "M1 product foundationと実装roadmap確定"
-
-milestone FORMATTER_READY:
-  title "formatter基礎完了"
-
-milestone MUTATION_PREVIEW_READY:
-  title "構造編集preview完了"
-
-milestone M2_EDIT_PREVIEW_READY:
-  title "M2 安全な編集preview完了"
-
-milestone M3_SAFE_WRITE_READY:
-  title "M3 安全なwrite完了"
-
-milestone M4_ADVANCE_READY:
-  title "M4 過去圧縮advance完了"
-
-milestone MERMAID_PROFILE_DEFINED:
-  title "Mermaid lossless profile確定"
-
-milestone MERMAID_EXPORT_READY:
-  title "Mermaid export完了"
-
-milestone M5_MERMAID_ROUNDTRIP_READY:
-  title "M5 Mermaid相互変換完了"
-
-milestone RELEASE_READY:
-  title "MVP release検証可能"
-
-milestone M6_MVP_RELEASED:
-  title "M6 MVP public alphaリリース"
-
 milestone M7_AGENT_GUIDANCE_READY:
   title "M7 beta feature受け入れ完了"
   description "Issue #2 AI Agent Guidance Registryとproject metadata CLIの両方をbeta release前に受け入れる"
+  state reached
 
 milestone M8_BETA_RELEASED:
   title "M8 0.x betaリリース"
-
-task CONTROL_PLANE_DESIGN_WORK_PACKAGE NOW -> CONTROL_PLANE_DESIGN_ACCEPTED:
-  title "AI工程制御planeを設計する"
-  description "plans/control-plane.pertのIssue #1設計17pを2026-07-22に受け入れた。durationは受け入れ前にroll-upした残り1pの実測velocity forecast 1/16dを保持する"
-  duration 0.0625d
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-
-task GRAMMAR_WORK_PACKAGE NOW -> GRAMMAR_ACCEPTED:
-  title "grammar planの残作業を完了する"
-  description "plans/grammar.pertの全13pとgrammar acceptanceが完了した"
-  duration 0.2d
-  status done
-  priority 50
-  requires:
-    DEVELOPERS 1
-
-gate CONTROL_PLANE_FOUNDATION_GATE CONTROL_PLANE_DESIGN_ACCEPTED -> FOUNDATION_INPUTS_ACCEPTED:
-  reason "product foundationの再構成にはAI工程制御planeの設計受け入れが必要"
-
-gate GRAMMAR_FOUNDATION_GATE GRAMMAR_ACCEPTED -> FOUNDATION_INPUTS_ACCEPTED:
-  reason "product foundationの再構成には文法受け入れが必要"
-
-task M1_ROADMAP_UPDATE FOUNDATION_INPUTS_ACCEPTED -> M1_PRODUCT_FOUNDATION_READY:
-  title "操作系優先でM1実装roadmapを確定する"
-  description "plans/operations.pertへ実ファイル境界、受け入れ条件、narrow test、resource、Pointを確定した。recommendationとIssue #2は共有CLI・reviewer競合のためM3後へ送る"
-  duration 1d
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-
-task FORMATTER_CORE M1_PRODUCT_FOUNDATION_READY -> FORMATTER_READY:
-  title "dsl format previewを公開する"
-  description "plans/operations.pertのFORMAT_APPLICATION 1pとFORMAT_CLI_PREVIEW 2pを完了し、再検査済みformatter previewをtext/JSONで公開した"
-  duration 0.2d
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-
-task MUTATION_PREVIEW M1_PRODUCT_FOUNDATION_READY -> MUTATION_PREVIEW_READY:
-  title "task、milestone、resource編集previewを実装する"
-  description "plans/operations.pertのmutation Core 7pとMUTATION_CLI_PREVIEW 2pを完了し、source-preservingなentity/batch previewをtext/JSONで公開した"
-  duration 0.285714d
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-
-gate FORMATTER_EDIT_GATE FORMATTER_READY -> M2_EDIT_PREVIEW_READY:
-  reason "編集previewにはformatterが必要"
-
-gate MUTATION_EDIT_GATE MUTATION_PREVIEW_READY -> M2_EDIT_PREVIEW_READY:
-  reason "編集previewにはmutation plannerが必要"
-
-task WRITE_SAFETY M2_EDIT_PREVIEW_READY -> M3_SAFE_WRITE_READY:
-  title "再検査、atomic write、optimistic lockを実装する"
-  description "plans/operations.pertのsafe write 6pを完了した。durationは受け入れ直前にroll-upしたSAFE_WRITE_ACCEPTANCE 2pの実測velocity forecast 0.125dを保持する"
-  duration 0.125d
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-
-task ADVANCE M3_SAFE_WRITE_READY -> M4_ADVANCE_READY:
-  title "合流を保持するadvance plannerを実装する"
-  description "plans/operations.pertのadvance 6pを完了した。durationは受け入れ直前にroll-upしたADVANCE_CLI_ACCEPTANCE 2pの実測velocity forecast 0.090909dを保持する"
-  duration 0.090909d
-  status done
-  priority 20
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-
-task MERMAID_PROFILE M3_SAFE_WRITE_READY -> MERMAID_PROFILE_DEFINED:
-  title "Mermaid lossless metadata schemaを確定する"
-  description "Perttool.MermaidProfile.v1のsemantic record、canonical JSON、両digest、fail-closed importをdocs/specs/mermaid-profile.mdと規範例へ固定した"
-  duration 2d
-  status done
-  priority 20
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-
-task MERMAID_EXPORT MERMAID_PROFILE_DEFINED -> MERMAID_EXPORT_READY:
-  title "AoA DAGをMermaidへexportする"
-  duration 3d
-  status done
-  priority 15
-  requires:
-    DEVELOPERS 1
-
-task MERMAID_ROUNDTRIP MERMAID_EXPORT_READY -> M5_MERMAID_ROUNDTRIP_READY:
-  title "lossless importとround-trip検査を実装する"
-  description "importMermaidとdag importでfail-closed profile復元、plain loss report、strict loss、exclusive out、Core/CLI/E2E round-tripを実装した"
-  duration 5d
-  status done
-  priority 10
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-
-gate ADVANCE_RELEASE_GATE M4_ADVANCE_READY -> RELEASE_READY:
-  reason "MVPにはadvance完了が必要"
-
-gate MERMAID_RELEASE_GATE M5_MERMAID_ROUNDTRIP_READY -> RELEASE_READY:
-  reason "MVPにはMermaid相互変換完了が必要"
-
-task RELEASE_E2E RELEASE_READY -> M6_MVP_RELEASED:
-  title "MVP E2Eと同一artifact配布を検証・公開する"
-  description "受け入れ再監査、package smoke、annotated tag、GitHub prerelease asset、npm alpha publish、registry隔離installを同一tarballで検証する。前倒ししたnpm preflightだけでは完了しない"
-  duration 2d
-  status done
-  priority 5
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-
-task RECOMMENDATION_IMPLEMENTATION M3_SAFE_WRITE_READY -> RELEASE_READY:
-  title "説明可能なrecommendationを実装し自己利用へ採用する"
-  description "plans/recommendation.pertのMIG-01からMIG-07全22pを完了し、normal recommendationをAI task selection authorityへ採用した。durationは完了直前の残り2pを20p/1dで換算した0.1dを保持する"
-  duration 0.1d
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-
-task AGENT_GUIDANCE_IMPLEMENTATION M6_MVP_RELEASED -> M7_AGENT_GUIDANCE_READY:
-  title "Issue #2 read-only AI Agent Guidance Registryを実装する"
-  description "plans/agent-guidance.pertでPROVIDER_BASELINE 4p、GUIDANCE_CONTRACT 5p、GUIDANCE_CORE 5p、AGENT_HELP_PUBLICATION 5pを2026-07-23の1 active dayで完了し、固有実測Velocity 19p/1dで残るGUIDANCE_ACCEPTANCE 3pの3/19dを0.157895dへroundしてroll-upする"
-  duration 0.157895d
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
 
 task BETA_RELEASE_E2E M7_AGENT_GUIDANCE_READY -> M8_BETA_RELEASED:
   title "Suffixなし0.x betaを同一artifactで検証・公開する"
   description "Issue #2受け入れ後、0.1.0、GitHub prerelease、npm beta dist-tag、latest不変、registry隔離installを同一tarballで検証する。Alpha互換や追加soakはgateにしない"
   duration 1d
   priority 5
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-
-task PROJECT_METADATA_CLI M6_MVP_RELEASED -> M7_AGENT_GUIDANCE_READY:
-  title "project metadataをCLIから閲覧・編集可能にする"
-  description "plans/operations.pertのPROJECT_METADATA_CLI 5pを、開始時の操作系Velocity 24p/1dで5/24dへ換算し6 decimal dayへroundする。利用者の明示指示によるhuman overrideでAGENT_GUIDANCE_IMPLEMENTATIONより先に実行する"
-  duration 0.208333d
-  status done
-  priority 100
   requires:
     DEVELOPERS 1
     REVIEWERS 1

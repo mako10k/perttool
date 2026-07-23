@@ -4,6 +4,7 @@
 - 決定日: 2026-07-23
 - Versioning: [ADR 0003](../adr/0003-beta-versioning.md)
 - Feature gate: [Issue #2](https://github.com/mako10k/perttool/issues/2)
+- Feature acceptance: [AI Agent Guidance Registry v1受け入れ記録](agent-guidance-acceptance.md)
 - Macro plan: [../../plans/mvp.pert](../../plans/mvp.pert)
 - Detail plan: [../../plans/agent-guidance.pert](../../plans/agent-guidance.pert)
 
@@ -16,7 +17,7 @@ Alphaからbetaへのstrict compatibilityは要求しない。必要な破壊的
 ## 2. Engineering gate
 
 - `plans/agent-guidance.pert`の全taskが完了している
-- Issue #2のacceptance criteriaを仕様、Core、CLI、text/JSON、fixture/golden、packageで満たす
+- [Issue #2受け入れ記録](agent-guidance-acceptance.md)により、acceptance criteriaを仕様、Core、CLI、text/JSON、fixture/golden、packageで満たす
 - v1はofflineかつread-onlyで、hook、project code、file generation、network refreshを実行しない
 - 5 provider profileのofficial sourceと`verified_at`を実装時点で再確認する
 - `npm run check`と`git diff --check`が成功する

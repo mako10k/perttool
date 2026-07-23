@@ -1088,7 +1088,7 @@ Exit:
 Exit:
 
 - [最初のbeta受け入れ条件](requirements.md#211-最初のbeta受け入れ条件)を満たす
-- Issue #2の12 acceptance criteriaをCore、CLI、help、testへtraceできる
+- [Issue #2受け入れ記録](process/agent-guidance-acceptance.md)で12 acceptance criteriaをCore、CLI、help、testへtraceできる
 - hook実行、file生成、設定変更、network access、provider writeを行わない
 - alpha互換や追加soakをgateにせず、破壊的変更がある場合は仕様と移行情報を同時更新する
 
