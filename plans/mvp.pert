@@ -4,15 +4,15 @@ project PERTTOOL_MVP:
   description |
     MVPから最初のbetaまでのmacro PERT。各durationはengineering-day見積りであり、
     grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pert、
-    M1からM4の操作系はplans/operations.pertを正とする。
-    操作系detail planは全24p完了時の実測Velocity 24p/1dを使用し、
-    resource forecastを6 decimal dayへroundしてmacro work packageへroll-upした。
+    M1からM4とproject metadata CLIの操作系はplans/operations.pertを正とする。
+    PROJECT_METADATA_CLIは開始時の操作系Velocity 24p/1dで5/24dへroll-upし、
+    完了後の操作系累計29p/2 active dayからVelocityを29p/2dへ再calibrationした。
     recommendation実装はplans/recommendation.pertを正とし、全22pを1 active dayで完了した。
     完了直前の残り2p resource forecast 0.1dをmacro work packageへ保持する。npm publication
     preparationは人間overrideで前倒しした後、RELEASE_E2Eで同一artifact公開を完了した。
-    BetaはIssue #2のplans/agent-guidance.pertを正とし、完了2 task 9p/1 active day
-    から再calibrationしたVelocity 9p/1dによる残り13pのresource forecast 13/9dを
-    1.444444dへroundしてroll-upする。BETA_RELEASE_E2Eはalpha release実測1 active dayを
+    BetaはIssue #2のplans/agent-guidance.pertを正とし、完了4 task 19p/1 active day
+    から再calibrationしたVelocity 19p/1dによる残り3pのresource forecast 3/19dを
+    0.157895dへroundしてroll-upする。BETA_RELEASE_E2Eはalpha release実測1 active dayを
     根拠に1dとする。Issue #3のmulti-plan compositionはbeta開始条件に含めない。
   as_of 2026-07-23
   duration_unit day
@@ -74,7 +74,8 @@ milestone M6_MVP_RELEASED:
   title "M6 MVP public alphaリリース"
 
 milestone M7_AGENT_GUIDANCE_READY:
-  title "M7 AI Agent Guidance Registry受け入れ完了"
+  title "M7 beta feature受け入れ完了"
+  description "Issue #2 AI Agent Guidance Registryとproject metadata CLIの両方をbeta release前に受け入れる"
 
 milestone M8_BETA_RELEASED:
   title "M8 0.x betaリリース"
@@ -213,8 +214,8 @@ task RECOMMENDATION_IMPLEMENTATION M3_SAFE_WRITE_READY -> RELEASE_READY:
 
 task AGENT_GUIDANCE_IMPLEMENTATION M6_MVP_RELEASED -> M7_AGENT_GUIDANCE_READY:
   title "Issue #2 read-only AI Agent Guidance Registryを実装する"
-  description "plans/agent-guidance.pertのPROVIDER_BASELINE 4pとGUIDANCE_CONTRACT 5pを2026-07-23の1 active dayで完了し、固有実測Velocity 9p/1dで残る3 task 13pの13/9dを1.444444dへroundしてroll-upする"
-  duration 1.444444d
+  description "plans/agent-guidance.pertでPROVIDER_BASELINE 4p、GUIDANCE_CONTRACT 5p、GUIDANCE_CORE 5p、AGENT_HELP_PUBLICATION 5pを2026-07-23の1 active dayで完了し、固有実測Velocity 19p/1dで残るGUIDANCE_ACCEPTANCE 3pの3/19dを0.157895dへroundしてroll-upする"
+  duration 0.157895d
   priority 100
   requires:
     DEVELOPERS 1
@@ -225,6 +226,16 @@ task BETA_RELEASE_E2E M7_AGENT_GUIDANCE_READY -> M8_BETA_RELEASED:
   description "Issue #2受け入れ後、0.1.0、GitHub prerelease、npm beta dist-tag、latest不変、registry隔離installを同一tarballで検証する。Alpha互換や追加soakはgateにしない"
   duration 1d
   priority 5
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task PROJECT_METADATA_CLI M6_MVP_RELEASED -> M7_AGENT_GUIDANCE_READY:
+  title "project metadataをCLIから閲覧・編集可能にする"
+  description "plans/operations.pertのPROJECT_METADATA_CLI 5pを、開始時の操作系Velocity 24p/1dで5/24dへ換算し6 decimal dayへroundする。利用者の明示指示によるhuman overrideでAGENT_GUIDANCE_IMPLEMENTATIONより先に実行する"
+  duration 0.208333d
+  status done
+  priority 100
   requires:
     DEVELOPERS 1
     REVIEWERS 1

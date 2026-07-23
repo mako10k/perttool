@@ -6,13 +6,13 @@ project AGENT_GUIDANCE:
     read-only AI Agent Guidance Registry v1を設計・実装する。
     Provider固有概念を共通taxonomyへmappingし、offline deterministicな
     Core、agent help text/JSON、fixture、package acceptanceを同じregistryから提供する。
-    Pointは初期相対見積りである。PROVIDER_BASELINE 4pとGUIDANCE_CONTRACT 5pを
-    2026-07-23の1 active dayで完了した実測9p/1dを現在のVelocityとし、
-    残る13pを予測する。
+    Pointは初期相対見積りである。PROVIDER_BASELINE 4p、GUIDANCE_CONTRACT 5p、
+    GUIDANCE_CORE 5p、AGENT_HELP_PUBLICATION 5pを2026-07-23の
+    1 active dayで完了した実測19p/1dを現在のVelocityとし、残る3pを予測する。
     Audit、scaffold、hook実行、enforcement、runtime web refreshは対象外とする。
   as_of 2026-07-23
   duration_unit point
-  velocity 9p/1d
+  velocity 19p/1d
   finish GUIDANCE_ACCEPTED
 
 resource DEVELOPERS:
@@ -89,6 +89,7 @@ task GUIDANCE_CORE GUIDANCE_CONTRACT_READY -> GUIDANCE_CORE_READY:
     native、compatible、preview、deprecated、unsupported、unknown、stalenessを
     reference-closedなfixture/goldenへ固定する。File、hook、network side effectは行わない。
   duration 5p
+  status done
   priority 80
   requires:
     DEVELOPERS 1
@@ -102,6 +103,7 @@ task AGENT_HELP_PUBLICATION GUIDANCE_CORE_READY -> AGENT_HELP_PUBLISHED:
     deterministic text/JSON、unknown diagnostic、alias canonicalizationを公開する。
     Existing dsl helpはIssue #2のacceptanceどおり維持する。
   duration 5p
+  status done
   priority 70
   requires:
     DEVELOPERS 1

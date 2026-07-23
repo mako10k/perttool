@@ -2,19 +2,20 @@ project OPERATIONS:
   version 1
   title "操作系M1-M4実装計画"
   description |
-    formatter preview、構造編集preview、safe write、advanceを実装する詳細plan。
+    formatter preview、構造編集preview、safe write、advance、project metadata CLIを実装する詳細plan。
     Pointは相対規模を表す。2026-07-22にmutation Core 7p、
     FORMAT_APPLICATION 1p、MUTATION_CLI_PREVIEW 2p、FORMAT_CLI_PREVIEW 2p、
     SAFE_WRITE_ADAPTER 4p、SAFE_WRITE_ACCEPTANCE 2p、ADVANCE_PLANNER 4p、
-    ADVANCE_CLI_ACCEPTANCE 2pを1 active dayで完了した操作系標本から、
-    実測Velocityを24p/1dへcalibrationした。
+    ADVANCE_CLI_ACCEPTANCE 2pの計24pを1 active dayで完了した。
+    2026-07-23にPROJECT_METADATA_CLI 5pを完了し、累計29p/2 active dayから
+    実測Velocityを29p/2dへ再calibrationした。
     recommendationとAI Agent Guidance RegistryのM3開始下限は閉じた。Recommendationは
     MVP public alphaまで完了し、AI Agent Guidance Registryはbeta gateとして独立detail planと
     macro work packageへ追加した。Multi-plan compositionはbeta後の将来backlogとして扱う。
-  as_of 2026-07-22
+  as_of 2026-07-23
   duration_unit point
-  velocity 24p/1d
-  finish OPERATIONS_READY
+  velocity 29p/2d
+  finish PROJECT_METADATA_CLI_READY
 
 resource DEVELOPERS:
   title "実装担当枠"
@@ -207,3 +208,17 @@ task ADVANCE_CLI_ACCEPTANCE ADVANCE_PLANNER_READY -> OPERATIONS_READY:
     REVIEWERS 1
     CLI_SURFACE 1
     FILESYSTEM_WRITE 1
+
+milestone PROJECT_METADATA_CLI_READY:
+  title "project metadata CLI受け入れ完了"
+
+task PROJECT_METADATA_CLI OPERATIONS_READY -> PROJECT_METADATA_CLI_READY:
+  title "project metadataをCLIから閲覧・編集可能にする"
+  description "Create: src/application/project.ts、src/mutation/project.ts、test/project-metadata.test.mjs。 Modify: requirements、mutation/interface仕様、basic design、CLI、public API、help、package smoke、AI workflow。 Accept: velocityを含む全project metadataをproject showのtext/JSONで返し、project setをpreview-first safe-writeとatomic batchへ接続する。 Test: narrow Core/CLI/E2E後にnpm run checkとgit diff --check。"
+  duration 5p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1

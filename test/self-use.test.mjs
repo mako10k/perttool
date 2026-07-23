@@ -123,8 +123,9 @@ test("operations plan has a valid idempotent advance candidate", async () => {
   assert.equal(advanced.changed, true);
   assert.ok(advanced.advance.removedTaskIds.includes("ADVANCE_PLANNER"));
   assert.ok(advanced.advance.removedTaskIds.includes("ADVANCE_CLI_ACCEPTANCE"));
-  assert.deepEqual(advanced.advance.frontierBefore, ["OPERATIONS_READY"]);
-  assert.deepEqual(advanced.advance.frontierAfter, ["OPERATIONS_READY"]);
+  assert.ok(advanced.advance.removedTaskIds.includes("PROJECT_METADATA_CLI"));
+  assert.deepEqual(advanced.advance.frontierBefore, ["PROJECT_METADATA_CLI_READY"]);
+  assert.deepEqual(advanced.advance.frontierAfter, ["PROJECT_METADATA_CLI_READY"]);
   assert.deepEqual(advanced.advance.readyBefore, []);
   assert.deepEqual(advanced.advance.readyAfter, []);
   assert.deepEqual(selectNextTasks(advanced.updatedText).groups, before.groups);

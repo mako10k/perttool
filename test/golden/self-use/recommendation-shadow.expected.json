@@ -13,34 +13,31 @@
   },
   "plans": {
     "agent-guidance": {
-      "source_digest": "sha256:68596c119c9af06ee571f3081eacb50919e776a97f21cebe61097638f5916845",
+      "source_digest": "sha256:ee68daf19e2e99bcafe2317eb4649cfd98f277cc07db438d4a8b991fecc62a27",
       "groups": {
         "active": [],
         "ready": [
-          "GUIDANCE_CORE"
+          "GUIDANCE_ACCEPTANCE"
         ],
         "runnable_now": [
-          "GUIDANCE_CORE"
+          "GUIDANCE_ACCEPTANCE"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "AGENT_HELP_PUBLICATION",
-          "GUIDANCE_ACCEPTANCE"
-        ]
+        "upcoming": []
       },
       "recommended_task_ids": [
-        "GUIDANCE_CORE"
+        "GUIDANCE_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "GUIDANCE_CORE"
+        "GUIDANCE_ACCEPTANCE"
       ],
       "tiers": {
-        "GUIDANCE_CORE": "recommended"
+        "GUIDANCE_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GUIDANCE_CORE",
+          "id": "GUIDANCE_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -113,7 +110,7 @@
       ]
     },
     "operations": {
-      "source_digest": "sha256:32ca98966184374306699af5689b27534e64b17cc30ee20762c59debea3d6a42",
+      "source_digest": "sha256:b38d4cc751e42ef437f4a140df22ffeb94bfc2aa1f6487d34feef6618eed6b6a",
       "groups": {
         "active": [],
         "ready": [],
@@ -165,7 +162,7 @@
       ]
     },
     "mvp": {
-      "source_digest": "sha256:9153023d3e3d01e3dd8e065b79c8e616b3e949fc95eeca6c9d1f179fec46792e",
+      "source_digest": "sha256:15ab17484073e08b0f4dbb56e78afbdf669731db4d19a1b520643838e411382a",
       "groups": {
         "active": [],
         "ready": [

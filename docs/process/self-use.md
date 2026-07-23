@@ -140,6 +140,12 @@ MVP public alpha受け入れ後、利用者判断でIssue #2を最初のbetaへ�
 
 続いて`GUIDANCE_CONTRACT`を完了した。[AI Agent Guidance Registry仕様](../specs/agent-guidance.md)と[規範例](../examples/agent-guidance.md)へ5 provider、6 surface、`grok` alias、6 support statusと構造化根拠、artifact resolution、common guidance/risk ID、project-first composition、snapshot-relative staleness、`Perttool.AgentGuidanceResult.v1`、text/JSON、`PTAGT-*`、read-only capability、audit/scaffold/enforcement migrationを固定した。`test/fixtures/agent-guidance/contract.v1.json`と専用testはversion identity、ordering、reference closure、20 case、既存provider baselineとのaxis整合を検査し、既存`dsl help`の局所testを含む全checkを通した。Detail planはpreview source digest `sha256:bf403deb5d8a39f186cd72fafcae3726187821255f0f7ca588ff4673b30d99d9`からexpected digest付き`task finish --write`を行い、finish直後は`sha256:54721b08fa2e878c9d12bb72ba77900d5a2fb180e2f2ae547642f02ca7c3d455`、Velocity反映後は`sha256:68596c119c9af06ee571f3081eacb50919e776a97f21cebe61097638f5916845`となった。完了標本を同日の累計9p/1 active dayへ更新し、残る13pのprecedence/resource forecastは`13/9d`である。Macroはpreview source digest `sha256:ffc0d2197b5fe8f0237ad9cd10a25e58eb123f037df5974b69f3693fe6106af6`からexpected digest付きで`AGENT_GUIDANCE_IMPLEMENTATION`を1.444444dへ更新し、task set直後は`sha256:67bef4a902b5849aaab8e5dfd6f01b985f00fd1095f0d1fad8d50f5d74e07dce`、roll-up説明反映後は`sha256:9153023d3e3d01e3dd8e065b79c8e616b3e949fc95eeca6c9d1f179fec46792e`となった。Beta releaseまでの残存makespanは2.444444dで、detailの唯一のready、`runnable_now`、recommended taskは`GUIDANCE_CORE`である。
 
+続いて`GUIDANCE_CORE`を完了した。`src/guidance/`へpublic type、5 provider x 6 surfaceのversion付きoffline profile、canonical profile digest、fail-closed validator、exact lookupと`grok` alias normalization、reference-closedなindex/quick/detail projection、schema順のdeterministic JSONを実装し、public libraryから公開した。Bundled profileはprovider baselineのartifact pathを保持し、native、compatible、preview、deprecated、unsupported、unknown、artifact path unknown、snapshot-relative staleness、description conflict、dangling reference、digest mismatchを専用testとgoldenへ固定した。Coreとcapabilityはfile、hook、command、network、provider stateへaccessせず、CLI/text publicationは後続へ残した。全229 testを通した後、detail planはpreview source digest `sha256:68596c119c9af06ee571f3081eacb50919e776a97f21cebe61097638f5916845`からexpected digest付き`task finish --write`を行い、finish直後は`sha256:c914a3a78905a67cfe59bef00e11d8e8f5d3308aa399505db8ef2395afc32d7c`、Velocity反映後は`sha256:8a40f693313273de4a97dcd891aca4cb27e6ee5618a9645ba507bcfaafd6a62a`となった。完了標本を同日の累計14p/1 active dayへ更新し、残る8pのprecedence/resource forecastは`4/7d`である。Macroはsource digest `sha256:9153023d3e3d01e3dd8e065b79c8e616b3e949fc95eeca6c9d1f179fec46792e`からexpected digest付きで`AGENT_GUIDANCE_IMPLEMENTATION`を0.571429dへ更新し、task set直後は`sha256:00c0e62752d21212ff9a7dae76be2a94c231467e3db62b07d0ca3cb83762da6c`、roll-up説明反映後は`sha256:bffd75002d05868bc4d6fd08a2c0e35c3ad378ebaa3ecfed01a61a8df69602e4`となった。Beta releaseまでの残存makespanは1.571429dで、detailの唯一のready、`runnable_now`、recommended taskは`AGENT_HELP_PUBLICATION`である。
+
+続いて`AGENT_HELP_PUBLICATION`を完了した。同じGuidance Core resultを`agent help [provider [surface]]`のindex/quick/detail、text/JSON、`grok` alias canonicalization、`PTAGT-*` domain error、`PTCLI-001` usage errorへ接続した。`src/help/registry.ts`のagent専用structured command helpはlegacy `dsl help` topic registryへ混ぜず、既存index JSON bytesをgoldenで維持する。Public text renderer、CLI JSONとCore serializerのbyte parity、source detail、read-only capability、project/provider stateを要求しない実行、local link、release tarball隔離installでのCore/CLI parityを専用testとE2Eへ固定した。Detail planはsource digest `sha256:8a40f693313273de4a97dcd891aca4cb27e6ee5618a9645ba507bcfaafd6a62a`からpreviewし、candidate digest `sha256:a655ae11a32aa2827bf44a9b9446c2094b0937239440f3753e9ac4ced6b746b1`を確認してexpected digest付き`task finish --write`を行った。Velocity反映後のdigestは`sha256:ee68daf19e2e99bcafe2317eb4649cfd98f277cc07db438d4a8b991fecc62a27`である。完了標本を同日の累計19p/1 active dayへ更新し、残る`GUIDANCE_ACCEPTANCE` 3pのprecedence/resource forecastは`3/19d`である。Macroはsource digest `sha256:bffd75002d05868bc4d6fd08a2c0e35c3ad378ebaa3ecfed01a61a8df69602e4`からpreviewし、expected digest付きで0.157895dへ更新した。Task set直後は`sha256:0c02bb566596ab903f31c915df08e42d3384fceffd3e9cd07c89c7f4e592444b`、project説明同期後は`sha256:a68c8ee462224ea6e2387b5c332fea398132afff17e4d72860f58b6a483b43c3`となった。Beta releaseまでの残存makespanは1.157895dで、detailの唯一のready、`runnable_now`、recommended taskは`GUIDANCE_ACCEPTANCE`である。
+
+同じlogical changeで、LSP server、コードハイライトとLSP clientを持つVSIX、MCP serverを最初のbeta後の独立backlogへ追加した。LSP serverをVSIXのpredecessorとし、MCP serverは独立workstreamとする。いずれも現行macroまたは最初のbetaのblockerへは追加しない。
+
 ### 4.1 Velocity実測calibration
 
 DSL version 1はworking calendar、pause、作業開始時刻を持たないため、commit timestamp間の数時間を暗黙のengineering-dayへ変換しない。自己利用planのVelocityは次の決定的なactive-day方式で測る。
@@ -157,19 +163,19 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | --- | --- | ---: | ---: | --- | --- |
 | `grammar.pert` | `FORMATTER_ROUNDTRIP`、`HELP_FIXTURE_SYNC` | 3p | 1d | `3p/1d` | 0p |
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
-| `operations.pert` | formatter/mutation preview、safe write、advance | 24p | 1d | `24p/1d` | 0p |
+| `operations.pert` | formatter/mutation preview、safe write、advance、project metadata CLI | 29p | 2d | `29p/2d` | 0p |
 | `recommendation.pert` | `FIXTURE_BASELINE`、`RANKING_CORE`、`EXPLANATION_CORE`、`NEXT_V3_PUBLICATION`、`SELF_USE_SHADOW`、`OVERRIDE_VALIDATION`、`AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
-| `agent-guidance.pert` | `PROVIDER_BASELINE`、`GUIDANCE_CONTRACT` | 9p | 1d | `9p/1d` | 13p = `13/9d` |
+| `agent-guidance.pert` | `PROVIDER_BASELINE`、`GUIDANCE_CONTRACT`、`GUIDANCE_CORE`、`AGENT_HELP_PUBLICATION` | 19p | 1d | `19p/1d` | 3p = `3/19d` |
 
 これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。実測5標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装、agent guidanceはwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
-Operationsはformatter/mutation preview 12p、safe write 6p、advance 6pの同日完了を累計し、実測`24p/1d`へ更新した。まだ1 active dayだけの暫定値であり、次の操作系taskを詳細planへ追加して完了実績が生じた時点で独立再calibrationする。Macroはday単位しか持たないため、未完了work packageでは`p/velocity`を6 decimal dayへroundする。現在のdetail残作業とresource delayは0pである。
+Operationsは2026-07-22のformatter/mutation preview 12p、safe write 6p、advance 6pに、2026-07-23の`PROJECT_METADATA_CLI` 5pを加えた。累計29p/2 active dayから実測Velocityを`29p/2d`へ再calibrationした。Project metadata taskのmacro durationは開始時に利用できた`24p/1d`から`5/24d`を6 decimalの`0.208333d`へroundして保持する。現在のdetail残作業とresource delayは0pである。
 
 Recommendation実装は`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2p、`OVERRIDE_VALIDATION` 3p、`AUTHORITY_ADOPTION` 2pを2026-07-23の同じactive dayで完了したため、累計22p/1 active dayの暫定実測`22p/1d`へ更新した。残るresource makespanは0pである。まだ1 active dayだけの標本なので、次の異なるactive dayまたは複数task完了時に再calibrationする。
 
-Agent guidanceは`PROVIDER_BASELINE` 4pと`GUIDANCE_CONTRACT` 5pを2026-07-23の同じactive dayで完了したため、累計9p/1 active dayの暫定実測`9p/1d`へ更新した。Provider横断調査、公開contract、規範例、機械可読case、専用test、計画再解析を含む標本で、残るresource makespanは13p、forecastは`13/9d`である。Macroは6 decimal dayへroundした1.444444dを使用する。まだ1 active dayだけの標本なので、次の異なるactive dayまたは複数task完了時に再calibrationする。
+Agent guidanceは`PROVIDER_BASELINE` 4p、`GUIDANCE_CONTRACT` 5p、`GUIDANCE_CORE` 5p、`AGENT_HELP_PUBLICATION` 5pを2026-07-23の同じactive dayで完了したため、累計19p/1 active dayの暫定実測`19p/1d`へ更新した。Provider横断調査、公開contract、規範例、version付きoffline profile、validator、query/projection、機械可読case、deterministic text/JSON、structured command help、CLI/E2E、package-installed parity、計画再解析を含む標本で、残るresource makespanは3p、forecastは`3/19d`である。Macroは6 decimal dayへroundした0.157895dを使用する。まだ1 active dayだけの標本なので、次の異なるactive dayまたは複数task完了時に再calibrationする。
 
 Stage 1で許可した操作:
 
@@ -229,9 +235,10 @@ Stage 1で禁止した操作:
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
 - `RELEASE_E2E`を含むMVP public alphaは完了した
-- Macroのready、`runnable_now`、recommendedは`AGENT_GUIDANCE_IMPLEMENTATION`、detailは`GUIDANCE_CORE`である
+- Macroのready、`runnable_now`、recommendedは`AGENT_GUIDANCE_IMPLEMENTATION`、detailは`GUIDANCE_ACCEPTANCE`である
 - `AGENT_GUIDANCE_IMPLEMENTATION`完了後だけ`BETA_RELEASE_E2E`を開始する
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
+- LSP server、VSIX、MCP serverは最初のbeta後の独立backlogであり、現行macroへwork packageを追加しない
 
 ### 5.3 AI工程制御設計plan
 
@@ -329,7 +336,9 @@ MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar 
 - MVP public alpha後に、Issue #2のread-only AI Agent Guidance Registry
 - Issue #2受け入れ後に、suffixなし`0.1.0` beta release
 - MVP後に、Issue #3のbacklog階層・multi-plan composition
-- MVP後のMCP/LSP adapter
+- 最初のbeta後に、LSP server
+- LSP server後に、コードハイライトとLSP clientを持つVSIX
+- 最初のbeta後に、LSP/VSIXと独立してMCP server
 
 各 plan は現在・未来だけを持ち、完了部分は advance と Git history で管理する。
 
@@ -398,6 +407,8 @@ Stage 1開始時の証跡:
 - agent guidance planning gate: Issue #2をprovider baseline、common contract、deterministic Core、read-only publication、acceptanceへ分解し、初期Velocity `22p/1d`、resource forecast 1d、最初のrecommended task `PROVIDER_BASELINE`をgoldenへ固定する
 - agent guidance provider baseline gate: 5 provider x 6 surfaceの公式source、artifact、scope、maturity evidence、risk、verified_atをoffline design inputへ固定し、固有実測`4p/1d`、残り18p = 4.5d、次のrecommended task `GUIDANCE_CONTRACT`をgoldenへ固定する
 - agent guidance contract gate: stable provider/surface/guidance/risk ID、support statusの構造化根拠、offline profile、Core/text/JSON、diagnostic、staleness、project-first composition、read-only migrationを規範仕様・20 case・contract fixtureへ固定し、累計実測`9p/1d`、残り13p = `13/9d`、次のrecommended task `GUIDANCE_CORE`をgoldenへ固定する
+- agent guidance Core gate: version付きoffline profile、canonical digest、validator、exact lookupとalias、reference-closedなindex/quick/detail projection、deterministic JSON、6 statusとfixed-date staleness、no-side-effect capabilityをpublic libraryと専用testへ固定し、累計実測`14p/1d`、残り8p = `4/7d`、次のrecommended task `AGENT_HELP_PUBLICATION`をgoldenへ固定する
+- agent guidance publication gate: 同じCore resultからdeterministic text/JSON、structured command help、`agent help` CLI、alias、unknown/usage diagnostic、read-only capability、legacy `dsl help` bytes、package-installed Core/CLI parityを固定し、累計実測`19p/1d`、残り3p = `3/19d`、次のrecommended task `GUIDANCE_ACCEPTANCE`をgoldenへ固定する
 - beta release gate: suffixなし`0.1.0`、GitHub prerelease、npm `beta`、既存`latest`不変、同一tarball、registry隔離installをIssue #2受け入れ後にだけ実行する
 - CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、6 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

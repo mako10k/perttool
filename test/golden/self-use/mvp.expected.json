@@ -5,19 +5,19 @@
     "summary": {
       "resources": 2,
       "milestones": 17,
-      "tasks": 14,
+      "tasks": 15,
       "gates": 6,
       "errors": 0,
       "warnings": 14
     }
   },
   "analyze": {
-    "precedence_makespan": "611111/250000",
+    "precedence_makespan": "231579/200000",
     "precedence_critical_tasks": [
       "AGENT_GUIDANCE_IMPLEMENTATION",
       "BETA_RELEASE_E2E"
     ],
-    "resource_makespan": "611111/250000",
+    "resource_makespan": "231579/200000",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [

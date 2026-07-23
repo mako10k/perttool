@@ -17,9 +17,9 @@
 
 同日に人間overrideで前倒ししたnpm publication preflightを、normal recommendationで選ばれた`RELEASE_E2E`から実行した。`v0.1.0-alpha.2`のversion/tag、GitHub asset、npm publish、registry installを同一tarballで検証し、MVP macroを完了した。
 
-Issue #2を最初のbetaへ含め、`agent-guidance.pert`の5 task全22pとmacro `AGENT_GUIDANCE_IMPLEMENTATION`、`BETA_RELEASE_E2E` 1dを追加した。2026-07-23に`PROVIDER_BASELINE` 4pと`GUIDANCE_CONTRACT` 5pを完了し、累計実測Velocityを`9p/1d`へ補正した。残る13pのforecast `13/9d`はmacroへ1.444444dとしてroll-upした。Macroのrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、detailのrecommended taskは`GUIDANCE_CORE`で、betaまでのprecedence/resource makespanは2.444444dである。Issue #3はbeta blockerに含めない。
+Issue #2を最初のbetaへ含め、`agent-guidance.pert`の5 task全22pとmacro `AGENT_GUIDANCE_IMPLEMENTATION`、`BETA_RELEASE_E2E` 1dを追加した。2026-07-23に`PROVIDER_BASELINE` 4p、`GUIDANCE_CONTRACT` 5p、`GUIDANCE_CORE` 5p、`AGENT_HELP_PUBLICATION` 5pを完了し、累計実測Velocityを`19p/1d`へ補正した。残る3pのforecast `3/19d`はmacroへ0.157895dとしてroll-upした。同日、利用者の明示指示で操作系`PROJECT_METADATA_CLI` 5pを先行完了し、開始時Velocityによる`0.208333d`をmacroへ保持した。操作系累計は29p/2 active day、実測Velocityは`29p/2d`である。Macroのrecommended work packageは再び`AGENT_GUIDANCE_IMPLEMENTATION`、detailのrecommended taskは`GUIDANCE_ACCEPTANCE`で、betaまでのprecedence/resource makespanは1.157895dである。Issue #3、LSP server、VSIX、MCP serverはbeta blockerに含めない。
 
-Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`24p/1d`、recommendationが`22p/1d`、agent guidanceが`9p/1d`である。いずれも1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
+Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`19p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 
 規範仕様は `plans/` ではなく `docs/specs/` に置く。`plans/` は作業状態、Git history は過去を担当する。Macro milestoneは`mvp.pert`、現在sliceの設計・実装状態は対応する詳細planへ記録し、同じtaskを両方で個別管理しない。Stage 3のediting/advance write手順は[自己利用計画](../docs/process/self-use.md)を正とする。
 
