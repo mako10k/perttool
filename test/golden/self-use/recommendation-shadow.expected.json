@@ -12,6 +12,54 @@
     "description_locale": "en"
   },
   "plans": {
+    "agent-guidance": {
+      "source_digest": "sha256:b39ceba34d6eee0b6d6c2a663d35bdbe95d89ea9172bfb977f839d0e715c2334",
+      "groups": {
+        "active": [],
+        "ready": [
+          "PROVIDER_BASELINE"
+        ],
+        "runnable_now": [
+          "PROVIDER_BASELINE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "GUIDANCE_CONTRACT",
+          "GUIDANCE_CORE",
+          "AGENT_HELP_PUBLICATION",
+          "GUIDANCE_ACCEPTANCE"
+        ]
+      },
+      "recommended_task_ids": [
+        "PROVIDER_BASELINE"
+      ],
+      "manual_selected_task_ids": [
+        "PROVIDER_BASELINE"
+      ],
+      "tiers": {
+        "PROVIDER_BASELINE": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "PROVIDER_BASELINE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
+    },
     "control-plane": {
       "source_digest": "sha256:21d4d8e5706031abf5c5713ed680638eef58f0f73cb49e2a3631a605b9c66c95",
       "groups": {
@@ -65,7 +113,7 @@
       ]
     },
     "operations": {
-      "source_digest": "sha256:02735a31416f6e9e1e62e5aa3a816a6d4e1e44ee1b7a2a3e1caab8e5663aedea",
+      "source_digest": "sha256:32ca98966184374306699af5689b27534e64b17cc30ee20762c59debea3d6a42",
       "groups": {
         "active": [],
         "ready": [],
@@ -117,26 +165,47 @@
       ]
     },
     "mvp": {
-      "source_digest": "sha256:47937515ecbf024bd1dd23ca7d73e526e2fb25ae6fac27cc4ff179ece45d5217",
+      "source_digest": "sha256:e184dfd1b320a87543dab9c04525c0547bb47daf9419f39338c705964cedae38",
       "groups": {
         "active": [],
-        "ready": [],
-        "runnable_now": [],
+        "ready": [
+          "AGENT_GUIDANCE_IMPLEMENTATION"
+        ],
+        "runnable_now": [
+          "AGENT_GUIDANCE_IMPLEMENTATION"
+        ],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [
+          "BETA_RELEASE_E2E"
+        ]
       },
-      "recommended_task_ids": [],
-      "manual_selected_task_ids": [],
-      "tiers": {},
+      "recommended_task_ids": [
+        "AGENT_GUIDANCE_IMPLEMENTATION"
+      ],
+      "manual_selected_task_ids": [
+        "AGENT_GUIDANCE_IMPLEMENTATION"
+      ],
+      "tiers": {
+        "AGENT_GUIDANCE_IMPLEMENTATION": "recommended"
+      },
       "joint_resource_feasible": true,
-      "ready_tasks": [],
+      "ready_tasks": [
+        {
+          "id": "AGENT_GUIDANCE_IMPLEMENTATION",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
       "record_counts": {
-        "task_decisions": 0,
-        "decision_steps": 1,
-        "facts": 1,
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
         "comparisons": 0,
-        "reasons": 1,
-        "descriptions": 0
+        "reasons": 4,
+        "descriptions": 1
       },
       "diagnostic_codes": [
         "PTDAG-208"

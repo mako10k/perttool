@@ -1,0 +1,118 @@
+project AGENT_GUIDANCE:
+  version 1
+  title "Issue #2 AI Agent Guidance Registry実装計画"
+  description |
+    Codex、GitHub Copilot、Claude Code、Grok Build、Antigravity向けの
+    read-only AI Agent Guidance Registry v1を設計・実装する。
+    Provider固有概念を共通taxonomyへmappingし、offline deterministicな
+    Core、agent help text/JSON、fixture、package acceptanceを同じregistryから提供する。
+    Pointは初期相対見積りである。最も近いrecommendation Core/CLI/help実装の
+    暫定実測22p/1dを初期Velocityに使用し、最初の完了taskで再calibrationする。
+    Audit、scaffold、hook実行、enforcement、runtime web refreshは対象外とする。
+  as_of 2026-07-23
+  duration_unit point
+  velocity 22p/1d
+  finish GUIDANCE_ACCEPTED
+
+resource DEVELOPERS:
+  title "Guidance設計・実装担当枠"
+  capacity 2
+
+resource REVIEWERS:
+  title "Provider事実・interface・securityレビュー枠"
+  description "Provider mapping、公開schema、hook trust境界の受け入れを同時に1件だけ行う"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "CLI・help公開surface所有枠"
+  description "src/cli.ts、src/index.ts、help registry、CLI testの同時変更を避ける"
+  capacity 1
+
+milestone NOW:
+  title "MVP public alpha受け入れ完了"
+  state reached
+
+milestone PROVIDER_BASELINE_READY:
+  title "5 providerの設計入力再検証完了"
+
+milestone GUIDANCE_CONTRACT_READY:
+  title "Guidance Registry v1規範contract確定"
+
+milestone GUIDANCE_CORE_READY:
+  title "Offline deterministic registry Core完了"
+
+milestone AGENT_HELP_PUBLISHED:
+  title "agent help Core・CLI公開完了"
+
+milestone GUIDANCE_ACCEPTED:
+  title "Issue #2 read-only v1受け入れ完了"
+
+task PROVIDER_BASELINE NOW -> PROVIDER_BASELINE_READY:
+  title "5 providerの公式surfaceを再検証する"
+  description |
+    Inspect: Issue #2のofficial sourceと実装時点の現行documentation。
+    Accept: codex、github-copilot、claude-code、grok-build、antigravityについて、
+    instruction、workflow、delegated_agent、enforcement、prompt、connectorの
+    artifact path、scope、maturity、risk、verified_atを推測なしでfixture入力へ固定する。
+    Security: webは設計時の確認だけに使用し、runtime registryはoffline snapshotとする。
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task GUIDANCE_CONTRACT PROVIDER_BASELINE_READY -> GUIDANCE_CONTRACT_READY:
+  title "共通taxonomyとversioned result契約を確定する"
+  description |
+    Create: docs/specs/agent-guidance.md、docs/examples/agent-guidance.md。
+    Accept: stable provider/surface/guidance/risk ID、alias、support status、staleness、
+    unknown、schema/profile version、Core result、text/JSON、diagnostic、exit code、
+    project guidance合成順、audit/scaffold/enforcement migrationを規範化する。
+    Compatibility: alpha全体のstrict compatibilityは要求しないが、採用したschemaを
+    breaking変更する場合はversionを上げ、既存dsl helpの局所non-regressionを検査する。
+  duration 5p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task GUIDANCE_CORE GUIDANCE_CONTRACT_READY -> GUIDANCE_CORE_READY:
+  title "Guidance Registry Coreとvalidatorを実装する"
+  description |
+    Create: src/guidance/のtype、versioned snapshot、validator、query、projectionと専用test。
+    Accept: 同じtool/profile/optionsからstable orderの同じresultを返し、5 provider、
+    native、compatible、preview、deprecated、unsupported、unknown、stalenessを
+    reference-closedなfixture/goldenへ固定する。File、hook、network side effectは行わない。
+  duration 5p
+  priority 80
+  requires:
+    DEVELOPERS 1
+
+task AGENT_HELP_PUBLICATION GUIDANCE_CORE_READY -> AGENT_HELP_PUBLISHED:
+  title "agent helpをCore、CLI、text、JSONへ公開する"
+  description |
+    Modify: src/application、src/cli.ts、src/index.ts、src/help/registry.ts、
+    CLI/help/library/package test、README、CHANGELOG。
+    Accept: agent helpのindex、provider、surface、level、formatを同じCoreへ接続し、
+    deterministic text/JSON、unknown diagnostic、alias canonicalizationを公開する。
+    Existing dsl helpはIssue #2のacceptanceどおり維持する。
+  duration 5p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+
+task GUIDANCE_ACCEPTANCE AGENT_HELP_PUBLISHED -> GUIDANCE_ACCEPTED:
+  title "Provider golden、security、package、beta gateを受け入れる"
+  description |
+    Accept: 5 providerのordering/projection、Core/CLI/package parity、offline determinism、
+    read-only side-effect boundary、hook trust説明、README/basic design/AI process/help同期、
+    audit/scaffold/enforcement non-goalを全checkで検証する。
+    Close: Issue #2のacceptance evidenceを記録し、macro work packageを完了可能にする。
+  duration 3p
+  priority 60
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1

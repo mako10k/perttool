@@ -1,19 +1,21 @@
 project PERTTOOL_MVP:
   version 1
-  title "perttool MVPマイルストーン計画"
+  title "perttool MVPからbetaへのmacro計画"
   description |
-    MVP全体のmacro PERT。各durationは現時点のengineering-day見積りであり、
+    MVPから最初のbetaまでのmacro PERT。各durationはengineering-day見積りであり、
     grammar sliceはplans/grammar.pert、AI工程制御設計はplans/control-plane.pert、
     M1からM4の操作系はplans/operations.pertを正とする。
     操作系detail planは全24p完了時の実測Velocity 24p/1dを使用し、
     resource forecastを6 decimal dayへroundしてmacro work packageへroll-upした。
     recommendation実装はplans/recommendation.pertを正とし、全22pを1 active dayで完了した。
     完了直前の残り2p resource forecast 0.1dをmacro work packageへ保持する。npm publication
-    preparationは人間overrideで前倒ししたが、RELEASE_E2Eのstatusは変更しない。Issue #2のAI Agent
-    Guidance RegistryとIssue #3のmulti-plan compositionは独立した将来backlogとして扱う。
+    preparationは人間overrideで前倒しした後、RELEASE_E2Eで同一artifact公開を完了した。
+    BetaはIssue #2のplans/agent-guidance.pertを正とし、初期Velocity 22p/1dによる
+    resource forecast 1dをroll-upする。BETA_RELEASE_E2Eはalpha release実測1 active dayを
+    根拠に1dとする。Issue #3のmulti-plan compositionはbeta開始条件に含めない。
   as_of 2026-07-23
   duration_unit day
-  finish M6_MVP_RELEASED
+  finish M8_BETA_RELEASED
 
 resource DEVELOPERS:
   title "実装担当枠"
@@ -68,7 +70,13 @@ milestone RELEASE_READY:
   title "MVP release検証可能"
 
 milestone M6_MVP_RELEASED:
-  title "M6 MVPリリース"
+  title "M6 MVP public alphaリリース"
+
+milestone M7_AGENT_GUIDANCE_READY:
+  title "M7 AI Agent Guidance Registry受け入れ完了"
+
+milestone M8_BETA_RELEASED:
+  title "M8 0.x betaリリース"
 
 task CONTROL_PLANE_DESIGN_WORK_PACKAGE NOW -> CONTROL_PLANE_DESIGN_ACCEPTED:
   title "AI工程制御planeを設計する"
@@ -198,6 +206,24 @@ task RECOMMENDATION_IMPLEMENTATION M3_SAFE_WRITE_READY -> RELEASE_READY:
   duration 0.1d
   status done
   priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task AGENT_GUIDANCE_IMPLEMENTATION M6_MVP_RELEASED -> M7_AGENT_GUIDANCE_READY:
+  title "Issue #2 read-only AI Agent Guidance Registryを実装する"
+  description "plans/agent-guidance.pertの5 task全22pを、recommendation実装の暫定実測Velocity 22p/1dで1dへroll-upする"
+  duration 1d
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+
+task BETA_RELEASE_E2E M7_AGENT_GUIDANCE_READY -> M8_BETA_RELEASED:
+  title "Suffixなし0.x betaを同一artifactで検証・公開する"
+  description "Issue #2受け入れ後、0.1.0、GitHub prerelease、npm beta dist-tag、latest不変、registry隔離installを同一tarballで検証する。Alpha互換や追加soakはgateにしない"
+  duration 1d
+  priority 5
   requires:
     DEVELOPERS 1
     REVIEWERS 1

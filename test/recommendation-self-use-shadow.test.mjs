@@ -9,6 +9,7 @@ const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
 const cli = path.join(root, "dist/cli.js");
 const planNames = [
+  "agent-guidance",
   "control-plane",
   "grammar",
   "operations",
@@ -138,7 +139,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all five self-use plans pass the v3 recommendation shadow gate", async () => {
+test("all six self-use plans pass the v3 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(

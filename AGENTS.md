@@ -11,7 +11,7 @@
 
 ## Current phase and sources of truth
 
-perttoolは現在、TypeScript CLIのMVP public alpha受け入れを完了した段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v3、read-only `validateOverride`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Recommendation MIG-01からMIG-07は完了し、5 plan shadow、unknown-version safe stop dry-run、共有指示同期を経て、completeかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`は同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registryからの隔離installまで検証済みである。Macro `plans/mvp.pert`の全taskは完了し、現時点のrecommended taskは空である。Issue #2またはIssue #3を次のwork packageとしてmacroへ追加するまでは、着手順を推測しない。Human overrideのapply、durable audit、Git integrationはMIG-08まで未解禁である。
+perttoolは現在、TypeScript CLIのMVP public alpha受け入れを完了し、最初のbetaへ進む段階である。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next` v3、read-only `validateOverride`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preserving formatter/application Core、task/milestone/resource mutation Core、atomic batch、safe-write I/O adapter、editing/advance CLIの`--write`/`--out`/`--expect-digest`、grammar acceptance suiteは実装済みである。Recommendation MIG-01からMIG-07は完了し、5 plan shadow、unknown-version safe stop dry-run、共有指示同期を経て、completeかつknownな`Perttool.NextResult.v3`をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`は同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registryからの隔離installまで検証済みである。最初のbetaはsuffixなし`0.1.0`、以後の`0.x.x`をbetaとし、alphaからのstrict compatibilityや追加soakをgateにしない。Issue #2のread-only AI Agent Guidance Registry v1をbeta gateへ追加済みで、macroのrecommended taskは`AGENT_GUIDANCE_IMPLEMENTATION`、`plans/agent-guidance.pert`のrecommended taskは`PROVIDER_BASELINE`である。Issue #3はbeta blockerではない。Human overrideのapply、durable audit、Git integrationはMIG-08まで未解禁である。
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -33,7 +33,7 @@ perttoolは現在、TypeScript CLIのMVP public alpha受け入れを完了した
 - `docs/adr/`: 採用済みarchitecture/runtime判断。
 - `docs/examples/`: parserとanalysisの規範sample。
 - `docs/process/`: 自己利用とAI開発の運用手順。
-- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をmacro roadmap、`grammar.pert`、`control-plane.pert`、`operations.pert`、`recommendation.pert`を詳細計画としてStage 3のpreview-first手順で使用する。
+- `plans/`: perttool自身の現在・未来の計画。`mvp.pert`をMVPからbetaまでのmacro roadmap、`grammar.pert`、`control-plane.pert`、`operations.pert`、`recommendation.pert`、`agent-guidance.pert`を詳細計画としてStage 3のpreview-first手順で使用する。
 - `scripts/`: repository-local verification command。
 - `.github/workflows/`: local verificationと同じ入口を使うCI。
 - `src/`: TypeScriptのparser、validator、Core API、CLI、help実装。
@@ -79,7 +79,7 @@ Normal task selectionでは、known `Perttool.NextResult.v3`、recommendation in
 
 ## Validation
 
-現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar/control-plane/operations/recommendation planのcheck/analyze/nextも含む。
+現在のrepository checkはNode.js 24以上でrootから実行する。`npm run check`はMVP/grammar/control-plane/operations/recommendation/agent-guidance planのcheck/analyze/nextも含む。
 
 ```sh
 npm ci
@@ -116,6 +116,6 @@ commit前に意図したdiffをfileまたはhunk単位で確認し、bug、regre
 - 利用者の未commit変更を保持し、今回のscopeに含まれるfileだけを明示的にstageする。
 - commitは1つのcoherent changeにし、簡潔な命令形subjectを使う。
 - remote設定を確認してからpushする。このrepositoryのremote writeは`secdat exec git push ...`、GitHub操作は`secdat exec gh ...`を使う。
-- npm publishは[publication手順](docs/process/npm-publication.md)のrelease gateを満たし、GitHub Releaseと同一の明示tarballを`alpha` tagへ送る。TOKENは`secdat`から`NPM_TOKEN`としてprocess限定で注入し、actual publishには利用者の明示許可を得る。
+- npm publishはrelease種別に応じてalphaの[publication記録](docs/process/npm-publication.md)または[beta release手順](docs/process/beta-release.md)のgateを満たし、GitHub Releaseと同一の明示tarballを指定dist-tagへ送る。Betaは`beta` tagを使用して既存`latest`を変更しない。TOKENは`secdat`から`NPM_TOKEN`としてprocess限定で注入し、actual publishには利用者の明示許可を得る。
 - `git reset --hard`、`git clean`、force-push、共有historyのrewriteなどの破壊的操作は、対象と影響を示した明示許可なしに実行しない。
 - secret、credential、local cache、生成reportをcommitしない。

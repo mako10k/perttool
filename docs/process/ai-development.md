@@ -97,7 +97,7 @@ git diff --check
 5. remote writeは`secdat exec`経由で行う
 6. push後にlocal branchとremote tracking branchを確認する
 
-npm publishは通常のclose outに含めない。[npm publication手順](npm-publication.md)のrelease gate、同一tarball、remote commit/tag、registry上の未公開versionを確認し、利用者がactual publishを明示許可した場合だけ`secdat`から`NPM_TOKEN`をprocess限定で注入する。曖昧なpublish responseを確認せずretryしない。
+npm publishは通常のclose outに含めない。Alphaは[npm publication記録](npm-publication.md)、betaは[beta release手順](beta-release.md)のrelease gate、同一tarball、remote commit/tag、registry上の未公開versionを確認し、利用者がactual publishを明示許可した場合だけ`secdat`から`NPM_TOKEN`をprocess限定で注入する。Betaは`beta` dist-tagを使い、既存`latest`を変更しない。曖昧なpublish responseを確認せずretryしない。
 
 ## 5. Next-task selection and self-use
 
@@ -114,7 +114,9 @@ npm publishは通常のclose outに含めない。[npm publication手順](npm-pu
 
 異なる詳細planのtaskをmacro判断なしに直接比較しない。`groups.ready`、`groups.runnable_now`、text summaryをrecommendationの代用にしない。Unknown schema/model version、incomplete/truncated trace、unknown tier、`PTREC-*`ではtaskを開始せず、安全に停止する。`deferred`または`discouraged`をnormal authorityで開始しない。
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`で、`v0.1.0-alpha.2`のGitHub/npm同一artifact配布とregistry installまで完了した。Macroの残作業とrecommended taskは0であり、次のfeatureをmacroへ追加するまではbacklog間の着手順を推測しない。
+2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`で、`v0.1.0-alpha.2`のGitHub/npm同一artifact配布とregistry installまで完了した。
+
+最初のbetaはsuffixなし`0.1.0`で、以後の`0.x.x`をbetaとする。Alphaからのstrict compatibilityと追加soakはgateにせず、Issue #2のread-only AI Agent Guidance Registryをbeta受け入れへ追加した。現在のmacro recommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、[詳細plan](../../plans/agent-guidance.pert)のrecommended taskは`PROVIDER_BASELINE`である。Issue #3はbeta blockerではない。
 
 ### 5.1 採用済みRecommendation authority
 

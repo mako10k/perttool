@@ -40,7 +40,7 @@ MVPはローカルCLIをprimary interfaceとし、同じCore APIをlibrary、tes
 - npm registryにはこの時点ではpublishしない
 - GitHub Releaseへ`npm pack`で生成したtarballを添付する
 - package metadataから`private`を外すが、publishは別の明示操作と認証を必要とする
-- stable `v0.1.0`はformatter、mutation、Mermaid、release E2Eを含むMVP gate完了後に判断する
+- 当時はstable `v0.1.0`をformatter、mutation、Mermaid、release E2Eを含むMVP gate完了後に判断するとした。この判断は[ADR 0003](0003-beta-versioning.md)が置き換え、suffixなし`0.x.x`をbetaとして扱う
 
 ## npm prerelease publication decision
 
@@ -55,7 +55,9 @@ MVPはローカルCLIをprimary interfaceとし、同じCore APIをlibrary、tes
 - actual publishはcleanなrelease commit、同一commitのremote mainとannotated tag、GitHub Release asset、未公開versionを確認した後の明示操作とする
 - stable `latest`の設定とtrusted publishingへの移行は別判断とする
 
-詳細なpreflight、publish、公開後検証は[npm publication手順](../process/npm-publication.md)を正とする。
+この節はpublic alphaのrelease判断を記録する。最初のbeta以降のversionとdist-tagは[ADR 0003](0003-beta-versioning.md)および[beta release手順](../process/beta-release.md)を正とし、alpha用のpublication記録を新しいreleaseへ流用しない。
+
+詳細なalpha preflight、publish、公開後検証は[npm publication手順](../process/npm-publication.md)を正とする。
 
 ## Dependency policy
 

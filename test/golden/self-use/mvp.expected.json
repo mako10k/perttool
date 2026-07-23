@@ -4,28 +4,40 @@
     "grammar_version": 1,
     "summary": {
       "resources": 2,
-      "milestones": 15,
-      "tasks": 12,
+      "milestones": 17,
+      "tasks": 14,
       "gates": 6,
       "errors": 0,
       "warnings": 14
     }
   },
   "analyze": {
-    "precedence_makespan": "0/1",
-    "precedence_critical_tasks": [],
-    "resource_makespan": "0/1",
+    "precedence_makespan": "2/1",
+    "precedence_critical_tasks": [
+      "AGENT_GUIDANCE_IMPLEMENTATION",
+      "BETA_RELEASE_E2E"
+    ],
+    "resource_makespan": "2/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
-    "schedule_critical_tasks": []
+    "schedule_critical_tasks": [
+      "AGENT_GUIDANCE_IMPLEMENTATION",
+      "BETA_RELEASE_E2E"
+    ]
   },
   "next": {
     "groups": {
       "active": [],
-      "ready": [],
-      "runnable_now": [],
+      "ready": [
+        "AGENT_GUIDANCE_IMPLEMENTATION"
+      ],
+      "runnable_now": [
+        "AGENT_GUIDANCE_IMPLEMENTATION"
+      ],
       "blocked_now": [],
-      "upcoming": []
+      "upcoming": [
+        "BETA_RELEASE_E2E"
+      ]
     }
   }
 }

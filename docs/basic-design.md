@@ -19,6 +19,7 @@
 - Mermaid profile: [specs/mermaid-profile.md](specs/mermaid-profile.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
+- Beta versioning/release decision: [adr/0003-beta-versioning.md](adr/0003-beta-versioning.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
 
 ## 1. 目的
@@ -131,10 +132,12 @@ perttool/
     basic-design.md
     requirements.md
   plans/
+    agent-guidance.pert
     control-plane.pert
     grammar.pert
     mvp.pert
     operations.pert
+    recommendation.pert
   scripts/
     check-docs.sh
     check-npm-link.sh
@@ -829,6 +832,7 @@ grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自�
 - `Perttool.HelpResult.v1`
 - `Perttool.ExportResult.v1`
 - `Perttool.ImportResult.v1`
+- `Perttool.AgentGuidanceResult.v1`（betaのIssue #2で追加予定）
 - `Perttool.CliError.v1`
 
 Rules:
@@ -925,9 +929,10 @@ MVPでは同一fixtureに対し、library resultとCLI JSONのsemantic payload�
 - Issue #1のAI工程制御設計計画: `plans/control-plane.pert`
 - M1からM4の操作系実装計画: `plans/operations.pert`
 - MVP recommendation実装計画: `plans/recommendation.pert`
+- Beta AI Agent Guidance Registry実装計画: `plans/agent-guidance.pert`
 - 過去の作業計画: Git history
 
-MVP全体のstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。2026-07-22時点ではgrammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`、操作系M1-M4を`plans/operations.pert`、MVP recommendation実装を`plans/recommendation.pert`で管理する。
+MVPからbetaまでのstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。Grammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`、操作系M1-M4を`plans/operations.pert`、MVP recommendation実装を`plans/recommendation.pert`、betaのIssue #2を`plans/agent-guidance.pert`で管理する。
 
 `.pert` は仕様内容そのものではなく、仕様を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
 
@@ -1042,7 +1047,7 @@ Exit:
 - write gate を満たす
 - grammar plan の安全な更新に使用する
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定し、全24pを完了して操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了した。Release readiness監査で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../plans/recommendation.pert)のMIG-01からMIG-07全22pで解消した。5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop dry-runを受け入れ、recommendation固有の暫定実測値を`22p/1d`へ再calibrationした。`v0.1.0-alpha.2`をGitHub prereleaseとnpm `alpha`へ同一artifactで公開し、registry installまで検証したため、detailとmacroの残作業、precedence/resource makespanはいずれも0である。
+`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定し、全24pを完了して操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了した。Release readiness監査で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../plans/recommendation.pert)のMIG-01からMIG-07全22pで解消した。5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop dry-runを受け入れ、recommendation固有の暫定実測値を`22p/1d`へ再calibrationした。`v0.1.0-alpha.2`をGitHub prereleaseとnpm `alpha`へ同一artifactで公開し、registry installまで検証してMVP public alphaを受け入れた。
 
 ### Slice 4: advance and Mermaid
 
@@ -1052,6 +1057,24 @@ Exit:
 - general Mermaid loss report
 - SVG/HTML preview の基礎
 
+### Post-MVP Slice 4A: AI Agent Guidance Registry and beta
+
+- provider別official baselineとversion付きoffline snapshot
+- instruction、workflow、delegated agent、enforcement、prompt、connectorの共通contract
+- deterministicな`Perttool.AgentGuidanceResult.v1` pure Core
+- read-only `agent help`のtext/JSON publication
+- provider drift、alias、unsupported/unknown、legacy help、package-installed CLIの受け入れtest
+- suffixなし`0.1.0`をGitHub prereleaseとnpm `beta`へ同一artifactで公開
+
+Exit:
+
+- [最初のbeta受け入れ条件](requirements.md#211-最初のbeta受け入れ条件)を満たす
+- Issue #2の12 acceptance criteriaをCore、CLI、help、testへtraceできる
+- hook実行、file生成、設定変更、network access、provider writeを行わない
+- alpha互換や追加soakをgateにせず、破壊的変更がある場合は仕様と移行情報を同時更新する
+
+[AI Agent Guidance詳細plan](../plans/agent-guidance.pert)は全22p、初期Velocity `22p/1d`、resource forecast 1dで開始する。最初の完了taskでこの借用値を実測へ再calibrationする。MacroはIssue #2を1d、beta release E2Eをalpha releaseの実績から1dとし、現在のrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、詳細recommended taskは`PROVIDER_BASELINE`である。
+
 ### Post-MVP Slice 5: MCP and editor
 
 - MCP adapter
@@ -1060,7 +1083,7 @@ Exit:
 
 ## 18. 詳細設計へ送る事項
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、task mutationのCore request、局所TextEdit、comment所有は[Mutation Semantics仕様](specs/mutation.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。残る事項は個別仕様またはADRで確定する。
+DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、task mutationのCore request、局所TextEdit、comment所有は[Mutation Semantics仕様](specs/mutation.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。Beta versioningとrelease gateは[ADR 0003](adr/0003-beta-versioning.md)および[beta release手順](process/beta-release.md)を正とする。Agent guidanceのprovider snapshot、Core schema、CLI contractは`GUIDANCE_CONTRACT`で個別仕様へ固定し、設計前に存在しないcontractを実装へ先行させない。
 
 1. CST の trivia/comment 所有規則の実装詳細
 2. formatter の canonical whitespace 実装詳細

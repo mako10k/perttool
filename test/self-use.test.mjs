@@ -145,6 +145,15 @@ test("recommendation plan matches the MIG-01 to MIG-07 implementation roadmap", 
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("agent guidance plan matches the Issue #2 beta implementation roadmap", async () => {
+  const text = await readFile(path.join(root, "plans/agent-guidance.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/agent-guidance.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {
   const text = await readFile(path.join(root, "plans/mvp.pert"), "utf8");
   const expected = JSON.parse(await readFile(

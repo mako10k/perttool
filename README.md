@@ -4,6 +4,8 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 
 `v0.1.0-alpha.2`は公開開発プレビューです。`dsl check`、`dsl format`、`dsl help`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなtask/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`を実装済みです。`dag next`はcompleteなrecommendation graphを持つ`Perttool.NextResult.v3`を返し、public Core型とCLI JSON/text/helpを同じ判断へ接続します。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
 
+次のreleaseはsuffixなし`0.1.0`で、`0.x.x`系列をbetaと定義します。Alphaからbetaへのstrict compatibilityは保証せず、Issue #2のread-only AI Agent Guidance Registryをbeta gateへ含めます。現在公開済みのversionは引き続き`v0.1.0-alpha.2`であり、betaはまだpublishしていません。
+
 - [要件定義](docs/requirements.md)
 - [基本設計](docs/basic-design.md)
 - [DSL 文法仕様](docs/specs/dsl-grammar.md)
@@ -23,15 +25,18 @@ PERT 線図を、Git 管理しやすい文書として記述・検査・分析�
 - [NextResult.v3 consumer migration guide](docs/process/next-v3-consumer-migration.md)
 - [Recommendation 設計受け入れレビュー](docs/process/recommendation-design-review.md)
 - [MVP release readiness監査](docs/process/mvp-release-readiness.md)
+- [Beta versioning ADR](docs/adr/0003-beta-versioning.md)
+- [Beta release手順](docs/process/beta-release.md)
 - [CLI Interface 仕様](docs/specs/interfaces.md)
 - [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
 - [DSL サンプル](docs/examples/README.md)
 - [自己利用計画](docs/process/self-use.md)
-- [MVPマイルストーン計画](plans/mvp.pert)
+- [MVPからbetaへのmacro計画](plans/mvp.pert)
 - [現在の文法作業計画](plans/grammar.pert)
 - [AI工程制御設計計画](plans/control-plane.pert)
 - [操作系M1-M4実装計画](plans/operations.pert)
 - [Recommendation実装計画](plans/recommendation.pert)
+- [AI Agent Guidance実装計画](plans/agent-guidance.pert)
 - [AI 開発ガイド](docs/process/ai-development.md)
 
 基本方針は次のとおりです。
@@ -115,7 +120,7 @@ perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
 
 `dag next`は依存関係上の`ready`、既存schedulerが選ぶ`runnable_now`、工程authorityであるroot `recommendation`を分離します。JSONは全ready taskのtier、exact typed fact、comparison、decision trace、canonical descriptionをcomplete graphとして返し、textは4 tierの`complete=false` summaryとJSON導線を返します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明も従来どおり保持します。Consumerは[移行ガイド](docs/process/next-v3-consumer-migration.md)に従い、`schema_version`を最初に検査します。
 
-5 planのshadowとMIG-07 safe-stop dry-runを経て、knownかつcompleteな`NextResult.v3`をperttool開発のnormal AI task selection authorityへ採用しました。Macro recommendationからworkstreamを選んでdetailを再解析し、unknown version、incomplete trace、`PTREC-*`、deferred/discouraged selectionでは開始せず停止します。
+既存5 planのshadowとMIG-07 safe-stop dry-runを経て、knownかつcompleteな`NextResult.v3`をperttool開発のnormal AI task selection authorityへ採用しました。現在はagent-guidance planを加えた6 planを検証対象とします。Macro recommendationからworkstreamを選んでdetailを再解析し、unknown version、incomplete trace、`PTREC-*`、deferred/discouraged selectionでは開始せず停止します。
 
 Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhuman requestから、normal recommendationを変更せずdeterministicな`Perttool.OverrideDecision.v1`を生成します。これはread-only validationであり、task state、file、Git、networkを変更しません。Override applyとaudit writeのCLIは未実装です。
 
@@ -127,7 +132,7 @@ Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhu
 
 `dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
 
-現在は[MVPマイルストーン計画](plans/mvp.pert)をmacro roadmapとするStage 3のpreview-first自己利用を行っています。[Recommendation実装計画](plans/recommendation.pert)のMIG-01からMIG-07全22pを1 active dayで完了し、recommendation固有の暫定実測Velocityを`22p/1d`へ更新しました。`v0.1.0-alpha.2`の同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registry installまで検証したため、macroの全taskとMVP受け入れは完了しています。現時点のrecommended taskは空で、Issue #2のAI Agent Guidance RegistryとIssue #3のmulti-plan compositionはmacroへ追加する前の独立backlogです。
+現在は[MVPからbetaへのmacro計画](plans/mvp.pert)をroadmapとするStage 3のpreview-first自己利用を行っています。MVP public alphaは受け入れ済みで、Issue #2のread-only AI Agent Guidance Registryをbeta gateへ追加しました。Macroのrecommended work packageは`AGENT_GUIDANCE_IMPLEMENTATION`、[詳細plan](plans/agent-guidance.pert)のrecommended taskは`PROVIDER_BASELINE`です。詳細22pはrecommendation実績`22p/1d`を初期値として1d、beta release E2Eはalpha release実績から1dとし、betaまでのresource makespanは2dです。Issue #3のmulti-plan compositionはbeta blockerに含めません。
 
 ## Security and license
 

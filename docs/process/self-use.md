@@ -1,6 +1,6 @@
 # perttool 自己利用計画
 
-- 文書状態: Active Stage 3 / Revision 2.20
+- 文書状態: Active Stage 3 / Revision 2.21
 - 作成日: 2026-07-21
 - 更新日: 2026-07-23
 - 関連設計: [../basic-design.md](../basic-design.md)
@@ -16,11 +16,12 @@
 | Artifact | 役割 | 正本 |
 | --- | --- | --- |
 | `docs/specs/dsl-grammar.md` | DSL の規範文法、EBNF、例、error policy | Markdown 文書 |
-| `plans/mvp.pert` | MVP全体のmacro milestoneとwork package | `.pert` 文書 |
+| `plans/mvp.pert` | MVPからbetaまでのmacro milestoneとwork package | `.pert` 文書 |
 | `plans/grammar.pert` | 文法作業の現在・未来 DAG | `.pert` 文書 |
 | `plans/control-plane.pert` | Issue #1のAI工程制御設計の現在・未来 DAG | `.pert` 文書 |
 | `plans/operations.pert` | formatter previewからadvanceまでの現在・未来 DAG | `.pert` 文書 |
 | `plans/recommendation.pert` | MIG-01からMIG-07の実装・shadow・adoption DAG | `.pert` 文書 |
+| `plans/agent-guidance.pert` | Issue #2のprovider baseline、Core、`agent help`、beta受け入れ DAG | `.pert` 文書 |
 | `test/fixtures/grammar/` | parser が受理・拒否すべき具体例 | fixture/golden |
 | Git history | 過去の計画、仕様、実装 | commit history |
 
@@ -39,7 +40,7 @@ Exit criteria:
 
 ## 4. Stage 1: read-only self-use
 
-2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用し始めた。2026-07-22に[AI工程制御設計plan](../../plans/control-plane.pert)と[操作系詳細plan](../../plans/operations.pert)を追加し、同日にStage 2、操作系完了後にStage 3へ移行した。
+2026-07-21に開始条件を満たし、[MVP macro plan](../../plans/mvp.pert)と[grammar detail plan](../../plans/grammar.pert)をread-onlyの正本計画として使用し始めた。2026-07-22に[AI工程制御設計plan](../../plans/control-plane.pert)と[操作系詳細plan](../../plans/operations.pert)を追加し、同日にStage 2、操作系完了後にStage 3へ移行した。2026-07-23にMVP public alpha受け入れ後のbeta gateとして[AI Agent Guidance詳細plan](../../plans/agent-guidance.pert)を追加した。
 
 開始条件:
 
@@ -133,7 +134,7 @@ Developer capacity 2を使い、`FORMAT_APPLICATION`と`MUTATION_CLI_PREVIEW`を
 
 続いて`RELEASE_E2E`を完了した。Version `0.1.0-alpha.2`、全206 test、文書、5 plan、local link、package install、publish normalizationを検証し、release commit `dd4fc3efc01945544a2dad7e1838fdd4d06d7275`を`origin/main`へpushして同commitへannotated tagを作成した。Worktree外で一度だけ生成したtarballをGitHub prerelease assetとnpm publishへ使用し、GitHub公開assetとregistry tarballのSHA-256 `aadb757a5d7bb82eed677158ce5c4b0672c5695a6dde97bec6f10c438711be8a`、npm integrity、`alpha=0.1.0-alpha.2`、隔離install、CLI version、`dsl check`を確認した。Publish直後のregistry `E404`では再試行せず、durable state照会で公開成功を確認した。初回publishでregistryが`latest`も同versionへ作成し、tag削除を`E400`で拒否したため、将来scriptへ伝播待ちと既存`latest`不変guardを追加し、初回例外をpublication記録へ残した。Macroはpreview source digest `sha256:741c027228dd13cfdf6bcdb6a4e0c0f6523848aba6f1c4f6e4d1f762433533bf`とcandidate digest `sha256:47937515ecbf024bd1dd23ca7d73e526e2fb25ae6fac27cc4ff179ece45d5217`を確認してexpected digest付き`task finish --write`を行った。全task完了後のprecedence/resource makespan、ready、recommendedは0である。
 
-Issue #2はrecommendation publication後のprovider別guideとしてhelp surfaceとreviewerを共有するが、現行macroへwork packageを追加していない。Issue #3もMVP外の将来設計のままとする。
+MVP public alpha受け入れ後、利用者判断でIssue #2を最初のbetaへ含めた。[ADR 0003](../adr/0003-beta-versioning.md)にsuffixなし`0.1.0`と`0.x.x` beta、alphaからのstrict compatibility不要、追加soak不要を固定し、[beta release手順](beta-release.md)へ工程を分離した。Issue #2は`plans/agent-guidance.pert`の5 task全22pへ分解し、recommendation実装の暫定実測`22p/1d`を初期Velocityとして1dへroll-upした。Macroには`AGENT_GUIDANCE_IMPLEMENTATION` 1dと、alpha release実績を根拠にした`BETA_RELEASE_E2E` 1dを直列に追加した。Issue #3はbeta blockerに含めず、MVP外の将来設計のままとする。
 
 ### 4.1 Velocity実測calibration
 
@@ -154,8 +155,9 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | `control-plane.pert` | `VISION_REQUIREMENTS`から`PROCESS_MIGRATION`までの9 task | 16p | 1d | `16p/1d` | calibration時点で1p = `1/16d` |
 | `operations.pert` | formatter/mutation preview、safe write、advance | 24p | 1d | `24p/1d` | 0p |
 | `recommendation.pert` | `FIXTURE_BASELINE`、`RANKING_CORE`、`EXPLANATION_CORE`、`NEXT_V3_PUBLICATION`、`SELF_USE_SHADOW`、`OVERRIDE_VALIDATION`、`AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
+| `agent-guidance.pert` | 完了標本なし。recommendation実装を近似work typeとして借用 | 0p | 0d | 初期値`22p/1d` | 22p = 1d |
 
-これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。4標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
+これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。実測4標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装はwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。Agent guidanceはCore/CLI/help/testを共有するrecommendation実装を近似標本として借用し、最初の完了taskで固有の実測値へ置き換える。
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
@@ -203,22 +205,24 @@ Stage 1で禁止した操作:
 
 すでに完了している作業を履歴再現のためだけに追加しない。必要な過去情報は Git から参照する。
 
-### 5.2 MVP macro planとの関係
+### 5.2 MVPからbetaまでのmacro planとの関係
 
-`plans/mvp.pert`はM1からM6までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`は`plans/grammar.pert`、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`は`plans/control-plane.pert`、M1からM4の操作系work packageは`plans/operations.pert`、`RECOMMENDATION_IMPLEMENTATION`は`plans/recommendation.pert`のresource makespanとvelocity forecastをroll-upするが、内部taskの状態を重複管理しない。
+`plans/mvp.pert`はM1からM8までのstage gateとwork packageだけを持つ。`GRAMMAR_WORK_PACKAGE`は`plans/grammar.pert`、`CONTROL_PLANE_DESIGN_WORK_PACKAGE`は`plans/control-plane.pert`、M1からM4の操作系work packageは`plans/operations.pert`、`RECOMMENDATION_IMPLEMENTATION`は`plans/recommendation.pert`、`AGENT_GUIDANCE_IMPLEMENTATION`は`plans/agent-guidance.pert`のresource makespanとvelocity forecastをroll-upするが、内部taskの状態を重複管理しない。
 
 - macro milestoneと全体critical path: `mvp.pert`
 - 現在のgrammar実装taskとresource待ち: `grammar.pert`
 - 現在のAI工程制御設計taskとresource待ち: `control-plane.pert`
 - 現在の操作系実装taskとresource待ち: `operations.pert`
 - 現在のrecommendation実装taskとresource待ち: `recommendation.pert`
+- 現在のAI Agent Guidance実装taskとresource待ち: `agent-guidance.pert`
 - macroでworkstreamを選んだ後、対応する詳細planで日々のtaskを選ぶ
 - 詳細slice完了時にだけ対応するmacro taskをdoneへ更新する
 - `M1_ROADMAP_UPDATE`は完了し、formatter preview、mutation preview、safe write、advanceを操作系detail planへ分解した
 - formatter/mutation preview、safe write、advance Core/CLIは完了し、Stage 3へ移行した
 - `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`は完了した。Release監査でcondition 16の欠落を確認し、`RECOMMENDATION_IMPLEMENTATION`をmacro release gateへ追加した
-- `RELEASE_E2E`を含むMVP macroと全detail taskは完了した。現在のready、`runnable_now`、recommended taskは空である
-- Issue #2はmacro planへ追加するまで着手順を推測しない
+- `RELEASE_E2E`を含むMVP public alphaは完了した
+- Macroのready、`runnable_now`、recommendedは`AGENT_GUIDANCE_IMPLEMENTATION`、detailは`PROVIDER_BASELINE`である
+- `AGENT_GUIDANCE_IMPLEMENTATION`完了後だけ`BETA_RELEASE_E2E`を開始する
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 
 ### 5.3 AI工程制御設計plan
@@ -305,15 +309,16 @@ advance 運用:
 
 ## 8. Stage 4: 対象拡大
 
-MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planでのread-only運用開始後、Issue #1のcontrol-plane設計planとM1-M4の操作系planをStage 1で追加した。Issue #2とIssue #3は独立backlogとして保持し、まだ詳細planへ展開しない。`M1_ROADMAP_UPDATE`で次の順を確定した。
+MVP macro planはStage 1から全体milestoneの確認に使用する。Grammar planでのread-only運用開始後、Issue #1のcontrol-plane設計planとM1-M4の操作系planをStage 1で追加した。MVP public alpha受け入れ後にIssue #2をbeta gateとして詳細planへ展開した。Issue #3は独立backlogとして保持する。現在の順序は次のとおりである。
 
 - formatterとmutation preview
 - safe write
 - advance
 - safe-write後に、Issue #1の設計結果に基づくrecommendation実装
-- safe-write後に、Issue #2のread-only AI Agent Guidance Registry
 - Mermaid conversion
 - perttool全体のMVP release plan
+- MVP public alpha後に、Issue #2のread-only AI Agent Guidance Registry
+- Issue #2受け入れ後に、suffixなし`0.1.0` beta release
 - MVP後に、Issue #3のbacklog階層・multi-plan composition
 - MVP後のMCP/LSP adapter
 
@@ -381,5 +386,7 @@ Stage 1開始時の証跡:
 - release readiness gate: MVP condition 1から16を個別監査し、未実装conditionを既存fieldの再解釈でPassにせず、recommendation detail/macro gateと再開条件へ固定する
 - recommendation authority gate: MIG-07完了後はdetail残作業0p、実測Velocity `22p/1d`、known/complete v3だけをnormal selection authorityとして使用する。`RELEASE_E2E`完了後はempty recommendationをgoldenへ固定する
 - release distribution gate: release commit、remote main、annotated tag、GitHub asset、npm publish、registry installを同一tarballで検査し、version、integrity、SHA-256、release URLを記録する
-- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、5 planを検査する
+- agent guidance planning gate: Issue #2をprovider baseline、common contract、deterministic Core、read-only publication、acceptanceへ分解し、初期Velocity `22p/1d`、resource forecast 1d、最初のrecommended task `PROVIDER_BASELINE`をgoldenへ固定する
+- beta release gate: suffixなし`0.1.0`、GitHub prerelease、npm `beta`、既存`latest`不変、同一tarball、registry隔離installをIssue #2受け入れ後にだけ実行する
+- CI entrypoint: `npm run check`から`npm run check:self-use`を実行し、6 planを検査する
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

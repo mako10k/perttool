@@ -1,5 +1,6 @@
 # npm publication手順
 
+- 本書は`v0.1.0-alpha.2`のalpha release手順と公開記録である。最初のsuffixなし`0.1.0` beta以降は[beta release手順](beta-release.md)を正とする。
 - 文書状態: Published 1.1
 - 作成日: 2026-07-23
 - 対象registry: `https://registry.npmjs.org/`

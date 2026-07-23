@@ -956,6 +956,25 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 15. Point見積りをexact PERT値として計算し、宣言velocityによるday/hour予測をtext/JSONで区別して返せる
 16. project factsから現在優先すべきtaskと理由を決定的なtext/JSONで返し、実行可能だが推奨されないtaskについて、より優先されるtaskを説明できる
 
+### 21.1 最初のbeta受け入れ条件
+
+MVP public alpha受け入れ後の最初のbetaは`0.1.0`とし、`-beta` suffixを付けない。`0.x.x`系列はbeta、`1.0.0`以降をstableと定義する。Alphaから最初のbetaへのstrict compatibilityは要求せず、projectの意味を明確にするために必要な破壊的変更を許可する。ただし、変更したschema、interface、仕様、移行方法、CHANGELOG、回帰testは同じlogical changeで更新する。
+
+Alphaのdogfooding、local link、GitHub prerelease、npm registryからの隔離installは評価期間として十分とし、beta開始前の追加soak期間は要求しない。
+
+最初のbetaには[Issue #2](https://github.com/mako10k/perttool/issues/2)のread-only AI Agent Guidance Registry v1を含め、少なくとも次を満たすことを要求する。
+
+1. Codex、GitHub Copilot、Claude Code、Grok Build、Antigravityについて、provider ID、support status、surface、source、検証日をversion付きsnapshotとして保持する
+2. instruction、workflow、delegated agent、enforcement、prompt、connectorの共通surfaceをprovider固有名称から分離する
+3. 同じsnapshot、query、optionから同じ順序と内容のCore resultを返す
+4. `agent help`のtext/JSONを同じCore resultから生成し、AIがprompt、skill、agent、hook相当の利用可否と適用境界を機械的に判断できる
+5. offlineで完結し、hook実行、file生成、設定変更、network access、providerへのwriteを行わない
+6. legacy `dsl help`の意味と既存CLI surfaceを意図せず変更しない
+7. provider/source drift、alias、unsupported/unknown、同一入力のbyte determinism、package-installed CLIを自動testで固定する
+8. beta releaseでは同一tarballをpackage check、GitHub prerelease、npm `beta` dist-tag、registry隔離installへ使用し、既存`latest`を変更しない
+
+Issue #3のbacklog階層・multi-plan composition、MCP、audit、scaffold、hook実行、enforcementは最初のbetaのblockerに含めない。
+
 ## 22. 初期要求との対応
 
 | 初期要求 | 本書での対応 |
@@ -997,6 +1016,7 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 - task=edgeのAoA採用: [ADR 0001](adr/0001-activity-on-arrow.md)
 - Node.js 24以上、npm、TypeScript ESM package: [ADR 0002](adr/0002-node-typescript-package.md)
+- suffixなし`0.x.x` beta、alpha互換境界、beta release gate: [ADR 0003](adr/0003-beta-versioning.md)
 - 実行可否、resource selection、推奨度の分離とtier semantics: [Recommendation Semantics仕様](specs/recommendation.md)
 - ranking input、selection horizon、優先規則、完全tie-break、algorithm version: [Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)
 - stable reason code、effect/role、typed fact category、entity reference、taxonomy version: [Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)
@@ -1035,4 +1055,6 @@ MVP 完了には、少なくとも以下をすべて満たすことを要求す�
 
 項目8は`TASK_MUTATION_CORE`と`ENTITY_MUTATION_CORE`で完了した。単独ではvalidな中間DAGを作れないconnected milestone追加やpath置換のため、最終candidateだけを検査するatomic batchもCore契約へ追加した。後続の`MUTATION_CLI_PREVIEW`でentity commandと`mutation apply`をpreview-firstのtext/JSON surfaceへ公開し、`SAFE_WRITE_ACCEPTANCE`で同じcandidateをatomic `--write`、exclusive `--out`、`--expect-digest`へ接続した。項目10はprofileの全semantic record、安定projection、両digest、exact数値、text/JSON parityをgolden/unit/E2Eで固定した。項目11はprofileのcanonical JSON、record順、両digest、意味model、projection対応をfail-closedで検査し、plain入力のstable generated IDとloss report、strict-loss、exclusive `--out`をCore/CLI/E2Eへ固定した。
 
-Analysis実装は`dag next` v3とread-only `validateOverride`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical path、next分類、`runnable_now`、resource rejection、upcoming explanationに加え、normal recommendationのcomplete graphをCore、CLI JSON/text、help、packageへ、`Perttool.OverrideDecision.v1` validationをpublic libraryへ公開した。Slice 2のbootstrap gate、grammar acceptance、safe-write gate、advance gateを満たし、Stage 3のpreview-first advance自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は[横断設計レビュー](process/recommendation-design-review.md)で受け入れた。[MVP release readiness監査](process/mvp-release-readiness.md)で確認した受け入れ条件16の欠落は、[Recommendation実装plan](../plans/recommendation.pert)のMIG-01からMIG-07全22p、5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop dry-runで解消した。Recommendation固有の暫定実測Velocityは`22p/1d`、detail残作業は0pである。`v0.1.0-alpha.2`の同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registryからの隔離installまで完了したため、macroの全taskとMVP受け入れは完了した。現時点のrecommended taskは空である。Issue #2のAI Agent Guidance RegistryとIssue #3のbacklog階層・multi-plan compositionは独立backlogとして保持する。
+Analysis実装は`dag next` v3とread-only `validateOverride`まで進んでいる。Exact Rational、PERT expected/variance、precedence CPM、critical path count、決定的resource schedule、capacity override、resource arc、schedule critical path、next分類、`runnable_now`、resource rejection、upcoming explanationに加え、normal recommendationのcomplete graphをCore、CLI JSON/text、help、packageへ、`Perttool.OverrideDecision.v1` validationをpublic libraryへ公開した。Slice 2のbootstrap gate、grammar acceptance、safe-write gate、advance gateを満たし、Stage 3のpreview-first advance自己利用を行っている。Issue #1のproduct vision、要件境界、実行可否と推奨度model、ranking policy、reason code taxonomy、structured explanation、Core/text/JSON interface、human override contract、normative example、test観点、self-useと実装migration方針は[横断設計レビュー](process/recommendation-design-review.md)で受け入れた。[MVP release readiness監査](process/mvp-release-readiness.md)で確認した受け入れ条件16の欠落は、[Recommendation実装plan](../plans/recommendation.pert)のMIG-01からMIG-07全22p、5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop dry-runで解消した。Recommendation固有の暫定実測Velocityは`22p/1d`、detail残作業は0pである。`v0.1.0-alpha.2`の同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、registryからの隔離installまで完了したため、MVP public alpha受け入れは完了した。
+
+[ADR 0003](adr/0003-beta-versioning.md)により、最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義した。Beta gateへIssue #2のread-only AI Agent Guidance Registry v1を追加し、[詳細plan](../plans/agent-guidance.pert)の初期Velocityをrecommendation実績から暫定的に`22p/1d`、macro work packageを1dとした。[Macro plan](../plans/mvp.pert)のrecommended taskは`AGENT_GUIDANCE_IMPLEMENTATION`、詳細planのrecommended taskは`PROVIDER_BASELINE`で、beta releaseまでのresource makespanは2dである。Issue #3はbeta blockerに含めない。

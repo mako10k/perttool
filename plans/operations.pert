@@ -8,9 +8,9 @@ project OPERATIONS:
     SAFE_WRITE_ADAPTER 4p、SAFE_WRITE_ACCEPTANCE 2p、ADVANCE_PLANNER 4p、
     ADVANCE_CLI_ACCEPTANCE 2pを1 active dayで完了した操作系標本から、
     実測Velocityを24p/1dへcalibrationした。
-    recommendationとAI Agent Guidance RegistryのM3開始下限は閉じたが、macro planへ
-    work packageとresourceを追加するまでは着手順を推測しない。Multi-plan compositionは
-    独立したMVP後の将来backlogとして扱う。
+    recommendationとAI Agent Guidance RegistryのM3開始下限は閉じた。Recommendationは
+    MVP public alphaまで完了し、AI Agent Guidance Registryはbeta gateとして独立detail planと
+    macro work packageへ追加した。Multi-plan compositionはbeta後の将来backlogとして扱う。
   as_of 2026-07-22
   duration_unit point
   velocity 24p/1d

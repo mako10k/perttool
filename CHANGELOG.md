@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+- 最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義し、alphaからのstrict compatibilityと追加soakをbeta gateから外した
+- Issue #2のread-only AI Agent Guidance Registryをbeta受け入れ条件とmacro/detail計画へ追加した
+
 ## [0.1.0-alpha.2] - 2026-07-23
 
 2回目の公開開発プレビュー。安全な編集・進行操作、Mermaid相互変換、説明可能なtask recommendationを追加し、同じartifactをGitHub Releaseとnpmの`alpha` tagへ配布する。
