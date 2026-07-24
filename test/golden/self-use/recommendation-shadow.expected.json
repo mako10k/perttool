@@ -37,17 +37,16 @@
       "diagnostic_codes": []
     },
     "cli-surface-reset": {
-      "source_digest": "sha256:555c2fd30244a590184bbe3b953b872cbc5caf59152d6ba92759b7749daf20f0",
+      "source_digest": "sha256:cede87824c095ef4054b3fb058c8ebf1adc80cf846cb720dc9a1cc42c46128b1",
       "groups": {
         "active": [],
         "ready": [
-          "MUT_002_GATE_MAINTENANCE",
           "MUT_001_PROJECT_INIT",
           "HELP_003_USAGE_RECOVERY",
           "HELP_002_DOMAIN_GUIDE_SPLIT"
         ],
         "runnable_now": [
-          "MUT_002_GATE_MAINTENANCE"
+          "MUT_001_PROJECT_INIT"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -56,21 +55,20 @@
         ]
       },
       "recommended_task_ids": [
-        "MUT_002_GATE_MAINTENANCE"
+        "MUT_001_PROJECT_INIT"
       ],
       "manual_selected_task_ids": [
-        "MUT_002_GATE_MAINTENANCE"
+        "MUT_001_PROJECT_INIT"
       ],
       "tiers": {
-        "MUT_002_GATE_MAINTENANCE": "recommended",
-        "MUT_001_PROJECT_INIT": "deferred",
+        "MUT_001_PROJECT_INIT": "recommended",
         "HELP_003_USAGE_RECOVERY": "deferred",
         "HELP_002_DOMAIN_GUIDE_SPLIT": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "MUT_002_GATE_MAINTENANCE",
+          "id": "MUT_001_PROJECT_INIT",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -78,31 +76,11 @@
           "resource_rejections": []
         },
         {
-          "id": "MUT_001_PROJECT_INIT",
-          "runnable_now": false,
-          "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "3/1",
-          "resource_rejections": [
-            {
-              "resource_id": "CLI_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "MUT_002_GATE_MAINTENANCE"
-              ]
-            }
-          ]
-        },
-        {
           "id": "HELP_003_USAGE_RECOVERY",
           "runnable_now": false,
-          "precedence_critical": false,
+          "precedence_critical": true,
           "schedule_critical": true,
-          "total_float": "3/1",
+          "total_float": "0/1",
           "resource_rejections": [
             {
               "resource_id": "CLI_SURFACE",
@@ -112,7 +90,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "MUT_002_GATE_MAINTENANCE"
+                "MUT_001_PROJECT_INIT"
               ]
             }
           ]
@@ -122,7 +100,7 @@
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "5/1",
+          "total_float": "2/1",
           "resource_rejections": [
             {
               "resource_id": "CLI_SURFACE",
@@ -132,19 +110,19 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "MUT_002_GATE_MAINTENANCE"
+                "MUT_001_PROJECT_INIT"
               ]
             }
           ]
         }
       ],
       "record_counts": {
-        "task_decisions": 4,
-        "decision_steps": 24,
-        "facts": 105,
-        "comparisons": 6,
-        "reasons": 16,
-        "descriptions": 10
+        "task_decisions": 3,
+        "decision_steps": 17,
+        "facts": 87,
+        "comparisons": 3,
+        "reasons": 12,
+        "descriptions": 6
       },
       "diagnostic_codes": []
     },

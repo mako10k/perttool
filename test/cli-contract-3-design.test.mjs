@@ -32,7 +32,7 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
     .map((match) => match[1]);
   assert.deepEqual(actualBacklogIds, backlogIds);
 
-  const advancedBacklogIds = new Set(["CLI-001", "HELP-001"]);
+  const advancedBacklogIds = new Set(["CLI-001", "HELP-001", "MUT-002"]);
   for (const backlogId of backlogIds) {
     const taskId = backlogId.replace("-", "_");
     const matches = plan.match(new RegExp(`^task ${taskId}(?:_| )`, "gm")) ?? [];
@@ -61,6 +61,15 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
     /^### MUT-001: Initialize a project through the CLI\n\nPriority: P0\nStatus: Backlog; contract designed, not implemented$/m,
   );
   assert.match(plan, /^task MUT_001_PROJECT_INIT /m);
+  assert.match(
+    backlog,
+    /^### MUT-002: Add complete gate maintenance\n\nPriority: P0\nStatus: Core complete \(2026-07-24\); direct command activation deferred to CLI-002$/m,
+  );
+  assert.doesNotMatch(plan, /^task MUT_002_GATE_MAINTENANCE /m);
+  assert.match(
+    plan,
+    /^milestone GATE_MAINTENANCE_READY:\n  title "MUT-002 gate maintenance ready"\n  state reached$/m,
+  );
 });
 
 test("Contract 3 has one complete normative acceptance-case sequence", async () => {

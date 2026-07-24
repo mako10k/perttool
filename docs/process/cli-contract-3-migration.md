@@ -54,8 +54,9 @@ The dependency order is fixed by `plans/cli-surface-reset.pert`.
    the internal top-level/resource/action query and deterministic text/JSON
    projection without exporting it from the package root or CLI.
 4. `MUT_001_PROJECT_INIT` and `MUT_002_GATE_MAINTENANCE` close typed
-   maintenance gaps. `project init` remains a backlog feature until this task
-   completes.
+   maintenance gaps. Gate Core, atomic-batch support, and internal descriptors
+   are complete; direct gate commands remain inactive until cutover.
+   `project init` remains a backlog feature until its task completes.
 5. `CLI_002_CONTRACT_V3_CUTOVER` activates all breaking names and operations in
    one versioned change and removes Contract 2 acceptance.
 6. `CLI_003_FILE_FIRST_ACCEPTANCE` verifies the installed package and accepts

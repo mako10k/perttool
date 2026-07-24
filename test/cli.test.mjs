@@ -1401,16 +1401,42 @@ test("entity and batch mutation commands share the safe-write path", (t) => {
 
   const batchPath = path.join(directory, "batch.pert");
   copyFileSync(path.join(root, minimalPath), batchPath);
+  const batchDigest = JSON.parse(run([
+    "dsl", "check", batchPath, "--format=json",
+  ]).stdout).source_digest;
   const request = {
     kind: "batch",
-    mutations: [{ kind: "task.set", id: "WORK", set: { title: "batched" } }],
+    mutations: [{
+      kind: "gate.add",
+      id: "APPROVAL",
+      from: "NOW",
+      to: "DONE",
+      gate: { reason: "batched approval" },
+    }],
   };
   const batch = run([
-    "mutation", "apply", batchPath, "--request", "-", "--write", "--format=json",
+    "mutation", "apply", batchPath, "--request", "-", "--write",
+    "--expect-digest", batchDigest, "--format=json",
   ], { input: JSON.stringify(request) });
   assert.equal(batch.status, 0, batch.stderr);
   assert.equal(JSON.parse(batch.stdout).write.written, true);
-  assert.match(readFileSync(batchPath, "utf8"), /title "batched"/);
+  assert.match(
+    readFileSync(batchPath, "utf8"),
+    /gate APPROVAL NOW -> DONE:\n  reason "batched approval"/,
+  );
+
+  const gateOutPath = path.join(directory, "gate-out.pert");
+  const gateOut = run([
+    "mutation", "apply", minimalPath, "--request", "-", "--out", gateOutPath,
+    "--format=json",
+  ], { input: JSON.stringify(request) });
+  assert.equal(gateOut.status, 0, gateOut.stderr);
+  assert.deepEqual(JSON.parse(gateOut.stdout).write, {
+    mode: "out",
+    target: gateOutPath,
+    written: true,
+  });
+  assert.match(readFileSync(gateOutPath, "utf8"), /gate APPROVAL NOW -> DONE:/);
 
   const outPath = path.join(directory, "out.pert");
   const out = run([

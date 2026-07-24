@@ -83,6 +83,270 @@ const entityPlan = [
   "",
 ].join("\n");
 
+const gatePlan = [
+  "project GATE_MUTATION:",
+  "  title \"gate mutation\"",
+  "  duration_unit day",
+  "  finish DONE",
+  "",
+  "milestone NOW:",
+  "  title \"now\"",
+  "  state reached",
+  "",
+  "milestone ALT:",
+  "  title \"alternate\"",
+  "  state reached",
+  "",
+  "milestone MID:",
+  "  title \"middle\"",
+  "",
+  "milestone DONE:",
+  "  title \"done\"",
+  "",
+  "task FIRST NOW -> MID:",
+  "  title \"first\"",
+  "  duration 1d",
+  "",
+  "task SECOND MID -> DONE:",
+  "  title \"second\"",
+  "  duration 1d",
+  "",
+  "task ALT_WORK ALT -> DONE:",
+  "  title \"alternate work\"",
+  "  duration 1d",
+  "",
+  "# approval ownership",
+  "gate APPROVAL ALT -> MID:",
+  "  # reason context",
+  "  reason |",
+  "    old",
+  "    reason",
+  "",
+].join("\n");
+
+test("gate add appends a canonical declaration and preserves source bytes", () => {
+  const input = `\uFEFF${linear.replaceAll("\n", "\r\n")}`;
+  const result = planMutation(
+    input,
+    {
+      kind: "gate.add",
+      id: "APPROVAL",
+      from: "NOW",
+      to: "DONE",
+      gate: { reason: "first\nsecond" },
+    },
+    { originalLabel: "plan.pert", updatedLabel: "candidate" },
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.changed, true);
+  assert.equal(result.edits.length, 1);
+  assert.equal(result.edits[0].startOffset, input.length);
+  assert.equal(applyEdits(input, result.edits), result.updatedText);
+  assert.ok(result.updatedText.startsWith("\uFEFF"));
+  assert.match(
+    result.updatedText,
+    /gate APPROVAL NOW -> DONE:\r\n  reason \|\r\n    first\r\n    second\r\n$/,
+  );
+  assert.match(result.diff, /^--- plan\.pert\n\+\+\+ candidate\n@@ /);
+  assertValid(result.updatedText);
+});
+
+test("gate set edits endpoints and reason locally and normalizes a no-op", () => {
+  assertValid(gatePlan);
+  const result = planMutation(gatePlan, {
+    kind: "gate.set",
+    id: "APPROVAL",
+    from: "NOW",
+    to: "DONE",
+    set: { reason: "new\nreason" },
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.changed, true);
+  assert.equal(result.edits.length, 3);
+  assert.equal(applyEdits(gatePlan, result.edits), result.updatedText);
+  assert.match(
+    result.updatedText,
+    /# approval ownership\ngate APPROVAL NOW -> DONE:\n  # reason context\n  reason \|\n    new\n    reason\n$/,
+  );
+  assert.match(result.updatedText, /task ALT_WORK ALT -> DONE:/);
+  assertValid(result.updatedText);
+
+  const noOp = planMutation(gatePlan, {
+    kind: "gate.set",
+    id: "APPROVAL",
+    from: "ALT",
+    to: "MID",
+    set: { reason: "old\nreason" },
+  });
+  assert.equal(noOp.ok, true);
+  assert.equal(noOp.changed, false);
+  assert.equal(noOp.diff, "");
+  assert.deepEqual(noOp.edits, []);
+});
+
+test("gate remove owns no cascade and preserves candidate-validation diagnostics", () => {
+  const removed = planMutation(gatePlan, {
+    kind: "gate.remove",
+    id: "APPROVAL",
+  });
+  assert.equal(removed.ok, true);
+  assert.doesNotMatch(removed.updatedText, /approval ownership|gate APPROVAL/);
+  assert.match(removed.updatedText, /milestone ALT:/);
+  assert.match(removed.updatedText, /task ALT_WORK ALT -> DONE:/);
+  assertValid(removed.updatedText);
+
+  const onlyGate = [
+    "project ONLY_GATE:",
+    "  title \"only gate\"",
+    "  duration_unit day",
+    "  finish DONE",
+    "",
+    "milestone NOW:",
+    "  title \"now\"",
+    "  state reached",
+    "",
+    "milestone DONE:",
+    "  title \"done\"",
+    "",
+    "gate REQUIRED NOW -> DONE:",
+    "  reason \"required\"",
+    "",
+  ].join("\n");
+  assertValid(onlyGate);
+  const rejected = planMutation(onlyGate, {
+    kind: "gate.remove",
+    id: "REQUIRED",
+  });
+  assert.equal(rejected.ok, false);
+  assert.equal(rejected.updatedText, null);
+  assert.deepEqual(rejected.edits, []);
+  assert.ok(rejected.diagnostics.some(({ code }) => code.startsWith("PTDAG-")));
+});
+
+test("gate request and target failures use stable mutation diagnostics", () => {
+  const cases = [
+    {
+      mutation: { kind: "gate.set", id: "APPROVAL" },
+      code: "PTMUT-301",
+    },
+    {
+      mutation: { kind: "gate.set", id: "MISSING", set: { reason: "x" } },
+      code: "PTMUT-302",
+    },
+    {
+      mutation: { kind: "gate.set", id: "FIRST", set: { reason: "x" } },
+      code: "PTMUT-303",
+    },
+    {
+      mutation: {
+        kind: "gate.add",
+        id: "DONE",
+        from: "NOW",
+        to: "MID",
+        gate: { reason: "duplicate" },
+      },
+      code: "PTMUT-304",
+    },
+    {
+      mutation: {
+        kind: "gate.add",
+        id: "EXTRA",
+        from: "NOW",
+        to: "MID",
+        gate: { reason: "x", title: "unsupported" },
+      },
+      code: "PTMUT-301",
+    },
+  ];
+  for (const { mutation, code } of cases) {
+    const result = planMutation(gatePlan, mutation);
+    assert.equal(result.ok, false);
+    assert.equal(result.updatedText, null);
+    assert.deepEqual(result.edits, []);
+    assert.equal(result.diagnostics.at(-1)?.code, code);
+  }
+});
+
+test("gate candidate validation rejects undefined endpoints, cycles, and empty reasons", () => {
+  const cases = [
+    {
+      text: linear,
+      mutation: {
+        kind: "gate.add",
+        id: "MISSING_ENDPOINT",
+        from: "NOW",
+        to: "UNKNOWN",
+        gate: { reason: "invalid endpoint" },
+      },
+      code: "PTSEM-204",
+    },
+    {
+      text: gatePlan,
+      mutation: {
+        kind: "gate.set",
+        id: "APPROVAL",
+        from: "DONE",
+        to: "MID",
+      },
+      code: "PTDAG-202",
+    },
+    {
+      text: gatePlan,
+      mutation: {
+        kind: "gate.set",
+        id: "APPROVAL",
+        set: { reason: "" },
+      },
+      code: "PTSEM-106",
+    },
+  ];
+  for (const { text, mutation, code } of cases) {
+    const result = planMutation(text, mutation);
+    assert.equal(result.ok, false);
+    assert.equal(result.updatedText, null);
+    assert.deepEqual(result.edits, []);
+    assert.ok(result.diagnostics.some((diagnostic) => diagnostic.code === code));
+  }
+});
+
+test("atomic batch creates connected milestones and gates in one candidate", () => {
+  const result = planMutation(linear, {
+    kind: "batch",
+    mutations: [
+      { kind: "task.remove", id: "WORK" },
+      {
+        kind: "milestone.add",
+        id: "MID",
+        milestone: { title: "middle" },
+      },
+      {
+        kind: "gate.add",
+        id: "FIRST_GATE",
+        from: "NOW",
+        to: "MID",
+        gate: { reason: "enter middle" },
+      },
+      {
+        kind: "gate.add",
+        id: "SECOND_GATE",
+        from: "MID",
+        to: "DONE",
+        gate: { reason: "enter finish" },
+      },
+    ],
+  });
+
+  assert.equal(result.ok, true);
+  assert.match(result.updatedText, /milestone MID:/);
+  assert.match(result.updatedText, /gate FIRST_GATE NOW -> MID:/);
+  assert.match(result.updatedText, /gate SECOND_GATE MID -> DONE:/);
+  assert.doesNotMatch(result.updatedText, /task WORK/);
+  assert.equal(applyEdits(linear, result.edits), result.updatedText);
+  assertValid(result.updatedText);
+});
+
 test("task add appends one canonical declaration and preserves source trivia", () => {
   const input = [
     "\uFEFFproject ADD:",

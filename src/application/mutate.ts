@@ -9,6 +9,7 @@ import {
 import { applyTextEdits, normalizeTextEdits } from "../mutation/text-edits.js";
 import type { TextEdit } from "../mutation/text-edits.js";
 import { mutationDiagnostic, type MutationEditPlan } from "../mutation/diagnostics.js";
+import { planGateMutationEdits } from "../mutation/gate.js";
 import { planMilestoneMutationEdits } from "../mutation/milestone.js";
 import { planProjectMutationEdits } from "../mutation/project.js";
 import { planResourceMutationEdits } from "../mutation/resource.js";
@@ -69,6 +70,13 @@ function planAtomicMutationEdits(
   }
   if (typeof kind === "string" && kind.startsWith("milestone.")) {
     return planMilestoneMutationEdits(text, document, mutation as Parameters<typeof planMilestoneMutationEdits>[2]);
+  }
+  if (typeof kind === "string" && kind.startsWith("gate.")) {
+    return planGateMutationEdits(
+      text,
+      document,
+      mutation as Parameters<typeof planGateMutationEdits>[2],
+    );
   }
   if (typeof kind === "string" && kind.startsWith("resource.")) {
     return planResourceMutationEdits(text, document, mutation as Parameters<typeof planResourceMutationEdits>[2]);

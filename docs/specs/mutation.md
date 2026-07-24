@@ -1,6 +1,6 @@
 # perttool Mutation Semantics Specification
 
-- Document status: Draft 0.3
+- Document status: Draft 0.4
 - Mutation semantics version: 1
 - Created: 2026-07-22
 - Requirements: [../requirements.md](../requirements.md)
@@ -13,7 +13,7 @@
 
 This document defines the Core contract for source-preserving mutations of `.pert` documents. A mutation does not write an existing document directly; it returns localized UTF-16 `TextEdit` values, a revalidated candidate, a digest, and a unified diff.
 
-The implementation scope of Mutation semantics version 1 is project `set`; task `add`, `set`, `remove`, and `finish`; milestone/resource `add`, `set`, and `remove`; and `batch`, which applies multiple atomic mutations to one candidate. Filesystem writing passes the candidate defined here to the safe-write adapter in the CLI Interface specification. `dag advance` is a subsequent slice that reuses this document's common invariants.
+The implementation scope of Mutation semantics version 1 is project `set`; task `add`, `set`, `remove`, and `finish`; gate/milestone/resource `add`, `set`, and `remove`; and `batch`, which applies multiple atomic mutations to one candidate. Filesystem writing passes the candidate defined here to the safe-write adapter in the CLI Interface specification. `dag advance` is a subsequent slice that reuses this document's common invariants.
 
 ## 2. Normative precedence
 
@@ -71,6 +71,21 @@ type AtomicMutation =
   | { kind: "task.remove"; id: string }
   | { kind: "task.finish"; id: string }
   | {
+      kind: "gate.add";
+      id: string;
+      from: string;
+      to: string;
+      gate: GateDefinition;
+    }
+  | {
+      kind: "gate.set";
+      id: string;
+      from?: string;
+      to?: string;
+      set?: GateFieldSet;
+    }
+  | { kind: "gate.remove"; id: string }
+  | {
       kind: "milestone.add";
       id: string;
       milestone: MilestoneDefinition;
@@ -110,7 +125,7 @@ type Mutation =
 
 An `estimate` contains all of `optimistic`, `mostLikely`, and `pessimistic`. A requirement contains `resourceId` and `units`. Duration is accepted as a DSL literal with a suffix; the candidate parser and validator validate the project unit.
 
-`MilestoneDefinition` requires `title` and can contain `description`, `state`, and `tags`. `MilestoneFieldSet` contains `title`, `description`, and `state`. `ResourceDefinition` requires `title` and `capacity` and can contain `description`. `ResourceFieldSet` contains `title`, `description`, and `capacity`. Resource `tags` are retained as a DSL field but are not mutable by version 1 resource-mutation requests.
+`GateDefinition` requires `reason`. `GateFieldSet` contains `reason`. `MilestoneDefinition` requires `title` and can contain `description`, `state`, and `tags`. `MilestoneFieldSet` contains `title`, `description`, and `state`. `ResourceDefinition` requires `title` and `capacity` and can contain `description`. `ResourceFieldSet` contains `title`, `description`, and `capacity`. Resource `tags` are retained as a DSL field but are not mutable by version 1 resource-mutation requests.
 
 A `kind` or field absent from the request model, or a field of the wrong type, is `PTMUT-301`. Input from JavaScript callers is also handled at the same request-diagnostic boundary rather than terminating with an exception.
 
@@ -186,7 +201,7 @@ Consecutive comments at the same structural level immediately before a declarati
 
 ### 5.3 Serialization
 
-New tasks and new fields follow the canonical serializer in the DSL grammar specification.
+New task/gate declarations and new fields follow the canonical serializer in the DSL grammar specification.
 
 - Indentation is 2 spaces and nested fields use 4 spaces
 - Strings use JSON-compatible escapes
@@ -194,6 +209,7 @@ New tasks and new fields follow the canonical serializer in the DSL grammar spec
 - Omit unnecessary leading and trailing zeroes in duration decimals
 - Serialize a tag that cannot be a bare tag as a String
 - Task field order is `title`, `description`, `duration|estimate`, `status`, `priority`, `requires`, `owner`, `tags`, `blocked_reason`, `source`
+- Gate field order is `reason`
 - Milestone field order is `title`, `description`, `state`, `tags`
 - Resource field order is `title`, `description`, `capacity`, `tags`
 - Estimate order is `optimistic`, `most_likely`, `pessimistic`
@@ -247,16 +263,24 @@ The candidate's `status=blocked` and `blocked_reason`, required fields, DAG, and
 
 `task.finish` sets status to `done`. If no status field exists, add it at the canonical position. An existing `blocked_reason` is incompatible with `done` and is removed in the same mutation. If it is already `done` with no `blocked_reason`, it is a valid no-op.
 
-## 9. Milestone/resource mutations and batch
+## 9. Gate/milestone/resource mutations and batch
 
-### 9.1 Milestones
+### 9.1 Gates
+
+- `gate.add` requires an unused ID, `from`, `to`, and `reason`, and appends a canonical declaration to the document end
+- `gate.set` requires at least one of `from`, `to`, or `set.reason`; it changes only the endpoint spans or reason field
+- `gate.remove` removes only the gate and its leading comments; it does not cascade-change endpoint milestones, tasks, other gates, or project finish
+- Revalidate endpoint references, cycles, finish reachability, joins, and reason validity through the final candidate
+- A gate reason is required and is not clearable
+
+### 9.2 Milestones
 
 - `milestone.add` requires `title` and appends a canonical declaration to the document end
 - `milestone.set` requires at least one change and changes title, description, state, or tags locally
 - `milestone.remove` removes only the milestone and its leading comments; it does not cascade-change task/gate endpoints or project finish
 - If a standalone add/remove final candidate violates reachability, roots, finish, or reference rules, reject it with the existing graph diagnostics
 
-### 9.2 Resources
+### 9.3 Resources
 
 - `resource.add` requires `title` and `capacity` and appends a canonical declaration to the document end
 - `resource.set` requires at least one change and changes title, description, or capacity locally
@@ -264,7 +288,7 @@ The candidate's `status=blocked` and `blocked_reason`, required fields, DAG, and
 - Revalidate requirements and active allocations after a capacity change using the candidate validator
 - Preserve existing resource tags byte-for-byte when changing other fields
 
-### 9.3 Project
+### 9.4 Project
 
 - `project.set` requires at least one change
 - Change the project header ID and every project field locally by source span
@@ -273,14 +297,14 @@ The candidate's `status=blocked` and `blocked_reason`, required fields, DAG, and
 - Revalidate consistency among `duration_unit`, `velocity`, duration fields, and `finish` with the candidate parser/validator; do not expose an inconsistent candidate
 - A project-wide unit change that cannot be valid alone can be applied as a batch that also changes related task durations/estimates
 
-### 9.4 Batch
+### 9.5 Batch
 
-Adding a milestone and its connecting edges in sequence creates an intermediate document with either an undefined endpoint or no path to finish, regardless of which is performed first. Therefore, when necessary, combine structural changes into one candidate with `batch`.
+Adding a milestone and its connecting task/gate edges in sequence creates an intermediate document with either an undefined endpoint or no path to finish, regardless of which is performed first. Therefore, when necessary, combine structural changes into one candidate with `batch`.
 
 - A batch contains one or more atomic mutations in request order
 - Reject nested batches and batches that change the same target more than once. The project target is the exactly-one project declaration; other targets are identified by entity ID
 - Each atomic mutation resolves its target in the original document. Do not set/remove an entity added in the same batch
-- A milestone/resource added in a batch can be referenced by a task add/set in that same batch
+- A milestone/resource added in a batch can be referenced by a task/gate add/set in that same batch
 - When declaration additions concentrate at the same document-end offset, combine them into one edit in request order. If that offset also has a field insertion on an existing final declaration, place fields first and new top-level declarations afterward
 - If atomic edit ranges conflict, reject the entire batch with `PTMUT-301`
 - Do not publish or validate intermediate states; submit only the final candidate to the normal document validator
@@ -310,9 +334,10 @@ Automatically verify at least the following.
 8. the candidate's target fields equal the request and semantic values of unrelated declarations/fields remain unchanged
 9. `TextEdit` values are ascending UTF-16 offsets, non-overlapping, and their application equals `updatedText`
 10. digest and unified diff are deterministically reproducible from the same input/request/options
-11. milestone/resource set preserves unrelated declarations, fields, comments, and order
-12. milestone/resource remove does not cascade and rejects a candidate that breaks reference or capacity constraints
-13. batch returns connected-milestone addition, path replacement, and simultaneous resource/requirement addition as one valid candidate
+11. gate/milestone/resource set preserves unrelated declarations, fields, comments, and order
+12. gate/milestone/resource remove does not cascade and rejects a candidate that breaks graph, reference, or capacity constraints
+13. batch returns connected-milestone task/gate addition, path replacement, and simultaneous resource/requirement addition as one valid candidate
 14. reject an empty/nested/duplicate-target/conflicting-edit batch with `PTMUT-301`
 15. project set deterministically handles localized set/clear for all fields, header ID changes, and no-ops
 16. include a project-wide unit change with related entities in the same batch and validate only the final candidate
+17. gate add/set/remove preserves endpoint and reason source spans, normalizes no-ops, and exposes no candidate for invalid endpoints, cycles, joins, or finish reachability

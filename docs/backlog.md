@@ -17,9 +17,9 @@ The eight items below are mapped one-to-one into
 normative contract-design task. The
 [Contract 3 specification](specs/cli-contract-3.md) and
 [migration guide](process/cli-contract-3-migration.md) accept that design
-target. `CLI-001` and the internal `HELP-001` projection are complete; six
-implementation items remain open. Public Contract 3 activation remains one
-atomic `CLI-002` change.
+target. `CLI-001`, the internal `HELP-001` projection, and gate-maintenance
+Core are complete; five implementation items remain open. Public Contract 3
+activation remains one atomic `CLI-002` change.
 
 ### CLI-001: Adopt one command descriptor registry
 
@@ -113,6 +113,7 @@ Acceptance:
 ### MUT-002: Add complete gate maintenance
 
 Priority: P0
+Status: Core complete (2026-07-24); direct command activation deferred to CLI-002
 
 Add gate Core mutations, atomic-batch support, and CLI
 `gate add|set|remove`.
@@ -124,6 +125,11 @@ Acceptance:
 - connected milestone and gate creation can be submitted as one atomic batch;
 - preview, diff, JSON, `--write`, `--out`, and optimistic locking match the
   task/milestone/resource contract.
+
+The public Contract 2 `mutation apply` path now accepts typed gate mutations in
+atomic batches and uses the shared safe-write controls. The pure Contract 3
+discovery projection contains `gate add|set|remove`, while active dispatch
+continues to reject those names until the atomic cutover.
 
 ### CLI-002: Normalize public names in one breaking version
 

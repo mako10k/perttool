@@ -7,6 +7,8 @@ import {
 import type {
   CommandDescriptor,
   CommandExample,
+  OperandDescriptor,
+  OptionDescriptor,
   ProjectedCommandDescriptor,
 } from "./registry.js";
 
@@ -85,6 +87,10 @@ const resourceDefinitions: readonly ResourceDefinition[] = Object.freeze([
   Object.freeze({
     name: "task",
     summary: "Maintain task edges through source-preserving previews.",
+  }),
+  Object.freeze({
+    name: "gate",
+    summary: "Maintain zero-duration dependency edges through source-preserving previews.",
   }),
   Object.freeze({
     name: "milestone",
@@ -243,8 +249,123 @@ function pathKey(path: ProjectedCommandDescriptor["path"]): string {
 }
 
 const projectedDescriptors = COMMAND_REGISTRY.map(projectContract3Descriptor);
+const projectedMutationTemplate = projectedDescriptors.find(
+  ({ operation }) => operation === "resource.remove",
+);
+if (projectedMutationTemplate === undefined) {
+  throw new Error("Contract 3 mutation descriptor template is missing");
+}
+const mutationTemplate: ProjectedCommandDescriptor = projectedMutationTemplate;
+
+function targetOperand(
+  name: string,
+  position: number,
+  valueType: string,
+): OperandDescriptor {
+  return Object.freeze({
+    name,
+    position,
+    valueType,
+    required: true,
+  });
+}
+
+function targetOption(
+  name: "from" | "to" | "reason",
+  required = false,
+): OptionDescriptor {
+  return Object.freeze({
+    name,
+    kind: "value",
+    valueType: name === "reason" ? "text" : "milestone-id",
+    required,
+    repeatable: false,
+    defaultValue: null,
+    enumValues: Object.freeze([]),
+    conflicts: Object.freeze([]),
+    requires: Object.freeze([]),
+    sharedGroup: null,
+    spelling: Object.freeze({
+      cli: `--${name}`,
+      dsl: name,
+      json: name,
+    }),
+  });
+}
+
+const gateMutationOperands = Object.freeze([
+  targetOperand("file", 0, "path-or-stdin"),
+  targetOperand("id", 1, "gate-id"),
+]);
+
+function gateDescriptor(
+  action: "add" | "set" | "remove",
+): ProjectedCommandDescriptor {
+  const options =
+    action === "add"
+      ? [...mutationTemplate.options, targetOption("reason", true)]
+      : action === "set"
+        ? [
+            ...mutationTemplate.options,
+            targetOption("from"),
+            targetOption("to"),
+            targetOption("reason"),
+          ]
+        : mutationTemplate.options;
+  const operands =
+    action === "add"
+      ? [
+          ...gateMutationOperands,
+          targetOperand("from", 2, "milestone-id"),
+          targetOperand("to", 3, "milestone-id"),
+        ]
+      : gateMutationOperands;
+  const detail =
+    action === "add"
+      ? "adding one gate"
+      : action === "set"
+        ? "source-preserving gate endpoint or reason changes"
+        : "removing one gate without cascading";
+  const invocation =
+    action === "add"
+      ? "perttool gate add plan.pert APPROVAL READY DONE --reason \"Approval required\" --diff"
+      : action === "set"
+        ? "perttool gate set plan.pert APPROVAL --reason \"Review accepted\" --diff"
+        : "perttool gate remove plan.pert APPROVAL --diff";
+  return Object.freeze({
+    contractVersion: 3,
+    path: Object.freeze(["gate", action] as const),
+    operation: `gate.${action}`,
+    summary: `Previews ${detail}.`,
+    operands: Object.freeze(operands),
+    options: Object.freeze(options),
+    input: mutationTemplate.input,
+    output: mutationTemplate.output,
+    stdin: mutationTemplate.stdin,
+    effect: mutationTemplate.effect,
+    resultSchemas: mutationTemplate.resultSchemas,
+    exitStatuses: mutationTemplate.exitStatuses,
+    examples: Object.freeze([
+      Object.freeze({
+        id: action,
+        invocation,
+        summary: `Preview gate ${action}.`,
+      }),
+    ]),
+  });
+}
+
+const targetOnlyDescriptors = Object.freeze([
+  gateDescriptor("add"),
+  gateDescriptor("set"),
+  gateDescriptor("remove"),
+]);
+const contract3Descriptors = Object.freeze([
+  ...projectedDescriptors,
+  ...targetOnlyDescriptors,
+]);
 const projectedByPath = new Map(
-  projectedDescriptors.map((descriptor) => [pathKey(descriptor.path), descriptor]),
+  contract3Descriptors.map((descriptor) => [pathKey(descriptor.path), descriptor]),
 );
 const orderedDescriptors: ProjectedCommandDescriptor[] = [helpDescriptor];
 
@@ -255,7 +376,7 @@ if (guideDescriptor === undefined) {
 orderedDescriptors.push(guideDescriptor);
 
 for (const resource of resourceDefinitions) {
-  const commands = projectedDescriptors.filter(
+  const commands = contract3Descriptors.filter(
     (descriptor) =>
       descriptor.path.length === 2 && descriptor.path[0] === resource.name,
   );
@@ -277,7 +398,7 @@ if (
 ) {
   throw new Error("duplicate Contract 3 command operation");
 }
-if (orderedDescriptors.length !== projectedDescriptors.length + 1) {
+if (orderedDescriptors.length !== contract3Descriptors.length + 1) {
   throw new Error("Contract 3 command projection has an unregistered resource");
 }
 

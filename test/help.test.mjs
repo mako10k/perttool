@@ -61,11 +61,16 @@ test("editing help exposes preview and explicit safe-write commands", () => {
   assert.equal(help.ok, true);
   assert.match(help.summary, /dsl format/);
   assert.match(help.summary, /task\/milestone\/resource mutation/);
+  assert.match(help.summary, /gate batch/);
   assert.match(help.summary, /atomic batch/);
   assert.match(help.summary, /dag advance/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planFormat/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planMutation/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /planAdvance/);
+  assert.match(
+    help.sections.map(({ body }) => body).join("\n"),
+    /Gate add\/set\/remove requests.*mutation apply batch/,
+  );
   assert.ok(help.syntax.some((line) => line.includes("project show")));
   assert.ok(help.syntax.some((line) => line.includes("project set")));
   assert.ok(help.syntax.some((line) => line.includes("dsl format")));

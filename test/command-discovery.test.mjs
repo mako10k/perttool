@@ -37,6 +37,9 @@ const expectedPaths = [
   "task set",
   "task remove",
   "task finish",
+  "gate add",
+  "gate set",
+  "gate remove",
   "milestone add",
   "milestone set",
   "milestone remove",
@@ -52,6 +55,7 @@ const expectedResources = [
   ["project", ["show", "set"]],
   ["dag", ["analyze", "next", "advance", "render", "import"]],
   ["task", ["add", "set", "remove", "finish"]],
+  ["gate", ["add", "set", "remove"]],
   ["milestone", ["add", "set", "remove"]],
   ["resource", ["add", "set", "remove"]],
   ["batch", ["apply"]],
@@ -99,8 +103,7 @@ test("Contract 3 command discovery projects every implemented capability in cano
   assert.equal(
     CONTRACT3_COMMAND_HELP_REGISTRY.some(
       ({ path: commandPath }) =>
-        commandPath.join(" ") === "project init"
-        || commandPath[0] === "gate",
+        commandPath.join(" ") === "project init",
     ),
     false,
   );
@@ -184,9 +187,46 @@ test("Contract 3 renames are derived projections while Contract 2 remains active
     ["help", "--format", "json"],
     ["document", "check", "--help"],
     ["batch", "apply", "--help"],
+    ["gate", "add", "--help"],
   ]) {
     const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
+  }
+});
+
+test("gate discovery covers the complete internal Contract 3 mutation target", () => {
+  const add = getCommandDiscovery({ resource: "gate", action: "add" });
+  assert.equal(add.ok, true);
+  assert.deepEqual(
+    add.commands[0]?.operands.map(({ name }) => name),
+    ["file", "id", "from", "to"],
+  );
+  assert.equal(
+    add.commands[0]?.options.find(({ name }) => name === "reason")?.required,
+    true,
+  );
+
+  const set = getCommandDiscovery({ resource: "gate", action: "set" });
+  assert.deepEqual(
+    set.commands[0]?.options
+      .filter(({ name }) => ["from", "to", "reason"].includes(name))
+      .map(({ name }) => name),
+    ["from", "to", "reason"],
+  );
+
+  const remove = getCommandDiscovery({ resource: "gate", action: "remove" });
+  assert.equal(
+    remove.commands[0]?.options.some(
+      ({ name }) => ["from", "to", "reason"].includes(name),
+    ),
+    false,
+  );
+  for (const result of [add, set, remove]) {
+    assert.equal(result.commands[0]?.effect, "preview");
+    assert.deepEqual(
+      result.commands[0]?.resultSchemas,
+      ["Perttool.MutationResult.v1", "Perttool.CliError.v1"],
+    );
   }
 });
 

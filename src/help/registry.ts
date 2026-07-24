@@ -500,12 +500,12 @@ const nodes: readonly HelpNode[] = [
   {
     id: "editing",
     title: "Safe editing",
-    summary: "Preview dsl format, task/milestone/resource mutations, atomic batches, and dag advance, then safely write validated candidates.",
+    summary: "Preview dsl format, task/milestone/resource mutations, gate batches, atomic batches, and dag advance, then safely write validated candidates.",
     quick: [
       {
         id: "current-surface",
         title: "Current surface",
-        body: "project show returns project metadata read-only. dsl format projects planFormat; project/entity commands and mutation apply project planMutation; and dag advance projects the revalidated candidate from planAdvance, UTF-16 TextEdits, digest, and diff as text/JSON. The default is a preview that does not modify files.",
+        body: "project show returns project metadata read-only. dsl format projects planFormat; project/entity commands and mutation apply project planMutation; and dag advance projects the revalidated candidate from planAdvance, UTF-16 TextEdits, digest, and diff as text/JSON. Gate add/set/remove requests are available inside a mutation apply batch; direct gate commands remain inactive until the Contract 3 cutover. The default is a preview that does not modify files.",
       },
     ],
     detail: [

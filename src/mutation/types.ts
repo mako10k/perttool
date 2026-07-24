@@ -122,6 +122,40 @@ export type TaskMutation =
   | RemoveTaskMutation
   | FinishTaskMutation;
 
+export interface GateDefinition {
+  readonly reason: string;
+}
+
+export interface GateFieldSet {
+  readonly reason?: string;
+}
+
+export interface AddGateMutation {
+  readonly kind: "gate.add";
+  readonly id: string;
+  readonly from: string;
+  readonly to: string;
+  readonly gate: GateDefinition;
+}
+
+export interface SetGateMutation {
+  readonly kind: "gate.set";
+  readonly id: string;
+  readonly from?: string;
+  readonly to?: string;
+  readonly set?: GateFieldSet;
+}
+
+export interface RemoveGateMutation {
+  readonly kind: "gate.remove";
+  readonly id: string;
+}
+
+export type GateMutation =
+  | AddGateMutation
+  | SetGateMutation
+  | RemoveGateMutation;
+
 export type MilestoneMutationState = "planned" | "reached";
 
 export interface MilestoneDefinition {
@@ -204,6 +238,7 @@ export type ResourceMutation =
 export type AtomicMutation =
   | ProjectMutation
   | TaskMutation
+  | GateMutation
   | MilestoneMutation
   | ResourceMutation;
 

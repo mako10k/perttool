@@ -5,7 +5,7 @@
     "summary": {
       "resources": 5,
       "milestones": 9,
-      "tasks": 6,
+      "tasks": 5,
       "gates": 4,
       "errors": 0,
       "warnings": 0
@@ -13,24 +13,23 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "18/1",
+    "precedence_makespan": "15/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "1/1",
+    "precedence_forecast": "15/26",
     "precedence_critical_tasks": [
-      "MUT_002_GATE_MAINTENANCE",
+      "HELP_003_USAGE_RECOVERY",
+      "MUT_001_PROJECT_INIT",
       "CLI_002_CONTRACT_V3_CUTOVER",
       "CLI_003_FILE_FIRST_ACCEPTANCE"
     ],
-    "resource_makespan": "31/1",
-    "resource_forecast": "31/18",
-    "resource_delay": "13/1",
+    "resource_makespan": "23/1",
+    "resource_forecast": "23/26",
+    "resource_delay": "8/1",
     "resource_arcs": [
       "resource:HELP_003_USAGE_RECOVERY:HELP_002_DOMAIN_GUIDE_SPLIT",
-      "resource:MUT_001_PROJECT_INIT:HELP_003_USAGE_RECOVERY",
-      "resource:MUT_002_GATE_MAINTENANCE:MUT_001_PROJECT_INIT"
+      "resource:MUT_001_PROJECT_INIT:HELP_003_USAGE_RECOVERY"
     ],
     "schedule_critical_tasks": [
-      "MUT_002_GATE_MAINTENANCE",
       "MUT_001_PROJECT_INIT",
       "HELP_003_USAGE_RECOVERY",
       "HELP_002_DOMAIN_GUIDE_SPLIT",
@@ -42,13 +41,12 @@
     "groups": {
       "active": [],
       "ready": [
-        "MUT_002_GATE_MAINTENANCE",
         "MUT_001_PROJECT_INIT",
         "HELP_003_USAGE_RECOVERY",
         "HELP_002_DOMAIN_GUIDE_SPLIT"
       ],
       "runnable_now": [
-        "MUT_002_GATE_MAINTENANCE"
+        "MUT_001_PROJECT_INIT"
       ],
       "blocked_now": [],
       "upcoming": [
@@ -57,11 +55,11 @@
       ]
     },
     "resource_rejection": {
-      "task_id": "MUT_001_PROJECT_INIT",
+      "task_id": "HELP_003_USAGE_RECOVERY",
       "resource_id": "CLI_SURFACE",
       "capacity": 1,
       "earlier_selected_task_ids": [
-        "MUT_002_GATE_MAINTENANCE"
+        "MUT_001_PROJECT_INIT"
       ]
     }
   }

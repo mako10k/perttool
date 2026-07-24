@@ -6,12 +6,13 @@ project CLI_SURFACE_RESET:
     docs/backlog.md into an independent post-beta workstream. This plan records
     future design, implementation, migration, and acceptance work only; it does not
     make an uncompleted Contract 3 command available. Estimates are provisional
-    relative points. The cumulative plan-specific sample is 18p/1d from Contract 3
-    design, the command registry, and hierarchical command discovery completed on
-    2026-07-24; recalibrate after work on another active day.
+    relative points. The cumulative plan-specific sample is 26p/1d from Contract 3
+    design, the command registry, hierarchical command discovery, and gate
+    maintenance completed on 2026-07-24; recalibrate after work on another active
+    day.
   as_of 2026-07-24
   duration_unit point
-  velocity 18p/1d
+  velocity 26p/1d
   finish CLI_SURFACE_RESET_ACCEPTED
 
 resource DEVELOPERS:
@@ -57,6 +58,7 @@ milestone PROJECT_INIT_READY:
 
 milestone GATE_MAINTENANCE_READY:
   title "MUT-002 gate maintenance ready"
+  state reached
 
 milestone CONTRACT_V3_IMPLEMENTATION_READY:
   title "CLI contract 3 implementation prerequisites complete"
@@ -107,17 +109,6 @@ task MUT_001_PROJECT_INIT CONTRACT_V3_DESIGNED -> PROJECT_INIT_READY:
     DEVELOPERS 1
     CLI_SURFACE 1
 
-task MUT_002_GATE_MAINTENANCE CONTRACT_V3_DESIGNED -> GATE_MAINTENANCE_READY:
-  title "MUT-002 add complete gate maintenance"
-  description |
-    Add source-preserving gate add, set, and remove Core mutations, atomic-batch
-    support, preview, diff, JSON, safe write, exclusive output, and optimistic
-    locking without implicit remove cascades.
-  duration 8p
-  priority 80
-  requires:
-    DEVELOPERS 1
-    CLI_SURFACE 1
 
 gate DOMAIN_GUIDE_GATE DOMAIN_GUIDE_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
   reason "Contract 3 cutover requires separated command help and domain guidance"

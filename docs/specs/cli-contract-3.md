@@ -22,8 +22,9 @@ interface. Until the atomic cutover defined by the migration guide:
 - implementations MUST NOT advertise a Contract 3 command that is unavailable;
 - consumers MUST NOT assume that the commands in this document work in
   `0.1.0`;
-- `project init` remains backlog item `MUT-001`, and gate maintenance remains
-  backlog item `MUT-002`.
+- `project init` remains backlog item `MUT-001`;
+- gate mutation Core, atomic-batch maintenance, and internal target descriptors
+  are implemented, but direct Contract 3 gate commands remain inactive.
 
 The cutover activates this complete specification at once. It does not activate
 individual renames opportunistically.
@@ -349,7 +350,9 @@ The result schema is `Perttool.InitResult.v1`. It contains
 
 ### 8.2 Gate maintenance
 
-Gate commands are backlog item `MUT-002`.
+Gate mutation Core and atomic-batch maintenance implement backlog item
+`MUT-002`. The direct commands below activate only at the atomic Contract 3
+cutover.
 
 ```text
 perttool gate add <file> <id> <from> <to> --reason <text>

@@ -287,6 +287,10 @@ test("E2E-009: atomic batch replaces a path and feeds analysis without intermedi
         kind: "task.add", id: "SECOND", from: "MID", to: "DONE",
         task: { title: "second", duration: "2d" },
       },
+      {
+        kind: "gate.add", id: "APPROVAL", from: "MID", to: "DONE",
+        gate: { reason: "approval required" },
+      },
     ],
   };
   const preview = runJson([
@@ -295,6 +299,7 @@ test("E2E-009: atomic batch replaces a path and feeds analysis without intermedi
   assert.equal(preview.ok, true);
   assert.match(preview.updated_text, /task FIRST NOW -> MID:/);
   assert.match(preview.updated_text, /task SECOND MID -> DONE:/);
+  assert.match(preview.updated_text, /gate APPROVAL MID -> DONE:/);
 
   const analyzed = runJson(["dag", "analyze", "-"], 0, { input: preview.updated_text });
   assert.equal(analyzed.ok, true);

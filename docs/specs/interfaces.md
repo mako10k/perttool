@@ -370,7 +370,7 @@ perttool mutation apply <file> --request <json-file|->
   [--format text|json] [--color auto|always|never]
 ```
 
-`--request -` can be used only when `<file>` is not stdin. The request JSON is `{ "kind": "batch", "mutations": [...] }`; reject nested batches and multiple changes to the same target. Filesystem write options follow the same rules as other mutation commands.
+`--request -` can be used only when `<file>` is not stdin. The request JSON is `{ "kind": "batch", "mutations": [...] }`; it accepts every atomic request in the Mutation Semantics specification, including gate add/set/remove. Reject nested batches and multiple changes to the same target. Filesystem write options follow the same rules as other mutation commands.
 
 ### 7.2 project
 
