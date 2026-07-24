@@ -3,74 +3,74 @@
 - Status: Superseded for the minimum runtime by [ADR 0005](0005-node-22-runtime-baseline.md)
 - Date: 2026-07-21
 - Decision owners: perttool maintainers
-- Related design: [基本設計](../basic-design.md)
-- Related interface: [CLI Interface仕様](../specs/interfaces.md)
+- Related design: [Basic Design](../basic-design.md)
+- Related interface: [CLI Interface](../specs/interfaces.md)
 
 ## Context
 
-MVPはローカルCLIをprimary interfaceとし、同じCore APIをlibrary、test、将来adapterから利用する。実装開始前にruntime、module形式、package manager、dependency方針、test入口を固定する必要がある。
+The MVP uses a local CLI as its primary interface and exposes the same Core API to the library, tests, and future adapters. The runtime, module format, package manager, dependency policy, and test entry point must be fixed before implementation begins.
 
-2026-07-21時点でNode.js 24はLTSであり、開発環境のNode.js 25はEOLである。Current release固有機能へ依存せずLTSをbaselineにする。
+As of 2026-07-21, Node.js 24 is LTS and Node.js 25 in the development environment is EOL. Use the LTS release as the baseline without depending on Current-release-only features.
 
 ## Decision
 
-- runtime baselineはNode.js `>=24`
-- package managerはnpm、lockfileは`package-lock.json`
-- 1つのnpm packageから`perttool` binaryとlibrary APIを提供する
-- package/module形式はESM（`type: module`）
-- TypeScript compilerは7.0系をlockfileで固定し、`module`/`moduleResolution`は`NodeNext`
-- test runnerはNode.js built-in test runner
-- MVP scaffoldはruntime dependencyを持たず、Node.js標準APIだけを使用する
-- 公開判断までは`private: true`とし、公開後のpackage tarballはruntimeに必要な`dist/`と利用者向け文書だけを含める
-- MCP SDK、transport、server packageをMVP dependencyへ追加しない
+- The runtime baseline is Node.js `>=24`.
+- The package manager is npm and the lockfile is `package-lock.json`.
+- One npm package provides both the `perttool` binary and library API.
+- The package and module format is ESM (`type: module`).
+- The lockfile pins the TypeScript compiler to the 7.0 series, with `module` and `moduleResolution` set to `NodeNext`.
+- Tests use the Node.js built-in test runner.
+- The MVP scaffold has no runtime dependencies and uses only Node.js standard APIs.
+- The package remains `private: true` until a publication decision. After publication, the package tarball contains only the runtime `dist/` files and user documentation.
+- Do not add the MCP SDK, transports, or server packages to the MVP dependencies.
 
 ## Consequences
 
-- CIはNode.js 24で`npm ci`とrepository checkを実行する
-- source importはNode ESM規則に従い`.js` extensionを記述する
-- build artifactは`dist/`へ出力しGit管理しない
-- TypeScript type、CLI JSON、JSON Schemaは同じlogical changeで更新する
-- Node.js 24より古いruntimeはMVP support対象外
-- `npm run check:package`でpack内容、CLI実行権限、version、最小文書の検査を行う
+- CI runs `npm ci` and the repository checks on Node.js 24.
+- Source imports include `.js` extensions in accordance with Node ESM rules.
+- Build artifacts are written to `dist/` and are not tracked by Git.
+- TypeScript types, CLI JSON, and JSON Schema change together as one logical change.
+- Runtimes older than Node.js 24 are outside MVP support.
+- `npm run check:package` validates package contents, CLI executable permissions, the version, and minimum documentation.
 
 ## Public alpha decision
 
-2026-07-21にMIT LicenseでGitHub repositoryをpublic化し、`v0.1.0-alpha.1`をGitHub prereleaseとして配布する判断を行った。これはread-only CLIの評価版であり、MVP stable releaseではない。
+On 2026-07-21, the maintainers decided to publish the GitHub repository under the MIT License and distribute `v0.1.0-alpha.1` as a GitHub prerelease. It is an evaluation release of the read-only CLI, not an MVP stable release.
 
-- npm registryにはこの時点ではpublishしない
-- GitHub Releaseへ`npm pack`で生成したtarballを添付する
-- package metadataから`private`を外すが、publishは別の明示操作と認証を必要とする
-- 当時はstable `v0.1.0`をformatter、mutation、Mermaid、release E2Eを含むMVP gate完了後に判断するとした。この判断は[ADR 0003](0003-beta-versioning.md)が置き換え、suffixなし`0.x.x`をbetaとして扱う
+- Do not publish it to the npm registry at this stage.
+- Attach a tarball produced by `npm pack` to the GitHub Release.
+- Remove `private` from the package metadata, while requiring a separate explicit operation and authentication to publish.
+- At the time, stable `v0.1.0` was to be considered after the MVP gate covering the formatter, mutation, Mermaid, and release E2E was complete. [ADR 0003](0003-beta-versioning.md) supersedes that decision and treats suffix-free `0.x.x` versions as beta releases.
 
 ## npm prerelease publication decision
 
-2026-07-23に、残るMVP gate完了後の次期prereleaseをnpm registryへもpublishする方針を採用した。準備を前倒ししても`RELEASE_E2E`やrecommendation taskを完了扱いにはしない。
+On 2026-07-23, the maintainers decided to publish the next prerelease to the npm registry after the remaining MVP gates were complete. Advancing preparation does not mark `RELEASE_E2E` or recommendation tasks complete.
 
-- 次の候補versionは`0.1.0-alpha.2`とし、現行checkoutを既存GitHub Releaseと同じ`0.1.0-alpha.1`としてpublishしない
-- prereleaseは`alpha` dist-tagを明示し、`latest`を変更しない
-- package check、GitHub Release asset、npm publishへ同一tarballを使用する
-- `package.json`の`publishConfig`でpublic access、npmjs registry、`alpha` tagを固定する
-- npmがpublish時にmanifestを自動補正しないことをdry-runで検査する
-- TOKENはtracked fileやargumentへ置かず、maintainerの`secdat`から`NPM_TOKEN`としてpublish processだけへ注入する
-- actual publishはcleanなrelease commit、同一commitのremote mainとannotated tag、GitHub Release asset、未公開versionを確認した後の明示操作とする
-- stable `latest`の設定とtrusted publishingへの移行は別判断とする
+- The next candidate version is `0.1.0-alpha.2`; do not publish the current checkout as the existing GitHub Release version `0.1.0-alpha.1`.
+- Explicitly publish prereleases under the `alpha` dist-tag without changing `latest`.
+- Use the same tarball for package checks, the GitHub Release asset, and npm publication.
+- Fix public access, the npmjs registry, and the `alpha` tag in `package.json` `publishConfig`.
+- Verify with a dry run that npm will not normalize the manifest automatically during publication.
+- Do not put the token in a tracked file or argument. Inject it as `NPM_TOKEN` from the maintainer's `secdat` only into the publication process.
+- Perform the actual publication only after confirming a clean release commit, remote main and an annotated tag at that commit, the GitHub Release asset, and an unpublished version.
+- Setting stable `latest` and migrating to trusted publishing are separate decisions.
 
-この節はpublic alphaのrelease判断を記録する。最初のbeta以降のversionとdist-tagは[ADR 0003](0003-beta-versioning.md)および[beta release手順](../process/beta-release.md)を正とし、alpha用のpublication記録を新しいreleaseへ流用しない。
+This section records the public-alpha release decision. For versions and dist-tags from the first beta onward, [ADR 0003](0003-beta-versioning.md) and the [beta release procedure](../process/beta-release.md) are authoritative. Do not reuse alpha publication records for a new release.
 
 The normalization dry-run may use npm `--force` only to bypass the duplicate-version rejection after publication. This does not authorize a write: actual publication never uses `--force` and retains the unpublished-version, clean commit, remote tag, and explicit approval gates.
 
-詳細なalpha preflight、publish、公開後検証は[npm publication手順](../process/npm-publication.md)を正とする。
+The [npm publication procedure](../process/npm-publication.md) is authoritative for the detailed alpha preflight, publication, and post-publication verification.
 
 ## Dependency policy
 
-Runtime dependency追加には次を要求する。
+Adding a runtime dependency requires:
 
-1. Node.js標準APIまたは小さなlocal implementationで代替できない理由
-2. license、maintenance、supply-chain riskの確認
-3. CLI startup、bundle/install sizeへの影響確認
-4. lockfile更新とtest
+1. An explanation of why the Node.js standard API or a small local implementation cannot replace it.
+2. A review of its license, maintenance, and supply-chain risk.
+3. A review of its effect on CLI startup and bundle or installation size.
+4. A lockfile update and tests.
 
-Parser generatorやCLI frameworkは将来必要性が生じた時点で再評価し、scaffold段階では導入しない。
+Reconsider a parser generator or CLI framework only when a future need arises; do not introduce one at the scaffold stage.
 
 ## Validation
 
@@ -79,4 +79,4 @@ npm ci
 npm run check
 ```
 
-CIとlocal developmentは同じ`npm run check`を入口にする。
+CI and local development use the same `npm run check` entry point.
