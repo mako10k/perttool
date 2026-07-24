@@ -300,12 +300,47 @@ structured target:
 help_target:
   resource       string|null
   action         string|null
+usage:
+  kind           "missing_resource"|"unknown_resource"|
+                 "missing_action"|"unknown_action"|
+                 "unknown_option"|"missing_option_value"|
+                 "unexpected_option_value"|"duplicate_option"|
+                 "invalid_option_value"|"missing_operand"|
+                 "extra_operand"|"missing_required_option"|
+                 "option_conflict"|"option_requires"
+  token          string|null
+  suggestion:
+    kind         "resource"|"action"|"option"
+    value        string
 ```
 
 A usage error identifies the parsed resource/action when known, the invalid or
-missing token, and the most specific valid `help_target`. Rendered text includes
-the equivalent `perttool help ...` query. A suggestion MUST come only from the
-registry and MUST NOT invent an unavailable command or option.
+missing token, and the most specific valid `help_target`. `usage.suggestion` is
+nullable. Unknown resources, actions, and options may provide one; the other
+usage-error kinds set it to null. Rendered text includes the equivalent
+`perttool help ...` query.
+
+The target is `{resource:null, action:null}` until a resource is resolved,
+`{resource, action:null}` until an action is resolved, and the exact descriptor
+path after command resolution. A top-level descriptor uses its command name as
+`resource` and null as `action`.
+
+A suggestion MUST come only from the resolved registry scope and MUST NOT
+invent an unavailable command or option. Candidate order is registry order.
+Compare the invalid token with each candidate using restricted
+Damerau-Levenshtein distance, where insertion, deletion, substitution, and one
+adjacent transposition each cost 1. A candidate is eligible when its distance
+is at most `max(1, floor(max(input.length, candidate.length) / 3))`. Choose the
+eligible candidate with the smallest distance and retain registry order for a
+tie. Option comparison and JSON omit the leading `--`; text rendering restores
+it.
+
+Usage validation resolves the descriptor before reading any document. It then
+validates option spelling and value presence, non-repeatability and enum values,
+operand cardinality, required operands/options, conflicts, and requirements in
+that order. The exact `<resource> <action> --help` form bypasses required
+arguments and resolves to command help. Handler-specific semantic usage checks
+retain the resolved descriptor target.
 
 ## 8. File-first maintenance additions
 

@@ -135,12 +135,13 @@ The human/LLM CLI surface review and its eight backlog items are also tracked
 as an independent post-beta workstream in
 [`plans/cli-surface-reset.pert`](../../plans/cli-surface-reset.pert).
 `CONTRACT_V3_DESIGN`, `CLI_001_COMMAND_REGISTRY`,
-`HELP_001_COMMAND_DISCOVERY`, `MUT_001_PROJECT_INIT`, and
-`MUT_002_GATE_MAINTENANCE` are complete and advanced. The active Contract 2
-CLI remains unchanged while the internal Contract 3 registry includes project
-initialization and gate maintenance. Fresh complete `NextResult.v3` recommends
-`HELP_003_USAGE_RECOVERY`; direct Contract 3 commands remain inactive until
-the atomic cutover.
+`HELP_001_COMMAND_DISCOVERY`, `HELP_003_USAGE_RECOVERY`,
+`MUT_001_PROJECT_INIT`, and `MUT_002_GATE_MAINTENANCE` are complete and
+advanced. The active Contract 2 CLI remains unchanged while the internal
+Contract 3 layer includes hierarchical help, registry-scoped usage recovery,
+project initialization, and gate maintenance. Fresh complete `NextResult.v3`
+recommends `HELP_002_DOMAIN_GUIDE_SPLIT`; direct Contract 3 commands remain
+inactive until the atomic cutover.
 
 ### 5.1 Adopted Recommendation authority
 

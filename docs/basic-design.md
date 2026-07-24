@@ -811,6 +811,16 @@ example data. `PTHLP-002` reports an unknown resource or top-level command;
 dispatch the target-only descriptors before the atomic cutover. The module
 naming does not change the following dependency rule.
 
+`HELP_003_USAGE_RECOVERY` adds the pure internal
+`src/command/usage.ts` projection. It resolves target command paths and
+validates descriptor-expressible argv structure before any document read,
+returns a typed `PTCLI-001` error with the most specific `helpTarget`, and
+renders deterministic `Perttool.CliError.v1` text/JSON. Suggestions use only
+the applicable registry resource, action, or option set and a fixed bounded
+edit-distance rule. Handler-specific value relationships can add a usage error
+after descriptor validation but retain the resolved descriptor target. Public
+Contract 2 error bytes and dispatch remain unchanged until the atomic cutover.
+
 ```text
 command descriptors
        |

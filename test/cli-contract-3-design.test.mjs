@@ -35,6 +35,7 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
   const advancedBacklogIds = new Set([
     "CLI-001",
     "HELP-001",
+    "HELP-003",
     "MUT-001",
     "MUT-002",
   ]);
@@ -60,6 +61,15 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
   assert.match(
     plan,
     /^milestone COMMAND_DISCOVERY_READY:\n  title "HELP-001 hierarchical command discovery ready"\n  state reached$/m,
+  );
+  assert.match(
+    backlog,
+    /^### HELP-003: Improve usage-error recovery\n\nPriority: P1\n\nStatus: Core complete \(2026-07-24\); public activation deferred to CLI-002$/m,
+  );
+  assert.doesNotMatch(plan, /^task HELP_003_USAGE_RECOVERY /m);
+  assert.match(
+    plan,
+    /^milestone USAGE_RECOVERY_READY:\n  title "HELP-003 usage-error recovery ready"\n  state reached$/m,
   );
   assert.match(
     backlog,

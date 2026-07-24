@@ -53,6 +53,9 @@ The dependency order is fixed by `plans/cli-surface-reset.pert`.
    fixtures may be completed earlier. `HELP_001_COMMAND_DISCOVERY` completed
    the internal top-level/resource/action query and deterministic text/JSON
    projection without exporting it from the package root or CLI.
+   `HELP_003_USAGE_RECOVERY` completed the internal registry-scoped argv
+   validation, exact structured help targets, deterministic error projection,
+   and non-invented suggestions under the same publication boundary.
 4. `MUT_001_PROJECT_INIT` and `MUT_002_GATE_MAINTENANCE` close typed
    maintenance gaps. Project initialization Core/result projection/exclusive
    output and gate Core/atomic-batch support are complete with internal

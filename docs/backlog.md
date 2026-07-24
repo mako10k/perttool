@@ -17,9 +17,10 @@ The eight items below are mapped one-to-one into
 normative contract-design task. The
 [Contract 3 specification](specs/cli-contract-3.md) and
 [migration guide](process/cli-contract-3-migration.md) accept that design
-target. `CLI-001`, the internal `HELP-001` projection, project initialization,
-and gate-maintenance Core are complete; four implementation items remain open.
-Public Contract 3 activation remains one atomic `CLI-002` change.
+target. `CLI-001`, the internal `HELP-001` and `HELP-003` projections, project
+initialization, and gate-maintenance Core are complete; three implementation
+items remain open. Public Contract 3 activation remains one atomic `CLI-002`
+change.
 
 ### CLI-001: Adopt one command descriptor registry
 
@@ -81,6 +82,8 @@ Acceptance:
 
 Priority: P1
 
+Status: Core complete (2026-07-24); public activation deferred to CLI-002
+
 Usage errors should identify the failed command, the invalid token or option,
 and the exact structured-help query that describes the accepted surface.
 
@@ -91,6 +94,12 @@ Acceptance:
 - JSON errors include a stable help target rather than only the generic
   `errors` topic;
 - no suggestion invents an unimplemented command or option.
+
+The pure Contract 3 recovery layer now validates descriptor-expressible argv
+structure before document I/O, returns stable exact help targets, and limits
+deterministic suggestions to the applicable registry scope. The active
+Contract 2 error and dispatch surface remains unchanged until the atomic
+cutover.
 
 ### MUT-001: Initialize a project through the CLI
 
