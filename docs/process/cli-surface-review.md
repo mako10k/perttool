@@ -5,6 +5,7 @@
 - Current CLI contract: 2
 - Proposed CLI contract: 3
 - Related backlog: [../backlog.md](../backlog.md)
+- Related plan: [../../plans/cli-surface-reset.pert](../../plans/cli-surface-reset.pert)
 
 ## Purpose
 
@@ -12,6 +13,8 @@ This review evaluates whether a user or an LLM can discover the complete
 perttool surface, understand side effects, and maintain a `.pert` file without
 guessing. It separates confirmed behavior in `0.1.0` from the proposed breaking
 contract. The proposal is not implemented by this document.
+The related plan sequences the reviewed work but does not accept the proposed
+contract or authorize implementation.
 
 ## Confirmed current surface
 

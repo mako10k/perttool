@@ -15,6 +15,8 @@ User communication is independent from the repository baseline. Unless the user 
 
 perttool has accepted its TypeScript CLI MVP, the read-only AI Agent Guidance Registry v1 from Issue #2, and the first suffix-free beta release, `v0.1.0`. The release was published from one verified tarball to a GitHub prerelease and npm `beta`, then explicitly promoted to npm `latest` after acceptance; both tags resolve to `0.1.0`. The implemented surface includes `dsl check`, `dsl format`, `dsl help`, read-only `agent help`, `dag analyze`, `dag next` v3, read-only `validateOverride`, `dag advance`, Mermaid export/import, source-preserving formatter and mutation Core APIs, atomic batch, safe-write I/O, editing/advance CLI write controls, project metadata CLI, and the grammar acceptance suite. A complete and known `Perttool.NextResult.v3` remains the normal AI task-selection authority. The macro plan is complete and has no ready task. The independent English-baseline detail plan has completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`, and now recommends `PERT_PLANS`. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
+The reviewed CLI/help reset is tracked independently in `plans/cli-surface-reset.pert`. Its review baseline is reached, none of the proposed Contract 3 surface is accepted or implemented by the plan, and `CONTRACT_V3_DESIGN` is its only initial recommended task.
+
 `project show`, which returns the complete project metadata including velocity, source-preserving `project set`, and atomic-batch `project.set` are also implemented. The observed operational velocity was recalibrated to `29p/2d` from a cumulative 29p over 2 active days, including 5p on 2026-07-23.
 
 ADR 0004 adopts English as the repository baseline. `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE` are complete and advanced; `plans/english-baseline.pert` now has 9p remaining, matching 9p precedence and resource makespans, and an observed `33p/1d` velocity, and recommends `PERT_PLANS`.
@@ -39,7 +41,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the macro roadmap through beta, and use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the macro roadmap through beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; and use `cli-surface-reset.pert` as the independent post-beta review-derived workstream.
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -88,7 +90,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for the MVP, grammar, control-plane, operations, recommendation, agent-guidance, and English-baseline plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for the MVP, grammar, control-plane, operations, recommendation, agent-guidance, English-baseline, and CLI-surface-reset plans.
 
 ```sh
 npm ci

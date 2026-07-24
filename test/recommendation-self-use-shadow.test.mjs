@@ -10,6 +10,7 @@ const root = path.resolve(testDirectory, "..");
 const cli = path.join(root, "dist/cli.js");
 const planNames = [
   "agent-guidance",
+  "cli-surface-reset",
   "control-plane",
   "english-baseline",
   "grammar",
@@ -140,7 +141,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all seven self-use plans pass the v3 recommendation shadow gate", async () => {
+test("all eight self-use plans pass the v3 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(

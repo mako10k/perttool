@@ -1,0 +1,71 @@
+{
+  "check": {
+    "document_id": "CLI_SURFACE_RESET",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 5,
+      "milestones": 11,
+      "tasks": 9,
+      "gates": 4,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "33/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "66/29",
+    "precedence_critical_tasks": [
+      "CONTRACT_V3_DESIGN",
+      "CLI_001_COMMAND_REGISTRY",
+      "HELP_001_COMMAND_DISCOVERY",
+      "HELP_003_USAGE_RECOVERY",
+      "CLI_002_CONTRACT_V3_CUTOVER",
+      "CLI_003_FILE_FIRST_ACCEPTANCE"
+    ],
+    "resource_makespan": "49/1",
+    "resource_forecast": "98/29",
+    "resource_delay": "16/1",
+    "resource_arcs": [
+      "resource:HELP_001_COMMAND_DISCOVERY:MUT_002_GATE_MAINTENANCE",
+      "resource:HELP_003_USAGE_RECOVERY:HELP_002_DOMAIN_GUIDE_SPLIT",
+      "resource:MUT_001_PROJECT_INIT:HELP_003_USAGE_RECOVERY",
+      "resource:MUT_002_GATE_MAINTENANCE:MUT_001_PROJECT_INIT"
+    ],
+    "schedule_critical_tasks": [
+      "CONTRACT_V3_DESIGN",
+      "CLI_001_COMMAND_REGISTRY",
+      "HELP_001_COMMAND_DISCOVERY",
+      "MUT_002_GATE_MAINTENANCE",
+      "MUT_001_PROJECT_INIT",
+      "HELP_003_USAGE_RECOVERY",
+      "HELP_002_DOMAIN_GUIDE_SPLIT",
+      "CLI_002_CONTRACT_V3_CUTOVER",
+      "CLI_003_FILE_FIRST_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "CONTRACT_V3_DESIGN"
+      ],
+      "runnable_now": [
+        "CONTRACT_V3_DESIGN"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "CLI_001_COMMAND_REGISTRY",
+        "HELP_001_COMMAND_DISCOVERY",
+        "MUT_002_GATE_MAINTENANCE",
+        "MUT_001_PROJECT_INIT",
+        "HELP_003_USAGE_RECOVERY",
+        "HELP_002_DOMAIN_GUIDE_SPLIT",
+        "CLI_002_CONTRACT_V3_CUTOVER",
+        "CLI_003_FILE_FIRST_ACCEPTANCE"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

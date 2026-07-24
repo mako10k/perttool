@@ -131,6 +131,12 @@ The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md).
 
 ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached. `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE` were completed and advanced through Stage 3 preview-first writes; the inventory and Unicode allowlist are recorded in `english-surface-inventory.md`, and fresh analysis now recommends `PERT_PLANS`.
 
+The human/LLM CLI surface review and its eight backlog items are also tracked
+as an independent post-beta workstream in
+[`plans/cli-surface-reset.pert`](../../plans/cli-surface-reset.pert). The plan
+starts with normative Contract 3 design and does not itself accept or implement
+the proposed surface.
+
 ### 5.1 Adopted Recommendation authority
 
 This section was not enabled solely by publishing `Perttool.NextResult.v3`. Because the self-use shadow gate was met and `AGENTS.md`, `.github/copilot-instructions.md`, help, and safe-stop tests were updated in the same MIG-07 adoption change, normal task selection uses the following as authority.

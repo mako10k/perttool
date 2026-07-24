@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.25
+- Document status: Active Stage 3 / Revision 2.26
 - Creation date: 2026-07-21
-- Update date: 2026-07-23
+- Update date: 2026-07-24
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -23,6 +23,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/recommendation.pert` | MIG-01 to MIG-07 implementation/shadow/adoption DAG | `.pert` document |
 | `plans/agent-guidance.pert` | provider baseline, Core, `agent help`, and beta-acceptance DAG for Issue #2 | `.pert` document |
 | `plans/english-baseline.pert` | Post-beta migration of maintained repository surfaces to canonical English | `.pert` document |
+| `plans/cli-surface-reset.pert` | Review-derived post-beta CLI/help design, implementation, migration, and acceptance DAG | `.pert` document |
 | `test/fixtures/grammar/` | Specific examples of what parser should accept or reject | fixture/golden |
 | Git history | Past plans, specifications, and implementation | commit history |
 
@@ -44,6 +45,11 @@ Exit criteria:
 The start conditions were met on 2026-07-21, when the [MVP macro plan](../../plans/mvp.pert) and [grammar detail plan](../../plans/grammar.pert) began to be used as read-only plans of record. The [AI Project Control Plane design plan](../../plans/control-plane.pert) and [operations detail plan](../../plans/operations.pert) were added on 2026-07-22; Stage 2 began that day, and Stage 3 began after operational work completed. The [AI Agent Guidance detail plan](../../plans/agent-guidance.pert) was added on 2026-07-23 as the beta gate after MVP public-alpha acceptance.
 
 On the same date, `english-baseline.pert` was added as an independent post-beta detail plan for the phased migration required by ADR 0004.
+
+On 2026-07-24, `cli-surface-reset.pert` was added as an independent post-beta
+plan that maps the completed human/LLM CLI review and all eight CLI/help backlog
+items to a dependency-ordered workstream. Creating the plan did not accept CLI
+contract 3 or implement any proposed command.
 
 Starting conditions:
 
@@ -250,6 +256,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - current recommendation implementation tasks and resource waits: `recommendation.pert`
 - current AI Agent Guidance implementation tasks and resource waits: `agent-guidance.pert`
 - Active post-beta English surface migration: `english-baseline.pert`
+- Independent post-beta CLI/help reset: `cli-surface-reset.pert`
 - after selecting a workstream in the macro plan, select daily tasks from the corresponding detail plan
 - update the corresponding macro task to `done` only when its detail slice is complete
 - `M1_ROADMAP_UPDATE` is complete and decomposed formatter preview, mutation preview, safe write, and advance into the operations detail plan
@@ -438,5 +445,6 @@ Stage 1 entry evidence:
 - English-baseline process-and-guidance gate: repository entrypoints and process/provider guidance are translated and cross-reviewed; five tasks totaling 19p remain, precedence is 11p, resource makespan is 16p with 5p delay, observed velocity is `23p/1d`, and `RUNTIME_MESSAGES` is recommended
 - English-baseline runtime-message gate: runtime diagnostics are translated and cross-reviewed without changing stable machine contracts; four tasks totaling 14p remain, precedence and resource makespans are both 11p, observed velocity is `28p/1d`, and `HELP_AND_USAGE` is recommended
 - English-baseline help-and-usage gate: structured help and installed-package projections are translated and cross-reviewed without changing command or schema contracts; three tasks totaling 9p remain, precedence and resource makespans are both 9p, observed velocity is `33p/1d`, and `PERT_PLANS` is recommended
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all seven plans
+- CLI-surface-reset planning gate: the eighth self-use plan maps all eight review backlog IDs one-to-one after a normative design precursor; 9 tasks total 49p, precedence makespan is 33p, heuristic resource makespan is 49p with 16p delay, inherited provisional velocity is `29p/2d`, and `CONTRACT_V3_DESIGN` is the only initial recommendation
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all eight plans
 - write state: Stage 3 editing/advance commands are enabled using preview-first, diff and deletion-list review, expected digests, and reanalysis after writes.

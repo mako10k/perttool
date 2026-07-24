@@ -1,0 +1,201 @@
+project CLI_SURFACE_RESET:
+  version 1
+  title "CLI surface reset from the human and LLM review"
+  description |
+    Convert docs/process/cli-surface-review.md and the CLI/help items in
+    docs/backlog.md into an independent post-beta workstream. This plan records
+    future design, implementation, migration, and acceptance work only; creating
+    it does not adopt CLI contract 3 or authorize implementation. Estimates are
+    provisional relative points, and 29p/2d is inherited from the closest
+    completed operations workstream until this plan has its own completion sample.
+  as_of 2026-07-24
+  duration_unit point
+  velocity 29p/2d
+  finish CLI_SURFACE_RESET_ACCEPTED
+
+resource DEVELOPERS:
+  title "CLI and Core implementation capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Public contract and migration review capacity"
+  description "Only one public CLI contract or acceptance review runs at a time"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "Dispatch, command help, and public CLI surface ownership"
+  description "Avoid concurrent changes to the shared command registry and CLI projections"
+  capacity 1
+
+resource DOC_SURFACE:
+  title "Requirements, interface, design, and migration documentation ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Installed-package and link acceptance ownership"
+  capacity 1
+
+milestone REVIEW_BASELINE_READY:
+  title "CLI surface review and backlog baseline ready"
+  state reached
+
+milestone CONTRACT_V3_DESIGNED:
+  title "CLI contract 3 requirements and design accepted"
+
+milestone COMMAND_REGISTRY_READY:
+  title "CLI-001 command descriptor registry ready"
+
+milestone COMMAND_DISCOVERY_READY:
+  title "HELP-001 hierarchical command discovery ready"
+
+milestone DOMAIN_GUIDE_READY:
+  title "HELP-002 command help and domain guide separation ready"
+
+milestone USAGE_RECOVERY_READY:
+  title "HELP-003 usage-error recovery ready"
+
+milestone PROJECT_INIT_READY:
+  title "MUT-001 project initialization ready"
+
+milestone GATE_MAINTENANCE_READY:
+  title "MUT-002 gate maintenance ready"
+
+milestone CONTRACT_V3_IMPLEMENTATION_READY:
+  title "CLI contract 3 implementation prerequisites complete"
+
+milestone CONTRACT_V3_CUTOVER_READY:
+  title "CLI-002 breaking contract 3 cutover ready"
+
+milestone CLI_SURFACE_RESET_ACCEPTED:
+  title "CLI-003 file-first maintenance workflow accepted"
+
+task CONTRACT_V3_DESIGN REVIEW_BASELINE_READY -> CONTRACT_V3_DESIGNED:
+  title "Turn the review baseline into the normative CLI contract 3 design"
+  description |
+    Update requirements, interface specification, basic design, migration
+    boundary, and acceptance cases so the complete resource/action surface,
+    common option rules, effects, schemas, and breaking mappings agree before
+    implementation starts. Do not implement the proposed commands in this task.
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+task CLI_001_COMMAND_REGISTRY CONTRACT_V3_DESIGNED -> COMMAND_REGISTRY_READY:
+  title "CLI-001 adopt one command descriptor registry"
+  description |
+    Make one typed registry authoritative for dispatch validation, text and JSON
+    help, operands, options, defaults, conflicts, input/output modes, effects,
+    result schemas, exit statuses, and examples. A command or accepted option
+    missing from the registry must fail repository verification.
+  duration 8p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+
+task HELP_001_COMMAND_DISCOVERY COMMAND_REGISTRY_READY -> COMMAND_DISCOVERY_READY:
+  title "HELP-001 add hierarchical machine-readable command discovery"
+  description |
+    Provide complete top-level, resource-level, and action-level text and JSON
+    help from the command registry without reading a project or hiding side
+    effects.
+  duration 5p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+
+task HELP_002_DOMAIN_GUIDE_SPLIT COMMAND_DISCOVERY_READY -> DOMAIN_GUIDE_READY:
+  title "HELP-002 separate command help from domain guidance"
+  description |
+    Move conceptual DSL, analysis, recommendation, editing, and workflow
+    guidance behind the guide surface while preserving topic IDs, diagnostic
+    links, and installed-package text and JSON coverage.
+  duration 3p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+
+task HELP_003_USAGE_RECOVERY COMMAND_DISCOVERY_READY -> USAGE_RECOVERY_READY:
+  title "HELP-003 improve usage-error recovery"
+  description |
+    Cover unknown resources, actions, options, missing values, conflicts, and
+    extra operands with stable structured help targets and suggestions that
+    never invent an unimplemented command or option.
+  duration 5p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+
+task MUT_001_PROJECT_INIT CONTRACT_V3_DESIGNED -> PROJECT_INIT_READY:
+  title "MUT-001 initialize a project through the CLI"
+  description |
+    Add preview-first creation of the smallest valid project with explicit ID,
+    title, duration unit, initial milestone, finish, and point velocity where
+    required. Exclusive output must refuse an existing target and verify the
+    written document without inventing tasks, resources, or dependencies.
+  duration 5p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+
+task MUT_002_GATE_MAINTENANCE CONTRACT_V3_DESIGNED -> GATE_MAINTENANCE_READY:
+  title "MUT-002 add complete gate maintenance"
+  description |
+    Add source-preserving gate add, set, and remove Core mutations, atomic-batch
+    support, preview, diff, JSON, safe write, exclusive output, and optimistic
+    locking without implicit remove cascades.
+  duration 8p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+
+gate DOMAIN_GUIDE_GATE DOMAIN_GUIDE_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
+  reason "Contract 3 cutover requires separated command help and domain guidance"
+
+gate USAGE_RECOVERY_GATE USAGE_RECOVERY_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
+  reason "Contract 3 cutover requires complete structured usage-error recovery"
+
+gate PROJECT_INIT_GATE PROJECT_INIT_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
+  reason "File-first maintenance requires typed project initialization"
+
+gate GATE_MAINTENANCE_GATE GATE_MAINTENANCE_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
+  reason "File-first maintenance requires complete gate mutation"
+
+task CLI_002_CONTRACT_V3_CUTOVER CONTRACT_V3_IMPLEMENTATION_READY -> CONTRACT_V3_CUTOVER_READY:
+  title "CLI-002 normalize public names in one breaking version"
+  description |
+    Adopt document, guide, help, and batch mappings in one versioned breaking
+    change. Update operation names, README, help, examples, package smoke tests,
+    and migration notes together, and make obsolete contract-2 spellings fail
+    according to the accepted migration.
+  duration 5p
+  priority 60
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+
+task CLI_003_FILE_FIRST_ACCEPTANCE CONTRACT_V3_CUTOVER_READY -> CLI_SURFACE_RESET_ACCEPTED:
+  title "CLI-003 accept complete file-first maintenance"
+  description |
+    Use an installed-package end-to-end test to initialize, read, change,
+    analyze, select, advance, and validate a plan without manually rewriting the
+    file. Every project, task, gate, milestone, and resource field must be
+    maintainable by a typed command or one atomic batch, without redundant
+    entity list/show commands.
+  duration 5p
+  priority 50
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1

@@ -3,15 +3,18 @@
 - Status: Active
 - Updated: 2026-07-24
 
-This file records post-beta product work that does not yet have an independent
-`.pert` workstream. It is not a normative interface specification. A backlog
-item must move into requirements, specifications, design, a PERT plan, and
-tests before implementation is accepted.
+This file records post-beta product work before or after it is promoted into an
+independent `.pert` workstream. It is not a normative interface specification.
+A backlog item must move into requirements, specifications, design, a PERT
+plan, and tests before implementation is accepted.
 
 ## CLI and help reset
 
 The evidence and proposed breaking surface are recorded in the
 [CLI surface review](process/cli-surface-review.md).
+The eight items below are mapped one-to-one into
+[`plans/cli-surface-reset.pert`](../plans/cli-surface-reset.pert), preceded by a
+normative contract-design task. The plan does not mark any item implemented.
 
 ### CLI-001: Adopt one command descriptor registry
 

@@ -36,6 +36,58 @@
       },
       "diagnostic_codes": []
     },
+    "cli-surface-reset": {
+      "source_digest": "sha256:337f17efbbd633e7ae14e70676ca69502dfab4adc6f9f08659d32e8e53f65680",
+      "groups": {
+        "active": [],
+        "ready": [
+          "CONTRACT_V3_DESIGN"
+        ],
+        "runnable_now": [
+          "CONTRACT_V3_DESIGN"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "CLI_001_COMMAND_REGISTRY",
+          "HELP_001_COMMAND_DISCOVERY",
+          "MUT_002_GATE_MAINTENANCE",
+          "MUT_001_PROJECT_INIT",
+          "HELP_003_USAGE_RECOVERY",
+          "HELP_002_DOMAIN_GUIDE_SPLIT",
+          "CLI_002_CONTRACT_V3_CUTOVER",
+          "CLI_003_FILE_FIRST_ACCEPTANCE"
+        ]
+      },
+      "recommended_task_ids": [
+        "CONTRACT_V3_DESIGN"
+      ],
+      "manual_selected_task_ids": [
+        "CONTRACT_V3_DESIGN"
+      ],
+      "tiers": {
+        "CONTRACT_V3_DESIGN": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "CONTRACT_V3_DESIGN",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
+    },
     "control-plane": {
       "source_digest": "sha256:21d4d8e5706031abf5c5713ed680638eef58f0f73cb49e2a3631a605b9c66c95",
       "groups": {
