@@ -29,12 +29,12 @@ const clearableFields = new Set<ProjectClearableField>([
 
 function requestError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return "project mutation requestがobjectではありません";
+    return "project mutation request is not an object";
   }
   const request = value as Record<string, unknown>;
-  if (request["kind"] !== "project.set") return "project mutation kindが未対応です";
+  if (request["kind"] !== "project.set") return "project mutation kind is unsupported";
   if (Object.keys(request).some((name) => !["kind", "set", "clear"].includes(name))) {
-    return "project.set requestに未対応fieldが含まれています";
+    return "project.set request contains unsupported fields";
   }
   const rawSet = request["set"];
   const rawClear = request["clear"];
@@ -42,15 +42,15 @@ function requestError(value: unknown): string | undefined {
     rawSet !== undefined &&
     (rawSet === null || typeof rawSet !== "object" || Array.isArray(rawSet))
   ) {
-    return "project setがobjectではありません";
+    return "project set is not an object";
   }
-  if (rawClear !== undefined && !Array.isArray(rawClear)) return "clearがarrayではありません";
+  if (rawClear !== undefined && !Array.isArray(rawClear)) return "clear is not an array";
 
   const set = (rawSet ?? {}) as ProjectFieldSet;
   const clear = (rawClear ?? []) as readonly unknown[];
   const setEntries = Object.entries(set).filter(([, item]) => item !== undefined);
   if (setEntries.length === 0 && clear.length === 0) {
-    return "project.setは少なくとも1つの変更指定を必要とします";
+    return "project.set requires at least one change specification";
   }
   const setFields = new Set([
     "id",
@@ -65,7 +65,7 @@ function requestError(value: unknown): string | undefined {
     "targetDuration",
   ]);
   if (Object.keys(set).some((name) => !setFields.has(name))) {
-    return "project setに未対応fieldが含まれています";
+    return "project set contains unsupported fields";
   }
   for (const name of [
     "id",
@@ -78,22 +78,22 @@ function requestError(value: unknown): string | undefined {
     "targetDuration",
   ] as const) {
     if (set[name] !== undefined && typeof set[name] !== "string") {
-      return `${name}がstringではありません`;
+      return `${name} is not a string`;
     }
   }
   if (set.version !== undefined && !Number.isSafeInteger(set.version)) {
-    return "versionがsafe integerではありません";
+    return "version is not a safe integer";
   }
   if (
     set.durationUnit !== undefined &&
     !new Set(["day", "hour", "point"]).has(set.durationUnit)
   ) {
-    return "durationUnitがday/hour/pointではありません";
+    return "durationUnit must be day, hour, or point";
   }
   if (clear.some((name) => typeof name !== "string" || !clearableFields.has(name as ProjectClearableField))) {
-    return "clearに未対応fieldが含まれています";
+    return "clear contains unsupported fields";
   }
-  if (new Set(clear).size !== clear.length) return "clear fieldが重複しています";
+  if (new Set(clear).size !== clear.length) return "clear contains duplicate fields";
   const conflicts: ReadonlyArray<readonly [keyof ProjectFieldSet, ProjectClearableField]> = [
     ["description", "description"],
     ["asOf", "as_of"],
@@ -103,7 +103,7 @@ function requestError(value: unknown): string | undefined {
   ];
   for (const [setName, clearName] of conflicts) {
     if (set[setName] !== undefined && clear.includes(clearName)) {
-      return `${clearName}をsetとclearへ同時指定できません`;
+      return `${clearName} cannot be specified in both set and clear`;
     }
   }
   return undefined;
@@ -154,7 +154,7 @@ export function planProjectMutationEdits(
   if (declaration === undefined) {
     return {
       edits: [],
-      diagnostic: mutationDiagnostic("PTMUT-302", "project declarationが存在しません"),
+      diagnostic: mutationDiagnostic("PTMUT-302", "project declaration does not exist"),
     };
   }
   return planSet(text, declaration, mutation);

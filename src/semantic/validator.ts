@@ -108,7 +108,7 @@ function requireField(
       makeDiagnostic(
         "PTSEM-101",
         "error",
-        `${declaration.kind} ${declaration.id}にrequired field ${fieldName}がありません`,
+        `${declaration.kind} ${declaration.id} is missing required field ${fieldName}`,
         declaration.idSpan,
         `syntax.${declaration.kind}`,
         declaration.id,
@@ -134,11 +134,11 @@ function validateDuplicateFields(
       makeDiagnostic(
         "PTSEM-102",
         "error",
-        `${declaration.kind} ${declaration.id}でfield ${field.name}が重複しています`,
+        `Field ${field.name} is duplicated in ${declaration.kind} ${declaration.id}`,
         field.span,
         `syntax.${declaration.kind}`,
         declaration.id,
-        [{ message: "最初のfield", span: first.span }],
+        [{ message: "First field", span: first.span }],
       ),
     );
   }
@@ -173,7 +173,7 @@ function validateNonemptyText(
       makeDiagnostic(
         "PTSEM-106",
         "error",
-        `${fieldName}は空にできません`,
+        `${fieldName} must not be empty`,
         field.valueSpan,
         `syntax.${declaration.kind}`,
         declaration.id,
@@ -196,7 +196,7 @@ function validateTags(
         makeDiagnostic(
           "PTSEM-107",
           "error",
-          `tag ${tag}が重複しています`,
+          `Tag ${tag} is duplicated`,
           field.valueSpan,
           "syntax.tags",
           declaration.id,
@@ -237,7 +237,7 @@ function validateFieldConstraints(
       makeDiagnostic(
         "PTSEM-101",
         "error",
-        "project declarationがありません",
+        "Missing project declaration",
         zeroSpan(document),
         "syntax.project",
       ),
@@ -250,11 +250,11 @@ function validateFieldConstraints(
         makeDiagnostic(
           "PTSEM-201",
           "error",
-          "project declarationはexactly oneです",
+          "There must be exactly one project declaration",
           project.idSpan,
           "syntax.project",
           project.id,
-          [{ message: "最初のproject", span: first.idSpan }],
+          [{ message: "First project", span: first.idSpan }],
         ),
       );
     }
@@ -265,7 +265,7 @@ function validateFieldConstraints(
       makeDiagnostic(
         "PTDSL-003",
         "error",
-        "projectは最初のdeclarationでなければなりません",
+        "The project must be the first declaration",
         firstDeclaration.idSpan,
         "syntax.top-level",
         firstDeclaration.id,
@@ -290,7 +290,7 @@ function validateFieldConstraints(
           makeDiagnostic(
             "PTSEM-108",
             "error",
-            "grammar version 1だけを受理します",
+            "Only grammar version 1 is supported",
             version.valueSpan,
             "syntax.project",
             declaration.id,
@@ -303,7 +303,7 @@ function validateFieldConstraints(
           makeDiagnostic(
             "PTDSL-008",
             "error",
-            "as_ofが有効なISO date/date-timeではありません",
+            "as_of is not a valid ISO date or date-time",
             asOf.valueSpan,
             "syntax.project",
             declaration.id,
@@ -317,7 +317,7 @@ function validateFieldConstraints(
           makeDiagnostic(
             "PTSEM-104",
             "error",
-            "target_durationは0より大きくしてください",
+            "target_duration must be greater than 0",
             fieldNamed(declaration, "target_duration")!.valueSpan,
             "syntax.duration",
             declaration.id,
@@ -344,7 +344,7 @@ function validateFieldConstraints(
                   makeDiagnostic(
                     "PTSEM-105",
                     "error",
-                    `project unit ${durationUnit.value}とduration suffixが一致しません`,
+                    `Duration suffix does not match project unit ${durationUnit.value}`,
                     valueField.valueSpan,
                     "syntax.duration",
                     candidate.id,
@@ -359,7 +359,7 @@ function validateFieldConstraints(
             makeDiagnostic(
               "PTSEM-111",
               "error",
-              "duration_unit pointにはvelocityが必要です",
+              "duration_unit point requires velocity",
               durationUnit.valueSpan,
               "syntax.velocity",
               declaration.id,
@@ -372,7 +372,7 @@ function validateFieldConstraints(
               makeDiagnostic(
                 "PTSEM-111",
                 "error",
-                "velocityのPoint量と期間量は0より大きくしてください",
+                "Velocity point and period values must be greater than 0",
                 velocityField!.valueSpan,
                 "syntax.velocity",
                 declaration.id,
@@ -387,7 +387,7 @@ function validateFieldConstraints(
               makeDiagnostic(
                 "PTSEM-111",
                 "error",
-                `project unit ${durationUnit.value}とvelocity期間suffixが一致しません`,
+                `Velocity period suffix does not match project unit ${durationUnit.value}`,
                 velocityField!.valueSpan,
                 "syntax.velocity",
                 declaration.id,
@@ -405,7 +405,7 @@ function validateFieldConstraints(
           makeDiagnostic(
             "PTSEM-109",
             "error",
-            "resource capacityは1以上です",
+            "Resource capacity must be at least 1",
             capacity.valueSpan,
             "syntax.resource",
             declaration.id,
@@ -425,7 +425,7 @@ function validateFieldConstraints(
           makeDiagnostic(
             "PTSEM-103",
             "error",
-            "taskはdurationまたはestimateのどちらかexactly oneを必要とします",
+            "A task must have exactly one of duration or estimate",
             declaration.idSpan,
             "syntax.task",
             declaration.id,
@@ -438,7 +438,7 @@ function validateFieldConstraints(
           makeDiagnostic(
             "PTSEM-104",
             "error",
-            "task durationは0より大きくしてください",
+            "Task duration must be greater than 0",
             durations[0]!.valueSpan,
             "syntax.duration",
             declaration.id,
@@ -455,7 +455,7 @@ function validateFieldConstraints(
               makeDiagnostic(
                 matching.length === 0 ? "PTSEM-101" : "PTSEM-102",
                 "error",
-                `estimate ${name}はexactly one必要です`,
+                `Estimate requires exactly one ${name} value`,
                 estimate.span,
                 "syntax.estimate",
                 declaration.id,
@@ -478,7 +478,7 @@ function validateFieldConstraints(
             makeDiagnostic(
               "PTSEM-104",
               "error",
-              "estimateはoptimistic <= most_likely <= pessimisticかつpessimistic > 0を満たしてください",
+              "An estimate must satisfy optimistic <= most_likely <= pessimistic and pessimistic > 0",
               estimate.span,
               "syntax.estimate",
               declaration.id,
@@ -493,7 +493,7 @@ function validateFieldConstraints(
           makeDiagnostic(
             "PTSEM-103",
             "error",
-            "blocked_reasonはstatus=blockedの場合だけ必須です",
+            "blocked_reason is required only when status=blocked",
             blockedReason?.span ?? fieldNamed(declaration, "status")?.span ?? declaration.idSpan,
             "syntax.task",
             declaration.id,
@@ -508,7 +508,7 @@ function validateFieldConstraints(
             makeDiagnostic(
               "PTSEM-101",
               "error",
-              "requires blockは1件以上必要です",
+              "The requires block must contain at least one requirement",
               requirements.span,
               "syntax.task",
               declaration.id,
@@ -523,11 +523,11 @@ function validateFieldConstraints(
               makeDiagnostic(
                 "PTSEM-110",
                 "error",
-                `resource requirement ${requirement.resourceId}が重複しています`,
+                `Resource requirement ${requirement.resourceId} is duplicated`,
                 requirement.resourceSpan,
                 "syntax.task",
                 declaration.id,
-                [{ message: "最初のrequirement", span: first.resourceSpan }],
+                [{ message: "First requirement", span: first.resourceSpan }],
               ),
             );
           } else {
@@ -538,7 +538,7 @@ function validateFieldConstraints(
               makeDiagnostic(
                 "PTSEM-109",
                 "error",
-                "requirement unitsは1以上です",
+                "Requirement units must be at least 1",
                 requirement.unitsSpan,
                 "syntax.resource",
                 declaration.id,
@@ -563,7 +563,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
         makeDiagnostic(
           "PTSEM-202",
           "error",
-          `reserved word ${declaration.id}はentity IDに使用できません`,
+          `Reserved word ${declaration.id} cannot be used as an entity ID`,
           declaration.idSpan,
           "syntax",
           declaration.id,
@@ -576,11 +576,11 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
         makeDiagnostic(
           "PTSEM-201",
           "error",
-          `entity ID ${declaration.id}が重複しています`,
+          `Entity ID ${declaration.id} is duplicated`,
           declaration.idSpan,
           "errors",
           declaration.id,
-          [{ message: "最初のdeclaration", span: first.idSpan }],
+          [{ message: "First declaration", span: first.idSpan }],
         ),
       );
     } else {
@@ -617,7 +617,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
       makeDiagnostic(
         "PTSEM-203",
         "error",
-        `project.finish ${finish}が未定義です`,
+        `project.finish ${finish} is undefined`,
         finishField.valueSpan,
         "syntax.project",
         project.id,
@@ -628,7 +628,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
       makeDiagnostic(
         "PTSEM-205",
         "error",
-        `project.finish ${finish}はmilestoneではありません`,
+        `project.finish ${finish} is not a milestone`,
         finishField.valueSpan,
         "syntax.project",
         project.id,
@@ -647,7 +647,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
           makeDiagnostic(
             "PTSEM-204",
             "error",
-            `endpoint ${endpoint}が未定義です`,
+            `Endpoint ${endpoint} is undefined`,
             endpointSpan,
             `syntax.${edge.declaration.kind}`,
             edge.id,
@@ -658,7 +658,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
           makeDiagnostic(
             "PTSEM-205",
             "error",
-            `endpoint ${endpoint}はmilestoneではありません`,
+            `Endpoint ${endpoint} is not a milestone`,
             endpointSpan,
             `syntax.${edge.declaration.kind}`,
             edge.id,
@@ -671,7 +671,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
         makeDiagnostic(
           "PTDAG-201",
           "error",
-          `edge ${edge.id}はself-loopです`,
+          `Edge ${edge.id} is a self-loop`,
           edge.declaration.arrowSpan!,
           "errors",
           edge.id,
@@ -690,7 +690,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
           makeDiagnostic(
             "PTSEM-206",
             "error",
-            `resource ${requirement.resourceId}が未定義です`,
+            `Resource ${requirement.resourceId} is undefined`,
             requirement.resourceSpan,
             "syntax.resource",
             task.id,
@@ -701,7 +701,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
           makeDiagnostic(
             "PTSEM-207",
             "error",
-            `${requirement.resourceId}はresourceではありません`,
+            `${requirement.resourceId} is not a resource`,
             requirement.resourceSpan,
             "syntax.resource",
             task.id,
@@ -714,7 +714,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
             makeDiagnostic(
               "PTSEM-208",
               "error",
-              `requirement ${requirement.units}がcapacity ${capacity}を超えています`,
+              `Requirement ${requirement.units} exceeds capacity ${capacity}`,
               requirement.unitsSpan,
               "syntax.resource",
               task.id,
@@ -763,7 +763,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
       makeDiagnostic(
         "PTDAG-202",
         "error",
-        "directed cycleを検出しました",
+        "Detected a directed cycle",
         cycleEdge?.declaration.headerSpan ?? project.idSpan,
         "errors",
         cycleEdge?.id,
@@ -778,7 +778,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
       makeDiagnostic(
         "PTDAG-203",
         "error",
-        `finish milestone ${finish}にoutgoing edgeがあります`,
+        `Finish milestone ${finish} has an outgoing edge`,
         firstOutgoing.declaration.headerSpan,
         "errors",
         firstOutgoing.id,
@@ -804,7 +804,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
           makeDiagnostic(
             "PTDAG-204",
             "error",
-            `milestone ${milestone.id}はfinishへ到達できません`,
+            `Milestone ${milestone.id} cannot reach the finish`,
             milestone.idSpan,
             "errors",
             milestone.id,
@@ -825,7 +825,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
         makeDiagnostic(
           "PTDAG-205",
           "error",
-          `root milestone ${milestone.id}はstate reachedでなければなりません`,
+          `Root milestone ${milestone.id} must have state reached`,
           fieldNamed(milestone, "state")?.valueSpan ?? milestone.idSpan,
           "errors",
           milestone.id,
@@ -861,7 +861,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
         makeDiagnostic(
           "PTDAG-206",
           "error",
-          `reached milestone ${milestoneId}にunsatisfied incoming edgeがあります`,
+          `Reached milestone ${milestoneId} has an unsatisfied incoming edge`,
           fieldNamed(milestone, "state")?.valueSpan ?? milestone.idSpan,
           "errors",
           milestoneId,
@@ -876,7 +876,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
         makeDiagnostic(
           "PTDAG-207",
           "error",
-          `${status} task ${task.id}のsourceがreachedではありません`,
+          `Source of ${status} task ${task.id} is not reached`,
           fieldNamed(task, "status")?.valueSpan ?? task.idSpan,
           "errors",
           task.id,
@@ -891,7 +891,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
         makeDiagnostic(
           "PTDAG-208",
           "warning",
-          `milestone ${milestoneId}はclosureでreachedです。advanceを検討してください`,
+          `Milestone ${milestoneId} is reached by closure; consider advance`,
           milestone.idSpan,
           "workflows",
           milestoneId,
@@ -921,7 +921,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
         makeDiagnostic(
           "PTRES-201",
           "error",
-          `active usage ${usage}がresource ${resource.id} capacity ${capacity}を超えています`,
+          `Active usage ${usage} exceeds capacity ${capacity} of resource ${resource.id}`,
           fieldNamed(resource, "capacity")!.valueSpan,
           "analysis.resources",
           resource.id,

@@ -20,42 +20,42 @@ function validStringArray(value: unknown): value is readonly string[] {
 
 function requestShapeError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return "milestone mutation requestがobjectではありません";
+    return "milestone mutation request is not an object";
   }
   const request = value as Record<string, unknown>;
   const kind = request["kind"];
   if (kind !== "milestone.add" && kind !== "milestone.set" && kind !== "milestone.remove") {
-    return "milestone mutation kindが未対応です";
+    return "milestone mutation kind is unsupported";
   }
-  if (typeof request["id"] !== "string") return "milestone idがstringではありません";
+  if (typeof request["id"] !== "string") return "milestone id is not a string";
   const fieldsByKind: Readonly<Record<string, ReadonlySet<string>>> = {
     "milestone.add": new Set(["kind", "id", "milestone"]),
     "milestone.set": new Set(["kind", "id", "set", "clear", "addTags", "removeTags"]),
     "milestone.remove": new Set(["kind", "id"]),
   };
   if (Object.keys(request).some((name) => !fieldsByKind[kind]!.has(name))) {
-    return `${kind} requestに未対応fieldが含まれています`;
+    return `${kind} request contains unsupported fields`;
   }
   return undefined;
 }
 
 function definitionError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return "milestone definitionがobjectではありません";
+    return "milestone definition is not an object";
   }
   const milestone = value as Record<string, unknown>;
   if (Object.keys(milestone).some((name) => !fieldOrder.includes(name as never))) {
-    return "milestone definitionに未対応fieldが含まれています";
+    return "milestone definition contains unsupported fields";
   }
-  if (typeof milestone["title"] !== "string") return "milestone titleがstringではありません";
+  if (typeof milestone["title"] !== "string") return "milestone title is not a string";
   if (milestone["description"] !== undefined && typeof milestone["description"] !== "string") {
-    return "milestone descriptionがstringではありません";
+    return "milestone description is not a string";
   }
   if (milestone["state"] !== undefined && !states.has(milestone["state"] as string)) {
-    return "milestone stateがplanned/reachedではありません";
+    return "milestone state must be planned or reached";
   }
   if (milestone["tags"] !== undefined && !validStringArray(milestone["tags"])) {
-    return "milestone tagsがstring arrayではありません";
+    return "milestone tags are not a string array";
   }
   return undefined;
 }
@@ -85,14 +85,14 @@ function setRequestError(mutation: SetMilestoneMutation): string | undefined {
     rawSet !== undefined &&
     (rawSet === null || typeof rawSet !== "object" || Array.isArray(rawSet))
   ) {
-    return "milestone setがobjectではありません";
+    return "milestone set is not an object";
   }
   for (const [name, value] of [
     ["clear", rawClear],
     ["addTags", rawAddTags],
     ["removeTags", rawRemoveTags],
   ] as const) {
-    if (value !== undefined && !Array.isArray(value)) return `${name}がarrayではありません`;
+    if (value !== undefined && !Array.isArray(value)) return `${name} is not an array`;
   }
   const set = (rawSet ?? {}) as MilestoneFieldSet;
   const clear = (rawClear ?? []) as NonNullable<SetMilestoneMutation["clear"]>;
@@ -105,40 +105,40 @@ function setRequestError(mutation: SetMilestoneMutation): string | undefined {
     addTags.length === 0 &&
     removeTags.length === 0
   ) {
-    return "milestone.setは少なくとも1つの変更指定を必要とします";
+    return "milestone.set requires at least one change specification";
   }
   if (Object.keys(set).some((name) => !["title", "description", "state"].includes(name))) {
-    return "milestone setに未対応fieldが含まれています";
+    return "milestone set contains unsupported fields";
   }
-  if (set.title !== undefined && typeof set.title !== "string") return "titleがstringではありません";
+  if (set.title !== undefined && typeof set.title !== "string") return "title is not a string";
   if (set.description !== undefined && typeof set.description !== "string") {
-    return "descriptionがstringではありません";
+    return "description is not a string";
   }
   if (set.state !== undefined && !states.has(set.state)) {
-    return "stateがplanned/reachedではありません";
+    return "state must be planned or reached";
   }
   if (!Array.isArray(clear) || clear.some((name) => !clearableFields.has(name))) {
-    return "clearに未対応fieldが含まれています";
+    return "clear contains unsupported fields";
   }
-  if (new Set(clear).size !== clear.length) return "clear fieldが重複しています";
+  if (new Set(clear).size !== clear.length) return "clear contains duplicate fields";
   const clearNames = new Set(clear);
   for (const [setName, clearName] of [
     ["description", "description"],
     ["state", "state"],
   ] as const) {
     if (set[setName] !== undefined && clearNames.has(clearName)) {
-      return `${clearName}をsetとclearへ同時指定できません`;
+      return `${clearName} cannot be specified in both set and clear`;
     }
   }
   if (!validStringArray(addTags) || !validStringArray(removeTags)) {
-    return "addTagsとremoveTagsはstring arrayである必要があります";
+    return "addTags and removeTags must be string arrays";
   }
   if (clearNames.has("tags") && (addTags.length > 0 || removeTags.length > 0)) {
-    return "clear tagsとadd/remove tagは併用できません";
+    return "clear tags cannot be combined with add/remove tags";
   }
   const removed = new Set(removeTags);
   if (addTags.some((tag) => removed.has(tag))) {
-    return "同じtagをaddとremoveへ同時指定できません";
+    return "the same tag cannot be specified in both add and remove";
   }
   return undefined;
 }
@@ -186,7 +186,7 @@ export function planMilestoneMutationEdits(
         edits: [],
         diagnostic: mutationDiagnostic(
           "PTMUT-304",
-          `entity ID ${mutation.id}はすでに使用されています`,
+          `entity ID ${mutation.id} is already in use`,
           entity,
         ),
       };
@@ -203,7 +203,7 @@ export function planMilestoneMutationEdits(
   if (entity === undefined) {
     return {
       edits: [],
-      diagnostic: mutationDiagnostic("PTMUT-302", `milestone ${mutation.id}が存在しません`),
+      diagnostic: mutationDiagnostic("PTMUT-302", `milestone ${mutation.id} does not exist`),
     };
   }
   if (entity.kind !== "milestone") {
@@ -211,7 +211,7 @@ export function planMilestoneMutationEdits(
       edits: [],
       diagnostic: mutationDiagnostic(
         "PTMUT-303",
-        `entity ${mutation.id}はmilestoneではありません`,
+        `entity ${mutation.id} is not a milestone`,
         entity,
       ),
     };

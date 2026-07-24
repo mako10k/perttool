@@ -159,6 +159,8 @@ Later that day, `NORMATIVE_DOCS` migrated the requirements, basic design, normat
 
 `PROCESS_AND_GUIDANCE_DOCS` then migrated the repository entrypoints, current CHANGELOG guidance, security guidance, process runbooks, and provider-facing development guidance. Lightweight translation agents worked in non-overlapping slices, and independent cross-review compared the results with the source text for normative strength, historical evidence, links, commands, stable identifiers, digests, and permission boundaries. The broad language scan leaves only the intentional Japanese-script detection expression in `english-surface-inventory.md`. An atomic batch recalibrated the cumulative workstream velocity to `23p/1d` and finished the 8p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:6e75ee63b4821dfe3104a2a5b91ab44cdece659644d74a9dee2917516768f57d`. Five tasks and 19p remain; precedence is 11p, resource makespan is 16p with 5p resource delay, and fresh complete `NextResult.v3` recommends `RUNTIME_MESSAGES`.
 
+`RUNTIME_MESSAGES` then migrated parser, semantic, application, mutation, conversion, CLI usage-diagnostic, and safe-write messages to English. Lightweight translation agents worked in non-overlapping slices and independently cross-reviewed each other's changes. Stable diagnostic codes, source spans, JSON fields, schema shapes, interpolation values, fail-closed boundaries, and safe-write checks remain unchanged; one byte-level recommendation golden was updated with the runtime message. The remaining Japanese runtime source is confined to `src/help/registry.ts` for `HELP_AND_USAGE`. An atomic batch recalibrated the cumulative workstream velocity to `28p/1d` and finished the 5p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:88698003c0100623e5aeb80e3407847e898e36770813ddd0945932ee98c293e8`. Four tasks and 14p remain; precedence and resource makespans are both 11p with no resource delay, and fresh complete `NextResult.v3` recommends `HELP_AND_USAGE`.
+
 ### 4.1 Velocity measurement calibration
 
 DSL version 1 has no working calendar, pause, or work-start time, so it does not convert the hours between commit timestamps into implicit engineering days. Measure the velocity of a self-use plan using the following definitive active-day method:
@@ -179,11 +181,11 @@ Recalibration from 2026-07-22 to 2026-07-23:
 | `operations.pert` | formatter/mutation preview, safe write, advance, project metadata CLI | 29p | 2d | `29p/2d` | 0p |
 | `recommendation.pert` | `FIXTURE_BASELINE`, `RANKING_CORE`, `EXPLANATION_CORE`, `NEXT_V3_PUBLICATION`, `SELF_USE_SHADOW`, `OVERRIDE_VALIDATION`, `AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
 | `agent-guidance.pert` | Total 5 tasks | 22p | 1d | `22p/1d` | 0p |
-| `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS` | 23p | 1d | `23p/1d` | resource `16/23d` |
+| `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES` | 28p | 1d | `28p/1d` | resource `11/28d` |
 
 This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, and English-baseline migration are not averaged because their work types differ. Future detail plans will specify the sample from the closest work type as their initial value.
 
-`english-baseline.pert` completed 2p of inventory work, 13p of normative-document migration, and 8p of process-and-guidance migration on the same active day. Its cumulative observed velocity is now `23p/1d`; the remaining 11p precedence path forecasts `11/23d`, and the 16p resource schedule forecasts `16/23d`. This remains a one-day sample and must be recalibrated after work on a different active day or after further task completions.
+`english-baseline.pert` completed 2p of inventory work, 13p of normative-document migration, 8p of process-and-guidance migration, and 5p of runtime-message migration on the same active day. Its cumulative observed velocity is now `28p/1d`; the remaining precedence path and resource schedule are both 11p and forecast `11/28d`. This remains a one-day sample and must be recalibrated after work on a different active day or after further task completions.
 
 Grammar was recalibrated after `FORMATTER_ROUNDTRIP` (2p) and `HELP_FIXTURE_SYNC` (1p) were completed on the same active day after the previous calibration, updating velocity to `3p/1d`. Because no work remains, the forecast is 0. Control-plane's `DESIGN_REVIEW` (1p) is deferred to the next calibration because the new sample still contains only one task.
 
@@ -256,7 +258,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - the suffix-free `v0.1.0` beta is accepted, and the macro has advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3 is a future backlog-hierarchy and multi-plan-composition design and does not add work packages to the current macro
 - the LSP server, VSIX, and MCP server are independent post-first-beta backlogs and do not add work packages to the current macro
-- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, and `PROCESS_AND_GUIDANCE_DOCS`; `RUNTIME_MESSAGES` is its current recommended task.
+- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, and `RUNTIME_MESSAGES`; `HELP_AND_USAGE` is its current recommended task.
 
 ### 5.3 AI process control design plan
 
@@ -432,5 +434,6 @@ Stage 1 entry evidence:
 - beta release gate: accepted `v0.1.0` from one tarball after verifying the GitHub prerelease, npm `beta`, unchanged `latest` during publication, artifact parity, and isolated registry installation; the later explicit promotion made `beta=latest=0.1.0`
 - English-baseline planning gate: the seventh self-use plan fixes ADR 0004, the completed surface inventory and normative-document migration, six remaining tasks totaling 27p, a 14p precedence makespan, a 17p resource makespan, observed velocity `15p/1d`, and the then-recommended task `PROCESS_AND_GUIDANCE_DOCS`
 - English-baseline process-and-guidance gate: repository entrypoints and process/provider guidance are translated and cross-reviewed; five tasks totaling 19p remain, precedence is 11p, resource makespan is 16p with 5p delay, observed velocity is `23p/1d`, and `RUNTIME_MESSAGES` is recommended
+- English-baseline runtime-message gate: runtime diagnostics are translated and cross-reviewed without changing stable machine contracts; four tasks totaling 14p remain, precedence and resource makespans are both 11p, observed velocity is `28p/1d`, and `HELP_AND_USAGE` is recommended
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all seven plans
 - write state: Stage 3 editing/advance commands are enabled using preview-first, diff and deletion-list review, expected digests, and reanalysis after writes.

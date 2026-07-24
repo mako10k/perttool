@@ -147,10 +147,10 @@ function parseCanonicalObject(
   try {
     value = JSON.parse(json);
   } catch {
-    throw new ImportFailure(code, "Mermaid profile JSONが不正です", span);
+    throw new ImportFailure(code, "Mermaid profile JSON is invalid", span);
   }
   if (!isObject(value) || JSON.stringify(value) !== json) {
-    throw new ImportFailure(code, "Mermaid profile JSONがcanonical objectではありません", span);
+    throw new ImportFailure(code, "Mermaid profile JSON is not a canonical object", span);
   }
   return value;
 }
@@ -164,7 +164,7 @@ function assertKeys(
     Object.keys(value).length !== expected.length ||
     Object.keys(value).some((key, index) => key !== expected[index])
   ) {
-    throw new ImportFailure("PTCNV-102", "Mermaid profile recordのkeyまたはkey順が不正です", span);
+    throw new ImportFailure("PTCNV-102", "Mermaid profile record keys or key order are invalid", span);
   }
 }
 
@@ -175,7 +175,7 @@ function requiredString(
 ): string {
   const result = value[key];
   if (typeof result !== "string") {
-    throw new ImportFailure("PTCNV-102", `${key}はstringでなければなりません`, span);
+    throw new ImportFailure("PTCNV-102", `${key} must be a string`, span);
   }
   return result;
 }
@@ -187,7 +187,7 @@ function nullableString(
 ): string | null {
   const result = value[key];
   if (result !== null && typeof result !== "string") {
-    throw new ImportFailure("PTCNV-102", `${key}はstringまたはnullでなければなりません`, span);
+    throw new ImportFailure("PTCNV-102", `${key} must be a string or null`, span);
   }
   return result;
 }
@@ -199,14 +199,14 @@ function safeInteger(
 ): number {
   const result = value[key];
   if (!Number.isSafeInteger(result)) {
-    throw new ImportFailure("PTCNV-102", `${key}はsafe integerでなければなりません`, span);
+    throw new ImportFailure("PTCNV-102", `${key} must be a safe integer`, span);
   }
   return result as number;
 }
 
 function stringArray(value: unknown, key: string, span: SourceSpan): readonly string[] {
   if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
-    throw new ImportFailure("PTCNV-102", `${key}はstring arrayでなければなりません`, span);
+    throw new ImportFailure("PTCNV-102", `${key} must be a string array`, span);
   }
   return value as readonly string[];
 }
@@ -222,56 +222,56 @@ function parseHeader(value: Readonly<Record<string, unknown>>, span: SourceSpan)
     "projection",
   ], span);
   if (value["schema_version"] !== "Perttool.MermaidProfile.v1") {
-    throw new ImportFailure("PTCNV-101", "Mermaid profile schema/versionが未対応です", span);
+    throw new ImportFailure("PTCNV-101", "Mermaid profile schema/version is unsupported", span);
   }
   if (value["profile"] !== "perttool" || value["source_fidelity"] !== "semantic-v1") {
-    throw new ImportFailure("PTCNV-102", "Mermaid profile headerが不正です", span);
+    throw new ImportFailure("PTCNV-102", "Mermaid profile header is invalid", span);
   }
   const recordCount = safeInteger(value, "record_count", span);
   if (recordCount < 1) {
-    throw new ImportFailure("PTCNV-102", "record_countは1以上でなければなりません", span);
+    throw new ImportFailure("PTCNV-102", "record_count must be at least 1", span);
   }
   const metadataDigest = requiredString(value, "metadata_digest", span);
   const projectionDigest = requiredString(value, "projection_digest", span);
   if (!digestPattern.test(metadataDigest) || !digestPattern.test(projectionDigest)) {
-    throw new ImportFailure("PTCNV-102", "profile digestの形式が不正です", span);
+    throw new ImportFailure("PTCNV-102", "profile digest format is invalid", span);
   }
   const projection = value["projection"];
   if (!isObject(projection)) {
-    throw new ImportFailure("PTCNV-102", "projection snapshotがobjectではありません", span);
+    throw new ImportFailure("PTCNV-102", "projection snapshot is not an object", span);
   }
   assertKeys(projection, ["schema_version", "direction", "analysis", "capacity_overrides"], span);
   if (
     projection["schema_version"] !== "Perttool.MermaidProjection.v1" ||
     projection["direction"] !== "LR"
   ) {
-    throw new ImportFailure("PTCNV-101", "Mermaid projection schema/versionが未対応です", span);
+    throw new ImportFailure("PTCNV-101", "Mermaid projection schema/version is unsupported", span);
   }
   const analysis = projection["analysis"];
   if (!new Set(["none", "precedence", "resource", "both"]).has(analysis as string)) {
-    throw new ImportFailure("PTCNV-102", "projection analysisが不正です", span);
+    throw new ImportFailure("PTCNV-102", "projection analysis is invalid", span);
   }
   const rawOverrides = projection["capacity_overrides"];
   if (!Array.isArray(rawOverrides)) {
-    throw new ImportFailure("PTCNV-102", "capacity_overridesがarrayではありません", span);
+    throw new ImportFailure("PTCNV-102", "capacity_overrides is not an array", span);
   }
   const overrides = new Map<string, number>();
   let previous = "";
   for (const raw of rawOverrides) {
     if (!isObject(raw)) {
-      throw new ImportFailure("PTCNV-102", "capacity overrideがobjectではありません", span);
+      throw new ImportFailure("PTCNV-102", "capacity override is not an object", span);
     }
     assertKeys(raw, ["resource_id", "capacity"], span);
     const resourceId = requiredString(raw, "resource_id", span);
     const capacity = safeInteger(raw, "capacity", span);
     if (!identifierPattern.test(resourceId) || capacity < 1 || compareStableStrings(previous, resourceId) >= 0) {
-      throw new ImportFailure("PTCNV-102", "capacity overrideのID、capacity、順序が不正です", span);
+      throw new ImportFailure("PTCNV-102", "capacity override ID, capacity, or order is invalid", span);
     }
     previous = resourceId;
     overrides.set(resourceId, capacity);
   }
   if (overrides.size > 0 && analysis !== "resource" && analysis !== "both") {
-    throw new ImportFailure("PTCNV-102", "capacity overrideにはresource analysisが必要です", span);
+    throw new ImportFailure("PTCNV-102", "capacity override requires resource analysis", span);
   }
   return {
     recordCount,
@@ -304,36 +304,36 @@ function validateRecordShape(record: ParsedRecord): void {
   }
   if (kind === "project") {
     if (safeInteger(value, "version", span) !== 1) {
-      throw new ImportFailure("PTCNV-101", "project versionが未対応です", span);
+      throw new ImportFailure("PTCNV-101", "project version is unsupported", span);
     }
     nullableString(value, "description", span);
     nullableString(value, "as_of", span);
     const unit = requiredString(value, "duration_unit", span);
     if (!new Set(["day", "hour", "point"]).has(unit)) {
-      throw new ImportFailure("PTCNV-102", "duration_unitが不正です", span);
+      throw new ImportFailure("PTCNV-102", "duration_unit is invalid", span);
     }
     const velocity = nullableString(value, "velocity", span);
     if (velocity !== null && !velocityPattern.test(velocity)) {
-      throw new ImportFailure("PTCNV-102", "velocity tokenがcanonicalではありません", span);
+      throw new ImportFailure("PTCNV-102", "velocity token is not canonical", span);
     }
     for (const key of ["critical_epsilon", "target_duration"] as const) {
       const token = key === "target_duration"
         ? nullableString(value, key, span)
         : requiredString(value, key, span);
       if (token !== null && !durationPattern.test(token)) {
-        throw new ImportFailure("PTCNV-102", `${key} tokenがcanonicalではありません`, span);
+        throw new ImportFailure("PTCNV-102", `${key} token is not canonical`, span);
       }
     }
   } else if (kind === "resource") {
     nullableString(value, "description", span);
     if (safeInteger(value, "capacity", span) < 1) {
-      throw new ImportFailure("PTCNV-102", "resource capacityが不正です", span);
+      throw new ImportFailure("PTCNV-102", "resource capacity is invalid", span);
     }
     stringArray(value["tags"], "tags", span);
   } else if (kind === "milestone") {
     nullableString(value, "description", span);
     if (!new Set(["planned", "reached"]).has(value["state"] as string)) {
-      throw new ImportFailure("PTCNV-102", "milestone stateが不正です", span);
+      throw new ImportFailure("PTCNV-102", "milestone state is invalid", span);
     }
     stringArray(value["tags"], "tags", span);
   } else if (kind === "task") {
@@ -342,43 +342,43 @@ function validateRecordShape(record: ParsedRecord): void {
     nullableString(value, "blocked_reason", span);
     nullableString(value, "source", span);
     if (!new Set(["planned", "active", "blocked", "done"]).has(value["status"] as string)) {
-      throw new ImportFailure("PTCNV-102", "task statusが不正です", span);
+      throw new ImportFailure("PTCNV-102", "task status is invalid", span);
     }
     safeInteger(value, "priority", span);
     stringArray(value["tags"], "tags", span);
     const estimate = value["estimate"];
     if (!isObject(estimate)) {
-      throw new ImportFailure("PTCNV-102", "task estimateがobjectではありません", span);
+      throw new ImportFailure("PTCNV-102", "task estimate is not an object", span);
     }
     if (estimate["kind"] === "deterministic") {
       assertKeys(estimate, ["kind", "duration"], span);
       if (!durationPattern.test(requiredString(estimate, "duration", span))) {
-        throw new ImportFailure("PTCNV-102", "duration tokenがcanonicalではありません", span);
+        throw new ImportFailure("PTCNV-102", "duration token is not canonical", span);
       }
     } else if (estimate["kind"] === "pert") {
       assertKeys(estimate, ["kind", "optimistic", "most_likely", "pessimistic"], span);
       for (const key of ["optimistic", "most_likely", "pessimistic"]) {
         if (!durationPattern.test(requiredString(estimate, key, span))) {
-          throw new ImportFailure("PTCNV-102", "PERT tokenがcanonicalではありません", span);
+          throw new ImportFailure("PTCNV-102", "PERT token is not canonical", span);
         }
       }
     } else {
-      throw new ImportFailure("PTCNV-102", "task estimate kindが不正です", span);
+      throw new ImportFailure("PTCNV-102", "task estimate kind is invalid", span);
     }
     const requirements = value["requires"];
     if (!Array.isArray(requirements)) {
-      throw new ImportFailure("PTCNV-102", "requiresがarrayではありません", span);
+      throw new ImportFailure("PTCNV-102", "requires is not an array", span);
     }
     let previous = "";
     for (const raw of requirements) {
       if (!isObject(raw)) {
-        throw new ImportFailure("PTCNV-102", "requirementがobjectではありません", span);
+        throw new ImportFailure("PTCNV-102", "requirement is not an object", span);
       }
       assertKeys(raw, ["resource_id", "units"], span);
       const resourceId = requiredString(raw, "resource_id", span);
       const units = safeInteger(raw, "units", span);
       if (units < 1 || compareStableStrings(previous, resourceId) >= 0) {
-        throw new ImportFailure("PTCNV-102", "requirementの値または順序が不正です", span);
+        throw new ImportFailure("PTCNV-102", "requirement value or order is invalid", span);
       }
       previous = resourceId;
     }
@@ -464,7 +464,7 @@ function serializeProfileRecords(records: readonly ParsedRecord[]): string {
 
 function validateRecordOrder(records: readonly ParsedRecord[], expectedCount: number): void {
   if (records.length !== expectedCount || records.length === 0 || records[0]!.kind !== "project") {
-    throw new ImportFailure("PTCNV-103", "semantic record countまたはproject recordが不正です");
+    throw new ImportFailure("PTCNV-103", "semantic record count or project record is invalid");
   }
   let previousRank = -1;
   let previousId = "";
@@ -473,7 +473,7 @@ function validateRecordOrder(records: readonly ParsedRecord[], expectedCount: nu
     const rank = kinds.indexOf(record.kind);
     const id = requiredString(record.value, "id", lineSpan(record.line));
     if (rank < previousRank || (rank === previousRank && compareStableStrings(previousId, id) >= 0)) {
-      throw new ImportFailure("PTCNV-103", "semantic record kindまたはID順が不正です", lineSpan(record.line));
+      throw new ImportFailure("PTCNV-103", "semantic record kind or ID order is invalid", lineSpan(record.line));
     }
     if (record.kind === "project") projects += 1;
     if (rank !== previousRank) previousId = "";
@@ -481,7 +481,7 @@ function validateRecordOrder(records: readonly ParsedRecord[], expectedCount: nu
     previousId = id;
   }
   if (projects !== 1) {
-    throw new ImportFailure("PTCNV-103", "project recordはexactly one必要です");
+    throw new ImportFailure("PTCNV-103", "exactly one project record is required");
   }
 }
 
@@ -498,17 +498,17 @@ function importProfile(
   maxDiagnostics: number,
 ): MermaidImportResult {
   if (text.startsWith("\uFEFF") || text.includes("\r") || !text.endsWith("\n")) {
-    throw new ImportFailure("PTCNV-102", "profile artifactはBOMなし、LF、末尾newlineを必要とします");
+    throw new ImportFailure("PTCNV-102", "profile artifact requires no BOM, LF line endings, and a trailing newline");
   }
   if (lines[0]?.text !== "flowchart LR" || lines[1]?.text.startsWith("  %% perttool:profile ") !== true) {
-    throw new ImportFailure("PTCNV-102", "profile artifact構造が不正です");
+    throw new ImportFailure("PTCNV-102", "profile artifact structure is invalid");
   }
   const lastNonempty = lines.findLastIndex(({ text }) => text !== "");
   if (lastNonempty === -1 || lines[lastNonempty]!.text !== "  %% perttool:projection-end") {
-    throw new ImportFailure("PTCNV-102", "projection-end markerがありません");
+    throw new ImportFailure("PTCNV-102", "projection-end marker is missing");
   }
   if (lines.slice(lastNonempty + 1).some(({ text: line }) => line !== "")) {
-    throw new ImportFailure("PTCNV-102", "projection-end後にstatementがあります");
+    throw new ImportFailure("PTCNV-102", "statement exists after projection-end");
   }
   const headerLine = lines[1]!;
   const headerJson = headerLine.text.slice("  %% perttool:profile ".length);
@@ -521,7 +521,7 @@ function importProfile(
   const endIndexes = lines.flatMap((line, index) =>
     line.text === "  %% perttool:projection-end" ? [index] : []);
   if (beginIndexes.length !== 1 || endIndexes.length !== 1 || beginIndexes[0]! <= 1 || endIndexes[0]! <= beginIndexes[0]! + 1) {
-    throw new ImportFailure("PTCNV-102", "projection marker構造が不正です");
+    throw new ImportFailure("PTCNV-102", "projection marker structure is invalid");
   }
   const begin = beginIndexes[0]!;
   const end = endIndexes[0]!;
@@ -530,7 +530,7 @@ function importProfile(
   for (const line of lines.slice(2, begin)) {
     const match = recordPattern.exec(line.text);
     if (match === null) {
-      throw new ImportFailure("PTCNV-102", "semantic record lineが不正です", lineSpan(line));
+      throw new ImportFailure("PTCNV-102", "semantic record line is invalid", lineSpan(line));
     }
     const json = match[2]!;
     records.push({
@@ -544,16 +544,16 @@ function importProfile(
   for (const record of records) validateRecordShape(record);
   const metadataBody = records.map(({ kind, json }) => `${kind} ${json}\n`).join("");
   if (sha256(metadataBody) !== header.metadataDigest) {
-    throw new ImportFailure("PTCNV-104", "metadata digestが一致しません");
+    throw new ImportFailure("PTCNV-104", "metadata digest does not match");
   }
   const projectionBody = lines.slice(begin + 1, end).map(({ text: line }) => `${line}\n`).join("");
   if (sha256(projectionBody) !== header.projectionDigest) {
-    throw new ImportFailure("PTCNV-105", "projection digestが一致しません");
+    throw new ImportFailure("PTCNV-105", "projection digest does not match");
   }
   const artifact = serializeProfileRecords(records);
   const checked = checkDocument(artifact, { maxDiagnostics });
   if (!checked.ok) {
-    throw new ImportFailure("PTCNV-106", "metadataから復元したDSLが意味検査に失敗しました");
+    throw new ImportFailure("PTCNV-106", "DSL restored from metadata failed semantic validation");
   }
   const reproduced = exportMermaid(artifact, {
     analysis: header.analysis,
@@ -561,7 +561,7 @@ function importProfile(
     maxDiagnostics,
   });
   if (!reproduced.ok || reproduced.artifact !== text) {
-    throw new ImportFailure("PTCNV-105", "projectionがmetadataのnode/edgeまたは解析snapshotと一致しません");
+    throw new ImportFailure("PTCNV-105", "projection does not match metadata nodes/edges or analysis snapshot");
   }
   return {
     ok: true,
@@ -628,7 +628,7 @@ function importPlain(
 ): MermaidImportResult {
   const first = lines.find(({ text: line }) => line.trim() !== "");
   if (first?.text.trim() !== "flowchart LR") {
-    throw new ImportFailure("PTCNV-102", "plain Mermaid v1はflowchart LRを必要とします", first === undefined ? undefined : lineSpan(first));
+    throw new ImportFailure("PTCNV-102", "plain Mermaid v1 requires flowchart LR", first === undefined ? undefined : lineSpan(first));
   }
   const nodes = new Map<string, PlainNode>();
   const edges: PlainEdge[] = [];
@@ -642,7 +642,7 @@ function importPlain(
     const trimmed = line.text.trim();
     if (trimmed === "" || line === first || stylePattern.test(line.text)) continue;
     if (unsafePattern.test(line.text)) {
-      throw new ImportFailure("PTCNV-102", "実行可能directiveまたはraw HTMLはimportできません", lineSpan(line));
+      throw new ImportFailure("PTCNV-102", "executable directives or raw HTML cannot be imported", lineSpan(line));
     }
     const nodeMatch = nodePattern.exec(line.text);
     if (nodeMatch !== null) {
@@ -667,7 +667,7 @@ function importPlain(
     if (!nodes.has(edge.to)) nodes.set(edge.to, { rawId: edge.to, title: edge.to, line: edge.line });
   }
   if (nodes.size === 0) {
-    throw new ImportFailure("PTCNV-102", "import可能なnodeがありません");
+    throw new ImportFailure("PTCNV-102", "no importable nodes");
   }
   const sortedNodes = [...nodes.values()].sort((left, right) => compareStableStrings(left.rawId, right.rawId));
   const generatedIds: GeneratedId[] = [];
@@ -728,25 +728,25 @@ function importPlain(
   const artifact = `${declarations.join("\n\n")}\n`;
   const checked = checkDocument(artifact, { maxDiagnostics });
   if (!checked.ok) {
-    throw new ImportFailure("PTCNV-106", "plain MermaidからvalidなAoA DAGを構成できません");
+    throw new ImportFailure("PTCNV-106", "could not construct a valid AoA DAG from plain Mermaid");
   }
   const records: ConversionLoss[] = [
-    loss("PTCNV-202", "project fieldをplain Mermaid既定値で生成しました", "IMPORTED_MERMAID", lineSpan(first)),
-    loss("PTCNV-204", "resource、estimate以外のtask fieldをplain Mermaidから復元できません", null, null),
+    loss("PTCNV-202", "project fields were generated using plain Mermaid defaults", "IMPORTED_MERMAID", lineSpan(first)),
+    loss("PTCNV-204", "task fields other than resource and estimate cannot be restored from plain Mermaid", null, null),
     ...sortedNodes.map((node) => loss(
       "PTCNV-201",
-      `${node.rawId}へstable milestone IDを生成しました`,
+      `generated stable milestone ID for ${node.rawId}`,
       milestoneIds.get(node.rawId)!,
       lineSpan(node.line),
     )),
     ...edges.flatMap((edge, index) => [
-      loss("PTCNV-201", `edge ${edge.index + 1}へstable task IDを生成しました`, `TASK_${String(index + 1).padStart(3, "0")}`, lineSpan(edge.line)),
-      loss("PTCNV-203", "plain Mermaid edgeのtask/gate kindを確定できないためtaskとして生成しました", `TASK_${String(index + 1).padStart(3, "0")}`, lineSpan(edge.line)),
+      loss("PTCNV-201", `generated stable task ID for edge ${edge.index + 1}`, `TASK_${String(index + 1).padStart(3, "0")}`, lineSpan(edge.line)),
+      loss("PTCNV-203", "generated as a task because the plain Mermaid edge kind cannot be determined as task or gate", `TASK_${String(index + 1).padStart(3, "0")}`, lineSpan(edge.line)),
     ]),
     ...(syntheticFinish
-      ? [loss("PTCNV-201", "複数sinkを統合するfinishとgate IDを生成しました", "MERMAID_FINISH", null)]
+      ? [loss("PTCNV-201", "generated finish and gate IDs to merge multiple sinks", "MERMAID_FINISH", null)]
       : []),
-    ...unsupported.map((line) => loss("PTCNV-205", "未対応Mermaid statementを無視しました", null, lineSpan(line))),
+    ...unsupported.map((line) => loss("PTCNV-205", "ignored unsupported Mermaid statement", null, lineSpan(line))),
   ];
   return {
     ok: true,

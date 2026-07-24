@@ -731,7 +731,7 @@ function assertExpectedDigest(
   ) {
     throw new SafeWriteConflictError(
       "expected_digest_mismatch",
-      "--expect-digestがinitial document digestと一致しません",
+      "--expect-digest does not match the initial document digest",
     );
   }
 }
@@ -744,7 +744,7 @@ async function commitCandidate(
   if (candidateText === null) {
     throw new SafeWriteVerificationError(
       "invalid_candidate",
-      "successful editing resultにcandidate textがありません",
+      "successful editing result has no candidate text",
     );
   }
   return request.mode === "in_place"

@@ -84,12 +84,12 @@ function errorCode(error: unknown): string | undefined {
 async function writableSource(path: string): Promise<WritableSource> {
   const pathStat = await lstat(path);
   if (pathStat.isSymbolicLink()) {
-    throw new SafeWriteConflictError("symlink", `symlink inputへのwriteは拒否されました: ${path}`);
+    throw new SafeWriteConflictError("symlink", `write to symlink input was rejected: ${path}`);
   }
   if (!pathStat.isFile()) {
     throw new SafeWriteConflictError(
       "not_regular_file",
-      `regular file以外へのwriteは拒否されました: ${path}`,
+      `write to non-regular file was rejected: ${path}`,
     );
   }
 
@@ -100,7 +100,7 @@ async function writableSource(path: string): Promise<WritableSource> {
     if (errorCode(error) === "ELOOP") {
       throw new SafeWriteConflictError(
         "symlink",
-        `symlink inputへのwriteは拒否されました: ${path}`,
+        `write to symlink input was rejected: ${path}`,
       );
     }
     throw error;
@@ -110,13 +110,13 @@ async function writableSource(path: string): Promise<WritableSource> {
     if (!openedStat.isFile()) {
       throw new SafeWriteConflictError(
         "not_regular_file",
-        `regular file以外へのwriteは拒否されました: ${path}`,
+        `write to non-regular file was rejected: ${path}`,
       );
     }
     if (openedStat.dev !== pathStat.dev || openedStat.ino !== pathStat.ino) {
       throw new SafeWriteConflictError(
         "source_changed",
-        `document pathがread中に置き換えられました: ${path}`,
+        `document path was replaced while being read: ${path}`,
       );
     }
     const bytes = await handle.readFile();
@@ -136,7 +136,7 @@ async function currentWritableSource(path: string): Promise<WritableSource> {
     if (errorCode(error) === "ENOENT") {
       throw new SafeWriteConflictError(
         "source_changed",
-        `documentが初回read後に削除されました: ${path}`,
+        `document was deleted after the initial read: ${path}`,
       );
     }
     throw error;
@@ -148,7 +148,7 @@ function validateCandidate(candidateText: string): Buffer {
   if (!checked.ok) {
     throw new SafeWriteVerificationError(
       "invalid_candidate",
-      "safe-write candidateがdocument検査に失敗しました",
+      "safe-write candidate failed document validation",
       checked.diagnostics,
     );
   }
@@ -178,7 +178,7 @@ async function exclusiveTemporary(
       if (errorCode(error) !== "EEXIST") throw error;
     }
   }
-  throw new Error(`exclusive temporary fileを作成できませんでした: ${target}`);
+  throw new Error(`could not create an exclusive temporary file: ${target}`);
 }
 
 async function writeAndSyncTemporary(
@@ -227,14 +227,14 @@ async function verifyWrittenDocument(
   if (written.digest !== candidateDigest) {
     throw new SafeWriteVerificationError(
       "post_write_digest_mismatch",
-      `written document digestがcandidateと一致しません: ${target}`,
+      `written document digest does not match candidate: ${target}`,
     );
   }
   const checked = checkDocument(written.text);
   if (!checked.ok) {
     throw new SafeWriteVerificationError(
       "post_write_invalid",
-      `written documentが再検査に失敗しました: ${target}`,
+      `written document failed revalidation: ${target}`,
       checked.diagnostics,
     );
   }
@@ -248,7 +248,7 @@ async function verifyWrittenArtifact(
   if (written.digest !== candidateDigest) {
     throw new SafeWriteVerificationError(
       "post_write_digest_mismatch",
-      `written artifact digestがcandidateと一致しません: ${target}`,
+      `written artifact digest does not match candidate: ${target}`,
     );
   }
 }
@@ -266,7 +266,7 @@ export async function replaceDocumentFile(
   ) {
     throw new SafeWriteConflictError(
       "expected_digest_mismatch",
-      "--expect-digestがinitial document digestと一致しません",
+      "--expect-digest does not match the initial document digest",
     );
   }
 
@@ -274,7 +274,7 @@ export async function replaceDocumentFile(
   if (beforeWrite.digest !== options.initialDigest) {
     throw new SafeWriteConflictError(
       "source_changed",
-      `documentが初回read後に変更されました: ${target}`,
+      `document changed after the initial read: ${target}`,
     );
   }
 
@@ -299,7 +299,7 @@ export async function replaceDocumentFile(
     if (beforeRename.digest !== options.initialDigest) {
       throw new SafeWriteConflictError(
         "source_changed",
-        `documentがcommit直前に変更されました: ${target}`,
+        `document changed immediately before commit: ${target}`,
       );
     }
     await rename(temporaryPath, target);
@@ -324,7 +324,7 @@ async function assertTargetAbsent(target: string): Promise<void> {
     const targetStat = await lstat(target);
     throw new SafeWriteConflictError(
       targetStat.isSymbolicLink() ? "symlink" : "target_exists",
-      `--out targetは既に存在します: ${target}`,
+      `--out target already exists: ${target}`,
     );
   } catch (error) {
     if (errorCode(error) === "ENOENT") return;
@@ -355,7 +355,7 @@ export async function createDocumentFile(
       if (errorCode(error) === "EEXIST") {
         throw new SafeWriteConflictError(
           "target_exists",
-          `--out targetがcommit前に作成されました: ${target}`,
+          `--out target was created before commit: ${target}`,
         );
       }
       throw error;
@@ -399,7 +399,7 @@ export async function createArtifactFile(
       if (errorCode(error) === "EEXIST") {
         throw new SafeWriteConflictError(
           "target_exists",
-          `--out targetがcommit前に作成されました: ${target}`,
+          `--out target was created before commit: ${target}`,
         );
       }
       throw error;

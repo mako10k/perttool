@@ -78,18 +78,18 @@ function planAtomicMutationEdits(
 
 function batchRequestError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return "batch mutation requestがobjectではありません";
+    return "batch mutation request is not an object";
   }
   const request = value as Record<string, unknown>;
-  if (request["kind"] !== "batch") return "batch mutation kindが不正です";
+  if (request["kind"] !== "batch") return "batch mutation kind is invalid";
   if (Object.keys(request).some((name) => !["kind", "mutations"].includes(name))) {
-    return "batch mutation requestに未対応fieldが含まれています";
+    return "batch mutation request contains unsupported fields";
   }
   if (!Array.isArray(request["mutations"]) || request["mutations"].length === 0) {
-    return "batch mutationは1件以上のatomic mutationを必要とします";
+    return "batch mutation requires at least one atomic mutation";
   }
   if (request["mutations"].some((item) => runtimeKind(item) === "batch")) {
-    return "batch mutationはnested batchを許可しません";
+    return "batch mutation does not allow nested batches";
   }
   const targets = request["mutations"].map((item) => {
     if (item === null || typeof item !== "object") return undefined;
@@ -98,10 +98,10 @@ function batchRequestError(value: unknown): string | undefined {
     return typeof record["id"] === "string" ? `entity:${record["id"]}` : undefined;
   });
   if (targets.some((target) => target === undefined)) {
-    return "batch内のatomic mutationはproject targetまたはstring idを必要とします";
+    return "atomic mutations in a batch require a project target or string id";
   }
   if (new Set(targets).size !== targets.length) {
-    return "batch内で同じtargetを複数回変更できません";
+    return "the same target cannot be changed more than once in a batch";
   }
   return undefined;
 }
@@ -183,7 +183,7 @@ function planMutationRequest(
       original.documentId,
       [
         ...original.diagnostics,
-        mutationDiagnostic("PTMUT-301", "mutation applyはtop-level batch requestを必要とします"),
+        mutationDiagnostic("PTMUT-301", "mutation apply requires a top-level batch request"),
       ],
       maximum,
       original.diagnosticsTruncated,
@@ -210,7 +210,7 @@ function planMutationRequest(
       original.documentId,
       [
         ...original.diagnostics,
-        mutationDiagnostic("PTMUT-301", "batch mutationのTextEdit rangeが競合しています"),
+        mutationDiagnostic("PTMUT-301", "TextEdit ranges in the batch mutation overlap"),
       ],
       maximum,
       original.diagnosticsTruncated,

@@ -93,7 +93,7 @@ function validStringArray(value: unknown): value is readonly string[] {
 }
 
 function taskDefinitionError(value: unknown): string | undefined {
-  if (value === null || typeof value !== "object") return "task definitionがobjectではありません";
+  if (value === null || typeof value !== "object") return "task definition is not an object";
   const task = value as Record<string, unknown>;
   const knownFields = new Set([
     "title",
@@ -109,44 +109,44 @@ function taskDefinitionError(value: unknown): string | undefined {
     "source",
   ]);
   if (Object.keys(task).some((name) => !knownFields.has(name))) {
-    return "task definitionに未対応fieldが含まれています";
+    return "task definition contains unsupported fields";
   }
-  if (typeof task["title"] !== "string") return "task titleがstringではありません";
+  if (typeof task["title"] !== "string") return "task title is not a string";
   if ((task["duration"] === undefined) === (task["estimate"] === undefined)) {
-    return "durationまたはestimateのexactly oneを必要とします";
+    return "exactly one of duration or estimate is required";
   }
   if (task["duration"] !== undefined && typeof task["duration"] !== "string") {
-    return "durationがstringではありません";
+    return "duration is not a string";
   }
   if (task["estimate"] !== undefined && !validEstimate(task["estimate"])) {
-    return "estimateはoptimistic、mostLikely、pessimisticのstringを必要とします";
+    return "estimate requires optimistic, mostLikely, and pessimistic string fields";
   }
   for (const name of ["description", "owner", "blockedReason", "source"] as const) {
     if (task[name] !== undefined && typeof task[name] !== "string") {
-      return `${name}がstringではありません`;
+      return `${name} is not a string`;
     }
   }
   if (task["status"] !== undefined && !taskStatuses.has(task["status"] as string)) {
-    return "statusがtask statusではありません";
+    return "status is not a task status";
   }
   if (task["priority"] !== undefined && !Number.isSafeInteger(task["priority"])) {
-    return "priorityがsafe integerではありません";
+    return "priority is not a safe integer";
   }
   if (task["tags"] !== undefined && !validStringArray(task["tags"])) {
-    return "tagsがstring arrayではありません";
+    return "tags are not a string array";
   }
   if (
     task["requirements"] !== undefined &&
     (!Array.isArray(task["requirements"]) || !task["requirements"].every(validRequirement))
   ) {
-    return "requirementsがresourceIdとsafe integer unitsのarrayではありません";
+    return "requirements must be an array of entries with resourceId and safe integer units";
   }
   return undefined;
 }
 
 function taskMutationRequestError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return "mutation requestがobjectではありません";
+    return "mutation request is not an object";
   }
   const request = value as Record<string, unknown>;
   const kind = request["kind"];
@@ -156,9 +156,9 @@ function taskMutationRequestError(value: unknown): string | undefined {
     kind !== "task.remove" &&
     kind !== "task.finish"
   ) {
-    return "mutation kindが未対応です";
+    return "mutation kind is unsupported";
   }
-  if (typeof request["id"] !== "string") return "mutation idがstringではありません";
+  if (typeof request["id"] !== "string") return "mutation id is not a string";
   const fieldsByKind: Readonly<Record<string, ReadonlySet<string>>> = {
     "task.add": new Set(["kind", "id", "from", "to", "task"]),
     "task.set": new Set([
@@ -177,7 +177,7 @@ function taskMutationRequestError(value: unknown): string | undefined {
     "task.finish": new Set(["kind", "id"]),
   };
   if (Object.keys(request).some((name) => !fieldsByKind[kind]!.has(name))) {
-    return `${kind} requestに未対応fieldが含まれています`;
+    return `${kind} request contains unsupported fields`;
   }
   return undefined;
 }
@@ -281,7 +281,7 @@ function addTaskPlan(text: string, mutation: AddTaskMutation): TaskMutationPlan 
       edits: [],
       diagnostic: mutationDiagnostic(
         "PTMUT-301",
-        `task.add requestが不正です${taskError === undefined ? "" : `: ${taskError}`}`,
+        `task.add request is invalid${taskError === undefined ? "" : `: ${taskError}`}`,
       ),
     };
   }
@@ -302,7 +302,7 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
     rawSet !== undefined &&
     (rawSet === null || typeof rawSet !== "object" || Array.isArray(rawSet))
   ) {
-    return "setがobjectではありません";
+    return "set is not an object";
   }
   for (const [name, value] of [
     ["clear", rawClear],
@@ -311,7 +311,7 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
     ["upsertRequirements", rawUpsertRequirements],
     ["removeRequirements", rawRemoveRequirements],
   ] as const) {
-    if (value !== undefined && !Array.isArray(value)) return `${name}がarrayではありません`;
+    if (value !== undefined && !Array.isArray(value)) return `${name} is not an array`;
   }
   const set = (rawSet ?? {}) as TaskFieldSet;
   const setEntries = Object.entries(set).filter(([, value]) => value !== undefined);
@@ -330,16 +330,16 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
     upsertRequirements.length === 0 &&
     removeRequirements.length === 0
   ) {
-    return "task.setは少なくとも1つの変更指定を必要とします";
+    return "task.set requires at least one change specification";
   }
   if (set.duration !== undefined && set.estimate !== undefined) {
-    return "durationとestimateは同時にsetできません";
+    return "duration and estimate cannot both be specified in set";
   }
   if (mutation.from !== undefined && typeof mutation.from !== "string") {
-    return "fromがstringではありません";
+    return "from is not a string";
   }
   if (mutation.to !== undefined && typeof mutation.to !== "string") {
-    return "toがstringではありません";
+    return "to is not a string";
   }
   const knownSetFields = new Set([
     "title",
@@ -353,36 +353,36 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
     "source",
   ]);
   if (Object.keys(set).some((name) => !knownSetFields.has(name))) {
-    return "setに未対応fieldが含まれています";
+    return "set contains unsupported fields";
   }
   for (const name of ["title", "description", "duration", "owner", "blockedReason", "source"] as const) {
     if (set[name] !== undefined && typeof set[name] !== "string") {
-      return `${name}がstringではありません`;
+      return `${name} is not a string`;
     }
   }
   if (set.estimate !== undefined && !validEstimate(set.estimate)) {
-    return "estimateはoptimistic、mostLikely、pessimisticのstringを必要とします";
+    return "estimate requires optimistic, mostLikely, and pessimistic string fields";
   }
   if (set.status !== undefined && !taskStatuses.has(set.status)) {
-    return "statusがtask statusではありません";
+    return "status is not a task status";
   }
   if (set.priority !== undefined && !Number.isSafeInteger(set.priority)) {
-    return "priorityがsafe integerではありません";
+    return "priority is not a safe integer";
   }
   if (!Array.isArray(clear) || clear.some((name) => !clearableFields.has(name))) {
-    return "clearに未対応fieldが含まれています";
+    return "clear contains unsupported fields";
   }
   if (!validStringArray(addTags) || !validStringArray(removeTags)) {
-    return "addTagsとremoveTagsはstring arrayである必要があります";
+    return "addTags and removeTags must be string arrays";
   }
   if (
     !Array.isArray(upsertRequirements) ||
     !upsertRequirements.every(validRequirement) ||
     !validStringArray(removeRequirements)
   ) {
-    return "requirement変更指定が不正です";
+    return "requirement change specification is invalid";
   }
-  if (new Set(clear).size !== clear.length) return "clear fieldが重複しています";
+  if (new Set(clear).size !== clear.length) return "clear contains duplicate fields";
   const clearNames = new Set(clear);
   const setToClear: Readonly<Record<keyof TaskFieldSet, string>> = {
     title: "title",
@@ -397,29 +397,29 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
   };
   for (const [name] of setEntries) {
     if (clearNames.has(setToClear[name as keyof TaskFieldSet] as never)) {
-      return `${setToClear[name as keyof TaskFieldSet]}をsetとclearへ同時指定できません`;
+      return `${setToClear[name as keyof TaskFieldSet]} cannot be specified in both set and clear`;
     }
   }
   if (clearNames.has("tags") && (addTags.length > 0 || removeTags.length > 0)) {
-    return "clear tagsとadd/remove tagは併用できません";
+    return "clear tags cannot be combined with add/remove tags";
   }
   if (
     clearNames.has("requires") &&
     (upsertRequirements.length > 0 || removeRequirements.length > 0)
   ) {
-    return "clear requiresとupsert/remove requirementは併用できません";
+    return "clear requires cannot be combined with upsert/remove requirements";
   }
   const removedTags = new Set(removeTags);
   if (addTags.some((tag) => removedTags.has(tag))) {
-    return "同じtagをaddとremoveへ同時指定できません";
+    return "the same tag cannot be specified in both add and remove";
   }
   const removedResources = new Set(removeRequirements);
   if (upsertRequirements.some(({ resourceId }) => removedResources.has(resourceId))) {
-    return "同じresourceをupsertとremoveへ同時指定できません";
+    return "the same resource cannot be specified in both upsert and remove";
   }
   const upsertIds = upsertRequirements.map(({ resourceId }) => resourceId);
   if (new Set(upsertIds).size !== upsertIds.length) {
-    return "upsert requirementのresourceが重複しています";
+    return "upsert requirements contain duplicate resources";
   }
   return undefined;
 }
@@ -687,7 +687,7 @@ export function planTaskMutationEdits(
         edits: [],
         diagnostic: mutationDiagnostic(
           "PTMUT-304",
-          `entity ID ${mutation.id}はすでに使用されています`,
+          `entity ID ${mutation.id} is already in use`,
           entity,
         ),
       };
@@ -699,7 +699,7 @@ export function planTaskMutationEdits(
       edits: [],
       diagnostic: mutationDiagnostic(
         "PTMUT-302",
-        `task ${mutation.id}が存在しません`,
+        `task ${mutation.id} does not exist`,
       ),
     };
   }
@@ -708,7 +708,7 @@ export function planTaskMutationEdits(
       edits: [],
       diagnostic: mutationDiagnostic(
         "PTMUT-303",
-        `entity ${mutation.id}はtaskではありません`,
+        `entity ${mutation.id} is not a task`,
         entity,
       ),
     };

@@ -14,39 +14,39 @@ const fieldOrder = ["title", "description", "capacity", "tags"] as const;
 
 function requestShapeError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return "resource mutation requestがobjectではありません";
+    return "resource mutation request is not an object";
   }
   const request = value as Record<string, unknown>;
   const kind = request["kind"];
   if (kind !== "resource.add" && kind !== "resource.set" && kind !== "resource.remove") {
-    return "resource mutation kindが未対応です";
+    return "resource mutation kind is unsupported";
   }
-  if (typeof request["id"] !== "string") return "resource idがstringではありません";
+  if (typeof request["id"] !== "string") return "resource id is not a string";
   const fieldsByKind: Readonly<Record<string, ReadonlySet<string>>> = {
     "resource.add": new Set(["kind", "id", "resource"]),
     "resource.set": new Set(["kind", "id", "set", "clear"]),
     "resource.remove": new Set(["kind", "id"]),
   };
   if (Object.keys(request).some((name) => !fieldsByKind[kind]!.has(name))) {
-    return `${kind} requestに未対応fieldが含まれています`;
+    return `${kind} request contains unsupported fields`;
   }
   return undefined;
 }
 
 function definitionError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return "resource definitionがobjectではありません";
+    return "resource definition is not an object";
   }
   const resource = value as Record<string, unknown>;
   if (Object.keys(resource).some((name) => !["title", "description", "capacity"].includes(name))) {
-    return "resource definitionに未対応fieldが含まれています";
+    return "resource definition contains unsupported fields";
   }
-  if (typeof resource["title"] !== "string") return "resource titleがstringではありません";
+  if (typeof resource["title"] !== "string") return "resource title is not a string";
   if (!Number.isSafeInteger(resource["capacity"])) {
-    return "resource capacityがsafe integerではありません";
+    return "resource capacity is not a safe integer";
   }
   if (resource["description"] !== undefined && typeof resource["description"] !== "string") {
-    return "resource descriptionがstringではありません";
+    return "resource description is not a string";
   }
   return undefined;
 }
@@ -73,31 +73,31 @@ function setRequestError(mutation: SetResourceMutation): string | undefined {
     rawSet !== undefined &&
     (rawSet === null || typeof rawSet !== "object" || Array.isArray(rawSet))
   ) {
-    return "resource setがobjectではありません";
+    return "resource set is not an object";
   }
-  if (rawClear !== undefined && !Array.isArray(rawClear)) return "clearがarrayではありません";
+  if (rawClear !== undefined && !Array.isArray(rawClear)) return "clear is not an array";
   const set = (rawSet ?? {}) as ResourceFieldSet;
   const clear = (rawClear ?? []) as NonNullable<SetResourceMutation["clear"]>;
   const setEntries = Object.entries(set).filter(([, item]) => item !== undefined);
   if (setEntries.length === 0 && clear.length === 0) {
-    return "resource.setは少なくとも1つの変更指定を必要とします";
+    return "resource.set requires at least one change specification";
   }
   if (Object.keys(set).some((name) => !["title", "description", "capacity"].includes(name))) {
-    return "resource setに未対応fieldが含まれています";
+    return "resource set contains unsupported fields";
   }
-  if (set.title !== undefined && typeof set.title !== "string") return "titleがstringではありません";
+  if (set.title !== undefined && typeof set.title !== "string") return "title is not a string";
   if (set.description !== undefined && typeof set.description !== "string") {
-    return "descriptionがstringではありません";
+    return "description is not a string";
   }
   if (set.capacity !== undefined && !Number.isSafeInteger(set.capacity)) {
-    return "capacityがsafe integerではありません";
+    return "capacity is not a safe integer";
   }
   if (!Array.isArray(clear) || clear.some((name) => name !== "description")) {
-    return "clearに未対応fieldが含まれています";
+    return "clear contains unsupported fields";
   }
-  if (new Set(clear).size !== clear.length) return "clear fieldが重複しています";
+  if (new Set(clear).size !== clear.length) return "clear contains duplicate fields";
   if (set.description !== undefined && clear.includes("description")) {
-    return "descriptionをsetとclearへ同時指定できません";
+    return "description cannot be specified in both set and clear";
   }
   return undefined;
 }
@@ -135,7 +135,7 @@ export function planResourceMutationEdits(
         edits: [],
         diagnostic: mutationDiagnostic(
           "PTMUT-304",
-          `entity ID ${mutation.id}はすでに使用されています`,
+          `entity ID ${mutation.id} is already in use`,
           entity,
         ),
       };
@@ -152,7 +152,7 @@ export function planResourceMutationEdits(
   if (entity === undefined) {
     return {
       edits: [],
-      diagnostic: mutationDiagnostic("PTMUT-302", `resource ${mutation.id}が存在しません`),
+      diagnostic: mutationDiagnostic("PTMUT-302", `resource ${mutation.id} does not exist`),
     };
   }
   if (entity.kind !== "resource") {
@@ -160,7 +160,7 @@ export function planResourceMutationEdits(
       edits: [],
       diagnostic: mutationDiagnostic(
         "PTMUT-303",
-        `entity ${mutation.id}はresourceではありません`,
+        `entity ${mutation.id} is not a resource`,
         entity,
       ),
     };

@@ -236,7 +236,7 @@ function inlineCommentDiagnostic(
 ): Diagnostic {
   return diagnostic(
     "PTDSL-011",
-    "inline commentは使用できません",
+    "Inline comments are not allowed",
     span(line, start, line.text.length),
     "syntax.comments",
     entityId,
@@ -365,7 +365,7 @@ function parseNestedEstimate(
       diagnostics.push(
         diagnostic(
           hasTab ? "PTDSL-001" : "PTDSL-002",
-          "estimate blockは4 spacesでindentしてください",
+          "The estimate block must be indented by 4 spaces",
           span(line, 0, indent),
           "syntax.indentation",
         ),
@@ -386,7 +386,7 @@ function parseNestedEstimate(
       diagnostics.push(
         diagnostic(
           "PTDSL-005",
-          "estimate blockのfieldが不正です",
+          "Invalid field in estimate block",
           lineSpan(line),
           "syntax.estimate",
         ),
@@ -403,7 +403,7 @@ function parseNestedEstimate(
       diagnostics.push(
         diagnostic(
           "PTDSL-007",
-          `${name}のdurationが不正です`,
+          `Invalid duration for ${name}`,
           valueSpan,
           "syntax.duration",
         ),
@@ -454,7 +454,7 @@ function parseNestedRequirements(
       diagnostics.push(
         diagnostic(
           hasTab ? "PTDSL-001" : "PTDSL-002",
-          "requires blockは4 spacesでindentしてください",
+          "The requires block must be indented by 4 spaces",
           span(line, 0, indent),
           "syntax.indentation",
         ),
@@ -475,7 +475,7 @@ function parseNestedRequirements(
       diagnostics.push(
         diagnostic(
           "PTDSL-005",
-          "resource requirementは`RESOURCE_ID units`で記述してください",
+          "A resource requirement must use the form `RESOURCE_ID units`",
           lineSpan(line),
           "syntax.task",
         ),
@@ -493,7 +493,7 @@ function parseNestedRequirements(
       diagnostics.push(
         diagnostic(
           "PTSEM-109",
-          "resource requirement unitsが範囲外です",
+          "Resource requirement units are out of range",
           span(line, unitsOffset, unitsOffset + unitsRaw.length),
           "syntax.resource",
         ),
@@ -546,7 +546,7 @@ function parseBlockText(
       diagnostics.push(
         diagnostic(
           tabBeforeContent ? "PTDSL-001" : "PTDSL-010",
-          "block textはfieldより1 level以上深くindentしてください",
+          "Block text must be indented at least one level deeper than its field",
           span(line, 0, Math.max(spaces + (tabBeforeContent ? 1 : 0), 1)),
           "syntax.text",
         ),
@@ -574,7 +574,7 @@ function parseBlockText(
       diagnostics.push(
         diagnostic(
           "PTDSL-010",
-          "block textは1行以上のnonblank contentを必要とします",
+          "Block text must contain at least one nonblank line",
           markerSpan,
           "syntax.text",
         ),
@@ -707,7 +707,7 @@ function parseDeclarationHeader(
   diagnostics.push(
     diagnostic(
       declarationKinds.has(firstWord as DeclarationKind) ? "PTDSL-004" : "PTDSL-003",
-      "top-level declaration headerが不正です",
+      "Invalid top-level declaration header",
       lineSpan(line),
       "syntax.top-level",
     ),
@@ -739,7 +739,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
       diagnostics.push(
         diagnostic(
           hasTab ? "PTDSL-001" : "PTDSL-002",
-          "top-level declarationはcolumn 0から開始してください",
+          "A top-level declaration must begin at column 0",
           span(headerLine, 0, indent),
           "syntax.indentation",
         ),
@@ -781,7 +781,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         diagnostics.push(
           diagnostic(
             indentation.hasTab ? "PTDSL-001" : "PTDSL-002",
-            "declaration fieldは2 spacesでindentしてください",
+            "A declaration field must be indented by 2 spaces",
             span(line, 0, indentation.indent),
             "syntax.indentation",
             header.id,
@@ -808,7 +808,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
           diagnostics.push(
             diagnostic(
               "PTDSL-005",
-              `${header.kind}にunknown block field ${name}があります`,
+              `Unknown block field ${name} in ${header.kind}`,
               span(line, 2, 2 + name.length),
               `syntax.${header.kind}`,
               header.id,
@@ -852,7 +852,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
           diagnostics.push(
             diagnostic(
               "PTDSL-005",
-              `${header.kind}に${name} fieldは使用できません`,
+              `The ${name} field is not allowed in ${header.kind}`,
               lineSpan(line),
               `syntax.${header.kind}`,
               header.id,
@@ -881,7 +881,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         diagnostics.push(
           diagnostic(
             "PTDSL-004",
-            "field syntaxが不正です",
+            "Invalid field syntax",
             lineSpan(line),
             `syntax.${header.kind}`,
             header.id,
@@ -899,7 +899,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         diagnostics.push(
           diagnostic(
             "PTDSL-005",
-            `${header.kind}にunknown field ${name}があります`,
+            `Unknown field ${name} in ${header.kind}`,
             span(line, nameStart, nameStart + name.length),
             `syntax.${header.kind}`,
             header.id,
@@ -914,7 +914,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         diagnostics.push(
           diagnostic(
             parsed.code,
-            `${name}の値が不正です`,
+            `Invalid value for ${name}`,
             valueSpan,
             parsed.topic ?? "syntax",
             header.id,

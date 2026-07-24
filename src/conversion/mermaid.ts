@@ -390,7 +390,7 @@ function plainLoss(document: DocumentNode): ConversionLoss {
   return {
     code: "PTCNV-206",
     severity: "warning",
-    message: "plain Mermaid profileはlossless semantic metadataを保持しません",
+    message: "plain Mermaid profile does not retain lossless semantic metadata",
     elementId: project.id,
     span: project.headerSpan,
     lossy: true,

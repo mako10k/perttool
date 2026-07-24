@@ -71,7 +71,7 @@ function validateCapacityOverrides(
   for (const [id] of overrides) {
     if (!graph.resources.has(id)) {
       diagnostics.push(
-        diagnostic("PTSEM-206", "error", `capacity overrideのresource ${id}が未定義です`, id),
+        diagnostic("PTSEM-206", "error", `resource ${id} in capacity override is undefined`, id),
       );
     }
   }
@@ -86,7 +86,7 @@ function validateCapacityOverrides(
         diagnostics.push({
           code: "PTSEM-208",
           severity: "error",
-          message: `requirement ${requirement.units}がwhat-if capacity ${effective.get(requirement.resourceId)!}を超えています`,
+          message: `requirement ${requirement.units} exceeds what-if capacity ${effective.get(requirement.resourceId)!}`,
           entityId: declaration.id,
           span: requirement.unitsSpan,
           helpTopic: "analysis.resources",
@@ -107,7 +107,7 @@ function validateCapacityOverrides(
       diagnostics.push({
         code: "PTRES-202",
         severity: "error",
-        message: `what-if capacity ${effective.get(id)!}がactive usage ${usage}未満です`,
+        message: `what-if capacity ${effective.get(id)!} is less than active usage ${usage}`,
         entityId: id,
         span: fieldNamed(resource.declaration, "capacity")!.valueSpan,
         helpTopic: "analysis.resources",
@@ -184,7 +184,7 @@ export function analyzeDocument(
       diagnostic(
         "PTDAG-302",
         "warning",
-        `critical path列挙をmax-paths ${maxPaths}で打ち切りました`,
+        `critical path enumeration was truncated at max-paths ${maxPaths}`,
         undefined,
         undefined,
         "analysis",
@@ -196,7 +196,7 @@ export function analyzeDocument(
       diagnostic(
         "PTRES-303",
         "warning",
-        "blocked taskは時刻0で解消する条件付きresource scheduleです",
+        "resource schedule is conditional on blocked tasks being resolved at time 0",
         resource.blockedTaskIds[0],
       ),
     );

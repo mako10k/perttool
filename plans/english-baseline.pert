@@ -4,7 +4,7 @@ project ENGLISH_BASELINE:
   description "Migrate repository-maintained prose, bundled help, and diagnostics to the English baseline adopted by ADR 0004. The canonical surface inventory and Unicode allowlist are recorded in docs/process/english-surface-inventory.md. Remaining migration work is tracked by the current tasks. Runtime i18n, translation catalogs, locale negotiation, and translation of user-authored content remain outside this plan."
   as_of 2026-07-24
   duration_unit point
-  velocity 23p/1d
+  velocity 28p/1d
   finish ENGLISH_BASELINE_ACCEPTED
 
 resource DEVELOPERS:
@@ -33,6 +33,7 @@ milestone SURFACE_INVENTORY_READY:
 
 milestone RUNTIME_MESSAGES_READY:
   title "Runtime messages migrated"
+  state reached
 
 milestone HELP_AND_USAGE_READY:
   title "Bundled help and usage migrated"
@@ -54,18 +55,6 @@ milestone GOLDEN_UNICODE_READY:
 milestone ENGLISH_BASELINE_ACCEPTED:
   title "English repository baseline accepted"
 
-task RUNTIME_MESSAGES SURFACE_INVENTORY_READY -> RUNTIME_MESSAGES_READY:
-  title "Migrate runtime diagnostics and messages to English"
-  description |
-    Translate parser, semantic, application, mutation, conversion, and
-    safe-write messages without changing stable diagnostic codes, source spans,
-    JSON fields, schema shape, or error boundaries. Update focused tests and
-    byte-level expectations in the same logical changes.
-  duration 5p
-  priority 100
-  requires:
-    DEVELOPERS 1
-    CLI_SURFACE 1
 
 task HELP_AND_USAGE SURFACE_INVENTORY_READY -> HELP_AND_USAGE_READY:
   title "Migrate bundled help and usage text to English"

@@ -5,7 +5,7 @@
     "summary": {
       "resources": 4,
       "milestones": 8,
-      "tasks": 5,
+      "tasks": 4,
       "gates": 4,
       "errors": 0,
       "warnings": 0
@@ -15,21 +15,17 @@
     "duration_unit": "point",
     "precedence_makespan": "11/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "11/23",
+    "precedence_forecast": "11/28",
     "precedence_critical_tasks": [
       "HELP_AND_USAGE",
-      "RUNTIME_MESSAGES",
       "GOLDEN_UNICODE_AUDIT",
       "ENGLISH_ACCEPTANCE"
     ],
-    "resource_makespan": "16/1",
-    "resource_forecast": "16/23",
-    "resource_delay": "5/1",
-    "resource_arcs": [
-      "resource:RUNTIME_MESSAGES:HELP_AND_USAGE"
-    ],
+    "resource_makespan": "11/1",
+    "resource_forecast": "11/28",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "RUNTIME_MESSAGES",
       "HELP_AND_USAGE",
       "GOLDEN_UNICODE_AUDIT",
       "ENGLISH_ACCEPTANCE"
@@ -39,12 +35,11 @@
     "groups": {
       "active": [],
       "ready": [
-        "RUNTIME_MESSAGES",
         "HELP_AND_USAGE",
         "PERT_PLANS"
       ],
       "runnable_now": [
-        "RUNTIME_MESSAGES",
+        "HELP_AND_USAGE",
         "PERT_PLANS"
       ],
       "blocked_now": [],
@@ -53,13 +48,6 @@
         "ENGLISH_ACCEPTANCE"
       ]
     },
-    "resource_rejection": {
-      "task_id": "HELP_AND_USAGE",
-      "resource_id": "CLI_SURFACE",
-      "capacity": 1,
-      "earlier_selected_task_ids": [
-        "RUNTIME_MESSAGES"
-      ]
-    }
+    "resource_rejection": null
   }
 }

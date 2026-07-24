@@ -11,7 +11,7 @@
     {
       "code": "PTRES-303",
       "severity": "warning",
-      "message": "blocked taskは時刻0で解消する条件付きresource scheduleです",
+      "message": "resource schedule is conditional on blocked tasks being resolved at time 0",
       "entity_id": "TASK_BLOCKED",
       "span": null,
       "related": [],
