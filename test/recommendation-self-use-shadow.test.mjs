@@ -16,6 +16,7 @@ const planNames = [
   "grammar",
   "operations",
   "recommendation",
+  "release-0.2.0",
   "mvp",
 ];
 const knownContract = {
@@ -141,7 +142,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all eight self-use plans pass the v3 recommendation shadow gate", async () => {
+test("all nine self-use plans pass the v3 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(

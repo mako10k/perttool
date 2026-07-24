@@ -1053,9 +1053,11 @@ The initial self-use target is the DSL grammar design and implementation work.
 - MVP recommendation implementation plan: `plans/recommendation.pert`
 - Beta AI Agent Guidance Registry implementation plan: `plans/agent-guidance.pert`
 - Post-beta English repository baseline migration: `plans/english-baseline.pert`
+- Post-beta CLI Contract 3 reset: `plans/cli-surface-reset.pert`
+- Contract 3 `v0.2.0` beta release: `plans/release-0.2.0.pert`
 - Historical work plans: Git history
 
-`plans/mvp.pert` defines the stage gates from MVP through beta; the design and implementation tasks for the current slice are separated into the corresponding detail plan. Macro work packages roll up the resource makespan of their detail plans and do not duplicate individual task state. Manage grammar implementation in `plans/grammar.pert`, AI process-control design in `plans/control-plane.pert`, operational M1-M4 work in `plans/operations.pert`, MVP recommendation implementation in `plans/recommendation.pert`, and beta Issue #2 in `plans/agent-guidance.pert`. The post-beta English migration remains independent in `plans/english-baseline.pert` until a later macro composition decision.
+`plans/mvp.pert` defines the completed stage gates from MVP through the first beta; the design and implementation tasks for each slice are separated into the corresponding detail plan. Macro work packages roll up the resource makespan of their detail plans and do not duplicate individual task state. Manage grammar implementation in `plans/grammar.pert`, AI process-control design in `plans/control-plane.pert`, operational M1-M4 work in `plans/operations.pert`, MVP recommendation implementation in `plans/recommendation.pert`, and beta Issue #2 in `plans/agent-guidance.pert`. The post-beta English migration, CLI reset, and `v0.2.0` release remain independent in `plans/english-baseline.pert`, `plans/cli-surface-reset.pert`, and `plans/release-0.2.0.pert` until a later macro composition decision.
 
 `.pert` represents the DAG of work that designs and implements specifications; it is not the specification content itself. Do not conflate normative specifications with work state.
 
@@ -1243,6 +1245,32 @@ Exit:
 - pass local-link and isolated-package acceptance;
 - preserve MCP, LSP, VSIX, i18n, Git, and multi-plan composition as independent
   non-goals.
+
+### Post-MVP Slice 4D: Contract 3 `v0.2.0` beta release
+
+The [`v0.2.0` release procedure](process/0.2.0-release.md) selects the first
+package version for accepted CLI Contract 3. The independent
+[`release-0.2.0.pert`](../plans/release-0.2.0.pert) plan separates:
+
+1. the normative release gate and version decision;
+2. local version, lockfile, CLI, CHANGELOG, and package preparation;
+3. clean-candidate and version-availability preflight;
+4. explicitly authorized Git, GitHub, and npm distribution from one tarball;
+5. durable public-channel acceptance.
+
+The distribution task remains blocked until the user explicitly authorizes
+the named `0.2.0` external-write batch. npm publication uses `beta` and must
+leave `latest` unchanged. A later `latest` promotion is not a release-plan
+task and requires a separate post-acceptance decision.
+
+Exit:
+
+- satisfy Requirements 21.3 from one clean release commit and annotated tag;
+- publish one tarball as a GitHub prerelease asset and npm `beta`;
+- verify artifact identity and isolated installation from both public
+  channels;
+- retain the pre-publication `latest` value;
+- record durable acceptance without rewriting the immutable release artifact.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

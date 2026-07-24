@@ -173,6 +173,15 @@ test("CLI surface reset plan matches the review-derived post-beta roadmap", asyn
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("0.2.0 release plan matches the Contract 3 distribution roadmap", async () => {
+  const text = await readFile(path.join(root, "plans/release-0.2.0.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/release-0.2.0.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {
   const text = await readFile(path.join(root, "plans/mvp.pert"), "utf8");
   const expected = JSON.parse(await readFile(

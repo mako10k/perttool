@@ -8,6 +8,7 @@
 - Previous CLI contract: [interfaces.md](interfaces.md)
 - Basic design: [../basic-design.md](../basic-design.md)
 - Migration: [../process/cli-contract-3-migration.md](../process/cli-contract-3-migration.md)
+- Release: [`v0.2.0` procedure](../process/0.2.0-release.md)
 
 ## 1. Purpose and activation boundary
 
@@ -23,8 +24,10 @@ publication is authorized by the source cutover.
 The cutover activated the complete command and JSON namespace at once,
 including direct project initialization and gate maintenance.
 `CLI_003_FILE_FIRST_ACCEPTANCE` then verified the complete workflow from an
-isolated installed package. This local acceptance does not select a package
-version, publish an artifact, or mutate an npm dist-tag.
+isolated installed package. The subsequent release decision selects
+suffix-free `0.2.0` as the first Contract 3 package. The release remains
+separately gated and does not publish an artifact or mutate an npm dist-tag
+until explicitly authorized.
 
 ## 2. Product invariants and non-goals
 

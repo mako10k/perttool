@@ -806,7 +806,8 @@ The active post-beta breaking interface is
 `guide`, replaces `mutation apply` with `batch apply`, and adds `project init`
 and `gate add|set|remove`. The current source completed the versioned atomic
 cutover. The already published `0.1.0` package remains the prior Contract 2
-artifact.
+artifact. Suffix-free beta `0.2.0` is the selected first Contract 3 package,
+subject to the separate release gate in Section 21.3.
 
 Must:
 
@@ -1086,6 +1087,38 @@ acceptance. It is accepted only when all of the following are true.
 Design-document acceptance alone does not satisfy these implementation
 criteria.
 
+### 21.3 CLI Contract 3 beta release acceptance criteria
+
+The first package that publishes accepted CLI Contract 3 is suffix-free
+`0.2.0`. It remains part of the `0.x.x` beta series, is a GitHub prerelease,
+and is published to npm `beta`. The release must satisfy all of the following.
+
+1. Align `package.json`, the lockfile root package, CLI/tool version, release
+   commit, annotated `v0.2.0` tag, GitHub asset, and npm package identity.
+2. Include the accepted Contract 3 command surface and installed-package
+   file-first workflow without restoring Contract 2 aliases.
+3. Pass `npm ci`, `npm run check`, `git diff --check`, package normalization,
+   isolated installation, and file-first acceptance from the release source.
+4. Establish before external mutation that `perttool@0.2.0` and `v0.2.0` are
+   unused and record the current npm `beta` and `latest` baseline.
+5. Push and verify one clean release commit and one annotated tag only after
+   explicit user authorization for the named release batch.
+6. Generate one tarball outside the worktree and distribute those exact bytes
+   through the GitHub prerelease and npm `beta`.
+7. Verify local, GitHub, and registry artifact identity and isolated
+   installation from both public channels.
+8. Verify that publication moves `beta` to `0.2.0` and leaves `latest`
+   unchanged.
+9. Record the durable release identity, artifact digests, registry metadata,
+   public URLs, installation results, and restart observations before
+   accepting the release.
+10. Treat any later `latest` promotion as a separate post-acceptance mutation
+    requiring an explicitly selected version and user authorization.
+
+Planning or locally accepting this gate does not authorize Git, GitHub, npm,
+or dist-tag writes. The authoritative procedure is
+[`docs/process/0.2.0-release.md`](process/0.2.0-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |
@@ -1128,7 +1161,7 @@ Resolved design decisions:
 
 - Adoption of AoA with task=edge: [ADR 0001](adr/0001-activity-on-arrow.md)
 - Node.js 22 or later, npm, TypeScript ESM package: [ADR 0005](adr/0005-node-22-runtime-baseline.md)
-- Suffix-free `0.x.x` beta, alpha compatibility boundary, and beta release gate: [ADR 0003](adr/0003-beta-versioning.md)
+- Suffix-free `0.x.x` beta, alpha compatibility boundary, and `v0.2.0` Contract 3 release target: [ADR 0003](adr/0003-beta-versioning.md)
 - English repository baseline, migration boundary, and current i18n non-goal: [ADR 0004](adr/0004-english-repository-baseline.md)
 - Separation of executability, resource selection, and recommendation level, and tier semantics: [Recommendation Semantics specification](specs/recommendation.md)
 - Ranking inputs, selection horizon, priority rules, complete tie-breaking, and algorithm version: [Recommendation Ranking Policy specification](specs/recommendation-ranking.md)
@@ -1139,6 +1172,7 @@ Resolved design decisions:
 - Mermaid semantic records, canonical JSON, digests, projection, and fail-closed import: [Mermaid Profile specification](specs/mermaid-profile.md)
 - Provider/surface/guidance/risk taxonomy, support evidence, offline profile, and Core/text/JSON contracts: [AI Agent Guidance Registry specification](specs/agent-guidance.md)
 - Complete command discovery, domain-guide separation, file-first initialization and gate maintenance, naming, effects, schemas, and breaking migration: [CLI Contract 3 specification](specs/cli-contract-3.md)
+- Contract 3 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.2.0` release procedure](process/0.2.0-release.md)
 
 ## 25. Recommended next specification work
 
@@ -1174,3 +1208,10 @@ Item 8 completed its foundation with `TASK_MUTATION_CORE` and `ENTITY_MUTATION_C
 The analysis implementation has progressed through `dag next` v3 and read-only `validateOverride`. In addition to Exact Rational values, PERT expected values/variance, precedence CPM, critical-path counts, deterministic resource schedules, capacity overrides, resource arcs, schedule critical paths, next classification, `runnable_now`, resource rejection, and upcoming explanations, it exposed the complete graph for normal recommendations through the Core, CLI JSON/text, help, and package, and exposed `Perttool.OverrideDecision.v1` validation through the public library. It satisfies Slice 2's bootstrap gate, grammar acceptance, safe-write gate, and advance gate, and performs Stage 3 preview-first self-use of advance. Issue #1's product vision, requirement boundary, executability and recommendation model, ranking policy, reason-code taxonomy, structured explanation, Core/text/JSON interface, human-override contract, normative examples, test perspectives, and self-use and implementation-migration policy were accepted in the [cross-cutting design review](process/recommendation-design-review.md). The missing acceptance criterion 16 found by the [MVP release-readiness audit](process/mvp-release-readiness.md) was resolved with all 22 points of MIG-01 through MIG-07 in the [Recommendation implementation plan](../plans/recommendation.pert), five plan shadows, read-only override validation, normal-authority adoption, and an unknown-version safe-stop dry run. The provisional measured Velocity specific to Recommendation is `22p/1d`, with zero detail work remaining. MVP public-alpha acceptance is complete because the same `v0.1.0-alpha.2` artifact was published to the GitHub prerelease and npm `alpha`, including isolated installation from the registry.
 
 [ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`, and currently recommends `PERT_PLANS`. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+
+The accepted Contract 3 source and package workflow select suffix-free beta
+`0.2.0` as their first release target. `RELEASE_020_GATE_DESIGN` is complete
+and advanced in [`plans/release-0.2.0.pert`](../plans/release-0.2.0.pert);
+`RELEASE_020_PREPARATION` is recommended. Package identity remains `0.1.0`,
+external distribution remains blocked on explicit user authorization, and npm
+`latest` promotion remains outside the release plan.

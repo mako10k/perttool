@@ -210,6 +210,55 @@
         "PTDAG-208"
       ]
     },
+    "release-0.2.0": {
+      "source_digest": "sha256:4e6b252e498d11b577ed266a84970c052ed6fdde6ab4a9f7489b795acb9ad69c",
+      "groups": {
+        "active": [],
+        "ready": [
+          "RELEASE_020_PREPARATION"
+        ],
+        "runnable_now": [
+          "RELEASE_020_PREPARATION"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "RELEASE_020_CANDIDATE",
+          "RELEASE_020_DISTRIBUTION",
+          "RELEASE_020_ACCEPTANCE"
+        ]
+      },
+      "recommended_task_ids": [
+        "RELEASE_020_PREPARATION"
+      ],
+      "manual_selected_task_ids": [
+        "RELEASE_020_PREPARATION"
+      ],
+      "tiers": {
+        "RELEASE_020_PREPARATION": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "RELEASE_020_PREPARATION",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": [
+        "PTRES-303"
+      ]
+    },
     "mvp": {
       "source_digest": "sha256:689462cc4c8a3b5d860f50c9e9a8de3c42ae9caea8fea4cd293ef2076d8caf24",
       "groups": {

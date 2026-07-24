@@ -15,6 +15,10 @@ This project records its notable changes here. The format is based on [Keep a Ch
   installed tarball, covering initialization, direct file inspection, every
   project/task/gate/milestone/resource field, analysis, recommendation,
   completion, advance, and final validation without manual `.pert` rewriting.
+- Selected suffix-free beta `0.2.0` as the first Contract 3 package target and
+  added a gated release plan that separates local preparation from explicitly
+  authorized Git, GitHub, and npm distribution; package identity remains
+  `0.1.0` until release preparation.
 - Promoted the accepted `perttool@0.1.0` beta to npm `latest` through an explicit post-release dist-tag operation. This changes the default install target without changing beta product maturity.
 - Lowered the source and next-release runtime baseline from Node.js 24 to maintained Node.js 22, with CI coverage for Node.js 22 and 24.
 - Reworked the root README as a user guide with `npx` and `npm exec` examples, and moved repository setup and verification to `docs/development.md`.

@@ -147,6 +147,17 @@ workflow using typed mutations for every entity field. The detail plan is now
 complete with no recommendation. The published `0.1.0` artifact remains
 Contract 2 until a separately authorized release.
 
+The user then selected suffix-free beta `0.2.0` as the first Contract 3 package
+target. The independent [`release-0.2.0.pert`](../../plans/release-0.2.0.pert)
+workstream and [`v0.2.0` procedure](0.2.0-release.md) separate normative gate
+design, local source preparation, clean-candidate acceptance, explicitly
+authorized distribution, and durable release acceptance.
+`RELEASE_020_GATE_DESIGN` is complete and advanced; the plan has 14p remaining
+at `3p/1d` and recommends `RELEASE_020_PREPARATION`. The package remains
+`0.1.0`. Do not unblock `RELEASE_020_DISTRIBUTION` or perform a remote,
+registry, or dist-tag write without explicit authorization for the named
+`0.2.0` batch.
+
 ### 5.1 Adopted Recommendation authority
 
 This section was not enabled solely by publishing `Perttool.NextResult.v3`. Because the self-use shadow gate was met and `AGENTS.md`, `.github/copilot-instructions.md`, help, and safe-stop tests were updated in the same MIG-07 adoption change, normal task selection uses the following as authority.

@@ -1,0 +1,106 @@
+project RELEASE_020:
+  version 1
+  title "perttool 0.2.0 Contract 3 beta release"
+  description "Plan the suffix-free 0.2.0 beta release that publishes accepted CLI Contract 3 from one verified tarball. RELEASE_020_GATE_DESIGN completed on 2026-07-24 and fixed the version, requirements, procedure, authorization boundary, and restart rules. Four tasks totaling 14p remain; external distribution stays blocked until explicit user authorization. The first observed plan-specific velocity is 3p/1d."
+  as_of 2026-07-24
+  duration_unit point
+  velocity 3p/1d
+  finish RELEASE_020_ACCEPTED
+
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize version, artifact, authorization, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, CHANGELOG, procedure, and acceptance-record changes."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, tarball creation, and registry verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, tag, GitHub Release, npm publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_020_GATE_ACCEPTED:
+  title "Version 0.2.0 release gate accepted"
+  state reached
+
+milestone RELEASE_020_SOURCE_READY:
+  title "Versioned release source ready"
+  state planned
+
+milestone RELEASE_020_CANDIDATE_READY:
+  title "One release candidate authorized for distribution"
+  state planned
+
+milestone RELEASE_020_DISTRIBUTED:
+  title "Version 0.2.0 distributed to GitHub and npm beta"
+  state planned
+
+milestone RELEASE_020_ACCEPTED:
+  title "Version 0.2.0 Contract 3 beta accepted"
+  state planned
+
+
+task RELEASE_020_PREPARATION RELEASE_020_GATE_ACCEPTED -> RELEASE_020_SOURCE_READY:
+  title "Prepare the version 0.2.0 release source"
+  description "Update package and lockfile identity, CLI version, CHANGELOG release section, user guidance, and release checks together. Run narrow checks before the complete repository gate. Do not push, tag, publish, or move a dist-tag."
+  duration 3p
+  status planned
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "REL-020-002"
+
+task RELEASE_020_CANDIDATE RELEASE_020_SOURCE_READY -> RELEASE_020_CANDIDATE_READY:
+  title "Accept one local 0.2.0 release candidate"
+  description "Require a clean release commit; run npm ci, the complete repository checks, package normalization, isolated file-first acceptance, and whitespace checks; verify the version is unpublished; and record the exact restart point before any external mutation."
+  duration 3p
+  status planned
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+  source "REL-020-003"
+
+task RELEASE_020_DISTRIBUTION RELEASE_020_CANDIDATE_READY -> RELEASE_020_DISTRIBUTED:
+  title "Distribute the authorized 0.2.0 artifact"
+  description "After explicit user authorization, push and verify the release commit, create and push annotated v0.2.0, generate one tarball outside the worktree, publish the same bytes to a GitHub prerelease and npm beta through secdat, and verify that npm latest remains unchanged. Inspect durable state before retrying any ambiguous write."
+  duration 5p
+  status blocked
+  priority 70
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+  blocked_reason "Requires explicit user authorization for the named 0.2.0 Git push, tag, GitHub Release, and npm beta publication batch."
+  source "REL-020-004"
+
+task RELEASE_020_ACCEPTANCE RELEASE_020_DISTRIBUTED -> RELEASE_020_ACCEPTED:
+  title "Accept the durable 0.2.0 release"
+  description "Verify release commit and peeled tag identity, GitHub and registry tarball parity, beta and unchanged latest tags, isolated GitHub and npm installations, Contract 3 and file-first behavior, and the durable acceptance record. Keep latest promotion outside this task."
+  duration 3p
+  status planned
+  priority 60
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    EXTERNAL_RELEASE 1
+  source "REL-020-005"

@@ -1,6 +1,6 @@
 # npm publication procedure
 
-- This document is the alpha-release procedure and publication record for `v0.1.0-alpha.2`. From the first suffix-free `0.1.0` beta onward, [the beta release procedure](beta-release.md) is authoritative.
+- This document is the alpha-release procedure and publication record for `v0.1.0-alpha.2`. The [first-beta procedure](beta-release.md) governs `v0.1.0`; the [`v0.2.0` procedure](0.2.0-release.md) governs the first Contract 3 package.
 - Document status: Published 1.1
 - Created: 2026-07-23
 - Target registry: `https://registry.npmjs.org/`

@@ -5,11 +5,12 @@
 - From: CLI contract 2 in perttool `0.1.0`
 - Target: [CLI Contract 3](../specs/cli-contract-3.md)
 - Plan: [CLI surface reset](../../plans/cli-surface-reset.pert)
+- Release: [`v0.2.0` procedure](0.2.0-release.md)
 
 ## 1. Boundary
 
-Contract 3 is a breaking post-beta CLI reset. The target package version will
-be selected by the release task; this document does not preselect a version or
+Contract 3 is a breaking post-beta CLI reset. The release decision selects
+suffix-free `0.2.0` as its first package version. Version selection does not
 authorize publication.
 
 `CLI_002_CONTRACT_V3_CUTOVER` is complete in the current source, so Contract 3
@@ -103,9 +104,10 @@ The cutover change must demonstrate:
 - unchanged semantic results for check, format, analyze, next, advance, render,
   import, and existing entity mutation beyond their operation-name mapping.
 
-Publication, npm dist-tag mutation, and GitHub release creation require their
-normal separate authorization and release gates. Completing the local cutover
-and installed-package acceptance does not authorize any external write.
+Publication, npm dist-tag mutation, and GitHub release creation require the
+separate `v0.2.0` authorization and release gates. Completing the local
+cutover, installed-package acceptance, and version selection does not authorize
+any external write.
 
 ## 6. Failure, restart, and rollback
 

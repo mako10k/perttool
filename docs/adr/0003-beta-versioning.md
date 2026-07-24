@@ -2,7 +2,8 @@
 
 - Status: Accepted
 - Date: 2026-07-23
-- Amended: 2026-07-23 (`v0.1.0` explicit `latest` promotion)
+- Amended: 2026-07-23 (`v0.1.0` explicit `latest` promotion);
+  2026-07-24 (`v0.2.0` Contract 3 release target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -24,8 +25,17 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
 - Do not include the backlog hierarchy and multi-plan composition from Issue #3, the LSP server, VSIX, MCP server, or guidance audit, scaffolding, and enforcement in the beta entry gate.
 - Publish to npm under the `beta` dist-tag without changing the existing `latest` tag in that publication operation. After release acceptance, only a separately authorized dist-tag operation explicitly approved by a human may promote the accepted beta to `latest`.
 - Publish a suffix-free `0.x.x` GitHub Release as a prerelease to match product maturity.
+- Select suffix-free `0.2.0` for the first package that publishes the accepted
+  breaking CLI Contract 3 surface. `0.1.1` would understate the compatibility
+  change, while `1.0.0` remains reserved for a future stable-series decision.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
+
+On 2026-07-24, after source and isolated-package acceptance of CLI Contract 3,
+the user selected `0.2.0` as the next release target. The
+[`v0.2.0` release procedure](../process/0.2.0-release.md) governs preparation,
+authorization, distribution, and acceptance. This selection does not itself
+change package identity or authorize an external write.
 
 ## Beta gate
 
