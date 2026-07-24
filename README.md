@@ -118,10 +118,11 @@ perttool mutation apply PLAN.pert \
   --expect-digest 'sha256:...'
 ```
 
-The current beta accepts gate add/set/remove requests inside `mutation apply`,
-but does not yet provide their direct commands or project initialization.
-Direct Contract 3 activation and the remaining tool-maintenance gap are tracked
-in the [product backlog](docs/backlog.md).
+The current beta accepts gate add/set/remove requests inside `mutation apply`.
+Direct gate commands and the `project init` command activate together with the
+rest of Contract 3; the implemented initialization Core is not a public CLI
+command in Contract 2. The remaining cutover work is tracked in the
+[product backlog](docs/backlog.md).
 
 ## Command map
 

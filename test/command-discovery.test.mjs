@@ -26,6 +26,7 @@ const expectedPaths = [
   "guide",
   "document check",
   "document format",
+  "project init",
   "project show",
   "project set",
   "dag analyze",
@@ -52,7 +53,7 @@ const expectedPaths = [
 
 const expectedResources = [
   ["document", ["check", "format"]],
-  ["project", ["show", "set"]],
+  ["project", ["init", "show", "set"]],
   ["dag", ["analyze", "next", "advance", "render", "import"]],
   ["task", ["add", "set", "remove", "finish"]],
   ["gate", ["add", "set", "remove"]],
@@ -72,6 +73,7 @@ const knownSchemas = new Set([
   "Perttool.FormatResult.v1",
   "Perttool.GuideResult.v1",
   "Perttool.ImportResult.v1",
+  "Perttool.InitResult.v1",
   "Perttool.MutationResult.v1",
   "Perttool.NextResult.v3",
   "Perttool.ProjectResult.v1",
@@ -99,13 +101,6 @@ test("Contract 3 command discovery projects every implemented capability in cano
     CONTRACT3_COMMAND_HELP_REGISTRY.every(
       ({ contractVersion }) => contractVersion === 3,
     ),
-  );
-  assert.equal(
-    CONTRACT3_COMMAND_HELP_REGISTRY.some(
-      ({ path: commandPath }) =>
-        commandPath.join(" ") === "project init",
-    ),
-    false,
   );
   for (const descriptor of CONTRACT3_COMMAND_HELP_REGISTRY) {
     assert.notEqual(descriptor.summary, "", descriptor.operation);
@@ -188,10 +183,77 @@ test("Contract 3 renames are derived projections while Contract 2 remains active
     ["document", "check", "--help"],
     ["batch", "apply", "--help"],
     ["gate", "add", "--help"],
+    ["project", "init", "--help"],
   ]) {
     const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
   }
+});
+
+test("project init discovery covers the complete internal Contract 3 target", () => {
+  const result = getCommandDiscovery({
+    resource: "project",
+    action: "init",
+  });
+  assert.equal(result.ok, true);
+  const descriptor = result.commands[0];
+  assert.ok(descriptor);
+  assert.deepEqual(descriptor.path, ["project", "init"]);
+  assert.equal(descriptor.operation, "project.init");
+  assert.deepEqual(
+    descriptor.operands.map(({ name, valueType }) => [name, valueType]),
+    [["project-id", "project-id"]],
+  );
+  assert.deepEqual(
+    descriptor.options.map(
+      ({ name, required, defaultValue, conflicts }) => [
+        name,
+        required,
+        defaultValue,
+        conflicts,
+      ],
+    ),
+    [
+      ["title", true, null, []],
+      ["duration-unit", true, null, []],
+      ["initial-milestone", true, null, []],
+      ["initial-milestone-title", true, null, []],
+      ["finish", true, null, []],
+      ["version", false, 1, []],
+      ["as-of", false, null, []],
+      ["velocity", false, null, []],
+      ["out", false, null, []],
+      ["format", false, "text", []],
+      ["color", false, "auto", ["format=json when color=always"]],
+    ],
+  );
+  assert.equal(
+    descriptor.options.some(({ name }) =>
+      ["write", "expect-digest"].includes(name)
+    ),
+    false,
+  );
+  assert.equal(descriptor.input, "none");
+  assert.deepEqual(descriptor.stdin, {
+    document: false,
+    artifact: false,
+    request: false,
+    mutuallyExclusive: false,
+  });
+  assert.equal(descriptor.effect, "write-or-create");
+  assert.deepEqual(descriptor.output, {
+    formats: ["text", "json"],
+    payload: "candidate-document",
+    fileEffect: "optional-create",
+  });
+  assert.deepEqual(descriptor.resultSchemas, [
+    "Perttool.InitResult.v1",
+    "Perttool.CliError.v1",
+  ]);
+  assert.deepEqual(
+    descriptor.exitStatuses.map(({ code }) => code),
+    [0, 1, 2, 3, 5, 70],
+  );
 });
 
 test("gate discovery covers the complete internal Contract 3 mutation target", () => {
@@ -236,9 +298,9 @@ test("resource and action queries return complete projections of one result", ()
   assert.deepEqual(resource.resources.map(({ name }) => name), ["project"]);
   assert.deepEqual(
     resource.commands.map(({ path: commandPath }) => commandPath.join(" ")),
-    ["project show", "project set"],
+    ["project init", "project show", "project set"],
   );
-  assert.deepEqual(resource.resources[0]?.actions, ["show", "set"]);
+  assert.deepEqual(resource.resources[0]?.actions, ["init", "show", "set"]);
 
   const action = getCommandDiscovery({
     resource: "project",

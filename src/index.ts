@@ -2,6 +2,13 @@ export { checkDocument } from "./application/check.js";
 export { analyzeDocument } from "./application/analyze.js";
 export { getAgentHelp } from "./application/agent-help.js";
 export { getProjectMetadata } from "./application/project.js";
+export {
+  planProjectInit,
+  projectInitResultToJson,
+  renderProjectInitResult,
+  serializeProjectInitResult,
+  withProjectInitOutput,
+} from "./application/init.js";
 export { planFormat } from "./application/format.js";
 export { selectNextTasks } from "./application/next.js";
 export { recommendationAnalysisToJson } from "./recommendation/json.js";
@@ -92,6 +99,12 @@ export type {
   ProjectMetadataDurationUnit,
   ProjectMetadataResult,
 } from "./application/project.js";
+export type {
+  ProjectInitDurationUnit,
+  ProjectInitRequest,
+  ProjectInitResult,
+  ProjectInitWrite,
+} from "./application/init.js";
 export {
   AGENT_GUIDANCE_DIRECTIVES,
   AGENT_GUIDANCE_ORIGINS,

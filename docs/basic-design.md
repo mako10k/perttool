@@ -801,12 +801,15 @@ expanded descriptors. The target `help` descriptor is the only additional
 descriptor in that slice. `MUT_002_GATE_MAINTENANCE` adds three target-only
 gate descriptors after implementing their Core and atomic-batch path; these
 descriptors reuse the editing contract and remain internal until cutover.
-`project init` remains absent because it is not implemented. Resource summaries
-fix display order but do not duplicate operand, option, effect, schema, exit,
-or example data. `PTHLP-002` reports an unknown resource or top-level command;
-`PTHLP-003` reports an unknown action. The package root and CLI do not expose
-the preview before the atomic cutover. The module naming does not change the
-following dependency rule.
+`MUT_001_PROJECT_INIT` adds the target-only `project init` descriptor after
+implementing `src/application/init.ts`, deterministic
+`Perttool.InitResult.v1` text/JSON projection, and composition with the
+existing exclusive safe-write adapter. Resource summaries fix the accepted
+action order but do not duplicate operand, option, effect, schema, exit, or
+example data. `PTHLP-002` reports an unknown resource or top-level command;
+`PTHLP-003` reports an unknown action. The active Contract 2 CLI does not
+dispatch the target-only descriptors before the atomic cutover. The module
+naming does not change the following dependency rule.
 
 ```text
 command descriptors
@@ -1191,9 +1194,9 @@ review-derived target before runtime work starts. The independent
 4. one atomic breaking cutover; and
 5. installed-package file-first acceptance.
 
-`project init` remains backlog item `MUT-001` until its dedicated task
-implements and tests it. Contract 3 design acceptance neither exposes the
-command nor authorizes a package release. The
+`MUT-001` implements and tests project initialization Core, output projection,
+exclusive creation, and its internal descriptor. This prerequisite neither
+exposes the direct command nor authorizes a package release. The
 [migration guide](process/cli-contract-3-migration.md) keeps Contract 2 active
 until all breaking names and JSON operations move together.
 

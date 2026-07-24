@@ -46,6 +46,7 @@ interface Contract3Mapping {
 interface ResourceDefinition {
   readonly name: string;
   readonly summary: string;
+  readonly actionOrder: readonly string[];
 }
 
 const contract3Mappings: Readonly<Record<string, Contract3Mapping>> =
@@ -75,38 +76,47 @@ const resourceDefinitions: readonly ResourceDefinition[] = Object.freeze([
   Object.freeze({
     name: "document",
     summary: "Validate and source-format PERT documents.",
+    actionOrder: Object.freeze(["check", "format"]),
   }),
   Object.freeze({
     name: "project",
     summary: "Inspect and maintain effective project metadata.",
+    actionOrder: Object.freeze(["init", "show", "set"]),
   }),
   Object.freeze({
     name: "dag",
     summary: "Analyze, select, advance, and convert the project graph.",
+    actionOrder: Object.freeze(["analyze", "next", "advance", "render", "import"]),
   }),
   Object.freeze({
     name: "task",
     summary: "Maintain task edges through source-preserving previews.",
+    actionOrder: Object.freeze(["add", "set", "remove", "finish"]),
   }),
   Object.freeze({
     name: "gate",
     summary: "Maintain zero-duration dependency edges through source-preserving previews.",
+    actionOrder: Object.freeze(["add", "set", "remove"]),
   }),
   Object.freeze({
     name: "milestone",
     summary: "Maintain milestone nodes through source-preserving previews.",
+    actionOrder: Object.freeze(["add", "set", "remove"]),
   }),
   Object.freeze({
     name: "resource",
     summary: "Maintain resource capacities through source-preserving previews.",
+    actionOrder: Object.freeze(["add", "set", "remove"]),
   }),
   Object.freeze({
     name: "batch",
     summary: "Apply one typed atomic mutation request as a preview.",
+    actionOrder: Object.freeze(["apply"]),
   }),
   Object.freeze({
     name: "agent",
     summary: "Inspect bundled offline AI agent guidance.",
+    actionOrder: Object.freeze(["help"]),
   }),
 ]);
 
@@ -293,6 +303,140 @@ function targetOption(
   });
 }
 
+interface TargetValueOption {
+  readonly valueType: string;
+  readonly required?: boolean;
+  readonly defaultValue?: string | number | null;
+  readonly enumValues?: readonly string[];
+  readonly conflicts?: readonly string[];
+  readonly dsl?: string | null;
+}
+
+function targetValueOption(
+  name: string,
+  config: TargetValueOption,
+): OptionDescriptor {
+  return Object.freeze({
+    name,
+    kind: "value",
+    valueType: config.valueType,
+    required: config.required ?? false,
+    repeatable: false,
+    defaultValue: config.defaultValue ?? null,
+    enumValues: Object.freeze([...(config.enumValues ?? [])]),
+    conflicts: Object.freeze([...(config.conflicts ?? [])]),
+    requires: Object.freeze([]),
+    sharedGroup: null,
+    spelling: Object.freeze({
+      cli: `--${name}`,
+      dsl: config.dsl ?? null,
+      json: name.replaceAll("-", "_"),
+    }),
+  });
+}
+
+function projectInitDescriptor(): ProjectedCommandDescriptor {
+  return Object.freeze({
+    contractVersion: 3,
+    path: Object.freeze(["project", "init"] as const),
+    operation: "project.init",
+    summary: "Previews the smallest valid project document or creates it exclusively.",
+    operands: Object.freeze([
+      targetOperand("project-id", 0, "project-id"),
+    ]),
+    options: Object.freeze([
+      targetValueOption("title", {
+        valueType: "text",
+        required: true,
+        dsl: "title",
+      }),
+      targetValueOption("duration-unit", {
+        valueType: "duration-unit",
+        required: true,
+        enumValues: ["day", "hour", "point"],
+        dsl: "duration_unit",
+      }),
+      targetValueOption("initial-milestone", {
+        valueType: "milestone-id",
+        required: true,
+      }),
+      targetValueOption("initial-milestone-title", {
+        valueType: "text",
+        required: true,
+      }),
+      targetValueOption("finish", {
+        valueType: "milestone-id",
+        required: true,
+        dsl: "finish",
+      }),
+      targetValueOption("version", {
+        valueType: "integer",
+        defaultValue: 1,
+        dsl: "version",
+      }),
+      targetValueOption("as-of", {
+        valueType: "date-or-date-time",
+        dsl: "as_of",
+      }),
+      targetValueOption("velocity", {
+        valueType: "velocity",
+        dsl: "velocity",
+      }),
+      targetValueOption("out", {
+        valueType: "path",
+      }),
+      targetValueOption("format", {
+        valueType: "output-format",
+        defaultValue: "text",
+        enumValues: ["text", "json"],
+      }),
+      targetValueOption("color", {
+        valueType: "color-mode",
+        defaultValue: "auto",
+        enumValues: ["auto", "always", "never"],
+        conflicts: ["format=json when color=always"],
+      }),
+    ]),
+    input: "none",
+    output: Object.freeze({
+      formats: Object.freeze(["text", "json"] as const),
+      payload: "candidate-document",
+      fileEffect: "optional-create",
+    }),
+    stdin: Object.freeze({
+      document: false,
+      artifact: false,
+      request: false,
+      mutuallyExclusive: false,
+    }),
+    effect: "write-or-create",
+    resultSchemas: Object.freeze([
+      "Perttool.InitResult.v1",
+      "Perttool.CliError.v1",
+    ]),
+    exitStatuses: Object.freeze([
+      Object.freeze({ code: 0, meaning: "Successful preview or exclusive creation." }),
+      Object.freeze({ code: 1, meaning: "Candidate validation failure." }),
+      Object.freeze({ code: 2, meaning: "CLI usage error." }),
+      Object.freeze({ code: 3, meaning: "Output or encoding error." }),
+      Object.freeze({ code: 5, meaning: "Existing target, symlink, or creation conflict." }),
+      Object.freeze({ code: 70, meaning: "Internal invariant or programmer error." }),
+    ]),
+    examples: Object.freeze([
+      Object.freeze({
+        id: "preview",
+        invocation: "perttool project init SAMPLE --title \"Sample project\" --duration-unit day --initial-milestone START --initial-milestone-title \"Project started\" --finish START",
+        summary: "Preview the complete smallest valid project document.",
+      }),
+      Object.freeze({
+        id: "out",
+        invocation: "perttool project init SAMPLE --title \"Sample project\" --duration-unit day --initial-milestone START --initial-milestone-title \"Project started\" --finish START --out plan.pert",
+        summary: "Create a new project document without overwriting a path.",
+      }),
+    ]),
+  });
+}
+
 const gateMutationOperands = Object.freeze([
   targetOperand("file", 0, "path-or-stdin"),
   targetOperand("id", 1, "gate-id"),
@@ -356,6 +500,7 @@ function gateDescriptor(
 }
 
 const targetOnlyDescriptors = Object.freeze([
+  projectInitDescriptor(),
   gateDescriptor("add"),
   gateDescriptor("set"),
   gateDescriptor("remove"),
@@ -376,12 +521,26 @@ if (guideDescriptor === undefined) {
 orderedDescriptors.push(guideDescriptor);
 
 for (const resource of resourceDefinitions) {
-  const commands = contract3Descriptors.filter(
-    (descriptor) =>
-      descriptor.path.length === 2 && descriptor.path[0] === resource.name,
-  );
+  const commands = contract3Descriptors
+    .filter(
+      (descriptor) =>
+        descriptor.path.length === 2 && descriptor.path[0] === resource.name,
+    )
+    .sort(
+      (left, right) =>
+        resource.actionOrder.indexOf(left.path[1]!)
+        - resource.actionOrder.indexOf(right.path[1]!),
+    );
   if (commands.length === 0) {
     throw new Error(`Contract 3 resource ${resource.name} has no commands`);
+  }
+  if (
+    commands.length !== resource.actionOrder.length
+    || commands.some(
+      (descriptor, index) => descriptor.path[1] !== resource.actionOrder[index],
+    )
+  ) {
+    throw new Error(`Contract 3 resource ${resource.name} action order is incomplete`);
   }
   orderedDescriptors.push(...commands);
 }
@@ -414,14 +573,9 @@ const contract3CommandsByPath = new Map(
 const resourceSummaries: readonly CommandResourceSummary[] = Object.freeze(
   resourceDefinitions.map((resource) =>
     Object.freeze({
-      ...resource,
-      actions: Object.freeze(
-        CONTRACT3_COMMAND_HELP_REGISTRY.flatMap((descriptor) =>
-          descriptor.path.length === 2 && descriptor.path[0] === resource.name
-            ? [descriptor.path[1]]
-            : []
-        ),
-      ),
+      name: resource.name,
+      summary: resource.summary,
+      actions: resource.actionOrder,
     })
   ),
 );

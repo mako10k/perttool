@@ -37,16 +37,15 @@
       "diagnostic_codes": []
     },
     "cli-surface-reset": {
-      "source_digest": "sha256:cede87824c095ef4054b3fb058c8ebf1adc80cf846cb720dc9a1cc42c46128b1",
+      "source_digest": "sha256:f73ad8098f6f363f220dbd4733ebee561f8f351d1b1ff46100a89d89003000c6",
       "groups": {
         "active": [],
         "ready": [
-          "MUT_001_PROJECT_INIT",
           "HELP_003_USAGE_RECOVERY",
           "HELP_002_DOMAIN_GUIDE_SPLIT"
         ],
         "runnable_now": [
-          "MUT_001_PROJECT_INIT"
+          "HELP_003_USAGE_RECOVERY"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -55,45 +54,24 @@
         ]
       },
       "recommended_task_ids": [
-        "MUT_001_PROJECT_INIT"
+        "HELP_003_USAGE_RECOVERY"
       ],
       "manual_selected_task_ids": [
-        "MUT_001_PROJECT_INIT"
+        "HELP_003_USAGE_RECOVERY"
       ],
       "tiers": {
-        "MUT_001_PROJECT_INIT": "recommended",
-        "HELP_003_USAGE_RECOVERY": "deferred",
+        "HELP_003_USAGE_RECOVERY": "recommended",
         "HELP_002_DOMAIN_GUIDE_SPLIT": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "MUT_001_PROJECT_INIT",
+          "id": "HELP_003_USAGE_RECOVERY",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
-        },
-        {
-          "id": "HELP_003_USAGE_RECOVERY",
-          "runnable_now": false,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": [
-            {
-              "resource_id": "CLI_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "MUT_001_PROJECT_INIT"
-              ]
-            }
-          ]
         },
         {
           "id": "HELP_002_DOMAIN_GUIDE_SPLIT",
@@ -110,19 +88,19 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "MUT_001_PROJECT_INIT"
+                "HELP_003_USAGE_RECOVERY"
               ]
             }
           ]
         }
       ],
       "record_counts": {
-        "task_decisions": 3,
-        "decision_steps": 17,
-        "facts": 87,
-        "comparisons": 3,
-        "reasons": 12,
-        "descriptions": 6
+        "task_decisions": 2,
+        "decision_steps": 12,
+        "facts": 47,
+        "comparisons": 2,
+        "reasons": 8,
+        "descriptions": 4
       },
       "diagnostic_codes": []
     },

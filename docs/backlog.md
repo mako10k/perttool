@@ -17,9 +17,9 @@ The eight items below are mapped one-to-one into
 normative contract-design task. The
 [Contract 3 specification](specs/cli-contract-3.md) and
 [migration guide](process/cli-contract-3-migration.md) accept that design
-target. `CLI-001`, the internal `HELP-001` projection, and gate-maintenance
-Core are complete; five implementation items remain open. Public Contract 3
-activation remains one atomic `CLI-002` change.
+target. `CLI-001`, the internal `HELP-001` projection, project initialization,
+and gate-maintenance Core are complete; four implementation items remain open.
+Public Contract 3 activation remains one atomic `CLI-002` change.
 
 ### CLI-001: Adopt one command descriptor registry
 
@@ -95,7 +95,7 @@ Acceptance:
 ### MUT-001: Initialize a project through the CLI
 
 Priority: P0
-Status: Backlog; contract designed, not implemented
+Status: Core complete (2026-07-24); direct command activation deferred to CLI-002
 
 Add a preview-first project initialization command that creates the smallest
 valid `.pert` document through the same validated and exclusive-create path as

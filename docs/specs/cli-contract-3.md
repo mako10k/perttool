@@ -22,7 +22,9 @@ interface. Until the atomic cutover defined by the migration guide:
 - implementations MUST NOT advertise a Contract 3 command that is unavailable;
 - consumers MUST NOT assume that the commands in this document work in
   `0.1.0`;
-- `project init` remains backlog item `MUT-001`;
+- project initialization Core, deterministic result projections, exclusive
+  output composition, and its internal target descriptor are implemented, but
+  the direct command remains inactive;
 - gate mutation Core, atomic-batch maintenance, and internal target descriptors
   are implemented, but direct Contract 3 gate commands remain inactive.
 
@@ -309,8 +311,9 @@ registry and MUST NOT invent an unavailable command or option.
 
 ### 8.1 `project init`
 
-`project init` is backlog item `MUT-001`; this section fixes its future
-contract without implementing it.
+`MUT-001` implements the initialization Core, result projections, exclusive
+output composition, and internal target descriptor fixed by this section.
+The direct command activates only at the atomic Contract 3 cutover.
 
 ```text
 perttool project init <project-id>

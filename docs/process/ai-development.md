@@ -134,10 +134,13 @@ ADR 0004 adopts English as the repository baseline immediately. The legacy-surfa
 The human/LLM CLI surface review and its eight backlog items are also tracked
 as an independent post-beta workstream in
 [`plans/cli-surface-reset.pert`](../../plans/cli-surface-reset.pert).
-`CONTRACT_V3_DESIGN` is complete and advanced, fixing the requirements,
-normative target, basic design, migration boundary, and acceptance cases
-without changing runtime commands. `CLI_001_COMMAND_REGISTRY` is now
-recommended. `project init` remains the unimplemented `MUT-001` backlog item.
+`CONTRACT_V3_DESIGN`, `CLI_001_COMMAND_REGISTRY`,
+`HELP_001_COMMAND_DISCOVERY`, `MUT_001_PROJECT_INIT`, and
+`MUT_002_GATE_MAINTENANCE` are complete and advanced. The active Contract 2
+CLI remains unchanged while the internal Contract 3 registry includes project
+initialization and gate maintenance. Fresh complete `NextResult.v3` recommends
+`HELP_003_USAGE_RECOVERY`; direct Contract 3 commands remain inactive until
+the atomic cutover.
 
 ### 5.1 Adopted Recommendation authority
 

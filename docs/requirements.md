@@ -704,8 +704,9 @@ Must:
   tasks, gates, resources, or dependencies.
 - Add, change, and remove gates through source-preserving typed mutations.
 - Support connected gate/milestone/task changes in one atomic batch.
-- Keep project initialization and gate maintenance as unimplemented backlog
-  until their dedicated plan tasks and acceptance cases pass.
+- Keep direct Contract 3 initialization and gate commands inactive until the
+  atomic cutover, even after their Core, output, and descriptor prerequisites
+  pass their dedicated plan tasks and acceptance cases.
 
 ## 13. Visualization requirements
 
@@ -1064,8 +1065,9 @@ acceptance. It is accepted only when all of the following are true.
 2. One command descriptor registry is authoritative for dispatch, validation,
    text help, JSON help, schemas, exits, effects, and examples.
 3. `project init` creates the explicit smallest valid document through preview
-   and exclusive output, and remains backlog until that behavior is
-   implemented.
+   and exclusive output; its Core, result projection, exclusive-create
+   composition, and internal descriptor are implemented before public
+   activation.
 4. Gate add/set/remove and connected atomic batches cover every gate field
    without an implicit cascade.
 5. Command `help` is complete at top, resource, and action levels, while
