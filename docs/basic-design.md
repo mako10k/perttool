@@ -786,9 +786,13 @@ default: updated text or diff only
 ### 11.3 Contract 3 command registry and dispatch
 
 Contract 3 replaces handwritten dispatch/help duplication with one immutable
-typed registry under `src/help/` or a dedicated `src/command/` module selected
-during `CLI_001_COMMAND_REGISTRY`. Module naming does not change the following
-dependency rule.
+typed registry. `CLI_001_COMMAND_REGISTRY` selected
+`src/command/registry.ts`, made its expanded Contract 2 descriptors
+authoritative for the active dispatch and option parser, and added
+deterministic text and JSON descriptor projections. Public hierarchical JSON
+help remains inactive until `HELP_001_COMMAND_DISCOVERY`, and the descriptors
+retain `contractVersion = 2` until the atomic cutover. The module naming does
+not change the following dependency rule.
 
 ```text
 command descriptors

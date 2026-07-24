@@ -39,28 +39,6 @@ export interface HelpResult {
   readonly diagnostics: readonly Diagnostic[];
 }
 
-export interface CommandHelpDefinition {
-  readonly operation: string;
-  readonly summary: string;
-  readonly syntax: readonly string[];
-}
-
-const agentHelpCommand: CommandHelpDefinition = {
-  operation: "agent.help",
-  summary:
-    "Displays read-only AI agent guidance for each provider from bundled offline profiles.",
-  syntax: [
-    "Usage: perttool agent help [<provider> [<surface>]]",
-    "  [--level index|quick|detail]",
-    "  [--format text|json]",
-    "  [--color auto|always|never]",
-  ],
-};
-
-export function getAgentHelpCommandHelp(): CommandHelpDefinition {
-  return agentHelpCommand;
-}
-
 const nodes: readonly HelpNode[] = [
   {
     id: "syntax",

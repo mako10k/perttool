@@ -6,11 +6,12 @@ project CLI_SURFACE_RESET:
     docs/backlog.md into an independent post-beta workstream. This plan records
     future design, implementation, migration, and acceptance work only; it does not
     make an uncompleted Contract 3 command available. Estimates are provisional
-    relative points. The first plan-specific sample is 5p/1d from Contract 3 design
-    completed on 2026-07-24; recalibrate after work on another active day.
+    relative points. The cumulative plan-specific sample is 13p/1d from Contract 3
+    design and the command registry completed on 2026-07-24; recalibrate after work
+    on another active day.
   as_of 2026-07-24
   duration_unit point
-  velocity 5p/1d
+  velocity 13p/1d
   finish CLI_SURFACE_RESET_ACCEPTED
 
 resource DEVELOPERS:
@@ -42,6 +43,7 @@ milestone CONTRACT_V3_DESIGNED:
 
 milestone COMMAND_REGISTRY_READY:
   title "CLI-001 command descriptor registry ready"
+  state reached
 
 milestone COMMAND_DISCOVERY_READY:
   title "HELP-001 hierarchical command discovery ready"
@@ -68,19 +70,6 @@ milestone CLI_SURFACE_RESET_ACCEPTED:
   title "CLI-003 file-first maintenance workflow accepted"
 
 
-task CLI_001_COMMAND_REGISTRY CONTRACT_V3_DESIGNED -> COMMAND_REGISTRY_READY:
-  title "CLI-001 adopt one command descriptor registry"
-  description |
-    Make one typed registry authoritative for dispatch validation, text and JSON
-    help, operands, options, defaults, conflicts, input/output modes, effects,
-    result schemas, exit statuses, and examples. A command or accepted option
-    missing from the registry must fail repository verification.
-  duration 8p
-  priority 90
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    CLI_SURFACE 1
 
 task HELP_001_COMMAND_DISCOVERY COMMAND_REGISTRY_READY -> COMMAND_DISCOVERY_READY:
   title "HELP-001 add hierarchical machine-readable command discovery"

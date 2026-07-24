@@ -5,7 +5,7 @@
     "summary": {
       "resources": 5,
       "milestones": 10,
-      "tasks": 8,
+      "tasks": 7,
       "gates": 4,
       "errors": 0,
       "warnings": 0
@@ -13,18 +13,17 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "28/1",
+    "precedence_makespan": "20/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "28/5",
+    "precedence_forecast": "20/13",
     "precedence_critical_tasks": [
-      "CLI_001_COMMAND_REGISTRY",
       "HELP_001_COMMAND_DISCOVERY",
       "HELP_003_USAGE_RECOVERY",
       "CLI_002_CONTRACT_V3_CUTOVER",
       "CLI_003_FILE_FIRST_ACCEPTANCE"
     ],
-    "resource_makespan": "44/1",
-    "resource_forecast": "44/5",
+    "resource_makespan": "36/1",
+    "resource_forecast": "36/13",
     "resource_delay": "16/1",
     "resource_arcs": [
       "resource:HELP_001_COMMAND_DISCOVERY:MUT_002_GATE_MAINTENANCE",
@@ -33,7 +32,6 @@
       "resource:MUT_002_GATE_MAINTENANCE:MUT_001_PROJECT_INIT"
     ],
     "schedule_critical_tasks": [
-      "CLI_001_COMMAND_REGISTRY",
       "HELP_001_COMMAND_DISCOVERY",
       "MUT_002_GATE_MAINTENANCE",
       "MUT_001_PROJECT_INIT",
@@ -47,16 +45,15 @@
     "groups": {
       "active": [],
       "ready": [
-        "CLI_001_COMMAND_REGISTRY",
+        "HELP_001_COMMAND_DISCOVERY",
         "MUT_002_GATE_MAINTENANCE",
         "MUT_001_PROJECT_INIT"
       ],
       "runnable_now": [
-        "CLI_001_COMMAND_REGISTRY"
+        "HELP_001_COMMAND_DISCOVERY"
       ],
       "blocked_now": [],
       "upcoming": [
-        "HELP_001_COMMAND_DISCOVERY",
         "HELP_003_USAGE_RECOVERY",
         "HELP_002_DOMAIN_GUIDE_SPLIT",
         "CLI_002_CONTRACT_V3_CUTOVER",
@@ -68,7 +65,7 @@
       "resource_id": "CLI_SURFACE",
       "capacity": 1,
       "earlier_selected_task_ids": [
-        "CLI_001_COMMAND_REGISTRY"
+        "HELP_001_COMMAND_DISCOVERY"
       ]
     }
   }

@@ -37,20 +37,19 @@
       "diagnostic_codes": []
     },
     "cli-surface-reset": {
-      "source_digest": "sha256:787097085074e9d08f3fdfd3f4af030e049152dfe10b8145fbb85eb4f0233939",
+      "source_digest": "sha256:a2efa9b0ef7d1c55cc2892de03ff8dd83e101e98864dd0916e0ebc5abc2c6e0c",
       "groups": {
         "active": [],
         "ready": [
-          "CLI_001_COMMAND_REGISTRY",
+          "HELP_001_COMMAND_DISCOVERY",
           "MUT_002_GATE_MAINTENANCE",
           "MUT_001_PROJECT_INIT"
         ],
         "runnable_now": [
-          "CLI_001_COMMAND_REGISTRY"
+          "HELP_001_COMMAND_DISCOVERY"
         ],
         "blocked_now": [],
         "upcoming": [
-          "HELP_001_COMMAND_DISCOVERY",
           "HELP_003_USAGE_RECOVERY",
           "HELP_002_DOMAIN_GUIDE_SPLIT",
           "CLI_002_CONTRACT_V3_CUTOVER",
@@ -58,20 +57,20 @@
         ]
       },
       "recommended_task_ids": [
-        "CLI_001_COMMAND_REGISTRY"
+        "HELP_001_COMMAND_DISCOVERY"
       ],
       "manual_selected_task_ids": [
-        "CLI_001_COMMAND_REGISTRY"
+        "HELP_001_COMMAND_DISCOVERY"
       ],
       "tiers": {
-        "CLI_001_COMMAND_REGISTRY": "recommended",
+        "HELP_001_COMMAND_DISCOVERY": "recommended",
         "MUT_002_GATE_MAINTENANCE": "deferred",
         "MUT_001_PROJECT_INIT": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "CLI_001_COMMAND_REGISTRY",
+          "id": "HELP_001_COMMAND_DISCOVERY",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -83,7 +82,7 @@
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "10/1",
+          "total_float": "2/1",
           "resource_rejections": [
             {
               "resource_id": "CLI_SURFACE",
@@ -93,7 +92,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "CLI_001_COMMAND_REGISTRY"
+                "HELP_001_COMMAND_DISCOVERY"
               ]
             }
           ]
@@ -103,7 +102,7 @@
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "13/1",
+          "total_float": "5/1",
           "resource_rejections": [
             {
               "resource_id": "CLI_SURFACE",
@@ -113,7 +112,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "CLI_001_COMMAND_REGISTRY"
+                "HELP_001_COMMAND_DISCOVERY"
               ]
             }
           ]

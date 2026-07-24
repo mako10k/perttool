@@ -22,7 +22,7 @@ const backlogIds = [
   "CLI-003",
 ];
 
-test("Contract 3 design maps every CLI review backlog item exactly once", async () => {
+test("Contract 3 backlog and current plan preserve open and advanced item traceability", async () => {
   const [backlog, plan] = await Promise.all([
     repositoryText("docs/backlog.md"),
     repositoryText("plans/cli-surface-reset.pert"),
@@ -35,9 +35,17 @@ test("Contract 3 design maps every CLI review backlog item exactly once", async 
   for (const backlogId of backlogIds) {
     const taskId = backlogId.replace("-", "_");
     const matches = plan.match(new RegExp(`^task ${taskId}(?:_| )`, "gm")) ?? [];
-    assert.equal(matches.length, 1, backlogId);
+    assert.equal(matches.length, backlogId === "CLI-001" ? 0 : 1, backlogId);
   }
 
+  assert.match(
+    backlog,
+    /^### CLI-001: Adopt one command descriptor registry\n\nPriority: P0\n\nStatus: Complete \(2026-07-24\)$/m,
+  );
+  assert.match(
+    plan,
+    /^milestone COMMAND_REGISTRY_READY:\n  title "CLI-001 command descriptor registry ready"\n  state reached$/m,
+  );
   assert.match(
     backlog,
     /^### MUT-001: Initialize a project through the CLI\n\nPriority: P0\nStatus: Backlog; contract designed, not implemented$/m,

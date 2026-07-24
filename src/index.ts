@@ -18,10 +18,28 @@ export { importMermaid } from "./conversion/mermaid-import.js";
 export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js";
 export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
+export { getHelp } from "./help/registry.js";
 export {
+  COMMAND_REGISTRY,
+  commandDescriptorToJson,
+  commandOptionSets,
+  commandRegistryToJson,
   getAgentHelpCommandHelp,
-  getHelp,
-} from "./help/registry.js";
+  getCommandDescriptor,
+  getCommandDescriptorByOperation,
+  renderCommandHelp,
+  renderTopLevelHelp,
+} from "./command/registry.js";
+export type {
+  CommandDescriptor,
+  CommandExample,
+  CommandHandler,
+  CommandOutputDescriptor,
+  ExitStatusDescriptor,
+  OperandDescriptor,
+  OptionDescriptor,
+  SharedOptionGroup,
+} from "./command/registry.js";
 export {
   getAgentGuidance,
   getBundledAgentGuidance,

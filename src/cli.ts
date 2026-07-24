@@ -23,9 +23,16 @@ import {
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import {
-  getAgentHelpCommandHelp,
   getHelp,
 } from "./help/registry.js";
+import {
+  commandOptionSets,
+  getCommandDescriptor,
+  getCommandDescriptorByOperation,
+  renderCommandHelp,
+  renderTopLevelHelp,
+  type CommandDescriptor,
+} from "./command/registry.js";
 import { serializeAgentGuidanceResult } from "./guidance/projection.js";
 import {
   agentGuidanceExitCode,
@@ -82,167 +89,6 @@ class UsageError extends Error {
   readonly code = "PTCLI-001";
 }
 
-function topLevelHelp(): string {
-  return [
-    "perttool - document-based PERT/CPM task management",
-    "",
-    "Usage:",
-    "  perttool --version",
-    "  perttool --help",
-    "  perttool dsl check <file> [--format text|json]",
-    "  perttool dsl format <file> [--check] [--diff] [--format text|json]",
-    "  perttool dsl help [topic [subtopic]] [--level index|quick|detail] [--format text|json]",
-    "  perttool agent help [provider [surface]] [--level index|quick|detail] [--format text|json]",
-    "  perttool project show <file> [--format text|json]",
-    "  perttool project set <file> [field options] [--diff] [--write | --out <path>]",
-    "  perttool dag analyze <file> [--schedule precedence|resource|both] [--format text|json]",
-    "  perttool dag next <file> [--capacity <resource-id>=<integer>] [--format text|json]",
-    "  perttool dag advance <file> [--diff] [--write | --out <path>] [--format text|json]",
-    "  perttool dag render <file> --to mermaid [--profile perttool|plain] [--format text|json]",
-    "  perttool dag import <file> --from mermaid [--strict-loss] [--out <path>] [--format text|json]",
-    "  perttool task add|set|remove|finish ...",
-    "  perttool milestone add|set|remove ...",
-    "  perttool resource add|set|remove ...",
-    "  perttool mutation apply <file> --request <json-file|-> [--diff] [--format text|json]",
-    "",
-    "Format and mutation commands preview by default; use --write or --out for explicit writes.",
-  ].join("\n");
-}
-
-function commandHelp(resource: string, action: string): string {
-  if (resource === "agent" && action === "help") {
-    return getAgentHelpCommandHelp().syntax.join("\n");
-  }
-  if (resource === "dsl" && action === "check") {
-    return [
-      "Usage: perttool dsl check <file>",
-      "  [--warnings-as-errors]",
-      "  [--max-diagnostics <integer>]",
-      "  [--format text|json]",
-      "  [--color auto|always|never]",
-    ].join("\n");
-  }
-  if (resource === "dsl" && action === "format") return [
-    "Usage: perttool dsl format <file>",
-    "  [--check] [--diff]",
-    "  [--write [--expect-digest <digest>] | --out <path>]",
-    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
-    "  [--format text|json] [--color auto|always|never]",
-  ].join("\n");
-  if (resource === "dsl" && action === "help") return [
-    "Usage: perttool dsl help [topic [subtopic]]",
-    "  [--level index|quick|detail]",
-    "  [--format text|json]",
-    "  [--color auto|always|never]",
-  ].join("\n");
-  if (resource === "project" && action === "show") return [
-    "Usage: perttool project show <file>",
-    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
-    "  [--format text|json] [--color auto|always|never]",
-  ].join("\n");
-  if (resource === "project" && action === "set") return [
-    "Usage: perttool project set <file> [field options]",
-    "  [--id <id>] [--version <integer>] [--title <text>] [--description <text>]",
-    "  [--as-of <date-or-date-time>] [--duration-unit day|hour|point]",
-    "  [--velocity <velocity>] [--finish <milestone-id>]",
-    "  [--critical-epsilon <duration>] [--target-duration <duration>]",
-    "  [--clear description|as_of|velocity|critical_epsilon|target_duration]...",
-    "  [--diff] [--write [--expect-digest <digest>] | --out <path>]",
-    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
-    "  [--format text|json] [--color auto|always|never]",
-  ].join("\n");
-  if (resource === "dag" && action === "analyze") return [
-    "Usage: perttool dag analyze <file>",
-    "  [--schedule precedence|resource|both]",
-    "  [--capacity <resource-id>=<integer>]...",
-    "  [--max-paths <integer>] [--precision <integer>]",
-    "  [--max-diagnostics <integer>]",
-    "  [--warnings-as-errors]",
-    "  [--format text|json] [--color auto|always|never]",
-  ].join("\n");
-  if (resource === "dag" && action === "next") return [
-    "Usage: perttool dag next <file>",
-    "  [--capacity <resource-id>=<integer>]...",
-    "  [--explain-depth <integer>] [--precision <integer>]",
-    "  [--max-diagnostics <integer>]",
-    "  [--warnings-as-errors]",
-    "  [--format text|json] [--color auto|always|never]",
-    "Output: Perttool.NextResult.v3 with a complete recommendation graph in JSON.",
-    "Consumers must inspect schema_version before using recommendation authority.",
-  ].join("\n");
-  if (resource === "dag" && action === "advance") return [
-    "Usage: perttool dag advance <file>",
-    "  [--diff] [--write [--expect-digest <digest>] | --out <path>]",
-    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
-    "  [--format text|json] [--color auto|always|never]",
-  ].join("\n");
-  if (resource === "dag" && action === "render") return [
-    "Usage: perttool dag render <file> --to mermaid",
-    "  [--profile perttool|plain] [--analysis none|precedence|resource|both]",
-    "  [--capacity <resource-id>=<integer>]... [--strict-loss] [--out <path>]",
-    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
-    "  [--format text|json] [--color auto|always|never]",
-  ].join("\n");
-  if (resource === "dag" && action === "import") return [
-    "Usage: perttool dag import <file> --from mermaid",
-    "  [--strict-loss] [--out <path>]",
-    "  [--max-diagnostics <integer>] [--warnings-as-errors]",
-    "  [--format text|json] [--color auto|always|never]",
-  ].join("\n");
-  const preview = "  [--diff] [--write [--expect-digest <digest>] | --out <path>] [--max-diagnostics <integer>] [--warnings-as-errors] [--format text|json] [--color auto|always|never]";
-  if (resource === "task" && action === "add") return [
-    "Usage: perttool task add <file> <id> <from> <to>",
-    "  --title <text> (--duration <duration> | --optimistic <duration> --most-likely <duration> --pessimistic <duration>)",
-    "  [--description <text>] [--status planned|active|blocked|done] [--priority <integer>]",
-    "  [--owner <text>] [--blocked-reason <text>] [--source <text>] [--tag <tag>]... [--require <resource-id>=<integer>]...",
-    preview,
-  ].join("\n");
-  if (resource === "task" && action === "set") return [
-    "Usage: perttool task set <file> <id> [field options]",
-    "  [--from <id>] [--to <id>] [--title <text>] [--description <text>] [--duration <duration>]",
-    "  [--optimistic <duration> --most-likely <duration> --pessimistic <duration>]",
-    "  [--status planned|active|blocked|done] [--priority <integer>] [--owner <text>]",
-    "  [--blocked-reason <text>] [--source <text>] [--require <resource-id>=<integer>]...",
-    "  [--add-tag <tag>]... [--remove-tag <tag>]... [--remove-require <resource-id>]... [--clear <field>]...",
-    preview,
-  ].join("\n");
-  if (resource === "task") return [
-    `Usage: perttool task ${action} <file> <id>`,
-    preview,
-  ].join("\n");
-  if (resource === "milestone" && action === "add") return [
-    "Usage: perttool milestone add <file> <id> --title <text>",
-    "  [--description <text>] [--state planned|reached] [--tag <tag>]...",
-    preview,
-  ].join("\n");
-  if (resource === "milestone" && action === "set") return [
-    "Usage: perttool milestone set <file> <id> [--title <text>] [--description <text>] [--state planned|reached]",
-    "  [--add-tag <tag>]... [--remove-tag <tag>]... [--clear description|state|tags]...",
-    preview,
-  ].join("\n");
-  if (resource === "milestone") return [
-    `Usage: perttool milestone ${action} <file> <id>`,
-    preview,
-  ].join("\n");
-  if (resource === "resource" && action === "add") return [
-    "Usage: perttool resource add <file> <id> --title <text> --capacity <integer>",
-    "  [--description <text>]",
-    preview,
-  ].join("\n");
-  if (resource === "resource" && action === "set") return [
-    "Usage: perttool resource set <file> <id> [--title <text>] [--description <text>] [--capacity <integer>] [--clear description]",
-    preview,
-  ].join("\n");
-  if (resource === "resource") return [
-    `Usage: perttool resource ${action} <file> <id>`,
-    preview,
-  ].join("\n");
-  return [
-    "Usage: perttool mutation apply <file> --request <json-file|->",
-    preview,
-  ].join("\n");
-}
-
 function parseOptions(
   args: readonly string[],
   valueOptions: ReadonlySet<string>,
@@ -291,6 +137,23 @@ function parseOptions(
     }
   }
   return { positionals, values, repeatedValues, flags };
+}
+
+function parseCommandOptions(
+  operation: string,
+  args: readonly string[],
+): ParsedOptions {
+  const descriptor = getCommandDescriptorByOperation(operation);
+  if (descriptor === null) {
+    throw new Error(`command descriptor is missing for ${operation}`);
+  }
+  const optionSets = commandOptionSets(descriptor);
+  return parseOptions(
+    args,
+    optionSets.values,
+    optionSets.flags,
+    optionSets.repeatable,
+  );
 }
 
 function outputFormat(value: string | undefined): OutputFormat {
@@ -459,11 +322,7 @@ function cliError(
 }
 
 async function runCheck(args: readonly string[]): Promise<number> {
-  const parsed = parseOptions(
-    args,
-    new Set(["format", "color", "max-diagnostics"]),
-    new Set(["warnings-as-errors"]),
-  );
+  const parsed = parseCommandOptions("dsl.check", args);
   if (parsed.positionals.length !== 1) {
     throw new UsageError("dsl check requires exactly one <file>");
   }
@@ -556,11 +415,7 @@ function renderProjectText(project: ProjectMetadata): string {
 }
 
 async function runProjectShow(args: readonly string[]): Promise<number> {
-  const parsed = parseOptions(
-    args,
-    new Set(["format", "color", "max-diagnostics"]),
-    new Set(["warnings-as-errors"]),
-  );
+  const parsed = parseCommandOptions("project.show", args);
   if (parsed.positionals.length !== 1) {
     throw new UsageError("project show requires exactly one <file>");
   }
@@ -661,15 +516,6 @@ function capacityOverrides(values: readonly string[]): ReadonlyMap<string, numbe
   }
   return overrides;
 }
-
-const mutationCommonValueOptions = [
-  "format",
-  "color",
-  "max-diagnostics",
-  "out",
-  "expect-digest",
-] as const;
-const mutationCommonFlagOptions = ["diff", "write", "warnings-as-errors"] as const;
 
 type EditingWriteRequest =
   | { readonly mode: "preview"; readonly target: null }
@@ -772,11 +618,7 @@ function renderWriteSummary(operation: string, result: DocumentWriteResult): str
 }
 
 async function runFormat(args: readonly string[]): Promise<number> {
-  const parsed = parseOptions(
-    args,
-    new Set(["format", "color", "max-diagnostics", "out", "expect-digest"]),
-    new Set(["check", "diff", "write", "warnings-as-errors"]),
-  );
+  const parsed = parseCommandOptions("dsl.format", args);
   if (parsed.positionals.length !== 1) {
     throw new UsageError("dsl format requires exactly one <file>");
   }
@@ -868,68 +710,6 @@ async function runFormat(args: readonly string[]): Promise<number> {
     }
   }
   return ok ? 0 : 1;
-}
-
-function mutationOptionSets(
-  resource: string,
-  action: string,
-): {
-  readonly values: ReadonlySet<string>;
-  readonly flags: ReadonlySet<string>;
-  readonly repeatable: ReadonlySet<string>;
-} {
-  const values = new Set<string>(mutationCommonValueOptions);
-  const flags = new Set<string>(mutationCommonFlagOptions);
-  const repeatable = new Set<string>();
-  const addValues = (...names: readonly string[]): void => {
-    for (const name of names) values.add(name);
-  };
-  const addRepeatable = (...names: readonly string[]): void => {
-    for (const name of names) repeatable.add(name);
-  };
-
-  if (resource === "project" && action === "set") {
-    addValues(
-      "id",
-      "version",
-      "title",
-      "description",
-      "as-of",
-      "duration-unit",
-      "velocity",
-      "finish",
-      "critical-epsilon",
-      "target-duration",
-    );
-    addRepeatable("clear");
-  } else if (resource === "task" && action === "add") {
-    addValues(
-      "title", "description", "duration", "optimistic", "most-likely",
-      "pessimistic", "status", "priority", "owner", "blocked-reason", "source",
-    );
-    addRepeatable("tag", "require");
-  } else if (resource === "task" && action === "set") {
-    addValues(
-      "from", "to", "title", "description", "duration", "optimistic",
-      "most-likely", "pessimistic", "status", "priority", "owner",
-      "blocked-reason", "source",
-    );
-    addRepeatable("require", "add-tag", "remove-tag", "remove-require", "clear");
-  } else if (resource === "milestone" && action === "add") {
-    addValues("title", "description", "state");
-    addRepeatable("tag");
-  } else if (resource === "milestone" && action === "set") {
-    addValues("title", "description", "state");
-    addRepeatable("add-tag", "remove-tag", "clear");
-  } else if (resource === "resource" && action === "add") {
-    addValues("title", "description", "capacity");
-  } else if (resource === "resource" && action === "set") {
-    addValues("title", "description", "capacity");
-    addRepeatable("clear");
-  } else if (resource === "mutation" && action === "apply") {
-    addValues("request");
-  }
-  return { values, flags, repeatable };
 }
 
 function requiredOption(parsed: ParsedOptions, name: string): string {
@@ -1383,8 +1163,7 @@ async function runMutation(
   action: string,
   args: readonly string[],
 ): Promise<number> {
-  const config = mutationOptionSets(resource, action);
-  const parsed = parseOptions(args, config.values, config.flags, config.repeatable);
+  const parsed = parseCommandOptions(`${resource}.${action}`, args);
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
   const maxDiagnostics = boundedInteger(
@@ -1535,11 +1314,7 @@ function renderAdvanceSummary(details: AdvanceDetails): string {
 }
 
 async function runAdvance(args: readonly string[]): Promise<number> {
-  const parsed = parseOptions(
-    args,
-    new Set(["format", "color", "max-diagnostics", "out", "expect-digest"]),
-    new Set(["diff", "write", "warnings-as-errors"]),
-  );
+  const parsed = parseCommandOptions("dag.advance", args);
   if (parsed.positionals.length !== 1) {
     throw new UsageError("dag advance requires exactly one <file>");
   }
@@ -1973,19 +1748,7 @@ function renderAnalysisText(
 }
 
 async function runAnalyze(args: readonly string[]): Promise<number> {
-  const parsed = parseOptions(
-    args,
-    new Set([
-      "schedule",
-      "max-paths",
-      "precision",
-      "max-diagnostics",
-      "format",
-      "color",
-    ]),
-    new Set(["warnings-as-errors"]),
-    new Set(["capacity"]),
-  );
+  const parsed = parseCommandOptions("dag.analyze", args);
   if (parsed.positionals.length !== 1) {
     throw new UsageError("dag analyze requires exactly one <file>");
   }
@@ -2104,20 +1867,7 @@ function renderConversionLoss(
 }
 
 async function runRender(args: readonly string[]): Promise<number> {
-  const parsed = parseOptions(
-    args,
-    new Set([
-      "to",
-      "profile",
-      "analysis",
-      "out",
-      "max-diagnostics",
-      "format",
-      "color",
-    ]),
-    new Set(["strict-loss", "warnings-as-errors"]),
-    new Set(["capacity"]),
-  );
+  const parsed = parseCommandOptions("dag.render", args);
   if (parsed.positionals.length !== 1) {
     throw new UsageError("dag render requires exactly one <file>");
   }
@@ -2237,11 +1987,7 @@ async function runRender(args: readonly string[]): Promise<number> {
 }
 
 async function runImport(args: readonly string[]): Promise<number> {
-  const parsed = parseOptions(
-    args,
-    new Set(["from", "out", "max-diagnostics", "format", "color"]),
-    new Set(["strict-loss", "warnings-as-errors"]),
-  );
+  const parsed = parseCommandOptions("dag.import", args);
   if (parsed.positionals.length !== 1) {
     throw new UsageError("dag import requires exactly one <file>");
   }
@@ -2614,12 +2360,7 @@ function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
 }
 
 async function runNext(args: readonly string[]): Promise<number> {
-  const parsed = parseOptions(
-    args,
-    new Set(["explain-depth", "precision", "max-diagnostics", "format", "color"]),
-    new Set(["warnings-as-errors"]),
-    new Set(["capacity"]),
-  );
+  const parsed = parseCommandOptions("dag.next", args);
   if (parsed.positionals.length !== 1) {
     throw new UsageError("dag next requires exactly one <file>");
   }
@@ -2727,11 +2468,7 @@ function renderHelpText(result: ReturnType<typeof getHelp>): string {
 }
 
 function runHelp(args: readonly string[]): number {
-  const parsed = parseOptions(
-    args,
-    new Set(["level", "format", "color"]),
-    new Set(),
-  );
+  const parsed = parseCommandOptions("dsl.help", args);
   if (parsed.positionals.length > 2) {
     throw new UsageError("dsl help accepts at most <topic> <subtopic>");
   }
@@ -2769,11 +2506,7 @@ function runHelp(args: readonly string[]): number {
 }
 
 function runAgentHelp(args: readonly string[]): number {
-  const parsed = parseOptions(
-    args,
-    new Set(["level", "format", "color"]),
-    new Set(),
-  );
+  const parsed = parseCommandOptions("agent.help", args);
   if (parsed.positionals.length > 2) {
     throw new UsageError("agent help accepts at most <provider> <surface>");
   }
@@ -2814,73 +2547,63 @@ function runAgentHelp(args: readonly string[]): number {
   return agentGuidanceExitCode(result.diagnostics);
 }
 
+async function dispatchCommand(
+  descriptor: CommandDescriptor,
+  args: readonly string[],
+): Promise<number> {
+  switch (descriptor.handler) {
+    case "check":
+      return runCheck(args);
+    case "format":
+      return runFormat(args);
+    case "domain-help":
+      return runHelp(args);
+    case "agent-help":
+      return runAgentHelp(args);
+    case "project-show":
+      return runProjectShow(args);
+    case "analyze":
+      return runAnalyze(args);
+    case "next":
+      return runNext(args);
+    case "advance":
+      return runAdvance(args);
+    case "render":
+      return runRender(args);
+    case "import":
+      return runImport(args);
+    case "mutation": {
+      const [resource, action] = descriptor.path;
+      return runMutation(
+        resource as "project" | "task" | "milestone" | "resource" | "mutation",
+        action,
+        args,
+      );
+    }
+  }
+}
+
 async function main(argv: readonly string[]): Promise<number> {
   if (argv.length === 1 && argv[0] === "--version") {
     process.stdout.write(`perttool ${TOOL_VERSION}\n`);
     return 0;
   }
   if (argv.length === 1 && argv[0] === "--help") {
-    process.stdout.write(`${topLevelHelp()}\n`);
+    process.stdout.write(`${renderTopLevelHelp()}\n`);
     return 0;
   }
   if (argv.length < 2) throw new UsageError("expected <resource> <action>");
   const resource = argv[0]!;
   const action = argv[1]!;
-  const entityActions = new Map<string, ReadonlySet<string>>([
-    ["project", new Set(["set"])],
-    ["task", new Set(["add", "set", "remove", "finish"])],
-    ["milestone", new Set(["add", "set", "remove"])],
-    ["resource", new Set(["add", "set", "remove"])],
-    ["mutation", new Set(["apply"])],
-  ]);
-  const isMutationCommand = entityActions.get(resource)?.has(action) === true;
-  if (
-    argv.length === 3 &&
-    argv[2] === "--help" &&
-    ((resource === "agent" && action === "help") ||
-      (resource === "dsl" && ["check", "format", "help"].includes(action)) ||
-      (resource === "project" && action === "show") ||
-      (resource === "dag" && ["analyze", "next", "advance", "render", "import"].includes(action)) ||
-      isMutationCommand)
-  ) {
-    process.stdout.write(`${commandHelp(resource, action)}\n`);
-    return 0;
-  }
-  if (resource === "dag" && action === "analyze") {
-    return runAnalyze(argv.slice(2));
-  }
-  if (resource === "dag" && action === "next") {
-    return runNext(argv.slice(2));
-  }
-  if (resource === "dag" && action === "advance") {
-    return runAdvance(argv.slice(2));
-  }
-  if (resource === "dag" && action === "render") {
-    return runRender(argv.slice(2));
-  }
-  if (resource === "dag" && action === "import") {
-    return runImport(argv.slice(2));
-  }
-  if (resource === "agent" && action === "help") {
-    return runAgentHelp(argv.slice(2));
-  }
-  if (resource === "project" && action === "show") {
-    return runProjectShow(argv.slice(2));
-  }
-  if (resource === "dsl" && action === "format") {
-    return runFormat(argv.slice(2));
-  }
-  if (isMutationCommand) {
-    return runMutation(
-      resource as "project" | "task" | "milestone" | "resource" | "mutation",
-      action,
-      argv.slice(2),
-    );
-  }
-  if (resource !== "dsl" || (action !== "check" && action !== "help")) {
+  const descriptor = getCommandDescriptor(resource, action);
+  if (descriptor === null) {
     throw new UsageError(`unknown or not-yet-implemented command: ${resource} ${action}`);
   }
-  return action === "check" ? runCheck(argv.slice(2)) : runHelp(argv.slice(2));
+  if (argv.length === 3 && argv[2] === "--help") {
+    process.stdout.write(`${renderCommandHelp(descriptor)}\n`);
+    return 0;
+  }
+  return dispatchCommand(descriptor, argv.slice(2));
 }
 
 const args = process.argv.slice(2);

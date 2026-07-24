@@ -17,11 +17,13 @@ The eight items below are mapped one-to-one into
 normative contract-design task. The
 [Contract 3 specification](specs/cli-contract-3.md) and
 [migration guide](process/cli-contract-3-migration.md) accept that design
-target. None of the eight implementation items is complete.
+target. `CLI-001` is complete; the other seven implementation items remain open.
 
 ### CLI-001: Adopt one command descriptor registry
 
 Priority: P0
+
+Status: Complete (2026-07-24)
 
 Replace dispatch-specific and hand-written help tables with one typed command
 descriptor registry used by dispatch validation, text help, JSON help, and
