@@ -1,10 +1,10 @@
 project CLI_SURFACE_RESET:
   version 1
   title "CLI surface reset from the human and LLM review"
-  description "Convert docs/process/cli-surface-review.md and the CLI/help items in docs/backlog.md into an independent post-beta workstream. This plan records future design, implementation, migration, and acceptance work only; it does not make an uncompleted Contract 3 command available. Estimates are provisional relative points. The cumulative plan-specific sample is 36p/1d from Contract 3 design, the command registry, hierarchical command discovery, gate maintenance, project initialization, and usage recovery completed on 2026-07-24; recalibrate after work on another active day."
+  description "Convert docs/process/cli-surface-review.md and the CLI/help items in docs/backlog.md into an independent post-beta workstream. This plan records future design, implementation, migration, and acceptance work only; it does not make an uncompleted Contract 3 command available. Estimates are provisional relative points. The cumulative plan-specific sample is 39p/1d from Contract 3 design, the command registry, hierarchical command discovery, domain-guide separation, usage recovery, gate maintenance, and project initialization completed on 2026-07-24; recalibrate after work on another active day."
   as_of 2026-07-24
   duration_unit point
-  velocity 36p/1d
+  velocity 39p/1d
   finish CLI_SURFACE_RESET_ACCEPTED
 
 resource DEVELOPERS:
@@ -32,27 +32,14 @@ resource PACKAGE_SURFACE:
 
 
 
-milestone COMMAND_DISCOVERY_READY:
-  title "HELP-001 hierarchical command discovery ready"
-  state reached
 
-milestone DOMAIN_GUIDE_READY:
-  title "HELP-002 command help and domain guide separation ready"
 
-milestone USAGE_RECOVERY_READY:
-  title "HELP-003 usage-error recovery ready"
-  state reached
 
-milestone PROJECT_INIT_READY:
-  title "MUT-001 project initialization ready"
-  state reached
 
-milestone GATE_MAINTENANCE_READY:
-  title "MUT-002 gate maintenance ready"
-  state reached
 
 milestone CONTRACT_V3_IMPLEMENTATION_READY:
   title "CLI contract 3 implementation prerequisites complete"
+  state reached
 
 milestone CONTRACT_V3_CUTOVER_READY:
   title "CLI-002 breaking contract 3 cutover ready"
@@ -63,32 +50,13 @@ milestone CLI_SURFACE_RESET_ACCEPTED:
 
 
 
-task HELP_002_DOMAIN_GUIDE_SPLIT COMMAND_DISCOVERY_READY -> DOMAIN_GUIDE_READY:
-  title "HELP-002 separate command help from domain guidance"
-  description |
-    Move conceptual DSL, analysis, recommendation, editing, and workflow
-    guidance behind the guide surface while preserving topic IDs, diagnostic
-    links, and installed-package text and JSON coverage.
-  duration 3p
-  priority 70
-  requires:
-    DEVELOPERS 1
-    CLI_SURFACE 1
 
 
 
 
-gate DOMAIN_GUIDE_GATE DOMAIN_GUIDE_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
-  reason "Contract 3 cutover requires separated command help and domain guidance"
 
-gate USAGE_RECOVERY_GATE USAGE_RECOVERY_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
-  reason "Contract 3 cutover requires complete structured usage-error recovery"
 
-gate PROJECT_INIT_GATE PROJECT_INIT_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
-  reason "File-first maintenance requires typed project initialization"
 
-gate GATE_MAINTENANCE_GATE GATE_MAINTENANCE_READY -> CONTRACT_V3_IMPLEMENTATION_READY:
-  reason "File-first maintenance requires complete gate mutation"
 
 task CLI_002_CONTRACT_V3_CUTOVER CONTRACT_V3_IMPLEMENTATION_READY -> CONTRACT_V3_CUTOVER_READY:
   title "CLI-002 normalize public names in one breaking version"

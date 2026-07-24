@@ -35,6 +35,7 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
   const advancedBacklogIds = new Set([
     "CLI-001",
     "HELP-001",
+    "HELP-002",
     "HELP-003",
     "MUT-001",
     "MUT-002",
@@ -58,36 +59,33 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
     backlog,
     /^### HELP-001: Add hierarchical, machine-readable command discovery\n\nPriority: P0\n\nStatus: Core complete \(2026-07-24\); public activation deferred to CLI-002$/m,
   );
+  assert.doesNotMatch(plan, /^milestone COMMAND_DISCOVERY_READY:/m);
   assert.match(
-    plan,
-    /^milestone COMMAND_DISCOVERY_READY:\n  title "HELP-001 hierarchical command discovery ready"\n  state reached$/m,
+    backlog,
+    /^### HELP-002: Separate command help from domain guidance\n\nPriority: P1\n\nStatus: Core complete \(2026-07-24\); public activation deferred to CLI-002$/m,
   );
+  assert.doesNotMatch(plan, /^milestone DOMAIN_GUIDE_READY:/m);
   assert.match(
     backlog,
     /^### HELP-003: Improve usage-error recovery\n\nPriority: P1\n\nStatus: Core complete \(2026-07-24\); public activation deferred to CLI-002$/m,
   );
   assert.doesNotMatch(plan, /^task HELP_003_USAGE_RECOVERY /m);
-  assert.match(
-    plan,
-    /^milestone USAGE_RECOVERY_READY:\n  title "HELP-003 usage-error recovery ready"\n  state reached$/m,
-  );
+  assert.doesNotMatch(plan, /^milestone USAGE_RECOVERY_READY:/m);
   assert.match(
     backlog,
     /^### MUT-001: Initialize a project through the CLI\n\nPriority: P0\nStatus: Core complete \(2026-07-24\); direct command activation deferred to CLI-002$/m,
   );
   assert.doesNotMatch(plan, /^task MUT_001_PROJECT_INIT /m);
-  assert.match(
-    plan,
-    /^milestone PROJECT_INIT_READY:\n  title "MUT-001 project initialization ready"\n  state reached$/m,
-  );
+  assert.doesNotMatch(plan, /^milestone PROJECT_INIT_READY:/m);
   assert.match(
     backlog,
     /^### MUT-002: Add complete gate maintenance\n\nPriority: P0\nStatus: Core complete \(2026-07-24\); direct command activation deferred to CLI-002$/m,
   );
   assert.doesNotMatch(plan, /^task MUT_002_GATE_MAINTENANCE /m);
+  assert.doesNotMatch(plan, /^milestone GATE_MAINTENANCE_READY:/m);
   assert.match(
     plan,
-    /^milestone GATE_MAINTENANCE_READY:\n  title "MUT-002 gate maintenance ready"\n  state reached$/m,
+    /^milestone CONTRACT_V3_IMPLEMENTATION_READY:\n  title "CLI contract 3 implementation prerequisites complete"\n  state reached$/m,
   );
 });
 

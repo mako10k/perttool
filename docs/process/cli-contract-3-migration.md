@@ -56,6 +56,10 @@ The dependency order is fixed by `plans/cli-surface-reset.pert`.
    `HELP_003_USAGE_RECOVERY` completed the internal registry-scoped argv
    validation, exact structured help targets, deterministic error projection,
    and non-invented suggestions under the same publication boundary.
+   `HELP_002_DOMAIN_GUIDE_SPLIT` completed the internal
+   `Perttool.GuideResult.v1` text/JSON projection over the existing topic
+   graph, preserved topic IDs and diagnostic links as `guide_topic`, and added
+   installed-package checks without activating the public `guide` command.
 4. `MUT_001_PROJECT_INIT` and `MUT_002_GATE_MAINTENANCE` close typed
    maintenance gaps. Project initialization Core/result projection/exclusive
    output and gate Core/atomic-batch support are complete with internal

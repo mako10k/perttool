@@ -4,29 +4,27 @@
     "grammar_version": 1,
     "summary": {
       "resources": 5,
-      "milestones": 8,
-      "tasks": 3,
-      "gates": 4,
+      "milestones": 3,
+      "tasks": 2,
+      "gates": 0,
       "errors": 0,
       "warnings": 0
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "13/1",
+    "precedence_makespan": "10/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "13/36",
+    "precedence_forecast": "10/39",
     "precedence_critical_tasks": [
-      "HELP_002_DOMAIN_GUIDE_SPLIT",
       "CLI_002_CONTRACT_V3_CUTOVER",
       "CLI_003_FILE_FIRST_ACCEPTANCE"
     ],
-    "resource_makespan": "13/1",
-    "resource_forecast": "13/36",
+    "resource_makespan": "10/1",
+    "resource_forecast": "10/39",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "HELP_002_DOMAIN_GUIDE_SPLIT",
       "CLI_002_CONTRACT_V3_CUTOVER",
       "CLI_003_FILE_FIRST_ACCEPTANCE"
     ]
@@ -35,14 +33,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "HELP_002_DOMAIN_GUIDE_SPLIT"
+        "CLI_002_CONTRACT_V3_CUTOVER"
       ],
       "runnable_now": [
-        "HELP_002_DOMAIN_GUIDE_SPLIT"
+        "CLI_002_CONTRACT_V3_CUTOVER"
       ],
       "blocked_now": [],
       "upcoming": [
-        "CLI_002_CONTRACT_V3_CUTOVER",
         "CLI_003_FILE_FIRST_ACCEPTANCE"
       ]
     },

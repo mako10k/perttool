@@ -274,8 +274,7 @@ resource and all of its commands. An action query has one complete command.
 Lookup failure returns the same envelope with `ok=false`, empty `commands`, a
 stable diagnostic, and exit 1. `PTHLP-002` identifies an unknown resource or
 top-level command, and `PTHLP-003` identifies an unknown action under a known
-resource. Domain-guide lookup retains the separate Contract 2
-`PTHLP-001` meaning until `HELP-002` migrates that projection.
+resource. Domain-guide lookup retains the separate `PTHLP-001` meaning.
 
 Every Contract 3 CLI JSON success or error envelope includes
 `cli_contract_version = 3`. Consumers check `schema_version`,
@@ -292,7 +291,39 @@ Guide JSON uses `Perttool.GuideResult.v1`, `cli_contract_version = 3`, and
 and topics fields preserve the meanings of Contract 2
 `Perttool.HelpResult.v1`.
 
+```text
+tool_version
+ok
+diagnostics       Diagnostic[]
+topic_id          string|null
+level             "index"|"quick"|"detail"
+title             string
+summary           string
+sections          [{id, title, body}]
+syntax            string[]
+examples          [{id, title, text}]
+related           string[]
+topics            [{id, title, summary}]
+```
+
+With no topic, `guide` returns the top-level topic index at level `index`.
+With a topic, the default level is `quick`; an explicit level retains the
+Contract 2 index/quick/detail meanings. Unknown topics retain diagnostic
+`PTHLP-001`, an empty content projection, and exit 1.
+
 Diagnostics that refer to conceptual material contain a stable `guide_topic`.
+Contract 3 retains the additive `help_topic` field as null in these diagnostics
+so that command help and domain guidance are not conflated. Text diagnostics
+render the equivalent `perttool guide ... --level quick` query. The underlying
+`HelpNode` registry remains the sole authority for topic IDs, content levels,
+related links, syntax, and examples. Guide lookup and rendering perform no
+project read, filesystem mutation, network access, or environment discovery.
+The same query produces byte-identical JSON and semantically identical text.
+
+Command discovery has no dependency on the `HelpNode` registry and does not
+require a domain topic ID. Guide results contain no command descriptor,
+resource/action catalog, option contract, or command-help target.
+
 Contract 3 emission of `Perttool.CliError.v1` adds an additive nullable
 structured target:
 

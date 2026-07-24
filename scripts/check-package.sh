@@ -66,6 +66,7 @@ for required in \
   package/LICENSE \
   package/CHANGELOG.md \
   package/dist/cli.js \
+  package/dist/help/guide.js \
   package/dist/index.js \
   package/dist/index.d.ts
 do
@@ -147,6 +148,10 @@ fi
       ) process.exit(1);
     });
   '
+if "$installed_cli" guide syntax --format=json >/dev/null 2>&1; then
+  printf 'packed Contract 2 CLI unexpectedly accepted public Contract 3 guide\n' >&2
+  exit 1
+fi
 "$installed_cli" project show "$repo_root/docs/examples/minimal.pert" --format=json |
   node -e '
     let input = "";
@@ -206,6 +211,26 @@ fi
     });
   '
 "$installed_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null
+installed_guide_module="$install_prefix/lib/node_modules/$package_name/dist/help/guide.js"
+node --input-type=module - "$installed_guide_module" <<'NODE'
+import { pathToFileURL } from "node:url";
+
+const guide = await import(pathToFileURL(process.argv[2]).href);
+const index = JSON.parse(guide.serializeGuideResult(
+  guide.getGuide(null, "index"),
+));
+const text = guide.renderGuideResult(guide.getGuide("syntax", "quick"));
+const missing = guide.guideResultToJson(guide.getGuide("missing", "detail"));
+if (
+  index.schema_version !== "Perttool.GuideResult.v1" ||
+  index.cli_contract_version !== 3 ||
+  index.operation !== "guide" ||
+  index.topics?.length !== 8 ||
+  !text.startsWith("DSL syntax\n") ||
+  missing.diagnostics?.[0]?.help_topic !== null ||
+  missing.diagnostics?.[0]?.guide_topic !== "syntax"
+) process.exit(1);
+NODE
 installed_module="$install_prefix/lib/node_modules/$package_name/dist/index.js"
 node --input-type=module - \
   "$installed_module" \

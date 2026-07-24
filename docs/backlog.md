@@ -17,8 +17,8 @@ The eight items below are mapped one-to-one into
 normative contract-design task. The
 [Contract 3 specification](specs/cli-contract-3.md) and
 [migration guide](process/cli-contract-3-migration.md) accept that design
-target. `CLI-001`, the internal `HELP-001` and `HELP-003` projections, project
-initialization, and gate-maintenance Core are complete; three implementation
+target. `CLI-001`, all three internal `HELP-*` projections, project
+initialization, and gate-maintenance Core are complete; two implementation
 items remain open. Public Contract 3 activation remains one atomic `CLI-002`
 change.
 
@@ -61,11 +61,14 @@ Acceptance:
 The pure Contract 3 preview now satisfies the registry, query, projection,
 lookup-diagnostic, determinism, and no-I/O parts of this item. The active
 Contract 2 CLI intentionally continues to reject `perttool help` until the
-atomic cutover; `HELP-002` still owns the domain-guide projection.
+atomic cutover; the completed `HELP-002` projection keeps domain guidance
+separate from command discovery.
 
 ### HELP-002: Separate command help from domain guidance
 
 Priority: P1
+
+Status: Core complete (2026-07-24); public activation deferred to CLI-002
 
 Move conceptual DSL, analysis, recommendation, editing, and workflow guidance
 behind a distinct `guide` surface. Preserve stable topic IDs and diagnostic
@@ -77,6 +80,12 @@ Acceptance:
 - domain guidance never acts as a substitute for the option contract;
 - diagnostic help links resolve to a known guide topic;
 - installed-package text and JSON golden tests cover both surfaces.
+
+The pure Contract 3 `Perttool.GuideResult.v1` projection now preserves every
+existing topic ID and content level, emits distinct `guide_topic` diagnostic
+links, and has deterministic text/JSON golden and installed-package coverage.
+Command discovery remains independent of the topic graph, and active Contract
+2 `dsl help` bytes and dispatch remain unchanged until the atomic cutover.
 
 ### HELP-003: Improve usage-error recovery
 

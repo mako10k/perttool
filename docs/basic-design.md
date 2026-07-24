@@ -821,6 +821,15 @@ edit-distance rule. Handler-specific value relationships can add a usage error
 after descriptor validation but retain the resolved descriptor target. Public
 Contract 2 error bytes and dispatch remain unchanged until the atomic cutover.
 
+`HELP_002_DOMAIN_GUIDE_SPLIT` adds the pure internal
+`src/help/guide.ts` projection over the existing `HelpNode` graph. It preserves
+topic IDs and index/quick/detail content while adding
+`Perttool.GuideResult.v1`, `cli_contract_version=3`, operation `guide`,
+deterministic text/JSON, and conceptual `guide_topic` diagnostic links. The
+command descriptor registry does not import the domain graph, and GuideResult
+does not project command descriptors or option contracts. Contract 2
+`dsl help` bytes and public dispatch remain unchanged until the atomic cutover.
+
 ```text
 command descriptors
        |

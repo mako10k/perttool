@@ -180,6 +180,7 @@ test("Contract 3 renames are derived projections while Contract 2 remains active
 
   for (const args of [
     ["help", "--format", "json"],
+    ["guide", "syntax"],
     ["document", "check", "--help"],
     ["batch", "apply", "--help"],
     ["gate", "add", "--help"],
