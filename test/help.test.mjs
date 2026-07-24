@@ -44,6 +44,18 @@ test("help registry topics and related links resolve", () => {
   }
 });
 
+test("bundled DSL help contains no Japanese-script prose", () => {
+  const japaneseScript = /[\u3040-\u30ff\u4e00-\u9fff]/u;
+  const results = [
+    getHelp(null, "index"),
+    ...topicIds.map((topicId) => getHelp(topicId, "detail")),
+    getHelp("unknown-topic", "detail"),
+  ];
+  for (const result of results) {
+    assert.doesNotMatch(JSON.stringify(result), japaneseScript);
+  }
+});
+
 test("editing help exposes preview and explicit safe-write commands", () => {
   const help = getHelp("editing", "detail");
   assert.equal(help.ok, true);
@@ -59,7 +71,7 @@ test("editing help exposes preview and explicit safe-write commands", () => {
   assert.ok(help.syntax.some((line) => line.includes("dsl format")));
   assert.ok(help.syntax.some((line) => line.includes("mutation apply")));
   assert.ok(help.syntax.some((line) => line.includes("dag advance")));
-  assert.match(help.sections.map(({ body }) => body).join("\n"), /既定.*preview/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /default.*preview/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--expect-digest/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--out/);
   assert.ok(
@@ -79,8 +91,8 @@ test("mermaid help exposes lossless export and fail-closed import", () => {
   assert.ok(help.syntax.some((line) => line.includes("--strict-loss")));
   const body = help.sections.map(({ body }) => body).join("\n");
   assert.match(body, /%% perttool:/);
-  assert.match(body, /正規化意味同値/);
-  assert.match(body, /plain importへ黙って降格しません/);
+  assert.match(body, /normalized semantic equivalence/);
+  assert.match(body, /not silently downgraded to plain import/);
   assert.match(body, /importMermaid/);
   assert.match(body, /PTCNV/);
   assert.deepEqual(help.examples, [
@@ -97,25 +109,25 @@ test("next help exposes the v3 recommendation authority and consumer safety", ()
   assert.equal(help.ok, true);
   assert.match(help.summary, /NextResult\.v3/);
   const body = help.sections.map(({ body }) => body).join("\n");
-  assert.match(body, /recommended、allowed、deferred、discouraged/);
+  assert.match(body, /recommended, allowed, deferred, or discouraged/);
   assert.match(body, /schema_version/);
   assert.match(body, /complete=false/);
-  assert.match(body, /未知.*自動開始しません/);
+  assert.match(body, /decisive semantics are unknown/);
   assert.ok(
     help.sections.some(
       ({ title }) => title === "AI task selection authority",
     ),
   );
   assert.match(body, /normal start authority/);
-  assert.match(body, /Macro.*detail/);
+  assert.match(body, /macro recommended work package.*detail plan/);
   assert.match(body, /recommended subset/);
-  assert.match(body, /allowedを1件/);
-  assert.match(body, /Unknown version.*PTREC.*停止/);
-  assert.match(body, /Task state.*capacity変更後.*再解析/);
+  assert.match(body, /exactly one allowed task/);
+  assert.match(body, /unknown version.*PTREC.*stop instead/);
+  assert.match(body, /task-state or capacity changes/);
   assert.match(body, /validateOverride/);
   assert.match(body, /Perttool\.OverrideDecision\.v1/);
-  assert.match(body, /secret、credential、token/);
-  assert.match(body, /Override apply.*未実装/);
+  assert.match(body, /secrets, credentials, or tokens/);
+  assert.match(body, /override apply and audit write is not implemented/);
   assert.ok(help.examples.some(({ text }) => text.endsWith("--format json")));
 });
 

@@ -129,7 +129,7 @@ The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.m
 
 The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
-ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached. `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, and `RUNTIME_MESSAGES` were completed and advanced through Stage 3 preview-first writes; the inventory and Unicode allowlist are recorded in `english-surface-inventory.md`, and fresh analysis now recommends `HELP_AND_USAGE`.
+ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached. `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE` were completed and advanced through Stage 3 preview-first writes; the inventory and Unicode allowlist are recorded in `english-surface-inventory.md`, and fresh analysis now recommends `PERT_PLANS`.
 
 ### 5.1 Adopted Recommendation authority
 

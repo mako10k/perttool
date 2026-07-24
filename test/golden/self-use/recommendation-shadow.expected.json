@@ -63,15 +63,13 @@
       ]
     },
     "english-baseline": {
-      "source_digest": "sha256:88698003c0100623e5aeb80e3407847e898e36770813ddd0945932ee98c293e8",
+      "source_digest": "sha256:540165d6de11dde691c689ccd7d5c1f03e73f5b36557d046e49cf011c7ae8b39",
       "groups": {
         "active": [],
         "ready": [
-          "HELP_AND_USAGE",
           "PERT_PLANS"
         ],
         "runnable_now": [
-          "HELP_AND_USAGE",
           "PERT_PLANS"
         ],
         "blocked_now": [],
@@ -81,42 +79,32 @@
         ]
       },
       "recommended_task_ids": [
-        "HELP_AND_USAGE"
+        "PERT_PLANS"
       ],
       "manual_selected_task_ids": [
-        "HELP_AND_USAGE",
         "PERT_PLANS"
       ],
       "tiers": {
-        "HELP_AND_USAGE": "recommended",
-        "PERT_PLANS": "allowed"
+        "PERT_PLANS": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "HELP_AND_USAGE",
+          "id": "PERT_PLANS",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
-        },
-        {
-          "id": "PERT_PLANS",
-          "runnable_now": true,
-          "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "2/1",
-          "resource_rejections": []
         }
       ],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 12,
-        "facts": 36,
-        "comparisons": 1,
-        "reasons": 8,
-        "descriptions": 3
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
       "diagnostic_codes": []
     },

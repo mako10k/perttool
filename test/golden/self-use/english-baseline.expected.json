@@ -5,7 +5,7 @@
     "summary": {
       "resources": 4,
       "milestones": 8,
-      "tasks": 4,
+      "tasks": 3,
       "gates": 4,
       "errors": 0,
       "warnings": 0
@@ -13,20 +13,20 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "11/1",
+    "precedence_makespan": "9/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "11/28",
+    "precedence_forecast": "3/11",
     "precedence_critical_tasks": [
-      "HELP_AND_USAGE",
+      "PERT_PLANS",
       "GOLDEN_UNICODE_AUDIT",
       "ENGLISH_ACCEPTANCE"
     ],
-    "resource_makespan": "11/1",
-    "resource_forecast": "11/28",
+    "resource_makespan": "9/1",
+    "resource_forecast": "3/11",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "HELP_AND_USAGE",
+      "PERT_PLANS",
       "GOLDEN_UNICODE_AUDIT",
       "ENGLISH_ACCEPTANCE"
     ]
@@ -35,11 +35,9 @@
     "groups": {
       "active": [],
       "ready": [
-        "HELP_AND_USAGE",
         "PERT_PLANS"
       ],
       "runnable_now": [
-        "HELP_AND_USAGE",
         "PERT_PLANS"
       ],
       "blocked_now": [],

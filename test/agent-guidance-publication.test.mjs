@@ -31,6 +31,10 @@ function run(args, options = {}) {
 test("agent help command help comes from structured registry data", () => {
   const definition = getAgentHelpCommandHelp();
   assert.equal(definition.operation, "agent.help");
+  assert.equal(
+    definition.summary,
+    "Displays read-only AI agent guidance for each provider from bundled offline profiles.",
+  );
   assert.match(definition.summary, /offline profile/);
   assert.deepEqual(definition.syntax, [
     "Usage: perttool agent help [<provider> [<surface>]]",
@@ -189,7 +193,7 @@ test("agent help does not require or create project/provider state", () => {
   }
 });
 
-test("legacy dsl help index bytes remain unchanged", async () => {
+test("legacy dsl help index remains byte-stable", async () => {
   const expected = await readFile(
     golden("legacy-dsl-help-index.expected.json"),
     "utf8",

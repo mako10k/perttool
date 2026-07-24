@@ -48,7 +48,7 @@ export interface CommandHelpDefinition {
 const agentHelpCommand: CommandHelpDefinition = {
   operation: "agent.help",
   summary:
-    "Bundled offline profileからprovider別のread-only AI agent guidanceを表示します。",
+    "Displays read-only AI agent guidance for each provider from bundled offline profiles.",
   syntax: [
     "Usage: perttool agent help [<provider> [<surface>]]",
     "  [--level index|quick|detail]",
@@ -65,19 +65,19 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax",
     title: "DSL syntax",
-    summary: "project、resource、milestone、task、gateを記述するgrammar version 1。",
+    summary: "Grammar version 1 for declaring project, resource, milestone, task, and gate.",
     quick: [
       {
         id: "declarations",
         title: "Declarations",
-        body: "projectを最初に1件置き、続けてresource、milestone、task、gateを記述します。",
+        body: "Place exactly one project first, followed by resource, milestone, task, and gate declarations.",
       },
     ],
     detail: [
       {
         id: "indentation",
         title: "Indentation",
-        body: "fieldは2 spaces、estimate/requiresの子fieldは4 spacesです。Tabは使用できません。",
+        body: "Fields use 2 spaces; child fields in estimate and requires use 4 spaces. Tabs are not allowed.",
       },
     ],
     syntax: [
@@ -109,19 +109,19 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.project",
     title: "Project syntax",
-    summary: "文書先頭にexactly one置くproject declarationです。",
+    summary: "The exactly-one project declaration at the start of a document.",
     quick: [
       {
         id: "required",
         title: "Required fields",
-        body: "title、duration_unit、finishが必須です。Point文書では正のvelocityも必須です。",
+        body: "title, duration_unit, and finish are required. Point documents also require a positive velocity.",
       },
     ],
     detail: [
       {
         id: "version",
         title: "Grammar version",
-        body: "version省略時は1として扱い、指定する場合もversion 1だけを受理します。",
+        body: "An omitted version is treated as 1; when specified, only version 1 is accepted.",
       },
     ],
     syntax: [
@@ -138,12 +138,12 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.resource",
     title: "Resource syntax",
-    summary: "Renewable resourceと同時利用可能な整数capacityを宣言します。",
+    summary: "Declares a renewable resource and its integer capacity for concurrent use.",
     quick: [
       {
         id: "capacity",
         title: "Capacity",
-        body: "titleと1以上のcapacityが必須です。Taskのrequiresからresource IDを参照します。",
+        body: "title and a capacity of at least 1 are required. Tasks reference the resource ID from requires.",
       },
     ],
     detail: [],
@@ -156,12 +156,12 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.milestone",
     title: "Milestone syntax",
-    summary: "AoA nodeと現在frontierのreached状態を宣言します。",
+    summary: "Declares an AoA node and its reached state in the current frontier.",
     quick: [
       {
         id: "state",
         title: "Milestone state",
-        body: "titleが必須です。stateはplannedまたはreachedで、readyは保存せず依存関係から導出します。",
+        body: "title is required. state is planned or reached; ready is derived from dependencies and is not stored.",
       },
     ],
     detail: [],
@@ -174,19 +174,19 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.task",
     title: "Task syntax",
-    summary: "Taskはmilestone間を結ぶAoA edgeです。",
+    summary: "A task is an AoA edge connecting milestones.",
     quick: [
       {
         id: "required",
         title: "Required fields",
-        body: "titleと、durationまたはestimateのどちらかexactly oneを指定します。",
+        body: "Specify title and exactly one of duration or estimate.",
       },
     ],
     detail: [
       {
         id: "resources",
         title: "Resources",
-        body: "requires blockの全resourceを同時取得し、task完了まで保持します。",
+        body: "All resources in the requires block are acquired together and held until the task completes.",
       },
     ],
     syntax: ["task ID FROM -> TO:", "  title \"...\"", "  duration 1d"],
@@ -206,12 +206,12 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.gate",
     title: "Gate syntax",
-    summary: "所要時間0のdependency edgeとしてmilestone間を接続します。",
+    summary: "Connects milestones with a zero-duration dependency edge.",
     quick: [
       {
         id: "reason",
         title: "Reason",
-        body: "reasonが必須です。Gateはresourceを要求せず、task durationも持ちません。",
+        body: "reason is required. A gate requires no resources and has no task duration.",
       },
     ],
     detail: [],
@@ -228,19 +228,19 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.estimate",
     title: "PERT estimate syntax",
-    summary: "optimistic、most_likely、pessimisticの三点見積りを記述します。",
+    summary: "Specifies a three-point estimate: optimistic, most_likely, and pessimistic.",
     quick: [
       {
         id: "order",
         title: "Ordering constraint",
-        body: "optimistic <= most_likely <= pessimistic、かつpessimistic > 0が必要です。",
+        body: "optimistic <= most_likely <= pessimistic and pessimistic > 0 are required.",
       },
     ],
     detail: [
       {
         id: "unit",
         title: "Duration unit",
-        body: "3値は同じsuffixを使い、project duration_unit（day/hour/point）と一致させます。",
+        body: "All three values use the same suffix, matching the project duration_unit (day/hour/point).",
       },
     ],
     syntax: [
@@ -261,7 +261,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.duration",
     title: "Duration syntax",
-    summary: "Finite decimalにproject unit suffix d、h、pのいずれかを付けます。",
+    summary: "A finite decimal followed by the project-unit suffix d, h, or p.",
     quick: [],
     detail: [],
     syntax: ["1d", "2.5h", "3p", "0d"],
@@ -271,24 +271,24 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.velocity",
     title: "Velocity syntax",
-    summary: "Pointとday/hourを相互換算するproject-wide velocityを記述します。",
+    summary: "Specifies the project-wide velocity for converting between points and days or hours.",
     quick: [
       {
         id: "forecast",
         title: "Velocity forecast",
-        body: "duration_unit pointではvelocityが必須です。PERT値はpのまま計算し、換算値をvelocity forecastとして別に返します。",
+        body: "duration_unit point requires velocity. PERT values are calculated in p and converted values are returned separately as a velocity forecast.",
       },
     ],
     detail: [
       {
         id: "units",
         title: "Units",
-        body: "20p/10dまたは20p/80hの形式です。dayとhourの関係は暗黙に推測しません。",
+        body: "Use the form 20p/10d or 20p/80h. The relationship between day and hour is not inferred implicitly.",
       },
       {
         id: "scope",
         title: "MVP scope",
-        body: "velocityはproject全体で一定です。team別、resource別、期間別velocityはMVP対象外です。",
+        body: "velocity is constant across the project. Per-team, per-resource, and time-varying velocity are outside the MVP scope.",
       },
     ],
     syntax: [
@@ -308,7 +308,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.indentation",
     title: "Indentation",
-    summary: "Structural indentationはASCII spacesだけを使用します。",
+    summary: "Structural indentation uses ASCII spaces only.",
     quick: [],
     detail: [],
     syntax: ["field: 2 spaces", "nested field: 4 spaces"],
@@ -318,13 +318,13 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.string",
     title: "String syntax",
-    summary: "JSON string literalと同じdouble-quoted textを使用します。",
+    summary: "Uses double-quoted text with the same rules as a JSON string literal.",
     quick: [],
     detail: [
       {
         id: "unicode",
         title: "Unicode and escapes",
-        body: "Unicodeは直接記述でき、escapeはJSON形式を使用します。Unpaired surrogateは受理しません。",
+        body: "Unicode may be written directly, and escapes use JSON syntax. Unpaired surrogates are not accepted.",
       },
     ],
     syntax: ["\"text\"", "\"\\u65e5\\u672c\""],
@@ -334,13 +334,13 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.text",
     title: "Text field syntax",
-    summary: "description、blocked_reason、reasonはStringまたはblock textを取ります。",
+    summary: "description, blocked_reason, and reason accept a String or block text.",
     quick: [],
     detail: [
       {
         id: "block",
         title: "Block text",
-        body: "nonblank contentのcommon indentを除去し、paragraph blankと残りのindentを保持します。",
+        body: "Removes the common indent from nonblank content while preserving paragraph blanks and remaining indentation.",
       },
     ],
     syntax: ["  description \"...\"", "  description |", "    first line"],
@@ -350,7 +350,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.tags",
     title: "Tag list syntax",
-    summary: "Bare IdentifierまたはStringを角括弧内へcomma区切りで記述します。",
+    summary: "A comma-separated list of bare Identifiers or Strings in square brackets.",
     quick: [],
     detail: [],
     syntax: ["  tags [alpha, \"two words\"]", "  tags []"],
@@ -360,12 +360,12 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.comments",
     title: "Comment syntax",
-    summary: "独立行の#以降をCST triviaとして保持します。",
+    summary: "Preserves # and the following text on standalone lines as CST trivia.",
     quick: [
       {
         id: "standalone",
         title: "Standalone only",
-        body: "grammar version 1ではinline commentを許可しません。Stringとblock text内の#はcontentです。",
+        body: "Grammar version 1 does not allow inline comments. # within a String or block text is content.",
       },
     ],
     detail: [],
@@ -376,7 +376,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.top-level",
     title: "Top-level declaration syntax",
-    summary: "Projectを文書先頭に置き、各declarationをcolumn 0から開始します。",
+    summary: "Place the project declaration at the start of the document and begin every declaration at column 0.",
     quick: [],
     detail: [],
     syntax: [
@@ -394,24 +394,24 @@ const nodes: readonly HelpNode[] = [
   {
     id: "analysis",
     title: "Analysis",
-    summary: "PERT/CPM precedence resultとresource scheduleを分離して返します。",
+    summary: "Returns PERT/CPM precedence results separately from the resource schedule.",
     quick: [
       {
         id: "results",
         title: "Separated results",
-        body: "precedence makespanはresourceを無視した下限、resource makespanはcapacityを守る決定的heuristic resultです。",
+        body: "The precedence makespan is a lower bound that ignores resources; the resource makespan is a deterministic heuristic result that respects capacity.",
       },
     ],
     detail: [
       {
         id: "exact",
         title: "Exact arithmetic",
-        body: "expected、variance、float、makespanはexact Rationalで計算し、displayだけを--precisionで丸めます。Point文書ではvelocity forecastもexact換算します。",
+        body: "expected, variance, float, and makespan use exact Rational arithmetic; only display values are rounded with --precision. Point documents also convert velocity forecasts exactly.",
       },
       {
         id: "paths",
         title: "Critical paths",
-        body: "near-critical subgraphとexact driving pathを区別し、path countは列挙上限と独立に返します。",
+        body: "Distinguishes the near-critical subgraph from exact driving paths, and returns the path count independently of the enumeration limit.",
       },
     ],
     syntax: [
@@ -430,24 +430,24 @@ const nodes: readonly HelpNode[] = [
   {
     id: "analysis.resources",
     title: "Resource analysis",
-    summary: "Renewable capacityを守る決定的heuristic scheduleです。",
+    summary: "A deterministic heuristic schedule that respects renewable capacity.",
     quick: [
       {
         id: "capacity",
         title: "Capacity override",
-        body: "--capacityはwhat-if入力であり、source documentを書き換えません。",
+        body: "--capacity is a what-if input and does not rewrite the source document.",
       },
     ],
     detail: [
       {
         id: "algorithm",
         title: "parallel-sgs v1",
-        body: "priority、precedence float、expected duration、task IDの順でcandidateをscanします。optimal=falseです。",
+        body: "Scans candidates by priority, precedence float, expected duration, and task ID. optimal=false.",
       },
       {
         id: "witness",
         title: "Resource witness",
-        body: "resource待ちはrelease taskから開始taskへのanalysis-only resource arcで説明し、正本DAGへ保存しません。",
+        body: "Resource waits are explained by analysis-only resource arcs from releasing tasks to starting tasks and are not stored in the authoritative DAG.",
       },
     ],
     syntax: [
@@ -466,44 +466,44 @@ const nodes: readonly HelpNode[] = [
   {
     id: "next",
     title: "Next tasks",
-    summary: "NextResult.v3で工程上の推奨taskと、active、ready、runnable_now、blocked_now、upcomingを返します。",
+    summary: "Returns workflow recommendations in NextResult.v3 together with active, ready, runnable_now, blocked_now, and upcoming tasks.",
     quick: [
       {
         id: "classification",
         title: "Task classification",
-        body: "readyは依存関係上開始可能なplanned task、runnable_nowは現在のactive allocationを差し引いて同時開始できるreadyの部分集合です。",
+        body: "ready consists of planned tasks whose dependencies permit them to start; runnable_now is the subset of ready tasks that can start concurrently after accounting for current active allocations.",
       },
       {
         id: "recommendation",
         title: "Recommendation authority",
-        body: "recommendationはready taskをrecommended、allowed、deferred、discouragedへ分類します。recommended setは同時開始可能ですがheuristicであり、optimal=falseです。",
+        body: "recommendation classifies ready tasks as recommended, allowed, deferred, or discouraged. The recommended set can start concurrently, but is heuristic and optimal=false.",
       },
     ],
     detail: [
       {
         id: "consumer-safety",
         title: "Machine-readable explanation",
-        body: "--format jsonはcompleteなPerttool.NextResult.v3説明graphを返します。Consumerはschema_versionと各model versionを先に検査し、未知のdecisive semanticsではtaskを自動開始しません。Textはcomplete=falseのsummaryです。",
+        body: "--format json returns a complete Perttool.NextResult.v3 explanation graph. Consumers first validate schema_version and every model version, and do not automatically start tasks when decisive semantics are unknown. Text is a complete=false summary.",
       },
       {
         id: "authority-adoption",
         title: "AI task selection authority",
-        body: "AIは--format jsonのknown Perttool.NextResult.v3、recommendation interface 1、ranking algorithm 1、reason taxonomy 1.0、explanation/expression/description model 1、locale en、completeかつnot-truncatedなtraceだけをnormal start authorityとして使用します。Macroのrecommended work packageを選んでから対応detailを再解析し、recommended subset、またはrecommended set全件にallowedを1件だけ追加した集合を選びます。Unknown version、incomplete trace、PTREC diagnostic、deferred/discouraged selectionでは開始せず停止します。Task stateまたはcapacity変更後は再解析します。",
+        body: "AI uses only a known Perttool.NextResult.v3 from --format json, recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, and a complete, non-truncated trace as normal start authority. After selecting the macro recommended work package, reanalyze its corresponding detail plan, then select either a recommended subset or the full recommended set plus exactly one allowed task. Do not start for an unknown version, incomplete trace, PTREC diagnostic, or deferred/discouraged selection; stop instead. Reanalyze after task-state or capacity changes.",
       },
       {
         id: "selection",
         title: "Resource selection",
-        body: "runnable_nowは既存scheduler順で選ぶoperational subset、recommendationはversion付きranking policyで選ぶauthorityであり、同じ集合とは限りません。CLI rendererはrankingを再実装しません。",
+        body: "runnable_now is an operational subset selected by the existing scheduler order, while recommendation is the authority selected by a versioned ranking policy; they are not necessarily the same set. The CLI renderer does not reimplement ranking.",
       },
       {
         id: "override-validation",
         title: "Human override validation",
-        body: "Public CoreのvalidateOverrideはcompleteなNextResult.v3と明示requestからPerttool.OverrideDecision.v1を決定的に生成します。これはread-only validationであり、task state、file、Git、networkを変更しません。reason_textとevidenceへsecret、credential、tokenを含めないでください。Override applyとaudit writeのCLIは未実装です。",
+        body: "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v3 and an explicit request. This is read-only validation and does not change task state, files, Git, or the network. Do not include secrets, credentials, or tokens in reason_text or evidence. The CLI for override apply and audit write is not implemented.",
       },
       {
         id: "explanation",
         title: "Upcoming explanation",
-        body: "upcomingは未到達の開始milestoneとunsatisfied incoming edgeを返します。--explain-depthは0..32、default 1です。",
+        body: "upcoming returns unreached starting milestones and unsatisfied incoming edges. --explain-depth is 0..32; the default is 1.",
       },
     ],
     syntax: [
@@ -522,19 +522,19 @@ const nodes: readonly HelpNode[] = [
   {
     id: "editing",
     title: "Safe editing",
-    summary: "dsl format、task/milestone/resource mutation、atomic batch、dag advanceをpreviewし、検査済み候補を安全にwriteできます。",
+    summary: "Preview dsl format, task/milestone/resource mutations, atomic batches, and dag advance, then safely write validated candidates.",
     quick: [
       {
         id: "current-surface",
         title: "Current surface",
-        body: "project showはproject metadataをread-onlyで返します。dsl formatはplanFormat、project/entity commandとmutation applyはplanMutation、dag advanceはplanAdvanceの再検査済みcandidate、UTF-16 TextEdit、digest、diffをtext/JSONへ投影します。既定はfileを変更しないpreviewです。",
+        body: "project show returns project metadata read-only. dsl format projects planFormat; project/entity commands and mutation apply project planMutation; and dag advance projects the revalidated candidate from planAdvance, UTF-16 TextEdits, digest, and diff as text/JSON. The default is a preview that does not modify files.",
       },
     ],
     detail: [
       {
         id: "write-gate",
         title: "Safe write",
-        body: "--writeは初回read digestとwrite直前digestを照合してatomic replaceし、--expect-digestでcaller lockを追加できます。--outは既存targetを上書きせず新規作成します。--diffはpreview専用です。",
+        body: "--write atomically replaces a file after comparing the initial-read digest with the digest immediately before writing; --expect-digest adds a caller lock. --out creates a new target without overwriting an existing one. --diff is for previews only.",
       },
     ],
     syntax: [
@@ -569,29 +569,29 @@ const nodes: readonly HelpNode[] = [
   {
     id: "mermaid",
     title: "Mermaid conversion",
-    summary: "dag renderとdag importでlossless Mermaid profileを往復でき、plain importの損失を明示できます。",
+    summary: "Round-trip a lossless Mermaid profile with dag render and dag import, and explicitly report plain-import loss.",
     quick: [
       {
         id: "authority",
         title: "Profile authority",
-        body: "%% perttool: semantic recordが正規化DSL意味モデルの復元正本で、flowchart node/edgeは人間向けprojectionです。",
+        body: "%% perttool: semantic records are the authoritative source for restoring the normalized DSL semantic model; flowchart nodes and edges are a human-facing projection.",
       },
     ],
     detail: [
       {
         id: "fidelity",
         title: "Lossless boundary",
-        body: "losslessはgrammar v1の正規化意味同値です。comment、blank line、field/declaration順、escape spelling、line endingのbyte同一性は対象外です。",
+        body: "Lossless means normalized semantic equivalence for grammar v1. Byte identity for comments, blank lines, field/declaration order, escape spelling, and line endings is out of scope.",
       },
       {
         id: "integrity",
         title: "Fail-closed validation",
-        body: "canonical JSON record、record count、metadata/projection SHA-256、node/edge対応を検査します。Profile header検出後の破損をplain importへ黙って降格しません。",
+        body: "Validates canonical JSON records, record count, metadata/projection SHA-256 values, and node/edge correspondence. Corruption detected after a profile header is not silently downgraded to plain import.",
       },
       {
         id: "availability",
         title: "Current availability",
-        body: "exportMermaid/importMermaid Coreとdag render/importは利用できます。perttool profileは復元用semantic metadataをfail-closed検査し、plain import/exportはstable PTCNV lossを返します。SVG、JSON targetは後続sliceです。",
+        body: "The exportMermaid/importMermaid Core and dag render/import are available. The perttool profile fail-closed validates restoration metadata, and plain import/export returns stable PTCNV losses. SVG and JSON targets are later slices.",
       },
     ],
     syntax: [
@@ -615,7 +615,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "workflows",
     title: "Workflows",
-    summary: "check、analyze、next、preview、Git commitの順で運用します。",
+    summary: "Operate in the order check, analyze, next, preview, and Git commit.",
     quick: [],
     detail: [],
     syntax: [],
@@ -625,24 +625,24 @@ const nodes: readonly HelpNode[] = [
   {
     id: "errors",
     title: "Diagnostics",
-    summary: "Stable code、source span、局所help topicで問題を報告します。",
+    summary: "Reports problems with stable codes, source spans, and local help topics.",
     quick: [
       {
         id: "recovery",
         title: "Error recovery",
-        body: "独立した構文errorは可能な範囲で複数返し、同じinvalid blockの子行は1 error regionとして抑制します。",
+        body: "Returns multiple independent syntax errors where possible, and suppresses child lines in the same invalid block as one error region.",
       },
     ],
     detail: [
       {
         id: "phases",
         title: "Phase suppression",
-        body: "parse errorがある文書ではfield/graph validationを実行せず、原因を直す前の派生PTSEM/PTDAG diagnosticを返しません。",
+        body: "For documents with parse errors, field/graph validation does not run, so derived PTSEM/PTDAG diagnostics are not returned before the cause is fixed.",
       },
       {
         id: "limit",
         title: "Diagnostic limit",
-        body: "--max-diagnosticsは1..1000、default 100です。上限超過はdiagnostics_truncatedで確認できます。",
+        body: "--max-diagnostics is 1..1000, with a default of 100. diagnostics_truncated indicates when the limit is exceeded.",
       },
     ],
     syntax: [
@@ -656,7 +656,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "samples",
     title: "Samples",
-    summary: "Repositoryの規範sample IDを案内します。",
+    summary: "Lists the repository's normative sample IDs.",
     quick: [],
     detail: [],
     syntax: [],
@@ -678,7 +678,7 @@ export function getHelp(topicId: string | null, level: HelpLevel): HelpResult {
       topicId: null,
       level: "index",
       title: "perttool DSL help",
-      summary: "利用するtopicを選択してください。",
+      summary: "Select a topic to use.",
       sections: [],
       syntax: [],
       examples: [],
@@ -696,7 +696,7 @@ export function getHelp(topicId: string | null, level: HelpLevel): HelpResult {
       topicId,
       level,
       title: "Unknown help topic",
-      summary: "指定されたhelp topicは存在しません。",
+      summary: "The specified help topic does not exist.",
       sections: [],
       syntax: [],
       examples: [],

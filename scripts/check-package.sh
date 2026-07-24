@@ -97,6 +97,56 @@ if [[ "$actual_version" != "$expected_version" ]]; then
 fi
 
 "$installed_cli" dsl check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+"$installed_cli" dsl help --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      const topicIds = result.topics?.map(({ id }) => id);
+      if (
+        result.schema_version !== "Perttool.HelpResult.v1" ||
+        result.operation !== "dsl.help" ||
+        JSON.stringify(topicIds) !== JSON.stringify([
+          "syntax",
+          "analysis",
+          "next",
+          "editing",
+          "mermaid",
+          "workflows",
+          "errors",
+          "samples",
+        ]) ||
+        /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
+      ) process.exit(1);
+    });
+  '
+"$installed_cli" dsl help next --level=detail --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      const sectionIds = result.sections?.map(({ id }) => id);
+      if (
+        result.schema_version !== "Perttool.HelpResult.v1" ||
+        result.operation !== "dsl.help" ||
+        result.topic_id !== "next" ||
+        JSON.stringify(sectionIds) !== JSON.stringify([
+          "classification",
+          "recommendation",
+          "consumer-safety",
+          "authority-adoption",
+          "selection",
+          "override-validation",
+          "explanation",
+        ]) ||
+        /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
+      ) process.exit(1);
+    });
+  '
 "$installed_cli" project show "$repo_root/docs/examples/minimal.pert" --format=json |
   node -e '
     let input = "";
