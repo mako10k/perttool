@@ -32,19 +32,29 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
     .map((match) => match[1]);
   assert.deepEqual(actualBacklogIds, backlogIds);
 
+  const advancedBacklogIds = new Set(["CLI-001", "HELP-001"]);
   for (const backlogId of backlogIds) {
     const taskId = backlogId.replace("-", "_");
     const matches = plan.match(new RegExp(`^task ${taskId}(?:_| )`, "gm")) ?? [];
-    assert.equal(matches.length, backlogId === "CLI-001" ? 0 : 1, backlogId);
+    assert.equal(
+      matches.length,
+      advancedBacklogIds.has(backlogId) ? 0 : 1,
+      backlogId,
+    );
   }
 
   assert.match(
     backlog,
     /^### CLI-001: Adopt one command descriptor registry\n\nPriority: P0\n\nStatus: Complete \(2026-07-24\)$/m,
   );
+  assert.doesNotMatch(plan, /^milestone COMMAND_REGISTRY_READY:/m);
+  assert.match(
+    backlog,
+    /^### HELP-001: Add hierarchical, machine-readable command discovery\n\nPriority: P0\n\nStatus: Core complete \(2026-07-24\); public activation deferred to CLI-002$/m,
+  );
   assert.match(
     plan,
-    /^milestone COMMAND_REGISTRY_READY:\n  title "CLI-001 command descriptor registry ready"\n  state reached$/m,
+    /^milestone COMMAND_DISCOVERY_READY:\n  title "HELP-001 hierarchical command discovery ready"\n  state reached$/m,
   );
   assert.match(
     backlog,

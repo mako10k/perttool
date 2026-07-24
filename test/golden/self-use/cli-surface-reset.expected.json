@@ -4,8 +4,8 @@
     "grammar_version": 1,
     "summary": {
       "resources": 5,
-      "milestones": 10,
-      "tasks": 7,
+      "milestones": 9,
+      "tasks": 6,
       "gates": 4,
       "errors": 0,
       "warnings": 0
@@ -13,26 +13,23 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "20/1",
+    "precedence_makespan": "18/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "20/13",
+    "precedence_forecast": "1/1",
     "precedence_critical_tasks": [
-      "HELP_001_COMMAND_DISCOVERY",
-      "HELP_003_USAGE_RECOVERY",
+      "MUT_002_GATE_MAINTENANCE",
       "CLI_002_CONTRACT_V3_CUTOVER",
       "CLI_003_FILE_FIRST_ACCEPTANCE"
     ],
-    "resource_makespan": "36/1",
-    "resource_forecast": "36/13",
-    "resource_delay": "16/1",
+    "resource_makespan": "31/1",
+    "resource_forecast": "31/18",
+    "resource_delay": "13/1",
     "resource_arcs": [
-      "resource:HELP_001_COMMAND_DISCOVERY:MUT_002_GATE_MAINTENANCE",
       "resource:HELP_003_USAGE_RECOVERY:HELP_002_DOMAIN_GUIDE_SPLIT",
       "resource:MUT_001_PROJECT_INIT:HELP_003_USAGE_RECOVERY",
       "resource:MUT_002_GATE_MAINTENANCE:MUT_001_PROJECT_INIT"
     ],
     "schedule_critical_tasks": [
-      "HELP_001_COMMAND_DISCOVERY",
       "MUT_002_GATE_MAINTENANCE",
       "MUT_001_PROJECT_INIT",
       "HELP_003_USAGE_RECOVERY",
@@ -45,27 +42,26 @@
     "groups": {
       "active": [],
       "ready": [
-        "HELP_001_COMMAND_DISCOVERY",
         "MUT_002_GATE_MAINTENANCE",
-        "MUT_001_PROJECT_INIT"
+        "MUT_001_PROJECT_INIT",
+        "HELP_003_USAGE_RECOVERY",
+        "HELP_002_DOMAIN_GUIDE_SPLIT"
       ],
       "runnable_now": [
-        "HELP_001_COMMAND_DISCOVERY"
+        "MUT_002_GATE_MAINTENANCE"
       ],
       "blocked_now": [],
       "upcoming": [
-        "HELP_003_USAGE_RECOVERY",
-        "HELP_002_DOMAIN_GUIDE_SPLIT",
         "CLI_002_CONTRACT_V3_CUTOVER",
         "CLI_003_FILE_FIRST_ACCEPTANCE"
       ]
     },
     "resource_rejection": {
-      "task_id": "MUT_002_GATE_MAINTENANCE",
+      "task_id": "MUT_001_PROJECT_INIT",
       "resource_id": "CLI_SURFACE",
       "capacity": 1,
       "earlier_selected_task_ids": [
-        "HELP_001_COMMAND_DISCOVERY"
+        "MUT_002_GATE_MAINTENANCE"
       ]
     }
   }

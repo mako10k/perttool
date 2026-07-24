@@ -790,9 +790,21 @@ typed registry. `CLI_001_COMMAND_REGISTRY` selected
 `src/command/registry.ts`, made its expanded Contract 2 descriptors
 authoritative for the active dispatch and option parser, and added
 deterministic text and JSON descriptor projections. Public hierarchical JSON
-help remains inactive until `HELP_001_COMMAND_DISCOVERY`, and the descriptors
-retain `contractVersion = 2` until the atomic cutover. The module naming does
-not change the following dependency rule.
+help remains inactive until the atomic cutover, and the active descriptors
+retain `contractVersion = 2` until then.
+
+`HELP_001_COMMAND_DISCOVERY` added the pure
+`src/command/discovery.ts` Contract 3 preview. It derives the accepted command
+and operation renames, examples, top-level/resource/action queries,
+`Perttool.CommandHelpResult.v1`, and deterministic text/JSON from the active
+expanded descriptors. The target `help` descriptor is the only additional
+descriptor in this slice. The preview includes only implemented capabilities,
+so `project init` and gate maintenance remain absent. Its resource summaries
+fix display order but do not duplicate operand, option, effect, schema, exit,
+or example data. `PTHLP-002` reports an unknown resource or top-level command;
+`PTHLP-003` reports an unknown action. The package root and CLI do not expose
+the preview before the atomic cutover. The module naming does not change the
+following dependency rule.
 
 ```text
 command descriptors

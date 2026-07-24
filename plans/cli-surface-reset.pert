@@ -6,12 +6,12 @@ project CLI_SURFACE_RESET:
     docs/backlog.md into an independent post-beta workstream. This plan records
     future design, implementation, migration, and acceptance work only; it does not
     make an uncompleted Contract 3 command available. Estimates are provisional
-    relative points. The cumulative plan-specific sample is 13p/1d from Contract 3
-    design and the command registry completed on 2026-07-24; recalibrate after work
-    on another active day.
+    relative points. The cumulative plan-specific sample is 18p/1d from Contract 3
+    design, the command registry, and hierarchical command discovery completed on
+    2026-07-24; recalibrate after work on another active day.
   as_of 2026-07-24
   duration_unit point
-  velocity 13p/1d
+  velocity 18p/1d
   finish CLI_SURFACE_RESET_ACCEPTED
 
 resource DEVELOPERS:
@@ -41,12 +41,10 @@ milestone CONTRACT_V3_DESIGNED:
   title "CLI contract 3 requirements and design accepted"
   state reached
 
-milestone COMMAND_REGISTRY_READY:
-  title "CLI-001 command descriptor registry ready"
-  state reached
 
 milestone COMMAND_DISCOVERY_READY:
   title "HELP-001 hierarchical command discovery ready"
+  state reached
 
 milestone DOMAIN_GUIDE_READY:
   title "HELP-002 command help and domain guide separation ready"
@@ -71,17 +69,6 @@ milestone CLI_SURFACE_RESET_ACCEPTED:
 
 
 
-task HELP_001_COMMAND_DISCOVERY COMMAND_REGISTRY_READY -> COMMAND_DISCOVERY_READY:
-  title "HELP-001 add hierarchical machine-readable command discovery"
-  description |
-    Provide complete top-level, resource-level, and action-level text and JSON
-    help from the command registry without reading a project or hiding side
-    effects.
-  duration 5p
-  priority 80
-  requires:
-    DEVELOPERS 1
-    CLI_SURFACE 1
 
 task HELP_002_DOMAIN_GUIDE_SPLIT COMMAND_DISCOVERY_READY -> DOMAIN_GUIDE_READY:
   title "HELP-002 separate command help from domain guidance"

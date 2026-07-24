@@ -269,7 +269,10 @@ diagnostics      Diagnostic[]
 The top-level query has all command paths and resources. A resource query has one
 resource and all of its commands. An action query has one complete command.
 Lookup failure returns the same envelope with `ok=false`, empty `commands`, a
-stable diagnostic, and exit 1.
+stable diagnostic, and exit 1. `PTHLP-002` identifies an unknown resource or
+top-level command, and `PTHLP-003` identifies an unknown action under a known
+resource. Domain-guide lookup retains the separate Contract 2
+`PTHLP-001` meaning until `HELP-002` migrates that projection.
 
 Every Contract 3 CLI JSON success or error envelope includes
 `cli_contract_version = 3`. Consumers check `schema_version`,

@@ -17,7 +17,9 @@ The eight items below are mapped one-to-one into
 normative contract-design task. The
 [Contract 3 specification](specs/cli-contract-3.md) and
 [migration guide](process/cli-contract-3-migration.md) accept that design
-target. `CLI-001` is complete; the other seven implementation items remain open.
+target. `CLI-001` and the internal `HELP-001` projection are complete; six
+implementation items remain open. Public Contract 3 activation remains one
+atomic `CLI-002` change.
 
 ### CLI-001: Adopt one command descriptor registry
 
@@ -41,6 +43,8 @@ Acceptance:
 
 Priority: P0
 
+Status: Core complete (2026-07-24); public activation deferred to CLI-002
+
 Provide top-level, resource-level, and action-level help for humans and LLMs.
 
 Acceptance:
@@ -52,6 +56,11 @@ Acceptance:
 - text and JSON are projections of the same registry;
 - help runs without reading a project file and reports no undocumented side
   effects.
+
+The pure Contract 3 preview now satisfies the registry, query, projection,
+lookup-diagnostic, determinism, and no-I/O parts of this item. The active
+Contract 2 CLI intentionally continues to reject `perttool help` until the
+atomic cutover; `HELP-002` still owns the domain-guide projection.
 
 ### HELP-002: Separate command help from domain guidance
 

@@ -60,11 +60,12 @@ export interface CommandOutputDescriptor {
   readonly fileEffect: "none" | "optional-create" | "optional-write-or-create";
 }
 
-export interface CommandDescriptor {
-  readonly contractVersion: 2;
-  readonly path: readonly [resource: string, action: string];
+export interface ProjectedCommandDescriptor {
+  readonly contractVersion: 2 | 3;
+  readonly path:
+    | readonly [command: string]
+    | readonly [resource: string, action: string];
   readonly operation: string;
-  readonly handler: CommandHandler;
   readonly summary: string;
   readonly operands: readonly OperandDescriptor[];
   readonly options: readonly OptionDescriptor[];
@@ -80,6 +81,12 @@ export interface CommandDescriptor {
   readonly resultSchemas: readonly string[];
   readonly exitStatuses: readonly ExitStatusDescriptor[];
   readonly examples: readonly CommandExample[];
+}
+
+export interface CommandDescriptor extends ProjectedCommandDescriptor {
+  readonly contractVersion: 2;
+  readonly path: readonly [resource: string, action: string];
+  readonly handler: CommandHandler;
   readonly textHelp: readonly string[];
   readonly topLevelUsage: string | null;
 }
@@ -1011,7 +1018,7 @@ export function renderCommandHelp(descriptor: CommandDescriptor): string {
 }
 
 export function commandDescriptorToJson(
-  descriptor: CommandDescriptor,
+  descriptor: ProjectedCommandDescriptor,
 ): Readonly<Record<string, unknown>> {
   return {
     cli_contract_version: descriptor.contractVersion,

@@ -50,7 +50,9 @@ The dependency order is fixed by `plans/cli-surface-reset.pert`.
 3. `HELP_001_COMMAND_DISCOVERY`, `HELP_002_DOMAIN_GUIDE_SPLIT`, and
    `HELP_003_USAGE_RECOVERY` implement and test Contract 3 projections. Public
    Contract 3 names remain unavailable until cutover; internal Core APIs and
-   fixtures may be completed earlier.
+   fixtures may be completed earlier. `HELP_001_COMMAND_DISCOVERY` completed
+   the internal top-level/resource/action query and deterministic text/JSON
+   projection without exporting it from the package root or CLI.
 4. `MUT_001_PROJECT_INIT` and `MUT_002_GATE_MAINTENANCE` close typed
    maintenance gaps. `project init` remains a backlog feature until this task
    completes.
