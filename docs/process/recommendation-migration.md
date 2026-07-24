@@ -1,218 +1,218 @@
-# Recommendation実装・自己利用migration
+# Recommendation implementation and self-use migration
 
-- 文書状態: MVP adoption complete 1.9
-- 作成日: 2026-07-22
-- 対応要件: [../requirements.md](../requirements.md)
-- 基本設計: [../basic-design.md](../basic-design.md)
+- Document status: MVP adoption complete 1.9
+- Created: 2026-07-22
+- Requirements: [../requirements.md](../requirements.md)
+- Basic design: [../basic-design.md](../basic-design.md)
 - Interface contract: [../specs/recommendation-interface.md](../specs/recommendation-interface.md)
 - V3 consumer guide: [next-v3-consumer-migration.md](next-v3-consumer-migration.md)
 - Human override: [../specs/recommendation-override.md](../specs/recommendation-override.md)
-- 規範例: [../examples/recommendation.md](../examples/recommendation.md)
-- AI開発ガイド: [ai-development.md](ai-development.md)
-- 自己利用計画: [self-use.md](self-use.md)
-- 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
-- 設計受け入れ記録: [recommendation-design-review.md](recommendation-design-review.md)
-- Shadow受け入れ記録: [recommendation-shadow-review.md](recommendation-shadow-review.md)
+- Normative example: [../examples/recommendation.md](../examples/recommendation.md)
+- AI development guide: [ai-development.md](ai-development.md)
+- Self-use plan: [self-use.md](self-use.md)
+- Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- Design acceptance record: [recommendation-design-review.md](recommendation-design-review.md)
+- Shadow acceptance record: [recommendation-shadow-review.md](recommendation-shadow-review.md)
 
-## 1. 目的
+## 1. Purpose
 
-本書は、設計済みのrecommendation契約を、`Perttool.NextResult.v2`由来fieldの意味を途中で変えずにCore、CLI、自己利用へ導入する順序とgateを定義する。
+This document defines the order and gates for introducing the designed recommendation contract into Core, CLI, and self-use without changing the meanings of fields derived from `Perttool.NextResult.v2` partway through.
 
-移行の目的は次である。
+The migration objectives are as follows.
 
-- ranking、reason、explanationをUIごとに再実装しない
-- incompleteな説明graphをAIのtask選択authorityにしない
-- v2からv3へのbreaking migrationを1つの公開logical changeにする
-- recommendation実装とhuman override適用を別authorityとして導入する
-- 現行のread-only自己利用を、未完成のwriterやaudit pathへ依存させない
-- roadmap再構成時に、実装task、dependency、acceptanceを見積り可能な単位へ分ける
+- Do not reimplement ranking, reasons, or explanations for each UI.
+- Do not make an incomplete explanation graph the AI task-selection authority.
+- Make the breaking migration from v2 to v3 one published logical change.
+- Introduce recommendation implementation and human-override apply as separate authorities.
+- Do not make current read-only self-use depend on an incomplete writer or audit path.
+- When restructuring the roadmap, divide implementation tasks, dependencies, and acceptance into estimable units.
 
-本書はprocessとmigration順序を定義する。Ranking、tier、wire schema、overrideの意味は対応する規範仕様を変更しない。
+This document defines process and migration order. It does not change the corresponding normative specifications for ranking, tiers, wire schema, or override semantics.
 
-## 2. 現在の境界
+## 2. Current boundaries
 
-2026-07-23時点の実装は次である。
+As of 2026-07-23, the implementation is as follows.
 
-- `selectNextTasks`と`dag next`は`Perttool.NextResult.v3`とcomplete recommendation graphを返す
-- `active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`は実装済み
-- candidate fact、complete order、selection horizon、recommended set、tier、structured explanation、PTREC invariant、Core/CLI JSON/text/help/package publicationは実装済み
-- self-use shadowは5 planで受け入れ済み
-- read-only override validationと`Perttool.OverrideDecision.v1` artifactはpublic library Coreへ実装済み
-- normal authority adoptionは5 plan shadowとunknown-version safe stop dry-runを経て完了済み
-- override apply、audit integrationは未実装
-- 自己利用はStage 3であり、editing/advance writeはpreview、expected digest、write後再解析を必須とする。Override applyは未実装である
-- AIのnormal task選択は[AI開発ガイド](ai-development.md)に従いcompleteかつknownなv3 recommendationをauthorityとする
+- `selectNextTasks` and `dag next` return `Perttool.NextResult.v3` and the complete recommendation graph.
+- `active`, `ready`, `runnable_now`, `blocked_now`, and `upcoming` are implemented.
+- Candidate facts, complete order, selection horizon, recommended set, tier, structured explanation, PTREC invariants, and Core/CLI JSON/text/help/package publication are implemented.
+- Self-use shadow is accepted for five plans.
+- Read-only override validation and the `Perttool.OverrideDecision.v1` artifact are implemented in the public library Core.
+- Normal-authority adoption is complete following the five-plan shadow and unknown-version safe-stop dry run.
+- Override apply and audit integration are unimplemented.
+- Self-use is at Stage 3; editing/advance writes require preview, expected digest, and reanalysis after writing. Override apply is unimplemented.
+- In accordance with the [AI development guide](ai-development.md), normal AI task selection uses a complete and known v3 recommendation as its authority.
 
-V2由来fieldをrecommendationとして解釈せず、root `recommendation`だけをnormal recommendationの正本とする。Unknown version、incomplete trace、`PTREC-*`ではtaskを開始せず、human override applyはMIG-08まで未解禁のままとする。
+Do not interpret v2-derived fields as recommendation; root `recommendation` alone is the source of truth for normal recommendation. Do not start a task for an unknown version, incomplete trace, or `PTREC-*`, and keep human-override apply unavailable until MIG-08.
 
-## 3. Roadmap再構成gate
+## 3. Roadmap restructuring gate
 
-最初のproduct implementation taskと見積りは、次を満たした`M1_ROADMAP_UPDATE`でmacro/detail planへ追加する。このgateは2026-07-22に完了した。
+Add the first product-implementation tasks and estimates to the macro/detail plans in `M1_ROADMAP_UPDATE` only after it satisfies the following. This gate was completed on 2026-07-22.
 
-1. `plans/control-plane.pert`の`DESIGN_REVIEW`が完了している
-2. `plans/grammar.pert`の受け入れが完了している
-3. formatter、mutation preview、safe write、advanceを、実際のmodule/file境界と担当resourceへ割り付ける
-4. 各unitへduration、acceptance、narrow test、並行可否を付ける
-5. `plans/mvp.pert`の`M1_ROADMAP_UPDATE`を完了してからproduct implementationへ着手する
+1. `DESIGN_REVIEW` in `plans/control-plane.pert` is complete.
+2. Acceptance of `plans/grammar.pert` is complete.
+3. Assign formatter, mutation preview, safe write, and advance to their actual module/file boundaries and responsible resources.
+4. Give each unit a duration, acceptance, narrow test, and parallelizability.
+5. Do not start product implementation until `M1_ROADMAP_UPDATE` in `plans/mvp.pert` is complete.
 
-実行順は[操作系詳細plan](../../plans/operations.pert)へ固定し、全24pを完了した。M3、Stage 3、Mermaid profile設計、Mermaid export/import round-tripへ到達した後、[MVP release readiness監査](mvp-release-readiness.md)で受け入れ条件16の未実装を確認した。MIG-01からMIG-07は[Recommendation実装plan](../../plans/recommendation.pert)へ22p、precedence 19p、resource 22pとして詳細化し、operations実測`24p/1d`を初期Velocityに使用する。Macroでは`RECOMMENDATION_IMPLEMENTATION`をrelease hard predecessorへ追加し、`RELEASE_E2E`をupcomingへ戻した。
+Execution order was fixed in the [operations detail plan](../../plans/operations.pert), completing all 24p. After M3, Stage 3, Mermaid profile design, and Mermaid export/import round-trip, the [MVP release readiness audit](mvp-release-readiness.md) identified unimplemented acceptance criterion 16. MIG-01 through MIG-07 were detailed in the [recommendation implementation plan](../../plans/recommendation.pert) as 22p, precedence 19p, and resource 22p, using observed operations `24p/1d` as initial velocity. The macro plan added `RECOMMENDATION_IMPLEMENTATION` as a release hard predecessor and returned `RELEASE_E2E` to upcoming.
 
-2026-07-23にMIG-01を完了した。REC-001からREC-007の最小`.pert`、REC-008からREC-011のunit input、将来期待fact、現行`NextResult.v2`のgroups/tasks/resource rejection/upcoming explanation projectionをfixtureとgoldenへ固定した。REC-002はcompletion counterfactualとgate距離が両立するよう規範距離を補正した。初回完了標本2p/1 active dayからrecommendation固有Velocityを`2p/1d`へ更新し、残るprecedence 17p、resource 20p、resource delay 3p、resource forecast 10dとなった。次taskは`RANKING_CORE`である。
+MIG-01 was completed on 2026-07-23. Minimal `.pert` fixtures for REC-001 through REC-007, unit input for REC-008 through REC-011, future expected facts, and the current `NextResult.v2` groups/tasks/resource-rejection/upcoming-explanation projection were fixed as fixtures and goldens. REC-002 corrected normative distance so completion counterfactual and gate distance agree. The first completion sample of 2p/1 active day updated recommendation-specific velocity to `2p/1d`, leaving precedence 17p, resource 20p, resource delay 3p, and resource forecast 10d. The next task was `RANKING_CORE`.
 
-同日にMIG-02を完了した。`src/recommendation/`へactual ready taskのcompletion counterfactual、structural distance、exact complete order、selection horizon、active allocation込みのjoint resource scan、tier、resource witnessをpure Coreとして実装した。REC-001からREC-007、全ranking rule、near-critical/minimum-float horizon、parallel/empty set、capacity override、selected/active-only blockerをunit testへ固定し、現行Core export、CLI、help、`NextResult.v2`は変更していない。累計6p/1 active dayからVelocityを`6p/1d`へ更新し、残るprecedence 13p、resource 16p、resource delay 3p、resource forecast `8/3d`となった。次taskは`EXPLANATION_CORE`である。
+On the same day, MIG-02 was completed. It implemented in `src/recommendation/` a pure Core for completion counterfactuals of actual ready tasks, structural distance, exact complete order, selection horizon, joint resource scan including active allocation, tier, and resource witnesses. Unit tests fixed REC-001 through REC-007, every ranking rule, near-critical/minimum-float horizon, parallel/empty sets, capacity override, and selected/active-only blockers; current Core exports, CLI, help, and `NextResult.v2` were unchanged. Cumulative velocity was updated from 6p/1 active day to `6p/1d`, leaving precedence 13p, resource 16p, resource delay 3p, and resource forecast `8/3d`. The next task was `EXPLANATION_CORE`.
 
-同日にMIG-03を完了した。MIG-02 resultからexact typed fact、depth制限付きexpression、winner/alternative/decisive ruleを持つminimal comparison、phase順のdecision trace、taxonomy 1.0 reason occurrence、typed parameterからのcanonical English descriptionを構築する非公開pure Coreを実装した。Record ID、canonical order、reference closure、tier/set、expression再評価、version/rule/code/fact registry、description key/parameter/textを検査し、`PTREC-301`から`PTREC-303`へfail-closedで変換する。REC-001からREC-011、selected/active-only resource blocker、scan時点とfinal setのresource witness、ready 0件、exact Rational、各diagnostic破損をunit testへ固定し、全186 testで現行Core export、CLI、help、`NextResult.v2`が変わらないことを確認した。累計11p/1 active dayからVelocityを`11p/1d`へ更新し、残るprecedence 8p、resource 11p、resource delay 3p、resource forecast 1dとなった。次taskは`NEXT_V3_PUBLICATION`である。
+On the same day, MIG-03 was completed. It implemented a non-public pure Core that builds exact typed facts, depth-limited expressions, minimal comparisons with winner/alternative/decisive rule, phase-ordered decision traces, taxonomy 1.0 reason occurrences, and canonical English descriptions from typed parameters from the MIG-02 result. It validates record IDs, canonical order, reference closure, tier/set, expression reevaluation, version/rule/code/fact registry, and description key/parameter/text, fail-closed to `PTREC-301` through `PTREC-303`. Unit tests fixed REC-001 through REC-011, selected/active-only resource blockers, resource witnesses at scan time and final set, zero ready tasks, exact Rational values, and each diagnostic corruption; all 186 tests confirmed current Core exports, CLI, help, and `NextResult.v2` unchanged. Velocity was updated from cumulative 11p/1 active day to `11p/1d`, leaving precedence 8p, resource 11p, resource delay 3p, and resource forecast 1d. The next task was `NEXT_V3_PUBLICATION`.
 
-同日にMIG-04を完了した。`selectNextTasks`へranking/explanationを接続し、public `NextResultV3`型、snake_case JSON adapter、`dag next` v3 complete graph、4 tier text summary、structured help、consumer migration guide、CHANGELOG、Core/CLI/package parityを1つのbreaking changeへ含めた。V2 operational projectionを維持し、ready 0件でもresult decisionとjoint feasibility factを返す。累計15p/1 active dayからVelocityを`15p/1d`へ更新し、残るprecedence 4p、resource 7p、resource delay 3p、resource forecast `7/15d`となった。次のprecedence critical taskは`SELF_USE_SHADOW`で、`OVERRIDE_VALIDATION`は同じready frontierだがreviewer競合によりdeferredである。
+On the same day, MIG-04 was completed. It connected ranking/explanation to `selectNextTasks` and included public `NextResultV3` types, snake_case JSON adapter, `dag next` v3 complete graph, four-tier text summary, structured help, consumer migration guide, CHANGELOG, and Core/CLI/package parity in one breaking change. It preserves v2 operational projection and returns result-decision and joint-feasibility facts even with zero ready tasks. Velocity was updated from cumulative 15p/1 active day to `15p/1d`, leaving precedence 4p, resource 7p, resource delay 3p, and resource forecast `7/15d`. The next precedence-critical task was `SELF_USE_SHADOW`; `OVERRIDE_VALIDATION` was on the same ready frontier but deferred due to reviewer contention.
 
-同日にMIG-06を完了した。5つのself-use planでknown v3 contract、complete graph、byte determinism、ready subset、joint resource feasibility、v2 operational field互換、`PTREC-*`不在を検査した。`SELF_USE_SHADOW`と`OVERRIDE_VALIDATION`の差をprimary comparison、resource witness、canonical descriptionだけから説明できることをgoldenへ固定し、[shadow受け入れ記録](recommendation-shadow-review.md)へ判定を残した。累計17p/1 active dayからVelocityを`17p/1d`へ更新し、残るprecedence 3p、resource 5p、resource delay 2p、resource forecast `5/17d`となった。次のprecedence criticalかつrecommended taskは`OVERRIDE_VALIDATION`で、`AUTHORITY_ADOPTION`は同じready frontierだがreviewer競合によりdeferredである。Shadow受け入れだけではnormal authorityへ昇格しない。
+On the same day, MIG-06 was completed. Five self-use plans verified the known v3 contract, complete graph, byte determinism, ready subset, joint resource feasibility, v2 operational-field compatibility, and absence of `PTREC-*`. Goldens fixed that the difference between `SELF_USE_SHADOW` and `OVERRIDE_VALIDATION` can be explained only from primary comparison, resource witness, and canonical description; the decision was recorded in the [shadow acceptance record](recommendation-shadow-review.md). Velocity was updated from cumulative 17p/1 active day to `17p/1d`, leaving precedence 3p, resource 5p, resource delay 2p, and resource forecast `5/17d`. The next precedence-critical and recommended task was `OVERRIDE_VALIDATION`; `AUTHORITY_ADOPTION` was on the same ready frontier but deferred due to reviewer contention. Shadow acceptance alone does not promote normal authority.
 
-同日にMIG-05を完了した。Pure `validateOverride`、public request/result型、`Perttool.OverrideDecision.v1` JSON projection、canonical artifactを実装し、allowed/deferred replacement、normal-authority selection、stale/eligibility/resource failure、caller-asserted actor、explicit UTC time、evidence canonicalization、capacity override binding、SHA-256 identityをOVR-001からOVR-004およびOVR-006へ固定した。OVR-005のdiscouraged fixtureはconcrete negative factを導入する将来versionまで予約のままである。Package-installed APIからも同じartifactを生成し、file、Git、network writeは追加していない。累計20p/1 active dayからVelocityを`20p/1d`へ更新し、残るprecedence/resource 2p、resource delay 0p、resource forecast `1/10d`となった。次の唯一のcriticalかつrecommended taskは`AUTHORITY_ADOPTION`である。
+On the same day, MIG-05 was completed. It implemented pure `validateOverride`, public request/result types, `Perttool.OverrideDecision.v1` JSON projection, and canonical artifacts, fixing allowed/deferred replacement, normal-authority selection, stale/eligibility/resource failure, caller-asserted actor, explicit UTC time, evidence canonicalization, capacity-override binding, and SHA-256 identity in OVR-001 through OVR-004 and OVR-006. The OVR-005 discouraged fixture remains reserved for a future version that introduces a concrete negative fact. The package-installed API generates the same artifact; no file, Git, or network write was added. Velocity was updated from cumulative 20p/1 active day to `20p/1d`, leaving precedence/resource 2p, resource delay 0p, and resource forecast `1/10d`. The only next critical and recommended task was `AUTHORITY_ADOPTION`.
 
-同日にMIG-07を完了した。`AGENTS.md`、Copilot指示、AI開発ガイド、helpへmacroからdetailのnormal selection ruleを同期し、recommended subset、recommended set全件とallowed 1件の追加、allowed replacement、deferred selection、empty recommendationをdry-runへ固定した。Schema、interface、algorithm、taxonomy、explanation、expression、description、locale、completeness、tier、decisive rule/reason/expression、`PTREC-*`の16境界では選択taskなしのsafe stopになる。全22pを同じactive dayで完了したため暫定実測Velocityを`22p/1d`へ更新し、detail残作業は0pとなった。Normal recommendation authorityは採用済みで、次のmacro recommended work packageは`RELEASE_E2E`である。
+On the same day, MIG-07 was completed. It synchronized the macro-to-detail normal-selection rule to `AGENTS.md`, Copilot instructions, the AI development guide, and help; dry runs fixed the recommended subset, all recommended tasks plus one allowed task, allowed replacement, deferred selection, and empty recommendation. At 16 boundaries for schema, interface, algorithm, taxonomy, explanation, expression, description, locale, completeness, tier, decisive rule/reason/expression, and `PTREC-*`, it safely stops without a selected task. Completing all 22p on the same active day updated provisional observed velocity to `22p/1d`, leaving 0p of detail work. Normal recommendation authority is adopted, and the next macro recommended work package is `RELEASE_E2E`.
 
-MIG-01からMIG-07は、v3 publicationまでに`src/cli.ts`、`src/index.ts`、CLI/help test、`REVIEWERS`を共有する。Task別duration、file ownership、acceptance、narrow testは`plans/recommendation.pert`を正とする。MIG-08はsafe-write gateに加えてoverride検証・audit gateを必要とし、MVP後の独立work packageのままとする。Issue #2もhelp surfaceとreviewerを共有するため、MVP public alpha後にbeta gateとして`plans/agent-guidance.pert`とmacro `AGENT_GUIDANCE_IMPLEMENTATION`へ追加した。Provider baselineと公開contract完了後の現在はmacroからIssue #2を選び、detailの`GUIDANCE_CORE`を開始する。
+MIG-01 through MIG-07 share `src/cli.ts`, `src/index.ts`, CLI/help tests, and `REVIEWERS` through v3 publication. `plans/recommendation.pert` is authoritative for task-specific duration, file ownership, acceptance, and narrow tests. MIG-08 requires override-validation/audit gates in addition to the safe-write gate and remains an independent post-MVP work package. Because Issue #2 also shares help surface and reviewers, it was added after MVP public alpha as the beta-gated `plans/agent-guidance.pert` and macro `AGENT_GUIDANCE_IMPLEMENTATION`. With provider baseline and public contract complete, select Issue #2 from the macro plan and start detail `GUIDANCE_CORE`.
 
-Roadmap再構成前はrecommendation migrationのduration、担当、parallel可否を先行決定しなかった。2026-07-22のrelease readiness監査で再構成gateを開き、実moduleとverification matrixから初期見積りを固定した。Issue #2をMVP recommendation実装の意味上のpredecessorにせず、共有help surfaceを調整する独立featureとして扱う。
+Before roadmap restructuring, duration, ownership, and parallelizability for recommendation migration were not decided in advance. The 2026-07-22 release-readiness audit opened the restructuring gate and fixed initial estimates from actual modules and the verification matrix. Treat Issue #2 as an independent feature that coordinates shared help surface, not as a semantic predecessor of MVP recommendation implementation.
 
-## 4. 実装migration unit
+## 4. Implementation migration units
 
 ### MIG-01 Normative fixture baseline
 
-[Recommendation規範例](../examples/recommendation.md)のcase IDを、最小`.pert` fixtureと期待factへ展開する。現行v2の`groups`、`tasks`、`resource_rejections`、upcoming `explanation`も同じfixtureでgolden化する。
+Expand case IDs from the [normative recommendation example](../examples/recommendation.md) into minimal `.pert` fixtures and expected facts. Also make the current v2 `groups`, `tasks`, `resource_rejections`, and upcoming `explanation` golden using the same fixtures.
 
 Exit:
 
-- REC-001からREC-011の実装可能caseがfixtureまたはunit inputへ対応する
-- v2 fieldの現行projectionが固定される
-- normal version 1で`discouraged`を捏造しない
-- fixture追加だけではpublic schemaやtextを変更しない
+- Each implementable case from REC-001 through REC-011 maps to a fixture or unit input.
+- The current projection of v2 fields is fixed.
+- Do not fabricate `discouraged` in normal version 1.
+- Adding fixtures alone does not change public schema or text.
 
-### MIG-02 Candidate facts、ranking、tier Core
+### MIG-02 Candidate facts, ranking, and tier Core
 
-Actual `ready`集合からcandidate fact、complete order、selection horizon、recommended set、tierを計算するpure Coreを実装する。Precedence analysisとproject graph factsを入力にし、schedulerの`runnable_now`、resource arc、schedule critical pathをranking inputへ戻さない。
-
-Exit:
-
-- exact Rationalとstable IDで同じ入力から同じ`H`、`R`、tierを返す
-- selected blockerとactive-only blockerを区別する
-- empty setとparallel recommendationをunit testで固定する
-- `R`がactive allocation込みでjointly feasibleである
-- CLI renderer、help、provider adapterにranking ruleが存在しない
-
-### MIG-03 Explanation graphとinvariant Core
-
-MIG-02の判断からfact、expression、decision step、comparison、reason occurrence、descriptionを構築する。Record ID、canonical order、reference closure、description renderingを検査し、不一致を`PTREC-301`から`PTREC-303`へ変換する。
+Implement a pure Core that calculates candidate facts, complete order, selection horizon, recommended set, and tier from the actual `ready` set. It takes precedence analysis and project-graph facts as input; do not feed the scheduler's `runnable_now`, resource arcs, or schedule critical path back into ranking input.
 
 Exit:
 
-- 各ready taskのdecisive chainがcompleteである
-- 「なぜAでBではないか」をwinner、alternative、rule、typed factから回答できる
-- active-only rejectでready-task winnerを生成しない
-- canonical English textがkeyとtyped parameterから再現できる
-- invariant failureをpartial success resultへ変換しない
+- Return the same `H`, `R`, and tier from the same input using exact Rational values and stable IDs.
+- Distinguish selected blockers from active-only blockers.
+- Fix empty sets and parallel recommendations in unit tests.
+- `R` is jointly feasible including active allocation.
+- No ranking rule exists in the CLI renderer, help, or provider adapter.
+
+### MIG-03 Explanation graph and invariant Core
+
+Build facts, expressions, decision steps, comparisons, reason occurrences, and descriptions from the MIG-02 decision. Validate record IDs, canonical order, reference closure, and description rendering, converting inconsistencies to `PTREC-301` through `PTREC-303`.
+
+Exit:
+
+- Every ready task has a complete decisive chain.
+- “Why A rather than B” can be answered from winner, alternative, rule, and typed facts.
+- Do not generate a ready-task winner for an active-only rejection.
+- Canonical English text can be reproduced from keys and typed parameters.
+- Do not convert an invariant failure into a partial-success result.
 
 ### MIG-04 `NextResult.v3` atomic publication
 
-MIG-01からMIG-03を満たした後、Recommendation Interface Contractに従い、Coreと`dag next`のdefault resultをv3へ一括で切り替える。
+After satisfying MIG-01 through MIG-03, switch the Core and `dag next` default result to v3 together, in accordance with the Recommendation Interface Contract.
 
-同じlogical changeへ含めるもの:
+Include in the same logical change:
 
-- public Core typeとlibrary export
-- CLI JSON serializationとtext summary
-- complete JSON、Core/CLI parity、text、errorのgolden
-- `dsl help`またはcommand helpのv3説明とmachine-readable help
-- README、package documentation、consumer migration guide
-- `CHANGELOG.md`のpre-release breaking change
-- `schema_version`を最初に検査するconsumer example
+- Public Core type and library export.
+- CLI JSON serialization and text summary.
+- Goldens for complete JSON, Core/CLI parity, text, and errors.
+- v3 explanation and machine-readable help in `dsl help` or command help.
+- README, package documentation, and consumer migration guide
+- The pre-release breaking change in `CHANGELOG.md`.
+- A consumer example that checks `schema_version` first.
 
-同じlogical changeで禁止するもの:
+Do not include in the same logical change:
 
-- v2 fieldをrecommendation fieldとして再解釈する
-- `--schema-version 2`などのdual emissionを追加する
-- incomplete graphを`complete=true`で返す
-- CLIだけを先にv3へし、library resultをv2のまま残す
-- recommendationと無関係なwriter、formatter、Mermaid変更を混在させる
+- Reinterpreting v2 fields as recommendation fields.
+- Adding dual emission such as `--schema-version 2`.
+- Returning an incomplete graph with `complete=true`.
+- Moving only the CLI to v3 first while leaving the library result on v2.
+- Mixing unrelated writer, formatter, or Mermaid changes with recommendation.
 
-公開直前までdefault CLIはv2のままにする。内部Coreを先行commitする場合も、未完成resultをpublic exportやhelpから発見可能にしない。
+Keep the default CLI on v2 until immediately before publication. Even when committing internal Core work first, do not make an incomplete result discoverable through a public export or help.
 
 ### MIG-05 Read-only override validation
 
-Completeなv3 resultを入力にするpure `validateOverride`を、normal rankingと別resultとして実装する。
+Implement pure `validateOverride`, which takes a complete v3 result as input, as a result separate from normal ranking.
 
 Exit:
 
-- override不要、必要、不可能を`PTOVR-*`で区別する
-- allowed/deferred replacementのselected setをactive allocation込みで再検査する
-- normal reasonをcopyまたはhuman reasonへ変換せずsource IDで参照する
-- deterministic artifact ID、caller-asserted actor、明示UTC時刻を固定する
-- filesystem、Git、network、task stateを変更しない
+- Distinguish unnecessary, required, and impossible overrides with `PTOVR-*`.
+- Recheck the selected set for allowed/deferred replacements including active allocation.
+- Reference normal reasons by source ID without copying or converting them to a human reason.
+- Fix deterministic artifact ID, caller-asserted actor, and explicit UTC time.
+- Do not change filesystem, Git, network, or task state.
 
-MIG-05はv3 publication後に独立して実装できる。MIG-04のnormal recommendationをoverride applyやwrite実装へ依存させない。
+MIG-05 can be implemented independently after v3 publication. Do not make MIG-04 normal recommendation depend on override apply or write implementation.
 
-2026-07-23にMIG-05をpublic library Coreとして実装した。`validateOverride`はsource `NextResultV3`とrequestだけを読み、`PTOVR-101`から`PTOVR-106`またはcanonical artifactを返す。CLI command、task state mutation、audit write、Git operationはMIG-08まで追加しない。
+MIG-05 was implemented as public library Core on 2026-07-23. `validateOverride` reads only source `NextResultV3` and a request, returning `PTOVR-101` through `PTOVR-106` or a canonical artifact. Do not add a CLI command, task-state mutation, audit write, or Git operation until MIG-08.
 
 ### MIG-06 Self-use shadow evaluation
 
-V3 publication後も、直ちにAIのtask selection authorityへ昇格させない。まず`plans/mvp.pert`と選択した詳細planに対し、現行の明示手順とv3 recommendationを同じsnapshotで比較する。
+Do not immediately promote v3 publication to AI task-selection authority. First compare the current explicit procedure and v3 recommendation on the same snapshot for `plans/mvp.pert` and selected detail plans.
 
 Shadow gate:
 
-- すべてのself-use planがcheck/analyze/nextに成功する
-- JSONがknown `Perttool.NextResult.v3`かつ`complete=true`、`truncated=false`である
-- algorithm、taxonomy、explanation、expression、description versionをconsumerが理解できる
-- 同じ入力とoptionでbyte-identical resultを返す
-- recommended taskがactual readyのsubsetで、recommended set全体がresource-feasibleである
-- 規範例とself-use goldenが成功し、`PTREC-*`がない
-- AIがprimary higher-priority taskとdecisive comparisonをJSONから説明できる
-- v2由来のoperational groupとresource/upcoming explanationがmigration前と同じ意味である
+- Every self-use plan succeeds at check/analyze/next.
+- JSON is known `Perttool.NextResult.v3` with `complete=true` and `truncated=false`.
+- The consumer understands algorithm, taxonomy, explanation, expression, and description versions.
+- The same input and options return a byte-identical result.
+- Recommended tasks are a subset of actual ready tasks, and the entire recommended set is resource-feasible.
+- The normative example and self-use golden succeed, with no `PTREC-*`.
+- The AI can explain the primary higher-priority task and decisive comparison from JSON.
+- v2-derived operational groups and resource/upcoming explanations have the same meanings as before migration.
 
-Shadow中は[AI開発ガイド](ai-development.md)の現行manual selection手順をauthorityとして維持し、差があればimplementation bug、spec gap、plan fact不足のどれかを切り分ける。Chat上の直感でgoldenをrecommendationへ合わせない。
+During shadow, keep the current manual-selection procedure from the [AI development guide](ai-development.md) as authority. If there is a difference, distinguish implementation bug, specification gap, or insufficient plan facts. Do not alter goldens to match recommendation based on chat intuition.
 
-2026-07-23にこのgateを5 planで受け入れた。受け入れ前snapshotは[shadow受け入れ記録](recommendation-shadow-review.md)へ保存し、完了後のcurrent snapshotは[test](../../test/recommendation-self-use-shadow.test.mjs)と[golden](../../test/golden/self-use/recommendation-shadow.expected.json)で継続検査する。MIG-07まではmanual authorityを維持する。
+This gate was accepted for five plans on 2026-07-23. Save the pre-acceptance snapshot in the [shadow acceptance record](recommendation-shadow-review.md), and continuously check the post-completion current snapshot with the [test](../../test/recommendation-self-use-shadow.test.mjs) and [golden](../../test/golden/self-use/recommendation-shadow.expected.json). Keep manual authority until MIG-07.
 
 ### MIG-07 Normal recommendation authority adoption
 
-MIG-06を満たした後、normal start selectionだけをAI開発flowのauthorityへ昇格できる。
+After satisfying MIG-06, only normal start selection can be promoted to authority in the AI development flow.
 
-Adoption changeで同時に更新するもの:
+Update together in the adoption change:
 
-- `AGENTS.md`と`.github/copilot-instructions.md`の共有task selection rule
-- [AI開発ガイド](ai-development.md)のmanualからv3への切替
-- [自己利用計画](self-use.md)のgateとgolden evidence
-- helpのAI向けconsumer手順
-- schema/version不明時のsafe stop
+- The shared task-selection rule in `AGENTS.md` and `.github/copilot-instructions.md`.
+- The switch from manual to v3 in the [AI development guide](ai-development.md).
+- Gates and golden evidence in the [self-use plan](self-use.md).
+- AI-consumer procedure in help.
+- Safe stop for unknown schema/version.
 
-AIのnormal selection rule:
+AI normal selection rule:
 
-1. macro planのrecommended work packageからworkstreamを選ぶ
-2. 対応するdetail planのrecommended taskを選ぶ
-3. recommended taskのsubsetは選択できる
-4. `allowed`は`R`全件を同じstart selectionへ維持した上で1件だけ追加でき、開始後は再解析する
-5. `deferred`または`discouraged`をnormal authorityで開始しない
-6. task start、completion、block、capacity変更後は同じresultを再利用せず再解析する
+1. Select a workstream from the macro plan's recommended work package.
+2. Select the recommended task in the corresponding detail plan.
+3. A subset of recommended tasks may be selected.
+4. One `allowed` task may be added only while retaining all of `R` in the same start selection; reanalyze after starting.
+5. Do not start `deferred` or `discouraged` under normal authority.
+6. After task start, completion, block, or capacity change, reanalyze rather than reusing the same result.
 
-複数planを1つのranking domainへ合成する機能はない。Macro planでworkstreamを選んでからdetail planを評価し、異なるdetail planのtaskを直接比較しない。
+There is no feature that combines multiple plans into one ranking domain. Select a workstream in the macro plan before evaluating its detail plan, and do not compare tasks in different detail plans directly.
 
-MIG-07はnormal selectionだけを対象とする。Human overrideを必要とする選択は、MIG-08を満たすまでperttool自己利用上の適用済みoverrideとみなさず、AIはnormal recommendationと人間の指示の差を明示して停止する。人間の最終決定権は失われないが、未実装のaudit/applyを成功したと表示しない。
+MIG-07 covers normal selection only. Until MIG-08 is satisfied, do not regard a selection requiring human override as an applied override in perttool self-use; the AI must state the difference between normal recommendation and human instruction, then stop. Human final decision authority is not lost, but do not represent unimplemented audit/apply as successful.
 
-2026-07-23にMIG-07を受け入れ、normal selection ruleを共有指示、AI開発ガイド、help、self-use evidenceへ同期した。Unknownまたはincompleteなcontractと`PTREC-*`でtask IDを返さないdry-runを自動testへ固定した。MIG-08のoverride apply/audit境界は変更していない。
+MIG-07 was accepted on 2026-07-23, synchronizing the normal-selection rule to shared instructions, the AI development guide, help, and self-use evidence. An automated test fixes the dry run that returns no task ID for an unknown or incomplete contract and `PTREC-*`. The MIG-08 override apply/audit boundary is unchanged.
 
-### MIG-08 Override applyとaudit adoption
+### MIG-08 Override apply and audit adoption
 
-Overrideを自己利用へ解禁するのは、MIG-05に加えてsafe-write gateと次を満たした後である。
+Override becomes available for self-use only after satisfying MIG-05, the safe-write gate, and the following.
 
-- selected taskのstart state transitionを安全にpreview、再検査、atomic writeできる
-- source digest、capacity option、task stateのstale checkがある
-- canonical override artifactをdurable audit sinkへ保存できる
-- repository-native運用ではtask state変更とGit trailerを同じlogical commitにできる
-- artifact ID、trailer、selected setをapply前後に検証する
-- apply後にcheck、analyze、nextを全体再実行する
-- single-use IDの再利用とpartial applyを拒否する
+- The selected task's start-state transition can be safely previewed, rechecked, and atomically written.
+- Source digest, capacity option, and task-state stale checks exist.
+- The canonical override artifact can be saved to a durable audit sink.
+- In repository-native operation, task-state changes and the Git trailer can be in the same logical commit.
+- Artifact ID, trailer, and selected set are validated before and after apply.
+- Check, analyze, and next are rerun for the whole plan after apply.
+- Reuse of a single-use ID and partial apply are rejected.
 
-MIG-08までは`Perttool.OverrideDecision.v1`の生成が可能でも、file mutation、Git commit、task実行を自動化しない。
+Until MIG-08, even if `Perttool.OverrideDecision.v1` can be generated, do not automate file mutation, Git commit, or task execution.
 
-## 5. Dependencyと公開境界
+## 5. Dependencies and publication boundaries
 
 ```text
 design review + grammar acceptance
@@ -246,68 +246,68 @@ MIG-01 fixtures -> MIG-02 ranking -> MIG-03 explanation|
                                   MIG-08 override apply
 ```
 
-MIG-01からMIG-07のside trackは、`M1_ROADMAP_UPDATE`で共有CLI・reviewerの競合を確認したため、`M3_SAFE_WRITE_READY`より前には開始しない。MIG-05とMIG-06はv3 publication後に並行可能な候補だが、safe-write後のresource scheduleでMermaid、Issue #2との順序を再解析する。Diagramは実装見積りやAgent並行実行の許可を意味しない。
+Do not start the MIG-01 through MIG-07 side track before `M3_SAFE_WRITE_READY`, because `M1_ROADMAP_UPDATE` identified conflicts over shared CLI and reviewers. MIG-05 and MIG-06 are candidates for parallel work after v3 publication, but reanalyze their ordering with Mermaid and Issue #2 in the post-safe-write resource schedule. The diagram does not authorize implementation estimates or parallel Agent execution.
 
 ## 6. Consumer migration guide
 
-MIG-04で[consumer migration guide](next-v3-consumer-migration.md)を追加し、最低限次を固定した。
+MIG-04 added the [consumer migration guide](next-v3-consumer-migration.md), fixing at least the following.
 
-- v2とv3のroot差分
-- `schema_version`先行検査
-- root `recommendation`がalways presentであること
-- ready task 0件とempty recommended setの正常処理
-- `recommended_task_ids`を集合として扱うこと
-- task decision、primary higher-priority task、decisive step、comparisonの参照手順
-- unknown decisive semanticsでは自動開始しないこと
-- JSONはcomplete graph、textは`complete=false`のsummaryであること
-- `groups`、`tasks`、scheduler resource rejection、upcoming explanationの意味を維持すること
-- `optimal=false`をglobal optimumと表示しないこと
+- Root differences between v2 and v3.
+- Checking `schema_version` first.
+- Root `recommendation` is always present.
+- Normal handling of zero ready tasks and an empty recommended set.
+- Treating `recommended_task_ids` as a set.
+- How to follow task-decision, primary-higher-priority-task, decisive-step, and comparison references.
+- No automatic start for unknown decisive semantics.
+- JSON is the complete graph; text is a `complete=false` summary.
+- Preserving the meanings of `groups`, `tasks`, scheduler resource rejection, and upcoming explanation.
+- Not displaying `optimal=false` as a global optimum.
 
-Provider別prompt、skill、agent、hook templateはIssue #2のscopeである。各provider guideはこのconsumer ruleを参照し、独自rankingやreason推測を追加しない。
+Provider-specific prompt, skill, agent, and hook templates are in the scope of Issue #2. Each provider guide references this consumer rule and does not add independent ranking or reason inference.
 
-## 7. Failure、rollback、compatibility
+## 7. Failure, rollback, and compatibility
 
-### Publication前
+### Before publication
 
-- MIG-04完了commitより前はdefault v2を維持する
-- internal ranking/explanation failureをv2 fieldへ混入させない
-- failed internal sliceをpublic helpへ掲載しない
+- Keep default v2 before the MIG-04 completion commit.
+- Do not mix internal ranking/explanation failure into v2 fields.
+- Do not publish a failed internal slice in public help.
 
-### Publication後
+### After publication
 
-- defaultはv3だけを返し、v2 dual emissionを追加しない
-- v3 regression時はrecommendationをtask selectionへ使用せず、known-good Git revisionとgoldenで原因を分離する
-- `schema_version=v3`のままrecommendation rootを省略しない
-- failureを隠すためv3 fieldを空にしたsuccess resultを返さない
-- v2 consumerへ黙ってdowngradeせず、pre-release breaking changeとして明示する
-- self-use authorityを一時停止してもproject planをtool bugへ合わせて変更しない
+- Default returns v3 only; do not add v2 dual emission.
+- For a v3 regression, do not use recommendation for task selection; isolate the cause with a known-good Git revision and golden.
+- Do not omit the recommendation root while `schema_version=v3`.
+- Do not return a successful result with empty v3 fields to hide failure.
+- Do not silently downgrade v2 consumers; state the pre-release breaking change explicitly.
+- Do not change the project plan to fit a tool bug even if self-use authority is suspended temporarily.
 
-Recommendation failureはplan failureとは限らない。Check、precedence analysis、resource schedule、classification、ranking、explanation、adapterのどの境界で失敗したかをsmall golden graphで切り分ける。
+A recommendation failure is not necessarily a plan failure. Use a small golden graph to isolate which boundary failed: check, precedence analysis, resource schedule, classification, ranking, explanation, or adapter.
 
 ## 8. Verification matrix
 
 | Unit | Narrow verification | Publication/adoption gate |
 | --- | --- | --- |
-| MIG-01 | fixture check、v2 projection golden | 規範case coverage |
-| MIG-02 | ranking/tier unit test、determinism、resource invariant | Core review |
+| MIG-01 | fixture check, v2 projection golden | normative case coverage |
+| MIG-02 | ranking/tier unit test, determinism, resource invariant | Core review |
 | MIG-03 | explanation/reference/invariant test | complete graph review |
-| MIG-04 | typecheck、Core/CLI parity、text/JSON E2E、help、package | `npm run check`、CHANGELOG、consumer guide |
-| MIG-05 | pure override unit、canonical hash、negative test | filesystem/Git side effectなし |
-| MIG-06 | 5 self-use plan、byte determinism、why A/B回答 | shadow evidence |
-| MIG-07 | AI workflow dry-run、unknown version safe stop | shared instructions同期 |
-| MIG-08 | stale、atomicity、audit trailer、re-analysis | safe-write/override adoption review |
+| MIG-04 | typecheck, Core/CLI parity, text/JSON E2E, help, package | `npm run check`, CHANGELOG, consumer guide |
+| MIG-05 | pure override unit, canonical hash, negative test | no filesystem/Git side effect |
+| MIG-06 | five self-use plans, byte determinism, why A/B answer | shadow evidence |
+| MIG-07 | AI workflow dry run, unknown-version safe stop | shared-instruction synchronization |
+| MIG-08 | stale, atomicity, audit trailer, re-analysis | safe-write/override adoption review |
 
-全unitで`git diff --check`を実行する。MIG-04、MIG-07、MIG-08はadapterまたは運用境界を変えるため、narrow testだけで完了扱いにしない。
+Run `git diff --check` for every unit. Because MIG-04, MIG-07, and MIG-08 change an adapter or operational boundary, do not consider them complete based only on narrow tests.
 
 ## 9. Acceptance
 
-- Coreからadapterまでの実装順序を定義した
-- v2を維持する内部実装期間とv3 atomic publicationを分離した
-- CHANGELOG、help、consumer migration guideをv3切替条件へ含めた
-- complete JSONをshadow評価してからnormal authorityへ昇格するgateを定義した
-- macro/detail planの二段階selectionを維持した
-- normal recommendation adoptionとoverride apply adoptionを分離した
-- override applyをsafe-write、audit、stale check、再解析へ接続した
-- Issue #2のprovider guideが独自rankingを持たない境界を定義した
-- roadmap再構成前にduration、担当、Agent並行性を捏造していない
-- current CLI、schema、implementation、write pathを変更していない
+- Defined the implementation order from Core through adapter.
+- Separated the internal implementation period that preserves v2 from atomic v3 publication.
+- Included CHANGELOG, help, and consumer migration guide in v3 switch conditions.
+- Defined the gate that promotes complete JSON to normal authority only after shadow evaluation.
+- Preserved two-stage selection through macro/detail plans.
+- Separated normal-recommendation adoption from override-apply adoption.
+- Connected override apply to safe write, audit, stale check, and reanalysis.
+- Defined the boundary that Issue #2 provider guides have no independent ranking.
+- Did not fabricate duration, ownership, or Agent parallelism before roadmap restructuring.
+- Did not change the current CLI, schema, implementation, or write path.

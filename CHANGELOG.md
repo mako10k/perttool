@@ -1,6 +1,6 @@
 # Changelog
 
-このプロジェクトの主な変更を記録する。形式は[Keep a Changelog](https://keepachangelog.com/ja/1.1.0/)を参考にし、versionは[Semantic Versioning](https://semver.org/lang/ja/)に従う。
+This project records its notable changes here. The format is based on [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/lang/ja/).
 
 ## [Unreleased]
 
@@ -17,59 +17,59 @@ First beta release. This suffix-free `0.x.x` series remains prerelease product m
 
 ### Added
 
-- Codex、GitHub Copilot、Claude Code、Grok Build、Antigravityのoffline profileを同じCoreからindex/quick/detailのtext/JSONへ公開するread-only `agent help`
-- velocityを含むproject metadata一式をtext/JSONで取得する`project show`と、preview-firstで局所更新する`project set`、atomic batch用`project.set`
-- 最初のbeta後の独立backlogとして、LSP server、コードハイライト/LSP clientを持つVSIX、MCP serverを明文化
+- Read-only `agent help`, which exposes offline profiles for Codex, GitHub Copilot, Claude Code, Grok Build, and Antigravity from the same Core as index/quick/detail text/JSON
+- `project show`, which retrieves complete project metadata including velocity as text/JSON; preview-first `project set` for localized updates; and `project.set` for atomic batches
+- An explicit independent post-first-beta backlog for an LSP server, a VSIX with syntax highlighting/LSP client, and an MCP server
 
 ### Changed
 
-- 最初のbetaをsuffixなし`0.1.0`、以後の`0.x.x`をbetaと定義し、alphaからのstrict compatibilityと追加soakをbeta gateから外した
-- Issue #2のread-only AI Agent Guidance Registryをbeta受け入れ条件とmacro/detail計画へ追加した
+- Defined the first beta as suffix-free `0.1.0` and subsequent `0.x.x` releases as beta, removing strict compatibility from alpha and additional soak time from the beta gate
+- Added the read-only AI Agent Guidance Registry from Issue #2 to beta acceptance criteria and macro/detail plans
 - Adopted English as the canonical repository language without i18n and added a phased, post-beta migration plan for legacy Japanese surfaces
 
 ## [0.1.0-alpha.2] - 2026-07-23
 
-2回目の公開開発プレビュー。安全な編集・進行操作、Mermaid相互変換、説明可能なtask recommendationを追加し、同じartifactをGitHub Releaseとnpmの`alpha` tagへ配布する。
+Second public development preview. Adds safe editing and advance operations, Mermaid round trips, and explainable task recommendations, and distributes the same artifact to GitHub Releases and npm's `alpha` tag.
 
 ### Added
 
-- `dsl format`とtask/milestone/resource/batch mutationのatomic `--write`、exclusive `--out`、`--expect-digest`
-- `Perttool.MermaidProfile.v1`のsemantic record、integrity digest、fail-closed import設計契約と規範artifact
-- `exportMermaid` Coreと`dag render --to mermaid`のlossless/plain profile、解析annotation、strict loss、exclusive `--out`
-- `importMermaid` Coreと`dag import --from mermaid`のfail-closed profile復元、plain loss report、strict loss、exclusive `--out`
-- canonical keep/remove set、partial join、idempotenceを保証するpure `planAdvance` Coreとpreview-first `dag advance` CLI
-- exact typed fact、comparison、decision trace、canonical descriptionを持つcomplete recommendation graphとpublic `NextResultV3` Core型
-- 5つのself-use planでv3 contract、byte determinism、operational互換、structured why-notを検査するrecommendation shadow gateとgolden
-- feasible replacement、`PTOVR-101`から`PTOVR-106`、caller-asserted human reason、normal trace reference、deterministic `Perttool.OverrideDecision.v1`を返すread-only `validateOverride` Core
-- completeかつknownな`NextResult.v3`をnormal AI task selection authorityへ採用する共有指示、help、unknown-version safe stop dry-run
-- npm publish normalizationを検査するpackage preflight、同一tarballをfail-closedでpublishするmaintainer script、`alpha` dist-tag固定
+- `dsl format`; atomic `--write` for task/milestone/resource/batch mutation; exclusive `--out`; and `--expect-digest`
+- Semantic records, integrity digests, fail-closed import design contracts, and normative artifacts for `Perttool.MermaidProfile.v1`
+- `exportMermaid` Core and lossless/plain profiles, analysis annotations, strict loss, and exclusive `--out` for `dag render --to mermaid`
+- `importMermaid` Core and fail-closed profile restoration, plain loss reports, strict loss, and exclusive `--out` for `dag import --from mermaid`
+- Pure `planAdvance` Core guaranteeing canonical keep/remove sets, partial joins, and idempotence, plus preview-first `dag advance` CLI
+- Complete recommendation graph with exact typed facts, comparisons, decision traces, and canonical descriptions, plus the public `NextResultV3` Core type
+- Recommendation shadow gate and golden tests that inspect the v3 contract, byte determinism, operational compatibility, and structured why-not across five self-use plans
+- Read-only `validateOverride` Core returning feasible replacements, `PTOVR-101` through `PTOVR-106`, caller-asserted human reasons, normal-trace references, and deterministic `Perttool.OverrideDecision.v1`
+- Shared instructions, help, and unknown-version safe-stop dry run that adopt complete, known `NextResult.v3` as the normal AI task-selection authority
+- Package preflight that checks npm publish normalization, a maintainer script that fail-closed publishes the identical tarball, and fixed `alpha` dist-tag
 
 ### Changed
 
-- pre-release breaking changeとして`dag next`のdefault JSONを`Perttool.NextResult.v2`から`Perttool.NextResult.v3`へ変更し、Core、CLI JSON/text、help、packageをatomicに公開
-- npmがCLI entrypointを除去しないよう`bin.perttool`をcanonicalな`dist/cli.js`へ修正
+- Changed the default `dag next` JSON from `Perttool.NextResult.v2` to `Perttool.NextResult.v3` as a pre-release breaking change, publishing Core, CLI JSON/text, help, and package atomically
+- Corrected `bin.perttool` to canonical `dist/cli.js` so npm does not remove the CLI entry point
 
 ## [0.1.0-alpha.1] - 2026-07-21
 
-最初の公開開発プレビュー。DSLとCLIの評価、read-onlyな計画検査・分析・次task選択を目的とする。stable MVPではなく、互換性のない変更が入る可能性がある。
+First public development preview. Intended to evaluate the DSL and CLI, read-only plan checking and analysis, and next-task selection. It is not a stable MVP and may include incompatible changes.
 
 ### Added
 
-- Activity-on-Arrow DSLのparser、semantic/graph validation、複数error recovery
-- exact Rationalを使うPERT/CPM precedence分析とcritical path列挙
-- renewable resource capacityを扱う決定的`parallel-sgs` heuristic schedule
-- `active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`の機械的判定
-- Point見積りとproject-wide velocityによるday/hour forecast
-- text/JSON CLI、構造化help、stable diagnostic codeとsource span
-- `npm link`およびGitHub Release tarballによるCLI導入
+- Activity-on-Arrow DSL parser, semantic/graph validation, and multiple-error recovery
+- PERT/CPM precedence analysis and critical-path enumeration using exact Rational values
+- Deterministic `parallel-sgs` heuristic schedule handling renewable resource capacity
+- Mechanical determination of `active`, `ready`, `runnable_now`, `blocked_now`, and `upcoming`
+- Day/hour forecasts from point estimates and project-wide velocity
+- Text/JSON CLI, structured help, stable diagnostic codes, and source spans
+- CLI installation through `npm link` and GitHub Release tarballs
 
 ### Known limitations
 
-- `dsl format`、task/milestone/resource mutation、`dag advance`は未実装
-- Mermaid import/exportは未実装
-- Resource scheduleは`optimal=false`のheuristicであり、厳密最適解ではない
-- npm registryには未公開。GitHub Release assetを使用する
-- Node.js 24以上が必要
+- `dsl format`, task/milestone/resource mutation, and `dag advance` are unimplemented
+- Mermaid import/export is unimplemented
+- The resource schedule is a heuristic with `optimal=false`, not an exact optimum
+- Not published to the npm registry; use the GitHub Release asset
+- Requires Node.js 24 or later
 
 [Unreleased]: https://github.com/mako10k/perttool/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.2...v0.1.0

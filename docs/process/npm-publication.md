@@ -1,37 +1,37 @@
-# npm publication手順
+# npm publication procedure
 
-- 本書は`v0.1.0-alpha.2`のalpha release手順と公開記録である。最初のsuffixなし`0.1.0` beta以降は[beta release手順](beta-release.md)を正とする。
-- 文書状態: Published 1.1
-- 作成日: 2026-07-23
-- 対象registry: `https://registry.npmjs.org/`
-- 配布tag: `alpha`
-- Release gate: [MVP release readiness監査](mvp-release-readiness.md)
+- This document is the alpha-release procedure and publication record for `v0.1.0-alpha.2`. From the first suffix-free `0.1.0` beta onward, [the beta release procedure](beta-release.md) is authoritative.
+- Document status: Published 1.1
+- Created: 2026-07-23
+- Target registry: `https://registry.npmjs.org/`
+- Distribution tag: `alpha`
+- Release gate: [MVP release readiness audit](mvp-release-readiness.md)
 - Current runtime baseline: [ADR 0005](../adr/0005-node-22-runtime-baseline.md)
 
-## 1. 現在の状態
+## 1. Current state
 
-公開準備時点では`perttool`はnpm registryへ未公開だった。2026-07-23に`npm view perttool`が`E404`であること、`NPM_TOKEN`を`secdat`から注入した`npm whoami`がmaintainer accountで成功することを確認した。
+At publication-preparation time, `perttool` had not been published to the npm registry. On 2026-07-23, it was verified that `npm view perttool` returned `E404` and that `npm whoami`, with `NPM_TOKEN` injected by `secdat`, succeeded for the maintainer account.
 
-公開準備時のcheckoutは`0.1.0-alpha.1`だったが、同名のGit tagとGitHub Releaseより後の変更を含んでいたため、そのversionではpublishしなかった。Recommendation受け入れ後に`RELEASE_E2E`が唯一のreadyかつrecommended work packageとなり、`0.1.0-alpha.2`をrelease versionとして選定した。
+The checkout during publication preparation was `0.1.0-alpha.1`, but it contained changes after the Git tag and GitHub Release of the same name, so that version was not published. After recommendation acceptance, `RELEASE_E2E` was the only ready and recommended work package, and `0.1.0-alpha.2` was selected as the release version.
 
-2026-07-23の最初の人間overrideはpublish準備だけを前倒しし、当時の工程statusや外部publish authorityを変更しなかった。その後MIG-07まで完了し、利用者は`secdat exec`配下でのGit pushとnpm publishを明示許可した。この許可は同一tarball、release commit/tag、GitHub asset、registry未公開version、process限定TOKENという本書のgateを省略しない。
+The first human override on 2026-07-23 advanced only publication preparation; it did not change the process status or external publication authority at that time. After MIG-07 was complete, the user explicitly authorized Git push and npm publication under `secdat exec`. That authorization does not omit this document's gates for the same tarball, release commit/tag, GitHub asset, registry-unpublished version, and process-scoped TOKEN.
 
-同日に`v0.1.0-alpha.2`をGitHub prereleaseとnpmへ公開し、registryからの隔離installまで完了した。公開artifactと検証値は第7節へ固定する。
+On the same day, `v0.1.0-alpha.2` was published to a GitHub prerelease and npm, including an isolated installation from the registry. Section 7 records the published artifact and verification values.
 
-## 2. 安全境界
+## 2. Safety boundaries
 
-- npmへ送るtarballは、package checkとGitHub Release assetに使用したものと同一にする
-- prereleaseは必ず`alpha` dist-tagへpublishし、既存packageではpublish前後の`latest`を一致させる
-- 初回package publishでregistryが必須の`latest`を同versionへ作成した場合は、削除を前提にせず例外としてrelease記録へ残す。利用者向け導線は`@alpha`を明示する
-- `package.json`、CLI `--version`、annotated Git tag、`origin/main`、tarball manifestのversionを一致させる
-- package manifestの`bin.perttool`はnpm publish normalization後も`dist/cli.js`でなければならない
-- TOKENをargument、tracked `.npmrc`、logへ書かない
-- publishは明示的な人間承認後に一度だけ実行する
-- responseが不明瞭な場合は`npm view perttool@VERSION`でdurable stateを確認し、確認前にretryしない
+- The tarball sent to npm must be the same one used for the package check and GitHub Release asset.
+- Always publish a prerelease with the `alpha` dist-tag, and for an existing package preserve `latest` before and after publication.
+- If the registry creates the required `latest` at the same version on the first package publication, record it as a release-record exception without assuming it can be removed. User-facing instructions must explicitly use `@alpha`.
+- Match the version in `package.json`, CLI `--version`, annotated Git tag, `origin/main`, and the tarball manifest.
+- `bin.perttool` in the package manifest must remain `dist/cli.js` after npm publish normalization.
+- Do not write TOKEN to an argument, tracked `.npmrc`, or log.
+- Publish exactly once after explicit human approval.
+- If the response is unclear, confirm durable state with `npm view perttool@VERSION`; do not retry before confirmation.
 
 ## 3. Repository preflight
 
-認証不要のdry-runはcurrent directoryまたは生成済みtarballへ実行できる。
+The authentication-free dry run can run against the current directory or an already generated tarball.
 
 ```sh
 bash scripts/publish-npm.sh --dry-run
@@ -42,9 +42,9 @@ bash scripts/publish-npm.sh --dry-run /absolute/path/to/perttool-VERSION.tgz
 
 ## 4. Release artifact
 
-`RELEASE_E2E`の再開条件を満たした後、release commitでversion、CHANGELOG、READMEを更新する。`npm run check`と`git diff --check`が成功し、cleanなrelease commitを`origin/main`へpushして同じcommitへannotated tagを作成する。
+After meeting the restart conditions for `RELEASE_E2E`, update the version, CHANGELOG, and README in the release commit. Once `npm run check` and `git diff --check` succeed, push the clean release commit to `origin/main` and create an annotated tag at the same commit.
 
-tarballはworktree外の一時directoryへ一度だけ生成する。次の変数名は例であり、system変数を流用しない。
+Generate the tarball exactly once in a temporary directory outside the worktree. The following variable names are examples; do not repurpose system variables.
 
 ```sh
 PERTTOOL_RELEASE_DIR=$(mktemp -d)
@@ -54,15 +54,15 @@ sha256sum "$PERTTOOL_RELEASE_TARBALL"
 bash scripts/check-package.sh "$PERTTOOL_RELEASE_TARBALL"
 ```
 
-tarballと`SHA256SUMS`を同じtagのGitHub prereleaseへ添付し、公開assetからの隔離installを確認する。GitHub操作とGit pushはrepository規則どおり`secdat exec gh ...`と`secdat exec git ...`を使う。
+Attach the tarball and `SHA256SUMS` to the GitHub prerelease for the same tag and verify an isolated installation from the published asset. For GitHub operations and Git push, use `secdat exec gh ...` and `secdat exec git ...` as required by repository policy.
 
-## 5. TOKEN注入とpublish
+## 5. TOKEN injection and publication
 
-Maintainer domainではsecret名を`NPM_TOKEN`とする。値は表示せず、publish processだけへ注入する。
+In the maintainer domain, use `NPM_TOKEN` as the secret name. Do not display its value; inject it only into the publication process.
 
-非対話publishにはnpmのgranular access tokenをread/write、Bypass 2FA付きで用意する。`npm whoami`成功は認証だけの証拠であり、publish権限やBypass 2FAを証明しない。権限と有効期限は[npm access token公式文書](https://docs.npmjs.com/about-access-tokens/)と[2FA publication要件](https://docs.npmjs.com/requiring-2fa-for-package-publishing-and-settings-modification/)に従い、release直前に確認する。
+For non-interactive publication, prepare an npm granular access token with read/write access and Bypass 2FA. A successful `npm whoami` proves authentication only; it does not prove publication permission or Bypass 2FA. Verify permissions and expiry immediately before release according to the [official npm access-token documentation](https://docs.npmjs.com/about-access-tokens/) and [2FA publication requirements](https://docs.npmjs.com/requiring-2fa-for-package-publishing-and-settings-modification/).
 
-認証確認:
+Authentication check:
 
 ```sh
 printf '%s\n' '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' |
@@ -73,7 +73,7 @@ secdat --dir /home/katsumata-m exec \
   -- npm whoami --userconfig=/dev/stdin
 ```
 
-同一tarballのpublish:
+Publish the same tarball:
 
 ```sh
 secdat --dir /home/katsumata-m exec \
@@ -83,20 +83,20 @@ secdat --dir /home/katsumata-m exec \
   -- bash scripts/publish-npm.sh --publish "$PERTTOOL_RELEASE_TARBALL"
 ```
 
-`--publish`は次をfail-closedで検査する。
+`--publish` checks the following fail-closed.
 
-1. 明示tarballである
-2. worktreeがcleanである
-3. tarballとcheckoutのname/versionが一致する
-4. local tag、remote annotated tag、`origin/main`がHEADと一致する
-5. `NPM_TOKEN`が存在し、`npm whoami`が成功する
-6. 同じversionがregistryに存在しない
-7. publish後の伝播中`E404`をbounded pollingし、registryから同じversionを取得できる
-8. `alpha`が公開versionを指し、既存の`latest`がpublish前後で変わらない
+1. The tarball is explicit.
+2. The worktree is clean.
+3. The tarball and checkout name/version match.
+4. The local tag, remote annotated tag, and `origin/main` match HEAD.
+5. `NPM_TOKEN` exists and `npm whoami` succeeds.
+6. The same version does not exist in the registry.
+7. It bounded-polls propagation-time `E404` after publication and can retrieve the same version from the registry.
+8. `alpha` points to the published version and any existing `latest` is unchanged before and after publication.
 
-## 6. 公開後検証
+## 6. Post-publication verification
 
-`npm view`でversionとdist-tagを確認し、user-ownedの一時prefixへregistryからinstallする。
+Confirm the version and dist-tag with `npm view`, then install from the registry into a user-owned temporary prefix.
 
 ```sh
 npm view perttool@VERSION name version dist
@@ -107,18 +107,18 @@ npm install --global --prefix "$PERTTOOL_VERIFY_PREFIX" perttool@VERSION
 "$PERTTOOL_VERIFY_PREFIX/bin/perttool" dsl check docs/examples/minimal.pert
 ```
 
-検証結果、registry integrity、GitHub asset SHA-256、release URLをrelease記録へ残してから`RELEASE_E2E`を完了する。
+Record verification results, registry integrity, the GitHub asset SHA-256, and release URL in the release record before completing `RELEASE_E2E`.
 
-## 7. `v0.1.0-alpha.2` release記録
+## 7. `v0.1.0-alpha.2` release record
 
 - Release commit/tag: `dd4fc3efc01945544a2dad7e1838fdd4d06d7275` / `v0.1.0-alpha.2`
 - GitHub prerelease: <https://github.com/mako10k/perttool/releases/tag/v0.1.0-alpha.2>
-- GitHub/registry共通tarball SHA-256: `aadb757a5d7bb82eed677158ce5c4b0672c5695a6dde97bec6f10c438711be8a`
+- Shared GitHub/registry tarball SHA-256: `aadb757a5d7bb82eed677158ce5c4b0672c5695a6dde97bec6f10c438711be8a`
 - npm version/dist-tag: `perttool@0.1.0-alpha.2` / `alpha`
 - npm integrity: `sha512-jLwW2MDQbibQK8skb3qrIU7x5Ek+ZjDhesI8yPbb5SsKJqkX8tNqxhAoBukFgx8X1Kyv/9LuxgrwbPXTIGyBnA==`
 - npm SHA-1: `d1bc681e68384d29b3130ba9a21c99e44605d51d`
-- Verification: GitHub公開assetとregistry tarballのSHA-256一致、`perttool@alpha`の隔離install、`perttool 0.1.0-alpha.2`、`dsl check docs/examples/minimal.pert`
+- Verification: SHA-256 match between the published GitHub asset and registry tarball; isolated installation of `perttool@alpha`; `perttool 0.1.0-alpha.2`; `dsl check docs/examples/minimal.pert`
 
-Publish本体は成功応答を返したが、直後のregistry照会は伝播中の`E404`となった。再publishせずdurable stateを照会し、versionとintegrityを確認した。この観測に基づき、publish scriptは`E404`だけをbounded pollingする。
+The publication itself returned a success response, but the immediate registry lookup returned propagation-time `E404`. Without republishing, durable state was queried and the version and integrity were verified. Based on this observation, the publication script bounded-polls only `E404`.
 
-初回package publishでは、明示した`alpha`に加えてregistryが`latest=0.1.0-alpha.2`を作成した。`npm dist-tag rm perttool latest`はregistryから`E400`で拒否されたため、破壊的なunpublishは行わず、初回package metadataの例外として保持する。今後のprereleaseではpublish前後の既存`latest`一致をguardし、READMEの導入例は`perttool@alpha`を明示する。
+On the first package publication, the registry created `latest=0.1.0-alpha.2` in addition to the explicit `alpha`. Because `npm dist-tag rm perttool latest` was rejected by the registry with `E400`, no destructive unpublish was performed; this remains a first-package-metadata exception. Future prereleases guard that pre-existing `latest` matches before and after publication, and README installation examples explicitly use `perttool@alpha`.

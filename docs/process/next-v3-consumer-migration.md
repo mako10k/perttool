@@ -1,16 +1,16 @@
 # NextResult.v3 consumer migration guide
 
-- 対象: `Perttool.NextResult.v2`を読むCLI／library consumer
-- 移行先: `Perttool.NextResult.v3`
-- 公開日: 2026-07-23
-- Normal authority採用日: 2026-07-23
-- 規範仕様: [Recommendation Interface Contract](../specs/recommendation-interface.md)
+- Scope: CLI/library consumers that read `Perttool.NextResult.v2`
+- Migration target: `Perttool.NextResult.v3`
+- Publication date: 2026-07-23
+- Normal authority adoption date: 2026-07-23
+- Normative specification: [Recommendation Interface Contract](../specs/recommendation-interface.md)
 
 ## 1. Breaking change
 
-`dag next`のdefault JSON schemaはv2からv3へ変わった。v2を同時出力するoptionはない。
+The default JSON schema of `dag next` changed from v2 to v3. There is no option to emit v2 concurrently.
 
-v3はv2の`groups`、`tasks`、`resource_rejections`、upcoming `explanation`の意味を維持し、rootへ次を追加する。
+V3 preserves the meanings of v2 `groups`, `tasks`, `resource_rejections`, and upcoming `explanation`, and adds the following at the root.
 
 ```text
 schema_version                    "Perttool.NextResult.v3"
@@ -18,11 +18,11 @@ recommendation_interface_version  1
 recommendation                    complete RecommendationAnalysis
 ```
 
-`groups.ready`は開始可能性、`groups.runnable_now`は既存schedulerが選んだresource-feasible subsetである。どちらもrecommendationの別名ではない。開始authorityはroot `recommendation`だけから読む。
+`groups.ready` represents start eligibility, and `groups.runnable_now` is the resource-feasible subset chosen by the existing scheduler. Neither is an alias for recommendation. Read start authority only from root `recommendation`.
 
-## 2. Schemaを最初に検査する
+## 2. Check the schema first
 
-Consumerは他fieldへ触れる前に`schema_version`を検査する。
+Consumers must check `schema_version` before accessing any other field.
 
 ```js
 const result = JSON.parse(stdout);
@@ -60,15 +60,15 @@ if (
 }
 ```
 
-Unknown tier、decisive rule、reason code、expression nodeまたはmodel versionを既知値へ変換しない。理解していないdecisive semanticsがある場合、taskを自動開始しない。
+Do not coerce an unknown tier, decisive rule, reason code, expression node, or model version into a known value. Do not automatically start a task when any decisive semantics are not understood.
 
-## 3. 推奨taskを読む
+## 3. Read recommended tasks
 
-`recommended_task_ids`は現在cycleで同時開始できる集合である。配列順を実行順とみなさない。Normal authorityではrecommended taskの1件以上のsubset、またはrecommended set全件を維持してresource-feasibleな`allowed` taskを1件だけ追加した集合を選べる。Allowed taskでrecommended taskを置き換える選択と、`deferred`または`discouraged`の選択はnormal authority外である。1 taskを開始したらproject stateを更新し、同じresultを再利用せず`dag next`を再実行する。
+`recommended_task_ids` is the set that can be started together in the current cycle. Do not treat array order as execution order. Under normal authority, consumers may select a subset containing one or more recommended tasks, or the full recommended set plus exactly one resource-feasible `allowed` task. Replacing a recommended task with an allowed task, and selecting `deferred` or `discouraged`, are outside normal authority. After starting one task, update project state and rerun `dag next`; do not reuse the same result.
 
-Ready taskが0件でも`recommendation`、result decision、joint feasibility factは存在する。`recommended_task_ids=[]`は正常resultであり、errorではない。Ready taskが存在してもactive allocationによりrecommended setがemptyになる場合がある。
+Even with zero ready tasks, `recommendation`, the result decision, and joint-feasibility facts are present. `recommended_task_ids=[]` is a normal result, not an error. The recommended set can be empty because of active allocation even when ready tasks exist.
 
-各actual ready taskには`task_decisions`がexactly one存在する。
+Each actual ready task has exactly one `task_decisions` entry.
 
 ```js
 for (const decision of recommendation.task_decisions) {
@@ -77,11 +77,11 @@ for (const decision of recommendation.task_decisions) {
       // normal start authority
       break;
     case "allowed":
-      // recommended workを維持した追加workとしてのみ開始可能
+      // may start only as additional work while retaining recommended work
       break;
     case "deferred":
     case "discouraged":
-      // human overrideなしに開始しない
+      // do not start without a human override
       break;
     default:
       throw new Error(`unknown recommendation tier: ${decision.tier}`);
@@ -89,35 +89,35 @@ for (const decision of recommendation.task_decisions) {
 }
 ```
 
-`algorithm.optimal=false`を省略せず、この結果をglobal optimumの証明として表示しない。
+Do not omit `algorithm.optimal=false` or present this result as proof of a global optimum.
 
-## 4. 「なぜAでBではないか」を読む
+## 4. Read “why A rather than B”
 
-Task decisionから次の順にreferenceを辿る。
+Follow references from the task decision in this order.
 
-1. `summary_description_id`からcanonical English summaryを取得する
-2. `primary_higher_priority_task_id`でprimary alternativeを確認する
-3. `decisive_step_id`から適用ruleとexact expressionを取得する
-4. `comparison_ids`からwinner、alternative、prior tie、contributing ruleを取得する
-5. step／comparisonの`fact_ids`からtyped value、unit、provenanceを取得する
+1. Obtain the canonical English summary from `summary_description_id`.
+2. Check the primary alternative through `primary_higher_priority_task_id`.
+3. Obtain the applied rule and exact expression from `decisive_step_id`.
+4. Obtain the winner, alternative, preceding tie, and contributing rule from `comparison_ids`.
+5. Obtain typed values, units, and provenance from step/comparison `fact_ids`.
 
-`descriptions[].text`は表示用projectionであり、authorityの正本ではない。欠けたruleやfactをtextから逆推論しない。Active allocationだけがresource conflictを起こす場合、comparisonのwinner／loser taskは`null`であり、ready taskを捏造しない。
+`descriptions[].text` is a display projection, not the authority source of truth. Do not infer missing rules or facts from text. When only active allocation causes a resource conflict, the comparison winner/loser task is `null`; do not fabricate a ready task.
 
-## 5. TextとJSON
+## 5. Text and JSON
 
-Text outputは4 tier sectionを持つ人間向けsummaryで、headerに`complete=false`と`--format json`導線を表示する。AutomationとAI agentはcomplete graphを持つJSONを使用する。
+Text output is a human-facing summary with four tier sections; its header displays `complete=false` and the `--format json` route. Automation and AI agents use JSON containing the complete graph.
 
 ```sh
 perttool dag next PLAN.pert --format json
 ```
 
-Recommendation invariant failureは成功したv3を返さず、`PTREC-301`から`PTREC-303`とexit `70`になる。Ready task 0件やempty recommended setとは区別する。
+A recommendation-invariant failure does not return a successful v3 result; it returns `PTREC-301` through `PTREC-303` and exit `70`. Distinguish it from zero ready tasks or an empty recommended set.
 
-Perttool自身のAI開発では、5 plan shadowとMIG-07 dry-runの受け入れ後、knownかつcompleteな本JSONをnormal task selection authorityとして採用した。Macro planのrecommendationでworkstreamを選んでから対応detail planを再解析し、異なるdetail planを直接比較しない。Unknownまたはincompleteなcontractではtask IDを返さず停止する。Human override apply/auditは別gateであり、read-only artifactだけから実行済みとみなさない。
+For perttool's own AI development, after acceptance of the five-plan shadow and the MIG-07 dry run, this known and complete JSON was adopted as the normal task-selection authority. Select a workstream from the macro-plan recommendation, then reanalyze its corresponding detail plan; do not compare different detail plans directly. Stop without returning a task ID for an unknown or incomplete contract. Human-override apply/audit is a separate gate; do not treat a read-only artifact alone as evidence that it has been performed.
 
 ## 6. Library consumer
 
-`selectNextTasks`はpublic `NextResultV3`を返す。成功時の`recommendation`はcompleteで、`recommendationAnalysisToJson`がCLIと同じsnake_case wire projectionを生成する。
+`selectNextTasks` returns public `NextResultV3`. On success, `recommendation` is complete and `recommendationAnalysisToJson` generates the same snake_case wire projection as the CLI.
 
 ```js
 import { recommendationAnalysisToJson, selectNextTasks } from "perttool";
@@ -129,11 +129,11 @@ if (!result.ok || result.recommendation === null) {
 const wireRecommendation = recommendationAnalysisToJson(result.recommendation);
 ```
 
-Filesystem bytesのdigestをroot resultと一致させるadapterは、`NextOptions.sourceDigest`へread時の`sha256:` digestを渡す。Stringだけを渡すlibrary callではUTF-8 textから決定的にdigestを生成する。
+An adapter that must align the filesystem-byte digest with the root result passes the read-time `sha256:` digest to `NextOptions.sourceDigest`. A library call that receives only a string deterministically generates the digest from UTF-8 text.
 
 ## 7. Read-only human override validation
 
-`validateOverride`はsuccessfulかつcompleteな`NextResultV3`と明示requestだけを入力にし、normal recommendationを変更せず`Perttool.OverrideDecision.v1`を返す。Allowed replacement、deferred selection、将来のdiscouraged selectionだけがoverride triggerになり、normal authority内のselectionは`PTOVR-106`、non-readyは`PTOVR-103`、resource-infeasibleなreplacementは`PTOVR-104`でartifactを生成しない。
+`validateOverride` takes only a successful, complete `NextResultV3` and an explicit request, returning `Perttool.OverrideDecision.v1` without changing the normal recommendation. Only an allowed replacement, deferred selection, or future discouraged selection triggers an override; a selection within normal authority returns `PTOVR-106`, a non-ready selection returns `PTOVR-103`, and a resource-infeasible replacement returns `PTOVR-104`, without generating an artifact.
 
 ```js
 import {
@@ -170,6 +170,6 @@ if (!validation.ok) {
 const canonicalRecord = canonicalOverrideArtifact(validation);
 ```
 
-同じsourceとrequestは同じ`override_id`とcanonical recordを返す。Actorはperttool認証済みではなく`caller_asserted`であり、現在時刻を自動挿入しない。`reasonText`とevidenceへsecret、credential、tokenを含めてはならない。
+The same source and request return the same `override_id` and canonical record. The actor is not authenticated by perttool but is `caller_asserted`, and the current time is not inserted automatically. `reasonText` and evidence must not include a secret, credential, or token.
 
-これはread-only Core APIである。Task state、file、Git、networkを変更せず、overrideを適用またはaudit sinkへ保存するCLIもまだ提供しない。MIG-08より前にcanonical artifactを実行許可や適用済みauditとして扱わない。
+This is a read-only Core API. It does not change task state, files, Git, or the network, and no CLI yet applies an override or saves one to an audit sink. Before MIG-08, do not treat a canonical artifact as execution permission or an applied audit.

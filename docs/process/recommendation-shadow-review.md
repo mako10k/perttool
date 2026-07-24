@@ -1,72 +1,72 @@
-# Recommendation self-use shadow受け入れ
+# Recommendation Self-use Shadow Acceptance
 
-- 判定: Accepted
-- 判定日: 2026-07-23
-- 対象task: `SELF_USE_SHADOW` / MIG-06
+- Decision: Accepted
+- Decision date: 2026-07-23
+- Task: `SELF_USE_SHADOW` / MIG-06
 - Migration: [recommendation-migration.md](recommendation-migration.md)
 - Self-use: [self-use.md](self-use.md)
 - Test: [../../test/recommendation-self-use-shadow.test.mjs](../../test/recommendation-self-use-shadow.test.mjs)
 - Golden: [../../test/golden/self-use/recommendation-shadow.expected.json](../../test/golden/self-use/recommendation-shadow.expected.json)
 
-## 1. 判定
+## 1. Decision
 
-`Perttool.NextResult.v3`のself-use shadow gateを受け入れる。5つのself-use planは同一snapshotのmanual selectionとv3 recommendationが一致し、known version、complete graph、byte determinism、ready subset、joint resource feasibility、operational field、構造化why-notの検査に成功した。
+Accept the `Perttool.NextResult.v3` self-use shadow gate. For five self-use plans, v3 recommendations matched the manual selections from the same snapshots and passed checks for known version, complete graph, byte determinism, ready subset, joint resource feasibility, operational fields, and structured why-not.
 
-この判定はnormal recommendationのtask selection authority採用ではない。MIG-07で`AGENTS.md`、Copilot指示、AI開発ガイド、help、unknown-version safe stopを同じchangeへ同期するまではmanual selectionをauthorityとして維持する。Read-only override validationとoverride applyも本判定のscope外である。
+This decision does not adopt normal recommendations as the task-selection authority. Retain manual selection as the authority until MIG-07 synchronizes `AGENTS.md`, Copilot instructions, AI development guidance, help, and unknown-version safe stop in the same change. Read-only override validation and override apply are also outside this decision's scope.
 
-## 2. 評価snapshot
+## 2. Evaluation snapshots
 
-`SELF_USE_SHADOW`をdoneへ変更する前のsnapshotを評価した。
+The snapshots were evaluated before changing `SELF_USE_SHADOW` to done.
 
-| Plan | Source digest | Manual selection | V3 recommended | 判定 |
+| Plan | Source digest | Manual selection | V3 recommended | Decision |
 | --- | --- | --- | --- | --- |
-| `control-plane.pert` | `sha256:21d4d8e5706031abf5c5713ed680638eef58f0f73cb49e2a3631a605b9c66c95` | empty | empty |一致 |
-| `grammar.pert` | `sha256:bbdeeb1636c0c3ca534d0f69b8a52c17f399a31c38aeecb2b7271f07812c909a` | empty | empty |一致 |
-| `operations.pert` | `sha256:02735a31416f6e9e1e62e5aa3a816a6d4e1e44ee1b7a2a3e1caab8e5663aedea` | empty | empty |一致 |
-| `recommendation.pert` | `sha256:2271c43a68cc7eb0cd9286335a1020c1a1fb53af3d6a3167b86d8f2e02f3109d` | `SELF_USE_SHADOW` | `SELF_USE_SHADOW` |一致 |
-| `mvp.pert` | `sha256:1a264e27b67e081708b2ccba87148296bd4b4aaa392b9c1a2eace9b14c014545` | `RECOMMENDATION_IMPLEMENTATION` | `RECOMMENDATION_IMPLEMENTATION` |一致 |
+| `control-plane.pert` | `sha256:21d4d8e5706031abf5c5713ed680638eef58f0f73cb49e2a3631a605b9c66c95` | empty | empty | Match |
+| `grammar.pert` | `sha256:bbdeeb1636c0c3ca534d0f69b8a52c17f399a31c38aeecb2b7271f07812c909a` | empty | empty | Match |
+| `operations.pert` | `sha256:02735a31416f6e9e1e62e5aa3a816a6d4e1e44ee1b7a2a3e1caab8e5663aedea` | empty | empty | Match |
+| `recommendation.pert` | `sha256:2271c43a68cc7eb0cd9286335a1020c1a1fb53af3d6a3167b86d8f2e02f3109d` | `SELF_USE_SHADOW` | `SELF_USE_SHADOW` | Match |
+| `mvp.pert` | `sha256:1a264e27b67e081708b2ccba87148296bd4b4aaa392b9c1a2eace9b14c014545` | `RECOMMENDATION_IMPLEMENTATION` | `RECOMMENDATION_IMPLEMENTATION` | Match |
 
-完了状態の更新後も同じtestをcurrent 5 planへ再実行する。Goldenは過去planの代替ではなく、current snapshotのshadow projectionとして更新し、上表を受け入れ時snapshotの記録として保持する。
+After the completion-state update, rerun the same tests against the current five plans. Update the golden as a shadow projection of the current snapshot, not as a replacement for past plans, and retain the table above as the record of the acceptance-time snapshots.
 
-## 3. Contract検査
+## 3. Contract checks
 
-5 planすべてで次を確認した。
+The following were confirmed for all five plans.
 
-- root schemaは`Perttool.NextResult.v3`、recommendation interface versionは1
-- algorithmは`perttool.recommendation-ranking.lexicographic-frontier` version 1、`optimal=false`
-- reason taxonomy `1.0`、explanation/expression/description registry version 1、locale `en`
-- `complete=true`、`decisive_chain_complete=true`、`truncated=false`、全omitted count 0
-- 同じfileとoptionを2回実行したstdoutがbyte-identical
-- 全ready taskにtask decisionがあり、recommended setはreadyのsubset
-- result decisionが参照する`set_start_feasibility` factはboolean `true`
-- `PTREC-*` diagnosticなし
-- v2由来の`groups`、task classification、`runnable_now`、resource rejection、upcoming explanationは既存baselineと同じ意味
+- Root schema is `Perttool.NextResult.v3`; recommendation interface version is 1
+- Algorithm is `perttool.recommendation-ranking.lexicographic-frontier` version 1 with `optimal=false`
+- Reason taxonomy is `1.0`; explanation/expression/description registry version is 1; locale is `en`
+- `complete=true`, `decisive_chain_complete=true`, `truncated=false`, and every omitted count is 0
+- stdout from two runs with the same file and options is byte-identical
+- Every ready task has a task decision, and the recommended set is a subset of ready tasks
+- The `set_start_feasibility` fact referenced by the result decision is boolean `true`
+- No `PTREC-*` diagnostics
+- `groups`, task classification, `runnable_now`, resource rejection, and upcoming explanations inherited from v2 have the same meaning as the existing baseline
 
-`PTDAG-208`はdone closureに対するadvance提案warningであり、recommendation failureではない。
+`PTDAG-208` is an advance-proposal warning for done closure, not a recommendation failure.
 
-## 4. なぜAでBではないか
+## 4. Why A rather than B?
 
-評価時のdetail planでは`SELF_USE_SHADOW`をA、`OVERRIDE_VALIDATION`をBとして、次をJSONだけから回答できた。
+In the detail plan at evaluation time, with `SELF_USE_SHADOW` as A and `OVERRIDE_VALIDATION` as B, the following could be answered from JSON alone.
 
-1. Aはprecedence critical classが`driving`、Bは`non_critical`であり、primary comparisonのdecisive rule `critical_class`でAが上位になる
-2. Aをrecommended setへ入れた後、Bの追加は`REVIEWERS` capacity 1に対してselected usage 1、required 1、available 0、deficit 1となる
-3. したがってAは`recommended`、Bは`deferred`で、resource decisive ruleは`joint_resource_feasibility`
-4. Canonical descriptionはranking comparison、resource conflict、deferred summaryの3件を同じfact/comparisonから導出する
+1. A has precedence critical class `driving`, B has `non_critical`, and A ranks higher under the primary comparison's decisive rule `critical_class`
+2. After A enters the recommended set, adding B results in selected usage 1, required 1, available 0, and deficit 1 against `REVIEWERS` capacity 1
+3. Therefore A is `recommended`, B is `deferred`, and the resource decisive rule is `joint_resource_feasibility`
+4. The canonical descriptions for ranking comparison, resource conflict, and deferred summary are derived from the same facts/comparisons
 
-これはchatの再推論ではなく、`primary_higher_priority_task_id`、2つのcomparison、resource capacity witness、description recordから得た説明である。
+This explanation is not a chat re-inference; it comes from `primary_higher_priority_task_id`, two comparisons, a resource-capacity witness, and description records.
 
-## 5. Exitとnon-goal
+## 5. Exit criteria and non-goals
 
 Exit:
 
-- 5 planのcheck/analyze/next成功
-- shadow testとgolden成功
-- `SELF_USE_SHADOW`をpreview-first、expected digest付きでdoneへ更新
-- 完了2pを同日のrecommendation実測へ加え、Velocityを`17p/1d`へ更新
+- check/analyze/next succeeds for five plans
+- shadow test and golden succeed
+- update `SELF_USE_SHADOW` to done preview-first with expected digest
+- add completed 2p to same-day observed recommendation velocity and update Velocity to `17p/1d`
 
 Non-goal:
 
 - normal authority adoption
 - read-only override validation
-- override apply、audit、Git integration
-- `RELEASE_E2E`またはnpm publish
+- override apply, audit, and Git integration
+- `RELEASE_E2E` or npm publish

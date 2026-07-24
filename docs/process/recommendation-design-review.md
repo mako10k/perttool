@@ -1,62 +1,62 @@
-# Recommendation設計受け入れレビュー
+# Recommendation Design Acceptance Review
 
-- 文書状態: Accepted 1.0
-- 受け入れ日: 2026-07-22
-- 対応Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
-- 対応plan: [../../plans/control-plane.pert](../../plans/control-plane.pert)
-- 実装migration: [recommendation-migration.md](recommendation-migration.md)
+- Document status: Accepted 1.0
+- Acceptance date: 2026-07-22
+- Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- Plan: [../../plans/control-plane.pert](../../plans/control-plane.pert)
+- Implementation migration: [recommendation-migration.md](recommendation-migration.md)
 
-## 1. 判定
+## 1. Decision
 
-Issue #1の設計を受け入れる。要件、規範仕様、基本設計、規範例、実装migrationは、実行可否と推奨度を分離した決定的かつ説明可能なrecommendation契約として横断整合している。
+Accept the design for Issue #1. Requirements, normative specifications, basic design, normative examples, and implementation migration are aligned across a deterministic and explainable recommendation contract that separates feasibility from recommendation priority.
 
-この判定は設計完了を意味する。受け入れ時点の`selectNextTasks`と`dag next`は`Perttool.NextResult.v2`であり、recommendation tier、structured explanation、override validation/applyを実装済みとはみなさなかった。2026-07-23のMIG-04でv3 publicationまでは完了したが、override validation/applyとshadow/adoptionは後続gateである。
+This decision means design completion. At acceptance, `selectNextTasks` and `dag next` used `Perttool.NextResult.v2`; recommendation tiers, structured explanations, and override validation/apply were not considered implemented. MIG-04 completed v3 publication on 2026-07-23, but override validation/apply and shadow/adoption remain subsequent gates.
 
-## 2. レビュー対象
+## 2. Review scope
 
-- [要件定義](../requirements.md)のAI Project Control Plane境界と完了条件
+- AI Project Control Plane boundary and completion criteria in [requirements](../requirements.md)
 - [Recommendation Semantics](../specs/recommendation.md)
 - [Ranking Policy](../specs/recommendation-ranking.md)
 - [Reason Taxonomy](../specs/recommendation-reasons.md)
 - [Structured Explanation](../specs/recommendation-explanation.md)
 - [Interface Contract](../specs/recommendation-interface.md)
 - [Human Override Contract](../specs/recommendation-override.md)
-- [Recommendation規範例](../examples/recommendation.md)
-- [基本設計](../basic-design.md)
-- [AI開発ガイド](ai-development.md)
-- [実装・自己利用migration](recommendation-migration.md)
+- [Recommendation normative example](../examples/recommendation.md)
+- [Basic design](../basic-design.md)
+- [AI development guidance](ai-development.md)
+- [Implementation and self-use migration](recommendation-migration.md)
 
-## 3. 受け入れmatrix
+## 3. Acceptance matrix
 
-| 観点 | 確認結果 | 判定 |
+| Perspective | Verification result | Decision |
 | --- | --- | --- |
-| 要件traceability | source of truth、global objective、determinism、explainability、human overrideを個別仕様へ追跡できる | Accepted |
-| model分離 | lifecycle/eligibility、resource selection、recommendation tierを混同せず、`blocked`をtierとして再定義しない | Accepted |
-| deterministic ranking | selection horizon、lexicographic rule、joint feasibility、完全tie-break、algorithm versionが固定されている | Accepted |
-| reasonとexplanation | stable reason codeをtyped fact、expression、comparison、decision trace、description projectionへ機械的に接続できる | Accepted |
-| interface整合 | Coreを正とし、complete JSONとsummary textを同じresultから導出し、v2からv3をatomicに公開する | Accepted |
-| override境界 | normal recommendationを改変せず、feasibility、human reason、single-use audit、再解析を別authorityとして扱う | Accepted |
-| 規範例 | critical対priority、unlock、gate近傍、parallel set、resource blocker、empty set、override境界を検証できる | Accepted |
-| migration | fixture、Core、explanation、v3公開、shadow、normal authority、override applyをgateで分離している | Accepted |
-| 現行実装境界 | v3公開前のv2 fieldをrecommendationと解釈せず、未完成resultをCLI/helpへ公開しない | Accepted |
-| 実装順序 | 文法受け入れ後は操作系を優先し、recommendationとIssue #2は操作系を遅らせない場合だけ並行する | Accepted |
+| Requirements traceability | Source of truth, global objective, determinism, explainability, and human override can be traced to individual specifications | Accepted |
+| Model separation | Does not conflate lifecycle/eligibility, resource selection, and recommendation tier, or redefine `blocked` as a tier | Accepted |
+| Deterministic ranking | Selection horizon, lexicographic rules, joint feasibility, complete tie-breaking, and algorithm version are fixed | Accepted |
+| Reasons and explanations | Stable reason codes can be mechanically connected to typed facts, expressions, comparisons, decision traces, and description projections | Accepted |
+| Interface alignment | Treats Core as the source of truth, derives complete JSON and summary text from the same result, and publishes v2 to v3 atomically | Accepted |
+| Override boundary | Does not change normal recommendations; treats feasibility, human reasons, single-use audit, and reanalysis as separate authorities | Accepted |
+| Normative examples | Can verify critical versus priority, unlock, gate proximity, parallel sets, resource blockers, empty sets, and override boundaries | Accepted |
+| Migration | Separates fixtures, Core, explanations, v3 publication, shadow, normal authority, and override apply by gate | Accepted |
+| Current implementation boundary | Does not interpret pre-v3-publication v2 fields as recommendations or expose incomplete results through CLI/help | Accepted |
+| Implementation order | Prioritizes operational work after grammar acceptance and parallelizes recommendation and Issue #2 only if they do not delay operational work | Accepted |
 
-## 4. 実装へ送る条件
+## 4. Conditions passed to implementation
 
-次のproduct implementationは、grammar acceptance後の`M1_ROADMAP_UPDATE`で[操作系詳細plan](../../plans/operations.pert)へ詳細化した。
+The following product implementation was detailed in the [operations detail plan](../../plans/operations.pert) at `M1_ROADMAP_UPDATE` after grammar acceptance.
 
-1. `FORMATTER_CORE`と`MUTATION_PREVIEW`を最初の実装trackとする
-2. 両方の受け入れ後に`WRITE_SAFETY`を実装する
-3. safe-write後に`ADVANCE`を次の操作系taskとし、Mermaid trackとのresource順はMVP全体完了を短縮するschedule判断へ従う
-4. MIG-01からMIG-07とIssue #2は共有CLI・reviewerが操作系と競合するため、`M3_SAFE_WRITE_READY`以降へ送る
-5. Human override applyであるMIG-08は`M3_SAFE_WRITE_READY`より前へ出さない
+1. Make `FORMATTER_CORE` and `MUTATION_PREVIEW` the first implementation tracks
+2. Implement `WRITE_SAFETY` after accepting both
+3. Make `ADVANCE` the next operational task after safe-write; sequence resources with the Mermaid track according to schedule decisions that shorten overall MVP completion
+4. Defer MIG-01 through MIG-07 and Issue #2 until `M3_SAFE_WRITE_READY` or later because their shared CLI and reviewers conflict with operational work
+5. Do not bring MIG-08, human override apply, ahead of `M3_SAFE_WRITE_READY`
 
-この順序はrecommendation設計の不備を示すものではない。Stage 1で不足していた操作能力を先に解消するproduct priorityであり、safe-write完了後はStage 2へ移行した。ただし、操作系内部の局所priorityを理由にMVP全体の完了予測を悪化させない。
+This order does not indicate a defect in the recommendation design. It is a product priority that first resolves operational capabilities missing in Stage 1, and transitions to Stage 2 after safe-write completes. However, do not worsen the forecast for overall MVP completion merely because of local priority within operational work.
 
-## 5. 残事項
+## 5. Remaining work
 
-- MIG-01からMIG-08の実装
-- Issue #2のprovider別AI Agent Guidance Registry設計・実装
-- Issue #3のbacklog階層・multi-plan composition設計
+- Implementation of MIG-01 through MIG-08
+- Provider-specific AI Agent Guidance Registry design and implementation for Issue #2
+- Backlog hierarchy and multi-plan composition design for Issue #3
 
-これらは未実装または将来設計であり、Issue #1のrecommendation契約を受け入れるうえでの設計blockerではない。
+These are unimplemented or future design work, not design blockers for accepting the Issue #1 recommendation contract.

@@ -1,68 +1,68 @@
 # AI Agent Guidance Provider baseline
 
-- 文書状態: Active 0.1
-- 検証日: 2026-07-23
-- 対象Issue: [#2 AI開発ガイドを出力する仕組み](https://github.com/mako10k/perttool/issues/2)
-- 実装計画: [../../plans/agent-guidance.pert](../../plans/agent-guidance.pert)
-- 機械可読入力: [../../test/fixtures/agent-guidance/provider-baseline.v1.json](../../test/fixtures/agent-guidance/provider-baseline.v1.json)
-- 公開contract: [../specs/agent-guidance.md](../specs/agent-guidance.md)
+- Document status: Active 0.1
+- Verification date: 2026-07-23
+- Issue: [#2 Mechanism to output AI development guidance](https://github.com/mako10k/perttool/issues/2)
+- Implementation plan: [../../plans/agent-guidance.pert](../../plans/agent-guidance.pert)
+- Machine-readable input: [../../test/fixtures/agent-guidance/provider-baseline.v1.json](../../test/fixtures/agent-guidance/provider-baseline.v1.json)
+- Public contract: [../specs/agent-guidance.md](../specs/agent-guidance.md)
 
-## 1. 目的
+## 1. Purpose
 
-Codex、GitHub Copilot、Claude Code、Grok Build、Antigravityの公式資料を同じ観点で再検証し、Issue #2の共通contractを設計するための入力を固定する。
+Reverify official documentation for Codex, GitHub Copilot, Claude Code, Grok Build, and Antigravity from the same perspective, and establish the inputs for designing the common contract for Issue #2.
 
-この文書とfixtureは規範interfaceではない。公開するsurface ID、support status、schema、projection、diagnosticは後続の[AI Agent Guidance Registry仕様](../specs/agent-guidance.md)を正とする。ここにある`maturity_evidence`もperttoolによるsupport判定ではなく、公式資料が明示する調査時点の状態を記録した証拠である。
+This document and fixture are not normative interfaces. The subsequent [AI Agent Guidance Registry specification](../specs/agent-guidance.md) is the source of truth for published surface IDs, support statuses, schemas, projections, and diagnostics. `maturity_evidence` here is also not perttool's support determination; it is evidence recording the state stated by official documentation at the time of investigation.
 
-## 2. 調査方法と境界
+## 2. Investigation method and boundary
 
-- 2026-07-23時点の各provider公式documentationだけを根拠とした
-- Web参照はこの設計時調査に限定し、将来のruntime registryはversioned offline snapshotだけを読む
-- 成果物pathが公式資料に明記されない場合は空配列とし、他providerとの類似から補完しない
-- provider間で同名の機能が異なる場合は、共通語へ強制変換せず`provider_terms`と事実説明を保持する
-- hook、skill内shell、MCP、delegated agentなど実行能力を持つsurfaceは、成果物pathだけでなくtrust、権限、side effectのriskも保持する
-- GitHub CopilotやAntigravityのように製品surfaceごとの差がある場合は、一つの製品全体へ一般化しない
+- Use only official documentation for each provider as of 2026-07-23 as evidence
+- Limit web references to this design-time investigation; a future runtime registry reads only versioned offline snapshots
+- When official documentation does not state an artifact path, use an empty array and do not fill it from similarities to other providers
+- When identically named features differ between providers, retain `provider_terms` and factual descriptions rather than force-converting them to common terminology
+- For surfaces with execution capability, such as hooks, shells within skills, MCP, and delegated agents, retain risk for trust, permissions, and side effects as well as artifact paths
+- When product surfaces differ, as for GitHub Copilot and Antigravity, do not generalize them to one entire product
 
-fixtureのsourceはURLと検証日を持つ。実装時にWebへ接続して更新したり、日付だけを自動更新したりしない。再検証は人間が公式資料との差分をreviewし、fixtureを通常のsource changeとして更新する。
+Fixture sources contain URLs and verification dates. Do not connect to the web during implementation to update them, nor automatically update dates alone. For revalidation, a human reviews differences from official documentation and updates the fixture as a normal source change.
 
-## 3. 比較結果
+## 3. Comparison results
 
 | Provider | Instruction | Workflow | Delegated agent | Enforcement | Prompt | Connector |
 | --- | --- | --- | --- | --- | --- | --- |
-| Codex | `AGENTS.md` / override | Agent Skills | Subagents / custom agent TOML | hooks | custom promptsはdeprecated | MCP in `config.toml` |
-| GitHub Copilot | Copilot instructions、path instructions、agent instructions | Agent Skills | custom agent profile | hooksはCoding Agent/CLI依存 | `*.prompt.md`は一部IDEでpublic preview | MCPはCLI fileとGitHub設定でsurface差 |
-| Claude Code | `CLAUDE.md` / rules | Skills | subagent Markdown | settings内hooks | Skills、互換custom commands | `.mcp.json`等 |
-| Grok Build | `AGENTS.md` familyとClaude互換instruction | Skills | subagents、plugin/Claude互換agent | hooksとpermission rules | user-invocable skill/command | Grok configとMCP互換file |
-| Antigravity | global `GEMINI.md` / workspace rules | Skills / Workflows | built-inと会話内dynamic custom subagent | `hooks.json` | slash invocationするWorkflow | `mcp_config.json` |
+| Codex | `AGENTS.md` / override | Agent Skills | Subagents / custom agent TOML | hooks | custom prompts are deprecated | MCP in `config.toml` |
+| GitHub Copilot | Copilot instructions, path instructions, agent instructions | Agent Skills | custom agent profile | hooks depend on Coding Agent/CLI | `*.prompt.md` is public preview in some IDEs | MCP differs by surface between CLI files and GitHub settings |
+| Claude Code | `CLAUDE.md` / rules | Skills | subagent Markdown | hooks in settings | Skills, compatible custom commands | `.mcp.json`, etc. |
+| Grok Build | `AGENTS.md` family and Claude-compatible instructions | Skills | subagents, plugin/Claude-compatible agents | hooks and permission rules | user-invocable skills/commands | Grok config and MCP-compatible files |
+| Antigravity | global `GEMINI.md` / workspace rules | Skills / Workflows | built-in and in-conversation dynamic custom subagents | `hooks.json` | slash-invoked Workflows | `mcp_config.json` |
 
-この表は索引であり、path、scope、maturity、risk、根拠はfixtureを正とする。
+This table is an index; the fixture is the source of truth for paths, scope, maturity, risk, and evidence.
 
-## 4. 推測を避けた箇所
+## 4. Areas where inference was avoided
 
 ### 4.1 Antigravity
 
-公式Rules/Workflows資料はWorkflowがglobalまたはworkspace scopeのMarkdownであることを説明するが、保存pathを明記していない。このため`prompt`のartifactは空配列にした。Custom subagentは`define_subagent`で会話中に定義され、会話終了まで再利用できるため、`delegated_agent`にも永続artifact pathを置いていない。
+Official Rules/Workflows documentation explains that Workflows are Markdown at global or workspace scope, but does not state storage paths. Therefore the `prompt` artifact is an empty array. Because custom subagents are defined during a conversation with `define_subagent` and can be reused until the conversation ends, `delegated_agent` also has no persistent artifact path.
 
 ### 4.2 Grok Build
 
-公式資料はsubagent、agentを含むplugin、Claude Code agent互換を説明する。一方、nativeなloose custom-agent fileのpathは確認できなかったため、`delegated_agent`のartifactは空配列にした。Claude互換pathをGrok native pathとして複製していない。
+Official documentation describes subagents, plugins containing agents, and compatibility with Claude Code agents. However, because no native loose custom-agent-file path could be confirmed, the `delegated_agent` artifact is an empty array. Claude-compatible paths are not copied as Grok-native paths.
 
 ### 4.3 GitHub Copilot
 
-instructions、skills、custom agents、hooks、prompt files、MCPはCopilot Coding Agent、CLI、IDEで対応範囲と格納方法が異なる。fixtureは確認したsurfaceとscopeを説明へ残し、全Copilot機能が同じartifactを読むとは扱わない。
+Instructions, skills, custom agents, hooks, prompt files, and MCP differ in support scope and storage method across Copilot Coding Agent, CLI, and IDE. The fixture retains the verified surfaces and scopes in its descriptions and does not treat all Copilot features as reading the same artifact.
 
 ### 4.4 Codex
 
-Custom promptsは公式にdeprecatedで、Skillsが推奨されている。`prompt`観点を欠落させずdeprecatedのまま記録し、将来のガイドが旧方式を推奨しないための入力にする。Project-local hookとMCPはtrusted project境界を持ち、hookはcommandを実行できるため、単なるhelp textとして安全扱いしない。
+Custom prompts are officially deprecated, and Skills are recommended. Record the `prompt` surface as deprecated rather than omitting it, so that future guidance does not recommend the old method. Project-local hooks and MCP have a trusted-project boundary, and hooks can execute commands; do not treat them as mere safe help text.
 
-## 5. 後続contractへの入力
+## 5. Inputs to the subsequent contract
 
-`GUIDANCE_CONTRACT`は本baselineから次を[公開contract](../specs/agent-guidance.md)へ確定した。
+`GUIDANCE_CONTRACT` established the following from this baseline in the [public contract](../specs/agent-guidance.md).
 
-1. provider、surface、guidance、risk、aliasのstable ID
-2. `native`、`compatible`、`preview`、`deprecated`、`unsupported`、`unknown`のsupport statusと、本baselineのmaturity evidenceとの変換規則
-3. provider製品surface差、空artifact path、stalenessを失わないversioned result
-4. project guidanceとprovider guidanceの合成順
-5. text/JSON projection、diagnostic、exit code
-6. read-only v1と、将来のaudit、scaffold、enforcement、runtime refreshの境界
+1. Stable IDs for provider, surface, guidance, risk, and alias
+2. Support statuses `native`, `compatible`, `preview`, `deprecated`, `unsupported`, and `unknown`, plus conversion rules from maturity evidence in this baseline
+3. Versioned results that retain provider product-surface differences, empty artifact paths, and staleness
+4. Composition order for project guidance and provider guidance
+5. Text/JSON projections, diagnostics, and exit codes
+6. The boundary between read-only v1 and future audit, scaffold, enforcement, and runtime refresh
 
-本baseline工程では公開契約、Core、CLI、file生成、hook実行、provider connector接続を実装していない。公開contractは後続設計工程で追加したが、Core、CLI、file生成、hook実行、provider connector接続はさらに後続taskのままである。
+This baseline phase did not implement the public contract, Core, CLI, file generation, hook execution, or provider-connector connections. The public contract was added in a subsequent design phase, but Core, CLI, file generation, hook execution, and provider-connector connections remained later tasks.

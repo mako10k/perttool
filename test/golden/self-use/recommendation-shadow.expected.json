@@ -63,18 +63,17 @@
       ]
     },
     "english-baseline": {
-      "source_digest": "sha256:c822e9a3b9f7eff72359ff3dab84abd3c285ded4b92e06f3c6beb1ea8a50c458",
+      "source_digest": "sha256:6e75ee63b4821dfe3104a2a5b91ab44cdece659644d74a9dee2917516768f57d",
       "groups": {
         "active": [],
         "ready": [
           "RUNTIME_MESSAGES",
           "HELP_AND_USAGE",
-          "PROCESS_AND_GUIDANCE_DOCS",
           "PERT_PLANS"
         ],
         "runnable_now": [
           "RUNTIME_MESSAGES",
-          "PROCESS_AND_GUIDANCE_DOCS"
+          "PERT_PLANS"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -83,34 +82,33 @@
         ]
       },
       "recommended_task_ids": [
-        "PROCESS_AND_GUIDANCE_DOCS"
+        "RUNTIME_MESSAGES"
       ],
       "manual_selected_task_ids": [
         "RUNTIME_MESSAGES",
-        "PROCESS_AND_GUIDANCE_DOCS"
+        "PERT_PLANS"
       ],
       "tiers": {
-        "PROCESS_AND_GUIDANCE_DOCS": "recommended",
-        "RUNTIME_MESSAGES": "allowed",
-        "HELP_AND_USAGE": "allowed",
-        "PERT_PLANS": "deferred"
+        "RUNTIME_MESSAGES": "recommended",
+        "HELP_AND_USAGE": "deferred",
+        "PERT_PLANS": "allowed"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
           "id": "RUNTIME_MESSAGES",
           "runnable_now": true,
-          "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "3/1",
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
           "resource_rejections": []
         },
         {
           "id": "HELP_AND_USAGE",
           "runnable_now": false,
-          "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "3/1",
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
           "resource_rejections": [
             {
               "resource_id": "CLI_SURFACE",
@@ -126,64 +124,21 @@
           ]
         },
         {
-          "id": "PROCESS_AND_GUIDANCE_DOCS",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        },
-        {
           "id": "PERT_PLANS",
-          "runnable_now": false,
+          "runnable_now": true,
           "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "5/1",
-          "resource_rejections": [
-            {
-              "resource_id": "DEVELOPERS",
-              "capacity": 2,
-              "used_before_decision": 2,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "RUNTIME_MESSAGES",
-                "PROCESS_AND_GUIDANCE_DOCS"
-              ]
-            },
-            {
-              "resource_id": "DOC_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "PROCESS_AND_GUIDANCE_DOCS"
-              ]
-            },
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "PROCESS_AND_GUIDANCE_DOCS"
-              ]
-            }
-          ]
+          "schedule_critical": false,
+          "total_float": "2/1",
+          "resource_rejections": []
         }
       ],
       "record_counts": {
-        "task_decisions": 4,
-        "decision_steps": 24,
-        "facts": 94,
-        "comparisons": 4,
-        "reasons": 17,
-        "descriptions": 9
+        "task_decisions": 3,
+        "decision_steps": 17,
+        "facts": 76,
+        "comparisons": 2,
+        "reasons": 12,
+        "descriptions": 5
       },
       "diagnostic_codes": []
     },

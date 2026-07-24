@@ -1,19 +1,19 @@
-# AI開発ガイド
+# AI Development Guide
 
-- 文書状態: Active 0.5
-- 作成日: 2026-07-21
-- 更新日: 2026-07-23
-- 共有指示: [../../AGENTS.md](../../AGENTS.md)
-- 自己利用計画: [self-use.md](self-use.md)
+- Document status: Active 0.5
+- Created: 2026-07-21
+- Updated: 2026-07-23
+- Shared instructions: [../../AGENTS.md](../../AGENTS.md)
+- Self-use plan: [self-use.md](self-use.md)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
 - Recommendation design review: [recommendation-design-review.md](recommendation-design-review.md)
 - Agent Guidance Provider baseline: [agent-guidance-provider-baseline.md](agent-guidance-provider-baseline.md)
 
-## 1. 目的
+## 1. Purpose
 
-Codex、GitHub Copilot、その他のcoding agentが、同じ正本、作業境界、検証command、Git規則を参照してperttoolを開発できるrepository構成を維持する。
+Maintain a repository structure in which Codex, GitHub Copilot, and other coding agents can develop perttool by consulting the same canonical sources, work boundaries, verification commands, and Git rules.
 
-AIごとに別のproduct判断を持たせず、project固有の意味は文書とtestへ、tool固有の入口だけを`AGENTS.md`、`.github/`、`.codex/`へ置く。
+Do not give each AI a separate product judgment. Put project-specific meaning in documents and tests, and put only tool-specific entrypoints in `AGENTS.md`, `.github/`, and `.codex/`.
 
 ### 1.1 Repository language
 
@@ -23,25 +23,25 @@ This rule does not force the conversation language. Agents continue to answer th
 
 The repository does not currently implement i18n, locale negotiation, translation catalogs, or a `--locale` option. Stable codes, field names, enum values, typed facts, and schema versions are the machine contract; natural-language text is a deterministic projection. Existing Japanese content is migrated in bounded tasks from [`plans/english-baseline.pert`](../../plans/english-baseline.pert) after the first beta.
 
-## 2. 参照したlocal repository
+## 2. Local repositories consulted
 
-`~/`直下の更新時刻が新しく、AI開発導線を持つcheckoutを2026-07-21に確認した。
+On 2026-07-21, the checkout directories immediately below `~/` that had recent modification times and AI development entrypoints were examined.
 
-| Repository | 抽出したpattern | perttoolでの採用 |
+| Repository | Extracted pattern | Adoption in perttool |
 | --- | --- | --- |
-| `~/kafs` | project map、実在command、task start gate、PERTによるnext-task選択、保守的Codex設定 | 簡潔化して`AGENTS.md`へ採用 |
-| `~/power-limit-cdt` | `AGENTS.md`を共有正本とするCodex/Copilot互換、要件から検証までのtraceability、remote操作前の確認 | 共有指示とGit規則へ採用 |
-| `~/kscr_selfhost` | repositoryを先に調べる、risk-first review、focused commit、proportional validation、`secdat exec` | workflowとreview規則へ採用 |
-| `~/secexec` | agent入口とproject固有のhard ruleを分離し、詳細のsource of truthを明示する | domain invariantを正本文書へ寄せる方針を採用 |
-| `~/openai-xmpp-bot-20250923` | `.editorconfig`と単一CI入口 | whitespace規約とrepository check CIへ採用 |
+| `~/kafs` | Project map, existing commands, task-start gates, PERT-based next-task selection, conservative Codex settings | Simplified and adopted in `AGENTS.md` |
+| `~/power-limit-cdt` | Codex/Copilot compatibility through `AGENTS.md` as shared canonical guidance, traceability from requirements through verification, checks before remote operations | Adopted in shared instructions and Git rules |
+| `~/kscr_selfhost` | Inspect the repository first, risk-first review, focused commits, proportional validation, `secdat exec` | Adopted in workflow and review rules |
+| `~/secexec` | Separate agent entrypoints from project-specific hard rules and identify detailed sources of truth | Adopted as a policy to place domain invariants in canonical documents |
+| `~/openai-xmpp-bot-20250923` | `.editorconfig` and a single CI entrypoint | Adopted in whitespace conventions and repository-check CI |
 
-次は採用しなかった。
+The following were not adopted.
 
-- product固有の安全規則やdeploy手順
-- 現段階では役割が重複する多数のcustom agent
-- issue、branch、worktree、PRをすべての変更へ強制する大規模repository向けworkflow
-- 存在しないbuild、lint、test commandの先行定義
-- 現在のperttoolでは検証できない抽象的な完了gate
+- Product-specific safety rules or deployment procedures
+- Many custom agents whose roles overlap at this stage
+- A large-repository workflow that mandates issues, branches, worktrees, and PRs for every change
+- Premature definitions of build, lint, or test commands that do not exist
+- Abstract completion gates that the current perttool cannot verify
 
 ## 3. Instruction architecture
 
@@ -51,35 +51,35 @@ AGENTS.md                         shared canonical guidance
 ├── .codex/config.toml               conservative project-local defaults
 ├── docs/process/ai-development.md   rationale and operating workflow
 ├── package.json                     executable repository check
-│   └── npm run check                typecheck、test、docs
+│   └── npm run check                typecheck, test, docs
 ├── scripts/check-docs.sh            documentation sub-check
-├── scripts/publish-npm.sh            npm dry-runと明示release tarball publish gate
+├── scripts/publish-npm.sh           npm dry-run and explicit release-tarball publish gate
 └── .github/workflows/ci.yml         same npm check in CI
 ```
 
-規則を追加する場合は、違反を検出できるtestまたは具体的なreview checkpointを優先する。単なる心構えを増やして`AGENTS.md`を長くしない。
+When adding a rule, prioritize a test that can detect a violation or a concrete review checkpoint. Do not lengthen `AGENTS.md` merely by adding general advice.
 
 ## 4. Standard workflow
 
 ### 4.1 Start
 
-1. `git status --short --branch`と`git log`でcurrent stateを確認する
-2. 利用者の目的、作業種別、変更範囲を確認する
-3. `AGENTS.md`の優先順で正本を読む
-4. acceptance criteria、non-goal、検証commandを決める
-5. 文書と実装のどちらを先に変更すべきか判断する
+1. Confirm the current state with `git status --short --branch` and `git log`
+2. Confirm the user's objective, type of work, and change scope
+3. Read canonical sources in the priority order in `AGENTS.md`
+4. Determine acceptance criteria, non-goals, and verification commands
+5. Decide whether documents or implementation should change first
 
 ### 4.2 Change
 
-- 1つのcoherent capabilityまたは仕様判断を1つのchangeにする
-- 無関係なcleanupを混ぜない
-- 安定ID、決定性、source span、loss reportなど既存contractを維持する
-- 仕様変更はsampleとtestへ伝播させる
-- user変更があるfileでは、上書きせず既存diffと統合する
+- Make one coherent capability or specification decision one change
+- Do not mix in unrelated cleanup
+- Preserve existing contracts such as stable IDs, determinism, source spans, and loss reports
+- Propagate specification changes to samples and tests
+- For files with user changes, integrate with the existing diff rather than overwriting it
 
 ### 4.3 Validate and review
 
-現段階の共通check:
+The common checks at this stage are:
 
 ```sh
 npm ci
@@ -87,95 +87,95 @@ npm run check
 git diff --check
 ```
 
-変更範囲に応じて`npm run typecheck`、`npm test`、`npm run check:docs`をnarrow checkとして先に実行する。
+Depending on the change scope, first run `npm run typecheck`, `npm test`, or `npm run check:docs` as narrow checks.
 
-その後、`git diff -- <対象file>`で次を確認する。
+Then use `git diff -- <target-file>` to confirm the following.
 
-- 正本間の矛盾がないか
-- requirementまたはacceptance criteriaが抜けていないか
-- exampleが仕様を実際に表しているか
-- heuristic、推論、厳密結果を混同していないか
-- 将来実装へ未確定事項を黙って押し込んでいないか
+- There is no contradiction among canonical sources
+- No requirement or acceptance criterion is missing
+- Examples actually represent the specification
+- Heuristics, inferences, and exact results are not confused
+- Open matters are not silently pushed into future implementation
 
 ### 4.4 Close out
 
-1. `git status --short`で対象fileだけが変更されていることを確認する
-2. 対象fileを明示的にstageする
-3. staged diffと`git diff --cached --check`を確認する
-4. 実行したcheckと未実行checkを区別する
-5. remote writeは`secdat exec`経由で行う
-6. push後にlocal branchとremote tracking branchを確認する
+1. Confirm with `git status --short` that only the target files are changed
+2. Explicitly stage the target files
+3. Review the staged diff and `git diff --cached --check`
+4. Distinguish checks that were run from those not run
+5. Perform remote writes through `secdat exec`
+6. After pushing, confirm the local branch and remote tracking branch
 
 npm publication is outside normal close out. Follow the alpha or beta release gate, verify the common tarball, remote commit/tag, and unpublished version, and inject `NPM_TOKEN` through `secdat` only after explicit user permission. Beta publication uses `beta` without moving `latest`. A later `latest` promotion is a separate, explicitly authorized dist-tag mutation. Never retry an ambiguous registry mutation before checking durable state.
 
 ## 5. Next-task selection and self-use
 
-実装前は`docs/requirements.md`の推奨仕様作業と未確定事項を使う。「次のタスク」はcurrent checkoutでhard predecessorが閉じていることを確認してから提案する。
+Before implementation, use the recommended specification work and open matters in `docs/requirements.md`. Propose the "next task" only after confirming that its hard predecessors are closed in the current checkout.
 
-`docs/process/self-use.md`のStage 1を満たした後は、perttool自身の`.pert`計画を正本に加える。Stage 3ではediting commandと`dag advance`をpreview-first、expected digest、write後再解析の手順で正本writerとして使用できる。2026-07-23のMIG-07完了後、task selectionはcompleteかつknownな`Perttool.NextResult.v3`をnormal authorityとして次の順で行う。
+After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert` plans to the canonical sources. In Stage 3, editing commands and `dag advance` may be used as canonical writers through preview-first, expected-digest, and post-write reanalysis procedures. After MIG-07 completed on 2026-07-23, task selection uses a complete, known `Perttool.NextResult.v3` as normal authority in the following order.
 
-1. `mvp.pert`と現在の詳細planを`perttool dsl check`し、計画が有効であることを確認する。Project ID、as_of、duration_unit、velocity、finishなどのmetadata確認にはsourceの直接閲覧でなく`perttool project show --format json`を使う
-2. `mvp.pert`を`dag analyze`、`dag next --format json`し、known version、complete trace、`PTREC-*`不在を確認してmacro recommended work packageからworkstreamを選ぶ
-3. 選んだwork packageに対応する詳細planを`dag analyze`、`dag next --format json`し、同じconsumer gateを確認してdetail recommended taskを選ぶ
-4. Recommended subset、またはrecommended set全件を維持してresource-feasibleな`allowed` taskを1件だけ追加した集合をnormal selectionとする
-5. decisive step、higher-priority task、comparisonをproject factから説明し、外部blockと利用可能resourceを確認する
-6. task start、completion、block、capacity変更後は同じresultを再利用せず、detailと必要なmacroを再解析する
+1. Run `perttool dsl check` on `mvp.pert` and the current detail plan to confirm that the plans are valid. Use `perttool project show --format json`, rather than directly viewing the source, to inspect metadata such as project ID, as_of, duration_unit, velocity, and finish
+2. Run `dag analyze` and `dag next --format json` for `mvp.pert`, confirm a known version, complete trace, and no `PTREC-*`, then select a workstream from the macro recommended work package
+3. Run `dag analyze` and `dag next --format json` for the detail plan corresponding to that work package, confirm the same consumer gate, then select the detail recommended task
+4. Treat as normal selection either a recommended subset or the recommended set plus exactly one resource-feasible `allowed` task while retaining every recommended task
+5. Explain the decisive step, higher-priority tasks, and comparison from project facts, and confirm external blocks and available resources
+6. After a task start, completion, block, or capacity change, do not reuse the result; reanalyze the detail plan and the necessary macro plan
 
-Project metadataを変更するときは`project set`のpreviewまたは`--diff`を確認し、永続化はStage 3のexpected digest付き`--write`手順を使う。Project-wide単位の変更でtask duration/estimateも同時に変える必要がある場合は、`project.set`と関連mutationを1つのatomic batchにまとめる。通常のmetadata閲覧・編集をsource fileの目視や手編集へ依存させない。
+When changing project metadata, inspect the `project set` preview or `--diff`, and use the Stage 3 `--write` procedure with an expected digest for persistence. If a project-wide unit change also requires task duration or estimate changes, combine `project.set` and the related mutations in one atomic batch. Do not depend on visual source inspection or manual editing for normal metadata viewing and editing.
 
-異なる詳細planのtaskをmacro判断なしに直接比較しない。`groups.ready`、`groups.runnable_now`、text summaryをrecommendationの代用にしない。Unknown schema/model version、incomplete/truncated trace、unknown tier、`PTREC-*`ではtaskを開始せず、安全に停止する。`deferred`または`discouraged`をnormal authorityで開始しない。
+Do not directly compare tasks from different detail plans without a macro decision. Do not substitute `groups.ready`, `groups.runnable_now`, or the text summary for a recommendation. With an unknown schema/model version, incomplete or truncated trace, unknown tier, or `PTREC-*`, do not start a task; stop safely. Do not start `deferred` or `discouraged` work under normal authority.
 
-2026-07-22の[Recommendation設計受け入れ](recommendation-design-review.md)、grammar受け入れ、formatter/mutation preview、safe write、Mermaid export/import round-trip、advance Core/CLIは完了し、Stage 3で自己利用している。[Release readiness監査](mvp-release-readiness.md)で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../../plans/recommendation.pert)のMIG-01からMIG-07、全22pで解消した。[5 planのshadow評価](recommendation-shadow-review.md)、read-only override validation、normal authority dry-run、unknown-version safe stop、共有指示/help同期は受け入れ済みである。Recommendation固有の暫定実測は`22p/1d`で、`v0.1.0-alpha.2`のGitHub/npm同一artifact配布とregistry installまで完了した。
+The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.md), grammar acceptance, formatter/mutation preview, safe write, Mermaid export/import round trip, and advance Core/CLI are complete and are in Stage 3 self-use. The missing MVP acceptance condition 16 found by the [release-readiness audit](mvp-release-readiness.md) was resolved by MIG-01 through MIG-07, totaling 22p, in the [Recommendation implementation plan](../../plans/recommendation.pert). The [five-plan shadow evaluation](recommendation-shadow-review.md), read-only override validation, normal-authority dry run, unknown-version safe stop, and shared-instruction/help synchronization are accepted. The provisional Recommendation-specific observation is `22p/1d`, and distribution of the same `v0.1.0-alpha.2` artifact through GitHub/npm and registry installation are complete.
 
 The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
-ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached. `SURFACE_INVENTORY` was unblocked, completed, and advanced through Stage 3 preview-first writes; the inventory and Unicode allowlist are recorded in `english-surface-inventory.md`, and fresh analysis now recommends `NORMATIVE_DOCS`.
+ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached. `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, and `PROCESS_AND_GUIDANCE_DOCS` were completed and advanced through Stage 3 preview-first writes; the inventory and Unicode allowlist are recorded in `english-surface-inventory.md`, and fresh analysis now recommends `RUNTIME_MESSAGES`.
 
-### 5.1 採用済みRecommendation authority
+### 5.1 Adopted Recommendation authority
 
-`Perttool.NextResult.v3`公開だけでは本節を有効化しなかった。Self-use shadow gateを満たし、`AGENTS.md`と`.github/copilot-instructions.md`、help、safe-stop testを同じMIG-07 adoption changeで更新したため、normal task selectionは次をauthorityとする。
+This section was not enabled solely by publishing `Perttool.NextResult.v3`. Because the self-use shadow gate was met and `AGENTS.md`, `.github/copilot-instructions.md`, help, and safe-stop tests were updated in the same MIG-07 adoption change, normal task selection uses the following as authority.
 
-1. macro planのcomplete JSON recommendationからwork packageを選ぶ
-2. 選んだwork packageのdetail planを再解析し、そのcomplete JSON recommendationからtaskを選ぶ
-3. recommended taskのsubset、または`R`全件を維持してresource-feasibleなallowed taskを1件追加した集合だけをnormal authorityで選ぶ
-4. decisive step、higher-priority task、comparisonを確認し、選択理由をproject factから説明する
-5. unknown schema/version、incomplete trace、`PTREC-*`では自動選択を停止する
-6. detail taskのstart、completion、block、capacity変更後はそのdetail planを再解析し、macro work packageのstatus、roll-up duration、capacityが変わった場合はmacro planも再解析する
+1. Select a work package from the macro plan's complete JSON recommendation
+2. Reanalyze the selected work package's detail plan and select a task from its complete JSON recommendation
+3. Under normal authority, select only a subset of recommended tasks or a set that retains all of `R` and adds one resource-feasible allowed task
+4. Confirm the decisive step, higher-priority tasks, and comparison, and explain the selection from project facts
+5. Stop automatic selection for an unknown schema/version, incomplete trace, or `PTREC-*`
+6. Reanalyze the detail plan after a detail-task start, completion, block, or capacity change; also reanalyze the macro plan if macro work-package status, roll-up duration, or capacity changes
 
-`deferred`または`discouraged`を選ぶ人間指示はnormal recommendationと区別する。Override apply gateを満たすまでは適用済みartifactを捏造せず、AIは差と未解禁のaudit/apply境界を提示する。Provider別prompt、skill、agent、hookはIssue #2のguideから同じruleへ到達させ、provider固有のpriority規則を追加しない。
+Human instructions to select `deferred` or `discouraged` are distinct from normal recommendations. Until the override-apply gate is met, do not fabricate an applied artifact; AI presents the difference and the not-yet-enabled audit/apply boundary. Provider-specific prompts, skills, agents, and hooks reach the same rules through the Issue #2 guide and do not add provider-specific priority rules.
 
-tool出力は選択根拠であり、task完了の独立証拠ではない。完了は対応仕様、code、test結果で確認する。
+Tool output is evidence for selection, not independent evidence of task completion. Confirm completion through the corresponding specification, code, and test results.
 
-## 6. Worktree分離によるparallel Agent workflow
+## 6. Parallel-agent workflow using isolated worktrees
 
-Sub-agent、delegation、parallel Agent workは、利用者が明示的に求めた場合、または有効なruntime policyが許可した場合だけ使用する。`dag next`が複数taskを`runnable_now`と返すことは工程上の並行可能性であり、Agent利用の許可そのものではない。
+Use sub-agents, delegation, or parallel agent work only when the user explicitly requests it or an effective runtime policy permits it. A `dag next` result that returns several `runnable_now` tasks means those tasks can run concurrently in the process; it does not itself authorize using agents.
 
-### 6.1 適用条件
+### 6.1 Applicability conditions
 
-次をすべて満たす場合だけparallel workの候補とする。
+Consider parallel work only when all of the following hold.
 
-- macro/detail planのcheckとanalysisが成功し、対象taskがhard predecessorとresource条件上並行可能である
-- current main worktreeがcleanで、全Agentを同じbase commitへ固定できる
-- file ownershipを排他的に分けられるか、共有fileをintegration ownerだけが変更する境界を作れる
-- 各taskのacceptance criteria、non-goal、narrow validation、commit条件を独立に記述できる
-- deploy、push、issue更新などの共有external side effectをAgentへ並行実行させない
+- Macro/detail plan checks and analysis succeed, and the target tasks can run concurrently under hard-predecessor and resource conditions
+- The current main worktree is clean, and all agents can be pinned to the same base commit
+- File ownership can be exclusively separated, or a boundary can be created where only the integration owner changes shared files
+- Each task's acceptance criteria, non-goals, narrow validation, and commit condition can be written independently
+- Shared external side effects such as deploys, pushes, and issue updates are not performed in parallel by agents
 
-同じ正本fileの編集、未解決の単一semantic decision、直列dependency、利用者の未commit変更と重なる作業は並行化しない。単にfileが別であることだけでsemantic independenceを仮定しない。
+Do not parallelize edits to the same canonical file, an unresolved single semantic decision, serial dependencies, or work overlapping the user's uncommitted changes. Do not assume semantic independence merely because files differ.
 
-### 6.2 Integration ownerとAgentの責務
+### 6.2 Responsibilities of the integration owner and agents
 
-Integration ownerは次を単独で管理する。
+The integration owner alone manages the following.
 
-- base commit、branch名、worktree絶対path
-- Agentごとの専有file、読み取り可能な正本、編集禁止file
-- shared requirements、親仕様、plan status、golden、process文書の統合
-- Agent commitのレビュー順、統合後の意味調整、全体検証
+- Base commit, branch name, and absolute worktree paths
+- Each agent's exclusive files, readable canonical sources, and prohibited files
+- Integration of shared requirements, parent specifications, plan status, golden files, and process documents
+- Review order for agent commits, semantic adjustment after integration, and whole-repository verification
 
-各Agentは指定worktree以外を変更せず、専有fileだけを1つのcoherent commitにする。Agentはshared planのtaskを`done`にせず、remote pushや他branchのcherry-pickを行わない。完了報告にcommit hash、変更file、検証、未解決事項を含める。
+Each agent changes no worktree other than the assigned one and makes one coherent commit containing only its exclusive files. Agents do not mark tasks in a shared plan `done`, push remotely, or cherry-pick from another branch. Completion reports include the commit hash, changed files, verification, and unresolved matters.
 
 ### 6.3 Worktree setup
 
-作成前にmainのstatus、base commit、既存worktree、branch、対象pathが衝突しないことをread-only commandで確認する。
+Before creation, use read-only commands to confirm that main status, the base commit, existing worktrees, branches, and target paths do not conflict.
 
 ```sh
 git status --short --branch
@@ -185,49 +185,49 @@ git worktree add -b agent/<task-id> <validated-absolute-path> <base-commit>
 git -C <validated-absolute-path> status --short --branch
 ```
 
-Target pathはtaskごとの明示的な絶対pathにする。`~`、`$HOME`、workspace root、未解決globをcreate/remove対象に使用しない。各Agent promptにworktree path、branch、base、専有file、参照正本、acceptance、validation、remote禁止を明記する。
+Use an explicit absolute path for each task as the target path. Do not use `~`, `$HOME`, the workspace root, or unresolved globs as creation/removal targets. Each agent prompt states the worktree path, branch, base, exclusive files, canonical sources to consult, acceptance, validation, and remote prohibition.
 
-### 6.4 Reviewとintegration
+### 6.4 Review and integration
 
-Agentごとに次を順番に行う。
+For each agent, perform the following in order.
 
-1. 対象worktreeがclean、branchが予定通り、commitがbaseの直系であることを確認する
-2. `git show --stat <commit>`と実diffで専有file境界、仕様、missing testをレビューする
-3. mainがcleanなことを再確認し、1commitずつcherry-pickする
-4. すべてのAgent commit統合後に、integration ownerがshared正本とplan/goldenを1つのlogical changeとして更新する
-5. `npm run check`と`git diff --check`を実行し、macro/detail planのcheck/analyze/next結果を再確認する
+1. Confirm that the target worktree is clean, the branch is as planned, and the commit descends directly from the base
+2. Review exclusive-file boundaries, specifications, and missing tests with `git show --stat <commit>` and the actual diff
+3. Reconfirm that main is clean and cherry-pick one commit at a time
+4. After integrating every agent commit, have the integration owner update shared canonical sources and plans/golden files as one logical change
+5. Run `npm run check` and `git diff --check`, then reconfirm macro/detail plan check/analyze/next results
 
-Cherry-pickでconflictがないことはsemantic consistencyの証明ではない。両Agentが同じ用語、version、invariantを別の意味で固定していないか、integration ownerが横断レビューする。矛盾がある場合は機械的に両方を採用せず、共有判断をmainで解決する。
+The absence of a cherry-pick conflict does not prove semantic consistency. The integration owner reviews across both agents to ensure they have not fixed the same terms, versions, or invariants to different meanings. If they conflict, do not mechanically adopt both; resolve the shared decision on main.
 
-### 6.5 Success、failure、cleanup
+### 6.5 Success, failure, and cleanup
 
-Parallel trialは次をすべて満たした場合に成功とする。
+A parallel trial succeeds only if all of the following hold.
 
-- 各Agentが専有fileだけをcommitし、narrow validationが成功する
-- mainへの個別統合で意図しないdiffが生じない
-- 仕様間の横断レビューとshared正本の調整が完了する
-- repository全checkと再解析後のplan goldenが成功する
-- commit履歴がAgent成果とintegration changeのlogical unitを保つ
+- Each agent commits only exclusive files and its narrow validation succeeds
+- Individual integration into main produces no unintended diff
+- Cross-specification review and shared-canonical-source adjustment are complete
+- The full repository check and post-reanalysis plan golden files succeed
+- Commit history preserves logical units for agent results and the integration change
 
-Agentが失敗、timeout、scope逸脱した場合は、対象worktreeとbranchを保持してstatus/diffを確認する。Force-remove、force-delete、未レビューcommitの自動統合を行わない。成功後にcleanupする場合も、worktreeがcleanでbranch commitがmainへ統合済みであることを確認し、検証済み絶対pathに対する`git worktree remove`と、通常の`git branch -d`だけを使用する。Cherry-pick後はcommit hashが変わるためancestor判定だけに依存せず、`git cherry main agent/<task-id>`の対象commitが`-`であることと、main側の実diffを確認してpatch equivalenceを検証する。この場合は通常の`git branch -d`がancestry上の未mergeとして削除を拒否し得る。`-D`へ自動切り替えせず、明示的な削除許可がなければsource branchを保持する。
+If an agent fails, times out, or exceeds scope, retain the target worktree and branch and inspect status/diff. Do not force-remove, force-delete, or automatically integrate an unreviewed commit. Even after success, before cleanup confirm that the worktree is clean and its branch commit is integrated into main; use only `git worktree remove` on a validated absolute path and ordinary `git branch -d`. Because the commit hash changes after cherry-picking, do not rely only on ancestor checks: confirm that the relevant commit from `git cherry main agent/<task-id>` is `-`, and inspect the actual main-side diff to verify patch equivalence. In that case ordinary `git branch -d` can refuse deletion because the branch is unmerged in ancestry. Do not automatically switch to `-D`; retain the source branch without explicit deletion permission.
 
 ### 6.6 2026-07-22 trial
 
-`RANKING_POLICY`と`REASON_CODE_TAXONOMY`は、`plans/control-plane.pert`上で両方がreadyかつ`runnable_now`であることを確認し、commit `aaabd83`から別branch/worktreeへ分離した。各Agentは新規仕様1fileだけをcommitし、mainへ`7333a12`と`9eb47cb`としてconflictなく統合できた。
+`RANKING_POLICY` and `REASON_CODE_TAXONOMY` were confirmed to be both ready and `runnable_now` in `plans/control-plane.pert`, then separated into different branches/worktrees from commit `aaabd83`. Each agent committed only one new specification file, and they were integrated into main as `7333a12` and `9eb47cb` without conflict.
 
-Integration ownerは、reason taxonomyのrecommended taskに因果ranking reasonを必須化し、両仕様の規範参照、requirements、basic design、plan、goldenを調整した。`npm run check`は90 test、21 Markdown、3 self-use plan、link/package checkを含めて成功した。
+The integration owner made causal ranking reasons mandatory for recommended tasks in the reason taxonomy, and reconciled canonical references, requirements, basic design, plans, and golden files across both specifications. `npm run check` succeeded with 90 tests, 21 Markdown files, three self-use plans, and link/package checks.
 
-このtrialで、Agentの完了時間が異なってもmainと他worktreeをcleanに保てること、file conflictを防げることを確認した。Patch equivalenceとclean statusの確認後、2worktreeは削除した。Source branchはcherry-pickによりancestry上は未mergeのため通常削除が拒否され、force-deleteせず保持した。一方で、仕様間のsemantic consistency、shared traceability、plan更新は自動的に解決しない。これらは引き続integration ownerの単一責務とする。
+This trial confirmed that main and other worktrees can remain clean and file conflicts can be avoided even when agents complete at different times. After confirming patch equivalence and clean status, the two worktrees were removed. The source branches were retained without force-deletion because ordinary deletion was refused as unmerged in ancestry after cherry-picking. Semantic consistency between specifications, shared traceability, and plan updates are not resolved automatically; they remain the sole responsibility of the integration owner.
 
 ## 7. Evolution rule
 
-TypeScript scaffoldでは次を固定した。
+The TypeScript scaffold fixes the following.
 
 - Node.js 22 or later, npm, ESM, and TypeScript 7.0
-- `npm ci`、`npm run build`、`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run check:link`、`npm run check:package`、`npm run check`
+- `npm ci`, `npm run build`, `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:link`, `npm run check:package`, and `npm run check`
 - CI runs `npm run check` on Node.js 22 and 24
-- sourceは`src/`、test/fixtureは`test/`、生成物は`dist/`
-- `node_modules/`、`dist/`、coverage、tsbuildinfoはGit管理外
-- runtime dependencyは現時点で0。必要になった場合だけ追加判断する
+- Sources are in `src/`, tests/fixtures are in `test/`, and generated artifacts are in `dist/`
+- `node_modules/`, `dist/`, coverage, and tsbuildinfo are not tracked by Git
+- Runtime dependencies are currently zero; add them only when required
 
-AI設定だけが実装workflowより先に複雑化しないようにする。
+Do not let AI configuration become more complex before the implementation workflow does.

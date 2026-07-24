@@ -1,50 +1,50 @@
-# E2Eシナリオテスト
+# E2E Scenario Tests
 
-- 文書状態: Active 1.5
-- 作成日: 2026-07-21
-- 対象surface: `dsl help`、`dsl check`、`dsl format`、mutation、`dag analyze`、`dag next`、`dag advance`、`dag render`、`dag import`
+- Document status: Active 1.5
+- Created: 2026-07-21
+- Covered surfaces: `dsl help`, `dsl check`, `dsl format`, mutation, `dag analyze`, `dag next`, `dag advance`, `dag render`, and `dag import`
 
-## 1. 目的
+## 1. Purpose
 
-利用者が作成した`.pert`文書を実際のCLI processへ渡し、文書検査、PERT/CPM分析、resource制約分析、次task判定、advance、Mermaid round-tripまでが一連の操作として成立することを確認する。
+Pass user-authored `.pert` documents to the actual CLI process and confirm that document checking, PERT/CPM analysis, resource-constrained analysis, next-task determination, advance, and Mermaid round trips work as one operational sequence.
 
-Core APIを直接呼ぶunit testとは分離し、`dist/cli.js`をsubprocessとして起動してexit code、stdout、stderr、JSON envelopeを検査する。
+Keep these tests separate from unit tests that call the Core API directly; start `dist/cli.js` as a subprocess and inspect the exit code, stdout, stderr, and JSON envelope.
 
-## 2. シナリオ
+## 2. Scenarios
 
-| ID | 利用場面 | 操作 | 主要な受け入れ条件 |
+| ID | Use case | Operation | Primary acceptance criteria |
 | --- | --- | --- | --- |
-| E2E-001 | 初めて計画を作り、人数変更を比較する | help → check → analyze → next → capacity override | dependency上のreadyを維持したまま、capacity 1では1task、capacity 2では2taskがrunnableになる。Resource makespanは8dから5dへ変わる |
-| E2E-002 | 実行中taskが排他resourceを占有している | check → analyze → next | active taskを別分類で返し、resource不要taskだけをrunnableにし、待機taskへactive occupantを示す |
-| E2E-003 | 外部承認でblocked taskがある | check → analyze → next → warnings-as-errors | blocked_nowとupcomingを区別し、分析が外部block解消を条件とすることをwarningで明示する |
-| E2E-004 | task完了を文書へ反映して再計算する | before/afterをcheck → analyze → next | done taskを候補から除外し、下流taskをreadyにし、残durationを5dから3dへ更新する。到達済み部分にはadvance案内を返す |
-| E2E-005 | 不正なresource参照を安全に拒否する | check → analyze → next | 全commandがexit 1と同じstable diagnosticを返し、成功resultを出さない |
-| E2E-006 | AIがPoint見積りとVelocity予測を利用する | help → check → analyze → next | PERT値をpで保持し、20p/10dのvelocity forecastをdayで別fieldに返す。Resource makespan 15pは7.5dになる |
-| E2E-007 | 複数の構文errorをAIが修正する | check → analyze → next、diagnostic上限 | 独立errorをsource順で回収し、invalid blockの子行と後続semantic/graph diagnosticを抑制し、上限超過を明示する |
-| E2E-008 | mutation previewを次のcommandへ渡す | task set preview → check | 再検査済みcandidateがvalidで、原本fileを変更しない |
-| E2E-009 | 中間状態を作らずpathを置換する | atomic batch preview → analyze | connected milestone追加とtask置換を1 candidateで検査し、そのまま解析できる |
-| E2E-010 | formatter previewを検査する | format preview → check → format --check | golden candidateがvalidかつidempotentで、原本fileを変更しない |
-| E2E-011 | 検査済みcandidateを安全に保存して再解析する | grammar temporary copy format --write → check → analyze → next、mutation --write → check → analyze → next | grammar planのround-tripが原文へ一致し、write後のformatter/mutation documentを全read-only commandが受理する |
-| E2E-012 | DSL意味と解析条件をMermaidでレビューする | help → render preview → render --out → strict plain | profile metadataはDSL意味値、headerはcapacity overrideを別々に保持し、exclusive outとstrict-lossを適用する |
-| E2E-013 | partial joinを保持してadvanceする | preview → check/analyze/next → temporary copyへwrite → 再実行 | 過去taskだけを削除し、frontier/readyを維持し、2回目をno-opにする |
-| E2E-014 | Mermaid profileを意味同値で往復する | analyzed render → profile import → check/analyze → re-render、plain strict import | profileをbyte一致で再生成し、改変を拒否し、plain lossをcandidate/writeから分離する |
+| E2E-001 | Create a first plan and compare staffing changes | help → check → analyze → next → capacity override | While preserving dependency readiness, one task is runnable at capacity 1 and two tasks are runnable at capacity 2. Resource makespan changes from 8d to 5d. |
+| E2E-002 | An active task occupies an exclusive resource | check → analyze → next | Return active tasks as a separate classification, make only resource-free tasks runnable, and show the active occupant for waiting tasks. |
+| E2E-003 | An external approval blocks a task | check → analyze → next → warnings-as-errors | Distinguish blocked_now from upcoming and state in a warning that analysis depends on resolution of the external block. |
+| E2E-004 | Reflect task completion in a document and recalculate | check → analyze → next for before/after | Exclude done tasks from candidates, make downstream tasks ready, and update remaining duration from 5d to 3d. Return advance guidance for the completed portion. |
+| E2E-005 | Safely reject an invalid resource reference | check → analyze → next | Every command returns exit 1 and the same stable diagnostic, without a successful result. |
+| E2E-006 | AI uses point estimates and velocity forecasts | help → check → analyze → next | Preserve PERT values in p and return a 20p/10d velocity forecast in days in a separate field. A 15p resource makespan becomes 7.5d. |
+| E2E-007 | AI corrects multiple syntax errors | check → analyze → next, diagnostic limit | Collect independent errors in source order, suppress child lines of invalid blocks and subsequent semantic/graph diagnostics, and state when the limit is exceeded. |
+| E2E-008 | Pass a mutation preview to the next command | task set preview → check | The revalidated candidate is valid and does not change the original file. |
+| E2E-009 | Replace a path without creating an intermediate state | atomic batch preview → analyze | Check a connected milestone addition and task replacement as one candidate, which can be analyzed directly. |
+| E2E-010 | Inspect a formatter preview | format preview → check → format --check | The golden candidate is valid and idempotent and does not change the original file. |
+| E2E-011 | Safely save and reanalyze a checked candidate | grammar temporary copy format --write → check → analyze → next, mutation --write → check → analyze → next | The grammar plan round trip matches the original text, and all read-only commands accept formatter/mutation documents after write. |
+| E2E-012 | Review DSL semantics and analysis conditions in Mermaid | help → render preview → render --out → strict plain | Profile metadata and headers separately retain DSL semantic values and capacity overrides, and apply exclusive out and strict loss. |
+| E2E-013 | Advance while preserving a partial join | preview → check/analyze/next → write to temporary copy → rerun | Remove only past tasks, preserve frontier/ready, and make the second run a no-op. |
+| E2E-014 | Round-trip a Mermaid profile with semantic equivalence | analyzed render → profile import → check/analyze → re-render, plain strict import | Regenerate the profile byte-identically, reject alterations, and separate plain loss from candidate/write. |
 
-Fixtureは`test/fixtures/e2e/`へ置き、過去状態を正本計画へ混ぜず、before/afterを独立した入力として比較する。
+Place fixtures in `test/fixtures/e2e/`; do not mix past states into normative plans, and compare before/after as independent inputs.
 
-## 3. 実行方法
+## 3. Running the tests
 
-E2Eだけを実行する。
+Run only E2E tests.
 
 ```sh
 npm run test:e2e
 ```
 
-全repository checkでは同じE2Eが通常test suiteの一部として再実行される。
+The full repository check reruns the same E2E tests as part of the normal test suite.
 
 ```sh
 npm run check
 ```
 
-## 4. MVP境界
+## 4. MVP boundary
 
-E2E-004はtask完了前後の解析差を固定し、E2E-013はpartial join fixtureのadvance previewと一時directory内copyへの`--write`、再実行no-opを検査する。Formatterとmutationもpreviewに加えて一時copyだけを`--write`し、Mermaid render/importは一時directoryだけを`--out`で検査する。正本planはE2Eから変更しない。MCPはこのE2E sliceの対象外とする。
+E2E-004 fixes the analysis difference before and after task completion. E2E-013 checks advance preview for a partial-join fixture, `--write` to a copy in a temporary directory, and rerun no-op behavior. In addition to previews, formatter and mutation use `--write` only on temporary copies, and Mermaid render/import use `--out` only in temporary directories. E2E does not change normative plans. MCP is outside this E2E slice.

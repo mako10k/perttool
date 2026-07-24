@@ -1,84 +1,84 @@
-# MVP release readiness監査
+# MVP release readiness audit
 
-- 文書状態: Released 1.6
-- 監査日: 2026-07-22
-- 更新日: 2026-07-23
-- 対象: [MVP受け入れ条件](../requirements.md#21-mvp-受け入れ条件)
+- Document status: Released 1.6
+- Audit date: 2026-07-22
+- Updated: 2026-07-23
+- Scope: [MVP acceptance criteria](../requirements.md#21-mvp-acceptance-criteria)
 - Macro plan: [../../plans/mvp.pert](../../plans/mvp.pert)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
 
-## 1. 結論
+## 1. Conclusion
 
-`RELEASE_E2E`を完了した。受け入れ条件1から16には実装・自動検査の証跡があり、condition 16のranking/tier、structured explanation/invariant、public v3、5 plan self-use shadow、read-only override validation、normal authority adoption、unknown-version safe stopまで受け入れ済みである。
+`RELEASE_E2E` is complete. Acceptance criteria 1 through 16 have implementation and automated-test evidence, including condition 16 ranking/tier, structured explanation/invariant, public v3, five-plan self-use shadow, read-only override validation, normal-authority adoption, and the unknown-version safe stop.
 
-現行`selectNextTasks`と`dag next`は`Perttool.NextResult.v3`であり、complete recommendation graphと、v2由来の`active`、`ready`、`runnable_now`、`blocked_now`、`upcoming`を直交するfieldとして返す。KnownかつcompleteなV3をnormal AI task selection authorityへ採用した。`v0.1.0-alpha.2`の同一artifactをGitHub prereleaseとnpm `alpha`へ公開し、双方からのSHA-256一致と隔離installを確認した。Macroの全taskは完了し、次のrecommended taskは空である。
+Current `selectNextTasks` and `dag next` use `Perttool.NextResult.v3`, returning the complete recommendation graph and the v2-derived `active`, `ready`, `runnable_now`, `blocked_now`, and `upcoming` as orthogonal fields. Known, complete v3 was adopted as the normal AI task-selection authority. The same `v0.1.0-alpha.2` artifact was published to a GitHub prerelease and npm `alpha`, and a SHA-256 match and isolated installation were verified from both. All macro tasks are complete, and the next recommended task is empty.
 
-## 2. 受け入れ証跡
+## 2. Acceptance evidence
 
-| 条件 | 状態 | 主な証跡 |
+| Criterion | Status | Main evidence |
 | --- | --- | --- |
-| 1-7 | Pass | parser/semantic/analysis/next unit、CLI、E2E-001からE2E-007 |
-| 8 | Pass | mutation/formatter/write-safety unit、CLI、E2E-008からE2E-011 |
-| 9 | Pass | advance unit、CLI、E2E-013 |
-| 10 | Pass | Mermaid profile/export/import unit、CLI、E2E-012とE2E-014 |
-| 11-12 | Pass | help registry、fixture/help link test |
-| 13-15 | Pass | Core/CLI parity、normative example、Point/velocity analysis test |
-| 16 | Pass | ranking/tier、structured explanation/invariant、`NextResult.v3` publication、5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop |
+| 1-7 | Pass | parser/semantic/analysis/next unit tests, CLI, E2E-001 through E2E-007 |
+| 8 | Pass | mutation/formatter/write-safety unit tests, CLI, E2E-008 through E2E-011 |
+| 9 | Pass | advance unit tests, CLI, E2E-013 |
+| 10 | Pass | Mermaid profile/export/import unit tests, CLI, E2E-012 and E2E-014 |
+| 11-12 | Pass | help registry, fixture/help link test |
+| 13-15 | Pass | Core/CLI parity, normative example, Point/velocity analysis test |
+| 16 | Pass | ranking/tier, structured explanation/invariant, `NextResult.v3` publication, five-plan shadow, read-only override validation, normal-authority adoption, unknown-version safe stop |
 
-`npm run check`の成功とMIG-07 adoption evidenceを合わせてcondition 16をPassとした。さらにrelease artifactのGitHub/npm配布とregistry installを`RELEASE_E2E`で受け入れた。
+Condition 16 was marked Pass based on successful `npm run check` together with MIG-07 adoption evidence. `RELEASE_E2E` additionally accepted GitHub/npm distribution of the release artifact and registry installation.
 
-## 3. 工程是正
+## 3. Schedule remediation
 
-監査時に[Recommendation実装plan](../../plans/recommendation.pert)へMIG-01からMIG-07を22pとして分解した。初期Velocityは、同じTypeScript Core/CLI実装に最も近い`operations.pert`の暫定実測`24p/1d`を使用した。Detail resource makespan 22pをmacroへ`0.916667d`としてroll-upし、`RECOMMENDATION_IMPLEMENTATION`を`RELEASE_READY`へ入るhard predecessorとして追加した。
+At audit time, MIG-01 through MIG-07 were decomposed into 22p in the [recommendation implementation plan](../../plans/recommendation.pert). The initial velocity used the provisional observed `24p/1d` of `operations.pert`, the closest comparable TypeScript Core/CLI implementation. The 22p detail-resource makespan was rolled up to the macro plan as `0.916667d`, and `RECOMMENDATION_IMPLEMENTATION` was added as a hard predecessor of `RELEASE_READY`.
 
-2026-07-23にMIG-01 fixture baseline 2pを完了した。Recommendation固有の初回実測を`2p/1d`とし、残るresource 20pのforecast 10dをmacroへ再roll-upした。次のdetail taskは`RANKING_CORE`であり、condition 16と`RELEASE_E2E`は引き続き未完了である。
+On 2026-07-23, MIG-01 fixture baseline 2p was completed. The first recommendation-specific observation was set to `2p/1d`, and the remaining-resource forecast of 20p/10d was rolled up to the macro plan again. The next detail task was `RANKING_CORE`; condition 16 and `RELEASE_E2E` remained incomplete.
 
-同日にMIG-02 ranking/tier Core 4pを完了し、累計実測を`6p/1d`へ更新した。残るresource 16pのforecast `8/3d`をmacroへ`2.666667d`として再roll-upした。次のdetail taskは`EXPLANATION_CORE`であり、condition 16と`RELEASE_E2E`は引き続き未完了である。
+On the same day, MIG-02 ranking/tier Core 4p was completed and cumulative observed velocity was updated to `6p/1d`. The forecast for the remaining 16p of resource work, `8/3d`, was rolled up again to the macro plan as `2.666667d`. The next detail task was `EXPLANATION_CORE`; condition 16 and `RELEASE_E2E` remained incomplete.
 
-同日にMIG-03 structured explanation/invariant Core 5pを完了し、累計実測を`11p/1d`へ更新した。残るresource 11pのforecast 1dをmacroへ再roll-upした。次のdetail taskは`NEXT_V3_PUBLICATION`であり、public v3、override、shadow/adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
+On the same day, MIG-03 structured explanation/invariant Core 5p was completed and cumulative observed velocity was updated to `11p/1d`. The one-day forecast for the remaining 11p of resource work was rolled up again to the macro plan. The next detail task was `NEXT_V3_PUBLICATION`; condition 16 and `RELEASE_E2E` remained incomplete because public v3, override, and shadow/adoption work remained.
 
-同日にMIG-04 `NextResult.v3` atomic publication 4pを完了し、累計実測を`15p/1d`へ更新した。残るresource 7pのforecast `7/15d`をmacroへ`0.466667d`として再roll-upした。Detailでは`SELF_USE_SHADOW`がrecommended、`OVERRIDE_VALIDATION`はreviewer競合でdeferredである。Override validation、shadow/adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
+On the same day, MIG-04 `NextResult.v3` atomic publication 4p was completed and cumulative observed velocity was updated to `15p/1d`. The forecast for the remaining 7p of resource work, `7/15d`, was rolled up again to the macro plan as `0.466667d`. In the detail plan, `SELF_USE_SHADOW` was recommended and `OVERRIDE_VALIDATION` was deferred because of reviewer contention. Condition 16 and `RELEASE_E2E` remained incomplete because override validation and shadow/adoption work remained.
 
-同日にMIG-06 self-use shadow 2pを完了し、5 planのmanual selectionとv3 recommendationの一致、known contract、complete graph、byte determinism、joint feasibility、operational field互換、structured why-notを受け入れた。累計実測を`17p/1d`へ更新し、残るresource 5pのforecast `5/17d`をmacroへ`0.294118d`として再roll-upした。Detailでは`OVERRIDE_VALIDATION`がrecommended、`AUTHORITY_ADOPTION`はreviewer競合でdeferredである。Override validationとnormal authority adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
+On the same day, MIG-06 self-use shadow 2p was completed, accepting agreement between five-plan manual selection and v3 recommendation, the known contract, complete graph, byte determinism, joint feasibility, operational-field compatibility, and structured why-not. Cumulative observed velocity was updated to `17p/1d`, and the forecast for the remaining 5p of resource work, `5/17d`, was rolled up again to the macro plan as `0.294118d`. In the detail plan, `OVERRIDE_VALIDATION` was recommended and `AUTHORITY_ADOPTION` was deferred because of reviewer contention. Condition 16 and `RELEASE_E2E` remained incomplete because override validation and normal-authority adoption remained.
 
-同日にMIG-05 read-only override validation 3pを完了した。Pure `validateOverride`、`PTOVR-101`から`PTOVR-106`、feasible replacement、normal trace reference、caller-asserted actor、canonical evidence、capacity witness、deterministic `Perttool.OverrideDecision.v1` artifact、package-installed APIを検査した。累計実測を`20p/1d`へ更新し、残るresource 2pのforecast `1/10d`をmacroへ`0.1d`として再roll-upした。Detailでは`AUTHORITY_ADOPTION`が唯一のrecommended taskである。Normal authority adoptionが残るためcondition 16と`RELEASE_E2E`は引き続き未完了である。
+On the same day, MIG-05 read-only override validation 3p was completed. It verified pure `validateOverride`, `PTOVR-101` through `PTOVR-106`, feasible replacement, normal-trace references, caller-asserted actor, canonical evidence, capacity witness, deterministic `Perttool.OverrideDecision.v1` artifact, and the package-installed API. Cumulative observed velocity was updated to `20p/1d`, and the forecast for the remaining 2p of resource work, `1/10d`, was rolled up again to the macro plan as `0.1d`. In the detail plan, `AUTHORITY_ADOPTION` was the only recommended task. Condition 16 and `RELEASE_E2E` remained incomplete because normal-authority adoption remained.
 
-同日にMIG-07 normal authority adoption 2pを完了した。共有指示、AI開発ガイド、consumer guide、helpへnormal selection ruleを同期し、recommended subset、allowed 1件追加、override-required selection、empty recommendationと16のunknown/incomplete/decisive-semantics境界をdry-runした。全22pの暫定実測を`22p/1d`へ更新し、detail残作業は0pとなった。Macro `RECOMMENDATION_IMPLEMENTATION`も完了し、condition 16をPassへ変更した。`RELEASE_E2E`が唯一のreadyかつrecommended taskで、残るmakespanは2dである。
+On the same day, MIG-07 normal-authority adoption 2p was completed. The normal-selection rule was synchronized to shared instructions, the AI development guide, consumer guide, and help; it dry-ran the recommended subset, one allowed addition, override-required selection, empty recommendation, and 16 unknown/incomplete/decisive-semantics boundaries. The provisional observation for all 22p was updated to `22p/1d`, leaving 0p in the detail plan. Macro `RECOMMENDATION_IMPLEMENTATION` was also completed and condition 16 was changed to Pass. `RELEASE_E2E` was the only ready and recommended task, with a remaining makespan of 2d.
 
-MIG-08のoverride apply、durable audit、Git integrationはMVP条件ではない。Read-only override validationであるMIG-05までをMVPへ含め、write authorityはMVP後も未解禁とする。
+MIG-08 override apply, durable audit, and Git integration are not MVP criteria. The MVP includes MIG-05, the read-only override validation; write authority remains unavailable after the MVP.
 
-## 4. `RELEASE_E2E`再開条件
+## 4. `RELEASE_E2E` restart conditions
 
-- `plans/recommendation.pert`のMIG-01からMIG-07が完了している
-- `Perttool.NextResult.v3`のcomplete JSON、text summary、help、consumer migrationが公開済みである
-- self-use shadowとnormal authority adoptionが受け入れ済みである
-- `npm run check`がpackage-installed CLIを含め成功する
-- package smokeがcheck、analyze、next v3、editing preview、advance preview、Mermaid round-tripを隔離prefixで確認する
+- MIG-01 through MIG-07 in `plans/recommendation.pert` are complete.
+- Complete JSON, text summary, help, and consumer migration for `Perttool.NextResult.v3` are published.
+- Self-use shadow and normal-authority adoption are accepted.
+- `npm run check`, including the package-installed CLI, succeeds.
+- Package smoke verifies check, analyze, next v3, editing preview, advance preview, and Mermaid round-trip in an isolated prefix.
 
-2026-07-23のMIG-07 changeでこの条件を満たし、同日のrelease artifact再監査と公開後検証で`RELEASE_E2E`を完了した。
+The MIG-07 change on 2026-07-23 met these conditions; the same day's release-artifact re-audit and post-publication verification completed `RELEASE_E2E`.
 
 ## 5. npm publication preparation
 
-2026-07-23に利用者の明示overrideでnpm publication preparationだけを前倒しした。この準備は`RELEASE_E2E`のpredecessorを満たさず、task status、recommendation authority、外部publish authorityを変更しない。
+On 2026-07-23, an explicit user override advanced only npm publication preparation. This preparation did not satisfy `RELEASE_E2E` predecessors and did not change task status, recommendation authority, or external publication authority.
 
-その後MIG-07まで完了し、`RELEASE_E2E`がreadyになった時点で、利用者は`secdat exec`配下でのGit pushとnpm publishを明示許可した。Actual publishは[npm publication手順](npm-publication.md)の同一artifact gateを満たしてから一度だけ実行する。
+After MIG-07 was complete and `RELEASE_E2E` became ready, the user explicitly authorized Git push and npm publication under `secdat exec`. Perform actual publication exactly once after meeting the same-artifact gate in the [npm publication procedure](npm-publication.md).
 
-確認・整備済み:
+Verified and prepared:
 
-- npm registryの`perttool`は確認時点で`E404`
-- maintainerのsecretを`NPM_TOKEN`へ統一し、値を表示せず`npm whoami`成功
-- npm 11のdry-runで`./dist/cli.js`がpublish manifestから除去される問題を再現
-- `bin.perttool`を`dist/cli.js`へcanonical化
-- public npmjs registryと`alpha` dist-tagを`publishConfig`へ固定
-- 同一tarball、clean worktree、local/remote tag、remote main、未公開versionを検査するfail-closed publish script
-- package checkへpublish normalization dry-runを追加
+- `perttool` in the npm registry returned `E404` at verification time.
+- The maintainer secret was standardized as `NPM_TOKEN`, without displaying its value; `npm whoami` succeeded.
+- An npm 11 dry run reproduced removal of `./dist/cli.js` from the publish manifest.
+- `bin.perttool` was canonicalized to `dist/cli.js`.
+- The public npmjs registry and `alpha` dist-tag were fixed in `publishConfig`.
+- A fail-closed publication script checks the same tarball, clean worktree, local/remote tag, remote main, and unpublished version.
+- A publish-normalization dry run was added to the package check.
 
-実施結果:
+Results:
 
-- release commit `dd4fc3efc01945544a2dad7e1838fdd4d06d7275`を`origin/main`へpushし、同commitのannotated tag `v0.1.0-alpha.2`を作成
-- GitHub prereleaseへtarballと`SHA256SUMS`を添付し、公開assetのSHA-256 `aadb757a5d7bb82eed677158ce5c4b0672c5695a6dde97bec6f10c438711be8a`を確認
-- 同じtarballをnpmへ一度だけpublishし、`perttool@0.1.0-alpha.2`、`alpha` dist-tag、registry integrity、SHA-1 `d1bc681e68384d29b3130ba9a21c99e44605d51d`を確認
-- GitHub assetとregistry tarballのSHA-256一致、`perttool@alpha`の隔離install、`--version`、`dsl check`を確認
-- task finish previewのsource digest `sha256:741c027228dd13cfdf6bcdb6a4e0c0f6523848aba6f1c4f6e4d1f762433533bf`とcandidate digest `sha256:47937515ecbf024bd1dd23ca7d73e526e2fb25ae6fac27cc4ff179ece45d5217`を確認して`RELEASE_E2E`を完了
+- Release commit `dd4fc3efc01945544a2dad7e1838fdd4d06d7275` was pushed to `origin/main`, and annotated tag `v0.1.0-alpha.2` was created at that commit.
+- The tarball and `SHA256SUMS` were attached to the GitHub prerelease, and published-asset SHA-256 `aadb757a5d7bb82eed677158ce5c4b0672c5695a6dde97bec6f10c438711be8a` was verified.
+- The same tarball was published to npm exactly once, verifying `perttool@0.1.0-alpha.2`, the `alpha` dist-tag, registry integrity, and SHA-1 `d1bc681e68384d29b3130ba9a21c99e44605d51d`.
+- The SHA-256 match between the GitHub asset and registry tarball, isolated installation of `perttool@alpha`, `--version`, and `dsl check` were verified.
+- `RELEASE_E2E` was completed after verifying task-finish-preview source digest `sha256:741c027228dd13cfdf6bcdb6a4e0c0f6523848aba6f1c4f6e4d1f762433533bf` and candidate digest `sha256:47937515ecbf024bd1dd23ca7d73e526e2fb25ae6fac27cc4ff179ece45d5217`.
 
-実行順とTOKEN境界は[npm publication手順](npm-publication.md)を正とする。
+The [npm publication procedure](npm-publication.md) is authoritative for execution order and TOKEN boundaries.

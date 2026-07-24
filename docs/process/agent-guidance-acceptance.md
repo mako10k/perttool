@@ -1,53 +1,53 @@
-# AI Agent Guidance Registry v1受け入れ記録
+# AI Agent Guidance Registry v1 Acceptance Record
 
-- 文書状態: Accepted 1.0
-- 受け入れ日: 2026-07-23
-- 対象Issue: [Issue #2](https://github.com/mako10k/perttool/issues/2)
-- 規範仕様: [AI Agent Guidance Registry仕様](../specs/agent-guidance.md)
-- 規範例: [AI Agent Guidance Registry規範例](../examples/agent-guidance.md)
-- Provider根拠: [AI Agent Guidance Provider baseline](agent-guidance-provider-baseline.md)
-- 詳細plan: [../../plans/agent-guidance.pert](../../plans/agent-guidance.pert)
+- Document status: Accepted 1.0
+- Acceptance date: 2026-07-23
+- Issue: [Issue #2](https://github.com/mako10k/perttool/issues/2)
+- Normative specification: [AI Agent Guidance Registry specification](../specs/agent-guidance.md)
+- Normative example: [AI Agent Guidance Registry normative example](../examples/agent-guidance.md)
+- Provider evidence: [AI Agent Guidance Provider baseline](agent-guidance-provider-baseline.md)
+- Detail plan: [../../plans/agent-guidance.pert](../../plans/agent-guidance.pert)
 
-## 1. 判定
+## 1. Decision
 
-Issue #2のread-only AI Agent Guidance Registry v1を受け入れる。Codex、GitHub Copilot、Claude Code、Grok Build、Antigravityのversion付きoffline profileを、provider固有名称と共通surfaceを分離した同一Coreから参照できる。`agent help`のtextとJSONは同じCore resultから決定的に生成され、package-installed CLIとpublic libraryも同じprofileを使用する。
+Accept read-only AI Agent Guidance Registry v1 for Issue #2. Versioned offline profiles for Codex, GitHub Copilot, Claude Code, Grok Build, and Antigravity can be queried through the same Core, which separates provider-specific names from common surfaces. `agent help` text and JSON are generated deterministically from the same Core result, and the package-installed CLI and public library use the same profiles.
 
-本受け入れは`agent help`だけを対象とする。`agent audit`、`agent scaffold`、hook実行、enforcement、provider設定変更、runtime network refreshは未実装かつnon-goalであり、受け入れによって解禁しない。
+This acceptance covers only `agent help`. `agent audit`, `agent scaffold`, hook execution, enforcement, provider configuration changes, and runtime network refresh are unimplemented and non-goals; this acceptance does not authorize them.
 
 ## 2. Issue #2 acceptance trace
 
-| ID | Acceptance criterion | 規範・実装 | 自動検証 |
+| ID | Acceptance criterion | Normative source and implementation | Automated verification |
 | --- | --- | --- | --- |
-| AGT-AC-01 | 共通surface taxonomyとstable guidance code | 仕様5.2、6章、`src/guidance/types.ts`、`src/guidance/profile.ts` | `test/agent-guidance-contract.test.mjs`、`test/agent-guidance-core.test.mjs` |
-| AGT-AC-02 | Provider用語を共通conceptへmapping | 仕様5.2、7章、Provider baseline | `test/agent-guidance-provider-baseline.test.mjs`、`test/agent-guidance-core.test.mjs` |
-| AGT-AC-03 | Provider ID、alias、support、staleness、unknown契約 | 仕様5章、7.3節、12章 | `test/agent-guidance-contract.test.mjs`、`test/agent-guidance-core.test.mjs` |
-| AGT-AC-04 | Read-only command、Core result、text/JSON、exit code | 仕様3章、8章から12章、`src/application/agent-help.ts` | `test/agent-guidance-core.test.mjs`、`test/agent-guidance-publication.test.mjs` |
-| AGT-AC-05 | TextとJSONを同一registryから決定的に生成 | `src/guidance/query.ts`、`src/guidance/text.ts`、`src/cli.ts` | Core serializer/CLI byte parity、text golden |
-| AGT-AC-06 | 5 providerのartifact、scope、maturity、risk、source、確認日 | Provider baseline、`test/fixtures/agent-guidance/provider-baseline.v1.json` | Provider baseline completeness、Core profile parity |
-| AGT-AC-07 | 6 support statusのfixture | `test/fixtures/agent-guidance/contract.v1.json` | support/evidence一対一、全status Core検証 |
-| AGT-AC-08 | Provider orderingとprojectionのfixture/golden | Provider/contract fixture、`test/golden/agent-guidance/` | 5 provider × 6 surface順序、index/quick/detail、alias、source closure |
-| AGT-AC-09 | Legacy `dsl help`非回帰 | 仕様11.1節、独立したstructured command help registry | `legacy-dsl-help-index.expected.json` byte golden |
-| AGT-AC-10 | README、basic design、AI process、help同期 | `README.md`、`docs/basic-design.md`、`docs/process/ai-development.md`、`src/help/registry.ts` | documentation/link check、CLI help/publication test |
-| AGT-AC-11 | Offline/read-onlyでhook、file生成、network refreshなし | 仕様3章、9.7節、read-only capability、pure Core境界 | 空環境・一時directory実行、capability、package-installed CLI検証 |
-| AGT-AC-12 | Audit、scaffold、enforcement migration境界 | 仕様14章、beta release手順 | contract normative case AGT-018からAGT-020、documentation check |
+| AGT-AC-01 | Common-surface taxonomy and stable guidance codes | Specification sections 5.2 and 6; `src/guidance/types.ts`; `src/guidance/profile.ts` | `test/agent-guidance-contract.test.mjs`; `test/agent-guidance-core.test.mjs` |
+| AGT-AC-02 | Mapping provider terminology to common concepts | Specification sections 5.2 and 7; Provider baseline | `test/agent-guidance-provider-baseline.test.mjs`; `test/agent-guidance-core.test.mjs` |
+| AGT-AC-03 | Provider ID, alias, support, staleness, and unknown contract | Specification sections 5, 7.3, and 12 | `test/agent-guidance-contract.test.mjs`; `test/agent-guidance-core.test.mjs` |
+| AGT-AC-04 | Read-only command, Core result, text/JSON, and exit codes | Specification sections 3 and 8 through 12; `src/application/agent-help.ts` | `test/agent-guidance-core.test.mjs`; `test/agent-guidance-publication.test.mjs` |
+| AGT-AC-05 | Deterministic text and JSON from the same registry | `src/guidance/query.ts`; `src/guidance/text.ts`; `src/cli.ts` | Core serializer/CLI byte parity; text golden |
+| AGT-AC-06 | Artifacts, scope, maturity, risk, sources, and verification date for five providers | Provider baseline; `test/fixtures/agent-guidance/provider-baseline.v1.json` | Provider baseline completeness; Core profile parity |
+| AGT-AC-07 | Fixtures for six support statuses | `test/fixtures/agent-guidance/contract.v1.json` | One-to-one support/evidence mapping; Core verification for every status |
+| AGT-AC-08 | Provider-ordering and projection fixtures/goldens | Provider/contract fixtures; `test/golden/agent-guidance/` | Five-provider by six-surface ordering; index/quick/detail; aliases; source closure |
+| AGT-AC-09 | No regression in legacy `dsl help` | Specification section 11.1; separate structured command-help registry | `legacy-dsl-help-index.expected.json` byte golden |
+| AGT-AC-10 | README, basic design, AI process, and help synchronization | `README.md`; `docs/basic-design.md`; `docs/process/ai-development.md`; `src/help/registry.ts` | Documentation/link check; CLI help/publication test |
+| AGT-AC-11 | Offline/read-only with no hooks, file generation, or network refresh | Specification sections 3 and 9.7; read-only capabilities; pure-Core boundary | Empty-environment and temporary-directory execution; capabilities; package-installed CLI verification |
+| AGT-AC-12 | Audit, scaffold, and enforcement migration boundary | Specification section 14; beta release procedure | Contract normative cases AGT-018 through AGT-020; documentation check |
 
-Issue本文の12 criteriaと本表は一対一である。規範的な意味はIssue本文ではなく、仕様15章のacceptance traceと上記参照先を正とする。
+The 12 criteria in the issue body correspond one-to-one with this table. Normative meaning comes not from the issue body but from the acceptance trace in specification section 15 and the references above.
 
 ## 3. Provider evidence
 
-Provider baselineとbundled profileの`verified_at`および`snapshot_as_of`は`2026-07-23`である。Provider baseline専用testは次を検査する。
+`verified_at` and `snapshot_as_of` in the Provider baseline and bundled profiles are `2026-07-23`. Provider-baseline-specific tests check the following.
 
-- 5 providerが固定順で存在し、各providerが同じ6 surfaceを持つ
-- 各surfaceがscope、maturity evidence、risk observation、official source参照、確認日を持つ
-- Official sourceがproviderに対応するhostだけを使用する
-- 公式資料でpathを確定できないartifactは空配列のまま保持し、推測で補わない
-- Baselineからbundled profileへのprovider、surface、artifact、source mappingが閉じている
+- Five providers exist in fixed order, and each provider has the same six surfaces
+- Each surface has scope, maturity evidence, risk observation, official-source references, and verification date
+- Official sources use only hosts corresponding to their provider
+- Artifacts whose paths cannot be determined from official documentation remain empty arrays and are not inferred
+- Provider, surface, artifact, and source mappings from the baseline to bundled profiles are closed
 
 ## 4. Security boundary
 
-`src/guidance/`は固定profileと引数だけを入力とするpure Coreで、file、environment、clock、locale catalog、network、provider APIを参照しない。CLI adapterは結果の表示だけを担当する。
+`src/guidance/` is a pure Core that accepts only fixed profiles and arguments; it does not access files, environment, clock, locale catalogs, network, or provider APIs. The CLI adapter only displays results.
 
-受け入れtestはproject外の空の一時directoryと空environmentで`agent help`を実行し、fileが生成されないことを確認する。公開capabilityは次の全項目を`false`として固定する。
+Acceptance tests run `agent help` in an empty temporary directory outside the project with an empty environment and confirm that no files are generated. The public capabilities fix all of the following to `false`.
 
 - project file read
 - file write
@@ -56,11 +56,11 @@ Provider baselineとbundled profileの`verified_at`および`snapshot_as_of`は`
 - network access
 - provider state read/write
 
-表示されるhook、workflow、connectorのriskはprovider機能についての説明であり、perttoolがそれらを実行したことを意味しない。
+The displayed risks for hooks, workflows, and connectors describe provider functionality; they do not mean perttool executed them.
 
 ## 5. Verification
 
-Repository root、Node.js 24以上で次を実行し、すべて成功した。
+The following commands were run from the repository root with Node.js 24 or later, and all succeeded.
 
 ```sh
 npm run build
@@ -74,10 +74,10 @@ npm run check
 git diff --check
 ```
 
-専用testは30件を実行した。Package checkはrelease tarballを一時directoryへpack/installし、public library、installed `agent help`、既存command、package内容、publish dry-runを検査した。Actual publish、GitHub release、npm dist-tag変更は実行していない。
+The dedicated tests ran 30 cases. The package check packed and installed the release tarball in a temporary directory and inspected the public library, installed `agent help`, existing commands, package contents, and publish dry run. Actual publish, GitHub release, and npm dist-tag changes were not run.
 
-## 6. Betaへの引き継ぎ
+## 6. Handoff to beta
 
-本受け入れでIssue #2 feature gateを閉じる。次の工程はmacro planの`BETA_RELEASE_E2E`であり、[beta release手順](beta-release.md)に従ってsuffixなし`0.1.0`、同一tarball、GitHub prerelease、npm `beta`、既存`latest`不変、registry隔離installを検証する。
+This acceptance closes the Issue #2 feature gate. The next step is `BETA_RELEASE_E2E` in the macro plan, which verifies suffix-free `0.1.0`, the identical tarball, GitHub prerelease, npm `beta`, unchanged pre-existing `latest`, and isolated registry installation according to the [beta release procedure](beta-release.md).
 
-本記録はbeta distribution完了を表さない。Version変更、beta release commitとそのpush、tag、GitHub prerelease、npm publishは`BETA_RELEASE_E2E`の明示的な実行時にだけ行う。
+This record does not represent completed beta distribution. Version changes, the beta release commit and its push, tag, GitHub prerelease, and npm publish occur only when `BETA_RELEASE_E2E` is explicitly executed.
