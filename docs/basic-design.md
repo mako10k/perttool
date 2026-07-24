@@ -1,9 +1,9 @@
-# perttool 基本設計
+# perttool Basic Design
 
-- 文書状態: Draft 1.8
-- 作成日: 2026-07-21
-- 更新日: 2026-07-23
-- 対応要件: [requirements.md](requirements.md)
+- Document status: Draft 1.8
+- Created: 2026-07-21
+- Updated: 2026-07-23
+- Applicable requirements: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
@@ -23,49 +23,49 @@
 - Runtime/package decision: [adr/0005-node-22-runtime-baseline.md](adr/0005-node-22-runtime-baseline.md)
 - Beta versioning/release decision: [adr/0003-beta-versioning.md](adr/0003-beta-versioning.md)
 - Repository language decision: [adr/0004-english-repository-baseline.md](adr/0004-english-repository-baseline.md)
-- 自己利用計画: [process/self-use.md](process/self-use.md)
+- Self-use plan: [process/self-use.md](process/self-use.md)
 
-## 1. 目的
+## 1. Purpose
 
-本書は、要件で定めた `perttool` を実装へ移せる粒度まで分解し、共通コア、データ表現、処理フロー、外部インターフェース、安全な文書更新、テスト境界を定義する。
+This document decomposes the `perttool` defined by the requirements to an implementation-ready level, and defines the shared Core, data representations, processing flows, external interfaces, safe document updates, and test boundaries.
 
-完全なDSL grammar、CLI/JSON contract、Mermaid profileは個別仕様で固定した。本書では、それらを実装するモジュール境界と契約を扱う。
+The complete DSL grammar, CLI/JSON contracts, and Mermaid profile are fixed by their respective specifications. This document covers the module boundaries and contracts that implement them.
 
-## 2. 基本方針
+## 2. Design Principles
 
-### 2.1 採用する方針
+### 2.1 Adopted Principles
 
-- 実装言語は TypeScript とする
-- Node.js 上で動作する CLI とライブラリを同一 package から提供する
-- task を edge、milestone を node とする Activity-on-Arrow を中核モデルとする
-- `.pert` 文書を正本とし、通常の解析はローカルで完結させる
-- parser、意味検査、PERT/CPM 計算は共通コアへ集約する
-- MVPはCLIをprimary adapterとし、LSP server、VSIX、MCP serverはMVP後に共通コアへ追加する
-- 文書編集は source span に対する差分として計画し、再 parse・再検査後にだけ適用する
-- 人間向け text と機械向け JSON は、同じ結果 object から描画する
-- すべての計算と並び順を決定的にする
+- The implementation language is TypeScript.
+- A CLI and library that run on Node.js are provided from the same package.
+- Activity-on-Arrow, in which tasks are edges and milestones are nodes, is the central model.
+- `.pert` documents are authoritative, and normal analysis completes locally.
+- Parsing, semantic validation, and PERT/CPM calculation are consolidated in the shared Core.
+- The MVP uses the CLI as its primary adapter; an LSP server, VSIX, and MCP server are added to the shared Core after the MVP.
+- Document edits are planned as diffs against source spans and applied only after reparsing and revalidation.
+- Human-readable text and machine-readable JSON are rendered from the same result object.
+- All calculations and orderings are deterministic.
 - English is the canonical language for repository-maintained artifacts; runtime i18n is not part of the current architecture
 
-TypeScript を選ぶ理由は次のとおりである。
+TypeScript is selected for the following reasons.
 
-- CLIと将来のMCP、VS Code系adapterを同じ型と実装から提供しやすい
-- Mermaid/HTML/SVG などの可視化 adapter と統合しやすい
-- `llmthink` で採用済みの、共通コアと薄い複数 UI という構成を踏襲できる
-- JSON Schema と TypeScript type の対応を管理しやすい
+- It enables the CLI and future MCP and VS Code-family adapters to share types and implementations.
+- It integrates well with visualization adapters such as Mermaid, HTML, and SVG.
+- It can follow the architecture already adopted by `llmthink`: a shared Core with multiple thin UIs.
+- It makes the correspondence between JSON Schema and TypeScript types easier to manage.
 
 The runtime is Node.js 22 or later, the package manager is npm, and the module format is ESM. [ADR 0005](adr/0005-node-22-runtime-baseline.md) defines the supported baseline; `package.json` and `package-lock.json` define concrete package versions, and the CI workflow defines the tested runtime matrix.
 
-### 2.2 採用しない方針
+### 2.2 Rejected Principles
 
-- CLI から MCP server を呼び出す構成にはしない
-- UI ごとに parser や PERT 計算を実装しない
-- AST を毎回全量 serialize して局所編集する方式を既定にしない
-- 浮動小数点値を計算上の正本にしない
-- Mermaid AST を内部の正規 graph model にしない
-- LLM の応答を解析結果として扱わない
-- 初期実装で厳密最適resource leveling、calendar、skill、外部issue同期を混在させない
+- The CLI does not invoke an MCP server.
+- Parsers and PERT calculations are not implemented separately for each UI.
+- Re-serializing the entire AST for every local edit is not the default approach.
+- Floating-point values are not authoritative for calculations.
+- A Mermaid AST is not the internal canonical graph model.
+- An LLM response is not treated as an analysis result.
+- The initial implementation does not combine exact-optimal resource leveling, calendars, skills, or external issue synchronization.
 
-## 3. システム構成
+## 3. System Architecture
 
 ```mermaid
 flowchart LR
@@ -98,9 +98,9 @@ flowchart LR
   GUIDANCE --> CLI
 ```
 
-### 3.1 dependency rule
+### 3.1 Dependency Rule
 
-依存方向は外側から内側への一方向にする。
+Dependencies point in one direction, from outer layers to inner layers.
 
 ```text
 CLI / future MCP / LSP / VSIX / filesystem
@@ -112,21 +112,21 @@ CLI / future MCP / LSP / VSIX / filesystem
 syntax / semantic / graph / analyzer / recommendation / transform
 ```
 
-Core layer は次へ依存してはならない。
+The Core layer MUST NOT depend on the following:
 
 - filesystem
 - network
 - process environment
-- terminal width や color
+- terminal width or color
 - MCP transport
 - editor API
-- wall clock
+- wall clock time
 
-基準日時、file path、表示桁、critical epsilon などは明示的な引数として渡す。
+The reference timestamp, file path, display precision, critical epsilon, and similar values are passed as explicit arguments.
 
-## 4. リポジトリ構成
+## 4. Repository Structure
 
-現在の実装では次の配置を採用する。未実装moduleを先行して配置しない。
+The current implementation uses the following layout. Do not create directories for unimplemented modules in advance.
 
 ```text
 perttool/
@@ -215,43 +215,43 @@ perttool/
     golden/
 ```
 
-配置は責務を表す。小規模な初期段階で空 directory を先に量産せず、実装 slice に応じて追加する。
+The layout represents responsibilities. Do not proliferate empty directories during the small initial stage; add them as implementation slices require.
 
-## 5. 文書表現の3層
+## 5. Three Layers of Document Representation
 
-文書を `CST -> AST -> Graph` の3層で扱う。
+Documents are handled in three layers: `CST -> AST -> Graph`.
 
 ### 5.1 CST
 
-CST は元テキストの編集可能性を保持する。
+CST preserves the editability of the original text.
 
-保持する情報:
+Preserved information:
 
-- token kind と raw text
-- UTF-16 code unit offset
-- line と column
+- token kind and raw text
+- UTF-16 code-unit offset
+- line and column
 - indentation
-- 空行
-- 独立行 comment
-- block の開始・終了 span
-- field value の span
-- block text marker と content の個別 span
-- 改行形式
+- blank lines
+- standalone-line comments
+- start and end spans for blocks
+- spans for field values
+- separate spans for block text markers and content
+- line-ending form
 
-内部 offset、line、column は 0 始まりとし、offset と column は JavaScript/LSP と整合する UTF-16 code unit 基準とする。CLI の source location は 1 始まりへ変換して表示する。filesystem digest と file size だけは UTF-8 byte 列を対象にする。
+Internal offsets, lines, and columns are zero-based; offsets and columns use UTF-16 code units to align with JavaScript and LSP. The CLI converts source locations to one-based values for display. Only filesystem digests and file sizes use UTF-8 byte sequences.
 
-CST の目的:
+Purposes of the CST:
 
-- task の 1 field だけを変更する
-- comment と宣言順を保持する
-- source diagnostic を正確に示す
-- editor rename や code action の基盤にする
+- Change only one field of a task.
+- Preserve comments and declaration order.
+- Report source diagnostics precisely.
+- Provide the foundation for editor rename and code actions.
 
 ### 5.2 AST
 
-AST は DSL の構文上の意味を表す。
+AST represents the syntactic meaning of the DSL.
 
-初期 node:
+Initial nodes:
 
 - `ProjectDecl`
 - `ResourceDecl`
@@ -264,7 +264,7 @@ AST は DSL の構文上の意味を表す。
 - `TextField`
 - `ListField`
 
-各 node は最低限、次を持つ。
+Each node has at least the following:
 
 ```text
 kind
@@ -274,11 +274,11 @@ source span
 CST node reference
 ```
 
-AST の時点では、参照先の存在、cycle、finish 到達性を確定しない。
+At the AST stage, target existence, cycles, and reachability of `finish` are not determined.
 
 ### 5.3 Graph model
 
-Graph model は参照解決済みの解析用表現である。
+The Graph model is the analysis representation after reference resolution.
 
 ```ts
 interface PertGraph {
@@ -292,23 +292,23 @@ interface PertGraph {
 }
 ```
 
-Graph model の条件:
+Graph model conditions:
 
-- ID が一意である
-- endpoint が解決済みである
-- taskのresource requirementが解決済みでcapacity内である
-- self-loop がない
-- DAG である
-- adjacency の edge ID は決定的な順で並ぶ
-- 入力 AST への source reference を保持する
+- IDs are unique.
+- Endpoints are resolved.
+- Each task resource requirement is resolved and within capacity.
+- There are no self-loops.
+- The graph is a DAG.
+- Edge IDs in adjacency lists use a deterministic order.
+- Source references to the input AST are retained.
 
-解析器は無効な Graph を受け取らない。構造エラーがある場合は `SemanticResult` が diagnostics を返し、Graph の生成を完了扱いにしない。
+Analyzers do not receive an invalid Graph. When structural errors exist, `SemanticResult` returns diagnostics and Graph construction is not considered complete.
 
-## 6. 数値表現
+## 6. Numeric Representation
 
 ### 6.1 Rational
 
-duration、expected、variance、float は内部で正規化した有理数として扱う。
+Durations, expected values, variances, and float values are represented internally as normalized rational numbers.
 
 ```ts
 interface Rational {
@@ -319,42 +319,42 @@ interface Rational {
 
 Rules:
 
-- denominator は常に正数
-- numerator と denominator は最大公約数で約分する
-- DSL の有限小数は正確な分数へ変換する
-- PERT の `/ 6` を正確に保持する
-- 表示時だけ指定桁へ丸める
-- JSON では decimal string と、必要に応じて numerator/denominator string を返す
+- The denominator is always positive.
+- The numerator and denominator are reduced by their greatest common divisor.
+- Finite decimals in the DSL are converted to exact fractions.
+- PERT division by `/ 6` is retained exactly.
+- Rounding to the requested precision occurs only for display.
+- JSON returns a decimal string and, when necessary, numerator and denominator strings.
 
-これにより、critical 判定と tie-break が runtime の浮動小数点差に左右されることを避ける。
+This prevents criticality decisions and tie breaks from depending on runtime floating-point differences.
 
-### 6.2 duration unitとvelocity
+### 6.2 Duration Units and Velocity
 
-MVP では 1 文書内の duration unit を統一する。
+The MVP uses a single duration unit within each document.
 
-- `duration_unit day` なら `d`
-- `duration_unit hour` なら `h`
-- `duration_unit point`なら`p`。`velocity <points>p/<period>d|h`を必須とする
-- 異なる unit の混在は semantic error
-- Pointとday/hourはproject-wide velocityでexact Rational換算する
-- 換算値はvelocity forecastとして基準PERT値と別に保持する
-- day/hour間のcalendar変換は行わない
-- variance の unit は duration unit の二乗として metadata に示す
+- `duration_unit day` uses `d`.
+- `duration_unit hour` uses `h`.
+- `duration_unit point` uses `p` and requires `velocity <points>p/<period>d|h`.
+- Mixing units is a semantic error.
+- Points and days/hours are converted as exact rationals using project-wide velocity.
+- Converted values are kept separately from baseline PERT values as a velocity forecast.
+- No calendar conversion is performed between days and hours.
+- Metadata reports the variance unit as the square of the duration unit.
 
-### 6.3 resource quantity
+### 6.3 Resource Quantities
 
-resource capacity、task requirement量、priorityは安全な範囲の非負Integerとして扱う。
+Resource capacities, task requirement quantities, and priorities are non-negative integers within a safe range.
 
-- capacityは1以上
-- requirement量は1以上かつcapacity以下
-- priorityは0以上、既定値0
-- 最大値は2147483647
-- quantityはdurationのRationalと混在させない
-- active taskの同時requirement合計がcapacityを超える場合はanalysis error
+- Capacity is at least 1.
+- A requirement quantity is at least 1 and no greater than capacity.
+- Priority is at least 0; its default is 0.
+- The maximum value is 2147483647.
+- Quantities are not mixed with duration rationals.
+- An analysis error occurs when simultaneous requirements of active tasks exceed capacity.
 
-## 7. 診断モデル
+## 7. Diagnostic Model
 
-すべての layer は共通の `Diagnostic` を返す。
+Every layer returns the shared `Diagnostic` type.
 
 ```ts
 interface Diagnostic {
@@ -369,29 +369,29 @@ interface Diagnostic {
 }
 ```
 
-code namespace:
+Code namespaces:
 
-- `PTDSL-*`: lexical/parser/field syntax
-- `PTSEM-*`: reference、state、duration、graph constraint
-- `PTDAG-*`: cycle、reachability、schedule
-- `PTRES-*`: resource capacity、allocation、resource schedule
-- `PTMUT-*`: mutation request、target resolution、unsafe removal
-- `PTIO-*`: safe-write conflict、post-write verification
-- `PTCNV-*`: import/export/loss report
+- `PTDSL-*`: lexical, parser, and field syntax
+- `PTSEM-*`: references, state, duration, and graph constraints
+- `PTDAG-*`: cycles, reachability, and schedules
+- `PTRES-*`: resource capacity, allocation, and resource schedules
+- `PTMUT-*`: mutation requests, target resolution, and unsafe removal
+- `PTIO-*`: safe-write conflicts and post-write verification
+- `PTCNV-*`: import, export, and loss reports
 - `PTCLI-*`: CLI usage
 - `PTHLP-*`: help registry lookup
 
 Rules:
 
-- 同じ原因からCore APIとCLIで異なるcodeを作らない。将来adapterも同じdiagnosticを再利用する
-- parse recovery 後の二次 error を抑制できること
-- cycle は少なくとも 1 本の witness path を related location 付きで返す
-- ID 重複は先行宣言と重複宣言の両方を示す
-- error の並び順は source position、code、ID の順で安定化する
+- Do not create different codes in the Core API and CLI for the same cause. Future adapters reuse the same diagnostics.
+- Secondary errors after parse recovery can be suppressed.
+- A cycle returns at least one witness path with related locations.
+- A duplicate ID reports both the prior declaration and the duplicate declaration.
+- Errors are stably ordered by source position, code, and ID.
 
 ## 8. Core API
 
-公開 library API は I/O を含まない pure function を基本とする。
+The public library API is based on pure functions that do not perform I/O.
 
 ```ts
 parseDocument(text, options): ParseResult
@@ -407,7 +407,7 @@ importMermaid(text, options): ImportResult
 getHelp(request): HelpResult
 ```
 
-Result の共通要素:
+Shared result fields:
 
 ```ts
 interface OperationResult {
@@ -418,7 +418,7 @@ interface OperationResult {
 }
 ```
 
-Source-preserving formatter Coreは次を返す。`formattedText`と`edits`は有効な候補を生成できた場合だけ提供し、I/O、diff、write modeは後続のapplication/CLI layerで付与する。
+The source-preserving formatter Core returns the following. It provides `formattedText` and `edits` only when it can produce a valid candidate; subsequent application and CLI layers add I/O, diff, and write modes.
 
 ```ts
 interface FormatResult {
@@ -434,17 +434,17 @@ interface FormatResult {
 
 Rules:
 
-- error diagnostic が 1 件以上あれば `ok=false`
-- warning の fail 条件は caller option で決める
-- library API は `process.exit` しない
-- syntax error や user document error を exception にしない
-- programmer error と不変条件違反だけを exception にする
-- `maxDiagnostics`はdefault 100、1..1000とし、超過時はsource順の先頭を返して`diagnosticsTruncated=true`にする
-- parse errorがある場合はfield/graph phaseへ進まず、派生diagnosticを抑制する
+- `ok=false` when one or more error diagnostics exist.
+- Caller options determine whether warnings cause failure.
+- Library APIs do not call `process.exit`.
+- Syntax errors and user document errors are not exceptions.
+- Only programmer errors and invariant violations are exceptions.
+- `maxDiagnostics` defaults to 100 and ranges from 1 through 1000; when exceeded, return the first diagnostics in source order and set `diagnosticsTruncated=true`.
+- When parse errors exist, do not proceed to field or graph phases, and suppress derived diagnostics.
 
 ### 8.1 Safe-write adapter
 
-I/Oはpure Coreの外に置き、Coreが生成・再検査したcandidateをdocument fileへcommitする境界だけを公開する。
+I/O remains outside the pure Core. The public boundary is limited to committing a candidate generated and revalidated by the Core to a document file.
 
 ```ts
 readDocumentFile(path): Promise<DocumentContent>
@@ -453,11 +453,11 @@ createDocumentFile(path, candidateText, { mode? }): Promise<DocumentWriteResult>
 createArtifactFile(path, artifact, { mode? }): Promise<DocumentWriteResult>
 ```
 
-`DocumentContent`は所有するraw bytes、BOMを保持したUTF-8 text、raw-byte SHA-256 digestを持つ。In-place replaceはsymlinkとregular file以外を拒否し、`lstat`したpath identityと`O_NOFOLLOW`でopenしたfile identityを比較する。Initial digestをwrite前とrename直前に再確認し、同directoryのexclusive temporary fileへmodeを継承してwrite、file fsync、atomic rename、parent directory fsync、digestとdocument validityの再検査を行う。
+`DocumentContent` contains owned raw bytes, BOM-preserving UTF-8 text, and a raw-byte SHA-256 digest. In-place replacement rejects symlinks and anything other than regular files, and compares the path identity obtained by `lstat` with the file identity opened using `O_NOFOLLOW`. It rechecks the initial digest before writing and immediately before renaming, writes an inherited mode to an exclusive temporary file in the same directory, fsyncs the file, atomically renames it, fsyncs the parent directory, and revalidates the digest and document validity.
 
-新規outputはrenameによる既存target上書きを避け、fsync済みtemporary fileから同一filesystemのexclusive hard linkでtargetを公開する。同時writer、既存file、symlinkはいずれも競合として拒否し、temporary entryを削除してparent directoryを再度fsyncする。`createDocumentFile`はDSL候補を再検査し、`createArtifactFile`はMermaidなど別形式のUTF-8 byte列に対してdigest一致だけを再検査する。Public resultはmode、target、candidate digest、byte数だけを返し、temporary pathやrandom tokenを返さない。
+New output avoids overwriting an existing target through rename and publishes the target through an exclusive hard link on the same filesystem from an fsynced temporary file. Concurrent writers, existing files, and symlinks are all rejected as conflicts; the temporary entry is removed and the parent directory is fsynced again. `createDocumentFile` revalidates DSL candidates, while `createArtifactFile` revalidates only digest equality for UTF-8 byte sequences in other formats such as Mermaid. Public results return only the mode, target, candidate digest, and byte count; they never return temporary paths or random tokens.
 
-## 9. 処理フロー
+## 9. Processing flows
 
 ### 9.1 check
 
@@ -473,7 +473,7 @@ text
  -> diagnostics sort
 ```
 
-Graph 構築ができない error がある場合、後続の schedule analysis は行わない。
+When an error prevents graph construction, do not perform subsequent schedule analysis.
 
 ### 9.2 analyze
 
@@ -495,13 +495,13 @@ check
 
 #### effective reached closure
 
-1. 明示 `reached` milestone を queue に入れる
-2. 始点が reached の `done` task を satisfied edge とする
-3. 始点が reached の gate を satisfied edge とする
-4. incoming edge を1本以上持ち、そのすべてが satisfied になった milestone を reached にする
-5. 新たに reached になった milestone から、外向きの done task と gate の satisfaction を伝播する
+1. Put explicitly `reached` milestones into the queue.
+2. Treat a `done` task whose source is reached as a satisfied edge.
+3. Treat a gate whose source is reached as a satisfied edge.
+4. Mark a milestone that has one or more incoming edges and whose incoming edges are all satisfied as reached.
+5. From each newly reached milestone, propagate satisfaction to outgoing done tasks and gates.
 
-DAG なのでトポロジカル順または入次数 counter で決定的に処理できる。
+Because the graph is a DAG, processing can be deterministic using topological order or an indegree counter.
 
 #### edge weight
 
@@ -510,13 +510,13 @@ DAG なのでトポロジカル順または入次数 counter で決定的に処�
 - PERT task: `(o + 4m + p) / 6`
 - gate: 0
 
-blocked task の作業時間は通常どおり重みに含めるが、外部待ち時間は含めない。結果全体に `conditionalOnBlocksResolved=true` を立て、該当 task ID を返す。
+Include the work duration of a blocked task in its weight as usual, but exclude external waiting time. Set `conditionalOnBlocksResolved=true` on the overall result and return the applicable task IDs.
 
-analysis resultは、resourceを無視した`precedence`と、capacityを守る`resource`を分離する。precedence makespanは理論下限、resource makespanは選択したheuristicによる実行可能値であり、最適値とは表示しない。
+The analysis result separates `precedence`, which ignores resources, from `resource`, which respects capacity. The precedence makespan is a theoretical lower bound; the resource makespan is a feasible result produced by the selected heuristic and MUST NOT be presented as an optimum.
 
 ### 9.3 next
 
-`next` は `analyze` の結果を再利用する。
+`next` reuses the result of `analyze`.
 
 ```text
 active:
@@ -549,17 +549,17 @@ earliestStart asc
 taskId asc
 ```
 
-resourceを要求しないready taskはrunnable candidateになる。resourceを要求するtaskはactive taskの時刻0占有量を差し引き、resource scheduleと同じpriority ruleで可能な限り選択する。選ばれなかったready taskには不足resource、capacity、使用量、占有taskを付ける。
+Ready tasks that do not require a resource are runnable candidates. For tasks that require resources, subtract the time-zero allocation of active tasks and select as many as possible under the same priority rule as the resource schedule. For each ready task not selected, include the insufficient resource, capacity, usage, and occupying task.
 
-upcoming の explanation は、直接の `from` milestone と、その milestone を未達にしている unsatisfied incoming edge を返す。最初から全祖先を展開せず、API option で explanation depth を制御する。
+The explanation for `upcoming` returns the direct `from` milestone and the unsatisfied incoming edges that leave that milestone unreached. Do not expand all ancestors initially; control explanation depth through an API option.
 
-Recommendationは既存classificationと`runnable_now`を置き換えず、新規start actionへのdecision authorityとして[Recommendation Semantics仕様](specs/recommendation.md)で分離する。Conceptual recommended setはready taskのsubsetであり、active allocationを含めてjointly resource-feasibleでなければならない。`recommended`、`allowed`、`deferred`、`discouraged`はready taskだけへ適用し、`blocked`をrecommendation tierとして使用しない。
+Recommendation does not replace the existing classification or `runnable_now`; it is separated in the [Recommendation Semantics specification](specs/recommendation.md) as the decision authority for new start actions. The conceptual recommended set is a subset of ready tasks and MUST be jointly resource-feasible, including active allocation. Apply `recommended`, `allowed`, `deferred`, and `discouraged` only to ready tasks, and do not use `blocked` as a recommendation tier.
 
-[Recommendation Ranking Policy仕様](specs/recommendation-ranking.md)はactual ready taskからselection horizonとrecommended setを決定的に選び、[Recommendation Reason Taxonomy仕様](specs/recommendation-reasons.md)はset/tierの理由をstable code、typed fact、entity referenceへ分解する。[Recommendation Structured Explanation仕様](specs/recommendation-explanation.md)はtyped fact、制限付きexpression、comparison、decision trace、description projectionを接続し、[Recommendation Interface Contract仕様](specs/recommendation-interface.md)はCore type、complete JSON、text summary、`NextResult.v3` migrationを固定する。[Recommendation Human Override Contract仕様](specs/recommendation-override.md)はnormal resultを変更せず、feasible replacement、human reason、audit artifact、再解析を分離する。`src/recommendation/`のpure Coreはcandidate fact、complete order、selection horizon、recommended set、tier、resource witness、complete explanation graph、canonical English description、PTREC invariant validationに加え、read-only `validateOverride`、`Perttool.OverrideDecision.v1` projection、canonical SHA-256 identityを実装する。Normal resultとoverride resultは別型のまま公開し、V2由来の`runnable_now`とupcoming explanationの意味は維持する。
+The [Recommendation Ranking Policy specification](specs/recommendation-ranking.md) deterministically selects the selection horizon and recommended set from actual ready tasks, and the [Recommendation Reason Taxonomy specification](specs/recommendation-reasons.md) decomposes the reason for a set or tier into stable codes, typed facts, and entity references. The [Recommendation Structured Explanation specification](specs/recommendation-explanation.md) connects typed facts, restricted expressions, comparisons, decision traces, and description projections, while the [Recommendation Interface Contract specification](specs/recommendation-interface.md) fixes the Core types, complete JSON, text summary, and `NextResult.v3` migration. The [Recommendation Human Override Contract specification](specs/recommendation-override.md) leaves the normal result unchanged and separates feasible replacements, human reasons, audit artifacts, and reanalysis. In addition to candidate facts, complete order, selection horizon, recommended set, tier, resource witnesses, a complete explanation graph, canonical English descriptions, and PTREC invariant validation, the pure Core in `src/recommendation/` implements read-only `validateOverride`, the `Perttool.OverrideDecision.v1` projection, and canonical SHA-256 identity. Publish normal and override results as distinct types, retaining the V2 meanings of `runnable_now` and upcoming explanations.
 
-競合境界と実装testへの入力は[Recommendation規範例](examples/recommendation.md)を使用する。Critical対priority、parallel recommendation、selected/active-only resource blocker、empty set、exact description、override必要性を同じcase IDでCore、JSON、text、override validationへ展開し、例の抜粋をcomplete resultとして扱わない。
+Use the [Recommendation normative examples](examples/recommendation.md) as inputs for conflict boundaries and implementation tests. Cover critical-versus-priority, parallel recommendations, selected and active-only resource blockers, empty sets, exact descriptions, and the need for an override across Core, JSON, text, and override validation using the same case IDs; do not treat an excerpt from an example as a complete result.
 
-実装と自己利用への導入順序は[Recommendation実装・自己利用migration](process/recommendation-migration.md)を正とする。MIG-04でCore、CLI、help、golden、package documentationを`NextResult.v3`へ一括切替した。CLI、help、provider guideは同じCore resultを表示し、独自rankingを持たない。Shadow評価とauthority adoptionは公開後の独立gateである。
+The [Recommendation implementation and self-use migration](process/recommendation-migration.md) is authoritative for the implementation and self-use adoption sequence. MIG-04 switched the Core, CLI, help, goldens, and package documentation to `NextResult.v3` together. The CLI, help, and provider guide display the same Core result and do not have independent ranking. Shadow evaluation and authority adoption are independent gates after publication.
 
 ### 9.4 mutation
 
@@ -588,23 +588,23 @@ interface MutationResult extends OperationResult {
 }
 ```
 
-Coreはファイルを書かない。MVPではCLI adapterが`MutationResult`を受け、安全条件を満たした場合だけwriteする。将来adapterにも同じ境界を適用する。
+The Core does not write files. In the MVP, the CLI adapter receives `MutationResult` and writes only when safety conditions are satisfied. Apply the same boundary to future adapters.
 
 ### 9.5 advance
 
-advance は通常 mutation より強い graph rewrite なので、専用 planner とする。
+Because advance is a stronger graph rewrite than ordinary mutation, it uses a dedicated planner.
 
-初期アルゴリズム:
+Initial algorithm:
 
-1. effective reached closure を求める
-2. 新たに reached となった milestone を frontier candidate とする
-3. finish へ至る未完了 edge を逆向きに辿り、未来に必要な subgraph を求める
-4. 合流判定にまだ必要な `done` task を保持する
-5. reached frontier より完全に過去で、未来 subgraph の条件に不要な edge/node を削除対象にする
-6. candidate 文書を再 parse・再分析する
-7. next result が advance 前後で意味的に矛盾しないことを確認する
+1. Determine the effective reached closure.
+2. Treat newly reached milestones as frontier candidates.
+3. Traverse unfinished edges backward from finish to determine the subgraph needed in the future.
+4. Retain `done` tasks still needed for join evaluation.
+5. Select for removal edges and nodes that are wholly before the reached frontier and unnecessary conditions of the future subgraph.
+6. Reparse and reanalyze the candidate document.
+7. Confirm that the next result is not semantically inconsistent before and after advance.
 
-advanceの完全な削除条件は[Graph Semantics仕様](specs/graph-semantics.md)を正とする。要約すると、targetがeffective reachedのedgeを過去として除去し、targetが未到達のedgeをunfinished workまたは部分合流条件として保持する。write actionはsafe-writeとadvanceの自己利用gateを満たすまで公開しない。
+The [Graph Semantics specification](specs/graph-semantics.md) is authoritative for the complete deletion conditions of advance. In summary, remove as past edges whose target is effectively reached, and retain edges whose target is unreached as unfinished work or partial-join conditions. Do not expose the write action until the self-use gates for safe-write and advance are met.
 
 ### 9.6 Mermaid export/import
 
@@ -630,88 +630,88 @@ Mermaid text
  -> loss report
 ```
 
-Mermaid adapter は analysis や validation を再実装しない。一般 Mermaid の best-effort import と、`perttool` profile の lossless import を別 mode として扱う。
+The Mermaid adapter does not reimplement analysis or validation. Treat best-effort import of general Mermaid and lossless import of the `perttool` profile as separate modes.
 
-MVP exporterは`src/conversion/mermaid.ts`の`exportMermaid`として実装し、`checkDocument`または`analyzeDocument`の結果からprofile/plain artifactを決定的に生成する。Importerは`src/conversion/mermaid-import.ts`の`importMermaid`として実装し、perttool profileをfail-closedで復元し、plain入力ではstable generated IDとloss reportを返す。CLIは`dag render --to mermaid`と`dag import --from mermaid`でtext/JSON、strict loss、exclusive `--out`を投影する。`--to svg|json`は後続sliceのままとする。
+Implement the MVP exporter as `exportMermaid` in `src/conversion/mermaid.ts`; it deterministically generates profile or plain artifacts from the result of `checkDocument` or `analyzeDocument`. Implement the importer as `importMermaid` in `src/conversion/mermaid-import.ts`; it restores the perttool profile fail-closed and returns stable generated IDs and a loss report for plain input. The CLI projects text or JSON, strict loss, and exclusive `--out` through `dag render --to mermaid` and `dag import --from mermaid`. Leave `--to svg|json` for a later slice.
 
-Lossless profileは[Mermaid Profile仕様](specs/mermaid-profile.md)を正とする。Default適用後の完全な意味値を`%% perttool:` canonical JSON recordへ保持し、visual flowchartを復元正本にしない。Profile headerを検出した後のrecord/digest/projection不正はfail closedとし、一般Mermaid importへ降格しない。Importerはmetadata decode後も通常のsemantic validationとcanonical DSLの再parseを通す。
+The [Mermaid Profile specification](specs/mermaid-profile.md) is authoritative for the lossless profile. Preserve the complete semantic value after applying defaults in `%% perttool:` canonical JSON records, and do not make the visual flowchart the source of truth for restoration. After detecting a profile header, fail closed for invalid records, digests, or projections; do not downgrade to general Mermaid import. After decoding metadata, the importer also performs ordinary semantic validation and reparses the canonical DSL.
 
-resource requirementはDAGのdependency edgeではないため、通常flowchartへresource nodeを直結してprecedenceと混同させない。resource共有はtask style/annotation、別のresource bipartite view、またはschedule timelineで表現する。
+Because a resource requirement is not a DAG dependency edge, do not connect resource nodes directly to an ordinary flowchart and confuse them with precedence. Represent shared resources using task styles or annotations, a separate resource bipartite view, or a schedule timeline.
 
-## 10. Graph algorithm
+## 10. Graph algorithms
 
-### 10.1 topological sort と cycle witness
+### 10.1 Topological sort and cycle witness
 
-- Kahn algorithm で安定 topological order を作る
-- 同時に処理可能な milestone は ID 辞書順の priority queue から取る
-- 全 node を処理できなければ cycle error
-- 未処理 subgraph に DFS を行い、1 本以上の cycle witness を返す
+- Create a stable topological order with Kahn's algorithm.
+- Take simultaneously processable milestones from a priority queue in lexicographic ID order.
+- If all nodes cannot be processed, report a cycle error.
+- Run DFS on the unprocessed subgraph and return one or more cycle witnesses.
 
 ### 10.2 finish reachability
 
-- finish から reverse traversal する
-- reverse traversal で到達しない未完了 edge/node を `finish_unreachable` とする
-- 過去を表すためだけの孤立 done subgraph は許容せず、advance 候補として診断する
+- Perform reverse traversal from finish.
+- Mark unfinished edges and nodes not reached by reverse traversal as `finish_unreachable`.
+- Do not allow isolated done subgraphs solely to represent the past; diagnose them as advance candidates.
 
 ### 10.3 forward pass
 
-- effective reached milestone の earliest は 0
-- milestone は topological order で処理する
-- non-reached milestone の earliest は incoming edge EF の最大値
-- 比較と加算は Rational で行う
+- The earliest value of an effectively reached milestone is 0.
+- Process milestones in topological order.
+- The earliest value of a non-reached milestone is the maximum EF of its incoming edges.
+- Perform comparisons and additions with Rational values.
 
 ### 10.4 backward pass
 
-- finish の latest は finish earliest
-- reverse topological order で処理する
-- milestone latest は outgoing edge LS の最小値
-- finish へ到達しない要素は事前検査で除外されていることを前提にする
+- The latest value of finish is the earliest value of finish.
+- Process in reverse topological order.
+- The latest value of a milestone is the minimum LS of its outgoing edges.
+- Assume that elements which cannot reach finish have been excluded by prior validation.
 
 ### 10.5 critical subgraph
 
-- `abs(totalFloat) <= criticalEpsilon` を critical とする
-- critical edge の集合を primary result とする
-- path 全列挙を primary result にしない
-- representative path は各分岐で edge ID の辞書順を tie-break とする
-- exact driving path数はBigIntで数え、列挙数と分離する
-- 全列挙 option には `maxPaths` を必須または既定上限付きにする
+- Treat `abs(totalFloat) <= criticalEpsilon` as critical.
+- Use the set of critical edges as the primary result.
+- Do not make full path enumeration the primary result.
+- For a representative path, tie-break at each branch by lexicographic edge ID order.
+- Count exact driving paths with BigInt, separately from the number enumerated.
+- Require `maxPaths` or provide a default limit for a full-enumeration option.
 
 ### 10.6 resource schedule
 
-MVPはrenewable resourceに対するdeterministic parallel schedule generation schemeを使用する。
+The MVP uses a deterministic parallel schedule-generation scheme for renewable resources.
 
 ```text
 t = 0
-active taskをrunningへ登録してresourceを確保
+register active tasks as running and allocate resources
 
-while unfinished taskがある:
-  precedence上eligibleなtaskを集める
-  priority desc, totalFloat asc, expectedDuration desc, id ascでsort
-  sort順に、全resourceを確保できるtaskを可能な限り開始
-  開始できるtaskがなくなったら次のtask完了時刻へtを進める
-  完了taskのresourceを返却し、milestone到達を伝播
+while unfinished tasks exist:
+  collect precedence-eligible tasks
+  sort by priority desc, totalFloat asc, expectedDuration desc, id asc
+  in sort order, start as many tasks as possible whose full resource requirements can be allocated
+  when no further task can start, advance t to the next task completion time
+  release resources of completed tasks and propagate milestone reachability
 ```
 
 Rules:
 
-- DAG edgeはhard precedence、priorityはsoft preference、resource arcは選択scheduleの説明用派生情報とする
-- taskはnon-preemptive
-- taskは全required resourceを同時取得する
-- allocation区間は`[start, finish)`
-- 同時刻の完了処理と開始処理は、先に完了・解放、次に開始とする
-- requirementが確保できない上位taskがあっても、後続taskがcapacity内なら開始できる
-- expected durationを使用する
-- blocked taskは時刻0にresourceを占有せず、即時解消を仮定したconditional scheduleとして別途flagする
-- done taskとgateはresourceを消費しない
-- resultにheuristic名とversionを含める
+- A DAG edge is hard precedence, priority is a soft preference, and a resource arc is derived information for explaining the selected schedule.
+- Tasks are non-preemptive.
+- A task acquires all required resources simultaneously.
+- The allocation interval is `[start, finish)`.
+- For completions and starts at the same time, complete and release first, then start.
+- A lower-priority task can start when it is within capacity even if a higher-priority task cannot secure its requirement.
+- Use expected duration.
+- A blocked task does not occupy resources at time zero; flag it separately as a conditional schedule that assumes immediate resolution.
+- Done tasks and gates consume no resources.
+- Include the heuristic name and version in the result.
 
-resource待ちを説明するため、task開始時にcapacityを解放して開始を可能にしたtaskとの間に`resource arc`を記録する。capacity 2以上と複数resourceを含むwitness選択、schedule graph replay、schedule critical pathの厳密な規則は[Analysis仕様](specs/analysis.md)を正とする。
+To explain resource waiting, record a `resource arc` between a task and the task whose completion released capacity that enabled its start. The [Analysis specification](specs/analysis.md) is authoritative for witness selection involving capacity of 2 or more and multiple resources, schedule-graph replay, and the exact rules for the schedule critical path.
 
-このheuristicは実行可能scheduleを返すが、最小makespanを保証しない。exact solverは別adapterとして将来追加し、lower bound、best found、gap、timeoutを明示する。
+This heuristic returns a feasible schedule but does not guarantee minimum makespan. Add an exact solver in the future as a separate adapter, explicitly reporting lower bound, best found, gap, and timeout.
 
-## 11. CLI 設計
+## 11. CLI design
 
-CLIはresource-firstとする。Command、option、stream、exit code、JSON fieldの規範は[CLI Interface仕様](specs/interfaces.md)を正とする。
+The CLI is resource-first. The [CLI Interface specification](specs/interfaces.md) is authoritative for commands, options, streams, exit codes, and JSON fields.
 
 ```text
 perttool dsl check <file>
@@ -733,63 +733,63 @@ perttool milestone add|set|remove ...
 perttool resource add|set|remove ...
 ```
 
-CLI adapter の責務:
+CLI adapter responsibilities:
 
-- argv parse
-- file read
-- Core API call
-- text/JSON render
-- exit code mapping
-- explicit write option の処理
-- terminal color の制御
+- parse argv
+- read files
+- call Core APIs
+- render text and JSON
+- map exit codes
+- handle explicit write options
+- control terminal colors
 
-CLI adapter が持たない責務:
+Responsibilities excluded from the CLI adapter:
 
-- DSL parse rule
-- graph validation rule
-- PERT/CPM formula
-- next task ranking
+- DSL parsing rules
+- graph validation rules
+- PERT/CPM formulas
+- next-task ranking
 - mutation target resolution
 
 ### 11.1 output
 
-- stdout: request された result data
-- stderr: diagnostic、write summary、non-data message
-- `--format text`: 人間向け既定出力
-- `--format json`: schema に従う機械可読出力
-- color は TTY の text 出力だけで既定有効
-- JSON に ANSI escape を含めない
+- stdout: requested result data
+- stderr: diagnostics, write summaries, and non-data messages
+- `--format text`: human-facing default output
+- `--format json`: machine-readable output conforming to the schema
+- enable color by default only for text output to a TTY
+- do not include ANSI escapes in JSON
 
 ### 11.2 write safety
 
-変更 command は既定で preview とする。
+Mutation commands preview by default.
 
 ```text
 default: updated text or diff only
---out: new fileへ出力
---write: input fileを更新
+--out: write to a new file
+--write: update the input file
 --expect-digest: optimistic lock
 ```
 
-`--write` の処理:
+`--write` procedure:
 
-1. 読み取り時 digest を保持
-2. mutation result を生成
-3. 書き込み直前に現在 file digest を再確認
-4. 同 directory に temporary file を作成
-5. temporary file を flush/fsync してから atomic rename
-6. 対応可能な環境では親 directory も fsync
-7. rename 後の file を再 parse して digest を確認
+1. Retain the digest recorded when reading.
+2. Generate the mutation result.
+3. Recheck the current file digest immediately before writing.
+4. Create a temporary file in the same directory.
+5. Flush and fsync the temporary file before atomic rename.
+6. Fsync the parent directory where supported.
+7. Reparse the file after rename and verify its digest.
 
-## 12. Post-MVP adapter境界
+## 12. Post-MVP adapter boundaries
 
-LSP server、VSIX/editor adapter、MCP serverはMVP対象外である。MVP repository構成、package dependency、acceptance testへLSP transport、VS Code extension、MCP serverやSDKを含めない。
+The LSP server, VSIX/editor adapter, and MCP server are outside the MVP scope. Do not include LSP transport, a VS Code extension, an MCP server, or SDKs in the MVP repository structure, package dependencies, or acceptance tests.
 
-将来adapterを追加する場合はCLI subprocessを呼ばず、同じapplication serviceを直接利用する。Adapter固有transport、request/response schema、write authorityはCLI Interface仕様と分離したversioned仕様で固定する。
+When adding future adapters, use the same application service directly rather than calling a CLI subprocess. Fix adapter-specific transports, request/response schemas, and write authority in versioned specifications separate from the CLI Interface specification.
 
-## 13. Help 設計
+## 13. Help design
 
-help を code 内の散在文字列にせず、共通 registry として持つ。
+Maintain help as a shared registry rather than scattered strings in code.
 
 ```ts
 interface HelpNode {
@@ -804,7 +804,7 @@ interface HelpNode {
 }
 ```
 
-初期 topic:
+Initial topics:
 
 - `syntax`
 - `syntax.project`
@@ -830,19 +830,19 @@ interface HelpNode {
 - `errors`
 - `samples`
 
-同じ registry から次を生成する。
+Generate the following from the same registry.
 
 - CLI text help
 - CLI JSON help
-- 将来のMCP help result
-- 将来のLSP hover/completion documentation
-- parse diagnostic の help link
+- future MCP help results
+- future LSP hover and completion documentation
+- help links in parse diagnostics
 
-grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自己完結した operational guidance を提供するが、完全 EBNF の複製を正本にはしない。grammar、parser、formatter、help sample の整合性は fixture から検査する。Registryの全related IDとparser fixtureの全diagnostic `helpTopic`が解決でき、syntax/sample topicのstable `.pert`参照が存在してparseできることを自動検査する。
+The complete normative grammar is `docs/specs/dsl-grammar.md`. Help provides self-contained operational guidance, but a duplicate of the complete EBNF is not the source of truth. Verify consistency among grammar, parser, formatter, and help samples through fixtures. Automatically verify that every related ID in the registry and every diagnostic `helpTopic` in parser fixtures resolves, and that stable `.pert` references for syntax and sample topics exist and can be parsed.
 
-## 14. Schema と versioning
+## 14. Schemas and versioning
 
-初期 schema:
+Initial schemas:
 
 - `Perttool.CheckResult.v1`
 - `Perttool.AnalysisResult.v2`
@@ -853,26 +853,26 @@ grammar の規範全文は `docs/specs/dsl-grammar.md` とする。help は自�
 - `Perttool.HelpResult.v1`
 - `Perttool.ExportResult.v1`
 - `Perttool.ImportResult.v1`
-- `Perttool.AgentGuidanceResult.v1`（betaのIssue #2で追加予定）
+- `Perttool.AgentGuidanceResult.v1` (planned for beta Issue #2)
 - `Perttool.CliError.v1`
 
 Rules:
 
-- TypeScript type と JSON Schema を同一変更で更新する
-- root に `schema_version` と `tool_version` を持つ
-- optional field の追加は同一 major schema 内で許容する
-- field 削除、意味変更、enum narrowing は major schema を上げる
-- golden JSON は stable key order で出力する
+- Update TypeScript types and JSON Schema in the same change.
+- Include `schema_version` and `tool_version` at the root.
+- Adding optional fields is permitted within the same major schema.
+- Removing fields, changing semantics, or narrowing enums requires a major schema increase.
+- Emit golden JSON in stable key order.
 
-DSL version は project block の optional field として将来導入できるよう予約する。MVP で省略された場合は version 1 grammar として扱う。
+Reserve DSL version for future introduction as an optional field in the project block. When omitted in the MVP, treat it as version 1 grammar.
 
-## 15. テスト設計
+## 15. Test design
 
-### 15.1 unit test
+### 15.1 Unit tests
 
 - indentation/tokenization
 - quoted text/block text
-- duration parse と Rational
+- duration parsing and Rational
 - PERT expected/variance
 - topological sort
 - cycle witness
@@ -882,13 +882,13 @@ DSL version は project block の optional field として将来導入できる�
 - next classification/operational sort
 - TextEdit overlap detection
 
-### 15.2 fixture/golden test
+### 15.2 Fixture/golden tests
 
-最低限の fixture:
+Minimum fixtures:
 
 - minimal linear graph
 - parallel diamond
-- task と gate の合流
+- task and gate convergence
 - multiple frontier
 - duplicate ID
 - undefined endpoint
@@ -908,7 +908,7 @@ DSL version は project block の optional field として将来導入できる�
 - multi-resource task
 - active resource oversubscription
 - priority tie-break
-- capacity変更でmakespan/critical pathが変わるgraph
+- a graph where a capacity change changes the makespan or critical path
 - Mermaid lossless round-trip
 - general Mermaid lossy import
 
@@ -922,93 +922,93 @@ Golden artifacts:
 - Mermaid output
 - loss report
 
-### 15.3 property test
+### 15.3 Property tests
 
 Should:
 
-- `parse(format(parse(text)))` の AST 同値性
+- AST equivalence of `parse(format(parse(text)))`
 - formatter idempotence
-- DAG generator に対する topological order validity
-- nonnegative task duration での earliest monotonicity
-- mutation 後の target field 一致と他 field 不変性
-- lossless Mermaid profile の semantic round-trip
+- topological-order validity for DAG generators
+- earliest-time monotonicity with nonnegative task durations
+- target-field equality and other-field invariance after mutation
+- semantic round-trip of the lossless Mermaid profile
 
-### 15.4 adapter parity
+### 15.4 Adapter parity
 
-MVPでは同一fixtureに対し、library resultとCLI JSONのsemantic payloadが一致することを検査する。Presentation固有fieldは比較対象から明示的に除外する。MCP parityはMCP adapter追加時のtestとする。
+For the MVP, verify that the library result and CLI JSON semantic payload agree for the same fixture. Explicitly exclude presentation-specific fields from comparison. Test MCP parity when the MCP adapter is added.
 
-## 16. 自己利用設計
+## 16. Self-use design
 
-自己利用の詳細な gate と運用は [process/self-use.md](process/self-use.md) を正とする。
+The detailed gates and operations for self-use are defined by [process/self-use.md](process/self-use.md).
 
-### 16.1 最初の対象
+### 16.1 Initial target
 
-最初の自己利用対象は DSL 文法の設計・実装タスクとする。
+The initial self-use target is the DSL grammar design and implementation work.
 
-- 規範的な grammar 内容: `docs/specs/dsl-grammar.md`
-- 現在・未来の grammar 作業計画: `plans/grammar.pert`
-- Issue #1のAI工程制御設計計画: `plans/control-plane.pert`
-- M1からM4の操作系実装計画: `plans/operations.pert`
-- MVP recommendation実装計画: `plans/recommendation.pert`
-- Beta AI Agent Guidance Registry実装計画: `plans/agent-guidance.pert`
+- Normative grammar content: `docs/specs/dsl-grammar.md`
+- Current and future grammar work plan: `plans/grammar.pert`
+- AI process-control design plan for Issue #1: `plans/control-plane.pert`
+- M1 through M4 operational implementation plan: `plans/operations.pert`
+- MVP recommendation implementation plan: `plans/recommendation.pert`
+- Beta AI Agent Guidance Registry implementation plan: `plans/agent-guidance.pert`
 - Post-beta English repository baseline migration: `plans/english-baseline.pert`
-- 過去の作業計画: Git history
+- Historical work plans: Git history
 
-MVPからbetaまでのstage gateは`plans/mvp.pert`、現在sliceの設計・実装taskは対応する詳細planで分離する。Macro work packageは詳細planのresource makespanをroll-upし、個別task状態を重複管理しない。Grammar実装を`plans/grammar.pert`、AI工程制御設計を`plans/control-plane.pert`、操作系M1-M4を`plans/operations.pert`、MVP recommendation実装を`plans/recommendation.pert`、betaのIssue #2を`plans/agent-guidance.pert`で管理する。The post-beta English migration remains independent in `plans/english-baseline.pert` until a later macro composition decision.
+`plans/mvp.pert` defines the stage gates from MVP through beta; the design and implementation tasks for the current slice are separated into the corresponding detail plan. Macro work packages roll up the resource makespan of their detail plans and do not duplicate individual task state. Manage grammar implementation in `plans/grammar.pert`, AI process-control design in `plans/control-plane.pert`, operational M1-M4 work in `plans/operations.pert`, MVP recommendation implementation in `plans/recommendation.pert`, and beta Issue #2 in `plans/agent-guidance.pert`. The post-beta English migration remains independent in `plans/english-baseline.pert` until a later macro composition decision.
 
-`.pert` は仕様内容そのものではなく、仕様を設計・実装する作業の DAG を表現する。規範仕様と作業状態を混同しない。
+`.pert` represents the DAG of work that designs and implements specifications; it is not the specification content itself. Do not conflate normative specifications with work state.
 
-### 16.2 bootstrap gate
+### 16.2 Bootstrap gate
 
-`plans/grammar.pert` を作成して CI 対象にする前に、次を満たす。
+Before creating `plans/grammar.pert` and making it a CI target, satisfy the following.
 
-- project/resource/milestone/task/gate の parser がある
-- ID と endpoint の意味検査がある
-- cycle と finish reachability の検査がある
-- `perttool dsl check` がある
-- `perttool dag analyze` の基本 forward/backward pass がある
-- renewable resource capacityを守るdeterministic scheduleがある
-- `perttool dag next` が決定的な結果を返す
-- 正常/失敗 fixture が自動テストされる
+- There is a parser for project, resource, milestone, task, and gate declarations.
+- There is semantic validation for IDs and endpoints.
+- There is validation for cycles and finish reachability.
+- `perttool dsl check` exists.
+- The basic forward/backward pass of `perttool dag analyze` exists.
+- There is a deterministic schedule that respects renewable-resource capacity.
+- `perttool dag next` returns a deterministic result.
+- Valid and failing fixtures are automatically tested.
 
-この段階では read-only の自己利用を開始する。formatter、mutation、advance の write path は使用しない。
+At this stage, begin read-only self-use. Do not use the write paths for formatter, mutation, or advance.
 
-### 16.3 write gate
+### 16.3 Write gate
 
-自己利用文書へ `format --write` や task mutation を適用するには、さらに次を満たす。
+To apply `format --write` or task mutation to self-use documents, also satisfy the following.
 
 - formatter idempotence
-- comment と宣言順の保持
+- preservation of comments and declaration order
 - preview diff
-- candidate text の再 parse・再検査
+- re-parsing and re-validation of candidate text
 - atomic write
 - optimistic lock
-- grammar plan fixture に対する round-trip regression
+- round-trip regression against the grammar-plan fixture
 
-### 16.4 failure policy
+### 16.4 Failure policy
 
-- tool の bug に合わせて grammar plan を不正に書き換えない
-- Markdown grammar と golden fixture を bootstrap 時の判断根拠として残す
-- 自己利用文書が parse 不能になった場合、直前の Git revision と read-only check から復旧する
-- tool upgrade と `plans/grammar.pert` の破壊的変更を同一 commit に混在させる場合は、旧版と新版の検査証跡を残す
+- Do not corrupt the grammar plan to accommodate a tool bug.
+- Retain the Markdown grammar and golden fixture as the evidence for bootstrap decisions.
+- If a self-use document becomes unparsable, recover using the immediately preceding Git revision and a read-only check.
+- When mixing a tool upgrade and a breaking change to `plans/grammar.pert` in one commit, retain verification evidence for both the old and new versions.
 
-## 17. 実装 slice
+## 17. Implementation slices
 
-### Slice 0: design baseline
+### Slice 0: Design baseline
 
-- 基本設計
-- DSL grammar spec
-- graph semantics spec
-- analysis spec
-- interface spec
-- ADR
+- basic design
+- DSL grammar specification
+- graph-semantics specification
+- analysis specification
+- interface specification
+- ADRs
 
 Exit:
 
-- parser が実装できる完全 EBNF と error policy がある
-- reached/ready/done/gate/advance の意味が例で確認できる
+- complete EBNF and an error policy with which a parser can be implemented
+- examples confirm the meaning of reached, ready, done, gate, and advance
 
-### Slice 1: syntax and check
+### Slice 1: Syntax and check
 
 - TypeScript scaffold
 - lexer/parser/CST/AST
@@ -1019,87 +1019,87 @@ Exit:
 
 Exit:
 
-- minimal/invalid fixture が固定される
-- source span 付き error が text/JSON で出る
+- minimal and invalid fixtures are fixed
+- errors with source spans are emitted in text and JSON
 
-### Slice 2: analysis and next
+### Slice 2: Analysis and next
 
 - Rational
-- topological/cycle/reachability
-- forward/backward pass
+- topology, cycles, and reachability
+- forward/backward passes
 - critical subgraph
 - renewable resource scheduler
-- runnable_now/resource wait explanation
+- runnable_now and resource-wait explanations
 - reached closure
 - next classification/operational sort
 - `dag analyze` / `dag next`
 
 Exit:
 
-- bootstrap gate を満たす
-- `plans/grammar.pert` の read-only 自己利用を開始する
+- satisfy the bootstrap gate
+- begin read-only self-use of `plans/grammar.pert`
 
-### Slice 2R: recommendation control plane
+### Slice 2R: Recommendation control plane
 
-- normative fixtureとv2 compatibility baseline
-- candidate fact、ranking、recommended set、tierのpure Core
-- structured explanation graph、invariant、canonical description
-- `Perttool.NextResult.v3`のCore/CLI/help atomic publication
+- normative fixtures and a v2 compatibility baseline
+- pure Core for candidate facts, ranking, recommended sets, and tiers
+- structured explanation graph, invariants, and canonical descriptions
+- atomic publication of `Perttool.NextResult.v3` through Core, CLI, and help
 - read-only override validation
-- self-use shadow evaluationとnormal authority adoption
+- self-use shadow evaluation and normal-authority adoption
 
 Exit:
 
-- [Recommendation実装・自己利用migration](process/recommendation-migration.md)のMIG-01からMIG-07を満たす
-- 同じCore resultからcomplete JSONとsummary textを生成する
-- v2由来fieldの意味を維持し、breaking changeをconsumerへ明示する
-- AIがmacro/detail planの二段階でknown complete recommendationを選択authorityにできる
+- satisfy MIG-01 through MIG-07 in [Recommendation Implementation and Self-use Migration](process/recommendation-migration.md)
+- generate complete JSON and summary text from the same Core result
+- preserve the meaning of v2-derived fields and make breaking changes explicit to consumers
+- allow AI to use known, complete recommendations as the selection authority through two-stage macro/detail planning
 
-Slice 2Rの実装taskと見積りは、Slice 3が`M3_SAFE_WRITE_READY`へ到達した後に詳細化する。`M1_ROADMAP_UPDATE`のfile ownership確認では、Slice 2RとIssue #2がSlice 3と`src/cli.ts`、`src/index.ts`、reviewerを共有するため、早期並行化は操作系milestoneを遅らせる可能性があると判定した。Human override applyはMIG-08として必ずsafe-write gate以降へ接続する。
+Detail the Slice 2R implementation tasks and estimates after Slice 3 reaches `M3_SAFE_WRITE_READY`. The file-ownership review for `M1_ROADMAP_UPDATE` found that Slice 2R and Issue #2 share `src/cli.ts`, `src/index.ts`, and reviewers with Slice 3; therefore, early parallelization could delay the operational milestones. Connect human override apply as MIG-08 only after the safe-write gate.
 
-### Slice 3: safe formatting and mutation
+### Slice 3: Safe formatting and mutation
 
 - source-preserving formatter
-- project/task/milestone/resource mutationとatomic batch
+- project, task, milestone, and resource mutation with atomic batch
 - preview diff
-- atomic write/optimistic lock
+- atomic write and optimistic lock
 
 Exit:
 
-- write gate を満たす
-- grammar plan の安全な更新に使用する
+- satisfy the write gate
+- use it for safe updates to the grammar plan
 
-`M1_ROADMAP_UPDATE`で[操作系詳細plan](../plans/operations.pert)を確定し、全24pを完了して操作系実測値を`24p/1d`へ再calibrationした。`dag advance`はpreview、diff、advance固有JSON、safe `--write`/`--out`/`--expect-digest`を公開し、Stage 3へ移行した。Macro `MERMAID_PROFILE`、`MERMAID_EXPORT`、`MERMAID_ROUNDTRIP`、`ADVANCE`も完了した。Release readiness監査で確認したMVP受け入れ条件16の欠落は、[Recommendation実装plan](../plans/recommendation.pert)のMIG-01からMIG-07全22pで解消した。5 plan shadow、read-only override validation、normal authority adoption、unknown-version safe stop dry-runを受け入れ、recommendation固有の暫定実測値を`22p/1d`へ再calibrationした。`v0.1.0-alpha.2`をGitHub prereleaseとnpm `alpha`へ同一artifactで公開し、registry installまで検証してMVP public alphaを受け入れた。
+`M1_ROADMAP_UPDATE` finalized the [operations detail plan](../plans/operations.pert), completed all 24p, and recalibrated its observed operational velocity to `24p/1d`. `dag advance` published preview, diff, advance-specific JSON, and safe `--write`, `--out`, and `--expect-digest` controls, moving the project to Stage 3. Macro `MERMAID_PROFILE`, `MERMAID_EXPORT`, `MERMAID_ROUNDTRIP`, and `ADVANCE` also completed. The release-readiness audit found that MVP acceptance criterion 16 was missing; all 22p of MIG-01 through MIG-07 in the [recommendation implementation plan](../plans/recommendation.pert) resolved it. The project accepted five-plan shadow evaluation, read-only override validation, normal-authority adoption, and an unknown-version safe-stop dry run, then recalibrated the provisional recommendation-specific observed velocity to `22p/1d`. It published `v0.1.0-alpha.2` to a GitHub prerelease and npm `alpha` from the same artifact and accepted the MVP public alpha after verification through registry installation.
 
-### Slice 4: advance and Mermaid
+### Slice 4: Advance and Mermaid
 
 - advance planner
 - Mermaid lossless profile
-- `%% perttool:` semantic recordとprojection integrity
+- `%% perttool:` semantic records and projection integrity
 - general Mermaid loss report
-- SVG/HTML preview の基礎
+- SVG/HTML preview foundations
 
 ### Post-MVP Slice 4A: AI Agent Guidance Registry and beta
 
-- provider別official baselineとversion付きoffline snapshot
-- [AI Agent Guidance Registry仕様](specs/agent-guidance.md)で固定したinstruction、workflow、delegated agent、enforcement、prompt、connectorの共通contract
-- deterministicな`Perttool.AgentGuidanceResult.v1` pure Core
-- read-only `agent help`のtext/JSON publication
-- provider drift、alias、unsupported/unknown、legacy help、package-installed CLIの受け入れtest
-- suffixなし`0.1.0`をGitHub prereleaseとnpm `beta`へ同一artifactで公開
+- provider-specific official baselines and versioned offline snapshots
+- the common contract for instructions, workflows, delegated agents, enforcement, prompts, and connectors fixed in the [AI Agent Guidance Registry specification](specs/agent-guidance.md)
+- deterministic `Perttool.AgentGuidanceResult.v1` pure Core
+- text/JSON publication of read-only `agent help`
+- acceptance tests for provider drift, aliases, unsupported/unknown values, legacy help, and the package-installed CLI
+- publication of suffix-free `0.1.0` to a GitHub prerelease and npm `beta` from the same artifact
 
 Exit:
 
-- [最初のbeta受け入れ条件](requirements.md#211-最初のbeta受け入れ条件)を満たす
-- [Issue #2受け入れ記録](process/agent-guidance-acceptance.md)で12 acceptance criteriaをCore、CLI、help、testへtraceできる
-- hook実行、file生成、設定変更、network access、provider writeを行わない
-- alpha互換や追加soakをgateにせず、破壊的変更がある場合は仕様と移行情報を同時更新する
+- satisfy the [first beta acceptance criteria](requirements.md#211-first-beta-acceptance-criteria)
+- trace the 12 acceptance criteria from the [Issue #2 acceptance record](process/agent-guidance-acceptance.md) to Core, CLI, help, and tests
+- perform no hook execution, file creation, configuration change, network access, or provider write
+- do not make alpha compatibility or additional soak a gate; update specifications and migration information in the same change when there is a breaking change
 
-[AI Agent Guidance詳細plan](../plans/agent-guidance.pert)は全22pである。[Provider baseline](process/agent-guidance-provider-baseline.md)を設計入力、[AI Agent Guidance Registry仕様](specs/agent-guidance.md)と[規範例](examples/agent-guidance.md)を公開contractの正本とする。進捗、実測Velocity、残forecast、現在のrecommended taskは詳細planと[自己利用手順](process/self-use.md)を正とし、本設計へ変動値を重複固定しない。
+The [AI Agent Guidance detail plan](../plans/agent-guidance.pert) totals 22p. Use the [provider baseline](process/agent-guidance-provider-baseline.md) as design input, and the [AI Agent Guidance Registry specification](specs/agent-guidance.md) and [normative example](examples/agent-guidance.md) as the sources of truth for the public contract. The detail plan and [self-use procedure](process/self-use.md) define progress, observed velocity, remaining forecast, and the current recommended task; do not duplicate changing values in this design.
 
-`src/guidance/`はdocument application serviceから独立したpure Coreとする。`profile.ts`がversion付きoffline snapshot、`validator.ts`がversion、ordering、reference closure、description、digestをfail-closedで検査し、`query.ts`がexact lookupとalias normalization、`projection.ts`がindex/quick/detailとpublic JSON bytes、`text.ts`が同じresultからtext bytesとexit境界を導出する。Coreはfile、environment、network、clock、locale catalog、provider APIを参照しない。`GUIDANCE_CORE`でpublic library exportと専用goldenを、`AGENT_HELP_PUBLICATION`でstructured command help、CLI adapter、text/JSON、package-installed parityを実装した。
+`src/guidance/` is a pure Core independent of the document application service. `profile.ts` provides versioned offline snapshots; `validator.ts` fail-closed validates version, ordering, reference closure, descriptions, and digests; `query.ts` provides exact lookup and alias normalization; `projection.ts` derives index, quick, and detail projections plus public JSON bytes; and `text.ts` derives text bytes and exit boundaries from the same result. The Core does not access files, the environment, the network, clocks, locale catalogs, or provider APIs. `GUIDANCE_CORE` implemented the public library export and dedicated goldens, while `AGENT_HELP_PUBLICATION` implemented structured command help, the CLI adapter, text/JSON, and package-installed parity.
 
-`src/application/project.ts`はvalid documentからproject metadataを抽出するread-only Coreとし、`project show`のtext/JSON adapterへ同じtyped resultを渡す。`src/mutation/project.ts`はexactly oneのproject declarationを対象とするsource-preserving `project.set`を提供する。Project単独ではvalidにならないunit変更はatomic batchへ関連entity mutationと一緒に含め、最終candidateだけを再検査する。これにより、velocityを含むproject metadataの通常の閲覧・編集はsource fileの直接閲覧や手編集を必要としない。
+`src/application/project.ts` is a read-only Core that extracts project metadata from a valid document and passes the same typed result to the text/JSON adapters for `project show`. `src/mutation/project.ts` provides source-preserving `project.set` for exactly one project declaration. Include unit changes that are invalid in the project alone with related entity mutations in an atomic batch, and revalidate only the final candidate. This makes ordinary viewing and editing of project metadata, including velocity, possible without directly viewing or manually editing the source file.
 
 ### Post-MVP Slice 4B: English repository baseline
 
@@ -1107,41 +1107,41 @@ Exit:
 
 The migration is split into inventory, runtime messages, bundled help, normative documents, process and agent guidance, current PERT metadata, golden/Unicode audit, and final acceptance. Runtime locale negotiation, translation catalogs, a `--locale` option, and automatic translation of `.pert` content are outside this slice.
 
-The first task remained explicitly blocked until `plans/mvp.pert` reached `M8_BETA_RELEASED`. Because cross-plan dependencies are not yet implemented, that external gate was represented by a stable `blocked_reason`. After beta acceptance, the Stage 3 preview-first unblock procedure removed the reason and changed `SURFACE_INVENTORY` to `planned`. The inventory completed and advanced on 2026-07-24; fresh analysis now recommends `NORMATIVE_DOCS`.
+The first task remained explicitly blocked until `plans/mvp.pert` reached `M8_BETA_RELEASED`. Because cross-plan dependencies are not yet implemented, that external gate was represented by a stable `blocked_reason`. After beta acceptance, the Stage 3 preview-first unblock procedure removed the reason and changed `SURFACE_INVENTORY` to `planned`. The inventory and normative-document migration completed and advanced on 2026-07-24; fresh analysis now recommends `PROCESS_AND_GUIDANCE_DOCS`.
 
-### Post-MVP Slice 5: language tooling and MCP
+### Post-MVP Slice 5: Language tooling and MCP
 
-最初のbetaとは独立した将来backlogとして、次の3成果物へ分ける。
+As an independent future backlog after the first beta, split the work into the following three deliverables.
 
-- LSP server: `src/application/`、parser/validator、formatter、source-preserving TextEditを直接使い、diagnostics/completion/definition/rename/formattingを提供する
-- VSIX: `.pert`用TextMate grammarによるコードハイライトとLSP clientを提供する。semantic analysisをextension内へ複製せず、LSP serverを唯一のlanguage intelligence sourceとする
-- MCP server: read-only analysis/helpから開始し、preview mutationへ段階拡張する。CLI subprocessではなく共通Application/Core APIを直接使う
+- LSP server: directly use `src/application/`, parser/validator, formatter, and source-preserving TextEdit to provide diagnostics, completion, definition, rename, and formatting.
+- VSIX: provide syntax highlighting through a TextMate grammar for `.pert` and an LSP client. Do not duplicate semantic analysis in the extension; make the LSP server the sole source of language intelligence.
+- MCP server: start with read-only analysis/help and extend incrementally to preview mutation. Directly use shared Application/Core APIs rather than CLI subprocesses.
 
-LSP protocol capability、UTF-16 position mapping、VSIX packaging/workspace trust/server distribution、MCP tool schema/transport/write safetyは、それぞれ実装開始前のversioned仕様で固定する。AdapterごとにCore semantic parity testを持たせる。LSP serverをVSIXのpredecessorとし、MCP serverは独立workstreamとして計画できる。
+Fix LSP protocol capabilities, UTF-16 position mapping, VSIX packaging, workspace trust, server distribution, and MCP tool schema, transport, and write safety in versioned specifications before each implementation begins. Give each adapter a Core semantic-parity test. Treat the LSP server as the predecessor of VSIX, while planning the MCP server as an independent workstream.
 
-## 18. 詳細設計へ送る事項
+## 18. Matters for detailed design
 
-DSL完全EBNFとerror recoveryは[DSL文法仕様](specs/dsl-grammar.md)、reached/ready/gate/resource/advanceは[Graph Semantics仕様](specs/graph-semantics.md)、PERT/CPMとresource scheduleは[Analysis仕様](specs/analysis.md)、task mutationのCore request、局所TextEdit、comment所有は[Mutation Semantics仕様](specs/mutation.md)、実行可否と推奨度のmodelは[Recommendation Semantics仕様](specs/recommendation.md)、推奨順と理由は[Ranking Policy](specs/recommendation-ranking.md)と[Reason Taxonomy](specs/recommendation-reasons.md)、説明graphは[Structured Explanation仕様](specs/recommendation-explanation.md)、recommendationのCore/text/JSONは[Recommendation Interface Contract仕様](specs/recommendation-interface.md)、human overrideは[Override Contract仕様](specs/recommendation-override.md)、現行CLI/help/write safetyは[CLI Interface仕様](specs/interfaces.md)で決定する。Agent guidanceのprovider/surface/guidance/risk taxonomy、support根拠、profile、Core/text/JSON、diagnostic、migration境界は[AI Agent Guidance Registry仕様](specs/agent-guidance.md)を正とする。Beta versioningとrelease gateは[ADR 0003](adr/0003-beta-versioning.md)および[beta release手順](process/beta-release.md)を正とする。Repository language baseline and migration boundary are defined by [ADR 0004](adr/0004-english-repository-baseline.md).
+The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for task mutation, local TextEdit, and comment ownership; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; and the [CLI Interface specification](specs/interfaces.md) determines the current CLI, help, and write safety. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
 
-1. CST の trivia/comment 所有規則の実装詳細
-2. formatter の canonical whitespace 実装詳細
-3. package/runtime/test dependency の選定
+1. Implementation details for CST trivia/comment ownership rules
+2. Implementation details for the formatter's canonical whitespace
+3. Selection of package, runtime, and test dependencies
 
-## 19. 要件トレーサビリティ
+## 19. Requirements traceability
 
-| 基本設計 | 主な対応要件 |
+| Basic design | Primary related requirements |
 | --- | --- |
-| CST/AST/Graph 3層 | 8、12、16、17章 |
-| Rational | 10章 |
-| Graph algorithm | 9、10、11章 |
-| Resource scheduler | 7.2、7.4、10.6、11章 |
-| Recommendation model | 2.4、5.4、17、21章 |
-| Recommendation ranking/reasons/explanation/interface/override | 2.4、5.4、17、21章 |
-| AI Agent Guidance Registry | 17章、21.1節 |
-| Pure Core API | 2.2、15、17章 |
-| CLI adapter | 15、17章 |
-| Help registry | 16章 |
-| Mutation/atomic write | 9.3、12、20.1節 |
-| Mermaid adapter | 13、14章 |
-| Test design | 20.3、21章 |
-| Grammar-first self-use | 19章、本書16章 |
+| CST/AST/Graph three layers | Chapters 8, 12, 16, and 17 |
+| Rational | Chapter 10 |
+| Graph algorithms | Chapters 9, 10, and 11 |
+| Resource scheduler | Sections 7.2, 7.4, and 10.6; Chapter 11 |
+| Recommendation model | Sections 2.4 and 5.4; Chapters 17 and 21 |
+| Recommendation ranking/reasons/explanation/interface/override | Sections 2.4 and 5.4; Chapters 17 and 21 |
+| AI Agent Guidance Registry | Chapter 17 and Section 21.1 |
+| Pure Core API | Sections 2.2 and 15; Chapter 17 |
+| CLI adapter | Chapters 15 and 17 |
+| Help registry | Chapter 16 |
+| Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
+| Mermaid adapter | Chapters 13 and 14 |
+| Test design | Section 20.3 and Chapter 21 |
+| Grammar-first self-use | Chapter 19 and Section 16 of this document |

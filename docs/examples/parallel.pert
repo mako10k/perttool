@@ -1,91 +1,91 @@
 project PARALLEL:
   version 1
-  title "共有resourceを含む並行計画"
+  title "Parallel plan with shared resources"
   description |
-    dependency上は同時実行可能でも、resource capacityによって
-    実際の開始順とschedule critical pathが変わる例。
+    An example where resource capacity changes the actual start order
+    and schedule critical path even when dependencies permit concurrency.
   as_of 2026-07-21
   duration_unit day
   finish RELEASED
 
 resource DEVELOPERS:
-  title "開発担当枠"
+  title "Developer slots"
   capacity 2
 
 resource TEST_ENV:
-  title "共有試験環境"
-  description "同時に1taskだけが使用できる"
+  title "Shared test environment"
+  description "Only one task can use it at a time"
   capacity 1
 
 milestone NOW:
-  title "現在"
+  title "Now"
   state reached
 
 milestone CORE_DONE:
-  title "コア実装完了"
+  title "Core implementation complete"
 
 milestone CLI_DONE:
-  title "CLI実装完了"
+  title "CLI implementation complete"
 
 milestone DOCS_DONE:
-  title "文書作成完了"
+  title "Documentation complete"
 
 milestone INTEGRATION_READY:
-  title "統合可能"
+  title "Integration ready"
 
 milestone TEST_DONE:
-  title "試験完了"
+  title "Testing complete"
 
 milestone PACKAGE_DONE:
-  title "パッケージ完了"
+  title "Package complete"
 
 milestone RELEASED:
-  title "リリース"
+  title "Released"
 
 task CORE NOW -> CORE_DONE:
-  title "コアを実装する"
+  title "Implement core"
   duration 4d
   priority 20
   requires:
     DEVELOPERS 1
 
 task CLI NOW -> CLI_DONE:
-  title "CLIを実装する"
+  title "Implement CLI"
   duration 3d
   priority 10
   requires:
     DEVELOPERS 1
 
 task DOCS NOW -> DOCS_DONE:
-  title "利用文書を書く"
+  title "Write user documentation"
   duration 2d
   requires:
     DEVELOPERS 1
 
 gate CORE_READY CORE_DONE -> INTEGRATION_READY:
-  reason "統合にはコアが必要"
+  reason "Integration requires the core"
 
 gate CLI_READY CLI_DONE -> INTEGRATION_READY:
-  reason "統合にはCLIが必要"
+  reason "Integration requires the CLI"
 
 gate DOCS_READY DOCS_DONE -> INTEGRATION_READY:
-  reason "リリースには文書が必要"
+  reason "Release requires documentation"
 
 task TEST INTEGRATION_READY -> TEST_DONE:
-  title "共有環境で試験する"
+  title "Test in the shared environment"
   duration 2d
   priority 10
   requires:
     TEST_ENV 1
 
 task PACKAGE INTEGRATION_READY -> PACKAGE_DONE:
-  title "共有環境でパッケージを作る"
+  title "Build a package in the shared environment"
   duration 1d
   requires:
     TEST_ENV 1
 
 gate TEST_RELEASE_GATE TEST_DONE -> RELEASED:
-  reason "試験完了が必要"
+  reason "Testing must be complete"
 
 gate PACKAGE_RELEASE_GATE PACKAGE_DONE -> RELEASED:
-  reason "パッケージ完了が必要"
+  reason "Packaging must be complete"

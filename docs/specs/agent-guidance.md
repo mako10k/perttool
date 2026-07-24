@@ -1,72 +1,72 @@
-# AI Agent Guidance Registry 仕様
+# AI Agent Guidance Registry Specification
 
-- 文書状態: Normative 1.0
+- Document status: Normative 1.0
 - Agent Guidance interface version: 1
 - Target schema: `Perttool.AgentGuidanceResult.v1`
 - Profile schema: `Perttool.AgentGuidanceProfile.v1`
-- 作成日: 2026-07-23
-- 対応要件: [../requirements.md](../requirements.md)
+- Created: 2026-07-23
+- Related requirements: [../requirements.md](../requirements.md)
 - Current CLI interface: [interfaces.md](interfaces.md)
 - Provider baseline: [../process/agent-guidance-provider-baseline.md](../process/agent-guidance-provider-baseline.md)
-- 規範例: [../examples/agent-guidance.md](../examples/agent-guidance.md)
-- 関連Issue: [Issue #2](https://github.com/mako10k/perttool/issues/2)
+- Normative example: [../examples/agent-guidance.md](../examples/agent-guidance.md)
+- Related issue: [Issue #2](https://github.com/mako10k/perttool/issues/2)
 
-## 1. 目的
+## 1. Purpose
 
-本仕様は、AI coding agentへperttoolの工程制御方針を適用するためのread-only guidance registryを固定する。AIまたは人間が`agent help`の1 resultから、providerで利用できる共有方針の配置先、適用scope、support status、risk、根拠source、stalenessを機械的に取得できることを目的とする。
+This specification fixes a read-only guidance registry for applying perttool project-control policy to AI coding agents. It enables an AI or a human to mechanically obtain, from one `agent help` result, the placement, applicable scope, support status, risks, supporting sources, and staleness of shared policy available for a provider.
 
-本仕様が答える問いは次である。
+This specification answers the following questions.
 
-- どのproviderと共通surfaceを認識するか
-- project control、共通surface、provider固有guidanceをどの順で合成するか
-- どのartifactへ何を配置でき、どのriskを確認すべきか
-- support statusをなぜその値にしたか
-- provider資料のunknown、preview、deprecated、stalenessをどうfail-closedで扱うか
-- Core、JSON、textが同じoffline snapshotをどう公開するか
+- Which providers and common surfaces are recognized?
+- In which order are project control, common-surface, and provider-specific guidance composed?
+- What may be placed in which artifact, and which risks must be checked?
+- Why does a support status have its value?
+- How are unknown, preview, deprecated, and stale provider materials handled fail-closed?
+- How do Core, JSON, and text expose the same offline snapshot?
 
-本仕様はprovider機能を自動設定する仕様ではない。Version 1はhelpだけを返し、file、hook、network、provider、project stateを変更しない。
+This specification does not automatically configure provider features. Version 1 returns help only; it does not change files, hooks, the network, providers, or project state.
 
-## 2. 規範上の位置
+## 2. Normative position
 
-意味や設計が競合する場合は次の順で解決する。
+Resolve conflicts of meaning or design in the following order.
 
-1. `docs/requirements.md`のMust requirement
-2. project authorityとnext-work判断はRecommendation仕様群
-3. 本仕様
-4. [CLI Interface仕様](interfaces.md)の共通CLI、stream、diagnostic、exit code
-5. provider profile、provider baseline
-6. basic design、example、test、help、implementation
+1. Must requirements in `docs/requirements.md`
+2. The Recommendation specification set for project authority and next-work decisions
+3. This specification
+4. Common CLI, stream, diagnostics, and exit codes in the [CLI Interface specification](interfaces.md)
+5. Provider profiles and the provider baseline
+6. Basic design, examples, tests, help, and implementation
 
-Provider profileは、task ranking、recommendation reason、human overrideを再定義してはならない。Providerが異なっても「何を実行すべきか」はproject modelと`dag next`が決める。Guidance registryは、その判断を各providerへ伝える配置と安全境界を説明する。
+Provider profiles MUST NOT redefine task ranking, recommendation reasons, or human overrides. Regardless of provider, the project model and `dag next` determine what should be performed. The guidance registry describes the placement and safety boundaries through which that determination is conveyed to each provider.
 
 ## 3. Scope
 
-対象:
+In scope:
 
-- Codex、GitHub Copilot、Claude Code、Grok Build、Antigravity
-- instruction、workflow、delegated agent、enforcement、prompt、connector
-- stable ID、alias、support status、artifact、scope、guidance、risk
-- version付きoffline provider profileとstaleness
-- pure Core queryと`Perttool.AgentGuidanceResult.v1`
-- `agent help`のindex、provider、surface、quick/detail
-- deterministic text/JSON projection
-- unknown lookup、invalid profile、invariant failure
-- 将来のaudit、scaffold、enforcementへの互換性境界
+- Codex, GitHub Copilot, Claude Code, Grok Build, Antigravity
+- instruction, workflow, delegated agent, enforcement, prompt, connector
+- stable IDs, aliases, support statuses, artifacts, scopes, guidance, risks
+- versioned offline provider profiles and staleness
+- the pure Core query and `Perttool.AgentGuidanceResult.v1`
+- `agent help` index, provider, surface, quick, and detail projections
+- deterministic text/JSON projections
+- unknown lookups, invalid profiles, and invariant failures
+- compatibility boundaries for future audit, scaffold, and enforcement
 
-対象外:
+Out of scope:
 
-- provider fileの探索、読込、生成、変更
-- hook、skill、workflow、agent、prompt、connectorの実行
-- runtime web refreshまたはprovider APIへの接続
-- repositoryの適合性監査
-- provider設定のscaffoldまたはapply
-- `dag next`の代行、project-specific task priorityの複製
-- provider featureの品質評価またはprovider間ranking
-- MCP、Issue #3のmulti-plan composition、autonomous planning
+- discovery, reading, creation, or modification of provider files
+- execution of hooks, skills, workflows, agents, prompts, or connectors
+- runtime web refresh or connection to provider APIs
+- repository conformance audit
+- provider-configuration scaffolding or application
+- substituting for `dag next` or duplicating project-specific task priority
+- quality evaluation of provider features or ranking among providers
+- MCP, Issue #3 multi-plan composition, or autonomous planning
 
 ## 4. Version identity
 
-Version 1の組合せを次とする。
+The Version 1 combination is as follows.
 
 ```text
 result_schema_version           = Perttool.AgentGuidanceResult.v1
@@ -80,28 +80,28 @@ description_locale              = en
 staleness_policy_version        = 1
 ```
 
-各versionは独立した互換性境界である。
+Each version is an independent compatibility boundary.
 
-| Version | 変更対象 |
+| Version | Changes to |
 | --- | --- |
-| result schema | public JSON shape、required field、field semantics |
-| guidance interface | Core query/resultの意味、ordering、projection |
-| profile schema | offline profile fileのshapeとvalidation |
-| profile data | provider mapping、alias、artifact、source、日付 |
-| guidance taxonomy | guidance IDまたはdirectiveの意味 |
-| risk taxonomy | risk ID、kind、mitigation関係の意味 |
-| description registry | canonical description templateと文言 |
-| staleness policy | 日付比較、状態、warning条件 |
+| result schema | public JSON shape, required fields, and field semantics |
+| guidance interface | Core query/result semantics, ordering, and projection |
+| profile schema | offline profile-file shape and validation |
+| profile data | provider mappings, aliases, artifacts, sources, and dates |
+| guidance taxonomy | meanings of guidance IDs and directives |
+| risk taxonomy | meanings of risk IDs, kinds, and mitigation relationships |
+| description registry | canonical description templates and wording |
+| staleness policy | date comparison, status, and warning conditions |
 
-Pre-release全体のstrict compatibilityは要求しない。ただし一度採用した`Perttool.AgentGuidanceResult.v1`を破壊的に変更する場合はresult schemaを上げる。Provider mappingだけの変更はprofile data version、既存IDの意味変更は対応taxonomy version、canonical文言だけの変更はdescription registry versionを上げる。
+Strict compatibility across all pre-releases is not required. However, a breaking change to an adopted `Perttool.AgentGuidanceResult.v1` requires incrementing the result schema. A provider-mapping-only change requires incrementing the profile data version; a change to the meaning of an existing ID requires incrementing the corresponding taxonomy version; and a canonical-wording-only change requires incrementing the description registry version.
 
-Runtime resultへ現在時刻、生成時刻、random IDを含めない。
+Do not include the current time, generation time, or random IDs in runtime results.
 
 ## 5. Stable taxonomy
 
-### 5.1 Provider IDとalias
+### 5.1 Provider IDs and aliases
 
-Canonical provider orderを次で固定する。
+The canonical provider order is fixed as follows.
 
 ```text
 codex
@@ -111,17 +111,17 @@ grok-build
 antigravity
 ```
 
-Version 1のaliasは次の1件だけである。
+Version 1 has only the following alias.
 
 ```text
 grok -> grok-build
 ```
 
-Aliasはinput normalizationだけに使用し、resultは常にcanonical provider IDを返す。Case folding、空白除去、prefix一致、fuzzy match、非規範aliasを行わない。`Grok`、`grok_build`、`copilot`はunknown providerである。
+Use aliases only for input normalization; results always return the canonical provider ID. Do not perform case folding, whitespace removal, prefix matching, fuzzy matching, or non-normative aliasing. `Grok`, `grok_build`, and `copilot` are unknown providers.
 
 ### 5.2 Surface ID
 
-Canonical surface orderを次で固定する。
+The canonical surface order is fixed as follows.
 
 ```text
 instruction
@@ -132,20 +132,20 @@ prompt
 connector
 ```
 
-| Surface | 共通意味 |
+| Surface | Common meaning |
 | --- | --- |
-| `instruction` | sessionまたはtaskをまたいで有効になるproject/user instruction |
-| `workflow` | 明示的に再利用する手順、skill、command package |
-| `delegated_agent` | 親agentから役割またはsubtaskを委譲するagent定義 |
-| `enforcement` | eventへ反応し、許可、拒否、検査、command実行を行いうるhook/policy |
-| `prompt` | 人が明示起動するprompt templateまたはcommand |
-| `connector` | 外部contextまたはtoolをagentへ公開するconnection |
+| `instruction` | project/user instructions effective across sessions or tasks |
+| `workflow` | an explicitly reusable procedure, skill, or command package |
+| `delegated_agent` | an agent definition to which a parent agent delegates a role or subtask |
+| `enforcement` | a hook/policy that may respond to events and allow, reject, inspect, or execute commands |
+| `prompt` | a prompt template or command explicitly invoked by a human |
+| `connector` | a connection exposing external context or tools to an agent |
 
-Provider用語をsurface IDの代わりに返さない。1つのprovider artifactが複数surfaceへ対応する場合、surface recordごとに同じpathを参照できるが、各surfaceのguidanceとriskは独立に保持する。
+Do not return provider terminology in place of surface IDs. When one provider artifact serves multiple surfaces, each surface record may reference the same path, but each surface retains independent guidance and risks.
 
 ### 5.3 Support status
 
-Support status vocabularyを次で固定する。
+The support-status vocabulary is fixed as follows.
 
 ```text
 native
@@ -156,20 +156,20 @@ unsupported
 unknown
 ```
 
-Statusはproviderの優劣、projectでの推奨順位、provider release全体のmaturityを表さない。
+Status does not represent provider superiority, project recommendation rank, or maturity of the provider release as a whole.
 
-| Status | 必須条件 |
+| Status | Required condition |
 | --- | --- |
-| `native` | 現行official sourceがprovider固有のsurfaceまたはartifactを記述している |
-| `compatible` | provider固有surfaceではなく、official sourceが他provider形式との互換利用を明記している |
-| `preview` | official sourceが対象surfaceまたはartifactをpreview、beta、experimental相当と明記している |
-| `deprecated` | official sourceが対象surfaceまたはartifactをdeprecatedと明記している |
-| `unsupported` | official sourceが対象surfaceまたはartifactを利用不可と明記している |
-| `unknown` | official sourceだけでは上記のいずれも立証できない |
+| `native` | Current official sources describe a provider-specific surface or artifact. |
+| `compatible` | The surface is not provider-specific, and official sources explicitly state compatible use of another provider's format. |
+| `preview` | Official sources explicitly mark the target surface or artifact as preview, beta, experimental, or equivalent. |
+| `deprecated` | Official sources explicitly mark the target surface or artifact as deprecated. |
+| `unsupported` | Official sources explicitly state that the target surface or artifact is unavailable. |
+| `unknown` | Official sources alone cannot establish any of the above. |
 
-単にartifact pathが空、maturityが未記載、資料が見つからない、別providerで利用できるという理由で`unsupported`を生成しない。Artifact pathの不明は`artifact_resolution=unknown`、release maturityの未記載はstatus evidenceのnoteとして分離する。
+Do not produce `unsupported` merely because an artifact path is empty, maturity is unstated, documentation cannot be found, or another provider supports it. Separate an unknown artifact path as `artifact_resolution=unknown`, and an unstated release maturity as a note in status evidence.
 
-同じ対象について複数条件が明記される場合は、次の決定順を使う。
+When multiple conditions are explicitly stated for the same target, use the following precedence.
 
 ```text
 explicitly unavailable -> unsupported
@@ -180,20 +180,20 @@ provider-native        -> native
 otherwise              -> unknown
 ```
 
-例えばcompatibleなartifactがpreviewでもある場合、public `support_status`は`preview`とし、compatibility fact、`compatibility_not_native` risk、source参照を保持する。単一statusへ直交する全事実を詰め込まない。
+For example, if a compatible artifact is also preview, its public `support_status` is `preview`, while retaining the compatibility fact, `compatibility_not_native` risk, and source references. Do not pack all orthogonal facts into one status.
 
-1 provider/surfaceに複数artifactがある場合、各artifactは自身の`support_status`を持つ。Surface summary statusは次の規則で選ぶ。
+When a provider/surface has multiple artifacts, each artifact has its own `support_status`. Select the surface summary status using the following rules.
 
-1. profileが`primary=true`とするartifactまたはcapabilityを1件だけ選ぶ
-2. primaryのstatusをsurface summaryへ投影する
-3. primaryがない場合はsurface summaryを`unknown`にする
-4. secondary artifactのstatusでsummaryを上書きしない
+1. Select exactly one artifact or capability for which the profile sets `primary=true`.
+2. Project the primary status to the surface summary.
+3. If there is no primary, make the surface summary `unknown`.
+4. Do not override the summary with a secondary artifact's status.
 
-したがって、nativeなprimaryとcompatibleなsecondaryを持つsurfaceは`native`であり、compatible pathもartifact recordには残る。
+Therefore, a surface with a native primary and compatible secondary is `native`, while the compatible path remains in the artifact record.
 
 ### 5.4 Status evidence
 
-全support statusは次の構造化根拠を持つ。
+Every support status has the following structured evidence.
 
 ```text
 SupportStatusEvidence:
@@ -209,9 +209,9 @@ SupportStatusEvidence:
   description         GuidanceDescription | null
 ```
 
-`source_ids`は同じproviderのofficial sourceを1件以上参照する。ただし`unknown`では検索・確認したsourceを1件以上参照し、なぜ結論できないかを`facts`へ記録する。`facts`はprofile-ownedな安定英文であり、runtime生成の要約ではない。Profileではdescriptionを必須とするが、public quick projectionでは`description=null`、detail projectionでは非nullとする。
+`source_ids` reference one or more official sources for the same provider. For `unknown`, they reference one or more sources that were searched or checked, and record in `facts` why no conclusion can be reached. `facts` are stable English owned by the profile, not runtime-generated summaries. Profiles require a description; public quick projection sets `description=null`, while detail projection makes it non-null.
 
-Statusと`evidence_kind`の合法な対応は1対1とする。
+The legal mapping between status and `evidence_kind` is one-to-one.
 
 | Status | Evidence kind |
 | --- | --- |
@@ -222,53 +222,53 @@ Statusと`evidence_kind`の合法な対応は1対1とする。
 | `unsupported` | `official_unsupported_notice` |
 | `unknown` | `insufficient_official_evidence` |
 
-Provider baselineの`maturity_evidence.status`は調査時の事実入力であり、public support statusへ機械的にcopyしない。`public_preview`と`deprecated`は対応するofficial noticeの候補になるが、`documented`、`surface_specific`、`not_stated`だけから`native`、`compatible`、`unsupported`、`unknown`を決めない。Profile作成時にartifact/capabilityごとのofficial fact、primary、互換関係を5.3の決定順へ適用し、5.4の構造化根拠を固定する。
+The provider baseline's `maturity_evidence.status` is fact input at research time and is not mechanically copied to public support status. `public_preview` and `deprecated` can be candidates for their corresponding official notices, but `documented`, `surface_specific`, and `not_stated` alone do not determine `native`, `compatible`, `unsupported`, or `unknown`. When creating a profile, apply per-artifact/capability official facts, primary selection, and compatibility relationships in the 5.3 precedence order, then fix the 5.4 structured evidence.
 
-### 5.5 Artifact resolutionとscope
+### 5.5 Artifact resolution and scope
 
-Artifact placementはsupport statusと別に次を返す。
+Artifact placement returns the following independently of support status.
 
 ```text
 artifact_resolution = known | not_applicable | unknown
 ```
 
-- `known`: official sourceからpathまたは配置単位を特定できる
-- `not_applicable`: file artifactを持たないsession/runtime capability
-- `unknown`: capabilityは観測できるがdurable artifactの配置を立証できない
+- `known`: an official source identifies the path or placement unit
+- `not_applicable`: a session/runtime capability with no file artifact
+- `unknown`: the capability is observable, but durable artifact placement cannot be established
 
-Scope vocabularyを次で固定する。
+The scope vocabulary is fixed as follows.
 
 ```text
 repository directory workspace user organization enterprise managed
 session conversation local admin system plugin compatibility
 ```
 
-Scopeの配列は上記順に並べる。Provider用語は`provider_terms`へ保持し、共通scopeへ根拠なく変換しない。
+Order scope arrays as above. Retain provider terminology in `provider_terms`; do not convert it to common scopes without evidence.
 
 ### 5.6 Guidance ID
 
-Version 1のguidanceを次で固定する。`directive`は`must`、`should`、`may`のいずれかである。
+Version 1 guidance is fixed as follows. `directive` is one of `must`, `should`, or `may`.
 
-| Guidance ID | Origin | Directive | 意味 |
+| Guidance ID | Origin | Directive | Meaning |
 | --- | --- | --- | --- |
-| `project_plan_is_authority` | project control | must | project modelをpriorityの正本とする |
-| `consult_dag_next_before_start` | project control | must | 新しいwork開始前に`dag next`を確認する |
-| `recompute_after_state_change` | project control | must | state advance後にproject全体を再解析する |
-| `require_explicit_human_override` | project control | must | 推奨外workは人間の明示判断として扱う |
-| `keep_provider_priority_identical` | project control | must | providerごとにpriority規則を変えない |
-| `use_narrowest_durable_surface` | common surface | should | 必要scopeを満たす最小の永続surfaceを選ぶ |
-| `preserve_scope_and_precedence` | common surface | must | providerのscopeとprecedenceを保持する |
-| `review_executable_customization` | common surface | must | code/toolを実行しうるcustomizationをreviewする |
-| `treat_unknown_as_unavailable` | common surface | must | unknownを利用可能と推測しない |
-| `review_stale_profile_before_adoption` | common surface | should | review due profileを新規採用前に再確認する |
+| `project_plan_is_authority` | project control | must | Treat the project model as the authority for priority. |
+| `consult_dag_next_before_start` | project control | must | Check `dag next` before starting new work. |
+| `recompute_after_state_change` | project control | must | Reanalyze the entire project after a state advance. |
+| `require_explicit_human_override` | project control | must | Treat work outside the recommendation as an explicit human decision. |
+| `keep_provider_priority_identical` | project control | must | Do not change priority rules by provider. |
+| `use_narrowest_durable_surface` | common surface | should | Choose the narrowest durable surface that satisfies the required scope. |
+| `preserve_scope_and_precedence` | common surface | must | Preserve provider scope and precedence. |
+| `review_executable_customization` | common surface | must | Review customizations that may execute code or tools. |
+| `treat_unknown_as_unavailable` | common surface | must | Do not infer that unknown is available. |
+| `review_stale_profile_before_adoption` | common surface | should | Recheck a review-due profile before new adoption. |
 
-Provider固有guidanceを追加する場合も`provider.<provider_id>.<name>`形式のstable IDを使い、project control guidanceと同じ意味の別IDを作らない。
+When adding provider-specific guidance, also use stable IDs in the form `provider.<provider_id>.<name>` and do not create a separate ID with the same meaning as project-control guidance.
 
-上表はVersion 1のcommon guidance registryである。Provider profileがprovider固有IDを追加する場合、そのIDをprofile dataとguidance taxonomyの両方へ登録し、両versionを上げる。Profile dataだけへ未登録IDを追加しない。
+The table above is the Version 1 common guidance registry. When a provider profile adds a provider-specific ID, register that ID in both profile data and the guidance taxonomy, and increment both versions. Do not add an unregistered ID only to profile data.
 
 ### 5.7 Risk ID
 
-Version 1のriskを次で固定する。
+Version 1 risks are fixed as follows.
 
 | Risk ID | Kind |
 | --- | --- |
@@ -287,11 +287,11 @@ Version 1のriskを次で固定する。
 | `artifact_path_unknown` | compatibility |
 | `compatibility_not_native` | compatibility |
 
-Riskはseverity scoreやprovider rankingを持たない。各risk recordは`mitigation_guidance_ids`を1件以上持ち、参照先guidanceをresult closureへ含める。
+Risks have neither severity scores nor provider rankings. Each risk record has one or more `mitigation_guidance_ids` and includes the referenced guidance in the result closure.
 
 ### 5.8 Canonical description
 
-Guidance、risk、status evidenceは次のdescriptionを持つ。
+Guidance, risks, and status evidence have the following descriptions.
 
 ```text
 GuidanceDescription:
@@ -300,13 +300,13 @@ GuidanceDescription:
   text        string
 ```
 
-`key`とparameterはmachine-readableな正本、`text`はdescription registry version 1、locale `en`から決定的に生成した派生値である。同じkeyとparameterから異なるtextを生成してはならない。Consumerは判断に`text`だけを使用せず、stable ID、directive、status、evidence、risk関係を使用する。
+`key` and parameters are the machine-readable authority; `text` is a derived value deterministically generated from description registry version 1 and locale `en`. The same key and parameters MUST NOT generate different text. Consumers must not use `text` alone for decisions; they use stable IDs, directives, status, evidence, and risk relationships.
 
 ## 6. Project guidance composition
 
 ### 6.1 Composition order
 
-適用順を次で固定する。
+The application order is fixed as follows.
 
 ```text
 project_control
@@ -314,31 +314,31 @@ common_surface
 provider
 ```
 
-これは「後勝ち」のoverride順ではない。後段は前段を具体化できるが、否定、緩和、並べ替えをしてはならない。
+This is not a last-wins override order. Later layers may make earlier layers concrete, but MUST NOT negate, weaken, or reorder them.
 
-Project control guidanceは全provider、全surfaceへ適用する。Common surface guidanceはsurface IDから決まり、provider guidanceはofficial provider behaviorの配置・scope・riskだけを補足する。
+Project-control guidance applies to every provider and surface. Common-surface guidance is determined by surface ID, and provider guidance only supplements placement, scope, and risks of official provider behavior.
 
 ### 6.2 Conflict
 
-次はprofile invariant failureである。
+The following are profile invariant failures.
 
-- provider guidanceがproject model以外をpriority authorityにする
-- `dag next`確認なしのtask selectionを正規経路として許可する
-- human overrideを暗黙化する
-- providerごとにRecommendation rankingまたはreasonを変更する
-- common guidanceの`must`をprovider guidanceが`should`または`may`へ弱める
+- Provider guidance makes something other than the project model the priority authority.
+- It permits task selection without checking `dag next` as a normal path.
+- It makes human overrides implicit.
+- It changes Recommendation ranking or reasons by provider.
+- Provider guidance weakens a `must` in common guidance to `should` or `may`.
 
-Conflictを「provider固有差分」として出力せず、`PTAGT-302`でprofile全体を拒否する。
+Do not output a conflict as a provider-specific difference; reject the entire profile with `PTAGT-302`.
 
 ### 6.3 Project-specific facts
 
-Version 1は`.pert` documentを読まず、現在のrecommended task、critical path、float、resource conflictをresultへ複製しない。Guidanceは`consult_dag_next_before_start`を返し、project固有の回答は`dag next`へ委譲する。
+Version 1 does not read `.pert` documents and does not copy the current recommended tasks, critical path, float, or resource conflicts into the result. Guidance returns `consult_dag_next_before_start` and delegates project-specific answers to `dag next`.
 
 ## 7. Offline profile
 
 ### 7.1 Profile identity
 
-Bundled profileは`Perttool.AgentGuidanceProfile.v1`であり、少なくとも次を持つ。
+The bundled profile is `Perttool.AgentGuidanceProfile.v1` and has at least the following.
 
 ```text
 schema_version
@@ -358,11 +358,11 @@ risk_registry
 sources
 ```
 
-Profile digestはUTF-8、末尾newline付きcanonical JSON bytesのSHA-256で、`sha256:<64 lowercase hex digits>`とする。Object keyはprofile serializerのschema order、registry配列は本仕様のcanonical orderで並べ、runtimeで再sortした別bytesをdigest対象にしない。
+The profile digest is the SHA-256 of canonical JSON bytes encoded as UTF-8 with a trailing newline, in the form `sha256:<64 lowercase hex digits>`. Object keys use the profile serializer's schema order, registry arrays use this specification's canonical order, and differently ordered bytes re-sorted at runtime are not the digest input.
 
 ### 7.2 Source
 
-Source recordは次を持つ。
+Source records have the following fields.
 
 ```text
 source_id
@@ -372,11 +372,11 @@ url
 verified_at
 ```
 
-Version 1 profileはofficial provider sourceだけを根拠にする。Blog、search result、AI生成要約、repositoryの推測をofficial sourceの代用にしない。URLはruntimeでfetchしない。
+Version 1 profiles rely only on official provider sources. Do not use blogs, search results, AI-generated summaries, or repository inferences as substitutes for official sources. Do not fetch URLs at runtime.
 
 ### 7.3 Staleness
 
-Stalenessはwall clockではなくprofileに固定した日付だけで計算する。
+Calculate staleness only from dates fixed in the profile, not from the wall clock.
 
 ```text
 Staleness:
@@ -386,21 +386,21 @@ Staleness:
   basis_date   YYYY-MM-DD
 ```
 
-`basis_date`はprofile rootの`snapshot_as_of`と一致する。
+`basis_date` matches the profile root's `snapshot_as_of`.
 
-- `verified`: `verified_at`と`review_after`があり、`snapshot_as_of <= review_after`
-- `review_due`: 両日付があり、`snapshot_as_of > review_after`
-- `unknown`: いずれかの日付をofficial evidenceから固定できない
+- `verified`: `verified_at` and `review_after` exist, and `snapshot_as_of <= review_after`
+- `review_due`: both dates exist, and `snapshot_as_of > review_after`
+- `unknown`: either date cannot be fixed from official evidence
 
-Review間隔はCoreへhard-codeせず、profile ownerがsource volatilityを考慮して`review_after`を明示する。Runtime invocation dateからstatusを変えない。Textは日付を必ず表示し、「現在有効」とは表現しない。
+Do not hard-code review intervals in Core; the profile owner explicitly sets `review_after` in consideration of source volatility. Do not change status from the runtime invocation date. Text always displays dates and does not say "currently valid."
 
-`review_due`は`PTAGT-202` warning、`unknown` stalenessは`PTAGT-203` warningを返す。どちらもlookup自体は成功するが、新規artifact採用前に再検証する。
+`review_due` returns a `PTAGT-202` warning, and `unknown` staleness returns a `PTAGT-203` warning. Both lookups themselves succeed, but they must be revalidated before adopting a new artifact.
 
 ## 8. Core API
 
 ### 8.1 Query
 
-Pure Coreは次の概念interfaceを持つ。
+The pure Core has the following conceptual interface.
 
 ```text
 getAgentGuidance(profile, query) -> AgentGuidanceResult
@@ -411,33 +411,33 @@ AgentGuidanceQuery:
   level        index | quick | detail
 ```
 
-Coreはfile、environment、network、clock、locale catalog、provider APIへアクセスしない。Alias normalization、validation、reference closure、ordering、projectionをCoreで一度だけ行い、CLI rendererは再判定しない。
+Core does not access files, the environment, the network, a clock, locale catalogs, or provider APIs. Perform alias normalization, validation, reference closure, ordering, and projection once in Core; CLI renderers MUST NOT decide them again.
 
-`surface_id`は`provider_id`なしで指定できない。
+`surface_id` cannot be specified without `provider_id`.
 
 ### 8.2 Projection level
 
 | Level | Projection |
 | --- | --- |
-| `index` | provider ID、display name、alias、available surface ID |
-| `quick` | surface status、artifact path/scope、guidance/risk ID、staleness |
-| `detail` | quickに加えてcanonical description、provider terms、status evidence、source title/URL |
+| `index` | provider IDs, display names, aliases, and available surface IDs |
+| `quick` | surface statuses, artifact paths/scopes, guidance/risk IDs, and staleness |
+| `detail` | quick plus canonical descriptions, provider terms, status evidence, and source titles/URLs |
 
-引数なしのdefault levelは`index`、providerまたはsurface指定時は`quick`とする。明示levelはどのquery shapeでも受理する。Levelは同じentityのID、status、orderingを変えず、情報量だけを変える。
+The default level with no operands is `index`; it is `quick` when a provider or surface is specified. Accept an explicit level for every query shape. A level changes only the amount of information, not the IDs, statuses, or ordering of the same entities.
 
 ### 8.3 Completeness
 
-Resultはquery projectionで参照するguidance、risk、sourceだけをroot registryへ含める。Riskから参照するmitigation guidance、status evidenceから参照するsourceを再帰的に含め、dangling referenceを許可しない。
+The result includes in the root registry only the guidance, risks, and sources referenced by the query projection. Recursively include mitigation guidance referenced by risks and sources referenced by status evidence; dangling references are not permitted.
 
-`index`ではsurface detailを返さないため、guidance、risk、source registryは空配列にできる。`quick`ではsource IDをsurfaceへ保持し、source registryはIDとprovider IDだけのprojectionを返す。`detail`ではsource URLを含む。
+Because `index` returns no surface detail, the guidance, risk, and source registries may be empty arrays. For `quick`, retain source IDs on surfaces and return a source-registry projection containing only IDs and provider IDs. `detail` includes source URLs.
 
-Positional filterを先に適用し、その後level projectionを行う。Surface指定の`index`は1 providerと指定した1件の`available_surface_ids`を返し、`surfaces=[]`とする。Providerだけの`index`はそのproviderの全surface ID、filterなしの`index`は全providerの全surface IDを返す。
+Apply positional filters before level projection. An `index` query with a surface returns one provider and the specified single `available_surface_ids` entry, with `surfaces=[]`. An `index` query with only a provider returns all surface IDs for that provider; an unfiltered `index` query returns all surface IDs for all providers.
 
 ## 9. Public result schema
 
 ### 9.1 Root
 
-JSON root field orderとrequired fieldを次で固定する。
+The JSON root field order and required fields are fixed as follows.
 
 ```text
 schema_version
@@ -463,14 +463,14 @@ capabilities
 diagnostics
 ```
 
-固定値:
+Fixed values:
 
 ```text
 schema_version = Perttool.AgentGuidanceResult.v1
 operation      = agent.help
 ```
 
-`profile_digest`はbundled profileのcanonical digestである。`agent help`は既存`dsl help`と同じくdocument operationではないため、`document_id`、`source`、`source_digest`、`diagnostics_truncated`を持たない。Unknown lookupでもversion identity、profile identity、query、空のresult配列、diagnosticを持つcomplete envelopeを返す。
+`profile_digest` is the canonical digest of the bundled profile. Like the existing `dsl help`, `agent help` is not a document operation and therefore has no `document_id`, `source`, `source_digest`, or `diagnostics_truncated`. Even an unknown lookup returns a complete envelope with version identity, profile identity, query, empty result arrays, and a diagnostic.
 
 ### 9.2 Query projection
 
@@ -483,7 +483,7 @@ query:
   alias_applied           boolean
 ```
 
-Unknown providerでは`canonical_provider_id=null`、known aliasではcanonical IDと`alias_applied=true`を返す。
+For an unknown provider, return `canonical_provider_id=null`; for a known alias, return the canonical ID and `alias_applied=true`.
 
 ### 9.3 Provider
 
@@ -496,7 +496,7 @@ ProviderGuidance:
   surfaces
 ```
 
-`aliases`はcanonical alias order、`available_surface_ids`はsurface orderである。Provider queryは1 provider、全体queryはprovider order、unknown queryは空配列を返す。
+`aliases` use canonical alias order, and `available_surface_ids` use surface order. A provider query returns one provider, a whole-registry query uses provider order, and an unknown query returns an empty array.
 
 ### 9.4 Surface
 
@@ -515,7 +515,7 @@ SurfaceGuidance:
   staleness
 ```
 
-`primary_artifact_id`はfile artifactを持たないcapabilityまたはunknown placementでは`null`にできる。`guidance_ids`はcomposition order、各origin内はtaxonomy order、`risk_ids`はrisk taxonomy orderである。
+`primary_artifact_id` may be `null` for a capability without a file artifact or with unknown placement. `guidance_ids` use composition order and taxonomy order within each origin; `risk_ids` use risk taxonomy order.
 
 ### 9.5 Artifact
 
@@ -529,9 +529,9 @@ GuidanceArtifact:
   status_evidence
 ```
 
-`path`は`artifact_resolution=known`の場合だけnon-nullとする。`scope_ids`は1件以上をscope orderで持ち、同じpathがrepositoryとdirectoryの両方へ適用される場合も1つのartifactに両scopeを保持する。Placeholderは`<skill-name>`のように山括弧で表し、実pathと誤認する生成値を返さない。Artifact自身のstatusにも5.4の`status_evidence`を必須とする。
+`path` is non-null only when `artifact_resolution=known`. `scope_ids` contain at least one entry in scope order; when the same path applies to both a repository and a directory, retain both scopes in one artifact. Represent placeholders such as `<skill-name>` in angle brackets and do not return generated values that could be mistaken for actual paths. An artifact's own status also requires the section 5.4 `status_evidence`.
 
-### 9.6 Guidance、risk、source
+### 9.6 Guidance, risk, and source
 
 ```text
 GuidanceRecord:
@@ -557,15 +557,15 @@ GuidanceSource:
   verified_at
 ```
 
-Quick projectionではdescription、title、urlを`null`、detailでは非nullとする。Field自体をlevelごとに省略しない。
+For quick projection, set `description`, `title`, and `url` to `null`; for detail they are non-null. Do not omit the fields themselves by level.
 
-Surfaceの`provider_terms`、status evidenceの`facts`と`description`もquickではそれぞれ空配列、空配列、`null`とし、detailでprofile値を返す。Source ID、status、artifact、scope、guidance/risk関係はquickでも省略しない。
+For quick projection, a surface's `provider_terms`, and a status evidence's `facts` and `description`, are respectively empty arrays, empty arrays, and `null`; detail returns the profile values. Do not omit source IDs, statuses, artifacts, scopes, or guidance/risk relationships even in quick projection.
 
-Project control guidanceの`surface_ids=[]`は全surfaceへの適用を表す。Common surfaceとprovider guidanceは1件以上のsurface IDをcanonical orderで持つ。空配列を「適用先なし」と解釈しない。
+`surface_ids=[]` for project-control guidance represents applicability to every surface. Common-surface and provider guidance have one or more surface IDs in canonical order. Do not interpret an empty array as "no applicability."
 
 ### 9.7 Capability declaration
 
-Version 1は常に次を返す。
+Version 1 always returns the following.
 
 ```text
 capabilities:
@@ -578,23 +578,23 @@ capabilities:
   writes_provider_state     false
 ```
 
-Renderer、alias、lookup結果によって値を変えない。
+Do not vary these values by renderer, alias, or lookup result.
 
 ## 10. Ordering and determinism
 
-Canonical orderingを次で固定する。
+Canonical ordering is fixed as follows.
 
-1. provider: 5.1のprovider order
-2. surface: 5.2のsurface order
+1. provider: provider order in section 5.1
+2. surface: surface order in section 5.2
 3. alias: profile alias declaration order
-4. scope: 5.5のscope order
-5. artifact: primary first、先頭scope IDのscope order、pathのUTF-8 byte order、artifact ID
-6. guidance: composition order、taxonomy order、guidance ID
-7. risk: taxonomy order、risk ID
-8. source: provider order、source IDのUTF-8 byte order
-9. diagnostic: severityではなく発生phase、code、provider ID、surface ID
+4. scope: scope order in section 5.5
+5. artifact: primary first; then scope order of the first scope ID, UTF-8 byte order of path, and artifact ID
+6. guidance: composition order, taxonomy order, and guidance ID
+7. risk: taxonomy order and risk ID
+8. source: provider order and UTF-8 byte order of source ID
+9. diagnostic: occurrence phase, code, provider ID, and surface ID, not severity
 
-同じtool version、profile bytes、queryからCore objectの意味、JSON bytes、text bytesを同一にする。Object insertion order、filesystem order、network response、locale、timezone、wall clockに依存しない。JSONは2-space indent、UTF-8、末尾newline、keyはschema orderとする。
+The same tool version, profile bytes, and query produce identical Core-object meaning, JSON bytes, and text bytes. Do not depend on object insertion order, filesystem order, network responses, locale, time zone, or wall clock. JSON uses two-space indentation, UTF-8, a trailing newline, and schema-order keys.
 
 ## 11. CLI contract
 
@@ -607,15 +607,15 @@ perttool agent help [<provider> [<surface>]]
   [--color auto|always|never]
 ```
 
-- `<provider>`はcanonical IDまたはstable alias
-- `<surface>`はcanonical surface IDだけ
-- 最大2 operand
-- `--warnings-as-errors`と`--max-diagnostics`は受理しない
-- command helpは`perttool agent help --help`
-- domain resultはprofile lookupを行うがproject documentを読まない
-- provider/surface/level/formatは同じCore resultへ接続する
+- `<provider>` is a canonical ID or stable alias
+- `<surface>` is a canonical surface ID only
+- Accept at most two operands
+- Do not accept `--warnings-as-errors` or `--max-diagnostics`
+- Command help is `perttool agent help --help`
+- The domain result performs a profile lookup but does not read a project document
+- Provider, surface, level, and format connect to the same Core result
 
-既存`dsl help`のtopic、default level、schema、PTHLP diagnostic、text/JSON byte出力を変更しない。
+Do not change the existing `dsl help` topics, default level, schema, PTHLP diagnostics, or text/JSON byte output.
 
 ### 11.2 Text layout
 
@@ -648,100 +648,100 @@ SOURCE <source-id> <url>
 READ-ONLY files=false hooks=false commands=false network=false provider-write=false
 ```
 
-Quickは`DESCRIPTION`とURL付き`SOURCE`を省略する。Unknown pathは`?`とし、空文字や推測pathを表示しない。Textのsection order、label、ID、status、date、pathの意味をgoldenで固定する。Machine consumerはJSONを使用する。
+Quick omits `DESCRIPTION` and URL-bearing `SOURCE`. Use `?` for an unknown path; do not display an empty string or an inferred path. Golden tests fix the meaning of text section order, labels, IDs, statuses, dates, and paths. Machine consumers use JSON.
 
 ## 12. Diagnostics and exit code
 
-Agent guidance diagnosticは`PTAGT-*` namespaceを使用し、`PTHLP-*`を再利用しない。
+Agent guidance diagnostics use the `PTAGT-*` namespace and do not reuse `PTHLP-*`.
 
 | Code | Severity | Exit | Meaning |
 | --- | --- | ---: | --- |
-| `PTAGT-101` | error | 1 | unknown provider IDまたはalias |
-| `PTAGT-102` | error | 1 | known providerに対するunknown surface ID |
-| `PTAGT-201` | warning | 0 | support statusが`unknown` |
-| `PTAGT-202` | warning | 0 | profile entryが`review_due` |
-| `PTAGT-203` | warning | 0 | profile entryのstalenessが`unknown` |
-| `PTAGT-301` | error | 1 | unsupported profile/schema/taxonomy version |
-| `PTAGT-302` | error | 70 | reference、composition、ordering invariant failure |
-| `PTAGT-303` | error | 70 | canonical descriptionまたはprofile digest invariant failure |
+| `PTAGT-101` | error | 1 | unknown provider ID or alias |
+| `PTAGT-102` | error | 1 | unknown surface ID for a known provider |
+| `PTAGT-201` | warning | 0 | support status is `unknown` |
+| `PTAGT-202` | warning | 0 | profile entry is `review_due` |
+| `PTAGT-203` | warning | 0 | staleness of a profile entry is `unknown` |
+| `PTAGT-301` | error | 1 | unsupported profile, schema, or taxonomy version |
+| `PTAGT-302` | error | 70 | reference, composition, or ordering invariant failure |
+| `PTAGT-303` | error | 70 | canonical description or profile digest invariant failure |
 
-Unknown lookupは`ok=false`、空のprovider/guidance/risk/source配列、1 diagnosticを返す。Known providerの`unsupported`または`unknown` surfaceはlookup成功であり、`ok=true`である。`unknown`だけ`PTAGT-201` warningを伴う。
+An unknown lookup returns `ok=false`, empty provider/guidance/risk/source arrays, and one diagnostic. An `unsupported` or `unknown` surface for a known provider is a successful lookup with `ok=true`. Only `unknown` carries a `PTAGT-201` warning.
 
-Unknown option、余分なoperand、surfaceだけの指定、invalid levelは`PTCLI-001`、exit 2とする。Envelope生成前のI/OはVersion 1にはなく、internal exceptionはexit 70である。JSONのstream規則はCLI Interface仕様9章を継承する。
+An unknown option, an extra operand, specifying only a surface, or an invalid level produces `PTCLI-001` and exit 2. Version 1 has no I/O before envelope creation, and an internal exception exits 70. JSON stream rules inherit section 9 of the CLI Interface specification.
 
 ## 13. Validation invariants
 
-Profile validatorは少なくとも次を検査する。
+The profile validator checks at least the following.
 
-- version identityがsupported combinationと一致する
-- provider/surface/orderが本仕様と一致し、重複しない
-- aliasがcanonical providerまたは他aliasと衝突しない
-- 全providerが6 surfaceをcanonical orderで持つ
-- statusとevidence kindが合法に対応する
-- primary artifact/capabilityがsurfaceごとに高々1件
-- artifact resolution、path、primary IDが矛盾しない
-- artifactのscope配列が空でなく、canonical orderである
-- surfaceとartifactのstatus evidenceが各statusへ合法に対応する
-- guidance、risk、source参照が閉じている
-- riskが少なくとも1 mitigation guidanceを持つ
-- composition orderと`must` directiveが弱められていない
-- source providerが参照元providerと一致する
-- URLがabsolute HTTPSである
-- dateがcanonical `YYYY-MM-DD`で、`verified_at <= review_after`かつ`verified_at <= snapshot_as_of`
-- stalenessが固定日付から一意に導出される
-- description key/parameter/textがregistryと一致する
-- canonical profile bytesとdigestが一致する
+- version identity matches a supported combination
+- providers, surfaces, and order match this specification and are not duplicated
+- no alias collides with a canonical provider or another alias
+- every provider has six surfaces in canonical order
+- statuses and evidence kinds correspond legally
+- there is at most one primary artifact/capability per surface
+- artifact resolution, path, and primary ID do not conflict
+- an artifact's scope array is non-empty and in canonical order
+- surface and artifact status evidence correspond legally to each status
+- guidance, risk, and source references are closed
+- every risk has at least one mitigation guidance entry
+- composition order and `must` directives are not weakened
+- the source provider matches the referring provider
+- URLs are absolute HTTPS
+- dates are canonical `YYYY-MM-DD`, with `verified_at <= review_after` and `verified_at <= snapshot_as_of`
+- staleness is uniquely derived from fixed dates
+- description key, parameter, and text match the registry
+- canonical profile bytes and digest match
 
-Invalid profileからpartial guidanceを返さない。Unsupported versionはconsumerが理解できるenvelopeを作れる場合だけ`PTAGT-301`を返し、shape自体を解釈できない場合はinternal safe stopとする。
+Do not return partial guidance from an invalid profile. Return `PTAGT-301` for an unsupported version only when a consumer can construct an understood envelope; if the shape itself cannot be interpreted, perform an internal safe stop.
 
 ## 14. Migration boundaries
 
 ### 14.1 Version 1: help
 
-Version 1はbundled profileに対するread-only queryだけを公開する。Repositoryやprovider environmentへの適合性を主張しない。
+Version 1 exposes only read-only queries over the bundled profile. It makes no conformance claim about a repository or provider environment.
 
 ### 14.2 Future audit
 
-`agent audit`を追加する場合:
+When adding `agent audit`:
 
-- 読むpath、symlink、encoding、ignore、trust境界を別仕様で固定する
-- help resultをaudit resultへ流用しない
-- `Perttool.AgentGuidanceAuditResult.v1`のような別schemaを使う
-- read-onlyであることをcapabilityへ明示する
+- define read paths, symlinks, encodings, ignores, and trust boundaries in a separate specification
+- do not reuse help results as audit results
+- use a separate schema such as `Perttool.AgentGuidanceAuditResult.v1`
+- state read-only behavior explicitly in capabilities
 
 ### 14.3 Future scaffold
 
-`agent scaffold`を追加する場合:
+When adding `agent scaffold`:
 
-- preview、diff、collision、ownership、safe-write、optimistic lockを別仕様で固定する
-- defaultでfileを書かない
-- provider fileを上書きまたはmergeする規則を推測しない
-- help/audit schemaをwrite resultへ流用しない
+- define preview, diff, collision, ownership, safe-write, and optimistic-lock behavior in a separate specification
+- do not write files by default
+- do not infer rules for overwriting or merging provider files
+- do not reuse help/audit schemas for write results
 
 ### 14.4 Future enforcement
 
-Hookまたはpolicy enforcementを追加する場合:
+When adding hook or policy enforcement:
 
-- 実行event、input/output、timeout、failure mode、trust、secret、command executionを別仕様で固定する
-- `dag next` recommendation versionとhuman override validationへ明示的にbindする
-- provider hookがtask priorityを独自計算しない
-- Version 1 helpの`executes_hooks=false`を変更せず、新しいoperation/resultで公開する
+- define execution events, input/output, timeouts, failure modes, trust, secrets, and command execution in a separate specification
+- bind explicitly to the `dag next` recommendation version and human-override validation
+- do not let provider hooks compute task priority independently
+- do not change Version 1 help's `executes_hooks=false`; expose it with a new operation/result
 
 ## 15. Acceptance trace
 
 | Issue #2 acceptance | Contract |
 | --- | --- |
-| 5 provider | 5.1、7章、9.3 |
-| 6 common surfaces | 5.2、9.4 |
-| stable ID/alias | 5章 |
-| support/unknown/staleness | 5.3、5.4、7.3 |
-| versioned offline profile | 4章、7章 |
-| deterministic Core | 8章、10章 |
-| text/JSON same Core | 8章、9章、11章 |
-| diagnostic/exit | 12章 |
-| project authority | 2章、6章 |
-| read-only/no network | 3章、9.7 |
-| legacy help non-regression | 11.1 |
-| audit/scaffold/enforcement boundary | 14章 |
+| 5 providers | 5.1, chapter 7, 9.3 |
+| 6 common surfaces | 5.2, 9.4 |
+| stable IDs/aliases | chapter 5 |
+| support/unknown/staleness | 5.3, 5.4, 7.3 |
+| versioned offline profile | chapter 4, chapter 7 |
+| deterministic Core | chapter 8, chapter 10 |
+| text/JSON from the same Core | chapters 8, 9, 11 |
+| diagnostics/exit | chapter 12 |
+| project authority | chapter 2, chapter 6 |
+| read-only/no network | chapter 3, 9.7 |
+| no regression in legacy help | 11.1 |
+| audit/scaffold/enforcement boundaries | chapter 14 |
 
-[規範例](../examples/agent-guidance.md)と`test/fixtures/agent-guidance/contract.v1.json`は、この表をcase IDへ展開する。Core実装はfixtureを都合よく変更せず、契約変更が必要なら本仕様とversionを先に更新する。
+The [normative example](../examples/agent-guidance.md) and `test/fixtures/agent-guidance/contract.v1.json` expand this table into case IDs. Core implementations MUST NOT conveniently change fixtures; when a contract change is necessary, update this specification and its version first.

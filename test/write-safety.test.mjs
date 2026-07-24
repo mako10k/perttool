@@ -30,7 +30,7 @@ const root = path.resolve(testDirectory, "..");
 const minimalText = readFileSync(path.join(root, "docs/examples/minimal.pert"), "utf8");
 
 function candidate(title) {
-  return minimalText.replace('title "作業する"', `title "${title}"`);
+  return minimalText.replace('title "Do work"', `title "${title}"`);
 }
 
 function workspace(t) {

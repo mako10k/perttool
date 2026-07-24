@@ -1,73 +1,73 @@
-# Recommendation Ranking Policy 仕様
+# Recommendation Ranking Policy Specification
 
-- 文書状態: Normative 1.0
-- 作成日: 2026-07-22
+- Document status: Normative 1.0
+- Created: 2026-07-22
 - Algorithm ID: `perttool.recommendation-ranking.lexicographic-frontier`
 - Algorithm version: `1`
-- 対象: AI Project Control Planeの決定的なrecommended set選択
+- Scope: deterministic selection of a recommended set for the AI Project Control Plane
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Human override: [recommendation-override.md](recommendation-override.md)
-- 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
-## 1. 目的
+## 1. Purpose
 
-本仕様は、[Recommendation Semantics仕様](recommendation.md)が定義するactual `ready` task集合`P`から、現在cycleで開始を推奨する集合`R`を決定的に選ぶranking policyを固定する。
+This specification fixes a ranking policy that deterministically selects the set `R` recommended to start in the current cycle from the actual `ready` task set `P` defined by the [Recommendation Semantics Specification](recommendation.md).
 
-次を定義する。
+It defines:
 
-- ranking対象と、project modelから取得するtyped fact
-- critical path、float、明示priority、後続解放、gate、milestone距離の優先規則
-- recommendationのselection horizon
-- active allocationを含むjoint resource feasibility
-- empty setと複数taskのparallel recommendation
-- 完全なtie-breakとalgorithm identity
-- 現行resource schedulerおよび`runnable_now`との非循環な境界
-- 後続decision traceへ渡すwinner、alternative、decisive rule
+- the ranking domain and typed facts obtained from the project model;
+- priority rules for critical path, float, explicit priority, downstream unlocks, gates, and milestone distance;
+- the selection horizon for recommendations;
+- joint resource feasibility including active allocations;
+- empty sets and parallel recommendations of multiple tasks;
+- complete tie-breaking and algorithm identity;
+- a non-cyclic boundary from the current resource scheduler and `runnable_now`; and
+- winners, alternatives, and decisive rules passed to the downstream decision trace.
 
-本policyは決定的なheuristicであり、resource-constrained project completionのglobal optimumを証明しない。
+This policy is a deterministic heuristic and does not prove a global optimum for resource-constrained project completion.
 
-## 2. 規範上の位置
+## 2. Normative position
 
-意味や設計が競合する場合は次の順で解決する。
+Resolve conflicts of meaning or design in the following order:
 
-1. [要件定義](../requirements.md)のMust requirement
-2. [Recommendation Semantics仕様](recommendation.md)
-3. 本仕様
-4. [Analysis仕様](analysis.md)
-5. [Graph Semantics仕様](graph-semantics.md)
-6. `docs/basic-design.md`、example、test、help、implementation
+1. Must requirements in [Requirements](../requirements.md)
+2. [Recommendation Semantics Specification](recommendation.md)
+3. this specification
+4. [Analysis Specification](analysis.md)
+5. [Graph Semantics Specification](graph-semantics.md)
+6. `docs/basic-design.md`, examples, tests, help, and implementation
 
-本仕様はrecommendation tierを再定義しない。`R`選択後の`recommended`、`allowed`、`deferred`、`discouraged`分類はRecommendation Semantics仕様の形式的順序を使用する。
+This specification does not redefine recommendation tiers. The formal ordering in the Recommendation Semantics Specification determines the `recommended`, `allowed`, `deferred`, and `discouraged` classifications after selecting `R`.
 
 ## 3. Scope
 
-対象:
+In scope:
 
-- 単一の有効なproject snapshot
-- actual `ready` taskの新規`start`判断
-- precedence CPMとproject graphから決定的に導出できるfact
-- applied capacity、active allocation、task requirement
-- 1回のanalysis request内でのrecommended set選択
+- a single valid project snapshot;
+- decisions to newly `start` actual `ready` tasks;
+- facts deterministically derivable from precedence CPM and the project graph;
+- applied capacity, active allocations, and task requirements; and
+- recommended-set selection within one analysis request.
 
-対象外:
+Out of scope:
 
-- active taskの継続、中断、cancel
-- future eventまでを含むresource scheduleの最適化
-- recommendationのweight tuning、学習、確率score
-- reason code taxonomyと構造化expression schema
-- Core type、CLI、JSON、text layout、schema migration
-- human overrideの永続化
-- 複数projectまたはmacro/detail planをまたぐranking
-- title、description、tag、owner、source、chat historyから意味を推測するranking
-- release固有semantics、rework risk、情報不足、置換予定、任意milestoneの業務的重要度の推測
-- recommendation実装
+- continuing, interrupting, or cancelling active tasks;
+- optimizing a resource schedule that includes future events;
+- recommendation weight tuning, learning, or probabilistic scores;
+- reason-code taxonomy and structured-expression schema;
+- Core types, CLI, JSON, text layout, and schema migration;
+- persistence of human overrides;
+- ranking across multiple projects or macro/detail plans;
+- ranking that infers meaning from titles, descriptions, tags, owners, sources, or chat history;
+- inference of release-specific semantics, rework risk, information insufficiency, planned replacement, or the business importance of arbitrary milestones; and
+- recommendation implementation.
 
-Grammar version 1にはrelease、rework risk、information sufficiencyを表す規範fieldがない。`RELEASE`などのID、title、tag、自然言語descriptionを解釈してranking factへ変換してはならない。
+Grammar version 1 has no normative fields for release, rework risk, or information sufficiency. IDs such as `RELEASE`, titles, tags, and natural-language descriptions MUST NOT be interpreted and converted into ranking facts.
 
-## 4. Algorithm identityと決定性
+## 4. Algorithm identity and determinism
 
-Version 1のalgorithm identityを次とする。
+The algorithm identity for version 1 is:
 
 ```text
 algorithm_id      = perttool.recommendation-ranking.lexicographic-frontier
@@ -75,63 +75,63 @@ algorithm_version = 1
 optimal           = false
 ```
 
-同じcanonical document、analysis option、applied capacity、critical epsilon、algorithm ID/versionから、同じcandidate fact、candidate order、selection horizon、`R`、comparisonを返さなければならない。
+The same canonical document, analysis options, applied capacity, critical epsilon, and algorithm ID/version MUST produce the same candidate facts, candidate order, selection horizon, `R`, and comparisons.
 
-次の変更はalgorithm versionの変更を必要とする。
+The following changes require an algorithm-version change:
 
-- ranking keyの追加、削除、順序変更
-- selection horizonの条件変更
-- counterfactual unlockまたはdistanceの定義変更
-- resource selection scanの変更
-- tie-breakの文字列比較規則変更
+- adding, removing, or reordering ranking keys;
+- changing the selection-horizon conditions;
+- changing the definition of counterfactual unlocks or distance;
+- changing the resource-selection scan; or
+- changing the string-comparison rule for tie-breaking.
 
-Description文言、renderer layout、field encodingだけの変更は[Recommendation Interface Contract仕様](recommendation-interface.md)のversioning対象であり、ranking algorithm versionを自動的には変更しない。
+Changes only to description wording, renderer layout, or field encoding are subject to versioning in the [Recommendation Interface Contract Specification](recommendation-interface.md) and do not automatically change the ranking algorithm version.
 
 ## 5. Ranking domain
 
-Recommendation Semantics仕様のactual `ready` task集合を`P`とする。
+Let `P` be the actual `ready` task set defined by the Recommendation Semantics Specification.
 
 ```text
 P = { t | classification(t) == ready }
 ```
 
-明示的negative factを持つtask集合を`N`とし、normal ranking candidateを`C`とする。
+Let `N` be the task set with explicit negative facts, and let `C` be the normal ranking candidates.
 
 ```text
 N = { t in P | explicitNegativeFact(t) == true }
 C = P - N
 ```
 
-Version 1のgrammarには`explicitNegativeFact`の正本fieldが存在しないため、version 1 documentでは`N`は常にemptyである。将来fact modelを追加して`N`を非emptyにする場合は、そのfactの規範仕様とranking algorithm versionを更新する。
+Because grammar version 1 has no authoritative field for `explicitNegativeFact`, `N` is always empty for a version 1 document. If a future fact model makes `N` nonempty, update the normative specification for that fact and the ranking algorithm version.
 
-- `active`、`blocked_now`、`upcoming`、`done`、gateは`P`へ含めない
-- capacity不足はcandidateからの除外条件ではない
-- resource requirementを持たないtaskも`C`へ含める
-- `C`がemptyならselection horizonと`R`もemptyである
+- `active`, `blocked_now`, `upcoming`, `done`, and gates are not included in `P`.
+- Insufficient capacity does not exclude a task from the candidates.
+- Tasks without resource requirements are also included in `C`.
+- If `C` is empty, both the selection horizon and `R` are empty.
 
 ## 6. Ranking input facts
 
 ### 6.1 Authoritative input
 
-各candidate`t`について次のfactだけをrankingへ使用する。
+Use only the following facts for ranking each candidate `t`.
 
-| Fact | 型 | 導出元 |
+| Fact | Type | Derived from |
 | --- | --- | --- |
 | `precedence_total_float` | exact Rational | precedence CPM |
-| `precedence_critical_class` | `driving | near_critical | non_critical` | total floatとproject `critical_epsilon` |
-| `explicit_priority` | Integer | task `priority`。省略時0 |
-| `new_ready_task_count` | nonnegative Integer | §6.2のcompletion counterfactual |
-| `new_satisfied_gate_count` | nonnegative Integer | §6.2のcompletion counterfactual |
-| `new_reached_milestone_count` | nonnegative Integer | §6.2のcompletion counterfactual |
-| `next_gate_task_distance` | nonnegative Integerまたは`infinity` | §6.3のresidual graph距離 |
-| `finish_task_distance` | nonnegative Integer | §6.3のresidual graph距離 |
-| `expected_duration` | exact Rational | Analysis仕様のeffective duration |
+| `precedence_critical_class` | `driving | near_critical | non_critical` | total float and project `critical_epsilon` |
+| `explicit_priority` | Integer | task `priority`; 0 if omitted |
+| `new_ready_task_count` | nonnegative Integer | completion counterfactual in §6.2 |
+| `new_satisfied_gate_count` | nonnegative Integer | completion counterfactual in §6.2 |
+| `new_reached_milestone_count` | nonnegative Integer | completion counterfactual in §6.2 |
+| `next_gate_task_distance` | nonnegative Integer or `infinity` | residual-graph distance in §6.3 |
+| `finish_task_distance` | nonnegative Integer | residual-graph distance in §6.3 |
+| `expected_duration` | exact Rational | effective duration in the Analysis Specification |
 | `task_id` | Identifier | canonical entity ID |
-| `requirements` | resource IDからpositive Integerへのmap | resolved requirement |
+| `requirements` | map from resource ID to positive Integer | resolved requirements |
 
-Set selectionには、applied capacity map、resourceごとのactive usage、active task IDを追加で使用する。Capacity overrideを指定した場合は宣言capacityではなくapplied capacityを使用する。
+Set selection additionally uses the applied-capacity map, active usage for each resource, and active task IDs. When a capacity override is specified, use applied capacity rather than declared capacity.
 
-`precedence_critical_class(t)`を次で定義する。有効analysisではtotal floatは0以上である。
+Define `precedence_critical_class(t)` as follows. Total float is nonnegative in a valid analysis.
 
 ```text
 driving       if precedence_total_float(t) == 0
@@ -139,18 +139,18 @@ near_critical if 0 < precedence_total_float(t) <= critical_epsilon
 non_critical  otherwise
 ```
 
-`critical_epsilon = 0`なら`near_critical`は存在しない。User-facing critical判定と同様にnear-criticalを認識するが、exact drivingと同一視しない。
+When `critical_epsilon = 0`, `near_critical` does not exist. Recognize near-critical tasks as in user-facing criticality determinations, but do not equate them with exact driving tasks.
 
 ### 6.2 Completion counterfactual
 
-後続解放factは、candidate`t`だけが現在snapshotで完了したと仮定する局所counterfactualから導出する。所要時間、他taskの進行、resource release eventは進めない。
+Derive downstream-unlock facts from a local counterfactual in which only candidate `t` completes in the current snapshot. Do not advance duration, progress of other tasks, or resource-release events.
 
-1. 現在のeffective reached集合を`R*`とする
-2. `t`だけを`done`としてsatisfiedにする
-3. 他taskのstatusとmilestone stored stateを変更しない
-4. Graph Semantics仕様のall-incoming ruleとgate closureを固定点まで適用し、`R*t`を得る
+1. Let `R*` be the current effective reached set.
+2. Mark only `t` as satisfied with status `done`.
+3. Do not change the status of other tasks or the stored state of milestones.
+4. Apply the all-incoming rule and gate closure from the Graph Semantics Specification to a fixed point, obtaining `R*t`.
 
-次を定義する。
+Define:
 
 ```text
 new_reached_milestones(t) = R*t - R*
@@ -177,11 +177,11 @@ new_satisfied_gates(t) = {
 new_satisfied_gate_count(t) = size(new_satisfied_gates(t))
 ```
 
-All-incoming joinの他branchが未完了なら、`t`だけで到達しないmilestoneとその後続をunlockへ数えない。Blocked taskは`new_ready_tasks`へ数えない。`new_satisfied_gate_count`は明示されたdependency gateの構造的影響であり、release承認や品質gateなどの業務意味を表さない。
+If another branch of an all-incoming join is unfinished, do not count milestones and downstream tasks that `t` alone does not reach as unlocks. Do not count blocked tasks in `new_ready_tasks`. `new_satisfied_gate_count` is the structural effect of explicit dependency gates; it does not represent business meaning such as release approval or quality gates.
 
 ### 6.3 Structural distance
 
-Distanceはcandidate`t`のdestination milestoneからproject finishへ向かうresidual graph上で計算する。Gateとretained `done` taskのcostを0、その他のunfinished task edgeのcostを1とする。
+Compute distance on the residual graph from candidate `t`'s destination milestone toward the project finish. Gates and retained `done` tasks have cost 0; all other unfinished task edges have cost 1.
 
 ```text
 edgeTaskCost(e) = 0  if kind(e) == gate or status(e) == done
@@ -191,28 +191,28 @@ finish_task_distance(t) =
   minimum sum(edgeTaskCost(e)) over paths dst(t) -> project.finish
 ```
 
-有効graphではfinish reachableなので`finish_task_distance`は有限である。
+In a valid graph, the finish is reachable, so `finish_task_distance` is finite.
 
-`next_gate_task_distance(t)`は、`dst(t)`から最初にgate edgeを通るまでのunfinished task edge costの最小値とする。`dst(t)`から直接gateを通る場合は0、downstreamにgateが存在しない場合は`infinity`とする。比較時はすべての有限値を`infinity`より先に置く。
+`next_gate_task_distance(t)` is the minimum unfinished-task-edge cost from `dst(t)` until traversing the first gate edge. It is 0 if a gate is traversed directly from `dst(t)`, and `infinity` if there is no downstream gate. In comparisons, every finite value precedes `infinity`.
 
-Distanceはedge数ではなくunfinished task数であり、durationを二重にscore化しない。Milestone titleやgate reasonの自然言語はdistanceへ影響しない。
+Distance is a count of unfinished tasks, not edges, and does not score duration twice. Natural language in milestone titles or gate reasons does not affect distance.
 
 ### 6.4 Excluded analysis facts
 
-Version 1は次をranking inputにしない。
+Version 1 does not use the following as ranking inputs:
 
-- resource schedule上のscheduled start/finish
-- resource wait、resource arc、schedule float、schedule critical path
-- resource makespan、utilization、peak usage
-- 現行`runnable_now` membershipまたはscheduler scan position
-- PERT variance、target duration、velocity forecast
-- owner、tag、description、blocked reason、source text
+- scheduled start or finish in the resource schedule;
+- resource wait, resource arc, schedule float, or schedule critical path;
+- resource makespan, utilization, or peak usage;
+- current `runnable_now` membership or scheduler scan position;
+- PERT variance, target duration, or velocity forecast; or
+- owner, tag, description, blocked reason, or source text.
 
-これらをsupporting informationとして将来表示する場合も、version 1の順位を変更してはならない。
+Even if these are displayed in the future as supporting information, they MUST NOT change the version 1 ranking.
 
 ## 7. Complete candidate order
 
-Candidateを次のtupleで昇順比較する。
+Compare candidates in ascending order of the following tuple.
 
 ```text
 (
@@ -229,34 +229,34 @@ Candidateを次のtupleで昇順比較する。
 )
 ```
 
-`critical_class_rank`は`driving = 0`、`near_critical = 1`、`non_critical = 2`とする。Rationalはexact比較し、表示用decimalを使用しない。Integerの負号は「大きい値を先にする」比較方向を示し、overflowするmachine integerへの変換を要求しない。`task_id`はUTF-8 byte列やlocale collationではなく、grammarのIdentifierに対するASCII code point辞書順で比較する。
+Set `critical_class_rank` to `driving = 0`, `near_critical = 1`, and `non_critical = 2`. Compare Rationals exactly; do not use display decimals. A negative Integer indicates the comparison direction "larger values first" and does not require conversion to a machine integer that could overflow. Compare `task_id` in ASCII code-point lexical order for grammar Identifiers, not by UTF-8 byte sequence or locale collation.
 
-このtupleはcomplete orderである。異なるtaskは最後の`task_id`で必ず順序が決まる。
+This tuple is a complete order. The final `task_id` always orders distinct tasks.
 
-優先規則の意味:
+The priority rules mean:
 
-1. exact driving taskをnear-critical、non-criticalより先にする
-2. 同じcritical classではtotal floatが小さいtaskを先にする
-3. 同じ工程余裕では人間が明示したpriorityが大きいtaskを先にする
-4. 単独完了で新しくreadyにするtaskが多いtaskを先にする
-5. dependency gateとmilestone closureへの直接的な影響が大きいtaskを先にする
-6. 次のgateとfinish milestoneへ構造的に近いtaskを先にする
-7. なお同値ならlongest-processing-time heuristicとしてexpected durationが大きいtaskを先にする
-8. 最後にtask IDで安定化する
+1. exact driving tasks precede near-critical and non-critical tasks;
+2. within the same critical class, tasks with lower total float precede;
+3. with the same schedule slack, tasks with higher human-specified priority precede;
+4. tasks that alone newly make more tasks ready precede;
+5. tasks with greater direct effects on dependency gates and milestone closure precede;
+6. tasks structurally closer to the next gate and finish milestone precede;
+7. if still tied, tasks with greater expected duration precede as a longest-processing-time heuristic; and
+8. finally, task ID stabilizes the order.
 
-このorderはopaqueな合成scoreを作らない。比較理由は最初に異なるkeyから一意に決まる。
+This order does not create an opaque composite score. The first differing key uniquely determines the reason for a comparison.
 
 ## 8. Selection horizon
 
-Selection horizonは、全ready taskを自動的に`recommended`へ昇格させず、現在の工程上もっとも緊急なcohortへ推薦を限定する境界である。
+The selection horizon is the boundary that limits recommendations to the most urgent cohort in the current schedule rather than automatically promoting every ready task to `recommended`.
 
-Candidate集合`C`がnonemptyの場合、critical classの最良値を`k`とする。
+When candidate set `C` is nonempty, let `k` be the best critical-class value.
 
 ```text
 k = minimum critical_class_rank(t) for t in C
 ```
 
-Horizon`H`を次で定義する。
+Define horizon `H` as follows.
 
 ```text
 if k in {driving, near_critical}:
@@ -266,28 +266,28 @@ else:
   H = { t in C | precedence_total_float(t) == f }
 ```
 
-したがって、actual readyにexact driving taskがあれば全exact driving taskが同じhorizonへ入る。Exact driving taskがなくnear-critical taskがあれば、全near-critical taskが入る。どちらもなければ、最小total floatのtask群が入る。
+Thus, if actual ready tasks include exact driving tasks, all exact driving tasks belong to the same horizon. If there are no exact driving tasks but there are near-critical tasks, all near-critical tasks belong to it. If neither exists, the tasks with minimum total float belong to it.
 
-Horizon外であることだけを`policyDefers(t)`の根拠にしない。Version 1では明示的な追加defer ruleを持たず、normal analysisの`policyDefers(t)`は全taskについて`false`とする。Horizon外のtaskは、`R`へ個別追加してresource-feasibleなら`allowed`、競合するなら`deferred`になる。
+Being outside the horizon alone MUST NOT be grounds for `policyDefers(t)`. Version 1 has no additional explicit defer rule, and `policyDefers(t)` is `false` for every task in normal analysis. A task outside the horizon is `allowed` if individually adding it to `R` is resource-feasible, or `deferred` if it conflicts.
 
-Selection horizonはsnapshot時刻0の新規startだけを対象にする。Future resource release後の候補、active task完了後のhorizon、project全期間の開始順を予測しない。
+The selection horizon concerns only new starts at snapshot time 0. It does not forecast candidates after future resource release, the horizon after active-task completion, or start order over the entire project duration.
 
 ## 9. Recommended set selection
 
 ### 9.1 Resource feasibility
 
-[Recommendation Semantics仕様](recommendation.md)の`startFeasible(S)`を使用する。
+Use `startFeasible(S)` from the [Recommendation Semantics Specification](recommendation.md).
 
 ```text
 for every resource r:
   activeUsage(r) + sum(requirement(t, r) for t in S) <= appliedCapacity(r)
 ```
 
-Resource requirementをprecedenceへ変換しない。Candidateの要求量がapplied capacity以下でも、active usageによって現在開始できない場合がある。
+Do not convert resource requirements into precedence. A candidate may be unable to start now because of active usage even if its requirement does not exceed applied capacity.
 
 ### 9.2 Deterministic scan
 
-`R`を次で選ぶ。
+Select `R` as follows.
 
 ```text
 R = empty ordered selection
@@ -301,33 +301,33 @@ for t in sort(H, complete candidate order):
 recommended_set = task IDs in R
 ```
 
-`recommended_set`の意味は集合であり、複数recommended task間に実行上の暗黙順序を付けない。Scan orderはselectionと説明を再現するために保持する。
+`recommended_set` denotes a set and does not impose an implicit execution order between multiple recommended tasks. Preserve scan order so that selection and explanations can be reproduced.
 
-この選択は次を保証する。
+This selection guarantees that:
 
-- `R`は`P`のsubsetである
-- `R`全体はactive allocationを含めてjointly feasibleである
-- `R`はscan終了時に`H`に対してinclusion-maximalである
-- `R`がtask数、priority合計、resource makespan、project completionを最適化するとは保証しない
-- horizon外のtaskは、resourceに余裕があっても`R`へ自動追加しない
+- `R` is a subset of `P`;
+- `R` as a whole is jointly feasible, including active allocations;
+- after the scan, `R` is inclusion-maximal with respect to `H`;
+- `R` is not guaranteed to optimize task count, total priority, resource makespan, or project completion; and
+- tasks outside the horizon are not automatically added to `R`, even when resources are available.
 
-## 10. Empty setとparallel recommendation
+## 10. Empty sets and parallel recommendations
 
-`R`は次の場合にemptyになり得る。
+`R` can be empty when:
 
-- `P`がempty
-- `C`がempty
-- `H`の全taskがapplied capacityとactive allocationにより現在resource-feasibleでない
+- `P` is empty;
+- `C` is empty; or
+- every task in `H` is not resource-feasible now because of applied capacity and active allocations.
 
-`H`にresource requirementを持たないtaskが1件以上あれば、そのtaskは必ず`R`へ入る。`H`のtaskが異なるresourceを使う、またはcapacity内で共存できる場合、複数taskを同時に`recommended`とする。
+If `H` contains one or more tasks without resource requirements, each such task is always included in `R`. When tasks in `H` use different resources or can coexist within capacity, multiple tasks are `recommended` concurrently.
 
-Parallel recommendationは「同時開始可能で、同じselection horizonに属する」ことを意味する。Task間のdependencyを追加せず、どれか1件だけを選ぶ排他的な意味を持たない。
+A parallel recommendation means "can start concurrently and belongs to the same selection horizon." It neither adds dependencies between tasks nor means that selecting exactly one task is exclusive.
 
-`R`がemptyでもhorizon外のfeasible taskを自動的にrecommendedへ繰り上げない。そのtaskはRecommendation Semantics仕様に従って`allowed`になり得る。これにより、工程上の第一候補がresource待ちである事実と、余剰resourceで開始可能なworkを区別する。
+Even if `R` is empty, do not automatically promote a feasible task outside the horizon to `recommended`. That task can be `allowed` according to the Recommendation Semantics Specification. This distinguishes the fact that the first schedule candidate is waiting for resources from work that can start with surplus resources.
 
-## 11. Tier classificationへの接続
+## 11. Connection to tier classification
 
-Version 1では`explicitNegativeFact(t)`と`policyDefers(t)`は常にfalseであるため、ready taskのnormal tierは次になる。
+Because `explicitNegativeFact(t)` and `policyDefers(t)` are always false in version 1, the normal tiers for ready tasks are:
 
 ```text
 if t in R:
@@ -338,13 +338,13 @@ else:
   deferred
 ```
 
-`discouraged`はversion 1では生成しない。将来、規範的negative factを追加するまで、推測したriskやrelease意味を理由にdiscouragedを返してはならない。
+Version 1 does not produce `discouraged`. Until a normative negative fact is added in the future, an implementation MUST NOT return `discouraged` based on inferred risk or release meaning.
 
-Allowed判定は各taskを`R`へ個別追加するcounterfactualである。複数allowed taskをまとめて開始できるとは保証しない。
+The `allowed` determination is a counterfactual that individually adds each task to `R`. It does not guarantee that multiple allowed tasks can be started together.
 
-## 12. Current schedulerとの非循環な境界
+## 12. Non-cyclic boundary from the current scheduler
 
-現行scheduler `parallel-sgs` version 1と`runnable_now`は本policyの入力ではない。
+The current scheduler, `parallel-sgs` version 1, and `runnable_now` are not inputs to this policy.
 
 ```text
 precedence CPM facts ─┐
@@ -356,44 +356,44 @@ project graph facts  ├─> parallel-sgs v1 ─> resource schedule / runnable_n
 current capacity     ┘
 ```
 
-- `R`をscheduler candidate orderから導出しない
-- `runnable_now` membershipをranking keyにしない
-- schedulerのresource arc、schedule critical path、resource waitをrankingへ戻さない
-- `R`をresource scheduleのhard precedenceとして注入しない
-- `R`導入時も現行`runnable_now`の意味とscheduler version 1を変更しない
+- Do not derive `R` from scheduler candidate order.
+- Do not use `runnable_now` membership as a ranking key.
+- Do not feed scheduler resource arcs, schedule critical path, or resource waits back into ranking.
+- Do not inject `R` as hard precedence into the resource schedule.
+- Introducing `R` does not change the meaning of current `runnable_now` or scheduler version 1.
 
-Resource schedule criticalityをranking inputにすると、candidate orderがscheduleを変え、変化したschedule criticalityが再びcandidate orderを変える循環が生じる。Version 1はこれを明示的に禁止する。
+Using resource-schedule criticality as a ranking input would create a cycle in which candidate order changes the schedule and changed schedule criticality changes candidate order again. Version 1 explicitly prohibits this.
 
-将来resource schedule factを採用する場合は、recommendationに依存しないbaseline schedulerを先に固定するか、収束条件を持つ反復algorithmを別versionとして規範化しなければならない。単に現在のschedule resultをversion 1へ追加してはならない。
+If resource-schedule facts are adopted in the future, first fix a baseline scheduler independent of recommendations, or normatively define an iterative algorithm with a convergence condition as another version. Do not merely add the current schedule result to version 1.
 
-## 13. Decision traceへの出力契約
+## 13. Output contract for the decision trace
 
-本節は[Recommendation Structured Explanation仕様](recommendation-explanation.md)へ渡すsemantic inputを定義する。JSON field名やserialization schemaは固定しない。
+This section defines the semantic inputs passed to the [Recommendation Structured Explanation Specification](recommendation-explanation.md). It does not fix JSON field names or a serialization schema.
 
-### 13.1 Stable rule ID
+### 13.1 Stable rule IDs
 
-Candidate comparisonの各keyへ次のstable rule IDを割り当てる。
+Assign the following stable rule IDs to candidate-comparison keys.
 
 | Order | Rule ID | Winner condition |
 | ---: | --- | --- |
-| 1 | `critical_class` | より高いcritical class |
-| 2 | `lower_total_float` | exact total floatが小さい |
-| 3 | `higher_explicit_priority` | priorityが大きい |
-| 4 | `higher_new_ready_count` | new ready task数が多い |
-| 5 | `higher_new_gate_count` | new satisfied gate数が多い |
-| 6 | `higher_new_milestone_count` | new reached milestone数が多い |
-| 7 | `shorter_next_gate_distance` | 次のgateまでのtask数が小さい |
-| 8 | `shorter_finish_distance` | finishまでのtask数が小さい |
-| 9 | `longer_expected_duration` | expected durationが大きい |
-| 10 | `task_id_tiebreak` | task IDがASCII辞書順で小さい |
+| 1 | `critical_class` | higher critical class |
+| 2 | `lower_total_float` | lower exact total float |
+| 3 | `higher_explicit_priority` | higher priority |
+| 4 | `higher_new_ready_count` | greater number of newly ready tasks |
+| 5 | `higher_new_gate_count` | greater number of newly satisfied gates |
+| 6 | `higher_new_milestone_count` | greater number of newly reached milestones |
+| 7 | `shorter_next_gate_distance` | fewer tasks to the next gate |
+| 8 | `shorter_finish_distance` | fewer tasks to the finish |
+| 9 | `longer_expected_duration` | greater expected duration |
+| 10 | `task_id_tiebreak` | lower task ID in ASCII lexical order |
 
-Resource selectionには`joint_resource_feasibility`、selection horizonには`selection_horizon`を使用する。これらはreason code taxonomyではなく、ranking decisionを識別するrule IDである。
+Use `joint_resource_feasibility` for resource selection and `selection_horizon` for the selection horizon. These are rule IDs that identify ranking decisions, not reason-code taxonomy.
 
 ### 13.2 Pairwise comparison
 
-任意の異なるcandidate`a`と`b`について、complete candidate orderで先になる方を`winner`、後になる方を`alternative`とする。`decisive_rule`はtupleで最初に異なるkeyのrule IDである。それより前の同値keyと、それより後にwinnerを補強するkeyは`supporting_rules`として保持できるが、decisive ruleと混同しない。
+For any distinct candidates `a` and `b`, the one earlier in complete candidate order is the `winner`, and the later one is the `alternative`. `decisive_rule` is the rule ID for the first differing key in the tuple. Earlier equal keys and later keys that support the winner may be retained as `supporting_rules`, but MUST NOT be confused with the decisive rule.
 
-Comparison inputは少なくとも次の意味を保持する。
+Comparison input MUST preserve at least the following meanings.
 
 ```text
 winner_task_id
@@ -404,75 +404,75 @@ decisive_alternative_fact
 supporting_rule_ids
 ```
 
-Factは§6の型とexact valueを保持する。自然言語descriptionをfact valueとして渡さない。
+Facts retain the types and exact values in §6. Do not pass natural-language descriptions as fact values.
 
 ### 13.3 Per-task selection decision
 
-各ready taskについて次を後続decision traceへ渡せなければならない。
+For every ready task, the following MUST be passed to the downstream decision trace:
 
-- candidateかnegative factによる除外か
-- critical classとhorizon membership
-- complete ranking keyとscan position
-- `R`への選択有無
-- horizon内taskでは、選択直前のactive usage、earlier selected usage、available、required、deficit
-- tier classificationに使用する`startFeasible(R union {t})`
-- horizon外の場合、horizon先頭taskとのpairwise comparison
-- horizon内でresource rejectされた場合、先に選択された競合taskとactive blocker
+- whether it is a candidate or excluded by a negative fact;
+- critical class and horizon membership;
+- complete ranking key and scan position;
+- whether it was selected into `R`;
+- for tasks in the horizon: active usage, earlier selected usage, available capacity, required capacity, and deficit immediately before selection;
+- `startFeasible(R union {t})` used for tier classification;
+- for tasks outside the horizon: pairwise comparison with the first task in the horizon; and
+- for tasks in the horizon rejected for resources: earlier selected conflicting tasks and active blockers.
 
-Resource rejectのready-task winnerは、deficitがあるresource ID辞書順、当該resourceを占有するearlier selected taskのscan順、task ID順で最初のtaskとする。複数taskの合計でのみdeficitが生じる場合は全contributorを保持する。Active allocationだけでrejectされた場合、ready-task winnerを捏造せず`winner_task_id`を非適用とし、active blocker task IDと`joint_resource_feasibility`を決定理由にする。
+For a resource rejection, the ready-task winner is the first task by lexical order of deficient resource ID, scan order of earlier selected tasks occupying that resource, and task ID. When a deficit arises only from the aggregate of multiple tasks, retain all contributors. When active allocations alone cause rejection, do not fabricate a ready-task winner: make `winner_task_id` inapplicable, and use the active-blocker task IDs and `joint_resource_feasibility` as the decisive reason.
 
-Horizon外taskのcomparison winnerは、`sort(H)`の先頭taskとする。そのtaskがactive resourceのため`R`へ選択されなかった場合も、これはranking上のwinnerであってselected taskではないことを区別する。
+The comparison winner for a task outside the horizon is the first task in `sort(H)`. Even if that task was not selected into `R` because of active resources, distinguish that it is a ranking winner, not a selected task.
 
-### 13.4 Winnerとselectionの区別
+### 13.4 Distinguishing winner from selection
 
-`winner`はpairwise rankingまたはresource allocation decisionで優先されたtaskを表し、常に`recommended` membershipを意味するとは限らない。後続modelは少なくとも次を混同してはならない。
+`winner` represents a task preferred in a pairwise ranking or resource-allocation decision and does not necessarily mean `recommended` membership. Downstream models MUST distinguish at least:
 
-- ranking上のwinner
-- horizon membership
-- resource scanで選択されたtask
-- final recommendation tier
+- the ranking winner;
+- horizon membership;
+- a task selected by the resource scan; and
+- the final recommendation tier.
 
-これにより、第一候補がactive resource待ちで`R`がemptyでも、「なぜ別taskがrecommendedではなくallowedなのか」をranking factとresource factから説明できる。
+Therefore, even when the first candidate is waiting for active resources and `R` is empty, the ranking and resource facts can explain why another task is `allowed` rather than `recommended`.
 
-## 14. Re-analysisとcache boundary
+## 14. Re-analysis and cache boundary
 
-次の変更後はranking fact、horizon、`R`、comparisonを再計算する。
+Recompute ranking facts, horizon, `R`, and comparisons after any of the following changes:
 
-- task start、completion、block、unblock
-- milestone stateまたはeffective reached closure
-- dependency、gate、finish milestone
-- duration、estimate、priority、requirement
-- resource capacityまたはcapacity override
-- `critical_epsilon`
-- ranking algorithm version
+- task start, completion, block, or unblock;
+- milestone state or effective reached closure;
+- dependency, gate, or finish milestone;
+- duration, estimate, priority, or requirement;
+- resource capacity or capacity override;
+- `critical_epsilon`; or
+- ranking algorithm version.
 
-Resultをcacheする場合は、canonical source digest、analysis option、applied capacity map、precedence analysis version、ranking algorithm ID/versionへ条件付ける。古い`R`だけを新しいsnapshotへ再利用しない。
+If results are cached, condition the cache on canonical source digest, analysis options, applied-capacity map, precedence-analysis version, and ranking algorithm ID/version. Do not reuse only an old `R` for a new snapshot.
 
-## 15. Version 1のnon-goalと将来拡張
+## 15. Version 1 non-goals and future extensions
 
-Version 1は、明示factだけで説明可能なbounded heuristicを優先する。次は将来のfact modelまたは別algorithm versionが必要である。
+Version 1 prioritizes a bounded heuristic explainable only from explicit facts. The following require a future fact model or another algorithm version:
 
-- release gateと通常dependency gateの業務上の区別
-- milestoneごとのbusiness importanceまたはdeadline
-- rework/replacement risk、information sufficiency
-- exact resource-constrained completion optimization
-- resource schedule criticalityを使う反復ranking
-- backlog、sprint、macro/detail compositionをまたぐpriority
-- empirical outcomeからのweight学習
+- business distinction between release gates and ordinary dependency gates;
+- business importance or deadlines for individual milestones;
+- rework or replacement risk and information sufficiency;
+- exact resource-constrained completion optimization;
+- iterative ranking using resource-schedule criticality;
+- priority across backlogs, sprints, or macro/detail composition; and
+- learning weights from empirical outcomes.
 
-これらがないことをAIの推測や自然言語解釈で補ってはならない。
+An AI MUST NOT compensate for the absence of these facts through inference or natural-language interpretation.
 
-## 16. 本sliceのacceptance
+## 16. Acceptance for this slice
 
-- ranking domainをactual ready taskへ限定した
-- version 1で利用できるtyped factと除外factを列挙した
-- critical class、float、priority、unlock、gate、milestone distanceの完全な優先規則を定義した
-- selection horizonとhorizon外の`allowed`可能性を定義した
-- recommended setの決定的scanとjoint resource feasibilityを定義した
-- empty setとparallel recommendationを定義した
-- task IDまで含むcomplete tie-breakを固定した
-- algorithm ID/versionとversion変更条件を固定した
-- scheduler、schedule criticality、`runnable_now`との循環を排除した
-- winner、alternative、decisive ruleをstructured decision traceへ渡す契約を定義した
-- release semantics、rework risk、情報不足を推測していない
-- current interfaceとimplementationを変更していない
+- The ranking domain is limited to actual ready tasks.
+- Typed facts available in version 1 and excluded facts are enumerated.
+- Complete priority rules for critical class, float, priority, unlocks, gates, and milestone distance are defined.
+- The selection horizon and the possibility of `allowed` outside it are defined.
+- The deterministic scan for the recommended set and joint resource feasibility are defined.
+- Empty sets and parallel recommendations are defined.
+- Complete tie-breaking through task ID is fixed.
+- The algorithm ID/version and conditions requiring a version change are fixed.
+- Cycles involving the scheduler, schedule criticality, and `runnable_now` are excluded.
+- The contract passing winner, alternative, and decisive rule to the structured decision trace is defined.
+- Release semantics, rework risk, and information insufficiency are not inferred.
+- The current interface and implementation are not changed.

@@ -155,6 +155,8 @@ The `BETA_RELEASE_E2E` task then completed. Release commit `4ba630f39a727f40d105
 
 On 2026-07-24, `SURFACE_INVENTORY` recorded the canonical surface counts, 13 runtime source files, Unicode allowlist, and stable identifier exclusions in [English surface migration inventory](english-surface-inventory.md). One atomic batch updated the plan metadata to the first workstream-specific velocity `2p/1d` and finished the 2p task; `dag advance` then removed the completed edge and prior milestone with expected-digest safe writes. The resulting digest is `sha256:16eb52f11d40d7c884d2bb6c46d3e8cd062559ebd66fd2df502152d270036c37`. Seven tasks and 40p remain; precedence is 27p, resource makespan is 30p, resource forecast is 15d, and fresh complete `NextResult.v3` recommends `NORMATIVE_DOCS`.
 
+Later that day, `NORMATIVE_DOCS` migrated the requirements, basic design, normative specifications, examples, and ADR surface to English while preserving normative strength, stable identifiers, exact values, and intentional Unicode boundaries. The Mermaid normative artifact and its metadata/projection digests were regenerated from the translated source DSL. An atomic batch recalibrated the cumulative workstream velocity to `15p/1d` and finished the 13p task; `dag advance` then removed the completed edge with expected-digest safe writes. The resulting digest is `sha256:c822e9a3b9f7eff72359ff3dab84abd3c285ded4b92e06f3c6beb1ea8a50c458`. Six tasks and 27p remain; precedence is 14p, resource makespan is 17p, resource forecast is `17/15d`, and fresh complete `NextResult.v3` recommends `PROCESS_AND_GUIDANCE_DOCS`.
+
 ### 4.1 Velocity実測calibration
 
 DSL version 1はworking calendar、pause、作業開始時刻を持たないため、commit timestamp間の数時間を暗黙のengineering-dayへ変換しない。自己利用planのVelocityは次の決定的なactive-day方式で測る。
@@ -175,10 +177,11 @@ DSL version 1はworking calendar、pause、作業開始時刻を持たないた�
 | `operations.pert` | formatter/mutation preview、safe write、advance、project metadata CLI | 29p | 2d | `29p/2d` | 0p |
 | `recommendation.pert` | `FIXTURE_BASELINE`、`RANKING_CORE`、`EXPLANATION_CORE`、`NEXT_V3_PUBLICATION`、`SELF_USE_SHADOW`、`OVERRIDE_VALIDATION`、`AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
 | `agent-guidance.pert` | 全5 task | 22p | 1d | `22p/1d` | 0p |
+| `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS` | 15p | 1d | `15p/1d` | resource `17/15d` |
 
-これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。実測5標本ともactive dayが1日なので暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装、agent guidanceはwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
+これはeffort hourや個人別生産性ではなく、plan単位の観測throughputである。実測標本はactive dayが少ないため暫定値とし、新しいactive dayまたは複数taskの完了が蓄積した時点で再calibrationする。Grammar実装、control-plane設計、操作系実装、recommendation実装、agent guidance、English baseline migrationはwork typeが異なるため平均せず、将来のdetail planは最も近いwork typeの標本を初期値として明示する。
 
-`english-baseline.pert` has no completed task sample yet. It provisionally uses the closest cross-cutting operations sample, `29p/2d`, which converts the 29p precedence path to 2d and the 32p resource schedule to `64/29d`. Recalibrate from this plan after its first completed tasks rather than treating the proxy as measured translation velocity.
+`english-baseline.pert` completed 2p of inventory work and 13p of normative-document migration on the same active day. Its cumulative observed velocity is now `15p/1d`; the remaining 14p precedence path forecasts `14/15d`, and the 17p resource schedule forecasts `17/15d`. This remains a one-day sample and must be recalibrated after work on a different active day or further completed tasks.
 
 Grammarは前回calibration後に`FORMATTER_ROUNDTRIP` 2pと`HELP_FIXTURE_SYNC` 1pが同じactive dayで完了したため再calibrationし、Velocityを`3p/1d`へ更新した。残作業は0なのでforecastは0である。Control-planeの`DESIGN_REVIEW` 1pは新規標本がまだ1 taskのため、次回calibrationへ送る。
 
@@ -251,7 +254,7 @@ Stage 1で禁止した操作:
 - The suffix-free `v0.1.0` beta is accepted, and the macro is advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3はbacklog階層とmulti-plan compositionの将来設計であり、現行macroへwork packageを追加しない
 - LSP server、VSIX、MCP serverは最初のbeta後の独立backlogであり、現行macroへwork packageを追加しない
-- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`; `NORMATIVE_DOCS` is its current recommended task.
+- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY` and `NORMATIVE_DOCS`; `PROCESS_AND_GUIDANCE_DOCS` is its current recommended task.
 
 ### 5.3 AI工程制御設計plan
 
@@ -425,6 +428,6 @@ Stage 1開始時の証跡:
 - agent guidance publication gate: 同じCore resultからdeterministic text/JSON、structured command help、`agent help` CLI、alias、unknown/usage diagnostic、read-only capability、legacy `dsl help` bytes、package-installed Core/CLI parityを固定し、累計実測`19p/1d`、残り3p = `3/19d`、次のrecommended task `GUIDANCE_ACCEPTANCE`をgoldenへ固定する
 - agent guidance acceptance gate: Issue #2の12 criteriaを仕様、Core、CLI、text/JSON、fixture/golden、package、securityへtraceし、全244 test、local link、release packageを受け入れる。累計実測`22p/1d`、detail残り0p、macroの次のrecommended task `BETA_RELEASE_E2E`をgoldenへ固定する
 - beta release gate: accepted `v0.1.0` from one tarball after verifying the GitHub prerelease, npm `beta`, unchanged `latest` during publication, artifact parity, and isolated registry installation; the later explicit promotion made `beta=latest=0.1.0`
-- English-baseline planning gate: ADR 0004, the completed surface inventory, seven remaining tasks totaling 40p, precedence makespan 27p, resource makespan 30p, first-sample `2p/1d` velocity, and the now-recommended `NORMATIVE_DOCS` task are fixed in the seventh self-use plan
+- English-baseline planning gate: ADR 0004, the completed surface inventory and normative-document migration, six remaining tasks totaling 27p, precedence makespan 14p, resource makespan 17p, observed `15p/1d` velocity, and the now-recommended `PROCESS_AND_GUIDANCE_DOCS` task are fixed in the seventh self-use plan
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all seven plans
 - write状態: Stage 3のediting/advance commandをpreview-first、diffと削除一覧、expected digest、write後再解析の手順で解禁する

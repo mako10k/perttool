@@ -1,59 +1,59 @@
-# perttool Analysis仕様
+# perttool Analysis Specification
 
-- 文書状態: Draft 0.3
+- Document status: Draft 0.3
 - Analysis version: 1
 - Scheduler: `parallel-sgs` version 1
-- 作成日: 2026-07-21
-- 更新日: 2026-07-22
-- 対応要件: [../requirements.md](../requirements.md)
+- Created: 2026-07-21
+- Updated: 2026-07-22
+- Related requirements: [../requirements.md](../requirements.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Recommendation explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
-- 文法仕様: [dsl-grammar.md](dsl-grammar.md)
-- 対応基本設計: [../basic-design.md](../basic-design.md)
+- Grammar specification: [dsl-grammar.md](dsl-grammar.md)
+- Related basic design: [../basic-design.md](../basic-design.md)
 
-## 1. 目的
+## 1. Purpose
 
-本書は、有効なperttool graphから次を決定的に計算する規範仕様である。
+This document is the normative specification for deterministically calculating the following from a valid perttool graph.
 
-- exact Rationalによるduration、PERT expected、variance
-- precedence-only CPMのforward/backward pass
-- total float、free float、critical subgraph、代表critical path
-- renewable resource capacityを守る実行可能schedule
-- `runnable_now`とresource不足説明
-- capacity 2以上と複数resourceに対応するresource release witness arc
-- resource待ちを含むschedule constraint graphとschedule critical path
-- rounding、tie-break、path count、diagnostic
+- Duration, PERT expected value, and variance using exact Rational values
+- Forward and backward passes for precedence-only CPM
+- Total float, free float, the critical subgraph, and a representative critical path
+- A feasible schedule that respects renewable resource capacity
+- `runnable_now` and explanations of insufficient resources
+- Resource-release witness arcs supporting capacity of 2 or greater and multiple resources
+- The schedule constraint graph and schedule critical path, including resource waits
+- Rounding, tie-breaking, path counts, and diagnostics
 
-通常のprecedence critical pathと、選択されたresource schedule上のschedule critical pathを別resultとして返す。MVPのresource scheduleを最適解と表示してはならない。
+Return the ordinary precedence critical path and the schedule critical path of the selected resource schedule as separate results. The MVP resource schedule MUST NOT be presented as an optimal solution.
 
-## 2. 規範の優先順位と境界
+## 2. Normative precedence and boundaries
 
-不一致がある場合は次の順で解消する。
+Resolve conflicts in the following order.
 
-1. `docs/requirements.md`のMust requirement
-2. [Graph Semantics仕様](graph-semantics.md)の有効graph、state、frontier
-3. 本書の数値・分析・scheduler規則
-4. [DSL文法仕様](dsl-grammar.md)のliteral規則
-5. `docs/basic-design.md`と`docs/examples/`
+1. Must requirements in `docs/requirements.md`
+2. Valid graphs, states, and frontiers in the [Graph Semantics specification](graph-semantics.md)
+3. The numeric, analysis, and scheduler rules in this document
+4. Literal rules in the [DSL Grammar specification](dsl-grammar.md)
+5. `docs/basic-design.md` and `docs/examples/`
 
-本書はparse、reference resolution、cycle、state consistencyを再実装しない。Graph errorがある場合はanalysisを開始しない。
+This document does not reimplement parsing, reference resolution, cycle detection, or state consistency. Analysis MUST NOT start when the graph has an error.
 
-本書の対象外:
+Out of scope for this document:
 
-- calendar、休日、shift、timezone、setup time、skill
-- consumable resource、preemption、途中のrequirement増減
-- exact solverをMVP既定経路にすること
-- target duration完了確率、Monte Carlo simulation、複数pathの厳密な完了確率
-- JSON Schema、CLI option spelling、post-MVP adapter wire contract
+- Calendars, holidays, shifts, time zones, setup time, and skills
+- Consumable resources, preemption, and changes to requirements during execution
+- Making an exact solver the MVP default path
+- Completion probability for a target duration, Monte Carlo simulation, and exact completion probability for multiple paths
+- JSON Schema, CLI option spelling, and post-MVP adapter wire contracts
 
 ## 3. Analysis input view
 
-### 3.1 canonical residual view
+### 3.1 Canonical residual view
 
-分析はsource document全体ではなく、Graph Semantics仕様のcanonical residual viewを使用する。
+Analysis uses the canonical residual view from the Graph Semantics specification, rather than the entire source document.
 
 ```text
 R       = effective reached set
@@ -63,30 +63,30 @@ F_a     = R intersection V_a
 G_a     = (V_a, E_a)
 ```
 
-- `F_a`をcurrent frontierとする
-- `E_a`にはunfinished task、未到達joinに必要なdone task/gateが残る
-- targetがreachedの過去edgeは分析対象外
-- resource declarationは元graphからすべて参照できる
-- project completeなら`V_a = {finish}`、`E_a = empty`、makespanは0
+- `F_a` is the current frontier.
+- `E_a` retains unfinished tasks and done tasks/gates required for unreached joins.
+- Historical edges whose target is reached are outside the analysis scope.
+- All resource declarations remain available from the original graph.
+- If the project is complete, `V_a = {finish}`, `E_a = empty`, and the makespan is 0.
 
-このviewにより、canonical advanceの前後で、retained taskのanalysis結果が変わらない。
+This view ensures that analysis results for retained tasks do not change before and after canonical advance.
 
-Projectの`critical_epsilon`はproject unitの0以上のexact Rationalへ正規化し、省略時は0とする。`target_duration`は入力metadataとして保持するが、Analysis version 1では完了確率を計算しない。
+Normalize the project `critical_epsilon` to an exact Rational of 0 or greater in the project unit; when omitted, it is 0. Retain `target_duration` as input metadata, but Analysis version 1 does not calculate completion probability.
 
-### 3.2 analysis options
+### 3.2 Analysis options
 
-Analysis version 1が意味として受け取るoption:
+Options interpreted semantically by Analysis version 1:
 
-- resource schedule: `precedence`、`resource`、`both`
+- Resource schedule: `precedence`, `resource`, or `both`
 - resource capacity override map
-- display precision
-- critical path enumeration limit
+- Display precision
+- Critical-path enumeration limit
 
-Optionの具体的CLI/JSON名はinterface仕様で固定する。Optionの指定順は結果へ影響しない。
+The interface specification fixes the concrete CLI/JSON names of options. Option ordering does not affect the result.
 
-### 3.3 result separation
+### 3.3 Result separation
 
-Primary resultは少なくとも次を分離する。
+The primary result separates at least the following.
 
 ```text
 analysis
@@ -97,13 +97,13 @@ analysis
 └── diagnostics/qualifiers
 ```
 
-Resource resultをprecedence fieldへ上書きしない。`makespan`だけを文脈なしで返さず、`precedenceMakespan`と`resourceMakespan`を区別する。
+Do not overwrite precedence fields with resource results. Do not return `makespan` alone without context; distinguish `precedenceMakespan` and `resourceMakespan`.
 
 ## 4. Rational arithmetic
 
-### 4.1 canonical form
+### 4.1 Canonical form
 
-すべてのduration、time、float、variance、utilizationをexact Rationalで計算する。
+Calculate all durations, times, floats, variances, and utilization values as exact Rational values.
 
 ```ts
 interface Rational {
@@ -112,17 +112,17 @@ interface Rational {
 }
 ```
 
-Canonical invariant:
+Canonical invariants:
 
-- denominatorは正
-- `gcd(abs(numerator), denominator) = 1`
-- zeroは`0/1`
-- signはnumeratorだけに持つ
-- arithmetic途中でJavaScript `number`へ変換しない
+- The denominator is positive.
+- `gcd(abs(numerator), denominator) = 1`.
+- Zero is `0/1`.
+- Only the numerator carries the sign.
+- Do not convert to JavaScript `number` during arithmetic.
 
-### 4.2 decimal conversion
+### 4.2 Decimal conversion
 
-有限小数`whole.fraction`を次でexact変換する。
+Convert a finite decimal `whole.fraction` exactly as follows.
 
 ```text
 digits      = concatenate(whole, fraction)
@@ -130,21 +130,21 @@ scale       = length(fraction)
 rational    = integer(digits) / 10^scale
 ```
 
-変換後に約分する。`0.10`と`0.1`は同じRationalである。Duration unitはproject unitへfield validation済みであることを前提とする。
+Reduce the result after conversion. `0.10` and `0.1` are the same Rational. This assumes that the duration unit has already undergone field validation against the project unit.
 
-### 4.3 operations
+### 4.3 Operations
 
-加算、減算、乗算、除算、比較、絶対値、平方をBigIntで実装する。
+Implement addition, subtraction, multiplication, division, comparison, absolute value, and squaring with BigInt.
 
-- 0除算はinternal error
-- compareはcross multiplicationで行う
-- `max`、`min`の同値時は値だけを返し、entity tie-breakはcallerが行う
-- varianceのdenominatorも約分する
-- resource quantityとpriorityはintegerのまま保持し、duration Rationalと混在させない
+- Division by zero is an internal error.
+- Compare by cross multiplication.
+- On equality, `max` and `min` return only the value; the caller performs entity tie-breaking.
+- Reduce the variance denominator as well.
+- Keep resource quantity and priority as integers; do not mix them with duration Rationals.
 
-### 4.4 exact output
+### 4.4 Exact output
 
-機械可読resultはexact valueを失ってはならない。
+Machine-readable results MUST NOT lose exact values.
 
 ```text
 numerator: signed decimal integer string
@@ -152,24 +152,24 @@ denominator: positive decimal integer string
 unit: day | hour | point | day^2 | hour^2 | point^2 | ratio
 ```
 
-人間向けdecimalは派生表示であり、比較、critical判定、tie-breakへ再利用しない。
+Human-readable decimals are derived displays and MUST NOT be reused for comparison, criticality decisions, or tie-breaking.
 
-### 4.5 velocity conversion
+### 4.5 Velocity conversion
 
-Project velocityを`P point / T calendar-unit`とする。基準単位がpointならcalendar forecastは`x * T / P`、基準単位がvelocity期間と同じday/hourならpoint forecastは`x * P / T`でexact計算する。
+Let project velocity be `P point / T calendar-unit`. If the base unit is point, calculate the calendar forecast exactly as `x * T / P`; if the base unit is a day/hour matching the velocity period, calculate the point forecast exactly as `x * P / T`.
 
-- `P`と`T`はともに正のRational
-- 換算途中で丸めない
-- source unitとtarget unitをresultへ明示する
-- 換算値には`velocity_forecast` qualifierを付け、PERT/CPMとresource scheduleは基準単位の値で実行する
-- varianceは基準単位の二乗で保持する。MVPのvelocity forecastはduration/expected/float/makespanを対象とし、forecast varianceは出力しない
-- day/hour間をvelocity経由または固定比率で暗黙換算しない
+- Both `P` and `T` are positive Rationals.
+- Do not round during conversion.
+- State the source unit and target unit in the result.
+- Attach the `velocity_forecast` qualifier to converted values; run PERT/CPM and resource scheduling on values in the base unit.
+- Retain variance in the square of the base unit. The MVP velocity forecast covers duration/expected/float/makespan and does not output forecast variance.
+- Do not implicitly convert between day and hour through velocity or a fixed ratio.
 
 ## 5. Duration and variance
 
-### 5.1 effective duration
+### 5.1 Effective duration
 
-Analysis edge duration`d(e)`を次で定義する。
+Define the analysis edge duration `d(e)` as follows.
 
 ```text
 d(gate) = 0
@@ -178,50 +178,50 @@ d(deterministic unfinished task) = declared duration
 d(PERT unfinished task) = expected duration
 ```
 
-`unfinished`は`planned`、`active`、`blocked`を含む。`active`の見積りはsnapshot時点の残量である。
+`unfinished` includes `planned`, `active`, and `blocked`. The estimate for `active` is the remaining amount at the snapshot time.
 
-### 5.2 PERT expected and variance
+### 5.2 PERT expected value and variance
 
-三点見積り`O`、`M`、`P`について:
+For the three-point estimates `O`, `M`, and `P`:
 
 ```text
 expected = (O + 4M + P) / 6
 variance = ((P - O) / 6)^2
 ```
 
-- 計算途中で丸めない
-- deterministic taskのvarianceは0
-- gateとdone taskの残varianceは0
-- variance unitはproject duration unitの二乗。pointなら`point^2`
-- path varianceはtaskが独立である近似の下でtask varianceを加算する
-- blocked外部待ち時間のmean/varianceを推測しない
+- Do not round during calculation.
+- The variance of a deterministic task is 0.
+- The remaining variance of a gate or done task is 0.
+- The variance unit is the square of the project duration unit; for points, `point^2`.
+- Under the approximation that tasks are independent, path variance is the sum of task variances.
+- Do not infer the mean or variance of external wait time for blocked tasks.
 
-### 5.3 blocked qualifier
+### 5.3 Blocked qualifier
 
-Residual graphに`blocked` taskが1件以上ある場合、precedence/resource resultの両方へ次を付ける。
+When the residual graph contains one or more `blocked` tasks, attach the following to both the precedence and resource results.
 
 ```text
 conditionalOnBlocksResolved = true
 blockedTaskIds = sorted IDs
 ```
 
-表示する完了見込みは、blockが時刻0で解消し、記載された残durationだけを要する条件付き値である。
+The displayed completion forecast is conditional: blocks resolve at time 0 and require only the stated remaining duration.
 
 ## 6. Precedence CPM
 
-### 6.1 virtual boundary
+### 6.1 Virtual boundary
 
-`G_a`へvirtual source `@START`とvirtual sink `@FINISH`を加える。
+Add a virtual source `@START` and virtual sink `@FINISH` to `G_a`.
 
-- `@START -> v`を全`v in F_a`へweight 0で接続する
-- `finish -> @FINISH`をweight 0で接続する
-- virtual elementをDSL entityやMermaid正本へ保存しない
+- Connect `@START -> v` to every `v in F_a` with weight 0.
+- Connect `finish -> @FINISH` with weight 0.
+- Do not persist virtual elements as DSL entities or in the Mermaid source of truth.
 
-Project completeの場合、`@START -> finish -> @FINISH`の0-duration pathとして扱う。
+For a complete project, treat this as the zero-duration path `@START -> finish -> @FINISH`.
 
-### 6.2 forward pass
+### 6.2 Forward pass
 
-Frontier milestoneのearliestを0とする。
+Set the earliest time of frontier milestones to 0.
 
 ```text
 E(v) = 0                                      if v in F_a
@@ -231,9 +231,9 @@ E(v) = max(EF(e) for e in In_a(v))           otherwise
 precedenceMakespan = E(finish)
 ```
 
-MilestoneはGraph Semantics仕様のstable topological orderを`V_a`へfilterした順で処理する。同値のincoming edgeがある場合、値は同じであり、path predecessor選択だけedge IDでtie-breakする。
+Process milestones in the stable topological order from the Graph Semantics specification, filtered to `V_a`. When incoming edges tie, the value is the same; use edge ID only to tie-break path-predecessor selection.
 
-### 6.3 backward pass
+### 6.3 Backward pass
 
 ```text
 L(finish) = precedenceMakespan
@@ -242,9 +242,9 @@ LS(e) = LF(e) - d(e)
 L(v) = min(LS(e) for e in Out_a(v))
 ```
 
-Reverse stable topological orderを使う。`finish`以外の全milestoneはfinish reachableなので、少なくとも1本のoutgoing edgeを持つ。
+Use reverse stable topological order. Every milestone other than `finish` is finish-reachable and therefore has at least one outgoing edge.
 
-### 6.4 float
+### 6.4 Float
 
 ```text
 totalFloat(e) = LS(e) - ES(e)
@@ -256,88 +256,88 @@ freeFloat(e) = E(dst(e)) - EF(e)
 milestoneSlack(v) = L(v) - E(v)
 ```
 
-有効入力ではfloatとmilestone slackは0以上である。負値はroundingで0へ補正せず、analysis invariant failureとして扱う。
+For valid input, float and milestone slack are 0 or greater. Do not correct negative values to 0 by rounding; treat them as an analysis invariant failure.
 
 ## 7. Precedence critical result
 
-### 7.1 critical and driving
+### 7.1 Critical and driving
 
-User-facing critical判定:
+User-facing criticality decision:
 
 ```text
 isCritical(e) = abs(totalFloat(e)) <= criticalEpsilon
 ```
 
-Exact longest pathを構成するdriving判定:
+Driving decision for constructing the exact longest path:
 
 ```text
 isDriving(e) = totalFloat(e) == 0
 ```
 
-`criticalEpsilon > 0`の場合、critical subgraphはnear-critical edgeを含み得る。代表critical pathとpath countは、makespanを実際に達成するexact driving edgeだけから作る。
+When `criticalEpsilon > 0`, the critical subgraph can include near-critical edges. Construct the representative critical path and path count only from exact driving edges that actually achieve the makespan.
 
-### 7.2 critical subgraph
+### 7.2 Critical subgraph
 
-Resultに次を含める。
+Include the following in the result.
 
-- critical milestone IDs
-- critical task IDs
-- critical gate IDs
-- driving edge IDs
-- edgeごとのES、EF、LS、LF、total/free float、expected、variance
-- milestoneごとのearliest、latest、slack
+- Critical milestone IDs
+- Critical task IDs
+- Critical gate IDs
+- Driving edge IDs
+- ES, EF, LS, LF, total/free float, expected value, and variance for each edge
+- Earliest, latest, and slack for each milestone
 
-Critical elementの表示順はstable topological position、同位置ではID辞書順とする。
+Display critical elements in stable topological position order, then in lexicographic ID order at the same position.
 
-### 7.3 representative path
+### 7.3 Representative path
 
-Driving subgraph上で`@START`から`@FINISH`へ到達できるarcだけを残す。
+Retain only arcs in the driving subgraph that can reach `@FINISH` from `@START`.
 
-代表pathは各nodeで、sinkへdriving pathを持つoutgoing arcのうちarc IDが最小のものを選ぶ。Virtual frontier arc IDは`frontier:<milestone-id>`、task/gate arc IDはentity IDとする。
+For the representative path, at each node select the outgoing arc with the smallest arc ID among those with a driving path to the sink. A virtual frontier arc ID is `frontier:<milestone-id>`; a task/gate arc ID is its entity ID.
 
-返すpathはvirtual arcを除いたtask/gate ID列である。Project completeの場合はempty pathを返す。
+The returned path is the sequence of task/gate IDs excluding virtual arcs. Return an empty path when the project is complete.
 
-### 7.4 path count and enumeration
+### 7.4 Path count and enumeration
 
-Exact driving path数をreverse topological dynamic programmingでBigInt計算し、decimal integer stringで返す。
+Calculate the number of exact driving paths with reverse-topological dynamic programming using BigInt, and return it as a decimal integer string.
 
 ```text
 count(@FINISH) = 1
 count(v) = sum(count(dst(a)) for driving outgoing arc a)
 ```
 
-- path countは列挙しなくても計算する
-- path enumerationは`maxPaths`を超えない
-- 列挙順はarc ID列の辞書順
-- `pathCount > emittedPaths`なら`pathsTruncated=true`
-- pathごとにtask variance合計をexact Rationalで返す
+- Calculate the path count even when paths are not enumerated.
+- Path enumeration does not exceed `maxPaths`.
+- Enumerate in lexicographic order of arc-ID sequences.
+- If `pathCount > emittedPaths`, set `pathsTruncated=true`.
+- Return the sum of task variances for each path as an exact Rational.
 
 ## 8. Display rounding
 
-### 8.1 default
+### 8.1 Default
 
-Default display precisionは小数3桁とする。Callerは0以上の有限な桁数を指定できる。Interface仕様は安全な最大値を設定する。
+The default display precision is three decimal places. The caller can specify a finite number of places of 0 or greater. The interface specification sets a safe maximum.
 
-### 8.2 rule
+### 8.2 Rule
 
-Rationalを10進表示するときだけround half away from zeroを使用する。
+Use round half away from zero only when displaying a Rational in decimal form.
 
 ```text
 13/6 -> 2.167  at precision 3
 -1/8 -> -0.13  at precision 2
 ```
 
-- trailing zeroを省略するcompact表示と固定桁表示をrenderer optionで分けられる
-- negative zeroを出力しない
-- exact numerator/denominatorを常に保持する
-- durationにはproject unit、varianceにはunit squaredを付ける
-- rounded valueを後続計算へ入力しない
+- A renderer option can distinguish compact display, which omits trailing zeros, from fixed-digit display.
+- Do not output negative zero.
+- Always retain the exact numerator/denominator.
+- Attach the project unit to durations and the squared unit to variances.
+- Do not feed rounded values into subsequent calculations.
 
 ## 9. Resource scheduling model
 
-### 9.1 scheduler identity
+### 9.1 Scheduler identity
 
-MVP schedulerの識別子:
+MVP scheduler identifiers:
 
 ```text
 algorithm = parallel-sgs
@@ -345,62 +345,62 @@ version = 1
 optimal = false
 ```
 
-同じresidual graph、capacity、scheduler versionから同じscheduleを返す。
+Return the same schedule for the same residual graph, capacity, and scheduler version.
 
-### 9.2 execution assumptions
+### 9.2 Execution assumptions
 
-- renewable integer capacity
-- non-preemptive task
-- taskは全required resourceを同時取得
-- allocation intervalは`[start, finish)`
-- expected durationをschedule durationとして使用
-- active taskはstart 0で固定し、残duration全体でresourceを保持
-- done taskとgateはduration/resource usage 0
-- blocked taskはblockが時刻0で解消したconditional taskとしてscheduleへ含める
-- resourceを要求しないtaskも同じevent loopで扱う
-- calendar timeへ変換しない
+- Renewable integer capacity
+- Non-preemptive tasks
+- A task acquires all required resources simultaneously.
+- The allocation interval is `[start, finish)`.
+- Use expected duration as schedule duration.
+- Fix active tasks at start 0 and retain resources for their entire remaining duration.
+- Done tasks and gates have duration/resource usage of 0.
+- Include blocked tasks in the schedule as conditional tasks whose blocks resolve at time 0.
+- Process tasks that require no resources in the same event loop.
+- Do not convert to calendar time.
 
-### 9.3 simulated milestone state
+### 9.3 Simulated milestone state
 
-Simulation開始時:
+At simulation start:
 
-1. frontier milestoneをtime 0でreachedにする
-2. retained done taskをtime 0でcompletedにする
-3. source reachedのgateをtime 0でsatisfiedにする
-4. all-incoming ruleを固定点まで伝播する
-5. active taskをstart 0、finish `d(t)`でrunningへ登録する
-6. active requirementsをcapacityから差し引く
+1. Mark frontier milestones as reached at time 0.
+2. Mark retained done tasks as completed at time 0.
+3. Mark gates whose source is reached as satisfied at time 0.
+4. Propagate the all-incoming rule to a fixed point.
+5. Register active tasks as running with start 0 and finish `d(t)`.
+6. Subtract active requirements from capacity.
 
-Task completion時にedgeをsatisfiedにし、milestone/gate closureをその時刻で伝播する。Milestone reached timeは全incoming satisfaction timeの最大値である。
+On task completion, mark the edge as satisfied and propagate milestone/gate closure at that time. The milestone reached time is the maximum of all incoming satisfaction times.
 
-### 9.4 eligibility
+### 9.4 Eligibility
 
-未開始task`t`は次の場合にschedule-eligibleである。
+An unstarted task `t` is schedule-eligible when the following holds.
 
 ```text
 simulated source milestone is reached
 and status(t) in {planned, blocked}
 ```
 
-Activeはすでにrunning、doneはcompletedでありcandidateへ含めない。
+Active tasks are already running and done tasks are completed; neither is included in candidates.
 
-### 9.5 candidate order
+### 9.5 Candidate order
 
-同一時刻のeligible taskを次のtupleで昇順比較する。
+Compare eligible tasks at the same time in ascending order of the following tuple.
 
 ```text
 (-priority, precedenceTotalFloat, -expectedDuration, taskId)
 ```
 
-- priorityは大きい方を先
-- total floatは小さい方を先
-- expected durationは大きい方を先
-- task IDはASCII辞書順
-- critical booleanを別keyにせず、exact/near-critical float値で決まる
+- Higher priority comes first.
+- Smaller total float comes first.
+- Longer expected duration comes first.
+- Task IDs use ASCII lexicographic order.
+- Do not use a separate critical boolean key; determine ordering from exact/near-critical float values.
 
-Active taskの固定startにはこの順位を適用しない。
+Do not apply this ordering to the fixed starts of active tasks.
 
-### 9.6 event loop
+### 9.6 Event loop
 
 ```text
 t = 0
@@ -425,33 +425,33 @@ while finish milestone is not reached:
 
 Rules:
 
-- 同時刻はcompletion/release、closure、startの順
-- candidateがfitしなくても、後続candidateがfitすれば開始する
-- scan中に開始したtaskのallocationは後続candidateから見える
-- 同じeventで開始したtaskを再走査しない
-- positive durationにより開始taskは同じeventで完了しない
-- 結果はinclusion-maximalだが、task数、priority合計、makespanを最適化した集合とは限らない
+- At the same time, process completion/release, then closure, then starts.
+- If a candidate does not fit, start a later candidate when it fits.
+- Allocations of tasks started during a scan are visible to later candidates.
+- Do not rescan tasks started in the same event.
+- Positive duration prevents a started task from completing in the same event.
+- The result is inclusion-maximal, but not necessarily a set that optimizes task count, total priority, or makespan.
 
 ## 10. Resource schedule result
 
 ### 10.1 task interval
 
-各residual taskについて次を返す。
+For each residual task, return:
 
 - status
-- expected durationとvariance
+- expected duration and variance
 - eligible time
-- scheduled start/finish
+- scheduled start and finish
 - resource wait
 - requirements
-- conditional blocked flag
+- conditional-blocked flag
 - selected priority tuple
 
 ```text
 resourceWait(t) = scheduledStart(t) - eligibleTime(t)
 ```
 
-Active taskはeligible/start 0、done taskはstart/finish 0とする。Resource waitは0以上である。
+Active tasks have eligible/start 0, and done tasks have start/finish 0. Resource wait is 0 or greater.
 
 ### 10.2 makespan and delay
 
@@ -460,11 +460,11 @@ resourceMakespan = simulated reached time of project.finish
 resourceDelay = resourceMakespan - precedenceMakespan
 ```
 
-`resourceDelay`は0以上でなければならない。Heuristic scheduleのmakespanをbest possibleまたはoptimalと表示しない。
+`resourceDelay` MUST be 0 or greater. Do not present the makespan of a heuristic schedule as best possible or optimal.
 
 ### 10.3 resource statistics
 
-Resource`r`について:
+For resource `r`:
 
 ```text
 amountTime(r) = sum(units(t,r) * duration(t) for scheduled non-done t)
@@ -473,114 +473,114 @@ peakUsage(r) = max simultaneous allocated units
 lastRelease(r) = max finish of tasks using r, or 0
 ```
 
-Resource makespanが0ならutilizationを0とする。Amount-timeとutilizationはexact Rationalで返す。Timeline intervalはstart、finish、task ID、unitsを含み、start、finish、task ID順に安定化する。
+If resource makespan is 0, utilization is 0. Return amount-time and utilization as exact Rationals. A timeline interval includes start, finish, task ID, and units, with stable ordering by start, finish, then task ID.
 
 ### 10.4 qualifiers
 
-Resource resultに次を含める。
+Include the following in the resource result:
 
-- algorithmとversion
+- algorithm and version
 - `optimal=false`
-- applied capacity mapとoverride元
+- applied capacity map and override source
 - conditional blocked task IDs
 - precedence lower bound
 - resource delay
-- resource arc一覧
+- resource arc list
 - constraint graph replay status
 
 ## 11. runnable_now
 
 ### 11.1 selection
 
-`runnable_now`はGraph Semantics仕様のactual `ready` taskだけを対象にする。Blocked taskを即時解消と仮定するresource forecastとは区別する。
+`runnable_now` covers only actual `ready` tasks as defined by the Graph Semantics specification. It is distinct from a resource forecast that assumes blocked tasks resolve immediately.
 
-1. active taskのtime-0 allocationをcapacityから差し引く
-2. ready taskをscheduler candidate orderでsortする
-3. 1回scanし、fitするtaskを選択・仮allocationする
-4. 選択task ID集合を`runnable_now`として返す
+1. Subtract time-0 allocations of active tasks from capacity.
+2. Sort ready tasks by scheduler candidate order.
+3. Scan once, selecting and provisionally allocating tasks that fit.
+4. Return the set of selected task IDs as `runnable_now`.
 
-Resource requirementを持たないready taskは必ず選択する。Resultはinclusion-maximalだが、最大task数や最適な組合せを保証しない。
+Always select ready tasks with no resource requirements. The result is inclusion-maximal, but does not guarantee the largest task count or optimal combination.
 
 ### 11.2 rejection explanation
 
-選択されなかったready taskについて、そのtaskをscanした瞬間のsnapshotを返す。
+For every ready task that was not selected, return the snapshot from the moment that task was scanned.
 
-Resourceごとに:
+For each resource:
 
 - capacity
 - active usage
-- earlier selected usage
-- total used before decision
-- task required units
+- usage selected earlier
+- total used before the decision
+- units required by the task
 - available units
 - deficit units
-- occupying active task IDs
-- same-selectionで先に選ばれたtask IDs
+- IDs of occupying active tasks
+- IDs of tasks selected earlier in the same selection
 
-不足resourceをresource ID辞書順で返す。後続candidateのallocationを遡って理由へ加えてはならない。
+Return insufficient resources in resource-ID lexicographic order. Do not retrospectively add allocations of later candidates to the explanation.
 
 ### 11.3 presentation order
 
-Next resultの表示順はresource選択順と別に次を使用する。
+For presentation order in a Next result, use the following separately from resource selection order.
 
 ```text
 (-priority, -isPrecedenceCritical, totalFloat, earliestStart, taskId)
 ```
 
-`runnable_now` membershipは表示sortで再計算しない。
+Do not recompute `runnable_now` membership using presentation sorting.
 
 ### 11.4 recommendation boundary
 
-`runnable_now`は現行scheduler candidate orderで選択したjointly feasible subsetであり、project control planeの推奨度ではない。新規start actionの`recommended`、`allowed`、`deferred`、`discouraged`は[Recommendation Semantics仕様](recommendation.md)を正とする。
+`runnable_now` is a jointly feasible subset selected by the current scheduler candidate order; it is not a project-control-plane recommendation. [Recommendation Semantics specification](recommendation.md) is authoritative for `recommended`, `allowed`, `deferred`, and `discouraged` new-start actions.
 
-[Recommendation Ranking Policy仕様](recommendation-ranking.md)はrecommended setをready taskのsubsetとして独立に選び、active allocationを含めてjointly resource-feasibleにする。現行`runnable_now`とrecommended setが異なる場合の意味上の説明graphは[Recommendation Structured Explanation仕様](recommendation-explanation.md)、interface versioningは[Recommendation Interface Contract仕様](recommendation-interface.md)を正とする。Recommendation実装まではscheduler version 1のcandidate orderと`runnable_now`を変更しない。
+[Recommendation Ranking Policy specification](recommendation-ranking.md) independently selects the recommended set as a subset of ready tasks and makes it jointly resource-feasible including active allocations. The [Recommendation Structured Explanation specification](recommendation-explanation.md) is authoritative for semantic explanation graphs when the current `runnable_now` and recommended set differ, and the [Recommendation Interface Contract specification](recommendation-interface.md) is authoritative for interface versioning. Until Recommendation is implemented, do not change the scheduler-version-1 candidate order or `runnable_now`.
 
 ## 12. Resource release witness arcs
 
 ### 12.1 purpose
 
-Resource arcは、選択scheduleでtask開始を遅らせたcapacity競合を説明し、schedule constraint graphで同じ開始時刻を再生する派生情報である。
+Resource arcs are derived information that explain capacity contention delaying task starts in the selected schedule and reproduce the same start times in the schedule constraint graph.
 
-- 正本DSLへ保存しない
-- hard precedenceと表示上区別する
-- schedule/capacity/scheduler versionが変われば再生成する
-- resourceWaitが0のtaskには生成しない
-- active/done taskをarc targetにしない
+- Do not persist them in the authoritative DSL.
+- Visually distinguish them from hard precedence.
+- Regenerate them when the schedule, capacity, or scheduler version changes.
+- Do not generate them for tasks with `resourceWait` 0.
+- Do not make active or done tasks arc targets.
 
 ### 12.2 start-event quantities
 
-Resource waitを持つtask`t`が時刻`s`に開始するとする。Resource`r`について、task`t`をscanする直前のevent情報を次で表す。
+Let task `t`, which has resource wait, start at time `s`. For resource `r`, represent event information immediately before scanning task `t` as follows.
 
-- `C(r)`: `s`より後まで継続するrunning taskのusage
-- `F(r)`: `s`で完了・releaseしたtaskのusage合計
-- `A(r)`: 同じ時刻`s`のscanで`t`より前に開始したtaskのusage
-- `q(r)`: `t`のrequirement
+- `C(r)`: usage of running tasks that continue after `s`
+- `F(r)`: total usage of tasks that complete and release at `s`
+- `A(r)`: usage of tasks started before `t` during the scan at the same time `s`
+- `q(r)`: requirement of `t`
 - `cap(r)`: effective capacity
 
-Releaseがなかったcounterfactualで`t`をfitさせるために必要なrelease量:
+The release quantity required for `t` to fit in the counterfactual with no releases is:
 
 ```text
 neededRelease(t,r) = max(0, C(r) + F(r) + A(r) + q(r) - cap(r))
 ```
 
-Actual scheduleがfeasibleなので`neededRelease(t,r) <= F(r)`である。Resource waitが正なら、少なくとも1つのrequired resourceでneededReleaseが正になる。
+Because the actual schedule is feasible, `neededRelease(t,r) <= F(r)`. If resource wait is positive, `neededRelease` is positive for at least one required resource.
 
 ### 12.3 deterministic witness selection
 
-各resourceをresource ID辞書順で独立に処理する。
+Process each resource independently in resource-ID lexicographic order.
 
-1. `s`で完了しresource`r`をreleaseしたtaskを集める
-2. release unitsの大きい順、同値ならtask ID辞書順にsortする
-3. accumulated unitsが`neededRelease(t,r)`以上になるまで選ぶ
-4. 最後のtaskのcontributionはremaining needed unitsまでとする
+1. Collect tasks that complete at `s` and release resource `r`.
+2. Sort descending by released units, then by task-ID lexicographic order on ties.
+3. Select tasks until accumulated units are at least `neededRelease(t,r)`.
+4. Limit the final task's contribution to the remaining needed units.
 
-この集合はper-resourceの決定的な少数witnessであり、複数resource全体でのglobal minimum arc集合は要求しない。
+This set is a deterministic, small witness per resource; a global minimum arc set across multiple resources is not required.
 
-同じ`fromTask -> toTask`が複数resourceで選ばれた場合は1つのarcへmergeし、resource別contribution mapを持つ。
+When the same `fromTask -> toTask` is selected for multiple resources, merge it into one arc with a per-resource contribution map.
 
 ### 12.4 arc record
 
-Resource arcは少なくとも次を持つ。
+A resource arc has at least the following fields.
 
 ```text
 id = resource:<from-task-id>:<to-task-id>
@@ -591,21 +591,21 @@ waitFrom
 resources: { resourceId -> contributedUnits }
 ```
 
-`waitFrom`はtarget taskの`eligibleTime`、`atTime`は`scheduledStart`であり、`atTime - waitFrom`がtargetのresource waitに一致する。
+`waitFrom` is the target task's `eligibleTime`, `atTime` is its `scheduledStart`, and `atTime - waitFrom` equals the target's resource wait.
 
-Arc source taskは`finish(fromTask) == start(toTask)`を満たす。Positive durationとevent orderによりresource arcは時間を逆行せず、schedule constraint graphへcycleを作らない。
+The arc source task satisfies `finish(fromTask) == start(toTask)`. Positive duration and event order ensure that resource arcs do not go backward in time or create cycles in the schedule constraint graph.
 
 ## 13. Schedule constraint graph
 
 ### 13.1 nodes
 
-選択scheduleから派生するanalysis-only graph`H`を作る。
+Create analysis-only graph `H` derived from the selected schedule.
 
-- `@START`、`@FINISH`
-- 各`V_a` milestoneの`M:<milestone-id>`
-- 各residual taskの`S:<task-id>`と`F:<task-id>`
+- `@START` and `@FINISH`
+- `M:<milestone-id>` for each `V_a` milestone
+- `S:<task-id>` and `F:<task-id>` for each residual task
 
-このgraphはDSLのAoA modelを置き換えず、resource scheduleの説明専用である。
+This graph does not replace the DSL AoA model; it is solely for explaining the resource schedule.
 
 ### 13.2 constraint arcs
 
@@ -619,18 +619,18 @@ Arc source taskは`finish(fromTask) == start(toTask)`を満たす。Positive dur
 | resource | `F:u` | `S:t` | 0 | `resource:<u>:<t>` |
 | project finish | `M:finish` | `@FINISH` | 0 | `project-finish` |
 
-Frontier arcは全`v in F_a`へ追加する。Done taskのduration weightは0である。
+Add a frontier arc for every `v in F_a`. The duration weight of a done task is 0.
 
 ### 13.3 replay invariant
 
-`H`のlongest-path earliest timeを全nodeについて計算する。
+Calculate the longest-path earliest time in `H` for every node.
 
 ```text
 distance(@START) = 0
 distance(y) = max(distance(x) + weight(x,y))
 ```
 
-次がactual scheduleと一致しなければならない。
+The following MUST match the actual schedule.
 
 ```text
 distance(S:t) = scheduledStart(t)
@@ -639,54 +639,54 @@ distance(M:v) = simulatedReachedTime(v)
 distance(@FINISH) = resourceMakespan
 ```
 
-不一致はresource arc生成またはschedulerのinternal errorであり、scheduleを成功扱いで返さない。
+A mismatch is an internal error in resource-arc generation or the scheduler; do not return the schedule as successful.
 
 ## 14. Schedule critical result
 
 ### 14.1 schedule float
 
-`H`でforward longest distanceとresourceMakespanからbackward latest timeを計算する。
+Calculate backward latest time in `H` from forward longest distances and `resourceMakespan`.
 
-Constraint arc`a: x -> y`について:
+For constraint arc `a: x -> y`:
 
 ```text
 scheduleFloat(a) = latest(y) - earliest(x) - weight(a)
 ```
 
-User-facing schedule critical判定は`abs(scheduleFloat) <= criticalEpsilon`、exact driving判定は`scheduleFloat == 0`とする。
+For user-facing schedule-critical classification, use `abs(scheduleFloat) <= criticalEpsilon`; for exact-driving classification, use `scheduleFloat == 0`.
 
 ### 14.2 schedule critical tasks and arcs
 
-- task duration arcがcriticalならtaskをschedule-criticalとする
-- status doneでweight 0のtaskはconnectorとしてpathに現れ得るが、positive-duration critical task一覧から除外する
-- resource constraint arcがcriticalならcritical resource arcとする
-- precedence/gate/resource constraintをtype付きで返す
-- precedence critical IDとschedule critical IDを別fieldにする
+- A task is schedule-critical when its task-duration arc is critical.
+- A done task with weight 0 may appear in a path as a connector, but exclude it from the positive-duration critical-task list.
+- A resource constraint arc is a critical resource arc when it is critical.
+- Return precedence, gate, and resource constraints with their types.
+- Use separate fields for precedence-critical IDs and schedule-critical IDs.
 
 ### 14.3 representative schedule critical path
 
-Exact driving constraint subgraph上で`@START`から`@FINISH`まで、stable arc IDが最小のarcを順に選ぶ。
+In the exact-driving constraint subgraph, choose the arc with the smallest stable arc ID at each step from `@START` to `@FINISH`.
 
-User-facing chainは次を保持する。
+The user-facing chain retains:
 
 - ordered positive-duration task IDs
-- task間のconstraint kind: precedence、gate、resource
-- resource arcの場合はresource contribution map
+- constraint kind between tasks: precedence, gate, or resource
+- resource contribution map for a resource arc
 - zero-duration connector IDs
 
-Path countとenumerationはprecedence critical pathと同じBigInt DP、上限、辞書順規則を使用する。
+Path counting and enumeration use the same BigInt DP, limit, and lexicographic rules as the precedence critical path.
 
 ### 14.4 capacity sensitivity
 
-Resource schedule resultへ、使用したcapacity map、resource arc、schedule critical pathを含める。Capacity override間の比較では少なくとも次を比較できる。
+Include the capacity map used, resource arcs, and schedule critical path in the resource schedule result. Comparisons between capacity overrides can compare at least:
 
 - resource makespan
-- precedence lower boundとの差
-- task start/finish差
-- resource arcの追加・削除
-- schedule critical task/chain差
+- difference from the precedence lower bound
+- differences in task starts and finishes
+- added and removed resource arcs
+- differences in schedule-critical tasks and chains
 
-Precedence resultはcapacity変更で変化してはならない。
+The precedence result MUST NOT change when capacity changes.
 
 ## 15. Normative examples
 
@@ -703,11 +703,11 @@ critical tasks         = [DESIGN, BUILD]
 representative variance = 1/4 d^2
 ```
 
-Default precision 3の表示はDESIGN expected `2.167d`、makespan `5.167d`である。Exact resultは丸めない。
+At default precision 3, display DESIGN expected as `2.167d` and makespan as `5.167d`. Do not round exact results.
 
 ### 15.2 parallel precedence result
 
-[parallel.pert](../examples/parallel.pert)のtask result:
+Task results for [parallel.pert](../examples/parallel.pert):
 
 | Task | d | ES | EF | LS | LF | TF | FF | Critical |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
@@ -732,7 +732,7 @@ representative critical task IDs = [CORE, TEST]
 | 2 | 2 | 7d | `CLI -> DOCS` | `CLI, DOCS, TEST` |
 | 3 | 2 | 6d | none | `CORE, TEST` |
 
-既定capacityのtimeline:
+Timeline at default capacity:
 
 ```text
 CORE     [0, 4)  DEVELOPERS 1
@@ -742,7 +742,7 @@ TEST     [5, 7)  TEST_ENV 1
 PACKAGE  [7, 8)  TEST_ENV 1
 ```
 
-既定capacityのresource witness:
+Resource witness at default capacity:
 
 ```text
 resource:CLI:DOCS
@@ -754,11 +754,11 @@ resource:TEST:PACKAGE
   resources { TEST_ENV: 1 }
 ```
 
-DEVELOPERS utilizationは`9/16`、TEST_ENV utilizationは`3/8`である。
+DEVELOPERS utilization is `9/16`, and TEST_ENV utilization is `3/8`.
 
 ### 15.4 runnable now
 
-`parallel.pert`の既定capacityではcandidate順が`CORE`、`CLI`、`DOCS`である。
+At the default capacity of `parallel.pert`, candidate order is `CORE`, `CLI`, `DOCS`.
 
 ```text
 runnable_now = [CORE, CLI]
@@ -771,80 +771,80 @@ DOCS rejection:
   selected occupants = [CORE, CLI]
 ```
 
-DEVELOPERSを3へoverrideすると`runnable_now = [CORE, CLI, DOCS]`になるが、ready集合とprecedence resultは変化しない。
+Overriding DEVELOPERS to 3 makes `runnable_now = [CORE, CLI, DOCS]`, but does not change the ready set or precedence result.
 
 ## 16. Diagnostics and invariants
 
 | Code | Severity | Meaning |
 | --- | --- | --- |
 | `PTDAG-301` | error | precedence float/longest-path invariant failure |
-| `PTDAG-302` | warning | requested path enumerationを上限で打ち切り |
-| `PTRES-301` | error | unfinished taskがあるのに次eventを生成不能 |
-| `PTRES-302` | error | constraint graph replayがscheduleと不一致 |
-| `PTRES-303` | warning | blocked taskを即時解消と仮定したconditional schedule |
+| `PTDAG-302` | warning | requested path enumeration was truncated at its limit |
+| `PTRES-301` | error | unable to generate the next event while unfinished tasks remain |
+| `PTRES-302` | error | constraint graph replay does not match the schedule |
+| `PTRES-303` | warning | conditional schedule that assumes blocked tasks resolve immediately |
 | `PTRES-304` | warning | optional exact/near-optimal solver timeout |
 
-Internal invariant failureを入力errorへ偽装しない。Diagnosticには関連task/resource/constraint arcを含める。
+Do not disguise an internal invariant failure as an input error. Include related tasks, resources, and constraint arcs in diagnostics.
 
 ## 17. Complexity
 
-- PERT duration計算: `O(T)`
-- CPM forward/backward: `O(V + E)`、BigInt arithmetic costを除く
-- critical path count: `O(V + E)`、BigInt arithmetic costを除く
-- path enumeration: emitted path sizeに比例し、`maxPaths`で制限
-- parallel SGS: eventごとのcandidate sort/scanを含み、単純実装のworst caseは`O(T^2 log T + T^2 R)`
-- resource witness: start eventのrelease taskとrequired resource数に比例
+- PERT duration calculation: `O(T)`
+- CPM forward/backward: `O(V + E)`, excluding BigInt arithmetic cost
+- critical path count: `O(V + E)`, excluding BigInt arithmetic cost
+- path enumeration: proportional to emitted-path size and limited by `maxPaths`
+- parallel SGS: including candidate sort/scan at each event, the worst case of a simple implementation is `O(T^2 log T + T^2 R)`
+- resource witness: proportional to released tasks at a start event and the number of required resources
 - schedule constraint graph longest path: `O(|V_H| + |E_H|)`
 
-Resource schedulerをCPMと同じ`O(V + E)`と表示してはならない。大規模化時は結果を変えずにeligible queueやresource indexを最適化する。
+Do not present the resource scheduler as having the same `O(V + E)` complexity as CPM. At larger scale, optimize eligible queues and resource indexes without changing results.
 
 ## 18. Optional exact/near-optimal solver boundary
 
-将来solver adapterは同じresidual graph、effective duration、active固定interval、capacity、conditional blocked policyを入力にする。
+A future solver adapter takes the same residual graph, effective durations, fixed intervals for active tasks, capacity, and conditional-blocked policy as input.
 
 Must if implemented:
 
-- heuristicと別のsolver ID/versionを返す
-- feasible scheduleを共通validatorで再検査する
-- resource witnessとconstraint graphを返却scheduleから再生成する
-- statusを`optimal`、`feasible`、`timeout`、`infeasible`で区別する
-- lower bound、best found、gap、timeoutを返す
-- optimal proofがない結果をoptimalと表示しない
-- default `parallel-sgs` resultを無言で置換しない
+- Return a solver ID/version distinct from the heuristic.
+- Revalidate the feasible schedule with the shared validator.
+- Regenerate resource witnesses and the constraint graph from the returned schedule.
+- Distinguish statuses `optimal`, `feasible`, `timeout`, and `infeasible`.
+- Return lower bound, best found, gap, and timeout.
+- Do not present a result as optimal without an optimality proof.
+- Do not silently replace the default `parallel-sgs` result.
 
-MVP acceptanceはこのadapterを要求しない。
+MVP acceptance does not require this adapter.
 
 ## 19. Analysis acceptance
 
-実装時は最低限、次を自動検査する。
+At minimum, an implementation automatically verifies the following.
 
-1. decimalとPERT `/6`をexact Rationalで保持する
-2. deterministic/gate/done varianceが0
-3. canonical advance前後でprecedence/resultが一致する
-4. diamond、parallel edge、multiple frontierのCPMがgoldenと一致する
-5. total/free floatとmilestone slackが非負
-6. critical epsilon分類とexact driving pathを区別する
-7. critical path countが列挙なしで一致する
-8. path enumerationが安定順かつ上限付き
-9. active taskをtime 0固定でscheduleする
-10. blocked taskをconditionalとして明示する
-11. multi-resource taskが全requirementsを同時取得する
-12. fitしない上位candidateをskipして後続fit taskを開始できる
-13. `runnable_now` rejection snapshotがscan時点と一致する
-14. capacity 1の排他scheduleがgoldenと一致する
-15. capacity 2以上でneededReleaseとwitness contributionが一致する
-16. resource arc mergeが複数resourceで決定的
-17. constraint graphが全task start/finishとmakespanを再生する
-18. schedule critical tasks/arcs/pathがcapacityごとにgoldenと一致する
-19. precedence resultがcapacity overrideで変化しない
-20. utilization、peak、last releaseがexact値と一致する
-21. same-time completion-before-startとID tie-breakが決定的
-22. scheduler deadlock/replay invariant failureを成功扱いにしない
+1. Retain decimals and PERT `/6` as exact Rationals.
+2. Deterministic, gate, and done variance is 0.
+3. Precedence and results match before and after canonical advance.
+4. CPM for diamonds, parallel edges, and multiple frontiers matches golden results.
+5. Total/free float and milestone slack are non-negative.
+6. Distinguish critical-epsilon classification from the exact driving path.
+7. Critical path counts match without enumeration.
+8. Path enumeration has stable ordering and a limit.
+9. Schedule active tasks fixed at time 0.
+10. Explicitly identify blocked tasks as conditional.
+11. A multi-resource task acquires all requirements simultaneously.
+12. Skip a higher-ranked candidate that does not fit and start a later task that fits.
+13. The `runnable_now` rejection snapshot matches the time of scanning.
+14. An exclusive capacity-1 schedule matches the golden result.
+15. At capacity 2 or greater, `neededRelease` and witness contributions match.
+16. Resource-arc merging is deterministic across multiple resources.
+17. The constraint graph reproduces all task starts/finishes and makespan.
+18. Schedule-critical tasks, arcs, and paths match golden results for each capacity.
+19. The precedence result does not change with a capacity override.
+20. Utilization, peak, and last release match exact values.
+21. Same-time completion-before-start and ID tie-breaking are deterministic.
+22. Do not treat scheduler deadlock or replay invariant failure as success.
 
 ## 20. Versioning and next specification
 
-Analysis version 1はgrammar version 1、semantics version 1を対象とする。
+Analysis version 1 targets grammar version 1 and semantics version 1.
 
-AnalysisResult/ResourceScheduleResult/NextResult JSON、exact Rationalとdisplay field、CLI option、exit code、text layout、path enumeration、capacity overrideは[CLI Interface仕様](interfaces.md)で固定した。MCP actionとschema parityはMVP対象外であり、将来adapterの別仕様へ送る。
+The [CLI Interface specification](interfaces.md) fixes AnalysisResult/ResourceScheduleResult/NextResult JSON, exact Rational and display fields, CLI options, exit codes, text layout, path enumeration, and capacity overrides. MCP actions and schema parity are outside the MVP and are deferred to a separate future adapter specification.
 
-Analysis ruleを破壊的に変更する場合はanalysis versionとscheduler versionのどちらが変わるかを区別する。候補順位、event order、witness選択を変える場合はscheduler versionを上げ、同じversionで別scheduleを返してはならない。
+When changing an Analysis rule incompatibly, distinguish whether the analysis version or scheduler version changes. When changing candidate order, event order, or witness selection, increase the scheduler version; do not return a different schedule under the same version.

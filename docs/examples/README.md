@@ -1,22 +1,22 @@
 # DSL examples
 
-- [minimal.pert](minimal.pert): resourceを使わない最小の直線DAG
-- [pert-estimate.pert](pert-estimate.pert): 三点見積りのexact expected/varianceを確認する直線DAG
-- [point-velocity.pert](point-velocity.pert): Pointを基準にPERT計算し、project-wide velocityでday予測を得る並行DAG
-- [parallel.pert](parallel.pert): dependency上は並行可能なtask、capacity 2の担当枠、capacity 1の排他設備を含むDAG
-- [advance-partial-before.pert](advance-partial-before.pert): done branchとactive branchが未到達milestoneへ合流するadvance前のDAG
-- [advance-partial-after.pert](advance-partial-after.pert): 過去edgeだけを削除し、合流に必要なdone taskを保持したcanonical advance結果
-- [recommendation.md](recommendation.md): AI工程制御のranking、resource conflict、構造化説明、human overrideの規範caseとtest観点
-- [agent-guidance.md](agent-guidance.md): provider/surface taxonomy、support根拠、guidance合成、staleness、read-only境界の規範case
-- [mermaid-profile.md](mermaid-profile.md): lossless `%% perttool:` semantic record、digest、projection、negative caseの規範例
+- [minimal.pert](minimal.pert): the smallest linear DAG without resources
+- [pert-estimate.pert](pert-estimate.pert): a linear DAG that verifies exact expected value and variance from a three-point estimate
+- [point-velocity.pert](point-velocity.pert): a parallel DAG that computes PERT in Points and obtains day forecasts from project-wide velocity
+- [parallel.pert](parallel.pert): a DAG with dependency-parallel tasks, capacity-2 developer slots, and a capacity-1 exclusive facility
+- [advance-partial-before.pert](advance-partial-before.pert): the pre-advance DAG where a done branch and an active branch join at an unreached milestone
+- [advance-partial-after.pert](advance-partial-after.pert): the canonical advance result that removes only historical edges while retaining the done tasks needed for the join
+- [recommendation.md](recommendation.md): normative cases and test perspectives for AI workflow-control ranking, resource conflicts, structured explanations, and human overrides
+- [agent-guidance.md](agent-guidance.md): normative cases for provider/surface taxonomy, support evidence, guidance composition, staleness, and the read-only boundary
+- [mermaid-profile.md](mermaid-profile.md): normative examples of lossless `%% perttool:` semantic records, digests, projections, and negative cases
 
-`.pert` fileはgrammar version 1、semantics version 1、analysis version 1の規範サンプルである。`recommendation.md`は実装済みRecommendation interface version 1の規範case、`agent-guidance.md`は後続Core/CLI実装へ先行するAgent Guidance interface version 1の規範caseである。`mermaid-profile.md`はMermaid adapterのwire contractとexport goldenであり、`exportMermaid`と`dag render --to mermaid`のbyte出力をtestで固定する。
+`.pert` files are normative samples for grammar version 1, semantics version 1, and analysis version 1. `recommendation.md` contains normative cases for the implemented Recommendation interface version 1, and `agent-guidance.md` contains normative cases for Agent Guidance interface version 1 ahead of later Core/CLI implementation. `mermaid-profile.md` is the Mermaid adapter wire contract and export golden; tests fix the byte output of `exportMermaid` and `dag render --to mermaid`.
 
-`pert-estimate.pert`では`DESIGN`のexpectedは`13/6d`、varianceは`1/4d^2`である。`BUILD`を含むprecedence makespanは`31/6d`、代表critical task列は`[DESIGN, BUILD]`になる。
+In `pert-estimate.pert`, `DESIGN` has expected value `13/6d` and variance `1/4d^2`. The precedence makespan including `BUILD` is `31/6d`, and the representative critical-task sequence is `[DESIGN, BUILD]`.
 
-`point-velocity.pert`では基準値のprecedence makespanは`10p`、capacity 1でのresource makespanは`15p`である。`velocity 20p/10d`によるforecastはそれぞれ`5d`、`7.5d`となる。基準値とforecastはCLI JSONで別fieldとして返す。
+In `point-velocity.pert`, the baseline precedence makespan is `10p` and the resource makespan at capacity 1 is `15p`. Forecasts using `velocity 20p/10d` are `5d` and `7.5d`, respectively. CLI JSON returns baseline values and forecasts in separate fields.
 
-`parallel.pert` のexpected durationに対する初期heuristicの期待値:
+Expected initial-heuristic results for the expected durations in `parallel.pert`:
 
 | DEVELOPERS | TEST_ENV | Makespan | Resource arcs | Schedule-critical tasks |
 | ---: | ---: | ---: | --- | --- |
@@ -25,6 +25,6 @@
 | 2 | 2 | 7d | `CLI -> DOCS` | `CLI, DOCS, TEST` |
 | 3 | 2 | 6d | none | `CORE, TEST` |
 
-resourceを無視したprecedence lower boundは6dである。既定capacityでは、時刻0に`CORE`と`CLI`を開始し、`DOCS`は担当枠待ちになる。統合後は`TEST`をpriorityで先に開始し、`PACKAGE`は排他試験環境待ちになる。この表をcapacity what-if分析のgolden expectationとして使用する。
+The precedence lower bound without resources is 6d. At default capacity, `CORE` and `CLI` start at time 0, while `DOCS` waits for a developer slot. After integration, `TEST` starts first by priority and `PACKAGE` waits for the exclusive test environment. Use this table as the golden expectation for capacity what-if analysis.
 
-`advance-partial-before.pert`からcanonical advanceを1回実行した結果は、`advance-partial-after.pert`と意味的に一致する。`BRANCH_A`はtargetの`A_DONE`が到達済みなので除去される。一方、done状態の`A_JOIN_WORK`は未到達`JOINED`の合流条件なので保持される。
+The result of running canonical advance once from `advance-partial-before.pert` is semantically equivalent to `advance-partial-after.pert`. `BRANCH_A` is removed because its target, `A_DONE`, has been reached. In contrast, done `A_JOIN_WORK` remains because it is a join condition for unreached `JOINED`.

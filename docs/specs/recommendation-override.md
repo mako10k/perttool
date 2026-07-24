@@ -1,105 +1,105 @@
-# Recommendation Human Override Contract 仕様
+# Recommendation Human Override Contract Specification
 
-- 文書状態: Normative 1.0
+- Document status: Normative 1.0
 - Override contract version: 1
 - Override artifact schema: `Perttool.OverrideDecision.v1`
-- 作成日: 2026-07-22
-- 対応要件: [../requirements.md](../requirements.md)
+- Created: 2026-07-22
+- Requirements: [../requirements.md](../requirements.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
-- 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
-## 1. 目的
+## 1. Purpose
 
-本仕様は、人間がnormal recommendationから意図的に逸脱する判断を、暗黙のtask選択やchat上の一言で終わらせず、元のrecommendation、選択task、置き換えたtask、理由、resource feasibility、actor、時刻へ結び付けるcontractを固定する。
+This specification establishes a contract that ties a human decision to intentionally depart from a normal recommendation to the original recommendation, selected tasks, replaced tasks, reason, resource feasibility, actor, and time, rather than leaving it as an implicit task selection or a brief chat statement.
 
-Human overrideはproject modelの判断を消去または改ざんする機能ではない。Normal recommendationをそのsnapshotの事実として保持したまま、人間が別のfeasible start setを明示的に承認したdecision eventである。
+A human override is not a feature that erases or falsifies a decision in the project model. It is a decision event in which a human explicitly approves a different feasible start set while retaining the normal recommendation as a fact of that snapshot.
 
-次を定義する。
+It defines the following:
 
-- overrideが必要なstart selectionと不要なselection
-- human authorityが上書きできる境界と、上書きできないgraph/resource invariant
-- normal recommendationへのstable reference
-- actor、reason code、reason text、evidence、decision time
-- override start setのresource validation
-- deterministicなoverride IDとcanonical artifact
-- Git historyを使うrepository-native audit方針
-- stale判定、single-use、state change後の全体再解析
+- start selections that require an override and selections that do not
+- boundaries of decisions that human authority can override, and graph/resource invariants that it cannot override
+- a stable reference to the normal recommendation
+- actor, reason code, reason text, evidence, and decision time
+- resource validation of the override start set
+- a deterministic override ID and canonical artifact
+- a repository-native audit policy using Git history
+- stale determination, single use, and full re-analysis after a state change
 
-本仕様は規範契約であり、2026-07-23のMIG-05でread-only `validateOverride`、public型、`Perttool.OverrideDecision.v1` JSON projection、canonical artifactをlibrary Coreへ実装した。Override command、task status mutation、Git commit、audit writeを実装したとはみなさない。
+This specification is a normative contract. MIG-05, on 2026-07-23, implemented read-only `validateOverride`, public types, the `Perttool.OverrideDecision.v1` JSON projection, and the canonical artifact in the library Core. It does not imply that an override command, task-status mutation, Git commit, or audit write has been implemented.
 
-## 2. 規範上の位置
+## 2. Normative position
 
-意味や設計が競合する場合は次の順で解決する。
+Resolve semantic or design conflicts in the following order:
 
-1. `docs/requirements.md`のMust requirement
-2. lifecycle、tier、start authorityは[Recommendation Semantics仕様](recommendation.md)
-3. normal selected setとcomparisonは[Recommendation Ranking Policy仕様](recommendation-ranking.md)
-4. normal reasonは[Recommendation Reason Taxonomy仕様](recommendation-reasons.md)
-5. normal traceは[Recommendation Structured Explanation仕様](recommendation-explanation.md)
-6. normal wire identityは[Recommendation Interface Contract仕様](recommendation-interface.md)
-7. 本仕様
-8. Graph Semantics、CLI Interface、basic design、process、example、test、implementation
+1. Must requirements in `docs/requirements.md`
+2. lifecycle, tier, and start authority in the [Recommendation Semantics Specification](recommendation.md)
+3. the normal selected set and comparisons in the [Recommendation Ranking Policy Specification](recommendation-ranking.md)
+4. normal reasons in the [Recommendation Reason Taxonomy Specification](recommendation-reasons.md)
+5. the normal trace in the [Recommendation Structured Explanation Specification](recommendation-explanation.md)
+6. normal wire identity in the [Recommendation Interface Contract Specification](recommendation-interface.md)
+7. this specification
+8. Graph Semantics, CLI Interface, basic design, process, examples, tests, and implementation
 
-Overrideはnormal tierを再分類しない。Override reason codeをnormal ranking inputまたはnormal Reason Taxonomy codeとして使用しない。
+An override does not reclassify a normal tier. Do not use an override reason code as a normal ranking input or normal Reason Taxonomy code.
 
 ## 3. Scope
 
-対象:
+In scope:
 
-- actual `ready` taskの`start` action
-- `allowed`をrecommended workの代わりに選ぶ判断
-- `deferred`または`discouraged`を選ぶ判断
-- 複数taskを含むreplacement start set
-- human-supplied reasonとcaller-asserted actor
-- source recommendation snapshotへ固定したread-only validation artifact
-- Git-managed projectでのdurable audit envelope
+- the `start` action for an actual `ready` task
+- a decision to select `allowed` work instead of recommended work
+- a decision to select `deferred` or `discouraged` work
+- a replacement start set that contains multiple tasks
+- a human-supplied reason and caller-asserted actor
+- a read-only validation artifact fixed to the source recommendation snapshot
+- a durable audit envelope in a Git-managed project
 
-対象外:
+Out of scope:
 
-- non-ready taskを強制開始すること
-- dependency、gate、blocked status、resource capacity violationの無視
-- automatic priority、duration、dependency、capacity変更
-- override reasonからranking weightを学習すること
-- approval workflow、RBAC、identity provider、signature、authentication
-- generic issue trackerまたはchat historyの保存
-- overrideを適用するCLI commandとwrite implementation
-- Git commandの自動実行
-- external audit service、network write、notification
+- forcing a non-ready task to start
+- ignoring dependencies, gates, blocked status, or resource-capacity violations
+- automatic changes to priority, duration, dependencies, or capacity
+- learning ranking weights from override reasons
+- approval workflows, RBAC, identity providers, signatures, or authentication
+- storing data in generic issue trackers or chat history
+- a CLI command and write implementation that applies an override
+- automatic execution of Git commands
+- external audit services, network writes, or notifications
 
 ## 4. Human authority boundary
 
-### 4.1 上書きできる判断
+### 4.1 Decisions that can be overridden
 
-人間は、normal recommendationが持つ「現在どのready taskを優先するか」というdecision authorityをoverrideできる。
+A human can override the decision authority held by a normal recommendation: which ready task to prioritize now.
 
-- recommended setの一部または全部を現在開始しない
-- resource-feasibleな`allowed` taskをrecommended workの代わりに開始する
-- resource-feasibleな`deferred` taskをrecommended taskと入れ替えて開始する
-- modeled negative factを認識した上でresource-feasibleな`discouraged` taskを開始する
+- not start some or all of the recommended set now
+- start a resource-feasible `allowed` task instead of recommended work
+- start a resource-feasible `deferred` task in place of a recommended task
+- start a resource-feasible `discouraged` task with awareness of modeled negative facts
 
-Override後も元taskのnormal tier、decisive reason、higher-priority task、resource witnessを変更しない。
+An override does not change the original task's normal tier, decisive reason, higher-priority task, or resource witness.
 
-### 4.2 上書きできない判断
+### 4.2 Decisions that cannot be overridden
 
-Human overrideは次をbypassしない。
+A human override does not bypass any of the following:
 
-- `ready`ではないtaskのeligibility
-- unreached dependencyまたはgate
+- eligibility of a task that is not `ready`
+- an unreached dependency or gate
 - `blocked` status
-- active taskをもう一度startすること
-- done taskをstartすること
-- applied capacityを超える同時start set
-- invalid document、cycle、undefined reference、analysis invariant failure
+- starting an active task again
+- starting a done task
+- a simultaneous start set that exceeds applied capacity
+- an invalid document, cycle, undefined reference, or analysis-invariant failure
 
-これらを変更する必要がある場合、人間はtask state、dependency、capacityなどのproject modelを明示的に修正し、安全なwrite pathで再解析する。Override artifactだけでproject factを偽装しない。
+When any of these must change, a human explicitly modifies the project model, such as task state, dependencies, or capacity, and re-analyzes it through a safe write path. Do not falsify project facts using only an override artifact.
 
 ### 4.3 Feasible replacement
 
-Normal recommended setを`R`、overrideで現在開始するready task集合を`O`とする。Valid overrideは次を満たす。
+Let `R` be the normal recommended set and `O` be the set of ready tasks started now by an override. A valid override satisfies the following:
 
 ```text
 O is a subset of P
@@ -107,65 +107,65 @@ startFeasible(O) == true
 O differs from an authority-preserving start selection
 ```
 
-Resource feasibilityはactive allocationとapplied capacityを含め、Recommendation Semantics仕様と同じexact判定を使う。`startFeasible(R union {t}) == false`でdeferredとなったtaskも、`R`の一部を外した`O`ならfeasibleになり得る。Task自身がactive allocationだけで開始不能な場合、overrideをvalidにせずcapacity/state変更を要求する。
+Resource feasibility includes active allocations and applied capacity and uses the same exact determination as the Recommendation Semantics Specification. A task deferred because `startFeasible(R union {t}) == false` can be feasible in `O` when some of `R` is removed. When a task itself cannot start because of active allocation alone, do not validate an override; require a capacity or state change.
 
 ## 5. Override requirement classification
 
-### 5.1 Override不要
+### 5.1 No override required
 
-次はnormal authorityの範囲内であり、override artifactを要求しない。
+The following are within normal authority and do not require an override artifact:
 
-- recommended taskを1件以上開始する。複数recommended taskのsubset選択に暗黙順序はない
-- recommended setを維持し、resource-feasibleな`allowed` taskを追加開始する
-- 現在はtaskを開始しない
+- starting one or more recommended tasks; selecting a subset of multiple recommended tasks has no implicit order
+- retaining the recommended set and additionally starting a resource-feasible `allowed` task
+- starting no task now
 
-Recommended set全件を同時開始しないことだけを逸脱とみなさない。
+Do not regard merely not starting every task in the recommended set concurrently as a departure.
 
-### 5.2 Override必要
+### 5.2 Override required
 
-次のtrigger codeを使用する。
+Use the following trigger codes:
 
-| Trigger code | 厳密な条件 |
+| Trigger code | Exact condition |
 | --- | --- |
-| `allowed_replaces_recommended` | selected `allowed` taskがあり、normal recommended taskの1件以上を開始集合から外す |
-| `deferred_selected` | selected taskのnormal tierが`deferred` |
-| `discouraged_selected` | selected taskのnormal tierが`discouraged` |
+| `allowed_replaces_recommended` | A selected `allowed` task is present and one or more normal recommended tasks are removed from the start set. |
+| `deferred_selected` | The normal tier of a selected task is `deferred`. |
+| `discouraged_selected` | The normal tier of a selected task is `discouraged`. |
 
-1 eventが複数条件を満たす場合、上表順で該当codeをすべて保持する。`recommended` taskのsubsetを選ぶこと、taskを選ばないこと、追加allowed workだけではtriggerを生成しない。
+When one event satisfies multiple conditions, retain every applicable code in the table order. Selecting a subset of `recommended` tasks, selecting no task, or only adding allowed work does not produce a trigger.
 
-### 5.3 Override不可能
+### 5.3 Override impossible
 
-次はvalid override artifactを生成せず、rejected resultとする。
+The following produce a rejected result rather than a valid override artifact:
 
-- `O`にnon-ready taskがある
+- `O` contains a non-ready task
 - `startFeasible(O) == false`
-- source recommendationがstaleまたはincomplete
-- selected taskのnormal decisionをsource graphから参照できない
-- actor、decision time、reasonが要件を満たさない
-- trigger codeが0件でoverride不要
+- the source recommendation is stale or incomplete
+- the selected task's normal decision cannot be referenced from the source graph
+- the actor, decision time, or reason does not meet the requirements
+- zero trigger codes mean that an override is unnecessary
 
-Override不要caseを監査件数のためだけにoverrideとして記録しない。
+Do not record a case that does not require an override as an override merely to increase the audit count.
 
 ## 6. Human reason taxonomy
 
-Override reasonはnormal project factではなく、人間が責任を持ってassertする判断理由である。Version 1は次のstable codeを持つ。
+An override reason is not a normal project fact; it is a decision reason asserted by a human who takes responsibility for it. Version 1 has the following stable codes:
 
-| Reason code | 意味 |
+| Reason code | Meaning |
 | --- | --- |
-| `human_priority_decision` | project model外の人間判断で現在優先順位を変える |
-| `external_commitment` | 顧客、契約、期限など外部commitmentを優先する |
-| `incident_response` | incidentまたは緊急対応を優先する |
-| `plan_correction_pending` | modelの不足または誤りを認識し、修正前に限定的に逸脱する |
-| `resource_reallocation_pending` | 実際のresource割当変更をmodelへ反映する前に選択を変える |
-| `risk_acceptance` | modeled negative factまたは既知riskを人間が受容する |
-| `experiment` | bounded experimentとして意図的に別taskを開始する |
-| `other_explicit_reason` | 上記に該当しない理由を明示する |
+| `human_priority_decision` | A human decision outside the project model changes the current priority. |
+| `external_commitment` | An external commitment, such as a customer, contract, or deadline, takes precedence. |
+| `incident_response` | An incident or urgent response takes precedence. |
+| `plan_correction_pending` | A model omission or error is recognized, and a limited departure is made before correction. |
+| `resource_reallocation_pending` | The selection changes before an actual resource-allocation change is reflected in the model. |
+| `risk_acceptance` | A human accepts a modeled negative fact or known risk. |
+| `experiment` | A different task is deliberately started as a bounded experiment. |
+| `other_explicit_reason` | A reason not covered above is stated explicitly. |
 
-`reason_code`だけでは不十分であり、nonempty `reason_text`を必須とする。Reason textをnormal reason code、ranking fact、task priorityへ自動変換しない。
+`reason_code` alone is insufficient; nonempty `reason_text` is required. Do not automatically convert reason text into a normal reason code, ranking fact, or task priority.
 
 ## 7. Override request
 
-Pure validationへ渡すrequestは次の意味を持つ。
+The request passed to pure validation has the following meaning:
 
 ```text
 source_schema_version          "Perttool.NextResult.v3"
@@ -185,15 +185,15 @@ acknowledged_negative_fact_reason_ids string[]
 
 Rules:
 
-- `source_digest`とresult decision IDはcomplete source recommendationと一致する
-- `selected_task_ids`は1件以上、duplicateなし、source `task_decisions`のcanonical orderで安定化する
-- perttoolはactorを認証したと表示せず、`authentication=caller_asserted`を固定する
-- `decided_at`はcallerが明示した`YYYY-MM-DDTHH:mm:ssZ`とし、現在時刻を自動挿入しない
-- actor IDは前後にUnicode White_Spaceを持たず、UTF-8で1..256 bytes、NULなしとする
-- `reason_text`は前後にUnicode White_Spaceを持たず、UTF-8で1..4096 bytes、NULなしとする
-- selected `discouraged` taskのdecisive negative fact reason IDを`acknowledged_negative_fact_reason_ids`へすべて明示する。それ以外のIDを混入させない
-- evidenceは0..16件、各valueは前後にUnicode White_Spaceを持たないUTF-8 1..1024 bytes、NULなしとする
-- secret、credential、tokenをreason/evidenceへ含めないことをhelpで警告する
+- `source_digest` and the result decision ID match the complete source recommendation.
+- `selected_task_ids` contains one or more entries, has no duplicates, and is stabilized in the canonical order of source `task_decisions`.
+- perttool does not claim to authenticate the actor and fixes `authentication=caller_asserted`.
+- `decided_at` is the `YYYY-MM-DDTHH:mm:ssZ` value explicitly supplied by the caller; do not automatically insert the current time.
+- The actor ID has no leading or trailing Unicode White_Space, is 1..256 UTF-8 bytes, and has no NUL.
+- `reason_text` has no leading or trailing Unicode White_Space, is 1..4096 UTF-8 bytes, and has no NUL.
+- Explicitly include every decisive negative-fact reason ID of a selected `discouraged` task in `acknowledged_negative_fact_reason_ids`. Do not include any other ID.
+- Evidence has 0..16 entries; each value has no leading or trailing Unicode White_Space, is 1..1024 UTF-8 bytes, and has no NUL.
+- Help warns not to include secrets, credentials, or tokens in reasons or evidence.
 
 Evidence reference:
 
@@ -202,11 +202,11 @@ kind   "issue" | "commit" | "document" | "url" | "other"
 value  string
 ```
 
-Producerはreference先へnetwork/file lookupを行わない。同一kind/valueをdeduplicateし、kind、valueのASCII/UTF-8 byte orderで安定化する。
+The producer does not perform a network or file lookup for a reference target. Deduplicate identical kind/value pairs and stabilize them in the ASCII/UTF-8 byte order of kind and value.
 
 ## 8. Override validation
 
-Validationはsource `NextResult.v3`とrequestだけを入力とするpure operationであり、normal rankingを変更しない。
+Validation is a pure operation whose only inputs are the source `NextResult.v3` and request; it does not change normal ranking.
 
 ```text
 validateOverride(sourceNextResult, request): OverrideValidationResult
@@ -214,17 +214,17 @@ validateOverride(sourceNextResult, request): OverrideValidationResult
 
 Validation order:
 
-1. source schema、interface、algorithm、taxonomy、explanation versionを理解できる
-2. source resultが`ok=true`かつcomplete、not truncatedである
-3. source digest、result decision IDがrequestと一致する
-4. selected taskがすべてactual readyでtask decisionを持つ
-5. trigger codeを第5章から導出する
-6. selected set `O`の`startFeasible(O)`をactive allocationとapplied capacityでexact評価する
-7. discouraged taskのnegative fact、deferred taskのblocker、displaced recommended taskをsource traceから参照する
-8. actor、time、reason、evidence、negative fact acknowledgementを検査する
-9. canonical artifactとoverride IDを生成する
+1. understand the source schema, interface, algorithm, taxonomy, and explanation versions
+2. verify that the source result has `ok=true`, is complete, and is not truncated
+3. verify that the source digest and result decision ID match the request
+4. verify that every selected task is actually ready and has a task decision
+5. derive trigger codes from section 5
+6. evaluate `startFeasible(O)` for selected set `O` exactly, with active allocations and applied capacity
+7. reference from the source trace the negative facts for discouraged tasks, blockers for deferred tasks, and displaced recommended tasks
+8. validate the actor, time, reason, evidence, and negative-fact acknowledgement
+9. generate the canonical artifact and override ID
 
-途中で失敗してもsource normal recommendationを変更しない。Validation failureをhuman approvalで成功へ読み替えない。
+Do not change the source normal recommendation if a step fails. Do not reinterpret a validation failure as success because of human approval.
 
 ## 9. `Perttool.OverrideDecision.v1`
 
@@ -240,7 +240,7 @@ diagnostics_truncated   boolean
 override                HumanOverrideDecision|null
 ```
 
-`ok=true`では`override`がnon-null、`ok=false`では`override=null`とする。これはmutation resultではなく、file、task status、Git repositoryを変更しないvalidation artifactである。
+When `ok=true`, `override` is non-null; when `ok=false`, `override=null`. This is not a mutation result but a validation artifact that does not change a file, task status, or Git repository.
 
 ### 9.2 HumanOverrideDecision
 
@@ -278,7 +278,7 @@ feasibility                     OverrideFeasibility
 single_use                      true
 ```
 
-`retained_recommended_task_ids`は`O intersection R`、`displaced_recommended_task_ids`は`R minus O`、`selected_nonrecommended_task_ids`は`O minus R`である。
+`retained_recommended_task_ids` is `O intersection R`, `displaced_recommended_task_ids` is `R minus O`, and `selected_nonrecommended_task_ids` is `O minus R`.
 
 ### 9.3 Per-task decision reference
 
@@ -294,9 +294,9 @@ trigger_codes                 OverrideTriggerCode[]
 acknowledged_negative_fact_reason_ids string[]
 ```
 
-Selected taskだけを含む。`acknowledged_negative_fact_reason_ids`はnormal tierが`discouraged`の場合にdecisive negative fact reasonをすべて含め、他tierではemptyとする。Normal reasonをcopyして別意味へ変換せずsource IDで参照する。
+Include only selected tasks. When the normal tier is `discouraged`, `acknowledged_negative_fact_reason_ids` contains every decisive negative-fact reason; for other tiers it is empty. Reference the source ID without copying a normal reason and transforming it into another meaning.
 
-`normal_reason_occurrence_ids`はtier必須reasonとdecisive chain closure、`normal_comparison_ids`はそれらが参照するcomparisonをcanonical orderで含む。Unrelated taskのreasonや、判断に使わなかった総当たりcomparisonを追加しない。
+`normal_reason_occurrence_ids` contains tier-required reasons and the decisive-chain closure, while `normal_comparison_ids` contains the comparisons they reference in canonical order. Do not add reasons for unrelated tasks or exhaustive comparisons not used for the decision.
 
 ### 9.4 Feasibility
 
@@ -315,39 +315,39 @@ resource_witnesses:
 expression                   RecommendationExpression|null
 ```
 
-すべてのdeclared resourceについてwitnessを返すか、usageが1以上のresourceだけを返すかはVersion 1では後者とし、resource ID順に並べる。`used = active_usage + selected_usage`、`available_after_selection = capacity - used`をexact integerで検査する。`expression`は各witnessのprecomputed `used <= capacity`をunit付きliteralで比較する制限付き`All`式とする。Witnessが0件ならresource制約はvacuously feasibleであり`expression=null`とする。Expressionがfalse、またはarithmetic invariantが一致しない場合はvalid artifactを生成しない。
+Version 1 returns witnesses only for resources with usage of at least 1, rather than for every declared resource, and orders them by resource ID. Check `used = active_usage + selected_usage` and `available_after_selection = capacity - used` as exact integers. `expression` is a restricted `All` expression that compares each witness's precomputed `used <= capacity` using unit-bearing literals. When there are zero witnesses, the resource constraint is vacuously feasible and `expression=null`. Do not generate a valid artifact when the expression is false or an arithmetic invariant does not match.
 
 ## 10. Deterministic identity
 
-Override IDは、`override_id`を除く`HumanOverrideDecision` payloadをschema記載順、canonical array order、UTF-8、改行なしのcompact JSONへserializationし、そのbytesのSHA-256から生成する。
+Generate the override ID from the SHA-256 of the `HumanOverrideDecision` payload excluding `override_id`, serialized as compact JSON in schema order and canonical array order, encoded as UTF-8, and without a newline.
 
 ```text
 override_id = "override:sha256:" + lowercaseHex(sha256(canonical_payload_without_id))
 ```
 
-次をidentityへ含む。
+The identity includes the following:
 
-- source digestと全semantic version
-- result decision IDとnormal recommended set
-- selected、retained、displaced task
-- trigger codeとnormal decision reference
+- source digest and all semantic versions
+- result decision ID and normal recommended set
+- selected, retained, and displaced tasks
+- trigger code and normal decision reference
 - exact resource witness
-- actor ID、caller-supplied decision time
+- actor ID and caller-supplied decision time
 - human reason code/text/evidence
 
-Localized description、current time、hostname、username、absolute path、random nonceをidentityへ含めない。同じrequestとsource resultからbyte-identical artifactとoverride IDを返す。
+Do not include localized descriptions, the current time, hostname, username, absolute path, or a random nonce in the identity. The same request and source result must return byte-identical artifacts and override IDs.
 
 ## 11. Durable audit policy
 
 ### 11.1 General rule
 
-Override対象taskを開始する前に、canonical `Perttool.OverrideDecision.v1` artifactを、project policyが定めるdurable append-only audit sinkへ保存する。Chat history、terminal scrollback、AI内部contextだけをaudit先にしない。
+Before starting an override-target task, store the canonical `Perttool.OverrideDecision.v1` artifact in the durable append-only audit sink specified by project policy. Do not use chat history, terminal scrollback, or AI-internal context alone as the audit destination.
 
-perttool Coreはaudit writeを行わない。Validation artifactの生成と、保存・state mutation・executionは別authorityとする。
+The perttool Core does not write audits. Generating a validation artifact and storing it, mutating state, and executing are separate authorities.
 
 ### 11.2 Repository-native default
 
-Git-managed `.pert` projectのdefault audit sinkは、overrideに対応するtask state変更commitのcommit messageとする。Commit body末尾に次の2 trailerを置く。
+For a Git-managed `.pert` project, the default audit sink is the commit message of the task-state-change commit corresponding to the override. Put the following two trailers at the end of the commit body.
 
 ```text
 Perttool-Override: override:sha256:<64 lowercase hex digits>
@@ -356,76 +356,76 @@ Perttool-Override-Record: <canonical compact Perttool.OverrideDecision.v1 JSON>
 
 Rules:
 
-- record trailerのJSONから再計算したIDが`Perttool-Override`と一致する
-- 同じcommitでselected taskのstart stateを正本へ反映する
-- unrelated overrideを1 commitへ混在させない
-- commitを作成せず実行だけ開始した状態をdurable audit完了とみなさない
-- perttoolはGitを自動実行せず、commit作成はhuman/execution workflowの責務とする
-- secretをcommit messageへ保存しない
+- The ID recalculated from the record trailer JSON matches `Perttool-Override`.
+- Reflect the selected task's start state in the source of truth in the same commit.
+- Do not mix unrelated overrides into one commit.
+- Do not consider beginning execution without creating a commit to be durable-audit completion.
+- perttool does not run Git automatically; creating the commit is the responsibility of the human/execution workflow.
+- Do not store secrets in the commit message.
 
-Stage 2では一般editing writeを解禁済みだが、override適用はMIG-08のvalidation、single-use、audit gateを満たすまで自己利用へ解禁しない。本contractやsafe-write surfaceの存在だけでoverride authorityを捏造しない。
+Stage 2 has enabled general editing writes, but does not enable override apply for self-use until MIG-08 validation, single-use, and audit gates are satisfied. Do not fabricate override authority merely from the existence of this contract or the safe-write surface.
 
 ### 11.3 External sink
 
-Project policyがexternal audit systemを使用する場合も、canonical artifact全体またはlossless content-addressed blobを保存し、override IDから取得できなければならない。Issue URLやticket IDだけを残してartifactを失わない。External sinkへのnetwork writeはperttool Coreの責務外である。
+When project policy uses an external audit system, it must still store the complete canonical artifact or a lossless content-addressed blob retrievable by override ID. Do not leave only an issue URL or ticket ID and lose the artifact. Network writes to an external sink are outside the perttool Core's responsibility.
 
-## 12. Apply、single-use、stale boundary
+## 12. Apply, single-use, and stale boundary
 
-Validated overrideはsource digestとsource recommendationへ固定されたsingle-use authorizationである。
+A validated override is a single-use authorization fixed to the source digest and source recommendation.
 
-Apply前に次を再検査する。
+Recheck the following before apply:
 
-- current canonical document digestがsource digestと一致する
-- capacity overrideとanalysis optionがsource recommendationと一致する
-- selected taskが引き続きreadyである
-- selected setが引き続きresource-feasibleである
-- override IDとartifact digestが一致する
-- durable auditを同じstate transitionへ結び付けられる
+- The current canonical document digest matches the source digest.
+- The capacity override and analysis options match the source recommendation.
+- The selected task remains ready.
+- The selected set remains resource-feasible.
+- The override ID and artifact digest match.
+- The durable audit can be attached to the same state transition.
 
-1件でも変化していればstaleとして拒否し、`dag next`からやり直す。古いoverrideを新しいsnapshotへ再baseしない。
+If even one item has changed, reject it as stale and restart from `dag next`. Do not rebase an old override onto a new snapshot.
 
-Applyは概念上、selected taskのstart state transitionとaudit envelopeを1つのlogical changeとして扱う。Partial apply、selected taskの一部だけのstart、同じoverride IDの再利用を許可しない。具体的mutation command、atomic file write、Git integrationは後続implementation/process設計で固定する。
+Conceptually, apply treats the selected task's start-state transition and audit envelope as one logical change. Do not allow partial apply, starting only some selected tasks, or reuse of the same override ID. Subsequent implementation/process design fixes the concrete mutation command, atomic file write, and Git integration.
 
 ## 13. Re-analysis contract
 
-Override apply後は、selected taskをactive、開始しなかったtaskを元のstateとしてproject documentへ反映した新snapshotから、check、analyze、nextを全体再実行する。
+After override apply, rerun check, analyze, and next for the entire project from a new snapshot whose project document reflects selected tasks as active and tasks not started in their original state.
 
-- source recommendationとoverride artifactを次cycleのranking resultとして再利用しない
-- displaced recommended taskを自動deferredへ書き換えない
-- human reasonをpriority、dependency、negative factへ自動変換しない
-- normal recommendation historyはGit/audit artifactで追跡し、現行resultは新snapshotから再計算する
-- plan correction pendingなどmodel更新を示すreasonでも、別の明示changeなしにmodelを変更しない
+- Do not reuse the source recommendation or override artifact as the ranking result for the next cycle.
+- Do not automatically rewrite a displaced recommended task as deferred.
+- Do not automatically convert a human reason into priority, dependency, or a negative fact.
+- Track normal recommendation history with Git/audit artifacts and recompute the current result from the new snapshot.
+- Do not change the model without a separate explicit change, even for reasons that indicate a model update such as a pending plan correction.
 
-再解析後のrecommendationが同じtaskを再度非推奨にしても、それは正常である。継続して別start actionを行う場合は、新しいresultに対してoverride要否を再判定する。
+It is normal if the recommendation after re-analysis again does not recommend the same task. When continuing with another start action, re-evaluate whether an override is necessary against the new result.
 
 ## 14. Explainability
 
-AIはoverride artifactから少なくとも次を回答できなければならない。
+An AI must be able to answer at least the following from an override artifact:
 
-- normal recommendationは何だったか
-- 人間がどのtaskを選び、どのrecommended taskを外したか
-- selected taskのnormal tierとdecisive reasonは何だったか
-- overrideが必要になったtriggerは何か
-- 人間が示したreason code、reason text、evidenceは何か
-- selected setがresource-feasibleである根拠は何か
-- actor identityがcaller-assertedであり、perttool認証済みではないこと
+- What was the normal recommendation?
+- Which tasks did the human select, and which recommended tasks did they remove?
+- What were the selected tasks' normal tiers and decisive reasons?
+- What trigger made the override necessary?
+- What reason code, reason text, and evidence did the human provide?
+- What establishes that the selected set is resource-feasible?
+- That the actor identity is caller-asserted and not authenticated by perttool.
 
-Human reason textは人間のassertionとして引用可能だが、project factまたはnormal ranking reasonとして表示しない。Normal traceとoverride traceを1つのreason listへ混ぜない。
+Human reason text may be quoted as a human assertion, but must not be presented as a project fact or normal-ranking reason. Do not mix the normal trace and override trace into one reason list.
 
 ## 15. Diagnostics
 
-| Code | Severity | 意味 |
+| Code | Severity | Meaning |
 | --- | --- | --- |
-| `PTOVR-101` | error | source schema/versionを理解できない、またはsource explanationがincomplete |
-| `PTOVR-102` | error | source digest/result decision不一致によるstale request |
-| `PTOVR-103` | error | selected taskがnon-ready、unknown、duplicate |
-| `PTOVR-104` | error | selected setがresource-infeasible |
-| `PTOVR-105` | error | actor、decision time、reason、evidenceがinvalid |
-| `PTOVR-106` | error | normal authority内でoverride不要 |
-| `PTOVR-201` | error | apply時のsource/state/capacity変化でartifactがstale |
-| `PTOVR-202` | error | override ID、canonical record、audit envelope不一致 |
+| `PTOVR-101` | error | The source schema/version is not understood, or the source explanation is incomplete |
+| `PTOVR-102` | error | Stale request due to a mismatch in source digest/result decision |
+| `PTOVR-103` | error | The selected task is non-ready, unknown, or duplicated |
+| `PTOVR-104` | error | The selected set is resource-infeasible |
+| `PTOVR-105` | error | The actor, decision time, reason, or evidence is invalid |
+| `PTOVR-106` | error | No override is needed within normal authority |
+| `PTOVR-201` | error | The artifact is stale because source/state/capacity changed at apply time |
+| `PTOVR-202` | error | Mismatch among override ID, canonical record, and audit envelope |
 
-Validation errorはdocument syntax errorへ変換しない。Read-only validationを将来CLIへ公開する場合、invalid requestはexit 1、usage errorはexit 2、I/O errorはexit 3、internal invariantはexit 70を使用する。Apply時のoptimistic lock conflictは既存exit 5を使用する。
+Do not convert a validation error into a document syntax error. If read-only validation is exposed in the CLI in the future, use exit 1 for an invalid request, exit 2 for a usage error, exit 3 for an I/O error, and exit 70 for an internal invariant. Use existing exit 5 for an optimistic-lock conflict at apply time.
 
 ## 16. Conceptual examples
 
@@ -448,7 +448,7 @@ Override:
   startFeasible(O) = true
 ```
 
-TASK_BをTASK_Aと同時に追加する場合はnormal authority内だが、TASK_Aを外してTASK_Bだけを選ぶためoverrideが必要になる。
+Adding TASK_B together with TASK_A is within normal authority, but removing TASK_A and selecting TASK_B alone requires an override.
 
 ### 16.2 Deferred work replaces a conflicting recommendation
 
@@ -465,7 +465,7 @@ Override trigger:
   deferred_selected
 ```
 
-Overrideはcapacity violationを許可したのではなく、TASK_Aを現在開始しないreplacement setを人間が選んだことを記録する。
+The override does not permit a capacity violation; it records that a human selected a replacement set that does not start TASK_A now.
 
 ### 16.3 Active allocation makes a task infeasible
 
@@ -481,39 +481,39 @@ Result:
   rejected with PTOVR-104
 ```
 
-この場合はactive stateまたはcapacityを正本で変更し、再解析しなければならない。
+In this case, change the active state or capacity in the source of truth and re-analyze.
 
-## 17. 後続設計taskへ送る事項
+## 17. Items handed to subsequent design tasks
 
 ### `NORMATIVE_EXAMPLES`
 
-[Recommendation規範例](../examples/recommendation.md)で次を固定した。
+[Normative recommendation examples](../examples/recommendation.md) fix the following.
 
-- allowed replacement、deferred replacement、将来modelでのdiscouraged risk acceptance
-- recommended subsetとadditional allowedでoverride不要となるcase
-- non-ready、active-only conflict、stale digestのreject
-- normal traceとoverride traceを分離したgolden artifact
-- deterministic override IDとGit trailer verification
+- allowed replacement, deferred replacement, and discouraged-risk acceptance in a future model
+- cases where a recommended subset and additional allowed work need no override
+- rejection for non-ready, active-only conflict, and stale digest
+- golden artifacts that separate normal traces from override traces
+- deterministic override IDs and Git trailer verification
 
 ### `PROCESS_MIGRATION`
 
-[Recommendation実装・自己利用migration](../process/recommendation-migration.md)で次を固定した。
+[Recommendation implementation and self-use migration](../process/recommendation-migration.md) fix the following.
 
-- override validationをread-onlyで導入する順序
-- write gate後のstate transitionとaudit commit手順
-- AIがoverride artifactなしにdeferred/discouraged taskを開始しない運用gate
-- secret reviewとcommit trailer verification
+- the order for introducing override validation as read-only
+- state transitions and audit-commit procedure after the write gate
+- the operational gate that prevents an AI from starting deferred/discouraged tasks without an override artifact
+- secret review and commit trailer verification
 
-## 18. 本sliceのacceptance
+## 18. Acceptance for this slice
 
-- human authorityがoverrideできるpriority判断と、できないeligibility/resource invariantを分離した
-- override必要、不要、不可能の条件を定義した
-- stable trigger codeとhuman reason taxonomyを定義した
-- caller-asserted actor、explicit UTC time、reason text、evidenceを定義した
-- source recommendationへ固定したseparate artifactを定義した
-- selected/retained/displaced taskとnormal decision referenceを定義した
-- replacement setのexact resource feasibilityを必須にした
-- deterministic override IDとsingle-use/stale ruleを定義した
-- Git commit trailerをrepository-native audit defaultとして定義した
-- apply後の全体再解析とnormal rankingへの非feedbackを定義した
-- current CLI、write path、Git operationを変更していない
+- Separated priority judgments that human authority may override from eligibility/resource invariants that it may not.
+- Defined conditions in which an override is required, not required, or impossible.
+- Defined stable trigger codes and the human-reason taxonomy.
+- Defined caller-asserted actors, explicit UTC times, reason text, and evidence.
+- Defined a separate artifact fixed to the source recommendation.
+- Defined selected, retained, and displaced tasks and normal decision references.
+- Required exact resource feasibility for the replacement set.
+- Defined deterministic override IDs and single-use/stale rules.
+- Defined Git commit trailers as the repository-native audit default.
+- Defined full re-analysis after apply and no feedback into normal ranking.
+- Did not change the current CLI, write path, or Git operation.

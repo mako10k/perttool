@@ -1,14 +1,14 @@
-# perttool CLI Interface仕様
+# perttool CLI Interface Specification
 
-- 文書状態: Draft 0.4
+- Document status: Draft 0.4
 - Interface version: 2
 - CLI contract version: 2
-- 作成日: 2026-07-21
-- 更新日: 2026-07-23
-- 対応要件: [../requirements.md](../requirements.md)
-- 文法仕様: [dsl-grammar.md](dsl-grammar.md)
+- Created: 2026-07-21
+- Updated: 2026-07-23
+- Requirements: [../requirements.md](../requirements.md)
+- Grammar specification: [dsl-grammar.md](dsl-grammar.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
-- Analysis仕様: [analysis.md](analysis.md)
+- Analysis specification: [analysis.md](analysis.md)
 - Mutation semantics: [mutation.md](mutation.md)
 - Mermaid profile: [mermaid-profile.md](mermaid-profile.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
@@ -17,38 +17,38 @@
 - Recommendation explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Future recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Future AI Agent Guidance interface: [agent-guidance.md](agent-guidance.md)
-- 対応基本設計: [../basic-design.md](../basic-design.md)
+- Related basic design: [../basic-design.md](../basic-design.md)
 
-## 1. 目的とMVP境界
+## 1. Purpose and MVP Boundary
 
-本書はperttool MVPのCLI command、option、標準入出力、exit code、text表示、CLI JSON resultを固定する規範仕様である。
+This is the normative specification that fixes the perttool MVP CLI commands, options, standard input/output, exit codes, text output, and CLI JSON results.
 
-MVPのprimary interfaceはローカルCLIとする。AI agentもMCPではなく、CLIの`--format json`を使用してcheck、analyze、next、preview mutationを実行する。
+The primary MVP interface is the local CLI. AI agents also use the CLI's `--format json`, rather than MCP, to perform checks, analysis, next-task selection, and preview mutations.
 
-MCP、LSP、VSIX/editor adapterはMVP後とし、本書ではtool名、action schema、transport、server起動commandを定義しない。MVP実装へMCP SDK、LSP transport、VS Code extension dependencyを追加してはならない。
+MCP, LSP, and VSIX/editor adapters are post-MVP; this document does not define tool names, action schemas, transports, or server startup commands for them. The MVP implementation MUST NOT add MCP SDK, LSP transport, or VS Code extension dependencies.
 
-## 2. 規範の優先順位と対象外
+## 2. Normative Precedence and Exclusions
 
-不一致がある場合は次の順で解消する。
+Resolve inconsistencies in the following order:
 
-1. `docs/requirements.md`のMust requirementとMVP境界
-2. [DSL文法仕様](dsl-grammar.md)のsyntax contract
-3. [Graph Semantics仕様](graph-semantics.md)のgraph/state contract
-4. [Analysis仕様](analysis.md)の数値・schedule contract
-5. 本書のCLIとserialization contract
-6. `docs/basic-design.md`とsample/help表示
+1. Must requirements and MVP boundary in `docs/requirements.md`
+2. The syntax contract in the [DSL Grammar Specification](dsl-grammar.md)
+3. The graph/state contract in the [Graph Semantics Specification](graph-semantics.md)
+4. The numeric and schedule contract in the [Analysis Specification](analysis.md)
+5. The CLI and serialization contract in this document
+6. `docs/basic-design.md` and sample/help output
 
-本書の対象外:
+Out of scope for this document:
 
-- Node.js対応version、package manager、配布package名
-- shell completion、GUI、TUI、daemon、network API
-- MCP/LSP/VSIX/editorのwire contract
-- Mermaid lossless metadataの内部record schema
-- calendar、exact resource solver、target duration完了確率
+- Supported Node.js versions, package managers, and distribution package names
+- Shell completion, GUI, TUI, daemons, and network APIs
+- Wire contracts for MCP, LSP, VSIX, or editors
+- Internal record schema for Mermaid lossless metadata
+- Calendars, exact resource solvers, and target-duration completion probability
 
-## 3. CLI dispatchと共通規則
+## 3. CLI Dispatch and Common Rules
 
-### 3.1 top-level grammar
+### 3.1 Top-level grammar
 
 ```text
 perttool --version
@@ -57,61 +57,61 @@ perttool <resource> <action> [operands] [options]
 perttool <resource> <action> --help
 ```
 
-MVP resourceは`dsl`、`project`、`dag`、`task`、`milestone`、`resource`である。最初のbetaは[AI Agent Guidance Registry仕様](agent-guidance.md)に従うread-only `agent help`を追加する。Resource名、action名、option名はcase-sensitiveとする。
+MVP resources are `dsl`, `project`, `dag`, `task`, `milestone`, and `resource`. The first beta adds read-only `agent help` in accordance with the [AI Agent Guidance Registry Specification](agent-guidance.md). Resource names, action names, and option names are case-sensitive.
 
 Rules:
 
-- unknown resource、action、option、余分なoperandはusage error
-- long optionのprefix省略を許さない
-- `--name value`と`--name=value`の両方を受理する
-- boolean optionへ値を付けない
-- optionの意味は記載順に依存しない
-- repeatableでないoptionの重複はusage error
-- pathが`-`から始まる場合は`--`でoption parsingを終了できる
-- response file、暗黙のenvironment option、config file、network accessはMVPに含めない
+- An unknown resource, action, option, or an extra operand is a usage error.
+- Long-option prefix abbreviation is not allowed.
+- Both `--name value` and `--name=value` are accepted.
+- Boolean options do not take a value.
+- Option meaning does not depend on order of appearance.
+- Repetition of a non-repeatable option is a usage error.
+- `--` can terminate option parsing when a path begins with `-`.
+- Response files, implicit environment options, configuration files, and network access are not in the MVP.
 
-`--version`は`perttool <semantic-version>`と末尾newlineをstdoutへ出す。`--version`と`--help`はterminal optionであり、相互または他のoperand/optionと併用しない。Commandの`--help`は必須operandなしで使用でき、常にtextを返す。DSLの機械可読helpには`dsl help --format json`、provider別AI guidanceには`agent help --format json`を使う。
+`--version` writes `perttool <semantic-version>` followed by a trailing newline to stdout. `--version` and `--help` are terminal options and MUST NOT be combined with each other or with other operands/options. Command `--help` may be used without required operands and always returns text. Use `dsl help --format json` for machine-readable DSL help and `agent help --format json` for provider-specific AI guidance.
 
-### 3.2 document input
+### 3.2 Document input
 
-`<file>`はUTF-8 document pathまたは`-`である。`-`はstdinを表す。
+`<file>` is a UTF-8 document path or `-`. `-` denotes stdin.
 
-- read-only operationとpreview operationはstdinを受理する
-- 1 invocationでdocument inputは1つだけ
-- stdin使用時、diagnostic source名は`<stdin>`
-- inputを読み切ってからparseを開始する
-- file pathをURLとして扱わない
-- invalid UTF-8、read failureはI/O error
-- input digestはBOMを含むraw UTF-8 bytesのSHA-256
-- digest文字列表現は`sha256:<64 lowercase hex digits>`
+- Read-only operations and preview operations accept stdin.
+- One invocation has exactly one document input.
+- When stdin is used, the diagnostic source name is `<stdin>`.
+- Parsing begins only after all input has been read.
+- A file path is not treated as a URL.
+- Invalid UTF-8 and read failures are I/O errors.
+- The input digest is SHA-256 over raw UTF-8 bytes, including a BOM.
+- The digest string representation is `sha256:<64 lowercase hex digits>`.
 
-### 3.3 common result options
+### 3.3 Common result options
 
-Resultを返すcommandは次を使用する。
+Commands that return results use the following options.
 
 | Option | Value | Default | Meaning |
 | --- | --- | --- | --- |
 | `--format` | `text` or `json` | `text` | CLI result serialization |
-| `--color` | `auto`, `always`, `never` | `auto` | text diagnosticのANSI color |
-| `--warnings-as-errors` | flag | off | warningが1件以上ならexit 1 |
-| `--max-diagnostics` | integer | `100` | 1..1000。返すdocument diagnostic件数の上限 |
+| `--color` | `auto`, `always`, `never` | `auto` | ANSI color for text diagnostics |
+| `--warnings-as-errors` | flag | off | Exit 1 if at least one warning is present |
+| `--max-diagnostics` | integer | `100` | 1..1000; upper limit on returned document diagnostics |
 
-`--format json`では`--color always`をusage errorとする。JSONへANSI escapeを含めない。`--color auto`はstdout/stderrそれぞれがTTYかを独立に判定する。
+With `--format json`, `--color always` is a usage error. JSON MUST NOT contain ANSI escapes. `--color auto` independently determines whether stdout and stderr are TTYs.
 
-`--warnings-as-errors`は`dsl help`以外のdocument-processing commandで受理する。Help commandにはdocument warningがないため指定をusage errorとする。
-`--max-diagnostics`もdocument-processing commandだけで受理し、`dsl help`ではusage errorとする。
+`--warnings-as-errors` is accepted by document-processing commands other than `dsl help`. Since help commands have no document warnings, specifying it is a usage error.
+`--max-diagnostics` is also accepted only by document-processing commands, and is a usage error for `dsl help`.
 
-### 3.4 command helpとdomain help
+### 3.4 Command help and domain help
 
-- `perttool --help`はresource一覧とglobal usageをstdoutへ出す
-- `<resource> <action> --help`はそのcommandのoperand/option usageをstdoutへ出す
-- command helpはexit 0で、documentを読まない
-- DSL、分析、workflowの学習用helpは`perttool dsl help`を使う
-- syntax error diagnosticはdomain help topic IDを返す
+- `perttool --help` writes the resource list and global usage to stdout.
+- `<resource> <action> --help` writes that command's operand/option usage to stdout.
+- Command help exits 0 and does not read a document.
+- Use `perttool dsl help` for learning-oriented DSL, analysis, and workflow help.
+- Syntax-error diagnostics return a domain-help topic ID.
 
-## 4. Command surface
+## 4. Command Surface
 
-### 4.1 complete surface
+### 4.1 Complete surface
 
 ```text
 perttool dsl check <file>
@@ -141,9 +141,9 @@ perttool resource set <file> <id>
 perttool resource remove <file> <id>
 ```
 
-`dag render --to svg|json`はpost-MVP targetとしてcommand namespaceを予約する。MVP実装がadvertiseして受理する必須targetは`mermaid`だけである。Targetを追加するchangeでparser enum、command help、renderer、golden testを同時に追加する。
+`dag render --to svg|json` reserves command-namespace targets for post-MVP work. The only target the MVP implementation is required to advertise and accept is `mermaid`. A change that adds a target MUST add its parser enum, command help, renderer, and golden tests together.
 
-## 5. DSL commands
+## 5. DSL Commands
 
 ### 5.1 `dsl check`
 
@@ -155,7 +155,7 @@ perttool dsl check <file>
   [--color auto|always|never]
 ```
 
-Grammar、field、reference、cycle、state、frontier、finish reachability、active resource allocationを検査する。Analysis scheduleは計算しない。
+Checks grammar, fields, references, cycles, state, frontier, finish reachability, and active resource allocation. It does not calculate an analysis schedule.
 
 ### 5.2 `dsl format`
 
@@ -170,14 +170,14 @@ perttool dsl format <file>
   [--color auto|always|never]
 ```
 
-- defaultは候補documentをstdoutへ出すpreview
-- `--diff`は候補documentの代わりにunified diffをstdoutへ出す
-- `--check`は変更が必要ならexit 1とし、fileを書かない
-- textの`--check`単独はstdoutを空にする。`--diff`併用時はdiffをstdoutへ出す
-- JSONの`--check`はCLIの`ok`とexit codeだけを変更し、candidate生成成功時のcandidate、diff、editを隠さない
-- `--check`は`--write`、`--out`と併用不可
-- formatterはcandidateを再parse・再検査する
-- inputが既にcanonicalなら`changed=false`
+- By default, previews the candidate document to stdout.
+- `--diff` writes a unified diff to stdout instead of the candidate document.
+- `--check` exits 1 when changes are required and does not write the file.
+- `--check` alone in text format leaves stdout empty. When combined with `--diff`, it writes the diff to stdout.
+- In JSON, `--check` changes only the CLI `ok` value and exit code; it does not hide the candidate, diff, or edits when candidate generation succeeds.
+- `--check` cannot be combined with `--write` or `--out`.
+- The formatter reparses and rechecks the candidate.
+- `changed=false` when the input is already canonical.
 
 ### 5.3 `dsl help`
 
@@ -188,20 +188,20 @@ perttool dsl help [<topic> [<subtopic>]]
   [--color auto|always|never]
 ```
 
-- 引数なしのdefault levelは`index`
-- topic指定時のdefault levelは`quick`
-- `<topic> <subtopic>`はhelp ID `<topic>.<subtopic>`へ正規化する
-- dotを含む単一topic IDも受理する
-- positional topicとsubtopicを連結した結果がregistryに存在しなければusage errorではなくhelp lookup error、exit 1
-- help resultはgrammar parseを必要とせず、`document_id`を持たない
+- The default level without arguments is `index`.
+- The default level when a topic is specified is `quick`.
+- `<topic> <subtopic>` is normalized to the help ID `<topic>.<subtopic>`.
+- A single topic ID containing a dot is also accepted.
+- When the concatenation of positional topic and subtopic is absent from the registry, it is a help lookup error, not a usage error, and exits 1.
+- A help result does not require grammar parsing and has no `document_id`.
 
-初期top-level topic:
+Initial top-level topics:
 
 ```text
 syntax analysis next editing mermaid workflows errors samples
 ```
 
-## 6. Project and DAG commands
+## 6. Project and DAG Commands
 
 ### 6.1 `project show`
 
@@ -211,18 +211,18 @@ perttool project show <file>
   [--format text|json] [--color auto|always|never]
 ```
 
-Valid documentのproject declarationを1件返す。ID、effective grammar version、title、description、as_of、duration_unit、velocity、finish、critical_epsilon、target_durationを固定順で表示する。Optional fieldが宣言されていない場合はJSONで`null`、textで`-`とする。Read-onlyでありfileを書き換えない。
+Returns exactly one project declaration from a valid document. It displays ID, effective grammar version, title, description, as_of, duration_unit, velocity, finish, critical_epsilon, and target_duration in a fixed order. When an optional field is not declared, it is `null` in JSON and `-` in text. It is read-only and does not rewrite the file.
 
-### 6.2 shared analysis options
+### 6.2 Shared analysis options
 
-`dag analyze`と`dag next`は次を共有する。
+`dag analyze` and `dag next` share the following options.
 
 | Option | Value | Default | Constraint |
 | --- | --- | --- | --- |
-| `--capacity` | `<resource-id>=<integer>` | none | repeatable、integerは1..2147483647 |
-| `--precision` | integer | `3` | 0..9、displayだけに適用 |
+| `--capacity` | `<resource-id>=<integer>` | none | Repeatable; integer is 1..2147483647 |
+| `--precision` | integer | `3` | 0..9; applies only to display |
 
-同一resource IDへの`--capacity`重複はusage errorとする。Unknown resource ID、requirement未満のcapacity、active allocation超過はdocument/analysis errorである。Overrideはsource documentを書き換えない。
+Duplicate `--capacity` values for the same resource ID are a usage error. An unknown resource ID, capacity below a requirement, and capacity exceeded by active allocation are document/analysis errors. Overrides do not rewrite the source document.
 
 ### 6.3 `dag analyze`
 
@@ -238,13 +238,13 @@ perttool dag analyze <file>
   [--color auto|always|never]
 ```
 
-- default scheduleは`both`
-- `--max-paths`は0..1000、default 1
-- representative pathとexact path countは`--max-paths`にかかわらず返す
-- enumerationがpath count未満なら`paths_truncated=true`
-- `precedence`はresource resultを生成しない
-- `resource`はfull precedence resultを表示しないが、resource result内にprecedence lower boundを保持する
-- `both`はprecedence/resource resultを分離して返す
+- The default schedule is `both`.
+- `--max-paths` is 0..1000, defaulting to 1.
+- A representative path and exact path count are returned regardless of `--max-paths`.
+- `paths_truncated=true` when enumeration is less than the path count.
+- `precedence` does not generate a resource result.
+- `resource` does not display the full precedence result, but retains the precedence lower bound within the resource result.
+- `both` returns separate precedence and resource results.
 
 ### 6.4 `dag next`
 
@@ -259,14 +259,14 @@ perttool dag next <file>
   [--color auto|always|never]
 ```
 
-- `--explain-depth`は0..32、default 1
-- active、ready、runnable_now、blocked_now、upcomingをすべて返す
-- capacity overrideは`runnable_now`とschedule annotationだけを変え、ready分類を変えない
-- 表示順とresource選択順を混同しない
+- `--explain-depth` is 0..32, defaulting to 1.
+- Returns active, ready, runnable_now, blocked_now, and upcoming in full.
+- A capacity override changes only `runnable_now` and schedule annotations; it does not change ready classification.
+- Do not conflate display order with resource-selection order.
 
 ### 6.5 `dag render`
 
-Mermaid選択時のartifact wire contractは[Mermaid Profile仕様](mermaid-profile.md)を正とする。
+The [Mermaid Profile Specification](mermaid-profile.md) is authoritative for the artifact wire contract when Mermaid is selected.
 
 ```text
 perttool dag render <file>
@@ -282,19 +282,19 @@ perttool dag render <file>
   [--color auto|always|never]
 ```
 
-- default profileは`perttool`
-- default analysisは`none`
-- text resultのdefaultはartifact bodyをstdoutへ出す
-- JSON resultはartifactとloss reportをenvelopeに含める
-- `--out`指定時、text resultのstdoutは空、write summaryはstderr
-- 既存`--out`を上書きしない
-- `--strict-loss`でlossy recordが1件以上ならartifactを書かずexit 4
-- `--to`はartifact種別、`--format`はCLI result serializationであり別概念
-- `--capacity`は`--analysis resource|both`とだけ併用できる
+- The default profile is `perttool`.
+- The default analysis is `none`.
+- Text results write the artifact body to stdout by default.
+- JSON results include the artifact and loss report in the envelope.
+- With `--out`, stdout is empty for text results and the write summary goes to stderr.
+- An existing `--out` is not overwritten.
+- With `--strict-loss`, one or more lossy records prevent writing the artifact and exit 4.
+- `--to` is the artifact type, while `--format` is CLI result serialization; they are distinct concepts.
+- `--capacity` can be combined only with `--analysis resource|both`.
 
 ### 6.6 `dag import`
 
-Profile検出、fail-closed validation、plain best-effort境界は[Mermaid Profile仕様](mermaid-profile.md)を正とする。
+The [Mermaid Profile Specification](mermaid-profile.md) is authoritative for profile detection, fail-closed validation, and the plain best-effort boundary.
 
 ```text
 perttool dag import <file>
@@ -306,11 +306,11 @@ perttool dag import <file>
   [--color auto|always|never]
 ```
 
-- defaultは候補DSLをstdoutへ出すpreview
-- source artifactをin-placeでDSLへ上書きする`--write`は提供しない
-- `--out`は既存pathを上書きしない
-- loss reportとgenerated ID mappingを常に生成する
-- `--strict-loss`でlossy recordが1件以上なら候補を書かずexit 4
+- By default, previews the candidate DSL to stdout.
+- No `--write` is provided to overwrite the source artifact in place with DSL.
+- `--out` does not overwrite an existing path.
+- Always generates a loss report and generated-ID mapping.
+- With `--strict-loss`, one or more lossy records prevent writing the candidate and exit 4.
 
 ### 6.7 `dag advance`
 
@@ -323,15 +323,15 @@ perttool dag advance <file>
   [--color auto|always|never]
 ```
 
-Defaultはcandidate document previewである。削除対象task/milestone、advance前後のfrontier、ready set comparisonをresultへ含める。
+The default is a candidate-document preview. The result includes the tasks/milestones to remove, frontier before and after advance, and a ready-set comparison.
 
-## 7. Entity mutation commands
+## 7. Entity Mutation Commands
 
-Mutation request、target解決、source-preserving TextEdit、comment所有、candidate再検査は[Mutation Semantics仕様](mutation.md)を正とする。本書はCLI optionとresult serializationを固定する。
+The [Mutation Semantics Specification](mutation.md) is authoritative for mutation requests, target resolution, source-preserving TextEdits, comment ownership, and candidate rechecking. This document fixes CLI options and result serialization.
 
-### 7.1 common mutation output options
+### 7.1 Common mutation output options
 
-`project set`と、`task`、`milestone`、`resource`の全mutation actionは次を受理する。
+`project set` and every mutation action for `task`, `milestone`, and `resource` accept the following options.
 
 ```text
 [--diff]
@@ -344,18 +344,18 @@ Mutation request、target解決、source-preserving TextEdit、comment所有、c
 
 Rules:
 
-- defaultは変更後documentのpreview
-- `--diff`はpreview時だけ使用できる
-- `--write`と`--out`は相互排他
-- `--write`はstdinで使用不可
-- `--expect-digest`は`--write`とだけ使用できる
-- `--expect-digest`省略時もread直後のdigestをwrite直前に再確認する
-- `--out`は既存pathを上書きしない
-- candidateがparse/semantic checkに失敗した場合は出力・writeしない
-- action全体を1 mutationとして扱い、部分適用しない
-- 同じfieldへの矛盾するoptionはusage error
+- By default, previews the changed document.
+- `--diff` can be used only for previews.
+- `--write` and `--out` are mutually exclusive.
+- `--write` cannot be used with stdin.
+- `--expect-digest` can be used only with `--write`.
+- Even when `--expect-digest` is omitted, the digest immediately after reading is rechecked immediately before writing.
+- `--out` does not overwrite an existing path.
+- Do not output or write when the candidate fails parsing or semantic checks.
+- Treat the whole action as one mutation; do not apply it partially.
+- Conflicting options for the same field are a usage error.
 
-複数entityを同じvalid candidateで変更する場合は、Mutation Semantics仕様の`batch` requestをJSONで受け取るpreview surfaceを提供する。
+To change multiple entities in the same valid candidate, provide a preview surface that accepts the Mutation Semantics Specification's `batch` request in JSON.
 
 ```text
 perttool mutation apply <file> --request <json-file|->
@@ -365,7 +365,7 @@ perttool mutation apply <file> --request <json-file|->
   [--format text|json] [--color auto|always|never]
 ```
 
-`--request -`は`<file>`がstdinでない場合だけ使用できる。Request JSONは`{ "kind": "batch", "mutations": [...] }`とし、nested batchと同じtargetへの複数変更を拒否する。Filesystem write optionは他mutation commandと同じ規則を適用する。
+`--request -` can be used only when `<file>` is not stdin. The request JSON is `{ "kind": "batch", "mutations": [...] }`; reject nested batches and multiple changes to the same target. Filesystem write options follow the same rules as other mutation commands.
 
 ### 7.2 project
 
@@ -379,7 +379,7 @@ perttool project set <file>
   [--clear description|as_of|velocity|critical_epsilon|target_duration]...
 ```
 
-少なくとも1変更optionを必要とする。`--clear`と同じfieldのset optionは同時指定できない。Project declarationはexactly oneであるためtarget ID operandを取らない。`duration_unit`、velocity、全duration、finish参照を含む最終candidateを再検査する。関連taskの変更を同時に必要とするproject-wide単位変更は`mutation apply`のbatchへ`project.set`と他atomic mutationを含める。
+At least one change option is required. A set option for the same field as `--clear` cannot be specified at the same time. Because the project declaration is exactly one, it takes no target-ID operand. Recheck the final candidate, including `duration_unit`, velocity, all durations, and finish references. A project-wide unit change that simultaneously requires related task changes includes `project.set` and other atomic mutations in a `mutation apply` batch.
 
 ### 7.3 task
 
@@ -397,7 +397,7 @@ perttool task add <file> <id> <from> <to>
   [--require <resource-id>=<integer>]...
 ```
 
-`task set`は`--from`、`--to`と上記field optionを任意の変更fieldとして受理し、`--title`も必須ではない。三点見積りへ変更するときは3 optionすべてを同じinvocationで指定し、既存durationを置換する。`--duration`は既存estimateを置換する。`--duration`と三点見積りは相互排他である。
+`task set` accepts `--from`, `--to`, and the field options above as optional changed fields; `--title` is not required. When changing to a three-point estimate, specify all three options in the same invocation, replacing the existing duration. `--duration` replaces the existing estimate. `--duration` and a three-point estimate are mutually exclusive.
 
 ```text
 perttool task set <file> <id>
@@ -411,7 +411,7 @@ perttool task set <file> <id>
   [--require <resource-id>=<integer>]...
 ```
 
-追加のset option:
+Additional set options:
 
 ```text
 --add-tag <tag>...
@@ -420,7 +420,7 @@ perttool task set <file> <id>
 --clear description|status|priority|owner|blocked_reason|source|tags|requires
 ```
 
-`task set`は少なくとも1変更optionを必要とする。`--status blocked`は同じcandidateで`blocked_reason`が存在することを要求する。`task remove`はcascade optionを持たず、削除後graphが無効なら拒否する。`task finish`はstatusを`done`へ変更し、同じsafe mutation pathを使う。
+`task set` requires at least one change option. `--status blocked` requires `blocked_reason` to be present in the same candidate. `task remove` has no cascade option and rejects removal if the resulting graph is invalid. `task finish` changes the status to `done` and uses the same safe mutation path.
 
 ### 7.4 milestone
 
@@ -440,11 +440,11 @@ perttool milestone set <file> <id>
 perttool milestone remove <file> <id>
 ```
 
-`milestone remove`はcascadeせず、endpoint/finish参照が残る場合は拒否する。
+`milestone remove` does not cascade and rejects removal when endpoint/finish references remain.
 
-`milestone set`は少なくとも1変更optionを必要とする。
+`milestone set` requires at least one change option.
 
-新規milestoneと接続taskを追加するなど、単独commandではinvalidな中間DAGになる操作は`mutation apply`のbatch requestへまとめる。`milestone add`単独でも最終candidate全体を検査し、孤立milestoneを受け入れない。
+Combine operations that would produce an invalid intermediate DAG as standalone commands, such as adding a new milestone and its connecting task, in a `mutation apply` batch request. `milestone add` alone also checks the whole final candidate and does not accept an isolated milestone.
 
 ### 7.5 resource
 
@@ -461,84 +461,84 @@ perttool resource set <file> <id>
 perttool resource remove <file> <id>
 ```
 
-`resource remove`はtask requirementをcascade削除せず、参照が残る場合は拒否する。
+`resource remove` does not cascade-delete task requirements and rejects removal when references remain.
 
-`resource set`は少なくとも1変更optionを必要とする。Capacityは1..2147483647で、変更後の全requirementとactive allocationを再検査する。
+`resource set` requires at least one change option. Capacity is 1..2147483647, and all resulting requirements and active allocation are rechecked.
 
 ## 8. Write safety
 
-In-place writeは次の順を必須とする。
+In-place writes MUST use the following sequence.
 
-1. raw input bytesとdigestを読む
-2. candidateとTextEditをCoreで生成する
-3. candidateを再parse・再検査する
-4. callerの`--expect-digest`があればinitial digestと比較する
-5. write直前にpathのdigestを再読込し、initial digestと比較する
-6. 同directoryにexclusive temporary fileを作る
-7. permission modeを可能な範囲で引き継ぐ
-8. bytesを書き、flush/fsyncする
-9. atomic renameする
-10. 可能ならparent directoryをfsyncする
-11. written bytesを再読込しcandidate digestと比較する
+1. Read the raw input bytes and digest.
+2. Generate the candidate and `TextEdit` in Core.
+3. Reparse and revalidate the candidate.
+4. If the caller supplies `--expect-digest`, compare it with the initial digest.
+5. Immediately before the write, reread the path digest and compare it with the initial digest.
+6. Create an exclusive temporary file in the same directory.
+7. Preserve the permission mode where possible.
+8. Write the bytes, then flush/fsync.
+9. Atomically rename the file.
+10. Fsync the parent directory where possible.
+11. Reread the written bytes and compare them with the candidate digest.
 
-Symlink inputへの`--write`はMVPでは拒否する。`--out`もsymlink targetまたは既存pathを拒否する。Raceまたはdigest不一致はexit 5で、元fileを変更しない。
+The MVP rejects `--write` to symlink inputs. `--out` also rejects symlink targets and existing paths. A race or digest mismatch returns exit 5 and does not modify the original file.
 
-Candidate digestがinitial digestと同じin-place `--write`はexpected/current digest検査を省略せず、fileを置換せずに`written=false`で成功する。`--out`はcandidateがinputと同じでも新規targetを作成する。
+For an in-place `--write` whose candidate digest equals the initial digest, expected/current digest checks are not omitted; it succeeds with `written=false` without replacing the file. `--out` creates a new target even when the candidate equals the input.
 
-I/O adapterは競合を`expected_digest_mismatch`、`source_changed`、`symlink`、`not_regular_file`、`target_exists`のstable reasonで区別する。Candidate検査またはrename後検査の失敗は競合と混同せず、`invalid_candidate`、`post_write_digest_mismatch`、`post_write_invalid`として区別する。Temporary pathとrandom tokenはpublic resultやdiagnosticへ含めない。
+The I/O adapter distinguishes conflicts using the stable reasons `expected_digest_mismatch`, `source_changed`, `symlink`, `not_regular_file`, and `target_exists`. Candidate-validation and post-rename-validation failures MUST NOT be confused with conflicts; they use `invalid_candidate`, `post_write_digest_mismatch`, and `post_write_invalid`. Temporary paths and random tokens MUST NOT appear in public results or diagnostics.
 
-CLIのwrite競合は`Perttool.CliError.v1`、diagnostic code `PTIO-501`、`data.reason`に上記のstable conflict reason、exit 5で返す。Adapter verification failureは`PTIO-502`、`data.reason`にverification reasonを持つinternal failureとしてexit 70で返す。その他のfilesystem I/O errorは`PTCLI-003`、exit 3とする。
+CLI write conflicts return `Perttool.CliError.v1`, diagnostic code `PTIO-501`, the stable conflict reason above in `data.reason`, and exit 5. Adapter verification failures return `PTIO-502`, an internal failure with a verification reason in `data.reason`, and exit 70. Other filesystem I/O errors return `PTCLI-003` and exit 3.
 
-`--out`は同directoryのexclusive temporary fileをflush/fsyncした後、既存targetを上書きしないatomic createで公開する。MVPの対応filesystemでは同一filesystem hard linkを使用し、同時writerの一方だけを成功させる。Target公開後にparent directoryをfsyncし、temporary entryを削除して再度parent directoryをfsyncする。
+After flushing/fsyncing an exclusive temporary file in the same directory, `--out` publishes it with an atomic create that does not overwrite an existing target. On MVP-supported filesystems, it uses a same-filesystem hard link so that only one concurrent writer succeeds. After publishing the target, it fsyncs the parent directory, removes the temporary entry, and fsyncs the parent directory again.
 
-## 9. stdout、stderr、exit code
+## 9. stdout, stderr, and exit code
 
 ### 9.1 stream contract
 
 Text format:
 
-- stdout: requested data、artifact、candidate document、diff
-- stderr: diagnostic、warning、write summary
-- success diagnosticをstderrへ出さない
-- dataがないwrite successはstdoutを空にする
+- stdout: requested data, artifact, candidate document, and diff
+- stderr: diagnostics, warnings, and write summary
+- Do not write successful diagnostics to stderr.
+- A successful write with no data leaves stdout empty.
 
 JSON format:
 
-- stdout: operation result envelope 1個と末尾newline
-- document diagnosticもenvelopeの`diagnostics`へ含める
-- stderr: envelopeを生成できないI/O/usage/internal failureの短いmessageだけ
-- JSONと同じdiagnosticをstderrへ重複出力しない
+- stdout: one operation-result envelope followed by a newline
+- Include document diagnostics in the envelope's `diagnostics`.
+- stderr: only a short message for I/O, usage, or internal failures that prevent envelope generation
+- Do not duplicate JSON diagnostics on stderr.
 
 ### 9.2 exit code
 
 | Code | Stable meaning |
 | ---: | --- |
-| 0 | operation成功、または有効なdocument。warningはpolicy上許容 |
-| 1 | DSL/semantic/analysis/profile validation/help lookup error、format check差分、またはwarnings-as-errors |
+| 0 | successful operation or valid document; warnings are allowed by policy |
+| 1 | DSL, semantic, analysis, profile-validation, or help-lookup error; format-check difference; or warnings-as-errors |
 | 2 | CLI usage error |
 | 3 | input/output/encoding error |
-| 4 | strict conversionでlossを検出 |
-| 5 | optimistic lock、symlink、atomic write競合 |
-| 70 | internal invariant/programmer error |
+| 4 | loss detected in strict conversion |
+| 5 | optimistic-lock, symlink, or atomic-write conflict |
+| 70 | internal invariant or programmer error |
 
-複数categoryが同時に起きる場合、CLI usageをdocument read前に検出する。Document処理開始後は`5 > 3 > 4 > 1 > 0`の優先順位で1つを返す。Signal終了の`128+signal`はperttool contractではない。
+When multiple categories occur simultaneously, detect CLI usage errors before reading the document. After document processing starts, return one result with priority `5 > 3 > 4 > 1 > 0`. Signal exits of `128+signal` are not part of the perttool contract.
 
 ## 10. Text result contract
 
 ### 10.1 stability boundary
 
-Textは人間向けである。Section順、field label、diagnostic code、ID、exact/display値の意味はgolden testで固定する。空白によるcolumn alignmentと将来の説明文追加はmachine contractではない。Machine consumerはJSONを使用する。
+Text is for humans. Golden tests fix the semantics of section order, field labels, diagnostic codes, IDs, and exact/display values. Whitespace-based column alignment and future explanatory additions are not a machine contract. Machine consumers use JSON.
 
 ### 10.2 diagnostic
 
 ```text
-PTDSL-012 error: task REQ の estimate 順序が不正です
+PTDSL-012 error: task REQ has an invalid estimate order
   --> plan.pert:24:5
   related: plan.pert:22:3 previous declaration
   help: perttool dsl help syntax estimate --level quick
 ```
 
-Diagnosticはseverity `error`、`warning`、`info`の順ではなく、source position、code、entity IDの規範順で表示する。Source位置を持たないdiagnosticは位置付きdiagnosticの後へcode順で置く。
+Display diagnostics in the normative order of source position, code, and entity ID, not by severity (`error`, `warning`, `info`). Place diagnostics without a source position after positioned diagnostics, ordered by code.
 
 ### 10.3 check
 
@@ -548,7 +548,7 @@ Success stdout:
 OK plan.pert project=PLAN milestones=7 tasks=5 gates=4 resources=2
 ```
 
-Error時はstdoutを空にし、diagnosticをstderrへ出す。
+On error, leave stdout empty and write diagnostics to stderr.
 
 ### 10.4 project show
 
@@ -569,7 +569,7 @@ TARGET_DURATION -
 
 ### 10.5 analyze
 
-Section順:
+Section order:
 
 ```text
 PERTTOOL ANALYSIS <document-id>
@@ -581,57 +581,57 @@ RESOURCE CRITICAL
 RESOURCE UTILIZATION
 ```
 
-未要求sectionは省略する。Precedence task tableはstable topological position、ID順で、`ID EXPECTED ES EF LS LF TF FF CRITICAL`を表示する。Resource task tableはscheduled start、finish、ID順で、`ID ELIGIBLE START FINISH WAIT REQUIREMENTS`を表示する。
+Omit sections that were not requested. Order the precedence task table by stable topological position and ID, and display `ID EXPECTED ES EF LS LF TF FF CRITICAL`. Order the resource task table by scheduled start, finish, and ID, and display `ID ELIGIBLE START FINISH WAIT REQUIREMENTS`.
 
-Heuristic schedule見出しには`algorithm@version`と`optimal=false`を必ず表示する。Blocked conditional、path truncation、capacity overrideは`QUALIFIERS`で隠さない。
+Heuristic-schedule headings MUST display `algorithm@version` and `optimal=false`. Do not hide blocked conditions, path truncation, or capacity overrides in `QUALIFIERS`.
 
 ### 10.6 next
 
-Section順は`ACTIVE`、`RUNNABLE NOW`、`READY / WAITING RESOURCE`、`BLOCKED NOW`、`UPCOMING`とする。各taskはpresentation orderで並べ、priority、critical、total float、expected、resource requirementを表示する。Runnableでないready taskは不足resourceとoccupantを直下へ表示する。
+The section order is `ACTIVE`, `RUNNABLE NOW`, `READY / WAITING RESOURCE`, `BLOCKED NOW`, and `UPCOMING`. Order each task by presentation order and show priority, criticality, total float, expected duration, and resource requirements. For a ready task that is not runnable, show the missing resource and occupant directly below it.
 
 ### 10.7 mutation and conversion
 
-- preview default: candidate documentそのもの
-- mutationのdefault text previewはstdoutへcandidate、stderrへ`PREVIEW <operation> changed=<boolean> original_digest=<digest> updated_digest=<digest>`を返す
-- `--diff`: unified diff、path labelはinput operandとcandidate
-- `--write`/`--out`: stdout empty、stderrにtargetとdigest
-- write成功summaryは`WRITE <operation> mode=<in_place|out> target=<path> digest=<digest> written=<true|false>`とする
-- import default: candidate DSL
-- render default: artifact body
-- JSON formatでは上記raw textの代わりに対応result envelopeを返す
+- default preview: the candidate document itself
+- the default mutation text preview returns the candidate on stdout and `PREVIEW <operation> changed=<boolean> original_digest=<digest> updated_digest=<digest>` on stderr
+- `--diff`: unified diff, with path labels for the input operand and candidate
+- `--write`/`--out`: empty stdout; target and digest on stderr
+- the successful-write summary is `WRITE <operation> mode=<in_place|out> target=<path> digest=<digest> written=<true|false>`
+- default import: candidate DSL
+- default render: artifact body
+- JSON format returns the corresponding result envelope instead of the raw text above
 
 ## 11. JSON common contract
 
 ### 11.1 encoding and naming
 
-- RFC 8259 JSON、UTF-8、BOMなし、末尾newlineあり
-- field名は`snake_case`
-- mapのkeyはASCII辞書順、entity arrayは各domainのstable順
-- integer safe range内のcount/quantityはJSON number
-- Rational numerator/denominatorとBigInt path countはdecimal string
-- `undefined`相当fieldは出力しない
-- schema上nullableと定義したfieldだけ`null`を使う
-- consumerは同じmajor versionの未知optional fieldを無視する
+- RFC 8259 JSON, UTF-8, no BOM, and a trailing newline
+- field names use `snake_case`
+- map keys use ASCII lexical order; entity arrays use each domain's stable order
+- counts and quantities within the integer safe range are JSON numbers
+- Rational numerators/denominators and BigInt path counts are decimal strings
+- do not emit fields equivalent to `undefined`
+- use `null` only for fields defined as nullable by the schema
+- consumers ignore unknown optional fields in the same major version
 
 ### 11.2 document result envelope
 
-Document operationは次をrootに持つ。
+Document operations have the following root fields.
 
 ```text
 schema_version  string   "Perttool.<ResultType>.v1"
 tool_version    string   semantic version
 operation       string   resource.action
-ok              boolean  CLI warning policy適用後の成功
+ok              boolean  success after the CLI warning policy is applied
 document_id     string|null
-source          string   operand spellingまたは"<stdin>"
+source          string   operand spelling or "<stdin>"
 source_digest   string|null
 diagnostics     Diagnostic[]
 diagnostics_truncated boolean
 ```
 
-`schema_version`はresult typeとmajor versionを同時に識別する。`tool_version`をschema互換性判断に使用しない。
+`schema_version` identifies both the result type and major version. Do not use `tool_version` to decide schema compatibility.
 
-`diagnostics_truncated=true`の場合、`diagnostics`はsource順の先頭`--max-diagnostics`件だけを持つ。Text出力はdiagnostic末尾へ`DIAGNOSTICS_TRUNCATED true limit=<N>`を出し、打ち切りを黙って成功扱いにしない。
+When `diagnostics_truncated=true`, `diagnostics` contains only the first `--max-diagnostics` items in source order. Text output appends `DIAGNOSTICS_TRUNCATED true limit=<N>` after diagnostics; do not silently treat truncation as success.
 
 ### 11.3 source location
 
@@ -662,9 +662,9 @@ Diagnostic:
   data             object
 ```
 
-`data`はdiagnostic code固有の安定fieldだけを持ち、free-form stack traceを含めない。Internal errorのstack traceは通常出力せず、明示的debug modeは将来仕様とする。
+`data` contains only stable fields specific to the diagnostic code and does not include a free-form stack trace. Do not normally output stack traces for internal errors; an explicit debug mode is future work.
 
-Help registry lookup diagnosticは`PTHLP-*` namespaceを使用する。Unknown topicは`PTHLP-001`、exit 1とする。
+Help-registry lookup diagnostics use the `PTHLP-*` namespace. An unknown topic is `PTHLP-001` with exit 1.
 
 ### 11.5 Rational value
 
@@ -676,7 +676,7 @@ RationalValue:
   display         decimal string rounded by --precision
 ```
 
-`display`を再計算へ使用してはならない。Duration displayへsuffixを付けた人間向け文字列はtext rendererが生成し、JSONの`display`にはunit suffixを含めない。
+`display` MUST NOT be used for recalculation. The text renderer generates human-readable strings with a suffix for duration display; JSON `display` does not include a unit suffix.
 
 ## 12. Operation JSON results
 
@@ -695,14 +695,18 @@ summary:
   warnings       integer
 ```
 
-Parse不能でcountを信頼できない場合は各entity countを0、`grammar_version=null`とする。
-`summary.errors`と`summary.warnings`は上限適用前の総数とし、`diagnostics.length`より大きい場合がある。
+If parsing fails and counts cannot be trusted, set every entity count to 0 and
+`grammar_version=null`. `summary.errors` and `summary.warnings` are the total
+counts before a limit is applied and may be greater than `diagnostics.length`.
 
 ### 12.2 AnalysisResult
 
 `schema_version = "Perttool.AnalysisResult.v2"`
 
-Version 2は`duration_unit point`、`velocity`、`velocity_forecast`を追加する。Version 1の`duration_unit` enumを拡張するためmajorを更新し、Version 2 producerはday/hour文書にもVersion 2を返す。
+Version 2 adds `duration_unit point`, `velocity`, and `velocity_forecast`. It
+increments the major version because it extends the Version 1 `duration_unit`
+enum, and a Version 2 producer returns Version 2 for day/hour documents as
+well.
 
 Root:
 
@@ -734,7 +738,9 @@ precedence_makespan RationalValue|null
 resource_makespan   RationalValue|null
 ```
 
-Velocity forecastは基準単位のresultを置き換えない。`precedence_makespan`と`resource_makespan`は対応する基準resultが生成された場合だけnon-nullとする。
+A velocity forecast does not replace a result in its base unit.
+`precedence_makespan` and `resource_makespan` are non-null only when the
+corresponding base result was produced.
 
 `PrecedenceResult`:
 
@@ -747,7 +753,8 @@ edges                           EdgeTiming[]
 critical                        CriticalResult
 ```
 
-`MilestoneTiming`は`id`、`earliest`、`latest`、`slack`を持つ。`EdgeTiming`は次を持つ。
+`MilestoneTiming` has `id`, `earliest`, `latest`, and `slack`. `EdgeTiming`
+has the following fields.
 
 ```text
 id source target kind status
@@ -756,7 +763,8 @@ es ef ls lf total_float free_float
 is_critical is_driving
 ```
 
-`kind`は`task|gate`、時間/float/expectedは`RationalValue`、`status`はtask statusまたはgateの`null`である。
+`kind` is `task|gate`; time, float, and expected values are `RationalValue`;
+and `status` is a task status or `null` for a gate.
 
 `CriticalResult`:
 
@@ -771,7 +779,7 @@ paths               CriticalPath[]
 paths_truncated     boolean
 ```
 
-`CriticalPath`は`edge_ids`、`task_ids`、`gate_ids`、`variance`を持つ。
+`CriticalPath` has `edge_ids`, `task_ids`, `gate_ids`, and `variance`.
 
 `ResourceScheduleResult`:
 
@@ -794,7 +802,8 @@ constraint_graph_replay:
 schedule_critical   ScheduleCriticalResult
 ```
 
-`ResourceCapacity`は`id`、`declared`、`override` nullable、`effective`をintegerで持つ。
+`ResourceCapacity` has string `id`, integer `declared`, nullable integer
+`override`, and integer `effective` fields.
 
 `ScheduledTask`:
 
@@ -821,7 +830,10 @@ resources [{resource_id, contributed_units}]
 schedule_float is_critical is_driving
 ```
 
-`ScheduleCriticalResult`はprecedence criticalと別に`task_ids`、`resource_arc_ids`、`driving_constraint_ids`、`representative_path`、`path_count`、`paths`、`paths_truncated`を持つ。Schedule pathは次を持つ。
+Separate from precedence criticality, `ScheduleCriticalResult` has `task_ids`,
+`resource_arc_ids`, `driving_constraint_ids`, `representative_path`,
+`path_count`, `paths`, and `paths_truncated`. A schedule path has the
+following fields.
 
 ```text
 task_ids             string[]
@@ -829,13 +841,17 @@ constraints          [{from_task_id, to_task_id, kind, resource_arc_id}]
 connector_ids        string[]
 ```
 
-`kind`は`precedence|gate|resource`で、resource以外の`resource_arc_id`は`null`とする。
+`kind` is `precedence|gate|resource`, and `resource_arc_id` is `null` for
+non-resource constraints.
 
 ### 12.3 NextResult
 
 `schema_version = "Perttool.NextResult.v3"`
 
-Recommendation固有の完全なwire schema、version identity、text summary、PTREC failureは[Recommendation Interface Contract仕様](recommendation-interface.md)を正とする。Rootは`recommendation_interface_version = 1`とrequired `recommendation`を持つ。
+The [Recommendation Interface Contract](recommendation-interface.md) is
+authoritative for the complete recommendation-specific wire schema, version
+identity, text summary, and PTREC failures. The root has
+`recommendation_interface_version = 1` and required `recommendation`.
 
 ```text
 precision             integer
@@ -852,7 +868,7 @@ velocity_forecast      NextVelocityForecast|null
   target_unit          "day" | "hour" | "point"
 ```
 
-NextResult rootの続き:
+The rest of the NextResult root:
 
 ```text
 capacity_overrides    [{resource_id, capacity}]
@@ -879,13 +895,26 @@ resource_rejections   ResourceRejection[]
 explanation           ExplanationNode[]
 ```
 
-`classification`は`active|ready|blocked_now|upcoming`である。`runnable_now`はready taskへの直交booleanであり、classification enumへ混ぜない。
+`classification` is `active|ready|blocked_now|upcoming`. `runnable_now` is a
+boolean orthogonal to a ready task; do not fold it into the classification
+enum.
 
-`recommendation`はactual ready taskだけを評価し、全ready taskのtier、recommended set、typed fact、comparison、decision trace、descriptionをcomplete graphとして返す。`groups`、`tasks[].resource_rejections`、upcoming `tasks[].explanation`はv2由来の意味を維持し、recommendationとして再解釈しない。V2からのbreaking migrationとconsumer safetyは[NextResult.v3 consumer migration guide](../process/next-v3-consumer-migration.md)を参照する。
+`recommendation` evaluates only actual ready tasks and returns the tier,
+recommended set, typed facts, comparisons, decision trace, and descriptions
+for all ready tasks as a complete graph. `groups`,
+`tasks[].resource_rejections`, and upcoming `tasks[].explanation` retain their
+V2 meanings and are not reinterpreted as recommendations. See the
+[NextResult.v3 consumer migration guide](../process/next-v3-consumer-migration.md)
+for breaking migration from V2 and consumer safety.
 
-`title`はstring、`status`はtask status、`priority`はinteger、`owner`と`blocked_reason`はstringまたは`null`とする。`expected`、`total_float`、`earliest_start`は基準単位の`RationalValue`である。`forecast_*`はvelocityがある場合だけtarget unitの`RationalValue`、それ以外は`null`とする。
+`title` is a string, `status` is a task status, `priority` is an integer, and
+`owner` and `blocked_reason` are strings or `null`. `expected`,
+`total_float`, and `earliest_start` are `RationalValue` in the base unit.
+`forecast_*` are `RationalValue` in the target unit only when velocity exists;
+otherwise, they are `null`.
 
-`tasks`と`groups`はunfinished taskだけを対象とし、retained `done` taskを次task候補へ含めない。
+`tasks` and `groups` cover only unfinished tasks; they do not include retained
+`done` tasks as candidates for the next task.
 
 `ResourceRejection`:
 
@@ -915,7 +944,12 @@ source_milestone_id   string
 source_reached        boolean
 ```
 
-Upcoming taskの`explanation`はtaskの直接`from` milestoneをrootとする。Rootではunsatisfied incoming edgeを常に返し、`--explain-depth 0`はそこで停止する。Depthを1増やすごとに、unsatisfied edgeの未到達source milestoneをID辞書順で`children`へ追加する。上限で未展開sourceが残るnodeは`truncated=true`とする。DAG上の同一pathで同じmilestoneを再訪しない。
+For an upcoming task, `explanation` roots at the task's direct `from`
+milestone. The root always returns unsatisfied incoming edges, and
+`--explain-depth 0` stops there. For each increment of depth, add the
+unreached source milestones of unsatisfied edges to `children` in
+lexicographic ID order. A node with unexpanded sources remaining at the limit
+has `truncated=true`. Do not revisit the same milestone on the same DAG path.
 
 ### 12.4 FormatResult
 
@@ -934,7 +968,9 @@ write:
   written         boolean
 ```
 
-Candidate生成成功時、`--check`または`--warnings-as-errors`でCLIの`ok=false`となっても、JSONは`updated_text`、`diff`、`edits`を保持する。
+When candidate generation succeeds, JSON retains `updated_text`, `diff`, and
+`edits` even when `--check` or `--warnings-as-errors` makes the CLI
+`ok=false`.
 
 ### 12.5 ProjectResult
 
@@ -955,7 +991,9 @@ project:
   target_duration    string|null
 ```
 
-共通rootの`document_id`、`source`、`source_digest`、`diagnostics`、`diagnostics_truncated`を持つ。Invalid documentでは`project=null`、`grammar_version=null`とする。
+It has the common root fields `document_id`, `source`, `source_digest`,
+`diagnostics`, and `diagnostics_truncated`. For an invalid document,
+`project=null` and `grammar_version=null`.
 
 ### 12.6 MutationResult
 
@@ -974,9 +1012,11 @@ write:
   written         boolean
 ```
 
-`TextEdit`は0-based UTF-16 `start_offset`、`end_offset`、`replacement`を持つ。`--format json`ではpreview/write modeにかかわらず、candidate生成成功時に`updated_text`と`diff`の両方を返す。
+`TextEdit` has 0-based UTF-16 `start_offset`, `end_offset`, and `replacement`.
+With `--format json`, return both `updated_text` and `diff` when candidate
+generation succeeds, regardless of preview/write mode.
 
-`dag advance`は追加で次を持つ。
+`dag advance` additionally has the following fields.
 
 ```text
 advance:
@@ -993,7 +1033,8 @@ advance:
 
 `schema_version = "Perttool.HelpResult.v1"`
 
-Help result rootは`tool_version`、`operation="dsl.help"`、`ok`、`diagnostics`を持ち、document fieldを持たない。
+The Help result root has `tool_version`, `operation="dsl.help"`, `ok`, and
+`diagnostics`; it has no document field.
 
 ```text
 topic_id      string|null
@@ -1007,11 +1048,13 @@ related       string[]
 topics        [{id, title, summary}]
 ```
 
-Index levelでは`topics`を使用する。Sample参照はabsolute pathでなくstable example IDを使用する。
+The index level uses `topics`. Sample references use stable example IDs rather
+than absolute paths.
 
 ### 12.8 ConversionResult
 
-Renderは`Perttool.ExportResult.v1`、importは`Perttool.ImportResult.v1`を使用する。
+Rendering uses `Perttool.ExportResult.v1`; import uses
+`Perttool.ImportResult.v1`.
 
 ```text
 artifact_format  "mermaid" | "svg" | "json" | "pert"
@@ -1027,19 +1070,29 @@ generated_ids    [{source_element, generated_id}]
 write            {mode, target, written}
 ```
 
-MVPの`dag render --to mermaid`は`artifact`をUTF-8 Mermaid string、`artifact_digest`をそのbyte列のSHA-256とする。Invalid documentまたはstrict-loss失敗では両方を`null`とする。`capacity_overrides`はresource ID昇順で、`generated_ids=[]`とする。
+MVP `dag render --to mermaid` sets `artifact` to a UTF-8 Mermaid string and
+`artifact_digest` to the SHA-256 of its bytes. Both are `null` for an invalid
+document or strict-loss failure. `capacity_overrides` are in ascending resource
+ID order and `generated_ids=[]`.
 
-`ConversionLoss`は`code`、`severity`、`message`、`element_id` nullable、`span` nullable、`lossy` booleanを持つ。
+`ConversionLoss` has `code`, `severity`, `message`, nullable `element_id`,
+nullable `span`, and boolean `lossy`.
 
-Mermaid profile errorとplain import lossのstable `PTCNV-*` codeは[Mermaid Profile仕様](mermaid-profile.md)を正とする。Profile header検出後のvalidation errorはplain modeへ降格せず、candidateを返さない。
+The [Mermaid Profile specification](mermaid-profile.md) is authoritative for
+stable `PTCNV-*` codes for Mermaid profile errors and plain import loss. A
+validation error after profile-header detection does not fall back to plain
+mode and returns no candidate.
 
-`loss_report`の型schema IDは`Perttool.ConversionLossReport.v1`とし、Export/Import resultの`$defs`から同じ定義を参照する。
+The type schema ID for `loss_report` is `Perttool.ConversionLossReport.v1`, and
+the Export/Import result `$defs` refer to the same definition.
 
 ## 13. CLI error serialization
 
-UsageまたはI/O errorでdocument resultを生成できない場合、textではstderrへ1件の`PTCLI-*` diagnosticとusage hintを出す。
+When a usage or I/O error prevents generation of a document result, text output
+emits one `PTCLI-*` diagnostic and a usage hint to stderr.
 
-Invocationに完全な`--format json`が含まれ、JSON rendererを選択できた場合はstdoutへ次を返す。
+When the invocation includes a complete `--format json` and the JSON renderer
+can be selected, return the following on stdout.
 
 ```text
 schema_version  "Perttool.CliError.v1"
@@ -1049,59 +1102,80 @@ ok              false
 diagnostics     Diagnostic[]
 ```
 
-Unknownまたは壊れた`--format`自体が原因の場合はJSONを推測せずtext stderrを使用する。
+When an unknown or malformed `--format` itself is the cause, do not infer JSON;
+use text stderr.
 
 ## 14. Determinism and privacy
 
-- resultへ現在時刻、hostname、username、absolute cwdを自動挿入しない
-- sourceはcallerが渡したoperand spellingを保持し、勝手にabsolute化しない
-- diagnostic messageへdocument全体を複製しない
-- stable resultへtemporary path、stack trace、random IDを含めない
-- output arrayは各domain仕様のstable orderを使用する
-- 同じdocument bytes、options、grammar/semantics/analysis/interface version、tool versionからbyte-identical JSONを返す
-- text rendererはterminal widthでentity順や値を変えない
+- Do not automatically insert the current time, hostname, username, or
+  absolute cwd into a result.
+- Preserve the operand spelling supplied by the caller in `source`; do not
+  silently make it absolute.
+- Do not duplicate the entire document in a diagnostic message.
+- Do not include temporary paths, stack traces, or random IDs in stable
+  results.
+- Output arrays use the stable order specified by their domain specifications.
+- Return byte-identical JSON for the same document bytes, options,
+  grammar/semantics/analysis/interface versions, and tool version.
+- The text renderer does not change entity order or values based on terminal
+  width.
 
 ## 15. MVP acceptance
 
-CLI実装時は最低限、次を自動検査する。
+At a minimum, the CLI implementation automatically checks the following.
 
-1. 全resource/actionのunknown command/option/extra operandをexit 2で拒否
-2. fileとstdinでread-only resultが意味的に一致
-3. textはdata stdout、diagnostic stderrを守る
-4. JSONはvalid、ANSIなし、末尾newline、stable key/entity order
-5. text/JSON diagnostic code、severity、span、help topicが一致
-6. CheckResultがvalid/invalid fixtureと一致
-7. AnalysisResultがanalysis goldenとexact Rationalで一致
-8. `--schedule` modeがresult sectionを正しく分離
-9. capacity overrideがdocumentを変更せずresource/next resultだけを変更
-10. NextResultのclassificationとrunnable_nowが直交
-11. `--precision`がdisplayだけを変えexact値を変えない
-12. `--max-paths`がpath countを変えず列挙だけを制限
-13. help index/quick/detailとJSONが同一registryから生成される
-14. mutation defaultがpreviewでfileを変更しない
-15. mutation JSONがupdated text、diff、TextEditを一致させる
-16. candidate invalid時にpreview/writeを返さない
-17. digest race、symlink、既存`--out`を安全に拒否
-18. writeがatomicで、write後documentを再検査
-19. Mermaid export/import loss reportとstrict-loss exit 4が一致
-20. CLI JSONと直接Core API resultのsemantic payloadが一致
-21. warning policyとexit codeの全組合せがgoldenと一致
-22. internal invariant failureをdocument errorまたはexit 0へ変換しない
-23. project showが全project metadataをtext/JSONで返し、project setが同じfieldをpreview/writeできる
-24. project.setを含むatomic batchがproject-wide unit変更の最終candidateだけを検査する
+1. Reject unknown commands/options/extra operands for every resource/action
+   with exit 2.
+2. Read-only results from files and stdin are semantically identical.
+3. Text preserves data stdout and diagnostic stderr.
+4. JSON is valid, has no ANSI, ends with a newline, and has stable key/entity
+   order.
+5. Text and JSON diagnostic code, severity, span, and help topic agree.
+6. CheckResult agrees with valid/invalid fixtures.
+7. AnalysisResult agrees exactly with the analysis golden using Rational values.
+8. `--schedule` mode separates result sections correctly.
+9. A capacity override changes only resource/next results without modifying the
+   document.
+10. NextResult classification and runnable_now are orthogonal.
+11. `--precision` changes only display and does not change exact values.
+12. `--max-paths` limits only enumeration without changing path count.
+13. Help index/quick/detail and JSON are generated from the same registry.
+14. The mutation default previews without modifying the file.
+15. Mutation JSON agrees on updated text, diff, and TextEdit.
+16. Do not return preview/write when the candidate is invalid.
+17. Safely reject a digest race, symlink, and existing `--out`.
+18. Write atomically and recheck the document after writing.
+19. Mermaid export/import loss reports agree with strict-loss exit 4.
+20. CLI JSON and the direct Core API result have the same semantic payload.
+21. Every combination of warning policy and exit code agrees with the golden.
+22. Do not convert an internal invariant failure into a document error or exit
+    0.
+23. Project show returns all project metadata as text/JSON, and project set can
+    preview/write the same fields.
+24. An atomic batch containing project.set checks only the final candidate for
+    a project-wide unit change.
 
-MVP acceptanceにMCP server、MCP tool schema、CLI/MCP parity testを含めない。
+MVP acceptance does not include an MCP server, MCP tool schemas, or CLI/MCP
+parity tests.
 
 ## 16. Versioning and post-MVP adapter boundary
 
-Interface version 1はgrammar version 1、semantics version 1、analysis version 1を対象とする。
+Interface version 1 covers grammar version 1, semantics version 1, and
+analysis version 1.
 
-次はbreaking changeでありInterface major versionを上げる。
+The following are breaking changes and require an Interface major-version
+increment.
 
-- resource/action/required operandの削除または意味変更
-- option名、default、exit code stable meaningの破壊的変更
-- JSON required fieldの削除、型変更、enum narrowing
-- source position baseまたはdigest表現の変更
-- textをmachine interfaceとして保証する範囲の変更
+- Removing or changing the meaning of a resource/action/required operand.
+- A breaking change to an option name, default, or stable exit-code meaning.
+- Removing or changing the type of a required JSON field, or narrowing an
+  enum.
+- Changing the source-position base or digest representation.
+- Changing the scope for which text is guaranteed as a machine interface.
 
-Future MCP adapter、LSP server、VSIXを追加する場合も、CLI processをsubprocessとして呼んだり意味規則をadapterへ複製したりせず、同じApplication/Core APIを利用する。MCP固有summary、transport error、tool schema、LSP capability、VSIX packaging/server distributionは別versioned仕様で定義し、CLI MVPまたは最初のbetaの完成条件へ遡及追加しない。
+Even when future MCP adapters, an LSP server, or a VSIX are added, use the same
+Application/Core API rather than calling the CLI process as a subprocess or
+duplicating semantic rules in adapters. Define MCP-specific summaries,
+transport errors, tool schemas, LSP capabilities, and VSIX packaging/server
+distribution in separate versioned specifications; do not retroactively add
+them to the completion criteria for the CLI MVP or the first beta.

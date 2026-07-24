@@ -1,35 +1,35 @@
-# Recommendation規範例
+# Normative Recommendation Examples
 
-- 文書状態: Normative 1.1
-- 作成日: 2026-07-22
-- 対応要件: [../requirements.md](../requirements.md)
+- Document status: Normative 1.1
+- Created: 2026-07-22
+- Related requirements: [../requirements.md](../requirements.md)
 - Recommendation semantics: [../specs/recommendation.md](../specs/recommendation.md)
 - Ranking policy: [../specs/recommendation-ranking.md](../specs/recommendation-ranking.md)
 - Reason taxonomy: [../specs/recommendation-reasons.md](../specs/recommendation-reasons.md)
 - Structured explanation: [../specs/recommendation-explanation.md](../specs/recommendation-explanation.md)
 - Interface contract: [../specs/recommendation-interface.md](../specs/recommendation-interface.md)
 - Human override: [../specs/recommendation-override.md](../specs/recommendation-override.md)
-- 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
-## 1. 目的
+## 1. Purpose
 
-本書は、Recommendation仕様群を実装とtestへ移すときに意味を変えないため、競合する小さなsnapshotと期待判断を固定する規範例である。
+This document is a normative example that fixes small, competing snapshots and expected decisions so that semantics do not change when the Recommendation specifications are transferred to implementation and tests.
 
-各例は次を区別する。
+Each example distinguishes the following:
 
-- lifecycle上のactual `ready`集合`P`
+- the lifecycle's actual `ready` set `P`
 - selection horizon `H`
-- resource-feasibleなrecommended set `R`
-- ready taskごとのtier
-- winner、alternative、decisive rule、typed fact
+- resource-feasible recommended set `R`
+- tier for each ready task
+- winner, alternative, decisive rule, and typed facts
 - canonical description projection
-- human overrideが不要、必要、不可能となる境界
+- boundaries where a human override is not needed, needed, or impossible
 
-表中のfact snapshotは既存DSLから導出されるanalysis projectionであり、新しいDSL構文ではない。`NextResult.v3`は実装済みで、同じ意味を持つ最小`.pert` fixture、complete JSON golden、text goldenへ展開した。Read-only override validationはpublic library Coreとgoldenへ実装済みだがCLI commandではないため、本書のoverride fragmentを現在のCLI実行結果とはみなさない。
+Fact snapshots in tables are analysis projections derived from the existing DSL, not new DSL syntax. `NextResult.v3` is implemented and expanded into minimal `.pert` fixtures, complete JSON goldens, and text goldens with the same semantics. Read-only override validation is implemented in the public library Core and goldens, but is not a CLI command; therefore do not treat override fragments in this document as current CLI output.
 
-## 2. 共通条件
+## 2. Common conditions
 
-特記しない限り、全例で次を使用する。
+Unless otherwise stated, every example uses the following.
 
 ```text
 action                       = start
@@ -45,22 +45,22 @@ explicitNegativeFact(t)      = false
 policyDefers(t)              = false
 ```
 
-Version 1のnormal producerは`discouraged`を生成しない。Fact表にないranking keyはtask間で同値とする。Resource表がない例では`startFeasible(S) = true`である。
+The Version 1 normal producer does not generate `discouraged`. Ranking keys not in a fact table are equal across tasks. For examples without a resource table, `startFeasible(S) = true`.
 
-`H`と`R`の配列はscan orderで記載するが、`R`は集合であり、複数task間に暗黙の実行順を与えない。
+Arrays `H` and `R` are written in scan order, but `R` is a set and does not imply an execution order among multiple tasks.
 
 ## 3. Normal recommendation
 
-### REC-001 Critical pathは明示priorityより先に比較する
+### REC-001 Compare critical paths before explicit priority
 
-入力fact:
+Input facts:
 
 | Task | Classification | Critical class | Total float | Priority | Resource |
 | --- | --- | --- | ---: | ---: | --- |
 | `CRITICAL_FIX` | `ready` | `driving` | `0p` | 10 | none |
 | `OPTIONAL_POLISH` | `ready` | `non_critical` | `3/2p` | 100 | none |
 
-期待判断:
+Expected decision:
 
 ```text
 P = [CRITICAL_FIX, OPTIONAL_POLISH]
@@ -71,9 +71,9 @@ CRITICAL_FIX   tier=recommended  recommended_set_member=true
 OPTIONAL_POLISH tier=allowed     recommended_set_member=false
 ```
 
-`CRITICAL_FIX`と`OPTIONAL_POLISH`のpairwise comparisonは、priorityを見る前の`critical_class`がdecisive ruleになる。`OPTIONAL_POLISH`はhorizon外でも`startFeasible(R union {OPTIONAL_POLISH}) = true`なので`allowed`であり、non-criticalであることだけを理由に`deferred`または`discouraged`にしない。
+In the pairwise comparison of `CRITICAL_FIX` and `OPTIONAL_POLISH`, `critical_class`, which precedes priority, is the decisive rule. Although `OPTIONAL_POLISH` is outside the horizon, it is `allowed` because `startFeasible(R union {OPTIONAL_POLISH}) = true`; do not classify it as `deferred` or `discouraged` merely because it is non-critical.
 
-必須の説明観測点:
+Required explanation observations:
 
 ```text
 winner_task_id              = CRITICAL_FIX
@@ -84,11 +84,11 @@ decisive_alternative_fact   = non_critical
 primary_higher_priority_task_id(OPTIONAL_POLISH) = CRITICAL_FIX
 ```
 
-この例は「priority 100のtaskよりpriority 10のtaskを選んだのはなぜか」へ、priorityの無視ではなく、より前段のcritical classで比較が決着したと回答できなければならない。
+This example must be able to answer why the priority-10 task was chosen over the priority-100 task: not because priority was ignored, but because an earlier critical-class comparison settled the ordering.
 
-### REC-002 先行ruleのtieとgate近傍のdecisive ruleを保持する
+### REC-002 Retain ties in preceding rules and the gate-proximity decisive rule
 
-入力fact:
+Input facts:
 
 | Factor | `GATE_NEAR` | `GATE_FAR` |
 | --- | ---: | ---: |
@@ -101,9 +101,9 @@ primary_higher_priority_task_id(OPTIONAL_POLISH) = CRITICAL_FIX
 | Next gate task distance | 1 | 2 |
 | Finish task distance | 2 | 3 |
 
-両taskは同じhorizonへ属する。Resource capacity 1で両方が同じresourceを1 unit要求するものとする。
+Both tasks belong to the same horizon. Assume resource capacity is 1 and both require 1 unit of the same resource.
 
-期待判断:
+Expected decision:
 
 ```text
 H = [GATE_NEAR, GATE_FAR]
@@ -112,7 +112,7 @@ GATE_NEAR tier=recommended
 GATE_FAR  tier=deferred
 ```
 
-Comparisonは次を保持する。
+The comparison retains the following.
 
 ```text
 prior_tied_rule_ids = [
@@ -127,22 +127,22 @@ decisive_rule_id = shorter_next_gate_distance
 contributing_rule_ids = [shorter_finish_distance]
 ```
 
-`shorter_finish_distance`はdecisive ruleより後にwinnerを補強するが、決定ruleへ昇格させない。両taskのdestinationから少なくとも1件のunfinished taskを経てgateへ到達するため、completion counterfactualのnew satisfied gate countは0のままtieになる。Task titleやgate reasonの自然言語をgate近傍factとして使用しない。
+`shorter_finish_distance` supports the winner after the decisive rule, but must not be promoted to the decisive rule. Because reaching a gate from either task's destination requires at least one unfinished task, the completion counterfactual's new-satisfied-gate count remains 0 and ties. Do not use natural language in task titles or gate reasons as gate-proximity facts.
 
-### REC-003 後続解放数が最初の差ならdecisiveになる
+### REC-003 A successor-unlock count becomes decisive when it is the first difference
 
-`UNLOCK_TWO`と`UNLOCK_ONE`はcritical class、total float、priorityまで同値で、それぞれの単独完了counterfactualが新しくreadyにするtask数だけ異なる。
+`UNLOCK_TWO` and `UNLOCK_ONE` are equal through critical class, total float, and priority; only the number of tasks newly made ready by each individual-completion counterfactual differs.
 
 ```text
 new_ready_task_count(UNLOCK_TWO) = 2
 new_ready_task_count(UNLOCK_ONE) = 1
 ```
 
-期待するpairwise comparisonのdecisive ruleは`higher_new_ready_count`である。All-incoming joinの他branchが未完了であるtaskを解放数へ数えず、単なる後続edge数を代用しない。
+The expected decisive rule for the pairwise comparison is `higher_new_ready_count`. Do not count a task whose other branch of an all-incoming join remains unfinished as unlocked, and do not substitute a mere successor-edge count.
 
-### REC-004 同じhorizonのfeasible taskを並列推薦する
+### REC-004 Recommend feasible tasks in the same horizon in parallel
 
-入力resource snapshot:
+Input resource snapshot:
 
 ```text
 capacity(DEV) = 2
@@ -151,9 +151,9 @@ requirement(PARALLEL_A, DEV) = 1
 requirement(PARALLEL_B, DEV) = 1
 ```
 
-両taskは`ready`かつ`driving`で同じhorizonへ属する。
+Both tasks are `ready`, `driving`, and in the same horizon.
 
-期待判断:
+Expected decision:
 
 ```text
 H = [PARALLEL_A, PARALLEL_B]
@@ -163,11 +163,11 @@ PARALLEL_A tier=recommended
 PARALLEL_B tier=recommended
 ```
 
-Candidate orderはscan再現のため保持するが、「`PARALLEL_A`を完了してから`PARALLEL_B`」というdependencyや排他選択を生成しない。
+Retain candidate order for scan reproducibility, but do not create a dependency or exclusive choice requiring `PARALLEL_A` to finish before `PARALLEL_B`.
 
-### REC-005 Selected taskとのresource競合をdeferredとして説明する
+### REC-005 Explain a resource conflict with a selected task as deferred
 
-入力resource snapshot:
+Input resource snapshot:
 
 ```text
 capacity(ENV) = 1
@@ -178,9 +178,9 @@ priority(ENV_HIGH) = 20
 priority(ENV_LOW) = 10
 ```
 
-両taskは`ready`、`driving`、total float `0p`で同じhorizonへ属する。他の先行ranking keyは同値とする。
+Both tasks are `ready`, `driving`, have total float `0p`, and belong to the same horizon. Other preceding ranking keys are equal.
 
-期待判断:
+Expected decision:
 
 ```text
 H = [ENV_HIGH, ENV_LOW]
@@ -189,7 +189,7 @@ ENV_HIGH tier=recommended
 ENV_LOW  tier=deferred
 ```
 
-`ENV_LOW`の必須witness:
+Required witness for `ENV_LOW`:
 
 ```text
 resource_id       = ENV
@@ -202,11 +202,11 @@ selected blockers = [ENV_HIGH]
 active blockers   = []
 ```
 
-Ranking comparisonのdecisive ruleは`higher_explicit_priority`、tier classificationのdecisive reasonは`recommended_set_resource_conflict`である。両者を1つのopaque reasonへ潰さない。
+The ranking comparison's decisive rule is `higher_explicit_priority`; the tier classification's decisive reason is `recommended_set_resource_conflict`. Do not collapse them into one opaque reason.
 
-### REC-006 Active allocationだけのrejectでready-task winnerを捏造しない
+### REC-006 Do not fabricate a ready-task winner for an active-allocation-only rejection
 
-入力resource snapshot:
+Input resource snapshot:
 
 ```text
 capacity(ENV) = 1
@@ -215,9 +215,9 @@ requirement(FRONTIER_TEST, ENV) = 1
 requirement(SIDE_DOCS, ENV) = 0
 ```
 
-`FRONTIER_TEST`は`ready`かつ`driving`、`SIDE_DOCS`は`ready`かつ`non_critical`とする。
+`FRONTIER_TEST` is `ready` and `driving`; `SIDE_DOCS` is `ready` and `non_critical`.
 
-期待判断:
+Expected decision:
 
 ```text
 H = [FRONTIER_TEST]
@@ -226,7 +226,7 @@ FRONTIER_TEST tier=deferred
 SIDE_DOCS     tier=allowed
 ```
 
-`FRONTIER_TEST`のresource comparisonは次を満たす。
+The resource comparison for `FRONTIER_TEST` meets the following.
 
 ```text
 scope               = resource_selection
@@ -239,13 +239,13 @@ active blockers     = [ACTIVE_TEST]
 selected blockers   = []
 ```
 
-`SIDE_DOCS`のranking上のhigher-priority taskは`FRONTIER_TEST`である。`FRONTIER_TEST`がresource rejectされたことを理由に`SIDE_DOCS`をrecommendedへ繰り上げず、`allowed`のままにする。
+`FRONTIER_TEST` is the higher-priority task for `SIDE_DOCS` in the ranking. Do not promote `SIDE_DOCS` to recommended because `FRONTIER_TEST` was resource-rejected; retain it as `allowed`.
 
-### REC-007 全blockedまたはready task 0件は正常なempty resultになる
+### REC-007 All blocked tasks or zero ready tasks produce a normal empty result
 
-`TASK_BLOCKED`だけが`blocked_now`でactual `ready` taskがないsnapshotを使用する。
+Use a snapshot where only `TASK_BLOCKED` is `blocked_now` and there are no actual `ready` tasks.
 
-期待判断:
+Expected decision:
 
 ```text
 P = []
@@ -255,13 +255,13 @@ task_decisions = []
 startFeasible(R) = true
 ```
 
-`recommendation` root、result decision、empty setのjoint feasibility factは省略しない。Textは`RECOMMENDED SET -`と4つのempty tier sectionを表示し、既存`BLOCKED NOW` sectionへ`TASK_BLOCKED`を残す。`blocked`というrecommendation tierや`PTREC-*` diagnosticを生成しない。
+Do not omit the `recommendation` root, result decision, or the empty set's joint-feasibility fact. Text displays `RECOMMENDED SET -` and four empty tier sections, and retains `TASK_BLOCKED` in the existing `BLOCKED NOW` section. Do not generate a recommendation tier called `blocked` or a `PTREC-*` diagnostic.
 
-## 4. Structured explanationとinterface projection
+## 4. Structured explanation and interface projection
 
-### REC-008 「なぜAでBではないか」をtyped comparisonから回答する
+### REC-008 Answer “why A and not B?” from a typed comparison
 
-REC-001のcomparisonは、少なくとも次の意味を持つ。これはwire fieldを追加するJSON例ではなく、complete `NextResult.v3`内のrecord間関係を表すsemantic projectionである。
+The comparison in REC-001 has at least the following meaning. This is not a JSON example that adds wire fields; it is a semantic projection representing relationships among records in complete `NextResult.v3`.
 
 ```text
 comparison:
@@ -291,20 +291,20 @@ description:
   text   = "CRITICAL_FIX ranks above OPTIONAL_POLISH by rule critical_class: driving less_than non_critical."
 ```
 
-実際のwire recordではfactを`facts[]`へ置き、comparisonは`fact_ids`と`decisive_expression`で参照する。Record ID、provenance、description parameterもInterface Contractに従ってcomplete graphへ含める。
+Actual wire records place facts in `facts[]`; comparisons refer to them with `fact_ids` and `decisive_expression`. Include record IDs, provenance, and description parameters in the complete graph according to the Interface Contract.
 
-Consumerは次の順で回答を構成できる。
+A consumer can compose an answer in the following order.
 
-1. task decisionから`primary_higher_priority_task_id`とdecisive stepを読む
-2. decisive stepからcomparison IDを読む
-3. comparisonからwinner、alternative、rule、typed fact、expressionを読む
-4. description keyとtyped parameterからcanonical textを検証する
+1. Read `primary_higher_priority_task_id` and the decisive step from the task decision.
+2. Read the comparison ID from the decisive step.
+3. Read the winner, alternative, rule, typed facts, and expression from the comparison.
+4. Verify canonical text from the description key and typed parameters.
 
-Description textだけからruleやfactを逆推論してはならない。
+Do not reverse-infer rules or facts from description text alone.
 
-### REC-009 Exact Rationalとcanonical descriptionを保持する
+### REC-009 Retain exact Rationals and canonical descriptions
 
-REC-001のtotal floatを補足表示する場合、`OPTIONAL_POLISH`の値`3/2p`は次のtyped valueとunitを使用する。
+When displaying supplemental total float for REC-001, the value `3/2p` for `OPTIONAL_POLISH` uses the following typed value and unit.
 
 ```json
 {
@@ -320,11 +320,11 @@ REC-001のtotal floatを補足表示する場合、`OPTIONAL_POLISH`の値`3/2p`
 }
 ```
 
-Binary floating pointの`1.5`を正本factへ入れず、canonical textは`3/2p`とrenderする。Expressionはfact reference間の`less_than`をexact評価し、評価結果とwinnerが一致しなければ`PTREC-301`とする。
+Do not place binary floating-point `1.5` in authoritative facts; canonical text renders `3/2p`. An expression evaluates `less_than` between fact references exactly, and produces `PTREC-301` if its result and the winner do not agree.
 
-### REC-010 Complete JSONとtext summaryを混同しない
+### REC-010 Do not confuse complete JSON with a text summary
 
-同じsnapshotのJSONは次を満たす。
+JSON for the same snapshot meets the following.
 
 ```text
 explanation_status.level                   = full
@@ -334,35 +334,35 @@ explanation_status.truncated               = false
 all omitted_counts                         = 0
 ```
 
-JSON goldenはresult decision、全ready task decision、参照closureを満たすstep、fact、comparison、reason、descriptionを含む。REC-008のような抜粋をcomplete resultとして保存しない。
+The JSON golden includes the result decision, every ready-task decision, and steps, facts, comparisons, reasons, and descriptions that satisfy reference closure. Do not save an excerpt such as REC-008 as a complete result.
 
-Text goldenはsummary projectionとして次を明示する。
+The text golden explicitly states the following as a summary projection.
 
 ```text
 EXPLANATION detail=summary complete=false machine_trace="--format json"
 ```
 
-Textからraw factやASTを復元させず、既存の`ACTIVE`、`RUNNABLE NOW`、`READY / WAITING RESOURCE`、`BLOCKED NOW`、`UPCOMING` sectionを維持する。
+Do not allow raw facts or ASTs to be reconstructed from text, and retain existing `ACTIVE`, `RUNNABLE NOW`, `READY / WAITING RESOURCE`, `BLOCKED NOW`, and `UPCOMING` sections.
 
-V2由来の`groups`、`tasks`、`tasks[].resource_rejections`、`tasks[].explanation`はfieldと意味を維持する。Goldenはv2 projectionとv3の同名fieldを比較し、recommendation root追加によってscheduler rejectionやupcoming dependency explanationが変化していないことを検査する。
+Retain the fields and semantics of v2-derived `groups`, `tasks`, `tasks[].resource_rejections`, and `tasks[].explanation`. Goldens compare the v2 projection and same-named fields in v3, checking that adding the recommendation root has not changed scheduler rejections or upcoming dependency explanations.
 
-### REC-011 Invariant failureを不完全な成功resultへ変換しない
+### REC-011 Do not turn invariant failures into incomplete successful results
 
-次を独立したnegative testにする。
+Make the following independent negative tests.
 
 | Broken invariant | Expected diagnostic |
 | --- | --- |
-| tierとset membershipの不一致、false expressionをdecisive winnerとして参照、reference closure欠落 | `PTREC-301` |
-| 宣言versionに未登録のrule、reason、fact kind、expression nodeを出力 | `PTREC-302` |
-| description key、typed parameter、canonical rendered textの不一致 | `PTREC-303` |
+| Mismatch between tier and set membership, reference to a false expression as decisive winner, or missing reference closure | `PTREC-301` |
+| Emitting a rule, reason, fact kind, or expression node not registered for the declared version | `PTREC-302` |
+| Mismatch among description key, typed parameters, and canonical rendered text | `PTREC-303` |
 
-いずれも成功した`NextResult.v3`を出力せず、CLIはinternal error exit `70`を使用する。Ready task 0件やresource起因のempty `R`はこのnegative testへ含めない。
+None emit a successful `NextResult.v3`; the CLI uses internal-error exit `70`. Do not include zero ready tasks or a resource-caused empty `R` in these negative tests.
 
 ## 5. Human override
 
-### OVR-001 Allowed taskがrecommended taskを置き換える
+### OVR-001 An allowed task replaces a recommended task
 
-REC-001のnormal resultで、human selectionを`O = [OPTIONAL_POLISH]`とする。
+In the normal result of REC-001, let the human selection be `O = [OPTIONAL_POLISH]`.
 
 ```text
 override required                 = true
@@ -373,11 +373,11 @@ selected_nonrecommended_task_ids  = [OPTIONAL_POLISH]
 startFeasible(O)                  = true
 ```
 
-Normal comparisonとtierは変更せず、override artifactは`OPTIONAL_POLISH`のnormal decision、decisive step、reason、comparison IDを参照する。
+Do not change normal comparisons or tiers; the override artifact refers to the normal decision, decisive step, reason, and comparison ID for `OPTIONAL_POLISH`.
 
-### OVR-002 Deferred taskとのfeasible replacementはcapacity violationではない
+### OVR-002 A feasible replacement with a deferred task is not a capacity violation
 
-REC-005のnormal resultで`O = [ENV_LOW]`とする。
+In the normal result of REC-005, let `O = [ENV_LOW]`.
 
 ```text
 override required              = true
@@ -386,34 +386,34 @@ displaced_recommended_task_ids = [ENV_HIGH]
 startFeasible(O)               = true
 ```
 
-`startFeasible(R union {ENV_LOW}) = false`と`startFeasible(O) = true`を区別する。Overrideはcapacity超過を承認せず、現在開始するreplacement setを変更する。
+Distinguish `startFeasible(R union {ENV_LOW}) = false` from `startFeasible(O) = true`. An override does not approve exceeding capacity; it changes the replacement set to start now.
 
-### OVR-003 Normal authority内の選択へoverrideを作らない
+### OVR-003 Do not create an override for a selection within normal authority
 
-次はoverride不要である。
+The following require no override.
 
-- REC-004の`R`からrecommended taskを1件以上選ぶsubset
-- REC-001の`R`を維持し、resource-feasibleな`OPTIONAL_POLISH`を追加する集合
-- 現在はtaskを開始しない判断
+- a subset choosing at least one recommended task from `R` in REC-004
+- a set that retains `R` in REC-001 and adds resource-feasible `OPTIONAL_POLISH`
+- a decision not to start a task now
 
-最初の2件をotherwise-validなvalidation requestとして渡した場合は`PTOVR-106`とし、artifactを生成しない。Taskを開始しない場合は`selected_task_ids`が1件以上というrequest契約を満たさないためvalidationを呼ばない。監査件数を増やす目的でoverride artifactを生成しない。
+Passing either of the first two as an otherwise-valid validation request produces `PTOVR-106` and no artifact. For no task start, do not invoke validation because it does not meet the request contract requiring at least one `selected_task_ids`. Do not generate an override artifact merely to increase the audit count.
 
-### OVR-004 Eligibility、active allocation、stale snapshotはoverrideできない
+### OVR-004 Eligibility, active allocation, and stale snapshots cannot be overridden
 
 | Input | Expected result |
 | --- | --- |
-| `selected_task_ids`に`blocked_now`または`upcoming` taskを含む | `PTOVR-103` |
-| REC-006で`O = [FRONTIER_TEST]` | `PTOVR-104` |
-| requestのsource digestまたはresult decision IDがsource resultと不一致 | `PTOVR-102` |
-| valid artifact生成後にdocument、capacity、task stateが変化 | apply時に`PTOVR-201` |
+| `selected_task_ids` contains a `blocked_now` or `upcoming` task | `PTOVR-103` |
+| `O = [FRONTIER_TEST]` in REC-006 | `PTOVR-104` |
+| The request's source digest or result decision ID mismatches the source result | `PTOVR-102` |
+| Document, capacity, or task state changes after a valid artifact is generated | `PTOVR-201` at apply time |
 
-Human reasonでこれらを成功へ読み替えない。
+Do not reinterpret these as success through a human reason.
 
-### OVR-005 Discouraged risk acceptanceは将来model用の予約fixtureである
+### OVR-005 Discouraged risk acceptance is a reserved fixture for a future model
 
-Taxonomy version 1.0にはconcrete negative fact kindがないため、現在のnormal producerから`discouraged` taskを作るfixtureは禁止する。
+Taxonomy version 1.0 has no concrete negative fact kind, so fixtures that create a `discouraged` task from the current normal producer are prohibited.
 
-将来、正本fieldとconcrete negative fact kindを別versionで追加した場合は、次を満たすfixtureを有効化する。
+When an authoritative field and concrete negative fact kind are added in a separate version in the future, enable fixtures meeting the following.
 
 ```text
 normal tier                              = discouraged
@@ -424,70 +424,70 @@ normal negative fact                     = unchanged
 startFeasible(O)                         = true
 ```
 
-Chat上の「riskがありそう」という推測を、このfixtureのnegative factとして使用しない。
+Do not use a chat inference that “there may be a risk” as the negative fact for this fixture.
 
-### OVR-006 Override artifactのidentityとaudit envelopeを検証する
+### OVR-006 Verify the override artifact identity and audit envelope
 
-Valid requestについて次をgolden testへ固定する。
+Fix the following as golden tests for a valid request.
 
-1. 同じsource resultとrequestからbyte-identicalなcanonical artifactを2回生成する
-2. `override_id`を除くpayloadのcompact JSONからSHA-256を再計算する
-3. 再計算値が`override:sha256:<digest>`と一致する
-4. actorは`authentication=caller_asserted`、時刻はrequestで明示したUTC値のままにする
-5. normal reasonをcopyまたはhuman reasonへ変換せず、source record IDで参照する
-6. commit messageの`Perttool-Override`と`Perttool-Override-Record` trailerから同じIDを再計算できる
+1. Generate byte-identical canonical artifacts twice from the same source result and request.
+2. Recalculate SHA-256 from compact JSON for the payload excluding `override_id`.
+3. The recalculated value matches `override:sha256:<digest>`.
+4. The actor remains `authentication=caller_asserted`, and the time remains the UTC value explicitly supplied in the request.
+5. Refer to normal reasons by source record ID without copying or converting them to human reasons.
+6. The same ID can be recalculated from the `Perttool-Override` and `Perttool-Override-Record` trailers in the commit message.
 
-MIG-08のoverride apply/audit gateを満たすまではtrailerを実commitへ適用せず、fixture stringへのpure verificationだけを行う。
+Until the MIG-08 override apply/audit gate is satisfied, do not apply trailers to real commits; perform only pure verification against fixture strings.
 
-## 6. Test観点とfixture対応
+## 6. Test perspectives and fixture mapping
 
-実装sliceでは、最低限次のtest層へ同じcase IDを付ける。
+In the implementation slice, assign the same case IDs to at least the following test layers.
 
-| Layer | 固定する内容 |
+| Layer | Fixed content |
 | --- | --- |
-| `.pert` fixture | lifecycle、dependency、gate、duration、priority、resource、active allocation |
-| Ranking unit | `P`、candidate facts、complete order、`H`、scan、`R` |
-| Explanation unit | decisive chain、prior tie、contributing rule、resource witness、expression evaluation |
-| Core result | 全ready taskのtier、reference closure、canonical ordering、byte determinism |
-| JSON golden | complete `Perttool.NextResult.v3`、exact value、entity reference、description |
-| Text golden | 4 tier summary、`complete=false`、JSON導線、既存v2 sectionの維持 |
-| Invariant test | `PTREC-301`から`PTREC-303`、unknown decisive semanticsの安全側処理 |
-| Override unit | 不要、必要、不可能、deterministic ID、single-use、stale判定 |
+| `.pert` fixture | lifecycle, dependency, gate, duration, priority, resource, active allocation |
+| Ranking unit | `P`, candidate facts, complete order, `H`, scan, `R` |
+| Explanation unit | decisive chain, prior tie, contributing rule, resource witness, expression evaluation |
+| Core result | tier of every ready task, reference closure, canonical ordering, byte determinism |
+| JSON golden | complete `Perttool.NextResult.v3`, exact values, entity references, descriptions |
+| Text golden | four-tier summary, `complete=false`, JSON route, retention of existing v2 sections |
+| Invariant test | `PTREC-301` through `PTREC-303`, safe handling of unknown decisive semantics |
+| Override unit | not needed, needed, impossible, deterministic IDs, single use, stale determination |
 
-最低限のcase coverage:
+Minimum case coverage:
 
 | Case | Ranking | Resource | Empty | Explanation | Override |
 | --- | --- | --- | --- | --- | --- |
-| REC-001 | critical対priority、horizon外allowed | none | no | higher-priority comparison | OVR-001、OVR-003 |
-| REC-002 | prior tie、gate近傍、contributing | selected conflict | no | decisive chain | - |
+| REC-001 | critical versus priority, allowed outside horizon | none | no | higher-priority comparison | OVR-001, OVR-003 |
+| REC-002 | prior tie, gate proximity, contributing | selected conflict | no | decisive chain | - |
 | REC-003 | successor unlock | none | no | counterfactual fact | - |
 | REC-004 | parallel recommended | jointly feasible | no | set semantics | OVR-003 |
-| REC-005 | priority scan | selected blocker | no | rankingとtier reasonの分離 | OVR-002 |
-| REC-006 | horizon外allowed | active-only blocker | `R=[]` | null task winner | OVR-004 |
-| REC-007 | no candidate | none | `P=[]`、`R=[]` | result-level closure | - |
-| REC-008..011 | - | - | - | typed comparison、Rational、projection、invariant | - |
-| OVR-005 | future version only | feasible replacement | no | normal/override trace分離 | discouraged acknowledgement |
+| REC-005 | priority scan | selected blocker | no | separation of ranking and tier reasons | OVR-002 |
+| REC-006 | allowed outside horizon | active-only blocker | `R=[]` | null task winner | OVR-004 |
+| REC-007 | no candidate | none | `P=[]`, `R=[]` | result-level closure | - |
+| REC-008..011 | - | - | - | typed comparison, Rational, projection, invariant | - |
+| OVR-005 | future version only | feasible replacement | no | normal/override trace separation | discouraged acknowledgement |
 
-実装時にfixtureを統合してもよいが、上表の観測点を失ってはならない。特にREC-006とREC-007を同じempty resultとして潰さず、「ready taskはあるがactive allocationで`R`がempty」と「ready task自体が0件」を別々に検査する。
+Fixtures may be consolidated during implementation, but must not lose the observations in the table above. In particular, do not collapse REC-006 and REC-007 into the same empty result: separately test “a ready task exists but active allocation makes `R` empty” and “there are zero ready tasks.”
 
-MIG-01の実体は`test/fixtures/recommendation/`のREC-001からREC-007 `.pert`、REC-008からREC-011 unit inputを含む`cases.json`、および`test/golden/recommendation/v2-projection.expected.json`である。Fixture baselineは将来の期待判断と現行`NextResult.v2` projectionを分離し、v3 publication前にpublic schemaやtextを変更しない。
+MIG-01 consists of REC-001 through REC-007 `.pert` files in `test/fixtures/recommendation/`, `cases.json` containing REC-008 through REC-011 unit inputs, and `test/golden/recommendation/v2-projection.expected.json`. Fixture baselines separate future expected decisions from the current `NextResult.v2` projection and do not change the public schema or text before v3 publication.
 
-MIG-02の実体は`src/recommendation/`の非公開ranking pure Coreと`test/recommendation-ranking.test.mjs`である。REC-001からREC-007のcandidate fact、selection horizon、recommended set、tier、resource witnessに加え、全ranking rule、near-critical/minimum-float horizon、capacity overrideを固定する。
+MIG-02 consists of the private ranking pure Core in `src/recommendation/` and `test/recommendation-ranking.test.mjs`. In addition to REC-001 through REC-007 candidate facts, selection horizons, recommended sets, tiers, and resource witnesses, it fixes all ranking rules, near-critical/minimum-float horizons, and capacity overrides.
 
-MIG-03の実体は`src/recommendation/explanation*.ts`と`test/recommendation-explanation.test.mjs`である。MIG-02結果からexact typed fact、制限付きexpression、minimal comparison、decision trace、reason occurrence、canonical English descriptionを構築し、reference/tier/expression不変条件を`PTREC-301`、version/rule/code/fact不変条件を`PTREC-302`、description不変条件を`PTREC-303`へ変換する。REC-001からREC-011、active-only reject、ready 0件、fail-closedを固定したが、MIG-04まではこの非公開Coreをpublic `NextResult.v3`として扱わない。
+MIG-03 consists of `src/recommendation/explanation*.ts` and `test/recommendation-explanation.test.mjs`. It builds exact typed facts, restricted expressions, minimal comparisons, decision traces, reason occurrences, and canonical English descriptions from MIG-02 results; it maps reference/tier/expression invariants to `PTREC-301`, version/rule/code/fact invariants to `PTREC-302`, and description invariants to `PTREC-303`. It fixes REC-001 through REC-011, active-only rejection, zero ready tasks, and fail-closed behavior, but does not treat this private Core as public `NextResult.v3` until MIG-04.
 
-MIG-04の実体は`src/application/next.ts`、`src/recommendation/json.ts`、`src/cli.ts`、`src/index.ts`、help、`test/recommendation-publication.test.mjs`、v3 JSON/text goldenである。Public `NextResultV3`、Core/CLI parity、complete empty graph、4 tier summary、byte determinism、PTREC partial result抑止、v2 operational projection維持、package-installed API/CLIを固定した。Consumerは[移行ガイド](../process/next-v3-consumer-migration.md)に従い、schemaとdecisive semanticsを先に検査する。
+MIG-04 consists of `src/application/next.ts`, `src/recommendation/json.ts`, `src/cli.ts`, `src/index.ts`, help, `test/recommendation-publication.test.mjs`, and v3 JSON/text goldens. It fixes public `NextResultV3`, Core/CLI parity, the complete empty graph, the four-tier summary, byte determinism, prevention of partial PTREC results, retention of the v2 operational projection, and the package-installed API/CLI. Consumers follow the [migration guide](../process/next-v3-consumer-migration.md), checking the schema and decisive semantics first.
 
 ## 7. Acceptance
 
-- critical対priority、unlock、gate近傍、parallel recommendationを固定した
-- selected blockerとactive-only blockerを分離した
-- horizon外allowedを第一候補へ自動昇格させないcaseを固定した
-- ready task 0件とresource起因のempty recommended setを分離した
-- winner、alternative、decisive rule、prior tie、contributing ruleを固定した
-- exact Rational、typed entity、expression、canonical descriptionの観測点を固定した
-- complete JSONとsummary textの責務を分離した
-- v2 field維持と`PTREC-301`から`PTREC-303`のnegative testを固定した
-- override不要、allowed/deferred replacement、不可能、stale、audit identityを固定した
-- `discouraged`を現行versionで捏造せず、将来fixtureの有効化条件を固定した
-- override apply、write path、provider固有adapterは変更していない
+- Fixed critical versus priority, unlocks, gate proximity, and parallel recommendations.
+- Separated selected blockers from active-only blockers.
+- Fixed cases that do not automatically promote allowed work outside the horizon to the first candidate.
+- Separated zero ready tasks from a resource-caused empty recommended set.
+- Fixed winners, alternatives, decisive rules, prior ties, and contributing rules.
+- Fixed observations for exact Rationals, typed entities, expressions, and canonical descriptions.
+- Separated responsibilities between complete JSON and summary text.
+- Fixed retention of v2 fields and negative tests for `PTREC-301` through `PTREC-303`.
+- Fixed no override, allowed/deferred replacement, impossible, stale, and audit identity cases.
+- Did not fabricate `discouraged` in the current version and fixed conditions for enabling future fixtures.
+- Did not change override apply, the write path, or provider-specific adapters.

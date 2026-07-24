@@ -5,7 +5,7 @@
     "summary": {
       "resources": 4,
       "milestones": 9,
-      "tasks": 7,
+      "tasks": 6,
       "gates": 4,
       "errors": 0,
       "warnings": 0
@@ -13,24 +13,22 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "27/1",
+    "precedence_makespan": "14/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "27/2",
+    "precedence_forecast": "14/15",
     "precedence_critical_tasks": [
-      "NORMATIVE_DOCS",
       "PROCESS_AND_GUIDANCE_DOCS",
       "GOLDEN_UNICODE_AUDIT",
       "ENGLISH_ACCEPTANCE"
     ],
-    "resource_makespan": "30/1",
-    "resource_forecast": "15/1",
+    "resource_makespan": "17/1",
+    "resource_forecast": "17/15",
     "resource_delay": "3/1",
     "resource_arcs": [
       "resource:PROCESS_AND_GUIDANCE_DOCS:PERT_PLANS",
       "resource:RUNTIME_MESSAGES:HELP_AND_USAGE"
     ],
     "schedule_critical_tasks": [
-      "NORMATIVE_DOCS",
       "PROCESS_AND_GUIDANCE_DOCS",
       "PERT_PLANS",
       "GOLDEN_UNICODE_AUDIT",
@@ -43,18 +41,17 @@
       "ready": [
         "RUNTIME_MESSAGES",
         "HELP_AND_USAGE",
-        "NORMATIVE_DOCS",
+        "PROCESS_AND_GUIDANCE_DOCS",
         "PERT_PLANS"
       ],
       "runnable_now": [
         "RUNTIME_MESSAGES",
-        "NORMATIVE_DOCS"
+        "PROCESS_AND_GUIDANCE_DOCS"
       ],
       "blocked_now": [],
       "upcoming": [
         "GOLDEN_UNICODE_AUDIT",
-        "ENGLISH_ACCEPTANCE",
-        "PROCESS_AND_GUIDANCE_DOCS"
+        "ENGLISH_ACCEPTANCE"
       ]
     },
     "resource_rejection": {

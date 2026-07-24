@@ -1085,7 +1085,7 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
   assert.match(estimatedText, /source "issue:preview"/);
 
   const parallelTasks = minimalText.replace(
-    "task WORK NOW -> DONE:\n  title \"作業する\"\n  duration 1d\n",
+    "task WORK NOW -> DONE:\n  title \"Do work\"\n  duration 1d\n",
     [
       "task FIRST NOW -> DONE:",
       "  title \"first\"",

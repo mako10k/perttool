@@ -1,69 +1,69 @@
-# Recommendation Reason Taxonomy 仕様
+# Recommendation Reason Taxonomy Specification
 
-- 文書状態: Normative 1.0
+- Document status: Normative 1.0
 - Taxonomy version: 1.0
-- 作成日: 2026-07-22
-- 対応要件: [../requirements.md](../requirements.md)
+- Created: 2026-07-22
+- Applicable requirements: [../requirements.md](../requirements.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Human override: [recommendation-override.md](recommendation-override.md)
-- Analysis仕様: [analysis.md](analysis.md)
-- 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- Analysis specification: [analysis.md](analysis.md)
+- Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
-## 1. 目的
+## 1. Purpose
 
-本仕様は、recommendationのset選択とtier付与に使うreasonを、安定した機械可読codeとproject factへ分解する規範仕様である。
+This specification is normative: it decomposes the reasons used for recommendation set selection and tier assignment into stable machine-readable codes and project facts.
 
-次を固定する。
+It defines the following:
 
-- lower snake caseのstable reason code
-- codeごとの発生条件
-- reasonのeffectとdecision上のrole
-- codeが要求するtyped factとentity参照
-- recommended set選択と4 tierへの対応
-- 未model化factをreasonへ混入させない境界
-- taxonomyとunknown codeの互換性
-- 構造化expression、decision trace、description projectionへ渡す入力
+- stable lower snake case reason codes
+- occurrence conditions for each code
+- the effect and decision role of a reason
+- the typed facts and entity references required by each code
+- the relationship to recommended-set selection and the four tiers
+- the boundary that prevents unmodeled facts from entering reasons
+- taxonomy and unknown-code compatibility
+- inputs passed to structured expressions, decision traces, and description projections
 
-Reason codeだけで「なぜこのtaskで別taskではないか」を説明したとはみなさない。Codeはreasonの分類であり、適用rule、typed fact、比較対象、決定条件を置き換えない。
+A reason code alone does not explain why a task was selected instead of another task. A code classifies a reason; it does not replace the applicable rule, typed facts, alternatives, or decision conditions.
 
-## 2. 規範上の位置とscope
+## 2. Normative position and scope
 
-意味や設計が競合する場合は次の順で解決する。
+Resolve conflicts in meaning or design in the following order:
 
-1. `docs/requirements.md`のMust requirement
-2. [Recommendation Semantics仕様](recommendation.md)
-3. Rankingの意味は[Recommendation Ranking Policy仕様](recommendation-ranking.md)、reasonの意味は本仕様
-4. [Analysis仕様](analysis.md)
-5. [Recommendation Structured Explanation仕様](recommendation-explanation.md)、[Recommendation Interface Contract仕様](recommendation-interface.md)
-6. example、test、help、implementation
+1. Must requirements in `docs/requirements.md`
+2. [Recommendation Semantics Specification](recommendation.md)
+3. [Recommendation Ranking Policy Specification](recommendation-ranking.md) for ranking meaning, and this specification for reason meaning
+4. [Analysis Specification](analysis.md)
+5. [Recommendation Structured Explanation Specification](recommendation-explanation.md) and [Recommendation Interface Contract Specification](recommendation-interface.md)
+6. examples, tests, help, and implementation
 
-対象:
+In scope:
 
-- actual `ready` taskに対するnormal recommendation
-- recommended set `R`への選択または非選択
-- `recommended`、`allowed`、`deferred`、`discouraged`のtier決定
-- project modelとversioned policyから導出できるfact/rule category
-- AI、人間、adapterが同じ意味で解釈するreason vocabulary
+- normal recommendations for actual `ready` tasks
+- selection into or exclusion from the recommended set `R`
+- determination of the `recommended`, `allowed`, `deferred`, and `discouraged` tiers
+- fact and rule categories derivable from the project model and versioned policy
+- a reason vocabulary interpreted consistently by AI, humans, and adapters
 
-対象外:
+Out of scope:
 
-- ranking factorの優先順、weight、selection horizon、tie-break
-- critical、float、priority、successor impact、gate/milestone distanceの計算規則
-- 自然言語description、localization、template、message ID
-- expression AST、decision traceのnode構造と評価規則
-- Core type、JSON field、schema、text layout、ordering、size limit
-- human override reasonとaudit storage。[Recommendation Human Override Contract仕様](recommendation-override.md)を正とする
-- lifecycle diagnostic、`blocked_reason`、`runnable_now`の既存resource rejectionの置換
-- interfaceまたは実装の変更
+- precedence, weights, selection horizon, and tie-breaks of ranking factors
+- calculation rules for criticality, float, priority, successor impact, and gate/milestone distance
+- natural-language descriptions, localization, templates, and message IDs
+- expression ASTs and the structure and evaluation rules of decision-trace nodes
+- Core types, JSON fields, schemas, text layouts, ordering, and size limits
+- human override reasons and audit storage; [Recommendation Human Override Contract Specification](recommendation-override.md) is authoritative
+- replacement of existing resource-rejection lifecycle diagnostics, `blocked_reason`, or `runnable_now`
+- interface or implementation changes
 
-Ranking factorの意味と比較規則は[Recommendation Ranking Policy仕様](recommendation-ranking.md)が固定する。本仕様は、それらを安定codeから参照するcategoryと、set/tier決定へ接続する条件を固定する。
+[Recommendation Ranking Policy Specification](recommendation-ranking.md) defines the meaning and comparison rules of ranking factors. This specification defines the categories that refer to them through stable codes and the conditions that connect them to set and tier decisions.
 
-## 3. Reasonの構成
+## 3. Reason composition
 
-Reason occurrenceは概念上、次の情報を持つ。
+A reason occurrence conceptually contains the following information:
 
 ```text
 reason occurrence
@@ -74,69 +74,69 @@ reason occurrence
 └── entity references
 ```
 
-これはwire schemaではない。Field名、入れ子、配列、cardinalityはStructured Explanation Modelと[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
+This is not a wire schema. The Structured Explanation Model and the [Recommendation Interface Contract Specification](recommendation-interface.md) define field names, nesting, arrays, and cardinality.
 
 ### 3.1 Effect
 
-Effectは、評価対象taskを現在開始する判断に対してreasonが持つ向きを表す。
+Effect expresses the direction a reason has for the decision to start the evaluated task now.
 
-| Effect | 意味 |
+| Effect | Meaning |
 | --- | --- |
-| `supporting` | taskの選択または開始を支持する |
-| `opposing` | 他のfactまたはruleと比較してtaskの選択を弱めるが、それ単独では開始不能を意味しない |
-| `blocking` | normal recommendationでは特定のset membershipまたはstart authorityを成立させない |
-| `neutral` | tie、適用domain、集合不変条件など、向きを持たないdecision contextを表す |
+| `supporting` | Supports selecting or starting the task. |
+| `opposing` | Weakens selection of the task relative to other facts or rules, but does not by itself mean that the task cannot be started. |
+| `blocking` | Prevents a particular set membership or start authority in a normal recommendation. |
+| `neutral` | Represents decision context without direction, such as a tie, applicability domain, or set invariant. |
 
-`blocking`はtaskが永久に実行不能であることを意味しない。例えばresource conflictは`R`を維持した同時開始を妨げるだけであり、project stateまたは選択集合が変われば解消し得る。
+`blocking` does not mean that a task is permanently impossible to execute. For example, a resource conflict only prevents simultaneous start while retaining `R`; it can be resolved when the project state or selected set changes.
 
 ### 3.2 Decision role
 
-Decision roleは、そのoccurrenceが現在の結論へどう寄与したかを表す。
+Decision role expresses how an occurrence contributed to the current conclusion.
 
-| Role | 意味 |
+| Role | Meaning |
 | --- | --- |
-| `decisive` | この条件または規則がなければ、set membershipまたはtierの結論が変わり得る |
-| `contributing` | 結論を支持または反対するが、単独では現在の結論を決めていない |
-| `context` | domain、不変条件、tieなどを示し、選択差を直接生んでいない |
+| `decisive` | Without this condition or rule, the conclusion about set membership or tier could change. |
+| `contributing` | Supports or opposes the conclusion, but does not by itself determine the current conclusion. |
+| `context` | Indicates a domain, invariant, tie, or similar condition without directly creating a selection difference. |
 
-同じcodeで許されるroleはtaxonomy tableで制限する。実際のroleはversioned ranking ruleの適用順とRecommendation Semantics仕様のclassification orderから決定し、表示側が推測してはならない。
+The taxonomy table restricts the roles permitted for the same code. Actual roles are determined by the application order of the versioned ranking rules and the classification order in the Recommendation Semantics Specification; presentation layers MUST NOT infer them.
 
-## 4. Code identifierと安定性
+## 4. Code identifiers and stability
 
-Reason codeはASCII lower snake caseとし、次を満たす。
+Reason codes use ASCII lower snake case and satisfy:
 
 ```text
 [a-z][a-z0-9]*(?:_[a-z0-9]+)*
 ```
 
-- codeはlocale、task ID、resource ID、rule ID、数値を埋め込まない
-- 同じcodeを別の発生条件または別のeffectへ再利用しない
-- code名を自然言語descriptionとして分割、翻訳、言い換えない
-- project固有のtag、title、自由記述から動的codeを生成しない
-- codeだけを受け取って、欠けたfact、rule、比較対象をconsumerが再推論しない
+- A code MUST NOT embed a locale, task ID, resource ID, rule ID, or numeric value.
+- The same code MUST NOT be reused for another occurrence condition or effect.
+- Code names MUST NOT be split, translated, or paraphrased as natural-language descriptions.
+- Dynamic codes MUST NOT be generated from project-specific tags, titles, or free-form text.
+- A consumer receiving only a code MUST NOT re-infer missing facts, rules, or alternatives.
 
-Entity固有情報と値はtyped factとentity referenceで運ぶ。
+Typed facts and entity references carry entity-specific information and values.
 
-## 5. Typed fact category
+## 5. Typed fact categories
 
-本仕様は後続schemaへ渡す意味上のfact kindを固定する。値のwire表現は固定しない。
+This specification defines semantic fact kinds passed to subsequent schemas. It does not define their wire representation.
 
-| Fact kind | 必須の意味 | 参照するentity |
+| Fact kind | Required meaning | Referenced entities |
 | --- | --- | --- |
-| `task_classification` | snapshotから導出したtaskのclassification | task |
-| `recommendation_set_membership` | taskがderived recommended set `R`へ含まれるか | task、derived set |
-| `set_start_feasibility` | 指定task集合について`startFeasible(S)`がtrueかfalseか | task集合、resource集合、derived set |
-| `resource_capacity_witness` | resourceごとのcapacity、active usage、selected usage、対象task requirement、available、deficitとoccupant | resource、対象task、active/selected task |
-| `ranking_rule_application` | versioned ruleをどのtaskへ適用し、支持、反対、tieのどれを得たか | policy rule、対象task、必要ならalternative task |
-| `ranking_comparison` | 同じrule/factorで比較したsubject値、alternative値、relationとwinner/loser | policy rule、ranking factor、2件以上のtask |
-| `policy_deferral` | `policyDefers(t)`の値と、それを導出したversioned rule | policy rule、task |
-| `modeled_negative_fact` | 登録済みnegative fact kindが対象taskの現在startへ適用されること | negative fact kind、task、factが参照するentity |
+| `task_classification` | Classification of a task derived from the snapshot. | task |
+| `recommendation_set_membership` | Whether a task is included in the derived recommended set `R`. | task, derived set |
+| `set_start_feasibility` | Whether `startFeasible(S)` is true or false for a specified task set. | task set, resource set, derived set |
+| `resource_capacity_witness` | Per-resource capacity, active usage, selected usage, requirement of the subject task, available amount, deficit, and occupants. | resource, subject task, active/selected tasks |
+| `ranking_rule_application` | Which versioned rule was applied to which task and whether it supported, opposed, or tied. | policy rule, subject task, alternative task when needed |
+| `ranking_comparison` | Subject value, alternative value, relation, and winner/loser compared under the same rule/factor. | policy rule, ranking factor, two or more tasks |
+| `policy_deferral` | The value of `policyDefers(t)` and the versioned rule that derived it. | policy rule, task |
+| `modeled_negative_fact` | Whether a registered negative fact kind applies to the current start of the subject task. | negative fact kind, task, entities referenced by the fact |
 
-`ranking_rule_application`と`ranking_comparison`の値は、boolean、integer、exact Rational、有限enum、entity reference、またはそれらの有限collectionとして型を保持する。表示用decimalや自然言語textを比較値の正本にしない。
+Values of `ranking_rule_application` and `ranking_comparison` retain their types as booleans, integers, exact Rationals, finite enums, entity references, or finite collections thereof. Display decimals and natural-language text MUST NOT be authoritative comparison values.
 
-### 5.1 Entity reference
+### 5.1 Entity references
 
-Entity referenceは少なくとも次のkindを区別する。
+Entity references distinguish at least the following kinds:
 
 - `project`
 - `task`
@@ -148,164 +148,164 @@ Entity referenceは少なくとも次のkindを区別する。
 - `negative_fact_kind`
 - `derived_set`
 
-Project entityは正本ID、task/milestone/gate/resourceはDSLのstable IDを参照する。Policy rule、ranking factor、negative fact kindは、それぞれのversioned specificationに登録されたstable IDを参照する。Recommended setはsnapshotから導出したsymbolic set `R`を参照し、titleや表示順をidentityにしない。
+The project entity refers to the authoritative ID. Tasks, milestones, gates, and resources refer to stable DSL IDs. Policy rules, ranking factors, and negative fact kinds refer to stable IDs registered in their respective versioned specifications. The recommended set refers to the symbolic set `R` derived from the snapshot; titles and display order MUST NOT be used as identity.
 
-同じ文字列が異なるkindに存在し得るため、IDだけでentity kindを推測してはならない。
+Because the same string can exist for different kinds, entity kind MUST NOT be inferred from an ID alone.
 
 ## 6. Stable reason code taxonomy
 
-### 6.1 Applicabilityとset outcome
+### 6.1 Applicability and set outcome
 
-| Code | 厳密な発生条件 | Effect | 許可role | 必須fact | 対応 |
+| Code | Exact occurrence condition | Effect | Permitted roles | Required facts | Correspondence |
 | --- | --- | --- | --- | --- | --- |
-| `task_ready` | `classification(t) == ready` | `neutral` | `context` | `task_classification` | 全tierの評価domain |
-| `recommended_set_selected` | `t in R` | `supporting` | `decisive` | `recommendation_set_membership(present=true)` | `recommended`、set inclusion |
-| `recommended_set_not_selected` | `t not in R` | `opposing` | `decisive` | `recommendation_set_membership(present=false)` | `allowed`、`deferred`、`discouraged`、set exclusion |
-| `recommended_set_feasible` | `startFeasible(R) == true` | `neutral` | `context` | `set_start_feasibility(R, true)` | recommended set全体の不変条件 |
+| `task_ready` | `classification(t) == ready` | `neutral` | `context` | `task_classification` | Evaluation domain for all tiers |
+| `recommended_set_selected` | `t in R` | `supporting` | `decisive` | `recommendation_set_membership(present=true)` | `recommended`, set inclusion |
+| `recommended_set_not_selected` | `t not in R` | `opposing` | `decisive` | `recommendation_set_membership(present=false)` | `allowed`, `deferred`, `discouraged`, set exclusion |
+| `recommended_set_feasible` | `startFeasible(R) == true` | `neutral` | `context` | `set_start_feasibility(R, true)` | Invariant for the entire recommended set |
 
-`recommended_set_selected`と`recommended_set_not_selected`はmembership outcomeであり、単独では選択原因を説明しない。非選択taskには、6.2または6.3の因果reasonを少なくとも1件関連付ける。
+`recommended_set_selected` and `recommended_set_not_selected` are membership outcomes; they do not by themselves explain the cause of selection. Associate at least one causal reason from 6.2 or 6.3 with every unselected task.
 
 ### 6.2 Ranking rule category
 
-| Code | 厳密な発生条件 | Effect | 許可role | 必須fact | 対応 |
+| Code | Exact occurrence condition | Effect | Permitted roles | Required facts | Correspondence |
 | --- | --- | --- | --- | --- | --- |
-| `ranking_rule_supports_task` | 登録済みversioned ranking ruleの適用結果が、subject taskを選択する向きである | `supporting` | `decisive`、`contributing` | `ranking_rule_application`。比較ruleでは`ranking_comparison`も必須 | 主にset inclusion。alternative比較にも使用 |
-| `ranking_rule_opposes_task` | 登録済みversioned ranking ruleの適用結果が、subject taskよりalternativeまたはpolicy条件を優先する向きである | `opposing` | `decisive`、`contributing` | `ranking_rule_application`。比較ruleでは`ranking_comparison`も必須 | set exclusion、上位taskの説明 |
-| `ranking_rule_tied` | 登録済みversioned ranking ruleでsubjectとalternativeが等価となり、そのruleでは順序が決まらない | `neutral` | `context` | `ranking_rule_application`と`ranking_comparison(relation=equal)` | 後続ruleまたはtie-breakへ進んだtrace |
+| `ranking_rule_supports_task` | Applying a registered versioned ranking rule favors selection of the subject task. | `supporting` | `decisive`, `contributing` | `ranking_rule_application`; comparative rules also require `ranking_comparison` | Primarily set inclusion; also used for alternative comparisons |
+| `ranking_rule_opposes_task` | Applying a registered versioned ranking rule favors an alternative or policy condition over the subject task. | `opposing` | `decisive`, `contributing` | `ranking_rule_application`; comparative rules also require `ranking_comparison` | Set exclusion and explanation of higher-ranked tasks |
+| `ranking_rule_tied` | A registered versioned ranking rule makes the subject and alternative equal, so that rule does not determine their order. | `neutral` | `context` | `ranking_rule_application` and `ranking_comparison(relation=equal)` | Trace that proceeds to a subsequent rule or tie-break |
 
-Ranking factor名をreason codeへ埋め込まない。例えばcritical、float、priorityを使う場合もcodeは上表を使い、どのfactor、値、relation、ruleが作用したかをtyped factで区別する。これにより、codeを増殖させずに「どのproject factがtask Aをtask Bより上位にしたか」を保持する。
+Do not embed ranking-factor names in reason codes. For example, when criticality, float, or priority is used, use the codes in this table and distinguish the applicable factor, value, relation, and rule with typed facts. This preserves which project fact ranked task A above task B without proliferating codes.
 
-`ranking_rule_supports_task`または`ranking_rule_opposes_task`を発生させるには、参照したruleとfactorがversioned Ranking Policyへ登録され、入力値とrelationを再計算できなければならない。Rule IDだけ、scoreだけ、自由記述だけのreasonは不十分である。
+To emit `ranking_rule_supports_task` or `ranking_rule_opposes_task`, the referenced rule and factor MUST be registered in the versioned Ranking Policy, and its input values and relation MUST be recomputable. A reason containing only a rule ID, score, or free-form text is insufficient.
 
-### 6.3 Tierとstart authority
+### 6.3 Tier and start authority
 
-| Code | 厳密な発生条件 | Effect | 許可role | 必須fact | 対応 |
+| Code | Exact occurrence condition | Effect | Permitted roles | Required facts | Correspondence |
 | --- | --- | --- | --- | --- | --- |
-| `recommended_set_addition_feasible` | `t not in R`かつ`startFeasible(R union {t}) == true` | `supporting` | `decisive`、`contributing` | `set_start_feasibility(R union {t}, true)` | `allowed`のcapacity条件。policy defer時は`deferred`へcontributingにもなり得る |
-| `recommended_set_resource_conflict` | `t not in R`かつ`startFeasible(R union {t}) == false` | `blocking` | `decisive`、`contributing` | `set_start_feasibility(R union {t}, false)`と、違反した全resourceの`resource_capacity_witness` | `deferred`のresource条件 |
-| `policy_defers_start` | `policyDefers(t) == true` | `blocking` | `decisive`、`contributing` | `policy_deferral(true)`と、その判断に使った`ranking_rule_application` | `deferred`のpolicy条件。先行するnegative factがある場合はcontributingになる |
-| `modeled_negative_fact_applies` | 登録済みnegative fact kindについて`explicitNegativeFact(t) == true` | `blocking` | `decisive` | 1件以上の`modeled_negative_fact`と適用rule | `discouraged`のnegative条件 |
+| `recommended_set_addition_feasible` | `t not in R` and `startFeasible(R union {t}) == true` | `supporting` | `decisive`, `contributing` | `set_start_feasibility(R union {t}, true)` | Capacity condition for `allowed`; it can also contribute to `deferred` when policy defers. |
+| `recommended_set_resource_conflict` | `t not in R` and `startFeasible(R union {t}) == false` | `blocking` | `decisive`, `contributing` | `set_start_feasibility(R union {t}, false)` and `resource_capacity_witness` for every violated resource | Resource condition for `deferred` |
+| `policy_defers_start` | `policyDefers(t) == true` | `blocking` | `decisive`, `contributing` | `policy_deferral(true)` and the `ranking_rule_application` used for the decision | Policy condition for `deferred`; it can be contributing when a preceding negative fact exists. |
+| `modeled_negative_fact_applies` | `explicitNegativeFact(t) == true` for a registered negative fact kind | `blocking` | `decisive` | One or more `modeled_negative_fact` values and the applicable rule | Negative condition for `discouraged` |
 
-`recommended_set_resource_conflict`は、違反resourceを1件だけ代表表示してはならない。複数resourceがcapacity制約へ違反する場合、全witnessをtyped factとして保持する。Natural language表示とcomplete JSONの境界は[Recommendation Interface Contract仕様](recommendation-interface.md)の責務である。
+`recommended_set_resource_conflict` MUST NOT show only one violated resource as a representative. If multiple resources violate capacity constraints, retain all witnesses as typed facts. The [Recommendation Interface Contract Specification](recommendation-interface.md) defines the boundary between natural-language presentation and complete JSON.
 
-## 7. Set selectionとの対応
+## 7. Relationship to set selection
 
-Recommended set `R`について、次を満たす。
+For the recommended set `R`, all of the following hold:
 
-1. `t in R`の各taskは`task_ready`、`recommended_set_selected`、selection horizonへの所属またはscan選択を示す`ranking_rule_supports_task`を持つ
-2. `t not in R`の各ready taskは`task_ready`と`recommended_set_not_selected`を持つ
-3. Result全体は`recommended_set_feasible`を持つ
-4. `recommended_set_not_selected`には、少なくとも1件の`ranking_rule_opposes_task`、`policy_defers_start`、`recommended_set_resource_conflict`、`modeled_negative_fact_applies`のいずれかを伴う
-5. Ranking Policyが空の`R`を許す場合も、各ready taskの非選択に適用したversioned ruleまたはresource witnessを`ranking_rule_opposes_task`、`policy_defers_start`、`recommended_set_resource_conflict`のいずれかで示す
-6. Set selectionが複数task間の比較に依存する場合、winnerとalternativeを同じ`ranking_comparison`で参照可能にする
+1. Every task where `t in R` has `task_ready`, `recommended_set_selected`, and `ranking_rule_supports_task` that shows membership in the selection horizon or scan selection.
+2. Every ready task where `t not in R` has `task_ready` and `recommended_set_not_selected`.
+3. The result as a whole has `recommended_set_feasible`.
+4. Every `recommended_set_not_selected` is accompanied by at least one of `ranking_rule_opposes_task`, `policy_defers_start`, `recommended_set_resource_conflict`, or `modeled_negative_fact_applies`.
+5. Even when the Ranking Policy permits an empty `R`, show the versioned rule or resource witness applied to the exclusion of every ready task with one of `ranking_rule_opposes_task`, `policy_defers_start`, or `recommended_set_resource_conflict`.
+6. When set selection depends on comparison among multiple tasks, make the winner and alternative referable through the same `ranking_comparison`.
 
-Membership outcomeだけ、task ID順だけ、opaque scoreだけを非選択理由としてはならない。Task ID tie-breakを使う場合、それ自体を登録済みpolicy rule/factorとして値とrelationを記録する。
+Membership outcome alone, task-ID order alone, or an opaque score MUST NOT be used as the reason for exclusion. If a task-ID tie-break is used, register it as a policy rule/factor and record its value and relation.
 
-## 8. Tierとの対応
+## 8. Relationship to tiers
 
-Recommendation Semantics仕様のclassification orderに従い、各tierへ次のreasonを対応させる。
+Following the classification order in the Recommendation Semantics Specification, associate the following reasons with each tier:
 
-| Tier | 必須reason | 条件付きreason | 禁止される決定reason |
+| Tier | Required reasons | Conditional reasons | Prohibited decisive reasons |
 | --- | --- | --- | --- |
-| `recommended` | `task_ready`、`recommended_set_selected`、`ranking_rule_supports_task`、result-levelの`recommended_set_feasible` | 0件以上の`ranking_rule_tied` | `recommended_set_not_selected`、`policy_defers_start`、`modeled_negative_fact_applies` |
-| `allowed` | `task_ready`、`recommended_set_not_selected`、`recommended_set_addition_feasible` | `ranking_rule_opposes_task`、`ranking_rule_tied` | `policy_defers_start`、`modeled_negative_fact_applies`、`recommended_set_resource_conflict` |
-| `deferred` | `task_ready`、`recommended_set_not_selected`と、`policy_defers_start`または`recommended_set_resource_conflict`の1件以上 | ranking evidence、addition feasibility | `modeled_negative_fact_applies`をdecisive reasonにすること |
-| `discouraged` | `task_ready`、`recommended_set_not_selected`、`modeled_negative_fact_applies` | ranking evidence、resource feasibility/conflict | なし。ただしnegative factがclassification order上のdecisive reasonであること |
+| `recommended` | `task_ready`, `recommended_set_selected`, `ranking_rule_supports_task`, and result-level `recommended_set_feasible` | Zero or more `ranking_rule_tied` values | `recommended_set_not_selected`, `policy_defers_start`, `modeled_negative_fact_applies` |
+| `allowed` | `task_ready`, `recommended_set_not_selected`, `recommended_set_addition_feasible` | `ranking_rule_opposes_task`, `ranking_rule_tied` | `policy_defers_start`, `modeled_negative_fact_applies`, `recommended_set_resource_conflict` |
+| `deferred` | `task_ready`, `recommended_set_not_selected`, and one or more of `policy_defers_start` or `recommended_set_resource_conflict` | ranking evidence, addition feasibility | `modeled_negative_fact_applies` as a decisive reason |
+| `discouraged` | `task_ready`, `recommended_set_not_selected`, `modeled_negative_fact_applies` | ranking evidence, resource feasibility/conflict | None, provided the negative fact is the decisive reason in classification order |
 
-`deferred` taskがpolicy deferとresource conflictの両方を持つ場合、Recommendation Semantics仕様のclassification orderで先に成立した条件だけを`decisive`とし、他方は`contributing`とする。`discouraged` taskでもpolicy deferやresource conflictを`contributing`として保持できるが、tierを決めたreasonは`modeled_negative_fact_applies`である。
+When a `deferred` task has both policy deferral and a resource conflict, only the condition that occurs first in the classification order in the Recommendation Semantics Specification is `decisive`; the other is `contributing`. A `discouraged` task can retain policy deferral or resource conflict as `contributing`, but `modeled_negative_fact_applies` determines its tier.
 
-Allowed taskの非選択理由は`recommended_set_not_selected`だけで終えてはならず、少なくとも1件の`ranking_rule_opposes_task`を伴う。これにより、AIはrecommended taskとallowed alternativeの比較を再推論せず回答できる。
+The reason an allowed task is unselected MUST NOT end with `recommended_set_not_selected` alone; it MUST include at least one `ranking_rule_opposes_task`. This enables AI to answer comparisons between a recommended task and an allowed alternative without re-inference.
 
-## 9. 未model化fact
+## 9. Unmodeled facts
 
-Taxonomy version 1.0では、`modeled_negative_fact`として登録されたconcrete fact kindは0件である。このため、Grammar/Semantics version 1のnormal analysisは次を満たす。
+In Taxonomy version 1.0, zero concrete fact kinds are registered as `modeled_negative_fact`. Therefore, normal analysis for Grammar/Semantics version 1 satisfies all of the following:
 
-- `modeled_negative_fact_applies`を生成しない
-- `explicitNegativeFact(t)`は全ready taskでfalseとして扱う
-- `discouraged` tierを生成しない
+- It does not emit `modeled_negative_fact_applies`.
+- It treats `explicitNegativeFact(t)` as false for every ready task.
+- It does not emit the `discouraged` tier.
 
-特に、次をchat、issue本文、task title、tag、source、自由記述から推測してreasonへ使用してはならない。
+In particular, the following MUST NOT be inferred from chats, issue bodies, task titles, tags, source text, or free-form text and used as reasons:
 
-- release固有semanticsまたはrelease gateであること
-- rework riskまたは将来置換される可能性
-- information sufficiency、仕様不足、調査不足
-- taskの面白さ、実装容易性、一般的なcode quality価値
+- release-specific semantics or release gates
+- rework risk or possible future replacement
+- information sufficiency, missing specifications, or insufficient investigation
+- task interest, implementation ease, or general code-quality value
 
-DSLの`gate`はmodel化されたdependency edgeだが、「release gate」というbusiness semanticsはmodel化されていない。Gate entityが存在することだけからrelease固有reasonを生成しない。
+The DSL `gate` is a modeled dependency edge, but the business semantics of a “release gate” are not modeled. Do not generate a release-specific reason merely because a gate entity exists.
 
-将来negative factを追加する場合は、正本field、validation、適用predicate、entity reference、ranking/overrideへの影響を仕様化し、concrete `negative_fact_kind`をtaxonomyへ登録してから生成する。未知情報を汎用`other`、`unknown_risk`、自由記述reasonとして正本判断へ混入させない。
+To add a negative fact in the future, specify the authoritative field, validation, applicability predicate, entity reference, and impacts on ranking/override, then register the concrete `negative_fact_kind` in the taxonomy before emitting it. Unknown information MUST NOT enter authoritative decisions as generic `other`, `unknown_risk`, or free-form reasons.
 
-## 10. Versioningとunknown code互換性
+## 10. Versioning and unknown-code compatibility
 
-Taxonomy versionは`major.minor`で管理する。Versionをwire上のどのfieldで返すかは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
+The taxonomy version uses `major.minor`. The [Recommendation Interface Contract Specification](recommendation-interface.md) defines the wire field that returns the version.
 
-- minor更新: 既存codeの意味を変えないcodeまたはfact kindの追加
-- major更新: code削除、発生predicate変更、effect変更、必須factの互換性を壊す変更
-- typo修正を含め、公開済みcodeのrenameは削除と追加として扱う
-- 廃止codeを別の意味で再利用しない
-- Ranking algorithm versionとTaxonomy versionを同一versionとみなさない
+- Minor updates add codes or fact kinds without changing the meaning of existing codes.
+- Major updates remove codes, change occurrence predicates, change effects, or make incompatible changes to required facts.
+- Including typo corrections, renaming a published code is treated as removal plus addition.
+- Do not reuse a retired code with a different meaning.
+- Do not treat Ranking algorithm version and Taxonomy version as the same version.
 
-Consumerが未知codeを受け取った場合は次を守る。
+When a consumer receives an unknown code, it follows all of the following:
 
-1. 未知codeと理解できたtyped fact/entity referenceを可能な限り保持する
-2. 未知codeを既知code、generic reason、自然言語へ推測変換しない
-3. 未知codeが`decisive`なら、tier自体を別tierへ再分類せず、説明を完全に理解できないことを明示する
-4. 未知codeだけを理由にresult全体を破棄しない。ただしconsumerが安全に実行できるactionは既知のtier authorityを超えない
-5. Human-facing descriptionが得られない場合はraw codeを識別可能に表示し、意味を捏造しない
+1. Retain the unknown code and any typed facts/entity references it can understand as far as possible.
+2. Do not speculatively convert an unknown code into a known code, generic reason, or natural language.
+3. If an unknown code is `decisive`, do not reclassify the tier itself to another tier; state that the explanation cannot be fully understood.
+4. Do not discard the entire result solely because of an unknown code. However, actions that the consumer can safely execute MUST NOT exceed the authority of known tiers.
+5. When no human-facing description is available, display the raw code recognizably and do not fabricate its meaning.
 
-Unknown fact kind、entity kind、rule IDについても同じ原則を適用する。Strict validationを行うproducerは、自身が宣言するTaxonomy versionで未登録のcode/fact kindを出力してはならない。
+The same principles apply to unknown fact kinds, entity kinds, and rule IDs. A producer performing strict validation MUST NOT output an unregistered code or fact kind for its declared Taxonomy version.
 
-## 11. Structured explanationへの入力境界
+## 11. Input boundary for structured explanations
 
-[Recommendation Structured Explanation仕様](recommendation-explanation.md)は、本仕様から次を入力として受け取る。
+The [Recommendation Structured Explanation Specification](recommendation-explanation.md) receives the following inputs from this specification:
 
 - stable reason code
-- effectとactual decision role
-- typed fact kindとexact value
-- kind付きentity reference
+- effect and actual decision role
+- typed fact kind and exact value
+- kind-qualified entity reference
 - ranking rule/factor reference
-- subject、winner、alternativeの関係
-- set membershipとresource feasibility witness
-- Taxonomy versionとRanking algorithm versionの分離
+- relationships among subject, winner, and alternative
+- set membership and resource-feasibility witnesses
+- separation of Taxonomy version and Ranking algorithm version
 
-Structured Explanation仕様と[Recommendation Interface Contract仕様](recommendation-interface.md)が固定するもの:
+The Structured Explanation Specification and [Recommendation Interface Contract Specification](recommendation-interface.md) define the following:
 
-- expression ASTのnode、operator、evaluation
-- reason occurrence間の親子関係とdecision trace
-- comparison ID、fact ID、rule application ID
-- description key、parameter、template、locale、fallback text
-- JSON field、schema、ordering、deduplication、truncation
+- expression-AST nodes, operators, and evaluation
+- parent-child relationships among reason occurrences and the decision trace
+- comparison IDs, fact IDs, and rule-application IDs
+- description keys, parameters, templates, locales, and fallback text
+- JSON fields, schemas, ordering, deduplication, and truncation
 
-後続taskはcodeの発生predicateやeffectを無言で変更してはならない。自然言語descriptionは[Structured Explanation仕様](recommendation-explanation.md)に従い、code、typed fact、comparison、decision traceから決定的に導出し、description textをranking inputへ戻してはならない。
+Subsequent tasks MUST NOT silently change the occurrence predicate or effect of a code. Following the [Structured Explanation Specification](recommendation-explanation.md), natural-language descriptions are deterministically derived from codes, typed facts, comparisons, and the decision trace; description text MUST NOT feed back into ranking input.
 
 ## 12. Invariants
 
-Reason生成は少なくとも次を検査する。
+Reason generation verifies at least all of the following:
 
-1. reason codeが宣言Taxonomy versionへ登録されている
-2. codeが要求するtyped factとentity referenceが欠けていない
-3. codeの発生predicateをfactから再評価できる
-4. effectとroleがtaxonomyで許可された組合せである
-5. ready taskだけがrecommendation reasonを持つ
-6. 各ready taskがexactly oneのset membership outcomeを持つ
-7. `recommended_set_selected` task集合が`R`と一致する
-8. `recommended_set_feasible`がfalseのresultを成功扱いにしない
-9. tierとrequired/forbidden reasonが第8章のmatrixと一致する
-10. set exclusionに因果reasonと、必要なalternative/rule参照がある
-11. 未登録negative factから`discouraged`を生成しない
-12. 同じsnapshot、options、Ranking algorithm version、Taxonomy versionから同じreason multisetとroleを返す
+1. The reason code is registered for the declared Taxonomy version.
+2. Required typed facts and entity references for the code are present.
+3. The fact can be used to re-evaluate the occurrence predicate of the code.
+4. The effect/role combination is permitted by the taxonomy.
+5. Only ready tasks have recommendation reasons.
+6. Every ready task has exactly one set-membership outcome.
+7. The set of `recommended_set_selected` tasks equals `R`.
+8. A result where `recommended_set_feasible` is false is not treated as successful.
+9. Tiers and required/prohibited reasons match the matrix in section 8.
+10. Set exclusion has a causal reason and any required alternative/rule reference.
+11. Do not generate `discouraged` from an unregistered negative fact.
+12. The same snapshot, options, Ranking algorithm version, and Taxonomy version return the same reason multiset and roles.
 
-違反はdescription欠落として黙って継続せず、analysis invariant failureとして扱う。具体的diagnostic codeと外部schemaは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
+Do not continue silently by treating a violation as a missing description; treat it as an analysis invariant failure. The [Recommendation Interface Contract Specification](recommendation-interface.md) defines concrete diagnostic codes and the external schema.
 
-## 13. 本sliceのacceptance
+## 13. Acceptance for this slice
 
-- stable lower snake case codeと不変な意味を定義した
-- codeごとの発生条件、effect、許可roleを定義した
-- typed fact categoryとkind付きentity参照を定義した
-- recommended set inclusion/exclusionを因果reasonへ接続した
-- 4 tierの必須reasonと禁止reasonを定義した
-- ranking factor固有意味をRanking Policyへ分離した
-- 未model化のrelease semantics、rework risk、information sufficiencyを生成禁止にした
-- Taxonomy versionとunknown codeの互換性を定義した
-- Structured Explanation Modelへ渡す入力と、そこで初めて決める事項を分離した
-- 自然言語description、JSON schema、interface、codeを変更していない
+- Stable lower snake case codes and invariant meanings are defined.
+- Occurrence predicates, effects, and permitted roles are defined for every code.
+- Typed fact categories and kind-qualified entity references are defined.
+- Recommended-set inclusion/exclusion is connected to causal reasons.
+- Required and prohibited reasons are defined for all four tiers.
+- Ranking-factor-specific meaning is separated into the Ranking Policy.
+- Generation of unmodeled release semantics, rework risk, and information sufficiency is prohibited.
+- Taxonomy versioning and unknown-code compatibility are defined.
+- Inputs passed to the Structured Explanation Model are separated from matters first determined there.
+- Natural-language descriptions, JSON schemas, interfaces, and code are unchanged.

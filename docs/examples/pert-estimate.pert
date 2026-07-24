@@ -1,26 +1,26 @@
 project PERT_ESTIMATE:
   version 1
-  title "三点見積りの直線計画"
+  title "Linear three-point-estimate plan"
   duration_unit day
   finish DONE
 
 milestone NOW:
-  title "現在"
+  title "Now"
   state reached
 
 milestone DESIGNED:
-  title "設計完了"
+  title "Design complete"
 
 milestone DONE:
-  title "完了"
+  title "Done"
 
 task DESIGN NOW -> DESIGNED:
-  title "設計する"
+  title "Design"
   estimate:
     optimistic 1d
     most_likely 2d
     pessimistic 4d
 
 task BUILD DESIGNED -> DONE:
-  title "実装する"
+  title "Implement"
   duration 3d

@@ -1,74 +1,74 @@
-# Recommendation Interface Contract 仕様
+# Recommendation Interface Contract Specification
 
-- 文書状態: Normative 1.0
+- Document status: Normative 1.0
 - Recommendation interface version: 1
 - Target schema: `Perttool.NextResult.v3`
-- 作成日: 2026-07-22
-- 対応要件: [../requirements.md](../requirements.md)
+- Created: 2026-07-22
+- Related requirements: [../requirements.md](../requirements.md)
 - Current CLI interface: [interfaces.md](interfaces.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Human override: [recommendation-override.md](recommendation-override.md)
-- 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
-## 1. 目的
+## 1. Purpose
 
-本仕様は、normal recommendationをCore API、CLI JSON、CLI textへ同じ意味で公開するinterface contractを固定する。AIが`dag next --format json`の1 resultだけから、現在開始すべきtask、他taskのtier、比較対象、適用rule、exact fact、decision traceを取得できることを目的とする。
+This specification fixes the interface contract for exposing a normal recommendation with the same meaning through the Core API, CLI JSON, and CLI text. Its purpose is to enable an AI to obtain, from one `dag next --format json` result, the task to start now, the tier of every other task, comparison targets, applicable rules, exact facts, and the decision trace.
 
-次を定義する。
+It defines the following:
 
-- Core recommendation typeと既存`NextResult`への接続
-- `Perttool.NextResult.v3`のwire schema
-- typed value、entity reference、expression、traceのencoding
-- stable description keyから生成するcanonical English text
-- CLI textのsummary layoutとCLI JSONのcomplete graph
-- `NextResult.v2`からのmigration
-- unknown version、invariant failure、determinismの境界
+- Core recommendation types and their connection to the existing `NextResult`
+- the wire schema for `Perttool.NextResult.v3`
+- encoding for typed values, entity references, expressions, and traces
+- canonical English text generated from stable description keys
+- the CLI text summary layout and the complete CLI JSON graph
+- migration from `NextResult.v2`
+- boundaries for unknown versions, invariant failures, and determinism
 
-本仕様は設計契約であり、2026-07-23のMIG-04でCore、CLI JSON/text、help、packageへatomicに実装された。MIG-05のread-only human override validation、MIG-06の5 plan shadow、MIG-07のnormal AI task selection authority採用とunknown-version safe stop dry-runも完了した。Human override apply/auditは別gateであり、v3公開やoverride artifact生成だけから解禁しない。
+This specification is a design contract and was implemented atomically in the Core, CLI JSON/text, help, and package by MIG-04 on 2026-07-23. MIG-05 read-only human-override validation, MIG-06 five-plan shadowing, and MIG-07 adoption of normal AI task-selection authority and the unknown-version safe-stop dry run are also complete. Human-override apply/audit is gated separately and is not enabled merely by publishing v3 or generating an override artifact.
 
-## 2. 規範上の位置
+## 2. Normative position
 
-意味や設計が競合する場合は次の順で解決する。
+Resolve semantic or design conflicts in the following order:
 
-1. `docs/requirements.md`のMust requirement
-2. recommendation tierは[Recommendation Semantics仕様](recommendation.md)
-3. 選択順とruleは[Recommendation Ranking Policy仕様](recommendation-ranking.md)
-4. reason codeは[Recommendation Reason Taxonomy仕様](recommendation-reasons.md)
-5. fact、expression、trace、description keyは[Recommendation Structured Explanation仕様](recommendation-explanation.md)
-6. 本仕様
-7. 現行[CLI Interface仕様](interfaces.md)の共通CLI、diagnostic、stream規則
-8. basic design、example、test、help、implementation
+1. Must requirements in `docs/requirements.md`
+2. recommendation tiers in the [Recommendation Semantics specification](recommendation.md)
+3. selection order and rules in the [Recommendation Ranking Policy specification](recommendation-ranking.md)
+4. reason codes in the [Recommendation Reason Taxonomy specification](recommendation-reasons.md)
+5. facts, expressions, traces, and description keys in the [Recommendation Structured Explanation specification](recommendation-explanation.md)
+6. this specification
+7. common CLI, diagnostic, and stream rules in the current [CLI Interface specification](interfaces.md)
+8. basic design, examples, tests, help, and implementation
 
-本仕様はranking、tier、reason codeの意味を再定義しない。現行Interface v2の共通result、CLI stream、exit codeは、明示したv3差分以外そのまま継承する。
+This specification does not redefine the meaning of rankings, tiers, or reason codes. It inherits the common results, CLI streams, and exit codes of the current Interface v2 unchanged, except for explicitly stated v3 differences.
 
 ## 3. Scope
 
-対象:
+In scope:
 
-- `dag next`のnormal recommendation
-- actual `ready` taskの`start` action
-- complete recommendation graphを持つCLI JSON
-- 全ready taskのtierとprimary reasonを示すCLI text
-- Coreとadapterが共有するstable typeとordering
-- pre-release中の`NextResult.v2`からv3への一回のmigration
+- normal recommendations from `dag next`
+- the `start` action for actual `ready` tasks
+- CLI JSON containing the complete recommendation graph
+- CLI text showing the tier and primary reason for every ready task
+- stable types and ordering shared by the Core and adapters
+- a one-time migration from the pre-release `NextResult.v2` to v3
 
-対象外:
+Out of scope:
 
-- recommendation algorithmの実装
-- human overrideの入力、永続化、audit result
-- non-ready taskのupcoming explanationの置き換え
-- MCP、LSP、provider固有tool schema
-- localized template catalogとlocale選択option
-- graph pagination、streaming、partial result query
-- byte単位のhard output limit
-- backward-compatibleなv2同時出力mode
+- implementation of the recommendation algorithm
+- human-override input, persistence, and audit results
+- replacement of upcoming explanations for non-ready tasks
+- MCP, LSP, and provider-specific tool schemas
+- localized template catalogs and a locale-selection option
+- graph pagination, streaming, and partial-result queries
+- a hard output limit measured in bytes
+- a backward-compatible v2 parallel-output mode
 
 ## 4. Version identity
 
-Version 1の組合せを次とする。
+Version 1 consists of the following combination:
 
 ```text
 next_schema_version                = Perttool.NextResult.v3
@@ -82,13 +82,13 @@ description_registry_version      = 1
 description_locale                = en
 ```
 
-これらは別々の互換性境界であり、1つの`version` fieldへ畳み込まない。`schema_version`はwire shape、algorithm versionは選択結果、taxonomy versionはreason vocabulary、explanation/expression versionはtrace semantics、description registryとlocaleは派生textを識別する。
+These are separate compatibility boundaries and MUST NOT be collapsed into one `version` field. `schema_version` identifies wire shape, the algorithm version identifies selection results, the taxonomy version identifies the reason vocabulary, explanation/expression versions identify trace semantics, and the description registry and locale identify derived text.
 
 ## 5. Core API contract
 
 ### 5.1 Type names
 
-Core/Application layerは少なくとも次のstable conceptual typeを持つ。
+The Core/Application layer has at least the following stable conceptual types:
 
 ```text
 NextResultV3
@@ -107,29 +107,29 @@ RecommendationProvenance
 RecommendationExplanationStatus
 ```
 
-TypeScript実装ではrepository規約に従ってpropertyをcamelCase、JSON adapterではsnake_caseに写像する。Type名とpropertyの意味をadapterごとに再定義しない。
+In the TypeScript implementation, map properties to camelCase in accordance with repository conventions; in the JSON adapter, map them to snake_case. Do not redefine the meaning of type names or properties per adapter.
 
-### 5.2 Purityとcompleteness
+### 5.2 Purity and completeness
 
-`selectNextTasks(text, options)`はrecommendation実装後に`NextResultV3`を返し、I/O、現在時刻、locale lookup、network lookupを行わない。Recommendation calculationは同じparse/semantic/analysis resultを使い、CLI rendererがrankingを再実装しない。
+After recommendation implementation, `selectNextTasks(text, options)` returns `NextResultV3` and performs no I/O, current-time lookup, locale lookup, or network lookup. Recommendation calculation uses the same parse/semantic/analysis result, and the CLI renderer does not reimplement ranking.
 
-Coreの`RecommendationAnalysis`はStructured Explanation仕様のtier必須trace、minimal comparison witness、全resource conflict witness、発生したcontributing/tie evidenceをすべて保持する。Core typeをtext表示量に合わせて切り詰めない。
+Core `RecommendationAnalysis` retains every tier-required trace, minimal comparison witness, resource-conflict witness, and emitted contributing/tie evidence required by the Structured Explanation specification. Do not truncate Core types to fit the amount of displayed text.
 
-### 5.3 Existing resultとの直交性
+### 5.3 Orthogonality to existing results
 
-`NextResultV3`はv2のclassification、`runnable_now`、resource rejection、upcoming explanationを保持し、新規root field `recommendation`を追加する。
+`NextResultV3` retains v2 classification, `runnable_now`, resource rejections, and upcoming explanations, and adds the new root field `recommendation`.
 
-- `groups.ready`はeligibilityであり、recommended setではない
-- `groups.runnable_now`は現行scheduler selectionであり、recommended setではない
-- `tasks[].resource_rejections`は`runnable_now`のwitnessであり、recommendation conflictではない
-- `tasks[].explanation`はupcoming dependency explanationであり、recommendation traceではない
-- recommendationはroot `recommendation`だけを正本とし、既存field名を再利用しない
+- `groups.ready` represents eligibility, not the recommended set.
+- `groups.runnable_now` represents current scheduler selection, not the recommended set.
+- `tasks[].resource_rejections` witnesses `runnable_now`; it is not a recommendation conflict.
+- `tasks[].explanation` is an upcoming dependency explanation, not a recommendation trace.
+- `recommendation` is authoritative only at root `recommendation`; do not reuse existing field names.
 
 ## 6. Common wire primitives
 
 ### 6.1 Entity reference
 
-Entity referenceは次のobjectとする。
+An entity reference is the following object:
 
 ```text
 kind  "project" | "task" | "milestone" | "gate" | "resource" |
@@ -137,11 +137,11 @@ kind  "project" | "task" | "milestone" | "gate" | "resource" |
 id    string
 ```
 
-裸のID stringをkind付きreferenceの代用にしない。既存のtask ID配列などv2由来fieldは互換性のためstringのまま保持する。
+Do not use a bare ID string as a substitute for a reference with a kind. Keep v2-derived fields, such as existing task-ID arrays, as strings for compatibility.
 
 ### 6.2 Typed value
 
-Scalar valueはtagged unionとする。
+Scalar values are a tagged union:
 
 ```text
 {type: "boolean", value: boolean}
@@ -151,7 +151,7 @@ Scalar valueはtagged unionとする。
 {type: "entity", value: RecommendationEntityReference}
 ```
 
-Collection valueは同じscalar typeだけを含む。
+Collection values contain only values of the same scalar type:
 
 ```text
 {type: "list", item_type: string, items: RecommendationScalarValue[]}
@@ -160,11 +160,11 @@ Collection valueは同じscalar typeだけを含む。
  entries: [{key: RecommendationScalarValue, value: RecommendationScalarValue}]}
 ```
 
-IntegerとRationalをJSON numberで返さない。Setとmap entryはStructured Explanation仕様のcanonical orderで並べる。Duplicate set itemまたはmap keyを許可しない。
+Do not return Integer or Rational values as JSON numbers. Order set and map entries in the canonical order defined by the Structured Explanation specification. Do not permit duplicate set items or map keys.
 
 ### 6.3 Unit
 
-Factの`unit`は次のいずれか、または`null`とする。
+A fact's `unit` is one of the following or `null`:
 
 ```text
 {kind: "duration", value: "day" | "hour" | "point"}
@@ -173,7 +173,7 @@ Factの`unit`は次のいずれか、または`null`とする。
 null
 ```
 
-Boolean、enum、entity referenceには`unit=null`を要求する。IntegerまたはRationalでも無次元countは`unit=null`とする。
+Require `unit=null` for Boolean, enum, and entity-reference values. A dimensionless count also has `unit=null`, even when it is an Integer or Rational.
 
 ### 6.4 Provenance
 
@@ -186,19 +186,19 @@ producer            {id: string, version: string}
 source_span         Span|null
 ```
 
-`source_span`はdocument上の1箇所へ直接対応するfactだけで使用する。Derived factへ推測したspanを付けない。`source_digest`はresult rootと一致しなければならない。
+Use `source_span` only for a fact that directly corresponds to one location in a document. Do not attach an inferred span to a derived fact. `source_digest` MUST match the result root.
 
 ### 6.5 Record ID encoding
 
-Decision graph内のrecord IDは次の形とする。
+Record IDs in the decision graph have the following form:
 
 ```text
 rec:<record_kind>:<semantic_component>[:<semantic_component>...]
 ```
 
-`record_kind`は`decision|step|fact|comparison|reason|description`のいずれかとする。ComponentはStructured Explanation仕様のsemantic identity順に並べ、非適用値は`-`、canonical occurrence indexは0以上のdecimalとする。Component内でASCII unreserved `A-Z a-z 0-9 - . _ ~`以外のUTF-8 byteを`%HH`のuppercase percent encodingへ変換する。Delimiter `:`をcomponentから未escapeで出さない。
+`record_kind` is one of `decision|step|fact|comparison|reason|description`. Order components by the semantic identity order in the Structured Explanation specification; use `-` for an inapplicable value and a decimal integer of zero or greater for the canonical occurrence index. Convert every UTF-8 byte other than ASCII unreserved `A-Z a-z 0-9 - . _ ~` within a component to uppercase `%HH` percent encoding. Do not emit delimiter `:` unescaped from a component.
 
-例:
+Examples:
 
 ```text
 rec:decision:task:TASK_A
@@ -208,13 +208,13 @@ rec:reason:TASK_A:recommended_set_selected:decisive:0
 rec:description:TASK_A:recommendation.summary.recommended:0
 ```
 
-Random UUID、array indexだけのID、locale text、display value、source offsetをrecord IDへ使用しない。
+Do not use random UUIDs, IDs consisting only of array indexes, locale text, display values, or source offsets as record IDs.
 
 ## 7. `Perttool.NextResult.v3`
 
-### 7.1 Root差分
+### 7.1 Root delta
 
-v3 rootはv2の全fieldに次を追加する。
+The v3 root adds the following to every v2 field:
 
 ```text
 schema_version                    "Perttool.NextResult.v3"
@@ -222,7 +222,7 @@ recommendation_interface_version  1
 recommendation                    RecommendationAnalysis
 ```
 
-`recommendation`は成功した`dag next` resultで常に存在する。Ready taskが0件でも省略せず、empty recommended setとresult-level feasibility decisionを返す。
+`recommendation` is always present in a successful `dag next` result. Do not omit it when there are zero ready tasks; return an empty recommended set and a result-level feasibility decision.
 
 ### 7.2 RecommendationAnalysis
 
@@ -248,13 +248,13 @@ descriptions                   RecommendationDescription[]
 explanation_status             RecommendationExplanationStatus
 ```
 
-`optimal=false`はheuristicであることを示す。Field名を`score`、`best`、`optimal`などへ言い換えてglobal optimumを暗示しない。
+`optimal=false` indicates that the result is heuristic. Do not rename field names to `score`, `best`, `optimal`, or similar terms that imply a global optimum.
 
-`recommended_task_ids`はRanking Policyのrecommended setをscan orderで返す。Setの意味に暗黙の実行順を与えない。`task_decisions`はすべてのactual ready taskについてexactly one存在し、non-ready taskのdecisionを含まない。
+`recommended_task_ids` returns the recommended set from the Ranking Policy in scan order. Do not give the set's meaning an implicit execution order. `task_decisions` contains exactly one decision for every actual ready task and no decision for a non-ready task.
 
 ### 7.3 Explanation status
 
-CLI JSON v3はcomplete graphだけを返す。
+CLI JSON v3 returns only complete graphs:
 
 ```text
 level                     "full"
@@ -269,7 +269,7 @@ omitted_counts:
   descriptions            0
 ```
 
-Producerはsizeを理由に配列を黙って省略せず、上記固定値を満たせないresultを成功扱いにしない。
+The producer does not silently omit arrays because of size and does not treat a result that cannot satisfy the fixed values above as successful.
 
 ## 8. Decision graph wire schema
 
@@ -284,7 +284,7 @@ step_ids                   string[]
 reason_occurrence_ids      string[]
 ```
 
-`joint_feasibility_fact_id`は`startFeasible(R) == true`のfactを参照する。Recommended setがemptyでもfactを省略しない。
+`joint_feasibility_fact_id` refers to the fact `startFeasible(R) == true`. Do not omit the fact when the recommended set is empty.
 
 ### 8.2 Task decision
 
@@ -304,7 +304,7 @@ summary_description_id           string
 description_ids                  string[]
 ```
 
-`recommended_set_member=true`と`tier=recommended`は同値でなければならない。`primary_higher_priority_task_id`の適用条件はStructured Explanation仕様を正とし、非適用時に上位taskを捏造しない。
+`recommended_set_member=true` and `tier=recommended` MUST be equivalent. The Structured Explanation specification is authoritative for the applicability conditions of `primary_higher_priority_task_id`; do not fabricate a higher-priority task when it is inapplicable.
 
 ### 8.3 Decision step
 
@@ -325,7 +325,7 @@ comparison_ids                string[]
 depends_on_step_ids           string[]
 ```
 
-`rule.kind`は`policy_rule`とする。`depends_on_step_ids`は同じdecision graph内の前方stepだけを参照する。
+`rule.kind` is `policy_rule`. `depends_on_step_ids` refers only to preceding steps in the same decision graph.
 
 ### 8.4 Fact
 
@@ -338,18 +338,18 @@ unit        RecommendationUnit|null
 provenance  RecommendationProvenance
 ```
 
-`kind`は宣言Taxonomy/Ranking/Explanation versionで登録済みでなければならない。表示用decimalを`value`へ入れない。
+`kind` MUST be registered in the declared Taxonomy/Ranking/Explanation version. Do not put a display decimal in `value`.
 
 ### 8.5 Expression
 
-Termは次のいずれかとする。
+A term is one of the following:
 
 ```text
 {kind: "fact", fact_id: string}
 {kind: "literal", value: RecommendationValue, unit: RecommendationUnit|null}
 ```
 
-Expressionは次のいずれかとする。
+An expression is one of the following:
 
 ```text
 {kind: "compare", left: Term,
@@ -360,7 +360,7 @@ Expressionは次のいずれかとする。
 {kind: "any", children: RecommendationExpression[]}
 ```
 
-Unknown nodeやrelationを既知nodeへ変換しない。`all`と`any`のchildrenは1件以上でなければならない。
+Do not convert an unknown node or relation to a known node. `all` and `any` MUST each have one or more children.
 
 ### 8.6 Comparison
 
@@ -378,7 +378,7 @@ contributing_rule_ids      string[]
 fact_ids                   string[]
 ```
 
-Active allocationだけのresource rejectionではtask間fieldを`null`とし、active blockerをfactで参照する。Empty stringや対象task自身をwinnerとして補完しない。
+For a resource rejection caused only by active allocation, set inter-task fields to `null` and refer to the active blocker through a fact. Do not fill in an empty string or the subject task itself as the winner.
 
 ### 8.7 Reason occurrence
 
@@ -395,7 +395,7 @@ comparison_ids             string[]
 description_id             string|null
 ```
 
-`code`はTaxonomy version 1.0のASCII lower snake case identifierである。Task-level reasonの`subject.kind`は`task`、result-levelの`recommended_set_feasible`は`derived_set`とする。Reason-level description keyがregistryにある場合だけ`description_id`をnon-nullにし、codeから表示文やrule IDを推測しない。各task decisionの`summary_description_id`は常にnon-nullである。
+`code` is an ASCII lower-snake-case identifier in Taxonomy version 1.0. `subject.kind` is `task` for a task-level reason, while result-level `recommended_set_feasible` uses `derived_set`. Set `description_id` to non-null only when the registry contains a reason-level description key; do not infer display text or a rule ID from the code. Every task decision's `summary_description_id` is always non-null.
 
 ### 8.8 Description
 
@@ -412,27 +412,27 @@ text                       string
 render_status              "rendered"
 ```
 
-Parameterは名前のASCII辞書順で並べる。`text`はkeyとtyped parameterから導出するconvenience projectionであり、decision inputではない。Producerが登録済みkeyのtemplateを持たない場合はraw fallbackを成功resultへ入れず、invariant failureとする。
+Order parameters by ASCII lexical order of their names. `text` is a convenience projection derived from the key and typed parameters, not a decision input. If the producer lacks a template for a registered key, do not place a raw fallback in a successful result; treat it as an invariant failure.
 
 ## 9. Canonical description rendering
 
-### 9.1 Localeとvalue rendering
+### 9.1 Locale and value rendering
 
-Interface version 1はcanonical locale `en`だけを持ち、locale optionを追加しない。将来localeを追加しても同じkey、parameter、tier、traceを変更しない。
+Interface version 1 has only the canonical locale `en` and adds no locale option. Adding locales in the future must not change the same keys, parameters, tiers, or traces.
 
 Canonical value rendering:
 
 - entity reference: stable `id`
-- boolean: `true`または`false`
-- integer: leading zeroのないdecimal
-- Rational: denominatorが1ならnumerator、他は`numerator/denominator`
-- duration unit: `d`、`h`、`p`
-- resource unit: 対応resource IDを` <RESOURCE_ID>-units`として後置
-- enum: 登録済みvalueをそのまま使用
-- list/set: `[item1, item2]`、emptyは`[]`
-- relation: registry valueをそのまま使用
+- boolean: `true` or `false`
+- integer: decimal without a leading zero
+- Rational: numerator when the denominator is 1; otherwise `numerator/denominator`
+- duration unit: `d`, `h`, `p`
+- resource unit: append the corresponding resource ID as ` <RESOURCE_ID>-units`
+- enum: use the registered value as is
+- list/set: `[item1, item2]`; use `[]` when empty
+- relation: use the registry value as is
 
-Description textでは`--precision`のrounded displayを使用せず、exact valueを保持する。
+Description text must retain exact values and must not use the rounded display from `--precision`.
 
 ### 9.2 Version 1 English templates
 
@@ -448,11 +448,11 @@ Description textでは`--precision`のrounded displayを使用せず、exact val
 | `recommendation.reason.policy_deferral` | `{task_id} is deferred by policy rule {rule_id}.` |
 | `recommendation.reason.negative_fact` | `{task_id} is discouraged because {negative_fact_kind} applies under rule {rule_id}.` |
 
-Template punctuation、ASCII space、parameter orderはregistry version 1の一部とする。Task titleやresource titleをtemplateへ自動挿入せず、stable IDを常に表示する。
+Template punctuation, ASCII spaces, and parameter order are part of registry version 1. Do not automatically insert task titles or resource titles into templates; always display stable IDs.
 
 ## 10. CLI text contract
 
-`dag next`のtextは既存headerとvelocity表示の後、`ACTIVE`より前に次のsummary sectionを追加する。
+After the existing header and velocity display, and before `ACTIVE`, the text output of `dag next` adds the following summary sections.
 
 ```text
 RECOMMENDATION
@@ -479,99 +479,99 @@ DISCOURAGED START
 
 Rules:
 
-- 4 tier sectionを固定順で常に表示する
-- taskはcomplete candidate orderで、各ready taskをexactly one sectionへ表示する
-- empty sectionは`-`とする
-- primary reasonはdecisive reason code、ruleはdecisive rule IDを表示する
-- higher-priority taskが非適用なら`-`、blockerが複数ならstable orderのcomma listとする
-- `why:`はsummary descriptionのcanonical English textを使用する
-- recommended setがemptyなら`RECOMMENDED SET -`とする
-- `optimal=false`とsummaryがcomplete traceではないことを省略しない
-- 既存`ACTIVE`、`RUNNABLE NOW`、`READY / WAITING RESOURCE`、`BLOCKED NOW`、`UPCOMING` sectionを削除またはrecommendation tierへ置換しない
+- Always display the four tier sections in the fixed order.
+- Display each ready task in exactly one section, in complete candidate order.
+- Use `-` for an empty section.
+- Display the decisive reason code as the primary reason and the decisive rule ID as the rule.
+- Use `-` when no higher-priority task applies; use a comma-separated list in stable order for multiple blockers.
+- Use the canonical English text of the summary description for `why:`.
+- Use `RECOMMENDED SET -` when the recommended set is empty.
+- Do not omit `optimal=false` or the statement that the summary is not a complete trace.
+- Do not remove or replace the existing `ACTIVE`, `RUNNABLE NOW`, `READY / WAITING RESOURCE`, `BLOCKED NOW`, or `UPCOMING` sections with recommendation tiers.
 
-Text summaryからraw fact/ASTを復元させない。AIとautomationがdecision traceを必要とする場合は同じcommandの`--format json`を使用する。
+Do not enable raw facts or ASTs to be reconstructed from the text summary. AI and automation that require the decision trace must use `--format json` on the same command.
 
-## 11. JSON completeness、size、pagination
+## 11. JSON completeness, size, and pagination
 
-Version 1はdeterminismとexplainabilityを優先し、CLI JSONを常に`level=full`、`complete=true`で返す。
+Version 1 prioritizes determinism and explainability and always returns CLI JSON with `level=full` and `complete=true`.
 
-- explanation levelを変更するCLI optionを持たない
-- graph paginationを持たない
-- byte limitまたはrecord count limitを持たない
-- task filterで他taskのcomparison witnessを欠落させない
-- terminal width、TTY、environment variableで内容を変えない
+- It has no CLI option that changes the explanation level.
+- It has no graph pagination.
+- It has no byte limit or record-count limit.
+- A task filter must not omit comparison witnesses for other tasks.
+- Terminal width, TTY, and environment variables must not change its contents.
 
-Result sizeはready task数、発生rule、fact、resource witnessに応じて増加する。将来size制御を追加する場合、cross-reference closure、continuation tokenのsnapshot binding、decisive chain completenessを別interface versionで固定する。Version 1 producerが独自limitでtruncated graphを返してはならない。
+Result size increases according to the number of ready tasks, triggered rules, facts, and resource witnesses. If size controls are added in the future, a separate interface version must fix cross-reference closure, snapshot binding for continuation tokens, and decisive-chain completeness. A Version 1 producer must not return a truncated graph due to its own limit.
 
-CLI textは明示的なsummary projectionであり、JSON graphのtruncationではない。`complete=false`とmachine trace導線をheaderへ表示する。
+CLI text is an explicit summary projection, not truncation of the JSON graph. Display `complete=false` and the machine-trace route in the header.
 
-## 12. Orderingとdeterminism
+## 12. Ordering and determinism
 
-JSON arrayは次の順を使用する。
+JSON arrays use the following order.
 
-1. `recommended_task_ids`: Ranking Policyのscan order
-2. `task_decisions`: complete candidate order、candidateでないready taskはtask ID順
-3. `decision_steps`: phase、rule order、step ID
-4. `facts`: fact kind、subject kind、subject ID、fact ID
-5. `comparisons`: scope、subject task、alternative task、decisive rule、comparison ID
-6. `reason_occurrences`: decision phase、rule order、subject、alternative、code、occurrence ID
-7. `descriptions`: source task order、key、description ID
-8. reference ID配列: semantic ruleが順序を持つ場合はその順、他はstable ID順
+1. `recommended_task_ids`: scan order from the Ranking Policy
+2. `task_decisions`: complete candidate order; task ID order for ready tasks that are not candidates
+3. `decision_steps`: phase, rule order, step ID
+4. `facts`: fact kind, subject kind, subject ID, fact ID
+5. `comparisons`: scope, subject task, alternative task, decisive rule, comparison ID
+6. `reason_occurrences`: decision phase, rule order, subject, alternative, code, occurrence ID
+7. `descriptions`: source task order, key, description ID
+8. reference ID arrays: the order defined by the semantic rule where it has one; stable ID order otherwise
 
-JSON object keyはschema記載順、末尾newlineあり、ANSIなしとする。同じdocument bytes、options、全version、tool versionからbyte-identical JSONとtextを返す。Description locale `en`は環境の`LANG`やtimezoneで変えない。
+JSON object keys use schema order, include a trailing newline, and contain no ANSI sequences. The same document bytes, options, all versions, and tool version must return byte-identical JSON and text. The description locale `en` must not vary with the environment's `LANG` or timezone.
 
-## 13. Unknown versionとconsumer safety
+## 13. Unknown versions and consumer safety
 
-Consumerは次を守る。
+Consumers must observe the following rules.
 
-- unknown `schema_version`をv2/v3として推測解釈しない
-- known schemaでもunknown tier enum、expression node、decisive reason code、decisive rule、model major versionを既知値へ変換しない
-- unknown optional contributing reasonだけで既知のtierを再分類しない
-- unknown decisive semanticsがあるtaskを自動開始しない
-- unknown objectとtyped valueを可能な限りlosslessに保持する
-- derived English `text`だけから欠けたauthorityを復元しない
+- Do not infer an unknown `schema_version` as v2 or v3.
+- Even for a known schema, do not map an unknown tier enum, expression node, decisive reason code, decisive rule, or model major version to a known value.
+- Do not reclassify a known tier solely because of an unknown optional contributing reason.
+- Do not automatically start a task with unknown decisive semantics.
+- Preserve unknown objects and typed values as losslessly as possible.
+- Do not reconstruct missing authority from derived English `text` alone.
 
-Producerは自身が宣言するversionでunknown code、key、node、relationを出力してはならない。Minor-compatible taxonomy追加を知らないconsumerはraw code/factを表示できるが、理解していないdecisive reasonを基に自動実行しない。
+Producers must not emit an unknown code, key, node, or relation for the version they declare. Consumers that do not know a minor-compatible taxonomy addition may display raw codes and facts, but must not automate an action based on a decisive reason they do not understand.
 
-## 14. Diagnosticsとexit code
+## 14. Diagnostics and exit codes
 
-Recommendation invariant failureには次のnamespaceを予約する。
+The following namespace is reserved for recommendation invariant failures.
 
-| Code | Severity | 意味 |
+| Code | Severity | Meaning |
 | --- | --- | --- |
-| `PTREC-301` | error | tier、set membership、decision trace、reference closureの不一致 |
-| `PTREC-302` | error | declared algorithm/taxonomy/model versionとcode、rule、fact、expressionが不一致 |
-| `PTREC-303` | error | description key、parameter、template、rendered textの不一致 |
+| `PTREC-301` | error | Mismatch among tier, set membership, decision trace, and reference closure |
+| `PTREC-302` | error | Mismatch between declared algorithm/taxonomy/model version and code, rule, fact, or expression |
+| `PTREC-303` | error | Mismatch among description key, parameters, template, and rendered text |
 
-これらはvalid user documentの入力errorではなくinternal invariant failureである。CLIは成功した`NextResult.v3`を出力せず、[CLI Interface仕様](interfaces.md)のinternal error exit `70`を使用する。Diagnosticには可能な範囲でdecision、task、fact、rule IDを`data`へ含めるが、stack trace、document全体、absolute pathを含めない。
+These are internal invariant failures, not input errors in a valid user document. The CLI must not emit a successful `NextResult.v3` and must use internal-error exit `70` from the [CLI Interface specification](interfaces.md). Where possible, diagnostics include decision, task, fact, and rule IDs in `data`, but must not include a stack trace, the entire document, or an absolute path.
 
-Ready taskが0件、recommended setがempty、全horizon taskがresource conflictであることは正常resultであり、`PTREC-*`を生成しない。
+Zero ready tasks, an empty recommended set, and resource conflicts for all horizon tasks are normal results and must not produce `PTREC-*`.
 
-## 15. `NextResult.v2`からのmigration
+## 15. Migration from `NextResult.v2`
 
-Recommendation実装を公開するlogical changeで`dag next`のdefault schemaをv2からv3へ上げる。
+The logical change that publishes the recommendation implementation raises the default schema of `dag next` from v2 to v3.
 
 | v2 | v3 |
 | --- | --- |
 | `schema_version=Perttool.NextResult.v2` | `schema_version=Perttool.NextResult.v3` |
-| recommendation fieldなし | required root `recommendation` |
-| `groups`と`tasks` | fieldと意味を維持 |
-| `tasks[].resource_rejections` | scheduler rejectionのまま維持 |
-| `tasks[].explanation` | upcoming dependency explanationのまま維持 |
-| textはoperational stateから開始 | recommendation summaryを先頭側へ追加 |
+| no recommendation field | required root `recommendation` |
+| `groups` and `tasks` | retain their fields and semantics |
+| `tasks[].resource_rejections` | retain scheduler rejections |
+| `tasks[].explanation` | retain the upcoming dependency explanation |
+| text starts with operational state | add the recommendation summary near the beginning |
 
 Migration rules:
 
-1. v2 fieldをrecommendationとして再解釈しない
-2. v3 consumerは`schema_version`を最初に検査する
-3. v2 consumerがv3を黙って受理することに依存しない
-4. `--schema-version 2`などのdual emission optionを追加しない
-5. implementation、help、Core/CLI JSON parity test、golden、package documentationを同じlogical changeで更新する
-6. pre-release中のbreaking migrationとしてCHANGELOGへ記録する
+1. Do not reinterpret v2 fields as recommendations.
+2. A v3 consumer checks `schema_version` first.
+3. Do not depend on a v2 consumer silently accepting v3.
+4. Do not add a dual-emission option such as `--schema-version 2`.
+5. Update implementation, help, Core/CLI JSON parity tests, goldens, and package documentation in the same logical change.
+6. Record this as a breaking migration during pre-release in the CHANGELOG.
 
 ## 16. Minimal JSON example
 
-次は参照形状を示す抜粋であり、complete resultではない。
+The following is an excerpt showing reference shapes; it is not a complete result.
 
 ```json
 {
@@ -624,58 +624,58 @@ Migration rules:
 }
 ```
 
-Actual resultは`result_decision`、全ready task decision、step、fact、comparison、reason、descriptionを含み、抜粋をcomplete resultとして出力してはならない。
+An actual result includes `result_decision`, every ready-task decision, steps, facts, comparisons, reasons, and descriptions. Do not emit the excerpt as a complete result.
 
-## 17. 後続設計taskへ送る事項
+## 17. Items handed to subsequent design tasks
 
 ### `NORMATIVE_EXAMPLES`
 
-[Recommendation規範例](../examples/recommendation.md)で次のgolden/test観点を固定した。
+[Normative recommendation examples](../examples/recommendation.md) fix the following golden and test perspectives.
 
-- v3 complete JSON goldenとtext summary golden
-- critical対priority、parallel recommended、horizon外allowed
-- selected blockerとactive-only blockerを区別するresource conflict
-- empty recommended set、ready task 0件
-- exact Rational、entity reference、expression evaluation、description rendering
-- v2 fieldの意味を維持するmigration test
-- `PTREC-301`から`PTREC-303`のinvariant test
+- v3 complete JSON goldens and text-summary goldens
+- critical versus priority, parallel recommended tasks, and allowed tasks outside the horizon
+- resource conflicts that distinguish selected blockers from active-only blockers
+- an empty recommended set and zero ready tasks
+- exact Rationals, entity references, expression evaluation, and description rendering
+- migration tests that retain the meaning of v2 fields
+- invariant tests for `PTREC-301` through `PTREC-303`
 
 ### `PROCESS_MIGRATION`
 
-[Recommendation実装・自己利用migration](../process/recommendation-migration.md)で次を固定した。
+[Recommendation implementation and self-use migration](../process/recommendation-migration.md) fix the following.
 
-- recommendation実装sliceのCoreからadapterまでの順序
-- v3切替時のCHANGELOG、help、consumer migration guide
-- AI development flowでJSON recommendationをtask選択authorityにするshadow/adoption gate
+- the order from Core through adapters for the recommendation implementation slice
+- the CHANGELOG, help, and consumer migration guide for the v3 switch
+- a shadow/adoption gate that makes JSON recommendations the task-selection authority in the AI development flow
 
-### [`HUMAN_OVERRIDE_CONTRACT`](recommendation-override.md)（確定）
+### [`HUMAN_OVERRIDE_CONTRACT`](recommendation-override.md) (decided)
 
-- normal `recommendation` graphを変更せずoverrideを別resultへ接続する方法
-- actor、reason、selected task、source recommendation identityの型
-- read-only recommendationとwrite/audit boundary
+- how to attach an override to a separate result without changing the normal `recommendation` graph
+- types for actor, reason, selected task, and source recommendation identity
+- the boundary between read-only recommendation and write/audit
 
-## 18. 本sliceのacceptance
+## 18. Acceptance for this slice
 
-- Core conceptual typeとv3 root fieldを定義した
-- typed value、unit、provenance、entity referenceのwire encodingを定義した
-- decision、step、fact、expression、comparison、reason、descriptionのfieldを固定した
-- canonical English templateとexact value renderingを定義した
-- text summaryとcomplete JSONの責務を分離した
-- v3ではpagination、size limit、truncationを採用しない判断を明示した
-- unknown decisive semanticsを自動実行しないconsumer ruleを定義した
-- recommendation invariant diagnosticとexit 70の境界を定義した
-- `NextResult.v2`からv3へのbreaking migrationを定義した
-- current interfaceとimplementationを変更していない
+- Defined Core conceptual types and the v3 root field.
+- Defined the wire encoding for typed values, units, provenance, and entity references.
+- Fixed fields for decisions, steps, facts, expressions, comparisons, reasons, and descriptions.
+- Defined canonical English templates and exact value rendering.
+- Separated responsibilities between the text summary and complete JSON.
+- Explicitly decided not to use pagination, size limits, or truncation in v3.
+- Defined the consumer rule that unknown decisive semantics must not be automated.
+- Defined the boundary between recommendation invariant diagnostics and exit 70.
+- Defined the breaking migration from `NextResult.v2` to v3.
+- Did not change the current interface or implementation.
 
 ## 19. Implementation status
 
-2026-07-23にMIG-04を完了した。
+MIG-04 was completed on 2026-07-23.
 
-- `selectNextTasks`はpublic `NextResultV3`とcomplete `RecommendationAnalysis`を返す
-- `recommendationAnalysisToJson`とCLIが同じsnake_case graphを返す
-- `dag next` default schemaを`Perttool.NextResult.v3`へ一回で切り替えた
-- textへ4 tier summary、`complete=false`、JSON導線を追加した
-- v2 operational fieldの意味をfixture baselineで維持した
-- complete empty JSON、text、Core/CLI parity、byte determinism、fail-closed、help、packageを自動検査へ固定した
+- `selectNextTasks` returns public `NextResultV3` and complete `RecommendationAnalysis`.
+- `recommendationAnalysisToJson` and the CLI return the same `snake_case` graph.
+- The default schema of `dag next` was switched to `Perttool.NextResult.v3` in a single change.
+- The text output adds four tier summaries, `complete=false`, and the JSON route.
+- Fixture baselines retain the meaning of v2 operational fields.
+- Automated checks cover complete empty JSON, text, Core/CLI parity, byte determinism, fail-closed behavior, help, and the package.
 
-Section 18は仕様策定slice当時の受け入れ記録である。「current interfaceとimplementationを変更していない」はその時点の履歴であり、MIG-04後の実装状態は本sectionを正とする。
+Section 18 is the acceptance record from the time this specification slice was drafted. “Did not change the current interface or implementation” is historical at that point; this section is authoritative for the implementation state after MIG-04.

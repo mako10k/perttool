@@ -1,37 +1,37 @@
 project ADVANCE_PARTIAL:
   version 1
-  title "部分合流のadvance前"
+  title "Before partial-join advance"
   duration_unit day
   finish RELEASED
 
 milestone NOW:
-  title "現在"
+  title "Now"
   state reached
 
 milestone A_DONE:
-  title "A側の前作業完了"
+  title "A-side prior work complete"
 
 milestone JOINED:
-  title "A/B合流"
+  title "A/B join"
 
 milestone RELEASED:
-  title "リリース"
+  title "Released"
 
 task BRANCH_A NOW -> A_DONE:
-  title "A側の前作業"
+  title "A-side prior work"
   duration 1d
   status done
 
 task A_JOIN_WORK A_DONE -> JOINED:
-  title "A側の合流作業"
+  title "A-side join work"
   duration 1d
   status done
 
 task BRANCH_B NOW -> JOINED:
-  title "B側の作業"
+  title "B-side work"
   duration 3d
   status active
 
 task RELEASE JOINED -> RELEASED:
-  title "リリースする"
+  title "Release"
   duration 1d

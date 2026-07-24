@@ -4,7 +4,7 @@ project ENGLISH_BASELINE:
   description "Migrate repository-maintained prose, bundled help, and diagnostics to the English baseline adopted by ADR 0004. The canonical surface inventory and Unicode allowlist are recorded in docs/process/english-surface-inventory.md. Remaining migration work is tracked by the current tasks. Runtime i18n, translation catalogs, locale negotiation, and translation of user-authored content remain outside this plan."
   as_of 2026-07-24
   duration_unit point
-  velocity 2p/1d
+  velocity 15p/1d
   finish ENGLISH_BASELINE_ACCEPTED
 
 resource DEVELOPERS:
@@ -39,6 +39,7 @@ milestone HELP_AND_USAGE_READY:
 
 milestone NORMATIVE_DOCS_READY:
   title "Normative documentation migrated"
+  state reached
 
 milestone PROCESS_GUIDANCE_READY:
   title "Process and agent guidance migrated"
@@ -81,19 +82,6 @@ task HELP_AND_USAGE SURFACE_INVENTORY_READY -> HELP_AND_USAGE_READY:
     DEVELOPERS 1
     CLI_SURFACE 1
 
-task NORMATIVE_DOCS SURFACE_INVENTORY_READY -> NORMATIVE_DOCS_READY:
-  title "Migrate requirements, design, specifications, and examples"
-  description |
-    Translate the canonical product requirements, basic design, normative
-    specifications, examples, and ADR indexes in bounded document groups.
-    Preserve requirement strength, terminology, anchors, links, examples, and
-    machine contract identifiers. Run documentation checks for every group.
-  duration 13p
-  priority 90
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
 
 task PROCESS_AND_GUIDANCE_DOCS NORMATIVE_DOCS_READY -> PROCESS_GUIDANCE_READY:
   title "Migrate process documentation and coding-agent guidance"

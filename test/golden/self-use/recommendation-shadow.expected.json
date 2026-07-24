@@ -63,35 +63,34 @@
       ]
     },
     "english-baseline": {
-      "source_digest": "sha256:16eb52f11d40d7c884d2bb6c46d3e8cd062559ebd66fd2df502152d270036c37",
+      "source_digest": "sha256:c822e9a3b9f7eff72359ff3dab84abd3c285ded4b92e06f3c6beb1ea8a50c458",
       "groups": {
         "active": [],
         "ready": [
           "RUNTIME_MESSAGES",
           "HELP_AND_USAGE",
-          "NORMATIVE_DOCS",
+          "PROCESS_AND_GUIDANCE_DOCS",
           "PERT_PLANS"
         ],
         "runnable_now": [
           "RUNTIME_MESSAGES",
-          "NORMATIVE_DOCS"
+          "PROCESS_AND_GUIDANCE_DOCS"
         ],
         "blocked_now": [],
         "upcoming": [
           "GOLDEN_UNICODE_AUDIT",
-          "ENGLISH_ACCEPTANCE",
-          "PROCESS_AND_GUIDANCE_DOCS"
+          "ENGLISH_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "NORMATIVE_DOCS"
+        "PROCESS_AND_GUIDANCE_DOCS"
       ],
       "manual_selected_task_ids": [
         "RUNTIME_MESSAGES",
-        "NORMATIVE_DOCS"
+        "PROCESS_AND_GUIDANCE_DOCS"
       ],
       "tiers": {
-        "NORMATIVE_DOCS": "recommended",
+        "PROCESS_AND_GUIDANCE_DOCS": "recommended",
         "RUNTIME_MESSAGES": "allowed",
         "HELP_AND_USAGE": "allowed",
         "PERT_PLANS": "deferred"
@@ -103,7 +102,7 @@
           "runnable_now": true,
           "precedence_critical": false,
           "schedule_critical": false,
-          "total_float": "16/1",
+          "total_float": "3/1",
           "resource_rejections": []
         },
         {
@@ -111,7 +110,7 @@
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": false,
-          "total_float": "16/1",
+          "total_float": "3/1",
           "resource_rejections": [
             {
               "resource_id": "CLI_SURFACE",
@@ -127,7 +126,7 @@
           ]
         },
         {
-          "id": "NORMATIVE_DOCS",
+          "id": "PROCESS_AND_GUIDANCE_DOCS",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -139,7 +138,7 @@
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "18/1",
+          "total_float": "5/1",
           "resource_rejections": [
             {
               "resource_id": "DEVELOPERS",
@@ -150,7 +149,7 @@
               "active_task_ids": [],
               "earlier_selected_task_ids": [
                 "RUNTIME_MESSAGES",
-                "NORMATIVE_DOCS"
+                "PROCESS_AND_GUIDANCE_DOCS"
               ]
             },
             {
@@ -161,7 +160,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "NORMATIVE_DOCS"
+                "PROCESS_AND_GUIDANCE_DOCS"
               ]
             },
             {
@@ -172,7 +171,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "NORMATIVE_DOCS"
+                "PROCESS_AND_GUIDANCE_DOCS"
               ]
             }
           ]

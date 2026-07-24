@@ -1,138 +1,138 @@
-# perttool DSL 文法仕様
+# perttool DSL Grammar Specification
 
-- 文書状態: Draft 0.5
+- Document status: Draft 0.5
 - Grammar version: 1
-- 作成日: 2026-07-21
-- 対応要件: [../requirements.md](../requirements.md)
-- 対応基本設計: [../basic-design.md](../basic-design.md)
+- Created: 2026-07-21
+- Related requirements: [../requirements.md](../requirements.md)
+- Related basic design: [../basic-design.md](../basic-design.md)
 - CLI interface: [interfaces.md](interfaces.md)
 - Mutation semantics: [mutation.md](mutation.md)
 
-## 1. 目的
+## 1. Purpose
 
-本書は、`.pert` 文書の字句規則、構文、block ごとの field、既定値、構文検査と意味検査の境界、source span、error recovery、formatting 契約を定義する。
+This document defines the lexical rules, syntax, fields for each block, defaults, the boundary between syntax and semantic validation, source spans, error recovery, and formatting contract for `.pert` documents.
 
-本書の EBNF と field table は grammar version 1 の規範である。代表的な正規文書は次を参照する。
+The EBNF and field tables in this document are normative for grammar version 1. See the following representative valid documents.
 
 - [minimal.pert](../examples/minimal.pert)
 - [parallel.pert](../examples/parallel.pert)
 
-## 2. 規範の優先順位
+## 2. Normative precedence
 
-文書間に不一致がある場合は、次の順で解消する。
+When documents disagree, resolve the discrepancy in the following order.
 
-1. `docs/requirements.md` の Must requirement
-2. 本書の grammar、field table、validation rule
-3. `docs/basic-design.md` の実装構造
+1. Must requirements in `docs/requirements.md`
+2. The grammar, field tables, and validation rules in this document
+3. The implementation structure in `docs/basic-design.md`
 4. `docs/examples/*.pert`
-5. CLI helpと将来adapter helpの表示内容
+5. The displayed content of CLI help and future adapter help
 
-不一致を発見した場合は、低い順位の artifact だけを場当たり的に直さず、同じ変更で必要な artifact と test を同期する。
+When a discrepancy is found, do not patch only the lower-precedence artifact; synchronize the necessary artifacts and tests in the same change.
 
-## 3. 設計原則
+## 3. Design principles
 
-- 行ベースとする
-- block は indentation で表す
-- top-level declaration は `project`、`resource`、`milestone`、`task`、`gate` に限定する
-- task と gate の endpoint は header に置き、edge であることを見た目で分かるようにする
-- 参照には title ではなく安定 ID を使う
-- field order と declaration order は意味に影響しない
-- 未知の field や keyword を黙って無視しない
-- 独立行 comment と blank line を CST に保持する
-- inline comment は grammar version 1 に含めない
-- formatter と parser が同じ grammar version を共有する
+- The language is line based.
+- Indentation represents blocks.
+- Top-level declarations are limited to `project`, `resource`, `milestone`, `task`, and `gate`.
+- Place task and gate endpoints in the header so that their nature as edges is visually apparent.
+- Use stable IDs, rather than titles, for references.
+- Field order and declaration order do not affect semantics.
+- Do not silently ignore unknown fields or keywords.
+- Preserve standalone comments and blank lines in the CST.
+- Inline comments are not part of grammar version 1.
+- The formatter and parser share the same grammar version.
 
-## 4. 文字とファイル
+## 4. Characters and files
 
 ### 4.1 encoding
 
-- file encoding は UTF-8 とする
-- UTF-8 BOM は file 先頭だけで受理する
-- BOM は意味を持たず、source-preserving operation では保持する
-- canonical serializer は BOM を出力しない
-- 不正な UTF-8 byte sequence は file read error とし、parser へ渡さない
+- File encoding is UTF-8.
+- A UTF-8 BOM is accepted only at the start of a file.
+- A BOM has no semantic meaning and is preserved by source-preserving operations.
+- The canonical serializer does not emit a BOM.
+- An invalid UTF-8 byte sequence is a file-read error and is not passed to the parser.
 
 ### 4.2 line ending
 
-- LF と CRLF を受理する
-- 1 文書内で LF と CRLF が混在する場合は warning とする
-- parser は最後の physical line に line ending がなくても受理する
-- lexer は grammar 上の処理のため EOF 直前に仮想 `NEWLINE` を置いてよい
-- 仮想 `NEWLINE` の source span は長さ 0 とする
-- source-preserving formatter は既存の主要 line ending を維持する
-- canonical serializer は LF と末尾 newline を使用する
+- Accept LF and CRLF.
+- Mixed LF and CRLF within one document is a warning.
+- The parser accepts a final physical line without a line ending.
+- The lexer may place a virtual `NEWLINE` immediately before EOF for grammar processing.
+- The virtual `NEWLINE` has a source span of length zero.
+- The source-preserving formatter retains the document's existing predominant line ending.
+- The canonical serializer uses LF and a final newline.
 
 ### 4.3 source position
 
-- 内部 offset、line、column は 0 始まりとする
-- offset と column は UTF-16 code unit 基準とする
-- CLI 表示では line と column を 1 始まりへ変換する
-- span は `[start, end)` の半開区間とする
-- raw file digest と file size は UTF-8 byte 列を対象にする
+- Internal offsets, lines, and columns are zero based.
+- Offsets and columns are measured in UTF-16 code units.
+- CLI output converts lines and columns to one-based values.
+- A span is the half-open interval `[start, end)`.
+- Raw file digests and file sizes apply to UTF-8 byte sequences.
 
-## 5. indentation と空白
+## 5. Indentation and whitespace
 
 ### 5.1 structural indentation
 
-- structural indentation は ASCII space のみを使用する
-- 1 level は 2 spaces とする
-- top-level declaration は column 0 から始める
-- declaration field は 2 spaces indent する
-- `estimate` と `requires` の子 field は 4 spaces indent する
-- block text の content は、所有 field より少なくとも 2 spaces 深くする
-- syntax 部分の tab は lexical error とする
-- block text の共通 indent より後にある tab は text として保持できる
-- 規定 level より深い、意味を持たない over-indent は error とする
+- Structural indentation uses ASCII spaces only.
+- One level is two spaces.
+- A top-level declaration begins at column 0.
+- Declaration fields are indented two spaces.
+- Child fields of `estimate` and `requires` are indented four spaces.
+- Block-text content is indented at least two spaces more deeply than its owning field.
+- A tab in syntax is a lexical error.
+- A tab after the common indentation of block text may be preserved as text.
+- A semantically meaningless over-indent deeper than the prescribed level is an error.
 
 ### 5.2 horizontal whitespace
 
-EBNF の `HSPACE` は1個以上の ASCII space、`OWS` は0個以上の ASCII spaceを表す。
+In the EBNF, `HSPACE` denotes one or more ASCII spaces, and `OWS` denotes zero or more ASCII spaces.
 
-- keyword と value の間には `HSPACE` が必要である
-- task/gate header の `->` 前後には `HSPACE` が必要である
-- colon の直前に space を置かない
-- list の comma 前に spaceを置かない
-- list の comma 後、`[` 後、`]` 前には `OWS` を置ける
-- syntax line の末尾 ASCII space は受理するが warning 候補とし、formatter が除去する
-- block text の末尾 space は text として保持する
+- `HSPACE` is required between a keyword and its value.
+- `HSPACE` is required on both sides of `->` in a task or gate header.
+- Do not place a space immediately before a colon.
+- Do not place a space immediately before a list comma.
+- `OWS` is allowed after a list comma, after `[`, and before `]`.
+- Trailing ASCII spaces on a syntax line are accepted but are warning candidates and removed by the formatter.
+- Trailing spaces in block text are preserved as text.
 
 ### 5.3 blank line
 
-- blank line は top-level、declaration body、estimate body に置ける
-- blank line 上の space は構造に影響しない
-- formatter は source-preserving mode で blank line の位置と個数を保持する
+- Blank lines are allowed at top level, in declaration bodies, and in estimate bodies.
+- Spaces on a blank line do not affect structure.
+- In source-preserving mode, the formatter retains blank-line positions and counts.
 
 ## 6. comment
 
 ### 6.1 syntax
 
-comment は、その行の indentation の後に `#` を置く独立行とする。
+A comment is a standalone line with `#` after the line's indentation.
 
 ```pert
 # top-level comment
 milestone READY:
   # field comment
-  title "準備完了"
+  title "Preparation complete"
 ```
 
 Rules:
 
-- `#` から line ending 直前までを comment text とする
-- comment は現在の structural level と同じ indentation に置く
-- inline comment は許可しない
-- quoted string 内の `#` は string content である
-- block text 内の `#` は block text content である
-- comment は AST の意味 model に含めず、CST trivia として保持する
-- comment だけから ID、依存、状態を導出しない
+- The content from `#` through immediately before the line ending is comment text.
+- A comment is placed at the indentation of the current structural level.
+- Inline comments are not allowed.
+- A `#` in a quoted string is string content.
+- A `#` in block text is block-text content.
+- Comments are not included in the AST semantic model and are retained as CST trivia.
+- Do not derive an ID, dependency, or state from a comment alone.
 
 ### 6.2 ownership
 
-source-preserving edit では comment の位置を維持する。
+Source-preserving edits retain comment positions.
 
-- declaration 直前の連続 comment はその declaration の leading trivia とする
-- field 直前の同一 block level の連続 comment はその field の leading trivia とする
-- declaration/field 後の comment はその位置の standalone trivia とする
-- element削除時は[Mutation Semantics仕様](mutation.md)のleading comment所有規則に従う
+- Consecutive comments immediately before a declaration are that declaration's leading trivia.
+- Consecutive comments at the same block level immediately before a field are that field's leading trivia.
+- A comment after a declaration or field is standalone trivia at that position.
+- When deleting an element, follow the leading-comment ownership rules in the [Mutation Semantics specification](mutation.md).
 
 ## 7. lexical token
 
@@ -146,14 +146,14 @@ Digit      = "0" ... "9" ;
 
 Rules:
 
-- ID は case-sensitive とする
-- Unicode normalization は行わない
-- entity ID と endpoint reference には同じ lexical rule を使う
-- bare tag にも同じ文字集合を使用できる
-- exact lowercase の予約語は entity ID と endpoint ID に使用できない
-- bare tag では予約語を使用できる
+- IDs are case-sensitive.
+- Do not perform Unicode normalization.
+- Entity IDs and endpoint references use the same lexical rule.
+- Bare tags may use the same character set.
+- An exactly lowercase reserved word cannot be used as an entity ID or endpoint ID.
+- A reserved word may be used as a bare tag.
 
-予約語:
+Reserved words:
 
 ```text
 project resource milestone task gate
@@ -172,10 +172,10 @@ day hour point
 Integer = Digit, { Digit } ;
 ```
 
-- sign と exponent は許可しない
-- grammar version 1 では `version`、resource `capacity`、task `priority`、resource requirement量に使用する
-- field validatorは0..2147483647の範囲だけを受理する
-- leading zero は構文上受理するが、formatter は除去する
+- Signs and exponents are not allowed.
+- In grammar version 1, Integer is used for `version`, resource `capacity`, task `priority`, and resource requirement quantities.
+- Field validation accepts only the range 0..2147483647.
+- Leading zeros are syntactically accepted but removed by the formatter.
 
 ### 7.3 Decimal
 
@@ -200,7 +200,7 @@ Invalid:
 - `NaN`
 - `Infinity`
 
-Decimal は有限10進数から正確な Rational へ変換する。
+Decimal is converted exactly from a finite decimal number to a Rational.
 
 ### 7.4 Duration
 
@@ -209,12 +209,12 @@ Duration = Decimal, DurationSuffix ;
 DurationSuffix = "d" | "h" | "p" ;
 ```
 
-- suffix は必須とする
-- space を Decimal と suffix の間に置かない
-- `d` は `duration_unit day`、`h` は `duration_unit hour`、`p`は`duration_unit point`に対応する
-- `0d`、`0h`、`0p`は lexical/syntax 上は有効とする
-- task duration と estimate の正値条件は field validation で検査する
-- 文書の project unit と異なる suffix は semantic error とする
+- A suffix is required.
+- Do not place a space between Decimal and its suffix.
+- `d` corresponds to `duration_unit day`, `h` to `duration_unit hour`, and `p` to `duration_unit point`.
+- `0d`, `0h`, and `0p` are lexically and syntactically valid.
+- Field validation checks the positive-value requirement for task durations and estimates.
+- A suffix that differs from the document's project unit is a semantic error.
 
 ### 7.5 Velocity
 
@@ -222,15 +222,15 @@ DurationSuffix = "d" | "h" | "p" ;
 Velocity = Decimal, "p", "/", Decimal, ( "d" | "h" ) ;
 ```
 
-- Point量と期間量の間に`/`を1個置き、空白を入れない
-- 両方のDecimalはfield validationで0より大きいことを要求する
-- `duration_unit point`ではrequired fieldとし、期間suffixがforecast unitを決める
-- `duration_unit day|hour`ではoptionalとし、期間suffixはproject unitと一致させる
-- velocityはproject-wide constantであり、task、resource、期間別のoverrideはgrammar version 1に含めない
+- Place exactly one `/` between the point quantity and duration quantity, with no spaces.
+- Field validation requires both Decimals to be greater than zero.
+- With `duration_unit point`, this is a required field, and the duration suffix determines the forecast unit.
+- With `duration_unit day|hour`, this is optional, and the duration suffix must match the project unit.
+- Velocity is a project-wide constant; per-task, per-resource, and per-period overrides are not included in grammar version 1.
 
 ### 7.6 String
 
-String は JSON string literal と同じ double-quoted 形式を使う。
+String uses the same double-quoted form as a JSON string literal.
 
 ```ebnf
 String = '"', { StringCharacter | EscapeSequence }, '"' ;
@@ -241,12 +241,12 @@ UnicodeEscape  = "\\u", HexDigit, HexDigit, HexDigit, HexDigit ;
 
 Rules:
 
-- literal newline と U+0000..U+001F は string 内に直接置けない
-- Unicode character は escape せず直接記述できる
-- 不正な escape は lexical error とする
-- unpaired surrogate になる `\uXXXX` は error とする
-- decoded string は Unicode normalization しない
-- canonical formatter は JSON escaping を使う
+- A literal newline and U+0000..U+001F cannot occur directly in a string.
+- Unicode characters may be written directly without escaping.
+- An invalid escape is a lexical error.
+- A `\uXXXX` escape that produces an unpaired surrogate is an error.
+- Do not perform Unicode normalization on decoded strings.
+- The canonical formatter uses JSON escaping.
 
 ### 7.7 ISO date/date-time
 
@@ -266,11 +266,11 @@ Second      = Digit, Digit ;
 
 Rules:
 
-- calendar 上存在しない日付や時刻は field validation error とする
-- date-time は `T` と `Z` を uppercase で記述する
-- timezone offset のない local date-time は許可しない
-- leap second は grammar version 1 では許可しない
-- `as_of` は date または date-time を取る
+- A date or time that does not exist in the calendar is a field-validation error.
+- Date-times write `T` and `Z` in uppercase.
+- A local date-time without a time-zone offset is not allowed.
+- Leap seconds are not allowed in grammar version 1.
+- `as_of` accepts a date or date-time.
 
 ### 7.8 TagList
 
@@ -279,56 +279,56 @@ TagList = "[", OWS, [ Tag, { OWS, ",", OWS, Tag } ], OWS, "]" ;
 Tag     = Identifier | String ;
 ```
 
-- bare Identifier と String はどちらも decoded string へ正規化する
-- 空 list `[]` を許可する
-- trailing comma は許可しない
-- duplicate tag は semantic error とする
-- ASCII Identifier として安全な tag は canonical formatter で bare 表記にできる
-- それ以外は String で出力する
+- Both a bare Identifier and a String are normalized to a decoded string.
+- The empty list `[]` is allowed.
+- A trailing comma is not allowed.
+- A duplicate tag is a semantic error.
+- A tag safe as an ASCII Identifier may use bare notation in the canonical formatter.
+- All other tags are emitted as Strings.
 
 ## 8. block text
 
 ### 8.1 syntax
 
-複数行 text field は `|` marker を使う。
+Multiline text fields use the `|` marker.
 
 ```pert
 description |
-  1行目
-  2行目
+  First line
+  Second line
 
-  4行目は空行を挟む
+  The fourth line follows a blank line
 ```
 
 Rules:
 
-- `|` の後は trailing space を除き何も置かない
-- 次の nonblank line は所有 field より少なくとも1 level深くする
-- block text は1行以上の nonblank contentを必要とする
-- block内のnonblank lineの最小indentをcommon indentとする
-- 各 nonblank line から common indent を除去する
-- common indent より深い space/tab は content として保持する
-- nonblank content 間の blank line は `\n` として保持する
-- 次の structural line 直前にある blank line は、後続に block content がなければ structural trivia とする
-- AST text は line を `\n` で結合し、terminal newline を保持しない
-- `#`、`:`、`->`、quote は block text 内で特別な意味を持たない
-- block textの`FieldNode.valueSpan`は`|` markerを指す
-- valid block textの`FieldNode.contentSpan`は、最初のnonblank lineのcommon indent直後から最後のnonblank line末尾までを指す
-- 最初のnonblank contentより前と最後のnonblank contentより後にあるblank lineはdecoded contentに含めず、CST triviaとして保持する
+- Nothing may follow `|` except trailing spaces.
+- The next nonblank line is at least one level deeper than the owning field.
+- Block text requires at least one line of nonblank content.
+- The minimum indentation of nonblank lines in a block is the common indentation.
+- Remove the common indentation from each nonblank line.
+- Spaces or tabs deeper than the common indentation are retained as content.
+- A blank line between nonblank content is retained as `\n`.
+- A blank line immediately before the next structural line is structural trivia if no block content follows it.
+- AST text joins lines with `\n` and does not retain a terminal newline.
+- `#`, `:`, `->`, and quotes have no special meaning in block text.
+- `FieldNode.valueSpan` for block text points to the `|` marker.
+- `FieldNode.contentSpan` for valid block text runs from immediately after the common indentation of the first nonblank line through the end of the last nonblank line.
+- Blank lines before the first nonblank content and after the last nonblank content are not included in decoded content and are retained as CST trivia.
 
 ### 8.2 TextValue
 
-次の field は String または block text を取る。
+The following fields accept String or block text.
 
 - `description`
 - `blocked_reason`
 - `reason`
 
-`title`、`owner`、`source` は String だけを取る。
+`title`, `owner`, and `source` accept only String.
 
 ## 9. indentation token
 
-parser grammar は lexer が生成する次の token を使う。
+The parser grammar uses the following tokens produced by the lexer.
 
 - `NEWLINE`
 - `INDENT`
@@ -340,16 +340,16 @@ parser grammar は lexer が生成する次の token を使う。
 
 Rules:
 
-- `INDENT` は structural level が1段深くなった位置で生成する
-- `DEDENT` は1段戻るごとに1個生成する
-- 2 levels 以上を一度に深くする indentation は error とする
-- blank/comment line だけでは indent stack を変更しない
-- block text mode では content indentation を structural `INDENT/DEDENT` に変換しない
-- invalid indentation 後も、最も近い有効な lower level へ回復できる
+- Generate `INDENT` where the structural level increases by one.
+- Generate one `DEDENT` for each level returned.
+- Indentation that increases by two or more levels at once is an error.
+- Blank or comment lines alone do not modify the indentation stack.
+- In block-text mode, do not convert content indentation to structural `INDENT` or `DEDENT`.
+- After invalid indentation, recovery may proceed to the nearest valid lower level.
 
-## 10. 完全 EBNF
+## 10. Complete EBNF
 
-この EBNF は indentation token 化後の token stream を対象とする。keyword は case-sensitive な literal である。
+This EBNF applies to the token stream after indentation tokenization. Keywords are case-sensitive literals.
 
 ```ebnf
 Document = Trivia, ProjectDecl,
@@ -463,87 +463,87 @@ HSPACE = " ", { " " } ;
 OWS = { " " } ;
 ```
 
-`String`、`IsoDate`、`IsoDateTime`、`BLOCK_TEXT` は前節の lexical rule に従う。
+`String`, `IsoDate`, `IsoDateTime`, and `BLOCK_TEXT` follow the lexical rules in the preceding sections.
 
-## 11. document rule
+## 11. Document rules
 
-### 11.1 top-level
+### 11.1 Top level
 
-- `project` は exactly one とする
-- `project` は trivia を除く最初の declaration とする
-- project 後には resource、milestone、task、gate を任意個置ける
-- project を2個以上置けない
-- project より前に resource/milestone/task/gate を置けない
-- top-level に field や estimate を直接置けない
-- include/import directive は grammar version 1 に含めない
+- Exactly one `project` is required.
+- `project` must be the first declaration excluding trivia.
+- Any number of resources, milestones, tasks, and gates may follow the project.
+- A document must not contain two or more projects.
+- A resource, milestone, task, or gate must not precede the project.
+- A field or estimate must not appear directly at the top level.
+- Grammar version 1 does not include include/import directives.
 
-### 11.2 declaration
+### 11.2 Declarations
 
-- forward reference を許可する
-- task/gate より後で endpoint milestone を宣言できる
-- declaration order は意味に影響しない
-- task/gate が同じ from/to pair を持つ parallel edge を許可する
-- entity ID は project、resource、milestone、task、gate を通じて文書全体で一意とする
-- endpoint は milestone ID だけを参照できる
-- taskのresource requirementはresource IDだけを参照できる
-- resource requirementは共有/容量制約であり、DAGのprecedence edgeには変換しない
-- title と ID は別物であり、title を参照解決に使用しない
+- Forward references are allowed.
+- An endpoint milestone may be declared after its task or gate.
+- Declaration order does not affect semantics.
+- Parallel edges are allowed when tasks or gates have the same from/to pair.
+- Entity IDs must be unique across the entire document, including projects, resources, milestones, tasks, and gates.
+- An endpoint may refer only to a milestone ID.
+- A task resource requirement may refer only to a resource ID.
+- Resource requirements are sharing/capacity constraints and are not converted into DAG precedence edges.
+- Titles and IDs are distinct; titles are not used for reference resolution.
 
-## 12. field table
+## 12. Field tables
 
-### 12.1 project
-
-| Field | Count | Value | Default/constraint |
-| --- | ---: | --- | --- |
-| `version` | 0..1 | Integer | 省略時1。v1 parser は1だけを受理 |
-| `title` | 1 | String | decoded text は nonempty |
-| `description` | 0..1 | TextValue | 指定時 nonempty |
-| `as_of` | 0..1 | ISO date/date-time | 実在する日時 |
-| `duration_unit` | 1 | `day`、`hour`、`point` | 文書内 duration suffix と一致 |
-| `velocity` | 0..1 | Velocity | `point`では必須。正のPoint量/正の期間量 |
-| `finish` | 1 | Identifier | milestone を参照 |
-| `critical_epsilon` | 0..1 | Duration | 省略時 project unit の0。0以上 |
-| `target_duration` | 0..1 | Duration | 指定時0より大きい |
-
-### 12.2 resource
-
-resource は task 実行中に占有され、完了時に返却される renewable resource を表す。
+### 12.1 Project
 
 | Field | Count | Value | Default/constraint |
 | --- | ---: | --- | --- |
-| `title` | 1 | String | nonempty |
-| `description` | 0..1 | TextValue | 指定時 nonempty |
-| `capacity` | 1 | Integer | 1以上。`1`は排他resource |
-| `tags` | 0..1 | TagList | 省略時 empty。duplicate 不可 |
+| `version` | 0..1 | Integer | Defaults to 1. The v1 parser accepts only 1. |
+| `title` | 1 | String | Decoded text is nonempty. |
+| `description` | 0..1 | TextValue | Nonempty when specified. |
+| `as_of` | 0..1 | ISO date/date-time | An existing date/time. |
+| `duration_unit` | 1 | `day`, `hour`, or `point` | Matches duration suffixes in the document. |
+| `velocity` | 0..1 | Velocity | Required for `point`. A positive point amount per positive period amount. |
+| `finish` | 1 | Identifier | Refers to a milestone. |
+| `critical_epsilon` | 0..1 | Duration | Defaults to zero in the project unit. Zero or greater. |
+| `target_duration` | 0..1 | Duration | Greater than zero when specified. |
 
-### 12.3 milestone
+### 12.2 Resource
 
-| Field | Count | Value | Default/constraint |
-| --- | ---: | --- | --- |
-| `title` | 1 | String | nonempty |
-| `description` | 0..1 | TextValue | 指定時 nonempty |
-| `state` | 0..1 | `planned` or `reached` | 省略時 `planned` |
-| `tags` | 0..1 | TagList | 省略時 empty。duplicate 不可 |
-
-### 12.4 task
+A resource represents a renewable resource that is held while a task executes and returned when it completes.
 
 | Field | Count | Value | Default/constraint |
 | --- | ---: | --- | --- |
-| `title` | 1 | String | nonempty |
-| `description` | 0..1 | TextValue | 指定時 nonempty |
-| `duration` | 0..1 | Duration | estimate と排他。0より大きい |
-| `estimate` | 0..1 | Estimate block | duration と排他。exactly one required |
-| `status` | 0..1 | task status | 省略時 `planned` |
-| `priority` | 0..1 | Integer | 省略時0。大きい値をresource scheduleで優先 |
-| `requires` | 0..1 | Requirements block | 省略時resource占有なし |
-| `owner` | 0..1 | String | 指定時 nonempty |
-| `tags` | 0..1 | TagList | 省略時 empty。duplicate 不可 |
-| `blocked_reason` | 0..1 | TextValue | status=blocked なら必須、それ以外は禁止 |
-| `source` | 0..1 | String | 指定時 nonempty。network accessしない |
+| `title` | 1 | String | Nonempty. |
+| `description` | 0..1 | TextValue | Nonempty when specified. |
+| `capacity` | 1 | Integer | At least 1. `1` is an exclusive resource. |
+| `tags` | 0..1 | TagList | Defaults to empty. Duplicates are not allowed. |
 
-task は `duration` または `estimate` のどちらか exactly one を持つ。
+### 12.3 Milestone
 
-`requires` の各行は `<resource-id> <units>` とする。
+| Field | Count | Value | Default/constraint |
+| --- | ---: | --- | --- |
+| `title` | 1 | String | Nonempty. |
+| `description` | 0..1 | TextValue | Nonempty when specified. |
+| `state` | 0..1 | `planned` or `reached` | Defaults to `planned`. |
+| `tags` | 0..1 | TagList | Defaults to empty. Duplicates are not allowed. |
+
+### 12.4 Task
+
+| Field | Count | Value | Default/constraint |
+| --- | ---: | --- | --- |
+| `title` | 1 | String | Nonempty. |
+| `description` | 0..1 | TextValue | Nonempty when specified. |
+| `duration` | 0..1 | Duration | Mutually exclusive with estimate. Greater than zero. |
+| `estimate` | 0..1 | Estimate block | Mutually exclusive with duration. Exactly one is required. |
+| `status` | 0..1 | task status | Defaults to `planned`. |
+| `priority` | 0..1 | Integer | Defaults to 0. Higher values are preferred by the resource schedule. |
+| `requires` | 0..1 | Requirements block | Defaults to no resource reservation. |
+| `owner` | 0..1 | String | Nonempty when specified. |
+| `tags` | 0..1 | TagList | Defaults to empty. Duplicates are not allowed. |
+| `blocked_reason` | 0..1 | TextValue | Required when status=blocked; forbidden otherwise. |
+| `source` | 0..1 | String | Nonempty when specified. Does not access the network. |
+
+A task has exactly one of `duration` or `estimate`.
+
+Each line of `requires` has the form `<resource-id> <units>`.
 
 ```pert
 requires:
@@ -553,207 +553,207 @@ requires:
 
 Rules:
 
-- `requires` blockを記述した場合は1件以上のresource requirementを持つ
-- units は1以上のInteger
-- 同じresource IDを同一task内で重複指定できない
-- units は参照resourceのcapacity以下でなければならない
-- taskは宣言した全resourceを同時に確保できたときだけ開始できる
-- taskは実行区間全体でresourceを保持し、完了時に全量を返却する
-- grammar version 1 はpreemption、途中増減、consumable resourceを表現しない
+- A `requires` block contains one or more resource requirements.
+- Units are an integer of at least 1.
+- The same resource ID must not be specified more than once in a task.
+- Units must not exceed the capacity of the referenced resource.
+- A task may start only when it can acquire all declared resources simultaneously.
+- A task holds its resources for its whole execution interval and returns all units upon completion.
+- Grammar version 1 does not express preemption, mid-task allocation changes, or consumable resources.
 
-### 12.5 estimate
+### 12.5 Estimate
 
 | Field | Count | Constraint |
 | --- | ---: | --- |
-| `optimistic` | 1 | 0以上 |
-| `most_likely` | 1 | 0以上 |
-| `pessimistic` | 1 | 0以上 |
+| `optimistic` | 1 | Zero or greater. |
+| `most_likely` | 1 | Zero or greater. |
+| `pessimistic` | 1 | Zero or greater. |
 
-追加 constraint:
+Additional constraints:
 
 - `optimistic <= most_likely <= pessimistic`
 - `pessimistic > 0`
-- 3 field は同じ suffix を使う
-- field order は任意
+- The three fields use the same suffix.
+- Field order is arbitrary.
 
-### 12.6 gate
+### 12.6 Gate
 
 | Field | Count | Value | Default/constraint |
 | --- | ---: | --- | --- |
-| `reason` | 1 | TextValue | nonempty |
+| `reason` | 1 | TextValue | Nonempty. |
 
-gate は duration、estimate、status を持てない。
+A gate cannot have `duration`, `estimate`, or `status`.
 
-## 13. syntax と semantic validation の境界
+## 13. Boundary between syntax and semantic validation
 
-### 13.1 parserが検出するもの
+### 13.1 Parser-detected conditions
 
-- keyword、colon、arrow、bracket、comma の不足
-- block を開始しない header
-- indentation level の不正
-- tab indentation
-- invalid Identifier/String/Decimal/Duration/date token
-- unknown top-level keyword
-- block に許されない unknown field
-- closed enum の未知 value
-- inline comment
-- block text の indentation 不正
+- Missing keyword, colon, arrow, bracket, or comma.
+- A header that does not begin a block.
+- An invalid indentation level.
+- Tab indentation.
+- An invalid Identifier, String, Decimal, Duration, or date token.
+- An unknown top-level keyword.
+- An unknown field not permitted in a block.
+- An unknown value in a closed enum.
+- An inline comment.
+- Invalid block-text indentation.
 
-### 13.2 field validatorが検出するもの
+### 13.2 Field-validator-detected conditions
 
-- required field 不足
-- duplicate field
-- duration/estimate の排他違反
-- estimate の3 field不足/重複/順序制約違反
-- zero/positive constraint
-- nonempty text constraint
-- blocked_reason と status の不整合
-- duplicate tag
-- resource capacity、task priority、requirement unitsのInteger constraint
-- 同一task内のduplicate resource requirement
-- project unit と duration suffix の不一致
-- point projectのvelocity不足、velocityのzero値、time projectとの期間suffix不一致
-- version 不一致
-- calendar 上不正な as_of
+- A missing required field.
+- A duplicate field.
+- A duration/estimate exclusivity violation.
+- Missing or duplicate estimate fields, or a violation of their ordering constraints.
+- A zero/positive constraint violation.
+- A nonempty-text constraint violation.
+- An inconsistency between `blocked_reason` and status.
+- A duplicate tag.
+- An Integer constraint on resource capacity, task priority, or requirement units.
+- A duplicate resource requirement in one task.
+- A mismatch between the project unit and a duration suffix.
+- A point project missing velocity, zero velocity, or a period-suffix mismatch with a time project.
+- A version mismatch.
+- An invalid calendar `as_of` value.
 
-### 13.3 graph validatorへ送るもの
+### 13.3 Conditions passed to the graph validator
 
-- duplicate entity ID
-- reserved word ID
-- undefined endpoint/finish
-- undefined resource reference
-- resource requirementがcapacityを超える状態
-- endpoint kind 不一致
-- self-loop
-- cycle
-- finish outdegree
-- finish reachability
-- root/reached state
-- active/done task の始点 reached 条件
-- reached milestone と unfinished incoming edge の矛盾
+- A duplicate entity ID.
+- A reserved-word ID.
+- An undefined endpoint or finish.
+- An undefined resource reference.
+- A resource requirement that exceeds capacity.
+- An endpoint kind mismatch.
+- A self-loop.
+- A cycle.
+- Finish outdegree.
+- Finish reachability.
+- Root/reached state.
+- The reached-start condition for an active/done task.
+- A contradiction between a reached milestone and an unfinished incoming edge.
 
-parseまたはfield validationにerrorがある文書から、解析可能なGraphを生成してはならない。
+An analyzable Graph must not be generated from a document with parse or field-validation errors.
 
-## 14. 初期 diagnostic code
+## 14. Initial diagnostic codes
 
 | Code | Meaning | Help topic |
 | --- | --- | --- |
-| `PTDSL-001` | tabをstructural indentationに使用 | `syntax.indentation` |
-| `PTDSL-002` | indentation width/level不正 | `syntax.indentation` |
-| `PTDSL-003` | top-level declaration不正 | `syntax.top-level` |
-| `PTDSL-004` | declaration header不正 | `syntax` |
-| `PTDSL-005` | unknown field | 対応する `syntax.*` |
-| `PTDSL-006` | invalid string/escape | `syntax.string` |
-| `PTDSL-007` | invalid duration/velocity/decimal | `syntax.duration`または`syntax.velocity` |
-| `PTDSL-008` | invalid date/date-time | `syntax.project` |
-| `PTDSL-009` | invalid list | `syntax.tags` |
-| `PTDSL-010` | invalid block text | `syntax.text` |
-| `PTDSL-011` | inline comment | `syntax.comments` |
-| `PTDSL-012` | closed enumのunknown value | 対応する `syntax.*` |
-| `PTSEM-101` | required field不足 | 対応する `syntax.*` |
-| `PTSEM-102` | duplicate field | 対応する `syntax.*` |
-| `PTSEM-103` | field combination不正 | 対応する `syntax.*` |
-| `PTSEM-104` | duration/estimate constraint不正 | `syntax.duration` |
-| `PTSEM-105` | project unit不一致 | `syntax.duration` |
-| `PTSEM-106` | empty text | 対応する `syntax.*` |
-| `PTSEM-107` | duplicate tag | `syntax.tags` |
-| `PTSEM-108` | unsupported grammar version | `syntax.project` |
-| `PTSEM-109` | resource capacity/requirement量の正数・範囲constraint不正 | `syntax.resource` |
-| `PTSEM-110` | duplicate resource requirement | `syntax.task` |
-| `PTSEM-111` | velocity constraint不正 | `syntax.velocity` |
+| `PTDSL-001` | Tab used for structural indentation | `syntax.indentation` |
+| `PTDSL-002` | Invalid indentation width/level | `syntax.indentation` |
+| `PTDSL-003` | Invalid top-level declaration | `syntax.top-level` |
+| `PTDSL-004` | Invalid declaration header | `syntax` |
+| `PTDSL-005` | Unknown field | Applicable `syntax.*` |
+| `PTDSL-006` | Invalid string/escape | `syntax.string` |
+| `PTDSL-007` | Invalid duration/velocity/decimal | `syntax.duration` or `syntax.velocity` |
+| `PTDSL-008` | Invalid date/date-time | `syntax.project` |
+| `PTDSL-009` | Invalid list | `syntax.tags` |
+| `PTDSL-010` | Invalid block text | `syntax.text` |
+| `PTDSL-011` | Inline comment | `syntax.comments` |
+| `PTDSL-012` | Unknown value in a closed enum | Applicable `syntax.*` |
+| `PTSEM-101` | Missing required field | Applicable `syntax.*` |
+| `PTSEM-102` | Duplicate field | Applicable `syntax.*` |
+| `PTSEM-103` | Invalid field combination | Applicable `syntax.*` |
+| `PTSEM-104` | Invalid duration/estimate constraint | `syntax.duration` |
+| `PTSEM-105` | Project unit mismatch | `syntax.duration` |
+| `PTSEM-106` | Empty text | Applicable `syntax.*` |
+| `PTSEM-107` | Duplicate tag | `syntax.tags` |
+| `PTSEM-108` | Unsupported grammar version | `syntax.project` |
+| `PTSEM-109` | Invalid positive/range constraint for resource capacity or requirement units | `syntax.resource` |
+| `PTSEM-110` | Duplicate resource requirement | `syntax.task` |
+| `PTSEM-111` | Invalid velocity constraint | `syntax.velocity` |
 
-Graph diagnostic codeは[Graph Semantics仕様](graph-semantics.md)で固定する。
+Graph diagnostic codes are fixed by the [Graph Semantics specification](graph-semantics.md).
 
-## 15. source span
+## 15. Source spans
 
-parser/CST は次の span を保持する。
+The parser/CST retains the following spans:
 
 - document
-- declaration全体
+- Whole declaration
 - declaration keyword
 - entity ID
-- task/gate from ID
+- Task/gate from ID
 - arrow
-- task/gate to ID
-- field全体
+- Task/gate to ID
+- Whole field
 - field keyword
 - field value
-- estimate block全体と各子field
-- requirements block全体と各resource requirement
+- Whole estimate block and each child field
+- Whole requirements block and each resource requirement
 - comment
-- block text markerとcontent
+- Block-text marker and content
 
 Rules:
 
-- diagnostic primary span は修正すべき最小 token/field を指す
-- missing token は挿入位置の zero-length span を使う
-- duplicate field/ID は後の宣言を primary、先の宣言を related location とする
-- invalid endpoint は endpoint token を指す
-- block indentation error は先頭 whitespace を指す
+- A diagnostic primary span identifies the smallest token/field that needs correction.
+- A missing token uses a zero-length span at its insertion point.
+- For a duplicate field/ID, the later declaration is primary and the earlier declaration is a related location.
+- An invalid endpoint identifies the endpoint token.
+- A block-indentation error identifies the leading whitespace.
 
-## 16. error recovery
+## 16. Error recovery
 
-parser は1件のerrorで文書全体を捨てず、独立した問題を可能な範囲で報告する。
+The parser does not discard the entire document for one error and reports independent problems where possible.
 
-### 16.1 top-level recovery
+### 16.1 Top-level recovery
 
-- invalid top-level line は次の column 0 の既知 declaration header まで読み飛ばす
-- invalid line が colon で終わる場合、その下の indented block も同じ error region として読み飛ばす
-- 同じerror region内の行を個別のtop-level/indentation errorとして重複報告しない
-- project がない場合も、後続 declaration を recovery AST として収集できる
+- An invalid top-level line is skipped through the next known declaration header at column 0.
+- If an invalid line ends in a colon, its following indented block is also skipped as the same error region.
+- Lines within the same error region are not redundantly reported as individual top-level/indentation errors.
+- Even without a project, following declarations can be collected in a recovery AST.
 
-### 16.2 declaration recovery
+### 16.2 Declaration recovery
 
-- invalid field line は現在 block の次の同 level field/comment/blank lineへ同期する
-- invalid field が nested block を開始した場合、その DEDENT まで読み飛ばす
-- unknown nested blockはblock名へ1件の`PTDSL-005`を返し、子行を個別診断しない
-- estimate/requires 内では4-space levelの次 entryまたは所有blockのDEDENTへ同期する
-- block text error は所有 field の次の structural lineへ同期する
+- An invalid field line synchronizes at the next same-level field, comment, or blank line in the current block.
+- If an invalid field starts a nested block, it is skipped through its DEDENT.
+- An unknown nested block returns one `PTDSL-005` at the block name and does not diagnose child lines individually.
+- Within `estimate`/`requires`, recovery synchronizes at the next entry at the four-space level or the owning block's DEDENT.
+- A block-text error synchronizes at the next structural line of its owning field.
 
-### 16.3 suppression
+### 16.3 Suppression
 
-- lexical errorを原因とする同一 token のparser errorは重複報告しない
-- headerが回復不能なdeclarationについてrequired field errorを追加しない
-- invalid duration tokenについてpositive/unit mismatchを追加しない
-- parse errorが1件以上ある文書ではfield validatorとgraph validatorを実行せず、`PTSEM-*`/`PTDAG-*`の派生diagnosticを追加しない
-- parse errorがある文書ではgraph diagnosticを生成しない
-- callerは`maxDiagnostics`で1..1000件、default 100件の最大diagnostic件数を指定できる
-- 上限を超えた`ParseResult`/`CheckResult`は`diagnosticsTruncated=true`を返し、CLI JSONは`diagnostics_truncated=true`を返す
+- A parser error for the same token caused by a lexical error is not reported redundantly.
+- Do not add required-field errors for a declaration whose header cannot be recovered.
+- Do not add a positive/unit-mismatch error for an invalid duration token.
+- For a document with one or more parse errors, do not run the field validator or graph validator, and do not add derived `PTSEM-*`/`PTDAG-*` diagnostics.
+- Do not generate graph diagnostics for a document with parse errors.
+- A caller may set the maximum number of diagnostics with `maxDiagnostics`, from 1 through 1000; the default is 100.
+- A `ParseResult`/`CheckResult` that exceeds the limit returns `diagnosticsTruncated=true`, and CLI JSON returns `diagnostics_truncated=true`.
 
-## 17. formatter contract
+## 17. Formatter contract
 
-### 17.1 source-preserving format
+### 17.1 Source-preserving formatting
 
-既存 `.pert` に対する `dsl format` は次を保持する。
+For an existing `.pert`, `dsl format` preserves the following:
 
 - declaration order
 - field order
-- comment textと相対位置
-- blank lineの位置と個数
-- block textのdecoded content
-- BOMの有無
-- 主要line ending
+- Comment text and relative positions
+- Blank-line positions and count
+- Decoded block-text content
+- Presence or absence of a BOM
+- Predominant line ending
 
-主要line endingはLFとCRLFの出現数が多い方とし、同数なら最初に現れるline ending、line endingがなければLFとする。Core `formatDocument`はI/O、diff、writeを行わず、0-based UTF-16 offsetの重ならない`TextEdit`と候補文書を返す。
+The predominant line ending is the more frequent of LF and CRLF; on a tie, it is the first line ending seen; without a line ending, it is LF. Core `formatDocument` performs no I/O, diff, or write, and returns non-overlapping `TextEdit`s at 0-based UTF-16 offsets together with a candidate document.
 
-次を正規化する。
+It normalizes the following:
 
-- structural indentationを2 spacesへ統一
-- token間space
-- arrow前後space
-- colon/comma/bracket周辺space
-- syntax line末尾spaceの除去
-- Decimalの不要なleading/trailing zero
-- String escape
-- file末尾newline
+- Structural indentation to two spaces
+- Spacing between tokens
+- Spacing around arrows
+- Spacing around colons, commas, and brackets
+- Removal of trailing space from syntax lines
+- Unnecessary leading/trailing zeroes in Decimal values
+- String escapes
+- A final newline
 
-parse/field validation errorがある文書を`--write`してはならない。preview-only recovery formatを将来提供する場合は別actionとする。
+A document with parse/field-validation errors must not be written with `--write`. Any future preview-only recovery formatting is a separate action.
 
-### 17.2 canonical serializer
+### 17.2 Canonical serializer
 
-新規生成、Mermaid import、AST fixture生成ではcanonical serializerを使う。
+Use the canonical serializer for new generation, Mermaid import, and AST-fixture generation.
 
-field order:
+Field order:
 
 ```text
 project:
@@ -778,40 +778,40 @@ gate:
   reason
 ```
 
-declaration order:
+Declaration order:
 
 1. project
-2. resourceをID辞書順
-3. milestoneをID辞書順
-4. task/gateをedge ID辞書順
+2. Resources in lexical ID order
+3. Milestones in lexical ID order
+4. Tasks/gates in edge-ID lexical order
 
-その他:
+Other rules:
 
-- indentationは2 spaces
-- line endingはLF
-- file末尾newlineあり
-- top-level declaration間は1 blank line
-- 空optional fieldは出力しない
-- default fieldは、利用者が明示した値を保持するsource formatを除き、canonical serializerでは省略できる
+- Indentation is two spaces.
+- Line endings are LF.
+- The file has a final newline.
+- One blank line separates top-level declarations.
+- Empty optional fields are not emitted.
+- The canonical serializer may omit default fields, except source formatting preserves values explicitly provided by a user.
 
-### 17.3 idempotence
+### 17.3 Idempotence
 
-有効な文書 `x` について次を満たす。
+For a valid document `x`, the following holds:
 
 ```text
 format(format(x)) == format(x)
 AST(parse(format(x))) == AST(parse(x))
 ```
 
-## 18. valid example
+## 18. Valid example
 
 ```pert
 project SAMPLE:
   version 1
-  title "サンプル"
+  title "Sample"
   description |
-    文法仕様の代表例。
-    taskはedgeとして記述する。
+    A representative grammar-specification example.
+    A task is written as an edge.
   as_of 2026-07-21
   duration_unit day
   finish RELEASED
@@ -819,25 +819,25 @@ project SAMPLE:
   target_duration 10d
 
 resource DEVELOPERS:
-  title "開発担当"
+  title "Developers"
   capacity 2
 
 resource TEST_DEVICE:
-  title "試験機"
+  title "Test device"
   capacity 1
 
 milestone NOW:
-  title "現在"
+  title "Current"
   state reached
 
 milestone DESIGNED:
-  title "設計完了"
+  title "Design complete"
 
 milestone RELEASED:
-  title "リリース"
+  title "Released"
 
 task DESIGN NOW -> DESIGNED:
-  title "設計する"
+  title "Design"
   estimate:
     optimistic 1d
     most_likely 2d
@@ -847,28 +847,28 @@ task DESIGN NOW -> DESIGNED:
   requires:
     DEVELOPERS 1
   owner "team-a"
-  tags [design, "重要"]
+  tags [design, "important"]
 
 task RELEASE DESIGNED -> RELEASED:
-  title "リリースする"
+  title "Release"
   duration 1d
   requires:
     DEVELOPERS 1
     TEST_DEVICE 1
 ```
 
-## 19. invalid example
+## 19. Invalid examples
 
-### 19.1 indentation
+### 19.1 Indentation
 
 ```pert
 milestone BAD:
    title "3 spaces"
 ```
 
-Expected: `PTDSL-002`。
+Expected: `PTDSL-002`.
 
-### 19.2 inline comment
+### 19.2 Inline comment
 
 ```pert
 task BAD START -> END:
@@ -876,13 +876,13 @@ task BAD START -> END:
   duration 2d # unsupported
 ```
 
-Expected: `PTDSL-011`。
+Expected: `PTDSL-011`.
 
-### 19.3 task field combination
+### 19.3 Task field combination
 
 ```pert
 task BAD START -> END:
-  title "両方指定"
+  title "Both specified"
   duration 2d
   estimate:
     optimistic 1d
@@ -890,59 +890,59 @@ task BAD START -> END:
     pessimistic 3d
 ```
 
-Expected: `PTSEM-103`。
+Expected: `PTSEM-103`.
 
-### 19.4 resource capacity
+### 19.4 Resource capacity
 
 ```pert
 resource DEVICE:
-  title "試験機"
+  title "Test device"
   capacity 1
 
 task BAD START -> END:
-  title "同時に2台必要"
+  title "Two devices required simultaneously"
   duration 1d
   requires:
     DEVICE 2
 ```
 
-Expected: `PTSEM-109`。
+Expected: `PTSEM-109`.
 
-### 19.5 blocked reason
+### 19.5 Blocked reason
 
 ```pert
 task BAD START -> END:
-  title "理由なしblock"
+  title "Blocked without a reason"
   duration 1d
   status blocked
 ```
 
-Expected: `PTSEM-103`。
+Expected: `PTSEM-103`.
 
-## 20. grammar version
+## 20. Grammar version
 
-- version省略時はversion 1と解釈する
-- version 1 parserは`version 1`だけを受理する
-- より新しいversionを黙ってversion 1として解釈しない
-- grammar破壊変更ではproject versionとmigration commandを用意する
-- help、examples、fixtures、formatterをgrammar versionと同じ変更で更新する
-- minorなfield追加でも旧parserがunknown fieldをerrorにすることを前提に、tool version compatibilityを明示する
+- An omitted version is interpreted as version 1.
+- A version 1 parser accepts only `version 1`.
+- Do not silently interpret a newer version as version 1.
+- For a grammar-breaking change, provide a project version and a migration command.
+- Update help, examples, fixtures, and formatter in the same change as a grammar version.
+- Explicitly state tool-version compatibility, recognizing that even a minor field addition causes older parsers to reject the unknown field.
 
-## 21. grammar acceptance
+## 21. Grammar acceptance
 
-parser実装時は最低限、次を自動検査する。
+At minimum, a parser implementation automatically checks the following:
 
-1. 本書のvalid exampleをparseできる
-2. `docs/examples/minimal.pert`をparseできる
-3. `docs/examples/parallel.pert`をparseできる
-4. project/resource/milestone/task/gateの各fieldを単独で検査できる
-5. invalid indentation/string/duration/list/dateを拒否する
-6. missing/duplicate/unknown fieldを区別する
-7. durationとestimateの排他を検査する
-8. commentとblank lineをCST round-tripで保持する
-9. block textのparagraphとcommon indentを保持する
-10. source spanがUTF-16 code unit基準で一致する
-11. error recoveryが独立した複数errorを返し、同じerror regionと後続phaseの派生diagnosticを抑制し、上限超過を明示する
-12. formatterがidempotentでAST同値を保つ
-13. help sampleとparser fixtureのdriftを検出する
-14. resource capacity、requires、priorityをparse/validateできる
+1. Parses this specification's valid example.
+2. Parses `docs/examples/minimal.pert`.
+3. Parses `docs/examples/parallel.pert`.
+4. Independently checks every project/resource/milestone/task/gate field.
+5. Rejects invalid indentation, string, duration, list, and date values.
+6. Distinguishes missing, duplicate, and unknown fields.
+7. Checks duration/estimate exclusivity.
+8. Preserves comments and blank lines in a CST round trip.
+9. Preserves block-text paragraphs and common indentation.
+10. Matches source spans in UTF-16 code units.
+11. Returns multiple independent errors during error recovery, suppresses duplicate diagnostics for the same error region and derived diagnostics from later phases, and indicates when the limit is exceeded.
+12. Keeps the formatter idempotent and AST-equivalent.
+13. Detects drift between help samples and parser fixtures.
+14. Parses and validates resource capacity, `requires`, and priority.

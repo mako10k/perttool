@@ -1,155 +1,155 @@
-# Recommendation Semantics 仕様
+# Recommendation Semantics Specification
 
-- 文書状態: Normative 1.0
-- 作成日: 2026-07-22
-- 対象: AI Project Control Planeの実行可否・推奨度model
+- Document status: Normative 1.0
+- Created: 2026-07-22
+- Scope: execution eligibility and recommendation model for the AI Project Control Plane
 - Ranking policy: [recommendation-ranking.md](recommendation-ranking.md)
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Human override: [recommendation-override.md](recommendation-override.md)
-- 関連Issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
+- Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
-## 1. 目的
+## 1. Purpose
 
-本仕様は、`dag next`が現在返すtask状態・resource選択と、将来追加するrecommendationを別の意味として定義する。
+This specification defines the task state and resource selection currently returned by `dag next`, and recommendations to be added in the future, as distinct concepts.
 
-次を固定する。
+It fixes the following:
 
-- recommendationを評価するactionとtask集合
-- lifecycle/eligibility、resource selection、recommendation tierの分離
-- `recommended`、`allowed`、`deferred`、`discouraged`の形式的意味
-- `blocked`をrecommendation tierとして使用しない判断
-- active、ready、blocked_now、upcoming、doneとの整合
-- 複数taskを同時にrecommendedとするための不変条件
-- human overrideと再解析の境界
-- ranking、reason code、構造化説明、interfaceへ送る責務
+- the action and task set to which recommendations are evaluated;
+- the separation of lifecycle/eligibility, resource selection, and recommendation tiers;
+- the formal meanings of `recommended`, `allowed`, `deferred`, and `discouraged`;
+- the decision not to use `blocked` as a recommendation tier;
+- consistency with `active`, `ready`, `blocked_now`, `upcoming`, and `done`;
+- invariants for recommending multiple tasks concurrently;
+- the boundary between human override and re-analysis; and
+- responsibilities passed to ranking, reason codes, structured explanations, and the interface.
 
-本仕様はrecommendationの意味契約である。2026-07-23のMIG-04で`Perttool.NextResult.v3`へ実装されたが、既存classificationや`runnable_now`をrecommendation tierとして再解釈しない。
+This specification is the semantic contract for recommendations. It was implemented in `Perttool.NextResult.v3` by MIG-04 on 2026-07-23, but it does not reinterpret existing classifications or `runnable_now` as recommendation tiers.
 
-## 2. 規範上の位置
+## 2. Normative position
 
-意味や設計が競合する場合は次の順で解決する。
+Resolve conflicts in meaning or design in the following order:
 
-1. `docs/requirements.md`のMust requirement
-2. 本仕様
-3. [Analysis仕様](analysis.md)
-4. [CLI Interface仕様](interfaces.md)
+1. Must requirements in `docs/requirements.md`
+2. This specification
+3. [Analysis Specification](analysis.md)
+4. [CLI Interface Specification](interfaces.md)
 5. `docs/basic-design.md`
-6. example、test、help、implementation
+6. examples, tests, help, and implementation
 
-本仕様の用語`ready`、`blocked_now`、effective reachedは[Graph Semantics仕様](graph-semantics.md)、precedence/resource analysisと`runnable_now`は[Analysis仕様](analysis.md)を前提とする。
+The terms `ready`, `blocked_now`, and effectively reached in this specification rely on the [Graph Semantics Specification](graph-semantics.md); precedence/resource analysis and `runnable_now` rely on the [Analysis Specification](analysis.md).
 
 ## 3. Scope
 
-対象:
+In scope:
 
-- 単一project snapshotで新しくtaskを開始する判断
-- current frontierから導出したunfinished task
-- active allocationを含む現在resource capacity
-- project modelに明示されたfactだけに基づくrecommendation
-- AIと人間が同じ意味で利用できるdecision authority
+- deciding whether to start a new task in a single project snapshot;
+- unfinished tasks derived from the current frontier;
+- current resource capacity including active allocations;
+- recommendations based only on facts explicitly represented by the project model; and
+- decision authority usable with the same meaning by AI and humans.
 
-対象外:
+Out of scope:
 
-- active taskを継続、中断、cancelする判断
-- ranking inputの優先順、weight、tie-break
-- reason code一覧と構造化expression schema
-- Core/CLI field、JSON schema、text layout、option、exit code
-- overrideの永続化commandとaudit storage
-- Issue #3の複数plan、backlog、macro/detail composition
-- project modelに存在しないrework risk、情報不足、release固有意味の推測
-- recommendation実装
+- deciding whether to continue, interrupt, or cancel an active task;
+- ranking input precedence, weights, and tie-breaks;
+- the reason-code inventory and structured-expression schema;
+- Core/CLI fields, JSON schema, text layout, options, and exit codes;
+- a command for persisting overrides and audit storage;
+- multiple plans, backlogs, and macro/detail composition in Issue #3;
+- inferring rework risk, insufficient information, or release-specific meaning that is absent from the project model; and
+- implementing recommendations.
 
-## 4. 3つの直交する判断
+## 4. Three orthogonal decisions
 
 ### 4.1 Lifecycle / eligibility classification
 
-既存classificationはtaskの工程状態を表す。
+The existing classifications represent the task's process state.
 
-| Classification | 意味 |
+| Classification | Meaning |
 | --- | --- |
-| `active` | すでに実行中 |
-| `ready` | precedenceとstatus上、新規開始候補になれる |
-| `blocked_now` | sourceはreachedだが外部block中 |
-| `upcoming` | source milestoneが未到達 |
-| `done` | 完了済み。Next resultのtask候補へ含めない |
+| `active` | Already in progress |
+| `ready` | Can become a candidate for a new start based on precedence and status |
+| `blocked_now` | Its source is reached, but it is externally blocked |
+| `upcoming` | Its source milestone has not been reached |
+| `done` | Completed. Not included as a task candidate in a Next result |
 
-このclassificationをrecommendation tierへ置き換えない。
+Do not replace these classifications with recommendation tiers.
 
 ### 4.2 Resource selection
 
-`runnable_now`は、active allocationを差し引いた後、現行scheduler candidate orderで選んだjointly feasibleなready task集合である。これはclassification enumではなく、ready taskへの直交membershipである。
+`runnable_now` is the jointly feasible set of ready tasks selected in the current scheduler candidate order after subtracting active allocations. It is not a classification enum; it is orthogonal membership for ready tasks.
 
-`runnable_now=false`は、task自体が永久に実行不能であることを意味しない。同じsnapshotでも、先に選ぶtask集合が変わればresource上開始できる場合がある。
+`runnable_now=false` does not mean that the task can never be executed. Even in the same snapshot, it may be possible to start it under resource constraints if the task set selected first changes.
 
 ### 4.3 Recommendation tier
 
-Recommendation tierは、project control planeが新規開始actionへ与えるdecision authorityを表す。Eligibility、resource capacity、工程上のpriorityを入力にするが、それらの別名ではない。
+A recommendation tier represents the decision authority that the project control plane gives to a new-start action. It takes eligibility, resource capacity, and process priority as inputs, but is not another name for any of them.
 
-概念上のtier集合を次とする。
+The conceptual set of tiers is:
 
 ```text
 recommended | allowed | deferred | discouraged
 ```
 
-`blocked`は含めない。実行不能または未到達の理由は既存classificationとresource factで表現する。
+It does not include `blocked`. Reasons that work is infeasible or unreached are represented through the existing classifications and resource facts.
 
 ## 5. Evaluation domain
 
-MVP recommendationのactionは`start`だけとする。
+The MVP action evaluated by recommendations is only `start`.
 
-Recommendationを評価するtask集合`P`は、actual `ready` task集合である。
+The task set `P` evaluated for recommendations is the actual set of `ready` tasks.
 
-- `active`: 新規開始actionではないためrecommendationを持たない
-- `ready`: 必ず1つのrecommendation tierを持つ
-- `blocked_now`: recommendationを持たない
-- `upcoming`: recommendationを持たない
-- `done`: resultへ含めない
+- `active`: has no recommendation because it is not a new-start action
+- `ready`: always has exactly one recommendation tier
+- `blocked_now`: has no recommendation
+- `upcoming`: has no recommendation
+- `done`: is not included in the result
 
-JSONでは[Recommendation Interface Contract仕様](recommendation-interface.md)に従い、actual ready taskだけを`task_decisions`へ含め、non-ready taskのtier fieldを生成しない。`not_recommended`や`blocked`を便宜的なtierとして追加してはならない。
+In JSON, in accordance with the [Recommendation Interface Contract Specification](recommendation-interface.md), include only actual ready tasks in `task_decisions`; do not generate a tier field for non-ready tasks. Do not add `not_recommended` or `blocked` as convenience tiers.
 
 ## 6. Resource feasibility
 
-Resource `r`の宣言capacityを`capacity(r)`、active taskの使用量を`activeUsage(r)`、ready task`t`の要求量を`requirement(t, r)`とする。
+Let the declared capacity of resource `r` be `capacity(r)`, usage by active tasks be `activeUsage(r)`, and the requirement of ready task `t` be `requirement(t, r)`.
 
-Ready task集合`S`について、次をすべて満たす場合に`startFeasible(S)`とする。
+For a ready-task set `S`, `startFeasible(S)` holds if all of the following hold:
 
 ```text
 for every resource r:
   activeUsage(r) + sum(requirement(t, r) for t in S) <= capacity(r)
 ```
 
-Resource requirementを持たないtaskは、そのresourceについて0を要求する。
+A task without a resource requirement requires 0 of that resource.
 
-Recommendation ranking policyが選ぶrecommended setを`R`とする。`R`は少なくとも次を満たさなければならない。
+Let `R` be the recommended set selected by the recommendation ranking policy. `R` must at least satisfy:
 
 ```text
 R is a subset of P
 startFeasible(R) == true
 ```
 
-同じtaskを複数回数えない。Active taskは`R`へ含めず、`activeUsage`としてcapacityから差し引く。
+Do not count the same task more than once. Do not include active tasks in `R`; subtract them from capacity as `activeUsage`.
 
-`R`の選択規則、空集合を許す条件、完全なtie-break、algorithm versionは[Recommendation Ranking Policy仕様](recommendation-ranking.md)で固定する。
+The selection rules for `R`, conditions allowing an empty set, complete tie-breaks, and the algorithm version are fixed by the [Recommendation Ranking Policy Specification](recommendation-ranking.md).
 
-Ranking Policyは、ready task`t`を現在cycleで追加開始せず後続cycleへ送る明示判断`policyDefers(t)`も定義する。Version 1では全taskについてfalseとし、selection horizon外でresource-feasibleなtaskを`allowed`として保持する。
+The Ranking Policy also defines `policyDefers(t)`, an explicit decision to not additionally start ready task `t` in the current cycle and to send it to a later cycle. In Version 1 this is false for every task, retaining resource-feasible tasks outside the selection horizon as `allowed`.
 
 ## 7. Tier semantics
 
 ### 7.1 `recommended`
 
-Task`t`が`t in R`を満たす場合、`recommended`である。
+Task `t` is `recommended` if `t in R`.
 
-- AIが現在のcycleで新規開始する第一候補である
-- `recommended` task集合全体を同時開始してもresource capacityを超えない
-- 複数taskをrecommendedにできる
-- 複数recommended task間に暗黙の順序を付けない
-- recommendationはglobal optimumの証明を意味しない
+- It is the first candidate for an AI to start in the current cycle.
+- Starting the entire `recommended` task set concurrently does not exceed resource capacity.
+- Multiple tasks can be recommended.
+- Do not impose an implicit order between multiple recommended tasks.
+- A recommendation does not prove a global optimum.
 
 ### 7.2 `allowed`
 
-Task`t`が次をすべて満たす場合、`allowed`である。
+Task `t` is `allowed` if all of the following hold:
 
 ```text
 t is in P
@@ -159,40 +159,40 @@ explicitNegativeFact(t) == false
 policyDefers(t) == false
 ```
 
-- recommended setをresource上妨げず、追加のworkとして開始できる
-- recommended taskを置き換えたり、先送りしたりする許可ではない
-- 各allowed taskは`R`へ個別追加できることだけを保証する
-- 複数allowed taskを同時追加した集合がfeasibleとは保証しない
-- taskを1件開始するたびにstateを更新して再解析する
+- It can be started as additional work without obstructing the recommended set on resources.
+- It is not permission to replace or defer recommended work.
+- Each allowed task is guaranteed only to be individually addable to `R`.
+- It is not guaranteed that a set of multiple allowed tasks added concurrently is feasible.
+- Update state and re-analyze every time a task is started.
 
-AIがallowed taskをrecommended taskの代わりに選ぶ場合はhuman overrideとして扱う。Recommended workを維持したまま追加capacityでallowed taskを選ぶ場合はoverrideを要求しない。
+When an AI selects an allowed task instead of a recommended task, treat it as a human override. When it selects an allowed task with additional capacity while retaining recommended work, no override is required.
 
 ### 7.3 `deferred`
 
-Task`t`がreadyだが、`recommended`、`allowed`、`discouraged`のいずれでもない場合、`deferred`である。
+Task `t` is `deferred` if it is ready but is neither `recommended`, `allowed`, nor `discouraged`.
 
-典型条件:
+Typical conditions:
 
-- recommended setとresource capacityが競合する
-- 現在cycleでは上位workを置き換えなければ開始できない
-- Ranking Policyが定義するselection horizonの外にある
+- it conflicts with the recommended set for resource capacity;
+- it cannot be started in the current cycle without replacing higher-ranked work; or
+- it is outside the selection horizon defined by the Ranking Policy.
 
-`deferred`は一時的な工程判断である。Project state、capacity、active allocation、ranking inputが変わった後に再評価する。Human overrideなしにAIが選択してはならない。
+`deferred` is a temporary process decision. Re-evaluate it after project state, capacity, active allocation, or ranking inputs change. An AI must not select it without human override.
 
 ### 7.4 `discouraged`
 
-Task`t`がreadyであり、project modelに明示されたnegative factが現在の開始を否定する場合、`discouraged`である。
+Task `t` is `discouraged` if it is ready and an explicit negative fact in the project model negates starting it now.
 
-- 単にnon-critical、floatが大きい、priorityが低いだけではdiscouragedにしない
-- chat context、AIの推測、実装上の興味をnegative factにしない
-- human overrideなしにAIが選択してはならない
-- override時もnegative factを消さず、判断根拠とともに表示する
+- Do not mark it discouraged merely because it is non-critical, has large float, or has low priority.
+- Do not treat chat context, AI inference, or implementation interest as a negative fact.
+- An AI must not select it without human override.
+- Even during an override, retain and display the negative fact with the decision rationale.
 
-Grammar version 1にはrework risk、replacement intent、information sufficiency、release固有semanticsの正本fieldがない。このため、それらを根拠に`discouraged`を生成してはならない。Interface v1は将来のmodeled negative factへ備えてJSON enumに`discouraged`を含めるが、Taxonomy version 1.0のnormal producerは生成しない。
+Grammar version 1 has no authoritative fields for rework risk, replacement intent, information sufficiency, or release-specific semantics. Therefore, do not generate `discouraged` on those grounds. Interface v1 includes `discouraged` in the JSON enum in preparation for modeled negative facts in the future, but the normal producer for Taxonomy version 1.0 does not generate it.
 
 ## 8. Formal classification order
 
-Normal analysisでは、ready task`t`を次の順で一意に分類する。
+In normal analysis, classify every ready task `t` uniquely in the following order:
 
 ```text
 if t is in R:
@@ -207,124 +207,124 @@ else:
   deferred
 ```
 
-Ranking Policyはnormal analysisで明示的negative factを持つtaskを`R`へ含めてはならない。Human overrideを適用した結果はnormal recommendationと別に表現する。
+The Ranking Policy must not include a task with an explicit negative fact in `R` during normal analysis. Represent results produced by applying a human override separately from the normal recommendation.
 
-同じsnapshot、capacity override、ranking algorithm versionから同じ`R`とtierを返す。
+Return the same `R` and tiers for the same snapshot, capacity override, and ranking algorithm version.
 
 ## 9. Classification consistency matrix
 
 | Existing state | Recommendation applicability | Start authority |
 | --- | --- | --- |
-| `active` | 非適用 | continuation policyの対象。新規startしない |
-| `ready` + `recommended` | 適用 | AIが選択可能 |
-| `ready` + `allowed` | 適用 | recommendedを維持する追加workとしてAIが選択可能 |
-| `ready` + `deferred` | 適用 | human overrideが必要 |
-| `ready` + `discouraged` | 適用 | negative factを伴うhuman overrideが必要 |
-| `blocked_now` | 非適用 | block解消前はstartしない |
-| `upcoming` | 非適用 | predecessor達成前はstartしない |
-| `done` | 非適用 | resultへ含めない |
+| `active` | Not applicable | Subject to continuation policy; do not newly start it |
+| `ready` + `recommended` | Applicable | AI may select it |
+| `ready` + `allowed` | Applicable | AI may select it as additional work that retains recommendations |
+| `ready` + `deferred` | Applicable | Human override required |
+| `ready` + `discouraged` | Applicable | Human override with the negative fact required |
+| `blocked_now` | Not applicable | Do not start until the block is resolved |
+| `upcoming` | Not applicable | Do not start until its predecessor is achieved |
+| `done` | Not applicable | Do not include it in the result |
 
-Ready taskへtierがない状態、またはnon-ready taskへtierがある状態はanalysis invariant failureとする。
+The absence of a tier on a ready task, or the presence of a tier on a non-ready task, is an analysis invariant failure.
 
-## 10. `runnable_now`との関係
+## 10. Relationship to `runnable_now`
 
-現行`runnable_now`集合を`L`、将来のrecommended setを`R`とする。
+Let the current `runnable_now` set be `L` and the future recommended set be `R`.
 
-- `L`は現行scheduler candidate orderで得たresource-feasible subsetである
-- `R`はRanking Policyで得るpreferredかつresource-feasible subsetである
-- `L`と`R`は同じになるとは限らない
-- `R`を導入するために`Perttool.NextResult.v2`の`runnable_now`を無言で再解釈しない
-- `L`と`R`が異なる場合、どのtaskを入れ替え、どのruleとfactで判断したかを構造化説明で返す
+- `L` is a resource-feasible subset obtained using the current scheduler candidate order.
+- `R` is a preferred, resource-feasible subset obtained using the Ranking Policy.
+- `L` and `R` need not be equal.
+- Do not silently reinterpret `runnable_now` in `Perttool.NextResult.v2` in order to introduce `R`.
+- If `L` and `R` differ, return a structured explanation of which tasks were substituted and the rules and facts used to decide it.
 
-Backward compatibility、schema version、field name、既定text表示は[Recommendation Interface Contract仕様](recommendation-interface.md)を正とする。Recommendation実装までは現行CLI出力を変更しない。
+The [Recommendation Interface Contract Specification](recommendation-interface.md) is authoritative for backward compatibility, schema version, field names, and default text rendering. Do not change current CLI output until recommendations are implemented.
 
 ## 11. Explainability invariant
 
-Recommendationはtierだけを返して完了としてはならない。
+A recommendation must not be considered complete merely because it returns a tier.
 
-各ready taskについて、少なくとも次を説明できるmodelを要求する。
+For every ready task, require a model capable of explaining at least the following:
 
-- 適用したranking rule
-- project modelから取得したtyped fact
-- selected taskとalternative taskの比較
-- decisive ruleとsupporting ruleの区別
-- recommended setへ含めた、または含めなかった理由
-- より上位のtask ID
-- resource feasibilityまたはconflict
-- 人間向けdescriptionを導出するstable keyとparameter
+- the ranking rule applied;
+- typed facts obtained from the project model;
+- comparison between selected tasks and alternative tasks;
+- the distinction between decisive and supporting rules;
+- why it was or was not included in the recommended set;
+- higher-ranked task IDs;
+- resource feasibility or conflict; and
+- stable keys and parameters from which human-facing descriptions are derived.
 
-Reason codeとtyped fact categoryは[Recommendation Reason Taxonomy仕様](recommendation-reasons.md)、制限付きexpression AST、decision trace、description projectionは[Recommendation Structured Explanation仕様](recommendation-explanation.md)、具体的なCore type、text/JSON field、schema migrationは[Recommendation Interface Contract仕様](recommendation-interface.md)を正とする。自然言語textだけを正本の理由にしない。
+The [Recommendation Reason Taxonomy Specification](recommendation-reasons.md) is authoritative for reason codes and typed fact categories; the [Recommendation Structured Explanation Specification](recommendation-explanation.md) is authoritative for the restricted expression AST, decision trace, and description projection; and the [Recommendation Interface Contract Specification](recommendation-interface.md) is authoritative for concrete Core types, text/JSON fields, and schema migration. Natural-language text alone must not be the authoritative reason.
 
 ## 12. Human override boundary
 
-本仕様でhuman overrideは次の意味を持つ。
+In this specification, a human override means any of the following:
 
-- allowed taskをrecommended workの代わりに選ぶ
-- deferred taskを現在開始する
-- discouraged taskをnegative factを承知して開始する
+- selecting an allowed task instead of recommended work;
+- starting a deferred task now; or
+- starting a discouraged task with knowledge of its negative fact.
 
-Overrideはnormal recommendationを過去に遡って変更しない。[Recommendation Human Override Contract仕様](recommendation-override.md)は、override必要/不要の条件、feasible replacement set、caller-asserted actor、human reason、Git audit artifact、single-use、override後の再解析を固定する。Overrideはnon-ready taskやcapacity violationをbypassしない。
+An override does not retroactively change the normal recommendation. The [Recommendation Human Override Contract Specification](recommendation-override.md) fixes the conditions that require or do not require an override, feasible replacement sets, caller-asserted actor, human reason, Git audit artifacts, single use, and re-analysis after an override. An override does not bypass non-ready tasks or capacity violations.
 
 ## 13. Re-analysis
 
-次の変更後は古いrecommendationを再利用せず、document全体を再解析する。
+Do not reuse an old recommendation after any of the following changes; re-analyze the complete document:
 
-- task start、completion、block、unblock
-- milestone reachedまたはadvance
-- capacity overrideまたはresource declaration
-- task priority、duration、dependency、requirement
-- human override
-- ranking algorithm version
+- task start, completion, block, or unblock;
+- milestone reach or advance;
+- capacity override or resource declaration;
+- task priority, duration, dependency, or requirement;
+- human override; or
+- ranking algorithm version.
 
-Recommendation resultはsource digest、capacity option、algorithm versionへ条件付けられる。具体的fieldは[Recommendation Interface Contract仕様](recommendation-interface.md)で固定する。
+A recommendation result is conditioned on the source digest, capacity options, and algorithm version. The concrete fields are fixed by the [Recommendation Interface Contract Specification](recommendation-interface.md).
 
-## 14. 後続設計taskへの入力
+## 14. Inputs to follow-on design tasks
 
 ### [`RANKING_POLICY`](recommendation-ranking.md)
 
-- `R`を選ぶproject factと優先規則
-- selection horizon
-- empty setと複数recommendedの条件
-- complete tie-breakとalgorithm version
-- current scheduler orderとのmigration
+- project facts and priority rules for choosing `R`;
+- selection horizon;
+- conditions for an empty set and multiple recommendations;
+- complete tie-breaks and algorithm version; and
+- migration from the current scheduler order.
 
 ### [`REASON_CODE_TAXONOMY`](recommendation-reasons.md)
 
-- tier付与とset選択のstable reason code
-- supporting、opposing、blockingのpolarity
-- fact IDと未model化factの扱い
+- stable reason codes for assigning tiers and selecting a set;
+- supporting, opposing, and blocking polarity; and
+- fact IDs and treatment of unmodeled facts.
 
 ### [`STRUCTURED_EXPLANATION_MODEL`](recommendation-explanation.md)
 
-- typed fact
-- 制限付きexpression AST
-- winner/alternative comparison
-- decisive/supporting rule
-- description key、parameter、派生text
+- typed facts;
+- a restricted expression AST;
+- winner/alternative comparison;
+- decisive/supporting rules; and
+- description keys, parameters, and derived text.
 
 ### [`INTERFACE_CONTRACT`](recommendation-interface.md)
 
-- Core typeとJSON schema
-- `NextResult.v2`からのmigration
-- text sectionとordering
-- explanation level、size limit、truncation
+- Core types and JSON schema;
+- migration from `NextResult.v2`;
+- text sections and ordering; and
+- explanation level, size limit, and truncation.
 
 ### [`HUMAN_OVERRIDE_CONTRACT`](recommendation-override.md)
 
-- tierとoverride requirementの対応
-- override reasonとaudit
-- write boundaryと再解析
+- correspondence between tiers and override requirements;
+- override reason and audit; and
+- write boundary and re-analysis.
 
-## 15. 本sliceのacceptance
+## 15. Acceptance for this slice
 
-- eligibilityとrecommendationを別軸として定義した
-- `runnable_now`とrecommended setを同一視しない
-- recommendationの評価対象をready taskのstart actionへ限定した
-- 4 tierの形式的意味とauthorityを定義した
-- `blocked`をrecommendation tierから除外した
-- active、blocked_now、upcoming、doneへの非適用を定義した
-- recommended setのjoint resource feasibilityを定義した
-- allowed taskの個別追加と複数同時追加を区別した
-- discouragedを明示的negative factだけに限定した
-- explainability、override、re-analysisを後続contractへ接続した
-- 現行CLI/JSONを変更していない
+- Eligibility and recommendation are defined as separate axes.
+- `runnable_now` and the recommended set are not treated as identical.
+- Recommendation evaluation is limited to the start action for ready tasks.
+- The formal meaning and authority of four tiers are defined.
+- `blocked` is excluded from recommendation tiers.
+- Non-applicability to `active`, `blocked_now`, `upcoming`, and `done` is defined.
+- Joint resource feasibility for the recommended set is defined.
+- Individual addition of allowed tasks is distinguished from adding multiple tasks simultaneously.
+- `discouraged` is restricted to explicit negative facts.
+- Explainability, override, and re-analysis are connected to follow-on contracts.
+- The current CLI/JSON is unchanged.

@@ -1,99 +1,99 @@
-# perttool Graph Semantics仕様
+# perttool Graph Semantics Specification
 
-- 文書状態: Draft 0.2
+- Document status: Draft 0.2
 - Semantics version: 1
-- 作成日: 2026-07-21
-- 対応要件: [../requirements.md](../requirements.md)
-- 文法仕様: [dsl-grammar.md](dsl-grammar.md)
-- 対応基本設計: [../basic-design.md](../basic-design.md)
+- Created: 2026-07-21
+- Related requirements: [../requirements.md](../requirements.md)
+- Grammar specification: [dsl-grammar.md](dsl-grammar.md)
+- Related basic design: [../basic-design.md](../basic-design.md)
 
-## 1. 目的
+## 1. Purpose
 
-本書は、構文上有効な`.pert`文書をDAGとして解決し、milestoneの到達状態、task/gateの充足、次タスク分類、frontier、resourceとの境界、`advance`後に残す最小graphを決定する規範仕様である。
+This document is the normative specification for resolving a syntactically valid `.pert` document as a DAG and determining milestone reachability, task/gate satisfaction, next-task classification, the frontier, the boundary with resources, and the minimal graph retained after `advance`.
 
-PERT/CPMの数式、resource scheduleのevent生成、capacity 2以上のresource arc、schedule critical pathは`docs/specs/analysis.md`で定義する。本書は、それらの入力となる有効graphと保存状態の意味を固定する。
+`docs/specs/analysis.md` defines PERT/CPM formulas, resource-schedule event generation, resource arcs for capacity 2 or greater, and the schedule critical path. This document fixes the meaning of the valid graph and stored state that serve as their inputs.
 
-## 2. 規範の優先順位
+## 2. Normative precedence
 
-不一致がある場合は次の順で解消する。
+Resolve inconsistencies in the following order.
 
-1. `docs/requirements.md`のMust requirement
-2. 本書のgraph、state、advance規則
-3. [DSL文法仕様](dsl-grammar.md)の構文・field規則
-4. `docs/basic-design.md`の実装構造
-5. `docs/examples/*.pert`とhelp表示
+1. Must requirements in `docs/requirements.md`
+2. The graph, state, and advance rules in this document
+3. Syntax and field rules in the [DSL grammar specification](dsl-grammar.md)
+4. Implementation structure in `docs/basic-design.md`
+5. `docs/examples/*.pert` and help output
 
-構文上受理できることは、graphとして有効であることを意味しない。parseまたはfield validationにerrorがある文書へ本書のgraph分析を適用してはならない。
+Syntactic acceptance does not imply graph validity. Do not apply the graph analysis in this document to a document with a parse or field-validation error.
 
-## 3. 対象と非対象
+## 3. Scope and exclusions
 
-本書が定義するもの:
+This document defines:
 
-- entity IDとreferenceの解決
-- task/gateをedgeとするDAG
-- root、finish、finish reachability
-- stored milestone stateとeffective reached closure
-- task statusとedge satisfaction
-- `active`、`ready`、`blocked_now`、`upcoming`の集合
-- resource referenceと時刻0のactive allocation整合性
-- frontierとproject completion
-- `advance`のsemantic rewriteと不変条件
-- graph diagnostic code、順序、source location
+- entity-ID and reference resolution
+- a DAG in which tasks and gates are edges
+- roots, finish, and finish reachability
+- stored milestone state and effective-reached closure
+- task status and edge satisfaction
+- the `active`, `ready`, `blocked_now`, and `upcoming` sets
+- resource references and consistency of time-zero active allocation
+- the frontier and project completion
+- semantic rewriting and invariants for `advance`
+- graph diagnostic codes, ordering, and source locations
 
-本書が定義しないもの:
+This document does not define:
 
-- duration、expected、variance、floatの数式
-- ready taskの最終表示順位
-- resource scheduleの最適性
-- resource waitを説明するresource arcの選択
-- formatterのcomment移動規則
-- file write、atomic replace、optimistic lock
-- Mermaid metadata、CLI JSON Schema、post-MVP adapter wire contract
+- formulas for duration, expected value, variance, and float
+- final display ranking of ready tasks
+- resource-schedule optimality
+- selection of resource arcs that explain resource waits
+- formatter rules for comment movement
+- file writes, atomic replacement, and optimistic locking
+- Mermaid metadata, CLI JSON Schema, and post-MVP adapter wire contracts
 
-## 4. 正規graph model
+## 4. Canonical graph model
 
-### 4.1 記号
+### 4.1 Notation
 
-参照解決後のgraphを次で表す。
+Represent the graph after reference resolution as follows.
 
 ```text
 G = (V, E)
 E = T union Q
 ```
 
-- `V`: milestone集合
-- `T`: task edge集合
-- `Q`: gate edge集合
-- `src(e)`: edgeの`from` milestone
-- `dst(e)`: edgeの`to` milestone
-- `In(v)`: `dst(e) = v`であるedge集合
-- `Out(v)`: `src(e) = v`であるedge集合
-- `finish`: `project.finish`が参照するmilestone
+- `V`: set of milestones
+- `T`: set of task edges
+- `Q`: set of gate edges
+- `src(e)`: the `from` milestone of edge `e`
+- `dst(e)`: the `to` milestone of edge `e`
+- `In(v)`: set of edges for which `dst(e) = v`
+- `Out(v)`: set of edges for which `src(e) = v`
+- `finish`: milestone referenced by `project.finish`
 
-Resourceは`G`のvertexまたはedgeではない。taskからresourceへのrequirementは別の二部関係として保持する。
+Resources are neither vertices nor edges in `G`. Retain task-to-resource requirements as a separate bipartite relation.
 
 ### 4.2 ID domain
 
-project、resource、milestone、task、gateのIDは1つのglobal namespaceを共有する。
+Project, resource, milestone, task, and gate IDs share one global namespace.
 
 Rules:
 
-- IDは文書全体で一意
-- exact lowercaseの予約語はentity IDに使用不可
-- task/gate endpointはmilestoneだけを参照できる
-- task requirementはresourceだけを参照できる
-- title、宣言順、source位置をreference解決に使用しない
-- forward referenceを許可する
+- IDs are unique throughout the document.
+- Exact lowercase reserved words are prohibited as entity IDs.
+- Task/gate endpoints can reference only milestones.
+- Task requirements can reference only resources.
+- Do not use titles, declaration order, or source positions for reference resolution.
+- Forward references are permitted.
 
-### 4.3 edge identity
+### 4.3 Edge identity
 
-task/gate IDがedge identityである。同じ`from`と`to`を持つparallel edgeを許可し、それぞれ独立した依存条件として数える。
+The task/gate ID is the edge identity. Parallel edges with the same `from` and `to` are permitted and count as independent dependency conditions.
 
-Milestoneのindegreeはedge数であり、endpoint pair数ではない。parallel edgeを1本へ自動統合してはならない。
+A milestone's indegree is the number of edges, not the number of endpoint pairs. Do not automatically merge parallel edges into one edge.
 
 ## 5. Graph build pipeline
 
-有効graphは次の順で構築する。
+Build a valid graph in the following order.
 
 ```text
 field-valid AST
@@ -110,93 +110,93 @@ field-valid AST
 
 Rules:
 
-- errorが1件以上ある場合、public analyzerへ`PertGraph`を渡さない
-- 独立したerrorは可能な範囲で同じcheckに報告する
-- cycleに依存する到達性やstate errorは、誤誘導を避けるため抑制できる
-- warningだけならgraphを生成し、analysisを続行できる
-- adjacency内のedgeはedge IDの辞書順とする
+- If one or more errors exist, do not pass `PertGraph` to a public analyzer.
+- Report independent errors in the same check where feasible.
+- Reachability and state errors that depend on a cycle may be suppressed to avoid misleading output.
+- When only warnings exist, the graph can be generated and analysis can continue.
+- Edges in an adjacency list are in lexicographic edge-ID order.
 
-## 6. 構造的な有効性
+## 6. Structural validity
 
-### 6.1 self-loopとDAG
+### 6.1 Self-loops and the DAG
 
-すべてのtask/gateについて`src(e) != dst(e)`でなければならない。
+For every task/gate, `src(e) != dst(e)` is required.
 
-taskとgateを区別せず全edgeを含めたgraphがDAGでなければならない。resource共有関係、owner、priorityはcycle検査へ含めない。
+The graph containing all edges, without distinguishing tasks from gates, must be a DAG. Do not include resource-sharing relationships, owners, or priority in cycle validation.
 
-### 6.2 stable topological order
+### 6.2 Stable topological order
 
-Kahn algorithmを使用し、入次数0の候補milestoneをID辞書順で選ぶ。edgeを処理するときはedge ID辞書順とする。
+Use Kahn's algorithm, choosing zero-indegree candidate milestones in lexicographic ID order. Process edges in lexicographic edge-ID order.
 
-全milestoneを処理できない場合はcycle errorとし、未処理subgraphから少なくとも1つのcycle witnessを返す。
+If all milestones cannot be processed, report a cycle error and return at least one cycle witness from the unprocessed subgraph.
 
-Cycle witnessは次の順で決定する。
+Determine a cycle witness in the following order.
 
-1. 未処理milestoneのうちID辞書順で最初のものからDFSする
-2. outgoing edgeをedge ID、次にtarget IDの順で走査する
-3. 最初のback edgeで閉じるcycleを採用する
-4. 表示上は最小milestone IDから始まるようrotateする
-5. milestone ID列とedge ID列の両方を返す
+1. Perform DFS from the lexicographically first unprocessed milestone ID.
+2. Traverse outgoing edges by edge ID and then target ID.
+3. Select the cycle closed by the first back edge.
+4. Rotate it for display so that it starts with the smallest milestone ID.
+5. Return both the milestone-ID sequence and edge-ID sequence.
 
-### 6.3 finish
+### 6.3 Finish
 
-- `project.finish`は存在するmilestoneを参照する
-- `Out(finish)`はemptyでなければならない
-- finish自身はfinishへ到達可能とする
-- zero-task projectは、finishが唯一のmilestoneかつ明示`reached`なら有効な完了済みprojectにできる
+- `project.finish` references an existing milestone.
+- `Out(finish)` must be empty.
+- Finish itself is considered reachable from finish.
+- A zero-task project can be a valid completed project when finish is the only milestone and is explicitly `reached`.
 
-### 6.4 finish reachability
+### 6.4 Finish reachability
 
-finishから全edgeを逆向きに走査する。
+Traverse all edges in reverse from finish.
 
-有効graphでは次を満たす。
+The following holds for a valid graph.
 
 ```text
 for every v in V: v can reach finish
 for every e in E: dst(e) can reach finish
 ```
 
-未完了edgeだけでなく、一時的に残されたdone taskとgateも対象にする。finishへ至らない過去専用subgraphを履歴目的で残すことは許可しない。
+This includes not only unfinished edges but also temporarily retained done tasks and gates. Do not retain a past-only subgraph that does not lead to finish for historical purposes.
 
-Resource declarationはfinish reachabilityの対象外であり、未使用resourceを宣言してもgraph errorにしない。
+Resource declarations are outside finish reachability; declaring an unused resource is not a graph error.
 
-### 6.5 roots
+### 6.5 Roots
 
-`In(v)`がemptyのmilestoneをrootとする。
+A milestone with empty `In(v)` is a root.
 
-- すべてのrootは明示的に`state reached`でなければならない
-- rootは複数存在でき、すべて現在frontierの独立入口として扱う
-- rootでないmilestoneを明示`reached`にできるが、後述のincoming consistencyを満たす必要がある
+- Every root must explicitly be `state reached`.
+- Multiple roots are allowed; treat each as an independent entry into the current frontier.
+- A non-root milestone can explicitly be `reached`, but it must satisfy the incoming consistency described below.
 
-## 7. 保存状態とedge satisfaction
+## 7. Stored state and edge satisfaction
 
-### 7.1 stored milestone state
+### 7.1 Stored milestone state
 
-Milestoneの保存状態は次の2値である。
+A milestone's stored state has the following two values.
 
-- `planned`: 省略時の値。到達済みかどうかはclosureで導出する
-- `reached`: 現行snapshotの明示的な到達事実
+- `planned`: the default when omitted. Reachability is derived by closure.
+- `reached`: an explicit fact that the current snapshot has reached the milestone.
 
-`state`は計算cacheではない。明示frontierをGit管理可能な文書へ保存するために使用する。
+`state` is not a computation cache. Use it to store the explicit frontier in a Git-manageable document.
 
-### 7.2 task status
+### 7.2 Task status
 
-Task statusは排他的である。
+Task statuses are mutually exclusive.
 
-| Status | 実行状態 | edge satisfaction | 時刻0のresource占有 |
+| Status | Execution state | edge satisfaction | Time-zero resource allocation |
 | --- | --- | --- | --- |
-| `planned` | 未着手 | unsatisfied | なし |
-| `active` | 実行中 | unsatisfied | 全requirements |
-| `blocked` | 外部要因で実行していない | unsatisfied | なし |
-| `done` | 作業条件を満たした | source reachedならsatisfied | なし |
+| `planned` | Not started | unsatisfied | None |
+| `active` | In progress | unsatisfied | All requirements |
+| `blocked` | Not executing because of an external factor | unsatisfied | None |
+| `done` | Work condition satisfied | satisfied if the source is reached | None |
 
-`active` taskのduration/estimateはsnapshot時点の残所要時間を表す。
+The duration/estimate of an `active` task represents remaining work at the snapshot time.
 
-Grammar version 1では`active`と`blocked`を同時に表せない。停止中もresourceを保持する作業や、途中でresourceを解放・再取得する作業は表現対象外とする。
+Grammar version 1 cannot represent `active` and `blocked` simultaneously. Work that retains a resource while stopped, or releases and reacquires a resource partway through, is outside the representable domain.
 
-### 7.3 satisfaction function
+### 7.3 Satisfaction function
 
-Milestone集合`R`に対するedge satisfactionを次で定義する。
+Define edge satisfaction for a milestone set `R` as follows.
 
 ```text
 sat(task e, R) = status(e) == done and src(e) in R
@@ -205,17 +205,17 @@ sat(gate e, R) = src(e) in R
 
 Rules:
 
-- gateはduration、status、resource requirementを持たない
-- gateはsourceがreachedになった同じclosure計算内で即座にsatisfiedになる
-- `done`だけを見てsource未到達のtaskをsatisfiedにしてはならない
-- `active` taskのtargetは、残durationが0であっても自動到達しない
-- resource空き状況はsatisfactionへ影響しない
+- A gate has no duration, status, or resource requirement.
+- A gate becomes satisfied immediately in the same closure computation in which its source becomes reached.
+- Do not treat a task whose source is unreached as satisfied merely because it is `done`.
+- An `active` task's target does not become reached automatically, even if its remaining duration is zero.
+- Resource availability does not affect satisfaction.
 
 ## 8. Effective reached closure
 
-### 8.1 least fixed point
+### 8.1 Least fixed point
 
-明示`state reached`の集合を`S`とする。次の関数を固定点まで適用してeffective reached集合`R*`を求める。
+Let `S` be the set of explicit `state reached` milestones. Apply the following function to a fixed point to obtain the effective-reached set `R*`.
 
 ```text
 F(R) = R union {
@@ -227,41 +227,41 @@ F(R) = R union {
 R* = least_fixed_point(F, S)
 ```
 
-DAGなのでstable topological orderで1回前向きに処理できる。実装がqueue方式を使う場合も同じ`R*`を返さなければならない。
+Because the graph is a DAG, one forward pass in stable topological order is sufficient. An implementation using a queue must return the same `R*`.
 
-### 8.2 all-incoming join
+### 8.2 All-incoming join
 
-Milestoneはincoming edgeのうち1本ではなく、すべてがsatisfiedになった場合だけ導出到達する。
+A milestone becomes derivatively reached only when all, rather than one, of its incoming edges are satisfied.
 
-- taskとgateを同じincoming conditionとして数える
-- parallel edgeもそれぞれ満たす必要がある
-- blocked、active、planned taskはいずれもjoinを満たさない
-- done branchとunfinished branchが合流する場合、done edgeはunfinished branch完了まで現行graphに必要である
+- Count tasks and gates alike as incoming conditions.
+- Each parallel edge must also be satisfied.
+- Blocked, active, and planned tasks do not satisfy a join.
+- When a done branch and an unfinished branch join, the done edge remains necessary in the current graph until the unfinished branch completes.
 
-### 8.3 state consistency
+### 8.3 State consistency
 
-Closure計算後に次を検証する。
+After computing the closure, validate the following.
 
-- 明示`reached` milestoneのincoming edgeは、すべて`R*`に対してsatisfiedでなければならない
-- `active`または`done` taskのsourceは`R*`に含まれなければならない
-- rootが`R*`に含まれない状態はerror
-- `planned`保存状態だがclosureで到達したmilestoneは有効だが、`advance`可能warningを返す
+- Every incoming edge of an explicit `reached` milestone must be satisfied with respect to `R*`.
+- The source of an `active` or `done` task must be in `R*`.
+- A root absent from `R*` is an error.
+- A milestone stored as `planned` but reached by closure is valid, but returns an `advance`-available warning.
 
-明示`reached`を根拠に自身の不完全incomingを無視してはならない。incoming inconsistencyがあるgraphはanalysisへ渡さない。
+Do not use explicit `reached` to ignore that milestone's incomplete incoming conditions. Do not pass a graph with incoming inconsistency to analysis.
 
-### 8.4 project completion
+### 8.4 Project completion
 
-有効graphについて次で定義する。
+For a valid graph, define the following.
 
 ```text
 projectComplete = finish in R*
 ```
 
-有効graphでprojectがcompleteなら、finishへ至る全taskは`done`である。off-path unfinished taskはfinish reachability ruleにより存在できない。
+If the project is complete in a valid graph, all tasks leading to finish are `done`. The finish-reachability rule disallows off-path unfinished tasks.
 
 ## 9. Derived task classification
 
-Task classificationは保存fieldではなく、statusと`R*`から導出する。
+Derive task classification from status and `R*`; it is not a stored field.
 
 ```text
 active = {
@@ -285,113 +285,113 @@ upcoming = {
 
 Rules:
 
-- `done` taskをnext candidateに含めない
-- `active` taskをready/upcomingへ重複分類しない
-- source未到達のblocked taskは`upcoming`であり、依存到達後に`blocked_now`になる
-- gateはtask classificationに含めない
-- priority、resource capacity、owner、durationはready判定を変更しない
-- 1 taskは上記の最大1集合にだけ属する
+- Do not include `done` tasks among next candidates.
+- Do not classify an `active` task redundantly as ready or upcoming.
+- A blocked task with an unreached source is `upcoming`; it becomes `blocked_now` after dependency reachability.
+- Do not include gates in task classification.
+- Priority, resource capacity, owner, and duration do not change the ready determination.
+- A task belongs to at most one of the sets above.
 
-`runnable_now`は`ready`の部分集合である。時刻0のactive allocationを差し引き、analysis仕様の決定的なresource選択規則を適用して求める。resourceを要求しないready taskは常にresource-feasible candidateである。
+`runnable_now` is a subset of `ready`. Determine it by subtracting time-zero active allocation and applying the deterministic resource-selection rules in the analysis specification. A ready task requiring no resource is always a resource-feasible candidate.
 
 ## 10. Gate semantics
 
-GateはAoA上のdummy dependency edgeである。
+A gate is a dummy dependency edge in AoA.
 
-- source reachedならsatisfied
-- target reachabilityには他のincoming edgeと同じall-incoming ruleを適用
-- durationは常に0
-- varianceとresource usageは0
-- task status、owner、priority、requiresを持たない
-- cycle、finish reachability、advance retentionの対象になる
-- taskへ暗黙変換せず、可視化とdiagnosticで種別を保持する
+- It is satisfied when its source is reached.
+- Apply the same all-incoming rule as other incoming edges to target reachability.
+- Its duration is always zero.
+- Its variance and resource usage are zero.
+- It has no task status, owner, priority, or requires field.
+- It is subject to cycle validation, finish reachability, and advance retention.
+- Do not implicitly convert it to a task; retain its kind in visualizations and diagnostics.
 
-Gate chainはclosure内で連続伝播できる。gateだけで到達できるmilestoneを利用者が手動で`reached`へ変更する必要はない。
+A gate chain can propagate continuously within closure. A user need not manually change a milestone reachable solely through gates to `reached`.
 
 ## 11. Resource semantics boundary
 
-### 11.1 resolved requirements
+### 11.1 Resolved requirements
 
-各task requirementは`resource ID -> positive integer units`のmapとして解決する。
+Resolve each task requirement as a `resource ID -> positive integer units` map.
 
-- resource IDが存在し、resource kindであること
-- unitsは宣言capacity以下であること
-- 同一task内でresource IDが一意であること
-- 全requirementsを同時取得すること
+- The resource ID exists and has resource kind.
+- Units do not exceed declared capacity.
+- A resource ID is unique within a task.
+- Acquire all requirements simultaneously.
 
-Resource requirementはprecedence edgeではなく、topological order、cycle、reached、readyへ影響しない。
+Resource requirements are not precedence edges and do not affect topological order, cycles, reached, or ready.
 
-### 11.2 active allocation
+### 11.2 Active allocation
 
-Resource`r`のsnapshot時刻0における使用量を次で定義する。
+Define the usage of resource `r` at snapshot time zero as follows.
 
 ```text
 activeUsage(r) = sum(requirement(t, r) for t in active)
 ```
 
-すべてのresourceについて`activeUsage(r) <= capacity(r)`でなければならない。超過はanalysis不能なresource errorとする。
+For every resource, `activeUsage(r) <= capacity(r)` is required. An excess is a resource error that prevents analysis.
 
-`planned`、`blocked`、`done`、gateは時刻0にresourceを占有しない。`blocked` taskの外部待ち時間は推測せず、将来scheduleはblockが時刻0で解消した条件付き結果として扱う。
+`planned`, `blocked`, `done`, and gates do not allocate resources at time zero. Do not infer an external wait duration for a `blocked` task; treat the future schedule as a conditional result in which the block is resolved at time zero.
 
-### 11.3 capacity override
+### 11.3 Capacity override
 
-What-if用capacity overrideはanalysis requestの一時入力である。
+A what-if capacity override is a temporary input to an analysis request.
 
-- 正本resource declarationを書き換えない
-- reference resolutionと正の整数constraintを再検査する
-- activeUsageを下回るoverrideはerror
-- effective reachedとready集合を変更しない
-- runnable_now、resource schedule、schedule critical pathは変更し得る
+- It does not rewrite the canonical resource declaration.
+- Revalidate reference resolution and positive-integer constraints.
+- An override below activeUsage is an error.
+- It does not change the effective-reached or ready sets.
+- It can change `runnable_now`, the resource schedule, and the schedule critical path.
 
 ## 12. Frontier
 
-### 12.1 future-required edges
+### 12.1 Future-required edges
 
-有効graphのeffective reached集合を`R*`とし、次を定義する。
+Let `R*` be the effective-reached set of a valid graph, and define the following.
 
 ```text
 E_keep = { e in E | dst(e) not in R* }
 V_keep = { finish } union endpoints(E_keep)
 ```
 
-State consistencyが成立する有効graphでは、次が成り立つ。
+For a valid graph with state consistency, the following holds.
 
-- targetがreachedのedgeはsatisfied済みの過去condition
-- targetがunreachedのedgeは、unfinished workまたは未到達joinに必要なsatisfied condition
-- unfinished taskのtargetは必ずunreached
+- An edge whose target is reached is a satisfied past condition.
+- An edge whose target is unreached is unfinished work or a satisfied condition required for an unreached join.
+- The target of an unfinished task is always unreached.
 
-### 12.2 frontier set
+### 12.2 Frontier set
 
-現在frontierを次で定義する。
+Define the current frontier as follows.
 
 ```text
 frontier = R* intersection V_keep
 ```
 
-Project completeの場合は`frontier = {finish}`とする。
+For a complete project, `frontier = {finish}`.
 
-Frontierには次の両方が含まれる。
+The frontier includes both of the following.
 
-- planned/active/blocked taskのsourceであるreached milestone
-- 未到達joinへ入るdone taskまたはsatisfied gateのsourceとして、部分合流を記憶するreached milestone
+- Reached milestones that are sources of planned, active, or blocked tasks.
+- Reached milestones that retain a partial join as sources of done tasks or satisfied gates entering an unreached join.
 
-したがってfrontierは単なる「unfinished taskの開始点」ではない。合流条件を失わないためのrootも含む。
+Therefore, the frontier is not merely the "starting point of unfinished tasks." It also includes roots required to retain join conditions.
 
 ## 13. Advance semantics
 
 ### 13.1 precondition
 
-`advance` plannerは次を満たす場合だけcandidateを生成する。
+The `advance` planner generates a candidate only when all of the following hold.
 
-- parse、field、reference、DAG、state、resource validationにerrorがない
-- effective reached closureを決定できる
-- input digestとsource textが呼出時点で対応している
+- There are no errors in parse, field, reference, DAG, state, or resource validation.
+- The effective reached closure can be determined.
+- The input digest and source text correspond at invocation time.
 
-Warningはpreviewを妨げないが、candidateに含めて表示する。
+Warnings do not prevent a preview, but they are included and displayed in the candidate.
 
 ### 13.2 canonical rewrite
 
-`R*`、`E_keep`、`V_keep`を前節どおり求め、次のgraphを生成する。
+Determine `R*`, `E_keep`, and `V_keep` as specified in the preceding section, then construct the following graph.
 
 ```text
 V' = V_keep
@@ -404,54 +404,54 @@ storedState'(v) =
 
 Rules:
 
-- `E'`に含まれるtask/gateのID、field、status、requirementを変更しない
-- `V'`に含まれるmilestoneのIDとuser fieldを維持する
-- `R*`に含まれるretained milestoneを明示`state reached`にする
-- `V'`外のmilestoneと`E'`外のedgeを削除する
-- resource declarationは自動削除しない
-- project ID、finish、duration unit、target durationを変更しない
-- `as_of`はwall clockから自動生成せず、callerが明示した場合だけ別mutationとして変更する
-- declaration/commentのtext edit規則はmutation仕様へ送る
+- Do not change the IDs, fields, statuses, or requirements of tasks/gates in `E'`.
+- Preserve the IDs and user fields of milestones in `V'`.
+- Set every retained milestone in `R*` to explicit `state reached`.
+- Remove milestones outside `V'` and edges outside `E'`.
+- Do not automatically remove resource declarations.
+- Do not change the project ID, finish, duration unit, or target duration.
+- Do not derive `as_of` automatically from the wall clock; change it as a separate mutation only when the caller explicitly requests it.
+- The text-edit rules for declarations and comments are specified by the mutation specification.
 
 ### 13.3 retention rule
 
-Edgeの保持条件はtargetが未到達かどうかだけで決まる。
+An edge is retained solely according to whether its target is unreached.
 
 | Edge state | Target | Advance |
 | --- | --- | --- |
-| done task | reached | remove as past |
-| gate | reached | remove as past |
-| done task | unreached join | keep as partial satisfaction |
-| satisfied gate | unreached join | keep as partial satisfaction |
-| planned/active/blocked task | unreached | keep as future work |
-| gate from unreached source | unreached | keep as future dependency |
+| done task | reached | remove as past work |
+| gate | reached | remove as past work |
+| done task | unreached join | retain as partial satisfaction |
+| satisfied gate | unreached join | retain as partial satisfaction |
+| planned/active/blocked task | unreached | retain as future work |
+| gate from unreached source | unreached | retain as future dependency |
 
-この規則により、合流前のdone branchを誤って削除しない。
+This rule prevents incorrect removal of a done branch before a join.
 
 ### 13.4 postcondition
 
-Advance candidateは再parse・再検査し、次を満たさなければならない。
+An advance candidate must be reparsed and revalidated, and must satisfy all of the following.
 
-- global ID、reference、DAG、finish reachabilityが有効
-- residual graphの全rootが明示`reached`
-- retained milestoneのeffective reached集合がinputと一致
-- unfinished taskのID、status、duration/estimate、resource requirementが一致
-- `active`、`ready`、`blocked_now`、`upcoming`がtask ID単位で一致
-- precedence/resource analysisのcurrent-boundary入力が意味的に一致
-- project completion判定が一致
-- 同じcandidateへ再度`advance`してもsemantic diffがempty
+- Global IDs, references, the DAG, and finish reachability are valid.
+- Every root of the residual graph is explicitly `reached`.
+- The effective reached set of retained milestones matches the input.
+- The IDs, statuses, durations/estimates, and resource requirements of unfinished tasks match.
+- `active`, `ready`, `blocked_now`, and `upcoming` match by task ID.
+- The current-boundary inputs to precedence/resource analysis are semantically equivalent.
+- The project-completion determination matches.
+- Running `advance` on the same candidate again produces an empty semantic diff.
 
-削除entity、state変更、保持したdone/gateと保持理由をpreview resultへ列挙する。
+The preview result lists removed entities, state changes, retained done tasks/gates, and the reason for each retention.
 
 ### 13.5 minimality
 
-Grammar version 1の表現力では、`E_keep`の各edgeは未到達targetのincoming conditionなので削除できない。`V_keep`の各milestoneはfinishまたは保持edgeのendpointなので削除できない。
+Under the expressive power of grammar version 1, every edge in `E_keep` is an incoming condition of an unreached target and cannot be removed. Every milestone in `V_keep` is either the finish or an endpoint of a retained edge and cannot be removed.
 
-逆に、targetがreachedのedgeは将来の到達判定へ影響せず、そのedgeだけから参照されるmilestoneも将来graphに不要である。この意味でcanonical rewriteは、IDを新規合成せずに作れる最小residual graphである。
+Conversely, an edge whose target is reached does not affect future reachability decisions, and a milestone referenced only by such edges is unnecessary in the future graph. In this sense, the canonical rewrite is the smallest residual graph that can be constructed without synthesizing new IDs.
 
 ## 14. Determinism
 
-同じdocument text、semantics version、optionから次が一致しなければならない。
+The following must be identical for the same document text, semantics version, and options.
 
 - reference resolution result
 - stable topological order
@@ -462,12 +462,12 @@ Grammar version 1の表現力では、`E_keep`の各edgeは未到達targetのinc
 - advance keep/remove set
 - diagnostics order
 
-集合のJSON/text表示は、別途指定がない限りentity ID辞書順とする。
+Unless otherwise specified, JSON/text representations of sets are sorted lexicographically by entity ID.
 
-Diagnosticは次のkeyで並べる。
+Diagnostics are ordered by the following keys.
 
-1. primary span start offset。Spanなしはspan付きの後
-2. severity: error、warning、info
+1. primary-span start offset; diagnostics without a span follow those with a span
+2. severity: error, warning, info
 3. diagnostic code
 4. entity ID
 
@@ -477,56 +477,56 @@ Diagnosticは次のkeyで並べる。
 
 | Code | Severity | Meaning | Primary span |
 | --- | --- | --- | --- |
-| `PTSEM-201` | error | duplicate global entity ID | 後のID |
-| `PTSEM-202` | error | reserved wordをentity IDに使用 | entity ID |
+| `PTSEM-201` | error | duplicate global entity ID | later ID |
+| `PTSEM-202` | error | reserved word used as an entity ID | entity ID |
 | `PTSEM-203` | error | undefined `project.finish` | finish value |
 | `PTSEM-204` | error | undefined task/gate endpoint | endpoint ID |
-| `PTSEM-205` | error | endpointがmilestone kindでない | endpoint ID |
+| `PTSEM-205` | error | endpoint is not a milestone kind | endpoint ID |
 | `PTSEM-206` | error | undefined resource requirement | resource ID |
-| `PTSEM-207` | error | requirement参照先がresource kindでない | resource ID |
-| `PTSEM-208` | error | requirement unitsがcapacity超過 | units |
+| `PTSEM-207` | error | requirement reference is not a resource kind | resource ID |
+| `PTSEM-208` | error | requirement units exceed capacity | units |
 
 ### 15.2 DAG and state
 
 | Code | Severity | Meaning | Primary span |
 | --- | --- | --- | --- |
 | `PTDAG-201` | error | task/gate self-loop | arrow |
-| `PTDAG-202` | error | directed cycle | witness先頭edge |
-| `PTDAG-203` | error | finishにoutgoing edgeがある | outgoing edge header |
-| `PTDAG-204` | error | milestone/edgeがfinishへ到達不能 | entity ID |
-| `PTDAG-205` | error | rootが明示`reached`でない | milestone ID/state |
-| `PTDAG-206` | error | 明示reached milestoneにunsatisfied incomingがある | milestone state |
-| `PTDAG-207` | error | active/done taskのsourceがeffective reachedでない | task status |
-| `PTDAG-208` | warning | planned milestoneがclosureでeffective reached | milestone ID/state |
-| `PTDAG-209` | warning | canonical advanceで過去entityを除去可能 | 最初の対象entity |
+| `PTDAG-202` | error | directed cycle | first witness edge |
+| `PTDAG-203` | error | finish has an outgoing edge | outgoing edge header |
+| `PTDAG-204` | error | milestone/edge cannot reach finish | entity ID |
+| `PTDAG-205` | error | root is not explicitly `reached` | milestone ID/state |
+| `PTDAG-206` | error | explicit reached milestone has unsatisfied incoming edges | milestone state |
+| `PTDAG-207` | error | source of active/done task is not effectively reached | task status |
+| `PTDAG-208` | warning | planned milestone is effectively reached by closure | milestone ID/state |
+| `PTDAG-209` | warning | past entity can be removed by canonical advance | first applicable entity |
 
 ### 15.3 resource state
 
 | Code | Severity | Meaning | Primary span |
 | --- | --- | --- | --- |
-| `PTRES-201` | error | active taskの合計使用量がcapacity超過 | resource capacity |
-| `PTRES-202` | error | what-if capacityがactiveUsage未満 | override value |
+| `PTRES-201` | error | total active-task usage exceeds capacity | resource capacity |
+| `PTRES-202` | error | what-if capacity is below `activeUsage` | override value |
 
-Duplicate、cycle、capacity errorでは、先行宣言、cycle構成edge、占有active taskをrelated locationとして返す。
+For duplicate, cycle, and capacity errors, return the earlier declaration, the edges forming the cycle, and the occupying active tasks as related locations.
 
 ## 16. Source mapping and result boundary
 
-Graph entityは元AST/CSTのsource referenceを保持する。
+Graph entities retain source references to the originating AST/CST.
 
-- entity diagnosticはIDまたは最小のfield valueをprimary spanにする
-- undefined referenceは参照tokenを指す
-- state contradictionは`state`または`status` valueを指す
-- `state` field省略時のroot errorはmilestone IDを指す
-- cycleはwitness edgeすべてをrelated locationにする
-- finish unreachableはentityごとにerrorを返せるが、callerの最大件数を尊重する
+- An entity diagnostic uses the ID or the smallest field value as its primary span.
+- An undefined reference points to the reference token.
+- A state contradiction points to the `state` or `status` value.
+- A root error when the `state` field is omitted points to the milestone ID.
+- A cycle uses every witness edge as a related location.
+- Finish-unreachable errors may be returned for each entity, subject to the caller's maximum count.
 
-`check` resultは、parse/field diagnosticsとgraph diagnosticsを同じ共通modelで返す。Graph errorがある場合、analysis/next/advance resultを成功扱いで返してはならない。
+The `check` result returns parse/field diagnostics and graph diagnostics in the same common model. When graph errors exist, analysis/next/advance results must not be returned as successful.
 
 ## 17. Normative examples
 
 ### 17.1 minimal
 
-[minimal.pert](../examples/minimal.pert)の期待値:
+Expected values for [minimal.pert](../examples/minimal.pert):
 
 ```text
 effective reached = [NOW]
@@ -538,11 +538,11 @@ upcoming           = []
 project complete   = false
 ```
 
-`WORK`を`done`へ変更すると`DONE`がeffective reachedになり、project completeとなる。canonical advance後はprojectと`state reached`の`DONE`だけがgraph entityとして残る。
+When `WORK` changes to `done`, `DONE` becomes effectively reached and the project is complete. After canonical advance, only the project and `DONE` with `state reached` remain as graph entities.
 
 ### 17.2 resource-parallel
 
-[parallel.pert](../examples/parallel.pert)の初期期待値:
+Initial expected values for [parallel.pert](../examples/parallel.pert):
 
 ```text
 effective reached = [NOW]
@@ -550,11 +550,11 @@ ready              = [CLI, CORE, DOCS]
 runnable_now       = [CORE, CLI]
 ```
 
-`runnable_now`は既定capacityと初期resource priority ruleによる。DEVELOPERS capacityを3へoverrideしてもeffective reachedとreadyは変化せず、runnable_nowへ`DOCS`が追加される。
+`runnable_now` follows the default capacity and the initial resource-priority rule. Overriding DEVELOPERS capacity to 3 does not change effective reached or ready; it adds `DOCS` to runnable_now.
 
 ### 17.3 partial join before advance
 
-[advance-partial-before.pert](../examples/advance-partial-before.pert)では、`BRANCH_A`と`A_JOIN_WORK`がdone、`BRANCH_B`がactiveである。
+In [advance-partial-before.pert](../examples/advance-partial-before.pert), `BRANCH_A` and `A_JOIN_WORK` are done, and `BRANCH_B` is active.
 
 ```text
 effective reached = [A_DONE, NOW]
@@ -564,55 +564,55 @@ ready              = []
 upcoming           = [RELEASE]
 ```
 
-`JOINED`は`A_JOIN_WORK`だけがsatisfiedなのでunreachedである。`A_DONE`は保存状態plannedだがeffective reachedなので`PTDAG-208`を返す。
+`JOINED` is unreached because only `A_JOIN_WORK` is satisfied. `A_DONE` has stored state planned but is effectively reached, so `PTDAG-208` is returned.
 
-Canonical advanceは`BRANCH_A`を過去として削除するが、未到達`JOINED`の条件であるdone task `A_JOIN_WORK`を保持する。結果は[advance-partial-after.pert](../examples/advance-partial-after.pert)と意味的に一致する。
+Canonical advance removes `BRANCH_A` as past work, but retains the done task `A_JOIN_WORK`, which is a condition of unreached `JOINED`. The result is semantically equivalent to [advance-partial-after.pert](../examples/advance-partial-after.pert).
 
 ### 17.4 partial join after advance
 
-[advance-partial-after.pert](../examples/advance-partial-after.pert)では`NOW`と`A_DONE`が明示rootである。再度advanceしてもdiffはemptyである。
+In [advance-partial-after.pert](../examples/advance-partial-after.pert), `NOW` and `A_DONE` are explicit roots. Running `advance` again produces an empty diff.
 
-`BRANCH_B`をdoneへ変更すると`JOINED`がeffective reachedになり、次のadvanceでは`A_JOIN_WORK`と`BRANCH_B`の両方を過去として削除し、`JOINED`を明示reachedにして`RELEASE`をreadyのまま保持する。
+When `BRANCH_B` changes to done, `JOINED` becomes effectively reached. The next advance removes both `A_JOIN_WORK` and `BRANCH_B` as past work, makes `JOINED` explicitly reached, and retains `RELEASE` as ready.
 
 ## 18. Invalid-state examples
 
-最低限、次をfixtureで拒否する。
+At minimum, fixtures must reject the following.
 
 1. planned root
-2. active task from unreached milestone
-3. done task from unreached milestone
-4. explicit reached join with planned/active/blocked incoming
-5. task/gateを含むcycle
-6. finish outgoing edge
+2. active task from an unreached milestone
+3. done task from an unreached milestone
+4. explicit reached join with planned/active/blocked incoming edges
+5. cycle containing a task/gate
+6. outgoing edge from finish
 7. finish-unreachable past subgraph
-8. endpointがresource ID
-9. requirementがmilestone ID
-10. active resource oversubscription
+8. endpoint that is a resource ID
+9. requirement that is a milestone ID
+10. active resource over-allocation
 
 ## 19. Semantics acceptance
 
-実装時は最低限、次を自動検査する。
+The implementation must automatically verify at least the following.
 
-1. declaration順に依存せず同じresolved graphを返す
-2. parallel edgeを独立incomingとして保持する
-3. stable topological orderとcycle witnessが決定的
-4. root、finish、finish reachabilityを検査する
-5. gate chainとdone taskを通じたleast fixed point closureを返す
-6. partial joinで未完了branchがある間はtargetをreachedにしない
-7. active/done source consistencyを検査する
-8. taskをactive/ready/blocked_now/upcomingへ重複なく分類する
-9. resource capacity変更がreached/readyを変えない
-10. active allocation超過を検出する
-11. canonical advanceがpartial joinのdone/gateを保持する
-12. advance前後でunfinished task分類が一致する
-13. advanceがidempotent
-14. complete projectをfinishだけのresidual graphへできる
-15. diagnostic code、primary span、related location、順序がgoldenと一致する
+1. return the same resolved graph regardless of declaration order
+2. retain parallel edges as independent incoming edges
+3. make stable topological order and cycle witnesses deterministic
+4. validate roots, finish, and finish reachability
+5. return least-fixed-point closure through gate chains and done tasks
+6. do not mark a target reached while an unfinished branch remains at a partial join
+7. validate active/done source consistency
+8. classify tasks into active/ready/blocked_now/upcoming without duplication
+9. ensure resource-capacity changes do not change reached/ready
+10. detect active-allocation overage
+11. ensure canonical advance retains done tasks/gates at a partial join
+12. ensure unfinished-task classification matches before and after advance
+13. ensure advance is idempotent
+14. reduce a complete project to a residual graph containing only finish
+15. match golden diagnostic codes, primary spans, related locations, and order
 
 ## 20. Versioning and next specification
 
-Semantics version 1はgrammar version 1を対象とする。
+Semantics version 1 applies to grammar version 1.
 
-本書の有効graphを入力とするduration、PERT/CPM、resource schedule、`runnable_now`、resource arc、schedule critical path、rounding、tie-breakは[Analysis仕様](analysis.md)、外部resultとCLI操作契約は[CLI Interface仕様](interfaces.md)で固定した。
+The [Analysis specification](analysis.md) defines duration, PERT/CPM, resource scheduling, `runnable_now`, resource arcs, schedule critical paths, rounding, and tie-breaking using the valid graph in this document as input. The [CLI Interface specification](interfaces.md) defines external result and CLI operation contracts.
 
-Graph semanticsを破壊的に変更する場合は、grammar変更の有無にかかわらずsemantics version、fixture、migration影響を明示する。
+For a breaking change to graph semantics, explicitly state the semantics version, fixtures, and migration impact whether or not it also changes the grammar.

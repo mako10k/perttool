@@ -1,31 +1,31 @@
-# AI Agent Guidance Registry 規範例
+# AI Agent Guidance Registry Normative Examples
 
-- 文書状態: Normative 1.0
-- 作成日: 2026-07-23
-- 対応要件: [../requirements.md](../requirements.md)
+- Document status: Normative 1.0
+- Created: 2026-07-23
+- Related requirements: [../requirements.md](../requirements.md)
 - Interface contract: [../specs/agent-guidance.md](../specs/agent-guidance.md)
 - Provider baseline: [../process/agent-guidance-provider-baseline.md](../process/agent-guidance-provider-baseline.md)
-- 関連Issue: [Issue #2](https://github.com/mako10k/perttool/issues/2)
+- Related issue: [Issue #2](https://github.com/mako10k/perttool/issues/2)
 
-## 1. 目的
+## 1. Purpose
 
-本書は、AI Agent Guidance Registry仕様をCore、CLI、golden testへ移すときに意味を変えないため、queryと期待projectionを固定する規範例である。
+This document provides normative examples that fix queries and expected projections so the AI Agent Guidance Registry specification can be transferred to the Core, CLI, and golden tests without changing its meaning.
 
-例は次を区別する。
+The examples distinguish the following:
 
-- provider/surface lookupとalias normalization
-- surface summary statusとartifact固有status
-- support statusとartifact path resolution
-- stable guidance/risk IDとcanonical description
-- profile snapshot時点のstaleness
-- successful unsupported/unknownとlookup error
-- read-only helpと将来のaudit/scaffold/enforcement
+- Provider/surface lookup and alias normalization
+- Surface-summary status and artifact-specific status
+- Support status and artifact-path resolution
+- Stable guidance/risk IDs and canonical descriptions
+- Staleness at the profile snapshot
+- Successful unsupported/unknown results and lookup errors
+- Read-only help and future audit/scaffold/enforcement
 
-例中のprofile fragmentはVersion 1 contract fixtureの意味を説明するものであり、provider設定fileではない。Core実装taskでbundled profileへ展開する。
+The profile fragments in these examples explain the meaning of the Version 1 contract fixture; they are not provider configuration files. The Core implementation task expands them into the bundled profile.
 
-## 2. 共通条件
+## 2. Common conditions
 
-特記しない限り次を使用する。
+Unless otherwise noted, use the following.
 
 ```text
 schema_version              = Perttool.AgentGuidanceResult.v1
@@ -41,7 +41,7 @@ snapshot_as_of              = 2026-07-23
 operation                   = agent.help
 ```
 
-全resultは次のcapabilityを持つ。
+Every result has the following capabilities.
 
 ```json
 {
@@ -55,7 +55,7 @@ operation                   = agent.help
 }
 ```
 
-## 3. Lookupとordering
+## 3. Lookup and ordering
 
 ### AGT-001 Provider index
 
@@ -67,7 +67,7 @@ surface_id  = null
 level       = index
 ```
 
-期待するprovider order:
+Expected provider order:
 
 ```text
 codex
@@ -77,7 +77,7 @@ grok-build
 antigravity
 ```
 
-全providerの`available_surface_ids`は次の順である。
+Every provider's `available_surface_ids` use the following order.
 
 ```text
 instruction
@@ -88,9 +88,9 @@ prompt
 connector
 ```
 
-`grok-build`だけがVersion 1 alias `grok`を持つ。Indexはsurface detail、guidance、risk、sourceを含めず、全配列をcanonical orderで返す。
+Only `grok-build` has the Version 1 alias `grok`. The index excludes surface details, guidance, risks, and sources, and returns all arrays in canonical order.
 
-### AGT-002 Aliasはcanonical providerへ正規化する
+### AGT-002 Normalize aliases to canonical providers
 
 CLI:
 
@@ -98,7 +98,7 @@ CLI:
 perttool agent help grok workflow --format json
 ```
 
-期待query:
+Expected query:
 
 ```json
 {
@@ -110,11 +110,11 @@ perttool agent help grok workflow --format json
 }
 ```
 
-Provider record、artifact ID、sourceのprovider IDはすべて`grok-build`を返す。Outputへaliasをprovider IDとして残さない。
+Provider records, artifact IDs, and provider IDs in sources all return `grok-build`. Do not retain the alias as a provider ID in output.
 
-### AGT-003 非規範aliasを推測しない
+### AGT-003 Do not infer non-normative aliases
 
-次はすべて`PTAGT-101`、exit 1である。
+The following all return `PTAGT-101` with exit 1.
 
 ```text
 Grok
@@ -123,13 +123,13 @@ copilot
 claude
 ```
 
-Resultは`ok=false`、`canonical_provider_id=null`、provider/guidance/risk/sourceは空配列である。Suggestionやfuzzy matchをcanonical resultへ混ぜない。
+The result has `ok=false` and `canonical_provider_id=null`, with empty provider/guidance/risk/source arrays. Do not mix suggestions or fuzzy matches into the canonical result.
 
-## 4. Support statusと説明
+## 4. Support status and explanation
 
-### AGT-004 Native primaryとcompatible secondary
+### AGT-004 Native primary and compatible secondary
 
-仮に1 surfaceが次を持つ。
+Suppose one surface has the following.
 
 ```text
 primary artifact:
@@ -145,11 +145,11 @@ secondary artifact:
   evidence = official_compatibility_documentation
 ```
 
-Surface summaryはprimaryの`native`である。Secondaryがcompatibleである事実はartifact record、`compatibility_not_native` risk、source参照へ残す。Surface全体をcompatibleにせず、compatible pathをnativeとも表示しない。
+The surface summary is the primary artifact's `native` status. Retain the fact that the secondary is compatible in the artifact record, the `compatibility_not_native` risk, and source references. Do not make the whole surface compatible, and do not present a compatible path as native.
 
-### AGT-005 Previewはexplicit noticeを必要とする
+### AGT-005 Preview requires an explicit notice
 
-GitHub Copilotの`prompt`はprovider baselineでofficial sourceがpublic previewを明記しているため、Version 1 profileの対応artifactは次を持つ。
+For the GitHub Copilot `prompt`, an official source in the provider baseline explicitly states public preview; therefore, the corresponding Version 1 profile artifact has the following.
 
 ```text
 support_status      = preview
@@ -157,11 +157,11 @@ evidence_kind       = official_preview_notice
 source_ids          = [github-prompt-files]
 ```
 
-単に新しい、変更が多い、IDE限定であるという推論からpreviewを生成しない。
+Do not infer preview merely because a feature is new, changes frequently, or is limited to an IDE.
 
-### AGT-006 Deprecatedはpreferred replacementと分離する
+### AGT-006 Keep deprecated separate from preferred replacement
 
-Codexの`prompt`はcustom promptsを示し、official sourceがdeprecatedと明記しているため次を持つ。
+The Codex `prompt` denotes custom prompts, and its official source explicitly states that they are deprecated; therefore, it has the following.
 
 ```text
 support_status      = deprecated
@@ -170,11 +170,11 @@ source_ids          = [codex-custom-prompts]
 risk_ids            = [prompt_not_persistent, provider_surface_availability_varies]
 ```
 
-Replacementとしてworkflow/Skillを説明できるが、prompt artifact自身のstatusをnativeへ戻さない。Provider固有の移行説明はproject control guidanceを変更しない。
+Workflow/Skill may be described as a replacement, but do not restore the prompt artifact's own status to native. Provider-specific migration guidance does not change project-control guidance.
 
-### AGT-007 Unsupportedとunknownを区別する
+### AGT-007 Distinguish unsupported from unknown
 
-Contract fixtureはstatus判定を次の2 sentinelで固定する。
+The contract fixture fixes status decisions with the following two sentinels.
 
 ```text
 explicit unsupported:
@@ -190,11 +190,11 @@ insufficient evidence:
   ok            = true
 ```
 
-Current provider profileに該当するunsupported surfaceがない場合でも、consumerが認識するvocabularyから削除しない。一方、資料が見つからないことをunsupported sentinelへ割り当ててはならない。
+Even when the current provider profile has no applicable unsupported surface, do not remove it from the vocabulary that consumers recognize. Conversely, lack of documentation MUST NOT be assigned to the unsupported sentinel.
 
-### AGT-008 Capabilityはnativeでもartifact pathはunknownになりうる
+### AGT-008 A native capability can still have an unknown artifact path
 
-Providerがdelegated agent capabilityをofficialに説明しているがdurable definition pathを立証できない場合:
+When a provider officially describes a delegated-agent capability but a durable definition path cannot be established:
 
 ```text
 support_status      = native
@@ -203,7 +203,7 @@ primary_artifact_id = null
 risk_ids includes artifact_path_unknown
 ```
 
-空pathのartifactを生成せず、`unsupported`へ降格せず、他providerのpathを流用しない。
+Do not create an artifact with an empty path, downgrade it to `unsupported`, or reuse another provider's path.
 
 ## 5. Guidance composition
 
@@ -215,7 +215,7 @@ CLI:
 perttool agent help codex enforcement --level detail --format json
 ```
 
-少なくとも次のguidanceをこの順で返す。
+Return at least the following guidance in this order.
 
 ```text
 project_plan_is_authority
@@ -228,7 +228,7 @@ preserve_scope_and_precedence
 review_executable_customization
 ```
 
-少なくとも次のriskをtaxonomy orderで返す。
+Return at least the following risks in taxonomy order.
 
 ```text
 hook_executes_code
@@ -237,13 +237,13 @@ provider_surface_availability_varies
 profile_may_be_stale
 ```
 
-各riskは少なくとも1 guidance IDを`mitigation_guidance_ids`へ持つ。例えば`hook_executes_code`は`review_executable_customization`を参照する。
+Each risk has at least one guidance ID in `mitigation_guidance_ids`. For example, `hook_executes_code` refers to `review_executable_customization`.
 
-Provider detailはCodex hookのpath、scope、trust behaviorを説明できるが、hookによるtask start可否を独自に定義しない。
+Provider detail may describe Codex hook paths, scope, and trust behavior, but MUST NOT independently define whether a hook permits task start.
 
-### AGT-010 Canonical descriptionはstable IDを補助する
+### AGT-010 Canonical descriptions supplement stable IDs
 
-Detail resultのguidance例:
+Example guidance in a detail result:
 
 ```json
 {
@@ -259,7 +259,7 @@ Detail resultのguidance例:
 }
 ```
 
-AIは「なぜこの指示が表示されたか」へ、自然言語だけでなく次の構造から回答できる。
+An AI can answer “why this directive was shown” from the following structure, rather than from natural language alone.
 
 ```text
 origin       = project_control
@@ -268,7 +268,7 @@ guidance_id  = consult_dag_next_before_start
 applies_to   = all providers and surfaces
 ```
 
-Text変更だけでguidance IDまたはdirectiveの意味を変えない。
+Do not change the meaning of a guidance ID or directive through a text-only change.
 
 ## 6. Staleness
 
@@ -282,7 +282,7 @@ review_after = 2026-07-01
 snapshot_as_of = 2026-07-23
 ```
 
-期待:
+Expected:
 
 ```text
 staleness.status = review_due
@@ -291,11 +291,11 @@ diagnostic = PTAGT-202 warning
 ok = true
 ```
 
-同じprofile bytesを2027年に実行してもresultは変わらない。更新が必要ならprofile data version、snapshot date、review date、profile digestを更新する。
+Running the same profile bytes in 2027 does not change the result. When an update is needed, update the profile data version, snapshot date, review date, and profile digest.
 
 ### AGT-012 Unknown staleness
 
-`verified_at`または`review_after`を固定できないentryは`staleness.status=unknown`、`PTAGT-203` warningである。Runtime dateを補完せず、profile build dateをverified dateとして代用しない。
+An entry whose `verified_at` or `review_after` cannot be fixed has `staleness.status=unknown` and a `PTAGT-203` warning. Do not supply a runtime date or substitute the profile build date for the verified date.
 
 ## 7. Text/JSON parity
 
@@ -307,7 +307,7 @@ Command:
 perttool agent help github-copilot prompt
 ```
 
-Textには少なくとも次を含める。
+The text includes at least the following.
 
 ```text
 QUERY provider=github-copilot surface=prompt level=quick alias=false
@@ -318,13 +318,13 @@ STALENESS status=verified verified-at=2026-07-23 review-after=<profile-date> bas
 READ-ONLY files=false hooks=false commands=false network=false provider-write=false
 ```
 
-同じqueryのJSONとprovider ID、surface ID、support status、artifact、guidance/risk ID、staleness、capabilityが一致する。Text rendererがstatusやriskを再判定しない。
+The JSON for the same query agrees on provider ID, surface ID, support status, artifact, guidance/risk IDs, staleness, and capabilities. The text renderer does not re-evaluate status or risks.
 
 ### AGT-014 Detail source
 
-Detailだけがsource title、official URL、canonical description textを返す。Quickにもsource IDは残すため、detailで別sourceへ差し替えない。URLは表示するだけでfetchしない。
+Only detail returns source titles, official URLs, and canonical description text. Quick retains source IDs, so detail does not substitute a different source. URLs are displayed only and are not fetched.
 
-## 8. Errorとread-only boundary
+## 8. Errors and the read-only boundary
 
 ### AGT-015 Unknown surface
 
@@ -332,7 +332,7 @@ Detailだけがsource title、official URL、canonical description textを返す
 perttool agent help codex policy --format json
 ```
 
-期待:
+Expected:
 
 ```text
 diagnostic code = PTAGT-102
@@ -342,11 +342,11 @@ ok              = false
 providers       = []
 ```
 
-`policy`を`enforcement`へ自動変換しない。
+Do not automatically convert `policy` to `enforcement`.
 
 ### AGT-016 Usage error
 
-次はdomain lookupではなく`PTCLI-001`、exit 2である。
+The following are `PTCLI-001` with exit 2, rather than domain lookups.
 
 ```sh
 perttool agent help codex enforcement extra
@@ -354,44 +354,44 @@ perttool agent help --level exhaustive
 perttool agent help codex --warnings-as-errors
 ```
 
-### AGT-017 Helpは外部状態を変えない
+### AGT-017 Help does not change external state
 
-全caseで次を検査する。
+Verify the following in every case.
 
-- project fileをopenしない
-- provider configを探索しない
-- hook/commandを実行しない
-- network socketを開かない
-- environmentからprovider stateを推測しない
-- fileまたはprovider stateを書かない
+- Do not open a project file.
+- Do not search provider configuration.
+- Do not execute hooks or commands.
+- Do not open network sockets.
+- Do not infer provider state from the environment.
+- Do not write files or provider state.
 
-Source URLがresultに含まれることはnetwork accessを意味しない。
+The presence of a source URL in a result does not imply network access.
 
 ## 9. Migration
 
-### AGT-018 Auditはhelp resultではない
+### AGT-018 Audit is not a help result
 
-将来の`agent audit`はrepository fileの有無や内容を検査できるが、`Perttool.AgentGuidanceResult.v1`へ`found`、`compliant`、local path contentを追加しない。別query、別capability、別result schemaを使う。
+A future `agent audit` may inspect the presence or contents of repository files, but MUST NOT add `found`, `compliant`, or local path content to `Perttool.AgentGuidanceResult.v1`. Use a separate query, capability, and result schema.
 
-### AGT-019 Scaffoldはpreview-first
+### AGT-019 Scaffold is preview-first
 
-将来の`agent scaffold`はcandidate、diff、collision、digest、write resultを別契約で返す。Version 1 helpの`writes_files=false`をoptionでtrueにしない。
+A future `agent scaffold` returns candidates, diffs, collisions, digests, and write results through a separate contract. Do not make Version 1 help's `writes_files=false` true through an option.
 
-### AGT-020 EnforcementはRecommendationへbindする
+### AGT-020 Bind enforcement to Recommendation
 
-将来hookを生成または実行する場合、hookはproject-specific priorityを再実装せず、supported `dag next` resultと明示的human overrideへbindする。Provider hook成功だけでproject stateをadvanceしない。
+When future hooks are generated or executed, they do not reimplement project-specific priority; bind them to a supported `dag next` result and an explicit human override. Do not advance project state solely because a provider hook succeeds.
 
 ## 10. Test mapping
 
-| Case | 主なtest |
+| Case | Primary tests |
 | --- | --- |
-| AGT-001..003 | provider order、surface order、alias、unknown lookup |
-| AGT-004..008 | 6 status、evidence kind、artifact resolution |
-| AGT-009..010 | composition、reference closure、description |
-| AGT-011..012 | fixed-date staleness、warning |
-| AGT-013..014 | Core/text/JSON parity、source projection |
-| AGT-015..016 | PTAGT/PTCLI、exit code |
+| AGT-001..003 | provider order, surface order, aliases, unknown lookup |
+| AGT-004..008 | six statuses, evidence kinds, artifact resolution |
+| AGT-009..010 | composition, reference closure, descriptions |
+| AGT-011..012 | fixed-date staleness, warnings |
+| AGT-013..014 | Core/text/JSON parity, source projection |
+| AGT-015..016 | PTAGT/PTCLI, exit codes |
 | AGT-017 | no-side-effect boundary |
 | AGT-018..020 | future operation/schema isolation |
 
-`test/fixtures/agent-guidance/contract.v1.json`はstable vocabularyとcase expectationを機械可読に固定する。Provider mappingの事実入力は`provider-baseline.v1.json`を正とし、規範例から新しいprovider pathを推測しない。
+`test/fixtures/agent-guidance/contract.v1.json` fixes the stable vocabulary and case expectations in machine-readable form. `provider-baseline.v1.json` is authoritative for factual provider-mapping input; do not infer new provider paths from normative examples.
