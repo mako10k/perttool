@@ -4,6 +4,12 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-25
+
+Contract 3 beta release. This version intentionally replaces the Contract 2
+command names and JSON envelope while retaining suffix-free `0.x.x` beta
+product maturity.
+
 ### Changed
 
 - Activated CLI Contract 3 as one breaking source-level cutover: `document
@@ -17,8 +23,8 @@ This project records its notable changes here. The format is based on [Keep a Ch
   completion, advance, and final validation without manual `.pert` rewriting.
 - Selected suffix-free beta `0.2.0` as the first Contract 3 package target and
   added a gated release plan that separates local preparation from explicitly
-  authorized Git, GitHub, and npm distribution; package identity remains
-  `0.1.0` until release preparation.
+  authorized Git, GitHub, and npm distribution; package, lockfile, and CLI
+  identity are prepared as `0.2.0`.
 - Promoted the accepted `perttool@0.1.0` beta to npm `latest` through an explicit post-release dist-tag operation. This changes the default install target without changing beta product maturity.
 - Lowered the source and next-release runtime baseline from Node.js 24 to maintained Node.js 22, with CI coverage for Node.js 22 and 24.
 - Reworked the root README as a user guide with `npx` and `npm exec` examples, and moved repository setup and verification to `docs/development.md`.
@@ -90,7 +96,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/mako10k/perttool/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.2...v0.1.0
 [0.1.0-alpha.2]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
 [0.1.0-alpha.1]: https://github.com/mako10k/perttool/releases/tag/v0.1.0-alpha.1

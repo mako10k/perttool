@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.28
+- Document status: Active Stage 3 / Revision 2.30
 - Creation date: 2026-07-21
-- Update date: 2026-07-24
+- Update date: 2026-07-25
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -197,6 +197,38 @@ Later that day, `NORMATIVE_DOCS` migrated the requirements, basic design, normat
 `CLI_003_FILE_FIRST_ACCEPTANCE` then added `scripts/check-package-file-first.mjs` to the isolated tarball inspection. The test imports no repository Core: it invokes only the installed CLI to initialize and directly read a plan, covers every project/task/gate/milestone/resource field through one atomic batch and typed commands, observes blocked, recommended, active, and done states through JSON, advances completed history, and validates the final one-frontier document. The package check passed without publication or dist-tag changes. An atomic batch recalibrated cumulative velocity to `49p/1d` and finished the 5p task; `dag advance` then removed the completed edge and prerequisite frontier with expected-digest safe writes. Because the source-preserving formatter intentionally retained deletion-adjacent blank lines, one final whitespace-only patch removed the new trailing blank lines that `git diff --check` rejected. The resulting plan digest is `sha256:a0aff025db519b5f31f924b15f79b8370f2abb3a8881d7f441724a677168da2f`. No detail task remains; precedence and heuristic resource makespans are zero, and fresh complete `NextResult.v3` has no recommendation.
 
 After the user selected `0.2.0` for the first Contract 3 package, `plans/release-0.2.0.pert` was created through Contract 3 `project init` and one atomic batch rather than manual source authoring. Its five tasks separate release-gate design, local version preparation, clean-candidate acceptance, authorized distribution, and durable acceptance; `RELEASE_020_DISTRIBUTION` carries an explicit authorization block, and npm `latest` promotion is outside the plan. Requirements 21.3, ADR 0003, the Contract 3 specification and migration guide, basic design, and `docs/process/0.2.0-release.md` fix the version, same-tarball rule, unchanged-`latest` rule, external authority boundary, and restart behavior. The initial valid plan totaled 17p with matching precedence and heuristic resource makespans, no resource delay, inherited provisional velocity `29p/2d`, and a complete recommendation for `RELEASE_020_GATE_DESIGN`. An atomic batch completed the 3p design and established the first plan-specific observation of `3p/1d`; `dag advance` removed the completed task and initial milestone with an expected digest. The resulting digest is `sha256:4e6b252e498d11b577ed266a84970c052ed6fdde6ab4a9f7489b795acb9ad69c`. Four tasks and 14p remain; both makespans are 14p, conditional on the distribution authorization block, and fresh complete `NextResult.v3` recommends `RELEASE_020_PREPARATION`. Package identity remains `0.1.0`, and no external write occurred.
+
+`RELEASE_020_PREPARATION` then aligned `package.json`, both lockfile root
+identities, the CLI version, dated CHANGELOG section, README version selection,
+and release goldens at `0.2.0`. The README pins Contract 3 in symmetric `npx`
+and `npm exec` examples because unqualified npm `latest` remains the published
+Contract 2 `0.1.0` artifact. `npm ci`, all 289 tests, documentation, nine
+self-use plans, local link, npm `beta` publish normalization, isolated package
+installation, complete file-first workflow, and `git diff --check` passed.
+An expected-digest atomic batch recalibrated cumulative velocity to `6p/1d`
+and finished the 3p task; `dag advance` then removed the completed edge and
+prior frontier, and `project set` synchronized current metadata. The resulting
+digest is
+`sha256:56956997d46f54a702c5fe06e92a83748c6df35b46c8fbe4a569a6f96c4c6a9b`.
+Three tasks and 11p remain; precedence and heuristic resource makespans are
+both 11p with no resource delay, conditional on distribution authorization,
+and fresh complete `NextResult.v3` recommends `RELEASE_020_CANDIDATE`. No
+registry lookup, push, tag, release, publication, or dist-tag write occurred.
+
+On 2026-07-25, `RELEASE_020_CANDIDATE` reran the complete local gate and
+confirmed that package, lockfile, CLI, and tag identities agree on `0.2.0` /
+`v0.2.0`. Read-only public checks established that the npm version, local and
+remote tag, and GitHub release were unused and that npm remained
+`beta=latest=0.1.0` with `alpha=0.1.0-alpha.2`. The user authorized the named
+Git force-update, annotated tag, GitHub prerelease, and npm `beta` publication
+batch while leaving `latest` excluded. An expected-digest atomic batch
+recalibrated cumulative velocity to `9p/2d`, completed the 3p candidate, and
+removed the distribution block; `dag advance` removed the completed edge and
+prior frontier. The resulting digest is
+`sha256:5a3b88b673fa52d98dcb7ccad6442db2528d966b328fc178746722f6f38fe0a9`.
+Two tasks and 8p remain; precedence and heuristic resource makespans are both
+8p with no resource delay, and fresh complete `NextResult.v3` recommends
+`RELEASE_020_DISTRIBUTION`.
 
 ### 4.1 Velocity measurement calibration
 
@@ -486,6 +518,6 @@ Stage 1 entry evidence:
 - CLI-surface-reset domain-guide gate: the HelpNode registry remains the sole domain-topic authority while the pure internal `Perttool.GuideResult.v1` projection provides separate index, quick/detail topic, text/JSON, and `guide_topic` diagnostics without command-descriptor coupling or Contract 2 byte changes; 10p remain, precedence/resource makespans are both 10p, observed provisional velocity is `39p/1d`, and `CLI_002_CONTRACT_V3_CUTOVER` is recommended
 - CLI-surface-reset Contract 3 cutover gate: the active 27-command registry drives dispatch, argv validation, text/JSON command help, separate guide publication, project initialization, direct gate maintenance, and `cli_contract_version=3`; four renamed Contract 2 routes fail with exit 2, 5p remain, precedence/resource makespans are both 5p, observed provisional velocity is `44p/1d`, and `CLI_003_FILE_FIRST_ACCEPTANCE` is recommended
 - CLI-surface-reset file-first acceptance gate: the isolated installed-package CLI alone initializes, reads, mutates every entity field, analyzes, selects, advances, and validates a plan without manual source rewriting; cumulative velocity is `49p/1d`, no detail work remains, and complete `NextResult.v3` has no recommendation
-- Contract 3 `v0.2.0` release-planning gate: the ninth self-use plan selects suffix-free `0.2.0`, fixes Requirements 21.3 and the release procedure, separates local preparation from external distribution, blocks the distribution task on explicit user authorization, and leaves package identity at `0.1.0`; 14p remain with conditional precedence/resource makespans of 14p, observed velocity `3p/1d`, and `RELEASE_020_PREPARATION` recommended
+- Contract 3 `v0.2.0` candidate gate: package, lockfile, CLI, CHANGELOG, README, and release checks are aligned at `0.2.0`; the complete local gate and unused-identity checks pass; npm `beta=latest=0.1.0` is the baseline; the named distribution batch is authorized but `latest` is excluded; 8p remain with precedence/resource makespans of 8p, observed velocity `9p/2d`, and `RELEASE_020_DISTRIBUTION` recommended
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all nine plans
 - write state: Stage 3 editing/advance commands are enabled using preview-first, diff and deletion-list review, expected digests, and reanalysis after writes.

@@ -211,35 +211,33 @@
       ]
     },
     "release-0.2.0": {
-      "source_digest": "sha256:4e6b252e498d11b577ed266a84970c052ed6fdde6ab4a9f7489b795acb9ad69c",
+      "source_digest": "sha256:5a3b88b673fa52d98dcb7ccad6442db2528d966b328fc178746722f6f38fe0a9",
       "groups": {
         "active": [],
         "ready": [
-          "RELEASE_020_PREPARATION"
+          "RELEASE_020_DISTRIBUTION"
         ],
         "runnable_now": [
-          "RELEASE_020_PREPARATION"
+          "RELEASE_020_DISTRIBUTION"
         ],
         "blocked_now": [],
         "upcoming": [
-          "RELEASE_020_CANDIDATE",
-          "RELEASE_020_DISTRIBUTION",
           "RELEASE_020_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "RELEASE_020_PREPARATION"
+        "RELEASE_020_DISTRIBUTION"
       ],
       "manual_selected_task_ids": [
-        "RELEASE_020_PREPARATION"
+        "RELEASE_020_DISTRIBUTION"
       ],
       "tiers": {
-        "RELEASE_020_PREPARATION": "recommended"
+        "RELEASE_020_DISTRIBUTION": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RELEASE_020_PREPARATION",
+          "id": "RELEASE_020_DISTRIBUTION",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -255,9 +253,7 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": [
-        "PTRES-303"
-      ]
+      "diagnostic_codes": []
     },
     "mvp": {
       "source_digest": "sha256:689462cc4c8a3b5d860f50c9e9a8de3c42ae9caea8fea4cd293ef2076d8caf24",

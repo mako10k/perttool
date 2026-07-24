@@ -152,11 +152,14 @@ target. The independent [`release-0.2.0.pert`](../../plans/release-0.2.0.pert)
 workstream and [`v0.2.0` procedure](0.2.0-release.md) separate normative gate
 design, local source preparation, clean-candidate acceptance, explicitly
 authorized distribution, and durable release acceptance.
-`RELEASE_020_GATE_DESIGN` is complete and advanced; the plan has 14p remaining
-at `3p/1d` and recommends `RELEASE_020_PREPARATION`. The package remains
-`0.1.0`. Do not unblock `RELEASE_020_DISTRIBUTION` or perform a remote,
-registry, or dist-tag write without explicit authorization for the named
-`0.2.0` batch.
+`RELEASE_020_GATE_DESIGN`, `RELEASE_020_PREPARATION`, and
+`RELEASE_020_CANDIDATE` are complete and advanced. Package, lockfile, CLI,
+CHANGELOG, README, release goldens, and package checks are aligned at `0.2.0`;
+the complete local gate passed; public identities are unused; and npm
+`beta=latest=0.1.0` is the verified baseline. The plan has 8p remaining at
+`9p/2d` and recommends `RELEASE_020_DISTRIBUTION`. The user authorized the
+named Git force-update, annotated tag, GitHub prerelease, and npm `beta` batch.
+Do not promote npm `latest`.
 
 ### 5.1 Adopted Recommendation authority
 

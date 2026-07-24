@@ -5,48 +5,44 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-The first beta is `0.1.0`. Beta releases may contain breaking CLI or schema
-changes. The current source baseline is Node.js 22 or later. The already
-published `0.1.0` artifact still uses CLI Contract 2 and declares Node.js 24.
-This README describes the Contract 3 source that will be included in the next
-package release; the lower runtime baseline also takes effect in that release.
+The current Contract 3 version is `0.2.0`. Beta releases may contain breaking
+CLI or schema changes. Version `0.2.0` requires Node.js 22 or later. The prior
+`0.1.0` artifact uses CLI Contract 2 and declares Node.js 24.
 
 ## Run without installing
 
-Use `npx` for an occasional invocation:
+Use `npx` for an occasional invocation and select Contract 3 explicitly:
 
 ```sh
-npx --yes perttool --version
-npx --yes perttool document check PLAN.pert
-npx --yes perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.2.0 -- perttool --version
+npx --yes --package=perttool@0.2.0 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.2.0 -- perttool dag next PLAN.pert --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool -- perttool --version
-npm exec --yes --package=perttool -- perttool document check PLAN.pert
-npm exec --yes --package=perttool -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.2.0 -- perttool --version
+npm exec --yes --package=perttool@0.2.0 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.2.0 -- perttool dag analyze PLAN.pert
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
-cache. Pin the future Contract 3 release version when reproducible automation
-is more important than following the default npm tag. Pinning `0.1.0` selects
-the prior Contract 2 interface and therefore does not accept the commands in
-this README.
+cache. Pinning `0.1.0` selects the prior Contract 2 interface and therefore
+does not accept the commands in this README.
 
 ## Install
 
 Install the CLI globally when it is used regularly:
 
 ```sh
-npm install --global perttool
+npm install --global perttool@0.2.0
 perttool --version
 ```
 
-Both npm `latest` and `beta` currently resolve to the prior `0.1.0` artifact.
-Until the next version is published, use Node.js 24 and the documentation
-bundled with `0.1.0` for those registry tags.
+npm `beta` resolves to Contract 3 `0.2.0`. npm `latest` remains on Contract 2
+`0.1.0` unless a later, separately authorized promotion occurs.
+`perttool@beta` is an alternative to the exact `0.2.0` pin.
 
 ## Plan files
 

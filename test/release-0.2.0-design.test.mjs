@@ -11,13 +11,16 @@ function repositoryText(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
 }
 
-test("0.2.0 release identity is selected without changing package identity", async () => {
+test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", async () => {
   const [
     requirements,
     adr,
     specification,
     migration,
     procedure,
+    changelog,
+    readme,
+    sourceVersion,
     manifestText,
     lockText,
   ] = await Promise.all([
@@ -26,6 +29,9 @@ test("0.2.0 release identity is selected without changing package identity", asy
     repositoryText("docs/specs/cli-contract-3.md"),
     repositoryText("docs/process/cli-contract-3-migration.md"),
     repositoryText("docs/process/0.2.0-release.md"),
+    repositoryText("CHANGELOG.md"),
+    repositoryText("README.md"),
+    repositoryText("src/version.ts"),
     repositoryText("package.json"),
     repositoryText("package-lock.json"),
   ]);
@@ -41,13 +47,20 @@ test("0.2.0 release identity is selected without changing package identity", asy
   assert.match(adr, /Select suffix-free `0\.2\.0`/);
   assert.match(specification, /suffix-free `0\.2\.0` as the first Contract 3 package/);
   assert.match(migration, /selects\nsuffix-free `0\.2\.0`/);
-  assert.match(procedure, /Status: Release gate accepted; source preparation pending/);
+  assert.match(procedure, /Status: Candidate accepted; distribution authorized/);
+  assert.match(changelog, /^## \[0\.2\.0\] - 2026-07-25$/m);
+  assert.match(readme, /current Contract 3 version is `0\.2\.0`/);
+  assert.match(
+    readme,
+    /npx --yes --package=perttool@0\.2\.0 -- perttool document check PLAN\.pert/,
+  );
+  assert.match(sourceVersion, /TOOL_VERSION = "0\.2\.0"/);
 
   const manifest = JSON.parse(manifestText);
   const lock = JSON.parse(lockText);
-  assert.equal(manifest.version, "0.1.0");
-  assert.equal(lock.version, "0.1.0");
-  assert.equal(lock.packages[""].version, "0.1.0");
+  assert.equal(manifest.version, "0.2.0");
+  assert.equal(lock.version, "0.2.0");
+  assert.equal(lock.packages[""].version, "0.2.0");
   assert.equal(manifest.publishConfig.tag, "beta");
 });
 
@@ -57,10 +70,11 @@ test("0.2.0 plan preserves preparation, authorization, and acceptance boundaries
     repositoryText("docs/process/0.2.0-release.md"),
   ]);
 
-  assert.doesNotMatch(plan, /^task RELEASE_020_GATE_DESIGN /m);
+  assert.doesNotMatch(
+    plan,
+    /^task RELEASE_020_(?:GATE_DESIGN|PREPARATION|CANDIDATE) /m,
+  );
   for (const taskId of [
-    "RELEASE_020_PREPARATION",
-    "RELEASE_020_CANDIDATE",
     "RELEASE_020_DISTRIBUTION",
     "RELEASE_020_ACCEPTANCE",
   ]) {
@@ -68,12 +82,13 @@ test("0.2.0 plan preserves preparation, authorization, and acceptance boundaries
   }
   assert.match(
     plan,
-    /^milestone RELEASE_020_GATE_ACCEPTED:\n  title "Version 0\.2\.0 release gate accepted"\n  state reached$/m,
+    /^milestone RELEASE_020_CANDIDATE_READY:\n  title "One release candidate authorized for distribution"\n  state reached$/m,
   );
   assert.match(
     plan,
-    /task RELEASE_020_DISTRIBUTION[\s\S]*?status blocked[\s\S]*?blocked_reason "Requires explicit user authorization/,
+    /task RELEASE_020_DISTRIBUTION[\s\S]*?status planned/,
   );
+  assert.doesNotMatch(plan, /blocked_reason "Requires explicit user authorization/);
   assert.match(
     procedure,
     /Generate one tarball outside the worktree[\s\S]*Create a GitHub prerelease[\s\S]*publish the same\n   tarball exactly once/,

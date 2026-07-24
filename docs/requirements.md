@@ -1212,6 +1212,9 @@ The analysis implementation has progressed through `dag next` v3 and read-only `
 The accepted Contract 3 source and package workflow select suffix-free beta
 `0.2.0` as their first release target. `RELEASE_020_GATE_DESIGN` is complete
 and advanced in [`plans/release-0.2.0.pert`](../plans/release-0.2.0.pert);
-`RELEASE_020_PREPARATION` is recommended. Package identity remains `0.1.0`,
-external distribution remains blocked on explicit user authorization, and npm
-`latest` promotion remains outside the release plan.
+`RELEASE_020_PREPARATION` and `RELEASE_020_CANDIDATE` completed and advanced
+after package, lockfile, CLI, CHANGELOG, README, and release checks aligned at
+`0.2.0`; the complete local gate passed; public identities were unused; and npm
+`beta=latest=0.1.0` was recorded. The user authorized the named distribution
+batch, and `RELEASE_020_DISTRIBUTION` is recommended. npm `latest` promotion
+remains outside the release plan.
