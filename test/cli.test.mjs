@@ -29,15 +29,15 @@ function run(args, options = {}) {
   });
 }
 
-test("dsl check text writes data to stdout", () => {
-  const result = run(["dsl", "check", "docs/examples/minimal.pert", "--color", "never"]);
+test("document check text writes data to stdout", () => {
+  const result = run(["document", "check", "docs/examples/minimal.pert", "--color", "never"]);
   assert.equal(result.status, 0);
   assert.match(result.stdout, /^OK docs\/examples\/minimal\.pert project=MINIMAL /);
   assert.equal(result.stderr, "");
 });
 
-test("dsl check JSON is stable and contains no ANSI escape", () => {
-  const result = run(["dsl", "check", "docs/examples/parallel.pert", "--format", "json"]);
+test("document check JSON is stable and contains no ANSI escape", () => {
+  const result = run(["document", "check", "docs/examples/parallel.pert", "--format", "json"]);
   assert.equal(result.status, 0);
   assert.equal(result.stdout.endsWith("\n"), true);
   assert.equal(result.stdout.includes("\u001b"), false);
@@ -56,8 +56,8 @@ test("dsl check JSON is stable and contains no ANSI escape", () => {
 
 test("stdin and file checks have the same semantic summary", async () => {
   const text = await readFile(path.join(root, "docs/examples/minimal.pert"), "utf8");
-  const fromFile = run(["dsl", "check", "docs/examples/minimal.pert", "--format=json"]);
-  const fromStdin = run(["dsl", "check", "-", "--format=json"], { input: text });
+  const fromFile = run(["document", "check", "docs/examples/minimal.pert", "--format=json"]);
+  const fromStdin = run(["document", "check", "-", "--format=json"], { input: text });
   assert.equal(fromFile.status, 0);
   assert.equal(fromStdin.status, 0);
   assert.deepEqual(JSON.parse(fromFile.stdout).summary, JSON.parse(fromStdin.stdout).summary);
@@ -66,8 +66,7 @@ test("stdin and file checks have the same semantic summary", async () => {
 
 test("invalid document returns exit 1 and one-based JSON span", () => {
   const result = run([
-    "dsl",
-    "check",
+    "document", "check",
     "test/fixtures/invalid/undefined-endpoint.pert",
     "--format=json",
   ]);
@@ -81,7 +80,7 @@ test("invalid document returns exit 1 and one-based JSON span", () => {
 
 test("diagnostic limit is stable across read-only document commands", () => {
   for (const command of [
-    ["dsl", "check"],
+    ["document", "check"],
     ["project", "show"],
     ["dag", "analyze"],
     ["dag", "next"],
@@ -112,8 +111,7 @@ test("diagnostic limit is stable across read-only document commands", () => {
   assert.deepEqual(renderJson.diagnostics.map(({ code }) => code), ["PTDSL-006", "PTDSL-003"]);
 
   const text = run([
-    "dsl",
-    "check",
+    "document", "check",
     "test/fixtures/invalid/multiple-syntax-errors.pert",
     "--max-diagnostics=2",
     "--color=never",
@@ -124,8 +122,7 @@ test("diagnostic limit is stable across read-only document commands", () => {
 
 test("warnings-as-errors returns exit 1 without a success result", () => {
   const result = run([
-    "dsl",
-    "check",
+    "document", "check",
     "docs/examples/advance-partial-before.pert",
     "--warnings-as-errors",
     "--color=never",
@@ -137,8 +134,7 @@ test("warnings-as-errors returns exit 1 without a success result", () => {
 
 test("missing input returns the stable I/O exit code as JSON", () => {
   const result = run([
-    "dsl",
-    "check",
+    "document", "check",
     "test/fixtures/does-not-exist.pert",
     "--format=json",
   ]);
@@ -149,10 +145,9 @@ test("missing input returns the stable I/O exit code as JSON", () => {
   assert.equal(json.diagnostics[0].code, "PTCLI-003");
 });
 
-test("dsl help exposes the estimate topic as JSON", () => {
+test("guide exposes the estimate topic as JSON", () => {
   const result = run([
-    "dsl",
-    "help",
+    "guide",
     "syntax",
     "estimate",
     "--level",
@@ -161,15 +156,15 @@ test("dsl help exposes the estimate topic as JSON", () => {
   ]);
   assert.equal(result.status, 0);
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.HelpResult.v1");
+  assert.equal(json.schema_version, "Perttool.GuideResult.v1");
+  assert.equal(json.cli_contract_version, 3);
   assert.equal(json.topic_id, "syntax.estimate");
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
 
-test("dsl help exposes point velocity syntax for AI clients", () => {
+test("guide exposes point velocity syntax for AI clients", () => {
   const result = run([
-    "dsl",
-    "help",
+    "guide",
     "syntax",
     "velocity",
     "--level=detail",
@@ -422,7 +417,8 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   const sourceText = readFileSync(path.join(root, source), "utf8");
   const help = run(["dag", "advance", "--help"]);
   assert.equal(help.status, 0, help.stderr);
-  assert.match(help.stdout, /perttool dag advance <file>/);
+  assert.match(help.stdout, /Command: perttool dag advance/);
+  assert.match(help.stdout, /0: file type=path-or-stdin required=true/);
   assert.match(help.stdout, /--expect-digest/);
 
   const preview = run(["dag", "advance", source, "--color=never"]);
@@ -519,7 +515,7 @@ test("dag advance shares safe-write locks and repeated write is a no-op", (t) =>
   const source = path.join(directory, "partial.pert");
   copyFileSync(path.join(root, "docs/examples/advance-partial-before.pert"), source);
   const initialDigest = JSON.parse(run([
-    "dsl", "check", source, "--format=json",
+    "document", "check", source, "--format=json",
   ]).stdout).source_digest;
 
   const written = run([
@@ -593,8 +589,7 @@ test("invalid capacity override is a usage or analysis error at the correct boun
 
 test("analysis help documents exact arithmetic and capacity what-if", () => {
   const analysis = run([
-    "dsl",
-    "help",
+    "guide",
     "analysis",
     "--level=detail",
     "--format=json",
@@ -603,8 +598,7 @@ test("analysis help documents exact arithmetic and capacity what-if", () => {
   assert.ok(JSON.parse(analysis.stdout).sections.some(({ id }) => id === "exact"));
 
   const resources = run([
-    "dsl",
-    "help",
+    "guide",
     "analysis",
     "resources",
     "--level=detail",
@@ -616,8 +610,7 @@ test("analysis help documents exact arithmetic and capacity what-if", () => {
 
 test("diagnostic help documents recovery, phase suppression, and limits", () => {
   const result = run([
-    "dsl",
-    "help",
+    "guide",
     "errors",
     "--level=detail",
     "--format=json",
@@ -642,8 +635,10 @@ test("dag render exposes Core-identical Mermaid in text and JSON", () => {
 
   const help = run(["dag", "render", "--help"]);
   assert.equal(help.status, 0, help.stderr);
-  assert.match(help.stdout, /--to mermaid/);
-  assert.match(help.stdout, /--analysis none\|precedence\|resource\|both/);
+  assert.match(help.stdout, /--to kind=value type=artifact-format required=true/);
+  assert.match(help.stdout, /default=null enum=mermaid/);
+  assert.match(help.stdout, /--analysis kind=value type=mermaid-analysis-mode/);
+  assert.match(help.stdout, /enum=none, precedence, resource, both/);
 
   const text = run([
     "dag", "render", minimalPath, "--to", "mermaid", "--color=never",
@@ -756,14 +751,16 @@ test("dag import restores a profile in text and JSON", () => {
   const profile = exportMermaid(minimalText).artifact;
   const help = run(["dag", "import", "--help"]);
   assert.equal(help.status, 0, help.stderr);
-  assert.match(help.stdout, /perttool dag import <file> --from mermaid/);
+  assert.match(help.stdout, /Command: perttool dag import/);
+  assert.match(help.stdout, /--from kind=value type=artifact-format required=true/);
+  assert.match(help.stdout, /default=null enum=mermaid/);
   assert.match(help.stdout, /--strict-loss/);
 
   const text = run([
     "dag", "import", "-", "--from=mermaid", "--color=never",
   ], { input: profile });
   assert.equal(text.status, 0, text.stderr);
-  assert.equal(JSON.parse(run(["dsl", "check", "-", "--format=json"], {
+  assert.equal(JSON.parse(run(["document", "check", "-", "--format=json"], {
     input: text.stdout,
   }).stdout).ok, true);
   assert.equal(exportMermaid(text.stdout).artifact, profile);
@@ -826,7 +823,7 @@ test("dag import reports plain loss, enforces strict-loss, and writes exclusivel
   const writtenJson = JSON.parse(written.stdout);
   assert.deepEqual(writtenJson.write, { mode: "out", target: output, written: true });
   assert.equal(readFileSync(output, "utf8"), writtenJson.artifact);
-  assert.equal(JSON.parse(run(["dsl", "check", output, "--format=json"]).stdout).ok, true);
+  assert.equal(JSON.parse(run(["document", "check", output, "--format=json"]).stdout).ok, true);
 
   const collision = run([
     "dag", "import", "-", "--from=mermaid", "--out", output, "--format=json",
@@ -845,7 +842,7 @@ test("dag import reports plain loss, enforces strict-loss, and writes exclusivel
   }
 });
 
-test("dsl format exposes candidate, diff, JSON, and stdin previews", () => {
+test("document format exposes candidate, diff, JSON, and stdin previews", () => {
   const source = "test/fixtures/grammar/formatter-roundtrip.pert";
   const expected = readFileSync(
     path.join(root, "test/golden/grammar/formatter-roundtrip.expected.pert"),
@@ -853,26 +850,27 @@ test("dsl format exposes candidate, diff, JSON, and stdin previews", () => {
   );
   const sourceText = readFileSync(path.join(root, source), "utf8");
 
-  const help = run(["dsl", "format", "--help"]);
+  const help = run(["document", "format", "--help"]);
   assert.equal(help.status, 0, help.stderr);
-  assert.match(help.stdout, /perttool dsl format <file>/);
+  assert.match(help.stdout, /Command: perttool document format/);
+  assert.match(help.stdout, /0: file type=path-or-stdin required=true/);
 
-  const preview = run(["dsl", "format", source, "--color=never"]);
+  const preview = run(["document", "format", source, "--color=never"]);
   assert.equal(preview.status, 0, preview.stderr);
   assert.equal(preview.stdout, expected);
-  assert.match(preview.stderr, /^PREVIEW dsl\.format changed=true /);
+  assert.match(preview.stderr, /^PREVIEW document\.format changed=true /);
 
-  const diff = run(["dsl", "format", source, "--diff", "--color=never"]);
+  const diff = run(["document", "format", source, "--diff", "--color=never"]);
   assert.equal(diff.status, 0, diff.stderr);
   assert.match(diff.stdout, /^--- test\/fixtures\/grammar\/formatter-roundtrip\.pert$/m);
   assert.match(diff.stdout, /^\+\+\+ candidate$/m);
   assert.equal(diff.stderr, "");
 
-  const jsonResult = run(["dsl", "format", source, "--format=json"]);
+  const jsonResult = run(["document", "format", source, "--format=json"]);
   assert.equal(jsonResult.status, 0, jsonResult.stderr);
   const json = JSON.parse(jsonResult.stdout);
   assert.equal(json.schema_version, "Perttool.FormatResult.v1");
-  assert.equal(json.operation, "dsl.format");
+  assert.equal(json.operation, "document.format");
   assert.equal(json.document_id, "FORMATTER_ROUNDTRIP");
   assert.equal(json.updated_text, expected);
   assert.match(json.diff, /^--- test\/fixtures\/grammar\/formatter-roundtrip\.pert/m);
@@ -880,7 +878,7 @@ test("dsl format exposes candidate, diff, JSON, and stdin previews", () => {
   assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
 
   const withBom = `\uFEFF${sourceText}`;
-  const stdin = run(["dsl", "format", "-", "--format=json"], { input: withBom });
+  const stdin = run(["document", "format", "-", "--format=json"], { input: withBom });
   assert.equal(stdin.status, 0, stdin.stderr);
   const stdinJson = JSON.parse(stdin.stdout);
   assert.equal(stdinJson.source, "<stdin>");
@@ -888,22 +886,22 @@ test("dsl format exposes candidate, diff, JSON, and stdin previews", () => {
   assert.equal(stdinJson.source_digest, stdinJson.original_digest);
 });
 
-test("dsl format check mode reports drift without hiding a valid candidate", () => {
+test("document format check mode reports drift without hiding a valid candidate", () => {
   const source = "test/fixtures/grammar/formatter-roundtrip.pert";
   const expected = "test/golden/grammar/formatter-roundtrip.expected.pert";
 
-  const changed = run(["dsl", "format", source, "--check", "--color=never"]);
+  const changed = run(["document", "format", source, "--check", "--color=never"]);
   assert.equal(changed.status, 1);
   assert.equal(changed.stdout, "");
   assert.equal(changed.stderr, "");
 
   const changedDiff = run([
-    "dsl", "format", source, "--check", "--diff", "--color=never",
+    "document", "format", source, "--check", "--diff", "--color=never",
   ]);
   assert.equal(changedDiff.status, 1);
   assert.match(changedDiff.stdout, /^--- test\/fixtures\/grammar\/formatter-roundtrip\.pert/m);
 
-  const changedJson = run(["dsl", "format", source, "--check", "--format=json"]);
+  const changedJson = run(["document", "format", source, "--check", "--format=json"]);
   assert.equal(changedJson.status, 1);
   const json = JSON.parse(changedJson.stdout);
   assert.equal(json.ok, false);
@@ -912,12 +910,12 @@ test("dsl format check mode reports drift without hiding a valid candidate", () 
   assert.match(json.diff, /^--- test\/fixtures\/grammar\/formatter-roundtrip\.pert/m);
   assert.ok(json.edits.length > 0);
 
-  const canonical = run(["dsl", "format", expected, "--check", "--color=never"]);
+  const canonical = run(["document", "format", expected, "--check", "--color=never"]);
   assert.equal(canonical.status, 0, canonical.stderr);
   assert.equal(canonical.stdout, "");
 });
 
-test("dsl format validates write option combinations and suppresses invalid candidates", () => {
+test("document format validates write option combinations and suppresses invalid candidates", () => {
   const source = "test/fixtures/grammar/formatter-roundtrip.pert";
   for (const options of [
     [source, "--write", "--out", "other.pert"],
@@ -929,7 +927,7 @@ test("dsl format validates write option combinations and suppresses invalid cand
     [source, "--write", "--expect-digest", "sha256:invalid"],
     ["-", "--write"],
   ]) {
-    const result = run(["dsl", "format", ...options, "--format=json"], {
+    const result = run(["document", "format", ...options, "--format=json"], {
       input: options[0] === "-" ? minimalText : undefined,
     });
     assert.equal(result.status, 2);
@@ -937,7 +935,7 @@ test("dsl format validates write option combinations and suppresses invalid cand
   }
 
   const invalid = run([
-    "dsl", "format", "test/fixtures/invalid/undefined-endpoint.pert", "--format=json",
+    "document", "format", "test/fixtures/invalid/undefined-endpoint.pert", "--format=json",
   ]);
   assert.equal(invalid.status, 1);
   const invalidJson = JSON.parse(invalid.stdout);
@@ -950,7 +948,7 @@ test("dsl format validates write option combinations and suppresses invalid cand
     .replace("project MINIMAL:", "project   MINIMAL:")
     .replace("  duration 1d\n", "  duration 01.0d\n  status done\n");
   const strict = run([
-    "dsl", "format", "-", "--warnings-as-errors", "--format=json",
+    "document", "format", "-", "--warnings-as-errors", "--format=json",
   ], { input: warningText });
   assert.equal(strict.status, 1);
   const strictJson = JSON.parse(strict.stdout);
@@ -960,7 +958,7 @@ test("dsl format validates write option combinations and suppresses invalid cand
   assert.ok(strictJson.diagnostics.some(({ code }) => code === "PTDAG-208"));
 });
 
-test("dsl format safely writes in place and to a new output", (t) => {
+test("document format safely writes in place and to a new output", (t) => {
   const directory = mkdtempSync(path.join(tmpdir(), "perttool-format-write-"));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const source = path.join(directory, "plan.pert");
@@ -970,7 +968,7 @@ test("dsl format safely writes in place and to a new output", (t) => {
   );
   copyFileSync(path.join(root, "test/fixtures/grammar/formatter-roundtrip.pert"), source);
 
-  const written = run(["dsl", "format", source, "--write", "--format=json"]);
+  const written = run(["document", "format", source, "--write", "--format=json"]);
   assert.equal(written.status, 0, written.stderr);
   const writtenJson = JSON.parse(written.stdout);
   assert.deepEqual(writtenJson.write, {
@@ -980,7 +978,7 @@ test("dsl format safely writes in place and to a new output", (t) => {
   });
   assert.equal(readFileSync(source, "utf8"), canonical);
 
-  const noOp = run(["dsl", "format", source, "--write", "--format=json"]);
+  const noOp = run(["document", "format", source, "--write", "--format=json"]);
   assert.equal(noOp.status, 0, noOp.stderr);
   assert.deepEqual(JSON.parse(noOp.stdout).write, {
     mode: "in_place",
@@ -989,7 +987,7 @@ test("dsl format safely writes in place and to a new output", (t) => {
   });
 
   const out = path.join(directory, "out.pert");
-  const outResult = run(["dsl", "format", "-", "--out", out, "--format=json"], {
+  const outResult = run(["document", "format", "-", "--out", out, "--format=json"], {
     input: canonical,
   });
   assert.equal(outResult.status, 0, outResult.stderr);
@@ -1000,7 +998,7 @@ test("dsl format safely writes in place and to a new output", (t) => {
   });
   assert.equal(readFileSync(out, "utf8"), canonical);
 
-  const existing = run(["dsl", "format", source, "--out", out, "--format=json"]);
+  const existing = run(["document", "format", source, "--out", out, "--format=json"]);
   assert.equal(existing.status, 5);
   const existingJson = JSON.parse(existing.stdout);
   assert.equal(existingJson.schema_version, "Perttool.CliError.v1");
@@ -1009,7 +1007,7 @@ test("dsl format safely writes in place and to a new output", (t) => {
 
   const beforeConflict = readFileSync(source, "utf8");
   const stale = run([
-    "dsl", "format", source, "--write",
+    "document", "format", source, "--write",
     "--expect-digest", `sha256:${"0".repeat(64)}`, "--format=json",
   ]);
   assert.equal(stale.status, 5);
@@ -1020,7 +1018,7 @@ test("dsl format safely writes in place and to a new output", (t) => {
 
   const symlink = path.join(directory, "linked.pert");
   symlinkSync(source, symlink);
-  const linked = run(["dsl", "format", symlink, "--write", "--format=json"]);
+  const linked = run(["document", "format", symlink, "--write", "--format=json"]);
   assert.equal(linked.status, 5);
   assert.equal(JSON.parse(linked.stdout).diagnostics[0].data.reason, "symlink");
   assert.equal(readFileSync(source, "utf8"), beforeConflict);
@@ -1029,7 +1027,11 @@ test("dsl format safely writes in place and to a new output", (t) => {
 test("task mutation commands expose candidate, diff, JSON, and stdin previews", () => {
   const actionHelp = run(["task", "add", "--help"]);
   assert.equal(actionHelp.status, 0, actionHelp.stderr);
-  assert.match(actionHelp.stdout, /perttool task add <file> <id> <from> <to>/);
+  assert.match(actionHelp.stdout, /Command: perttool task add/);
+  assert.match(actionHelp.stdout, /0: file type=path-or-stdin required=true/);
+  assert.match(actionHelp.stdout, /1: id type=task-id required=true/);
+  assert.match(actionHelp.stdout, /2: from type=milestone-id required=true/);
+  assert.match(actionHelp.stdout, /3: to type=milestone-id required=true/);
 
   const defaultPreview = run([
     "task", "set", minimalPath, "WORK", "--title", "default preview", "--color=never",
@@ -1113,11 +1115,15 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
 test("project show and set expose all metadata without direct source editing", () => {
   const showHelp = run(["project", "show", "--help"]);
   assert.equal(showHelp.status, 0, showHelp.stderr);
-  assert.match(showHelp.stdout, /perttool project show <file>/);
+  assert.match(showHelp.stdout, /Command: perttool project show/);
+  assert.match(showHelp.stdout, /0: file type=path-or-stdin required=true/);
   const setHelp = run(["project", "set", "--help"]);
   assert.equal(setHelp.status, 0, setHelp.stderr);
-  assert.match(setHelp.stdout, /--velocity <velocity>/);
-  assert.match(setHelp.stdout, /--clear description\|as_of\|velocity/);
+  assert.match(setHelp.stdout, /--velocity kind=value type=velocity/);
+  assert.match(
+    setHelp.stdout,
+    /enum=description, as_of, velocity, critical_epsilon, target_duration/,
+  );
 
   const shown = run([
     "project", "show", "test/fixtures/grammar/all-fields.pert", "--format=json",
@@ -1239,7 +1245,7 @@ test("milestone and resource add set remove actions project to mutation Core", (
   assert.doesNotMatch(JSON.parse(resourceRemove.stdout).updated_text, /resource UNUSED:/);
 });
 
-test("mutation apply supports request or document stdin but rejects a shared stdin", (t) => {
+test("batch apply supports request or document stdin but rejects a shared stdin", (t) => {
   const request = {
     kind: "batch",
     mutations: [
@@ -1257,7 +1263,7 @@ test("mutation apply supports request or document stdin but rejects a shared std
   };
   const requestText = JSON.stringify(request);
   const requestFromStdin = run([
-    "mutation", "apply", minimalPath, "--request", "-", "--format=json",
+    "batch", "apply", minimalPath, "--request", "-", "--format=json",
   ], { input: requestText });
   assert.equal(requestFromStdin.status, 0, requestFromStdin.stderr);
   const requestJson = JSON.parse(requestFromStdin.stdout);
@@ -1269,19 +1275,22 @@ test("mutation apply supports request or document stdin but rejects a shared std
   const requestPath = path.join(directory, "request.json");
   writeFileSync(requestPath, requestText, "utf8");
   const documentFromStdin = run([
-    "mutation", "apply", "-", "--request", requestPath, "--format=json",
+    "batch", "apply", "-", "--request", requestPath, "--format=json",
   ], { input: minimalText });
   assert.equal(documentFromStdin.status, 0, documentFromStdin.stderr);
   assert.equal(JSON.parse(documentFromStdin.stdout).source, "<stdin>");
 
   const conflict = run([
-    "mutation", "apply", "-", "--request", "-", "--format=json",
+    "batch", "apply", "-", "--request", "-", "--format=json",
   ]);
   assert.equal(conflict.status, 2);
-  assert.match(JSON.parse(conflict.stdout).diagnostics[0].message, /cannot both use stdin/);
+  assert.match(
+    JSON.parse(conflict.stdout).diagnostics[0].message,
+    /document and request stdin are mutually exclusive/,
+  );
 
   const nested = run([
-    "mutation", "apply", minimalPath, "--request", "-", "--format=json",
+    "batch", "apply", minimalPath, "--request", "-", "--format=json",
   ], {
     input: JSON.stringify({ kind: "batch", mutations: [{ kind: "batch", mutations: [] }] }),
   });
@@ -1291,7 +1300,7 @@ test("mutation apply supports request or document stdin but rejects a shared std
   assert.equal(nestedJson.updated_text, null);
 
   const nonBatch = run([
-    "mutation", "apply", minimalPath, "--request", "-", "--format=json",
+    "batch", "apply", minimalPath, "--request", "-", "--format=json",
   ], { input: JSON.stringify({ kind: "task.finish", id: "WORK" }) });
   assert.equal(nonBatch.status, 1);
   const nonBatchJson = JSON.parse(nonBatch.stdout);
@@ -1361,7 +1370,7 @@ test("entity and batch mutation commands share the safe-write path", (t) => {
   const taskPath = path.join(directory, "task.pert");
   copyFileSync(path.join(root, minimalPath), taskPath);
   const initialDigest = JSON.parse(run([
-    "dsl", "check", taskPath, "--format=json",
+    "document", "check", taskPath, "--format=json",
   ]).stdout).source_digest;
   const task = run([
     "task", "set", taskPath, "WORK", "--title", "implemented", "--write",
@@ -1402,7 +1411,7 @@ test("entity and batch mutation commands share the safe-write path", (t) => {
   const batchPath = path.join(directory, "batch.pert");
   copyFileSync(path.join(root, minimalPath), batchPath);
   const batchDigest = JSON.parse(run([
-    "dsl", "check", batchPath, "--format=json",
+    "document", "check", batchPath, "--format=json",
   ]).stdout).source_digest;
   const request = {
     kind: "batch",
@@ -1415,7 +1424,7 @@ test("entity and batch mutation commands share the safe-write path", (t) => {
     }],
   };
   const batch = run([
-    "mutation", "apply", batchPath, "--request", "-", "--write",
+    "batch", "apply", batchPath, "--request", "-", "--write",
     "--expect-digest", batchDigest, "--format=json",
   ], { input: JSON.stringify(request) });
   assert.equal(batch.status, 0, batch.stderr);
@@ -1427,7 +1436,7 @@ test("entity and batch mutation commands share the safe-write path", (t) => {
 
   const gateOutPath = path.join(directory, "gate-out.pert");
   const gateOut = run([
-    "mutation", "apply", minimalPath, "--request", "-", "--out", gateOutPath,
+    "batch", "apply", minimalPath, "--request", "-", "--out", gateOutPath,
     "--format=json",
   ], { input: JSON.stringify(request) });
   assert.equal(gateOut.status, 0, gateOut.stderr);

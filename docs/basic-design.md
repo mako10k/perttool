@@ -713,13 +713,19 @@ This heuristic returns a feasible schedule but does not guarantee minimum makesp
 
 ## 11. CLI design
 
-The CLI is resource-first. The [CLI Interface specification](specs/interfaces.md) is authoritative for the implemented Contract 2 commands, options, streams, exit codes, and JSON fields. [CLI Contract 3](specs/cli-contract-3.md) is the accepted post-beta target and remains inactive until its atomic cutover.
+The CLI is resource-first. [CLI Contract 3](specs/cli-contract-3.md) is
+authoritative for the active commands, options, operation namespace, command
+help, guide split, and JSON envelope. The [CLI Interface
+specification](specs/interfaces.md) is retained for Contract 2 payload, stream,
+and exit meanings that Contract 3 explicitly preserves.
 
 ```text
-perttool dsl check <file>
-perttool dsl format <file>
-perttool dsl help [topic] [subtopic] [--level index|quick|detail]
+perttool help [resource [action]] [--format text|json]
+perttool guide [topic] [subtopic] [--level index|quick|detail]
+perttool document check <file>
+perttool document format <file>
 
+perttool project init ...
 perttool project show <file>
 perttool project set <file> ...
 
@@ -731,8 +737,11 @@ perttool dag import <file> --from mermaid
 perttool dag advance <file>
 
 perttool task add|set|remove|finish ...
+perttool gate add|set|remove ...
 perttool milestone add|set|remove ...
 perttool resource add|set|remove ...
+perttool batch apply <file> --request <json-file|->
+perttool agent help [provider [surface]]
 ```
 
 CLI adapter responsibilities:
@@ -787,48 +796,49 @@ default: updated text or diff only
 
 Contract 3 replaces handwritten dispatch/help duplication with one immutable
 typed registry. `CLI_001_COMMAND_REGISTRY` selected
-`src/command/registry.ts`, made its expanded Contract 2 descriptors
-authoritative for the active dispatch and option parser, and added
-deterministic text and JSON descriptor projections. Public hierarchical JSON
-help remains inactive until the atomic cutover, and the active descriptors
-retain `contractVersion = 2` until then.
+`src/command/registry.ts` as the descriptor source and added deterministic
+descriptor projections. `CLI_002_CONTRACT_V3_CUTOVER` made the projected
+`CONTRACT3_COMMAND_REGISTRY` in `src/command/discovery.ts` authoritative for
+active dispatch, argv validation, text help, and JSON help. Every active
+descriptor has `contractVersion = 3`.
 
 `HELP_001_COMMAND_DISCOVERY` added the pure
-`src/command/discovery.ts` Contract 3 preview. It derives the accepted command
+`src/command/discovery.ts` Contract 3 projection. It derives the accepted command
 and operation renames, examples, top-level/resource/action queries,
 `Perttool.CommandHelpResult.v1`, and deterministic text/JSON from the active
 expanded descriptors. The target `help` descriptor is the only additional
-descriptor in that slice. `MUT_002_GATE_MAINTENANCE` adds three target-only
+descriptor in that slice. `MUT_002_GATE_MAINTENANCE` added three target-only
 gate descriptors after implementing their Core and atomic-batch path; these
-descriptors reuse the editing contract and remain internal until cutover.
-`MUT_001_PROJECT_INIT` adds the target-only `project init` descriptor after
+descriptors reuse the editing contract. `MUT_001_PROJECT_INIT` added the
+target-only `project init` descriptor after
 implementing `src/application/init.ts`, deterministic
 `Perttool.InitResult.v1` text/JSON projection, and composition with the
 existing exclusive safe-write adapter. Resource summaries fix the accepted
 action order but do not duplicate operand, option, effect, schema, exit, or
 example data. `PTHLP-002` reports an unknown resource or top-level command;
-`PTHLP-003` reports an unknown action. The active Contract 2 CLI does not
-dispatch the target-only descriptors before the atomic cutover. The module
-naming does not change the following dependency rule.
+`PTHLP-003` reports an unknown action. The atomic cutover activated all
+projected and target-only descriptors together. The module naming does not
+change the following dependency rule.
 
-`HELP_003_USAGE_RECOVERY` adds the pure internal
+`HELP_003_USAGE_RECOVERY` added the pure
 `src/command/usage.ts` projection. It resolves target command paths and
 validates descriptor-expressible argv structure before any document read,
 returns a typed `PTCLI-001` error with the most specific `helpTarget`, and
 renders deterministic `Perttool.CliError.v1` text/JSON. Suggestions use only
 the applicable registry resource, action, or option set and a fixed bounded
 edit-distance rule. Handler-specific value relationships can add a usage error
-after descriptor validation but retain the resolved descriptor target. Public
-Contract 2 error bytes and dispatch remain unchanged until the atomic cutover.
+after descriptor validation but retain the resolved descriptor target. The
+cutover now runs this validation before document I/O and rejects Contract 2
+renamed spellings with exit 2.
 
-`HELP_002_DOMAIN_GUIDE_SPLIT` adds the pure internal
+`HELP_002_DOMAIN_GUIDE_SPLIT` added the pure
 `src/help/guide.ts` projection over the existing `HelpNode` graph. It preserves
 topic IDs and index/quick/detail content while adding
 `Perttool.GuideResult.v1`, `cli_contract_version=3`, operation `guide`,
 deterministic text/JSON, and conceptual `guide_topic` diagnostic links. The
 command descriptor registry does not import the domain graph, and GuideResult
-does not project command descriptors or option contracts. Contract 2
-`dsl help` bytes and public dispatch remain unchanged until the atomic cutover.
+does not project command descriptors or option contracts. The cutover
+published this projection as `guide` and removed the `dsl help` route.
 
 ```text
 command descriptors
@@ -850,8 +860,8 @@ per-command view. Expansion rejects duplicate or conflicting option names.
 Dispatch parity tests compare the expanded registry with every implemented
 handler; a handler or option without a descriptor is a build failure.
 
-Build the registry and Contract 3 projections before public cutover while
-keeping Contract 2 as the advertised surface. The cutover changes all breaking
+The registry and Contract 3 projections were built before public cutover while
+Contract 2 remained advertised. The cutover then changed all breaking
 resource/action and JSON operation mappings in one logical change.
 
 ## 12. Post-MVP adapter boundaries
@@ -939,9 +949,9 @@ Initial schemas:
 - `Perttool.ImportResult.v1`
 - `Perttool.AgentGuidanceResult.v1` (planned for beta Issue #2)
 - `Perttool.CliError.v1`
-- `Perttool.CommandHelpResult.v1` (Contract 3 target)
-- `Perttool.GuideResult.v1` (Contract 3 target)
-- `Perttool.InitResult.v1` (Contract 3 target)
+- `Perttool.CommandHelpResult.v1`
+- `Perttool.GuideResult.v1`
+- `Perttool.InitResult.v1`
 
 Rules:
 
@@ -951,9 +961,9 @@ Rules:
 - Removing fields, changing semantics, or narrowing enums requires a major schema increase.
 - Emit golden JSON in stable key order.
 
-Every Contract 3 CLI JSON envelope also includes
-`cli_contract_version=3`. Contract 2 result shapes remain active until the
-atomic cutover.
+Every active CLI JSON envelope includes `cli_contract_version=3`. Existing
+result-specific schema versions remain unchanged where Contract 3 preserves
+their payload meanings.
 
 Reserve DSL version for future introduction as an optional field in the project block. When omitted in the MVP, treat it as version 1 grammar.
 
@@ -1210,14 +1220,16 @@ review-derived target before runtime work starts. The independent
 2. hierarchical command discovery, domain-guide separation, and usage-error
    recovery;
 3. explicit project initialization and typed gate maintenance;
-4. one atomic breaking cutover; and
+4. one atomic breaking cutover, completed by
+   `CLI_002_CONTRACT_V3_CUTOVER`; and
 5. installed-package file-first acceptance.
 
-`MUT-001` implements and tests project initialization Core, output projection,
-exclusive creation, and its internal descriptor. This prerequisite neither
-exposes the direct command nor authorizes a package release. The
-[migration guide](process/cli-contract-3-migration.md) keeps Contract 2 active
-until all breaking names and JSON operations move together.
+`MUT-001` implemented and tested project initialization Core, output
+projection, exclusive creation, and its internal descriptor without
+authorizing a package release. The [migration
+guide](process/cli-contract-3-migration.md) kept Contract 2 active until all
+breaking names and JSON operations moved together. The remaining slice task is
+installed-package file-first acceptance.
 
 Exit:
 
@@ -1241,7 +1253,7 @@ Fix LSP protocol capabilities, UTF-16 position mapping, VSIX packaging, workspac
 
 ## 18. Matters for detailed design
 
-The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) determines the implemented Contract 2 CLI, help, and write safety; and the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the accepted post-beta command/help reset. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
+The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; and the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
 
 1. Implementation details for CST trivia/comment ownership rules
 2. Implementation details for the formatter's canonical whitespace

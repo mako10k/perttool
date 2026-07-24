@@ -108,7 +108,8 @@ test("dag next command help identifies the breaking v3 consumer boundary", () =>
   const command = run(["dag", "next", "--help"]);
   assert.equal(command.status, 0, command.stderr);
   assert.match(command.stdout, /Perttool\.NextResult\.v3/);
-  assert.match(command.stdout, /schema_version/);
+  assert.match(command.stdout, /CLI contract: 3/);
+  assert.match(command.stdout, /Output: formats=text,json/);
 });
 
 test("text derives a later parallel recommendation rule from the Core summary", () => {

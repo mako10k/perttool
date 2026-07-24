@@ -27,26 +27,58 @@ export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
 export { getHelp } from "./help/registry.js";
 export {
-  COMMAND_REGISTRY,
   commandDescriptorToJson,
   commandOptionSets,
-  commandRegistryToJson,
   getAgentHelpCommandHelp,
-  getCommandDescriptor,
-  getCommandDescriptorByOperation,
-  renderCommandHelp,
-  renderTopLevelHelp,
 } from "./command/registry.js";
+export {
+  CONTRACT3_COMMAND_REGISTRY as COMMAND_REGISTRY,
+  commandHelpResultToJson,
+  commandRegistryToJson,
+  getCommandDiscovery,
+  renderCommandHelpResult,
+  serializeCommandHelpResult,
+} from "./command/discovery.js";
+export {
+  commandUsageErrorToJson,
+  renderCommandUsageError,
+  serializeCommandUsageError,
+  validateCommandInvocation,
+} from "./command/usage.js";
+export {
+  getGuide,
+  guideResultToJson,
+  renderGuideResult,
+  serializeGuideResult,
+} from "./help/guide.js";
 export type {
-  CommandDescriptor,
   CommandExample,
   CommandHandler,
   CommandOutputDescriptor,
   ExitStatusDescriptor,
   OperandDescriptor,
   OptionDescriptor,
+  ProjectedCommandDescriptor,
+  ProjectedCommandDescriptor as CommandDescriptor,
   SharedOptionGroup,
 } from "./command/registry.js";
+export type {
+  CommandHelpQuery,
+  CommandHelpResult,
+  CommandResourceSummary,
+} from "./command/discovery.js";
+export type {
+  CommandHelpTarget,
+  CommandInvocationValidation,
+  CommandOptionOccurrence,
+  CommandUsageError,
+  CommandUsageErrorKind,
+  CommandUsageSuggestion,
+  CommandUsageSuggestionKind,
+  InvalidCommandInvocation,
+  ValidCommandInvocation,
+} from "./command/usage.js";
+export type { GuideResult } from "./help/guide.js";
 export {
   getAgentGuidance,
   getBundledAgentGuidance,

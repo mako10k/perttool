@@ -1,5 +1,5 @@
 import { TOOL_VERSION } from "../version.js";
-import { CONTRACT3_COMMAND_HELP_REGISTRY } from "./discovery.js";
+import { CONTRACT3_COMMAND_REGISTRY } from "./discovery.js";
 import type { ProjectedCommandDescriptor } from "./registry.js";
 
 export type CommandUsageErrorKind =
@@ -80,7 +80,7 @@ const commandsByPath = new Map<string, ProjectedCommandDescriptor>();
 const resourceActions = new Map<string, string[]>();
 const resources: string[] = [];
 
-for (const descriptor of CONTRACT3_COMMAND_HELP_REGISTRY) {
+for (const descriptor of CONTRACT3_COMMAND_REGISTRY) {
   if (descriptor.path.length === 1) {
     topLevelByName.set(descriptor.path[0], descriptor);
     continue;
@@ -591,6 +591,21 @@ export function commandUsageErrorToJson(
       },
     ],
   };
+}
+
+export function handlerCommandUsageError(
+  descriptor: ProjectedCommandDescriptor,
+  message: string,
+): CommandUsageError {
+  return Object.freeze({
+    code: "PTCLI-001",
+    kind: "invalid_option_value",
+    message,
+    operation: descriptor.operation,
+    token: null,
+    helpTarget: helpTarget(descriptor),
+    suggestion: null,
+  });
 }
 
 export function serializeCommandUsageError(

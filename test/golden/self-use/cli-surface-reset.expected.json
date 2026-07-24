@@ -4,8 +4,8 @@
     "grammar_version": 1,
     "summary": {
       "resources": 5,
-      "milestones": 3,
-      "tasks": 2,
+      "milestones": 2,
+      "tasks": 1,
       "gates": 0,
       "errors": 0,
       "warnings": 0
@@ -13,19 +13,17 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "10/1",
+    "precedence_makespan": "5/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "10/39",
+    "precedence_forecast": "5/44",
     "precedence_critical_tasks": [
-      "CLI_002_CONTRACT_V3_CUTOVER",
       "CLI_003_FILE_FIRST_ACCEPTANCE"
     ],
-    "resource_makespan": "10/1",
-    "resource_forecast": "10/39",
+    "resource_makespan": "5/1",
+    "resource_forecast": "5/44",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "CLI_002_CONTRACT_V3_CUTOVER",
       "CLI_003_FILE_FIRST_ACCEPTANCE"
     ]
   },
@@ -33,15 +31,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "CLI_002_CONTRACT_V3_CUTOVER"
+        "CLI_003_FILE_FIRST_ACCEPTANCE"
       ],
       "runnable_now": [
-        "CLI_002_CONTRACT_V3_CUTOVER"
+        "CLI_003_FILE_FIRST_ACCEPTANCE"
       ],
       "blocked_now": [],
-      "upcoming": [
-        "CLI_003_FILE_FIRST_ACCEPTANCE"
-      ]
+      "upcoming": []
     },
     "resource_rejection": null
   }

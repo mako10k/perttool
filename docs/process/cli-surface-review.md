@@ -1,9 +1,9 @@
 # CLI surface review for human and LLM users
 
-- Status: Design accepted; implementation pending
+- Status: Review complete; Contract 3 source cutover implemented
 - Date: 2026-07-24
-- Current CLI contract: 2
-- Accepted target CLI contract: 3
+- Published `0.1.0` CLI contract: 2
+- Current source CLI contract: 3
 - Related backlog: [../backlog.md](../backlog.md)
 - Related plan: [../../plans/cli-surface-reset.pert](../../plans/cli-surface-reset.pert)
 - Normative target: [../specs/cli-contract-3.md](../specs/cli-contract-3.md)
@@ -13,11 +13,11 @@
 
 This review evaluates whether a user or an LLM can discover the complete
 perttool surface, understand side effects, and maintain a `.pert` file without
-guessing. It separates confirmed behavior in `0.1.0` from the proposed breaking
-contract. The reviewed target is now accepted by the Contract 3 specification,
-but it is not implemented by this document or available in `0.1.0`.
+guessing. It separates confirmed behavior in `0.1.0` from the reviewed breaking
+contract. The current source implements that target through the atomic Contract
+3 cutover; the already published `0.1.0` artifact remains Contract 2.
 
-## Confirmed current surface
+## Confirmed published `0.1.0` surface
 
 The `0.1.0` dispatcher implements:
 
@@ -70,9 +70,9 @@ atomic replacement; `--out` exclusively creates a new path.
 - Project initialization and gate mutation are the blockers to claiming that a
   plan can be maintained entirely through typed tools.
 
-## Accepted Contract 3 design target
+## Implemented Contract 3 source surface
 
-The next breaking beta should expose this canonical surface:
+The current source exposes this canonical surface:
 
 ```text
 perttool --version
@@ -166,6 +166,10 @@ Contract 3 implementation is accepted only when:
 5. an installed-package E2E test completes the file-first maintenance workflow;
 6. old contract-2 commands fail according to the documented beta migration;
 7. README examples use only the accepted installed surface.
+
+The source cutover satisfies items 1 through 4, 6, and 7. Item 5 remains the
+separate `CLI_003_FILE_FIRST_ACCEPTANCE` task and blocks release acceptance,
+but does not restore the source to a mixed or Contract 2 surface.
 
 Shell completion, interactive prompts, TUI, MCP, LSP, VSIX, locale negotiation,
 and direct Git operations are non-goals for this reset.

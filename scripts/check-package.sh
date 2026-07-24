@@ -97,8 +97,8 @@ if [[ "$actual_version" != "$expected_version" ]]; then
   exit 1
 fi
 
-"$installed_cli" dsl check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
-"$installed_cli" dsl help --format=json |
+"$installed_cli" document check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+"$installed_cli" guide --format=json |
   node -e '
     let input = "";
     process.stdin.setEncoding("utf8");
@@ -107,8 +107,9 @@ fi
       const result = JSON.parse(input);
       const topicIds = result.topics?.map(({ id }) => id);
       if (
-        result.schema_version !== "Perttool.HelpResult.v1" ||
-        result.operation !== "dsl.help" ||
+        result.schema_version !== "Perttool.GuideResult.v1" ||
+        result.cli_contract_version !== 3 ||
+        result.operation !== "guide" ||
         JSON.stringify(topicIds) !== JSON.stringify([
           "syntax",
           "analysis",
@@ -123,7 +124,7 @@ fi
       ) process.exit(1);
     });
   '
-"$installed_cli" dsl help next --level=detail --format=json |
+"$installed_cli" guide next --level=detail --format=json |
   node -e '
     let input = "";
     process.stdin.setEncoding("utf8");
@@ -132,8 +133,9 @@ fi
       const result = JSON.parse(input);
       const sectionIds = result.sections?.map(({ id }) => id);
       if (
-        result.schema_version !== "Perttool.HelpResult.v1" ||
-        result.operation !== "dsl.help" ||
+        result.schema_version !== "Perttool.GuideResult.v1" ||
+        result.cli_contract_version !== 3 ||
+        result.operation !== "guide" ||
         result.topic_id !== "next" ||
         JSON.stringify(sectionIds) !== JSON.stringify([
           "classification",
@@ -148,10 +150,31 @@ fi
       ) process.exit(1);
     });
   '
-if "$installed_cli" guide syntax --format=json >/dev/null 2>&1; then
-  printf 'packed Contract 2 CLI unexpectedly accepted public Contract 3 guide\n' >&2
-  exit 1
-fi
+assert_contract2_rejected() {
+  set +e
+  "$installed_cli" "$@" >/dev/null 2>&1
+  contract2_status=$?
+  set -e
+  if [[ "$contract2_status" -ne 2 ]]; then
+    printf 'packed Contract 2 route was not rejected with exit 2: %s\n' "$*" >&2
+    exit 1
+  fi
+}
+assert_contract2_rejected dsl check "$repo_root/docs/examples/minimal.pert"
+assert_contract2_rejected dsl format "$repo_root/docs/examples/minimal.pert"
+assert_contract2_rejected dsl help
+assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert" --request missing.json
+"$installed_cli" help project init --format=json >/dev/null
+"$installed_cli" project init PACKAGE_SMOKE \
+  --title "Package smoke" \
+  --duration-unit day \
+  --initial-milestone START \
+  --initial-milestone-title "Package smoke started" \
+  --finish START \
+  --format=json >/dev/null
+"$installed_cli" gate set "$repo_root/docs/examples/point-velocity.pert" \
+  DESIGN_RELEASE --reason "Design and implementation release" \
+  --format=json >/dev/null
 "$installed_cli" project show "$repo_root/docs/examples/minimal.pert" --format=json |
   node -e '
     let input = "";
@@ -251,10 +274,17 @@ const guidanceCli = spawnSync(
   ["agent", "help", "grok", "workflow", "--format=json"],
   { encoding: "utf8" },
 );
+const guidanceCliJson = JSON.parse(guidanceCli.stdout);
+const { cli_contract_version: guidanceContract, ...guidanceCliCore } =
+  guidanceCliJson;
+const guidanceCoreJson = JSON.parse(
+  api.serializeAgentGuidanceResult(guidance),
+);
 if (
   guidanceCli.status !== 0 ||
   guidanceCli.stderr !== "" ||
-  guidanceCli.stdout !== api.serializeAgentGuidanceResult(guidance)
+  guidanceContract !== 3 ||
+  JSON.stringify(guidanceCliCore) !== JSON.stringify(guidanceCoreJson)
 ) process.exit(1);
 
 const source = await readFile(process.argv[3], "utf8");

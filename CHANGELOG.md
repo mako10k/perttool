@@ -6,10 +6,21 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ### Changed
 
+- Activated CLI Contract 3 as one breaking source-level cutover: `document
+  check|format`, `guide`, and `batch apply` replace the Contract 2 `dsl` and
+  `mutation` spellings; every CLI JSON envelope now identifies contract 3;
+  command dispatch, validation, and text/JSON help share the active typed
+  registry; and obsolete spellings fail with structured usage recovery.
 - Promoted the accepted `perttool@0.1.0` beta to npm `latest` through an explicit post-release dist-tag operation. This changes the default install target without changing beta product maturity.
 - Lowered the source and next-release runtime baseline from Node.js 24 to maintained Node.js 22, with CI coverage for Node.js 22 and 24.
 - Reworked the root README as a user guide with `npx` and `npm exec` examples, and moved repository setup and verification to `docs/development.md`.
 - Recorded the complete English-surface inventory, Unicode allowlist, CLI/LLM surface review, and the structured-help, project-init, and gate-mutation backlog.
+
+### Added
+
+- Public `help` command discovery, separate `guide` domain topics,
+  preview-first `project init`, and direct source-preserving
+  `gate add|set|remove` commands.
 
 ## [0.1.0] - 2026-07-23
 

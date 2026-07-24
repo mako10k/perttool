@@ -7,7 +7,7 @@ cd "$repo_root"
 
 plans=(plans/agent-guidance.pert plans/cli-surface-reset.pert plans/control-plane.pert plans/english-baseline.pert plans/grammar.pert plans/operations.pert plans/recommendation.pert plans/mvp.pert)
 for plan in "${plans[@]}"; do
-  node dist/cli.js dsl check "$plan" --format=json >/dev/null
+  node dist/cli.js document check "$plan" --format=json >/dev/null
   node dist/cli.js dag analyze "$plan" --format=json >/dev/null
   node dist/cli.js dag next "$plan" --format=json >/dev/null
 done

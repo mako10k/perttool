@@ -1,10 +1,10 @@
 project CLI_SURFACE_RESET:
   version 1
   title "CLI surface reset from the human and LLM review"
-  description "Convert docs/process/cli-surface-review.md and the CLI/help items in docs/backlog.md into an independent post-beta workstream. This plan records future design, implementation, migration, and acceptance work only; it does not make an uncompleted Contract 3 command available. Estimates are provisional relative points. The cumulative plan-specific sample is 39p/1d from Contract 3 design, the command registry, hierarchical command discovery, domain-guide separation, usage recovery, gate maintenance, and project initialization completed on 2026-07-24; recalibrate after work on another active day."
+  description "Convert docs/process/cli-surface-review.md and the CLI/help items in docs/backlog.md into an independent post-beta workstream. The source Contract 3 cutover is complete; installed-package file-first acceptance remains separate and does not authorize a release. Estimates are provisional relative points. The cumulative plan-specific sample is 44p/1d from Contract 3 design, the command registry, hierarchical command discovery, domain-guide separation, usage recovery, gate maintenance, project initialization, and the atomic public cutover completed on 2026-07-24; recalibrate after work on another active day."
   as_of 2026-07-24
   duration_unit point
-  velocity 39p/1d
+  velocity 44p/1d
   finish CLI_SURFACE_RESET_ACCEPTED
 
 resource DEVELOPERS:
@@ -37,12 +37,10 @@ resource PACKAGE_SURFACE:
 
 
 
-milestone CONTRACT_V3_IMPLEMENTATION_READY:
-  title "CLI contract 3 implementation prerequisites complete"
-  state reached
 
 milestone CONTRACT_V3_CUTOVER_READY:
   title "CLI-002 breaking contract 3 cutover ready"
+  state reached
 
 milestone CLI_SURFACE_RESET_ACCEPTED:
   title "CLI-003 file-first maintenance workflow accepted"
@@ -58,19 +56,6 @@ milestone CLI_SURFACE_RESET_ACCEPTED:
 
 
 
-task CLI_002_CONTRACT_V3_CUTOVER CONTRACT_V3_IMPLEMENTATION_READY -> CONTRACT_V3_CUTOVER_READY:
-  title "CLI-002 normalize public names in one breaking version"
-  description |
-    Adopt document, guide, help, and batch mappings in one versioned breaking
-    change. Update operation names, README, help, examples, package smoke tests,
-    and migration notes together, and make obsolete contract-2 spellings fail
-    according to the accepted migration.
-  duration 5p
-  priority 60
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    CLI_SURFACE 1
 
 task CLI_003_FILE_FIRST_ACCEPTANCE CONTRACT_V3_CUTOVER_READY -> CLI_SURFACE_RESET_ACCEPTED:
   title "CLI-003 accept complete file-first maintenance"

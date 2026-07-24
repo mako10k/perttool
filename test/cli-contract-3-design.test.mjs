@@ -22,7 +22,7 @@ const backlogIds = [
   "CLI-003",
 ];
 
-test("Contract 3 backlog and current plan preserve open and advanced item traceability", async () => {
+test("Contract 3 backlog and current plan preserve completed cutover traceability", async () => {
   const [backlog, plan] = await Promise.all([
     repositoryText("docs/backlog.md"),
     repositoryText("plans/cli-surface-reset.pert"),
@@ -39,6 +39,7 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
     "HELP-003",
     "MUT-001",
     "MUT-002",
+    "CLI-002",
   ]);
   for (const backlogId of backlogIds) {
     const taskId = backlogId.replace("-", "_");
@@ -57,35 +58,40 @@ test("Contract 3 backlog and current plan preserve open and advanced item tracea
   assert.doesNotMatch(plan, /^milestone COMMAND_REGISTRY_READY:/m);
   assert.match(
     backlog,
-    /^### HELP-001: Add hierarchical, machine-readable command discovery\n\nPriority: P0\n\nStatus: Core complete \(2026-07-24\); public activation deferred to CLI-002$/m,
+    /^### HELP-001: Add hierarchical, machine-readable command discovery\n\nPriority: P0\n\nStatus: Complete \(2026-07-24\)$/m,
   );
   assert.doesNotMatch(plan, /^milestone COMMAND_DISCOVERY_READY:/m);
   assert.match(
     backlog,
-    /^### HELP-002: Separate command help from domain guidance\n\nPriority: P1\n\nStatus: Core complete \(2026-07-24\); public activation deferred to CLI-002$/m,
+    /^### HELP-002: Separate command help from domain guidance\n\nPriority: P1\n\nStatus: Complete \(2026-07-24\)$/m,
   );
   assert.doesNotMatch(plan, /^milestone DOMAIN_GUIDE_READY:/m);
   assert.match(
     backlog,
-    /^### HELP-003: Improve usage-error recovery\n\nPriority: P1\n\nStatus: Core complete \(2026-07-24\); public activation deferred to CLI-002$/m,
+    /^### HELP-003: Improve usage-error recovery\n\nPriority: P1\n\nStatus: Complete \(2026-07-24\)$/m,
   );
   assert.doesNotMatch(plan, /^task HELP_003_USAGE_RECOVERY /m);
   assert.doesNotMatch(plan, /^milestone USAGE_RECOVERY_READY:/m);
   assert.match(
     backlog,
-    /^### MUT-001: Initialize a project through the CLI\n\nPriority: P0\nStatus: Core complete \(2026-07-24\); direct command activation deferred to CLI-002$/m,
+    /^### MUT-001: Initialize a project through the CLI\n\nPriority: P0\nStatus: Complete \(2026-07-24\)$/m,
   );
   assert.doesNotMatch(plan, /^task MUT_001_PROJECT_INIT /m);
   assert.doesNotMatch(plan, /^milestone PROJECT_INIT_READY:/m);
   assert.match(
     backlog,
-    /^### MUT-002: Add complete gate maintenance\n\nPriority: P0\nStatus: Core complete \(2026-07-24\); direct command activation deferred to CLI-002$/m,
+    /^### MUT-002: Add complete gate maintenance\n\nPriority: P0\nStatus: Complete \(2026-07-24\)$/m,
   );
   assert.doesNotMatch(plan, /^task MUT_002_GATE_MAINTENANCE /m);
   assert.doesNotMatch(plan, /^milestone GATE_MAINTENANCE_READY:/m);
   assert.match(
+    backlog,
+    /^### CLI-002: Normalize public names in one breaking version\n\nPriority: P1\n\nStatus: Complete \(2026-07-24\)$/m,
+  );
+  assert.doesNotMatch(plan, /^task CLI_002_CONTRACT_V3_CUTOVER /m);
+  assert.match(
     plan,
-    /^milestone CONTRACT_V3_IMPLEMENTATION_READY:\n  title "CLI contract 3 implementation prerequisites complete"\n  state reached$/m,
+    /^milestone CONTRACT_V3_CUTOVER_READY:\n  title "CLI-002 breaking contract 3 cutover ready"\n  state reached$/m,
   );
 });
 
@@ -99,14 +105,14 @@ test("Contract 3 has one complete normative acceptance-case sequence", async () 
   );
 
   assert.deepEqual(actualCaseIds, expectedCaseIds);
-  assert.match(specification, /Contract 3 is an accepted design target, not the currently implemented/);
+  assert.match(specification, /Contract 3 is the active interface in the current source/);
   assert.match(
     specification,
-    /project initialization Core, deterministic result projections, exclusive/,
+    /remaining\n`CLI_003_FILE_FIRST_ACCEPTANCE` task verifies the complete workflow/,
   );
 });
 
-test("Contract 2 remains active until the atomic Contract 3 cutover", async () => {
+test("Contract 3 is active in source while published 0.1.0 remains Contract 2", async () => {
   const [currentInterface, targetInterface, migration] = await Promise.all([
     repositoryText("docs/specs/interfaces.md"),
     repositoryText("docs/specs/cli-contract-3.md"),
@@ -114,9 +120,10 @@ test("Contract 2 remains active until the atomic Contract 3 cutover", async () =
   ]);
 
   assert.match(currentInterface, /CLI contract version: 2/);
-  assert.match(currentInterface, /implemented CLI contract version 2/);
+  assert.match(currentInterface, /superseded CLI Contract 2 command surface/);
   assert.match(targetInterface, /Target CLI contract version: 3/);
-  assert.match(migration, /Contract 2 remains the active public interface until/);
+  assert.match(migration, /CLI_002_CONTRACT_V3_CUTOVER` is complete in the current source/);
+  assert.match(migration, /published `0\.1\.0` artifact\s+remains Contract 2/);
   assert.match(migration, /There is no `--cli-contract 2`, alias period/);
 
   for (const operation of [

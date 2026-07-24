@@ -561,8 +561,14 @@ if (orderedDescriptors.length !== contract3Descriptors.length + 1) {
   throw new Error("Contract 3 command projection has an unregistered resource");
 }
 
-export const CONTRACT3_COMMAND_HELP_REGISTRY:
+export const CONTRACT3_COMMAND_REGISTRY:
 readonly ProjectedCommandDescriptor[] = Object.freeze(orderedDescriptors);
+
+export const CONTRACT3_COMMAND_HELP_REGISTRY = CONTRACT3_COMMAND_REGISTRY;
+
+export function commandRegistryToJson(): readonly Readonly<Record<string, unknown>>[] {
+  return CONTRACT3_COMMAND_REGISTRY.map(commandDescriptorToJson);
+}
 
 const contract3CommandsByPath = new Map(
   CONTRACT3_COMMAND_HELP_REGISTRY.map(
@@ -822,7 +828,7 @@ export function renderCommandHelpResult(
       ({ path }) => path.length === 1,
     );
     const lines = [
-      "perttool command catalog (CLI Contract 3 preview)",
+      "perttool command catalog (CLI Contract 3)",
       "",
       "Top-level commands:",
       ...topLevel.map(

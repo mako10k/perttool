@@ -7,12 +7,16 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import {
-  getAgentHelpCommandHelp,
+  agentGuidanceResultToJson,
   getAgentHelp,
   getBundledAgentGuidance,
   renderAgentGuidanceText,
   serializeAgentGuidanceResult,
 } from "../dist/index.js";
+import {
+  getCommandDiscovery,
+  renderCommandHelpResult,
+} from "../dist/command/discovery.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -29,26 +33,25 @@ function run(args, options = {}) {
 }
 
 test("agent help command help comes from structured registry data", () => {
-  const definition = getAgentHelpCommandHelp();
+  const result = getCommandDiscovery({
+    resource: "agent",
+    action: "help",
+  });
+  const definition = result.commands[0];
+  assert.ok(definition);
   assert.equal(definition.operation, "agent.help");
   assert.equal(
     definition.summary,
     "Displays read-only AI agent guidance for each provider from bundled offline profiles.",
   );
   assert.match(definition.summary, /offline profile/);
-  assert.deepEqual(definition.syntax, [
-    "Usage: perttool agent help [<provider> [<surface>]]",
-    "  [--level index|quick|detail]",
-    "  [--format text|json]",
-    "  [--color auto|always|never]",
-  ]);
 
   const top = run(["--help"]);
   assert.equal(top.status, 0, top.stderr);
-  assert.match(top.stdout, /perttool agent help \[provider \[surface\]\]/);
+  assert.match(top.stdout, /^    help  Displays read-only AI agent guidance/m);
   const command = run(["agent", "help", "--help"]);
   assert.equal(command.status, 0, command.stderr);
-  assert.equal(command.stdout, `${definition.syntax.join("\n")}\n`);
+  assert.equal(command.stdout, renderCommandHelpResult(result));
 });
 
 test("agent help index text is deterministic and matches the public renderer", async () => {
@@ -77,15 +80,14 @@ test("agent help quick text preserves status, reasons, staleness, and read-only 
   assert.doesNotMatch(result.stdout, /^SOURCE /m);
 });
 
-test("agent help JSON is byte-identical to the Core serializer and canonicalizes aliases", () => {
+test("agent help JSON adds the Contract 3 envelope to the Core projection", () => {
   const query = {
     providerId: "grok",
     surfaceId: "workflow",
     level: "quick",
   };
-  const expected = serializeAgentGuidanceResult(
-    getAgentHelp(query),
-  );
+  const coreResult = getAgentHelp(query);
+  const expected = serializeAgentGuidanceResult(coreResult);
   assert.equal(
     expected,
     serializeAgentGuidanceResult(getBundledAgentGuidance(query)),
@@ -98,9 +100,11 @@ test("agent help JSON is byte-identical to the Core serializer and canonicalizes
   ]);
   assert.equal(first.status, 0, first.stderr);
   assert.equal(first.stderr, "");
-  assert.equal(first.stdout, expected);
-  assert.equal(second.stdout, expected);
+  assert.equal(first.stdout, second.stdout);
   const json = JSON.parse(first.stdout);
+  assert.equal(json.cli_contract_version, 3);
+  const { cli_contract_version: _contract, ...cliProjection } = json;
+  assert.deepEqual(cliProjection, agentGuidanceResultToJson(coreResult));
   assert.deepEqual(json.query, {
     input_provider_id: "grok",
     canonical_provider_id: "grok-build",
@@ -193,12 +197,15 @@ test("agent help does not require or create project/provider state", () => {
   }
 });
 
-test("legacy dsl help index remains byte-stable", async () => {
+test("Contract 3 guide index is byte-stable", async () => {
   const expected = await readFile(
-    golden("legacy-dsl-help-index.expected.json"),
+    path.join(
+      testDirectory,
+      "golden/help/contract3-guide-index.expected.json",
+    ),
     "utf8",
   );
-  const result = run(["dsl", "help", "--format=json"]);
+  const result = run(["guide", "--format=json"]);
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stderr, "");
   assert.equal(result.stdout, expected);

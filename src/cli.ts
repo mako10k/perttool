@@ -7,6 +7,12 @@ import type { AnalysisMode } from "./application/analyze.js";
 import { analyzeDocument } from "./application/analyze.js";
 import { checkDocument } from "./application/check.js";
 import { planFormat, type FormatPreviewResult } from "./application/format.js";
+import {
+  planProjectInit,
+  projectInitResultToJson,
+  renderProjectInitResult,
+  withProjectInitOutput,
+} from "./application/init.js";
 import { planBatchMutation, planMutation } from "./application/mutate.js";
 import { selectNextTasks } from "./application/next.js";
 import {
@@ -23,17 +29,27 @@ import {
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import {
-  getHelp,
-} from "./help/registry.js";
+  getGuide,
+  renderGuideResult,
+  serializeGuideResult,
+} from "./help/guide.js";
 import {
   commandOptionSets,
-  getCommandDescriptor,
-  getCommandDescriptorByOperation,
-  renderCommandHelp,
-  renderTopLevelHelp,
-  type CommandDescriptor,
+  type ProjectedCommandDescriptor,
 } from "./command/registry.js";
-import { serializeAgentGuidanceResult } from "./guidance/projection.js";
+import {
+  CONTRACT3_COMMAND_REGISTRY,
+  getCommandDiscovery,
+  renderCommandHelpResult,
+  serializeCommandHelpResult,
+} from "./command/discovery.js";
+import {
+  handlerCommandUsageError,
+  renderCommandUsageError,
+  serializeCommandUsageError,
+  validateCommandInvocation,
+} from "./command/usage.js";
+import { agentGuidanceResultToJson } from "./guidance/projection.js";
 import {
   agentGuidanceExitCode,
   renderAgentGuidanceText,
@@ -143,8 +159,10 @@ function parseCommandOptions(
   operation: string,
   args: readonly string[],
 ): ParsedOptions {
-  const descriptor = getCommandDescriptorByOperation(operation);
-  if (descriptor === null) {
+  const descriptor = CONTRACT3_COMMAND_REGISTRY.find(
+    (candidate) => candidate.operation === operation,
+  );
+  if (descriptor === undefined) {
     throw new Error(`command descriptor is missing for ${operation}`);
   }
   const optionSets = commandOptionSets(descriptor);
@@ -217,7 +235,8 @@ function jsonDiagnostic(diagnostic: Diagnostic): Readonly<Record<string, unknown
       message: related.message,
       span: jsonSpan(related.span),
     })),
-    help_topic: diagnostic.helpTopic ?? null,
+    help_topic: null,
+    guide_topic: diagnostic.helpTopic ?? null,
     expected_syntax: diagnostic.expectedSyntax ?? null,
     fixes: [],
     data: diagnostic.data ?? {},
@@ -254,7 +273,7 @@ function renderDiagnostic(
   if (diagnostic.helpTopic !== undefined) {
     const [topic, subtopic] = diagnostic.helpTopic.split(".", 2);
     lines.push(
-      `  help: perttool dsl help ${topic}${subtopic === undefined ? "" : ` ${subtopic}`} --level quick`,
+      `  guide: perttool guide ${topic}${subtopic === undefined ? "" : ` ${subtopic}`} --level quick`,
     );
   }
   return lines.join("\n");
@@ -310,6 +329,7 @@ function cliError(
   if (json) {
     writeJson({
       schema_version: "Perttool.CliError.v1",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
       operation,
       ok: false,
@@ -322,9 +342,9 @@ function cliError(
 }
 
 async function runCheck(args: readonly string[]): Promise<number> {
-  const parsed = parseCommandOptions("dsl.check", args);
+  const parsed = parseCommandOptions("document.check", args);
   if (parsed.positionals.length !== 1) {
-    throw new UsageError("dsl check requires exactly one <file>");
+    throw new UsageError("document check requires exactly one <file>");
   }
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
@@ -344,7 +364,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
     return cliError(
       error instanceof Error ? error : new Error(String(error)),
       3,
-      "dsl.check",
+      "document.check",
       format === "json",
     );
   }
@@ -355,8 +375,9 @@ async function runCheck(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.CheckResult.v1",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
-      operation: "dsl.check",
+      operation: "document.check",
       ok,
       document_id: result.documentId,
       source,
@@ -450,6 +471,7 @@ async function runProjectShow(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ProjectResult.v1",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
       operation: "project.show",
       ok,
@@ -473,6 +495,63 @@ async function runProjectShow(args: readonly string[]): Promise<number> {
     }
   }
   return ok ? 0 : 1;
+}
+
+async function runProjectInit(args: readonly string[]): Promise<number> {
+  const parsed = parseCommandOptions("project.init", args);
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const durationUnit = enumOption<"day" | "hour" | "point">(
+    requiredOption(parsed, "duration-unit"),
+    "duration-unit",
+    new Set(["day", "hour", "point"]),
+  )!;
+  const version = optionalInteger(parsed, "version", 0, 2_147_483_647);
+  let result = planProjectInit({
+    projectId: parsed.positionals[0]!,
+    title: requiredOption(parsed, "title"),
+    durationUnit,
+    initialMilestone: requiredOption(parsed, "initial-milestone"),
+    initialMilestoneTitle: requiredOption(
+      parsed,
+      "initial-milestone-title",
+    ),
+    finish: requiredOption(parsed, "finish"),
+    ...(version === undefined ? {} : { version }),
+    ...(parsed.values.get("as-of") === undefined
+      ? {}
+      : { asOf: parsed.values.get("as-of")! }),
+    ...(parsed.values.get("velocity") === undefined
+      ? {}
+      : { velocity: parsed.values.get("velocity")! }),
+  });
+  let writeResult: DocumentWriteResult | null = null;
+  const output = parsed.values.get("out");
+  if (result.ok && output !== undefined) {
+    try {
+      writeResult = await createDocumentFile(output, result.candidateText!);
+      result = withProjectInitOutput(result, writeResult);
+    } catch (error) {
+      return writeFailureExit(error, "project.init", format === "json");
+    }
+  }
+  if (format === "json") {
+    writeJson(projectInitResultToJson(result));
+  } else {
+    if (result.ok) {
+      if (writeResult === null) {
+        process.stdout.write(renderProjectInitResult(result));
+      } else {
+        process.stderr.write(renderWriteSummary("project.init", writeResult));
+      }
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(
+        `${renderDiagnostic(diagnostic, "<project-init>", color)}\n`,
+      );
+    }
+  }
+  return result.ok ? 0 : 1;
 }
 
 function boundedInteger(
@@ -618,9 +697,9 @@ function renderWriteSummary(operation: string, result: DocumentWriteResult): str
 }
 
 async function runFormat(args: readonly string[]): Promise<number> {
-  const parsed = parseCommandOptions("dsl.format", args);
+  const parsed = parseCommandOptions("document.format", args);
   if (parsed.positionals.length !== 1) {
-    throw new UsageError("dsl format requires exactly one <file>");
+    throw new UsageError("document format requires exactly one <file>");
   }
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
@@ -645,7 +724,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
     return cliError(
       error instanceof Error ? error : new Error(String(error)),
       3,
-      "dsl.format",
+      "document.format",
       format === "json",
     );
   }
@@ -668,14 +747,15 @@ async function runFormat(args: readonly string[]): Promise<number> {
         writeResult = await commitCandidate(writeRequest, result.updatedText, input.digest);
       }
     } catch (error) {
-      return writeFailureExit(error, "dsl.format", format === "json");
+      return writeFailureExit(error, "document.format", format === "json");
     }
   }
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.FormatResult.v1",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
-      operation: "dsl.format",
+      operation: "document.format",
       ok,
       document_id: result.documentId,
       source,
@@ -688,7 +768,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
     const candidateAllowed = result.ok && !warningFailure;
     if (candidateAllowed) {
       if (writeResult !== null) {
-        process.stderr.write(renderWriteSummary("dsl.format", writeResult));
+        process.stderr.write(renderWriteSummary("document.format", writeResult));
       } else if (parsed.flags.has("check")) {
         if (parsed.flags.has("diff")) process.stdout.write(result.diff ?? "");
       } else {
@@ -697,7 +777,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
         );
         if (!parsed.flags.has("diff")) {
           process.stderr.write(
-            `PREVIEW dsl.format changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+            `PREVIEW document.format changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
           );
         }
       }
@@ -1121,6 +1201,39 @@ function resourceMutationFromOptions(action: string, parsed: ParsedOptions): Mut
   };
 }
 
+function gateMutationFromOptions(action: string, parsed: ParsedOptions): Mutation {
+  const expectedPositionals = action === "add" ? 4 : 2;
+  if (parsed.positionals.length !== expectedPositionals) {
+    throw new UsageError(
+      `gate ${action} requires ${action === "add" ? "<file> <id> <from> <to>" : "<file> <id>"}`,
+    );
+  }
+  const id = parsed.positionals[1]!;
+  if (action === "remove") return { kind: "gate.remove", id };
+  if (action === "add") {
+    return {
+      kind: "gate.add",
+      id,
+      from: parsed.positionals[2]!,
+      to: parsed.positionals[3]!,
+      gate: { reason: requiredOption(parsed, "reason") },
+    };
+  }
+  const from = parsed.values.get("from");
+  const to = parsed.values.get("to");
+  const reason = parsed.values.get("reason");
+  if (from === undefined && to === undefined && reason === undefined) {
+    throw new UsageError("gate set requires --from, --to, or --reason");
+  }
+  return {
+    kind: "gate.set",
+    id,
+    ...(from === undefined ? {} : { from }),
+    ...(to === undefined ? {} : { to }),
+    ...(reason === undefined ? {} : { set: { reason } }),
+  };
+}
+
 function previewResultJson(
   result: MutationResult | FormatPreviewResult,
   exposeCandidate: boolean,
@@ -1159,7 +1272,7 @@ async function readMutationRequest(source: string): Promise<unknown> {
 }
 
 async function runMutation(
-  resource: "project" | "task" | "milestone" | "resource" | "mutation",
+  resource: "project" | "task" | "gate" | "milestone" | "resource" | "batch",
   action: string,
   args: readonly string[],
 ): Promise<number> {
@@ -1178,9 +1291,9 @@ async function runMutation(
   let writeRequest: EditingWriteRequest;
   let mutation: Mutation;
 
-  if (resource === "mutation") {
+  if (resource === "batch") {
     if (parsed.positionals.length !== 1) {
-      throw new UsageError("mutation apply requires exactly one <file>");
+      throw new UsageError("batch apply requires exactly one <file>");
     }
     sourceOperand = parsed.positionals[0]!;
     writeRequest = editingWriteRequest(parsed, sourceOperand);
@@ -1207,6 +1320,8 @@ async function runMutation(
         ? projectMutationFromOptions(parsed)
         : resource === "task"
           ? taskMutationFromOptions(action, parsed)
+          : resource === "gate"
+            ? gateMutationFromOptions(action, parsed)
           : resource === "milestone"
             ? milestoneMutationFromOptions(action, parsed)
             : resourceMutationFromOptions(action, parsed);
@@ -1231,7 +1346,7 @@ async function runMutation(
     originalLabel: source,
     updatedLabel: "candidate",
   };
-  const result = resource === "mutation"
+  const result = resource === "batch"
     ? planBatchMutation(input.text, mutation, mutationOptions)
     : planMutation(input.text, mutation, mutationOptions);
   const warningFailure =
@@ -1253,6 +1368,7 @@ async function runMutation(
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.MutationResult.v1",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
       operation,
       ok,
@@ -1365,6 +1481,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.MutationResult.v1",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
       operation: "dag.advance",
       ok,
@@ -1793,6 +1910,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.AnalysisResult.v2",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
       operation: "dag.analyze",
       ok,
@@ -1938,6 +2056,7 @@ async function runRender(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ExportResult.v1",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
       operation: "dag.render",
       ok,
@@ -2039,6 +2158,7 @@ async function runImport(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ImportResult.v1",
+      cli_contract_version: 3,
       tool_version: TOOL_VERSION,
       operation: "dag.import",
       ok,
@@ -2407,6 +2527,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     if (format === "json") {
       writeJson({
         schema_version: "Perttool.CliError.v1",
+        cli_contract_version: 3,
         tool_version: TOOL_VERSION,
         operation: "dag.next",
         ok: false,
@@ -2427,6 +2548,7 @@ async function runNext(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.NextResult.v3",
+      cli_contract_version: 3,
       recommendation_interface_version: 1,
       tool_version: TOOL_VERSION,
       operation: "dag.next",
@@ -2450,56 +2572,48 @@ async function runNext(args: readonly string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-function renderHelpText(result: ReturnType<typeof getHelp>): string {
-  const lines = [result.title, "", result.summary];
-  if (result.topics.length > 0) {
-    lines.push("", "Topics:");
-    for (const topic of result.topics) lines.push(`  ${topic.id.padEnd(12)} ${topic.summary}`);
-  }
-  for (const section of result.sections) {
-    lines.push("", section.title, section.body);
-  }
-  if (result.syntax.length > 0) lines.push("", "Syntax:", ...result.syntax.map((line) => `  ${line}`));
-  if (result.examples.length > 0) {
-    lines.push("", "Examples:", ...result.examples.map((example) => `  ${example.id}: ${example.text}`));
-  }
-  if (result.related.length > 0) lines.push("", `Related: ${result.related.join(", ")}`);
-  return `${lines.join("\n")}\n`;
-}
-
-function runHelp(args: readonly string[]): number {
-  const parsed = parseCommandOptions("dsl.help", args);
+function runGuide(args: readonly string[]): number {
+  const parsed = parseCommandOptions("guide", args);
   if (parsed.positionals.length > 2) {
-    throw new UsageError("dsl help accepts at most <topic> <subtopic>");
+    throw new UsageError("guide accepts at most <topic> <subtopic>");
   }
   const format = outputFormat(parsed.values.get("format"));
   colorMode(parsed.values.get("color"), format);
   const topicId =
     parsed.positionals.length === 0 ? null : parsed.positionals.join(".");
   const level = helpLevel(parsed.values.get("level"), topicId !== null);
-  const result = getHelp(topicId, level);
+  const result = getGuide(topicId, level);
   if (format === "json") {
-    writeJson({
-      schema_version: "Perttool.HelpResult.v1",
-      tool_version: TOOL_VERSION,
-      operation: "dsl.help",
-      ok: result.ok,
-      diagnostics: result.diagnostics.map(jsonDiagnostic),
-      topic_id: result.topicId,
-      level: result.level,
-      title: result.title,
-      summary: result.summary,
-      sections: result.sections,
-      syntax: result.syntax,
-      examples: result.examples,
-      related: result.related,
-      topics: result.topics,
-    });
-  } else if (result.ok) {
-    process.stdout.write(renderHelpText(result));
+    process.stdout.write(serializeGuideResult(result));
   } else {
-    for (const diagnostic of result.diagnostics) {
-      process.stderr.write(`${renderDiagnostic(diagnostic, "<help>", "never")}\n`);
+    const rendered = renderGuideResult(result);
+    if (result.ok) {
+      process.stdout.write(rendered);
+    } else {
+      process.stderr.write(rendered);
+    }
+  }
+  return result.ok ? 0 : 1;
+}
+
+function runCommandHelp(args: readonly string[]): number {
+  const parsed = parseCommandOptions("help", args);
+  if (parsed.positionals.length > 2) {
+    throw new UsageError("help accepts at most <resource> <action>");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const result = getCommandDiscovery({
+    resource: parsed.positionals[0] ?? null,
+    action: parsed.positionals[1] ?? null,
+  });
+  if (format === "json") {
+    process.stdout.write(serializeCommandHelpResult(result));
+  } else {
+    const rendered = renderCommandHelpResult(result);
+    if (result.ok) {
+      process.stdout.write(rendered);
+    } else {
+      process.stderr.write(rendered);
     }
   }
   return result.ok ? 0 : 1;
@@ -2521,7 +2635,16 @@ function runAgentHelp(args: readonly string[]): number {
     level,
   });
   if (format === "json") {
-    process.stdout.write(serializeAgentGuidanceResult(result));
+    const projected = agentGuidanceResultToJson(result);
+    const {
+      schema_version: schemaVersion,
+      ...payload
+    } = projected;
+    writeJson({
+      schema_version: schemaVersion,
+      cli_contract_version: 3,
+      ...payload,
+    });
   } else {
     if (result.ok) {
       process.stdout.write(renderAgentGuidanceText(result));
@@ -2548,39 +2671,71 @@ function runAgentHelp(args: readonly string[]): number {
 }
 
 async function dispatchCommand(
-  descriptor: CommandDescriptor,
+  descriptor: ProjectedCommandDescriptor,
   args: readonly string[],
 ): Promise<number> {
-  switch (descriptor.handler) {
-    case "check":
+  switch (descriptor.operation) {
+    case "help":
+      return runCommandHelp(args);
+    case "guide":
+      return runGuide(args);
+    case "document.check":
       return runCheck(args);
-    case "format":
+    case "document.format":
       return runFormat(args);
-    case "domain-help":
-      return runHelp(args);
-    case "agent-help":
+    case "agent.help":
       return runAgentHelp(args);
-    case "project-show":
+    case "project.init":
+      return runProjectInit(args);
+    case "project.show":
       return runProjectShow(args);
-    case "analyze":
+    case "dag.analyze":
       return runAnalyze(args);
-    case "next":
+    case "dag.next":
       return runNext(args);
-    case "advance":
+    case "dag.advance":
       return runAdvance(args);
-    case "render":
+    case "dag.render":
       return runRender(args);
-    case "import":
+    case "dag.import":
       return runImport(args);
-    case "mutation": {
-      const [resource, action] = descriptor.path;
-      return runMutation(
-        resource as "project" | "task" | "milestone" | "resource" | "mutation",
-        action,
-        args,
-      );
-    }
   }
+  if (
+    descriptor.path.length === 2
+    && (
+      descriptor.operation === "project.set"
+      || descriptor.operation === "batch.apply"
+      || /^(?:task|gate|milestone|resource)\.(?:add|set|remove|finish)$/.test(
+        descriptor.operation,
+      )
+    )
+  ) {
+    const [resource, action] = descriptor.path;
+    return runMutation(
+      resource as
+        | "project"
+        | "task"
+        | "gate"
+        | "milestone"
+        | "resource"
+        | "batch",
+      action,
+      args,
+    );
+  }
+  throw new Error(`no Contract 3 handler for ${descriptor.operation}`);
+}
+
+function emitCommandUsage(
+  error: ReturnType<typeof handlerCommandUsageError>,
+  json: boolean,
+): number {
+  if (json) {
+    process.stdout.write(serializeCommandUsageError(error));
+  } else {
+    process.stderr.write(renderCommandUsageError(error));
+  }
+  return 2;
 }
 
 async function main(argv: readonly string[]): Promise<number> {
@@ -2589,21 +2744,35 @@ async function main(argv: readonly string[]): Promise<number> {
     return 0;
   }
   if (argv.length === 1 && argv[0] === "--help") {
-    process.stdout.write(`${renderTopLevelHelp()}\n`);
-    return 0;
+    return runCommandHelp([]);
   }
-  if (argv.length < 2) throw new UsageError("expected <resource> <action>");
-  const resource = argv[0]!;
-  const action = argv[1]!;
-  const descriptor = getCommandDescriptor(resource, action);
-  if (descriptor === null) {
-    throw new UsageError(`unknown or not-yet-implemented command: ${resource} ${action}`);
+  const validation = validateCommandInvocation(argv);
+  if (!validation.ok) {
+    if (jsonRequested(argv)) {
+      process.stdout.write(serializeCommandUsageError(validation.error));
+    } else {
+      process.stderr.write(renderCommandUsageError(validation.error));
+    }
+    return 2;
   }
-  if (argv.length === 3 && argv[2] === "--help") {
-    process.stdout.write(`${renderCommandHelp(descriptor)}\n`);
-    return 0;
+  const descriptor = validation.descriptor;
+  if (validation.helpAlias) {
+    return runCommandHelp([...descriptor.path]);
   }
-  return dispatchCommand(descriptor, argv.slice(2));
+  try {
+    return await dispatchCommand(
+      descriptor,
+      argv.slice(descriptor.path.length),
+    );
+  } catch (error) {
+    if (error instanceof UsageError) {
+      return emitCommandUsage(
+        handlerCommandUsageError(descriptor, error.message),
+        jsonRequested(argv),
+      );
+    }
+    throw error;
+  }
 }
 
 const args = process.argv.slice(2);
@@ -2612,8 +2781,8 @@ try {
 } catch (error) {
   process.exitCode = cliError(
     error instanceof Error ? error : new Error(String(error)),
-    error instanceof UsageError ? 2 : 70,
-    args.length >= 2 ? `${args[0]}.${args[1]}` : null,
+    70,
+    null,
     jsonRequested(args),
   );
 }

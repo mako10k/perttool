@@ -1,11 +1,11 @@
 # CLI Contract 3 Specification
 
-- Document status: Accepted design; implementation pending
+- Document status: Active source contract; installed-package acceptance pending
 - Specification version: 1
 - Target CLI contract version: 3
 - Created: 2026-07-24
 - Requirements: [../requirements.md](../requirements.md)
-- Current CLI contract: [interfaces.md](interfaces.md)
+- Previous CLI contract: [interfaces.md](interfaces.md)
 - Basic design: [../basic-design.md](../basic-design.md)
 - Migration: [../process/cli-contract-3-migration.md](../process/cli-contract-3-migration.md)
 
@@ -15,21 +15,16 @@ This specification fixes the next breaking CLI surface for human and LLM
 users. It covers command discovery, domain guidance, complete file-first
 maintenance, naming, side effects, result schemas, and acceptance cases.
 
-Contract 3 is an accepted design target, not the currently implemented
-interface. Until the atomic cutover defined by the migration guide:
+Contract 3 is the active interface in the current source after the atomic
+`CLI_002_CONTRACT_V3_CUTOVER` change. The already published `0.1.0` package
+remains a Contract 2 artifact and does not accept these commands. No package
+publication is authorized by the source cutover.
 
-- [CLI Interface version 2](interfaces.md) remains the implemented contract;
-- implementations MUST NOT advertise a Contract 3 command that is unavailable;
-- consumers MUST NOT assume that the commands in this document work in
-  `0.1.0`;
-- project initialization Core, deterministic result projections, exclusive
-  output composition, and its internal target descriptor are implemented, but
-  the direct command remains inactive;
-- gate mutation Core, atomic-batch maintenance, and internal target descriptors
-  are implemented, but direct Contract 3 gate commands remain inactive.
-
-The cutover activates this complete specification at once. It does not activate
-individual renames opportunistically.
+The cutover activated the complete command and JSON namespace at once,
+including direct project initialization and gate maintenance. The remaining
+`CLI_003_FILE_FIRST_ACCEPTANCE` task verifies the complete workflow from an
+isolated installed package; until that passes, Contract 3 is implemented but
+not release-accepted.
 
 ## 2. Product invariants and non-goals
 
@@ -379,7 +374,7 @@ retain the resolved descriptor target.
 
 `MUT-001` implements the initialization Core, result projections, exclusive
 output composition, and internal target descriptor fixed by this section.
-The direct command activates only at the atomic Contract 3 cutover.
+The direct command is active as part of the atomic Contract 3 cutover.
 
 ```text
 perttool project init <project-id>
@@ -420,8 +415,8 @@ The result schema is `Perttool.InitResult.v1`. It contains
 ### 8.2 Gate maintenance
 
 Gate mutation Core and atomic-batch maintenance implement backlog item
-`MUT-002`. The direct commands below activate only at the atomic Contract 3
-cutover.
+`MUT-002`. The direct commands below are active as part of the atomic Contract
+3 cutover.
 
 ```text
 perttool gate add <file> <id> <from> <to> --reason <text>
@@ -479,6 +474,7 @@ one cutover. It does not offer a Contract 2 schema or spelling switch.
 | CLI3-013 | README and package examples contain only the accepted Contract 3 surface at cutover. |
 | CLI3-014 | Repeating the same help query returns byte-identical JSON and semantically identical text. |
 
-Contract 3 is not accepted by passing only the design-document checks. All
-cases require implementation evidence in the cutover and file-first acceptance
-tasks.
+Contract 3 is not release-accepted by passing only the design-document checks
+or the source cutover. `CLI3-001` through `CLI3-011`, `CLI3-013`, and
+`CLI3-014` require cutover evidence; `CLI3-012` requires the separate
+file-first installed-package acceptance task.

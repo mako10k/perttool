@@ -1,5 +1,6 @@
 {
   "schema_version": "Perttool.NextResult.v3",
+  "cli_contract_version": 3,
   "recommendation_interface_version": 1,
   "tool_version": "0.1.0",
   "operation": "dag.next",
@@ -15,7 +16,8 @@
       "entity_id": "TASK_BLOCKED",
       "span": null,
       "related": [],
-      "help_topic": "analysis.resources",
+      "help_topic": null,
+      "guide_topic": "analysis.resources",
       "expected_syntax": null,
       "fixes": [],
       "data": {}

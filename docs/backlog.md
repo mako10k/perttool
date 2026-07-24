@@ -17,10 +17,9 @@ The eight items below are mapped one-to-one into
 normative contract-design task. The
 [Contract 3 specification](specs/cli-contract-3.md) and
 [migration guide](process/cli-contract-3-migration.md) accept that design
-target. `CLI-001`, all three internal `HELP-*` projections, project
-initialization, and gate-maintenance Core are complete; two implementation
-items remain open. Public Contract 3 activation remains one atomic `CLI-002`
-change.
+target. `CLI-001`, all three `HELP-*` items, project initialization, gate
+maintenance, and the atomic public `CLI-002` cutover are complete. One
+installed-package acceptance item remains open.
 
 ### CLI-001: Adopt one command descriptor registry
 
@@ -44,7 +43,7 @@ Acceptance:
 
 Priority: P0
 
-Status: Core complete (2026-07-24); public activation deferred to CLI-002
+Status: Complete (2026-07-24)
 
 Provide top-level, resource-level, and action-level help for humans and LLMs.
 
@@ -58,17 +57,16 @@ Acceptance:
 - help runs without reading a project file and reports no undocumented side
   effects.
 
-The pure Contract 3 preview now satisfies the registry, query, projection,
-lookup-diagnostic, determinism, and no-I/O parts of this item. The active
-Contract 2 CLI intentionally continues to reject `perttool help` until the
-atomic cutover; the completed `HELP-002` projection keeps domain guidance
-separate from command discovery.
+The active Contract 3 projection satisfies the registry, query, projection,
+lookup-diagnostic, determinism, and no-I/O requirements. The public `help`
+command and exact `--help` aliases use it while the completed `HELP-002`
+projection keeps domain guidance separate from command discovery.
 
 ### HELP-002: Separate command help from domain guidance
 
 Priority: P1
 
-Status: Core complete (2026-07-24); public activation deferred to CLI-002
+Status: Complete (2026-07-24)
 
 Move conceptual DSL, analysis, recommendation, editing, and workflow guidance
 behind a distinct `guide` surface. Preserve stable topic IDs and diagnostic
@@ -84,14 +82,15 @@ Acceptance:
 The pure Contract 3 `Perttool.GuideResult.v1` projection now preserves every
 existing topic ID and content level, emits distinct `guide_topic` diagnostic
 links, and has deterministic text/JSON golden and installed-package coverage.
-Command discovery remains independent of the topic graph, and active Contract
-2 `dsl help` bytes and dispatch remain unchanged until the atomic cutover.
+Command discovery remains independent of the topic graph. The atomic cutover
+published this projection as `guide` and removed the Contract 2 `dsl help`
+route.
 
 ### HELP-003: Improve usage-error recovery
 
 Priority: P1
 
-Status: Core complete (2026-07-24); public activation deferred to CLI-002
+Status: Complete (2026-07-24)
 
 Usage errors should identify the failed command, the invalid token or option,
 and the exact structured-help query that describes the accepted surface.
@@ -106,14 +105,13 @@ Acceptance:
 
 The pure Contract 3 recovery layer now validates descriptor-expressible argv
 structure before document I/O, returns stable exact help targets, and limits
-deterministic suggestions to the applicable registry scope. The active
-Contract 2 error and dispatch surface remains unchanged until the atomic
-cutover.
+deterministic suggestions to the applicable registry scope. The atomic cutover
+made it the active pre-I/O argv validation and error surface.
 
 ### MUT-001: Initialize a project through the CLI
 
 Priority: P0
-Status: Core complete (2026-07-24); direct command activation deferred to CLI-002
+Status: Complete (2026-07-24)
 
 Add a preview-first project initialization command that creates the smallest
 valid `.pert` document through the same validated and exclusive-create path as
@@ -131,7 +129,7 @@ Acceptance:
 ### MUT-002: Add complete gate maintenance
 
 Priority: P0
-Status: Core complete (2026-07-24); direct command activation deferred to CLI-002
+Status: Complete (2026-07-24)
 
 Add gate Core mutations, atomic-batch support, and CLI
 `gate add|set|remove`.
@@ -144,14 +142,14 @@ Acceptance:
 - preview, diff, JSON, `--write`, `--out`, and optimistic locking match the
   task/milestone/resource contract.
 
-The public Contract 2 `mutation apply` path now accepts typed gate mutations in
-atomic batches and uses the shared safe-write controls. The pure Contract 3
-discovery projection contains `gate add|set|remove`, while active dispatch
-continues to reject those names until the atomic cutover.
+The public `gate add|set|remove` commands and `batch apply` accept typed gate
+mutations and use the shared preview and safe-write controls.
 
 ### CLI-002: Normalize public names in one breaking version
 
 Priority: P1
+
+Status: Complete (2026-07-24)
 
 Adopt the command mapping and naming rules from the CLI surface review in one
 versioned change rather than accumulating aliases.
@@ -180,7 +178,7 @@ Acceptance:
   a typed command or one atomic batch;
 - direct entity list/show commands are not added merely to duplicate the source
   file;
-- effective or derived values remain available from `project show`, `dsl
+- effective or derived values remain available from `project show`, `document
   check`, `dag analyze`, and `dag next`;
 - an end-to-end test creates, changes, analyzes, advances, and validates a plan
   without manually rewriting the file.

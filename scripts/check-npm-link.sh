@@ -34,8 +34,8 @@ fi
 
 (
   cd "$link_prefix"
-  "$linked_cli" dsl check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
-  "$linked_cli" dsl help --format=json |
+  "$linked_cli" document check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+  "$linked_cli" guide --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -44,8 +44,9 @@ fi
         const result = JSON.parse(input);
         const topicIds = result.topics?.map(({ id }) => id);
         if (
-          result.schema_version !== "Perttool.HelpResult.v1" ||
-          result.operation !== "dsl.help" ||
+          result.schema_version !== "Perttool.GuideResult.v1" ||
+          result.cli_contract_version !== 3 ||
+          result.operation !== "guide" ||
           JSON.stringify(topicIds) !== JSON.stringify([
             "syntax",
             "analysis",
@@ -60,7 +61,7 @@ fi
         ) process.exit(1);
       });
     '
-  "$linked_cli" dsl help next --level=detail --format=json |
+  "$linked_cli" guide next --level=detail --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -69,8 +70,9 @@ fi
         const result = JSON.parse(input);
         const sectionIds = result.sections?.map(({ id }) => id);
         if (
-          result.schema_version !== "Perttool.HelpResult.v1" ||
-          result.operation !== "dsl.help" ||
+          result.schema_version !== "Perttool.GuideResult.v1" ||
+          result.cli_contract_version !== 3 ||
+          result.operation !== "guide" ||
           result.topic_id !== "next" ||
           JSON.stringify(sectionIds) !== JSON.stringify([
             "classification",
@@ -86,6 +88,7 @@ fi
       });
     '
   "$linked_cli" project show "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+  "$linked_cli" help project init --format=json >/dev/null
   "$linked_cli" agent help codex instruction --format=json >/dev/null
   "$linked_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null
 )

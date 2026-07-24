@@ -704,8 +704,8 @@ Must:
   tasks, gates, resources, or dependencies.
 - Add, change, and remove gates through source-preserving typed mutations.
 - Support connected gate/milestone/task changes in one atomic batch.
-- Keep direct Contract 3 initialization and gate commands inactive until the
-  atomic cutover, even after their Core, output, and descriptor prerequisites
+- Activate direct Contract 3 initialization and gate commands only as part of
+  the atomic cutover, after their Core, output, and descriptor prerequisites
   pass their dedicated plan tasks and acceptance cases.
 
 ## 13. Visualization requirements
@@ -800,13 +800,13 @@ perttool milestone add|set|remove ...
 perttool resource add|set|remove ...
 ```
 
-The accepted post-beta breaking target is
+The active post-beta breaking interface is
 [CLI Contract 3](specs/cli-contract-3.md). It replaces `dsl check|format` with
 `document check|format`, separates hierarchical command `help` from domain
 `guide`, replaces `mutation apply` with `batch apply`, and adds `project init`
-and `gate add|set|remove`. Contract 2 remains the implemented interface until
-the versioned atomic cutover; accepting the design does not advertise the
-target commands in `0.1.0`.
+and `gate add|set|remove`. The current source completed the versioned atomic
+cutover. The already published `0.1.0` package remains the prior Contract 2
+artifact.
 
 Must:
 
@@ -838,15 +838,16 @@ Use `llmthink`'s shared help graph and `semdl`'s separation of operational and m
 
 Must:
 
-- Make `perttool dsl help` the entry point for learning the DSL.
+- Make `perttool guide` the entry point for learning the DSL and domain
+  concepts.
 - Divide help topics at least into `syntax`, `analysis`, `next`, `editing`, `mermaid`, `workflows`, `errors`, and `samples`.
 - Let each topic select index, quick, or detail information density.
-- Have CLI text and CLI JSON share the same help registry, reusable by future adapters.
+- Have guide text and guide JSON share the same domain registry, reusable by
+  future adapters.
 - With `--format json`, return topic, summary, syntax, examples, and related topics.
 - Refer to samples by stable sample ID rather than fixed absolute paths.
 
-The preceding requirements describe implemented Contract 2. At Contract 3
-cutover, command discovery and domain guidance have separate authorities.
+Contract 3 command discovery and domain guidance have separate authorities.
 
 Must:
 
@@ -923,7 +924,7 @@ The LSP server and VSIX have a server/client dependency. The MCP server can be d
 
 ## 18. JSON and schemas
 
-The [Mutation Semantics specification](specs/mutation.md) is authoritative for mutation Core requests, local TextEdits, comment ownership, and candidate revalidation. The [CLI Interface specification](specs/interfaces.md) is authoritative for the implemented Contract 2 CLI JSON envelopes and diagnostic, Rational, analysis, next, mutation, help, and conversion fields. The [CLI Contract 3 specification](specs/cli-contract-3.md) is authoritative for the accepted target command/operation namespace, command-help and guide schemas, initialization result, and `cli_contract_version`.
+The [Mutation Semantics specification](specs/mutation.md) is authoritative for mutation Core requests, local TextEdits, comment ownership, and candidate revalidation. The [CLI Interface specification](specs/interfaces.md) remains the reference for Contract 2 payload meanings explicitly preserved by Contract 3. The [CLI Contract 3 specification](specs/cli-contract-3.md) is authoritative for the active command/operation namespace, command-help and guide schemas, initialization result, diagnostic links, and `cli_contract_version`.
 
 Must:
 
@@ -1168,7 +1169,7 @@ Before implementation, separate the specifications in the following order.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 
-Item 8 completed its foundation with `TASK_MUTATION_CORE` and `ENTITY_MUTATION_CORE`, added gate add/set/remove Core through `MUT_002_GATE_MAINTENANCE`, and added read-only `project show` and source-preserving `project set` through project-metadata extensions. The Core contract also added an atomic batch that validates only the final candidate for connected-milestone task/gate additions, path replacements, and project-wide unit changes that cannot independently produce valid intermediate DAGs. `MUTATION_CLI_PREVIEW` exposed entity commands and `mutation apply` through preview-first text/JSON surfaces, and `SAFE_WRITE_ACCEPTANCE` connected the same candidate to atomic `--write`, exclusive `--out`, and `--expect-digest`. Direct Contract 3 gate commands remain inactive until the atomic CLI cutover. Item 10 fixed all semantic records in the profile, stable projection, both digests, exact values, and text/JSON parity with golden/unit/E2E tests. Item 11 fail-closedly verifies canonical profile JSON, record order, both digests, semantic-model and projection correspondence, and fixes stable generated IDs and loss reports for plain input, strict-loss, and exclusive `--out` in Core/CLI/E2E.
+Item 8 completed its foundation with `TASK_MUTATION_CORE` and `ENTITY_MUTATION_CORE`, added gate add/set/remove Core through `MUT_002_GATE_MAINTENANCE`, and added read-only `project show` and source-preserving `project set` through project-metadata extensions. The Core contract also added an atomic batch that validates only the final candidate for connected-milestone task/gate additions, path replacements, and project-wide unit changes that cannot independently produce valid intermediate DAGs. `MUTATION_CLI_PREVIEW` exposed entity commands and the former `mutation apply` path through preview-first text/JSON surfaces, and `SAFE_WRITE_ACCEPTANCE` connected the same candidate to atomic `--write`, exclusive `--out`, and `--expect-digest`. The Contract 3 cutover now exposes direct gate commands and `batch apply` through that shared path. Item 10 fixed all semantic records in the profile, stable projection, both digests, exact values, and text/JSON parity with golden/unit/E2E tests. Item 11 fail-closedly verifies canonical profile JSON, record order, both digests, semantic-model and projection correspondence, and fixes stable generated IDs and loss reports for plain input, strict-loss, and exclusive `--out` in Core/CLI/E2E.
 
 The analysis implementation has progressed through `dag next` v3 and read-only `validateOverride`. In addition to Exact Rational values, PERT expected values/variance, precedence CPM, critical-path counts, deterministic resource schedules, capacity overrides, resource arcs, schedule critical paths, next classification, `runnable_now`, resource rejection, and upcoming explanations, it exposed the complete graph for normal recommendations through the Core, CLI JSON/text, help, and package, and exposed `Perttool.OverrideDecision.v1` validation through the public library. It satisfies Slice 2's bootstrap gate, grammar acceptance, safe-write gate, and advance gate, and performs Stage 3 preview-first self-use of advance. Issue #1's product vision, requirement boundary, executability and recommendation model, ranking policy, reason-code taxonomy, structured explanation, Core/text/JSON interface, human-override contract, normative examples, test perspectives, and self-use and implementation-migration policy were accepted in the [cross-cutting design review](process/recommendation-design-review.md). The missing acceptance criterion 16 found by the [MVP release-readiness audit](process/mvp-release-readiness.md) was resolved with all 22 points of MIG-01 through MIG-07 in the [Recommendation implementation plan](../plans/recommendation.pert), five plan shadows, read-only override validation, normal-authority adoption, and an unknown-version safe-stop dry run. The provisional measured Velocity specific to Recommendation is `22p/1d`, with zero detail work remaining. MVP public-alpha acceptance is complete because the same `v0.1.0-alpha.2` artifact was published to the GitHub prerelease and npm `alpha`, including isolated installation from the registry.
 

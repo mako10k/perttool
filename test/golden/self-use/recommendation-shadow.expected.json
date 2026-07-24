@@ -37,33 +37,31 @@
       "diagnostic_codes": []
     },
     "cli-surface-reset": {
-      "source_digest": "sha256:efe1d0fe3f8295a554b683ae9c990cf2e436a717b8c545a3dd9707ddc49a359e",
+      "source_digest": "sha256:f7cd81c517a32b2516a50d62e7163848f51ad2c613a463fccecbf0dabd2c3676",
       "groups": {
         "active": [],
         "ready": [
-          "CLI_002_CONTRACT_V3_CUTOVER"
+          "CLI_003_FILE_FIRST_ACCEPTANCE"
         ],
         "runnable_now": [
-          "CLI_002_CONTRACT_V3_CUTOVER"
+          "CLI_003_FILE_FIRST_ACCEPTANCE"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "CLI_003_FILE_FIRST_ACCEPTANCE"
-        ]
+        "upcoming": []
       },
       "recommended_task_ids": [
-        "CLI_002_CONTRACT_V3_CUTOVER"
+        "CLI_003_FILE_FIRST_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "CLI_002_CONTRACT_V3_CUTOVER"
+        "CLI_003_FILE_FIRST_ACCEPTANCE"
       ],
       "tiers": {
-        "CLI_002_CONTRACT_V3_CUTOVER": "recommended"
+        "CLI_003_FILE_FIRST_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "CLI_002_CONTRACT_V3_CUTOVER",
+          "id": "CLI_003_FILE_FIRST_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

@@ -114,7 +114,7 @@ Before implementation, use the recommended specification work and open matters i
 
 After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert` plans to the canonical sources. In Stage 3, editing commands and `dag advance` may be used as canonical writers through preview-first, expected-digest, and post-write reanalysis procedures. After MIG-07 completed on 2026-07-23, task selection uses a complete, known `Perttool.NextResult.v3` as normal authority in the following order.
 
-1. Run `perttool dsl check` on `mvp.pert` and the current detail plan to confirm that the plans are valid. Use `perttool project show --format json`, rather than directly viewing the source, to inspect metadata such as project ID, as_of, duration_unit, velocity, and finish
+1. Run `perttool document check` on `mvp.pert` and the current detail plan to confirm that the plans are valid. Use `perttool project show --format json`, rather than directly viewing the source, to inspect metadata such as project ID, as_of, duration_unit, velocity, and finish
 2. Run `dag analyze` and `dag next --format json` for `mvp.pert`, confirm a known version, complete trace, and no `PTREC-*`, then select a workstream from the macro recommended work package
 3. Run `dag analyze` and `dag next --format json` for the detail plan corresponding to that work package, confirm the same consumer gate, then select the detail recommended task
 4. Treat as normal selection either a recommended subset or the recommended set plus exactly one resource-feasible `allowed` task while retaining every recommended task
@@ -138,12 +138,12 @@ as an independent post-beta workstream in
 `HELP_001_COMMAND_DISCOVERY`, `HELP_002_DOMAIN_GUIDE_SPLIT`,
 `HELP_003_USAGE_RECOVERY`, `MUT_001_PROJECT_INIT`, and
 `MUT_002_GATE_MAINTENANCE` are complete and
-advanced. The active Contract 2 CLI remains unchanged while the internal
-Contract 3 layer includes hierarchical command help, a separate domain-guide
-projection, registry-scoped usage recovery, project initialization, and gate
-maintenance. Fresh complete `NextResult.v3` recommends the atomic public
-cutover `CLI_002_CONTRACT_V3_CUTOVER`; direct Contract 3 commands remain
-inactive until that cutover.
+advanced. `CLI_002_CONTRACT_V3_CUTOVER` then activated hierarchical command
+help, the separate domain-guide projection, registry-scoped usage recovery,
+project initialization, gate maintenance, all renamed commands, and Contract 3
+JSON envelopes in one source change. The remaining task is
+`CLI_003_FILE_FIRST_ACCEPTANCE`; the published `0.1.0` artifact remains
+Contract 2 until a separately authorized release.
 
 ### 5.1 Adopted Recommendation authority
 

@@ -1,6 +1,6 @@
 # CLI Contract 3 migration
 
-- Status: Accepted migration design; implementation pending
+- Status: Source cutover complete; installed-package acceptance pending
 - Date: 2026-07-24
 - From: CLI contract 2 in perttool `0.1.0`
 - Target: [CLI Contract 3](../specs/cli-contract-3.md)
@@ -12,11 +12,12 @@ Contract 3 is a breaking post-beta CLI reset. The target package version will
 be selected by the release task; this document does not preselect a version or
 authorize publication.
 
-Contract 2 remains the active public interface until the
-`CLI_002_CONTRACT_V3_CUTOVER` change. The accepted design does not make
-Contract 3 commands available in `0.1.0`.
+`CLI_002_CONTRACT_V3_CUTOVER` is complete in the current source, so Contract 3
+is now its active public interface. The already published `0.1.0` artifact
+remains Contract 2; the local cutover does not mutate that package or authorize
+a new publication.
 
-At cutover:
+The cutover:
 
 - the command and JSON operation namespace changes atomically;
 - `cli_contract_version=3` appears in every JSON envelope;
@@ -64,8 +65,8 @@ The dependency order is fixed by `plans/cli-surface-reset.pert`.
    maintenance gaps. Project initialization Core/result projection/exclusive
    output and gate Core/atomic-batch support are complete with internal
    descriptors; their direct commands remain inactive until cutover.
-5. `CLI_002_CONTRACT_V3_CUTOVER` activates all breaking names and operations in
-   one versioned change and removes Contract 2 acceptance.
+5. `CLI_002_CONTRACT_V3_CUTOVER` activated all breaking names and operations in
+   one versioned source change and removed Contract 2 acceptance.
 6. `CLI_003_FILE_FIRST_ACCEPTANCE` verifies the installed package and accepts
    the complete workflow.
 
@@ -78,8 +79,9 @@ release.
 The compatibility window is documentation and prerelease review before the
 Contract 3 package is accepted. Runtime dual emission is not provided.
 
-- Before cutover, Contract 2 works and Contract 3 renames are not advertised.
-- At and after cutover, Contract 3 works and the renamed Contract 2 spellings
+- The published `0.1.0` package remains the last current Contract 2 artifact.
+- In the current source and future Contract 3 packages, Contract 3 works and
+  the renamed Contract 2 spellings
   return exit 2 with a Contract 3 `help_target`.
 - There is no `--cli-contract 2`, alias period, or automatic command rewrite.
 - Consumers needing more migration time pin the last Contract 2 package.
@@ -107,9 +109,10 @@ does not authorize any external write.
 
 ## 6. Failure, restart, and rollback
 
-Before public cutover, a failing prerequisite leaves Contract 2 active and the
-corresponding plan task incomplete. Record the blocker on that task and rerun
-check/analyze/next; do not skip to cutover.
+Before the completed source cutover, a failing prerequisite would have left
+Contract 2 active and the corresponding plan task incomplete. That restart
+rule remains historical evidence; do not restore a mixed surface if later
+acceptance fails.
 
 After a Contract 3 package is published, rollback means selecting and
 installing the last Contract 2 package or publishing a separately reviewed

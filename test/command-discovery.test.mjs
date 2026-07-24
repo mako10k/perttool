@@ -5,12 +5,9 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { commandDescriptorToJson } from "../dist/index.js";
 import {
-  COMMAND_REGISTRY,
-  commandDescriptorToJson,
-} from "../dist/index.js";
-import {
-  CONTRACT3_COMMAND_HELP_REGISTRY,
+  CONTRACT3_COMMAND_REGISTRY,
   commandHelpResultToJson,
   getCommandDiscovery,
   renderCommandHelpResult,
@@ -88,21 +85,21 @@ function runCli(args) {
 
 test("Contract 3 command discovery projects every implemented capability in canonical order", () => {
   assert.deepEqual(
-    CONTRACT3_COMMAND_HELP_REGISTRY.map(({ path: commandPath }) =>
+    CONTRACT3_COMMAND_REGISTRY.map(({ path: commandPath }) =>
       commandPath.join(" ")
     ),
     expectedPaths,
   );
   assert.equal(
-    new Set(CONTRACT3_COMMAND_HELP_REGISTRY.map(({ operation }) => operation)).size,
+    new Set(CONTRACT3_COMMAND_REGISTRY.map(({ operation }) => operation)).size,
     expectedPaths.length,
   );
   assert.ok(
-    CONTRACT3_COMMAND_HELP_REGISTRY.every(
+    CONTRACT3_COMMAND_REGISTRY.every(
       ({ contractVersion }) => contractVersion === 3,
     ),
   );
-  for (const descriptor of CONTRACT3_COMMAND_HELP_REGISTRY) {
+  for (const descriptor of CONTRACT3_COMMAND_REGISTRY) {
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(descriptor.examples.length > 0, descriptor.operation);
     assert.ok(descriptor.resultSchemas.length > 0, descriptor.operation);
@@ -132,7 +129,7 @@ test("Contract 3 command discovery projects every implemented capability in cano
     top.resources.map(({ name, actions }) => [name, actions]),
     expectedResources,
   );
-  assert.deepEqual(top.commands, CONTRACT3_COMMAND_HELP_REGISTRY);
+  assert.deepEqual(top.commands, CONTRACT3_COMMAND_REGISTRY);
   const topText = renderCommandHelpResult(top);
   for (const commandPath of expectedPaths) {
     const [resource, action] = commandPath.split(" ");
@@ -144,13 +141,7 @@ test("Contract 3 command discovery projects every implemented capability in cano
   }
 });
 
-test("Contract 3 renames are derived projections while Contract 2 remains active", () => {
-  assert.deepEqual(
-    COMMAND_REGISTRY.map(({ path: commandPath }) => commandPath.join(" ")).slice(0, 3),
-    ["dsl check", "dsl format", "dsl help"],
-  );
-  assert.equal(COMMAND_REGISTRY.at(-1)?.operation, "mutation.apply");
-
+test("Contract 3 projections are the active public surface", () => {
   const guide = getCommandDiscovery({ resource: "guide", action: null });
   assert.equal(guide.ok, true);
   assert.deepEqual(guide.commands[0]?.path, ["guide"]);
@@ -187,11 +178,32 @@ test("Contract 3 renames are derived projections while Contract 2 remains active
     ["project", "init", "--help"],
   ]) {
     const result = runCli(args);
+    assert.equal(result.status, 0, `${args.join(" ")}: ${result.stderr}`);
+  }
+
+  for (const args of [
+    ["dsl", "check", "docs/examples/minimal.pert", "--format=json"],
+    ["dsl", "format", "docs/examples/minimal.pert", "--format=json"],
+    ["dsl", "help", "--format=json"],
+    [
+      "mutation",
+      "apply",
+      "docs/examples/minimal.pert",
+      "--request",
+      "missing.json",
+      "--format=json",
+    ],
+  ]) {
+    const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
+    const json = JSON.parse(result.stdout);
+    assert.equal(json.cli_contract_version, 3);
+    assert.equal(json.help_target.resource, null);
+    assert.equal(json.help_target.action, null);
   }
 });
 
-test("project init discovery covers the complete internal Contract 3 target", () => {
+test("project init discovery covers the complete public Contract 3 target", () => {
   const result = getCommandDiscovery({
     resource: "project",
     action: "init",
@@ -257,7 +269,7 @@ test("project init discovery covers the complete internal Contract 3 target", ()
   );
 });
 
-test("gate discovery covers the complete internal Contract 3 mutation target", () => {
+test("gate discovery covers the complete public Contract 3 mutation target", () => {
   const add = getCommandDiscovery({ resource: "gate", action: "add" });
   assert.equal(add.ok, true);
   assert.deepEqual(

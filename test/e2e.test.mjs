@@ -34,28 +34,30 @@ function runJson(args, expectedStatus = 0, options = {}) {
   );
   assert.equal(result.stderr, "");
   assert.equal(result.stdout.endsWith("\n"), true);
-  return JSON.parse(result.stdout);
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.cli_contract_version, 3);
+  return json;
 }
 
 test("E2E-001: discover commands, validate a plan, and compare capacity what-if", () => {
   const help = run(["--help"]);
   assert.equal(help.status, 0);
-  assert.match(help.stdout, /perttool dag analyze <file>/);
-  assert.match(help.stdout, /perttool dag next <file>/);
-  assert.match(help.stdout, /perttool dag advance <file>/);
-  assert.match(help.stdout, /perttool dag import <file> --from mermaid/);
-  assert.match(help.stdout, /perttool task add\|set\|remove\|finish/);
-  assert.match(help.stdout, /perttool mutation apply <file>/);
-  assert.match(help.stdout, /perttool agent help \[provider \[surface\]\]/);
-  assert.match(help.stdout, /perttool project show <file>/);
-  assert.match(help.stdout, /perttool project set <file>/);
+  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 3\)$/m);
+  assert.match(help.stdout, /^  document  /m);
+  assert.match(help.stdout, /^    check  /m);
+  assert.match(help.stdout, /^  project  /m);
+  assert.match(help.stdout, /^    init  /m);
+  assert.match(help.stdout, /^  gate  /m);
+  assert.match(help.stdout, /^    add  /m);
+  assert.match(help.stdout, /^  batch  /m);
+  assert.match(help.stdout, /^    apply  /m);
 
-  const nextHelp = runJson(["dsl", "help", "next", "--level=detail"]);
+  const nextHelp = runJson(["guide", "next", "--level=detail"]);
   assert.equal(nextHelp.topic_id, "next");
   assert.ok(nextHelp.sections.some(({ id }) => id === "selection"));
 
   const source = fixture("capacity-what-if");
-  const checked = runJson(["dsl", "check", source]);
+  const checked = runJson(["document", "check", source]);
   assert.equal(checked.ok, true);
   assert.equal(checked.document_id, "RELEASE_CAPACITY");
 
@@ -133,7 +135,7 @@ test("E2E-016: AI reads and updates velocity entirely through the CLI", (t) => {
 
 test("E2E-002: active allocation blocks only tasks requiring the occupied resource", () => {
   const source = fixture("active-resource");
-  assert.equal(runJson(["dsl", "check", source]).ok, true);
+  assert.equal(runJson(["document", "check", source]).ok, true);
 
   const analyzed = runJson(["dag", "analyze", source]);
   assert.equal(analyzed.precedence.makespan.display, "3");
@@ -150,7 +152,7 @@ test("E2E-002: active allocation blocks only tasks requiring the occupied resour
 
 test("E2E-003: external block is visible and can fail a strict automation run", () => {
   const source = fixture("blocked-approval");
-  assert.equal(runJson(["dsl", "check", source]).ok, true);
+  assert.equal(runJson(["document", "check", source]).ok, true);
 
   const analyzed = runJson(["dag", "analyze", source]);
   assert.equal(analyzed.ok, true);
@@ -178,8 +180,8 @@ test("E2E-003: external block is visible and can fail a strict automation run", 
 test("E2E-004: recording completion recalculates the remaining frontier and duration", () => {
   const beforeSource = fixture("progress-before");
   const afterSource = fixture("progress-after");
-  assert.equal(runJson(["dsl", "check", beforeSource]).ok, true);
-  assert.equal(runJson(["dsl", "check", afterSource]).ok, true);
+  assert.equal(runJson(["document", "check", beforeSource]).ok, true);
+  assert.equal(runJson(["document", "check", afterSource]).ok, true);
 
   const beforeAnalysis = runJson(["dag", "analyze", beforeSource]);
   const afterAnalysis = runJson(["dag", "analyze", afterSource]);
@@ -199,7 +201,7 @@ test("E2E-004: recording completion recalculates the remaining frontier and dura
 test("E2E-005: all read-only document commands reject an undefined resource", () => {
   const source = fixture("invalid-resource");
   for (const command of [
-    ["dsl", "check", source],
+    ["document", "check", source],
     ["dag", "analyze", source],
     ["dag", "next", source],
     ["dag", "render", source, "--to=mermaid"],
@@ -212,7 +214,7 @@ test("E2E-005: all read-only document commands reject an undefined resource", ()
 
 test("E2E-006: AI can validate point estimates and consume explicit velocity forecasts", () => {
   const source = "docs/examples/point-velocity.pert";
-  const checked = runJson(["dsl", "check", source]);
+  const checked = runJson(["document", "check", source]);
   assert.equal(checked.ok, true);
 
   const analyzed = runJson(["dag", "analyze", source]);
@@ -233,7 +235,7 @@ test("E2E-006: AI can validate point estimates and consume explicit velocity for
 test("E2E-007: multiple syntax errors recover without semantic cascades", () => {
   const source = "test/fixtures/invalid/multiple-syntax-errors.pert";
   for (const command of [
-    ["dsl", "check", source],
+    ["document", "check", source],
     ["dag", "analyze", source],
     ["dag", "next", source],
     ["dag", "render", source, "--to=mermaid"],
@@ -267,7 +269,7 @@ test("E2E-008: mutation preview is valid for the next command and leaves the sou
   assert.match(preview.updated_text, /title "implemented"/);
   assert.match(preview.diff, /^--- docs\/examples\/minimal\.pert\n\+\+\+ candidate/m);
 
-  const checked = runJson(["dsl", "check", "-"], 0, { input: preview.updated_text });
+  const checked = runJson(["document", "check", "-"], 0, { input: preview.updated_text });
   assert.equal(checked.ok, true);
   assert.equal(checked.document_id, "MINIMAL");
   assert.equal(readFileSync(path.join(root, source), "utf8"), before);
@@ -294,7 +296,7 @@ test("E2E-009: atomic batch replaces a path and feeds analysis without intermedi
     ],
   };
   const preview = runJson([
-    "mutation", "apply", "docs/examples/minimal.pert", "--request", "-",
+    "batch", "apply", "docs/examples/minimal.pert", "--request", "-",
   ], 0, { input: JSON.stringify(request) });
   assert.equal(preview.ok, true);
   assert.match(preview.updated_text, /task FIRST NOW -> MID:/);
@@ -313,15 +315,15 @@ test("E2E-010: formatter preview feeds validation and leaves the source unchange
     "utf8",
   );
   const before = readFileSync(path.join(root, source), "utf8");
-  const preview = runJson(["dsl", "format", source]);
-  assert.equal(preview.operation, "dsl.format");
+  const preview = runJson(["document", "format", source]);
+  assert.equal(preview.operation, "document.format");
   assert.equal(preview.changed, true);
   assert.equal(preview.updated_text, expected);
   assert.deepEqual(preview.write, { mode: "preview", target: null, written: false });
 
-  const checked = runJson(["dsl", "check", "-"], 0, { input: preview.updated_text });
+  const checked = runJson(["document", "check", "-"], 0, { input: preview.updated_text });
   assert.equal(checked.document_id, "FORMATTER_ROUNDTRIP");
-  const stable = run(["dsl", "format", "-", "--check"], { input: preview.updated_text });
+  const stable = run(["document", "format", "-", "--check"], { input: preview.updated_text });
   assert.equal(stable.status, 0, stable.stderr);
   assert.equal(stable.stdout, "");
   assert.equal(readFileSync(path.join(root, source), "utf8"), before);
@@ -338,12 +340,12 @@ test("E2E-011: safe writes on temporary copies feed check, analyze, and next", (
     grammarOriginal.replace("project GRAMMAR:", "project   GRAMMAR:"),
     "utf8",
   );
-  const formatted = runJson(["dsl", "format", grammarCopy, "--write"]);
+  const formatted = runJson(["document", "format", grammarCopy, "--write"]);
   assert.equal(formatted.changed, true);
   assert.equal(formatted.write.mode, "in_place");
   assert.equal(formatted.write.written, true);
   assert.equal(readFileSync(grammarCopy, "utf8"), grammarOriginal);
-  assert.equal(runJson(["dsl", "check", grammarCopy]).ok, true);
+  assert.equal(runJson(["document", "check", grammarCopy]).ok, true);
   assert.equal(runJson(["dag", "analyze", grammarCopy]).ok, true);
   assert.equal(runJson(["dag", "next", grammarCopy]).ok, true);
 
@@ -354,13 +356,13 @@ test("E2E-011: safe writes on temporary copies feed check, analyze, and next", (
   ]);
   assert.equal(mutated.write.mode, "in_place");
   assert.equal(mutated.write.written, true);
-  assert.equal(runJson(["dsl", "check", mutationCopy]).ok, true);
+  assert.equal(runJson(["document", "check", mutationCopy]).ok, true);
   assert.equal(runJson(["dag", "analyze", mutationCopy]).ok, true);
   assert.deepEqual(runJson(["dag", "next", mutationCopy]).groups.ready, ["WORK"]);
 });
 
 test("E2E-012: Mermaid export preserves semantics and analysis context", (t) => {
-  const help = runJson(["dsl", "help", "mermaid", "--level=detail"]);
+  const help = runJson(["guide", "mermaid", "--level=detail"]);
   assert.match(help.summary, /dag render/);
   assert.ok(help.syntax.some((line) => line.includes("--to mermaid")));
 
@@ -405,7 +407,7 @@ test("E2E-013: advance preview and safe write preserve a partial join", (t) => {
   assert.deepEqual(preview.advance.frontier_after, ["A_DONE", "NOW"]);
   assert.equal(readFileSync(path.join(root, source), "utf8"), beforeText);
 
-  assert.equal(runJson(["dsl", "check", "-"], 0, { input: preview.updated_text }).ok, true);
+  assert.equal(runJson(["document", "check", "-"], 0, { input: preview.updated_text }).ok, true);
   assert.equal(runJson(["dag", "analyze", "-"], 0, { input: preview.updated_text }).ok, true);
   const afterNext = runJson(["dag", "next", "-"], 0, { input: preview.updated_text });
   assert.deepEqual(afterNext.groups, beforeNext.groups);
@@ -414,13 +416,13 @@ test("E2E-013: advance preview and safe write preserve a partial join", (t) => {
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const copy = path.join(directory, "partial.pert");
   copyFileSync(path.join(root, source), copy);
-  const digest = runJson(["dsl", "check", copy]).source_digest;
+  const digest = runJson(["document", "check", copy]).source_digest;
   const written = runJson([
     "dag", "advance", copy, "--write", "--expect-digest", digest,
   ]);
   assert.equal(written.write.written, true);
   assert.equal(readFileSync(copy, "utf8"), preview.updated_text);
-  assert.equal(runJson(["dsl", "check", copy]).ok, true);
+  assert.equal(runJson(["document", "check", copy]).ok, true);
   assert.deepEqual(runJson(["dag", "next", copy]).groups, beforeNext.groups);
 
   const repeated = runJson(["dag", "advance", copy, "--write"]);
@@ -441,7 +443,7 @@ test("E2E-014: lossless Mermaid profile round-trips and plain import stays expli
   assert.equal(imported.profile, "perttool");
   assert.equal(imported.loss_report.lossless, true);
   assert.deepEqual(imported.generated_ids, []);
-  assert.equal(runJson(["dsl", "check", "-"], 0, { input: imported.artifact }).ok, true);
+  assert.equal(runJson(["document", "check", "-"], 0, { input: imported.artifact }).ok, true);
   assert.equal(runJson([
     "dag", "render", "-", "--to=mermaid", "--analysis=both",
     "--capacity=TEST_ENV=2",

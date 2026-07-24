@@ -186,6 +186,8 @@ Later that day, `NORMATIVE_DOCS` migrated the requirements, basic design, normat
 
 `HELP_002_DOMAIN_GUIDE_SPLIT` then added the pure internal `src/help/guide.ts` projection. The existing HelpNode registry remains the sole domain-topic authority, while `Perttool.GuideResult.v1` gives Contract 3 its own deterministic index, quick/detail topic, text, JSON, and `guide_topic` diagnostic contract without importing command descriptors or changing legacy Contract 2 help bytes. Tests cover every registered topic and level, parser and source-diagnostic link resolution, unknown topics, deterministic isolated operation without filesystem or environment discovery, and installed-package projection parity. The active Contract 2 CLI still rejects public `guide`. All 287 tests, documentation, eight self-use plans, link checks, and package inspections passed. An atomic batch recalibrated cumulative velocity to `39p/1d` and finished the 3p task; `dag advance` then removed the completed edge and prerequisite frontier with expected-digest safe writes, and `project set` synchronized the plan description. The resulting digest is `sha256:efe1d0fe3f8295a554b683ae9c990cf2e436a717b8c545a3dd9707ddc49a359e`. Two tasks and 10p remain; precedence and heuristic resource makespans are both 10p with no resource delay, and both forecasts are `10/39d`. Fresh complete `NextResult.v3` recommends the breaking atomic public cutover `CLI_002_CONTRACT_V3_CUTOVER`.
 
+`CLI_002_CONTRACT_V3_CUTOVER` then activated all 27 Contract 3 descriptors as the single dispatch, option-validation, text-help, and JSON-help authority. The source CLI now exposes hierarchical `help`, separate domain `guide`, `document check|format`, `project init`, direct gate maintenance, and `batch apply`; every CLI JSON envelope includes `cli_contract_version=3`, conceptual diagnostics use `guide_topic`, and the four renamed Contract 2 routes fail with exit 2 and structured recovery. The package root exports the active registry and projections, while README, CHANGELOG, requirements, specifications, design, migration guidance, package smoke, CLI/E2E, and goldens use the same surface. All 286 tests, the local link, and the isolated package inspection passed without publishing or changing npm tags. An atomic batch recalibrated cumulative velocity to `44p/1d` and finished the 5p task; `dag advance` then removed the completed edge and prerequisite frontier with expected-digest safe writes. The resulting plan digest is `sha256:f7cd81c517a32b2516a50d62e7163848f51ad2c613a463fccecbf0dabd2c3676`. One task and 5p remain; precedence and heuristic resource makespans are both 5p with no resource delay, and both forecasts are `5/44d`. Fresh complete `NextResult.v3` recommends `CLI_003_FILE_FIRST_ACCEPTANCE`.
+
 ### 4.1 Velocity measurement calibration
 
 DSL version 1 has no working calendar, pause, or work-start time, so it does not convert the hours between commit timestamps into implicit engineering days. Measure the velocity of a self-use plan using the following definitive active-day method:
@@ -207,7 +209,7 @@ Recalibration from 2026-07-22 to 2026-07-24:
 | `recommendation.pert` | `FIXTURE_BASELINE`, `RANKING_CORE`, `EXPLANATION_CORE`, `NEXT_V3_PUBLICATION`, `SELF_USE_SHADOW`, `OVERRIDE_VALIDATION`, `AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
 | `agent-guidance.pert` | Total 5 tasks | 22p | 1d | `22p/1d` | 0p |
 | `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE` | 33p | 1d | `33p/1d` | resource `3/11d` |
-| `cli-surface-reset.pert` | `CONTRACT_V3_DESIGN`, `CLI_001_COMMAND_REGISTRY`, `HELP_001_COMMAND_DISCOVERY`, `HELP_002_DOMAIN_GUIDE_SPLIT`, `HELP_003_USAGE_RECOVERY`, `MUT_001_PROJECT_INIT`, `MUT_002_GATE_MAINTENANCE` | 39p | 1d | `39p/1d` | precedence/resource `10/39d` |
+| `cli-surface-reset.pert` | `CONTRACT_V3_DESIGN`, `CLI_001_COMMAND_REGISTRY`, `HELP_001_COMMAND_DISCOVERY`, `HELP_002_DOMAIN_GUIDE_SPLIT`, `HELP_003_USAGE_RECOVERY`, `MUT_001_PROJECT_INIT`, `MUT_002_GATE_MAINTENANCE`, `CLI_002_CONTRACT_V3_CUTOVER` | 44p | 1d | `44p/1d` | precedence/resource `5/44d` |
 
 This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, English-baseline migration, and the CLI-surface reset are not averaged because their work types differ. Future detail plans will specify the sample from the closest work type as their initial value.
 
@@ -227,14 +229,14 @@ Stage 1 allowed operations:
 - analyze
 - next
 - check/analyze/next results in CLI JSON
-- `dsl format` preview, diff, check, and JSON results
+- `document format` preview, diff, check, and JSON results
 - text/JSON results for `project show`, and preview, diff, and JSON results for `project set`
 - preview, diff, and JSON results for task/milestone/resource changes and atomic batches
 - a preview of Mermaid export, when it is available read-only
 
 Stage 1 prohibited operations:
 
-- `format --write`
+- `document format --write`
 - `project set --write`
 - `task ... --write`
 - `milestone ... --write`
@@ -330,12 +332,13 @@ Entry conditions:
 
 Additional operations allowed:
 
-- `dsl format --write`
+- `document format --write`
 - `project set --write`
 - `task add|set|remove|finish --write`
+- `gate add|set|remove --write`
 - `milestone add|set|remove --write`
 - `resource add|set|remove --write`
-- `mutation apply --write`
+- `batch apply --write`
 - `--out` for the editing commands above, and `--expect-digest` for in-place `--write`
 
 Procedure:
@@ -469,5 +472,6 @@ Stage 1 entry evidence:
 - CLI-surface-reset project-initialization gate: pure smallest-document Core, `Perttool.InitResult.v1`, deterministic text/JSON, UTF-16 insertion edit, exclusive output, fail-closed validation, and the internal descriptor are covered while public Contract 2 rejects `project init`; 18p remain, precedence/resource makespans are 15p/18p with 3p delay, observed provisional velocity is `31p/1d`, and `HELP_003_USAGE_RECOVERY` is recommended
 - CLI-surface-reset usage-recovery gate: pure registry-scoped argv validation, exact typed help targets, stable text/JSON errors, bounded non-invented suggestions, command-help aliases, conflict and stdin checks, determinism, and no-I/O operation are covered while public Contract 2 remains active; 13p remain, precedence/resource makespans are both 13p, observed provisional velocity is `36p/1d`, and `HELP_002_DOMAIN_GUIDE_SPLIT` is recommended
 - CLI-surface-reset domain-guide gate: the HelpNode registry remains the sole domain-topic authority while the pure internal `Perttool.GuideResult.v1` projection provides separate index, quick/detail topic, text/JSON, and `guide_topic` diagnostics without command-descriptor coupling or Contract 2 byte changes; 10p remain, precedence/resource makespans are both 10p, observed provisional velocity is `39p/1d`, and `CLI_002_CONTRACT_V3_CUTOVER` is recommended
+- CLI-surface-reset Contract 3 cutover gate: the active 27-command registry drives dispatch, argv validation, text/JSON command help, separate guide publication, project initialization, direct gate maintenance, and `cli_contract_version=3`; four renamed Contract 2 routes fail with exit 2, 5p remain, precedence/resource makespans are both 5p, observed provisional velocity is `44p/1d`, and `CLI_003_FILE_FIRST_ACCEPTANCE` is recommended
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all eight plans
 - write state: Stage 3 editing/advance commands are enabled using preview-first, diff and deletion-list review, expected digests, and reanalysis after writes.
