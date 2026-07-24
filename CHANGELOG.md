@@ -7,6 +7,9 @@
 ### Changed
 
 - Promoted the accepted `perttool@0.1.0` beta to npm `latest` through an explicit post-release dist-tag operation. This changes the default install target without changing beta product maturity.
+- Lowered the source and next-release runtime baseline from Node.js 24 to maintained Node.js 22, with CI coverage for Node.js 22 and 24.
+- Reworked the root README as a user guide with `npx` and `npm exec` examples, and moved repository setup and verification to `docs/development.md`.
+- Recorded the complete English-surface inventory, Unicode allowlist, CLI/LLM surface review, and the structured-help, project-init, and gate-mutation backlog.
 
 ## [0.1.0] - 2026-07-23
 

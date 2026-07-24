@@ -1,151 +1,181 @@
 # perttool
 
-PERT 線図を、Git 管理しやすい文書として記述・検査・分析するためのタスク管理CLI。
+`perttool` is a local CLI for keeping PERT/CPM plans in reviewable text files.
+It validates an Activity-on-Arrow plan, calculates precedence and
+resource-constrained schedules, recommends the next task, and applies
+source-preserving changes through preview-first commands.
 
-現在のcheckoutでは、`dsl check`、`dsl format`、`dsl help`、read-only `agent help`、`project show`、`project set`、`dag analyze`、`dag next`、`dag advance`、`dag render --to mermaid`、`dag import --from mermaid`、source-preservingなproject/task/milestone/resource/batch mutation、atomic `--write`、exclusive `--out`、`--expect-digest`を実装済みです。`project show`はvelocityを含むproject metadata一式、`dag next`はcompleteなrecommendation graphを持つ`Perttool.NextResult.v3`、`agent help`は5 providerのoffline profileをindex/quick/detailのtext/JSONで返します。いずれもpublic Core型とCLIを同じ判断へ接続します。Node.js 24以上が必要で、pre-release中は互換性のない変更が入る可能性があります。
+The first beta is `0.1.0`. Beta releases may contain breaking CLI or schema
+changes. The current source baseline is Node.js 22 or later. The already
+published `0.1.0` artifact still declares Node.js 24; the lower baseline takes
+effect in the next package release.
 
-`0.1.0` is the first beta release. Suffix-free `0.x.x` versions are the beta series, and strict compatibility with the alpha series is not guaranteed. This release includes the read-only AI Agent Guidance Registry from Issue #2.
+## Run without installing
 
-- [要件定義](docs/requirements.md)
-- [基本設計](docs/basic-design.md)
-- [DSL 文法仕様](docs/specs/dsl-grammar.md)
-- [Graph Semantics 仕様](docs/specs/graph-semantics.md)
-- [Analysis 仕様](docs/specs/analysis.md)
-- [Mutation Semantics 仕様](docs/specs/mutation.md)
-- [Mermaid Profile 仕様](docs/specs/mermaid-profile.md)
-- [Recommendation Semantics 仕様](docs/specs/recommendation.md)
-- [Recommendation Ranking Policy 仕様](docs/specs/recommendation-ranking.md)
-- [Recommendation Reason Taxonomy 仕様](docs/specs/recommendation-reasons.md)
-- [Recommendation Structured Explanation 仕様](docs/specs/recommendation-explanation.md)
-- [Recommendation Interface Contract 仕様](docs/specs/recommendation-interface.md)
-- [Recommendation Human Override Contract 仕様](docs/specs/recommendation-override.md)
-- [Recommendation 規範例](docs/examples/recommendation.md)
-- [AI Agent Guidance Registry 仕様](docs/specs/agent-guidance.md)
-- [AI Agent Guidance Registry 規範例](docs/examples/agent-guidance.md)
-- [Mermaid Profile 規範例](docs/examples/mermaid-profile.md)
-- [Recommendation 実装・自己利用migration](docs/process/recommendation-migration.md)
-- [NextResult.v3 consumer migration guide](docs/process/next-v3-consumer-migration.md)
-- [Recommendation 設計受け入れレビュー](docs/process/recommendation-design-review.md)
-- [MVP release readiness監査](docs/process/mvp-release-readiness.md)
-- [Beta versioning ADR](docs/adr/0003-beta-versioning.md)
-- [Beta release procedure](docs/process/beta-release.md)
-- [`v0.1.0` beta release acceptance](docs/process/beta-release-acceptance.md)
-- [English repository baseline ADR](docs/adr/0004-english-repository-baseline.md)
-- [CLI Interface 仕様](docs/specs/interfaces.md)
-- [Architecture Decision Records](docs/adr/0001-activity-on-arrow.md)
-- [DSL サンプル](docs/examples/README.md)
-- [自己利用計画](docs/process/self-use.md)
-- [MVPからbetaへのmacro計画](plans/mvp.pert)
-- [現在の文法作業計画](plans/grammar.pert)
-- [AI工程制御設計計画](plans/control-plane.pert)
-- [操作系M1-M4実装計画](plans/operations.pert)
-- [Recommendation実装計画](plans/recommendation.pert)
-- [AI Agent Guidance実装計画](plans/agent-guidance.pert)
-- [English baseline migration plan](plans/english-baseline.pert)
-- [AI 開発ガイド](docs/process/ai-development.md)
+Use `npx` for an occasional invocation:
 
-基本方針は次のとおりです。
+```sh
+npx --yes perttool@latest --version
+npx --yes perttool@latest dsl check PLAN.pert
+npx --yes perttool@latest dag next PLAN.pert --format json
+```
 
-- Activity-on-Arrow とし、タスクを DAG のエッジ、マイルストーンをノードとして扱う
-- 独自 DSL 文書をプロジェクト状態の正本とする
-- PERT/CPM 計算と「次のタスク」の判定を機械的かつ決定的に行う
-- 相対見積り`p`を基準に保持し、明示したproject-wide velocityで`d`または`h`の予測へexact換算する
-- 共有resourceのcapacityから排他実行と並列実行可能数を扱う
-- Mermaid との相互変換、CLI、構造化ヘルプ、AI向けJSON操作導線を同じ共通コア上に提供する
-- MVPはCLIをprimary interfaceとし、LSP server、コードハイライト/LSP clientを持つVSIX、MCP serverは最初のbeta後の独立backlogとして追加する
-- 現行文書は現在と未来を表し、過去は Git 履歴で追跡する
-- parser・check・analyze・next が安定した時点で、文法作業の計画から自己利用を開始する
+The equivalent explicit `npm exec` form is:
+
+```sh
+npm exec --yes --package=perttool@latest -- perttool --version
+npm exec --yes --package=perttool@latest -- perttool dag analyze PLAN.pert
+```
+
+`npx` and `npm exec` may download the selected package version into the npm
+cache. Pin a version such as `perttool@0.1.0` when reproducible automation is
+more important than following `latest`.
 
 ## Install
 
-Install the current recommended beta from npm. Both `latest` and `beta` currently resolve to `0.1.0`. Maintainers publish through the `beta` dist-tag without moving `latest`; a later `latest` promotion is a separately authorized post-acceptance operation.
+Install the CLI globally when it is used regularly:
 
 ```sh
 npm install --global perttool
 perttool --version
 ```
 
-ローカルcheckoutを開発中のNode.jsユーザー環境へlinkする場合:
+Both npm `latest` and `beta` currently resolve to `0.1.0`. Until the next
+version is published, use Node.js 24 for those registry tags.
 
-```sh
-git clone https://github.com/mako10k/perttool.git
-cd perttool
-npm ci
-npm link
-perttool --version
+## Plan files
+
+A `.pert` file is the source of truth and is intended to remain directly
+readable. This minimal plan has one one-day task:
+
+```text
+project EXAMPLE:
+  version 1
+  title "Example plan"
+  duration_unit day
+  finish DONE
+
+milestone NOW:
+  title "Current frontier"
+  state reached
+
+milestone DONE:
+  title "Done"
+
+task WORK NOW -> DONE:
+  title "Do the work"
+  duration 1d
 ```
 
-`prepare` lifecycleが`dist/`をbuildしてから、`perttool` binaryを現在のnpm global prefixへsymlinkします。System領域へsudoでinstallせず、NVMなどuser-ownedのnpm prefixを使用してください。解除はcheckoutで`npm unlink --global perttool`を実行します。
-
-## Development
-
-Setupとrepository check:
+Save it as `PLAN.pert`, then inspect it with:
 
 ```sh
-npm ci
-npm run check
+perttool dsl check PLAN.pert
+perttool project show PLAN.pert
+perttool dag analyze PLAN.pert
+perttool dag next PLAN.pert --format json
 ```
 
-実CLI processを使うE2Eシナリオだけを実行する場合:
+Task duration can use deterministic `day`, `hour`, or relative `point` units.
+Point plans declare a project-wide velocity such as `20p/10d`. Analysis keeps
+the exact point result and reports the time conversion separately as a velocity
+forecast.
+
+## Maintain a plan through the CLI
+
+Read the file for its complete human-facing state. Use CLI mutation commands for
+routine maintenance so that each candidate is parsed and semantically checked
+before it can be written.
 
 ```sh
-npm run test:e2e
-```
+# Preview a source-preserving change.
+perttool task set PLAN.pert WORK --status active --diff
 
-## CLI examples
-
-```sh
-perttool --help
-perttool dsl check docs/examples/parallel.pert
-perttool dsl check PLAN.pert --max-diagnostics 20 --format json
-perttool dsl format PLAN.pert --check
-perttool dsl format PLAN.pert --diff
-perttool dsl format PLAN.pert --write --expect-digest "$EXPECTED_DIGEST"
-perttool dsl help syntax estimate --level detail --format json
-perttool dsl help syntax velocity --level detail --format json
-perttool agent help
-perttool agent help codex enforcement --level detail --format json
+# Obtain the current digest for optimistic locking.
 perttool project show PLAN.pert --format json
-perttool project set PLAN.pert --velocity 20p/1d --diff
-perttool project set PLAN.pert --velocity 20p/1d --write --expect-digest "$EXPECTED_DIGEST"
-perttool dag analyze docs/examples/point-velocity.pert --format json
-perttool dag analyze docs/examples/parallel.pert
-perttool dag analyze docs/examples/parallel.pert --capacity DEVELOPERS=3 --capacity TEST_ENV=2 --format json
-perttool dag next docs/examples/parallel.pert
-perttool dag next docs/examples/parallel.pert --capacity DEVELOPERS=3 --format json
-perttool dag advance docs/examples/advance-partial-before.pert --diff
-perttool dag advance PLAN.pert --write --expect-digest "$EXPECTED_DIGEST"
-perttool dag render docs/examples/parallel.pert --to mermaid --analysis both
-perttool dag render docs/examples/parallel.pert --to mermaid --analysis resource --capacity TEST_ENV=2 --out parallel.mmd
-perttool dag import parallel.mmd --from mermaid
-perttool dag import parallel.mmd --from mermaid --strict-loss --out parallel.pert
-perttool task set docs/examples/minimal.pert WORK --status active --diff
-perttool task set PLAN.pert WORK --status active --write --expect-digest "$EXPECTED_DIGEST"
-perttool resource set docs/examples/parallel.pert TEST_ENV --capacity 2 --format json
-perttool mutation apply docs/examples/minimal.pert --request changes.json --diff
-perttool mutation apply PLAN.pert --request changes.json --out UPDATED.pert
+
+# Apply the reviewed change atomically.
+perttool task set PLAN.pert WORK \
+  --status active \
+  --write \
+  --expect-digest 'sha256:...'
+
+# Finish a task, inspect the new frontier, then remove completed history.
+perttool task finish PLAN.pert WORK --diff
+perttool dag next PLAN.pert --format json
+perttool dag advance PLAN.pert --diff
 ```
 
-`dag analyze`はexact RationalによるPERT/CPMと、renewable resource capacityを守る決定的な`parallel-sgs` scheduleを別resultとして返します。`duration_unit point`では`velocity 20p/10d`のように宣言し、基準のPoint値とday/hourの`velocity_forecast`を分離して返します。Resource scheduleは実行可能なheuristicであり、最適解とは表示しません。
+All formatter and mutation commands preview by default. `--write` replaces the
+input through the safe-write path, while `--out` exclusively creates a new
+file. Use `mutation apply` when several changes must become valid atomically:
 
-`project show`はproject ID、version、title、description、as_of、duration_unit、velocity、finish、critical_epsilon、target_durationを固定順のtextまたは`Perttool.ProjectResult.v1` JSONで返します。`project set`は同じfieldをsource-preservingに変更し、optional fieldは`--clear`できます。既定は検査済みcandidateのpreviewで、永続化は他のediting commandと同じsafe-write optionを明示した場合だけです。Project-wide単位とtask durationを同時変更する場合は、`mutation apply`のatomic batchへ`project.set`と関連entity mutationを含めます。
+```sh
+perttool mutation apply PLAN.pert --request changes.json --diff
+perttool mutation apply PLAN.pert \
+  --request changes.json \
+  --write \
+  --expect-digest 'sha256:...'
+```
 
-`dag next`は依存関係上の`ready`、既存schedulerが選ぶ`runnable_now`、工程authorityであるroot `recommendation`を分離します。JSONは全ready taskのtier、exact typed fact、comparison、decision trace、canonical descriptionをcomplete graphとして返し、textは4 tierの`complete=false` summaryとJSON導線を返します。開始できないready taskには不足resourceと占有task、upcoming taskには未充足依存の説明も従来どおり保持します。Consumerは[移行ガイド](docs/process/next-v3-consumer-migration.md)に従い、`schema_version`を最初に検査します。
+The current beta does not yet provide project initialization or gate
+add/set/remove commands. Those tool-maintenance gaps and the planned breaking
+CLI cleanup are tracked in the [product backlog](docs/backlog.md).
 
-Known and complete `NextResult.v3` is the normal AI task-selection authority after the original five-plan shadow and the MIG-07 safe-stop dry run. The self-use gate checks seven plans, including agent guidance and the active post-beta English-baseline migration. Select a workstream from a non-empty macro recommendation before analyzing its detail plan, and stop on unknown versions, incomplete traces, `PTREC-*`, or deferred/discouraged selections. When a completed macro has no ready work package, use only an explicitly independent detail plan whose external gate is recorded as reached.
+## Command map
 
-Public libraryの`validateOverride`はcompleteな`NextResultV3`と明示的なhuman requestから、normal recommendationを変更せずdeterministicな`Perttool.OverrideDecision.v1`を生成します。これはread-only validationであり、task state、file、Git、networkを変更しません。Override applyとaudit writeのCLIは未実装です。
+| Goal | Command |
+| --- | --- |
+| Validate a document | `perttool dsl check <file>` |
+| Canonically format it | `perttool dsl format <file>` |
+| Read project metadata | `perttool project show <file>` |
+| Change project metadata | `perttool project set <file> ...` |
+| Analyze schedules | `perttool dag analyze <file>` |
+| Select next work | `perttool dag next <file>` |
+| Remove completed history | `perttool dag advance <file>` |
+| Export or import Mermaid | `perttool dag render`, `perttool dag import` |
+| Maintain tasks | `perttool task add|set|remove|finish` |
+| Maintain milestones | `perttool milestone add|set|remove` |
+| Maintain resources | `perttool resource add|set|remove` |
+| Apply an atomic batch | `perttool mutation apply` |
+| Read DSL guidance | `perttool dsl help` |
+| Read coding-agent guidance | `perttool agent help` |
 
-`dag advance`はeffective reachedより過去のtask/gate/milestoneだけを除去し、未到達joinに必要なdone taskとsatisfied gateを保持します。既定はcandidate previewで、削除entityとfrontier/readyの前後比較をtext/JSONへ含めます。`--write`、`--out`、`--expect-digest`は他のediting commandと同じsafe-write経路を使います。
+Run `perttool --help` for the complete current syntax. Command-specific help is
+available without a document, for example:
 
-`dag render --to mermaid`は既定でlosslessな`Perttool.MermaidProfile.v1`をstdoutへ生成します。`--analysis`でprecedence/resource解析値をprojectionへ注記でき、`--out`は既存targetを上書きしません。`--profile plain`はsemantic metadataを持たないため`PTCNV-206`を返し、`--strict-loss`でartifactを拒否できます。
+```sh
+perttool task set --help
+perttool dag next --help
+perttool dsl help editing --level detail --format json
+```
 
-`dag import --from mermaid`はperttool profileのcanonical JSON、record順、metadata/projection digest、semantic model、projection対応をfail-closedで検査し、canonical DSLをpreviewします。Plain Mermaidはstable generated IDとloss reportを返す限定best-effortで、`--strict-loss`はlossy candidateと`--out`を拒否します。
+## LLM and automation use
 
-`dsl format`とMutation commandは既定では検査済みcandidateをpreviewし、`--diff`ではunified diffを返します。`dsl format --check`は変更が必要なときだけexit 1です。Preview確認後は`--write`でinitial digestを再照合してatomic replaceし、`--expect-digest`でcaller lockを追加できます。`--out`は既存targetを上書きせず新規documentを作成します。`--format json`ではcandidate、diff、UTF-16 TextEdit、digest、write結果を同じresultへ含めます。
+Use `--format json` for machine consumers. Check `schema_version` before reading
+the rest of a result. A complete, known `Perttool.NextResult.v3` recommendation
+graph is the task-selection authority; do not infer authority from the text
+summary or from `ready` alone.
 
-The Stage 3 preview-first self-use workflow has completed the [macro roadmap through beta](plans/mvp.pert). The first suffix-free beta, `v0.1.0`, is [accepted](docs/process/beta-release-acceptance.md) after one tarball was verified across the GitHub prerelease, npm `beta`, and isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro recommendation is now empty. The independent [English baseline migration plan](plans/english-baseline.pert) is unblocked and recommends `SURFACE_INVENTORY` with a provisional `29p/2d` velocity. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+Mutation JSON returns the candidate text, unified diff, UTF-16 text edits,
+source digest, updated digest, diagnostics, and write result in one envelope.
+Unknown schema versions, incomplete recommendation traces, and `PTREC-*`
+diagnostics must fail closed.
+
+## Documentation
+
+- [CLI interface](docs/specs/interfaces.md)
+- [DSL grammar](docs/specs/dsl-grammar.md)
+- [Graph semantics](docs/specs/graph-semantics.md)
+- [Analysis semantics](docs/specs/analysis.md)
+- [Mutation semantics](docs/specs/mutation.md)
+- [Recommendation semantics](docs/specs/recommendation.md)
+- [Examples](docs/examples/README.md)
+- [Developer guide](docs/development.md)
+- [Product backlog](docs/backlog.md)
 
 ## Security and license
 
-脆弱性は[Security Policy](SECURITY.md)に従って非公開で報告してください。本ソフトウェアは[MIT License](LICENSE)で公開します。変更履歴と既知の制約は[CHANGELOG](CHANGELOG.md)を参照してください。
+Report vulnerabilities privately according to [SECURITY.md](SECURITY.md).
+perttool is released under the [MIT License](LICENSE). See
+[CHANGELOG.md](CHANGELOG.md) for release changes and known limitations.

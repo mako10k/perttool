@@ -20,7 +20,7 @@
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
 - Mermaid profile: [specs/mermaid-profile.md](specs/mermaid-profile.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
-- Runtime/package decision: [adr/0002-node-typescript-package.md](adr/0002-node-typescript-package.md)
+- Runtime/package decision: [adr/0005-node-22-runtime-baseline.md](adr/0005-node-22-runtime-baseline.md)
 - Beta versioning/release decision: [adr/0003-beta-versioning.md](adr/0003-beta-versioning.md)
 - Repository language decision: [adr/0004-english-repository-baseline.md](adr/0004-english-repository-baseline.md)
 - 自己利用計画: [process/self-use.md](process/self-use.md)
@@ -53,7 +53,7 @@ TypeScript を選ぶ理由は次のとおりである。
 - `llmthink` で採用済みの、共通コアと薄い複数 UI という構成を踏襲できる
 - JSON Schema と TypeScript type の対応を管理しやすい
 
-RuntimeはNode.js 24以上、package managerはnpm、module形式はESMとする。詳細は[ADR 0002](adr/0002-node-typescript-package.md)、具体versionは`package.json`と`package-lock.json`、CI baselineはworkflowを正本とする。
+The runtime is Node.js 22 or later, the package manager is npm, and the module format is ESM. [ADR 0005](adr/0005-node-22-runtime-baseline.md) defines the supported baseline; `package.json` and `package-lock.json` define concrete package versions, and the CI workflow defines the tested runtime matrix.
 
 ### 2.2 採用しない方針
 
@@ -1107,7 +1107,7 @@ Exit:
 
 The migration is split into inventory, runtime messages, bundled help, normative documents, process and agent guidance, current PERT metadata, golden/Unicode audit, and final acceptance. Runtime locale negotiation, translation catalogs, a `--locale` option, and automatic translation of `.pert` content are outside this slice.
 
-The first task remained explicitly blocked until `plans/mvp.pert` reached `M8_BETA_RELEASED`. Because cross-plan dependencies are not yet implemented, that external gate was represented by a stable `blocked_reason`. After beta acceptance, the Stage 3 preview-first unblock procedure removed the reason and changed `SURFACE_INVENTORY` to `planned`; fresh analysis now makes it the recommended entry task.
+The first task remained explicitly blocked until `plans/mvp.pert` reached `M8_BETA_RELEASED`. Because cross-plan dependencies are not yet implemented, that external gate was represented by a stable `blocked_reason`. After beta acceptance, the Stage 3 preview-first unblock procedure removed the reason and changed `SURFACE_INVENTORY` to `planned`. The inventory completed and advanced on 2026-07-24; fresh analysis now recommends `NORMATIVE_DOCS`.
 
 ### Post-MVP Slice 5: language tooling and MCP
 

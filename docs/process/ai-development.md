@@ -129,7 +129,7 @@ Project metadataを変更するときは`project set`のpreviewまたは`--diff`
 
 The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
-ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached, and `SURFACE_INVENTORY` was unblocked through a Stage 3 `task set` preview, expected digest, safe write, and fresh `check`/`analyze`/`next`; it is now the recommended detail task.
+ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached. `SURFACE_INVENTORY` was unblocked, completed, and advanced through Stage 3 preview-first writes; the inventory and Unicode allowlist are recorded in `english-surface-inventory.md`, and fresh analysis now recommends `NORMATIVE_DOCS`.
 
 ### 5.1 採用済みRecommendation authority
 
@@ -223,9 +223,9 @@ Integration ownerは、reason taxonomyのrecommended taskに因果ranking reason
 
 TypeScript scaffoldでは次を固定した。
 
-- Node.js 24以上、npm、ESM、TypeScript 7.0系
+- Node.js 22 or later, npm, ESM, and TypeScript 7.0
 - `npm ci`、`npm run build`、`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run check:link`、`npm run check:package`、`npm run check`
-- CIはNode.js 24で`npm run check`
+- CI runs `npm run check` on Node.js 22 and 24
 - sourceは`src/`、test/fixtureは`test/`、生成物は`dist/`
 - `node_modules/`、`dist/`、coverage、tsbuildinfoはGit管理外
 - runtime dependencyは現時点で0。必要になった場合だけ追加判断する

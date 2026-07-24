@@ -22,7 +22,7 @@ Issue #2 was included in the first beta and accepted after all five `agent-guida
 
 The suffix-free `v0.1.0` beta was published and [accepted](../docs/process/beta-release-acceptance.md) on 2026-07-23, then explicitly promoted so npm `beta` and `latest` both resolve to `0.1.0`. The macro plan is advanced to the reached `M8_BETA_RELEASED` frontier and has no remaining or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
-ADR 0004 adopts English as the canonical repository language without i18n. The `english-baseline.pert` detail plan contains eight migration tasks totaling 42p. Its precedence makespan is 29p, resource makespan is 32p, and provisional resource forecast is `64/29d`. The beta gate is reached, so `SURFACE_INVENTORY` is now ready, runnable, and recommended.
+ADR 0004 adopts English as the canonical repository language without i18n. `SURFACE_INVENTORY` completed on 2026-07-24 and was advanced after its inventory and Unicode allowlist were recorded. The `english-baseline.pert` detail plan now contains seven remaining tasks totaling 40p. Its precedence makespan is 27p, resource makespan is 30p, first-sample velocity is `2p/1d`, and resource forecast is `15d`. `NORMATIVE_DOCS` is the current recommended task.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

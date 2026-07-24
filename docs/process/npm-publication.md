@@ -6,7 +6,7 @@
 - 対象registry: `https://registry.npmjs.org/`
 - 配布tag: `alpha`
 - Release gate: [MVP release readiness監査](mvp-release-readiness.md)
-- Runtime/package判断: [ADR 0002](../adr/0002-node-typescript-package.md)
+- Current runtime baseline: [ADR 0005](../adr/0005-node-22-runtime-baseline.md)
 
 ## 1. 現在の状態
 

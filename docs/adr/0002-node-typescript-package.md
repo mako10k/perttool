@@ -1,6 +1,6 @@
-# ADR 0002: Node.js 24 LTS上のTypeScript ESM CLIとして配布する
+# ADR 0002: Distribute a TypeScript ESM CLI on Node.js 24
 
-- Status: Accepted
+- Status: Superseded for the minimum runtime by [ADR 0005](0005-node-22-runtime-baseline.md)
 - Date: 2026-07-21
 - Decision owners: perttool maintainers
 - Related design: [基本設計](../basic-design.md)

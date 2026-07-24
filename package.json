@@ -40,7 +40,7 @@
     }
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=22"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -55,7 +55,7 @@
     "check": "npm run typecheck && npm test && npm run check:docs && npm run check:self-use && npm run check:link && npm run check:package"
   },
   "devDependencies": {
-    "@types/node": "24.13.3",
+    "@types/node": "22.20.1",
     "typescript": "7.0.2"
   }
 }

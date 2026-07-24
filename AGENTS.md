@@ -13,11 +13,11 @@ User communication is independent from the repository baseline. Unless the user 
 
 ## Current phase and sources of truth
 
-perttool has accepted its TypeScript CLI MVP, the read-only AI Agent Guidance Registry v1 from Issue #2, and the first suffix-free beta release, `v0.1.0`. The release was published from one verified tarball to a GitHub prerelease and npm `beta`, then explicitly promoted to npm `latest` after acceptance; both tags resolve to `0.1.0`. The implemented surface includes `dsl check`, `dsl format`, `dsl help`, read-only `agent help`, `dag analyze`, `dag next` v3, read-only `validateOverride`, `dag advance`, Mermaid export/import, source-preserving formatter and mutation Core APIs, atomic batch, safe-write I/O, editing/advance CLI write controls, project metadata CLI, and the grammar acceptance suite. A complete and known `Perttool.NextResult.v3` remains the normal AI task-selection authority. The macro plan is complete and has no ready task. The independent English-baseline detail plan now recommends `SURFACE_INVENTORY`. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
+perttool has accepted its TypeScript CLI MVP, the read-only AI Agent Guidance Registry v1 from Issue #2, and the first suffix-free beta release, `v0.1.0`. The release was published from one verified tarball to a GitHub prerelease and npm `beta`, then explicitly promoted to npm `latest` after acceptance; both tags resolve to `0.1.0`. The implemented surface includes `dsl check`, `dsl format`, `dsl help`, read-only `agent help`, `dag analyze`, `dag next` v3, read-only `validateOverride`, `dag advance`, Mermaid export/import, source-preserving formatter and mutation Core APIs, atomic batch, safe-write I/O, editing/advance CLI write controls, project metadata CLI, and the grammar acceptance suite. A complete and known `Perttool.NextResult.v3` remains the normal AI task-selection authority. The macro plan is complete and has no ready task. The independent English-baseline detail plan has completed `SURFACE_INVENTORY` and now recommends `NORMATIVE_DOCS`. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
 また、velocityを含むproject metadata一式を返す`project show`、source-preservingな`project set`、atomic batchの`project.set`も実装済みである。操作系実測Velocityは2026-07-23の5pを加えた累計29p/2 active dayから`29p/2d`へ再calibrationした。
 
-ADR 0004 adopts English as the repository baseline. The 42p legacy-surface migration is tracked in `plans/english-baseline.pert` with a provisional `29p/2d` velocity. The `M8_BETA_RELEASED` gate is reached, and `SURFACE_INVENTORY` is the current recommended detail task.
+ADR 0004 adopts English as the repository baseline. `SURFACE_INVENTORY` is complete and advanced; `plans/english-baseline.pert` now has 40p remaining with a first-sample `2p/1d` velocity and recommends `NORMATIVE_DOCS`.
 
 意味や設計が競合した場合は、原則として次の順で扱う。
 
@@ -53,7 +53,7 @@ ADR 0004 adopts English as the repository baseline. The 42p legacy-surface migra
 - `src/mutation/`: project/task/milestone/resourceとatomic batchのrequest、canonical advance、source-preserving UTF-16 TextEdit生成、適用規則。
 - `src/application/`: check/project metadata/analyze/nextと、再検査済みmutation resultを返すpure service。
 - `test/`: Node.js built-in test runnerのfixture、analysis/next/formatter/mutation/conversion/write-safety unit test、CLI integration/E2E test。
-- `package.json`: Node.js 24以上、npm script、binary/library entrypoint。
+- `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
 実装を追加した時点で、実際のdirectoryとcommandに合わせてこのmapを更新する。
 
@@ -88,7 +88,7 @@ Normal task selectionでは、known `Perttool.NextResult.v3`、recommendation in
 
 ## Validation
 
-Run the repository checks from the root with Node.js 24 or later. `npm run check` includes check/analyze/next validation for the MVP, grammar, control-plane, operations, recommendation, agent-guidance, and English-baseline plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for the MVP, grammar, control-plane, operations, recommendation, agent-guidance, and English-baseline plans.
 
 ```sh
 npm ci
@@ -103,7 +103,7 @@ Narrow checkは`npm run typecheck`、`npm test`、`npm run test:e2e`、`npm run 
 - analysis変更では小さなgolden graphを使い、precedence結果とresource schedule結果を別々に検証する。
 - implementation追加後は、実在するnarrow testを先に実行し、共有coreに触れた場合だけ広いsuiteへ進む。
 - 実行していないtestを成功したと報告しない。失敗や環境不足はcommandとともに明記する。
-- package/runtime方針は`docs/adr/0002-node-typescript-package.md`を正とし、command変更時は本節、`docs/process/ai-development.md`、CIを同時に更新する。
+- The package/runtime baseline is defined by `docs/adr/0005-node-22-runtime-baseline.md`. When commands change, update this section, `docs/process/ai-development.md`, and CI in the same logical change.
 
 ## Review and durable guidance
 

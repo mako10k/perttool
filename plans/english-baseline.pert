@@ -1,10 +1,10 @@
 project ENGLISH_BASELINE:
   version 1
   title "English repository baseline migration"
-  description "Migrate repository-maintained prose, bundled help, and diagnostics to the English baseline adopted by ADR 0004. The first beta release is accepted and SURFACE_INVENTORY is now the recommended entry task. The provisional velocity is 29p/2d and must be recalibrated from this workstream after its first completed tasks. Runtime i18n, translation catalogs, locale negotiation, and translation of user-authored content remain outside this plan."
-  as_of 2026-07-23
+  description "Migrate repository-maintained prose, bundled help, and diagnostics to the English baseline adopted by ADR 0004. The canonical surface inventory and Unicode allowlist are recorded in docs/process/english-surface-inventory.md. Remaining migration work is tracked by the current tasks. Runtime i18n, translation catalogs, locale negotiation, and translation of user-authored content remain outside this plan."
+  as_of 2026-07-24
   duration_unit point
-  velocity 29p/2d
+  velocity 2p/1d
   finish ENGLISH_BASELINE_ACCEPTED
 
 resource DEVELOPERS:
@@ -26,13 +26,10 @@ resource DOC_SURFACE:
   description "Avoid concurrent structural edits to shared documentation indexes and links"
   capacity 1
 
-milestone LANGUAGE_POLICY_ADOPTED:
-  title "English baseline policy adopted"
-  description "ADR 0004 and repository guidance define English as canonical without i18n"
-  state reached
 
 milestone SURFACE_INVENTORY_READY:
   title "Migration inventory and allowlist design ready"
+  state reached
 
 milestone RUNTIME_MESSAGES_READY:
   title "Runtime messages migrated"
@@ -58,20 +55,6 @@ milestone GOLDEN_UNICODE_READY:
 milestone ENGLISH_BASELINE_ACCEPTED:
   title "English repository baseline accepted"
 
-task SURFACE_INVENTORY LANGUAGE_POLICY_ADOPTED -> SURFACE_INVENTORY_READY:
-  title "Inventory canonical language surfaces and define the Unicode allowlist"
-  description |
-    Re-run the repository inventory by product documentation, normative
-    specifications, process guidance, runtime messages, bundled help, tests,
-    fixtures, and current plans. Define which user-authored or Unicode
-    round-trip fixtures remain non-English. Record stable identifiers and
-    historical artifacts that must not be translated.
-  duration 2p
-  status planned
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
 task RUNTIME_MESSAGES SURFACE_INVENTORY_READY -> RUNTIME_MESSAGES_READY:
   title "Migrate runtime diagnostics and messages to English"
   description |
