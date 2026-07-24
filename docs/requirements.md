@@ -1209,12 +1209,11 @@ The analysis implementation has progressed through `dag next` v3 and read-only `
 
 [ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`, and currently recommends `PERT_PLANS`. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
-The accepted Contract 3 source and package workflow select suffix-free beta
-`0.2.0` as their first release target. `RELEASE_020_GATE_DESIGN` is complete
-and advanced in [`plans/release-0.2.0.pert`](../plans/release-0.2.0.pert);
-`RELEASE_020_PREPARATION` and `RELEASE_020_CANDIDATE` completed and advanced
-after package, lockfile, CLI, CHANGELOG, README, and release checks aligned at
-`0.2.0`; the complete local gate passed; public identities were unused; and npm
-`beta=latest=0.1.0` was recorded. The user authorized the named distribution
-batch, and `RELEASE_020_DISTRIBUTION` is recommended. npm `latest` promotion
-remains outside the release plan.
+The accepted Contract 3 source and package workflow published suffix-free beta
+`0.2.0` as the first Contract 3 package. All five tasks in
+[`plans/release-0.2.0.pert`](../plans/release-0.2.0.pert) completed and
+advanced after verifying release commit/tag identity, common local/GitHub/npm
+tarball bytes, installed Contract 3 and file-first behavior, `beta=0.2.0`, and
+unchanged `latest=0.1.0`. The completed plan has no recommendation. The
+[`v0.2.0` acceptance record](process/0.2.0-release-acceptance.md) preserves the
+durable evidence. npm `latest` promotion remains outside the release plan.

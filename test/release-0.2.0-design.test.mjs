@@ -18,6 +18,7 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
     specification,
     migration,
     procedure,
+    acceptance,
     changelog,
     readme,
     sourceVersion,
@@ -29,6 +30,7 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
     repositoryText("docs/specs/cli-contract-3.md"),
     repositoryText("docs/process/cli-contract-3-migration.md"),
     repositoryText("docs/process/0.2.0-release.md"),
+    repositoryText("docs/process/0.2.0-release-acceptance.md"),
     repositoryText("CHANGELOG.md"),
     repositoryText("README.md"),
     repositoryText("src/version.ts"),
@@ -47,7 +49,11 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
   assert.match(adr, /Select suffix-free `0\.2\.0`/);
   assert.match(specification, /suffix-free `0\.2\.0` as the first Contract 3 package/);
   assert.match(migration, /selects\nsuffix-free `0\.2\.0`/);
-  assert.match(procedure, /Status: Candidate accepted; distribution authorized/);
+  assert.match(procedure, /Status: Accepted 1\.0/);
+  assert.match(
+    acceptance,
+    /Local, GitHub, and registry tarball SHA-256 \| `26ab6fc3f27574f293e985032d3701e4ca1ae69f2471e6c58d0a2e4bc0cbe52b`/,
+  );
   assert.match(changelog, /^## \[0\.2\.0\] - 2026-07-25$/m);
   assert.match(readme, /current Contract 3 version is `0\.2\.0`/);
   assert.match(
@@ -64,29 +70,17 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
   assert.equal(manifest.publishConfig.tag, "beta");
 });
 
-test("0.2.0 plan preserves preparation, authorization, and acceptance boundaries", async () => {
-  const [plan, procedure] = await Promise.all([
+test("0.2.0 completed plan preserves release and acceptance boundaries", async () => {
+  const [plan, procedure, acceptance] = await Promise.all([
     repositoryText("plans/release-0.2.0.pert"),
     repositoryText("docs/process/0.2.0-release.md"),
+    repositoryText("docs/process/0.2.0-release-acceptance.md"),
   ]);
 
-  assert.doesNotMatch(
-    plan,
-    /^task RELEASE_020_(?:GATE_DESIGN|PREPARATION|CANDIDATE) /m,
-  );
-  for (const taskId of [
-    "RELEASE_020_DISTRIBUTION",
-    "RELEASE_020_ACCEPTANCE",
-  ]) {
-    assert.match(plan, new RegExp(`^task ${taskId} `, "m"));
-  }
+  assert.doesNotMatch(plan, /^task RELEASE_020_/m);
   assert.match(
     plan,
-    /^milestone RELEASE_020_CANDIDATE_READY:\n  title "One release candidate authorized for distribution"\n  state reached$/m,
-  );
-  assert.match(
-    plan,
-    /task RELEASE_020_DISTRIBUTION[\s\S]*?status planned/,
+    /^milestone RELEASE_020_ACCEPTED:\n  title "Version 0\.2\.0 Contract 3 beta accepted"\n  state reached$/m,
   );
   assert.doesNotMatch(plan, /blocked_reason "Requires explicit user authorization/);
   assert.match(
@@ -96,4 +90,6 @@ test("0.2.0 plan preserves preparation, authorization, and acceptance boundaries
   assert.match(procedure, /npm publication tag: `beta`/);
   assert.match(procedure, /`latest` promotion is a separate post-acceptance decision/);
   assert.match(procedure, /Do not retry an ambiguous GitHub or npm mutation/);
+  assert.match(acceptance, /npm `latest` remains on\nContract 2 `0\.1\.0`/);
+  assert.match(acceptance, /no remaining recommendation/);
 });

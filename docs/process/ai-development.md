@@ -152,14 +152,14 @@ target. The independent [`release-0.2.0.pert`](../../plans/release-0.2.0.pert)
 workstream and [`v0.2.0` procedure](0.2.0-release.md) separate normative gate
 design, local source preparation, clean-candidate acceptance, explicitly
 authorized distribution, and durable release acceptance.
-`RELEASE_020_GATE_DESIGN`, `RELEASE_020_PREPARATION`, and
-`RELEASE_020_CANDIDATE` are complete and advanced. Package, lockfile, CLI,
-CHANGELOG, README, release goldens, and package checks are aligned at `0.2.0`;
-the complete local gate passed; public identities are unused; and npm
-`beta=latest=0.1.0` is the verified baseline. The plan has 8p remaining at
-`9p/2d` and recommends `RELEASE_020_DISTRIBUTION`. The user authorized the
-named Git force-update, annotated tag, GitHub prerelease, and npm `beta` batch.
-Do not promote npm `latest`.
+All five `RELEASE_020_*` tasks are complete and advanced. Version `0.2.0` was
+published from one verified tarball to a GitHub prerelease and npm `beta`;
+local, GitHub, and registry bytes match; installed Contract 3 and file-first
+checks passed; and npm `latest=0.1.0` is unchanged. The plan has no remaining
+or recommended task at `17p/2d`. The durable
+[acceptance record](0.2.0-release-acceptance.md) contains the release identity,
+artifact digests, dist-tags, and verification commands. Do not promote npm
+`latest` without a separate explicit decision.
 
 ### 5.1 Adopted Recommendation authority
 

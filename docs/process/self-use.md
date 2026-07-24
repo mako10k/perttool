@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.30
+- Document status: Active Stage 3 / Revision 2.31
 - Creation date: 2026-07-21
 - Update date: 2026-07-25
 - Related design: [../basic-design.md](../basic-design.md)
@@ -57,10 +57,10 @@ Contract 3 specification, basic design, migration boundary, and 14 normative
 acceptance cases. The 5p task was completed and advanced, establishing the
 first plan-specific velocity sample of `5p/1d`; no runtime command changed.
 
-After Contract 3 package acceptance, `release-0.2.0.pert` was added as the
-ninth independent plan. Its design gate selected `0.2.0` without changing
-package identity and separated local release work from the explicitly
-authorized external distribution task.
+After Contract 3 source acceptance, `release-0.2.0.pert` was added as the ninth
+independent plan. Its design gate selected `0.2.0` without changing package
+identity and separated local release work from the explicitly authorized
+external distribution task.
 
 Starting conditions:
 
@@ -230,6 +230,24 @@ Two tasks and 8p remain; precedence and heuristic resource makespans are both
 8p with no resource delay, and fresh complete `NextResult.v3` recommends
 `RELEASE_020_DISTRIBUTION`.
 
+The authorized distribution then replaced the prior WIP tip with release
+commit `826b8ec3de2629aa3050a2affb8bdd79c4f5000b` through a lease-guarded
+force update and fixed annotated `v0.2.0` at that commit. One retained tarball
+passed the package and file-first gates, was attached to the GitHub prerelease,
+and was published exactly once to npm `beta` through the process-limited
+`NPM_TOKEN` route. Local, downloaded GitHub, and independently downloaded npm
+bytes share SHA-256
+`26ab6fc3f27574f293e985032d3701e4ca1ae69f2471e6c58d0a2e4bc0cbe52b`;
+isolated Contract 3, renamed-command rejection, read-only agent guidance,
+complete Next v3, and file-first checks passed. npm now reports
+`beta=0.2.0`, `latest=0.1.0`, and `alpha=0.1.0-alpha.2`, so `latest` did not
+move. Expected-digest batch and advance writes completed the 5p distribution
+and 3p acceptance tasks, recalibrated cumulative velocity to `17p/2d`, and
+left only reached `RELEASE_020_ACCEPTED`. The final digest is
+`sha256:3ea3923fb7ae8ac5874e9856ac05f699d9de341f486ee9b9e7472fe028b7071b`;
+fresh complete `NextResult.v3` has no recommendation. The durable evidence is
+in [`0.2.0-release-acceptance.md`](0.2.0-release-acceptance.md).
+
 ### 4.1 Velocity measurement calibration
 
 DSL version 1 has no working calendar, pause, or work-start time, so it does not convert the hours between commit timestamps into implicit engineering days. Measure the velocity of a self-use plan using the following definitive active-day method:
@@ -241,7 +259,7 @@ DSL version 1 has no working calendar, pause, or work-start time, so it does not
 5. Count parallel work on the same day only once as a day, while including it in the points total.
 6. Defer tasks completed by the calibration itself to the next sample to avoid a cycle.
 
-Recalibration from 2026-07-22 to 2026-07-24:
+Recalibration from 2026-07-22 to 2026-07-25:
 
 | Plan | Closed sample | Completed Point | Active day | Velocity | Remaining forecast |
 | --- | --- | ---: | ---: | --- | --- |
@@ -252,11 +270,16 @@ Recalibration from 2026-07-22 to 2026-07-24:
 | `agent-guidance.pert` | Total 5 tasks | 22p | 1d | `22p/1d` | 0p |
 | `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE` | 33p | 1d | `33p/1d` | resource `3/11d` |
 | `cli-surface-reset.pert` | All 9 tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` | 49p | 1d | `49p/1d` | 0p |
-| `release-0.2.0.pert` | `RELEASE_020_GATE_DESIGN` | 3p | 1d | `3p/1d` | conditional `14/3d` |
+| `release-0.2.0.pert` | All 5 tasks through `RELEASE_020_ACCEPTANCE` | 17p | 2d | `17p/2d` | 0p |
 
 This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, English-baseline migration, and the CLI-surface reset are not averaged because their work types differ. Future detail plans will specify the sample from the closest work type as their initial value.
 
 `english-baseline.pert` completed 2p of inventory work, 13p of normative-document migration, 8p of process-and-guidance migration, 5p of runtime-message migration, and 5p of help-and-usage migration on the same active day. Its cumulative observed velocity is now `33p/1d`; the remaining precedence path and resource schedule are both 9p and forecast `3/11d`. This remains a one-day sample and must be recalibrated after work on a different active day or after further task completions.
+
+The `release-0.2.0.pert` workstream completed its 3p gate design and 3p source
+preparation on 2026-07-24, then completed its 3p candidate, 5p distribution,
+and 3p acceptance on 2026-07-25. Its cumulative observed velocity is
+`17p/2d`, and no work remains.
 
 Grammar was recalibrated after `FORMATTER_ROUNDTRIP` (2p) and `HELP_FIXTURE_SYNC` (1p) were completed on the same active day after the previous calibration, updating velocity to `3p/1d`. Because no work remains, the forecast is 0. Control-plane's `DESIGN_REVIEW` (1p) is deferred to the next calibration because the new sample still contains only one task.
 
@@ -518,6 +541,6 @@ Stage 1 entry evidence:
 - CLI-surface-reset domain-guide gate: the HelpNode registry remains the sole domain-topic authority while the pure internal `Perttool.GuideResult.v1` projection provides separate index, quick/detail topic, text/JSON, and `guide_topic` diagnostics without command-descriptor coupling or Contract 2 byte changes; 10p remain, precedence/resource makespans are both 10p, observed provisional velocity is `39p/1d`, and `CLI_002_CONTRACT_V3_CUTOVER` is recommended
 - CLI-surface-reset Contract 3 cutover gate: the active 27-command registry drives dispatch, argv validation, text/JSON command help, separate guide publication, project initialization, direct gate maintenance, and `cli_contract_version=3`; four renamed Contract 2 routes fail with exit 2, 5p remain, precedence/resource makespans are both 5p, observed provisional velocity is `44p/1d`, and `CLI_003_FILE_FIRST_ACCEPTANCE` is recommended
 - CLI-surface-reset file-first acceptance gate: the isolated installed-package CLI alone initializes, reads, mutates every entity field, analyzes, selects, advances, and validates a plan without manual source rewriting; cumulative velocity is `49p/1d`, no detail work remains, and complete `NextResult.v3` has no recommendation
-- Contract 3 `v0.2.0` candidate gate: package, lockfile, CLI, CHANGELOG, README, and release checks are aligned at `0.2.0`; the complete local gate and unused-identity checks pass; npm `beta=latest=0.1.0` is the baseline; the named distribution batch is authorized but `latest` is excluded; 8p remain with precedence/resource makespans of 8p, observed velocity `9p/2d`, and `RELEASE_020_DISTRIBUTION` recommended
+- Contract 3 `v0.2.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Contract 3, renamed-command rejection, read-only agent guidance, complete Next v3, and file-first checks pass; npm `beta=0.2.0` while `latest=0.1.0` is unchanged; cumulative velocity is `17p/2d`, no detail work remains, and complete Next v3 has no recommendation
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all nine plans
 - write state: Stage 3 editing/advance commands are enabled using preview-first, diff and deletion-list review, expected digests, and reanalysis after writes.

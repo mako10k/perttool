@@ -1,10 +1,10 @@
 project RELEASE_020:
   version 1
   title "perttool 0.2.0 Contract 3 beta release"
-  description "Plan the suffix-free 0.2.0 beta release that publishes accepted CLI Contract 3 from one verified tarball. RELEASE_020_GATE_DESIGN, RELEASE_020_PREPARATION, and RELEASE_020_CANDIDATE completed through 2026-07-25, fixing the release boundary, aligning and fully validating the release source, and confirming unused public identities plus the beta/latest baseline. Two tasks totaling 8p remain. The user authorized the named Git force-update, annotated tag, GitHub prerelease, and npm beta distribution batch; latest promotion remains excluded. The observed cumulative plan-specific velocity is 9p/2d."
+  description "Plan the suffix-free 0.2.0 beta release that publishes accepted CLI Contract 3 from one verified tarball. All five tasks totaling 17p completed through 2026-07-25. Version 0.2.0 was published from one verified tarball to a GitHub prerelease and npm beta, verified byte-for-byte from both public channels, and accepted with beta at 0.2.0 and latest unchanged at 0.1.0. The observed cumulative plan-specific velocity is 17p/2d."
   as_of 2026-07-25
   duration_unit point
-  velocity 9p/2d
+  velocity 17p/2d
   finish RELEASE_020_ACCEPTED
 
 
@@ -34,43 +34,8 @@ resource EXTERNAL_RELEASE:
 
 
 
-milestone RELEASE_020_CANDIDATE_READY:
-  title "One release candidate authorized for distribution"
-  state reached
 
-milestone RELEASE_020_DISTRIBUTED:
-  title "Version 0.2.0 distributed to GitHub and npm beta"
-  state planned
 
 milestone RELEASE_020_ACCEPTED:
   title "Version 0.2.0 Contract 3 beta accepted"
-  state planned
-
-
-
-
-task RELEASE_020_DISTRIBUTION RELEASE_020_CANDIDATE_READY -> RELEASE_020_DISTRIBUTED:
-  title "Distribute the authorized 0.2.0 artifact"
-  description "After explicit user authorization, push and verify the release commit, create and push annotated v0.2.0, generate one tarball outside the worktree, publish the same bytes to a GitHub prerelease and npm beta through secdat, and verify that npm latest remains unchanged. Inspect durable state before retrying any ambiguous write."
-  duration 5p
-  status planned
-  priority 70
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
-    EXTERNAL_RELEASE 1
-  source "REL-020-004"
-
-task RELEASE_020_ACCEPTANCE RELEASE_020_DISTRIBUTED -> RELEASE_020_ACCEPTED:
-  title "Accept the durable 0.2.0 release"
-  description "Verify release commit and peeled tag identity, GitHub and registry tarball parity, beta and unchanged latest tags, isolated GitHub and npm installations, Contract 3 and file-first behavior, and the durable acceptance record. Keep latest promotion outside this task."
-  duration 3p
-  status planned
-  priority 60
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    EXTERNAL_RELEASE 1
-  source "REL-020-005"
+  state reached
