@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.26
+- Document status: Active Stage 3 / Revision 2.27
 - Creation date: 2026-07-21
 - Update date: 2026-07-24
 - Related design: [../basic-design.md](../basic-design.md)
@@ -50,6 +50,11 @@ On 2026-07-24, `cli-surface-reset.pert` was added as an independent post-beta
 plan that maps the completed human/LLM CLI review and all eight CLI/help backlog
 items to a dependency-ordered workstream. Creating the plan did not accept CLI
 contract 3 or implement any proposed command.
+
+Later on 2026-07-24, `CONTRACT_V3_DESIGN` accepted the requirements, standalone
+Contract 3 specification, basic design, migration boundary, and 14 normative
+acceptance cases. The 5p task was completed and advanced, establishing the
+first plan-specific velocity sample of `5p/1d`; no runtime command changed.
 
 Starting conditions:
 
@@ -180,7 +185,7 @@ DSL version 1 has no working calendar, pause, or work-start time, so it does not
 5. Count parallel work on the same day only once as a day, while including it in the points total.
 6. Defer tasks completed by the calibration itself to the next sample to avoid a cycle.
 
-Recalibration from 2026-07-22 to 2026-07-23:
+Recalibration from 2026-07-22 to 2026-07-24:
 
 | Plan | Closed sample | Completed Point | Active day | Velocity | Remaining forecast |
 | --- | --- | ---: | ---: | --- | --- |
@@ -190,8 +195,9 @@ Recalibration from 2026-07-22 to 2026-07-23:
 | `recommendation.pert` | `FIXTURE_BASELINE`, `RANKING_CORE`, `EXPLANATION_CORE`, `NEXT_V3_PUBLICATION`, `SELF_USE_SHADOW`, `OVERRIDE_VALIDATION`, `AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
 | `agent-guidance.pert` | Total 5 tasks | 22p | 1d | `22p/1d` | 0p |
 | `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE` | 33p | 1d | `33p/1d` | resource `3/11d` |
+| `cli-surface-reset.pert` | `CONTRACT_V3_DESIGN` | 5p | 1d | `5p/1d` | precedence `28/5d`; resource `44/5d` |
 
-This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, and English-baseline migration are not averaged because their work types differ. Future detail plans will specify the sample from the closest work type as their initial value.
+This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, English-baseline migration, and the CLI-surface reset are not averaged because their work types differ. Future detail plans will specify the sample from the closest work type as their initial value.
 
 `english-baseline.pert` completed 2p of inventory work, 13p of normative-document migration, 8p of process-and-guidance migration, 5p of runtime-message migration, and 5p of help-and-usage migration on the same active day. Its cumulative observed velocity is now `33p/1d`; the remaining precedence path and resource schedule are both 9p and forecast `3/11d`. This remains a one-day sample and must be recalibrated after work on a different active day or after further task completions.
 
@@ -446,5 +452,6 @@ Stage 1 entry evidence:
 - English-baseline runtime-message gate: runtime diagnostics are translated and cross-reviewed without changing stable machine contracts; four tasks totaling 14p remain, precedence and resource makespans are both 11p, observed velocity is `28p/1d`, and `HELP_AND_USAGE` is recommended
 - English-baseline help-and-usage gate: structured help and installed-package projections are translated and cross-reviewed without changing command or schema contracts; three tasks totaling 9p remain, precedence and resource makespans are both 9p, observed velocity is `33p/1d`, and `PERT_PLANS` is recommended
 - CLI-surface-reset planning gate: the eighth self-use plan maps all eight review backlog IDs one-to-one after a normative design precursor; 9 tasks total 49p, precedence makespan is 33p, heuristic resource makespan is 49p with 16p delay, inherited provisional velocity is `29p/2d`, and `CONTRACT_V3_DESIGN` is the only initial recommendation
+- CLI-surface-reset design gate: requirements, Contract 3 specification, basic design, migration guide, 14 `CLI3-*` cases, and design-consistency tests are accepted without runtime changes; the 5p task is advanced, 44p remain, observed provisional velocity is `5p/1d`, precedence/resource makespans are 28p/44p, `CLI_001_COMMAND_REGISTRY` is recommended, and `project init` remains backlog `MUT-001`
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all eight plans
 - write state: Stage 3 editing/advance commands are enabled using preview-first, diff and deletion-list review, expected digests, and reanalysis after writes.

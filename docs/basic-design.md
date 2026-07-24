@@ -1,8 +1,8 @@
 # perttool Basic Design
 
-- Document status: Draft 1.8
+- Document status: Draft 1.9
 - Created: 2026-07-21
-- Updated: 2026-07-23
+- Updated: 2026-07-24
 - Applicable requirements: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
@@ -18,6 +18,8 @@
 - Recommendation migration: [process/recommendation-migration.md](process/recommendation-migration.md)
 - Recommendation design review: [process/recommendation-design-review.md](process/recommendation-design-review.md)
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
+- CLI Contract 3: [specs/cli-contract-3.md](specs/cli-contract-3.md)
+- CLI Contract 3 migration: [process/cli-contract-3-migration.md](process/cli-contract-3-migration.md)
 - Mermaid profile: [specs/mermaid-profile.md](specs/mermaid-profile.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0005-node-22-runtime-baseline.md](adr/0005-node-22-runtime-baseline.md)
@@ -711,7 +713,7 @@ This heuristic returns a feasible schedule but does not guarantee minimum makesp
 
 ## 11. CLI design
 
-The CLI is resource-first. The [CLI Interface specification](specs/interfaces.md) is authoritative for commands, options, streams, exit codes, and JSON fields.
+The CLI is resource-first. The [CLI Interface specification](specs/interfaces.md) is authoritative for the implemented Contract 2 commands, options, streams, exit codes, and JSON fields. [CLI Contract 3](specs/cli-contract-3.md) is the accepted post-beta target and remains inactive until its atomic cutover.
 
 ```text
 perttool dsl check <file>
@@ -781,6 +783,37 @@ default: updated text or diff only
 6. Fsync the parent directory where supported.
 7. Reparse the file after rename and verify its digest.
 
+### 11.3 Contract 3 command registry and dispatch
+
+Contract 3 replaces handwritten dispatch/help duplication with one immutable
+typed registry under `src/help/` or a dedicated `src/command/` module selected
+during `CLI_001_COMMAND_REGISTRY`. Module naming does not change the following
+dependency rule.
+
+```text
+command descriptors
+       |
+       +--> argv dispatch validation
+       +--> text command help
+       +--> JSON command help
+       +--> usage-error help targets
+       +--> registry completeness tests
+```
+
+The descriptor layer may depend on shared public types and schema IDs. It does
+not depend on filesystem adapters, parse documents, run application services,
+or contain domain algorithms. The CLI adapter resolves a descriptor, validates
+argv against it, then calls the existing Application/Core path.
+
+Shared options are reusable descriptor fragments expanded into a complete
+per-command view. Expansion rejects duplicate or conflicting option names.
+Dispatch parity tests compare the expanded registry with every implemented
+handler; a handler or option without a descriptor is a build failure.
+
+Build the registry and Contract 3 projections before public cutover while
+keeping Contract 2 as the advertised surface. The cutover changes all breaking
+resource/action and JSON operation mappings in one logical change.
+
 ## 12. Post-MVP adapter boundaries
 
 The LSP server, VSIX/editor adapter, and MCP server are outside the MVP scope. Do not include LSP transport, a VS Code extension, an MCP server, or SDKs in the MVP repository structure, package dependencies, or acceptance tests.
@@ -840,6 +873,17 @@ Generate the following from the same registry.
 
 The complete normative grammar is `docs/specs/dsl-grammar.md`. Help provides self-contained operational guidance, but a duplicate of the complete EBNF is not the source of truth. Verify consistency among grammar, parser, formatter, and help samples through fixtures. Automatically verify that every related ID in the registry and every diagnostic `helpTopic` in parser fixtures resolves, and that stable `.pert` references for syntax and sample topics exist and can be parsed.
 
+Contract 3 separates two registry domains:
+
+- the command descriptor registry drives dispatch and `help` at top-level,
+  resource-level, and action-level;
+- the existing `HelpNode` graph drives conceptual `guide` topics.
+
+Neither registry substitutes for the other. Diagnostics reference a
+`guide_topic` for conceptual recovery and a structured `help_target` for argv
+recovery. `agent help` remains a third read-only registry backed by Guidance
+Core because it answers provider-capability questions.
+
 ## 14. Schemas and versioning
 
 Initial schemas:
@@ -855,6 +899,9 @@ Initial schemas:
 - `Perttool.ImportResult.v1`
 - `Perttool.AgentGuidanceResult.v1` (planned for beta Issue #2)
 - `Perttool.CliError.v1`
+- `Perttool.CommandHelpResult.v1` (Contract 3 target)
+- `Perttool.GuideResult.v1` (Contract 3 target)
+- `Perttool.InitResult.v1` (Contract 3 target)
 
 Rules:
 
@@ -863,6 +910,10 @@ Rules:
 - Adding optional fields is permitted within the same major schema.
 - Removing fields, changing semantics, or narrowing enums requires a major schema increase.
 - Emit golden JSON in stable key order.
+
+Every Contract 3 CLI JSON envelope also includes
+`cli_contract_version=3`. Contract 2 result shapes remain active until the
+atomic cutover.
 
 Reserve DSL version for future introduction as an optional field in the project block. When omitted in the MVP, treat it as version 1 grammar.
 
@@ -1109,6 +1160,35 @@ The migration is split into inventory, runtime messages, bundled help, normative
 
 The first task remained explicitly blocked until `plans/mvp.pert` reached `M8_BETA_RELEASED`. Because cross-plan dependencies are not yet implemented, that external gate was represented by a stable `blocked_reason`. After beta acceptance, the Stage 3 preview-first unblock procedure removed the reason and changed `SURFACE_INVENTORY` to `planned`. The inventory, normative-document, process-and-guidance, runtime-message, and help-and-usage migrations completed and advanced on 2026-07-24; fresh analysis now recommends `PERT_PLANS`.
 
+### Post-MVP Slice 4C: CLI Contract 3
+
+The [CLI Contract 3 specification](specs/cli-contract-3.md) fixes the complete
+review-derived target before runtime work starts. The independent
+[`cli-surface-reset.pert`](../plans/cli-surface-reset.pert) plan orders:
+
+1. the authoritative command descriptor registry;
+2. hierarchical command discovery, domain-guide separation, and usage-error
+   recovery;
+3. explicit project initialization and typed gate maintenance;
+4. one atomic breaking cutover; and
+5. installed-package file-first acceptance.
+
+`project init` remains backlog item `MUT-001` until its dedicated task
+implements and tests it. Contract 3 design acceptance neither exposes the
+command nor authorizes a package release. The
+[migration guide](process/cli-contract-3-migration.md) keeps Contract 2 active
+until all breaking names and JSON operations move together.
+
+Exit:
+
+- satisfy Requirements 21.2 and every `CLI3-*` normative case;
+- maintain one dispatch/help registry and separate command/domain/agent help
+  meanings;
+- initialize and maintain every entity type without manual source rewriting;
+- pass local-link and isolated-package acceptance;
+- preserve MCP, LSP, VSIX, i18n, Git, and multi-plan composition as independent
+  non-goals.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 As an independent future backlog after the first beta, split the work into the following three deliverables.
@@ -1121,7 +1201,7 @@ Fix LSP protocol capabilities, UTF-16 position mapping, VSIX packaging, workspac
 
 ## 18. Matters for detailed design
 
-The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for task mutation, local TextEdit, and comment ownership; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; and the [CLI Interface specification](specs/interfaces.md) determines the current CLI, help, and write safety. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
+The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for task mutation, local TextEdit, and comment ownership; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) determines the implemented Contract 2 CLI, help, and write safety; and the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the accepted post-beta command/help reset. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
 
 1. Implementation details for CST trivia/comment ownership rules
 2. Implementation details for the formatter's canonical whitespace
@@ -1141,6 +1221,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | Pure Core API | Sections 2.2 and 15; Chapter 17 |
 | CLI adapter | Chapters 15 and 17 |
 | Help registry | Chapter 16 |
+| CLI Contract 3 registry, help/guide split, and file-first maintenance | Sections 12.2, 15, 16, and 21.2 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
 | Mermaid adapter | Chapters 13 and 14 |
 | Test design | Section 20.3 and Chapter 21 |

@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.9
+- Document status: Draft 0.10
 - Created: 2026-07-21
-- Updated: 2026-07-23
+- Updated: 2026-07-24
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -694,6 +694,19 @@ Should:
 - Preserve unrelated comments and ordering through source-span-based local edits.
 - Accept a pre-change document digest and reject writes on conflict.
 
+The accepted post-beta [CLI Contract 3](specs/cli-contract-3.md) adds two
+maintenance capabilities without changing the file-first source of truth.
+
+Must:
+
+- Initialize the smallest valid project through an explicit preview-first
+  `project init` command and exclusive `--out`, without silently creating
+  tasks, gates, resources, or dependencies.
+- Add, change, and remove gates through source-preserving typed mutations.
+- Support connected gate/milestone/task changes in one atomic batch.
+- Keep project initialization and gate maintenance as unimplemented backlog
+  until their dedicated plan tasks and acceptance cases pass.
+
 ## 13. Visualization requirements
 
 Must:
@@ -786,6 +799,14 @@ perttool milestone add|set|remove ...
 perttool resource add|set|remove ...
 ```
 
+The accepted post-beta breaking target is
+[CLI Contract 3](specs/cli-contract-3.md). It replaces `dsl check|format` with
+`document check|format`, separates hierarchical command `help` from domain
+`guide`, replaces `mutation apply` with `batch apply`, and adds `project init`
+and `gate add|set|remove`. Contract 2 remains the implemented interface until
+the versioned atomic cutover; accepting the design does not advertise the
+target commands in `0.1.0`.
+
 Must:
 
 - Provide default text output for people.
@@ -822,6 +843,23 @@ Must:
 - Have CLI text and CLI JSON share the same help registry, reusable by future adapters.
 - With `--format json`, return topic, summary, syntax, examples, and related topics.
 - Refer to samples by stable sample ID rather than fixed absolute paths.
+
+The preceding requirements describe implemented Contract 2. At Contract 3
+cutover, command discovery and domain guidance have separate authorities.
+
+Must:
+
+- Provide top-level, resource-level, and action-level command discovery through
+  `perttool help` in text and JSON.
+- Derive dispatch validation, text help, and JSON help from one complete typed
+  command descriptor registry.
+- Expose operand and option types, requiredness, repeatability, defaults,
+  conflicts, input/stdin behavior, filesystem effects, result schemas, exit
+  statuses, and examples.
+- Move the existing domain topic graph to `perttool guide` without changing its
+  stable topic IDs.
+- Return the most specific structured command-help target for usage errors and
+  derive suggestions only from registered commands and options.
 
 ### 16.2 Context-sensitive diagnostics
 
@@ -884,7 +922,7 @@ The LSP server and VSIX have a server/client dependency. The MCP server can be d
 
 ## 18. JSON and schemas
 
-The [Mutation Semantics specification](specs/mutation.md) is authoritative for mutation Core requests, local TextEdits, comment ownership, and candidate revalidation. The [CLI Interface specification](specs/interfaces.md) is authoritative for CLI JSON envelopes and diagnostic, Rational, analysis, next, mutation, help, and conversion fields.
+The [Mutation Semantics specification](specs/mutation.md) is authoritative for mutation Core requests, local TextEdits, comment ownership, and candidate revalidation. The [CLI Interface specification](specs/interfaces.md) is authoritative for the implemented Contract 2 CLI JSON envelopes and diagnostic, Rational, analysis, next, mutation, help, and conversion fields. The [CLI Contract 3 specification](specs/cli-contract-3.md) is authoritative for the accepted target command/operation namespace, command-help and guide schemas, initialization result, and `cli_contract_version`.
 
 Must:
 
@@ -1016,6 +1054,35 @@ Do not include Issue #3 backlog hierarchy/multi-plan composition, the LSP server
 
 Migration of legacy surfaces under the English repository baseline is also excluded from this release gate. It proceeds after beta through `plans/english-baseline.pert`.
 
+### 21.2 CLI Contract 3 acceptance criteria
+
+CLI Contract 3 is a post-beta breaking change independent of first-beta
+acceptance. It is accepted only when all of the following are true.
+
+1. Requirements, Contract 3 specification, basic design, migration guide, and
+   package documentation agree on one complete resource/action surface.
+2. One command descriptor registry is authoritative for dispatch, validation,
+   text help, JSON help, schemas, exits, effects, and examples.
+3. `project init` creates the explicit smallest valid document through preview
+   and exclusive output, and remains backlog until that behavior is
+   implemented.
+4. Gate add/set/remove and connected atomic batches cover every gate field
+   without an implicit cascade.
+5. Command `help` is complete at top, resource, and action levels, while
+   `guide` owns domain topics.
+6. Usage errors return a stable exact help target and never suggest an
+   unavailable surface.
+7. All JSON envelopes identify Contract 3 and use the accepted operation
+   mapping.
+8. Contract 2 renamed spellings fail after the versioned cutover; no hidden
+   compatibility alias remains.
+9. An installed-package E2E initializes, reads, changes, analyzes, selects,
+   advances, and validates a plan without manual source rewriting.
+10. All `CLI3-*` normative cases in the Contract 3 specification pass.
+
+Design-document acceptance alone does not satisfy these implementation
+criteria.
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |
@@ -1068,6 +1135,7 @@ Resolved design decisions:
 - Override requirements, feasible replacements, human reasons, audit, and reanalysis: [Recommendation Human Override Contract specification](specs/recommendation-override.md)
 - Mermaid semantic records, canonical JSON, digests, projection, and fail-closed import: [Mermaid Profile specification](specs/mermaid-profile.md)
 - Provider/surface/guidance/risk taxonomy, support evidence, offline profile, and Core/text/JSON contracts: [AI Agent Guidance Registry specification](specs/agent-guidance.md)
+- Complete command discovery, domain-guide separation, file-first initialization and gate maintenance, naming, effects, schemas, and breaking migration: [CLI Contract 3 specification](specs/cli-contract-3.md)
 
 ## 25. Recommended next specification work
 
@@ -1094,6 +1162,7 @@ Before implementation, separate the specifications in the following order.
 9. [x] [Mermaid Profile specification](specs/mermaid-profile.md): `%% perttool:` semantic records, canonical JSON, integrity, projection, and lossless-import boundary
 10. [x] Mermaid export: `exportMermaid`, `dag render --to mermaid`, profile/plain loss reports, analysis annotation, and exclusive `--out`
 11. [x] Mermaid import: `importMermaid`, `dag import --from mermaid`, fail-closed profile restoration, plain loss reports, and round-trip E2E
+12. [x] [CLI Contract 3 design](specs/cli-contract-3.md): complete target surface, descriptor registry, command help, domain guide, project initialization, gate maintenance, migration boundary, and normative acceptance cases
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

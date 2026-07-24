@@ -4,13 +4,13 @@ project CLI_SURFACE_RESET:
   description |
     Convert docs/process/cli-surface-review.md and the CLI/help items in
     docs/backlog.md into an independent post-beta workstream. This plan records
-    future design, implementation, migration, and acceptance work only; creating
-    it does not adopt CLI contract 3 or authorize implementation. Estimates are
-    provisional relative points, and 29p/2d is inherited from the closest
-    completed operations workstream until this plan has its own completion sample.
+    future design, implementation, migration, and acceptance work only; it does not
+    make an uncompleted Contract 3 command available. Estimates are provisional
+    relative points. The first plan-specific sample is 5p/1d from Contract 3 design
+    completed on 2026-07-24; recalibrate after work on another active day.
   as_of 2026-07-24
   duration_unit point
-  velocity 29p/2d
+  velocity 5p/1d
   finish CLI_SURFACE_RESET_ACCEPTED
 
 resource DEVELOPERS:
@@ -35,12 +35,10 @@ resource PACKAGE_SURFACE:
   title "Installed-package and link acceptance ownership"
   capacity 1
 
-milestone REVIEW_BASELINE_READY:
-  title "CLI surface review and backlog baseline ready"
-  state reached
 
 milestone CONTRACT_V3_DESIGNED:
   title "CLI contract 3 requirements and design accepted"
+  state reached
 
 milestone COMMAND_REGISTRY_READY:
   title "CLI-001 command descriptor registry ready"
@@ -69,19 +67,6 @@ milestone CONTRACT_V3_CUTOVER_READY:
 milestone CLI_SURFACE_RESET_ACCEPTED:
   title "CLI-003 file-first maintenance workflow accepted"
 
-task CONTRACT_V3_DESIGN REVIEW_BASELINE_READY -> CONTRACT_V3_DESIGNED:
-  title "Turn the review baseline into the normative CLI contract 3 design"
-  description |
-    Update requirements, interface specification, basic design, migration
-    boundary, and acceptance cases so the complete resource/action surface,
-    common option rules, effects, schemas, and breaking mappings agree before
-    implementation starts. Do not implement the proposed commands in this task.
-  duration 5p
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
 
 task CLI_001_COMMAND_REGISTRY CONTRACT_V3_DESIGNED -> COMMAND_REGISTRY_READY:
   title "CLI-001 adopt one command descriptor registry"

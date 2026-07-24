@@ -1,20 +1,21 @@
 # CLI surface review for human and LLM users
 
-- Status: Review baseline
+- Status: Design accepted; implementation pending
 - Date: 2026-07-24
 - Current CLI contract: 2
-- Proposed CLI contract: 3
+- Accepted target CLI contract: 3
 - Related backlog: [../backlog.md](../backlog.md)
 - Related plan: [../../plans/cli-surface-reset.pert](../../plans/cli-surface-reset.pert)
+- Normative target: [../specs/cli-contract-3.md](../specs/cli-contract-3.md)
+- Migration: [cli-contract-3-migration.md](cli-contract-3-migration.md)
 
 ## Purpose
 
 This review evaluates whether a user or an LLM can discover the complete
 perttool surface, understand side effects, and maintain a `.pert` file without
 guessing. It separates confirmed behavior in `0.1.0` from the proposed breaking
-contract. The proposal is not implemented by this document.
-The related plan sequences the reviewed work but does not accept the proposed
-contract or authorize implementation.
+contract. The reviewed target is now accepted by the Contract 3 specification,
+but it is not implemented by this document or available in `0.1.0`.
 
 ## Confirmed current surface
 
@@ -69,7 +70,7 @@ atomic replacement; `--out` exclusively creates a new path.
 - Project initialization and gate mutation are the blockers to claiming that a
   plan can be maintained entirely through typed tools.
 
-## Proposed contract 3
+## Accepted Contract 3 design target
 
 The next breaking beta should expose this canonical surface:
 
@@ -155,7 +156,7 @@ copy of an option set is accepted.
 
 ## Acceptance boundary
 
-Contract 3 is accepted only when:
+Contract 3 implementation is accepted only when:
 
 1. requirements, interface specification, basic design, and migration notes
    agree on the full surface;

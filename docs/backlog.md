@@ -14,7 +14,10 @@ The evidence and proposed breaking surface are recorded in the
 [CLI surface review](process/cli-surface-review.md).
 The eight items below are mapped one-to-one into
 [`plans/cli-surface-reset.pert`](../plans/cli-surface-reset.pert), preceded by a
-normative contract-design task. The plan does not mark any item implemented.
+normative contract-design task. The
+[Contract 3 specification](specs/cli-contract-3.md) and
+[migration guide](process/cli-contract-3-migration.md) accept that design
+target. None of the eight implementation items is complete.
 
 ### CLI-001: Adopt one command descriptor registry
 
@@ -81,6 +84,7 @@ Acceptance:
 ### MUT-001: Initialize a project through the CLI
 
 Priority: P0
+Status: Backlog; contract designed, not implemented
 
 Add a preview-first project initialization command that creates the smallest
 valid `.pert` document through the same validated and exclusive-create path as

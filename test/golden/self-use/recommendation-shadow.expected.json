@@ -37,21 +37,20 @@
       "diagnostic_codes": []
     },
     "cli-surface-reset": {
-      "source_digest": "sha256:337f17efbbd633e7ae14e70676ca69502dfab4adc6f9f08659d32e8e53f65680",
+      "source_digest": "sha256:787097085074e9d08f3fdfd3f4af030e049152dfe10b8145fbb85eb4f0233939",
       "groups": {
         "active": [],
         "ready": [
-          "CONTRACT_V3_DESIGN"
+          "CLI_001_COMMAND_REGISTRY",
+          "MUT_002_GATE_MAINTENANCE",
+          "MUT_001_PROJECT_INIT"
         ],
         "runnable_now": [
-          "CONTRACT_V3_DESIGN"
+          "CLI_001_COMMAND_REGISTRY"
         ],
         "blocked_now": [],
         "upcoming": [
-          "CLI_001_COMMAND_REGISTRY",
           "HELP_001_COMMAND_DISCOVERY",
-          "MUT_002_GATE_MAINTENANCE",
-          "MUT_001_PROJECT_INIT",
           "HELP_003_USAGE_RECOVERY",
           "HELP_002_DOMAIN_GUIDE_SPLIT",
           "CLI_002_CONTRACT_V3_CUTOVER",
@@ -59,32 +58,74 @@
         ]
       },
       "recommended_task_ids": [
-        "CONTRACT_V3_DESIGN"
+        "CLI_001_COMMAND_REGISTRY"
       ],
       "manual_selected_task_ids": [
-        "CONTRACT_V3_DESIGN"
+        "CLI_001_COMMAND_REGISTRY"
       ],
       "tiers": {
-        "CONTRACT_V3_DESIGN": "recommended"
+        "CLI_001_COMMAND_REGISTRY": "recommended",
+        "MUT_002_GATE_MAINTENANCE": "deferred",
+        "MUT_001_PROJECT_INIT": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "CONTRACT_V3_DESIGN",
+          "id": "CLI_001_COMMAND_REGISTRY",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
+        },
+        {
+          "id": "MUT_002_GATE_MAINTENANCE",
+          "runnable_now": false,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "10/1",
+          "resource_rejections": [
+            {
+              "resource_id": "CLI_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "CLI_001_COMMAND_REGISTRY"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "MUT_001_PROJECT_INIT",
+          "runnable_now": false,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "13/1",
+          "resource_rejections": [
+            {
+              "resource_id": "CLI_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "CLI_001_COMMAND_REGISTRY"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
-        "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "task_decisions": 3,
+        "decision_steps": 18,
+        "facts": 76,
+        "comparisons": 4,
+        "reasons": 12,
+        "descriptions": 7
       },
       "diagnostic_codes": []
     },

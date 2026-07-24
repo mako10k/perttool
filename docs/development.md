@@ -75,6 +75,8 @@ Key design documents:
 - [Beta versioning ADR](adr/0003-beta-versioning.md)
 - [English repository baseline ADR](adr/0004-english-repository-baseline.md)
 - [CLI interface](specs/interfaces.md)
+- [CLI Contract 3 target](specs/cli-contract-3.md)
+- [CLI Contract 3 migration](process/cli-contract-3-migration.md)
 - [Mutation semantics](specs/mutation.md)
 - [Mermaid profile](specs/mermaid-profile.md)
 - [Recommendation interface](specs/recommendation-interface.md)

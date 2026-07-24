@@ -4,7 +4,7 @@
 - Interface version: 2
 - CLI contract version: 2
 - Created: 2026-07-21
-- Updated: 2026-07-23
+- Updated: 2026-07-24
 - Requirements: [../requirements.md](../requirements.md)
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
@@ -18,10 +18,15 @@
 - Future recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Future AI Agent Guidance interface: [agent-guidance.md](agent-guidance.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
+- Accepted future CLI contract: [cli-contract-3.md](cli-contract-3.md)
 
 ## 1. Purpose and MVP Boundary
 
 This is the normative specification that fixes the perttool MVP CLI commands, options, standard input/output, exit codes, text output, and CLI JSON results.
+
+This document remains the implemented CLI contract version 2 specification.
+The accepted [CLI Contract 3](cli-contract-3.md) is a future breaking target
+and does not supersede this document until its atomic cutover.
 
 The primary MVP interface is the local CLI. AI agents also use the CLI's `--format json`, rather than MCP, to perform checks, analysis, next-task selection, and preview mutations.
 
@@ -1179,3 +1184,8 @@ duplicating semantic rules in adapters. Define MCP-specific summaries,
 transport errors, tool schemas, LSP capabilities, and VSIX packaging/server
 distribution in separate versioned specifications; do not retroactively add
 them to the completion criteria for the CLI MVP or the first beta.
+
+CLI Contract 3 is separately versioned because it changes resources, actions,
+JSON operation names, help schemas, and usage-error recovery. Implementations
+must follow its [migration boundary](../process/cli-contract-3-migration.md)
+rather than adding Contract 3 aliases to this Contract 2 surface.
