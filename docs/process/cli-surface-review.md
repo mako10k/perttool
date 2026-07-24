@@ -1,6 +1,6 @@
 # CLI surface review for human and LLM users
 
-- Status: Review complete; Contract 3 source cutover implemented
+- Status: Review complete; Contract 3 source and installed-package acceptance complete
 - Date: 2026-07-24
 - Published `0.1.0` CLI contract: 2
 - Current source CLI contract: 3
@@ -15,7 +15,8 @@ This review evaluates whether a user or an LLM can discover the complete
 perttool surface, understand side effects, and maintain a `.pert` file without
 guessing. It separates confirmed behavior in `0.1.0` from the reviewed breaking
 contract. The current source implements that target through the atomic Contract
-3 cutover; the already published `0.1.0` artifact remains Contract 2.
+3 cutover and has passed isolated installed-package acceptance; the already
+published `0.1.0` artifact remains Contract 2.
 
 ## Confirmed published `0.1.0` surface
 
@@ -167,9 +168,10 @@ Contract 3 implementation is accepted only when:
 6. old contract-2 commands fail according to the documented beta migration;
 7. README examples use only the accepted installed surface.
 
-The source cutover satisfies items 1 through 4, 6, and 7. Item 5 remains the
-separate `CLI_003_FILE_FIRST_ACCEPTANCE` task and blocks release acceptance,
-but does not restore the source to a mixed or Contract 2 surface.
+The source cutover satisfies items 1 through 4, 6, and 7.
+`CLI_003_FILE_FIRST_ACCEPTANCE` satisfies item 5 through an isolated installed
+tarball and completes the review-derived workstream. This acceptance neither
+publishes a package nor restores a mixed or Contract 2 source surface.
 
 Shell completion, interactive prompts, TUI, MCP, LSP, VSIX, locale negotiation,
 and direct Git operations are non-goals for this reset.

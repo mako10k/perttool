@@ -1,6 +1,6 @@
 # CLI Contract 3 Specification
 
-- Document status: Active source contract; installed-package acceptance pending
+- Document status: Active source contract; installed-package acceptance complete
 - Specification version: 1
 - Target CLI contract version: 3
 - Created: 2026-07-24
@@ -21,10 +21,10 @@ remains a Contract 2 artifact and does not accept these commands. No package
 publication is authorized by the source cutover.
 
 The cutover activated the complete command and JSON namespace at once,
-including direct project initialization and gate maintenance. The remaining
-`CLI_003_FILE_FIRST_ACCEPTANCE` task verifies the complete workflow from an
-isolated installed package; until that passes, Contract 3 is implemented but
-not release-accepted.
+including direct project initialization and gate maintenance.
+`CLI_003_FILE_FIRST_ACCEPTANCE` then verified the complete workflow from an
+isolated installed package. This local acceptance does not select a package
+version, publish an artifact, or mutate an npm dist-tag.
 
 ## 2. Product invariants and non-goals
 
@@ -474,7 +474,7 @@ one cutover. It does not offer a Contract 2 schema or spelling switch.
 | CLI3-013 | README and package examples contain only the accepted Contract 3 surface at cutover. |
 | CLI3-014 | Repeating the same help query returns byte-identical JSON and semantically identical text. |
 
-Contract 3 is not release-accepted by passing only the design-document checks
-or the source cutover. `CLI3-001` through `CLI3-011`, `CLI3-013`, and
-`CLI3-014` require cutover evidence; `CLI3-012` requires the separate
-file-first installed-package acceptance task.
+`CLI3-001` through `CLI3-011`, `CLI3-013`, and `CLI3-014` have cutover
+evidence. `CLI3-012` has a separate installed-package file-first E2E that uses
+no repository Core imports. Together they accept this contract for a future
+release, but do not select a version or authorize publication.

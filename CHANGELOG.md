@@ -11,6 +11,10 @@ This project records its notable changes here. The format is based on [Keep a Ch
   `mutation` spellings; every CLI JSON envelope now identifies contract 3;
   command dispatch, validation, and text/JSON help share the active typed
   registry; and obsolete spellings fail with structured usage recovery.
+- Accepted the complete file-first Contract 3 workflow from an isolated
+  installed tarball, covering initialization, direct file inspection, every
+  project/task/gate/milestone/resource field, analysis, recommendation,
+  completion, advance, and final validation without manual `.pert` rewriting.
 - Promoted the accepted `perttool@0.1.0` beta to npm `latest` through an explicit post-release dist-tag operation. This changes the default install target without changing beta product maturity.
 - Lowered the source and next-release runtime baseline from Node.js 24 to maintained Node.js 22, with CI coverage for Node.js 22 and 24.
 - Reworked the root README as a user guide with `npx` and `npm exec` examples, and moved repository setup and verification to `docs/development.md`.

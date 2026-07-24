@@ -1,6 +1,6 @@
 # CLI Contract 3 migration
 
-- Status: Source cutover complete; installed-package acceptance pending
+- Status: Source cutover and installed-package acceptance complete
 - Date: 2026-07-24
 - From: CLI contract 2 in perttool `0.1.0`
 - Target: [CLI Contract 3](../specs/cli-contract-3.md)
@@ -23,7 +23,7 @@ The cutover:
 - `cli_contract_version=3` appears in every JSON envelope;
 - help, README, examples, package smoke tests, and CHANGELOG change together;
 - obsolete Contract 2 spellings fail instead of becoming aliases;
-- the package is not accepted until the installed-package workflow passes.
+- installed-package acceptance is local release evidence, not publication.
 
 ## 2. Consumer mapping
 
@@ -67,7 +67,7 @@ The dependency order is fixed by `plans/cli-surface-reset.pert`.
    descriptors; their direct commands remain inactive until cutover.
 5. `CLI_002_CONTRACT_V3_CUTOVER` activated all breaking names and operations in
    one versioned source change and removed Contract 2 acceptance.
-6. `CLI_003_FILE_FIRST_ACCEPTANCE` verifies the installed package and accepts
+6. `CLI_003_FILE_FIRST_ACCEPTANCE` verified the installed package and accepted
    the complete workflow.
 
 Do not mark an implementation prerequisite complete by changing only help or
@@ -76,8 +76,8 @@ release.
 
 ## 4. Compatibility window
 
-The compatibility window is documentation and prerelease review before the
-Contract 3 package is accepted. Runtime dual emission is not provided.
+The compatibility window is documentation and prerelease review before a
+Contract 3 release is published. Runtime dual emission is not provided.
 
 - The published `0.1.0` package remains the last current Contract 2 artifact.
 - In the current source and future Contract 3 packages, Contract 3 works and
@@ -105,7 +105,7 @@ The cutover change must demonstrate:
 
 Publication, npm dist-tag mutation, and GitHub release creation require their
 normal separate authorization and release gates. Completing the local cutover
-does not authorize any external write.
+and installed-package acceptance does not authorize any external write.
 
 ## 6. Failure, restart, and rollback
 
@@ -118,6 +118,7 @@ After a Contract 3 package is published, rollback means selecting and
 installing the last Contract 2 package or publishing a separately reviewed
 fix. Do not restore mixed aliases in a patch as an undocumented rollback.
 
-A failed installed-package acceptance leaves
-`CLI_003_FILE_FIRST_ACCEPTANCE` incomplete. Correct the implementation, rebuild
+Before the completed installed-package acceptance, a failure left
+`CLI_003_FILE_FIRST_ACCEPTANCE` incomplete. That restart rule remains the rule
+for future release-candidate regressions: correct the implementation, rebuild
 one verified tarball, and rerun the complete acceptance workflow.

@@ -1222,14 +1222,17 @@ review-derived target before runtime work starts. The independent
 3. explicit project initialization and typed gate maintenance;
 4. one atomic breaking cutover, completed by
    `CLI_002_CONTRACT_V3_CUTOVER`; and
-5. installed-package file-first acceptance.
+5. installed-package file-first acceptance, completed by
+   `CLI_003_FILE_FIRST_ACCEPTANCE`.
 
 `MUT-001` implemented and tested project initialization Core, output
 projection, exclusive creation, and its internal descriptor without
 authorizing a package release. The [migration
 guide](process/cli-contract-3-migration.md) kept Contract 2 active until all
-breaking names and JSON operations moved together. The remaining slice task is
-installed-package file-first acceptance.
+breaking names and JSON operations moved together. The isolated package
+workflow now verifies every entity field and the complete
+initialize/read/change/analyze/select/advance/validate sequence without
+importing the repository Core or manually rewriting the document.
 
 Exit:
 

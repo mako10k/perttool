@@ -22,10 +22,12 @@ const backlogIds = [
   "CLI-003",
 ];
 
-test("Contract 3 backlog and current plan preserve completed cutover traceability", async () => {
-  const [backlog, plan] = await Promise.all([
+test("Contract 3 backlog and current plan preserve completed acceptance traceability", async () => {
+  const [backlog, plan, packageCheck, fileFirstCheck] = await Promise.all([
     repositoryText("docs/backlog.md"),
     repositoryText("plans/cli-surface-reset.pert"),
+    repositoryText("scripts/check-package.sh"),
+    repositoryText("scripts/check-package-file-first.mjs"),
   ]);
 
   const actualBacklogIds = [...backlog.matchAll(/^### ([A-Z]+-\d{3}):/gm)]
@@ -40,6 +42,7 @@ test("Contract 3 backlog and current plan preserve completed cutover traceabilit
     "MUT-001",
     "MUT-002",
     "CLI-002",
+    "CLI-003",
   ]);
   for (const backlogId of backlogIds) {
     const taskId = backlogId.replace("-", "_");
@@ -90,9 +93,17 @@ test("Contract 3 backlog and current plan preserve completed cutover traceabilit
   );
   assert.doesNotMatch(plan, /^task CLI_002_CONTRACT_V3_CUTOVER /m);
   assert.match(
-    plan,
-    /^milestone CONTRACT_V3_CUTOVER_READY:\n  title "CLI-002 breaking contract 3 cutover ready"\n  state reached$/m,
+    backlog,
+    /^### CLI-003: File-first maintenance acceptance\n\nPriority: P1\n\nStatus: Complete \(2026-07-24\)$/m,
   );
+  assert.doesNotMatch(plan, /^task CLI_003_FILE_FIRST_ACCEPTANCE /m);
+  assert.match(
+    plan,
+    /^milestone CLI_SURFACE_RESET_ACCEPTED:\n  title "CLI-003 file-first maintenance workflow accepted"\n  state reached$/m,
+  );
+  assert.match(packageCheck, /scripts\/check-package-file-first\.mjs/);
+  assert.match(fileFirstCheck, /installed package file-first acceptance passed/);
+  assert.doesNotMatch(fileFirstCheck, /(?:from|import\()\s*["'][^"']*dist\//);
 });
 
 test("Contract 3 has one complete normative acceptance-case sequence", async () => {
@@ -108,7 +119,7 @@ test("Contract 3 has one complete normative acceptance-case sequence", async () 
   assert.match(specification, /Contract 3 is the active interface in the current source/);
   assert.match(
     specification,
-    /remaining\n`CLI_003_FILE_FIRST_ACCEPTANCE` task verifies the complete workflow/,
+    /`CLI_003_FILE_FIRST_ACCEPTANCE` then verified the complete workflow/,
   );
 });
 

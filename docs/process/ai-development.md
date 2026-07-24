@@ -137,12 +137,14 @@ as an independent post-beta workstream in
 `CONTRACT_V3_DESIGN`, `CLI_001_COMMAND_REGISTRY`,
 `HELP_001_COMMAND_DISCOVERY`, `HELP_002_DOMAIN_GUIDE_SPLIT`,
 `HELP_003_USAGE_RECOVERY`, `MUT_001_PROJECT_INIT`, and
-`MUT_002_GATE_MAINTENANCE` are complete and
-advanced. `CLI_002_CONTRACT_V3_CUTOVER` then activated hierarchical command
+`MUT_002_GATE_MAINTENANCE` are complete and advanced.
+`CLI_002_CONTRACT_V3_CUTOVER` then activated hierarchical command
 help, the separate domain-guide projection, registry-scoped usage recovery,
 project initialization, gate maintenance, all renamed commands, and Contract 3
-JSON envelopes in one source change. The remaining task is
-`CLI_003_FILE_FIRST_ACCEPTANCE`; the published `0.1.0` artifact remains
+JSON envelopes in one source change. `CLI_003_FILE_FIRST_ACCEPTANCE` completed
+the installed-package initialize/read/change/analyze/select/advance/validate
+workflow using typed mutations for every entity field. The detail plan is now
+complete with no recommendation. The published `0.1.0` artifact remains
 Contract 2 until a separately authorized release.
 
 ### 5.1 Adopted Recommendation authority

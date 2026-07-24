@@ -234,6 +234,9 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
     });
   '
 "$installed_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null
+node scripts/check-package-file-first.mjs \
+  "$installed_cli" \
+  "$package_root/file-first-workflow"
 installed_guide_module="$install_prefix/lib/node_modules/$package_name/dist/help/guide.js"
 node --input-type=module - "$installed_guide_module" <<'NODE'
 import { pathToFileURL } from "node:url";

@@ -18,8 +18,8 @@ normative contract-design task. The
 [Contract 3 specification](specs/cli-contract-3.md) and
 [migration guide](process/cli-contract-3-migration.md) accept that design
 target. `CLI-001`, all three `HELP-*` items, project initialization, gate
-maintenance, and the atomic public `CLI-002` cutover are complete. One
-installed-package acceptance item remains open.
+maintenance, the atomic public `CLI-002` cutover, and installed-package
+acceptance are complete.
 
 ### CLI-001: Adopt one command descriptor registry
 
@@ -168,6 +168,8 @@ Acceptance:
 
 Priority: P1
 
+Status: Complete (2026-07-24)
+
 Verify the intended workflow: read the text file directly, use commands for
 validated maintenance, and use JSON for automated decisions.
 
@@ -182,6 +184,12 @@ Acceptance:
   check`, `dag analyze`, and `dag next`;
 - an end-to-end test creates, changes, analyzes, advances, and validates a plan
   without manually rewriting the file.
+
+`scripts/check-package-file-first.mjs` now runs from `check:package` against
+only the isolated installed CLI. It initializes and directly reads a plan,
+uses an atomic batch and typed commands to cover every declared entity field,
+observes blocked, recommended, active, and done task states through JSON,
+advances completed history, and validates the final one-frontier document.
 
 ## Independent post-beta work
 

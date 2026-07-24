@@ -37,7 +37,9 @@ npm run check:package
 `check:link` uses a temporary user prefix and does not modify the real npm
 global prefix. `check:package` creates a release tarball in a temporary
 directory, verifies the package allowlist and publish normalization, installs it
-into an isolated prefix, and runs CLI and library smoke checks.
+into an isolated prefix, runs CLI and library smoke checks, and completes the
+file-first initialize/read/change/analyze/select/advance/validate workflow
+through that installed CLI alone.
 
 ## Link a checkout locally
 
