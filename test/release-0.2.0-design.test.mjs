@@ -41,7 +41,7 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
   assert.match(requirements, /^### 21\.3 CLI Contract 3 beta release acceptance criteria$/m);
   const releaseSection = requirements.split(
     "### 21.3 CLI Contract 3 beta release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split("### 21.4 ")[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],

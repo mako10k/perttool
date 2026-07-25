@@ -107,9 +107,10 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
     plan,
     /task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED ->[\s\S]*Do not activate the public CLI, result schemas, or normal authority in this slice\./,
   );
+  assert.doesNotMatch(plan, /task SU_M4_UNIT_MIGRATION_WORK_PACKAGE/);
   assert.match(
     plan,
-    /task SU_M4_UNIT_MIGRATION_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED ->[\s\S]*do not publish the Contract 4 command, package surface, or installed workflow in this slice\./,
+    /milestone UNIT_MIGRATION_ACCEPTED:[\s\S]*state reached/,
   );
   assert.match(
     plan,
