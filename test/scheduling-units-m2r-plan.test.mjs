@@ -21,7 +21,6 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "RATIONAL_DURATION_CONTRACT",
     "RATIONAL_DURATION_SOURCE_MODEL",
     "EXACT_DURATION_SERIALIZER",
     "RATIONAL_DURATION_FORMATTER",
@@ -33,11 +32,12 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 24);
+  assert.equal(points, 20);
 
+  assert.doesNotMatch(detail, /^task RATIONAL_DURATION_CONTRACT /m);
   assert.match(
     detail,
-    /task RATIONAL_DURATION_CONTRACT[\s\S]*requirements, DSL grammar, unit-migration and interface specifications, basic design, examples, and acceptance cases/,
+    /milestone RATIONAL_DURATION_CONTRACT_ACCEPTED:[\s\S]*state reached/,
   );
   assert.match(
     detail,
@@ -47,15 +47,6 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
     detail,
     /upgrades a source document to the newly selected target grammar only when an exact generated fraction requires it/,
   );
-  assert.match(
-    detail,
-    /Do not widen Grammar 1 or accepted Grammar 2 in place or activate Contract 4\./,
-  );
-  assert.match(
-    detail,
-    /select new grammar, unit-migration, and public result or interface identities where compatibility requires them/,
-  );
-
   assert.match(
     macro,
     /task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> RATIONAL_DURATION_ACCEPTED/,

@@ -14,6 +14,15 @@ export interface DurationValue {
   readonly suffix: "d" | "h" | "p";
 }
 
+export interface DurationFractionValue {
+  readonly text: string;
+  readonly numerator: bigint;
+  readonly denominator: bigint;
+  readonly suffix: "d" | "h" | "p";
+}
+
+export type ExactDurationValue = DurationValue | DurationFractionValue;
+
 export interface VelocityValue {
   readonly text: string;
   readonly points: DurationValue & { readonly suffix: "p" };
@@ -86,14 +95,33 @@ export function fieldNamed(
 }
 
 export function compareDurations(
-  left: DurationValue,
-  right: DurationValue,
+  left: ExactDurationValue,
+  right: ExactDurationValue,
 ): number {
-  const leftScaled = left.digits * 10n ** BigInt(right.scale);
-  const rightScaled = right.digits * 10n ** BigInt(left.scale);
-  return leftScaled < rightScaled ? -1 : leftScaled > rightScaled ? 1 : 0;
+  const leftRatio = durationRatio(left);
+  const rightRatio = durationRatio(right);
+  const leftScaled = leftRatio.numerator * rightRatio.denominator;
+  const rightScaled = rightRatio.numerator * leftRatio.denominator;
+  return leftScaled < rightScaled
+    ? -1
+    : leftScaled > rightScaled
+      ? 1
+      : 0;
 }
 
-export function isZeroDuration(value: DurationValue): boolean {
-  return value.digits === 0n;
+export function isZeroDuration(value: ExactDurationValue): boolean {
+  return "numerator" in value
+    ? value.numerator === 0n
+    : value.digits === 0n;
+}
+
+function durationRatio(
+  value: ExactDurationValue,
+): { readonly numerator: bigint; readonly denominator: bigint } {
+  return "numerator" in value
+    ? { numerator: value.numerator, denominator: value.denominator }
+    : {
+        numerator: value.digits,
+        denominator: 10n ** BigInt(value.scale),
+      };
 }

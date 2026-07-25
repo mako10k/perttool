@@ -11,10 +11,15 @@ import {
 import type { DocumentNode } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import {
+  parseTargetGrammar3Document,
   parseTargetDocument,
+  type TargetGrammar3Capability,
   type TargetGrammar2Capability,
 } from "../parser/document-parser.js";
-import { validateTargetDocumentSemantics } from "./validator.js";
+import {
+  validateTargetDocumentSemantics,
+  validateTargetGrammar3DocumentSemantics,
+} from "./validator.js";
 
 export interface TargetValidationOptions {
   readonly maxDiagnostics?: number;
@@ -40,6 +45,21 @@ export interface TargetDocumentValidationResult {
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticCounts: DiagnosticCounts;
   readonly diagnosticsTruncated: boolean;
+}
+
+const targetGrammar3ValidatedDocumentBrand: unique symbol = Symbol(
+  "perttool.target-grammar-3-validated-document",
+);
+
+export interface TargetGrammar3ValidatedDocument {
+  readonly [targetGrammar3ValidatedDocumentBrand]: true;
+  readonly grammarVersion: 1 | 2 | 3;
+  readonly document: DocumentNode;
+}
+
+export interface TargetGrammar3DocumentValidationResult
+  extends Omit<TargetDocumentValidationResult, "validatedDocument"> {
+  readonly validatedDocument: TargetGrammar3ValidatedDocument | null;
 }
 
 export function validateTargetDocument(
@@ -84,6 +104,64 @@ export function validateTargetDocument(
     validatedDocument: ok && validatedGrammarVersion !== undefined
       ? Object.freeze({
           [targetValidatedDocumentBrand]: true as const,
+          grammarVersion: validatedGrammarVersion,
+          document: parsed.document,
+        })
+      : null,
+    diagnostics: limited.diagnostics,
+    diagnosticCounts,
+    diagnosticsTruncated: parsed.diagnosticsTruncated || limited.truncated,
+  };
+}
+
+export function validateTargetGrammar3Document(
+  text: string,
+  capability: TargetGrammar3Capability,
+  options: TargetValidationOptions = {},
+): TargetGrammar3DocumentValidationResult {
+  const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
+  const parsed = parseTargetGrammar3Document(
+    text,
+    capability,
+    { maxDiagnostics },
+  );
+  const validatedDiagnostics = validateTargetGrammar3DocumentSemantics(
+    parsed.document,
+    parsed.diagnostics,
+  );
+  const limited = limitDiagnostics(validatedDiagnostics, maxDiagnostics);
+  const project = parsed.document.declarations.find(
+    (declaration) => declaration.kind === "project",
+  );
+  const declaredVersion = project === undefined
+    ? undefined
+    : fieldNamed(project, "version")?.value ?? 1;
+  const parseFailed = parsed.diagnostics.some(
+    (diagnostic) => diagnostic.severity === "error",
+  );
+  const diagnosticCounts = parseFailed
+    ? parsed.diagnosticCounts
+    : countDiagnostics(validatedDiagnostics);
+  const ok = !hasErrors(validatedDiagnostics);
+  const validatedGrammarVersion =
+    declaredVersion === 1 ||
+    declaredVersion === 2 ||
+    declaredVersion === 3
+      ? declaredVersion
+      : undefined;
+  return {
+    ok,
+    document: parsed.document,
+    documentId: project?.id ?? null,
+    grammarVersion: parseFailed
+      ? null
+      : typeof declaredVersion === "number"
+        ? declaredVersion
+        : 1,
+    parseFailed,
+    validatedDocument: ok && validatedGrammarVersion !== undefined
+      ? Object.freeze({
+          [targetGrammar3ValidatedDocumentBrand]: true as const,
           grammarVersion: validatedGrammarVersion,
           document: parsed.document,
         })

@@ -557,11 +557,12 @@ the Contract 4 public cutover after shadow and unknown-result safe-stop
 acceptance. Package publication remains a separate decision after that local
 acceptance.
 
-The current source still implements only the internal Grammar 2 target
-capability described below. SU-M2R introduces a separately identity-checked
-Grammar 3 capability rather than changing `TARGET_GRAMMAR_2_CAPABILITY` in
-place. Until that implementation and its acceptance task complete, the active
-Grammar 1 parser and accepted internal Grammar 2 behavior remain unchanged.
+The current source implements the internal Grammar 2 target capability and a
+separately identity-checked Grammar 3 source capability rather than changing
+`TARGET_GRAMMAR_2_CAPABILITY` in place. Grammar 3 parsing and validation plus
+exact source serialization are internal SU-M2R inputs; formatter, mutation,
+version-boundary, and acceptance work remains. The active Grammar 1 parser
+and accepted internal Grammar 2 behavior remain unchanged.
 
 The SU-M2 source implementation keeps `parseDocument` fixed to the active
 Grammar 1 profile. Target parsing requires the identity-checked internal
@@ -570,6 +571,22 @@ the added fields. Declared date and date-time tokens become exact internal
 `DeclaredCalendarValue` records while retaining their original spelling and
 source spans. The capability, target parser, and calendar records are not
 re-exported from `src/index.ts`.
+
+The SU-M2R source implementation adds
+`TARGET_GRAMMAR_3_CAPABILITY`, `parseTargetGrammar3Document`, and
+`validateTargetGrammar3Document` as a separate internal boundary. Explicit
+Grammar 3 Duration accepts the existing Decimal record or an additive
+`DurationFractionValue`. A Fraction retains its original token and source
+span while storing a reduced nonnegative numerator and positive denominator.
+Exact cross-form comparisons enforce zero, positivity, and PERT ordering
+without binary floating point. Grammar 1 and Grammar 2 continue to reject
+Fraction Duration, and velocity remains Decimal-only.
+
+The internal `serializeExactDurationSource` helper consumes a Rational and
+Duration unit. It emits the shortest exact ordinary Decimal when the reduced
+denominator has no prime factors other than 2 and 5, otherwise a reduced
+Fraction. It uses BigInt arithmetic only and is independent from display
+precision and rounding.
 
 The active and target parsers derive their accepted fields from shared
 canonical declaration-field orders. The internal target formatter reuses the

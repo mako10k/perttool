@@ -11,7 +11,7 @@ import {
 import type {
   DeclarationNode,
   DocumentNode,
-  DurationValue,
+  ExactDurationValue,
   FieldNode,
   RequirementValue,
   VelocityValue,
@@ -73,19 +73,25 @@ interface Edge {
 interface ValidationProfile {
   readonly supportedGrammarVersions: ReadonlySet<number>;
   readonly unsupportedVersionMessage: string;
-  readonly requireTemporalAnchor: boolean;
+  readonly temporalAnchorGrammarVersions: ReadonlySet<number>;
 }
 
 const grammar1ValidationProfile: ValidationProfile = {
   supportedGrammarVersions: new Set([1]),
   unsupportedVersionMessage: "Only grammar version 1 is supported",
-  requireTemporalAnchor: false,
+  temporalAnchorGrammarVersions: new Set(),
 };
 
 const targetValidationProfile: ValidationProfile = {
   supportedGrammarVersions: new Set([1, 2]),
   unsupportedVersionMessage: "Only grammar versions 1 and 2 are supported",
-  requireTemporalAnchor: true,
+  temporalAnchorGrammarVersions: new Set([2]),
+};
+
+const targetGrammar3ValidationProfile: ValidationProfile = {
+  supportedGrammarVersions: new Set([1, 2, 3]),
+  unsupportedVersionMessage: "Only grammar versions 1, 2, and 3 are supported",
+  temporalAnchorGrammarVersions: new Set([2, 3]),
 };
 
 function makeDiagnostic(
@@ -162,12 +168,18 @@ function validateDuplicateFields(
   }
 }
 
-function durationValue(field: FieldNode | undefined): DurationValue | undefined {
+function durationValue(
+  field: FieldNode | undefined,
+): ExactDurationValue | undefined {
   if (field === undefined || typeof field.value !== "object" || field.value === null) {
     return undefined;
   }
-  return "digits" in field.value && "suffix" in field.value
-    ? (field.value as DurationValue)
+  if (!("suffix" in field.value)) return undefined;
+  return (
+    ("digits" in field.value && "scale" in field.value) ||
+    ("numerator" in field.value && "denominator" in field.value)
+  )
+    ? (field.value as ExactDurationValue)
     : undefined;
 }
 
@@ -577,10 +589,16 @@ function validateFieldConstraints(
     }
   }
 
-  if (!profile.requireTemporalAnchor || projects.length !== 1) return;
+  if (projects.length !== 1) return;
   const project = projects[0]!;
   const version = fieldNamed(project, "version")?.value ?? 1;
-  if (version !== 2 || fieldNamed(project, "as_of") !== undefined) return;
+  if (
+    typeof version !== "number" ||
+    !profile.temporalAnchorGrammarVersions.has(version) ||
+    fieldNamed(project, "as_of") !== undefined
+  ) {
+    return;
+  }
   for (const declaration of document.declarations) {
     for (const field of declaration.fields) {
       if (field.name !== "deadline" && field.name !== "not_before") continue;
@@ -1006,5 +1024,16 @@ export function validateTargetDocumentSemantics(
     document,
     parseDiagnostics,
     targetValidationProfile,
+  );
+}
+
+export function validateTargetGrammar3DocumentSemantics(
+  document: DocumentNode,
+  parseDiagnostics: readonly Diagnostic[] = [],
+): readonly Diagnostic[] {
+  return validateDocumentWithProfile(
+    document,
+    parseDiagnostics,
+    targetGrammar3ValidationProfile,
   );
 }

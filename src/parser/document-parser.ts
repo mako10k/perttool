@@ -18,7 +18,9 @@ import type {
   DeclarationKind,
   DeclarationNode,
   DocumentNode,
+  DurationFractionValue,
   DurationValue,
+  ExactDurationValue,
   FieldNode,
   ParseResult,
   RequirementValue,
@@ -49,6 +51,19 @@ export const TARGET_GRAMMAR_2_CAPABILITY: TargetGrammar2Capability =
     id: "perttool.target-grammar-2-source",
     version: 1,
     grammarVersion: 2,
+  });
+
+export interface TargetGrammar3Capability {
+  readonly id: "perttool.target-grammar-3-source";
+  readonly version: 1;
+  readonly grammarVersion: 3;
+}
+
+export const TARGET_GRAMMAR_3_CAPABILITY: TargetGrammar3Capability =
+  Object.freeze({
+    id: "perttool.target-grammar-3-source",
+    version: 1,
+    grammarVersion: 3,
   });
 
 const identifierPattern = /^[A-Za-z][A-Za-z0-9_-]*$/;
@@ -85,16 +100,25 @@ interface ParseProfile {
     Record<DeclarationKind, ReadonlySet<string>>
   >;
   readonly typedCalendarValues: boolean;
+  readonly exactFractionDurations: boolean;
 }
 
 const grammar1Profile: ParseProfile = {
   allowedFields: grammar1AllowedFields,
   typedCalendarValues: false,
+  exactFractionDurations: false,
 };
 
 const grammar2Profile: ParseProfile = {
   allowedFields: grammar2AllowedFields,
   typedCalendarValues: true,
+  exactFractionDurations: false,
+};
+
+const grammar3Profile: ParseProfile = {
+  allowedFields: grammar2AllowedFields,
+  typedCalendarValues: true,
+  exactFractionDurations: true,
 };
 
 function splitLines(text: string): readonly SourceLine[] {
@@ -195,6 +219,52 @@ function parseDuration(raw: string): DurationValue | undefined {
     text: raw,
     digits: BigInt(`${whole}${fraction}`),
     scale: fraction.length,
+    suffix,
+  };
+}
+
+function greatestCommonDivisor(left: bigint, right: bigint): bigint {
+  let a = left;
+  let b = right;
+  while (b !== 0n) {
+    const remainder = a % b;
+    a = b;
+    b = remainder;
+  }
+  return a;
+}
+
+function parseExactDuration(raw: string): ExactDurationValue | undefined {
+  const decimal = parseDuration(raw);
+  if (decimal !== undefined) return decimal;
+  const match = /^([0-9]+)\/([0-9]+)([dhp])$/.exec(raw);
+  if (match === null) return undefined;
+  const numeratorText = match[1];
+  const denominatorText = match[2];
+  const suffix = match[3];
+  if (
+    numeratorText === undefined ||
+    denominatorText === undefined ||
+    (suffix !== "d" && suffix !== "h" && suffix !== "p")
+  ) {
+    return undefined;
+  }
+  const sourceNumerator = BigInt(numeratorText);
+  const sourceDenominator = BigInt(denominatorText);
+  if (sourceDenominator === 0n) return undefined;
+  if (sourceNumerator === 0n) {
+    return {
+      text: raw,
+      numerator: 0n,
+      denominator: 1n,
+      suffix,
+    };
+  }
+  const divisor = greatestCommonDivisor(sourceNumerator, sourceDenominator);
+  return {
+    text: raw,
+    numerator: sourceNumerator / divisor,
+    denominator: sourceDenominator / divisor,
     suffix,
   };
 }
@@ -322,7 +392,9 @@ function scalarFieldValue(
       : { value };
   }
   if (["duration", "critical_epsilon", "target_duration"].includes(name)) {
-    const value = parseDuration(rawValue);
+    const value = profile.exactFractionDurations
+      ? parseExactDuration(rawValue)
+      : parseDuration(rawValue);
     return value === undefined
       ? { value: rawValue, code: "PTDSL-007", topic: "syntax.duration" }
       : { value };
@@ -381,6 +453,7 @@ function parseNestedEstimate(
   startIndex: number,
   diagnostics: Diagnostic[],
   trivia: TriviaNode[],
+  profile: ParseProfile,
 ): { children: readonly FieldNode[]; nextIndex: number; endSpan: SourceSpan } {
   const children: FieldNode[] = [];
   let index = startIndex;
@@ -437,7 +510,9 @@ function parseNestedEstimate(
     const rawValue = match[2]!;
     const valueOffset = line.text.indexOf(rawValue, 4 + name.length);
     const valueSpan = span(line, valueOffset, valueOffset + rawValue.length);
-    const value = parseDuration(rawValue);
+    const value = profile.exactFractionDurations
+      ? parseExactDuration(rawValue)
+      : parseDuration(rawValue);
     if (value === undefined) {
       diagnostics.push(
         diagnostic(
@@ -863,7 +938,13 @@ function parseDocumentWithProfile(
         }
         const keywordStart = 2;
         if (name === "estimate") {
-          const parsed = parseNestedEstimate(lines, index + 1, diagnostics, trivia);
+          const parsed = parseNestedEstimate(
+            lines,
+            index + 1,
+            diagnostics,
+            trivia,
+            profile,
+          );
           fields.push({
             name,
             rawValue: "",
@@ -1013,5 +1094,26 @@ export function parseTargetDocument(
     : undefined;
   return version === 2
     ? parseDocumentWithProfile(text, options, grammar2Profile)
+    : grammar1;
+}
+
+export function parseTargetGrammar3Document(
+  text: string,
+  capability: TargetGrammar3Capability,
+  options: ParseOptions = {},
+): ParseResult {
+  if (capability !== TARGET_GRAMMAR_3_CAPABILITY) {
+    throw new TypeError("The target Grammar 3 source capability is required");
+  }
+  const grammar1 = parseDocumentWithProfile(text, options, grammar1Profile);
+  const first = grammar1.document.declarations[0];
+  const version = first?.kind === "project"
+    ? first.fields.find((field) => field.name === "version")?.value
+    : undefined;
+  if (version === 2) {
+    return parseDocumentWithProfile(text, options, grammar2Profile);
+  }
+  return version === 3
+    ? parseDocumentWithProfile(text, options, grammar3Profile)
     : grammar1;
 }

@@ -86,7 +86,7 @@ milestone RATIONAL_DURATION_ACCEPTED:
 task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> RATIONAL_DURATION_ACCEPTED:
   title "Extend the target DSL with exact rational Duration"
   description "Roll up plans/scheduling-units-m2r.pert. Supersede the finite-decimal-only target contract with Decimal-or-fraction Duration, reduced canonical fraction output, exact source serialization, explicit selection of new grammar, migration, and result or interface identities where compatibility requires them, a versioned source-upgrade boundary, and target parser, formatter, mutation, and acceptance coverage. Keep Grammar 1, accepted Grammar 2, CLI Contract 3, public schemas, help, and installed behavior unchanged."
-  duration 0.583333d
+  duration 0.416667d
   priority 100
   requires:
     DEVELOPERS 1
