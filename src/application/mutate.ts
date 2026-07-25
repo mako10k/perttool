@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { createUnifiedDiff } from "../editing/unified-diff.js";
 import type { Diagnostic } from "../model/diagnostics.js";
+import type { DocumentNode } from "../model/syntax.js";
 import {
   limitDiagnostics,
   normalizeMaxDiagnostics,
@@ -10,13 +11,19 @@ import { applyTextEdits, normalizeTextEdits } from "../mutation/text-edits.js";
 import type { TextEdit } from "../mutation/text-edits.js";
 import { mutationDiagnostic, type MutationEditPlan } from "../mutation/diagnostics.js";
 import { planGateMutationEdits } from "../mutation/gate.js";
-import { planMilestoneMutationEdits } from "../mutation/milestone.js";
+import {
+  ACTIVE_MILESTONE_MUTATION_PROFILE,
+  planMilestoneMutationEdits,
+  type MilestoneMutationProfile,
+} from "../mutation/milestone.js";
 import { planProjectMutationEdits } from "../mutation/project.js";
 import { planResourceMutationEdits } from "../mutation/resource.js";
-import { planTaskMutationEdits } from "../mutation/task.js";
+import {
+  ACTIVE_TASK_MUTATION_PROFILE,
+  planTaskMutationEdits,
+  type TaskMutationProfile,
+} from "../mutation/task.js";
 import type {
-  AtomicMutation,
-  BatchMutation,
   Mutation,
   MutationOptions,
   MutationResult,
@@ -55,10 +62,48 @@ function runtimeKind(value: unknown): unknown {
     : undefined;
 }
 
+export interface MutationDocumentValidation {
+  readonly ok: boolean;
+  readonly document: DocumentNode | null;
+  readonly documentId: string | null;
+  readonly diagnostics: readonly Diagnostic[];
+  readonly diagnosticsTruncated: boolean;
+}
+
+export type MutationDocumentValidator = (
+  text: string,
+  maxDiagnostics: number,
+) => MutationDocumentValidation;
+
+export interface MutationPlanningProfile {
+  readonly task: TaskMutationProfile;
+  readonly milestone: MilestoneMutationProfile;
+}
+
+const activeMutationPlanningProfile: MutationPlanningProfile = Object.freeze({
+  task: ACTIVE_TASK_MUTATION_PROFILE,
+  milestone: ACTIVE_MILESTONE_MUTATION_PROFILE,
+});
+
+function validateActiveDocument(
+  text: string,
+  maxDiagnostics: number,
+): MutationDocumentValidation {
+  const checked = checkDocument(text, { maxDiagnostics });
+  return {
+    ok: checked.ok,
+    document: checked.document,
+    documentId: checked.documentId,
+    diagnostics: checked.diagnostics,
+    diagnosticsTruncated: checked.diagnosticsTruncated,
+  };
+}
+
 function planAtomicMutationEdits(
   text: string,
   document: Parameters<typeof planTaskMutationEdits>[1],
-  mutation: AtomicMutation,
+  mutation: unknown,
+  profile: MutationPlanningProfile,
 ): MutationEditPlan {
   const kind = runtimeKind(mutation);
   if (kind === "project.set") {
@@ -69,7 +114,12 @@ function planAtomicMutationEdits(
     );
   }
   if (typeof kind === "string" && kind.startsWith("milestone.")) {
-    return planMilestoneMutationEdits(text, document, mutation as Parameters<typeof planMilestoneMutationEdits>[2]);
+    return planMilestoneMutationEdits(
+      text,
+      document,
+      mutation as Parameters<typeof planMilestoneMutationEdits>[2],
+      profile.milestone,
+    );
   }
   if (typeof kind === "string" && kind.startsWith("gate.")) {
     return planGateMutationEdits(
@@ -81,7 +131,12 @@ function planAtomicMutationEdits(
   if (typeof kind === "string" && kind.startsWith("resource.")) {
     return planResourceMutationEdits(text, document, mutation as Parameters<typeof planResourceMutationEdits>[2]);
   }
-  return planTaskMutationEdits(text, document, mutation as Parameters<typeof planTaskMutationEdits>[2]);
+  return planTaskMutationEdits(
+    text,
+    document,
+    mutation as Parameters<typeof planTaskMutationEdits>[2],
+    profile.task,
+  );
 }
 
 function batchRequestError(value: unknown): string | undefined {
@@ -147,34 +202,37 @@ function mergeBatchInsertions(edits: readonly TextEdit[]): readonly TextEdit[] {
 function planAllMutationEdits(
   text: string,
   document: Parameters<typeof planTaskMutationEdits>[1],
-  mutation: Mutation,
+  mutation: unknown,
+  profile: MutationPlanningProfile,
 ): MutationEditPlan {
   if (runtimeKind(mutation) !== "batch") {
-    return planAtomicMutationEdits(text, document, mutation as AtomicMutation);
+    return planAtomicMutationEdits(text, document, mutation, profile);
   }
   const error = batchRequestError(mutation);
   if (error !== undefined) {
     return { edits: [], diagnostic: mutationDiagnostic("PTMUT-301", error) };
   }
-  const batch = mutation as BatchMutation;
+  const batch = mutation as { readonly mutations: readonly unknown[] };
   const edits: TextEdit[] = [];
   for (const atomic of batch.mutations) {
-    const planned = planAtomicMutationEdits(text, document, atomic);
+    const planned = planAtomicMutationEdits(text, document, atomic, profile);
     if (planned.diagnostic !== undefined) return planned;
     edits.push(...planned.edits);
   }
   return { edits: mergeBatchInsertions(edits) };
 }
 
-function planMutationRequest(
+export function planValidatedMutationRequest(
   text: string,
   mutation: unknown,
+  validator: MutationDocumentValidator,
+  profile: MutationPlanningProfile,
   options: MutationOptions = {},
   batchOnly = false,
 ): MutationResult {
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
   const originalDigest = digest(text);
-  const original = checkDocument(text, { maxDiagnostics: maximum });
+  const original = validator(text, maximum);
   if (!original.ok) {
     return failure(
       originalDigest,
@@ -183,6 +241,9 @@ function planMutationRequest(
       maximum,
       original.diagnosticsTruncated,
     );
+  }
+  if (original.document === null) {
+    throw new Error("mutation validator accepted a document without an AST");
   }
 
   if (batchOnly && runtimeKind(mutation) !== "batch") {
@@ -198,7 +259,12 @@ function planMutationRequest(
     );
   }
 
-  const planned = planAllMutationEdits(text, original.document, mutation as Mutation);
+  const planned = planAllMutationEdits(
+    text,
+    original.document,
+    mutation,
+    profile,
+  );
   if (planned.diagnostic !== undefined) {
     return failure(
       originalDigest,
@@ -225,7 +291,7 @@ function planMutationRequest(
     );
   }
   const updatedText = applyTextEdits(text, edits);
-  const candidate = checkDocument(updatedText, { maxDiagnostics: maximum });
+  const candidate = validator(updatedText, maximum);
   if (!candidate.ok) {
     return failure(
       originalDigest,
@@ -262,7 +328,13 @@ export function planMutation(
   mutation: Mutation,
   options: MutationOptions = {},
 ): MutationResult {
-  return planMutationRequest(text, mutation, options);
+  return planValidatedMutationRequest(
+    text,
+    mutation,
+    validateActiveDocument,
+    activeMutationPlanningProfile,
+    options,
+  );
 }
 
 export function planBatchMutation(
@@ -270,5 +342,12 @@ export function planBatchMutation(
   mutation: unknown,
   options: MutationOptions = {},
 ): MutationResult {
-  return planMutationRequest(text, mutation, options, true);
+  return planValidatedMutationRequest(
+    text,
+    mutation,
+    validateActiveDocument,
+    activeMutationPlanningProfile,
+    options,
+    true,
+  );
 }

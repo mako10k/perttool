@@ -6,7 +6,17 @@ import type {
   RequirementValue,
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
+import {
+  GRAMMAR_1_DECLARATION_FIELD_ORDER,
+  TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER,
+} from "../model/declaration-fields.js";
 import { mutationDiagnostic } from "./diagnostics.js";
+import type {
+  TargetTaskDefinition,
+  TargetTaskFieldSet,
+  TargetTaskMutation,
+  TargetSetTaskMutation,
+} from "./target-types.js";
 import type {
   AddTaskMutation,
   SetTaskMutation,
@@ -38,27 +48,28 @@ export interface TaskMutationPlan {
   readonly diagnostic?: Diagnostic;
 }
 
-const fieldOrder = [
-  "title",
-  "description",
-  "duration",
-  "estimate",
-  "status",
-  "priority",
-  "requires",
-  "owner",
-  "tags",
-  "blocked_reason",
-  "source",
-] as const;
+export interface TaskMutationProfile {
+  readonly fieldOrder: readonly string[];
+  readonly temporalFields: boolean;
+}
 
-const fieldRank = new Map<string, number>(
-  fieldOrder.map((name, index) => [name, name === "estimate" ? 2 : index]),
-);
-fieldRank.set("duration", 2);
+export const ACTIVE_TASK_MUTATION_PROFILE: TaskMutationProfile = Object.freeze({
+  fieldOrder: GRAMMAR_1_DECLARATION_FIELD_ORDER.task,
+  temporalFields: false,
+});
+
+export const TARGET_TASK_MUTATION_PROFILE: TaskMutationProfile = Object.freeze({
+  fieldOrder: TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER.task,
+  temporalFields: true,
+});
+
+type SupportedTaskMutation = TaskMutation | TargetTaskMutation;
+type SupportedTaskDefinition = TaskDefinition | TargetTaskDefinition;
+type SupportedTaskFieldSet = TaskFieldSet | TargetTaskFieldSet;
+type SupportedSetTaskMutation = SetTaskMutation | TargetSetTaskMutation;
 
 const taskStatuses = new Set(["planned", "active", "blocked", "done"]);
-const clearableFields = new Set([
+const activeClearableFields = [
   "description",
   "status",
   "priority",
@@ -67,7 +78,11 @@ const clearableFields = new Set([
   "source",
   "tags",
   "requires",
-]);
+] as const;
+
+function fieldRank(profile: TaskMutationProfile): ReadonlyMap<string, number> {
+  return new Map(profile.fieldOrder.map((name, index) => [name, index]));
+}
 
 function validEstimate(value: unknown): value is TaskEstimateInput {
   if (value === null || typeof value !== "object") return false;
@@ -92,7 +107,10 @@ function validStringArray(value: unknown): value is readonly string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
-function taskDefinitionError(value: unknown): string | undefined {
+function taskDefinitionError(
+  value: unknown,
+  profile: TaskMutationProfile,
+): string | undefined {
   if (value === null || typeof value !== "object") return "task definition is not an object";
   const task = value as Record<string, unknown>;
   const knownFields = new Set([
@@ -100,6 +118,7 @@ function taskDefinitionError(value: unknown): string | undefined {
     "description",
     "duration",
     "estimate",
+    ...(profile.temporalFields ? ["notBefore", "deadline"] : []),
     "status",
     "priority",
     "requirements",
@@ -121,7 +140,13 @@ function taskDefinitionError(value: unknown): string | undefined {
   if (task["estimate"] !== undefined && !validEstimate(task["estimate"])) {
     return "estimate requires optimistic, mostLikely, and pessimistic string fields";
   }
-  for (const name of ["description", "owner", "blockedReason", "source"] as const) {
+  for (const name of [
+    "description",
+    "owner",
+    "blockedReason",
+    "source",
+    ...(profile.temporalFields ? ["notBefore", "deadline"] as const : []),
+  ] as const) {
     if (task[name] !== undefined && typeof task[name] !== "string") {
       return `${name} is not a string`;
     }
@@ -226,6 +251,9 @@ function serializeField(
       return `  duration ${canonicalDuration(value as string)}`;
     case "estimate":
       return serializeEstimate(value as TaskEstimateInput, lineEnding);
+    case "not_before":
+    case "deadline":
+      return `  ${name} ${value}`;
     case "status":
     case "priority":
       return `  ${name} ${value}`;
@@ -238,11 +266,17 @@ function serializeField(
   }
 }
 
-function taskFields(task: TaskDefinition): ReadonlyMap<string, unknown> {
+function taskFields(task: SupportedTaskDefinition): ReadonlyMap<string, unknown> {
   const fields = new Map<string, unknown>([["title", task.title]]);
   if (task.description !== undefined) fields.set("description", task.description);
   if (task.duration !== undefined) fields.set("duration", task.duration);
   if (task.estimate !== undefined) fields.set("estimate", task.estimate);
+  if ("notBefore" in task && task.notBefore !== undefined) {
+    fields.set("not_before", task.notBefore);
+  }
+  if ("deadline" in task && task.deadline !== undefined) {
+    fields.set("deadline", task.deadline);
+  }
   if (task.status !== undefined) fields.set("status", task.status);
   if (task.priority !== undefined) fields.set("priority", task.priority);
   if (task.requirements !== undefined) fields.set("requires", task.requirements);
@@ -253,11 +287,18 @@ function taskFields(task: TaskDefinition): ReadonlyMap<string, unknown> {
   return fields;
 }
 
-function serializeTask(mutation: AddTaskMutation, lineEnding: string): string {
+function serializeTask(
+  mutation: AddTaskMutation | TargetTaskMutation,
+  lineEnding: string,
+  profile: TaskMutationProfile,
+): string {
+  if (mutation.kind !== "task.add") {
+    throw new Error("task serializer requires task.add");
+  }
   const fields = taskFields(mutation.task);
   return [
     `task ${mutation.id} ${mutation.from} -> ${mutation.to}:`,
-    ...fieldOrder.flatMap((name) => {
+    ...profile.fieldOrder.flatMap((name) => {
       if (name === "duration" && fields.has("estimate")) return [];
       if (name === "estimate" && fields.has("duration")) return [];
       return fields.has(name) ? [serializeField(name, fields.get(name), lineEnding)] : [];
@@ -265,12 +306,16 @@ function serializeTask(mutation: AddTaskMutation, lineEnding: string): string {
   ].join(lineEnding);
 }
 
-function addTaskPlan(text: string, mutation: AddTaskMutation): TaskMutationPlan {
-  const task = mutation.task as TaskDefinition & {
+function addTaskPlan(
+  text: string,
+  mutation: AddTaskMutation | Extract<TargetTaskMutation, { kind: "task.add" }>,
+  profile: TaskMutationProfile,
+): TaskMutationPlan {
+  const task = mutation.task as SupportedTaskDefinition & {
     readonly duration?: string;
     readonly estimate?: TaskEstimateInput;
   };
-  const taskError = taskDefinitionError(task);
+  const taskError = taskDefinitionError(task, profile);
   if (
     typeof mutation.id !== "string" ||
     typeof mutation.from !== "string" ||
@@ -287,11 +332,20 @@ function addTaskPlan(text: string, mutation: AddTaskMutation): TaskMutationPlan 
   }
   const lineEnding = majorLineEnding(text);
   return {
-    edits: [appendDeclarationEdit(text, serializeTask(mutation, lineEnding), lineEnding)],
+    edits: [
+      appendDeclarationEdit(
+        text,
+        serializeTask(mutation, lineEnding, profile),
+        lineEnding,
+      ),
+    ],
   };
 }
 
-function setRequestError(mutation: SetTaskMutation): string | undefined {
+function setRequestError(
+  mutation: SupportedSetTaskMutation,
+  profile: TaskMutationProfile,
+): string | undefined {
   const rawSet = mutation.set as unknown;
   const rawClear = mutation.clear as unknown;
   const rawAddTags = mutation.addTags as unknown;
@@ -313,9 +367,9 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
   ] as const) {
     if (value !== undefined && !Array.isArray(value)) return `${name} is not an array`;
   }
-  const set = (rawSet ?? {}) as TaskFieldSet;
+  const set = (rawSet ?? {}) as SupportedTaskFieldSet;
   const setEntries = Object.entries(set).filter(([, value]) => value !== undefined);
-  const clear = (rawClear ?? []) as NonNullable<SetTaskMutation["clear"]>;
+  const clear = (rawClear ?? []) as readonly string[];
   const addTags = (rawAddTags ?? []) as NonNullable<SetTaskMutation["addTags"]>;
   const removeTags = (rawRemoveTags ?? []) as NonNullable<SetTaskMutation["removeTags"]>;
   const upsertRequirements = (rawUpsertRequirements ?? []) as NonNullable<SetTaskMutation["upsertRequirements"]>;
@@ -346,6 +400,7 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
     "description",
     "duration",
     "estimate",
+    ...(profile.temporalFields ? ["notBefore", "deadline"] : []),
     "status",
     "priority",
     "owner",
@@ -355,8 +410,17 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
   if (Object.keys(set).some((name) => !knownSetFields.has(name))) {
     return "set contains unsupported fields";
   }
-  for (const name of ["title", "description", "duration", "owner", "blockedReason", "source"] as const) {
-    if (set[name] !== undefined && typeof set[name] !== "string") {
+  for (const name of [
+    "title",
+    "description",
+    "duration",
+    "owner",
+    "blockedReason",
+    "source",
+    ...(profile.temporalFields ? ["notBefore", "deadline"] as const : []),
+  ] as const) {
+    if ((set as Record<string, unknown>)[name] !== undefined &&
+        typeof (set as Record<string, unknown>)[name] !== "string") {
       return `${name} is not a string`;
     }
   }
@@ -369,6 +433,10 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
   if (set.priority !== undefined && !Number.isSafeInteger(set.priority)) {
     return "priority is not a safe integer";
   }
+  const clearableFields = new Set([
+    ...activeClearableFields,
+    ...(profile.temporalFields ? ["not_before", "deadline"] : []),
+  ]);
   if (!Array.isArray(clear) || clear.some((name) => !clearableFields.has(name))) {
     return "clear contains unsupported fields";
   }
@@ -384,11 +452,14 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
   }
   if (new Set(clear).size !== clear.length) return "clear contains duplicate fields";
   const clearNames = new Set(clear);
-  const setToClear: Readonly<Record<keyof TaskFieldSet, string>> = {
+  const setToClear: Readonly<Record<string, string>> = {
     title: "title",
     description: "description",
     duration: "duration",
     estimate: "estimate",
+    ...(profile.temporalFields
+      ? { notBefore: "not_before", deadline: "deadline" }
+      : {}),
     status: "status",
     priority: "priority",
     owner: "owner",
@@ -396,8 +467,8 @@ function setRequestError(mutation: SetTaskMutation): string | undefined {
     source: "source",
   };
   for (const [name] of setEntries) {
-    if (clearNames.has(setToClear[name as keyof TaskFieldSet] as never)) {
-      return `${setToClear[name as keyof TaskFieldSet]} cannot be specified in both set and clear`;
+    if (clearNames.has(setToClear[name]!)) {
+      return `${setToClear[name]} cannot be specified in both set and clear`;
     }
   }
   if (clearNames.has("tags") && (addTags.length > 0 || removeTags.length > 0)) {
@@ -441,9 +512,10 @@ function currentRequirements(task: DeclarationNode): readonly TaskRequirementInp
 function planSetTask(
   text: string,
   task: DeclarationNode,
-  mutation: SetTaskMutation,
+  mutation: SupportedSetTaskMutation,
+  profile: TaskMutationProfile,
 ): TaskMutationPlan {
-  const error = setRequestError(mutation);
+  const error = setRequestError(mutation, profile);
   if (error !== undefined) {
     return { edits: [], diagnostic: mutationDiagnostic("PTMUT-301", error, task) };
   }
@@ -452,9 +524,10 @@ function planSetTask(
   const edits: TextEdit[] = [];
   const deleted = new Set<string>(mutation.clear ?? []);
   const additions = new Map<number, Array<{ name: string; serialized: string }>>();
+  const rank = fieldRank(profile);
 
   const queueAddition = (name: string, value: unknown): void => {
-    const offset = fieldInsertionOffset(task, name, deleted, lines, fieldRank);
+    const offset = fieldInsertionOffset(task, name, deleted, lines, rank);
     const entries = additions.get(offset) ?? [];
     entries.push({ name, serialized: serializeField(name, value, lineEnding) });
     additions.set(offset, entries);
@@ -503,6 +576,7 @@ function planSetTask(
   }
 
   const set = mutation.set ?? {};
+  const targetSet = set as TargetTaskFieldSet;
   if (set.title !== undefined) setScalar("title", set.title, JSON.stringify(set.title));
   if (set.description !== undefined) setText("description", set.description);
   if (set.duration !== undefined) {
@@ -541,6 +615,12 @@ function planSetTask(
         replacement: serializeEstimate(set.estimate, lineEnding),
       });
     }
+  }
+  if (profile.temporalFields && targetSet.notBefore !== undefined) {
+    setScalar("not_before", targetSet.notBefore, targetSet.notBefore);
+  }
+  if (profile.temporalFields && targetSet.deadline !== undefined) {
+    setScalar("deadline", targetSet.deadline, targetSet.deadline);
   }
   if (set.status !== undefined) setScalar("status", set.status, set.status);
   if (set.priority !== undefined) setScalar("priority", set.priority, String(set.priority));
@@ -652,7 +732,7 @@ function planSetTask(
   }
   for (const [offset, entries] of additions) {
     entries.sort(
-      (left, right) => (fieldRank.get(left.name) ?? 99) - (fieldRank.get(right.name) ?? 99),
+      (left, right) => (rank.get(left.name) ?? 99) - (rank.get(right.name) ?? 99),
     );
     edits.push({
       startOffset: offset,
@@ -671,7 +751,8 @@ function planSetTask(
 export function planTaskMutationEdits(
   text: string,
   document: DocumentNode,
-  mutation: TaskMutation,
+  mutation: SupportedTaskMutation,
+  profile: TaskMutationProfile = ACTIVE_TASK_MUTATION_PROFILE,
 ): TaskMutationPlan {
   const requestError = taskMutationRequestError(mutation);
   if (requestError !== undefined) {
@@ -692,7 +773,7 @@ export function planTaskMutationEdits(
         ),
       };
     }
-    return addTaskPlan(text, mutation);
+    return addTaskPlan(text, mutation, profile);
   }
   if (entity === undefined) {
     return {
@@ -725,7 +806,7 @@ export function planTaskMutationEdits(
       ...(fieldNamed(entity, "blocked_reason") === undefined
         ? {}
         : { clear: ["blocked_reason"] }),
-    });
+    }, profile);
   }
-  return planSetTask(text, entity, mutation);
+  return planSetTask(text, entity, mutation, profile);
 }

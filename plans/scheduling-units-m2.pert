@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M2:
   version 1
   title "SU-M2 temporal source and Core foundations"
-  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. Observed SU-M2 velocity is 12p/1d from the completed target Grammar 2 source, semantic-validation, and formatter tasks on one active day and will be recalibrated from later completed SU-M2 work."
+  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. Observed SU-M2 velocity is 17p/1d from the completed target Grammar 2 source, semantic-validation, formatter, and temporal mutation/batch tasks on one active day and will be recalibrated from later completed SU-M2 work."
   as_of 2026-07-25
   duration_unit point
-  velocity 12p/1d
+  velocity 17p/1d
   finish M2_FOUNDATIONS_ACCEPTED
 
 
@@ -72,6 +72,7 @@ task TEMPORAL_MUTATION_BATCH_CORE TEMPORAL_FORMATTER_READY -> TEMPORAL_MUTATION_
   title "Implement target temporal mutation and atomic batch Core"
   description "Add target-only task and milestone temporal add, set, and clear requests with canonical placement and localized UTF-16 edits. Support final-candidate-only batch upgrade with version/as_of and downgrade after clearing all temporal fields. Reuse ordinary candidate validation, diff, digest, and safe-write adapters; expose no Contract 4 CLI option or descriptor. Cover TUI-009, TUI-010, and the temporal half of TUI-013."
   duration 5p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

@@ -166,6 +166,7 @@ perttool/
       check.ts
       format.ts
       mutate.ts
+      target-mutate.ts
       next.ts
     analysis/
       graph.ts
@@ -188,6 +189,7 @@ perttool/
     io/
       document-file.ts
       safe-write.ts
+      target-safe-write.ts
     model/
       calendar.ts
       declaration-fields.ts
@@ -204,6 +206,7 @@ perttool/
       source.ts
       task.ts
       text-edits.ts
+      target-types.ts
       types.ts
     semantic/
       target-validator.ts
@@ -221,6 +224,7 @@ perttool/
     parser.test.mjs
     temporal-source-parser.test.mjs
     temporal-semantic-validator.test.mjs
+    temporal-mutation.test.mjs
     mutation.test.mjs
     self-use.test.mjs
     fixtures/
@@ -570,6 +574,25 @@ fields retained on active, done, or reached history remain valid source;
 projection availability and start authority belong to later target Core
 slices. The target validator reads no clock, host zone, locale, repository, or
 path and is not re-exported from `src/index.ts`.
+
+The internal target mutation planner uses the same identity-checked
+capability, target validated-document boundary, canonical declaration-field
+orders, entity editors, UTF-16 edit normalization, diff, and digest machinery.
+Its private request types add task `notBefore`/`deadline` and milestone
+`deadline` only to target add/set/clear operations. A batch plans every edit
+against the original AST and validates only the final target candidate, so
+one request can atomically add `version 2`/`as_of` with temporal fields or
+remove all temporal fields/`as_of` while returning to version 1. Invalid
+calendar values, missing anchors, overlap, duplicate targets, and invented
+unit-migration batch members expose no candidate or edits. The active
+`planMutation`, public request types, root exports, registry, and CLI remain
+Grammar 1 and Contract 3.
+
+Safe-write mechanics accept an internal candidate-validator strategy while
+the public adapters remain fixed to active Grammar 1 validation. The private
+target adapters bind the Grammar 2 capability to that same in-place/out,
+digest-lock, symlink/race rejection, fsync, and post-write verification path;
+they do not add a Contract 4 CLI write route.
 
 ## 7. Diagnostic Model
 

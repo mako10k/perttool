@@ -70,6 +70,15 @@ export interface DocumentWriteResult {
   readonly written: boolean;
 }
 
+export interface DocumentCandidateValidation {
+  readonly ok: boolean;
+  readonly diagnostics: readonly Diagnostic[];
+}
+
+export type DocumentCandidateValidator = (
+  text: string,
+) => DocumentCandidateValidation;
+
 interface WritableSource {
   readonly digest: string;
   readonly mode: number;
@@ -143,8 +152,15 @@ async function currentWritableSource(path: string): Promise<WritableSource> {
   }
 }
 
-function validateCandidate(candidateText: string): Buffer {
-  const checked = checkDocument(candidateText);
+function validateActiveCandidate(text: string): DocumentCandidateValidation {
+  return checkDocument(text);
+}
+
+function validateCandidate(
+  candidateText: string,
+  validator: DocumentCandidateValidator,
+): Buffer {
+  const checked = validator(candidateText);
   if (!checked.ok) {
     throw new SafeWriteVerificationError(
       "invalid_candidate",
@@ -222,6 +238,7 @@ async function syncParentDirectory(target: string): Promise<void> {
 async function verifyWrittenDocument(
   target: string,
   candidateDigest: string,
+  validator: DocumentCandidateValidator,
 ): Promise<void> {
   const written = await readDocumentFile(target);
   if (written.digest !== candidateDigest) {
@@ -230,7 +247,7 @@ async function verifyWrittenDocument(
       `written document digest does not match candidate: ${target}`,
     );
   }
-  const checked = checkDocument(written.text);
+  const checked = validator(written.text);
   if (!checked.ok) {
     throw new SafeWriteVerificationError(
       "post_write_invalid",
@@ -253,12 +270,13 @@ async function verifyWrittenArtifact(
   }
 }
 
-export async function replaceDocumentFile(
+export async function replaceValidatedDocumentFile(
   target: string,
   candidateText: string,
   options: ReplaceDocumentOptions,
+  validator: DocumentCandidateValidator,
 ): Promise<DocumentWriteResult> {
-  const candidateBytes = validateCandidate(candidateText);
+  const candidateBytes = validateCandidate(candidateText, validator);
   const candidateDigest = digestDocumentBytes(candidateBytes);
   if (
     options.expectedDigest !== undefined &&
@@ -305,7 +323,7 @@ export async function replaceDocumentFile(
     await rename(temporaryPath, target);
     renamed = true;
     await syncParentDirectory(target);
-    await verifyWrittenDocument(target, candidateDigest);
+    await verifyWrittenDocument(target, candidateDigest, validator);
   } finally {
     if (!renamed) await unlink(temporaryPath).catch(() => undefined);
   }
@@ -317,6 +335,19 @@ export async function replaceDocumentFile(
     bytesWritten: candidateBytes.byteLength,
     written: true,
   };
+}
+
+export async function replaceDocumentFile(
+  target: string,
+  candidateText: string,
+  options: ReplaceDocumentOptions,
+): Promise<DocumentWriteResult> {
+  return replaceValidatedDocumentFile(
+    target,
+    candidateText,
+    options,
+    validateActiveCandidate,
+  );
 }
 
 async function assertTargetAbsent(target: string): Promise<void> {
@@ -332,12 +363,13 @@ async function assertTargetAbsent(target: string): Promise<void> {
   }
 }
 
-export async function createDocumentFile(
+export async function createValidatedDocumentFile(
   target: string,
   candidateText: string,
+  validator: DocumentCandidateValidator,
   options: CreateDocumentOptions = {},
 ): Promise<DocumentWriteResult> {
-  const candidateBytes = validateCandidate(candidateText);
+  const candidateBytes = validateCandidate(candidateText, validator);
   const candidateDigest = digestDocumentBytes(candidateBytes);
   await assertTargetAbsent(target);
   const temporaryPath = await writeAndSyncTemporary(
@@ -361,7 +393,7 @@ export async function createDocumentFile(
       throw error;
     }
     await syncParentDirectory(target);
-    await verifyWrittenDocument(target, candidateDigest);
+    await verifyWrittenDocument(target, candidateDigest, validator);
   } finally {
     await unlink(temporaryPath).catch(() => undefined);
     if (linked) await syncParentDirectory(target);
@@ -374,6 +406,19 @@ export async function createDocumentFile(
     bytesWritten: candidateBytes.byteLength,
     written: true,
   };
+}
+
+export async function createDocumentFile(
+  target: string,
+  candidateText: string,
+  options: CreateDocumentOptions = {},
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFile(
+    target,
+    candidateText,
+    validateActiveCandidate,
+    options,
+  );
 }
 
 export async function createArtifactFile(

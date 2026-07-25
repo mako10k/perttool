@@ -259,15 +259,14 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m2": {
-      "source_digest": "sha256:b9bc8c44f8750c92f8d538015f74d32f91a104428a704abd057de59761c11608",
+      "source_digest": "sha256:35d92ed13d050992eb2eb5872eaa5133e17e3b325b8c0b8c47cb15377171d420",
       "groups": {
         "active": [],
         "ready": [
-          "TEMPORAL_MUTATION_BATCH_CORE",
           "DECLARED_TEMPORAL_INPUT_CORE"
         ],
         "runnable_now": [
-          "TEMPORAL_MUTATION_BATCH_CORE"
+          "DECLARED_TEMPORAL_INPUT_CORE"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -275,58 +274,39 @@
         ]
       },
       "recommended_task_ids": [
-        "TEMPORAL_MUTATION_BATCH_CORE"
+        "DECLARED_TEMPORAL_INPUT_CORE"
       ],
       "manual_selected_task_ids": [
-        "TEMPORAL_MUTATION_BATCH_CORE"
+        "DECLARED_TEMPORAL_INPUT_CORE"
       ],
       "tiers": {
-        "TEMPORAL_MUTATION_BATCH_CORE": "recommended",
-        "DECLARED_TEMPORAL_INPUT_CORE": "deferred"
+        "DECLARED_TEMPORAL_INPUT_CORE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "TEMPORAL_MUTATION_BATCH_CORE",
+          "id": "DECLARED_TEMPORAL_INPUT_CORE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
-        },
-        {
-          "id": "DECLARED_TEMPORAL_INPUT_CORE",
-          "runnable_now": false,
-          "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "2/1",
-          "resource_rejections": [
-            {
-              "resource_id": "TARGET_CORE_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "TEMPORAL_MUTATION_BATCH_CORE"
-              ]
-            }
-          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 12,
-        "facts": 47,
-        "comparisons": 2,
-        "reasons": 8,
-        "descriptions": 4
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:b07cae7ceb2b42491abf3f630878308911f782ad470f7d6797bfa1b8a7e0537f",
+      "source_digest": "sha256:54c397d678aa7c449120ac0ae9ef72ff2a5fb4bced3c1b8afff87f37f3237fde",
       "groups": {
         "active": [],
         "ready": [

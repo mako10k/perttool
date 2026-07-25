@@ -437,13 +437,18 @@ SU-M2 progress:
   source field and declaration order, comments, BOM, line endings, and exact
   temporal tokens, and revalidates an idempotent target-AST-equivalent
   candidate. The active Contract 3 formatter remains Grammar 1.
-- Three tasks and 12p remain. The precedence makespan is 9p; the heuristic
-  resource makespan is 12p with 3p resource delay. Observed provisional
-  velocity `12p/1d` yields exact `3/4d` and `1d` forecasts, and complete
-  `NextResult.v3` recommends `TEMPORAL_MUTATION_BATCH_CORE`.
-  `DECLARED_TEMPORAL_INPUT_CORE` is deferred by the selected task's
-  `TARGET_CORE_SURFACE` use.
-- The macro rollup has provisional `5d` precedence and `7d` heuristic
+- `TEMPORAL_MUTATION_BATCH_CORE` is complete. The internal capability-checked
+  target planner adds, sets, and clears task/milestone temporal fields through
+  the shared canonical order and localized UTF-16 edit path. Atomic batches
+  upgrade or downgrade version/anchor/temporal fields from one original AST
+  and validate only the final target candidate. The common diff, digest,
+  in-place/out, optimistic-lock, symlink/race rejection, and post-write
+  mechanics are reused without adding a Contract 4 CLI or root export.
+- Two tasks and 7p remain. Both precedence and heuristic resource makespans
+  are 7p with no resource delay. Observed provisional velocity `17p/1d`
+  yields exact `7/17d` forecasts, and complete `NextResult.v3` recommends
+  `DECLARED_TEMPORAL_INPUT_CORE`.
+- The macro rollup has provisional `4.411765d` precedence and `6.411765d` heuristic
   resource makespans with 2d resource delay. Its recommendation remains
   `SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4

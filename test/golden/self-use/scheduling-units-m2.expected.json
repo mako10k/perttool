@@ -8,26 +8,23 @@
       "tasks": 3,
       "gates": 2,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "9/1",
+    "precedence_makespan": "7/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "3/4",
+    "precedence_forecast": "7/17",
     "precedence_critical_tasks": [
-      "TEMPORAL_MUTATION_BATCH_CORE",
+      "DECLARED_TEMPORAL_INPUT_CORE",
       "M2_FOUNDATION_ACCEPTANCE"
     ],
-    "resource_makespan": "12/1",
-    "resource_forecast": "1/1",
-    "resource_delay": "3/1",
-    "resource_arcs": [
-      "resource:TEMPORAL_MUTATION_BATCH_CORE:DECLARED_TEMPORAL_INPUT_CORE"
-    ],
+    "resource_makespan": "7/1",
+    "resource_forecast": "7/17",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "TEMPORAL_MUTATION_BATCH_CORE",
       "DECLARED_TEMPORAL_INPUT_CORE",
       "M2_FOUNDATION_ACCEPTANCE"
     ]
@@ -36,24 +33,16 @@
     "groups": {
       "active": [],
       "ready": [
-        "TEMPORAL_MUTATION_BATCH_CORE",
         "DECLARED_TEMPORAL_INPUT_CORE"
       ],
       "runnable_now": [
-        "TEMPORAL_MUTATION_BATCH_CORE"
+        "DECLARED_TEMPORAL_INPUT_CORE"
       ],
       "blocked_now": [],
       "upcoming": [
         "M2_FOUNDATION_ACCEPTANCE"
       ]
     },
-    "resource_rejection": {
-      "task_id": "DECLARED_TEMPORAL_INPUT_CORE",
-      "resource_id": "TARGET_CORE_SURFACE",
-      "capacity": 1,
-      "earlier_selected_task_ids": [
-        "TEMPORAL_MUTATION_BATCH_CORE"
-      ]
-    }
+    "resource_rejection": null
   }
 }
