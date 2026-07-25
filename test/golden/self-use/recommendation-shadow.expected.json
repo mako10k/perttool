@@ -355,53 +355,86 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m3": {
-      "source_digest": "sha256:0aba50469e542c3b697e1b4d9f1aaf2a92e7bb86bc478be24385d668c9dc9bde",
+      "source_digest": "sha256:9af7e44f56fd2137c52df8feb5a04ae675817f9557a31d9a5316eec631fe2856",
       "groups": {
         "active": [],
         "ready": [
-          "TEMPORAL_INPUT_PROJECTION"
+          "TEMPORAL_PRECEDENCE_CORE",
+          "TEMPORAL_RESOURCE_SCHEDULE"
         ],
         "runnable_now": [
-          "TEMPORAL_INPUT_PROJECTION"
+          "TEMPORAL_PRECEDENCE_CORE"
         ],
         "blocked_now": [],
         "upcoming": [
           "DEADLINE_EVALUATION_CORE",
           "ANALYSIS_NEXT_V4_TARGET",
-          "M3_DEADLINE_ACCEPTANCE",
-          "TEMPORAL_PRECEDENCE_CORE",
-          "TEMPORAL_RESOURCE_SCHEDULE"
+          "M3_DEADLINE_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "TEMPORAL_INPUT_PROJECTION"
+        "TEMPORAL_RESOURCE_SCHEDULE"
       ],
       "manual_selected_task_ids": [
-        "TEMPORAL_INPUT_PROJECTION"
+        "TEMPORAL_PRECEDENCE_CORE"
       ],
       "tiers": {
-        "TEMPORAL_INPUT_PROJECTION": "recommended"
+        "TEMPORAL_RESOURCE_SCHEDULE": "recommended",
+        "TEMPORAL_PRECEDENCE_CORE": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "TEMPORAL_INPUT_PROJECTION",
+          "id": "TEMPORAL_PRECEDENCE_CORE",
           "runnable_now": true,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "1/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "TEMPORAL_RESOURCE_SCHEDULE",
+          "runnable_now": false,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
-          "resource_rejections": []
+          "resource_rejections": [
+            {
+              "resource_id": "CONTRACT3_GUARD",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "TEMPORAL_PRECEDENCE_CORE"
+              ]
+            },
+            {
+              "resource_id": "REVIEWERS",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "TEMPORAL_PRECEDENCE_CORE"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
-        "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "task_decisions": 2,
+        "decision_steps": 12,
+        "facts": 58,
+        "comparisons": 2,
+        "reasons": 9,
+        "descriptions": 5
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units-m4": {
       "source_digest": "sha256:22327233571357720df909e8c4aef779d70bf06a9dc8a2fcad0c7b7b451d3bb8",

@@ -1,4 +1,4 @@
-import type { DurationValue } from "./syntax.js";
+import type { ExactDurationValue } from "./syntax.js";
 
 export interface Rational {
   readonly numerator: bigint;
@@ -30,8 +30,10 @@ export function rational(numerator: bigint, denominator = 1n): Rational {
 export const ZERO = rational(0n);
 export const ONE = rational(1n);
 
-export function rationalFromDuration(value: DurationValue): Rational {
-  return rational(value.digits, 10n ** BigInt(value.scale));
+export function rationalFromDuration(value: ExactDurationValue): Rational {
+  return "numerator" in value
+    ? rational(value.numerator, value.denominator)
+    : rational(value.digits, 10n ** BigInt(value.scale));
 }
 
 export function add(left: Rational, right: Rational): Rational {

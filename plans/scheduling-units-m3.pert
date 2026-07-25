@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M3:
   version 1
   title "SU-M3 temporal deadline and Next v4 target Core"
-  description "Implement and accept only the internal SU-M3 temporal deadline and NextResult v4 target Core selected by the scheduling-and-units macro. Accepted Grammar 3 Duration, declared calendar values, temporal semantics, and Contract 4 interface requirements are inputs. Six tasks total 23p at inherited 24p/1d velocity. Active Grammar 1, CLI Contract 3, public result schemas, root exports, registry/help, Guide, installed behavior, Next v3 normal authority, and package distribution remain unchanged until SU-M5."
+  description "Implement and accept only the internal SU-M3 temporal deadline and NextResult v4 target Core selected by the scheduling-and-units macro. Accepted Grammar 3 Duration, declared calendar values, temporal semantics, and Contract 4 interface requirements are inputs. Exact temporal input and release-bound projection is complete; five tasks and 19p remain at an observed 4p/1d velocity. Active Grammar 1, CLI Contract 3, public result schemas, root exports, registry/help, Guide, installed behavior, Next v3 normal authority, and package distribution remain unchanged until SU-M5."
   as_of 2026-07-25
   duration_unit point
-  velocity 24p/1d
+  velocity 4p/1d
   finish DEADLINE_CAPABILITIES_ACCEPTED
 
 milestone RATIONAL_DURATION_ACCEPTED:
@@ -69,6 +69,7 @@ task TEMPORAL_INPUT_PROJECTION RATIONAL_DURATION_ACCEPTED -> TEMPORAL_INPUT_READ
   title "Project exact declared temporal inputs"
   description "Build the target-only declared-input projection over Grammar 3 validated documents. Derive exact effective velocity, as_of-relative calendar relationships, not_before release bounds, milestone/task deadline values, and unavailable or not-applicable qualifications without activating a public result schema."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
