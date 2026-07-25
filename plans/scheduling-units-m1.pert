@@ -31,12 +31,10 @@ resource PUBLIC_SURFACE:
 
 
 
-milestone INTERFACE_CONTRACT_DEFINED:
-  title "Grammar and interface projections defined"
-  state reached
 
 milestone NORMATIVE_EXAMPLES_READY:
   title "Boundary examples and acceptance cases ready"
+  state reached
 
 milestone M1_CONTRACT_ACCEPTED:
   title "SU-M1 temporal and migration contract accepted"
@@ -48,21 +46,6 @@ milestone M1_CONTRACT_ACCEPTED:
 
 
 
-task NORMATIVE_EXAMPLES INTERFACE_CONTRACT_DEFINED -> NORMATIVE_EXAMPLES_READY:
-  title "Create boundary examples and machine-readable acceptance cases"
-  description |
-    Cover date and date-time boundaries, offsets, invalid calendar values,
-    blocked and resource-qualified deadlines, both migration directions,
-    incompatible velocity, non-representable conversions, idempotence, and
-    deterministic text and JSON projections.
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    NORMATIVE_SURFACE 1
-    PUBLIC_SURFACE 1
 
 task M1_CONTRACT_REVIEW NORMATIVE_EXAMPLES_READY -> M1_CONTRACT_ACCEPTED:
   title "Review and accept the SU-M1 contract"
