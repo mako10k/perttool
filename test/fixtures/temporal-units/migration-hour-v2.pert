@@ -1,0 +1,36 @@
+project MIGRATION_HOUR:
+  version 2
+  title "Hour-to-point migration with inserted velocity"
+  as_of 2026-07-25T09:00:00Z
+  duration_unit hour
+  critical_epsilon 0.5h
+  target_duration 4h
+  finish FINISH
+
+milestone START:
+  title "Current frontier"
+  state reached
+
+milestone MID:
+  title "Fixed work complete"
+  deadline 2026-07-25T11:30:00Z
+
+milestone FINISH:
+  title "Estimated work complete"
+  deadline 2026-07-25T14:30:00Z
+
+task FIXED START -> MID:
+  title "Fixed hour duration"
+  duration 2.5h
+  not_before 2026-07-25T09:00:00Z
+  deadline 2026-07-25T11:30:00Z
+  status planned
+
+task ESTIMATED MID -> FINISH:
+  title "Three-point estimate"
+  estimate:
+    optimistic 1h
+    most_likely 2h
+    pessimistic 3h
+  deadline 2026-07-25T14:30:00Z
+  status planned

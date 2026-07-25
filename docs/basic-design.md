@@ -1473,8 +1473,9 @@ leaving current Contract 3 and NextResult v3 authority unchanged.
 Exit:
 
 - accept the calendar, deadline, migration, and interface contracts;
-- accept machine-readable boundary examples for available, unavailable,
-  not-applicable, migration-failure, and authority cases;
+- accept the [machine-readable boundary examples](examples/temporal-units.md)
+  for available, unavailable, not-applicable, migration-failure, and authority
+  cases;
 - complete the cross-cutting contract review;
 - keep runtime activation, authority adoption, and publication separately
   gated.

@@ -568,6 +568,10 @@ fields to grammar version 1.
 
 ## 19. Acceptance for this contract
 
+The deadline observations are fixed by
+[TUE-004, TUE-005, and TUE-008 through TUE-011](../examples/temporal-units.md)
+and the shared machine-readable baseline.
+
 - Task, milestone, and project-finish deadline subjects are unambiguous.
 - Done tasks and reached milestones do not acquire invented actual times.
 - Future `not_before` bounds enter independently versioned precedence and

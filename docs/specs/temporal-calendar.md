@@ -435,6 +435,10 @@ selects:
 
 ## 16. Acceptance
 
+The calendar observations are fixed by
+[TUE-003 through TUE-008](../examples/temporal-units.md#3-validation-and-calendar-cases)
+and the shared machine-readable baseline.
+
 This slice is accepted only when tests and review establish all of the
 following.
 
@@ -455,5 +459,5 @@ following.
 11. Existing grammar version 1 and Analysis version 1 identities remain
     unchanged.
 12. Deadline and source-migration semantics plus the public interface remain
-    separately versioned, while examples and design review remain explicit
-    follow-on work.
+    separately versioned, the boundary examples are fixed, and design review
+    remains explicit follow-on work.

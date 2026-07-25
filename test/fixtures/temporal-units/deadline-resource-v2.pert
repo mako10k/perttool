@@ -1,0 +1,35 @@
+project DEADLINE_RESOURCE:
+  version 2
+  title "Resource-qualified task deadline"
+  as_of 2026-07-25T09:00:00+09:00
+  duration_unit hour
+  finish FINISH
+
+resource DEV:
+  title "Exclusive developer"
+  capacity 1
+
+milestone START:
+  title "Current frontier"
+  state reached
+
+milestone FINISH:
+  title "All work complete"
+  deadline 2026-07-25T13:00:00+09:00
+
+task RESOURCE_FIRST START -> FINISH:
+  title "Higher-priority resource user"
+  duration 2h
+  status planned
+  priority 100
+  requires:
+    DEV 1
+
+task DEADLINE_TASK START -> FINISH:
+  title "Precedence-on-time but resource-late work"
+  duration 2h
+  deadline 2026-07-25T11:00:00+09:00
+  status planned
+  priority 10
+  requires:
+    DEV 1

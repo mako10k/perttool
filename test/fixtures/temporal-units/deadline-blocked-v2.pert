@@ -1,0 +1,29 @@
+project DEADLINE_BLOCKED:
+  version 2
+  title "Deadline conditional on blocked work"
+  as_of 2026-07-25T09:00:00Z
+  duration_unit hour
+  finish DELIVERY
+
+milestone START:
+  title "Current frontier"
+  state reached
+
+milestone INPUT_READY:
+  title "Blocked input ready"
+
+milestone DELIVERY:
+  title "Delivery"
+  deadline 2026-07-25T11:00:00Z
+
+task BLOCKED_INPUT START -> INPUT_READY:
+  title "Resolve an external block"
+  duration 1h
+  status blocked
+  blocked_reason "External approval has not arrived"
+
+task DELIVER INPUT_READY -> DELIVERY:
+  title "Complete delivery"
+  duration 1h
+  deadline 2026-07-25T11:00:00Z
+  status planned

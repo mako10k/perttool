@@ -1,0 +1,37 @@
+project MIGRATION_POINT:
+  version 2
+  title "Point-to-day exact migration"
+  as_of 2026-07-25T09:00:00+09:00
+  duration_unit point
+  velocity 20p/10d
+  critical_epsilon 0.5p
+  target_duration 12p
+  finish FINISH
+
+milestone START:
+  title "Current frontier"
+  state reached
+
+milestone MID:
+  title "Deterministic work complete"
+  deadline 2026-07-27T09:00:00+09:00
+
+milestone FINISH:
+  title "Estimated work complete"
+  deadline 2026-07-30T09:00:00+09:00
+
+task FIXED START -> MID:
+  title "Fixed point duration"
+  duration 4.00p
+  not_before 2026-07-25T09:00:00+09:00
+  deadline 2026-07-27T09:00:00+09:00
+  status planned
+
+task ESTIMATED MID -> FINISH:
+  title "Three-point estimate"
+  estimate:
+    optimistic 2p
+    most_likely 4p
+    pessimistic 6p
+  deadline 2026-07-30T09:00:00+09:00
+  status planned

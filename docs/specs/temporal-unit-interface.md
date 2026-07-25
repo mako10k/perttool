@@ -730,6 +730,12 @@ Temporal Deadline Semantics.
 
 ## 12. Normative acceptance cases
 
+The concrete target inputs and expected semantic projections are fixed by the
+[Normative Temporal and Unit-Migration Examples](../examples/temporal-units.md)
+and `Perttool.TemporalUnitExampleBaseline.v1`. The `TUI-*` rows remain
+interface-wide acceptance observations; the `TUE-*` cases provide reusable
+input and expected-output witnesses.
+
 | ID | Required observation |
 | --- | --- |
 | TUI-001 | Grammar v1 rejects temporal fields and otherwise retains byte-compatible validation; grammar v2 accepts exactly the three added fields. |

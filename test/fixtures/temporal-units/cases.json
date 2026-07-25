@@ -1,0 +1,502 @@
+{
+  "schema_version": "Perttool.TemporalUnitExampleBaseline.v1",
+  "target_contract": {
+    "grammar_version": 2,
+    "cli_contract_version": 4,
+    "calendar": {
+      "id": "perttool.calendar-projection",
+      "version": 1,
+      "profile_id": "perttool.calendar.continuous-fixed-offset",
+      "profile_version": 1
+    },
+    "deadline": {
+      "id": "perttool.deadline-evaluation",
+      "version": 1
+    },
+    "unit_migration": {
+      "id": "perttool.unit-migration",
+      "version": 1
+    }
+  },
+  "cases": [
+    {
+      "case_id": "TUE-001",
+      "category": "validation",
+      "title": "Grammar version 1 remains closed",
+      "operation": "document.check",
+      "input": {
+        "project_version": 1,
+        "field": "task.deadline",
+        "literal": "2026-07-25"
+      },
+      "expected": {
+        "ok": false,
+        "diagnostic_codes": ["PTDSL-005"],
+        "temporal_inputs": null
+      }
+    },
+    {
+      "case_id": "TUE-002",
+      "category": "validation",
+      "title": "A temporal field requires the explicit anchor",
+      "operation": "document.check",
+      "input": {
+        "project_version": 2,
+        "as_of": null,
+        "field": "milestone.deadline",
+        "literal": "2026-07-25"
+      },
+      "expected": {
+        "ok": false,
+        "diagnostic_codes": ["PTSEM-112"],
+        "wall_clock_read": false,
+        "host_zone_read": false
+      }
+    },
+    {
+      "case_id": "TUE-003",
+      "category": "validation",
+      "title": "Invalid Gregorian and date-time spellings fail as source errors",
+      "operation": "document.check",
+      "input": {
+        "invalid_literals": [
+          "2026-02-29",
+          "2026-07-25T10:00:00",
+          "2026-07-25T10:00:60Z"
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "diagnostic_code_by_literal": {
+          "2026-02-29": "PTDSL-008",
+          "2026-07-25T10:00:00": "PTDSL-008",
+          "2026-07-25T10:00:60Z": "PTDSL-008"
+        },
+        "candidate": null
+      }
+    },
+    {
+      "case_id": "TUE-004",
+      "category": "calendar",
+      "title": "Leap-day release and inclusive date deadline",
+      "operation": "dag.analyze",
+      "fixture": "calendar-date-v2.pert",
+      "expected": {
+        "anchor": {
+          "kind": "date",
+          "source_text": "2028-02-28"
+        },
+        "task_id": "LEAP_WINDOW",
+        "release_bound": {
+          "numerator": "1",
+          "denominator": "1",
+          "unit": "day"
+        },
+        "precedence": {
+          "start_relative": "1/1d",
+          "finish_relative": "3/1d",
+          "start_calendar": "2028-02-29",
+          "finish_calendar": "2028-03-02",
+          "forecast_relation": "after_deadline",
+          "signed_margin": "-1/1 calendar_days",
+          "assessment": "lower_bound_late"
+        },
+        "resource": {
+          "finish_relative": "3/1d",
+          "finish_calendar": "2028-03-02",
+          "forecast_relation": "after_deadline",
+          "signed_margin": "-1/1 calendar_days",
+          "assessment": "heuristic_late",
+          "optimal": false
+        },
+        "current_state": "not_due",
+        "current_signed_window": "2/1 calendar_days",
+        "combined_assessment": "forecast_infeasible"
+      }
+    },
+    {
+      "case_id": "TUE-005",
+      "category": "calendar",
+      "title": "Equal instants retain different declared offsets",
+      "operation": "dag.analyze",
+      "fixture": "calendar-offset-v2.pert",
+      "expected": {
+        "anchor_source_text": "2026-07-25T09:00:00+09:00",
+        "not_before_source_text": "2026-07-25T00:00:00Z",
+        "task_deadline_source_text": "2026-07-25T02:00:00Z",
+        "milestone_deadline_source_text": "2026-07-25T11:00:00+09:00",
+        "release_bound": "0/1h",
+        "derived_finish_source_text": "2026-07-25T11:00:00+09:00",
+        "task_forecast_relation": "on_deadline",
+        "milestone_forecast_relation": "on_deadline",
+        "destination_relationship": "same_deadline",
+        "signed_margin": "0/1 si_seconds",
+        "combined_assessment": "forecast_on_time",
+        "declared_source_text_preserved": true
+      }
+    },
+    {
+      "case_id": "TUE-006",
+      "category": "authority",
+      "title": "Mixed kinds remain valid and fail closed for a new start",
+      "operation": "dag.next",
+      "fixture": "mixed-kind-v2.pert",
+      "expected": {
+        "document_ok": true,
+        "structurally_ready_task_ids": ["FUTURE_CLOCK"],
+        "recommendation_task_ids": ["FUTURE_CLOCK"],
+        "runnable_now_task_ids": [],
+        "startable_recommended_task_ids": [],
+        "unavailable_recommended_task_ids": ["FUTURE_CLOCK"],
+        "time_eligibility": "unavailable",
+        "release_state": "unavailable",
+        "unavailable_causes": ["incomparable_temporal_kinds"],
+        "classification": "ready",
+        "recommendation_tier": "recommended",
+        "deadline_facts_used_for_ranking": false
+      }
+    },
+    {
+      "case_id": "TUE-007",
+      "category": "calendar",
+      "title": "A date anchor does not invent a clock for hour projection",
+      "operation": "dag.analyze",
+      "input": {
+        "as_of": "2026-07-25",
+        "duration_unit": "hour",
+        "relative_finish": "1/1h"
+      },
+      "expected": {
+        "document_ok": true,
+        "projection_state": "unavailable",
+        "unavailable_causes": ["date_anchor_has_no_clock"],
+        "rounded_or_promoted": false
+      }
+    },
+    {
+      "case_id": "TUE-008",
+      "category": "deadline",
+      "title": "Current deadline comparison is inclusive",
+      "operation": "dag.analyze",
+      "input": {
+        "as_of": "2026-07-25",
+        "deadlines": [
+          "2026-07-26",
+          "2026-07-25",
+          "2026-07-24"
+        ]
+      },
+      "expected": {
+        "state_by_deadline": {
+          "2026-07-26": "not_due",
+          "2026-07-25": "due_now",
+          "2026-07-24": "overdue"
+        },
+        "end_of_day_inferred": false
+      }
+    },
+    {
+      "case_id": "TUE-009",
+      "category": "deadline",
+      "title": "Resource lateness is at risk rather than proven infeasible",
+      "operation": "dag.analyze",
+      "fixture": "deadline-resource-v2.pert",
+      "expected": {
+        "subject": {
+          "kind": "task",
+          "id": "DEADLINE_TASK"
+        },
+        "precedence": {
+          "start": "0/1h",
+          "finish": "2/1h",
+          "forecast_relation": "on_deadline",
+          "assessment": "lower_bound_on_time",
+          "optimal": null
+        },
+        "resource": {
+          "start": "2/1h",
+          "finish": "4/1h",
+          "forecast_relation": "after_deadline",
+          "signed_margin": "-2/1h",
+          "assessment": "heuristic_late",
+          "optimal": false
+        },
+        "combined_assessment": "at_risk",
+        "proof_of_infeasibility": false
+      }
+    },
+    {
+      "case_id": "TUE-010",
+      "category": "deadline",
+      "title": "Blocked predecessors qualify numeric deadline projections",
+      "operation": "dag.analyze",
+      "fixture": "deadline-blocked-v2.pert",
+      "expected": {
+        "subject": {
+          "kind": "task",
+          "id": "DELIVER"
+        },
+        "precedence_finish": "2/1h",
+        "resource_finish": "2/1h",
+        "forecast_relation": "on_deadline",
+        "combined_assessment": "forecast_on_time",
+        "conditional_on_blocks_resolved": true,
+        "blocked_task_ids": ["BLOCKED_INPUT"],
+        "invented_block_duration": false,
+        "resource_optimal": false
+      }
+    },
+    {
+      "case_id": "TUE-011",
+      "category": "deadline",
+      "title": "Completed work does not acquire an actual timestamp",
+      "operation": "dag.analyze",
+      "fixture": "deadline-complete-v2.pert",
+      "expected": {
+        "subjects": [
+          "task:HISTORICAL",
+          "milestone:FINISH"
+        ],
+        "completion_state": "complete_actual_time_unavailable",
+        "current_state": "not_applicable",
+        "precedence_state": "not_applicable",
+        "resource_state": "not_applicable",
+        "combined_assessment": "not_applicable",
+        "actual_completion_inferred": false
+      }
+    },
+    {
+      "case_id": "TUE-012",
+      "category": "migration",
+      "title": "Point-to-day migration converts every inventoried field exactly",
+      "operation": "project.migrate-unit",
+      "fixture": "migration-point-v2.pert",
+      "input": {
+        "target_unit": "day",
+        "replacement_velocity": null
+      },
+      "expected": {
+        "ok": true,
+        "changed": true,
+        "source_unit": "point",
+        "target_unit": "day",
+        "effective_velocity": "20p/10d",
+        "velocity_disposition": "retained",
+        "converted_tokens_by_field": {
+          "project.critical_epsilon": "0.25d",
+          "project.target_duration": "6d",
+          "task.FIXED.duration": "2d",
+          "task.ESTIMATED.estimate.optimistic": "1d",
+          "task.ESTIMATED.estimate.most_likely": "2d",
+          "task.ESTIMATED.estimate.pessimistic": "3d"
+        },
+        "reversibility": "exact",
+        "temporal_tokens_preserved": [
+          "2026-07-25T09:00:00+09:00",
+          "2026-07-27T09:00:00+09:00",
+          "2026-07-30T09:00:00+09:00"
+        ]
+      }
+    },
+    {
+      "case_id": "TUE-013",
+      "category": "migration",
+      "title": "Hour-to-point migration can insert an explicit velocity",
+      "operation": "project.migrate-unit",
+      "fixture": "migration-hour-v2.pert",
+      "input": {
+        "target_unit": "point",
+        "replacement_velocity": "8p/4h"
+      },
+      "expected": {
+        "ok": true,
+        "changed": true,
+        "source_unit": "hour",
+        "target_unit": "point",
+        "effective_velocity": "8p/4h",
+        "velocity_disposition": "inserted",
+        "converted_tokens_by_field": {
+          "project.critical_epsilon": "1p",
+          "project.target_duration": "8p",
+          "task.FIXED.duration": "5p",
+          "task.ESTIMATED.estimate.optimistic": "2p",
+          "task.ESTIMATED.estimate.most_likely": "4p",
+          "task.ESTIMATED.estimate.pessimistic": "6p"
+        },
+        "reversibility": "values_exact_metadata_changed",
+        "temporal_tokens_preserved": true
+      }
+    },
+    {
+      "case_id": "TUE-014",
+      "category": "migration",
+      "title": "Unsupported directions and incompatible velocity fail explicitly",
+      "operation": "project.migrate-unit",
+      "input": {
+        "requests": [
+          {
+            "source_unit": "point",
+            "target_unit": "hour",
+            "velocity": "10p/5d"
+          },
+          {
+            "source_unit": "day",
+            "target_unit": "hour",
+            "velocity": "10p/5d"
+          },
+          {
+            "source_unit": "hour",
+            "target_unit": "point",
+            "velocity": "10p/5d"
+          },
+          {
+            "source_unit": "hour",
+            "target_unit": "hour",
+            "replacement_velocity": "8p/4h"
+          }
+        ]
+      },
+      "expected": {
+        "causes": [
+          "velocity_period_mismatch",
+          "unsupported_direction",
+          "velocity_period_mismatch",
+          "same_unit_velocity_change"
+        ],
+        "diagnostic_codes": [
+          "PTMIG-405",
+          "PTMIG-404",
+          "PTMIG-405",
+          "PTMIG-406"
+        ],
+        "partial_candidate_exposed": false
+      }
+    },
+    {
+      "case_id": "TUE-015",
+      "category": "migration",
+      "title": "Non-terminating exact decimals reject the whole migration",
+      "operation": "project.migrate-unit",
+      "fixture": "migration-nonrepresentable-v2.pert",
+      "input": {
+        "target_unit": "day",
+        "replacement_velocity": null
+      },
+      "expected": {
+        "ok": false,
+        "cause": "nonrepresentable_decimal",
+        "diagnostic_code": "PTMIG-408",
+        "affected_fields": [
+          "project.critical_epsilon",
+          "project.target_duration",
+          "task.FIXED.duration",
+          "task.ESTIMATED.estimate.optimistic",
+          "task.ESTIMATED.estimate.most_likely"
+        ],
+        "candidate": null,
+        "updated_digest": null,
+        "edits": [],
+        "diff": null,
+        "velocity_replaced": false
+      }
+    },
+    {
+      "case_id": "TUE-016",
+      "category": "migration",
+      "title": "Same-unit and repeated requests are idempotent",
+      "operation": "project.migrate-unit",
+      "input": {
+        "requests": [
+          "same source and target without replacement",
+          "repeat the target of a successful changing-unit migration"
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "changed": false,
+        "updated_text_equals_original": true,
+        "edits": [],
+        "diff": "",
+        "velocity_required": false,
+        "rescaled_again": false,
+        "reversibility": "not_applicable"
+      }
+    },
+    {
+      "case_id": "TUE-017",
+      "category": "migration",
+      "title": "The exact inverse restores values but not lexical padding",
+      "operation": "project.migrate-unit",
+      "fixture": "migration-point-v2.pert",
+      "input": {
+        "sequence": [
+          {
+            "target_unit": "day"
+          },
+          {
+            "target_unit": "point"
+          }
+        ]
+      },
+      "expected": {
+        "base_unit_restored": "point",
+        "exact_duration_values_restored": true,
+        "semantic_velocity_restored": true,
+        "non_timing_semantics_restored": true,
+        "temporal_source_tokens_byte_equal": true,
+        "original_token": "4.00p",
+        "inverse_token": "4p",
+        "whole_document_byte_equal": false,
+        "reversibility": "exact"
+      }
+    },
+    {
+      "case_id": "TUE-018",
+      "category": "projection",
+      "title": "Text and JSON projections have one deterministic semantic order",
+      "operation": "all-read-operations",
+      "fixture": "calendar-offset-v2.pert",
+      "expected": {
+        "json": {
+          "check_schema": "Perttool.CheckResult.v2",
+          "project_schema": "Perttool.ProjectResult.v2",
+          "analysis_schema": "Perttool.AnalysisResult.v3",
+          "next_schema": "Perttool.NextResult.v4",
+          "cli_contract_version": 4,
+          "declared_temporal_order": [
+            "project:CALENDAR_OFFSET.as_of",
+            "milestone:FINISH.deadline",
+            "task:OFFSET_EQUAL.not_before",
+            "task:OFFSET_EQUAL.deadline"
+          ],
+          "deadline_subject_order": [
+            "task:OFFSET_EQUAL",
+            "milestone:FINISH"
+          ],
+          "paired_view_order": [
+            "precedence",
+            "resource"
+          ]
+        },
+        "text": {
+          "document_check_suffix": "temporal=milestone_deadlines:1,task_not_before:1,task_deadlines:1",
+          "project_labels": [
+            "AS_OF",
+            "FINISH_DEADLINE"
+          ],
+          "analysis_section_order": [
+            "TEMPORAL PRECEDENCE",
+            "TEMPORAL RESOURCE",
+            "DEADLINES"
+          ],
+          "next_first_section": "START AUTHORITY",
+          "next_last_section": "TEMPORAL CONTEXT",
+          "ranking_label": "INFORMATIONAL FOR RANKING v1",
+          "resource_qualification": "optimal=false"
+        },
+        "repeat_byte_equal": true,
+        "text_and_json_same_core_result": true
+      }
+    }
+  ]
+}

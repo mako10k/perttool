@@ -1,0 +1,21 @@
+project MIXED_KIND:
+  version 2
+  title "Valid source with unavailable temporal relationship"
+  as_of 2026-07-25
+  duration_unit day
+  finish FINISH
+
+milestone START:
+  title "Current frontier"
+  state reached
+
+milestone FINISH:
+  title "Finish"
+  deadline 2026-07-27
+
+task FUTURE_CLOCK START -> FINISH:
+  title "Date anchor with a date-time release"
+  duration 1d
+  not_before 2026-07-25T12:00:00Z
+  deadline 2026-07-26
+  status planned

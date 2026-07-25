@@ -1,0 +1,21 @@
+project CALENDAR_DATE:
+  version 2
+  title "Leap-day date projection"
+  as_of 2028-02-28
+  duration_unit day
+  finish RELEASED
+
+milestone START:
+  title "Current frontier"
+  state reached
+
+milestone RELEASED:
+  title "Release complete"
+  deadline 2028-03-01
+
+task LEAP_WINDOW START -> RELEASED:
+  title "Wait for leap day and complete"
+  duration 2d
+  not_before 2028-02-29
+  deadline 2028-03-01
+  status planned

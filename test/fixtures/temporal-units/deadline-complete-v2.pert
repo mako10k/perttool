@@ -1,0 +1,21 @@
+project DEADLINE_COMPLETE:
+  version 2
+  title "Completed history remains unknown"
+  as_of 2026-07-25
+  duration_unit day
+  finish FINISH
+
+milestone START:
+  title "Historical start"
+  state reached
+
+milestone FINISH:
+  title "Reached finish"
+  state reached
+  deadline 2026-07-25
+
+task HISTORICAL START -> FINISH:
+  title "Completed without an actual timestamp"
+  duration 1d
+  deadline 2026-07-24
+  status done

@@ -419,8 +419,9 @@ whole-document semantic identity with the pre-replacement source.
 
 ## 14. Semantic outcome
 
-The interface task will choose public type and field names. Its projection
-MUST nevertheless preserve these semantic facts.
+The [Temporal and Unit Interface Contract](temporal-unit-interface.md) selects
+the public type and field names. Its projection MUST preserve these semantic
+facts.
 
 ```text
 UnitMigrationOutcome:
@@ -458,7 +459,7 @@ ordinary validation diagnostics.
 ## 15. Fail-closed causes
 
 The following semantic causes are stable in unit migration version 1. The
-interface contract will map them to public diagnostics.
+interface contract maps them to public diagnostics.
 
 | Cause | Meaning |
 | --- | --- |
@@ -488,7 +489,7 @@ Unit migration version 1:
 - does not add a command to CLI Contract 3; and
 - does not authorize a package release.
 
-The dependency-ordered interface contract decides:
+The accepted dependency-ordered interface contract fixes:
 
 - Core request and result type names;
 - CLI command path and option spellings;
@@ -498,11 +499,15 @@ The dependency-ordered interface contract decides:
 - interaction with `batch apply`; and
 - preview, `--write`, `--out`, and expected-digest behavior.
 
-Runtime implementation MUST NOT begin by treating the existing project/task
-batch surface as the public migration operation. It first needs the versioned
-interface and acceptance cases.
+Runtime implementation MUST use the accepted versioned interface and
+acceptance cases. It MUST NOT treat the existing project/task batch surface as
+the public migration operation.
 
 ## 17. Acceptance for this contract
+
+The migration observations are fixed by
+[TUE-012 through TUE-017](../examples/temporal-units.md#5-unit-migration-cases)
+and the shared machine-readable baseline.
 
 The semantic contract is accepted only when tests establish all of the
 following.

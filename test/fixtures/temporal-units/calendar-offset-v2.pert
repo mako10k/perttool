@@ -1,0 +1,21 @@
+project CALENDAR_OFFSET:
+  version 2
+  title "Equal instants with different offsets"
+  as_of 2026-07-25T09:00:00+09:00
+  duration_unit hour
+  finish FINISH
+
+milestone START:
+  title "Current frontier"
+  state reached
+
+milestone FINISH:
+  title "Offset-preserving finish"
+  deadline 2026-07-25T11:00:00+09:00
+
+task OFFSET_EQUAL START -> FINISH:
+  title "Finish at an equal UTC deadline"
+  duration 2h
+  not_before 2026-07-25T00:00:00Z
+  deadline 2026-07-25T02:00:00Z
+  status planned
