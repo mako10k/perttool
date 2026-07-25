@@ -24,7 +24,6 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "TEMPORAL_INPUT_PROJECTION",
     "TEMPORAL_PRECEDENCE_CORE",
     "TEMPORAL_RESOURCE_SCHEDULE",
     "DEADLINE_EVALUATION_CORE",
@@ -35,7 +34,11 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 23);
+  assert.equal(points, 19);
+  assert.match(
+    detail,
+    /milestone TEMPORAL_INPUT_READY:[\s\S]*state reached/,
+  );
   assert.match(detail, /Active Grammar 1, CLI Contract 3/);
   assert.match(detail, /Next v3 normal authority/);
   assert.doesNotMatch(detail, /project migrate-unit/);
@@ -46,7 +49,7 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
   assert.match(interfaceSpec, /Perttool\.NextResult\.v4/);
 });
 
-test("SU-M3 starts from the complete known recommendation", async () => {
+test("SU-M3 maintains the complete known recommendation after input acceptance", async () => {
   const source = await repositoryFile("plans/scheduling-units-m3.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
@@ -56,18 +59,21 @@ test("SU-M3 starts from the complete known recommendation", async () => {
   assert.ok(analysis.resource);
   assert.deepEqual(
     [analysis.precedence.makespan.numerator, analysis.precedence.makespan.denominator],
-    [19n, 1n],
+    [15n, 1n],
   );
   assert.deepEqual(
     [analysis.resource.makespan.numerator, analysis.resource.makespan.denominator],
-    [23n, 1n],
+    [19n, 1n],
   );
   assert.equal(next.ok, true);
   assert.ok(next.recommendation);
-  assert.deepEqual(next.groups.ready, ["TEMPORAL_INPUT_PROJECTION"]);
-  assert.deepEqual(next.groups.runnableNow, ["TEMPORAL_INPUT_PROJECTION"]);
+  assert.deepEqual(next.groups.ready, [
+    "TEMPORAL_PRECEDENCE_CORE",
+    "TEMPORAL_RESOURCE_SCHEDULE",
+  ]);
+  assert.deepEqual(next.groups.runnableNow, ["TEMPORAL_PRECEDENCE_CORE"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "TEMPORAL_INPUT_PROJECTION",
+    "TEMPORAL_RESOURCE_SCHEDULE",
   ]);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);
