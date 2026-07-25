@@ -585,6 +585,28 @@ returns that nominally validated boundary for later SU-M4 layers. Neither
 application boundary nor the migration modules are root exports or Contract 3
 commands.
 
+`src/application/target-unit-migration-candidate.ts` coordinates the prepared
+request and exact conversion without routing through the ordinary public
+batch surface. It plans the grammar version, base unit, retained/replaced/
+inserted velocity, and complete Duration inventory as one non-overlapping
+UTF-16 edit set against the original target AST; applies the edits once;
+validates only the final Grammar 1, 2, or 3 candidate; verifies exact token and
+absolute-temporal preservation postconditions; and exposes candidate text,
+SHA-256 digest, unified diff, and edits only after success. Its candidate is
+accepted by the existing internal Grammar 3 digest-locked safe-write adapter.
+The service remains absent from root exports and CLI Contract 3.
+
+Round-trip acceptance invokes that same service for each operation. A
+same-unit request and a repeated completed target return the current source,
+digest, and empty edit/diff set without conversion records. An inverse request
+is prepared again from the forward candidate and restores every inventoried
+Rational under the retained effective velocity; canonical Duration spelling
+may differ while temporal tokens, trivia, and unrelated fields remain exact.
+Grammar 3 retention is observable on the inverse. Velocity insertion or
+replacement is qualified by the operation that changed the metadata; the
+history-free inverse retains the resulting velocity and does not guess its
+prior absence or value.
+
 The SU-M2 source implementation keeps `parseDocument` fixed to the active
 Grammar 1 profile. Target parsing requires the identity-checked internal
 `TARGET_GRAMMAR_2_CAPABILITY`; only an explicit project `version 2` selects

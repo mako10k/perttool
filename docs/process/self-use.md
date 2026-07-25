@@ -457,6 +457,42 @@ advance then removes the completed task, retains both
 result branch still starts from the request frontier, preserves the
 ready/recommended sets, and clears `PTDAG-208`.
 
+`UNIT_MIGRATION_CANDIDATE` then added the internal application service that
+composes request preparation and exact conversion without publishing a batch
+member or command. It plans grammar version, `duration_unit`, velocity
+retention/replacement/insertion, and every inventoried Duration against the
+one original target AST as non-overlapping UTF-16 edits; applies one
+in-memory candidate; validates only that final Grammar 1/2/3 candidate; and
+checks the selected grammar, exact canonical Duration order, retained
+velocity bytes or canonical replacement, and every absolute temporal token
+before returning SHA-256 digest, unified diff, edits, and source. TUE-012,
+TUE-013, and TUE-015 cover retained, inserted, and Grammar 3 upgrade cases;
+failure, no-op, determinism, BOM, edit replay, and existing target safe-write
+tests keep partial candidates and Contract 3 exposure closed. The cumulative
+13p first-day sample leaves 12p, with 8p precedence, 12p heuristic resources,
+4p delay, forecasts `8/13d` and `12/13d`, and complete Next v3 recommends
+`MIGRATION_NOOP_REPEAT_INVERSE`; `UNIT_MIGRATION_RESULT_V2` remains
+resource-deferred. The task is done but unadvanced until its implementation
+snapshot is committed under ADV-001.
+
+`MIGRATION_NOOP_REPEAT_INVERSE` then accepted the candidate service's
+round-trip behavior without adding a new runtime surface. TUE-016 repeats a
+completed target and receives the same source, digest, and empty edits/diff
+without rescaling. TUE-017 performs Point-to-day-to-Point and compares every
+parsed Rational, semantic velocity, non-timing field, absolute temporal token,
+standalone comment, and blank line; the original `4.00p` returns canonically
+as `4p`. TUE-015 proves an exact-Fraction forward migration retains Grammar 3
+and reports `grammar_version_retained_on_inverse`. An inserted-velocity round
+trip restores all original Duration values while retaining the new velocity;
+the forward result supplies `values_exact_metadata_changed` and
+`velocity_inserted`, and the corresponding replacement case records
+`velocity_replaced`; their history-free inverses do not invent provenance. The
+cumulative 17p first-day sample leaves 8p; precedence and heuristic resource
+makespans are both 8p with no delay, both forecasts are `8/17d`, and complete
+Next v3 recommends `UNIT_MIGRATION_RESULT_V2`. The candidate and round-trip
+tasks remain done but unadvanced until their implementation snapshot is
+committed under ADV-001.
+
 Starting conditions:
 
 - `perttool dsl check <file>` works

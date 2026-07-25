@@ -4,7 +4,7 @@ project SCHEDULING_UNITS_M4:
   description "Implement and accept only the internal unit-migration version 2 Core selected by the scheduling-and-units macro. SU-M2R exact Decimal-or-fraction Duration, canonical serialization, target Grammar 3, and version-boundary capabilities are accepted inputs. The active Grammar 1 runtime, CLI Contract 3, public schemas, root exports, command registry, help, Guide, installed workflow, Next v3 authority, and package distribution remain unchanged. The initial velocity is inherited at 24p/1d; six tasks total 25p."
   as_of 2026-07-25
   duration_unit point
-  velocity 8p/1d
+  velocity 17p/1d
   finish UNIT_MIGRATION_ACCEPTED
 
 
@@ -67,6 +67,7 @@ task UNIT_MIGRATION_CANDIDATE EXACT_CONVERSION_READY -> MIGRATION_CANDIDATE_READ
   title "Implement the atomic source-preserving migration candidate"
   description "Plan non-overlapping UTF-16 edits for grammar version when required, duration_unit, velocity retention/replacement/insertion, and every inventoried Duration. Apply one in-memory candidate, parse and validate it through the selected Grammar 1, 2, or 3 capability, and publish digest, diff, edits, and candidate only after final validation. Reuse target safe-write mechanics without adding active Contract 3 dispatch or an automatic migration batch member."
   duration 5p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -89,6 +90,7 @@ task MIGRATION_NOOP_REPEAT_INVERSE MIGRATION_CANDIDATE_READY -> MIGRATION_ROUNDT
   title "Accept no-op, repetition, and exact inverse behavior"
   description "Make same-unit requests without replacement successful unchanged candidates, prove repeated targets do not rescale, and verify inverse migration with the same effective velocity restores every exact source Rational. Preserve canonical lexical and unrelated bytes while reporting grammar-upgrade or velocity replacement/insertion as values_exact_metadata_changed rather than overstating whole-document identity."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

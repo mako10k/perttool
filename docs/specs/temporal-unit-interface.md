@@ -670,7 +670,10 @@ Stable qualification strings include
 `velocity_replaced`, and `velocity_inserted` when applicable. An upgrade or
 velocity metadata change sets
 `reversibility=values_exact_metadata_changed`; otherwise an invertible
-changing migration reports `exact`.
+changing migration reports `exact`. Reversibility and qualifications describe
+one request and its source. A caller evaluating a forward/inverse sequence
+retains the forward outcome; an inverse does not infer whether its currently
+declared velocity was inserted or replaced by an earlier operation.
 
 ## 9. Text projections
 

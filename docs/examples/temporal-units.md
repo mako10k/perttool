@@ -317,6 +317,9 @@ velocity, but original metadata did not contain that velocity, so the result
 is `values_exact_metadata_changed`. Absolute temporal tokens remain unchanged.
 The machine-readable case fixes the retained token at all six temporal field
 paths rather than treating preservation as a document-level boolean.
+An inverse request retains this now-declared velocity and does not infer its
+former absence; sequence-level comparison therefore retains this forward
+qualification.
 
 ### TUE-014 Direction and velocity failures are distinct
 

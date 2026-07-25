@@ -307,75 +307,54 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m4": {
-      "source_digest": "sha256:9dc9eedb4760c73c31c995c2ad077f443f24a979b99b9c144a09bbf46c0248ca",
+      "source_digest": "sha256:92c6f6cbfe7490d87e44dda1bba47d6c046b0c9fe953d1b9b76a1284888a63e5",
       "groups": {
         "active": [],
         "ready": [
-          "UNIT_MIGRATION_CANDIDATE",
           "UNIT_MIGRATION_RESULT_V2"
         ],
         "runnable_now": [
-          "UNIT_MIGRATION_CANDIDATE"
+          "UNIT_MIGRATION_RESULT_V2"
         ],
         "blocked_now": [],
         "upcoming": [
-          "MIGRATION_NOOP_REPEAT_INVERSE",
           "M4_UNIT_MIGRATION_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "UNIT_MIGRATION_CANDIDATE"
+        "UNIT_MIGRATION_RESULT_V2"
       ],
       "manual_selected_task_ids": [
-        "UNIT_MIGRATION_CANDIDATE"
+        "UNIT_MIGRATION_RESULT_V2"
       ],
       "tiers": {
-        "UNIT_MIGRATION_CANDIDATE": "recommended",
-        "UNIT_MIGRATION_RESULT_V2": "deferred"
+        "UNIT_MIGRATION_RESULT_V2": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "UNIT_MIGRATION_CANDIDATE",
+          "id": "UNIT_MIGRATION_RESULT_V2",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
-        },
-        {
-          "id": "UNIT_MIGRATION_RESULT_V2",
-          "runnable_now": false,
-          "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "5/1",
-          "resource_rejections": [
-            {
-              "resource_id": "MIGRATION_CORE_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "UNIT_MIGRATION_CANDIDATE"
-              ]
-            }
-          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 12,
-        "facts": 47,
-        "comparisons": 2,
-        "reasons": 8,
-        "descriptions": 4
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:93e6373dc3b3282503de900662a9449cff9ce0409bc21d864aee36294dd3c784",
+      "source_digest": "sha256:45430100787042414bb682d26a61306545d64ec565a8079349e9f2ac8d3d3da2",
       "groups": {
         "active": [],
         "ready": [

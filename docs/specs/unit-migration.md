@@ -436,10 +436,20 @@ preserved.
 
 If the first migration replaced or inserted velocity, the inverse restores
 exact duration values under that effective velocity but retains the new
-velocity. If the first migration upgraded grammar version 1 or 2 to version 3,
-the inverse likewise retains version 3 rather than guessing that a downgrade
-is desired. Either condition reports `values_exact_metadata_changed` rather
-than claiming whole-document semantic identity with the original source.
+velocity. The forward outcome records `velocity_replaced` or
+`velocity_inserted` and `values_exact_metadata_changed`, which qualifies the
+round trip relative to the original source. Migration requests are
+history-free: an inverse prepared from the resulting source treats that
+velocity as retained and does not infer whether it existed before the forward
+operation.
+
+If the first migration upgraded grammar version 1 or 2 to version 3, the
+inverse likewise retains version 3 rather than guessing that a downgrade is
+desired. This condition is visible in the inverse source itself, so the
+inverse reports `grammar_version_retained_on_inverse` and
+`values_exact_metadata_changed`. A caller evaluating a multi-operation round
+trip retains the outcomes of those operations; the migration Core does not
+reconstruct provenance from Git or hidden state.
 
 ## 14. Semantic outcome
 
@@ -474,7 +484,8 @@ Each converted-field record identifies the project or task field and retains:
 `reversibility` is one of:
 
 - `exact`: inverse migration with the retained effective velocity restores
-  source semantic values and migration retained grammar and velocity metadata;
+  source semantic values and retains the current request's grammar and
+  velocity metadata;
 - `values_exact_metadata_changed`: duration values invert exactly, but
   replacement/inserted velocity or a retained grammar upgrade prevents a claim
   that original metadata is restored; or

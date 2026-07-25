@@ -518,11 +518,22 @@ SU-M2 progress:
   Decimal-or-Fraction tokens, Grammar 1/2/3 retention or upgrade, no-op, and
   inverse checks. Implementation commit `e442ea9` satisfies ADV-001 and the
   detail is advanced to `EXACT_CONVERSION_READY`.
-- Four SU-M4 tasks and 17p remain. Cumulative velocity is `8p/1d`.
-  Precedence and heuristic resource makespans are 13p and 17p with 4p delay;
-  forecasts are `13/8d` and `17/8d`. Complete Next v3 recommends
-  `UNIT_MIGRATION_CANDIDATE`;
-  `UNIT_MIGRATION_RESULT_V2` is ready but resource-deferred.
+- `UNIT_MIGRATION_CANDIDATE` is implemented and recorded done through one
+  coordinated UTF-16 edit set, final-candidate-only Grammar 1/2/3 validation,
+  exact Duration and temporal preservation postconditions, digest/diff,
+  fail-closed request/source handling, determinism, BOM retention, and target
+  safe-write reuse. It remains unadvanced under ADV-001 until its
+  implementation snapshot is committed.
+- `MIGRATION_NOOP_REPEAT_INVERSE` is implemented and recorded done through
+  unchanged same-unit and repeated requests, exact Rational round trips,
+  canonical lexical normalization, byte-retained temporal and unrelated
+  source, retained Grammar 3 qualification, and inserted/replaced velocity
+  metadata without historical inference. It remains unadvanced with the
+  candidate WIP under ADV-001 until the implementation snapshot is committed.
+- Two SU-M4 tasks and 8p remain. Cumulative velocity is `17p/1d`.
+  Precedence and heuristic resource makespans are both 8p with no delay;
+  both forecasts are `8/17d`. Complete Next v3 recommends
+  `UNIT_MIGRATION_RESULT_V2`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, the public unit-migration command and installed workflow,
