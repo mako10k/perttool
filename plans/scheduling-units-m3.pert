@@ -50,6 +50,7 @@ milestone TEMPORAL_PRECEDENCE_READY:
 
 milestone TEMPORAL_RESOURCE_READY:
   title "Release-aware temporal resource schedule ready"
+  state reached
 
 milestone TEMPORAL_SCHEDULES_READY:
   title "Temporal schedule branches ready for deadline evaluation"
@@ -75,17 +76,6 @@ task TEMPORAL_PRECEDENCE_CORE TEMPORAL_INPUT_READY -> TEMPORAL_PRECEDENCE_READY:
     PRECEDENCE_SURFACE 1
     CONTRACT3_GUARD 1
 
-task TEMPORAL_RESOURCE_SCHEDULE TEMPORAL_INPUT_READY -> TEMPORAL_RESOURCE_READY:
-  title "Implement release-aware temporal heuristic scheduling"
-  description "Extend parallel-sgs version 1 internally with exact release events, completion-before-release-before-start ordering, deterministic future-event advancement, resource capacity preservation, and unavailable-bound failure. Preserve optimal=false and distinguish heuristic evidence."
-  duration 5p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RESOURCE_SCHEDULE_SURFACE 1
-    CONTRACT3_GUARD 1
 
 gate TEMPORAL_PRECEDENCE_GATE TEMPORAL_PRECEDENCE_READY -> TEMPORAL_SCHEDULES_READY:
   reason "Deadline evaluation requires the accepted temporal precedence branch"
