@@ -56,33 +56,34 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   assert.match(interfaceSpec, /Perttool\.UnitMigrationResult\.v2/);
 });
 
-test("SU-M4 advances request completion and selects exact conversion", async () => {
+test("SU-M4 records exact conversion and selects the candidate", async () => {
   const source = await repositoryFile("plans/scheduling-units-m4.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
 
   assert.match(source, /milestone MIGRATION_REQUEST_READY:[\s\S]*state reached/);
-  assert.match(source, /velocity 4p\/1d/);
+  assert.match(source, /task EXACT_UNIT_CONVERSION[\s\S]*status done/);
+  assert.match(source, /velocity 8p\/1d/);
   assert.equal(analysis.ok, true);
   assert.ok(analysis.precedence);
   assert.ok(analysis.resource);
   assert.deepEqual(
     [analysis.precedence.makespan.numerator, analysis.precedence.makespan.denominator],
-    [17n, 1n],
+    [13n, 1n],
   );
   assert.deepEqual(
     [analysis.resource.makespan.numerator, analysis.resource.makespan.denominator],
-    [21n, 1n],
+    [17n, 1n],
   );
   assert.equal(next.ok, true);
   assert.ok(next.recommendation);
   assert.deepEqual(next.groups.ready, [
-    "EXACT_UNIT_CONVERSION",
+    "UNIT_MIGRATION_CANDIDATE",
     "UNIT_MIGRATION_RESULT_V2",
   ]);
-  assert.deepEqual(next.groups.runnableNow, ["EXACT_UNIT_CONVERSION"]);
+  assert.deepEqual(next.groups.runnableNow, ["UNIT_MIGRATION_CANDIDATE"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "EXACT_UNIT_CONVERSION",
+    "UNIT_MIGRATION_CANDIDATE",
   ]);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);

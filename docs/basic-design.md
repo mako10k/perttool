@@ -574,10 +574,16 @@ behavior remain unchanged.
 
 `src/migration/request.ts` owns the pure semantic request, velocity, stable
 cause, complete Duration inventory, and preserved-temporal snapshot.
+`src/migration/conversion.ts` applies the one positive exact velocity factor
+to that ordered inventory, records normalized original and converted
+Rationals with their units, reuses the accepted exact Duration serializer,
+and selects the existing grammar retention or upgrade boundary without using
+display or calendar-projection values.
 `src/application/target-unit-migration-request.ts` admits only a document
 validated through the identity-checked Grammar 3 target capability and
 returns that nominally validated boundary for later SU-M4 layers. Neither
-module is a root export or a Contract 3 command.
+application boundary nor the migration modules are root exports or Contract 3
+commands.
 
 The SU-M2 source implementation keeps `parseDocument` fixed to the active
 Grammar 1 profile. Target parsing requires the identity-checked internal

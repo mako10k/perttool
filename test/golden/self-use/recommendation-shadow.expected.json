@@ -307,37 +307,36 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m4": {
-      "source_digest": "sha256:dfc10dbff95460c64d60508e7257172c7c8e64f6359cc9a57970e663d60fdb5a",
+      "source_digest": "sha256:11b417624b18abddcab75c4fb2219a78e30e2b99c3d56960ac90aa7380dcb786",
       "groups": {
         "active": [],
         "ready": [
-          "EXACT_UNIT_CONVERSION",
+          "UNIT_MIGRATION_CANDIDATE",
           "UNIT_MIGRATION_RESULT_V2"
         ],
         "runnable_now": [
-          "EXACT_UNIT_CONVERSION"
+          "UNIT_MIGRATION_CANDIDATE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "UNIT_MIGRATION_CANDIDATE",
           "MIGRATION_NOOP_REPEAT_INVERSE",
           "M4_UNIT_MIGRATION_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "EXACT_UNIT_CONVERSION"
+        "UNIT_MIGRATION_CANDIDATE"
       ],
       "manual_selected_task_ids": [
-        "EXACT_UNIT_CONVERSION"
+        "UNIT_MIGRATION_CANDIDATE"
       ],
       "tiers": {
-        "EXACT_UNIT_CONVERSION": "recommended",
+        "UNIT_MIGRATION_CANDIDATE": "recommended",
         "UNIT_MIGRATION_RESULT_V2": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "EXACT_UNIT_CONVERSION",
+          "id": "UNIT_MIGRATION_CANDIDATE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -349,7 +348,7 @@
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "9/1",
+          "total_float": "5/1",
           "resource_rejections": [
             {
               "resource_id": "MIGRATION_CORE_SURFACE",
@@ -359,7 +358,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "EXACT_UNIT_CONVERSION"
+                "UNIT_MIGRATION_CANDIDATE"
               ]
             }
           ]
@@ -373,10 +372,12 @@
         "reasons": 8,
         "descriptions": 4
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:94600cb3d153d99167624c65b7c6f26ac0a380d408f83d1ee306feb5cf55b25a",
+      "source_digest": "sha256:93e6373dc3b3282503de900662a9449cff9ce0409bc21d864aee36294dd3c784",
       "groups": {
         "active": [],
         "ready": [

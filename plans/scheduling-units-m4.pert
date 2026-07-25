@@ -4,7 +4,7 @@ project SCHEDULING_UNITS_M4:
   description "Implement and accept only the internal unit-migration version 2 Core selected by the scheduling-and-units macro. SU-M2R exact Decimal-or-fraction Duration, canonical serialization, target Grammar 3, and version-boundary capabilities are accepted inputs. The active Grammar 1 runtime, CLI Contract 3, public schemas, root exports, command registry, help, Guide, installed workflow, Next v3 authority, and package distribution remain unchanged. The initial velocity is inherited at 24p/1d; six tasks total 25p."
   as_of 2026-07-25
   duration_unit point
-  velocity 4p/1d
+  velocity 8p/1d
   finish UNIT_MIGRATION_ACCEPTED
 
 
@@ -65,6 +65,7 @@ task EXACT_UNIT_CONVERSION MIGRATION_REQUEST_READY -> EXACT_CONVERSION_READY:
   title "Implement exact migration conversion records"
   description "Convert every inventoried source value through the effective velocity with reduced exact Rational arithmetic. Reuse the accepted shortest-Decimal-or-reduced-Fraction Duration serializer and explicit grammar-retain-or-upgrade decision, preserve ordering and PERT constraints, and record original and converted exact values plus canonical target tokens. Never round, infer a day/hour ratio, or use calendar projection scalars."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

@@ -438,6 +438,22 @@ then satisfied ADV-001; canonical advance removed the completed task and
 predecessor milestone, retained `MIGRATION_REQUEST_READY` as reached, preserved
 the ready/recommended sets, and cleared `PTDAG-208`.
 
+`EXACT_UNIT_CONVERSION` then added the pure ordered conversion layer. It uses
+only reduced Rational multiplication and division with the prepared positive
+velocity, records exact original and converted values with source and target
+units, reuses the accepted shortest-Decimal-or-reduced-Fraction serializer,
+and feeds every generated token into the existing Grammar 1/2/3 retention or
+upgrade decision. TUE-012, TUE-013, and TUE-015 fix Decimal, inserted-velocity,
+and Fraction-upgrade results; no-op, malformed prepared input, deterministic
+composition, ordering, positivity, PERT ordering, and exact inverse probes
+keep calendar projections and display precision out of the algorithm. The
+module remains internal and absent from the root API. The cumulative 8p
+first-day sample recalibrates velocity to `8p/1d`; 17p remain with 13p
+precedence, 17p heuristic resources, 4p delay, forecasts `13/8d` and `17/8d`,
+and complete Next v3 recommends `UNIT_MIGRATION_CANDIDATE`. The task remains
+done but unadvanced until its implementation snapshot is committed under
+ADV-001.
+
 Starting conditions:
 
 - `perttool dsl check <file>` works

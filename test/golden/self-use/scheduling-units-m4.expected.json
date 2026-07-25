@@ -8,28 +8,26 @@
       "tasks": 5,
       "gates": 2,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "17/1",
+    "precedence_makespan": "13/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "17/4",
+    "precedence_forecast": "13/8",
     "precedence_critical_tasks": [
-      "EXACT_UNIT_CONVERSION",
       "UNIT_MIGRATION_CANDIDATE",
       "MIGRATION_NOOP_REPEAT_INVERSE",
       "M4_UNIT_MIGRATION_ACCEPTANCE"
     ],
-    "resource_makespan": "21/1",
-    "resource_forecast": "21/4",
+    "resource_makespan": "17/1",
+    "resource_forecast": "17/8",
     "resource_delay": "4/1",
     "resource_arcs": [
       "resource:MIGRATION_NOOP_REPEAT_INVERSE:UNIT_MIGRATION_RESULT_V2"
     ],
     "schedule_critical_tasks": [
-      "EXACT_UNIT_CONVERSION",
       "UNIT_MIGRATION_CANDIDATE",
       "MIGRATION_NOOP_REPEAT_INVERSE",
       "UNIT_MIGRATION_RESULT_V2",
@@ -40,15 +38,14 @@
     "groups": {
       "active": [],
       "ready": [
-        "EXACT_UNIT_CONVERSION",
+        "UNIT_MIGRATION_CANDIDATE",
         "UNIT_MIGRATION_RESULT_V2"
       ],
       "runnable_now": [
-        "EXACT_UNIT_CONVERSION"
+        "UNIT_MIGRATION_CANDIDATE"
       ],
       "blocked_now": [],
       "upcoming": [
-        "UNIT_MIGRATION_CANDIDATE",
         "MIGRATION_NOOP_REPEAT_INVERSE",
         "M4_UNIT_MIGRATION_ACCEPTANCE"
       ]
@@ -58,7 +55,7 @@
       "resource_id": "MIGRATION_CORE_SURFACE",
       "capacity": 1,
       "earlier_selected_task_ids": [
-        "EXACT_UNIT_CONVERSION"
+        "UNIT_MIGRATION_CANDIDATE"
       ]
     }
   }

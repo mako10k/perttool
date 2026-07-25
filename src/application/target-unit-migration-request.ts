@@ -23,12 +23,9 @@ import {
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 
-export interface TargetUnitMigrationRequestPreparation {
-  readonly ok: boolean;
+interface TargetUnitMigrationRequestPreparationBase {
   readonly unitMigration: typeof UNIT_MIGRATION_IDENTITY;
   readonly documentId: string | null;
-  readonly sourceGrammarVersion: MigrationGrammarVersion | null;
-  readonly sourceUnit: DurationUnit | null;
   readonly targetUnit: DurationUnit;
   readonly changed: boolean;
   readonly effectiveVelocity: ExactMigrationVelocity | null;
@@ -39,8 +36,27 @@ export interface TargetUnitMigrationRequestPreparation {
   readonly unavailableCauses: readonly UnitMigrationUnavailableCause[];
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticsTruncated: boolean;
-  readonly validatedDocument: TargetGrammar3ValidatedDocument | null;
 }
+
+export interface TargetUnitMigrationRequestSuccess
+  extends TargetUnitMigrationRequestPreparationBase {
+  readonly ok: true;
+  readonly sourceGrammarVersion: MigrationGrammarVersion;
+  readonly sourceUnit: DurationUnit;
+  readonly validatedDocument: TargetGrammar3ValidatedDocument;
+}
+
+export interface TargetUnitMigrationRequestFailure
+  extends TargetUnitMigrationRequestPreparationBase {
+  readonly ok: false;
+  readonly sourceGrammarVersion: MigrationGrammarVersion | null;
+  readonly sourceUnit: DurationUnit | null;
+  readonly validatedDocument: null;
+}
+
+export type TargetUnitMigrationRequestPreparation =
+  | TargetUnitMigrationRequestSuccess
+  | TargetUnitMigrationRequestFailure;
 
 function invalidOriginal(
   request: NormalizedUnitMigrationRequest,
@@ -90,8 +106,27 @@ export function prepareTargetUnitMigrationRequest(
     checked.validatedDocument,
     normalizedRequest,
   );
+  if (!prepared.ok) {
+    return Object.freeze({
+      ok: false,
+      unitMigration: prepared.unitMigration,
+      documentId: checked.documentId,
+      sourceGrammarVersion: prepared.sourceGrammarVersion,
+      sourceUnit: prepared.sourceUnit,
+      targetUnit: prepared.targetUnit,
+      changed: prepared.changed,
+      effectiveVelocity: prepared.effectiveVelocity,
+      velocityDisposition: prepared.velocityDisposition,
+      durationInventory: prepared.durationInventory,
+      preservedTemporalFields: prepared.preservedTemporalFields,
+      unavailableCauses: prepared.unavailableCauses,
+      diagnostics: checked.diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+      validatedDocument: null,
+    });
+  }
   return Object.freeze({
-    ok: prepared.ok,
+    ok: true,
     unitMigration: prepared.unitMigration,
     documentId: checked.documentId,
     sourceGrammarVersion: prepared.sourceGrammarVersion,
@@ -105,6 +140,6 @@ export function prepareTargetUnitMigrationRequest(
     unavailableCauses: prepared.unavailableCauses,
     diagnostics: checked.diagnostics,
     diagnosticsTruncated: checked.diagnosticsTruncated,
-    validatedDocument: prepared.ok ? checked.validatedDocument : null,
+    validatedDocument: checked.validatedDocument,
   });
 }
