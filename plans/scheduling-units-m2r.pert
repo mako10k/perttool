@@ -46,9 +46,11 @@ milestone RATIONAL_DURATION_CORE_INPUT_READY:
 
 milestone RATIONAL_DURATION_FORMATTER_READY:
   title "Target rational Duration formatter ready"
+  state reached
 
 milestone RATIONAL_DURATION_MUTATION_READY:
   title "Target rational Duration mutation ready"
+  state reached
 
 milestone RATIONAL_DURATION_VERSION_BOUNDARY_READY:
   title "Grammar upgrade and compatibility boundary ready"
@@ -64,25 +66,7 @@ milestone RATIONAL_DURATION_ACCEPTED:
 
 
 
-task RATIONAL_DURATION_FORMATTER RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_DURATION_FORMATTER_READY:
-  title "Extend the target formatter for rational Duration"
-  description "Extend the target formatter and source-equivalence tests for fraction Duration while preserving user-authored tokens and trivia unless normalized by an explicit formatting rule. Verify idempotence and exact target-AST equivalence."
-  duration 3p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    SYNTAX_SURFACE 1
 
-task RATIONAL_DURATION_MUTATION RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_DURATION_MUTATION_READY:
-  title "Extend target mutation for rational Duration"
-  description "Extend target project and task mutation plus final-candidate batch paths to accept exact fraction Duration, preserve localized UTF-16 edits and safe-write reuse, and keep automatic unit migration excluded from batch."
-  duration 3p
-  status done
-  priority 80
-  requires:
-    DEVELOPERS 1
-    MUTATION_SURFACE 1
 
 task RATIONAL_DURATION_VERSION_BOUNDARY RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_DURATION_VERSION_BOUNDARY_READY:
   title "Implement the rational Duration version boundary"

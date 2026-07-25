@@ -5,10 +5,10 @@
     "summary": {
       "resources": 7,
       "milestones": 6,
-      "tasks": 4,
+      "tasks": 2,
       "gates": 3,
       "errors": 0,
-      "warnings": 2
+      "warnings": 0
     }
   },
   "analyze": {

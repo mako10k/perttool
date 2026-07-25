@@ -489,10 +489,10 @@ SU-M2 progress:
   before SU-M3 and SU-M4. `RATIONAL_DURATION_CONTRACT` is committed and
   advanced. `RATIONAL_DURATION_SOURCE_MODEL` and `EXACT_DURATION_SERIALIZER`
   are also committed and advanced. `RATIONAL_DURATION_FORMATTER` and
-  `RATIONAL_DURATION_MUTATION` are implemented and done but unadvanced under
-  ADV-001 until their implementation snapshot is committed. Seven points
-  remain; precedence and heuristic resource makespans are both 7p with no
-  delay. At the inherited provisional `24p/1d`, both forecasts are `7/24d`.
+  `RATIONAL_DURATION_MUTATION` are committed at `f0d9a26` and advanced through
+  the expected-digest path. Seven points remain; precedence and heuristic
+  resource makespans are both 7p with no delay. At the inherited provisional
+  `24p/1d`, both forecasts are `7/24d`.
 - The macro rollup is `0.291667d`, leaving `4.291667d` precedence and `6.291667d`
   heuristic resource makespans with 2d resource delay. Its only ready,
   `runnable_now`, and complete Next v3 recommended work package is
