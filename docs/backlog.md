@@ -490,8 +490,9 @@ SU-M2 progress:
   advanced. `RATIONAL_DURATION_SOURCE_MODEL` and `EXACT_DURATION_SERIALIZER`
   are also committed and advanced. `RATIONAL_DURATION_FORMATTER` and
   `RATIONAL_DURATION_MUTATION` are committed at `f0d9a26` and advanced through
-  the expected-digest path. `RATIONAL_DURATION_VERSION_BOUNDARY` is implemented
-  and done but unadvanced under ADV-001 pending its implementation commit.
+  the expected-digest path. `RATIONAL_DURATION_VERSION_BOUNDARY` is committed
+  at `fa698ca` and advanced through the same ADV-001 path. The detail digest is
+  `sha256:63bbe45287126762e0e27ca09b0a4822968a6ab1a5aee9f5dfb7410ffc5590e6`.
   Four points remain; precedence and heuristic resource makespans are both 4p
   with no delay. At the inherited provisional `24p/1d`, both forecasts are
   `1/6d`.

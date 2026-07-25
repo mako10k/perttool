@@ -20,36 +20,22 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
   const taskIds = [...detail.matchAll(/^task ([A-Z0-9_]+) /gm)].map(
     (match) => match[1],
   );
-  assert.deepEqual(taskIds, [
-    "RATIONAL_DURATION_VERSION_BOUNDARY",
-    "RATIONAL_DURATION_ACCEPTANCE",
-  ]);
+  assert.deepEqual(taskIds, ["RATIONAL_DURATION_ACCEPTANCE"]);
   const points = [...detail.matchAll(/^  duration (\d+)p$/gm)].reduce(
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 7);
+  assert.equal(points, 4);
 
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_CONTRACT /m);
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_SOURCE_MODEL /m);
   assert.doesNotMatch(detail, /^task EXACT_DURATION_SERIALIZER /m);
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_FORMATTER /m);
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_MUTATION /m);
+  assert.doesNotMatch(detail, /^task RATIONAL_DURATION_VERSION_BOUNDARY /m);
   assert.match(
     detail,
-    /milestone RATIONAL_DURATION_CORE_INPUT_READY:[\s\S]*state reached/,
-  );
-  assert.match(
-    detail,
-    /milestone RATIONAL_DURATION_FORMATTER_READY:[\s\S]*state reached/,
-  );
-  assert.match(
-    detail,
-    /milestone RATIONAL_DURATION_MUTATION_READY:[\s\S]*state reached/,
-  );
-  assert.match(
-    detail,
-    /upgrades a source document to the newly selected target grammar only when an exact generated fraction requires it/,
+    /milestone RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:[\s\S]*state reached/,
   );
   assert.match(
     macro,

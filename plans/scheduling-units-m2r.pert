@@ -40,23 +40,13 @@ resource CONTRACT3_GUARD:
 
 
 
-milestone RATIONAL_DURATION_CORE_INPUT_READY:
-  title "Rational source and serializer branches ready"
-  state reached
 
-milestone RATIONAL_DURATION_FORMATTER_READY:
-  title "Target rational Duration formatter ready"
-  state reached
 
-milestone RATIONAL_DURATION_MUTATION_READY:
-  title "Target rational Duration mutation ready"
-  state reached
 
-milestone RATIONAL_DURATION_VERSION_BOUNDARY_READY:
-  title "Grammar upgrade and compatibility boundary ready"
 
 milestone RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:
   title "Rational Duration branches ready for acceptance"
+  state reached
 
 milestone RATIONAL_DURATION_ACCEPTED:
   title "Exact rational Duration extension accepted"
@@ -68,25 +58,9 @@ milestone RATIONAL_DURATION_ACCEPTED:
 
 
 
-task RATIONAL_DURATION_VERSION_BOUNDARY RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_DURATION_VERSION_BOUNDARY_READY:
-  title "Implement the rational Duration version boundary"
-  description "Implement the internal candidate boundary that upgrades a source document to the newly selected target grammar only when an exact generated fraction requires it, reports the selected grammar and related compatibility metadata changes in reversibility, preserves temporal source, and leaves public schemas, exports, dispatch, help, and installed behavior unchanged."
-  duration 3p
-  status done
-  priority 70
-  requires:
-    DEVELOPERS 1
-    TARGET_CORE_SURFACE 1
-    CONTRACT3_GUARD 1
 
-gate FORMATTER_ACCEPTANCE_GATE RATIONAL_DURATION_FORMATTER_READY -> RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:
-  reason "Acceptance requires target formatter support"
 
-gate MUTATION_ACCEPTANCE_GATE RATIONAL_DURATION_MUTATION_READY -> RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:
-  reason "Acceptance requires target mutation and batch support"
 
-gate VERSION_BOUNDARY_ACCEPTANCE_GATE RATIONAL_DURATION_VERSION_BOUNDARY_READY -> RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:
-  reason "Acceptance requires the selected version identities and source-grammar compatibility boundary"
 
 task RATIONAL_DURATION_ACCEPTANCE RATIONAL_DURATION_ACCEPTANCE_INPUT_READY -> RATIONAL_DURATION_ACCEPTED:
   title "Accept exact rational Duration without public activation"
