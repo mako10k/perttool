@@ -167,6 +167,8 @@ test("completed project advances to the reached finish and preserves resources",
   assert.doesNotMatch(result.updatedText, /milestone NOW:/);
   assert.doesNotMatch(result.updatedText, /task WORK /);
   assert.match(result.updatedText, /milestone DONE:\r\n  title \"done\"\r\n  state reached/);
+  assert.match(result.updatedText, /  state reached\r\n$/);
+  assert.doesNotMatch(result.updatedText, /\r\n\r\n$/);
   assert.deepEqual(result.advance.removedTaskIds, ["WORK"]);
   assert.deepEqual(result.advance.removedMilestoneIds, ["NOW"]);
   assert.deepEqual(result.advance.keptMilestoneIds, ["DONE"]);
