@@ -1194,7 +1194,7 @@ must follow its [migration boundary](../process/cli-contract-3-migration.md)
 rather than adding Contract 3 aliases to this Contract 2 surface.
 
 The [Temporal and Unit Interface Contract](temporal-unit-interface.md)
-separately targets grammar version 2 and CLI Contract 4. It selects
+version 2 separately targets grammar version 3 and CLI Contract 4. It selects
 CheckResult v2, ProjectResult v2, AnalysisResult v3, NextResult v4, and
-UnitMigrationResult v1 without changing the retained Contract 2 payload
+UnitMigrationResult v2 without changing the retained Contract 2 payload
 meanings in this document or silently widening active Contract 3.

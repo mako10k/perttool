@@ -1,6 +1,6 @@
 # perttool Basic Design
 
-- Document status: Draft 1.13
+- Document status: Draft 1.14
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Applicable requirements: [requirements.md](requirements.md)
@@ -471,7 +471,7 @@ direction and effective-velocity validation
 complete base-unit field inventory
                          |
                          v
-exact Rational conversion + finite-decimal preflight
+exact Rational conversion + canonical Duration and grammar selection
                          |
                          v
 localized UTF-16 edits + one revalidated candidate
@@ -484,11 +484,13 @@ target duration plus every deterministic or three-point task estimate,
 regardless of task status. Absolute `as_of`, `deadline`, and `not_before`
 values are retained.
 
-Preflight reduces every converted Rational and accepts source serialization
-only when its denominator contains no prime factor other than 2 or 5. The
-candidate uses the shortest exact finite decimal and target suffix. One
-nonrepresentable value suppresses the complete candidate, edit list, and
-diff; display rounding is never a fallback.
+Serialization reduces every converted Rational. A denominator containing only
+prime factors 2 and 5 produces the shortest exact finite Decimal; every other
+denominator produces a reduced fraction Duration. Display rounding is never a
+fallback. A grammar version 1 or 2 source remains at that version when every
+generated token is Decimal. If any generated token requires a fraction, the
+same candidate upgrades the project to grammar version 3 before final
+validation.
 
 The planner retains an equal declared velocity byte-for-byte, atomically
 replaces a different explicit velocity, or inserts an explicit velocity for a
@@ -499,8 +501,9 @@ validation, diff, digest, and later safe-write controls.
 A same-target request without replacement is a no-op. Repeating a successful
 target does not rescale values. Inverting with the same effective velocity
 restores exact source Rationals, although canonical Duration spelling need not
-restore lexical bytes. A replacement velocity is retained and therefore
-qualifies whole-document reversibility as metadata-changed.
+restore lexical bytes. A replacement velocity or source-grammar upgrade is
+retained and therefore qualifies whole-document reversibility as
+metadata-changed. Migration never automatically downgrades grammar version 3.
 
 The [Point and Time-Unit Migration Semantics
 specification](specs/unit-migration.md) fixes the algorithm identity, formulas,
@@ -510,19 +513,19 @@ round-trip meaning.
 ### 6.7 Temporal and Unit Public Interface
 
 The [Temporal and Unit Interface
-Contract](specs/temporal-unit-interface.md) keeps grammar version 1 and CLI
-Contract 3 closed, then selects grammar version 2 and CLI Contract 4 for one
-later atomic cutover.
+Contract](specs/temporal-unit-interface.md) version 2 keeps grammar version 1,
+accepted target grammar version 2, and CLI Contract 3 closed, then selects
+grammar version 3 and CLI Contract 4 for one later atomic cutover.
 
 Grammar version 2 adds only milestone `deadline`, task `not_before`, and task
-`deadline`. It requires explicit `project.as_of` when any is present. The
-words remain contextual field keywords, preserving previously valid entity
-IDs. Exact date/date-time values flow from validated CST/AST data into a pure
-temporal application layer; they never enter ordinary PERT or recommendation
-ranking as substituted values.
+`deadline`. Grammar version 3 inherits those fields and changes only Duration
+to accept a finite Decimal or an exact unsigned fraction with a positive
+denominator. Exact date/date-time and Rational values flow from validated
+CST/AST data into pure application layers; they never enter ordinary PERT or
+recommendation ranking as substituted display values.
 
 The target public results are CheckResult v2, ProjectResult v2,
-AnalysisResult v3, NextResult v4, and UnitMigrationResult v1. Analysis v3
+AnalysisResult v3, NextResult v4, and UnitMigrationResult v2. Analysis v3
 retains the entire base Analysis v2 result and adds separate temporal
 precedence/resource and deadline views. Next v4 retains Recommendation
 algorithm version 1 and its complete v3 graph, then adds a release gate:
@@ -533,7 +536,7 @@ ranking.
 `project migrate-unit --to-unit ...` calls a separate pure planner, not
 `project.set` or `batch.apply`. Temporal field mutations can participate in a
 final-candidate-only batch, including grammar upgrade/downgrade. Automatic
-unit migration cannot be a batch member in interface version 1 because its
+unit migration cannot be a batch member in interface version 2 because its
 complete-field inventory and exactness guarantee bind to one source
 snapshot.
 
@@ -542,14 +545,23 @@ Guide, diagnostics, README, installed-package E2E, authority guidance, and
 override validation move together. Emitting NextResult v4 alone does not
 authorize self-use.
 
-Delivery preserves that atomic boundary. SU-M2 implements target Grammar 2
-source handling and declared-input Core projections; SU-M3 adds target
-calendar, deadline, temporal-schedule, and Next v4 Core; and SU-M4 adds the
-exact unit-migration Core. Those slices can expose internal target types and
-tests but do not enter active dispatch, help, public result schemas, package
-examples, or normal task-selection authority. SU-M5 alone performs the
-Contract 4 public cutover after shadow and unknown-result safe-stop acceptance.
-Package publication remains a separate decision after that local acceptance.
+Delivery preserves that atomic boundary. SU-M2 implemented accepted target
+Grammar 2 source handling and declared-input Core projections. SU-M2R first
+fixes and then implements Grammar 3 exact Duration source, formatting,
+mutation, version-boundary, and acceptance behavior. SU-M3 adds target
+calendar, deadline, temporal-schedule, and Next v4 Core; SU-M4 adds
+unit-migration version 2 Core. Those slices can expose internal target types
+and tests but do not enter active dispatch, help, public result schemas,
+package examples, or normal task-selection authority. SU-M5 alone performs
+the Contract 4 public cutover after shadow and unknown-result safe-stop
+acceptance. Package publication remains a separate decision after that local
+acceptance.
+
+The current source still implements only the internal Grammar 2 target
+capability described below. SU-M2R introduces a separately identity-checked
+Grammar 3 capability rather than changing `TARGET_GRAMMAR_2_CAPABILITY` in
+place. Until that implementation and its acceptance task complete, the active
+Grammar 1 parser and accepted internal Grammar 2 behavior remain unchanged.
 
 The SU-M2 source implementation keeps `parseDocument` fixed to the active
 Grammar 1 profile. Target parsing requires the identity-checked internal
@@ -1220,7 +1232,7 @@ Target Contract 4 schemas:
 - `Perttool.ProjectResult.v2`
 - `Perttool.AnalysisResult.v3`
 - `Perttool.NextResult.v4`
-- `Perttool.UnitMigrationResult.v1`
+- `Perttool.UnitMigrationResult.v2`
 
 Rules:
 
@@ -1236,7 +1248,7 @@ their payload meanings.
 
 After the target cutover every active envelope includes
 `cli_contract_version=4`; the target document operations always return their
-new schema identity for grammar versions 1 and 2.
+new schema identity for grammar versions 1, 2, and 3.
 
 Reserve DSL version for future introduction as an optional field in the project block. When omitted in the MVP, treat it as version 1 grammar.
 
@@ -1550,8 +1562,9 @@ Exit:
 The scheduling-units M1 workstream specifies the temporal property scope,
 calendar arithmetic, release-aware deadline evaluation, exact Point/time
 source migration, and the public interface before runtime implementation.
-The public interface selects grammar version 2 and CLI Contract 4 while
-leaving current Contract 3 and NextResult v3 authority unchanged.
+The current public-interface target selects grammar version 3, unit-migration
+version 2, and CLI Contract 4 while leaving active Contract 3, accepted
+Grammar 2 behavior, and NextResult v3 authority unchanged.
 
 The accepted implementation sequence treats SU-M2 through SU-M4 as
 target-only source and Core slices. SU-M5 atomically activates the public

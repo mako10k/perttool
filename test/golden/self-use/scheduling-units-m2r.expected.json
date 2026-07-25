@@ -1,0 +1,60 @@
+{
+  "check": {
+    "document_id": "SCHEDULING_UNITS_M2R",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 7,
+      "milestones": 10,
+      "tasks": 7,
+      "gates": 5,
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "11/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "11/24",
+    "precedence_critical_tasks": [
+      "RATIONAL_DURATION_SOURCE_MODEL",
+      "RATIONAL_DURATION_FORMATTER",
+      "RATIONAL_DURATION_MUTATION",
+      "RATIONAL_DURATION_VERSION_BOUNDARY",
+      "RATIONAL_DURATION_ACCEPTANCE"
+    ],
+    "resource_makespan": "14/1",
+    "resource_forecast": "7/12",
+    "resource_delay": "3/1",
+    "resource_arcs": [
+      "resource:RATIONAL_DURATION_FORMATTER:RATIONAL_DURATION_VERSION_BOUNDARY"
+    ],
+    "schedule_critical_tasks": [
+      "RATIONAL_DURATION_SOURCE_MODEL",
+      "RATIONAL_DURATION_FORMATTER",
+      "RATIONAL_DURATION_VERSION_BOUNDARY",
+      "RATIONAL_DURATION_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "RATIONAL_DURATION_SOURCE_MODEL",
+        "EXACT_DURATION_SERIALIZER"
+      ],
+      "runnable_now": [
+        "RATIONAL_DURATION_SOURCE_MODEL",
+        "EXACT_DURATION_SERIALIZER"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "RATIONAL_DURATION_ACCEPTANCE",
+        "RATIONAL_DURATION_FORMATTER",
+        "RATIONAL_DURATION_MUTATION",
+        "RATIONAL_DURATION_VERSION_BOUNDARY"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

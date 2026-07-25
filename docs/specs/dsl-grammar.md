@@ -1,7 +1,7 @@
 # perttool DSL Grammar Specification
 
-- Document status: Draft 0.7
-- Grammar versions: 1 active; 2 target
+- Document status: Draft 0.8
+- Grammar versions: 1 active; 2 accepted target; 3 current target
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Related requirements: [../requirements.md](../requirements.md)
@@ -16,10 +16,11 @@
 This document defines the lexical rules, syntax, fields for each block, defaults, the boundary between syntax and semantic validation, source spans, error recovery, and formatting contract for `.pert` documents.
 
 The EBNF and field tables through Section 19 are normative for grammar version
-1. Section 20 fixes the grammar version 2 delta selected by the
-[Temporal and Unit Interface Contract](temporal-unit-interface.md). Grammar
-version 2 is not active in the current runtime. See the following
-representative valid version 1 documents.
+1. Section 20.1 fixes the accepted grammar version 2 temporal delta. Section
+20.2 fixes the grammar version 3 exact fraction Duration delta selected by
+[Temporal and Unit Interface Contract version
+2](temporal-unit-interface.md). Grammar versions 2 and 3 are not active in the
+current runtime. See the following representative valid version 1 documents.
 
 - [minimal.pert](../examples/minimal.pert)
 - [parallel.pert](../examples/parallel.pert)
@@ -675,7 +676,7 @@ An analyzable Graph must not be generated from a document with parse or field-va
 | `PTSEM-109` | Invalid positive/range constraint for resource capacity or requirement units | `syntax.resource` |
 | `PTSEM-110` | Duplicate resource requirement | `syntax.task` |
 | `PTSEM-111` | Invalid velocity constraint | `syntax.velocity` |
-| `PTSEM-112` | Grammar v2 temporal field without `project.as_of` | `syntax.temporal` |
+| `PTSEM-112` | Grammar v2/v3 temporal field without `project.as_of` | `syntax.temporal` |
 
 Graph diagnostic codes are fixed by the [Graph Semantics specification](graph-semantics.md).
 
@@ -759,6 +760,8 @@ It normalizes the following:
 - Spacing around colons, commas, and brackets
 - Removal of trailing space from syntax lines
 - Unnecessary leading/trailing zeroes in Decimal values
+- Grammar version 3 Duration tokens according to the exact canonical
+  serializer in Section 20.2
 - String escapes
 - A final newline
 
@@ -990,7 +993,61 @@ rejects the added fields as `PTDSL-005`.
 
 Unit migration version 1 supports versions 1 and 2 because the version 2
 delta adds no base-unit-bearing field. It preserves `as_of`, `deadline`, and
-`not_before` tokens and does not change the project grammar version.
+`not_before` tokens and does not change the project grammar version. Its
+finite-Decimal-only behavior remains the accepted historical version 1
+contract.
+
+### 20.2 Grammar version 3 exact Duration delta
+
+Grammar version 3 is selected only by an explicit `version 3`. It inherits
+every grammar version 2 field, validation rule, contextual keyword, and
+canonical field order, and changes only the accepted `Duration` value syntax:
+
+```ebnf
+DurationV3              = ( Decimal | DurationFraction ), DurationSuffix ;
+DurationFraction        = DurationFractionInteger, "/",
+                          DurationFractionInteger ;
+DurationFractionInteger = Digit, { Digit } ;
+```
+
+Rules:
+
+- The numerator and denominator are unsigned base-10 integers. Signs,
+  exponents, decimal points, whitespace, and a second slash are not accepted
+  inside a DurationFraction.
+- The denominator must be greater than zero. A zero denominator is an invalid
+  Duration token and reports `PTDSL-007`; it does not reach Rational
+  arithmetic.
+- Fraction components use arbitrary-precision integer semantics and are not
+  subject to the 32-bit field constraint for resource capacity or priority.
+- The numerator may be zero. `0/7d` denotes the exact same Rational as `0d`.
+- A valid Fraction is reduced to one normalized Rational for semantic
+  validation and analysis. The source token and span remain available to
+  source-preserving operations.
+- The existing suffix, project-unit, positivity, and PERT estimate-order rules
+  apply to the normalized Rational without change.
+- Velocity remains the Decimal-only syntax in Section 7.5. Fraction Duration
+  does not introduce an ambiguous fraction form for velocity.
+
+Canonical Duration serialization is deterministic:
+
+1. reduce the Rational with a positive denominator;
+2. if the denominator has only prime factors 2 and 5, emit the shortest exact
+   Decimal followed by the suffix;
+3. otherwise emit `numerator/denominator` in reduced form followed by the
+   suffix; and
+4. emit exact zero as `0` followed by the suffix.
+
+The explicit formatter applies this canonical spelling to Decimal and
+Fraction Duration tokens. Source-preserving mutations and migration retain an
+unrelated valid token byte-for-byte and use the canonical serializer only for
+new or replaced Duration values.
+
+Unit migration version 2 accepts grammar versions 1, 2, and 3. A version 1 or
+2 candidate remains at its source grammar version when every generated token
+is a finite Decimal. If at least one generated token requires a Fraction, the
+same atomic candidate sets the project to version 3. A version 3 source is
+never downgraded automatically.
 
 ## 21. Grammar acceptance
 
@@ -1014,3 +1071,11 @@ At minimum, a parser implementation automatically checks the following:
     temporal fields and requires an explicit anchor.
 16. Treats `deadline` and `not_before` as contextual fields without invalidating
     an existing entity ID that uses either spelling.
+17. Keeps grammar version 2 Duration acceptance finite-Decimal-only while
+    grammar version 3 accepts Decimal or exact Fraction Duration.
+18. Rejects zero denominators, signs, whitespace, exponents, decimal fraction
+    components, and multiple slashes as `PTDSL-007`.
+19. Canonicalizes terminating Rationals to the shortest Decimal and all other
+    Rationals to a reduced Fraction without rounding.
+20. Preserves unrelated valid Fraction tokens in source-preserving operations
+    and retains exact Rational equivalence across explicit formatting.

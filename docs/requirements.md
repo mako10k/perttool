@@ -1,6 +1,6 @@
 # perttool Requirements
 
-- Document status: Draft 0.13
+- Document status: Draft 0.14
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Scope: MVP and subsequent extension boundaries
@@ -436,14 +436,18 @@ Compatibility:
 - Grammar version 1 keeps its current field set and meaning. The new temporal
   fields require a new grammar version rather than silently widening version
   1.
+- Grammar version 2 keeps its accepted temporal field set and finite-Decimal
+  Duration syntax. Exact fraction Duration is introduced by grammar version 3
+  rather than silently widening version 2.
 - A version 1 document without the new fields retains byte-compatible
   validation behavior and the same base analysis and recommendation results
   under the existing algorithm versions.
 - Result schemas that add temporal fields receive new schema identities.
   Existing schema identities do not gain conditionally present fields.
 - The [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
-  selects grammar version 2, CLI Contract 4, and new document-result
-  identities. It introduces no compatibility aliases and does not silently
+  version 2 selects grammar version 3, unit-migration version 2,
+  `Perttool.UnitMigrationResult.v2`, and the unchanged future CLI Contract 4
+  boundary. It introduces no compatibility aliases and does not silently
   reinterpret Contract 3 options.
 
 ### 7.7 Point and time-unit source migration
@@ -468,9 +472,14 @@ Must:
   priority, and all other non-duration source values unchanged.
 - Calculate every conversion as an exact Rational using the effective
   velocity. Do not use binary floating point or a rendered decimal.
-- Serialize only exact finite grammar decimals. If any reduced result has a
-  denominator containing a prime other than 2 or 5, reject the entire
-  migration without rounding or a partial candidate.
+- Serialize every exact converted Rational. Emit the shortest exact finite
+  Decimal when the reduced denominator has no prime factor other than 2 or 5;
+  otherwise emit a reduced fraction Duration under grammar version 3. Never
+  round or expose a partial candidate.
+- Retain grammar version 1 or 2 when every generated Duration is representable
+  by its existing Decimal syntax. When any generated value requires a
+  fraction, atomically upgrade the complete candidate to grammar version 3
+  and report the grammar metadata change.
 - Retain, replace, or insert velocity deterministically. A retained velocity
   preserves its source bytes; a replacement is explicit and atomic.
 - Produce one source-preserving candidate, localized edits, and a deterministic
@@ -478,8 +487,10 @@ Must:
 - Treat a same-target request without replacement as a no-op and prevent a
   repeated request from scaling values twice.
 - Guarantee exact inverse restoration of source Rational values when the same
-  effective velocity is retained. Lexical decimal spelling need not be
-  restored, and replacement velocity must be reported as a metadata change.
+  effective velocity is retained. Lexical Duration spelling need not be
+  restored. Replacement velocity and a grammar-version upgrade must each be
+  reported as metadata changes; migration does not automatically downgrade a
+  version 3 document.
 - Fail closed if a later grammar adds a base-unit-bearing field not inventoried
   by the active migration version.
 
@@ -1401,8 +1412,8 @@ Resolved design decisions:
 - Contract 3 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.2.0` release procedure](process/0.2.0-release.md)
 - Date/date-time comparison, `as_of`, exact day/hour/point projection, fixed-offset preservation, continuous-calendar boundaries, and `not_before` release bounds: [Temporal Calendar Semantics specification](specs/temporal-calendar.md)
 - Temporal precedence/resource release scheduling, deadline state, exact margin/lateness, feasibility, blocked/heuristic qualification, risk, and recommendation-version boundary: [Temporal Deadline Semantics specification](specs/temporal-deadline.md)
-- Permitted Point/time directions, effective velocity, complete field inventory, exact finite-decimal conversion, atomic candidate behavior, and round-trip qualification: [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md)
-- Grammar version 2 fields, CLI Contract 4, Core boundaries, temporal/unit text and JSON projections, mutation, help, diagnostics, and authority migration: [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
+- Permitted Point/time directions, effective velocity, complete field inventory, exact Decimal-or-fraction conversion, atomic grammar upgrade, and round-trip qualification: [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md)
+- Grammar versions 2 and 3, CLI Contract 4, Core boundaries, temporal/unit text and JSON projections, mutation, help, diagnostics, and authority migration: [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
 - Calendar, deadline, start-authority, exact-migration, failure, idempotence, and deterministic projection cases: [Normative Temporal and Unit-Migration Examples](examples/temporal-units.md)
 - Complete requirements/specification/example/interface trace, resolved delivery sequencing, and implementation handoff: [SU-M1 Temporal and Unit-Migration Contract Acceptance Review](process/scheduling-units-m1-acceptance.md)
 
@@ -1440,6 +1451,11 @@ Before implementation, separate the specifications in the following order.
     - [x] [Grammar, Core, CLI, help, diagnostics, and result-projection contract](specs/temporal-unit-interface.md)
     - [x] [Normative boundary examples and machine-readable acceptance cases](examples/temporal-units.md)
     - [x] [Cross-cutting SU-M1 contract review](process/scheduling-units-m1-acceptance.md)
+14. [x] Exact rational Duration SU-M2R contract refinement
+    - [x] Grammar version 3 Decimal-or-fraction Duration syntax and canonical serialization
+    - [x] Unit-migration version 2 grammar-upgrade and reversibility semantics
+    - [x] Temporal/unit interface version 2 and UnitMigrationResult v2 identities
+    - [x] Revised TUI/TUE acceptance observations and machine baseline
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

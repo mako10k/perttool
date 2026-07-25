@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.49
+- Document status: Active Stage 3 / Revision 2.50
 - Creation date: 2026-07-21
 - Update date: 2026-07-25
 - Related design: [../basic-design.md](../basic-design.md)
@@ -28,6 +28,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
+| `plans/scheduling-units-m2r.pert` | Current exact rational Duration contract and target-only source/editing extension before SU-M3 and SU-M4 | `.pert` document |
 | `test/fixtures/grammar/` | Specific examples of what parser should accept or reject | fixture/golden |
 | Git history | Past plans, specifications, and implementation | commit history |
 
@@ -329,6 +330,40 @@ different jointly feasible SU-M4 set. Recommendation section 10 permits this
 orthogonality; the self-use shadow no longer imposes the false `recommended
 subset of runnable_now` condition.
 
+The user then rejected finite-decimal-only source migration as too incomplete
+for common exact values such as `1/3d` and selected an exact fraction Duration
+extension. `scheduling-units-m2r.pert` was created through `project init` and
+one expected-digest atomic batch rather than manual `.pert` editing. Its seven
+tasks total 24p; precedence is 15p and the heuristic resource makespan is 18p
+with 3p delay. The inherited provisional `24p/1d` velocity produces exact
+forecasts of `5/8d` and `3/4d`. The macro rolls the resource forecast up as
+`0.75d`, inserts SU-M2R as the common predecessor of SU-M3 and SU-M4, and now
+has `4.75d` precedence and `6.75d` heuristic resource makespans with 2d delay.
+
+`RATIONAL_DURATION_CONTRACT` then accepted
+`perttool.temporal-unit-interface@2`, Grammar 3,
+`perttool.unit-migration@2`, `Perttool.UnitMigrationResult.v2`, exact
+Decimal-or-fraction Duration serialization, atomic source-grammar selection,
+and explicit reversibility metadata. The
+[acceptance record](scheduling-units-m2r-contract-acceptance.md) traces the
+requirements, grammar, migration, interface, mutation, design, and TUI/TUE
+observations without activating Grammar 3, Contract 4, or a public migration
+command. The task is `done` but deliberately unadvanced: the new detail plan
+has no committed pre-advance snapshot, so removing its reached closure would
+violate the temporary ADV-001 safety condition.
+
+The detail digest is
+`sha256:262e4e261fcb52b42f464ddcee130b80c4e00e7051b285d7adf55790c06dee03`.
+Twenty points remain; precedence is 11p, heuristic resource work is 14p with
+3p delay, and the inherited provisional forecasts are `11/24d` and `7/12d`.
+The macro rollup is now `0.583333d`; its digest is
+`sha256:6f03b0f28532daa4f6e4e39ceae2f7f946ee472bf0709f757e812a42bafac0b8`,
+with `4.583333d` precedence and `6.583333d` heuristic resource makespans and
+2d delay. Fresh complete Next v3 still selects
+`SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` in the macro, recommends
+`RATIONAL_DURATION_SOURCE_MODEL` in the detail, and classifies the jointly
+feasible `EXACT_DURATION_SERIALIZER` as `allowed`.
+
 Starting conditions:
 
 - `perttool dsl check <file>` works
@@ -548,6 +583,7 @@ Recalibration from 2026-07-22 to 2026-07-25:
 | `release-0.2.0.pert` | All 5 tasks through `RELEASE_020_ACCEPTANCE` | 17p | 2d | `17p/2d` | 0p |
 | `scheduling-units-m1.pert` | All 7 tasks through `M1_CONTRACT_REVIEW` | 24p | 1d | `24p/1d` | 0p |
 | `scheduling-units-m2.pert` | All 6 tasks through `M2_FOUNDATION_ACCEPTANCE` | 24p | 1d | `24p/1d` | 0p |
+| `scheduling-units-m2r.pert` | `RATIONAL_DURATION_CONTRACT` is complete in the working tree; no completion commit is counted yet | 0p committed | 0d | provisional `24p/1d` | resource `7/12d` |
 
 This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, English-baseline migration, and the CLI-surface reset are not averaged because their work types differ. Future detail plans specify the sample from the closest work type as their initial value. `scheduling-units-m2.pert` initially inherited `24p/1d` from SU-M1, replaced it with its own sample after the first task, and now records all six completed SU-M2 tasks as cumulative `24p/1d` on the same active day.
 
@@ -625,6 +661,8 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - Completed detail only to SU-M1: `scheduling-units-m1.pert`
 - Completed and advanced target-only source/Core detail to SU-M2:
   `scheduling-units-m2.pert`
+- Current exact rational Duration detail before SU-M3 and SU-M4:
+  `scheduling-units-m2r.pert`
 - after selecting a workstream in the macro plan, select daily tasks from the corresponding detail plan
 - update the corresponding macro task to `done` only when its detail slice is complete
 - `M1_ROADMAP_UPDATE` is complete and decomposed formatter preview, mutation preview, safe write, and advance into the operations detail plan
@@ -848,7 +886,8 @@ Stage 1 entry evidence:
 - CLI-surface-reset Contract 3 cutover gate: the active 27-command registry drives dispatch, argv validation, text/JSON command help, separate guide publication, project initialization, direct gate maintenance, and `cli_contract_version=3`; four renamed Contract 2 routes fail with exit 2, 5p remain, precedence/resource makespans are both 5p, observed provisional velocity is `44p/1d`, and `CLI_003_FILE_FIRST_ACCEPTANCE` is recommended
 - CLI-surface-reset file-first acceptance gate: the isolated installed-package CLI alone initializes, reads, mutates every entity field, analyzes, selects, advances, and validates a plan without manual source rewriting; cumulative velocity is `49p/1d`, no detail work remains, and complete `NextResult.v3` has no recommendation
 - Contract 3 `v0.2.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Contract 3, renamed-command rejection, read-only agent guidance, complete Next v3, and file-first checks pass; publication left `latest=0.1.0` unchanged, then a separately authorized post-acceptance operation made `beta=latest=0.2.0`; cumulative velocity is `17p/2d`, no detail work remains, and complete Next v3 has no recommendation
-- scheduling-and-units milestone planning gate: `TIME-001` and `UNIT-001` map to SU-M0 through SU-M5 without duplicating detail task state; SU-M2 is accepted and advanced at `24p/1d`; the remaining macro precedence/resource makespans are 4d and 6d with 2d resource delay; its scheduler set is SU-M3 while complete Next v3 recommends the different jointly feasible SU-M4 set
+- scheduling-and-units rational-Duration replanning gate: completed SU-M1/SU-M2 history remains advanced; the new SU-M2R common predecessor captures the user-selected Decimal-or-fraction target DSL direction without changing active Grammar 1, accepted Grammar 2, migration version 1, or Contract 3; the contract task selects new version identities where compatibility requires them; seven detail tasks total 24p with 15p precedence and 18p heuristic resource makespans, 3p delay, inherited forecasts `5/8d` and `3/4d`; the macro has `4.75d` precedence and `6.75d` resource makespans with 2d delay; complete Next v3 recommends `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` and then `RATIONAL_DURATION_CONTRACT`
+- SU-M2R exact-Duration contract gate: Grammar 3, `perttool.temporal-unit-interface@2`, `perttool.unit-migration@2`, `Perttool.UnitMigrationResult.v2`, unsigned exact Fraction syntax, canonical shortest-Decimal-or-reduced-Fraction output, atomic grammar retention/upgrade, and reversibility metadata are accepted without runtime activation; `RATIONAL_DURATION_CONTRACT` is done but unadvanced under ADV-001, 20p remain with 11p precedence and 14p heuristic resource makespans, 3p delay, inherited forecasts `11/24d` and `7/12d`; the macro rollup is `0.583333d` and complete Next v3 recommends `RATIONAL_DURATION_SOURCE_MODEL` while `EXACT_DURATION_SERIALIZER` is allowed
 - SU-M1 temporal-requirements gate: project `as_of`, milestone `deadline`, task `not_before`, and task `deadline` are the exact initial property scope; grammar version 1 and existing result identities are not widened; `TEMPORAL_REQUIREMENTS` is completed and advanced; six tasks total 21p, precedence is 17p, heuristic resource work is 21p with 4p delay, observed provisional velocity is `3p/1d`, the resource forecast is `7d`, and `CALENDAR_SEMANTICS` is recommended
 - SU-M1 calendar-semantics gate: `perttool.calendar-projection` and the continuous fixed-offset profile version 1 fix tagged date/date-time comparison, `as_of`, exact projection, velocity, `not_before`, unavailable causes, and the no-business-calendar/no-unit-migration boundary; `CALENDAR_SEMANTICS` is completed and advanced; five tasks total 17p, precedence is 13p, heuristic resource work is 17p with 4p delay, cumulative provisional velocity is `7p/1d`, the resource forecast is `17/7d`, and `DEADLINE_SEMANTICS` is recommended
 - SU-M1 deadline-semantics gate: `perttool.deadline-evaluation` version 1 fixes task finish, milestone reach, project finish, current deadline state, signed margin, precedence lower bounds, heuristic resource forecasts, combined assessment, blocked-cone qualification, unavailable causes, and the Analysis/Recommendation version boundary; `DEADLINE_SEMANTICS` is complete and advanced through the committed-snapshot and expected-digest path; four tasks and 13p remain, both precedence and heuristic resource makespans are 13p with no resource delay, cumulative provisional velocity is `11p/1d`, both forecasts are `13/11d`, and `UNIT_MIGRATION_SEMANTICS` is recommended
@@ -861,6 +900,6 @@ Stage 1 entry evidence:
 - SU-M2 temporal-formatter gate: `TEMPORAL_FORMATTER_ROUNDTRIP` is complete and advanced from the clean committed snapshot through one shared active/target canonical field order and the internal target formatter; field/declaration order, comments, blank lines, BOM, line endings, exact temporal tokens, UTF-16 edits, malformed-input suppression, target-AST equivalence, idempotence, all nine fixtures, and all six TUE-012/TUE-013 occurrences are covered while active Grammar 1, CLI Contract 3, and root exports remain fixed; three tasks and 12p remain, precedence/resource makespans are 9p/12p with 3p resource delay, cumulative provisional velocity is `12p/1d`, forecasts are `3/4d` and `1d`, `TEMPORAL_MUTATION_BATCH_CORE` is recommended, and `DECLARED_TEMPORAL_INPUT_CORE` is deferred by `TARGET_CORE_SURFACE`
 - SU-M2 temporal-mutation gate: `TEMPORAL_MUTATION_BATCH_CORE` is complete and advanced from clean implementation commit `65c8cda` through private capability-checked task/milestone temporal requests, shared canonical placement, localized UTF-16 edits, final-candidate-only version/anchor/temporal upgrade and downgrade batches, fail-closed invalid candidates, common deterministic diff/digest, and shared in-place/out safe-write mechanics; active Grammar 1, CLI Contract 3, root exports, descriptors, help, and installed behavior remain fixed; two tasks and 7p remain, precedence/resource makespans are both 7p with no delay, cumulative provisional velocity is `17p/1d`, both forecasts are `7/17d`, and `DECLARED_TEMPORAL_INPUT_CORE` is recommended
 - SU-M2 declared-input Core gate: `DECLARED_TEMPORAL_INPUT_CORE` is complete and advanced from clean implementation commit `5dc3390` through internal target CheckResult v2 and ProjectResult v2 Core projections over one validated source order; exact anchors, milestone deadlines, nullable task constraints, finish-milestone deadlines, Grammar 1 compatibility, syntax suppression, semantic-error retention, complete invalid project results, diagnostic limits, determinism, and the TUI-004 Core boundary are covered while active Contract 3 schemas, CLI, root exports, descriptors, help, and installed behavior remain fixed; one task and 4p remain, precedence/resource makespans are both 4p with no delay, cumulative provisional velocity is `20p/1d`, both forecasts are `1/5d`, and `M2_FOUNDATION_ACCEPTANCE` is recommended
-- SU-M2 foundation-acceptance gate: `M2_FOUNDATION_ACCEPTANCE` is complete and advanced through the cross-cutting acceptance record, all 18 TUI and TUE traces, active Contract 3/Grammar 1 rejection, target API non-export, actual installed-package checks, and 361-test full verification; cumulative velocity is `24p/1d`, no detail work remains, and the remaining macro recommends the jointly feasible SU-M4 set while its separate scheduler set contains SU-M3
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twelve plans
+- SU-M2 foundation-acceptance gate: `M2_FOUNDATION_ACCEPTANCE` is complete and advanced through the cross-cutting acceptance record, all 18 TUI and TUE traces, active Contract 3/Grammar 1 rejection, target API non-export, actual installed-package checks, and 361-test full verification; cumulative velocity is `24p/1d` and no SU-M2 detail work remains; the later user-selected SU-M2R replan supersedes its then-current SU-M3/SU-M4 frontier without rewriting this history
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirteen plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

@@ -122,6 +122,7 @@ test("the active registry exposes no Contract 4 route, option, or schema", () =>
     "Perttool.AnalysisResult.v3",
     "Perttool.NextResult.v4",
     "Perttool.UnitMigrationResult.v1",
+    "Perttool.UnitMigrationResult.v2",
   ]) {
     assert.equal(schemas.includes(schema), false, schema);
   }
@@ -172,20 +173,19 @@ test("the SU-M3 handoff keeps public activation and migration out of scope", asy
   );
 });
 
-test("the accepted macro frontier keeps scheduler and recommendation sets orthogonal", async () => {
+test("the replanned macro frontier selects the rational Duration extension", async () => {
   const source = await repositoryFile("plans/scheduling-units.pert");
   const result = publicApi.selectNextTasks(source);
   assert.equal(result.ok, true);
   assert.ok(result.recommendation);
   assert.deepEqual(result.groups.ready, [
-    "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
-    "SU_M4_UNIT_MIGRATION_WORK_PACKAGE",
+    "SU_M2R_RATIONAL_DURATION_WORK_PACKAGE",
   ]);
   assert.deepEqual(result.groups.runnableNow, [
-    "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
+    "SU_M2R_RATIONAL_DURATION_WORK_PACKAGE",
   ]);
   assert.deepEqual(result.recommendation.recommendedTaskIds, [
-    "SU_M4_UNIT_MIGRATION_WORK_PACKAGE",
+    "SU_M2R_RATIONAL_DURATION_WORK_PACKAGE",
   ]);
   const jointFact = result.recommendation.facts.find(
     ({ id }) =>

@@ -177,8 +177,9 @@ Let project velocity be `P point / T calendar-unit`. If the base unit is point, 
 - Do not implicitly convert between day and hour through velocity or a fixed ratio.
 - These formulas also define exact numeric scaling for unit migration, but an
   Analysis `velocity_forecast` remains read-only. Source-field inventory,
-  finite-decimal representability, atomic rewriting, and round-trip behavior
-  belong to the Unit Migration Semantics specification.
+  canonical Decimal-or-fraction serialization, source-grammar selection,
+  atomic rewriting, and round-trip behavior belong to the Unit Migration
+  Semantics specification.
 
 ## 5. Duration and variance
 

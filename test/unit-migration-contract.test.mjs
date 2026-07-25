@@ -14,14 +14,14 @@ async function repositoryFile(relativePath) {
 test("unit migration fixes identity, directions, and effective velocity", async () => {
   const specification = await repositoryFile("docs/specs/unit-migration.md");
 
-  assert.match(specification, /Document status: Normative 1\.0/);
+  assert.match(specification, /Document status: Normative 2\.0/);
   assert.match(
     specification,
     /Unit migration ID: `perttool\.unit-migration`/,
   );
   assert.match(
     specification,
-    /unit_migration_version\s+= 1/,
+    /unit_migration_version\s+= 2/,
   );
   for (const row of [
     "| `point` | `day` | `U = day` |",
@@ -78,29 +78,29 @@ test("unit migration fixes the complete source inventory and exact formulas", as
   );
 });
 
-test("unit migration fails closed for nonrepresentable exact values", async () => {
+test("unit migration serializes every exact value and selects the grammar atomically", async () => {
   const specification = await repositoryFile("docs/specs/unit-migration.md");
 
   assert.match(specification, /d = 2\^a \* 5\^b/);
   assert.match(
     specification,
-    /reject it if the denominator has any prime factor other than 2 or 5/,
+    /when the test succeeds[\s\S]*emit the shortest ordinary Decimal/,
   );
   assert.match(
     specification,
-    /emit ordinary decimal notation without an exponent/,
+    /otherwise emit the reduced `numerator\/denominator` form/,
   );
   assert.match(
     specification,
-    /\| `1\/3` day \| not representable \|/,
+    /\| `1\/3` day \| `1\/3d` \|/,
   );
   assert.match(
     specification,
-    /fail the entire request with\s+`nonrepresentable_decimal`/,
+    /Migration version 2 has no\s+`nonrepresentable_decimal` failure/,
   );
   assert.match(
     specification,
-    /Return no partial candidate, edits, or diff/,
+    /upgrade source grammar version 1 or 2 to explicit version 3 when any\s+generated token is a Fraction/,
   );
   assert.match(
     specification,
@@ -144,7 +144,7 @@ test("unit migration fixes no-op, inverse, and existing-version boundaries", asy
   assert.match(design, /### 6\.6 Point and Time-Unit Source Migration/);
   assert.match(
     grammar,
-    /Unit migration version 1 supports versions 1 and 2/,
+    /Unit migration version 2 accepts grammar versions 1, 2, and 3/,
   );
   assert.match(
     analysis,
@@ -152,7 +152,7 @@ test("unit migration fixes no-op, inverse, and existing-version boundaries", asy
   );
   assert.match(
     mutation,
-    /does not claim automatic field inventory, exact\s+conversion, finite-decimal preflight/,
+    /does not claim automatic field inventory, exact\s+conversion, canonical Decimal-or-fraction serialization/,
   );
   assert.match(
     calendar,

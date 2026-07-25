@@ -54,8 +54,8 @@ The following are not part of Contract 3:
 - locale negotiation, translation catalogs, or a `--locale` option;
 - direct Git operations;
 - backlog hierarchy or multi-plan composition.
-- grammar version 2 temporal fields, temporal result projections, or
-  `project migrate-unit`; these require CLI Contract 4.
+- grammar version 2/3 temporal or exact-Fraction fields, temporal result
+  projections, or `project migrate-unit`; these require CLI Contract 4.
 
 `project show` remains because it exposes effective and defaulted project
 metadata used by automation. `dag analyze` and `dag next` remain the sources of

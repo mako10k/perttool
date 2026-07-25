@@ -303,7 +303,8 @@ if (
   serializedHelp.includes("Perttool.ProjectResult.v2") ||
   serializedHelp.includes("Perttool.AnalysisResult.v3") ||
   serializedHelp.includes("Perttool.NextResult.v4") ||
-  serializedHelp.includes("Perttool.UnitMigrationResult.v1")
+  serializedHelp.includes("Perttool.UnitMigrationResult.v1") ||
+  serializedHelp.includes("Perttool.UnitMigrationResult.v2")
 ) process.exit(1);
 
 for (const [route, schemaVersion] of [

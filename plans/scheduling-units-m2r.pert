@@ -1,0 +1,154 @@
+project SCHEDULING_UNITS_M2R:
+  version 1
+  title "Exact rational Duration extension"
+  description "Plan and accept an exact rational Duration extension before SU-M3 and SU-M4. Active Grammar 1, accepted target Grammar 2, and CLI Contract 3 stay closed. The first task selects new grammar, unit-migration, and result or interface version identities where compatibility requires them, then defines fraction syntax, canonical serialization, a versioned source-upgrade boundary, and reversibility qualification. Implementation remains internal until SU-M5."
+  as_of 2026-07-25
+  duration_unit point
+  velocity 24p/1d
+  finish RATIONAL_DURATION_ACCEPTED
+
+milestone M2R_INPUT_READY:
+  title "SU-M2 rational Duration refinement ready"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two independent rational-Duration slices may run together when ownership does not overlap"
+  capacity 2
+
+resource REVIEWERS:
+  title "Normative and compatibility review capacity"
+  capacity 1
+
+resource NORMATIVE_SURFACE:
+  title "Requirements, specifications, design, and examples ownership"
+  capacity 1
+
+resource SYNTAX_SURFACE:
+  title "Target parser, CST/AST, validator, and formatter ownership"
+  capacity 1
+
+resource MUTATION_SURFACE:
+  title "Target mutation and batch ownership"
+  capacity 1
+
+resource TARGET_CORE_SURFACE:
+  title "Exact Rational source serialization and target candidate ownership"
+  capacity 1
+
+resource CONTRACT3_GUARD:
+  title "Active Grammar 1 and CLI Contract 3 compatibility gate"
+  capacity 1
+
+milestone RATIONAL_DURATION_CONTRACT_ACCEPTED:
+  title "Rational Duration contract accepted"
+
+milestone RATIONAL_DURATION_SOURCE_READY:
+  title "Target rational Duration source model ready"
+
+milestone EXACT_DURATION_SERIALIZER_READY:
+  title "Exact Duration source serializer ready"
+
+milestone RATIONAL_DURATION_CORE_INPUT_READY:
+  title "Rational source and serializer branches ready"
+
+milestone RATIONAL_DURATION_FORMATTER_READY:
+  title "Target rational Duration formatter ready"
+
+milestone RATIONAL_DURATION_MUTATION_READY:
+  title "Target rational Duration mutation ready"
+
+milestone RATIONAL_DURATION_VERSION_BOUNDARY_READY:
+  title "Grammar upgrade and compatibility boundary ready"
+
+milestone RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:
+  title "Rational Duration branches ready for acceptance"
+
+milestone RATIONAL_DURATION_ACCEPTED:
+  title "Exact rational Duration extension accepted"
+
+task RATIONAL_DURATION_CONTRACT M2R_INPUT_READY -> RATIONAL_DURATION_CONTRACT_ACCEPTED:
+  title "Revise the exact Duration contract"
+  description "Revise requirements, DSL grammar, unit-migration and interface specifications, basic design, examples, and acceptance cases together. Define Decimal-or-fraction Duration in a new target grammar version; select new grammar, unit-migration, and public result or interface identities where compatibility requires them; define accepted input and denominator rules, shortest-decimal or reduced-fraction generated tokens, an atomic source-grammar upgrade, metadata qualification, and replacement of nonrepresentable_decimal. Do not widen Grammar 1 or accepted Grammar 2 in place or activate Contract 4."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+
+task RATIONAL_DURATION_SOURCE_MODEL RATIONAL_DURATION_CONTRACT_ACCEPTED -> RATIONAL_DURATION_SOURCE_READY:
+  title "Implement the target rational Duration source model"
+  description "Extend the target CST, AST, parser, and validator to accept exact fraction Duration only under the newly selected target grammar; retain source spans and tokens; reject zero denominators and malformed forms deterministically; enforce suffix and positive or estimate-order constraints; and keep Grammar 1 and accepted Grammar 2 behavior unchanged."
+  duration 4p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    SYNTAX_SURFACE 1
+
+task EXACT_DURATION_SERIALIZER RATIONAL_DURATION_CONTRACT_ACCEPTED -> EXACT_DURATION_SERIALIZER_READY:
+  title "Implement exact Duration source serialization"
+  description "Add an exact source serializer over Rational that emits the shortest finite decimal when terminating and a reduced integer fraction otherwise, never calls rounding display code, and produces deterministic canonical tokens for later migration."
+  duration 3p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    TARGET_CORE_SURFACE 1
+
+gate RATIONAL_SOURCE_CORE_GATE RATIONAL_DURATION_SOURCE_READY -> RATIONAL_DURATION_CORE_INPUT_READY:
+  reason "Editing requires the target rational Duration source model"
+
+gate EXACT_SERIALIZER_CORE_GATE EXACT_DURATION_SERIALIZER_READY -> RATIONAL_DURATION_CORE_INPUT_READY:
+  reason "Editing and version-boundary work require exact source serialization"
+
+task RATIONAL_DURATION_FORMATTER RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_DURATION_FORMATTER_READY:
+  title "Extend the target formatter for rational Duration"
+  description "Extend the target formatter and source-equivalence tests for fraction Duration while preserving user-authored tokens and trivia unless normalized by an explicit formatting rule. Verify idempotence and exact target-AST equivalence."
+  duration 3p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    SYNTAX_SURFACE 1
+
+task RATIONAL_DURATION_MUTATION RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_DURATION_MUTATION_READY:
+  title "Extend target mutation for rational Duration"
+  description "Extend target project and task mutation plus final-candidate batch paths to accept exact fraction Duration, preserve localized UTF-16 edits and safe-write reuse, and keep automatic unit migration excluded from batch."
+  duration 3p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    MUTATION_SURFACE 1
+
+task RATIONAL_DURATION_VERSION_BOUNDARY RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_DURATION_VERSION_BOUNDARY_READY:
+  title "Implement the rational Duration version boundary"
+  description "Implement the internal candidate boundary that upgrades a source document to the newly selected target grammar only when an exact generated fraction requires it, reports the selected grammar and related compatibility metadata changes in reversibility, preserves temporal source, and leaves public schemas, exports, dispatch, help, and installed behavior unchanged."
+  duration 3p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    TARGET_CORE_SURFACE 1
+    CONTRACT3_GUARD 1
+
+gate FORMATTER_ACCEPTANCE_GATE RATIONAL_DURATION_FORMATTER_READY -> RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:
+  reason "Acceptance requires target formatter support"
+
+gate MUTATION_ACCEPTANCE_GATE RATIONAL_DURATION_MUTATION_READY -> RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:
+  reason "Acceptance requires target mutation and batch support"
+
+gate VERSION_BOUNDARY_ACCEPTANCE_GATE RATIONAL_DURATION_VERSION_BOUNDARY_READY -> RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:
+  reason "Acceptance requires the selected version identities and source-grammar compatibility boundary"
+
+task RATIONAL_DURATION_ACCEPTANCE RATIONAL_DURATION_ACCEPTANCE_INPUT_READY -> RATIONAL_DURATION_ACCEPTED:
+  title "Accept exact rational Duration without public activation"
+  description "Trace the revised TUI and TUE observations; replace TUE-015 failure with exact fraction success; cover malformed fractions, Decimal compatibility, round trips, version identities, and source-grammar upgrade behavior; verify target APIs remain unexported and the installed Contract 3 CLI rejects the new target grammar; run full repository, link, and package gates; and hand the exact syntax to SU-M3 and SU-M4."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    SYNTAX_SURFACE 1
+    MUTATION_SURFACE 1
+    TARGET_CORE_SURFACE 1
+    CONTRACT3_GUARD 1

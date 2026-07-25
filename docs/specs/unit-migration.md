@@ -1,8 +1,8 @@
 # Point and Time-Unit Migration Semantics Specification
 
-- Document status: Normative 1.0
+- Document status: Normative 2.0
 - Unit migration ID: `perttool.unit-migration`
-- Unit migration version: `1`
+- Unit migration version: `2`
 - Created: 2026-07-25
 - Related requirements: [../requirements.md](../requirements.md)
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
@@ -14,13 +14,15 @@
 
 ## 1. Purpose
 
-This specification fixes the first exact source-migration contract between a
-Point project and one explicitly velocity-linked time unit. It defines:
+This specification fixes the current exact source-migration contract between
+a Point project and one explicitly velocity-linked time unit. It defines:
 
 - the permitted `point -> day|hour` and `day|hour -> point` directions;
 - the declared or explicitly replaced velocity used by the migration;
 - the complete inventory of base-unit-bearing source fields;
-- exact Rational conversion and finite-decimal representability;
+- exact Rational conversion and canonical Decimal-or-fraction Duration
+  serialization;
+- deterministic source-grammar retention or upgrade to grammar version 3;
 - atomic, source-preserving candidate behavior;
 - no-op, repeated, and inverse migration behavior;
 - the boundary between source migration and read-only velocity forecasts; and
@@ -55,12 +57,17 @@ migration and MUST NOT be reused as migration input.
 
 ## 3. Identity and determinism
 
-The accepted initial identity is:
+The current identity is:
 
 ```text
 unit_migration_id       = perttool.unit-migration
-unit_migration_version  = 1
+unit_migration_version  = 2
 ```
+
+Version 1 remains the accepted historical finite-Decimal-only contract for
+grammar versions 1 and 2. Version 2 replaces its representability failure with
+exact fraction Duration and an atomic grammar version 3 upgrade. It does not
+change the permitted directions or velocity formulas.
 
 The same valid source bytes, target unit, optional replacement velocity, and
 version identity MUST produce the same semantic outcome, converted exact
@@ -71,7 +78,7 @@ environment variable, prior analysis result, or rendered decimal. It consumes
 only the validated source and explicit request.
 
 An incompatible change to permitted directions, velocity selection,
-conversion formulas, field inventory, decimal representability, or
+conversion formulas, field inventory, source serialization, or
 round-trip meaning requires a unit-migration version increase. A public
 result schema or CLI contract is versioned independently.
 
@@ -84,7 +91,10 @@ In scope:
 - migration from `day` or `hour` to `point`;
 - a declared velocity or an explicit replacement velocity;
 - every base-unit-bearing source value listed in Section 7;
-- exact Rational conversion and canonical finite-decimal serialization;
+- exact Rational conversion and canonical Decimal-or-fraction serialization;
+- deterministic retention of grammar version 1 or 2 when every generated
+  token is Decimal, or one atomic upgrade to grammar version 3 when a
+  generated fraction is required;
 - one atomic, revalidated, source-preserving candidate; and
 - deterministic no-op, repetition, inverse, and failure behavior.
 
@@ -172,7 +182,7 @@ original calendar forecast.
 
 ## 7. Complete source-field inventory
 
-Unit migration version 1 rewrites exactly the following source values.
+Unit migration version 2 rewrites exactly the following source values.
 
 | Source location | Migration behavior |
 | --- | --- |
@@ -188,7 +198,8 @@ Unit migration version 1 rewrites exactly the following source values.
 The following values are not base-unit-bearing migration inputs and remain
 unchanged:
 
-- project ID, version, title, description, `as_of`, and finish;
+- project ID, title, description, `as_of`, and finish; project version remains
+  unchanged except for the exact-fraction upgrade defined in Section 9;
 - milestone and task `deadline`;
 - task `not_before`;
 - milestone state and task status;
@@ -201,18 +212,19 @@ The initial temporal scope contains only absolute dates and date-times, so it
 adds no duration-bearing source field to this inventory. Absolute temporal
 values MUST NOT be rewritten merely because the project base unit changes.
 
-Grammar version 2 adds only absolute temporal fields, so the inventory remains
-complete for grammar versions 1 and 2. If a later grammar version adds a
-source field whose meaning is expressed in the project base unit, unit
-migration version 1 fails with
+Grammar version 2 adds only absolute temporal fields, and grammar version 3
+changes only Duration literal syntax, so the inventory remains complete for
+grammar versions 1, 2, and 3. If a later grammar version adds a source field
+whose meaning is expressed in the project base unit, unit migration version 2
+fails with
 `unsupported_duration_field` until a new migration version inventories that
 field. It MUST NOT silently leave a base-unit-bearing field unchanged.
 
 ## 8. Exact conversion
 
-All source decimals and velocity quantities are parsed into reduced exact
-Rationals before conversion. No binary floating point or display string is a
-semantic input.
+All source Decimal or Fraction Duration tokens and Decimal velocity quantities
+are parsed into reduced exact Rationals before conversion. No binary floating
+point or display string is a semantic input.
 
 For a source value `x`:
 
@@ -239,26 +251,19 @@ successful candidate is reparsed, Analysis version 1 derives them from the
 converted source estimates in the target unit. Variance consequently uses the
 square of the target base unit.
 
-## 9. Finite-decimal representability
+## 9. Canonical exact Duration serialization
 
-Grammar version 1 Duration values are finite base-10 decimals with a suffix.
-An exact converted Rational `n/d`, reduced with `d > 0`, is source
-representable if and only if:
+Grammar versions 1 and 2 accept finite base-10 Decimal Duration tokens.
+Grammar version 3 additionally accepts exact fraction Duration. For every
+converted Rational `n/d`, reduced with `d > 0`, the serializer MUST:
 
-```text
-d = 2^a * 5^b
-```
-
-for non-negative integers `a` and `b`.
-
-The serializer MUST:
-
-1. reduce the Rational;
-2. reject it if the denominator has any prime factor other than 2 or 5;
-3. scale it to the smallest exact power-of-ten denominator;
-4. emit ordinary decimal notation without an exponent;
-5. remove unnecessary leading and fractional trailing zeroes; and
-6. append the target suffix `p`, `d`, or `h`.
+1. reduce the Rational and normalize zero to `0/1`;
+2. test whether `d = 2^a * 5^b` for non-negative integers `a` and `b`;
+3. when the test succeeds, scale to the smallest exact power-of-ten
+   denominator and emit the shortest ordinary Decimal without an exponent;
+4. otherwise emit the reduced `numerator/denominator` form;
+5. append the target suffix `p`, `d`, or `h`; and
+6. never round, truncate, clamp, or use a displayed decimal.
 
 Examples:
 
@@ -268,16 +273,29 @@ Examples:
 | `1/2` day | `0.5d` |
 | `5/2` hour | `2.5h` |
 | `10/1` point | `10p` |
-| `1/3` day | not representable |
+| `1/3` day | `1/3d` |
+| `4/6` day | `2/3d` |
 
-No precision option, display precision, decimal cache, or renderer may change
-this decision. Migration never rounds, truncates, clamps, or substitutes a
-displayed decimal.
+Factorization selects spelling, not success. Every exact Rational is
+representable by grammar version 3. No precision option, display precision,
+decimal cache, or renderer may change this decision.
 
-Before constructing a candidate, preflight every converted source field. If
-one or more values are not representable, fail the entire request with
-`nonrepresentable_decimal` and identify every affected source field in
-declaration and field order. Return no partial candidate, edits, or diff.
+After serializing every converted field, select the candidate grammar:
+
+- retain source grammar version 1 or 2 when every generated token is Decimal;
+- upgrade source grammar version 1 or 2 to explicit version 3 when any
+  generated token is a Fraction; and
+- retain source grammar version 3 regardless of generated token spelling.
+
+An omitted source `version` means version 1. An upgrade inserts `version 3` in
+canonical project-field order; an explicit version 1 or 2 is replaced
+locally. Grammar selection, unit, velocity, and every converted Duration are
+one atomic candidate. Migration version 2 has no
+`nonrepresentable_decimal` failure.
+
+`grammar_disposition` is `retained` when source and target grammar versions
+are equal and `upgraded_for_exact_fraction` when version 1 or 2 becomes
+version 3.
 
 ## 10. Velocity disposition
 
@@ -307,9 +325,9 @@ Processing is:
 
 1. validate the original document;
 2. validate the semantic request and select the effective velocity;
-3. inventory every version-1 base-unit-bearing source field;
+3. inventory every version-2 base-unit-bearing source field;
 4. calculate all exact converted values;
-5. preflight finite-decimal representability for all values;
+5. canonically serialize every exact value and select the candidate grammar;
 6. create non-overlapping UTF-16 `TextEdit` values;
 7. apply edits to one in-memory candidate;
 8. parse and semantically validate only the final candidate; and
@@ -318,6 +336,8 @@ Processing is:
 
 Edits change only:
 
+- the project `version` value span, or a canonical version-field insertion,
+  when an exact Fraction requires grammar version 3;
 - the `duration_unit` value span;
 - the velocity value span, or a canonical velocity field insertion, when
   required; and
@@ -331,11 +351,11 @@ canonically even when its numeric value does not change.
 The candidate reuses the common digest, unified-diff, edit ordering,
 revalidation, and later safe-write rules from Mutation semantics. No
 candidate, edits, or diff are exposed for an invalid original, invalid request,
-nonrepresentable conversion, or invalid final candidate.
+or invalid final candidate.
 
 An ordinary atomic batch can manually set the same fields, but it does not
 thereby claim the inventory, exactness, velocity-disposition, or round-trip
-guarantees of `perttool.unit-migration` version 1.
+guarantees of `perttool.unit-migration` version 2.
 
 ## 12. Temporal and analysis preservation
 
@@ -402,10 +422,12 @@ An inverse migration with the same effective velocity MUST restore:
 - every base-unit-bearing source value to the exact original Rational;
 - the original base unit;
 - the same semantic velocity; and
-- the same non-timing document semantics.
+- the same non-timing document semantic values, subject to the explicit
+  grammar and velocity metadata qualifications below.
 
 The inverse is guaranteed source-representable because the restored original
-Duration values were valid finite decimals.
+Duration values were valid under the source grammar and grammar version 3 can
+represent every exact Rational.
 
 Lexical byte identity is not guaranteed. Migrated Duration tokens are
 canonical, so an original spelling such as `1.00p` may return as `1p`.
@@ -414,8 +436,10 @@ preserved.
 
 If the first migration replaced or inserted velocity, the inverse restores
 exact duration values under that effective velocity but retains the new
-velocity. It reports `values_exact_metadata_changed` rather than claiming
-whole-document semantic identity with the pre-replacement source.
+velocity. If the first migration upgraded grammar version 1 or 2 to version 3,
+the inverse likewise retains version 3 rather than guessing that a downgrade
+is desired. Either condition reports `values_exact_metadata_changed` rather
+than claiming whole-document semantic identity with the original source.
 
 ## 14. Semantic outcome
 
@@ -427,6 +451,9 @@ facts.
 UnitMigrationOutcome:
   unit_migration_id
   unit_migration_version
+  source_grammar_version
+  target_grammar_version
+  grammar_disposition
   source_unit
   target_unit
   effective_velocity
@@ -447,10 +474,10 @@ Each converted-field record identifies the project or task field and retains:
 `reversibility` is one of:
 
 - `exact`: inverse migration with the retained effective velocity restores
-  source semantic values;
+  source semantic values and migration retained grammar and velocity metadata;
 - `values_exact_metadata_changed`: duration values invert exactly, but
-  replacement or inserted velocity prevents a claim that original metadata is
-  restored; or
+  replacement/inserted velocity or a retained grammar upgrade prevents a claim
+  that original metadata is restored; or
 - `not_applicable`: same-unit no-op or failed request.
 
 The outcome does not substitute for the candidate text, unified diff, or
@@ -458,7 +485,7 @@ ordinary validation diagnostics.
 
 ## 15. Fail-closed causes
 
-The following semantic causes are stable in unit migration version 1. The
+The following semantic causes are stable in unit migration version 2. The
 interface contract maps them to public diagnostics.
 
 | Cause | Meaning |
@@ -469,9 +496,12 @@ interface contract maps them to public diagnostics.
 | `unsupported_direction` | The request is not Point-to-time, time-to-Point, or a permitted no-op |
 | `velocity_period_mismatch` | The effective velocity period does not match the required time unit |
 | `same_unit_velocity_change` | A same-unit request attempted to change velocity |
-| `unsupported_duration_field` | The source grammar contains a base-unit-bearing field unknown to migration version 1 |
-| `nonrepresentable_decimal` | At least one exact converted Rational has no finite grammar decimal |
+| `unsupported_duration_field` | The source grammar contains a base-unit-bearing field unknown to migration version 2 |
 | `invalid_candidate` | The complete rewritten source failed ordinary validation |
+
+`nonrepresentable_decimal` belongs only to migration version 1. Migration
+version 2 never emits it because grammar version 3 represents every exact
+converted Rational as a Decimal or Fraction.
 
 Failures are deterministic and preserve all applicable ordinary parser,
 semantic, and candidate diagnostics. They expose no partial candidate, edits,
@@ -479,10 +509,12 @@ diff, or partially replaced velocity.
 
 ## 16. Compatibility and interface boundaries
 
-Unit migration version 1:
+Unit migration version 2:
 
-- operates on the inventoried base-unit fields of grammar versions 1 and 2;
-- adds no DSL field, keyword, or implicit mixed-unit rule;
+- operates on the inventoried base-unit fields of grammar versions 1, 2, and
+  3;
+- uses grammar version 3 Fraction syntax but adds no new field, keyword, or
+  implicit mixed-unit rule;
 - does not change Analysis version 1 or its `velocity_forecast` qualifier;
 - does not change calendar or deadline algorithm identities;
 - does not change Mutation semantics version 1 requests;
@@ -512,7 +544,7 @@ and the shared machine-readable baseline.
 The semantic contract is accepted only when tests establish all of the
 following.
 
-1. The identity is `perttool.unit-migration` version 1.
+1. The identity is `perttool.unit-migration` version 2.
 2. Only Point-to-linked-time and matching-time-to-Point directions succeed.
 3. No day/hour relationship is inferred from velocity or calendar constants.
 4. Declared, equal-replacement, different-replacement, and inserted velocity
@@ -522,14 +554,18 @@ following.
 6. Absolute temporal values, resources, priorities, states, and graph
    structure remain unchanged.
 7. Conversion uses exact Rational formulas and positive scaling.
-8. A reduced denominator containing a prime other than 2 or 5 fails the whole
-   request without rounding.
-9. Converted Duration tokens use the shortest exact finite decimal and target
-   suffix.
+8. A reduced denominator containing only prime factors 2 and 5 produces the
+   shortest exact Decimal; every other denominator produces a reduced
+   Fraction, without rounding.
+9. Grammar version 1 or 2 is retained for all-Decimal output; any generated
+   Fraction atomically upgrades the candidate to grammar version 3.
 10. The candidate is one source-preserving, atomically revalidated rewrite.
 11. Same-unit and repeated requests are no-ops and do not rescale.
 12. An inverse with the same effective velocity restores exact source values,
-    with lexical and replacement-velocity qualifications stated explicitly.
-13. Grammar version 2 absolute temporal tokens are preserved byte-for-byte,
-    while existing analysis, calendar, deadline, mutation, and CLI versions
-    remain unchanged.
+    with lexical, replacement-velocity, and grammar-upgrade qualifications
+    stated explicitly.
+13. Grammar version 2 and 3 absolute temporal tokens are preserved
+    byte-for-byte, while existing analysis, calendar, deadline, mutation, and
+    CLI versions remain unchanged.
+14. Zero denominators and malformed Fraction tokens fail ordinary grammar
+    validation before migration and expose no candidate.

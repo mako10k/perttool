@@ -298,7 +298,8 @@ architecture decision is normative.
 
 Priority: P1
 
-Status: Contract accepted (`SU-M1`)
+Status: Contract accepted (`SU-M1`); rational-Duration refinement planned
+(`SU-M2R`)
 
 Define a coherent temporal model, including `deadline`, and carry it through
 the file-first interface and every affected result projection. Use that model
@@ -333,7 +334,8 @@ Acceptance:
 
 Priority: P1
 
-Status: Contract accepted (`SU-M1`)
+Status: Contract accepted (`SU-M1`); rational-Duration refinement planned
+(`SU-M2R`)
 
 Design a preview-first migration that rewrites a project between `point` and
 its velocity-linked `day` or `hour` unit. This is a source migration, distinct
@@ -351,9 +353,9 @@ Acceptance:
   including task durations or all three PERT estimates, `critical_epsilon`,
   `target_duration`, and any duration-bearing temporal fields accepted by
   `TIME-001`;
-- values that cannot be represented exactly in the DSL have an explicit,
-  fail-closed precision or rounding policy; no displayed decimal is reused as
-  conversion input;
+- every exact converted Rational is source-representable in the target DSL as
+  either a finite Decimal or an exact fraction Duration; no displayed decimal
+  is reused as conversion input and migration never rounds;
 - preview text, structured JSON, and a deterministic unified diff identify
   every changed value, while write and output modes remain atomic,
   source-preserving, race-safe, and fully revalidated;
@@ -361,8 +363,30 @@ Acceptance:
   diagnostics explain when reversibility cannot be guaranteed;
 - command discovery, help, guide content, README examples, batch interaction,
   and installed-package tests cover both `point -> day|hour` and
-  `day|hour -> point`, including incompatible velocity and non-representable
-  result cases, at the atomic Contract 4 acceptance gate.
+  `day|hour -> point`, including incompatible velocity, exact fraction,
+  malformed fraction, and Grammar 1 compatibility cases, at the atomic
+  Contract 4 acceptance gate.
+
+Replanning decision on 2026-07-25:
+
+- the finite-decimal-only migration contract is safe but incomplete for common
+  velocities such as `3p/1d`;
+- accepted Grammar 3 adds exact fraction Duration to the Grammar 2 temporal
+  field set, while generated migration tokens use the shortest exact finite
+  Decimal when possible and a reduced fraction otherwise;
+- active Grammar 1 and accepted target Grammar 2 remain closed, and a migration
+  that needs an exact fraction defines one atomic source-to-target grammar
+  candidate and reports the grammar metadata change in its reversibility
+  qualification;
+- completed `RATIONAL_DURATION_CONTRACT` selected
+  `perttool.temporal-unit-interface@2`, `perttool.unit-migration@2`, and
+  `Perttool.UnitMigrationResult.v2` rather than silently widening an accepted
+  identity; and
+- the accepted
+  [SU-M2R contract review](process/scheduling-units-m2r-contract-acceptance.md)
+  traces Grammar 3 syntax, canonical serialization, atomic grammar selection,
+  reversibility metadata, malformed input, and compatibility without
+  activating Grammar 3 or Contract 4.
 
 ### Refinement and delivery milestones
 
@@ -376,6 +400,7 @@ project duration unit changes.
 | `SU-M0` | Backlog refined | Scope, non-goals, milestone boundaries, and macro/detail tracking rules are recorded. | `TIME-001`, `UNIT-001` |
 | `SU-M1` | Temporal and migration contract accepted | Requirements, normative specifications, interface projections, examples, compatibility policy, and an acceptance review define temporal semantics, deadline-derived behavior, and exact unit migration. | `TIME-001`, `UNIT-001` |
 | `SU-M2` | Temporal source and Core foundations accepted | Target Grammar 2 parsing, validation, formatting, source-preserving temporal mutation, and declared-input Core projections are accepted without activating public Contract 4 schemas, help, or installed-package behavior. | `TIME-001` |
+| `SU-M2R` | Exact rational Duration extension accepted | Requirements and a newly versioned target grammar accept Decimal-or-fraction Duration; exact serialization, parser, validator, formatter, mutation, source-to-target grammar candidate behavior, version-identity decisions, and compatibility acceptance are complete without public activation. | `TIME-001`, `UNIT-001` |
 | `SU-M3` | Temporal deadline and Next v4 target Core accepted | Calendar projection, deadline evaluation, temporal precedence/resource views, and time-gated Next v4 start-authority Core are accepted without making the target CLI or authority active. | `TIME-001` |
 | `SU-M4` | Exact unit-migration Core accepted | The target planner covers every base-unit-bearing value in both directions, with source-preserving preview candidates, exactness, diagnostics, idempotence, and inverse qualification, without publishing its Contract 4 command. | `UNIT-001` |
 | `SU-M5` | Atomic Contract 4 workstream accepted | CLI Contract 4, public result schemas, registry/help/Guide/README, installed-package workflows, and Next v4 normal authority move together after shadow and safe-stop acceptance; release scope is decided separately. | `TIME-001`, `UNIT-001` |
@@ -383,15 +408,18 @@ project duration unit changes.
 Progress is tracked at two levels:
 
 - [`plans/scheduling-units.pert`](../plans/scheduling-units.pert) is the
-  milestone-level roadmap. Its `SU-M2` estimate is rolled up from the current
-  detail; estimates after `SU-M2` remain provisional and are re-estimated when
-  the preceding milestone is accepted.
+  milestone-level roadmap. `SU-M2R` is rolled up from its current detail;
+  estimates after `SU-M2R` remain provisional and are re-estimated when the
+  preceding milestone is accepted.
 - [`plans/scheduling-units-m1.pert`](../plans/scheduling-units-m1.pert) tracks
   only the detailed work required to reach `SU-M1`. It does not duplicate
   completion state for later milestones.
 - [`plans/scheduling-units-m2.pert`](../plans/scheduling-units-m2.pert) tracks
-  the current six-task target-only source and Core slice required to reach
-  `SU-M2`. It does not activate the public Contract 4 surface.
+  the completed and advanced six-task target-only source and Core slice that
+  reached `SU-M2`.
+- [`plans/scheduling-units-m2r.pert`](../plans/scheduling-units-m2r.pert)
+  tracks the current exact rational Duration contract and target-only source
+  extension required before SU-M3 and SU-M4.
 - Select the milestone work package from a fresh, complete macro `dag next`
   result, then select daily work from the corresponding milestone-detail plan.
   When a detail plan reaches its finish, roll up that result once to the macro,
@@ -457,11 +485,18 @@ SU-M2 progress:
   boundary, actual installed-package behavior, and the SU-M3 handoff. All 24p
   are complete at a cumulative provisional `24p/1d`; both the detail and
   macro work-package frontiers are advanced from committed snapshots.
-- The remaining macro has 4d precedence and 6d heuristic resource makespans
-  with 2d resource delay. Both SU-M3 and SU-M4 are ready. The existing
-  scheduler selects SU-M3, while complete `NextResult.v3` recommends the
-  different jointly feasible SU-M4 set; Recommendation section 10 explicitly
-  permits the two sets to differ.
+- The user-selected rational Duration replan adds one common SU-M2R predecessor
+  before SU-M3 and SU-M4. `RATIONAL_DURATION_CONTRACT` is done but unadvanced
+  under ADV-001. Twenty points remain; precedence is 11p and the heuristic
+  resource makespan is 14p with 3p delay. At the inherited provisional
+  `24p/1d`, the forecasts are `11/24d` and `7/12d`.
+- The macro rollup is `0.583333d`, leaving `4.583333d` precedence and `6.583333d`
+  heuristic resource makespans with 2d resource delay. Its only ready,
+  `runnable_now`, and complete Next v3 recommended work package is
+  `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE`.
+- In the detail, complete Next v3 recommends
+  `RATIONAL_DURATION_SOURCE_MODEL`; `EXACT_DURATION_SERIALIZER` is also ready,
+  jointly feasible, and `allowed`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, unit migration, and publication are explicit non-goals.

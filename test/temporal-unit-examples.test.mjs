@@ -37,11 +37,15 @@ test("temporal/unit examples publish one contiguous machine baseline", async () 
 
   assert.equal(
     document.schema_version,
-    "Perttool.TemporalUnitExampleBaseline.v1",
+    "Perttool.TemporalUnitExampleBaseline.v2",
   );
   assert.deepEqual(document.target_contract, {
-    grammar_version: 2,
+    grammar_version: 3,
     cli_contract_version: 4,
+    interface: {
+      id: "perttool.temporal-unit-interface",
+      version: 2,
+    },
     calendar: {
       id: "perttool.calendar-projection",
       version: 1,
@@ -54,12 +58,13 @@ test("temporal/unit examples publish one contiguous machine baseline", async () 
     },
     unit_migration: {
       id: "perttool.unit-migration",
-      version: 1,
+      version: 2,
     },
+    unit_migration_result: "Perttool.UnitMigrationResult.v2",
   });
 
   const expectedIds = Array.from(
-    { length: 18 },
+    { length: 20 },
     (_, index) => `TUE-${String(index + 1).padStart(3, "0")}`,
   );
   assert.deepEqual(
@@ -244,11 +249,12 @@ test("deadline cases keep proof, heuristic, block, and history meanings separate
   );
 });
 
-test("migration cases fix exact inventory, failures, idempotence, and inverse", async () => {
+test("migration cases fix exact inventory, grammar upgrade, idempotence, and inverse", async () => {
   const document = await baseline();
 
   const pointToDay = byId(document, "TUE-012").expected;
   assert.equal(pointToDay.velocity_disposition, "retained");
+  assert.equal(pointToDay.grammar_disposition, "retained");
   assert.deepEqual(pointToDay.converted_tokens_by_field, {
     "project.critical_epsilon": "0.25d",
     "project.target_duration": "6d",
@@ -269,6 +275,7 @@ test("migration cases fix exact inventory, failures, idempotence, and inverse", 
 
   const hourToPoint = byId(document, "TUE-013").expected;
   assert.equal(hourToPoint.velocity_disposition, "inserted");
+  assert.equal(hourToPoint.grammar_disposition, "retained");
   assert.equal(
     hourToPoint.converted_tokens_by_field["task.FIXED.duration"],
     "5p",
@@ -295,17 +302,25 @@ test("migration cases fix exact inventory, failures, idempotence, and inverse", 
   ]);
   assert.equal(failures.partial_candidate_exposed, false);
 
-  const nonrepresentable = byId(document, "TUE-015").expected;
-  assert.equal(nonrepresentable.diagnostic_code, "PTMIG-408");
-  assert.deepEqual(nonrepresentable.affected_fields, [
-    "project.critical_epsilon",
-    "project.target_duration",
-    "task.FIXED.duration",
-    "task.ESTIMATED.estimate.optimistic",
-    "task.ESTIMATED.estimate.most_likely",
-  ]);
-  assert.equal(nonrepresentable.candidate, null);
-  assert.deepEqual(nonrepresentable.edits, []);
+  const rational = byId(document, "TUE-015").expected;
+  assert.equal(rational.ok, true);
+  assert.equal(rational.source_grammar_version, 2);
+  assert.equal(rational.target_grammar_version, 3);
+  assert.equal(
+    rational.grammar_disposition,
+    "upgraded_for_exact_fraction",
+  );
+  assert.deepEqual(rational.converted_tokens_by_field, {
+    "project.critical_epsilon": "1/3d",
+    "project.target_duration": "2/3d",
+    "task.FIXED.duration": "1/3d",
+    "task.ESTIMATED.estimate.optimistic": "1/3d",
+    "task.ESTIMATED.estimate.most_likely": "2/3d",
+    "task.ESTIMATED.estimate.pessimistic": "1d",
+  });
+  assert.equal(rational.reversibility, "values_exact_metadata_changed");
+  assert.equal(rational.candidate_exposed, true);
+  assert.equal(rational.ptmig_408_emitted, false);
 
   const idempotent = byId(document, "TUE-016").expected;
   assert.equal(idempotent.changed, false);
@@ -320,6 +335,36 @@ test("migration cases fix exact inventory, failures, idempotence, and inverse", 
   assert.equal(inverse.whole_document_byte_equal, false);
 });
 
+test("Grammar 3 cases fix exact Duration compatibility and malformed input", async () => {
+  const document = await baseline();
+  const exact = byId(document, "TUE-019").expected;
+
+  assert.deepEqual(exact.exact_and_canonical_by_literal, {
+    "1d": { exact: "1/1d", canonical: "1d" },
+    "0.5d": { exact: "1/2d", canonical: "0.5d" },
+    "1/3d": { exact: "1/3d", canonical: "1/3d" },
+    "4/6d": { exact: "2/3d", canonical: "2/3d" },
+    "0/7d": { exact: "0/1d", canonical: "0d" },
+  });
+  assert.equal(exact.grammar_2_fraction_diagnostic, "PTDSL-007");
+  assert.equal(exact.rounded, false);
+
+  const malformed = byId(document, "TUE-020");
+  assert.deepEqual(malformed.input.invalid_duration_literals, [
+    "1/0d",
+    "-1/3d",
+    "1/-3d",
+    "1 /3d",
+    "1/ 3d",
+    "1.5/3d",
+    "1/3.0d",
+    "1/2/3d",
+  ]);
+  assert.equal(malformed.expected.diagnostic_code, "PTDSL-007");
+  assert.equal(malformed.expected.candidate, null);
+  assert.equal(malformed.expected.rational_arithmetic_reached, false);
+});
+
 test("projection case fixes schema, semantic ordering, labels, and determinism", async () => {
   const projection = byId(await baseline(), "TUE-018").expected;
 
@@ -328,6 +373,7 @@ test("projection case fixes schema, semantic ordering, labels, and determinism",
     project_schema: "Perttool.ProjectResult.v2",
     analysis_schema: "Perttool.AnalysisResult.v3",
     next_schema: "Perttool.NextResult.v4",
+    unit_migration_schema: "Perttool.UnitMigrationResult.v2",
     cli_contract_version: 4,
     declared_temporal_order: [
       "project:CALENDAR_OFFSET.as_of",

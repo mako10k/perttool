@@ -1,7 +1,7 @@
 project SCHEDULING_UNITS:
   version 1
   title "Temporal properties, deadlines, and unit migration roadmap"
-  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating task state in milestone-detail plans. SU-M1 and SU-M2 are accepted and advanced. SU-M3 and SU-M4 are ready; complete Next v3 recommends SU-M4 while the separate scheduler runnable_now set contains SU-M3. Later estimates remain provisional until the preceding accepted milestone creates and re-estimates its detail plan. Release and external distribution remain separate decisions."
+  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1 and SU-M2 are accepted and advanced. The user-selected exact rational Duration extension is the next common predecessor; SU-M3 and SU-M4 remain provisional until it is accepted. Release and external distribution remain separate decisions."
   as_of 2026-07-25
   duration_unit day
   finish SCHEDULING_UNITS_ACCEPTED
@@ -44,9 +44,9 @@ milestone SCHEDULING_UNITS_ACCEPTED:
 
 
 
-task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> DEADLINE_CAPABILITIES_ACCEPTED:
+task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED -> DEADLINE_CAPABILITIES_ACCEPTED:
   title "Implement temporal deadline and Next v4 target Core"
-  description "Provisional work package. Create its detail plan and re-estimate it after SU-M2. Implement target calendar projection, deadline evaluation, temporal precedence/resource views, and Next v4 time-gated start-authority Core. Do not activate the public CLI or normal authority in this slice."
+  description "Provisional work package. Create its detail plan and re-estimate it after the rational Duration extension is accepted. Implement target calendar projection, deadline evaluation, temporal precedence and resource views, and Next v4 time-gated start-authority Core. Do not activate the public CLI or normal authority in this slice."
   duration 2d
   priority 90
   requires:
@@ -54,9 +54,9 @@ task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> DEADLIN
     REVIEWERS 1
     PUBLIC_SURFACE 1
 
-task SU_M4_UNIT_MIGRATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> UNIT_MIGRATION_ACCEPTED:
+task SU_M4_UNIT_MIGRATION_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED -> UNIT_MIGRATION_ACCEPTED:
   title "Implement exact unit-migration Core"
-  description "Provisional work package. Create its detail plan and re-estimate it after SU-M2. Implement the target exact migration planner, source-preserving preview candidate, diagnostics, idempotence, and inverse qualification in both directions. Do not publish the Contract 4 command or installed-package workflow in this slice."
+  description "Provisional work package. Create its detail plan and re-estimate it after the rational Duration extension is accepted. Implement the target exact migration planner using Decimal-or-fraction Duration and reduced canonical fraction output, source-preserving preview candidates, diagnostics, idempotence, and inverse qualification in both directions. Do not publish the Contract 4 command or installed-package workflow in this slice."
   duration 3d
   priority 80
   requires:
@@ -79,3 +79,16 @@ task SU_M5_INTEGRATED_ACCEPTANCE DELIVERY_INPUT_READY -> SCHEDULING_UNITS_ACCEPT
     DEVELOPERS 1
     REVIEWERS 1
     PACKAGE_SURFACE 1
+
+milestone RATIONAL_DURATION_ACCEPTED:
+  title "Exact rational Duration target extension accepted"
+
+task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> RATIONAL_DURATION_ACCEPTED:
+  title "Extend the target DSL with exact rational Duration"
+  description "Roll up plans/scheduling-units-m2r.pert. Supersede the finite-decimal-only target contract with Decimal-or-fraction Duration, reduced canonical fraction output, exact source serialization, explicit selection of new grammar, migration, and result or interface identities where compatibility requires them, a versioned source-upgrade boundary, and target parser, formatter, mutation, and acceptance coverage. Keep Grammar 1, accepted Grammar 2, CLI Contract 3, public schemas, help, and installed behavior unchanged."
+  duration 0.583333d
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PUBLIC_SURFACE 1

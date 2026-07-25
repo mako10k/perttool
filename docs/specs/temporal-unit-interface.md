@@ -1,9 +1,9 @@
 # Temporal and Unit Interface Contract Specification
 
-- Document status: Normative 1.0
+- Document status: Normative 2.0
 - Interface ID: `perttool.temporal-unit-interface`
-- Interface version: `1`
-- Target grammar version: `2`
+- Interface version: `2`
+- Target grammar version: `3`
 - Target CLI contract version: `4`
 - Created: 2026-07-25
 - Requirements: [../requirements.md](../requirements.md)
@@ -17,10 +17,11 @@
 
 ## 1. Purpose and activation boundary
 
-This contract fixes the public surface for the first temporal and source-unit
-extension. It selects:
+This contract fixes the current public-surface target for the temporal and
+source-unit extension. It selects:
 
-- grammar version 2 fields and validation;
+- accepted grammar version 2 temporal fields plus grammar version 3 exact
+  Fraction Duration;
 - Core request and result boundaries;
 - CLI Contract 4 commands, operands, options, and effects;
 - source-preserving temporal mutation and unit-migration behavior;
@@ -51,15 +52,23 @@ Resolve conflicts in this order.
 
 The selected identities are:
 
-| Concern | Existing identity | Target identity |
-| --- | --- | --- |
-| DSL grammar | `1` | `2` |
-| CLI contract | `3` | `4` |
-| Check result | `Perttool.CheckResult.v1` | `Perttool.CheckResult.v2` |
-| Project result | `Perttool.ProjectResult.v1` | `Perttool.ProjectResult.v2` |
-| Analysis result | `Perttool.AnalysisResult.v2` | `Perttool.AnalysisResult.v3` |
-| Next result | `Perttool.NextResult.v3` | `Perttool.NextResult.v4` |
-| Unit migration | absent | `Perttool.UnitMigrationResult.v1` |
+| Concern | Active identity | Interface v1 target | Interface v2 target |
+| --- | --- | --- | --- |
+| DSL grammar | `1` | `2` | `3` |
+| CLI contract | `3` | `4` | `4` |
+| Check result | `Perttool.CheckResult.v1` | `Perttool.CheckResult.v2` | `Perttool.CheckResult.v2` |
+| Project result | `Perttool.ProjectResult.v1` | `Perttool.ProjectResult.v2` | `Perttool.ProjectResult.v2` |
+| Analysis result | `Perttool.AnalysisResult.v2` | `Perttool.AnalysisResult.v3` | `Perttool.AnalysisResult.v3` |
+| Next result | `Perttool.NextResult.v3` | `Perttool.NextResult.v4` | `Perttool.NextResult.v4` |
+| Unit-migration semantics | absent | `perttool.unit-migration@1` | `perttool.unit-migration@2` |
+| Unit-migration result | absent | `Perttool.UnitMigrationResult.v1` | `Perttool.UnitMigrationResult.v2` |
+
+Interface version 1 and grammar version 2 remain accepted historical target
+contracts. They were never activated in a public package. Interface version 2
+replaces the pre-activation migration target before the first Contract 4
+cutover. CLI Contract 4 remains the target because command paths, options,
+effects, and exit meanings do not change; its migration command now names
+`Perttool.UnitMigrationResult.v2` before any Contract 4 consumer exists.
 
 `Perttool.MutationResult.v1`, `Perttool.InitResult.v1`,
 `Perttool.CommandHelpResult.v1`, `Perttool.GuideResult.v1`, and
@@ -73,7 +82,7 @@ ordinary analysis, scheduler, and recommendation identities remain the
 independent versions fixed by their specifications. A CLI or schema version
 does not silently increment a domain algorithm.
 
-## 3. Grammar version 2
+## 3. Grammar versions 2 and 3
 
 ### 3.1 Version selection and compatibility
 
@@ -149,10 +158,26 @@ task:
 ```
 
 Source-preserving formatting retains existing field order. New fields use the
-canonical positions above without reordering existing fields. Unit migration
-version 1 supports grammar versions 1 and 2 because version 2 adds no
-base-unit-bearing field; it preserves `as_of`, `deadline`, and `not_before`
-byte-for-byte.
+canonical positions above without reordering existing fields.
+
+### 3.5 Grammar version 3 exact Duration
+
+Grammar version 3 inherits every grammar version 2 field, validation rule,
+contextual keyword, and canonical field order. It changes only Duration from
+Decimal-only to `Decimal | DurationFraction`, where DurationFraction contains
+unsigned base-10 integer components, no whitespace, and a denominator greater
+than zero. Velocity remains Decimal-only.
+
+The semantic value is one reduced Rational. Canonical generated and explicitly
+formatted spelling uses the shortest exact Decimal when the reduced
+denominator has only prime factors 2 and 5, and a reduced Fraction otherwise.
+Source-preserving operations do not rewrite unrelated valid Duration tokens.
+
+Unit migration version 2 accepts grammar versions 1, 2, and 3 and preserves
+`as_of`, `deadline`, and `not_before` byte-for-byte. It retains grammar version
+1 or 2 for all-Decimal output, atomically upgrades one candidate to version 3
+when any exact generated Duration requires a Fraction, and never
+automatically downgrades version 3.
 
 ## 4. Core boundaries
 
@@ -221,7 +246,7 @@ document and an ordinary exact analysis result:
 
 ```ts
 analyzeTemporal(
-  document: ValidatedDocumentV2,
+  document: ValidatedDocumentV3,
   analysis: AnalysisResultV2,
   options: TemporalAnalysisOptions,
 ): TemporalAnalysis
@@ -250,7 +275,7 @@ planUnitMigration(
 ): UnitMigrationResult
 ```
 
-The planner implements `perttool.unit-migration` version 1 and returns the
+The planner implements `perttool.unit-migration` version 2 and returns the
 semantic outcome, localized UTF-16 edits, candidate, digest, and diff only
 after final validation. It is not a `project.set` shortcut and does not
 consume rendered analysis.
@@ -280,7 +305,7 @@ perttool project migrate-unit <file>
 Its operation is `project.migrate-unit`, input is `document`, effect is
 `preview`, document stdin is accepted for preview and rejected with
 `--write`, and its only success schema is
-`Perttool.UnitMigrationResult.v1`.
+`Perttool.UnitMigrationResult.v2`.
 
 `--to-unit` is required. `--replacement-velocity` is explicit caller input,
 not a forecast. An invalid `--to-unit` enum is a usage error; an invalid
@@ -312,13 +337,13 @@ perttool milestone set ...
   [--clear ...|deadline]
 ```
 
-`project init --initial-milestone-deadline` requires `--version 2` and an
-explicit `--as-of`. All other temporal field acceptance is determined from
-the final candidate's explicit grammar version and anchor.
+`project init --initial-milestone-deadline` requires `--version 2` or
+`--version 3` and an explicit `--as-of`. All other temporal field acceptance
+is determined from the final candidate's explicit grammar version and anchor.
 
 `document check`, `project show`, `dag analyze`, and `dag next` gain no
-temporal toggle. Contract 4 returns their new schemas for both grammar
-versions so consumers never guess a payload shape from document content.
+temporal toggle. Contract 4 returns their target schemas for grammar versions
+1, 2, and 3 so consumers never guess a payload shape from document content.
 
 ## 6. Mutation, batch, and write behavior
 
@@ -340,8 +365,11 @@ MilestoneClearableField += "deadline";
 A batch may atomically:
 
 - set `project.version` to 2 and add temporal fields;
+- set `project.version` to 3 and add temporal fields or exact Fraction
+  Duration;
 - set `project.as_of` and add temporal fields;
-- clear every temporal field and set `project.version` to 1; or
+- replace every Fraction Duration with Decimal values and explicitly set
+  `project.version` to 1 or 2 when the final candidate satisfies that grammar;
 - update multiple temporal fields whose intermediate documents would be
   invalid.
 
@@ -349,14 +377,14 @@ Only the final batch candidate is parsed and validated. Clearing `as_of`
 while any temporal field remains fails with `PTSEM-112`.
 
 Automatic unit migration is deliberately not an atomic `batch.apply` member
-in interface version 1. A batch containing a `project.migrate-unit` kind is
+in interface version 2. A batch containing a `project.migrate-unit` kind is
 `PTMUT-301`. Callers run the dedicated migration, persist or consume its
 candidate, then re-read and reanalyze before a separate mutation. A manually
 authored batch can change unit-bearing fields but does not receive migration
 inventory, exactness, or reversibility claims.
 
 Temporal mutations reuse `Perttool.MutationResult.v1`. Unit migration uses
-`Perttool.UnitMigrationResult.v1`. Both preview by default and share:
+`Perttool.UnitMigrationResult.v2`. Both preview by default and share:
 
 - complete-candidate revalidation;
 - `--diff` only in preview;
@@ -596,12 +624,17 @@ closed into `unavailable_recommended_task_ids`.
 For a version 1 document, every structurally ready task is time-eligible and
 `startable_recommended_task_ids` equals the existing recommended set.
 
-### 8.5 `Perttool.UnitMigrationResult.v1`
+### 8.5 `Perttool.UnitMigrationResult.v2`
 
-The result retains the common document envelope and mutation candidate fields:
+Version 2 retains the version 1 common document envelope and mutation
+candidate fields, replaces finite-Decimal failure with exact Fraction output,
+and adds required grammar metadata:
 
 ```text
 unit_migration             {id, version}
+source_grammar_version     integer|null
+target_grammar_version     integer|null
+grammar_disposition        "retained"|"upgraded_for_exact_fraction"|null
 source_unit                "day"|"hour"|"point"|null
 target_unit                "day"|"hour"|"point"
 effective_velocity         Velocity|null
@@ -625,6 +658,19 @@ write                      {mode, target, written}
 `original` and `converted` are exact `{numerator, denominator, unit}` records.
 `MigrationCause` has semantic `cause`, public `diagnostic_code`, and affected
 field paths. Failures expose no candidate, updated digest, diff, or edits.
+
+`source_grammar_version` uses effective version 1 when the field is omitted.
+For a successful no-op, source and target grammar versions are equal and
+`grammar_disposition=retained`. A changing migration upgrades version 1 or 2
+only when at least one `canonical_token` is a Fraction. A version 3 source
+always retains version 3.
+
+Stable qualification strings include
+`grammar_upgraded_for_exact_fraction`, `grammar_version_retained_on_inverse`,
+`velocity_replaced`, and `velocity_inserted` when applicable. An upgrade or
+velocity metadata change sets
+`reversibility=values_exact_metadata_changed`; otherwise an invertible
+changing migration reports `exact`.
 
 ## 9. Text projections
 
@@ -673,7 +719,7 @@ they must not advertise unavailable commands or fields.
 
 | Code | Meaning | Guide topic |
 | --- | --- | --- |
-| `PTSEM-112` | A v2 `deadline` or `not_before` exists without `project.as_of` | `syntax.temporal` |
+| `PTSEM-112` | A v2/v3 `deadline` or `not_before` exists without `project.as_of` | `syntax.temporal` |
 
 Calendar and deadline unavailability in a valid document is result data, not
 a diagnostic or exit 1. Invalid literals retain `PTDSL-008`.
@@ -689,13 +735,14 @@ a diagnostic or exit 1. Invalid literals retain `PTDSL-008`.
 | `PTMIG-405` | `velocity_period_mismatch` |
 | `PTMIG-406` | `same_unit_velocity_change` |
 | `PTMIG-407` | `unsupported_duration_field` |
-| `PTMIG-408` | `nonrepresentable_decimal` |
+| `PTMIG-408` | Reserved: version 1 `nonrepresentable_decimal`; never emitted by version 2 |
 | `PTMIG-409` | `invalid_candidate` |
 
-`PTMIG-401` retains all ordinary source diagnostics. `PTMIG-408` identifies
-every nonrepresentable field in stable source order. `PTMIG-409` retains
-ordinary candidate diagnostics. Request or semantic failures exit 1; usage,
-I/O, and write conflicts retain exits 2, 3, and 5.
+`PTMIG-401` retains all ordinary source diagnostics. Malformed or
+zero-denominator Fraction tokens fail ordinary parsing with `PTDSL-007`.
+`PTMIG-408` remains reserved so its accepted version 1 meaning is not reused.
+`PTMIG-409` retains ordinary candidate diagnostics. Request or semantic
+failures exit 1; usage, I/O, and write conflicts retain exits 2, 3, and 5.
 
 ## 11. Compatibility and authority migration
 
@@ -704,7 +751,8 @@ Contract 4 is one breaking cutover. It has no `--cli-contract`,
 
 Before activation, implementation must:
 
-1. parse and format grammar versions 1 and 2 without widening version 1;
+1. parse and format grammar versions 1, 2, and 3 without widening version 1
+   or 2;
 2. publish all new Core and JSON types together;
 3. update command descriptors, dispatch, text help, JSON help, Guide, README,
    installed-package E2E, and schemas together;
@@ -732,27 +780,29 @@ Temporal Deadline Semantics.
 
 The concrete target inputs and expected semantic projections are fixed by the
 [Normative Temporal and Unit-Migration Examples](../examples/temporal-units.md)
-and `Perttool.TemporalUnitExampleBaseline.v1`. The `TUI-*` rows remain
+and `Perttool.TemporalUnitExampleBaseline.v2`. The `TUI-*` rows remain
 interface-wide acceptance observations; the `TUE-*` cases provide reusable
 input and expected-output witnesses.
 
 | ID | Required observation |
 | --- | --- |
-| TUI-001 | Grammar v1 rejects temporal fields and otherwise retains byte-compatible validation; grammar v2 accepts exactly the three added fields. |
+| TUI-001 | Grammar v1 rejects temporal fields and otherwise retains byte-compatible validation; grammar v2 accepts exactly the three added fields; grammar v3 inherits those fields and alone accepts Fraction Duration. |
 | TUI-002 | Grammar v2 requires an explicit `as_of` for temporal fields, accepts mixed kinds as valid-but-unavailable, and never reads a clock or host zone. |
-| TUI-003 | Parser, formatter, mutations, batch, Guide, and diagnostics use one canonical temporal field inventory and order. |
+| TUI-003 | Parser, formatter, mutations, batch, Guide, and diagnostics use one canonical temporal field inventory/order and one exact Duration serializer. |
 | TUI-004 | CheckResult v2 and ProjectResult v2 expose declared temporal inputs without adding fields to their previous schema identities. |
 | TUI-005 | AnalysisResult v3 preserves base AnalysisResult v2 and returns separate, versioned precedence/resource temporal views with exact values and causes. |
 | TUI-006 | Deadline evaluations distinguish absent, complete-history-unavailable, unavailable, conditional, and available states and preserve heuristic qualification. |
 | TUI-007 | NextResult v4 retains the complete v3 recommendation graph, does not rank by temporal facts, and separates raw preference from time-gated start authority. |
 | TUI-008 | A future or unavailable `not_before` removes a ready task from `runnable_now` and start authority without reclassifying it as blocked. |
 | TUI-009 | Task and milestone temporal add/set/clear operations are source-preserving and final-candidate validated. |
-| TUI-010 | One batch can upgrade or downgrade grammar and temporal fields without validating invalid intermediate states. |
+| TUI-010 | One batch can explicitly upgrade or downgrade grammar and temporal fields/Duration tokens without validating invalid intermediate states. |
 | TUI-011 | `project migrate-unit` alone owns automatic migration guarantees and is rejected as a batch member. |
-| TUI-012 | UnitMigrationResult v1 exposes exact converted fields, velocity disposition, reversibility, candidate data, and every stable failure cause. |
+| TUI-012 | UnitMigrationResult v2 exposes exact converted fields, source/target grammar, grammar and velocity dispositions, reversibility, candidate data, and every stable failure cause. |
 | TUI-013 | Preview, diff, write, out, digest, race, symlink, and post-write behavior is identical across temporal mutation and unit migration. |
 | TUI-014 | The Contract 4 descriptor registry exactly matches dispatch, accepted options, text/JSON help, effects, schemas, exits, and examples. |
 | TUI-015 | Guide topics cover syntax, analysis, next-task authority, and migration recovery without conflating command discovery. |
 | TUI-016 | Text and JSON derive from the same Core results and expose every unavailable cause, block condition, and non-optimal scheduler identity. |
-| TUI-017 | Grammar v2 unit migration preserves every absolute temporal token and supports exact inverse source values under migration version 1. |
+| TUI-017 | Grammar v2/v3 unit migration preserves every absolute temporal token and supports exact inverse source values under migration version 2, with grammar-upgrade metadata qualification. |
 | TUI-018 | Contract 4 activation, NextResult v4 authority adoption, and package publication remain separately gated and fail closed for unknown or incomplete results. |
+| TUI-019 | Grammar v3 accepts unsigned exact Fraction Duration with a positive denominator; malformed forms fail as PTDSL-007, while Decimal behavior remains compatible. |
+| TUI-020 | Migration version 2 emits the shortest exact Decimal or reduced Fraction, upgrades v1/v2 to v3 only when required, and never automatically downgrades v3. |

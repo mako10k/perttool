@@ -244,6 +244,15 @@ test("scheduling and units SU-M2 plan matches the target-Core detail", async () 
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("scheduling and units SU-M2R plan matches the rational-Duration detail", async () => {
+  const text = await readFile(path.join(root, "plans/scheduling-units-m2r.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/scheduling-units-m2r.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {
   const text = await readFile(path.join(root, "plans/mvp.pert"), "utf8");
   const expected = JSON.parse(await readFile(

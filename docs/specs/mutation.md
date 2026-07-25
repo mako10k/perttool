@@ -299,8 +299,9 @@ The candidate's `status=blocked` and `blocked_reason`, required fields, DAG, and
 - Revalidate consistency among `duration_unit`, `velocity`, duration fields, and `finish` with the candidate parser/validator; do not expose an inconsistent candidate
 - A project-wide unit change that cannot be valid alone can be applied as a batch that also changes related task durations/estimates
 - A manually authored batch does not claim automatic field inventory, exact
-  conversion, finite-decimal preflight, velocity disposition, or inverse
-  guarantees. Those belong to `perttool.unit-migration`.
+  conversion, canonical Decimal-or-fraction serialization, source-grammar
+  upgrade, velocity disposition, or inverse guarantees. Those belong to
+  `perttool.unit-migration`.
 
 ### 9.5 Batch
 
@@ -325,7 +326,7 @@ Adding a milestone and its connecting task/gate edges in sequence creates an int
 
 Use `PTMUT-*` only for mutation request/target errors. Do not wrap a candidate's syntax, field, or graph errors as `PTMUT-*`; preserve existing `PTDSL-*`, `PTSEM-*`, and `PTDAG-*` diagnostics.
 
-## 11. Grammar version 2 temporal extension
+## 11. Grammar version 2 temporal and version 3 Duration extensions
 
 The [Temporal and Unit Interface Contract](temporal-unit-interface.md)
 selects this target extension to Mutation semantics version 1. It is not
@@ -348,15 +349,17 @@ the final candidate. Insert new milestone fields after `state` and before
 `tags`. Insert task fields after `duration|estimate` in `not_before`,
 `deadline` order and before `status`.
 
-A batch can set `project.version=2` or `project.asOf` together with temporal
-fields, and can clear all temporal fields together with
-`project.version=1`. Validate only the final candidate. Clearing `as_of` while
+A batch can set `project.version=2|3` or `project.asOf` together with temporal
+fields, and can replace Fraction Duration values while explicitly returning
+to version 1 or 2. Validate only the final candidate. Clearing `as_of` while
 any temporal field remains preserves `PTSEM-112`; do not convert it to a
-mutation diagnostic.
+mutation diagnostic. Grammar version 3 Duration strings use the exact
+Decimal-or-fraction grammar and canonical generation rules; unrelated valid
+source tokens remain byte-preserved.
 
 Automatic unit migration remains a separate `planUnitMigration` operation.
 It is not an `AtomicMutation` and cannot occur inside `batch` in interface
-version 1. Reject a batch request that invents a `project.migrate-unit` kind
+version 2. Reject a batch request that invents a `project.migrate-unit` kind
 with `PTMUT-301`. A caller applies a dedicated migration candidate and
 re-reads it before any subsequent mutation.
 

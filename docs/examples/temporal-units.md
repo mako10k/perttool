@@ -1,6 +1,6 @@
 # Normative Temporal and Unit-Migration Examples
 
-- Document status: Normative 1.0
+- Document status: Normative 2.0
 - Created: 2026-07-25
 - Related requirements: [../requirements.md](../requirements.md)
 - Calendar semantics: [../specs/temporal-calendar.md](../specs/temporal-calendar.md)
@@ -13,16 +13,17 @@
 ## 1. Purpose and activation boundary
 
 These examples fix the boundary observations used to transfer the accepted
-SU-M1 temporal and unit-migration contract into implementation and acceptance
-tests. The case IDs are stable across the normative narrative, target source
-fixtures, unit tests, future Core tests, CLI JSON/text goldens, and
-installed-package tests.
+temporal/unit contract and its SU-M2R exact-Duration refinement into
+implementation and acceptance tests. The case IDs are stable across the
+normative narrative, target source fixtures, unit tests, future Core tests,
+CLI JSON/text goldens, and installed-package tests.
 
-The examples target grammar version 2 and CLI Contract 4. They do not activate
-either version. The current runtime remains grammar version 1, CLI Contract 3,
-and `Perttool.NextResult.v3`; it is expected to reject these future source
-fixtures until the Contract 4 cutover is accepted. README and current command
-help must not present the target fixtures as runnable current-package examples.
+The examples target grammar versions 2 and 3 and CLI Contract 4. They do not
+activate any target version. The current runtime remains grammar version 1,
+CLI Contract 3, and `Perttool.NextResult.v3`; it is expected to reject these
+future source fixtures until the Contract 4 cutover is accepted. README and
+current command help must not present the target fixtures as runnable
+current-package examples.
 
 The source fixtures under
 [`test/fixtures/temporal-units/`](../../test/fixtures/temporal-units/) are
@@ -32,17 +33,22 @@ not permission to omit any required field from a complete public result.
 
 ## 2. Common conditions
 
-Unless a case says otherwise:
+The common target-interface identities are below. A case's source grammar is
+explicit and independent: all file-backed fixtures in this baseline are
+grammar version 2, TUE-015 upgrades its candidate to version 3, and TUE-019
+and TUE-020 exercise version 3 literals directly.
 
 ```text
-grammar_version                    = 2
+target_grammar_version             = 3
 cli_contract_version               = 4
+temporal_unit_interface            = perttool.temporal-unit-interface@2
 calendar_arithmetic                = perttool.calendar-projection@1
 calendar_profile                   = perttool.calendar.continuous-fixed-offset@1
 deadline_evaluation                = perttool.deadline-evaluation@1
 temporal_precedence_projection     = perttool.temporal-precedence-earliest@1
 temporal_resource_projection       = perttool.temporal-parallel-sgs@1
-unit_migration                     = perttool.unit-migration@1
+unit_migration                     = perttool.unit-migration@2
+unit_migration_result              = Perttool.UnitMigrationResult.v2
 recommendation_algorithm           = perttool.recommendation-ranking.lexicographic-frontier@1
 recommendation_interface           = 1
 reason_taxonomy                    = 1.0
@@ -323,25 +329,33 @@ paths rather than treating preservation as a document-level boolean.
 
 No failure exposes a partial candidate or a partially changed velocity.
 
-### TUE-015 A non-terminating decimal rejects the whole candidate
+### TUE-015 A non-terminating exact value upgrades to fraction Duration
 
 Input:
 [`migration-nonrepresentable-v2.pert`](../../test/fixtures/temporal-units/migration-nonrepresentable-v2.pert)
 
-With `3p/1d`, Point values `1p` and `2p` become `1/3d` and `2/3d`. Migration
-fails once with `nonrepresentable_decimal` / `PTMIG-408`, retaining every
-affected field in source and field order:
+With `3p/1d`, Point values `1p`, `2p`, and `3p` become exact `1/3d`,
+`2/3d`, and `1d`. Migration version 2 succeeds with one candidate:
 
-```text
-project.critical_epsilon
-project.target_duration
-task.FIXED.duration
-task.ESTIMATED.estimate.optimistic
-task.ESTIMATED.estimate.most_likely
-```
+| Field | Canonical token |
+| --- | --- |
+| `project.critical_epsilon` | `1/3d` |
+| `project.target_duration` | `2/3d` |
+| `task.FIXED.duration` | `1/3d` |
+| `task.ESTIMATED.estimate.optimistic` | `1/3d` |
+| `task.ESTIMATED.estimate.most_likely` | `2/3d` |
+| `task.ESTIMATED.estimate.pessimistic` | `1d` |
 
-The representable `3p -> 1d` field does not appear in that list. The failure
-returns no candidate, updated digest, edits, diff, or velocity replacement.
+Because at least one token requires a Fraction, the same candidate changes
+the explicit project version from 2 to 3. The result reports
+`grammar_disposition=upgraded_for_exact_fraction`,
+`reversibility=values_exact_metadata_changed`, and
+`grammar_upgraded_for_exact_fraction`. It does not emit reserved
+`PTMIG-408`.
+
+An inverse migration restores every exact Point value but retains grammar
+version 3. It reports `grammar_version_retained_on_inverse` rather than
+silently downgrading the document.
 
 ### TUE-016 Same-unit and repeated requests are idempotent
 
@@ -383,6 +397,7 @@ document check  Perttool.CheckResult.v2
 project show    Perttool.ProjectResult.v2
 dag analyze     Perttool.AnalysisResult.v3
 dag next        Perttool.NextResult.v4
+project migrate-unit Perttool.UnitMigrationResult.v2
 cli_contract_version = 4
 ```
 
@@ -417,7 +432,42 @@ source, options, and algorithm versions produces byte-identical output. Text
 and JSON are projections of the same Core result, not independently derived
 semantics.
 
-## 7. Fixture mapping and implementation acceptance
+## 7. Exact Duration grammar cases
+
+### TUE-019 Grammar 3 accepts fractions and retains Decimal compatibility
+
+Grammar version 3 accepts `1d`, `0.5d`, `1/3d`, `4/6d`, and `0/7d` as exact
+Duration tokens. Their normalized values and explicit-format results are:
+
+| Input | Exact value | Canonical token |
+| --- | --- | --- |
+| `1d` | `1/1d` | `1d` |
+| `0.5d` | `1/2d` | `0.5d` |
+| `1/3d` | `1/3d` | `1/3d` |
+| `4/6d` | `2/3d` | `2/3d` |
+| `0/7d` | `0/1d` | `0d` |
+
+No value is rounded. Grammar version 2 still rejects a Fraction Duration with
+`PTDSL-007`; its accepted Decimal behavior is unchanged.
+
+### TUE-020 Malformed fractions fail before Rational arithmetic
+
+Each token below fails as one invalid Duration token with `PTDSL-007`:
+
+```text
+1/0d
+-1/3d
+1/-3d
+1 /3d
+1/ 3d
+1.5/3d
+1/3.0d
+1/2/3d
+```
+
+No token reaches Rational arithmetic or produces a candidate.
+
+## 8. Fixture mapping and implementation acceptance
 
 | Case | Target source fixture | Primary implementation layer |
 | --- | --- | --- |
@@ -432,7 +482,8 @@ semantics.
 | TUE-012, TUE-017 | `migration-point-v2.pert` | Point/time migration and inverse |
 | TUE-013 | `migration-hour-v2.pert` | replacement velocity insertion |
 | TUE-014, TUE-016 | machine baseline request cases | migration request validation and no-op |
-| TUE-015 | `migration-nonrepresentable-v2.pert` | finite-decimal preflight |
+| TUE-015 | `migration-nonrepresentable-v2.pert` | exact fraction output and atomic grammar upgrade |
+| TUE-019, TUE-020 | machine baseline Duration literals | Grammar 3 parser, validator, formatter, and diagnostics |
 
 During implementation, retain the same IDs in:
 
@@ -448,16 +499,19 @@ must also verify schema closure, exact values, diagnostic closure, stable
 ordering, unavailable causes, block qualifiers, scheduler identity, and
 unknown/incomplete-result safe stop.
 
-## 8. Acceptance
+## 9. Acceptance
 
 - Fixed valid, invalid, unavailable, and not-applicable temporal boundaries.
 - Fixed leap-day, inclusive date, equal-instant offset, and mixed-kind cases.
 - Separated precedence proof from heuristic resource lateness and block
   qualification.
 - Fixed Point-to-time and time-to-Point inventory, velocity, and exact tokens.
-- Fixed unsupported, mismatched, same-unit, and nonrepresentable failures.
+- Fixed unsupported, mismatched, and same-unit failures plus reserved
+  migration-version-1 representability diagnostics.
+- Fixed Grammar 3 Decimal-or-fraction acceptance, malformed-fraction
+  rejection, canonical serialization, and atomic source-grammar upgrade.
 - Fixed no-op, repetition, inverse, and lexical-normalization behavior.
 - Fixed deterministic text/JSON identities, order, labels, and common-Core
   projection.
-- Did not activate Grammar 2, CLI Contract 4, NextResult v4 authority, runtime
-  i18n, or package publication.
+- Did not activate Grammar 2 or 3, CLI Contract 4, NextResult v4 authority,
+  runtime i18n, or package publication.

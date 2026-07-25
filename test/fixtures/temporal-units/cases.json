@@ -1,8 +1,12 @@
 {
-  "schema_version": "Perttool.TemporalUnitExampleBaseline.v1",
+  "schema_version": "Perttool.TemporalUnitExampleBaseline.v2",
   "target_contract": {
-    "grammar_version": 2,
+    "grammar_version": 3,
     "cli_contract_version": 4,
+    "interface": {
+      "id": "perttool.temporal-unit-interface",
+      "version": 2
+    },
     "calendar": {
       "id": "perttool.calendar-projection",
       "version": 1,
@@ -15,8 +19,9 @@
     },
     "unit_migration": {
       "id": "perttool.unit-migration",
-      "version": 1
-    }
+      "version": 2
+    },
+    "unit_migration_result": "Perttool.UnitMigrationResult.v2"
   },
   "cases": [
     {
@@ -356,6 +361,9 @@
         "target_unit": "day",
         "effective_velocity": "20p/10d",
         "velocity_disposition": "retained",
+        "source_grammar_version": 2,
+        "target_grammar_version": 2,
+        "grammar_disposition": "retained",
         "converted_tokens_by_field": {
           "project.critical_epsilon": "0.25d",
           "project.target_duration": "6d",
@@ -392,6 +400,9 @@
         "target_unit": "point",
         "effective_velocity": "8p/4h",
         "velocity_disposition": "inserted",
+        "source_grammar_version": 2,
+        "target_grammar_version": 2,
+        "grammar_disposition": "retained",
         "converted_tokens_by_field": {
           "project.critical_epsilon": "1p",
           "project.target_duration": "8p",
@@ -459,7 +470,7 @@
     {
       "case_id": "TUE-015",
       "category": "migration",
-      "title": "Non-terminating exact decimals reject the whole migration",
+      "title": "Non-terminating exact values produce fractions and upgrade the grammar",
       "operation": "project.migrate-unit",
       "fixture": "migration-nonrepresentable-v2.pert",
       "input": {
@@ -467,21 +478,27 @@
         "replacement_velocity": null
       },
       "expected": {
-        "ok": false,
-        "cause": "nonrepresentable_decimal",
-        "diagnostic_code": "PTMIG-408",
-        "affected_fields": [
-          "project.critical_epsilon",
-          "project.target_duration",
-          "task.FIXED.duration",
-          "task.ESTIMATED.estimate.optimistic",
-          "task.ESTIMATED.estimate.most_likely"
+        "ok": true,
+        "changed": true,
+        "source_grammar_version": 2,
+        "target_grammar_version": 3,
+        "grammar_disposition": "upgraded_for_exact_fraction",
+        "velocity_disposition": "retained",
+        "converted_tokens_by_field": {
+          "project.critical_epsilon": "1/3d",
+          "project.target_duration": "2/3d",
+          "task.FIXED.duration": "1/3d",
+          "task.ESTIMATED.estimate.optimistic": "1/3d",
+          "task.ESTIMATED.estimate.most_likely": "2/3d",
+          "task.ESTIMATED.estimate.pessimistic": "1d"
+        },
+        "reversibility": "values_exact_metadata_changed",
+        "qualifications": [
+          "grammar_upgraded_for_exact_fraction"
         ],
-        "candidate": null,
-        "updated_digest": null,
-        "edits": [],
-        "diff": null,
-        "velocity_replaced": false
+        "candidate_version": 3,
+        "candidate_exposed": true,
+        "ptmig_408_emitted": false
       }
     },
     {
@@ -524,6 +541,9 @@
       },
       "expected": {
         "base_unit_restored": "point",
+        "source_grammar_version": 2,
+        "target_grammar_version": 2,
+        "grammar_disposition": "retained",
         "exact_duration_values_restored": true,
         "semantic_velocity_restored": true,
         "non_timing_semantics_restored": true,
@@ -546,6 +566,7 @@
           "project_schema": "Perttool.ProjectResult.v2",
           "analysis_schema": "Perttool.AnalysisResult.v3",
           "next_schema": "Perttool.NextResult.v4",
+          "unit_migration_schema": "Perttool.UnitMigrationResult.v2",
           "cli_contract_version": 4,
           "declared_temporal_order": [
             "project:CALENDAR_OFFSET.as_of",
@@ -580,6 +601,72 @@
         },
         "repeat_byte_equal": true,
         "text_and_json_same_core_result": true
+      }
+    },
+    {
+      "case_id": "TUE-019",
+      "category": "validation",
+      "title": "Grammar 3 accepts exact fractions and preserves Decimal compatibility",
+      "operation": "document.check-and-format",
+      "input": {
+        "project_version": 3,
+        "duration_literals": [
+          "1d",
+          "0.5d",
+          "1/3d",
+          "4/6d",
+          "0/7d"
+        ]
+      },
+      "expected": {
+        "exact_and_canonical_by_literal": {
+          "1d": {
+            "exact": "1/1d",
+            "canonical": "1d"
+          },
+          "0.5d": {
+            "exact": "1/2d",
+            "canonical": "0.5d"
+          },
+          "1/3d": {
+            "exact": "1/3d",
+            "canonical": "1/3d"
+          },
+          "4/6d": {
+            "exact": "2/3d",
+            "canonical": "2/3d"
+          },
+          "0/7d": {
+            "exact": "0/1d",
+            "canonical": "0d"
+          }
+        },
+        "grammar_2_fraction_diagnostic": "PTDSL-007",
+        "rounded": false
+      }
+    },
+    {
+      "case_id": "TUE-020",
+      "category": "validation",
+      "title": "Malformed fractions fail before Rational arithmetic",
+      "operation": "document.check",
+      "input": {
+        "project_version": 3,
+        "invalid_duration_literals": [
+          "1/0d",
+          "-1/3d",
+          "1/-3d",
+          "1 /3d",
+          "1/ 3d",
+          "1.5/3d",
+          "1/3.0d",
+          "1/2/3d"
+        ]
+      },
+      "expected": {
+        "diagnostic_code": "PTDSL-007",
+        "candidate": null,
+        "rational_arithmetic_reached": false
       }
     }
   ]
