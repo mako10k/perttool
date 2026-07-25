@@ -21,6 +21,10 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
     (match) => match[1],
   );
   assert.deepEqual(taskIds, ["RATIONAL_DURATION_ACCEPTANCE"]);
+  assert.match(
+    detail,
+    /task RATIONAL_DURATION_ACCEPTANCE [\s\S]*?  status done/,
+  );
   const points = [...detail.matchAll(/^  duration (\d+)p$/gm)].reduce(
     (total, match) => total + Number(match[1]),
     0,

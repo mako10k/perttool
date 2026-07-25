@@ -491,17 +491,20 @@ SU-M2 progress:
   are also committed and advanced. `RATIONAL_DURATION_FORMATTER` and
   `RATIONAL_DURATION_MUTATION` are committed at `f0d9a26` and advanced through
   the expected-digest path. `RATIONAL_DURATION_VERSION_BOUNDARY` is committed
-  at `fa698ca` and advanced through the same ADV-001 path. The detail digest is
-  `sha256:63bbe45287126762e0e27ca09b0a4822968a6ab1a5aee9f5dfb7410ffc5590e6`.
-  Four points remain; precedence and heuristic resource makespans are both 4p
-  with no delay. At the inherited provisional `24p/1d`, both forecasts are
-  `1/6d`.
+  at `fa698ca` and advanced through the same ADV-001 path. Final
+  `RATIONAL_DURATION_ACCEPTANCE` is implemented and done but unadvanced until
+  its acceptance snapshot is committed. The
+  [acceptance record](process/scheduling-units-m2r-acceptance.md) traces all
+  TUI/TUE observations through 020, exact TUE-015 representation, internal
+  composition, and the closed installed Contract 3 boundary. All 24p are done
+  at provisional `24p/1d`; the detail has zero makespans and no recommendation
+  at digest
+  `sha256:ccb862377a719215e551f2f9f0226745c3d6c3cc3b0b5736d1875dc1826d6d6e`.
 - The macro rollup is `0.166667d`, leaving `4.166667d` precedence and `6.166667d`
   heuristic resource makespans with 2d resource delay. Its only ready,
   `runnable_now`, and complete Next v3 recommended work package is
   `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE`.
-- In the detail, complete Next v3 recommends
-  `RATIONAL_DURATION_ACCEPTANCE`.
+- In the detail, complete Next v3 has no recommendation.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, unit migration, and publication are explicit non-goals.

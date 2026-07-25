@@ -390,15 +390,21 @@ exports and Contract 3 behavior. The implementation is committed at
 reached through the expected-digest Stage 3 advance path required by ADV-001.
 
 The detail digest is
-`sha256:63bbe45287126762e0e27ca09b0a4822968a6ab1a5aee9f5dfb7410ffc5590e6`.
-Four points remain; precedence and heuristic resource makespans are both 4p
-with no resource delay, and both inherited provisional forecasts are
-`1/6d`. The macro rollup is now `0.166667d`; its digest is
+`sha256:ccb862377a719215e551f2f9f0226745c3d6c3cc3b0b5736d1875dc1826d6d6e`.
+`RATIONAL_DURATION_ACCEPTANCE` is implemented and done but unadvanced until
+this acceptance snapshot is committed under ADV-001. The
+[SU-M2R acceptance record](scheduling-units-m2r-acceptance.md) traces
+TUI-001 through TUI-020 and TUE-001 through TUE-020, accepts TUE-015 exact
+Fraction representation without claiming the SU-M4 migration operation, and
+fixes internal composition plus the closed package boundary. All 24p are done
+at provisional `24p/1d`; the detail has zero precedence and heuristic resource
+makespans and no recommendation. Until committed Advance and one macro
+rollup, the macro remains `0.166667d`; its digest is
 `sha256:d8ac8a48e125e36849782c24338ce07c7a3d4ff04ea5abca6a1e2d2c03b892b3`,
 with `4.166667d` precedence and `6.166667d` heuristic resource makespans and
 2d delay. Fresh complete Next v3 still selects
-`SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` in the macro and recommends the
-only ready and runnable `RATIONAL_DURATION_ACCEPTANCE` in the detail.
+`SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` in the macro and has no detail
+recommendation.
 
 Starting conditions:
 
@@ -619,7 +625,7 @@ Recalibration from 2026-07-22 to 2026-07-25:
 | `release-0.2.0.pert` | All 5 tasks through `RELEASE_020_ACCEPTANCE` | 17p | 2d | `17p/2d` | 0p |
 | `scheduling-units-m1.pert` | All 7 tasks through `M1_CONTRACT_REVIEW` | 24p | 1d | `24p/1d` | 0p |
 | `scheduling-units-m2.pert` | All 6 tasks through `M2_FOUNDATION_ACCEPTANCE` | 24p | 1d | `24p/1d` | 0p |
-| `scheduling-units-m2r.pert` | `RATIONAL_DURATION_CONTRACT` is complete in the working tree; no completion commit is counted yet | 0p committed | 0d | provisional `24p/1d` | resource `7/12d` |
+| `scheduling-units-m2r.pert` | All 7 tasks through `RATIONAL_DURATION_ACCEPTANCE` | 24p | 1d | provisional `24p/1d` | 0p |
 
 This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, English-baseline migration, and the CLI-surface reset are not averaged because their work types differ. Future detail plans specify the sample from the closest work type as their initial value. `scheduling-units-m2.pert` initially inherited `24p/1d` from SU-M1, replaced it with its own sample after the first task, and now records all six completed SU-M2 tasks as cumulative `24p/1d` on the same active day.
 
@@ -927,6 +933,7 @@ Stage 1 entry evidence:
 - SU-M2R rational-source and exact-serializer gate: a separate identity-checked internal Grammar 3 parser/validator retains reduced Fraction values, exact source tokens, and spans while Grammar 1/2 stay closed; exact Rational serialization emits the shortest ordinary Decimal or a reduced Fraction without display rounding; both tasks are committed at `787f0bb` and advanced through the expected-digest path; 13p remain with 7p precedence and 10p heuristic resource makespans, 3p delay, inherited forecasts `7/24d` and `5/12d`; the macro rollup is `0.416667d`, and complete Next v3 recommends `RATIONAL_DURATION_FORMATTER` plus `RATIONAL_DURATION_MUTATION`
 - SU-M2R exact-formatter and source-mutation gate: separate internal Grammar 3 formatting and mutation paths canonicalize exact Duration values without rounding, preserve unrelated source and existing Grammar 1/2 behavior, validate final candidates through the matching capability, reject automatic migration batch members, and retain digest-locked in-place/out safe writes; both tasks are committed at `f0d9a26` and advanced through the expected-digest path; 7p remain with matching precedence and heuristic resource makespans, no resource delay, inherited forecast `7/24d`; the macro rollup is `0.291667d`, and complete Next v3 recommends `RATIONAL_DURATION_VERSION_BOUNDARY`
 - SU-M2R grammar-version boundary gate: pure canonical-token selection and the identity-checked version-candidate planner retain Grammar 1/2 for all-Decimal output, upgrade one localized project version only for Fraction output, never downgrade Grammar 3, preserve temporal source, and report grammar/qualification/reversibility metadata without changing root exports or Contract 3; the task is committed at `fa698ca` and advanced through the expected-digest path; 4p remain with matching precedence and heuristic resource makespans, no resource delay, inherited forecast `1/6d`; the detail digest is `sha256:63bbe45287126762e0e27ca09b0a4822968a6ab1a5aee9f5dfb7410ffc5590e6`, the macro rollup is `0.166667d`, and complete Next v3 recommends `RATIONAL_DURATION_ACCEPTANCE`
+- SU-M2R exact-Duration acceptance gate: the accepted record traces TUI/TUE through 020, verifies exact source/formatter/mutation/version-boundary composition, turns TUE-015 into an exact Grammar 3 representation without claiming the SU-M4 migration operation, and proves source and installed Contract 3 keep Grammar 2/3 and target APIs closed; all 24p are done at provisional `24p/1d`, the detail has zero makespans and no recommendation at digest `sha256:ccb862377a719215e551f2f9f0226745c3d6c3cc3b0b5736d1875dc1826d6d6e`, and the done task remains unadvanced until this acceptance snapshot is committed under ADV-001
 - SU-M1 temporal-requirements gate: project `as_of`, milestone `deadline`, task `not_before`, and task `deadline` are the exact initial property scope; grammar version 1 and existing result identities are not widened; `TEMPORAL_REQUIREMENTS` is completed and advanced; six tasks total 21p, precedence is 17p, heuristic resource work is 21p with 4p delay, observed provisional velocity is `3p/1d`, the resource forecast is `7d`, and `CALENDAR_SEMANTICS` is recommended
 - SU-M1 calendar-semantics gate: `perttool.calendar-projection` and the continuous fixed-offset profile version 1 fix tagged date/date-time comparison, `as_of`, exact projection, velocity, `not_before`, unavailable causes, and the no-business-calendar/no-unit-migration boundary; `CALENDAR_SEMANTICS` is completed and advanced; five tasks total 17p, precedence is 13p, heuristic resource work is 17p with 4p delay, cumulative provisional velocity is `7p/1d`, the resource forecast is `17/7d`, and `DEADLINE_SEMANTICS` is recommended
 - SU-M1 deadline-semantics gate: `perttool.deadline-evaluation` version 1 fixes task finish, milestone reach, project finish, current deadline state, signed margin, precedence lower bounds, heuristic resource forecasts, combined assessment, blocked-cone qualification, unavailable causes, and the Analysis/Recommendation version boundary; `DEADLINE_SEMANTICS` is complete and advanced through the committed-snapshot and expected-digest path; four tasks and 13p remain, both precedence and heuristic resource makespans are 13p with no resource delay, cumulative provisional velocity is `11p/1d`, both forecasts are `13/11d`, and `UNIT_MIGRATION_SEMANTICS` is recommended

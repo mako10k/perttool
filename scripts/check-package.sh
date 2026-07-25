@@ -263,7 +263,8 @@ node --input-type=module - \
   "$repo_root/docs/examples/minimal.pert" \
   "$repo_root/test/fixtures/recommendation/rec-001-critical-priority.pert" \
   "$installed_cli" \
-  "$repo_root/test/fixtures/temporal-units/calendar-offset-v2.pert" <<'NODE'
+  "$repo_root/test/fixtures/temporal-units/calendar-offset-v2.pert" \
+  "$repo_root/test/fixtures/rational-duration/contract3-rejection-v3.pert" <<'NODE'
 import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
@@ -279,6 +280,17 @@ for (const targetName of [
   "checkTargetDocument",
   "getTargetProjectMetadata",
   "projectDeclaredCalendarValue",
+  "TARGET_GRAMMAR_3_CAPABILITY",
+  "parseTargetGrammar3Document",
+  "validateTargetGrammar3Document",
+  "formatTargetGrammar3Document",
+  "planTargetGrammar3Mutation",
+  "planTargetGrammar3BatchMutation",
+  "createTargetGrammar3DocumentFile",
+  "replaceTargetGrammar3DocumentFile",
+  "serializeExactDurationSource",
+  "selectExactDurationGrammarBoundary",
+  "planTargetExactDurationGrammarBoundary",
 ]) {
   if (targetName in api) process.exit(1);
 }
@@ -307,29 +319,35 @@ if (
   serializedHelp.includes("Perttool.UnitMigrationResult.v2")
 ) process.exit(1);
 
-for (const [route, schemaVersion] of [
-  [["document", "check"], "Perttool.CheckResult.v1"],
-  [["document", "format"], "Perttool.FormatResult.v1"],
-  [["project", "show"], "Perttool.ProjectResult.v1"],
-  [["dag", "analyze"], "Perttool.AnalysisResult.v2"],
-  [["dag", "next"], "Perttool.NextResult.v3"],
+for (const [fixture, allowedCodes] of [
+  [process.argv[6], new Set(["PTDSL-005"])],
+  [process.argv[7], new Set(["PTDSL-005", "PTDSL-007"])],
 ]) {
-  const result = spawnSync(
-    process.argv[5],
-    [...route, process.argv[6], "--format=json"],
-    { encoding: "utf8" },
-  );
-  const json = JSON.parse(result.stdout);
-  if (
-    result.status !== 1 ||
-    result.stderr !== "" ||
-    json.schema_version !== schemaVersion ||
-    json.cli_contract_version !== 3 ||
-    json.ok !== false ||
-    (json.grammar_version ?? null) !== null ||
-    json.diagnostics?.length === 0 ||
-    json.diagnostics?.some(({ code }) => code !== "PTDSL-005")
-  ) process.exit(1);
+  for (const [route, schemaVersion] of [
+    [["document", "check"], "Perttool.CheckResult.v1"],
+    [["document", "format"], "Perttool.FormatResult.v1"],
+    [["project", "show"], "Perttool.ProjectResult.v1"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v2"],
+    [["dag", "next"], "Perttool.NextResult.v3"],
+  ]) {
+    const result = spawnSync(
+      process.argv[5],
+      [...route, fixture, "--format=json"],
+      { encoding: "utf8" },
+    );
+    const json = JSON.parse(result.stdout);
+    if (
+      result.status !== 1 ||
+      result.stderr !== "" ||
+      json.schema_version !== schemaVersion ||
+      json.cli_contract_version !== 3 ||
+      json.ok !== false ||
+      (json.grammar_version ?? null) !== null ||
+      json.diagnostics?.length === 0 ||
+      !json.diagnostics.some(({ code }) => code === "PTDSL-005") ||
+      json.diagnostics.some(({ code }) => !allowedCodes.has(code))
+    ) process.exit(1);
+  }
 }
 
 const guidance = api.getAgentHelp({

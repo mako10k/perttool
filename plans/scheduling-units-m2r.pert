@@ -66,6 +66,7 @@ task RATIONAL_DURATION_ACCEPTANCE RATIONAL_DURATION_ACCEPTANCE_INPUT_READY -> RA
   title "Accept exact rational Duration without public activation"
   description "Trace the revised TUI and TUE observations; replace TUE-015 failure with exact fraction success; cover malformed fractions, Decimal compatibility, round trips, version identities, and source-grammar upgrade behavior; verify target APIs remain unexported and the installed Contract 3 CLI rejects the new target grammar; run full repository, link, and package gates; and hand the exact syntax to SU-M3 and SU-M4."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

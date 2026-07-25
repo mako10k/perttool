@@ -1,0 +1,22 @@
+project RATIONAL_PACKAGE_REJECTION:
+  version 3
+  title "Grammar 3 package rejection"
+  as_of 2026-07-25
+  duration_unit day
+  finish FINISH
+  critical_epsilon 0/7d
+  target_duration 4/6d
+
+milestone START:
+  title "Start"
+  state reached
+
+milestone FINISH:
+  title "Finish"
+  deadline 2026-07-27
+
+task EXACT START -> FINISH:
+  title "Exact fraction"
+  duration 1/3d
+  not_before 2026-07-25
+  deadline 2026-07-26
