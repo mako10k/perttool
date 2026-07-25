@@ -37,19 +37,19 @@ milestone CONTRACT_ACCEPTED:
   title "SU-M1 temporal and migration contract accepted"
 
 milestone TEMPORAL_SURFACE_ACCEPTED:
-  title "SU-M2 temporal property surface accepted"
+  title "SU-M2 temporal source and Core foundations accepted"
 
 milestone DEADLINE_CAPABILITIES_ACCEPTED:
-  title "SU-M3 deadline-aware capabilities accepted"
+  title "SU-M3 temporal deadline and Next v4 target Core accepted"
 
 milestone UNIT_MIGRATION_ACCEPTED:
-  title "SU-M4 point and time-unit migration accepted"
+  title "SU-M4 exact unit-migration Core accepted"
 
 milestone DELIVERY_INPUT_READY:
-  title "Deadline and migration capability branches accepted"
+  title "Deadline and migration Core branches accepted"
 
 milestone SCHEDULING_UNITS_ACCEPTED:
-  title "SU-M5 integrated workstream accepted"
+  title "SU-M5 atomic Contract 4 workstream accepted"
 
 task SU_M1_CONTRACT_WORK_PACKAGE BACKLOG_REFINED -> CONTRACT_ACCEPTED:
   title "Accept the temporal and unit-migration contract"
@@ -65,11 +65,8 @@ task SU_M1_CONTRACT_WORK_PACKAGE BACKLOG_REFINED -> CONTRACT_ACCEPTED:
     PUBLIC_SURFACE 1
 
 task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE CONTRACT_ACCEPTED -> TEMPORAL_SURFACE_ACCEPTED:
-  title "Implement and accept the temporal property surface"
-  description |
-    Provisional work package. Create its detail plan and re-estimate it after
-    SU-M1. Cover parser, validation, formatting, mutation, help, text/JSON
-    projections, and installed-package file-first behavior.
+  title "Implement temporal source and Core foundations"
+  description "Provisional work package. Create its detail plan and re-estimate it after SU-M1. Implement target Grammar 2 parsing, validation, formatting, source-preserving temporal mutation, and declared-input Core projections. Do not activate CLI Contract 4, public result schemas, help, or installed-package behavior in this slice."
   duration 2d
   priority 90
   requires:
@@ -77,11 +74,8 @@ task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE CONTRACT_ACCEPTED -> TEMPORAL_SURFACE_A
     PUBLIC_SURFACE 1
 
 task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> DEADLINE_CAPABILITIES_ACCEPTED:
-  title "Implement and accept deadline-aware capabilities"
-  description |
-    Provisional work package. Create its detail plan and re-estimate it after
-    SU-M2. Cover the accepted projected-date, feasibility, margin, lateness,
-    overdue, risk, and recommendation behaviors.
+  title "Implement temporal deadline and Next v4 target Core"
+  description "Provisional work package. Create its detail plan and re-estimate it after SU-M2. Implement target calendar projection, deadline evaluation, temporal precedence/resource views, and Next v4 time-gated start-authority Core. Do not activate the public CLI or normal authority in this slice."
   duration 2d
   priority 90
   requires:
@@ -90,11 +84,8 @@ task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> DEADLIN
     PUBLIC_SURFACE 1
 
 task SU_M4_UNIT_MIGRATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> UNIT_MIGRATION_ACCEPTED:
-  title "Implement and accept safe point and time-unit migration"
-  description |
-    Provisional work package. Create its detail plan and re-estimate it after
-    SU-M2. Cover exact preview-first conversion, atomic writes, diagnostics,
-    idempotence, and installed-package acceptance in both directions.
+  title "Implement exact unit-migration Core"
+  description "Provisional work package. Create its detail plan and re-estimate it after SU-M2. Implement the target exact migration planner, source-preserving preview candidate, diagnostics, idempotence, and inverse qualification in both directions. Do not publish the Contract 4 command or installed-package workflow in this slice."
   duration 3d
   priority 80
   requires:
@@ -103,18 +94,14 @@ task SU_M4_UNIT_MIGRATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> UNIT_MIGRATI
     PUBLIC_SURFACE 1
 
 gate DEADLINE_ACCEPTANCE_GATE DEADLINE_CAPABILITIES_ACCEPTED -> DELIVERY_INPUT_READY:
-  reason "Integrated acceptance requires deadline-aware capabilities"
+  reason "Atomic Contract 4 acceptance requires the temporal deadline and Next v4 target Core"
 
 gate UNIT_MIGRATION_ACCEPTANCE_GATE UNIT_MIGRATION_ACCEPTED -> DELIVERY_INPUT_READY:
-  reason "Integrated acceptance requires unit migration"
+  reason "Atomic Contract 4 acceptance requires the exact unit-migration target Core"
 
 task SU_M5_INTEGRATED_ACCEPTANCE DELIVERY_INPUT_READY -> SCHEDULING_UNITS_ACCEPTED:
-  title "Accept the integrated scheduling and unit-migration workstream"
-  description |
-    Run cross-feature regression, documentation, self-use, local-link, and
-    installed-package gates. Decide release scope separately; this task does
-    not authorize a Git push, GitHub release, npm publication, or dist-tag
-    change.
+  title "Accept atomic Contract 4 and the integrated workstream"
+  description "Atomically cut over CLI Contract 4, public result schemas, registry dispatch, text/JSON help, Guide, README, installed-package workflows, and Next v4 normal start authority after shadow and unknown-result safe-stop acceptance. Run cross-feature regression, self-use, link, and package gates. Decide release scope separately; this task does not authorize a Git push, GitHub release, npm publication, or dist-tag change."
   duration 1d
   priority 100
   requires:

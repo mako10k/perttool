@@ -17,5 +17,6 @@ milestone FINISH:
 task HISTORICAL START -> FINISH:
   title "Completed without an actual timestamp"
   duration 1d
+  not_before 2026-07-23
   deadline 2026-07-24
   status done

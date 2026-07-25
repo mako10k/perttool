@@ -1376,10 +1376,12 @@ There are no undecided design decisions that currently prevent starting MVP impl
 
 The SU-M1 temporal and unit-migration extension has accepted its property
 scope, deterministic calendar and deadline semantics, exact source-unit
-migration semantics, public interface contract, and dependency-ordered
-normative examples but still requires the cross-cutting review in Section 25.
-That remaining decision blocks temporal implementation, not continued use of
-grammar version 1.
+migration semantics, public interface contract, dependency-ordered normative
+examples, and
+[cross-cutting review](process/scheduling-units-m1-acceptance.md).
+Implementation may proceed only through the accepted target-only Core slices;
+Grammar 2, CLI Contract 4, and NextResult v4 authority remain inactive until
+their atomic acceptance gate.
 
 Resolved design decisions:
 
@@ -1402,6 +1404,7 @@ Resolved design decisions:
 - Permitted Point/time directions, effective velocity, complete field inventory, exact finite-decimal conversion, atomic candidate behavior, and round-trip qualification: [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md)
 - Grammar version 2 fields, CLI Contract 4, Core boundaries, temporal/unit text and JSON projections, mutation, help, diagnostics, and authority migration: [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
 - Calendar, deadline, start-authority, exact-migration, failure, idempotence, and deterministic projection cases: [Normative Temporal and Unit-Migration Examples](examples/temporal-units.md)
+- Complete requirements/specification/example/interface trace, resolved delivery sequencing, and implementation handoff: [SU-M1 Temporal and Unit-Migration Contract Acceptance Review](process/scheduling-units-m1-acceptance.md)
 
 ## 25. Recommended next specification work
 
@@ -1429,14 +1432,14 @@ Before implementation, separate the specifications in the following order.
 10. [x] Mermaid export: `exportMermaid`, `dag render --to mermaid`, profile/plain loss reports, analysis annotation, and exclusive `--out`
 11. [x] Mermaid import: `importMermaid`, `dag import --from mermaid`, fail-closed profile restoration, plain loss reports, and round-trip E2E
 12. [x] [CLI Contract 3 design](specs/cli-contract-3.md): complete target surface, descriptor registry, command help, domain guide, project initialization, gate maintenance, migration boundary, and normative acceptance cases
-13. [ ] Temporal properties, deadlines, and unit migration SU-M1 contract
+13. [x] Temporal properties, deadlines, and unit migration SU-M1 contract
     - [x] Temporal properties, entity scope, meanings, compatibility boundary, and non-goals
     - [x] [Deterministic date/date-time, `as_of`, timezone, and calendar semantics](specs/temporal-calendar.md)
     - [x] [Deadline-derived analysis and recommendation semantics](specs/temporal-deadline.md)
     - [x] [Exact point and time-unit source-migration semantics](specs/unit-migration.md)
     - [x] [Grammar, Core, CLI, help, diagnostics, and result-projection contract](specs/temporal-unit-interface.md)
     - [x] [Normative boundary examples and machine-readable acceptance cases](examples/temporal-units.md)
-    - [ ] Cross-cutting SU-M1 contract review
+    - [x] [Cross-cutting SU-M1 contract review](process/scheduling-units-m1-acceptance.md)
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

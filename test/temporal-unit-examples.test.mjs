@@ -113,6 +113,22 @@ test("calendar cases fix validation, exact release, offsets, and start authority
   const document = await baseline();
 
   assert.deepEqual(
+    byId(document, "TUE-001").expected.diagnostic_code_by_field,
+    {
+      "milestone.deadline": "PTDSL-005",
+      "task.not_before": "PTDSL-005",
+      "task.deadline": "PTDSL-005",
+    },
+  );
+  assert.deepEqual(
+    byId(document, "TUE-002").expected.diagnostic_code_by_field,
+    {
+      "milestone.deadline": "PTSEM-112",
+      "task.not_before": "PTSEM-112",
+      "task.deadline": "PTSEM-112",
+    },
+  );
+  assert.deepEqual(
     byId(document, "TUE-003").expected.diagnostic_code_by_literal,
     {
       "2026-02-29": "PTDSL-008",
@@ -131,11 +147,26 @@ test("calendar cases fix validation, exact release, offsets, and start authority
   assert.equal(leap.precedence.assessment, "lower_bound_late");
   assert.equal(leap.resource.optimal, false);
   assert.equal(leap.combined_assessment, "forecast_infeasible");
+  assert.deepEqual(leap.next_authority, {
+    structurally_ready_task_ids: ["LEAP_WINDOW"],
+    recommendation_task_ids: ["LEAP_WINDOW"],
+    runnable_now_task_ids: [],
+    startable_recommended_task_ids: [],
+    delayed_recommended_task_ids: ["LEAP_WINDOW"],
+    time_eligibility: "not_yet_eligible",
+    explanation_code: "not_before_future",
+  });
 
   const offsets = byId(document, "TUE-005").expected;
   assert.equal(offsets.release_bound, "0/1h");
   assert.equal(offsets.destination_relationship, "same_deadline");
   assert.equal(offsets.declared_source_text_preserved, true);
+  assert.deepEqual(offsets.next_authority, {
+    runnable_now_task_ids: ["OFFSET_EQUAL"],
+    startable_recommended_task_ids: ["OFFSET_EQUAL"],
+    time_eligibility: "eligible",
+    explanation_code: "not_before_reached",
+  });
 
   const authority = byId(document, "TUE-006").expected;
   assert.deepEqual(authority.structurally_ready_task_ids, ["FUTURE_CLOCK"]);
@@ -147,10 +178,45 @@ test("calendar cases fix validation, exact release, offsets, and start authority
   ]);
   assert.equal(authority.classification, "ready");
   assert.equal(authority.deadline_facts_used_for_ranking, false);
+  assert.equal(authority.combined_assessment, "unavailable");
 });
 
 test("deadline cases keep proof, heuristic, block, and history meanings separate", async () => {
   const document = await baseline();
+
+  const inclusive = byId(document, "TUE-008").expected;
+  assert.deepEqual(inclusive.forecast_relation_and_margin, {
+    completion_before_deadline: {
+      relation: "before_deadline",
+      signed_margin: "1/1 calendar_days",
+    },
+    completion_on_deadline: {
+      relation: "on_deadline",
+      signed_margin: "0/1 calendar_days",
+    },
+    completion_after_deadline: {
+      relation: "after_deadline",
+      signed_margin: "-1/1 calendar_days",
+    },
+  });
+  assert.deepEqual(inclusive.destination_relationship_by_pair, {
+    "task_2026-07-24__milestone_2026-07-25":
+      "task_deadline_before_milestone",
+    "task_2026-07-25__milestone_2026-07-25": "same_deadline",
+    "task_2026-07-26__milestone_2026-07-25":
+      "task_deadline_after_milestone",
+    task_date__milestone_date_time: "unavailable",
+    "task_2026-07-25__milestone_absent": "deadline_absent",
+  });
+  assert.deepEqual(inclusive.deadline_absent, {
+    deadline_evaluation_present: false,
+    temporal_schedule_state: "available",
+  });
+  assert.deepEqual(inclusive.combined_state_witnesses, {
+    incomplete_and_current_overdue: "overdue",
+    precedence_on_time_and_resource_unavailable: "not_proven_late",
+    all_forecast_relationships_unavailable: "unavailable",
+  });
 
   const resource = byId(document, "TUE-009").expected;
   assert.equal(resource.precedence.assessment, "lower_bound_on_time");
@@ -171,6 +237,11 @@ test("deadline cases keep proof, heuristic, block, and history meanings separate
   );
   assert.equal(complete.current_state, "not_applicable");
   assert.equal(complete.actual_completion_inferred, false);
+  assert.equal(complete.time_eligibility, "not_applicable");
+  assert.equal(
+    complete.time_eligibility_explanation_code,
+    "task_already_started",
+  );
 });
 
 test("migration cases fix exact inventory, failures, idempotence, and inverse", async () => {
@@ -187,6 +258,14 @@ test("migration cases fix exact inventory, failures, idempotence, and inverse", 
     "task.ESTIMATED.estimate.pessimistic": "3d",
   });
   assert.equal(pointToDay.reversibility, "exact");
+  assert.deepEqual(pointToDay.temporal_tokens_by_field, {
+    "project.as_of": "2026-07-25T09:00:00+09:00",
+    "milestone.MID.deadline": "2026-07-27T09:00:00+09:00",
+    "milestone.FINISH.deadline": "2026-07-30T09:00:00+09:00",
+    "task.FIXED.not_before": "2026-07-25T09:00:00+09:00",
+    "task.FIXED.deadline": "2026-07-27T09:00:00+09:00",
+    "task.ESTIMATED.deadline": "2026-07-30T09:00:00+09:00",
+  });
 
   const hourToPoint = byId(document, "TUE-013").expected;
   assert.equal(hourToPoint.velocity_disposition, "inserted");
@@ -198,6 +277,14 @@ test("migration cases fix exact inventory, failures, idempotence, and inverse", 
     hourToPoint.reversibility,
     "values_exact_metadata_changed",
   );
+  assert.deepEqual(hourToPoint.temporal_tokens_by_field, {
+    "project.as_of": "2026-07-25T09:00:00Z",
+    "milestone.MID.deadline": "2026-07-25T11:30:00Z",
+    "milestone.FINISH.deadline": "2026-07-25T14:30:00Z",
+    "task.FIXED.not_before": "2026-07-25T09:00:00Z",
+    "task.FIXED.deadline": "2026-07-25T11:30:00Z",
+    "task.ESTIMATED.deadline": "2026-07-25T14:30:00Z",
+  });
 
   const failures = byId(document, "TUE-014").expected;
   assert.deepEqual(failures.diagnostic_codes, [

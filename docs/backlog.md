@@ -298,7 +298,7 @@ architecture decision is normative.
 
 Priority: P1
 
-Status: In progress (`SU-M1` contract)
+Status: Contract accepted (`SU-M1`)
 
 Define a coherent temporal model, including `deadline`, and carry it through
 the file-first interface and every affected result projection. Use that model
@@ -325,15 +325,15 @@ Acceptance:
 - any effect on recommendation eligibility, ranking, or reason taxonomy is
   explicit, versioned, and tested rather than introduced as an implicit
   tie-breaker;
-- normative examples and installed-package file-first tests cover date and
-  date-time boundaries, offsets, invalid calendar values, and deterministic
-  output.
+- normative examples cover date and date-time boundaries, offsets, invalid
+  calendar values, and deterministic output; the installed-package
+  file-first cases activate only at the atomic Contract 4 acceptance gate.
 
 ### UNIT-001: Design safe point and time-unit migration
 
 Priority: P1
 
-Status: In progress (`SU-M1` contract)
+Status: Contract accepted (`SU-M1`)
 
 Design a preview-first migration that rewrites a project between `point` and
 its velocity-linked `day` or `hour` unit. This is a source migration, distinct
@@ -362,7 +362,7 @@ Acceptance:
 - command discovery, help, guide content, README examples, batch interaction,
   and installed-package tests cover both `point -> day|hour` and
   `day|hour -> point`, including incompatible velocity and non-representable
-  result cases.
+  result cases, at the atomic Contract 4 acceptance gate.
 
 ### Refinement and delivery milestones
 
@@ -375,10 +375,10 @@ project duration unit changes.
 | --- | --- | --- | --- |
 | `SU-M0` | Backlog refined | Scope, non-goals, milestone boundaries, and macro/detail tracking rules are recorded. | `TIME-001`, `UNIT-001` |
 | `SU-M1` | Temporal and migration contract accepted | Requirements, normative specifications, interface projections, examples, compatibility policy, and an acceptance review define temporal semantics, deadline-derived behavior, and exact unit migration. | `TIME-001`, `UNIT-001` |
-| `SU-M2` | Temporal property surface accepted | The accepted properties are parsed, validated, formatted, mutated, documented, and exposed symmetrically through text, JSON, help, guide, and file-first package workflows. | `TIME-001` |
-| `SU-M3` | Deadline-aware capabilities accepted | Projected dates and accepted feasibility, margin, lateness, overdue, or risk capabilities work across precedence and heuristic resource results, with explicit recommendation-version behavior. | `TIME-001` |
-| `SU-M4` | Unit migration accepted | Preview-first and atomic source migration covers every base-unit-bearing value in both directions, with exactness, diagnostics, idempotence, and installed-package acceptance. | `UNIT-001` |
-| `SU-M5` | Integrated workstream accepted | Cross-feature regression, documentation, self-use, link, and package gates pass, and release scope is decided separately. | `TIME-001`, `UNIT-001` |
+| `SU-M2` | Temporal source and Core foundations accepted | Target Grammar 2 parsing, validation, formatting, source-preserving temporal mutation, and declared-input Core projections are accepted without activating public Contract 4 schemas, help, or installed-package behavior. | `TIME-001` |
+| `SU-M3` | Temporal deadline and Next v4 target Core accepted | Calendar projection, deadline evaluation, temporal precedence/resource views, and time-gated Next v4 start-authority Core are accepted without making the target CLI or authority active. | `TIME-001` |
+| `SU-M4` | Exact unit-migration Core accepted | The target planner covers every base-unit-bearing value in both directions, with source-preserving preview candidates, exactness, diagnostics, idempotence, and inverse qualification, without publishing its Contract 4 command. | `UNIT-001` |
+| `SU-M5` | Atomic Contract 4 workstream accepted | CLI Contract 4, public result schemas, registry/help/Guide/README, installed-package workflows, and Next v4 normal authority move together after shadow and safe-stop acceptance; release scope is decided separately. | `TIME-001`, `UNIT-001` |
 
 Progress is tracked at two levels:
 
@@ -395,7 +395,7 @@ Progress is tracked at two levels:
   reanalyze, and create the next milestone-detail plan from the accepted
   contract.
 
-Current SU-M1 progress:
+SU-M1 acceptance:
 
 - `TEMPORAL_REQUIREMENTS`, `CALENDAR_SEMANTICS`, `DEADLINE_SEMANTICS`,
   `UNIT_MIGRATION_SEMANTICS`, `INTERFACE_PROJECTION_CONTRACT`, and
@@ -414,9 +414,10 @@ Current SU-M1 progress:
   `Perttool.TemporalUnitExampleBaseline.v1` fix `TUE-001` through `TUE-018`
   across available, unavailable, not-applicable, failure, authority, and
   deterministic-projection boundaries.
-- One task and 2p remain at provisional `22p/1d`; precedence and heuristic
-  resource makespans are 2p with no resource delay and exact `1/11d`
-  forecasts. Fresh complete `NextResult.v3` recommends `M1_CONTRACT_REVIEW`.
+- The [cross-cutting acceptance review](process/scheduling-units-m1-acceptance.md)
+  closes every `TUI-001` through `TUI-018` observation, resolves the public
+  cutover sequencing ambiguity, and passes the accepted contract to target
+  Core implementation without activating Grammar 2, Contract 4, or Next v4.
 
 ## Independent post-beta work
 

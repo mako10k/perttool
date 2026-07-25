@@ -528,6 +528,15 @@ Guide, diagnostics, README, installed-package E2E, authority guidance, and
 override validation move together. Emitting NextResult v4 alone does not
 authorize self-use.
 
+Delivery preserves that atomic boundary. SU-M2 implements target Grammar 2
+source handling and declared-input Core projections; SU-M3 adds target
+calendar, deadline, temporal-schedule, and Next v4 Core; and SU-M4 adds the
+exact unit-migration Core. Those slices can expose internal target types and
+tests but do not enter active dispatch, help, public result schemas, package
+examples, or normal task-selection authority. SU-M5 alone performs the
+Contract 4 public cutover after shadow and unknown-result safe-stop acceptance.
+Package publication remains a separate decision after that local acceptance.
+
 ## 7. Diagnostic Model
 
 Every layer returns the shared `Diagnostic` type.
@@ -1469,6 +1478,12 @@ calendar arithmetic, release-aware deadline evaluation, exact Point/time
 source migration, and the public interface before runtime implementation.
 The public interface selects grammar version 2 and CLI Contract 4 while
 leaving current Contract 3 and NextResult v3 authority unchanged.
+
+The accepted implementation sequence treats SU-M2 through SU-M4 as
+target-only source and Core slices. SU-M5 atomically activates the public
+schemas, registry and dispatch, text/JSON help, Guide, README and
+installed-package workflows, and Next v4 normal start authority. No earlier
+milestone is a partial public Contract 4 cutover.
 
 Exit:
 

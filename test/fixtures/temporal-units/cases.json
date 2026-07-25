@@ -26,12 +26,29 @@
       "operation": "document.check",
       "input": {
         "project_version": 1,
-        "field": "task.deadline",
-        "literal": "2026-07-25"
+        "fields": [
+          {
+            "field": "milestone.deadline",
+            "literal": "2026-07-25"
+          },
+          {
+            "field": "task.not_before",
+            "literal": "2026-07-25"
+          },
+          {
+            "field": "task.deadline",
+            "literal": "2026-07-25"
+          }
+        ]
       },
       "expected": {
         "ok": false,
         "diagnostic_codes": ["PTDSL-005"],
+        "diagnostic_code_by_field": {
+          "milestone.deadline": "PTDSL-005",
+          "task.not_before": "PTDSL-005",
+          "task.deadline": "PTDSL-005"
+        },
         "temporal_inputs": null
       }
     },
@@ -43,12 +60,21 @@
       "input": {
         "project_version": 2,
         "as_of": null,
-        "field": "milestone.deadline",
+        "fields": [
+          "milestone.deadline",
+          "task.not_before",
+          "task.deadline"
+        ],
         "literal": "2026-07-25"
       },
       "expected": {
         "ok": false,
         "diagnostic_codes": ["PTSEM-112"],
+        "diagnostic_code_by_field": {
+          "milestone.deadline": "PTSEM-112",
+          "task.not_before": "PTSEM-112",
+          "task.deadline": "PTSEM-112"
+        },
         "wall_clock_read": false,
         "host_zone_read": false
       }
@@ -111,7 +137,16 @@
         },
         "current_state": "not_due",
         "current_signed_window": "2/1 calendar_days",
-        "combined_assessment": "forecast_infeasible"
+        "combined_assessment": "forecast_infeasible",
+        "next_authority": {
+          "structurally_ready_task_ids": ["LEAP_WINDOW"],
+          "recommendation_task_ids": ["LEAP_WINDOW"],
+          "runnable_now_task_ids": [],
+          "startable_recommended_task_ids": [],
+          "delayed_recommended_task_ids": ["LEAP_WINDOW"],
+          "time_eligibility": "not_yet_eligible",
+          "explanation_code": "not_before_future"
+        }
       }
     },
     {
@@ -132,7 +167,13 @@
         "destination_relationship": "same_deadline",
         "signed_margin": "0/1 si_seconds",
         "combined_assessment": "forecast_on_time",
-        "declared_source_text_preserved": true
+        "declared_source_text_preserved": true,
+        "next_authority": {
+          "runnable_now_task_ids": ["OFFSET_EQUAL"],
+          "startable_recommended_task_ids": ["OFFSET_EQUAL"],
+          "time_eligibility": "eligible",
+          "explanation_code": "not_before_reached"
+        }
       }
     },
     {
@@ -153,7 +194,8 @@
         "unavailable_causes": ["incomparable_temporal_kinds"],
         "classification": "ready",
         "recommendation_tier": "recommended",
-        "deadline_facts_used_for_ranking": false
+        "deadline_facts_used_for_ranking": false,
+        "combined_assessment": "unavailable"
       }
     },
     {
@@ -192,7 +234,37 @@
           "2026-07-25": "due_now",
           "2026-07-24": "overdue"
         },
-        "end_of_day_inferred": false
+        "end_of_day_inferred": false,
+        "forecast_relation_and_margin": {
+          "completion_before_deadline": {
+            "relation": "before_deadline",
+            "signed_margin": "1/1 calendar_days"
+          },
+          "completion_on_deadline": {
+            "relation": "on_deadline",
+            "signed_margin": "0/1 calendar_days"
+          },
+          "completion_after_deadline": {
+            "relation": "after_deadline",
+            "signed_margin": "-1/1 calendar_days"
+          }
+        },
+        "destination_relationship_by_pair": {
+          "task_2026-07-24__milestone_2026-07-25": "task_deadline_before_milestone",
+          "task_2026-07-25__milestone_2026-07-25": "same_deadline",
+          "task_2026-07-26__milestone_2026-07-25": "task_deadline_after_milestone",
+          "task_date__milestone_date_time": "unavailable",
+          "task_2026-07-25__milestone_absent": "deadline_absent"
+        },
+        "deadline_absent": {
+          "deadline_evaluation_present": false,
+          "temporal_schedule_state": "available"
+        },
+        "combined_state_witnesses": {
+          "incomplete_and_current_overdue": "overdue",
+          "precedence_on_time_and_resource_unavailable": "not_proven_late",
+          "all_forecast_relationships_unavailable": "unavailable"
+        }
       }
     },
     {
@@ -262,7 +334,9 @@
         "precedence_state": "not_applicable",
         "resource_state": "not_applicable",
         "combined_assessment": "not_applicable",
-        "actual_completion_inferred": false
+        "actual_completion_inferred": false,
+        "time_eligibility": "not_applicable",
+        "time_eligibility_explanation_code": "task_already_started"
       }
     },
     {
@@ -291,11 +365,14 @@
           "task.ESTIMATED.estimate.pessimistic": "3d"
         },
         "reversibility": "exact",
-        "temporal_tokens_preserved": [
-          "2026-07-25T09:00:00+09:00",
-          "2026-07-27T09:00:00+09:00",
-          "2026-07-30T09:00:00+09:00"
-        ]
+        "temporal_tokens_by_field": {
+          "project.as_of": "2026-07-25T09:00:00+09:00",
+          "milestone.MID.deadline": "2026-07-27T09:00:00+09:00",
+          "milestone.FINISH.deadline": "2026-07-30T09:00:00+09:00",
+          "task.FIXED.not_before": "2026-07-25T09:00:00+09:00",
+          "task.FIXED.deadline": "2026-07-27T09:00:00+09:00",
+          "task.ESTIMATED.deadline": "2026-07-30T09:00:00+09:00"
+        }
       }
     },
     {
@@ -324,7 +401,14 @@
           "task.ESTIMATED.estimate.pessimistic": "6p"
         },
         "reversibility": "values_exact_metadata_changed",
-        "temporal_tokens_preserved": true
+        "temporal_tokens_by_field": {
+          "project.as_of": "2026-07-25T09:00:00Z",
+          "milestone.MID.deadline": "2026-07-25T11:30:00Z",
+          "milestone.FINISH.deadline": "2026-07-25T14:30:00Z",
+          "task.FIXED.not_before": "2026-07-25T09:00:00Z",
+          "task.FIXED.deadline": "2026-07-25T11:30:00Z",
+          "task.ESTIMATED.deadline": "2026-07-25T14:30:00Z"
+        }
       }
     },
     {

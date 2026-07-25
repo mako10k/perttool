@@ -58,16 +58,17 @@ follows the public-interface contract.
 
 ### TUE-001 Grammar version 1 remains closed
 
-A version 1 task containing `deadline 2026-07-25` fails ordinary validation
-with `PTDSL-005`. The parser must not accept the field and then hide it from a
-version 1 result. Because parsing did not produce trusted temporal values,
-`CheckResult.v2.temporal_inputs` is null.
+Each of milestone `deadline`, task `not_before`, and task `deadline` fails
+ordinary version 1 validation with `PTDSL-005`. The parser must not accept any
+of the fields and then hide it from a version 1 result. Because parsing did not
+produce trusted temporal values, `CheckResult.v2.temporal_inputs` is null.
 
 ### TUE-002 A temporal field requires the explicit anchor
 
-A version 2 document containing a milestone deadline but no `project.as_of`
-fails with `PTSEM-112`. Validation does not read the wall clock or host time
-zone to repair the document.
+Each of milestone `deadline`, task `not_before`, and task `deadline` requires
+an explicit `project.as_of` in version 2. Omitting the anchor fails with
+`PTSEM-112`. Validation does not read the wall clock or host time zone to
+repair the document.
 
 ### TUE-003 Invalid calendar values remain source errors
 
@@ -106,6 +107,12 @@ signed margin         = -1 calendar day
 No end-of-day time is invented. The continuous profile counts February 29 and
 the following civil dates without a business-calendar exception.
 
+The task is structurally ready and remains recommended by Recommendation
+version 1, but the future release bound removes it from both `runnable_now` and
+`startable_recommended_task_ids`. It appears in
+`delayed_recommended_task_ids` with `not_yet_eligible` /
+`not_before_future`.
+
 ### TUE-005 Equal instants retain different offsets
 
 Input:
@@ -130,6 +137,9 @@ Declared `source_text` retains each original offset. The derived finish uses
 the anchor offset. Equality must not rewrite the task deadline from `Z` to
 `+09:00`.
 
+The equal release instant is eligible. The task appears in both `runnable_now`
+and `startable_recommended_task_ids` with `not_before_reached`.
+
 ### TUE-006 Mixed temporal kinds are valid but not start authority
 
 Input:
@@ -152,6 +162,7 @@ unavailable_recommended_task_ids          = [FUTURE_CLOCK]
 
 The task is not reclassified as `blocked`, and the unavailable release fact
 does not become a Recommendation version 1 ranking fact.
+The combined deadline assessment is also `unavailable`.
 
 ### TUE-007 A date anchor does not invent a clock
 
@@ -171,6 +182,26 @@ For an incomplete subject and `as_of 2026-07-25`:
 
 Date equality is a civil-day equality. `due_now` does not imply an end-of-day
 clock and does not suppress forecast evaluation.
+
+Forecast comparisons retain exact signed margins:
+
+| Completion | Relation | Signed margin |
+| --- | --- | ---: |
+| One civil day before | `before_deadline` | `1 calendar day` |
+| Same civil day | `on_deadline` | `0 calendar days` |
+| One civil day after | `after_deadline` | `-1 calendar day` |
+
+A task deadline before, equal to, or after its destination milestone deadline
+is respectively `task_deadline_before_milestone`, `same_deadline`, or
+`task_deadline_after_milestone`. Mixed date/date-time kinds produce
+`unavailable`; an absent destination deadline produces `deadline_absent`.
+Absence suppresses only that deadline evaluation, not an otherwise available
+temporal schedule.
+
+The combined-state witnesses also remain distinct: an incomplete subject
+already past its deadline is `overdue`; a precedence-on-time result with an
+unavailable resource relationship is `not_proven_late`; and a subject whose
+forecast relationships are all unavailable is `unavailable`.
 
 ## 4. Deadline qualification cases
 
@@ -224,6 +255,9 @@ Current state, both forecast views, and combined assessment are
 `not_applicable`. Relative time zero is not substituted as an actual
 completion timestamp.
 
+The retained `not_before` value is likewise not start authority for history:
+time eligibility is `not_applicable` with `task_already_started`.
+
 ## 5. Unit-migration cases
 
 ### TUE-012 Point to day converts the complete inventory
@@ -250,8 +284,10 @@ Exact expected tokens, in converted-field order:
 | `task.ESTIMATED.estimate.most_likely` | `4p` | `2d` |
 | `task.ESTIMATED.estimate.pessimistic` | `6p` | `3d` |
 
-Every `as_of`, `not_before`, and deadline token remains byte-identical. The
-result is `reversibility=exact`.
+Every occurrence of `project.as_of`, both milestone deadlines, the task
+`not_before`, and both task deadlines remains byte-identical. The
+machine-readable case fixes the original token at each of those six field
+paths. The result is `reversibility=exact`.
 
 ### TUE-013 Hour to Point inserts the caller-supplied relationship
 
@@ -273,6 +309,8 @@ The hour project has no declared velocity. Requesting Point with replacement
 The disposition is `inserted`. Exact values can invert under the effective
 velocity, but original metadata did not contain that velocity, so the result
 is `values_exact_metadata_changed`. Absolute temporal tokens remain unchanged.
+The machine-readable case fixes the retained token at all six temporal field
+paths rather than treating preservation as a document-level boolean.
 
 ### TUE-014 Direction and velocity failures are distinct
 
