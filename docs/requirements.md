@@ -1,6 +1,6 @@
 # perttool Requirements
 
-- Document status: Draft 0.11
+- Document status: Draft 0.12
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Scope: MVP and subsequent extension boundaries
@@ -19,6 +19,8 @@ The central mission of `perttool` is not PERT analysis itself. It is to provide 
 - Generation of a feasible schedule that considers shared resource capacity
 - Projection of the relative schedule onto declared dates or date-times
 - Evaluation of task and milestone deadlines without hiding infeasible targets
+- Exact preview-first migration between Points and one explicitly
+  velocity-linked time unit
 - Extraction of critical tasks and slack
 - Extraction of the “next task” that can be started now
 - Derivation of the task to prioritize in the current project and the reason it takes precedence over other feasible tasks
@@ -442,6 +444,50 @@ Compatibility:
 - The interface-contract task decides whether the additive command options
   require a new CLI contract identity, but it must not introduce aliases or
   silently reinterpret existing options.
+
+### 7.7 Point and time-unit source migration
+
+The first unit-migration extension rewrites one complete valid document
+between `point` and the `day` or `hour` unit linked by an explicit project
+velocity. It is distinct from read-only `velocity_forecast` output.
+
+Must:
+
+- Permit only `point -> day|hour` and matching `day|hour -> point`.
+- Select one exact effective velocity from the project or from an explicit
+  replacement supplied as part of the same atomic request.
+- Require the effective velocity's period to match the time source or target.
+  Never infer a `day <-> hour` relationship from a calendar constant,
+  displayed forecast, locale, or wall clock.
+- Convert `critical_epsilon`, `target_duration`, every task `duration`, and all
+  three values of every task `estimate`, regardless of task status.
+- Preserve omitted `critical_epsilon` as an omitted target-unit zero rather
+  than inserting a field.
+- Leave `as_of`, `deadline`, `not_before`, graph structure, resources, state,
+  priority, and all other non-duration source values unchanged.
+- Calculate every conversion as an exact Rational using the effective
+  velocity. Do not use binary floating point or a rendered decimal.
+- Serialize only exact finite grammar decimals. If any reduced result has a
+  denominator containing a prime other than 2 or 5, reject the entire
+  migration without rounding or a partial candidate.
+- Retain, replace, or insert velocity deterministically. A retained velocity
+  preserves its source bytes; a replacement is explicit and atomic.
+- Produce one source-preserving candidate, localized edits, and a deterministic
+  unified diff, and revalidate only the final candidate.
+- Treat a same-target request without replacement as a no-op and prevent a
+  repeated request from scaling values twice.
+- Guarantee exact inverse restoration of source Rational values when the same
+  effective velocity is retained. Lexical decimal spelling need not be
+  restored, and replacement velocity must be reported as a metadata change.
+- Fail closed if a later grammar adds a base-unit-bearing field not inventoried
+  by the active migration version.
+
+The normative formulas, field inventory, representability rule, velocity
+disposition, round-trip qualification, and stable semantic failure causes are
+defined by the
+[Point and Time-Unit Migration Semantics specification](specs/unit-migration.md).
+The dependency-ordered interface task defines public Core/CLI names, result
+schemas, help, and diagnostic codes before runtime implementation.
 
 ## 8. DSL requirements
 
@@ -1325,11 +1371,11 @@ or dist-tag writes. The authoritative procedure is
 
 There are no undecided design decisions that currently prevent starting MVP implementation. If a new semantic decision is needed during implementation, update an ADR or an individual specification first rather than fixing it only in code.
 
-The SU-M1 temporal and unit-migration extension has accepted its property scope
-and deterministic calendar semantics but still requires the dependency-ordered
-deadline, migration, interface, and example specifications in Section 25.
-These decisions block temporal implementation, not continued use of grammar
-version 1.
+The SU-M1 temporal and unit-migration extension has accepted its property
+scope, deterministic calendar and deadline semantics, and exact source-unit
+migration semantics but still requires the dependency-ordered interface,
+example, and review specifications in Section 25. These decisions block
+temporal implementation, not continued use of grammar version 1.
 
 Resolved design decisions:
 
@@ -1349,6 +1395,7 @@ Resolved design decisions:
 - Contract 3 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.2.0` release procedure](process/0.2.0-release.md)
 - Date/date-time comparison, `as_of`, exact day/hour/point projection, fixed-offset preservation, continuous-calendar boundaries, and `not_before` release bounds: [Temporal Calendar Semantics specification](specs/temporal-calendar.md)
 - Temporal precedence/resource release scheduling, deadline state, exact margin/lateness, feasibility, blocked/heuristic qualification, risk, and recommendation-version boundary: [Temporal Deadline Semantics specification](specs/temporal-deadline.md)
+- Permitted Point/time directions, effective velocity, complete field inventory, exact finite-decimal conversion, atomic candidate behavior, and round-trip qualification: [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md)
 
 ## 25. Recommended next specification work
 
@@ -1380,7 +1427,7 @@ Before implementation, separate the specifications in the following order.
     - [x] Temporal properties, entity scope, meanings, compatibility boundary, and non-goals
     - [x] [Deterministic date/date-time, `as_of`, timezone, and calendar semantics](specs/temporal-calendar.md)
     - [x] [Deadline-derived analysis and recommendation semantics](specs/temporal-deadline.md)
-    - [ ] Exact point and time-unit source-migration semantics
+    - [x] [Exact point and time-unit source-migration semantics](specs/unit-migration.md)
     - [ ] Grammar, Core, CLI, help, diagnostics, and result-projection contract
     - [ ] Normative boundary examples and machine-readable acceptance cases
     - [ ] Cross-cutting SU-M1 contract review

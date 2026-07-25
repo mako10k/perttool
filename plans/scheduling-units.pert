@@ -57,7 +57,7 @@ task SU_M1_CONTRACT_WORK_PACKAGE BACKLOG_REFINED -> CONTRACT_ACCEPTED:
     Roll up plans/scheduling-units-m1.pert. Accept requirements, normative
     semantics, interface projections, examples, compatibility policy, and the
     design review before implementation scope is fixed.
-  duration 1.181818d
+  duration 0.6d
   priority 100
   requires:
     DEVELOPERS 1

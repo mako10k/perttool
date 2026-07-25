@@ -8,26 +8,24 @@
       "tasks": 4,
       "gates": 2,
       "errors": 0,
-      "warnings": 0
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "13/1",
+    "precedence_makespan": "9/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "13/11",
+    "precedence_forecast": "3/5",
     "precedence_critical_tasks": [
-      "UNIT_MIGRATION_SEMANTICS",
       "INTERFACE_PROJECTION_CONTRACT",
       "NORMATIVE_EXAMPLES",
       "M1_CONTRACT_REVIEW"
     ],
-    "resource_makespan": "13/1",
-    "resource_forecast": "13/11",
+    "resource_makespan": "9/1",
+    "resource_forecast": "3/5",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "UNIT_MIGRATION_SEMANTICS",
       "INTERFACE_PROJECTION_CONTRACT",
       "NORMATIVE_EXAMPLES",
       "M1_CONTRACT_REVIEW"
@@ -37,14 +35,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "UNIT_MIGRATION_SEMANTICS"
+        "INTERFACE_PROJECTION_CONTRACT"
       ],
       "runnable_now": [
-        "UNIT_MIGRATION_SEMANTICS"
+        "INTERFACE_PROJECTION_CONTRACT"
       ],
       "blocked_now": [],
       "upcoming": [
-        "INTERFACE_PROJECTION_CONTRACT",
         "NORMATIVE_EXAMPLES",
         "M1_CONTRACT_REVIEW"
       ]

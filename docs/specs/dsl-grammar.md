@@ -1,12 +1,14 @@
 # perttool DSL Grammar Specification
 
-- Document status: Draft 0.5
+- Document status: Draft 0.6
 - Grammar version: 1
 - Created: 2026-07-21
+- Updated: 2026-07-25
 - Related requirements: [../requirements.md](../requirements.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 - CLI interface: [interfaces.md](interfaces.md)
 - Mutation semantics: [mutation.md](mutation.md)
+- Unit migration semantics: [unit-migration.md](unit-migration.md)
 
 ## 1. Purpose
 
@@ -215,6 +217,10 @@ DurationSuffix = "d" | "h" | "p" ;
 - `0d`, `0h`, and `0p` are lexically and syntactically valid.
 - Field validation checks the positive-value requirement for task durations and estimates.
 - A suffix that differs from the document's project unit is a semantic error.
+- A source migration between Point and a linked time unit rewrites every
+  base-unit Duration under the independently versioned
+  [Unit Migration Semantics specification](unit-migration.md). Grammar version
+  1 itself does not infer or apply that migration.
 
 ### 7.5 Velocity
 
@@ -227,6 +233,9 @@ Velocity = Decimal, "p", "/", Decimal, ( "d" | "h" ) ;
 - With `duration_unit point`, this is a required field, and the duration suffix determines the forecast unit.
 - With `duration_unit day|hour`, this is optional, and the duration suffix must match the project unit.
 - Velocity is a project-wide constant; per-task, per-resource, and per-period overrides are not included in grammar version 1.
+- Retaining or explicitly replacing this constant during source-unit migration
+  follows the Unit Migration Semantics specification. A read-only velocity
+  forecast does not rewrite this field.
 
 ### 7.6 String
 
@@ -925,6 +934,8 @@ Expected: `PTSEM-103`.
 - A version 1 parser accepts only `version 1`.
 - Do not silently interpret a newer version as version 1.
 - For a grammar-breaking change, provide a project version and a migration command.
+- Unit migration version 1 changes only accepted version-1 values and suffixes;
+  it does not change the project grammar version.
 - Update help, examples, fixtures, and formatter in the same change as a grammar version.
 - Explicitly state tool-version compatibility, recognizing that even a minor field addition causes older parsers to reject the unknown field.
 

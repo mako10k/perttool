@@ -1,6 +1,6 @@
 # perttool Analysis Specification
 
-- Document status: Draft 0.5
+- Document status: Draft 0.6
 - Analysis version: 1
 - Scheduler: `parallel-sgs` version 1
 - Created: 2026-07-21
@@ -13,6 +13,7 @@
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Temporal calendar semantics: [temporal-calendar.md](temporal-calendar.md)
 - Temporal deadline semantics: [temporal-deadline.md](temporal-deadline.md)
+- Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
@@ -50,6 +51,9 @@ Out of scope for this document:
 - Temporal release scheduling and deadline evaluation, which preserve the
   unqualified Analysis version 1 results and are independently versioned by
   the [Temporal Deadline Semantics specification](temporal-deadline.md)
+- Source migration between Points and a linked time unit, which rewrites the
+  document before reanalysis under the independently versioned
+  [Unit Migration Semantics specification](unit-migration.md)
 - Holidays, shifts, named time zones, setup time, and skills
 - Consumable resources, preemption, and changes to requirements during execution
 - Making an exact solver the MVP default path
@@ -171,6 +175,10 @@ Let project velocity be `P point / T calendar-unit`. If the base unit is point, 
 - Attach the `velocity_forecast` qualifier to converted values; run PERT/CPM and resource scheduling on values in the base unit.
 - Retain variance in the square of the base unit. The MVP velocity forecast covers duration/expected/float/makespan and does not output forecast variance.
 - Do not implicitly convert between day and hour through velocity or a fixed ratio.
+- These formulas also define exact numeric scaling for unit migration, but an
+  Analysis `velocity_forecast` remains read-only. Source-field inventory,
+  finite-decimal representability, atomic rewriting, and round-trip behavior
+  belong to the Unit Migration Semantics specification.
 
 ## 5. Duration and variance
 

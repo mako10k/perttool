@@ -76,6 +76,6 @@ test("temporal requirements preserve base analysis and version recommendation ch
   );
   assert.match(
     requirements,
-    /- \[ \] Exact point and time-unit source-migration semantics/,
+    /- \[x\] \[Exact point and time-unit source-migration semantics\]\(specs\/unit-migration\.md\)/,
   );
 });

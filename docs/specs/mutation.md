@@ -1,6 +1,6 @@
 # perttool Mutation Semantics Specification
 
-- Document status: Draft 0.4
+- Document status: Draft 0.5
 - Mutation semantics version: 1
 - Created: 2026-07-22
 - Requirements: [../requirements.md](../requirements.md)
@@ -8,12 +8,13 @@
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - CLI interface: [interfaces.md](interfaces.md)
 - Basic design: [../basic-design.md](../basic-design.md)
+- Unit migration semantics: [unit-migration.md](unit-migration.md)
 
 ## 1. Purpose and scope
 
 This document defines the Core contract for source-preserving mutations of `.pert` documents. A mutation does not write an existing document directly; it returns localized UTF-16 `TextEdit` values, a revalidated candidate, a digest, and a unified diff.
 
-The implementation scope of Mutation semantics version 1 is project `set`; task `add`, `set`, `remove`, and `finish`; gate/milestone/resource `add`, `set`, and `remove`; and `batch`, which applies multiple atomic mutations to one candidate. Filesystem writing passes the candidate defined here to the safe-write adapter in the CLI Interface specification. `dag advance` is a subsequent slice that reuses this document's common invariants.
+The implementation scope of Mutation semantics version 1 is project `set`; task `add`, `set`, `remove`, and `finish`; gate/milestone/resource `add`, `set`, and `remove`; and `batch`, which applies multiple atomic mutations to one candidate. Filesystem writing passes the candidate defined here to the safe-write adapter in the CLI Interface specification. `dag advance` is a subsequent slice that reuses this document's common invariants. The independently versioned [Unit Migration Semantics specification](unit-migration.md) also reuses the candidate/edit/diff invariants but is not an implemented Mutation version 1 request.
 
 ## 2. Normative precedence
 
@@ -296,6 +297,9 @@ The candidate's `status=blocked` and `blocked_reason`, required fields, DAG, and
 - `description`, `as_of`, `velocity`, `critical_epsilon`, and `target_duration` are clearable
 - Revalidate consistency among `duration_unit`, `velocity`, duration fields, and `finish` with the candidate parser/validator; do not expose an inconsistent candidate
 - A project-wide unit change that cannot be valid alone can be applied as a batch that also changes related task durations/estimates
+- A manually authored batch does not claim automatic field inventory, exact
+  conversion, finite-decimal preflight, velocity disposition, or inverse
+  guarantees. Those belong to `perttool.unit-migration`.
 
 ### 9.5 Batch
 

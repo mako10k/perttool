@@ -1,6 +1,6 @@
 # perttool Basic Design
 
-- Document status: Draft 1.11
+- Document status: Draft 1.12
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Applicable requirements: [requirements.md](requirements.md)
@@ -8,6 +8,7 @@
 - Analysis: [specs/analysis.md](specs/analysis.md)
 - Temporal calendar semantics: [specs/temporal-calendar.md](specs/temporal-calendar.md)
 - Temporal deadline semantics: [specs/temporal-deadline.md](specs/temporal-deadline.md)
+- Unit migration semantics: [specs/unit-migration.md](specs/unit-migration.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
 - Recommendation ranking: [specs/recommendation-ranking.md](specs/recommendation-ranking.md)
 - Recommendation reasons: [specs/recommendation-reasons.md](specs/recommendation-reasons.md)
@@ -438,6 +439,60 @@ fixes these meanings. Recommendation algorithm version 1 and Reason Taxonomy
 version 1.0 do not consume deadline facts. Public result types, CLI/help
 projection, grammar fields, and source-preserving mutations remain
 responsibilities of the ordered SU-M1 follow-on contracts.
+
+### 6.6 Point and Time-Unit Source Migration
+
+Unit migration is a pure candidate-planning layer over one valid source
+document. It is not an Analysis forecast and does not apply a sequence of
+independently valid project/task mutations.
+
+```text
+valid source + target unit + optional replacement velocity
+                         |
+                         v
+direction and effective-velocity validation
+                         |
+                         v
+complete base-unit field inventory
+                         |
+                         v
+exact Rational conversion + finite-decimal preflight
+                         |
+                         v
+localized UTF-16 edits + one revalidated candidate
+```
+
+The only changing-unit directions are Point to the effective velocity's
+`day` or `hour` period, and the matching time unit back to Point. The design
+does not infer a day/hour ratio. It converts declared project epsilon and
+target duration plus every deterministic or three-point task estimate,
+regardless of task status. Absolute `as_of`, `deadline`, and `not_before`
+values are retained.
+
+Preflight reduces every converted Rational and accepts source serialization
+only when its denominator contains no prime factor other than 2 or 5. The
+candidate uses the shortest exact finite decimal and target suffix. One
+nonrepresentable value suppresses the complete candidate, edit list, and
+diff; display rounding is never a fallback.
+
+The planner retains an equal declared velocity byte-for-byte, atomically
+replaces a different explicit velocity, or inserts an explicit velocity for a
+time source that lacks one. It edits only the project unit, applicable
+velocity, and inventoried Duration value spans, then reuses ordinary candidate
+validation, diff, digest, and later safe-write controls.
+
+A same-target request without replacement is a no-op. Repeating a successful
+target does not rescale values. Inverting with the same effective velocity
+restores exact source Rationals, although canonical Duration spelling need not
+restore lexical bytes. A replacement velocity is retained and therefore
+qualifies whole-document reversibility as metadata-changed.
+
+The [Point and Time-Unit Migration Semantics
+specification](specs/unit-migration.md) fixes the algorithm identity, formulas,
+field inventory, velocity disposition, representability, failures, and
+round-trip meaning. The ordered interface contract must define public Core,
+CLI, text/JSON, help, diagnostic, batch, and write projections before a
+runtime module or command is added.
 
 ## 7. Diagnostic Model
 

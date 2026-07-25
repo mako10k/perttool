@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M1:
   version 1
   title "SU-M1 temporal and unit-migration contract"
-  description "Refine TIME-001 and UNIT-001 into an accepted normative contract before implementation. This plan ends at SU-M1 and does not track later delivery tasks. TEMPORAL_REQUIREMENTS, CALENDAR_SEMANTICS, and DEADLINE_SEMANTICS completed on 2026-07-25, establishing a cumulative provisional observed velocity of 11p/1d."
+  description "Refine TIME-001 and UNIT-001 into an accepted normative contract before implementation. This plan ends at SU-M1 and does not track later delivery tasks. TEMPORAL_REQUIREMENTS, CALENDAR_SEMANTICS, DEADLINE_SEMANTICS, and UNIT_MIGRATION_SEMANTICS completed on 2026-07-25, establishing a cumulative provisional observed velocity of 15p/1d."
   as_of 2026-07-25
   duration_unit point
-  velocity 11p/1d
+  velocity 15p/1d
   finish M1_CONTRACT_ACCEPTED
 
 resource DEVELOPERS:
@@ -61,6 +61,7 @@ task UNIT_MIGRATION_SEMANTICS TEMPORAL_SCOPE_DEFINED -> UNIT_MIGRATION_SEMANTICS
     replacement, no-op and round-trip behavior, and fail-closed diagnostics.
     Do not treat an existing velocity forecast as a source rewrite.
   duration 4p
+  status done
   priority 90
   requires:
     DEVELOPERS 1

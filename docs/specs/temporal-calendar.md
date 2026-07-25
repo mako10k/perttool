@@ -10,6 +10,7 @@
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
 - Analysis specification: [analysis.md](analysis.md)
 - Deadline semantics: [temporal-deadline.md](temporal-deadline.md)
+- Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -416,9 +417,10 @@ The [Temporal Deadline Semantics specification](temporal-deadline.md) receives:
 It defines feasibility, margin, lateness, overdue, and risk states; release
 scheduling; and the unchanged recommendation-version boundary.
 
-`UNIT_MIGRATION_SEMANTICS` receives only the project velocity relationship. It
-MUST NOT use calendar-projection scalars, a date difference, an offset, or
-`as_of` to invent a `day <-> hour` source migration.
+The [Unit Migration Semantics specification](unit-migration.md) receives only
+the project velocity relationship. It MUST NOT use calendar-projection
+scalars, a date difference, an offset, or `as_of` to invent a `day <-> hour`
+source migration.
 
 `INTERFACE_PROJECTION_CONTRACT` decides:
 

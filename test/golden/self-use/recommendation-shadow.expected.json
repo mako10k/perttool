@@ -235,35 +235,34 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m1": {
-      "source_digest": "sha256:b3ffd76140960f8203d99c67abe154538e77ee620016908324a5465b610adc28",
+      "source_digest": "sha256:51c1a9036a8c370dbf2a0882618f63cb43fcd63ab1b7b1255d05342123b93643",
       "groups": {
         "active": [],
         "ready": [
-          "UNIT_MIGRATION_SEMANTICS"
+          "INTERFACE_PROJECTION_CONTRACT"
         ],
         "runnable_now": [
-          "UNIT_MIGRATION_SEMANTICS"
+          "INTERFACE_PROJECTION_CONTRACT"
         ],
         "blocked_now": [],
         "upcoming": [
-          "INTERFACE_PROJECTION_CONTRACT",
           "NORMATIVE_EXAMPLES",
           "M1_CONTRACT_REVIEW"
         ]
       },
       "recommended_task_ids": [
-        "UNIT_MIGRATION_SEMANTICS"
+        "INTERFACE_PROJECTION_CONTRACT"
       ],
       "manual_selected_task_ids": [
-        "UNIT_MIGRATION_SEMANTICS"
+        "INTERFACE_PROJECTION_CONTRACT"
       ],
       "tiers": {
-        "UNIT_MIGRATION_SEMANTICS": "recommended"
+        "INTERFACE_PROJECTION_CONTRACT": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "UNIT_MIGRATION_SEMANTICS",
+          "id": "INTERFACE_PROJECTION_CONTRACT",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -279,10 +278,12 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:605ef06a302c5e9c76b154c348c831cf6ffb93711ecd3a2c698edef562e5b5bd",
+      "source_digest": "sha256:6079f800d3f3e933e9480019bddd604822b9f00dca1f690e6640658c26532744",
       "groups": {
         "active": [],
         "ready": [
