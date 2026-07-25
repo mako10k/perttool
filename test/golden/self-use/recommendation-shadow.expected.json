@@ -283,33 +283,31 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m2r": {
-      "source_digest": "sha256:3b7c573ac820c4874b2b9b571e3bf08995df564c51e11505d5e16970aa754480",
+      "source_digest": "sha256:9c2681db105ef18f4867a49967fe11138a44c1f415cd58804cde1f93ea09a5e3",
       "groups": {
         "active": [],
         "ready": [
-          "RATIONAL_DURATION_VERSION_BOUNDARY"
+          "RATIONAL_DURATION_ACCEPTANCE"
         ],
         "runnable_now": [
-          "RATIONAL_DURATION_VERSION_BOUNDARY"
+          "RATIONAL_DURATION_ACCEPTANCE"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "RATIONAL_DURATION_ACCEPTANCE"
-        ]
+        "upcoming": []
       },
       "recommended_task_ids": [
-        "RATIONAL_DURATION_VERSION_BOUNDARY"
+        "RATIONAL_DURATION_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "RATIONAL_DURATION_VERSION_BOUNDARY"
+        "RATIONAL_DURATION_ACCEPTANCE"
       ],
       "tiers": {
-        "RATIONAL_DURATION_VERSION_BOUNDARY": "recommended"
+        "RATIONAL_DURATION_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RATIONAL_DURATION_VERSION_BOUNDARY",
+          "id": "RATIONAL_DURATION_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -325,10 +323,12 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:e0e4a30ec17fe811ca271f18090427437aa6d96730cb570b5729ef01f2f9114c",
+      "source_digest": "sha256:d8ac8a48e125e36849782c24338ce07c7a3d4ff04ea5abca6a1e2d2c03b892b3",
       "groups": {
         "active": [],
         "ready": [

@@ -8,24 +8,22 @@
       "tasks": 2,
       "gates": 3,
       "errors": 0,
-      "warnings": 0
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "7/1",
+    "precedence_makespan": "4/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "7/24",
+    "precedence_forecast": "1/6",
     "precedence_critical_tasks": [
-      "RATIONAL_DURATION_VERSION_BOUNDARY",
       "RATIONAL_DURATION_ACCEPTANCE"
     ],
-    "resource_makespan": "7/1",
-    "resource_forecast": "7/24",
+    "resource_makespan": "4/1",
+    "resource_forecast": "1/6",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "RATIONAL_DURATION_VERSION_BOUNDARY",
       "RATIONAL_DURATION_ACCEPTANCE"
     ]
   },
@@ -33,15 +31,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "RATIONAL_DURATION_VERSION_BOUNDARY"
+        "RATIONAL_DURATION_ACCEPTANCE"
       ],
       "runnable_now": [
-        "RATIONAL_DURATION_VERSION_BOUNDARY"
+        "RATIONAL_DURATION_ACCEPTANCE"
       ],
       "blocked_now": [],
-      "upcoming": [
-        "RATIONAL_DURATION_ACCEPTANCE"
-      ]
+      "upcoming": []
     },
     "resource_rejection": null
   }

@@ -72,6 +72,7 @@ task RATIONAL_DURATION_VERSION_BOUNDARY RATIONAL_DURATION_CORE_INPUT_READY -> RA
   title "Implement the rational Duration version boundary"
   description "Implement the internal candidate boundary that upgrades a source document to the newly selected target grammar only when an exact generated fraction requires it, reports the selected grammar and related compatibility metadata changes in reversibility, preserves temporal source, and leaves public schemas, exports, dispatch, help, and installed behavior unchanged."
   duration 3p
+  status done
   priority 70
   requires:
     DEVELOPERS 1

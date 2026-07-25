@@ -650,6 +650,26 @@ target adapters bind the Grammar 2 or Grammar 3 capability to that same
 in-place/out, digest-lock, symlink/race rejection, fsync, and post-write
 verification path; they do not add a Contract 4 CLI write route.
 
+The internal exact-Duration grammar boundary receives the complete set of
+canonical tokens generated for one changing-unit candidate and an explicit
+velocity disposition. A pure selector retains source Grammar 1 or 2 for an
+all-Decimal set, upgrades either to Grammar 3 when any token is a Fraction,
+and never downgrades Grammar 3. An identity-checked target application
+validates the source through the Grammar 3 capability and returns either no
+version edit or the localized canonical `project.version 3` edit. The
+version-only candidate is revalidated and is intended for composition with
+the later unit, velocity, and Duration edits before their one final
+validation. It preserves all temporal source bytes.
+
+The boundary reports source and target grammar versions,
+`grammar_disposition`, stable grammar/velocity qualifications, and
+reversibility independently from display precision. An upgrade, a retained
+Grammar 3 inverse-shaped all-Decimal candidate, or replaced/inserted velocity
+qualifies reversibility as `values_exact_metadata_changed`; another changing
+candidate is `exact`, and a no-op is `not_applicable`. The boundary and its
+types remain internal and do not activate migration, public schemas,
+dispatch, help, or installed behavior.
+
 ## 7. Diagnostic Model
 
 Every layer returns the shared `Diagnostic` type.
