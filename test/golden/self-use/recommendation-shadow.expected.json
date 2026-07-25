@@ -259,7 +259,7 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m2": {
-      "source_digest": "sha256:4173812cbd35ed9cb02e297530b2986126c6b0e78a2ecf1c273902acecf76d17",
+      "source_digest": "sha256:c2973ddd7596582d383b071abcb0b405269400c0ef825b93bad57c2627611c68",
       "groups": {
         "active": [],
         "ready": [],
@@ -280,12 +280,10 @@
         "reasons": 1,
         "descriptions": 0
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "scheduling-units": {
-      "source_digest": "sha256:29a266bb0cffec0096409514f495503f5b65c59577e5d1145d013f402e28e18d",
+      "source_digest": "sha256:cb919310d661d470d78efe8da45da0307ebca08c623eb6cfdce366cb0a3615fb",
       "groups": {
         "active": [],
         "ready": [
@@ -360,9 +358,7 @@
         "reasons": 9,
         "descriptions": 5
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "mvp": {
       "source_digest": "sha256:689462cc4c8a3b5d860f50c9e9a8de3c42ae9caea8fea4cd293ef2076d8caf24",

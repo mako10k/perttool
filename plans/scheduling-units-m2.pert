@@ -40,30 +40,7 @@ resource CONTRACT3_GUARD:
 
 
 
-milestone M2_ACCEPTANCE_INPUT_READY:
-  title "SU-M2 target Core branches ready for acceptance"
-  state reached
 
 milestone M2_FOUNDATIONS_ACCEPTED:
   title "SU-M2 temporal source and Core foundations accepted"
-
-
-
-
-
-
-
-
-task M2_FOUNDATION_ACCEPTANCE M2_ACCEPTANCE_INPUT_READY -> M2_FOUNDATIONS_ACCEPTED:
-  title "Accept SU-M2 target foundations without public activation"
-  description "Trace SU-M2-owned TUI and TUE observations through target Core tests; verify Grammar 1 parser/check/formatter, Contract 3 registry, active JSON identities, help, package exports, and installed-package behavior remain unchanged and reject the target surface. Run malformed-input, source-preservation, batch, determinism, documentation, full repository, link, and package gates. Record the handoff to SU-M3; do not activate Contract 4 or publish anything."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    SYNTAX_SURFACE 1
-    MUTATION_SURFACE 1
-    TARGET_CORE_SURFACE 1
-    CONTRACT3_GUARD 1
+  state reached

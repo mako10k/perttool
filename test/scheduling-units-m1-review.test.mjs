@@ -94,13 +94,14 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
     repositoryFile("plans/scheduling-units-m2.pert"),
     repositoryFile("docs/backlog.md"),
     repositoryFile("docs/basic-design.md"),
-    repositoryFile("docs/process/scheduling-units-m1-acceptance.md"),
+    repositoryFile("docs/process/scheduling-units-m2-acceptance.md"),
   ]);
 
   assert.match(
     plan,
-    /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE[\s\S]*Roll up plans\/scheduling-units-m2\.pert\.[\s\S]*Keep active Grammar 1, CLI Contract 3, public result schemas, help, and installed-package behavior unchanged\./,
+    /milestone TEMPORAL_SURFACE_ACCEPTED:[\s\S]*state reached/,
   );
+  assert.doesNotMatch(plan, /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE/);
   assert.match(
     plan,
     /task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE[\s\S]*Do not activate the public CLI or normal authority in this slice\./,
@@ -117,14 +118,16 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
   const taskIds = [...detail.matchAll(/^task ([A-Z0-9_]+) /gm)].map(
     (match) => match[1],
   );
-  assert.deepEqual(taskIds, [
-    "M2_FOUNDATION_ACCEPTANCE",
-  ]);
+  assert.deepEqual(taskIds, []);
   const points = [...detail.matchAll(/^  duration (\d+)p$/gm)].reduce(
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 4);
+  assert.equal(points, 0);
+  assert.match(
+    detail,
+    /milestone M2_FOUNDATIONS_ACCEPTED:[\s\S]*state reached/,
+  );
   assert.match(
     detail,
     /The active runtime remains Grammar 1 and CLI Contract 3\./,
@@ -147,6 +150,6 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
   );
   assert.match(
     acceptance,
-    /No semantic blocker remains for creating and estimating the SU-M2 detail plan\./,
+    /There are no open SU-M2 acceptance findings\./,
   );
 });

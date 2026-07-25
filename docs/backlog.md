@@ -455,8 +455,8 @@ SU-M2 progress:
   [SU-M2 acceptance record](process/scheduling-units-m2-acceptance.md) traces
   every `TUI-*` and `TUE-*` observation, the active Contract 3 rejection
   boundary, actual installed-package behavior, and the SU-M3 handoff. All 24p
-  are complete at a cumulative provisional `24p/1d`; the committed-snapshot
-  advance remains to remove the reached detail and macro frontiers.
+  are complete at a cumulative provisional `24p/1d`; both the detail and
+  macro work-package frontiers are advanced from committed snapshots.
 - The remaining macro has 4d precedence and 6d heuristic resource makespans
   with 2d resource delay. Both SU-M3 and SU-M4 are ready. The existing
   scheduler selects SU-M3, while complete `NextResult.v3` recommends the
