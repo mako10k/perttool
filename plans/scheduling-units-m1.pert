@@ -30,12 +30,10 @@ resource PUBLIC_SURFACE:
 
 
 
-milestone CONTRACT_INPUT_READY:
-  title "Temporal and migration semantic inputs ready"
-  state reached
 
 milestone INTERFACE_CONTRACT_DEFINED:
   title "Grammar and interface projections defined"
+  state reached
 
 milestone NORMATIVE_EXAMPLES_READY:
   title "Boundary examples and acceptance cases ready"
@@ -49,22 +47,6 @@ milestone M1_CONTRACT_ACCEPTED:
 
 
 
-task INTERFACE_PROJECTION_CONTRACT CONTRACT_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
-  title "Define grammar, Core, CLI, help, and result projections"
-  description |
-    Specify field syntax and validation, source-preserving mutations, batch
-    behavior, preview and safe-write controls, text/JSON schemas, command
-    discovery, guide content, diagnostics, and compatibility/version policy.
-    Inventory every affected project, validation, analysis, schedule, and
-    next-task output.
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    NORMATIVE_SURFACE 1
-    PUBLIC_SURFACE 1
 
 task NORMATIVE_EXAMPLES INTERFACE_CONTRACT_DEFINED -> NORMATIVE_EXAMPLES_READY:
   title "Create boundary examples and machine-readable acceptance cases"

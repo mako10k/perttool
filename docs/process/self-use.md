@@ -134,6 +134,24 @@ delay, and exact `3/5d` forecasts. Complete `NextResult.v3` recommends
 `INTERFACE_PROJECTION_CONTRACT`. The macro rollup produces `6.6d` precedence
 and `8.6d` heuristic resource makespans with 2d resource delay.
 
+`INTERFACE_PROJECTION_CONTRACT` then accepted
+[`perttool.temporal-unit-interface` version 1](../specs/temporal-unit-interface.md).
+It keeps grammar version 1 and CLI Contract 3 closed while selecting target
+Grammar 2, CLI Contract 4, CheckResult v2, ProjectResult v2, AnalysisResult
+v3, NextResult v4, and UnitMigrationResult v1. The contract fixes temporal
+field validation and source-preserving mutation, the dedicated
+`project migrate-unit` boundary, batch exclusion for automatic migration,
+preview/write safety, text/JSON, Guide topics, diagnostics, and the separation
+of unchanged recommendation ranking from release-gated start authority.
+Runtime activation and Next v4 authority adoption remain later gates. The 4p
+task was completed and advanced through the committed-snapshot and
+expected-digest Stage 3 path. The same-day cumulative sample is `19p/1d`; two
+tasks and 5p remain, with 5p precedence and heuristic resource makespans, no
+resource delay, and exact `5/19d` forecasts. Complete `NextResult.v3`
+recommends `NORMATIVE_EXAMPLES`. The six-decimal macro rollup produces
+`6.263158d` precedence and `8.263158d` heuristic resource makespans with 2d
+resource delay.
+
 Starting conditions:
 
 - `perttool dsl check <file>` works
@@ -649,10 +667,11 @@ Stage 1 entry evidence:
 - CLI-surface-reset Contract 3 cutover gate: the active 27-command registry drives dispatch, argv validation, text/JSON command help, separate guide publication, project initialization, direct gate maintenance, and `cli_contract_version=3`; four renamed Contract 2 routes fail with exit 2, 5p remain, precedence/resource makespans are both 5p, observed provisional velocity is `44p/1d`, and `CLI_003_FILE_FIRST_ACCEPTANCE` is recommended
 - CLI-surface-reset file-first acceptance gate: the isolated installed-package CLI alone initializes, reads, mutates every entity field, analyzes, selects, advances, and validates a plan without manual source rewriting; cumulative velocity is `49p/1d`, no detail work remains, and complete `NextResult.v3` has no recommendation
 - Contract 3 `v0.2.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Contract 3, renamed-command rejection, read-only agent guidance, complete Next v3, and file-first checks pass; publication left `latest=0.1.0` unchanged, then a separately authorized post-acceptance operation made `beta=latest=0.2.0`; cumulative velocity is `17p/2d`, no detail work remains, and complete Next v3 has no recommendation
-- scheduling-and-units milestone planning gate: `TIME-001` and `UNIT-001` map to SU-M0 through SU-M5 without duplicating detail task state; after the unit-migration-semantics rollup, the provisional macro precedence/resource makespans are `6.6d` and `8.6d` with 2d resource delay, and `SU_M1_CONTRACT_WORK_PACKAGE` is recommended
+- scheduling-and-units milestone planning gate: `TIME-001` and `UNIT-001` map to SU-M0 through SU-M5 without duplicating detail task state; after the interface-contract rollup, the provisional macro precedence/resource makespans are `6.263158d` and `8.263158d` with 2d resource delay, and `SU_M1_CONTRACT_WORK_PACKAGE` is recommended
 - SU-M1 temporal-requirements gate: project `as_of`, milestone `deadline`, task `not_before`, and task `deadline` are the exact initial property scope; grammar version 1 and existing result identities are not widened; `TEMPORAL_REQUIREMENTS` is completed and advanced; six tasks total 21p, precedence is 17p, heuristic resource work is 21p with 4p delay, observed provisional velocity is `3p/1d`, the resource forecast is `7d`, and `CALENDAR_SEMANTICS` is recommended
 - SU-M1 calendar-semantics gate: `perttool.calendar-projection` and the continuous fixed-offset profile version 1 fix tagged date/date-time comparison, `as_of`, exact projection, velocity, `not_before`, unavailable causes, and the no-business-calendar/no-unit-migration boundary; `CALENDAR_SEMANTICS` is completed and advanced; five tasks total 17p, precedence is 13p, heuristic resource work is 17p with 4p delay, cumulative provisional velocity is `7p/1d`, the resource forecast is `17/7d`, and `DEADLINE_SEMANTICS` is recommended
 - SU-M1 deadline-semantics gate: `perttool.deadline-evaluation` version 1 fixes task finish, milestone reach, project finish, current deadline state, signed margin, precedence lower bounds, heuristic resource forecasts, combined assessment, blocked-cone qualification, unavailable causes, and the Analysis/Recommendation version boundary; `DEADLINE_SEMANTICS` is complete and advanced through the committed-snapshot and expected-digest path; four tasks and 13p remain, both precedence and heuristic resource makespans are 13p with no resource delay, cumulative provisional velocity is `11p/1d`, both forecasts are `13/11d`, and `UNIT_MIGRATION_SEMANTICS` is recommended
 - SU-M1 unit-migration-semantics gate: `perttool.unit-migration` version 1 fixes permitted Point/linked-time directions, effective velocity disposition, the complete source-field inventory, exact finite-decimal conversion, atomic candidates, no-op/repetition, inverse qualification, and fail-closed causes without adding a CLI command; `UNIT_MIGRATION_SEMANTICS` is complete and advanced through the committed-snapshot and expected-digest path; three tasks and 9p remain, both precedence and heuristic resource makespans are 9p with no resource delay, cumulative provisional velocity is `15p/1d`, both forecasts are `3/5d`, and `INTERFACE_PROJECTION_CONTRACT` is recommended
+- SU-M1 interface-contract gate: `perttool.temporal-unit-interface` version 1 selects target Grammar 2, CLI Contract 4, temporal/unit Core and result identities, source-preserving mutation, dedicated migration, help, diagnostics, and release-gated Next v4 start authority without activating them in Contract 3; `INTERFACE_PROJECTION_CONTRACT` is complete and advanced through the committed-snapshot and expected-digest path; two tasks and 5p remain, both precedence and heuristic resource makespans are 5p with no resource delay, cumulative provisional velocity is `19p/1d`, both forecasts are `5/19d`, and `NORMATIVE_EXAMPLES` is recommended
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all eleven plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

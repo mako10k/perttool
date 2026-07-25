@@ -397,15 +397,21 @@ Progress is tracked at two levels:
 
 Current SU-M1 progress:
 
-- `TEMPORAL_REQUIREMENTS`, `CALENDAR_SEMANTICS`, `DEADLINE_SEMANTICS`, and
-  `UNIT_MIGRATION_SEMANTICS` are complete and advanced. The accepted deadline
-  contract is
+- `TEMPORAL_REQUIREMENTS`, `CALENDAR_SEMANTICS`, `DEADLINE_SEMANTICS`,
+  `UNIT_MIGRATION_SEMANTICS`, and `INTERFACE_PROJECTION_CONTRACT` are complete
+  and advanced. The accepted deadline contract is
   [`perttool.deadline-evaluation` version 1](specs/temporal-deadline.md).
 - The accepted calendar contract is
   [`perttool.calendar-projection` version 1](specs/temporal-calendar.md).
 - The accepted migration contract is
   [`perttool.unit-migration` version 1](specs/unit-migration.md).
-- Fresh complete `NextResult.v3` recommends `INTERFACE_PROJECTION_CONTRACT`.
+- The accepted public interface contract is
+  [`perttool.temporal-unit-interface` version 1](specs/temporal-unit-interface.md);
+  it targets Grammar 2 and CLI Contract 4 without activating that future
+  surface.
+- Two tasks and 5p remain at provisional `19p/1d`; precedence and heuristic
+  resource makespans are 5p with no resource delay and exact `5/19d`
+  forecasts. Fresh complete `NextResult.v3` recommends `NORMATIVE_EXAMPLES`.
 
 ## Independent post-beta work
 

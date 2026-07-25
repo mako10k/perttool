@@ -235,34 +235,33 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m1": {
-      "source_digest": "sha256:29148b301187d82e085ae77b8265b4a6638a6f0b46a53bc5088952ecbe054262",
+      "source_digest": "sha256:73f0b977aa34b410ec5454c9992669ec9eeea2ac8678a9e90cbfa8adba6ef83a",
       "groups": {
         "active": [],
         "ready": [
-          "INTERFACE_PROJECTION_CONTRACT"
+          "NORMATIVE_EXAMPLES"
         ],
         "runnable_now": [
-          "INTERFACE_PROJECTION_CONTRACT"
+          "NORMATIVE_EXAMPLES"
         ],
         "blocked_now": [],
         "upcoming": [
-          "NORMATIVE_EXAMPLES",
           "M1_CONTRACT_REVIEW"
         ]
       },
       "recommended_task_ids": [
-        "INTERFACE_PROJECTION_CONTRACT"
+        "NORMATIVE_EXAMPLES"
       ],
       "manual_selected_task_ids": [
-        "INTERFACE_PROJECTION_CONTRACT"
+        "NORMATIVE_EXAMPLES"
       ],
       "tiers": {
-        "INTERFACE_PROJECTION_CONTRACT": "recommended"
+        "NORMATIVE_EXAMPLES": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "INTERFACE_PROJECTION_CONTRACT",
+          "id": "NORMATIVE_EXAMPLES",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -281,7 +280,7 @@
       "diagnostic_codes": []
     },
     "scheduling-units": {
-      "source_digest": "sha256:6079f800d3f3e933e9480019bddd604822b9f00dca1f690e6640658c26532744",
+      "source_digest": "sha256:742a95064cc3119b394e4396afbdedcb7b770923384fec2fa13dc82e7cdeb37f",
       "groups": {
         "active": [],
         "ready": [
