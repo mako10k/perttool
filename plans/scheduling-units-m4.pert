@@ -44,6 +44,7 @@ milestone MIGRATION_REQUEST_READY:
 
 milestone EXACT_CONVERSION_READY:
   title "Exact unit conversion and canonical token generation ready"
+  state reached
 
 milestone MIGRATION_CANDIDATE_READY:
   title "Atomic source-preserving migration candidate ready"
@@ -61,16 +62,6 @@ milestone UNIT_MIGRATION_ACCEPTED:
   title "SU-M4 exact unit-migration Core accepted"
 
 
-task EXACT_UNIT_CONVERSION MIGRATION_REQUEST_READY -> EXACT_CONVERSION_READY:
-  title "Implement exact migration conversion records"
-  description "Convert every inventoried source value through the effective velocity with reduced exact Rational arithmetic. Reuse the accepted shortest-Decimal-or-reduced-Fraction Duration serializer and explicit grammar-retain-or-upgrade decision, preserve ordering and PERT constraints, and record original and converted exact values plus canonical target tokens. Never round, infer a day/hour ratio, or use calendar projection scalars."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    MIGRATION_CORE_SURFACE 1
-    TARGET_SOURCE_SURFACE 1
 
 task UNIT_MIGRATION_CANDIDATE EXACT_CONVERSION_READY -> MIGRATION_CANDIDATE_READY:
   title "Implement the atomic source-preserving migration candidate"

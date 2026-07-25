@@ -516,8 +516,8 @@ SU-M2 progress:
 - `EXACT_UNIT_CONVERSION` is implemented and recorded done through exact
   Point/time formulas, ordered original/converted Rational records, canonical
   Decimal-or-Fraction tokens, Grammar 1/2/3 retention or upgrade, no-op, and
-  inverse checks. It remains unadvanced under ADV-001 until its implementation
-  snapshot is committed.
+  inverse checks. Implementation commit `e442ea9` satisfies ADV-001 and the
+  detail is advanced to `EXACT_CONVERSION_READY`.
 - Four SU-M4 tasks and 17p remain. Cumulative velocity is `8p/1d`.
   Precedence and heuristic resource makespans are 13p and 17p with 4p delay;
   forecasts are `13/8d` and `17/8d`. Complete Next v3 recommends

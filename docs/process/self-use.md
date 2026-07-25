@@ -451,8 +451,11 @@ module remains internal and absent from the root API. The cumulative 8p
 first-day sample recalibrates velocity to `8p/1d`; 17p remain with 13p
 precedence, 17p heuristic resources, 4p delay, forecasts `13/8d` and `17/8d`,
 and complete Next v3 recommends `UNIT_MIGRATION_CANDIDATE`. The task remains
-done but unadvanced until its implementation snapshot is committed under
-ADV-001.
+done until implementation commit `e442ea9` satisfies ADV-001. Canonical
+advance then removes the completed task, retains both
+`MIGRATION_REQUEST_READY` and `EXACT_CONVERSION_READY` as reached because the
+result branch still starts from the request frontier, preserves the
+ready/recommended sets, and clears `PTDAG-208`.
 
 Starting conditions:
 

@@ -24,7 +24,6 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "EXACT_UNIT_CONVERSION",
     "UNIT_MIGRATION_CANDIDATE",
     "UNIT_MIGRATION_RESULT_V2",
     "MIGRATION_NOOP_REPEAT_INVERSE",
@@ -34,8 +33,13 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 21);
+  assert.equal(points, 17);
 
+  assert.match(
+    detail,
+    /milestone EXACT_CONVERSION_READY:[\s\S]*state reached/,
+  );
+  assert.doesNotMatch(detail, /^task EXACT_UNIT_CONVERSION /m);
   assert.match(
     detail,
     /milestone MIGRATION_REQUEST_READY:[\s\S]*state reached/,
@@ -56,13 +60,12 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   assert.match(interfaceSpec, /Perttool\.UnitMigrationResult\.v2/);
 });
 
-test("SU-M4 records exact conversion and selects the candidate", async () => {
+test("SU-M4 advances exact conversion and selects the candidate", async () => {
   const source = await repositoryFile("plans/scheduling-units-m4.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
 
-  assert.match(source, /milestone MIGRATION_REQUEST_READY:[\s\S]*state reached/);
-  assert.match(source, /task EXACT_UNIT_CONVERSION[\s\S]*status done/);
+  assert.match(source, /milestone EXACT_CONVERSION_READY:[\s\S]*state reached/);
   assert.match(source, /velocity 8p\/1d/);
   assert.equal(analysis.ok, true);
   assert.ok(analysis.precedence);
