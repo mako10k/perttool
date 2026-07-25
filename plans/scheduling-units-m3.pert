@@ -41,19 +41,12 @@ resource CONTRACT3_GUARD:
   title "Active Grammar 1, CLI Contract 3, and Next v3 compatibility gate"
   capacity 1
 
-milestone TEMPORAL_INPUT_READY:
-  title "Declared temporal inputs projected exactly"
-  state reached
 
-milestone TEMPORAL_PRECEDENCE_READY:
-  title "Release-aware temporal precedence analysis ready"
 
-milestone TEMPORAL_RESOURCE_READY:
-  title "Release-aware temporal resource schedule ready"
-  state reached
 
 milestone TEMPORAL_SCHEDULES_READY:
   title "Temporal schedule branches ready for deadline evaluation"
+  state reached
 
 milestone DEADLINE_EVALUATION_READY:
   title "Exact deadline evaluation ready"
@@ -65,24 +58,9 @@ milestone DEADLINE_CAPABILITIES_ACCEPTED:
   title "SU-M3 temporal deadline and Next v4 target Core accepted"
 
 
-task TEMPORAL_PRECEDENCE_CORE TEMPORAL_INPUT_READY -> TEMPORAL_PRECEDENCE_READY:
-  title "Implement release-aware temporal precedence analysis"
-  description "Implement the exact forward temporal projection with not_before release bounds, retained structural readiness, completion-relative scheduling, unavailable-bound failure, and deterministic precedence output while leaving active AnalysisResult v2 unchanged."
-  duration 4p
-  status done
-  priority 95
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PRECEDENCE_SURFACE 1
-    CONTRACT3_GUARD 1
 
 
-gate TEMPORAL_PRECEDENCE_GATE TEMPORAL_PRECEDENCE_READY -> TEMPORAL_SCHEDULES_READY:
-  reason "Deadline evaluation requires the accepted temporal precedence branch"
 
-gate TEMPORAL_RESOURCE_GATE TEMPORAL_RESOURCE_READY -> TEMPORAL_SCHEDULES_READY:
-  reason "Deadline evaluation requires the accepted temporal resource branch"
 
 task DEADLINE_EVALUATION_CORE TEMPORAL_SCHEDULES_READY -> DEADLINE_EVALUATION_READY:
   title "Evaluate exact deadline state and risk"

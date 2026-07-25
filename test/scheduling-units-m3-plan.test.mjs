@@ -24,7 +24,6 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "TEMPORAL_PRECEDENCE_CORE",
     "DEADLINE_EVALUATION_CORE",
     "ANALYSIS_NEXT_V4_TARGET",
     "M3_DEADLINE_ACCEPTANCE",
@@ -33,29 +32,22 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 14);
+  assert.equal(points, 10);
   assert.match(
     detail,
-    /milestone TEMPORAL_INPUT_READY:[\s\S]*state reached/,
+    /milestone TEMPORAL_SCHEDULES_READY:[\s\S]*state reached/,
   );
   assert.match(detail, /Active Grammar 1, CLI Contract 3/);
   assert.match(detail, /Next v3 normal authority/);
   assert.doesNotMatch(detail, /project migrate-unit/);
-  assert.match(
-    detail,
-    /milestone TEMPORAL_RESOURCE_READY:[\s\S]*state reached/,
-  );
-  assert.match(
-    detail,
-    /task TEMPORAL_PRECEDENCE_CORE[\s\S]*status done/,
-  );
+  assert.doesNotMatch(detail, /status done/);
   assert.doesNotMatch(macro, /^task SU_M4_UNIT_MIGRATION_WORK_PACKAGE /m);
   assert.match(deadline, /perttool\.deadline-evaluation/);
   assert.match(interfaceSpec, /Perttool\.AnalysisResult\.v3/);
   assert.match(interfaceSpec, /Perttool\.NextResult\.v4/);
 });
 
-test("SU-M3 maintains the complete known recommendation after both schedules", async () => {
+test("SU-M3 maintains the complete known recommendation at deadline evaluation", async () => {
   const source = await repositoryFile("plans/scheduling-units-m3.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
