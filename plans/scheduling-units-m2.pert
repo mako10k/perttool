@@ -40,15 +40,13 @@ milestone TEMPORAL_VALIDATION_READY:
   title "Target temporal validation semantics ready"
   state reached
 
-milestone TEMPORAL_FORMATTER_READY:
-  title "Target temporal formatter round-trip ready"
-  state reached
 
 milestone DECLARED_INPUT_CORE_READY:
   title "Target declared temporal-input Core ready"
 
 milestone TEMPORAL_MUTATION_READY:
   title "Target temporal mutation and batch Core ready"
+  state reached
 
 milestone M2_ACCEPTANCE_INPUT_READY:
   title "SU-M2 target Core branches ready for acceptance"
@@ -68,16 +66,6 @@ task DECLARED_TEMPORAL_INPUT_CORE TEMPORAL_VALIDATION_READY -> DECLARED_INPUT_CO
     DEVELOPERS 1
     TARGET_CORE_SURFACE 1
 
-task TEMPORAL_MUTATION_BATCH_CORE TEMPORAL_FORMATTER_READY -> TEMPORAL_MUTATION_READY:
-  title "Implement target temporal mutation and atomic batch Core"
-  description "Add target-only task and milestone temporal add, set, and clear requests with canonical placement and localized UTF-16 edits. Support final-candidate-only batch upgrade with version/as_of and downgrade after clearing all temporal fields. Reuse ordinary candidate validation, diff, digest, and safe-write adapters; expose no Contract 4 CLI option or descriptor. Cover TUI-009, TUI-010, and the temporal half of TUI-013."
-  duration 5p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    MUTATION_SURFACE 1
-    TARGET_CORE_SURFACE 1
 
 gate TEMPORAL_MUTATION_ACCEPTANCE_GATE TEMPORAL_MUTATION_READY -> M2_ACCEPTANCE_INPUT_READY:
   reason "SU-M2 acceptance requires target temporal mutation and final-candidate batch behavior"

@@ -437,7 +437,7 @@ SU-M2 progress:
   source field and declaration order, comments, BOM, line endings, and exact
   temporal tokens, and revalidates an idempotent target-AST-equivalent
   candidate. The active Contract 3 formatter remains Grammar 1.
-- `TEMPORAL_MUTATION_BATCH_CORE` is complete. The internal capability-checked
+- `TEMPORAL_MUTATION_BATCH_CORE` is complete and advanced. The internal capability-checked
   target planner adds, sets, and clears task/milestone temporal fields through
   the shared canonical order and localized UTF-16 edit path. Atomic batches
   upgrade or downgrade version/anchor/temporal fields from one original AST
