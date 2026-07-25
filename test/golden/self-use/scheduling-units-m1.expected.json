@@ -8,25 +8,23 @@
       "tasks": 3,
       "gates": 0,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "9/1",
+    "precedence_makespan": "5/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "3/5",
+    "precedence_forecast": "5/19",
     "precedence_critical_tasks": [
-      "INTERFACE_PROJECTION_CONTRACT",
       "NORMATIVE_EXAMPLES",
       "M1_CONTRACT_REVIEW"
     ],
-    "resource_makespan": "9/1",
-    "resource_forecast": "3/5",
+    "resource_makespan": "5/1",
+    "resource_forecast": "5/19",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "INTERFACE_PROJECTION_CONTRACT",
       "NORMATIVE_EXAMPLES",
       "M1_CONTRACT_REVIEW"
     ]
@@ -35,14 +33,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "INTERFACE_PROJECTION_CONTRACT"
+        "NORMATIVE_EXAMPLES"
       ],
       "runnable_now": [
-        "INTERFACE_PROJECTION_CONTRACT"
+        "NORMATIVE_EXAMPLES"
       ],
       "blocked_now": [],
       "upcoming": [
-        "NORMATIVE_EXAMPLES",
         "M1_CONTRACT_REVIEW"
       ]
     },
