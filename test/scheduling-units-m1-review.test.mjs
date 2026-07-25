@@ -88,9 +88,10 @@ test("SU-M1 accepted identities and requirements stay aligned", async () => {
   );
 });
 
-test("macro delivery keeps target Core slices behind one public cutover", async () => {
-  const [plan, backlog, design, acceptance] = await Promise.all([
+test("macro and SU-M2 detail keep target Core slices behind one public cutover", async () => {
+  const [plan, detail, backlog, design, acceptance] = await Promise.all([
     repositoryFile("plans/scheduling-units.pert"),
+    repositoryFile("plans/scheduling-units-m2.pert"),
     repositoryFile("docs/backlog.md"),
     repositoryFile("docs/basic-design.md"),
     repositoryFile("docs/process/scheduling-units-m1-acceptance.md"),
@@ -98,7 +99,7 @@ test("macro delivery keeps target Core slices behind one public cutover", async 
 
   assert.match(
     plan,
-    /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE[\s\S]*Do not activate CLI Contract 4, public result schemas, help, or installed-package behavior in this slice\./,
+    /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE[\s\S]*Roll up plans\/scheduling-units-m2\.pert\.[\s\S]*duration 0\.875d/,
   );
   assert.match(
     plan,
@@ -111,6 +112,31 @@ test("macro delivery keeps target Core slices behind one public cutover", async 
   assert.match(
     plan,
     /task SU_M5_INTEGRATED_ACCEPTANCE[\s\S]*Atomically cut over CLI Contract 4, public result schemas, registry dispatch, text\/JSON help, Guide, README, installed-package workflows, and Next v4 normal start authority/,
+  );
+
+  const taskIds = [...detail.matchAll(/^task ([A-Z0-9_]+) /gm)].map(
+    (match) => match[1],
+  );
+  assert.deepEqual(taskIds, [
+    "GRAMMAR_V2_TEMPORAL_SOURCE",
+    "TEMPORAL_SEMANTIC_VALIDATION",
+    "TEMPORAL_FORMATTER_ROUNDTRIP",
+    "DECLARED_TEMPORAL_INPUT_CORE",
+    "TEMPORAL_MUTATION_BATCH_CORE",
+    "M2_FOUNDATION_ACCEPTANCE",
+  ]);
+  const points = [...detail.matchAll(/^  duration (\d+)p$/gm)].reduce(
+    (total, match) => total + Number(match[1]),
+    0,
+  );
+  assert.equal(points, 24);
+  assert.match(
+    detail,
+    /The active runtime remains Grammar 1 and CLI Contract 3\./,
+  );
+  assert.match(
+    detail,
+    /Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan\./,
   );
 
   for (const document of [backlog, design, acceptance]) {

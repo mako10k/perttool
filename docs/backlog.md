@@ -383,12 +383,15 @@ project duration unit changes.
 Progress is tracked at two levels:
 
 - [`plans/scheduling-units.pert`](../plans/scheduling-units.pert) is the
-  milestone-level roadmap. Its work-package estimates after `SU-M1` are
-  provisional and are re-estimated when the preceding contract or milestone is
-  accepted.
+  milestone-level roadmap. Its `SU-M2` estimate is rolled up from the current
+  detail; estimates after `SU-M2` remain provisional and are re-estimated when
+  the preceding milestone is accepted.
 - [`plans/scheduling-units-m1.pert`](../plans/scheduling-units-m1.pert) tracks
   only the detailed work required to reach `SU-M1`. It does not duplicate
   completion state for later milestones.
+- [`plans/scheduling-units-m2.pert`](../plans/scheduling-units-m2.pert) tracks
+  the current six-task target-only source and Core slice required to reach
+  `SU-M2`. It does not activate the public Contract 4 surface.
 - Select the milestone work package from a fresh, complete macro `dag next`
   result, then select daily work from the corresponding milestone-detail plan.
   When a detail plan reaches its finish, roll up that result once to the macro,
@@ -418,6 +421,22 @@ SU-M1 acceptance:
   closes every `TUI-001` through `TUI-018` observation, resolves the public
   cutover sequencing ambiguity, and passes the accepted contract to target
   Core implementation without activating Grammar 2, Contract 4, or Next v4.
+
+SU-M2 planning:
+
+- Six tasks total 24p: target Grammar 2 source, temporal validation, formatter
+  round-trip, declared-input Core, temporal mutation/batch Core, and
+  cross-cutting acceptance.
+- Both precedence and heuristic resource makespans are 21p with no resource
+  delay. Inherited provisional velocity `24p/1d` yields an exact `7/8d`
+  forecast, and complete `NextResult.v3` recommends
+  `GRAMMAR_V2_TEMPORAL_SOURCE`.
+- The macro rollup has provisional `39/8d` precedence and `55/8d` heuristic
+  resource makespans with 2d resource delay. Its recommendation remains
+  `SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE`.
+- Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
+  projections, descriptors, help, Guide, package workflows, temporal analysis,
+  Next v4 authority, unit migration, and publication are explicit non-goals.
 
 ## Independent post-beta work
 

@@ -258,8 +258,57 @@
       },
       "diagnostic_codes": []
     },
+    "scheduling-units-m2": {
+      "source_digest": "sha256:714cf0a1e33bd38b53e4d408bf219bac296cea08d2062c014209a633c12a96b6",
+      "groups": {
+        "active": [],
+        "ready": [
+          "GRAMMAR_V2_TEMPORAL_SOURCE"
+        ],
+        "runnable_now": [
+          "GRAMMAR_V2_TEMPORAL_SOURCE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "TEMPORAL_SEMANTIC_VALIDATION",
+          "TEMPORAL_MUTATION_BATCH_CORE",
+          "M2_FOUNDATION_ACCEPTANCE",
+          "TEMPORAL_FORMATTER_ROUNDTRIP",
+          "DECLARED_TEMPORAL_INPUT_CORE"
+        ]
+      },
+      "recommended_task_ids": [
+        "GRAMMAR_V2_TEMPORAL_SOURCE"
+      ],
+      "manual_selected_task_ids": [
+        "GRAMMAR_V2_TEMPORAL_SOURCE"
+      ],
+      "tiers": {
+        "GRAMMAR_V2_TEMPORAL_SOURCE": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "GRAMMAR_V2_TEMPORAL_SOURCE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
+    },
     "scheduling-units": {
-      "source_digest": "sha256:1fede5c1fb4e1e0585e3560399148223759f3e90b2e155f8b2d1cbe010c80a0a",
+      "source_digest": "sha256:b3616976a745c1ea04d0b61222f60348b024aba9de4e0b301ee9424f889be71b",
       "groups": {
         "active": [],
         "ready": [

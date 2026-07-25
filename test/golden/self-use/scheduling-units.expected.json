@@ -12,13 +12,13 @@
     }
   },
   "analyze": {
-    "precedence_makespan": "6/1",
+    "precedence_makespan": "39/8",
     "precedence_critical_tasks": [
       "SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE",
       "SU_M4_UNIT_MIGRATION_WORK_PACKAGE",
       "SU_M5_INTEGRATED_ACCEPTANCE"
     ],
-    "resource_makespan": "8/1",
+    "resource_makespan": "55/8",
     "resource_delay": "2/1",
     "resource_arcs": [
       "resource:SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE:SU_M4_UNIT_MIGRATION_WORK_PACKAGE"

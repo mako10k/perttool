@@ -1,0 +1,128 @@
+project SCHEDULING_UNITS_M2:
+  version 1
+  title "SU-M2 temporal source and Core foundations"
+  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. The initial provisional velocity is inherited from the completed SU-M1 detail at 24p/1d and will be recalibrated from completed SU-M2 work."
+  as_of 2026-07-25
+  duration_unit point
+  velocity 24p/1d
+  finish M2_FOUNDATIONS_ACCEPTED
+
+milestone M1_CONTRACT_ACCEPTED:
+  title "SU-M1 temporal and migration contract accepted"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two independent target-only Core slices may run together when file ownership does not overlap"
+  capacity 2
+
+resource REVIEWERS:
+  title "Grammar and compatibility review capacity"
+  description "Only one source-contract or compatibility acceptance review runs at a time"
+  capacity 1
+
+resource SYNTAX_SURFACE:
+  title "Parser, CST/AST, validator, and formatter ownership"
+  capacity 1
+
+resource MUTATION_SURFACE:
+  title "Temporal mutation and batch ownership"
+  capacity 1
+
+resource TARGET_CORE_SURFACE:
+  title "Target CalendarValue and declared-input Core ownership"
+  description "Target-only types do not enter active CLI adapters or package exports before SU-M5"
+  capacity 1
+
+resource CONTRACT3_GUARD:
+  title "Active Grammar 1 and CLI Contract 3 compatibility gate"
+  capacity 1
+
+milestone GRAMMAR_V2_SOURCE_READY:
+  title "Target Grammar 2 temporal source model ready"
+
+milestone TEMPORAL_VALIDATION_READY:
+  title "Target temporal validation semantics ready"
+
+milestone TEMPORAL_FORMATTER_READY:
+  title "Target temporal formatter round-trip ready"
+
+milestone DECLARED_INPUT_CORE_READY:
+  title "Target declared temporal-input Core ready"
+
+milestone TEMPORAL_MUTATION_READY:
+  title "Target temporal mutation and batch Core ready"
+
+milestone M2_ACCEPTANCE_INPUT_READY:
+  title "SU-M2 target Core branches ready for acceptance"
+
+milestone M2_FOUNDATIONS_ACCEPTED:
+  title "SU-M2 temporal source and Core foundations accepted"
+
+task GRAMMAR_V2_TEMPORAL_SOURCE M1_CONTRACT_ACCEPTED -> GRAMMAR_V2_SOURCE_READY:
+  title "Implement the target Grammar 2 temporal source model"
+  description "Add an explicit target-only grammar capability, exact CalendarValue lexical/source records, and only milestone deadline, task not_before, and task deadline. Keep Grammar 1 field rejection, contextual identifiers, source spans, original tokens, PTDSL-005, and PTDSL-008 fixed. Do not route the target capability through active check, formatter, CLI, registry, or package exports. Cover TUE-001 and TUE-003 plus valid date/date-time source fixtures."
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SYNTAX_SURFACE 1
+
+task TEMPORAL_SEMANTIC_VALIDATION GRAMMAR_V2_SOURCE_READY -> TEMPORAL_VALIDATION_READY:
+  title "Implement target temporal semantic validation"
+  description "Require explicit project.as_of with PTSEM-112, preserve mixed temporal kinds as valid source, retain not_before and deadlines on active, done, or reached history, and read no clock, host zone, locale, or Git state. Return a target validated-document boundary without changing active Grammar 1 application behavior. Cover TUE-002, TUE-006, TUE-007, and TUE-011 validation meanings."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SYNTAX_SURFACE 1
+    TARGET_CORE_SURFACE 1
+
+task TEMPORAL_FORMATTER_ROUNDTRIP TEMPORAL_VALIDATION_READY -> TEMPORAL_FORMATTER_READY:
+  title "Accept target temporal formatter round trips"
+  description "Extend the target-only formatter path with canonical insertion order while preserving existing field order, comments, declaration order, BOM, line endings, exact temporal tokens, idempotence, and target AST equivalence. The active Contract 3 formatter must continue rejecting target Grammar 2 documents. Cover the formatter part of TUI-003 and the field-occurrence preservation witnesses."
+  duration 3p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    SYNTAX_SURFACE 1
+
+task DECLARED_TEMPORAL_INPUT_CORE TEMPORAL_VALIDATION_READY -> DECLARED_INPUT_CORE_READY:
+  title "Implement target declared temporal-input Core projections"
+  description "Derive internal target CheckResult v2 and ProjectResult v2 Core records from one validated source order, including anchor, milestone deadlines, task constraints, and finish deadline. Fix complete invalid-result and stable-order behavior without adding active CLI adapters, JSON schemas, src/index exports, descriptors, help, or package surface. Cover the Core portion of TUI-004."
+  duration 3p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    TARGET_CORE_SURFACE 1
+
+task TEMPORAL_MUTATION_BATCH_CORE TEMPORAL_FORMATTER_READY -> TEMPORAL_MUTATION_READY:
+  title "Implement target temporal mutation and atomic batch Core"
+  description "Add target-only task and milestone temporal add, set, and clear requests with canonical placement and localized UTF-16 edits. Support final-candidate-only batch upgrade with version/as_of and downgrade after clearing all temporal fields. Reuse ordinary candidate validation, diff, digest, and safe-write adapters; expose no Contract 4 CLI option or descriptor. Cover TUI-009, TUI-010, and the temporal half of TUI-013."
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    MUTATION_SURFACE 1
+    TARGET_CORE_SURFACE 1
+
+gate TEMPORAL_MUTATION_ACCEPTANCE_GATE TEMPORAL_MUTATION_READY -> M2_ACCEPTANCE_INPUT_READY:
+  reason "SU-M2 acceptance requires target temporal mutation and final-candidate batch behavior"
+
+gate DECLARED_INPUT_ACCEPTANCE_GATE DECLARED_INPUT_CORE_READY -> M2_ACCEPTANCE_INPUT_READY:
+  reason "SU-M2 acceptance requires target declared temporal-input Core projections"
+
+task M2_FOUNDATION_ACCEPTANCE M2_ACCEPTANCE_INPUT_READY -> M2_FOUNDATIONS_ACCEPTED:
+  title "Accept SU-M2 target foundations without public activation"
+  description "Trace SU-M2-owned TUI and TUE observations through target Core tests; verify Grammar 1 parser/check/formatter, Contract 3 registry, active JSON identities, help, package exports, and installed-package behavior remain unchanged and reject the target surface. Run malformed-input, source-preservation, batch, determinism, documentation, full repository, link, and package gates. Record the handoff to SU-M3; do not activate Contract 4 or publish anything."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SYNTAX_SURFACE 1
+    MUTATION_SURFACE 1
+    TARGET_CORE_SURFACE 1
+    CONTRACT3_GUARD 1

@@ -1,12 +1,7 @@
 project SCHEDULING_UNITS:
   version 1
   title "Temporal properties, deadlines, and unit migration roadmap"
-  description |
-    Track TIME-001 and UNIT-001 as milestone-level work packages without
-    duplicating the task state in milestone-detail plans. SU-M1 is rolled up
-    from plans/scheduling-units-m1.pert. Later estimates are provisional until
-    the preceding accepted contract or milestone is used to create the next
-    detail plan. Release and external distribution remain separate decisions.
+  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating task state in milestone-detail plans. SU-M1 is accepted and advanced. SU-M2 is rolled up from plans/scheduling-units-m2.pert. Later estimates remain provisional until the preceding accepted milestone creates and re-estimates its detail plan. Release and external distribution remain separate decisions."
   as_of 2026-07-25
   duration_unit day
   finish SCHEDULING_UNITS_ACCEPTED
@@ -52,8 +47,8 @@ milestone SCHEDULING_UNITS_ACCEPTED:
 
 task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE CONTRACT_ACCEPTED -> TEMPORAL_SURFACE_ACCEPTED:
   title "Implement temporal source and Core foundations"
-  description "Provisional work package. Create its detail plan and re-estimate it after SU-M1. Implement target Grammar 2 parsing, validation, formatting, source-preserving temporal mutation, and declared-input Core projections. Do not activate CLI Contract 4, public result schemas, help, or installed-package behavior in this slice."
-  duration 2d
+  description "Roll up plans/scheduling-units-m2.pert. Implement and accept target Grammar 2 parsing, validation, formatting, source-preserving temporal mutation, and declared-input Core projections. Keep active Grammar 1, CLI Contract 3, public result schemas, help, and installed-package behavior unchanged."
+  duration 0.875d
   priority 90
   requires:
     DEVELOPERS 1
