@@ -419,9 +419,11 @@ Progress is tracked at two levels:
 - [`plans/scheduling-units-m2r.pert`](../plans/scheduling-units-m2r.pert)
   tracks the completed and advanced exact rational Duration contract and
   target-only source extension required before SU-M3 and SU-M4.
+- [`plans/scheduling-units-m3.pert`](../plans/scheduling-units-m3.pert)
+  tracks the current six-task temporal deadline and NextResult v4 target Core
+  selected by complete macro Next v3.
 - [`plans/scheduling-units-m4.pert`](../plans/scheduling-units-m4.pert)
-  tracks the current six-task internal unit-migration version 2 Core selected
-  by complete macro Next v3.
+  tracks the completed and advanced internal unit-migration version 2 Core.
 - Select the milestone work package from a fresh, complete macro `dag next`
   result, then select daily work from the corresponding milestone-detail plan.
   When a detail plan reaches its finish, roll up that result once to the macro,
@@ -542,8 +544,8 @@ SU-M2 progress:
 - All six SU-M4 tasks and 25p are done at cumulative `25p/1d`. The final
   acceptance snapshot is committed at `bc75b37`; the detail is advanced to
   the reached `UNIT_MIGRATION_ACCEPTED` frontier with zero makespans and no
-  recommendation. The macro SU-M4 package is rolled up once and is done but
-  unadvanced. The remaining macro precedence and heuristic resource makespans
+  recommendation. The macro SU-M4 package is rolled up once in commit
+  `4101ef7` and advanced. The remaining macro precedence and heuristic resource makespans
   are both `1.958333d` with no delay, and complete Next v3 recommends
   `SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4

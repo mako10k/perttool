@@ -354,6 +354,55 @@
       },
       "diagnostic_codes": []
     },
+    "scheduling-units-m3": {
+      "source_digest": "sha256:0aba50469e542c3b697e1b4d9f1aaf2a92e7bb86bc478be24385d668c9dc9bde",
+      "groups": {
+        "active": [],
+        "ready": [
+          "TEMPORAL_INPUT_PROJECTION"
+        ],
+        "runnable_now": [
+          "TEMPORAL_INPUT_PROJECTION"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "DEADLINE_EVALUATION_CORE",
+          "ANALYSIS_NEXT_V4_TARGET",
+          "M3_DEADLINE_ACCEPTANCE",
+          "TEMPORAL_PRECEDENCE_CORE",
+          "TEMPORAL_RESOURCE_SCHEDULE"
+        ]
+      },
+      "recommended_task_ids": [
+        "TEMPORAL_INPUT_PROJECTION"
+      ],
+      "manual_selected_task_ids": [
+        "TEMPORAL_INPUT_PROJECTION"
+      ],
+      "tiers": {
+        "TEMPORAL_INPUT_PROJECTION": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "TEMPORAL_INPUT_PROJECTION",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
+    },
     "scheduling-units-m4": {
       "source_digest": "sha256:22327233571357720df909e8c4aef779d70bf06a9dc8a2fcad0c7b7b451d3bb8",
       "groups": {
@@ -379,7 +428,7 @@
       "diagnostic_codes": []
     },
     "scheduling-units": {
-      "source_digest": "sha256:7a1ac045a9c2c3a1b3f3c1d40070fbac049002cd0c9e99945b7f73006ee6d632",
+      "source_digest": "sha256:a5190a6eda6b1ea9f909e4d44aaa4d5339ec8cbdada6b06a8c3159076cb4f487",
       "groups": {
         "active": [],
         "ready": [
@@ -421,9 +470,7 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "mvp": {
       "source_digest": "sha256:689462cc4c8a3b5d860f50c9e9a8de3c42ae9caea8fea4cd293ef2076d8caf24",

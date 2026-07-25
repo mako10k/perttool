@@ -25,11 +25,13 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/english-baseline.pert` | Post-beta migration of maintained repository surfaces to canonical English | `.pert` document |
 | `plans/cli-surface-reset.pert` | Review-derived post-beta CLI/help design, implementation, migration, and acceptance DAG | `.pert` document |
 | `plans/release-0.2.0.pert` | Contract 3 version decision, local preparation, authorized distribution, and acceptance DAG | `.pert` document |
+| `plans/release-0.3.0.pert` | Contract 4 version gate, accepted implementation input, preparation, authorized PUBLISH, and acceptance DAG | `.pert` document |
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
 | `plans/scheduling-units-m2r.pert` | Completed exact rational Duration contract and target-only source/editing extension before SU-M3 and SU-M4 | `.pert` document |
-| `plans/scheduling-units-m4.pert` | Current internal exact unit-migration version 2 Core detail | `.pert` document |
+| `plans/scheduling-units-m3.pert` | Current temporal deadline and NextResult v4 target Core detail | `.pert` document |
+| `plans/scheduling-units-m4.pert` | Completed and advanced exact unit-migration version 2 Core detail | `.pert` document |
 | `test/fixtures/grammar/` | Specific examples of what parser should accept or reject | fixture/golden |
 | Git history | Past plans, specifications, and implementation | commit history |
 
@@ -526,9 +528,9 @@ candidate evidence. All six tasks and 25p are done at cumulative `25p/1d`;
 the detail has zero precedence and heuristic resource makespans and no
 recommendation. The final acceptance snapshot is committed at `bc75b37`; the
 expected-digest advance retains only reached `UNIT_MIGRATION_ACCEPTED`. The
-macro SU-M4 work package is rolled up once and marked done but remains
-unadvanced until this rollup snapshot is committed. Fresh complete macro
-Next v3 recommends `SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE`; the remaining
+macro SU-M4 work package is rolled up once in commit `4101ef7` and then
+advanced to reached `UNIT_MIGRATION_ACCEPTED`. Fresh complete macro Next v3
+recommends `SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE`; the remaining
 precedence and heuristic resource makespans are both `1.958333d` with no
 resource delay. SU-M5 owns the atomic public Contract 4 cutover; publication
 remains separately authorized.
@@ -832,7 +834,9 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
   `scheduling-units-m2.pert`
 - Completed exact rational Duration detail before SU-M3 and SU-M4:
   `scheduling-units-m2r.pert`
-- Current exact unit-migration Core detail: `scheduling-units-m4.pert`
+- Current temporal deadline and NextResult v4 target Core detail:
+  `scheduling-units-m3.pert`
+- Completed exact unit-migration Core detail: `scheduling-units-m4.pert`
 - after selecting a workstream in the macro plan, select daily tasks from the corresponding detail plan
 - update the corresponding macro task to `done` only when its detail slice is complete
 - `M1_ROADMAP_UPDATE` is complete and decomposed formatter preview, mutation preview, safe write, and advance into the operations detail plan
@@ -1076,5 +1080,11 @@ Stage 1 entry evidence:
 - SU-M2 temporal-mutation gate: `TEMPORAL_MUTATION_BATCH_CORE` is complete and advanced from clean implementation commit `65c8cda` through private capability-checked task/milestone temporal requests, shared canonical placement, localized UTF-16 edits, final-candidate-only version/anchor/temporal upgrade and downgrade batches, fail-closed invalid candidates, common deterministic diff/digest, and shared in-place/out safe-write mechanics; active Grammar 1, CLI Contract 3, root exports, descriptors, help, and installed behavior remain fixed; two tasks and 7p remain, precedence/resource makespans are both 7p with no delay, cumulative provisional velocity is `17p/1d`, both forecasts are `7/17d`, and `DECLARED_TEMPORAL_INPUT_CORE` is recommended
 - SU-M2 declared-input Core gate: `DECLARED_TEMPORAL_INPUT_CORE` is complete and advanced from clean implementation commit `5dc3390` through internal target CheckResult v2 and ProjectResult v2 Core projections over one validated source order; exact anchors, milestone deadlines, nullable task constraints, finish-milestone deadlines, Grammar 1 compatibility, syntax suppression, semantic-error retention, complete invalid project results, diagnostic limits, determinism, and the TUI-004 Core boundary are covered while active Contract 3 schemas, CLI, root exports, descriptors, help, and installed behavior remain fixed; one task and 4p remain, precedence/resource makespans are both 4p with no delay, cumulative provisional velocity is `20p/1d`, both forecasts are `1/5d`, and `M2_FOUNDATION_ACCEPTANCE` is recommended
 - SU-M2 foundation-acceptance gate: `M2_FOUNDATION_ACCEPTANCE` is complete and advanced through the cross-cutting acceptance record, all 18 TUI and TUE traces, active Contract 3/Grammar 1 rejection, target API non-export, actual installed-package checks, and 361-test full verification; cumulative velocity is `24p/1d` and no SU-M2 detail work remains; the later user-selected SU-M2R replan supersedes its then-current SU-M3/SU-M4 frontier without rewriting this history
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all fourteen plans
+- SU-M4 rollup and SU-M3 planning gate: the committed SU-M4 detail and its
+  one macro rollup are advanced to reached `UNIT_MIGRATION_ACCEPTED`.
+  `scheduling-units-m3.pert` decomposes the remaining 23p target Core into six
+  tasks with 19p precedence, 23p reviewer-constrained heuristic resources,
+  4p delay, inherited `24p/1d` velocity, forecasts `19/24d` and `23/24d`,
+  and complete Next v3 recommendation `TEMPORAL_INPUT_PROJECTION`.
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all sixteen plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

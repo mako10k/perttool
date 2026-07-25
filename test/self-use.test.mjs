@@ -262,6 +262,15 @@ test("scheduling and units SU-M2R plan matches the rational-Duration detail", as
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("scheduling and units SU-M3 plan matches the temporal-deadline detail", async () => {
+  const text = await readFile(path.join(root, "plans/scheduling-units-m3.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/scheduling-units-m3.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("scheduling and units SU-M4 plan matches the migration-Core detail", async () => {
   const text = await readFile(path.join(root, "plans/scheduling-units-m4.pert"), "utf8");
   const expected = JSON.parse(await readFile(

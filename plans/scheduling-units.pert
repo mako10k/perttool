@@ -1,7 +1,7 @@
 project SCHEDULING_UNITS:
   version 1
   title "Temporal properties, deadlines, and unit migration roadmap"
-  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, and SU-M2R are accepted and advanced. The SU-M4 detail is accepted and advanced at cumulative 25p/1d, and SU_M4_UNIT_MIGRATION_WORK_PACKAGE is done but unadvanced after one rollup. SU-M3 remains estimated at 23p using inherited 24p/1d velocity. The remaining precedence and heuristic resource makespans are both 1.958333d with no delay. Complete Next v3 recommends SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE. SU-M5 atomic Contract 4 activation follows both branches; release and external distribution remain separate decisions."
+  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, SU-M2R, and SU-M4 are accepted and advanced. The SU-M4 detail completed 25p at 25p/1d and was rolled up once. SU-M3 remains estimated at 23p using inherited 24p/1d velocity and is the only ready and recommended macro work package. The remaining precedence and heuristic resource makespans are both 1.958333d with no delay. SU-M5 atomic Contract 4 activation follows the accepted SU-M3 and SU-M4 branches; release and external distribution remain separate decisions."
   as_of 2026-07-25
   duration_unit day
   finish SCHEDULING_UNITS_ACCEPTED
@@ -32,6 +32,7 @@ milestone DEADLINE_CAPABILITIES_ACCEPTED:
 
 milestone UNIT_MIGRATION_ACCEPTED:
   title "SU-M4 exact unit-migration Core accepted"
+  state reached
 
 milestone DELIVERY_INPUT_READY:
   title "Deadline and migration Core branches accepted"
@@ -51,16 +52,6 @@ task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED -> DEADLI
     REVIEWERS 1
     PUBLIC_SURFACE 1
 
-task SU_M4_UNIT_MIGRATION_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED -> UNIT_MIGRATION_ACCEPTED:
-  title "Implement exact unit-migration Core"
-  description "Re-estimated milestone package: 25p at the inherited 24p/1d velocity, recorded as a six-decimal 1.041667d macro resource forecast. Implement unit-migration version 2 request validation, exact conversion and complete field inventory, atomic source-preserving candidate planning, UnitMigrationResult v2 projection, diagnostics, no-op and repetition behavior, and qualified exact inverse behavior. Reuse the accepted Grammar 3 Duration boundary; do not publish the Contract 4 command, package surface, or installed workflow in this slice."
-  duration 1.041667d
-  status done
-  priority 80
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PUBLIC_SURFACE 1
 
 gate DEADLINE_ACCEPTANCE_GATE DEADLINE_CAPABILITIES_ACCEPTED -> DELIVERY_INPUT_READY:
   reason "Atomic Contract 4 acceptance requires the temporal deadline and Next v4 target Core"

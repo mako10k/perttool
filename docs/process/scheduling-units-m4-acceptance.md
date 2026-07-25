@@ -150,6 +150,6 @@ acceptance and separate release authorization.
 The final detail snapshot is committed at `bc75b37` and advanced to the
 reached `UNIT_MIGRATION_ACCEPTED` frontier. SU-M4 completion is rolled into
 `SU_M4_UNIT_MIGRATION_WORK_PACKAGE` once without copying detail task history.
-The macro package remains done but unadvanced until its rollup snapshot is
-committed. Do not start SU-M5 until both SU-M3 and SU-M4 macro work packages
-are complete.
+The rollup is committed at `4101ef7` and advanced to reached
+`UNIT_MIGRATION_ACCEPTED`. Do not start SU-M5 until both SU-M3 and SU-M4 macro
+work packages are complete.
