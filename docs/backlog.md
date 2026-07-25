@@ -529,10 +529,16 @@ SU-M2 progress:
   source, retained Grammar 3 qualification, and inserted/replaced velocity
   metadata without historical inference. Both tasks are committed at
   `b8da602` and advanced to the reached `MIGRATION_ROUNDTRIP_READY` frontier.
-- Two SU-M4 tasks and 8p remain. Cumulative velocity is `17p/1d`.
-  Precedence and heuristic resource makespans are both 8p with no delay;
-  both forecasts are `8/17d`. Complete Next v3 recommends
-  `UNIT_MIGRATION_RESULT_V2`.
+- `UNIT_MIGRATION_RESULT_V2` is implemented and recorded done through the
+  internal `Perttool.UnitMigrationResult.v2` schema identity, exact
+  unit-bearing velocity and converted-field records, complete semantic causes,
+  deterministic failures, candidate data, and verified preview/write state.
+  It remains unadvanced; ADV-001 requires this implementation snapshot to be
+  committed before a later advance.
+- One SU-M4 acceptance task and 4p remain. Cumulative velocity is `21p/1d`.
+  Precedence and heuristic resource makespans are both 4p with no delay;
+  both forecasts are `4/21d`. Complete Next v3 recommends
+  `M4_UNIT_MIGRATION_ACCEPTANCE`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, the public unit-migration command and installed workflow,

@@ -495,6 +495,22 @@ milestones while retaining `MIGRATION_REQUEST_READY` and
 `MIGRATION_ROUNDTRIP_READY` as the two reached frontiers. Reanalysis preserves
 the ready/recommended result task and clears both `PTDAG-208` warnings.
 
+`UNIT_MIGRATION_RESULT_V2` then added the internal schema projection over the
+accepted candidate. It fixes `Perttool.UnitMigrationResult.v2`, projects the
+algorithm identity and grammar/unit dispositions, removes the request-only
+velocity token and token classification, emits exact unit-bearing effective
+velocity and converted fields, preserves reversibility, qualifications,
+complete causes, candidate data, diagnostics, and deterministic invalid
+results, and attaches only a matching target safe-write outcome. Dedicated
+tests cover TUE-012, no-op, Grammar 3 upgrade, failure determinism, root-export
+closure, and digest-matched writes. No JSON/text adapter, CLI envelope, help,
+registry, or installed workflow is added. The cumulative 21p first-day sample
+leaves only the 4p acceptance task; precedence and heuristic resource
+makespans are both 4p with no delay, both forecasts are `4/21d`, and complete
+Next v3 recommends `M4_UNIT_MIGRATION_ACCEPTANCE`. The task is done but
+unadvanced; ADV-001 requires this implementation snapshot to be committed
+before a later advance.
+
 Starting conditions:
 
 - `perttool dsl check <file>` works

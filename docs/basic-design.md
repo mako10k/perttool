@@ -607,6 +607,16 @@ replacement is qualified by the operation that changed the metadata; the
 history-free inverse retains the resulting velocity and does not guess its
 prior absence or value.
 
+`src/application/target-unit-migration-result.ts` projects the candidate into
+the internal `Perttool.UnitMigrationResult.v2` Core shape. It removes the
+request-only velocity token and serializer classification, emits normalized
+exact values with explicit Point or calendar units, preserves ordered
+converted fields and complete semantic causes, and includes candidate,
+diagnostic, and preview/write state. A write state can be attached only to a
+successful result whose safe-write digest equals the candidate digest. This
+module has no JSON or text adapter, CLI envelope, command registration, root
+export, or active installed workflow; those remain SU-M5 work.
+
 The SU-M2 source implementation keeps `parseDocument` fixed to the active
 Grammar 1 profile. Target parsing requires the identity-checked internal
 `TARGET_GRAMMAR_2_CAPABILITY`; only an explicit project `version 2` selects

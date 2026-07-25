@@ -4,7 +4,7 @@ project SCHEDULING_UNITS_M4:
   description "Implement and accept only the internal unit-migration version 2 Core selected by the scheduling-and-units macro. SU-M2R exact Decimal-or-fraction Duration, canonical serialization, target Grammar 3, and version-boundary capabilities are accepted inputs. The active Grammar 1 runtime, CLI Contract 3, public schemas, root exports, command registry, help, Guide, installed workflow, Next v3 authority, and package distribution remain unchanged. The initial velocity is inherited at 24p/1d; six tasks total 25p."
   as_of 2026-07-25
   duration_unit point
-  velocity 17p/1d
+  velocity 21p/1d
   finish UNIT_MIGRATION_ACCEPTED
 
 
@@ -64,6 +64,7 @@ task UNIT_MIGRATION_RESULT_V2 MIGRATION_REQUEST_READY -> MIGRATION_RESULT_V2_REA
   title "Implement the internal UnitMigrationResult v2 projection"
   description "Project algorithm identity, source and target grammar, grammar and velocity dispositions, source and target units, exact effective velocity, converted-field records, reversibility, qualifications, unavailable causes, candidate data, diagnostics, and deterministic invalid results under the accepted interface names. Keep the type internal: no root export, JSON command envelope, text adapter, help entry, or installed-package workflow."
   duration 4p
+  status done
   priority 80
   requires:
     DEVELOPERS 1

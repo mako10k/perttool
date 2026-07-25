@@ -307,33 +307,31 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m4": {
-      "source_digest": "sha256:5ba5b08f07b4df562ac6a441c123b7f7825c7dd34ed2256a7b5492bf7b16b103",
+      "source_digest": "sha256:43014c96e1f014f3d59dd5cd42975183ce4a7890c00635e90c27e9607680f5c9",
       "groups": {
         "active": [],
         "ready": [
-          "UNIT_MIGRATION_RESULT_V2"
+          "M4_UNIT_MIGRATION_ACCEPTANCE"
         ],
         "runnable_now": [
-          "UNIT_MIGRATION_RESULT_V2"
+          "M4_UNIT_MIGRATION_ACCEPTANCE"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "M4_UNIT_MIGRATION_ACCEPTANCE"
-        ]
+        "upcoming": []
       },
       "recommended_task_ids": [
-        "UNIT_MIGRATION_RESULT_V2"
+        "M4_UNIT_MIGRATION_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "UNIT_MIGRATION_RESULT_V2"
+        "M4_UNIT_MIGRATION_ACCEPTANCE"
       ],
       "tiers": {
-        "UNIT_MIGRATION_RESULT_V2": "recommended"
+        "M4_UNIT_MIGRATION_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "UNIT_MIGRATION_RESULT_V2",
+          "id": "M4_UNIT_MIGRATION_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -349,10 +347,12 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:16eefe04c9905f89e5d4f781329d89d805a49e155d5d84a4a7ec342e645432cf",
+      "source_digest": "sha256:e5c480c442300b2cdf96a4c53728d6554bec4630da60893a951805c8eeb07141",
       "groups": {
         "active": [],
         "ready": [

@@ -8,24 +8,22 @@
       "tasks": 2,
       "gates": 2,
       "errors": 0,
-      "warnings": 0
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "8/1",
+    "precedence_makespan": "4/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "8/17",
+    "precedence_forecast": "4/21",
     "precedence_critical_tasks": [
-      "UNIT_MIGRATION_RESULT_V2",
       "M4_UNIT_MIGRATION_ACCEPTANCE"
     ],
-    "resource_makespan": "8/1",
-    "resource_forecast": "8/17",
+    "resource_makespan": "4/1",
+    "resource_forecast": "4/21",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "UNIT_MIGRATION_RESULT_V2",
       "M4_UNIT_MIGRATION_ACCEPTANCE"
     ]
   },
@@ -33,15 +31,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "UNIT_MIGRATION_RESULT_V2"
+        "M4_UNIT_MIGRATION_ACCEPTANCE"
       ],
       "runnable_now": [
-        "UNIT_MIGRATION_RESULT_V2"
+        "M4_UNIT_MIGRATION_ACCEPTANCE"
       ],
       "blocked_now": [],
-      "upcoming": [
-        "M4_UNIT_MIGRATION_ACCEPTANCE"
-      ]
+      "upcoming": []
     },
     "resource_rejection": null
   }
