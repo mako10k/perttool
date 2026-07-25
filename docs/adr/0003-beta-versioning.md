@@ -3,7 +3,8 @@
 - Status: Accepted
 - Date: 2026-07-23
 - Amended: 2026-07-23 (`v0.1.0` explicit `latest` promotion);
-  2026-07-24 (`v0.2.0` Contract 3 release target)
+  2026-07-24 (`v0.2.0` Contract 3 release target);
+  2026-07-25 (`v0.2.0` explicit `latest` promotion)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -36,6 +37,12 @@ the user selected `0.2.0` as the next release target. The
 [`v0.2.0` release procedure](../process/0.2.0-release.md) governs preparation,
 authorization, distribution, and acceptance. This selection does not itself
 change package identity or authorize an external write.
+
+On 2026-07-25, after `v0.2.0` beta acceptance, the user explicitly promoted
+`perttool@0.2.0` to npm `latest`. Registry reads and an isolated
+`perttool@latest` installation confirmed that `beta` and `latest` both resolve
+to Contract 3 `0.2.0`; `alpha` remains on `0.1.0-alpha.2`. Product maturity
+remains beta.
 
 ## Beta gate
 

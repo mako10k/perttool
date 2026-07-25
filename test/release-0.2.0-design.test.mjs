@@ -60,6 +60,7 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
     readme,
     /npx --yes --package=perttool@0\.2\.0 -- perttool document check PLAN\.pert/,
   );
+  assert.match(readme, /npm `beta` and `latest` both resolve to Contract 3 `0\.2\.0`/);
   assert.match(sourceVersion, /TOOL_VERSION = "0\.2\.0"/);
 
   const manifest = JSON.parse(manifestText);
@@ -90,6 +91,10 @@ test("0.2.0 completed plan preserves release and acceptance boundaries", async (
   assert.match(procedure, /npm publication tag: `beta`/);
   assert.match(procedure, /`latest` promotion is a separate post-acceptance decision/);
   assert.match(procedure, /Do not retry an ambiguous GitHub or npm mutation/);
-  assert.match(acceptance, /npm `latest` remains on\nContract 2 `0\.1\.0`/);
+  assert.match(acceptance, /Status: Accepted 1\.1/);
+  assert.match(
+    acceptance,
+    /Current unauthenticated[\s\S]*\| `latest` \| `0\.2\.0` \|/,
+  );
   assert.match(acceptance, /no remaining recommendation/);
 });

@@ -40,9 +40,9 @@ npm install --global perttool@0.2.0
 perttool --version
 ```
 
-npm `beta` resolves to Contract 3 `0.2.0`. npm `latest` remains on Contract 2
-`0.1.0` unless a later, separately authorized promotion occurs.
-`perttool@beta` is an alternative to the exact `0.2.0` pin.
+npm `beta` and `latest` both resolve to Contract 3 `0.2.0` after the accepted
+beta was separately promoted to the default tag. `perttool@beta` and
+`perttool@latest` are alternatives to the exact `0.2.0` pin.
 
 ## Plan files
 

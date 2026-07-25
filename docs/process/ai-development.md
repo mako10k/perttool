@@ -154,12 +154,12 @@ design, local source preparation, clean-candidate acceptance, explicitly
 authorized distribution, and durable release acceptance.
 All five `RELEASE_020_*` tasks are complete and advanced. Version `0.2.0` was
 published from one verified tarball to a GitHub prerelease and npm `beta`;
-local, GitHub, and registry bytes match; installed Contract 3 and file-first
-checks passed; and npm `latest=0.1.0` is unchanged. The plan has no remaining
-or recommended task at `17p/2d`. The durable
-[acceptance record](0.2.0-release-acceptance.md) contains the release identity,
-artifact digests, dist-tags, and verification commands. Do not promote npm
-`latest` without a separate explicit decision.
+local, GitHub, and registry bytes match; and installed Contract 3 and
+file-first checks passed. Publication moved only `beta`; after acceptance, a
+separately authorized dist-tag operation made npm `beta=latest=0.2.0`. The
+plan remains unchanged with no remaining or recommended task at `17p/2d`.
+The durable [acceptance record](0.2.0-release-acceptance.md) contains the
+release identity, artifact digests, dist-tags, and verification commands.
 
 ### 5.1 Adopted Recommendation authority
 

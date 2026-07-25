@@ -1214,6 +1214,9 @@ The accepted Contract 3 source and package workflow published suffix-free beta
 [`plans/release-0.2.0.pert`](../plans/release-0.2.0.pert) completed and
 advanced after verifying release commit/tag identity, common local/GitHub/npm
 tarball bytes, installed Contract 3 and file-first behavior, `beta=0.2.0`, and
-unchanged `latest=0.1.0`. The completed plan has no recommendation. The
+unchanged publication-time `latest=0.1.0`. After acceptance, the user
+separately authorized promotion of the accepted version, and npm now reports
+`beta=latest=0.2.0`. The completed release plan has no recommendation and was
+not changed by that independent dist-tag operation. The
 [`v0.2.0` acceptance record](process/0.2.0-release-acceptance.md) preserves the
-durable evidence. npm `latest` promotion remains outside the release plan.
+durable evidence.

@@ -4,6 +4,13 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Changed
+
+- Promoted the accepted `perttool@0.2.0` Contract 3 beta to npm `latest`
+  through a separate, explicitly authorized post-acceptance dist-tag
+  operation. This changes the default install target without changing beta
+  product maturity or the immutable release artifact.
+
 ## [0.2.0] - 2026-07-25
 
 Contract 3 beta release. This version intentionally replaces the Contract 2

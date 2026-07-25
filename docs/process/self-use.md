@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.31
+- Document status: Active Stage 3 / Revision 2.32
 - Creation date: 2026-07-21
 - Update date: 2026-07-25
 - Related design: [../basic-design.md](../basic-design.md)
@@ -247,6 +247,14 @@ left only reached `RELEASE_020_ACCEPTED`. The final digest is
 `sha256:3ea3923fb7ae8ac5874e9856ac05f699d9de341f486ee9b9e7472fe028b7071b`;
 fresh complete `NextResult.v3` has no recommendation. The durable evidence is
 in [`0.2.0-release-acceptance.md`](0.2.0-release-acceptance.md).
+
+After acceptance, the user explicitly selected the accepted `beta` version for
+npm `latest`. One `secdat`-routed
+`npm dist-tag add perttool@0.2.0 latest` operation changed only the default
+tag. Prefer-online and direct registry reads confirmed
+`beta=latest=0.2.0` and `alpha=0.1.0-alpha.2`; an isolated
+`perttool@latest` installation reported `0.2.0` and returned CLI Contract 3.
+The immutable release artifact and completed release plan were not changed.
 
 ### 4.1 Velocity measurement calibration
 
@@ -541,6 +549,6 @@ Stage 1 entry evidence:
 - CLI-surface-reset domain-guide gate: the HelpNode registry remains the sole domain-topic authority while the pure internal `Perttool.GuideResult.v1` projection provides separate index, quick/detail topic, text/JSON, and `guide_topic` diagnostics without command-descriptor coupling or Contract 2 byte changes; 10p remain, precedence/resource makespans are both 10p, observed provisional velocity is `39p/1d`, and `CLI_002_CONTRACT_V3_CUTOVER` is recommended
 - CLI-surface-reset Contract 3 cutover gate: the active 27-command registry drives dispatch, argv validation, text/JSON command help, separate guide publication, project initialization, direct gate maintenance, and `cli_contract_version=3`; four renamed Contract 2 routes fail with exit 2, 5p remain, precedence/resource makespans are both 5p, observed provisional velocity is `44p/1d`, and `CLI_003_FILE_FIRST_ACCEPTANCE` is recommended
 - CLI-surface-reset file-first acceptance gate: the isolated installed-package CLI alone initializes, reads, mutates every entity field, analyzes, selects, advances, and validates a plan without manual source rewriting; cumulative velocity is `49p/1d`, no detail work remains, and complete `NextResult.v3` has no recommendation
-- Contract 3 `v0.2.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Contract 3, renamed-command rejection, read-only agent guidance, complete Next v3, and file-first checks pass; npm `beta=0.2.0` while `latest=0.1.0` is unchanged; cumulative velocity is `17p/2d`, no detail work remains, and complete Next v3 has no recommendation
+- Contract 3 `v0.2.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Contract 3, renamed-command rejection, read-only agent guidance, complete Next v3, and file-first checks pass; publication left `latest=0.1.0` unchanged, then a separately authorized post-acceptance operation made `beta=latest=0.2.0`; cumulative velocity is `17p/2d`, no detail work remains, and complete Next v3 has no recommendation
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all nine plans
 - write state: Stage 3 editing/advance commands are enabled using preview-first, diff and deletion-list review, expected digests, and reanalysis after writes.
