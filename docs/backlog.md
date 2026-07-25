@@ -522,14 +522,13 @@ SU-M2 progress:
   coordinated UTF-16 edit set, final-candidate-only Grammar 1/2/3 validation,
   exact Duration and temporal preservation postconditions, digest/diff,
   fail-closed request/source handling, determinism, BOM retention, and target
-  safe-write reuse. It remains unadvanced under ADV-001 until its
-  implementation snapshot is committed.
+  safe-write reuse.
 - `MIGRATION_NOOP_REPEAT_INVERSE` is implemented and recorded done through
   unchanged same-unit and repeated requests, exact Rational round trips,
   canonical lexical normalization, byte-retained temporal and unrelated
   source, retained Grammar 3 qualification, and inserted/replaced velocity
-  metadata without historical inference. It remains unadvanced with the
-  candidate WIP under ADV-001 until the implementation snapshot is committed.
+  metadata without historical inference. Both tasks are committed at
+  `b8da602` and advanced to the reached `MIGRATION_ROUNDTRIP_READY` frontier.
 - Two SU-M4 tasks and 8p remain. Cumulative velocity is `17p/1d`.
   Precedence and heuristic resource makespans are both 8p with no delay;
   both forecasts are `8/17d`. Complete Next v3 recommends

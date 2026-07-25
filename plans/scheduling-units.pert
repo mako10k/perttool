@@ -1,7 +1,7 @@
 project SCHEDULING_UNITS:
   version 1
   title "Temporal properties, deadlines, and unit migration roadmap"
-  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, and SU-M2R are accepted and advanced. Accepted target-only semantics re-estimate SU-M3 at 23p and SU-M4 at 25p using the inherited 24p/1d velocity. Complete fresh macro Next v3 selects SU-M4; plans/scheduling-units-m4.pert has advanced exact conversion and completed UNIT_MIGRATION_CANDIDATE plus MIGRATION_NOOP_REPEAT_INVERSE at cumulative 17p/1d, leaving matching 8p precedence and heuristic resource makespans with no delay and recommending UNIT_MIGRATION_RESULT_V2. SU-M3 remains at its milestone estimate until selected. Release and external distribution remain separate decisions."
+  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, and SU-M2R are accepted and advanced. Accepted target-only semantics re-estimate SU-M3 at 23p and SU-M4 at 25p using the inherited 24p/1d velocity. Complete fresh macro Next v3 selects SU-M4; plans/scheduling-units-m4.pert has advanced exact conversion, UNIT_MIGRATION_CANDIDATE, and MIGRATION_NOOP_REPEAT_INVERSE through commit b8da602 at cumulative 17p/1d, leaving matching 8p precedence and heuristic resource makespans with no delay and recommending UNIT_MIGRATION_RESULT_V2. SU-M3 remains at its milestone estimate until selected. Release and external distribution remain separate decisions."
   as_of 2026-07-25
   duration_unit day
   finish SCHEDULING_UNITS_ACCEPTED

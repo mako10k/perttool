@@ -472,8 +472,7 @@ tests keep partial candidates and Contract 3 exposure closed. The cumulative
 13p first-day sample leaves 12p, with 8p precedence, 12p heuristic resources,
 4p delay, forecasts `8/13d` and `12/13d`, and complete Next v3 recommends
 `MIGRATION_NOOP_REPEAT_INVERSE`; `UNIT_MIGRATION_RESULT_V2` remains
-resource-deferred. The task is done but unadvanced until its implementation
-snapshot is committed under ADV-001.
+resource-deferred.
 
 `MIGRATION_NOOP_REPEAT_INVERSE` then accepted the candidate service's
 round-trip behavior without adding a new runtime surface. TUE-016 repeats a
@@ -490,8 +489,11 @@ the forward result supplies `values_exact_metadata_changed` and
 cumulative 17p first-day sample leaves 8p; precedence and heuristic resource
 makespans are both 8p with no delay, both forecasts are `8/17d`, and complete
 Next v3 recommends `UNIT_MIGRATION_RESULT_V2`. The candidate and round-trip
-tasks remain done but unadvanced until their implementation snapshot is
-committed under ADV-001.
+implementation is committed at `b8da602`; canonical expected-digest advance
+then removes both task edges and the exact-conversion/candidate intermediate
+milestones while retaining `MIGRATION_REQUEST_READY` and
+`MIGRATION_ROUNDTRIP_READY` as the two reached frontiers. Reanalysis preserves
+the ready/recommended result task and clears both `PTDAG-208` warnings.
 
 Starting conditions:
 

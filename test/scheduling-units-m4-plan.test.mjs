@@ -24,21 +24,16 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "UNIT_MIGRATION_CANDIDATE",
     "UNIT_MIGRATION_RESULT_V2",
-    "MIGRATION_NOOP_REPEAT_INVERSE",
     "M4_UNIT_MIGRATION_ACCEPTANCE",
   ]);
   const points = [...detail.matchAll(/^  duration (\d+)p$/gm)].reduce(
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 17);
+  assert.equal(points, 8);
 
-  assert.match(
-    detail,
-    /milestone EXACT_CONVERSION_READY:[\s\S]*state reached/,
-  );
+  assert.doesNotMatch(detail, /^milestone EXACT_CONVERSION_READY:/m);
   assert.doesNotMatch(detail, /^task EXACT_UNIT_CONVERSION /m);
   assert.match(
     detail,
@@ -60,17 +55,17 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   assert.match(interfaceSpec, /Perttool\.UnitMigrationResult\.v2/);
 });
 
-test("SU-M4 records round-trip acceptance and selects result projection", async () => {
+test("SU-M4 advances round-trip acceptance and selects result projection", async () => {
   const source = await repositoryFile("plans/scheduling-units-m4.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
 
-  assert.match(source, /milestone EXACT_CONVERSION_READY:[\s\S]*state reached/);
-  assert.match(source, /task UNIT_MIGRATION_CANDIDATE[\s\S]*status done/);
   assert.match(
     source,
-    /task MIGRATION_NOOP_REPEAT_INVERSE[\s\S]*status done/,
+    /milestone MIGRATION_ROUNDTRIP_READY:[\s\S]*state reached/,
   );
+  assert.doesNotMatch(source, /^task UNIT_MIGRATION_CANDIDATE /m);
+  assert.doesNotMatch(source, /^task MIGRATION_NOOP_REPEAT_INVERSE /m);
   assert.match(source, /velocity 17p\/1d/);
   assert.equal(analysis.ok, true);
   assert.ok(analysis.precedence);

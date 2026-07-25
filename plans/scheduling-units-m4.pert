@@ -42,18 +42,14 @@ milestone MIGRATION_REQUEST_READY:
   title "Migration request, direction, velocity, and inventory Core ready"
   state reached
 
-milestone EXACT_CONVERSION_READY:
-  title "Exact unit conversion and canonical token generation ready"
-  state reached
 
-milestone MIGRATION_CANDIDATE_READY:
-  title "Atomic source-preserving migration candidate ready"
 
 milestone MIGRATION_RESULT_V2_READY:
   title "Internal UnitMigrationResult v2 projection ready"
 
 milestone MIGRATION_ROUNDTRIP_READY:
   title "No-op, repetition, and inverse behavior ready"
+  state reached
 
 milestone M4_ACCEPTANCE_INPUT_READY:
   title "SU-M4 migration branches ready for acceptance"
@@ -63,17 +59,6 @@ milestone UNIT_MIGRATION_ACCEPTED:
 
 
 
-task UNIT_MIGRATION_CANDIDATE EXACT_CONVERSION_READY -> MIGRATION_CANDIDATE_READY:
-  title "Implement the atomic source-preserving migration candidate"
-  description "Plan non-overlapping UTF-16 edits for grammar version when required, duration_unit, velocity retention/replacement/insertion, and every inventoried Duration. Apply one in-memory candidate, parse and validate it through the selected Grammar 1, 2, or 3 capability, and publish digest, diff, edits, and candidate only after final validation. Reuse target safe-write mechanics without adding active Contract 3 dispatch or an automatic migration batch member."
-  duration 5p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    MIGRATION_CORE_SURFACE 1
-    TARGET_SOURCE_SURFACE 1
-    SAFE_WRITE_SURFACE 1
 
 task UNIT_MIGRATION_RESULT_V2 MIGRATION_REQUEST_READY -> MIGRATION_RESULT_V2_READY:
   title "Implement the internal UnitMigrationResult v2 projection"
@@ -86,17 +71,6 @@ task UNIT_MIGRATION_RESULT_V2 MIGRATION_REQUEST_READY -> MIGRATION_RESULT_V2_REA
     MIGRATION_CORE_SURFACE 1
     TARGET_RESULT_SURFACE 1
 
-task MIGRATION_NOOP_REPEAT_INVERSE MIGRATION_CANDIDATE_READY -> MIGRATION_ROUNDTRIP_READY:
-  title "Accept no-op, repetition, and exact inverse behavior"
-  description "Make same-unit requests without replacement successful unchanged candidates, prove repeated targets do not rescale, and verify inverse migration with the same effective velocity restores every exact source Rational. Preserve canonical lexical and unrelated bytes while reporting grammar-upgrade or velocity replacement/insertion as values_exact_metadata_changed rather than overstating whole-document identity."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    MIGRATION_CORE_SURFACE 1
-    TARGET_SOURCE_SURFACE 1
-    SAFE_WRITE_SURFACE 1
 
 gate MIGRATION_ROUNDTRIP_ACCEPTANCE_GATE MIGRATION_ROUNDTRIP_READY -> M4_ACCEPTANCE_INPUT_READY:
   reason "SU-M4 acceptance requires exact candidate, no-op, repetition, and inverse behavior"
