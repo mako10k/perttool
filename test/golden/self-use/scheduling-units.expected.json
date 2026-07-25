@@ -8,23 +8,21 @@
       "tasks": 4,
       "gates": 2,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
-    "precedence_makespan": "21/5",
+    "precedence_makespan": "4/1",
     "precedence_critical_tasks": [
-      "SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE",
       "SU_M4_UNIT_MIGRATION_WORK_PACKAGE",
       "SU_M5_INTEGRATED_ACCEPTANCE"
     ],
-    "resource_makespan": "31/5",
+    "resource_makespan": "6/1",
     "resource_delay": "2/1",
     "resource_arcs": [
       "resource:SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE:SU_M4_UNIT_MIGRATION_WORK_PACKAGE"
     ],
     "schedule_critical_tasks": [
-      "SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE",
       "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
       "SU_M4_UNIT_MIGRATION_WORK_PACKAGE",
       "SU_M5_INTEGRATED_ACCEPTANCE"
@@ -34,16 +32,15 @@
     "groups": {
       "active": [],
       "ready": [
-        "SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE"
+        "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
+        "SU_M4_UNIT_MIGRATION_WORK_PACKAGE"
       ],
       "runnable_now": [
-        "SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE"
+        "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
       ],
       "blocked_now": [],
       "upcoming": [
-        "SU_M5_INTEGRATED_ACCEPTANCE",
-        "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
-        "SU_M4_UNIT_MIGRATION_WORK_PACKAGE"
+        "SU_M5_INTEGRATED_ACCEPTANCE"
       ]
     }
   }

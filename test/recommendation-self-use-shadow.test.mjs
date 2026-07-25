@@ -232,12 +232,6 @@ test("all twelve self-use plans pass the v3 recommendation shadow gate", async (
     assert.ok(jointFact);
     assert.deepEqual(jointFact.value, { type: "boolean", value: true });
 
-    assert.equal(
-      recommendation.recommended_task_ids.every((id) =>
-        json.groups.runnable_now.includes(id)),
-      true,
-      `${planName}: v3 recommendation is a runnable subset`,
-    );
     actual.plans[planName] = projectPlan(json);
     if (planName === "recommendation") {
       actual.why_not = projectWhyNot(recommendation);

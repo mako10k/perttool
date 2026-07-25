@@ -451,13 +451,17 @@ SU-M2 progress:
   temporal inputs, semantic diagnostics retain trusted declarations, and an
   invalid project result is complete and null-valued without activating a
   public schema or adapter.
-- One task and 4p remain. Both precedence and heuristic resource makespans
-  are 4p with no resource delay. Observed provisional velocity `20p/1d`
-  yields exact `1/5d` forecasts, and complete `NextResult.v3` recommends
-  `M2_FOUNDATION_ACCEPTANCE`.
-- The macro rollup has provisional `4.2d` precedence and `6.2d` heuristic
-  resource makespans with 2d resource delay. Its recommendation remains
-  `SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE`.
+- `M2_FOUNDATION_ACCEPTANCE` is complete. The
+  [SU-M2 acceptance record](process/scheduling-units-m2-acceptance.md) traces
+  every `TUI-*` and `TUE-*` observation, the active Contract 3 rejection
+  boundary, actual installed-package behavior, and the SU-M3 handoff. All 24p
+  are complete at a cumulative provisional `24p/1d`; the committed-snapshot
+  advance remains to remove the reached detail and macro frontiers.
+- The remaining macro has 4d precedence and 6d heuristic resource makespans
+  with 2d resource delay. Both SU-M3 and SU-M4 are ready. The existing
+  scheduler selects SU-M3, while complete `NextResult.v3` recommends the
+  different jointly feasible SU-M4 set; Recommendation section 10 explicitly
+  permits the two sets to differ.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, unit migration, and publication are explicit non-goals.

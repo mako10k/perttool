@@ -262,12 +262,75 @@ node --input-type=module - \
   "$installed_module" \
   "$repo_root/docs/examples/minimal.pert" \
   "$repo_root/test/fixtures/recommendation/rec-001-critical-priority.pert" \
-  "$installed_cli" <<'NODE'
+  "$installed_cli" \
+  "$repo_root/test/fixtures/temporal-units/calendar-offset-v2.pert" <<'NODE'
 import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
 const api = await import(pathToFileURL(process.argv[2]).href);
+for (const targetName of [
+  "TARGET_GRAMMAR_2_CAPABILITY",
+  "parseTargetDocument",
+  "validateTargetDocument",
+  "formatTargetDocument",
+  "planTargetMutation",
+  "planTargetBatchMutation",
+  "checkTargetDocument",
+  "getTargetProjectMetadata",
+  "projectDeclaredCalendarValue",
+]) {
+  if (targetName in api) process.exit(1);
+}
+
+const contract3Help = spawnSync(
+  process.argv[5],
+  ["help", "--format=json"],
+  { encoding: "utf8" },
+);
+const contract3HelpJson = JSON.parse(contract3Help.stdout);
+const serializedHelp = JSON.stringify(contract3HelpJson);
+if (
+  contract3Help.status !== 0 ||
+  contract3Help.stderr !== "" ||
+  contract3HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
+  contract3HelpJson.cli_contract_version !== 3 ||
+  contract3HelpJson.commands?.length !== 27 ||
+  serializedHelp.includes("project migrate-unit") ||
+  serializedHelp.includes('"not-before"') ||
+  serializedHelp.includes('"deadline"') ||
+  serializedHelp.includes("Perttool.CheckResult.v2") ||
+  serializedHelp.includes("Perttool.ProjectResult.v2") ||
+  serializedHelp.includes("Perttool.AnalysisResult.v3") ||
+  serializedHelp.includes("Perttool.NextResult.v4") ||
+  serializedHelp.includes("Perttool.UnitMigrationResult.v1")
+) process.exit(1);
+
+for (const [route, schemaVersion] of [
+  [["document", "check"], "Perttool.CheckResult.v1"],
+  [["document", "format"], "Perttool.FormatResult.v1"],
+  [["project", "show"], "Perttool.ProjectResult.v1"],
+  [["dag", "analyze"], "Perttool.AnalysisResult.v2"],
+  [["dag", "next"], "Perttool.NextResult.v3"],
+]) {
+  const result = spawnSync(
+    process.argv[5],
+    [...route, process.argv[6], "--format=json"],
+    { encoding: "utf8" },
+  );
+  const json = JSON.parse(result.stdout);
+  if (
+    result.status !== 1 ||
+    result.stderr !== "" ||
+    json.schema_version !== schemaVersion ||
+    json.cli_contract_version !== 3 ||
+    json.ok !== false ||
+    (json.grammar_version ?? null) !== null ||
+    json.diagnostics?.length === 0 ||
+    json.diagnostics?.some(({ code }) => code !== "PTDSL-005")
+  ) process.exit(1);
+}
+
 const guidance = api.getAgentHelp({
   providerId: "grok",
   surfaceId: "workflow",

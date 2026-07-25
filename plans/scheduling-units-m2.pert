@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M2:
   version 1
   title "SU-M2 temporal source and Core foundations"
-  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. Observed SU-M2 velocity is 20p/1d from the completed target Grammar 2 source, semantic-validation, formatter, temporal mutation/batch, and declared-input Core tasks on one active day and will be recalibrated from later completed SU-M2 work."
+  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. All six SU-M2 tasks are accepted at an observed cumulative velocity of 24p/1d on one active day. SU-M3 owns target calendar, deadline, temporal schedule, and Next v4 Core; SU-M4 owns exact unit migration; SU-M5 owns atomic public activation."
   as_of 2026-07-25
   duration_unit point
-  velocity 20p/1d
+  velocity 24p/1d
   finish M2_FOUNDATIONS_ACCEPTED
 
 
@@ -58,6 +58,7 @@ task M2_FOUNDATION_ACCEPTANCE M2_ACCEPTANCE_INPUT_READY -> M2_FOUNDATIONS_ACCEPT
   title "Accept SU-M2 target foundations without public activation"
   description "Trace SU-M2-owned TUI and TUE observations through target Core tests; verify Grammar 1 parser/check/formatter, Contract 3 registry, active JSON identities, help, package exports, and installed-package behavior remain unchanged and reject the target surface. Run malformed-input, source-preservation, batch, determinism, documentation, full repository, link, and package gates. Record the handoff to SU-M3; do not activate Contract 4 or publish anything."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
