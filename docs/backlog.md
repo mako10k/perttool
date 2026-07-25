@@ -428,7 +428,7 @@ SU-M2 progress:
   target capability parses exactly the three temporal field positions and
   exact declared date/date-time records while the active parser remains
   Grammar 1.
-- `TEMPORAL_SEMANTIC_VALIDATION` is complete. The internal nominally branded
+- `TEMPORAL_SEMANTIC_VALIDATION` is complete and advanced. The internal nominally branded
   validated-document boundary accepts Grammar 1/2 through the target
   capability, reports field-local `PTSEM-112`, and retains mixed kinds and
   active/done/reached temporal history without reading a clock or environment.

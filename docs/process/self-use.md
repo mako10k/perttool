@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.42
+- Document status: Active Stage 3 / Revision 2.43
 - Creation date: 2026-07-21
 - Update date: 2026-07-25
 - Related design: [../basic-design.md](../basic-design.md)
@@ -221,8 +221,10 @@ history as valid source. It reads no wall clock, host zone, locale, path, or
 Git state and does not add projection, start-authority, CLI, help, or public
 schema behavior. All 336 tests, documentation, twelve self-use plans, link
 checks, and package inspection passed. The 4p task was completed with the
-source task through a cumulative `9p/1d` sample and will be advanced only from
-the resulting clean committed snapshot. Four tasks and 15p remain; precedence
+source task through a cumulative `9p/1d` sample, then advanced from commit
+`936f372` with the exact expected source digest
+`sha256:234c5f566b7c338622615e46c31dcb23ee0e65cff95c7ca8b53200c30b51ed57`.
+Four tasks and 15p remain; precedence
 and heuristic resource makespans are both 12p with no resource delay, both
 forecasts are `4/3d`, and complete `NextResult.v3` recommends
 `TEMPORAL_FORMATTER_ROUNDTRIP` while `DECLARED_TEMPORAL_INPUT_CORE` is
@@ -757,6 +759,6 @@ Stage 1 entry evidence:
 - SU-M1 normative-examples gate: `TUE-001` through `TUE-018`, nine target Grammar 2 source fixtures, and `Perttool.TemporalUnitExampleBaseline.v1` fix calendar, deadline, release-gated authority, migration, failure, idempotence, inverse, and deterministic text/JSON witnesses without runtime activation; `NORMATIVE_EXAMPLES` is complete and advanced through the committed-snapshot and expected-digest path; one task and 2p remain, both precedence and heuristic resource makespans are 2p with no resource delay, cumulative provisional velocity is `22p/1d`, both forecasts are `1/11d`, and `M1_CONTRACT_REVIEW` is recommended
 - SU-M1 contract-acceptance gate: all `TUI-001` through `TUI-018` observations trace through requirements, specifications, examples, delivery gates, and tests; the sequencing conflict is resolved with target-only SU-M2 through SU-M4 Core slices and one SU-M5 public cutover; the completed detail is advanced at `24p/1d` with no recommendation
 - SU-M2 Grammar 2 source gate: `GRAMMAR_V2_TEMPORAL_SOURCE` is complete and advanced from the clean committed snapshot through an identity-checked internal capability, exact declared calendar records, Grammar 1 closure, contextual IDs, exact field-position checks, all nine target fixtures, and TUE-001/TUE-003 coverage; five tasks and 19p remain, both precedence and heuristic resource makespans are 16p with no resource delay, observed provisional velocity is `5p/1d`, both forecasts are `16/5d`, active Grammar 1 and CLI Contract 3 remain fixed, and `TEMPORAL_SEMANTIC_VALIDATION` is recommended
-- SU-M2 temporal-semantic-validation gate: `TEMPORAL_SEMANTIC_VALIDATION` is complete through the internal target validated-document boundary, field-local `PTSEM-112`, mixed-kind validity, date-anchor/hour validity, active/done/reached temporal retention, deterministic diagnostic limits, and clock-free TUE-002/TUE-006/TUE-007/TUE-011 coverage; four tasks and 15p remain, both precedence and heuristic resource makespans are 12p with no resource delay, cumulative provisional velocity is `9p/1d`, both forecasts are `4/3d`, active Grammar 1 and CLI Contract 3 remain fixed, `TEMPORAL_FORMATTER_ROUNDTRIP` is recommended, and `DECLARED_TEMPORAL_INPUT_CORE` is resource-feasible and allowed
+- SU-M2 temporal-semantic-validation gate: `TEMPORAL_SEMANTIC_VALIDATION` is complete and advanced from the clean committed snapshot through the internal target validated-document boundary, field-local `PTSEM-112`, mixed-kind validity, date-anchor/hour validity, active/done/reached temporal retention, deterministic diagnostic limits, and clock-free TUE-002/TUE-006/TUE-007/TUE-011 coverage; four tasks and 15p remain, both precedence and heuristic resource makespans are 12p with no resource delay, cumulative provisional velocity is `9p/1d`, both forecasts are `4/3d`, active Grammar 1 and CLI Contract 3 remain fixed, `TEMPORAL_FORMATTER_ROUNDTRIP` is recommended, and `DECLARED_TEMPORAL_INPUT_CORE` is resource-feasible and allowed
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twelve plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

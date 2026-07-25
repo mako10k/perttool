@@ -35,12 +35,10 @@ resource CONTRACT3_GUARD:
   title "Active Grammar 1 and CLI Contract 3 compatibility gate"
   capacity 1
 
-milestone GRAMMAR_V2_SOURCE_READY:
-  title "Target Grammar 2 temporal source model ready"
-  state reached
 
 milestone TEMPORAL_VALIDATION_READY:
   title "Target temporal validation semantics ready"
+  state reached
 
 milestone TEMPORAL_FORMATTER_READY:
   title "Target temporal formatter round-trip ready"
@@ -58,17 +56,6 @@ milestone M2_FOUNDATIONS_ACCEPTED:
   title "SU-M2 temporal source and Core foundations accepted"
 
 
-task TEMPORAL_SEMANTIC_VALIDATION GRAMMAR_V2_SOURCE_READY -> TEMPORAL_VALIDATION_READY:
-  title "Implement target temporal semantic validation"
-  description "Require explicit project.as_of with PTSEM-112, preserve mixed temporal kinds as valid source, retain not_before and deadlines on active, done, or reached history, and read no clock, host zone, locale, or Git state. Return a target validated-document boundary without changing active Grammar 1 application behavior. Cover TUE-002, TUE-006, TUE-007, and TUE-011 validation meanings."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    SYNTAX_SURFACE 1
-    TARGET_CORE_SURFACE 1
 
 task TEMPORAL_FORMATTER_ROUNDTRIP TEMPORAL_VALIDATION_READY -> TEMPORAL_FORMATTER_READY:
   title "Accept target temporal formatter round trips"
