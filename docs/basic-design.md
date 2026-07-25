@@ -1439,6 +1439,7 @@ The initial self-use target is the DSL grammar design and implementation work.
 - Post-beta English repository baseline migration: `plans/english-baseline.pert`
 - Post-beta CLI Contract 3 reset: `plans/cli-surface-reset.pert`
 - Contract 3 `v0.2.0` beta release: `plans/release-0.2.0.pert`
+- Contract 4 `v0.3.0` beta release: `plans/release-0.3.0.pert`
 - Historical work plans: Git history
 
 `plans/mvp.pert` defines the completed stage gates from MVP through the first beta; the design and implementation tasks for each slice are separated into the corresponding detail plan. Macro work packages roll up the resource makespan of their detail plans and do not duplicate individual task state. Manage grammar implementation in `plans/grammar.pert`, AI process-control design in `plans/control-plane.pert`, operational M1-M4 work in `plans/operations.pert`, MVP recommendation implementation in `plans/recommendation.pert`, and beta Issue #2 in `plans/agent-guidance.pert`. The post-beta English migration, CLI reset, and `v0.2.0` release remain independent in `plans/english-baseline.pert`, `plans/cli-surface-reset.pert`, and `plans/release-0.2.0.pert` until a later macro composition decision.
@@ -1680,6 +1681,39 @@ Exit:
 - complete the cross-cutting contract review;
 - keep runtime activation, authority adoption, and publication separately
   gated.
+
+### Post-MVP Slice 4F: Contract 4 `v0.3.0` beta release
+
+The [`v0.3.0` release procedure](process/0.3.0-release.md) selects the first
+package version for the accepted temporal, deadline, exact unit-migration, and
+CLI Contract 4 surface. The independent
+[`release-0.3.0.pert`](../plans/release-0.3.0.pert) plan does not duplicate
+SU-M3 or SU-M5 task state. It verifies the reached scheduling-and-units finish
+before preparing and accepting one release candidate.
+
+The release sequence separates:
+
+1. the normative version and release gate;
+2. verification of accepted Contract 4 implementation input;
+3. local package identity and documentation preparation;
+4. one clean candidate and external availability preflight;
+5. the explicitly authorized Git, GitHub, and npm `beta` publication from one
+   tarball;
+6. post-publication durable acceptance.
+
+The current user authorization extends through `RELEASE_030_PUBLISH`. npm
+`latest` promotion and `RELEASE_030_ACCEPTANCE` remain separate later
+boundaries.
+
+Exit:
+
+- satisfy Requirements 21.4 from one clean release commit and annotated tag;
+- publish the accepted Contract 4 package from one tarball to the GitHub
+  prerelease and npm `beta`;
+- verify artifact identity and isolated installation from both public
+  channels;
+- retain `latest=0.2.0`;
+- leave durable acceptance as the next release-plan task.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

@@ -161,6 +161,16 @@ plan remains unchanged with no remaining or recommended task at `17p/2d`.
 The durable [acceptance record](0.2.0-release-acceptance.md) contains the
 release identity, artifact digests, dist-tags, and verification commands.
 
+The next public target is suffix-free beta `0.3.0` for the atomic Contract 4
+cutover. The independent
+[`release-0.3.0.pert`](../../plans/release-0.3.0.pert) plan verifies the
+accepted scheduling-and-units finish, then separates source preparation,
+candidate acceptance, the authorized Git/GitHub/npm `beta` PUBLISH operation,
+and durable acceptance. `RELEASE_030_GATE_DESIGN` is done but unadvanced;
+complete Next v3 recommends `RELEASE_030_CONTRACT_4_READINESS`, which waits
+for the accepted scheduling-and-units finish. The current authorization stops
+after PUBLISH and does not include npm `latest` promotion.
+
 ### 5.1 Adopted Recommendation authority
 
 This section was not enabled solely by publishing `Perttool.NextResult.v3`. Because the self-use shadow gate was met and `AGENTS.md`, `.github/copilot-instructions.md`, help, and safe-stop tests were updated in the same MIG-07 adoption change, normal task selection uses the following as authority.

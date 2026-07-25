@@ -4,7 +4,8 @@
 - Date: 2026-07-23
 - Amended: 2026-07-23 (`v0.1.0` explicit `latest` promotion);
   2026-07-24 (`v0.2.0` Contract 3 release target);
-  2026-07-25 (`v0.2.0` explicit `latest` promotion)
+  2026-07-25 (`v0.2.0` explicit `latest` promotion and `v0.3.0` Contract 4
+  release target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -29,6 +30,10 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
 - Select suffix-free `0.2.0` for the first package that publishes the accepted
   breaking CLI Contract 3 surface. `0.1.1` would understate the compatibility
   change, while `1.0.0` remains reserved for a future stable-series decision.
+- Select suffix-free `0.3.0` for the first package that publishes accepted
+  Grammar 3, temporal/deadline results, exact unit migration, NextResult v4
+  normal authority, and the breaking CLI Contract 4 surface. `0.2.1` would
+  understate the public grammar, command, schema, and authority changes.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 
@@ -43,6 +48,14 @@ On 2026-07-25, after `v0.2.0` beta acceptance, the user explicitly promoted
 `perttool@latest` installation confirmed that `beta` and `latest` both resolve
 to Contract 3 `0.2.0`; `alpha` remains on `0.1.0-alpha.2`. Product maturity
 remains beta.
+
+On 2026-07-25, the user selected the next meaningful release as `0.3.0` and
+authorized work through its named publication task. The
+[`v0.3.0` release procedure](../process/0.3.0-release.md) keeps scheduling and
+unit implementation in its milestone/detail plans, verifies the accepted
+Contract 4 input in the release plan, and separates source preparation,
+candidate acceptance, publication, and durable acceptance. That authorization
+does not include npm `latest` promotion.
 
 ## Beta gate
 

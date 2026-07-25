@@ -1,0 +1,57 @@
+{
+  "check": {
+    "document_id": "RELEASE_030",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 5,
+      "milestones": 7,
+      "tasks": 6,
+      "gates": 0,
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "16/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "32/17",
+    "precedence_critical_tasks": [
+      "RELEASE_030_CONTRACT_4_READINESS",
+      "RELEASE_030_PREPARATION",
+      "RELEASE_030_CANDIDATE",
+      "RELEASE_030_PUBLISH",
+      "RELEASE_030_ACCEPTANCE"
+    ],
+    "resource_makespan": "16/1",
+    "resource_forecast": "32/17",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
+    "schedule_critical_tasks": [
+      "RELEASE_030_CONTRACT_4_READINESS",
+      "RELEASE_030_PREPARATION",
+      "RELEASE_030_CANDIDATE",
+      "RELEASE_030_PUBLISH",
+      "RELEASE_030_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "RELEASE_030_CONTRACT_4_READINESS"
+      ],
+      "runnable_now": [
+        "RELEASE_030_CONTRACT_4_READINESS"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "RELEASE_030_PREPARATION",
+        "RELEASE_030_CANDIDATE",
+        "RELEASE_030_PUBLISH",
+        "RELEASE_030_ACCEPTANCE"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

@@ -19,6 +19,20 @@ The reviewed CLI/help reset is tracked independently in `plans/cli-surface-reset
 
 The first Contract 3 package, suffix-free beta `0.2.0`, is accepted under `docs/process/0.2.0-release.md` and `docs/process/0.2.0-release-acceptance.md`. All five tasks in `plans/release-0.2.0.pert` are complete and advanced. The release commit and peeled annotated tag agree; the local, GitHub, and npm tarballs have the same SHA-256; and installed-package Contract 3 and file-first checks passed. Publication moved only npm `beta`; after acceptance, the user separately authorized one dist-tag operation that made `beta=latest=0.2.0`. The plan itself remains complete and unchanged, with no remaining or recommended task, zero precedence and heuristic resource makespans, and an observed `17p/2d` velocity.
 
+The next release target is suffix-free beta `0.3.0`, selected for the breaking
+Contract 4 cutover. `plans/release-0.3.0.pert` independently tracks release
+gate design, accepted scheduling-and-units input, source preparation,
+candidate acceptance, PUBLISH, and durable acceptance without duplicating
+SU-M3/SU-M5 task state. `RELEASE_030_GATE_DESIGN` is done but unadvanced after
+normative acceptance. Sixteen points remain; precedence and heuristic resource
+makespans are both 16p with no delay, inherited velocity is `17p/2d`, and
+complete Next v3 recommends `RELEASE_030_CONTRACT_4_READINESS`, which must wait
+for the accepted scheduling-and-units finish. The user
+has explicitly authorized work through `RELEASE_030_PUBLISH`, including the
+named clean Git push, annotated `v0.3.0` tag, GitHub prerelease, and npm
+`beta` publication after all preceding gates pass. npm `latest` promotion and
+`RELEASE_030_ACCEPTANCE` are outside that authorization.
+
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, and the user-selected SU-M2R exact rational Duration extension are complete and advanced at `24p/1d` each. The [SU-M2R acceptance record](docs/process/scheduling-units-m2r-acceptance.md) traces TUI/TUE through 020, fixes exact TUE-015 representation without claiming the later migration command, and verifies internal composition plus the closed Contract 3/package boundary. The macro rollup and re-estimation are committed at `a93c129` and advanced at `b4e891d`. SU-M3 is re-estimated at 23p (`0.958333d`) and SU-M4 at 25p (`1.041667d`); the macro has `2.041667d` precedence and `3d` heuristic resource makespans with `0.958333d` delay. Complete macro Next v3 recommends `SU_M4_UNIT_MIGRATION_WORK_PACKAGE`, while the separate scheduler `runnable_now` set contains SU-M3. In the current detail `plans/scheduling-units-m4.pert`, request, exact conversion, candidate, round-trip, and Result v2 work are advanced to `M4_ACCEPTANCE_INPUT_READY`; the Result v2 implementation is committed at `94d4e11`. The [SU-M4 acceptance record](docs/process/scheduling-units-m4-acceptance.md) traces TUI/TUE through 020 and accepts exact request/inventory/conversion, the one final Grammar 1/2/3 candidate, safe-write reuse, no-op/repeat/inverse semantics, stable causes, deterministic Result v2, and the closed Contract 3/package boundary with no open findings. All six tasks and 25p are done at `25p/1d`; the detail has zero precedence and heuristic resource makespans and no recommendation, but the final acceptance task remains unadvanced until this snapshot is committed under ADV-001. The macro SU-M4 work package remains planned until that detail is advanced and rolled up once. Active Grammar 1, accepted target Grammar 2, CLI Contract 3, public schemas, root exports, help, Guide, installed behavior, Next v3 authority, and publication remain unchanged. SU-M3 still owns temporal analysis and SU-M5 public Contract 4 activation.
 
 `project show`, which returns the complete project metadata including velocity, source-preserving `project set`, and atomic-batch `project.set` are also implemented. The observed operational velocity was recalibrated to `29p/2d` from a cumulative 29p over 2 active days, including 5p on 2026-07-23.
@@ -45,7 +59,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert` and `release-0.2.0.pert` as completed independent post-beta workstreams; and use `scheduling-units.pert` plus the current `scheduling-units-m*.pert`, presently `scheduling-units-m4.pert`, as the milestone/detail pair for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert` and `release-0.2.0.pert` as completed independent post-beta workstreams; use `release-0.3.0.pert` as the active Contract 4 release workstream; and use `scheduling-units.pert` plus the current `scheduling-units-m*.pert`, presently `scheduling-units-m4.pert`, as the milestone/detail pair for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.

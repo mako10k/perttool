@@ -1344,6 +1344,46 @@ Planning or locally accepting this gate does not authorize Git, GitHub, npm,
 or dist-tag writes. The authoritative procedure is
 [`docs/process/0.2.0-release.md`](process/0.2.0-release.md).
 
+### 21.4 CLI Contract 4 beta release acceptance criteria
+
+The first package that publishes the accepted temporal, deadline, exact
+unit-migration, and CLI Contract 4 surface is suffix-free `0.3.0`. It remains
+part of the `0.x.x` beta series, is a GitHub prerelease, and is published to
+npm `beta`. The release must satisfy all of the following.
+
+1. Reach and advance the scheduling-and-units macro finish only after SU-M3
+   target-Core acceptance and SU-M5 atomic public Contract 4 acceptance.
+2. Publish Grammar 3, CLI Contract 4, `Perttool.AnalysisResult.v3`,
+   `Perttool.NextResult.v4`, `Perttool.UnitMigrationResult.v2`, the complete
+   migration guidance, and installed-package workflows together.
+3. Make a complete, known, non-truncated `Perttool.NextResult.v4` the normal
+   start-authority result and fail closed for unknown or incomplete results.
+4. Align `package.json`, the lockfile root package, CLI/tool version, release
+   commit, annotated `v0.3.0` tag, GitHub asset, and npm package identity.
+5. Pass `npm ci`, `npm run check`, `git diff --check`, package normalization,
+   isolated installation, temporal/deadline acceptance, exact unit migration,
+   and the complete file-first Contract 4 workflow from the release source.
+6. Establish before external mutation that `perttool@0.3.0` and `v0.3.0` are
+   unused and record the current npm `beta` and `latest` baseline.
+7. Push and verify one clean release commit and annotated tag only under
+   explicit user authorization for the named `0.3.0` release batch.
+8. Generate one tarball outside the worktree, distribute those exact bytes
+   through the GitHub prerelease and npm `beta`, and verify isolated
+   installation from both public channels.
+9. Verify that publication moves `beta` to `0.3.0`, leaves `latest`
+   unchanged, and does not imply stable product maturity.
+10. Record durable identity, common artifact digests, registry metadata,
+    public URLs, Contract 4 behavior, installation results, and restart
+    observations before accepting the release.
+
+Planning or locally accepting this gate does not authorize Git, GitHub, npm,
+or dist-tag writes. The user's explicit request to proceed through
+`RELEASE_030_PUBLISH` authorizes only the named `0.3.0` Git push, annotated
+tag, GitHub prerelease, and npm `beta` publication batch after all preceding
+gates pass. It does not authorize npm `latest` promotion. The authoritative
+procedure is
+[`docs/process/0.3.0-release.md`](process/0.3.0-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |
@@ -1398,7 +1438,7 @@ Resolved design decisions:
 
 - Adoption of AoA with task=edge: [ADR 0001](adr/0001-activity-on-arrow.md)
 - Node.js 22 or later, npm, TypeScript ESM package: [ADR 0005](adr/0005-node-22-runtime-baseline.md)
-- Suffix-free `0.x.x` beta, alpha compatibility boundary, and `v0.2.0` Contract 3 release target: [ADR 0003](adr/0003-beta-versioning.md)
+- Suffix-free `0.x.x` beta, alpha compatibility boundary, `v0.2.0` Contract 3, and `v0.3.0` Contract 4 release targets: [ADR 0003](adr/0003-beta-versioning.md)
 - English repository baseline, migration boundary, and current i18n non-goal: [ADR 0004](adr/0004-english-repository-baseline.md)
 - Separation of executability, resource selection, and recommendation level, and tier semantics: [Recommendation Semantics specification](specs/recommendation.md)
 - Ranking inputs, selection horizon, priority rules, complete tie-breaking, and algorithm version: [Recommendation Ranking Policy specification](specs/recommendation-ranking.md)
@@ -1410,6 +1450,7 @@ Resolved design decisions:
 - Provider/surface/guidance/risk taxonomy, support evidence, offline profile, and Core/text/JSON contracts: [AI Agent Guidance Registry specification](specs/agent-guidance.md)
 - Complete command discovery, domain-guide separation, file-first initialization and gate maintenance, naming, effects, schemas, and breaking migration: [CLI Contract 3 specification](specs/cli-contract-3.md)
 - Contract 3 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.2.0` release procedure](process/0.2.0-release.md)
+- Contract 4 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.3.0` release procedure](process/0.3.0-release.md)
 - Date/date-time comparison, `as_of`, exact day/hour/point projection, fixed-offset preservation, continuous-calendar boundaries, and `not_before` release bounds: [Temporal Calendar Semantics specification](specs/temporal-calendar.md)
 - Temporal precedence/resource release scheduling, deadline state, exact margin/lateness, feasibility, blocked/heuristic qualification, risk, and recommendation-version boundary: [Temporal Deadline Semantics specification](specs/temporal-deadline.md)
 - Permitted Point/time directions, effective velocity, complete field inventory, exact Decimal-or-fraction conversion, atomic grammar upgrade, and round-trip qualification: [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md)
