@@ -424,7 +424,7 @@ SU-M1 acceptance:
 
 SU-M2 progress:
 
-- `GRAMMAR_V2_TEMPORAL_SOURCE` is complete. The identity-checked internal
+- `GRAMMAR_V2_TEMPORAL_SOURCE` is complete and advanced. The identity-checked internal
   target capability parses exactly the three temporal field positions and
   exact declared date/date-time records while the active parser remains
   Grammar 1.

@@ -7,9 +7,6 @@ project SCHEDULING_UNITS_M2:
   velocity 5p/1d
   finish M2_FOUNDATIONS_ACCEPTED
 
-milestone M1_CONTRACT_ACCEPTED:
-  title "SU-M1 temporal and migration contract accepted"
-  state reached
 
 resource DEVELOPERS:
   title "Implementation capacity"
@@ -40,6 +37,7 @@ resource CONTRACT3_GUARD:
 
 milestone GRAMMAR_V2_SOURCE_READY:
   title "Target Grammar 2 temporal source model ready"
+  state reached
 
 milestone TEMPORAL_VALIDATION_READY:
   title "Target temporal validation semantics ready"
@@ -59,16 +57,6 @@ milestone M2_ACCEPTANCE_INPUT_READY:
 milestone M2_FOUNDATIONS_ACCEPTED:
   title "SU-M2 temporal source and Core foundations accepted"
 
-task GRAMMAR_V2_TEMPORAL_SOURCE M1_CONTRACT_ACCEPTED -> GRAMMAR_V2_SOURCE_READY:
-  title "Implement the target Grammar 2 temporal source model"
-  description "Add an explicit target-only grammar capability, exact CalendarValue lexical/source records, and only milestone deadline, task not_before, and task deadline. Keep Grammar 1 field rejection, contextual identifiers, source spans, original tokens, PTDSL-005, and PTDSL-008 fixed. Do not route the target capability through active check, formatter, CLI, registry, or package exports. Cover TUE-001 and TUE-003 plus valid date/date-time source fixtures."
-  duration 5p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    SYNTAX_SURFACE 1
 
 task TEMPORAL_SEMANTIC_VALIDATION GRAMMAR_V2_SOURCE_READY -> TEMPORAL_VALIDATION_READY:
   title "Implement target temporal semantic validation"
