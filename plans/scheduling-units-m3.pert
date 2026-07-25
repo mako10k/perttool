@@ -7,9 +7,6 @@ project SCHEDULING_UNITS_M3:
   velocity 4p/1d
   finish DEADLINE_CAPABILITIES_ACCEPTED
 
-milestone RATIONAL_DURATION_ACCEPTED:
-  title "Exact rational Duration target extension accepted"
-  state reached
 
 resource DEVELOPERS:
   title "Implementation capacity"
@@ -46,6 +43,7 @@ resource CONTRACT3_GUARD:
 
 milestone TEMPORAL_INPUT_READY:
   title "Declared temporal inputs projected exactly"
+  state reached
 
 milestone TEMPORAL_PRECEDENCE_READY:
   title "Release-aware temporal precedence analysis ready"
@@ -65,17 +63,6 @@ milestone M3_ACCEPTANCE_INPUT_READY:
 milestone DEADLINE_CAPABILITIES_ACCEPTED:
   title "SU-M3 temporal deadline and Next v4 target Core accepted"
 
-task TEMPORAL_INPUT_PROJECTION RATIONAL_DURATION_ACCEPTED -> TEMPORAL_INPUT_READY:
-  title "Project exact declared temporal inputs"
-  description "Build the target-only declared-input projection over Grammar 3 validated documents. Derive exact effective velocity, as_of-relative calendar relationships, not_before release bounds, milestone/task deadline values, and unavailable or not-applicable qualifications without activating a public result schema."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    TEMPORAL_INPUT_SURFACE 1
-    CONTRACT3_GUARD 1
 
 task TEMPORAL_PRECEDENCE_CORE TEMPORAL_INPUT_READY -> TEMPORAL_PRECEDENCE_READY:
   title "Implement release-aware temporal precedence analysis"
