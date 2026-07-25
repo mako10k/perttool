@@ -9,6 +9,7 @@
 - Related requirements: [../requirements.md](../requirements.md)
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
 - Analysis specification: [analysis.md](analysis.md)
+- Deadline semantics: [temporal-deadline.md](temporal-deadline.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -404,7 +405,7 @@ preserve these meanings and MUST distinguish:
 
 ## 15. Follow-on contract boundaries
 
-`DEADLINE_SEMANTICS` receives:
+The [Temporal Deadline Semantics specification](temporal-deadline.md) receives:
 
 - same-kind comparison;
 - signed exact date or instant difference;
@@ -412,8 +413,8 @@ preserve these meanings and MUST distinguish:
 - block and heuristic qualifications; and
 - unavailable causes.
 
-It decides feasibility, margin, lateness, overdue, and risk states and any
-versioned recommendation effect.
+It defines feasibility, margin, lateness, overdue, and risk states; release
+scheduling; and the unchanged recommendation-version boundary.
 
 `UNIT_MIGRATION_SEMANTICS` receives only the project velocity relationship. It
 MUST NOT use calendar-projection scalars, a date difference, an offset, or

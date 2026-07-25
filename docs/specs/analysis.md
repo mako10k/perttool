@@ -1,6 +1,6 @@
 # perttool Analysis Specification
 
-- Document status: Draft 0.4
+- Document status: Draft 0.5
 - Analysis version: 1
 - Scheduler: `parallel-sgs` version 1
 - Created: 2026-07-21
@@ -12,6 +12,7 @@
 - Recommendation explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Temporal calendar semantics: [temporal-calendar.md](temporal-calendar.md)
+- Temporal deadline semantics: [temporal-deadline.md](temporal-deadline.md)
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
@@ -46,6 +47,9 @@ Out of scope for this document:
 
 - Calendar projection, which composes over exact Analysis version 1 results
   through the [Temporal Calendar Semantics specification](temporal-calendar.md)
+- Temporal release scheduling and deadline evaluation, which preserve the
+  unqualified Analysis version 1 results and are independently versioned by
+  the [Temporal Deadline Semantics specification](temporal-deadline.md)
 - Holidays, shifts, named time zones, setup time, and skills
 - Consumable resources, preemption, and changes to requirements during execution
 - Making an exact solver the MVP default path

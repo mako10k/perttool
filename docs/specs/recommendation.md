@@ -8,6 +8,7 @@
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Human override: [recommendation-override.md](recommendation-override.md)
+- Temporal deadline semantics: [temporal-deadline.md](temporal-deadline.md)
 - Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. Purpose
@@ -108,6 +109,12 @@ The task set `P` evaluated for recommendations is the actual set of `ready` task
 - `done`: is not included in the result
 
 In JSON, in accordance with the [Recommendation Interface Contract Specification](recommendation-interface.md), include only actual ready tasks in `task_decisions`; do not generate a tier field for non-ready tasks. Do not add `not_recommended` or `blocked` as convenience tiers.
+
+Temporal release eligibility and deadline assessment do not change `P` or a
+version 1 recommendation tier. The
+[Temporal Deadline Semantics specification](temporal-deadline.md) keeps
+deadline facts informational until an explicit ranking, taxonomy,
+explanation, and result-schema version change is accepted.
 
 ## 6. Resource feasibility
 

@@ -1,12 +1,13 @@
 # perttool Basic Design
 
-- Document status: Draft 1.10
+- Document status: Draft 1.11
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Applicable requirements: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
 - Temporal calendar semantics: [specs/temporal-calendar.md](specs/temporal-calendar.md)
+- Temporal deadline semantics: [specs/temporal-deadline.md](specs/temporal-deadline.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
 - Recommendation ranking: [specs/recommendation-ranking.md](specs/recommendation-ranking.md)
 - Recommendation reasons: [specs/recommendation-reasons.md](specs/recommendation-reasons.md)
@@ -389,15 +390,54 @@ qualification. The projection constants for day/date-time and hour/date-time
 arithmetic are not a general day/hour conversion and cannot be reused for
 source migration.
 
-`task.not_before` eventually produces an exact release bound for a new start.
+`task.not_before` produces an exact release bound for a new start.
 Structural `ready` remains a graph/state fact. A missing or incomparable
 temporal relationship fails closed for `runnable_now` without reclassifying
-the task as blocked. A separately versioned scheduling rule must apply future
-release bounds; the unqualified Analysis version 1 results remain available.
+the task as blocked. The separately versioned temporal precedence and resource
+projections apply future release bounds; the unqualified Analysis version 1
+results remain available.
 
-Deadline states, public result types, CLI/help projection, grammar fields, and
-source-preserving mutations remain responsibilities of the ordered SU-M1
-follow-on contracts.
+### 6.5 Temporal Deadline Evaluation
+
+Deadline evaluation is a pure layer over the calendar model and separately
+versioned temporal schedules.
+
+```text
+project.as_of + deadline + completion state
+                    +
+temporal precedence earliest projection
+                    +
+temporal parallel-SGS projection
+                    |
+                    v
+current due state + separate forecast views
+                    |
+                    v
+exact margin/lateness + qualified combined assessment
+```
+
+The temporal precedence projection propagates the maximum of predecessor reach
+and `not_before` release for every unstarted task. The temporal resource
+projection extends `parallel-sgs` version 1 with deterministic release events
+while preserving capacity, active allocation, candidate order, and
+`optimal=false`.
+
+For an incomplete deadline subject, compare `as_of` independently from each
+projected completion. Positive signed margin is early, zero is on the
+deadline, and negative margin is late. A precedence lower-bound miss is
+`forecast_infeasible`; a resource-heuristic miss when the lower bound can meet
+is `at_risk`; a constructed on-time heuristic schedule is
+`forecast_on_time`. None is an actual-time or probability claim.
+
+Done tasks and reached milestones have no inferred historical completion time.
+Blocked predecessor cones retain stable conditional IDs, and heuristic
+results retain their scheduler identity and non-optimal qualification.
+
+The [Temporal Deadline Semantics specification](specs/temporal-deadline.md)
+fixes these meanings. Recommendation algorithm version 1 and Reason Taxonomy
+version 1.0 do not consume deadline facts. Public result types, CLI/help
+projection, grammar fields, and source-preserving mutations remain
+responsibilities of the ordered SU-M1 follow-on contracts.
 
 ## 7. Diagnostic Model
 

@@ -398,10 +398,12 @@ Progress is tracked at two levels:
 Current SU-M1 progress:
 
 - `TEMPORAL_REQUIREMENTS` and `CALENDAR_SEMANTICS` are complete and advanced.
+  `DEADLINE_SEMANTICS` is complete and retained in the committed pre-advance
+  snapshot; its accepted contract is
+  [`perttool.deadline-evaluation` version 1](specs/temporal-deadline.md).
 - The accepted calendar contract is
   [`perttool.calendar-projection` version 1](specs/temporal-calendar.md).
-- Fresh complete `NextResult.v3` recommends `DEADLINE_SEMANTICS`; source
-  migration semantics remain a ready but resource-deferred parallel branch.
+- Fresh complete `NextResult.v3` recommends `UNIT_MIGRATION_SEMANTICS`.
 
 ## Independent post-beta work
 

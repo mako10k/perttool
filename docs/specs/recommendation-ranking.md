@@ -8,6 +8,7 @@
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Human override: [recommendation-override.md](recommendation-override.md)
+- Temporal deadline semantics: [temporal-deadline.md](temporal-deadline.md)
 - Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. Purpose
@@ -206,6 +207,8 @@ Version 1 does not use the following as ranking inputs:
 - resource makespan, utilization, or peak usage;
 - current `runnable_now` membership or scheduler scan position;
 - PERT variance, target duration, or velocity forecast; or
+- `not_before`, task or milestone deadline, projected calendar value, deadline
+  margin or lateness, and deadline assessment; or
 - owner, tag, description, blocked reason, or source text.
 
 Even if these are displayed in the future as supporting information, they MUST NOT change the version 1 ranking.
@@ -453,7 +456,8 @@ If results are cached, condition the cache on canonical source digest, analysis 
 Version 1 prioritizes a bounded heuristic explainable only from explicit facts. The following require a future fact model or another algorithm version:
 
 - business distinction between release gates and ordinary dependency gates;
-- business importance or deadlines for individual milestones;
+- using task or milestone deadline facts defined by the
+  [Temporal Deadline Semantics specification](temporal-deadline.md);
 - rework or replacement risk and information sufficiency;
 - exact resource-constrained completion optimization;
 - iterative ranking using resource-schedule criticality;

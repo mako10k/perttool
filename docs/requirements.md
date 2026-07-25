@@ -750,6 +750,12 @@ Must:
 - Use versioned deterministic calendar arithmetic specified before
   implementation.
 
+The exact temporal release scheduling, current due/overdue state, signed
+margin, precedence/resource feasibility meanings, non-probabilistic risk
+state, block qualification, and unchanged recommendation-version boundary are
+defined by the
+[Temporal Deadline Semantics specification](specs/temporal-deadline.md).
+
 ## 11. Next-task determination
 
 `perttool dag next` returns at least the following classifications.
@@ -1342,6 +1348,7 @@ Resolved design decisions:
 - Complete command discovery, domain-guide separation, file-first initialization and gate maintenance, naming, effects, schemas, and breaking migration: [CLI Contract 3 specification](specs/cli-contract-3.md)
 - Contract 3 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.2.0` release procedure](process/0.2.0-release.md)
 - Date/date-time comparison, `as_of`, exact day/hour/point projection, fixed-offset preservation, continuous-calendar boundaries, and `not_before` release bounds: [Temporal Calendar Semantics specification](specs/temporal-calendar.md)
+- Temporal precedence/resource release scheduling, deadline state, exact margin/lateness, feasibility, blocked/heuristic qualification, risk, and recommendation-version boundary: [Temporal Deadline Semantics specification](specs/temporal-deadline.md)
 
 ## 25. Recommended next specification work
 
@@ -1372,7 +1379,7 @@ Before implementation, separate the specifications in the following order.
 13. [ ] Temporal properties, deadlines, and unit migration SU-M1 contract
     - [x] Temporal properties, entity scope, meanings, compatibility boundary, and non-goals
     - [x] [Deterministic date/date-time, `as_of`, timezone, and calendar semantics](specs/temporal-calendar.md)
-    - [ ] Deadline-derived analysis and recommendation semantics
+    - [x] [Deadline-derived analysis and recommendation semantics](specs/temporal-deadline.md)
     - [ ] Exact point and time-unit source-migration semantics
     - [ ] Grammar, Core, CLI, help, diagnostics, and result-projection contract
     - [ ] Normative boundary examples and machine-readable acceptance cases

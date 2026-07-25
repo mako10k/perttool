@@ -72,6 +72,10 @@ test("temporal requirements preserve base analysis and version recommendation ch
   );
   assert.match(
     requirements,
-    /- \[ \] Deadline-derived analysis and recommendation semantics/,
+    /- \[x\] \[Deadline-derived analysis and recommendation semantics\]\(specs\/temporal-deadline\.md\)/,
+  );
+  assert.match(
+    requirements,
+    /- \[ \] Exact point and time-unit source-migration semantics/,
   );
 });
