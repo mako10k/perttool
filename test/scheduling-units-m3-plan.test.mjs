@@ -24,7 +24,6 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "DEADLINE_EVALUATION_CORE",
     "ANALYSIS_NEXT_V4_TARGET",
     "M3_DEADLINE_ACCEPTANCE",
   ]);
@@ -32,18 +31,15 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 10);
+  assert.equal(points, 6);
   assert.match(
     detail,
-    /milestone TEMPORAL_SCHEDULES_READY:[\s\S]*state reached/,
+    /milestone DEADLINE_EVALUATION_READY:[\s\S]*state reached/,
   );
   assert.match(detail, /Active Grammar 1, CLI Contract 3/);
   assert.match(detail, /Next v3 normal authority/);
   assert.doesNotMatch(detail, /project migrate-unit/);
-  assert.match(
-    detail,
-    /task DEADLINE_EVALUATION_CORE[\s\S]*status done/,
-  );
+  assert.doesNotMatch(detail, /status done/);
   assert.doesNotMatch(macro, /^task SU_M4_UNIT_MIGRATION_WORK_PACKAGE /m);
   assert.match(deadline, /perttool\.deadline-evaluation/);
   assert.match(interfaceSpec, /Perttool\.AnalysisResult\.v3/);

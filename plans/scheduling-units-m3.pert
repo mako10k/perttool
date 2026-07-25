@@ -44,12 +44,10 @@ resource CONTRACT3_GUARD:
 
 
 
-milestone TEMPORAL_SCHEDULES_READY:
-  title "Temporal schedule branches ready for deadline evaluation"
-  state reached
 
 milestone DEADLINE_EVALUATION_READY:
   title "Exact deadline evaluation ready"
+  state reached
 
 milestone M3_ACCEPTANCE_INPUT_READY:
   title "Internal AnalysisResult v3 and NextResult v4 ready"
@@ -62,17 +60,6 @@ milestone DEADLINE_CAPABILITIES_ACCEPTED:
 
 
 
-task DEADLINE_EVALUATION_CORE TEMPORAL_SCHEDULES_READY -> DEADLINE_EVALUATION_READY:
-  title "Evaluate exact deadline state and risk"
-  description "Implement milestone and task deadline relationships, current due and overdue state, exact margin and lateness, precedence/resource feasibility, blocked and heuristic qualification, risk, and deterministic diagnostic causes from the accepted temporal schedules."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DEADLINE_SURFACE 1
-    CONTRACT3_GUARD 1
 
 task ANALYSIS_NEXT_V4_TARGET DEADLINE_EVALUATION_READY -> M3_ACCEPTANCE_INPUT_READY:
   title "Compose internal AnalysisResult v3 and NextResult v4"
