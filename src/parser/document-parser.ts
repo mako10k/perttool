@@ -9,6 +9,7 @@ import {
   normalizeMaxDiagnostics,
   sortDiagnostics,
 } from "../model/diagnostics.js";
+import { parseDeclaredCalendarValue } from "../model/calendar.js";
 import type {
   DeclarationKind,
   DeclarationNode,
@@ -33,6 +34,19 @@ export interface ParseOptions {
   readonly maxDiagnostics?: number;
 }
 
+export interface TargetGrammar2Capability {
+  readonly id: "perttool.target-grammar-2-source";
+  readonly version: 1;
+  readonly grammarVersion: 2;
+}
+
+export const TARGET_GRAMMAR_2_CAPABILITY: TargetGrammar2Capability =
+  Object.freeze({
+    id: "perttool.target-grammar-2-source",
+    version: 1,
+    grammarVersion: 2,
+  });
+
 const identifierPattern = /^[A-Za-z][A-Za-z0-9_-]*$/;
 const declarationKinds = new Set<DeclarationKind>([
   "project",
@@ -42,7 +56,9 @@ const declarationKinds = new Set<DeclarationKind>([
   "gate",
 ]);
 
-const allowedFields: Readonly<Record<DeclarationKind, ReadonlySet<string>>> = {
+const grammar1AllowedFields: Readonly<
+  Record<DeclarationKind, ReadonlySet<string>>
+> = {
   project: new Set([
     "version",
     "title",
@@ -70,6 +86,35 @@ const allowedFields: Readonly<Record<DeclarationKind, ReadonlySet<string>>> = {
     "source",
   ]),
   gate: new Set(["reason"]),
+};
+
+const grammar2AllowedFields: Readonly<
+  Record<DeclarationKind, ReadonlySet<string>>
+> = {
+  ...grammar1AllowedFields,
+  milestone: new Set([...grammar1AllowedFields.milestone, "deadline"]),
+  task: new Set([
+    ...grammar1AllowedFields.task,
+    "not_before",
+    "deadline",
+  ]),
+};
+
+interface ParseProfile {
+  readonly allowedFields: Readonly<
+    Record<DeclarationKind, ReadonlySet<string>>
+  >;
+  readonly typedCalendarValues: boolean;
+}
+
+const grammar1Profile: ParseProfile = {
+  allowedFields: grammar1AllowedFields,
+  typedCalendarValues: false,
+};
+
+const grammar2Profile: ParseProfile = {
+  allowedFields: grammar2AllowedFields,
+  typedCalendarValues: true,
 };
 
 function splitLines(text: string): readonly SourceLine[] {
@@ -276,6 +321,7 @@ function splitTagItems(raw: string): readonly string[] | undefined {
 function scalarFieldValue(
   name: string,
   rawValue: string,
+  profile: ParseProfile,
 ): { value: unknown; code?: string; topic?: string } {
   if (["title", "owner", "source"].includes(name)) {
     const value = parseString(rawValue);
@@ -331,6 +377,19 @@ function scalarFieldValue(
     const value = splitTagItems(rawValue);
     return value === undefined
       ? { value: rawValue, code: "PTDSL-009", topic: "syntax.tags" }
+      : { value };
+  }
+  if (
+    profile.typedCalendarValues &&
+    (name === "as_of" || name === "deadline" || name === "not_before")
+  ) {
+    const value = parseDeclaredCalendarValue(rawValue);
+    return value === undefined
+      ? {
+          value: rawValue,
+          code: "PTDSL-008",
+          topic: name === "as_of" ? "syntax.project" : "syntax.temporal",
+        }
       : { value };
   }
   if (name === "as_of") return { value: rawValue };
@@ -715,7 +774,11 @@ function parseDeclarationHeader(
   return undefined;
 }
 
-export function parseDocument(text: string, options: ParseOptions = {}): ParseResult {
+function parseDocumentWithProfile(
+  text: string,
+  options: ParseOptions,
+  profile: ParseProfile,
+): ParseResult {
   const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
   const diagnostics: Diagnostic[] = [];
   const declarations: DeclarationNode[] = [];
@@ -804,7 +867,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
       if (blockMatch !== null) {
         const name = blockMatch[1]!;
         const isKnownBlock = name === "estimate" || name === "requires";
-        if (!isKnownBlock || !allowedFields[header.kind].has(name)) {
+        if (!isKnownBlock || !profile.allowedFields[header.kind].has(name)) {
           diagnostics.push(
             diagnostic(
               "PTDSL-005",
@@ -848,7 +911,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
       const textBlockMatch = /^(description|blocked_reason|reason) +\|$/.exec(content);
       if (textBlockMatch !== null) {
         const name = textBlockMatch[1]!;
-        if (!allowedFields[header.kind].has(name)) {
+        if (!profile.allowedFields[header.kind].has(name)) {
           diagnostics.push(
             diagnostic(
               "PTDSL-005",
@@ -895,7 +958,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
       const nameStart = 2;
       const valueStart = line.text.indexOf(rawValue, nameStart + name.length);
       const valueSpan = span(line, valueStart, valueStart + rawValue.length);
-      if (!allowedFields[header.kind].has(name)) {
+      if (!profile.allowedFields[header.kind].has(name)) {
         diagnostics.push(
           diagnostic(
             "PTDSL-005",
@@ -909,7 +972,7 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
         if (rawValue === "|") index = skipIndentedRegion(lines, index, 2);
         continue;
       }
-      const parsed = scalarFieldValue(name, rawValue);
+      const parsed = scalarFieldValue(name, rawValue, profile);
       if (parsed.code !== undefined) {
         diagnostics.push(
           diagnostic(
@@ -946,4 +1009,29 @@ export function parseDocument(text: string, options: ParseOptions = {}): ParseRe
     diagnosticCounts: countDiagnostics(sortedDiagnostics),
     diagnosticsTruncated: limited.truncated,
   };
+}
+
+export function parseDocument(
+  text: string,
+  options: ParseOptions = {},
+): ParseResult {
+  return parseDocumentWithProfile(text, options, grammar1Profile);
+}
+
+export function parseTargetDocument(
+  text: string,
+  capability: TargetGrammar2Capability,
+  options: ParseOptions = {},
+): ParseResult {
+  if (capability !== TARGET_GRAMMAR_2_CAPABILITY) {
+    throw new TypeError("The target Grammar 2 source capability is required");
+  }
+  const grammar1 = parseDocumentWithProfile(text, options, grammar1Profile);
+  const first = grammar1.document.declarations[0];
+  const version = first?.kind === "project"
+    ? first.fields.find((field) => field.name === "version")?.value
+    : undefined;
+  return version === 2
+    ? parseDocumentWithProfile(text, options, grammar2Profile)
+    : grammar1;
 }

@@ -188,6 +188,7 @@ perttool/
       document-file.ts
       safe-write.ts
     model/
+      calendar.ts
       syntax.ts
       diagnostics.ts
       rational.ts
@@ -215,6 +216,7 @@ perttool/
     e2e.test.mjs
     next.test.mjs
     parser.test.mjs
+    temporal-source-parser.test.mjs
     mutation.test.mjs
     self-use.test.mjs
     fixtures/
@@ -536,6 +538,14 @@ tests but do not enter active dispatch, help, public result schemas, package
 examples, or normal task-selection authority. SU-M5 alone performs the
 Contract 4 public cutover after shadow and unknown-result safe-stop acceptance.
 Package publication remains a separate decision after that local acceptance.
+
+The SU-M2 source implementation keeps `parseDocument` fixed to the active
+Grammar 1 profile. Target parsing requires the identity-checked internal
+`TARGET_GRAMMAR_2_CAPABILITY`; only an explicit project `version 2` selects
+the added fields. Declared date and date-time tokens become exact internal
+`DeclaredCalendarValue` records while retaining their original spelling and
+source spans. The capability, target parser, and calendar records are not
+re-exported from `src/index.ts`.
 
 ## 7. Diagnostic Model
 

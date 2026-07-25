@@ -422,16 +422,17 @@ SU-M1 acceptance:
   cutover sequencing ambiguity, and passes the accepted contract to target
   Core implementation without activating Grammar 2, Contract 4, or Next v4.
 
-SU-M2 planning:
+SU-M2 progress:
 
-- Six tasks total 24p: target Grammar 2 source, temporal validation, formatter
-  round-trip, declared-input Core, temporal mutation/batch Core, and
-  cross-cutting acceptance.
-- Both precedence and heuristic resource makespans are 21p with no resource
-  delay. Inherited provisional velocity `24p/1d` yields an exact `7/8d`
-  forecast, and complete `NextResult.v3` recommends
-  `GRAMMAR_V2_TEMPORAL_SOURCE`.
-- The macro rollup has provisional `39/8d` precedence and `55/8d` heuristic
+- `GRAMMAR_V2_TEMPORAL_SOURCE` is complete. The identity-checked internal
+  target capability parses exactly the three temporal field positions and
+  exact declared date/date-time records while the active parser remains
+  Grammar 1.
+- Five tasks and 19p remain. Both precedence and heuristic resource makespans
+  are 16p with no resource delay. Observed provisional velocity `5p/1d` yields
+  exact `16/5d` forecasts, and complete `NextResult.v3` recommends
+  `TEMPORAL_SEMANTIC_VALIDATION`.
+- The macro rollup has provisional `36/5d` precedence and `46/5d` heuristic
   resource makespans with 2d resource delay. Its recommendation remains
   `SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4

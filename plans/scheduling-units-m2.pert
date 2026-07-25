@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M2:
   version 1
   title "SU-M2 temporal source and Core foundations"
-  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. The initial provisional velocity is inherited from the completed SU-M1 detail at 24p/1d and will be recalibrated from completed SU-M2 work."
+  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. Observed SU-M2 velocity is 5p/1d from the completed target Grammar 2 source task on one active day and will be recalibrated from later completed SU-M2 work."
   as_of 2026-07-25
   duration_unit point
-  velocity 24p/1d
+  velocity 5p/1d
   finish M2_FOUNDATIONS_ACCEPTED
 
 milestone M1_CONTRACT_ACCEPTED:
@@ -63,6 +63,7 @@ task GRAMMAR_V2_TEMPORAL_SOURCE M1_CONTRACT_ACCEPTED -> GRAMMAR_V2_SOURCE_READY:
   title "Implement the target Grammar 2 temporal source model"
   description "Add an explicit target-only grammar capability, exact CalendarValue lexical/source records, and only milestone deadline, task not_before, and task deadline. Keep Grammar 1 field rejection, contextual identifiers, source spans, original tokens, PTDSL-005, and PTDSL-008 fixed. Do not route the target capability through active check, formatter, CLI, registry, or package exports. Cover TUE-001 and TUE-003 plus valid date/date-time source fixtures."
   duration 5p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

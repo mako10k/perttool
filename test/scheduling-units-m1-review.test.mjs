@@ -99,7 +99,7 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
 
   assert.match(
     plan,
-    /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE[\s\S]*Roll up plans\/scheduling-units-m2\.pert\.[\s\S]*duration 0\.875d/,
+    /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE[\s\S]*Roll up plans\/scheduling-units-m2\.pert\.[\s\S]*Keep active Grammar 1, CLI Contract 3, public result schemas, help, and installed-package behavior unchanged\./,
   );
   assert.match(
     plan,

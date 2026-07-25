@@ -259,18 +259,17 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m2": {
-      "source_digest": "sha256:714cf0a1e33bd38b53e4d408bf219bac296cea08d2062c014209a633c12a96b6",
+      "source_digest": "sha256:6df2f704b50fa2a743bd916227a0c3062d21f72b26239dbfebd6b18cdce297f7",
       "groups": {
         "active": [],
         "ready": [
-          "GRAMMAR_V2_TEMPORAL_SOURCE"
+          "TEMPORAL_SEMANTIC_VALIDATION"
         ],
         "runnable_now": [
-          "GRAMMAR_V2_TEMPORAL_SOURCE"
+          "TEMPORAL_SEMANTIC_VALIDATION"
         ],
         "blocked_now": [],
         "upcoming": [
-          "TEMPORAL_SEMANTIC_VALIDATION",
           "TEMPORAL_MUTATION_BATCH_CORE",
           "M2_FOUNDATION_ACCEPTANCE",
           "TEMPORAL_FORMATTER_ROUNDTRIP",
@@ -278,18 +277,18 @@
         ]
       },
       "recommended_task_ids": [
-        "GRAMMAR_V2_TEMPORAL_SOURCE"
+        "TEMPORAL_SEMANTIC_VALIDATION"
       ],
       "manual_selected_task_ids": [
-        "GRAMMAR_V2_TEMPORAL_SOURCE"
+        "TEMPORAL_SEMANTIC_VALIDATION"
       ],
       "tiers": {
-        "GRAMMAR_V2_TEMPORAL_SOURCE": "recommended"
+        "TEMPORAL_SEMANTIC_VALIDATION": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GRAMMAR_V2_TEMPORAL_SOURCE",
+          "id": "TEMPORAL_SEMANTIC_VALIDATION",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -305,10 +304,12 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:b3616976a745c1ea04d0b61222f60348b024aba9de4e0b301ee9424f889be71b",
+      "source_digest": "sha256:1b0e2506985d455dc3cafda6bc4a95dc306ef20694391a93613991cf9b86ad6d",
       "groups": {
         "active": [],
         "ready": [
