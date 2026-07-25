@@ -492,14 +492,13 @@ SU-M2 progress:
   `RATIONAL_DURATION_MUTATION` are committed at `f0d9a26` and advanced through
   the expected-digest path. `RATIONAL_DURATION_VERSION_BOUNDARY` is committed
   at `fa698ca` and advanced through the same ADV-001 path. Final
-  `RATIONAL_DURATION_ACCEPTANCE` is implemented and done but unadvanced until
-  its acceptance snapshot is committed. The
+  `RATIONAL_DURATION_ACCEPTANCE` is committed at `29550c5` and advanced. The
   [acceptance record](process/scheduling-units-m2r-acceptance.md) traces all
   TUI/TUE observations through 020, exact TUE-015 representation, internal
   composition, and the closed installed Contract 3 boundary. All 24p are done
   at provisional `24p/1d`; the detail has zero makespans and no recommendation
   at digest
-  `sha256:ccb862377a719215e551f2f9f0226745c3d6c3cc3b0b5736d1875dc1826d6d6e`.
+  `sha256:5ba8eb9d5ec192f2d30568e1c51ebba670c4c496b232e6ad8bb9e965490931bb`.
 - The macro rollup is `0.166667d`, leaving `4.166667d` precedence and `6.166667d`
   heuristic resource makespans with 2d resource delay. Its only ready,
   `runnable_now`, and complete Next v3 recommended work package is

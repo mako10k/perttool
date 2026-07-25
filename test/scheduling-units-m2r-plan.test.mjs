@@ -20,16 +20,12 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
   const taskIds = [...detail.matchAll(/^task ([A-Z0-9_]+) /gm)].map(
     (match) => match[1],
   );
-  assert.deepEqual(taskIds, ["RATIONAL_DURATION_ACCEPTANCE"]);
-  assert.match(
-    detail,
-    /task RATIONAL_DURATION_ACCEPTANCE [\s\S]*?  status done/,
-  );
+  assert.deepEqual(taskIds, []);
   const points = [...detail.matchAll(/^  duration (\d+)p$/gm)].reduce(
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 4);
+  assert.equal(points, 0);
 
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_CONTRACT /m);
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_SOURCE_MODEL /m);
@@ -37,10 +33,8 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_FORMATTER /m);
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_MUTATION /m);
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_VERSION_BOUNDARY /m);
-  assert.match(
-    detail,
-    /milestone RATIONAL_DURATION_ACCEPTANCE_INPUT_READY:[\s\S]*state reached/,
-  );
+  assert.doesNotMatch(detail, /^task RATIONAL_DURATION_ACCEPTANCE /m);
+  assert.match(detail, /milestone RATIONAL_DURATION_ACCEPTED:[\s\S]*state reached/);
   assert.match(
     macro,
     /task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> RATIONAL_DURATION_ACCEPTED/,
