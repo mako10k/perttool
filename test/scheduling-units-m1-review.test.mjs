@@ -99,20 +99,17 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
 
   assert.match(
     plan,
-    /milestone TEMPORAL_SURFACE_ACCEPTED:[\s\S]*state reached/,
+    /milestone RATIONAL_DURATION_ACCEPTED:[\s\S]*state reached/,
   );
   assert.doesNotMatch(plan, /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE/);
+  assert.doesNotMatch(plan, /task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE/);
   assert.match(
     plan,
-    /task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE[\s\S]*Decimal-or-fraction Duration[\s\S]*Keep Grammar 1, accepted Grammar 2, CLI Contract 3, public schemas, help, and installed behavior unchanged\./,
+    /task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED ->[\s\S]*Do not activate the public CLI, result schemas, or normal authority in this slice\./,
   );
   assert.match(
     plan,
-    /task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED ->[\s\S]*Do not activate the public CLI or normal authority in this slice\./,
-  );
-  assert.match(
-    plan,
-    /task SU_M4_UNIT_MIGRATION_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED ->[\s\S]*Do not publish the Contract 4 command or installed-package workflow in this slice\./,
+    /task SU_M4_UNIT_MIGRATION_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED ->[\s\S]*do not publish the Contract 4 command, package surface, or installed workflow in this slice\./,
   );
   assert.match(
     plan,

@@ -1,0 +1,136 @@
+project SCHEDULING_UNITS_M4:
+  version 1
+  title "SU-M4 exact unit-migration target Core"
+  description "Implement and accept only the internal unit-migration version 2 Core selected by the scheduling-and-units macro. SU-M2R exact Decimal-or-fraction Duration, canonical serialization, target Grammar 3, and version-boundary capabilities are accepted inputs. The active Grammar 1 runtime, CLI Contract 3, public schemas, root exports, command registry, help, Guide, installed workflow, Next v3 authority, and package distribution remain unchanged. The initial velocity is inherited at 24p/1d; six tasks total 25p."
+  as_of 2026-07-25
+  duration_unit point
+  velocity 24p/1d
+  finish UNIT_MIGRATION_ACCEPTED
+
+milestone RATIONAL_DURATION_ACCEPTED:
+  title "Exact rational Duration target extension accepted"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two independent target-only slices may run together when ownership does not overlap"
+  capacity 2
+
+resource REVIEWERS:
+  title "Migration contract and compatibility review capacity"
+  capacity 1
+
+resource MIGRATION_CORE_SURFACE:
+  title "Unit-migration algorithm and integration ownership"
+  description "Serialize request, conversion, candidate, result, reversibility, and acceptance changes in the migration Core"
+  capacity 1
+
+resource TARGET_SOURCE_SURFACE:
+  title "Grammar 1, 2, and 3 target source-candidate ownership"
+  capacity 1
+
+resource TARGET_RESULT_SURFACE:
+  title "Internal UnitMigrationResult v2 projection ownership"
+  capacity 1
+
+resource SAFE_WRITE_SURFACE:
+  title "Candidate diff, digest, and target safe-write ownership"
+  capacity 1
+
+resource CONTRACT3_GUARD:
+  title "Active Grammar 1 and CLI Contract 3 compatibility gate"
+  capacity 1
+
+milestone MIGRATION_REQUEST_READY:
+  title "Migration request, direction, velocity, and inventory Core ready"
+
+milestone EXACT_CONVERSION_READY:
+  title "Exact unit conversion and canonical token generation ready"
+
+milestone MIGRATION_CANDIDATE_READY:
+  title "Atomic source-preserving migration candidate ready"
+
+milestone MIGRATION_RESULT_V2_READY:
+  title "Internal UnitMigrationResult v2 projection ready"
+
+milestone MIGRATION_ROUNDTRIP_READY:
+  title "No-op, repetition, and inverse behavior ready"
+
+milestone M4_ACCEPTANCE_INPUT_READY:
+  title "SU-M4 migration branches ready for acceptance"
+
+milestone UNIT_MIGRATION_ACCEPTED:
+  title "SU-M4 exact unit-migration Core accepted"
+
+task MIGRATION_REQUEST_AND_INVENTORY RATIONAL_DURATION_ACCEPTED -> MIGRATION_REQUEST_READY:
+  title "Implement migration request validation and complete field inventory"
+  description "Add internal unit-migration version 2 request and validated-input boundaries. Select a declared or replacement exact velocity; accept only Point-to-linked-time, matching-time-to-Point, and same-unit no-op; reject direct day/hour conversion and period mismatches; inventory project epsilon and target plus every deterministic or three-point task Duration for Grammar 1, 2, and 3. Preserve all absolute temporal values. Emit stable semantic causes without exposing a Contract 4 command."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    MIGRATION_CORE_SURFACE 1
+
+task EXACT_UNIT_CONVERSION MIGRATION_REQUEST_READY -> EXACT_CONVERSION_READY:
+  title "Implement exact migration conversion records"
+  description "Convert every inventoried source value through the effective velocity with reduced exact Rational arithmetic. Reuse the accepted shortest-Decimal-or-reduced-Fraction Duration serializer and explicit grammar-retain-or-upgrade decision, preserve ordering and PERT constraints, and record original and converted exact values plus canonical target tokens. Never round, infer a day/hour ratio, or use calendar projection scalars."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    MIGRATION_CORE_SURFACE 1
+    TARGET_SOURCE_SURFACE 1
+
+task UNIT_MIGRATION_CANDIDATE EXACT_CONVERSION_READY -> MIGRATION_CANDIDATE_READY:
+  title "Implement the atomic source-preserving migration candidate"
+  description "Plan non-overlapping UTF-16 edits for grammar version when required, duration_unit, velocity retention/replacement/insertion, and every inventoried Duration. Apply one in-memory candidate, parse and validate it through the selected Grammar 1, 2, or 3 capability, and publish digest, diff, edits, and candidate only after final validation. Reuse target safe-write mechanics without adding active Contract 3 dispatch or an automatic migration batch member."
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    MIGRATION_CORE_SURFACE 1
+    TARGET_SOURCE_SURFACE 1
+    SAFE_WRITE_SURFACE 1
+
+task UNIT_MIGRATION_RESULT_V2 MIGRATION_REQUEST_READY -> MIGRATION_RESULT_V2_READY:
+  title "Implement the internal UnitMigrationResult v2 projection"
+  description "Project algorithm identity, source and target grammar, grammar and velocity dispositions, source and target units, exact effective velocity, converted-field records, reversibility, qualifications, unavailable causes, candidate data, diagnostics, and deterministic invalid results under the accepted interface names. Keep the type internal: no root export, JSON command envelope, text adapter, help entry, or installed-package workflow."
+  duration 4p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    MIGRATION_CORE_SURFACE 1
+    TARGET_RESULT_SURFACE 1
+
+task MIGRATION_NOOP_REPEAT_INVERSE MIGRATION_CANDIDATE_READY -> MIGRATION_ROUNDTRIP_READY:
+  title "Accept no-op, repetition, and exact inverse behavior"
+  description "Make same-unit requests without replacement successful unchanged candidates, prove repeated targets do not rescale, and verify inverse migration with the same effective velocity restores every exact source Rational. Preserve canonical lexical and unrelated bytes while reporting grammar-upgrade or velocity replacement/insertion as values_exact_metadata_changed rather than overstating whole-document identity."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    MIGRATION_CORE_SURFACE 1
+    TARGET_SOURCE_SURFACE 1
+    SAFE_WRITE_SURFACE 1
+
+gate MIGRATION_ROUNDTRIP_ACCEPTANCE_GATE MIGRATION_ROUNDTRIP_READY -> M4_ACCEPTANCE_INPUT_READY:
+  reason "SU-M4 acceptance requires exact candidate, no-op, repetition, and inverse behavior"
+
+gate MIGRATION_RESULT_ACCEPTANCE_GATE MIGRATION_RESULT_V2_READY -> M4_ACCEPTANCE_INPUT_READY:
+  reason "SU-M4 acceptance requires the complete internal UnitMigrationResult v2 projection"
+
+task M4_UNIT_MIGRATION_ACCEPTANCE M4_ACCEPTANCE_INPUT_READY -> UNIT_MIGRATION_ACCEPTED:
+  title "Accept the SU-M4 unit-migration target Core"
+  description "Trace every SU-M4-owned TUI and TUE observation through unit, malformed-input, property, source-preservation, safe-write, no-op, repetition, inverse, and deterministic-result tests. Verify active Grammar 1, CLI Contract 3, public schemas, root exports, the 27-command registry, help, Guide, Next v3 authority, and installed behavior remain unchanged and reject the target operation. Record the SU-M5 handoff and run the full repository, documentation, self-use, link, and package gates without activating Contract 4 or publishing anything."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    MIGRATION_CORE_SURFACE 1
+    TARGET_SOURCE_SURFACE 1
+    TARGET_RESULT_SURFACE 1
+    SAFE_WRITE_SURFACE 1
+    CONTRACT3_GUARD 1

@@ -28,7 +28,8 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
-| `plans/scheduling-units-m2r.pert` | Current exact rational Duration contract and target-only source/editing extension before SU-M3 and SU-M4 | `.pert` document |
+| `plans/scheduling-units-m2r.pert` | Completed exact rational Duration contract and target-only source/editing extension before SU-M3 and SU-M4 | `.pert` document |
+| `plans/scheduling-units-m4.pert` | Current internal exact unit-migration version 2 Core detail | `.pert` document |
 | `test/fixtures/grammar/` | Specific examples of what parser should accept or reject | fixture/golden |
 | Git history | Past plans, specifications, and implementation | commit history |
 
@@ -399,13 +400,23 @@ TUI-001 through TUI-020 and TUE-001 through TUE-020, accepts TUE-015 exact
 Fraction representation without claiming the SU-M4 migration operation, and
 fixes internal composition plus the closed package boundary. All 24p are done
 at provisional `24p/1d`; the detail has zero precedence and heuristic resource
-makespans and no recommendation. Until one macro rollup, the macro remains
-`0.166667d`; its digest is
-`sha256:d8ac8a48e125e36849782c24338ce07c7a3d4ff04ea5abca6a1e2d2c03b892b3`,
-with `4.166667d` precedence and `6.166667d` heuristic resource makespans and
-2d delay. Fresh complete Next v3 still selects
-`SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` in the macro and has no detail
-recommendation.
+makespans and no recommendation.
+
+The committed SU-M2R snapshot was then rolled up once in `a93c129` and the
+macro frontier was advanced from that committed state in `b4e891d`. Accepted
+semantics re-estimate SU-M3 at 23p (`0.958333d`) and SU-M4 at 25p
+(`1.041667d`). The macro now has `2.041667d` precedence and `3d` heuristic
+resource makespans with `0.958333d` delay. Complete Next v3 recommends SU-M4,
+while the separate scheduler `runnable_now` set contains SU-M3.
+
+`scheduling-units-m4.pert` was created through `project init`, one
+expected-digest atomic batch, and a metadata-safe `project set`; no `.pert`
+declaration was authored manually. Its six tasks total 25p. Precedence is 21p,
+the heuristic resource makespan is 25p with 4p delay, and the inherited
+`24p/1d` velocity produces exact forecasts `7/8d` and `25/24d`. Complete Next
+v3 recommends `MIGRATION_REQUEST_AND_INVENTORY`. The detail keeps the
+unit-migration version 2 request, exact conversion, candidate, result,
+no-op/repetition/inverse, and acceptance work internal until SU-M5.
 
 Starting conditions:
 
@@ -704,8 +715,9 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - Completed detail only to SU-M1: `scheduling-units-m1.pert`
 - Completed and advanced target-only source/Core detail to SU-M2:
   `scheduling-units-m2.pert`
-- Current exact rational Duration detail before SU-M3 and SU-M4:
+- Completed exact rational Duration detail before SU-M3 and SU-M4:
   `scheduling-units-m2r.pert`
+- Current exact unit-migration Core detail: `scheduling-units-m4.pert`
 - after selecting a workstream in the macro plan, select daily tasks from the corresponding detail plan
 - update the corresponding macro task to `done` only when its detail slice is complete
 - `M1_ROADMAP_UPDATE` is complete and decomposed formatter preview, mutation preview, safe write, and advance into the operations detail plan
@@ -935,6 +947,7 @@ Stage 1 entry evidence:
 - SU-M2R exact-formatter and source-mutation gate: separate internal Grammar 3 formatting and mutation paths canonicalize exact Duration values without rounding, preserve unrelated source and existing Grammar 1/2 behavior, validate final candidates through the matching capability, reject automatic migration batch members, and retain digest-locked in-place/out safe writes; both tasks are committed at `f0d9a26` and advanced through the expected-digest path; 7p remain with matching precedence and heuristic resource makespans, no resource delay, inherited forecast `7/24d`; the macro rollup is `0.291667d`, and complete Next v3 recommends `RATIONAL_DURATION_VERSION_BOUNDARY`
 - SU-M2R grammar-version boundary gate: pure canonical-token selection and the identity-checked version-candidate planner retain Grammar 1/2 for all-Decimal output, upgrade one localized project version only for Fraction output, never downgrade Grammar 3, preserve temporal source, and report grammar/qualification/reversibility metadata without changing root exports or Contract 3; the task is committed at `fa698ca` and advanced through the expected-digest path; 4p remain with matching precedence and heuristic resource makespans, no resource delay, inherited forecast `1/6d`; the detail digest is `sha256:63bbe45287126762e0e27ca09b0a4822968a6ab1a5aee9f5dfb7410ffc5590e6`, the macro rollup is `0.166667d`, and complete Next v3 recommends `RATIONAL_DURATION_ACCEPTANCE`
 - SU-M2R exact-Duration acceptance gate: the accepted record traces TUI/TUE through 020, verifies exact source/formatter/mutation/version-boundary composition, turns TUE-015 into an exact Grammar 3 representation without claiming the SU-M4 migration operation, and proves source and installed Contract 3 keep Grammar 2/3 and target APIs closed; acceptance is committed at `29550c5`, all 24p are complete and advanced at provisional `24p/1d`, and the detail has zero makespans and no recommendation at digest `sha256:5ba8eb9d5ec192f2d30568e1c51ebba670c4c496b232e6ad8bb9e965490931bb`
+- SU-M2R macro-rollup and SU-M4 planning gate: the committed SU-M2R snapshot is rolled up at `a93c129` and advanced at `b4e891d`; SU-M3 and SU-M4 are re-estimated at 23p and 25p, complete macro Next v3 recommends SU-M4, and the current six-task `scheduling-units-m4.pert` detail has 21p precedence, 25p heuristic resources, 4p delay, forecasts `7/8d` and `25/24d`, and recommends `MIGRATION_REQUEST_AND_INVENTORY`
 - SU-M1 temporal-requirements gate: project `as_of`, milestone `deadline`, task `not_before`, and task `deadline` are the exact initial property scope; grammar version 1 and existing result identities are not widened; `TEMPORAL_REQUIREMENTS` is completed and advanced; six tasks total 21p, precedence is 17p, heuristic resource work is 21p with 4p delay, observed provisional velocity is `3p/1d`, the resource forecast is `7d`, and `CALENDAR_SEMANTICS` is recommended
 - SU-M1 calendar-semantics gate: `perttool.calendar-projection` and the continuous fixed-offset profile version 1 fix tagged date/date-time comparison, `as_of`, exact projection, velocity, `not_before`, unavailable causes, and the no-business-calendar/no-unit-migration boundary; `CALENDAR_SEMANTICS` is completed and advanced; five tasks total 17p, precedence is 13p, heuristic resource work is 17p with 4p delay, cumulative provisional velocity is `7p/1d`, the resource forecast is `17/7d`, and `DEADLINE_SEMANTICS` is recommended
 - SU-M1 deadline-semantics gate: `perttool.deadline-evaluation` version 1 fixes task finish, milestone reach, project finish, current deadline state, signed margin, precedence lower bounds, heuristic resource forecasts, combined assessment, blocked-cone qualification, unavailable causes, and the Analysis/Recommendation version boundary; `DEADLINE_SEMANTICS` is complete and advanced through the committed-snapshot and expected-digest path; four tasks and 13p remain, both precedence and heuristic resource makespans are 13p with no resource delay, cumulative provisional velocity is `11p/1d`, both forecasts are `13/11d`, and `UNIT_MIGRATION_SEMANTICS` is recommended
@@ -948,5 +961,5 @@ Stage 1 entry evidence:
 - SU-M2 temporal-mutation gate: `TEMPORAL_MUTATION_BATCH_CORE` is complete and advanced from clean implementation commit `65c8cda` through private capability-checked task/milestone temporal requests, shared canonical placement, localized UTF-16 edits, final-candidate-only version/anchor/temporal upgrade and downgrade batches, fail-closed invalid candidates, common deterministic diff/digest, and shared in-place/out safe-write mechanics; active Grammar 1, CLI Contract 3, root exports, descriptors, help, and installed behavior remain fixed; two tasks and 7p remain, precedence/resource makespans are both 7p with no delay, cumulative provisional velocity is `17p/1d`, both forecasts are `7/17d`, and `DECLARED_TEMPORAL_INPUT_CORE` is recommended
 - SU-M2 declared-input Core gate: `DECLARED_TEMPORAL_INPUT_CORE` is complete and advanced from clean implementation commit `5dc3390` through internal target CheckResult v2 and ProjectResult v2 Core projections over one validated source order; exact anchors, milestone deadlines, nullable task constraints, finish-milestone deadlines, Grammar 1 compatibility, syntax suppression, semantic-error retention, complete invalid project results, diagnostic limits, determinism, and the TUI-004 Core boundary are covered while active Contract 3 schemas, CLI, root exports, descriptors, help, and installed behavior remain fixed; one task and 4p remain, precedence/resource makespans are both 4p with no delay, cumulative provisional velocity is `20p/1d`, both forecasts are `1/5d`, and `M2_FOUNDATION_ACCEPTANCE` is recommended
 - SU-M2 foundation-acceptance gate: `M2_FOUNDATION_ACCEPTANCE` is complete and advanced through the cross-cutting acceptance record, all 18 TUI and TUE traces, active Contract 3/Grammar 1 rejection, target API non-export, actual installed-package checks, and 361-test full verification; cumulative velocity is `24p/1d` and no SU-M2 detail work remains; the later user-selected SU-M2R replan supersedes its then-current SU-M3/SU-M4 frontier without rewriting this history
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirteen plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all fourteen plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

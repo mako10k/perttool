@@ -306,8 +306,57 @@
       },
       "diagnostic_codes": []
     },
+    "scheduling-units-m4": {
+      "source_digest": "sha256:e583a350a43ec3dcdf0a1de51d55ea9238f54a8d7008087aff47e3d7c2ed4610",
+      "groups": {
+        "active": [],
+        "ready": [
+          "MIGRATION_REQUEST_AND_INVENTORY"
+        ],
+        "runnable_now": [
+          "MIGRATION_REQUEST_AND_INVENTORY"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "EXACT_UNIT_CONVERSION",
+          "UNIT_MIGRATION_CANDIDATE",
+          "MIGRATION_NOOP_REPEAT_INVERSE",
+          "M4_UNIT_MIGRATION_ACCEPTANCE",
+          "UNIT_MIGRATION_RESULT_V2"
+        ]
+      },
+      "recommended_task_ids": [
+        "MIGRATION_REQUEST_AND_INVENTORY"
+      ],
+      "manual_selected_task_ids": [
+        "MIGRATION_REQUEST_AND_INVENTORY"
+      ],
+      "tiers": {
+        "MIGRATION_REQUEST_AND_INVENTORY": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "MIGRATION_REQUEST_AND_INVENTORY",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
+    },
     "scheduling-units": {
-      "source_digest": "sha256:ee91c3f07bd0afd24b2f18a06870f76163e71dc854e01c682ffed8e632183f1c",
+      "source_digest": "sha256:f33ac07c0e0a6a42d572c5cb4c09f8441b447066ae6912154e90c17813276688",
       "groups": {
         "active": [],
         "ready": [

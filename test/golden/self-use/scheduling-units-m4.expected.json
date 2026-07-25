@@ -1,0 +1,61 @@
+{
+  "check": {
+    "document_id": "SCHEDULING_UNITS_M4",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 7,
+      "milestones": 8,
+      "tasks": 6,
+      "gates": 2,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "21/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "7/8",
+    "precedence_critical_tasks": [
+      "MIGRATION_REQUEST_AND_INVENTORY",
+      "EXACT_UNIT_CONVERSION",
+      "UNIT_MIGRATION_CANDIDATE",
+      "MIGRATION_NOOP_REPEAT_INVERSE",
+      "M4_UNIT_MIGRATION_ACCEPTANCE"
+    ],
+    "resource_makespan": "25/1",
+    "resource_forecast": "25/24",
+    "resource_delay": "4/1",
+    "resource_arcs": [
+      "resource:MIGRATION_NOOP_REPEAT_INVERSE:UNIT_MIGRATION_RESULT_V2"
+    ],
+    "schedule_critical_tasks": [
+      "MIGRATION_REQUEST_AND_INVENTORY",
+      "EXACT_UNIT_CONVERSION",
+      "UNIT_MIGRATION_CANDIDATE",
+      "MIGRATION_NOOP_REPEAT_INVERSE",
+      "UNIT_MIGRATION_RESULT_V2",
+      "M4_UNIT_MIGRATION_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "MIGRATION_REQUEST_AND_INVENTORY"
+      ],
+      "runnable_now": [
+        "MIGRATION_REQUEST_AND_INVENTORY"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "EXACT_UNIT_CONVERSION",
+        "UNIT_MIGRATION_CANDIDATE",
+        "MIGRATION_NOOP_REPEAT_INVERSE",
+        "M4_UNIT_MIGRATION_ACCEPTANCE",
+        "UNIT_MIGRATION_RESULT_V2"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

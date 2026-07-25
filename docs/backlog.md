@@ -408,9 +408,8 @@ project duration unit changes.
 Progress is tracked at two levels:
 
 - [`plans/scheduling-units.pert`](../plans/scheduling-units.pert) is the
-  milestone-level roadmap. `SU-M2R` is rolled up from its current detail;
-  estimates after `SU-M2R` remain provisional and are re-estimated when the
-  preceding milestone is accepted.
+  milestone-level roadmap. `SU-M2R` is complete and advanced; SU-M3 and SU-M4
+  are re-estimated from its accepted semantics.
 - [`plans/scheduling-units-m1.pert`](../plans/scheduling-units-m1.pert) tracks
   only the detailed work required to reach `SU-M1`. It does not duplicate
   completion state for later milestones.
@@ -418,8 +417,11 @@ Progress is tracked at two levels:
   the completed and advanced six-task target-only source and Core slice that
   reached `SU-M2`.
 - [`plans/scheduling-units-m2r.pert`](../plans/scheduling-units-m2r.pert)
-  tracks the current exact rational Duration contract and target-only source
-  extension required before SU-M3 and SU-M4.
+  tracks the completed and advanced exact rational Duration contract and
+  target-only source extension required before SU-M3 and SU-M4.
+- [`plans/scheduling-units-m4.pert`](../plans/scheduling-units-m4.pert)
+  tracks the current six-task internal unit-migration version 2 Core selected
+  by complete macro Next v3.
 - Select the milestone work package from a fresh, complete macro `dag next`
   result, then select daily work from the corresponding milestone-detail plan.
   When a detail plan reaches its finish, roll up that result once to the macro,
@@ -499,14 +501,20 @@ SU-M2 progress:
   at provisional `24p/1d`; the detail has zero makespans and no recommendation
   at digest
   `sha256:5ba8eb9d5ec192f2d30568e1c51ebba670c4c496b232e6ad8bb9e965490931bb`.
-- The macro rollup is `0.166667d`, leaving `4.166667d` precedence and `6.166667d`
-  heuristic resource makespans with 2d resource delay. Its only ready,
-  `runnable_now`, and complete Next v3 recommended work package is
-  `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE`.
-- In the detail, complete Next v3 has no recommendation.
+- The SU-M2R macro rollup is committed at `a93c129` and advanced at
+  `b4e891d`. SU-M3 is re-estimated at 23p (`0.958333d`) and SU-M4 at 25p
+  (`1.041667d`). The macro has `2.041667d` precedence and `3d` heuristic
+  resource makespans with `0.958333d` delay. Complete Next v3 recommends
+  `SU_M4_UNIT_MIGRATION_WORK_PACKAGE`; the independent scheduler
+  `runnable_now` set contains SU-M3.
+- The current SU-M4 detail has six tasks totaling 25p. Its precedence and
+  heuristic resource makespans are 21p and 25p with 4p delay; forecasts are
+  `7/8d` and `25/24d`. Complete Next v3 recommends
+  `MIGRATION_REQUEST_AND_INVENTORY`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
-  Next v4 authority, unit migration, and publication are explicit non-goals.
+  Next v4 authority, the public unit-migration command and installed workflow,
+  and publication are explicit non-goals.
 
 ## Independent post-beta work
 

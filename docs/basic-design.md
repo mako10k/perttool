@@ -561,9 +561,11 @@ The current source implements the internal Grammar 2 target capability and a
 separately identity-checked Grammar 3 source capability rather than changing
 `TARGET_GRAMMAR_2_CAPABILITY` in place. Grammar 3 parsing, validation, exact
 source serialization, explicit formatting, and source-preserving mutation are
-internal SU-M2R inputs; version-boundary and acceptance work remains. The
-active Grammar 1 parser and accepted internal Grammar 2 behavior remain
-unchanged.
+internal SU-M2R inputs. The exact-Duration version boundary and cross-cutting
+acceptance are complete. Unit-migration version 2 request validation, complete
+field inventory, exact conversion, coordinated candidate planning, result
+projection, and inverse behavior remain the current SU-M4 detail. The active
+Grammar 1 parser and accepted internal Grammar 2 behavior remain unchanged.
 
 The SU-M2 source implementation keeps `parseDocument` fixed to the active
 Grammar 1 profile. Target parsing requires the identity-checked internal
