@@ -1,7 +1,7 @@
 project SCHEDULING_UNITS:
   version 1
   title "Temporal properties, deadlines, and unit migration roadmap"
-  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, SU-M2R, and SU-M4 are accepted and advanced. SU-M3 completed 23p at 23p/1d, is rolled up once as the existing 0.958333d macro duration, and remains done but unadvanced until this snapshot is committed. SU-M5 is the only ready and recommended work package; its new six-task detail totals 23p with 16p precedence, 23p heuristic resources, and 7p delay. The remaining macro makespans are both 1d. Release and external distribution remain separate decisions."
+  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, SU-M2R, SU-M3, and SU-M4 are accepted, rolled up once, and advanced. SU-M5 is the only ready and recommended work package; its six-task detail totals 23p with 16p precedence, 23p heuristic resources, and 7p delay. The remaining macro makespans are both 1d. Release and external distribution remain separate decisions."
   as_of 2026-07-25
   duration_unit day
   finish SCHEDULING_UNITS_ACCEPTED
@@ -27,38 +27,20 @@ resource PACKAGE_SURFACE:
 
 
 
-milestone DEADLINE_CAPABILITIES_ACCEPTED:
-  title "SU-M3 temporal deadline and Next v4 target Core accepted"
 
-milestone UNIT_MIGRATION_ACCEPTED:
-  title "SU-M4 exact unit-migration Core accepted"
-  state reached
 
 milestone DELIVERY_INPUT_READY:
   title "Deadline and migration Core branches accepted"
+  state reached
 
 milestone SCHEDULING_UNITS_ACCEPTED:
   title "SU-M5 atomic Contract 4 workstream accepted"
 
 
 
-task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED -> DEADLINE_CAPABILITIES_ACCEPTED:
-  title "Implement temporal deadline and Next v4 target Core"
-  description "Completed milestone package: the 23p SU-M3 detail was accepted at 23p/1d and is represented by the existing six-decimal 0.958333d macro duration. Exact calendar projection, release-aware temporal precedence and heuristic resource views, deadline evaluation, AnalysisResult v3 projection, and NextResult v4 release-gated authority Core are accepted with the unchanged complete Recommendation version 1 graph. Public CLI, result schemas, and normal authority remain gated to SU-M5."
-  duration 0.958333d
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PUBLIC_SURFACE 1
 
 
-gate DEADLINE_ACCEPTANCE_GATE DEADLINE_CAPABILITIES_ACCEPTED -> DELIVERY_INPUT_READY:
-  reason "Atomic Contract 4 acceptance requires the temporal deadline and Next v4 target Core"
 
-gate UNIT_MIGRATION_ACCEPTANCE_GATE UNIT_MIGRATION_ACCEPTED -> DELIVERY_INPUT_READY:
-  reason "Atomic Contract 4 acceptance requires the exact unit-migration target Core"
 
 task SU_M5_INTEGRATED_ACCEPTANCE DELIVERY_INPUT_READY -> SCHEDULING_UNITS_ACCEPTED:
   title "Accept atomic Contract 4 and the integrated workstream"
@@ -69,7 +51,3 @@ task SU_M5_INTEGRATED_ACCEPTANCE DELIVERY_INPUT_READY -> SCHEDULING_UNITS_ACCEPT
     DEVELOPERS 1
     REVIEWERS 1
     PACKAGE_SURFACE 1
-
-milestone RATIONAL_DURATION_ACCEPTED:
-  title "Exact rational Duration target extension accepted"
-  state reached

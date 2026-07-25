@@ -1112,8 +1112,8 @@ Stage 1 entry evidence:
   retains only reached `DEADLINE_CAPABILITIES_ACCEPTED`, with zero makespans
   and no recommendation.
 - SU-M3 macro rollup and SU-M5 planning gate: accepted 23p SU-M3 is rolled
-  up once as the existing `0.958333d` macro duration; the unadvanced macro
-  snapshot recommends only `SU_M5_INTEGRATED_ACCEPTANCE`. The new six-task
+  up once as the existing `0.958333d` macro duration and advanced; the
+  resulting macro recommends only `SU_M5_INTEGRATED_ACCEPTANCE`. The new six-task
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
