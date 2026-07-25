@@ -8,29 +8,26 @@
       "tasks": 5,
       "gates": 2,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "15/1",
+    "precedence_makespan": "14/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "15/4",
+    "precedence_forecast": "14/9",
     "precedence_critical_tasks": [
-      "TEMPORAL_RESOURCE_SCHEDULE",
+      "TEMPORAL_PRECEDENCE_CORE",
       "DEADLINE_EVALUATION_CORE",
       "ANALYSIS_NEXT_V4_TARGET",
       "M3_DEADLINE_ACCEPTANCE"
     ],
-    "resource_makespan": "19/1",
-    "resource_forecast": "19/4",
-    "resource_delay": "4/1",
-    "resource_arcs": [
-      "resource:TEMPORAL_PRECEDENCE_CORE:TEMPORAL_RESOURCE_SCHEDULE"
-    ],
+    "resource_makespan": "14/1",
+    "resource_forecast": "14/9",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
       "TEMPORAL_PRECEDENCE_CORE",
-      "TEMPORAL_RESOURCE_SCHEDULE",
       "DEADLINE_EVALUATION_CORE",
       "ANALYSIS_NEXT_V4_TARGET",
       "M3_DEADLINE_ACCEPTANCE"
@@ -40,8 +37,7 @@
     "groups": {
       "active": [],
       "ready": [
-        "TEMPORAL_PRECEDENCE_CORE",
-        "TEMPORAL_RESOURCE_SCHEDULE"
+        "TEMPORAL_PRECEDENCE_CORE"
       ],
       "runnable_now": [
         "TEMPORAL_PRECEDENCE_CORE"
@@ -53,13 +49,6 @@
         "M3_DEADLINE_ACCEPTANCE"
       ]
     },
-    "resource_rejection": {
-      "task_id": "TEMPORAL_RESOURCE_SCHEDULE",
-      "resource_id": "CONTRACT3_GUARD",
-      "capacity": 1,
-      "earlier_selected_task_ids": [
-        "TEMPORAL_PRECEDENCE_CORE"
-      ]
-    }
+    "resource_rejection": null
   }
 }

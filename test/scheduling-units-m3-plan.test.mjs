@@ -42,14 +42,17 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
   assert.match(detail, /Active Grammar 1, CLI Contract 3/);
   assert.match(detail, /Next v3 normal authority/);
   assert.doesNotMatch(detail, /project migrate-unit/);
-  assert.doesNotMatch(detail, /status done/);
+  assert.match(
+    detail,
+    /task TEMPORAL_RESOURCE_SCHEDULE[\s\S]*status done/,
+  );
   assert.doesNotMatch(macro, /^task SU_M4_UNIT_MIGRATION_WORK_PACKAGE /m);
   assert.match(deadline, /perttool\.deadline-evaluation/);
   assert.match(interfaceSpec, /Perttool\.AnalysisResult\.v3/);
   assert.match(interfaceSpec, /Perttool\.NextResult\.v4/);
 });
 
-test("SU-M3 maintains the complete known recommendation after input acceptance", async () => {
+test("SU-M3 maintains the complete known recommendation after resource scheduling", async () => {
   const source = await repositoryFile("plans/scheduling-units-m3.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
@@ -59,21 +62,18 @@ test("SU-M3 maintains the complete known recommendation after input acceptance",
   assert.ok(analysis.resource);
   assert.deepEqual(
     [analysis.precedence.makespan.numerator, analysis.precedence.makespan.denominator],
-    [15n, 1n],
+    [14n, 1n],
   );
   assert.deepEqual(
     [analysis.resource.makespan.numerator, analysis.resource.makespan.denominator],
-    [19n, 1n],
+    [14n, 1n],
   );
   assert.equal(next.ok, true);
   assert.ok(next.recommendation);
-  assert.deepEqual(next.groups.ready, [
-    "TEMPORAL_PRECEDENCE_CORE",
-    "TEMPORAL_RESOURCE_SCHEDULE",
-  ]);
+  assert.deepEqual(next.groups.ready, ["TEMPORAL_PRECEDENCE_CORE"]);
   assert.deepEqual(next.groups.runnableNow, ["TEMPORAL_PRECEDENCE_CORE"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "TEMPORAL_RESOURCE_SCHEDULE",
+    "TEMPORAL_PRECEDENCE_CORE",
   ]);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);

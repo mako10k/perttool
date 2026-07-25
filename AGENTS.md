@@ -65,7 +65,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
 - `src/command/`: immutable typed command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and active Contract 3 GuideResult projection.
-- `src/analysis/`: residual graph, precedence CPM, and resource-schedule implementations using exact Rational values.
+- `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, and the internal release-aware temporal resource scheduler using exact Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
 - `src/conversion/`: Mermaid profile/plain export and import, semantic metadata, projection generation, and fail-closed restoration.
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.
