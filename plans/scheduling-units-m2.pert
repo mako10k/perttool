@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M2:
   version 1
   title "SU-M2 temporal source and Core foundations"
-  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. Observed SU-M2 velocity is 5p/1d from the completed target Grammar 2 source task on one active day and will be recalibrated from later completed SU-M2 work."
+  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. Observed SU-M2 velocity is 9p/1d from the completed target Grammar 2 source and semantic-validation tasks on one active day and will be recalibrated from later completed SU-M2 work."
   as_of 2026-07-25
   duration_unit point
-  velocity 5p/1d
+  velocity 9p/1d
   finish M2_FOUNDATIONS_ACCEPTED
 
 
@@ -62,6 +62,7 @@ task TEMPORAL_SEMANTIC_VALIDATION GRAMMAR_V2_SOURCE_READY -> TEMPORAL_VALIDATION
   title "Implement target temporal semantic validation"
   description "Require explicit project.as_of with PTSEM-112, preserve mixed temporal kinds as valid source, retain not_before and deadlines on active, done, or reached history, and read no clock, host zone, locale, or Git state. Return a target validated-document boundary without changing active Grammar 1 application behavior. Cover TUE-002, TUE-006, TUE-007, and TUE-011 validation meanings."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

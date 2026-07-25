@@ -70,6 +70,24 @@ interface Edge {
   readonly target: string;
 }
 
+interface ValidationProfile {
+  readonly supportedGrammarVersions: ReadonlySet<number>;
+  readonly unsupportedVersionMessage: string;
+  readonly requireTemporalAnchor: boolean;
+}
+
+const grammar1ValidationProfile: ValidationProfile = {
+  supportedGrammarVersions: new Set([1]),
+  unsupportedVersionMessage: "Only grammar version 1 is supported",
+  requireTemporalAnchor: false,
+};
+
+const targetValidationProfile: ValidationProfile = {
+  supportedGrammarVersions: new Set([1, 2]),
+  unsupportedVersionMessage: "Only grammar versions 1 and 2 are supported",
+  requireTemporalAnchor: true,
+};
+
 function makeDiagnostic(
   code: string,
   severity: "error" | "warning",
@@ -230,6 +248,7 @@ function isValidIsoDate(raw: string): boolean {
 function validateFieldConstraints(
   document: DocumentNode,
   diagnostics: Diagnostic[],
+  profile: ValidationProfile,
 ): void {
   const projects = document.declarations.filter((declaration) => declaration.kind === "project");
   if (projects.length === 0) {
@@ -285,12 +304,16 @@ function validateFieldConstraints(
       const velocity = velocityValue(velocityField);
       requireField(declaration, "finish", diagnostics);
       const version = fieldNamed(declaration, "version");
-      if (version !== undefined && version.value !== 1) {
+      if (
+        version !== undefined &&
+        typeof version.value === "number" &&
+        !profile.supportedGrammarVersions.has(version.value)
+      ) {
         diagnostics.push(
           makeDiagnostic(
             "PTSEM-108",
             "error",
-            "Only grammar version 1 is supported",
+            profile.unsupportedVersionMessage,
             version.valueSpan,
             "syntax.project",
             declaration.id,
@@ -551,6 +574,26 @@ function validateFieldConstraints(
     if (declaration.kind === "gate") {
       requireField(declaration, "reason", diagnostics);
       validateNonemptyText(declaration, "reason", diagnostics);
+    }
+  }
+
+  if (!profile.requireTemporalAnchor || projects.length !== 1) return;
+  const project = projects[0]!;
+  const version = fieldNamed(project, "version")?.value ?? 1;
+  if (version !== 2 || fieldNamed(project, "as_of") !== undefined) return;
+  for (const declaration of document.declarations) {
+    for (const field of declaration.fields) {
+      if (field.name !== "deadline" && field.name !== "not_before") continue;
+      diagnostics.push(
+        makeDiagnostic(
+          "PTSEM-112",
+          "error",
+          `${declaration.kind} ${declaration.id}.${field.name} requires project.as_of`,
+          field.valueSpan,
+          "syntax.temporal",
+          declaration.id,
+        ),
+      );
     }
   }
 }
@@ -936,9 +979,32 @@ export function validateDocument(
   document: DocumentNode,
   parseDiagnostics: readonly Diagnostic[] = [],
 ): readonly Diagnostic[] {
+  return validateDocumentWithProfile(
+    document,
+    parseDiagnostics,
+    grammar1ValidationProfile,
+  );
+}
+
+function validateDocumentWithProfile(
+  document: DocumentNode,
+  parseDiagnostics: readonly Diagnostic[],
+  profile: ValidationProfile,
+): readonly Diagnostic[] {
   const diagnostics = [...parseDiagnostics];
   if (hasErrors(diagnostics)) return sortDiagnostics(diagnostics);
-  validateFieldConstraints(document, diagnostics);
+  validateFieldConstraints(document, diagnostics, profile);
   if (!hasErrors(diagnostics)) validateGraph(document, diagnostics);
   return sortDiagnostics(diagnostics);
+}
+
+export function validateTargetDocumentSemantics(
+  document: DocumentNode,
+  parseDiagnostics: readonly Diagnostic[] = [],
+): readonly Diagnostic[] {
+  return validateDocumentWithProfile(
+    document,
+    parseDiagnostics,
+    targetValidationProfile,
+  );
 }

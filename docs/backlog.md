@@ -428,11 +428,16 @@ SU-M2 progress:
   target capability parses exactly the three temporal field positions and
   exact declared date/date-time records while the active parser remains
   Grammar 1.
-- Five tasks and 19p remain. Both precedence and heuristic resource makespans
-  are 16p with no resource delay. Observed provisional velocity `5p/1d` yields
-  exact `16/5d` forecasts, and complete `NextResult.v3` recommends
-  `TEMPORAL_SEMANTIC_VALIDATION`.
-- The macro rollup has provisional `36/5d` precedence and `46/5d` heuristic
+- `TEMPORAL_SEMANTIC_VALIDATION` is complete. The internal nominally branded
+  validated-document boundary accepts Grammar 1/2 through the target
+  capability, reports field-local `PTSEM-112`, and retains mixed kinds and
+  active/done/reached temporal history without reading a clock or environment.
+- Four tasks and 15p remain. Both precedence and heuristic resource makespans
+  are 12p with no resource delay. Observed provisional velocity `9p/1d` yields
+  exact `4/3d` forecasts, and complete `NextResult.v3` recommends
+  `TEMPORAL_FORMATTER_ROUNDTRIP`; `DECLARED_TEMPORAL_INPUT_CORE` is a
+  resource-feasible `allowed` task.
+- The macro rollup has provisional `5.333333d` precedence and `7.333333d` heuristic
   resource makespans with 2d resource delay. Its recommendation remains
   `SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4

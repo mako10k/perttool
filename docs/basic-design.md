@@ -204,6 +204,7 @@ perttool/
       text-edits.ts
       types.ts
     semantic/
+      target-validator.ts
       validator.ts
     cli.ts
     index.ts
@@ -217,6 +218,7 @@ perttool/
     next.test.mjs
     parser.test.mjs
     temporal-source-parser.test.mjs
+    temporal-semantic-validator.test.mjs
     mutation.test.mjs
     self-use.test.mjs
     fixtures/
@@ -546,6 +548,15 @@ the added fields. Declared date and date-time tokens become exact internal
 `DeclaredCalendarValue` records while retaining their original spelling and
 source spans. The capability, target parser, and calendar records are not
 re-exported from `src/index.ts`.
+
+Target semantic validation accepts Grammar 1 or explicit Grammar 2 only
+through that same capability and returns an internal `TargetValidatedDocument`
+boundary on success. A Grammar 2 temporal field without `project.as_of`
+produces `PTSEM-112` at the field value. Mixed calendar kinds and temporal
+fields retained on active, done, or reached history remain valid source;
+projection availability and start authority belong to later target Core
+slices. The target validator reads no clock, host zone, locale, repository, or
+path and is not re-exported from `src/index.ts`.
 
 ## 7. Diagnostic Model
 
