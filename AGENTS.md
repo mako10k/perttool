@@ -65,7 +65,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
 - `src/command/`: immutable typed command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and active Contract 3 GuideResult projection.
-- `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, and internal release-aware temporal precedence and resource schedulers using exact Rational values.
+- `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
 - `src/conversion/`: Mermaid profile/plain export and import, semantic metadata, projection generation, and fail-closed restoration.
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.
@@ -73,7 +73,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, and separate internal Grammar 2/3 target-validation adapters.
 - `src/migration/`: internal exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
-- `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values and exact Gregorian/fixed-offset comparison, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
+- `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
 - `src/parser/`: the active Grammar 1 parser plus separate identity-checked internal target Grammar 2 and Grammar 3 source capabilities; target parsers are not root package exports.
 - `src/semantic/`: active Grammar 1 validation plus separate internal target Grammar 1/2 and Grammar 1/2/3 validated-document boundaries, exact cross-form Duration constraints, and temporal-anchor validation; target validators are not root package exports.
 - `src/mutation/`: active requests for project/task/gate/milestone/resource and atomic batch, internal Grammar 2/3 project/task/milestone profiles, exact changed-field Duration generation, canonical advance, source-preserving UTF-16 TextEdit generation, and application rules.
