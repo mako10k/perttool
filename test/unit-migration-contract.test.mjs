@@ -144,7 +144,7 @@ test("unit migration fixes no-op, inverse, and existing-version boundaries", asy
   assert.match(design, /### 6\.6 Point and Time-Unit Source Migration/);
   assert.match(
     grammar,
-    /Unit migration version 1 changes only accepted version-1 values and suffixes/,
+    /Unit migration version 1 supports versions 1 and 2/,
   );
   assert.match(
     analysis,

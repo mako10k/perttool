@@ -11,6 +11,7 @@
 - Analysis specification: [analysis.md](analysis.md)
 - Deadline semantics: [temporal-deadline.md](temporal-deadline.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
+- Public interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -422,7 +423,8 @@ the project velocity relationship. It MUST NOT use calendar-projection
 scalars, a date difference, an offset, or `as_of` to invent a `day <-> hour`
 source migration.
 
-`INTERFACE_PROJECTION_CONTRACT` decides:
+The [Temporal and Unit Interface Contract](temporal-unit-interface.md)
+selects:
 
 - grammar-version fields and validation;
 - Core types and result-schema identities;
@@ -452,5 +454,6 @@ following.
     business-calendar, or time-varying-capacity input.
 11. Existing grammar version 1 and Analysis version 1 identities remain
     unchanged.
-12. Deadline, source-migration, interface, examples, and design review remain
-    explicit follow-on work.
+12. Deadline and source-migration semantics plus the public interface remain
+    separately versioned, while examples and design review remain explicit
+    follow-on work.

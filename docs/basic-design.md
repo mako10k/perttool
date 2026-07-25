@@ -1,6 +1,6 @@
 # perttool Basic Design
 
-- Document status: Draft 1.12
+- Document status: Draft 1.13
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Applicable requirements: [requirements.md](requirements.md)
@@ -9,6 +9,7 @@
 - Temporal calendar semantics: [specs/temporal-calendar.md](specs/temporal-calendar.md)
 - Temporal deadline semantics: [specs/temporal-deadline.md](specs/temporal-deadline.md)
 - Unit migration semantics: [specs/unit-migration.md](specs/unit-migration.md)
+- Temporal and unit interface: [specs/temporal-unit-interface.md](specs/temporal-unit-interface.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
 - Recommendation ranking: [specs/recommendation-ranking.md](specs/recommendation-ranking.md)
 - Recommendation reasons: [specs/recommendation-reasons.md](specs/recommendation-reasons.md)
@@ -490,9 +491,42 @@ qualifies whole-document reversibility as metadata-changed.
 The [Point and Time-Unit Migration Semantics
 specification](specs/unit-migration.md) fixes the algorithm identity, formulas,
 field inventory, velocity disposition, representability, failures, and
-round-trip meaning. The ordered interface contract must define public Core,
-CLI, text/JSON, help, diagnostic, batch, and write projections before a
-runtime module or command is added.
+round-trip meaning.
+
+### 6.7 Temporal and Unit Public Interface
+
+The [Temporal and Unit Interface
+Contract](specs/temporal-unit-interface.md) keeps grammar version 1 and CLI
+Contract 3 closed, then selects grammar version 2 and CLI Contract 4 for one
+later atomic cutover.
+
+Grammar version 2 adds only milestone `deadline`, task `not_before`, and task
+`deadline`. It requires explicit `project.as_of` when any is present. The
+words remain contextual field keywords, preserving previously valid entity
+IDs. Exact date/date-time values flow from validated CST/AST data into a pure
+temporal application layer; they never enter ordinary PERT or recommendation
+ranking as substituted values.
+
+The target public results are CheckResult v2, ProjectResult v2,
+AnalysisResult v3, NextResult v4, and UnitMigrationResult v1. Analysis v3
+retains the entire base Analysis v2 result and adds separate temporal
+precedence/resource and deadline views. Next v4 retains Recommendation
+algorithm version 1 and its complete v3 graph, then adds a release gate:
+automation starts only the intersection published as
+`startable_recommended_task_ids`. Deadline facts remain informational for
+ranking.
+
+`project migrate-unit --to-unit ...` calls a separate pure planner, not
+`project.set` or `batch.apply`. Temporal field mutations can participate in a
+final-candidate-only batch, including grammar upgrade/downgrade. Automatic
+unit migration cannot be a batch member in interface version 1 because its
+complete-field inventory and exactness guarantee bind to one source
+snapshot.
+
+Contract 4 is not active until parser, Core, schemas, registry dispatch/help,
+Guide, diagnostics, README, installed-package E2E, authority guidance, and
+override validation move together. Emitting NextResult v4 alone does not
+authorize self-use.
 
 ## 7. Diagnostic Model
 
@@ -859,6 +893,10 @@ help, guide split, and JSON envelope. The [CLI Interface
 specification](specs/interfaces.md) is retained for Contract 2 payload, stream,
 and exit meanings that Contract 3 explicitly preserves.
 
+The [Temporal and Unit Interface
+Contract](specs/temporal-unit-interface.md) is the target-only Contract 4
+delta. It is not added to active dispatch until its atomic cutover gate.
+
 ```text
 perttool help [resource [action]] [--format text|json]
 perttool guide [topic] [subtopic] [--level index|quick|detail]
@@ -1093,6 +1131,14 @@ Initial schemas:
 - `Perttool.GuideResult.v1`
 - `Perttool.InitResult.v1`
 
+Target Contract 4 schemas:
+
+- `Perttool.CheckResult.v2`
+- `Perttool.ProjectResult.v2`
+- `Perttool.AnalysisResult.v3`
+- `Perttool.NextResult.v4`
+- `Perttool.UnitMigrationResult.v1`
+
 Rules:
 
 - Update TypeScript types and JSON Schema in the same change.
@@ -1104,6 +1150,10 @@ Rules:
 Every active CLI JSON envelope includes `cli_contract_version=3`. Existing
 result-specific schema versions remain unchanged where Contract 3 preserves
 their payload meanings.
+
+After the target cutover every active envelope includes
+`cli_contract_version=4`; the target document operations always return their
+new schema identity for grammar versions 1 and 2.
 
 Reserve DSL version for future introduction as an optional field in the project block. When omitted in the MVP, treat it as version 1 grammar.
 
@@ -1412,6 +1462,23 @@ Exit:
 - retain the pre-publication `latest` value;
 - record durable acceptance without rewriting the immutable release artifact.
 
+### Post-MVP Slice 4E: Temporal and unit SU-M1 contract
+
+The scheduling-units M1 workstream specifies the temporal property scope,
+calendar arithmetic, release-aware deadline evaluation, exact Point/time
+source migration, and the public interface before runtime implementation.
+The public interface selects grammar version 2 and CLI Contract 4 while
+leaving current Contract 3 and NextResult v3 authority unchanged.
+
+Exit:
+
+- accept the calendar, deadline, migration, and interface contracts;
+- accept machine-readable boundary examples for available, unavailable,
+  not-applicable, migration-failure, and authority cases;
+- complete the cross-cutting contract review;
+- keep runtime activation, authority adoption, and publication separately
+  gated.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 As an independent future backlog after the first beta, split the work into the following three deliverables.
@@ -1424,7 +1491,7 @@ Fix LSP protocol capabilities, UTF-16 position mapping, VSIX packaging, workspac
 
 ## 18. Matters for detailed design
 
-The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; and the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
+The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the target grammar 2, CLI Contract 4, temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
 
 1. Implementation details for CST trivia/comment ownership rules
 2. Implementation details for the formatter's canonical whitespace
@@ -1445,6 +1512,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | CLI adapter | Chapters 15 and 17 |
 | Help registry | Chapter 16 |
 | CLI Contract 3 registry, help/guide split, and file-first maintenance | Sections 12.2, 15, 16, and 21.2 |
+| Temporal/unit grammar, projections, migration, and Contract 4 boundary | Sections 7.6, 7.7, 10.7, 11, 12, 15, 16, and 18 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
 | Mermaid adapter | Chapters 13 and 14 |
 | Test design | Section 20.3 and Chapter 21 |

@@ -19,6 +19,7 @@
 - Future AI Agent Guidance interface: [agent-guidance.md](agent-guidance.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 - Active CLI contract: [cli-contract-3.md](cli-contract-3.md)
+- Future temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 
 ## 1. Purpose and MVP Boundary
 
@@ -1191,3 +1192,9 @@ CLI Contract 3 is separately versioned because it changes resources, actions,
 JSON operation names, help schemas, and usage-error recovery. Implementations
 must follow its [migration boundary](../process/cli-contract-3-migration.md)
 rather than adding Contract 3 aliases to this Contract 2 surface.
+
+The [Temporal and Unit Interface Contract](temporal-unit-interface.md)
+separately targets grammar version 2 and CLI Contract 4. It selects
+CheckResult v2, ProjectResult v2, AnalysisResult v3, NextResult v4, and
+UnitMigrationResult v1 without changing the retained Contract 2 payload
+meanings in this document or silently widening active Contract 3.

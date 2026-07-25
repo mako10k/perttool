@@ -9,6 +9,7 @@
 - Basic design: [../basic-design.md](../basic-design.md)
 - Migration: [../process/cli-contract-3-migration.md](../process/cli-contract-3-migration.md)
 - Release: [`v0.2.0` procedure](../process/0.2.0-release.md)
+- Future temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 
 ## 1. Purpose and activation boundary
 
@@ -53,6 +54,8 @@ The following are not part of Contract 3:
 - locale negotiation, translation catalogs, or a `--locale` option;
 - direct Git operations;
 - backlog hierarchy or multi-plan composition.
+- grammar version 2 temporal fields, temporal result projections, or
+  `project migrate-unit`; these require CLI Contract 4.
 
 `project show` remains because it exposes effective and defaulted project
 metadata used by automation. `dag analyze` and `dag next` remain the sources of
@@ -457,6 +460,13 @@ specification changes them explicitly.
 
 The versioned migration changes the public command and operation namespace in
 one cutover. It does not offer a Contract 2 schema or spelling switch.
+
+The independently versioned
+[Temporal and Unit Interface Contract](temporal-unit-interface.md) retains
+this complete surface and targets CLI Contract 4 because adding temporal
+options, one migration command, and new document-result identities would
+otherwise silently widen this accepted contract. Contract 3 remains unchanged
+until that later atomic cutover.
 
 ## 10. Normative acceptance cases
 

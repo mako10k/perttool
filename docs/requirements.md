@@ -1,6 +1,6 @@
 # perttool Requirements
 
-- Document status: Draft 0.12
+- Document status: Draft 0.13
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Scope: MVP and subsequent extension boundaries
@@ -441,9 +441,10 @@ Compatibility:
   under the existing algorithm versions.
 - Result schemas that add temporal fields receive new schema identities.
   Existing schema identities do not gain conditionally present fields.
-- The interface-contract task decides whether the additive command options
-  require a new CLI contract identity, but it must not introduce aliases or
-  silently reinterpret existing options.
+- The [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
+  selects grammar version 2, CLI Contract 4, and new document-result
+  identities. It introduces no compatibility aliases and does not silently
+  reinterpret Contract 3 options.
 
 ### 7.7 Point and time-unit source migration
 
@@ -486,8 +487,10 @@ The normative formulas, field inventory, representability rule, velocity
 disposition, round-trip qualification, and stable semantic failure causes are
 defined by the
 [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md).
-The dependency-ordered interface task defines public Core/CLI names, result
-schemas, help, and diagnostic codes before runtime implementation.
+The dependency-ordered
+[Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
+defines public Core/CLI names, result schemas, help, and diagnostic codes
+before runtime implementation.
 
 ## 8. DSL requirements
 
@@ -1372,10 +1375,11 @@ or dist-tag writes. The authoritative procedure is
 There are no undecided design decisions that currently prevent starting MVP implementation. If a new semantic decision is needed during implementation, update an ADR or an individual specification first rather than fixing it only in code.
 
 The SU-M1 temporal and unit-migration extension has accepted its property
-scope, deterministic calendar and deadline semantics, and exact source-unit
-migration semantics but still requires the dependency-ordered interface,
-example, and review specifications in Section 25. These decisions block
-temporal implementation, not continued use of grammar version 1.
+scope, deterministic calendar and deadline semantics, exact source-unit
+migration semantics, and public interface contract but still requires the
+dependency-ordered examples and cross-cutting review in Section 25. These
+remaining decisions block temporal implementation, not continued use of
+grammar version 1.
 
 Resolved design decisions:
 
@@ -1396,6 +1400,7 @@ Resolved design decisions:
 - Date/date-time comparison, `as_of`, exact day/hour/point projection, fixed-offset preservation, continuous-calendar boundaries, and `not_before` release bounds: [Temporal Calendar Semantics specification](specs/temporal-calendar.md)
 - Temporal precedence/resource release scheduling, deadline state, exact margin/lateness, feasibility, blocked/heuristic qualification, risk, and recommendation-version boundary: [Temporal Deadline Semantics specification](specs/temporal-deadline.md)
 - Permitted Point/time directions, effective velocity, complete field inventory, exact finite-decimal conversion, atomic candidate behavior, and round-trip qualification: [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md)
+- Grammar version 2 fields, CLI Contract 4, Core boundaries, temporal/unit text and JSON projections, mutation, help, diagnostics, and authority migration: [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
 
 ## 25. Recommended next specification work
 
@@ -1428,7 +1433,7 @@ Before implementation, separate the specifications in the following order.
     - [x] [Deterministic date/date-time, `as_of`, timezone, and calendar semantics](specs/temporal-calendar.md)
     - [x] [Deadline-derived analysis and recommendation semantics](specs/temporal-deadline.md)
     - [x] [Exact point and time-unit source-migration semantics](specs/unit-migration.md)
-    - [ ] Grammar, Core, CLI, help, diagnostics, and result-projection contract
+    - [x] [Grammar, Core, CLI, help, diagnostics, and result-projection contract](specs/temporal-unit-interface.md)
     - [ ] Normative boundary examples and machine-readable acceptance cases
     - [ ] Cross-cutting SU-M1 contract review
 

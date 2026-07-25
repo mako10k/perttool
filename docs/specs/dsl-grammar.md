@@ -1,7 +1,7 @@
 # perttool DSL Grammar Specification
 
-- Document status: Draft 0.6
-- Grammar version: 1
+- Document status: Draft 0.7
+- Grammar versions: 1 active; 2 target
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Related requirements: [../requirements.md](../requirements.md)
@@ -9,12 +9,17 @@
 - CLI interface: [interfaces.md](interfaces.md)
 - Mutation semantics: [mutation.md](mutation.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
+- Temporal and unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 
 ## 1. Purpose
 
 This document defines the lexical rules, syntax, fields for each block, defaults, the boundary between syntax and semantic validation, source spans, error recovery, and formatting contract for `.pert` documents.
 
-The EBNF and field tables in this document are normative for grammar version 1. See the following representative valid documents.
+The EBNF and field tables through Section 19 are normative for grammar version
+1. Section 20 fixes the grammar version 2 delta selected by the
+[Temporal and Unit Interface Contract](temporal-unit-interface.md). Grammar
+version 2 is not active in the current runtime. See the following
+representative valid version 1 documents.
 
 - [minimal.pert](../examples/minimal.pert)
 - [parallel.pert](../examples/parallel.pert)
@@ -654,7 +659,7 @@ An analyzable Graph must not be generated from a document with parse or field-va
 | `PTDSL-005` | Unknown field | Applicable `syntax.*` |
 | `PTDSL-006` | Invalid string/escape | `syntax.string` |
 | `PTDSL-007` | Invalid duration/velocity/decimal | `syntax.duration` or `syntax.velocity` |
-| `PTDSL-008` | Invalid date/date-time | `syntax.project` |
+| `PTDSL-008` | Invalid date/date-time | `syntax.project` or `syntax.temporal` |
 | `PTDSL-009` | Invalid list | `syntax.tags` |
 | `PTDSL-010` | Invalid block text | `syntax.text` |
 | `PTDSL-011` | Inline comment | `syntax.comments` |
@@ -670,6 +675,7 @@ An analyzable Graph must not be generated from a document with parse or field-va
 | `PTSEM-109` | Invalid positive/range constraint for resource capacity or requirement units | `syntax.resource` |
 | `PTSEM-110` | Duplicate resource requirement | `syntax.task` |
 | `PTSEM-111` | Invalid velocity constraint | `syntax.velocity` |
+| `PTSEM-112` | Grammar v2 temporal field without `project.as_of` | `syntax.temporal` |
 
 Graph diagnostic codes are fixed by the [Graph Semantics specification](graph-semantics.md).
 
@@ -933,11 +939,58 @@ Expected: `PTSEM-103`.
 - An omitted version is interpreted as version 1.
 - A version 1 parser accepts only `version 1`.
 - Do not silently interpret a newer version as version 1.
-- For a grammar-breaking change, provide a project version and a migration command.
-- Unit migration version 1 changes only accepted version-1 values and suffixes;
-  it does not change the project grammar version.
+- For a grammar-breaking change, provide a project version and a migration
+  procedure.
 - Update help, examples, fixtures, and formatter in the same change as a grammar version.
 - Explicitly state tool-version compatibility, recognizing that even a minor field addition causes older parsers to reject the unknown field.
+
+### 20.1 Grammar version 2 temporal delta
+
+Grammar version 2 is selected only by an explicit `version 2`. It adds:
+
+```ebnf
+DeadlineField  = "deadline", HSPACE, ( IsoDateTime | IsoDate ), NEWLINE ;
+NotBeforeField = "not_before", HSPACE, ( IsoDateTime | IsoDate ), NEWLINE ;
+
+MilestoneFieldV2 = MilestoneField | DeadlineField ;
+TaskFieldV2      = TaskField | NotBeforeField | DeadlineField ;
+```
+
+`deadline` and `not_before` are contextual field keywords rather than global
+reserved IDs. The version 1 reserved-word set and valid entity IDs remain
+unchanged.
+
+| Entity | Field | Count | Value | Constraint |
+| --- | --- | ---: | --- | --- |
+| milestone | `deadline` | 0..1 | ISO date/date-time | Latest desired reach; not a dependency or hard cap |
+| task | `not_before` | 0..1 | ISO date/date-time | Earliest permitted start for a new start |
+| task | `deadline` | 0..1 | ISO date/date-time | Latest desired finish; not a hard cap |
+
+A version 2 document with at least one `deadline` or `not_before` requires
+`project.as_of`; absence is `PTSEM-112`. Mixed date/date-time kinds remain a
+valid document and produce an unavailable temporal relationship rather than a
+validation error. Temporal fields on active/done tasks and reached milestones
+remain valid declared source even when their operation is not applicable or
+historical compliance is unavailable.
+
+Grammar version 2 canonical field order is:
+
+```text
+milestone:
+  title, description, state, deadline, tags
+
+task:
+  title, description, duration|estimate, not_before, deadline, status,
+  priority, requires, owner, tags, blocked_reason, source
+```
+
+All other EBNF, field tables, validation phases, spans, recovery, and
+source-preserving formatting rules remain those of version 1. Version 1
+rejects the added fields as `PTDSL-005`.
+
+Unit migration version 1 supports versions 1 and 2 because the version 2
+delta adds no base-unit-bearing field. It preserves `as_of`, `deadline`, and
+`not_before` tokens and does not change the project grammar version.
 
 ## 21. Grammar acceptance
 
@@ -957,3 +1010,7 @@ At minimum, a parser implementation automatically checks the following:
 12. Keeps the formatter idempotent and AST-equivalent.
 13. Detects drift between help samples and parser fixtures.
 14. Parses and validates resource capacity, `requires`, and priority.
+15. Keeps version 1 behavior closed while version 2 accepts exactly the three
+    temporal fields and requires an explicit anchor.
+16. Treats `deadline` and `not_before` as contextual fields without invalidating
+    an existing entity ID that uses either spelling.

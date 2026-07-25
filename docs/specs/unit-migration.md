@@ -9,6 +9,7 @@
 - Analysis specification: [analysis.md](analysis.md)
 - Mutation semantics: [mutation.md](mutation.md)
 - Calendar semantics: [temporal-calendar.md](temporal-calendar.md)
+- Public interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -200,8 +201,10 @@ The initial temporal scope contains only absolute dates and date-times, so it
 adds no duration-bearing source field to this inventory. Absolute temporal
 values MUST NOT be rewritten merely because the project base unit changes.
 
-If a later grammar version adds a source field whose meaning is expressed in
-the project base unit, unit migration version 1 fails with
+Grammar version 2 adds only absolute temporal fields, so the inventory remains
+complete for grammar versions 1 and 2. If a later grammar version adds a
+source field whose meaning is expressed in the project base unit, unit
+migration version 1 fails with
 `unsupported_duration_field` until a new migration version inventories that
 field. It MUST NOT silently leave a base-unit-bearing field unchanged.
 
@@ -477,7 +480,7 @@ diff, or partially replaced velocity.
 
 Unit migration version 1:
 
-- operates on the currently accepted base-unit fields of grammar version 1;
+- operates on the inventoried base-unit fields of grammar versions 1 and 2;
 - adds no DSL field, keyword, or implicit mixed-unit rule;
 - does not change Analysis version 1 or its `velocity_forecast` qualifier;
 - does not change calendar or deadline algorithm identities;
@@ -522,5 +525,6 @@ following.
 11. Same-unit and repeated requests are no-ops and do not rescale.
 12. An inverse with the same effective velocity restores exact source values,
     with lexical and replacement-velocity qualifications stated explicitly.
-13. Existing analysis, calendar, deadline, mutation, grammar, and CLI versions
+13. Grammar version 2 absolute temporal tokens are preserved byte-for-byte,
+    while existing analysis, calendar, deadline, mutation, and CLI versions
     remain unchanged.

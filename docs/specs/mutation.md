@@ -1,6 +1,6 @@
 # perttool Mutation Semantics Specification
 
-- Document status: Draft 0.5
+- Document status: Draft 0.6
 - Mutation semantics version: 1
 - Created: 2026-07-22
 - Requirements: [../requirements.md](../requirements.md)
@@ -9,6 +9,7 @@
 - CLI interface: [interfaces.md](interfaces.md)
 - Basic design: [../basic-design.md](../basic-design.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
+- Temporal and unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 
 ## 1. Purpose and scope
 
@@ -324,7 +325,46 @@ Adding a milestone and its connecting task/gate edges in sequence creates an int
 
 Use `PTMUT-*` only for mutation request/target errors. Do not wrap a candidate's syntax, field, or graph errors as `PTMUT-*`; preserve existing `PTDSL-*`, `PTSEM-*`, and `PTDAG-*` diagnostics.
 
-## 11. Acceptance invariants
+## 11. Grammar version 2 temporal extension
+
+The [Temporal and Unit Interface Contract](temporal-unit-interface.md)
+selects this target extension to Mutation semantics version 1. It is not
+implemented by the current grammar version 1 runtime.
+
+```ts
+TaskDefinition.notBefore?: string;
+TaskDefinition.deadline?: string;
+TaskFieldSet.notBefore?: string;
+TaskFieldSet.deadline?: string;
+TaskClearableField += "not_before" | "deadline";
+
+MilestoneDefinition.deadline?: string;
+MilestoneFieldSet.deadline?: string;
+MilestoneClearableField += "deadline";
+```
+
+The strings use the grammar ISO date/date-time form and are validated through
+the final candidate. Insert new milestone fields after `state` and before
+`tags`. Insert task fields after `duration|estimate` in `not_before`,
+`deadline` order and before `status`.
+
+A batch can set `project.version=2` or `project.asOf` together with temporal
+fields, and can clear all temporal fields together with
+`project.version=1`. Validate only the final candidate. Clearing `as_of` while
+any temporal field remains preserves `PTSEM-112`; do not convert it to a
+mutation diagnostic.
+
+Automatic unit migration remains a separate `planUnitMigration` operation.
+It is not an `AtomicMutation` and cannot occur inside `batch` in interface
+version 1. Reject a batch request that invents a `project.migrate-unit` kind
+with `PTMUT-301`. A caller applies a dedicated migration candidate and
+re-reads it before any subsequent mutation.
+
+Temporal mutation results retain `Perttool.MutationResult.v1` because its
+candidate, diff, edit, and write payload shape is unchanged. CLI Contract 4
+provides the enclosing contract identity.
+
+## 12. Acceptance invariants
 
 Automatically verify at least the following.
 
@@ -345,3 +385,9 @@ Automatically verify at least the following.
 15. project set deterministically handles localized set/clear for all fields, header ID changes, and no-ops
 16. include a project-wide unit change with related entities in the same batch and validate only the final candidate
 17. gate add/set/remove preserves endpoint and reason source spans, normalizes no-ops, and exposes no candidate for invalid endpoints, cycles, joins, or finish reachability
+18. grammar version 2 temporal add/set/clear uses localized edits in canonical
+    insertion order and retains unrelated source bytes
+19. one batch can add or remove the anchor, grammar version, and temporal
+    fields by validating only the final candidate
+20. automatic unit migration is rejected as a batch member and retains its
+    separate exact-inventory result contract

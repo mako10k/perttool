@@ -13,6 +13,7 @@
 - Analysis specification: [analysis.md](analysis.md)
 - Recommendation semantics: [recommendation.md](recommendation.md)
 - Recommendation ranking: [recommendation-ranking.md](recommendation-ranking.md)
+- Public interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -545,22 +546,23 @@ subject with unknown actual time does not receive a forecast result.
 
 ## 18. Version and interface boundaries
 
-The interface contract that publishes these semantics MUST:
+The [Temporal and Unit Interface Contract](temporal-unit-interface.md) that
+publishes these semantics:
 
-- select new result schema identities rather than adding fields to existing
+- selects new result schema identities rather than adding fields to existing
   Analysis or Next schemas;
-- preserve base relative values separately from calendar values and margins;
-- identify the deadline, calendar, precedence, resource, scheduler, and
+- preserves base relative values separately from calendar values and margins;
+- identifies the deadline, calendar, precedence, resource, scheduler, and
   velocity versions used;
-- expose exact numerator/denominator values and tagged units;
-- keep absent, not-applicable, unavailable, conditional, and available states
+- exposes exact numerator/denominator values and tagged units;
+- keeps absent, not-applicable, unavailable, conditional, and available states
   distinct;
-- expose precedence and resource views separately;
-- carry `optimal=false` and block qualifiers into text and JSON;
-- preserve task/destination-milestone deadline relationships; and
-- keep the recommendation boundary in section 16 machine-verifiable.
+- exposes precedence and resource views separately;
+- carries `optimal=false` and block qualifiers into text and JSON;
+- preserves task/destination-milestone deadline relationships; and
+- keeps the recommendation boundary in section 16 machine-verifiable.
 
-The grammar and mutation contract later determines field syntax and
+Grammar version 2 and the mutation extension determine field syntax and
 source-preserving edits. This specification does not authorize adding the
 fields to grammar version 1.
 
