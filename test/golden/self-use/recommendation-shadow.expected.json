@@ -283,7 +283,7 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m2r": {
-      "source_digest": "sha256:f6efa953bf1bed128c4604416cc3786d3a376cf5251d79c5476fb0f48d96c168",
+      "source_digest": "sha256:dd98470d99896a768a58220d400ec658d80dc8f5acfe02b18552aae5ee812057",
       "groups": {
         "active": [],
         "ready": [
@@ -361,9 +361,7 @@
         "reasons": 11,
         "descriptions": 4
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "scheduling-units": {
       "source_digest": "sha256:92f613648d27944f5c206f06bf72d61b31a5144138c05a6c23ebc5029adcc8a3",

@@ -21,8 +21,6 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "RATIONAL_DURATION_SOURCE_MODEL",
-    "EXACT_DURATION_SERIALIZER",
     "RATIONAL_DURATION_FORMATTER",
     "RATIONAL_DURATION_MUTATION",
     "RATIONAL_DURATION_VERSION_BOUNDARY",
@@ -32,16 +30,14 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 20);
+  assert.equal(points, 13);
 
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_CONTRACT /m);
+  assert.doesNotMatch(detail, /^task RATIONAL_DURATION_SOURCE_MODEL /m);
+  assert.doesNotMatch(detail, /^task EXACT_DURATION_SERIALIZER /m);
   assert.match(
     detail,
-    /milestone RATIONAL_DURATION_CONTRACT_ACCEPTED:[\s\S]*state reached/,
-  );
-  assert.match(
-    detail,
-    /shortest finite decimal when terminating and a reduced integer fraction otherwise/,
+    /milestone RATIONAL_DURATION_CORE_INPUT_READY:[\s\S]*state reached/,
   );
   assert.match(
     detail,

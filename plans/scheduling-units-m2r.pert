@@ -37,18 +37,12 @@ resource CONTRACT3_GUARD:
   title "Active Grammar 1 and CLI Contract 3 compatibility gate"
   capacity 1
 
-milestone RATIONAL_DURATION_CONTRACT_ACCEPTED:
-  title "Rational Duration contract accepted"
-  state reached
 
-milestone RATIONAL_DURATION_SOURCE_READY:
-  title "Target rational Duration source model ready"
 
-milestone EXACT_DURATION_SERIALIZER_READY:
-  title "Exact Duration source serializer ready"
 
 milestone RATIONAL_DURATION_CORE_INPUT_READY:
   title "Rational source and serializer branches ready"
+  state reached
 
 milestone RATIONAL_DURATION_FORMATTER_READY:
   title "Target rational Duration formatter ready"
@@ -66,31 +60,9 @@ milestone RATIONAL_DURATION_ACCEPTED:
   title "Exact rational Duration extension accepted"
 
 
-task RATIONAL_DURATION_SOURCE_MODEL RATIONAL_DURATION_CONTRACT_ACCEPTED -> RATIONAL_DURATION_SOURCE_READY:
-  title "Implement the target rational Duration source model"
-  description "Extend the target CST, AST, parser, and validator to accept exact fraction Duration only under the newly selected target grammar; retain source spans and tokens; reject zero denominators and malformed forms deterministically; enforce suffix and positive or estimate-order constraints; and keep Grammar 1 and accepted Grammar 2 behavior unchanged."
-  duration 4p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    SYNTAX_SURFACE 1
 
-task EXACT_DURATION_SERIALIZER RATIONAL_DURATION_CONTRACT_ACCEPTED -> EXACT_DURATION_SERIALIZER_READY:
-  title "Implement exact Duration source serialization"
-  description "Add an exact source serializer over Rational that emits the shortest finite decimal when terminating and a reduced integer fraction otherwise, never calls rounding display code, and produces deterministic canonical tokens for later migration."
-  duration 3p
-  status done
-  priority 80
-  requires:
-    DEVELOPERS 1
-    TARGET_CORE_SURFACE 1
 
-gate RATIONAL_SOURCE_CORE_GATE RATIONAL_DURATION_SOURCE_READY -> RATIONAL_DURATION_CORE_INPUT_READY:
-  reason "Editing requires the target rational Duration source model"
 
-gate EXACT_SERIALIZER_CORE_GATE EXACT_DURATION_SERIALIZER_READY -> RATIONAL_DURATION_CORE_INPUT_READY:
-  reason "Editing and version-boundary work require exact source serialization"
 
 task RATIONAL_DURATION_FORMATTER RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_DURATION_FORMATTER_READY:
   title "Extend the target formatter for rational Duration"

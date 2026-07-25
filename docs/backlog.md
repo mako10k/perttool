@@ -488,8 +488,7 @@ SU-M2 progress:
 - The user-selected rational Duration replan adds one common SU-M2R predecessor
   before SU-M3 and SU-M4. `RATIONAL_DURATION_CONTRACT` is committed and
   advanced. `RATIONAL_DURATION_SOURCE_MODEL` and `EXACT_DURATION_SERIALIZER`
-  are implemented and done but unadvanced under ADV-001 until their
-  implementation snapshot is committed. Thirteen points remain; precedence is
+  are also committed and advanced. Thirteen points remain; precedence is
   7p and the heuristic resource makespan is 10p with 3p delay. At the inherited
   provisional `24p/1d`, the forecasts are `7/24d` and `5/12d`.
 - The macro rollup is `0.416667d`, leaving `4.416667d` precedence and `6.416667d`
