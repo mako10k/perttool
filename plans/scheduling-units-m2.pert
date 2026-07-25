@@ -42,6 +42,7 @@ milestone TEMPORAL_VALIDATION_READY:
 
 milestone TEMPORAL_FORMATTER_READY:
   title "Target temporal formatter round-trip ready"
+  state reached
 
 milestone DECLARED_INPUT_CORE_READY:
   title "Target declared temporal-input Core ready"
@@ -57,15 +58,6 @@ milestone M2_FOUNDATIONS_ACCEPTED:
 
 
 
-task TEMPORAL_FORMATTER_ROUNDTRIP TEMPORAL_VALIDATION_READY -> TEMPORAL_FORMATTER_READY:
-  title "Accept target temporal formatter round trips"
-  description "Extend the target-only formatter path with canonical insertion order while preserving existing field order, comments, declaration order, BOM, line endings, exact temporal tokens, idempotence, and target AST equivalence. The active Contract 3 formatter must continue rejecting target Grammar 2 documents. Cover the formatter part of TUI-003 and the field-occurrence preservation witnesses."
-  duration 3p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    SYNTAX_SURFACE 1
 
 task DECLARED_TEMPORAL_INPUT_CORE TEMPORAL_VALIDATION_READY -> DECLARED_INPUT_CORE_READY:
   title "Implement target declared temporal-input Core projections"

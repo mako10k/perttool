@@ -118,7 +118,6 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "TEMPORAL_FORMATTER_ROUNDTRIP",
     "DECLARED_TEMPORAL_INPUT_CORE",
     "TEMPORAL_MUTATION_BATCH_CORE",
     "M2_FOUNDATION_ACCEPTANCE",
@@ -127,7 +126,7 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 15);
+  assert.equal(points, 12);
   assert.match(
     detail,
     /The active runtime remains Grammar 1 and CLI Contract 3\./,

@@ -432,7 +432,7 @@ SU-M2 progress:
   validated-document boundary accepts Grammar 1/2 through the target
   capability, reports field-local `PTSEM-112`, and retains mixed kinds and
   active/done/reached temporal history without reading a clock or environment.
-- `TEMPORAL_FORMATTER_ROUNDTRIP` is complete. The internal target formatter
+- `TEMPORAL_FORMATTER_ROUNDTRIP` is complete and advanced. The internal target formatter
   shares one canonical Grammar 1/2 field order with the parser, preserves
   source field and declaration order, comments, BOM, line endings, and exact
   temporal tokens, and revalidates an idempotent target-AST-equivalent
