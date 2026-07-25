@@ -38,21 +38,14 @@ resource CONTRACT3_GUARD:
   title "Active Grammar 1 and CLI Contract 3 compatibility gate"
   capacity 1
 
-milestone MIGRATION_REQUEST_READY:
-  title "Migration request, direction, velocity, and inventory Core ready"
-  state reached
 
 
 
-milestone MIGRATION_RESULT_V2_READY:
-  title "Internal UnitMigrationResult v2 projection ready"
 
-milestone MIGRATION_ROUNDTRIP_READY:
-  title "No-op, repetition, and inverse behavior ready"
-  state reached
 
 milestone M4_ACCEPTANCE_INPUT_READY:
   title "SU-M4 migration branches ready for acceptance"
+  state reached
 
 milestone UNIT_MIGRATION_ACCEPTED:
   title "SU-M4 exact unit-migration Core accepted"
@@ -60,24 +53,9 @@ milestone UNIT_MIGRATION_ACCEPTED:
 
 
 
-task UNIT_MIGRATION_RESULT_V2 MIGRATION_REQUEST_READY -> MIGRATION_RESULT_V2_READY:
-  title "Implement the internal UnitMigrationResult v2 projection"
-  description "Project algorithm identity, source and target grammar, grammar and velocity dispositions, source and target units, exact effective velocity, converted-field records, reversibility, qualifications, unavailable causes, candidate data, diagnostics, and deterministic invalid results under the accepted interface names. Keep the type internal: no root export, JSON command envelope, text adapter, help entry, or installed-package workflow."
-  duration 4p
-  status done
-  priority 80
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    MIGRATION_CORE_SURFACE 1
-    TARGET_RESULT_SURFACE 1
 
 
-gate MIGRATION_ROUNDTRIP_ACCEPTANCE_GATE MIGRATION_ROUNDTRIP_READY -> M4_ACCEPTANCE_INPUT_READY:
-  reason "SU-M4 acceptance requires exact candidate, no-op, repetition, and inverse behavior"
 
-gate MIGRATION_RESULT_ACCEPTANCE_GATE MIGRATION_RESULT_V2_READY -> M4_ACCEPTANCE_INPUT_READY:
-  reason "SU-M4 acceptance requires the complete internal UnitMigrationResult v2 projection"
 
 task M4_UNIT_MIGRATION_ACCEPTANCE M4_ACCEPTANCE_INPUT_READY -> UNIT_MIGRATION_ACCEPTED:
   title "Accept the SU-M4 unit-migration target Core"

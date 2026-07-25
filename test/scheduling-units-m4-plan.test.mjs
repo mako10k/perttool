@@ -23,27 +23,25 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   const taskIds = [...detail.matchAll(/^task ([A-Z0-9_]+) /gm)].map(
     (match) => match[1],
   );
-  assert.deepEqual(taskIds, [
-    "UNIT_MIGRATION_RESULT_V2",
-    "M4_UNIT_MIGRATION_ACCEPTANCE",
-  ]);
+  assert.deepEqual(taskIds, ["M4_UNIT_MIGRATION_ACCEPTANCE"]);
   const points = [...detail.matchAll(/^  duration (\d+)p$/gm)].reduce(
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 8);
+  assert.equal(points, 4);
 
   assert.doesNotMatch(detail, /^milestone EXACT_CONVERSION_READY:/m);
   assert.doesNotMatch(detail, /^task EXACT_UNIT_CONVERSION /m);
-  assert.match(
-    detail,
-    /milestone MIGRATION_REQUEST_READY:[\s\S]*state reached/,
-  );
+  assert.doesNotMatch(detail, /^milestone MIGRATION_REQUEST_READY:/m);
   assert.doesNotMatch(detail, /^task MIGRATION_REQUEST_AND_INVENTORY /m);
   assert.doesNotMatch(detail, /^milestone RATIONAL_DURATION_ACCEPTED:/m);
+  assert.match(
+    detail,
+    /milestone M4_ACCEPTANCE_INPUT_READY:[\s\S]*state reached/,
+  );
   assert.match(detail, /finish UNIT_MIGRATION_ACCEPTED/);
   assert.match(detail, /six tasks total 25p/);
-  assert.match(detail, /Keep the type internal: no root export/);
+  assert.doesNotMatch(detail, /^task UNIT_MIGRATION_RESULT_V2 /m);
   assert.match(detail, /without activating Contract 4 or publishing anything/);
   assert.match(
     macro,
@@ -55,21 +53,15 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   assert.match(interfaceSpec, /Perttool\.UnitMigrationResult\.v2/);
 });
 
-test("SU-M4 records Result v2 and selects final acceptance", async () => {
+test("SU-M4 advances Result v2 and selects final acceptance", async () => {
   const source = await repositoryFile("plans/scheduling-units-m4.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
 
-  assert.match(
-    source,
-    /milestone MIGRATION_ROUNDTRIP_READY:[\s\S]*state reached/,
-  );
+  assert.doesNotMatch(source, /^milestone MIGRATION_ROUNDTRIP_READY:/m);
   assert.doesNotMatch(source, /^task UNIT_MIGRATION_CANDIDATE /m);
   assert.doesNotMatch(source, /^task MIGRATION_NOOP_REPEAT_INVERSE /m);
-  assert.match(
-    source,
-    /task UNIT_MIGRATION_RESULT_V2[\s\S]*status done/,
-  );
+  assert.doesNotMatch(source, /^task UNIT_MIGRATION_RESULT_V2 /m);
   assert.match(source, /velocity 21p\/1d/);
   assert.equal(analysis.ok, true);
   assert.ok(analysis.precedence);

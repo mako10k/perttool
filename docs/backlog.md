@@ -533,8 +533,9 @@ SU-M2 progress:
   internal `Perttool.UnitMigrationResult.v2` schema identity, exact
   unit-bearing velocity and converted-field records, complete semantic causes,
   deterministic failures, candidate data, and verified preview/write state.
-  It remains unadvanced; ADV-001 requires this implementation snapshot to be
-  committed before a later advance.
+  Implementation commit `94d4e11` satisfies ADV-001; canonical advance removes
+  the completed result branch and retains `M4_ACCEPTANCE_INPUT_READY` as the
+  reached frontier.
 - One SU-M4 acceptance task and 4p remain. Cumulative velocity is `21p/1d`.
   Precedence and heuristic resource makespans are both 4p with no delay;
   both forecasts are `4/21d`. Complete Next v3 recommends

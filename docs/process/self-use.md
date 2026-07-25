@@ -508,8 +508,10 @@ registry, or installed workflow is added. The cumulative 21p first-day sample
 leaves only the 4p acceptance task; precedence and heuristic resource
 makespans are both 4p with no delay, both forecasts are `4/21d`, and complete
 Next v3 recommends `M4_UNIT_MIGRATION_ACCEPTANCE`. The task is done but
-unadvanced; ADV-001 requires this implementation snapshot to be committed
-before a later advance.
+committed at `94d4e11`; canonical expected-digest advance then removes the
+completed result branch and retains `M4_ACCEPTANCE_INPUT_READY` as the reached
+frontier. Reanalysis clears both `PTDAG-208` warnings while preserving the
+ready and recommended acceptance task.
 
 Starting conditions:
 
