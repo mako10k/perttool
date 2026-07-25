@@ -307,56 +307,78 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m4": {
-      "source_digest": "sha256:e583a350a43ec3dcdf0a1de51d55ea9238f54a8d7008087aff47e3d7c2ed4610",
+      "source_digest": "sha256:17572de114c771b1df2c33dec8af285fa1c5cf3a4b7aa7c4ac40c6a7ab102575",
       "groups": {
         "active": [],
         "ready": [
-          "MIGRATION_REQUEST_AND_INVENTORY"
+          "EXACT_UNIT_CONVERSION",
+          "UNIT_MIGRATION_RESULT_V2"
         ],
         "runnable_now": [
-          "MIGRATION_REQUEST_AND_INVENTORY"
+          "EXACT_UNIT_CONVERSION"
         ],
         "blocked_now": [],
         "upcoming": [
-          "EXACT_UNIT_CONVERSION",
           "UNIT_MIGRATION_CANDIDATE",
           "MIGRATION_NOOP_REPEAT_INVERSE",
-          "M4_UNIT_MIGRATION_ACCEPTANCE",
-          "UNIT_MIGRATION_RESULT_V2"
+          "M4_UNIT_MIGRATION_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "MIGRATION_REQUEST_AND_INVENTORY"
+        "EXACT_UNIT_CONVERSION"
       ],
       "manual_selected_task_ids": [
-        "MIGRATION_REQUEST_AND_INVENTORY"
+        "EXACT_UNIT_CONVERSION"
       ],
       "tiers": {
-        "MIGRATION_REQUEST_AND_INVENTORY": "recommended"
+        "EXACT_UNIT_CONVERSION": "recommended",
+        "UNIT_MIGRATION_RESULT_V2": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "MIGRATION_REQUEST_AND_INVENTORY",
+          "id": "EXACT_UNIT_CONVERSION",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
+        },
+        {
+          "id": "UNIT_MIGRATION_RESULT_V2",
+          "runnable_now": false,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "9/1",
+          "resource_rejections": [
+            {
+              "resource_id": "MIGRATION_CORE_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "EXACT_UNIT_CONVERSION"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
-        "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "task_decisions": 2,
+        "decision_steps": 12,
+        "facts": 47,
+        "comparisons": 2,
+        "reasons": 8,
+        "descriptions": 4
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:f33ac07c0e0a6a42d572c5cb4c09f8441b447066ae6912154e90c17813276688",
+      "source_digest": "sha256:94600cb3d153d99167624c65b7c6f26ac0a380d408f83d1ee306feb5cf55b25a",
       "groups": {
         "active": [],
         "ready": [

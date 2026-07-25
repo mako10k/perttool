@@ -418,6 +418,24 @@ v3 recommends `MIGRATION_REQUEST_AND_INVENTORY`. The detail keeps the
 unit-migration version 2 request, exact conversion, candidate, result,
 no-op/repetition/inverse, and acceptance work internal until SU-M5.
 
+`MIGRATION_REQUEST_AND_INVENTORY` then added a pure internal request and
+inventory Core plus a capability-checked application boundary. It selects the
+declared, semantically equal, replaced, or inserted exact velocity; keeps
+same-unit requests without replacement as no-ops; rejects malformed
+replacement velocities, unsupported day/hour directions, missing velocity,
+period mismatch, and same-unit velocity changes with stable causes mapped to
+`PTMIG-401` through `PTMIG-407`, while retaining `PTMIG-408` as reserved. The
+declaration/field-order inventory covers project epsilon/target and every
+deterministic or three-point task Duration for Grammar 1, 2, and 3, independent
+of task status. Absolute `as_of`, `deadline`, and `not_before` source tokens
+are captured for later candidate-preservation checks, and an unknown future
+base-unit field fails closed. The internal modules remain absent from root
+exports and the 27-command Contract 3 registry. The 4p first-day sample
+recalibrates velocity to `4p/1d`; 21p remain with 17p precedence, 21p
+heuristic resources, 4p delay, forecasts `17/4d` and `21/4d`, and complete
+Next v3 recommends `EXACT_UNIT_CONVERSION`. The task remains done but
+unadvanced until its implementation snapshot is committed under ADV-001.
+
 Starting conditions:
 
 - `perttool dsl check <file>` works

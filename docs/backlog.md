@@ -507,10 +507,16 @@ SU-M2 progress:
   resource makespans with `0.958333d` delay. Complete Next v3 recommends
   `SU_M4_UNIT_MIGRATION_WORK_PACKAGE`; the independent scheduler
   `runnable_now` set contains SU-M3.
-- The current SU-M4 detail has six tasks totaling 25p. Its precedence and
-  heuristic resource makespans are 21p and 25p with 4p delay; forecasts are
-  `7/8d` and `25/24d`. Complete Next v3 recommends
-  `MIGRATION_REQUEST_AND_INVENTORY`.
+- `MIGRATION_REQUEST_AND_INVENTORY` is implemented and recorded done through
+  the validated Grammar 1/2/3 request boundary, exact velocity selection,
+  declaration/field-order Duration inventory, preserved temporal snapshot,
+  stable migration causes, and Contract 3 closure. Its 4p first-day sample
+  recalibrates SU-M4 velocity to `4p/1d`; the task remains unadvanced under
+  ADV-001 until its implementation snapshot is committed.
+- Five SU-M4 tasks and 21p remain. Precedence and heuristic resource
+  makespans are 17p and 21p with 4p delay; forecasts are `17/4d` and `21/4d`.
+  Complete Next v3 recommends `EXACT_UNIT_CONVERSION`;
+  `UNIT_MIGRATION_RESULT_V2` is ready but resource-deferred.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, the public unit-migration command and installed workflow,

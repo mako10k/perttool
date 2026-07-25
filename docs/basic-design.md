@@ -562,10 +562,22 @@ separately identity-checked Grammar 3 source capability rather than changing
 `TARGET_GRAMMAR_2_CAPABILITY` in place. Grammar 3 parsing, validation, exact
 source serialization, explicit formatting, and source-preserving mutation are
 internal SU-M2R inputs. The exact-Duration version boundary and cross-cutting
-acceptance are complete. Unit-migration version 2 request validation, complete
-field inventory, exact conversion, coordinated candidate planning, result
-projection, and inverse behavior remain the current SU-M4 detail. The active
-Grammar 1 parser and accepted internal Grammar 2 behavior remain unchanged.
+acceptance are complete. SU-M4 now adds an internal migration-version-2
+request preparation layer over the validated Grammar 1/2/3 boundary. It
+selects an exact declared, equal, replaced, or inserted velocity; rejects
+unsupported directions and period mismatches with stable causes; inventories
+every known base-unit field in declaration and field order; and captures
+absolute temporal source tokens for later preservation checks. Exact
+conversion, coordinated candidate planning, result projection, and inverse
+behavior remain. The active Grammar 1 parser and accepted internal Grammar 2
+behavior remain unchanged.
+
+`src/migration/request.ts` owns the pure semantic request, velocity, stable
+cause, complete Duration inventory, and preserved-temporal snapshot.
+`src/application/target-unit-migration-request.ts` admits only a document
+validated through the identity-checked Grammar 3 target capability and
+returns that nominally validated boundary for later SU-M4 layers. Neither
+module is a root export or a Contract 3 command.
 
 The SU-M2 source implementation keeps `parseDocument` fixed to the active
 Grammar 1 profile. Target parsing requires the identity-checked internal

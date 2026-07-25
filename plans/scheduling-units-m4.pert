@@ -4,7 +4,7 @@ project SCHEDULING_UNITS_M4:
   description "Implement and accept only the internal unit-migration version 2 Core selected by the scheduling-and-units macro. SU-M2R exact Decimal-or-fraction Duration, canonical serialization, target Grammar 3, and version-boundary capabilities are accepted inputs. The active Grammar 1 runtime, CLI Contract 3, public schemas, root exports, command registry, help, Guide, installed workflow, Next v3 authority, and package distribution remain unchanged. The initial velocity is inherited at 24p/1d; six tasks total 25p."
   as_of 2026-07-25
   duration_unit point
-  velocity 24p/1d
+  velocity 4p/1d
   finish UNIT_MIGRATION_ACCEPTED
 
 milestone RATIONAL_DURATION_ACCEPTED:
@@ -66,6 +66,7 @@ task MIGRATION_REQUEST_AND_INVENTORY RATIONAL_DURATION_ACCEPTED -> MIGRATION_REQ
   title "Implement migration request validation and complete field inventory"
   description "Add internal unit-migration version 2 request and validated-input boundaries. Select a declared or replacement exact velocity; accept only Point-to-linked-time, matching-time-to-Point, and same-unit no-op; reject direct day/hour conversion and period mismatches; inventory project epsilon and target plus every deterministic or three-point task Duration for Grammar 1, 2, and 3. Preserve all absolute temporal values. Emit stable semantic causes without exposing a Contract 4 command."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
