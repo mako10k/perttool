@@ -259,38 +259,35 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m2": {
-      "source_digest": "sha256:d69c47db594cf3f7cb7cb3aa76fa84eed2905018d207b92136f72cc91dd5b7d8",
+      "source_digest": "sha256:6bfdfee6d953c4a298249c4af105c077ff11dfd7684e7b31b20ac92cb0f08997",
       "groups": {
         "active": [],
         "ready": [
-          "TEMPORAL_FORMATTER_ROUNDTRIP",
+          "TEMPORAL_MUTATION_BATCH_CORE",
           "DECLARED_TEMPORAL_INPUT_CORE"
         ],
         "runnable_now": [
-          "TEMPORAL_FORMATTER_ROUNDTRIP",
-          "DECLARED_TEMPORAL_INPUT_CORE"
+          "TEMPORAL_MUTATION_BATCH_CORE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "TEMPORAL_MUTATION_BATCH_CORE",
           "M2_FOUNDATION_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "TEMPORAL_FORMATTER_ROUNDTRIP"
+        "TEMPORAL_MUTATION_BATCH_CORE"
       ],
       "manual_selected_task_ids": [
-        "TEMPORAL_FORMATTER_ROUNDTRIP",
-        "DECLARED_TEMPORAL_INPUT_CORE"
+        "TEMPORAL_MUTATION_BATCH_CORE"
       ],
       "tiers": {
-        "TEMPORAL_FORMATTER_ROUNDTRIP": "recommended",
-        "DECLARED_TEMPORAL_INPUT_CORE": "allowed"
+        "TEMPORAL_MUTATION_BATCH_CORE": "recommended",
+        "DECLARED_TEMPORAL_INPUT_CORE": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "TEMPORAL_FORMATTER_ROUNDTRIP",
+          "id": "TEMPORAL_MUTATION_BATCH_CORE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -299,25 +296,39 @@
         },
         {
           "id": "DECLARED_TEMPORAL_INPUT_CORE",
-          "runnable_now": true,
+          "runnable_now": false,
           "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "5/1",
-          "resource_rejections": []
+          "schedule_critical": true,
+          "total_float": "2/1",
+          "resource_rejections": [
+            {
+              "resource_id": "TARGET_CORE_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "TEMPORAL_MUTATION_BATCH_CORE"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
         "task_decisions": 2,
         "decision_steps": 12,
-        "facts": 36,
-        "comparisons": 1,
+        "facts": 47,
+        "comparisons": 2,
         "reasons": 8,
-        "descriptions": 3
+        "descriptions": 4
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:a80820c623d05aa87ac7f601d332dd2c72546796e63710f0541a07e71d4a175d",
+      "source_digest": "sha256:b07cae7ceb2b42491abf3f630878308911f782ad470f7d6797bfa1b8a7e0537f",
       "groups": {
         "active": [],
         "ready": [

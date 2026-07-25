@@ -1,6 +1,11 @@
 import { checkDocument, type CheckOptions } from "../application/check.js";
 import type { Diagnostic } from "../model/diagnostics.js";
+import {
+  GRAMMAR_1_DECLARATION_FIELD_ORDER,
+} from "../model/declaration-fields.js";
 import type {
+  DeclarationKind,
+  DocumentNode,
   DurationValue,
   FieldNode,
   RequirementValue,
@@ -23,6 +28,18 @@ export interface FormatResult {
   readonly edits: readonly TextEdit[];
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticsTruncated: boolean;
+}
+
+export interface FormatValidation {
+  readonly ok: boolean;
+  readonly document: DocumentNode | null;
+  readonly documentId: string | null;
+  readonly diagnostics: readonly Diagnostic[];
+  readonly diagnosticsTruncated: boolean;
+}
+
+export interface SourceFormatProfile {
+  readonly fieldOrder: Readonly<Record<DeclarationKind, readonly string[]>>;
 }
 
 interface PhysicalLine {
@@ -143,9 +160,13 @@ function pushEdit(edits: TextEdit[], text: string, edit: TextEdit): void {
   if (text.slice(edit.startOffset, edit.endOffset) !== edit.replacement) edits.push(edit);
 }
 
-export function formatDocument(text: string, options: FormatOptions = {}): FormatResult {
-  const checked = checkDocument(text, options);
-  if (!checked.ok) {
+export function formatValidatedSource(
+  text: string,
+  checked: FormatValidation,
+  validateCandidate: (candidate: string) => FormatValidation,
+  profile: SourceFormatProfile,
+): FormatResult {
+  if (!checked.ok || checked.document === null) {
     return {
       ok: false,
       documentId: checked.documentId,
@@ -162,6 +183,7 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
   const edits: TextEdit[] = [];
 
   for (const declaration of checked.document.declarations) {
+    const knownFields = new Set(profile.fieldOrder[declaration.kind]);
     pushEdit(edits, text, {
       startOffset: declaration.headerSpan.start.offset,
       endOffset: declaration.headerSpan.end.offset,
@@ -172,6 +194,11 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
     });
 
     for (const field of declaration.fields) {
+      if (!knownFields.has(field.name)) {
+        throw new Error(
+          `formatter profile does not define ${declaration.kind}.${field.name}`,
+        );
+      }
       const fieldLine = lines[field.span.start.line]!;
       if (field.contentSpan !== undefined && typeof field.value === "string") {
         const firstLine = lines[field.contentSpan.start.line]!;
@@ -241,8 +268,10 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
 
   const normalizedEdits = normalizeTextEdits(text, edits, "formatter");
   const formattedText = applyTextEdits(text, normalizedEdits);
-  const candidate = checkDocument(formattedText, options);
-  if (!candidate.ok) throw new Error("formatter produced an invalid candidate document");
+  const candidate = validateCandidate(formattedText);
+  if (!candidate.ok || candidate.document === null) {
+    throw new Error("formatter produced an invalid candidate document");
+  }
   return {
     ok: true,
     documentId: candidate.documentId,
@@ -252,4 +281,27 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
     diagnostics: candidate.diagnostics,
     diagnosticsTruncated: candidate.diagnosticsTruncated,
   };
+}
+
+function activeValidation(
+  text: string,
+  options: FormatOptions,
+): FormatValidation {
+  const checked = checkDocument(text, options);
+  return {
+    ok: checked.ok,
+    document: checked.ok ? checked.document : null,
+    documentId: checked.documentId,
+    diagnostics: checked.diagnostics,
+    diagnosticsTruncated: checked.diagnosticsTruncated,
+  };
+}
+
+export function formatDocument(text: string, options: FormatOptions = {}): FormatResult {
+  return formatValidatedSource(
+    text,
+    activeValidation(text, options),
+    (candidate) => activeValidation(candidate, options),
+    { fieldOrder: GRAMMAR_1_DECLARATION_FIELD_ORDER },
+  );
 }

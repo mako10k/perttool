@@ -432,12 +432,18 @@ SU-M2 progress:
   validated-document boundary accepts Grammar 1/2 through the target
   capability, reports field-local `PTSEM-112`, and retains mixed kinds and
   active/done/reached temporal history without reading a clock or environment.
-- Four tasks and 15p remain. Both precedence and heuristic resource makespans
-  are 12p with no resource delay. Observed provisional velocity `9p/1d` yields
-  exact `4/3d` forecasts, and complete `NextResult.v3` recommends
-  `TEMPORAL_FORMATTER_ROUNDTRIP`; `DECLARED_TEMPORAL_INPUT_CORE` is a
-  resource-feasible `allowed` task.
-- The macro rollup has provisional `5.333333d` precedence and `7.333333d` heuristic
+- `TEMPORAL_FORMATTER_ROUNDTRIP` is complete. The internal target formatter
+  shares one canonical Grammar 1/2 field order with the parser, preserves
+  source field and declaration order, comments, BOM, line endings, and exact
+  temporal tokens, and revalidates an idempotent target-AST-equivalent
+  candidate. The active Contract 3 formatter remains Grammar 1.
+- Three tasks and 12p remain. The precedence makespan is 9p; the heuristic
+  resource makespan is 12p with 3p resource delay. Observed provisional
+  velocity `12p/1d` yields exact `3/4d` and `1d` forecasts, and complete
+  `NextResult.v3` recommends `TEMPORAL_MUTATION_BATCH_CORE`.
+  `DECLARED_TEMPORAL_INPUT_CORE` is deferred by the selected task's
+  `TARGET_CORE_SURFACE` use.
+- The macro rollup has provisional `5d` precedence and `7d` heuristic
   resource makespans with 2d resource delay. Its recommendation remains
   `SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4

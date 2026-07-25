@@ -48,7 +48,7 @@ milestone SCHEDULING_UNITS_ACCEPTED:
 task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE CONTRACT_ACCEPTED -> TEMPORAL_SURFACE_ACCEPTED:
   title "Implement temporal source and Core foundations"
   description "Roll up plans/scheduling-units-m2.pert. Implement and accept target Grammar 2 parsing, validation, formatting, source-preserving temporal mutation, and declared-input Core projections. Keep active Grammar 1, CLI Contract 3, public result schemas, help, and installed-package behavior unchanged."
-  duration 1.333333d
+  duration 1d
   priority 90
   requires:
     DEVELOPERS 1

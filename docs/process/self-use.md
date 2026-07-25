@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.43
+- Document status: Active Stage 3 / Revision 2.44
 - Creation date: 2026-07-21
 - Update date: 2026-07-25
 - Related design: [../basic-design.md](../basic-design.md)
@@ -231,6 +231,28 @@ forecasts are `4/3d`, and complete `NextResult.v3` recommends
 resource-feasible and `allowed`. Rolling the detail forecast to six decimal
 day precision produces macro precedence and heuristic resource makespans of
 `5.333333d` and `7.333333d`, retaining 2d resource delay.
+
+`TEMPORAL_FORMATTER_ROUNDTRIP` then introduced one shared canonical
+declaration-field order for the active Grammar 1 and target Grammar 2 parser
+profiles and an internal target-only formatter over the target validated
+document. The formatter preserves existing field and declaration order,
+comments, blank lines, BOM, predominant line endings, and exact `as_of`,
+`deadline`, and `not_before` tokens while retaining the ordinary lexical
+normalization rules, UTF-16 edits, candidate revalidation, idempotence, and
+target-AST equivalence. Malformed temporal source exposes no candidate; all
+nine target fixtures and the six TUE-012/TUE-013 temporal field occurrences
+round trip, while the active Contract 3 formatter and root exports remain
+Grammar 1. All 342 tests, documentation, twelve self-use plans, link checks,
+and package inspection passed. The 3p task was completed through an atomic
+expected-digest batch together with cumulative velocity recalibration to
+`12p/1d` and will be advanced only from the resulting clean committed
+snapshot. Three tasks and 12p remain; the precedence makespan is 9p and the
+heuristic resource makespan is 12p with 3p resource delay. The forecasts are
+`3/4d` and `1d`, and complete `NextResult.v3` recommends
+`TEMPORAL_MUTATION_BATCH_CORE`; `DECLARED_TEMPORAL_INPUT_CORE` is deferred by
+the selected task's `TARGET_CORE_SURFACE` use. Rolling the resource forecast
+to the macro produces 5d precedence and 7d heuristic resource makespans with
+2d resource delay.
 
 Starting conditions:
 
@@ -760,5 +782,6 @@ Stage 1 entry evidence:
 - SU-M1 contract-acceptance gate: all `TUI-001` through `TUI-018` observations trace through requirements, specifications, examples, delivery gates, and tests; the sequencing conflict is resolved with target-only SU-M2 through SU-M4 Core slices and one SU-M5 public cutover; the completed detail is advanced at `24p/1d` with no recommendation
 - SU-M2 Grammar 2 source gate: `GRAMMAR_V2_TEMPORAL_SOURCE` is complete and advanced from the clean committed snapshot through an identity-checked internal capability, exact declared calendar records, Grammar 1 closure, contextual IDs, exact field-position checks, all nine target fixtures, and TUE-001/TUE-003 coverage; five tasks and 19p remain, both precedence and heuristic resource makespans are 16p with no resource delay, observed provisional velocity is `5p/1d`, both forecasts are `16/5d`, active Grammar 1 and CLI Contract 3 remain fixed, and `TEMPORAL_SEMANTIC_VALIDATION` is recommended
 - SU-M2 temporal-semantic-validation gate: `TEMPORAL_SEMANTIC_VALIDATION` is complete and advanced from the clean committed snapshot through the internal target validated-document boundary, field-local `PTSEM-112`, mixed-kind validity, date-anchor/hour validity, active/done/reached temporal retention, deterministic diagnostic limits, and clock-free TUE-002/TUE-006/TUE-007/TUE-011 coverage; four tasks and 15p remain, both precedence and heuristic resource makespans are 12p with no resource delay, cumulative provisional velocity is `9p/1d`, both forecasts are `4/3d`, active Grammar 1 and CLI Contract 3 remain fixed, `TEMPORAL_FORMATTER_ROUNDTRIP` is recommended, and `DECLARED_TEMPORAL_INPUT_CORE` is resource-feasible and allowed
+- SU-M2 temporal-formatter gate: `TEMPORAL_FORMATTER_ROUNDTRIP` is complete through one shared active/target canonical field order and the internal target formatter; field/declaration order, comments, blank lines, BOM, line endings, exact temporal tokens, UTF-16 edits, malformed-input suppression, target-AST equivalence, idempotence, all nine fixtures, and all six TUE-012/TUE-013 occurrences are covered while active Grammar 1, CLI Contract 3, and root exports remain fixed; three tasks and 12p remain, precedence/resource makespans are 9p/12p with 3p resource delay, cumulative provisional velocity is `12p/1d`, forecasts are `3/4d` and `1d`, `TEMPORAL_MUTATION_BATCH_CORE` is recommended, and `DECLARED_TEMPORAL_INPUT_CORE` is deferred by `TARGET_CORE_SURFACE`
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twelve plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

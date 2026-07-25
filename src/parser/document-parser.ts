@@ -10,6 +10,10 @@ import {
   sortDiagnostics,
 } from "../model/diagnostics.js";
 import { parseDeclaredCalendarValue } from "../model/calendar.js";
+import {
+  GRAMMAR_1_DECLARATION_FIELD_ORDER,
+  TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER,
+} from "../model/declaration-fields.js";
 import type {
   DeclarationKind,
   DeclarationNode,
@@ -56,49 +60,25 @@ const declarationKinds = new Set<DeclarationKind>([
   "gate",
 ]);
 
+function allowedFieldsFromOrder(
+  fieldOrder: Readonly<Record<DeclarationKind, readonly string[]>>,
+): Readonly<Record<DeclarationKind, ReadonlySet<string>>> {
+  return {
+    project: new Set(fieldOrder.project),
+    resource: new Set(fieldOrder.resource),
+    milestone: new Set(fieldOrder.milestone),
+    task: new Set(fieldOrder.task),
+    gate: new Set(fieldOrder.gate),
+  };
+}
+
 const grammar1AllowedFields: Readonly<
   Record<DeclarationKind, ReadonlySet<string>>
-> = {
-  project: new Set([
-    "version",
-    "title",
-    "description",
-    "as_of",
-    "duration_unit",
-    "velocity",
-    "finish",
-    "critical_epsilon",
-    "target_duration",
-  ]),
-  resource: new Set(["title", "description", "capacity", "tags"]),
-  milestone: new Set(["title", "description", "state", "tags"]),
-  task: new Set([
-    "title",
-    "description",
-    "duration",
-    "estimate",
-    "status",
-    "priority",
-    "requires",
-    "owner",
-    "tags",
-    "blocked_reason",
-    "source",
-  ]),
-  gate: new Set(["reason"]),
-};
+> = allowedFieldsFromOrder(GRAMMAR_1_DECLARATION_FIELD_ORDER);
 
 const grammar2AllowedFields: Readonly<
   Record<DeclarationKind, ReadonlySet<string>>
-> = {
-  ...grammar1AllowedFields,
-  milestone: new Set([...grammar1AllowedFields.milestone, "deadline"]),
-  task: new Set([
-    ...grammar1AllowedFields.task,
-    "not_before",
-    "deadline",
-  ]),
-};
+> = allowedFieldsFromOrder(TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER);
 
 interface ParseProfile {
   readonly allowedFields: Readonly<

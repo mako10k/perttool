@@ -175,6 +175,7 @@ perttool/
       unified-diff.ts
     formatter/
       source-formatter.ts
+      target-source-formatter.ts
     guidance/
       profile.ts
       projection.ts
@@ -189,6 +190,7 @@ perttool/
       safe-write.ts
     model/
       calendar.ts
+      declaration-fields.ts
       syntax.ts
       diagnostics.ts
       rational.ts
@@ -548,6 +550,17 @@ the added fields. Declared date and date-time tokens become exact internal
 `DeclaredCalendarValue` records while retaining their original spelling and
 source spans. The capability, target parser, and calendar records are not
 re-exported from `src/index.ts`.
+
+The active and target parsers derive their accepted fields from shared
+canonical declaration-field orders. The internal target formatter reuses the
+same Grammar 2 order as the later temporal mutation insertion path, but walks
+the validated source fields in their existing order. It retains declaration
+order, comments, blank lines, BOM, predominant line endings, and the exact
+`as_of`, `deadline`, and `not_before` token spellings while applying the
+ordinary lexical normalization rules to the rest of the document. The
+candidate crosses the target validated-document boundary again, and repeated
+formatting is idempotent and target-AST equivalent. `formatDocument`, root
+exports, CLI Contract 3, and installed-package behavior remain Grammar 1.
 
 Target semantic validation accepts Grammar 1 or explicit Grammar 2 only
 through that same capability and returns an internal `TargetValidatedDocument`
