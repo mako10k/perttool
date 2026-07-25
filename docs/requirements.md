@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.10
+- Document status: Draft 0.11
 - Created: 2026-07-21
-- Updated: 2026-07-24
+- Updated: 2026-07-25
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -17,6 +17,8 @@ The central mission of `perttool` is not PERT analysis itself. It is to provide 
 - Structural validation as a DAG
 - Schedule analysis based on PERT/CPM
 - Generation of a feasible schedule that considers shared resource capacity
+- Projection of the relative schedule onto declared dates or date-times
+- Evaluation of task and milestone deadlines without hiding infeasible targets
 - Extraction of critical tasks and slack
 - Extraction of the “next task” that can be started now
 - Derivation of the task to prioritize in the current project and the reason it takes precedence over other feasible tasks
@@ -118,6 +120,9 @@ The baseline policy is effective immediately. Migration of existing surfaces is 
 
 - A task list alone makes dependencies and start order hard to see.
 - Critical paths and slack calculated manually become stale after a plan changes.
+- Relative durations alone do not show when work is projected to start or
+  finish, whether a start constraint is active, or whether a declared deadline
+  is at risk.
 - Editing a diagram directly separates it from the plan data or makes them inconsistent.
 - When adding a task, it is difficult to notice that existing dependencies have been broken.
 - “Tasks that can be done now” and “future tasks” are mixed together.
@@ -134,6 +139,9 @@ The MVP does not aim to provide the following.
 - Replacing a general-purpose project-management SaaS
 - Guaranteeing an exact exhaustive-search optimum for resource-constrained schedules in the MVP
 - A general-purpose resource calendar that includes shifts, holidays, skills, and setup time
+- Actual-time, attendance, or timesheet recording
+- Automatic deadline enforcement that silently changes dependencies, duration,
+  resource priority, or recommendation ranking
 - Management of attendance, work billing, costs, or budgets
 - Chat, notifications, or approval workflows
 - Storing all historical states in one `.pert` document without using Git history
@@ -204,6 +212,10 @@ The MVP does not aim to provide the following.
 | Velocity Forecast | A forecast that converts Points and days/hours using Velocity, distinct from declared PERT values |
 | Snapshot | A `.pert` document representing the present and future at a particular point in time |
 | Advance | An operation that moves the frontier forward to reflect completion conditions and removes unneeded past portions |
+| Temporal Anchor | `project.as_of`, which maps relative schedule time zero to the declared snapshot date or date-time |
+| Not Before | An absolute task-start constraint that prevents an unstarted task from becoming time-eligible before the declared value |
+| Deadline | An absolute target by which a task should finish or a milestone should be reached; missing it does not make the source document structurally invalid |
+| Calendar Projection | A derived mapping from exact relative schedule values to dates or date-times; it does not replace the base-unit analysis |
 
 ## 7. Canonical data model
 
@@ -218,7 +230,7 @@ Must fields:
 
 Optional fields:
 
-- `as_of`: the reference date or datetime of the snapshot
+- `as_of`: the temporal anchor and reference date or date-time of the snapshot
 - `description`: a multiline description
 - `critical_epsilon`: the tolerance for including near-critical work in critical display under exact Rational calculation
 - `target_duration`: the target duration from the current boundary to `finish`
@@ -232,6 +244,10 @@ Constraints:
 - With `duration_unit point`, the period suffix of velocity determines whether conversion is to `day` or `hour`.
 - A velocity-derived value is explicitly named `velocity_forecast` and does not replace a declared PERT value.
 - Velocity does not imply a relationship between `1d` and `1h`, business days, or working hours.
+- A document declaring any task or milestone temporal property requires
+  `as_of`; no command derives it from the system clock.
+- The deadline for the whole project is the `deadline` on the milestone
+  referenced by `finish`. There is no separate `project.deadline` alias.
 
 ### 7.2 Resource
 
@@ -266,6 +282,8 @@ Optional fields:
 - `state`: `planned` or `reached`; defaults to `planned`
 - `description`: a multiline description
 - `tags`: a set of strings for search and display
+- `deadline`: the latest desired date or date-time at which the milestone
+  should be reached
 
 Constraints:
 
@@ -273,6 +291,11 @@ Constraints:
 - No task or gate may leave the finish milestone.
 - A `reached` milestone with an unfinished incoming edge is reported as a state contradiction.
 - Portions before an explicit `reached` milestone that are not needed for present-state determination should not be retained.
+- A milestone deadline is a target, not a dependency edge or a hard cap on the
+  schedule. A future or missed deadline does not make an otherwise valid DAG
+  invalid.
+- The current snapshot does not reconstruct the actual reach time or deadline
+  compliance of an already reached milestone.
 
 ### 7.4 Task
 
@@ -294,6 +317,10 @@ Optional fields:
 - `tags`: a set of strings
 - `blocked_reason`: the reason for `blocked`
 - `source`: a reference target such as a ticket or design document
+- `not_before`: the earliest permitted date or date-time at which an unstarted
+  task may start
+- `deadline`: the latest desired date or date-time at which the task should
+  finish
 
 Constraints:
 
@@ -309,6 +336,16 @@ Constraints:
 - The start milestone of an `active` or `done` task must be effectively reached.
 - A `done` task should remain only while it is needed for the current join determination.
 - A task ID can be retained even when its name or endpoint changes.
+- `not_before` constrains temporal start eligibility but does not create a DAG
+  edge, change the task duration, or make a structurally ready task unready.
+- A task deadline is evaluated independently of its destination milestone
+  deadline. Neither value is implicitly copied to the other.
+- A deadline is a target rather than a hard finish constraint. A past or
+  forecast-missed deadline remains analyzable and is reported as a temporal
+  result rather than a structural-validation failure.
+- The current document does not store actual start or finish timestamps. It
+  must not infer deadline compliance for `done` tasks from `as_of` or Git
+  commit time.
 
 The `duration` or `estimate` of an in-progress task represents remaining duration at the current snapshot. Git history records previous estimates.
 
@@ -328,6 +365,83 @@ Constraints:
 - Its duration is always 0.
 - It must not create a cycle, just as a task must not.
 - In a visualization, it uses a line style distinguishable from a task.
+
+### 7.6 Temporal property scope
+
+The first temporal extension accepts exactly the following declared
+properties.
+
+| Entity | Property | Meaning |
+| --- | --- | --- |
+| Project | `as_of` | Existing snapshot anchor for relative schedule time zero |
+| Milestone | `deadline` | Latest desired reach date or date-time |
+| Task | `not_before` | Earliest permitted start date or date-time for an unstarted task |
+| Task | `deadline` | Latest desired finish date or date-time |
+
+Must:
+
+- Use the same explicit ISO date/date-time lexical family as `as_of`; a
+  date-time carries an offset and no value depends on the process-local time
+  zone.
+- Require `project.as_of` when `deadline` or `not_before` is declared.
+- Keep structural readiness separate from temporal eligibility. A task can be
+  `ready` but not time-eligible or `runnable_now`.
+- Keep task and milestone deadlines as evaluation targets. Do not convert them
+  into hidden gates, resource dependencies, duration changes, or hard
+  infeasibility errors.
+- Keep exact relative PERT/CPM and resource-schedule values in the project base
+  unit. Calendar projections and deadline evaluations are separate qualified
+  results and never replace those values.
+- Preserve a declared offset and enough date/date-time precision to reproduce
+  comparisons and projections. Human-readable formatting is not a comparison
+  input.
+- Evaluate task deadlines, milestone deadlines, and the finish-milestone
+  deadline independently, while returning their relationships explicitly when
+  one task feeds a deadline-bearing milestone.
+- Treat temporal output as a deterministic function of the document, options,
+  and versioned algorithms. Do not read the current wall clock.
+- Expose why a calendar projection or deadline evaluation is unavailable,
+  including a missing anchor, unavailable point/time conversion, unresolved
+  block, or unsupported calendar relationship.
+
+Initial capabilities:
+
+- Derive projected task start and finish, milestone reach, and project finish
+  from both the precedence lower bound and the heuristic resource schedule
+  where the calendar contract permits it.
+- Evaluate temporal start eligibility from `not_before`.
+- Derive deadline feasibility, remaining margin or lateness, and overdue or
+  at-risk state without concealing whether the result comes from precedence or
+  heuristic resource scheduling.
+- Carry temporal facts into next-task output and structured explanations.
+  Any effect on recommendation eligibility, ranking, selection horizon, tier,
+  or reason taxonomy requires an explicit algorithm/schema version change.
+
+The first temporal extension does not accept:
+
+- `project.deadline`; use the finish milestone deadline;
+- temporal fields on resources or gates;
+- milestone `not_before`, task planned-start/planned-finish fields, actual
+  start/finish timestamps, recurrence, reminders, or percent complete;
+- per-task or per-resource time zones, business calendars, holidays, shifts,
+  working hours, or time-varying capacity;
+- implicit day/hour conversion, conversion through the host locale, or
+  conversion from Git timestamps; or
+- automatic propagation of a milestone deadline to incoming tasks.
+
+Compatibility:
+
+- Grammar version 1 keeps its current field set and meaning. The new temporal
+  fields require a new grammar version rather than silently widening version
+  1.
+- A version 1 document without the new fields retains byte-compatible
+  validation behavior and the same base analysis and recommendation results
+  under the existing algorithm versions.
+- Result schemas that add temporal fields receive new schema identities.
+  Existing schema identities do not gain conditionally present fields.
+- The interface-contract task decides whether the additive command options
+  require a new CLI contract identity, but it must not introduce aliases or
+  silently reinterpret existing options.
 
 ## 8. DSL requirements
 
@@ -611,6 +725,31 @@ Could:
 - Select an exact or near-optimal solver such as CP-SAT/MILP for bounded problems.
 - Report the lower bound, best found result, optimality gap, and timeout.
 
+### 10.7 Temporal projection and deadline evaluation
+
+Temporal analysis is an additional projection over the relative schedules; it
+does not replace the calculations in Sections 10.2 through 10.6.
+
+Must:
+
+- Map relative schedule time zero only from the declared `project.as_of`.
+- Preserve separate projections for the precedence lower bound and the
+  heuristic resource schedule and identify the source schedule in every
+  temporal result.
+- Apply `not_before` only through a versioned temporal-eligibility rule; keep
+  the unqualified precedence CPM result available.
+- Return projected dates/date-times and signed deadline margin or lateness
+  without reusing display-rounded values.
+- Distinguish a deadline that is currently overdue from one that is only
+  forecast to be late.
+- Qualify results that assume immediate block resolution and results obtained
+  from a heuristic resource schedule.
+- Return an explicit unavailable result rather than inventing a timezone,
+  working calendar, day/hour conversion, actual completion time, or missing
+  velocity.
+- Use versioned deterministic calendar arithmetic specified before
+  implementation.
+
 ## 11. Next-task determination
 
 `perttool dag next` returns at least the following classifications.
@@ -636,6 +775,16 @@ Must:
   5. lexicographic task ID
 - Explain unmet direct milestones and incomplete upstream tasks for each upcoming task.
 - Return the same meaning in human-readable text and machine-readable JSON.
+- Keep `ready` as the structural/state classification. When temporal
+  properties are supported, a ready task before `not_before` is excluded from
+  `runnable_now` with a distinct temporal-eligibility explanation rather than
+  being reclassified as blocked.
+- Expose applicable `not_before`, task deadline, destination-milestone
+  deadline, projected start/finish, and qualified deadline state in next-task
+  results.
+- Keep recommendation algorithm version 1 unchanged for version 1 documents.
+  Deadline-aware recommendation behavior requires a separately versioned
+  ranking and explanation contract.
 
 Should:
 
@@ -707,6 +856,10 @@ Must:
 - Activate direct Contract 3 initialization and gate commands only as part of
   the atomic cutover, after their Core, output, and descriptor prerequisites
   pass their dedicated plan tasks and acceptance cases.
+- When the temporal grammar version is implemented, add, change, and clear
+  every accepted temporal property through typed preview-first mutations and
+  atomic batch requests. File-first maintenance must not require manual source
+  rewriting.
 
 ## 13. Visualization requirements
 
@@ -934,6 +1087,12 @@ Must:
 - Include at least `schema_version`, `tool_version`, and `document_id` in JSON output that processes a document. Help/CLI usage results need not have document fields.
 - Do not confuse values rounded for display with values used for calculation.
 - Accompany breaking changes to JSON fields with a schema-version change.
+- Keep exact base-unit values and calendar projections in distinct fields.
+- Preserve the declared date/date-time form and offset where required by the
+  temporal contract.
+- Represent unavailable temporal projections and their reasons explicitly;
+  absence, not-applicable, and invalid input must not collapse into the same
+  state.
 
 Should:
 
@@ -1141,6 +1300,9 @@ or dist-tag writes. The authoritative procedure is
 
 - Calendars with business days, holidays, and working hours
 - Per-task calendars and time zones
+- Actual task-start, task-finish, and milestone-reach event history
+- Recurring deadlines, reminders, and external calendar synchronization
+- Time-varying resource capacity and resource availability dates
 - Advanced resource modeling including shifts, skills, and assignee calendars
 - Exact optimization of resource-constrained schedules
 - Include/import for multiple project documents
@@ -1156,6 +1318,12 @@ or dist-tag writes. The authoritative procedure is
 ## 24. Undecided design decisions
 
 There are no undecided design decisions that currently prevent starting MVP implementation. If a new semantic decision is needed during implementation, update an ADR or an individual specification first rather than fixing it only in code.
+
+The SU-M1 temporal and unit-migration extension has accepted its property scope
+and deterministic calendar semantics but still requires the dependency-ordered
+deadline, migration, interface, and example specifications in Section 25.
+These decisions block temporal implementation, not continued use of grammar
+version 1.
 
 Resolved design decisions:
 
@@ -1173,6 +1341,7 @@ Resolved design decisions:
 - Provider/surface/guidance/risk taxonomy, support evidence, offline profile, and Core/text/JSON contracts: [AI Agent Guidance Registry specification](specs/agent-guidance.md)
 - Complete command discovery, domain-guide separation, file-first initialization and gate maintenance, naming, effects, schemas, and breaking migration: [CLI Contract 3 specification](specs/cli-contract-3.md)
 - Contract 3 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.2.0` release procedure](process/0.2.0-release.md)
+- Date/date-time comparison, `as_of`, exact day/hour/point projection, fixed-offset preservation, continuous-calendar boundaries, and `not_before` release bounds: [Temporal Calendar Semantics specification](specs/temporal-calendar.md)
 
 ## 25. Recommended next specification work
 
@@ -1200,6 +1369,14 @@ Before implementation, separate the specifications in the following order.
 10. [x] Mermaid export: `exportMermaid`, `dag render --to mermaid`, profile/plain loss reports, analysis annotation, and exclusive `--out`
 11. [x] Mermaid import: `importMermaid`, `dag import --from mermaid`, fail-closed profile restoration, plain loss reports, and round-trip E2E
 12. [x] [CLI Contract 3 design](specs/cli-contract-3.md): complete target surface, descriptor registry, command help, domain guide, project initialization, gate maintenance, migration boundary, and normative acceptance cases
+13. [ ] Temporal properties, deadlines, and unit migration SU-M1 contract
+    - [x] Temporal properties, entity scope, meanings, compatibility boundary, and non-goals
+    - [x] [Deterministic date/date-time, `as_of`, timezone, and calendar semantics](specs/temporal-calendar.md)
+    - [ ] Deadline-derived analysis and recommendation semantics
+    - [ ] Exact point and time-unit source-migration semantics
+    - [ ] Grammar, Core, CLI, help, diagnostics, and result-projection contract
+    - [ ] Normative boundary examples and machine-readable acceptance cases
+    - [ ] Cross-cutting SU-M1 contract review
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

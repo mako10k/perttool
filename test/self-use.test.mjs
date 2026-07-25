@@ -75,6 +75,41 @@ function detailedPlanProjection(text) {
   };
 }
 
+function macroPlanProjection(text) {
+  const checked = checkDocument(text);
+  const analyzed = analyzeDocument(text);
+  const next = selectNextTasks(text);
+  assert.equal(checked.ok, true);
+  assert.equal(analyzed.ok, true);
+  assert.equal(next.ok, true);
+  assert.ok(analyzed.precedence);
+  assert.ok(analyzed.resource);
+  return {
+    check: {
+      document_id: checked.documentId,
+      grammar_version: checked.grammarVersion,
+      summary: checked.summary,
+    },
+    analyze: {
+      precedence_makespan: exact(analyzed.precedence.makespan),
+      precedence_critical_tasks: analyzed.precedence.critical.taskIds,
+      resource_makespan: exact(analyzed.resource.makespan),
+      resource_delay: exact(analyzed.resource.resourceDelay),
+      resource_arcs: analyzed.resource.resourceArcs.map(({ id }) => id),
+      schedule_critical_tasks: analyzed.resource.scheduleCritical.taskIds,
+    },
+    next: {
+      groups: {
+        active: next.groups.active,
+        ready: next.groups.ready,
+        runnable_now: next.groups.runnableNow,
+        blocked_now: next.groups.blockedNow,
+        upcoming: next.groups.upcoming,
+      },
+    },
+  };
+}
+
 test("grammar plan check/analyze/next matches the read-only self-use golden", async () => {
   const text = await readFile(path.join(root, "plans/grammar.pert"), "utf8");
   const expected = JSON.parse(await readFile(
@@ -182,43 +217,29 @@ test("0.2.0 release plan matches the completed Contract 3 release roadmap", asyn
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("scheduling and units plan matches the milestone-level roadmap", async () => {
+  const text = await readFile(path.join(root, "plans/scheduling-units.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/scheduling-units.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(macroPlanProjection(text), expected);
+});
+
+test("scheduling and units SU-M1 plan matches the contract detail", async () => {
+  const text = await readFile(path.join(root, "plans/scheduling-units-m1.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/scheduling-units-m1.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("MVP plan check/analyze/next matches the macro roadmap golden", async () => {
   const text = await readFile(path.join(root, "plans/mvp.pert"), "utf8");
   const expected = JSON.parse(await readFile(
     path.join(testDirectory, "golden/self-use/mvp.expected.json"),
     "utf8",
   ));
-  const checked = checkDocument(text);
-  const analyzed = analyzeDocument(text);
-  const next = selectNextTasks(text);
-  assert.equal(checked.ok, true);
-  assert.equal(analyzed.ok, true);
-  assert.equal(next.ok, true);
-  assert.ok(analyzed.precedence);
-  assert.ok(analyzed.resource);
-  const actual = {
-    check: {
-      document_id: checked.documentId,
-      grammar_version: checked.grammarVersion,
-      summary: checked.summary,
-    },
-    analyze: {
-      precedence_makespan: exact(analyzed.precedence.makespan),
-      precedence_critical_tasks: analyzed.precedence.critical.taskIds,
-      resource_makespan: exact(analyzed.resource.makespan),
-      resource_delay: exact(analyzed.resource.resourceDelay),
-      resource_arcs: analyzed.resource.resourceArcs.map(({ id }) => id),
-      schedule_critical_tasks: analyzed.resource.scheduleCritical.taskIds,
-    },
-    next: {
-      groups: {
-        active: next.groups.active,
-        ready: next.groups.ready,
-        runnable_now: next.groups.runnableNow,
-        blocked_now: next.groups.blockedNow,
-        upcoming: next.groups.upcoming,
-      },
-    },
-  };
-  assert.deepEqual(actual, expected);
+  assert.deepEqual(macroPlanProjection(text), expected);
 });

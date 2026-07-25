@@ -1,11 +1,12 @@
 # perttool Basic Design
 
-- Document status: Draft 1.9
+- Document status: Draft 1.10
 - Created: 2026-07-21
-- Updated: 2026-07-24
+- Updated: 2026-07-25
 - Applicable requirements: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
+- Temporal calendar semantics: [specs/temporal-calendar.md](specs/temporal-calendar.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
 - Recommendation ranking: [specs/recommendation-ranking.md](specs/recommendation-ranking.md)
 - Recommendation reasons: [specs/recommendation-reasons.md](specs/recommendation-reasons.md)
@@ -353,6 +354,50 @@ Resource capacities, task requirement quantities, and priorities are non-negativ
 - The maximum value is 2147483647.
 - Quantities are not mixed with duration rationals.
 - An analysis error occurs when simultaneous requirements of active tasks exceed capacity.
+
+### 6.4 Temporal Calendar Projection
+
+The first temporal extension adds a pure projection layer over exact relative
+analysis. It does not change `AnalysisResult.v2`, scheduler version 1, or the
+source document.
+
+```text
+validated calendar literals + project.as_of
+                    +
+exact precedence or resource relative result
+                    +
+point velocity when the base unit is point
+                    |
+                    v
+tagged exact calendar values or an unavailable cause
+```
+
+Calendar values remain tagged as `date` or `date-time`. Dates use Gregorian
+ordinal-day arithmetic and do not imply midnight or a time zone. Date-times
+use exact Rational SI seconds normalized for comparison by their declared
+fixed offset; derived values retain the `as_of` offset. Mixed-kind operations
+do not guess a conversion.
+
+Projection uses the independently versioned arithmetic and continuous profile
+in the [Temporal Calendar Semantics specification](specs/temporal-calendar.md).
+It has no clock, locale, host-zone, named-zone, daylight-saving,
+business-calendar, or resource-availability input.
+
+For a point project, the existing exact velocity conversion selects day or
+hour as the projection unit while retaining the `velocity_forecast`
+qualification. The projection constants for day/date-time and hour/date-time
+arithmetic are not a general day/hour conversion and cannot be reused for
+source migration.
+
+`task.not_before` eventually produces an exact release bound for a new start.
+Structural `ready` remains a graph/state fact. A missing or incomparable
+temporal relationship fails closed for `runnable_now` without reclassifying
+the task as blocked. A separately versioned scheduling rule must apply future
+release bounds; the unqualified Analysis version 1 results remain available.
+
+Deadline states, public result types, CLI/help projection, grammar fields, and
+source-preserving mutations remain responsibilities of the ordered SU-M1
+follow-on contracts.
 
 ## 7. Diagnostic Model
 

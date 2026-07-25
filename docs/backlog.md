@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-07-24
+- Updated: 2026-07-25
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -191,9 +191,223 @@ uses an atomic batch and typed commands to cover every declared entity field,
 observes blocked, recommended, active, and done task states through JSON,
 advances completed history, and validates the final one-frontier document.
 
+## Advance history safety
+
+### ADV-001: Guard advance writes that can erase uncommitted history
+
+Priority: P0
+
+Status: Refined backlog (not scheduled)
+
+`dag advance` deliberately removes declarations and owned leading comments
+that no longer affect the present or future graph. The current source-digest
+and atomic-write controls prevent stale or partial writes, but they do not
+prove that the exact pre-advance information being removed is recoverable from
+Git. A task can therefore be marked `done` and advanced before that transition,
+or another edit inside a removed declaration, has appeared in commit history.
+
+Add a repository-aware guard at the in-place advance-write boundary. Do not
+treat every dirty repository or every dirty target file as destructive. A
+dirty change that remains byte-for-byte in the advance candidate is not lost.
+Block only when an advance edit would remove or replace current-side
+information that the guard cannot prove is represented by the selected Git
+history baseline.
+
+Refined behavior:
+
+- The guard applies to a changed `dag advance <file> --write` operation.
+  Preview, `--diff`, stdin, `--out`, and an idempotent no-op do not erase the
+  source file and are not blocked by this guard.
+- The default history baseline is the target path in the repository's `HEAD`
+  commit. Staged changes are still uncommitted and are not treated as durable
+  history.
+- Each non-empty source range removed or replaced by the advance `TextEdit`
+  set, including declaration-owned leading comments, is checked against
+  current-side additions or modifications relative to `HEAD`.
+- Dirty changes outside those destructive ranges are retained by the
+  source-preserving candidate and do not block the write.
+- A target that is untracked at `HEAD`, a repository without `HEAD`, a path
+  outside a Git worktree, unavailable Git inspection, an ambiguous path
+  mapping, or a history check that cannot prove preservation is unsafe by
+  default when the candidate has destructive edits.
+- The proposed explicit override is `--force-history-loss`. It is valid only
+  with in-place `--write` and bypasses only this history-recoverability guard.
+  It must not bypass parsing, semantic and advance postconditions, expected
+  digests, source rechecks, symlink/race rejection, or atomic-write rules.
+- The guard performs read-only repository inspection. It never stages,
+  commits, stashes, resets, checks out, or otherwise changes Git state.
+- A successful proof is bound to the repository identity, repository-relative
+  path, `HEAD` object ID, and raw source digest and is rechecked immediately
+  before the atomic write. A changed source or history baseline fails safely.
+- Text and JSON identify whether the guard was not applicable, passed,
+  blocked, or explicitly forced. A blocked result includes stable diagnostics
+  and the affected advance edit or entity IDs without exposing an absolute
+  repository path.
+
+Acceptance:
+
+- a tracked target identical to `HEAD` can perform a destructive advance;
+- staged or unstaged information inside a removed task, gate, milestone,
+  scalar replacement, or owned leading comment blocks the write;
+- a dirty edit that is wholly retained in the candidate does not block;
+- an untracked target and a target outside a Git repository block a
+  destructive in-place write but remain previewable and writable to a separate
+  `--out` path;
+- an empty advance remains a no-op without requiring Git history;
+- `--force-history-loss` records that the override was used and cannot relax
+  any existing safe-write or validation gate;
+- changes to `HEAD` or the source between assessment and write are rejected;
+- worktrees, staged changes, renames, BOM/CRLF input, Git-unavailable
+  environments, and deterministic text/JSON diagnostics have focused tests;
+- command discovery, exact help, guide content, README workflow examples, and
+  installed-package file-first acceptance expose the same guard and override
+  semantics.
+
+Non-goals:
+
+- rejecting a write solely because unrelated paths or retained source ranges
+  are dirty;
+- automatically creating a history commit or searching reflogs, unreachable
+  objects, chat logs, or terminal output for a recoverable copy;
+- adding Git requirements to check, analysis, recommendation, ordinary
+  mutation preview, or advance preview;
+- generalizing the first version to explicit `task|gate|milestone remove`;
+- implementing recommendation override apply, its durable audit sink, or any
+  Git mutation.
+
+Provisional delivery slices:
+
+| ID | Scope | Estimate | Exit |
+| --- | --- | ---: | --- |
+| `ADV_HISTORY_CONTRACT` | Requirements, Git-baseline and dirty-range semantics, CLI/schema compatibility, diagnostics, and the boundary with MIG-08 and Contract 3 | 3p | A normative contract and acceptance matrix are approved before runtime changes. |
+| `ADV_HISTORY_PROBE` | Pure history assessment plus a read-only Git adapter bound to `HEAD`, path, and source digest | 4p | Unit tests distinguish preserved dirty changes from destructive overlap and fail closed when proof is unavailable. |
+| `ADV_HISTORY_CLI` | `dag advance --write` enforcement, explicit force option, descriptor/help projection, and structured result | 4p | In-place writes enforce the guard without weakening existing safe-write controls. |
+| `ADV_HISTORY_ACCEPTANCE` | Race/worktree/encoding cases, E2E, guide/README, link, and installed-package checks | 3p | The complete repository and package gate passes with no automatic Git mutation. |
+
+The estimates are provisional and do not create task state. When this backlog
+item is selected, promote the four slices into one independent detail plan
+rather than adding them to the scheduling-and-units workstream. The contract
+slice must first resolve the current Contract 3 no-Git boundary and decide
+whether its read-only adapter is shared with, sequenced after, or explicitly
+independent from MIG-08. Runtime implementation is not accepted until that
+architecture decision is normative.
+
+## Scheduling metadata and unit migration
+
+### TIME-001: Add temporal properties and deadline-aware capabilities
+
+Priority: P1
+
+Status: In progress (`SU-M1` contract)
+
+Define a coherent temporal model, including `deadline`, and carry it through
+the file-first interface and every affected result projection. Use that model
+to add explicitly specified schedule and recommendation capabilities instead
+of treating dates as display-only metadata.
+
+Acceptance:
+
+- requirements decide which project, milestone, and task temporal properties
+  are supported and define their meanings, relationships, and optionality;
+- date-only and offset-bearing date-time semantics, comparison rules, the
+  relationship to `project.as_of`, and the absence or presence of a working
+  calendar are explicit and deterministic;
+- grammar, semantic validation, formatter behavior, source-preserving
+  mutations, batch operations, command descriptors, help, guide content, and
+  diagnostics cover every accepted property symmetrically;
+- affected text and JSON results from project inspection, document validation,
+  analysis, scheduling, and next-task selection expose the temporal inputs and
+  derived values without losing exact duration values or timezone context;
+- the accepted design specifies deadline-derived capabilities such as
+  projected dates, feasibility, remaining margin, lateness, and overdue or
+  at-risk state, including how blocked work and heuristic resource schedules
+  qualify those results;
+- any effect on recommendation eligibility, ranking, or reason taxonomy is
+  explicit, versioned, and tested rather than introduced as an implicit
+  tie-breaker;
+- normative examples and installed-package file-first tests cover date and
+  date-time boundaries, offsets, invalid calendar values, and deterministic
+  output.
+
+### UNIT-001: Design safe point and time-unit migration
+
+Priority: P1
+
+Status: In progress (`SU-M1` contract)
+
+Design a preview-first migration that rewrites a project between `point` and
+its velocity-linked `day` or `hour` unit. This is a source migration, distinct
+from the existing read-only `velocity_forecast` projection.
+
+Acceptance:
+
+- requirements and specifications define migration direction, prerequisites,
+  velocity handling, compatibility/version policy, and the public Core and CLI
+  operation before implementation;
+- conversion uses the project velocity and exact Rational arithmetic, never
+  infers a day/hour relationship, and fails safely when the requested target
+  unit is not linked by the declared velocity;
+- the design inventories and converts every base-unit-bearing declaration,
+  including task durations or all three PERT estimates, `critical_epsilon`,
+  `target_duration`, and any duration-bearing temporal fields accepted by
+  `TIME-001`;
+- values that cannot be represented exactly in the DSL have an explicit,
+  fail-closed precision or rounding policy; no displayed decimal is reused as
+  conversion input;
+- preview text, structured JSON, and a deterministic unified diff identify
+  every changed value, while write and output modes remain atomic,
+  source-preserving, race-safe, and fully revalidated;
+- no-op, repeated, and exact round-trip migrations have defined behavior, and
+  diagnostics explain when reversibility cannot be guaranteed;
+- command discovery, help, guide content, README examples, batch interaction,
+  and installed-package tests cover both `point -> day|hour` and
+  `day|hour -> point`, including incompatible velocity and non-representable
+  result cases.
+
+### Refinement and delivery milestones
+
+`TIME-001` and `UNIT-001` form one coordinated workstream because unit
+migration must inventory any duration-bearing fields accepted by the temporal
+contract. Absolute dates and date-times are not converted merely because the
+project duration unit changes.
+
+| ID | Milestone | Exit criteria | Backlog coverage |
+| --- | --- | --- | --- |
+| `SU-M0` | Backlog refined | Scope, non-goals, milestone boundaries, and macro/detail tracking rules are recorded. | `TIME-001`, `UNIT-001` |
+| `SU-M1` | Temporal and migration contract accepted | Requirements, normative specifications, interface projections, examples, compatibility policy, and an acceptance review define temporal semantics, deadline-derived behavior, and exact unit migration. | `TIME-001`, `UNIT-001` |
+| `SU-M2` | Temporal property surface accepted | The accepted properties are parsed, validated, formatted, mutated, documented, and exposed symmetrically through text, JSON, help, guide, and file-first package workflows. | `TIME-001` |
+| `SU-M3` | Deadline-aware capabilities accepted | Projected dates and accepted feasibility, margin, lateness, overdue, or risk capabilities work across precedence and heuristic resource results, with explicit recommendation-version behavior. | `TIME-001` |
+| `SU-M4` | Unit migration accepted | Preview-first and atomic source migration covers every base-unit-bearing value in both directions, with exactness, diagnostics, idempotence, and installed-package acceptance. | `UNIT-001` |
+| `SU-M5` | Integrated workstream accepted | Cross-feature regression, documentation, self-use, link, and package gates pass, and release scope is decided separately. | `TIME-001`, `UNIT-001` |
+
+Progress is tracked at two levels:
+
+- [`plans/scheduling-units.pert`](../plans/scheduling-units.pert) is the
+  milestone-level roadmap. Its work-package estimates after `SU-M1` are
+  provisional and are re-estimated when the preceding contract or milestone is
+  accepted.
+- [`plans/scheduling-units-m1.pert`](../plans/scheduling-units-m1.pert) tracks
+  only the detailed work required to reach `SU-M1`. It does not duplicate
+  completion state for later milestones.
+- Select the milestone work package from a fresh, complete macro `dag next`
+  result, then select daily work from the corresponding milestone-detail plan.
+  When a detail plan reaches its finish, roll up that result once to the macro,
+  reanalyze, and create the next milestone-detail plan from the accepted
+  contract.
+
+Current SU-M1 progress:
+
+- `TEMPORAL_REQUIREMENTS` and `CALENDAR_SEMANTICS` are complete and advanced.
+- The accepted calendar contract is
+  [`perttool.calendar-projection` version 1](specs/temporal-calendar.md).
+- Fresh complete `NextResult.v3` recommends `DEADLINE_SEMANTICS`; source
+  migration semantics remain a ready but resource-deferred parallel branch.
+
 ## Independent post-beta work
 
 Issue #3 (backlog hierarchy and multi-plan composition), the LSP server, the
 VSIX, the MCP server, human override apply/audit, and Git integration remain
-independent workstreams. They are not prerequisites for the CLI/help reset
-unless a later requirements decision explicitly composes them.
+independent workstreams. `ADV-001` is the refined, unscheduled read-only Git
+guard for destructive advance writes; it is not yet a Contract 3 feature.
+These items are not prerequisites for the CLI/help reset unless a later
+requirements decision explicitly composes them.

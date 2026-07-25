@@ -234,6 +234,134 @@
       },
       "diagnostic_codes": []
     },
+    "scheduling-units-m1": {
+      "source_digest": "sha256:80dd26fc2d46c46d52abf6a7bc2065f692be4315efea2d3f0b9b4340415ce8a9",
+      "groups": {
+        "active": [],
+        "ready": [
+          "DEADLINE_SEMANTICS",
+          "UNIT_MIGRATION_SEMANTICS"
+        ],
+        "runnable_now": [
+          "DEADLINE_SEMANTICS"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "INTERFACE_PROJECTION_CONTRACT",
+          "NORMATIVE_EXAMPLES",
+          "M1_CONTRACT_REVIEW"
+        ]
+      },
+      "recommended_task_ids": [
+        "DEADLINE_SEMANTICS"
+      ],
+      "manual_selected_task_ids": [
+        "DEADLINE_SEMANTICS"
+      ],
+      "tiers": {
+        "DEADLINE_SEMANTICS": "recommended",
+        "UNIT_MIGRATION_SEMANTICS": "deferred"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "DEADLINE_SEMANTICS",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "UNIT_MIGRATION_SEMANTICS",
+          "runnable_now": false,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": [
+            {
+              "resource_id": "NORMATIVE_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "DEADLINE_SEMANTICS"
+              ]
+            },
+            {
+              "resource_id": "REVIEWERS",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "DEADLINE_SEMANTICS"
+              ]
+            }
+          ]
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 2,
+        "decision_steps": 11,
+        "facts": 80,
+        "comparisons": 1,
+        "reasons": 9,
+        "descriptions": 4
+      },
+      "diagnostic_codes": []
+    },
+    "scheduling-units": {
+      "source_digest": "sha256:417097e8ed6a9a44c59eedaa8c7c1fe51900fa431a911d6125a2f93ce1f215eb",
+      "groups": {
+        "active": [],
+        "ready": [
+          "SU_M1_CONTRACT_WORK_PACKAGE"
+        ],
+        "runnable_now": [
+          "SU_M1_CONTRACT_WORK_PACKAGE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "SU_M5_INTEGRATED_ACCEPTANCE",
+          "SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE",
+          "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
+          "SU_M4_UNIT_MIGRATION_WORK_PACKAGE"
+        ]
+      },
+      "recommended_task_ids": [
+        "SU_M1_CONTRACT_WORK_PACKAGE"
+      ],
+      "manual_selected_task_ids": [
+        "SU_M1_CONTRACT_WORK_PACKAGE"
+      ],
+      "tiers": {
+        "SU_M1_CONTRACT_WORK_PACKAGE": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "SU_M1_CONTRACT_WORK_PACKAGE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
+    },
     "mvp": {
       "source_digest": "sha256:689462cc4c8a3b5d860f50c9e9a8de3c42ae9caea8fea4cd293ef2076d8caf24",
       "groups": {

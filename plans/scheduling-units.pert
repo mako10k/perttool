@@ -1,0 +1,123 @@
+project SCHEDULING_UNITS:
+  version 1
+  title "Temporal properties, deadlines, and unit migration roadmap"
+  description |
+    Track TIME-001 and UNIT-001 as milestone-level work packages without
+    duplicating the task state in milestone-detail plans. SU-M1 is rolled up
+    from plans/scheduling-units-m1.pert. Later estimates are provisional until
+    the preceding accepted contract or milestone is used to create the next
+    detail plan. Release and external distribution remain separate decisions.
+  as_of 2026-07-25
+  duration_unit day
+  finish SCHEDULING_UNITS_ACCEPTED
+
+resource DEVELOPERS:
+  title "Design and implementation capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Normative contract and acceptance review capacity"
+  description "Only one public-contract or acceptance review runs at a time"
+  capacity 1
+
+resource PUBLIC_SURFACE:
+  title "Grammar, Core, CLI, help, and result projection ownership"
+  description "Serialize work packages that change shared public interfaces"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Self-use, link, and installed-package acceptance ownership"
+  capacity 1
+
+milestone BACKLOG_REFINED:
+  title "SU-M0 backlog and tracking model refined"
+  state reached
+
+milestone CONTRACT_ACCEPTED:
+  title "SU-M1 temporal and migration contract accepted"
+
+milestone TEMPORAL_SURFACE_ACCEPTED:
+  title "SU-M2 temporal property surface accepted"
+
+milestone DEADLINE_CAPABILITIES_ACCEPTED:
+  title "SU-M3 deadline-aware capabilities accepted"
+
+milestone UNIT_MIGRATION_ACCEPTED:
+  title "SU-M4 point and time-unit migration accepted"
+
+milestone DELIVERY_INPUT_READY:
+  title "Deadline and migration capability branches accepted"
+
+milestone SCHEDULING_UNITS_ACCEPTED:
+  title "SU-M5 integrated workstream accepted"
+
+task SU_M1_CONTRACT_WORK_PACKAGE BACKLOG_REFINED -> CONTRACT_ACCEPTED:
+  title "Accept the temporal and unit-migration contract"
+  description |
+    Roll up plans/scheduling-units-m1.pert. Accept requirements, normative
+    semantics, interface projections, examples, compatibility policy, and the
+    design review before implementation scope is fixed.
+  duration 2.428571d
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PUBLIC_SURFACE 1
+
+task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE CONTRACT_ACCEPTED -> TEMPORAL_SURFACE_ACCEPTED:
+  title "Implement and accept the temporal property surface"
+  description |
+    Provisional work package. Create its detail plan and re-estimate it after
+    SU-M1. Cover parser, validation, formatting, mutation, help, text/JSON
+    projections, and installed-package file-first behavior.
+  duration 2d
+  priority 90
+  requires:
+    DEVELOPERS 1
+    PUBLIC_SURFACE 1
+
+task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> DEADLINE_CAPABILITIES_ACCEPTED:
+  title "Implement and accept deadline-aware capabilities"
+  description |
+    Provisional work package. Create its detail plan and re-estimate it after
+    SU-M2. Cover the accepted projected-date, feasibility, margin, lateness,
+    overdue, risk, and recommendation behaviors.
+  duration 2d
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PUBLIC_SURFACE 1
+
+task SU_M4_UNIT_MIGRATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> UNIT_MIGRATION_ACCEPTED:
+  title "Implement and accept safe point and time-unit migration"
+  description |
+    Provisional work package. Create its detail plan and re-estimate it after
+    SU-M2. Cover exact preview-first conversion, atomic writes, diagnostics,
+    idempotence, and installed-package acceptance in both directions.
+  duration 3d
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PUBLIC_SURFACE 1
+
+gate DEADLINE_ACCEPTANCE_GATE DEADLINE_CAPABILITIES_ACCEPTED -> DELIVERY_INPUT_READY:
+  reason "Integrated acceptance requires deadline-aware capabilities"
+
+gate UNIT_MIGRATION_ACCEPTANCE_GATE UNIT_MIGRATION_ACCEPTED -> DELIVERY_INPUT_READY:
+  reason "Integrated acceptance requires unit migration"
+
+task SU_M5_INTEGRATED_ACCEPTANCE DELIVERY_INPUT_READY -> SCHEDULING_UNITS_ACCEPTED:
+  title "Accept the integrated scheduling and unit-migration workstream"
+  description |
+    Run cross-feature regression, documentation, self-use, local-link, and
+    installed-package gates. Decide release scope separately; this task does
+    not authorize a Git push, GitHub release, npm publication, or dist-tag
+    change.
+  duration 1d
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1

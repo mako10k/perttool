@@ -19,6 +19,8 @@ The reviewed CLI/help reset is tracked independently in `plans/cli-surface-reset
 
 The first Contract 3 package, suffix-free beta `0.2.0`, is accepted under `docs/process/0.2.0-release.md` and `docs/process/0.2.0-release-acceptance.md`. All five tasks in `plans/release-0.2.0.pert` are complete and advanced. The release commit and peeled annotated tag agree; the local, GitHub, and npm tarballs have the same SHA-256; and installed-package Contract 3 and file-first checks passed. Publication moved only npm `beta`; after acceptance, the user separately authorized one dist-tag operation that made `beta=latest=0.2.0`. The plan itself remains complete and unchanged, with no remaining or recommended task, zero precedence and heuristic resource makespans, and an observed `17p/2d` velocity.
 
+The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and the current SU-M1 detail `plans/scheduling-units-m1.pert`. SU-M0 through SU-M5 separate backlog refinement, contract acceptance, temporal surface acceptance, deadline capability acceptance, unit migration acceptance, and integrated acceptance. `TEMPORAL_REQUIREMENTS` and `CALENDAR_SEMANTICS` are complete and advanced. The accepted initial temporal scope is project `as_of`, milestone `deadline`, task `not_before`, and task `deadline`; `perttool.calendar-projection` version 1 fixes exact tagged date/date-time comparison, fixed-offset and point-velocity projection, `not_before`, unavailable causes, and the continuous-calendar boundary without widening Grammar or Analysis version 1. The SU-M1 detail has five tasks totaling 17p, 13p precedence, 17p heuristic resource work with 4p delay, cumulative provisional velocity `7p/1d`, an exact `17/7d` resource forecast, and recommends `DEADLINE_SEMANTICS`. The six-decimal rollup to `SU_M1_CONTRACT_WORK_PACKAGE` gives the macro provisional `8.428571d` precedence and `10.428571d` heuristic resource makespans with 2d delay; it recommends that work package. Later work-package estimates remain provisional until the preceding milestone is accepted.
+
 `project show`, which returns the complete project metadata including velocity, source-preserving `project set`, and atomic-batch `project.set` are also implemented. The observed operational velocity was recalibrated to `29p/2d` from a cumulative 29p over 2 active days, including 5p on 2026-07-23.
 
 ADR 0004 adopts English as the repository baseline. `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE` are complete and advanced; `plans/english-baseline.pert` now has 9p remaining, matching 9p precedence and resource makespans, and an observed `33p/1d` velocity, and recommends `PERT_PLANS`.
@@ -43,7 +45,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; and use `cli-surface-reset.pert` and `release-0.2.0.pert` as explicitly requested independent post-beta workstreams.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert` and `release-0.2.0.pert` as completed independent post-beta workstreams; and use `scheduling-units.pert` plus the current `scheduling-units-m*.pert` as the milestone/detail pair for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -77,6 +79,8 @@ For metadata such as Project ID, as_of, duration_unit, velocity, and finish, nor
 
 When the user asks for the “next task,” first present candidates based on recommended specification work in `docs/requirements.md`, unresolved matters, and the current Git state. From self-use Stage 1 onward, use the macro recommendation in `mvp.pert` to choose a workstream, then reanalyze the corresponding detail plan and choose a task from its detail recommendation. Base candidate selection on the `check`, `analyze`, and `next --format json` results for both the macro plan and the target detail plan; do not directly compare tasks from different detail plans without a macro decision.
 
+For the explicitly selected scheduling-and-units workstream, use `scheduling-units.pert` as its macro authority and the current `scheduling-units-m*.pert` as its detail authority. When a detail finish is reached, roll it up once to the matching macro work package, re-estimate later provisional packages, and create only the next milestone-detail plan from accepted semantics.
+
 For normal task selection, use only a known `Perttool.NextResult.v3`, recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale `en`, and a complete, non-truncated trace as the authority. You may choose a subset of recommended tasks, or a set retaining all recommended tasks with exactly one additional resource-feasible `allowed` task. Do not start for an unknown version, incomplete trace, `PTREC-*`, or a `deferred`/`discouraged` selection; stop safely. Reanalyze rather than reusing the same result after task start, completion, blocking, or capacity changes. Do not apply a selection requiring a human override until MIG-08; report its difference from the normal recommendation and the still-unavailable audit/apply boundary.
 
 For changes affecting correctness, proceed in the order of requirements/specification, design, implementation, and verification by default. If an implementation reveals a gap in a specification, do not encode an assumption only in code; update the applicable normative document first or in the same change.
@@ -94,7 +98,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for the MVP, grammar, control-plane, operations, recommendation, agent-guidance, English-baseline, and CLI-surface-reset plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all eleven self-use plans, including the scheduling-and-units macro and current SU-M1 detail.
 
 ```sh
 npm ci

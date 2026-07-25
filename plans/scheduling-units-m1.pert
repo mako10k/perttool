@@ -1,0 +1,135 @@
+project SCHEDULING_UNITS_M1:
+  version 1
+  title "SU-M1 temporal and unit-migration contract"
+  description "Refine TIME-001 and UNIT-001 into an accepted normative contract before implementation. This plan ends at SU-M1 and does not track later delivery tasks. TEMPORAL_REQUIREMENTS and CALENDAR_SEMANTICS completed on 2026-07-25, establishing a cumulative provisional observed velocity of 7p/1d."
+  as_of 2026-07-25
+  duration_unit point
+  velocity 7p/1d
+  finish M1_CONTRACT_ACCEPTED
+
+resource DEVELOPERS:
+  title "Requirements and contract design capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Normative meaning and public-contract review capacity"
+  description "Only one contract slice is reviewed at a time"
+  capacity 1
+
+resource NORMATIVE_SURFACE:
+  title "Requirements, specifications, design, and examples ownership"
+  description "Avoid concurrent changes to overlapping normative documents"
+  capacity 1
+
+resource PUBLIC_SURFACE:
+  title "Core, CLI, help, and result projection contract ownership"
+  capacity 1
+
+
+milestone TEMPORAL_SCOPE_DEFINED:
+  title "Temporal property scope and non-goals defined"
+  state reached
+
+milestone CALENDAR_SEMANTICS_DEFINED:
+  title "Date and date-time semantics defined"
+  state reached
+
+milestone DEADLINE_SEMANTICS_DEFINED:
+  title "Deadline-derived behavior defined"
+
+milestone UNIT_MIGRATION_SEMANTICS_DEFINED:
+  title "Point and time-unit migration semantics defined"
+
+milestone CONTRACT_INPUT_READY:
+  title "Temporal and migration semantic inputs ready"
+
+milestone INTERFACE_CONTRACT_DEFINED:
+  title "Grammar and interface projections defined"
+
+milestone NORMATIVE_EXAMPLES_READY:
+  title "Boundary examples and acceptance cases ready"
+
+milestone M1_CONTRACT_ACCEPTED:
+  title "SU-M1 temporal and migration contract accepted"
+
+
+
+task DEADLINE_SEMANTICS CALENDAR_SEMANTICS_DEFINED -> DEADLINE_SEMANTICS_DEFINED:
+  title "Define deadline-derived analysis and recommendation behavior"
+  description |
+    Specify projected dates, feasibility, remaining margin, lateness, overdue
+    or risk state, and qualifications for blocked work and heuristic resource
+    schedules. Version any recommendation eligibility, ranking, or reason
+    changes explicitly.
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+
+task UNIT_MIGRATION_SEMANTICS TEMPORAL_SCOPE_DEFINED -> UNIT_MIGRATION_SEMANTICS_DEFINED:
+  title "Define exact point and time-unit source migration"
+  description |
+    Specify velocity prerequisites, all base-unit-bearing fields, exact
+    Rational conversion, non-representable values, velocity retention or
+    replacement, no-op and round-trip behavior, and fail-closed diagnostics.
+    Do not treat an existing velocity forecast as a source rewrite.
+  duration 4p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+
+gate DEADLINE_CONTRACT_GATE DEADLINE_SEMANTICS_DEFINED -> CONTRACT_INPUT_READY:
+  reason "The public contract requires accepted deadline semantics"
+
+gate UNIT_MIGRATION_CONTRACT_GATE UNIT_MIGRATION_SEMANTICS_DEFINED -> CONTRACT_INPUT_READY:
+  reason "The public contract requires accepted unit migration semantics"
+
+task INTERFACE_PROJECTION_CONTRACT CONTRACT_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
+  title "Define grammar, Core, CLI, help, and result projections"
+  description |
+    Specify field syntax and validation, source-preserving mutations, batch
+    behavior, preview and safe-write controls, text/JSON schemas, command
+    discovery, guide content, diagnostics, and compatibility/version policy.
+    Inventory every affected project, validation, analysis, schedule, and
+    next-task output.
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    PUBLIC_SURFACE 1
+
+task NORMATIVE_EXAMPLES INTERFACE_CONTRACT_DEFINED -> NORMATIVE_EXAMPLES_READY:
+  title "Create boundary examples and machine-readable acceptance cases"
+  description |
+    Cover date and date-time boundaries, offsets, invalid calendar values,
+    blocked and resource-qualified deadlines, both migration directions,
+    incompatible velocity, non-representable conversions, idempotence, and
+    deterministic text and JSON projections.
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    PUBLIC_SURFACE 1
+
+task M1_CONTRACT_REVIEW NORMATIVE_EXAMPLES_READY -> M1_CONTRACT_ACCEPTED:
+  title "Review and accept the SU-M1 contract"
+  description |
+    Trace TIME-001 and UNIT-001 through requirements, specifications, design,
+    examples, interfaces, migration policy, diagnostics, and acceptance cases.
+    Confirm that implementation tasks and later macro estimates can now be
+    refined without inventing unresolved semantics.
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    PUBLIC_SURFACE 1

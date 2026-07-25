@@ -30,7 +30,11 @@ test("Contract 3 backlog and current plan preserve completed acceptance traceabi
     repositoryText("scripts/check-package-file-first.mjs"),
   ]);
 
-  const actualBacklogIds = [...backlog.matchAll(/^### ([A-Z]+-\d{3}):/gm)]
+  const cliBacklog = backlog.match(
+    /^## CLI and help reset\n(?<section>[\s\S]*?)(?=^## )/m,
+  )?.groups?.section;
+  assert.ok(cliBacklog);
+  const actualBacklogIds = [...cliBacklog.matchAll(/^### ([A-Z]+-\d{3}):/gm)]
     .map((match) => match[1]);
   assert.deepEqual(actualBacklogIds, backlogIds);
 

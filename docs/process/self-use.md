@@ -25,6 +25,8 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/english-baseline.pert` | Post-beta migration of maintained repository surfaces to canonical English | `.pert` document |
 | `plans/cli-surface-reset.pert` | Review-derived post-beta CLI/help design, implementation, migration, and acceptance DAG | `.pert` document |
 | `plans/release-0.2.0.pert` | Contract 3 version decision, local preparation, authorized distribution, and acceptance DAG | `.pert` document |
+| `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
+| `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `test/fixtures/grammar/` | Specific examples of what parser should accept or reject | fixture/golden |
 | Git history | Past plans, specifications, and implementation | commit history |
 
@@ -61,6 +63,46 @@ After Contract 3 source acceptance, `release-0.2.0.pert` was added as the ninth
 independent plan. Its design gate selected `0.2.0` without changing package
 identity and separated local release work from the explicitly authorized
 external distribution task.
+
+On 2026-07-25, `scheduling-units.pert` and
+`scheduling-units-m1.pert` were added after `TIME-001` and `UNIT-001` were
+explicitly selected for refinement. The first plan records only SU-M0 through
+SU-M5 work packages. The second records the seven tasks required to accept
+SU-M1 and inherits the closest completed contract-design velocity,
+`16p/1d`. Later work packages remain provisional until the preceding
+milestone supplies accepted semantics and a new detail plan.
+
+Later that day, `TEMPORAL_REQUIREMENTS` fixed the initial temporal extension to
+the existing project `as_of` anchor, milestone `deadline`, and task
+`not_before` and `deadline`. It kept structural readiness separate from
+temporal eligibility, required new grammar and result versions instead of
+silently widening version 1, and retained calendar arithmetic, deadline
+derivation, migration, interfaces, examples, and cross-cutting review as
+dependency-ordered SU-M1 work. The task was completed and advanced through the
+Stage 3 safe-write path. Its 3p sample established provisional observed
+velocity `3p/1d`; six tasks and 21p remain, with a 17p precedence makespan, a
+21p heuristic resource makespan, 4p resource delay, and a 7d resource
+forecast. Complete `NextResult.v3` recommends `CALENDAR_SEMANTICS`. The detail
+forecast is rolled up to the macro SU-M1 work package, producing provisional
+13d precedence and 15d heuristic resource makespans with 2d resource delay.
+
+`CALENDAR_SEMANTICS` then accepted
+[`perttool.calendar-projection` version 1](../specs/temporal-calendar.md).
+Date values remain civil-day labels without an implicit midnight or time zone;
+offset-bearing date-times compare as exact Rational SI-second instants while
+retaining their declared offsets. The contract fixes the date/day,
+date/hour, date-time/day, and date-time/hour projection matrix; exact point
+velocity projection; `not_before` release bounds; mixed-kind and fractional
+date unavailability; and the continuous fixed-offset profile without a host
+clock, named zones, DST, business calendars, or time-varying resources.
+Calendar projection remains separate from Analysis version 1 and cannot
+authorize source unit migration. The 4p task was completed and advanced through
+the expected-digest Stage 3 path. The same-day cumulative sample is `7p/1d`;
+five tasks and 17p remain, with a 13p precedence makespan, 17p heuristic
+resource makespan, 4p resource delay, and exact `17/7d` resource forecast.
+Complete `NextResult.v3` recommends `DEADLINE_SEMANTICS`. The six-decimal macro
+rollup produces `8.428571d` precedence and `10.428571d` heuristic resource
+makespans with 2d resource delay.
 
 Starting conditions:
 
@@ -352,6 +394,8 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - Active post-beta English surface migration: `english-baseline.pert`
 - Independent post-beta CLI/help reset: `cli-surface-reset.pert`
 - Independent Contract 3 `v0.2.0` release: `release-0.2.0.pert`
+- Independent scheduling/unit milestone roadmap: `scheduling-units.pert`
+- Current detail only to SU-M1: `scheduling-units-m1.pert`
 - after selecting a workstream in the macro plan, select daily tasks from the corresponding detail plan
 - update the corresponding macro task to `done` only when its detail slice is complete
 - `M1_ROADMAP_UPDATE` is complete and decomposed formatter preview, mutation preview, safe write, and advance into the operations detail plan
@@ -363,6 +407,14 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - Issue #3 is a future backlog-hierarchy and multi-plan-composition design and does not add work packages to the current macro
 - the LSP server, VSIX, and MCP server are independent post-first-beta backlogs and do not add work packages to the current macro
 - The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`; `PERT_PLANS` is its current recommended task.
+
+For the explicitly selected scheduling-and-units workstream, first use a fresh
+complete `NextResult.v3` from `scheduling-units.pert` to select the milestone
+work package. Then use the current `scheduling-units-m*.pert` detail plan to
+select the daily task. Do not duplicate detail-task status in the macro. When a
+detail finish is reached, complete and advance the corresponding macro work
+package once, re-estimate the remaining provisional macro packages, and create
+only the next milestone-detail plan from the accepted contract.
 
 ### 5.3 AI process control design plan
 
@@ -461,6 +513,7 @@ The MVP macro plan is used from Stage 1 to confirm overall milestones. After rea
 - the read-only AI Agent Guidance Registry in Issue #2 after the MVP public alpha
 - the suffix-free `0.1.0` beta release after Issue #2 is accepted
 - After the suffix-free `0.1.0` beta release, migrate the repository to the English baseline
+- refine and deliver temporal properties, deadline-aware capabilities, and safe point/time-unit migration through the SU-M0 to SU-M5 milestone roadmap
 - the Issue #3 backlog hierarchy and multi-plan composition after the MVP
 - the LSP server after the first beta
 - the VSIX, with code highlighting and an LSP client, after the LSP server

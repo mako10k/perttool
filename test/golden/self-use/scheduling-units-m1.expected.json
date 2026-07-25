@@ -1,0 +1,66 @@
+{
+  "check": {
+    "document_id": "SCHEDULING_UNITS_M1",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 4,
+      "milestones": 8,
+      "tasks": 5,
+      "gates": 2,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "13/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "13/7",
+    "precedence_critical_tasks": [
+      "DEADLINE_SEMANTICS",
+      "UNIT_MIGRATION_SEMANTICS",
+      "INTERFACE_PROJECTION_CONTRACT",
+      "NORMATIVE_EXAMPLES",
+      "M1_CONTRACT_REVIEW"
+    ],
+    "resource_makespan": "17/1",
+    "resource_forecast": "17/7",
+    "resource_delay": "4/1",
+    "resource_arcs": [
+      "resource:DEADLINE_SEMANTICS:UNIT_MIGRATION_SEMANTICS"
+    ],
+    "schedule_critical_tasks": [
+      "DEADLINE_SEMANTICS",
+      "UNIT_MIGRATION_SEMANTICS",
+      "INTERFACE_PROJECTION_CONTRACT",
+      "NORMATIVE_EXAMPLES",
+      "M1_CONTRACT_REVIEW"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "DEADLINE_SEMANTICS",
+        "UNIT_MIGRATION_SEMANTICS"
+      ],
+      "runnable_now": [
+        "DEADLINE_SEMANTICS"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "INTERFACE_PROJECTION_CONTRACT",
+        "NORMATIVE_EXAMPLES",
+        "M1_CONTRACT_REVIEW"
+      ]
+    },
+    "resource_rejection": {
+      "task_id": "UNIT_MIGRATION_SEMANTICS",
+      "resource_id": "NORMATIVE_SURFACE",
+      "capacity": 1,
+      "earlier_selected_task_ids": [
+        "DEADLINE_SEMANTICS"
+      ]
+    }
+  }
+}
