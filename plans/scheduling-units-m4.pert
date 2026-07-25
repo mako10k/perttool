@@ -7,9 +7,6 @@ project SCHEDULING_UNITS_M4:
   velocity 4p/1d
   finish UNIT_MIGRATION_ACCEPTED
 
-milestone RATIONAL_DURATION_ACCEPTED:
-  title "Exact rational Duration target extension accepted"
-  state reached
 
 resource DEVELOPERS:
   title "Implementation capacity"
@@ -43,6 +40,7 @@ resource CONTRACT3_GUARD:
 
 milestone MIGRATION_REQUEST_READY:
   title "Migration request, direction, velocity, and inventory Core ready"
+  state reached
 
 milestone EXACT_CONVERSION_READY:
   title "Exact unit conversion and canonical token generation ready"
@@ -62,16 +60,6 @@ milestone M4_ACCEPTANCE_INPUT_READY:
 milestone UNIT_MIGRATION_ACCEPTED:
   title "SU-M4 exact unit-migration Core accepted"
 
-task MIGRATION_REQUEST_AND_INVENTORY RATIONAL_DURATION_ACCEPTED -> MIGRATION_REQUEST_READY:
-  title "Implement migration request validation and complete field inventory"
-  description "Add internal unit-migration version 2 request and validated-input boundaries. Select a declared or replacement exact velocity; accept only Point-to-linked-time, matching-time-to-Point, and same-unit no-op; reject direct day/hour conversion and period mismatches; inventory project epsilon and target plus every deterministic or three-point task Duration for Grammar 1, 2, and 3. Preserve all absolute temporal values. Emit stable semantic causes without exposing a Contract 4 command."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    MIGRATION_CORE_SURFACE 1
 
 task EXACT_UNIT_CONVERSION MIGRATION_REQUEST_READY -> EXACT_CONVERSION_READY:
   title "Implement exact migration conversion records"

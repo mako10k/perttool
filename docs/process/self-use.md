@@ -433,8 +433,10 @@ base-unit field fails closed. The internal modules remain absent from root
 exports and the 27-command Contract 3 registry. The 4p first-day sample
 recalibrates velocity to `4p/1d`; 21p remain with 17p precedence, 21p
 heuristic resources, 4p delay, forecasts `17/4d` and `21/4d`, and complete
-Next v3 recommends `EXACT_UNIT_CONVERSION`. The task remains done but
-unadvanced until its implementation snapshot is committed under ADV-001.
+Next v3 recommends `EXACT_UNIT_CONVERSION`. Implementation commit `163e1bd`
+then satisfied ADV-001; canonical advance removed the completed task and
+predecessor milestone, retained `MIGRATION_REQUEST_READY` as reached, preserved
+the ready/recommended sets, and cleared `PTDAG-208`.
 
 Starting conditions:
 

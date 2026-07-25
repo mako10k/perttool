@@ -511,8 +511,8 @@ SU-M2 progress:
   the validated Grammar 1/2/3 request boundary, exact velocity selection,
   declaration/field-order Duration inventory, preserved temporal snapshot,
   stable migration causes, and Contract 3 closure. Its 4p first-day sample
-  recalibrates SU-M4 velocity to `4p/1d`; the task remains unadvanced under
-  ADV-001 until its implementation snapshot is committed.
+  recalibrates SU-M4 velocity to `4p/1d`; implementation commit `163e1bd`
+  satisfies ADV-001 and the detail is advanced to `MIGRATION_REQUEST_READY`.
 - Five SU-M4 tasks and 21p remain. Precedence and heuristic resource
   makespans are 17p and 21p with 4p delay; forecasts are `17/4d` and `21/4d`.
   Complete Next v3 recommends `EXACT_UNIT_CONVERSION`;

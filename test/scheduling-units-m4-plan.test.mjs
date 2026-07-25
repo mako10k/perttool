@@ -24,7 +24,6 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
     (match) => match[1],
   );
   assert.deepEqual(taskIds, [
-    "MIGRATION_REQUEST_AND_INVENTORY",
     "EXACT_UNIT_CONVERSION",
     "UNIT_MIGRATION_CANDIDATE",
     "UNIT_MIGRATION_RESULT_V2",
@@ -35,12 +34,14 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 25);
+  assert.equal(points, 21);
 
   assert.match(
     detail,
-    /milestone RATIONAL_DURATION_ACCEPTED:[\s\S]*state reached/,
+    /milestone MIGRATION_REQUEST_READY:[\s\S]*state reached/,
   );
+  assert.doesNotMatch(detail, /^task MIGRATION_REQUEST_AND_INVENTORY /m);
+  assert.doesNotMatch(detail, /^milestone RATIONAL_DURATION_ACCEPTED:/m);
   assert.match(detail, /finish UNIT_MIGRATION_ACCEPTED/);
   assert.match(detail, /six tasks total 25p/);
   assert.match(detail, /Keep the type internal: no root export/);
@@ -55,15 +56,12 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   assert.match(interfaceSpec, /Perttool\.UnitMigrationResult\.v2/);
 });
 
-test("SU-M4 records request completion and selects exact conversion", async () => {
+test("SU-M4 advances request completion and selects exact conversion", async () => {
   const source = await repositoryFile("plans/scheduling-units-m4.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
 
-  assert.match(
-    source,
-    /task MIGRATION_REQUEST_AND_INVENTORY[\s\S]*status done/,
-  );
+  assert.match(source, /milestone MIGRATION_REQUEST_READY:[\s\S]*state reached/);
   assert.match(source, /velocity 4p\/1d/);
   assert.equal(analysis.ok, true);
   assert.ok(analysis.precedence);
