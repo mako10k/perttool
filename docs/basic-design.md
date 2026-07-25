@@ -166,7 +166,9 @@ perttool/
       check.ts
       format.ts
       mutate.ts
+      target-check.ts
       target-mutate.ts
+      target-project.ts
       next.ts
     analysis/
       graph.ts
@@ -196,6 +198,7 @@ perttool/
       syntax.ts
       diagnostics.ts
       rational.ts
+      target-calendar.ts
     parser/
       document-parser.ts
     mutation/
@@ -223,6 +226,7 @@ perttool/
     next.test.mjs
     parser.test.mjs
     temporal-source-parser.test.mjs
+    temporal-declared-input.test.mjs
     temporal-semantic-validator.test.mjs
     temporal-mutation.test.mjs
     mutation.test.mjs
@@ -574,6 +578,19 @@ fields retained on active, done, or reached history remain valid source;
 projection availability and start authority belong to later target Core
 slices. The target validator reads no clock, host zone, locale, repository, or
 path and is not re-exported from `src/index.ts`.
+
+The internal target check service reuses that one parsed and semantically
+checked document to derive CheckResult v2 declared-input Core records. It
+projects the optional anchor, milestone deadlines, and task constraints from
+the validated source order into exact tagged CalendarValue records. Syntax
+failures or an unprojectable legacy anchor set `temporalInputs` to null;
+trusted declared fields remain observable with semantic diagnostics such as a
+missing anchor. Diagnostic limits do not change the complete summary counts.
+The target project service consumes the same target check result once,
+projects typed `asOf`, and obtains `finishDeadline` only from the milestone
+named by `project.finish`. Any invalid document returns null project metadata
+and null grammar version. Neither service performs calendar arithmetic,
+deadline evaluation, JSON projection, CLI dispatch, or public export.
 
 The internal target mutation planner uses the same identity-checked
 capability, target validated-document boundary, canonical declaration-field

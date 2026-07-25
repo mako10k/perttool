@@ -259,33 +259,31 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m2": {
-      "source_digest": "sha256:b85223462092e6deb7fce029e01da36a07f2de69fe202d4befd4654cea8d6100",
+      "source_digest": "sha256:c78e3e8516c77b66c5fa59b7c0346869dd978a32d69e9caeda2c3a0111f7c61a",
       "groups": {
         "active": [],
         "ready": [
-          "DECLARED_TEMPORAL_INPUT_CORE"
+          "M2_FOUNDATION_ACCEPTANCE"
         ],
         "runnable_now": [
-          "DECLARED_TEMPORAL_INPUT_CORE"
+          "M2_FOUNDATION_ACCEPTANCE"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "M2_FOUNDATION_ACCEPTANCE"
-        ]
+        "upcoming": []
       },
       "recommended_task_ids": [
-        "DECLARED_TEMPORAL_INPUT_CORE"
+        "M2_FOUNDATION_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "DECLARED_TEMPORAL_INPUT_CORE"
+        "M2_FOUNDATION_ACCEPTANCE"
       ],
       "tiers": {
-        "DECLARED_TEMPORAL_INPUT_CORE": "recommended"
+        "M2_FOUNDATION_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "DECLARED_TEMPORAL_INPUT_CORE",
+          "id": "M2_FOUNDATION_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -301,10 +299,12 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:54c397d678aa7c449120ac0ae9ef72ff2a5fb4bced3c1b8afff87f37f3237fde",
+      "source_digest": "sha256:aecc694071831ea91a161012ed5a9b26d2114ff9eb6467e28dcd60b940f02bea",
       "groups": {
         "active": [],
         "ready": [

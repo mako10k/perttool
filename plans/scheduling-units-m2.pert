@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M2:
   version 1
   title "SU-M2 temporal source and Core foundations"
-  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. Observed SU-M2 velocity is 17p/1d from the completed target Grammar 2 source, semantic-validation, formatter, and temporal mutation/batch tasks on one active day and will be recalibrated from later completed SU-M2 work."
+  description "Implement and accept only the target Grammar 2 temporal source and Core foundations selected by the SU-M1 contract. The active runtime remains Grammar 1 and CLI Contract 3. Public Contract 4 schemas, descriptors, help, Guide, README examples, installed-package temporal workflows, temporal analysis, Next v4 authority, unit migration, and publication are outside this plan. Observed SU-M2 velocity is 20p/1d from the completed target Grammar 2 source, semantic-validation, formatter, temporal mutation/batch, and declared-input Core tasks on one active day and will be recalibrated from later completed SU-M2 work."
   as_of 2026-07-25
   duration_unit point
-  velocity 17p/1d
+  velocity 20p/1d
   finish M2_FOUNDATIONS_ACCEPTED
 
 
@@ -61,6 +61,7 @@ task DECLARED_TEMPORAL_INPUT_CORE TEMPORAL_VALIDATION_READY -> DECLARED_INPUT_CO
   title "Implement target declared temporal-input Core projections"
   description "Derive internal target CheckResult v2 and ProjectResult v2 Core records from one validated source order, including anchor, milestone deadlines, task constraints, and finish deadline. Fix complete invalid-result and stable-order behavior without adding active CLI adapters, JSON schemas, src/index exports, descriptors, help, or package surface. Cover the Core portion of TUI-004."
   duration 3p
+  status done
   priority 80
   requires:
     DEVELOPERS 1

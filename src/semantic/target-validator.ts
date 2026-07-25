@@ -1,5 +1,9 @@
-import type { Diagnostic } from "../model/diagnostics.js";
+import type {
+  Diagnostic,
+  DiagnosticCounts,
+} from "../model/diagnostics.js";
 import {
+  countDiagnostics,
   hasErrors,
   limitDiagnostics,
   normalizeMaxDiagnostics,
@@ -28,8 +32,13 @@ export interface TargetValidatedDocument {
 
 export interface TargetDocumentValidationResult {
   readonly ok: boolean;
+  readonly document: DocumentNode;
+  readonly documentId: string | null;
+  readonly grammarVersion: number | null;
+  readonly parseFailed: boolean;
   readonly validatedDocument: TargetValidatedDocument | null;
   readonly diagnostics: readonly Diagnostic[];
+  readonly diagnosticCounts: DiagnosticCounts;
   readonly diagnosticsTruncated: boolean;
 }
 
@@ -48,21 +57,39 @@ export function validateTargetDocument(
   const project = parsed.document.declarations.find(
     (declaration) => declaration.kind === "project",
   );
-  const version = project === undefined
+  const declaredVersion = project === undefined
     ? undefined
     : fieldNamed(project, "version")?.value ?? 1;
+  const parseFailed = parsed.diagnostics.some(
+    (diagnostic) => diagnostic.severity === "error",
+  );
+  const diagnosticCounts = parseFailed
+    ? parsed.diagnosticCounts
+    : countDiagnostics(validatedDiagnostics);
   const ok = !hasErrors(validatedDiagnostics);
-  const grammarVersion = version === 1 || version === 2 ? version : undefined;
+  const validatedGrammarVersion =
+    declaredVersion === 1 || declaredVersion === 2
+      ? declaredVersion
+      : undefined;
   return {
     ok,
-    validatedDocument: ok && grammarVersion !== undefined
+    document: parsed.document,
+    documentId: project?.id ?? null,
+    grammarVersion: parseFailed
+      ? null
+      : typeof declaredVersion === "number"
+        ? declaredVersion
+        : 1,
+    parseFailed,
+    validatedDocument: ok && validatedGrammarVersion !== undefined
       ? Object.freeze({
           [targetValidatedDocumentBrand]: true as const,
-          grammarVersion,
+          grammarVersion: validatedGrammarVersion,
           document: parsed.document,
         })
       : null,
     diagnostics: limited.diagnostics,
+    diagnosticCounts,
     diagnosticsTruncated: parsed.diagnosticsTruncated || limited.truncated,
   };
 }
