@@ -283,17 +283,14 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m2r": {
-      "source_digest": "sha256:dd98470d99896a768a58220d400ec658d80dc8f5acfe02b18552aae5ee812057",
+      "source_digest": "sha256:39a676239eea9caee160694be2b5ed3e4780702753deca20d1a85f67d9ac6f15",
       "groups": {
         "active": [],
         "ready": [
-          "RATIONAL_DURATION_FORMATTER",
-          "RATIONAL_DURATION_MUTATION",
           "RATIONAL_DURATION_VERSION_BOUNDARY"
         ],
         "runnable_now": [
-          "RATIONAL_DURATION_FORMATTER",
-          "RATIONAL_DURATION_MUTATION"
+          "RATIONAL_DURATION_VERSION_BOUNDARY"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -301,70 +298,39 @@
         ]
       },
       "recommended_task_ids": [
-        "RATIONAL_DURATION_FORMATTER",
-        "RATIONAL_DURATION_MUTATION"
+        "RATIONAL_DURATION_VERSION_BOUNDARY"
       ],
       "manual_selected_task_ids": [
-        "RATIONAL_DURATION_FORMATTER",
-        "RATIONAL_DURATION_MUTATION"
+        "RATIONAL_DURATION_VERSION_BOUNDARY"
       ],
       "tiers": {
-        "RATIONAL_DURATION_FORMATTER": "recommended",
-        "RATIONAL_DURATION_MUTATION": "recommended",
-        "RATIONAL_DURATION_VERSION_BOUNDARY": "deferred"
+        "RATIONAL_DURATION_VERSION_BOUNDARY": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RATIONAL_DURATION_FORMATTER",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        },
-        {
-          "id": "RATIONAL_DURATION_MUTATION",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": false,
-          "total_float": "0/1",
-          "resource_rejections": []
-        },
-        {
           "id": "RATIONAL_DURATION_VERSION_BOUNDARY",
-          "runnable_now": false,
+          "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
-          "resource_rejections": [
-            {
-              "resource_id": "DEVELOPERS",
-              "capacity": 2,
-              "used_before_decision": 2,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "RATIONAL_DURATION_FORMATTER",
-                "RATIONAL_DURATION_MUTATION"
-              ]
-            }
-          ]
+          "resource_rejections": []
         }
       ],
       "record_counts": {
-        "task_decisions": 3,
-        "decision_steps": 16,
-        "facts": 75,
-        "comparisons": 1,
-        "reasons": 11,
-        "descriptions": 4
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:92f613648d27944f5c206f06bf72d61b31a5144138c05a6c23ebc5029adcc8a3",
+      "source_digest": "sha256:e0e4a30ec17fe811ca271f18090427437aa6d96730cb570b5729ef01f2f9114c",
       "groups": {
         "active": [],
         "ready": [

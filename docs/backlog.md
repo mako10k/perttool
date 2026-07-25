@@ -488,17 +488,17 @@ SU-M2 progress:
 - The user-selected rational Duration replan adds one common SU-M2R predecessor
   before SU-M3 and SU-M4. `RATIONAL_DURATION_CONTRACT` is committed and
   advanced. `RATIONAL_DURATION_SOURCE_MODEL` and `EXACT_DURATION_SERIALIZER`
-  are also committed and advanced. Thirteen points remain; precedence is
-  7p and the heuristic resource makespan is 10p with 3p delay. At the inherited
-  provisional `24p/1d`, the forecasts are `7/24d` and `5/12d`.
-- The macro rollup is `0.416667d`, leaving `4.416667d` precedence and `6.416667d`
+  are also committed and advanced. `RATIONAL_DURATION_FORMATTER` and
+  `RATIONAL_DURATION_MUTATION` are implemented and done but unadvanced under
+  ADV-001 until their implementation snapshot is committed. Seven points
+  remain; precedence and heuristic resource makespans are both 7p with no
+  delay. At the inherited provisional `24p/1d`, both forecasts are `7/24d`.
+- The macro rollup is `0.291667d`, leaving `4.291667d` precedence and `6.291667d`
   heuristic resource makespans with 2d resource delay. Its only ready,
   `runnable_now`, and complete Next v3 recommended work package is
   `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE`.
 - In the detail, complete Next v3 recommends
-  the jointly feasible `RATIONAL_DURATION_FORMATTER` and
-  `RATIONAL_DURATION_MUTATION`; `RATIONAL_DURATION_VERSION_BOUNDARY` is ready
-  but deferred by developer capacity.
+  `RATIONAL_DURATION_VERSION_BOUNDARY`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, unit migration, and publication are explicit non-goals.

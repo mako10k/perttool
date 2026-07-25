@@ -16,7 +16,11 @@ import {
   planMilestoneMutationEdits,
   type MilestoneMutationProfile,
 } from "../mutation/milestone.js";
-import { planProjectMutationEdits } from "../mutation/project.js";
+import {
+  ACTIVE_PROJECT_MUTATION_PROFILE,
+  planProjectMutationEdits,
+  type ProjectMutationProfile,
+} from "../mutation/project.js";
 import { planResourceMutationEdits } from "../mutation/resource.js";
 import {
   ACTIVE_TASK_MUTATION_PROFILE,
@@ -76,11 +80,13 @@ export type MutationDocumentValidator = (
 ) => MutationDocumentValidation;
 
 export interface MutationPlanningProfile {
+  readonly project: ProjectMutationProfile;
   readonly task: TaskMutationProfile;
   readonly milestone: MilestoneMutationProfile;
 }
 
 const activeMutationPlanningProfile: MutationPlanningProfile = Object.freeze({
+  project: ACTIVE_PROJECT_MUTATION_PROFILE,
   task: ACTIVE_TASK_MUTATION_PROFILE,
   milestone: ACTIVE_MILESTONE_MUTATION_PROFILE,
 });
@@ -111,6 +117,7 @@ function planAtomicMutationEdits(
       text,
       document,
       mutation as Parameters<typeof planProjectMutationEdits>[2],
+      profile.project,
     );
   }
   if (typeof kind === "string" && kind.startsWith("milestone.")) {

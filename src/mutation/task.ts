@@ -10,6 +10,9 @@ import {
   GRAMMAR_1_DECLARATION_FIELD_ORDER,
   TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
+import {
+  canonicalizeExactDurationSourceToken,
+} from "../model/exact-duration-source.js";
 import { mutationDiagnostic } from "./diagnostics.js";
 import type {
   TargetTaskDefinition,
@@ -51,16 +54,27 @@ export interface TaskMutationPlan {
 export interface TaskMutationProfile {
   readonly fieldOrder: readonly string[];
   readonly temporalFields: boolean;
+  readonly exactDurations: boolean;
 }
 
 export const ACTIVE_TASK_MUTATION_PROFILE: TaskMutationProfile = Object.freeze({
   fieldOrder: GRAMMAR_1_DECLARATION_FIELD_ORDER.task,
   temporalFields: false,
+  exactDurations: false,
 });
 
-export const TARGET_TASK_MUTATION_PROFILE: TaskMutationProfile = Object.freeze({
-  fieldOrder: TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER.task,
-  temporalFields: true,
+export const TARGET_GRAMMAR_2_TASK_MUTATION_PROFILE: TaskMutationProfile =
+  Object.freeze({
+    fieldOrder: TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER.task,
+    temporalFields: true,
+    exactDurations: false,
+  });
+
+export const TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE: TaskMutationProfile =
+  Object.freeze({
+    fieldOrder: TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER.task,
+    temporalFields: true,
+    exactDurations: true,
 });
 
 type SupportedTaskMutation = TaskMutation | TargetTaskMutation;
@@ -207,7 +221,13 @@ function taskMutationRequestError(value: unknown): string | undefined {
   return undefined;
 }
 
-function canonicalDuration(value: string): string {
+function canonicalDuration(
+  value: string,
+  profile: TaskMutationProfile,
+): string {
+  if (profile.exactDurations) {
+    return canonicalizeExactDurationSourceToken(value)?.token ?? value;
+  }
   const match = /^(\d+)(?:\.(\d+))?([dhp])$/.exec(value);
   if (match === null) return value;
   const whole = match[1]!.replace(/^0+(?=\d)/, "");
@@ -215,12 +235,16 @@ function canonicalDuration(value: string): string {
   return `${whole}${fraction === "" ? "" : `.${fraction}`}${match[3]}`;
 }
 
-function serializeEstimate(estimate: TaskEstimateInput, lineEnding: string): string {
+function serializeEstimate(
+  estimate: TaskEstimateInput,
+  lineEnding: string,
+  profile: TaskMutationProfile,
+): string {
   return [
     "  estimate:",
-    `    optimistic ${canonicalDuration(estimate.optimistic)}`,
-    `    most_likely ${canonicalDuration(estimate.mostLikely)}`,
-    `    pessimistic ${canonicalDuration(estimate.pessimistic)}`,
+    `    optimistic ${canonicalDuration(estimate.optimistic, profile)}`,
+    `    most_likely ${canonicalDuration(estimate.mostLikely, profile)}`,
+    `    pessimistic ${canonicalDuration(estimate.pessimistic, profile)}`,
   ].join(lineEnding);
 }
 
@@ -238,6 +262,7 @@ function serializeField(
   name: string,
   value: unknown,
   lineEnding: string,
+  profile: TaskMutationProfile,
 ): string {
   switch (name) {
     case "title":
@@ -248,9 +273,9 @@ function serializeField(
     case "blocked_reason":
       return serializeTextField(name, value as string, lineEnding);
     case "duration":
-      return `  duration ${canonicalDuration(value as string)}`;
+      return `  duration ${canonicalDuration(value as string, profile)}`;
     case "estimate":
-      return serializeEstimate(value as TaskEstimateInput, lineEnding);
+      return serializeEstimate(value as TaskEstimateInput, lineEnding, profile);
     case "not_before":
     case "deadline":
       return `  ${name} ${value}`;
@@ -301,7 +326,9 @@ function serializeTask(
     ...profile.fieldOrder.flatMap((name) => {
       if (name === "duration" && fields.has("estimate")) return [];
       if (name === "estimate" && fields.has("duration")) return [];
-      return fields.has(name) ? [serializeField(name, fields.get(name), lineEnding)] : [];
+      return fields.has(name)
+        ? [serializeField(name, fields.get(name), lineEnding, profile)]
+        : [];
     }),
   ].join(lineEnding);
 }
@@ -529,7 +556,10 @@ function planSetTask(
   const queueAddition = (name: string, value: unknown): void => {
     const offset = fieldInsertionOffset(task, name, deleted, lines, rank);
     const entries = additions.get(offset) ?? [];
-    entries.push({ name, serialized: serializeField(name, value, lineEnding) });
+    entries.push({
+      name,
+      serialized: serializeField(name, value, lineEnding, profile),
+    });
     additions.set(offset, entries);
   };
   const setScalar = (name: string, value: unknown, valueText: string): void => {
@@ -583,12 +613,21 @@ function planSetTask(
     const duration = fieldNamed(task, "duration");
     const estimate = fieldNamed(task, "estimate");
     if (duration !== undefined) {
-      setScalar("duration", set.duration, canonicalDuration(set.duration));
+      setScalar(
+        "duration",
+        set.duration,
+        canonicalDuration(set.duration, profile),
+      );
     } else if (estimate !== undefined) {
       edits.push({
         startOffset: estimate.span.start.offset,
         endOffset: contentTextEndOffset(estimate, lines),
-        replacement: serializeField("duration", set.duration, lineEnding),
+        replacement: serializeField(
+          "duration",
+          set.duration,
+          lineEnding,
+          profile,
+        ),
       });
     }
   }
@@ -605,14 +644,14 @@ function planSetTask(
         edits.push({
           startOffset: child.valueSpan.start.offset,
           endOffset: child.valueSpan.end.offset,
-          replacement: canonicalDuration(value),
+          replacement: canonicalDuration(value, profile),
         });
       }
     } else if (duration !== undefined) {
       edits.push({
         startOffset: duration.span.start.offset,
         endOffset: contentTextEndOffset(duration, lines),
-        replacement: serializeEstimate(set.estimate, lineEnding),
+        replacement: serializeEstimate(set.estimate, lineEnding, profile),
       });
     }
   }

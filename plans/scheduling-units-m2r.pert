@@ -68,6 +68,7 @@ task RATIONAL_DURATION_FORMATTER RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_
   title "Extend the target formatter for rational Duration"
   description "Extend the target formatter and source-equivalence tests for fraction Duration while preserving user-authored tokens and trivia unless normalized by an explicit formatting rule. Verify idempotence and exact target-AST equivalence."
   duration 3p
+  status done
   priority 90
   requires:
     DEVELOPERS 1
@@ -77,6 +78,7 @@ task RATIONAL_DURATION_MUTATION RATIONAL_DURATION_CORE_INPUT_READY -> RATIONAL_D
   title "Extend target mutation for rational Duration"
   description "Extend target project and task mutation plus final-candidate batch paths to accept exact fraction Duration, preserve localized UTF-16 edits and safe-write reuse, and keep automatic unit migration excluded from batch."
   duration 3p
+  status done
   priority 80
   requires:
     DEVELOPERS 1

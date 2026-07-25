@@ -559,10 +559,11 @@ acceptance.
 
 The current source implements the internal Grammar 2 target capability and a
 separately identity-checked Grammar 3 source capability rather than changing
-`TARGET_GRAMMAR_2_CAPABILITY` in place. Grammar 3 parsing and validation plus
-exact source serialization are internal SU-M2R inputs; formatter, mutation,
-version-boundary, and acceptance work remains. The active Grammar 1 parser
-and accepted internal Grammar 2 behavior remain unchanged.
+`TARGET_GRAMMAR_2_CAPABILITY` in place. Grammar 3 parsing, validation, exact
+source serialization, explicit formatting, and source-preserving mutation are
+internal SU-M2R inputs; version-boundary and acceptance work remains. The
+active Grammar 1 parser and accepted internal Grammar 2 behavior remain
+unchanged.
 
 The SU-M2 source implementation keeps `parseDocument` fixed to the active
 Grammar 1 profile. Target parsing requires the identity-checked internal
@@ -589,24 +590,29 @@ Fraction. It uses BigInt arithmetic only and is independent from display
 precision and rounding.
 
 The active and target parsers derive their accepted fields from shared
-canonical declaration-field orders. The internal target formatter reuses the
-same Grammar 2 order as the later temporal mutation insertion path, but walks
-the validated source fields in their existing order. It retains declaration
-order, comments, blank lines, BOM, predominant line endings, and the exact
-`as_of`, `deadline`, and `not_before` token spellings while applying the
-ordinary lexical normalization rules to the rest of the document. The
-candidate crosses the target validated-document boundary again, and repeated
-formatting is idempotent and target-AST equivalent. `formatDocument`, root
-exports, CLI Contract 3, and installed-package behavior remain Grammar 1.
+canonical declaration-field orders. The internal Grammar 2 and Grammar 3
+target formatters reuse the same target order as the temporal mutation
+insertion path, but walk the validated source fields in their existing order.
+Both retain declaration order, comments, blank lines, BOM, predominant line
+endings, and the exact `as_of`, `deadline`, and `not_before` token spellings
+while applying the ordinary lexical normalization rules to the rest of the
+document. The Grammar 3 path additionally canonicalizes every exact Duration
+as the shortest ordinary Decimal or reduced Fraction without changing its
+Rational value. Each candidate crosses its matching target
+validated-document boundary again, and repeated formatting is idempotent and
+target-AST equivalent. `formatDocument`, root exports, CLI Contract 3, and
+installed-package behavior remain Grammar 1.
 
-Target semantic validation accepts Grammar 1 or explicit Grammar 2 only
-through that same capability and returns an internal `TargetValidatedDocument`
-boundary on success. A Grammar 2 temporal field without `project.as_of`
+Target semantic validation has separate identity-checked boundaries. The
+Grammar 2 capability accepts Grammar 1 or explicit Grammar 2, while the
+Grammar 3 capability also accepts explicit Grammar 3 and exact Fraction
+Duration. Both return an internal `TargetValidatedDocument` boundary on
+success. A Grammar 2 or Grammar 3 temporal field without `project.as_of`
 produces `PTSEM-112` at the field value. Mixed calendar kinds and temporal
 fields retained on active, done, or reached history remain valid source;
 projection availability and start authority belong to later target Core
-slices. The target validator reads no clock, host zone, locale, repository, or
-path and is not re-exported from `src/index.ts`.
+slices. The target validators read no clock, host zone, locale, repository,
+or path and are not re-exported from `src/index.ts`.
 
 The internal target check service reuses that one parsed and semantically
 checked document to derive CheckResult v2 declared-input Core records. It
@@ -621,24 +627,28 @@ named by `project.finish`. Any invalid document returns null project metadata
 and null grammar version. Neither service performs calendar arithmetic,
 deadline evaluation, JSON projection, CLI dispatch, or public export.
 
-The internal target mutation planner uses the same identity-checked
-capability, target validated-document boundary, canonical declaration-field
-orders, entity editors, UTF-16 edit normalization, diff, and digest machinery.
-Its private request types add task `notBefore`/`deadline` and milestone
-`deadline` only to target add/set/clear operations. A batch plans every edit
-against the original AST and validates only the final target candidate, so
-one request can atomically add `version 2`/`as_of` with temporal fields or
-remove all temporal fields/`as_of` while returning to version 1. Invalid
-calendar values, missing anchors, overlap, duplicate targets, and invented
-unit-migration batch members expose no candidate or edits. The active
+The internal Grammar 2 and Grammar 3 target mutation planners use their
+matching identity-checked capability and validated-document boundary with the
+shared canonical declaration-field orders, entity editors, UTF-16 edit
+normalization, diff, and digest machinery. Their private request types add
+task `notBefore`/`deadline` and milestone `deadline` only to target
+add/set/clear operations. The Grammar 3 profile also accepts exact Duration in
+project and task add/set/estimate requests, canonicalizes only changed values,
+and preserves unrelated source tokens. A batch plans every edit against the
+original AST and validates only the final target candidate, so one request
+can atomically select the required target grammar and can return to Grammar 1
+or Grammar 2 only when the final candidate permits it. Invalid calendar or
+Duration values, missing anchors, overlap, duplicate targets, and invented
+unit-migration batch members expose no candidate or edits; automatic
+whole-document unit migration remains outside this planner. The active
 `planMutation`, public request types, root exports, registry, and CLI remain
 Grammar 1 and Contract 3.
 
 Safe-write mechanics accept an internal candidate-validator strategy while
 the public adapters remain fixed to active Grammar 1 validation. The private
-target adapters bind the Grammar 2 capability to that same in-place/out,
-digest-lock, symlink/race rejection, fsync, and post-write verification path;
-they do not add a Contract 4 CLI write route.
+target adapters bind the Grammar 2 or Grammar 3 capability to that same
+in-place/out, digest-lock, symlink/race rejection, fsync, and post-write
+verification path; they do not add a Contract 4 CLI write route.
 
 ## 7. Diagnostic Model
 

@@ -1,7 +1,9 @@
 import type {
+  TargetGrammar3Capability,
   TargetGrammar2Capability,
 } from "../parser/document-parser.js";
 import {
+  validateTargetGrammar3Document,
   validateTargetDocument,
 } from "../semantic/target-validator.js";
 import {
@@ -18,6 +20,18 @@ function targetValidator(
 ): DocumentCandidateValidator {
   return (text) => {
     const checked = validateTargetDocument(text, capability);
+    return {
+      ok: checked.ok,
+      diagnostics: checked.diagnostics,
+    };
+  };
+}
+
+function targetGrammar3Validator(
+  capability: TargetGrammar3Capability,
+): DocumentCandidateValidator {
+  return (text) => {
+    const checked = validateTargetGrammar3Document(text, capability);
     return {
       ok: checked.ok,
       diagnostics: checked.diagnostics,
@@ -49,6 +63,34 @@ export async function createTargetDocumentFile(
     target,
     candidateText,
     targetValidator(capability),
+    options,
+  );
+}
+
+export async function replaceTargetGrammar3DocumentFile(
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar3Capability,
+  options: ReplaceDocumentOptions,
+): Promise<DocumentWriteResult> {
+  return replaceValidatedDocumentFile(
+    target,
+    candidateText,
+    options,
+    targetGrammar3Validator(capability),
+  );
+}
+
+export async function createTargetGrammar3DocumentFile(
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar3Capability,
+  options: CreateDocumentOptions = {},
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFile(
+    target,
+    candidateText,
+    targetGrammar3Validator(capability),
     options,
   );
 }

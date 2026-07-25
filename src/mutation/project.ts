@@ -1,4 +1,7 @@
 import type { DeclarationNode, DocumentNode } from "../model/syntax.js";
+import {
+  canonicalizeExactDurationSourceToken,
+} from "../model/exact-duration-source.js";
 import { EntityEditor } from "./entity-editor.js";
 import { mutationDiagnostic, type MutationEditPlan } from "./diagnostics.js";
 import type {
@@ -26,6 +29,31 @@ const clearableFields = new Set<ProjectClearableField>([
   "critical_epsilon",
   "target_duration",
 ]);
+
+export interface ProjectMutationProfile {
+  readonly exactDurations: boolean;
+}
+
+export const ACTIVE_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
+  Object.freeze({
+    exactDurations: false,
+  });
+
+export const TARGET_GRAMMAR_2_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
+  ACTIVE_PROJECT_MUTATION_PROFILE;
+
+export const TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
+  Object.freeze({
+    exactDurations: true,
+  });
+
+function canonicalDuration(
+  value: string,
+  profile: ProjectMutationProfile,
+): string {
+  if (!profile.exactDurations) return value;
+  return canonicalizeExactDurationSourceToken(value)?.token ?? value;
+}
 
 function requestError(value: unknown): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -113,6 +141,7 @@ function planSet(
   text: string,
   declaration: DeclarationNode,
   mutation: SetProjectMutation,
+  profile: ProjectMutationProfile,
 ): MutationEditPlan {
   const error = requestError(mutation);
   if (error !== undefined) {
@@ -136,10 +165,16 @@ function planSet(
   if (set.velocity !== undefined) editor.setScalar("velocity", set.velocity);
   if (set.finish !== undefined) editor.setScalar("finish", set.finish);
   if (set.criticalEpsilon !== undefined) {
-    editor.setScalar("critical_epsilon", set.criticalEpsilon);
+    editor.setScalar(
+      "critical_epsilon",
+      canonicalDuration(set.criticalEpsilon, profile),
+    );
   }
   if (set.targetDuration !== undefined) {
-    editor.setScalar("target_duration", set.targetDuration);
+    editor.setScalar(
+      "target_duration",
+      canonicalDuration(set.targetDuration, profile),
+    );
   }
   edits.push(...editor.finish());
   return { edits };
@@ -149,6 +184,7 @@ export function planProjectMutationEdits(
   text: string,
   document: DocumentNode,
   mutation: SetProjectMutation,
+  profile: ProjectMutationProfile = ACTIVE_PROJECT_MUTATION_PROFILE,
 ): MutationEditPlan {
   const declaration = document.declarations.find(({ kind }) => kind === "project");
   if (declaration === undefined) {
@@ -157,5 +193,5 @@ export function planProjectMutationEdits(
       diagnostic: mutationDiagnostic("PTMUT-302", "project declaration does not exist"),
     };
   }
-  return planSet(text, declaration, mutation);
+  return planSet(text, declaration, mutation, profile);
 }

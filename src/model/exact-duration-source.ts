@@ -10,6 +10,9 @@ export interface ExactDurationSourceToken {
   readonly token: string;
 }
 
+const exactDurationTokenPattern =
+  /^([0-9]+)(?:\.([0-9]+)|\/([0-9]+))?([dhp])$/;
+
 function divideOut(
   value: bigint,
   factor: bigint,
@@ -63,4 +66,39 @@ export function serializeExactDurationSource(
     classification: "fraction",
     token: `${normalized.numerator}/${normalized.denominator}${suffix}`,
   };
+}
+
+export function canonicalizeExactDurationSourceToken(
+  source: string,
+): ExactDurationSourceToken | null {
+  const match = exactDurationTokenPattern.exec(source);
+  if (match === null) return null;
+  const whole = match[1];
+  const decimalFraction = match[2];
+  const fractionDenominator = match[3];
+  const suffix = match[4];
+  if (
+    whole === undefined ||
+    (suffix !== "d" && suffix !== "h" && suffix !== "p")
+  ) {
+    return null;
+  }
+  const unit: DurationUnit =
+    suffix === "d" ? "day" : suffix === "h" ? "hour" : "point";
+  if (fractionDenominator !== undefined) {
+    const denominator = BigInt(fractionDenominator);
+    if (denominator === 0n) return null;
+    return serializeExactDurationSource(
+      rational(BigInt(whole), denominator),
+      unit,
+    );
+  }
+  const fraction = decimalFraction ?? "";
+  return serializeExactDurationSource(
+    rational(
+      BigInt(`${whole}${fraction}`),
+      10n ** BigInt(fraction.length),
+    ),
+    unit,
+  );
 }

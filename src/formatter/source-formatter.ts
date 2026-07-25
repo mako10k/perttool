@@ -6,11 +6,16 @@ import {
 import type {
   DeclarationKind,
   DocumentNode,
+  DurationFractionValue,
   DurationValue,
+  ExactDurationValue,
   FieldNode,
   RequirementValue,
   VelocityValue,
 } from "../model/syntax.js";
+import {
+  serializeExactDurationSource,
+} from "../model/exact-duration-source.js";
 import {
   applyTextEdits,
   normalizeTextEdits,
@@ -91,7 +96,17 @@ function canonicalDecimal(value: DurationValue): string {
   return fraction === "" ? whole : `${whole}.${fraction}`;
 }
 
-function canonicalDuration(value: DurationValue): string {
+function canonicalDuration(value: ExactDurationValue): string {
+  if ("numerator" in value) {
+    return serializeExactDurationSource(
+      { numerator: value.numerator, denominator: value.denominator },
+      value.suffix === "d"
+        ? "day"
+        : value.suffix === "h"
+          ? "hour"
+          : "point",
+    ).token;
+  }
   return `${canonicalDecimal(value)}${value.suffix}`;
 }
 
@@ -106,6 +121,26 @@ function isDurationValue(value: unknown): value is DurationValue {
     "suffix" in value &&
     (value.suffix === "d" || value.suffix === "h" || value.suffix === "p")
   );
+}
+
+function isDurationFractionValue(
+  value: unknown,
+): value is DurationFractionValue {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "numerator" in value &&
+    typeof value.numerator === "bigint" &&
+    "denominator" in value &&
+    typeof value.denominator === "bigint" &&
+    value.denominator > 0n &&
+    "suffix" in value &&
+    (value.suffix === "d" || value.suffix === "h" || value.suffix === "p")
+  );
+}
+
+function isExactDurationValue(value: unknown): value is ExactDurationValue {
+  return isDurationValue(value) || isDurationFractionValue(value);
 }
 
 function isVelocityValue(value: unknown): value is VelocityValue {
@@ -129,7 +164,9 @@ function canonicalFieldValue(field: FieldNode): string | undefined {
     return typeof field.value === "number" ? String(field.value) : undefined;
   }
   if (["duration", "critical_epsilon", "target_duration", "optimistic", "most_likely", "pessimistic"].includes(field.name)) {
-    return isDurationValue(field.value) ? canonicalDuration(field.value) : undefined;
+    return isExactDurationValue(field.value)
+      ? canonicalDuration(field.value)
+      : undefined;
   }
   if (field.name === "velocity") {
     return isVelocityValue(field.value)

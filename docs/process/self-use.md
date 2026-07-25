@@ -365,17 +365,29 @@ display-rounding code. Both APIs remain internal and the two tasks are done
 in implementation commit `787f0bb`; their tasks and prerequisite frontier
 were then advanced through the expected-digest Stage 3 path.
 
+`RATIONAL_DURATION_FORMATTER` and `RATIONAL_DURATION_MUTATION` were then
+started together from the next complete recommendation. The separate internal
+Grammar 3 formatter emits every exact Duration as the shortest ordinary
+Decimal or reduced Fraction while preserving comments, layout, calendar
+tokens, and exact Rational semantics; repeated formatting is idempotent. The
+Grammar 3 mutation path canonicalizes only changed project/task Duration
+values, supports task add/set/estimate and final-candidate grammar
+upgrade/return, preserves unrelated source tokens, rejects invented automatic
+migration members, and uses the existing digest-locked in-place/out safe-write
+mechanics. Grammar 1 and Grammar 2 behavior and public exports remain closed.
+Both tasks are done but remain unadvanced until their implementation snapshot
+is committed, as required by the temporary ADV-001 procedure.
+
 The detail digest is
-`sha256:dd98470d99896a768a58220d400ec658d80dc8f5acfe02b18552aae5ee812057`.
-Thirteen points remain; precedence is 7p, heuristic resource work is 10p with
-3p delay, and the inherited provisional forecasts are `7/24d` and `5/12d`.
-The macro rollup is now `0.416667d`; its digest is
-`sha256:92f613648d27944f5c206f06bf72d61b31a5144138c05a6c23ebc5029adcc8a3`,
-with `4.416667d` precedence and `6.416667d` heuristic resource makespans and
+`sha256:39a676239eea9caee160694be2b5ed3e4780702753deca20d1a85f67d9ac6f15`.
+Seven points remain; precedence and heuristic resource makespans are both 7p
+with no resource delay, and both inherited provisional forecasts are
+`7/24d`. The macro rollup is now `0.291667d`; its digest is
+`sha256:e0e4a30ec17fe811ca271f18090427437aa6d96730cb570b5729ef01f2f9114c`,
+with `4.291667d` precedence and `6.291667d` heuristic resource makespans and
 2d delay. Fresh complete Next v3 still selects
 `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` in the macro and recommends the
-jointly feasible `RATIONAL_DURATION_FORMATTER` and
-`RATIONAL_DURATION_MUTATION` in the detail.
+only ready and runnable `RATIONAL_DURATION_VERSION_BOUNDARY` in the detail.
 
 Starting conditions:
 
@@ -902,6 +914,7 @@ Stage 1 entry evidence:
 - scheduling-and-units rational-Duration replanning gate: completed SU-M1/SU-M2 history remains advanced; the new SU-M2R common predecessor captures the user-selected Decimal-or-fraction target DSL direction without changing active Grammar 1, accepted Grammar 2, migration version 1, or Contract 3; the contract task selects new version identities where compatibility requires them; seven detail tasks total 24p with 15p precedence and 18p heuristic resource makespans, 3p delay, inherited forecasts `5/8d` and `3/4d`; the macro has `4.75d` precedence and `6.75d` resource makespans with 2d delay; complete Next v3 recommends `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` and then `RATIONAL_DURATION_CONTRACT`
 - SU-M2R exact-Duration contract gate: Grammar 3, `perttool.temporal-unit-interface@2`, `perttool.unit-migration@2`, `Perttool.UnitMigrationResult.v2`, unsigned exact Fraction syntax, canonical shortest-Decimal-or-reduced-Fraction output, atomic grammar retention/upgrade, and reversibility metadata are accepted without runtime activation; `RATIONAL_DURATION_CONTRACT` is committed at `c1dec29` and advanced through the expected-digest path
 - SU-M2R rational-source and exact-serializer gate: a separate identity-checked internal Grammar 3 parser/validator retains reduced Fraction values, exact source tokens, and spans while Grammar 1/2 stay closed; exact Rational serialization emits the shortest ordinary Decimal or a reduced Fraction without display rounding; both tasks are committed at `787f0bb` and advanced through the expected-digest path; 13p remain with 7p precedence and 10p heuristic resource makespans, 3p delay, inherited forecasts `7/24d` and `5/12d`; the macro rollup is `0.416667d`, and complete Next v3 recommends `RATIONAL_DURATION_FORMATTER` plus `RATIONAL_DURATION_MUTATION`
+- SU-M2R exact-formatter and source-mutation gate: separate internal Grammar 3 formatting and mutation paths canonicalize exact Duration values without rounding, preserve unrelated source and existing Grammar 1/2 behavior, validate final candidates through the matching capability, reject automatic migration batch members, and retain digest-locked in-place/out safe writes; both tasks are done but unadvanced pending the implementation commit under ADV-001; 7p remain with matching precedence and heuristic resource makespans, no resource delay, inherited forecast `7/24d`; the macro rollup is `0.291667d`, and complete Next v3 recommends `RATIONAL_DURATION_VERSION_BOUNDARY`
 - SU-M1 temporal-requirements gate: project `as_of`, milestone `deadline`, task `not_before`, and task `deadline` are the exact initial property scope; grammar version 1 and existing result identities are not widened; `TEMPORAL_REQUIREMENTS` is completed and advanced; six tasks total 21p, precedence is 17p, heuristic resource work is 21p with 4p delay, observed provisional velocity is `3p/1d`, the resource forecast is `7d`, and `CALENDAR_SEMANTICS` is recommended
 - SU-M1 calendar-semantics gate: `perttool.calendar-projection` and the continuous fixed-offset profile version 1 fix tagged date/date-time comparison, `as_of`, exact projection, velocity, `not_before`, unavailable causes, and the no-business-calendar/no-unit-migration boundary; `CALENDAR_SEMANTICS` is completed and advanced; five tasks total 17p, precedence is 13p, heuristic resource work is 17p with 4p delay, cumulative provisional velocity is `7p/1d`, the resource forecast is `17/7d`, and `DEADLINE_SEMANTICS` is recommended
 - SU-M1 deadline-semantics gate: `perttool.deadline-evaluation` version 1 fixes task finish, milestone reach, project finish, current deadline state, signed margin, precedence lower bounds, heuristic resource forecasts, combined assessment, blocked-cone qualification, unavailable causes, and the Analysis/Recommendation version boundary; `DEADLINE_SEMANTICS` is complete and advanced through the committed-snapshot and expected-digest path; four tasks and 13p remain, both precedence and heuristic resource makespans are 13p with no resource delay, cumulative provisional velocity is `11p/1d`, both forecasts are `13/11d`, and `UNIT_MIGRATION_SEMANTICS` is recommended
