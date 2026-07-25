@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M3:
   version 1
   title "SU-M3 temporal deadline and Next v4 target Core"
-  description "Implement and accept only the internal SU-M3 temporal deadline and NextResult v4 target Core selected by the scheduling-and-units macro. Accepted Grammar 3 Duration, declared calendar values, temporal semantics, and Contract 4 interface requirements are inputs. Exact temporal input projection and release-aware heuristic resource scheduling are complete; four tasks and 14p remain at an observed 9p/1d velocity. Active Grammar 1, CLI Contract 3, public result schemas, root exports, registry/help, Guide, installed behavior, Next v3 normal authority, and package distribution remain unchanged until SU-M5."
+  description "Implement and accept only the internal SU-M3 temporal deadline and NextResult v4 target Core selected by the scheduling-and-units macro. Accepted Grammar 3 Duration, declared calendar values, temporal semantics, and Contract 4 interface requirements are inputs. Exact temporal input projection and both release-aware schedule branches are complete; deadline evaluation, target result composition, and acceptance total 10p at an observed 13p/1d velocity. Active Grammar 1, CLI Contract 3, public result schemas, root exports, registry/help, Guide, installed behavior, Next v3 normal authority, and package distribution remain unchanged until SU-M5."
   as_of 2026-07-25
   duration_unit point
-  velocity 9p/1d
+  velocity 13p/1d
   finish DEADLINE_CAPABILITIES_ACCEPTED
 
 
@@ -69,6 +69,7 @@ task TEMPORAL_PRECEDENCE_CORE TEMPORAL_INPUT_READY -> TEMPORAL_PRECEDENCE_READY:
   title "Implement release-aware temporal precedence analysis"
   description "Implement the exact forward temporal projection with not_before release bounds, retained structural readiness, completion-relative scheduling, unavailable-bound failure, and deterministic precedence output while leaving active AnalysisResult v2 unchanged."
   duration 4p
+  status done
   priority 95
   requires:
     DEVELOPERS 1
