@@ -26,20 +26,13 @@ resource PUBLIC_SURFACE:
   capacity 1
 
 
-milestone TEMPORAL_SCOPE_DEFINED:
-  title "Temporal property scope and non-goals defined"
-  state reached
 
 
-milestone DEADLINE_SEMANTICS_DEFINED:
-  title "Deadline-derived behavior defined"
-  state reached
 
-milestone UNIT_MIGRATION_SEMANTICS_DEFINED:
-  title "Point and time-unit migration semantics defined"
 
 milestone CONTRACT_INPUT_READY:
   title "Temporal and migration semantic inputs ready"
+  state reached
 
 milestone INTERFACE_CONTRACT_DEFINED:
   title "Grammar and interface projections defined"
@@ -53,26 +46,8 @@ milestone M1_CONTRACT_ACCEPTED:
 
 
 
-task UNIT_MIGRATION_SEMANTICS TEMPORAL_SCOPE_DEFINED -> UNIT_MIGRATION_SEMANTICS_DEFINED:
-  title "Define exact point and time-unit source migration"
-  description |
-    Specify velocity prerequisites, all base-unit-bearing fields, exact
-    Rational conversion, non-representable values, velocity retention or
-    replacement, no-op and round-trip behavior, and fail-closed diagnostics.
-    Do not treat an existing velocity forecast as a source rewrite.
-  duration 4p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    NORMATIVE_SURFACE 1
 
-gate DEADLINE_CONTRACT_GATE DEADLINE_SEMANTICS_DEFINED -> CONTRACT_INPUT_READY:
-  reason "The public contract requires accepted deadline semantics"
 
-gate UNIT_MIGRATION_CONTRACT_GATE UNIT_MIGRATION_SEMANTICS_DEFINED -> CONTRACT_INPUT_READY:
-  reason "The public contract requires accepted unit migration semantics"
 
 task INTERFACE_PROJECTION_CONTRACT CONTRACT_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
   title "Define grammar, Core, CLI, help, and result projections"

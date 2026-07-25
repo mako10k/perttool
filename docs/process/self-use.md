@@ -126,11 +126,11 @@ effective velocity; the complete base-unit-bearing source-field inventory;
 exact Rational conversion; finite-decimal representability; atomic
 source-preserving candidates; no-op and repeated behavior; exact inverse
 values; and explicit metadata-change and fail-closed qualifications. It does
-not infer day/hour conversion or add a public command. The 4p task is complete
-and retained in the committed pre-advance snapshot. The same-day cumulative
-sample is `15p/1d`; three unfinished tasks and 9p remain, with 9p precedence
-and heuristic resource makespans, no resource delay, and exact `3/5d`
-forecasts. Complete `NextResult.v3` recommends
+not infer day/hour conversion or add a public command. The 4p task was
+completed and advanced through the committed-snapshot and expected-digest
+Stage 3 path. The same-day cumulative sample is `15p/1d`; three tasks and 9p
+remain, with 9p precedence and heuristic resource makespans, no resource
+delay, and exact `3/5d` forecasts. Complete `NextResult.v3` recommends
 `INTERFACE_PROJECTION_CONTRACT`. The macro rollup produces `6.6d` precedence
 and `8.6d` heuristic resource makespans with 2d resource delay.
 
@@ -653,6 +653,6 @@ Stage 1 entry evidence:
 - SU-M1 temporal-requirements gate: project `as_of`, milestone `deadline`, task `not_before`, and task `deadline` are the exact initial property scope; grammar version 1 and existing result identities are not widened; `TEMPORAL_REQUIREMENTS` is completed and advanced; six tasks total 21p, precedence is 17p, heuristic resource work is 21p with 4p delay, observed provisional velocity is `3p/1d`, the resource forecast is `7d`, and `CALENDAR_SEMANTICS` is recommended
 - SU-M1 calendar-semantics gate: `perttool.calendar-projection` and the continuous fixed-offset profile version 1 fix tagged date/date-time comparison, `as_of`, exact projection, velocity, `not_before`, unavailable causes, and the no-business-calendar/no-unit-migration boundary; `CALENDAR_SEMANTICS` is completed and advanced; five tasks total 17p, precedence is 13p, heuristic resource work is 17p with 4p delay, cumulative provisional velocity is `7p/1d`, the resource forecast is `17/7d`, and `DEADLINE_SEMANTICS` is recommended
 - SU-M1 deadline-semantics gate: `perttool.deadline-evaluation` version 1 fixes task finish, milestone reach, project finish, current deadline state, signed margin, precedence lower bounds, heuristic resource forecasts, combined assessment, blocked-cone qualification, unavailable causes, and the Analysis/Recommendation version boundary; `DEADLINE_SEMANTICS` is complete and advanced through the committed-snapshot and expected-digest path; four tasks and 13p remain, both precedence and heuristic resource makespans are 13p with no resource delay, cumulative provisional velocity is `11p/1d`, both forecasts are `13/11d`, and `UNIT_MIGRATION_SEMANTICS` is recommended
-- SU-M1 unit-migration-semantics gate: `perttool.unit-migration` version 1 fixes permitted Point/linked-time directions, effective velocity disposition, the complete source-field inventory, exact finite-decimal conversion, atomic candidates, no-op/repetition, inverse qualification, and fail-closed causes without adding a CLI command; `UNIT_MIGRATION_SEMANTICS` is complete and retained in the committed pre-advance snapshot; three unfinished tasks and 9p remain, both precedence and heuristic resource makespans are 9p with no resource delay, cumulative provisional velocity is `15p/1d`, both forecasts are `3/5d`, and `INTERFACE_PROJECTION_CONTRACT` is recommended
+- SU-M1 unit-migration-semantics gate: `perttool.unit-migration` version 1 fixes permitted Point/linked-time directions, effective velocity disposition, the complete source-field inventory, exact finite-decimal conversion, atomic candidates, no-op/repetition, inverse qualification, and fail-closed causes without adding a CLI command; `UNIT_MIGRATION_SEMANTICS` is complete and advanced through the committed-snapshot and expected-digest path; three tasks and 9p remain, both precedence and heuristic resource makespans are 9p with no resource delay, cumulative provisional velocity is `15p/1d`, both forecasts are `3/5d`, and `INTERFACE_PROJECTION_CONTRACT` is recommended
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all eleven plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

@@ -4,11 +4,11 @@
     "grammar_version": 1,
     "summary": {
       "resources": 4,
-      "milestones": 7,
-      "tasks": 4,
-      "gates": 2,
+      "milestones": 4,
+      "tasks": 3,
+      "gates": 0,
       "errors": 0,
-      "warnings": 2
+      "warnings": 0
     }
   },
   "analyze": {
