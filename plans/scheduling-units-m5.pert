@@ -1,0 +1,135 @@
+project SCHEDULING_UNITS_M5:
+  version 1
+  title "SU-M5 atomic Contract 4 cutover"
+  description "Atomically activate and accept the public Contract 4 surface from the accepted SU-M3 temporal target Core and SU-M4 exact unit-migration Core. Six tasks total 23p at an inherited 23p/1d velocity. The precedence makespan is 16p; reviewer-constrained heuristic resources are 23p with 7p delay. Public Core activation precedes migration, discovery, and authority branches; installed workflow and integrated acceptance follow their join. This detail does not authorize Git push, GitHub release, npm publication, or dist-tag changes."
+  as_of 2026-07-26
+  duration_unit point
+  velocity 23p/1d
+  finish CONTRACT4_ACCEPTED
+
+milestone M5_START:
+  title "Accepted SU-M3 and SU-M4 inputs ready"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two independent Contract 4 branches may proceed when ownership does not overlap."
+  capacity 2
+
+resource REVIEWERS:
+  title "Integrated Contract 4 review capacity"
+  capacity 1
+
+resource PUBLIC_CORE_SURFACE:
+  title "Public grammar and result Core ownership"
+  capacity 1
+
+resource MIGRATION_ROUTE_SURFACE:
+  title "Temporal mutation and unit migration route ownership"
+  capacity 1
+
+resource COMMAND_GUIDANCE_SURFACE:
+  title "Registry, adapters, help, and Guide ownership"
+  capacity 1
+
+resource AUTHORITY_SURFACE:
+  title "Next v4 authority and fail-closed consumer ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "README and installed-package workflow ownership"
+  capacity 1
+
+milestone PUBLIC_CORE_READY:
+  title "Grammar 3 and public Contract 4 Core ready"
+
+milestone MIGRATION_ROUTE_READY:
+  title "Temporal mutation and unit migration CLI route ready"
+
+milestone DISCOVERY_READY:
+  title "Contract 4 discovery, help, and Guide ready"
+
+milestone AUTHORITY_READY:
+  title "NextResult v4 normal authority ready"
+
+milestone INTEGRATION_INPUT_READY:
+  title "All public Contract 4 branches ready for integration"
+
+milestone INSTALLED_WORKFLOW_READY:
+  title "README and installed Contract 4 workflow ready"
+
+milestone CONTRACT4_ACCEPTED:
+  title "Atomic Contract 4 workstream accepted"
+
+task CONTRACT4_PUBLIC_CORE M5_START -> PUBLIC_CORE_READY:
+  title "Activate Grammar 3 and public Contract 4 Core"
+  description "Replace the active Grammar 1 boundary with the accepted Grammar 3-capable parser, validator, formatter, mutation, CheckResult v2, ProjectResult v2, AnalysisResult v3, NextResult v4, and UnitMigrationResult v2 public Core. Define the intentional root export policy and keep version identities closed."
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PUBLIC_CORE_SURFACE 1
+
+task CONTRACT4_MIGRATION_ROUTE PUBLIC_CORE_READY -> MIGRATION_ROUTE_READY:
+  title "Publish temporal mutation and exact unit migration"
+  description "Expose project, milestone, task, and batch temporal fields plus project migrate-unit through source-preserving preview and safe writes. Adapt every accepted migration cause, exact record, no-op, repetition, inverse, grammar upgrade, and optimistic-lock behavior without inventing batch members."
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    MIGRATION_ROUTE_SURFACE 1
+
+task CONTRACT4_COMMAND_GUIDANCE PUBLIC_CORE_READY -> DISCOVERY_READY:
+  title "Cut over registry, projections, help, and Guide"
+  description "Replace the Contract 3 registry with one typed Contract 4 registry that drives dispatch, parsing, deterministic text and JSON help, temporal and migration result adapters, recovery, diagnostics, and the editing.unit-migration Guide topic. Reject obsolete identities and partial aliases."
+  duration 4p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    COMMAND_GUIDANCE_SURFACE 1
+
+task NEXT_V4_NORMAL_AUTHORITY PUBLIC_CORE_READY -> AUTHORITY_READY:
+  title "Adopt complete NextResult v4 as normal authority"
+  description "Make only a known complete non-truncated NextResult v4 with Recommendation version 1 and the temporal release gate the normal start authority. Preserve deadline-independent ranking and make unknown, incomplete, malformed, or unavailable temporal authority fail closed in guidance and consumer checks."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    AUTHORITY_SURFACE 1
+
+gate MIGRATION_INTEGRATION_GATE MIGRATION_ROUTE_READY -> INTEGRATION_INPUT_READY:
+  reason "Installed Contract 4 requires the complete temporal mutation and migration route"
+
+gate DISCOVERY_INTEGRATION_GATE DISCOVERY_READY -> INTEGRATION_INPUT_READY:
+  reason "Installed Contract 4 requires complete registry, adapters, help, and Guide"
+
+gate AUTHORITY_INTEGRATION_GATE AUTHORITY_READY -> INTEGRATION_INPUT_READY:
+  reason "Installed Contract 4 requires fail-closed NextResult v4 authority"
+
+task CONTRACT4_INSTALLED_WORKFLOW INTEGRATION_INPUT_READY -> INSTALLED_WORKFLOW_READY:
+  title "Document and exercise the installed Contract 4 workflow"
+  description "Update user-facing README examples and isolated package checks for npx and npm exec, Grammar 3 temporal documents, deadline analysis, Next v4 authority, temporal maintenance, exact project migrate-unit preview/write, repetition, inverse qualification, and the complete file-first workflow."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task M5_CONTRACT4_ACCEPTANCE INSTALLED_WORKFLOW_READY -> CONTRACT4_ACCEPTED:
+  title "Accept the atomic Contract 4 workstream"
+  description "Trace every TUI and TUE observation through public Core, CLI text and JSON, help, Guide, README, installed-package workflows, unknown-result safe-stop, source preservation, migration round trips, and cross-feature regression. Record the release handoff and run full repository, documentation, self-use, link, and package gates without publishing."
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PUBLIC_CORE_SURFACE 1
+    MIGRATION_ROUTE_SURFACE 1
+    COMMAND_GUIDANCE_SURFACE 1
+    AUTHORITY_SURFACE 1
+    PACKAGE_SURFACE 1

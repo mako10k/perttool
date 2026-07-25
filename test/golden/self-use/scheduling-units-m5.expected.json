@@ -1,0 +1,61 @@
+{
+  "check": {
+    "document_id": "SCHEDULING_UNITS_M5",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 7,
+      "milestones": 8,
+      "tasks": 6,
+      "gates": 3,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "16/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "16/23",
+    "precedence_critical_tasks": [
+      "CONTRACT4_PUBLIC_CORE",
+      "CONTRACT4_MIGRATION_ROUTE",
+      "CONTRACT4_INSTALLED_WORKFLOW",
+      "M5_CONTRACT4_ACCEPTANCE"
+    ],
+    "resource_makespan": "23/1",
+    "resource_forecast": "1/1",
+    "resource_delay": "7/1",
+    "resource_arcs": [
+      "resource:CONTRACT4_MIGRATION_ROUTE:NEXT_V4_NORMAL_AUTHORITY",
+      "resource:NEXT_V4_NORMAL_AUTHORITY:CONTRACT4_COMMAND_GUIDANCE"
+    ],
+    "schedule_critical_tasks": [
+      "CONTRACT4_PUBLIC_CORE",
+      "CONTRACT4_MIGRATION_ROUTE",
+      "NEXT_V4_NORMAL_AUTHORITY",
+      "CONTRACT4_COMMAND_GUIDANCE",
+      "CONTRACT4_INSTALLED_WORKFLOW",
+      "M5_CONTRACT4_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "CONTRACT4_PUBLIC_CORE"
+      ],
+      "runnable_now": [
+        "CONTRACT4_PUBLIC_CORE"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "CONTRACT4_MIGRATION_ROUTE",
+        "CONTRACT4_INSTALLED_WORKFLOW",
+        "M5_CONTRACT4_ACCEPTANCE",
+        "NEXT_V4_NORMAL_AUTHORITY",
+        "CONTRACT4_COMMAND_GUIDANCE"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

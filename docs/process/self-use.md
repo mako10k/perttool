@@ -30,8 +30,9 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
 | `plans/scheduling-units-m2r.pert` | Completed exact rational Duration contract and target-only source/editing extension before SU-M3 and SU-M4 | `.pert` document |
-| `plans/scheduling-units-m3.pert` | Current temporal deadline and NextResult v4 target Core detail | `.pert` document |
+| `plans/scheduling-units-m3.pert` | Completed and advanced temporal deadline and NextResult v4 target Core detail | `.pert` document |
 | `plans/scheduling-units-m4.pert` | Completed and advanced exact unit-migration version 2 Core detail | `.pert` document |
+| `plans/scheduling-units-m5.pert` | Current atomic public Contract 4 cutover and integrated acceptance detail | `.pert` document |
 | `test/fixtures/grammar/` | Specific examples of what parser should accept or reject | fixture/golden |
 | Git history | Past plans, specifications, and implementation | commit history |
 
@@ -1110,5 +1111,11 @@ Stage 1 entry evidence:
   all six tasks and 23p are done at `23p/1d`; the committed-snapshot advance
   retains only reached `DEADLINE_CAPABILITIES_ACCEPTED`, with zero makespans
   and no recommendation.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all sixteen plans
+- SU-M3 macro rollup and SU-M5 planning gate: accepted 23p SU-M3 is rolled
+  up once as the existing `0.958333d` macro duration; the unadvanced macro
+  snapshot recommends only `SU_M5_INTEGRATED_ACCEPTANCE`. The new six-task
+  SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
+  reviewer-constrained heuristic resources, 7p delay, and recommendation
+  `CONTRACT4_PUBLIC_CORE`.
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all seventeen plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

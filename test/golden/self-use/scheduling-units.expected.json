@@ -8,20 +8,18 @@
         "tasks": 2,
         "gates": 2,
         "errors": 0,
-        "warnings": 0
+        "warnings": 2
       }
   },
   "analyze": {
-    "precedence_makespan": "1958333/1000000",
+    "precedence_makespan": "1/1",
     "precedence_critical_tasks": [
-      "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
       "SU_M5_INTEGRATED_ACCEPTANCE"
     ],
-    "resource_makespan": "1958333/1000000",
+    "resource_makespan": "1/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
       "SU_M5_INTEGRATED_ACCEPTANCE"
     ]
   },
@@ -29,15 +27,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
+        "SU_M5_INTEGRATED_ACCEPTANCE"
       ],
       "runnable_now": [
-        "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
+        "SU_M5_INTEGRATED_ACCEPTANCE"
       ],
       "blocked_now": [],
-      "upcoming": [
-        "SU_M5_INTEGRATED_ACCEPTANCE"
-      ]
+      "upcoming": []
     }
   }
 }

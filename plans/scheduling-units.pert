@@ -1,7 +1,7 @@
 project SCHEDULING_UNITS:
   version 1
   title "Temporal properties, deadlines, and unit migration roadmap"
-  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, SU-M2R, and SU-M4 are accepted and advanced. The SU-M4 detail completed 25p at 25p/1d and was rolled up once. SU-M3 remains estimated at 23p using inherited 24p/1d velocity and is the only ready and recommended macro work package. The remaining precedence and heuristic resource makespans are both 1.958333d with no delay. SU-M5 atomic Contract 4 activation follows the accepted SU-M3 and SU-M4 branches; release and external distribution remain separate decisions."
+  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, SU-M2R, and SU-M4 are accepted and advanced. SU-M3 completed 23p at 23p/1d, is rolled up once as the existing 0.958333d macro duration, and remains done but unadvanced until this snapshot is committed. SU-M5 is the only ready and recommended work package; its new six-task detail totals 23p with 16p precedence, 23p heuristic resources, and 7p delay. The remaining macro makespans are both 1d. Release and external distribution remain separate decisions."
   as_of 2026-07-25
   duration_unit day
   finish SCHEDULING_UNITS_ACCEPTED
@@ -44,8 +44,9 @@ milestone SCHEDULING_UNITS_ACCEPTED:
 
 task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED -> DEADLINE_CAPABILITIES_ACCEPTED:
   title "Implement temporal deadline and Next v4 target Core"
-  description "Re-estimated milestone package: 23p at the inherited 24p/1d velocity, recorded as a six-decimal 0.958333d macro resource forecast. Implement target calendar projection, release-aware temporal precedence and heuristic resource views, deadline evaluation, AnalysisResult v3 projection, and NextResult v4 time-gated authority Core with the unchanged complete v3 recommendation graph. Do not activate the public CLI, result schemas, or normal authority in this slice."
+  description "Completed milestone package: the 23p SU-M3 detail was accepted at 23p/1d and is represented by the existing six-decimal 0.958333d macro duration. Exact calendar projection, release-aware temporal precedence and heuristic resource views, deadline evaluation, AnalysisResult v3 projection, and NextResult v4 release-gated authority Core are accepted with the unchanged complete Recommendation version 1 graph. Public CLI, result schemas, and normal authority remain gated to SU-M5."
   duration 0.958333d
+  status done
   priority 90
   requires:
     DEVELOPERS 1
