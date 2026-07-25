@@ -235,33 +235,31 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m1": {
-      "source_digest": "sha256:73f0b977aa34b410ec5454c9992669ec9eeea2ac8678a9e90cbfa8adba6ef83a",
+      "source_digest": "sha256:f139f620808f46bbe658b394df90bf651ad26b3a6092e857e32cef06675ba76f",
       "groups": {
         "active": [],
         "ready": [
-          "NORMATIVE_EXAMPLES"
+          "M1_CONTRACT_REVIEW"
         ],
         "runnable_now": [
-          "NORMATIVE_EXAMPLES"
+          "M1_CONTRACT_REVIEW"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "M1_CONTRACT_REVIEW"
-        ]
+        "upcoming": []
       },
       "recommended_task_ids": [
-        "NORMATIVE_EXAMPLES"
+        "M1_CONTRACT_REVIEW"
       ],
       "manual_selected_task_ids": [
-        "NORMATIVE_EXAMPLES"
+        "M1_CONTRACT_REVIEW"
       ],
       "tiers": {
-        "NORMATIVE_EXAMPLES": "recommended"
+        "M1_CONTRACT_REVIEW": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "NORMATIVE_EXAMPLES",
+          "id": "M1_CONTRACT_REVIEW",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -277,10 +275,12 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units": {
-      "source_digest": "sha256:742a95064cc3119b394e4396afbdedcb7b770923384fec2fa13dc82e7cdeb37f",
+      "source_digest": "sha256:4291bc74aa3bec40b0dd257b40996f40056c0f841fd7a3a0c299390d2c63dd46",
       "groups": {
         "active": [],
         "ready": [
