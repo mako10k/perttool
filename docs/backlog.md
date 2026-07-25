@@ -444,7 +444,7 @@ SU-M2 progress:
   and validate only the final target candidate. The common diff, digest,
   in-place/out, optimistic-lock, symlink/race rejection, and post-write
   mechanics are reused without adding a Contract 4 CLI or root export.
-- `DECLARED_TEMPORAL_INPUT_CORE` is complete. Internal capability-checked
+- `DECLARED_TEMPORAL_INPUT_CORE` is complete and advanced. Internal capability-checked
   CheckResult v2 and ProjectResult v2 Core projections expose exact typed
   anchors, milestone deadlines, task constraints, and the finish-milestone
   deadline in stable source order. Syntax failures suppress untrusted

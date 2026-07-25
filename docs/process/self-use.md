@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.48
+- Document status: Active Stage 3 / Revision 2.49
 - Creation date: 2026-07-21
 - Update date: 2026-07-25
 - Related design: [../basic-design.md](../basic-design.md)
@@ -294,7 +294,10 @@ CLI Contract 3, root exports, descriptors, help, and installed behavior remain
 unchanged. All 355 tests, documentation, twelve self-use plans, local link,
 package dry run, and installed-package file-first gate passed. The 3p task was
 completed through an atomic expected-digest batch,
-recalibrating cumulative SU-M2 velocity to `20p/1d`. One task and 4p remain;
+recalibrating cumulative SU-M2 velocity to `20p/1d`, then advanced from clean
+implementation commit `5dc3390` with the exact expected source digest
+`sha256:c78e3e8516c77b66c5fa59b7c0346869dd978a32d69e9caeda2c3a0111f7c61a`.
+One task and 4p remain;
 both precedence and heuristic resource makespans are 4p with no delay, both
 forecasts are exact `1/5d`, and complete `NextResult.v3` recommends
 `M2_FOUNDATION_ACCEPTANCE`. The detail forecast rolls up to 0.2d, producing
@@ -831,6 +834,6 @@ Stage 1 entry evidence:
 - SU-M2 temporal-semantic-validation gate: `TEMPORAL_SEMANTIC_VALIDATION` is complete and advanced from the clean committed snapshot through the internal target validated-document boundary, field-local `PTSEM-112`, mixed-kind validity, date-anchor/hour validity, active/done/reached temporal retention, deterministic diagnostic limits, and clock-free TUE-002/TUE-006/TUE-007/TUE-011 coverage; four tasks and 15p remain, both precedence and heuristic resource makespans are 12p with no resource delay, cumulative provisional velocity is `9p/1d`, both forecasts are `4/3d`, active Grammar 1 and CLI Contract 3 remain fixed, `TEMPORAL_FORMATTER_ROUNDTRIP` is recommended, and `DECLARED_TEMPORAL_INPUT_CORE` is resource-feasible and allowed
 - SU-M2 temporal-formatter gate: `TEMPORAL_FORMATTER_ROUNDTRIP` is complete and advanced from the clean committed snapshot through one shared active/target canonical field order and the internal target formatter; field/declaration order, comments, blank lines, BOM, line endings, exact temporal tokens, UTF-16 edits, malformed-input suppression, target-AST equivalence, idempotence, all nine fixtures, and all six TUE-012/TUE-013 occurrences are covered while active Grammar 1, CLI Contract 3, and root exports remain fixed; three tasks and 12p remain, precedence/resource makespans are 9p/12p with 3p resource delay, cumulative provisional velocity is `12p/1d`, forecasts are `3/4d` and `1d`, `TEMPORAL_MUTATION_BATCH_CORE` is recommended, and `DECLARED_TEMPORAL_INPUT_CORE` is deferred by `TARGET_CORE_SURFACE`
 - SU-M2 temporal-mutation gate: `TEMPORAL_MUTATION_BATCH_CORE` is complete and advanced from clean implementation commit `65c8cda` through private capability-checked task/milestone temporal requests, shared canonical placement, localized UTF-16 edits, final-candidate-only version/anchor/temporal upgrade and downgrade batches, fail-closed invalid candidates, common deterministic diff/digest, and shared in-place/out safe-write mechanics; active Grammar 1, CLI Contract 3, root exports, descriptors, help, and installed behavior remain fixed; two tasks and 7p remain, precedence/resource makespans are both 7p with no delay, cumulative provisional velocity is `17p/1d`, both forecasts are `7/17d`, and `DECLARED_TEMPORAL_INPUT_CORE` is recommended
-- SU-M2 declared-input Core gate: `DECLARED_TEMPORAL_INPUT_CORE` is complete through internal target CheckResult v2 and ProjectResult v2 Core projections over one validated source order; exact anchors, milestone deadlines, nullable task constraints, finish-milestone deadlines, Grammar 1 compatibility, syntax suppression, semantic-error retention, complete invalid project results, diagnostic limits, determinism, and the TUI-004 Core boundary are covered while active Contract 3 schemas, CLI, root exports, descriptors, help, and installed behavior remain fixed; one task and 4p remain, precedence/resource makespans are both 4p with no delay, cumulative provisional velocity is `20p/1d`, both forecasts are `1/5d`, and `M2_FOUNDATION_ACCEPTANCE` is recommended
+- SU-M2 declared-input Core gate: `DECLARED_TEMPORAL_INPUT_CORE` is complete and advanced from clean implementation commit `5dc3390` through internal target CheckResult v2 and ProjectResult v2 Core projections over one validated source order; exact anchors, milestone deadlines, nullable task constraints, finish-milestone deadlines, Grammar 1 compatibility, syntax suppression, semantic-error retention, complete invalid project results, diagnostic limits, determinism, and the TUI-004 Core boundary are covered while active Contract 3 schemas, CLI, root exports, descriptors, help, and installed behavior remain fixed; one task and 4p remain, precedence/resource makespans are both 4p with no delay, cumulative provisional velocity is `20p/1d`, both forecasts are `1/5d`, and `M2_FOUNDATION_ACCEPTANCE` is recommended
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twelve plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.
