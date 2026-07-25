@@ -29,12 +29,10 @@ resource PACKAGE_SURFACE:
   title "Self-use, link, and installed-package acceptance ownership"
   capacity 1
 
-milestone BACKLOG_REFINED:
-  title "SU-M0 backlog and tracking model refined"
-  state reached
 
 milestone CONTRACT_ACCEPTED:
   title "SU-M1 temporal and migration contract accepted"
+  state reached
 
 milestone TEMPORAL_SURFACE_ACCEPTED:
   title "SU-M2 temporal source and Core foundations accepted"
@@ -51,19 +49,6 @@ milestone DELIVERY_INPUT_READY:
 milestone SCHEDULING_UNITS_ACCEPTED:
   title "SU-M5 atomic Contract 4 workstream accepted"
 
-task SU_M1_CONTRACT_WORK_PACKAGE BACKLOG_REFINED -> CONTRACT_ACCEPTED:
-  title "Accept the temporal and unit-migration contract"
-  description |
-    Roll up plans/scheduling-units-m1.pert. Accept requirements, normative
-    semantics, interface projections, examples, compatibility policy, and the
-    design review before implementation scope is fixed.
-  duration 0.090909d
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PUBLIC_SURFACE 1
 
 task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE CONTRACT_ACCEPTED -> TEMPORAL_SURFACE_ACCEPTED:
   title "Implement temporal source and Core foundations"
