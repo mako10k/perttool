@@ -30,12 +30,10 @@ milestone TEMPORAL_SCOPE_DEFINED:
   title "Temporal property scope and non-goals defined"
   state reached
 
-milestone CALENDAR_SEMANTICS_DEFINED:
-  title "Date and date-time semantics defined"
-  state reached
 
 milestone DEADLINE_SEMANTICS_DEFINED:
   title "Deadline-derived behavior defined"
+  state reached
 
 milestone UNIT_MIGRATION_SEMANTICS_DEFINED:
   title "Point and time-unit migration semantics defined"
@@ -54,20 +52,6 @@ milestone M1_CONTRACT_ACCEPTED:
 
 
 
-task DEADLINE_SEMANTICS CALENDAR_SEMANTICS_DEFINED -> DEADLINE_SEMANTICS_DEFINED:
-  title "Define deadline-derived analysis and recommendation behavior"
-  description |
-    Specify projected dates, feasibility, remaining margin, lateness, overdue
-    or risk state, and qualifications for blocked work and heuristic resource
-    schedules. Version any recommendation eligibility, ranking, or reason
-    changes explicitly.
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    NORMATIVE_SURFACE 1
 
 task UNIT_MIGRATION_SEMANTICS TEMPORAL_SCOPE_DEFINED -> UNIT_MIGRATION_SEMANTICS_DEFINED:
   title "Define exact point and time-unit source migration"
