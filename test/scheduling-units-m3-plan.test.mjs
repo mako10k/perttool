@@ -39,14 +39,17 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
   assert.match(detail, /Active Grammar 1, CLI Contract 3/);
   assert.match(detail, /Next v3 normal authority/);
   assert.doesNotMatch(detail, /project migrate-unit/);
-  assert.doesNotMatch(detail, /status done/);
+  assert.match(
+    detail,
+    /task ANALYSIS_NEXT_V4_TARGET[\s\S]*status done/,
+  );
   assert.doesNotMatch(macro, /^task SU_M4_UNIT_MIGRATION_WORK_PACKAGE /m);
   assert.match(deadline, /perttool\.deadline-evaluation/);
   assert.match(interfaceSpec, /Perttool\.AnalysisResult\.v3/);
   assert.match(interfaceSpec, /Perttool\.NextResult\.v4/);
 });
 
-test("SU-M3 maintains the complete known recommendation at result composition", async () => {
+test("SU-M3 maintains the complete known recommendation at acceptance", async () => {
   const source = await repositoryFile("plans/scheduling-units-m3.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
@@ -56,18 +59,18 @@ test("SU-M3 maintains the complete known recommendation at result composition", 
   assert.ok(analysis.resource);
   assert.deepEqual(
     [analysis.precedence.makespan.numerator, analysis.precedence.makespan.denominator],
-    [6n, 1n],
+    [2n, 1n],
   );
   assert.deepEqual(
     [analysis.resource.makespan.numerator, analysis.resource.makespan.denominator],
-    [6n, 1n],
+    [2n, 1n],
   );
   assert.equal(next.ok, true);
   assert.ok(next.recommendation);
-  assert.deepEqual(next.groups.ready, ["ANALYSIS_NEXT_V4_TARGET"]);
-  assert.deepEqual(next.groups.runnableNow, ["ANALYSIS_NEXT_V4_TARGET"]);
+  assert.deepEqual(next.groups.ready, ["M3_DEADLINE_ACCEPTANCE"]);
+  assert.deepEqual(next.groups.runnableNow, ["M3_DEADLINE_ACCEPTANCE"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "ANALYSIS_NEXT_V4_TARGET",
+    "M3_DEADLINE_ACCEPTANCE",
   ]);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);

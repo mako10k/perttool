@@ -1,10 +1,10 @@
 project SCHEDULING_UNITS_M3:
   version 1
   title "SU-M3 temporal deadline and Next v4 target Core"
-  description "Implement and accept only the internal SU-M3 temporal deadline and NextResult v4 target Core selected by the scheduling-and-units macro. Accepted Grammar 3 Duration, declared calendar values, temporal semantics, and Contract 4 interface requirements are inputs. Exact temporal inputs, both release-aware schedules, and deadline evaluation are complete; target result composition and acceptance total 6p at an observed 17p/1d velocity. Active Grammar 1, CLI Contract 3, public result schemas, root exports, registry/help, Guide, installed behavior, Next v3 normal authority, and package distribution remain unchanged until SU-M5."
+  description "Implement and accept only the internal SU-M3 temporal deadline and NextResult v4 target Core selected by the scheduling-and-units macro. Accepted Grammar 3 Duration, declared calendar values, temporal semantics, and Contract 4 interface requirements are inputs. Exact temporal inputs, both schedule branches, deadline evaluation, and internal AnalysisResult v3/NextResult v4 composition are complete; only the 2p SU-M3 acceptance remains at an observed 21p/1d velocity. Active Grammar 1, CLI Contract 3, public result schemas, root exports, registry/help, Guide, installed behavior, Next v3 normal authority, and package distribution remain unchanged until SU-M5."
   as_of 2026-07-25
   duration_unit point
-  velocity 17p/1d
+  velocity 21p/1d
   finish DEADLINE_CAPABILITIES_ACCEPTED
 
 
@@ -65,6 +65,7 @@ task ANALYSIS_NEXT_V4_TARGET DEADLINE_EVALUATION_READY -> M3_ACCEPTANCE_INPUT_RE
   title "Compose internal AnalysisResult v3 and NextResult v4"
   description "Project complete target-only AnalysisResult v3 and NextResult v4 values. Embed the unchanged complete NextResult v3 recommendation graph, add only the normative temporal release gate and deadline evidence, preserve versioned identities and deterministic JSON-ready records, and add no public adapter or normal-authority switch."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

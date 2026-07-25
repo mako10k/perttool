@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
-import { analyzeDocument } from "./analyze.js";
+import {
+  analyzeDocument,
+  type AnalysisResult,
+} from "./analyze.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import { compareStableStrings, hasErrors, sortDiagnostics } from "../model/diagnostics.js";
 import type { Rational } from "../model/rational.js";
@@ -288,6 +291,18 @@ export function selectNextTasks(
       ? {}
       : { maxDiagnostics: options.maxDiagnostics }),
   });
+  return selectNextTasksFromAnalysis(analysis, sourceDigest, options);
+}
+
+export function selectNextTasksFromAnalysis(
+  analysis: AnalysisResult,
+  sourceDigest: string,
+  options: NextOptions = {},
+): NextResultV3 {
+  const precision = options.precision ?? 3;
+  const explainDepth = options.explainDepth ?? 1;
+  const capacityOverrides =
+    options.capacityOverrides ?? analysis.capacityOverrides;
   const diagnostics = analysis.diagnostics.filter((diagnostic) => diagnostic.code !== "PTDAG-302");
   if (!analysis.ok || analysis.precedence === null || analysis.resource === null) {
     return {
