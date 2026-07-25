@@ -43,7 +43,7 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
   assert.match(interfaceSpec, /Perttool\.NextResult\.v4/);
 });
 
-test("SU-M3 maintains the complete known recommendation at acceptance", async () => {
+test("SU-M3 records the complete accepted frontier without a recommendation", async () => {
   const source = await repositoryFile("plans/scheduling-units-m3.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
@@ -53,19 +53,17 @@ test("SU-M3 maintains the complete known recommendation at acceptance", async ()
   assert.ok(analysis.resource);
   assert.deepEqual(
     [analysis.precedence.makespan.numerator, analysis.precedence.makespan.denominator],
-    [2n, 1n],
+    [0n, 1n],
   );
   assert.deepEqual(
     [analysis.resource.makespan.numerator, analysis.resource.makespan.denominator],
-    [2n, 1n],
+    [0n, 1n],
   );
   assert.equal(next.ok, true);
   assert.ok(next.recommendation);
-  assert.deepEqual(next.groups.ready, ["M3_DEADLINE_ACCEPTANCE"]);
-  assert.deepEqual(next.groups.runnableNow, ["M3_DEADLINE_ACCEPTANCE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "M3_DEADLINE_ACCEPTANCE",
-  ]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);
 });

@@ -535,6 +535,22 @@ precedence and heuristic resource makespans are both `1.958333d` with no
 resource delay. SU-M5 owns the atomic public Contract 4 cutover; publication
 remains separately authorized.
 
+`M3_DEADLINE_ACCEPTANCE` then accepted the complete internal temporal deadline
+and NextResult v4 target Core and recorded the
+[SU-M3 acceptance evidence](scheduling-units-m3-acceptance.md). The record
+traces TUI-001 through TUI-020 and TUE-001 through TUE-020 across exact
+calendar input, release-aware precedence, release-aware heuristic resource
+scheduling, deadline evaluation, target AnalysisResult v3/NextResult v4,
+malformed input, blocked qualification, completed-history unavailability,
+determinism, and the Contract 3 root/registry/help/Guide/package boundary.
+The accepted Next v4 retains the complete Recommendation version 1 graph,
+applies only the temporal release gate to `runnable_now`, and fixes
+`deadline_facts_used_for_ranking=false`. All six tasks and 23p are done at
+`23p/1d`; the detail has zero precedence and heuristic resource makespans and
+no recommendation. The final task remains unadvanced until this acceptance
+snapshot is committed under ADV-001. SU-M5 owns the atomic public Contract 4
+cutover and remains separately gated from release publication.
+
 Starting conditions:
 
 - `perttool dsl check <file>` works
@@ -1086,5 +1102,11 @@ Stage 1 entry evidence:
   tasks with 19p precedence, 23p reviewer-constrained heuristic resources,
   4p delay, inherited `24p/1d` velocity, forecasts `19/24d` and `23/24d`,
   and complete Next v3 recommendation `TEMPORAL_INPUT_PROJECTION`.
+- SU-M3 temporal acceptance gate: exact calendar projection, release-aware
+  precedence and heuristic resources, deadline evidence, target AnalysisResult
+  v3/NextResult v4, malformed input, blocked/history qualifications,
+  determinism, and Contract 3 closure are accepted across TUI/TUE through 020;
+  all six tasks and 23p are done at `23p/1d`, with zero makespans and no
+  recommendation, pending the committed-snapshot advance.
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all sixteen plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

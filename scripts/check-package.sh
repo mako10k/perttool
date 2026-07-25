@@ -301,6 +301,14 @@ for (const targetName of [
   "withTargetUnitMigrationWrite",
   "UNIT_MIGRATION_IDENTITY",
   "UNIT_MIGRATION_DIAGNOSTIC_CODES",
+  "prepareTargetTemporalInputs",
+  "projectTargetTemporalInputs",
+  "analyzeTemporalPrecedenceSchedule",
+  "analyzeTemporalResourceSchedule",
+  "evaluateTemporalDeadlines",
+  "analyzeTargetTemporalDocument",
+  "selectTargetTemporalTasks",
+  "selectNextTasksFromAnalysis",
 ]) {
   if (targetName in api) process.exit(1);
 }
