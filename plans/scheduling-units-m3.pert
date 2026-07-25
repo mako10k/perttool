@@ -45,12 +45,10 @@ resource CONTRACT3_GUARD:
 
 
 
-milestone DEADLINE_EVALUATION_READY:
-  title "Exact deadline evaluation ready"
-  state reached
 
 milestone M3_ACCEPTANCE_INPUT_READY:
   title "Internal AnalysisResult v3 and NextResult v4 ready"
+  state reached
 
 milestone DEADLINE_CAPABILITIES_ACCEPTED:
   title "SU-M3 temporal deadline and Next v4 target Core accepted"
@@ -61,17 +59,6 @@ milestone DEADLINE_CAPABILITIES_ACCEPTED:
 
 
 
-task ANALYSIS_NEXT_V4_TARGET DEADLINE_EVALUATION_READY -> M3_ACCEPTANCE_INPUT_READY:
-  title "Compose internal AnalysisResult v3 and NextResult v4"
-  description "Project complete target-only AnalysisResult v3 and NextResult v4 values. Embed the unchanged complete NextResult v3 recommendation graph, add only the normative temporal release gate and deadline evidence, preserve versioned identities and deterministic JSON-ready records, and add no public adapter or normal-authority switch."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    TARGET_RESULT_SURFACE 1
-    CONTRACT3_GUARD 1
 
 task M3_DEADLINE_ACCEPTANCE M3_ACCEPTANCE_INPUT_READY -> DEADLINE_CAPABILITIES_ACCEPTED:
   title "Accept the SU-M3 temporal deadline target Core"
