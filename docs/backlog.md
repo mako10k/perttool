@@ -503,10 +503,7 @@ SU-M2 progress:
   `sha256:5ba8eb9d5ec192f2d30568e1c51ebba670c4c496b232e6ad8bb9e965490931bb`.
 - The SU-M2R macro rollup is committed at `a93c129` and advanced at
   `b4e891d`. SU-M3 is re-estimated at 23p (`0.958333d`) and SU-M4 at 25p
-  (`1.041667d`). The macro has `2.041667d` precedence and `3d` heuristic
-  resource makespans with `0.958333d` delay. Complete Next v3 recommends
-  `SU_M4_UNIT_MIGRATION_WORK_PACKAGE`; the independent scheduler
-  `runnable_now` set contains SU-M3.
+  (`1.041667d`).
 - `MIGRATION_REQUEST_AND_INVENTORY` is implemented and recorded done through
   the validated Grammar 1/2/3 request boundary, exact velocity selection,
   declaration/field-order Duration inventory, preserved temporal snapshot,
@@ -542,11 +539,13 @@ SU-M2 progress:
   source preservation, no-op/repeat/inverse behavior, safe-write reuse, and
   the closed Contract 3/help/Guide/package boundary. There are no open SU-M4
   acceptance findings.
-- All six SU-M4 tasks and 25p are done at cumulative `25p/1d`. The detail has
-  zero precedence and heuristic resource makespans, no remaining or
-  recommended task, and one expected `PTDAG-208` until the committed final
-  task is advanced under ADV-001. The macro work package remains planned until
-  that detail rollup.
+- All six SU-M4 tasks and 25p are done at cumulative `25p/1d`. The final
+  acceptance snapshot is committed at `bc75b37`; the detail is advanced to
+  the reached `UNIT_MIGRATION_ACCEPTED` frontier with zero makespans and no
+  recommendation. The macro SU-M4 package is rolled up once and is done but
+  unadvanced. The remaining macro precedence and heuristic resource makespans
+  are both `1.958333d` with no delay, and complete Next v3 recommends
+  `SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE`.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, the public unit-migration command and installed workflow,

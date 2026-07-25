@@ -173,20 +173,19 @@ test("the SU-M3 handoff keeps public activation and migration out of scope", asy
   );
 });
 
-test("the accepted rational Duration rollup selects the SU-M4 work package", async () => {
+test("the accepted SU-M4 rollup selects the SU-M3 work package", async () => {
   const source = await repositoryFile("plans/scheduling-units.pert");
   const result = publicApi.selectNextTasks(source);
   assert.equal(result.ok, true);
   assert.ok(result.recommendation);
   assert.deepEqual(result.groups.ready, [
     "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
-    "SU_M4_UNIT_MIGRATION_WORK_PACKAGE",
   ]);
   assert.deepEqual(result.groups.runnableNow, [
     "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
   ]);
   assert.deepEqual(result.recommendation.recommendedTaskIds, [
-    "SU_M4_UNIT_MIGRATION_WORK_PACKAGE",
+    "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
   ]);
   const jointFact = result.recommendation.facts.find(
     ({ id }) =>

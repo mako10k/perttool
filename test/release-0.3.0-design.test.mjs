@@ -37,7 +37,11 @@ test("0.3.0 release gate keeps Contract 4 implementation and publication separat
     procedure,
     /user's 2026-07-25 request to proceed through PUBLISH explicitly authorizes/,
   );
-  assert.match(plan, /^task RELEASE_030_GATE_DESIGN /m);
+  assert.doesNotMatch(plan, /^task RELEASE_030_GATE_DESIGN /m);
+  assert.match(
+    plan,
+    /^milestone RELEASE_030_GATE_ACCEPTED:\n  title "Version 0\.3\.0 release gate accepted"\n  state reached$/m,
+  );
   assert.match(plan, /^task RELEASE_030_CONTRACT_4_READINESS /m);
   assert.match(plan, /^task RELEASE_030_PUBLISH /m);
   assert.match(plan, /^task RELEASE_030_ACCEPTANCE /m);

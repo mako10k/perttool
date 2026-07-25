@@ -147,7 +147,9 @@ text and JSON derive from the same Core results. It must not silently activate
 only the migration command or publish a package before the integrated
 acceptance and separate release authorization.
 
-After this detail is committed and advanced, roll SU-M4 completion into
-`SU_M4_UNIT_MIGRATION_WORK_PACKAGE` once. Do not copy the detail task history
-into the macro plan, and do not start SU-M5 until both SU-M3 and SU-M4 macro
-work packages are complete.
+The final detail snapshot is committed at `bc75b37` and advanced to the
+reached `UNIT_MIGRATION_ACCEPTED` frontier. SU-M4 completion is rolled into
+`SU_M4_UNIT_MIGRATION_WORK_PACKAGE` once without copying detail task history.
+The macro package remains done but unadvanced until its rollup snapshot is
+committed. Do not start SU-M5 until both SU-M3 and SU-M4 macro work packages
+are complete.

@@ -38,7 +38,7 @@ All five tasks in `release-0.2.0.pert`, totaling 17p, completed and advanced thr
 
 The independent `release-0.3.0.pert` plan selects suffix-free beta `0.3.0` for
 the breaking Contract 4 cutover without duplicating scheduling-and-units
-implementation state. `RELEASE_030_GATE_DESIGN` is done but unadvanced.
+implementation state. `RELEASE_030_GATE_DESIGN` is complete and advanced.
 Sixteen points remain; both makespans are 16p with no delay, the inherited
 release velocity is `17p/2d`, and the forecast is `32/17d`. Complete Next v3
 recommends `RELEASE_030_CONTRACT_4_READINESS`, which waits for the accepted
@@ -46,7 +46,7 @@ scheduling-and-units finish. The user has authorized work through
 `RELEASE_030_PUBLISH`; `latest` promotion and durable acceptance remain
 separate later boundaries.
 
-On 2026-07-25, `TIME-001` and `UNIT-001` were refined into the independent scheduling-and-units roadmap. SU-M1, SU-M2, and the exact fraction Duration extension SU-M2R are complete and advanced at `24p/1d` each. SU-M2R was rolled up at `a93c129` and the macro frontier advanced at `b4e891d`. Accepted semantics re-estimate SU-M3 at 23p and SU-M4 at 25p; complete macro Next v3 selects SU-M4. In `scheduling-units-m4.pert`, request/inventory, exact conversion, candidate, round-trip, and internal Result v2 work are implemented and advanced to `M4_ACCEPTANCE_INPUT_READY`; Result v2 is committed at `94d4e11`. `M4_UNIT_MIGRATION_ACCEPTANCE` records the complete [SU-M4 evidence](../docs/process/scheduling-units-m4-acceptance.md), and all six tasks and 25p are done at cumulative `25p/1d`. The detail has zero makespans and no recommendation but remains unadvanced until its acceptance snapshot is committed under ADV-001; the macro work package remains planned until the subsequent rollup. Active Grammar 1, accepted target Grammar 2, CLI Contract 3, public schemas, help, installed workflows, Next v3 authority, and publication remain unchanged.
+On 2026-07-25, `TIME-001` and `UNIT-001` were refined into the independent scheduling-and-units roadmap. SU-M1, SU-M2, and the exact fraction Duration extension SU-M2R are complete and advanced at `24p/1d` each. SU-M2R was rolled up at `a93c129` and the macro frontier advanced at `b4e891d`. The [SU-M4 evidence](../docs/process/scheduling-units-m4-acceptance.md) accepts all six tasks and 25p at cumulative `25p/1d`; its final snapshot is committed at `bc75b37`, and the detail is advanced to reached `UNIT_MIGRATION_ACCEPTED` with zero makespans and no recommendation. The macro SU-M4 package is rolled up once and done but unadvanced. SU-M3 remains estimated at 23p (`0.958333d`); the remaining macro precedence and heuristic resource makespans are both `1.958333d` with no delay, and complete Next v3 recommends `SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE`. Active Grammar 1, accepted target Grammar 2, CLI Contract 3, public schemas, help, installed workflows, Next v3 authority, and publication remain unchanged.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

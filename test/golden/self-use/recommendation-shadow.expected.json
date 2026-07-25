@@ -235,7 +235,7 @@
       "diagnostic_codes": []
     },
     "release-0.3.0": {
-      "source_digest": "sha256:204eb6c908d594bc154523c8625048ff673c0f9e06c1d028b16b9d7868e33d2f",
+      "source_digest": "sha256:a939c15be223d350fb953948cbffa07a72e75b1ca8823e511eebf080caa7a091",
       "groups": {
         "active": [],
         "ready": [
@@ -280,9 +280,7 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "scheduling-units-m1": {
       "source_digest": "sha256:3d9e421d3da2517b98256a41dda0b074f54ba73332095bf26a5e789a0e851af1",
@@ -357,7 +355,7 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m4": {
-      "source_digest": "sha256:5854dbf896a7701a77eab184eea9c6696900b96ca6e4083d0ead2b191ee00ff5",
+      "source_digest": "sha256:22327233571357720df909e8c4aef779d70bf06a9dc8a2fcad0c7b7b451d3bb8",
       "groups": {
         "active": [],
         "ready": [],
@@ -378,17 +376,14 @@
         "reasons": 1,
         "descriptions": 0
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "scheduling-units": {
-      "source_digest": "sha256:02c86c35f0e19fc9cb77cb2a876d2fed644f47e85192083c3389d6900ce85f6c",
+      "source_digest": "sha256:7a1ac045a9c2c3a1b3f3c1d40070fbac049002cd0c9e99945b7f73006ee6d632",
       "groups": {
         "active": [],
         "ready": [
-          "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
-          "SU_M4_UNIT_MIGRATION_WORK_PACKAGE"
+          "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
         ],
         "runnable_now": [
           "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
@@ -399,66 +394,36 @@
         ]
       },
       "recommended_task_ids": [
-        "SU_M4_UNIT_MIGRATION_WORK_PACKAGE"
+        "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
       ],
       "manual_selected_task_ids": [
         "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
       ],
       "tiers": {
-        "SU_M4_UNIT_MIGRATION_WORK_PACKAGE": "recommended",
-        "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE": "deferred"
+        "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
           "id": "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
           "runnable_now": true,
-          "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "41667/500000",
-          "resource_rejections": []
-        },
-        {
-          "id": "SU_M4_UNIT_MIGRATION_WORK_PACKAGE",
-          "runnable_now": false,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
-          "resource_rejections": [
-            {
-              "resource_id": "PUBLIC_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
-              ]
-            },
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE"
-              ]
-            }
-          ]
+          "resource_rejections": []
         }
       ],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 12,
-        "facts": 58,
-        "comparisons": 2,
-        "reasons": 9,
-        "descriptions": 5
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "mvp": {
       "source_digest": "sha256:689462cc4c8a3b5d860f50c9e9a8de3c42ae9caea8fea4cd293ef2076d8caf24",

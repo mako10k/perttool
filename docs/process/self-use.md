@@ -524,9 +524,14 @@ Existing suites retain malformed input, UTF-16/source/BOM preservation,
 digest, race, symlink, in-place/out, no-op, repeat, inverse, and deterministic
 candidate evidence. All six tasks and 25p are done at cumulative `25p/1d`;
 the detail has zero precedence and heuristic resource makespans and no
-recommendation. The final task remains unadvanced until this acceptance
-snapshot is committed under ADV-001. SU-M5 owns the atomic public Contract 4
-cutover; publication remains separately authorized.
+recommendation. The final acceptance snapshot is committed at `bc75b37`; the
+expected-digest advance retains only reached `UNIT_MIGRATION_ACCEPTED`. The
+macro SU-M4 work package is rolled up once and marked done but remains
+unadvanced until this rollup snapshot is committed. Fresh complete macro
+Next v3 recommends `SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE`; the remaining
+precedence and heuristic resource makespans are both `1.958333d` with no
+resource delay. SU-M5 owns the atomic public Contract 4 cutover; publication
+remains separately authorized.
 
 Starting conditions:
 

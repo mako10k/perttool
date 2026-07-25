@@ -1,15 +1,12 @@
 project RELEASE_030:
   version 1
   title "perttool 0.3.0 Contract 4 beta release"
-  description "Plan the suffix-free 0.3.0 beta release that atomically publishes accepted CLI Contract 4, Grammar 3, temporal deadline projections, NextResult v4 authority, and exact unit migration from one verified tarball. The scheduling-and-units macro remains the implementation authority; this plan verifies its accepted finish without duplicating milestone task state. RELEASE_030_GATE_DESIGN is done but unadvanced after normative gate acceptance. Sixteen points remain; both makespans are 16p and the inherited forecast is 32/17d. Complete Next v3 recommends RELEASE_030_CONTRACT_4_READINESS, which must wait for the accepted scheduling-and-units finish. PUBLISH covers the explicitly authorized Git push, annotated tag, GitHub prerelease, and npm beta operation. npm latest promotion remains a separate post-acceptance decision."
+  description "Plan the suffix-free 0.3.0 beta release that atomically publishes accepted CLI Contract 4, Grammar 3, temporal deadline projections, NextResult v4 authority, and exact unit migration from one verified tarball. The scheduling-and-units macro remains the implementation authority; this plan verifies its accepted finish without duplicating milestone task state. RELEASE_030_GATE_DESIGN is complete and advanced after normative gate acceptance. Sixteen points remain; both makespans are 16p and the inherited forecast is 32/17d. Complete Next v3 recommends RELEASE_030_CONTRACT_4_READINESS, which must wait for the accepted scheduling-and-units finish. PUBLISH covers the explicitly authorized Git push, annotated tag, GitHub prerelease, and npm beta operation. npm latest promotion remains a separate post-acceptance decision."
   as_of 2026-07-25
   duration_unit point
   velocity 17p/2d
   finish RELEASE_030_ACCEPTED
 
-milestone RELEASE_030_PLANNING_STARTED:
-  title "Version 0.3.0 release planning started"
-  state reached
 
 resource DEVELOPERS:
   title "Release engineering capacity"
@@ -37,6 +34,7 @@ resource EXTERNAL_RELEASE:
 
 milestone RELEASE_030_GATE_ACCEPTED:
   title "Version 0.3.0 release gate accepted"
+  state reached
 
 milestone RELEASE_030_CONTRACT_4_READY:
   title "Accepted Contract 4 release input verified"
@@ -53,16 +51,6 @@ milestone RELEASE_030_PUBLISHED:
 milestone RELEASE_030_ACCEPTED:
   title "Version 0.3.0 Contract 4 beta accepted"
 
-task RELEASE_030_GATE_DESIGN RELEASE_030_PLANNING_STARTED -> RELEASE_030_GATE_ACCEPTED:
-  title "Define the 0.3.0 Contract 4 release gate"
-  description "Select suffix-free 0.3.0 for the breaking Contract 4 cutover. Update requirements, ADR, design, procedure, release PERT, authorization boundary, restart rules, and latest exclusion together. This task performs no external write."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
 
 task RELEASE_030_CONTRACT_4_READINESS RELEASE_030_GATE_ACCEPTED -> RELEASE_030_CONTRACT_4_READY:
   title "Verify accepted Contract 4 release input"
