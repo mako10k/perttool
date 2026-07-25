@@ -513,6 +513,21 @@ completed result branch and retains `M4_ACCEPTANCE_INPUT_READY` as the reached
 frontier. Reanalysis clears both `PTDAG-208` warnings while preserving the
 ready and recommended acceptance task.
 
+`M4_UNIT_MIGRATION_ACCEPTANCE` then accepted the complete internal migration
+version 2 Core and recorded the
+[SU-M4 acceptance evidence](scheduling-units-m4-acceptance.md). The record
+traces TUI-001 through TUI-020 and TUE-001 through TUE-020, with direct
+migration witnesses for TUE-012 through TUE-017. Cross-layer tests add an
+exact Rational/velocity property matrix, the complete stable cause/code map,
+full Result v2 composition, and Contract 3 root/registry/help/Guide rejection.
+Existing suites retain malformed input, UTF-16/source/BOM preservation,
+digest, race, symlink, in-place/out, no-op, repeat, inverse, and deterministic
+candidate evidence. All six tasks and 25p are done at cumulative `25p/1d`;
+the detail has zero precedence and heuristic resource makespans and no
+recommendation. The final task remains unadvanced until this acceptance
+snapshot is committed under ADV-001. SU-M5 owns the atomic public Contract 4
+cutover; publication remains separately authorized.
+
 Starting conditions:
 
 - `perttool dsl check <file>` works

@@ -53,7 +53,7 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   assert.match(interfaceSpec, /Perttool\.UnitMigrationResult\.v2/);
 });
 
-test("SU-M4 advances Result v2 and selects final acceptance", async () => {
+test("SU-M4 records final acceptance with no remaining detail task", async () => {
   const source = await repositoryFile("plans/scheduling-units-m4.pert");
   const analysis = publicApi.analyzeDocument(source);
   const next = publicApi.selectNextTasks(source);
@@ -62,25 +62,27 @@ test("SU-M4 advances Result v2 and selects final acceptance", async () => {
   assert.doesNotMatch(source, /^task UNIT_MIGRATION_CANDIDATE /m);
   assert.doesNotMatch(source, /^task MIGRATION_NOOP_REPEAT_INVERSE /m);
   assert.doesNotMatch(source, /^task UNIT_MIGRATION_RESULT_V2 /m);
-  assert.match(source, /velocity 21p\/1d/);
+  assert.match(
+    source,
+    /task M4_UNIT_MIGRATION_ACCEPTANCE[\s\S]*status done/,
+  );
+  assert.match(source, /velocity 25p\/1d/);
   assert.equal(analysis.ok, true);
   assert.ok(analysis.precedence);
   assert.ok(analysis.resource);
   assert.deepEqual(
     [analysis.precedence.makespan.numerator, analysis.precedence.makespan.denominator],
-    [4n, 1n],
+    [0n, 1n],
   );
   assert.deepEqual(
     [analysis.resource.makespan.numerator, analysis.resource.makespan.denominator],
-    [4n, 1n],
+    [0n, 1n],
   );
   assert.equal(next.ok, true);
   assert.ok(next.recommendation);
-  assert.deepEqual(next.groups.ready, ["M4_UNIT_MIGRATION_ACCEPTANCE"]);
-  assert.deepEqual(next.groups.runnableNow, ["M4_UNIT_MIGRATION_ACCEPTANCE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "M4_UNIT_MIGRATION_ACCEPTANCE",
-  ]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);
 });

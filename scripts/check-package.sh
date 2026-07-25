@@ -252,6 +252,9 @@ if (
   index.cli_contract_version !== 3 ||
   index.operation !== "guide" ||
   index.topics?.length !== 8 ||
+  JSON.stringify(index).includes("editing.unit-migration") ||
+  JSON.stringify(index).includes("project migrate-unit") ||
+  JSON.stringify(index).includes("Perttool.UnitMigrationResult.v2") ||
   !text.startsWith("DSL syntax\n") ||
   missing.diagnostics?.[0]?.help_topic !== null ||
   missing.diagnostics?.[0]?.guide_topic !== "syntax"
@@ -291,6 +294,13 @@ for (const targetName of [
   "serializeExactDurationSource",
   "selectExactDurationGrammarBoundary",
   "planTargetExactDurationGrammarBoundary",
+  "prepareTargetUnitMigrationRequest",
+  "convertPreparedUnitMigrationRequest",
+  "planTargetUnitMigrationCandidate",
+  "planTargetUnitMigrationResult",
+  "withTargetUnitMigrationWrite",
+  "UNIT_MIGRATION_IDENTITY",
+  "UNIT_MIGRATION_DIAGNOSTIC_CODES",
 ]) {
   if (targetName in api) process.exit(1);
 }
@@ -317,6 +327,29 @@ if (
   serializedHelp.includes("Perttool.NextResult.v4") ||
   serializedHelp.includes("Perttool.UnitMigrationResult.v1") ||
   serializedHelp.includes("Perttool.UnitMigrationResult.v2")
+) process.exit(1);
+
+const unavailableMigration = spawnSync(
+  process.argv[5],
+  [
+    "project",
+    "migrate-unit",
+    process.argv[6],
+    "--to-unit",
+    "day",
+    "--format=json",
+  ],
+  { encoding: "utf8" },
+);
+const unavailableMigrationJson = JSON.parse(unavailableMigration.stdout);
+if (
+  unavailableMigration.status !== 2 ||
+  unavailableMigration.stderr !== "" ||
+  unavailableMigrationJson.schema_version !== "Perttool.CliError.v1" ||
+  unavailableMigrationJson.cli_contract_version !== 3 ||
+  unavailableMigrationJson.operation !== null ||
+  unavailableMigrationJson.usage?.kind !== "unknown_action" ||
+  unavailableMigrationJson.usage?.token !== "migrate-unit"
 ) process.exit(1);
 
 for (const [fixture, allowedCodes] of [

@@ -1,7 +1,7 @@
 project SCHEDULING_UNITS:
   version 1
   title "Temporal properties, deadlines, and unit migration roadmap"
-  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, and SU-M2R are accepted and advanced. Accepted target-only semantics re-estimate SU-M3 at 23p and SU-M4 at 25p using the inherited 24p/1d velocity. Complete fresh macro Next v3 selects SU-M4; plans/scheduling-units-m4.pert has advanced request, exact conversion, candidate, round-trip, and Result v2 work to M4_ACCEPTANCE_INPUT_READY at cumulative 21p/1d. One 4p acceptance task remains with matching precedence and heuristic resource makespans, no delay, 4/21d forecasts, and a recommendation for M4_UNIT_MIGRATION_ACCEPTANCE. SU-M3 remains at its milestone estimate until selected. Release and external distribution remain separate decisions."
+  description "Track TIME-001 and UNIT-001 as milestone-level work packages without duplicating detail task state. SU-M1, SU-M2, and SU-M2R are accepted and advanced. Accepted target-only semantics re-estimate SU-M3 at 23p and SU-M4 at 25p using the inherited 24p/1d velocity. The SU-M4 detail has accepted the internal exact migration Core through M4_UNIT_MIGRATION_ACCEPTANCE at cumulative 25p/1d; its final task is done but unadvanced under ADV-001, with zero detail makespans and no detail recommendation. The macro SU-M4 work package remains planned until the committed detail is advanced and rolled up once. Complete fresh macro Next v3 still selects SU-M4, while SU-M3 remains at its milestone estimate until selected. Release and external distribution remain separate decisions."
   as_of 2026-07-25
   duration_unit day
   finish SCHEDULING_UNITS_ACCEPTED

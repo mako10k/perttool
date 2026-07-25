@@ -536,10 +536,17 @@ SU-M2 progress:
   Implementation commit `94d4e11` satisfies ADV-001; canonical advance removes
   the completed result branch and retains `M4_ACCEPTANCE_INPUT_READY` as the
   reached frontier.
-- One SU-M4 acceptance task and 4p remain. Cumulative velocity is `21p/1d`.
-  Precedence and heuristic resource makespans are both 4p with no delay;
-  both forecasts are `4/21d`. Complete Next v3 recommends
-  `M4_UNIT_MIGRATION_ACCEPTANCE`.
+- `M4_UNIT_MIGRATION_ACCEPTANCE` traces TUI/TUE through 020 in the
+  [SU-M4 acceptance record](process/scheduling-units-m4-acceptance.md).
+  Cross-layer tests cover exact properties, stable causes, complete Result v2,
+  source preservation, no-op/repeat/inverse behavior, safe-write reuse, and
+  the closed Contract 3/help/Guide/package boundary. There are no open SU-M4
+  acceptance findings.
+- All six SU-M4 tasks and 25p are done at cumulative `25p/1d`. The detail has
+  zero precedence and heuristic resource makespans, no remaining or
+  recommended task, and one expected `PTDAG-208` until the committed final
+  task is advanced under ADV-001. The macro work package remains planned until
+  that detail rollup.
 - Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
   projections, descriptors, help, Guide, package workflows, temporal analysis,
   Next v4 authority, the public unit-migration command and installed workflow,

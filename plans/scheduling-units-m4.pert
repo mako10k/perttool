@@ -4,7 +4,7 @@ project SCHEDULING_UNITS_M4:
   description "Implement and accept only the internal unit-migration version 2 Core selected by the scheduling-and-units macro. SU-M2R exact Decimal-or-fraction Duration, canonical serialization, target Grammar 3, and version-boundary capabilities are accepted inputs. The active Grammar 1 runtime, CLI Contract 3, public schemas, root exports, command registry, help, Guide, installed workflow, Next v3 authority, and package distribution remain unchanged. The initial velocity is inherited at 24p/1d; six tasks total 25p."
   as_of 2026-07-25
   duration_unit point
-  velocity 21p/1d
+  velocity 25p/1d
   finish UNIT_MIGRATION_ACCEPTED
 
 
@@ -61,6 +61,7 @@ task M4_UNIT_MIGRATION_ACCEPTANCE M4_ACCEPTANCE_INPUT_READY -> UNIT_MIGRATION_AC
   title "Accept the SU-M4 unit-migration target Core"
   description "Trace every SU-M4-owned TUI and TUE observation through unit, malformed-input, property, source-preservation, safe-write, no-op, repetition, inverse, and deterministic-result tests. Verify active Grammar 1, CLI Contract 3, public schemas, root exports, the 27-command registry, help, Guide, Next v3 authority, and installed behavior remain unchanged and reject the target operation. Record the SU-M5 handoff and run the full repository, documentation, self-use, link, and package gates without activating Contract 4 or publishing anything."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
