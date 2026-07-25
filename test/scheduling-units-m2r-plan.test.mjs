@@ -35,9 +35,10 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_VERSION_BOUNDARY /m);
   assert.doesNotMatch(detail, /^task RATIONAL_DURATION_ACCEPTANCE /m);
   assert.match(detail, /milestone RATIONAL_DURATION_ACCEPTED:[\s\S]*state reached/);
+  assert.doesNotMatch(macro, /^task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE /m);
   assert.match(
     macro,
-    /task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> RATIONAL_DURATION_ACCEPTED/,
+    /milestone RATIONAL_DURATION_ACCEPTED:[\s\S]*state reached/,
   );
   assert.match(
     macro,

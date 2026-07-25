@@ -1,15 +1,15 @@
 {
   "check": {
-    "document_id": "SCHEDULING_UNITS",
-    "grammar_version": 1,
-    "summary": {
-      "resources": 4,
-      "milestones": 6,
-      "tasks": 4,
-      "gates": 2,
-      "errors": 0,
-      "warnings": 1
-    }
+      "document_id": "SCHEDULING_UNITS",
+      "grammar_version": 1,
+      "summary": {
+        "resources": 4,
+        "milestones": 5,
+        "tasks": 3,
+        "gates": 2,
+        "errors": 0,
+        "warnings": 0
+      }
   },
   "analyze": {
     "precedence_makespan": "2041667/1000000",

@@ -26,9 +26,6 @@ resource PACKAGE_SURFACE:
 
 
 
-milestone TEMPORAL_SURFACE_ACCEPTED:
-  title "SU-M2 temporal source and Core foundations accepted"
-  state reached
 
 milestone DEADLINE_CAPABILITIES_ACCEPTED:
   title "SU-M3 temporal deadline and Next v4 target Core accepted"
@@ -82,14 +79,4 @@ task SU_M5_INTEGRATED_ACCEPTANCE DELIVERY_INPUT_READY -> SCHEDULING_UNITS_ACCEPT
 
 milestone RATIONAL_DURATION_ACCEPTED:
   title "Exact rational Duration target extension accepted"
-
-task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE TEMPORAL_SURFACE_ACCEPTED -> RATIONAL_DURATION_ACCEPTED:
-  title "Extend the target DSL with exact rational Duration"
-  description "Rolled up from the completed and advanced plans/scheduling-units-m2r.pert. Grammar 3 exact Decimal-or-fraction Duration, reduced canonical serialization, source-preserving target formatting and mutation, version-boundary handling, and acceptance coverage are committed. Grammar 1, accepted Grammar 2, CLI Contract 3, public schemas, help, installed behavior, and distribution remain unchanged."
-  duration 0.166667d
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PUBLIC_SURFACE 1
+  state reached
