@@ -46,32 +46,7 @@ resource CONTRACT3_GUARD:
 
 
 
-milestone M3_ACCEPTANCE_INPUT_READY:
-  title "Internal AnalysisResult v3 and NextResult v4 ready"
-  state reached
 
 milestone DEADLINE_CAPABILITIES_ACCEPTED:
   title "SU-M3 temporal deadline and Next v4 target Core accepted"
-
-
-
-
-
-
-
-
-task M3_DEADLINE_ACCEPTANCE M3_ACCEPTANCE_INPUT_READY -> DEADLINE_CAPABILITIES_ACCEPTED:
-  title "Accept the SU-M3 temporal deadline target Core"
-  description "Trace SU-M3-owned TUI and TUE observations through exact calendar, release, temporal schedule, deadline, malformed-input, blocked, deterministic-result, and authority-boundary tests. Verify active Grammar 1, CLI Contract 3, AnalysisResult v2, NextResult v3 normal authority, root exports, registry/help, Guide, installed behavior, and package distribution remain unchanged. Record the SU-M5 handoff and run the full repository gates."
-  duration 2p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    TEMPORAL_INPUT_SURFACE 1
-    PRECEDENCE_SURFACE 1
-    RESOURCE_SCHEDULE_SURFACE 1
-    DEADLINE_SURFACE 1
-    TARGET_RESULT_SURFACE 1
-    CONTRACT3_GUARD 1
+  state reached

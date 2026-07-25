@@ -547,8 +547,9 @@ The accepted Next v4 retains the complete Recommendation version 1 graph,
 applies only the temporal release gate to `runnable_now`, and fixes
 `deadline_facts_used_for_ranking=false`. All six tasks and 23p are done at
 `23p/1d`; the detail has zero precedence and heuristic resource makespans and
-no recommendation. The final task remains unadvanced until this acceptance
-snapshot is committed under ADV-001. SU-M5 owns the atomic public Contract 4
+no recommendation. The acceptance snapshot is committed at `9c61bac`, and
+the expected-digest advance retains only reached
+`DEADLINE_CAPABILITIES_ACCEPTED`. SU-M5 owns the atomic public Contract 4
 cutover and remains separately gated from release publication.
 
 Starting conditions:
@@ -1106,7 +1107,8 @@ Stage 1 entry evidence:
   precedence and heuristic resources, deadline evidence, target AnalysisResult
   v3/NextResult v4, malformed input, blocked/history qualifications,
   determinism, and Contract 3 closure are accepted across TUI/TUE through 020;
-  all six tasks and 23p are done at `23p/1d`, with zero makespans and no
-  recommendation, pending the committed-snapshot advance.
+  all six tasks and 23p are done at `23p/1d`; the committed-snapshot advance
+  retains only reached `DEADLINE_CAPABILITIES_ACCEPTED`, with zero makespans
+  and no recommendation.
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all sixteen plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

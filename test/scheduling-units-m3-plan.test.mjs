@@ -12,7 +12,7 @@ async function repositoryFile(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
 }
 
-test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", async () => {
+test("SU-M3 retains only its reached accepted frontier after advance", async () => {
   const [detail, macro, deadline, interfaceSpec] = await Promise.all([
     repositoryFile("plans/scheduling-units-m3.pert"),
     repositoryFile("plans/scheduling-units.pert"),
@@ -23,20 +23,21 @@ test("SU-M3 decomposes only the temporal deadline and Next v4 target Core", asyn
   const taskIds = [...detail.matchAll(/^task ([A-Z0-9_]+) /gm)].map(
     (match) => match[1],
   );
-  assert.deepEqual(taskIds, ["M3_DEADLINE_ACCEPTANCE"]);
+  assert.deepEqual(taskIds, []);
   const points = [...detail.matchAll(/^  duration (\d+)p$/gm)].reduce(
     (total, match) => total + Number(match[1]),
     0,
   );
-  assert.equal(points, 2);
+  assert.equal(points, 0);
   assert.match(
     detail,
-    /milestone M3_ACCEPTANCE_INPUT_READY:[\s\S]*state reached/,
+    /milestone DEADLINE_CAPABILITIES_ACCEPTED:[\s\S]*state reached/,
   );
   assert.match(detail, /Active Grammar 1, CLI Contract 3/);
   assert.match(detail, /Next v3 normal authority/);
   assert.doesNotMatch(detail, /project migrate-unit/);
   assert.doesNotMatch(detail, /^task ANALYSIS_NEXT_V4_TARGET /m);
+  assert.doesNotMatch(detail, /^task M3_DEADLINE_ACCEPTANCE /m);
   assert.doesNotMatch(macro, /^task SU_M4_UNIT_MIGRATION_WORK_PACKAGE /m);
   assert.match(deadline, /perttool\.deadline-evaluation/);
   assert.match(interfaceSpec, /Perttool\.AnalysisResult\.v3/);
