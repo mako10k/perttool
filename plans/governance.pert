@@ -1,0 +1,223 @@
+project OWNER_AWARE_GOVERNANCE:
+  version 1
+  title "Owner-aware goal and DAG governance"
+  description "Adopt GitHub Issue #4 as an independent post-beta workstream. Separate authority to change the project goal or DAG from recommendation override MIG-08. Principal and owner-acceptance values are caller assertions, not authentication. Preserve preview-first mutation, candidate validation, optimistic locking, and safe-write controls. The issue is design input; normative requirements and specifications must settle exact DSL, repeatable confirmation, compatibility, and schema contracts before implementation. The provisional 29p/2d velocity is inherited from the completed operations workstream until this plan has its own accepted sample. Release publication is outside this plan."
+  as_of 2026-07-26
+  duration_unit point
+  velocity 29p/2d
+  finish GOVERNANCE_ACCEPTED
+
+milestone ISSUE_4_ACCEPTED:
+  title "Issue #4 accepted as design input"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Normative and safety review capacity"
+  description "Only one cross-cutting authority or public-contract review runs at a time"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "CLI, help, and result-schema ownership"
+  description "Avoid concurrent changes to the shared command registry, help, and CLI projections"
+  capacity 1
+
+resource WRITE_PATH:
+  title "Mutation and safe-write ownership"
+  description "Avoid concurrent changes to governed mutation classification and write enforcement"
+  capacity 1
+
+resource DOC_SURFACE:
+  title "Normative and guidance documentation ownership"
+  description "Avoid concurrent cross-cutting edits to requirements, specifications, examples, and guidance"
+  capacity 1
+
+milestone REQUIREMENTS_ACCEPTED:
+  title "Governance requirements and threat boundary accepted"
+
+milestone DSL_CONTRACT_DEFINED:
+  title "Governance DSL and effective metadata contract defined"
+
+milestone AUTHORITY_SEMANTICS_DEFINED:
+  title "Goal and DAG authority semantics defined"
+
+milestone INTERFACE_INPUT_READY:
+  title "Governance interface design input ready"
+
+milestone INTERFACE_CONTRACT_DEFINED:
+  title "Core, CLI, help, and JSON contract defined"
+
+milestone EXAMPLES_DEFINED:
+  title "Normative governance examples defined"
+
+milestone DESIGN_ACCEPTED:
+  title "Issue #4 cross-cutting design accepted"
+
+milestone SOURCE_MODEL_READY:
+  title "Governance source model and metadata maintenance ready"
+
+milestone AUTHORITY_CORE_READY:
+  title "Pure mutation-authority evaluation ready"
+
+milestone IMPLEMENTATION_INPUT_READY:
+  title "CLI enforcement implementation input ready"
+
+milestone CLI_PREVIEW_READY:
+  title "Governed CLI preview and projections ready"
+
+milestone WRITE_ENFORCEMENT_READY:
+  title "Governed write enforcement ready"
+
+milestone GUIDANCE_READY:
+  title "Editing guidance and generated warning ready"
+
+milestone ACCEPTANCE_INPUT_READY:
+  title "Owner-aware governance acceptance input ready"
+
+milestone GOVERNANCE_ACCEPTED:
+  title "Owner-aware goal and DAG governance accepted"
+
+task GOV_REQUIREMENTS ISSUE_4_ACCEPTED -> REQUIREMENTS_ACCEPTED:
+  title "Adopt the Issue #4 authority boundary in requirements"
+  description "Define the accidental-overreach threat model; goal and DAG scopes; default goal_owner=user and dag_owner=user with empty delegates; initial user, llm, and codex principal IDs; ordinary-maintenance exclusions; caller-asserted identity boundary; and non-goals. Explicitly separate project-model write authority from recommendation override MIG-08."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+task GOV_DSL_CONTRACT REQUIREMENTS_ACCEPTED -> DSL_CONTRACT_DEFINED:
+  title "Define governance source and effective-metadata semantics"
+  description "Specify project governance fields, principal syntax, omission defaults, grammar compatibility, source preservation, project init/show behavior, and pre-change metadata snapshots. Update normative examples without changing recommendation ranking or resource semantics."
+  duration 4p
+  priority 95
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+task GOV_AUTHORITY_CONTRACT REQUIREMENTS_ACCEPTED -> AUTHORITY_SEMANTICS_DEFINED:
+  title "Define governed mutation and pre-change authority semantics"
+  description "Classify goal, DAG, and ordinary maintenance mutations; define owner/delegate authorization, preview reporting, pre-change checks, self-authorization rejection, mixed-scope batch behavior, direct-edit limits, and stable PTGOV diagnostics."
+  duration 4p
+  priority 95
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+    WRITE_PATH 1
+
+gate GOV_DSL_INTERFACE_INPUT DSL_CONTRACT_DEFINED -> INTERFACE_INPUT_READY:
+  reason "The public interface requires the accepted governance source contract"
+
+gate GOV_AUTHORITY_INTERFACE_INPUT AUTHORITY_SEMANTICS_DEFINED -> INTERFACE_INPUT_READY:
+  reason "The public interface requires accepted pre-change authority semantics"
+
+task GOV_INTERFACE_CONTRACT INTERFACE_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
+  title "Define Core, CLI, help, and JSON governance contracts"
+  description "Settle actor and owner-acceptance request shapes, distinct-owner batch confirmation, preview and write results, project show projection, stable diagnostics and exits, command registry/help, schema versions, and the compatibility cutover before implementation."
+  duration 4p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    DOC_SURFACE 1
+
+task GOV_NORMATIVE_EXAMPLES INTERFACE_CONTRACT_DEFINED -> EXAMPLES_DEFINED:
+  title "Fix normative governance examples and acceptance cases"
+  description "Cover omitted defaults, owner and delegate writes, missing and wrong acceptance, governed preview, distinct-owner batches, pre-change self-authorization rejection, stale digests, unaffected maintenance, and direct-edit bypass guidance."
+  duration 2p
+  priority 85
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+task GOV_DESIGN_ACCEPTANCE EXAMPLES_DEFINED -> DESIGN_ACCEPTED:
+  title "Accept the cross-cutting Issue #4 design"
+  description "Trace every Issue #4 criterion and non-goal through requirements, grammar, mutation, interface, design, examples, and process. Confirm that authentication, recommendation ranking, MIG-08 audit/apply, Git integration, and release publication remain separate."
+  duration 2p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+task GOV_SOURCE_MODEL DESIGN_ACCEPTED -> SOURCE_MODEL_READY:
+  title "Implement governance source and metadata maintenance"
+  description "Implement parser, CST/model, semantic defaults, formatter, project init/show/set, batch fields, public types, and the generated leading direct-edit warning from the accepted contract. Preserve Grammar 1/2/3 compatibility as designed."
+  duration 5p
+  priority 75
+  requires:
+    DEVELOPERS 1
+    DOC_SURFACE 1
+
+task GOV_AUTHORITY_CORE DESIGN_ACCEPTED -> AUTHORITY_CORE_READY:
+  title "Implement pure pre-change mutation-authority evaluation"
+  description "Implement deterministic scope classification, effective-owner and delegate resolution, pre-change authorization, mixed batch requirements, preview metadata, and PTGOV diagnostics without filesystem, Git, authentication, or network effects."
+  duration 5p
+  priority 75
+  requires:
+    DEVELOPERS 1
+    WRITE_PATH 1
+
+gate GOV_SOURCE_IMPLEMENTATION_INPUT SOURCE_MODEL_READY -> IMPLEMENTATION_INPUT_READY:
+  reason "CLI enforcement requires governance source and metadata support"
+
+gate GOV_AUTHORITY_IMPLEMENTATION_INPUT AUTHORITY_CORE_READY -> IMPLEMENTATION_INPUT_READY:
+  reason "CLI enforcement requires pure pre-change authority evaluation"
+
+task GOV_CLI_PREVIEW IMPLEMENTATION_INPUT_READY -> CLI_PREVIEW_READY:
+  title "Publish governed previews, command options, help, and JSON"
+  description "Connect the accepted actor and owner-acceptance shapes to direct and batch commands. Keep previews free of confirmation requirements while reporting affected scopes, effective owners, and whether a write would require acceptance."
+  duration 4p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    WRITE_PATH 1
+
+task GOV_WRITE_ENFORCEMENT CLI_PREVIEW_READY -> WRITE_ENFORCEMENT_READY:
+  title "Enforce governance on every affected safe-write path"
+  description "Enforce owner/delegate or accepted-owner assertions for goal and DAG writes, including atomic batch, import, advance, and governed metadata changes. Retain optimistic locking, candidate validation, symlink rejection, atomic write, and unaffected maintenance behavior."
+  duration 5p
+  priority 65
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    WRITE_PATH 1
+
+task GOV_GUIDANCE DESIGN_ACCEPTED -> GUIDANCE_READY:
+  title "Align editing guidance and generated project warnings"
+  description "Update guide editing, README, and process guidance to state that direct DSL editing bypasses goal and DAG owner-confirmation checks, and align them with the generated project header owned by GOV_SOURCE_MODEL. Keep the statement guidance rather than technical enforcement."
+  duration 3p
+  priority 60
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOC_SURFACE 1
+
+gate GOV_WRITE_ACCEPTANCE_INPUT WRITE_ENFORCEMENT_READY -> ACCEPTANCE_INPUT_READY:
+  reason "Acceptance requires all governed write paths"
+
+gate GOV_GUIDANCE_ACCEPTANCE_INPUT GUIDANCE_READY -> ACCEPTANCE_INPUT_READY:
+  reason "Acceptance requires aligned editing guidance and generated warnings"
+
+task GOV_ACCEPTANCE ACCEPTANCE_INPUT_READY -> GOVERNANCE_ACCEPTED:
+  title "Accept owner-aware governance across source and installed package"
+  description "Run focused Core, grammar, mutation, CLI, batch, safe-write, help, guide, documentation, self-use, link, package, and installed-workflow tests. Verify Issue #4 defaults, delegation, confirmations, stale-digest behavior, ordinary mutations, direct-edit guidance, and all explicit non-goals."
+  duration 4p
+  priority 55
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    WRITE_PATH 1
+    DOC_SURFACE 1

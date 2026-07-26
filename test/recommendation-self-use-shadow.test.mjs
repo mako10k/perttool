@@ -14,6 +14,7 @@ const planNames = [
   "control-plane",
   "english-baseline",
   "grammar",
+  "governance",
   "operations",
   "recommendation",
   "release-0.2.0",
@@ -150,7 +151,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all seventeen self-use plans pass the v4 recommendation shadow gate", async () => {
+test("all eighteen self-use plans pass the v4 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(

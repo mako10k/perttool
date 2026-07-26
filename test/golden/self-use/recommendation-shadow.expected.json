@@ -158,6 +158,61 @@
         "PTDAG-208"
       ]
     },
+    "governance": {
+      "source_digest": "sha256:e27992631183cf7dacae4da549cdd335a4822854ac8d11b7888a9db8457bb588",
+      "groups": {
+        "active": [],
+        "ready": [
+          "GOV_REQUIREMENTS"
+        ],
+        "runnable_now": [
+          "GOV_REQUIREMENTS"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "GOV_AUTHORITY_CONTRACT",
+          "GOV_DSL_CONTRACT",
+          "GOV_INTERFACE_CONTRACT",
+          "GOV_NORMATIVE_EXAMPLES",
+          "GOV_DESIGN_ACCEPTANCE",
+          "GOV_AUTHORITY_CORE",
+          "GOV_SOURCE_MODEL",
+          "GOV_CLI_PREVIEW",
+          "GOV_WRITE_ENFORCEMENT",
+          "GOV_GUIDANCE",
+          "GOV_ACCEPTANCE"
+        ]
+      },
+      "recommended_task_ids": [
+        "GOV_REQUIREMENTS"
+      ],
+      "manual_selected_task_ids": [
+        "GOV_REQUIREMENTS"
+      ],
+      "tiers": {
+        "GOV_REQUIREMENTS": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "GOV_REQUIREMENTS",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
+    },
     "operations": {
       "source_digest": "sha256:b38d4cc751e42ef437f4a140df22ffeb94bfc2aa1f6487d34feef6618eed6b6a",
       "groups": {

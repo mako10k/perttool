@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.50
+- Document status: Active Stage 3 / Revision 2.51
 - Creation date: 2026-07-21
-- Update date: 2026-07-25
+- Update date: 2026-07-26
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -23,6 +23,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/recommendation.pert` | MIG-01 to MIG-07 implementation/shadow/adoption DAG | `.pert` document |
 | `plans/agent-guidance.pert` | provider baseline, Core, `agent help`, and beta-acceptance DAG for Issue #2 | `.pert` document |
 | `plans/english-baseline.pert` | Post-beta migration of maintained repository surfaces to canonical English | `.pert` document |
+| `plans/governance.pert` | Independent post-beta Issue #4 owner-aware goal and DAG mutation governance roadmap | `.pert` document |
 | `plans/cli-surface-reset.pert` | Review-derived post-beta CLI/help design, implementation, migration, and acceptance DAG | `.pert` document |
 | `plans/release-0.2.0.pert` | Contract 3 version decision, local preparation, authorized distribution, and acceptance DAG | `.pert` document |
 | `plans/release-0.3.0.pert` | Contract 4 version gate, accepted implementation input, preparation, authorized PUBLISH, and acceptance DAG | `.pert` document |
@@ -791,6 +792,13 @@ Recommendation implementation completed `FIXTURE_BASELINE` (2p), `RANKING_CORE` 
 
 Agent guidance completed `PROVIDER_BASELINE` (4p), `GUIDANCE_CONTRACT` (5p), `GUIDANCE_CORE` (5p), `AGENT_HELP_PUBLICATION` (5p), and `GUIDANCE_ACCEPTANCE` (3p) on the same active day, 2026-07-23, updating the provisional observed velocity to `22p/1d` from 22p over one active day. The sample includes cross-provider research, a public contract, normative examples, a versioned offline profile, a validator, queries/projections, machine-readable cases, deterministic text/JSON, structured command help, CLI/E2E, package-installed parity, security acceptance, and plan reanalysis; detail's remaining resource makespan is 0p. As this is still a sample of only one active day, recalibrate on the next different active day or after multiple task completions.
 
+On 2026-07-26, `governance.pert` was added after Issue #4 was reviewed and
+accepted as design input. It is an independent post-beta workstream for
+project-model write authority, separate from recommendation override MIG-08.
+Its requirements and contract tasks precede implementation; creating the plan
+does not add authentication, activate governance checks, or authorize a
+release.
+
 Stage 1 allowed operations:
 
 - check
@@ -844,6 +852,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - current recommendation implementation tasks and resource waits: `recommendation.pert`
 - current AI Agent Guidance implementation tasks and resource waits: `agent-guidance.pert`
 - Active post-beta English surface migration: `english-baseline.pert`
+- Independent post-beta owner-aware mutation governance: `governance.pert`
 - Independent post-beta CLI/help reset: `cli-surface-reset.pert`
 - Independent Contract 3 `v0.2.0` release: `release-0.2.0.pert`
 - Independent scheduling/unit milestone roadmap: `scheduling-units.pert`
@@ -1118,5 +1127,5 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all seventeen plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all eighteen plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

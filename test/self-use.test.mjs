@@ -199,6 +199,15 @@ test("English baseline plan matches the phased post-beta migration roadmap", asy
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("owner-aware governance plan matches the Issue #4 roadmap", async () => {
+  const text = await readFile(path.join(root, "plans/governance.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/governance.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("CLI surface reset plan matches the review-derived post-beta roadmap", async () => {
   const text = await readFile(path.join(root, "plans/cli-surface-reset.pert"), "utf8");
   const expected = JSON.parse(await readFile(

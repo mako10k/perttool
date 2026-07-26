@@ -1,0 +1,80 @@
+{
+  "check": {
+    "document_id": "OWNER_AWARE_GOVERNANCE",
+    "grammar_version": 1,
+    "summary": {
+      "resources": 5,
+      "milestones": 16,
+      "tasks": 12,
+      "gates": 6,
+      "errors": 0,
+      "warnings": 0
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "33/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "66/29",
+    "precedence_critical_tasks": [
+      "GOV_REQUIREMENTS",
+      "GOV_AUTHORITY_CONTRACT",
+      "GOV_DSL_CONTRACT",
+      "GOV_INTERFACE_CONTRACT",
+      "GOV_NORMATIVE_EXAMPLES",
+      "GOV_DESIGN_ACCEPTANCE",
+      "GOV_AUTHORITY_CORE",
+      "GOV_SOURCE_MODEL",
+      "GOV_CLI_PREVIEW",
+      "GOV_WRITE_ENFORCEMENT",
+      "GOV_ACCEPTANCE"
+    ],
+    "resource_makespan": "40/1",
+    "resource_forecast": "80/29",
+    "resource_delay": "7/1",
+    "resource_arcs": [
+      "resource:GOV_AUTHORITY_CONTRACT:GOV_DSL_CONTRACT",
+      "resource:GOV_WRITE_ENFORCEMENT:GOV_GUIDANCE"
+    ],
+    "schedule_critical_tasks": [
+      "GOV_REQUIREMENTS",
+      "GOV_AUTHORITY_CONTRACT",
+      "GOV_DSL_CONTRACT",
+      "GOV_INTERFACE_CONTRACT",
+      "GOV_NORMATIVE_EXAMPLES",
+      "GOV_DESIGN_ACCEPTANCE",
+      "GOV_AUTHORITY_CORE",
+      "GOV_SOURCE_MODEL",
+      "GOV_CLI_PREVIEW",
+      "GOV_WRITE_ENFORCEMENT",
+      "GOV_GUIDANCE",
+      "GOV_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "GOV_REQUIREMENTS"
+      ],
+      "runnable_now": [
+        "GOV_REQUIREMENTS"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "GOV_AUTHORITY_CONTRACT",
+        "GOV_DSL_CONTRACT",
+        "GOV_INTERFACE_CONTRACT",
+        "GOV_NORMATIVE_EXAMPLES",
+        "GOV_DESIGN_ACCEPTANCE",
+        "GOV_AUTHORITY_CORE",
+        "GOV_SOURCE_MODEL",
+        "GOV_CLI_PREVIEW",
+        "GOV_WRITE_ENFORCEMENT",
+        "GOV_GUIDANCE",
+        "GOV_ACCEPTANCE"
+      ]
+    },
+    "resource_rejection": null
+  }
+}
