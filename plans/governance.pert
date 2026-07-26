@@ -31,19 +31,12 @@ resource DOC_SURFACE:
   description "Avoid concurrent cross-cutting edits to requirements, specifications, examples, and guidance"
   capacity 1
 
-milestone REQUIREMENTS_ACCEPTED:
-  title "Governance requirements and threat boundary accepted"
-  state reached
 
-milestone DSL_CONTRACT_DEFINED:
-  title "Governance DSL and effective metadata contract defined"
 
-milestone AUTHORITY_SEMANTICS_DEFINED:
-  title "Goal and DAG authority semantics defined"
-  state reached
 
 milestone INTERFACE_INPUT_READY:
   title "Governance interface design input ready"
+  state reached
 
 milestone INTERFACE_CONTRACT_DEFINED:
   title "Core, CLI, help, and JSON contract defined"
@@ -78,22 +71,8 @@ milestone ACCEPTANCE_INPUT_READY:
 milestone GOVERNANCE_ACCEPTED:
   title "Owner-aware goal and DAG governance accepted"
 
-task GOV_DSL_CONTRACT REQUIREMENTS_ACCEPTED -> DSL_CONTRACT_DEFINED:
-  title "Define governance source and effective-metadata semantics"
-  description "Specify project governance fields, principal syntax, omission defaults, grammar compatibility, source preservation, project init/show behavior, and pre-change metadata snapshots. Update normative examples without changing recommendation ranking or resource semantics."
-  duration 4p
-  status done
-  priority 95
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
 
-gate GOV_DSL_INTERFACE_INPUT DSL_CONTRACT_DEFINED -> INTERFACE_INPUT_READY:
-  reason "The public interface requires the accepted governance source contract"
 
-gate GOV_AUTHORITY_INTERFACE_INPUT AUTHORITY_SEMANTICS_DEFINED -> INTERFACE_INPUT_READY:
-  reason "The public interface requires accepted pre-change authority semantics"
 
 task GOV_INTERFACE_CONTRACT INTERFACE_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
   title "Define Core, CLI, help, and JSON governance contracts"

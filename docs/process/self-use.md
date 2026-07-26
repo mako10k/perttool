@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.56
+- Document status: Active Stage 3 / Revision 2.57
 - Creation date: 2026-07-21
 - Update date: 2026-07-26
 - Related design: [../basic-design.md](../basic-design.md)
@@ -887,6 +887,20 @@ Complete, non-truncated NextResult v4 recommends and authorizes only
 `GOV_INTERFACE_CONTRACT`. The accepted snapshot retains `PTDAG-208` for
 `DSL_CONTRACT_DEFINED` and `INTERFACE_INPUT_READY` until advance. Grammar 4
 and owner-aware runtime enforcement remain unavailable.
+
+After the acceptance snapshot was committed at `468c76f`, the advance preview
+from digest
+`sha256:b04565729a8f33c1af3de57a94889747077c2e9b9f615a89ba1e4fdac717cd8f`
+removed completed task `GOV_DSL_CONTRACT`; gates
+`GOV_DSL_INTERFACE_INPUT` and `GOV_AUTHORITY_INTERFACE_INPUT`; and historical
+milestones `REQUIREMENTS_ACCEPTED`, `DSL_CONTRACT_DEFINED`, and
+`AUTHORITY_SEMANTICS_DEFINED`. It retained `INTERFACE_INPUT_READY` as the
+reached frontier and produced digest
+`sha256:d02c20ac5665084ab757f82c10fab63aa4ad92ee54d8f5732e32a4137d9d571b`.
+Reanalysis preserves 34p remaining, 26p precedence and 29p heuristic resource
+makespans, 3p resource delay, both forecasts, and the sole
+`GOV_INTERFACE_CONTRACT` recommendation while clearing both `PTDAG-208`
+warnings.
 
 Stage 1 allowed operations:
 
