@@ -62,6 +62,7 @@ task CONTRACT4_INSTALLED_WORKFLOW INTEGRATION_INPUT_READY -> INSTALLED_WORKFLOW_
   title "Document and exercise the installed Contract 4 workflow"
   description "Update user-facing README examples and isolated package checks for npx and npm exec, Grammar 3 temporal documents, deadline analysis, Next v4 authority, temporal maintenance, exact project migrate-unit preview/write, repetition, inverse qualification, and the complete file-first workflow."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
