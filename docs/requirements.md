@@ -1497,11 +1497,11 @@ Before implementation, separate the specifications in the following order.
     - [x] Unit-migration version 2 grammar-upgrade and reversibility semantics
     - [x] Temporal/unit interface version 2 and UnitMigrationResult v2 identities
     - [x] Revised TUI/TUE acceptance observations and machine baseline
-15. [ ] Atomic Contract 4 public cutover and installed-package acceptance
+15. [x] Atomic Contract 4 public cutover and installed-package acceptance
     - [x] Active Grammar 1/2/3 parsing, validation, formatting, and mutation
     - [x] Public AnalysisResult v3, NextResult v4, and UnitMigrationResult v2
     - [x] Registry, help, Guide, README, diagnostics, and normal start authority
-    - [ ] Installed-package file-first workflow and durable SU-M5 acceptance
+    - [x] Installed-package file-first workflow and durable SU-M5 acceptance
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 
