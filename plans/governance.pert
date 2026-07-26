@@ -1,10 +1,10 @@
 project OWNER_AWARE_GOVERNANCE:
   version 1
   title "Owner-aware goal and DAG governance"
-  description "Adopt GitHub Issue #4 as an independent post-beta workstream. Separate authority to change the project goal or DAG from recommendation override MIG-08. Principal and owner-acceptance values are caller assertions, not authentication. Preserve preview-first mutation, candidate validation, optimistic locking, and safe-write controls. GOV_REQUIREMENTS completed 3p on 2026-07-26 and establishes the first workstream-specific velocity sample of 3p/1d. Normative requirements now fix the threat model, scope, defaults, write boundary, and non-goals; subsequent tasks still own the DSL, authority, interface, implementation, and acceptance contracts. Release publication is outside this plan."
+  description "Adopt GitHub Issue #4 as an independent post-beta workstream. Separate authority to change the project goal or DAG from recommendation override MIG-08. Principal and owner-confirmation values are caller assertions, not authentication. Preserve preview-first mutation, candidate validation, optimistic locking, and safe-write controls. GOV_REQUIREMENTS completed 3p and GOV_AUTHORITY_CONTRACT completed 4p on 2026-07-26, establishing a cumulative workstream-specific velocity sample of 7p/1d. Requirements fix the threat model, scope, defaults, write boundary, and non-goals. Governance semantics version 1 now fixes actual-change classification, preview/write decisions, pre-change owner and delegate authorization, mixed-scope behavior, new-document and direct-edit boundaries, and PTGOV-101. Subsequent tasks still own the DSL, interface, runtime implementation, and acceptance contracts. Release publication is outside this plan."
   as_of 2026-07-26
   duration_unit point
-  velocity 3p/1d
+  velocity 7p/1d
   finish GOVERNANCE_ACCEPTED
 
 resource DEVELOPERS:
@@ -91,6 +91,7 @@ task GOV_AUTHORITY_CONTRACT REQUIREMENTS_ACCEPTED -> AUTHORITY_SEMANTICS_DEFINED
   title "Define governed mutation and pre-change authority semantics"
   description "Classify goal, DAG, and ordinary maintenance mutations; define owner/delegate authorization, preview reporting, pre-change checks, self-authorization rejection, mixed-scope batch behavior, direct-edit limits, and stable PTGOV diagnostics."
   duration 4p
+  status done
   priority 95
   requires:
     DEVELOPERS 1
@@ -106,7 +107,7 @@ gate GOV_AUTHORITY_INTERFACE_INPUT AUTHORITY_SEMANTICS_DEFINED -> INTERFACE_INPU
 
 task GOV_INTERFACE_CONTRACT INTERFACE_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
   title "Define Core, CLI, help, and JSON governance contracts"
-  description "Settle actor and owner-acceptance request shapes, distinct-owner batch confirmation, preview and write results, project show projection, stable diagnostics and exits, command registry/help, schema versions, and the compatibility cutover before implementation."
+  description "Settle actor and owner-confirmation request shapes, distinct-owner batch confirmation, preview and write results, project show projection, stable diagnostics and exits, command registry/help, schema versions, and the compatibility cutover before implementation."
   duration 4p
   priority 90
   requires:
@@ -161,7 +162,7 @@ gate GOV_AUTHORITY_IMPLEMENTATION_INPUT AUTHORITY_CORE_READY -> IMPLEMENTATION_I
 
 task GOV_CLI_PREVIEW IMPLEMENTATION_INPUT_READY -> CLI_PREVIEW_READY:
   title "Publish governed previews, command options, help, and JSON"
-  description "Connect the accepted actor and owner-acceptance shapes to direct and batch commands. Keep previews free of confirmation requirements while reporting affected scopes, effective owners, and whether a write would require acceptance."
+  description "Connect the accepted actor and owner-confirmation shapes to direct and batch commands. Keep previews free of confirmation requirements while reporting affected scopes, effective owners, and whether a write would require confirmation."
   duration 4p
   priority 70
   requires:

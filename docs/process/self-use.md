@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.53
+- Document status: Active Stage 3 / Revision 2.54
 - Creation date: 2026-07-21
 - Update date: 2026-07-26
 - Related design: [../basic-design.md](../basic-design.md)
@@ -827,6 +827,29 @@ frontier. The advanced source digest is
 Reanalysis preserves the 42p remaining work, 30p precedence makespan, 37p
 heuristic resource makespan, 7p resource delay, forecasts, ready set, and
 `GOV_AUTHORITY_CONTRACT` recommendation, and clears `PTDAG-208`.
+
+`GOV_AUTHORITY_CONTRACT` then accepted owner-aware governance semantics version
+1. The contract fixes actual candidate-change classification; goal, DAG, and
+ordinary-maintenance boundaries; owner/delegate and caller-asserted
+confirmation decisions; pre-change self-authorization rejection; atomic
+mixed-scope behavior; new-document and direct-edit limits; composition with
+candidate validation, optimistic locking, and safe writes; and the stable
+domain meaning and causes of `PTGOV-101`. It deliberately leaves DSL spelling,
+public Core/CLI/JSON shapes, runtime enforcement, authentication, and durable
+audit to later gates.
+
+The atomic completion and project-metadata candidate was previewed from source
+digest
+`sha256:d90a7869b2737115b5f1a0bba06a444731051e9907cac5849d64d337acc80242`
+and produced digest
+`sha256:ea8ee6a0c60dd46246b2b2493964f8918b1ec58ee891264d0c6641c9aeb7c438`.
+The cumulative 7p completed on one active day updates plan-specific velocity
+to `7p/1d`. There are 38p remaining, with a 30p precedence makespan, 33p
+heuristic resource makespan, 3p resource delay, and forecasts of `30/7d` and
+`33/7d`. Complete NextResult v4 recommends and authorizes only
+`GOV_DSL_CONTRACT`. The accepted snapshot retains `PTDAG-208` until the
+completion edge is advanced. Owner-aware runtime enforcement remains
+unavailable.
 
 Stage 1 allowed operations:
 

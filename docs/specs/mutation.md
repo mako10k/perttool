@@ -1,12 +1,13 @@
 # perttool Mutation Semantics Specification
 
-- Document status: Draft 0.6
+- Document status: Draft 0.7
 - Mutation semantics version: 1
 - Created: 2026-07-22
 - Requirements: [../requirements.md](../requirements.md)
 - DSL grammar: [dsl-grammar.md](dsl-grammar.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - CLI interface: [interfaces.md](interfaces.md)
+- Governance semantics: [governance-authority.md](governance-authority.md)
 - Basic design: [../basic-design.md](../basic-design.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Temporal and unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
@@ -17,6 +18,14 @@ This document defines the Core contract for source-preserving mutations of `.per
 
 The implementation scope of Mutation semantics version 1 is project `set`; task `add`, `set`, `remove`, and `finish`; gate/milestone/resource `add`, `set`, and `remove`; and `batch`, which applies multiple atomic mutations to one candidate. Filesystem writing passes the candidate defined here to the safe-write adapter in the CLI Interface specification. `dag advance` is a subsequent slice that reuses this document's common invariants. The independently versioned [Unit Migration Semantics specification](unit-migration.md) also reuses the candidate/edit/diff invariants but is not an implemented Mutation version 1 request.
 
+The independently versioned
+[Owner-Aware Mutation Governance Semantics specification](governance-authority.md)
+classifies an accepted original-to-candidate change as `goal`, `dag`, or
+ordinary maintenance. Governance does not change Mutation semantics version 1
+request resolution, edits, candidate validity, or result identity. Runtime
+enforcement remains unavailable until the governance DSL, interface, and
+implementation gates are accepted.
+
 ## 2. Normative precedence
 
 Resolve inconsistencies between documents in the following order.
@@ -25,8 +34,10 @@ Resolve inconsistencies between documents in the following order.
 2. Syntax, fields, and validation rules in the [DSL grammar specification](dsl-grammar.md)
 3. State and DAG rules in the [Graph Semantics specification](graph-semantics.md)
 4. Mutation requests, `TextEdit`, and comment-ownership rules in this document
-5. Commands, options, and serialization rules in the [CLI Interface specification](interfaces.md)
-6. `docs/basic-design.md` and help/samples
+5. Persistent-write authority in the
+   [Governance Semantics specification](governance-authority.md)
+6. Commands, options, and serialization rules in the [CLI Interface specification](interfaces.md)
+7. `docs/basic-design.md` and help/samples
 
 The CLI projects options to the Core requests in this document. A CLI adapter MUST NOT reimplement target resolution, field mutation, or candidate validation.
 
@@ -177,6 +188,22 @@ Rules:
 
 Serialize a unified diff with LF, beginning with `--- <originalLabel>` and `+++ <updatedLabel>`. Return one hunk with three lines of context before and after the changed region. The same input, request, and options return byte-identical diffs.
 
+### 4.1 Governance composition
+
+A governance-aware application classifies only a successful final candidate.
+It uses the original document's effective governance snapshot and digest; it
+does not use candidate owner/delegate values to authorize the candidate.
+
+Preview remains successful when authority assertions are absent. Before
+persisting a governed candidate, the application requires the separate
+governance decision to authorize every affected scope and only then enters the
+existing safe-write adapter. An ordinary or byte-identical mutation retains
+its existing write behavior.
+
+The mutation planner does not infer an actor, validate identity, persist an
+approval, or emit `PTGOV-101` itself. It returns the source-preserving
+candidate on which the common authority evaluator operates.
+
 ## 5. Source-preserving TextEdit
 
 ### 5.1 Common rules
@@ -325,6 +352,10 @@ Adding a milestone and its connecting task/gate edges in sequence creates an int
 | `PTMUT-304` | error | Added ID duplicates an existing entity |
 
 Use `PTMUT-*` only for mutation request/target errors. Do not wrap a candidate's syntax, field, or graph errors as `PTMUT-*`; preserve existing `PTDSL-*`, `PTSEM-*`, and `PTDAG-*` diagnostics.
+
+`PTGOV-101` is not a mutation request or candidate diagnostic. It belongs to
+the separate persistent-write authority decision after a valid candidate has
+been classified.
 
 ## 11. Grammar version 2 temporal and version 3 Duration extensions
 

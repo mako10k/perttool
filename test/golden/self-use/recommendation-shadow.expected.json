@@ -159,15 +159,14 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:d90a7869b2737115b5f1a0bba06a444731051e9907cac5849d64d337acc80242",
+      "source_digest": "sha256:ea8ee6a0c60dd46246b2b2493964f8918b1ec58ee891264d0c6641c9aeb7c438",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_AUTHORITY_CONTRACT",
           "GOV_DSL_CONTRACT"
         ],
         "runnable_now": [
-          "GOV_AUTHORITY_CONTRACT"
+          "GOV_DSL_CONTRACT"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -183,66 +182,36 @@
         ]
       },
       "recommended_task_ids": [
-        "GOV_AUTHORITY_CONTRACT"
+        "GOV_DSL_CONTRACT"
       ],
       "manual_selected_task_ids": [
-        "GOV_AUTHORITY_CONTRACT"
+        "GOV_DSL_CONTRACT"
       ],
       "tiers": {
-        "GOV_AUTHORITY_CONTRACT": "recommended",
-        "GOV_DSL_CONTRACT": "deferred"
+        "GOV_DSL_CONTRACT": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_AUTHORITY_CONTRACT",
+          "id": "GOV_DSL_CONTRACT",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
-        },
-        {
-          "id": "GOV_DSL_CONTRACT",
-          "runnable_now": false,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": [
-            {
-              "resource_id": "DOC_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "GOV_AUTHORITY_CONTRACT"
-              ]
-            },
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "GOV_AUTHORITY_CONTRACT"
-              ]
-            }
-          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 11,
-        "facts": 80,
-        "comparisons": 1,
-        "reasons": 9,
-        "descriptions": 4
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "operations": {
       "source_digest": "sha256:b38d4cc751e42ef437f4a140df22ffeb94bfc2aa1f6487d34feef6618eed6b6a",

@@ -125,6 +125,8 @@ authority to redefine the project goal or DAG. The threat is accidental
 authority overreach or goal substitution by a non-malicious executor, such as
 changing `project.finish` or replacing difficult critical-path work and then
 treating the resulting empty recommendation as project completion.
+The [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md)
+defines the exact change classification and pre-change authority decision.
 
 Must:
 
@@ -988,7 +990,10 @@ Must:
 
 ### 12.3 Owner-aware goal and DAG writes
 
-The governance extension separates two authority scopes.
+The [governance semantics contract](specs/governance-authority.md) is
+authoritative for change classification, preview/write decisions,
+pre-change authorization, mixed-scope behavior, and the stable governance
+denial. The governance extension separates two authority scopes.
 
 - `goal`: changing `project.finish`, `goal_owner`, or `goal_delegates`
 - `dag`: adding or removing task, gate, or milestone structure; changing task
