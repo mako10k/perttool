@@ -20,6 +20,7 @@
 - Related basic design: [../basic-design.md](../basic-design.md)
 - Active CLI contract: [cli-contract-3.md](cli-contract-3.md)
 - Future temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
+- Future governance interface: [governance-interface.md](governance-interface.md)
 
 ## 1. Purpose and MVP Boundary
 
@@ -224,9 +225,10 @@ Returns exactly one project declaration from a valid document. It displays ID, e
 The accepted [Governance Source and Effective-Metadata
 specification](governance-source.md) requires the future governance cutover to
 expose both declared and effective owner/delegate metadata for every supported
-grammar version. The governance interface contract fixes its exact typed,
-text, JSON, schema, and compatibility projection; the active Contract 4
-surface above remains unchanged until that atomic cutover.
+grammar version. The [Governance Interface
+contract](governance-interface.md) fixes its exact typed, text, JSON, schema,
+and compatibility projection; the active Contract 4 surface above remains
+unchanged until that atomic cutover.
 
 ### 6.2 Shared analysis options
 

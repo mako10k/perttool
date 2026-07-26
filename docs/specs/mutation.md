@@ -9,6 +9,7 @@
 - CLI interface: [interfaces.md](interfaces.md)
 - Governance semantics: [governance-authority.md](governance-authority.md)
 - Governance source: [governance-source.md](governance-source.md)
+- Governance interface: [governance-interface.md](governance-interface.md)
 - Basic design: [../basic-design.md](../basic-design.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Temporal and unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
@@ -23,9 +24,11 @@ The independently versioned
 [Owner-Aware Mutation Governance Semantics specification](governance-authority.md)
 classifies an accepted original-to-candidate change as `goal`, `dag`, or
 ordinary maintenance. Governance does not change Mutation semantics version 1
-request resolution, edits, candidate validity, or result identity. Runtime
-enforcement remains unavailable until the governance interface and
-implementation gates are accepted.
+request resolution, edits, or candidate validity. The
+[Governance Interface contract](governance-interface.md) adds caller
+assertions and selects MutationResult v2 at the later Contract 5 cutover.
+Runtime enforcement remains unavailable until the governance implementation
+and acceptance gates are complete.
 
 ## 2. Normative precedence
 
@@ -402,8 +405,9 @@ provides the enclosing contract identity.
 
 The [Governance Source and Effective-Metadata
 specification](governance-source.md) selects this target extension to Mutation
-semantics version 1. It is not active until the governance source/interface
-cutover.
+semantics version 1. The [Governance Interface
+contract](governance-interface.md) fixes its public Core and CLI projection.
+It is not active until the atomic Contract 5 cutover.
 
 ```ts
 ProjectFieldSet.goalOwner?: PrincipalId;

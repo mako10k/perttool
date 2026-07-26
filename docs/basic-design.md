@@ -1,6 +1,6 @@
 # perttool Basic Design
 
-- Document status: Draft 1.16
+- Document status: Draft 1.17
 - Created: 2026-07-21
 - Updated: 2026-07-26
 - Applicable requirements: [requirements.md](requirements.md)
@@ -18,6 +18,7 @@
 - Recommendation override: [specs/recommendation-override.md](specs/recommendation-override.md)
 - Owner-aware mutation governance: [specs/governance-authority.md](specs/governance-authority.md)
 - Governance source and effective metadata: [specs/governance-source.md](specs/governance-source.md)
+- Governance interface: [specs/governance-interface.md](specs/governance-interface.md)
 - Recommendation examples: [examples/recommendation.md](examples/recommendation.md)
 - AI Agent Guidance Registry: [specs/agent-guidance.md](specs/agent-guidance.md)
 - AI Agent Guidance examples: [examples/agent-guidance.md](examples/agent-guidance.md)
@@ -976,8 +977,9 @@ specification](specs/governance-source.md) fixes the Grammar 4 source fields,
 declared/effective defaults, localized edits, and digest-bound pre-change
 snapshot. The
 [Governance Semantics specification](specs/governance-authority.md) fixes
-classification and pre-change decisions; the later governance interface
-contract fixes public request and result types.
+classification and pre-change decisions; the
+[Governance Interface contract](specs/governance-interface.md) fixes public
+request and result types, CLI Contract 5, help, diagnostics, and exits.
 
 Preview renders the candidate and authority facts even when an actor or owner
 acceptance is absent. A persistent governed write proceeds to the safe-write
@@ -1756,7 +1758,7 @@ has no remaining or recommended task, and the independent promotion made npm
 
 The independent [`governance.pert`](../plans/governance.pert) workstream
 adopts Issue #4 without merging it into recommendation override MIG-08.
-Requirements Draft 0.15 fixes the accidental-overreach threat boundary,
+Requirements Draft 0.16 fixes the accidental-overreach threat boundary,
 effective default owners, goal/DAG scope, and explicit non-goals. Governance
 semantics version 1 fixes actual-change classification, pre-change
 owner/delegate authorization, atomic mixed-scope decisions, preview behavior,
@@ -1764,13 +1766,16 @@ direct-edit limits, and `PTGOV-101`. Governance source contract version 1
 fixes PrincipalId/PrincipalList syntax, Grammar 4 project fields, declared and
 effective defaults, source-preserving edits, project init/show behavior,
 generated warnings, unit-migration compatibility, and the digest-bound
-pre-change snapshot.
+pre-change snapshot. Governance interface version 1 selects one optional
+actor, repeatable `--accepted-by-owner`, operation-level batch assertions,
+ProjectResult v3, MutationResult v2 with GovernanceDecision v1, PTGOV-101
+under exit 1, and the atomic Grammar 4/CLI Contract 5 cutover.
 
-The remaining sequence independently accepts the public Core/CLI/help/JSON
-interface, normative cases, source model, pure evaluator, write enforcement,
-guidance, and installed-package acceptance. Until those gates are complete,
-the active Contract 4 runtime does not parse Grammar 4 governance fields,
-accept actor/owner-confirmation options, or enforce owner-aware writes.
+The remaining sequence independently accepts normative cases, source model,
+pure evaluator, write enforcement, guidance, and installed-package acceptance.
+Until those gates are complete, the active Contract 4 runtime does not parse
+Grammar 4 governance fields, accept actor/owner-confirmation options, or
+enforce owner-aware writes.
 
 Exit:
 
@@ -1795,7 +1800,7 @@ Fix LSP protocol capabilities, UTF-16 position mapping, VSIX packaging, workspac
 
 ## 18. Matters for detailed design
 
-The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Governance Source and Effective-Metadata specification](specs/governance-source.md) determines Grammar 4 source, omission defaults, project metadata, and pre-change snapshots; the [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md) determines goal/DAG change classification and pre-change persistent-write authority; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the active Grammar 1/2/3 and CLI Contract 4 temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
+The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Governance Source and Effective-Metadata specification](specs/governance-source.md) determines Grammar 4 source, omission defaults, project metadata, and pre-change snapshots; the [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md) determines goal/DAG change classification and pre-change persistent-write authority; the [Owner-Aware Governance Interface Contract](specs/governance-interface.md) determines Core assertions, CLI Contract 5, text/JSON/help projections, diagnostics, exits, and atomic activation; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the active Grammar 1/2/3 and CLI Contract 4 temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
 
 1. Implementation details for CST trivia/comment ownership rules
 2. Implementation details for the formatter's canonical whitespace
@@ -1818,7 +1823,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | CLI Contract 3 registry, help/guide split, and file-first maintenance | Sections 12.2, 15, 16, and 21.2 |
 | Temporal/unit grammar, projections, migration, and Contract 4 boundary | Sections 7.6, 7.7, 10.7, 11, 12, 15, 16, and 18 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
-| Owner-aware goal/DAG source and mutation governance | Sections 2.6, 7.1, and 12.3 |
+| Owner-aware goal/DAG source, authority, and Contract 5 interface | Sections 2.6, 7.1, 12.3, 15, and 16 |
 | Mermaid adapter | Chapters 13 and 14 |
 | Test design | Section 20.3 and Chapter 21 |
 | Grammar-first self-use | Chapter 19 and Section 16 of this document |

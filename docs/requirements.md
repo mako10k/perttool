@@ -1,6 +1,6 @@
 # perttool Requirements
 
-- Document status: Draft 0.15
+- Document status: Draft 0.16
 - Created: 2026-07-21
 - Updated: 2026-07-26
 - Scope: MVP and subsequent extension boundaries
@@ -131,6 +131,9 @@ The [Governance Source and Effective-Metadata
 specification](specs/governance-source.md) defines principal syntax, declared
 and effective project metadata, Grammar 4 compatibility, and the source
 snapshot consumed by that decision.
+The [Owner-Aware Governance Interface
+Contract](specs/governance-interface.md) defines the caller assertions, public
+results, CLI Contract 5, help, diagnostics, exits, and atomic activation.
 
 Must:
 
@@ -1001,6 +1004,11 @@ pre-change authorization, mixed-scope behavior, and the stable governance
 denial. The [governance source
 contract](specs/governance-source.md) is authoritative for Grammar 4,
 declared/effective project metadata, and the digest-bound pre-change snapshot.
+The [governance interface
+contract](specs/governance-interface.md) is authoritative for Core caller
+assertions, repeatable `--accepted-by-owner`, CLI Contract 5, project and
+mutation result schemas, help, diagnostics, exits, and the atomic public
+cutover.
 The governance extension separates two authority scopes.
 
 - `goal`: changing `project.finish`, `goal_owner`, or `goal_delegates`
@@ -1037,8 +1045,9 @@ Must:
   introduces.
 - Atomic batch authorization is evaluated over the union of governed
   mutations. When goal and DAG owners differ, the caller supplies both owner
-  confirmations unambiguously or the write is rejected. The exact repeatable
-  CLI option and request shape are fixed by the governance interface contract.
+  confirmations through repeatable `--accepted-by-owner` values or the write
+  is rejected. Assertions are operation-level and cannot differ by batch
+  member.
 - Governed direct commands, atomic batch, graph import, and advance share the
   same Core authority determination. A CLI adapter must not reimplement or
   weaken it.
@@ -1600,6 +1609,7 @@ Resolved design decisions:
 - Complete requirements/specification/example/interface trace, resolved delivery sequencing, and implementation handoff: [SU-M1 Temporal and Unit-Migration Contract Acceptance Review](process/scheduling-units-m1-acceptance.md)
 - Governance principal syntax, Grammar 4 fields, declared/effective defaults, source preservation, initialization warning, project metadata, and pre-change snapshot: [Governance Source and Effective-Metadata specification](specs/governance-source.md)
 - Goal/DAG classification, pre-change authority, mixed-scope decisions, preview behavior, and stable denial: [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md)
+- Core assertions, CLI Contract 5, project/mutation schemas, help, diagnostics, exits, and atomic activation: [Owner-Aware Governance Interface Contract](specs/governance-interface.md)
 
 ## 25. Recommended next specification work
 
@@ -1649,7 +1659,7 @@ Before implementation, separate the specifications in the following order.
     - [x] Requirements and accidental-overreach threat boundary
     - [x] Goal/DAG change classification and pre-change authority semantics
     - [x] Grammar 4 source and declared/effective metadata contract
-    - [ ] Core, CLI, help, JSON, and diagnostic interface contract
+    - [x] [Core, CLI, help, JSON, and diagnostic interface contract](specs/governance-interface.md)
     - [ ] Normative authority and write-path examples
     - [ ] Source, evaluator, preview, write, guidance, and installed acceptance
 

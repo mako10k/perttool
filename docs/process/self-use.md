@@ -902,6 +902,32 @@ makespans, 3p resource delay, both forecasts, and the sole
 `GOV_INTERFACE_CONTRACT` recommendation while clearing both `PTDAG-208`
 warnings.
 
+`GOV_INTERFACE_CONTRACT` then accepted governance interface version 1. It
+selects one optional caller-asserted actor, repeatable
+`--accepted-by-owner`, one operation-level assertion set for atomic batch,
+ProjectResult v3, MutationResult v2 with GovernanceDecision v1, PTGOV-101
+under the existing domain-error exit 1, typed registry/help and `guide
+editing` coverage, and one atomic Grammar 4/CLI Contract 5 cutover. Governed
+preview remains successful without assertions and returns whether the
+corresponding write is authorized. A denied persistent result retains its
+reviewable candidate and decision with `written=false`, while an authorized
+stale write remains PTIO-501/exit 5.
+
+The atomic completion and project-metadata candidate was previewed from source
+digest
+`sha256:d02c20ac5665084ab757f82c10fab63aa4ad92ee54d8f5732e32a4137d9d571b`
+and produced digest
+`sha256:fde88f087fa285249566bf66b3ac7fe7581402435c46e7ade55c161bb47f3e48`.
+The cumulative 15p completed on one active day updates plan-specific velocity
+to `15p/1d`. There are 30p remaining, with a 22p precedence makespan, 25p
+heuristic resource makespan, 3p resource delay, and forecasts of `22/15d` and
+`5/3d`. Six dedicated interface-contract tests and all 526 unit tests pass;
+the documentation, all 18 self-use plans, local link, package, and installed
+file-first gates also pass. Complete, non-truncated NextResult v4 recommends
+and authorizes only `GOV_NORMATIVE_EXAMPLES`. The accepted snapshot retains
+`PTDAG-208` for `INTERFACE_CONTRACT_DEFINED` until advance. Grammar 4,
+Contract 5, and owner-aware runtime enforcement remain unavailable.
+
 Stage 1 allowed operations:
 
 - check

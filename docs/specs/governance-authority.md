@@ -6,6 +6,7 @@
 - Requirements: [../requirements.md](../requirements.md)
 - Mutation semantics: [mutation.md](mutation.md)
 - Governance source: [governance-source.md](governance-source.md)
+- Governance interface: [governance-interface.md](governance-interface.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Mermaid profile: [mermaid-profile.md](mermaid-profile.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
@@ -38,7 +39,8 @@ DSL spelling, field order, omission defaults, and the pre-change source
 snapshot belong to the accepted governance source contract. This contract does
 not fix a public Core request or result schema, CLI option multiplicity, text
 rendering, JSON field layout, or exit codes. Those belong to the governance
-interface contract. It also does not activate runtime enforcement.
+[interface contract](governance-interface.md). It also does not activate
+runtime enforcement.
 
 ## 2. Normative position
 
@@ -326,10 +328,9 @@ non-delegate actor, use `owner_confirmation_required` when no owner assertions
 were supplied and `owner_confirmation_mismatch` when assertions were supplied
 but omitted the required owner.
 
-The governance interface contract fixes the exact diagnostic data projection,
-text, exit code, and whether multiple denied scopes are represented as one
-diagnostic with ordered causes or multiple ordered diagnostics. Either
-projection retains the facts above and the `PTGOV-101` meaning.
+The Governance Interface contract fixes one diagnostic with ordered denied
+scopes, the exact data and text projections, and exit 1. That projection
+retains the facts above and the `PTGOV-101` meaning.
 
 Do not describe `PTGOV-101` as an authentication, identity-verification,
 signature, or RBAC failure. Existing `PTDSL-*`, `PTSEM-*`, `PTDAG-*`,

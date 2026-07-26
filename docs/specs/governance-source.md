@@ -7,6 +7,7 @@
 - DSL grammar: [dsl-grammar.md](dsl-grammar.md)
 - Mutation semantics: [mutation.md](mutation.md)
 - Governance authority: [governance-authority.md](governance-authority.md)
+- Governance interface: [governance-interface.md](governance-interface.md)
 - Unit migration: [unit-migration.md](unit-migration.md)
 - Related issue: [Issue #4](https://github.com/mako10k/perttool/issues/4)
 
@@ -33,8 +34,9 @@ versions.
 
 This specification does not fix public Core type names, CLI options, JSON
 schema fields, text rendering, diagnostics for authority denial, or exit codes.
-The governance interface contract owns those surfaces. It also does not
-authenticate principals or activate write enforcement.
+The [Governance Interface contract](governance-interface.md) owns those
+surfaces. It also does not authenticate principals or activate write
+enforcement.
 
 ## 2. Normative position
 
@@ -231,7 +233,7 @@ The smallest default `project init` document may remain Grammar 1 with all four
 governance fields omitted. Its effective owners are `user`, and its effective
 delegate sets are empty. A future initialization request containing any
 non-default or explicitly declared governance value generates Grammar 4.
-The governance interface contract fixes the exact request options.
+The Governance Interface contract fixes the exact request options.
 
 After the governance source cutover, every new `.pert` document emitted by
 `project init` or Mermaid import begins with this exact leading comment:

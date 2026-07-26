@@ -159,18 +159,17 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:d02c20ac5665084ab757f82c10fab63aa4ad92ee54d8f5732e32a4137d9d571b",
+      "source_digest": "sha256:fde88f087fa285249566bf66b3ac7fe7581402435c46e7ade55c161bb47f3e48",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_INTERFACE_CONTRACT"
+          "GOV_NORMATIVE_EXAMPLES"
         ],
         "runnable_now": [
-          "GOV_INTERFACE_CONTRACT"
+          "GOV_NORMATIVE_EXAMPLES"
         ],
         "blocked_now": [],
         "upcoming": [
-          "GOV_NORMATIVE_EXAMPLES",
           "GOV_DESIGN_ACCEPTANCE",
           "GOV_AUTHORITY_CORE",
           "GOV_SOURCE_MODEL",
@@ -181,18 +180,18 @@
         ]
       },
       "recommended_task_ids": [
-        "GOV_INTERFACE_CONTRACT"
+        "GOV_NORMATIVE_EXAMPLES"
       ],
       "manual_selected_task_ids": [
-        "GOV_INTERFACE_CONTRACT"
+        "GOV_NORMATIVE_EXAMPLES"
       ],
       "tiers": {
-        "GOV_INTERFACE_CONTRACT": "recommended"
+        "GOV_NORMATIVE_EXAMPLES": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_INTERFACE_CONTRACT",
+          "id": "GOV_NORMATIVE_EXAMPLES",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -208,7 +207,9 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "operations": {
       "source_digest": "sha256:b38d4cc751e42ef437f4a140df22ffeb94bfc2aa1f6487d34feef6618eed6b6a",

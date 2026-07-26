@@ -64,7 +64,8 @@ installed workflows, and Next v4 normal authority.
 
 Also on 2026-07-26, Issue #4's independent `governance.pert` workstream
 accepted and advanced `GOV_REQUIREMENTS`, `GOV_AUTHORITY_CONTRACT`, and
-`GOV_DSL_CONTRACT`. Requirements Draft 0.15 fixes the accidental
+`GOV_DSL_CONTRACT`, and accepted `GOV_INTERFACE_CONTRACT`. Requirements Draft
+0.16 fixes the accidental
 authority-overreach threat model, separate goal/DAG scopes, omitted-metadata
 defaults, caller-asserted principals and confirmation, pre-change
 authorization, ordinary-maintenance exclusions, and non-goals. Governance
@@ -73,9 +74,13 @@ authority. Governance source contract version 1 fixes PrincipalId and
 PrincipalList syntax, target Grammar 4 fields, declared/effective defaults,
 source preservation, project init/show behavior, generated warnings,
 unit-migration compatibility, and the digest-bound snapshot without adding a
-runtime. The cumulative 11p sample establishes `11p/1d`; 34p remain, with 26p
-precedence and 29p heuristic resource makespans and 3p resource delay.
-Complete NextResult v4 recommends `GOV_INTERFACE_CONTRACT`.
+runtime. Governance interface version 1 fixes one optional actor, repeatable
+`--accepted-by-owner`, operation-level batch assertions, ProjectResult v3,
+MutationResult v2 with GovernanceDecision v1, PTGOV-101 under exit 1, and an
+atomic Grammar 4/CLI Contract 5 cutover. The cumulative 15p sample establishes
+`15p/1d`; 30p remain, with 22p precedence and 25p heuristic resource
+makespans and 3p resource delay. Complete NextResult v4 recommends
+`GOV_NORMATIVE_EXAMPLES`.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 
