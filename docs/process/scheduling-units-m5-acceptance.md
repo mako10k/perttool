@@ -132,7 +132,10 @@ task.
 
 The accepted source still identifies the package as `0.2.0`; changing
 package, lockfile, CLI/tool version, changelog, and release-source identity to
-`0.3.0` belongs to `RELEASE_030_PREPARATION`. After this detail reaches and
-advances `CONTRACT4_ACCEPTED`, roll SU-M5 into
-`SU_M5_INTEGRATED_ACCEPTANCE` exactly once. Only then may
-`RELEASE_030_CONTRACT_4_READINESS` consume the accepted finish.
+`0.3.0` belongs to `RELEASE_030_PREPARATION`. The acceptance record is commit
+`81b4828`; the detail task completed at `fecdfc1` and advanced to reached
+`CONTRACT4_ACCEPTED` at `f15a7ac`. SU-M5 then rolled into
+`SU_M5_INTEGRATED_ACCEPTANCE` exactly once at `4f902a1`, and the macro advanced
+to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero
+makespans and no recommendation, so `RELEASE_030_CONTRACT_4_READINESS` may
+consume the accepted finish.

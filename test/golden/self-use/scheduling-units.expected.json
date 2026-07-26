@@ -4,34 +4,26 @@
       "grammar_version": 1,
       "summary": {
         "resources": 4,
-        "milestones": 2,
-        "tasks": 1,
+        "milestones": 1,
+        "tasks": 0,
         "gates": 0,
         "errors": 0,
         "warnings": 0
       }
   },
   "analyze": {
-    "precedence_makespan": "1/1",
-    "precedence_critical_tasks": [
-      "SU_M5_INTEGRATED_ACCEPTANCE"
-    ],
-    "resource_makespan": "1/1",
+    "precedence_makespan": "0/1",
+    "precedence_critical_tasks": [],
+    "resource_makespan": "0/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
-    "schedule_critical_tasks": [
-      "SU_M5_INTEGRATED_ACCEPTANCE"
-    ]
+    "schedule_critical_tasks": []
   },
   "next": {
     "groups": {
       "active": [],
-      "ready": [
-        "SU_M5_INTEGRATED_ACCEPTANCE"
-      ],
-      "runnable_now": [
-        "SU_M5_INTEGRATED_ACCEPTANCE"
-      ],
+      "ready": [],
+      "runnable_now": [],
       "blocked_now": [],
       "upcoming": []
     }

@@ -26,14 +26,14 @@ candidate acceptance, PUBLISH, and durable acceptance without duplicating
 SU-M3/SU-M5 task state. `RELEASE_030_GATE_DESIGN` is complete and advanced
 after normative acceptance. Sixteen points remain; precedence and heuristic resource
 makespans are both 16p with no delay, inherited velocity is `17p/2d`, and
-complete Next v4 recommends `RELEASE_030_CONTRACT_4_READINESS`, which must wait
-for the accepted scheduling-and-units finish. The user
+complete Next v4 recommends `RELEASE_030_CONTRACT_4_READINESS`. The accepted
+scheduling-and-units finish is now reached, so the task is startable. The user
 has explicitly authorized work through `RELEASE_030_PUBLISH`, including the
 named clean Git push, annotated `v0.3.0` tag, GitHub prerelease, and npm
 `beta` publication after all preceding gates pass. npm `latest` promotion and
 `RELEASE_030_ACCEPTANCE` are outside that authorization.
 
-The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, and SU-M4 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`, and the detail is advanced to reached `DEADLINE_CAPABILITIES_ACCEPTED` with zero makespans and no recommendation. Its TUI/TUE through 020 acceptance covers exact calendar input, release-aware precedence and heuristic resource scheduling, deadline evaluation, internal AnalysisResult v3/NextResult v4 composition, deterministic failures, and the closed Contract 3/package boundary. The macro has only the 1d SU-M5 work package remaining and recommends it. The current `plans/scheduling-units-m5.pert` detail has six tasks totaling 23p at inherited `23p/1d`: 16p precedence, 23p reviewer-constrained heuristic resources, 7p delay, and forecasts `16/23d` and `1d`. Its implementation candidate atomically exposes Grammar 1/2/3, CLI Contract 4, public schemas and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority; acceptance and macro roll-up still gate the release.
+The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public schemas and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 
 `project show`, which returns the complete project metadata including velocity, source-preserving `project set`, and atomic-batch `project.set` are also implemented. The observed operational velocity was recalibrated to `29p/2d` from a cumulative 29p over 2 active days, including 5p on 2026-07-23.
 
@@ -59,7 +59,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert` and `release-0.2.0.pert` as completed independent post-beta workstreams; use `release-0.3.0.pert` as the active Contract 4 release workstream; and use `scheduling-units.pert` plus the current `scheduling-units-m*.pert`, presently `scheduling-units-m5.pert`, as the milestone/detail pair for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert` and `release-0.2.0.pert` as completed independent post-beta workstreams; use `release-0.3.0.pert` as the active Contract 4 release workstream; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -116,7 +116,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all seventeen self-use plans, including the scheduling-and-units macro, completed SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4 details, current SU-M5 detail, and the active `0.3.0` release plan.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all seventeen self-use plans, including the completed scheduling-and-units macro and SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 details, and the active `0.3.0` release plan.
 
 ```sh
 npm ci

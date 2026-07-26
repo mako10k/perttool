@@ -403,88 +403,50 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m5": {
-      "source_digest": "sha256:32dd5fd4cd1fefb24f7429f17db7733e2e4c215b0a2615ecd79e0fcb2a4dc763",
+      "source_digest": "sha256:21157024c080bbcd070a6d8034315c6c951f663f53d57e2306f759ab2fc9a32f",
       "groups": {
         "active": [],
-        "ready": [
-          "M5_CONTRACT4_ACCEPTANCE"
-        ],
-        "runnable_now": [
-          "M5_CONTRACT4_ACCEPTANCE"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": []
       },
-      "recommended_task_ids": [
-        "M5_CONTRACT4_ACCEPTANCE"
-      ],
-      "manual_selected_task_ids": [
-        "M5_CONTRACT4_ACCEPTANCE"
-      ],
-      "tiers": {
-        "M5_CONTRACT4_ACCEPTANCE": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "M5_CONTRACT4_ACCEPTANCE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": []
     },
     "scheduling-units": {
-      "source_digest": "sha256:f6ac24f79c1971771375a30ea498632258739d1d8292665690cfa671e3f468b5",
+      "source_digest": "sha256:bd79f5a003a88b50cd42d7f41a1a3676a22a85523f811c47df3a062f854642b0",
       "groups": {
         "active": [],
-        "ready": [
-          "SU_M5_INTEGRATED_ACCEPTANCE"
-        ],
-        "runnable_now": [
-          "SU_M5_INTEGRATED_ACCEPTANCE"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": []
       },
-      "recommended_task_ids": [
-        "SU_M5_INTEGRATED_ACCEPTANCE"
-      ],
-      "manual_selected_task_ids": [
-        "SU_M5_INTEGRATED_ACCEPTANCE"
-      ],
-      "tiers": {
-        "SU_M5_INTEGRATED_ACCEPTANCE": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "SU_M5_INTEGRATED_ACCEPTANCE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": []
     },
