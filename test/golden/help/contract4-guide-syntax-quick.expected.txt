@@ -1,0 +1,15 @@
+DSL syntax
+
+Grammar versions 1, 2, and 3 for declaring project, resource, milestone, task, and gate.
+
+Declarations
+Place exactly one project first, followed by resource, milestone, task, and gate declarations.
+
+Syntax:
+  project ID:
+  milestone ID:
+  task ID FROM -> TO:
+  gate ID FROM -> TO:
+  resource ID:
+
+Related: syntax.project, syntax.resource, syntax.milestone, syntax.task, syntax.gate, syntax.estimate, syntax.velocity, syntax.temporal, analysis, errors

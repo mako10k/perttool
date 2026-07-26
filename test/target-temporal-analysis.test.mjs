@@ -189,7 +189,7 @@ test("TUE-011 complete history is retained only as deadline evidence", async () 
   );
 });
 
-test("Grammar 3 fraction analysis remains exact and active Contract 3 remains closed", () => {
+test("Grammar 3 fraction analysis remains exact through the public Contract 4 Core", () => {
   const text = `project FRACTION_TARGET:
   version 3
   title "fraction target"
@@ -216,7 +216,15 @@ task WORK START -> FINISH:
     result.temporal.precedence.tasks[0].finish.calendar.sourceText,
     "2026-07-25T09:20:00Z",
   );
-  assert.equal(publicApi.analyzeDocument(text).ok, false);
+  const publicResult = publicApi.analyzeDocument(text);
+  assert.equal(publicResult.ok, true);
+  assert.equal(publicResult.schemaVersion, "Perttool.AnalysisResult.v3");
+  assert.equal(publicResult.precedence.makespan.numerator, 1n);
+  assert.equal(publicResult.precedence.makespan.denominator, 3n);
+  assert.equal(
+    publicResult.temporal.precedence.tasks[0].finish.calendar.sourceText,
+    "2026-07-25T09:20:00Z",
+  );
 });
 
 test("Grammar 1 base recommendation remains byte-structurally unchanged", async () => {

@@ -11,7 +11,7 @@ import {
 import {
   planTargetGrammar3Mutation,
 } from "../dist/application/target-mutate.js";
-import { CONTRACT3_COMMAND_REGISTRY } from "../dist/command/discovery.js";
+import { CONTRACT4_COMMAND_REGISTRY } from "../dist/command/discovery.js";
 import {
   formatTargetGrammar3Document,
 } from "../dist/formatter/target-source-formatter.js";
@@ -190,7 +190,7 @@ test("Grammar 3 source, formatting, mutation, and version selection compose exac
   );
 });
 
-test("the public package root and Contract 3 registry omit SU-M2R targets", async () => {
+test("the public package root hides target helpers while Contract 4 exposes accepted schemas", async () => {
   for (const targetName of [
     "TARGET_GRAMMAR_3_CAPABILITY",
     "parseTargetGrammar3Document",
@@ -209,52 +209,43 @@ test("the public package root and Contract 3 registry omit SU-M2R targets", asyn
 
   const manifest = JSON.parse(await repositoryFile("package.json"));
   assert.deepEqual(Object.keys(manifest.exports), ["."]);
-  assert.equal(CONTRACT3_COMMAND_REGISTRY.length, 27);
+  assert.equal(CONTRACT4_COMMAND_REGISTRY.length, 28);
   assert.ok(
-    CONTRACT3_COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 3,
+    CONTRACT4_COMMAND_REGISTRY.every(
+      ({ contractVersion }) => contractVersion === 4,
     ),
   );
-  const serializedRegistry = JSON.stringify(CONTRACT3_COMMAND_REGISTRY);
-  for (const unavailable of [
+  const serializedRegistry = JSON.stringify(CONTRACT4_COMMAND_REGISTRY);
+  for (const available of [
     "project migrate-unit",
     "Perttool.UnitMigrationResult.v2",
     "Perttool.AnalysisResult.v3",
     "Perttool.NextResult.v4",
   ]) {
-    assert.equal(serializedRegistry.includes(unavailable), false, unavailable);
+    assert.equal(serializedRegistry.includes(available), true, available);
   }
 });
 
-test("active Contract 3 routes reject Grammar 3 under existing identities", () => {
+test("active Contract 4 routes accept Grammar 3 under target identities", () => {
   const cases = [
-    [["document", "check"], "Perttool.CheckResult.v1"],
+    [["document", "check"], "Perttool.CheckResult.v2"],
     [["document", "format"], "Perttool.FormatResult.v1"],
-    [["project", "show"], "Perttool.ProjectResult.v1"],
-    [["dag", "analyze"], "Perttool.AnalysisResult.v2"],
-    [["dag", "next"], "Perttool.NextResult.v3"],
+    [["project", "show"], "Perttool.ProjectResult.v2"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v3"],
+    [["dag", "next"], "Perttool.NextResult.v4"],
   ];
 
   for (const [route, schemaVersion] of cases) {
     const result = runCli([...route, grammar3Fixture, "--format=json"]);
-    assert.equal(result.status, 1, `${route.join(" ")}: ${result.stderr}`);
+    assert.equal(result.status, 0, `${route.join(" ")}: ${result.stderr}`);
     assert.equal(result.stderr, "");
     const json = JSON.parse(result.stdout);
     assert.equal(json.schema_version, schemaVersion);
-    assert.equal(json.cli_contract_version, 3);
-    assert.equal(json.ok, false);
-    assert.equal(json.grammar_version ?? null, null);
-    assert.ok(json.diagnostics.length > 0);
-    assert.ok(
-      json.diagnostics.some(({ code }) => code === "PTDSL-005"),
-      route.join(" "),
-    );
-    assert.ok(
-      json.diagnostics.every(({ code }) =>
-        code === "PTDSL-005" || code === "PTDSL-007"
-      ),
-      route.join(" "),
-    );
+    assert.equal(json.cli_contract_version, 4);
+    assert.equal(json.ok, true);
+    if (schemaVersion !== "Perttool.FormatResult.v1") {
+      assert.equal(json.grammar_version, 3);
+    }
   }
 });
 

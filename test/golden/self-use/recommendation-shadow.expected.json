@@ -1,6 +1,6 @@
 {
   "contract": {
-    "schema_version": "Perttool.NextResult.v3",
+    "schema_version": "Perttool.NextResult.v4",
     "recommendation_interface_version": 1,
     "algorithm_id": "perttool.recommendation-ranking.lexicographic-frontier",
     "algorithm_version": 1,

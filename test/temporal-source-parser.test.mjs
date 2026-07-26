@@ -159,7 +159,7 @@ test("target Grammar 2 parses exact declared calendar source records", async () 
   const active = publicApi.parseDocument(text);
   assert.deepEqual(
     active.diagnostics.map(({ code }) => code),
-    ["PTDSL-005", "PTDSL-005", "PTDSL-005"],
+    [],
   );
 
   const parsed = parseTargetDocument(text, TARGET_GRAMMAR_2_CAPABILITY);

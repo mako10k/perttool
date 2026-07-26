@@ -23,8 +23,8 @@ test("temporal/unit interface selects closed version boundaries", async () => {
     /Interface ID: `perttool\.temporal-unit-interface`/,
   );
   assert.match(specification, /Interface version: `2`/);
-  assert.match(specification, /Target grammar version: `3`/);
-  assert.match(specification, /Target CLI contract version: `4`/);
+  assert.match(specification, /Active grammar version: `3`/);
+  assert.match(specification, /Active CLI contract version: `4`/);
   for (const row of [
     "| DSL grammar | `1` | `2` | `3` |",
     "| CLI contract | `3` | `4` | `4` |",
@@ -39,7 +39,7 @@ test("temporal/unit interface selects closed version boundaries", async () => {
   }
   assert.match(
     specification,
-    /current\s+source remains CLI Contract 3 and accepts only grammar version 1/,
+    /source implementation activated this complete interface atomically/,
   );
   assert.match(
     contract3,

@@ -12,18 +12,18 @@ import type { TextEdit } from "../mutation/text-edits.js";
 import { mutationDiagnostic, type MutationEditPlan } from "../mutation/diagnostics.js";
 import { planGateMutationEdits } from "../mutation/gate.js";
 import {
-  ACTIVE_MILESTONE_MUTATION_PROFILE,
+  TARGET_MILESTONE_MUTATION_PROFILE,
   planMilestoneMutationEdits,
   type MilestoneMutationProfile,
 } from "../mutation/milestone.js";
 import {
-  ACTIVE_PROJECT_MUTATION_PROFILE,
+  TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
   planProjectMutationEdits,
   type ProjectMutationProfile,
 } from "../mutation/project.js";
 import { planResourceMutationEdits } from "../mutation/resource.js";
 import {
-  ACTIVE_TASK_MUTATION_PROFILE,
+  TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
   planTaskMutationEdits,
   type TaskMutationProfile,
 } from "../mutation/task.js";
@@ -86,9 +86,9 @@ export interface MutationPlanningProfile {
 }
 
 const activeMutationPlanningProfile: MutationPlanningProfile = Object.freeze({
-  project: ACTIVE_PROJECT_MUTATION_PROFILE,
-  task: ACTIVE_TASK_MUTATION_PROFILE,
-  milestone: ACTIVE_MILESTONE_MUTATION_PROFILE,
+  project: TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
+  task: TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
+  milestone: TARGET_MILESTONE_MUTATION_PROFILE,
 });
 
 function validateActiveDocument(

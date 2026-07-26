@@ -48,6 +48,8 @@ export interface TaskRequirementInput {
 interface TaskDefinitionBase {
   readonly title: string;
   readonly description?: string;
+  readonly notBefore?: string;
+  readonly deadline?: string;
   readonly status?: TaskMutationStatus;
   readonly priority?: number;
   readonly requirements?: readonly TaskRequirementInput[];
@@ -68,6 +70,8 @@ export interface TaskFieldSet {
   readonly description?: string;
   readonly duration?: string;
   readonly estimate?: TaskEstimateInput;
+  readonly notBefore?: string;
+  readonly deadline?: string;
   readonly status?: TaskMutationStatus;
   readonly priority?: number;
   readonly owner?: string;
@@ -77,6 +81,8 @@ export interface TaskFieldSet {
 
 export type TaskClearableField =
   | "description"
+  | "not_before"
+  | "deadline"
   | "status"
   | "priority"
   | "owner"
@@ -162,6 +168,7 @@ export interface MilestoneDefinition {
   readonly title: string;
   readonly description?: string;
   readonly state?: MilestoneMutationState;
+  readonly deadline?: string;
   readonly tags?: readonly string[];
 }
 
@@ -169,9 +176,14 @@ export interface MilestoneFieldSet {
   readonly title?: string;
   readonly description?: string;
   readonly state?: MilestoneMutationState;
+  readonly deadline?: string;
 }
 
-export type MilestoneClearableField = "description" | "state" | "tags";
+export type MilestoneClearableField =
+  | "description"
+  | "state"
+  | "deadline"
+  | "tags";
 
 export interface AddMilestoneMutation {
   readonly kind: "milestone.add";

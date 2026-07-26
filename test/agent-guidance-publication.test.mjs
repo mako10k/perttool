@@ -80,7 +80,7 @@ test("agent help quick text preserves status, reasons, staleness, and read-only 
   assert.doesNotMatch(result.stdout, /^SOURCE /m);
 });
 
-test("agent help JSON adds the Contract 3 envelope to the Core projection", () => {
+test("agent help JSON adds the Contract 4 envelope to the Core projection", () => {
   const query = {
     providerId: "grok",
     surfaceId: "workflow",
@@ -102,7 +102,7 @@ test("agent help JSON adds the Contract 3 envelope to the Core projection", () =
   assert.equal(first.stderr, "");
   assert.equal(first.stdout, second.stdout);
   const json = JSON.parse(first.stdout);
-  assert.equal(json.cli_contract_version, 3);
+  assert.equal(json.cli_contract_version, 4);
   const { cli_contract_version: _contract, ...cliProjection } = json;
   assert.deepEqual(cliProjection, agentGuidanceResultToJson(coreResult));
   assert.deepEqual(json.query, {
@@ -197,7 +197,7 @@ test("agent help does not require or create project/provider state", () => {
   }
 });
 
-test("Contract 3 guide index is byte-stable", async () => {
+test("Contract 4 guide index is byte-stable", async () => {
   const expected = await readFile(
     path.join(
       testDirectory,

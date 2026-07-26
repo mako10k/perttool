@@ -8,7 +8,7 @@ import * as publicApi from "../dist/index.js";
 import {
   planTargetUnitMigrationResult,
 } from "../dist/application/target-unit-migration-result.js";
-import { CONTRACT3_COMMAND_REGISTRY } from "../dist/command/discovery.js";
+import { CONTRACT4_COMMAND_REGISTRY } from "../dist/command/discovery.js";
 import {
   convertPreparedUnitMigrationRequest,
 } from "../dist/migration/conversion.js";
@@ -354,7 +354,7 @@ test("stable failure causes are complete and failures expose no candidate", asyn
   }
 });
 
-test("the active package root, registry, help, and Guide remain Contract 3", async () => {
+test("the active package root hides target helpers while Contract 4 exposes migration", async () => {
   for (const targetName of [
     "TARGET_GRAMMAR_3_CAPABILITY",
     "prepareTargetUnitMigrationRequest",
@@ -369,30 +369,39 @@ test("the active package root, registry, help, and Guide remain Contract 3", asy
 
   const manifest = JSON.parse(await repositoryFile("package.json"));
   assert.deepEqual(Object.keys(manifest.exports), ["."]);
-  assert.equal(CONTRACT3_COMMAND_REGISTRY.length, 27);
+  assert.equal("planUnitMigration" in publicApi, true);
+  assert.equal(CONTRACT4_COMMAND_REGISTRY.length, 28);
   assert.ok(
-    CONTRACT3_COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 3,
+    CONTRACT4_COMMAND_REGISTRY.every(
+      ({ contractVersion }) => contractVersion === 4,
     ),
   );
 
   const help = runCli(["help", "--format=json"]);
   const guide = runCli(["guide", "--format=json"]);
+  const unitGuide = runCli([
+    "guide",
+    "editing",
+    "unit-migration",
+    "--format=json",
+  ]);
   assert.equal(help.status, 0, help.stderr);
   assert.equal(guide.status, 0, guide.stderr);
+  assert.equal(unitGuide.status, 0, unitGuide.stderr);
   const helpJson = JSON.parse(help.stdout);
   const guideJson = JSON.parse(guide.stdout);
   assert.equal(helpJson.schema_version, "Perttool.CommandHelpResult.v1");
   assert.equal(guideJson.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(helpJson.cli_contract_version, 3);
-  assert.equal(guideJson.cli_contract_version, 3);
-  for (const serialized of [help.stdout, guide.stdout]) {
-    assert.equal(serialized.includes("project migrate-unit"), false);
-    assert.equal(serialized.includes("Perttool.UnitMigrationResult.v2"), false);
-    assert.equal(serialized.includes("editing.unit-migration"), false);
-  }
+  assert.equal(helpJson.cli_contract_version, 4);
+  assert.equal(guideJson.cli_contract_version, 4);
+  assert.equal(help.stdout.includes("project migrate-unit"), true);
+  assert.equal(help.stdout.includes("Perttool.UnitMigrationResult.v2"), true);
+  assert.equal(
+    JSON.parse(unitGuide.stdout).topic_id,
+    "editing.unit-migration",
+  );
 
-  const rejected = runCli([
+  const migrated = runCli([
     "project",
     "migrate-unit",
     "test/fixtures/temporal-units/migration-point-v2.pert",
@@ -400,14 +409,13 @@ test("the active package root, registry, help, and Guide remain Contract 3", asy
     "day",
     "--format=json",
   ]);
-  assert.equal(rejected.status, 2);
-  assert.equal(rejected.stderr, "");
-  const error = JSON.parse(rejected.stdout);
-  assert.equal(error.schema_version, "Perttool.CliError.v1");
-  assert.equal(error.cli_contract_version, 3);
-  assert.equal(error.operation, null);
-  assert.equal(error.usage.kind, "unknown_action");
-  assert.equal(error.usage.token, "migrate-unit");
+  assert.equal(migrated.status, 0);
+  assert.equal(migrated.stderr, "");
+  const result = JSON.parse(migrated.stdout);
+  assert.equal(result.schema_version, "Perttool.UnitMigrationResult.v2");
+  assert.equal(result.cli_contract_version, 4);
+  assert.equal(result.operation, "project.migrate-unit");
+  assert.equal(result.ok, true);
 });
 
 test("the SU-M5 handoff keeps activation and publication separately gated", async () => {

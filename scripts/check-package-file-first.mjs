@@ -47,14 +47,14 @@ function invokeJson(args, options = {}) {
   const result = invoke([...args, "--format=json"], options);
   assert.equal(result.stderr, "", `unexpected stderr for: ${args.join(" ")}`);
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 3);
+  assert.equal(value.cli_contract_version, 4);
   if ((options.expectedStatus ?? 0) === 0) assert.equal(value.ok, true);
   return value;
 }
 
 function checkedDigest() {
   const result = invokeJson(["document", "check", planPath]);
-  assert.equal(result.schema_version, "Perttool.CheckResult.v1");
+  assert.equal(result.schema_version, "Perttool.CheckResult.v2");
   assert.equal(result.document_id, "FILE_FIRST_ACCEPTED");
   return result.source_digest;
 }
@@ -91,9 +91,11 @@ const initialized = invokeJson([
   "--finish",
   "START",
   "--version",
-  "1",
+  "2",
   "--as-of",
   "2026-07-24",
+  "--initial-milestone-deadline",
+  "2026-07-30",
   "--velocity",
   "5p/1d",
   "--out",
@@ -114,13 +116,26 @@ assert.doesNotMatch(initialized.candidate_text, /^(?:task|gate|resource) /m);
 const initialProject = invokeJson(["project", "show", planPath]);
 assert.deepEqual(initialProject.project, {
   id: "FILE_FIRST",
-  version: 1,
+  version: 2,
   title: "File-first package acceptance",
   description: null,
-  as_of: "2026-07-24",
+  as_of: {
+    kind: "date",
+    source_text: "2026-07-24",
+    year: 2026,
+    month: 7,
+    day: 24,
+  },
   duration_unit: "point",
   velocity: "5p/1d",
   finish: "START",
+  finish_deadline: {
+    kind: "date",
+    source_text: "2026-07-30",
+    year: 2026,
+    month: 7,
+    day: 30,
+  },
   critical_epsilon: null,
   target_duration: null,
 });
@@ -137,7 +152,7 @@ const connectedPlan = {
       kind: "project.set",
       set: {
         id: "FILE_FIRST_ACCEPTED",
-        version: 1,
+        version: 2,
         title: "Installed package workflow",
         description: "Created and maintained only through perttool commands.",
         asOf: "2026-07-25",
@@ -164,6 +179,7 @@ const connectedPlan = {
         title: "Implementation ready",
         description: "The installed workflow reached review.",
         state: "planned",
+        deadline: "2026-07-28",
         tags: ["build", "review"],
       },
     },
@@ -174,6 +190,7 @@ const connectedPlan = {
         title: "Acceptance complete",
         description: "The installed workflow is accepted.",
         state: "planned",
+        deadline: "2026-07-30",
         tags: ["release"],
       },
     },
@@ -191,6 +208,8 @@ const connectedPlan = {
           pessimistic: "5p",
         },
         status: "blocked",
+        notBefore: "2026-07-25",
+        deadline: "2026-07-28",
         priority: 80,
         requirements: [{ resourceId: "DEV", units: 1 }],
         owner: "package-reviewer",
@@ -222,19 +241,32 @@ assert.equal(batch.operation, "batch.apply");
 const fullProject = invokeJson(["project", "show", planPath]);
 assert.deepEqual(fullProject.project, {
   id: "FILE_FIRST_ACCEPTED",
-  version: 1,
+  version: 2,
   title: "Installed package workflow",
   description: "Created and maintained only through perttool commands.",
-  as_of: "2026-07-25",
+  as_of: {
+    kind: "date",
+    source_text: "2026-07-25",
+    year: 2026,
+    month: 7,
+    day: 25,
+  },
   duration_unit: "point",
   velocity: "10p/2d",
   finish: "DONE",
+  finish_deadline: {
+    kind: "date",
+    source_text: "2026-07-30",
+    year: 2026,
+    month: 7,
+    day: 30,
+  },
   critical_epsilon: "1p",
   target_duration: "8p",
 });
 
 const blockedNext = invokeJson(["dag", "next", planPath]);
-assert.equal(blockedNext.schema_version, "Perttool.NextResult.v3");
+assert.equal(blockedNext.schema_version, "Perttool.NextResult.v4");
 assert.equal(blockedNext.recommendation.explanation_status.complete, true);
 assert.deepEqual(blockedNext.groups.ready, []);
 assert.deepEqual(blockedNext.groups.blocked_now, ["BUILD"]);
@@ -269,6 +301,8 @@ const milestoneUpdate = writeMutation([
   "The isolated package passed mutation setup.",
   "--state",
   "planned",
+  "--deadline",
+  "2026-07-29",
   "--remove-tag",
   "build",
   "--add-tag",
@@ -317,6 +351,10 @@ const taskUpdate = writeMutation([
   "5p",
   "--status",
   "planned",
+  "--not-before",
+  "2026-07-26",
+  "--deadline",
+  "2026-07-29",
   "--priority",
   "90",
   "--owner",
@@ -342,16 +380,20 @@ for (const expected of [
   "velocity 12p/2d",
   "critical_epsilon 2p",
   "target_duration 13p",
+  "as_of 2026-07-26",
   "resource DEV:",
   'title "Package developers"',
   "capacity 2",
   "milestone READY:",
+  "deadline 2026-07-29",
   'title "Package ready"',
   "tags [",
   "accepted",
   "task BUILD START -> READY:",
   'title "Complete installed maintenance"',
   "duration 5p",
+  "not_before 2026-07-26",
+  "deadline 2026-07-29",
   "priority 90",
   'owner "package-agent"',
   'source "installed-package"',
@@ -363,14 +405,20 @@ for (const expected of [
 assert.doesNotMatch(maintainedText, /blocked_reason|optimistic|most_likely|pessimistic/);
 
 const analysis = invokeJson(["dag", "analyze", planPath]);
-assert.equal(analysis.schema_version, "Perttool.AnalysisResult.v2");
+assert.equal(analysis.schema_version, "Perttool.AnalysisResult.v3");
 assert.equal(analysis.precedence.makespan.display, "5");
 assert.equal(analysis.resource.makespan.display, "5");
+assert.equal(analysis.temporal.precedence.state, "available");
+assert.ok(analysis.temporal.deadline_evaluations.length > 0);
 
 const selected = invokeJson(["dag", "next", planPath]);
 assert.deepEqual(selected.groups.ready, ["BUILD"]);
 assert.deepEqual(selected.groups.runnable_now, ["BUILD"]);
 assert.deepEqual(selected.recommendation.recommended_task_ids, ["BUILD"]);
+assert.deepEqual(
+  selected.temporal.authority.startable_recommended_task_ids,
+  ["BUILD"],
+);
 assert.equal(selected.recommendation.explanation_status.complete, true);
 
 writeMutation([
@@ -430,4 +478,81 @@ assert.deepEqual(finalNext.groups, {
 });
 assert.equal(finalNext.recommendation.explanation_status.complete, true);
 
-process.stdout.write("installed package file-first acceptance passed\n");
+const beforeMigrationText = readFileSync(planPath, "utf8");
+const migrationPreview = invokeJson([
+  "project",
+  "migrate-unit",
+  planPath,
+  "--to-unit",
+  "day",
+]);
+assert.equal(
+  migrationPreview.schema_version,
+  "Perttool.UnitMigrationResult.v2",
+);
+assert.equal(migrationPreview.changed, true);
+assert.equal(migrationPreview.source_unit, "point");
+assert.equal(migrationPreview.target_unit, "day");
+assert.equal(
+  migrationPreview.grammar_disposition,
+  "upgraded_for_exact_fraction",
+);
+assert.ok(
+  migrationPreview.converted_fields.some(
+    ({ canonical_token: token }) => token.includes("/"),
+  ),
+);
+assert.equal(readFileSync(planPath, "utf8"), beforeMigrationText);
+
+const migrationWrite = invokeJson([
+  "project",
+  "migrate-unit",
+  planPath,
+  "--to-unit",
+  "day",
+  "--write",
+  "--expect-digest",
+  checkedDigest(),
+]);
+assert.equal(migrationWrite.write.mode, "in_place");
+assert.equal(migrationWrite.write.written, true);
+assert.equal(migrationWrite.target_grammar_version, 3);
+assert.equal(readFileSync(planPath, "utf8"), migrationWrite.updated_text);
+
+const repeatedMigration = invokeJson([
+  "project",
+  "migrate-unit",
+  planPath,
+  "--to-unit",
+  "day",
+]);
+assert.equal(repeatedMigration.changed, false);
+assert.equal(repeatedMigration.reversibility, "not_applicable");
+
+const inverseMigration = invokeJson([
+  "project",
+  "migrate-unit",
+  planPath,
+  "--to-unit",
+  "point",
+  "--replacement-velocity",
+  "12p/2d",
+  "--write",
+  "--expect-digest",
+  checkedDigest(),
+]);
+assert.equal(inverseMigration.write.written, true);
+assert.equal(inverseMigration.target_unit, "point");
+assert.ok(
+  ["exact", "values_exact_metadata_changed"].includes(
+    inverseMigration.reversibility,
+  ),
+);
+const inverseText = readFileSync(planPath, "utf8");
+assert.match(inverseText, /duration_unit point/);
+assert.match(inverseText, /critical_epsilon 2p/);
+assert.match(inverseText, /target_duration 13p/);
+assert.match(inverseText, /deadline 2026-07-30/);
+assert.equal(invokeJson(["document", "check", planPath]).ok, true);
+
+process.stdout.write("installed package Contract 4 file-first acceptance passed\n");

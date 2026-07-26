@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto";
-import type { NextResultV3, NextTask } from "../application/next.js";
+import type { NextResultV4 } from "../application/contract4.js";
+import type { NextTask } from "../application/next.js";
+import type { TargetNextResultV4 } from "../application/target-temporal-analysis.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import { fieldNamed } from "../model/syntax.js";
@@ -28,7 +30,7 @@ import { TOOL_VERSION } from "../version.js";
 
 const overrideSchemaVersion = "Perttool.OverrideDecision.v1" as const;
 const operation = "recommendation.override.validate" as const;
-const sourceSchemaVersion = "Perttool.NextResult.v3" as const;
+const sourceSchemaVersion = "Perttool.NextResult.v4" as const;
 const digestPattern = /^sha256:[0-9a-f]{64}$/;
 const overrideReasonCodes = new Set<HumanOverrideReasonCode>([
   "human_priority_decision",
@@ -118,7 +120,10 @@ function validUtcSecond(value: unknown): value is string {
   );
 }
 
-function sourceContractError(source: NextResultV3, request: OverrideRequest): string | null {
+function sourceContractError(
+  source: NextResultV4,
+  request: OverrideRequest,
+): string | null {
   try {
     if (request.sourceSchemaVersion !== sourceSchemaVersion) {
       return `unsupported source schema ${String(request.sourceSchemaVersion)}`;
@@ -126,11 +131,14 @@ function sourceContractError(source: NextResultV3, request: OverrideRequest): st
     if (
       !source.ok ||
       source.recommendation === null ||
-      source.diagnosticsTruncated
+      source.diagnosticsTruncated ||
+      source.schemaVersion !== sourceSchemaVersion ||
+      source.temporal === null
     ) {
-      return "source NextResult.v3 must be successful and untruncated";
+      return "source NextResult.v4 must be successful, untruncated, and include temporal authority";
     }
     const recommendation = source.recommendation;
+    const authority = source.temporal.authority;
     if (
       recommendation.algorithm.id !==
         "perttool.recommendation-ranking.lexicographic-frontier" ||
@@ -143,7 +151,12 @@ function sourceContractError(source: NextResultV3, request: OverrideRequest): st
       recommendation.descriptionLocale !== "en" ||
       recommendation.explanationStatus.complete !== true ||
       recommendation.explanationStatus.decisiveChainComplete !== true ||
-      recommendation.explanationStatus.truncated !== false
+      recommendation.explanationStatus.truncated !== false ||
+      authority.policy !== "recommendation_v1_plus_release_gate" ||
+      authority.recommendationAlgorithm.id !== recommendation.algorithm.id ||
+      authority.recommendationAlgorithm.version !==
+        recommendation.algorithm.version ||
+      authority.deadlineFactsUsedForRanking !== false
     ) {
       return "source recommendation uses unsupported or incomplete decisive semantics";
     }
@@ -165,6 +178,56 @@ function sourceContractError(source: NextResultV3, request: OverrideRequest): st
       !sameMembers(source.groups.ready, decisionTasks)
     ) {
       return "source ready tasks and recommendation decisions do not match";
+    }
+    const temporalTaskIds = source.temporal.tasks.map(({ taskId }) => taskId);
+    const eligibleTaskIds = source.temporal.tasks
+      .filter(({ timeEligibility }) => timeEligibility.state === "eligible")
+      .map(({ taskId }) => taskId);
+    const ineligibleTaskIds = source.temporal.tasks
+      .filter(
+        ({ timeEligibility }) =>
+          timeEligibility.state === "not_yet_eligible",
+      )
+      .map(({ taskId }) => taskId);
+    const unavailableTaskIds = source.temporal.tasks
+      .filter(({ timeEligibility }) => timeEligibility.state === "unavailable")
+      .map(({ taskId }) => taskId);
+    if (
+      new Set(temporalTaskIds).size !== temporalTaskIds.length ||
+      !sameMembers(authority.timeEligibleTaskIds, eligibleTaskIds) ||
+      !sameMembers(authority.timeIneligibleTaskIds, ineligibleTaskIds) ||
+      !sameMembers(
+        authority.timeEligibilityUnavailableTaskIds,
+        unavailableTaskIds,
+      ) ||
+      source.groups.runnableNow.some(
+        (taskId) => !authority.timeEligibleTaskIds.includes(taskId),
+      )
+    ) {
+      return "source temporal eligibility authority is inconsistent";
+    }
+    const expectedStartable = recommendation.recommendedTaskIds.filter(
+      (taskId) => source.groups.runnableNow.includes(taskId),
+    );
+    const expectedDelayed = recommendation.recommendedTaskIds.filter(
+      (taskId) => authority.timeIneligibleTaskIds.includes(taskId),
+    );
+    const expectedUnavailable = recommendation.recommendedTaskIds.filter(
+      (taskId) =>
+        authority.timeEligibilityUnavailableTaskIds.includes(taskId),
+    );
+    if (
+      !sameMembers(
+        authority.startableRecommendedTaskIds,
+        expectedStartable,
+      ) ||
+      !sameMembers(authority.delayedRecommendedTaskIds, expectedDelayed) ||
+      !sameMembers(
+        authority.unavailableRecommendedTaskIds,
+        expectedUnavailable,
+      )
+    ) {
+      return "source temporal start authority does not match the recommendation";
     }
     const declaredResources = new Set(
       source.document.declarations
@@ -253,7 +316,9 @@ function triggerCodesForTier(
   return triggers;
 }
 
-function declaredCapacities(source: NextResultV3): ReadonlyMap<string, number> {
+function declaredCapacities(
+  source: TargetNextResultV4,
+): ReadonlyMap<string, number> {
   const capacities = new Map<string, number>();
   for (const declaration of source.document.declarations) {
     if (declaration.kind !== "resource") continue;
@@ -322,7 +387,7 @@ function feasibilityExpression(
 }
 
 function evaluateSelectedSet(
-  source: NextResultV3,
+  source: TargetNextResultV4,
   selectedTaskIds: readonly string[],
 ): {
   readonly feasible: boolean;
@@ -386,7 +451,7 @@ function evaluateSelectedSet(
 }
 
 function negativeReasonIds(
-  source: NextResultV3,
+  source: TargetNextResultV4,
   taskId: string,
 ): readonly string[] {
   const recommendation = source.recommendation!;
@@ -406,7 +471,7 @@ function negativeReasonIds(
 }
 
 function acknowledgementError(
-  source: NextResultV3,
+  source: TargetNextResultV4,
   request: OverrideRequest,
   selectedTaskIds: readonly string[],
 ): string | null {
@@ -446,7 +511,7 @@ function acknowledgementError(
 }
 
 function taskDecisionReferences(
-  source: NextResultV3,
+  source: TargetNextResultV4,
   selectedTaskIds: readonly string[],
   displacesRecommended: boolean,
 ): readonly OverrideTaskDecision[] {
@@ -479,14 +544,15 @@ function taskDecisionReferences(
 }
 
 export function validateOverride(
-  source: NextResultV3,
+  source: NextResultV4,
   request: OverrideRequest,
 ): OverrideValidationResult {
   const sourceError = sourceContractError(source, request);
   if (sourceError !== null) {
     return failure("PTOVR-101", sourceError);
   }
-  const recommendation = source.recommendation!;
+  const validatedSource = source as TargetNextResultV4;
+  const recommendation = validatedSource.recommendation!;
   if (
     request.sourceDigest !== recommendation.sourceDigest ||
     request.sourceResultDecisionId !== recommendation.resultDecision.id
@@ -508,7 +574,10 @@ export function validateOverride(
     );
   }
   const selectedSet = new Set(request.selectedTaskIds);
-  const readySet = new Set(source.groups.ready);
+  const readySet = new Set(validatedSource.groups.ready);
+  const timeEligibleSet = new Set(
+    validatedSource.temporal.authority.timeEligibleTaskIds,
+  );
   const decisionByTask = new Map(
     recommendation.taskDecisions.map((decision) => [
       decision.subjectTaskId,
@@ -516,12 +585,15 @@ export function validateOverride(
     ]),
   );
   const invalidTaskIds = request.selectedTaskIds.filter(
-    (id) => !readySet.has(id) || !decisionByTask.has(id),
+    (id) =>
+      !readySet.has(id) ||
+      !timeEligibleSet.has(id) ||
+      !decisionByTask.has(id),
   );
   if (invalidTaskIds.length > 0) {
     return failure(
       "PTOVR-103",
-      "selected task is not an actual ready task with a normal decision",
+      "selected task is not an actual ready and time-eligible task with a normal decision",
       { task_ids: [...invalidTaskIds].sort(compareStableStrings) },
     );
   }
@@ -563,7 +635,7 @@ export function validateOverride(
   }
   let feasibility: ReturnType<typeof evaluateSelectedSet>;
   try {
-    feasibility = evaluateSelectedSet(source, selectedTaskIds);
+    feasibility = evaluateSelectedSet(validatedSource, selectedTaskIds);
   } catch (error) {
     return failure(
       "PTOVR-101",
@@ -595,7 +667,7 @@ export function validateOverride(
   let acknowledgement: string | null;
   try {
     acknowledgement = acknowledgementError(
-      source,
+      validatedSource,
       request,
       selectedTaskIds,
     );
@@ -625,7 +697,7 @@ export function validateOverride(
       descriptionRegistryVersion: recommendation.descriptionRegistryVersion,
       resultDecisionId: recommendation.resultDecision.id,
       recommendedTaskIds: recommendation.recommendedTaskIds,
-      capacityOverrides: [...source.capacityOverrides]
+      capacityOverrides: [...validatedSource.capacityOverrides]
         .sort(([left], [right]) => compareStableStrings(left, right))
         .map(([resourceId, capacity]) => ({ resourceId, capacity })),
     },
@@ -648,7 +720,7 @@ export function validateOverride(
       triggerCodes: eventTriggers,
     },
     taskDecisions: taskDecisionReferences(
-      source,
+      validatedSource,
       selectedTaskIds,
       displacesRecommended,
     ),

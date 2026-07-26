@@ -8,7 +8,7 @@ import {
 
 export interface GuideResult extends HelpResult {
   readonly schemaVersion: "Perttool.GuideResult.v1";
-  readonly cliContractVersion: 3;
+  readonly cliContractVersion: 4;
   readonly toolVersion: string;
   readonly operation: "guide";
 }
@@ -72,7 +72,7 @@ export function getGuide(
   const help = getHelp(topicId, level);
   return Object.freeze({
     schemaVersion: "Perttool.GuideResult.v1",
-    cliContractVersion: 3,
+    cliContractVersion: 4,
     toolVersion: TOOL_VERSION,
     operation: "guide",
     ...help,

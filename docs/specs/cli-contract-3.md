@@ -1,6 +1,6 @@
 # CLI Contract 3 Specification
 
-- Document status: Active source contract; installed-package acceptance complete
+- Document status: Published compatibility contract; installed-package acceptance complete
 - Specification version: 1
 - Target CLI contract version: 3
 - Created: 2026-07-24
@@ -9,7 +9,7 @@
 - Basic design: [../basic-design.md](../basic-design.md)
 - Migration: [../process/cli-contract-3-migration.md](../process/cli-contract-3-migration.md)
 - Release: [`v0.2.0` procedure](../process/0.2.0-release.md)
-- Future temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
+- Successor temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 
 ## 1. Purpose and activation boundary
 
@@ -17,10 +17,11 @@ This specification fixes the next breaking CLI surface for human and LLM
 users. It covers command discovery, domain guidance, complete file-first
 maintenance, naming, side effects, result schemas, and acceptance cases.
 
-Contract 3 is the active interface in the current source after the atomic
-`CLI_002_CONTRACT_V3_CUTOVER` change. The already published `0.1.0` package
-remains a Contract 2 artifact and does not accept these commands. No package
-publication is authorized by the source cutover.
+Contract 3 remains the compatibility contract published as `0.2.0` after the
+atomic `CLI_002_CONTRACT_V3_CUTOVER` change. Published `0.1.0` remains a
+Contract 2 artifact, while the current source has advanced atomically to
+Contract 4 for the separately gated `0.3.0` release. This specification remains
+normative for explicitly pinned Contract 3 consumers.
 
 The cutover activated the complete command and JSON namespace at once,
 including direct project initialization and gate maintenance.

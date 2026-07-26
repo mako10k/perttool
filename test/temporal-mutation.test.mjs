@@ -86,7 +86,7 @@ const upgrade = {
   ],
 };
 
-test("target temporal mutation is capability-checked and remains internal", () => {
+test("target temporal mutation remains capability-checked while Contract 4 is public", () => {
   assert.equal("planTargetMutation" in publicApi, false);
   assert.equal("planTargetBatchMutation" in publicApi, false);
   assert.equal("replaceTargetDocumentFile" in publicApi, false);
@@ -115,7 +115,7 @@ test("target temporal mutation is capability-checked and remains internal", () =
     set: { deadline: "2026-07-27" },
   });
   assert.equal(active.ok, false);
-  assert.equal(active.diagnostics.at(-1)?.code, "PTMUT-301");
+  assert.equal(active.diagnostics.at(-1)?.code, "PTDSL-005");
   assert.equal(active.updatedText, null);
   assert.deepEqual(active.edits, []);
 });
@@ -156,7 +156,7 @@ test("one final-candidate batch upgrades and downgrades temporal grammar", () =>
     work.fields.find(({ name }) => name === "not_before").rawValue,
     "2026-07-25T09:00:00.5000+09:30",
   );
-  assert.equal(publicApi.checkDocument(upgraded.updatedText).ok, false);
+  assert.equal(publicApi.checkDocument(upgraded.updatedText).ok, true);
 
   const repeated = planTargetBatchMutation(
     grammar1,
@@ -457,15 +457,13 @@ test("target temporal candidates reuse digest-locked in-place and out writes", a
     assert.equal(created.digest, changed.updatedDigest);
     assert.equal(await readFile(output, "utf8"), changed.updatedText);
 
-    await assert.rejects(
-      publicApi.createDocumentFile(
-        path.join(directory, "active-rejects.pert"),
-        changed.updatedText,
-      ),
-      (error) =>
-        error instanceof publicApi.SafeWriteVerificationError &&
-        error.reason === "invalid_candidate",
+    const publicOutput = path.join(directory, "active-accepts.pert");
+    const publicCreated = await publicApi.createDocumentFile(
+      publicOutput,
+      changed.updatedText,
     );
+    assert.equal(publicCreated.written, true);
+    assert.equal(await readFile(publicOutput, "utf8"), changed.updatedText);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

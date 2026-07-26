@@ -4,7 +4,10 @@ import { readFile } from "node:fs/promises";
 import process from "node:process";
 import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
-import { analyzeDocument } from "./application/analyze.js";
+import {
+  analyzeDocument,
+  selectNextTasks,
+} from "./application/contract4.js";
 import { checkDocument } from "./application/check.js";
 import { planFormat, type FormatPreviewResult } from "./application/format.js";
 import {
@@ -14,7 +17,11 @@ import {
   withProjectInitOutput,
 } from "./application/init.js";
 import { planBatchMutation, planMutation } from "./application/mutate.js";
-import { selectNextTasks } from "./application/next.js";
+import {
+  planUnitMigration,
+  withUnitMigrationWrite,
+  type UnitMigrationResult,
+} from "./application/unit-migration.js";
 import {
   getProjectMetadata,
   type ProjectMetadata,
@@ -38,7 +45,7 @@ import {
   type ProjectedCommandDescriptor,
 } from "./command/registry.js";
 import {
-  CONTRACT3_COMMAND_REGISTRY,
+  CONTRACT4_COMMAND_REGISTRY,
   getCommandDiscovery,
   renderCommandHelpResult,
   serializeCommandHelpResult,
@@ -69,6 +76,7 @@ import {
 import type { Diagnostic, SourceSpan } from "./model/diagnostics.js";
 import type { Rational } from "./model/rational.js";
 import { formatDecimal } from "./model/rational.js";
+import type { TargetCalendarValue } from "./model/target-calendar.js";
 import type { DurationUnit, Velocity } from "./model/units.js";
 import { convertWithVelocity, durationSuffix } from "./model/units.js";
 import { recommendationInvariantExitCode } from "./recommendation/failure.js";
@@ -159,7 +167,7 @@ function parseCommandOptions(
   operation: string,
   args: readonly string[],
 ): ParsedOptions {
-  const descriptor = CONTRACT3_COMMAND_REGISTRY.find(
+  const descriptor = CONTRACT4_COMMAND_REGISTRY.find(
     (candidate) => candidate.operation === operation,
   );
   if (descriptor === undefined) {
@@ -301,6 +309,18 @@ function writeJson(value: unknown): void {
   process.stdout.write(`${JSON.stringify(value)}\n`);
 }
 
+function snakeJson(value: unknown): unknown {
+  if (typeof value === "bigint") return value.toString();
+  if (Array.isArray(value)) return value.map(snakeJson);
+  if (value === null || typeof value !== "object") return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [
+      key.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase(),
+      snakeJson(item),
+    ]),
+  );
+}
+
 function cliError(
   error: Error,
   exitCode: number,
@@ -329,7 +349,7 @@ function cliError(
   if (json) {
     writeJson({
       schema_version: "Perttool.CliError.v1",
-      cli_contract_version: 3,
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation,
       ok: false,
@@ -374,8 +394,8 @@ async function runCheck(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.CheckResult.v1",
-      cli_contract_version: 3,
+      schema_version: "Perttool.CheckResult.v2",
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation: "document.check",
       ok,
@@ -386,11 +406,12 @@ async function runCheck(args: readonly string[]): Promise<number> {
       diagnostics_truncated: result.diagnosticsTruncated,
       grammar_version: result.grammarVersion,
       summary: result.summary,
+      temporal_inputs: snakeJson(result.temporalInputs),
     });
   } else {
     if (ok) {
       process.stdout.write(
-        `OK ${source} project=${result.documentId ?? "-"} milestones=${result.summary.milestones} tasks=${result.summary.tasks} gates=${result.summary.gates} resources=${result.summary.resources}\n`,
+        `OK ${source} project=${result.documentId ?? "-"} milestones=${result.summary.milestones} tasks=${result.summary.tasks} gates=${result.summary.gates} resources=${result.summary.resources} temporal=milestone_deadlines:${result.temporalInputs?.milestoneDeadlines.length ?? 0},task_not_before:${result.temporalInputs?.taskConstraints.filter(({ notBefore }) => notBefore !== null).length ?? 0},task_deadlines:${result.temporalInputs?.taskConstraints.filter(({ deadline }) => deadline !== null).length ?? 0}\n`,
       );
     }
     for (const diagnostic of result.diagnostics) {
@@ -409,10 +430,11 @@ function projectJson(project: ProjectMetadata): Readonly<Record<string, unknown>
     version: project.version,
     title: project.title,
     description: project.description,
-    as_of: project.asOf,
+    as_of: snakeJson(project.asOf),
     duration_unit: project.durationUnit,
     velocity: project.velocity,
     finish: project.finish,
+    finish_deadline: snakeJson(project.finishDeadline),
     critical_epsilon: project.criticalEpsilon,
     target_duration: project.targetDuration,
   };
@@ -420,15 +442,20 @@ function projectJson(project: ProjectMetadata): Readonly<Record<string, unknown>
 
 function renderProjectText(project: ProjectMetadata): string {
   const optional = (value: string | null): string => value ?? "-";
+  const calendar = (value: TargetCalendarValue | null): string =>
+    value === null
+      ? "-"
+      : `${value.kind.toUpperCase()} ${value.sourceText ?? "-"}`;
   return [
     `PROJECT ${project.id}`,
     `VERSION ${project.version}`,
     `TITLE ${JSON.stringify(project.title)}`,
     `DESCRIPTION ${project.description === null ? "-" : JSON.stringify(project.description)}`,
-    `AS_OF ${optional(project.asOf)}`,
+    `AS_OF ${calendar(project.asOf)}`,
     `DURATION_UNIT ${project.durationUnit}`,
     `VELOCITY ${optional(project.velocity)}`,
     `FINISH ${project.finish}`,
+    `FINISH_DEADLINE ${calendar(project.finishDeadline)}`,
     `CRITICAL_EPSILON ${optional(project.criticalEpsilon)}`,
     `TARGET_DURATION ${optional(project.targetDuration)}`,
     "",
@@ -470,8 +497,8 @@ async function runProjectShow(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.ProjectResult.v1",
-      cli_contract_version: 3,
+      schema_version: "Perttool.ProjectResult.v2",
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation: "project.show",
       ok,
@@ -524,6 +551,12 @@ async function runProjectInit(args: readonly string[]): Promise<number> {
     ...(parsed.values.get("velocity") === undefined
       ? {}
       : { velocity: parsed.values.get("velocity")! }),
+    ...(parsed.values.get("initial-milestone-deadline") === undefined
+      ? {}
+      : {
+          initialMilestoneDeadline:
+            parsed.values.get("initial-milestone-deadline")!,
+        }),
   });
   let writeResult: DocumentWriteResult | null = null;
   const output = parsed.values.get("out");
@@ -753,7 +786,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.FormatResult.v1",
-      cli_contract_version: 3,
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation: "document.format",
       ok,
@@ -943,6 +976,12 @@ function taskMutationFromOptions(action: string, parsed: ParsedOptions): Mutatio
         ...(parsed.values.get("description") === undefined
           ? {}
           : { description: parsed.values.get("description")! }),
+        ...(parsed.values.get("not-before") === undefined
+          ? {}
+          : { notBefore: parsed.values.get("not-before")! }),
+        ...(parsed.values.get("deadline") === undefined
+          ? {}
+          : { deadline: parsed.values.get("deadline")! }),
         ...(status === undefined ? {} : { status }),
         ...(priority === undefined ? {} : { priority }),
         ...(requirements.length === 0 ? {} : { requirements }),
@@ -967,7 +1006,7 @@ function taskMutationFromOptions(action: string, parsed: ParsedOptions): Mutatio
     "clear",
     new Set([
       "description", "status", "priority", "owner", "blocked_reason", "source",
-      "tags", "requires",
+      "tags", "requires", "not_before", "deadline",
     ]),
   );
   const addTags = uniqueRepeated(parsed, "add-tag");
@@ -988,6 +1027,12 @@ function taskMutationFromOptions(action: string, parsed: ParsedOptions): Mutatio
       ? {}
       : { description: parsed.values.get("description")! }),
     ...timing,
+    ...(parsed.values.get("not-before") === undefined
+      ? {}
+      : { notBefore: parsed.values.get("not-before")! }),
+    ...(parsed.values.get("deadline") === undefined
+      ? {}
+      : { deadline: parsed.values.get("deadline")! }),
     ...(status === undefined ? {} : { status }),
     ...(priority === undefined ? {} : { priority }),
     ...(parsed.values.get("owner") === undefined
@@ -1002,6 +1047,8 @@ function taskMutationFromOptions(action: string, parsed: ParsedOptions): Mutatio
   };
   const clearConflicts = new Map<TaskClearableField, boolean>([
     ["description", parsed.values.has("description")],
+    ["not_before", parsed.values.has("not-before")],
+    ["deadline", parsed.values.has("deadline")],
     ["status", status !== undefined],
     ["priority", priority !== undefined],
     ["owner", parsed.values.has("owner")],
@@ -1114,6 +1161,9 @@ function milestoneMutationFromOptions(action: string, parsed: ParsedOptions): Mu
           ? {}
           : { description: parsed.values.get("description")! }),
         ...(state === undefined ? {} : { state }),
+        ...(parsed.values.get("deadline") === undefined
+          ? {}
+          : { deadline: parsed.values.get("deadline")! }),
         ...((parsed.repeatedValues.get("tag") ?? []).length === 0
           ? {}
           : { tags: parsed.repeatedValues.get("tag")! }),
@@ -1123,7 +1173,7 @@ function milestoneMutationFromOptions(action: string, parsed: ParsedOptions): Mu
   const clear = enumRepeated<MilestoneClearableField>(
     parsed,
     "clear",
-    new Set(["description", "state", "tags"]),
+    new Set(["description", "state", "deadline", "tags"]),
   );
   const addTags = uniqueRepeated(parsed, "add-tag");
   const removeTags = uniqueRepeated(parsed, "remove-tag");
@@ -1132,6 +1182,7 @@ function milestoneMutationFromOptions(action: string, parsed: ParsedOptions): Mu
     clear.some((field) =>
       (field === "description" && parsed.values.has("description")) ||
       (field === "state" && state !== undefined) ||
+      (field === "deadline" && parsed.values.has("deadline")) ||
       (field === "tags" && (addTags.length > 0 || removeTags.length > 0)))
   ) {
     throw new UsageError("--clear conflicts with another milestone field option");
@@ -1144,6 +1195,9 @@ function milestoneMutationFromOptions(action: string, parsed: ParsedOptions): Mu
       ? {}
       : { description: parsed.values.get("description")! }),
     ...(state === undefined ? {} : { state }),
+    ...(parsed.values.get("deadline") === undefined
+      ? {}
+      : { deadline: parsed.values.get("deadline")! }),
   };
   return {
     kind: "milestone.set",
@@ -1368,7 +1422,7 @@ async function runMutation(
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.MutationResult.v1",
-      cli_contract_version: 3,
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation,
       ok,
@@ -1390,6 +1444,182 @@ async function runMutation(
         if (!parsed.flags.has("diff")) {
           process.stderr.write(
             `PREVIEW ${operation} changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+          );
+        }
+      }
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return ok ? 0 : 1;
+}
+
+function unitMigrationJson(
+  result: UnitMigrationResult,
+  source: string,
+  sourceDigest: string,
+  ok: boolean,
+): Readonly<Record<string, unknown>> {
+  const exact = (
+    value: UnitMigrationResult["convertedFields"][number]["original"],
+  ) => ({
+    numerator: value.numerator.toString(),
+    denominator: value.denominator.toString(),
+    unit: value.unit,
+  });
+  return {
+    schema_version: result.schemaVersion,
+    cli_contract_version: 4,
+    tool_version: TOOL_VERSION,
+    operation: "project.migrate-unit",
+    ok,
+    document_id: result.documentId,
+    source,
+    source_digest: sourceDigest,
+    diagnostics: result.diagnostics.map(jsonDiagnostic),
+    diagnostics_truncated: result.diagnosticsTruncated,
+    unit_migration: result.unitMigration,
+    source_grammar_version: result.sourceGrammarVersion,
+    target_grammar_version: result.targetGrammarVersion,
+    grammar_disposition: result.grammarDisposition,
+    source_unit: result.sourceUnit,
+    target_unit: result.targetUnit,
+    effective_velocity: result.effectiveVelocity === null
+      ? null
+      : {
+          points: exact(result.effectiveVelocity.points),
+          period: exact(result.effectiveVelocity.period),
+        },
+    velocity_disposition: result.velocityDisposition,
+    changed: result.changed,
+    converted_fields: result.convertedFields.map((field) => ({
+      entity_kind: field.entityKind,
+      entity_id: field.entityId,
+      field_path: field.fieldPath,
+      original: exact(field.original),
+      converted: exact(field.converted),
+      canonical_token: field.canonicalToken,
+    })),
+    reversibility: result.reversibility,
+    qualifications: result.qualifications,
+    unavailable_causes: result.unavailableCauses.map((cause) => ({
+      cause: cause.cause,
+      diagnostic_code: cause.diagnosticCode,
+      field_paths: cause.fieldPaths,
+    })),
+    original_digest: result.originalDigest,
+    updated_digest: result.updatedDigest,
+    updated_text: result.updatedText,
+    diff: result.diff,
+    edits: result.edits.map((edit) => ({
+      start_offset: edit.startOffset,
+      end_offset: edit.endOffset,
+      replacement: edit.replacement,
+    })),
+    write: {
+      mode: result.write.mode,
+      target: result.write.target,
+      written: result.write.written,
+    },
+  };
+}
+
+async function runUnitMigration(args: readonly string[]): Promise<number> {
+  const parsed = parseCommandOptions("project.migrate-unit", args);
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("project migrate-unit requires exactly one <file>");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const targetUnit = enumOption<DurationUnit>(
+    requiredOption(parsed, "to-unit"),
+    "to-unit",
+    new Set(["day", "hour", "point"]),
+  )!;
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const sourceOperand = parsed.positionals[0]!;
+  const writeRequest = editingWriteRequest(parsed, sourceOperand);
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "project.migrate-unit",
+      format === "json",
+    );
+  }
+  let result = planUnitMigration(
+    input.text,
+    {
+      targetUnit,
+      ...(parsed.values.get("replacement-velocity") === undefined
+        ? {}
+        : {
+            replacementVelocity:
+              parsed.values.get("replacement-velocity")!,
+          }),
+    },
+    {
+      maxDiagnostics,
+      originalLabel: source,
+      updatedLabel: "candidate",
+    },
+  );
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated ||
+      result.diagnostics.some(({ severity }) => severity === "warning"));
+  const ok = result.ok && !warningFailure;
+  let writeResult: DocumentWriteResult | null = null;
+  if (result.ok) {
+    try {
+      assertExpectedDigest(writeRequest, input.digest);
+      if (ok && writeRequest.mode !== "preview") {
+        writeResult = await commitCandidate(
+          writeRequest,
+          result.updatedText,
+          input.digest,
+        );
+        result = withUnitMigrationWrite(result, writeResult);
+      }
+    } catch (error) {
+      return writeFailureExit(
+        error,
+        "project.migrate-unit",
+        format === "json",
+      );
+    }
+  }
+  if (format === "json") {
+    writeJson(unitMigrationJson(result, source, input.digest, ok));
+  } else {
+    if (ok) {
+      if (writeResult !== null) {
+        process.stderr.write(
+          renderWriteSummary("project.migrate-unit", writeResult),
+        );
+      } else {
+        process.stdout.write(
+          parsed.flags.has("diff")
+            ? (result.diff ?? "")
+            : (result.updatedText ?? ""),
+        );
+        if (!parsed.flags.has("diff")) {
+          process.stderr.write(
+            `PREVIEW project.migrate-unit changed=${result.changed} source_unit=${result.sourceUnit ?? "-"} target_unit=${result.targetUnit} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest ?? "-"}\n`,
           );
         }
       }
@@ -1481,7 +1711,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.MutationResult.v1",
-      cli_contract_version: 3,
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation: "dag.advance",
       ok,
@@ -1861,6 +2091,52 @@ function renderAnalysisText(
     }
     if (resource.resources.length === 0) lines.push("-");
   }
+  if (result.temporal !== null) {
+    const temporalPoint = (
+      point: typeof result.temporal.precedence.tasks[number]["start"],
+    ): string => {
+      const causes = point.unavailableCauses
+        .map(({ cause }) => cause)
+        .join(",") || "-";
+      return [
+        `state=${point.state}`,
+        `relative=${point.relative === null ? "-" : `${point.relative.numerator}/${point.relative.denominator}${durationSuffix(point.relative.unit)}`}`,
+        `calendar=${point.calendar?.sourceText ?? "-"}`,
+        `causes=${causes}`,
+      ].join(" ");
+    };
+    for (const [title, projection] of [
+      ["TEMPORAL PRECEDENCE", result.temporal.precedence],
+      ["TEMPORAL RESOURCE", result.temporal.resource],
+    ] as const) {
+      lines.push(
+        "",
+        title,
+        `STATE ${projection.state}`,
+        `ALGORITHM ${projection.algorithm === null ? "-" : `${projection.algorithm.id}@${projection.algorithm.version} optimal=${projection.algorithm.optimal}`}`,
+        `CONDITIONAL_ON_BLOCKS_RESOLVED ${projection.conditionalOnBlocksResolved}`,
+        `BLOCKED_TASKS ${projection.blockedTaskIds.join(",") || "-"}`,
+      );
+      for (const task of projection.tasks) {
+        lines.push(
+          `${task.taskId} START ${temporalPoint(task.start)} FINISH ${temporalPoint(task.finish)}`,
+        );
+      }
+      if (projection.tasks.length === 0) lines.push("-");
+    }
+    lines.push("", "DEADLINES");
+    for (const evaluation of result.temporal.deadlineEvaluations) {
+      const causes = [
+        ...evaluation.current.unavailableCauses,
+        ...evaluation.precedence.unavailableCauses,
+        ...evaluation.resource.unavailableCauses,
+      ].map(({ cause }) => cause).join(",") || "-";
+      lines.push(
+        `${evaluation.subject.kind}:${evaluation.subject.id} assessment=${evaluation.combinedAssessment} precedence=${evaluation.precedence.assessment ?? evaluation.precedence.state} resource=${evaluation.resource.assessment ?? evaluation.resource.state} conditional=${evaluation.conditionalOnBlocksResolved} causes=${causes}`,
+      );
+    }
+    if (result.temporal.deadlineEvaluations.length === 0) lines.push("-");
+  }
   return `${lines.join("\n")}\n`;
 }
 
@@ -1909,8 +2185,8 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.AnalysisResult.v2",
-      cli_contract_version: 3,
+      schema_version: "Perttool.AnalysisResult.v3",
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation: "dag.analyze",
       ok,
@@ -1919,6 +2195,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
       diagnostics_truncated: result.diagnosticsTruncated,
+      grammar_version: result.grammarVersion,
       mode: result.mode,
       precision: result.precision,
       ...(result.durationUnit === null
@@ -1941,6 +2218,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
         result.resource === null || result.durationUnit === null
           ? null
           : resourceJson(result.resource, result.durationUnit, result.precision),
+      temporal: snakeJson(result.temporal),
     });
   } else {
     if (ok) process.stdout.write(renderAnalysisText(result));
@@ -2056,7 +2334,7 @@ async function runRender(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ExportResult.v1",
-      cli_contract_version: 3,
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation: "dag.render",
       ok,
@@ -2158,7 +2436,7 @@ async function runImport(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ImportResult.v1",
-      cli_contract_version: 3,
+      cli_contract_version: 4,
       tool_version: TOOL_VERSION,
       operation: "dag.import",
       ok,
@@ -2426,7 +2704,15 @@ function renderExplanation(
 function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
   const unit = result.durationUnit!;
   const taskById = new Map(result.tasks.map((task) => [task.id, task]));
+  const authority = result.temporal!.authority;
   const lines = [
+    "START AUTHORITY",
+    `POLICY ${authority.policy}`,
+    `STARTABLE RECOMMENDED ${authority.startableRecommendedTaskIds.join(",") || "-"}`,
+    `DELAYED RECOMMENDED ${authority.delayedRecommendedTaskIds.join(",") || "-"}`,
+    `UNAVAILABLE RECOMMENDED ${authority.unavailableRecommendedTaskIds.join(",") || "-"}`,
+    "DEADLINE FACTS INFORMATIONAL FOR RANKING v1",
+    "",
     `PERTTOOL NEXT ${result.documentId ?? "-"}`,
     `VELOCITY ${result.velocity === null ? "-" : velocityText(result.velocity, result.precision)}`,
     `VELOCITY_FORECAST_UNIT ${result.velocityForecast?.targetUnit ?? "-"}`,
@@ -2476,6 +2762,16 @@ function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
   );
   section("BLOCKED NOW", result.groups.blockedNow, "blocked");
   section("UPCOMING", result.groups.upcoming, "explanation");
+  lines.push("", "TEMPORAL CONTEXT");
+  for (const temporal of result.temporal!.tasks) {
+    const causes = temporal.timeEligibility.unavailableCauses
+      .map(({ cause }) => cause)
+      .join(",") || "-";
+    lines.push(
+      `${temporal.taskId} eligibility=${temporal.timeEligibility.state} release=${temporal.timeEligibility.releaseBound === null ? "-" : `${temporal.timeEligibility.releaseBound.numerator}/${temporal.timeEligibility.releaseBound.denominator}${durationSuffix(temporal.timeEligibility.releaseBound.unit)}`} task_deadline=${temporal.taskDeadline?.sourceText ?? "-"} destination=${temporal.destinationMilestoneId} destination_deadline=${temporal.destinationDeadline?.sourceText ?? "-"} causes=${causes}`,
+    );
+  }
+  if (result.temporal!.tasks.length === 0) lines.push("-");
   return `${lines.join("\n")}\n`;
 }
 
@@ -2527,7 +2823,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     if (format === "json") {
       writeJson({
         schema_version: "Perttool.CliError.v1",
-        cli_contract_version: 3,
+        cli_contract_version: 4,
         tool_version: TOOL_VERSION,
         operation: "dag.next",
         ok: false,
@@ -2547,8 +2843,8 @@ async function runNext(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.NextResult.v3",
-      cli_contract_version: 3,
+      schema_version: "Perttool.NextResult.v4",
+      cli_contract_version: 4,
       recommendation_interface_version: 1,
       tool_version: TOOL_VERSION,
       operation: "dag.next",
@@ -2558,7 +2854,9 @@ async function runNext(args: readonly string[]): Promise<number> {
       source_digest: input.digest,
       diagnostics: result.diagnostics.map(jsonDiagnostic),
       diagnostics_truncated: result.diagnosticsTruncated,
+      grammar_version: result.grammarVersion,
       ...(result.durationUnit === null ? {} : nextJson(result)),
+      temporal: snakeJson(result.temporal),
     });
   } else {
     if (ok) process.stdout.write(renderNextText(result));
@@ -2642,7 +2940,7 @@ function runAgentHelp(args: readonly string[]): number {
     } = projected;
     writeJson({
       schema_version: schemaVersion,
-      cli_contract_version: 3,
+      cli_contract_version: 4,
       ...payload,
     });
   } else {
@@ -2689,6 +2987,8 @@ async function dispatchCommand(
       return runProjectInit(args);
     case "project.show":
       return runProjectShow(args);
+    case "project.migrate-unit":
+      return runUnitMigration(args);
     case "dag.analyze":
       return runAnalyze(args);
     case "dag.next":
@@ -2723,7 +3023,7 @@ async function dispatchCommand(
       args,
     );
   }
-  throw new Error(`no Contract 3 handler for ${descriptor.operation}`);
+  throw new Error(`no Contract 4 handler for ${descriptor.operation}`);
 }
 
 function emitCommandUsage(

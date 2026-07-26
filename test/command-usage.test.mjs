@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { CONTRACT3_COMMAND_HELP_REGISTRY } from "../dist/command/discovery.js";
+import { CONTRACT4_COMMAND_HELP_REGISTRY } from "../dist/command/discovery.js";
 import {
   commandUsageErrorToJson,
   renderCommandUsageError,
@@ -22,7 +22,7 @@ function invalid(argv) {
   return result.error;
 }
 
-test("Contract 3 usage recovery returns the most specific stable help target", () => {
+test("Contract 4 usage recovery returns the most specific stable help target", () => {
   const cases = [
     {
       argv: [],
@@ -171,16 +171,16 @@ test("descriptor conflicts cover direct, conditional, and stdin relationships", 
 
 test("usage suggestions are deterministic members of the resolved registry scope", () => {
   const resources = new Set(
-    CONTRACT3_COMMAND_HELP_REGISTRY
+    CONTRACT4_COMMAND_HELP_REGISTRY
       .filter(({ path: commandPath }) => commandPath.length === 2)
       .map(({ path: commandPath }) => commandPath[0]),
   );
   const projectActions = new Set(
-    CONTRACT3_COMMAND_HELP_REGISTRY
+    CONTRACT4_COMMAND_HELP_REGISTRY
       .filter(({ path: commandPath }) => commandPath[0] === "project")
       .map(({ path: commandPath }) => commandPath[1]),
   );
-  const show = CONTRACT3_COMMAND_HELP_REGISTRY.find(
+  const show = CONTRACT4_COMMAND_HELP_REGISTRY.find(
     ({ operation }) => operation === "project.show",
   );
   assert.ok(show);
@@ -261,7 +261,7 @@ test("valid invocation projection preserves operands, repeatable options, and he
     ],
   );
 
-  for (const descriptor of CONTRACT3_COMMAND_HELP_REGISTRY) {
+  for (const descriptor of CONTRACT4_COMMAND_HELP_REGISTRY) {
     const result = validateCommandInvocation([...descriptor.path, "--help"]);
     assert.equal(result.ok, true, descriptor.path.join(" "));
     assert.equal(result.helpAlias, true);
@@ -290,7 +290,7 @@ test("usage error text and JSON are byte deterministic and recovery-complete", (
     "diagnostics",
   ]);
   assert.equal(json.schema_version, "Perttool.CliError.v1");
-  assert.equal(json.cli_contract_version, 3);
+  assert.equal(json.cli_contract_version, 4);
   assert.equal(json.operation, "project.show");
   assert.equal(json.ok, false);
   assert.deepEqual(json.help_target, {

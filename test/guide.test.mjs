@@ -27,6 +27,7 @@ const topicIds = [
   "syntax.estimate",
   "syntax.duration",
   "syntax.velocity",
+  "syntax.temporal",
   "syntax.indentation",
   "syntax.string",
   "syntax.text",
@@ -35,8 +36,10 @@ const topicIds = [
   "syntax.top-level",
   "analysis",
   "analysis.resources",
+  "analysis.temporal",
   "next",
   "editing",
+  "editing.unit-migration",
   "mermaid",
   "workflows",
   "errors",
@@ -59,7 +62,7 @@ function helpProjection(result) {
   };
 }
 
-test("Contract 3 guide preserves every HelpNode topic and content level", () => {
+test("Contract 4 guide preserves every HelpNode topic and content level", () => {
   const queries = [
     { topicId: null, level: "index" },
     ...topicIds.flatMap((topicId) =>
@@ -71,7 +74,7 @@ test("Contract 3 guide preserves every HelpNode topic and content level", () => 
   for (const { topicId, level } of queries) {
     const guide = getGuide(topicId, level);
     assert.equal(guide.schemaVersion, "Perttool.GuideResult.v1");
-    assert.equal(guide.cliContractVersion, 3);
+    assert.equal(guide.cliContractVersion, 4);
     assert.equal(guide.operation, "guide");
     assert.deepEqual(helpProjection(guide), getHelp(topicId, level));
   }
@@ -94,7 +97,7 @@ test("GuideResult text and JSON match canonical golden projections", async () =>
   const expectedText = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract3-guide-syntax-quick.expected.txt",
+      "golden/help/contract4-guide-syntax-quick.expected.txt",
     ),
     "utf8",
   );

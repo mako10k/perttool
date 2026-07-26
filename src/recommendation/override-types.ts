@@ -36,7 +36,7 @@ export interface OverrideActor {
 }
 
 export interface OverrideRequest {
-  readonly sourceSchemaVersion: "Perttool.NextResult.v3";
+  readonly sourceSchemaVersion: "Perttool.NextResult.v4";
   readonly sourceDigest: string;
   readonly sourceResultDecisionId: string;
   readonly selectedTaskIds: readonly string[];
@@ -49,7 +49,7 @@ export interface OverrideRequest {
 }
 
 export interface OverrideDecisionSource {
-  readonly schemaVersion: "Perttool.NextResult.v3";
+  readonly schemaVersion: "Perttool.NextResult.v4";
   readonly toolVersion: string;
   readonly sourceDigest: string;
   readonly recommendationInterfaceVersion: 1;

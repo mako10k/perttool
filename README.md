@@ -5,54 +5,57 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-The current Contract 3 version is `0.2.0`. Beta releases may contain breaking
-CLI or schema changes. Version `0.2.0` requires Node.js 22 or later. The prior
-`0.1.0` artifact uses CLI Contract 2 and declares Node.js 24.
+The current Contract 4 version is `0.3.0`. Beta releases may contain breaking
+CLI or schema changes. Version `0.3.0` requires Node.js 22 or later. Contract 3
+remains available by pinning `0.2.0`.
 
 ## Run without installing
 
-Use `npx` for an occasional invocation and select Contract 3 explicitly:
+Use `npx` for an occasional invocation and select Contract 4 explicitly:
 
 ```sh
-npx --yes --package=perttool@0.2.0 -- perttool --version
-npx --yes --package=perttool@0.2.0 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.2.0 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.3.0 -- perttool --version
+npx --yes --package=perttool@0.3.0 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.3.0 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.3.0 -- perttool project migrate-unit PLAN.pert --to-unit day --diff
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.2.0 -- perttool --version
-npm exec --yes --package=perttool@0.2.0 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.2.0 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.3.0 -- perttool --version
+npm exec --yes --package=perttool@0.3.0 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.3.0 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.3.0 -- perttool project migrate-unit PLAN.pert --to-unit day --diff
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
-cache. Pinning `0.1.0` selects the prior Contract 2 interface and therefore
-does not accept the commands in this README.
+cache. Pinning `0.2.0` selects Contract 3 and therefore does not accept the
+temporal and migration surface in this README.
 
 ## Install
 
 Install the CLI globally when it is used regularly:
 
 ```sh
-npm install --global perttool@0.2.0
+npm install --global perttool@0.3.0
 perttool --version
 ```
 
-npm `beta` and `latest` both resolve to Contract 3 `0.2.0` after the accepted
-beta was separately promoted to the default tag. `perttool@beta` and
-`perttool@latest` are alternatives to the exact `0.2.0` pin.
+npm `beta` resolves to Contract 4 `0.3.0`. npm `latest` remains Contract 3
+`0.2.0`; publication does not promote it. Use `perttool@beta` as an alternative
+to the exact `0.3.0` pin.
 
 ## Plan files
 
 A `.pert` file is the source of truth and is intended to remain directly
-readable. This minimal plan has one one-day task:
+readable. This temporal plan has one one-day task:
 
 ```text
 project EXAMPLE:
-  version 1
+  version 2
   title "Example plan"
+  as_of 2026-07-26
   duration_unit day
   finish DONE
 
@@ -62,10 +65,13 @@ milestone NOW:
 
 milestone DONE:
   title "Done"
+  deadline 2026-07-28
 
 task WORK NOW -> DONE:
   title "Do the work"
   duration 1d
+  not_before 2026-07-26
+  deadline 2026-07-27
 ```
 
 Save it as `PLAN.pert`, then inspect it with:
@@ -80,7 +86,8 @@ perttool dag next PLAN.pert --format json
 Task duration can use deterministic `day`, `hour`, or relative `point` units.
 Point plans declare a project-wide velocity such as `20p/10d`. Analysis keeps
 the exact point result and reports the time conversion separately as a velocity
-forecast.
+forecast. Grammar version 3 also accepts an exact Fraction such as `1/3d`;
+versions 1 and 2 continue to accept Decimal duration tokens.
 
 ## Maintain a plan through the CLI
 
@@ -118,6 +125,8 @@ perttool project show PLAN.pert --format json
 # Apply the reviewed change atomically.
 perttool task set PLAN.pert WORK \
   --status active \
+  --not-before 2026-07-26 \
+  --deadline 2026-07-27 \
   --write \
   --expect-digest 'sha256:...'
 
@@ -147,6 +156,27 @@ perttool batch apply PLAN.pert \
   --expect-digest 'sha256:...'
 ```
 
+Use the dedicated migration route for exact whole-document conversion between
+Point and time units. Preview before writing; the result inventories every
+converted field and reports grammar upgrades and reversibility:
+
+```sh
+perttool project migrate-unit PLAN.pert --to-unit day --diff
+perttool project migrate-unit PLAN.pert \
+  --to-unit day \
+  --write \
+  --expect-digest 'sha256:...'
+
+# A time-to-Point conversion requires an explicit relationship when needed.
+perttool project migrate-unit PLAN.pert \
+  --to-unit point \
+  --replacement-velocity 20p/10d \
+  --diff
+```
+
+Migration is not a `batch apply` member. Re-read and reanalyze the written
+candidate before making a separate mutation.
+
 ## Command map
 
 | Goal | Command |
@@ -158,6 +188,7 @@ perttool batch apply PLAN.pert \
 | Initialize a project | `perttool project init ...` |
 | Read project metadata | `perttool project show <file>` |
 | Change project metadata | `perttool project set <file> ...` |
+| Migrate project units exactly | `perttool project migrate-unit <file> ...` |
 | Analyze schedules | `perttool dag analyze <file>` |
 | Select next work | `perttool dag next <file>` |
 | Remove completed history | `perttool dag advance <file>` |
@@ -182,20 +213,22 @@ perttool guide editing --level detail --format json
 ## LLM and automation use
 
 Use `--format json` for machine consumers. Check both
-`cli_contract_version == 3` and the result-specific `schema_version` before
-reading the rest of a result. A complete, known `Perttool.NextResult.v3`
-recommendation graph is the task-selection authority; do not infer authority
-from the text summary or from `ready` alone.
+`cli_contract_version == 4` and the result-specific `schema_version` before
+reading the rest of a result. A complete, known, non-truncated
+`Perttool.NextResult.v4` with temporal policy
+`recommendation_v1_plus_release_gate` is required. Start only task IDs in
+`temporal.authority.startable_recommended_task_ids`; do not infer start
+authority from the raw recommended set, the text summary, or `ready` alone.
 
 Mutation JSON returns the candidate text, unified diff, UTF-16 text edits,
 source digest, updated digest, diagnostics, and write result in one envelope.
-Unknown schema versions, incomplete recommendation traces, and `PTREC-*`
-diagnostics must fail closed.
+Unknown schema versions, incomplete recommendation traces, `PTREC-*`
+diagnostics, and future or unavailable temporal eligibility must fail closed.
 
 ## Documentation
 
-- [CLI Contract 3](docs/specs/cli-contract-3.md)
-- [Migration from CLI Contract 2](docs/process/cli-contract-3-migration.md)
+- [Temporal and Unit Interface Contract (CLI Contract 4)](docs/specs/temporal-unit-interface.md)
+- [CLI Contract 3 compatibility baseline](docs/specs/cli-contract-3.md)
 - [DSL grammar](docs/specs/dsl-grammar.md)
 - [Graph semantics](docs/specs/graph-semantics.md)
 - [Analysis semantics](docs/specs/analysis.md)

@@ -1,7 +1,7 @@
 import { checkDocument, type CheckOptions } from "../application/check.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import {
-  GRAMMAR_1_DECLARATION_FIELD_ORDER,
+  TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
 import type {
   DeclarationKind,
@@ -339,6 +339,6 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
     text,
     activeValidation(text, options),
     (candidate) => activeValidation(candidate, options),
-    { fieldOrder: GRAMMAR_1_DECLARATION_FIELD_ORDER },
+    { fieldOrder: TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER },
   );
 }

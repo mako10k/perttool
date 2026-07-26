@@ -9,7 +9,7 @@ import {
   analyzeTargetTemporalDocument,
   selectTargetTemporalTasks,
 } from "../dist/application/target-temporal-analysis.js";
-import { CONTRACT3_COMMAND_REGISTRY } from "../dist/command/discovery.js";
+import { CONTRACT4_COMMAND_REGISTRY } from "../dist/command/discovery.js";
 import {
   TARGET_GRAMMAR_3_CAPABILITY,
 } from "../dist/parser/document-parser.js";
@@ -180,7 +180,9 @@ task WORK START -> FINISH:
     exact.temporal.precedence.tasks[0].finish.calendar.sourceText,
     "2026-07-25T09:20:00Z",
   );
-  assert.equal(publicApi.analyzeDocument(exactSource).ok, false);
+  const publicExact = publicApi.analyzeDocument(exactSource);
+  assert.equal(publicExact.ok, true);
+  assert.equal(publicExact.schemaVersion, "Perttool.AnalysisResult.v3");
 
   const malformed = targetAnalyze(
     exactSource.replace("duration 1/3h", "duration 1/0h"),
@@ -212,7 +214,7 @@ test("target Analysis v3 and Next v4 are deterministic and retain Recommendation
   assert.equal(firstNext.temporal.authority.deadlineFactsUsedForRanking, false);
 });
 
-test("active package root, registry, help, Guide, and CLI remain Contract 3", async () => {
+test("active package root keeps helpers internal while registry, help, Guide, and CLI use Contract 4", async () => {
   for (const targetName of [
     "TARGET_GRAMMAR_3_CAPABILITY",
     "prepareTargetTemporalInputs",
@@ -229,10 +231,10 @@ test("active package root, registry, help, Guide, and CLI remain Contract 3", as
 
   const manifest = JSON.parse(await repositoryFile("package.json"));
   assert.deepEqual(Object.keys(manifest.exports), ["."]);
-  assert.equal(CONTRACT3_COMMAND_REGISTRY.length, 27);
+  assert.equal(CONTRACT4_COMMAND_REGISTRY.length, 28);
   assert.ok(
-    CONTRACT3_COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 3,
+    CONTRACT4_COMMAND_REGISTRY.every(
+      ({ contractVersion }) => contractVersion === 4,
     ),
   );
 
@@ -241,32 +243,32 @@ test("active package root, registry, help, Guide, and CLI remain Contract 3", as
   assert.equal(help.status, 0, help.stderr);
   assert.equal(guide.status, 0, guide.stderr);
   for (const serialized of [help.stdout, guide.stdout]) {
-    assert.equal(serialized.includes("Perttool.AnalysisResult.v3"), false);
-    assert.equal(serialized.includes("Perttool.NextResult.v4"), false);
-    assert.equal(serialized.includes('"not-before"'), false);
-    assert.equal(serialized.includes('"deadline"'), false);
+    assert.equal(serialized.includes("NextResult.v4"), true);
   }
-  assert.equal(JSON.parse(help.stdout).cli_contract_version, 3);
-  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 3);
+  assert.equal(help.stdout.includes("Perttool.AnalysisResult.v3"), true);
+  assert.equal(help.stdout.includes('"not-before"'), true);
+  assert.equal(help.stdout.includes('"deadline"'), true);
+  assert.equal(JSON.parse(help.stdout).cli_contract_version, 4);
+  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 4);
 
   const targetFixture = path.join(
     fixtureDirectory,
     "calendar-offset-v2.pert",
   );
   for (const [route, schemaVersion] of [
-    [["document", "check"], "Perttool.CheckResult.v1"],
-    [["project", "show"], "Perttool.ProjectResult.v1"],
-    [["dag", "analyze"], "Perttool.AnalysisResult.v2"],
-    [["dag", "next"], "Perttool.NextResult.v3"],
+    [["document", "check"], "Perttool.CheckResult.v2"],
+    [["project", "show"], "Perttool.ProjectResult.v2"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v3"],
+    [["dag", "next"], "Perttool.NextResult.v4"],
   ]) {
-    const rejected = runCli([...route, targetFixture, "--format=json"]);
-    assert.equal(rejected.status, 1);
-    assert.equal(rejected.stderr, "");
-    const error = JSON.parse(rejected.stdout);
-    assert.equal(error.schema_version, schemaVersion);
-    assert.equal(error.cli_contract_version, 3);
-    assert.equal(error.ok, false);
-    assert.equal(error.diagnostics.some(({ code }) => code === "PTDSL-005"), true);
+    const accepted = runCli([...route, targetFixture, "--format=json"]);
+    assert.equal(accepted.status, 0);
+    assert.equal(accepted.stderr, "");
+    const result = JSON.parse(accepted.stdout);
+    assert.equal(result.schema_version, schemaVersion);
+    assert.equal(result.cli_contract_version, 4);
+    assert.equal(result.ok, true);
+    assert.equal(result.grammar_version, 2);
   }
 });
 

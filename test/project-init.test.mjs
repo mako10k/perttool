@@ -52,7 +52,7 @@ test("project init returns the deterministic smallest valid document", () => {
 
   assert.equal(result.ok, true);
   assert.equal(result.schemaVersion, "Perttool.InitResult.v1");
-  assert.equal(result.cliContractVersion, 3);
+  assert.equal(result.cliContractVersion, 4);
   assert.equal(result.operation, "project.init");
   assert.equal(result.documentId, "SAMPLE");
   assert.equal(result.source, null);

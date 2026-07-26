@@ -106,7 +106,10 @@ test("Contract 3 backlog and current plan preserve completed acceptance traceabi
     /^milestone CLI_SURFACE_RESET_ACCEPTED:\n  title "CLI-003 file-first maintenance workflow accepted"\n  state reached$/m,
   );
   assert.match(packageCheck, /scripts\/check-package-file-first\.mjs/);
-  assert.match(fileFirstCheck, /installed package file-first acceptance passed/);
+  assert.match(
+    fileFirstCheck,
+    /installed package Contract 4 file-first acceptance passed/,
+  );
   assert.doesNotMatch(fileFirstCheck, /(?:from|import\()\s*["'][^"']*dist\//);
 });
 
@@ -120,14 +123,17 @@ test("Contract 3 has one complete normative acceptance-case sequence", async () 
   );
 
   assert.deepEqual(actualCaseIds, expectedCaseIds);
-  assert.match(specification, /Contract 3 is the active interface in the current source/);
+  assert.match(
+    specification,
+    /Contract 3 remains the compatibility contract published as `0\.2\.0`/,
+  );
   assert.match(
     specification,
     /`CLI_003_FILE_FIRST_ACCEPTANCE` then verified the complete workflow/,
   );
 });
 
-test("Contract 3 is active in source while published 0.1.0 remains Contract 2", async () => {
+test("Contract 3 remains the published compatibility boundary between Contracts 2 and 4", async () => {
   const [currentInterface, targetInterface, migration] = await Promise.all([
     repositoryText("docs/specs/interfaces.md"),
     repositoryText("docs/specs/cli-contract-3.md"),
@@ -137,8 +143,12 @@ test("Contract 3 is active in source while published 0.1.0 remains Contract 2", 
   assert.match(currentInterface, /CLI contract version: 2/);
   assert.match(currentInterface, /superseded CLI Contract 2 command surface/);
   assert.match(targetInterface, /Target CLI contract version: 3/);
-  assert.match(migration, /CLI_002_CONTRACT_V3_CUTOVER` is complete in the current source/);
-  assert.match(migration, /published `0\.1\.0` artifact\s+remains Contract 2/);
+  assert.match(
+    migration,
+    /CLI_002_CONTRACT_V3_CUTOVER` remains the accepted source history for `0\.2\.0`/,
+  );
+  assert.match(migration, /Published `0\.1\.0` remains Contract 2/);
+  assert.match(migration, /published `0\.2\.0` remains Contract 3/);
   assert.match(migration, /There is no `--cli-contract 2`, alias period/);
 
   for (const operation of [

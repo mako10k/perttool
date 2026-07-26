@@ -5,7 +5,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import * as publicApi from "../dist/index.js";
-import { CONTRACT3_COMMAND_REGISTRY } from "../dist/command/discovery.js";
+import { CONTRACT4_COMMAND_REGISTRY } from "../dist/command/discovery.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -90,67 +90,63 @@ test("the public package boundary omits every SU-M2 target capability", async ()
   assert.deepEqual(Object.keys(manifest.exports["."]), ["types", "import"]);
 });
 
-test("the active registry exposes no Contract 4 route, option, or schema", () => {
-  assert.equal(CONTRACT3_COMMAND_REGISTRY.length, 27);
+test("the active registry exposes the complete Contract 4 route, options, and schemas", () => {
+  assert.equal(CONTRACT4_COMMAND_REGISTRY.length, 28);
   assert.ok(
-    CONTRACT3_COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 3,
+    CONTRACT4_COMMAND_REGISTRY.every(
+      ({ contractVersion }) => contractVersion === 4,
     ),
   );
 
-  const paths = CONTRACT3_COMMAND_REGISTRY.map(({ path: commandPath }) =>
+  const paths = CONTRACT4_COMMAND_REGISTRY.map(({ path: commandPath }) =>
     commandPath.join(" ")
   );
-  const options = CONTRACT3_COMMAND_REGISTRY.flatMap(({ options: commandOptions }) =>
+  const options = CONTRACT4_COMMAND_REGISTRY.flatMap(({ options: commandOptions }) =>
     commandOptions.map(({ name }) => name)
   );
-  const schemas = CONTRACT3_COMMAND_REGISTRY.flatMap(
+  const schemas = CONTRACT4_COMMAND_REGISTRY.flatMap(
     ({ resultSchemas }) => resultSchemas,
   );
 
-  assert.equal(paths.includes("project migrate-unit"), false);
+  assert.equal(paths.includes("project migrate-unit"), true);
   for (const option of [
     "deadline",
     "not-before",
     "initial-milestone-deadline",
   ]) {
-    assert.equal(options.includes(option), false, option);
+    assert.equal(options.includes(option), true, option);
   }
   for (const schema of [
     "Perttool.CheckResult.v2",
     "Perttool.ProjectResult.v2",
     "Perttool.AnalysisResult.v3",
     "Perttool.NextResult.v4",
-    "Perttool.UnitMigrationResult.v1",
     "Perttool.UnitMigrationResult.v2",
   ]) {
-    assert.equal(schemas.includes(schema), false, schema);
+    assert.equal(schemas.includes(schema), true, schema);
   }
 });
 
-test("active Contract 3 routes reject Grammar 2 under their existing identities", () => {
+test("active Contract 4 routes accept Grammar 2 under target identities", () => {
   const cases = [
-    [["document", "check"], "Perttool.CheckResult.v1"],
+    [["document", "check"], "Perttool.CheckResult.v2"],
     [["document", "format"], "Perttool.FormatResult.v1"],
-    [["project", "show"], "Perttool.ProjectResult.v1"],
-    [["dag", "analyze"], "Perttool.AnalysisResult.v2"],
-    [["dag", "next"], "Perttool.NextResult.v3"],
+    [["project", "show"], "Perttool.ProjectResult.v2"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v3"],
+    [["dag", "next"], "Perttool.NextResult.v4"],
   ];
 
   for (const [route, schemaVersion] of cases) {
     const result = runCli([...route, targetFixture, "--format=json"]);
-    assert.equal(result.status, 1, `${route.join(" ")}: ${result.stderr}`);
+    assert.equal(result.status, 0, `${route.join(" ")}: ${result.stderr}`);
     assert.equal(result.stderr, "");
     const json = JSON.parse(result.stdout);
     assert.equal(json.schema_version, schemaVersion);
-    assert.equal(json.cli_contract_version, 3);
-    assert.equal(json.ok, false);
-    assert.equal(json.grammar_version ?? null, null);
-    assert.ok(json.diagnostics.length > 0);
-    assert.ok(
-      json.diagnostics.every(({ code }) => code === "PTDSL-005"),
-      route.join(" "),
-    );
+    assert.equal(json.cli_contract_version, 4);
+    assert.equal(json.ok, true);
+    if (schemaVersion !== "Perttool.FormatResult.v1") {
+      assert.equal(json.grammar_version, 2);
+    }
   }
 });
 
@@ -173,19 +169,19 @@ test("the SU-M3 handoff keeps public activation and migration out of scope", asy
   );
 });
 
-test("the accepted SU-M4 rollup selects the SU-M3 work package", async () => {
+test("the accepted delivery rollup selects the SU-M5 work package", async () => {
   const source = await repositoryFile("plans/scheduling-units.pert");
   const result = publicApi.selectNextTasks(source);
   assert.equal(result.ok, true);
   assert.ok(result.recommendation);
   assert.deepEqual(result.groups.ready, [
-    "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
+    "SU_M5_INTEGRATED_ACCEPTANCE",
   ]);
   assert.deepEqual(result.groups.runnableNow, [
-    "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
+    "SU_M5_INTEGRATED_ACCEPTANCE",
   ]);
   assert.deepEqual(result.recommendation.recommendedTaskIds, [
-    "SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE",
+    "SU_M5_INTEGRATED_ACCEPTANCE",
   ]);
   const jointFact = result.recommendation.facts.find(
     ({ id }) =>

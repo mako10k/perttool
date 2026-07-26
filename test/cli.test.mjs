@@ -42,7 +42,7 @@ test("document check JSON is stable and contains no ANSI escape", () => {
   assert.equal(result.stdout.endsWith("\n"), true);
   assert.equal(result.stdout.includes("\u001b"), false);
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.CheckResult.v1");
+  assert.equal(json.schema_version, "Perttool.CheckResult.v2");
   assert.equal(json.document_id, "PARALLEL");
   assert.deepEqual(json.summary, {
     resources: 2,
@@ -157,7 +157,7 @@ test("guide exposes the estimate topic as JSON", () => {
   assert.equal(result.status, 0);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(json.cli_contract_version, 3);
+  assert.equal(json.cli_contract_version, 4);
   assert.equal(json.topic_id, "syntax.estimate");
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
@@ -187,7 +187,7 @@ test("dag analyze defaults to separate precedence and resource JSON results", ()
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.AnalysisResult.v2");
+  assert.equal(json.schema_version, "Perttool.AnalysisResult.v3");
   assert.equal(json.mode, "both");
   assert.equal(json.precedence.makespan.numerator, "6");
   assert.equal(json.resource.makespan.numerator, "8");
@@ -309,7 +309,7 @@ test("dag next JSON separates readiness from the runnable resource subset", () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v3");
+  assert.equal(json.schema_version, "Perttool.NextResult.v4");
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.recommendation.explanation_status.complete, true);
   assert.deepEqual(json.recommendation.recommended_task_ids, ["CORE"]);
@@ -1130,7 +1130,7 @@ test("project show and set expose all metadata without direct source editing", (
   ]);
   assert.equal(shown.status, 0, shown.stderr);
   const shownJson = JSON.parse(shown.stdout);
-  assert.equal(shownJson.schema_version, "Perttool.ProjectResult.v1");
+  assert.equal(shownJson.schema_version, "Perttool.ProjectResult.v2");
   assert.equal(shownJson.operation, "project.show");
   assert.equal(shownJson.document_id, "ALL_FIELDS");
   assert.equal(shownJson.grammar_version, 1);
@@ -1139,10 +1139,21 @@ test("project show and set expose all metadata without direct source editing", (
     version: 1,
     title: "all declaration fields",
     description: "project description",
-    as_of: "2026-07-21T20:00:00+09:00",
+    as_of: {
+      kind: "date_time",
+      source_text: "2026-07-21T20:00:00+09:00",
+      year: 2026,
+      month: 7,
+      day: 21,
+      hour: 20,
+      minute: 0,
+      second: { numerator: "0", denominator: "1" },
+      offset_minutes: 540,
+    },
     duration_unit: "point",
     velocity: "10p/5d",
     finish: "DONE",
+    finish_deadline: null,
     critical_epsilon: "0p",
     target_duration: "20p",
   });

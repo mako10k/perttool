@@ -170,7 +170,7 @@ test("REC-001 through REC-011 have a complete fixture or unit-input baseline", a
   assert.deepEqual(noCandidate.expected.recommended_task_ids, []);
 });
 
-test("NextResult.v3 preserves the stable v2 operational field baseline", async () => {
+test("NextResult.v4 preserves the stable v2 operational field baseline", async () => {
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
   const expected = JSON.parse(await readFile(goldenPath, "utf8"));
   const actual = Object.fromEntries(
@@ -179,7 +179,7 @@ test("NextResult.v3 preserves the stable v2 operational field baseline", async (
       .map(({ case_id, fixture }) => [case_id, runCurrent(fixture)]),
   );
   for (const [caseId, projection] of Object.entries(actual)) {
-    assert.equal(projection.schema_version, "Perttool.NextResult.v3");
+    assert.equal(projection.schema_version, "Perttool.NextResult.v4");
     const { schema_version: _currentSchema, ...currentOperational } = projection;
     const { schema_version: _baselineSchema, ...baselineOperational } = expected[caseId];
     assert.deepEqual(currentOperational, baselineOperational, caseId);

@@ -28,7 +28,7 @@ const planNames = [
   "mvp",
 ];
 const knownContract = {
-  schema_version: "Perttool.NextResult.v3",
+  schema_version: "Perttool.NextResult.v4",
   recommendation_interface_version: 1,
   algorithm_id: "perttool.recommendation-ranking.lexicographic-frontier",
   algorithm_version: 1,
@@ -150,7 +150,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all seventeen self-use plans pass the v3 recommendation shadow gate", async () => {
+test("all seventeen self-use plans pass the v4 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(
@@ -215,6 +215,19 @@ test("all seventeen self-use plans pass the v3 recommendation shadow gate", asyn
     assert.equal(
       json.diagnostics.some(({ code }) => code.startsWith("PTREC-")),
       false,
+    );
+    assert.equal(
+      json.temporal.authority.policy,
+      "recommendation_v1_plus_release_gate",
+    );
+    assert.equal(
+      json.temporal.authority.startable_recommended_task_ids.every(
+        (id) =>
+          recommendation.recommended_task_ids.includes(id) &&
+          json.groups.runnable_now.includes(id),
+      ),
+      true,
+      `${planName}: temporal start authority`,
     );
 
     const readySet = new Set(json.groups.ready);

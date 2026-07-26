@@ -10,6 +10,7 @@
 - Reason taxonomy: [recommendation-reasons.md](recommendation-reasons.md)
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
+- Temporal start authority: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. Purpose
@@ -41,8 +42,9 @@ Resolve semantic or design conflicts in the following order:
 4. normal reasons in the [Recommendation Reason Taxonomy Specification](recommendation-reasons.md)
 5. the normal trace in the [Recommendation Structured Explanation Specification](recommendation-explanation.md)
 6. normal wire identity in the [Recommendation Interface Contract Specification](recommendation-interface.md)
-7. this specification
-8. Graph Semantics, CLI Interface, basic design, process, examples, tests, and implementation
+7. temporal release eligibility and start authority in the [Temporal and Unit Interface Contract](temporal-unit-interface.md)
+8. this specification
+9. Graph Semantics, CLI Interface, basic design, process, examples, tests, and implementation
 
 An override does not reclassify a normal tier. Do not use an override reason code as a normal ranking input or normal Reason Taxonomy code.
 
@@ -92,6 +94,8 @@ A human override does not bypass any of the following:
 - `blocked` status
 - starting an active task again
 - starting a done task
+- a future `not_before` release
+- an unavailable temporal release relationship
 - a simultaneous start set that exceeds applied capacity
 - an invalid document, cycle, undefined reference, or analysis-invariant failure
 
@@ -137,7 +141,7 @@ When one event satisfies multiple conditions, retain every applicable code in th
 
 The following produce a rejected result rather than a valid override artifact:
 
-- `O` contains a non-ready task
+- `O` contains a non-ready or temporally ineligible task
 - `startFeasible(O) == false`
 - the source recommendation is stale or incomplete
 - the selected task's normal decision cannot be referenced from the source graph
@@ -168,7 +172,7 @@ An override reason is not a normal project fact; it is a decision reason asserte
 The request passed to pure validation has the following meaning:
 
 ```text
-source_schema_version          "Perttool.NextResult.v3"
+source_schema_version          "Perttool.NextResult.v4"
 source_digest                  sha256 digest
 source_result_decision_id      string
 selected_task_ids              string[]
@@ -206,7 +210,9 @@ The producer does not perform a network or file lookup for a reference target. D
 
 ## 8. Override validation
 
-Validation is a pure operation whose only inputs are the source `NextResult.v3` and request; it does not change normal ranking.
+Validation is a pure operation whose only inputs are the source
+`NextResult.v4` and request; it does not change normal ranking or temporal
+eligibility.
 
 ```text
 validateOverride(sourceNextResult, request): OverrideValidationResult
@@ -217,12 +223,15 @@ Validation order:
 1. understand the source schema, interface, algorithm, taxonomy, and explanation versions
 2. verify that the source result has `ok=true`, is complete, and is not truncated
 3. verify that the source digest and result decision ID match the request
-4. verify that every selected task is actually ready and has a task decision
-5. derive trigger codes from section 5
-6. evaluate `startFeasible(O)` for selected set `O` exactly, with active allocations and applied capacity
-7. reference from the source trace the negative facts for discouraged tasks, blockers for deferred tasks, and displaced recommended tasks
-8. validate the actor, time, reason, evidence, and negative-fact acknowledgement
-9. generate the canonical artifact and override ID
+4. verify that temporal authority is complete and consistent with the source
+   recommendation
+5. verify that every selected task is actually ready, time-eligible, and has a
+   task decision
+6. derive trigger codes from section 5
+7. evaluate `startFeasible(O)` for selected set `O` exactly, with active allocations and applied capacity
+8. reference from the source trace the negative facts for discouraged tasks, blockers for deferred tasks, and displaced recommended tasks
+9. validate the actor, time, reason, evidence, and negative-fact acknowledgement
+10. generate the canonical artifact and override ID
 
 Do not change the source normal recommendation if a step fails. Do not reinterpret a validation failure as success because of human approval.
 
@@ -248,7 +257,7 @@ When `ok=true`, `override` is non-null; when `ok=false`, `override=null`. This i
 override_contract_version        1
 override_id                      "override:sha256:" + 64 lowercase hex digits
 source:
-  schema_version                 "Perttool.NextResult.v3"
+  schema_version                 "Perttool.NextResult.v4"
   tool_version                   string
   source_digest                  sha256 digest
   recommendation_interface_version 1

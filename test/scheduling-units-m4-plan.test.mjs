@@ -46,8 +46,9 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   assert.doesNotMatch(macro, /^task SU_M4_UNIT_MIGRATION_WORK_PACKAGE /m);
   assert.match(
     macro,
-    /milestone UNIT_MIGRATION_ACCEPTED:[\s\S]*state reached/,
+    /milestone DELIVERY_INPUT_READY:[\s\S]*state reached/,
   );
+  assert.doesNotMatch(macro, /milestone UNIT_MIGRATION_ACCEPTED:/);
   assert.doesNotMatch(macro, /^task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE /m);
 
   assert.match(migration, /Unit migration version: `2`/);

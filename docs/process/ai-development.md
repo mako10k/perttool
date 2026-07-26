@@ -112,18 +112,18 @@ npm publication is outside normal close out. Follow the alpha or beta release ga
 
 Before implementation, use the recommended specification work and open matters in `docs/requirements.md`. Propose the "next task" only after confirming that its hard predecessors are closed in the current checkout.
 
-After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert` plans to the canonical sources. In Stage 3, editing commands and `dag advance` may be used as canonical writers through preview-first, expected-digest, and post-write reanalysis procedures. After MIG-07 completed on 2026-07-23, task selection uses a complete, known `Perttool.NextResult.v3` as normal authority in the following order.
+After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert` plans to the canonical sources. In Stage 3, editing commands and `dag advance` may be used as canonical writers through preview-first, expected-digest, and post-write reanalysis procedures. Contract 4 extends the MIG-07 recommendation gate: task selection uses a complete, known `Perttool.NextResult.v4` and its temporal authority as follows.
 
 1. Run `perttool document check` on `mvp.pert` and the current detail plan to confirm that the plans are valid. Use `perttool project show --format json`, rather than directly viewing the source, to inspect metadata such as project ID, as_of, duration_unit, velocity, and finish
-2. Run `dag analyze` and `dag next --format json` for `mvp.pert`, confirm a known version, complete trace, and no `PTREC-*`, then select a workstream from the macro recommended work package
+2. Run `dag analyze` and `dag next --format json` for `mvp.pert`, confirm a known version, complete trace, temporal policy `recommendation_v1_plus_release_gate`, and no `PTREC-*`, then select a workstream from `startable_recommended_task_ids`
 3. Run `dag analyze` and `dag next --format json` for the detail plan corresponding to that work package, confirm the same consumer gate, then select the detail recommended task
-4. Treat as normal selection either a recommended subset or the recommended set plus exactly one resource-feasible `allowed` task while retaining every recommended task
+4. Treat as normal selection either a startable recommended subset or the startable recommended set plus exactly one time-eligible, resource-feasible `allowed` task while retaining every startable recommended task
 5. Explain the decisive step, higher-priority tasks, and comparison from project facts, and confirm external blocks and available resources
 6. After a task start, completion, block, or capacity change, do not reuse the result; reanalyze the detail plan and the necessary macro plan
 
 When changing project metadata, inspect the `project set` preview or `--diff`, and use the Stage 3 `--write` procedure with an expected digest for persistence. If a project-wide unit change also requires task duration or estimate changes, combine `project.set` and the related mutations in one atomic batch. Do not depend on visual source inspection or manual editing for normal metadata viewing and editing.
 
-Do not directly compare tasks from different detail plans without a macro decision. Do not substitute `groups.ready`, `groups.runnable_now`, or the text summary for a recommendation. With an unknown schema/model version, incomplete or truncated trace, unknown tier, or `PTREC-*`, do not start a task; stop safely. Do not start `deferred` or `discouraged` work under normal authority.
+Do not directly compare tasks from different detail plans without a macro decision. Do not substitute `groups.ready`, `groups.runnable_now`, the raw recommended set, or the text summary for start authority. With an unknown schema/model/temporal-policy version, incomplete or truncated trace, unknown tier, `PTREC-*`, or future or unavailable temporal eligibility, do not start a task; stop safely. Do not start `deferred` or `discouraged` work under normal authority.
 
 The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.md), grammar acceptance, formatter/mutation preview, safe write, Mermaid export/import round trip, and advance Core/CLI are complete and are in Stage 3 self-use. The missing MVP acceptance condition 16 found by the [release-readiness audit](mvp-release-readiness.md) was resolved by MIG-01 through MIG-07, totaling 22p, in the [Recommendation implementation plan](../../plans/recommendation.pert). The [five-plan shadow evaluation](recommendation-shadow-review.md), read-only override validation, normal-authority dry run, unknown-version safe stop, and shared-instruction/help synchronization are accepted. The provisional Recommendation-specific observation is `22p/1d`, and distribution of the same `v0.1.0-alpha.2` artifact through GitHub/npm and registry installation are complete.
 
@@ -173,13 +173,19 @@ after PUBLISH and does not include npm `latest` promotion.
 
 ### 5.1 Adopted Recommendation authority
 
-This section was not enabled solely by publishing `Perttool.NextResult.v3`. Because the self-use shadow gate was met and `AGENTS.md`, `.github/copilot-instructions.md`, help, and safe-stop tests were updated in the same MIG-07 adoption change, normal task selection uses the following as authority.
+MIG-07 established Recommendation version 1 authority. The atomic Contract 4
+cutover adds the temporal release gate without changing ranking. Because
+`AGENTS.md`, `.github/copilot-instructions.md`, help, and safe-stop tests move
+together, normal task selection uses the following as authority.
 
 1. Select a work package from the macro plan's complete JSON recommendation
 2. Reanalyze the selected work package's detail plan and select a task from its complete JSON recommendation
-3. Under normal authority, select only a subset of recommended tasks or a set that retains all of `R` and adds one resource-feasible allowed task
+3. Start only IDs exposed by `startable_recommended_task_ids`; under normal
+   authority, select only a subset of that set or retain it and add one
+   time-eligible, resource-feasible allowed task
 4. Confirm the decisive step, higher-priority tasks, and comparison, and explain the selection from project facts
-5. Stop automatic selection for an unknown schema/version, incomplete trace, or `PTREC-*`
+5. Stop automatic selection for an unknown schema/version or temporal policy,
+   incomplete trace, `PTREC-*`, or future or unavailable temporal eligibility
 6. Reanalyze the detail plan after a detail-task start, completion, block, or capacity change; also reanalyze the macro plan if macro work-package status, roll-up duration, or capacity changes
 
 Human instructions to select `deferred` or `discouraged` are distinct from normal recommendations. Until the override-apply gate is met, do not fabricate an applied artifact; AI presents the difference and the not-yet-enabled audit/apply boundary. Provider-specific prompts, skills, agents, and hooks reach the same rules through the Issue #2 guide and do not add provider-specific priority rules.

@@ -25,7 +25,7 @@ export interface CommandResourceSummary {
 
 export interface CommandHelpResult {
   readonly schemaVersion: "Perttool.CommandHelpResult.v1";
-  readonly cliContractVersion: 3;
+  readonly cliContractVersion: 4;
   readonly toolVersion: string;
   readonly operation: "help";
   readonly ok: boolean;
@@ -81,7 +81,7 @@ const resourceDefinitions: readonly ResourceDefinition[] = Object.freeze([
   Object.freeze({
     name: "project",
     summary: "Inspect and maintain effective project metadata.",
-    actionOrder: Object.freeze(["init", "show", "set"]),
+    actionOrder: Object.freeze(["init", "show", "set", "migrate-unit"]),
   }),
   Object.freeze({
     name: "dag",
@@ -121,7 +121,7 @@ const resourceDefinitions: readonly ResourceDefinition[] = Object.freeze([
 ]);
 
 const helpDescriptor: ProjectedCommandDescriptor = Object.freeze({
-  contractVersion: 3,
+  contractVersion: 4,
   path: Object.freeze(["help"] as const),
   operation: "help",
   summary: "Discovers the complete implemented command contract.",
@@ -263,7 +263,7 @@ const projectedMutationTemplate = projectedDescriptors.find(
   ({ operation }) => operation === "resource.remove",
 );
 if (projectedMutationTemplate === undefined) {
-  throw new Error("Contract 3 mutation descriptor template is missing");
+  throw new Error("Contract 4 mutation descriptor template is missing");
 }
 const mutationTemplate: ProjectedCommandDescriptor = projectedMutationTemplate;
 
@@ -509,19 +509,171 @@ const contract3Descriptors = Object.freeze([
   ...projectedDescriptors,
   ...targetOnlyDescriptors,
 ]);
+
+const commonProjectionOptionNames = new Set([
+  "diff",
+  "write",
+  "expect-digest",
+  "out",
+  "max-diagnostics",
+  "warnings-as-errors",
+  "format",
+  "color",
+]);
+
+function insertedDomainOption(
+  descriptor: ProjectedCommandDescriptor,
+  option: OptionDescriptor,
+): readonly OptionDescriptor[] {
+  if (descriptor.options.some(({ name }) => name === option.name)) {
+    throw new Error(
+      `Contract 4 option --${option.name} already exists on ${descriptor.operation}`,
+    );
+  }
+  const insertionIndex = descriptor.options.findIndex(({ name }) =>
+    commonProjectionOptionNames.has(name)
+  );
+  if (insertionIndex < 0) {
+    return Object.freeze([...descriptor.options, option]);
+  }
+  return Object.freeze([
+    ...descriptor.options.slice(0, insertionIndex),
+    option,
+    ...descriptor.options.slice(insertionIndex),
+  ]);
+}
+
+function contract4Options(
+  descriptor: ProjectedCommandDescriptor,
+): readonly OptionDescriptor[] {
+  let options = descriptor.options;
+  const append = (option: OptionDescriptor): void => {
+    options = insertedDomainOption({ ...descriptor, options }, option);
+  };
+  if (descriptor.operation === "project.init") {
+    append(targetValueOption("initial-milestone-deadline", {
+      valueType: "date-or-date-time",
+      dsl: "milestone.deadline",
+    }));
+  }
+  if (descriptor.operation === "task.add" || descriptor.operation === "task.set") {
+    append(targetValueOption("not-before", {
+      valueType: "date-or-date-time",
+      dsl: "not_before",
+    }));
+    append(targetValueOption("deadline", {
+      valueType: "date-or-date-time",
+      dsl: "deadline",
+    }));
+  }
+  if (descriptor.operation === "milestone.add" || descriptor.operation === "milestone.set") {
+    append(targetValueOption("deadline", {
+      valueType: "date-or-date-time",
+      dsl: "deadline",
+    }));
+  }
+  if (descriptor.operation === "task.set" || descriptor.operation === "milestone.set") {
+    options = Object.freeze(options.map((option) =>
+      option.name !== "clear"
+        ? option
+        : Object.freeze({
+            ...option,
+            enumValues: Object.freeze([
+              ...option.enumValues,
+              ...(descriptor.operation === "task.set"
+                ? ["not_before", "deadline"]
+                : ["deadline"]),
+            ]),
+          })
+    ));
+  }
+  return options;
+}
+
+const contract4SchemaReplacements: Readonly<Record<string, string>> =
+  Object.freeze({
+    "Perttool.CheckResult.v1": "Perttool.CheckResult.v2",
+    "Perttool.ProjectResult.v1": "Perttool.ProjectResult.v2",
+    "Perttool.AnalysisResult.v2": "Perttool.AnalysisResult.v3",
+    "Perttool.NextResult.v3": "Perttool.NextResult.v4",
+  });
+
+function projectContract4Descriptor(
+  descriptor: ProjectedCommandDescriptor,
+): ProjectedCommandDescriptor {
+  return Object.freeze({
+    ...descriptor,
+    contractVersion: 4,
+    options: contract4Options(descriptor),
+    resultSchemas: Object.freeze(descriptor.resultSchemas.map(
+      (schema) => contract4SchemaReplacements[schema] ?? schema,
+    )),
+  });
+}
+
+function unitMigrationDescriptor(): ProjectedCommandDescriptor {
+  return Object.freeze({
+    contractVersion: 4,
+    path: Object.freeze(["project", "migrate-unit"] as const),
+    operation: "project.migrate-unit",
+    summary: "Previews exact whole-document Point and time-unit migration.",
+    operands: Object.freeze([
+      targetOperand("file", 0, "path-or-stdin"),
+    ]),
+    options: Object.freeze([
+      targetValueOption("to-unit", {
+        valueType: "duration-unit",
+        required: true,
+        enumValues: ["day", "hour", "point"],
+      }),
+      targetValueOption("replacement-velocity", {
+        valueType: "velocity",
+      }),
+      ...mutationTemplate.options,
+    ]),
+    input: "document",
+    output: mutationTemplate.output,
+    stdin: mutationTemplate.stdin,
+    effect: "preview",
+    resultSchemas: Object.freeze([
+      "Perttool.UnitMigrationResult.v2",
+      "Perttool.CliError.v1",
+    ]),
+    exitStatuses: mutationTemplate.exitStatuses,
+    examples: Object.freeze([
+      Object.freeze({
+        id: "preview",
+        invocation:
+          "perttool project migrate-unit plan.pert --to-unit day --diff",
+        summary: "Preview exact Point-to-day migration.",
+      }),
+      Object.freeze({
+        id: "replacement",
+        invocation:
+          "perttool project migrate-unit plan.pert --to-unit point --replacement-velocity 8p/4h --diff",
+        summary: "Preview time-to-Point migration with an explicit relationship.",
+      }),
+    ]),
+  });
+}
+
+const contract4Descriptors = Object.freeze([
+  ...contract3Descriptors.map(projectContract4Descriptor),
+  unitMigrationDescriptor(),
+]);
 const projectedByPath = new Map(
-  contract3Descriptors.map((descriptor) => [pathKey(descriptor.path), descriptor]),
+  contract4Descriptors.map((descriptor) => [pathKey(descriptor.path), descriptor]),
 );
 const orderedDescriptors: ProjectedCommandDescriptor[] = [helpDescriptor];
 
 const guideDescriptor = projectedByPath.get("guide");
 if (guideDescriptor === undefined) {
-  throw new Error("Contract 3 guide descriptor is missing");
+  throw new Error("Contract 4 guide descriptor is missing");
 }
 orderedDescriptors.push(guideDescriptor);
 
 for (const resource of resourceDefinitions) {
-  const commands = contract3Descriptors
+  const commands = contract4Descriptors
     .filter(
       (descriptor) =>
         descriptor.path.length === 2 && descriptor.path[0] === resource.name,
@@ -532,7 +684,7 @@ for (const resource of resourceDefinitions) {
         - resource.actionOrder.indexOf(right.path[1]!),
     );
   if (commands.length === 0) {
-    throw new Error(`Contract 3 resource ${resource.name} has no commands`);
+    throw new Error(`Contract 4 resource ${resource.name} has no commands`);
   }
   if (
     commands.length !== resource.actionOrder.length
@@ -540,7 +692,7 @@ for (const resource of resourceDefinitions) {
       (descriptor, index) => descriptor.path[1] !== resource.actionOrder[index],
     )
   ) {
-    throw new Error(`Contract 3 resource ${resource.name} action order is incomplete`);
+    throw new Error(`Contract 4 resource ${resource.name} action order is incomplete`);
   }
   orderedDescriptors.push(...commands);
 }
@@ -549,29 +701,29 @@ if (
   new Set(orderedDescriptors.map((descriptor) => pathKey(descriptor.path))).size
   !== orderedDescriptors.length
 ) {
-  throw new Error("duplicate Contract 3 command path");
+  throw new Error("duplicate Contract 4 command path");
 }
 if (
   new Set(orderedDescriptors.map(({ operation }) => operation)).size
   !== orderedDescriptors.length
 ) {
-  throw new Error("duplicate Contract 3 command operation");
+  throw new Error("duplicate Contract 4 command operation");
 }
-if (orderedDescriptors.length !== contract3Descriptors.length + 1) {
-  throw new Error("Contract 3 command projection has an unregistered resource");
+if (orderedDescriptors.length !== contract4Descriptors.length + 1) {
+  throw new Error("Contract 4 command projection has an unregistered resource");
 }
 
-export const CONTRACT3_COMMAND_REGISTRY:
+export const CONTRACT4_COMMAND_REGISTRY:
 readonly ProjectedCommandDescriptor[] = Object.freeze(orderedDescriptors);
 
-export const CONTRACT3_COMMAND_HELP_REGISTRY = CONTRACT3_COMMAND_REGISTRY;
+export const CONTRACT4_COMMAND_HELP_REGISTRY = CONTRACT4_COMMAND_REGISTRY;
 
 export function commandRegistryToJson(): readonly Readonly<Record<string, unknown>>[] {
-  return CONTRACT3_COMMAND_REGISTRY.map(commandDescriptorToJson);
+  return CONTRACT4_COMMAND_REGISTRY.map(commandDescriptorToJson);
 }
 
-const contract3CommandsByPath = new Map(
-  CONTRACT3_COMMAND_HELP_REGISTRY.map(
+const contract4CommandsByPath = new Map(
+  CONTRACT4_COMMAND_HELP_REGISTRY.map(
     (descriptor) => [pathKey(descriptor.path), descriptor],
   ),
 );
@@ -610,7 +762,7 @@ function result(
 ): CommandHelpResult {
   return Object.freeze({
     schemaVersion: "Perttool.CommandHelpResult.v1",
-    cliContractVersion: 3,
+    cliContractVersion: 4,
     toolVersion: TOOL_VERSION,
     operation: "help",
     ok: diagnostics.length === 0,
@@ -636,13 +788,13 @@ export function getCommandDiscovery(
     return result(
       query,
       resourceSummaries,
-      CONTRACT3_COMMAND_HELP_REGISTRY,
+      CONTRACT4_COMMAND_HELP_REGISTRY,
       [],
     );
   }
 
   if (query.action === null) {
-    const topLevel = contract3CommandsByPath.get(query.resource);
+    const topLevel = contract4CommandsByPath.get(query.resource);
     if (topLevel !== undefined && topLevel.path.length === 1) {
       return result(query, [], [topLevel], []);
     }
@@ -670,7 +822,7 @@ export function getCommandDiscovery(
     return result(
       query,
       [resource],
-      CONTRACT3_COMMAND_HELP_REGISTRY.filter(
+      CONTRACT4_COMMAND_HELP_REGISTRY.filter(
         (descriptor) =>
           descriptor.path.length === 2
           && descriptor.path[0] === query.resource,
@@ -696,7 +848,7 @@ export function getCommandDiscovery(
       ],
     );
   }
-  const command = contract3CommandsByPath.get(
+  const command = contract4CommandsByPath.get(
     `${query.resource}\0${query.action}`,
   );
   if (command === undefined) {
@@ -828,7 +980,7 @@ export function renderCommandHelpResult(
       ({ path }) => path.length === 1,
     );
     const lines = [
-      "perttool command catalog (CLI Contract 3)",
+      "perttool command catalog (CLI Contract 4)",
       "",
       "Top-level commands:",
       ...topLevel.map(

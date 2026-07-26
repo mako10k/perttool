@@ -1,14 +1,5 @@
 import { createHash } from "node:crypto";
 import {
-  buildResidualGraph,
-} from "../analysis/graph.js";
-import {
-  analyzePrecedence,
-} from "../analysis/precedence.js";
-import {
-  analyzeResources,
-} from "../analysis/resource.js";
-import {
   evaluateTemporalDeadlines,
   type DeadlineEvaluation,
   type DeadlineUnavailableCause,
@@ -21,7 +12,10 @@ import {
   analyzeTemporalResourceSchedule,
   type TemporalResourceSchedule,
 } from "../analysis/temporal-resource.js";
-import type { AnalysisResult } from "./analyze.js";
+import {
+  analyzeDocument as analyzeBaseDocument,
+  type AnalysisResult,
+} from "./analyze.js";
 import {
   selectNextTasksFromAnalysis,
   type NextOptions,
@@ -43,11 +37,7 @@ import {
 } from "../model/rational.js";
 import { fieldNamed } from "../model/syntax.js";
 import type { TargetCalendarValue } from "../model/target-calendar.js";
-import {
-  createVelocityConversion,
-  type DurationUnit,
-  type Velocity,
-} from "../model/units.js";
+import type { DurationUnit, Velocity } from "../model/units.js";
 import type {
   TargetGrammar3Capability,
 } from "../parser/document-parser.js";
@@ -507,54 +497,6 @@ function scheduleProjection(
   });
 }
 
-function validatedBaseAnalysis(
-  validated: TargetGrammar3ValidatedDocument,
-  options: TargetTemporalAnalysisOptions,
-): AnalysisResult {
-  const graph = buildResidualGraph(validated.document);
-  const capacityOverrides = options.capacityOverrides ?? new Map();
-  for (const [id, capacity] of capacityOverrides) {
-    if (!graph.resources.has(id)) {
-      throw new TypeError(`unknown target capacity override ${id}`);
-    }
-    if (!Number.isSafeInteger(capacity) || capacity < 0) {
-      throw new TypeError(
-        `target capacity override ${id} must be a nonnegative safe integer`,
-      );
-    }
-  }
-  const maxPaths = options.maxPaths ?? 100;
-  if (!Number.isSafeInteger(maxPaths) || maxPaths < 0) {
-    throw new TypeError("target maxPaths must be a nonnegative safe integer");
-  }
-  const precedence = analyzePrecedence(graph, maxPaths);
-  const resource = analyzeResources(
-    graph,
-    precedence,
-    capacityOverrides,
-    maxPaths,
-  );
-  return Object.freeze({
-    ok: true,
-    document: validated.document,
-    documentId: graph.project.id,
-    diagnostics: Object.freeze([]),
-    diagnosticsTruncated: false,
-    mode: "both",
-    precision: options.precision ?? 3,
-    capacityOverrides,
-    durationUnit: graph.durationUnit,
-    velocity: graph.velocity,
-    velocityForecast: createVelocityConversion(
-      graph.durationUnit,
-      graph.velocity,
-    ),
-    criticalEpsilon: graph.criticalEpsilon,
-    precedence,
-    resource,
-  });
-}
-
 function failure(
   documentId: string | null,
   grammarVersion: number | null,
@@ -589,7 +531,15 @@ export function analyzeTargetTemporalDocument(
   }
   const validated = checked.validatedDocument;
   const inputs = projectTargetTemporalInputs(validated);
-  const base = validatedBaseAnalysis(validated, options);
+  const base = analyzeBaseDocument(text, options);
+  if (!base.ok || base.document === null) {
+    return failure(
+      base.documentId,
+      validated.grammarVersion,
+      base.diagnostics,
+      base.diagnosticsTruncated,
+    );
+  }
   const precedenceSchedule = analyzeTemporalPrecedenceSchedule(
     validated,
     inputs,
@@ -640,8 +590,8 @@ export function analyzeTargetTemporalDocument(
       ),
       deadlineEvaluations,
     }),
-    diagnostics: checked.diagnostics,
-    diagnosticsTruncated: checked.diagnosticsTruncated,
+    diagnostics: base.diagnostics,
+    diagnosticsTruncated: base.diagnosticsTruncated,
   });
 }
 
@@ -654,6 +604,9 @@ function timeEligibility(
   if (input.status === "active" || input.status === "done") {
     state = "not_applicable";
     code = "task_already_started";
+  } else if (input.declaredNotBefore === null) {
+    state = "eligible";
+    code = "no_not_before";
   } else if (input.release.state === "unavailable") {
     state = "unavailable";
     code = "temporal_eligibility_unavailable";
@@ -688,7 +641,8 @@ function timeEligibility(
       factIds: Object.freeze([factId]),
     }),
     facts: Object.freeze([fact]),
-    unavailableCauses: input.release.unavailableCauses,
+    unavailableCauses:
+      state === "unavailable" ? input.release.unavailableCauses : [],
   });
 }
 
@@ -764,7 +718,12 @@ export function selectTargetTemporalTasks(
     options,
   );
   if (!base.ok || base.recommendation === null) {
-    throw new Error("validated target analysis did not produce NextResult v3");
+    return failure(
+      analyzed.documentId,
+      analyzed.grammarVersion,
+      base.diagnostics,
+      base.diagnosticsTruncated,
+    );
   }
   const checked = validateTargetGrammar3Document(text, capability, options);
   const validated = checked.validatedDocument!;

@@ -24,7 +24,7 @@ function run(args, options = {}) {
   });
 }
 
-test("NextResult.v3 publishes the same complete recommendation from Core and CLI", async () => {
+test("NextResult.v4 publishes the same complete recommendation from Core and CLI", async () => {
   const source = await readFile(path.join(root, fixture));
   const sourceDigest = digestDocumentBytes(source);
   const core = selectNextTasks(source.toString("utf8"), { sourceDigest });
@@ -34,7 +34,8 @@ test("NextResult.v3 publishes the same complete recommendation from Core and CLI
   const command = run(["dag", "next", fixture, "--format=json"]);
   assert.equal(command.status, 0, command.stderr);
   const json = JSON.parse(command.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v3");
+  assert.equal(json.schema_version, "Perttool.NextResult.v4");
+  assert.equal(json.cli_contract_version, 4);
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.source_digest, sourceDigest);
   assert.deepEqual(
@@ -51,7 +52,7 @@ test("NextResult.v3 publishes the same complete recommendation from Core and CLI
   );
 });
 
-test("NextResult.v3 complete empty recommendation matches its JSON golden", async () => {
+test("NextResult.v4 complete empty recommendation preserves v3 fields and adds temporal authority", async () => {
   const command = run([
     "dag",
     "next",
@@ -65,7 +66,32 @@ test("NextResult.v3 complete empty recommendation matches its JSON golden", asyn
       "utf8",
     ),
   );
-  assert.deepEqual(JSON.parse(command.stdout), expected);
+  const actual = JSON.parse(command.stdout);
+  const {
+    grammar_version: grammarVersion,
+    temporal,
+    ...retained
+  } = actual;
+  assert.deepEqual(retained, {
+    ...expected,
+    schema_version: "Perttool.NextResult.v4",
+    cli_contract_version: 4,
+  });
+  assert.equal(grammarVersion, 1);
+  assert.deepEqual(temporal.authority, {
+    policy: "recommendation_v1_plus_release_gate",
+    recommendation_algorithm: {
+      id: "perttool.recommendation-ranking.lexicographic-frontier",
+      version: 1,
+    },
+    deadline_facts_used_for_ranking: false,
+    time_eligible_task_ids: ["TASK_BLOCKED"],
+    time_ineligible_task_ids: [],
+    time_eligibility_unavailable_task_ids: [],
+    startable_recommended_task_ids: [],
+    delayed_recommended_task_ids: [],
+    unavailable_recommended_task_ids: [],
+  });
   assert.equal(expected.recommendation.task_decisions.length, 0);
   assert.equal(expected.recommendation.result_decision.recommended_task_ids.length, 0);
 });
@@ -74,13 +100,13 @@ test("dag next text publishes four tier sections and preserves operational secti
   const command = run(["dag", "next", fixture, "--color=never"]);
   assert.equal(command.status, 0, command.stderr);
   const expected = await readFile(
-    path.join(testDirectory, "golden/recommendation/v3-text.expected.txt"),
+    path.join(testDirectory, "golden/recommendation/v4-text.expected.txt"),
     "utf8",
   );
   assert.equal(command.stdout, expected);
 });
 
-test("NextResult.v3 JSON is byte deterministic for the same snapshot and options", () => {
+test("NextResult.v4 JSON is byte deterministic for the same snapshot and options", () => {
   const first = run(["dag", "next", fixture, "--format=json"]);
   const second = run(["dag", "next", fixture, "--format=json"]);
   assert.equal(first.status, 0, first.stderr);
@@ -104,11 +130,11 @@ test("CLI recommendation provenance preserves the raw BOM-bound source digest", 
   );
 });
 
-test("dag next command help identifies the breaking v3 consumer boundary", () => {
+test("dag next command help identifies the breaking v4 consumer boundary", () => {
   const command = run(["dag", "next", "--help"]);
   assert.equal(command.status, 0, command.stderr);
-  assert.match(command.stdout, /Perttool\.NextResult\.v3/);
-  assert.match(command.stdout, /CLI contract: 3/);
+  assert.match(command.stdout, /Perttool\.NextResult\.v4/);
+  assert.match(command.stdout, /CLI contract: 4/);
   assert.match(command.stdout, /Output: formats=text,json/);
 });
 
@@ -130,7 +156,7 @@ test("text derives a later parallel recommendation rule from the Core summary", 
   );
 });
 
-test("recommendation invariant failure exposes no partial v3 Core result", async () => {
+test("recommendation invariant failure exposes no partial v4 Core result", async () => {
   const source = await readFile(path.join(root, fixture), "utf8");
   const result = selectNextTasks(source, { sourceDigest: "invalid-digest" });
   const actual = {

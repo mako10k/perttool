@@ -90,9 +90,10 @@ function understandsExpression(expression) {
 
 function understandsAuthorityContract(result) {
   const recommendation = result.recommendation;
+  const authority = result.temporal?.authority;
   const omitted = recommendation?.explanation_status?.omitted_counts;
   if (
-    result.schema_version !== "Perttool.NextResult.v3" ||
+    result.schema_version !== "Perttool.NextResult.v4" ||
     result.recommendation_interface_version !== 1 ||
     result.ok !== true ||
     recommendation == null ||
@@ -108,6 +109,17 @@ function understandsAuthorityContract(result) {
     recommendation.explanation_status?.complete !== true ||
     recommendation.explanation_status.decisive_chain_complete !== true ||
     recommendation.explanation_status.truncated !== false ||
+    authority?.policy !== "recommendation_v1_plus_release_gate" ||
+    authority.recommendation_algorithm?.id !== recommendation.algorithm.id ||
+    authority.recommendation_algorithm?.version !==
+      recommendation.algorithm.version ||
+    authority.deadline_facts_used_for_ranking !== false ||
+    !Array.isArray(authority.time_eligible_task_ids) ||
+    !Array.isArray(authority.time_ineligible_task_ids) ||
+    !Array.isArray(authority.time_eligibility_unavailable_task_ids) ||
+    !Array.isArray(authority.startable_recommended_task_ids) ||
+    !Array.isArray(authority.delayed_recommended_task_ids) ||
+    !Array.isArray(authority.unavailable_recommended_task_ids) ||
     omitted == null ||
     ![
       "decision_steps",
@@ -170,7 +182,23 @@ function understandsAuthorityContract(result) {
       decision?.tier === "recommended" &&
       decision.recommended_set_member === true
     );
-  });
+  }) &&
+    authority.startable_recommended_task_ids.every(
+      (id) =>
+        recommendation.recommended_task_ids.includes(id) &&
+        result.groups.runnable_now.includes(id) &&
+        authority.time_eligible_task_ids.includes(id),
+    ) &&
+    authority.delayed_recommended_task_ids.every(
+      (id) =>
+        recommendation.recommended_task_ids.includes(id) &&
+        authority.time_ineligible_task_ids.includes(id),
+    ) &&
+    authority.unavailable_recommended_task_ids.every(
+      (id) =>
+        recommendation.recommended_task_ids.includes(id) &&
+        authority.time_eligibility_unavailable_task_ids.includes(id),
+    );
 }
 
 function evaluateNormalSelection(result, requestedTaskIds) {
@@ -182,9 +210,10 @@ function evaluateNormalSelection(result, requestedTaskIds) {
     };
   }
   const recommendation = result.recommendation;
+  const authority = result.temporal.authority;
   const selectedTaskIds =
     requestedTaskIds === undefined
-      ? recommendation.recommended_task_ids
+      ? authority.startable_recommended_task_ids
       : requestedTaskIds;
   if (selectedTaskIds.length === 0) {
     return {
@@ -195,7 +224,11 @@ function evaluateNormalSelection(result, requestedTaskIds) {
   }
   if (
     new Set(selectedTaskIds).size !== selectedTaskIds.length ||
-    selectedTaskIds.some((id) => !result.groups.ready.includes(id))
+    selectedTaskIds.some(
+      (id) =>
+        !result.groups.ready.includes(id) ||
+        !authority.time_eligible_task_ids.includes(id),
+    )
   ) {
     return {
       status: "safe_stop",
@@ -212,6 +245,9 @@ function evaluateNormalSelection(result, requestedTaskIds) {
   if (
     selectedTaskIds.every(
       (id) => decisionByTask.get(id)?.tier === "recommended",
+    ) &&
+    selectedTaskIds.every((id) =>
+      authority.startable_recommended_task_ids.includes(id)
     )
   ) {
     return {
@@ -244,7 +280,7 @@ function evaluateNormalSelection(result, requestedTaskIds) {
   };
 }
 
-test("MIG-07 dry-run adopts only the documented normal authority", async () => {
+test("Contract 4 dry-run adopts only the documented temporal normal authority", async () => {
   const critical = runNext(
     "test/fixtures/recommendation/rec-001-critical-priority.pert",
   );
@@ -286,13 +322,13 @@ test("MIG-07 dry-run adopts only the documented normal authority", async () => {
   assert.deepEqual(actual, expected.normal_authority);
 });
 
-test("MIG-07 dry-run safely stops for unknown or incomplete authority semantics", async () => {
+test("Contract 4 dry-run safely stops for unknown or incomplete authority semantics", async () => {
   const source = runNext(
     "test/fixtures/recommendation/rec-001-critical-priority.pert",
   );
   const cases = [
     ["schema_version", (json) => {
-      json.schema_version = "Perttool.NextResult.v4";
+      json.schema_version = "Perttool.NextResult.v3";
     }],
     ["recommendation_interface_version", (json) => {
       json.recommendation_interface_version = 2;
@@ -364,4 +400,32 @@ test("MIG-07 dry-run safely stops for unknown or incomplete authority semantics"
     ),
   );
   assert.deepEqual(actual, expected.safe_stop);
+});
+
+test("Contract 4 authority stops for future release and unknown temporal policy", () => {
+  const future = runNext(
+    "test/fixtures/temporal-units/calendar-date-v2.pert",
+  );
+  assert.deepEqual(
+    future.temporal.authority.delayed_recommended_task_ids,
+    ["LEAP_WINDOW"],
+  );
+  assert.deepEqual(evaluateNormalSelection(future), {
+    status: "no_start",
+    reason: "empty_selection",
+    selected_task_ids: [],
+  });
+  assert.deepEqual(evaluateNormalSelection(future, ["LEAP_WINDOW"]), {
+    status: "safe_stop",
+    reason: "ineligible_selection",
+    selected_task_ids: [],
+  });
+
+  const unknown = structuredClone(future);
+  unknown.temporal.authority.policy = "unknown";
+  assert.deepEqual(evaluateNormalSelection(unknown), {
+    status: "safe_stop",
+    reason: "unknown_or_incomplete_contract",
+    selected_task_ids: [],
+  });
 });

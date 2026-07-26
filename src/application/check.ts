@@ -7,8 +7,12 @@ import {
 } from "../model/diagnostics.js";
 import type { DocumentNode } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
+import type { TargetCalendarValue } from "../model/target-calendar.js";
 import { parseDocument } from "../parser/document-parser.js";
 import { validateDocument } from "../semantic/validator.js";
+import {
+  projectDeclaredCalendarValue,
+} from "../model/target-calendar.js";
 
 export interface CheckSummary {
   readonly resources: number;
@@ -19,6 +23,23 @@ export interface CheckSummary {
   readonly warnings: number;
 }
 
+export interface MilestoneDeadlineInput {
+  readonly milestoneId: string;
+  readonly deadline: TargetCalendarValue;
+}
+
+export interface TaskTemporalConstraint {
+  readonly taskId: string;
+  readonly notBefore: TargetCalendarValue | null;
+  readonly deadline: TargetCalendarValue | null;
+}
+
+export interface TemporalInputs {
+  readonly anchor: TargetCalendarValue | null;
+  readonly milestoneDeadlines: readonly MilestoneDeadlineInput[];
+  readonly taskConstraints: readonly TaskTemporalConstraint[];
+}
+
 export interface CheckResult {
   readonly ok: boolean;
   readonly document: DocumentNode;
@@ -27,10 +48,63 @@ export interface CheckResult {
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticsTruncated: boolean;
   readonly summary: CheckSummary;
+  readonly temporalInputs: TemporalInputs | null;
 }
 
 export interface CheckOptions {
   readonly maxDiagnostics?: number;
+}
+
+function temporalInputs(
+  document: DocumentNode,
+  parseFailed: boolean,
+): TemporalInputs | null {
+  if (parseFailed) return null;
+  const project = document.declarations.find(
+    (declaration) => declaration.kind === "project",
+  );
+  const anchorField = project === undefined
+    ? undefined
+    : fieldNamed(project, "as_of");
+  const anchor = anchorField === undefined
+    ? null
+    : projectDeclaredCalendarValue(anchorField.value);
+  if (anchorField !== undefined && anchor === null) return null;
+
+  const milestoneDeadlines: MilestoneDeadlineInput[] = [];
+  const taskConstraints: TaskTemporalConstraint[] = [];
+  for (const declaration of document.declarations) {
+    if (declaration.kind === "milestone") {
+      const deadlineField = fieldNamed(declaration, "deadline");
+      if (deadlineField === undefined) continue;
+      const deadline = projectDeclaredCalendarValue(deadlineField.value);
+      if (deadline === null) return null;
+      milestoneDeadlines.push({ milestoneId: declaration.id, deadline });
+      continue;
+    }
+    if (declaration.kind !== "task") continue;
+    const notBeforeField = fieldNamed(declaration, "not_before");
+    const deadlineField = fieldNamed(declaration, "deadline");
+    if (notBeforeField === undefined && deadlineField === undefined) continue;
+    const notBefore = notBeforeField === undefined
+      ? null
+      : projectDeclaredCalendarValue(notBeforeField.value);
+    const deadline = deadlineField === undefined
+      ? null
+      : projectDeclaredCalendarValue(deadlineField.value);
+    if (
+      (notBeforeField !== undefined && notBefore === null) ||
+      (deadlineField !== undefined && deadline === null)
+    ) {
+      return null;
+    }
+    taskConstraints.push({
+      taskId: declaration.id,
+      notBefore,
+      deadline,
+    });
+  }
+  return { anchor, milestoneDeadlines, taskConstraints };
 }
 
 export function checkDocument(text: string, options: CheckOptions = {}): CheckResult {
@@ -73,5 +147,6 @@ export function checkDocument(text: string, options: CheckOptions = {}): CheckRe
     diagnostics,
     diagnosticsTruncated: parsed.diagnosticsTruncated || limited.truncated,
     summary,
+    temporalInputs: temporalInputs(parsed.document, parseFailed),
   };
 }

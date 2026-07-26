@@ -13,10 +13,10 @@ Contract 3 is a breaking post-beta CLI reset. The release decision selects
 suffix-free `0.2.0` as its first package version. Version selection does not
 authorize publication.
 
-`CLI_002_CONTRACT_V3_CUTOVER` is complete in the current source, so Contract 3
-is now its active public interface. The already published `0.1.0` artifact
-remains Contract 2; the local cutover does not mutate that package or authorize
-a new publication.
+`CLI_002_CONTRACT_V3_CUTOVER` remains the accepted source history for `0.2.0`.
+Published `0.1.0` remains Contract 2, published `0.2.0` remains Contract 3,
+and the current source has advanced atomically to Contract 4 for the
+separately gated `0.3.0` release.
 
 The cutover:
 
@@ -80,9 +80,8 @@ release.
 The compatibility window is documentation and prerelease review before a
 Contract 3 release is published. Runtime dual emission is not provided.
 
-- The published `0.1.0` package remains the last current Contract 2 artifact.
-- In the current source and future Contract 3 packages, Contract 3 works and
-  the renamed Contract 2 spellings
+- Published `0.1.0` remains the Contract 2 artifact.
+- Explicitly pinned `0.2.0` uses Contract 3, and the renamed Contract 2 spellings
   return exit 2 with a Contract 3 `help_target`.
 - There is no `--cli-contract 2`, alias period, or automatic command rewrite.
 - Consumers needing more migration time pin the last Contract 2 package.

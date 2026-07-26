@@ -146,7 +146,7 @@ test("point input projection retains effective velocity and exact point values",
   ]);
 });
 
-test("Grammar 3 fractions are accepted while active Contract 3 stays closed", () => {
+test("Grammar 3 fractions are accepted by active Contract 4", () => {
   const text = `project FRACTIONAL_TEMPORAL:
   version 3
   title "fractional temporal input"
@@ -180,7 +180,7 @@ task WORK START -> FINISH:
     result.projection.tasks[0].release.relationship.state,
     "available",
   );
-  assert.equal(publicApi.checkDocument(text).ok, false);
+  assert.equal(publicApi.checkDocument(text).ok, true);
 });
 
 test("TUE-007 does not invent a clock for a date/hour relationship", () => {

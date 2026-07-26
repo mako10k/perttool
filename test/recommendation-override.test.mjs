@@ -28,7 +28,7 @@ async function sourceFor(fixture) {
 
 function requestFor(source, selectedTaskIds, overrides = {}) {
   return {
-    sourceSchemaVersion: "Perttool.NextResult.v3",
+    sourceSchemaVersion: "Perttool.NextResult.v4",
     sourceDigest: source.recommendation.sourceDigest,
     sourceResultDecisionId: source.recommendation.resultDecision.id,
     selectedTaskIds,
@@ -185,7 +185,7 @@ test("OVR-004 fails closed for unsupported, stale, ineligible, and infeasible in
     [
       rec001,
       requestFor(rec001, ["OPTIONAL_POLISH"], {
-        sourceSchemaVersion: "Perttool.NextResult.v4",
+        sourceSchemaVersion: "Perttool.NextResult.v3",
       }),
     ],
     [
@@ -342,6 +342,32 @@ milestone NOW:`,
   );
   assert.equal(baseline.ok, true, JSON.stringify(baseline.diagnostics));
   assert.notEqual(withOverride.override.overrideId, baseline.override.overrideId);
+});
+
+test("override validation cannot bypass a future temporal release gate", async () => {
+  const fixture = await readFile(
+    path.join(fixtureDirectory, "rec-001-critical-priority.pert"),
+    "utf8",
+  );
+  const sourceText = fixture
+    .replace("  version 1\n", "  version 2\n  as_of 2026-07-26\n")
+    .replace(
+      '  title "Polish an optional component"\n',
+      '  title "Polish an optional component"\n  not_before 2026-07-27\n',
+    );
+  const source = selectNextTasks(sourceText);
+  assert.equal(source.ok, true);
+  assert.deepEqual(
+    source.temporal.authority.timeIneligibleTaskIds,
+    ["OPTIONAL_POLISH"],
+  );
+
+  const result = validateOverride(
+    source,
+    requestFor(source, ["OPTIONAL_POLISH"]),
+  );
+  assert.equal(diagnosticCode(result), "PTOVR-103");
+  assert.match(result.diagnostics[0].message, /time-eligible/);
 });
 
 test("validation is synchronous and leaves an unrelated filesystem sandbox unchanged", async () => {

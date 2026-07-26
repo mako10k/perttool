@@ -108,7 +108,7 @@ fi
       const topicIds = result.topics?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 3 ||
+        result.cli_contract_version !== 4 ||
         result.operation !== "guide" ||
         JSON.stringify(topicIds) !== JSON.stringify([
           "syntax",
@@ -134,7 +134,7 @@ fi
       const sectionIds = result.sections?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 3 ||
+        result.cli_contract_version !== 4 ||
         result.operation !== "guide" ||
         result.topic_id !== "next" ||
         JSON.stringify(sectionIds) !== JSON.stringify([
@@ -183,7 +183,7 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
     process.stdin.on("end", () => {
       const result = JSON.parse(input);
       if (
-        result.schema_version !== "Perttool.ProjectResult.v1" ||
+        result.schema_version !== "Perttool.ProjectResult.v2" ||
         result.project?.id !== "MINIMAL" ||
         result.project?.velocity !== null
       ) process.exit(1);
@@ -227,9 +227,10 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
     process.stdin.on("end", () => {
       const result = JSON.parse(input);
       if (
-        result.schema_version !== "Perttool.NextResult.v3" ||
+        result.schema_version !== "Perttool.NextResult.v4" ||
         result.recommendation_interface_version !== 1 ||
-        result.recommendation?.explanation_status?.complete !== true
+        result.recommendation?.explanation_status?.complete !== true ||
+        result.temporal?.authority?.policy !== "recommendation_v1_plus_release_gate"
       ) process.exit(1);
     });
   '
@@ -249,12 +250,10 @@ const text = guide.renderGuideResult(guide.getGuide("syntax", "quick"));
 const missing = guide.guideResultToJson(guide.getGuide("missing", "detail"));
 if (
   index.schema_version !== "Perttool.GuideResult.v1" ||
-  index.cli_contract_version !== 3 ||
+  index.cli_contract_version !== 4 ||
   index.operation !== "guide" ||
   index.topics?.length !== 8 ||
-  JSON.stringify(index).includes("editing.unit-migration") ||
-  JSON.stringify(index).includes("project migrate-unit") ||
-  JSON.stringify(index).includes("Perttool.UnitMigrationResult.v2") ||
+  !JSON.stringify(index).includes("Grammar versions 1, 2, and 3") ||
   !text.startsWith("DSL syntax\n") ||
   missing.diagnostics?.[0]?.help_topic !== null ||
   missing.diagnostics?.[0]?.guide_topic !== "syntax"
@@ -312,64 +311,48 @@ for (const targetName of [
 ]) {
   if (targetName in api) process.exit(1);
 }
+for (const publicName of [
+  "analyzeDocument",
+  "selectNextTasks",
+  "planUnitMigration",
+  "withUnitMigrationWrite",
+]) {
+  if (typeof api[publicName] !== "function") process.exit(1);
+}
 
-const contract3Help = spawnSync(
+const contract4Help = spawnSync(
   process.argv[5],
   ["help", "--format=json"],
   { encoding: "utf8" },
 );
-const contract3HelpJson = JSON.parse(contract3Help.stdout);
-const serializedHelp = JSON.stringify(contract3HelpJson);
+const contract4HelpJson = JSON.parse(contract4Help.stdout);
+const serializedHelp = JSON.stringify(contract4HelpJson);
 if (
-  contract3Help.status !== 0 ||
-  contract3Help.stderr !== "" ||
-  contract3HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
-  contract3HelpJson.cli_contract_version !== 3 ||
-  contract3HelpJson.commands?.length !== 27 ||
-  serializedHelp.includes("project migrate-unit") ||
-  serializedHelp.includes('"not-before"') ||
-  serializedHelp.includes('"deadline"') ||
-  serializedHelp.includes("Perttool.CheckResult.v2") ||
-  serializedHelp.includes("Perttool.ProjectResult.v2") ||
-  serializedHelp.includes("Perttool.AnalysisResult.v3") ||
-  serializedHelp.includes("Perttool.NextResult.v4") ||
-  serializedHelp.includes("Perttool.UnitMigrationResult.v1") ||
-  serializedHelp.includes("Perttool.UnitMigrationResult.v2")
+  contract4Help.status !== 0 ||
+  contract4Help.stderr !== "" ||
+  contract4HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
+  contract4HelpJson.cli_contract_version !== 4 ||
+  contract4HelpJson.commands?.length !== 28 ||
+  !serializedHelp.includes("project migrate-unit") ||
+  !serializedHelp.includes('"not-before"') ||
+  !serializedHelp.includes('"deadline"') ||
+  !serializedHelp.includes("Perttool.CheckResult.v2") ||
+  !serializedHelp.includes("Perttool.ProjectResult.v2") ||
+  !serializedHelp.includes("Perttool.AnalysisResult.v3") ||
+  !serializedHelp.includes("Perttool.NextResult.v4") ||
+  !serializedHelp.includes("Perttool.UnitMigrationResult.v2")
 ) process.exit(1);
 
-const unavailableMigration = spawnSync(
-  process.argv[5],
-  [
-    "project",
-    "migrate-unit",
-    process.argv[6],
-    "--to-unit",
-    "day",
-    "--format=json",
-  ],
-  { encoding: "utf8" },
-);
-const unavailableMigrationJson = JSON.parse(unavailableMigration.stdout);
-if (
-  unavailableMigration.status !== 2 ||
-  unavailableMigration.stderr !== "" ||
-  unavailableMigrationJson.schema_version !== "Perttool.CliError.v1" ||
-  unavailableMigrationJson.cli_contract_version !== 3 ||
-  unavailableMigrationJson.operation !== null ||
-  unavailableMigrationJson.usage?.kind !== "unknown_action" ||
-  unavailableMigrationJson.usage?.token !== "migrate-unit"
-) process.exit(1);
-
-for (const [fixture, allowedCodes] of [
-  [process.argv[6], new Set(["PTDSL-005"])],
-  [process.argv[7], new Set(["PTDSL-005", "PTDSL-007"])],
+for (const [fixture, grammarVersion] of [
+  [process.argv[6], 2],
+  [process.argv[7], 3],
 ]) {
   for (const [route, schemaVersion] of [
-    [["document", "check"], "Perttool.CheckResult.v1"],
+    [["document", "check"], "Perttool.CheckResult.v2"],
     [["document", "format"], "Perttool.FormatResult.v1"],
-    [["project", "show"], "Perttool.ProjectResult.v1"],
-    [["dag", "analyze"], "Perttool.AnalysisResult.v2"],
-    [["dag", "next"], "Perttool.NextResult.v3"],
+    [["project", "show"], "Perttool.ProjectResult.v2"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v3"],
+    [["dag", "next"], "Perttool.NextResult.v4"],
   ]) {
     const result = spawnSync(
       process.argv[5],
@@ -378,15 +361,15 @@ for (const [fixture, allowedCodes] of [
     );
     const json = JSON.parse(result.stdout);
     if (
-      result.status !== 1 ||
+      result.status !== 0 ||
       result.stderr !== "" ||
       json.schema_version !== schemaVersion ||
-      json.cli_contract_version !== 3 ||
-      json.ok !== false ||
-      (json.grammar_version ?? null) !== null ||
-      json.diagnostics?.length === 0 ||
-      !json.diagnostics.some(({ code }) => code === "PTDSL-005") ||
-      json.diagnostics.some(({ code }) => !allowedCodes.has(code))
+      json.cli_contract_version !== 4 ||
+      json.ok !== true ||
+      (route[1] === "format"
+        ? "grammar_version" in json
+        : json.grammar_version !== grammarVersion) ||
+      json.diagnostics?.length !== 0
     ) process.exit(1);
   }
 }
@@ -409,7 +392,7 @@ const guidanceCoreJson = JSON.parse(
 if (
   guidanceCli.status !== 0 ||
   guidanceCli.stderr !== "" ||
-  guidanceContract !== 3 ||
+  guidanceContract !== 4 ||
   JSON.stringify(guidanceCliCore) !== JSON.stringify(guidanceCoreJson)
 ) process.exit(1);
 
@@ -429,7 +412,7 @@ const overrideSource = await readFile(process.argv[4], "utf8");
 const overrideNext = api.selectNextTasks(overrideSource);
 if (!overrideNext.ok || overrideNext.recommendation === null) process.exit(1);
 const override = api.validateOverride(overrideNext, {
-  sourceSchemaVersion: "Perttool.NextResult.v3",
+  sourceSchemaVersion: "Perttool.NextResult.v4",
   sourceDigest: overrideNext.recommendation.sourceDigest,
   sourceResultDecisionId: overrideNext.recommendation.resultDecision.id,
   selectedTaskIds: ["OPTIONAL_POLISH"],

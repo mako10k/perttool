@@ -7,9 +7,9 @@
   "diagnostics_truncated": false,
   "override": {
     "override_contract_version": 1,
-    "override_id": "override:sha256:0fdc2e3d2bfb61be5407ff92a8277752816cc5f88fa589327610d002511c2af3",
+    "override_id": "override:sha256:9130778b1261ef14a73ecd59bc51f9e84fc362f541ebd0e53b88e14c42b13203",
     "source": {
-      "schema_version": "Perttool.NextResult.v3",
+      "schema_version": "Perttool.NextResult.v4",
       "tool_version": "0.2.0",
       "source_digest": "sha256:9e4f50ba3f0774b1e09d97185b413ddc8f3ccf3d7484f4b4cf315e116109d3bc",
       "recommendation_interface_version": 1,

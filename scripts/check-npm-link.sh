@@ -45,7 +45,7 @@ fi
         const topicIds = result.topics?.map(({ id }) => id);
         if (
           result.schema_version !== "Perttool.GuideResult.v1" ||
-          result.cli_contract_version !== 3 ||
+          result.cli_contract_version !== 4 ||
           result.operation !== "guide" ||
           JSON.stringify(topicIds) !== JSON.stringify([
             "syntax",
@@ -71,7 +71,7 @@ fi
         const sectionIds = result.sections?.map(({ id }) => id);
         if (
           result.schema_version !== "Perttool.GuideResult.v1" ||
-          result.cli_contract_version !== 3 ||
+          result.cli_contract_version !== 4 ||
           result.operation !== "guide" ||
           result.topic_id !== "next" ||
           JSON.stringify(sectionIds) !== JSON.stringify([

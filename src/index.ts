@@ -1,5 +1,8 @@
 export { checkDocument } from "./application/check.js";
-export { analyzeDocument } from "./application/analyze.js";
+export {
+  analyzeDocument,
+  selectNextTasks,
+} from "./application/contract4.js";
 export { getAgentHelp } from "./application/agent-help.js";
 export { getProjectMetadata } from "./application/project.js";
 export {
@@ -10,7 +13,6 @@ export {
   withProjectInitOutput,
 } from "./application/init.js";
 export { planFormat } from "./application/format.js";
-export { selectNextTasks } from "./application/next.js";
 export { recommendationAnalysisToJson } from "./recommendation/json.js";
 export {
   canonicalOverrideArtifact,
@@ -19,6 +21,10 @@ export {
   validateOverride,
 } from "./recommendation/override.js";
 export { planMutation } from "./application/mutate.js";
+export {
+  planUnitMigration,
+  withUnitMigrationWrite,
+} from "./application/unit-migration.js";
 export { planAdvance } from "./mutation/advance.js";
 export { exportMermaid } from "./conversion/mermaid.js";
 export { importMermaid } from "./conversion/mermaid-import.js";
@@ -32,7 +38,7 @@ export {
   getAgentHelpCommandHelp,
 } from "./command/registry.js";
 export {
-  CONTRACT3_COMMAND_REGISTRY as COMMAND_REGISTRY,
+  CONTRACT4_COMMAND_REGISTRY as COMMAND_REGISTRY,
   commandHelpResultToJson,
   commandRegistryToJson,
   getCommandDiscovery,
@@ -125,7 +131,14 @@ export * from "./model/rational.js";
 export * from "./model/units.js";
 export { parseDocument } from "./parser/document-parser.js";
 export { validateDocument } from "./semantic/validator.js";
-export type { CheckOptions, CheckResult, CheckSummary } from "./application/check.js";
+export type {
+  CheckOptions,
+  CheckResult,
+  CheckSummary,
+  MilestoneDeadlineInput,
+  TaskTemporalConstraint,
+  TemporalInputs,
+} from "./application/check.js";
 export type {
   ProjectMetadata,
   ProjectMetadataDurationUnit,
@@ -204,20 +217,24 @@ export type {
 } from "./application/format.js";
 export type {
   AnalysisMode,
-  AnalysisResult,
   AnalyzeOptions,
 } from "./application/analyze.js";
 export type {
   ExplanationNode,
   NextGroups,
   NextOptions,
-  NextResult,
   NextResultV3,
   NextTask,
   ResourceRejection,
   TaskClassification,
   UnsatisfiedEdgeExplanation,
 } from "./application/next.js";
+export type {
+  AnalysisResultV3 as AnalysisResult,
+  AnalysisResultV3,
+  NextResultV4 as NextResult,
+  NextResultV4,
+} from "./application/contract4.js";
 export type {
   RecommendationAnalysis,
   RecommendationComparison,
@@ -368,3 +385,17 @@ export type {
   TaskMutationStatus,
   TaskRequirementInput,
 } from "./mutation/types.js";
+export type {
+  UnitMigrationConvertedField,
+  UnitMigrationEffectiveVelocity,
+  UnitMigrationExactValue,
+  UnitMigrationOptions,
+  UnitMigrationResult,
+  UnitMigrationWrite,
+} from "./application/unit-migration.js";
+export type {
+  UnitMigrationCause,
+  UnitMigrationDiagnosticCode,
+  UnitMigrationRequest,
+  UnitMigrationUnavailableCause,
+} from "./migration/request.js";

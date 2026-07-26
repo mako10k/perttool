@@ -1,3 +1,10 @@
+START AUTHORITY
+POLICY recommendation_v1_plus_release_gate
+STARTABLE RECOMMENDED CRITICAL_FIX
+DELAYED RECOMMENDED -
+UNAVAILABLE RECOMMENDED -
+DEADLINE FACTS INFORMATIONAL FOR RANKING v1
+
 PERTTOOL NEXT REC_001_CRITICAL_PRIORITY
 VELOCITY 1p/1d
 VELOCITY_FORECAST_UNIT day
@@ -38,3 +45,7 @@ BLOCKED NOW
 
 UPCOMING
 -
+
+TEMPORAL CONTEXT
+CRITICAL_FIX eligibility=eligible release=- task_deadline=- destination=CRITICAL_DONE destination_deadline=- causes=-
+OPTIONAL_POLISH eligibility=eligible release=- task_deadline=- destination=OPTIONAL_DONE destination_deadline=- causes=-

@@ -1076,7 +1076,24 @@ export function parseDocument(
   text: string,
   options: ParseOptions = {},
 ): ParseResult {
-  return parseDocumentWithProfile(text, options, grammar1Profile);
+  return parseGrammar3CapableDocument(text, options);
+}
+
+function parseGrammar3CapableDocument(
+  text: string,
+  options: ParseOptions,
+): ParseResult {
+  const grammar1 = parseDocumentWithProfile(text, options, grammar1Profile);
+  const first = grammar1.document.declarations[0];
+  const version = first?.kind === "project"
+    ? first.fields.find((field) => field.name === "version")?.value
+    : undefined;
+  if (version === 2) {
+    return parseDocumentWithProfile(text, options, grammar2Profile);
+  }
+  return version === 3
+    ? parseDocumentWithProfile(text, options, grammar3Profile)
+    : grammar1;
 }
 
 export function parseTargetDocument(
@@ -1105,15 +1122,5 @@ export function parseTargetGrammar3Document(
   if (capability !== TARGET_GRAMMAR_3_CAPABILITY) {
     throw new TypeError("The target Grammar 3 source capability is required");
   }
-  const grammar1 = parseDocumentWithProfile(text, options, grammar1Profile);
-  const first = grammar1.document.declarations[0];
-  const version = first?.kind === "project"
-    ? first.fields.find((field) => field.name === "version")?.value
-    : undefined;
-  if (version === 2) {
-    return parseDocumentWithProfile(text, options, grammar2Profile);
-  }
-  return version === 3
-    ? parseDocumentWithProfile(text, options, grammar3Profile)
-    : grammar1;
+  return parseGrammar3CapableDocument(text, options);
 }

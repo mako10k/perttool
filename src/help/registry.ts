@@ -43,7 +43,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax",
     title: "DSL syntax",
-    summary: "Grammar version 1 for declaring project, resource, milestone, task, and gate.",
+    summary: "Grammar versions 1, 2, and 3 for declaring project, resource, milestone, task, and gate.",
     quick: [
       {
         id: "declarations",
@@ -80,6 +80,7 @@ const nodes: readonly HelpNode[] = [
       "syntax.gate",
       "syntax.estimate",
       "syntax.velocity",
+      "syntax.temporal",
       "analysis",
       "errors",
     ],
@@ -99,7 +100,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "version",
         title: "Grammar version",
-        body: "An omitted version is treated as 1; when specified, only version 1 is accepted.",
+        body: "An omitted version is treated as 1. Version 2 adds temporal fields; version 3 additionally accepts exact Fraction Duration.",
       },
     ],
     syntax: [
@@ -111,7 +112,7 @@ const nodes: readonly HelpNode[] = [
     examples: [
       { id: "minimal", title: "Minimal project", text: "docs/examples/minimal.pert" },
     ],
-    related: ["syntax", "syntax.duration", "syntax.velocity", "syntax.text"],
+    related: ["syntax", "syntax.duration", "syntax.velocity", "syntax.temporal", "syntax.text"],
   },
   {
     id: "syntax.resource",
@@ -147,7 +148,7 @@ const nodes: readonly HelpNode[] = [
     examples: [
       { id: "minimal", title: "Reached frontier", text: "docs/examples/minimal.pert" },
     ],
-    related: ["syntax", "syntax.task", "syntax.gate", "syntax.tags", "syntax.text"],
+    related: ["syntax", "syntax.task", "syntax.gate", "syntax.temporal", "syntax.tags", "syntax.text"],
   },
   {
     id: "syntax.task",
@@ -179,6 +180,7 @@ const nodes: readonly HelpNode[] = [
       "syntax.text",
       "syntax.tags",
       "analysis.resources",
+      "syntax.temporal",
     ],
   },
   {
@@ -239,12 +241,49 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax.duration",
     title: "Duration syntax",
-    summary: "A finite decimal followed by the project-unit suffix d, h, or p.",
+    summary: "An exact Decimal or, in Grammar 3, reduced Fraction followed by d, h, or p.",
     quick: [],
     detail: [],
-    syntax: ["1d", "2.5h", "3p", "0d"],
+    syntax: ["1d", "2.5h", "3p", "1/3d", "0d"],
     examples: [],
     related: ["syntax.estimate", "syntax.velocity", "analysis"],
+  },
+  {
+    id: "syntax.temporal",
+    title: "Temporal syntax",
+    summary: "Grammar 2 and 3 add milestone deadline plus task not_before and deadline fields.",
+    quick: [
+      {
+        id: "anchor",
+        title: "Explicit anchor",
+        body: "Any deadline or not_before requires project.as_of. Date and offset date-time values remain distinct, and perttool never invents a clock or host time zone.",
+      },
+    ],
+    detail: [
+      {
+        id: "semantics",
+        title: "Temporal meaning",
+        body: "not_before is a release constraint for a new task start. Deadlines are desired completion or reach times, not dependency edges or hard caps. Mixed valid calendar kinds remain source-valid but may make a projection unavailable.",
+      },
+    ],
+    syntax: [
+      "project ID:",
+      "  version 2|3",
+      "  as_of DATE|OFFSET_DATE_TIME",
+      "milestone ID:",
+      "  deadline DATE|OFFSET_DATE_TIME",
+      "task ID FROM -> TO:",
+      "  not_before DATE|OFFSET_DATE_TIME",
+      "  deadline DATE|OFFSET_DATE_TIME",
+    ],
+    examples: [
+      {
+        id: "temporal-units",
+        title: "Normative temporal examples",
+        text: "docs/examples/temporal-units.md",
+      },
+    ],
+    related: ["syntax.project", "syntax.task", "syntax.milestone", "analysis.temporal", "editing"],
   },
   {
     id: "syntax.velocity",
@@ -403,7 +442,7 @@ const nodes: readonly HelpNode[] = [
         text: "perttool dag analyze docs/examples/parallel.pert",
       },
     ],
-    related: ["analysis.resources", "next"],
+    related: ["analysis.resources", "analysis.temporal", "next"],
   },
   {
     id: "analysis.resources",
@@ -442,9 +481,45 @@ const nodes: readonly HelpNode[] = [
     related: ["analysis", "next"],
   },
   {
+    id: "analysis.temporal",
+    title: "Temporal analysis",
+    summary: "Projects exact calendar schedules and deadline states separately for precedence and heuristic resources.",
+    quick: [
+      {
+        id: "views",
+        title: "Separate views",
+        body: "AnalysisResult v3 retains base analysis and adds temporal precedence, temporal resource, and deadline evaluations. The resource view remains heuristic and optimal=false.",
+      },
+    ],
+    detail: [
+      {
+        id: "availability",
+        title: "Unavailable causes",
+        body: "Missing or incomparable calendar relationships, Point/time conversion limits, completed history, and unresolved blocks remain explicit states and causes rather than guessed values.",
+      },
+      {
+        id: "ranking",
+        title: "Ranking boundary",
+        body: "Deadline facts are informational for Recommendation version 1. NextResult v4 applies not_before only as a separate release gate after recommendation.",
+      },
+    ],
+    syntax: [
+      "perttool dag analyze FILE --format json",
+      "perttool dag next FILE --format json",
+    ],
+    examples: [
+      {
+        id: "temporal-units",
+        title: "Temporal and deadline cases",
+        text: "docs/examples/temporal-units.md",
+      },
+    ],
+    related: ["analysis", "analysis.resources", "next", "syntax.temporal"],
+  },
+  {
     id: "next",
     title: "Next tasks",
-    summary: "Returns workflow recommendations in NextResult.v3 together with active, ready, runnable_now, blocked_now, and upcoming tasks.",
+    summary: "Returns NextResult.v4 recommendations, temporal start authority, and active, ready, runnable_now, blocked_now, and upcoming tasks.",
     quick: [
       {
         id: "classification",
@@ -461,12 +536,12 @@ const nodes: readonly HelpNode[] = [
       {
         id: "consumer-safety",
         title: "Machine-readable explanation",
-        body: "--format json returns a complete Perttool.NextResult.v3 explanation graph. Consumers first validate schema_version and every model version, and do not automatically start tasks when decisive semantics are unknown. Text is a complete=false summary.",
+        body: "--format json returns a complete Perttool.NextResult.v4 with the unchanged Recommendation version 1 explanation graph and a separate temporal release gate. Consumers validate every identity and do not start when decisive or temporal authority is unknown.",
       },
       {
         id: "authority-adoption",
         title: "AI task selection authority",
-        body: "AI uses only a known Perttool.NextResult.v3 from --format json, recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, and a complete, non-truncated trace as normal start authority. After selecting the macro recommended work package, reanalyze its corresponding detail plan, then select either a recommended subset or the full recommended set plus exactly one allowed task. Do not start for an unknown version, incomplete trace, PTREC diagnostic, or deferred/discouraged selection; stop instead. Reanalyze after task-state or capacity changes.",
+        body: "AI uses only a known Perttool.NextResult.v4 from --format json, Recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, a complete non-truncated trace, and temporal policy recommendation_v1_plus_release_gate. Start only IDs in startable_recommended_task_ids. Stop for unknown, incomplete, malformed, future, or unavailable authority, PTREC diagnostics, and deferred or discouraged selections. Reanalyze after task-state or capacity changes.",
       },
       {
         id: "selection",
@@ -476,7 +551,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "override-validation",
         title: "Human override validation",
-        body: "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v3 and an explicit request. This is read-only validation and does not change task state, files, Git, or the network. Do not include secrets, credentials, or tokens in reason_text or evidence. The CLI for override apply and audit write is not implemented.",
+        body: "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v4 and an explicit request, and cannot bypass a future or unavailable temporal release gate. This is read-only validation and does not change task state, files, Git, or the network.",
       },
       {
         id: "explanation",
@@ -495,7 +570,7 @@ const nodes: readonly HelpNode[] = [
         text: "perttool dag next docs/examples/parallel.pert --format json",
       },
     ],
-    related: ["analysis", "analysis.resources"],
+    related: ["analysis", "analysis.resources", "analysis.temporal"],
   },
   {
     id: "editing",
@@ -544,7 +619,43 @@ const nodes: readonly HelpNode[] = [
         text: "perttool task set plan.pert TASK_ID --status active --write --expect-digest sha256:<64 lowercase hex digits>",
       },
     ],
-    related: ["workflows"],
+    related: ["editing.unit-migration", "syntax.temporal", "workflows"],
+  },
+  {
+    id: "editing.unit-migration",
+    title: "Exact unit migration",
+    summary: "Migrates the complete Duration inventory between Point and matching day or hour units.",
+    quick: [
+      {
+        id: "directions",
+        title: "Exact directions",
+        body: "Supported directions are point to day or hour and the matching time unit back to point. A declared or explicit replacement velocity supplies the exact relationship; day-to-hour is never inferred.",
+      },
+    ],
+    detail: [
+      {
+        id: "safety",
+        title: "Preview and safe write",
+        body: "project migrate-unit previews by default, preserves every absolute temporal token, validates one complete candidate, and shares diff, write, out, digest-lock, race, symlink, and post-write checks with ordinary mutations.",
+      },
+      {
+        id: "batch",
+        title: "Batch exclusion and reversibility",
+        body: "Automatic migration is not a batch.apply member. UnitMigrationResult v2 reports exact converted records, grammar and velocity dispositions, qualifications, and whether values and metadata are reversible.",
+      },
+    ],
+    syntax: [
+      "perttool project migrate-unit FILE --to-unit day|hour|point [--replacement-velocity VELOCITY]",
+      "  [--diff] [--write [--expect-digest DIGEST] | --out PATH]",
+    ],
+    examples: [
+      {
+        id: "point-to-day",
+        title: "Preview Point-to-day migration",
+        text: "perttool project migrate-unit plan.pert --to-unit day --diff",
+      },
+    ],
+    related: ["editing", "syntax.duration", "syntax.velocity", "syntax.temporal"],
   },
   {
     id: "mermaid",

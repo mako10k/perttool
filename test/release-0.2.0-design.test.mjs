@@ -11,7 +11,7 @@ function repositoryText(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
 }
 
-test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", async () => {
+test("0.2.0 release record preserves Contract 3 package identity and guidance", async () => {
   const [
     requirements,
     adr,
@@ -20,10 +20,6 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
     procedure,
     acceptance,
     changelog,
-    readme,
-    sourceVersion,
-    manifestText,
-    lockText,
   ] = await Promise.all([
     repositoryText("docs/requirements.md"),
     repositoryText("docs/adr/0003-beta-versioning.md"),
@@ -32,10 +28,6 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
     repositoryText("docs/process/0.2.0-release.md"),
     repositoryText("docs/process/0.2.0-release-acceptance.md"),
     repositoryText("CHANGELOG.md"),
-    repositoryText("README.md"),
-    repositoryText("src/version.ts"),
-    repositoryText("package.json"),
-    repositoryText("package-lock.json"),
   ]);
 
   assert.match(requirements, /^### 21\.3 CLI Contract 3 beta release acceptance criteria$/m);
@@ -55,20 +47,8 @@ test("0.2.0 release source aligns package, lockfile, CLI, and user guidance", as
     /Local, GitHub, and registry tarball SHA-256 \| `26ab6fc3f27574f293e985032d3701e4ca1ae69f2471e6c58d0a2e4bc0cbe52b`/,
   );
   assert.match(changelog, /^## \[0\.2\.0\] - 2026-07-25$/m);
-  assert.match(readme, /current Contract 3 version is `0\.2\.0`/);
-  assert.match(
-    readme,
-    /npx --yes --package=perttool@0\.2\.0 -- perttool document check PLAN\.pert/,
-  );
-  assert.match(readme, /npm `beta` and `latest` both resolve to Contract 3 `0\.2\.0`/);
-  assert.match(sourceVersion, /TOOL_VERSION = "0\.2\.0"/);
-
-  const manifest = JSON.parse(manifestText);
-  const lock = JSON.parse(lockText);
-  assert.equal(manifest.version, "0.2.0");
-  assert.equal(lock.version, "0.2.0");
-  assert.equal(lock.packages[""].version, "0.2.0");
-  assert.equal(manifest.publishConfig.tag, "beta");
+  assert.match(acceptance, /`beta` and `latest` now resolve to Contract 3 `0\.2\.0`/);
+  assert.match(acceptance, /\| `latest` \| `0\.2\.0` \|/);
 });
 
 test("0.2.0 completed plan preserves release and acceptance boundaries", async () => {

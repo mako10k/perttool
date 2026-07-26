@@ -183,8 +183,12 @@ test("TUI-004 projects exact declared inputs and finish deadline", async () => {
     checked,
   );
 
-  assert.equal(publicApi.checkDocument(text).ok, false);
-  assert.equal(publicApi.getProjectMetadata(text).ok, false);
+  const publicChecked = publicApi.checkDocument(text);
+  assert.equal(publicChecked.ok, true);
+  assert.deepEqual(publicChecked.temporalInputs, checked.temporalInputs);
+  const publicProject = publicApi.getProjectMetadata(text);
+  assert.equal(publicProject.ok, true);
+  assert.deepEqual(publicProject.project, project.project);
 });
 
 test("declared temporal arrays retain source declaration order", async () => {

@@ -18,6 +18,7 @@ export interface ProjectInitRequest {
   readonly version?: number;
   readonly asOf?: string;
   readonly velocity?: string;
+  readonly initialMilestoneDeadline?: string;
 }
 
 export interface ProjectInitWrite {
@@ -28,7 +29,7 @@ export interface ProjectInitWrite {
 
 export interface ProjectInitResult {
   readonly schemaVersion: "Perttool.InitResult.v1";
-  readonly cliContractVersion: 3;
+  readonly cliContractVersion: 4;
   readonly toolVersion: string;
   readonly operation: "project.init";
   readonly ok: boolean;
@@ -53,6 +54,7 @@ const requestFields = new Set([
   "version",
   "asOf",
   "velocity",
+  "initialMilestoneDeadline",
 ]);
 
 const previewWrite: ProjectInitWrite = Object.freeze({
@@ -95,7 +97,7 @@ function requestError(value: unknown): string | undefined {
   ) {
     return "project init version must be an integer from 0 to 2147483647";
   }
-  for (const field of ["asOf", "velocity"]) {
+  for (const field of ["asOf", "velocity", "initialMilestoneDeadline"]) {
     if (request[field] !== undefined && typeof request[field] !== "string") {
       return `project init ${field} must be a string when provided`;
     }
@@ -105,6 +107,15 @@ function requestError(value: unknown): string | undefined {
   }
   if (request["durationUnit"] === "point" && request["velocity"] === undefined) {
     return "project init with point durationUnit requires velocity";
+  }
+  if (
+    request["initialMilestoneDeadline"] !== undefined &&
+    (
+      (request["version"] !== 2 && request["version"] !== 3) ||
+      request["asOf"] === undefined
+    )
+  ) {
+    return "project init initialMilestoneDeadline requires version 2 or 3 and asOf";
   }
   return undefined;
 }
@@ -125,6 +136,9 @@ function renderCandidate(request: ProjectInitRequest): string {
     `milestone ${request.initialMilestone}:`,
     `  title ${JSON.stringify(request.initialMilestoneTitle)}`,
     "  state reached",
+    ...(request.initialMilestoneDeadline === undefined
+      ? []
+      : [`  deadline ${request.initialMilestoneDeadline}`]),
     "",
   ].join("\n");
 }
@@ -143,7 +157,7 @@ function result(
 ): ProjectInitResult {
   return {
     schemaVersion: "Perttool.InitResult.v1",
-    cliContractVersion: 3,
+    cliContractVersion: 4,
     toolVersion: TOOL_VERSION,
     operation: "project.init",
     source: null,

@@ -35,14 +35,14 @@ function runJson(args, expectedStatus = 0, options = {}) {
   assert.equal(result.stderr, "");
   assert.equal(result.stdout.endsWith("\n"), true);
   const json = JSON.parse(result.stdout);
-  assert.equal(json.cli_contract_version, 3);
+  assert.equal(json.cli_contract_version, 4);
   return json;
 }
 
 test("E2E-001: discover commands, validate a plan, and compare capacity what-if", () => {
   const help = run(["--help"]);
   assert.equal(help.status, 0);
-  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 3\)$/m);
+  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 4\)$/m);
   assert.match(help.stdout, /^  document  /m);
   assert.match(help.stdout, /^    check  /m);
   assert.match(help.stdout, /^  project  /m);
@@ -129,7 +129,13 @@ test("E2E-016: AI reads and updates velocity entirely through the CLI", (t) => {
 
   const after = runJson(["project", "show", source]);
   assert.equal(after.project.velocity, "12p/5d");
-  assert.equal(after.project.as_of, "2026-07-23");
+  assert.deepEqual(after.project.as_of, {
+    kind: "date",
+    source_text: "2026-07-23",
+    year: 2026,
+    month: 7,
+    day: 23,
+  });
   assert.equal(after.source_digest, written.updated_digest);
 });
 

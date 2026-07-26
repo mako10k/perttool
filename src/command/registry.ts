@@ -61,7 +61,7 @@ export interface CommandOutputDescriptor {
 }
 
 export interface ProjectedCommandDescriptor {
-  readonly contractVersion: 2 | 3;
+  readonly contractVersion: 2 | 3 | 4;
   readonly path:
     | readonly [command: string]
     | readonly [resource: string, action: string];
@@ -765,7 +765,20 @@ const commandDefinitions: readonly CommandDefinition[] = [
       valueOption("add-tag", { valueType: "tag", repeatable: true, dsl: "tags" }),
       valueOption("remove-tag", { valueType: "tag", repeatable: true, dsl: "tags" }),
       valueOption("remove-require", { valueType: "resource-id", repeatable: true, dsl: "requires" }),
-      valueOption("clear", { valueType: "task-field", repeatable: true }),
+      valueOption("clear", {
+        valueType: "task-field",
+        repeatable: true,
+        enumValues: [
+          "description",
+          "status",
+          "priority",
+          "owner",
+          "blocked_reason",
+          "source",
+          "tags",
+          "requires",
+        ],
+      }),
     ],
     input: "document",
     stdin: documentStdin,

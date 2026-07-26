@@ -3,8 +3,8 @@
 - Document status: Normative 2.0
 - Interface ID: `perttool.temporal-unit-interface`
 - Interface version: `2`
-- Target grammar version: `3`
-- Target CLI contract version: `4`
+- Active grammar version: `3`
+- Active CLI contract version: `4`
 - Created: 2026-07-25
 - Requirements: [../requirements.md](../requirements.md)
 - Grammar: [dsl-grammar.md](dsl-grammar.md)
@@ -12,7 +12,7 @@
 - Deadline semantics: [temporal-deadline.md](temporal-deadline.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Mutation semantics: [mutation.md](mutation.md)
-- Active CLI contract: [cli-contract-3.md](cli-contract-3.md)
+- Prior CLI contract: [cli-contract-3.md](cli-contract-3.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose and activation boundary
@@ -30,14 +30,12 @@ source-unit extension. It selects:
 - the compatibility and authority boundary from grammar version 1, CLI
   Contract 3, and `Perttool.NextResult.v3`.
 
-This is an implementation target, not the active runtime contract. The current
-source remains CLI Contract 3 and accepts only grammar version 1. No command,
-field, schema, package release, or recommendation-authority change in this
-document is active until an implementation change satisfies every applicable
-`TUI-*` case and performs one atomic Contract 4 cutover.
-
-This task does not implement parsing, analysis, mutation, help, or CLI
-dispatch. It also does not authorize publication.
+The source implementation activated this complete interface atomically in
+SU-M5 after satisfying the applicable `TUI-*` and `TUE-*` cases. It accepts
+grammar versions 1, 2, and 3 and exposes CLI Contract 4, the target schemas,
+temporal and migration commands, and NextResult v4 start authority together.
+Package publication remains a separate release operation and is not
+authorized by this specification.
 
 ## 2. Normative position and version matrix
 
@@ -47,12 +45,12 @@ Resolve conflicts in this order.
 2. Calendar, deadline, and unit-migration semantic specifications
 3. This public interface contract
 4. Grammar and mutation mechanical contracts
-5. Active CLI Contract 3 meanings retained by this contract
+5. Prior CLI Contract 3 meanings retained by this contract
 6. Basic design, examples, help, tests, and implementation
 
 The selected identities are:
 
-| Concern | Active identity | Interface v1 target | Interface v2 target |
+| Concern | Prior public identity | Interface v1 historical target | Active interface v2 |
 | --- | --- | --- | --- |
 | DSL grammar | `1` | `2` | `3` |
 | CLI contract | `3` | `4` | `4` |
@@ -68,7 +66,7 @@ contracts. They were never activated in a public package. Interface version 2
 replaces the pre-activation migration target before the first Contract 4
 cutover. CLI Contract 4 remains the target because command paths, options,
 effects, and exit meanings do not change; its migration command now names
-`Perttool.UnitMigrationResult.v2` before any Contract 4 consumer exists.
+`Perttool.UnitMigrationResult.v2` before Contract 4 activation.
 
 `Perttool.MutationResult.v1`, `Perttool.InitResult.v1`,
 `Perttool.CommandHelpResult.v1`, `Perttool.GuideResult.v1`, and

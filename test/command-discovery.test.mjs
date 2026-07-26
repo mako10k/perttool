@@ -7,7 +7,7 @@ import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { commandDescriptorToJson } from "../dist/index.js";
 import {
-  CONTRACT3_COMMAND_REGISTRY,
+  CONTRACT4_COMMAND_REGISTRY,
   commandHelpResultToJson,
   getCommandDiscovery,
   renderCommandHelpResult,
@@ -26,6 +26,7 @@ const expectedPaths = [
   "project init",
   "project show",
   "project set",
+  "project migrate-unit",
   "dag analyze",
   "dag next",
   "dag advance",
@@ -50,7 +51,7 @@ const expectedPaths = [
 
 const expectedResources = [
   ["document", ["check", "format"]],
-  ["project", ["init", "show", "set"]],
+  ["project", ["init", "show", "set", "migrate-unit"]],
   ["dag", ["analyze", "next", "advance", "render", "import"]],
   ["task", ["add", "set", "remove", "finish"]],
   ["gate", ["add", "set", "remove"]],
@@ -62,8 +63,8 @@ const expectedResources = [
 
 const knownSchemas = new Set([
   "Perttool.AgentGuidanceResult.v1",
-  "Perttool.AnalysisResult.v2",
-  "Perttool.CheckResult.v1",
+  "Perttool.AnalysisResult.v3",
+  "Perttool.CheckResult.v2",
   "Perttool.CliError.v1",
   "Perttool.CommandHelpResult.v1",
   "Perttool.ExportResult.v1",
@@ -72,8 +73,9 @@ const knownSchemas = new Set([
   "Perttool.ImportResult.v1",
   "Perttool.InitResult.v1",
   "Perttool.MutationResult.v1",
-  "Perttool.NextResult.v3",
-  "Perttool.ProjectResult.v1",
+  "Perttool.NextResult.v4",
+  "Perttool.ProjectResult.v2",
+  "Perttool.UnitMigrationResult.v2",
 ]);
 
 function runCli(args) {
@@ -83,23 +85,23 @@ function runCli(args) {
   });
 }
 
-test("Contract 3 command discovery projects every implemented capability in canonical order", () => {
+test("Contract 4 command discovery projects every implemented capability in canonical order", () => {
   assert.deepEqual(
-    CONTRACT3_COMMAND_REGISTRY.map(({ path: commandPath }) =>
+    CONTRACT4_COMMAND_REGISTRY.map(({ path: commandPath }) =>
       commandPath.join(" ")
     ),
     expectedPaths,
   );
   assert.equal(
-    new Set(CONTRACT3_COMMAND_REGISTRY.map(({ operation }) => operation)).size,
+    new Set(CONTRACT4_COMMAND_REGISTRY.map(({ operation }) => operation)).size,
     expectedPaths.length,
   );
   assert.ok(
-    CONTRACT3_COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 3,
+    CONTRACT4_COMMAND_REGISTRY.every(
+      ({ contractVersion }) => contractVersion === 4,
     ),
   );
-  for (const descriptor of CONTRACT3_COMMAND_REGISTRY) {
+  for (const descriptor of CONTRACT4_COMMAND_REGISTRY) {
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(descriptor.examples.length > 0, descriptor.operation);
     assert.ok(descriptor.resultSchemas.length > 0, descriptor.operation);
@@ -123,13 +125,13 @@ test("Contract 3 command discovery projects every implemented capability in cano
   const top = getCommandDiscovery({ resource: null, action: null });
   assert.equal(top.ok, true);
   assert.equal(top.schemaVersion, "Perttool.CommandHelpResult.v1");
-  assert.equal(top.cliContractVersion, 3);
+  assert.equal(top.cliContractVersion, 4);
   assert.equal(top.operation, "help");
   assert.deepEqual(
     top.resources.map(({ name, actions }) => [name, actions]),
     expectedResources,
   );
-  assert.deepEqual(top.commands, CONTRACT3_COMMAND_REGISTRY);
+  assert.deepEqual(top.commands, CONTRACT4_COMMAND_REGISTRY);
   const topText = renderCommandHelpResult(top);
   for (const commandPath of expectedPaths) {
     const [resource, action] = commandPath.split(" ");
@@ -141,7 +143,7 @@ test("Contract 3 command discovery projects every implemented capability in cano
   }
 });
 
-test("Contract 3 projections are the active public surface", () => {
+test("Contract 4 projections are the active public surface", () => {
   const guide = getCommandDiscovery({ resource: "guide", action: null });
   assert.equal(guide.ok, true);
   assert.deepEqual(guide.commands[0]?.path, ["guide"]);
@@ -197,13 +199,13 @@ test("Contract 3 projections are the active public surface", () => {
     const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
     const json = JSON.parse(result.stdout);
-    assert.equal(json.cli_contract_version, 3);
+    assert.equal(json.cli_contract_version, 4);
     assert.equal(json.help_target.resource, null);
     assert.equal(json.help_target.action, null);
   }
 });
 
-test("project init discovery covers the complete public Contract 3 target", () => {
+test("project init discovery covers the complete public Contract 4 target", () => {
   const result = getCommandDiscovery({
     resource: "project",
     action: "init",
@@ -235,6 +237,7 @@ test("project init discovery covers the complete public Contract 3 target", () =
       ["version", false, 1, []],
       ["as-of", false, null, []],
       ["velocity", false, null, []],
+      ["initial-milestone-deadline", false, null, []],
       ["out", false, null, []],
       ["format", false, "text", []],
       ["color", false, "auto", ["format=json when color=always"]],
@@ -311,9 +314,12 @@ test("resource and action queries return complete projections of one result", ()
   assert.deepEqual(resource.resources.map(({ name }) => name), ["project"]);
   assert.deepEqual(
     resource.commands.map(({ path: commandPath }) => commandPath.join(" ")),
-    ["project init", "project show", "project set"],
+    ["project init", "project show", "project set", "project migrate-unit"],
   );
-  assert.deepEqual(resource.resources[0]?.actions, ["init", "show", "set"]);
+  assert.deepEqual(
+    resource.resources[0]?.actions,
+    ["init", "show", "set", "migrate-unit"],
+  );
 
   const action = getCommandDiscovery({
     resource: "project",

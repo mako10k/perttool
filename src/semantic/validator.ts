@@ -1000,7 +1000,7 @@ export function validateDocument(
   return validateDocumentWithProfile(
     document,
     parseDiagnostics,
-    grammar1ValidationProfile,
+    targetGrammar3ValidationProfile,
   );
 }
 

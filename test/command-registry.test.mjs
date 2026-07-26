@@ -11,7 +11,7 @@ import {
   getCommandDiscovery as getPublicCommandDiscovery,
 } from "../dist/index.js";
 import {
-  CONTRACT3_COMMAND_REGISTRY,
+  CONTRACT4_COMMAND_REGISTRY,
   getCommandDiscovery,
   renderCommandHelpResult,
 } from "../dist/command/discovery.js";
@@ -28,6 +28,7 @@ const expectedPaths = [
   "project init",
   "project show",
   "project set",
+  "project migrate-unit",
   "dag analyze",
   "dag next",
   "dag advance",
@@ -57,28 +58,28 @@ function run(args) {
   });
 }
 
-test("the Contract 3 registry covers the complete active surface exactly once", () => {
-  assert.equal(COMMAND_REGISTRY, CONTRACT3_COMMAND_REGISTRY);
+test("the Contract 4 registry covers the complete active surface exactly once", () => {
+  assert.equal(COMMAND_REGISTRY, CONTRACT4_COMMAND_REGISTRY);
   assert.deepEqual(
     commandRegistryToJson(),
-    CONTRACT3_COMMAND_REGISTRY.map(commandDescriptorToJson),
+    CONTRACT4_COMMAND_REGISTRY.map(commandDescriptorToJson),
   );
   assert.deepEqual(
     getPublicCommandDiscovery({ resource: null, action: null }).commands,
-    CONTRACT3_COMMAND_REGISTRY,
+    CONTRACT4_COMMAND_REGISTRY,
   );
   assert.deepEqual(
-    CONTRACT3_COMMAND_REGISTRY.map((descriptor) =>
+    CONTRACT4_COMMAND_REGISTRY.map((descriptor) =>
       descriptor.path.join(" ")
     ),
     expectedPaths,
   );
   assert.equal(
-    new Set(CONTRACT3_COMMAND_REGISTRY.map(({ operation }) => operation)).size,
+    new Set(CONTRACT4_COMMAND_REGISTRY.map(({ operation }) => operation)).size,
     expectedPaths.length,
   );
-  for (const descriptor of CONTRACT3_COMMAND_REGISTRY) {
-    assert.equal(descriptor.contractVersion, 3, descriptor.operation);
+  for (const descriptor of CONTRACT4_COMMAND_REGISTRY) {
+    assert.equal(descriptor.contractVersion, 4, descriptor.operation);
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(
       descriptor.operands.every(
@@ -103,13 +104,13 @@ test("the Contract 3 registry covers the complete active surface exactly once", 
 });
 
 test("JSON descriptors and option parsing metadata are deterministic projections", () => {
-  const first = CONTRACT3_COMMAND_REGISTRY.map(commandDescriptorToJson);
-  const second = CONTRACT3_COMMAND_REGISTRY.map(commandDescriptorToJson);
+  const first = CONTRACT4_COMMAND_REGISTRY.map(commandDescriptorToJson);
+  const second = CONTRACT4_COMMAND_REGISTRY.map(commandDescriptorToJson);
   assert.equal(JSON.stringify(first), JSON.stringify(second));
   assert.equal(JSON.stringify(first).includes("mutuallyExclusive"), false);
   assert.equal(JSON.stringify(first).includes('"mutually_exclusive"'), true);
 
-  for (const descriptor of CONTRACT3_COMMAND_REGISTRY) {
+  for (const descriptor of CONTRACT4_COMMAND_REGISTRY) {
     const optionSets = commandOptionSets(descriptor);
     assert.deepEqual(
       new Set([
@@ -140,7 +141,7 @@ test("top-level and exact command help are active-registry projections", () => {
   assert.equal(top.status, 0, top.stderr);
   assert.equal(top.stdout, renderCommandHelpResult(topResult));
 
-  for (const descriptor of CONTRACT3_COMMAND_REGISTRY) {
+  for (const descriptor of CONTRACT4_COMMAND_REGISTRY) {
     const [resource, action] = descriptor.path;
     const query = getCommandDiscovery({
       resource,
@@ -154,7 +155,7 @@ test("top-level and exact command help are active-registry projections", () => {
 });
 
 test("every registered path dispatches through registry-derived validation", () => {
-  for (const descriptor of CONTRACT3_COMMAND_REGISTRY) {
+  for (const descriptor of CONTRACT4_COMMAND_REGISTRY) {
     const result = run([
       ...descriptor.path,
       "--registry-completeness-probe",

@@ -1,5 +1,5 @@
 import { TOOL_VERSION } from "../version.js";
-import { CONTRACT3_COMMAND_REGISTRY } from "./discovery.js";
+import { CONTRACT4_COMMAND_REGISTRY } from "./discovery.js";
 import type { ProjectedCommandDescriptor } from "./registry.js";
 
 export type CommandUsageErrorKind =
@@ -80,7 +80,7 @@ const commandsByPath = new Map<string, ProjectedCommandDescriptor>();
 const resourceActions = new Map<string, string[]>();
 const resources: string[] = [];
 
-for (const descriptor of CONTRACT3_COMMAND_REGISTRY) {
+for (const descriptor of CONTRACT4_COMMAND_REGISTRY) {
   if (descriptor.path.length === 1) {
     topLevelByName.set(descriptor.path[0], descriptor);
     continue;
@@ -547,7 +547,7 @@ export function commandUsageErrorToJson(
 ): Readonly<Record<string, unknown>> {
   return {
     schema_version: "Perttool.CliError.v1",
-    cli_contract_version: 3,
+    cli_contract_version: 4,
     tool_version: TOOL_VERSION,
     operation: error.operation,
     ok: false,

@@ -88,7 +88,7 @@ test("SU-M1 accepted identities and requirements stay aligned", async () => {
   );
 });
 
-test("macro and SU-M2 detail keep target Core slices behind one public cutover", async () => {
+test("macro rolls accepted history forward while SU-M2 retains its acceptance snapshot", async () => {
   const [plan, detail, backlog, design, acceptance] = await Promise.all([
     repositoryFile("plans/scheduling-units.pert"),
     repositoryFile("plans/scheduling-units-m2.pert"),
@@ -99,18 +99,16 @@ test("macro and SU-M2 detail keep target Core slices behind one public cutover",
 
   assert.match(
     plan,
-    /milestone RATIONAL_DURATION_ACCEPTED:[\s\S]*state reached/,
+    /SU-M1, SU-M2, SU-M2R, SU-M3, and SU-M4 are accepted, rolled up once, and advanced/,
   );
   assert.doesNotMatch(plan, /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE/);
   assert.doesNotMatch(plan, /task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE/);
-  assert.match(
-    plan,
-    /task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE RATIONAL_DURATION_ACCEPTED ->[\s\S]*Do not activate the public CLI, result schemas, or normal authority in this slice\./,
-  );
+  assert.doesNotMatch(plan, /milestone RATIONAL_DURATION_ACCEPTED:/);
+  assert.doesNotMatch(plan, /task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE/);
   assert.doesNotMatch(plan, /task SU_M4_UNIT_MIGRATION_WORK_PACKAGE/);
   assert.match(
     plan,
-    /milestone UNIT_MIGRATION_ACCEPTED:[\s\S]*state reached/,
+    /milestone DELIVERY_INPUT_READY:[\s\S]*state reached/,
   );
   assert.match(
     plan,

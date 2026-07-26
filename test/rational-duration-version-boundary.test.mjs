@@ -265,7 +265,7 @@ test("the version edit composes atomically with a generated Fraction", () => {
   );
   assert.equal(checked.ok, true);
   assert.equal(checked.validatedDocument.grammarVersion, 3);
-  assert.equal(publicApi.checkDocument(candidate).ok, false);
+  assert.equal(publicApi.checkDocument(candidate).ok, true);
   assert.ok(candidate.includes("  duration 1/3d\n"));
   for (const token of [
     "2026-07-25T09:00:00+09:00",

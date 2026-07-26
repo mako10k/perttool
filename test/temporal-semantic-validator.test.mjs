@@ -143,7 +143,7 @@ task WORK START -> FINISH:
   const active = publicApi.checkDocument(text);
   assert.deepEqual(
     active.diagnostics.map(({ code }) => code),
-    ["PTDSL-005", "PTDSL-005", "PTDSL-005"],
+    ["PTSEM-112", "PTSEM-112", "PTSEM-112"],
   );
 });
 

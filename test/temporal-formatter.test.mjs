@@ -204,19 +204,18 @@ test("target formatter preserves source structure and exact temporal tokens", ()
   assert.equal(repeated.formattedText, formatted.formattedText);
 });
 
-test("active Contract 3 formatter continues to reject target Grammar 2", async () => {
+test("active Contract 4 formatter accepts Grammar 2", async () => {
   const source = await readFile(
     path.join(fixtureDirectory, "calendar-offset-v2.pert"),
     "utf8",
   );
   const active = publicApi.formatDocument(source);
-  assert.equal(active.ok, false);
-  assert.equal(active.changed, false);
-  assert.equal(active.formattedText, null);
-  assert.deepEqual(
-    active.diagnostics.map(({ code }) => code),
-    ["PTDSL-005", "PTDSL-005", "PTDSL-005"],
-  );
+  assert.equal(active.ok, true);
+  assert.equal(active.formattedText, formatTargetDocument(
+    source,
+    TARGET_GRAMMAR_2_CAPABILITY,
+  ).formattedText);
+  assert.deepEqual(active.diagnostics, []);
 });
 
 test("target formatter exposes no candidate for invalid temporal source", () => {

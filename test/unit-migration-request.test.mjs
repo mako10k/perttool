@@ -14,7 +14,7 @@ import {
   UNIT_MIGRATION_IDENTITY,
 } from "../dist/migration/request.js";
 import {
-  CONTRACT3_COMMAND_REGISTRY,
+  CONTRACT4_COMMAND_REGISTRY,
 } from "../dist/command/discovery.js";
 import {
   TARGET_GRAMMAR_3_CAPABILITY,
@@ -41,18 +41,19 @@ function causeProjection(result) {
   );
 }
 
-test("unit-migration request preparation is internal and capability-checked", async () => {
+test("unit migration is public while target request preparation remains capability-checked", async () => {
   const source = await fixture("migration-point-v2.pert");
   assert.equal("prepareTargetUnitMigrationRequest" in publicApi, false);
   assert.equal("UNIT_MIGRATION_IDENTITY" in publicApi, false);
+  assert.equal("planUnitMigration" in publicApi, true);
   assert.deepEqual(UNIT_MIGRATION_IDENTITY, {
     id: "perttool.unit-migration",
     version: 2,
   });
-  assert.equal(CONTRACT3_COMMAND_REGISTRY.length, 27);
+  assert.equal(CONTRACT4_COMMAND_REGISTRY.length, 28);
   assert.equal(
-    JSON.stringify(CONTRACT3_COMMAND_REGISTRY).includes("project migrate-unit"),
-    false,
+    JSON.stringify(CONTRACT4_COMMAND_REGISTRY).includes("project migrate-unit"),
+    true,
   );
   assert.equal("PTMIG-408" in UNIT_MIGRATION_DIAGNOSTIC_CODES, false);
   assert.throws(

@@ -18,6 +18,7 @@ const topicIds = [
   "syntax.estimate",
   "syntax.duration",
   "syntax.velocity",
+  "syntax.temporal",
   "syntax.indentation",
   "syntax.string",
   "syntax.text",
@@ -26,8 +27,10 @@ const topicIds = [
   "syntax.top-level",
   "analysis",
   "analysis.resources",
+  "analysis.temporal",
   "next",
   "editing",
+  "editing.unit-migration",
   "mermaid",
   "workflows",
   "errors",
@@ -113,30 +116,27 @@ test("mermaid help exposes lossless export and fail-closed import", () => {
   ]);
 });
 
-test("next help exposes the v3 recommendation authority and consumer safety", () => {
+test("next help exposes the v4 temporal start authority and consumer safety", () => {
   const help = getHelp("next", "detail");
   assert.equal(help.ok, true);
-  assert.match(help.summary, /NextResult\.v3/);
+  assert.match(help.summary, /NextResult\.v4/);
   const body = help.sections.map(({ body }) => body).join("\n");
   assert.match(body, /recommended, allowed, deferred, or discouraged/);
-  assert.match(body, /schema_version/);
-  assert.match(body, /complete=false/);
-  assert.match(body, /decisive semantics are unknown/);
+  assert.match(body, /temporal release gate/);
+  assert.match(body, /decisive or temporal authority is unknown/);
   assert.ok(
     help.sections.some(
       ({ title }) => title === "AI task selection authority",
     ),
   );
-  assert.match(body, /normal start authority/);
-  assert.match(body, /macro recommended work package.*detail plan/);
-  assert.match(body, /recommended subset/);
-  assert.match(body, /exactly one allowed task/);
-  assert.match(body, /unknown version.*PTREC.*stop instead/);
+  assert.match(body, /startable_recommended_task_ids/);
+  assert.match(body, /future, or unavailable authority/);
+  assert.match(body, /PTREC diagnostics/);
   assert.match(body, /task-state or capacity changes/);
   assert.match(body, /validateOverride/);
   assert.match(body, /Perttool\.OverrideDecision\.v1/);
-  assert.match(body, /secrets, credentials, or tokens/);
-  assert.match(body, /override apply and audit write is not implemented/);
+  assert.match(body, /cannot bypass a future or unavailable temporal release gate/);
+  assert.match(body, /does not change task state, files, Git, or the network/);
   assert.ok(help.examples.some(({ text }) => text.endsWith("--format json")));
 });
 

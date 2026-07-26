@@ -1662,12 +1662,13 @@ Exit:
 The scheduling-units M1 workstream specifies the temporal property scope,
 calendar arithmetic, release-aware deadline evaluation, exact Point/time
 source migration, and the public interface before runtime implementation.
-The current public-interface target selects grammar version 3, unit-migration
-version 2, and CLI Contract 4 while leaving active Contract 3, accepted
-Grammar 2 behavior, and NextResult v3 authority unchanged.
+The accepted public interface selects grammar version 3, unit-migration
+version 2, and CLI Contract 4. SU-M5 atomically activated the Grammar 1/2/3
+boundary, target result schemas, and NextResult v4 authority in source; package
+publication remains separately gated.
 
-The accepted implementation sequence treats SU-M2 through SU-M4 as
-target-only source and Core slices. SU-M5 atomically activates the public
+The accepted implementation sequence treated SU-M2 through SU-M4 as
+target-only source and Core slices. SU-M5 atomically activated the public
 schemas, registry and dispatch, text/JSON help, Guide, README and
 installed-package workflows, and Next v4 normal start authority. No earlier
 milestone is a partial public Contract 4 cutover.

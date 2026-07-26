@@ -1,6 +1,7 @@
 import type { Diagnostic } from "../model/diagnostics.js";
 import type { DurationValue, VelocityValue } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
+import type { TargetCalendarValue } from "../model/target-calendar.js";
 import { checkDocument, type CheckOptions } from "./check.js";
 
 export type ProjectMetadataDurationUnit = "day" | "hour" | "point";
@@ -10,10 +11,11 @@ export interface ProjectMetadata {
   readonly version: number;
   readonly title: string;
   readonly description: string | null;
-  readonly asOf: string | null;
+  readonly asOf: TargetCalendarValue | null;
   readonly durationUnit: ProjectMetadataDurationUnit;
   readonly velocity: string | null;
   readonly finish: string;
+  readonly finishDeadline: TargetCalendarValue | null;
   readonly criticalEpsilon: string | null;
   readonly targetDuration: string | null;
 }
@@ -76,10 +78,14 @@ export function getProjectMetadata(
       version: checked.grammarVersion,
       title,
       description: optionalString(fieldNamed(declaration, "description")?.value),
-      asOf: optionalString(fieldNamed(declaration, "as_of")?.value),
+      asOf: checked.temporalInputs?.anchor ?? null,
       durationUnit,
       velocity: optionalLiteral(fieldNamed(declaration, "velocity")?.value),
       finish,
+      finishDeadline:
+        checked.temporalInputs?.milestoneDeadlines.find(
+          ({ milestoneId }) => milestoneId === finish,
+        )?.deadline ?? null,
       criticalEpsilon: optionalLiteral(fieldNamed(declaration, "critical_epsilon")?.value),
       targetDuration: optionalLiteral(fieldNamed(declaration, "target_duration")?.value),
     },
