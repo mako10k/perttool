@@ -159,18 +159,17 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:f10dd3e1ebb5a672ac6db058273399ba53e8eadfccbe6891f74888fca268f303",
+      "source_digest": "sha256:e9be2602378f21d7fd6181359c796cf29bac8c18c0ff397029b5d15860c0ec39",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_NORMATIVE_EXAMPLES"
+          "GOV_DESIGN_ACCEPTANCE"
         ],
         "runnable_now": [
-          "GOV_NORMATIVE_EXAMPLES"
+          "GOV_DESIGN_ACCEPTANCE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "GOV_DESIGN_ACCEPTANCE",
           "GOV_AUTHORITY_CORE",
           "GOV_SOURCE_MODEL",
           "GOV_CLI_PREVIEW",
@@ -180,18 +179,18 @@
         ]
       },
       "recommended_task_ids": [
-        "GOV_NORMATIVE_EXAMPLES"
+        "GOV_DESIGN_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "GOV_NORMATIVE_EXAMPLES"
+        "GOV_DESIGN_ACCEPTANCE"
       ],
       "tiers": {
-        "GOV_NORMATIVE_EXAMPLES": "recommended"
+        "GOV_DESIGN_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_NORMATIVE_EXAMPLES",
+          "id": "GOV_DESIGN_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -207,7 +206,9 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "operations": {
       "source_digest": "sha256:b38d4cc751e42ef437f4a140df22ffeb94bfc2aa1f6487d34feef6618eed6b6a",

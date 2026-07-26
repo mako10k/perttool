@@ -939,6 +939,31 @@ Reanalysis preserves 30p remaining, 22p precedence and 25p heuristic resource
 makespans, 3p resource delay, both forecasts, and the sole
 `GOV_NORMATIVE_EXAMPLES` recommendation while clearing `PTDAG-208`.
 
+`GOV_NORMATIVE_EXAMPLES` then accepted 15 authority and write-path cases as
+one Markdown and machine-readable baseline. The cases fix omitted defaults,
+governed preview without assertions, scope-local owner/delegate authority,
+missing/matching/wrong owner confirmation, the independent actor requirement,
+same- and distinct-owner batches, pre-change self-authorization rejection,
+stale-digest composition, ordinary and byte-identical maintenance,
+transformation and new-document boundaries, assertion validation, atomic
+Contract 5 activation, and direct-edit guidance without authentication or
+enforcement claims.
+
+The atomic completion and project-metadata candidate was previewed from source
+digest
+`sha256:f10dd3e1ebb5a672ac6db058273399ba53e8eadfccbe6891f74888fca268f303`
+and produced digest
+`sha256:e9be2602378f21d7fd6181359c796cf29bac8c18c0ff397029b5d15860c0ec39`.
+The cumulative 17p completed on one active day updates plan-specific velocity
+to `17p/1d`. There are 28p remaining, with a 20p precedence makespan, 23p
+heuristic resource makespan, 3p resource delay, and forecasts of `20/17d` and
+`23/17d`. Six dedicated example-contract tests and all 532 unit tests pass;
+the documentation, all 18 self-use plans, local link, package, and installed
+file-first gates also pass. Complete, non-truncated NextResult v4 recommends
+and authorizes only `GOV_DESIGN_ACCEPTANCE`. The accepted snapshot retains
+`PTDAG-208` for `EXAMPLES_DEFINED` until advance. Grammar 4, Contract 5, and
+owner-aware runtime enforcement remain unavailable.
+
 Stage 1 allowed operations:
 
 - check

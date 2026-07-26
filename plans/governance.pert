@@ -1,10 +1,10 @@
 project OWNER_AWARE_GOVERNANCE:
   version 1
   title "Owner-aware goal and DAG governance"
-  description "Adopt GitHub Issue #4 as an independent post-beta workstream. Separate authority to change the project goal or DAG from recommendation override MIG-08. Principal and owner-confirmation values are caller assertions, not authentication. Preserve preview-first mutation, candidate validation, optimistic locking, and safe-write controls. GOV_REQUIREMENTS completed 3p, GOV_AUTHORITY_CONTRACT completed 4p, GOV_DSL_CONTRACT completed 4p, and GOV_INTERFACE_CONTRACT completed 4p on 2026-07-26, establishing a cumulative workstream-specific velocity sample of 15p/1d. Requirements fix the threat model, scope, defaults, write boundary, and non-goals. Governance semantics version 1 fixes actual-change classification and pre-change authority. Governance source contract version 1 fixes PrincipalId/PrincipalList syntax, Grammar 4 project fields, declared/effective defaults, source-preserving edits, project init/show behavior, unit-migration compatibility, and the digest-bound pre-change snapshot. Governance interface version 1 fixes an optional actor, repeatable accepted-by-owner assertions, operation-level batch confirmation, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, PTGOV-101 under exit 1, and an atomic Grammar 4/CLI Contract 5 cutover. Subsequent tasks still own normative examples, runtime implementation, guidance, and installed acceptance. Release publication is outside this plan."
+  description "Adopt GitHub Issue #4 as an independent post-beta workstream. Separate authority to change the project goal or DAG from recommendation override MIG-08. Principal and owner-confirmation values are caller assertions, not authentication. Preserve preview-first mutation, candidate validation, optimistic locking, and safe-write controls. GOV_REQUIREMENTS completed 3p, GOV_AUTHORITY_CONTRACT completed 4p, GOV_DSL_CONTRACT completed 4p, GOV_INTERFACE_CONTRACT completed 4p, and GOV_NORMATIVE_EXAMPLES completed 2p on 2026-07-26, establishing a cumulative workstream-specific velocity sample of 17p/1d. Requirements fix the threat model, scope, defaults, write boundary, and non-goals. Governance semantics version 1 fixes actual-change classification and pre-change authority. Governance source contract version 1 fixes PrincipalId/PrincipalList syntax, Grammar 4 project fields, declared/effective defaults, source-preserving edits, project init/show behavior, unit-migration compatibility, and the digest-bound pre-change snapshot. Governance interface version 1 fixes an optional actor, repeatable accepted-by-owner assertions, operation-level batch confirmation, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, PTGOV-101 under exit 1, and an atomic Grammar 4/CLI Contract 5 cutover. Normative governance examples fix defaults, preview, owner/delegate authority, missing/matching/wrong confirmation, same- and distinct-owner batches, pre-change self-authorization rejection, stale-digest composition, ordinary operations, atomic activation, and direct-edit guidance as one machine-readable acceptance baseline. Subsequent tasks still own design acceptance, runtime implementation, guidance, and installed acceptance. Release publication is outside this plan."
   as_of 2026-07-26
   duration_unit point
-  velocity 15p/1d
+  velocity 17p/1d
   finish GOVERNANCE_ACCEPTED
 
 resource DEVELOPERS:
@@ -77,6 +77,7 @@ task GOV_NORMATIVE_EXAMPLES INTERFACE_CONTRACT_DEFINED -> EXAMPLES_DEFINED:
   title "Fix normative governance examples and acceptance cases"
   description "Cover omitted defaults, owner and delegate writes, missing and wrong acceptance, governed preview, distinct-owner batches, pre-change self-authorization rejection, stale digests, unaffected maintenance, and direct-edit bypass guidance."
   duration 2p
+  status done
   priority 85
   requires:
     DEVELOPERS 1

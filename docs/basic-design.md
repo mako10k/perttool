@@ -19,6 +19,7 @@
 - Owner-aware mutation governance: [specs/governance-authority.md](specs/governance-authority.md)
 - Governance source and effective metadata: [specs/governance-source.md](specs/governance-source.md)
 - Governance interface: [specs/governance-interface.md](specs/governance-interface.md)
+- Governance examples: [examples/governance.md](examples/governance.md)
 - Recommendation examples: [examples/recommendation.md](examples/recommendation.md)
 - AI Agent Guidance Registry: [specs/agent-guidance.md](specs/agent-guidance.md)
 - AI Agent Guidance examples: [examples/agent-guidance.md](examples/agent-guidance.md)
@@ -1770,9 +1771,14 @@ pre-change snapshot. Governance interface version 1 selects one optional
 actor, repeatable `--accepted-by-owner`, operation-level batch assertions,
 ProjectResult v3, MutationResult v2 with GovernanceDecision v1, PTGOV-101
 under exit 1, and the atomic Grammar 4/CLI Contract 5 cutover.
+The [normative governance examples](examples/governance.md) fix defaults,
+preview, direct owner/delegate authority, missing/matching/wrong confirmation,
+same- and distinct-owner batches, pre-change self-authorization rejection,
+stale-digest composition, ordinary operations, atomic activation, and
+direct-edit guidance as one machine-readable acceptance baseline.
 
-The remaining sequence independently accepts normative cases, source model,
-pure evaluator, write enforcement, guidance, and installed-package acceptance.
+The remaining sequence independently accepts the source model, pure
+evaluator, write enforcement, guidance, and installed-package behavior.
 Until those gates are complete, the active Contract 4 runtime does not parse
 Grammar 4 governance fields, accept actor/owner-confirmation options, or
 enforce owner-aware writes.

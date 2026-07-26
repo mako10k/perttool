@@ -1610,6 +1610,7 @@ Resolved design decisions:
 - Governance principal syntax, Grammar 4 fields, declared/effective defaults, source preservation, initialization warning, project metadata, and pre-change snapshot: [Governance Source and Effective-Metadata specification](specs/governance-source.md)
 - Goal/DAG classification, pre-change authority, mixed-scope decisions, preview behavior, and stable denial: [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md)
 - Core assertions, CLI Contract 5, project/mutation schemas, help, diagnostics, exits, and atomic activation: [Owner-Aware Governance Interface Contract](specs/governance-interface.md)
+- Defaults, preview, owner/delegate assertions, atomic batches, safe-write composition, ordinary operations, and direct-edit guidance: [Normative Owner-Aware Governance Examples](examples/governance.md)
 
 ## 25. Recommended next specification work
 
@@ -1660,7 +1661,7 @@ Before implementation, separate the specifications in the following order.
     - [x] Goal/DAG change classification and pre-change authority semantics
     - [x] Grammar 4 source and declared/effective metadata contract
     - [x] [Core, CLI, help, JSON, and diagnostic interface contract](specs/governance-interface.md)
-    - [ ] Normative authority and write-path examples
+    - [x] [Normative authority and write-path examples](examples/governance.md)
     - [ ] Source, evaluator, preview, write, guidance, and installed acceptance
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.

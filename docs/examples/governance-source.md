@@ -12,8 +12,8 @@
 These cases fix the source and effective-metadata observations accepted by
 `GOV_DSL_CONTRACT`. The accepted interface contract fixes the
 actor/owner-confirmation CLI, JSON, text, write, schema, diagnostic, and exit
-shapes. These source cases do not provide the authority-decision and
-write-path observations owned by `GOV_NORMATIVE_EXAMPLES`.
+shapes. The accepted [authority and write-path examples](governance.md) own
+the corresponding decision and persistence observations.
 
 Grammar 4 is an accepted target and is not active in perttool `0.3.0`.
 The active runtime supports Grammar 1, 2, and 3 and must fail closed for these
@@ -127,10 +127,10 @@ delegate-list token and retains Grammar 4. Governance metadata does not enter
 the DAG or recommendation fact model, so the same non-governance project facts
 produce the same schedule, recommendation tiers, and normal start authority.
 
-## 3. Required interface and later case projections
+## 3. Accepted interface and case projections
 
-The accepted governance interface contract and later normative cases extend
-these source observations with:
+The accepted governance interface contract and authority/write-path cases
+extend these source observations with:
 
 - exact `project show` text and JSON for declared and effective metadata;
 - actor and owner-confirmation request forms;

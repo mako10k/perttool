@@ -1,0 +1,484 @@
+{
+  "schema_version": "Perttool.GovernanceExampleBaseline.v1",
+  "target_contract": {
+    "grammar_version": 4,
+    "cli_contract_version": 5,
+    "interface": {
+      "id": "perttool.governance-interface",
+      "version": 1
+    },
+    "source_contract_version": 1,
+    "semantics_version": 1,
+    "project_result": "Perttool.ProjectResult.v3",
+    "mutation_result": "Perttool.MutationResult.v2",
+    "decision": "Perttool.GovernanceDecision.v1",
+    "denial_diagnostic": "PTGOV-101",
+    "invalid_core_input_diagnostic": "PTGOV-102",
+    "stale_write_diagnostic": "PTIO-501"
+  },
+  "snapshots": {
+    "DEFAULT": {
+      "declared": {
+        "goal_owner": null,
+        "goal_delegates": null,
+        "dag_owner": null,
+        "dag_delegates": null
+      },
+      "effective": {
+        "goal_owner": "user",
+        "goal_delegates": [],
+        "dag_owner": "user",
+        "dag_delegates": []
+      }
+    },
+    "DELEGATED": {
+      "effective": {
+        "goal_owner": "user",
+        "goal_delegates": ["llm"],
+        "dag_owner": "user",
+        "dag_delegates": ["codex"]
+      }
+    },
+    "SPLIT": {
+      "effective": {
+        "goal_owner": "user",
+        "goal_delegates": [],
+        "dag_owner": "llm",
+        "dag_delegates": []
+      }
+    }
+  },
+  "generated_warning": "# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.",
+  "cases": [
+    {
+      "case_id": "GOV-001",
+      "category": "metadata",
+      "title": "Omitted fields expose declared nulls and effective defaults",
+      "snapshot": "DEFAULT",
+      "operation": "project.show",
+      "expected": {
+        "ok": true,
+        "schema_version": "Perttool.ProjectResult.v3",
+        "source_changed": false,
+        "grammar_upgraded": false,
+        "governance_decision": null,
+        "text_lines": [
+          "GOAL_OWNER declared=- effective=user",
+          "GOAL_DELEGATES declared=- effective=[]",
+          "DAG_OWNER declared=- effective=user",
+          "DAG_DELEGATES declared=- effective=[]"
+        ]
+      }
+    },
+    {
+      "case_id": "GOV-002",
+      "category": "preview",
+      "title": "A governed preview succeeds without assertions",
+      "snapshot": "DEFAULT",
+      "operation": "project.set",
+      "change": "project.finish",
+      "request": {
+        "intent": "preview",
+        "actor": null,
+        "accepted_by_owner": []
+      },
+      "expected": {
+        "ok": true,
+        "diagnostic_codes": [],
+        "write": {
+          "written": false
+        },
+        "governance": {
+          "applicable": true,
+          "affected_scopes": ["goal"],
+          "required_owner_confirmations": ["user"],
+          "owner_confirmation_required": true,
+          "write_authorized": false,
+          "scopes": [
+            {
+              "scope": "goal",
+              "required_owner": "user",
+              "effective_delegates": [],
+              "actor_direct": false,
+              "owner_confirmation_required": true,
+              "owner_confirmation_present": false,
+              "scope_authorized": false,
+              "denial_cause": "actor_required"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "GOV-003",
+      "category": "direct_authority",
+      "title": "Owner and delegate authority remains scope-local",
+      "snapshot": "DELEGATED",
+      "operation": "authority.evaluate",
+      "expected": {
+        "authorized": [
+          {
+            "scope": "goal",
+            "actor": "user",
+            "basis": "owner"
+          },
+          {
+            "scope": "goal",
+            "actor": "llm",
+            "basis": "delegate"
+          },
+          {
+            "scope": "dag",
+            "actor": "codex",
+            "basis": "delegate"
+          }
+        ],
+        "not_directly_authorized": [
+          {
+            "scope": "goal",
+            "actor": "codex",
+            "required_owner": "user"
+          }
+        ],
+        "authorized_scope_shape": {
+          "actor_direct": true,
+          "owner_confirmation_required": false,
+          "scope_authorized": true,
+          "denial_cause": null
+        }
+      }
+    },
+    {
+      "case_id": "GOV-004",
+      "category": "denied_write",
+      "title": "Missing owner confirmation denies persistence",
+      "snapshot": "DEFAULT",
+      "operation": "project.set",
+      "candidate_identity": "default-finish-change",
+      "change": "project.finish",
+      "request": {
+        "intent": "persist",
+        "actor": "codex",
+        "accepted_by_owner": []
+      },
+      "expected": {
+        "ok": false,
+        "candidate_retained": true,
+        "diagnostic_codes": ["PTGOV-101"],
+        "exit_code": 1,
+        "write": {
+          "written": false,
+          "safe_write_entered": false
+        },
+        "scope": {
+          "scope": "goal",
+          "required_owner": "user",
+          "actor_direct": false,
+          "owner_confirmation_present": false,
+          "scope_authorized": false,
+          "denial_cause": "owner_confirmation_required"
+        }
+      }
+    },
+    {
+      "case_id": "GOV-005",
+      "category": "authorized_write",
+      "title": "Matching owner confirmation authorizes the same change",
+      "snapshot": "DEFAULT",
+      "operation": "project.set",
+      "candidate_identity": "default-finish-change",
+      "change": "project.finish",
+      "request": {
+        "intent": "persist",
+        "actor": "codex",
+        "accepted_by_owner": ["user"]
+      },
+      "expected": {
+        "ok": true,
+        "diagnostic_codes": [],
+        "exit_code": 0,
+        "write": {
+          "written": true,
+          "safe_write_entered": true
+        },
+        "scope": {
+          "scope": "goal",
+          "required_owner": "user",
+          "actor_direct": false,
+          "owner_confirmation_present": true,
+          "scope_authorized": true,
+          "denial_cause": null
+        }
+      }
+    },
+    {
+      "case_id": "GOV-006",
+      "category": "denied_write",
+      "title": "A wrong owner assertion remains a governance denial",
+      "snapshot": "DEFAULT",
+      "operation": "project.set",
+      "candidate_identity": "default-finish-change",
+      "change": "project.finish",
+      "request": {
+        "intent": "persist",
+        "actor": "codex",
+        "accepted_by_owner": ["llm"]
+      },
+      "expected": {
+        "ok": false,
+        "diagnostic_codes": ["PTGOV-101"],
+        "invalid_input_diagnostic_emitted": false,
+        "exit_code": 1,
+        "write": {
+          "written": false,
+          "safe_write_entered": false
+        },
+        "scope": {
+          "scope": "goal",
+          "required_owner": "user",
+          "actor_direct": false,
+          "owner_confirmation_present": false,
+          "scope_authorized": false,
+          "denial_cause": "owner_confirmation_mismatch"
+        }
+      }
+    },
+    {
+      "case_id": "GOV-007",
+      "category": "denied_write",
+      "title": "Owner confirmation never substitutes for an actor",
+      "snapshot": "DEFAULT",
+      "operation": "project.set",
+      "change": "project.finish",
+      "request": {
+        "intent": "persist",
+        "actor": null,
+        "accepted_by_owner": ["user"]
+      },
+      "expected": {
+        "ok": false,
+        "diagnostic_codes": ["PTGOV-101"],
+        "exit_code": 1,
+        "write": {
+          "written": false
+        },
+        "scope": {
+          "scope": "goal",
+          "required_owner": "user",
+          "actor_direct": false,
+          "owner_confirmation_present": true,
+          "scope_authorized": false,
+          "denial_cause": "actor_required"
+        }
+      }
+    },
+    {
+      "case_id": "GOV-008",
+      "category": "batch",
+      "title": "Equal owners require one deduplicated confirmation",
+      "snapshot": "DEFAULT",
+      "operation": "batch.apply",
+      "changes": ["project.finish", "task.add"],
+      "request": {
+        "intent": "persist",
+        "actor": "codex",
+        "accepted_by_owner": ["user"]
+      },
+      "expected": {
+        "affected_scopes": ["goal", "dag"],
+        "required_owner_confirmations": ["user"],
+        "write_authorized": true,
+        "assertion_level": "operation",
+        "scope_authorized": {
+          "goal": true,
+          "dag": true
+        }
+      }
+    },
+    {
+      "case_id": "GOV-009",
+      "category": "batch",
+      "title": "Distinct owners require both exact confirmations",
+      "snapshot": "SPLIT",
+      "operation": "batch.apply",
+      "changes": ["project.finish", "task.add"],
+      "request": {
+        "intent": "persist",
+        "actor": "codex"
+      },
+      "expected": {
+        "affected_scopes": ["goal", "dag"],
+        "required_owner_confirmations": ["user", "llm"],
+        "partial_assertion": {
+          "accepted_by_owner": ["user"],
+          "scope_authorized": {
+            "goal": true,
+            "dag": false
+          },
+          "dag_denial_cause": "owner_confirmation_mismatch",
+          "write_authorized": false,
+          "written": false
+        },
+        "complete_assertion": {
+          "cli_occurrences": ["user", "llm"],
+          "accepted_by_owner": ["llm", "user"],
+          "scope_authorized": {
+            "goal": true,
+            "dag": true
+          },
+          "write_authorized": true
+        }
+      }
+    },
+    {
+      "case_id": "GOV-010",
+      "category": "pre_change_authority",
+      "title": "One operation cannot grant itself direct authority",
+      "snapshot": "DEFAULT",
+      "operation": "batch.apply",
+      "changes": ["project.dag_delegates.add(codex)", "task.add"],
+      "request": {
+        "intent": "persist",
+        "actor": "codex",
+        "accepted_by_owner": []
+      },
+      "expected": {
+        "affected_scopes": ["dag"],
+        "effective_delegates_used": [],
+        "candidate_delegates_used_for_authority": false,
+        "actor_direct": false,
+        "required_owner_confirmations": ["user"],
+        "write_authorized": false,
+        "denial_cause": "owner_confirmation_required",
+        "later_decision_requires_new_digest": true
+      }
+    },
+    {
+      "case_id": "GOV-011",
+      "category": "safe_write",
+      "title": "Authorization does not weaken stale-digest rejection",
+      "snapshot": "DEFAULT",
+      "operation": "project.set",
+      "request": {
+        "intent": "persist",
+        "actor": "codex",
+        "accepted_by_owner": ["user"]
+      },
+      "expected": {
+        "governance_write_authorized": true,
+        "digest_changed_before_commit": true,
+        "ok": false,
+        "diagnostic_codes": ["PTIO-501"],
+        "governance_denial_emitted": false,
+        "exit_code": 5,
+        "write": {
+          "written": false
+        },
+        "retry": {
+          "reread": true,
+          "replan": true,
+          "reclassify": true,
+          "reauthorize": true,
+          "prior_decision_reusable": false
+        }
+      }
+    },
+    {
+      "case_id": "GOV-012",
+      "category": "ordinary",
+      "title": "Ordinary maintenance and byte-identical candidates are not governed",
+      "snapshot": "DEFAULT",
+      "operation": "mutation.plan",
+      "changes": ["task.estimate", "resource.capacity", "byte_identical"],
+      "request": {
+        "intent": "persist",
+        "actor": null,
+        "accepted_by_owner": []
+      },
+      "expected": {
+        "applicable": false,
+        "affected_scopes": [],
+        "required_owner_confirmations": [],
+        "owner_confirmation_required": false,
+        "write_authorized": true,
+        "scopes": [],
+        "existing_safe_write_rules_retained": true
+      }
+    },
+    {
+      "case_id": "GOV-013",
+      "category": "operation_boundary",
+      "title": "Transformations and new-document creation invent no authority",
+      "snapshot": null,
+      "operation": "boundary.matrix",
+      "expected": {
+        "ordinary_transformations": [
+          "document.format",
+          "project.migrate-unit"
+        ],
+        "new_document_operations": [
+          "project.init",
+          "dag.import"
+        ],
+        "governance_assertions_accepted": false,
+        "pre_change_snapshot_invented": false,
+        "existing_document_replacement_exempt": false
+      }
+    },
+    {
+      "case_id": "GOV-014",
+      "category": "validation_and_cutover",
+      "title": "Invalid assertions fail before authority evaluation",
+      "snapshot": "DEFAULT",
+      "operation": "contract.validation",
+      "expected": {
+        "cli_invalid": {
+          "causes": [
+            "malformed_actor",
+            "duplicate_actor",
+            "malformed_accepted_by_owner",
+            "duplicate_accepted_by_owner"
+          ],
+          "diagnostic_code": "PTCLI-001",
+          "exit_code": 2,
+          "document_io_reached": false
+        },
+        "core_invalid": {
+          "diagnostic_code": "PTGOV-102",
+          "exit_code": 1,
+          "governance_decision": null
+        },
+        "contract_4": {
+          "grammar_4_accepted": false,
+          "governance_options_accepted": false,
+          "partial_public_surface": false
+        },
+        "contract_5_activation": "atomic"
+      }
+    },
+    {
+      "case_id": "GOV-015",
+      "category": "presentation",
+      "title": "Help and direct-edit guidance state the same limit",
+      "snapshot": null,
+      "operation": "presentation.acceptance",
+      "expected": {
+        "surfaces": [
+          "registry",
+          "text_help",
+          "json_help",
+          "guide.editing",
+          "README",
+          "generated_header",
+          "installed_package"
+        ],
+        "generated_warning_exact": true,
+        "direct_edit_governance_decision": null,
+        "claims_authentication": false,
+        "claims_verified_consultation": false,
+        "claims_durable_audit": false,
+        "claims_direct_edit_prevention": false
+      }
+    }
+  ]
+}
