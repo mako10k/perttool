@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.14
+- Document status: Draft 0.15
 - Created: 2026-07-21
-- Updated: 2026-07-25
+- Updated: 2026-07-26
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -118,6 +118,35 @@ Current non-goals:
 
 The baseline policy is effective immediately. Migration of existing surfaces is a separate, phased workstream after the first beta and does not expand the accepted `BETA_RELEASE_E2E` gate.
 
+### 2.6 Separate plan maintenance from goal and DAG authority
+
+`perttool` distinguishes authority to perform ordinary plan maintenance from
+authority to redefine the project goal or DAG. The threat is accidental
+authority overreach or goal substitution by a non-malicious executor, such as
+changing `project.finish` or replacing difficult critical-path work and then
+treating the resulting empty recommendation as project completion.
+
+Must:
+
+- Represent effective owners and delegates separately for the project goal and
+  DAG.
+- Keep existing documents valid when governance metadata is omitted. Their
+  effective goal owner and DAG owner are `user`, and both delegate sets are
+  empty.
+- Treat principal IDs and owner-confirmation values as caller assertions, not
+  authenticated or verified identities. The initial principal domain supports
+  at least `user`, `llm`, and `codex`.
+- Require explicit write authority for goal and DAG changes while keeping
+  preview, diff, and read-only analysis available without owner confirmation.
+- Authorize owner and delegate changes against the pre-change governance state;
+  a mutation cannot grant itself authority and use the new authority in the
+  same operation.
+- Keep this project-model write authority separate from a recommendation
+  override. An override selects a different feasible ready-task start set; it
+  does not authorize changing project facts, the goal, or the DAG.
+- Preserve all existing parse, semantic, candidate-validation,
+  optimistic-lock, safe-write, and Git-history protections.
+
 ## 3. Problems to solve
 
 - A task list alone makes dependencies and start order hard to see.
@@ -131,12 +160,16 @@ The baseline policy is effective immediately. Migration of existing surfaces is 
 - “Tasks that can be done now” and “tasks that should be done now” are not distinguished, causing an AI to optimize locally for an easy-to-start branch task.
 - Project intent and the reasons for task selection are scattered across prompts, chat history, and issue discussions, so the same decision cannot be reproduced from the same plan.
 - Optional features and improvements scheduled for replacement are prioritized, while critical dependencies and work immediately before a gate are postponed.
+- An executor that is authorized to maintain status or estimates can
+  accidentally redefine `project.finish` or restructure the DAG without the
+  goal or DAG owner's confirmation.
 - A plan that cannot be recalculated without a GUI or external service is difficult to put under Git and automation.
 - Behavior diverges when human help and the operational contract for AI are implemented separately.
 
 ## 4. Non-goals
 
-The MVP does not aim to provide the following.
+The MVP and the subsequent extension boundaries in this document do not aim to
+provide the following.
 
 - Replacing a general-purpose project-management SaaS
 - Guaranteeing an exact exhaustive-search optimum for resource-constrained schedules in the MVP
@@ -156,6 +189,15 @@ The MVP does not aim to provide the following.
 - Guaranteeing an exact global optimum for a heuristic schedule or recommendation
 - Treating risks, information, or release semantics absent from the project model as source-of-truth facts inferred from chat
 - Prohibiting a human from deviating from a recommendation
+- Authenticating or verifying governance principals, or providing signatures,
+  RBAC, identity-provider integration, or an external approval system
+- Defending against a malicious caller that deliberately forges an actor or
+  owner-confirmation assertion
+- Preventing a text editor from changing `.pert` bytes
+- Treating governance owners or delegates as recommendation-ranking facts,
+  dependency edges, or scheduling resources
+- Providing a durable owner-confirmation ledger or combining owner-aware
+  mutation authority with recommendation override apply/audit
 - runtime i18n, localization catalogs, or locale negotiation
 
 ## 5. Intended users and primary use cases
@@ -209,6 +251,11 @@ The MVP does not aim to provide the following.
 | Schedule Critical | A sequence of tasks that constrains completion time in a feasible schedule including resource waits |
 | Recommendation | Work that should currently be prioritized and its explanation, derived from facts explicit in the project model. The [Recommendation Semantics specification](specs/recommendation.md) is authoritative for its formal meaning. |
 | Override | A decision in which a human intentionally chooses work different from the recommendation and states that fact and its reason |
+| Principal | A caller-asserted identifier such as `user`, `llm`, or `codex`; it is not an authenticated identity |
+| Goal Owner | The principal whose authority governs changes to `project.finish` and goal-governance metadata |
+| DAG Owner | The principal whose authority governs changes to task, gate, and milestone structure and DAG-governance metadata |
+| Delegate | A principal that an owner has declared may perform governed writes within one authority scope |
+| Owner Confirmation | A caller assertion that the named effective owner was consulted; it is neither authentication nor proof of approval |
 | Point | The project-specific unit `p` that AI or people use to estimate relative work size; it is not time itself |
 | Velocity | A project-wide ratio expressing the number of Points that can be completed in a period; for example, `20p/10d` |
 | Velocity Forecast | A forecast that converts Points and days/hours using Velocity, distinct from declared PERT values |
@@ -250,6 +297,18 @@ Constraints:
   `as_of`; no command derives it from the system clock.
 - The deadline for the whole project is the `deadline` on the milestone
   referenced by `finish`. There is no separate `project.deadline` alias.
+
+Owner-aware governance extension:
+
+- The project model provides declared and effective values for `goal_owner`,
+  `dag_owner`, `goal_delegates`, and `dag_delegates`.
+- Omitting these fields means effective `goal_owner=user`,
+  `dag_owner=user`, and empty goal and DAG delegate sets. Existing documents
+  remain valid without source migration.
+- Owner and delegate values are principal IDs. The normative grammar,
+  canonical field order, compatibility version, and source-preserving mutation
+  forms are fixed by the subsequent governance DSL contract rather than
+  inferred from these requirements.
 
 ### 7.2 Resource
 
@@ -926,6 +985,67 @@ Must:
   every accepted temporal property through typed preview-first mutations and
   atomic batch requests. File-first maintenance must not require manual source
   rewriting.
+
+### 12.3 Owner-aware goal and DAG writes
+
+The governance extension separates two authority scopes.
+
+- `goal`: changing `project.finish`, `goal_owner`, or `goal_delegates`
+- `dag`: adding or removing task, gate, or milestone structure; changing task
+  or gate endpoints; importing a replacement graph; advancing away removed
+  task, gate, or milestone structure; or changing `dag_owner` or
+  `dag_delegates`
+
+Ordinary maintenance remains outside these confirmation gates. This includes
+task or milestone state, estimates, priorities, task owner, descriptions,
+tags, block reasons, sources, temporal properties, task resource requirements,
+resource declarations and capacities, project metadata other than
+`project.finish` and governance fields, formatting, and exact unit migration.
+A later requirement may add another authority scope, but an implementation
+must not silently widen `goal` or `dag`.
+
+Must:
+
+- A governed preview, `--diff`, JSON preview, and read-only operation succeeds
+  without an actor or owner-confirmation assertion and reports the authority
+  scope, effective pre-change owner, and whether a corresponding write would
+  require owner confirmation for the supplied actor. When no actor is
+  supplied, the preview reports owner confirmation as required rather than
+  inventing an actor.
+- A governed write declares a caller-asserted actor. The effective owner or a
+  declared delegate for that scope may write without a separate
+  owner-confirmation assertion.
+- Any other actor must supply a caller assertion naming the effective
+  pre-change owner for every affected scope. A missing or mismatched assertion
+  fails with a stable machine-readable governance diagnostic that identifies
+  the required scope and owner without claiming authentication.
+- Owner and delegate changes use only the pre-change owner and delegate state
+  for authorization. An atomic request cannot self-authorize through values it
+  introduces.
+- Atomic batch authorization is evaluated over the union of governed
+  mutations. When goal and DAG owners differ, the caller supplies both owner
+  confirmations unambiguously or the write is rejected. The exact repeatable
+  CLI option and request shape are fixed by the governance interface contract.
+- Governed direct commands, atomic batch, graph import, and advance share the
+  same Core authority determination. A CLI adapter must not reimplement or
+  weaken it.
+- Governance authorization does not replace source validation,
+  final-candidate validation, expected-digest comparison, symlink/race
+  rejection, atomic write, or post-write reanalysis.
+- `project show` exposes declared and effective governance values. Applicable
+  mutation results expose the actor, affected scopes, required owners, whether
+  confirmation was required, and caller-asserted owner-confirmation values.
+- Registry-driven text help, JSON help, `guide editing`, README maintenance
+  guidance, normative examples, and generated/project-init documents describe
+  the same boundary. Generated documents include a short leading comment
+  warning that direct DSL editing bypasses owner-confirmation checks.
+- Direct editing remains technically possible and receives no claim of
+  governance enforcement. Existing `.pert` plans should normally be
+  maintained through perttool commands when owner-aware governance is active.
+- Focused Core, CLI, batch, safe-write, and installed-package tests cover
+  omitted defaults, owner and delegate writes, missing and mismatched
+  confirmation, pre-change self-authorization rejection, mixed-scope batches,
+  stale-digest conflicts, and unaffected ordinary maintenance.
 
 ## 13. Visualization requirements
 

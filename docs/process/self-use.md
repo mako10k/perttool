@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.51
+- Document status: Active Stage 3 / Revision 2.52
 - Creation date: 2026-07-21
 - Update date: 2026-07-26
 - Related design: [../basic-design.md](../basic-design.md)
@@ -798,6 +798,24 @@ project-model write authority, separate from recommendation override MIG-08.
 Its requirements and contract tasks precede implementation; creating the plan
 does not add authentication, activate governance checks, or authorize a
 release.
+
+Then `GOV_REQUIREMENTS` accepted the accidental-overreach threat model;
+separate goal, DAG, and ordinary-maintenance scopes; effective `user` owners
+with empty delegates for omitted metadata; caller-asserted principals and owner
+confirmation; pre-change authorization; preview/write separation; batch,
+import, and advance coverage; direct-edit guidance; and explicit
+authentication, ranking, audit, and enforcement non-goals in requirements
+Draft 0.15. The atomic completion and project-metadata candidate was previewed
+from source digest
+`sha256:e27992631183cf7dacae4da549cdd335a4822854ac8d11b7888a9db8457bb588`
+and produced digest
+`sha256:b23e0652b94e55021f76a61d510449c6a742371d4ce5ad6b1e5111c20b100ddd`.
+The first accepted 3p sample establishes plan-specific velocity `3p/1d`.
+There are 42p remaining, with a 30p precedence makespan, 37p heuristic
+resource makespan, 7p resource delay, and forecasts of 10d and `37/3d`.
+Complete NextResult v4 recommends `GOV_AUTHORITY_CONTRACT`;
+`GOV_DSL_CONTRACT` is ready but deferred by the shared `DOC_SURFACE` and
+`REVIEWERS` resources. Owner-aware runtime enforcement remains unavailable.
 
 Stage 1 allowed operations:
 

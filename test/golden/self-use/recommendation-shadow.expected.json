@@ -159,19 +159,18 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:e27992631183cf7dacae4da549cdd335a4822854ac8d11b7888a9db8457bb588",
+      "source_digest": "sha256:b23e0652b94e55021f76a61d510449c6a742371d4ce5ad6b1e5111c20b100ddd",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_REQUIREMENTS"
+          "GOV_AUTHORITY_CONTRACT",
+          "GOV_DSL_CONTRACT"
         ],
         "runnable_now": [
-          "GOV_REQUIREMENTS"
+          "GOV_AUTHORITY_CONTRACT"
         ],
         "blocked_now": [],
         "upcoming": [
-          "GOV_AUTHORITY_CONTRACT",
-          "GOV_DSL_CONTRACT",
           "GOV_INTERFACE_CONTRACT",
           "GOV_NORMATIVE_EXAMPLES",
           "GOV_DESIGN_ACCEPTANCE",
@@ -184,34 +183,68 @@
         ]
       },
       "recommended_task_ids": [
-        "GOV_REQUIREMENTS"
+        "GOV_AUTHORITY_CONTRACT"
       ],
       "manual_selected_task_ids": [
-        "GOV_REQUIREMENTS"
+        "GOV_AUTHORITY_CONTRACT"
       ],
       "tiers": {
-        "GOV_REQUIREMENTS": "recommended"
+        "GOV_AUTHORITY_CONTRACT": "recommended",
+        "GOV_DSL_CONTRACT": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_REQUIREMENTS",
+          "id": "GOV_AUTHORITY_CONTRACT",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
+        },
+        {
+          "id": "GOV_DSL_CONTRACT",
+          "runnable_now": false,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": [
+            {
+              "resource_id": "DOC_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "GOV_AUTHORITY_CONTRACT"
+              ]
+            },
+            {
+              "resource_id": "REVIEWERS",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "GOV_AUTHORITY_CONTRACT"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
-        "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "task_decisions": 2,
+        "decision_steps": 11,
+        "facts": 80,
+        "comparisons": 1,
+        "reasons": 9,
+        "descriptions": 4
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "operations": {
       "source_digest": "sha256:b38d4cc751e42ef437f4a140df22ffeb94bfc2aa1f6487d34feef6618eed6b6a",

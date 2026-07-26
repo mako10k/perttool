@@ -62,6 +62,16 @@ recommendation. The accepted surface atomically exposes Grammar 1/2/3, CLI
 Contract 4, temporal and deadline results, exact unit migration, help, Guide,
 installed workflows, and Next v4 normal authority.
 
+Also on 2026-07-26, Issue #4's independent `governance.pert` workstream
+accepted `GOV_REQUIREMENTS`. Requirements Draft 0.15 now fixes the accidental
+authority-overreach threat model, separate goal/DAG scopes, omitted-metadata
+defaults, caller-asserted principals and confirmation, pre-change
+authorization, ordinary-maintenance exclusions, and non-goals without adding a
+runtime. The first 3p sample establishes `3p/1d`; 42p remain, with 30p
+precedence and 37p heuristic resource makespans and 7p resource delay.
+Complete NextResult v4 recommends `GOV_AUTHORITY_CONTRACT`, while
+`GOV_DSL_CONTRACT` is ready but resource-deferred.
+
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 
 規範仕様は `plans/` ではなく `docs/specs/` に置く。`plans/` は作業状態、Git history は過去を担当する。Macro milestoneは`mvp.pert`、現在sliceの設計・実装状態は対応する詳細planへ記録し、同じtaskを両方で個別管理しない。Stage 3のediting/advance write手順は[自己利用計画](../docs/process/self-use.md)を正とする。
