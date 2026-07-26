@@ -63,9 +63,9 @@ Contract 4, temporal and deadline results, exact unit migration, help, Guide,
 installed workflows, and Next v4 normal authority.
 
 Also on 2026-07-26, Issue #4's independent `governance.pert` workstream
-accepted and advanced `GOV_REQUIREMENTS`, `GOV_AUTHORITY_CONTRACT`, and
-`GOV_DSL_CONTRACT`, and accepted `GOV_INTERFACE_CONTRACT`. Requirements Draft
-0.16 fixes the accidental
+accepted and advanced `GOV_REQUIREMENTS`, `GOV_AUTHORITY_CONTRACT`,
+`GOV_DSL_CONTRACT`, and `GOV_INTERFACE_CONTRACT`. Requirements Draft 0.16
+fixes the accidental
 authority-overreach threat model, separate goal/DAG scopes, omitted-metadata
 defaults, caller-asserted principals and confirmation, pre-change
 authorization, ordinary-maintenance exclusions, and non-goals. Governance

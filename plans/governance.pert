@@ -34,12 +34,10 @@ resource DOC_SURFACE:
 
 
 
-milestone INTERFACE_INPUT_READY:
-  title "Governance interface design input ready"
-  state reached
 
 milestone INTERFACE_CONTRACT_DEFINED:
   title "Core, CLI, help, and JSON contract defined"
+  state reached
 
 milestone EXAMPLES_DEFINED:
   title "Normative governance examples defined"
@@ -74,17 +72,6 @@ milestone GOVERNANCE_ACCEPTED:
 
 
 
-task GOV_INTERFACE_CONTRACT INTERFACE_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
-  title "Define Core, CLI, help, and JSON governance contracts"
-  description "Settle actor and owner-confirmation request shapes, distinct-owner batch confirmation, preview and write results, project show projection, stable diagnostics and exits, command registry/help, schema versions, and the compatibility cutover before implementation."
-  duration 4p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    CLI_SURFACE 1
-    DOC_SURFACE 1
 
 task GOV_NORMATIVE_EXAMPLES INTERFACE_CONTRACT_DEFINED -> EXAMPLES_DEFINED:
   title "Fix normative governance examples and acceptance cases"
