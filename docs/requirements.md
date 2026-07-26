@@ -127,6 +127,10 @@ changing `project.finish` or replacing difficult critical-path work and then
 treating the resulting empty recommendation as project completion.
 The [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md)
 defines the exact change classification and pre-change authority decision.
+The [Governance Source and Effective-Metadata
+specification](specs/governance-source.md) defines principal syntax, declared
+and effective project metadata, Grammar 4 compatibility, and the source
+snapshot consumed by that decision.
 
 Must:
 
@@ -309,8 +313,9 @@ Owner-aware governance extension:
   remain valid without source migration.
 - Owner and delegate values are principal IDs. The normative grammar,
   canonical field order, compatibility version, and source-preserving mutation
-  forms are fixed by the subsequent governance DSL contract rather than
-  inferred from these requirements.
+  forms are fixed by the [Governance Source and Effective-Metadata
+  specification](specs/governance-source.md) rather than inferred from these
+  requirements.
 
 ### 7.2 Resource
 
@@ -993,7 +998,10 @@ Must:
 The [governance semantics contract](specs/governance-authority.md) is
 authoritative for change classification, preview/write decisions,
 pre-change authorization, mixed-scope behavior, and the stable governance
-denial. The governance extension separates two authority scopes.
+denial. The [governance source
+contract](specs/governance-source.md) is authoritative for Grammar 4,
+declared/effective project metadata, and the digest-bound pre-change snapshot.
+The governance extension separates two authority scopes.
 
 - `goal`: changing `project.finish`, `goal_owner`, or `goal_delegates`
 - `dag`: adding or removing task, gate, or milestone structure; changing task
@@ -1563,9 +1571,9 @@ scope, deterministic calendar and deadline semantics, exact source-unit
 migration semantics, public interface contract, dependency-ordered normative
 examples, and
 [cross-cutting review](process/scheduling-units-m1-acceptance.md).
-Implementation may proceed only through the accepted target-only Core slices;
-Grammar 2, CLI Contract 4, and NextResult v4 authority remain inactive until
-their atomic acceptance gate.
+The atomic Contract 4 acceptance gate is complete: Grammar 1, 2, and 3,
+AnalysisResult v3, NextResult v4 normal authority, exact unit migration, and
+the installed-package workflow are active in `0.3.0`.
 
 Resolved design decisions:
 
@@ -1590,6 +1598,8 @@ Resolved design decisions:
 - Grammar versions 2 and 3, CLI Contract 4, Core boundaries, temporal/unit text and JSON projections, mutation, help, diagnostics, and authority migration: [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
 - Calendar, deadline, start-authority, exact-migration, failure, idempotence, and deterministic projection cases: [Normative Temporal and Unit-Migration Examples](examples/temporal-units.md)
 - Complete requirements/specification/example/interface trace, resolved delivery sequencing, and implementation handoff: [SU-M1 Temporal and Unit-Migration Contract Acceptance Review](process/scheduling-units-m1-acceptance.md)
+- Governance principal syntax, Grammar 4 fields, declared/effective defaults, source preservation, initialization warning, project metadata, and pre-change snapshot: [Governance Source and Effective-Metadata specification](specs/governance-source.md)
+- Goal/DAG classification, pre-change authority, mixed-scope decisions, preview behavior, and stable denial: [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md)
 
 ## 25. Recommended next specification work
 
@@ -1635,6 +1645,13 @@ Before implementation, separate the specifications in the following order.
     - [x] Public AnalysisResult v3, NextResult v4, and UnitMigrationResult v2
     - [x] Registry, help, Guide, README, diagnostics, and normal start authority
     - [x] Installed-package file-first workflow and durable SU-M5 acceptance
+16. [ ] Owner-aware goal and DAG mutation governance
+    - [x] Requirements and accidental-overreach threat boundary
+    - [x] Goal/DAG change classification and pre-change authority semantics
+    - [x] Grammar 4 source and declared/effective metadata contract
+    - [ ] Core, CLI, help, JSON, and diagnostic interface contract
+    - [ ] Normative authority and write-path examples
+    - [ ] Source, evaluator, preview, write, guidance, and installed acceptance
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

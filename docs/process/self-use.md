@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.55
+- Document status: Active Stage 3 / Revision 2.56
 - Creation date: 2026-07-21
 - Update date: 2026-07-26
 - Related design: [../basic-design.md](../basic-design.md)
@@ -861,6 +861,32 @@ removed completed task `GOV_AUTHORITY_CONTRACT`, retained
 Reanalysis preserves the 38p remaining work, 30p precedence makespan, 33p
 heuristic resource makespan, 3p resource delay, both forecasts, and the sole
 `GOV_DSL_CONTRACT` recommendation, and clears `PTDAG-208`.
+
+`GOV_DSL_CONTRACT` then accepted governance source contract version 1.
+Principal IDs reuse the case-sensitive ASCII Identifier form, delegate lists
+retain source order while authority consumes sets, and duplicate delegates
+fail with `PTSEM-113`. Explicit Grammar 4 inherits Grammar 3 and adds only the
+four governance project fields; Grammar 1 through 3 remain valid through
+declared omission and effective `user`/empty defaults. The contract fixes
+atomic version upgrades, localized set/clear behavior, no automatic downgrade,
+project init/show semantics, the exact generated direct-edit warning,
+digest-bound pre-change snapshots, Grammar 4 unit-migration retention, and a
+fail-closed Mermaid Profile v1 boundary without changing DAG, resource,
+temporal, unit, recommendation, or normal start-authority semantics.
+
+The atomic completion and project-metadata candidate was previewed from source
+digest
+`sha256:15f91d1ab76e7fb2b2d0fe1cc44a7bb66478b8e68361f95d2b047bc2a3583a2f`
+and produced digest
+`sha256:b04565729a8f33c1af3de57a94889747077c2e9b9f615a89ba1e4fdac717cd8f`.
+The cumulative 11p completed on one active day updates plan-specific velocity
+to `11p/1d`. There are 34p remaining, with a 26p precedence makespan, 29p
+heuristic resource makespan, 3p resource delay, and forecasts of `26/11d` and
+`29/11d`. The dedicated source-contract tests and all 520 unit tests pass.
+Complete, non-truncated NextResult v4 recommends and authorizes only
+`GOV_INTERFACE_CONTRACT`. The accepted snapshot retains `PTDAG-208` for
+`DSL_CONTRACT_DEFINED` and `INTERFACE_INPUT_READY` until advance. Grammar 4
+and owner-aware runtime enforcement remain unavailable.
 
 Stage 1 allowed operations:
 

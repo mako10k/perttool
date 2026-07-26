@@ -159,18 +159,17 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:15f91d1ab76e7fb2b2d0fe1cc44a7bb66478b8e68361f95d2b047bc2a3583a2f",
+      "source_digest": "sha256:b04565729a8f33c1af3de57a94889747077c2e9b9f615a89ba1e4fdac717cd8f",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_DSL_CONTRACT"
+          "GOV_INTERFACE_CONTRACT"
         ],
         "runnable_now": [
-          "GOV_DSL_CONTRACT"
+          "GOV_INTERFACE_CONTRACT"
         ],
         "blocked_now": [],
         "upcoming": [
-          "GOV_INTERFACE_CONTRACT",
           "GOV_NORMATIVE_EXAMPLES",
           "GOV_DESIGN_ACCEPTANCE",
           "GOV_AUTHORITY_CORE",
@@ -182,18 +181,18 @@
         ]
       },
       "recommended_task_ids": [
-        "GOV_DSL_CONTRACT"
+        "GOV_INTERFACE_CONTRACT"
       ],
       "manual_selected_task_ids": [
-        "GOV_DSL_CONTRACT"
+        "GOV_INTERFACE_CONTRACT"
       ],
       "tiers": {
-        "GOV_DSL_CONTRACT": "recommended"
+        "GOV_INTERFACE_CONTRACT": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_DSL_CONTRACT",
+          "id": "GOV_INTERFACE_CONTRACT",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -209,7 +208,9 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "operations": {
       "source_digest": "sha256:b38d4cc751e42ef437f4a140df22ffeb94bfc2aa1f6487d34feef6618eed6b6a",

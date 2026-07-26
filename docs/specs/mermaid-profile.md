@@ -1,6 +1,6 @@
 # perttool Mermaid Profile Specification
 
-- Document status: Draft 1.0
+- Document status: Draft 1.1
 - Profile schema: `Perttool.MermaidProfile.v1`
 - Projection schema: `Perttool.MermaidProjection.v1`
 - Created: 2026-07-22
@@ -9,6 +9,7 @@
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Analysis: [analysis.md](analysis.md)
 - CLI interface: [interfaces.md](interfaces.md)
+- Governance source: [governance-source.md](governance-source.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 - Normative example: [../examples/mermaid-profile.md](../examples/mermaid-profile.md)
 
@@ -50,6 +51,12 @@ The following are outside the Profile v1 lossless scope because the [DSL grammar
 - Field order and declaration order
 
 The DSL after import uses the representation of the canonical serializer. Equality with the original byte sequence is not called lossless.
+
+Profile v1 has no fields for declared governance owners or delegates. It
+therefore MUST NOT claim a lossless Grammar 4 export or import, drop governance
+metadata, or restore it from effective defaults. Grammar 4 profile conversion
+remains unavailable until a versioned profile contract preserves declared
+governance values and normalized-semantic equivalence.
 
 ### 2.2 Non-goals
 
@@ -387,7 +394,7 @@ The import implementation slice fixes plain-mode support to the following.
 
 Assign milestones sequential IDs beginning with `MILESTONE_001` in Unicode code-point order of source node IDs, and assign tasks sequential IDs beginning with `TASK_001` in physical source-edge order. Return mappings in `generated_ids` and `PTCNV-201`. Because all edge kinds are unknown, convert every edge, whether solid or dotted, to a task with duration `1d`, and return `PTCNV-203` and `PTCNV-204` for unavailable fields. Set root milestones to `reached` and the single sink as the project finish. With multiple sinks, add `MERMAID_FINISH` and zero-duration synthetic gates in ID order, and record their generation in the loss report.
 
-The project uses ID `IMPORTED_MERMAID`, version 1, title `Imported Mermaid`, and duration unit `day`, and records defaulted or unavailable fields in `PTCNV-202`. Do not restore resources, capacity, requirements, or task status/priority/owner/tags/source; record them in `PTCNV-204`. Pass the generated candidate through the normal semantic validator, and return no candidate with `PTCNV-106` if it cannot form a valid AoA DAG because of a cycle or similar issue. The same plain input MUST return the same DSL byte sequence, loss order, and generated-ID mapping.
+The project uses ID `IMPORTED_MERMAID`, version 1, title `Imported Mermaid`, and duration unit `day`, and records defaulted or unavailable fields in `PTCNV-202`. Do not restore resources, capacity, requirements, or task status/priority/owner/tags/source; record them in `PTCNV-204`. Governance values remain omitted and resolve through their source-contract defaults. After the governance cutover, the generated document includes the exact leading direct-edit warning from that contract. Pass the generated candidate through the normal semantic validator, and return no candidate with `PTCNV-106` if it cannot form a valid AoA DAG because of a cycle or similar issue. The same plain input MUST return the same DSL byte sequence, loss order, and generated-ID mapping for the same active contract version.
 
 ## 12. Stable diagnostic/loss codes
 

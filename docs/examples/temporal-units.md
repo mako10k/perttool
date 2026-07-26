@@ -1,6 +1,6 @@
 # Normative Temporal and Unit-Migration Examples
 
-- Document status: Normative 2.0
+- Document status: Normative 2.1
 - Created: 2026-07-25
 - Related requirements: [../requirements.md](../requirements.md)
 - Calendar semantics: [../specs/temporal-calendar.md](../specs/temporal-calendar.md)
@@ -15,19 +15,17 @@
 These examples fix the boundary observations used to transfer the accepted
 temporal/unit contract and its SU-M2R exact-Duration refinement into
 implementation and acceptance tests. The case IDs are stable across the
-normative narrative, target source fixtures, unit tests, future Core tests,
-CLI JSON/text goldens, and installed-package tests.
+normative narrative, source fixtures, unit tests, Core tests, CLI JSON/text
+goldens, and installed-package tests.
 
-The examples target grammar versions 2 and 3 and CLI Contract 4. They do not
-activate any target version. The current runtime remains grammar version 1,
-CLI Contract 3, and `Perttool.NextResult.v3`; it is expected to reject these
-future source fixtures until the Contract 4 cutover is accepted. README and
-current command help must not present the target fixtures as runnable
-current-package examples.
+The examples cover active grammar versions 2 and 3 and CLI Contract 4. The
+atomic Contract 4 cutover is accepted in perttool `0.3.0`; current README and
+command help may present these fixtures only with their exact version and
+calendar/unit qualifications.
 
 The source fixtures under
 [`test/fixtures/temporal-units/`](../../test/fixtures/temporal-units/) are
-normative target inputs, not generated output. `cases.json` is the
+normative inputs, not generated output. `cases.json` is the
 machine-readable expected-observation baseline. It records semantic subsets,
 not permission to omit any required field from a complete public result.
 

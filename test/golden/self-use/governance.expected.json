@@ -8,16 +8,15 @@
       "tasks": 10,
       "gates": 6,
       "errors": 0,
-      "warnings": 0
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "30/1",
+    "precedence_makespan": "26/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "30/7",
+    "precedence_forecast": "26/11",
     "precedence_critical_tasks": [
-      "GOV_DSL_CONTRACT",
       "GOV_INTERFACE_CONTRACT",
       "GOV_NORMATIVE_EXAMPLES",
       "GOV_DESIGN_ACCEPTANCE",
@@ -27,14 +26,13 @@
       "GOV_WRITE_ENFORCEMENT",
       "GOV_ACCEPTANCE"
     ],
-    "resource_makespan": "33/1",
-    "resource_forecast": "33/7",
+    "resource_makespan": "29/1",
+    "resource_forecast": "29/11",
     "resource_delay": "3/1",
     "resource_arcs": [
       "resource:GOV_WRITE_ENFORCEMENT:GOV_GUIDANCE"
     ],
     "schedule_critical_tasks": [
-      "GOV_DSL_CONTRACT",
       "GOV_INTERFACE_CONTRACT",
       "GOV_NORMATIVE_EXAMPLES",
       "GOV_DESIGN_ACCEPTANCE",
@@ -50,14 +48,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "GOV_DSL_CONTRACT"
+        "GOV_INTERFACE_CONTRACT"
       ],
       "runnable_now": [
-        "GOV_DSL_CONTRACT"
+        "GOV_INTERFACE_CONTRACT"
       ],
       "blocked_now": [],
       "upcoming": [
-        "GOV_INTERFACE_CONTRACT",
         "GOV_NORMATIVE_EXAMPLES",
         "GOV_DESIGN_ACCEPTANCE",
         "GOV_AUTHORITY_CORE",

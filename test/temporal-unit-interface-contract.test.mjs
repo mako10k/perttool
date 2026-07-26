@@ -227,6 +227,6 @@ test("interface acceptance cases are complete and requirements mark the task don
   assert.match(design, /### 6\.7 Temporal and Unit Public Interface/);
   assert.match(
     unitMigration,
-    /operates on the inventoried base-unit fields of grammar versions 1, 2, and\s+3/,
+    /operates on the inventoried base-unit fields of grammar versions 1, 2, and\s+3, and 4/,
   );
 });

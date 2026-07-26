@@ -1,7 +1,7 @@
 # perttool DSL Grammar Specification
 
-- Document status: Draft 0.8
-- Grammar versions: 1 active; 2 accepted target; 3 current target
+- Document status: Draft 0.9
+- Grammar versions: 1, 2, and 3 active; 4 accepted target
 - Created: 2026-07-21
 - Updated: 2026-07-25
 - Related requirements: [../requirements.md](../requirements.md)
@@ -10,17 +10,19 @@
 - Mutation semantics: [mutation.md](mutation.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Temporal and unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
+- Governance source and effective metadata: [governance-source.md](governance-source.md)
 
 ## 1. Purpose
 
 This document defines the lexical rules, syntax, fields for each block, defaults, the boundary between syntax and semantic validation, source spans, error recovery, and formatting contract for `.pert` documents.
 
 The EBNF and field tables through Section 19 are normative for grammar version
-1. Section 20.1 fixes the accepted grammar version 2 temporal delta. Section
-20.2 fixes the grammar version 3 exact fraction Duration delta selected by
-[Temporal and Unit Interface Contract version
-2](temporal-unit-interface.md). Grammar versions 2 and 3 are not active in the
-current runtime. See the following representative valid version 1 documents.
+1. Section 20.1 fixes the active grammar version 2 temporal delta. Section
+20.2 fixes the active grammar version 3 exact fraction Duration delta selected
+by [Temporal and Unit Interface Contract version
+2](temporal-unit-interface.md). Section 20.3 fixes the accepted, not-yet-active
+Grammar 4 governance delta. See the following representative valid version 1
+documents.
 
 - [minimal.pert](../examples/minimal.pert)
 - [parallel.pert](../examples/parallel.pert)
@@ -677,6 +679,7 @@ An analyzable Graph must not be generated from a document with parse or field-va
 | `PTSEM-110` | Duplicate resource requirement | `syntax.task` |
 | `PTSEM-111` | Invalid velocity constraint | `syntax.velocity` |
 | `PTSEM-112` | Grammar v2/v3 temporal field without `project.as_of` | `syntax.temporal` |
+| `PTSEM-113` | Duplicate principal in one governance delegate list | `syntax.project` |
 
 Graph diagnostic codes are fixed by the [Graph Semantics specification](graph-semantics.md).
 
@@ -1049,6 +1052,67 @@ is a finite Decimal. If at least one generated token requires a Fraction, the
 same atomic candidate sets the project to version 3. A version 3 source is
 never downgraded automatically.
 
+### 20.3 Grammar version 4 governance delta
+
+Grammar version 4 is selected only by an explicit `version 4`. It inherits
+every grammar version 3 declaration, temporal field, exact Duration form,
+validation rule, contextual keyword, and canonical field order. It adds:
+
+```ebnf
+PrincipalId         = Identifier ;
+PrincipalList       = "[", OWS,
+                      [ PrincipalId,
+                        { OWS, ",", OWS, PrincipalId } ],
+                      OWS, "]" ;
+GoalOwnerField      = "goal_owner", HSPACE, PrincipalId, NEWLINE ;
+GoalDelegatesField  = "goal_delegates", HSPACE, PrincipalList, NEWLINE ;
+DagOwnerField       = "dag_owner", HSPACE, PrincipalId, NEWLINE ;
+DagDelegatesField   = "dag_delegates", HSPACE, PrincipalList, NEWLINE ;
+
+ProjectFieldV4 = ProjectField
+               | GoalOwnerField
+               | GoalDelegatesField
+               | DagOwnerField
+               | DagDelegatesField ;
+```
+
+The four field spellings are contextual project-field keywords rather than
+global reserved IDs. Existing entity and endpoint identifiers accepted by
+Grammar 1, 2, or 3 remain accepted. A principal uses the Identifier character
+form, compares case-sensitively without Unicode normalization, and may use a
+spelling that is reserved only for an entity ID.
+
+| Field | Count | Value | Default/constraint |
+| --- | ---: | --- | --- |
+| `goal_owner` | 0..1 | PrincipalId | Effective default `user` |
+| `goal_delegates` | 0..1 | PrincipalList | Effective default empty; no duplicates |
+| `dag_owner` | 0..1 | PrincipalId | Effective default `user` |
+| `dag_delegates` | 0..1 | PrincipalList | Effective default empty; no duplicates |
+
+An empty principal list is valid. A duplicate exact principal ID in one list
+is `PTSEM-113`; source order otherwise has no authority meaning.
+
+Grammar version 4 canonical project-field order is:
+
+```text
+version, title, description, as_of, duration_unit, velocity, finish,
+goal_owner, goal_delegates, dag_owner, dag_delegates,
+critical_epsilon, target_duration
+```
+
+Grammar versions 1, 2, and 3 reject governance fields as `PTDSL-005`.
+Existing documents require no source migration because omitted governance
+metadata has effective `user` owners and empty delegate sets. Adding any
+governance field to an older source atomically sets `project.version` to `4`.
+Clearing the last governance field does not automatically downgrade the
+document. An explicit downgrade is valid only when no governance field remains
+and the final candidate is accepted by the selected older grammar.
+
+The complete principal, declared/effective metadata, source-preservation,
+project-init/show, pre-change snapshot, and adapter boundaries are normative
+in the [Governance Source and Effective-Metadata
+specification](governance-source.md).
+
 ## 21. Grammar acceptance
 
 At minimum, a parser implementation automatically checks the following:
@@ -1079,3 +1143,11 @@ At minimum, a parser implementation automatically checks the following:
     Rationals to a reduced Fraction without rounding.
 20. Preserves unrelated valid Fraction tokens in source-preserving operations
     and retains exact Rational equivalence across explicit formatting.
+21. Keeps Grammar 1, 2, and 3 behavior closed while Grammar 4 accepts exactly
+    the four governance project fields under an explicit version.
+22. Treats governance field spellings as contextual without invalidating
+    existing entity IDs.
+23. Rejects duplicate delegates with `PTSEM-113`, retains valid principal-list
+    source order, and derives omission defaults without rewriting the source.
+24. Adds governance metadata to an older grammar only through one atomic
+    Grammar 4 candidate and never downgrades Grammar 4 automatically.

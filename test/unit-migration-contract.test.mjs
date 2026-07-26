@@ -14,7 +14,7 @@ async function repositoryFile(relativePath) {
 test("unit migration fixes identity, directions, and effective velocity", async () => {
   const specification = await repositoryFile("docs/specs/unit-migration.md");
 
-  assert.match(specification, /Document status: Normative 2\.0/);
+  assert.match(specification, /Document status: Normative 2\.1/);
   assert.match(
     specification,
     /Unit migration ID: `perttool\.unit-migration`/,
@@ -104,6 +104,14 @@ test("unit migration serializes every exact value and selects the grammar atomic
   );
   assert.match(
     specification,
+    /retain source grammar version 3 or 4 regardless of generated token spelling/,
+  );
+  assert.match(
+    specification,
+    /Grammar 4 source is never changed to Grammar 3/,
+  );
+  assert.match(
+    specification,
     /parse and semantically validate only the final candidate/,
   );
 });
@@ -145,6 +153,14 @@ test("unit migration fixes no-op, inverse, and existing-version boundaries", asy
   assert.match(
     grammar,
     /Unit migration version 2 accepts grammar versions 1, 2, and 3/,
+  );
+  assert.match(
+    specification,
+    /inventory remains complete for\s+grammar versions 1, 2, 3, and 4/,
+  );
+  assert.match(
+    specification,
+    /preserve `goal_owner`, `goal_delegates`, `dag_owner`, and\s+`dag_delegates`/,
   );
   assert.match(
     analysis,

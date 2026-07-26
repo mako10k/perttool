@@ -1,6 +1,6 @@
 # perttool Mutation Semantics Specification
 
-- Document status: Draft 0.7
+- Document status: Draft 0.8
 - Mutation semantics version: 1
 - Created: 2026-07-22
 - Requirements: [../requirements.md](../requirements.md)
@@ -8,6 +8,7 @@
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - CLI interface: [interfaces.md](interfaces.md)
 - Governance semantics: [governance-authority.md](governance-authority.md)
+- Governance source: [governance-source.md](governance-source.md)
 - Basic design: [../basic-design.md](../basic-design.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Temporal and unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
@@ -23,7 +24,7 @@ The independently versioned
 classifies an accepted original-to-candidate change as `goal`, `dag`, or
 ordinary maintenance. Governance does not change Mutation semantics version 1
 request resolution, edits, candidate validity, or result identity. Runtime
-enforcement remains unavailable until the governance DSL, interface, and
+enforcement remains unavailable until the governance interface and
 implementation gates are accepted.
 
 ## 2. Normative precedence
@@ -360,8 +361,7 @@ been classified.
 ## 11. Grammar version 2 temporal and version 3 Duration extensions
 
 The [Temporal and Unit Interface Contract](temporal-unit-interface.md)
-selects this target extension to Mutation semantics version 1. It is not
-implemented by the current grammar version 1 runtime.
+selects this active Contract 4 extension to Mutation semantics version 1.
 
 ```ts
 TaskDefinition.notBefore?: string;
@@ -398,7 +398,49 @@ Temporal mutation results retain `Perttool.MutationResult.v1` because its
 candidate, diff, edit, and write payload shape is unchanged. CLI Contract 4
 provides the enclosing contract identity.
 
-## 12. Acceptance invariants
+## 12. Grammar version 4 governance source extension
+
+The [Governance Source and Effective-Metadata
+specification](governance-source.md) selects this target extension to Mutation
+semantics version 1. It is not active until the governance source/interface
+cutover.
+
+```ts
+ProjectFieldSet.goalOwner?: PrincipalId;
+ProjectFieldSet.goalDelegates?: readonly PrincipalId[];
+ProjectFieldSet.dagOwner?: PrincipalId;
+ProjectFieldSet.dagDelegates?: readonly PrincipalId[];
+
+ProjectClearableField +=
+  | "goal_owner"
+  | "goal_delegates"
+  | "dag_owner"
+  | "dag_delegates";
+```
+
+Setting an existing governance field changes only its value span. Clearing a
+field uses the common leading-comment ownership rule. Insert new project
+fields after `finish` in `goal_owner`, `goal_delegates`, `dag_owner`,
+`dag_delegates` order and before `critical_epsilon`.
+
+A mutation that adds any governance field to Grammar 1, 2, or 3 atomically
+sets `project.version=4`. A batch may explicitly set version 4 together with
+the governance fields and validates only its final candidate. Removing the
+last governance field does not automatically downgrade Grammar 4. An explicit
+downgrade succeeds only when no governance field remains and every final field
+and Duration token is accepted by the selected older grammar.
+
+Delegate arrays preserve request order and generate `[one, two]` with one
+space after each comma. Duplicate exact principals fail candidate validation
+with `PTSEM-113`; they are not silently deduplicated or sorted. Unrelated
+source bytes remain preserved.
+
+These edit rules construct a candidate but do not authorize persistence.
+After final candidate validation, Governance semantics classifies inserted,
+changed, or removed governance fields against the pre-change snapshot. A
+candidate cannot use its new owner or delegate values to authorize itself.
+
+## 13. Acceptance invariants
 
 Automatically verify at least the following.
 
@@ -425,3 +467,9 @@ Automatically verify at least the following.
     fields by validating only the final candidate
 20. automatic unit migration is rejected as a batch member and retains its
     separate exact-inventory result contract
+21. governance set/clear uses localized edits, retained delegate order, and
+    common comment ownership
+22. adding governance source to Grammar 1, 2, or 3 atomically creates a valid
+    Grammar 4 candidate, while clearing never causes automatic downgrade
+23. candidate governance values do not replace the digest-bound pre-change
+    snapshot used for persistent-write authority

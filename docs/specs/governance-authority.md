@@ -5,6 +5,7 @@
 - Created: 2026-07-26
 - Requirements: [../requirements.md](../requirements.md)
 - Mutation semantics: [mutation.md](mutation.md)
+- Governance source: [governance-source.md](governance-source.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Mermaid profile: [mermaid-profile.md](mermaid-profile.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
@@ -33,24 +34,28 @@ This contract fixes:
 - the stable domain diagnostic for a denied write; and
 - the boundary with direct editing and existing safeguards.
 
-This contract does not fix DSL spelling or field order, a public Core request
-or result schema, CLI option multiplicity, text rendering, JSON field layout,
-or exit codes. Those belong to the governance DSL and interface contracts. It
-also does not activate runtime enforcement.
+DSL spelling, field order, omission defaults, and the pre-change source
+snapshot belong to the accepted governance source contract. This contract does
+not fix a public Core request or result schema, CLI option multiplicity, text
+rendering, JSON field layout, or exit codes. Those belong to the governance
+interface contract. It also does not activate runtime enforcement.
 
 ## 2. Normative position
 
 Resolve semantic conflicts in the following order:
 
 1. Must requirements in `docs/requirements.md`
-2. source syntax and effective-metadata rules in the DSL Grammar specification
+2. source syntax and effective-metadata rules in the
+   [Governance Source specification](governance-source.md) and DSL Grammar
+   specification
 3. mutation, graph, import, and unit-migration candidate semantics
 4. authority classification and decisions in this specification
 5. interface, basic-design, process, example, test, and implementation text
 
-The grammar contract determines how governance values are declared and how
-omission produces an effective governance snapshot. This specification
-consumes that snapshot and does not reinterpret source tokens.
+The governance source contract determines how governance values are declared,
+how omission produces an effective governance snapshot, and how that snapshot
+is bound to the source digest. This specification consumes that snapshot and
+does not reinterpret source tokens.
 
 The mutation, advance, and import planners determine whether a candidate is
 valid and what changed. This specification classifies that accepted change set
@@ -60,9 +65,9 @@ and does not reimplement source editing or graph validation.
 
 ### 3.1 Principal assertions
 
-A `PrincipalId` is an opaque, case-sensitive identifier accepted by the
-governance source and interface contracts. The initial domain supports at
-least `user`, `llm`, and `codex`.
+A `PrincipalId` is the opaque, case-sensitive ASCII Identifier form accepted
+by the governance source and interface contracts. The initial domain supports
+at least `user`, `llm`, and `codex`.
 
 Comparing two principals means exact identifier equality. The Core does not
 read an operating-system account, environment variable, Git identity, network
@@ -82,8 +87,8 @@ interface EffectiveGovernance {
 ```
 
 When governance fields are omitted, the effective snapshot has `user` as both
-owners and empty delegate sets. The DSL contract owns the exact derivation and
-validation of this value.
+owners and empty delegate sets. The Governance Source specification owns the
+exact derivation and validation of this value.
 
 The snapshot is bound to the original document digest. A later retry against
 different bytes creates a new snapshot and a new authority decision.
@@ -289,8 +294,8 @@ classification.
 and cannot overwrite a pre-change `.pert` plan. They therefore have no
 pre-change governance snapshot. New-document creation does not require a
 fictional actor or owner confirmation; the created document receives the
-governance values and direct-edit warning defined by the later DSL and
-interface contracts.
+governance values and direct-edit warning defined by the accepted source
+contract and later interface contract.
 
 This contract does not misrepresent new-document creation as authorization to
 replace an existing plan. Any future import route that replaces or derives a

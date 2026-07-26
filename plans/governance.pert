@@ -1,10 +1,10 @@
 project OWNER_AWARE_GOVERNANCE:
   version 1
   title "Owner-aware goal and DAG governance"
-  description "Adopt GitHub Issue #4 as an independent post-beta workstream. Separate authority to change the project goal or DAG from recommendation override MIG-08. Principal and owner-confirmation values are caller assertions, not authentication. Preserve preview-first mutation, candidate validation, optimistic locking, and safe-write controls. GOV_REQUIREMENTS completed 3p and GOV_AUTHORITY_CONTRACT completed 4p on 2026-07-26, establishing a cumulative workstream-specific velocity sample of 7p/1d. Requirements fix the threat model, scope, defaults, write boundary, and non-goals. Governance semantics version 1 now fixes actual-change classification, preview/write decisions, pre-change owner and delegate authorization, mixed-scope behavior, new-document and direct-edit boundaries, and PTGOV-101. Subsequent tasks still own the DSL, interface, runtime implementation, and acceptance contracts. Release publication is outside this plan."
+  description "Adopt GitHub Issue #4 as an independent post-beta workstream. Separate authority to change the project goal or DAG from recommendation override MIG-08. Principal and owner-confirmation values are caller assertions, not authentication. Preserve preview-first mutation, candidate validation, optimistic locking, and safe-write controls. GOV_REQUIREMENTS completed 3p, GOV_AUTHORITY_CONTRACT completed 4p, and GOV_DSL_CONTRACT completed 4p on 2026-07-26, establishing a cumulative workstream-specific velocity sample of 11p/1d. Requirements fix the threat model, scope, defaults, write boundary, and non-goals. Governance semantics version 1 fixes actual-change classification and pre-change authority. Governance source contract version 1 fixes PrincipalId/PrincipalList syntax, Grammar 4 project fields, declared/effective defaults, source-preserving edits, project init/show behavior, unit-migration compatibility, and the digest-bound pre-change snapshot. Subsequent tasks still own the interface, runtime implementation, and acceptance contracts. Release publication is outside this plan."
   as_of 2026-07-26
   duration_unit point
-  velocity 7p/1d
+  velocity 11p/1d
   finish GOVERNANCE_ACCEPTED
 
 resource DEVELOPERS:
@@ -82,6 +82,7 @@ task GOV_DSL_CONTRACT REQUIREMENTS_ACCEPTED -> DSL_CONTRACT_DEFINED:
   title "Define governance source and effective-metadata semantics"
   description "Specify project governance fields, principal syntax, omission defaults, grammar compatibility, source preservation, project init/show behavior, and pre-change metadata snapshots. Update normative examples without changing recommendation ranking or resource semantics."
   duration 4p
+  status done
   priority 95
   requires:
     DEVELOPERS 1
