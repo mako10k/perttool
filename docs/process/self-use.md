@@ -1002,6 +1002,19 @@ and authorizes the joint start of `GOV_AUTHORITY_CORE` and
 for `DESIGN_ACCEPTED` until advance. Grammar 4, Contract 5, and owner-aware
 runtime enforcement remain unavailable.
 
+After the acceptance snapshot was committed at `07f536c`, the advance preview
+from digest
+`sha256:723fd69263973debb28e094521eeb428b4bdf51a9136b0ae05449a330063a02c`
+removed completed task `GOV_DESIGN_ACCEPTANCE` and historical milestone
+`EXAMPLES_DEFINED`. It retained `DESIGN_ACCEPTED` as the reached frontier and
+produced digest
+`sha256:e67a3f069aee26614418d7bd50f9de925e87d28895c08a9e28030ca53eb07789`.
+Reanalysis preserves 26p remaining, 18p precedence and 21p heuristic resource
+makespans, 3p resource delay, both forecasts, and the joint
+`GOV_AUTHORITY_CORE` and `GOV_SOURCE_MODEL` recommendation while clearing
+`PTDAG-208`. `GOV_GUIDANCE` remains ready but deferred by the selected
+resource-feasible set.
+
 Stage 1 allowed operations:
 
 - check

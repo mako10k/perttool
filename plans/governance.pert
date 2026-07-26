@@ -36,12 +36,10 @@ resource DOC_SURFACE:
 
 
 
-milestone EXAMPLES_DEFINED:
-  title "Normative governance examples defined"
-  state reached
 
 milestone DESIGN_ACCEPTED:
   title "Issue #4 cross-cutting design accepted"
+  state reached
 
 milestone SOURCE_MODEL_READY:
   title "Governance source model and metadata maintenance ready"
@@ -72,16 +70,6 @@ milestone GOVERNANCE_ACCEPTED:
 
 
 
-task GOV_DESIGN_ACCEPTANCE EXAMPLES_DEFINED -> DESIGN_ACCEPTED:
-  title "Accept the cross-cutting Issue #4 design"
-  description "Trace every Issue #4 criterion and non-goal through requirements, grammar, mutation, interface, design, examples, and process. Confirm that authentication, recommendation ranking, MIG-08 audit/apply, Git integration, and release publication remain separate."
-  duration 2p
-  status done
-  priority 80
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
 
 task GOV_SOURCE_MODEL DESIGN_ACCEPTED -> SOURCE_MODEL_READY:
   title "Implement governance source and metadata maintenance"
