@@ -37,23 +37,13 @@ resource PACKAGE_SURFACE:
   title "README and installed-package workflow ownership"
   capacity 1
 
-milestone PUBLIC_CORE_READY:
-  title "Grammar 3 and public Contract 4 Core ready"
-  state reached
 
-milestone MIGRATION_ROUTE_READY:
-  title "Temporal mutation and unit migration CLI route ready"
-  state reached
 
-milestone DISCOVERY_READY:
-  title "Contract 4 discovery, help, and Guide ready"
-  state reached
 
-milestone AUTHORITY_READY:
-  title "NextResult v4 normal authority ready"
 
 milestone INTEGRATION_INPUT_READY:
   title "All public Contract 4 branches ready for integration"
+  state reached
 
 milestone INSTALLED_WORKFLOW_READY:
   title "README and installed Contract 4 workflow ready"
@@ -64,25 +54,9 @@ milestone CONTRACT4_ACCEPTED:
 
 
 
-task NEXT_V4_NORMAL_AUTHORITY PUBLIC_CORE_READY -> AUTHORITY_READY:
-  title "Adopt complete NextResult v4 as normal authority"
-  description "Make only a known complete non-truncated NextResult v4 with Recommendation version 1 and the temporal release gate the normal start authority. Preserve deadline-independent ranking and make unknown, incomplete, malformed, or unavailable temporal authority fail closed in guidance and consumer checks."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    AUTHORITY_SURFACE 1
 
-gate MIGRATION_INTEGRATION_GATE MIGRATION_ROUTE_READY -> INTEGRATION_INPUT_READY:
-  reason "Installed Contract 4 requires the complete temporal mutation and migration route"
 
-gate DISCOVERY_INTEGRATION_GATE DISCOVERY_READY -> INTEGRATION_INPUT_READY:
-  reason "Installed Contract 4 requires complete registry, adapters, help, and Guide"
 
-gate AUTHORITY_INTEGRATION_GATE AUTHORITY_READY -> INTEGRATION_INPUT_READY:
-  reason "Installed Contract 4 requires fail-closed NextResult v4 authority"
 
 task CONTRACT4_INSTALLED_WORKFLOW INTEGRATION_INPUT_READY -> INSTALLED_WORKFLOW_READY:
   title "Document and exercise the installed Contract 4 workflow"
