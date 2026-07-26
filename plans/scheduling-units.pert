@@ -1,7 +1,7 @@
 project SCHEDULING_UNITS:
   version 1
   title "Temporal properties, deadlines, and unit migration roadmap"
-  description "TIME-001 and UNIT-001 are accepted through SU-M5. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 each reached detail acceptance and were rolled up exactly once. The remaining macro task records the atomic Contract 4 integrated acceptance; its precedence and heuristic resource makespans are both 1d. Release 0.3.0 remains tracked independently."
+  description "TIME-001 and UNIT-001 are accepted through SU-M5. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 each reached detail acceptance and were rolled up exactly once. The macro plan has reached SCHEDULING_UNITS_ACCEPTED with no remaining or recommended task. Release 0.3.0 remains tracked independently."
   as_of 2026-07-26
   duration_unit day
   finish SCHEDULING_UNITS_ACCEPTED
@@ -29,26 +29,7 @@ resource PACKAGE_SURFACE:
 
 
 
-milestone DELIVERY_INPUT_READY:
-  title "Deadline and migration Core branches accepted"
-  state reached
 
 milestone SCHEDULING_UNITS_ACCEPTED:
   title "SU-M5 atomic Contract 4 workstream accepted"
-
-
-
-
-
-
-
-task SU_M5_INTEGRATED_ACCEPTANCE DELIVERY_INPUT_READY -> SCHEDULING_UNITS_ACCEPTED:
-  title "Accept atomic Contract 4 and the integrated workstream"
-  description "Atomically cut over CLI Contract 4, public result schemas, registry dispatch, text/JSON help, Guide, README, installed-package workflows, and Next v4 normal start authority after shadow and unknown-result safe-stop acceptance. Run cross-feature regression, self-use, link, and package gates. Decide release scope separately; this task does not authorize a Git push, GitHub release, npm publication, or dist-tag change."
-  duration 1d
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
+  state reached
