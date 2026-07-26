@@ -4,6 +4,8 @@
 - Acceptance date: 2026-07-26
 - Issue: [Issue #4](https://github.com/mako10k/perttool/issues/4)
 - Plan: [../../plans/governance.pert](../../plans/governance.pert)
+- Current implementation handoff:
+  [governance-implementation-handoff.md](governance-implementation-handoff.md)
 - Governance semantics version: `1`
 - Governance source contract version: `1`
 - Interface: `perttool.governance-interface@1`
