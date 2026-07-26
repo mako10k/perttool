@@ -42,32 +42,7 @@ resource PACKAGE_SURFACE:
 
 
 
-milestone INSTALLED_WORKFLOW_READY:
-  title "README and installed Contract 4 workflow ready"
-  state reached
 
 milestone CONTRACT4_ACCEPTED:
   title "Atomic Contract 4 workstream accepted"
-
-
-
-
-
-
-
-
-
-task M5_CONTRACT4_ACCEPTANCE INSTALLED_WORKFLOW_READY -> CONTRACT4_ACCEPTED:
-  title "Accept the atomic Contract 4 workstream"
-  description "Trace every TUI and TUE observation through public Core, CLI text and JSON, help, Guide, README, installed-package workflows, unknown-result safe-stop, source preservation, migration round trips, and cross-feature regression. Record the release handoff and run full repository, documentation, self-use, link, and package gates without publishing."
-  duration 2p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PUBLIC_CORE_SURFACE 1
-    MIGRATION_ROUTE_SURFACE 1
-    COMMAND_GUIDANCE_SURFACE 1
-    AUTHORITY_SURFACE 1
-    PACKAGE_SURFACE 1
+  state reached
