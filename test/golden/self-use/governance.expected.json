@@ -8,30 +8,28 @@
       "tasks": 7,
       "gates": 4,
       "errors": 0,
-      "warnings": 0
+      "warnings": 1
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "20/1",
+    "precedence_makespan": "18/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "20/17",
+    "precedence_forecast": "18/19",
     "precedence_critical_tasks": [
-      "GOV_DESIGN_ACCEPTANCE",
       "GOV_AUTHORITY_CORE",
       "GOV_SOURCE_MODEL",
       "GOV_CLI_PREVIEW",
       "GOV_WRITE_ENFORCEMENT",
       "GOV_ACCEPTANCE"
     ],
-    "resource_makespan": "23/1",
-    "resource_forecast": "23/17",
+    "resource_makespan": "21/1",
+    "resource_forecast": "21/19",
     "resource_delay": "3/1",
     "resource_arcs": [
       "resource:GOV_WRITE_ENFORCEMENT:GOV_GUIDANCE"
     ],
     "schedule_critical_tasks": [
-      "GOV_DESIGN_ACCEPTANCE",
       "GOV_AUTHORITY_CORE",
       "GOV_SOURCE_MODEL",
       "GOV_CLI_PREVIEW",
@@ -44,21 +42,29 @@
     "groups": {
       "active": [],
       "ready": [
-        "GOV_DESIGN_ACCEPTANCE"
+        "GOV_AUTHORITY_CORE",
+        "GOV_SOURCE_MODEL",
+        "GOV_GUIDANCE"
       ],
       "runnable_now": [
-        "GOV_DESIGN_ACCEPTANCE"
+        "GOV_AUTHORITY_CORE",
+        "GOV_SOURCE_MODEL"
       ],
       "blocked_now": [],
       "upcoming": [
-        "GOV_AUTHORITY_CORE",
-        "GOV_SOURCE_MODEL",
         "GOV_CLI_PREVIEW",
         "GOV_WRITE_ENFORCEMENT",
-        "GOV_GUIDANCE",
         "GOV_ACCEPTANCE"
       ]
     },
-    "resource_rejection": null
+    "resource_rejection": {
+      "task_id": "GOV_GUIDANCE",
+      "resource_id": "DEVELOPERS",
+      "capacity": 2,
+      "earlier_selected_task_ids": [
+        "GOV_AUTHORITY_CORE",
+        "GOV_SOURCE_MODEL"
+      ]
+    }
   }
 }

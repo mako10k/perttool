@@ -6,6 +6,7 @@
 - Source contract: [../specs/governance-source.md](../specs/governance-source.md)
 - Authority semantics: [../specs/governance-authority.md](../specs/governance-authority.md)
 - Interface contract: [../specs/governance-interface.md](../specs/governance-interface.md)
+- Design acceptance: [../process/governance-design-acceptance.md](../process/governance-design-acceptance.md)
 
 ## 1. Purpose and activation boundary
 

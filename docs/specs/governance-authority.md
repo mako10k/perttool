@@ -8,6 +8,7 @@
 - Governance source: [governance-source.md](governance-source.md)
 - Governance interface: [governance-interface.md](governance-interface.md)
 - Normative governance examples: [../examples/governance.md](../examples/governance.md)
+- Design acceptance: [../process/governance-design-acceptance.md](../process/governance-design-acceptance.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)
 - Mermaid profile: [mermaid-profile.md](mermaid-profile.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)

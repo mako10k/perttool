@@ -975,6 +975,33 @@ Reanalysis preserves 28p remaining, 20p precedence and 23p heuristic resource
 makespans, 3p resource delay, both forecasts, and the sole
 `GOV_DESIGN_ACCEPTANCE` recommendation while clearing `PTDAG-208`.
 
+`GOV_DESIGN_ACCEPTANCE` then accepted the cross-cutting Issue #4 design with
+no open findings. The durable review traces all 10 Issue criteria, all 15
+interface invariants, six source cases, 15 authority/write cases, and nine
+explicit non-goal boundaries into the delivery gates. It resolves repeatable
+distinct-owner confirmation, digest-bound pre-change self-authorization,
+new-document import versus existing-document replacement, and direct-edit
+guidance without claiming technical prevention. Authentication, recommendation
+ranking, MIG-08 override audit/apply, Git integration, and release publication
+remain separate.
+
+The atomic completion and project-metadata candidate was previewed from source
+digest
+`sha256:745adb51cd8e52272e1714566e2ce0013b05b29de1eae9c86f82495ad260b69e`
+and produced digest
+`sha256:723fd69263973debb28e094521eeb428b4bdf51a9136b0ae05449a330063a02c`.
+The cumulative 19p completed on one active day updates plan-specific velocity
+to `19p/1d`. There are 26p remaining, with an 18p precedence makespan, 21p
+heuristic resource makespan, 3p resource delay, and forecasts of `18/19d` and
+`21/19d`. Five dedicated acceptance-review tests and all 537 unit tests pass;
+the documentation, all 18 self-use plans, local link, package, and installed
+file-first gates also pass. Complete, non-truncated NextResult v4 recommends
+and authorizes the joint start of `GOV_AUTHORITY_CORE` and
+`GOV_SOURCE_MODEL`. `GOV_GUIDANCE` is ready but deferred by the selected set's
+`DEVELOPERS` and `DOC_SURFACE` use. The accepted snapshot retains `PTDAG-208`
+for `DESIGN_ACCEPTED` until advance. Grammar 4, Contract 5, and owner-aware
+runtime enforcement remain unavailable.
+
 Stage 1 allowed operations:
 
 - check

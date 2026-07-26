@@ -9,6 +9,7 @@
 - Governance authority: [governance-authority.md](governance-authority.md)
 - Governance interface: [governance-interface.md](governance-interface.md)
 - Normative governance examples: [../examples/governance.md](../examples/governance.md)
+- Design acceptance: [../process/governance-design-acceptance.md](../process/governance-design-acceptance.md)
 - Unit migration: [unit-migration.md](unit-migration.md)
 - Related issue: [Issue #4](https://github.com/mako10k/perttool/issues/4)
 

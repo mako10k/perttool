@@ -6,6 +6,7 @@
 - Authority semantics: [../specs/governance-authority.md](../specs/governance-authority.md)
 - Source contract: [../specs/governance-source.md](../specs/governance-source.md)
 - Interface contract: [../specs/governance-interface.md](../specs/governance-interface.md)
+- Design acceptance: [../process/governance-design-acceptance.md](../process/governance-design-acceptance.md)
 - Machine baseline:
   [../../test/fixtures/governance/cases.json](../../test/fixtures/governance/cases.json)
 

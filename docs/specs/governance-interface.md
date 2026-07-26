@@ -10,6 +10,7 @@
 - Governance source: [governance-source.md](governance-source.md)
 - Governance authority: [governance-authority.md](governance-authority.md)
 - Normative governance examples: [../examples/governance.md](../examples/governance.md)
+- Design acceptance: [../process/governance-design-acceptance.md](../process/governance-design-acceptance.md)
 - Mutation semantics: [mutation.md](mutation.md)
 - Active temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Prior CLI contract: [cli-contract-3.md](cli-contract-3.md)

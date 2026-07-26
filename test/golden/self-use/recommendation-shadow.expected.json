@@ -159,54 +159,100 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:745adb51cd8e52272e1714566e2ce0013b05b29de1eae9c86f82495ad260b69e",
+      "source_digest": "sha256:723fd69263973debb28e094521eeb428b4bdf51a9136b0ae05449a330063a02c",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_DESIGN_ACCEPTANCE"
+          "GOV_AUTHORITY_CORE",
+          "GOV_SOURCE_MODEL",
+          "GOV_GUIDANCE"
         ],
         "runnable_now": [
-          "GOV_DESIGN_ACCEPTANCE"
+          "GOV_AUTHORITY_CORE",
+          "GOV_SOURCE_MODEL"
         ],
         "blocked_now": [],
         "upcoming": [
-          "GOV_AUTHORITY_CORE",
-          "GOV_SOURCE_MODEL",
           "GOV_CLI_PREVIEW",
           "GOV_WRITE_ENFORCEMENT",
-          "GOV_GUIDANCE",
           "GOV_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "GOV_DESIGN_ACCEPTANCE"
+        "GOV_AUTHORITY_CORE",
+        "GOV_SOURCE_MODEL"
       ],
       "manual_selected_task_ids": [
-        "GOV_DESIGN_ACCEPTANCE"
+        "GOV_AUTHORITY_CORE",
+        "GOV_SOURCE_MODEL"
       ],
       "tiers": {
-        "GOV_DESIGN_ACCEPTANCE": "recommended"
+        "GOV_AUTHORITY_CORE": "recommended",
+        "GOV_SOURCE_MODEL": "recommended",
+        "GOV_GUIDANCE": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_DESIGN_ACCEPTANCE",
+          "id": "GOV_AUTHORITY_CORE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
+        },
+        {
+          "id": "GOV_SOURCE_MODEL",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "GOV_GUIDANCE",
+          "runnable_now": false,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "11/1",
+          "resource_rejections": [
+            {
+              "resource_id": "DEVELOPERS",
+              "capacity": 2,
+              "used_before_decision": 2,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "GOV_AUTHORITY_CORE",
+                "GOV_SOURCE_MODEL"
+              ]
+            },
+            {
+              "resource_id": "DOC_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "GOV_SOURCE_MODEL"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
-        "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "task_decisions": 3,
+        "decision_steps": 17,
+        "facts": 75,
+        "comparisons": 2,
+        "reasons": 12,
+        "descriptions": 6
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "operations": {
       "source_digest": "sha256:b38d4cc751e42ef437f4a140df22ffeb94bfc2aa1f6487d34feef6618eed6b6a",
