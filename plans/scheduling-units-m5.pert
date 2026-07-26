@@ -64,6 +64,7 @@ task CONTRACT4_MIGRATION_ROUTE PUBLIC_CORE_READY -> MIGRATION_ROUTE_READY:
   title "Publish temporal mutation and exact unit migration"
   description "Expose project, milestone, task, and batch temporal fields plus project migrate-unit through source-preserving preview and safe writes. Adapt every accepted migration cause, exact record, no-op, repetition, inverse, grammar upgrade, and optimistic-lock behavior without inventing batch members."
   duration 5p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
