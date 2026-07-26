@@ -41,14 +41,11 @@ milestone DESIGN_ACCEPTED:
   title "Issue #4 cross-cutting design accepted"
   state reached
 
-milestone SOURCE_MODEL_READY:
-  title "Governance source model and metadata maintenance ready"
 
-milestone AUTHORITY_CORE_READY:
-  title "Pure mutation-authority evaluation ready"
 
 milestone IMPLEMENTATION_INPUT_READY:
   title "CLI enforcement implementation input ready"
+  state reached
 
 milestone CLI_PREVIEW_READY:
   title "Governed CLI preview and projections ready"
@@ -71,31 +68,9 @@ milestone GOVERNANCE_ACCEPTED:
 
 
 
-task GOV_SOURCE_MODEL DESIGN_ACCEPTED -> SOURCE_MODEL_READY:
-  title "Implement governance source and metadata maintenance"
-  description "Implement parser, CST/model, semantic defaults, formatter, project init/show/set, batch fields, public types, and the generated leading direct-edit warning from the accepted contract. Preserve Grammar 1/2/3 compatibility as designed."
-  duration 5p
-  status done
-  priority 75
-  requires:
-    DEVELOPERS 1
-    DOC_SURFACE 1
 
-task GOV_AUTHORITY_CORE DESIGN_ACCEPTED -> AUTHORITY_CORE_READY:
-  title "Implement pure pre-change mutation-authority evaluation"
-  description "Implement deterministic scope classification, effective-owner and delegate resolution, pre-change authorization, mixed batch requirements, preview metadata, and PTGOV diagnostics without filesystem, Git, authentication, or network effects."
-  duration 5p
-  status done
-  priority 75
-  requires:
-    DEVELOPERS 1
-    WRITE_PATH 1
 
-gate GOV_SOURCE_IMPLEMENTATION_INPUT SOURCE_MODEL_READY -> IMPLEMENTATION_INPUT_READY:
-  reason "CLI enforcement requires governance source and metadata support"
 
-gate GOV_AUTHORITY_IMPLEMENTATION_INPUT AUTHORITY_CORE_READY -> IMPLEMENTATION_INPUT_READY:
-  reason "CLI enforcement requires pure pre-change authority evaluation"
 
 task GOV_CLI_PREVIEW IMPLEMENTATION_INPUT_READY -> CLI_PREVIEW_READY:
   title "Publish governed previews, command options, help, and JSON"
