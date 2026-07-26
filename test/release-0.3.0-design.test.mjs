@@ -18,6 +18,7 @@ test("0.3.0 release gate keeps Contract 4 implementation and publication separat
     design,
     procedure,
     readiness,
+    publishRecord,
     plan,
     manifestText,
     lockfileText,
@@ -29,6 +30,7 @@ test("0.3.0 release gate keeps Contract 4 implementation and publication separat
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.3.0-release.md"),
     repositoryText("docs/process/0.3.0-contract4-readiness.md"),
+    repositoryText("docs/process/0.3.0-publish.md"),
     repositoryText("plans/release-0.3.0.pert"),
     repositoryText("package.json"),
     repositoryText("package-lock.json"),
@@ -46,26 +48,41 @@ test("0.3.0 release gate keeps Contract 4 implementation and publication separat
   );
   assert.match(adr, /Select suffix-free `0\.3\.0`/);
   assert.match(design, /^### Post-MVP Slice 4F: Contract 4 `v0\.3\.0` beta release$/m);
-  assert.match(procedure, /Status: Candidate accepted 1\.2/);
+  assert.match(procedure, /Status: Published; acceptance pending 1\.3/);
   assert.match(procedure, /latest=0\.2\.0/);
   assert.match(
     procedure,
     /user's 2026-07-25 request to proceed through PUBLISH explicitly authorizes/,
   );
   assert.match(readiness, /Document status: Accepted 1\.0/);
+  assert.match(publishRecord, /Document status: Published 1\.0/);
+  assert.match(
+    publishRecord,
+    /Release commit: `af445770e323efe374a17808fde20ec48a7d68cf`/,
+  );
+  assert.match(
+    publishRecord,
+    /Local, GitHub, and npm tarball SHA-256 \| `197548a4ec1b7f05210bbd1c0bed4ad6090358e5834ab24a4e57e24927262074`/,
+  );
+  assert.match(publishRecord, /\| `beta` \| `0\.3\.0` \|/);
+  assert.match(publishRecord, /\| `latest` \| `0\.2\.0` \|/);
+  assert.match(
+    publishRecord,
+    /`RELEASE_030_ACCEPTANCE` remains unstarted and outside the current/,
+  );
   assert.doesNotMatch(plan, /^task RELEASE_030_GATE_DESIGN /m);
   assert.doesNotMatch(plan, /^task RELEASE_030_CONTRACT_4_READINESS /m);
   assert.doesNotMatch(plan, /^task RELEASE_030_PREPARATION /m);
   assert.doesNotMatch(plan, /^task RELEASE_030_CANDIDATE /m);
+  assert.doesNotMatch(plan, /^task RELEASE_030_PUBLISH /m);
   assert.match(
     plan,
-    /^milestone RELEASE_030_CANDIDATE_ACCEPTED:\n  title "Version 0\.3\.0 release candidate accepted"\n  state reached$/m,
+    /^milestone RELEASE_030_PUBLISHED:\n  title "Version 0\.3\.0 published to GitHub and npm beta"\n  state reached$/m,
   );
-  assert.match(plan, /^task RELEASE_030_PUBLISH /m);
   assert.match(plan, /^task RELEASE_030_ACCEPTANCE /m);
   assert.match(
     plan,
-    /npm latest promotion and RELEASE_030_ACCEPTANCE remain outside that authorization/,
+    /RELEASE_030_ACCEPTANCE, which remains outside the current authorization together with npm latest promotion/,
   );
 
   const manifest = JSON.parse(manifestText);

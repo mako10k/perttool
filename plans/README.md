@@ -41,14 +41,15 @@ All five tasks in `release-0.2.0.pert`, totaling 17p, completed and advanced thr
 The independent `release-0.3.0.pert` plan selects suffix-free beta `0.3.0` for
 the breaking Contract 4 cutover without duplicating scheduling-and-units
 implementation state. `RELEASE_030_GATE_DESIGN`,
-`RELEASE_030_CONTRACT_4_READINESS`, `RELEASE_030_PREPARATION`, and
-`RELEASE_030_CANDIDATE` are complete and advanced after the full Node.js 22
-gates plus unused-identity, dist-tag-baseline, and credential-route preflight.
-Two tasks and 6p remain; both makespans are 6p with no delay, observed
-cumulative velocity is `13p/2d`, and the forecast is `12/13d`. Complete Next
-v4 recommends `RELEASE_030_PUBLISH`. The user has authorized work through
-`RELEASE_030_PUBLISH`; `latest` promotion and durable acceptance remain
-separate later boundaries.
+`RELEASE_030_CONTRACT_4_READINESS`, `RELEASE_030_PREPARATION`,
+`RELEASE_030_CANDIDATE`, and `RELEASE_030_PUBLISH` are complete and advanced.
+The [PUBLISH record](../docs/process/0.3.0-publish.md) fixes the release
+commit/tag, common GitHub/npm tarball, installed Contract 4 checks, and
+`beta=0.3.0` with unchanged `latest=0.2.0`. One task and 3p remain; both
+makespans are 3p with no delay, observed cumulative velocity is `16p/2d`, and
+the forecast is `3/8d`. Complete Next v4 recommends
+`RELEASE_030_ACCEPTANCE`, which remains outside the current authorization
+together with npm `latest` promotion.
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.

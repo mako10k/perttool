@@ -170,11 +170,13 @@ and durable acceptance. `RELEASE_030_GATE_DESIGN` and
 `RELEASE_030_CONTRACT_4_READINESS` are complete and advanced; the
 [readiness record](0.3.0-contract4-readiness.md) consumes the reached
 scheduling-and-units finish without duplicating its task state.
-`RELEASE_030_PREPARATION` and `RELEASE_030_CANDIDATE` are complete and
-advanced after the full Node.js 22 repository and package gates plus the
-unused-identity, dist-tag-baseline, and credential-route preflight. Complete
-Next v4 recommends `RELEASE_030_PUBLISH`. The current authorization stops
-after PUBLISH and does not include npm `latest` promotion.
+`RELEASE_030_PREPARATION`, `RELEASE_030_CANDIDATE`, and
+`RELEASE_030_PUBLISH` are complete and advanced. The
+[PUBLISH record](0.3.0-publish.md) fixes the release commit/tag, common
+GitHub/npm tarball identity, installed Contract 4 checks, and
+`beta=0.3.0` with unchanged `latest=0.2.0`. Complete Next v4 recommends
+`RELEASE_030_ACCEPTANCE`, which remains outside the current authorization
+together with npm `latest` promotion.
 
 ### 5.1 Adopted Recommendation authority
 
