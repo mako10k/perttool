@@ -1384,6 +1384,14 @@ gates pass. It does not authorize npm `latest` promotion. The authoritative
 procedure is
 [`docs/process/0.3.0-release.md`](process/0.3.0-release.md).
 
+All ten criteria were accepted on 2026-07-26. Publication itself preserved
+`latest=0.2.0` as required. After acceptance, the user separately selected
+and authorized `perttool@0.3.0` for the independent `latest` dist-tag
+operation; durable registry reads and an unqualified global installation
+confirmed `beta=latest=0.3.0` without changing beta product maturity. The
+evidence is recorded in
+[`docs/process/0.3.0-release-acceptance.md`](process/0.3.0-release-acceptance.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |
@@ -1521,4 +1529,15 @@ separately authorized promotion of the accepted version, and npm now reports
 `beta=latest=0.2.0`. The completed release plan has no recommendation and was
 not changed by that independent dist-tag operation. The
 [`v0.2.0` acceptance record](process/0.2.0-release-acceptance.md) preserves the
+durable evidence.
+
+The accepted Contract 4 source and package workflow published suffix-free beta
+`0.3.0` from one byte-identical local, GitHub, and npm tarball. All six tasks
+in [`plans/release-0.3.0.pert`](../plans/release-0.3.0.pert) are complete and
+advanced; the plan has zero makespans and no recommendation at `19p/2d`.
+Publication moved only `beta` and preserved `latest=0.2.0`. After acceptance,
+the user separately authorized the default-tag mutation, and npm now reports
+`beta=latest=0.3.0`; an unqualified global installation and light Contract 4
+smoke passed. The
+[`v0.3.0` acceptance record](process/0.3.0-release-acceptance.md) preserves the
 durable evidence.

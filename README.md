@@ -38,13 +38,13 @@ temporal and migration surface in this README.
 Install the CLI globally when it is used regularly:
 
 ```sh
-npm install --global perttool@0.3.0
+npm install --global perttool
 perttool --version
 ```
 
-npm `beta` resolves to Contract 4 `0.3.0`. npm `latest` remains Contract 3
-`0.2.0`; publication does not promote it. Use `perttool@beta` as an alternative
-to the exact `0.3.0` pin.
+npm `latest` and `beta` both resolve to Contract 4 `0.3.0`. Use
+`perttool@0.3.0` for an exact pin or `perttool@beta` to follow the beta
+channel. Contract 3 remains available as `perttool@0.2.0`.
 
 ## Plan files
 

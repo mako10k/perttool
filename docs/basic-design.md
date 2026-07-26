@@ -1702,9 +1702,10 @@ The release sequence separates:
    tarball;
 6. post-publication durable acceptance.
 
-The current user authorization extends through `RELEASE_030_PUBLISH`. npm
-`latest` promotion and `RELEASE_030_ACCEPTANCE` remain separate later
-boundaries.
+The release was published under the initial authorization through
+`RELEASE_030_PUBLISH`, then accepted under a later explicit request. npm
+`latest` promotion remained a separate post-acceptance mutation and was
+performed only after the user selected `0.3.0`.
 
 Exit:
 
@@ -1713,8 +1714,13 @@ Exit:
   prerelease and npm `beta`;
 - verify artifact identity and isolated installation from both public
   channels;
-- retain `latest=0.2.0`;
-- leave durable acceptance as the next release-plan task.
+- retain `latest=0.2.0` during PUBLISH;
+- record durable acceptance separately;
+- allow only a separately authorized post-acceptance `latest` promotion.
+
+All exit conditions were satisfied on 2026-07-26. The completed release plan
+has no remaining or recommended task, and the independent promotion made npm
+`beta=latest=0.3.0` without changing beta product maturity.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

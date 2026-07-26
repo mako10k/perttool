@@ -161,22 +161,21 @@ plan remains unchanged with no remaining or recommended task at `17p/2d`.
 The durable [acceptance record](0.2.0-release-acceptance.md) contains the
 release identity, artifact digests, dist-tags, and verification commands.
 
-The next public target is suffix-free beta `0.3.0` for the atomic Contract 4
-cutover. The independent
+Suffix-free beta `0.3.0` is the accepted atomic Contract 4 release. The
+independent
 [`release-0.3.0.pert`](../../plans/release-0.3.0.pert) plan verifies the
 accepted scheduling-and-units finish, then separates source preparation,
 candidate acceptance, the authorized Git/GitHub/npm `beta` PUBLISH operation,
-and durable acceptance. `RELEASE_030_GATE_DESIGN` and
-`RELEASE_030_CONTRACT_4_READINESS` are complete and advanced; the
+and durable acceptance. All six tasks are complete and advanced. The
 [readiness record](0.3.0-contract4-readiness.md) consumes the reached
 scheduling-and-units finish without duplicating its task state.
-`RELEASE_030_PREPARATION`, `RELEASE_030_CANDIDATE`, and
-`RELEASE_030_PUBLISH` are complete and advanced. The
 [PUBLISH record](0.3.0-publish.md) fixes the release commit/tag, common
 GitHub/npm tarball identity, installed Contract 4 checks, and
-`beta=0.3.0` with unchanged `latest=0.2.0`. Complete Next v4 recommends
-`RELEASE_030_ACCEPTANCE`, which remains outside the current authorization
-together with npm `latest` promotion.
+publication-time `beta=0.3.0` with unchanged `latest=0.2.0`. The
+[acceptance record](0.3.0-release-acceptance.md) records the separately
+authorized promotion to `beta=latest=0.3.0`, the unqualified global
+installation, and light smoke. The completed plan has zero makespans, no
+recommendation, and observed cumulative velocity `19p/2d`.
 
 ### 5.1 Adopted Recommendation authority
 

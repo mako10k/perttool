@@ -4,6 +4,13 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Changed
+
+- Accepted the `perttool@0.3.0` Contract 4 beta and promoted it to npm
+  `latest` through a separate, explicitly authorized post-acceptance dist-tag
+  operation. npm `beta` and `latest` now resolve to `0.3.0`; product maturity
+  remains beta.
+
 ## [0.3.0] - 2026-07-26
 
 Contract 4 beta release. This version atomically publishes temporal and

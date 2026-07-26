@@ -13,7 +13,7 @@ User communication is independent from the repository baseline. Unless the user 
 
 ## Current phase and sources of truth
 
-perttool has accepted its TypeScript CLI MVP, the read-only AI Agent Guidance Registry v1 from Issue #2, and suffix-free beta releases through `v0.3.0`. Version `0.3.0` publishes the atomic Contract 4 cutover from one verified tarball and resolves from npm `beta`; `latest` remains Contract 3 `0.2.0`, and `0.1.0` remains the prior Contract 2 artifact available by explicit pin. The current source implements Grammar 1/2/3 reads, registry-driven `help`, separate `guide`, temporal project/task/milestone maintenance, exact `project migrate-unit`, `Perttool.AnalysisResult.v3`, `Perttool.NextResult.v4`, `Perttool.UnitMigrationResult.v2`, read-only `validateOverride`, source-preserving mutation, and safe-write controls. A complete and known `Perttool.NextResult.v4` with a complete temporal start-authority projection is the normal AI task-selection authority. The macro plan is complete and has no ready task. The independent English-baseline detail plan has completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`, and now recommends `PERT_PLANS`. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
+perttool has accepted its TypeScript CLI MVP, the read-only AI Agent Guidance Registry v1 from Issue #2, and suffix-free beta releases through `v0.3.0`. Version `0.3.0` publishes the atomic Contract 4 cutover from one verified tarball and now resolves from both npm `beta` and `latest` after a separately authorized post-acceptance promotion; `0.2.0` remains the prior Contract 3 artifact available by explicit pin. The current source implements Grammar 1/2/3 reads, registry-driven `help`, separate `guide`, temporal project/task/milestone maintenance, exact `project migrate-unit`, `Perttool.AnalysisResult.v3`, `Perttool.NextResult.v4`, `Perttool.UnitMigrationResult.v2`, read-only `validateOverride`, source-preserving mutation, and safe-write controls. A complete and known `Perttool.NextResult.v4` with a complete temporal start-authority projection is the normal AI task-selection authority. The macro plan is complete and has no ready task. The independent English-baseline detail plan has completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`, and now recommends `PERT_PLANS`. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
 The reviewed CLI/help reset is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted Contract 3 design introduced one typed registry for dispatch, option parsing, text help, and JSON help; separated domain guide and agent guidance; added structured usage recovery, project initialization, and direct gate maintenance; and rejected renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and the installed-package workflow for temporal and exact-unit behavior. The plan has no remaining or recommended task and an observed provisional `49p/1d` velocity.
 
@@ -23,15 +23,15 @@ The current Contract 4 release is suffix-free beta `0.3.0`.
 `plans/release-0.3.0.pert` independently tracks release
 gate design, accepted scheduling-and-units input, source preparation,
 candidate acceptance, PUBLISH, and durable acceptance without duplicating
-SU-M3/SU-M5 task state. `RELEASE_030_GATE_DESIGN`,
-`RELEASE_030_CONTRACT_4_READINESS`, `RELEASE_030_PREPARATION`,
-`RELEASE_030_CANDIDATE`, and `RELEASE_030_PUBLISH` are complete and advanced.
+SU-M3/SU-M5 task state. All six release tasks from
+`RELEASE_030_GATE_DESIGN` through `RELEASE_030_ACCEPTANCE` are complete and
+advanced.
 Release commit and peeled tag target `af44577` agree; the GitHub prerelease and
 npm registry tarballs have SHA-256 `197548a4...62074`; npm
-`beta=0.3.0`, `latest=0.2.0`, and `alpha=0.1.0-alpha.2`. One task and 3p
-remain, both makespans are 3p, observed cumulative velocity is `16p/2d`, and
-complete Next v4 recommends `RELEASE_030_ACCEPTANCE`. That acceptance task and
-npm `latest` promotion are outside the current authorization.
+`beta=latest=0.3.0` and `alpha=0.1.0-alpha.2`. An unqualified global
+installation and light Contract 4 smoke passed. The plan has zero precedence
+and heuristic resource makespans, no remaining or recommended task, and
+observed cumulative velocity `19p/2d`.
 
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public schemas and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 
@@ -59,7 +59,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert` and `release-0.2.0.pert` as completed independent post-beta workstreams; use `release-0.3.0.pert` as the active Contract 4 release workstream; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `english-baseline.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert`, `release-0.2.0.pert`, and `release-0.3.0.pert` as completed independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -116,7 +116,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all seventeen self-use plans, including the completed scheduling-and-units macro and SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 details, and the active `0.3.0` release plan.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all seventeen self-use plans, including the completed scheduling-and-units macro and SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 details, and the completed `0.3.0` release plan.
 
 ```sh
 npm ci

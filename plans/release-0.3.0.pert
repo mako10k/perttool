@@ -1,7 +1,7 @@
 project RELEASE_030:
   version 1
   title "perttool 0.3.0 Contract 4 beta release"
-  description "Release suffix-free 0.3.0 beta from the accepted atomic Contract 4 source and one verified tarball. All six tasks and 19p completed over two active days. Release commit af445770e323efe374a17808fde20ec48a7d68cf is the peeled v0.3.0 target, and local, GitHub, and npm tarballs are byte-identical. After acceptance, the explicitly authorized dist-tag operation made beta=latest=0.3.0 while alpha remains 0.1.0-alpha.2. An unqualified global install and light Contract 4 smoke passed. RELEASE_030_ACCEPTANCE is done and the reached finish is ready for canonical advance."
+  description "Release suffix-free 0.3.0 beta from the accepted atomic Contract 4 source and one verified tarball. All six tasks and 19p completed over two active days. Release commit af445770e323efe374a17808fde20ec48a7d68cf is the peeled v0.3.0 target, and local, GitHub, and npm tarballs are byte-identical. After acceptance, the explicitly authorized dist-tag operation made beta=latest=0.3.0 while alpha remains 0.1.0-alpha.2. An unqualified global install and light Contract 4 smoke passed. The plan has no remaining or recommended task after advance."
   as_of 2026-07-26
   duration_unit point
   velocity 19p/2d
@@ -36,26 +36,7 @@ resource EXTERNAL_RELEASE:
 
 
 
-milestone RELEASE_030_PUBLISHED:
-  title "Version 0.3.0 published to GitHub and npm beta"
-  state reached
 
 milestone RELEASE_030_ACCEPTED:
   title "Version 0.3.0 Contract 4 beta accepted"
-
-
-
-
-
-
-task RELEASE_030_ACCEPTANCE RELEASE_030_PUBLISHED -> RELEASE_030_ACCEPTED:
-  title "Record durable 0.3.0 beta acceptance"
-  description "Verify release commit and peeled tag identity, common local/GitHub/npm tarball digest, registry integrity and metadata, isolated installation from both public channels, complete Contract 4 behavior, beta and unchanged latest tags, and exact commands. Record a post-release acceptance document without altering the immutable artifact."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
+  state reached

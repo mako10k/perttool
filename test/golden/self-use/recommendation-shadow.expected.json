@@ -235,45 +235,26 @@
       "diagnostic_codes": []
     },
     "release-0.3.0": {
-      "source_digest": "sha256:121863f3360e2fd4cc2f05125e5630deb94d71d985717b098a9500a650445e58",
+      "source_digest": "sha256:66fc6487cd0ca33be2bba4176e6f13aa6af386b5861e5eee458069f2d70a4874",
       "groups": {
         "active": [],
-        "ready": [
-          "RELEASE_030_ACCEPTANCE"
-        ],
-        "runnable_now": [
-          "RELEASE_030_ACCEPTANCE"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": []
       },
-      "recommended_task_ids": [
-        "RELEASE_030_ACCEPTANCE"
-      ],
-      "manual_selected_task_ids": [
-        "RELEASE_030_ACCEPTANCE"
-      ],
-      "tiers": {
-        "RELEASE_030_ACCEPTANCE": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "RELEASE_030_ACCEPTANCE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": []
     },

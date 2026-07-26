@@ -4,8 +4,8 @@
     "grammar_version": 1,
     "summary": {
       "resources": 5,
-      "milestones": 2,
-      "tasks": 1,
+      "milestones": 1,
+      "tasks": 0,
       "gates": 0,
       "errors": 0,
       "warnings": 0
@@ -13,29 +13,21 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "3/1",
+    "precedence_makespan": "0/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "3/8",
-    "precedence_critical_tasks": [
-      "RELEASE_030_ACCEPTANCE"
-    ],
-    "resource_makespan": "3/1",
-    "resource_forecast": "3/8",
+    "precedence_forecast": "0/1",
+    "precedence_critical_tasks": [],
+    "resource_makespan": "0/1",
+    "resource_forecast": "0/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
-    "schedule_critical_tasks": [
-      "RELEASE_030_ACCEPTANCE"
-    ]
+    "schedule_critical_tasks": []
   },
   "next": {
     "groups": {
       "active": [],
-      "ready": [
-        "RELEASE_030_ACCEPTANCE"
-      ],
-      "runnable_now": [
-        "RELEASE_030_ACCEPTANCE"
-      ],
+      "ready": [],
+      "runnable_now": [],
       "blocked_now": [],
       "upcoming": []
     },

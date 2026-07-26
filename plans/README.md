@@ -42,14 +42,16 @@ The independent `release-0.3.0.pert` plan selects suffix-free beta `0.3.0` for
 the breaking Contract 4 cutover without duplicating scheduling-and-units
 implementation state. `RELEASE_030_GATE_DESIGN`,
 `RELEASE_030_CONTRACT_4_READINESS`, `RELEASE_030_PREPARATION`,
-`RELEASE_030_CANDIDATE`, and `RELEASE_030_PUBLISH` are complete and advanced.
+`RELEASE_030_CANDIDATE`, `RELEASE_030_PUBLISH`, and
+`RELEASE_030_ACCEPTANCE` are complete and advanced.
 The [PUBLISH record](../docs/process/0.3.0-publish.md) fixes the release
 commit/tag, common GitHub/npm tarball, installed Contract 4 checks, and
-`beta=0.3.0` with unchanged `latest=0.2.0`. One task and 3p remain; both
-makespans are 3p with no delay, observed cumulative velocity is `16p/2d`, and
-the forecast is `3/8d`. Complete Next v4 recommends
-`RELEASE_030_ACCEPTANCE`, which remains outside the current authorization
-together with npm `latest` promotion.
+publication-time `beta=0.3.0` with unchanged `latest=0.2.0`. The
+[acceptance record](../docs/process/0.3.0-release-acceptance.md) records the
+separately authorized `beta=latest=0.3.0` promotion, unqualified global
+installation, and light smoke. All six tasks and 19p completed over two
+active days. The plan now has zero precedence and heuristic resource
+makespans and no ready or recommended task.
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.

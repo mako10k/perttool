@@ -5,7 +5,8 @@
 - Amended: 2026-07-23 (`v0.1.0` explicit `latest` promotion);
   2026-07-24 (`v0.2.0` Contract 3 release target);
   2026-07-25 (`v0.2.0` explicit `latest` promotion and `v0.3.0` Contract 4
-  release target)
+  release target);
+  2026-07-26 (`v0.3.0` explicit `latest` promotion)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -56,6 +57,12 @@ unit implementation in its milestone/detail plans, verifies the accepted
 Contract 4 input in the release plan, and separates source preparation,
 candidate acceptance, publication, and durable acceptance. That authorization
 does not include npm `latest` promotion.
+
+On 2026-07-26, after `v0.3.0` beta publication and release acceptance, the
+user explicitly promoted `perttool@0.3.0` to npm `latest`. Registry reads and
+an unqualified global installation confirmed that `beta` and `latest` both
+resolve to Contract 4 `0.3.0`; `alpha` remains on `0.1.0-alpha.2`. Product
+maturity remains beta.
 
 ## Beta gate
 
