@@ -55,11 +55,11 @@ test("0.3.0 release gate keeps Contract 4 implementation and publication separat
   assert.match(readiness, /Document status: Accepted 1\.0/);
   assert.doesNotMatch(plan, /^task RELEASE_030_GATE_DESIGN /m);
   assert.doesNotMatch(plan, /^task RELEASE_030_CONTRACT_4_READINESS /m);
+  assert.doesNotMatch(plan, /^task RELEASE_030_PREPARATION /m);
   assert.match(
     plan,
-    /^milestone RELEASE_030_CONTRACT_4_READY:\n  title "Accepted Contract 4 release input verified"\n  state reached$/m,
+    /^milestone RELEASE_030_SOURCE_PREPARED:\n  title "Version 0\.3\.0 release source prepared"\n  state reached$/m,
   );
-  assert.match(plan, /^task RELEASE_030_PREPARATION /m);
   assert.match(plan, /^task RELEASE_030_PUBLISH /m);
   assert.match(plan, /^task RELEASE_030_ACCEPTANCE /m);
   assert.match(

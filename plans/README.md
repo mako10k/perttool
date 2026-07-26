@@ -40,13 +40,12 @@ All five tasks in `release-0.2.0.pert`, totaling 17p, completed and advanced thr
 
 The independent `release-0.3.0.pert` plan selects suffix-free beta `0.3.0` for
 the breaking Contract 4 cutover without duplicating scheduling-and-units
-implementation state. `RELEASE_030_GATE_DESIGN` and
-`RELEASE_030_CONTRACT_4_READINESS` are complete and advanced, and
-`RELEASE_030_PREPARATION` is complete after the full Node.js 22 repository and
-package gates. Three tasks and 10p remain; both makespans are 10p with no
-delay, the inherited release velocity is `17p/2d`, and the forecast is
-`20/17d`. Complete Next v4 recommends `RELEASE_030_CANDIDATE`. The user has
-authorized work through
+implementation state. `RELEASE_030_GATE_DESIGN`,
+`RELEASE_030_CONTRACT_4_READINESS`, and `RELEASE_030_PREPARATION` are complete
+and advanced after the full Node.js 22 repository and package gates. Three
+tasks and 10p remain; both makespans are 10p with no delay, the inherited
+release velocity is `17p/2d`, and the forecast is `20/17d`. Complete Next v4
+recommends `RELEASE_030_CANDIDATE`. The user has authorized work through
 `RELEASE_030_PUBLISH`; `latest` promotion and durable acceptance remain
 separate later boundaries.
 

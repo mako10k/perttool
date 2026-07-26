@@ -33,12 +33,10 @@ resource EXTERNAL_RELEASE:
   capacity 1
 
 
-milestone RELEASE_030_CONTRACT_4_READY:
-  title "Accepted Contract 4 release input verified"
-  state reached
 
 milestone RELEASE_030_SOURCE_PREPARED:
   title "Version 0.3.0 release source prepared"
+  state reached
 
 milestone RELEASE_030_CANDIDATE_ACCEPTED:
   title "Version 0.3.0 release candidate accepted"
@@ -51,17 +49,6 @@ milestone RELEASE_030_ACCEPTED:
 
 
 
-task RELEASE_030_PREPARATION RELEASE_030_CONTRACT_4_READY -> RELEASE_030_SOURCE_PREPARED:
-  title "Prepare version 0.3.0 release source"
-  description "Align package and lockfile identity, CLI version, CHANGELOG, README, release documentation, golden artifacts, and generic beta publication validation. Run the complete repository and package gates without remote or registry writes."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
 
 task RELEASE_030_CANDIDATE RELEASE_030_SOURCE_PREPARED -> RELEASE_030_CANDIDATE_ACCEPTED:
   title "Accept one clean 0.3.0 release candidate"

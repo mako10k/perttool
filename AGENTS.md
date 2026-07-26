@@ -23,12 +23,12 @@ The next release target is suffix-free beta `0.3.0`, selected for the breaking
 Contract 4 cutover. `plans/release-0.3.0.pert` independently tracks release
 gate design, accepted scheduling-and-units input, source preparation,
 candidate acceptance, PUBLISH, and durable acceptance without duplicating
-SU-M3/SU-M5 task state. `RELEASE_030_GATE_DESIGN` and
-`RELEASE_030_CONTRACT_4_READINESS` are complete and advanced, and
-`RELEASE_030_PREPARATION` is complete after the full Node.js 22 repository and
-package gates. Ten points remain; precedence and heuristic resource makespans
-are both 10p with no delay, inherited velocity is `17p/2d`, and complete Next
-v4 recommends `RELEASE_030_CANDIDATE`. The user
+SU-M3/SU-M5 task state. `RELEASE_030_GATE_DESIGN`,
+`RELEASE_030_CONTRACT_4_READINESS`, and `RELEASE_030_PREPARATION` are complete
+and advanced after the full Node.js 22 repository and package gates. Ten
+points remain; precedence and heuristic resource makespans are both 10p with
+no delay, inherited velocity is `17p/2d`, and complete Next v4 recommends
+`RELEASE_030_CANDIDATE`. The user
 has explicitly authorized work through `RELEASE_030_PUBLISH`, including the
 named clean Git push, annotated `v0.3.0` tag, GitHub prerelease, and npm
 `beta` publication after all preceding gates pass. npm `latest` promotion and

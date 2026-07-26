@@ -170,10 +170,10 @@ and durable acceptance. `RELEASE_030_GATE_DESIGN` and
 `RELEASE_030_CONTRACT_4_READINESS` are complete and advanced; the
 [readiness record](0.3.0-contract4-readiness.md) consumes the reached
 scheduling-and-units finish without duplicating its task state.
-`RELEASE_030_PREPARATION` is complete after the full Node.js 22 repository and
-package gates, and complete Next v4 recommends `RELEASE_030_CANDIDATE`. The
-current authorization stops after PUBLISH and does not include npm `latest`
-promotion.
+`RELEASE_030_PREPARATION` is complete and advanced after the full Node.js 22
+repository and package gates, and complete Next v4 recommends
+`RELEASE_030_CANDIDATE`. The current authorization stops after PUBLISH and
+does not include npm `latest` promotion.
 
 ### 5.1 Adopted Recommendation authority
 
