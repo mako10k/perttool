@@ -68,6 +68,7 @@ task NEXT_V4_NORMAL_AUTHORITY PUBLIC_CORE_READY -> AUTHORITY_READY:
   title "Adopt complete NextResult v4 as normal authority"
   description "Make only a known complete non-truncated NextResult v4 with Recommendation version 1 and the temporal release gate the normal start authority. Preserve deadline-independent ranking and make unknown, incomplete, malformed, or unavailable temporal authority fail closed in guidance and consumer checks."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
