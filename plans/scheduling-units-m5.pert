@@ -65,6 +65,7 @@ task CONTRACT4_PUBLIC_CORE M5_START -> PUBLIC_CORE_READY:
   title "Activate Grammar 3 and public Contract 4 Core"
   description "Replace the active Grammar 1 boundary with the accepted Grammar 3-capable parser, validator, formatter, mutation, CheckResult v2, ProjectResult v2, AnalysisResult v3, NextResult v4, and UnitMigrationResult v2 public Core. Define the intentional root export policy and keep version identities closed."
   duration 5p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
