@@ -35,12 +35,10 @@ resource DOC_SURFACE:
 
 
 
-milestone INTERFACE_CONTRACT_DEFINED:
-  title "Core, CLI, help, and JSON contract defined"
-  state reached
 
 milestone EXAMPLES_DEFINED:
   title "Normative governance examples defined"
+  state reached
 
 milestone DESIGN_ACCEPTED:
   title "Issue #4 cross-cutting design accepted"
@@ -73,16 +71,6 @@ milestone GOVERNANCE_ACCEPTED:
 
 
 
-task GOV_NORMATIVE_EXAMPLES INTERFACE_CONTRACT_DEFINED -> EXAMPLES_DEFINED:
-  title "Fix normative governance examples and acceptance cases"
-  description "Cover omitted defaults, owner and delegate writes, missing and wrong acceptance, governed preview, distinct-owner batches, pre-change self-authorization rejection, stale digests, unaffected maintenance, and direct-edit bypass guidance."
-  duration 2p
-  status done
-  priority 85
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
 
 task GOV_DESIGN_ACCEPTANCE EXAMPLES_DEFINED -> DESIGN_ACCEPTED:
   title "Accept the cross-cutting Issue #4 design"

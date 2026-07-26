@@ -964,6 +964,17 @@ and authorizes only `GOV_DESIGN_ACCEPTANCE`. The accepted snapshot retains
 `PTDAG-208` for `EXAMPLES_DEFINED` until advance. Grammar 4, Contract 5, and
 owner-aware runtime enforcement remain unavailable.
 
+After the acceptance snapshot was committed at `39f6162`, the advance preview
+from digest
+`sha256:e9be2602378f21d7fd6181359c796cf29bac8c18c0ff397029b5d15860c0ec39`
+removed completed task `GOV_NORMATIVE_EXAMPLES` and historical milestone
+`INTERFACE_CONTRACT_DEFINED`. It retained `EXAMPLES_DEFINED` as the reached
+frontier and produced digest
+`sha256:745adb51cd8e52272e1714566e2ce0013b05b29de1eae9c86f82495ad260b69e`.
+Reanalysis preserves 28p remaining, 20p precedence and 23p heuristic resource
+makespans, 3p resource delay, both forecasts, and the sole
+`GOV_DESIGN_ACCEPTANCE` recommendation while clearing `PTDAG-208`.
+
 Stage 1 allowed operations:
 
 - check
