@@ -403,51 +403,70 @@
       "diagnostic_codes": []
     },
     "scheduling-units-m5": {
-      "source_digest": "sha256:0b71e7711fa301847677a38edaf90469ac90bbf9a91352f277b6dca8d061c713",
+      "source_digest": "sha256:37406040e951466307d5b475cc4572a9885281e2203da9278d01974fe10b1209",
       "groups": {
         "active": [],
         "ready": [
-          "CONTRACT4_PUBLIC_CORE"
+          "NEXT_V4_NORMAL_AUTHORITY",
+          "CONTRACT4_COMMAND_GUIDANCE"
         ],
         "runnable_now": [
-          "CONTRACT4_PUBLIC_CORE"
+          "NEXT_V4_NORMAL_AUTHORITY"
         ],
         "blocked_now": [],
         "upcoming": [
-          "CONTRACT4_MIGRATION_ROUTE",
           "CONTRACT4_INSTALLED_WORKFLOW",
-          "M5_CONTRACT4_ACCEPTANCE",
-          "NEXT_V4_NORMAL_AUTHORITY",
-          "CONTRACT4_COMMAND_GUIDANCE"
+          "M5_CONTRACT4_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "CONTRACT4_PUBLIC_CORE"
+        "CONTRACT4_COMMAND_GUIDANCE"
       ],
       "manual_selected_task_ids": [
-        "CONTRACT4_PUBLIC_CORE"
+        "NEXT_V4_NORMAL_AUTHORITY"
       ],
       "tiers": {
-        "CONTRACT4_PUBLIC_CORE": "recommended"
+        "CONTRACT4_COMMAND_GUIDANCE": "recommended",
+        "NEXT_V4_NORMAL_AUTHORITY": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "CONTRACT4_PUBLIC_CORE",
+          "id": "NEXT_V4_NORMAL_AUTHORITY",
           "runnable_now": true,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "1/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "CONTRACT4_COMMAND_GUIDANCE",
+          "runnable_now": false,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
-          "resource_rejections": []
+          "resource_rejections": [
+            {
+              "resource_id": "REVIEWERS",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "NEXT_V4_NORMAL_AUTHORITY"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
-        "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "task_decisions": 2,
+        "decision_steps": 12,
+        "facts": 47,
+        "comparisons": 2,
+        "reasons": 8,
+        "descriptions": 4
       },
       "diagnostic_codes": []
     },

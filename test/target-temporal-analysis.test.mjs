@@ -132,6 +132,68 @@ test("TUE-005 an equal release instant is startable", async () => {
   );
 });
 
+test("Next v4 start authority follows feasible recommendation R rather than scheduler L", () => {
+  const result = next(`project AUTHORITY_SEPARATION:
+  version 1
+  title "Recommendation and scheduler separation"
+  duration_unit point
+  velocity 1p/1d
+  finish FINISH
+
+resource REVIEWER:
+  title "Reviewer"
+  capacity 1
+
+milestone START:
+  title "Start"
+  state reached
+
+milestone DRIVING_DONE:
+  title "Driving task complete"
+
+milestone PRIORITY_DONE:
+  title "Priority task complete"
+
+milestone FINISH:
+  title "Finish"
+
+task DRIVING START -> DRIVING_DONE:
+  title "Driving path"
+  duration 4p
+  priority 90
+  requires:
+    REVIEWER 1
+
+task PRIORITY START -> PRIORITY_DONE:
+  title "Scheduler priority"
+  duration 3p
+  priority 100
+  requires:
+    REVIEWER 1
+
+gate DRIVING_GATE DRIVING_DONE -> FINISH:
+  reason "Driving path is required"
+
+gate PRIORITY_GATE PRIORITY_DONE -> FINISH:
+  reason "Priority path is required"
+`);
+  assert.deepEqual(result.groups.runnableNow, ["PRIORITY"]);
+  assert.deepEqual(result.recommendation.recommendedTaskIds, ["DRIVING"]);
+  assert.deepEqual(
+    result.temporal.authority.startableRecommendedTaskIds,
+    ["DRIVING"],
+  );
+  assert.equal(
+    result.tasks.find(({ id }) => id === "DRIVING").runnableNow,
+    false,
+  );
+  assert.equal(
+    result.temporal.tasks.find(({ taskId }) => taskId === "DRIVING")
+      .timeEligibility.state,
+    "eligible",
+  );
+});
+
 test("TUE-006 mixed kinds remain ready but never gain start authority", async () => {
   const result = next(await fixture("mixed-kind-v2.pert"));
   assert.deepEqual(result.groups.ready, ["FUTURE_CLOCK"]);

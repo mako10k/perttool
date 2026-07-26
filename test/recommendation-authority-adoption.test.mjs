@@ -186,7 +186,6 @@ function understandsAuthorityContract(result) {
     authority.startable_recommended_task_ids.every(
       (id) =>
         recommendation.recommended_task_ids.includes(id) &&
-        result.groups.runnable_now.includes(id) &&
         authority.time_eligible_task_ids.includes(id),
     ) &&
     authority.delayed_recommended_task_ids.every(

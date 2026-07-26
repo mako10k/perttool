@@ -224,7 +224,7 @@ test("all seventeen self-use plans pass the v4 recommendation shadow gate", asyn
       json.temporal.authority.startable_recommended_task_ids.every(
         (id) =>
           recommendation.recommended_task_ids.includes(id) &&
-          json.groups.runnable_now.includes(id),
+          json.temporal.authority.time_eligible_task_ids.includes(id),
       ),
       true,
       `${planName}: temporal start authority`,

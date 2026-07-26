@@ -738,7 +738,6 @@ export function selectTargetTemporalTasks(
       .map(({ taskId }) => taskId);
   const recommended = base.recommendation.recommendedTaskIds;
   const startable = recommended.filter((id) =>
-    base.groups.runnableNow.includes(id) &&
     eligibilityById.get(id)?.state === "eligible"
   );
   const delayed = recommended.filter((id) =>
