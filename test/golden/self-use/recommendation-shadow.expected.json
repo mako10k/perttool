@@ -235,34 +235,33 @@
       "diagnostic_codes": []
     },
     "release-0.3.0": {
-      "source_digest": "sha256:2fb1efe80f799155ba98157e0d1e2b6955782110f64aaeb2ac73b972d7e8b08f",
+      "source_digest": "sha256:06eccf893c0e964787f7380d8f374b273217cbf0d88b2de7c1cd56f0c17362f9",
       "groups": {
         "active": [],
         "ready": [
-          "RELEASE_030_CANDIDATE"
+          "RELEASE_030_PUBLISH"
         ],
         "runnable_now": [
-          "RELEASE_030_CANDIDATE"
+          "RELEASE_030_PUBLISH"
         ],
         "blocked_now": [],
         "upcoming": [
-          "RELEASE_030_PUBLISH",
           "RELEASE_030_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "RELEASE_030_CANDIDATE"
+        "RELEASE_030_PUBLISH"
       ],
       "manual_selected_task_ids": [
-        "RELEASE_030_CANDIDATE"
+        "RELEASE_030_PUBLISH"
       ],
       "tiers": {
-        "RELEASE_030_CANDIDATE": "recommended"
+        "RELEASE_030_PUBLISH": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RELEASE_030_CANDIDATE",
+          "id": "RELEASE_030_PUBLISH",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

@@ -46,7 +46,7 @@ test("0.3.0 release gate keeps Contract 4 implementation and publication separat
   );
   assert.match(adr, /Select suffix-free `0\.3\.0`/);
   assert.match(design, /^### Post-MVP Slice 4F: Contract 4 `v0\.3\.0` beta release$/m);
-  assert.match(procedure, /Status: Source prepared 1\.1/);
+  assert.match(procedure, /Status: Candidate accepted 1\.2/);
   assert.match(procedure, /latest=0\.2\.0/);
   assert.match(
     procedure,
@@ -56,9 +56,10 @@ test("0.3.0 release gate keeps Contract 4 implementation and publication separat
   assert.doesNotMatch(plan, /^task RELEASE_030_GATE_DESIGN /m);
   assert.doesNotMatch(plan, /^task RELEASE_030_CONTRACT_4_READINESS /m);
   assert.doesNotMatch(plan, /^task RELEASE_030_PREPARATION /m);
+  assert.doesNotMatch(plan, /^task RELEASE_030_CANDIDATE /m);
   assert.match(
     plan,
-    /^milestone RELEASE_030_SOURCE_PREPARED:\n  title "Version 0\.3\.0 release source prepared"\n  state reached$/m,
+    /^milestone RELEASE_030_CANDIDATE_ACCEPTED:\n  title "Version 0\.3\.0 release candidate accepted"\n  state reached$/m,
   );
   assert.match(plan, /^task RELEASE_030_PUBLISH /m);
   assert.match(plan, /^task RELEASE_030_ACCEPTANCE /m);

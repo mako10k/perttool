@@ -24,11 +24,12 @@ Contract 4 cutover. `plans/release-0.3.0.pert` independently tracks release
 gate design, accepted scheduling-and-units input, source preparation,
 candidate acceptance, PUBLISH, and durable acceptance without duplicating
 SU-M3/SU-M5 task state. `RELEASE_030_GATE_DESIGN`,
-`RELEASE_030_CONTRACT_4_READINESS`, and `RELEASE_030_PREPARATION` are complete
-and advanced after the full Node.js 22 repository and package gates. Ten
-points remain; precedence and heuristic resource makespans are both 10p with
-no delay, inherited velocity is `17p/2d`, and complete Next v4 recommends
-`RELEASE_030_CANDIDATE`. The user
+`RELEASE_030_CONTRACT_4_READINESS`, `RELEASE_030_PREPARATION`, and
+`RELEASE_030_CANDIDATE` are complete and advanced after the full Node.js 22
+repository and package gates plus unused-identity, dist-tag-baseline, and
+credential-route preflight. Six points remain; precedence and heuristic
+resource makespans are both 6p with no delay, observed cumulative velocity is
+`13p/2d`, and complete Next v4 recommends `RELEASE_030_PUBLISH`. The user
 has explicitly authorized work through `RELEASE_030_PUBLISH`, including the
 named clean Git push, annotated `v0.3.0` tag, GitHub prerelease, and npm
 `beta` publication after all preceding gates pass. npm `latest` promotion and
