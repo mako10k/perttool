@@ -43,6 +43,7 @@ milestone PUBLIC_CORE_READY:
 
 milestone MIGRATION_ROUTE_READY:
   title "Temporal mutation and unit migration CLI route ready"
+  state reached
 
 milestone DISCOVERY_READY:
   title "Contract 4 discovery, help, and Guide ready"
@@ -60,16 +61,6 @@ milestone CONTRACT4_ACCEPTED:
   title "Atomic Contract 4 workstream accepted"
 
 
-task CONTRACT4_MIGRATION_ROUTE PUBLIC_CORE_READY -> MIGRATION_ROUTE_READY:
-  title "Publish temporal mutation and exact unit migration"
-  description "Expose project, milestone, task, and batch temporal fields plus project migrate-unit through source-preserving preview and safe writes. Adapt every accepted migration cause, exact record, no-op, repetition, inverse, grammar upgrade, and optimistic-lock behavior without inventing batch members."
-  duration 5p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    MIGRATION_ROUTE_SURFACE 1
 
 task CONTRACT4_COMMAND_GUIDANCE PUBLIC_CORE_READY -> DISCOVERY_READY:
   title "Cut over registry, projections, help, and Guide"
