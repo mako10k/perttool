@@ -1,8 +1,8 @@
 project RELEASE_030:
   version 1
   title "perttool 0.3.0 Contract 4 beta release"
-  description "Plan the suffix-free 0.3.0 beta release that atomically publishes accepted CLI Contract 4, Grammar 3, temporal deadline projections, NextResult v4 authority, and exact unit migration from one verified tarball. The scheduling-and-units macro remains the implementation authority; this plan verifies its accepted finish without duplicating milestone task state. RELEASE_030_GATE_DESIGN is complete and advanced after normative gate acceptance. Sixteen points remain; both makespans are 16p and the inherited forecast is 32/17d. Complete Next v3 recommends RELEASE_030_CONTRACT_4_READINESS, which must wait for the accepted scheduling-and-units finish. PUBLISH covers the explicitly authorized Git push, annotated tag, GitHub prerelease, and npm beta operation. npm latest promotion remains a separate post-acceptance decision."
-  as_of 2026-07-25
+  description "Release suffix-free 0.3.0 beta from the accepted atomic Contract 4 source and one verified tarball. RELEASE_030_GATE_DESIGN is complete and advanced. The scheduling-and-units macro and SU-M5 detail reached their accepted finishes, and RELEASE_030_CONTRACT_4_READINESS verified the complete public and installed boundary. Four tasks and 14p remain; precedence and heuristic resource makespans are both 14p with an inherited 28/17d forecast. Complete NextResult v4 recommends RELEASE_030_PREPARATION. Work is authorized through PUBLISH: clean Git push, annotated v0.3.0, GitHub prerelease, and npm beta. npm latest promotion and RELEASE_030_ACCEPTANCE remain outside that authorization."
+  as_of 2026-07-26
   duration_unit point
   velocity 17p/2d
   finish RELEASE_030_ACCEPTED
@@ -56,6 +56,7 @@ task RELEASE_030_CONTRACT_4_READINESS RELEASE_030_GATE_ACCEPTED -> RELEASE_030_C
   title "Verify accepted Contract 4 release input"
   description "Require the scheduling-and-units macro finish to be reached after SU-M3 and SU-M5 acceptance. Verify public Grammar 3, CLI Contract 4, AnalysisResult v3, NextResult v4 normal authority, UnitMigrationResult v2, migration guidance, help, README, and installed behavior without duplicating their implementation state in this release plan."
   duration 2p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
