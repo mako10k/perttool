@@ -166,10 +166,14 @@ cutover. The independent
 [`release-0.3.0.pert`](../../plans/release-0.3.0.pert) plan verifies the
 accepted scheduling-and-units finish, then separates source preparation,
 candidate acceptance, the authorized Git/GitHub/npm `beta` PUBLISH operation,
-and durable acceptance. `RELEASE_030_GATE_DESIGN` is complete and advanced;
-complete Next v3 recommends `RELEASE_030_CONTRACT_4_READINESS`, which waits
-for the accepted scheduling-and-units finish. The current authorization stops
-after PUBLISH and does not include npm `latest` promotion.
+and durable acceptance. `RELEASE_030_GATE_DESIGN` and
+`RELEASE_030_CONTRACT_4_READINESS` are complete and advanced; the
+[readiness record](0.3.0-contract4-readiness.md) consumes the reached
+scheduling-and-units finish without duplicating its task state.
+`RELEASE_030_PREPARATION` is complete after the full Node.js 22 repository and
+package gates, and complete Next v4 recommends `RELEASE_030_CANDIDATE`. The
+current authorization stops after PUBLISH and does not include npm `latest`
+promotion.
 
 ### 5.1 Adopted Recommendation authority
 

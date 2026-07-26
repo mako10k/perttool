@@ -12,13 +12,28 @@ function repositoryText(relativePath) {
 }
 
 test("0.3.0 release gate keeps Contract 4 implementation and publication separate", async () => {
-  const [requirements, adr, design, procedure, plan, manifestText] = await Promise.all([
+  const [
+    requirements,
+    adr,
+    design,
+    procedure,
+    readiness,
+    plan,
+    manifestText,
+    lockfileText,
+    versionSource,
+    changelog,
+  ] = await Promise.all([
     repositoryText("docs/requirements.md"),
     repositoryText("docs/adr/0003-beta-versioning.md"),
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.3.0-release.md"),
+    repositoryText("docs/process/0.3.0-contract4-readiness.md"),
     repositoryText("plans/release-0.3.0.pert"),
     repositoryText("package.json"),
+    repositoryText("package-lock.json"),
+    repositoryText("src/version.ts"),
+    repositoryText("CHANGELOG.md"),
   ]);
 
   assert.match(requirements, /^### 21\.4 CLI Contract 4 beta release acceptance criteria$/m);
@@ -31,26 +46,37 @@ test("0.3.0 release gate keeps Contract 4 implementation and publication separat
   );
   assert.match(adr, /Select suffix-free `0\.3\.0`/);
   assert.match(design, /^### Post-MVP Slice 4F: Contract 4 `v0\.3\.0` beta release$/m);
-  assert.match(procedure, /Status: Planned 1\.0/);
+  assert.match(procedure, /Status: Source prepared 1\.1/);
   assert.match(procedure, /latest=0\.2\.0/);
   assert.match(
     procedure,
     /user's 2026-07-25 request to proceed through PUBLISH explicitly authorizes/,
   );
+  assert.match(readiness, /Document status: Accepted 1\.0/);
   assert.doesNotMatch(plan, /^task RELEASE_030_GATE_DESIGN /m);
+  assert.doesNotMatch(plan, /^task RELEASE_030_CONTRACT_4_READINESS /m);
   assert.match(
     plan,
-    /^milestone RELEASE_030_GATE_ACCEPTED:\n  title "Version 0\.3\.0 release gate accepted"\n  state reached$/m,
+    /^milestone RELEASE_030_CONTRACT_4_READY:\n  title "Accepted Contract 4 release input verified"\n  state reached$/m,
   );
-  assert.match(plan, /^task RELEASE_030_CONTRACT_4_READINESS /m);
+  assert.match(plan, /^task RELEASE_030_PREPARATION /m);
   assert.match(plan, /^task RELEASE_030_PUBLISH /m);
   assert.match(plan, /^task RELEASE_030_ACCEPTANCE /m);
   assert.match(
     plan,
-    /npm latest promotion remains a separate post-acceptance decision/,
+    /npm latest promotion and RELEASE_030_ACCEPTANCE remain outside that authorization/,
   );
 
   const manifest = JSON.parse(manifestText);
-  assert.equal(manifest.version, "0.2.0");
+  const lockfile = JSON.parse(lockfileText);
+  assert.equal(manifest.version, "0.3.0");
+  assert.equal(lockfile.version, "0.3.0");
+  assert.equal(lockfile.packages[""].version, "0.3.0");
+  assert.match(versionSource, /TOOL_VERSION = "0\.3\.0"/);
+  assert.match(changelog, /^## \[0\.3\.0\] - 2026-07-26$/m);
+  assert.match(
+    changelog,
+    /^\[0\.3\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.2\.0\.\.\.v0\.3\.0$/m,
+  );
   assert.equal(manifest.publishConfig.tag, "beta");
 });

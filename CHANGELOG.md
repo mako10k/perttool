@@ -4,12 +4,50 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-26
+
+Contract 4 beta release. This version atomically publishes temporal and
+deadline-aware planning, exact unit migration, and Grammar 3. It intentionally
+changes public result identities and extends the CLI surface while retaining
+suffix-free `0.x.x` beta product maturity.
+
+### Added
+
+- Added Grammar 2 project `as_of`, milestone `deadline`, and task
+  `not_before`/`deadline` fields, plus Grammar 3 exact reduced Fraction
+  Durations alongside ordinary Decimals.
+- Added exact release-aware precedence and heuristic resource schedules,
+  deterministic calendar projection, and separate task, milestone, and
+  project deadline evidence in `Perttool.AnalysisResult.v3`.
+- Added preview-first `project migrate-unit` with complete Duration inventory,
+  exact Point/hour/day conversion, Decimal-or-Fraction output, coordinated
+  grammar upgrades, velocity disposition, no-op/repeat behavior, qualified
+  inverse results, and digest-locked safe writes through
+  `Perttool.UnitMigrationResult.v2`.
+
 ### Changed
 
+- Activated CLI Contract 4 through one 28-command registry that drives
+  dispatch, option validation, text/JSON help, structured recovery, temporal
+  entity mutation, Guide, README, and installed-package behavior.
+- Replaced the public check, project, analysis, and next projections with
+  their accepted Contract 4 identities. `Perttool.NextResult.v4` preserves
+  Recommendation v1 ranking and adds fail-closed temporal start authority;
+  temporal eligibility gates the recommended set without substituting the
+  heuristic scheduler's runnable set.
+- Extended the isolated installed-package file-first workflow through Grammar
+  3 reads and writes, temporal/deadline analysis, complete NextResult v4,
+  forward/repeated/inverse exact migration, and public Core export checks.
 - Promoted the accepted `perttool@0.2.0` Contract 3 beta to npm `latest`
   through a separate, explicitly authorized post-acceptance dist-tag
-  operation. This changes the default install target without changing beta
-  product maturity or the immutable release artifact.
+  operation. Contract 4 publication itself keeps `latest` at `0.2.0`.
+
+### Fixed
+
+- Preserved every Contract 3 `task set --clear` value when adding temporal
+  task fields to the Contract 4 descriptor.
+- Preserved Recommendation set authority when its selected task differs from
+  the heuristic resource scheduler's first runnable task.
 
 ## [0.2.0] - 2026-07-25
 
@@ -103,7 +141,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/mako10k/perttool/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mako10k/perttool/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.2...v0.1.0
 [0.1.0-alpha.2]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.1...v0.1.0-alpha.2

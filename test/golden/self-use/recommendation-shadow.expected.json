@@ -235,36 +235,34 @@
       "diagnostic_codes": []
     },
     "release-0.3.0": {
-      "source_digest": "sha256:a939c15be223d350fb953948cbffa07a72e75b1ca8823e511eebf080caa7a091",
+      "source_digest": "sha256:f8a83e13098d3fa13a54454d822ad6db9c813e336aa458e3a86dc44da54e36ee",
       "groups": {
         "active": [],
         "ready": [
-          "RELEASE_030_CONTRACT_4_READINESS"
+          "RELEASE_030_CANDIDATE"
         ],
         "runnable_now": [
-          "RELEASE_030_CONTRACT_4_READINESS"
+          "RELEASE_030_CANDIDATE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "RELEASE_030_PREPARATION",
-          "RELEASE_030_CANDIDATE",
           "RELEASE_030_PUBLISH",
           "RELEASE_030_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "RELEASE_030_CONTRACT_4_READINESS"
+        "RELEASE_030_CANDIDATE"
       ],
       "manual_selected_task_ids": [
-        "RELEASE_030_CONTRACT_4_READINESS"
+        "RELEASE_030_CANDIDATE"
       ],
       "tiers": {
-        "RELEASE_030_CONTRACT_4_READINESS": "recommended"
+        "RELEASE_030_CANDIDATE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RELEASE_030_CONTRACT_4_READINESS",
+          "id": "RELEASE_030_CANDIDATE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -280,7 +278,9 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "scheduling-units-m1": {
       "source_digest": "sha256:3d9e421d3da2517b98256a41dda0b074f54ba73332095bf26a5e789a0e851af1",

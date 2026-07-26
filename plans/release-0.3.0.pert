@@ -1,7 +1,7 @@
 project RELEASE_030:
   version 1
   title "perttool 0.3.0 Contract 4 beta release"
-  description "Release suffix-free 0.3.0 beta from the accepted atomic Contract 4 source and one verified tarball. RELEASE_030_GATE_DESIGN is complete and advanced. The scheduling-and-units macro and SU-M5 detail reached their accepted finishes, and RELEASE_030_CONTRACT_4_READINESS verified the complete public and installed boundary. Four tasks and 14p remain; precedence and heuristic resource makespans are both 14p with an inherited 28/17d forecast. Complete NextResult v4 recommends RELEASE_030_PREPARATION. Work is authorized through PUBLISH: clean Git push, annotated v0.3.0, GitHub prerelease, and npm beta. npm latest promotion and RELEASE_030_ACCEPTANCE remain outside that authorization."
+  description "Release suffix-free 0.3.0 beta from the accepted atomic Contract 4 source and one verified tarball. RELEASE_030_GATE_DESIGN, RELEASE_030_CONTRACT_4_READINESS, and RELEASE_030_PREPARATION are complete. The scheduling-and-units macro and SU-M5 detail reached their accepted finishes, the readiness record verified the complete public and installed boundary, and the prepared 0.3.0 source passed the full Node.js 22 repository and package gates. Three tasks and 10p remain; precedence and heuristic resource makespans are both 10p with an inherited 20/17d forecast. Complete NextResult v4 recommends RELEASE_030_CANDIDATE. Work is authorized through PUBLISH: clean Git push, annotated v0.3.0, GitHub prerelease, and npm beta. npm latest promotion and RELEASE_030_ACCEPTANCE remain outside that authorization."
   as_of 2026-07-26
   duration_unit point
   velocity 17p/2d
@@ -55,6 +55,7 @@ task RELEASE_030_PREPARATION RELEASE_030_CONTRACT_4_READY -> RELEASE_030_SOURCE_
   title "Prepare version 0.3.0 release source"
   description "Align package and lockfile identity, CLI version, CHANGELOG, README, release documentation, golden artifacts, and generic beta publication validation. Run the complete repository and package gates without remote or registry writes."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

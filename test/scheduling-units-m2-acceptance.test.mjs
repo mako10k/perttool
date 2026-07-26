@@ -169,20 +169,14 @@ test("the SU-M3 handoff keeps public activation and migration out of scope", asy
   );
 });
 
-test("the accepted delivery rollup selects the SU-M5 work package", async () => {
+test("the accepted delivery rollup has no remaining recommendation", async () => {
   const source = await repositoryFile("plans/scheduling-units.pert");
   const result = publicApi.selectNextTasks(source);
   assert.equal(result.ok, true);
   assert.ok(result.recommendation);
-  assert.deepEqual(result.groups.ready, [
-    "SU_M5_INTEGRATED_ACCEPTANCE",
-  ]);
-  assert.deepEqual(result.groups.runnableNow, [
-    "SU_M5_INTEGRATED_ACCEPTANCE",
-  ]);
-  assert.deepEqual(result.recommendation.recommendedTaskIds, [
-    "SU_M5_INTEGRATED_ACCEPTANCE",
-  ]);
+  assert.deepEqual(result.groups.ready, []);
+  assert.deepEqual(result.groups.runnableNow, []);
+  assert.deepEqual(result.recommendation.recommendedTaskIds, []);
   const jointFact = result.recommendation.facts.find(
     ({ id }) =>
       id === result.recommendation.resultDecision.jointFeasibilityFactId,

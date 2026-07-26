@@ -20,7 +20,7 @@
 - [scheduling-units-m2r.pert](scheduling-units-m2r.pert): completed and advanced exact rational Duration contract, target source, editing, version-boundary, and acceptance detail
 - [scheduling-units-m3.pert](scheduling-units-m3.pert): completed and advanced target-only declared temporal input, precedence, heuristic resource, deadline, AnalysisResult v3, NextResult v4, and acceptance detail
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
-- [scheduling-units-m5.pert](scheduling-units-m5.pert): current atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
+- [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
 All seventeen plans pass the self-use gate and are used as inputs to `document check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing and `dag advance` with an expected digest and post-write reanalysis. Detailed plans use Points as the analysis unit and velocity-converted days as forecasts. Select the macro workstream from `mvp.pert` before selecting a task from its detail plan. For the explicitly selected scheduling-and-units workstream, select a milestone work package from `scheduling-units.pert`, create and accept its milestone-detail plan when none is current, and then select a task from that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`, `release-0.3.0.pert`, and the scheduling-and-units plans are explicitly requested independent post-beta plans and are not rolled up into the completed MVP macro.
 
@@ -40,15 +40,23 @@ All five tasks in `release-0.2.0.pert`, totaling 17p, completed and advanced thr
 
 The independent `release-0.3.0.pert` plan selects suffix-free beta `0.3.0` for
 the breaking Contract 4 cutover without duplicating scheduling-and-units
-implementation state. `RELEASE_030_GATE_DESIGN` is complete and advanced.
-Sixteen points remain; both makespans are 16p with no delay, the inherited
-release velocity is `17p/2d`, and the forecast is `32/17d`. Complete Next v3
-recommends `RELEASE_030_CONTRACT_4_READINESS`, which waits for the accepted
-scheduling-and-units finish. The user has authorized work through
+implementation state. `RELEASE_030_GATE_DESIGN` and
+`RELEASE_030_CONTRACT_4_READINESS` are complete and advanced, and
+`RELEASE_030_PREPARATION` is complete after the full Node.js 22 repository and
+package gates. Three tasks and 10p remain; both makespans are 10p with no
+delay, the inherited release velocity is `17p/2d`, and the forecast is
+`20/17d`. Complete Next v4 recommends `RELEASE_030_CANDIDATE`. The user has
+authorized work through
 `RELEASE_030_PUBLISH`; `latest` promotion and durable acceptance remain
 separate later boundaries.
 
-On 2026-07-25, `TIME-001` and `UNIT-001` were refined into the independent scheduling-and-units roadmap. SU-M1, SU-M2, and the exact fraction Duration extension SU-M2R are complete and advanced at `24p/1d` each. The [SU-M4 evidence](../docs/process/scheduling-units-m4-acceptance.md) accepts all six tasks and 25p at cumulative `25p/1d`; its final snapshot is committed at `bc75b37`, and both the detail and macro package are advanced to reached `UNIT_MIGRATION_ACCEPTED`. SU-M3 is the only ready and recommended macro package. Its current detail has six tasks totaling 23p: precedence 19p, reviewer-constrained heuristic resource makespan 23p with 4p delay, inherited `24p/1d` velocity, and forecasts `19/24d` and `23/24d`. Complete detail Next v3 recommends `TEMPORAL_INPUT_PROJECTION`. Active Grammar 1, accepted target Grammar 2, CLI Contract 3, public schemas, help, installed workflows, Next v3 authority, and publication remain unchanged.
+On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
+SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.
+The macro rolled up every detail exactly once and retains only reached
+`SCHEDULING_UNITS_ACCEPTED`; it and SU-M5 have zero makespans and no
+recommendation. The accepted surface atomically exposes Grammar 1/2/3, CLI
+Contract 4, temporal and deadline results, exact unit migration, help, Guide,
+installed workflows, and Next v4 normal authority.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

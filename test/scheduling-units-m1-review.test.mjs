@@ -88,7 +88,7 @@ test("SU-M1 accepted identities and requirements stay aligned", async () => {
   );
 });
 
-test("macro rolls accepted history forward while SU-M2 retains its acceptance snapshot", async () => {
+test("macro reaches integrated acceptance while SU-M2 retains its acceptance snapshot", async () => {
   const [plan, detail, backlog, design, acceptance] = await Promise.all([
     repositoryFile("plans/scheduling-units.pert"),
     repositoryFile("plans/scheduling-units-m2.pert"),
@@ -99,7 +99,7 @@ test("macro rolls accepted history forward while SU-M2 retains its acceptance sn
 
   assert.match(
     plan,
-    /SU-M1, SU-M2, SU-M2R, SU-M3, and SU-M4 are accepted, rolled up once, and advanced/,
+    /SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 each reached detail acceptance and were rolled up exactly once/,
   );
   assert.doesNotMatch(plan, /task SU_M2_TEMPORAL_SURFACE_WORK_PACKAGE/);
   assert.doesNotMatch(plan, /task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE/);
@@ -108,12 +108,9 @@ test("macro rolls accepted history forward while SU-M2 retains its acceptance sn
   assert.doesNotMatch(plan, /task SU_M4_UNIT_MIGRATION_WORK_PACKAGE/);
   assert.match(
     plan,
-    /milestone DELIVERY_INPUT_READY:[\s\S]*state reached/,
+    /milestone SCHEDULING_UNITS_ACCEPTED:[\s\S]*state reached/,
   );
-  assert.match(
-    plan,
-    /task SU_M5_INTEGRATED_ACCEPTANCE[\s\S]*Atomically cut over CLI Contract 4, public result schemas, registry dispatch, text\/JSON help, Guide, README, installed-package workflows, and Next v4 normal start authority/,
-  );
+  assert.doesNotMatch(plan, /task SU_M5_INTEGRATED_ACCEPTANCE/);
 
   const taskIds = [...detail.matchAll(/^task ([A-Z0-9_]+) /gm)].map(
     (match) => match[1],

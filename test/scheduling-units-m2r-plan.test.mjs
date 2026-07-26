@@ -38,7 +38,7 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
   assert.doesNotMatch(macro, /^task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE /m);
   assert.match(
     macro,
-    /SU-M1, SU-M2, SU-M2R, SU-M3, and SU-M4 are accepted, rolled up once, and advanced/,
+    /SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 each reached detail acceptance and were rolled up exactly once/,
   );
   assert.doesNotMatch(macro, /milestone RATIONAL_DURATION_ACCEPTED:/);
   assert.doesNotMatch(macro, /task SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE/);
@@ -48,7 +48,7 @@ test("SU-M2R replans exact rational Duration before SU-M3 and SU-M4", async () =
   );
   assert.match(
     macro,
-    /milestone DELIVERY_INPUT_READY:[\s\S]*state reached/,
+    /milestone SCHEDULING_UNITS_ACCEPTED:[\s\S]*state reached/,
   );
 });
 
