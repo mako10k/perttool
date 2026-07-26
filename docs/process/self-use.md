@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.54
+- Document status: Active Stage 3 / Revision 2.55
 - Creation date: 2026-07-21
 - Update date: 2026-07-26
 - Related design: [../basic-design.md](../basic-design.md)
@@ -850,6 +850,17 @@ heuristic resource makespan, 3p resource delay, and forecasts of `30/7d` and
 `GOV_DSL_CONTRACT`. The accepted snapshot retains `PTDAG-208` until the
 completion edge is advanced. Owner-aware runtime enforcement remains
 unavailable.
+
+After the acceptance snapshot was committed at `ab823c7`, the advance preview
+from digest
+`sha256:ea8ee6a0c60dd46246b2b2493964f8918b1ec58ee891264d0c6641c9aeb7c438`
+removed completed task `GOV_AUTHORITY_CONTRACT`, retained
+`AUTHORITY_SEMANTICS_DEFINED` as a reached frontier alongside the still-needed
+`REQUIREMENTS_ACCEPTED`, and produced digest
+`sha256:15f91d1ab76e7fb2b2d0fe1cc44a7bb66478b8e68361f95d2b047bc2a3583a2f`.
+Reanalysis preserves the 38p remaining work, 30p precedence makespan, 33p
+heuristic resource makespan, 3p resource delay, both forecasts, and the sole
+`GOV_DSL_CONTRACT` recommendation, and clears `PTDAG-208`.
 
 Stage 1 allowed operations:
 

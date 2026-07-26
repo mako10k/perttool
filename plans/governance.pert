@@ -40,6 +40,7 @@ milestone DSL_CONTRACT_DEFINED:
 
 milestone AUTHORITY_SEMANTICS_DEFINED:
   title "Goal and DAG authority semantics defined"
+  state reached
 
 milestone INTERFACE_INPUT_READY:
   title "Governance interface design input ready"
@@ -86,18 +87,6 @@ task GOV_DSL_CONTRACT REQUIREMENTS_ACCEPTED -> DSL_CONTRACT_DEFINED:
     DEVELOPERS 1
     REVIEWERS 1
     DOC_SURFACE 1
-
-task GOV_AUTHORITY_CONTRACT REQUIREMENTS_ACCEPTED -> AUTHORITY_SEMANTICS_DEFINED:
-  title "Define governed mutation and pre-change authority semantics"
-  description "Classify goal, DAG, and ordinary maintenance mutations; define owner/delegate authorization, preview reporting, pre-change checks, self-authorization rejection, mixed-scope batch behavior, direct-edit limits, and stable PTGOV diagnostics."
-  duration 4p
-  status done
-  priority 95
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
-    WRITE_PATH 1
 
 gate GOV_DSL_INTERFACE_INPUT DSL_CONTRACT_DEFINED -> INTERFACE_INPUT_READY:
   reason "The public interface requires the accepted governance source contract"
