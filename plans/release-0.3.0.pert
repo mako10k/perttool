@@ -1,10 +1,10 @@
 project RELEASE_030:
   version 1
   title "perttool 0.3.0 Contract 4 beta release"
-  description "Release suffix-free 0.3.0 beta from the accepted atomic Contract 4 source and one verified tarball. Work through RELEASE_030_PUBLISH is complete: release commit af445770e323efe374a17808fde20ec48a7d68cf is on origin/main and is the peeled v0.3.0 target; the GitHub prerelease and npm beta contain byte-identical tarballs; beta is 0.3.0 while latest remains 0.2.0. One task and 3p remain; precedence and heuristic resource makespans are both 3p with an observed cumulative 16p/2d velocity and a 3/8d forecast. Complete NextResult v4 recommends RELEASE_030_ACCEPTANCE, which remains outside the current authorization together with npm latest promotion."
+  description "Release suffix-free 0.3.0 beta from the accepted atomic Contract 4 source and one verified tarball. All six tasks and 19p completed over two active days. Release commit af445770e323efe374a17808fde20ec48a7d68cf is the peeled v0.3.0 target, and local, GitHub, and npm tarballs are byte-identical. After acceptance, the explicitly authorized dist-tag operation made beta=latest=0.3.0 while alpha remains 0.1.0-alpha.2. An unqualified global install and light Contract 4 smoke passed. RELEASE_030_ACCEPTANCE is done and the reached finish is ready for canonical advance."
   as_of 2026-07-26
   duration_unit point
-  velocity 16p/2d
+  velocity 19p/2d
   finish RELEASE_030_ACCEPTED
 
 
@@ -52,6 +52,7 @@ task RELEASE_030_ACCEPTANCE RELEASE_030_PUBLISHED -> RELEASE_030_ACCEPTED:
   title "Record durable 0.3.0 beta acceptance"
   description "Verify release commit and peeled tag identity, common local/GitHub/npm tarball digest, registry integrity and metadata, isolated installation from both public channels, complete Contract 4 behavior, beta and unchanged latest tags, and exact commands. Record a post-release acceptance document without altering the immutable artifact."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
