@@ -41,12 +41,10 @@ resource PACKAGE_SURFACE:
 
 
 
-milestone INTEGRATION_INPUT_READY:
-  title "All public Contract 4 branches ready for integration"
-  state reached
 
 milestone INSTALLED_WORKFLOW_READY:
   title "README and installed Contract 4 workflow ready"
+  state reached
 
 milestone CONTRACT4_ACCEPTED:
   title "Atomic Contract 4 workstream accepted"
@@ -58,16 +56,6 @@ milestone CONTRACT4_ACCEPTED:
 
 
 
-task CONTRACT4_INSTALLED_WORKFLOW INTEGRATION_INPUT_READY -> INSTALLED_WORKFLOW_READY:
-  title "Document and exercise the installed Contract 4 workflow"
-  description "Update user-facing README examples and isolated package checks for npx and npm exec, Grammar 3 temporal documents, deadline analysis, Next v4 authority, temporal maintenance, exact project migrate-unit preview/write, repetition, inverse qualification, and the complete file-first workflow."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
 
 task M5_CONTRACT4_ACCEPTANCE INSTALLED_WORKFLOW_READY -> CONTRACT4_ACCEPTED:
   title "Accept the atomic Contract 4 workstream"
