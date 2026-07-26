@@ -16,7 +16,13 @@ import type {
   TargetUnitMigrationCandidateOptions,
 } from "./target-unit-migration-candidate.js";
 
-export type UnitMigrationResult = TargetUnitMigrationResult;
+export type UnitMigrationResult = Omit<
+  TargetUnitMigrationResult,
+  "sourceGrammarVersion" | "targetGrammarVersion"
+> & {
+  readonly sourceGrammarVersion: 1 | 2 | 3 | null;
+  readonly targetGrammarVersion: 1 | 2 | 3 | null;
+};
 export type UnitMigrationConvertedField =
   TargetUnitMigrationResultConvertedField;
 export type UnitMigrationWrite = TargetUnitMigrationResultWrite;
@@ -30,17 +36,31 @@ export function planUnitMigration(
   request: UnitMigrationRequest,
   options: UnitMigrationOptions = {},
 ): UnitMigrationResult {
-  return planTargetUnitMigrationResult(
+  const result = planTargetUnitMigrationResult(
     text,
     request,
     TARGET_GRAMMAR_3_CAPABILITY,
     options,
   );
+  if (
+    result.sourceGrammarVersion === 4 ||
+    result.targetGrammarVersion === 4
+  ) {
+    throw new Error("active Grammar 3 unit migration returned Grammar 4");
+  }
+  return result as UnitMigrationResult;
 }
 
 export function withUnitMigrationWrite(
   result: UnitMigrationResult,
   output: DocumentWriteResult,
 ): UnitMigrationResult {
-  return withTargetUnitMigrationWrite(result, output);
+  const written = withTargetUnitMigrationWrite(result, output);
+  if (
+    written.sourceGrammarVersion === 4 ||
+    written.targetGrammarVersion === 4
+  ) {
+    throw new Error("active Grammar 3 unit migration returned Grammar 4");
+  }
+  return written as UnitMigrationResult;
 }

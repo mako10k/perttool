@@ -13,6 +13,7 @@ import { parseDeclaredCalendarValue } from "../model/calendar.js";
 import {
   GRAMMAR_1_DECLARATION_FIELD_ORDER,
   TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER,
+  TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
 import type {
   DeclarationKind,
@@ -66,6 +67,19 @@ export const TARGET_GRAMMAR_3_CAPABILITY: TargetGrammar3Capability =
     grammarVersion: 3,
   });
 
+export interface TargetGrammar4Capability {
+  readonly id: "perttool.target-grammar-4-governance-source";
+  readonly version: 1;
+  readonly grammarVersion: 4;
+}
+
+export const TARGET_GRAMMAR_4_CAPABILITY: TargetGrammar4Capability =
+  Object.freeze({
+    id: "perttool.target-grammar-4-governance-source",
+    version: 1,
+    grammarVersion: 4,
+  });
+
 const identifierPattern = /^[A-Za-z][A-Za-z0-9_-]*$/;
 const declarationKinds = new Set<DeclarationKind>([
   "project",
@@ -95,30 +109,45 @@ const grammar2AllowedFields: Readonly<
   Record<DeclarationKind, ReadonlySet<string>>
 > = allowedFieldsFromOrder(TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER);
 
+const grammar4AllowedFields: Readonly<
+  Record<DeclarationKind, ReadonlySet<string>>
+> = allowedFieldsFromOrder(TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER);
+
 interface ParseProfile {
   readonly allowedFields: Readonly<
     Record<DeclarationKind, ReadonlySet<string>>
   >;
   readonly typedCalendarValues: boolean;
   readonly exactFractionDurations: boolean;
+  readonly governanceValues: boolean;
 }
 
 const grammar1Profile: ParseProfile = {
   allowedFields: grammar1AllowedFields,
   typedCalendarValues: false,
   exactFractionDurations: false,
+  governanceValues: false,
 };
 
 const grammar2Profile: ParseProfile = {
   allowedFields: grammar2AllowedFields,
   typedCalendarValues: true,
   exactFractionDurations: false,
+  governanceValues: false,
 };
 
 const grammar3Profile: ParseProfile = {
   allowedFields: grammar2AllowedFields,
   typedCalendarValues: true,
   exactFractionDurations: true,
+  governanceValues: false,
+};
+
+const grammar4Profile: ParseProfile = {
+  allowedFields: grammar4AllowedFields,
+  typedCalendarValues: true,
+  exactFractionDurations: true,
+  governanceValues: true,
 };
 
 function splitLines(text: string): readonly SourceLine[] {
@@ -368,6 +397,16 @@ function splitTagItems(raw: string): readonly string[] | undefined {
   return quoted ? undefined : items;
 }
 
+function splitPrincipalItems(raw: string): readonly string[] | undefined {
+  if (!raw.startsWith("[") || !raw.endsWith("]")) return undefined;
+  const body = raw.slice(1, -1).trim();
+  if (body === "") return [];
+  const items = body.split(",").map((item) => item.trim());
+  return items.every((item) => identifierPattern.test(item))
+    ? items
+    : undefined;
+}
+
 function scalarFieldValue(
   name: string,
   rawValue: string,
@@ -409,6 +448,23 @@ function scalarFieldValue(
     return identifierPattern.test(rawValue)
       ? { value: rawValue }
       : { value: rawValue, code: "PTDSL-004", topic: "syntax.project" };
+  }
+  if (
+    profile.governanceValues &&
+    (name === "goal_owner" || name === "dag_owner")
+  ) {
+    return identifierPattern.test(rawValue)
+      ? { value: rawValue }
+      : { value: rawValue, code: "PTDSL-004", topic: "syntax.project" };
+  }
+  if (
+    profile.governanceValues &&
+    (name === "goal_delegates" || name === "dag_delegates")
+  ) {
+    const value = splitPrincipalItems(rawValue);
+    return value === undefined
+      ? { value: rawValue, code: "PTDSL-009", topic: "syntax.project" }
+      : { value };
   }
   if (name === "duration_unit") {
     return rawValue === "day" || rawValue === "hour" || rawValue === "point"
@@ -1096,6 +1152,20 @@ function parseGrammar3CapableDocument(
     : grammar1;
 }
 
+function parseGrammar4CapableDocument(
+  text: string,
+  options: ParseOptions,
+): ParseResult {
+  const grammar3 = parseGrammar3CapableDocument(text, options);
+  const first = grammar3.document.declarations[0];
+  const version = first?.kind === "project"
+    ? first.fields.find((field) => field.name === "version")?.value
+    : undefined;
+  return version === 4
+    ? parseDocumentWithProfile(text, options, grammar4Profile)
+    : grammar3;
+}
+
 export function parseTargetDocument(
   text: string,
   capability: TargetGrammar2Capability,
@@ -1123,4 +1193,15 @@ export function parseTargetGrammar3Document(
     throw new TypeError("The target Grammar 3 source capability is required");
   }
   return parseGrammar3CapableDocument(text, options);
+}
+
+export function parseTargetGrammar4Document(
+  text: string,
+  capability: TargetGrammar4Capability,
+  options: ParseOptions = {},
+): ParseResult {
+  if (capability !== TARGET_GRAMMAR_4_CAPABILITY) {
+    throw new TypeError("The target Grammar 4 governance source capability is required");
+  }
+  return parseGrammar4CapableDocument(text, options);
 }

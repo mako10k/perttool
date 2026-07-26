@@ -31,15 +31,20 @@ import {
 import {
   planProjectMutationEdits,
   TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
+  TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
 } from "../mutation/project.js";
 import {
   applyTextEdits,
   normalizeTextEdits,
   type TextEdit,
 } from "../mutation/text-edits.js";
-import type { TargetGrammar3Capability } from "../parser/document-parser.js";
+import type {
+  TargetGrammar3Capability,
+  TargetGrammar4Capability,
+} from "../parser/document-parser.js";
 import {
   validateTargetGrammar3Document,
+  validateTargetGrammar4Document,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 import {
@@ -222,7 +227,9 @@ function projectConfigurationEdits(
     text,
     prepared.validatedDocument.document,
     { kind: "project.set", set },
-    TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
+    prepared.sourceGrammarVersion === 4
+      ? TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE
+      : TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
   );
   if (planned.diagnostic !== undefined) {
     throw new Error(
@@ -391,7 +398,7 @@ function assertCandidatePostconditions(
 export function planTargetUnitMigrationCandidate(
   text: string,
   request: UnitMigrationRequest,
-  capability: TargetGrammar3Capability,
+  capability: TargetGrammar3Capability | TargetGrammar4Capability,
   options: TargetUnitMigrationCandidateOptions = {},
 ): TargetUnitMigrationCandidate {
   const originalDigest = digest(text);
@@ -444,11 +451,9 @@ export function planTargetUnitMigrationCandidate(
     "unit migration candidate",
   );
   const updatedText = applyTextEdits(text, edits);
-  const candidate = validateTargetGrammar3Document(
-    updatedText,
-    capability,
-    options,
-  );
+  const candidate = capability.grammarVersion === 4
+    ? validateTargetGrammar4Document(updatedText, capability, options)
+    : validateTargetGrammar3Document(updatedText, capability, options);
   if (
     !candidate.ok ||
     candidate.validatedDocument === null ||

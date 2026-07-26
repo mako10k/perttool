@@ -6,9 +6,12 @@ import type {
   MilestoneDefinition,
   MilestoneFieldSet,
   MilestoneMutation,
+  ProjectFieldSet,
+  ProjectMutation,
   RemoveMilestoneMutation,
   RemoveTaskMutation,
   SetMilestoneMutation,
+  SetProjectMutation,
   SetTaskMutation,
   TaskDefinition,
   TaskFieldSet,
@@ -91,3 +94,36 @@ export interface TargetBatchMutation {
 }
 
 export type TargetMutation = TargetAtomicMutation | TargetBatchMutation;
+
+export interface TargetGovernanceProjectFieldSet extends ProjectFieldSet {
+  readonly goalOwner?: string;
+  readonly goalDelegates?: readonly string[];
+  readonly dagOwner?: string;
+  readonly dagDelegates?: readonly string[];
+}
+
+export type TargetGovernanceProjectClearableField =
+  | NonNullable<SetProjectMutation["clear"]>[number]
+  | "goal_owner"
+  | "goal_delegates"
+  | "dag_owner"
+  | "dag_delegates";
+
+export interface TargetGovernanceSetProjectMutation
+  extends Omit<SetProjectMutation, "set" | "clear"> {
+  readonly set?: TargetGovernanceProjectFieldSet;
+  readonly clear?: readonly TargetGovernanceProjectClearableField[];
+}
+
+export type TargetGovernanceAtomicMutation =
+  | Exclude<TargetAtomicMutation, ProjectMutation>
+  | TargetGovernanceSetProjectMutation;
+
+export interface TargetGovernanceBatchMutation {
+  readonly kind: "batch";
+  readonly mutations: readonly TargetGovernanceAtomicMutation[];
+}
+
+export type TargetGovernanceMutation =
+  | TargetGovernanceAtomicMutation
+  | TargetGovernanceBatchMutation;

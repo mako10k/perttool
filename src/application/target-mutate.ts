@@ -9,6 +9,7 @@ import {
 import {
   TARGET_GRAMMAR_2_PROJECT_MUTATION_PROFILE,
   TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
+  TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
 } from "../mutation/project.js";
 import {
   TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
@@ -16,6 +17,8 @@ import {
 } from "../mutation/task.js";
 import type {
   TargetBatchMutation,
+  TargetGovernanceBatchMutation,
+  TargetGovernanceMutation,
   TargetMutation,
 } from "../mutation/target-types.js";
 import type {
@@ -24,10 +27,12 @@ import type {
 } from "../mutation/types.js";
 import type {
   TargetGrammar3Capability,
+  TargetGrammar4Capability,
   TargetGrammar2Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar3Document,
+  validateTargetGrammar4Document,
   validateTargetDocument,
 } from "../semantic/target-validator.js";
 
@@ -41,6 +46,13 @@ const targetGrammar2MutationPlanningProfile: MutationPlanningProfile =
 const targetGrammar3MutationPlanningProfile: MutationPlanningProfile =
   Object.freeze({
     project: TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
+    task: TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
+    milestone: TARGET_MILESTONE_MUTATION_PROFILE,
+  });
+
+const targetGrammar4MutationPlanningProfile: MutationPlanningProfile =
+  Object.freeze({
+    project: TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
     task: TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
     milestone: TARGET_MILESTONE_MUTATION_PROFILE,
   });
@@ -69,6 +81,29 @@ function targetGrammar3Validator(
 ): (text: string, maxDiagnostics: number) => MutationDocumentValidation {
   return (text, maxDiagnostics) => {
     const checked = validateTargetGrammar3Document(
+      text,
+      capability,
+      { maxDiagnostics },
+    );
+    const document = checked.validatedDocument?.document;
+    const project = document?.declarations.find(
+      (declaration) => declaration.kind === "project",
+    );
+    return {
+      ok: checked.ok,
+      document: document ?? null,
+      documentId: project?.id ?? null,
+      diagnostics: checked.diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+    };
+  };
+}
+
+function targetGrammar4Validator(
+  capability: TargetGrammar4Capability,
+): (text: string, maxDiagnostics: number) => MutationDocumentValidation {
+  return (text, maxDiagnostics) => {
+    const checked = validateTargetGrammar4Document(
       text,
       capability,
       { maxDiagnostics },
@@ -144,6 +179,37 @@ export function planTargetGrammar3BatchMutation(
     mutation,
     targetGrammar3Validator(capability),
     targetGrammar3MutationPlanningProfile,
+    options,
+    true,
+  );
+}
+
+export function planTargetGrammar4Mutation(
+  text: string,
+  mutation: TargetGovernanceMutation,
+  capability: TargetGrammar4Capability,
+  options: MutationOptions = {},
+): MutationResult {
+  return planValidatedMutationRequest(
+    text,
+    mutation,
+    targetGrammar4Validator(capability),
+    targetGrammar4MutationPlanningProfile,
+    options,
+  );
+}
+
+export function planTargetGrammar4BatchMutation(
+  text: string,
+  mutation: TargetGovernanceBatchMutation,
+  capability: TargetGrammar4Capability,
+  options: MutationOptions = {},
+): MutationResult {
+  return planValidatedMutationRequest(
+    text,
+    mutation,
+    targetGrammar4Validator(capability),
+    targetGrammar4MutationPlanningProfile,
     options,
     true,
   );

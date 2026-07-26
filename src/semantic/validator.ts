@@ -94,6 +94,13 @@ const targetGrammar3ValidationProfile: ValidationProfile = {
   temporalAnchorGrammarVersions: new Set([2, 3]),
 };
 
+const targetGrammar4ValidationProfile: ValidationProfile = {
+  supportedGrammarVersions: new Set([1, 2, 3, 4]),
+  unsupportedVersionMessage:
+    "Only grammar versions 1, 2, 3, and 4 are supported",
+  temporalAnchorGrammarVersions: new Set([2, 3, 4]),
+};
+
 function makeDiagnostic(
   code: string,
   severity: "error" | "warning",
@@ -238,6 +245,35 @@ function validateTags(
   }
 }
 
+function validateGovernanceDelegates(
+  declaration: DeclarationNode,
+  diagnostics: Diagnostic[],
+): void {
+  if (declaration.kind !== "project") return;
+  for (const fieldName of ["goal_delegates", "dag_delegates"]) {
+    const field = fieldNamed(declaration, fieldName);
+    if (field === undefined || !Array.isArray(field.value)) continue;
+    const seen = new Set<string>();
+    for (const principal of field.value) {
+      if (typeof principal !== "string") continue;
+      if (seen.has(principal)) {
+        diagnostics.push(
+          makeDiagnostic(
+            "PTSEM-113",
+            "error",
+            `Principal ${principal} is duplicated in ${fieldName}`,
+            field.valueSpan,
+            "syntax.project",
+            declaration.id,
+          ),
+        );
+        break;
+      }
+      seen.add(principal);
+    }
+  }
+}
+
 function isValidIsoDate(raw: string): boolean {
   const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
   if (dateMatch !== null) {
@@ -307,6 +343,7 @@ function validateFieldConstraints(
   for (const declaration of document.declarations) {
     validateDuplicateFields(declaration, diagnostics);
     validateTags(declaration, diagnostics);
+    validateGovernanceDelegates(declaration, diagnostics);
     validateNonemptyText(declaration, "title", diagnostics);
     validateNonemptyText(declaration, "description", diagnostics);
     if (declaration.kind === "project") {
@@ -1035,5 +1072,16 @@ export function validateTargetGrammar3DocumentSemantics(
     document,
     parseDiagnostics,
     targetGrammar3ValidationProfile,
+  );
+}
+
+export function validateTargetGrammar4DocumentSemantics(
+  document: DocumentNode,
+  parseDiagnostics: readonly Diagnostic[] = [],
+): readonly Diagnostic[] {
+  return validateDocumentWithProfile(
+    document,
+    parseDiagnostics,
+    targetGrammar4ValidationProfile,
   );
 }

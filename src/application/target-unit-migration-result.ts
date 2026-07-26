@@ -14,7 +14,10 @@ import type {
   UnitMigrationUnavailableCause,
 } from "../migration/request.js";
 import type { TextEdit } from "../mutation/text-edits.js";
-import type { TargetGrammar3Capability } from "../parser/document-parser.js";
+import type {
+  TargetGrammar3Capability,
+  TargetGrammar4Capability,
+} from "../parser/document-parser.js";
 import {
   planTargetUnitMigrationCandidate,
   type TargetUnitMigrationCandidateOptions,
@@ -114,7 +117,7 @@ function effectiveVelocity(
 export function planTargetUnitMigrationResult(
   text: string,
   request: UnitMigrationRequest,
-  capability: TargetGrammar3Capability,
+  capability: TargetGrammar3Capability | TargetGrammar4Capability,
   options: TargetUnitMigrationCandidateOptions = {},
 ): TargetUnitMigrationResult {
   const candidate = planTargetUnitMigrationCandidate(

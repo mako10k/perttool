@@ -56,3 +56,22 @@ export const TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER = freezeFieldOrder({
     "source",
   ],
 } as const satisfies Readonly<Record<DeclarationKind, readonly string[]>>);
+
+export const TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER = freezeFieldOrder({
+  ...TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER,
+  project: [
+    "version",
+    "title",
+    "description",
+    "as_of",
+    "duration_unit",
+    "velocity",
+    "finish",
+    "goal_owner",
+    "goal_delegates",
+    "dag_owner",
+    "dag_delegates",
+    "critical_epsilon",
+    "target_duration",
+  ],
+} as const satisfies Readonly<Record<DeclarationKind, readonly string[]>>);

@@ -178,6 +178,23 @@ function canonicalFieldValue(field: FieldNode): string | undefined {
     if (tags.length !== field.value.length) return undefined;
     return `[${tags.map((tag) => (bareTagPattern.test(tag) ? tag : JSON.stringify(tag))).join(", ")}]`;
   }
+  if (
+    (field.name === "goal_owner" || field.name === "dag_owner") &&
+    typeof field.value === "string"
+  ) {
+    return field.value;
+  }
+  if (
+    (field.name === "goal_delegates" || field.name === "dag_delegates") &&
+    Array.isArray(field.value)
+  ) {
+    const principals = field.value.filter(
+      (value): value is string => typeof value === "string",
+    );
+    return principals.length === field.value.length
+      ? `[${principals.join(", ")}]`
+      : undefined;
+  }
   return field.rawValue === "" ? undefined : field.rawValue;
 }
 

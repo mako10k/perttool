@@ -71,14 +71,15 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.
 - `src/formatter/`: the active Grammar 1/2/3 source-preserving formatter Core over the shared canonical field order; Grammar 3 explicit formatting uses exact Decimal-or-Fraction canonicalization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
+- `src/governance/`: internal target Grammar 4 declared/effective governance metadata and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection; these remain outside the active Contract 4 package root.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, and separate internal Grammar 2/3 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
-- `src/parser/`: the active identity-checked Grammar 1/2/3 parser capabilities.
-- `src/semantic/`: active Grammar 1/2/3 validated-document boundaries, exact cross-form Duration constraints, and temporal-anchor validation.
-- `src/mutation/`: active Grammar 1/2/3 requests for project/task/gate/milestone/resource and atomic batch, exact changed-field Duration generation, canonical advance, source-preserving UTF-16 TextEdit generation, and application rules.
-- `src/application/`: pure services for active Contract 4 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3 mutation planning, and the exact-Duration version-candidate boundary.
-- `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety unit tests; and CLI integration/E2E tests.
+- `src/parser/`: the active identity-checked Grammar 1/2/3 parser capabilities and the internal capability-checked target Grammar 4 governance-source parser.
+- `src/semantic/`: active Grammar 1/2/3 validated-document boundaries plus the internal target Grammar 4 boundary, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
+- `src/mutation/`: active Grammar 1/2/3 requests for project/task/gate/milestone/resource and atomic batch, internal target Grammar 4 project-governance fields, exact changed-field Duration generation, canonical advance, source-preserving UTF-16 TextEdit generation, and application rules.
+- `src/application/`: pure services for active Contract 4 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3 mutation planning, the exact-Duration version-candidate boundary, and internal target Grammar 4 init/show/mutation/unit-migration adapters.
+- `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
 When adding an implementation, update this map to match its actual directories and commands.

@@ -5,12 +5,17 @@ import {
 import { EntityEditor } from "./entity-editor.js";
 import { mutationDiagnostic, type MutationEditPlan } from "./diagnostics.js";
 import type {
+  TargetGovernanceProjectClearableField,
+  TargetGovernanceProjectFieldSet,
+  TargetGovernanceSetProjectMutation,
+} from "./target-types.js";
+import type {
   ProjectClearableField,
   ProjectFieldSet,
   SetProjectMutation,
 } from "./types.js";
 
-const fieldOrder = [
+const activeFieldOrder = [
   "version",
   "title",
   "description",
@@ -22,7 +27,7 @@ const fieldOrder = [
   "target_duration",
 ] as const;
 
-const clearableFields = new Set<ProjectClearableField>([
+const activeClearableFields = new Set<ProjectClearableField>([
   "description",
   "as_of",
   "velocity",
@@ -32,11 +37,15 @@ const clearableFields = new Set<ProjectClearableField>([
 
 export interface ProjectMutationProfile {
   readonly exactDurations: boolean;
+  readonly governanceSource: boolean;
+  readonly fieldOrder: readonly string[];
 }
 
 export const ACTIVE_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
   Object.freeze({
     exactDurations: false,
+    governanceSource: false,
+    fieldOrder: activeFieldOrder,
   });
 
 export const TARGET_GRAMMAR_2_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
@@ -45,6 +54,29 @@ export const TARGET_GRAMMAR_2_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
 export const TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
   Object.freeze({
     exactDurations: true,
+    governanceSource: false,
+    fieldOrder: activeFieldOrder,
+  });
+
+export const TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
+  Object.freeze({
+    exactDurations: true,
+    governanceSource: true,
+    fieldOrder: [
+      "version",
+      "title",
+      "description",
+      "as_of",
+      "duration_unit",
+      "velocity",
+      "finish",
+      "goal_owner",
+      "goal_delegates",
+      "dag_owner",
+      "dag_delegates",
+      "critical_epsilon",
+      "target_duration",
+    ],
   });
 
 function canonicalDuration(
@@ -55,7 +87,10 @@ function canonicalDuration(
   return canonicalizeExactDurationSourceToken(value)?.token ?? value;
 }
 
-function requestError(value: unknown): string | undefined {
+function requestError(
+  value: unknown,
+  profile: ProjectMutationProfile,
+): string | undefined {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return "project mutation request is not an object";
   }
@@ -74,7 +109,7 @@ function requestError(value: unknown): string | undefined {
   }
   if (rawClear !== undefined && !Array.isArray(rawClear)) return "clear is not an array";
 
-  const set = (rawSet ?? {}) as ProjectFieldSet;
+  const set = (rawSet ?? {}) as TargetGovernanceProjectFieldSet;
   const clear = (rawClear ?? []) as readonly unknown[];
   const setEntries = Object.entries(set).filter(([, item]) => item !== undefined);
   if (setEntries.length === 0 && clear.length === 0) {
@@ -91,6 +126,9 @@ function requestError(value: unknown): string | undefined {
     "finish",
     "criticalEpsilon",
     "targetDuration",
+    ...(profile.governanceSource
+      ? ["goalOwner", "goalDelegates", "dagOwner", "dagDelegates"]
+      : []),
   ]);
   if (Object.keys(set).some((name) => !setFields.has(name))) {
     return "project set contains unsupported fields";
@@ -104,9 +142,46 @@ function requestError(value: unknown): string | undefined {
     "finish",
     "criticalEpsilon",
     "targetDuration",
+    ...(profile.governanceSource ? ["goalOwner", "dagOwner"] as const : []),
   ] as const) {
     if (set[name] !== undefined && typeof set[name] !== "string") {
       return `${name} is not a string`;
+    }
+  }
+  if (profile.governanceSource) {
+    for (const name of ["goalDelegates", "dagDelegates"] as const) {
+      const value = set[name];
+      if (
+        value !== undefined &&
+        (
+          !Array.isArray(value) ||
+          value.some(
+            (principal) =>
+              typeof principal !== "string" ||
+              !/^[A-Za-z][A-Za-z0-9_-]*$/.test(principal),
+          )
+        )
+      ) {
+        return `${name} is not a principal list`;
+      }
+    }
+    for (const name of ["goalOwner", "dagOwner"] as const) {
+      const value = set[name];
+      if (
+        value !== undefined &&
+        !/^[A-Za-z][A-Za-z0-9_-]*$/.test(value)
+      ) {
+        return `${name} is not a principal`;
+      }
+    }
+    const governanceSet = [
+      set.goalOwner,
+      set.goalDelegates,
+      set.dagOwner,
+      set.dagDelegates,
+    ].some((item) => item !== undefined);
+    if (governanceSet && set.version !== undefined && set.version !== 4) {
+      return "setting governance fields requires version 4";
     }
   }
   if (set.version !== undefined && !Number.isSafeInteger(set.version)) {
@@ -118,16 +193,35 @@ function requestError(value: unknown): string | undefined {
   ) {
     return "durationUnit must be day, hour, or point";
   }
-  if (clear.some((name) => typeof name !== "string" || !clearableFields.has(name as ProjectClearableField))) {
+  const clearableFields = new Set<string>([
+    ...activeClearableFields,
+    ...(profile.governanceSource
+      ? ["goal_owner", "goal_delegates", "dag_owner", "dag_delegates"]
+      : []),
+  ]);
+  if (clear.some((name) => typeof name !== "string" || !clearableFields.has(name))) {
     return "clear contains unsupported fields";
   }
   if (new Set(clear).size !== clear.length) return "clear contains duplicate fields";
-  const conflicts: ReadonlyArray<readonly [keyof ProjectFieldSet, ProjectClearableField]> = [
+  const conflicts: ReadonlyArray<
+    readonly [
+      keyof TargetGovernanceProjectFieldSet,
+      TargetGovernanceProjectClearableField,
+    ]
+  > = [
     ["description", "description"],
     ["asOf", "as_of"],
     ["velocity", "velocity"],
     ["criticalEpsilon", "critical_epsilon"],
     ["targetDuration", "target_duration"],
+    ...(profile.governanceSource
+      ? [
+          ["goalOwner", "goal_owner"],
+          ["goalDelegates", "goal_delegates"],
+          ["dagOwner", "dag_owner"],
+          ["dagDelegates", "dag_delegates"],
+        ] as const
+      : []),
   ];
   for (const [setName, clearName] of conflicts) {
     if (set[setName] !== undefined && clear.includes(clearName)) {
@@ -140,14 +234,19 @@ function requestError(value: unknown): string | undefined {
 function planSet(
   text: string,
   declaration: DeclarationNode,
-  mutation: SetProjectMutation,
+  mutation: SetProjectMutation | TargetGovernanceSetProjectMutation,
   profile: ProjectMutationProfile,
 ): MutationEditPlan {
-  const error = requestError(mutation);
+  const error = requestError(mutation, profile);
   if (error !== undefined) {
     return { edits: [], diagnostic: mutationDiagnostic("PTMUT-301", error, declaration) };
   }
-  const editor = new EntityEditor(text, declaration, fieldOrder, mutation.clear ?? []);
+  const editor = new EntityEditor(
+    text,
+    declaration,
+    profile.fieldOrder,
+    mutation.clear ?? [],
+  );
   const set = mutation.set ?? {};
   const edits = [];
   if (set.id !== undefined) {
@@ -157,13 +256,49 @@ function planSet(
       replacement: set.id,
     });
   }
-  if (set.version !== undefined) editor.setScalar("version", String(set.version));
+  const governanceSet =
+    profile.governanceSource &&
+    (
+      (set as TargetGovernanceProjectFieldSet).goalOwner !== undefined ||
+      (set as TargetGovernanceProjectFieldSet).goalDelegates !== undefined ||
+      (set as TargetGovernanceProjectFieldSet).dagOwner !== undefined ||
+      (set as TargetGovernanceProjectFieldSet).dagDelegates !== undefined
+    );
+  if (set.version !== undefined) {
+    editor.setScalar("version", String(set.version));
+  } else if (
+    governanceSet &&
+    editor.fieldValue("version") !== 4
+  ) {
+    editor.setScalar("version", "4");
+  }
   if (set.title !== undefined) editor.setScalar("title", JSON.stringify(set.title));
   if (set.description !== undefined) editor.setText("description", set.description);
   if (set.asOf !== undefined) editor.setScalar("as_of", set.asOf);
   if (set.durationUnit !== undefined) editor.setScalar("duration_unit", set.durationUnit);
   if (set.velocity !== undefined) editor.setScalar("velocity", set.velocity);
   if (set.finish !== undefined) editor.setScalar("finish", set.finish);
+  if (profile.governanceSource) {
+    const governanceSet = set as TargetGovernanceProjectFieldSet;
+    if (governanceSet.goalOwner !== undefined) {
+      editor.setScalar("goal_owner", governanceSet.goalOwner);
+    }
+    if (governanceSet.goalDelegates !== undefined) {
+      editor.setScalar(
+        "goal_delegates",
+        `[${governanceSet.goalDelegates.join(", ")}]`,
+      );
+    }
+    if (governanceSet.dagOwner !== undefined) {
+      editor.setScalar("dag_owner", governanceSet.dagOwner);
+    }
+    if (governanceSet.dagDelegates !== undefined) {
+      editor.setScalar(
+        "dag_delegates",
+        `[${governanceSet.dagDelegates.join(", ")}]`,
+      );
+    }
+  }
   if (set.criticalEpsilon !== undefined) {
     editor.setScalar(
       "critical_epsilon",
@@ -183,7 +318,7 @@ function planSet(
 export function planProjectMutationEdits(
   text: string,
   document: DocumentNode,
-  mutation: SetProjectMutation,
+  mutation: SetProjectMutation | TargetGovernanceSetProjectMutation,
   profile: ProjectMutationProfile = ACTIVE_PROJECT_MUTATION_PROFILE,
 ): MutationEditPlan {
   const declaration = document.declarations.find(({ kind }) => kind === "project");

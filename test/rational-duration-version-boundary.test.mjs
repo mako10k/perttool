@@ -151,11 +151,11 @@ test("grammar selection rejects noncanonical generated tokens and invalid contex
   );
   assert.throws(
     () => selectExactDurationGrammarBoundary(
-      4,
+      5,
       [decimal],
       { migrationChanged: true, velocityDisposition: "retained" },
     ),
-    /source grammar version must be 1, 2, or 3/,
+    /source grammar version must be 1, 2, 3, or 4/,
   );
   assert.throws(
     () => selectExactDurationGrammarBoundary(
