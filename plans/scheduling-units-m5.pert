@@ -7,9 +7,6 @@ project SCHEDULING_UNITS_M5:
   velocity 23p/1d
   finish CONTRACT4_ACCEPTED
 
-milestone M5_START:
-  title "Accepted SU-M3 and SU-M4 inputs ready"
-  state reached
 
 resource DEVELOPERS:
   title "Implementation capacity"
@@ -42,6 +39,7 @@ resource PACKAGE_SURFACE:
 
 milestone PUBLIC_CORE_READY:
   title "Grammar 3 and public Contract 4 Core ready"
+  state reached
 
 milestone MIGRATION_ROUTE_READY:
   title "Temporal mutation and unit migration CLI route ready"
@@ -61,16 +59,6 @@ milestone INSTALLED_WORKFLOW_READY:
 milestone CONTRACT4_ACCEPTED:
   title "Atomic Contract 4 workstream accepted"
 
-task CONTRACT4_PUBLIC_CORE M5_START -> PUBLIC_CORE_READY:
-  title "Activate Grammar 3 and public Contract 4 Core"
-  description "Replace the active Grammar 1 boundary with the accepted Grammar 3-capable parser, validator, formatter, mutation, CheckResult v2, ProjectResult v2, AnalysisResult v3, NextResult v4, and UnitMigrationResult v2 public Core. Define the intentional root export policy and keep version identities closed."
-  duration 5p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PUBLIC_CORE_SURFACE 1
 
 task CONTRACT4_MIGRATION_ROUTE PUBLIC_CORE_READY -> MIGRATION_ROUTE_READY:
   title "Publish temporal mutation and exact unit migration"
