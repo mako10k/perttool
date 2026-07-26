@@ -7,10 +7,6 @@ project OWNER_AWARE_GOVERNANCE:
   velocity 3p/1d
   finish GOVERNANCE_ACCEPTED
 
-milestone ISSUE_4_ACCEPTED:
-  title "Issue #4 accepted as design input"
-  state reached
-
 resource DEVELOPERS:
   title "Implementation capacity"
   capacity 2
@@ -37,6 +33,7 @@ resource DOC_SURFACE:
 
 milestone REQUIREMENTS_ACCEPTED:
   title "Governance requirements and threat boundary accepted"
+  state reached
 
 milestone DSL_CONTRACT_DEFINED:
   title "Governance DSL and effective metadata contract defined"
@@ -79,17 +76,6 @@ milestone ACCEPTANCE_INPUT_READY:
 
 milestone GOVERNANCE_ACCEPTED:
   title "Owner-aware goal and DAG governance accepted"
-
-task GOV_REQUIREMENTS ISSUE_4_ACCEPTED -> REQUIREMENTS_ACCEPTED:
-  title "Adopt the Issue #4 authority boundary in requirements"
-  description "Define the accidental-overreach threat model; goal and DAG scopes; default goal_owner=user and dag_owner=user with empty delegates; initial user, llm, and codex principal IDs; ordinary-maintenance exclusions; caller-asserted identity boundary; and non-goals. Explicitly separate project-model write authority from recommendation override MIG-08."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
 
 task GOV_DSL_CONTRACT REQUIREMENTS_ACCEPTED -> DSL_CONTRACT_DEFINED:
   title "Define governance source and effective-metadata semantics"

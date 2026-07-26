@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.52
+- Document status: Active Stage 3 / Revision 2.53
 - Creation date: 2026-07-21
 - Update date: 2026-07-26
 - Related design: [../basic-design.md](../basic-design.md)
@@ -816,6 +816,17 @@ resource makespan, 7p resource delay, and forecasts of 10d and `37/3d`.
 Complete NextResult v4 recommends `GOV_AUTHORITY_CONTRACT`;
 `GOV_DSL_CONTRACT` is ready but deferred by the shared `DOC_SURFACE` and
 `REVIEWERS` resources. Owner-aware runtime enforcement remains unavailable.
+
+After the acceptance snapshot was committed at `e0dcf6f`, the advance preview
+from digest
+`sha256:b23e0652b94e55021f76a61d510449c6a742371d4ce5ad6b1e5111c20b100ddd`
+removed both completed task `GOV_REQUIREMENTS` and its reached origin milestone
+`ISSUE_4_ACCEPTED`, while retaining `REQUIREMENTS_ACCEPTED` as the reached
+frontier. The advanced source digest is
+`sha256:d90a7869b2737115b5f1a0bba06a444731051e9907cac5849d64d337acc80242`.
+Reanalysis preserves the 42p remaining work, 30p precedence makespan, 37p
+heuristic resource makespan, 7p resource delay, forecasts, ready set, and
+`GOV_AUTHORITY_CONTRACT` recommendation, and clears `PTDAG-208`.
 
 Stage 1 allowed operations:
 
