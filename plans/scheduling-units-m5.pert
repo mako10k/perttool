@@ -47,6 +47,7 @@ milestone MIGRATION_ROUTE_READY:
 
 milestone DISCOVERY_READY:
   title "Contract 4 discovery, help, and Guide ready"
+  state reached
 
 milestone AUTHORITY_READY:
   title "NextResult v4 normal authority ready"
@@ -62,16 +63,6 @@ milestone CONTRACT4_ACCEPTED:
 
 
 
-task CONTRACT4_COMMAND_GUIDANCE PUBLIC_CORE_READY -> DISCOVERY_READY:
-  title "Cut over registry, projections, help, and Guide"
-  description "Replace the Contract 3 registry with one typed Contract 4 registry that drives dispatch, parsing, deterministic text and JSON help, temporal and migration result adapters, recovery, diagnostics, and the editing.unit-migration Guide topic. Reject obsolete identities and partial aliases."
-  duration 4p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    COMMAND_GUIDANCE_SURFACE 1
 
 task NEXT_V4_NORMAL_AUTHORITY PUBLIC_CORE_READY -> AUTHORITY_READY:
   title "Adopt complete NextResult v4 as normal authority"
