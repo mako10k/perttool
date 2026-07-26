@@ -133,7 +133,7 @@ test("requirements and design adopt the review without claiming runtime activati
   );
 });
 
-test("implementation handoff retains every plan task and explicit separation", async () => {
+test("implementation handoff retains the complete trace and current plan frontier", async () => {
   const [acceptance, plan] = await Promise.all([
     repositoryFile("docs/process/governance-design-acceptance.md"),
     repositoryFile("plans/governance.pert"),
@@ -148,8 +148,25 @@ test("implementation handoff retains every plan task and explicit separation", a
     "GOV_ACCEPTANCE",
   ]) {
     assert.ok(acceptance.includes(taskId), taskId);
+  }
+  for (const taskId of [
+    "GOV_CLI_PREVIEW",
+    "GOV_WRITE_ENFORCEMENT",
+    "GOV_GUIDANCE",
+    "GOV_ACCEPTANCE",
+  ]) {
     assert.ok(plan.includes(`task ${taskId} `), taskId);
   }
+  for (const completedTaskId of [
+    "GOV_SOURCE_MODEL",
+    "GOV_AUTHORITY_CORE",
+  ]) {
+    assert.ok(!plan.includes(`task ${completedTaskId} `), completedTaskId);
+  }
+  assert.match(
+    plan,
+    /milestone IMPLEMENTATION_INPUT_READY:\n(?:  .+\n)*  state reached/,
+  );
   for (const boundary of [
     "Authentication and identity verification",
     "Recommendation ranking and scheduling",
