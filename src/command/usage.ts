@@ -75,26 +75,50 @@ interface IndexedOperand {
   readonly value: string;
 }
 
-const topLevelByName = new Map<string, ProjectedCommandDescriptor>();
-const commandsByPath = new Map<string, ProjectedCommandDescriptor>();
-const resourceActions = new Map<string, string[]>();
-const resources: string[] = [];
-
-for (const descriptor of CONTRACT4_COMMAND_REGISTRY) {
-  if (descriptor.path.length === 1) {
-    topLevelByName.set(descriptor.path[0], descriptor);
-    continue;
-  }
-  const [resource, action] = descriptor.path;
-  commandsByPath.set(`${resource}\0${action}`, descriptor);
-  const actions = resourceActions.get(resource);
-  if (actions === undefined) {
-    resources.push(resource);
-    resourceActions.set(resource, [action]);
-  } else {
-    actions.push(action);
-  }
+interface CommandUsageIndex {
+  readonly topLevelByName:
+    ReadonlyMap<string, ProjectedCommandDescriptor>;
+  readonly commandsByPath:
+    ReadonlyMap<string, ProjectedCommandDescriptor>;
+  readonly resourceActions: ReadonlyMap<string, readonly string[]>;
+  readonly resources: readonly string[];
 }
+
+function commandUsageIndex(
+  registry: readonly ProjectedCommandDescriptor[],
+): CommandUsageIndex {
+  const topLevelByName =
+    new Map<string, ProjectedCommandDescriptor>();
+  const commandsByPath =
+    new Map<string, ProjectedCommandDescriptor>();
+  const resourceActions = new Map<string, string[]>();
+  const resources: string[] = [];
+  for (const descriptor of registry) {
+    if (descriptor.path.length === 1) {
+      topLevelByName.set(descriptor.path[0], descriptor);
+      continue;
+    }
+    const [resource, action] = descriptor.path;
+    commandsByPath.set(`${resource}\0${action}`, descriptor);
+    const actions = resourceActions.get(resource);
+    if (actions === undefined) {
+      resources.push(resource);
+      resourceActions.set(resource, [action]);
+    } else {
+      actions.push(action);
+    }
+  }
+  return {
+    topLevelByName,
+    commandsByPath,
+    resourceActions,
+    resources: Object.freeze(resources),
+  };
+}
+
+const contract4CommandUsageIndex = commandUsageIndex(
+  CONTRACT4_COMMAND_REGISTRY,
+);
 
 function helpTarget(
   descriptor: ProjectedCommandDescriptor,
@@ -471,8 +495,9 @@ function validateDescriptorArguments(
   };
 }
 
-export function validateCommandInvocation(
+function validateCommandInvocationWithIndex(
   argv: readonly string[],
+  index: CommandUsageIndex,
 ): CommandInvocationValidation {
   if (argv.length === 0) {
     return usageError(
@@ -485,11 +510,11 @@ export function validateCommandInvocation(
   }
 
   const resource = argv[0]!;
-  const topLevel = topLevelByName.get(resource);
+  const topLevel = index.topLevelByName.get(resource);
   if (topLevel !== undefined) {
     return validateDescriptorArguments(topLevel, argv.slice(1));
   }
-  const actions = resourceActions.get(resource);
+  const actions = index.resourceActions.get(resource);
   if (actions === undefined) {
     return usageError(
       "unknown_resource",
@@ -497,7 +522,7 @@ export function validateCommandInvocation(
       resource,
       Object.freeze({ resource: null, action: null }),
       null,
-      nearestSuggestion(resource, resources, "resource"),
+      nearestSuggestion(resource, index.resources, "resource"),
     );
   }
   if (argv.length < 2 || argv[1]!.startsWith("--")) {
@@ -511,7 +536,9 @@ export function validateCommandInvocation(
   }
 
   const action = argv[1]!;
-  const descriptor = commandsByPath.get(`${resource}\0${action}`);
+  const descriptor = index.commandsByPath.get(
+    `${resource}\0${action}`,
+  );
   if (descriptor === undefined) {
     return usageError(
       "unknown_action",
@@ -523,6 +550,25 @@ export function validateCommandInvocation(
     );
   }
   return validateDescriptorArguments(descriptor, argv.slice(2));
+}
+
+export function validateCommandInvocationAgainstRegistry(
+  argv: readonly string[],
+  registry: readonly ProjectedCommandDescriptor[],
+): CommandInvocationValidation {
+  return validateCommandInvocationWithIndex(
+    argv,
+    commandUsageIndex(registry),
+  );
+}
+
+export function validateCommandInvocation(
+  argv: readonly string[],
+): CommandInvocationValidation {
+  return validateCommandInvocationWithIndex(
+    argv,
+    contract4CommandUsageIndex,
+  );
 }
 
 function helpInvocation(target: CommandHelpTarget): string {
@@ -542,12 +588,13 @@ function renderedSuggestion(
     : suggestion.value;
 }
 
-export function commandUsageErrorToJson(
+export function commandUsageErrorToJsonForContract(
   error: CommandUsageError,
+  cliContractVersion: number,
 ): Readonly<Record<string, unknown>> {
   return {
     schema_version: "Perttool.CliError.v1",
-    cli_contract_version: 4,
+    cli_contract_version: cliContractVersion,
     tool_version: TOOL_VERSION,
     operation: error.operation,
     ok: false,
@@ -591,6 +638,12 @@ export function commandUsageErrorToJson(
       },
     ],
   };
+}
+
+export function commandUsageErrorToJson(
+  error: CommandUsageError,
+): Readonly<Record<string, unknown>> {
+  return commandUsageErrorToJsonForContract(error, 4);
 }
 
 export function handlerCommandUsageError(

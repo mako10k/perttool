@@ -983,6 +983,17 @@ classification and pre-change decisions; the
 [Governance Interface contract](specs/governance-interface.md) fixes public
 request and result types, CLI Contract 5, help, diagnostics, and exits.
 
+The internal target path implements this preview composition without
+activating it. `src/application/target-governance-mutation.ts` applies the
+same actual-change classifier and pre-change evaluator after direct, batch,
+and advance candidates validate.
+`src/application/target-governance-projection.ts` owns target ProjectResult
+v3, MutationResult v2, GovernanceDecision v1, and text projections.
+`src/command/target-governance-discovery.ts` and
+`src/command/target-governance-usage.ts` derive the complete Contract 5
+registry, help, usage recovery, and operation-level caller assertions while
+the active root and CLI remain Contract 4.
+
 Preview renders the candidate and authority facts even when an actor or owner
 acceptance is absent. A persistent governed write proceeds to the safe-write
 adapter only when every affected scope is authorized. Direct commands, atomic
@@ -1784,11 +1795,12 @@ the explicit non-goals into the implementation gates. It accepts design input
 without activating Grammar 4, CLI Contract 5, or owner-aware runtime
 enforcement.
 
-The remaining sequence independently accepts the source model, pure
-evaluator, write enforcement, guidance, and installed-package behavior.
-Until those gates are complete, the active Contract 4 runtime does not parse
-Grammar 4 governance fields, accept actor/owner-confirmation options, or
-enforce owner-aware writes.
+The internal source model, pure evaluator, and governed preview/result/help
+target are implemented. The remaining sequence independently accepts write
+enforcement, guidance, and complete installed-package behavior. Until those
+gates are complete, the active Contract 4 runtime does not parse Grammar 4
+governance fields, accept actor/owner-confirmation options, or enforce
+owner-aware writes.
 
 Exit:
 

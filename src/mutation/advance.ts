@@ -51,6 +51,19 @@ export interface AdvanceResult extends MutationResult {
   readonly advance: AdvanceDetails | null;
 }
 
+export interface AdvanceDocumentValidation {
+  readonly ok: boolean;
+  readonly document: DocumentNode;
+  readonly documentId: string | null;
+  readonly diagnostics: readonly Diagnostic[];
+  readonly diagnosticsTruncated: boolean;
+}
+
+export type AdvanceDocumentValidator = (
+  text: string,
+  maxDiagnostics: number,
+) => AdvanceDocumentValidation;
+
 interface AdvancePlan {
   readonly edits: readonly TextEdit[];
   readonly keptTaskIds: readonly string[];
@@ -351,13 +364,14 @@ function verifyPostconditions(
   }
 }
 
-export function planAdvance(
+export function planValidatedAdvance(
   text: string,
+  validator: AdvanceDocumentValidator,
   options: MutationOptions = {},
 ): AdvanceResult {
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
   const originalDigest = digest(text);
-  const original = checkDocument(text, { maxDiagnostics: maximum });
+  const original = validator(text, maximum);
   if (!original.ok) {
     return failure(
       originalDigest,
@@ -371,7 +385,7 @@ export function planAdvance(
   const plan = buildAdvancePlan(text, original.document);
   const edits = normalizeTextEdits(text, plan.edits, "advance");
   const updatedText = applyTextEdits(text, edits);
-  const candidate = checkDocument(updatedText, { maxDiagnostics: maximum });
+  const candidate = validator(updatedText, maximum);
   if (!candidate.ok) {
     return failure(
       originalDigest,
@@ -417,4 +431,25 @@ export function planAdvance(
       readyAfter,
     },
   };
+}
+
+function validateActiveAdvanceDocument(
+  text: string,
+  maxDiagnostics: number,
+): AdvanceDocumentValidation {
+  const checked = checkDocument(text, { maxDiagnostics });
+  return {
+    ok: checked.ok,
+    document: checked.document,
+    documentId: checked.documentId,
+    diagnostics: checked.diagnostics,
+    diagnosticsTruncated: checked.diagnosticsTruncated,
+  };
+}
+
+export function planAdvance(
+  text: string,
+  options: MutationOptions = {},
+): AdvanceResult {
+  return planValidatedAdvance(text, validateActiveAdvanceDocument, options);
 }

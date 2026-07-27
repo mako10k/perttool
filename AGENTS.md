@@ -63,7 +63,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
-- `src/command/`: immutable typed command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
+- `src/command/`: immutable typed command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, structured usage-error recovery, and the internal target Contract 5 governance registry and usage projection.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and active Contract 4 GuideResult projection.
 - `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
@@ -78,7 +78,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/parser/`: the active identity-checked Grammar 1/2/3 parser capabilities and the internal capability-checked target Grammar 4 governance-source parser.
 - `src/semantic/`: active Grammar 1/2/3 validated-document boundaries plus the internal target Grammar 4 boundary, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3 requests for project/task/gate/milestone/resource and atomic batch, internal target Grammar 4 project-governance fields, exact changed-field Duration generation, canonical advance, source-preserving UTF-16 TextEdit generation, and application rules.
-- `src/application/`: pure services for active Contract 4 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3 mutation planning, the exact-Duration version-candidate boundary, and internal target Grammar 4 init/show/mutation/unit-migration adapters.
+- `src/application/`: pure services for active Contract 4 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3 mutation planning, the exact-Duration version-candidate boundary, and internal target Grammar 4 init/show/mutation/unit-migration adapters plus governed direct/batch/advance preview and Contract 5 result projections.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
