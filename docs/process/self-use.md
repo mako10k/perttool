@@ -1028,9 +1028,14 @@ digest
 `sha256:069823f669f09617f8068e12614297b7c1ffe259d21c7cdf01df05ea007fa13c`
 with
 `sha256:89b4c2f74ee221500b90d3c5530eb02a9b74ee721d7d7b621ebf002c495ed110`.
-An ordinary project-description clarification then produced current digest
+An ordinary project-description clarification then produced snapshot digest
 `sha256:3664c6149673f53221716d91c1a7fadf6eac15c02ac13ea230659c0ab286a0a1`.
-`RELEASE_040_GATE_DESIGN` is done but unadvanced. Sixteen points remain;
+After committed snapshot `eb74b6e`, canonical advance removed
+`RELEASE_040_GATE_DESIGN` and `RELEASE_040_PLANNING_STARTED`, retained
+`RELEASE_040_GATE_ACCEPTED` as the reached frontier, and produced current
+digest
+`sha256:6745eb3bd85eebf54a18408fb36841fd80bd176b6c18fa9d9bddb1fbeefd1f7d`.
+The gate-design task is complete and advanced. Sixteen points remain;
 the precedence makespan is 16p, and the heuristic resource makespan is
 conditionally 16p if publication authorization is resolved at time zero.
 Both inherited forecasts are `32/19d`, and complete NextResult v4 recommends

@@ -204,7 +204,7 @@ Grammar 4 and CLI Contract 5 cutover. The independent
 [`release-0.4.0.pert`](../../plans/release-0.4.0.pert) plan verifies reached
 governance acceptance, then separates source preparation, one clean candidate
 and immutable tarball, the Git/GitHub/npm `beta` PUBLISH operation, and
-durable acceptance. `RELEASE_040_GATE_DESIGN` is done but unadvanced;
+durable acceptance. `RELEASE_040_GATE_DESIGN` is complete and advanced;
 complete NextResult v4 recommends
 `RELEASE_040_CONTRACT_5_READINESS`. The current authorization covers gate
 design only. `RELEASE_040_PUBLISH` remains blocked until a separate user

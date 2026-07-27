@@ -39,8 +39,8 @@ The selected next release target is suffix-free beta `0.4.0` for the breaking
 Grammar 4 and CLI Contract 5 cutover. `plans/release-0.4.0.pert`
 independently tracks gate design, accepted governance input, source
 preparation, candidate acceptance, PUBLISH, and durable acceptance without
-restoring completed governance task state. `RELEASE_040_GATE_DESIGN` is done
-but unadvanced after normative gate acceptance. Sixteen points remain; the
+restoring completed governance task state. `RELEASE_040_GATE_DESIGN` is
+complete and advanced after normative gate acceptance. Sixteen points remain; the
 precedence makespan is 16p, and the heuristic resource makespan is
 conditionally 16p with no resource delay if publication authorization is
 resolved at time zero. Inherited velocity is `19p/2d`, and both forecasts are

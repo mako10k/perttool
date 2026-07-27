@@ -10,9 +10,6 @@ project RELEASE_040:
   goal_owner user
   dag_owner user
 
-milestone RELEASE_040_PLANNING_STARTED:
-  title "Version 0.4.0 release planning started"
-  state reached
 
 resource DEVELOPERS:
   title "Release engineering capacity"
@@ -40,6 +37,7 @@ resource EXTERNAL_RELEASE:
 
 milestone RELEASE_040_GATE_ACCEPTED:
   title "Version 0.4.0 release gate accepted"
+  state reached
 
 milestone RELEASE_040_CONTRACT_5_READY:
   title "Accepted Contract 5 release input verified"
@@ -56,16 +54,6 @@ milestone RELEASE_040_PUBLISHED:
 milestone RELEASE_040_ACCEPTED:
   title "Version 0.4.0 Contract 5 beta accepted"
 
-task RELEASE_040_GATE_DESIGN RELEASE_040_PLANNING_STARTED -> RELEASE_040_GATE_ACCEPTED:
-  title "Define the 0.4.0 Contract 5 release gate"
-  description "Select suffix-free 0.4.0 for the breaking Contract 5 cutover. Update requirements, ADR, design, procedure, release PERT, authority boundary, restart rules, self-use coverage, and latest/Issue exclusions together. This task performs no external write."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
 
 task RELEASE_040_CONTRACT_5_READINESS RELEASE_040_GATE_ACCEPTED -> RELEASE_040_CONTRACT_5_READY:
   title "Verify accepted Contract 5 release input"
