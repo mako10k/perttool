@@ -235,6 +235,15 @@ test("0.3.0 release plan matches the Contract 4 release roadmap", async () => {
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("0.4.0 release plan matches the Contract 5 release roadmap", async () => {
+  const text = await readFile(path.join(root, "plans/release-0.4.0.pert"), "utf8");
+  const expected = JSON.parse(await readFile(
+    path.join(testDirectory, "golden/self-use/release-0.4.0.expected.json"),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("scheduling and units plan matches the milestone-level roadmap", async () => {
   const text = await readFile(path.join(root, "plans/scheduling-units.pert"), "utf8");
   const expected = JSON.parse(await readFile(

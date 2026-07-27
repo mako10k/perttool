@@ -6,7 +6,8 @@
   2026-07-24 (`v0.2.0` Contract 3 release target);
   2026-07-25 (`v0.2.0` explicit `latest` promotion and `v0.3.0` Contract 4
   release target);
-  2026-07-26 (`v0.3.0` explicit `latest` promotion)
+  2026-07-26 (`v0.3.0` explicit `latest` promotion);
+  2026-07-27 (`v0.4.0` Contract 5 release target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -35,6 +36,10 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   Grammar 3, temporal/deadline results, exact unit migration, NextResult v4
   normal authority, and the breaking CLI Contract 4 surface. `0.2.1` would
   understate the public grammar, command, schema, and authority changes.
+- Select suffix-free `0.4.0` for the first package that publishes accepted
+  Grammar 4, owner-aware goal and DAG mutation governance, and the breaking
+  CLI Contract 5 surface. `0.3.1` would understate the grammar, JSON schema,
+  command-option, and persistent-write authority changes.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 
@@ -63,6 +68,14 @@ user explicitly promoted `perttool@0.3.0` to npm `latest`. Registry reads and
 an unqualified global installation confirmed that `beta` and `latest` both
 resolve to Contract 4 `0.3.0`; `alpha` remains on `0.1.0-alpha.2`. Product
 maturity remains beta.
+
+On 2026-07-27, after repository-source and locally packed Contract 5
+acceptance, the user selected the next task as design of the `0.4.0` release
+gate. The [`v0.4.0` release procedure](../process/0.4.0-release.md) verifies
+the completed governance acceptance before source preparation and retains
+publication as a separately authorized task. This gate-design authorization
+does not authorize Git push, tag creation, GitHub or npm publication, npm
+`latest` promotion, or Issue #4 closure.
 
 ## Beta gate
 

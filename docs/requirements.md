@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.16
+- Document status: Draft 0.17
 - Created: 2026-07-21
-- Updated: 2026-07-26
+- Updated: 2026-07-27
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -1545,6 +1545,60 @@ confirmed `beta=latest=0.3.0` without changing beta product maturity. The
 evidence is recorded in
 [`docs/process/0.3.0-release-acceptance.md`](process/0.3.0-release-acceptance.md).
 
+### 21.5 CLI Contract 5 beta release acceptance criteria
+
+The first package that publishes the accepted owner-aware goal/DAG mutation
+governance and CLI Contract 5 surface is suffix-free `0.4.0`. It remains part
+of the `0.x.x` beta series, is a GitHub prerelease, and is published to npm
+`beta`. The release must satisfy all of the following.
+
+1. Retain reached `GOVERNANCE_ACCEPTED` in `plans/governance.pert` and verify
+   the accepted Grammar 4, Contract 5, public-root, safe-write, and installed
+   package boundary without duplicating completed implementation task state.
+2. Publish Grammar 4, declared/effective governance metadata,
+   `Perttool.ProjectResult.v3`, `Perttool.MutationResult.v2`,
+   `Perttool.GovernanceDecision.v1`, Contract 5 help/Guide, generated warning,
+   and owner-aware persistence together.
+3. Preserve Grammar 1/2/3 source compatibility through effective default
+   owner `user` and empty delegates, while failing closed for unauthorized,
+   malformed, invalid, or stale persistent goal/DAG mutations.
+4. Retain authentication, verified identity, signatures, durable approval
+   audit, direct-edit prevention, recommendation override apply, MIG-08, Git
+   integration, Issue synchronization, and adapters as explicit non-goals.
+5. Align `package.json`, the lockfile root package, CLI/tool version, release
+   commit, annotated `v0.4.0` tag, GitHub asset, and npm package identity.
+6. Provide explicit Contract 4-to-5 migration guidance for envelope/result
+   schemas, owner fields, `--actor`, repeatable `--accepted-by-owner`, and the
+   absence of a Contract 4 runtime switch or compatibility alias.
+7. Pass `npm ci`, `npm run check`, `git diff --check`, package normalization,
+   isolated installation, owner/delegate/default/stale-digest/batch
+   acceptance, exact unit-migration preservation, complete NextResult v4,
+   and the file-first Contract 5 workflow from one clean release source.
+8. Establish before external mutation that `perttool@0.4.0`, `v0.4.0`, and
+   the matching GitHub Release are unused; record npm `beta`, `latest`, and
+   `alpha`; and verify the protected credential routes without displaying
+   secrets.
+9. Generate one immutable tarball outside the worktree, verify it before the
+   first external write, distribute those exact bytes through the GitHub
+   prerelease and npm `beta`, and verify isolated installation from both
+   public channels.
+10. Push and verify one clean release commit and annotated tag only under
+    separate explicit user authorization for the named `0.4.0` external
+    publication batch.
+11. Verify that publication moves `beta` to `0.4.0`, leaves `latest`
+    unchanged at `0.3.0`, and does not imply stable product maturity.
+12. Record durable identity, common artifact digests, registry metadata,
+    public URLs, Contract 5 behavior, installation results, and restart
+    observations before accepting the release.
+
+Planning or locally accepting this gate does not authorize Git, GitHub, npm,
+dist-tag, or Issue writes. The user's 2026-07-27 request authorizes only
+`RELEASE_040_GATE_DESIGN`. `RELEASE_040_PUBLISH` remains blocked until a
+separate user instruction explicitly authorizes the named `0.4.0` external
+publication batch. npm `latest` promotion and Issue #4 closure are distinct
+post-acceptance decisions. The authoritative procedure is
+[`docs/process/0.4.0-release.md`](process/0.4.0-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |
@@ -1599,7 +1653,9 @@ Resolved design decisions:
 
 - Adoption of AoA with task=edge: [ADR 0001](adr/0001-activity-on-arrow.md)
 - Node.js 22 or later, npm, TypeScript ESM package: [ADR 0005](adr/0005-node-22-runtime-baseline.md)
-- Suffix-free `0.x.x` beta, alpha compatibility boundary, `v0.2.0` Contract 3, and `v0.3.0` Contract 4 release targets: [ADR 0003](adr/0003-beta-versioning.md)
+- Suffix-free `0.x.x` beta, alpha compatibility boundary, and `v0.2.0`
+  Contract 3 through `v0.4.0` Contract 5 release targets:
+  [ADR 0003](adr/0003-beta-versioning.md)
 - English repository baseline, migration boundary, and current i18n non-goal: [ADR 0004](adr/0004-english-repository-baseline.md)
 - Separation of executability, resource selection, and recommendation level, and tier semantics: [Recommendation Semantics specification](specs/recommendation.md)
 - Ranking inputs, selection horizon, priority rules, complete tie-breaking, and algorithm version: [Recommendation Ranking Policy specification](specs/recommendation-ranking.md)
@@ -1612,6 +1668,9 @@ Resolved design decisions:
 - Complete command discovery, domain-guide separation, file-first initialization and gate maintenance, naming, effects, schemas, and breaking migration: [CLI Contract 3 specification](specs/cli-contract-3.md)
 - Contract 3 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.2.0` release procedure](process/0.2.0-release.md)
 - Contract 4 package identity, authorization, artifact parity, distribution, and acceptance: [`v0.3.0` release procedure](process/0.3.0-release.md)
+- Contract 5 package identity, authorization, artifact parity, distribution,
+  and acceptance:
+  [`v0.4.0` release procedure](process/0.4.0-release.md)
 - Date/date-time comparison, `as_of`, exact day/hour/point projection, fixed-offset preservation, continuous-calendar boundaries, and `not_before` release bounds: [Temporal Calendar Semantics specification](specs/temporal-calendar.md)
 - Temporal precedence/resource release scheduling, deadline state, exact margin/lateness, feasibility, blocked/heuristic qualification, risk, and recommendation-version boundary: [Temporal Deadline Semantics specification](specs/temporal-deadline.md)
 - Permitted Point/time directions, effective velocity, complete field inventory, exact Decimal-or-fraction conversion, atomic grammar upgrade, and round-trip qualification: [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md)
@@ -1669,14 +1728,14 @@ Before implementation, separate the specifications in the following order.
     - [x] Public AnalysisResult v3, NextResult v4, and UnitMigrationResult v2
     - [x] Registry, help, Guide, README, diagnostics, and normal start authority
     - [x] Installed-package file-first workflow and durable SU-M5 acceptance
-16. [ ] Owner-aware goal and DAG mutation governance
+16. [x] Owner-aware goal and DAG mutation governance
     - [x] Requirements and accidental-overreach threat boundary
     - [x] Goal/DAG change classification and pre-change authority semantics
     - [x] Grammar 4 source and declared/effective metadata contract
     - [x] [Core, CLI, help, JSON, and diagnostic interface contract](specs/governance-interface.md)
     - [x] [Normative authority and write-path examples](examples/governance.md)
     - [x] [Cross-cutting Issue #4 design acceptance](process/governance-design-acceptance.md)
-    - [ ] Source, evaluator, preview, write, guidance, and installed acceptance
+    - [x] Source, evaluator, preview, write, guidance, and installed acceptance
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 
@@ -1708,3 +1767,12 @@ the user separately authorized the default-tag mutation, and npm now reports
 smoke passed. The
 [`v0.3.0` acceptance record](process/0.3.0-release-acceptance.md) preserves the
 durable evidence.
+
+The accepted repository source and locally packed package now activate
+Grammar 4 and CLI Contract 5 atomically. The independent
+[`plans/release-0.4.0.pert`](../plans/release-0.4.0.pert) release workstream
+selects suffix-free beta `0.4.0` and verifies the completed governance
+acceptance before release preparation. Its gate-design authorization performs
+no external write; PUBLISH remains blocked pending a separate named
+authorization, and npm `latest` promotion and Issue #4 closure remain
+independent post-acceptance decisions.

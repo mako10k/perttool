@@ -45,7 +45,7 @@ test("0.3.0 release gate records Contract 4 publication and acceptance separatel
   assert.match(requirements, /^### 21\.4 CLI Contract 4 beta release acceptance criteria$/m);
   const releaseSection = requirements.split(
     "### 21.4 CLI Contract 4 beta release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split("### 21.5 CLI Contract 5 beta release acceptance criteria")[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],

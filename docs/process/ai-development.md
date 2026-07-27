@@ -1,8 +1,8 @@
 # AI Development Guide
 
-- Document status: Active 0.5
+- Document status: Active 0.6
 - Created: 2026-07-21
-- Updated: 2026-07-23
+- Updated: 2026-07-27
 - Shared instructions: [../../AGENTS.md](../../AGENTS.md)
 - Self-use plan: [self-use.md](self-use.md)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
@@ -198,6 +198,19 @@ publication-time `beta=0.3.0` with unchanged `latest=0.2.0`. The
 authorized promotion to `beta=latest=0.3.0`, the unqualified global
 installation, and light smoke. The completed plan has zero makespans, no
 recommendation, and observed cumulative velocity `19p/2d`.
+
+The selected next public target is suffix-free beta `0.4.0` for the breaking
+Grammar 4 and CLI Contract 5 cutover. The independent
+[`release-0.4.0.pert`](../../plans/release-0.4.0.pert) plan verifies reached
+governance acceptance, then separates source preparation, one clean candidate
+and immutable tarball, the Git/GitHub/npm `beta` PUBLISH operation, and
+durable acceptance. `RELEASE_040_GATE_DESIGN` is done but unadvanced;
+complete NextResult v4 recommends
+`RELEASE_040_CONTRACT_5_READINESS`. The current authorization covers gate
+design only. `RELEASE_040_PUBLISH` remains blocked until a separate user
+instruction explicitly authorizes the named `0.4.0` external batch; npm
+`latest` promotion and Issue #4 closure are separate post-acceptance
+decisions.
 
 ### 5.1 Adopted Recommendation authority
 

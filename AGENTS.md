@@ -35,6 +35,22 @@ installation and light Contract 4 smoke passed. The plan has zero precedence
 and heuristic resource makespans, no remaining or recommended task, and
 observed cumulative velocity `19p/2d`.
 
+The selected next release target is suffix-free beta `0.4.0` for the breaking
+Grammar 4 and CLI Contract 5 cutover. `plans/release-0.4.0.pert`
+independently tracks gate design, accepted governance input, source
+preparation, candidate acceptance, PUBLISH, and durable acceptance without
+restoring completed governance task state. `RELEASE_040_GATE_DESIGN` is done
+but unadvanced after normative gate acceptance. Sixteen points remain; the
+precedence makespan is 16p, and the heuristic resource makespan is
+conditionally 16p with no resource delay if publication authorization is
+resolved at time zero. Inherited velocity is `19p/2d`, and both forecasts are
+`32/19d`.
+Complete NextResult v4 recommends and starts only
+`RELEASE_040_CONTRACT_5_READINESS`. The user authorized only gate design;
+`RELEASE_040_PUBLISH` is blocked pending separate explicit authorization for
+the named `0.4.0` external batch. npm `latest` promotion and Issue #4 closure
+remain separate post-acceptance decisions.
+
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public schemas and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 
 `project show`, which returns the complete project metadata including velocity, source-preserving `project set`, and atomic-batch `project.set` are also implemented. The observed operational velocity was recalibrated to `29p/2d` from a cumulative 29p over 2 active days, including 5p on 2026-07-23.
@@ -61,7 +77,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, `english-baseline.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert`, `release-0.2.0.pert`, and `release-0.3.0.pert` as completed independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, `english-baseline.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `cli-surface-reset.pert`, `release-0.2.0.pert`, and `release-0.3.0.pert` as completed independent post-beta workstreams; use `release-0.4.0.pert` as the active Contract 5 release workstream; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -119,7 +135,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all eighteen self-use plans, including the owner-aware governance plan, the completed scheduling-and-units macro and SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 details, and the completed `0.3.0` release plan.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all nineteen self-use plans, including the owner-aware governance plan, the completed scheduling-and-units macro and SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 details, the completed `0.3.0` release plan, and the active `0.4.0` release plan.
 
 ```sh
 npm ci

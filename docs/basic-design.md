@@ -1,8 +1,8 @@
 # perttool Basic Design
 
-- Document status: Draft 1.17
+- Document status: Draft 1.18
 - Created: 2026-07-21
-- Updated: 2026-07-26
+- Updated: 2026-07-27
 - Applicable requirements: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
@@ -21,6 +21,7 @@
 - Governance interface: [specs/governance-interface.md](specs/governance-interface.md)
 - Governance examples: [examples/governance.md](examples/governance.md)
 - Governance design acceptance: [process/governance-design-acceptance.md](process/governance-design-acceptance.md)
+- Contract 5 beta release: [process/0.4.0-release.md](process/0.4.0-release.md)
 - Recommendation examples: [examples/recommendation.md](examples/recommendation.md)
 - AI Agent Guidance Registry: [specs/agent-guidance.md](specs/agent-guidance.md)
 - AI Agent Guidance examples: [examples/agent-guidance.md](examples/agent-guidance.md)
@@ -1500,9 +1501,10 @@ The initial self-use target is the DSL grammar design and implementation work.
 - Post-beta CLI Contract 3 reset: `plans/cli-surface-reset.pert`
 - Contract 3 `v0.2.0` beta release: `plans/release-0.2.0.pert`
 - Contract 4 `v0.3.0` beta release: `plans/release-0.3.0.pert`
+- Contract 5 `v0.4.0` beta release: `plans/release-0.4.0.pert`
 - Historical work plans: Git history
 
-`plans/mvp.pert` defines the completed stage gates from MVP through the first beta; the design and implementation tasks for each slice are separated into the corresponding detail plan. Macro work packages roll up the resource makespan of their detail plans and do not duplicate individual task state. Manage grammar implementation in `plans/grammar.pert`, AI process-control design in `plans/control-plane.pert`, operational M1-M4 work in `plans/operations.pert`, MVP recommendation implementation in `plans/recommendation.pert`, and beta Issue #2 in `plans/agent-guidance.pert`. The post-beta English migration, CLI reset, `v0.2.0` release, scheduling/unit roadmap and details, and `v0.3.0` release remain independent in their corresponding plans until a later macro composition decision.
+`plans/mvp.pert` defines the completed stage gates from MVP through the first beta; the design and implementation tasks for each slice are separated into the corresponding detail plan. Macro work packages roll up the resource makespan of their detail plans and do not duplicate individual task state. Manage grammar implementation in `plans/grammar.pert`, AI process-control design in `plans/control-plane.pert`, operational M1-M4 work in `plans/operations.pert`, MVP recommendation implementation in `plans/recommendation.pert`, and beta Issue #2 in `plans/agent-guidance.pert`. The post-beta English migration, CLI reset, `v0.2.0` release, scheduling/unit roadmap and details, `v0.3.0` release, owner-aware governance, and `v0.4.0` release remain independent in their corresponding plans until a later macro composition decision.
 
 `.pert` represents the DAG of work that designs and implements specifications; it is not the specification content itself. Do not conflate normative specifications with work state.
 
@@ -1831,6 +1833,42 @@ Exit:
 - retain authentication, durable audit, recommendation ranking, MIG-08, Git
   integration, and release publication as separate concerns.
 
+### Post-MVP Slice 4H: Contract 5 `v0.4.0` beta release
+
+The [`v0.4.0` release procedure](process/0.4.0-release.md) selects the first
+package version for accepted Grammar 4, owner-aware goal/DAG mutation
+governance, and CLI Contract 5. The independent
+[`release-0.4.0.pert`](../plans/release-0.4.0.pert) plan does not restore or
+duplicate completed governance implementation task state. It verifies reached
+`GOVERNANCE_ACCEPTED` and the accepted source/package boundary before
+preparing one release candidate.
+
+The release sequence separates:
+
+1. the normative version, release gate, and authority boundary;
+2. verification of accepted Contract 5 implementation input;
+3. local package identity, migration guidance, and documentation preparation;
+4. one clean candidate and one immutable tarball;
+5. the separately authorized Git, GitHub, and npm `beta` PUBLISH operation;
+6. post-publication durable acceptance;
+7. independent later decisions for npm `latest` and Issue #4 closure.
+
+The 2026-07-27 request authorizes only `RELEASE_040_GATE_DESIGN`.
+`RELEASE_040_PUBLISH` remains explicitly blocked in the plan until a separate
+user instruction authorizes the named `0.4.0` external publication batch.
+Plan state records this boundary but is not itself external-write authority.
+
+Exit:
+
+- satisfy Requirements 21.5 from one clean release commit and one immutable
+  tarball;
+- publish the accepted Contract 5 package to a GitHub prerelease and npm
+  `beta` only under separate named authorization;
+- verify artifact identity and isolated installation from both public
+  channels;
+- retain `latest=0.3.0`; and
+- leave npm `latest` promotion and Issue #4 closure as separate decisions.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 As an independent future backlog after the first beta, split the work into the following three deliverables.
@@ -1866,7 +1904,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | CLI Contract 3 registry, help/guide split, and file-first maintenance | Sections 12.2, 15, 16, and 21.2 |
 | Temporal/unit grammar, projections, migration, and Contract 4 boundary | Sections 7.6, 7.7, 10.7, 11, 12, 15, 16, and 18 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
-| Owner-aware goal/DAG source, authority, and Contract 5 interface | Sections 2.6, 7.1, 12.3, 15, and 16 |
+| Owner-aware goal/DAG source, authority, and Contract 5 interface/release | Sections 2.6, 7.1, 12.3, 15, 16, and 17 |
 | Mermaid adapter | Chapters 13 and 14 |
 | Test design | Section 20.3 and Chapter 21 |
 | Grammar-first self-use | Chapter 19 and Section 16 of this document |

@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.57
+- Document status: Active Stage 3 / Revision 2.58
 - Creation date: 2026-07-21
-- Update date: 2026-07-26
+- Update date: 2026-07-27
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -27,6 +27,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/cli-surface-reset.pert` | Review-derived post-beta CLI/help design, implementation, migration, and acceptance DAG | `.pert` document |
 | `plans/release-0.2.0.pert` | Contract 3 version decision, local preparation, authorized distribution, and acceptance DAG | `.pert` document |
 | `plans/release-0.3.0.pert` | Contract 4 version gate, accepted implementation input, preparation, authorized PUBLISH, and acceptance DAG | `.pert` document |
+| `plans/release-0.4.0.pert` | Contract 5 version gate, accepted governance input, preparation, separately authorized PUBLISH, and acceptance DAG | `.pert` document |
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
@@ -1015,6 +1016,29 @@ makespans, 3p resource delay, both forecasts, and the joint
 `PTDAG-208`. `GOV_GUIDANCE` remains ready but deferred by the selected
 resource-feasible set.
 
+The governance workstream subsequently completed and advanced every remaining
+task through `GOV_ACCEPTANCE`; reached `GOVERNANCE_ACCEPTED`, the accepted
+source/package boundary, and its `45p/2d` observation remain in the current
+plan and acceptance record. After the user selected release-gate design as
+the next task, Contract 5 `project init` created
+`plans/release-0.4.0.pert` as Grammar 4 with explicit goal/DAG owner `user`.
+One governed atomic batch changed both goal and DAG scopes using actor `codex`
+and the user-authorized `accepted-by-owner user` assertion. It replaced source
+digest
+`sha256:069823f669f09617f8068e12614297b7c1ffe259d21c7cdf01df05ea007fa13c`
+with
+`sha256:89b4c2f74ee221500b90d3c5530eb02a9b74ee721d7d7b621ebf002c495ed110`.
+An ordinary project-description clarification then produced current digest
+`sha256:3664c6149673f53221716d91c1a7fadf6eac15c02ac13ea230659c0ab286a0a1`.
+`RELEASE_040_GATE_DESIGN` is done but unadvanced. Sixteen points remain;
+the precedence makespan is 16p, and the heuristic resource makespan is
+conditionally 16p if publication authorization is resolved at time zero.
+Both inherited forecasts are `32/19d`, and complete NextResult v4 recommends
+and starts only `RELEASE_040_CONTRACT_5_READINESS`.
+`RELEASE_040_PUBLISH` is explicitly blocked pending a separate named
+authorization; npm `latest` promotion and Issue #4 closure remain separate
+post-acceptance decisions.
+
 Stage 1 allowed operations:
 
 - check
@@ -1071,6 +1095,8 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - Independent post-beta owner-aware mutation governance: `governance.pert`
 - Independent post-beta CLI/help reset: `cli-surface-reset.pert`
 - Independent Contract 3 `v0.2.0` release: `release-0.2.0.pert`
+- Completed independent Contract 4 `v0.3.0` release: `release-0.3.0.pert`
+- Active independent Contract 5 `v0.4.0` release: `release-0.4.0.pert`
 - Independent scheduling/unit milestone roadmap: `scheduling-units.pert`
 - Completed detail only to SU-M1: `scheduling-units-m1.pert`
 - Completed and advanced target-only source/Core detail to SU-M2:
@@ -1214,6 +1240,8 @@ The MVP macro plan is used from Stage 1 to confirm overall milestones. After rea
 - the suffix-free `0.1.0` beta release after Issue #2 is accepted
 - After the suffix-free `0.1.0` beta release, migrate the repository to the English baseline
 - refine and deliver temporal properties, deadline-aware capabilities, and safe point/time-unit migration through the SU-M0 to SU-M5 milestone roadmap
+- deliver Issue #4 owner-aware governance, then release its accepted Grammar 4
+  and Contract 5 boundary through the independent `0.4.0` beta workstream
 - the Issue #3 backlog hierarchy and multi-plan composition after the MVP
 - the LSP server after the first beta
 - the VSIX, with code highlighting and an LSP client, after the LSP server
@@ -1304,6 +1332,7 @@ Stage 1 entry evidence:
 - CLI-surface-reset file-first acceptance gate: the isolated installed-package CLI alone initializes, reads, mutates every entity field, analyzes, selects, advances, and validates a plan without manual source rewriting; cumulative velocity is `49p/1d`, no detail work remains, and complete `NextResult.v3` has no recommendation
 - Contract 3 `v0.2.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Contract 3, renamed-command rejection, read-only agent guidance, complete Next v3, and file-first checks pass; publication left `latest=0.1.0` unchanged, then a separately authorized post-acceptance operation made `beta=latest=0.2.0`; cumulative velocity is `17p/2d`, no detail work remains, and complete Next v3 has no recommendation
 - Contract 4 `v0.3.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Grammar 3, temporal/deadline analysis, complete Next v4 start authority, exact unit migration, and file-first checks pass; publication left `latest=0.2.0` unchanged, then a separately authorized post-acceptance operation made `beta=latest=0.3.0`; an unqualified global installation and light smoke pass; cumulative velocity is `19p/2d`, no detail work remains, and complete Next v4 has no recommendation
+- Contract 5 `v0.4.0` planning gate: Grammar 4 `project init` plus one governed atomic batch create the independent release plan, select the breaking beta version, retain completed governance implementation state outside the release DAG, and explicitly block PUBLISH until separate named authorization; 16p remain, the precedence makespan is 16p, the heuristic resource makespan is conditionally 16p if the block resolves at time zero, inherited forecasts are `32/19d`, and complete Next v4 recommends `RELEASE_040_CONTRACT_5_READINESS`
 - scheduling-and-units rational-Duration replanning gate: completed SU-M1/SU-M2 history remains advanced; the new SU-M2R common predecessor captures the user-selected Decimal-or-fraction target DSL direction without changing active Grammar 1, accepted Grammar 2, migration version 1, or Contract 3; the contract task selects new version identities where compatibility requires them; seven detail tasks total 24p with 15p precedence and 18p heuristic resource makespans, 3p delay, inherited forecasts `5/8d` and `3/4d`; the macro has `4.75d` precedence and `6.75d` resource makespans with 2d delay; complete Next v3 recommends `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` and then `RATIONAL_DURATION_CONTRACT`
 - SU-M2R exact-Duration contract gate: Grammar 3, `perttool.temporal-unit-interface@2`, `perttool.unit-migration@2`, `Perttool.UnitMigrationResult.v2`, unsigned exact Fraction syntax, canonical shortest-Decimal-or-reduced-Fraction output, atomic grammar retention/upgrade, and reversibility metadata are accepted without runtime activation; `RATIONAL_DURATION_CONTRACT` is committed at `c1dec29` and advanced through the expected-digest path
 - SU-M2R rational-source and exact-serializer gate: a separate identity-checked internal Grammar 3 parser/validator retains reduced Fraction values, exact source tokens, and spans while Grammar 1/2 stay closed; exact Rational serialization emits the shortest ordinary Decimal or a reduced Fraction without display rounding; both tasks are committed at `787f0bb` and advanced through the expected-digest path; 13p remain with 7p precedence and 10p heuristic resource makespans, 3p delay, inherited forecasts `7/24d` and `5/12d`; the macro rollup is `0.416667d`, and complete Next v3 recommends `RATIONAL_DURATION_FORMATTER` plus `RATIONAL_DURATION_MUTATION`
@@ -1343,5 +1372,5 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all eighteen plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all nineteen plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.
