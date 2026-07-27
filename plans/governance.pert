@@ -37,23 +37,16 @@ resource DOC_SURFACE:
 
 
 
-milestone DESIGN_ACCEPTED:
-  title "Issue #4 cross-cutting design accepted"
-  state reached
 
 
 
 
 
-milestone WRITE_ENFORCEMENT_READY:
-  title "Governed write enforcement ready"
-  state reached
 
-milestone GUIDANCE_READY:
-  title "Editing guidance and generated warning ready"
 
 milestone ACCEPTANCE_INPUT_READY:
   title "Owner-aware governance acceptance input ready"
+  state reached
 
 milestone GOVERNANCE_ACCEPTED:
   title "Owner-aware goal and DAG governance accepted"
@@ -70,22 +63,8 @@ milestone GOVERNANCE_ACCEPTED:
 
 
 
-task GOV_GUIDANCE DESIGN_ACCEPTED -> GUIDANCE_READY:
-  title "Align editing guidance and generated project warnings"
-  description "Update guide editing, README, and process guidance to state that direct DSL editing bypasses goal and DAG owner-confirmation checks, and align them with the generated project header owned by GOV_SOURCE_MODEL. Keep the statement guidance rather than technical enforcement."
-  duration 3p
-  status done
-  priority 60
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
 
-gate GOV_WRITE_ACCEPTANCE_INPUT WRITE_ENFORCEMENT_READY -> ACCEPTANCE_INPUT_READY:
-  reason "Acceptance requires all governed write paths"
 
-gate GOV_GUIDANCE_ACCEPTANCE_INPUT GUIDANCE_READY -> ACCEPTANCE_INPUT_READY:
-  reason "Acceptance requires aligned editing guidance and generated warnings"
 
 task GOV_ACCEPTANCE ACCEPTANCE_INPUT_READY -> GOVERNANCE_ACCEPTED:
   title "Accept owner-aware governance across source and installed package"

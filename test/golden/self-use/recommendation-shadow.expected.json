@@ -159,33 +159,31 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:b4ca40e45a477645e0d00c1e58d3b1bdb5c4993456c0fc006ef2a2b796aed8f9",
+      "source_digest": "sha256:59055944502216054187f8e70cc449b801e3922e48d674b410d852ba0b3f4790",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_GUIDANCE"
+          "GOV_ACCEPTANCE"
         ],
         "runnable_now": [
-          "GOV_GUIDANCE"
+          "GOV_ACCEPTANCE"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "GOV_ACCEPTANCE"
-        ]
+        "upcoming": []
       },
       "recommended_task_ids": [
-        "GOV_GUIDANCE"
+        "GOV_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "GOV_GUIDANCE"
+        "GOV_ACCEPTANCE"
       ],
       "tiers": {
-        "GOV_GUIDANCE": "recommended"
+        "GOV_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_GUIDANCE",
+          "id": "GOV_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
