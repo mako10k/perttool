@@ -146,17 +146,11 @@ test("omitted governance defaults do not alter Grammar 1/2/3 source", () => {
   const activeVersion4 = perttool.checkDocument(
     source({ governance: [] }),
   );
-  assert.equal(activeVersion4.ok, false);
-  assert.equal(
-    activeVersion4.diagnostics.some(({ code }) => code === "PTSEM-108"),
-    true,
-  );
+  assert.equal(activeVersion4.ok, true);
+  assert.equal(activeVersion4.grammarVersion, 4);
   const activeGovernance = perttool.checkDocument(source());
-  assert.equal(activeGovernance.ok, false);
-  assert.equal(
-    activeGovernance.diagnostics.some(({ code }) => code === "PTDSL-005"),
-    true,
-  );
+  assert.equal(activeGovernance.ok, true);
+  assert.equal(activeGovernance.grammarVersion, 4);
 });
 
 test("governance field names remain contextual rather than reserved entity IDs", () => {
@@ -224,6 +218,10 @@ test("Grammar 4 formatting canonicalizes only declared values", () => {
     TARGET_GRAMMAR_4_CAPABILITY,
   );
   assert.doesNotMatch(omittedFormatted.formattedText, /goal_owner|dag_owner/);
+
+  const activeFormatted = perttool.formatDocument(text);
+  assert.equal(activeFormatted.ok, true);
+  assert.equal(activeFormatted.formattedText, formatted.formattedText);
 });
 
 test("project mutation upgrades atomically, preserves order, and supports clear/downgrade", () => {
@@ -416,9 +414,17 @@ test("exact unit migration retains Grammar 4 governance source", () => {
   ]) {
     assert.equal(migrated.updatedText.includes(line), true, line);
   }
+
+  const activeMigrated = perttool.planUnitMigration(text, {
+    targetUnit: "day",
+  });
+  assert.equal(activeMigrated.ok, true);
+  assert.equal(activeMigrated.sourceGrammarVersion, 4);
+  assert.equal(activeMigrated.targetGrammarVersion, 4);
+  assert.match(activeMigrated.updatedText, /goal_owner llm/);
 });
 
-test("Contract 4 root exports no partial Grammar 4 or governance surface", async () => {
+test("Contract 5 root exposes standard governance types without target helpers", async () => {
   for (const name of [
     "TARGET_GRAMMAR_4_CAPABILITY",
     "parseTargetGrammar4Document",
@@ -434,7 +440,9 @@ test("Contract 4 root exports no partial Grammar 4 or governance surface", async
     new URL("../dist/index.d.ts", import.meta.url),
     "utf8",
   );
-  assert.doesNotMatch(declarations, /Governance|Grammar4|GRAMMAR_4/);
+  assert.match(declarations, /GovernanceDecisionV1/);
+  assert.match(declarations, /GovernanceRequestInput/);
+  assert.doesNotMatch(declarations, /parseTargetGrammar4Document/);
   const activeInit = perttool.planProjectInit({
     projectId: "ACTIVE",
     title: "active",
@@ -446,6 +454,21 @@ test("Contract 4 root exports no partial Grammar 4 or governance surface", async
   assert.equal(activeInit.ok, true);
   assert.equal(
     activeInit.candidateText.startsWith(GOVERNANCE_DIRECT_EDIT_WARNING),
-    false,
+    true,
+  );
+
+  const activeMetadata = perttool.getProjectMetadata(source());
+  assert.equal(activeMetadata.ok, true);
+  assert.equal(activeMetadata.project.version, 4);
+  assert.equal(activeMetadata.project.governance.effective.goalOwner, "user");
+  assert.equal(activeMetadata.project.governance.effective.dagOwner, "admin");
+
+  const profileExport = perttool.exportMermaid(source());
+  assert.equal(profileExport.ok, false);
+  assert.equal(profileExport.artifact, null);
+  assert.equal(profileExport.lossReport.lossless, false);
+  assert.equal(
+    profileExport.diagnostics.some(({ code }) => code === "PTCNV-102"),
+    true,
   );
 });

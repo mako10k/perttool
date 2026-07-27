@@ -17,7 +17,7 @@ import {
   type TargetTemporalAnalysis,
 } from "./target-temporal-analysis.js";
 import {
-  TARGET_GRAMMAR_3_CAPABILITY,
+  TARGET_GRAMMAR_4_CAPABILITY,
 } from "../parser/document-parser.js";
 
 export interface AnalysisResultV3 extends AnalysisResult {
@@ -41,7 +41,7 @@ export function analyzeDocument(
   const base = analyzeBaseDocument(text, options);
   const target = analyzeTargetTemporalDocument(
     text,
-    TARGET_GRAMMAR_3_CAPABILITY,
+    TARGET_GRAMMAR_4_CAPABILITY,
     options,
   );
   return Object.freeze({
@@ -58,7 +58,7 @@ export function selectNextTasks(
 ): NextResultV4 {
   const target = selectTargetTemporalTasks(
     text,
-    TARGET_GRAMMAR_3_CAPABILITY,
+    TARGET_GRAMMAR_4_CAPABILITY,
     options,
   );
   if ("recommendation" in target) return target;

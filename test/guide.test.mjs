@@ -6,13 +6,13 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
+  checkDocument,
   getGuide,
+  getHelp,
   guideResultToJson,
   renderGuideResult,
   serializeGuideResult,
-} from "../dist/help/guide.js";
-import { getHelp } from "../dist/help/registry.js";
-import { checkDocument } from "../dist/index.js";
+} from "../dist/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -62,7 +62,7 @@ function helpProjection(result) {
   };
 }
 
-test("Contract 4 guide preserves every HelpNode topic and content level", () => {
+test("Contract 5 guide preserves every HelpNode topic and content level", () => {
   const queries = [
     { topicId: null, level: "index" },
     ...topicIds.flatMap((topicId) =>
@@ -74,9 +74,21 @@ test("Contract 4 guide preserves every HelpNode topic and content level", () => 
   for (const { topicId, level } of queries) {
     const guide = getGuide(topicId, level);
     assert.equal(guide.schemaVersion, "Perttool.GuideResult.v1");
-    assert.equal(guide.cliContractVersion, 4);
+    assert.equal(guide.cliContractVersion, 5);
     assert.equal(guide.operation, "guide");
-    assert.deepEqual(helpProjection(guide), getHelp(topicId, level));
+    const help = getHelp(topicId, level);
+    if (topicId === "editing" && level !== "index") {
+      assert.deepEqual(
+        {
+          ...helpProjection(guide),
+          sections: guide.sections.slice(0, help.sections.length),
+        },
+        help,
+      );
+      assert.ok(guide.sections.length > help.sections.length);
+    } else {
+      assert.deepEqual(helpProjection(guide), help);
+    }
   }
 
   const index = getGuide(null, "index");
@@ -90,14 +102,14 @@ test("GuideResult text and JSON match canonical golden projections", async () =>
   const expectedJson = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract3-guide-index.expected.json",
+      "golden/help/contract5-guide-index.expected.json",
     ),
     "utf8",
   );
   const expectedText = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract4-guide-syntax-quick.expected.txt",
+      "golden/help/contract5-guide-syntax-quick.expected.txt",
     ),
     "utf8",
   );

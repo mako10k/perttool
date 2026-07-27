@@ -453,6 +453,13 @@ export function targetGovernanceCommandDescriptorToJson(
   };
 }
 
+export function targetGovernanceCommandRegistryToJson():
+  readonly Readonly<Record<string, unknown>>[] {
+  return TARGET_GOVERNANCE_COMMAND_REGISTRY.map(
+    targetGovernanceCommandDescriptorToJson,
+  );
+}
+
 function diagnosticToJson(
   value: Diagnostic,
 ): Readonly<Record<string, unknown>> {

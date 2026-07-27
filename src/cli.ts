@@ -16,7 +16,6 @@ import {
   renderProjectInitResult,
   withProjectInitOutput,
 } from "./application/init.js";
-import { planBatchMutation, planMutation } from "./application/mutate.js";
 import {
   planUnitMigration,
   withUnitMigrationWrite,
@@ -24,8 +23,24 @@ import {
 } from "./application/unit-migration.js";
 import {
   getProjectMetadata,
-  type ProjectMetadata,
 } from "./application/project.js";
+import {
+  planTargetGovernanceAdvance,
+  planTargetGovernanceBatchMutation,
+  planTargetGovernanceMutation,
+  type TargetGovernanceAdvanceResultV2,
+  type TargetGovernanceMutationResultV2,
+} from "./application/target-governance-mutation.js";
+import {
+  renderTargetGovernanceDecision,
+  renderTargetGovernanceProjectText,
+  targetGovernanceMutationResultToJson,
+  targetGovernanceProjectResultToJson,
+  type TargetGovernanceWriteProjection,
+} from "./application/target-governance-projection.js";
+import {
+  persistTargetGovernanceResult,
+} from "./application/target-governance-write.js";
 import { getAgentHelp } from "./application/agent-help.js";
 import {
   exportMermaid,
@@ -36,26 +51,29 @@ import {
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import {
-  getGuide,
-  renderGuideResult,
-  serializeGuideResult,
-} from "./help/guide.js";
+  getTargetGovernanceGuide,
+  renderTargetGovernanceGuideResult,
+  serializeTargetGovernanceGuideResult,
+} from "./help/target-governance-guide.js";
 import {
   commandOptionSets,
   type ProjectedCommandDescriptor,
 } from "./command/registry.js";
 import {
-  CONTRACT4_COMMAND_REGISTRY,
-  getCommandDiscovery,
-  renderCommandHelpResult,
-  serializeCommandHelpResult,
-} from "./command/discovery.js";
+  TARGET_GOVERNANCE_COMMAND_REGISTRY,
+  getTargetGovernanceCommandDiscovery,
+  renderTargetGovernanceCommandHelpResult,
+  serializeTargetGovernanceCommandHelpResult,
+  type TargetGovernanceCommandDescriptor,
+} from "./command/target-governance-discovery.js";
 import {
   handlerCommandUsageError,
-  renderCommandUsageError,
-  serializeCommandUsageError,
-  validateCommandInvocation,
 } from "./command/usage.js";
+import {
+  renderTargetGovernanceCommandUsageError,
+  serializeTargetGovernanceCommandUsageError,
+  validateTargetGovernanceCommandInvocation,
+} from "./command/target-governance-usage.js";
 import { agentGuidanceResultToJson } from "./guidance/projection.js";
 import {
   agentGuidanceExitCode,
@@ -76,7 +94,6 @@ import {
 import type { Diagnostic, SourceSpan } from "./model/diagnostics.js";
 import type { Rational } from "./model/rational.js";
 import { formatDecimal } from "./model/rational.js";
-import type { TargetCalendarValue } from "./model/target-calendar.js";
 import type { DurationUnit, Velocity } from "./model/units.js";
 import { convertWithVelocity, durationSuffix } from "./model/units.js";
 import { recommendationInvariantExitCode } from "./recommendation/failure.js";
@@ -86,17 +103,20 @@ import type {
   MilestoneMutationState,
   Mutation,
   MutationResult,
-  ProjectClearableField,
   ResourceClearableField,
   TaskClearableField,
   TaskEstimateInput,
   TaskMutationStatus,
   TaskRequirementInput,
 } from "./mutation/types.js";
+import type {
+  TargetGovernanceMutation,
+  TargetGovernanceProjectClearableField,
+} from "./mutation/target-types.js";
+import type { AdvanceDetails } from "./mutation/advance.js";
 import {
-  planAdvance,
-  type AdvanceDetails,
-} from "./mutation/advance.js";
+  TARGET_GRAMMAR_4_CAPABILITY,
+} from "./parser/document-parser.js";
 import { TOOL_VERSION } from "./version.js";
 
 type OutputFormat = "text" | "json";
@@ -167,7 +187,7 @@ function parseCommandOptions(
   operation: string,
   args: readonly string[],
 ): ParsedOptions {
-  const descriptor = CONTRACT4_COMMAND_REGISTRY.find(
+  const descriptor = TARGET_GOVERNANCE_COMMAND_REGISTRY.find(
     (candidate) => candidate.operation === operation,
   );
   if (descriptor === undefined) {
@@ -349,7 +369,7 @@ function cliError(
   if (json) {
     writeJson({
       schema_version: "Perttool.CliError.v1",
-      cli_contract_version: 4,
+      cli_contract_version: 5,
       tool_version: TOOL_VERSION,
       operation,
       ok: false,
@@ -395,7 +415,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.CheckResult.v2",
-      cli_contract_version: 4,
+      cli_contract_version: 5,
       tool_version: TOOL_VERSION,
       operation: "document.check",
       ok,
@@ -422,44 +442,6 @@ async function runCheck(args: readonly string[]): Promise<number> {
     }
   }
   return ok ? 0 : 1;
-}
-
-function projectJson(project: ProjectMetadata): Readonly<Record<string, unknown>> {
-  return {
-    id: project.id,
-    version: project.version,
-    title: project.title,
-    description: project.description,
-    as_of: snakeJson(project.asOf),
-    duration_unit: project.durationUnit,
-    velocity: project.velocity,
-    finish: project.finish,
-    finish_deadline: snakeJson(project.finishDeadline),
-    critical_epsilon: project.criticalEpsilon,
-    target_duration: project.targetDuration,
-  };
-}
-
-function renderProjectText(project: ProjectMetadata): string {
-  const optional = (value: string | null): string => value ?? "-";
-  const calendar = (value: TargetCalendarValue | null): string =>
-    value === null
-      ? "-"
-      : `${value.kind.toUpperCase()} ${value.sourceText ?? "-"}`;
-  return [
-    `PROJECT ${project.id}`,
-    `VERSION ${project.version}`,
-    `TITLE ${JSON.stringify(project.title)}`,
-    `DESCRIPTION ${project.description === null ? "-" : JSON.stringify(project.description)}`,
-    `AS_OF ${calendar(project.asOf)}`,
-    `DURATION_UNIT ${project.durationUnit}`,
-    `VELOCITY ${optional(project.velocity)}`,
-    `FINISH ${project.finish}`,
-    `FINISH_DEADLINE ${calendar(project.finishDeadline)}`,
-    `CRITICAL_EPSILON ${optional(project.criticalEpsilon)}`,
-    `TARGET_DURATION ${optional(project.targetDuration)}`,
-    "",
-  ].join("\n");
 }
 
 async function runProjectShow(args: readonly string[]): Promise<number> {
@@ -496,23 +478,17 @@ async function runProjectShow(args: readonly string[]): Promise<number> {
       result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
   if (format === "json") {
-    writeJson({
-      schema_version: "Perttool.ProjectResult.v2",
-      cli_contract_version: 4,
-      tool_version: TOOL_VERSION,
-      operation: "project.show",
-      ok,
-      document_id: result.documentId,
-      source,
-      source_digest: input.digest,
-      diagnostics: result.diagnostics.map(jsonDiagnostic),
-      diagnostics_truncated: result.diagnosticsTruncated,
-      grammar_version: result.grammarVersion,
-      project: result.project === null ? null : projectJson(result.project),
-    });
+    writeJson(
+      targetGovernanceProjectResultToJson(
+        result,
+        source,
+        input.digest,
+        ok,
+      ),
+    );
   } else {
     if (ok && result.project !== null) {
-      process.stdout.write(renderProjectText(result.project));
+      process.stdout.write(renderTargetGovernanceProjectText(result.project));
     }
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
@@ -556,6 +532,24 @@ async function runProjectInit(args: readonly string[]): Promise<number> {
       : {
           initialMilestoneDeadline:
             parsed.values.get("initial-milestone-deadline")!,
+        }),
+    ...(parsed.values.get("goal-owner") === undefined
+      ? {}
+      : { goalOwner: parsed.values.get("goal-owner")! }),
+    ...(parsed.values.get("goal-delegates") === undefined
+      ? {}
+      : {
+          goalDelegates:
+            principalListOption(parsed.values.get("goal-delegates")!),
+        }),
+    ...(parsed.values.get("dag-owner") === undefined
+      ? {}
+      : { dagOwner: parsed.values.get("dag-owner")! }),
+    ...(parsed.values.get("dag-delegates") === undefined
+      ? {}
+      : {
+          dagDelegates:
+            principalListOption(parsed.values.get("dag-delegates")!),
         }),
   });
   let writeResult: DocumentWriteResult | null = null;
@@ -678,6 +672,54 @@ function editingWriteRequest(
   return { mode: "preview", target: null };
 }
 
+function governanceRequest(
+  parsed: ParsedOptions,
+  writeRequest: EditingWriteRequest,
+) {
+  return Object.freeze({
+    intent: writeRequest.mode === "preview"
+      ? "preview" as const
+      : "persist" as const,
+    actor: parsed.values.get("actor") ?? null,
+    acceptedByOwner: Object.freeze([
+      ...(parsed.repeatedValues.get("accepted-by-owner") ?? []),
+    ]),
+  });
+}
+
+async function persistGovernedResult(
+  result:
+    | TargetGovernanceMutationResultV2
+    | TargetGovernanceAdvanceResultV2,
+  request: EditingWriteRequest,
+  sourceOperand: string,
+): Promise<TargetGovernanceWriteProjection> {
+  if (request.mode === "preview") {
+    return Object.freeze({
+      mode: "preview",
+      target: null,
+      written: false,
+    });
+  }
+  return persistTargetGovernanceResult(
+    result,
+    TARGET_GRAMMAR_4_CAPABILITY,
+    request.mode === "in_place"
+      ? {
+          mode: "in_place",
+          target: request.target,
+          ...(request.expectedDigest === undefined
+            ? {}
+            : { expectedDigest: request.expectedDigest }),
+        }
+      : {
+          mode: "out",
+          source: sourceOperand,
+          target: request.target,
+        },
+  );
+}
+
 function assertExpectedDigest(
   request: EditingWriteRequest,
   initialDigest: string,
@@ -727,6 +769,14 @@ function writeFailureExit(error: unknown, operation: string, json: boolean): num
 
 function renderWriteSummary(operation: string, result: DocumentWriteResult): string {
   return `WRITE ${operation} mode=${result.mode} target=${result.target} digest=${result.digest} written=${result.written}\n`;
+}
+
+function renderGovernanceWriteSummary(
+  operation: string,
+  result: TargetGovernanceWriteProjection,
+  digest: string | null,
+): string {
+  return `WRITE ${operation} mode=${result.mode} target=${result.target ?? "-"} digest=${digest ?? "-"} written=${result.written}\n`;
 }
 
 async function runFormat(args: readonly string[]): Promise<number> {
@@ -786,7 +836,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.FormatResult.v1",
-      cli_contract_version: 4,
+      cli_contract_version: 5,
       tool_version: TOOL_VERSION,
       operation: "document.format",
       ok,
@@ -863,6 +913,13 @@ function uniqueRepeated(parsed: ParsedOptions, option: string): readonly string[
     seen.add(value);
   }
   return values;
+}
+
+function principalListOption(value: string): readonly string[] {
+  const interior = value.slice(1, -1).trim();
+  return interior === ""
+    ? Object.freeze([])
+    : Object.freeze(interior.split(",").map((item) => item.trim()));
 }
 
 function enumRepeated<T extends string>(
@@ -1075,7 +1132,9 @@ function taskMutationFromOptions(action: string, parsed: ParsedOptions): Mutatio
   };
 }
 
-function projectMutationFromOptions(parsed: ParsedOptions): Mutation {
+function projectMutationFromOptions(
+  parsed: ParsedOptions,
+): TargetGovernanceMutation {
   if (parsed.positionals.length !== 1) {
     throw new UsageError("project set requires exactly one <file>");
   }
@@ -1085,7 +1144,7 @@ function projectMutationFromOptions(parsed: ParsedOptions): Mutation {
     "duration-unit",
     new Set(["day", "hour", "point"]),
   );
-  const clear = enumRepeated<ProjectClearableField>(
+  const clear = enumRepeated<TargetGovernanceProjectClearableField>(
     parsed,
     "clear",
     new Set([
@@ -1094,14 +1153,22 @@ function projectMutationFromOptions(parsed: ParsedOptions): Mutation {
       "velocity",
       "critical_epsilon",
       "target_duration",
+      "goal_owner",
+      "goal_delegates",
+      "dag_owner",
+      "dag_delegates",
     ]),
   );
-  const conflicts = new Map<ProjectClearableField, boolean>([
+  const conflicts = new Map<TargetGovernanceProjectClearableField, boolean>([
     ["description", parsed.values.has("description")],
     ["as_of", parsed.values.has("as-of")],
     ["velocity", parsed.values.has("velocity")],
     ["critical_epsilon", parsed.values.has("critical-epsilon")],
     ["target_duration", parsed.values.has("target-duration")],
+    ["goal_owner", parsed.values.has("goal-owner")],
+    ["goal_delegates", parsed.values.has("goal-delegates")],
+    ["dag_owner", parsed.values.has("dag-owner")],
+    ["dag_delegates", parsed.values.has("dag-delegates")],
   ]);
   const conflict = clear.find((field) => conflicts.get(field) === true);
   if (conflict !== undefined) {
@@ -1132,6 +1199,24 @@ function projectMutationFromOptions(parsed: ParsedOptions): Mutation {
     ...(parsed.values.get("target-duration") === undefined
       ? {}
       : { targetDuration: parsed.values.get("target-duration")! }),
+    ...(parsed.values.get("goal-owner") === undefined
+      ? {}
+      : { goalOwner: parsed.values.get("goal-owner")! }),
+    ...(parsed.values.get("goal-delegates") === undefined
+      ? {}
+      : {
+          goalDelegates:
+            principalListOption(parsed.values.get("goal-delegates")!),
+        }),
+    ...(parsed.values.get("dag-owner") === undefined
+      ? {}
+      : { dagOwner: parsed.values.get("dag-owner")! }),
+    ...(parsed.values.get("dag-delegates") === undefined
+      ? {}
+      : {
+          dagDelegates:
+            principalListOption(parsed.values.get("dag-delegates")!),
+        }),
   };
   return {
     kind: "project.set",
@@ -1343,7 +1428,7 @@ async function runMutation(
   const operation = `${resource}.${action}`;
   let sourceOperand: string;
   let writeRequest: EditingWriteRequest;
-  let mutation: Mutation;
+  let mutation: TargetGovernanceMutation;
 
   if (resource === "batch") {
     if (parsed.positionals.length !== 1) {
@@ -1367,7 +1452,7 @@ async function runMutation(
         format === "json",
       );
     }
-    mutation = request as Mutation;
+    mutation = request as TargetGovernanceMutation;
   } else {
     mutation =
       resource === "project"
@@ -1399,44 +1484,66 @@ async function runMutation(
     maxDiagnostics,
     originalLabel: source,
     updatedLabel: "candidate",
+    governance: governanceRequest(parsed, writeRequest),
   };
   const result = resource === "batch"
-    ? planBatchMutation(input.text, mutation, mutationOptions)
-    : planMutation(input.text, mutation, mutationOptions);
+    ? planTargetGovernanceBatchMutation(
+        input.text,
+        mutation as Extract<
+          TargetGovernanceMutation,
+          { readonly kind: "batch" }
+        >,
+        TARGET_GRAMMAR_4_CAPABILITY,
+        mutationOptions,
+      )
+    : planTargetGovernanceMutation(
+        input.text,
+        mutation,
+        TARGET_GRAMMAR_4_CAPABILITY,
+        mutationOptions,
+      );
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
     (result.diagnosticsTruncated ||
       result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
-  let writeResult: DocumentWriteResult | null = null;
+  let writeResult: TargetGovernanceWriteProjection = Object.freeze({
+    mode: writeRequest.mode,
+    target: writeRequest.target,
+    written: false,
+  });
   if (result.ok) {
     try {
-      assertExpectedDigest(writeRequest, input.digest);
       if (ok && writeRequest.mode !== "preview") {
-        writeResult = await commitCandidate(writeRequest, result.updatedText, input.digest);
+        writeResult = await persistGovernedResult(
+          result,
+          writeRequest,
+          sourceOperand,
+        );
       }
     } catch (error) {
       return writeFailureExit(error, operation, format === "json");
     }
   }
   if (format === "json") {
-    writeJson({
-      schema_version: "Perttool.MutationResult.v1",
-      cli_contract_version: 4,
-      tool_version: TOOL_VERSION,
-      operation,
-      ok,
-      document_id: result.documentId,
-      source,
-      source_digest: input.digest,
-      diagnostics: result.diagnostics.map(jsonDiagnostic),
-      diagnostics_truncated: result.diagnosticsTruncated,
-      ...previewResultJson(result, result.ok, writeRequest, writeResult),
-    });
+    writeJson(
+      targetGovernanceMutationResultToJson(
+        ok ? result : Object.freeze({ ...result, ok: false }),
+        operation,
+        source,
+        writeResult,
+      ),
+    );
   } else {
     if (ok) {
-      if (writeResult !== null) {
-        process.stderr.write(renderWriteSummary(operation, writeResult));
+      if (writeRequest.mode !== "preview") {
+        process.stderr.write(
+          renderGovernanceWriteSummary(
+            operation,
+            writeResult,
+            result.updatedDigest,
+          ),
+        );
       } else {
         process.stdout.write(
           parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
@@ -1447,6 +1554,11 @@ async function runMutation(
           );
         }
       }
+    }
+    if (result.governance !== null) {
+      process.stderr.write(
+        renderTargetGovernanceDecision(result.governance),
+      );
     }
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
@@ -1473,7 +1585,7 @@ function unitMigrationJson(
   });
   return {
     schema_version: result.schemaVersion,
-    cli_contract_version: 4,
+    cli_contract_version: 5,
     tool_version: TOOL_VERSION,
     operation: "project.migrate-unit",
     ok,
@@ -1634,22 +1746,6 @@ async function runUnitMigration(args: readonly string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-function advanceResultJson(
-  details: AdvanceDetails | null,
-): Readonly<Record<string, unknown>> | null {
-  return details === null
-    ? null
-    : {
-        removed_task_ids: details.removedTaskIds,
-        removed_gate_ids: details.removedGateIds,
-        removed_milestone_ids: details.removedMilestoneIds,
-        frontier_before: details.frontierBefore,
-        frontier_after: details.frontierAfter,
-        ready_before: details.readyBefore,
-        ready_after: details.readyAfter,
-      };
-}
-
 function renderAdvanceSummary(details: AdvanceDetails): string {
   const list = (ids: readonly string[]): string => ids.join(",") || "-";
   return [
@@ -1687,46 +1783,58 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       format === "json",
     );
   }
-  const result = planAdvance(input.text, {
-    maxDiagnostics,
-    originalLabel: source,
-    updatedLabel: "candidate",
-  });
+  const result = planTargetGovernanceAdvance(
+    input.text,
+    TARGET_GRAMMAR_4_CAPABILITY,
+    {
+      maxDiagnostics,
+      originalLabel: source,
+      updatedLabel: "candidate",
+      governance: governanceRequest(parsed, writeRequest),
+    },
+  );
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
     (result.diagnosticsTruncated ||
       result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
-  let writeResult: DocumentWriteResult | null = null;
+  let writeResult: TargetGovernanceWriteProjection = Object.freeze({
+    mode: writeRequest.mode,
+    target: writeRequest.target,
+    written: false,
+  });
   if (result.ok) {
     try {
-      assertExpectedDigest(writeRequest, input.digest);
       if (ok && writeRequest.mode !== "preview") {
-        writeResult = await commitCandidate(writeRequest, result.updatedText, input.digest);
+        writeResult = await persistGovernedResult(
+          result,
+          writeRequest,
+          sourceOperand,
+        );
       }
     } catch (error) {
       return writeFailureExit(error, "dag.advance", format === "json");
     }
   }
   if (format === "json") {
-    writeJson({
-      schema_version: "Perttool.MutationResult.v1",
-      cli_contract_version: 4,
-      tool_version: TOOL_VERSION,
-      operation: "dag.advance",
-      ok,
-      document_id: result.documentId,
-      source,
-      source_digest: input.digest,
-      diagnostics: result.diagnostics.map(jsonDiagnostic),
-      diagnostics_truncated: result.diagnosticsTruncated,
-      ...previewResultJson(result, result.ok, writeRequest, writeResult),
-      advance: advanceResultJson(result.advance),
-    });
+    writeJson(
+      targetGovernanceMutationResultToJson(
+        ok ? result : Object.freeze({ ...result, ok: false }),
+        "dag.advance",
+        source,
+        writeResult,
+      ),
+    );
   } else {
     if (ok && result.advance !== null) {
-      if (writeResult !== null) {
-        process.stderr.write(renderWriteSummary("dag.advance", writeResult));
+      if (writeRequest.mode !== "preview") {
+        process.stderr.write(
+          renderGovernanceWriteSummary(
+            "dag.advance",
+            writeResult,
+            result.updatedDigest,
+          ),
+        );
       } else {
         process.stdout.write(
           parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
@@ -1738,6 +1846,11 @@ async function runAdvance(args: readonly string[]): Promise<number> {
         }
       }
       process.stderr.write(renderAdvanceSummary(result.advance));
+    }
+    if (result.governance !== null) {
+      process.stderr.write(
+        renderTargetGovernanceDecision(result.governance),
+      );
     }
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
@@ -2186,7 +2299,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.AnalysisResult.v3",
-      cli_contract_version: 4,
+      cli_contract_version: 5,
       tool_version: TOOL_VERSION,
       operation: "dag.analyze",
       ok,
@@ -2334,7 +2447,7 @@ async function runRender(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ExportResult.v1",
-      cli_contract_version: 4,
+      cli_contract_version: 5,
       tool_version: TOOL_VERSION,
       operation: "dag.render",
       ok,
@@ -2436,7 +2549,7 @@ async function runImport(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ImportResult.v1",
-      cli_contract_version: 4,
+      cli_contract_version: 5,
       tool_version: TOOL_VERSION,
       operation: "dag.import",
       ok,
@@ -2823,7 +2936,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     if (format === "json") {
       writeJson({
         schema_version: "Perttool.CliError.v1",
-        cli_contract_version: 4,
+        cli_contract_version: 5,
         tool_version: TOOL_VERSION,
         operation: "dag.next",
         ok: false,
@@ -2844,7 +2957,7 @@ async function runNext(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.NextResult.v4",
-      cli_contract_version: 4,
+      cli_contract_version: 5,
       recommendation_interface_version: 1,
       tool_version: TOOL_VERSION,
       operation: "dag.next",
@@ -2880,11 +2993,11 @@ function runGuide(args: readonly string[]): number {
   const topicId =
     parsed.positionals.length === 0 ? null : parsed.positionals.join(".");
   const level = helpLevel(parsed.values.get("level"), topicId !== null);
-  const result = getGuide(topicId, level);
+  const result = getTargetGovernanceGuide(topicId, level);
   if (format === "json") {
-    process.stdout.write(serializeGuideResult(result));
+    process.stdout.write(serializeTargetGovernanceGuideResult(result));
   } else {
-    const rendered = renderGuideResult(result);
+    const rendered = renderTargetGovernanceGuideResult(result);
     if (result.ok) {
       process.stdout.write(rendered);
     } else {
@@ -2900,14 +3013,14 @@ function runCommandHelp(args: readonly string[]): number {
     throw new UsageError("help accepts at most <resource> <action>");
   }
   const format = outputFormat(parsed.values.get("format"));
-  const result = getCommandDiscovery({
+  const result = getTargetGovernanceCommandDiscovery({
     resource: parsed.positionals[0] ?? null,
     action: parsed.positionals[1] ?? null,
   });
   if (format === "json") {
-    process.stdout.write(serializeCommandHelpResult(result));
+    process.stdout.write(serializeTargetGovernanceCommandHelpResult(result));
   } else {
-    const rendered = renderCommandHelpResult(result);
+    const rendered = renderTargetGovernanceCommandHelpResult(result);
     if (result.ok) {
       process.stdout.write(rendered);
     } else {
@@ -2940,7 +3053,7 @@ function runAgentHelp(args: readonly string[]): number {
     } = projected;
     writeJson({
       schema_version: schemaVersion,
-      cli_contract_version: 4,
+      cli_contract_version: 5,
       ...payload,
     });
   } else {
@@ -2969,7 +3082,7 @@ function runAgentHelp(args: readonly string[]): number {
 }
 
 async function dispatchCommand(
-  descriptor: ProjectedCommandDescriptor,
+  descriptor: TargetGovernanceCommandDescriptor,
   args: readonly string[],
 ): Promise<number> {
   switch (descriptor.operation) {
@@ -3023,7 +3136,7 @@ async function dispatchCommand(
       args,
     );
   }
-  throw new Error(`no Contract 4 handler for ${descriptor.operation}`);
+  throw new Error(`no Contract 5 handler for ${descriptor.operation}`);
 }
 
 function emitCommandUsage(
@@ -3031,9 +3144,11 @@ function emitCommandUsage(
   json: boolean,
 ): number {
   if (json) {
-    process.stdout.write(serializeCommandUsageError(error));
+    process.stdout.write(
+      serializeTargetGovernanceCommandUsageError(error),
+    );
   } else {
-    process.stderr.write(renderCommandUsageError(error));
+    process.stderr.write(renderTargetGovernanceCommandUsageError(error));
   }
   return 2;
 }
@@ -3046,12 +3161,16 @@ async function main(argv: readonly string[]): Promise<number> {
   if (argv.length === 1 && argv[0] === "--help") {
     return runCommandHelp([]);
   }
-  const validation = validateCommandInvocation(argv);
+  const validation = validateTargetGovernanceCommandInvocation(argv);
   if (!validation.ok) {
     if (jsonRequested(argv)) {
-      process.stdout.write(serializeCommandUsageError(validation.error));
+      process.stdout.write(
+        serializeTargetGovernanceCommandUsageError(validation.error),
+      );
     } else {
-      process.stderr.write(renderCommandUsageError(validation.error));
+      process.stderr.write(
+        renderTargetGovernanceCommandUsageError(validation.error),
+      );
     }
     return 2;
   }
@@ -3067,7 +3186,10 @@ async function main(argv: readonly string[]): Promise<number> {
   } catch (error) {
     if (error instanceof UsageError) {
       return emitCommandUsage(
-        handlerCommandUsageError(descriptor, error.message),
+        handlerCommandUsageError(
+          descriptor as unknown as ProjectedCommandDescriptor,
+          error.message,
+        ),
         jsonRequested(argv),
       );
     }

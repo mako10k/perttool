@@ -47,7 +47,7 @@ function invokeJson(args, options = {}) {
   const result = invoke([...args, "--format=json"], options);
   assert.equal(result.stderr, "", `unexpected stderr for: ${args.join(" ")}`);
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 4);
+  assert.equal(value.cli_contract_version, 5);
   if ((options.expectedStatus ?? 0) === 0) assert.equal(value.ok, true);
   return value;
 }
@@ -55,17 +55,35 @@ function invokeJson(args, options = {}) {
 function checkedDigest() {
   const result = invokeJson(["document", "check", planPath]);
   assert.equal(result.schema_version, "Perttool.CheckResult.v2");
-  assert.equal(result.document_id, "FILE_FIRST_ACCEPTED");
+  assert.ok(
+    ["FILE_FIRST", "FILE_FIRST_ACCEPTED"].includes(result.document_id),
+  );
   return result.source_digest;
 }
 
 function writeMutation(args, options = {}) {
   const digest = options.digest ?? checkedDigest();
+  const governedCommands = new Set([
+    "project set",
+    "dag advance",
+    "task add",
+    "task set",
+    "task remove",
+    "gate add",
+    "gate set",
+    "gate remove",
+    "milestone add",
+    "milestone remove",
+    "batch apply",
+  ]);
+  const assertions = governedCommands.has(args.slice(0, 2).join(" "))
+    ? ["--actor", "user"]
+    : [];
   const result = invokeJson(
-    [...args, "--write", "--expect-digest", digest],
+    [...args, ...assertions, "--write", "--expect-digest", digest],
     { input: options.input },
   );
-  assert.equal(result.schema_version, "Perttool.MutationResult.v1");
+  assert.equal(result.schema_version, "Perttool.MutationResult.v2");
   assert.deepEqual(result.write, {
     mode: "in_place",
     target: planPath,
@@ -110,7 +128,10 @@ assert.deepEqual(initialized.write, {
   written: true,
 });
 assert.equal(readFileSync(planPath, "utf8"), initialized.candidate_text);
-assert.match(initialized.candidate_text, /^project FILE_FIRST:/);
+assert.match(
+  initialized.candidate_text,
+  /^# Existing \.pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal\/DAG owner-confirmation checks\.\nproject FILE_FIRST:/,
+);
 assert.doesNotMatch(initialized.candidate_text, /^(?:task|gate|resource) /m);
 
 const initialProject = invokeJson(["project", "show", planPath]);
@@ -136,9 +157,45 @@ assert.deepEqual(initialProject.project, {
     month: 7,
     day: 30,
   },
+  governance: {
+    source_contract_version: 1,
+    declared: {
+      goal_owner: null,
+      goal_delegates: null,
+      dag_owner: null,
+      dag_delegates: null,
+    },
+    effective: {
+      goal_owner: "user",
+      goal_delegates: [],
+      dag_owner: "user",
+      dag_delegates: [],
+    },
+  },
   critical_epsilon: null,
   target_duration: null,
 });
+
+const governanceUpgrade = writeMutation([
+  "project",
+  "set",
+  planPath,
+  "--goal-owner",
+  "user",
+  "--goal-delegates",
+  "[]",
+  "--dag-owner",
+  "user",
+  "--dag-delegates",
+  "[]",
+]);
+assert.equal(governanceUpgrade.governance.applicable, true);
+assert.deepEqual(
+  governanceUpgrade.governance.affected_scopes,
+  ["goal", "dag"],
+);
+assert.equal(governanceUpgrade.governance.write_authorized, true);
+assert.match(governanceUpgrade.updated_text, /  version 4\n/);
 
 const initialDigest = invokeJson([
   "document",
@@ -152,7 +209,7 @@ const connectedPlan = {
       kind: "project.set",
       set: {
         id: "FILE_FIRST_ACCEPTED",
-        version: 2,
+        version: 4,
         title: "Installed package workflow",
         description: "Created and maintained only through perttool commands.",
         asOf: "2026-07-25",
@@ -229,6 +286,70 @@ const connectedPlan = {
     },
   ],
 };
+const beforeDenied = readFileSync(planPath, "utf8");
+const governancePreview = invokeJson(
+  ["batch", "apply", planPath, "--request", "-"],
+  { input: JSON.stringify(connectedPlan) },
+);
+assert.equal(governancePreview.schema_version, "Perttool.MutationResult.v2");
+assert.equal(governancePreview.governance.applicable, true);
+assert.deepEqual(
+  governancePreview.governance.affected_scopes,
+  ["goal", "dag"],
+);
+assert.equal(governancePreview.governance.write_authorized, false);
+assert.equal(governancePreview.write.written, false);
+
+const governanceDenied = invokeJson(
+  [
+    "batch",
+    "apply",
+    planPath,
+    "--request",
+    "-",
+    "--write",
+    "--expect-digest",
+    initialDigest,
+  ],
+  {
+    input: JSON.stringify(connectedPlan),
+    expectedStatus: 1,
+  },
+);
+assert.equal(governanceDenied.ok, false);
+assert.deepEqual(
+  governanceDenied.diagnostics.map(({ code }) => code),
+  ["PTGOV-101"],
+);
+assert.equal(governanceDenied.updated_text, governancePreview.updated_text);
+assert.equal(governanceDenied.write.written, false);
+assert.equal(readFileSync(planPath, "utf8"), beforeDenied);
+
+const governanceStale = invokeJson(
+  [
+    "batch",
+    "apply",
+    planPath,
+    "--request",
+    "-",
+    "--actor",
+    "user",
+    "--write",
+    "--expect-digest",
+    `sha256:${"0".repeat(64)}`,
+  ],
+  {
+    input: JSON.stringify(connectedPlan),
+    expectedStatus: 5,
+  },
+);
+assert.equal(governanceStale.ok, false);
+assert.deepEqual(
+  governanceStale.diagnostics.map(({ code }) => code),
+  ["PTIO-501"],
+);
+assert.equal(readFileSync(planPath, "utf8"), beforeDenied);
+
 const batch = writeMutation(
   ["batch", "apply", planPath, "--request", "-"],
   {
@@ -237,11 +358,15 @@ const batch = writeMutation(
   },
 );
 assert.equal(batch.operation, "batch.apply");
+assert.equal(batch.governance.applicable, true);
+assert.deepEqual(batch.governance.affected_scopes, ["goal", "dag"]);
+assert.equal(batch.governance.actor, "user");
+assert.equal(batch.governance.write_authorized, true);
 
 const fullProject = invokeJson(["project", "show", planPath]);
 assert.deepEqual(fullProject.project, {
   id: "FILE_FIRST_ACCEPTED",
-  version: 2,
+  version: 4,
   title: "Installed package workflow",
   description: "Created and maintained only through perttool commands.",
   as_of: {
@@ -260,6 +385,21 @@ assert.deepEqual(fullProject.project, {
     year: 2026,
     month: 7,
     day: 30,
+  },
+  governance: {
+    source_contract_version: 1,
+    declared: {
+      goal_owner: "user",
+      goal_delegates: [],
+      dag_owner: "user",
+      dag_delegates: [],
+    },
+    effective: {
+      goal_owner: "user",
+      goal_delegates: [],
+      dag_owner: "user",
+      dag_delegates: [],
+    },
   },
   critical_epsilon: "1p",
   target_duration: "8p",
@@ -495,7 +635,7 @@ assert.equal(migrationPreview.source_unit, "point");
 assert.equal(migrationPreview.target_unit, "day");
 assert.equal(
   migrationPreview.grammar_disposition,
-  "upgraded_for_exact_fraction",
+  "retained",
 );
 assert.ok(
   migrationPreview.converted_fields.some(
@@ -516,7 +656,7 @@ const migrationWrite = invokeJson([
 ]);
 assert.equal(migrationWrite.write.mode, "in_place");
 assert.equal(migrationWrite.write.written, true);
-assert.equal(migrationWrite.target_grammar_version, 3);
+assert.equal(migrationWrite.target_grammar_version, 4);
 assert.equal(readFileSync(planPath, "utf8"), migrationWrite.updated_text);
 
 const repeatedMigration = invokeJson([
@@ -555,4 +695,4 @@ assert.match(inverseText, /target_duration 13p/);
 assert.match(inverseText, /deadline 2026-07-30/);
 assert.equal(invokeJson(["document", "check", planPath]).ok, true);
 
-process.stdout.write("installed package Contract 4 file-first acceptance passed\n");
+process.stdout.write("installed package Contract 5 file-first acceptance passed\n");

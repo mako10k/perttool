@@ -1,4 +1,5 @@
 import {
+  createTargetGrammar4DocumentFile,
   createTargetGrammar4DocumentFileFromSource,
   replaceTargetGrammar4DocumentFile,
 } from "../io/target-safe-write.js";
@@ -91,18 +92,27 @@ export async function persistTargetGovernanceResult(
               : { expectedDigest: request.expectedDigest }),
           },
         )
-      : await createTargetGrammar4DocumentFileFromSource(
-          request.source,
-          request.target,
-          candidateText,
-          capability,
-          {
-            initialDigest: result.originalDigest,
-            ...(request.fileMode === undefined
+      : request.source === "-"
+        ? await createTargetGrammar4DocumentFile(
+            request.target,
+            candidateText,
+            capability,
+            request.fileMode === undefined
               ? {}
-              : { mode: request.fileMode }),
-          },
-        );
+              : { mode: request.fileMode },
+          )
+        : await createTargetGrammar4DocumentFileFromSource(
+            request.source,
+            request.target,
+            candidateText,
+            capability,
+            {
+              initialDigest: result.originalDigest,
+              ...(request.fileMode === undefined
+                ? {}
+                : { mode: request.fileMode }),
+            },
+          );
   if (output.digest !== result.updatedDigest) {
     throw new Error(
       "governance safe-write digest does not match the candidate",

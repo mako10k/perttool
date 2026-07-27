@@ -984,8 +984,8 @@ classification and pre-change decisions; the
 [Governance Interface contract](specs/governance-interface.md) fixes public
 request and result types, CLI Contract 5, help, diagnostics, and exits.
 
-The internal target path implements this preview and persistence composition
-without activating it. `src/application/target-governance-mutation.ts`
+The capability-checked governance path implements this preview and persistence
+composition. `src/application/target-governance-mutation.ts`
 applies the same actual-change classifier and pre-change evaluator after
 direct, batch, and advance candidates validate.
 `src/application/target-governance-projection.ts` owns target ProjectResult
@@ -1000,14 +1000,14 @@ again before exclusive output creation, so a stale authority decision cannot
 produce a new output artifact.
 `src/command/target-governance-discovery.ts` and
 `src/command/target-governance-usage.ts` derive the complete Contract 5
-registry, help, usage recovery, and operation-level caller assertions while
-the active root and CLI remain Contract 4.
+registry, help, usage recovery, and operation-level caller assertions used by
+the active root and CLI.
 `src/governance/guidance.ts` owns the exact generated direct-edit warning.
-`src/help/target-governance-guide.ts` reuses the active HelpNode projection
-and adds the Contract 5 editing guidance for preview, pre-change authority,
+`src/help/target-governance-guide.ts` reuses the HelpNode projection and adds
+the active Contract 5 editing guidance for preview, pre-change authority,
 atomic multi-scope confirmation, caller-assertion limits, and direct-edit
-bypass. The active `getGuide` projection remains Contract 4 until the atomic
-cutover.
+bypass. `src/application/contract5-governance.ts` exposes the governed
+direct, batch, and advance planners under the standard package-root names.
 
 Preview renders the candidate and authority facts even when an actor or owner
 acceptance is absent. A persistent governed write proceeds to the safe-write
@@ -1810,13 +1810,15 @@ the explicit non-goals into the implementation gates. It accepts design input
 without activating Grammar 4, CLI Contract 5, or owner-aware runtime
 enforcement.
 
-The internal source model, pure evaluator, governed preview/result/help
-target, guarded target safe-write composition, generated warning, and
-target editing guidance are implemented. The remaining acceptance task
-reviews and activates the complete installed-package behavior atomically.
-Until that gate is complete, the active Contract 4 runtime does not parse
-Grammar 4 governance fields, accept actor/owner-confirmation options, expose
-the target Guide, or enforce owner-aware writes.
+The source model, pure evaluator, governed preview/result/help path, guarded
+safe-write composition, generated warning, and editing guidance are
+implemented. The Issue #4 acceptance gate activated Grammar 4, ProjectResult
+v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry and
+Guide, owner-aware persistence, and installed-package behavior atomically.
+The accepted evidence is recorded in
+[Issue #4 Governance Implementation Acceptance](process/governance-acceptance.md).
+The published `0.3.0` artifact remains Contract 4; release version selection
+and publication were not part of this activation.
 
 Exit:
 

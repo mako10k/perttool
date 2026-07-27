@@ -34,7 +34,8 @@ test("project metadata exposes every project field without source inspection", (
   assert.equal(result.ok, true);
   assert.equal(result.documentId, "ALL_FIELDS");
   assert.equal(result.grammarVersion, 1);
-  assert.deepEqual(result.project, {
+  const { governance, ...project } = result.project;
+  assert.deepEqual(project, {
     id: "ALL_FIELDS",
     version: 1,
     title: "all declaration fields",
@@ -57,6 +58,17 @@ test("project metadata exposes every project field without source inspection", (
     criticalEpsilon: "0p",
     targetDuration: "20p",
   });
+  assert.deepEqual(governance.declared, {
+    goalOwner: null,
+    goalDelegates: null,
+    dagOwner: null,
+    dagDelegates: null,
+  });
+  assert.equal(governance.sourceContractVersion, 1);
+  assert.equal(governance.effective.goalOwner, "user");
+  assert.deepEqual([...governance.effective.goalDelegates], []);
+  assert.equal(governance.effective.dagOwner, "user");
+  assert.deepEqual([...governance.effective.dagDelegates], []);
 
   const invalid = getProjectMetadata("project BROKEN:\n  title \"broken\"\n");
   assert.equal(invalid.ok, false);

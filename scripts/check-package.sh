@@ -108,7 +108,7 @@ fi
       const topicIds = result.topics?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 4 ||
+        result.cli_contract_version !== 5 ||
         result.operation !== "guide" ||
         JSON.stringify(topicIds) !== JSON.stringify([
           "syntax",
@@ -134,7 +134,7 @@ fi
       const sectionIds = result.sections?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 4 ||
+        result.cli_contract_version !== 5 ||
         result.operation !== "guide" ||
         result.topic_id !== "next" ||
         JSON.stringify(sectionIds) !== JSON.stringify([
@@ -183,7 +183,7 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
     process.stdin.on("end", () => {
       const result = JSON.parse(input);
       if (
-        result.schema_version !== "Perttool.ProjectResult.v2" ||
+        result.schema_version !== "Perttool.ProjectResult.v3" ||
         result.project?.id !== "MINIMAL" ||
         result.project?.velocity !== null
       ) process.exit(1);
@@ -198,7 +198,7 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
     process.stdin.on("end", () => {
       const result = JSON.parse(input);
       if (
-        result.schema_version !== "Perttool.MutationResult.v1" ||
+        result.schema_version !== "Perttool.MutationResult.v2" ||
         result.operation !== "project.set" ||
         !result.updated_text?.includes("  as_of 2026-07-23")
       ) process.exit(1);
@@ -238,7 +238,7 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
 node scripts/check-package-file-first.mjs \
   "$installed_cli" \
   "$package_root/file-first-workflow"
-installed_guide_module="$install_prefix/lib/node_modules/$package_name/dist/help/guide.js"
+installed_guide_module="$install_prefix/lib/node_modules/$package_name/dist/index.js"
 node --input-type=module - "$installed_guide_module" <<'NODE'
 import { pathToFileURL } from "node:url";
 
@@ -250,10 +250,10 @@ const text = guide.renderGuideResult(guide.getGuide("syntax", "quick"));
 const missing = guide.guideResultToJson(guide.getGuide("missing", "detail"));
 if (
   index.schema_version !== "Perttool.GuideResult.v1" ||
-  index.cli_contract_version !== 4 ||
+  index.cli_contract_version !== 5 ||
   index.operation !== "guide" ||
   index.topics?.length !== 8 ||
-  !JSON.stringify(index).includes("Grammar versions 1, 2, and 3") ||
+  !JSON.stringify(index).includes("Grammar versions 1, 2, 3, and 4") ||
   !text.startsWith("DSL syntax\n") ||
   missing.diagnostics?.[0]?.help_topic !== null ||
   missing.diagnostics?.[0]?.guide_topic !== "syntax"
@@ -308,6 +308,12 @@ for (const targetName of [
   "analyzeTargetTemporalDocument",
   "selectTargetTemporalTasks",
   "selectNextTasksFromAnalysis",
+  "TARGET_GRAMMAR_4_CAPABILITY",
+  "parseTargetGrammar4Document",
+  "validateTargetGrammar4Document",
+  "planTargetGrammar4Mutation",
+  "planTargetGovernanceMutation",
+  "TARGET_GOVERNANCE_COMMAND_REGISTRY",
 ]) {
   if (targetName in api) process.exit(1);
 }
@@ -316,31 +322,41 @@ for (const publicName of [
   "selectNextTasks",
   "planUnitMigration",
   "withUnitMigrationWrite",
+  "planMutation",
+  "planBatchMutation",
+  "planAdvance",
+  "getProjectMetadata",
+  "getGuide",
+  "validateCommandInvocation",
 ]) {
   if (typeof api[publicName] !== "function") process.exit(1);
 }
 
-const contract4Help = spawnSync(
+const contract5Help = spawnSync(
   process.argv[5],
   ["help", "--format=json"],
   { encoding: "utf8" },
 );
-const contract4HelpJson = JSON.parse(contract4Help.stdout);
-const serializedHelp = JSON.stringify(contract4HelpJson);
+const contract5HelpJson = JSON.parse(contract5Help.stdout);
+const serializedHelp = JSON.stringify(contract5HelpJson);
 if (
-  contract4Help.status !== 0 ||
-  contract4Help.stderr !== "" ||
-  contract4HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
-  contract4HelpJson.cli_contract_version !== 4 ||
-  contract4HelpJson.commands?.length !== 28 ||
+  contract5Help.status !== 0 ||
+  contract5Help.stderr !== "" ||
+  contract5HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
+  contract5HelpJson.cli_contract_version !== 5 ||
+  contract5HelpJson.commands?.length !== 28 ||
   !serializedHelp.includes("project migrate-unit") ||
   !serializedHelp.includes('"not-before"') ||
   !serializedHelp.includes('"deadline"') ||
   !serializedHelp.includes("Perttool.CheckResult.v2") ||
-  !serializedHelp.includes("Perttool.ProjectResult.v2") ||
+  !serializedHelp.includes("Perttool.ProjectResult.v3") ||
+  !serializedHelp.includes("Perttool.MutationResult.v2") ||
   !serializedHelp.includes("Perttool.AnalysisResult.v3") ||
   !serializedHelp.includes("Perttool.NextResult.v4") ||
-  !serializedHelp.includes("Perttool.UnitMigrationResult.v2")
+  !serializedHelp.includes("Perttool.UnitMigrationResult.v2") ||
+  !serializedHelp.includes('"actor"') ||
+  !serializedHelp.includes('"accepted-by-owner"') ||
+  !serializedHelp.includes('"goal-owner"')
 ) process.exit(1);
 
 for (const [fixture, grammarVersion] of [
@@ -350,7 +366,7 @@ for (const [fixture, grammarVersion] of [
   for (const [route, schemaVersion] of [
     [["document", "check"], "Perttool.CheckResult.v2"],
     [["document", "format"], "Perttool.FormatResult.v1"],
-    [["project", "show"], "Perttool.ProjectResult.v2"],
+    [["project", "show"], "Perttool.ProjectResult.v3"],
     [["dag", "analyze"], "Perttool.AnalysisResult.v3"],
     [["dag", "next"], "Perttool.NextResult.v4"],
   ]) {
@@ -364,7 +380,7 @@ for (const [fixture, grammarVersion] of [
       result.status !== 0 ||
       result.stderr !== "" ||
       json.schema_version !== schemaVersion ||
-      json.cli_contract_version !== 4 ||
+      json.cli_contract_version !== 5 ||
       json.ok !== true ||
       (route[1] === "format"
         ? "grammar_version" in json
@@ -392,7 +408,7 @@ const guidanceCoreJson = JSON.parse(
 if (
   guidanceCli.status !== 0 ||
   guidanceCli.stderr !== "" ||
-  guidanceContract !== 4 ||
+  guidanceContract !== 5 ||
   JSON.stringify(guidanceCliCore) !== JSON.stringify(guidanceCoreJson)
 ) process.exit(1);
 

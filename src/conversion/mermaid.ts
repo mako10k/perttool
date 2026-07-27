@@ -462,6 +462,39 @@ export function exportMermaid(
     };
   }
 
+  const project = document.declarations.find(
+    ({ kind }) => kind === "project",
+  );
+  if (
+    profile === "perttool" &&
+    fieldNamed(project!, "version")?.value === 4
+  ) {
+    return {
+      ok: false,
+      document,
+      documentId,
+      diagnostics: [
+        ...diagnostics,
+        {
+          code: "PTCNV-102",
+          severity: "error",
+          message:
+            "Mermaid Profile v1 cannot preserve Grammar 4 governance metadata",
+          span: project!.headerSpan,
+          entityId: project!.id,
+          helpTopic: "mermaid",
+        },
+      ],
+      diagnosticsTruncated,
+      profile,
+      analysis: analysisMode,
+      capacityOverrides,
+      artifact: null,
+      artifactDigest: null,
+      lossReport: { lossless: false, records: [] },
+    };
+  }
+
   const projection = projectionLines(document, analysis, precision);
   const artifact = profile === "perttool"
     ? profileArtifact(document, projection, analysisMode, capacityOverrides)

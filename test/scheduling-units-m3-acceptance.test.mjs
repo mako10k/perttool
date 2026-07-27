@@ -214,7 +214,7 @@ test("target Analysis v3 and Next v4 are deterministic and retain Recommendation
   assert.equal(firstNext.temporal.authority.deadlineFactsUsedForRanking, false);
 });
 
-test("active package root keeps helpers internal while registry, help, Guide, and CLI use Contract 4", async () => {
+test("active package root keeps temporal helpers internal while CLI uses Contract 5", async () => {
   for (const targetName of [
     "TARGET_GRAMMAR_3_CAPABILITY",
     "prepareTargetTemporalInputs",
@@ -248,8 +248,8 @@ test("active package root keeps helpers internal while registry, help, Guide, an
   assert.equal(help.stdout.includes("Perttool.AnalysisResult.v3"), true);
   assert.equal(help.stdout.includes('"not-before"'), true);
   assert.equal(help.stdout.includes('"deadline"'), true);
-  assert.equal(JSON.parse(help.stdout).cli_contract_version, 4);
-  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 4);
+  assert.equal(JSON.parse(help.stdout).cli_contract_version, 5);
+  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 5);
 
   const targetFixture = path.join(
     fixtureDirectory,
@@ -257,7 +257,7 @@ test("active package root keeps helpers internal while registry, help, Guide, an
   );
   for (const [route, schemaVersion] of [
     [["document", "check"], "Perttool.CheckResult.v2"],
-    [["project", "show"], "Perttool.ProjectResult.v2"],
+    [["project", "show"], "Perttool.ProjectResult.v3"],
     [["dag", "analyze"], "Perttool.AnalysisResult.v3"],
     [["dag", "next"], "Perttool.NextResult.v4"],
   ]) {
@@ -266,7 +266,7 @@ test("active package root keeps helpers internal while registry, help, Guide, an
     assert.equal(accepted.stderr, "");
     const result = JSON.parse(accepted.stdout);
     assert.equal(result.schema_version, schemaVersion);
-    assert.equal(result.cli_contract_version, 4);
+    assert.equal(result.cli_contract_version, 5);
     assert.equal(result.ok, true);
     assert.equal(result.grammar_version, 2);
   }

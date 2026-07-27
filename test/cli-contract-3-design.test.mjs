@@ -108,7 +108,7 @@ test("Contract 3 backlog and current plan preserve completed acceptance traceabi
   assert.match(packageCheck, /scripts\/check-package-file-first\.mjs/);
   assert.match(
     fileFirstCheck,
-    /installed package Contract 4 file-first acceptance passed/,
+    /installed package Contract 5 file-first acceptance passed/,
   );
   assert.doesNotMatch(fileFirstCheck, /(?:from|import\()\s*["'][^"']*dist\//);
 });

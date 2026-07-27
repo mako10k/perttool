@@ -1,25 +1,17 @@
-import { digestDocumentBytes } from "../io/document-file.js";
 import type { DocumentWriteResult } from "../io/safe-write.js";
 import type { Diagnostic } from "../model/diagnostics.js";
-import { mutationDiagnostic } from "../mutation/diagnostics.js";
 import type { TextEdit } from "../mutation/text-edits.js";
+import { TARGET_GRAMMAR_4_CAPABILITY } from "../parser/document-parser.js";
 import { TOOL_VERSION } from "../version.js";
-import { checkDocument } from "./check.js";
+import {
+  planTargetGovernanceProjectInit,
+  type TargetGovernanceProjectInitRequest,
+} from "./target-governance-init.js";
 
 export type ProjectInitDurationUnit = "day" | "hour" | "point";
 
-export interface ProjectInitRequest {
-  readonly projectId: string;
-  readonly title: string;
-  readonly durationUnit: ProjectInitDurationUnit;
-  readonly initialMilestone: string;
-  readonly initialMilestoneTitle: string;
-  readonly finish: string;
-  readonly version?: number;
-  readonly asOf?: string;
-  readonly velocity?: string;
-  readonly initialMilestoneDeadline?: string;
-}
+export interface ProjectInitRequest
+  extends TargetGovernanceProjectInitRequest {}
 
 export interface ProjectInitWrite {
   readonly mode: "preview" | "out";
@@ -29,7 +21,7 @@ export interface ProjectInitWrite {
 
 export interface ProjectInitResult {
   readonly schemaVersion: "Perttool.InitResult.v1";
-  readonly cliContractVersion: 4;
+  readonly cliContractVersion: 5;
   readonly toolVersion: string;
   readonly operation: "project.init";
   readonly ok: boolean;
@@ -44,169 +36,26 @@ export interface ProjectInitResult {
   readonly diagnosticsTruncated: boolean;
 }
 
-const requestFields = new Set([
-  "projectId",
-  "title",
-  "durationUnit",
-  "initialMilestone",
-  "initialMilestoneTitle",
-  "finish",
-  "version",
-  "asOf",
-  "velocity",
-  "initialMilestoneDeadline",
-]);
-
-const previewWrite: ProjectInitWrite = Object.freeze({
-  mode: "preview",
-  target: null,
-  written: false,
-});
-
-function requestError(value: unknown): string | undefined {
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return "project init request is not an object";
-  }
-  const request = value as Record<string, unknown>;
-  if (Object.keys(request).some((name) => !requestFields.has(name))) {
-    return "project init request contains unsupported fields";
-  }
-  for (const field of [
-    "projectId",
-    "title",
-    "initialMilestone",
-    "initialMilestoneTitle",
-    "finish",
-  ]) {
-    if (typeof request[field] !== "string") {
-      return `project init request requires string field ${field}`;
-    }
-  }
-  if (
-    request["durationUnit"] !== "day" &&
-    request["durationUnit"] !== "hour" &&
-    request["durationUnit"] !== "point"
-  ) {
-    return "project init durationUnit must be day, hour, or point";
-  }
-  if (
-    request["version"] !== undefined &&
-    (!Number.isSafeInteger(request["version"]) ||
-      (request["version"] as number) < 0 ||
-      (request["version"] as number) > 2_147_483_647)
-  ) {
-    return "project init version must be an integer from 0 to 2147483647";
-  }
-  for (const field of ["asOf", "velocity", "initialMilestoneDeadline"]) {
-    if (request[field] !== undefined && typeof request[field] !== "string") {
-      return `project init ${field} must be a string when provided`;
-    }
-  }
-  if (request["finish"] !== request["initialMilestone"]) {
-    return "project init finish must equal initialMilestone in initialization version 1";
-  }
-  if (request["durationUnit"] === "point" && request["velocity"] === undefined) {
-    return "project init with point durationUnit requires velocity";
-  }
-  if (
-    request["initialMilestoneDeadline"] !== undefined &&
-    (
-      (request["version"] !== 2 && request["version"] !== 3) ||
-      request["asOf"] === undefined
-    )
-  ) {
-    return "project init initialMilestoneDeadline requires version 2 or 3 and asOf";
-  }
-  return undefined;
-}
-
-function renderCandidate(request: ProjectInitRequest): string {
-  const fields = [
-    `  version ${request.version ?? 1}`,
-    `  title ${JSON.stringify(request.title)}`,
-    ...(request.asOf === undefined ? [] : [`  as_of ${request.asOf}`]),
-    `  duration_unit ${request.durationUnit}`,
-    ...(request.velocity === undefined ? [] : [`  velocity ${request.velocity}`]),
-    `  finish ${request.finish}`,
-  ];
-  return [
-    `project ${request.projectId}:`,
-    ...fields,
-    "",
-    `milestone ${request.initialMilestone}:`,
-    `  title ${JSON.stringify(request.initialMilestoneTitle)}`,
-    "  state reached",
-    ...(request.initialMilestoneDeadline === undefined
-      ? []
-      : [`  deadline ${request.initialMilestoneDeadline}`]),
-    "",
-  ].join("\n");
-}
-
-function result(
-  values: Omit<
-    ProjectInitResult,
-    | "schemaVersion"
-    | "cliContractVersion"
-    | "toolVersion"
-    | "operation"
-    | "source"
-    | "sourceDigest"
-    | "write"
-  >,
-): ProjectInitResult {
-  return {
+export function planProjectInit(request: unknown): ProjectInitResult {
+  const planned = planTargetGovernanceProjectInit(
+    request,
+    TARGET_GRAMMAR_4_CAPABILITY,
+  );
+  return Object.freeze({
     schemaVersion: "Perttool.InitResult.v1",
-    cliContractVersion: 4,
+    cliContractVersion: 5,
     toolVersion: TOOL_VERSION,
     operation: "project.init",
+    ok: planned.ok,
+    documentId: planned.documentId,
     source: null,
     sourceDigest: null,
-    write: previewWrite,
-    ...values,
-  };
-}
-
-export function planProjectInit(request: unknown): ProjectInitResult {
-  const error = requestError(request);
-  if (error !== undefined) {
-    return result({
-      ok: false,
-      documentId: null,
-      candidateText: null,
-      candidateDigest: null,
-      edits: [],
-      diagnostics: [mutationDiagnostic("PTMUT-301", error)],
-      diagnosticsTruncated: false,
-    });
-  }
-
-  const candidateText = renderCandidate(request as ProjectInitRequest);
-  const checked = checkDocument(candidateText);
-  if (!checked.ok) {
-    return result({
-      ok: false,
-      documentId: null,
-      candidateText: null,
-      candidateDigest: null,
-      edits: [],
-      diagnostics: checked.diagnostics,
-      diagnosticsTruncated: checked.diagnosticsTruncated,
-    });
-  }
-  const edit = Object.freeze({
-    startOffset: 0,
-    endOffset: 0,
-    replacement: candidateText,
-  });
-  return result({
-    ok: true,
-    documentId: checked.documentId,
-    candidateText,
-    candidateDigest: digestDocumentBytes(Buffer.from(candidateText, "utf8")),
-    edits: Object.freeze([edit]),
-    diagnostics: checked.diagnostics,
-    diagnosticsTruncated: checked.diagnosticsTruncated,
+    candidateText: planned.candidateText,
+    candidateDigest: planned.candidateDigest,
+    edits: planned.edits,
+    write: planned.write,
+    diagnostics: planned.diagnostics,
+    diagnosticsTruncated: planned.diagnosticsTruncated,
   });
 }
 
@@ -225,14 +74,14 @@ export function withProjectInitOutput(
   ) {
     throw new Error("project init output does not match the candidate");
   }
-  return {
+  return Object.freeze({
     ...value,
     write: Object.freeze({
       mode: "out",
       target: output.target,
       written: true,
     }),
-  };
+  });
 }
 
 function diagnosticToJson(
@@ -299,14 +148,10 @@ export function projectInitResultToJson(
   };
 }
 
-export function serializeProjectInitResult(
-  value: ProjectInitResult,
-): string {
+export function serializeProjectInitResult(value: ProjectInitResult): string {
   return `${JSON.stringify(projectInitResultToJson(value), null, 2)}\n`;
 }
 
-export function renderProjectInitResult(
-  value: ProjectInitResult,
-): string {
+export function renderProjectInitResult(value: ProjectInitResult): string {
   return value.candidateText ?? "";
 }

@@ -6,6 +6,7 @@ import type { Rational } from "../model/rational.js";
 import { ZERO, add, maximum } from "../model/rational.js";
 import type {
   TargetGrammar3ValidatedDocument,
+  TargetGrammar4ValidatedDocument,
 } from "../semantic/target-validator.js";
 import {
   buildResidualGraph,
@@ -177,7 +178,9 @@ function schedule(
 }
 
 export function analyzeTemporalPrecedenceSchedule(
-  validated: TargetGrammar3ValidatedDocument,
+  validated:
+    | TargetGrammar3ValidatedDocument
+    | TargetGrammar4ValidatedDocument,
   inputs: TargetTemporalInputProjection,
 ): TemporalPrecedenceSchedule {
   if (

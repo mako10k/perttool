@@ -1,6 +1,6 @@
 # Issue #4 Governance Implementation Handoff
 
-- Document status: Resumable checkpoint
+- Document status: Superseded resumable checkpoint
 - Handoff date: 2026-07-27
 - Issue: [Issue #4](https://github.com/mako10k/perttool/issues/4), open at handoff
 - Plan: [../../plans/governance.pert](../../plans/governance.pert)
@@ -11,6 +11,11 @@
   `GOV_CLI_PREVIEW`, `GOV_WRITE_ENFORCEMENT`, `GOV_GUIDANCE`
 - Normal next task: `GOV_ACCEPTANCE`
 - Active public package boundary: `0.3.0`, Grammar 1/2/3, CLI Contract 4
+
+This point-in-time checkpoint is superseded by
+[Issue #4 Governance Implementation Acceptance](governance-acceptance.md).
+The sections below intentionally preserve the pre-activation state and resume
+boundary rather than rewriting historical evidence as current state.
 
 ## 1. Purpose
 

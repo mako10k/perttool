@@ -123,17 +123,16 @@ After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert` 
 
 When changing project metadata, inspect the `project set` preview or `--diff`, and use the Stage 3 `--write` procedure with an expected digest for persistence. If a project-wide unit change also requires task duration or estimate changes, combine `project.set` and the related mutations in one atomic batch. Do not depend on visual source inspection or manual editing for normal metadata viewing and editing.
 
-Owner-aware governance is currently an internal Contract 5 target, not an
-active Contract 4 control. After the atomic Grammar 4 and Contract 5 cutover,
-governed previews may omit actor and owner confirmation, but persistent goal
-or DAG changes require an actor. Effective owners and delegates have direct
-authority; another actor must provide repeatable `--accepted-by-owner`
-caller assertions for every affected effective owner. Always decide authority
-from the digest-bound pre-change document, and require one atomic batch to
-satisfy every affected scope. These assertions are not authentication,
-verified identity, signatures, or durable audit records.
+Owner-aware governance is active in repository-source Grammar 4 and CLI
+Contract 5. Governed previews may omit actor and owner confirmation, but
+persistent goal or DAG changes require an actor. Effective owners and
+delegates have direct authority; another actor must provide repeatable
+`--accepted-by-owner` caller assertions for every affected effective owner.
+Always decide authority from the digest-bound pre-change document, and require
+one atomic batch to satisfy every affected scope. These assertions are not
+authentication, verified identity, signatures, or durable audit records.
 
-Generated target projects state the direct-edit boundary exactly:
+Generated projects state the direct-edit boundary exactly:
 
 ```pert
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
@@ -141,9 +140,10 @@ Generated target projects state the direct-edit boundary exactly:
 
 Treat this as guidance rather than technical prevention. A text editor, shell
 command, or other program can bypass the tool-mediated authority check. Keep
-Git and human review as separate controls. Until Contract 5 activates
-atomically, do not pass governance fields or caller assertions to the active
-CLI and do not infer that a manual source edit was authorized.
+Git and human review as separate controls. The published `0.3.0` package
+remains Contract 4 and does not accept governance fields or caller assertions;
+use live command discovery and require the expected contract version rather
+than inferring support from the package name alone.
 
 Do not directly compare tasks from different detail plans without a macro decision. Do not substitute `groups.ready`, `groups.runnable_now`, the raw recommended set, or the text summary for start authority. With an unknown schema/model/temporal-policy version, incomplete or truncated trace, unknown tier, `PTREC-*`, or future or unavailable temporal eligibility, do not start a task; stop safely. Do not start `deferred` or `discouraged` work under normal authority.
 

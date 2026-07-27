@@ -10,13 +10,11 @@ import {
   agentGuidanceResultToJson,
   getAgentHelp,
   getBundledAgentGuidance,
+  getCommandDiscovery,
+  renderCommandHelpResult,
   renderAgentGuidanceText,
   serializeAgentGuidanceResult,
 } from "../dist/index.js";
-import {
-  getCommandDiscovery,
-  renderCommandHelpResult,
-} from "../dist/command/discovery.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -80,7 +78,7 @@ test("agent help quick text preserves status, reasons, staleness, and read-only 
   assert.doesNotMatch(result.stdout, /^SOURCE /m);
 });
 
-test("agent help JSON adds the Contract 4 envelope to the Core projection", () => {
+test("agent help JSON adds the Contract 5 envelope to the Core projection", () => {
   const query = {
     providerId: "grok",
     surfaceId: "workflow",
@@ -102,7 +100,7 @@ test("agent help JSON adds the Contract 4 envelope to the Core projection", () =
   assert.equal(first.stderr, "");
   assert.equal(first.stdout, second.stdout);
   const json = JSON.parse(first.stdout);
-  assert.equal(json.cli_contract_version, 4);
+  assert.equal(json.cli_contract_version, 5);
   const { cli_contract_version: _contract, ...cliProjection } = json;
   assert.deepEqual(cliProjection, agentGuidanceResultToJson(coreResult));
   assert.deepEqual(json.query, {
@@ -197,11 +195,11 @@ test("agent help does not require or create project/provider state", () => {
   }
 });
 
-test("Contract 4 guide index is byte-stable", async () => {
+test("Contract 5 guide index is byte-stable", async () => {
   const expected = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract3-guide-index.expected.json",
+      "golden/help/contract5-guide-index.expected.json",
     ),
     "utf8",
   );

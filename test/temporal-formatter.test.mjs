@@ -204,7 +204,7 @@ test("target formatter preserves source structure and exact temporal tokens", ()
   assert.equal(repeated.formattedText, formatted.formattedText);
 });
 
-test("active Contract 4 formatter accepts Grammar 2", async () => {
+test("active Contract 5 formatter retains Grammar 2", async () => {
   const source = await readFile(
     path.join(fixtureDirectory, "calendar-offset-v2.pert"),
     "utf8",

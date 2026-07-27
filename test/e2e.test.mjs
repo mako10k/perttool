@@ -35,14 +35,14 @@ function runJson(args, expectedStatus = 0, options = {}) {
   assert.equal(result.stderr, "");
   assert.equal(result.stdout.endsWith("\n"), true);
   const json = JSON.parse(result.stdout);
-  assert.equal(json.cli_contract_version, 4);
+  assert.equal(json.cli_contract_version, 5);
   return json;
 }
 
 test("E2E-001: discover commands, validate a plan, and compare capacity what-if", () => {
   const help = run(["--help"]);
   assert.equal(help.status, 0);
-  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 4\)$/m);
+  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 5\)$/m);
   assert.match(help.stdout, /^  document  /m);
   assert.match(help.stdout, /^    check  /m);
   assert.match(help.stdout, /^  project  /m);
@@ -425,6 +425,7 @@ test("E2E-013: advance preview and safe write preserve a partial join", (t) => {
   const digest = runJson(["document", "check", copy]).source_digest;
   const written = runJson([
     "dag", "advance", copy, "--write", "--expect-digest", digest,
+    "--actor", "user",
   ]);
   assert.equal(written.write.written, true);
   assert.equal(readFileSync(copy, "utf8"), preview.updated_text);

@@ -157,7 +157,7 @@ test("guide exposes the estimate topic as JSON", () => {
   assert.equal(result.status, 0);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(json.cli_contract_version, 4);
+  assert.equal(json.cli_contract_version, 5);
   assert.equal(json.topic_id, "syntax.estimate");
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
@@ -439,7 +439,7 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   const jsonResult = run(["dag", "advance", source, "--format=json"]);
   assert.equal(jsonResult.status, 0, jsonResult.stderr);
   const json = JSON.parse(jsonResult.stdout);
-  assert.equal(json.schema_version, "Perttool.MutationResult.v1");
+  assert.equal(json.schema_version, "Perttool.MutationResult.v2");
   assert.equal(json.operation, "dag.advance");
   assert.equal(json.document_id, "ADVANCE_PARTIAL");
   assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
@@ -520,7 +520,7 @@ test("dag advance shares safe-write locks and repeated write is a no-op", (t) =>
 
   const written = run([
     "dag", "advance", source, "--write", "--expect-digest", initialDigest,
-    "--format=json",
+    "--actor", "user", "--format=json",
   ]);
   assert.equal(written.status, 0, written.stderr);
   const writtenJson = JSON.parse(written.stdout);
@@ -541,7 +541,7 @@ test("dag advance shares safe-write locks and repeated write is a no-op", (t) =>
   const outPath = path.join(directory, "candidate.pert");
   const out = run([
     "dag", "advance", "docs/examples/advance-partial-before.pert",
-    "--out", outPath, "--format=json",
+    "--out", outPath, "--actor", "user", "--format=json",
   ]);
   assert.equal(out.status, 0, out.stderr);
   assert.equal(JSON.parse(out.stdout).write.written, true);
@@ -549,7 +549,8 @@ test("dag advance shares safe-write locks and repeated write is a no-op", (t) =>
 
   const stale = run([
     "dag", "advance", source, "--write",
-    "--expect-digest", `sha256:${"0".repeat(64)}`, "--format=json",
+    "--expect-digest", `sha256:${"0".repeat(64)}`,
+    "--actor", "user", "--format=json",
   ]);
   assert.equal(stale.status, 5, stale.stderr);
   assert.equal(JSON.parse(stale.stdout).diagnostics[0].data.reason, "expected_digest_mismatch");
@@ -1051,7 +1052,7 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
   ]);
   assert.equal(added.status, 0, added.stderr);
   const addedJson = JSON.parse(added.stdout);
-  assert.equal(addedJson.schema_version, "Perttool.MutationResult.v1");
+  assert.equal(addedJson.schema_version, "Perttool.MutationResult.v2");
   assert.equal(addedJson.operation, "task.add");
   assert.equal(addedJson.document_id, "MINIMAL");
   assert.equal(addedJson.write.mode, "preview");
@@ -1122,7 +1123,7 @@ test("project show and set expose all metadata without direct source editing", (
   assert.match(setHelp.stdout, /--velocity kind=value type=velocity/);
   assert.match(
     setHelp.stdout,
-    /enum=description, as_of, velocity, critical_epsilon, target_duration/,
+    /enum=description, as_of, velocity, critical_epsilon, target_duration, goal_owner, goal_delegates, dag_owner, dag_delegates/,
   );
 
   const shown = run([
@@ -1130,7 +1131,7 @@ test("project show and set expose all metadata without direct source editing", (
   ]);
   assert.equal(shown.status, 0, shown.stderr);
   const shownJson = JSON.parse(shown.stdout);
-  assert.equal(shownJson.schema_version, "Perttool.ProjectResult.v2");
+  assert.equal(shownJson.schema_version, "Perttool.ProjectResult.v3");
   assert.equal(shownJson.operation, "project.show");
   assert.equal(shownJson.document_id, "ALL_FIELDS");
   assert.equal(shownJson.grammar_version, 1);
@@ -1154,6 +1155,21 @@ test("project show and set expose all metadata without direct source editing", (
     velocity: "10p/5d",
     finish: "DONE",
     finish_deadline: null,
+    governance: {
+      source_contract_version: 1,
+      declared: {
+        goal_owner: null,
+        goal_delegates: null,
+        dag_owner: null,
+        dag_delegates: null,
+      },
+      effective: {
+        goal_owner: "user",
+        goal_delegates: [],
+        dag_owner: "user",
+        dag_delegates: [],
+      },
+    },
     critical_epsilon: "0p",
     target_duration: "20p",
   });
@@ -1173,7 +1189,7 @@ test("project show and set expose all metadata without direct source editing", (
   ], { input: readFileSync(path.join(root, "test/fixtures/grammar/all-fields.pert"), "utf8") });
   assert.equal(preview.status, 0, preview.stderr);
   const previewJson = JSON.parse(preview.stdout);
-  assert.equal(previewJson.schema_version, "Perttool.MutationResult.v1");
+  assert.equal(previewJson.schema_version, "Perttool.MutationResult.v2");
   assert.equal(previewJson.operation, "project.set");
   assert.equal(previewJson.source, "<stdin>");
   assert.equal(previewJson.write.mode, "preview");
@@ -1223,7 +1239,7 @@ test("milestone and resource add set remove actions project to mutation Core", (
     const rejected = run([...args, "--format=json"]);
     assert.equal(rejected.status, 1, rejected.stderr);
     const json = JSON.parse(rejected.stdout);
-    assert.equal(json.schema_version, "Perttool.MutationResult.v1");
+    assert.equal(json.schema_version, "Perttool.MutationResult.v2");
     assert.equal(json.ok, false);
     assert.equal(json.updated_text, null);
     assert.equal(json.diff, null);
@@ -1436,7 +1452,7 @@ test("entity and batch mutation commands share the safe-write path", (t) => {
   };
   const batch = run([
     "batch", "apply", batchPath, "--request", "-", "--write",
-    "--expect-digest", batchDigest, "--format=json",
+    "--expect-digest", batchDigest, "--actor", "user", "--format=json",
   ], { input: JSON.stringify(request) });
   assert.equal(batch.status, 0, batch.stderr);
   assert.equal(JSON.parse(batch.stdout).write.written, true);
@@ -1448,7 +1464,7 @@ test("entity and batch mutation commands share the safe-write path", (t) => {
   const gateOutPath = path.join(directory, "gate-out.pert");
   const gateOut = run([
     "batch", "apply", minimalPath, "--request", "-", "--out", gateOutPath,
-    "--format=json",
+    "--actor", "user", "--format=json",
   ], { input: JSON.stringify(request) });
   assert.equal(gateOut.status, 0, gateOut.stderr);
   assert.deepEqual(JSON.parse(gateOut.stdout).write, {

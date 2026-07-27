@@ -223,12 +223,12 @@ perttool project show <file>
 Returns exactly one project declaration from a valid document. It displays ID, effective grammar version, title, description, as_of, duration_unit, velocity, finish, critical_epsilon, and target_duration in a fixed order. When an optional field is not declared, it is `null` in JSON and `-` in text. It is read-only and does not rewrite the file.
 
 The accepted [Governance Source and Effective-Metadata
-specification](governance-source.md) requires the future governance cutover to
-expose both declared and effective owner/delegate metadata for every supported
-grammar version. The [Governance Interface
-contract](governance-interface.md) fixes its exact typed, text, JSON, schema,
-and compatibility projection; the active Contract 4 surface above remains
-unchanged until that atomic cutover.
+specification](governance-source.md) requires Contract 5 to expose both
+declared and effective owner/delegate metadata for every supported grammar
+version. The [Governance Interface contract](governance-interface.md) fixes
+its exact typed, text, JSON, schema, and compatibility projection. That atomic
+cutover is active in the repository source; the published `0.3.0` artifact
+retains the Contract 4 surface above.
 
 ### 6.2 Shared analysis options
 

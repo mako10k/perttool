@@ -5,14 +5,14 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { commandDescriptorToJson } from "../dist/index.js";
 import {
-  CONTRACT4_COMMAND_REGISTRY,
+  COMMAND_REGISTRY,
+  commandDescriptorToJson,
   commandHelpResultToJson,
   getCommandDiscovery,
   renderCommandHelpResult,
   serializeCommandHelpResult,
-} from "../dist/command/discovery.js";
+} from "../dist/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -72,9 +72,9 @@ const knownSchemas = new Set([
   "Perttool.GuideResult.v1",
   "Perttool.ImportResult.v1",
   "Perttool.InitResult.v1",
-  "Perttool.MutationResult.v1",
+  "Perttool.MutationResult.v2",
   "Perttool.NextResult.v4",
-  "Perttool.ProjectResult.v2",
+  "Perttool.ProjectResult.v3",
   "Perttool.UnitMigrationResult.v2",
 ]);
 
@@ -85,23 +85,23 @@ function runCli(args) {
   });
 }
 
-test("Contract 4 command discovery projects every implemented capability in canonical order", () => {
+test("Contract 5 command discovery projects every implemented capability in canonical order", () => {
   assert.deepEqual(
-    CONTRACT4_COMMAND_REGISTRY.map(({ path: commandPath }) =>
+    COMMAND_REGISTRY.map(({ path: commandPath }) =>
       commandPath.join(" ")
     ),
     expectedPaths,
   );
   assert.equal(
-    new Set(CONTRACT4_COMMAND_REGISTRY.map(({ operation }) => operation)).size,
+    new Set(COMMAND_REGISTRY.map(({ operation }) => operation)).size,
     expectedPaths.length,
   );
   assert.ok(
-    CONTRACT4_COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 4,
+    COMMAND_REGISTRY.every(
+      ({ contractVersion }) => contractVersion === 5,
     ),
   );
-  for (const descriptor of CONTRACT4_COMMAND_REGISTRY) {
+  for (const descriptor of COMMAND_REGISTRY) {
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(descriptor.examples.length > 0, descriptor.operation);
     assert.ok(descriptor.resultSchemas.length > 0, descriptor.operation);
@@ -125,13 +125,13 @@ test("Contract 4 command discovery projects every implemented capability in cano
   const top = getCommandDiscovery({ resource: null, action: null });
   assert.equal(top.ok, true);
   assert.equal(top.schemaVersion, "Perttool.CommandHelpResult.v1");
-  assert.equal(top.cliContractVersion, 4);
+  assert.equal(top.cliContractVersion, 5);
   assert.equal(top.operation, "help");
   assert.deepEqual(
     top.resources.map(({ name, actions }) => [name, actions]),
     expectedResources,
   );
-  assert.deepEqual(top.commands, CONTRACT4_COMMAND_REGISTRY);
+  assert.deepEqual(top.commands, COMMAND_REGISTRY);
   const topText = renderCommandHelpResult(top);
   for (const commandPath of expectedPaths) {
     const [resource, action] = commandPath.split(" ");
@@ -143,7 +143,7 @@ test("Contract 4 command discovery projects every implemented capability in cano
   }
 });
 
-test("Contract 4 projections are the active public surface", () => {
+test("Contract 5 projections are the active public surface", () => {
   const guide = getCommandDiscovery({ resource: "guide", action: null });
   assert.equal(guide.ok, true);
   assert.deepEqual(guide.commands[0]?.path, ["guide"]);
@@ -199,13 +199,13 @@ test("Contract 4 projections are the active public surface", () => {
     const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
     const json = JSON.parse(result.stdout);
-    assert.equal(json.cli_contract_version, 4);
+    assert.equal(json.cli_contract_version, 5);
     assert.equal(json.help_target.resource, null);
     assert.equal(json.help_target.action, null);
   }
 });
 
-test("project init discovery covers the complete public Contract 4 target", () => {
+test("project init discovery covers the complete public Contract 5 target", () => {
   const result = getCommandDiscovery({
     resource: "project",
     action: "init",
@@ -238,6 +238,10 @@ test("project init discovery covers the complete public Contract 4 target", () =
       ["as-of", false, null, []],
       ["velocity", false, null, []],
       ["initial-milestone-deadline", false, null, []],
+      ["goal-owner", false, null, []],
+      ["goal-delegates", false, null, []],
+      ["dag-owner", false, null, []],
+      ["dag-delegates", false, null, []],
       ["out", false, null, []],
       ["format", false, "text", []],
       ["color", false, "auto", ["format=json when color=always"]],
@@ -303,7 +307,7 @@ test("gate discovery covers the complete public Contract 3 mutation target", () 
     assert.equal(result.commands[0]?.effect, "preview");
     assert.deepEqual(
       result.commands[0]?.resultSchemas,
-      ["Perttool.MutationResult.v1", "Perttool.CliError.v1"],
+      ["Perttool.MutationResult.v2", "Perttool.CliError.v1"],
     );
   }
 });

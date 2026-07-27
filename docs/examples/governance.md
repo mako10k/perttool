@@ -17,11 +17,11 @@ These cases fix the authority-decision and write-path observations accepted by
 [governance examples](governance-source.md). The Markdown case IDs and the
 machine baseline are one normative acceptance set.
 
-Grammar 4, governance interface 1, and CLI Contract 5 are accepted targets.
-They are not active in perttool `0.3.0`. The active Contract 4 runtime must
-continue to reject explicit Grammar 4 sources and governance options until the
-atomic cutover. The examples therefore specify later implementation
-observations; they are not transcripts from the current runtime.
+Grammar 4, governance interface 1, and CLI Contract 5 are active in the
+repository source and locally built or packed artifacts. The published
+`perttool@0.3.0` artifact remains Contract 4 and rejects explicit Grammar 4
+sources and governance options. These examples specify the active source
+contract; release version selection and publication remain separate.
 
 Unless a case says otherwise, a mutation candidate is syntactically,
 semantically, and graph valid. `<SOURCE_DIGEST>` means the digest of the

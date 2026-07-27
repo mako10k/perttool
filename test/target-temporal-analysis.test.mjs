@@ -251,7 +251,7 @@ test("TUE-011 complete history is retained only as deadline evidence", async () 
   );
 });
 
-test("Grammar 3 fraction analysis remains exact through the public Contract 4 Core", () => {
+test("Grammar 3 fraction analysis remains exact through the public Contract 5 Core", () => {
   const text = `project FRACTION_TARGET:
   version 3
   title "fraction target"

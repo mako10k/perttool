@@ -6,6 +6,12 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ### Changed
 
+- Accepted the atomic repository-source Grammar 4 and CLI Contract 5 cutover
+  for Issue #4 owner-aware goal/DAG governance. The public root, CLI,
+  registry/help/Guide, safe-write enforcement, and isolated installed-package
+  workflow now expose the accepted governance contract together. Release
+  version selection and publication remain separate; the published `0.3.0`
+  package is still Contract 4.
 - Accepted the `perttool@0.3.0` Contract 4 beta and promoted it to npm
   `latest` through a separate, explicitly authorized post-acceptance dist-tag
   operation. npm `beta` and `latest` now resolve to `0.3.0`; product maturity

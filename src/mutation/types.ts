@@ -1,4 +1,6 @@
 import type { CheckOptions } from "../application/check.js";
+import type { GovernanceRequestInput } from "../governance/types.js";
+import type { PrincipalId } from "../governance/source.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import type { TextEdit } from "./text-edits.js";
 
@@ -15,6 +17,10 @@ export interface ProjectFieldSet {
   readonly durationUnit?: ProjectDurationUnit;
   readonly velocity?: string;
   readonly finish?: string;
+  readonly goalOwner?: PrincipalId;
+  readonly goalDelegates?: readonly PrincipalId[];
+  readonly dagOwner?: PrincipalId;
+  readonly dagDelegates?: readonly PrincipalId[];
   readonly criticalEpsilon?: string;
   readonly targetDuration?: string;
 }
@@ -23,6 +29,10 @@ export type ProjectClearableField =
   | "description"
   | "as_of"
   | "velocity"
+  | "goal_owner"
+  | "goal_delegates"
+  | "dag_owner"
+  | "dag_delegates"
   | "critical_epsilon"
   | "target_duration";
 
@@ -264,6 +274,7 @@ export type Mutation = AtomicMutation | BatchMutation;
 export interface MutationOptions extends CheckOptions {
   readonly originalLabel?: string;
   readonly updatedLabel?: string;
+  readonly governance?: GovernanceRequestInput;
 }
 
 export interface MutationResult {

@@ -35,10 +35,13 @@ import type {
 } from "../model/units.js";
 import type {
   TargetGrammar3Capability,
+  TargetGrammar4Capability,
 } from "../parser/document-parser.js";
 import {
+  validateTargetGrammar4Document,
   validateTargetGrammar3Document,
   type TargetGrammar3ValidatedDocument,
+  type TargetGrammar4ValidatedDocument,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 
@@ -114,7 +117,7 @@ export interface TargetTaskTemporalInput {
 export interface TargetTemporalInputProjection {
   readonly calendar: typeof CALENDAR_ARITHMETIC_IDENTITY;
   readonly documentId: string;
-  readonly grammarVersion: 1 | 2 | 3;
+  readonly grammarVersion: 1 | 2 | 3 | 4;
   readonly anchor: TargetCalendarValue | null;
   readonly effectiveProjection: TargetEffectiveProjection;
   readonly milestoneDeadlines: readonly TargetMilestoneTemporalInput[];
@@ -325,7 +328,9 @@ function deadlineInput(
 }
 
 export function projectTargetTemporalInputs(
-  validated: TargetGrammar3ValidatedDocument,
+  validated:
+    | TargetGrammar3ValidatedDocument
+    | TargetGrammar4ValidatedDocument,
 ): TargetTemporalInputProjection {
   const document = validated.document;
   const project = document.declarations.find(
@@ -459,10 +464,12 @@ export function projectTargetTemporalInputs(
 
 export function prepareTargetTemporalInputs(
   text: string,
-  capability: TargetGrammar3Capability,
+  capability: TargetGrammar3Capability | TargetGrammar4Capability,
   options: TargetValidationOptions = {},
 ): TargetTemporalInputResult {
-  const checked = validateTargetGrammar3Document(text, capability, options);
+  const checked = capability.grammarVersion === 4
+    ? validateTargetGrammar4Document(text, capability, options)
+    : validateTargetGrammar3Document(text, capability, options);
   return Object.freeze({
     ok: checked.ok,
     documentId: checked.documentId,

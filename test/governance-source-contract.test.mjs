@@ -112,7 +112,7 @@ test("project metadata, generated warnings, and pre-change snapshots have one co
   );
   assert.match(
     interfaces,
-    /expose both declared and effective owner\/delegate metadata/,
+    /expose both\s+declared and effective owner\/delegate metadata/,
   );
   assert.match(
     requirements,

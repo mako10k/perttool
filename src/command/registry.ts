@@ -1095,7 +1095,13 @@ export function renderTopLevelHelp(): string {
   ].join("\n");
 }
 
-export function commandOptionSets(descriptor: ProjectedCommandDescriptor): {
+export function commandOptionSets(descriptor: {
+  readonly options: readonly {
+    readonly kind: "value" | "flag";
+    readonly name: string;
+    readonly repeatable: boolean;
+  }[];
+}): {
   readonly values: ReadonlySet<string>;
   readonly flags: ReadonlySet<string>;
   readonly repeatable: ReadonlySet<string>;

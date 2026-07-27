@@ -83,14 +83,17 @@ test("quick target guidance keeps the preview and persistence distinction", () =
   );
 });
 
-test("active Contract 4 Guide and public root do not expose target governance", () => {
-  const active = getGuide("editing", "detail");
-  assert.equal(active.cliContractVersion, 4);
-  const text = renderGuideResult(active);
-  assert.doesNotMatch(text, /owner-aware governance/i);
-  assert.doesNotMatch(text, /accepted-by-owner/);
+test("active Contract 5 Guide exposes governance through standard names", () => {
+  const active = publicApi.getGuide("editing", "detail");
+  assert.equal(active.cliContractVersion, 5);
+  const text = publicApi.renderGuideResult(active);
+  assert.match(text, /owner-aware governance/i);
+  assert.match(text, /accepted-by-owner/);
   assert.equal("getTargetGovernanceGuide" in publicApi, false);
-  assert.equal("GOVERNANCE_DIRECT_EDIT_WARNING" in publicApi, false);
+  assert.equal(
+    publicApi.GOVERNANCE_DIRECT_EDIT_WARNING,
+    GOVERNANCE_DIRECT_EDIT_WARNING,
+  );
 });
 
 test("generated project, README, and process guidance share the exact warning", async () => {

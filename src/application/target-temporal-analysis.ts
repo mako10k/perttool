@@ -40,10 +40,13 @@ import type { TargetCalendarValue } from "../model/target-calendar.js";
 import type { DurationUnit, Velocity } from "../model/units.js";
 import type {
   TargetGrammar3Capability,
+  TargetGrammar4Capability,
 } from "../parser/document-parser.js";
 import {
+  validateTargetGrammar4Document,
   validateTargetGrammar3Document,
   type TargetGrammar3ValidatedDocument,
+  type TargetGrammar4ValidatedDocument,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 import {
@@ -54,6 +57,23 @@ import {
   type TargetTemporalExactValue,
   type TargetTemporalInputProjection,
 } from "./target-temporal-input.js";
+
+type TargetTemporalCapability =
+  | TargetGrammar3Capability
+  | TargetGrammar4Capability;
+type TargetTemporalValidatedDocument =
+  | TargetGrammar3ValidatedDocument
+  | TargetGrammar4ValidatedDocument;
+
+function validateTargetTemporalDocument(
+  text: string,
+  capability: TargetTemporalCapability,
+  options: TargetValidationOptions,
+) {
+  return capability.grammarVersion === 4
+    ? validateTargetGrammar4Document(text, capability, options)
+    : validateTargetGrammar3Document(text, capability, options);
+}
 
 export const TARGET_ANALYSIS_RESULT_SCHEMA_VERSION =
   "Perttool.AnalysisResult.v3" as const;
@@ -193,7 +213,7 @@ export interface TargetNextTemporalTask {
 export interface TargetNextResultV4
   extends Omit<NextResultV3, "groups"> {
   readonly schemaVersion: typeof TARGET_NEXT_RESULT_SCHEMA_VERSION;
-  readonly grammarVersion: 1 | 2 | 3;
+  readonly grammarVersion: 1 | 2 | 3 | 4;
   readonly groups: NextResultV3["groups"];
   readonly temporal: {
     readonly authority: {
@@ -368,7 +388,7 @@ function hasTemporalSource(inputs: TargetTemporalInputProjection): boolean {
 }
 
 function scheduleProjection(
-  validated: TargetGrammar3ValidatedDocument,
+  validated: TargetTemporalValidatedDocument,
   inputs: TargetTemporalInputProjection,
   schedule: TemporalPrecedenceSchedule | TemporalResourceSchedule,
   view: "precedence" | "resource",
@@ -517,10 +537,10 @@ function failure(
 
 export function analyzeTargetTemporalDocument(
   text: string,
-  capability: TargetGrammar3Capability,
+  capability: TargetTemporalCapability,
   options: TargetTemporalAnalysisOptions = {},
 ): TargetAnalysisResultV3 {
-  const checked = validateTargetGrammar3Document(text, capability, options);
+  const checked = validateTargetTemporalDocument(text, capability, options);
   if (!checked.ok || checked.validatedDocument === null) {
     return failure(
       checked.documentId,
@@ -647,7 +667,7 @@ function timeEligibility(
 }
 
 function temporalTaskRecords(
-  validated: TargetGrammar3ValidatedDocument,
+  validated: TargetTemporalValidatedDocument,
   inputs: TargetTemporalInputProjection,
   analysis: TargetTemporalAnalysis,
 ): readonly TargetNextTemporalTask[] {
@@ -703,7 +723,7 @@ function temporalTaskRecords(
 
 export function selectTargetTemporalTasks(
   text: string,
-  capability: TargetGrammar3Capability,
+  capability: TargetTemporalCapability,
   options: TargetTemporalAnalysisOptions & NextOptions = {},
 ): TargetNextResultV4 | TargetAnalysisResultV3 {
   const analyzed = analyzeTargetTemporalDocument(text, capability, options);
@@ -725,7 +745,7 @@ export function selectTargetTemporalTasks(
       base.diagnosticsTruncated,
     );
   }
-  const checked = validateTargetGrammar3Document(text, capability, options);
+  const checked = validateTargetTemporalDocument(text, capability, options);
   const validated = checked.validatedDocument!;
   const inputs = projectTargetTemporalInputs(validated);
   const tasks = temporalTaskRecords(validated, inputs, analyzed.temporal);

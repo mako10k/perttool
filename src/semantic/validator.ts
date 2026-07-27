@@ -1037,7 +1037,7 @@ export function validateDocument(
   return validateDocumentWithProfile(
     document,
     parseDiagnostics,
-    targetGrammar3ValidationProfile,
+    targetGrammar4ValidationProfile,
   );
 }
 

@@ -12,6 +12,7 @@ import test from "node:test";
 import {
   checkDocument,
   createDocumentFile,
+  GOVERNANCE_DIRECT_EDIT_WARNING,
   planProjectInit,
   projectInitResultToJson,
   readDocumentFile,
@@ -30,7 +31,8 @@ const dayRequest = {
   finish: "START",
 };
 
-const dayCandidate = `project SAMPLE:
+const dayCandidate = `${GOVERNANCE_DIRECT_EDIT_WARNING}
+project SAMPLE:
   version 1
   title "Sample project"
   duration_unit day
@@ -52,7 +54,7 @@ test("project init returns the deterministic smallest valid document", () => {
 
   assert.equal(result.ok, true);
   assert.equal(result.schemaVersion, "Perttool.InitResult.v1");
-  assert.equal(result.cliContractVersion, 4);
+  assert.equal(result.cliContractVersion, 5);
   assert.equal(result.operation, "project.init");
   assert.equal(result.documentId, "SAMPLE");
   assert.equal(result.source, null);
@@ -97,7 +99,8 @@ test("project init emits optional fields in grammar order and preserves string m
   assert.equal(result.ok, true);
   assert.equal(
     result.candidateText,
-    `project SAMPLE:
+    `${GOVERNANCE_DIRECT_EDIT_WARNING}
+project SAMPLE:
   version 1
   title "Quoted \\"project\\"\\nnext"
   as_of 2026-07-24T09:30:00+09:00

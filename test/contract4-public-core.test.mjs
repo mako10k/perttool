@@ -16,7 +16,7 @@ async function fixture(name) {
   return readFile(path.join(fixtureDirectory, name), "utf8");
 }
 
-test("Contract 4 public Core activates Grammar 3 without target capability exports", async () => {
+test("Contract 5 public Core retains Grammar 3 without target capability exports", async () => {
   const text = await fixture("migration-nonrepresentable-v2.pert");
   const parsed = perttool.parseDocument(text);
   const diagnostics = perttool.validateDocument(
@@ -41,7 +41,7 @@ test("Contract 4 public Core activates Grammar 3 without target capability expor
   }
 });
 
-test("Contract 4 public results expose typed temporal and release-gated views", async () => {
+test("Contract 5 public results retain typed temporal and release-gated views", async () => {
   const text = await fixture("calendar-date-v2.pert");
   const project = perttool.getProjectMetadata(text);
   assert.equal(project.ok, true);
@@ -64,7 +64,7 @@ test("Contract 4 public results expose typed temporal and release-gated views", 
   );
 });
 
-test("Contract 4 public formatting and mutation preserve exact temporal source", () => {
+test("Contract 5 public formatting and mutation preserve exact temporal source", () => {
   const text = `project PUBLIC_CORE:
   version 3
   title "public core"

@@ -314,16 +314,16 @@ test("malformed and duplicate target assertions are Contract 5 usage errors", ()
   );
 });
 
-test("active root and CLI remain Contract 4 and reject target-only options", () => {
+test("active root and CLI expose Contract 5 without target-prefixed helpers", () => {
   assert.equal("planTargetGovernanceMutation" in publicApi, false);
   assert.equal("TARGET_GOVERNANCE_COMMAND_REGISTRY" in publicApi, false);
   assert.ok(
-    CONTRACT4_COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 4,
+    publicApi.COMMAND_REGISTRY.every(
+      ({ contractVersion }) => contractVersion === 5,
     ),
   );
   assert.equal(
-    CONTRACT4_COMMAND_REGISTRY.some(({ options }) =>
+    publicApi.COMMAND_REGISTRY.some(({ options }) =>
       options.some(({ name }) =>
         [
           "actor",
@@ -335,17 +335,16 @@ test("active root and CLI remain Contract 4 and reject target-only options", () 
         ].includes(name)
       )
     ),
-    false,
+    true,
   );
-  const activeUsage = validateCommandInvocation([
+  const activeUsage = publicApi.validateCommandInvocation([
     "project",
     "set",
     "docs/examples/minimal.pert",
     "--actor",
     "codex",
   ]);
-  assert.equal(activeUsage.ok, false);
-  assert.equal(activeUsage.error.kind, "unknown_option");
+  assert.equal(activeUsage.ok, true);
 
   const run = spawnSync(
     process.execPath,
@@ -356,13 +355,16 @@ test("active root and CLI remain Contract 4 and reject target-only options", () 
       "docs/examples/minimal.pert",
       "--actor",
       "codex",
+      "--title",
+      "governed preview",
       "--format",
       "json",
     ],
     { cwd: root, encoding: "utf8" },
   );
-  assert.equal(run.status, 2, run.stderr);
+  assert.equal(run.status, 0, run.stderr);
   const json = JSON.parse(run.stdout);
-  assert.equal(json.cli_contract_version, 4);
-  assert.equal(json.diagnostics[0].code, "PTCLI-001");
+  assert.equal(json.cli_contract_version, 5);
+  assert.equal(json.schema_version, "Perttool.MutationResult.v2");
+  assert.equal(json.governance.applicable, false);
 });

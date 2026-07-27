@@ -27,6 +27,7 @@ import type { TargetCalendarValue } from "../model/target-calendar.js";
 import type { DurationUnit, Velocity } from "../model/units.js";
 import type {
   TargetGrammar3ValidatedDocument,
+  TargetGrammar4ValidatedDocument,
 } from "../semantic/target-validator.js";
 import type {
   TemporalPrecedenceSchedule,
@@ -503,7 +504,9 @@ function deadlineView(
 }
 
 function predecessorBlockedTaskIds(
-  document: TargetGrammar3ValidatedDocument["document"],
+  document:
+    | TargetGrammar3ValidatedDocument["document"]
+    | TargetGrammar4ValidatedDocument["document"],
   subject: DeadlineSubject,
 ): readonly string[] {
   const incoming = new Map<string, DeclarationNode[]>();
@@ -603,7 +606,9 @@ function combined(
 }
 
 export function evaluateTemporalDeadlines(
-  validated: TargetGrammar3ValidatedDocument,
+  validated:
+    | TargetGrammar3ValidatedDocument
+    | TargetGrammar4ValidatedDocument,
   inputs: TargetTemporalInputProjection,
   precedenceSchedule: TemporalPrecedenceSchedule,
   resourceSchedule: TemporalResourceSchedule,

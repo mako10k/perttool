@@ -1,7 +1,7 @@
 import type { DocumentWriteResult } from "../io/safe-write.js";
 import type { UnitMigrationRequest } from "../migration/request.js";
 import {
-  TARGET_GRAMMAR_3_CAPABILITY,
+  TARGET_GRAMMAR_4_CAPABILITY,
 } from "../parser/document-parser.js";
 import {
   planTargetUnitMigrationResult,
@@ -20,8 +20,8 @@ export type UnitMigrationResult = Omit<
   TargetUnitMigrationResult,
   "sourceGrammarVersion" | "targetGrammarVersion"
 > & {
-  readonly sourceGrammarVersion: 1 | 2 | 3 | null;
-  readonly targetGrammarVersion: 1 | 2 | 3 | null;
+  readonly sourceGrammarVersion: 1 | 2 | 3 | 4 | null;
+  readonly targetGrammarVersion: 1 | 2 | 3 | 4 | null;
 };
 export type UnitMigrationConvertedField =
   TargetUnitMigrationResultConvertedField;
@@ -39,15 +39,9 @@ export function planUnitMigration(
   const result = planTargetUnitMigrationResult(
     text,
     request,
-    TARGET_GRAMMAR_3_CAPABILITY,
+    TARGET_GRAMMAR_4_CAPABILITY,
     options,
   );
-  if (
-    result.sourceGrammarVersion === 4 ||
-    result.targetGrammarVersion === 4
-  ) {
-    throw new Error("active Grammar 3 unit migration returned Grammar 4");
-  }
   return result as UnitMigrationResult;
 }
 
@@ -56,11 +50,5 @@ export function withUnitMigrationWrite(
   output: DocumentWriteResult,
 ): UnitMigrationResult {
   const written = withTargetUnitMigrationWrite(result, output);
-  if (
-    written.sourceGrammarVersion === 4 ||
-    written.targetGrammarVersion === 4
-  ) {
-    throw new Error("active Grammar 3 unit migration returned Grammar 4");
-  }
   return written as UnitMigrationResult;
 }

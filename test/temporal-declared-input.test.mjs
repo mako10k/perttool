@@ -188,7 +188,17 @@ test("TUI-004 projects exact declared inputs and finish deadline", async () => {
   assert.deepEqual(publicChecked.temporalInputs, checked.temporalInputs);
   const publicProject = publicApi.getProjectMetadata(text);
   assert.equal(publicProject.ok, true);
-  assert.deepEqual(publicProject.project, project.project);
+  const { governance, ...publicProjectWithoutGovernance } =
+    publicProject.project;
+  assert.deepEqual(publicProjectWithoutGovernance, project.project);
+  assert.deepEqual(governance.declared, {
+    goalOwner: null,
+    goalDelegates: null,
+    dagOwner: null,
+    dagDelegates: null,
+  });
+  assert.equal(governance.effective.goalOwner, "user");
+  assert.equal(governance.effective.dagOwner, "user");
 });
 
 test("declared temporal arrays retain source declaration order", async () => {

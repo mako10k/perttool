@@ -146,7 +146,7 @@ test("point input projection retains effective velocity and exact point values",
   ]);
 });
 
-test("Grammar 3 fractions are accepted by active Contract 4", () => {
+test("Grammar 3 fractions are retained by active Contract 5", () => {
   const text = `project FRACTIONAL_TEMPORAL:
   version 3
   title "fractional temporal input"

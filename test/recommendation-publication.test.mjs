@@ -35,7 +35,7 @@ test("NextResult.v4 publishes the same complete recommendation from Core and CLI
   assert.equal(command.status, 0, command.stderr);
   const json = JSON.parse(command.stdout);
   assert.equal(json.schema_version, "Perttool.NextResult.v4");
-  assert.equal(json.cli_contract_version, 4);
+  assert.equal(json.cli_contract_version, 5);
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.source_digest, sourceDigest);
   assert.deepEqual(
@@ -75,7 +75,7 @@ test("NextResult.v4 complete empty recommendation preserves v3 fields and adds t
   assert.deepEqual(retained, {
     ...expected,
     schema_version: "Perttool.NextResult.v4",
-    cli_contract_version: 4,
+    cli_contract_version: 5,
   });
   assert.equal(grammarVersion, 1);
   assert.deepEqual(temporal.authority, {
@@ -134,7 +134,7 @@ test("dag next command help identifies the breaking v4 consumer boundary", () =>
   const command = run(["dag", "next", "--help"]);
   assert.equal(command.status, 0, command.stderr);
   assert.match(command.stdout, /Perttool\.NextResult\.v4/);
-  assert.match(command.stdout, /CLI contract: 4/);
+  assert.match(command.stdout, /CLI contract: 5/);
   assert.match(command.stdout, /Output: formats=text,json/);
 });
 

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { checkDocument } from "../application/check.js";
+import { GOVERNANCE_DIRECT_EDIT_WARNING } from "../governance/guidance.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { compareStableStrings, normalizeMaxDiagnostics } from "../model/diagnostics.js";
 import type { DocumentNode } from "../model/syntax.js";
@@ -390,7 +391,7 @@ function textField(name: string, value: unknown): readonly string[] {
 }
 
 function serializeProfileRecords(records: readonly ParsedRecord[]): string {
-  const declarations: string[] = [];
+  const declarations: string[] = [GOVERNANCE_DIRECT_EDIT_WARNING];
   for (const { kind, value } of records) {
     if (kind === "project") {
       declarations.push([
@@ -691,7 +692,7 @@ function importPlain(
   const syntheticFinish = sinks.length !== 1;
   const finish = syntheticFinish ? "MERMAID_FINISH" : milestoneIds.get(sinks[0]!.rawId)!;
   if (syntheticFinish) generatedIds.push({ sourceElement: "synthetic:finish", generatedId: finish });
-  const declarations: string[] = [[
+  const declarations: string[] = [GOVERNANCE_DIRECT_EDIT_WARNING, [
     "project IMPORTED_MERMAID:",
     "  version 1",
     "  title \"Imported Mermaid\"",

@@ -43,7 +43,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax",
     title: "DSL syntax",
-    summary: "Grammar versions 1, 2, and 3 for declaring project, resource, milestone, task, and gate.",
+    summary: "Grammar versions 1, 2, 3, and 4 for declaring project, governance metadata, resource, milestone, task, and gate.",
     quick: [
       {
         id: "declarations",
@@ -100,7 +100,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "version",
         title: "Grammar version",
-        body: "An omitted version is treated as 1. Version 2 adds temporal fields; version 3 additionally accepts exact Fraction Duration.",
+        body: "An omitted version is treated as 1. Version 2 adds temporal fields; version 3 additionally accepts exact Fraction Duration; version 4 adds declared goal/DAG owners and delegates.",
       },
     ],
     syntax: [

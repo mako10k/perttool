@@ -5,9 +5,11 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-The current Contract 4 version is `0.3.0`. Beta releases may contain breaking
-CLI or schema changes. Version `0.3.0` requires Node.js 22 or later. Contract 3
-remains available by pinning `0.2.0`.
+The repository source now implements Grammar 4 and CLI Contract 5. The latest
+published package remains Contract 4 `0.3.0`; release version selection and
+publication for Contract 5 are separate work. Beta releases may contain
+breaking CLI or schema changes. Version `0.3.0` requires Node.js 22 or later.
+Contract 3 remains available by pinning `0.2.0`.
 
 ## Run without installing
 
@@ -156,21 +158,34 @@ perttool batch apply PLAN.pert \
   --expect-digest 'sha256:...'
 ```
 
-### Owner-aware governance target
+### Owner-aware governance
 
 The published `0.3.0` package still uses Grammar 1/2/3 and CLI Contract 4. It
-does not yet accept governance fields, `--actor`, or
-`--accepted-by-owner`, and it does not enforce owner-aware writes. Those
-surfaces activate together only with the future atomic Grammar 4 and CLI
-Contract 5 cutover.
+does not accept governance fields, `--actor`, or `--accepted-by-owner`, and it
+does not enforce owner-aware writes. The repository source and locally built
+or packed artifacts activate those surfaces together as Grammar 4 and CLI
+Contract 5. Do not infer that local acceptance published a new package.
 
-Under that target contract, previews may omit actor and owner confirmation.
-A persistent goal or DAG change requires an actor. An effective owner or
-delegate has direct authority; another actor supplies repeatable
-`--accepted-by-owner` caller assertions for every affected effective owner.
-The digest-bound pre-change document determines owners and delegates, and an
-atomic batch must satisfy every affected scope. The assertions are not
-authentication, verified identity, signatures, or a durable approval audit.
+Under Contract 5, previews may omit actor and owner confirmation. A persistent
+goal or DAG change requires an actor. An effective owner or delegate has direct
+authority; another actor supplies repeatable `--accepted-by-owner` caller
+assertions for every affected effective owner. The digest-bound pre-change
+document determines owners and delegates, and an atomic batch must satisfy
+every affected scope. The assertions are not authentication, verified
+identity, signatures, or a durable approval audit.
+
+For example, preview and then persist a DAG change as its effective owner:
+
+```sh
+perttool gate add PLAN.pert APPROVAL NOW DONE \
+  --reason "Approval required" \
+  --diff
+perttool gate add PLAN.pert APPROVAL NOW DONE \
+  --reason "Approval required" \
+  --actor user \
+  --write \
+  --expect-digest 'sha256:...'
+```
 
 Generated Contract 5 projects carry this maintenance warning:
 
@@ -238,10 +253,11 @@ perttool guide editing --level detail --format json
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. Check both
-`cli_contract_version == 4` and the result-specific `schema_version` before
-reading the rest of a result. A complete, known, non-truncated
-`Perttool.NextResult.v4` with temporal policy
+Use `--format json` for machine consumers. Repository-source Contract 5
+consumers must check `cli_contract_version == 5`; consumers pinned to the
+published `0.3.0` package must continue to require Contract 4. In both cases,
+check the result-specific `schema_version` before reading the rest of a result.
+A complete, known, non-truncated `Perttool.NextResult.v4` with temporal policy
 `recommendation_v1_plus_release_gate` is required. Start only task IDs in
 `temporal.authority.startable_recommended_task_ids`; do not infer start
 authority from the raw recommended set, the text summary, or `ready` alone.
@@ -254,6 +270,8 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 ## Documentation
 
 - [Temporal and Unit Interface Contract (CLI Contract 4)](docs/specs/temporal-unit-interface.md)
+- [Owner-Aware Governance Interface Contract (CLI Contract 5)](docs/specs/governance-interface.md)
+- [Issue #4 governance implementation acceptance](docs/process/governance-acceptance.md)
 - [CLI Contract 3 compatibility baseline](docs/specs/cli-contract-3.md)
 - [DSL grammar](docs/specs/dsl-grammar.md)
 - [Graph semantics](docs/specs/graph-semantics.md)

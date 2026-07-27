@@ -1,6 +1,6 @@
 DSL syntax
 
-Grammar versions 1, 2, and 3 for declaring project, resource, milestone, task, and gate.
+Grammar versions 1, 2, 3, and 4 for declaring project, governance metadata, resource, milestone, task, and gate.
 
 Declarations
 Place exactly one project first, followed by resource, milestone, task, and gate declarations.

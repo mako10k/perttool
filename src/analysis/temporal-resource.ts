@@ -14,6 +14,7 @@ import {
 import type { RequirementValue } from "../model/syntax.js";
 import type {
   TargetGrammar3ValidatedDocument,
+  TargetGrammar4ValidatedDocument,
 } from "../semantic/target-validator.js";
 import {
   buildResidualGraph,
@@ -426,7 +427,9 @@ function schedule(
 }
 
 export function analyzeTemporalResourceSchedule(
-  validated: TargetGrammar3ValidatedDocument,
+  validated:
+    | TargetGrammar3ValidatedDocument
+    | TargetGrammar4ValidatedDocument,
   inputs: TargetTemporalInputProjection,
   options: TemporalResourceOptions = {},
 ): TemporalResourceSchedule {

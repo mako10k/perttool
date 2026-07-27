@@ -125,6 +125,20 @@ export async function replaceTargetGrammar4DocumentFile(
   );
 }
 
+export async function createTargetGrammar4DocumentFile(
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar4Capability,
+  options: CreateDocumentOptions = {},
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFile(
+    target,
+    candidateText,
+    targetGrammar4Validator(capability),
+    options,
+  );
+}
+
 export async function createTargetGrammar4DocumentFileFromSource(
   source: string,
   target: string,

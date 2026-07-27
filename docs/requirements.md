@@ -1286,7 +1286,18 @@ The LSP server and VSIX have a server/client dependency. The MCP server can be d
 
 ## 18. JSON and schemas
 
-The [Mutation Semantics specification](specs/mutation.md) is authoritative for mutation Core requests, local TextEdits, comment ownership, and candidate revalidation. The [CLI Interface specification](specs/interfaces.md) remains the reference for Contract 2 payload meanings explicitly preserved by Contract 3. The [CLI Contract 3 specification](specs/cli-contract-3.md) is authoritative for the active command/operation namespace, command-help and guide schemas, initialization result, diagnostic links, and `cli_contract_version`.
+The [Mutation Semantics specification](specs/mutation.md) is authoritative for
+mutation Core requests, local TextEdits, comment ownership, and candidate
+revalidation. The [CLI Interface specification](specs/interfaces.md) remains
+the reference for Contract 2 payload meanings explicitly preserved by
+Contract 3. The [CLI Contract 3 specification](specs/cli-contract-3.md)
+remains authoritative for the command/operation namespace, command-help and
+guide foundations, initialization result, and diagnostic links.
+[Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
+defines the Contract 4 temporal/unit schemas retained by Contract 5, and
+[Owner-Aware Governance Interface Contract](specs/governance-interface.md)
+defines the active repository-source `cli_contract_version`, ProjectResult v3,
+MutationResult v2, governance decision, help, and write boundary.
 
 Must:
 
@@ -1612,6 +1623,7 @@ Resolved design decisions:
 - Core assertions, CLI Contract 5, project/mutation schemas, help, diagnostics, exits, and atomic activation: [Owner-Aware Governance Interface Contract](specs/governance-interface.md)
 - Defaults, preview, owner/delegate assertions, atomic batches, safe-write composition, ordinary operations, and direct-edit guidance: [Normative Owner-Aware Governance Examples](examples/governance.md)
 - Complete Issue #4 criteria, interface invariants, non-goals, resolved cross-cutting findings, and implementation handoff: [Issue #4 Owner-Aware Governance Design Acceptance Review](process/governance-design-acceptance.md)
+- Atomic Grammar 4 and CLI Contract 5 source/package-root activation, installed-package evidence, and retained release boundary: [Issue #4 Governance Implementation Acceptance](process/governance-acceptance.md)
 
 ## 25. Recommended next specification work
 
