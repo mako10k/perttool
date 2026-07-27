@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-07-25
+- Updated: 2026-07-27
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -553,11 +553,146 @@ SU-M2 progress:
   Next v4 authority, the public unit-migration command and installed workflow,
   and publication are explicit non-goals.
 
+## Strict approval authentication and certificates
+
+### GOV-AUTH-001: Add opt-in strict approval
+
+Priority: Unset (requires refinement)
+
+Status: Proposed backlog (not scheduled)
+
+The accepted Issue #4 governance contract deliberately treats actor and owner
+confirmation values as caller assertions. Preserve that behavior as the
+default loose approval mode, while designing an opt-in strict mode for projects
+that require authenticated approval and verifiable change-approval
+certificates. The `loose` and `strict` names describe the requested modes here;
+their final DSL and interface spellings remain a normative design decision.
+
+Proposed strict-mode inputs and behavior:
+
+- Associate each strict principal with one compact, versioned strict-credential
+  token in the DSL. The preferred representation is one random-looking ASCII
+  string of approximately 40 to 50 characters that jointly binds password
+  verification and the signature-verification identity. It is one
+  user-attached value even when password verification and signature
+  verification use separate internal layers.
+- First evaluate whether that single token can safely contain all required
+  public verification material. If the target length cannot carry the complete
+  versioned verifier, salt, parameters, and signature-verification material,
+  keep the one-string user surface by making the token an opaque
+  collision-resistant identifier or cryptographic commitment to one
+  tamper-protected credential record that contains both. Use separate
+  user-attached strings only if the requirements and architecture review
+  demonstrate that the unified representation is unsafe or impractical.
+- Passwords and private signing keys must never occur in the `.pert` source.
+  The short token is not itself a password, private key, signature, or
+  sufficient proof. It authorizes no action unless the password verifier
+  addressed by the token succeeds and the approval-certificate signature
+  verifies against the signing identity bound by that same token. Neither
+  result alone is strict approval.
+- Salt each enrolled password verifier so that equal passwords do not normally
+  produce equal stored values. Record the password-derivation algorithm,
+  parameters, format version, and salt needed for deterministic verification;
+  a fast or ambiguously truncated password hash is not an accepted verifier.
+- Define decision-edge and signed change-approval-certificate semantics. A
+  certificate must bind the approval to the exact pre-change source digest,
+  candidate digest, affected governance scopes, approving actor and owner,
+  policy version, and a unique request value. A displayed short fingerprint is
+  an identifier for full verification material, not a substitute for signature
+  verification.
+- Add a durable approval-request lifecycle sufficient to distinguish at least
+  pending, approved, rejected, expired, and consumed requests. Define
+  concurrency, replay prevention, revocation, key rotation, password reset,
+  recovery, retention, and audit behavior before selecting a storage adapter.
+- Add a CLI read surface that lists unprocessed approvals and can filter the
+  list by exact actor. Add an approval action that authenticates the actor with
+  a password and invokes the signing identity bound by the actor's one
+  strict-credential token to produce the signed approval certificate. Password
+  input must use a non-echoing or otherwise explicitly protected secret-input
+  path and must not appear in argv, JSON, diagnostics, logs, shell history, or
+  project source.
+- Keep preview and request creation distinct from persistence. A strict-mode
+  governed write must fail closed until every required approval certificate is
+  valid for the exact candidate and current source. Consuming approvals and
+  persisting the candidate must have an atomic or recoverably idempotent
+  contract.
+- Keep decision edges distinct from Activity-on-Arrow task/gate dependencies
+  and from resource requirements unless a later normative requirement
+  explicitly gives them scheduling semantics.
+
+Compatibility and trust-boundary requirements:
+
+- Existing documents and omitted approval-mode metadata continue to use loose
+  Issue #4 behavior. Strict approval is opt-in and must not become a
+  prerequisite for completing the current `plans/governance.pert` workstream.
+- Enabling, disabling, or downgrading strict mode, replacing a verifier, and
+  rotating or revoking a verification key are themselves protected changes.
+- The design must identify a root of trust outside attacker-controlled source,
+  or state precisely why direct DSL editing and a `strict` to `loose` edit
+  cannot be prevented. It must not claim strict authentication when all policy
+  and verification material can be replaced in the same editable file.
+- Password verification and approval-certificate signature verification may be
+  separate internal operations, but the strict authorization decision is their
+  conjunction under the same principal-bound token. Diagnostics may identify
+  the failed layer without treating success in the other layer as authority. A
+  password-derived value or short hash alone is not described as a digital
+  signature.
+- Loose and strict results, help, Guide content, and installed-package behavior
+  expose the effective mode and never describe an unverified caller assertion
+  as strict approval.
+
+Acceptance:
+
+- a legacy or mode-omitting plan retains byte-compatible loose behavior;
+- the preferred strict enrollment adds exactly one random-looking, 40-to-50
+  ASCII-character credential token to a principal and that token jointly binds
+  the password verifier and signature-verification identity;
+- changing either bound component, resolving the token to a different
+  credential record, or combining components enrolled under different tokens
+  invalidates strict approval;
+- any fallback to separate user-attached strings is supported by an accepted
+  finding that the unified target cannot satisfy the security or operational
+  contract;
+- independently salted verifier fixtures demonstrate that equal passwords do
+  not normally produce equal stored verifier strings;
+- strict-mode approval succeeds only when the actor's password verification and
+  a valid signature over the exact approval-certificate payload both succeed
+  under the same token; correct-password/invalid-signature and
+  invalid-password/valid-signature cases both fail closed;
+- candidate, source, scope, owner, policy, expiry, revocation, or request-value
+  mismatch fails closed, and an approved request cannot be replayed;
+- CLI text and JSON deterministically list all and actor-filtered pending
+  approvals without exposing passwords, password verifiers, or private signing
+  material;
+- password entry is covered by tests that prove it is absent from argv,
+  project source, normal output, diagnostics, and logs;
+- direct, batch, advance, and any existing-document import write paths cannot
+  bypass strict approval after it is enabled;
+- focused source, cryptographic-adapter, lifecycle, CLI, concurrency,
+  safe-write, downgrade, help, package, and installed-workflow tests pass; and
+- the requirements, threat model, source contract, authority semantics,
+  interface contract, normative examples, architecture decision, and
+  independent PERT plan are accepted before runtime implementation.
+
+Security design should be based on reviewed password-verifier and signature
+standards, including
+[NIST SP 800-63B-4](https://doi.org/10.6028/NIST.SP.800-63b-4),
+[RFC 9106](https://www.rfc-editor.org/rfc/rfc9106), and
+[RFC 8032](https://www.rfc-editor.org/rfc/rfc8032). This backlog item does not
+select an algorithm, parameter set, source field, CLI spelling, storage
+adapter, or release.
+
+When selected, refine this item into an independent, design-first `.pert`
+workstream sequenced after the loose owner-aware governance contract it
+extends. Do not add its unresolved authentication, certificate, or durable
+ledger semantics to an in-progress Issue #4 implementation slice.
+
 ## Independent post-beta work
 
 Issue #3 (backlog hierarchy and multi-plan composition), the LSP server, the
-VSIX, the MCP server, human override apply/audit, and Git integration remain
-independent workstreams. `ADV-001` is the refined, unscheduled read-only Git
-guard for destructive advance writes; it is not yet a Contract 3 feature.
-These items are not prerequisites for the CLI/help reset unless a later
-requirements decision explicitly composes them.
+VSIX, the MCP server, human override apply/audit, Git integration, and
+`GOV-AUTH-001` strict approval remain independent workstreams. `ADV-001` is the
+refined, unscheduled read-only Git guard for destructive advance writes; it is
+not yet a Contract 3 feature. These items are not prerequisites for the
+CLI/help reset or the current loose owner-aware governance workstream unless a
+later requirements decision explicitly composes them.
