@@ -1853,7 +1853,8 @@ The release sequence separates:
 6. post-publication durable acceptance;
 7. independent later decisions for npm `latest` and Issue #4 closure.
 
-The 2026-07-27 request authorizes only `RELEASE_040_GATE_DESIGN`.
+The 2026-07-27 requests authorize only `RELEASE_040_GATE_DESIGN` and
+`RELEASE_040_CONTRACT_5_READINESS`.
 `RELEASE_040_PUBLISH` remains explicitly blocked in the plan until a separate
 user instruction authorizes the named `0.4.0` external publication batch.
 Plan state records this boundary but is not itself external-write authority.

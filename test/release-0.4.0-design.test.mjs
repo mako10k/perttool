@@ -18,6 +18,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     design,
     procedure,
     governanceAcceptance,
+    readiness,
     plan,
     manifestText,
     lockfileText,
@@ -28,6 +29,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.4.0-release.md"),
     repositoryText("docs/process/governance-acceptance.md"),
+    repositoryText("docs/process/0.4.0-contract5-readiness.md"),
     repositoryText("plans/release-0.4.0.pert"),
     repositoryText("package.json"),
     repositoryText("package-lock.json"),
@@ -54,7 +56,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.match(procedure, /Expected pre-publication default: `beta=latest=0\.3\.0`/);
   assert.match(
     procedure,
-    /request authorizes only\n`RELEASE_040_GATE_DESIGN`/,
+    /requests authorize only `RELEASE_040_GATE_DESIGN` and\n`RELEASE_040_CONTRACT_5_READINESS`/,
   );
   assert.match(
     procedure,
@@ -62,6 +64,8 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   );
   assert.match(governanceAcceptance, /Document status: Accepted/);
   assert.match(governanceAcceptance, /Published package boundary: `0\.3\.0`/);
+  assert.match(readiness, /Document status: Accepted 1\.0/);
+  assert.match(readiness, /starts only\s+`RELEASE_040_PREPARATION`/);
 
   assert.match(plan, /^project RELEASE_040:$/m);
   assert.match(plan, /^  version 4$/m);

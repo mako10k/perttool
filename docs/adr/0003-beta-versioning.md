@@ -75,7 +75,9 @@ gate. The [`v0.4.0` release procedure](../process/0.4.0-release.md) verifies
 the completed governance acceptance before source preparation and retains
 publication as a separately authorized task. This gate-design authorization
 does not authorize Git push, tag creation, GitHub or npm publication, npm
-`latest` promotion, or Issue #4 closure.
+`latest` promotion, or Issue #4 closure. A subsequent instruction authorized
+only the Contract 5 readiness gate and retained the same external-write
+exclusions.
 
 ## Beta gate
 

@@ -283,36 +283,35 @@
       "diagnostic_codes": []
     },
     "release-0.4.0": {
-      "source_digest": "sha256:6745eb3bd85eebf54a18408fb36841fd80bd176b6c18fa9d9bddb1fbeefd1f7d",
+      "source_digest": "sha256:009fa869798727cc67eeddcf08fcafa4e9e677433af1952b1c8a133ac3b0b7a9",
       "groups": {
         "active": [],
         "ready": [
-          "RELEASE_040_CONTRACT_5_READINESS"
+          "RELEASE_040_PREPARATION"
         ],
         "runnable_now": [
-          "RELEASE_040_CONTRACT_5_READINESS"
+          "RELEASE_040_PREPARATION"
         ],
         "blocked_now": [],
         "upcoming": [
-          "RELEASE_040_PREPARATION",
           "RELEASE_040_CANDIDATE",
           "RELEASE_040_PUBLISH",
           "RELEASE_040_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "RELEASE_040_CONTRACT_5_READINESS"
+        "RELEASE_040_PREPARATION"
       ],
       "manual_selected_task_ids": [
-        "RELEASE_040_CONTRACT_5_READINESS"
+        "RELEASE_040_PREPARATION"
       ],
       "tiers": {
-        "RELEASE_040_CONTRACT_5_READINESS": "recommended"
+        "RELEASE_040_PREPARATION": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RELEASE_040_CONTRACT_5_READINESS",
+          "id": "RELEASE_040_PREPARATION",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -329,6 +328,7 @@
         "descriptions": 1
       },
       "diagnostic_codes": [
+        "PTDAG-208",
         "PTRES-303"
       ]
     },

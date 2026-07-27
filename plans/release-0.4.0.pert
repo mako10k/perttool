@@ -2,7 +2,7 @@
 project RELEASE_040:
   version 4
   title "perttool 0.4.0 Contract 5 beta release"
-  description "Plan the suffix-free 0.4.0 beta release that publishes accepted Grammar 4, owner-aware goal and DAG mutation governance, and CLI Contract 5 from one immutable tarball. The completed governance plan remains the implementation authority. RELEASE_040_GATE_DESIGN completed 3p after the user authorized only release-gate design. Sixteen points remain; the precedence makespan is 16p and the heuristic resource makespan is conditionally 16p if the blocked publication authorization is resolved at time zero, with an inherited 32/19d forecast from the accepted 0.3.0 release velocity. Complete NextResult v4 recommends RELEASE_040_CONTRACT_5_READINESS. RELEASE_040_PUBLISH is blocked pending separate explicit user authorization for the named 0.4.0 external batch. npm latest promotion and Issue #4 closure remain separate post-acceptance decisions."
+  description "Release suffix-free 0.4.0 beta from the accepted atomic Contract 5 source and one verified tarball. RELEASE_040_GATE_DESIGN is complete and advanced. The governance plan reached its accepted finish, and RELEASE_040_CONTRACT_5_READINESS verified the complete public, owner-aware safe-write, and installed-package boundary with no open readiness finding. Four tasks and 14p remain; precedence and heuristic resource makespans are both 14p with an inherited 28/19d forecast. Complete NextResult v4 recommends RELEASE_040_PREPARATION. Current authorization covers completed gate design and readiness only. RELEASE_040_PUBLISH remains blocked pending separate explicit authorization for the named 0.4.0 external batch; npm latest promotion and Issue #4 closure remain separate post-acceptance decisions."
   as_of 2026-07-27
   duration_unit point
   velocity 19p/2d
@@ -59,6 +59,7 @@ task RELEASE_040_CONTRACT_5_READINESS RELEASE_040_GATE_ACCEPTED -> RELEASE_040_C
   title "Verify accepted Contract 5 release input"
   description "Require reached GOVERNANCE_ACCEPTED and the accepted governance record. Verify public Grammar 4, CLI Contract 5, owner-aware Core and safe-write enforcement, effective defaults, root exports, help, Guide, README, and installed behavior without duplicating implementation state."
   duration 2p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

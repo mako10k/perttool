@@ -1592,11 +1592,12 @@ of the `0.x.x` beta series, is a GitHub prerelease, and is published to npm
     observations before accepting the release.
 
 Planning or locally accepting this gate does not authorize Git, GitHub, npm,
-dist-tag, or Issue writes. The user's 2026-07-27 request authorizes only
-`RELEASE_040_GATE_DESIGN`. `RELEASE_040_PUBLISH` remains blocked until a
-separate user instruction explicitly authorizes the named `0.4.0` external
-publication batch. npm `latest` promotion and Issue #4 closure are distinct
-post-acceptance decisions. The authoritative procedure is
+dist-tag, or Issue writes. The user's 2026-07-27 requests authorize only
+`RELEASE_040_GATE_DESIGN` and `RELEASE_040_CONTRACT_5_READINESS`.
+`RELEASE_040_PUBLISH` remains blocked until a separate user instruction
+explicitly authorizes the named `0.4.0` external publication batch. npm
+`latest` promotion and Issue #4 closure are distinct post-acceptance
+decisions. The authoritative procedure is
 [`docs/process/0.4.0-release.md`](process/0.4.0-release.md).
 
 ## 22. Mapping to the initial requirements
@@ -1772,7 +1773,7 @@ The accepted repository source and locally packed package now activate
 Grammar 4 and CLI Contract 5 atomically. The independent
 [`plans/release-0.4.0.pert`](../plans/release-0.4.0.pert) release workstream
 selects suffix-free beta `0.4.0` and verifies the completed governance
-acceptance before release preparation. Its gate-design authorization performs
-no external write; PUBLISH remains blocked pending a separate named
-authorization, and npm `latest` promotion and Issue #4 closure remain
-independent post-acceptance decisions.
+acceptance before release preparation. Its gate-design and readiness
+authorizations perform no external write; PUBLISH remains blocked pending a
+separate named authorization, and npm `latest` promotion and Issue #4 closure
+remain independent post-acceptance decisions.
