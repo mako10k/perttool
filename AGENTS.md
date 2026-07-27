@@ -40,12 +40,12 @@ Grammar 4 and CLI Contract 5 cutover. `plans/release-0.4.0.pert`
 independently tracks gate design, accepted governance input, source
 preparation, candidate acceptance, PUBLISH, and durable acceptance without
 restoring completed governance task state. `RELEASE_040_GATE_DESIGN` is
-complete and advanced, and `RELEASE_040_CONTRACT_5_READINESS` is done but
-unadvanced after accepting the Contract 5 readiness record. Fourteen points
-remain; the precedence makespan is 14p, and the heuristic resource makespan is
-conditionally 14p with no resource delay if publication authorization is
-resolved at time zero. Inherited velocity is `19p/2d`, and both forecasts are
-`28/19d`. Complete NextResult v4 recommends and starts only
+complete and advanced, and `RELEASE_040_CONTRACT_5_READINESS` is complete and
+advanced after accepting the Contract 5 readiness record. Fourteen points
+remain; the precedence makespan is 14p, and the heuristic resource makespan
+is conditionally 14p with no resource delay if publication authorization is
+resolved at time zero. Inherited velocity is `19p/2d`, and both forecasts
+are `28/19d`. Complete NextResult v4 recommends and starts only
 `RELEASE_040_PREPARATION`. The user authorized only gate design and readiness;
 `RELEASE_040_PUBLISH` is blocked pending separate explicit authorization for
 the named `0.4.0` external batch. npm `latest` promotion and Issue #4 closure
