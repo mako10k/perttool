@@ -159,15 +159,14 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:df6ac9ca7d11af357799367b664f4d2219f3e80c0af52fb4e6f9a900021cc24d",
+      "source_digest": "sha256:b4ca40e45a477645e0d00c1e58d3b1bdb5c4993456c0fc006ef2a2b796aed8f9",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_WRITE_ENFORCEMENT",
           "GOV_GUIDANCE"
         ],
         "runnable_now": [
-          "GOV_WRITE_ENFORCEMENT"
+          "GOV_GUIDANCE"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -175,53 +174,32 @@
         ]
       },
       "recommended_task_ids": [
-        "GOV_WRITE_ENFORCEMENT"
+        "GOV_GUIDANCE"
       ],
       "manual_selected_task_ids": [
-        "GOV_WRITE_ENFORCEMENT"
+        "GOV_GUIDANCE"
       ],
       "tiers": {
-        "GOV_WRITE_ENFORCEMENT": "recommended",
-        "GOV_GUIDANCE": "deferred"
+        "GOV_GUIDANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_WRITE_ENFORCEMENT",
+          "id": "GOV_GUIDANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
-        },
-        {
-          "id": "GOV_GUIDANCE",
-          "runnable_now": false,
-          "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "2/1",
-          "resource_rejections": [
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "GOV_WRITE_ENFORCEMENT"
-              ]
-            }
-          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 12,
-        "facts": 47,
-        "comparisons": 2,
-        "reasons": 8,
-        "descriptions": 4
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
       "diagnostic_codes": []
     },

@@ -4,8 +4,8 @@
     "grammar_version": 1,
     "summary": {
       "resources": 5,
-      "milestones": 6,
-      "tasks": 3,
+      "milestones": 5,
+      "tasks": 2,
       "gates": 2,
       "errors": 0,
       "warnings": 0
@@ -13,21 +13,18 @@
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "9/1",
+    "precedence_makespan": "7/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "6/11",
+    "precedence_forecast": "7/19",
     "precedence_critical_tasks": [
-      "GOV_WRITE_ENFORCEMENT",
+      "GOV_GUIDANCE",
       "GOV_ACCEPTANCE"
     ],
-    "resource_makespan": "12/1",
-    "resource_forecast": "8/11",
-    "resource_delay": "3/1",
-    "resource_arcs": [
-      "resource:GOV_WRITE_ENFORCEMENT:GOV_GUIDANCE"
-    ],
+    "resource_makespan": "7/1",
+    "resource_forecast": "7/19",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "GOV_WRITE_ENFORCEMENT",
       "GOV_GUIDANCE",
       "GOV_ACCEPTANCE"
     ]
@@ -36,24 +33,16 @@
     "groups": {
       "active": [],
       "ready": [
-        "GOV_WRITE_ENFORCEMENT",
         "GOV_GUIDANCE"
       ],
       "runnable_now": [
-        "GOV_WRITE_ENFORCEMENT"
+        "GOV_GUIDANCE"
       ],
       "blocked_now": [],
       "upcoming": [
         "GOV_ACCEPTANCE"
       ]
     },
-    "resource_rejection": {
-      "task_id": "GOV_GUIDANCE",
-      "resource_id": "REVIEWERS",
-      "capacity": 1,
-      "earlier_selected_task_ids": [
-        "GOV_WRITE_ENFORCEMENT"
-      ]
-    }
+    "resource_rejection": null
   }
 }

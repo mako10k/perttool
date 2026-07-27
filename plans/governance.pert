@@ -44,12 +44,10 @@ milestone DESIGN_ACCEPTED:
 
 
 
-milestone CLI_PREVIEW_READY:
-  title "Governed CLI preview and projections ready"
-  state reached
 
 milestone WRITE_ENFORCEMENT_READY:
   title "Governed write enforcement ready"
+  state reached
 
 milestone GUIDANCE_READY:
   title "Editing guidance and generated warning ready"
@@ -71,17 +69,6 @@ milestone GOVERNANCE_ACCEPTED:
 
 
 
-task GOV_WRITE_ENFORCEMENT CLI_PREVIEW_READY -> WRITE_ENFORCEMENT_READY:
-  title "Enforce governance on every affected safe-write path"
-  description "Enforce owner/delegate or accepted-owner assertions for goal and DAG writes, including atomic batch, import, advance, and governed metadata changes. Retain optimistic locking, candidate validation, symlink rejection, atomic write, and unaffected maintenance behavior."
-  duration 5p
-  status done
-  priority 65
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    CLI_SURFACE 1
-    WRITE_PATH 1
 
 task GOV_GUIDANCE DESIGN_ACCEPTED -> GUIDANCE_READY:
   title "Align editing guidance and generated project warnings"

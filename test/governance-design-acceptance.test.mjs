@@ -150,7 +150,6 @@ test("implementation trace and current plan frontier remain aligned", async () =
     assert.ok(acceptance.includes(taskId), taskId);
   }
   for (const taskId of [
-    "GOV_WRITE_ENFORCEMENT",
     "GOV_GUIDANCE",
     "GOV_ACCEPTANCE",
   ]) {
@@ -160,12 +159,13 @@ test("implementation trace and current plan frontier remain aligned", async () =
     "GOV_SOURCE_MODEL",
     "GOV_AUTHORITY_CORE",
     "GOV_CLI_PREVIEW",
+    "GOV_WRITE_ENFORCEMENT",
   ]) {
     assert.ok(!plan.includes(`task ${completedTaskId} `), completedTaskId);
   }
   assert.match(
     plan,
-    /milestone CLI_PREVIEW_READY:\n(?:  .+\n)*  state reached/,
+    /milestone WRITE_ENFORCEMENT_READY:\n(?:  .+\n)*  state reached/,
   );
   for (const boundary of [
     "Authentication and identity verification",
