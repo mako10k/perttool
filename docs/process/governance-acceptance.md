@@ -113,3 +113,11 @@ Acceptance does not claim:
 The generated warning remains guidance: a text editor, shell command, or other
 program can bypass the tool-mediated owner-confirmation check. Git and human
 review remain separate controls.
+
+## 6. Plan closeout
+
+`GOV_ACCEPTANCE` completed 4p on 2026-07-27. The workstream therefore records
+45p over two active days. Canonical advance removed the completed task and its
+obsolete input milestone, marked `GOVERNANCE_ACCEPTED` reached, and left zero
+precedence and heuristic resource makespans with no ready, recommended, or
+startable task.

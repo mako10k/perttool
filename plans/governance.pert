@@ -44,37 +44,7 @@ resource DOC_SURFACE:
 
 
 
-milestone ACCEPTANCE_INPUT_READY:
-  title "Owner-aware governance acceptance input ready"
-  state reached
 
 milestone GOVERNANCE_ACCEPTED:
   title "Owner-aware goal and DAG governance accepted"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-task GOV_ACCEPTANCE ACCEPTANCE_INPUT_READY -> GOVERNANCE_ACCEPTED:
-  title "Accept owner-aware governance across source and installed package"
-  description "Run focused Core, grammar, mutation, CLI, batch, safe-write, help, guide, documentation, self-use, link, package, and installed-workflow tests. Verify Issue #4 defaults, delegation, confirmations, stale-digest behavior, ordinary mutations, direct-edit guidance, and all explicit non-goals."
-  duration 4p
-  status done
-  priority 55
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    CLI_SURFACE 1
-    WRITE_PATH 1
-    DOC_SURFACE 1
+  state reached

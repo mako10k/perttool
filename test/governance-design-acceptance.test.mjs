@@ -133,9 +133,10 @@ test("requirements and design adopt the review without claiming runtime activati
   );
 });
 
-test("implementation trace and current plan frontier remain aligned", async () => {
-  const [acceptance, plan] = await Promise.all([
+test("implementation trace and advanced plan remain aligned", async () => {
+  const [acceptance, implementationAcceptance, plan] = await Promise.all([
     repositoryFile("docs/process/governance-design-acceptance.md"),
+    repositoryFile("docs/process/governance-acceptance.md"),
     repositoryFile("plans/governance.pert"),
   ]);
 
@@ -149,22 +150,21 @@ test("implementation trace and current plan frontier remain aligned", async () =
   ]) {
     assert.ok(acceptance.includes(taskId), taskId);
   }
-  assert.ok(
-    plan.includes("task GOV_ACCEPTANCE "),
-    "GOV_ACCEPTANCE",
-  );
+  assert.match(implementationAcceptance, /Document status: Accepted/);
+  assert.match(implementationAcceptance, /`GOV-AC-010` \| Accepted/);
   for (const completedTaskId of [
     "GOV_SOURCE_MODEL",
     "GOV_AUTHORITY_CORE",
     "GOV_CLI_PREVIEW",
     "GOV_WRITE_ENFORCEMENT",
     "GOV_GUIDANCE",
+    "GOV_ACCEPTANCE",
   ]) {
     assert.ok(!plan.includes(`task ${completedTaskId} `), completedTaskId);
   }
   assert.match(
     plan,
-    /milestone ACCEPTANCE_INPUT_READY:\n(?:  .+\n)*  state reached/,
+    /milestone GOVERNANCE_ACCEPTED:\n(?:  .+\n)*  state reached/,
   );
   for (const boundary of [
     "Authentication and identity verification",

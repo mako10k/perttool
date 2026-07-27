@@ -159,45 +159,26 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:59055944502216054187f8e70cc449b801e3922e48d674b410d852ba0b3f4790",
+      "source_digest": "sha256:d56df5e6ef362dc5d5f6c26b1bf17b535e64676cf408c2cfb16fecb87a46a8e6",
       "groups": {
         "active": [],
-        "ready": [
-          "GOV_ACCEPTANCE"
-        ],
-        "runnable_now": [
-          "GOV_ACCEPTANCE"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": []
       },
-      "recommended_task_ids": [
-        "GOV_ACCEPTANCE"
-      ],
-      "manual_selected_task_ids": [
-        "GOV_ACCEPTANCE"
-      ],
-      "tiers": {
-        "GOV_ACCEPTANCE": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "GOV_ACCEPTANCE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": []
     },
