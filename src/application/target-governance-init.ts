@@ -3,6 +3,7 @@ import type { Diagnostic } from "../model/diagnostics.js";
 import { mutationDiagnostic } from "../mutation/diagnostics.js";
 import type { TextEdit } from "../mutation/text-edits.js";
 import type { TargetGrammar4Capability } from "../parser/document-parser.js";
+import { GOVERNANCE_DIRECT_EDIT_WARNING } from "../governance/guidance.js";
 import {
   validateTargetGrammar4Document,
   type TargetValidationOptions,
@@ -12,8 +13,7 @@ import type {
   ProjectInitWrite,
 } from "./init.js";
 
-export const GOVERNANCE_DIRECT_EDIT_WARNING =
-  "# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks." as const;
+export { GOVERNANCE_DIRECT_EDIT_WARNING };
 
 export interface TargetGovernanceProjectInitRequest {
   readonly projectId: string;

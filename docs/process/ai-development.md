@@ -123,6 +123,28 @@ After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert` 
 
 When changing project metadata, inspect the `project set` preview or `--diff`, and use the Stage 3 `--write` procedure with an expected digest for persistence. If a project-wide unit change also requires task duration or estimate changes, combine `project.set` and the related mutations in one atomic batch. Do not depend on visual source inspection or manual editing for normal metadata viewing and editing.
 
+Owner-aware governance is currently an internal Contract 5 target, not an
+active Contract 4 control. After the atomic Grammar 4 and Contract 5 cutover,
+governed previews may omit actor and owner confirmation, but persistent goal
+or DAG changes require an actor. Effective owners and delegates have direct
+authority; another actor must provide repeatable `--accepted-by-owner`
+caller assertions for every affected effective owner. Always decide authority
+from the digest-bound pre-change document, and require one atomic batch to
+satisfy every affected scope. These assertions are not authentication,
+verified identity, signatures, or durable audit records.
+
+Generated target projects state the direct-edit boundary exactly:
+
+```pert
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+```
+
+Treat this as guidance rather than technical prevention. A text editor, shell
+command, or other program can bypass the tool-mediated authority check. Keep
+Git and human review as separate controls. Until Contract 5 activates
+atomically, do not pass governance fields or caller assertions to the active
+CLI and do not infer that a manual source edit was authorized.
+
 Do not directly compare tasks from different detail plans without a macro decision. Do not substitute `groups.ready`, `groups.runnable_now`, the raw recommended set, or the text summary for start authority. With an unknown schema/model/temporal-policy version, incomplete or truncated trace, unknown tier, `PTREC-*`, or future or unavailable temporal eligibility, do not start a task; stop safely. Do not start `deferred` or `discouraged` work under normal authority.
 
 The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.md), grammar acceptance, formatter/mutation preview, safe write, Mermaid export/import round trip, and advance Core/CLI are complete and are in Stage 3 self-use. The missing MVP acceptance condition 16 found by the [release-readiness audit](mvp-release-readiness.md) was resolved by MIG-01 through MIG-07, totaling 22p, in the [Recommendation implementation plan](../../plans/recommendation.pert). The [five-plan shadow evaluation](recommendation-shadow-review.md), read-only override validation, normal-authority dry run, unknown-version safe stop, and shared-instruction/help synchronization are accepted. The provisional Recommendation-specific observation is `22p/1d`, and distribution of the same `v0.1.0-alpha.2` artifact through GitHub/npm and registry installation are complete.

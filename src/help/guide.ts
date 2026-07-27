@@ -6,11 +6,15 @@ import {
   type HelpResult,
 } from "./registry.js";
 
-export interface GuideResult extends HelpResult {
+export interface GuideProjectionResult extends HelpResult {
   readonly schemaVersion: "Perttool.GuideResult.v1";
-  readonly cliContractVersion: 4;
+  readonly cliContractVersion: 4 | 5;
   readonly toolVersion: string;
   readonly operation: "guide";
+}
+
+export interface GuideResult extends GuideProjectionResult {
+  readonly cliContractVersion: 4;
 }
 
 function jsonPosition(position: SourceSpan["start"]): Readonly<
@@ -80,7 +84,7 @@ export function getGuide(
 }
 
 export function guideResultToJson(
-  result: GuideResult,
+  result: GuideProjectionResult,
 ): Readonly<Record<string, unknown>> {
   return {
     schema_version: result.schemaVersion,
@@ -101,11 +105,11 @@ export function guideResultToJson(
   };
 }
 
-export function serializeGuideResult(result: GuideResult): string {
+export function serializeGuideResult(result: GuideProjectionResult): string {
   return `${JSON.stringify(guideResultToJson(result))}\n`;
 }
 
-export function renderGuideResult(result: GuideResult): string {
+export function renderGuideResult(result: GuideProjectionResult): string {
   if (!result.ok) {
     return `${result.diagnostics.map(renderGuideDiagnostic).join("\n")}\n`;
   }

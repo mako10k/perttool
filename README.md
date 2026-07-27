@@ -156,6 +156,32 @@ perttool batch apply PLAN.pert \
   --expect-digest 'sha256:...'
 ```
 
+### Owner-aware governance target
+
+The published `0.3.0` package still uses Grammar 1/2/3 and CLI Contract 4. It
+does not yet accept governance fields, `--actor`, or
+`--accepted-by-owner`, and it does not enforce owner-aware writes. Those
+surfaces activate together only with the future atomic Grammar 4 and CLI
+Contract 5 cutover.
+
+Under that target contract, previews may omit actor and owner confirmation.
+A persistent goal or DAG change requires an actor. An effective owner or
+delegate has direct authority; another actor supplies repeatable
+`--accepted-by-owner` caller assertions for every affected effective owner.
+The digest-bound pre-change document determines owners and delegates, and an
+atomic batch must satisfy every affected scope. The assertions are not
+authentication, verified identity, signatures, or a durable approval audit.
+
+Generated Contract 5 projects carry this maintenance warning:
+
+```pert
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+```
+
+The warning is guidance, not technical prevention. A text editor, shell
+command, or other program can bypass the tool-mediated check; Git and human
+review remain external controls.
+
 Use the dedicated migration route for exact whole-document conversion between
 Point and time units. Preview before writing; the result inventories every
 converted field and reports grammar upgrades and reversibility:

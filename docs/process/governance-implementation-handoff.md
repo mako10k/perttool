@@ -1,51 +1,47 @@
 # Issue #4 Governance Implementation Handoff
 
 - Document status: Resumable checkpoint
-- Handoff date: 2026-07-26
+- Handoff date: 2026-07-27
 - Issue: [Issue #4](https://github.com/mako10k/perttool/issues/4), open at handoff
 - Plan: [../../plans/governance.pert](../../plans/governance.pert)
 - Design acceptance:
   [governance-design-acceptance.md](governance-design-acceptance.md)
-- Implementation checkpoint: `38f2620`
-- Completed implementation tasks: `GOV_SOURCE_MODEL`, `GOV_AUTHORITY_CORE`
-- Normal next task: `GOV_CLI_PREVIEW`
+- Resume base before guidance: `efb13e2`
+- Completed implementation tasks: `GOV_SOURCE_MODEL`, `GOV_AUTHORITY_CORE`,
+  `GOV_CLI_PREVIEW`, `GOV_WRITE_ENFORCEMENT`, `GOV_GUIDANCE`
+- Normal next task: `GOV_ACCEPTANCE`
 - Active public package boundary: `0.3.0`, Grammar 1/2/3, CLI Contract 4
 
 ## 1. Purpose
 
 This record allows another checkout or agent to resume the Issue #4
-owner-aware governance work without reconstructing the completed source and
-authority slices from chat history.
+owner-aware governance work without reconstructing the completed source,
+authority, preview, write, and guidance slices from chat history.
 
 The checkpoint is intentionally incomplete. It contains the accepted
 requirements and contracts plus internal target Grammar 4 source support and
-the pure governance authority Core. It does not activate Grammar 4, CLI
-Contract 5, governed previews, or owner-aware write enforcement on the public
-package surface.
+the complete target Contract 5 path through guarded persistence and editing
+guidance. It does not activate Grammar 4, CLI Contract 5, governed previews,
+or owner-aware write enforcement on the public package surface.
 
 ## 2. Verified checkpoint
 
-At implementation checkpoint `38f2620`:
+After `GOV_GUIDANCE` completion and canonical advance in this checkout:
 
 - the branch is `main`;
 - all intended implementation and plan changes are committed;
-- `npm run check` passes with 555 tests, documentation, all 18 self-use plans,
+- `npm run check` passes, including documentation, all 18 self-use plans,
   local-link checks, package normalization, and isolated installed-package
   Contract 4 acceptance;
 - `git diff --check` passes;
 - `plans/governance.pert` is valid after completion and canonical advance;
-- its remaining work is 16p;
-- its precedence makespan is 13p;
-- its heuristic `parallel-sgs` resource makespan is 16p and is not an exact
-  optimum;
-- its observed velocity is `29p/1d`; and
+- its remaining work is 4p;
+- its precedence and heuristic `parallel-sgs` resource makespans are 4p, and
+  the resource result is not an exact optimum;
+- its observed velocity is `41p/2d`; and
 - a complete, non-truncated `Perttool.NextResult.v4` under
   `recommendation_v1_plus_release_gate` recommends and permits starting only
-  `GOV_CLI_PREVIEW`.
-
-`GOV_GUIDANCE` is structurally ready but has tier `deferred` because it does
-not fit the selected set on `REVIEWERS`. It is not start authority at this
-checkpoint.
+  `GOV_ACCEPTANCE`.
 
 ## 3. Completed implementation
 
@@ -110,6 +106,10 @@ The primary focused tests are:
 
 - `test/governance-source-core.test.mjs`
 - `test/governance-authority-core.test.mjs`
+- `test/governance-command-target.test.mjs`
+- `test/governance-preview-target.test.mjs`
+- `test/governance-write-enforcement.test.mjs`
+- `test/governance-guidance-target.test.mjs`
 - `test/governance-source-contract.test.mjs`
 - `test/governance-interface-contract.test.mjs`
 - `test/governance-examples-contract.test.mjs`
@@ -118,6 +118,29 @@ The primary focused tests are:
 
 The machine-readable authority/write baseline remains
 `test/fixtures/governance/cases.json`.
+
+### 3.4 Target interface, writes, and guidance
+
+The internal target Contract 5 path now additionally provides:
+
+- operation-level actor and repeatable accepted-owner request preparation;
+- complete ProjectResult v3, MutationResult v2, GovernanceDecision v1, text,
+  JSON, registry, help, usage-recovery, and diagnostic projections;
+- governed preview without requiring persistence authority;
+- one guarded persistence composition for direct mutation, atomic batch,
+  advance, and existing-document replacement;
+- pre-I/O rejection of preview, denied, invalid, or stale authority;
+- the unchanged Contract 4 safe-write and exclusive-output guarantees after
+  authorization;
+- a target-only Contract 5 `guide editing` projection explaining pre-change
+  authority, multi-scope batches, caller-assertion limits, and direct-edit
+  bypass; and
+- README and process guidance aligned byte-for-byte with the generated project
+  warning.
+
+The exact warning is owned by `src/governance/guidance.ts`; project generation
+and the target Guide consume that one constant. The active Contract 4 Guide,
+root exports, and CLI do not expose the target projection.
 
 ## 4. Public boundary that remains closed
 
@@ -143,10 +166,7 @@ that atomic public cutover.
 
 | Task | Size | Current state | Required outcome |
 | --- | ---: | --- | --- |
-| `GOV_CLI_PREVIEW` | 4p | Recommended and startable | Connect operation-level actor/confirmation requests, result projections, registry descriptors, help, diagnostics, and governed preview behavior on the target path |
-| `GOV_WRITE_ENFORCEMENT` | 5p | Predecessor blocked | Enforce the same decision before every affected safe-write path without weakening candidate validation or write safety |
-| `GOV_GUIDANCE` | 3p | Ready but deferred | Align Guide, README, process guidance, and generated warnings without claiming authentication or direct-edit prevention |
-| `GOV_ACCEPTANCE` | 4p | Join blocked | Accept the complete atomic source, Core, CLI, batch, safe-write, help, Guide, and installed-package behavior |
+| `GOV_ACCEPTANCE` | 4p | Recommended and startable | Review and activate the complete atomic source, Core, CLI, batch, safe-write, help, Guide, and installed-package behavior |
 
 Release version selection, tagging, GitHub Release creation, npm publication,
 and dist-tag movement remain outside this plan and need a separately
@@ -176,7 +196,7 @@ node dist/cli.js dag next plans/governance.pert --format=json
 
 Continue only if NextResult is the known complete v4 authority, its
 explanation is complete and non-truncated, its temporal policy remains
-`recommendation_v1_plus_release_gate`, and `GOV_CLI_PREVIEW` remains in
+`recommendation_v1_plus_release_gate`, and `GOV_ACCEPTANCE` remains in
 `temporal.authority.startable_recommended_task_ids`.
 
 Read these normative inputs before changing the target interface:
@@ -191,30 +211,28 @@ Read these normative inputs before changing the target interface:
 
 ## 7. Next bounded slice
 
-Implement only `GOV_CLI_PREVIEW` after revalidation. Its minimum review
+Implement only `GOV_ACCEPTANCE` after revalidation. Its minimum review
 boundary is:
 
-1. add target request preparation for optional actor and repeatable
-   accepted-owner assertions;
-2. connect direct and atomic-batch target planners to the existing pure
-   classifier and evaluator;
-3. return complete target ProjectResult v3, MutationResult v2, and
-   GovernanceDecision v1 projections;
-4. make governed preview succeed without actor or owner confirmation while
-   reporting scopes, effective owners, and whether persistence would require
-   confirmation;
-5. add the target Contract 5 registry, text help, JSON help, usage recovery,
-   and stable diagnostic projections required by the accepted interface;
-6. retain the active Contract 4 root and CLI until the later atomic cutover;
-   and
-7. add focused Core/CLI projection tests plus explicit Contract 4
-   non-exposure regressions.
+1. review the source, authority, preview, write, registry/help, Guide, warning,
+   and diagnostic target against the accepted contracts and examples;
+2. connect Grammar 4 and CLI Contract 5 only as one public activation change,
+   including root exports and installed-package behavior;
+3. prove all governed direct, atomic-batch, advance, and existing-document
+   replacement writes evaluate the pre-change snapshot before I/O;
+4. prove preview, unauthorized persistence, stale source, malformed
+   assertions, and ordinary changes retain their specified outcomes;
+5. prove text/JSON/help/Guide/diagnostic projections and exit codes from an
+   isolated installed package;
+6. retain explicit non-goals for authentication, durable audit, MIG-08, Git
+   integration, and recommendation ranking; and
+7. stop before release version selection, tagging, publication, or dist-tag
+   changes.
 
 Stop and update the normative contract before coding if the slice requires a
 different option shape, schema identity, authority meaning, diagnostic, exit
-code, or activation order. Do not fold `GOV_WRITE_ENFORCEMENT`,
-`GOV_GUIDANCE`, release work, authentication, MIG-08, Git integration, or
-recommendation changes into this slice.
+code, or activation order. Do not fold release work, authentication, durable
+audit, MIG-08, Git integration, or recommendation changes into this slice.
 
 ## 8. Completion and plan-record procedure
 

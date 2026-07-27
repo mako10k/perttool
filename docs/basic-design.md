@@ -1002,6 +1002,12 @@ produce a new output artifact.
 `src/command/target-governance-usage.ts` derive the complete Contract 5
 registry, help, usage recovery, and operation-level caller assertions while
 the active root and CLI remain Contract 4.
+`src/governance/guidance.ts` owns the exact generated direct-edit warning.
+`src/help/target-governance-guide.ts` reuses the active HelpNode projection
+and adds the Contract 5 editing guidance for preview, pre-change authority,
+atomic multi-scope confirmation, caller-assertion limits, and direct-edit
+bypass. The active `getGuide` projection remains Contract 4 until the atomic
+cutover.
 
 Preview renders the candidate and authority facts even when an actor or owner
 acceptance is absent. A persistent governed write proceeds to the safe-write
@@ -1805,11 +1811,12 @@ without activating Grammar 4, CLI Contract 5, or owner-aware runtime
 enforcement.
 
 The internal source model, pure evaluator, governed preview/result/help
-target, and guarded target safe-write composition are implemented. The
-remaining sequence independently accepts guidance and complete
-installed-package behavior. Until those gates are complete, the active
-Contract 4 runtime does not parse Grammar 4 governance fields, accept
-actor/owner-confirmation options, or enforce owner-aware writes.
+target, guarded target safe-write composition, generated warning, and
+target editing guidance are implemented. The remaining acceptance task
+reviews and activates the complete installed-package behavior atomically.
+Until that gate is complete, the active Contract 4 runtime does not parse
+Grammar 4 governance fields, accept actor/owner-confirmation options, expose
+the target Guide, or enforce owner-aware writes.
 
 Exit:
 

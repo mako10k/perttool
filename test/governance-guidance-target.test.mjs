@@ -1,0 +1,112 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import test from "node:test";
+import { fileURLToPath } from "node:url";
+import * as publicApi from "../dist/index.js";
+import {
+  GOVERNANCE_DIRECT_EDIT_WARNING as initWarning,
+} from "../dist/application/target-governance-init.js";
+import {
+  GOVERNANCE_DIRECT_EDIT_WARNING,
+} from "../dist/governance/guidance.js";
+import { getGuide, renderGuideResult } from "../dist/help/guide.js";
+import {
+  getTargetGovernanceGuide,
+  renderTargetGovernanceGuideResult,
+  serializeTargetGovernanceGuideResult,
+  targetGovernanceGuideResultToJson,
+} from "../dist/help/target-governance-guide.js";
+
+const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(testDirectory, "..");
+
+test("target Contract 5 editing Guide states the complete governance boundary", () => {
+  const result = getTargetGovernanceGuide("editing", "detail");
+  assert.equal(result.ok, true);
+  assert.equal(result.schemaVersion, "Perttool.GuideResult.v1");
+  assert.equal(result.cliContractVersion, 5);
+  assert.deepEqual(
+    result.sections.slice(-4).map(({ id }) => id),
+    [
+      "owner-aware-governance",
+      "pre-change-authority",
+      "assertion-boundary",
+      "direct-edit-boundary",
+    ],
+  );
+
+  const text = renderTargetGovernanceGuideResult(result);
+  for (const expected of [
+    "previews may omit actor and owner confirmation",
+    "effective owner or delegate has direct authority",
+    "repeatable --accepted-by-owner caller assertions",
+    "every affected effective owner",
+    "digest-bound pre-change document",
+    "atomic batch must satisfy every affected scope",
+    "not authentication, verified identity, signatures, or a durable approval audit",
+    "guidance, not technical prevention",
+    "bypass the tool-mediated authority check",
+  ]) {
+    assert.match(text, new RegExp(expected));
+  }
+  assert.match(text, new RegExp(GOVERNANCE_DIRECT_EDIT_WARNING.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+
+  const json = targetGovernanceGuideResultToJson(result);
+  assert.equal(json.cli_contract_version, 5);
+  assert.equal(
+    serializeTargetGovernanceGuideResult(result),
+    `${JSON.stringify(json)}\n`,
+  );
+  assert.equal(
+    serializeTargetGovernanceGuideResult(
+      getTargetGovernanceGuide("editing", "detail"),
+    ),
+    serializeTargetGovernanceGuideResult(result),
+  );
+});
+
+test("quick target guidance keeps the preview and persistence distinction", () => {
+  const result = getTargetGovernanceGuide("editing", "quick");
+  assert.equal(result.cliContractVersion, 5);
+  assert.equal(
+    result.sections.at(-1).id,
+    "owner-aware-governance",
+  );
+  assert.match(
+    result.sections.at(-1).body,
+    /Contract 5 previews may omit actor and owner confirmation/,
+  );
+  assert.doesNotMatch(
+    renderTargetGovernanceGuideResult(result),
+    /Pre-change authority/,
+  );
+});
+
+test("active Contract 4 Guide and public root do not expose target governance", () => {
+  const active = getGuide("editing", "detail");
+  assert.equal(active.cliContractVersion, 4);
+  const text = renderGuideResult(active);
+  assert.doesNotMatch(text, /owner-aware governance/i);
+  assert.doesNotMatch(text, /accepted-by-owner/);
+  assert.equal("getTargetGovernanceGuide" in publicApi, false);
+  assert.equal("GOVERNANCE_DIRECT_EDIT_WARNING" in publicApi, false);
+});
+
+test("generated project, README, and process guidance share the exact warning", async () => {
+  assert.equal(initWarning, GOVERNANCE_DIRECT_EDIT_WARNING);
+  const [readme, processGuide] = await Promise.all([
+    readFile(path.join(root, "README.md"), "utf8"),
+    readFile(path.join(root, "docs/process/ai-development.md"), "utf8"),
+  ]);
+  for (const source of [readme, processGuide]) {
+    assert.match(source, new RegExp(GOVERNANCE_DIRECT_EDIT_WARNING.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+    assert.match(
+      source,
+      /guidance(?:, not| rather than) technical prevention/i,
+    );
+    assert.match(source, /not\s+authentication/i);
+    assert.match(source, /Contract 4/);
+    assert.match(source, /Contract 5/);
+  }
+});
