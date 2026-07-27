@@ -159,36 +159,35 @@
       ]
     },
     "governance": {
-      "source_digest": "sha256:4297966ff03d4baca282f7234733b5d67bd8fcb2a617d35820fda09f06066497",
+      "source_digest": "sha256:df6ac9ca7d11af357799367b664f4d2219f3e80c0af52fb4e6f9a900021cc24d",
       "groups": {
         "active": [],
         "ready": [
-          "GOV_CLI_PREVIEW",
+          "GOV_WRITE_ENFORCEMENT",
           "GOV_GUIDANCE"
         ],
         "runnable_now": [
-          "GOV_CLI_PREVIEW"
+          "GOV_WRITE_ENFORCEMENT"
         ],
         "blocked_now": [],
         "upcoming": [
-          "GOV_WRITE_ENFORCEMENT",
           "GOV_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "GOV_CLI_PREVIEW"
+        "GOV_WRITE_ENFORCEMENT"
       ],
       "manual_selected_task_ids": [
-        "GOV_CLI_PREVIEW"
+        "GOV_WRITE_ENFORCEMENT"
       ],
       "tiers": {
-        "GOV_CLI_PREVIEW": "recommended",
+        "GOV_WRITE_ENFORCEMENT": "recommended",
         "GOV_GUIDANCE": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "GOV_CLI_PREVIEW",
+          "id": "GOV_WRITE_ENFORCEMENT",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -200,7 +199,7 @@
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "6/1",
+          "total_float": "2/1",
           "resource_rejections": [
             {
               "resource_id": "REVIEWERS",
@@ -210,7 +209,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "GOV_CLI_PREVIEW"
+                "GOV_WRITE_ENFORCEMENT"
               ]
             }
           ]
