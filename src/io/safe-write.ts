@@ -58,6 +58,11 @@ export interface CreateDocumentOptions {
   readonly mode?: number;
 }
 
+export interface CreateDocumentFromSourceOptions
+  extends CreateDocumentOptions {
+  readonly initialDigest: string;
+}
+
 export interface CreateArtifactOptions {
   readonly mode?: number;
 }
@@ -149,6 +154,19 @@ async function currentWritableSource(path: string): Promise<WritableSource> {
       );
     }
     throw error;
+  }
+}
+
+async function assertCurrentSource(
+  path: string,
+  initialDigest: string,
+): Promise<void> {
+  const current = await currentWritableSource(path);
+  if (current.digest !== initialDigest) {
+    throw new SafeWriteConflictError(
+      "source_changed",
+      `document changed after the initial read: ${path}`,
+    );
   }
 }
 
@@ -363,14 +381,23 @@ async function assertTargetAbsent(target: string): Promise<void> {
   }
 }
 
-export async function createValidatedDocumentFile(
+async function createValidatedDocumentFileInternal(
   target: string,
   candidateText: string,
   validator: DocumentCandidateValidator,
-  options: CreateDocumentOptions = {},
+  options: CreateDocumentOptions,
+  source:
+    | {
+        readonly path: string;
+        readonly initialDigest: string;
+      }
+    | undefined,
 ): Promise<DocumentWriteResult> {
   const candidateBytes = validateCandidate(candidateText, validator);
   const candidateDigest = digestDocumentBytes(candidateBytes);
+  if (source !== undefined) {
+    await assertCurrentSource(source.path, source.initialDigest);
+  }
   await assertTargetAbsent(target);
   const temporaryPath = await writeAndSyncTemporary(
     target,
@@ -379,6 +406,9 @@ export async function createValidatedDocumentFile(
   );
   let linked = false;
   try {
+    if (source !== undefined) {
+      await assertCurrentSource(source.path, source.initialDigest);
+    }
     await assertTargetAbsent(target);
     try {
       await link(temporaryPath, target);
@@ -406,6 +436,40 @@ export async function createValidatedDocumentFile(
     bytesWritten: candidateBytes.byteLength,
     written: true,
   };
+}
+
+export async function createValidatedDocumentFile(
+  target: string,
+  candidateText: string,
+  validator: DocumentCandidateValidator,
+  options: CreateDocumentOptions = {},
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFileInternal(
+    target,
+    candidateText,
+    validator,
+    options,
+    undefined,
+  );
+}
+
+export async function createValidatedDocumentFileFromSource(
+  source: string,
+  target: string,
+  candidateText: string,
+  validator: DocumentCandidateValidator,
+  options: CreateDocumentFromSourceOptions,
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFileInternal(
+    target,
+    candidateText,
+    validator,
+    options,
+    {
+      path: source,
+      initialDigest: options.initialDigest,
+    },
+  );
 }
 
 export async function createDocumentFile(

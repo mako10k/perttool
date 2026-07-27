@@ -174,6 +174,7 @@ perttool/
       format.ts
       mutate.ts
       target-check.ts
+      target-governance-write.ts
       target-mutate.ts
       target-project.ts
       next.ts
@@ -983,12 +984,20 @@ classification and pre-change decisions; the
 [Governance Interface contract](specs/governance-interface.md) fixes public
 request and result types, CLI Contract 5, help, diagnostics, and exits.
 
-The internal target path implements this preview composition without
-activating it. `src/application/target-governance-mutation.ts` applies the
-same actual-change classifier and pre-change evaluator after direct, batch,
-and advance candidates validate.
+The internal target path implements this preview and persistence composition
+without activating it. `src/application/target-governance-mutation.ts`
+applies the same actual-change classifier and pre-change evaluator after
+direct, batch, and advance candidates validate.
 `src/application/target-governance-projection.ts` owns target ProjectResult
 v3, MutationResult v2, GovernanceDecision v1, and text projections.
+`src/application/target-governance-write.ts` rejects preview, denied, and
+invalid results before I/O, then sends only a digest-bound authorized
+persistent candidate through the target Grammar 4 safe-write adapter.
+In-place persistence retains expected-digest, source-identity, symlink,
+atomic-replacement, and post-write checks. Existing-document `--out`
+persistence rechecks the original source before temporary-file creation and
+again before exclusive output creation, so a stale authority decision cannot
+produce a new output artifact.
 `src/command/target-governance-discovery.ts` and
 `src/command/target-governance-usage.ts` derive the complete Contract 5
 registry, help, usage recovery, and operation-level caller assertions while
@@ -1795,12 +1804,12 @@ the explicit non-goals into the implementation gates. It accepts design input
 without activating Grammar 4, CLI Contract 5, or owner-aware runtime
 enforcement.
 
-The internal source model, pure evaluator, and governed preview/result/help
-target are implemented. The remaining sequence independently accepts write
-enforcement, guidance, and complete installed-package behavior. Until those
-gates are complete, the active Contract 4 runtime does not parse Grammar 4
-governance fields, accept actor/owner-confirmation options, or enforce
-owner-aware writes.
+The internal source model, pure evaluator, governed preview/result/help
+target, and guarded target safe-write composition are implemented. The
+remaining sequence independently accepts guidance and complete
+installed-package behavior. Until those gates are complete, the active
+Contract 4 runtime does not parse Grammar 4 governance fields, accept
+actor/owner-confirmation options, or enforce owner-aware writes.
 
 Exit:
 
