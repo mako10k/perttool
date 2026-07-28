@@ -298,7 +298,7 @@ architecture decision is normative.
 
 Priority: P0
 
-Status: Contract accepted; implementation not started
+Status: Contract accepted; internal source Core complete
 
 Git history can prove that a task-state snapshot was recorded, but it cannot
 prove the actual event time, active execution duration, person effort, or the
@@ -313,7 +313,10 @@ normative target semantics are in the
 work state is in
 [`plans/project-actuals.pert`](../plans/project-actuals.pert). The
 [`ACTUALS_CONTRACT_REVIEW`](process/project-actuals-contract-review.md) fixes
-the remaining source and public-interface details before runtime work.
+the source and public-interface details. The
+[`ACTUAL_SOURCE_CORE` acceptance](process/project-actuals-source-core-acceptance.md)
+records the internal Grammar 5 parser, validation, formatter, and exact source
+model without activating the future public contract.
 
 Required outcomes:
 
@@ -348,7 +351,7 @@ Planned delivery slices:
 | ID | Scope | Estimate | Exit |
 | --- | --- | ---: | --- |
 | `ACTUALS_CONTRACT_REVIEW` | Accept source syntax/version, event/lifecycle semantics, history/observation schemas, diagnostics, compatibility, and normative cases | 4p | No unresolved semantic or public-contract decision blocks implementation. |
-| `ACTUAL_SOURCE_CORE` | Grammar 5 work-event and suspended-state parsing, validation, formatting, and exact model | 5p | Internal source round trips and preserves Grammar 1-4 behavior. |
+| `ACTUAL_SOURCE_CORE` | Grammar 5 work-event and suspended-state parsing, validation, formatting, and exact model | 5p | Complete: internal source round trips and preserves Grammar 1-4 behavior. |
 | `ACTUAL_GIT_HISTORY_PROBE` | Shared read-only repository/path/revision snapshots and typed history availability | 5p | First-parent, shallow, path, race, and unavailable cases are deterministic and Git remains unchanged. |
 | `FINISH_ACTUALS` | Eventful finish, exact measurements, planned baseline, retry, governance, and safe-write composition | 5p | Status and finish event form one validated candidate and installed-active behavior remains unchanged. |
 | `WORK_LIFECYCLE` | Start, suspend, resume, state reduction, resource/classification handling, and result version target | 7p | Complete/open/finish-only sequences and suspended behavior pass focused tests. |

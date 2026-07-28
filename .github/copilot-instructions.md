@@ -11,15 +11,16 @@ Mandatory summary:
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation
   semantics 2, the Normative target 1.0 Project Actuals and Git History
   Contract, Contract 6 schemas/diagnostics, and fourteen machine-readable PACT
-  cases. `ACTUALS_CONTRACT_REVIEW` is complete, its exact pre-advance snapshot
-  is committed at `f6e93e1`, and the task has been advanced to reached
-  `ACTUALS_CONTRACT_READY`. Eight tasks and 43p remain; precedence is 27p and
-  the heuristic resource makespan is 28p with 1p delay. Complete NextResult v4
-  recommends and starts only `ACTUAL_SOURCE_CORE`; `ACTUAL_GIT_HISTORY_PROBE`
-  is allowed. The accepted design uses explicit fixed-offset lifecycle events,
-  task-owned pre-advance evidence, read-only first-parent Git reconstruction,
-  exact active-time/effort observations, and no automatic declared-velocity
-  mutation. Runtime implementation, Git mutation, velocity adoption, MIG-08,
+  cases. `ACTUALS_CONTRACT_REVIEW` is complete and advanced from its `f6e93e1`
+  pre-advance snapshot. `ACTUAL_SOURCE_CORE` is complete in the retained
+  pre-advance snapshot: its internal identity-checked Grammar 5 source Core
+  parses, validates, formats, and projects exact task-owned work events while
+  the standard package root, CLI Contract 5, and Grammar 1 through 4 remain
+  unchanged. Seven tasks and 38p remain; precedence is 26p and the
+  `parallel-sgs` version 1 heuristic resource makespan is 28p with 2p delay.
+  Complete NextResult v4 recommends and starts only
+  `ACTUAL_GIT_HISTORY_PROBE`; `FINISH_ACTUALS` is allowed. Public Grammar
+  5/CLI Contract 6 activation, Git mutation, velocity adoption, MIG-08,
   publication, and dist-tag movement remain outside scope. The independent
   workstream does not displace `PERT_PLANS`.
 - The CLI/help review is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted registry-driven design separates command help, domain guide, and agent guidance, includes project initialization and gate maintenance, and rejects renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and installed-package workflow for temporal and exact-unit behavior. The completed plan has no recommendation at `49p/1d`.

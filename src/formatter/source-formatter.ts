@@ -1,6 +1,9 @@
 import { checkDocument, type CheckOptions } from "../application/check.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import {
+  canonicalizeEventDateTimeSourceToken,
+} from "../model/calendar.js";
+import {
   TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
 import type {
@@ -9,13 +12,18 @@ import type {
   DurationFractionValue,
   DurationValue,
   ExactDurationValue,
+  ExactPersonHoursValue,
   FieldNode,
+  PersonHoursFractionValue,
+  PersonHoursValue,
   RequirementValue,
+  TargetDeclarationKind,
   VelocityValue,
 } from "../model/syntax.js";
 import {
   serializeExactDurationSource,
 } from "../model/exact-duration-source.js";
+import { rational } from "../model/rational.js";
 import {
   applyTextEdits,
   normalizeTextEdits,
@@ -37,14 +45,16 @@ export interface FormatResult {
 
 export interface FormatValidation {
   readonly ok: boolean;
-  readonly document: DocumentNode | null;
+  readonly document: DocumentNode<TargetDeclarationKind> | null;
   readonly documentId: string | null;
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticsTruncated: boolean;
 }
 
 export interface SourceFormatProfile {
-  readonly fieldOrder: Readonly<Record<DeclarationKind, readonly string[]>>;
+  readonly fieldOrder:
+    Readonly<Record<DeclarationKind, readonly string[]>>
+    & Partial<Readonly<Record<"work_event", readonly string[]>>>;
 }
 
 interface PhysicalLine {
@@ -143,6 +153,43 @@ function isExactDurationValue(value: unknown): value is ExactDurationValue {
   return isDurationValue(value) || isDurationFractionValue(value);
 }
 
+function isPersonHoursValue(value: unknown): value is PersonHoursValue {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "digits" in value &&
+    typeof value.digits === "bigint" &&
+    "scale" in value &&
+    typeof value.scale === "number" &&
+    "suffix" in value &&
+    value.suffix === "ph"
+  );
+}
+
+function isPersonHoursFractionValue(
+  value: unknown,
+): value is PersonHoursFractionValue {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "numerator" in value &&
+    typeof value.numerator === "bigint" &&
+    "denominator" in value &&
+    typeof value.denominator === "bigint" &&
+    value.denominator > 0n &&
+    "suffix" in value &&
+    value.suffix === "ph"
+  );
+}
+
+function canonicalPersonHours(value: ExactPersonHoursValue): string {
+  const exact = "numerator" in value
+    ? rational(value.numerator, value.denominator)
+    : rational(value.digits, 10n ** BigInt(value.scale));
+  const hourToken = serializeExactDurationSource(exact, "hour").token;
+  return `${hourToken.slice(0, -1)}ph`;
+}
+
 function isVelocityValue(value: unknown): value is VelocityValue {
   return (
     typeof value === "object" &&
@@ -160,13 +207,36 @@ function canonicalFieldValue(field: FieldNode): string | undefined {
   if (["title", "description", "owner", "source", "blocked_reason", "reason"].includes(field.name)) {
     return typeof field.value === "string" ? JSON.stringify(field.value) : undefined;
   }
-  if (["version", "capacity", "priority"].includes(field.name)) {
+  if (["version", "capacity", "priority", "model"].includes(field.name)) {
     return typeof field.value === "number" ? String(field.value) : undefined;
   }
-  if (["duration", "critical_epsilon", "target_duration", "optimistic", "most_likely", "pessimistic"].includes(field.name)) {
+  if (
+    [
+      "duration",
+      "critical_epsilon",
+      "target_duration",
+      "optimistic",
+      "most_likely",
+      "pessimistic",
+      "planned_value",
+      "active_time",
+    ].includes(field.name)
+  ) {
     return isExactDurationValue(field.value)
       ? canonicalDuration(field.value)
       : undefined;
+  }
+  if (
+    field.name === "effort" &&
+    (
+      isPersonHoursValue(field.value) ||
+      isPersonHoursFractionValue(field.value)
+    )
+  ) {
+    return canonicalPersonHours(field.value);
+  }
+  if (field.name === "occurred_at" && typeof field.rawValue === "string") {
+    return canonicalizeEventDateTimeSourceToken(field.rawValue) ?? undefined;
   }
   if (field.name === "velocity") {
     return isVelocityValue(field.value)
@@ -237,7 +307,9 @@ export function formatValidatedSource(
   const edits: TextEdit[] = [];
 
   for (const declaration of checked.document.declarations) {
-    const knownFields = new Set(profile.fieldOrder[declaration.kind]);
+    const knownFields = new Set(
+      profile.fieldOrder[declaration.kind] ?? [],
+    );
     pushEdit(edits, text, {
       startOffset: declaration.headerSpan.start.offset,
       endOffset: declaration.headerSpan.end.offset,

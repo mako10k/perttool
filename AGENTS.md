@@ -20,19 +20,19 @@ Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstr
 The explicitly selected project-actuals workstream is tracked independently in
 `plans/project-actuals.pert`. `ACTUALS_CONTRACT_REVIEW` is complete, its exact
 pre-advance snapshot is committed at `f6e93e1`, and the task has been advanced
-to reached `ACTUALS_CONTRACT_READY`. Accepted ADR 0006, Grammar 5
-source/migration, Graph semantics 2, Mutation semantics 2, the Normative target
-1.0 Project Actuals and Git History Contract, Contract 6 result
-identities/diagnostics, and fourteen dependency-ordered machine-readable PACT
-cases fix explicit fixed-offset lifecycle events, suspended state, task-owned
-evidence, read-only first-parent reconstruction, and exact observations without
-automatic declared-velocity mutation. Eight tasks and 43p remain; precedence is
-27p, the heuristic resource makespan is 28p with 1p delay, and forecasts at the
-inherited `29p/2d` velocity are `54/29d` and `56/29d`. Complete NextResult v4
-recommends and starts only `ACTUAL_SOURCE_CORE`; `ACTUAL_GIT_HISTORY_PROBE` is
-`allowed`. Runtime implementation, Git mutation, automatic velocity adoption,
-MIG-08, release publication, and dist-tag movement remain unauthorized. This
-independent workstream does not displace `PERT_PLANS`.
+to reached `ACTUALS_CONTRACT_READY`. `ACTUAL_SOURCE_CORE` is complete in the
+retained pre-advance snapshot. The internal identity-checked Grammar 5 source
+Core now parses, validates, formats, and projects exact task-owned work events
+and the target suspended state while the standard package root, CLI Contract
+5, and Grammar 1 through 4 remain unchanged. Its acceptance record is
+`docs/process/project-actuals-source-core-acceptance.md`. Seven tasks and 38p
+remain; precedence is 26p, the `parallel-sgs` version 1 heuristic resource
+makespan is 28p with 2p delay, and forecasts at the inherited `29p/2d`
+velocity are `52/29d` and `56/29d`. Complete NextResult v4 recommends and
+starts only `ACTUAL_GIT_HISTORY_PROBE`; `FINISH_ACTUALS` is `allowed`. Public
+Grammar 5/CLI Contract 6 activation, Git mutation, automatic velocity
+adoption, MIG-08, release publication, and dist-tag movement remain
+unauthorized. This independent workstream does not displace `PERT_PLANS`.
 
 The reviewed CLI/help reset is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted Contract 3 design introduced one typed registry for dispatch, option parsing, text help, and JSON help; separated domain guide and agent guidance; added structured usage recovery, project initialization, and direct gate maintenance; and rejected renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and the installed-package workflow for temporal and exact-unit behavior. The plan has no remaining or recommended task and an observed provisional `49p/1d` velocity.
 
@@ -108,20 +108,21 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
+- `src/actuals/`: internal Grammar 5 source projection for exact, task-owned work-event records; lifecycle reduction, history, observations, and public activation remain future slices.
 - `src/command/`: immutable typed command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, structured usage-error recovery, the retained Contract 4 registry, and the active Contract 5 governance registry and usage projection.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, the retained Contract 4 projection, and the active Contract 5 editing Guide.
 - `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
 - `src/conversion/`: Mermaid profile/plain export and import, semantic metadata, projection generation, and fail-closed restoration.
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.
-- `src/formatter/`: the active Grammar 1/2/3/4 source-preserving formatter Core over the shared canonical field order; Grammar 3/4 explicit formatting uses exact Decimal-or-Fraction canonicalization.
+- `src/formatter/`: the active Grammar 1/2/3/4 source-preserving formatter Core plus the internal Grammar 5 work-event target formatter; exact target values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 5 package surface.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
-- `src/parser/`: the active identity-checked Grammar 1/2/3/4 parser capabilities, including the capability-checked Grammar 4 governance-source parser.
-- `src/semantic/`: active Grammar 1/2/3/4 validated-document boundaries, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
+- `src/parser/`: the active Grammar 1/2/3/4 parser and the internal identity-checked Grammar 5 work-event source capability.
+- `src/semantic/`: active Grammar 1/2/3/4 validated-document boundaries plus the internal Grammar 5 task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3/4 requests for project/task/gate/milestone/resource and atomic batch, governance project fields, exact changed-field Duration generation, canonical advance, source-preserving UTF-16 TextEdit generation, and application rules.
 - `src/application/`: pure services for active Contract 5 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3/4 mutation planning, the exact-Duration version-candidate boundary, governed direct/batch/advance planning, Contract 5 result projections, and authorization-before-safe-write orchestration.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.

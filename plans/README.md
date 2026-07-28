@@ -121,15 +121,18 @@ Contract](../docs/specs/project-actuals.md), and fourteen normative PACT cases.
 2, Mutation semantics 2, Contract 6 schemas/diagnostics, and the
 machine-readable case matrix. Git commit `f6e93e1` records the exact completed
 4p pre-advance snapshot; the residual plan retains reached
-`ACTUALS_CONTRACT_READY`. Eight tasks and 43p remain. Precedence is 27p; the
-`parallel-sgs` version 1 heuristic resource makespan is 28p with 1p resource
-delay. At the inherited operations velocity `29p/2d`, the forecasts are
-`54/29d` and `56/29d`. Complete NextResult v4 recommends and starts only
-`ACTUAL_SOURCE_CORE`; `ACTUAL_GIT_HISTORY_PROBE` is allowed. Runtime
-implementation, Git mutation, automatic declared-velocity changes, MIG-08,
-release publication, and dist-tag movement remain outside the authorized
-scope. This independent workstream does not displace `PERT_PLANS` in the
-English-baseline detail.
+`ACTUALS_CONTRACT_READY`. `ACTUAL_SOURCE_CORE` is complete in the retained
+pre-advance snapshot, with the internal Grammar 5 parser, validator, formatter,
+exact actuals source model, and Grammar 1 through 4 compatibility accepted.
+Seven tasks and 38p remain. Precedence is 26p; the `parallel-sgs` version 1
+heuristic resource makespan is 28p with 2p resource delay. At the inherited
+operations velocity `29p/2d`, the forecasts are `52/29d` and `56/29d`.
+Complete NextResult v4 recommends and starts only
+`ACTUAL_GIT_HISTORY_PROBE`; `FINISH_ACTUALS` is allowed. Public Grammar 5/CLI
+Contract 6 activation, Git mutation, automatic declared-velocity changes,
+MIG-08, release publication, and dist-tag movement remain outside the
+authorized scope. This independent workstream does not displace `PERT_PLANS`
+in the English-baseline detail.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

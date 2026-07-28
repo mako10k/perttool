@@ -9,11 +9,15 @@ import {
   normalizeMaxDiagnostics,
   sortDiagnostics,
 } from "../model/diagnostics.js";
-import { parseDeclaredCalendarValue } from "../model/calendar.js";
+import {
+  parseDeclaredCalendarValue,
+  parseEventDateTimeValue,
+} from "../model/calendar.js";
 import {
   GRAMMAR_1_DECLARATION_FIELD_ORDER,
   TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER,
   TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER,
+  TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
 import type {
   DeclarationKind,
@@ -22,9 +26,11 @@ import type {
   DurationFractionValue,
   DurationValue,
   ExactDurationValue,
+  ExactPersonHoursValue,
   FieldNode,
   ParseResult,
   RequirementValue,
+  TargetDeclarationKind,
   TriviaNode,
   VelocityValue,
 } from "../model/syntax.js";
@@ -80,6 +86,19 @@ export const TARGET_GRAMMAR_4_CAPABILITY: TargetGrammar4Capability =
     grammarVersion: 4,
   });
 
+export interface TargetGrammar5Capability {
+  readonly id: "perttool.target-grammar-5-actuals-source";
+  readonly version: 1;
+  readonly grammarVersion: 5;
+}
+
+export const TARGET_GRAMMAR_5_CAPABILITY: TargetGrammar5Capability =
+  Object.freeze({
+    id: "perttool.target-grammar-5-actuals-source",
+    version: 1,
+    grammarVersion: 5,
+  });
+
 const identifierPattern = /^[A-Za-z][A-Za-z0-9_-]*$/;
 const declarationKinds = new Set<DeclarationKind>([
   "project",
@@ -90,36 +109,44 @@ const declarationKinds = new Set<DeclarationKind>([
 ]);
 
 function allowedFieldsFromOrder(
-  fieldOrder: Readonly<Record<DeclarationKind, readonly string[]>>,
-): Readonly<Record<DeclarationKind, ReadonlySet<string>>> {
+  fieldOrder: Readonly<Record<DeclarationKind, readonly string[]>> &
+    Partial<Readonly<Record<"work_event", readonly string[]>>>,
+): Readonly<Record<TargetDeclarationKind, ReadonlySet<string>>> {
   return {
     project: new Set(fieldOrder.project),
     resource: new Set(fieldOrder.resource),
     milestone: new Set(fieldOrder.milestone),
     task: new Set(fieldOrder.task),
     gate: new Set(fieldOrder.gate),
+    work_event: new Set(fieldOrder.work_event ?? []),
   };
 }
 
 const grammar1AllowedFields: Readonly<
-  Record<DeclarationKind, ReadonlySet<string>>
+  Record<TargetDeclarationKind, ReadonlySet<string>>
 > = allowedFieldsFromOrder(GRAMMAR_1_DECLARATION_FIELD_ORDER);
 
 const grammar2AllowedFields: Readonly<
-  Record<DeclarationKind, ReadonlySet<string>>
+  Record<TargetDeclarationKind, ReadonlySet<string>>
 > = allowedFieldsFromOrder(TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER);
 
 const grammar4AllowedFields: Readonly<
-  Record<DeclarationKind, ReadonlySet<string>>
+  Record<TargetDeclarationKind, ReadonlySet<string>>
 > = allowedFieldsFromOrder(TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER);
+
+const grammar5AllowedFields: Readonly<
+  Record<TargetDeclarationKind, ReadonlySet<string>>
+> = allowedFieldsFromOrder(TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER);
 
 interface ParseProfile {
   readonly allowedFields: Readonly<
-    Record<DeclarationKind, ReadonlySet<string>>
+    Record<TargetDeclarationKind, ReadonlySet<string>>
   >;
   readonly typedCalendarValues: boolean;
   readonly exactFractionDurations: boolean;
   readonly governanceValues: boolean;
+  readonly workEvents: boolean;
+  readonly suspendedStatus: boolean;
 }
 
 const grammar1Profile: ParseProfile = {
@@ -127,6 +154,8 @@ const grammar1Profile: ParseProfile = {
   typedCalendarValues: false,
   exactFractionDurations: false,
   governanceValues: false,
+  workEvents: false,
+  suspendedStatus: false,
 };
 
 const grammar2Profile: ParseProfile = {
@@ -134,6 +163,8 @@ const grammar2Profile: ParseProfile = {
   typedCalendarValues: true,
   exactFractionDurations: false,
   governanceValues: false,
+  workEvents: false,
+  suspendedStatus: false,
 };
 
 const grammar3Profile: ParseProfile = {
@@ -141,6 +172,8 @@ const grammar3Profile: ParseProfile = {
   typedCalendarValues: true,
   exactFractionDurations: true,
   governanceValues: false,
+  workEvents: false,
+  suspendedStatus: false,
 };
 
 const grammar4Profile: ParseProfile = {
@@ -148,6 +181,17 @@ const grammar4Profile: ParseProfile = {
   typedCalendarValues: true,
   exactFractionDurations: true,
   governanceValues: true,
+  workEvents: false,
+  suspendedStatus: false,
+};
+
+const grammar5Profile: ParseProfile = {
+  allowedFields: grammar5AllowedFields,
+  typedCalendarValues: true,
+  exactFractionDurations: true,
+  governanceValues: true,
+  workEvents: true,
+  suspendedStatus: true,
 };
 
 function splitLines(text: string): readonly SourceLine[] {
@@ -298,6 +342,45 @@ function parseExactDuration(raw: string): ExactDurationValue | undefined {
   };
 }
 
+function parseExactPersonHours(
+  raw: string,
+): ExactPersonHoursValue | undefined {
+  const decimal = /^([0-9]+)(?:\.([0-9]+))?ph$/.exec(raw);
+  if (decimal !== null) {
+    const whole = decimal[1]!;
+    const fraction = decimal[2] ?? "";
+    return {
+      text: raw,
+      digits: BigInt(`${whole}${fraction}`),
+      scale: fraction.length,
+      suffix: "ph",
+    };
+  }
+  const fraction = /^([0-9]+)\/([0-9]+)ph$/.exec(raw);
+  if (fraction === null) return undefined;
+  const sourceNumerator = BigInt(fraction[1]!);
+  const sourceDenominator = BigInt(fraction[2]!);
+  if (sourceDenominator === 0n) return undefined;
+  if (sourceNumerator === 0n) {
+    return {
+      text: raw,
+      numerator: 0n,
+      denominator: 1n,
+      suffix: "ph",
+    };
+  }
+  const divisor = greatestCommonDivisor(
+    sourceNumerator,
+    sourceDenominator,
+  );
+  return {
+    text: raw,
+    numerator: sourceNumerator / divisor,
+    denominator: sourceDenominator / divisor,
+    suffix: "ph",
+  };
+}
+
 function parseVelocity(raw: string): VelocityValue | undefined {
   const match = /^([0-9]+(?:\.[0-9]+)?p)\/([0-9]+(?:\.[0-9]+)?[dh])$/.exec(raw);
   if (match === null) return undefined;
@@ -424,16 +507,35 @@ function scalarFieldValue(
       ? { value: rawValue, code: "PTDSL-006", topic: "syntax.text" }
       : { value };
   }
-  if (["version", "capacity", "priority"].includes(name)) {
+  if (["version", "capacity", "priority", "model"].includes(name)) {
     const value = parseInteger(rawValue);
     return value === undefined
       ? { value: rawValue, code: "PTDSL-012", topic: "syntax" }
       : { value };
   }
-  if (["duration", "critical_epsilon", "target_duration"].includes(name)) {
+  if (
+    ["duration", "critical_epsilon", "target_duration", "planned_value"]
+      .includes(name)
+  ) {
     const value = profile.exactFractionDurations
       ? parseExactDuration(rawValue)
       : parseDuration(rawValue);
+    return value === undefined
+      ? { value: rawValue, code: "PTDSL-007", topic: "syntax.duration" }
+      : { value };
+  }
+  if (name === "active_time") {
+    const value = profile.exactFractionDurations
+      ? parseExactDuration(rawValue)
+      : undefined;
+    return value?.suffix === "h"
+      ? { value }
+      : { value: rawValue, code: "PTDSL-007", topic: "syntax.duration" };
+  }
+  if (name === "effort") {
+    const value = profile.workEvents
+      ? parseExactPersonHours(rawValue)
+      : undefined;
     return value === undefined
       ? { value: rawValue, code: "PTDSL-007", topic: "syntax.duration" }
       : { value };
@@ -448,6 +550,24 @@ function scalarFieldValue(
     return identifierPattern.test(rawValue)
       ? { value: rawValue }
       : { value: rawValue, code: "PTDSL-004", topic: "syntax.project" };
+  }
+  if (name === "task") {
+    return identifierPattern.test(rawValue)
+      ? { value: rawValue }
+      : { value: rawValue, code: "PTDSL-004", topic: "syntax.work-event" };
+  }
+  if (name === "kind") {
+    return ["start", "suspend", "resume", "finish"].includes(rawValue)
+      ? { value: rawValue }
+      : { value: rawValue, code: "PTDSL-012", topic: "syntax.work-event" };
+  }
+  if (name === "occurred_at") {
+    const value = profile.workEvents
+      ? parseEventDateTimeValue(rawValue)
+      : undefined;
+    return value === undefined
+      ? { value: rawValue, code: "PTDSL-008", topic: "syntax.work-event" }
+      : { value };
   }
   if (
     profile.governanceValues &&
@@ -477,7 +597,10 @@ function scalarFieldValue(
       : { value: rawValue, code: "PTDSL-012", topic: "syntax.milestone" };
   }
   if (name === "status") {
-    return ["planned", "active", "blocked", "done"].includes(rawValue)
+    const values = profile.suspendedStatus
+      ? ["planned", "active", "blocked", "suspended", "done"]
+      : ["planned", "active", "blocked", "done"];
+    return values.includes(rawValue)
       ? { value: rawValue }
       : { value: rawValue, code: "PTDSL-012", topic: "syntax.task" };
   }
@@ -797,11 +920,18 @@ function skipIndentedRegion(
   return index;
 }
 
-function isKnownDeclarationHeader(text: string): boolean {
+function isKnownDeclarationHeader(
+  text: string,
+  profile: ParseProfile,
+): boolean {
   const normalized = text.trimEnd();
   return (
     /^(?:project|resource|milestone) +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized) ||
-    /^(?:task|gate) +[A-Za-z][A-Za-z0-9_-]* +[A-Za-z][A-Za-z0-9_-]* +-> +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized)
+    /^(?:task|gate) +[A-Za-z][A-Za-z0-9_-]* +[A-Za-z][A-Za-z0-9_-]* +-> +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized) ||
+    (
+      profile.workEvents &&
+      /^work_event +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized)
+    )
   );
 }
 
@@ -809,6 +939,7 @@ function skipInvalidTopLevelRegion(
   lines: readonly SourceLine[],
   startIndex: number,
   trivia: TriviaNode[],
+  profile: ParseProfile,
 ): number {
   let index = startIndex;
   while (index < lines.length) {
@@ -824,7 +955,12 @@ function skipInvalidTopLevelRegion(
       continue;
     }
     const indentation = leadingIndent(line);
-    if (indentation.indent === 0 && isKnownDeclarationHeader(line.text)) break;
+    if (
+      indentation.indent === 0 &&
+      isKnownDeclarationHeader(line.text, profile)
+    ) {
+      break;
+    }
     index += 1;
   }
   return index;
@@ -833,7 +969,11 @@ function skipInvalidTopLevelRegion(
 function parseDeclarationHeader(
   line: SourceLine,
   diagnostics: Diagnostic[],
-): Omit<DeclarationNode, "span" | "fields"> | undefined {
+  profile: ParseProfile,
+): Omit<
+  DeclarationNode<TargetDeclarationKind>,
+  "span" | "fields"
+> | undefined {
   const normalized = line.text.trimEnd();
   const edge = /^(task|gate) +([A-Za-z][A-Za-z0-9_-]*) +([A-Za-z][A-Za-z0-9_-]*) +-> +([A-Za-z][A-Za-z0-9_-]*):$/.exec(
     normalized,
@@ -859,11 +999,16 @@ function parseDeclarationHeader(
       arrowSpan: span(line, arrowStart, arrowStart + 2),
     };
   }
-  const simple = /^(project|resource|milestone) +([A-Za-z][A-Za-z0-9_-]*):$/.exec(
-    normalized,
-  );
+  const simplePattern = profile.workEvents
+    ? /^(project|resource|milestone|work_event) +([A-Za-z][A-Za-z0-9_-]*):$/
+    : /^(project|resource|milestone) +([A-Za-z][A-Za-z0-9_-]*):$/;
+  const simple = simplePattern.exec(normalized);
   if (simple !== null) {
-    const kind = simple[1] as "project" | "resource" | "milestone";
+    const kind = simple[1] as
+      | "project"
+      | "resource"
+      | "milestone"
+      | "work_event";
     const id = simple[2]!;
     const idStart = line.text.indexOf(id, kind.length + 1);
     return {
@@ -874,9 +1019,12 @@ function parseDeclarationHeader(
     };
   }
   const firstWord = line.text.trim().split(/\s+/, 1)[0] ?? "";
+  const knownDeclarationKind =
+    declarationKinds.has(firstWord as DeclarationKind) ||
+    (profile.workEvents && firstWord === "work_event");
   diagnostics.push(
     diagnostic(
-      declarationKinds.has(firstWord as DeclarationKind) ? "PTDSL-004" : "PTDSL-003",
+      knownDeclarationKind ? "PTDSL-004" : "PTDSL-003",
       "Invalid top-level declaration header",
       lineSpan(line),
       "syntax.top-level",
@@ -889,10 +1037,10 @@ function parseDocumentWithProfile(
   text: string,
   options: ParseOptions,
   profile: ParseProfile,
-): ParseResult {
+): ParseResult<TargetDeclarationKind> {
   const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
   const diagnostics: Diagnostic[] = [];
-  const declarations: DeclarationNode[] = [];
+  const declarations: DeclarationNode<TargetDeclarationKind>[] = [];
   const trivia: TriviaNode[] = [];
   const lines = splitLines(text);
   let index = 0;
@@ -925,13 +1073,13 @@ function parseDocumentWithProfile(
     if (headerInlineCommentStart !== undefined) {
       diagnostics.push(inlineCommentDiagnostic(headerLine, headerInlineCommentStart));
       index += 1;
-      index = skipInvalidTopLevelRegion(lines, index, trivia);
+      index = skipInvalidTopLevelRegion(lines, index, trivia, profile);
       continue;
     }
-    const header = parseDeclarationHeader(headerLine, diagnostics);
+    const header = parseDeclarationHeader(headerLine, diagnostics, profile);
     index += 1;
     if (header === undefined) {
-      index = skipInvalidTopLevelRegion(lines, index, trivia);
+      index = skipInvalidTopLevelRegion(lines, index, trivia, profile);
       continue;
     }
     const fields: FieldNode[] = [];
@@ -1117,7 +1265,11 @@ function parseDocumentWithProfile(
       span: joinSpan(header.headerSpan, declarationEnd),
     });
   }
-  const document: DocumentNode = { text, declarations, trivia };
+  const document: DocumentNode<TargetDeclarationKind> = {
+    text,
+    declarations,
+    trivia,
+  };
   const sortedDiagnostics = sortDiagnostics(diagnostics);
   const limited = limitDiagnostics(sortedDiagnostics, maxDiagnostics);
   return {
@@ -1126,6 +1278,12 @@ function parseDocumentWithProfile(
     diagnosticCounts: countDiagnostics(sortedDiagnostics),
     diagnosticsTruncated: limited.truncated,
   };
+}
+
+function activeParseResult(
+  result: ParseResult<TargetDeclarationKind>,
+): ParseResult {
+  return result as unknown as ParseResult;
 }
 
 export function parseDocument(
@@ -1139,16 +1297,22 @@ function parseGrammar3CapableDocument(
   text: string,
   options: ParseOptions,
 ): ParseResult {
-  const grammar1 = parseDocumentWithProfile(text, options, grammar1Profile);
+  const grammar1 = activeParseResult(
+    parseDocumentWithProfile(text, options, grammar1Profile),
+  );
   const first = grammar1.document.declarations[0];
   const version = first?.kind === "project"
     ? first.fields.find((field) => field.name === "version")?.value
     : undefined;
   if (version === 2) {
-    return parseDocumentWithProfile(text, options, grammar2Profile);
+    return activeParseResult(
+      parseDocumentWithProfile(text, options, grammar2Profile),
+    );
   }
   return version === 3
-    ? parseDocumentWithProfile(text, options, grammar3Profile)
+    ? activeParseResult(
+        parseDocumentWithProfile(text, options, grammar3Profile),
+      )
     : grammar1;
 }
 
@@ -1162,8 +1326,24 @@ function parseGrammar4CapableDocument(
     ? first.fields.find((field) => field.name === "version")?.value
     : undefined;
   return version === 4
-    ? parseDocumentWithProfile(text, options, grammar4Profile)
+    ? activeParseResult(
+        parseDocumentWithProfile(text, options, grammar4Profile),
+      )
     : grammar3;
+}
+
+function parseGrammar5CapableDocument(
+  text: string,
+  options: ParseOptions,
+): ParseResult<TargetDeclarationKind> {
+  const grammar4 = parseGrammar4CapableDocument(text, options);
+  const first = grammar4.document.declarations[0];
+  const version = first?.kind === "project"
+    ? first.fields.find((field) => field.name === "version")?.value
+    : undefined;
+  return version === 5
+    ? parseDocumentWithProfile(text, options, grammar5Profile)
+    : grammar4;
 }
 
 export function parseTargetDocument(
@@ -1174,13 +1354,17 @@ export function parseTargetDocument(
   if (capability !== TARGET_GRAMMAR_2_CAPABILITY) {
     throw new TypeError("The target Grammar 2 source capability is required");
   }
-  const grammar1 = parseDocumentWithProfile(text, options, grammar1Profile);
+  const grammar1 = activeParseResult(
+    parseDocumentWithProfile(text, options, grammar1Profile),
+  );
   const first = grammar1.document.declarations[0];
   const version = first?.kind === "project"
     ? first.fields.find((field) => field.name === "version")?.value
     : undefined;
   return version === 2
-    ? parseDocumentWithProfile(text, options, grammar2Profile)
+    ? activeParseResult(
+        parseDocumentWithProfile(text, options, grammar2Profile),
+      )
     : grammar1;
 }
 
@@ -1204,4 +1388,17 @@ export function parseTargetGrammar4Document(
     throw new TypeError("The target Grammar 4 governance source capability is required");
   }
   return parseGrammar4CapableDocument(text, options);
+}
+
+export function parseTargetGrammar5Document(
+  text: string,
+  capability: TargetGrammar5Capability,
+  options: ParseOptions = {},
+): ParseResult<TargetDeclarationKind> {
+  if (capability !== TARGET_GRAMMAR_5_CAPABILITY) {
+    throw new TypeError(
+      "The target Grammar 5 actuals source capability is required",
+    );
+  }
+  return parseGrammar5CapableDocument(text, options);
 }

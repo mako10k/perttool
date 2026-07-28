@@ -7,6 +7,8 @@ export type DeclarationKind =
   | "task"
   | "gate";
 
+export type TargetDeclarationKind = DeclarationKind | "work_event";
+
 export interface DurationValue {
   readonly text: string;
   readonly digits: bigint;
@@ -22,6 +24,26 @@ export interface DurationFractionValue {
 }
 
 export type ExactDurationValue = DurationValue | DurationFractionValue;
+
+export interface PersonHoursValue {
+  readonly text: string;
+  readonly digits: bigint;
+  readonly scale: number;
+  readonly suffix: "ph";
+}
+
+export interface PersonHoursFractionValue {
+  readonly text: string;
+  readonly numerator: bigint;
+  readonly denominator: bigint;
+  readonly suffix: "ph";
+}
+
+export type ExactPersonHoursValue =
+  | PersonHoursValue
+  | PersonHoursFractionValue;
+
+export type WorkEventKind = "start" | "suspend" | "resume" | "finish";
 
 export interface VelocityValue {
   readonly text: string;
@@ -47,8 +69,10 @@ export interface FieldNode {
   readonly children?: readonly FieldNode[];
 }
 
-export interface DeclarationNode {
-  readonly kind: DeclarationKind;
+export interface DeclarationNode<
+  Kind extends TargetDeclarationKind = DeclarationKind,
+> {
+  readonly kind: Kind;
   readonly id: string;
   readonly span: SourceSpan;
   readonly idSpan: SourceSpan;
@@ -67,28 +91,32 @@ export interface TriviaNode {
   readonly span: SourceSpan;
 }
 
-export interface DocumentNode {
+export interface DocumentNode<
+  Kind extends TargetDeclarationKind = DeclarationKind,
+> {
   readonly text: string;
-  readonly declarations: readonly DeclarationNode[];
+  readonly declarations: readonly DeclarationNode<Kind>[];
   readonly trivia: readonly TriviaNode[];
 }
 
-export interface ParseResult {
-  readonly document: DocumentNode;
+export interface ParseResult<
+  Kind extends TargetDeclarationKind = DeclarationKind,
+> {
+  readonly document: DocumentNode<Kind>;
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticCounts: DiagnosticCounts;
   readonly diagnosticsTruncated: boolean;
 }
 
-export function fieldsNamed(
-  declaration: DeclarationNode,
+export function fieldsNamed<Kind extends TargetDeclarationKind>(
+  declaration: DeclarationNode<Kind>,
   name: string,
 ): readonly FieldNode[] {
   return declaration.fields.filter((field) => field.name === name);
 }
 
-export function fieldNamed(
-  declaration: DeclarationNode,
+export function fieldNamed<Kind extends TargetDeclarationKind>(
+  declaration: DeclarationNode<Kind>,
   name: string,
 ): FieldNode | undefined {
   return fieldsNamed(declaration, name)[0];

@@ -1,4 +1,7 @@
-import type { DeclarationKind } from "./syntax.js";
+import type {
+  DeclarationKind,
+  TargetDeclarationKind,
+} from "./syntax.js";
 
 function freezeFieldOrder<
   const T extends Readonly<Record<DeclarationKind, readonly string[]>>,
@@ -75,3 +78,17 @@ export const TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER = freezeFieldOrder({
     "target_duration",
   ],
 } as const satisfies Readonly<Record<DeclarationKind, readonly string[]>>);
+
+export const TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER = freezeFieldOrder({
+  ...TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER,
+  work_event: [
+    "model",
+    "task",
+    "kind",
+    "occurred_at",
+    "planned_value",
+    "active_time",
+    "effort",
+    "reason",
+  ],
+} as const satisfies Readonly<Record<TargetDeclarationKind, readonly string[]>>);

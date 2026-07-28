@@ -1315,9 +1315,13 @@ Advance procedure:
 8. Commit the advanced present/future plan as a second logical change.
 
 The accepted project-actuals target will make task-owned work events part of
-the exact pre-advance snapshot and removal review. Until its Grammar 5/CLI
-Contract 6 cutover is accepted, the active workflow remains status-only and
-must not add future event syntax manually. The target contract is
+the exact pre-advance snapshot and removal review. Its internal Grammar 5
+source Core is accepted in
+[`project-actuals-source-core-acceptance.md`](project-actuals-source-core-acceptance.md),
+but the standard package root and CLI remain Grammar 1 through 4 and Contract
+5. Until the atomic Grammar 5/CLI Contract 6 cutover is accepted, the active
+workflow remains status-only and must not add future event syntax manually.
+The target contract is
 [`docs/specs/project-actuals.md`](../specs/project-actuals.md).
 
 The runtime history guard in backlog

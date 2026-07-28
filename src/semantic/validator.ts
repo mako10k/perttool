@@ -14,6 +14,7 @@ import type {
   ExactDurationValue,
   FieldNode,
   RequirementValue,
+  TargetDeclarationKind,
   VelocityValue,
 } from "../model/syntax.js";
 import {
@@ -22,6 +23,18 @@ import {
   fieldsNamed,
   isZeroDuration,
 } from "../model/syntax.js";
+import {
+  add,
+  compare,
+  divide,
+  multiply,
+  rational,
+  rationalFromDuration,
+  type Rational,
+} from "../model/rational.js";
+
+type AnyDeclarationNode = DeclarationNode<TargetDeclarationKind>;
+type AnyDocumentNode = DocumentNode<TargetDeclarationKind>;
 
 const reservedWords = new Set([
   "project",
@@ -64,7 +77,7 @@ const reservedWords = new Set([
 ]);
 
 interface Edge {
-  readonly declaration: DeclarationNode;
+  readonly declaration: AnyDeclarationNode;
   readonly id: string;
   readonly source: string;
   readonly target: string;
@@ -74,24 +87,28 @@ interface ValidationProfile {
   readonly supportedGrammarVersions: ReadonlySet<number>;
   readonly unsupportedVersionMessage: string;
   readonly temporalAnchorGrammarVersions: ReadonlySet<number>;
+  readonly workEvents: boolean;
 }
 
 const grammar1ValidationProfile: ValidationProfile = {
   supportedGrammarVersions: new Set([1]),
   unsupportedVersionMessage: "Only grammar version 1 is supported",
   temporalAnchorGrammarVersions: new Set(),
+  workEvents: false,
 };
 
 const targetValidationProfile: ValidationProfile = {
   supportedGrammarVersions: new Set([1, 2]),
   unsupportedVersionMessage: "Only grammar versions 1 and 2 are supported",
   temporalAnchorGrammarVersions: new Set([2]),
+  workEvents: false,
 };
 
 const targetGrammar3ValidationProfile: ValidationProfile = {
   supportedGrammarVersions: new Set([1, 2, 3]),
   unsupportedVersionMessage: "Only grammar versions 1, 2, and 3 are supported",
   temporalAnchorGrammarVersions: new Set([2, 3]),
+  workEvents: false,
 };
 
 const targetGrammar4ValidationProfile: ValidationProfile = {
@@ -99,6 +116,15 @@ const targetGrammar4ValidationProfile: ValidationProfile = {
   unsupportedVersionMessage:
     "Only grammar versions 1, 2, 3, and 4 are supported",
   temporalAnchorGrammarVersions: new Set([2, 3, 4]),
+  workEvents: false,
+};
+
+const targetGrammar5ValidationProfile: ValidationProfile = {
+  supportedGrammarVersions: new Set([1, 2, 3, 4, 5]),
+  unsupportedVersionMessage:
+    "Only grammar versions 1, 2, 3, 4, and 5 are supported",
+  temporalAnchorGrammarVersions: new Set([2, 3, 4, 5]),
+  workEvents: true,
 };
 
 function makeDiagnostic(
@@ -109,6 +135,7 @@ function makeDiagnostic(
   helpTopic: string,
   entityId?: string,
   related?: readonly RelatedLocation[],
+  data?: Readonly<Record<string, unknown>>,
 ): Diagnostic {
   return {
     code,
@@ -118,10 +145,11 @@ function makeDiagnostic(
     helpTopic,
     ...(entityId === undefined ? {} : { entityId }),
     ...(related === undefined || related.length === 0 ? {} : { related }),
+    ...(data === undefined ? {} : { data }),
   };
 }
 
-function zeroSpan(document: DocumentNode): SourceSpan {
+function zeroSpan(document: AnyDocumentNode): SourceSpan {
   return {
     start: { offset: 0, line: 0, column: 0 },
     end: { offset: document.text.length === 0 ? 0 : 1, line: 0, column: document.text.length === 0 ? 0 : 1 },
@@ -129,7 +157,7 @@ function zeroSpan(document: DocumentNode): SourceSpan {
 }
 
 function requireField(
-  declaration: DeclarationNode,
+  declaration: AnyDeclarationNode,
   fieldName: string,
   diagnostics: Diagnostic[],
 ): FieldNode | undefined {
@@ -151,7 +179,7 @@ function requireField(
 }
 
 function validateDuplicateFields(
-  declaration: DeclarationNode,
+  declaration: AnyDeclarationNode,
   diagnostics: Diagnostic[],
 ): void {
   const firstByName = new Map<string, FieldNode>();
@@ -182,6 +210,13 @@ function durationValue(
     return undefined;
   }
   if (!("suffix" in field.value)) return undefined;
+  if (
+    field.value.suffix !== "d" &&
+    field.value.suffix !== "h" &&
+    field.value.suffix !== "p"
+  ) {
+    return undefined;
+  }
   return (
     ("digits" in field.value && "scale" in field.value) ||
     ("numerator" in field.value && "denominator" in field.value)
@@ -200,7 +235,7 @@ function velocityValue(field: FieldNode | undefined): VelocityValue | undefined 
 }
 
 function validateNonemptyText(
-  declaration: DeclarationNode,
+  declaration: AnyDeclarationNode,
   fieldName: string,
   diagnostics: Diagnostic[],
 ): void {
@@ -220,7 +255,7 @@ function validateNonemptyText(
 }
 
 function validateTags(
-  declaration: DeclarationNode,
+  declaration: AnyDeclarationNode,
   diagnostics: Diagnostic[],
 ): void {
   const field = fieldNamed(declaration, "tags");
@@ -246,7 +281,7 @@ function validateTags(
 }
 
 function validateGovernanceDelegates(
-  declaration: DeclarationNode,
+  declaration: AnyDeclarationNode,
   diagnostics: Diagnostic[],
 ): void {
   if (declaration.kind !== "project") return;
@@ -294,7 +329,7 @@ function isValidIsoDate(raw: string): boolean {
 }
 
 function validateFieldConstraints(
-  document: DocumentNode,
+  document: AnyDocumentNode,
   diagnostics: Diagnostic[],
   profile: ValidationProfile,
 ): void {
@@ -411,7 +446,14 @@ function validateFieldConstraints(
             const values = field.children ?? [field];
             for (const valueField of values) {
               const value = durationValue(valueField);
-              if (value !== undefined && value.suffix !== expectedSuffix) {
+              if (
+                value !== undefined &&
+                !(
+                  candidate.kind === "work_event" &&
+                  valueField.name === "active_time"
+                ) &&
+                value.suffix !== expectedSuffix
+              ) {
                 diagnostics.push(
                   makeDiagnostic(
                     "PTSEM-105",
@@ -653,8 +695,238 @@ function validateFieldConstraints(
   }
 }
 
-function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void {
-  const firstById = new Map<string, DeclarationNode>();
+function eventDiagnostic(
+  code: "PTACT-101" | "PTACT-102" | "PTACT-103",
+  message: string,
+  declaration: AnyDeclarationNode,
+  span: SourceSpan,
+  cause:
+    | "unsupported_event_model"
+    | "missing_task"
+    | "wrong_entity_kind"
+    | "missing_field"
+    | "forbidden_field"
+    | "planned_value_mismatch",
+  related?: readonly RelatedLocation[],
+): Diagnostic {
+  return makeDiagnostic(
+    code,
+    "error",
+    message,
+    span,
+    "syntax.work-event",
+    declaration.id,
+    related,
+    { cause },
+  );
+}
+
+function taskExpectedValue(task: AnyDeclarationNode): Rational {
+  const duration = durationValue(fieldNamed(task, "duration"));
+  if (duration !== undefined) return rationalFromDuration(duration);
+  const estimate = fieldNamed(task, "estimate");
+  if (estimate === undefined) {
+    throw new Error(`validated task ${task.id} has no duration or estimate`);
+  }
+  const children = estimate.children ?? [];
+  const value = (name: string): Rational => {
+    const durationValueForChild = durationValue(
+      children.find((field) => field.name === name),
+    );
+    if (durationValueForChild === undefined) {
+      throw new Error(`validated task ${task.id} estimate is missing ${name}`);
+    }
+    return rationalFromDuration(durationValueForChild);
+  };
+  return divide(
+    add(
+      add(value("optimistic"), multiply(rational(4n), value("most_likely"))),
+      value("pessimistic"),
+    ),
+    rational(6n),
+  );
+}
+
+function validateWorkEvents(
+  document: AnyDocumentNode,
+  diagnostics: Diagnostic[],
+): void {
+  const entities = new Map<string, AnyDeclarationNode>();
+  const tasks = new Map<string, AnyDeclarationNode>();
+  for (const declaration of document.declarations) {
+    if (!entities.has(declaration.id)) {
+      entities.set(declaration.id, declaration);
+    }
+    if (declaration.kind === "task" && !tasks.has(declaration.id)) {
+      tasks.set(declaration.id, declaration);
+    }
+  }
+  for (const event of document.declarations.filter(
+    (declaration) => declaration.kind === "work_event",
+  )) {
+    const requiredFields = ["model", "task", "kind", "occurred_at"] as const;
+    let missingRequired = false;
+    for (const fieldName of requiredFields) {
+      if (fieldNamed(event, fieldName) !== undefined) continue;
+      diagnostics.push(
+        eventDiagnostic(
+          "PTACT-103",
+          `work_event ${event.id} is missing required field ${fieldName}`,
+          event,
+          event.idSpan,
+          "missing_field",
+        ),
+      );
+      missingRequired = true;
+    }
+    if (missingRequired) continue;
+
+    const modelField = fieldNamed(event, "model")!;
+    if (modelField.value !== 1) {
+      diagnostics.push(
+        eventDiagnostic(
+          "PTACT-101",
+          `work_event ${event.id} uses unsupported model ${modelField.rawValue}`,
+          event,
+          modelField.valueSpan,
+          "unsupported_event_model",
+        ),
+      );
+    }
+
+    const taskField = fieldNamed(event, "task")!;
+    const task = typeof taskField.value === "string"
+      ? tasks.get(taskField.value)
+      : undefined;
+    if (task === undefined) {
+      const referenced = typeof taskField.value === "string"
+        ? entities.get(taskField.value)
+        : undefined;
+      if (referenced === undefined) {
+        diagnostics.push(
+          eventDiagnostic(
+            "PTACT-102",
+            `work_event ${event.id} references missing task ${taskField.rawValue}`,
+            event,
+            taskField.valueSpan,
+            "missing_task",
+          ),
+        );
+      } else {
+        diagnostics.push(
+          eventDiagnostic(
+            "PTACT-102",
+            `work_event ${event.id} reference ${referenced.id} is not a task`,
+            event,
+            taskField.valueSpan,
+            "wrong_entity_kind",
+            [{
+              message: `${referenced.kind} declaration`,
+              span: referenced.idSpan,
+            }],
+          ),
+        );
+      }
+    }
+
+    const kind = fieldNamed(event, "kind")!.value;
+    if (
+      kind !== "start" &&
+      kind !== "suspend" &&
+      kind !== "resume" &&
+      kind !== "finish"
+    ) {
+      continue;
+    }
+    const matrix: Readonly<Record<
+      typeof kind,
+      Readonly<Record<
+        "planned_value" | "active_time" | "effort" | "reason",
+        "required" | "optional" | "forbidden"
+      >>
+    >> = {
+      start: {
+        planned_value: "required",
+        active_time: "forbidden",
+        effort: "forbidden",
+        reason: "forbidden",
+      },
+      suspend: {
+        planned_value: "forbidden",
+        active_time: "forbidden",
+        effort: "forbidden",
+        reason: "optional",
+      },
+      resume: {
+        planned_value: "forbidden",
+        active_time: "forbidden",
+        effort: "forbidden",
+        reason: "forbidden",
+      },
+      finish: {
+        planned_value: "forbidden",
+        active_time: "optional",
+        effort: "optional",
+        reason: "forbidden",
+      },
+    };
+    for (const [fieldName, presence] of Object.entries(matrix[kind]) as Array<
+      [
+        "planned_value" | "active_time" | "effort" | "reason",
+        "required" | "optional" | "forbidden",
+      ]
+    >) {
+      const field = fieldNamed(event, fieldName);
+      if (presence === "required" && field === undefined) {
+        diagnostics.push(
+          eventDiagnostic(
+            "PTACT-103",
+            `work_event ${event.id} kind ${kind} requires field ${fieldName}`,
+            event,
+            fieldNamed(event, "kind")!.valueSpan,
+            "missing_field",
+          ),
+        );
+      } else if (presence === "forbidden" && field !== undefined) {
+        diagnostics.push(
+          eventDiagnostic(
+            "PTACT-103",
+            `work_event ${event.id} kind ${kind} forbids field ${fieldName}`,
+            event,
+            field.span,
+            "forbidden_field",
+          ),
+        );
+      }
+    }
+
+    const plannedValueField = fieldNamed(event, "planned_value");
+    const plannedValue = durationValue(plannedValueField);
+    if (
+      kind === "start" &&
+      task?.kind === "task" &&
+      plannedValue !== undefined &&
+      compare(rationalFromDuration(plannedValue), taskExpectedValue(task)) !== 0
+    ) {
+      diagnostics.push(
+        eventDiagnostic(
+          "PTACT-103",
+          `work_event ${event.id} planned_value does not match task ${task.id}`,
+          event,
+          plannedValueField!.valueSpan,
+          "planned_value_mismatch",
+          [{ message: "Owned task", span: task.idSpan }],
+        ),
+      );
+    }
+  }
+}
+
+function validateGraph(
+  document: AnyDocumentNode,
+  diagnostics: Diagnostic[],
+): void {
+  const firstById = new Map<string, AnyDeclarationNode>();
   for (const declaration of document.declarations) {
     if (reservedWords.has(declaration.id)) {
       diagnostics.push(
@@ -1000,7 +1272,7 @@ function validateGraph(document: DocumentNode, diagnostics: Diagnostic[]): void 
 
   for (const resource of resources.values()) {
     const capacity = fieldNamed(resource, "capacity")!.value as number;
-    const activeTasks: DeclarationNode[] = [];
+    const activeTasks: AnyDeclarationNode[] = [];
     let usage = 0;
     for (const task of document.declarations.filter((declaration) => declaration.kind === "task")) {
       if ((fieldNamed(task, "status")?.value ?? "planned") !== "active") continue;
@@ -1042,13 +1314,16 @@ export function validateDocument(
 }
 
 function validateDocumentWithProfile(
-  document: DocumentNode,
+  document: AnyDocumentNode,
   parseDiagnostics: readonly Diagnostic[],
   profile: ValidationProfile,
 ): readonly Diagnostic[] {
   const diagnostics = [...parseDiagnostics];
   if (hasErrors(diagnostics)) return sortDiagnostics(diagnostics);
   validateFieldConstraints(document, diagnostics, profile);
+  if (!hasErrors(diagnostics) && profile.workEvents) {
+    validateWorkEvents(document, diagnostics);
+  }
   if (!hasErrors(diagnostics)) validateGraph(document, diagnostics);
   return sortDiagnostics(diagnostics);
 }
@@ -1083,5 +1358,16 @@ export function validateTargetGrammar4DocumentSemantics(
     document,
     parseDiagnostics,
     targetGrammar4ValidationProfile,
+  );
+}
+
+export function validateTargetGrammar5DocumentSemantics(
+  document: AnyDocumentNode,
+  parseDiagnostics: readonly Diagnostic[] = [],
+): readonly Diagnostic[] {
+  return validateDocumentWithProfile(
+    document,
+    parseDiagnostics,
+    targetGrammar5ValidationProfile,
   );
 }

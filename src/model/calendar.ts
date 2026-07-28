@@ -120,3 +120,31 @@ export function parseDeclaredCalendarValue(
     offsetMinutes: offsetMagnitude === 0 ? 0 : offsetSign * offsetMagnitude,
   };
 }
+
+export function parseEventDateTimeValue(
+  sourceText: string,
+): DeclaredCalendarDateTime | undefined {
+  if (
+    !/[+-]\d{2}:\d{2}$/.test(sourceText) ||
+    sourceText.endsWith("-00:00")
+  ) {
+    return undefined;
+  }
+  const parsed = parseDeclaredCalendarValue(sourceText);
+  return parsed?.kind === "date_time" ? parsed : undefined;
+}
+
+export function canonicalizeEventDateTimeSourceToken(
+  sourceText: string,
+): string | null {
+  if (parseEventDateTimeValue(sourceText) === undefined) return null;
+  const match =
+    /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d+))?([+-]\d{2}:\d{2})$/.exec(
+      sourceText,
+    );
+  if (match === null) return null;
+  const prefix = match[1]!;
+  const fraction = (match[2] ?? "").replace(/0+$/, "");
+  const offset = match[3]!;
+  return `${prefix}${fraction === "" ? "" : `.${fraction}`}${offset}`;
+}

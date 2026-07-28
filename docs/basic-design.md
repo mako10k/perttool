@@ -737,8 +737,9 @@ dispatch, help, or installed behavior.
 
 The selected post-beta actuals architecture follows
 [ADR 0006](adr/0006-explicit-work-events-in-git-history.md) and the
-[Project Actuals and Git History Contract](specs/project-actuals.md). It is a
-target design, not part of active Grammar 4 or CLI Contract 5.
+[Project Actuals and Git History Contract](specs/project-actuals.md). Its
+source Core is implemented behind an internal target capability; it is not
+part of active Grammar 4 or CLI Contract 5.
 
 The target keeps three concerns separate.
 
@@ -762,14 +763,16 @@ read-only semantic history reconstruction
 
 #### 6.8.1 Source and lifecycle Core
 
-A future `src/actuals/` pure Core owns:
+The internal `src/actuals/` source Core currently owns:
 
 - event identity and exact fixed-offset time;
-- lifecycle transition reduction;
-- complete, open, finish-only, unrecorded, and unavailable coverage;
-- exact cycle/active-time and explicit person-effort records;
+- exact active-time and explicit person-effort source values;
 - planned-value baselines; and
-- deterministic task/project actual summaries.
+- deterministic task-owned event projection.
+
+Lifecycle transition reduction, complete/open/finish-only coverage, derived
+cycle time, task/project summaries, and history availability remain later
+implementation slices.
 
 Grammar 5 adds task-owned top-level `work_event` declarations and the
 `suspended` task state. Exact event EBNF, `h`/`ph` quantities, canonical
@@ -2020,21 +2023,21 @@ Exit:
 The independent
 [`project-actuals.pert`](../plans/project-actuals.pert) workstream adopts the
 accepted actuals contract without changing the completed MVP, governance, or
-release plans. Contract review is complete; implementation separates:
+release plans. Contract review and the internal Grammar 5 source Core are
+complete; the remaining implementation separates:
 
-1. Grammar 5 work-event and suspended-state source Core;
-2. a shared read-only Git history probe compatible with `ADV-001`;
-3. eventful finish and atomic state/event mutation;
-4. start, suspend, and resume lifecycle behavior;
-5. project history reconstruction and qualified legacy evidence;
-6. exact velocity and effort observations;
-7. the atomic Grammar 5/CLI Contract 6 public cutover; and
-8. repository and installed-package acceptance.
+1. a shared read-only Git history probe compatible with `ADV-001`;
+2. eventful finish and atomic state/event mutation;
+3. start, suspend, and resume lifecycle behavior;
+4. project history reconstruction and qualified legacy evidence;
+5. exact velocity and effort observations;
+6. the atomic Grammar 5/CLI Contract 6 public cutover; and
+7. repository and installed-package acceptance.
 
-The slice does not authorize implementation before the contract review,
-automatic Git mutation, post-advance correction, arbitrary branch-union
-history, automatic declared-velocity changes, MIG-08, package publication, or
-dist-tag movement.
+The source Core completion does not activate Grammar 5 or CLI Contract 6. The
+slice does not authorize automatic Git mutation, post-advance correction,
+arbitrary branch-union history, automatic declared-velocity changes, MIG-08,
+package publication, or dist-tag movement.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 
