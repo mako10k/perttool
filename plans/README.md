@@ -121,12 +121,14 @@ Contract](../docs/specs/project-actuals.md), and fourteen normative PACT cases.
 2, Mutation semantics 2, Contract 6 schemas/diagnostics, and the
 machine-readable case matrix. Git commit `f6e93e1` records the exact completed
 4p pre-advance snapshot; the residual plan retains reached
-`ACTUALS_CONTRACT_READY`. `ACTUAL_SOURCE_CORE` is complete in the retained
-pre-advance snapshot, with the internal Grammar 5 parser, validator, formatter,
-exact actuals source model, and Grammar 1 through 4 compatibility accepted.
-Seven tasks and 38p remain. Precedence is 26p; the `parallel-sgs` version 1
-heuristic resource makespan is 28p with 2p resource delay. At the inherited
-operations velocity `29p/2d`, the forecasts are `52/29d` and `56/29d`.
+`ACTUALS_CONTRACT_READY`. Git commit `d6d3d7f` records the exact completed 5p
+`ACTUAL_SOURCE_CORE` pre-advance snapshot; the residual plan retains reached
+`ACTUAL_SOURCE_READY`. The internal Grammar 5 parser, validator, formatter,
+exact actuals source model, and Grammar 1 through 4 compatibility are
+accepted. Seven tasks and 38p remain. Precedence is 26p; the `parallel-sgs`
+version 1 heuristic resource makespan is 28p with 2p resource delay. At the
+inherited operations velocity `29p/2d`, the forecasts are `52/29d` and
+`56/29d`.
 Complete NextResult v4 recommends and starts only
 `ACTUAL_GIT_HISTORY_PROBE`; `FINISH_ACTUALS` is allowed. Public Grammar 5/CLI
 Contract 6 activation, Git mutation, automatic declared-velocity changes,

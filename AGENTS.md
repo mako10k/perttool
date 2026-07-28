@@ -20,14 +20,15 @@ Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstr
 The explicitly selected project-actuals workstream is tracked independently in
 `plans/project-actuals.pert`. `ACTUALS_CONTRACT_REVIEW` is complete, its exact
 pre-advance snapshot is committed at `f6e93e1`, and the task has been advanced
-to reached `ACTUALS_CONTRACT_READY`. `ACTUAL_SOURCE_CORE` is complete in the
-retained pre-advance snapshot. The internal identity-checked Grammar 5 source
-Core now parses, validates, formats, and projects exact task-owned work events
-and the target suspended state while the standard package root, CLI Contract
-5, and Grammar 1 through 4 remain unchanged. Its acceptance record is
-`docs/process/project-actuals-source-core-acceptance.md`. Seven tasks and 38p
-remain; precedence is 26p, the `parallel-sgs` version 1 heuristic resource
-makespan is 28p with 2p delay, and forecasts at the inherited `29p/2d`
+to reached `ACTUALS_CONTRACT_READY`. `ACTUAL_SOURCE_CORE` is complete, its
+exact pre-advance snapshot is committed at `d6d3d7f`, and the task has been
+advanced to reached `ACTUAL_SOURCE_READY`. The internal identity-checked
+Grammar 5 source Core parses, validates, formats, and projects exact task-owned
+work events and the target suspended state while the standard package root,
+CLI Contract 5, and Grammar 1 through 4 remain unchanged. Its acceptance
+record is `docs/process/project-actuals-source-core-acceptance.md`. Seven tasks
+and 38p remain; precedence is 26p, the `parallel-sgs` version 1 heuristic
+resource makespan is 28p with 2p delay, and forecasts at the inherited `29p/2d`
 velocity are `52/29d` and `56/29d`. Complete NextResult v4 recommends and
 starts only `ACTUAL_GIT_HISTORY_PROBE`; `FINISH_ACTUALS` is `allowed`. Public
 Grammar 5/CLI Contract 6 activation, Git mutation, automatic velocity

@@ -106,7 +106,7 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan retains the completed source Core before advance", async () => {
+test("project actuals plan advances the completed source Core", async () => {
   const plan = "plans/project-actuals.pert";
   const [source, contractAcceptance, sourceAcceptance] = await Promise.all([
     repositoryText(plan),
@@ -122,22 +122,23 @@ test("project actuals plan retains the completed source Core before advance", as
   assert.deepEqual(checked.summary, {
     resources: 8,
     milestones: 11,
-    tasks: 8,
+    tasks: 7,
     gates: 4,
     errors: 0,
-    warnings: 1,
+    warnings: 0,
   });
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.match(
     source,
     /milestone ACTUALS_CONTRACT_READY:[\s\S]*?  state reached/,
   );
-  assert.match(contractAcceptance, /Plan task: `ACTUALS_CONTRACT_REVIEW`/);
-  assert.match(sourceAcceptance, /`ACTUAL_SOURCE_CORE` is accepted/);
   assert.match(
     source,
-    /task ACTUAL_SOURCE_CORE[\s\S]*?  status done/,
+    /milestone ACTUAL_SOURCE_READY:[\s\S]*?  state reached/,
   );
+  assert.match(contractAcceptance, /Plan task: `ACTUALS_CONTRACT_REVIEW`/);
+  assert.match(sourceAcceptance, /`ACTUAL_SOURCE_CORE` is accepted/);
+  assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.equal(analyzed.precedence.makespan.numerator, "26");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
   assert.equal(analyzed.resource.makespan.numerator, "28");

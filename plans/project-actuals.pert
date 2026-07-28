@@ -2,7 +2,7 @@
 project PROJECT_ACTUALS:
   version 1
   title "Project actuals and Git-recorded history"
-  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; Git commit f6e93e1 records its completed 4p pre-advance snapshot, and the residual plan retains reached ACTUALS_CONTRACT_READY. ACTUAL_SOURCE_CORE is complete in this retained 5p pre-advance snapshot with identity-checked internal Grammar 5 parsing, validation, formatting, exact task-owned event projection, and active Grammar 1-4 compatibility. Seven tasks and 38p remain. Precedence is 26p and the parallel-sgs version 1 heuristic resource makespan is 28p with 2p resource delay; forecasts at 29p/2d are 52/29d and 56/29d. Complete NextResult v4 recommends and starts only ACTUAL_GIT_HISTORY_PROBE; FINISH_ACTUALS is allowed. Grammar 5 and CLI Contract 6 remain publicly inactive, and this plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
+  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; Git commit f6e93e1 records its completed 4p pre-advance snapshot, and the residual plan retains reached ACTUALS_CONTRACT_READY. ACTUAL_SOURCE_CORE accepted identity-checked internal Grammar 5 parsing, validation, formatting, exact task-owned event projection, and active Grammar 1-4 compatibility; Git commit d6d3d7f records its completed 5p pre-advance snapshot, and the task is advanced to reached ACTUAL_SOURCE_READY. Seven tasks and 38p remain. Precedence is 26p and the parallel-sgs version 1 heuristic resource makespan is 28p with 2p resource delay; forecasts at 29p/2d are 52/29d and 56/29d. Complete NextResult v4 recommends and starts only ACTUAL_GIT_HISTORY_PROBE; FINISH_ACTUALS is allowed. Grammar 5 and CLI Contract 6 remain publicly inactive, and this plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
   as_of 2026-07-28
   duration_unit point
   velocity 29p/2d
@@ -49,6 +49,7 @@ milestone ACTUALS_CONTRACT_READY:
 
 milestone ACTUAL_SOURCE_READY:
   title "Grammar 5 actual-event source Core ready"
+  state reached
 
 milestone GIT_PROBE_READY:
   title "Read-only Git history probe ready"
@@ -78,15 +79,6 @@ milestone ACTUALS_ACCEPTED:
   title "Project actuals and Git history accepted"
 
 
-task ACTUAL_SOURCE_CORE ACTUALS_CONTRACT_READY -> ACTUAL_SOURCE_READY:
-  title "Implement the Grammar 5 actual-event source Core"
-  description "Implement identity-checked Grammar 5 work-event and suspended-state parsing, exact values, semantic validation, source preservation, formatting, task ownership, compatibility rejection, and internal actuals model without public activation."
-  duration 5p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    SOURCE_SURFACE 1
 
 task ACTUAL_GIT_HISTORY_PROBE ACTUALS_CONTRACT_READY -> GIT_PROBE_READY:
   title "Implement the read-only Git history probe"

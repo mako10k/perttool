@@ -6,6 +6,7 @@
 The implementation can read, validate, format, and project explicit
 task-owned work events without activating Grammar 5 or CLI Contract 6 through
 the standard package root, CLI, help, mutation, or installed workflow.
+Git commit `d6d3d7f` records the exact completed 5p pre-advance snapshot.
 
 This acceptance is subordinate to ADR 0006, the Project Actuals and Git
 History Contract, the Grammar 5 target in the DSL Grammar specification, and

@@ -12,12 +12,14 @@ Mandatory summary:
   semantics 2, the Normative target 1.0 Project Actuals and Git History
   Contract, Contract 6 schemas/diagnostics, and fourteen machine-readable PACT
   cases. `ACTUALS_CONTRACT_REVIEW` is complete and advanced from its `f6e93e1`
-  pre-advance snapshot. `ACTUAL_SOURCE_CORE` is complete in the retained
-  pre-advance snapshot: its internal identity-checked Grammar 5 source Core
-  parses, validates, formats, and projects exact task-owned work events while
-  the standard package root, CLI Contract 5, and Grammar 1 through 4 remain
-  unchanged. Seven tasks and 38p remain; precedence is 26p and the
-  `parallel-sgs` version 1 heuristic resource makespan is 28p with 2p delay.
+  pre-advance snapshot. `ACTUAL_SOURCE_CORE` is complete, its exact
+  pre-advance snapshot is committed at `d6d3d7f`, and the task is advanced to
+  reached `ACTUAL_SOURCE_READY`. Its internal identity-checked Grammar 5
+  source Core parses, validates, formats, and projects exact task-owned work
+  events while the standard package root, CLI Contract 5, and Grammar 1
+  through 4 remain unchanged. Seven tasks and 38p remain; precedence is 26p
+  and the `parallel-sgs` version 1 heuristic resource makespan is 28p with 2p
+  delay.
   Complete NextResult v4 recommends and starts only
   `ACTUAL_GIT_HISTORY_PROBE`; `FINISH_ACTUALS` is allowed. Public Grammar
   5/CLI Contract 6 activation, Git mutation, velocity adoption, MIG-08,
