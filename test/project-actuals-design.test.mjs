@@ -106,25 +106,30 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan completes contract review and selects source Core", async () => {
+test("project actuals plan advances contract review and selects source Core", async () => {
   const plan = "plans/project-actuals.pert";
-  const source = await repositoryText(plan);
+  const [source, acceptance] = await Promise.all([
+    repositoryText(plan),
+    repositoryText("docs/process/project-actuals-contract-review.md"),
+  ]);
   const checked = runJson("document", "check", plan);
   const analyzed = runJson("dag", "analyze", plan);
   const next = runJson("dag", "next", plan);
 
   assert.deepEqual(checked.summary, {
     resources: 8,
-    milestones: 12,
-    tasks: 9,
+    milestones: 11,
+    tasks: 8,
     gates: 4,
     errors: 0,
-    warnings: 1,
+    warnings: 0,
   });
+  assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.match(
     source,
-    /task ACTUALS_CONTRACT_REVIEW[\s\S]*?  status done/,
+    /milestone ACTUALS_CONTRACT_READY:[\s\S]*?  state reached/,
   );
+  assert.match(acceptance, /Plan task: `ACTUALS_CONTRACT_REVIEW`/);
   assert.equal(analyzed.precedence.makespan.numerator, "27");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
   assert.equal(analyzed.resource.makespan.numerator, "28");

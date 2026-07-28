@@ -18,22 +18,21 @@ perttool has accepted its TypeScript CLI MVP, the read-only AI Agent Guidance Re
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` workflow. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
 The explicitly selected project-actuals workstream is tracked independently in
-`plans/project-actuals.pert`. `ACTUALS_CONTRACT_REVIEW` is complete but
-retained in the pre-advance snapshot until Git records it. Accepted ADR 0006,
-Grammar 5 source/migration, Graph semantics 2, Mutation semantics 2, the
-Normative target 1.0 Project Actuals and Git History Contract, Contract 6
-result identities/diagnostics, and fourteen dependency-ordered
-machine-readable PACT cases fix explicit fixed-offset lifecycle events,
-suspended state, task-owned evidence, read-only first-parent reconstruction,
-and exact observations without automatic declared-velocity mutation. Eight
-tasks and 43p remain; precedence is 27p, the heuristic resource makespan is
-28p with 1p delay, and forecasts at the inherited `29p/2d` velocity are
-`54/29d` and `56/29d`. Complete NextResult v4 recommends and starts only
-`ACTUAL_SOURCE_CORE`; `ACTUAL_GIT_HISTORY_PROBE` is `allowed`. Runtime
-implementation, advance before the completion snapshot is committed, Git
-mutation, automatic velocity adoption, MIG-08, release publication, and
-dist-tag movement remain unauthorized. This independent workstream does not
-displace `PERT_PLANS`.
+`plans/project-actuals.pert`. `ACTUALS_CONTRACT_REVIEW` is complete, its exact
+pre-advance snapshot is committed at `f6e93e1`, and the task has been advanced
+to reached `ACTUALS_CONTRACT_READY`. Accepted ADR 0006, Grammar 5
+source/migration, Graph semantics 2, Mutation semantics 2, the Normative target
+1.0 Project Actuals and Git History Contract, Contract 6 result
+identities/diagnostics, and fourteen dependency-ordered machine-readable PACT
+cases fix explicit fixed-offset lifecycle events, suspended state, task-owned
+evidence, read-only first-parent reconstruction, and exact observations without
+automatic declared-velocity mutation. Eight tasks and 43p remain; precedence is
+27p, the heuristic resource makespan is 28p with 1p delay, and forecasts at the
+inherited `29p/2d` velocity are `54/29d` and `56/29d`. Complete NextResult v4
+recommends and starts only `ACTUAL_SOURCE_CORE`; `ACTUAL_GIT_HISTORY_PROBE` is
+`allowed`. Runtime implementation, Git mutation, automatic velocity adoption,
+MIG-08, release publication, and dist-tag movement remain unauthorized. This
+independent workstream does not displace `PERT_PLANS`.
 
 The reviewed CLI/help reset is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted Contract 3 design introduced one typed registry for dispatch, option parsing, text help, and JSON help; separated domain guide and agent guidance; added structured usage recovery, project initialization, and direct gate maintenance; and rejected renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and the installed-package workflow for temporal and exact-unit behavior. The plan has no remaining or recommended task and an observed provisional `49p/1d` velocity.
 

@@ -11,17 +11,17 @@ Mandatory summary:
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation
   semantics 2, the Normative target 1.0 Project Actuals and Git History
   Contract, Contract 6 schemas/diagnostics, and fourteen machine-readable PACT
-  cases. `ACTUALS_CONTRACT_REVIEW` is complete but retained until its exact
-  pre-advance snapshot is committed. Eight tasks and 43p remain; precedence is
-  27p and the heuristic resource makespan is 28p with 1p delay. Complete
-  NextResult v4 recommends and starts only `ACTUAL_SOURCE_CORE`;
-  `ACTUAL_GIT_HISTORY_PROBE` is allowed. The accepted design uses explicit
-  fixed-offset lifecycle events, task-owned pre-advance evidence, read-only
-  first-parent Git reconstruction, exact active-time/effort observations, and
-  no automatic declared-velocity mutation. Runtime implementation, premature
-  advance, Git mutation, velocity adoption, MIG-08, publication, and dist-tag
-  movement remain outside scope. The independent workstream does not displace
-  `PERT_PLANS`.
+  cases. `ACTUALS_CONTRACT_REVIEW` is complete, its exact pre-advance snapshot
+  is committed at `f6e93e1`, and the task has been advanced to reached
+  `ACTUALS_CONTRACT_READY`. Eight tasks and 43p remain; precedence is 27p and
+  the heuristic resource makespan is 28p with 1p delay. Complete NextResult v4
+  recommends and starts only `ACTUAL_SOURCE_CORE`; `ACTUAL_GIT_HISTORY_PROBE`
+  is allowed. The accepted design uses explicit fixed-offset lifecycle events,
+  task-owned pre-advance evidence, read-only first-parent Git reconstruction,
+  exact active-time/effort observations, and no automatic declared-velocity
+  mutation. Runtime implementation, Git mutation, velocity adoption, MIG-08,
+  publication, and dist-tag movement remain outside scope. The independent
+  workstream does not displace `PERT_PLANS`.
 - The CLI/help review is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted registry-driven design separates command help, domain guide, and agent guidance, includes project initialization and gate maintenance, and rejects renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and installed-package workflow for temporal and exact-unit behavior. The completed plan has no recommendation at `49p/1d`.
 - The first Contract 3 package, suffix-free beta `0.2.0`, is accepted under `plans/release-0.2.0.pert`, `docs/process/0.2.0-release.md`, and its acceptance record. All five release tasks are complete and advanced; release commit/tag identity, common local/GitHub/npm tarball bytes, and installed Contract 3/file-first behavior are verified. Publication moved only `beta`; a separately authorized post-acceptance dist-tag operation then made npm `beta=latest=0.2.0`. The completed release plan remains unchanged with no recommendation at `17p/2d`.
 - The suffix-free Contract 4 beta `0.3.0` is accepted. All six release tasks through `RELEASE_030_ACCEPTANCE` are complete and advanced. Release commit and peeled `v0.3.0` target `af44577` agree; the GitHub prerelease and npm registry tarballs have SHA-256 `197548a4...62074`; a separately authorized post-acceptance operation made npm `beta=latest=0.3.0`, while `alpha=0.1.0-alpha.2`. An unqualified global installation and light Contract 4 smoke passed. The plan has zero makespans, no recommendation, and observed cumulative velocity `19p/2d`.
