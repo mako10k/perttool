@@ -8,8 +8,9 @@ events in the same candidate as their state transition. Suspended tasks retain
 their complete remaining duration while releasing snapshot resources and
 remaining outside ordinary Next classifications and start authority.
 
-The exact completed 7p pre-advance snapshot is retained by the Git commit
-identified in this record after that commit is created.
+Git commit `518a59e` retains the exact completed 7p pre-advance snapshot.
+Canonical advance then removed the completed task and its obsolete source
+milestone while retaining reached `LIFECYCLE_READY`.
 
 This acceptance is subordinate to ADR 0006, the Project Actuals and Git
 History Contract, Graph semantics 2, Mutation semantics 2, and PACT-001

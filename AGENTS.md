@@ -48,7 +48,8 @@ from the read-only first-parent probe. Its deterministic
 `Perttool.ProjectHistoryResult.v1` JSON and text target remains absent from
 the active package root and CLI; its acceptance record is
 `docs/process/project-actuals-history-acceptance.md`. `WORK_LIFECYCLE` is
-complete and retained done pending its required pre-advance commit. Its
+complete; Git commit `518a59e` records its exact completed 7p pre-advance
+snapshot, and the task is advanced to reached `LIFECYCLE_READY`. Its
 internal lifecycle target provides exact start/suspend/resume candidates,
 deterministic retry and refusal, resource release, full remaining-duration
 schedules, and separate `Perttool.AnalysisResult.v4` and

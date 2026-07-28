@@ -141,8 +141,9 @@ task-owned advance removal without changing the active public surface.
 internal reducer reconstructs explicit events, advance removal, qualified
 legacy transitions, exact task summaries, typed availability, and
 deterministic Result v1 text/JSON without public activation.
-`WORK_LIFECYCLE` is complete and retained done pending its required
-pre-advance commit. Its internal target implements exact
+`WORK_LIFECYCLE` is complete. Git commit `518a59e` records its exact
+completed 7p pre-advance snapshot, and the task is advanced to reached
+`LIFECYCLE_READY`. Its internal target implements exact
 start/suspend/resume candidates, deterministic retry and refusal, resource
 release, full remaining-duration schedules, and separate AnalysisResult
 v4/NextResult v5 suspended handling without changing the active public

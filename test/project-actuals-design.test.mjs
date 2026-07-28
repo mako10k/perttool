@@ -141,26 +141,20 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
 
   assert.deepEqual(checked.summary, {
     resources: 8,
-    milestones: 7,
-    tasks: 4,
+    milestones: 6,
+    tasks: 3,
     gates: 2,
     errors: 0,
-    warnings: 1,
+    warnings: 0,
   });
-  assert.deepEqual(
-    checked.diagnostics.map(({ code, entity_id }) => [code, entity_id]),
-    [["PTDAG-208", "LIFECYCLE_READY"]],
-  );
+  assert.deepEqual(checked.diagnostics, []);
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
     /milestone ACTUALS_CONTRACT_READY:/,
   );
   assert.doesNotMatch(source, /milestone ACTUAL_SOURCE_READY:/);
-  assert.match(
-    source,
-    /milestone FINISH_ACTUALS_READY:[\s\S]*?  state reached/,
-  );
+  assert.doesNotMatch(source, /milestone FINISH_ACTUALS_READY:/);
   assert.match(contractAcceptance, /Plan task: `ACTUALS_CONTRACT_REVIEW`/);
   assert.match(sourceAcceptance, /`ACTUAL_SOURCE_CORE` is accepted/);
   assert.match(
@@ -177,6 +171,7 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
     lifecycleAcceptance,
     /exact completed 7p pre-advance snapshot/,
   );
+  assert.match(lifecycleAcceptance, /Git commit `518a59e`/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.doesNotMatch(source, /task FINISH_ACTUALS/);
@@ -186,11 +181,8 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
     source,
     /milestone PROJECT_HISTORY_READY:[\s\S]*?  state reached/,
   );
+  assert.doesNotMatch(source, /task WORK_LIFECYCLE/);
   assert.match(
-    source,
-    /task WORK_LIFECYCLE[\s\S]*?  status done/,
-  );
-  assert.doesNotMatch(
     source,
     /milestone LIFECYCLE_READY:\n  title[^\n]*\n  state reached/,
   );
