@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-07-27
+- Updated: 2026-07-28
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -291,6 +291,71 @@ slice must first resolve the current Contract 3 no-Git boundary and decide
 whether its read-only adapter is shared with, sequenced after, or explicitly
 independent from MIG-08. Runtime implementation is not accepted until that
 architecture decision is normative.
+
+## Project actuals and Git-recorded history
+
+### ACT-001: Record explicit work lifecycle and observed project performance
+
+Priority: P0
+
+Status: Contract accepted; implementation not started
+
+Git history can prove that a task-state snapshot was recorded, but it cannot
+prove the actual event time, active execution duration, person effort, or the
+operator's intended lifecycle transition. Add explicit task work events and
+use Git as their durable pre-advance history rather than interpreting commit
+time as completion time.
+
+The target architecture is recorded in
+[ADR 0006](adr/0006-explicit-work-events-in-git-history.md), the accepted
+normative target semantics are in the
+[Project Actuals and Git History Contract](specs/project-actuals.md), and the
+work state is in
+[`plans/project-actuals.pert`](../plans/project-actuals.pert). The
+[`ACTUALS_CONTRACT_REVIEW`](process/project-actuals-contract-review.md) fixes
+the remaining source and public-interface details before runtime work.
+
+Required outcomes:
+
+- explicit fixed-offset `start`, `suspend`, `resume`, and `finish` events;
+- an atomic task-state and event candidate with no hidden clock input;
+- a distinct future `suspended` state that releases renewable resources;
+- exact cycle time, active time, person effort, and planned-value provenance;
+- task-owned events removed by advance only after the pre-advance Git
+  recoverability boundary;
+- a read-only first-parent history projection that distinguishes declared
+  actuals from legacy Git-recorded transitions;
+- typed incomplete/unavailable results for shallow, ambiguous, renamed,
+  unsupported, or conflicting history;
+- exact elapsed-hour and qualified active-date Point throughput plus
+  Point/person-hour productivity;
+- observed velocity that never mutates declared project velocity; and
+- one closed Grammar 5/CLI Contract 6 compatibility and acceptance boundary.
+
+Compatibility and non-goals:
+
+- Grammar 1 through 4, CLI Contract 5, status-only `task finish`, and current
+  result schemas remain unchanged until atomic activation.
+- History and `ADV-001` share the narrow read-only Git adapter, path/HEAD
+  identity, and race-safe inspection primitives. History does not enforce the
+  advance decision, and `ADV-001` does not become the history result model.
+- The workstream does not implement Git writes, automatic velocity adoption,
+  post-advance correction, arbitrary branch-union history, payroll/billing,
+  business calendars, statistical confidence, MIG-08, or release operations.
+
+Planned delivery slices:
+
+| ID | Scope | Estimate | Exit |
+| --- | --- | ---: | --- |
+| `ACTUALS_CONTRACT_REVIEW` | Accept source syntax/version, event/lifecycle semantics, history/observation schemas, diagnostics, compatibility, and normative cases | 4p | No unresolved semantic or public-contract decision blocks implementation. |
+| `ACTUAL_SOURCE_CORE` | Grammar 5 work-event and suspended-state parsing, validation, formatting, and exact model | 5p | Internal source round trips and preserves Grammar 1-4 behavior. |
+| `ACTUAL_GIT_HISTORY_PROBE` | Shared read-only repository/path/revision snapshots and typed history availability | 5p | First-parent, shallow, path, race, and unavailable cases are deterministic and Git remains unchanged. |
+| `FINISH_ACTUALS` | Eventful finish, exact measurements, planned baseline, retry, governance, and safe-write composition | 5p | Status and finish event form one validated candidate and installed-active behavior remains unchanged. |
+| `WORK_LIFECYCLE` | Start, suspend, resume, state reduction, resource/classification handling, and result version target | 7p | Complete/open/finish-only sequences and suspended behavior pass focused tests. |
+| `PROJECT_HISTORY` | Semantic reconstruction, deduplication, advance removal, legacy qualification, Core/text/JSON | 6p | Explicit and legacy evidence remain distinct across real repository histories. |
+| `VELOCITY_OBSERVATION` | Exact Point/hour, qualified Point/active-date, and Point/person-hour observations | 5p | Parallel work is not double-counted and declared velocity is unchanged. |
+| `ACTUALS_PUBLIC_CONTRACT` | Atomic Grammar 5/CLI Contract 6 registry, help, Guide, schemas, diagnostics, and root activation | 6p | No partial public activation or compatibility alias exists. |
+| `ACTUALS_ACCEPTANCE` | Repository, Git, lifecycle, link, package, and installed workflow acceptance | 4p | All normative PACT cases pass with no Git mutation or release side effect. |
 
 ## Scheduling metadata and unit migration
 

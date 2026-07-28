@@ -1,0 +1,185 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project PROJECT_ACTUALS:
+  version 1
+  title "Project actuals and Git-recorded history"
+  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; the completed 4p task remains in the pre-advance snapshot until Git records it. Eight tasks and 43p remain. Precedence is 27p and the heuristic resource makespan is 28p with 1p resource delay; forecasts at 29p/2d are 54/29d and 56/29d. Complete NextResult v4 recommends and starts only ACTUAL_SOURCE_CORE; ACTUAL_GIT_HISTORY_PROBE is allowed but not recommended. This plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
+  as_of 2026-07-28
+  duration_unit point
+  velocity 29p/2d
+  finish ACTUALS_ACCEPTED
+
+milestone ACTUALS_SELECTED:
+  title "Project actuals workstream selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two implementation slices may run concurrently when their owned surfaces do not overlap"
+  capacity 2
+
+resource REVIEWERS:
+  title "Normative and public-contract review capacity"
+  description "Only one cross-cutting contract or acceptance review runs at a time"
+  capacity 1
+
+resource NORMATIVE_SURFACE:
+  title "Requirements, specifications, ADR, and normative examples"
+  capacity 1
+
+resource SOURCE_SURFACE:
+  title "Grammar, parser, semantic, formatter, and mutation ownership"
+  capacity 1
+
+resource GIT_SURFACE:
+  title "Read-only Git adapter and history reconstruction ownership"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "Command registry, help, diagnostics, and public result ownership"
+  capacity 1
+
+resource WRITE_PATH:
+  title "Governed mutation, advance, and safe-write ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package root and installed-workflow acceptance ownership"
+  capacity 1
+
+milestone ACTUALS_CONTRACT_READY:
+  title "Project actuals contract accepted"
+
+milestone ACTUAL_SOURCE_READY:
+  title "Grammar 5 actual-event source Core ready"
+
+milestone GIT_PROBE_READY:
+  title "Read-only Git history probe ready"
+
+milestone FINISH_ACTUALS_READY:
+  title "Eventful task finish Core ready"
+
+milestone LIFECYCLE_READY:
+  title "Work lifecycle Core ready"
+
+milestone HISTORY_INPUT_READY:
+  title "Source and Git history inputs ready"
+
+milestone PROJECT_HISTORY_READY:
+  title "Project history interface ready"
+
+milestone VELOCITY_OBSERVATION_READY:
+  title "Observed project performance ready"
+
+milestone ACTUALS_INTEGRATED_INPUT:
+  title "Lifecycle and observation inputs integrated"
+
+milestone ACTUALS_PUBLIC_READY:
+  title "Grammar 5 and CLI Contract 6 public surface ready"
+
+milestone ACTUALS_ACCEPTED:
+  title "Project actuals and Git history accepted"
+
+task ACTUALS_CONTRACT_REVIEW ACTUALS_SELECTED -> ACTUALS_CONTRACT_READY:
+  title "Accept the project actuals contract"
+  description "Review ADR 0006, requirements, actuals/history semantics, normative PACT cases, Grammar 5 syntax and migration, suspended-state graph meaning, lifecycle requests, result schemas, diagnostics, and compatibility. Resolve every source and public-contract decision before implementation."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+
+task ACTUAL_SOURCE_CORE ACTUALS_CONTRACT_READY -> ACTUAL_SOURCE_READY:
+  title "Implement the Grammar 5 actual-event source Core"
+  description "Implement identity-checked Grammar 5 work-event and suspended-state parsing, exact values, semantic validation, source preservation, formatting, task ownership, compatibility rejection, and internal actuals model without public activation."
+  duration 5p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    SOURCE_SURFACE 1
+
+task ACTUAL_GIT_HISTORY_PROBE ACTUALS_CONTRACT_READY -> GIT_PROBE_READY:
+  title "Implement the read-only Git history probe"
+  description "Implement the repository-relative path, revision, first-parent snapshot, digest, and typed availability adapter shared with ADV-001 primitives. Cover shallow history, missing HEAD, untracked paths, worktrees, races, unsupported history, and prove that no Git state changes."
+  duration 5p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    GIT_SURFACE 1
+
+task FINISH_ACTUALS ACTUAL_SOURCE_READY -> FINISH_ACTUALS_READY:
+  title "Add eventful finish and exact actual measurements"
+  description "Plan task done state and its finish event as one candidate. Implement deterministic identity, finish-only coverage, exact active time and effort, planned-value baseline, retries/conflicts, governed preview, safe write, and advance event ownership while retaining status-only compatibility."
+  duration 5p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    SOURCE_SURFACE 1
+    WRITE_PATH 1
+
+task WORK_LIFECYCLE FINISH_ACTUALS_READY -> LIFECYCLE_READY:
+  title "Implement start, suspend, and resume lifecycle behavior"
+  description "Implement exact state/event transitions, complete and open sequence reduction, suspended resource release and classification, deterministic retry/failure, temporal compatibility, governed write composition, and target analysis/next result handling without adding recommendation override."
+  duration 7p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    SOURCE_SURFACE 1
+    CLI_SURFACE 1
+    WRITE_PATH 1
+
+gate SOURCE_HISTORY_GATE ACTUAL_SOURCE_READY -> HISTORY_INPUT_READY:
+  reason "Semantic history requires the accepted Grammar 5 source model"
+
+gate GIT_HISTORY_GATE GIT_PROBE_READY -> HISTORY_INPUT_READY:
+  reason "Semantic history requires repository snapshots and provenance"
+
+task PROJECT_HISTORY HISTORY_INPUT_READY -> PROJECT_HISTORY_READY:
+  title "Implement project history reconstruction"
+  description "Reconstruct explicit events and qualified legacy Git-recorded transitions, deduplicate snapshot-visible IDs, retain the last payload before advance removal, project exact task summaries, and expose typed incomplete/unavailable Core, text, and JSON results."
+  duration 6p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    GIT_SURFACE 1
+    CLI_SURFACE 1
+
+task VELOCITY_OBSERVATION PROJECT_HISTORY_READY -> VELOCITY_OBSERVATION_READY:
+  title "Implement exact velocity and effort observations"
+  description "Derive completed baseline Points, exact elapsed-hour throughput, qualified active-date throughput, and Point/person-hour productivity with explicit sample provenance and coverage. Do not double-count parallel cycle time, infer day/hour or effort, read the clock, or mutate declared velocity."
+  duration 5p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    GIT_SURFACE 1
+
+gate LIFECYCLE_INTEGRATION_GATE LIFECYCLE_READY -> ACTUALS_INTEGRATED_INPUT:
+  reason "Public activation requires complete lifecycle behavior"
+
+gate OBSERVATION_INTEGRATION_GATE VELOCITY_OBSERVATION_READY -> ACTUALS_INTEGRATED_INPUT:
+  reason "Public activation requires history-derived observations"
+
+task ACTUALS_PUBLIC_CONTRACT ACTUALS_INTEGRATED_INPUT -> ACTUALS_PUBLIC_READY:
+  title "Activate Grammar 5 and CLI Contract 6 atomically"
+  description "Activate parser, formatter, lifecycle mutations, suspended graph/results, project history, velocity observation, root exports, command registry, text/JSON help, Guide, schemas, diagnostics, examples, and migration guidance in one compatibility-reviewed cutover."
+  duration 6p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task ACTUALS_ACCEPTANCE ACTUALS_PUBLIC_READY -> ACTUALS_ACCEPTED:
+  title "Accept project actuals and Git-recorded history"
+  description "Trace every PACT case through requirements, source, lifecycle, advance, real Git histories, Core, CLI, schemas, help, package root, link, and installed workflow. Prove deterministic qualification, no automatic Git or velocity mutation, retained Contract 5 compatibility, and no release side effect."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    GIT_SURFACE 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1

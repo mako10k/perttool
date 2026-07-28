@@ -224,6 +224,12 @@ to its declared calendar value.
   finish may be projected, but its historical start time is unknown.
 - A `done` task or reached milestone has no inferred actual completion time.
 
+The selected [Project Actuals and Git History
+Contract](project-actuals.md) defines a separate future evidence model for
+explicit task work-event times. It does not reinterpret `as_of`, projected
+calendar values, or Git timestamps. The first temporal-extension behavior in
+this specification remains unchanged until that later contract is activated.
+
 Temporal properties require `as_of` as fixed by Requirements. A request for a
 calendar projection of a document without an anchor returns
 `missing_temporal_anchor`; it does not mutate the document or read the clock.

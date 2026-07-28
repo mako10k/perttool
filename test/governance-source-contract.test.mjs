@@ -31,7 +31,10 @@ test("governance source fixes PrincipalId, PrincipalList, and Grammar 4", async 
     assert.ok(source.includes(field), field);
     assert.ok(grammar.includes(field), field);
   }
-  assert.match(grammar, /Grammar versions: 1, 2, and 3 active; 4 accepted target/);
+  assert.match(
+    grammar,
+    /Grammar versions: 1, 2, 3, and 4 active; 5 accepted target/,
+  );
   assert.match(
     grammar,
     /Grammar version 4 is selected only by an explicit `version 4`/,

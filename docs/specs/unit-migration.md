@@ -11,6 +11,7 @@
 - Calendar semantics: [temporal-calendar.md](temporal-calendar.md)
 - Public interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Governance source: [governance-source.md](governance-source.md)
+- Project actuals target: [project-actuals.md](project-actuals.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -563,6 +564,29 @@ The accepted dependency-ordered interface contract fixes:
 Runtime implementation MUST use the accepted versioned interface and
 acceptance cases. It MUST NOT treat the existing project/task batch surface as
 the public migration operation.
+
+### 16.1 Accepted unit-migration version 3 delta
+
+Unit migration version 3 is the accepted, not-yet-active Grammar 5 extension.
+It inherits every version 2 formula, velocity rule, exact serializer,
+source-preserving candidate rule, failure cause, and no-op/inverse meaning,
+and changes only this complete inventory and version boundary:
+
+- add every `work_event.planned_value` to the base-unit-bearing source
+  inventory;
+- convert it with the same exact scale factor as task estimates;
+- identify its converted-field path as
+  `entity_kind="work_event"`, event ID, and
+  `field_path="planned_value"`;
+- never convert `work_event.occurred_at`, `active_time`, `effort`, `reason`,
+  model, task reference, kind, or event ID;
+- accept and retain Grammar 5 even when every generated token is Decimal; and
+- never infer, delete, or alter actual evidence while migrating units.
+
+Unit migration version 2 continues to reject Grammar 5 with
+`unsupported_duration_field`. Version 3 selects
+`Perttool.UnitMigrationResult.v3` only at the coordinated Grammar 5 and CLI
+Contract 6 cutover. It has no standalone activation or downgrade path.
 
 ## 17. Acceptance for this contract
 

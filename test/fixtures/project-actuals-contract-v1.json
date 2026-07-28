@@ -1,0 +1,149 @@
+{
+  "schema_version": "Perttool.ProjectActualsContractCases.v1",
+  "actuals_model_version": 1,
+  "history_model_version": 1,
+  "velocity_observation_model_version": 1,
+  "grammar_version": 5,
+  "cli_contract_version": 6,
+  "cases": [
+    {
+      "id": "PACT-001",
+      "depends_on": [],
+      "operation": "task.finish.actual",
+      "expected": {
+        "atomic_fields": ["task.status", "work_event"],
+        "partial_candidate_exposed": false
+      }
+    },
+    {
+      "id": "PACT-002",
+      "depends_on": [],
+      "operation": "lifecycle.request",
+      "expected": {
+        "occurred_at_required": true,
+        "implicit_clock_inputs": []
+      }
+    },
+    {
+      "id": "PACT-003",
+      "depends_on": ["PACT-001", "PACT-002"],
+      "operation": "actuals.reduce",
+      "expected": {
+        "coverage": "complete",
+        "cycle_time": "8h",
+        "derived_active_time": "6h"
+      }
+    },
+    {
+      "id": "PACT-004",
+      "depends_on": ["PACT-001", "PACT-002"],
+      "operation": "task.finish.actual",
+      "expected": {
+        "coverage": "finish_only",
+        "actual_start": null,
+        "cycle_time": null,
+        "effort_usable": true
+      }
+    },
+    {
+      "id": "PACT-005",
+      "depends_on": ["PACT-002"],
+      "operation": "task.suspend",
+      "expected": {
+        "status": "suspended",
+        "resource_occupancy": 0,
+        "new_start_recommended": false,
+        "blocked": false
+      }
+    },
+    {
+      "id": "PACT-006",
+      "depends_on": ["PACT-001", "PACT-002"],
+      "operation": "lifecycle.retry",
+      "expected": {
+        "identical_retry": "no_op",
+        "different_payload": "PTACT-106"
+      }
+    },
+    {
+      "id": "PACT-007",
+      "depends_on": ["PACT-001", "PACT-006"],
+      "operation": "dag.advance",
+      "expected": {
+        "remove_owned_events": true,
+        "retain_unowned_events": true,
+        "history_event_count": 1
+      }
+    },
+    {
+      "id": "PACT-008",
+      "depends_on": [],
+      "operation": "project.history",
+      "expected": {
+        "evidence_class": "git_recorded_transition",
+        "occurred_at": null,
+        "recorded_at_usable_as_actual": false
+      }
+    },
+    {
+      "id": "PACT-009",
+      "depends_on": ["PACT-008"],
+      "operation": "project.history",
+      "expected": {
+        "status": "incomplete",
+        "cause": "shallow_boundary",
+        "guessed_start": false
+      }
+    },
+    {
+      "id": "PACT-010",
+      "depends_on": ["PACT-003"],
+      "operation": "project.observe-velocity",
+      "expected": {
+        "completed_points": "6p",
+        "observation_time": "3h",
+        "elapsed_hour_throughput": "2p/1h"
+      }
+    },
+    {
+      "id": "PACT-011",
+      "depends_on": ["PACT-010"],
+      "operation": "project.observe-velocity",
+      "expected": {
+        "completed_points": "6p",
+        "effort": "8ph",
+        "effort_productivity": "3/4p/1ph"
+      }
+    },
+    {
+      "id": "PACT-012",
+      "depends_on": ["PACT-010", "PACT-011"],
+      "operation": "project.observe-velocity",
+      "expected": {
+        "source_changed": false,
+        "declared_velocity_changed": false,
+        "adoption_requires_project_set": true
+      }
+    },
+    {
+      "id": "PACT-013",
+      "depends_on": ["PACT-003", "PACT-010"],
+      "operation": "project.observe-velocity",
+      "expected": {
+        "mixed_offsets": "unavailable",
+        "incomplete_intervals": "unavailable",
+        "day_equals_24_hours": false
+      }
+    },
+    {
+      "id": "PACT-014",
+      "depends_on": ["PACT-001", "PACT-005", "PACT-008", "PACT-012"],
+      "operation": "contract.activate",
+      "expected": {
+        "atomic_boundary": ["Grammar 5", "CLI Contract 6"],
+        "grammar_1_through_4_changed": false,
+        "cli_contract_5_changed": false
+      }
+    }
+  ]
+}

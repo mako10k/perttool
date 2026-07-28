@@ -1,9 +1,9 @@
 # perttool DSL Grammar Specification
 
-- Document status: Draft 0.9
-- Grammar versions: 1, 2, and 3 active; 4 accepted target
+- Document status: Draft 1.0
+- Grammar versions: 1, 2, 3, and 4 active; 5 accepted target
 - Created: 2026-07-21
-- Updated: 2026-07-25
+- Updated: 2026-07-28
 - Related requirements: [../requirements.md](../requirements.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 - CLI interface: [interfaces.md](interfaces.md)
@@ -20,8 +20,9 @@ The EBNF and field tables through Section 19 are normative for grammar version
 1. Section 20.1 fixes the active grammar version 2 temporal delta. Section
 20.2 fixes the active grammar version 3 exact fraction Duration delta selected
 by [Temporal and Unit Interface Contract version
-2](temporal-unit-interface.md). Section 20.3 fixes the accepted, not-yet-active
-Grammar 4 governance delta. See the following representative valid version 1
+2](temporal-unit-interface.md). Section 20.3 fixes the active Grammar 4
+governance delta. Section 20.4 fixes the accepted, not-yet-active Grammar 5
+project-actuals delta. See the following representative valid version 1
 documents.
 
 - [minimal.pert](../examples/minimal.pert)
@@ -43,7 +44,9 @@ When a discrepancy is found, do not patch only the lower-precedence artifact; sy
 
 - The language is line based.
 - Indentation represents blocks.
-- Top-level declarations are limited to `project`, `resource`, `milestone`, `task`, and `gate`.
+- Top-level declarations are limited to `project`, `resource`, `milestone`,
+  `task`, and `gate` through Grammar 4. Grammar 5 additionally accepts
+  `work_event`.
 - Place task and gate endpoints in the header so that their nature as edges is visually apparent.
 - Use stable IDs, rather than titles, for references.
 - Field order and declaration order do not affect semantics.
@@ -1113,6 +1116,147 @@ project-init/show, pre-change snapshot, and adapter boundaries are normative
 in the [Governance Source and Effective-Metadata
 specification](governance-source.md).
 
+### 20.4 Grammar version 5 project-actuals delta
+
+Grammar version 5 is selected only by an explicit `version 5`. It inherits
+every Grammar 4 declaration, temporal field, exact Duration form, governance
+field, validation rule, contextual keyword, and canonical field order. It
+adds the top-level `work_event` evidence declaration and task status
+`suspended`.
+
+```ebnf
+ExactUnsignedV5 = Decimal | DurationFraction ;
+EventDateTimeV5 = IsoDate, "T", Hour, ":", Minute, ":", Second,
+                  [ Fraction ], NumericOffsetV5 ;
+NumericOffsetV5 = ( "+" | "-" ), Hour, ":", Minute ;
+ActiveHoursV5 = ExactUnsignedV5, "h" ;
+PersonHoursV5 = ExactUnsignedV5, "ph" ;
+
+WorkEventDeclV5 = "work_event", HSPACE, Identifier, ":", NEWLINE,
+                  INDENT, WorkEventEntryV5,
+                  { WorkEventEntryV5 }, DEDENT ;
+WorkEventEntryV5 = BlockTrivia | WorkEventFieldV5 ;
+WorkEventFieldV5 = EventModelFieldV5
+                 | EventTaskFieldV5
+                 | EventKindFieldV5
+                 | OccurredAtFieldV5
+                 | PlannedValueFieldV5
+                 | ActiveTimeFieldV5
+                 | EffortFieldV5
+                 | ReasonField ;
+EventModelFieldV5 = "model", HSPACE, Integer, NEWLINE ;
+EventTaskFieldV5 = "task", HSPACE, Identifier, NEWLINE ;
+EventKindFieldV5 = "kind", HSPACE,
+                   ( "start" | "suspend" | "resume" | "finish" ),
+                   NEWLINE ;
+OccurredAtFieldV5 = "occurred_at", HSPACE, EventDateTimeV5, NEWLINE ;
+PlannedValueFieldV5 = "planned_value", HSPACE, DurationV3, NEWLINE ;
+ActiveTimeFieldV5 = "active_time", HSPACE, ActiveHoursV5, NEWLINE ;
+EffortFieldV5 = "effort", HSPACE, PersonHoursV5, NEWLINE ;
+
+StatusFieldV5 = "status", HSPACE,
+                ( "planned" | "active" | "blocked" | "suspended" | "done" ),
+                NEWLINE ;
+ProjectEntryV5 = BlockTrivia | ProjectFieldV4 ;
+ProjectDeclV5 = "project", HSPACE, Identifier, ":", NEWLINE,
+                INDENT, ProjectEntryV5, { ProjectEntryV5 }, DEDENT ;
+MilestoneFieldV5 = MilestoneField | DeadlineField ;
+MilestoneEntryV5 = BlockTrivia | MilestoneFieldV5 ;
+MilestoneDeclV5 = "milestone", HSPACE, Identifier, ":", NEWLINE,
+                  INDENT, MilestoneEntryV5,
+                  { MilestoneEntryV5 }, DEDENT ;
+TaskFieldV5 = TitleField
+            | DescriptionField
+            | DurationField
+            | EstimateField
+            | NotBeforeField
+            | DeadlineField
+            | StatusFieldV5
+            | PriorityField
+            | RequirementsField
+            | OwnerField
+            | TagsField
+            | BlockedReasonField
+            | SourceField ;
+TaskEntryV5 = BlockTrivia | TaskFieldV5 ;
+TaskDeclV5 = "task", HSPACE, Identifier,
+             HSPACE, Identifier, HSPACE, "->", HSPACE, Identifier,
+             ":", NEWLINE,
+             INDENT, TaskEntryV5, { TaskEntryV5 }, DEDENT ;
+
+DeclarationV5 = ResourceDecl | MilestoneDeclV5 | TaskDeclV5 | GateDecl
+              | WorkEventDeclV5 ;
+DocumentV5 = Trivia, ProjectDeclV5,
+             { Trivia, DeclarationV5 }, Trivia, EOF ;
+```
+
+`work_event`, `model`, `kind`, `occurred_at`, `planned_value`,
+`active_time`, `effort`, `start`, `suspend`, `resume`, `finish`,
+`suspended`, and `ph` are contextual in the positions above. They do not
+expand the Grammar 1 reserved-ID set. Grammar 1 through 4 retain their
+existing entity-ID acceptance and reject a top-level `work_event` as
+`PTDSL-003` and a `suspended` status value as `PTDSL-012`.
+
+Every `work_event` has exactly one each of `model`, `task`, `kind`, and
+`occurred_at`. Model 1 is the only accepted event model. A different model is
+`PTACT-101` with cause `unsupported_event_model`.
+
+The kind-specific field matrix is normative.
+
+| Kind | `planned_value` | `active_time` | `effort` | `reason` |
+| --- | --- | --- | --- | --- |
+| `start` | exactly 1 | forbidden | forbidden | forbidden |
+| `suspend` | forbidden | forbidden | forbidden | 0..1 |
+| `resume` | forbidden | forbidden | forbidden | forbidden |
+| `finish` | forbidden | 0..1 | 0..1 | forbidden |
+
+`planned_value` uses the document base-unit suffix and may be zero.
+`active_time` is an exact non-negative number of elapsed hours. `effort` is
+an exact non-negative number of person-hours. Decimal and Fraction forms use
+the Grammar 3 exact parsing and canonicalization rules. A zero denominator is
+`PTDSL-007`; signs, exponents, spaces inside a Fraction, and negative values
+are not accepted.
+
+An event date-time requires a numeric offset. `Z`, a date-only value, a local
+date-time, and `-00:00` are `PTDSL-008`. Calendar fields, offset range, and
+instant comparison otherwise use the active fixed-offset calendar rules.
+Source-preserving operations retain the declared token. Canonical generation
+removes a zero fractional second, removes trailing fractional zeroes, retains
+the declared numeric offset, and emits UTC as `+00:00`.
+
+Work-event IDs share the global document ID namespace. The `task` field must
+resolve to a task; another entity kind or a missing ID is `PTACT-102`.
+`planned_value` must equal the exact expected value of the referenced task in
+the project base unit at the candidate's first start. Kind/field mismatch or
+an unequal planned value is `PTACT-103`. Sequence, stored-state, identity,
+measurement, and resource rules are defined by the
+[Project Actuals and Git History Contract](project-actuals.md).
+
+Grammar 5 canonical work-event field order is:
+
+```text
+model, task, kind, occurred_at, planned_value, active_time, effort, reason
+```
+
+Canonical declaration order is project, resources, milestones, task/gate
+edges, then work events. Existing source declaration order remains preserved.
+New work events append after the last declaration in event-ID order only when
+one request creates more than one event. A work event owns its indented field
+comments. The ordinary leading-comment rule applies to the whole declaration;
+removing an event removes only its owned leading comments and body.
+
+Adding a work event or `suspended` state to an older source atomically sets
+`project.version` to `5`. A Grammar 5 document is never downgraded
+automatically. An explicit downgrade is valid only when no work event or
+`suspended` state remains and the complete candidate is valid under the
+selected older grammar.
+
+Unit migration version 3 accepts Grammar 5 and converts every
+`work_event.planned_value` together with the existing base-unit inventory.
+It never converts `occurred_at`, `active_time`, `effort`, or `reason`, retains
+Grammar 5, and never removes actual evidence. Unit migration versions 1 and 2
+reject Grammar 5 as unsupported.
+
 ## 21. Grammar acceptance
 
 At minimum, a parser implementation automatically checks the following:
@@ -1151,3 +1295,15 @@ At minimum, a parser implementation automatically checks the following:
     source order, and derives omission defaults without rewriting the source.
 24. Adds governance metadata to an older grammar only through one atomic
     Grammar 4 candidate and never downgrades Grammar 4 automatically.
+25. Keeps Grammar 1 through 4 behavior closed while Grammar 5 accepts exactly
+    `work_event` declarations and the `suspended` status.
+26. Treats every Grammar 5 spelling as contextual outside its declared
+    position and preserves older valid entity IDs.
+27. Validates model, task ownership, exact kind/field presence, numeric-offset
+    event time, planned-value equality, exact hours, and exact person-hours.
+28. Preserves work-event comments and unrelated source bytes, emits the
+    canonical field order, and keeps explicit formatting idempotent.
+29. Adds actuals source only through one valid Grammar 5 candidate and never
+    downgrades Grammar 5 automatically.
+30. Includes `work_event.planned_value` in unit migration version 3 while
+    preserving event time, active time, effort, reason, and Grammar 5.

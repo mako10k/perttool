@@ -444,6 +444,62 @@ After final candidate validation, Governance semantics classifies inserted,
 changed, or removed governance fields against the pre-change snapshot. A
 candidate cannot use its new owner or delegate values to authorize itself.
 
+### 12.1 Accepted lifecycle mutation version 2 extension
+
+The selected [Project Actuals and Git History
+Contract](project-actuals.md) fixes the following not-yet-active Mutation
+semantics version 2 requests:
+
+```ts
+type LifecycleMutation =
+  | { kind: "task.start"; taskId: string; event: LifecycleEventInput }
+  | { kind: "task.suspend"; taskId: string; event: LifecycleEventInput }
+  | { kind: "task.resume"; taskId: string; event: LifecycleEventInput }
+  | { kind: "task.finish.actual"; taskId: string;
+      event: LifecycleEventInput };
+```
+
+Each request changes one task state and appends one task-owned `work_event` in
+one final candidate. Lifecycle requests are not atomic-batch members in
+version 2; a batch cannot hide multiple state transitions or define their
+event order.
+
+Processing extends Section 4 as follows.
+
+1. Validate the original through its declared grammar and validate the typed
+   lifecycle request.
+2. Resolve one task and validate its source state and existing event stream.
+3. Derive or validate the event ID. On start, compute the exact task expected
+   value for `planned_value`; do not accept a caller override.
+4. Create one localized status edit and one complete canonical work-event
+   declaration insertion. Eventful finish also removes `blocked_reason` when
+   finishing an unrecorded blocked task.
+5. If required, add the `project.version 5` edit in the same set.
+6. Apply all edits once and validate the final Grammar 5 candidate, including
+   event/state reduction and active resource capacity.
+7. Only after candidate success, classify governance against the pre-change
+   source and return `Perttool.MutationResult.v3`.
+
+No candidate, edit, or event is exposed when either half is invalid.
+Identical retries are no-ops. Reusing an event ID with another payload is
+`PTACT-106`. The Core does not read the system clock, Git, a prior Next
+result, or a path.
+
+Status insertion/replacement follows the Grammar 5 task-field order.
+Work-event insertion follows the Grammar 5 declaration and field order and
+the ordinary leading-comment ownership rule. Unrelated source bytes and event
+declaration order remain unchanged.
+
+Grammar 1 through 4 retain Section 8.2 status-only `task.finish`. Grammar 5
+rejects status-only finish, direct `suspended`, and direct status mutation
+after any event exists. An unrecorded Grammar 5 task retains legacy direct
+status maintenance for `planned`, `active`, `blocked`, and `done`.
+
+Canonical advance in version 2 removes every event owned by each removed task
+in the same candidate and returns `removed_work_event_ids`. It does not remove
+events belonging to retained tasks. The required pre-advance Git snapshot
+procedure remains outside the pure mutation Core.
+
 ## 13. Acceptance invariants
 
 Automatically verify at least the following.

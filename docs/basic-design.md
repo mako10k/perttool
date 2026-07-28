@@ -1,8 +1,8 @@
 # perttool Basic Design
 
-- Document status: Draft 1.18
+- Document status: Draft 1.20
 - Created: 2026-07-21
-- Updated: 2026-07-27
+- Updated: 2026-07-28
 - Applicable requirements: [requirements.md](requirements.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
@@ -10,6 +10,7 @@
 - Temporal deadline semantics: [specs/temporal-deadline.md](specs/temporal-deadline.md)
 - Unit migration semantics: [specs/unit-migration.md](specs/unit-migration.md)
 - Temporal and unit interface: [specs/temporal-unit-interface.md](specs/temporal-unit-interface.md)
+- Project actuals and Git history: [specs/project-actuals.md](specs/project-actuals.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
 - Recommendation ranking: [specs/recommendation-ranking.md](specs/recommendation-ranking.md)
 - Recommendation reasons: [specs/recommendation-reasons.md](specs/recommendation-reasons.md)
@@ -732,6 +733,120 @@ candidate is `exact`, and a no-op is `not_applicable`. The boundary and its
 types remain internal and do not activate migration, public schemas,
 dispatch, help, or installed behavior.
 
+### 6.8 Project actuals and Git history
+
+The selected post-beta actuals architecture follows
+[ADR 0006](adr/0006-explicit-work-events-in-git-history.md) and the
+[Project Actuals and Git History Contract](specs/project-actuals.md). It is a
+target design, not part of active Grammar 4 or CLI Contract 5.
+
+The target keeps three concerns separate.
+
+```text
+current source mutation
+  task state + task-owned work event
+            |
+            v
+  one validated source candidate
+            |
+            v
+  pre-advance Git snapshot
+            |
+            v
+read-only semantic history reconstruction
+            |
+            +--> task actual summaries
+            +--> project throughput observations
+            +--> qualified legacy recorded transitions
+```
+
+#### 6.8.1 Source and lifecycle Core
+
+A future `src/actuals/` pure Core owns:
+
+- event identity and exact fixed-offset time;
+- lifecycle transition reduction;
+- complete, open, finish-only, unrecorded, and unavailable coverage;
+- exact cycle/active-time and explicit person-effort records;
+- planned-value baselines; and
+- deterministic task/project actual summaries.
+
+Grammar 5 adds task-owned top-level `work_event` declarations and the
+`suspended` task state. Exact event EBNF, `h`/`ph` quantities, canonical
+field order, source ownership, and migration are fixed by the accepted
+contract. Events are source records but not graph edges. A lifecycle
+application service plans the state edit and event insertion against one
+validated source, applies the edit set once, revalidates the final candidate,
+and exposes neither half on failure.
+
+`suspended` tasks occupy no renewable resources and are not ordinary ready or
+blocked tasks. Graph, analysis, recommendation, and public results require
+versioned support before activation. Lifecycle mutation does not implement
+recommendation override or durable authorization audit.
+
+#### 6.8.2 Advance ownership
+
+The advance planner treats each work event as owned by its task declaration.
+Removing a task removes its events in the same candidate and reports their
+IDs. The existing pre-advance commit procedure remains mandatory. `ADV-001`
+uses the shared Git inspection boundary to guard destructive edits, while
+history reconstruction uses it to read evidence; the two application
+decisions do not call each other.
+
+#### 6.8.3 Read-only Git adapter
+
+A future `src/history/` boundary separates a pure semantic history reducer from
+a narrow read-only Git adapter.
+
+```ts
+interface PlanRevisionSnapshot {
+  readonly repositorySnapshotId: string;
+  readonly relativePath: string;
+  readonly commitId: string;
+  readonly parentCommitIds: readonly string[];
+  readonly recordedAt: string | null;
+  readonly sourceDigest: string;
+  readonly source: Uint8Array | null;
+}
+```
+
+The adapter resolves one repository-relative path and revision, traverses
+first-parent history, and returns raw snapshots and provenance. It never
+stages, commits, checks out, resets, rebases, or pushes. The pure reducer
+parses supported snapshots, deduplicates stable event IDs, retains the last
+committed payload before advance removal, and distinguishes explicit actual
+events from legacy Git-recorded transitions.
+
+Shallow history, unsupported grammar, ambiguous path/rename/merge history,
+task-ID replacement, and event conflicts produce typed incomplete or
+unavailable results. Current-source operations remain Git-independent.
+
+#### 6.8.4 Observation service
+
+The observation service consumes only the versioned history result. It returns
+exact elapsed-hour Point throughput, qualified active-date Point throughput,
+and Point/person-hour productivity separately. It does not sum parallel cycle
+times, infer effort from resources, equate one day with 24 hours, read the
+current clock, or mutate declared velocity.
+
+The active project velocity remains the forecast input. A separately
+previewed `project set` may later adopt one compatible observed value; the
+observation service never performs that write.
+
+#### 6.8.5 Public cutover
+
+The implementation may land internal source, actuals, Git, lifecycle,
+history, and observation slices without exposing them. Public activation is
+one coordinated Grammar 5/CLI Contract 6 cutover after:
+
+- source syntax and version migration are accepted;
+- suspended-state graph and result semantics are versioned;
+- lifecycle mutation composes governance and safe-write controls;
+- history and observation schemas have stable qualification causes;
+- active Contract 5 command discovery proves future commands remain absent
+  before cutover; and
+- repository, link, package, and installed-package acceptance pass.
+
 ## 7. Diagnostic Model
 
 Every layer returns the shared `Diagnostic` type.
@@ -1395,6 +1510,22 @@ Target Contract 4 schemas:
 - `Perttool.NextResult.v4`
 - `Perttool.UnitMigrationResult.v2`
 
+Active Contract 5 schema changes:
+
+- `Perttool.ProjectResult.v3`
+- `Perttool.MutationResult.v2`
+- `Perttool.GovernanceDecision.v1`
+
+Accepted target Contract 6 schema changes:
+
+- `Perttool.CheckResult.v3`
+- `Perttool.AnalysisResult.v4`
+- `Perttool.NextResult.v5`
+- `Perttool.MutationResult.v3`
+- `Perttool.UnitMigrationResult.v3`
+- `Perttool.ProjectHistoryResult.v1`
+- `Perttool.VelocityObservationResult.v1`
+
 Rules:
 
 - Update TypeScript types and JSON Schema in the same change.
@@ -1403,13 +1534,11 @@ Rules:
 - Removing fields, changing semantics, or narrowing enums requires a major schema increase.
 - Emit golden JSON in stable key order.
 
-Every active CLI JSON envelope includes `cli_contract_version=3`. Existing
-result-specific schema versions remain unchanged where Contract 3 preserves
-their payload meanings.
-
-After the target cutover every active envelope includes
-`cli_contract_version=4`; the target document operations always return their
-new schema identity for grammar versions 1, 2, and 3.
+Every active CLI JSON envelope includes `cli_contract_version=5`. Existing
+result-specific schema versions remain unchanged where Contract 5 preserves
+their payload meanings. At the accepted future cutover, every envelope
+includes `cli_contract_version=6`; the actuals-affected operations always
+return their Contract 6 schema identities, including for older input grammars.
 
 Reserve DSL version for future introduction as an optional field in the project block. When omitted in the MVP, treat it as version 1 grammar.
 
@@ -1886,6 +2015,27 @@ Exit:
   `latest` promotion; and
 - leave Issue #4 closure as a separate decision.
 
+### Post-MVP Slice 4I: Project actuals and Git-recorded history
+
+The independent
+[`project-actuals.pert`](../plans/project-actuals.pert) workstream adopts the
+accepted actuals contract without changing the completed MVP, governance, or
+release plans. Contract review is complete; implementation separates:
+
+1. Grammar 5 work-event and suspended-state source Core;
+2. a shared read-only Git history probe compatible with `ADV-001`;
+3. eventful finish and atomic state/event mutation;
+4. start, suspend, and resume lifecycle behavior;
+5. project history reconstruction and qualified legacy evidence;
+6. exact velocity and effort observations;
+7. the atomic Grammar 5/CLI Contract 6 public cutover; and
+8. repository and installed-package acceptance.
+
+The slice does not authorize implementation before the contract review,
+automatic Git mutation, post-advance correction, arbitrary branch-union
+history, automatic declared-velocity changes, MIG-08, package publication, or
+dist-tag movement.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 As an independent future backlog after the first beta, split the work into the following three deliverables.
@@ -1898,7 +2048,7 @@ Fix LSP protocol capabilities, UTF-16 position mapping, VSIX packaging, workspac
 
 ## 18. Matters for detailed design
 
-The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Governance Source and Effective-Metadata specification](specs/governance-source.md) determines Grammar 4 source, omission defaults, project metadata, and pre-change snapshots; the [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md) determines goal/DAG change classification and pre-change persistent-write authority; the [Owner-Aware Governance Interface Contract](specs/governance-interface.md) determines Core assertions, CLI Contract 5, text/JSON/help projections, diagnostics, exits, and atomic activation; the [Issue #4 Owner-Aware Governance Design Acceptance Review](process/governance-design-acceptance.md) fixes the complete criterion, interface, example, non-goal, and implementation-gate trace; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the active Grammar 1/2/3 and CLI Contract 4 temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomies; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary.
+The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, done, suspended, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Project Actuals and Git History Contract](specs/project-actuals.md) determines the selected future work-event, lifecycle, history, and observation semantics; the [Governance Source and Effective-Metadata specification](specs/governance-source.md) determines Grammar 4 source, omission defaults, project metadata, and pre-change snapshots; the [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md) determines goal/DAG change classification and pre-change persistent-write authority; the [Owner-Aware Governance Interface Contract](specs/governance-interface.md) determines Core assertions, CLI Contract 5, text/JSON/help projections, diagnostics, exits, and atomic activation; the [Issue #4 Owner-Aware Governance Design Acceptance Review](process/governance-design-acceptance.md) fixes the complete criterion, interface, example, non-goal, and implementation-gate trace; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the active Grammar 1/2/3 and CLI Contract 4 temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomy; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary. [ADR 0006](adr/0006-explicit-work-events-in-git-history.md) defines transient same-document work events and read-only Git durability.
 
 1. Implementation details for CST trivia/comment ownership rules
 2. Implementation details for the formatter's canonical whitespace
@@ -1920,6 +2070,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | Help registry | Chapter 16 |
 | CLI Contract 3 registry, help/guide split, and file-first maintenance | Sections 12.2, 15, 16, and 21.2 |
 | Temporal/unit grammar, projections, migration, and Contract 4 boundary | Sections 7.6, 7.7, 10.7, 11, 12, 15, 16, and 18 |
+| Project actuals, lifecycle, Git history, and observed velocity | Sections 2.3, 7.8, 9, 12, and 19 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
 | Owner-aware goal/DAG source, authority, and Contract 5 interface/release | Sections 2.6, 7.1, 12.3, 15, 16, and 17 |
 | Mermaid adapter | Chapters 13 and 14 |

@@ -1314,6 +1314,12 @@ Advance procedure:
    ready set, analysis, and next result again.
 8. Commit the advanced present/future plan as a second logical change.
 
+The accepted project-actuals target will make task-owned work events part of
+the exact pre-advance snapshot and removal review. Until its Grammar 5/CLI
+Contract 6 cutover is accepted, the active workflow remains status-only and
+must not add future event syntax manually. The target contract is
+[`docs/specs/project-actuals.md`](../specs/project-actuals.md).
+
 The runtime history guard in backlog
 [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history)
 is not implemented. Until it is accepted, do not use in-place
@@ -1469,5 +1475,5 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all nineteen plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty current plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

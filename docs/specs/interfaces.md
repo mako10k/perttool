@@ -21,6 +21,7 @@
 - Active CLI contract: [cli-contract-3.md](cli-contract-3.md)
 - Future temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Future governance interface: [governance-interface.md](governance-interface.md)
+- Future project actuals interface: [project-actuals.md](project-actuals.md)
 
 ## 1. Purpose and MVP Boundary
 
@@ -1207,3 +1208,12 @@ version 2 separately targets grammar version 3 and CLI Contract 4. It selects
 CheckResult v2, ProjectResult v2, AnalysisResult v3, NextResult v4, and
 UnitMigrationResult v2 without changing the retained Contract 2 payload
 meanings in this document or silently widening active Contract 3.
+
+The selected [Project Actuals and Git History
+Contract](project-actuals.md) separately targets Grammar 5 and CLI Contract 6.
+It requires versioned lifecycle mutation, suspended-state analysis/next,
+project history, and velocity-observation results. None of those commands,
+options, enum values, or conditional fields is part of the active interfaces
+described here or CLI Contract 5. The Project Actuals contract fixes their
+exact schema identities, exit mapping, and help projection before
+implementation; activation remains atomic.

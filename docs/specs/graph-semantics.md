@@ -1,8 +1,9 @@
 # perttool Graph Semantics Specification
 
-- Document status: Draft 0.2
-- Semantics version: 1
+- Document status: Draft 0.3
+- Semantics versions: 1 active; 2 accepted target
 - Created: 2026-07-21
+- Updated: 2026-07-28
 - Related requirements: [../requirements.md](../requirements.md)
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
@@ -608,6 +609,16 @@ The implementation must automatically verify at least the following.
 13. ensure advance is idempotent
 14. reduce a complete project to a residual graph containing only finish
 15. match golden diagnostic codes, primary spans, related locations, and order
+16. classify each suspended task exactly once and never as active, ready,
+    blocked, upcoming, runnable, or new-start recommended
+17. require a reached source, retain edge dissatisfaction, and exclude
+    suspended requirements from snapshot allocation
+18. identify precedence and resource schedules as conditional on the exact
+    suspended task set resuming at relative time zero
+19. reject a start or resume candidate that would over-allocate active
+    resources
+20. make advance remove and report exactly the work events owned by each
+    removed task
 
 ## 20. Versioning and next specification
 
@@ -616,3 +627,33 @@ Semantics version 1 applies to grammar version 1.
 The [Analysis specification](analysis.md) defines duration, PERT/CPM, resource scheduling, `runnable_now`, resource arcs, schedule critical paths, rounding, and tie-breaking using the valid graph in this document as input. The [CLI Interface specification](interfaces.md) defines external result and CLI operation contracts.
 
 For a breaking change to graph semantics, explicitly state the semantics version, fixtures, and migration impact whether or not it also changes the grammar.
+
+Graph semantics version 2 is the accepted, not-yet-active Grammar 5 delta. It
+inherits version 1 and adds the following exact rules.
+
+- A `work_event` ID joins the global document-ID namespace, and its task
+  reference resolves to a task, but the event is not a vertex or edge in
+  `G`.
+- `suspended` means intentionally paused. It is unfinished, does not satisfy
+  its edge, occupies no snapshot resource, and requires an effectively
+  reached source.
+- `suspended` is a separate complete classification set containing every
+  suspended task. Its IDs occur in none of `active`, `ready`, `blocked_now`,
+  `upcoming`, or `runnable_now`.
+- Precedence and heuristic resource analysis retain a suspended task and its
+  remaining duration, but the schedule is explicitly conditional on every
+  reported suspended task resuming at relative time zero. Analysis never
+  chooses a resume time.
+- New-start recommendation and temporal start authority exclude suspended
+  tasks. Resume is an explicit lifecycle action, not a recommendation of a
+  new task.
+- Time-zero active usage continues to sum only `active` tasks. Starting or
+  resuming a task revalidates the complete active allocation.
+- Advance treats work events as owned records. When it removes a task, it
+  removes and reports exactly that task's events. It never removes an event
+  owned by a retained task. Suspended tasks are unfinished and retained.
+
+Version 2 adds `suspended_task_ids` and
+`conditional_on_suspensions_resumed` to both analysis views and their
+temporal projections. These meanings are activated only with coordinated
+Grammar 5 and CLI Contract 6; semantics version 1 remains unchanged.

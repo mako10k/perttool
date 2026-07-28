@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.17
+- Document status: Draft 0.19
 - Created: 2026-07-21
-- Updated: 2026-07-27
+- Updated: 2026-07-28
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -67,6 +67,9 @@ Must:
 - The source-of-truth `.pert` document represents the current work boundary and the unfinished plan beyond it.
 - Git retains the history of tasks that are complete and no longer serve a role.
 - Only completed tasks still needed to determine a join of parallel tasks may remain temporarily in the current document with state `done`.
+- The selected post-beta actuals extension may temporarily retain explicit
+  work events owned by a current task. Advance removes those events with the
+  task after the exact pre-advance snapshot becomes recoverable from Git.
 - After the join condition is satisfied, the current boundary can advance and unnecessary past portions can be removed mechanically.
 
 This document calls this forward operation `advance`. Git is used to inspect history and the difference before and after `advance`.
@@ -414,9 +417,11 @@ Constraints:
 - A deadline is a target rather than a hard finish constraint. A past or
   forecast-missed deadline remains analyzable and is reported as a temporal
   result rather than a structural-validation failure.
-- The current document does not store actual start or finish timestamps. It
+- Grammar versions 1 through 4 do not store actual start or finish events. They
   must not infer deadline compliance for `done` tasks from `as_of` or Git
-  commit time.
+  commit time. The selected Grammar 5 target records explicit work events
+  under the separate [Project Actuals and Git History
+  Contract](specs/project-actuals.md).
 
 The `duration` or `estimate` of an in-progress task represents remaining duration at the current snapshot. Git history records previous estimates.
 
@@ -571,6 +576,58 @@ The dependency-ordered
 [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md)
 defines public Core/CLI names, result schemas, help, and diagnostic codes
 before runtime implementation.
+
+### 7.8 Project actuals and work lifecycle
+
+The selected post-beta actuals extension records explicit operational evidence
+without turning Git commit time or projected schedules into actual facts. Its
+source, lifecycle, history, and observation semantics are defined by the
+[Project Actuals and Git History Contract](specs/project-actuals.md), with the
+storage decision recorded in
+[ADR 0006](adr/0006-explicit-work-events-in-git-history.md).
+
+Must:
+
+- Represent actual start, suspend, resume, and finish as versioned work events
+  associated with a stable task ID.
+- Require an explicit fixed-offset event date-time. Core behavior must not read
+  the wall clock or substitute `as_of` or Git time.
+- Update lifecycle state and append its event as one previewable,
+  source-preserving, candidate-validated mutation.
+- Keep `blocked` distinct from the future `suspended` state. A suspended task
+  releases its renewable resources and is not automatically ready or
+  recommended.
+- Keep active execution time, cycle time, person effort, task estimates, and
+  resource quantities as distinct values.
+- Use exact Rational arithmetic for actual durations, person effort, Point
+  baselines, and observed rates.
+- Preserve an exact planned-value baseline so estimate changes cannot silently
+  inflate completed-Point observations.
+- Let a standalone explicit finish record partial `finish_only` coverage
+  without inventing a start or elapsed interval.
+- Retain task-owned work events only while the task remains in the current
+  source, remove them with the task during advance, and preserve the exact
+  pre-advance evidence in Git history.
+- Reconstruct project actuals through read-only Git inspection. Explicit event
+  time and Git-recorded transition time must remain different evidence
+  classes.
+- Report shallow, ambiguous, renamed, unsupported, or otherwise incomplete
+  history as incomplete or unavailable rather than guessing.
+- Compute elapsed-hour throughput, qualified active-date throughput, and
+  Point/person-hour productivity separately. Parallel task cycle times must
+  not be summed as a project observation period.
+- Return observed velocity separately from declared `project.velocity`.
+  Observation must not mutate the source or automatically adopt a rate.
+- Keep Grammar 1 through 4, CLI Contract 5, current analysis/recommendation
+  schema identities, and status-only `task finish` unchanged until one atomic
+  future contract cutover is accepted.
+
+The first contract does not include automatic Git mutation, a permanent
+historical ledger in the current graph, a multi-file sidecar transaction,
+post-advance correction, arbitrary branch-union reconstruction, payroll or
+billing semantics, business calendars, named time zones, statistical
+confidence, automatic velocity adoption, recommendation override apply,
+durable authorization audit, or release operations.
 
 ## 8. DSL requirements
 
@@ -996,6 +1053,12 @@ Must:
   atomic batch requests. File-first maintenance must not require manual source
   rewriting.
 
+The selected but unimplemented actuals target adds eventful `task finish`,
+typed `task start|suspend|resume`, read-only `project history`, and read-only
+`project observe-velocity`. Their final option, result, diagnostic, version,
+and compatibility contracts are fixed before implementation. These commands
+must not appear in active Contract 5 help or dispatch.
+
 ### 12.3 Owner-aware goal and DAG writes
 
 The [governance semantics contract](specs/governance-authority.md) is
@@ -1335,6 +1398,8 @@ Must:
 - Do not create large diffs that do not require formatting or structural edits.
 - Make generated artifacts distinguishable from sources of truth.
 - Document that past tasks remain recoverable and comparable from Git even after they are removed.
+- Keep explicit work-event time and Git-recorded time distinct when the
+  selected actuals extension is active.
 - Make analysis itself usable in environments without Git.
 
 Could:
@@ -1636,14 +1701,17 @@ acceptance decision in
 
 - Calendars with business days, holidays, and working hours
 - Per-task calendars and time zones
-- Actual task-start, task-finish, and milestone-reach event history
+- Milestone-reach event history; task start/finish and work lifecycle are
+  selected in the independent `project-actuals.pert` workstream
 - Recurring deadlines, reminders, and external calendar synchronization
 - Time-varying resource capacity and resource availability dates
 - Advanced resource modeling including shifts, skills, and assignee calendars
 - Exact optimization of resource-constrained schedules
 - Include/import for multiple project documents
-- Statistical analysis of actual time and forecast accuracy
-- Velocity by team/resource, period, and history
+- Statistical analysis of actual time and forecast accuracy beyond the
+  selected exact observation model
+- Velocity by team/resource and statistical history beyond the selected
+  project observation model
 - Plan-diff analysis between Git revisions
 - Web UI and collaborative editing
 - Broad import of arbitrary Mermaid syntax
@@ -1663,6 +1731,13 @@ examples, and
 The atomic Contract 4 acceptance gate is complete: Grammar 1, 2, and 3,
 AnalysisResult v3, NextResult v4 normal authority, exact unit migration, and
 the installed-package workflow are active in `0.3.0`.
+
+The selected project-actuals workstream has accepted its source and
+public-interface decisions. ADR 0006 is accepted, the Project Actuals and Git
+History Contract is Normative target 1.0, Grammar 5 and CLI Contract 6 are
+closed target boundaries, and every PACT case has a machine-readable fixture.
+The accepted contract remains unimplemented and does not change active Grammar
+1 through 4 or CLI Contract 5.
 
 Resolved design decisions:
 
@@ -1698,6 +1773,17 @@ Resolved design decisions:
 - Defaults, preview, owner/delegate assertions, atomic batches, safe-write composition, ordinary operations, and direct-edit guidance: [Normative Owner-Aware Governance Examples](examples/governance.md)
 - Complete Issue #4 criteria, interface invariants, non-goals, resolved cross-cutting findings, and implementation handoff: [Issue #4 Owner-Aware Governance Design Acceptance Review](process/governance-design-acceptance.md)
 - Atomic Grammar 4 and CLI Contract 5 source/package-root activation, installed-package evidence, and retained release boundary: [Issue #4 Governance Implementation Acceptance](process/governance-acceptance.md)
+- Same-document work events and pre-advance Git durability:
+  [ADR 0006](adr/0006-explicit-work-events-in-git-history.md)
+- Grammar 5 event syntax, lifecycle and suspended semantics, Git history and
+  observed-performance Core/CLI schemas, diagnostics, and atomic Contract 6
+  activation:
+  [Project Actuals and Git History Contract](specs/project-actuals.md)
+- Dependency-ordered semantic and machine-readable project-actuals cases:
+  [Project Actuals Examples](examples/project-actuals.md)
+- Complete actuals requirements/specification/example/interface trace and
+  implementation handoff:
+  [Project Actuals Contract Acceptance Review](process/project-actuals-contract-review.md)
 
 ## 25. Recommended next specification work
 
@@ -1751,6 +1837,17 @@ Before implementation, separate the specifications in the following order.
     - [x] [Normative authority and write-path examples](examples/governance.md)
     - [x] [Cross-cutting Issue #4 design acceptance](process/governance-design-acceptance.md)
     - [x] Source, evaluator, preview, write, guidance, and installed acceptance
+17. [x] Project actuals and Git-recorded history contract
+    - [x] Accepted same-document event and pre-advance Git architecture in
+      [ADR 0006](adr/0006-explicit-work-events-in-git-history.md)
+    - [x] Normative target lifecycle, history, and observation semantics in the
+      [Project Actuals and Git History Contract](specs/project-actuals.md)
+    - [x] Normative PACT cases in
+      [Project Actuals Examples](examples/project-actuals.md)
+    - [x] Grammar 5 EBNF, lexical units, field order, source ownership, and
+      migration
+    - [x] Public schema identities, exact diagnostics/exits, machine fixtures,
+      and cross-cutting contract acceptance
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

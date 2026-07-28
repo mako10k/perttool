@@ -12,6 +12,10 @@
 - [agent-guidance.pert](agent-guidance.pert): [Issue #2](https://github.com/mako10k/perttool/issues/2)のprovider baseline、common contract、Core、`agent help`、beta受け入れを分解した詳細計画
 - [english-baseline.pert](english-baseline.pert): phased migration of repository-maintained prose, bundled help, diagnostics, current plans, and golden fixtures to the English baseline
 - [governance.pert](governance.pert): independent post-beta requirements, contract, implementation, and acceptance roadmap for [Issue #4](https://github.com/mako10k/perttool/issues/4) owner-aware goal and DAG mutation governance
+- [project-actuals.pert](project-actuals.pert): independent post-beta design,
+  implementation, public cutover, and acceptance roadmap for explicit work
+  events, lifecycle transitions, read-only Git history, and observed project
+  performance
 - [cli-surface-reset.pert](cli-surface-reset.pert): independent post-beta plan that maps the human/LLM CLI review and its eight backlog items into design, implementation, breaking migration, and file-first acceptance
 - [release-0.2.0.pert](release-0.2.0.pert): independent Contract 3 beta release plan covering the version decision, local preparation, candidate gate, authorized distribution, and durable acceptance
 - [release-0.3.0.pert](release-0.3.0.pert): independent Contract 4 beta release plan covering the version gate, accepted scheduling-and-units input, preparation, candidate, authorized publication, and durable acceptance
@@ -24,7 +28,19 @@
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All nineteen plans pass the self-use gate and are used as inputs to `document check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing and `dag advance` with an expected digest and post-write reanalysis. Detailed plans use Points as the analysis unit and velocity-converted days as forecasts. Select the macro workstream from `mvp.pert` before selecting a task from its detail plan. For the explicitly selected scheduling-and-units workstream, select a milestone work package from `scheduling-units.pert`, create and accept its milestone-detail plan when none is current, and then select a task from that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`, `release-0.3.0.pert`, `release-0.4.0.pert`, `governance.pert`, and the scheduling-and-units plans are explicitly requested independent post-beta plans and are not rolled up into the completed MVP macro.
+All twenty plans pass the self-use gate and are used as inputs to `document
+check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
+and `dag advance` with an expected digest and post-write reanalysis. Detailed
+plans use Points as the analysis unit and velocity-converted days as forecasts.
+Select the macro workstream from `mvp.pert` before selecting a task from its
+detail plan. For the explicitly selected scheduling-and-units workstream,
+select a milestone work package from `scheduling-units.pert`, create and accept
+its milestone-detail plan when none is current, and then select a task from
+that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
+`release-0.3.0.pert`, `release-0.4.0.pert`, `governance.pert`,
+`project-actuals.pert`, and the scheduling-and-units plans are explicitly
+requested independent post-beta plans and are not rolled up into the completed
+MVP macro.
 
 2026-07-23にRecommendation detailの`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2p、`OVERRIDE_VALIDATION` 3p、`AUTHORITY_ADOPTION` 2pを完了し、累計1 active dayからrecommendation固有の暫定実測Velocityを`22p/1d`へ更新した。Detailの残りは0pである。Macro `RECOMMENDATION_IMPLEMENTATION`と`RELEASE_E2E`も完了し、MVP public alphaを受け入れた。
 
@@ -96,6 +112,23 @@ CLI, and installed-package acceptance are active together. The plan has zero
 makespans and no recommendation at observed velocity `45p/2d`. Authentication,
 durable audit, recommendation override apply, MIG-08, Git integration, and
 Issue synchronization remain unavailable.
+
+The independently selected `project-actuals.pert` workstream starts from
+[ADR 0006](../docs/adr/0006-explicit-work-events-in-git-history.md), the accepted
+[Project Actuals and Git History
+Contract](../docs/specs/project-actuals.md), and fourteen normative PACT cases.
+`ACTUALS_CONTRACT_REVIEW` accepted Grammar 5 source/migration, Graph semantics
+2, Mutation semantics 2, Contract 6 schemas/diagnostics, and the
+machine-readable case matrix. The done 4p task remains in the exact
+pre-advance snapshot until Git records it. Eight tasks and 43p remain.
+Precedence is 27p; the `parallel-sgs` version 1 heuristic resource makespan is
+28p with 1p resource delay. At the inherited operations velocity `29p/2d`,
+the forecasts are `54/29d` and `56/29d`. Complete NextResult v4 recommends
+and starts only `ACTUAL_SOURCE_CORE`; `ACTUAL_GIT_HISTORY_PROBE` is allowed.
+Runtime implementation, premature advance, Git mutation, automatic
+declared-velocity changes, MIG-08, release publication, and dist-tag movement
+remain outside the authorized scope. This independent workstream does not
+displace `PERT_PLANS` in the English-baseline detail.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 
