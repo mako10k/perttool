@@ -7,6 +7,8 @@ pure request can finish one task and append its task-owned finish event as one
 validated candidate. The implementation remains absent from the standard
 package root, CLI Contract 5, help, and installed workflow.
 
+Git commit `2af13c4` records the exact completed 5p pre-advance snapshot.
+
 This acceptance is subordinate to ADR 0006, the Project Actuals and Git
 History Contract, Mutation semantics 2, the Grammar 5 target, and PACT-001,
 PACT-002, PACT-003, PACT-004, PACT-006, and PACT-007. It does not revise their

@@ -33,11 +33,12 @@ advanced to reached `HISTORY_INPUT_READY`. Its internal read-only adapter
 binds SHA-1/SHA-256 repository snapshots, first-parent path history, raw
 source digests, typed incomplete/unavailable causes, linked worktrees, and
 source/HEAD races without changing Git or the active public surface.
-`FINISH_ACTUALS` is complete and retained as done pending its required
-pre-advance commit. Its internal eventful-finish Core provides deterministic
-identity, exact active-time and effort input, finish-only and complete
-coverage, retry/conflict handling, governed Grammar 5 safe write, and
-task-owned advance removal. Its acceptance record is
+`FINISH_ACTUALS` is complete, its exact pre-advance snapshot is committed at
+`2af13c4`, and the task is advanced to reached `FINISH_ACTUALS_READY`. Its
+internal eventful-finish Core provides deterministic identity, exact
+active-time and effort input, finish-only and complete coverage,
+retry/conflict handling, governed Grammar 5 safe write, and task-owned advance
+removal. Its acceptance record is
 `docs/process/project-actuals-finish-acceptance.md`. Five tasks and 28p remain;
 precedence is 21p, the `parallel-sgs` version 1 heuristic resource makespan is
 23p with 2p delay, and forecasts at the inherited `29p/2d` velocity are

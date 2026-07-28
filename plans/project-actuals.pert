@@ -2,7 +2,7 @@
 project PROJECT_ACTUALS:
   version 1
   title "Project actuals and Git-recorded history"
-  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; Git commit f6e93e1 records its completed 4p pre-advance snapshot. ACTUAL_SOURCE_CORE accepted identity-checked internal Grammar 5 parsing, validation, formatting, exact task-owned event projection, and active Grammar 1-4 compatibility; Git commit d6d3d7f records its completed 5p pre-advance snapshot, and the task is advanced to reached ACTUAL_SOURCE_READY. ACTUAL_GIT_HISTORY_PROBE accepted the internal read-only SHA-1/SHA-256 repository/path/revision probe, first-parent raw snapshots, typed availability, linked worktrees, race detection, and unchanged Git/public surfaces; Git commit 2198a0b records its completed 5p pre-advance snapshot, and the task and satisfied source/history gates are advanced to reached HISTORY_INPUT_READY. FINISH_ACTUALS is complete and retained done pending its required pre-advance commit. Its internal eventful-finish Core provides deterministic identity, exact active-time and effort inputs, finish-only and complete coverage, retry/conflict handling, governed Grammar 5 safe write, and task-owned advance removal without changing active Grammar 1-4 or CLI Contract 5. Five tasks and 28p remain. Precedence is 21p and the parallel-sgs version 1 heuristic resource makespan is 23p with 2p resource delay; forecasts at 29p/2d are 42/29d and 46/29d. Complete NextResult v4 recommends and starts only PROJECT_HISTORY; WORK_LIFECYCLE is deferred by the selected CLI_SURFACE capacity witness. Grammar 5 and CLI Contract 6 remain publicly inactive, and this plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
+  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; Git commit f6e93e1 records its completed 4p pre-advance snapshot. ACTUAL_SOURCE_CORE accepted identity-checked internal Grammar 5 parsing, validation, formatting, exact task-owned event projection, and active Grammar 1-4 compatibility; Git commit d6d3d7f records its completed 5p pre-advance snapshot, and the task is advanced to reached ACTUAL_SOURCE_READY. ACTUAL_GIT_HISTORY_PROBE accepted the internal read-only SHA-1/SHA-256 repository/path/revision probe, first-parent raw snapshots, typed availability, linked worktrees, race detection, and unchanged Git/public surfaces; Git commit 2198a0b records its completed 5p pre-advance snapshot, and the task and satisfied source/history gates are advanced to reached HISTORY_INPUT_READY. FINISH_ACTUALS accepted deterministic eventful finish, exact active-time and effort inputs, finish-only and complete coverage, retry/conflict handling, governed Grammar 5 safe write, task-owned advance removal, and unchanged active Grammar 1-4 and CLI Contract 5; Git commit 2af13c4 records its exact completed 5p pre-advance snapshot, and the task is advanced to reached FINISH_ACTUALS_READY. Five tasks and 28p remain. Precedence is 21p and the parallel-sgs version 1 heuristic resource makespan is 23p with 2p resource delay; forecasts at 29p/2d are 42/29d and 46/29d. Complete NextResult v4 recommends and starts only PROJECT_HISTORY; WORK_LIFECYCLE is deferred by the selected CLI_SURFACE capacity witness. Grammar 5 and CLI Contract 6 remain publicly inactive, and this plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
   as_of 2026-07-28
   duration_unit point
   velocity 29p/2d
@@ -44,13 +44,11 @@ resource PACKAGE_SURFACE:
   capacity 1
 
 
-milestone ACTUAL_SOURCE_READY:
-  title "Grammar 5 actual-event source Core ready"
-  state reached
 
 
 milestone FINISH_ACTUALS_READY:
   title "Eventful task finish Core ready"
+  state reached
 
 milestone LIFECYCLE_READY:
   title "Work lifecycle Core ready"
@@ -77,16 +75,6 @@ milestone ACTUALS_ACCEPTED:
 
 
 
-task FINISH_ACTUALS ACTUAL_SOURCE_READY -> FINISH_ACTUALS_READY:
-  title "Add eventful finish and exact actual measurements"
-  description "Plan task done state and its finish event as one candidate. Implement deterministic identity, finish-only coverage, exact active time and effort, planned-value baseline, retries/conflicts, governed preview, safe write, and advance event ownership while retaining status-only compatibility."
-  duration 5p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    SOURCE_SURFACE 1
-    WRITE_PATH 1
 
 task WORK_LIFECYCLE FINISH_ACTUALS_READY -> LIFECYCLE_READY:
   title "Implement start, suspend, and resume lifecycle behavior"

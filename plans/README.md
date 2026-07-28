@@ -130,12 +130,13 @@ accepted. Git commit `2198a0b` records the exact completed 5p
 source/history gates are advanced to reached `HISTORY_INPUT_READY`. The
 internal probe binds SHA-1/SHA-256 repository snapshots, first-parent path
 history, raw source digests, typed availability, linked worktrees, and
-source/HEAD races without changing Git or the active public surface.
-`FINISH_ACTUALS` is complete and retained as done pending its required
-pre-advance commit. Its internal target implements deterministic eventful
-finish, exact measurements, finish-only and complete coverage, governed
-Grammar 5 safe write, and task-owned advance removal without changing the
-active public surface. Five tasks and 28p remain. Precedence is 21p; the
+source/HEAD races without changing Git or the active public surface. Git
+commit `2af13c4` records the exact completed 5p `FINISH_ACTUALS` pre-advance
+snapshot; the task is advanced to reached `FINISH_ACTUALS_READY`. Its internal
+target implements deterministic eventful finish, exact measurements,
+finish-only and complete coverage, governed Grammar 5 safe write, and
+task-owned advance removal without changing the active public surface. Five
+tasks and 28p remain. Precedence is 21p; the
 `parallel-sgs` version 1 heuristic resource makespan is 23p with 2p resource
 delay. At the inherited operations velocity `29p/2d`, the forecasts are
 `42/29d` and `46/29d`. Complete NextResult v4 recommends and starts only

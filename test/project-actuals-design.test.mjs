@@ -106,7 +106,7 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan retains the accepted finish snapshot", async () => {
+test("project actuals plan advances the accepted eventful finish", async () => {
   const plan = "plans/project-actuals.pert";
   const [
     source,
@@ -133,24 +133,22 @@ test("project actuals plan retains the accepted finish snapshot", async () => {
 
   assert.deepEqual(checked.summary, {
     resources: 8,
-    milestones: 9,
-    tasks: 6,
+    milestones: 8,
+    tasks: 5,
     gates: 2,
     errors: 0,
-    warnings: 1,
+    warnings: 0,
   });
-  assert.deepEqual(
-    checked.diagnostics.map(({ code }) => code),
-    ["PTDAG-208"],
-  );
+  assert.deepEqual(checked.diagnostics, []);
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
     /milestone ACTUALS_CONTRACT_READY:/,
   );
+  assert.doesNotMatch(source, /milestone ACTUAL_SOURCE_READY:/);
   assert.match(
     source,
-    /milestone ACTUAL_SOURCE_READY:[\s\S]*?  state reached/,
+    /milestone FINISH_ACTUALS_READY:[\s\S]*?  state reached/,
   );
   assert.match(
     source,
@@ -164,8 +162,10 @@ test("project actuals plan retains the accepted finish snapshot", async () => {
   );
   assert.match(probeAcceptance, /Git commit `2198a0b`/);
   assert.match(finishAcceptance, /`FINISH_ACTUALS` is accepted/);
+  assert.match(finishAcceptance, /Git commit `2af13c4`/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
+  assert.doesNotMatch(source, /task FINISH_ACTUALS/);
   assert.equal(analyzed.precedence.makespan.numerator, "21");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
   assert.equal(analyzed.resource.makespan.numerator, "23");
