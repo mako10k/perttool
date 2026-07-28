@@ -125,16 +125,19 @@ machine-readable case matrix. Git commit `f6e93e1` records the exact completed
 `ACTUAL_SOURCE_CORE` pre-advance snapshot; the residual plan retains reached
 `ACTUAL_SOURCE_READY`. The internal Grammar 5 parser, validator, formatter,
 exact actuals source model, and Grammar 1 through 4 compatibility are
-accepted. Seven tasks and 38p remain. Precedence is 26p; the `parallel-sgs`
-version 1 heuristic resource makespan is 28p with 2p resource delay. At the
-inherited operations velocity `29p/2d`, the forecasts are `52/29d` and
-`56/29d`.
-Complete NextResult v4 recommends and starts only
-`ACTUAL_GIT_HISTORY_PROBE`; `FINISH_ACTUALS` is allowed. Public Grammar 5/CLI
-Contract 6 activation, Git mutation, automatic declared-velocity changes,
-MIG-08, release publication, and dist-tag movement remain outside the
-authorized scope. This independent workstream does not displace `PERT_PLANS`
-in the English-baseline detail.
+accepted. `ACTUAL_GIT_HISTORY_PROBE` is complete and retained as done pending
+its required pre-advance commit. The internal probe binds SHA-1/SHA-256
+repository snapshots, first-parent path history, raw source digests, typed
+availability, linked worktrees, and source/HEAD races without changing Git or
+the active public surface. Six unfinished tasks and 33p remain. Precedence is
+22p; the `parallel-sgs` version 1 heuristic resource makespan is 23p with 1p
+resource delay. At the inherited operations velocity `29p/2d`, the forecasts
+are `44/29d` and `46/29d`. Complete NextResult v4 recommends and starts only
+`FINISH_ACTUALS`; `PROJECT_HISTORY` is allowed. Public Grammar 5/CLI Contract
+6 activation, Git mutation, automatic declared-velocity changes, MIG-08,
+release publication, and dist-tag movement remain outside the authorized
+scope. This independent workstream does not displace `PERT_PLANS` in the
+English-baseline detail.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

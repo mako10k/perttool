@@ -209,53 +209,52 @@
       ]
     },
     "project-actuals": {
-      "source_digest": "sha256:32ae08b69c7428a77efc98ea17a3bf32361cdad322fff9e102c127b2023b8a86",
+      "source_digest": "sha256:8644bf0072fb95cd22d1901f4e5411e268a21879acb43ab60d08e73749d79aea",
       "groups": {
         "active": [],
         "ready": [
-          "ACTUAL_GIT_HISTORY_PROBE",
-          "FINISH_ACTUALS"
+          "FINISH_ACTUALS",
+          "PROJECT_HISTORY"
         ],
         "runnable_now": [
-          "ACTUAL_GIT_HISTORY_PROBE",
-          "FINISH_ACTUALS"
+          "FINISH_ACTUALS",
+          "PROJECT_HISTORY"
         ],
         "blocked_now": [],
         "upcoming": [
           "ACTUALS_PUBLIC_CONTRACT",
           "ACTUALS_ACCEPTANCE",
-          "PROJECT_HISTORY",
-          "VELOCITY_OBSERVATION",
-          "WORK_LIFECYCLE"
+          "WORK_LIFECYCLE",
+          "VELOCITY_OBSERVATION"
         ]
       },
       "recommended_task_ids": [
-        "ACTUAL_GIT_HISTORY_PROBE"
-      ],
-      "manual_selected_task_ids": [
-        "ACTUAL_GIT_HISTORY_PROBE",
         "FINISH_ACTUALS"
       ],
+      "manual_selected_task_ids": [
+        "FINISH_ACTUALS",
+        "PROJECT_HISTORY"
+      ],
       "tiers": {
-        "ACTUAL_GIT_HISTORY_PROBE": "recommended",
-        "FINISH_ACTUALS": "allowed"
+        "FINISH_ACTUALS": "recommended",
+        "PROJECT_HISTORY": "allowed"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "ACTUAL_GIT_HISTORY_PROBE",
+          "id": "FINISH_ACTUALS",
           "runnable_now": true,
           "precedence_critical": true,
-          "schedule_critical": true,
+          "schedule_critical": false,
           "total_float": "0/1",
           "resource_rejections": []
         },
         {
-          "id": "FINISH_ACTUALS",
+          "id": "PROJECT_HISTORY",
           "runnable_now": true,
           "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "4/1",
+          "schedule_critical": true,
+          "total_float": "1/1",
           "resource_rejections": []
         }
       ],
@@ -267,7 +266,9 @@
         "reasons": 8,
         "descriptions": 3
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "recommendation": {
       "source_digest": "sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464",

@@ -798,8 +798,8 @@ decisions do not call each other.
 
 #### 6.8.3 Read-only Git adapter
 
-A future `src/history/` boundary separates a pure semantic history reducer from
-a narrow read-only Git adapter.
+The internal `src/history/` boundary separates the future pure semantic
+history reducer from the implemented narrow read-only Git probe.
 
 ```ts
 interface PlanRevisionSnapshot {
@@ -808,21 +808,30 @@ interface PlanRevisionSnapshot {
   readonly commitId: string;
   readonly parentCommitIds: readonly string[];
   readonly recordedAt: string | null;
-  readonly sourceDigest: string;
+  readonly sourceDigest: string | null;
   readonly source: Uint8Array | null;
 }
 ```
 
-The adapter resolves one repository-relative path and revision, traverses
-first-parent history, and returns raw snapshots and provenance. It never
-stages, commits, checks out, resets, rebases, or pushes. The pure reducer
-parses supported snapshots, deduplicates stable event IDs, retains the last
-committed payload before advance removal, and distinguishes explicit actual
-events from legacy Git-recorded transitions.
+The probe binds the Git object format, resolved commit, repository-relative
+path, current source digest, and optional caller-expected digest. It traverses
+only first-parent path changes and returns raw bytes, including a null source
+for a deletion snapshot, plus commit parents and committer-time provenance.
+It accepts SHA-1 and SHA-256 object repositories, supports linked worktrees,
+and rechecks both `HEAD` and the regular-file identity after inspection. It
+never stages, commits, checks out, resets, rebases, or pushes.
 
-Shallow history, unsupported grammar, ambiguous path/rename/merge history,
-task-ID replacement, and event conflicts produce typed incomplete or
-unavailable results. Current-source operations remain Git-independent.
+The probe is internal to the source tree and absent from the active package
+root, CLI Contract 5, and installed workflow. The future pure reducer parses
+supported snapshots, deduplicates stable event IDs, retains the last committed
+payload before advance removal, and distinguishes explicit actual events from
+legacy Git-recorded transitions.
+
+The probe reports shallow and rename boundaries as typed incomplete results;
+missing repository/HEAD/revision, untracked or ambiguous paths, source/HEAD
+races, and process or read failures fail closed. Unsupported grammar,
+task-ID replacement, event conflicts, and other semantic availability belong
+to the future reducer. Current-source operations remain Git-independent.
 
 #### 6.8.4 Observation service
 

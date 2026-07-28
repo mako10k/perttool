@@ -26,14 +26,19 @@ advanced to reached `ACTUAL_SOURCE_READY`. The internal identity-checked
 Grammar 5 source Core parses, validates, formats, and projects exact task-owned
 work events and the target suspended state while the standard package root,
 CLI Contract 5, and Grammar 1 through 4 remain unchanged. Its acceptance
-record is `docs/process/project-actuals-source-core-acceptance.md`. Seven tasks
-and 38p remain; precedence is 26p, the `parallel-sgs` version 1 heuristic
-resource makespan is 28p with 2p delay, and forecasts at the inherited `29p/2d`
-velocity are `52/29d` and `56/29d`. Complete NextResult v4 recommends and
-starts only `ACTUAL_GIT_HISTORY_PROBE`; `FINISH_ACTUALS` is `allowed`. Public
-Grammar 5/CLI Contract 6 activation, Git mutation, automatic velocity
-adoption, MIG-08, release publication, and dist-tag movement remain
-unauthorized. This independent workstream does not displace `PERT_PLANS`.
+record is `docs/process/project-actuals-source-core-acceptance.md`.
+`ACTUAL_GIT_HISTORY_PROBE` is complete and retained as done pending its
+required pre-advance commit. Its internal read-only adapter binds SHA-1/SHA-256
+repository snapshots, first-parent path history, raw source digests, typed
+incomplete/unavailable causes, linked worktrees, and source/HEAD races without
+changing Git or the active public surface. Six unfinished tasks and 33p
+remain; precedence is 22p, the `parallel-sgs` version 1 heuristic resource
+makespan is 23p with 1p delay, and forecasts at the inherited `29p/2d`
+velocity are `44/29d` and `46/29d`. Complete NextResult v4 recommends and
+starts only `FINISH_ACTUALS`; `PROJECT_HISTORY` is `allowed`. Public Grammar
+5/CLI Contract 6 activation, Git mutation, automatic velocity adoption,
+MIG-08, release publication, and dist-tag movement remain unauthorized. This
+independent workstream does not displace `PERT_PLANS`.
 
 The reviewed CLI/help reset is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted Contract 3 design introduced one typed registry for dispatch, option parsing, text help, and JSON help; separated domain guide and agent guidance; added structured usage recovery, project initialization, and direct gate maintenance; and rejected renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and the installed-package workflow for temporal and exact-unit behavior. The plan has no remaining or recommended task and an observed provisional `49p/1d` velocity.
 
@@ -119,6 +124,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/formatter/`: the active Grammar 1/2/3/4 source-preserving formatter Core plus the internal Grammar 5 work-event target formatter; exact target values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 5 package surface.
+- `src/history/`: internal read-only Git probe for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, typed availability, linked worktrees, and race detection; semantic history reduction and public activation remain future slices.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.

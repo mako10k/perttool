@@ -298,7 +298,7 @@ architecture decision is normative.
 
 Priority: P0
 
-Status: Contract accepted; internal source Core complete
+Status: Contract accepted; internal source Core and Git history probe complete
 
 Git history can prove that a task-state snapshot was recorded, but it cannot
 prove the actual event time, active execution duration, person effort, or the
@@ -316,7 +316,10 @@ work state is in
 the source and public-interface details. The
 [`ACTUAL_SOURCE_CORE` acceptance](process/project-actuals-source-core-acceptance.md)
 records the internal Grammar 5 parser, validation, formatter, and exact source
-model without activating the future public contract.
+model without activating the future public contract. The
+[`ACTUAL_GIT_HISTORY_PROBE` acceptance](process/project-actuals-git-history-probe-acceptance.md)
+records the internal read-only first-parent repository adapter, typed
+availability, race handling, and unchanged active public surface.
 
 Required outcomes:
 
