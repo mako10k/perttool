@@ -22,8 +22,6 @@ test("0.3.0 release gate records Contract 4 publication and acceptance separatel
     acceptanceRecord,
     plan,
     manifestText,
-    lockfileText,
-    versionSource,
     changelog,
     readme,
   ] = await Promise.all([
@@ -36,8 +34,6 @@ test("0.3.0 release gate records Contract 4 publication and acceptance separatel
     repositoryText("docs/process/0.3.0-release-acceptance.md"),
     repositoryText("plans/release-0.3.0.pert"),
     repositoryText("package.json"),
-    repositoryText("package-lock.json"),
-    repositoryText("src/version.ts"),
     repositoryText("CHANGELOG.md"),
     repositoryText("README.md"),
   ]);
@@ -100,21 +96,15 @@ test("0.3.0 release gate records Contract 4 publication and acceptance separatel
   assert.match(plan, /beta=latest=0\.3\.0/);
 
   const manifest = JSON.parse(manifestText);
-  const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.3.0");
-  assert.equal(lockfile.version, "0.3.0");
-  assert.equal(lockfile.packages[""].version, "0.3.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.3\.0"/);
   assert.match(changelog, /^## \[0\.3\.0\] - 2026-07-26$/m);
   assert.match(
     changelog,
     /^\[0\.3\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.2\.0\.\.\.v0\.3\.0$/m,
   );
   assert.match(changelog, /Accepted the `perttool@0\.3\.0` Contract 4 beta/);
-  assert.match(readme, /npm install --global perttool$/m);
   assert.match(
     readme,
-    /npm `latest` and `beta` both resolve to Contract 4 `0\.3\.0`/,
+    /npm `beta` and `latest` still\s+resolve to Contract 4 `0\.3\.0`/,
   );
   assert.equal(manifest.publishConfig.tag, "beta");
 });

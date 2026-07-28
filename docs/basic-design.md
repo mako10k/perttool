@@ -30,6 +30,7 @@
 - CLI interface: [specs/interfaces.md](specs/interfaces.md)
 - CLI Contract 3: [specs/cli-contract-3.md](specs/cli-contract-3.md)
 - CLI Contract 3 migration: [process/cli-contract-3-migration.md](process/cli-contract-3-migration.md)
+- CLI Contract 5 migration: [process/cli-contract-5-migration.md](process/cli-contract-5-migration.md)
 - Mermaid profile: [specs/mermaid-profile.md](specs/mermaid-profile.md)
 - AoA decision: [adr/0001-activity-on-arrow.md](adr/0001-activity-on-arrow.md)
 - Runtime/package decision: [adr/0005-node-22-runtime-baseline.md](adr/0005-node-22-runtime-baseline.md)
@@ -1853,8 +1854,9 @@ The release sequence separates:
 6. post-publication durable acceptance;
 7. independent later decisions for npm `latest` and Issue #4 closure.
 
-The 2026-07-27 requests authorize only `RELEASE_040_GATE_DESIGN` and
-`RELEASE_040_CONTRACT_5_READINESS`.
+The 2026-07-27 requests authorized `RELEASE_040_GATE_DESIGN` and
+`RELEASE_040_CONTRACT_5_READINESS`; the 2026-07-28 instruction to perform the
+next release task authorizes `RELEASE_040_PREPARATION`.
 `RELEASE_040_PUBLISH` remains explicitly blocked in the plan until a separate
 user instruction authorizes the named `0.4.0` external publication batch.
 Plan state records this boundary but is not itself external-write authority.

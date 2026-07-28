@@ -79,6 +79,7 @@ Key design documents:
 - [Previous CLI Contract 2 payload reference](specs/interfaces.md)
 - [Active CLI Contract 3](specs/cli-contract-3.md)
 - [CLI Contract 3 migration](process/cli-contract-3-migration.md)
+- [CLI Contract 5 migration](process/cli-contract-5-migration.md)
 - [Mutation semantics](specs/mutation.md)
 - [Mermaid profile](specs/mermaid-profile.md)
 - [Recommendation interface](specs/recommendation-interface.md)

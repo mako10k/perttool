@@ -5,48 +5,54 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-The repository source now implements Grammar 4 and CLI Contract 5. The latest
-published package remains Contract 4 `0.3.0`; release version selection and
-publication for Contract 5 are separate work. Beta releases may contain
-breaking CLI or schema changes. Version `0.3.0` requires Node.js 22 or later.
-Contract 3 remains available by pinning `0.2.0`.
+The prepared `0.4.0` source implements Grammar 4 and CLI Contract 5. Its
+publication remains a separate operation; npm `beta` and `latest` still
+resolve to Contract 4 `0.3.0` until that operation is explicitly authorized.
+Beta releases may contain breaking CLI or schema changes. Version `0.4.0`
+requires Node.js 22 or later. Contract 4 and Contract 3 remain available by
+pinning `0.3.0` and `0.2.0`, respectively.
 
 ## Run without installing
 
-Use `npx` for an occasional invocation and select Contract 4 explicitly:
+Use `npx` for an occasional invocation and select Contract 5 explicitly:
 
 ```sh
-npx --yes --package=perttool@0.3.0 -- perttool --version
-npx --yes --package=perttool@0.3.0 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.3.0 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.3.0 -- perttool project migrate-unit PLAN.pert --to-unit day --diff
+npx --yes --package=perttool@0.4.0 -- perttool --version
+npx --yes --package=perttool@0.4.0 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.4.0 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.4.0 -- perttool project migrate-unit PLAN.pert --to-unit day --diff
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.3.0 -- perttool --version
-npm exec --yes --package=perttool@0.3.0 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.3.0 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.3.0 -- perttool project migrate-unit PLAN.pert --to-unit day --diff
+npm exec --yes --package=perttool@0.4.0 -- perttool --version
+npm exec --yes --package=perttool@0.4.0 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.4.0 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.4.0 -- perttool project migrate-unit PLAN.pert --to-unit day --diff
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
-cache. Pinning `0.2.0` selects Contract 3 and therefore does not accept the
-temporal and migration surface in this README.
+cache. The `0.4.0` registry commands become available only after the
+separately authorized publication. Pinning `0.3.0` selects Contract 4 and
+therefore does not accept the governance surface in this README; pinning
+`0.2.0` selects Contract 3 and also omits the temporal and migration surface.
 
 ## Install
 
 Install the CLI globally when it is used regularly:
 
 ```sh
-npm install --global perttool
+npm install --global perttool@0.4.0
 perttool --version
 ```
 
-npm `latest` and `beta` both resolve to Contract 4 `0.3.0`. Use
-`perttool@0.3.0` for an exact pin or `perttool@beta` to follow the beta
-channel. Contract 3 remains available as `perttool@0.2.0`.
+The prepared release will move npm `beta` to Contract 5 `0.4.0` while leaving
+`latest` on Contract 4 `0.3.0`. Before publication, both tags still resolve
+to `0.3.0`, so use a locally packed `0.4.0` artifact for candidate testing.
+After publication, `perttool@beta` follows Contract 5. Contract 4 and
+Contract 3 remain available as exact pins `perttool@0.3.0` and
+`perttool@0.2.0`.
 
 ## Plan files
 
@@ -160,19 +166,28 @@ perttool batch apply PLAN.pert \
 
 ### Owner-aware governance
 
-The published `0.3.0` package still uses Grammar 1/2/3 and CLI Contract 4. It
-does not accept governance fields, `--actor`, or `--accepted-by-owner`, and it
-does not enforce owner-aware writes. The repository source and locally built
-or packed artifacts activate those surfaces together as Grammar 4 and CLI
-Contract 5. Do not infer that local acceptance published a new package.
+Moving from `0.3.0` Contract 4 to `0.4.0` Contract 5 changes every JSON
+envelope to `cli_contract_version=5`. Project metadata changes from
+`Perttool.ProjectResult.v2` to `Perttool.ProjectResult.v3`; mutation and
+advance change from `Perttool.MutationResult.v1` to
+`Perttool.MutationResult.v2` and include a
+`Perttool.GovernanceDecision.v1`. Consumers must reject unknown identities
+rather than treating the new fields as optional.
 
-Under Contract 5, previews may omit actor and owner confirmation. A persistent
-goal or DAG change requires an actor. An effective owner or delegate has direct
-authority; another actor supplies repeatable `--accepted-by-owner` caller
-assertions for every affected effective owner. The digest-bound pre-change
-document determines owners and delegates, and an atomic batch must satisfy
-every affected scope. The assertions are not authentication, verified
-identity, signatures, or a durable approval audit.
+Grammar 4 adds declared goal/DAG owners and delegates. Persistent goal or DAG
+changes require `--actor`; an effective owner or delegate has direct
+authority, while another actor supplies repeatable `--accepted-by-owner`
+caller assertions for every affected effective owner. The digest-bound
+pre-change document determines owners and delegates, and an atomic batch must
+satisfy every affected scope. These assertions are not authentication,
+verified identity, signatures, or a durable approval audit.
+
+Contract 5 previews may still omit actor and owner confirmation. A Contract 4
+runtime fails closed on Grammar 4 and governance options; there is no
+`--cli-contract 4` switch, compatibility alias, or environment toggle. Pin
+`perttool@0.3.0` when a consumer is not ready to migrate. See the
+[Contract 4-to-5 migration guide](docs/process/cli-contract-5-migration.md)
+for the complete boundary.
 
 For example, preview and then persist a DAG change as its effective owner:
 
@@ -253,10 +268,10 @@ perttool guide editing --level detail --format json
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. Repository-source Contract 5
-consumers must check `cli_contract_version == 5`; consumers pinned to the
-published `0.3.0` package must continue to require Contract 4. In both cases,
-check the result-specific `schema_version` before reading the rest of a result.
+Use `--format json` for machine consumers. Contract 5 consumers must check
+`cli_contract_version == 5`; consumers pinned to `0.3.0` must continue to
+require Contract 4. In both cases, check the result-specific `schema_version`
+before reading the rest of a result.
 A complete, known, non-truncated `Perttool.NextResult.v4` with temporal policy
 `recommendation_v1_plus_release_gate` is required. Start only task IDs in
 `temporal.authority.startable_recommended_task_ids`; do not infer start
@@ -271,6 +286,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 
 - [Temporal and Unit Interface Contract (CLI Contract 4)](docs/specs/temporal-unit-interface.md)
 - [Owner-Aware Governance Interface Contract (CLI Contract 5)](docs/specs/governance-interface.md)
+- [Contract 4-to-5 migration](docs/process/cli-contract-5-migration.md)
 - [Issue #4 governance implementation acceptance](docs/process/governance-acceptance.md)
 - [CLI Contract 3 compatibility baseline](docs/specs/cli-contract-3.md)
 - [DSL grammar](docs/specs/dsl-grammar.md)

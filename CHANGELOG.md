@@ -4,14 +4,34 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-28
+
+Contract 5 beta release. This version atomically publishes Grammar 4 and
+owner-aware goal and DAG mutation governance. It intentionally changes every
+CLI JSON envelope and the project and mutation result identities while
+retaining suffix-free `0.x.x` beta product maturity.
+
+### Added
+
+- Added declared and effective goal/DAG owners and delegates, digest-bound
+  pre-change governance snapshots, deterministic actual-change
+  classification, normalized caller assertions, and stable pre-change
+  authority decisions.
+- Added owner-aware persistent direct, batch, and advance operations,
+  `Perttool.GovernanceDecision.v1`, PTGOV diagnostics, generated direct-edit
+  guidance, and the Contract 5 editing Guide.
+
 ### Changed
 
-- Accepted the atomic repository-source Grammar 4 and CLI Contract 5 cutover
-  for Issue #4 owner-aware goal/DAG governance. The public root, CLI,
-  registry/help/Guide, safe-write enforcement, and isolated installed-package
-  workflow now expose the accepted governance contract together. Release
-  version selection and publication remain separate; the published `0.3.0`
-  package is still Contract 4.
+- Changed every CLI JSON envelope to `cli_contract_version=5`, project
+  metadata to `Perttool.ProjectResult.v3`, and mutation and advance results to
+  `Perttool.MutationResult.v2` with an embedded governance decision.
+- Persistent goal or DAG changes now require `--actor`. An effective owner or
+  delegate has direct authority; another actor must supply repeatable
+  `--accepted-by-owner` caller assertions for every affected effective owner.
+- Retained Grammar 1/2/3 compatibility through effective default owner
+  `user`, the complete Contract 4 temporal/deadline/unit-migration surface,
+  and NextResult v4 normal start authority.
 - Accepted the `perttool@0.3.0` Contract 4 beta and promoted it to npm
   `latest` through a separate, explicitly authorized post-acceptance dist-tag
   operation. npm `beta` and `latest` now resolve to `0.3.0`; product maturity
@@ -154,7 +174,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/mako10k/perttool/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mako10k/perttool/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mako10k/perttool/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mako10k/perttool/compare/v0.1.0-alpha.2...v0.1.0

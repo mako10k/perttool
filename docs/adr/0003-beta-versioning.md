@@ -79,6 +79,12 @@ does not authorize Git push, tag creation, GitHub or npm publication, npm
 only the Contract 5 readiness gate and retained the same external-write
 exclusions.
 
+On 2026-07-28, the user instructed perttool to perform the next release task.
+That authorizes local `RELEASE_040_PREPARATION`, including version-bearing
+source, migration guidance, tests, and package validation. It does not
+authorize Git push, tag creation, GitHub or npm publication, npm `latest`
+promotion, or Issue #4 closure.
+
 ## Beta gate
 
 1. Accept Issue #2's normative contract, five-provider baseline, Core, text and JSON projections, CLI, package, and security boundaries.

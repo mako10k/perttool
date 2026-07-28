@@ -2,8 +2,8 @@
 project RELEASE_040:
   version 4
   title "perttool 0.4.0 Contract 5 beta release"
-  description "Release suffix-free 0.4.0 beta from the accepted atomic Contract 5 source and one verified tarball. RELEASE_040_GATE_DESIGN is complete and advanced. The governance plan reached its accepted finish, and RELEASE_040_CONTRACT_5_READINESS verified the complete public, owner-aware safe-write, and installed-package boundary with no open readiness finding. Four tasks and 14p remain; precedence and heuristic resource makespans are both 14p with an inherited 28/19d forecast. Complete NextResult v4 recommends RELEASE_040_PREPARATION. Current authorization covers completed gate design and readiness only. RELEASE_040_PUBLISH remains blocked pending separate explicit authorization for the named 0.4.0 external batch; npm latest promotion and Issue #4 closure remain separate post-acceptance decisions."
-  as_of 2026-07-27
+  description "Release suffix-free 0.4.0 beta from the accepted atomic Contract 5 source and one verified tarball. RELEASE_040_GATE_DESIGN, RELEASE_040_CONTRACT_5_READINESS, and RELEASE_040_PREPARATION are complete. Governance acceptance and readiness verified the complete public, owner-aware safe-write, and installed-package boundary; the prepared 0.4.0 source, Contract 4-to-5 migration guidance, tests, goldens, and package identity passed the full Node.js 22 repository and isolated-package gates. Three tasks and 10p remain; precedence and heuristic resource makespans are both 10p with an inherited 20/19d forecast. Complete NextResult v4 recommends RELEASE_040_CANDIDATE. Current authorization stops after source preparation. RELEASE_040_PUBLISH remains blocked pending separate explicit authorization for the named 0.4.0 external batch; npm latest promotion and Issue #4 closure remain separate post-acceptance decisions."
+  as_of 2026-07-28
   duration_unit point
   velocity 19p/2d
   finish RELEASE_040_ACCEPTED
@@ -58,6 +58,7 @@ task RELEASE_040_PREPARATION RELEASE_040_CONTRACT_5_READY -> RELEASE_040_SOURCE_
   title "Prepare version 0.4.0 release source"
   description "Align package and lockfile identity, CLI version, CHANGELOG, README, Contract 4-to-5 migration guidance, release documentation, tests, goldens, and beta publication validation. Run the complete repository and package gates without remote or registry writes."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

@@ -55,6 +55,21 @@ installation, and light smoke. All six tasks and 19p completed over two
 active days. The plan now has zero precedence and heuristic resource
 makespans and no ready or recommended task.
 
+The independent `release-0.4.0.pert` plan selects suffix-free beta `0.4.0`
+for the breaking Grammar 4 and CLI Contract 5 cutover without duplicating
+governance implementation state. `RELEASE_040_GATE_DESIGN` and
+`RELEASE_040_CONTRACT_5_READINESS` are complete and advanced, and
+`RELEASE_040_PREPARATION` is complete after the full Node.js 22 repository
+and installed-package gates. Package identity, CHANGELOG, README, and the
+[Contract 4-to-5 migration guide](../docs/process/cli-contract-5-migration.md)
+are prepared together. Three tasks and 10p remain; both makespans are
+conditionally 10p with no resource delay if publication authorization is
+resolved at time zero, inherited velocity is `19p/2d`, and both forecasts are
+`20/19d`. Complete NextResult v4 recommends `RELEASE_040_CANDIDATE`.
+`RELEASE_040_PUBLISH` remains blocked pending separate authorization for the
+named external batch; npm `latest` promotion and Issue #4 closure remain
+separate post-acceptance decisions.
+
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.
 The macro rolled up every detail exactly once and retains only reached
@@ -63,25 +78,16 @@ recommendation. The accepted surface atomically exposes Grammar 1/2/3, CLI
 Contract 4, temporal and deadline results, exact unit migration, help, Guide,
 installed workflows, and Next v4 normal authority.
 
-Also on 2026-07-26, Issue #4's independent `governance.pert` workstream
-accepted and advanced `GOV_REQUIREMENTS`, `GOV_AUTHORITY_CONTRACT`,
-`GOV_DSL_CONTRACT`, and `GOV_INTERFACE_CONTRACT`. Requirements Draft 0.16
-fixes the accidental
-authority-overreach threat model, separate goal/DAG scopes, omitted-metadata
-defaults, caller-asserted principals and confirmation, pre-change
-authorization, ordinary-maintenance exclusions, and non-goals. Governance
-semantics version 1 fixes actual-change classification and pre-change
-authority. Governance source contract version 1 fixes PrincipalId and
-PrincipalList syntax, target Grammar 4 fields, declared/effective defaults,
-source preservation, project init/show behavior, generated warnings,
-unit-migration compatibility, and the digest-bound snapshot without adding a
-runtime. Governance interface version 1 fixes one optional actor, repeatable
-`--accepted-by-owner`, operation-level batch assertions, ProjectResult v3,
-MutationResult v2 with GovernanceDecision v1, PTGOV-101 under exit 1, and an
-atomic Grammar 4/CLI Contract 5 cutover. The cumulative 15p sample establishes
-`15p/1d`; 30p remain, with 22p precedence and 25p heuristic resource
-makespans and 3p resource delay. Complete NextResult v4 recommends
-`GOV_NORMATIVE_EXAMPLES`.
+Issue #4's independent `governance.pert` workstream completed and advanced
+all twelve tasks through `GOV_ACCEPTANCE`. Grammar 4, declared/effective
+metadata, actual-change classification, caller-assertion normalization,
+pre-change authority, governed direct/batch/advance planning and persistence,
+PTGOV diagnostics, ProjectResult v3, MutationResult v2 with
+GovernanceDecision v1, registry/help/Guide, generated warning, public root,
+CLI, and installed-package acceptance are active together. The plan has zero
+makespans and no recommendation at observed velocity `45p/2d`. Authentication,
+durable audit, recommendation override apply, MIG-08, Git integration, and
+Issue synchronization remain unavailable.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 
