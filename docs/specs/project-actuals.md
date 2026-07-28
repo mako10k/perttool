@@ -242,6 +242,13 @@ pre-advance snapshot, but it is qualified as `finish_snapshot`, not
 `start_baseline`. History output exposes the baseline source so estimate
 changes cannot silently inflate observed throughput.
 
+An eventless task with a Git-recorded transition to `done` MAY likewise retain
+the exact task value from that transition's committed snapshot as a
+`finish_snapshot` baseline. It remains `git_recorded_transition` evidence,
+has no baseline event ID, and participates only in the separately qualified
+Git-recorded candidate. Commit time and the snapshot baseline do not turn it
+into declared actual evidence.
+
 ### 6.3 Project observations
 
 Velocity observation model 1 provides separate measures.

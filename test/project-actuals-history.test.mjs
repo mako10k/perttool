@@ -363,6 +363,16 @@ test("legacy Git transitions retain recorded provenance without actual time", as
   assert.equal(result.events.length, 0);
   assert.equal(result.tasks[0].coverage, "unrecorded");
   assert.equal(result.tasks[0].lastFinish, null);
+  assert.deepEqual(
+    [
+      result.tasks[0].plannedValue.numerator,
+      result.tasks[0].plannedValue.denominator,
+    ],
+    ["4", "1"],
+  );
+  assert.equal(result.tasks[0].baselineSource, "finish_snapshot");
+  assert.equal(result.tasks[0].baselineEventId, null);
+  assert.equal(result.tasks[0].baselineCommitId, doneCommit);
 
   const duplicateSelection = inspectTargetProjectHistory(
     probe,

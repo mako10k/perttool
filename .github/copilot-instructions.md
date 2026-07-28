@@ -41,10 +41,13 @@ Mandatory summary:
   start/suspend/resume candidates, deterministic retry and refusal, resource
   release, full remaining-duration schedules, and separate AnalysisResult
   v4/NextResult v5 suspended handling without changing the active public
-  surface. Three tasks and 15p remain;
-  precedence and the `parallel-sgs` version 1 heuristic resource makespan are
-  both 15p with no delay. Complete NextResult v4 recommends and starts only
-  `VELOCITY_OBSERVATION`.
+  surface. `VELOCITY_OBSERVATION` is complete and retained done pending its
+  pre-advance commit. Its pure service derives exact elapsed-hour,
+  active-date, effort-productivity, and separately qualified Git-recorded
+  rates without changing declared velocity or the active public surface. Two
+  tasks and 10p remain; precedence and the `parallel-sgs` version 1 heuristic
+  resource makespan are both 10p with no delay. Complete NextResult v4
+  recommends and starts only `ACTUALS_PUBLIC_CONTRACT`.
   Public Grammar 5/CLI Contract 6 activation, Git mutation, velocity adoption,
   MIG-08, publication, and dist-tag movement remain outside scope. The
   independent workstream does not displace `PERT_PLANS`.

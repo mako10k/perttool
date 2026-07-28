@@ -209,34 +209,33 @@
       ]
     },
     "project-actuals": {
-      "source_digest": "sha256:2024a97d3db3d05fe53834b08677380bb0213097d3be30a328206ba6770ba94e",
+      "source_digest": "sha256:7a756f5e51bf57497d614270d7056419d418afadc11995c5e289fa184d8600c2",
       "groups": {
         "active": [],
         "ready": [
-          "VELOCITY_OBSERVATION"
+          "ACTUALS_PUBLIC_CONTRACT"
         ],
         "runnable_now": [
-          "VELOCITY_OBSERVATION"
+          "ACTUALS_PUBLIC_CONTRACT"
         ],
         "blocked_now": [],
         "upcoming": [
-          "ACTUALS_PUBLIC_CONTRACT",
           "ACTUALS_ACCEPTANCE"
         ]
       },
       "recommended_task_ids": [
-        "VELOCITY_OBSERVATION"
+        "ACTUALS_PUBLIC_CONTRACT"
       ],
       "manual_selected_task_ids": [
-        "VELOCITY_OBSERVATION"
+        "ACTUALS_PUBLIC_CONTRACT"
       ],
       "tiers": {
-        "VELOCITY_OBSERVATION": "recommended"
+        "ACTUALS_PUBLIC_CONTRACT": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "VELOCITY_OBSERVATION",
+          "id": "ACTUALS_PUBLIC_CONTRACT",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -252,7 +251,9 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "recommendation": {
       "source_digest": "sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464",

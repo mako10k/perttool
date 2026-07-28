@@ -709,6 +709,7 @@ function suspensionIntervals(
 function summaryForTask(
   taskId: string,
   eventEntries: readonly EventAccumulator[],
+  transitions: readonly GitRecordedTransition[],
   plannedByCommit: ReadonlyMap<string, ReadonlyMap<string, ActualQuantity>>,
   historyStatus: ProjectHistoryStatus,
   identityReplaced: boolean,
@@ -789,6 +790,24 @@ function summaryForTask(
     baselineEventId = plannedValue === null ? null : lastFinishEntry.event.id;
     baselineCommitId =
       plannedValue === null ? null : lastFinishEntry.lastSeenCommitId;
+  } else if (
+    reduction.ok &&
+    reduction.coverage === "unrecorded"
+  ) {
+    const recordedFinish = transitions
+      .filter(
+        (transition) =>
+          transition.taskId === taskId &&
+          transition.toState === "done",
+      )
+      .at(-1);
+    if (recordedFinish !== undefined) {
+      plannedValue =
+        plannedByCommit.get(recordedFinish.commitId)?.get(taskId) ?? null;
+      baselineSource = plannedValue === null ? null : "finish_snapshot";
+      baselineCommitId =
+        plannedValue === null ? null : recordedFinish.commitId;
+    }
   }
   const causes: ActualsCause[] = [];
   const coverage = reduction.ok ? reduction.coverage : "unavailable";
@@ -1147,6 +1166,7 @@ export function inspectProjectHistory(
       summaryForTask(
         taskId,
         eventEntries,
+        transitions,
         plannedByCommit,
         status,
         replacedTaskIds.has(taskId),

@@ -55,11 +55,17 @@ deterministic retry and refusal, resource release, full remaining-duration
 schedules, and separate `Perttool.AnalysisResult.v4` and
 `Perttool.NextResult.v5` suspended handling without changing the active
 public surface. Its acceptance record is
-`docs/process/project-actuals-lifecycle-acceptance.md`. Three tasks and 15p
-remain; precedence and the `parallel-sgs` version 1 heuristic resource
-makespan are both 15p with no resource delay, and both forecasts at the
-inherited `29p/2d` velocity are `30/29d`. Complete NextResult v4 recommends
-and starts only `VELOCITY_OBSERVATION`.
+`docs/process/project-actuals-lifecycle-acceptance.md`.
+`VELOCITY_OBSERVATION` is complete and retained done pending its required
+pre-advance commit. Its pure service derives exact elapsed-hour,
+active-date, effort-productivity, and separately qualified Git-recorded rates
+from ProjectHistoryResult v1 without changing declared velocity or the active
+public surface. Its acceptance record is
+`docs/process/project-actuals-velocity-observation-acceptance.md`. Two tasks
+and 10p remain; precedence and the `parallel-sgs` version 1 heuristic resource
+makespan are both 10p with no resource delay, and both forecasts at the
+inherited `29p/2d` velocity are `20/29d`. Complete NextResult v4 recommends
+and starts only `ACTUALS_PUBLIC_CONTRACT`.
 Public Grammar 5/CLI Contract 6 activation, Git mutation, automatic velocity
 adoption, MIG-08, release publication, and dist-tag movement remain
 unauthorized. This independent workstream does not displace `PERT_PLANS`.
@@ -148,14 +154,14 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/formatter/`: the active Grammar 1/2/3/4 source-preserving formatter Core plus the internal Grammar 5 work-event target formatter; exact target values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 5 package surface.
-- `src/history/`: internal read-only Git probe and pure semantic reducer for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries, typed availability, linked worktrees, and race detection; public activation remains a future slice.
+- `src/history/`: internal read-only Git probe, pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; public activation remains a future slice.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
 - `src/parser/`: the active Grammar 1/2/3/4 parser and the internal identity-checked Grammar 5 work-event source capability.
 - `src/semantic/`: active Grammar 1/2/3/4 validated-document boundaries plus the internal Grammar 5 task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3/4 requests for project/task/gate/milestone/resource and atomic batch, governance project fields, exact changed-field Duration generation, canonical advance, internal Grammar 5 atomic finish/event edits and task-owned event removal, source-preserving UTF-16 TextEdit generation, and application rules.
-- `src/application/`: pure services for active Contract 5 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3/4 mutation planning, the exact-Duration version-candidate boundary, governed direct/batch/advance planning, Contract 5 result projections, authorization-before-safe-write orchestration, and internal Grammar 5 lifecycle/governed-write/advance, suspended AnalysisResult v4/NextResult v5, and ProjectHistoryResult v1 targets.
+- `src/application/`: pure services for active Contract 5 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3/4 mutation planning, the exact-Duration version-candidate boundary, governed direct/batch/advance planning, Contract 5 result projections, authorization-before-safe-write orchestration, and internal Grammar 5 lifecycle/governed-write/advance, suspended AnalysisResult v4/NextResult v5, ProjectHistoryResult v1, and VelocityObservationResult v1 targets.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 

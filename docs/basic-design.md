@@ -876,6 +876,12 @@ and Point/person-hour productivity separately. It does not sum parallel cycle
 times, infer effort from resources, equate one day with 24 hours, read the
 current clock, or mutate declared velocity.
 
+The history reducer retains an eventless task's exact value at its
+Git-recorded `done` transition as a qualified `finish_snapshot` baseline.
+This is the only baseline available to the separately reported
+`git_recorded_transition` candidate; it has no event ID and remains
+`recorded_not_actual`.
+
 The active project velocity remains the forecast input. A separately
 previewed `project set` may later adopt one compatible observed value; the
 observation service never performs that write.

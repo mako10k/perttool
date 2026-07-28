@@ -106,7 +106,7 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan retains the completed lifecycle snapshot", async () => {
+test("project actuals plan retains every accepted internal slice", async () => {
   const plan = "plans/project-actuals.pert";
   const [
     source,
@@ -116,6 +116,7 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
     finishAcceptance,
     historyAcceptance,
     lifecycleAcceptance,
+    observationAcceptance,
   ] = await Promise.all([
     repositoryText(plan),
     repositoryText("docs/process/project-actuals-contract-review.md"),
@@ -134,6 +135,9 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
     repositoryText(
       "docs/process/project-actuals-lifecycle-acceptance.md",
     ),
+    repositoryText(
+      "docs/process/project-actuals-velocity-observation-acceptance.md",
+    ),
   ]);
   const checked = runJson("document", "check", plan);
   const analyzed = runJson("dag", "analyze", plan);
@@ -145,9 +149,15 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
     tasks: 3,
     gates: 2,
     errors: 0,
-    warnings: 0,
+    warnings: 2,
   });
-  assert.deepEqual(checked.diagnostics, []);
+  assert.deepEqual(
+    checked.diagnostics.map(({ code, entity_id }) => [code, entity_id]),
+    [
+      ["PTDAG-208", "VELOCITY_OBSERVATION_READY"],
+      ["PTDAG-208", "ACTUALS_INTEGRATED_INPUT"],
+    ],
+  );
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
@@ -172,6 +182,14 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
     /exact completed 7p pre-advance snapshot/,
   );
   assert.match(lifecycleAcceptance, /Git commit `518a59e`/);
+  assert.match(
+    observationAcceptance,
+    /`VELOCITY_OBSERVATION` is accepted/,
+  );
+  assert.match(
+    observationAcceptance,
+    /exact completed 5p pre-advance snapshot/,
+  );
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.doesNotMatch(source, /task FINISH_ACTUALS/);
@@ -186,27 +204,35 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
     source,
     /milestone LIFECYCLE_READY:\n  title[^\n]*\n  state reached/,
   );
-  assert.equal(analyzed.precedence.makespan.numerator, "15");
+  assert.match(
+    source,
+    /task VELOCITY_OBSERVATION[\s\S]*?  status done/,
+  );
+  assert.doesNotMatch(
+    source,
+    /milestone VELOCITY_OBSERVATION_READY:\n  title[^\n]*\n  state reached/,
+  );
+  assert.equal(analyzed.precedence.makespan.numerator, "10");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
-  assert.equal(analyzed.resource.makespan.numerator, "15");
+  assert.equal(analyzed.resource.makespan.numerator, "10");
   assert.equal(analyzed.resource.resource_delay.numerator, "0");
   assert.equal(
     analyzed.velocity_forecast.precedence_makespan.numerator,
-    "30",
+    "20",
   );
   assert.equal(
     analyzed.velocity_forecast.precedence_makespan.denominator,
     "29",
   );
-  assert.equal(analyzed.velocity_forecast.resource_makespan.numerator, "30");
+  assert.equal(analyzed.velocity_forecast.resource_makespan.numerator, "20");
   assert.equal(analyzed.velocity_forecast.resource_makespan.denominator, "29");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["VELOCITY_OBSERVATION"]);
+  assert.deepEqual(next.groups.ready, ["ACTUALS_PUBLIC_CONTRACT"]);
   assert.deepEqual(next.recommendation.recommended_task_ids, [
-    "VELOCITY_OBSERVATION",
+    "ACTUALS_PUBLIC_CONTRACT",
   ]);
   assert.deepEqual(next.temporal.authority.startable_recommended_task_ids, [
-    "VELOCITY_OBSERVATION",
+    "ACTUALS_PUBLIC_CONTRACT",
   ]);
   assert.deepEqual(
     Object.fromEntries(
@@ -216,7 +242,7 @@ test("project actuals plan retains the completed lifecycle snapshot", async () =
       ]),
     ),
     {
-      VELOCITY_OBSERVATION: "recommended",
+      ACTUALS_PUBLIC_CONTRACT: "recommended",
     },
   );
 });

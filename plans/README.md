@@ -149,10 +149,16 @@ release, full remaining-duration schedules, and separate AnalysisResult
 v4/NextResult v5 suspended handling without changing the active public
 surface. The acceptance record is
 [`project-actuals-lifecycle-acceptance.md`](../docs/process/project-actuals-lifecycle-acceptance.md).
-Three tasks and 15p remain. Precedence and the `parallel-sgs` version 1
-heuristic resource makespan are both 15p with no resource delay. At the
-inherited operations velocity `29p/2d`, both forecasts are `30/29d`.
-Complete NextResult v4 recommends and starts only `VELOCITY_OBSERVATION`.
+`VELOCITY_OBSERVATION` is complete and retained done pending its required
+pre-advance commit. Its pure service derives exact elapsed-hour, qualified
+active-date, effort-productivity, and separately qualified Git-recorded rates
+without changing declared velocity or the active public surface. The
+acceptance record is
+[`project-actuals-velocity-observation-acceptance.md`](../docs/process/project-actuals-velocity-observation-acceptance.md).
+Two tasks and 10p remain. Precedence and the `parallel-sgs` version 1
+heuristic resource makespan are both 10p with no resource delay. At the
+inherited operations velocity `29p/2d`, both forecasts are `20/29d`.
+Complete NextResult v4 recommends and starts only `ACTUALS_PUBLIC_CONTRACT`.
 Public Grammar 5/CLI Contract 6 activation,
 Git mutation, automatic declared-velocity changes, MIG-08, release
 publication, and dist-tag movement remain outside the authorized scope. This

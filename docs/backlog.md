@@ -298,7 +298,8 @@ architecture decision is normative.
 
 Priority: P0
 
-Status: Contract accepted; internal source, Git probe, eventful finish, lifecycle, and project history complete
+Status: Contract accepted; internal source, Git probe, eventful finish,
+lifecycle, project history, and velocity observation complete
 
 Git history can prove that a task-state snapshot was recorded, but it cannot
 prove the actual event time, active execution duration, person effort, or the
@@ -332,6 +333,11 @@ The
 [`WORK_LIFECYCLE` acceptance](process/project-actuals-lifecycle-acceptance.md)
 records exact lifecycle candidates, resource release, and separate suspended
 analysis and Next handling without activating the public contract.
+The
+[`VELOCITY_OBSERVATION` acceptance](process/project-actuals-velocity-observation-acceptance.md)
+records exact declared and qualified Git-recorded rates, deterministic sample
+selection, and unchanged declared velocity without activating the public
+contract.
 
 Required outcomes:
 
@@ -371,7 +377,7 @@ Planned delivery slices:
 | `FINISH_ACTUALS` | Eventful finish, exact measurements, planned baseline, retry, governance, and safe-write composition | 5p | Complete: status and finish event form one validated candidate and installed-active behavior remains unchanged. |
 | `WORK_LIFECYCLE` | Start, suspend, resume, state reduction, resource/classification handling, and result version target | 7p | Complete: exact transitions, open reduction, resource release, suspended result handling, and compatibility pass focused tests. |
 | `PROJECT_HISTORY` | Semantic reconstruction, deduplication, advance removal, legacy qualification, Core/text/JSON | 6p | Complete: explicit and legacy evidence remain distinct across real repository histories. |
-| `VELOCITY_OBSERVATION` | Exact Point/hour, qualified Point/active-date, and Point/person-hour observations | 5p | Parallel work is not double-counted and declared velocity is unchanged. |
+| `VELOCITY_OBSERVATION` | Exact Point/hour, qualified Point/active-date, and Point/person-hour observations | 5p | Complete: parallel work is not double-counted, Git-recorded rates remain qualified, and declared velocity is unchanged. |
 | `ACTUALS_PUBLIC_CONTRACT` | Atomic Grammar 5/CLI Contract 6 registry, help, Guide, schemas, diagnostics, and root activation | 6p | No partial public activation or compatibility alias exists. |
 | `ACTUALS_ACCEPTANCE` | Repository, Git, lifecycle, link, package, and installed workflow acceptance | 4p | All normative PACT cases pass with no Git mutation or release side effect. |
 
