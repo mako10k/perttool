@@ -215,7 +215,8 @@ The later named PUBLISH authorization pushed release commit and annotated tag
 `6b341d1`, created the GitHub prerelease, and published the byte-identical
 tarball to npm `beta`. npm reports `beta=0.4.0` and unchanged
 `latest=0.3.0`; the [PUBLISH record](0.4.0-publish.md) preserves the exact
-identity and commands. Complete NextResult v4 recommends only
+identity and commands. The completed PUBLISH task is advanced to the reached
+`RELEASE_040_PUBLISHED` frontier. Complete NextResult v4 recommends only
 `RELEASE_040_ACCEPTANCE`. npm `latest` promotion and Issue #4 closure are
 separate post-acceptance decisions.
 

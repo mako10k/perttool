@@ -97,17 +97,14 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.doesNotMatch(plan, /^task RELEASE_040_CANDIDATE /m);
   assert.doesNotMatch(plan, /^milestone RELEASE_040_CONTRACT_5_READY:/m);
   assert.doesNotMatch(plan, /^milestone RELEASE_040_SOURCE_PREPARED:/m);
+  assert.doesNotMatch(plan, /^milestone RELEASE_040_CANDIDATE_ACCEPTED:/m);
   assert.match(
     plan,
-    /^milestone RELEASE_040_CANDIDATE_ACCEPTED:\n(?:  .*\n)*?  state reached$/m,
+    /^milestone RELEASE_040_PUBLISHED:\n(?:  .*\n)*?  state reached$/m,
   );
   assert.match(plan, /Complete NextResult v4 recommends and starts only RELEASE_040_ACCEPTANCE/);
-  assert.match(plan, /^task RELEASE_040_PUBLISH /m);
+  assert.doesNotMatch(plan, /^task RELEASE_040_PUBLISH /m);
   assert.match(plan, /^task RELEASE_040_ACCEPTANCE /m);
-  assert.match(
-    plan,
-    /task RELEASE_040_PUBLISH[\s\S]*?  status done/,
-  );
   assert.match(plan, /npm latest promotion and Issue #4 closure remain separate/);
   assert.match(
     procedure,

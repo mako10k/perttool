@@ -1102,6 +1102,11 @@ Contract 5 package workflow, and an isolated registry installation reported
 one 3p acceptance task remains with a `3/8d` forecast, and complete
 NextResult v4 recommends only `RELEASE_040_ACCEPTANCE`. npm `latest`
 promotion and Issue #4 closure remain separate post-acceptance decisions.
+After commit `486ae67` preserved the completed task snapshot, canonical
+governed advance removed `RELEASE_040_PUBLISH` and
+`RELEASE_040_CANDIDATE_ACCEPTED`, retained reached
+`RELEASE_040_PUBLISHED`, and produced digest
+`sha256:e7f1f67e134f0351ba676e6dabb576ab5ff13010958ae75f1d2f6e35a6b21769`.
 
 Stage 1 allowed operations:
 

@@ -48,7 +48,7 @@ tests, goldens, and full Node.js 22 repository and installed-package gates.
 `RELEASE_040_CANDIDATE` is complete and advanced after the clean source,
 version and channel identity, external availability, protected routes, and
 full Node.js 22 gates were reverified. The retained 392-file candidate
-tarball has SHA-256 `010af9ce...7cc4a`. `RELEASE_040_PUBLISH` is complete:
+tarball has SHA-256 `010af9ce...7cc4a`. `RELEASE_040_PUBLISH` is complete and advanced:
 release commit and peeled `v0.4.0` target `6b341d1` agree; the candidate,
 GitHub, and npm tarballs are byte-identical; npm reports `beta=0.4.0`,
 `latest=0.3.0`, and `alpha=0.1.0-alpha.2`; and isolated public-package checks

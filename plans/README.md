@@ -62,7 +62,7 @@ governance implementation state. `RELEASE_040_GATE_DESIGN`,
 `RELEASE_040_CANDIDATE` are complete and advanced after the full Node.js 22
 repository and installed-package gates. Package identity, CHANGELOG, README, and the
 [Contract 4-to-5 migration guide](../docs/process/cli-contract-5-migration.md)
-were prepared together. `RELEASE_040_PUBLISH` is complete: release commit and
+were prepared together. `RELEASE_040_PUBLISH` is complete and advanced: release commit and
 peeled `v0.4.0` target `6b341d1` agree; the retained candidate, GitHub, and npm
 tarballs have common SHA-256 `010af9ce...7cc4a`; npm reports `beta=0.4.0`
 with unchanged `latest=0.3.0`; and both public-package workflows passed. One
