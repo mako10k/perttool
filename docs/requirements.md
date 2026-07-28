@@ -1597,11 +1597,15 @@ dist-tag, or Issue writes. The user's 2026-07-27 requests authorized
 first 2026-07-28 instruction to perform the next release task authorized
 `RELEASE_040_PREPARATION`, and the later instruction to continue after the
 candidate-only scope was stated authorized `RELEASE_040_CANDIDATE`.
-`RELEASE_040_PUBLISH` remains blocked until a separate user instruction
-explicitly authorizes the named `0.4.0` external publication batch. npm
-`latest` promotion and Issue #4 closure are distinct post-acceptance
-decisions. The authoritative procedure is
-[`docs/process/0.4.0-release.md`](process/0.4.0-release.md).
+After the PUBLISH boundary was stated again, the user's 2026-07-28
+instruction to proceed separately authorized and completed only the named
+`0.4.0` external publication batch. The release commit and peeled tag agree;
+the candidate, GitHub, and npm tarballs are byte-identical; and npm reports
+`beta=0.4.0` with unchanged `latest=0.3.0`. Release acceptance, npm `latest`
+promotion, and Issue #4 closure remain distinct decisions. The authoritative
+procedure and publication evidence are
+[`docs/process/0.4.0-release.md`](process/0.4.0-release.md) and
+[`docs/process/0.4.0-publish.md`](process/0.4.0-publish.md).
 
 ## 22. Mapping to the initial requirements
 
@@ -1775,8 +1779,8 @@ durable evidence.
 The accepted repository source and locally packed package now activate
 Grammar 4 and CLI Contract 5 atomically. The independent
 [`plans/release-0.4.0.pert`](../plans/release-0.4.0.pert) release workstream
-selects suffix-free beta `0.4.0` and verifies the completed governance
-acceptance before release preparation. Its gate-design and readiness
-authorizations perform no external write; PUBLISH remains blocked pending a
-separate named authorization, and npm `latest` promotion and Issue #4 closure
-remain independent post-acceptance decisions.
+selected and published suffix-free beta `0.4.0` after verifying the completed
+governance acceptance, one clean candidate, and one immutable tarball. npm
+reports `beta=0.4.0` with unchanged `latest=0.3.0`; durable release acceptance
+remains the only release-plan task. npm `latest` promotion and Issue #4
+closure remain independent post-acceptance decisions.

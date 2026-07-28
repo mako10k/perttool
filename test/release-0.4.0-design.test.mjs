@@ -17,6 +17,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     adr,
     design,
     procedure,
+    publishRecord,
     governanceAcceptance,
     readiness,
     plan,
@@ -31,6 +32,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     repositoryText("docs/adr/0003-beta-versioning.md"),
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.4.0-release.md"),
+    repositoryText("docs/process/0.4.0-publish.md"),
     repositoryText("docs/process/governance-acceptance.md"),
     repositoryText("docs/process/0.4.0-contract5-readiness.md"),
     repositoryText("plans/release-0.4.0.pert"),
@@ -58,7 +60,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     design,
     /^### Post-MVP Slice 4H: Contract 5 `v0\.4\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Candidate accepted 1\.2/);
+  assert.match(procedure, /Status: Published 1\.3/);
   assert.match(procedure, /Expected pre-publication default: `beta=latest=0\.3\.0`/);
   assert.match(
     procedure,
@@ -66,8 +68,20 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   );
   assert.match(
     procedure,
-    /`RELEASE_040_PUBLISH` remains blocked until a separate user instruction/,
+    /instruction to proceed authorized only the named `0\.4\.0` external\s+PUBLISH batch/,
   );
+  assert.match(publishRecord, /Document status: Published 1\.0/);
+  assert.match(
+    publishRecord,
+    /6b341d1913bd943d872b14d7ef48645ac7b26667/,
+  );
+  assert.match(
+    publishRecord,
+    /010af9ce2290ade99c191b0c6a9ea485d5ae23ec1241113dfbc1d275b387cc4a/,
+  );
+  assert.match(publishRecord, /`beta` \| `0\.4\.0`/);
+  assert.match(publishRecord, /`latest` \| `0\.3\.0`/);
+  assert.match(publishRecord, /No publish\s+retry occurred/);
   assert.match(governanceAcceptance, /Document status: Accepted/);
   assert.match(governanceAcceptance, /Published package boundary: `0\.3\.0`/);
   assert.match(readiness, /Document status: Accepted 1\.0/);
@@ -87,12 +101,12 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     plan,
     /^milestone RELEASE_040_CANDIDATE_ACCEPTED:\n(?:  .*\n)*?  state reached$/m,
   );
-  assert.match(plan, /Complete NextResult v4 has no startable recommendation/);
+  assert.match(plan, /Complete NextResult v4 recommends and starts only RELEASE_040_ACCEPTANCE/);
   assert.match(plan, /^task RELEASE_040_PUBLISH /m);
   assert.match(plan, /^task RELEASE_040_ACCEPTANCE /m);
   assert.match(
     plan,
-    /task RELEASE_040_PUBLISH[\s\S]*?  status blocked[\s\S]*?  blocked_reason "Await separate explicit user authorization/,
+    /task RELEASE_040_PUBLISH[\s\S]*?  status done/,
   );
   assert.match(plan, /npm latest promotion and Issue #4 closure remain separate/);
   assert.match(

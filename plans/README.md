@@ -57,21 +57,20 @@ makespans and no ready or recommended task.
 
 The independent `release-0.4.0.pert` plan selects suffix-free beta `0.4.0`
 for the breaking Grammar 4 and CLI Contract 5 cutover without duplicating
-governance implementation state. `RELEASE_040_GATE_DESIGN` and
-`RELEASE_040_CONTRACT_5_READINESS` are complete and advanced, and
-`RELEASE_040_PREPARATION` is complete and advanced after the full Node.js 22
+governance implementation state. `RELEASE_040_GATE_DESIGN`,
+`RELEASE_040_CONTRACT_5_READINESS`, `RELEASE_040_PREPARATION`, and
+`RELEASE_040_CANDIDATE` are complete and advanced after the full Node.js 22
 repository and installed-package gates. Package identity, CHANGELOG, README, and the
 [Contract 4-to-5 migration guide](../docs/process/cli-contract-5-migration.md)
-are prepared together. `RELEASE_040_CANDIDATE` is also complete and advanced
-after version, external availability, protected routes, full Node.js 22
-acceptance, and one retained 392-file tarball with SHA-256
-`010af9ce...7cc4a` were verified. Two tasks and 6p remain; both makespans are
-conditionally 6p with no resource delay if publication authorization is
-resolved at time zero, observed cumulative velocity is `13p/2d`, and both
-forecasts are `12/13d`. Complete NextResult v4 has no startable
-recommendation because `RELEASE_040_PUBLISH` remains blocked pending separate
-authorization for the named external batch. npm `latest` promotion and Issue
-#4 closure remain separate post-acceptance decisions.
+were prepared together. `RELEASE_040_PUBLISH` is complete: release commit and
+peeled `v0.4.0` target `6b341d1` agree; the retained candidate, GitHub, and npm
+tarballs have common SHA-256 `010af9ce...7cc4a`; npm reports `beta=0.4.0`
+with unchanged `latest=0.3.0`; and both public-package workflows passed. One
+task and 3p remain, both makespans are 3p, observed cumulative velocity is
+`16p/2d`, and the forecast is `3/8d`. Complete NextResult v4 recommends only
+`RELEASE_040_ACCEPTANCE`. npm `latest` promotion and Issue #4 closure remain
+separate post-acceptance decisions. The durable external evidence is in the
+[`v0.4.0` PUBLISH record](../docs/process/0.4.0-publish.md).
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.

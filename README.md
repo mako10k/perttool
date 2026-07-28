@@ -5,9 +5,8 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-The prepared `0.4.0` source implements Grammar 4 and CLI Contract 5. Its
-publication remains a separate operation; npm `beta` and `latest` still
-resolve to Contract 4 `0.3.0` until that operation is explicitly authorized.
+The published `0.4.0` package implements Grammar 4 and CLI Contract 5. npm
+`beta` resolves to `0.4.0`, while `latest` remains on Contract 4 `0.3.0`.
 Beta releases may contain breaking CLI or schema changes. Version `0.4.0`
 requires Node.js 22 or later. Contract 4 and Contract 3 remain available by
 pinning `0.3.0` and `0.2.0`, respectively.
@@ -33,10 +32,9 @@ npm exec --yes --package=perttool@0.4.0 -- perttool project migrate-unit PLAN.pe
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
-cache. The `0.4.0` registry commands become available only after the
-separately authorized publication. Pinning `0.3.0` selects Contract 4 and
-therefore does not accept the governance surface in this README; pinning
-`0.2.0` selects Contract 3 and also omits the temporal and migration surface.
+cache. Pinning `0.3.0` selects Contract 4 and therefore does not accept the
+governance surface in this README; pinning `0.2.0` selects Contract 3 and
+also omits the temporal and migration surface.
 
 ## Install
 
@@ -47,12 +45,9 @@ npm install --global perttool@0.4.0
 perttool --version
 ```
 
-The prepared release will move npm `beta` to Contract 5 `0.4.0` while leaving
-`latest` on Contract 4 `0.3.0`. Before publication, both tags still resolve
-to `0.3.0`, so use a locally packed `0.4.0` artifact for candidate testing.
-After publication, `perttool@beta` follows Contract 5. Contract 4 and
-Contract 3 remain available as exact pins `perttool@0.3.0` and
-`perttool@0.2.0`.
+npm `beta` now resolves to Contract 5 `0.4.0`, while `latest` remains on
+Contract 4 `0.3.0`. Contract 4 and Contract 3 remain available as exact pins
+`perttool@0.3.0` and `perttool@0.2.0`.
 
 ## Plan files
 

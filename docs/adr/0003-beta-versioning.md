@@ -7,7 +7,8 @@
   2026-07-25 (`v0.2.0` explicit `latest` promotion and `v0.3.0` Contract 4
   release target);
   2026-07-26 (`v0.3.0` explicit `latest` promotion);
-  2026-07-27 (`v0.4.0` Contract 5 release target)
+  2026-07-27 (`v0.4.0` Contract 5 release target);
+  2026-07-28 (`v0.4.0` beta publication)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -92,6 +93,13 @@ continue toward the release. That authorizes local
 credential-route checks plus one retained tarball. It does not authorize Git
 push, tag creation, GitHub or npm publication, npm `latest` promotion, or
 Issue #4 closure.
+
+After the PUBLISH boundary was stated again, the user instructed perttool to
+proceed. That separately authorized the named `0.4.0` Git, GitHub prerelease,
+and npm `beta` publication batch. The release commit and peeled tag agree,
+and the candidate, GitHub, and npm tarballs are byte-identical. npm now
+reports `beta=0.4.0` and unchanged `latest=0.3.0`. Release acceptance, npm
+`latest` promotion, and Issue #4 closure remain separate decisions.
 
 ## Beta gate
 

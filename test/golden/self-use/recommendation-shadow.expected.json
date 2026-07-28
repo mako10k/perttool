@@ -283,33 +283,48 @@
       "diagnostic_codes": []
     },
     "release-0.4.0": {
-      "source_digest": "sha256:8ab64d07ecf3cbc1099336548be023ef6f5b217f9d1cecf539e818a83f4d8323",
+      "source_digest": "sha256:27aadcfe57f3393f1cda11e0d8f0ee73d0eaef49ba547db12fc5b87795d07844",
       "groups": {
         "active": [],
-        "ready": [],
-        "runnable_now": [],
-        "blocked_now": [
-          "RELEASE_040_PUBLISH"
-        ],
-        "upcoming": [
+        "ready": [
           "RELEASE_040_ACCEPTANCE"
-        ]
+        ],
+        "runnable_now": [
+          "RELEASE_040_ACCEPTANCE"
+        ],
+        "blocked_now": [],
+        "upcoming": []
       },
-      "recommended_task_ids": [],
-      "manual_selected_task_ids": [],
-      "tiers": {},
+      "recommended_task_ids": [
+        "RELEASE_040_ACCEPTANCE"
+      ],
+      "manual_selected_task_ids": [
+        "RELEASE_040_ACCEPTANCE"
+      ],
+      "tiers": {
+        "RELEASE_040_ACCEPTANCE": "recommended"
+      },
       "joint_resource_feasible": true,
-      "ready_tasks": [],
+      "ready_tasks": [
+        {
+          "id": "RELEASE_040_ACCEPTANCE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
       "record_counts": {
-        "task_decisions": 0,
-        "decision_steps": 1,
-        "facts": 1,
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
         "comparisons": 0,
-        "reasons": 1,
-        "descriptions": 0
+        "reasons": 4,
+        "descriptions": 1
       },
       "diagnostic_codes": [
-        "PTRES-303"
+        "PTDAG-208"
       ]
     },
     "scheduling-units-m1": {

@@ -211,12 +211,13 @@ source, [Contract 4-to-5 migration](cli-contract-5-migration.md), and full
 Node.js 22 repository/package gates. `RELEASE_040_CANDIDATE` is complete and
 advanced after read-only external availability and protected-route checks and
 acceptance of one retained tarball with SHA-256 `010af9ce...7cc4a`.
-Complete NextResult v4 has no startable recommendation because
-`RELEASE_040_PUBLISH` remains blocked until a separate user instruction
-explicitly authorizes the named `0.4.0` external batch. The current
-authorization stops after candidate acceptance; npm
-`latest` promotion and Issue #4 closure are separate post-acceptance
-decisions.
+The later named PUBLISH authorization pushed release commit and annotated tag
+`6b341d1`, created the GitHub prerelease, and published the byte-identical
+tarball to npm `beta`. npm reports `beta=0.4.0` and unchanged
+`latest=0.3.0`; the [PUBLISH record](0.4.0-publish.md) preserves the exact
+identity and commands. Complete NextResult v4 recommends only
+`RELEASE_040_ACCEPTANCE`. npm `latest` promotion and Issue #4 closure are
+separate post-acceptance decisions.
 
 ### 5.1 Adopted Recommendation authority
 

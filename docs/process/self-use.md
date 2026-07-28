@@ -1085,6 +1085,24 @@ cumulative velocity is `13p/2d`, and both forecasts are `12/13d`. Complete
 NextResult v4 has no startable recommendation while
 `RELEASE_040_PUBLISH` remains blocked pending a separate named authorization.
 
+Later on 2026-07-28, after that boundary was restated, the user authorized the
+named `0.4.0` PUBLISH batch. Release commit
+`6b341d1913bd943d872b14d7ef48645ac7b26667` was pushed; the annotated local
+and remote tag peeled to that commit; and the GitHub prerelease published
+`perttool-0.4.0.tgz` plus `SHA256SUMS`. The retained candidate, downloaded
+GitHub asset, and independently packed npm registry tarball are byte-identical
+at SHA-256
+`010af9ce2290ade99c191b0c6a9ea485d5ae23ec1241113dfbc1d275b387cc4a`.
+The npm mutation returned `+ perttool@0.4.0`, then bounded immediate reads
+exhausted propagation-time `E404` responses; no retry occurred. Later durable
+reads verified package integrity, `beta=0.4.0`, unchanged `latest=0.3.0`, and
+`alpha=0.1.0-alpha.2`. Both public tarballs passed the complete installed
+Contract 5 package workflow, and an isolated registry installation reported
+`perttool 0.4.0`. The PUBLISH snapshot recalibrates velocity to `16p/2d`;
+one 3p acceptance task remains with a `3/8d` forecast, and complete
+NextResult v4 recommends only `RELEASE_040_ACCEPTANCE`. npm `latest`
+promotion and Issue #4 closure remain separate post-acceptance decisions.
+
 Stage 1 allowed operations:
 
 - check
@@ -1378,7 +1396,7 @@ Stage 1 entry evidence:
 - CLI-surface-reset file-first acceptance gate: the isolated installed-package CLI alone initializes, reads, mutates every entity field, analyzes, selects, advances, and validates a plan without manual source rewriting; cumulative velocity is `49p/1d`, no detail work remains, and complete `NextResult.v3` has no recommendation
 - Contract 3 `v0.2.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Contract 3, renamed-command rejection, read-only agent guidance, complete Next v3, and file-first checks pass; publication left `latest=0.1.0` unchanged, then a separately authorized post-acceptance operation made `beta=latest=0.2.0`; cumulative velocity is `17p/2d`, no detail work remains, and complete Next v3 has no recommendation
 - Contract 4 `v0.3.0` acceptance gate: one verified tarball is byte-identical across local, GitHub prerelease, and npm; installed Grammar 3, temporal/deadline analysis, complete Next v4 start authority, exact unit migration, and file-first checks pass; publication left `latest=0.2.0` unchanged, then a separately authorized post-acceptance operation made `beta=latest=0.3.0`; an unqualified global installation and light smoke pass; cumulative velocity is `19p/2d`, no detail work remains, and complete Next v4 has no recommendation
-- Contract 5 `v0.4.0` candidate gate: readiness and source preparation are advanced; the clean candidate reverified version/channel identity, external absence, protected routes, 585 tests, 78 Markdown documents, six PERT examples, nineteen self-use plans, and the installed file-first workflow; one retained 392-file tarball has SHA-256 `010af9ce...7cc4a`; two tasks and 6p remain with conditional 6p makespans, observed cumulative velocity `13p/2d`, forecasts `12/13d`, and no startable recommendation while PUBLISH remains separately blocked
+- Contract 5 `v0.4.0` PUBLISH gate: the release commit and peeled tag agree; the candidate, GitHub, and npm tarballs are byte-identical at SHA-256 `010af9ce...7cc4a`; both public-package workflows and a registry install pass; npm reports `beta=0.4.0` with unchanged `latest=0.3.0`; one 3p acceptance task remains at observed cumulative velocity `16p/2d` and forecast `3/8d`; complete Next v4 recommends only `RELEASE_040_ACCEPTANCE`
 - scheduling-and-units rational-Duration replanning gate: completed SU-M1/SU-M2 history remains advanced; the new SU-M2R common predecessor captures the user-selected Decimal-or-fraction target DSL direction without changing active Grammar 1, accepted Grammar 2, migration version 1, or Contract 3; the contract task selects new version identities where compatibility requires them; seven detail tasks total 24p with 15p precedence and 18p heuristic resource makespans, 3p delay, inherited forecasts `5/8d` and `3/4d`; the macro has `4.75d` precedence and `6.75d` resource makespans with 2d delay; complete Next v3 recommends `SU_M2R_RATIONAL_DURATION_WORK_PACKAGE` and then `RATIONAL_DURATION_CONTRACT`
 - SU-M2R exact-Duration contract gate: Grammar 3, `perttool.temporal-unit-interface@2`, `perttool.unit-migration@2`, `Perttool.UnitMigrationResult.v2`, unsigned exact Fraction syntax, canonical shortest-Decimal-or-reduced-Fraction output, atomic grammar retention/upgrade, and reversibility metadata are accepted without runtime activation; `RATIONAL_DURATION_CONTRACT` is committed at `c1dec29` and advanced through the expected-digest path
 - SU-M2R rational-source and exact-serializer gate: a separate identity-checked internal Grammar 3 parser/validator retains reduced Fraction values, exact source tokens, and spans while Grammar 1/2 stay closed; exact Rational serialization emits the shortest ordinary Decimal or a reduced Fraction without display rounding; both tasks are committed at `787f0bb` and advanced through the expected-digest path; 13p remain with 7p precedence and 10p heuristic resource makespans, 3p delay, inherited forecasts `7/24d` and `5/12d`; the macro rollup is `0.416667d`, and complete Next v3 recommends `RATIONAL_DURATION_FORMATTER` plus `RATIONAL_DURATION_MUTATION`
