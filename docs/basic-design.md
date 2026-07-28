@@ -1863,8 +1863,8 @@ again, the user's instruction to proceed authorized only the named `0.4.0`
 external publication batch. That batch is complete: the release commit and
 peeled tag agree, both public channels contain the candidate bytes, and npm
 reports `beta=0.4.0` with unchanged `latest=0.3.0`. Durable acceptance then
-completed all six release tasks at `19p/2d`; the pre-advance plan has zero
-makespans and no recommendation. The user separately authorized the
+completed all six release tasks at `19p/2d` and advanced the plan to reached
+`RELEASE_040_ACCEPTED`; it has zero makespans and no recommendation. The user separately authorized the
 post-acceptance `perttool@0.4.0` `latest` promotion. Plan state records these
 boundaries but is not itself external-write authority.
 

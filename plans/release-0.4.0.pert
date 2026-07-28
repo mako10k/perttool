@@ -39,26 +39,7 @@ resource EXTERNAL_RELEASE:
 
 
 
-milestone RELEASE_040_PUBLISHED:
-  title "Version 0.4.0 published to GitHub and npm beta"
-  state reached
 
 milestone RELEASE_040_ACCEPTED:
   title "Version 0.4.0 Contract 5 beta accepted"
-
-
-
-
-
-
-task RELEASE_040_ACCEPTANCE RELEASE_040_PUBLISHED -> RELEASE_040_ACCEPTED:
-  title "Record durable 0.4.0 beta acceptance"
-  description "Verify release commit and peeled tag identity, common candidate/GitHub/npm tarball digest, registry integrity and metadata, isolated installation from both public channels, complete Contract 5 behavior, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact or closing Issue #4."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
+  state reached

@@ -1602,8 +1602,8 @@ instruction to proceed separately authorized and completed only the named
 `0.4.0` external publication batch. The release commit and peeled tag agree;
 the candidate, GitHub, and npm tarballs are byte-identical; and npm reports
 `beta=0.4.0` with unchanged `latest=0.3.0`. All twelve criteria and all six
-release-plan tasks were then accepted at `19p/2d`; the pre-advance snapshot
-has zero makespans and no recommendation. The user's later instruction
+release-plan tasks were then accepted at `19p/2d` and advanced to reached
+`RELEASE_040_ACCEPTED`; the plan has zero makespans and no recommendation. The user's later instruction
 separately selected `perttool@0.4.0` for npm `latest`; Issue #4 closure
 remains a distinct decision. The authoritative procedure and evidence are
 [`docs/process/0.4.0-release.md`](process/0.4.0-release.md) and
@@ -1785,7 +1785,7 @@ atomically. The independent
 [`plans/release-0.4.0.pert`](../plans/release-0.4.0.pert) release workstream
 selected and published suffix-free beta `0.4.0` after verifying the completed
 governance acceptance, one clean candidate, and one immutable tarball. All
-six release tasks are complete; the pre-advance state has zero makespans and
+six release tasks are complete and advanced; the plan has zero makespans and
 no recommendation at `19p/2d`. At acceptance, npm reported `beta=0.4.0`,
 unchanged `latest=0.3.0`, and `alpha=0.1.0-alpha.2`. The user separately
 authorized the later `latest` promotion; Issue #4 closure remains an

@@ -103,8 +103,9 @@ reports `beta=0.4.0` and unchanged `latest=0.3.0`. Release acceptance, npm
 
 Later on 2026-07-28, durable acceptance reverified both public tarballs and
 their installed Contract 5 workflows. All six release tasks and 19p are
-accepted over two active days; the pre-advance plan has zero makespans and no
-recommendation. The user then explicitly selected `perttool@0.4.0` for a
+accepted over two active days and advanced to reached
+`RELEASE_040_ACCEPTED`; the plan has zero makespans and no recommendation.
+The user then explicitly selected `perttool@0.4.0` for a
 separate post-acceptance npm `latest` promotion. Issue #4 closure remains a
 separate decision.
 

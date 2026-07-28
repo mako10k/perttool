@@ -53,9 +53,9 @@ release commit and peeled `v0.4.0` target `6b341d1` agree; the candidate,
 GitHub, and npm tarballs are byte-identical; npm reports `beta=0.4.0`,
 `latest=0.3.0`, and `alpha=0.1.0-alpha.2`; and isolated public-package checks
 passed. `RELEASE_040_ACCEPTANCE` is complete after rechecking both public
-tarballs. All six tasks and 19p are accepted over two active days; the
-pre-advance snapshot has zero makespans, no ready or recommended task, and
-only the expected advance warning. The user separately authorized the later
+tarballs. All six tasks and 19p are accepted over two active days and
+advanced to reached `RELEASE_040_ACCEPTED`; the plan has zero makespans and no
+ready or recommended task. The user separately authorized the later
 `perttool@0.4.0` npm `latest` promotion. Issue #4 closure remains a separate
 post-acceptance decision.
 

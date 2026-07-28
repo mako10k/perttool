@@ -1119,6 +1119,12 @@ task, and only the expected `PTDAG-208` advance warning. At acceptance npm
 reported `beta=0.4.0`, unchanged `latest=0.3.0`, and
 `alpha=0.1.0-alpha.2`. The user separately authorized a later one-time
 `perttool@0.4.0` `latest` promotion; Issue #4 closure remains separate.
+Commit `d016e59` preserves that completed task state. Canonical governed
+advance then removed `RELEASE_040_ACCEPTANCE` and
+`RELEASE_040_PUBLISHED`, retained reached `RELEASE_040_ACCEPTED`, and
+produced digest
+`sha256:9abdbbfbd8431d854977af74d1483777f822cb38afecf180022050bc5bbaf342`
+with no diagnostic, ready task, or recommendation.
 
 Stage 1 allowed operations:
 

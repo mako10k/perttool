@@ -66,10 +66,10 @@ were prepared together. `RELEASE_040_PUBLISH` is complete and advanced: release 
 peeled `v0.4.0` target `6b341d1` agree; the retained candidate, GitHub, and npm
 tarballs have common SHA-256 `010af9ce...7cc4a`; npm reports `beta=0.4.0`
 with unchanged `latest=0.3.0`; and both public-package workflows passed.
-Durable acceptance completed all six tasks and 19p over two active days.
-The pre-advance snapshot has zero precedence and heuristic resource
-makespans, no ready or recommended task, and only the expected advance
-warning. The user separately authorized the post-acceptance
+Durable acceptance completed all six tasks and 19p over two active days and
+advanced the plan to reached `RELEASE_040_ACCEPTED`. It has zero precedence
+and heuristic resource makespans and no ready or recommended task. The user
+separately authorized the post-acceptance
 `perttool@0.4.0` `latest` promotion; Issue #4 closure remains separate. The
 durable evidence is in the [`v0.4.0` PUBLISH
 record](../docs/process/0.4.0-publish.md) and [`v0.4.0` acceptance
