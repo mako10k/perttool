@@ -283,7 +283,7 @@
       "diagnostic_codes": []
     },
     "release-0.4.0": {
-      "source_digest": "sha256:df58c434c45d3c59abf4aabcf06922a184242d52b0c6676f103c8d482f5545be",
+      "source_digest": "sha256:c0d3c4d4ab2fbb40000418f919669f0df6b8d90167820a4024bf06c87b3f4fac",
       "groups": {
         "active": [],
         "ready": [
@@ -327,7 +327,6 @@
         "descriptions": 1
       },
       "diagnostic_codes": [
-        "PTDAG-208",
         "PTRES-303"
       ]
     },

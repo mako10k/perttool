@@ -36,12 +36,10 @@ resource EXTERNAL_RELEASE:
   capacity 1
 
 
-milestone RELEASE_040_CONTRACT_5_READY:
-  title "Accepted Contract 5 release input verified"
-  state reached
 
 milestone RELEASE_040_SOURCE_PREPARED:
   title "Version 0.4.0 release source prepared"
+  state reached
 
 milestone RELEASE_040_CANDIDATE_ACCEPTED:
   title "Version 0.4.0 release candidate accepted"
@@ -54,17 +52,6 @@ milestone RELEASE_040_ACCEPTED:
 
 
 
-task RELEASE_040_PREPARATION RELEASE_040_CONTRACT_5_READY -> RELEASE_040_SOURCE_PREPARED:
-  title "Prepare version 0.4.0 release source"
-  description "Align package and lockfile identity, CLI version, CHANGELOG, README, Contract 4-to-5 migration guidance, release documentation, tests, goldens, and beta publication validation. Run the complete repository and package gates without remote or registry writes."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
 
 task RELEASE_040_CANDIDATE RELEASE_040_SOURCE_PREPARED -> RELEASE_040_CANDIDATE_ACCEPTED:
   title "Accept one clean 0.4.0 release candidate"

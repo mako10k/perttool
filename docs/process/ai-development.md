@@ -206,9 +206,9 @@ governance acceptance, then separates source preparation, one clean candidate
 and immutable tarball, the Git/GitHub/npm `beta` PUBLISH operation, and
 durable acceptance. `RELEASE_040_GATE_DESIGN` and
 `RELEASE_040_CONTRACT_5_READINESS` are complete and advanced, and
-`RELEASE_040_PREPARATION` is complete after aligning the `0.4.0` source,
-[Contract 4-to-5 migration](cli-contract-5-migration.md), and full Node.js 22
-repository/package gates. Complete NextResult v4 recommends
+`RELEASE_040_PREPARATION` is complete and advanced after aligning the `0.4.0`
+source, [Contract 4-to-5 migration](cli-contract-5-migration.md), and full
+Node.js 22 repository/package gates. Complete NextResult v4 recommends
 `RELEASE_040_CANDIDATE`. The current authorization stops after source
 preparation. `RELEASE_040_PUBLISH` remains blocked until a separate user
 instruction explicitly authorizes the named `0.4.0` external batch; npm

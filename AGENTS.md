@@ -42,10 +42,10 @@ preparation, candidate acceptance, PUBLISH, and durable acceptance without
 restoring completed governance task state. `RELEASE_040_GATE_DESIGN` is
 complete and advanced, and `RELEASE_040_CONTRACT_5_READINESS` is complete and
 advanced after accepting the Contract 5 readiness record.
-`RELEASE_040_PREPARATION` is complete after aligning the `0.4.0` package
-identity, CHANGELOG, README, Contract 4-to-5 migration guidance, tests,
-goldens, and full Node.js 22 repository and installed-package gates. Ten
-points remain; the precedence makespan is 10p, and the heuristic resource
+`RELEASE_040_PREPARATION` is complete and advanced after aligning the `0.4.0`
+package identity, CHANGELOG, README, Contract 4-to-5 migration guidance,
+tests, goldens, and full Node.js 22 repository and installed-package gates.
+Ten points remain; the precedence makespan is 10p, and the heuristic resource
 makespan is conditionally 10p with no resource delay if publication
 authorization is resolved at time zero. Inherited velocity is `19p/2d`, and
 both forecasts are `20/19d`. Complete NextResult v4 recommends and starts

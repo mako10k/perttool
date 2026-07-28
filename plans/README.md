@@ -59,8 +59,8 @@ The independent `release-0.4.0.pert` plan selects suffix-free beta `0.4.0`
 for the breaking Grammar 4 and CLI Contract 5 cutover without duplicating
 governance implementation state. `RELEASE_040_GATE_DESIGN` and
 `RELEASE_040_CONTRACT_5_READINESS` are complete and advanced, and
-`RELEASE_040_PREPARATION` is complete after the full Node.js 22 repository
-and installed-package gates. Package identity, CHANGELOG, README, and the
+`RELEASE_040_PREPARATION` is complete and advanced after the full Node.js 22
+repository and installed-package gates. Package identity, CHANGELOG, README, and the
 [Contract 4-to-5 migration guide](../docs/process/cli-contract-5-migration.md)
 are prepared together. Three tasks and 10p remain; both makespans are
 conditionally 10p with no resource delay if publication authorization is

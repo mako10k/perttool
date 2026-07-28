@@ -79,13 +79,11 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.match(plan, /^  dag_owner user$/m);
   assert.doesNotMatch(plan, /^task RELEASE_040_GATE_DESIGN /m);
   assert.doesNotMatch(plan, /^task RELEASE_040_CONTRACT_5_READINESS /m);
+  assert.doesNotMatch(plan, /^task RELEASE_040_PREPARATION /m);
+  assert.doesNotMatch(plan, /^milestone RELEASE_040_CONTRACT_5_READY:/m);
   assert.match(
     plan,
-    /^milestone RELEASE_040_CONTRACT_5_READY:\n(?:  .*\n)*?  state reached$/m,
-  );
-  assert.match(
-    plan,
-    /task RELEASE_040_PREPARATION[\s\S]*?  status done/,
+    /^milestone RELEASE_040_SOURCE_PREPARED:\n(?:  .*\n)*?  state reached$/m,
   );
   assert.match(plan, /Complete NextResult v4 recommends RELEASE_040_CANDIDATE/);
   assert.match(plan, /^task RELEASE_040_PUBLISH /m);
