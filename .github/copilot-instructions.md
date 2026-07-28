@@ -29,10 +29,15 @@ Mandatory summary:
   deterministic identity, exact active-time and effort input, finish-only and
   complete coverage, retry/conflict handling, governed Grammar 5 safe write,
   and task-owned advance removal while the active public surface remains
-  unchanged. Five tasks and 28p remain; precedence is 21p and
-  the `parallel-sgs` version 1 heuristic resource makespan is 23p with 2p
-  delay. Complete NextResult v4 recommends and starts only `PROJECT_HISTORY`;
-  `WORK_LIFECYCLE` is deferred by the selected `CLI_SURFACE` capacity witness.
+  unchanged. `PROJECT_HISTORY` is complete and retained as `done` pending its
+  required pre-advance commit. Its internal pure reducer reconstructs
+  explicit events, advance removal, qualified legacy Git-recorded
+  transitions, exact task summaries, and typed availability from the
+  first-parent probe; deterministic Result v1 text/JSON remains publicly
+  inactive. Four tasks and 22p remain; precedence and the `parallel-sgs`
+  version 1 heuristic resource makespan are both 17p with no delay. Complete
+  NextResult v4 recommends and starts only `WORK_LIFECYCLE`;
+  `VELOCITY_OBSERVATION` is allowed.
   Public Grammar 5/CLI Contract 6 activation, Git mutation, velocity adoption,
   MIG-08, publication, and dist-tag movement remain outside scope. The
   independent workstream does not displace `PERT_PLANS`.

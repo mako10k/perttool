@@ -298,7 +298,7 @@ architecture decision is normative.
 
 Priority: P0
 
-Status: Contract accepted; internal source, Git probe, and eventful finish complete
+Status: Contract accepted; internal source, Git probe, eventful finish, and project history complete
 
 Git history can prove that a task-state snapshot was recorded, but it cannot
 prove the actual event time, active execution duration, person effort, or the
@@ -323,7 +323,11 @@ availability, race handling, and unchanged active public surface. The
 [`FINISH_ACTUALS` acceptance](process/project-actuals-finish-acceptance.md)
 records atomic eventful finish, exact measurements, deterministic retry,
 governed Grammar 5 safe write, and advance event ownership without activating
-the future public contract.
+the future public contract. The
+[`PROJECT_HISTORY` acceptance](process/project-actuals-history-acceptance.md)
+records first-parent semantic reconstruction, explicit-event deduplication and
+removal, qualified legacy transitions, exact task summaries, and deterministic
+internal result projections while retaining the same public boundary.
 
 Required outcomes:
 
@@ -362,7 +366,7 @@ Planned delivery slices:
 | `ACTUAL_GIT_HISTORY_PROBE` | Shared read-only repository/path/revision snapshots and typed history availability | 5p | Complete: first-parent, shallow, path, race, and unavailable cases are deterministic and Git remains unchanged. |
 | `FINISH_ACTUALS` | Eventful finish, exact measurements, planned baseline, retry, governance, and safe-write composition | 5p | Complete: status and finish event form one validated candidate and installed-active behavior remains unchanged. |
 | `WORK_LIFECYCLE` | Start, suspend, resume, state reduction, resource/classification handling, and result version target | 7p | Complete/open/finish-only sequences and suspended behavior pass focused tests. |
-| `PROJECT_HISTORY` | Semantic reconstruction, deduplication, advance removal, legacy qualification, Core/text/JSON | 6p | Explicit and legacy evidence remain distinct across real repository histories. |
+| `PROJECT_HISTORY` | Semantic reconstruction, deduplication, advance removal, legacy qualification, Core/text/JSON | 6p | Complete: explicit and legacy evidence remain distinct across real repository histories. |
 | `VELOCITY_OBSERVATION` | Exact Point/hour, qualified Point/active-date, and Point/person-hour observations | 5p | Parallel work is not double-counted and declared velocity is unchanged. |
 | `ACTUALS_PUBLIC_CONTRACT` | Atomic Grammar 5/CLI Contract 6 registry, help, Guide, schemas, diagnostics, and root activation | 6p | No partial public activation or compatibility alias exists. |
 | `ACTUALS_ACCEPTANCE` | Repository, Git, lifecycle, link, package, and installed workflow acceptance | 4p | All normative PACT cases pass with no Git mutation or release side effect. |

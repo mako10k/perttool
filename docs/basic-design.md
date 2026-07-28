@@ -781,9 +781,10 @@ governance decision. Identical retries are no-ops and payload reuse under one
 ID fails closed. Grammar 5 safe-write adapters retain the active digest,
 optimistic-lock, symlink, race, and atomic replacement controls.
 
-Start, suspend, and resume mutation, public lifecycle projection, task/project
-summaries, and semantic history availability remain later implementation
-slices.
+Start, suspend, and resume mutation and public lifecycle projection remain
+later implementation slices. The internal history reducer now derives
+task-actual summaries from committed snapshots without activating them
+through the public package surface.
 
 Grammar 5 adds task-owned top-level `work_event` declarations and the
 `suspended` task state. Exact event EBNF, `h`/`ph` quantities, canonical
@@ -809,10 +810,10 @@ unchanged. The existing pre-advance commit procedure remains mandatory.
 while history reconstruction uses it to read evidence; the two application
 decisions do not call each other.
 
-#### 6.8.3 Read-only Git adapter
+#### 6.8.3 Read-only Git history
 
-The internal `src/history/` boundary separates the future pure semantic
-history reducer from the implemented narrow read-only Git probe.
+The internal `src/history/` boundary separates the pure semantic history
+reducer from the narrow read-only Git probe.
 
 ```ts
 interface PlanRevisionSnapshot {
@@ -834,17 +835,29 @@ It accepts SHA-1 and SHA-256 object repositories, supports linked worktrees,
 and rechecks both `HEAD` and the regular-file identity after inspection. It
 never stages, commits, checks out, resets, rebases, or pushes.
 
-The probe is internal to the source tree and absent from the active package
-root, CLI Contract 5, and installed workflow. The future pure reducer parses
-supported snapshots, deduplicates stable event IDs, retains the last committed
-payload before advance removal, and distinguishes explicit actual events from
-legacy Git-recorded transitions.
+The probe and reducer are internal to the source tree and absent from the
+active package root, CLI Contract 5, and installed workflow. The pure reducer
+parses supported Grammar 1 through 5 snapshots, treats a deletion as an empty
+snapshot, deduplicates stable event IDs, retains the last committed payload
+and removal commit, and fails closed when one ID has conflicting payloads.
+It distinguishes explicit actual events from legacy Git-recorded transitions:
+commit provenance can identify a recorded state change but never supplies an
+actual event time.
 
 The probe reports shallow and rename boundaries as typed incomplete results;
 missing repository/HEAD/revision, untracked or ambiguous paths, source/HEAD
 races, and process or read failures fail closed. Unsupported grammar,
-task-ID replacement, event conflicts, and other semantic availability belong
-to the future reducer. Current-source operations remain Git-independent.
+task-ID replacement, and event conflicts are typed by the reducer. A boundary
+cuts semantic continuity so an incomplete prefix cannot invent a transition
+or complete actual. Current-source operations remain Git-independent.
+
+The reducer projects exact complete, open, finish-only, unrecorded, or
+unavailable task summaries. It preserves actual start and finish times,
+suspension intervals, cycle and active time, explicit active-time and effort
+measurements, and the qualified planned-value baseline from the start or
+finish snapshot. The internal application target composes the probe and
+reducer and provides deterministic `Perttool.ProjectHistoryResult.v1` JSON
+and text projections without adding a public command or root export.
 
 #### 6.8.4 Observation service
 
@@ -2046,14 +2059,14 @@ The independent
 [`project-actuals.pert`](../plans/project-actuals.pert) workstream adopts the
 accepted actuals contract without changing the completed MVP, governance, or
 release plans. Contract review, the internal Grammar 5 source Core, the
-read-only Git probe, and eventful finish are complete. Eventful finish remains
-behind the internal target capability. The remaining implementation separates:
+read-only Git probe, eventful finish, and semantic project-history
+reconstruction are complete. They remain behind internal target capabilities.
+The remaining implementation separates:
 
 1. start, suspend, and resume lifecycle behavior;
-2. project history reconstruction and qualified legacy evidence;
-3. exact velocity and effort observations;
-4. the atomic Grammar 5/CLI Contract 6 public cutover; and
-5. repository and installed-package acceptance.
+2. exact velocity and effort observations;
+3. the atomic Grammar 5/CLI Contract 6 public cutover; and
+4. repository and installed-package acceptance.
 
 The source Core completion does not activate Grammar 5 or CLI Contract 6. The
 slice does not authorize automatic Git mutation, post-advance correction,

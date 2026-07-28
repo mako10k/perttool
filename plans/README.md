@@ -135,16 +135,20 @@ commit `2af13c4` records the exact completed 5p `FINISH_ACTUALS` pre-advance
 snapshot; the task is advanced to reached `FINISH_ACTUALS_READY`. Its internal
 target implements deterministic eventful finish, exact measurements,
 finish-only and complete coverage, governed Grammar 5 safe write, and
-task-owned advance removal without changing the active public surface. Five
-tasks and 28p remain. Precedence is 21p; the
-`parallel-sgs` version 1 heuristic resource makespan is 23p with 2p resource
-delay. At the inherited operations velocity `29p/2d`, the forecasts are
-`42/29d` and `46/29d`. Complete NextResult v4 recommends and starts only
-`PROJECT_HISTORY`; `WORK_LIFECYCLE` is deferred by the selected `CLI_SURFACE`
-capacity witness. Public Grammar 5/CLI Contract 6 activation, Git mutation,
-automatic declared-velocity changes, MIG-08, release publication, and
-dist-tag movement remain outside the authorized scope. This independent
-workstream does not displace `PERT_PLANS` in the English-baseline detail.
+task-owned advance removal without changing the active public surface.
+`PROJECT_HISTORY` is complete and retained as `done` pending its required
+pre-advance commit. Its internal reducer reconstructs explicit events,
+advance removal, qualified legacy transitions, exact task summaries, typed
+availability, and deterministic Result v1 text/JSON without public activation.
+Four tasks and 22p remain. Precedence and the `parallel-sgs` version 1
+heuristic resource makespan are both 17p with no resource delay. At the
+inherited operations velocity `29p/2d`, both forecasts are `34/29d`.
+Complete NextResult v4 recommends and starts only `WORK_LIFECYCLE`;
+`VELOCITY_OBSERVATION` is allowed. Public Grammar 5/CLI Contract 6 activation,
+Git mutation, automatic declared-velocity changes, MIG-08, release
+publication, and dist-tag movement remain outside the authorized scope. This
+independent workstream does not displace `PERT_PLANS` in the English-baseline
+detail.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 
