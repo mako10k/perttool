@@ -6,7 +6,7 @@ resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
 The accepted `0.4.0` package implements Grammar 4 and CLI Contract 5. npm
-`beta` resolves to `0.4.0`, while `latest` remains on Contract 4 `0.3.0`.
+`beta` and `latest` both resolve to `0.4.0`.
 Beta releases may contain breaking CLI or schema changes. Version `0.4.0`
 requires Node.js 22 or later. Contract 4 and Contract 3 remain available by
 pinning `0.3.0` and `0.2.0`, respectively.
@@ -45,8 +45,8 @@ npm install --global perttool@0.4.0
 perttool --version
 ```
 
-npm `beta` now resolves to Contract 5 `0.4.0`, while `latest` remains on
-Contract 4 `0.3.0`. Contract 4 and Contract 3 remain available as exact pins
+npm `beta` and `latest` now resolve to Contract 5 `0.4.0`. Contract 4 and
+Contract 3 remain available as exact pins
 `perttool@0.3.0` and `perttool@0.2.0`.
 
 ## Plan files

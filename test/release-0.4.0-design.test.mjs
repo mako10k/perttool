@@ -62,7 +62,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     design,
     /^### Post-MVP Slice 4H: Contract 5 `v0\.4\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Accepted 1\.4/);
+  assert.match(procedure, /Status: Accepted 1\.5/);
   assert.match(procedure, /Expected pre-publication default: `beta=latest=0\.3\.0`/);
   assert.match(
     procedure,
@@ -84,13 +84,15 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.match(publishRecord, /`beta` \| `0\.4\.0`/);
   assert.match(publishRecord, /`latest` \| `0\.3\.0`/);
   assert.match(publishRecord, /No publish\s+retry occurred/);
-  assert.match(acceptanceRecord, /Document status: Accepted 1\.0/);
+  assert.match(acceptanceRecord, /Document status: Accepted 1\.1/);
   assert.match(
     acceptanceRecord,
     /010af9ce2290ade99c191b0c6a9ea485d5ae23ec1241113dfbc1d275b387cc4a/,
   );
   assert.match(acceptanceRecord, /`beta` \| `0\.4\.0`/);
   assert.match(acceptanceRecord, /`latest` \| `0\.3\.0`/);
+  assert.match(acceptanceRecord, /npm dist-tag add perttool@0\.4\.0 latest/);
+  assert.match(acceptanceRecord, /`latest` \| `0\.4\.0`/);
   assert.match(governanceAcceptance, /Document status: Accepted/);
   assert.match(governanceAcceptance, /Published package boundary: `0\.3\.0`/);
   assert.match(readiness, /Document status: Accepted 1\.0/);
@@ -136,6 +138,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     /^\[0\.4\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.3\.0\.\.\.v0\.4\.0$/m,
   );
   assert.match(readme, /npx --yes --package=perttool@0\.4\.0/);
+  assert.match(readme, /npm `beta` and `latest` now resolve to Contract 5 `0\.4\.0`/);
   assert.match(
     readme,
     /Moving from `0\.3\.0` Contract 4 to `0\.4\.0` Contract 5 changes every JSON\s+envelope to `cli_contract_version=5`/,

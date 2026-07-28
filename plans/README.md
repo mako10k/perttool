@@ -70,7 +70,10 @@ Durable acceptance completed all six tasks and 19p over two active days and
 advanced the plan to reached `RELEASE_040_ACCEPTED`. It has zero precedence
 and heuristic resource makespans and no ready or recommended task. The user
 separately authorized the post-acceptance
-`perttool@0.4.0` `latest` promotion; Issue #4 closure remains separate. The
+`perttool@0.4.0` `latest` promotion; fresh registry reads and an unqualified
+isolated installation confirmed `beta=latest=0.4.0`, CLI Contract 5, and
+Grammar 4. The completed plan did not change. Issue #4 closure remains
+separate. The
 durable evidence is in the [`v0.4.0` PUBLISH
 record](../docs/process/0.4.0-publish.md) and [`v0.4.0` acceptance
 record](../docs/process/0.4.0-release-acceptance.md).

@@ -1868,6 +1868,11 @@ completed all six release tasks at `19p/2d` and advanced the plan to reached
 post-acceptance `perttool@0.4.0` `latest` promotion. Plan state records these
 boundaries but is not itself external-write authority.
 
+That separate promotion is complete. Fresh registry reads and an unqualified
+isolated installation confirmed `beta=latest=0.4.0`, CLI Contract 5, and
+Grammar 4. It changed only npm's default tag and did not alter the immutable
+release artifact or completed release plan.
+
 Exit:
 
 - satisfy Requirements 21.5 from one clean release commit and one immutable

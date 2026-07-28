@@ -8,7 +8,8 @@
   release target);
   2026-07-26 (`v0.3.0` explicit `latest` promotion);
   2026-07-27 (`v0.4.0` Contract 5 release target);
-  2026-07-28 (`v0.4.0` beta publication and acceptance)
+  2026-07-28 (`v0.4.0` beta publication, acceptance, and explicit `latest`
+  promotion)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -106,8 +107,11 @@ their installed Contract 5 workflows. All six release tasks and 19p are
 accepted over two active days and advanced to reached
 `RELEASE_040_ACCEPTED`; the plan has zero makespans and no recommendation.
 The user then explicitly selected `perttool@0.4.0` for a
-separate post-acceptance npm `latest` promotion. Issue #4 closure remains a
-separate decision.
+separate post-acceptance npm `latest` promotion. The one-time dist-tag
+mutation succeeded; fresh registry reads and an unqualified isolated
+installation confirmed `beta=latest=0.4.0`, CLI Contract 5, and Grammar 4.
+Product maturity remains beta, and Issue #4 closure remains a separate
+decision.
 
 ## Beta gate
 

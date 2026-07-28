@@ -221,7 +221,10 @@ tarballs, completed all six tasks and 19p at `19p/2d`, and advanced the
 zero-makespan plan to reached `RELEASE_040_ACCEPTED` with no recommendation. The
 [acceptance record](0.4.0-release-acceptance.md) preserves that boundary.
 The user then separately selected `perttool@0.4.0` for npm `latest`; Issue #4
-closure remains a separate decision.
+closure remains a separate decision. That one-time dist-tag mutation is now
+complete. Fresh registry reads and an unqualified isolated installation
+confirmed `beta=latest=0.4.0`, CLI Contract 5, and Grammar 4 without changing
+the accepted artifact or completed plan.
 
 ### 5.1 Adopted Recommendation authority
 

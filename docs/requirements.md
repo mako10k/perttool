@@ -1605,7 +1605,10 @@ the candidate, GitHub, and npm tarballs are byte-identical; and npm reports
 release-plan tasks were then accepted at `19p/2d` and advanced to reached
 `RELEASE_040_ACCEPTED`; the plan has zero makespans and no recommendation. The user's later instruction
 separately selected `perttool@0.4.0` for npm `latest`; Issue #4 closure
-remains a distinct decision. The authoritative procedure and evidence are
+remains a distinct decision. The separately authorized dist-tag mutation is
+complete; fresh registry reads and an unqualified isolated installation
+confirmed `beta=latest=0.4.0`, CLI Contract 5, and Grammar 4 without changing
+the accepted artifact or completed plan. The authoritative procedure and evidence are
 [`docs/process/0.4.0-release.md`](process/0.4.0-release.md) and
 [`docs/process/0.4.0-publish.md`](process/0.4.0-publish.md), with the
 acceptance decision in
@@ -1788,5 +1791,6 @@ governance acceptance, one clean candidate, and one immutable tarball. All
 six release tasks are complete and advanced; the plan has zero makespans and
 no recommendation at `19p/2d`. At acceptance, npm reported `beta=0.4.0`,
 unchanged `latest=0.3.0`, and `alpha=0.1.0-alpha.2`. The user separately
-authorized the later `latest` promotion; Issue #4 closure remains an
-independent post-acceptance decision.
+authorized and completed the later `latest` promotion; npm now reports
+`beta=latest=0.4.0`, and an unqualified isolated installation passed. Issue
+#4 closure remains an independent post-acceptance decision.
