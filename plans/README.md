@@ -136,10 +136,11 @@ snapshot; the task is advanced to reached `FINISH_ACTUALS_READY`. Its internal
 target implements deterministic eventful finish, exact measurements,
 finish-only and complete coverage, governed Grammar 5 safe write, and
 task-owned advance removal without changing the active public surface.
-`PROJECT_HISTORY` is complete and retained as `done` pending its required
-pre-advance commit. Its internal reducer reconstructs explicit events,
-advance removal, qualified legacy transitions, exact task summaries, typed
-availability, and deterministic Result v1 text/JSON without public activation.
+`PROJECT_HISTORY` is complete, its exact pre-advance snapshot is committed at
+`c0eff39`, and the task is advanced to reached `PROJECT_HISTORY_READY`. Its
+internal reducer reconstructs explicit events, advance removal, qualified
+legacy transitions, exact task summaries, typed availability, and
+deterministic Result v1 text/JSON without public activation.
 Four tasks and 22p remain. Precedence and the `parallel-sgs` version 1
 heuristic resource makespan are both 17p with no resource delay. At the
 inherited operations velocity `29p/2d`, both forecasts are `34/29d`.

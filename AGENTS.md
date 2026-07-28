@@ -40,12 +40,13 @@ active-time and effort input, finish-only and complete coverage,
 retry/conflict handling, governed Grammar 5 safe write, and task-owned advance
 removal. Its acceptance record is
 `docs/process/project-actuals-finish-acceptance.md`. `PROJECT_HISTORY` is
-complete and retained as `done` pending its required pre-advance commit. Its
-internal pure reducer reconstructs explicit events, advance removal, qualified
-legacy Git-recorded transitions, exact task summaries, and typed
-incomplete/unavailable outcomes from the read-only first-parent probe. Its
-deterministic `Perttool.ProjectHistoryResult.v1` JSON and text target remains
-absent from the active package root and CLI; its acceptance record is
+complete, its exact pre-advance snapshot is committed at `c0eff39`, and the
+task is advanced to reached `PROJECT_HISTORY_READY`. Its internal pure reducer
+reconstructs explicit events, advance removal, qualified legacy Git-recorded
+transitions, exact task summaries, and typed incomplete/unavailable outcomes
+from the read-only first-parent probe. Its deterministic
+`Perttool.ProjectHistoryResult.v1` JSON and text target remains absent from
+the active package root and CLI; its acceptance record is
 `docs/process/project-actuals-history-acceptance.md`. Four tasks and 22p
 remain; precedence and the `parallel-sgs` version 1 heuristic resource
 makespan are both 17p with no resource delay, and both forecasts at the

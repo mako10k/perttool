@@ -106,7 +106,7 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan retains completed history before advance", async () => {
+test("project actuals plan advances the accepted project history", async () => {
   const plan = "plans/project-actuals.pert";
   const [
     source,
@@ -137,16 +137,13 @@ test("project actuals plan retains completed history before advance", async () =
 
   assert.deepEqual(checked.summary, {
     resources: 8,
-    milestones: 8,
-    tasks: 5,
+    milestones: 7,
+    tasks: 4,
     gates: 2,
     errors: 0,
-    warnings: 1,
+    warnings: 0,
   });
-  assert.deepEqual(
-    checked.diagnostics.map(({ code }) => code),
-    ["PTDAG-208"],
-  );
+  assert.deepEqual(checked.diagnostics, []);
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
@@ -156,10 +153,6 @@ test("project actuals plan retains completed history before advance", async () =
   assert.match(
     source,
     /milestone FINISH_ACTUALS_READY:[\s\S]*?  state reached/,
-  );
-  assert.match(
-    source,
-    /milestone HISTORY_INPUT_READY:[\s\S]*?  state reached/,
   );
   assert.match(contractAcceptance, /Plan task: `ACTUALS_CONTRACT_REVIEW`/);
   assert.match(sourceAcceptance, /`ACTUAL_SOURCE_CORE` is accepted/);
@@ -171,12 +164,15 @@ test("project actuals plan retains completed history before advance", async () =
   assert.match(finishAcceptance, /`FINISH_ACTUALS` is accepted/);
   assert.match(finishAcceptance, /Git commit `2af13c4`/);
   assert.match(historyAcceptance, /`PROJECT_HISTORY` is accepted/);
+  assert.match(historyAcceptance, /Git commit `c0eff39`/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.doesNotMatch(source, /task FINISH_ACTUALS/);
+  assert.doesNotMatch(source, /task PROJECT_HISTORY/);
+  assert.doesNotMatch(source, /milestone HISTORY_INPUT_READY:/);
   assert.match(
     source,
-    /task PROJECT_HISTORY[\s\S]*?  status done/,
+    /milestone PROJECT_HISTORY_READY:[\s\S]*?  state reached/,
   );
   assert.equal(analyzed.precedence.makespan.numerator, "17");
   assert.equal(analyzed.precedence.makespan.denominator, "1");

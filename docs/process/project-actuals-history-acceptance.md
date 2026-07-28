@@ -7,8 +7,7 @@ It reconstructs explicit task work events and qualified legacy Git-recorded
 state transitions from the read-only first-parent probe, and projects exact
 task-actual summaries without activating Grammar 5 or CLI Contract 6.
 
-The exact completed 6p pre-advance snapshot is retained by the Git commit
-identified in this record after that commit is created.
+Git commit `c0eff39` records the exact completed 6p pre-advance snapshot.
 
 This acceptance is subordinate to ADR 0006, the Project Actuals and Git
 History Contract, the Grammar 5 target, and PACT-008 through PACT-012. It does
