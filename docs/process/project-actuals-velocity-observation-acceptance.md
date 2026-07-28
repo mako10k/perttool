@@ -7,8 +7,10 @@ It consumes only `Perttool.ProjectHistoryResult.v1`, derives exact declared
 and qualified Git-recorded rates, and never changes source text or declared
 project velocity.
 
-The exact completed 5p pre-advance snapshot is retained by the Git commit
-identified in this record after that commit is created.
+Git commit `19b060a` retains the exact completed 5p pre-advance snapshot.
+Canonical advance then removed the completed task and satisfied integration
+gates, retained their join as reached `ACTUALS_INTEGRATED_INPUT`, and
+preserved `ACTUALS_PUBLIC_CONTRACT` as the only ready recommendation.
 
 This acceptance is subordinate to ADR 0006, the Project Actuals and Git
 History Contract, and PACT-010 through PACT-013. It does not activate Grammar

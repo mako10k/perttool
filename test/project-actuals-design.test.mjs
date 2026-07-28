@@ -145,19 +145,13 @@ test("project actuals plan retains every accepted internal slice", async () => {
 
   assert.deepEqual(checked.summary, {
     resources: 8,
-    milestones: 6,
-    tasks: 3,
-    gates: 2,
+    milestones: 3,
+    tasks: 2,
+    gates: 0,
     errors: 0,
-    warnings: 2,
+    warnings: 0,
   });
-  assert.deepEqual(
-    checked.diagnostics.map(({ code, entity_id }) => [code, entity_id]),
-    [
-      ["PTDAG-208", "VELOCITY_OBSERVATION_READY"],
-      ["PTDAG-208", "ACTUALS_INTEGRATED_INPUT"],
-    ],
-  );
+  assert.deepEqual(checked.diagnostics, []);
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
@@ -190,27 +184,20 @@ test("project actuals plan retains every accepted internal slice", async () => {
     observationAcceptance,
     /exact completed 5p pre-advance snapshot/,
   );
+  assert.match(observationAcceptance, /Git commit `19b060a`/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.doesNotMatch(source, /task FINISH_ACTUALS/);
   assert.doesNotMatch(source, /task PROJECT_HISTORY/);
   assert.doesNotMatch(source, /milestone HISTORY_INPUT_READY:/);
-  assert.match(
-    source,
-    /milestone PROJECT_HISTORY_READY:[\s\S]*?  state reached/,
-  );
+  assert.doesNotMatch(source, /milestone PROJECT_HISTORY_READY:/);
   assert.doesNotMatch(source, /task WORK_LIFECYCLE/);
+  assert.doesNotMatch(source, /milestone LIFECYCLE_READY:/);
+  assert.doesNotMatch(source, /task VELOCITY_OBSERVATION/);
+  assert.doesNotMatch(source, /milestone VELOCITY_OBSERVATION_READY:/);
   assert.match(
     source,
-    /milestone LIFECYCLE_READY:\n  title[^\n]*\n  state reached/,
-  );
-  assert.match(
-    source,
-    /task VELOCITY_OBSERVATION[\s\S]*?  status done/,
-  );
-  assert.doesNotMatch(
-    source,
-    /milestone VELOCITY_OBSERVATION_READY:\n  title[^\n]*\n  state reached/,
+    /milestone ACTUALS_INTEGRATED_INPUT:[\s\S]*?  state reached/,
   );
   assert.equal(analyzed.precedence.makespan.numerator, "10");
   assert.equal(analyzed.precedence.makespan.denominator, "1");

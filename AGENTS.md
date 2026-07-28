@@ -56,8 +56,10 @@ schedules, and separate `Perttool.AnalysisResult.v4` and
 `Perttool.NextResult.v5` suspended handling without changing the active
 public surface. Its acceptance record is
 `docs/process/project-actuals-lifecycle-acceptance.md`.
-`VELOCITY_OBSERVATION` is complete and retained done pending its required
-pre-advance commit. Its pure service derives exact elapsed-hour,
+`VELOCITY_OBSERVATION` is complete; Git commit `19b060a` records its exact
+completed 5p pre-advance snapshot, and the task and satisfied integration
+gates are advanced to reached `ACTUALS_INTEGRATED_INPUT`. Its pure service
+derives exact elapsed-hour,
 active-date, effort-productivity, and separately qualified Git-recorded rates
 from ProjectHistoryResult v1 without changing declared velocity or the active
 public surface. Its acceptance record is

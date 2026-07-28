@@ -2,7 +2,7 @@
 project PROJECT_ACTUALS:
   version 1
   title "Project actuals and Git-recorded history"
-  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; Git commit f6e93e1 records its completed 4p pre-advance snapshot. ACTUAL_SOURCE_CORE accepted identity-checked internal Grammar 5 parsing, validation, formatting, exact task-owned event projection, and active Grammar 1-4 compatibility; Git commit d6d3d7f records its completed 5p pre-advance snapshot, and the task is advanced to reached ACTUAL_SOURCE_READY. ACTUAL_GIT_HISTORY_PROBE accepted the internal read-only SHA-1/SHA-256 repository/path/revision probe, first-parent raw snapshots, typed availability, linked worktrees, race detection, and unchanged Git/public surfaces; Git commit 2198a0b records its completed 5p pre-advance snapshot, and the task and satisfied source/history gates are advanced to reached HISTORY_INPUT_READY. FINISH_ACTUALS accepted deterministic eventful finish, exact active-time and effort inputs, finish-only and complete coverage, retry/conflict handling, governed Grammar 5 safe write, task-owned advance removal, and unchanged active Grammar 1-4 and CLI Contract 5; Git commit 2af13c4 records its exact completed 5p pre-advance snapshot, and the task is advanced to reached FINISH_ACTUALS_READY. PROJECT_HISTORY accepted internal first-parent semantic reduction, declared-event deduplication and advance removal, qualified legacy Git-recorded transitions, exact task summaries, typed incomplete/unavailable outcomes, deterministic ProjectHistoryResult v1 JSON/text, and unchanged active public surfaces; Git commit c0eff39 records its exact completed 6p pre-advance snapshot, and the task is advanced to reached PROJECT_HISTORY_READY. WORK_LIFECYCLE accepted exact start, suspend, and resume candidates, deterministic retry and refusal, suspended resource release, full remaining-duration schedules, and separate AnalysisResult v4/NextResult v5 target handling without changing active public surfaces; Git commit 518a59e records its exact completed 7p pre-advance snapshot, and the task is advanced to reached LIFECYCLE_READY. VELOCITY_OBSERVATION accepted exact elapsed-hour, qualified active-date, effort-productivity, and separately qualified Git-recorded rates, deterministic selection and provenance, and unchanged declared velocity/public surfaces; the completed task is retained as done pending its required pre-advance commit. Two tasks and 10p remain. Precedence and the parallel-sgs version 1 heuristic resource makespan are both 10p with no resource delay; both forecasts at 29p/2d are 20/29d. Complete NextResult v4 recommends and starts only ACTUALS_PUBLIC_CONTRACT. Grammar 5 and CLI Contract 6 remain publicly inactive, and this plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
+  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; Git commit f6e93e1 records its completed 4p pre-advance snapshot. ACTUAL_SOURCE_CORE accepted identity-checked internal Grammar 5 parsing, validation, formatting, exact task-owned event projection, and active Grammar 1-4 compatibility; Git commit d6d3d7f records its completed 5p pre-advance snapshot, and the task is advanced to reached ACTUAL_SOURCE_READY. ACTUAL_GIT_HISTORY_PROBE accepted the internal read-only SHA-1/SHA-256 repository/path/revision probe, first-parent raw snapshots, typed availability, linked worktrees, race detection, and unchanged Git/public surfaces; Git commit 2198a0b records its completed 5p pre-advance snapshot, and the task and satisfied source/history gates are advanced to reached HISTORY_INPUT_READY. FINISH_ACTUALS accepted deterministic eventful finish, exact active-time and effort inputs, finish-only and complete coverage, retry/conflict handling, governed Grammar 5 safe write, task-owned advance removal, and unchanged active Grammar 1-4 and CLI Contract 5; Git commit 2af13c4 records its exact completed 5p pre-advance snapshot, and the task is advanced to reached FINISH_ACTUALS_READY. PROJECT_HISTORY accepted internal first-parent semantic reduction, declared-event deduplication and advance removal, qualified legacy Git-recorded transitions, exact task summaries, typed incomplete/unavailable outcomes, deterministic ProjectHistoryResult v1 JSON/text, and unchanged active public surfaces; Git commit c0eff39 records its exact completed 6p pre-advance snapshot, and the task is advanced to reached PROJECT_HISTORY_READY. WORK_LIFECYCLE accepted exact start, suspend, and resume candidates, deterministic retry and refusal, suspended resource release, full remaining-duration schedules, and separate AnalysisResult v4/NextResult v5 target handling without changing active public surfaces; Git commit 518a59e records its exact completed 7p pre-advance snapshot, and the task is advanced to reached LIFECYCLE_READY. VELOCITY_OBSERVATION accepted exact elapsed-hour, qualified active-date, effort-productivity, and separately qualified Git-recorded rates, deterministic selection and provenance, and unchanged declared velocity/public surfaces; Git commit 19b060a records its exact completed 5p pre-advance snapshot, and the task and satisfied integration gates are advanced to reached ACTUALS_INTEGRATED_INPUT. Two tasks and 10p remain. Precedence and the parallel-sgs version 1 heuristic resource makespan are both 10p with no resource delay; both forecasts at 29p/2d are 20/29d. Complete NextResult v4 recommends and starts only ACTUALS_PUBLIC_CONTRACT. Grammar 5 and CLI Contract 6 remain publicly inactive, and this plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
   as_of 2026-07-28
   duration_unit point
   velocity 29p/2d
@@ -47,20 +47,13 @@ resource PACKAGE_SURFACE:
 
 
 
-milestone LIFECYCLE_READY:
-  title "Work lifecycle Core ready"
-  state reached
 
 
-milestone PROJECT_HISTORY_READY:
-  title "Project history interface ready"
-  state reached
 
-milestone VELOCITY_OBSERVATION_READY:
-  title "Observed project performance ready"
 
 milestone ACTUALS_INTEGRATED_INPUT:
   title "Lifecycle and observation inputs integrated"
+  state reached
 
 milestone ACTUALS_PUBLIC_READY:
   title "Grammar 5 and CLI Contract 6 public surface ready"
@@ -76,21 +69,8 @@ milestone ACTUALS_ACCEPTED:
 
 
 
-task VELOCITY_OBSERVATION PROJECT_HISTORY_READY -> VELOCITY_OBSERVATION_READY:
-  title "Implement exact velocity and effort observations"
-  description "Derive completed baseline Points, exact elapsed-hour throughput, qualified active-date throughput, and Point/person-hour productivity with explicit sample provenance and coverage. Do not double-count parallel cycle time, infer day/hour or effort, read the clock, or mutate declared velocity."
-  duration 5p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    GIT_SURFACE 1
 
-gate LIFECYCLE_INTEGRATION_GATE LIFECYCLE_READY -> ACTUALS_INTEGRATED_INPUT:
-  reason "Public activation requires complete lifecycle behavior"
 
-gate OBSERVATION_INTEGRATION_GATE VELOCITY_OBSERVATION_READY -> ACTUALS_INTEGRATED_INPUT:
-  reason "Public activation requires history-derived observations"
 
 task ACTUALS_PUBLIC_CONTRACT ACTUALS_INTEGRATED_INPUT -> ACTUALS_PUBLIC_READY:
   title "Activate Grammar 5 and CLI Contract 6 atomically"

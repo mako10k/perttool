@@ -41,8 +41,10 @@ Mandatory summary:
   start/suspend/resume candidates, deterministic retry and refusal, resource
   release, full remaining-duration schedules, and separate AnalysisResult
   v4/NextResult v5 suspended handling without changing the active public
-  surface. `VELOCITY_OBSERVATION` is complete and retained done pending its
-  pre-advance commit. Its pure service derives exact elapsed-hour,
+  surface. `VELOCITY_OBSERVATION` is complete; Git commit `19b060a` records
+  its exact completed 5p pre-advance snapshot, and the task and satisfied
+  integration gates are advanced to reached `ACTUALS_INTEGRATED_INPUT`. Its
+  pure service derives exact elapsed-hour,
   active-date, effort-productivity, and separately qualified Git-recorded
   rates without changing declared velocity or the active public surface. Two
   tasks and 10p remain; precedence and the `parallel-sgs` version 1 heuristic

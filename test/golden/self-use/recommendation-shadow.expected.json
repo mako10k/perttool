@@ -209,7 +209,7 @@
       ]
     },
     "project-actuals": {
-      "source_digest": "sha256:7a756f5e51bf57497d614270d7056419d418afadc11995c5e289fa184d8600c2",
+      "source_digest": "sha256:b22a63fe1f1b4512d3e612f98cec4f83188a4abc6181d9da4de0795fad11496e",
       "groups": {
         "active": [],
         "ready": [
@@ -251,9 +251,7 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "recommendation": {
       "source_digest": "sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464",
