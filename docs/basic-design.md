@@ -763,16 +763,27 @@ read-only semantic history reconstruction
 
 #### 6.8.1 Source and lifecycle Core
 
-The internal `src/actuals/` source Core currently owns:
+The internal `src/actuals/` source and eventful-finish Core currently owns:
 
-- event identity and exact fixed-offset time;
+- deterministic event identity and exact fixed-offset time;
 - exact active-time and explicit person-effort source values;
 - planned-value baselines; and
-- deterministic task-owned event projection.
+- deterministic task-owned event projection;
+- semantic event ordering and exact active-interval reduction; and
+- complete, open, finish-only, and unrecorded coverage classification.
 
-Lifecycle transition reduction, complete/open/finish-only coverage, derived
-cycle time, task/project summaries, and history availability remain later
-implementation slices.
+The internal finish application service implements only
+`task.finish.actual`. It normalizes an explicit caller time and exact
+measurements, derives or validates one event ID, validates the pre-change event
+stream and stored state, plans the task state and finish event as one
+candidate, revalidates exact active time, and composes the existing pre-change
+governance decision. Identical retries are no-ops and payload reuse under one
+ID fails closed. Grammar 5 safe-write adapters retain the active digest,
+optimistic-lock, symlink, race, and atomic replacement controls.
+
+Start, suspend, and resume mutation, public lifecycle projection, task/project
+summaries, and semantic history availability remain later implementation
+slices.
 
 Grammar 5 adds task-owned top-level `work_event` declarations and the
 `suspended` task state. Exact event EBNF, `h`/`ph` quantities, canonical
@@ -789,11 +800,13 @@ recommendation override or durable authorization audit.
 
 #### 6.8.2 Advance ownership
 
-The advance planner treats each work event as owned by its task declaration.
-Removing a task removes its events in the same candidate and reports their
-IDs. The existing pre-advance commit procedure remains mandatory. `ADV-001`
-uses the shared Git inspection boundary to guard destructive edits, while
-history reconstruction uses it to read evidence; the two application
+The internal Grammar 5 advance profile treats each work event as owned by its
+task declaration. Removing a task removes its events in the same candidate,
+retains events for residual tasks, and reports the removed event IDs in stable
+order. Active Grammar 1 through 4 advance results and projections remain
+unchanged. The existing pre-advance commit procedure remains mandatory.
+`ADV-001` uses the shared Git inspection boundary to guard destructive edits,
+while history reconstruction uses it to read evidence; the two application
 decisions do not call each other.
 
 #### 6.8.3 Read-only Git adapter
@@ -2032,16 +2045,15 @@ Exit:
 The independent
 [`project-actuals.pert`](../plans/project-actuals.pert) workstream adopts the
 accepted actuals contract without changing the completed MVP, governance, or
-release plans. Contract review and the internal Grammar 5 source Core are
-complete; the remaining implementation separates:
+release plans. Contract review, the internal Grammar 5 source Core, the
+read-only Git probe, and eventful finish are complete. Eventful finish remains
+behind the internal target capability. The remaining implementation separates:
 
-1. a shared read-only Git history probe compatible with `ADV-001`;
-2. eventful finish and atomic state/event mutation;
-3. start, suspend, and resume lifecycle behavior;
-4. project history reconstruction and qualified legacy evidence;
-5. exact velocity and effort observations;
-6. the atomic Grammar 5/CLI Contract 6 public cutover; and
-7. repository and installed-package acceptance.
+1. start, suspend, and resume lifecycle behavior;
+2. project history reconstruction and qualified legacy evidence;
+3. exact velocity and effort observations;
+4. the atomic Grammar 5/CLI Contract 6 public cutover; and
+5. repository and installed-package acceptance.
 
 The source Core completion does not activate Grammar 5 or CLI Contract 6. The
 slice does not authorize automatic Git mutation, post-advance correction,

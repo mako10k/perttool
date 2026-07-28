@@ -1,4 +1,9 @@
-import type { DeclarationNode, FieldNode, RequirementValue } from "../model/syntax.js";
+import type {
+  DeclarationNode,
+  FieldNode,
+  RequirementValue,
+  TargetDeclarationKind,
+} from "../model/syntax.js";
 import type { TextEdit } from "./text-edits.js";
 
 export interface PhysicalLine {
@@ -84,7 +89,7 @@ export function contentTextEndOffset(
 }
 
 function declarationContentEndOffset(
-  declaration: DeclarationNode,
+  declaration: DeclarationNode<TargetDeclarationKind>,
   lines: readonly PhysicalLine[],
 ): number {
   const lastField = declaration.fields[declaration.fields.length - 1];
@@ -123,7 +128,7 @@ export function deleteFieldEdit(
 }
 
 export function deleteDeclarationEdit(
-  declaration: DeclarationNode,
+  declaration: DeclarationNode<TargetDeclarationKind>,
   lines: readonly PhysicalLine[],
 ): TextEdit {
   return {
@@ -161,7 +166,7 @@ export function serializeTextField(
 }
 
 export function fieldInsertionOffset(
-  declaration: DeclarationNode,
+  declaration: DeclarationNode<TargetDeclarationKind>,
   name: string,
   deleted: ReadonlySet<string>,
   lines: readonly PhysicalLine[],

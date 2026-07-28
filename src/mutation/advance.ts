@@ -8,7 +8,12 @@ import {
   normalizeMaxDiagnostics,
   sortDiagnostics,
 } from "../model/diagnostics.js";
-import type { DeclarationNode, DocumentNode, RequirementValue } from "../model/syntax.js";
+import type {
+  DeclarationNode,
+  DocumentNode,
+  RequirementValue,
+  TargetDeclarationKind,
+} from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import { checkDocument } from "../application/check.js";
 import { EntityEditor } from "./entity-editor.js";
@@ -53,7 +58,7 @@ export interface AdvanceResult extends MutationResult {
 
 export interface AdvanceDocumentValidation {
   readonly ok: boolean;
-  readonly document: DocumentNode;
+  readonly document: DocumentNode<TargetDeclarationKind>;
   readonly documentId: string | null;
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticsTruncated: boolean;
@@ -74,6 +79,15 @@ interface AdvancePlan {
   readonly removedMilestoneIds: readonly string[];
   readonly stateChangedMilestoneIds: readonly string[];
   readonly retainedSatisfiedEdges: readonly AdvanceRetainedEdge[];
+  readonly removedWorkEventIds: readonly string[];
+}
+
+export interface ActualsAdvanceDetails extends AdvanceDetails {
+  readonly removedWorkEventIds: readonly string[];
+}
+
+export interface AdvancePlanningProfile {
+  readonly removeTaskOwnedWorkEvents?: boolean;
 }
 
 function digest(text: string): string {
@@ -103,16 +117,20 @@ function failure(
   };
 }
 
-function sortedIds(declarations: readonly DeclarationNode[]): readonly string[] {
+function sortedIds(
+  declarations: readonly DeclarationNode<TargetDeclarationKind>[],
+): readonly string[] {
   return declarations.map(({ id }) => id).sort(compareStableStrings);
 }
 
-function taskStatus(declaration: DeclarationNode): string {
+function taskStatus(
+  declaration: DeclarationNode<TargetDeclarationKind>,
+): string {
   return (fieldNamed(declaration, "status")?.value ?? "planned") as string;
 }
 
 function readyTaskIds(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
   reached: ReadonlySet<string>,
 ): readonly string[] {
   return document.declarations
@@ -127,7 +145,7 @@ function readyTaskIds(
 }
 
 function classifiedTaskIds(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
   reached: ReadonlySet<string>,
 ): Readonly<Record<"active" | "ready" | "blockedNow" | "upcoming", readonly string[]>> {
   const groups = {
@@ -155,7 +173,7 @@ function classifiedTaskIds(
 
 function advanceDeletionEdit(
   text: string,
-  declaration: DeclarationNode,
+  declaration: DeclarationNode<TargetDeclarationKind>,
   lines: readonly PhysicalLine[],
   isLastDeclaration: boolean,
 ): TextEdit {
@@ -175,13 +193,30 @@ function advanceDeletionEdit(
   };
 }
 
-function buildAdvancePlan(text: string, document: DocumentNode): AdvancePlan {
+function structuralDocument(
+  document: DocumentNode<TargetDeclarationKind>,
+): DocumentNode {
+  return {
+    text: document.text,
+    declarations: document.declarations.filter(
+      (declaration): declaration is DeclarationNode =>
+        declaration.kind !== "work_event",
+    ),
+    trivia: document.trivia,
+  };
+}
+
+function buildAdvancePlan(
+  text: string,
+  document: DocumentNode<TargetDeclarationKind>,
+  profile: AdvancePlanningProfile,
+): AdvancePlan {
   const project = document.declarations.find(({ kind }) => kind === "project");
   if (project === undefined) throw new Error("validated advance document has no project");
   const finish = fieldNamed(project, "finish")?.value;
   if (typeof finish !== "string") throw new Error("validated advance project has no finish");
 
-  const reached = computeEffectiveReached(document);
+  const reached = computeEffectiveReached(structuralDocument(document));
   const edges = document.declarations.filter(
     (declaration) => declaration.kind === "task" || declaration.kind === "gate",
   );
@@ -202,6 +237,14 @@ function buildAdvancePlan(text: string, document: DocumentNode): AdvancePlan {
   );
   const milestones = document.declarations.filter(({ kind }) => kind === "milestone");
   const removedMilestones = milestones.filter(({ id }) => !keptMilestones.has(id));
+  const removedTaskIds = new Set(removedTasks.map(({ id }) => id));
+  const removedWorkEvents = profile.removeTaskOwnedWorkEvents === true
+    ? document.declarations.filter(
+        (declaration) =>
+          declaration.kind === "work_event" &&
+          removedTaskIds.has(fieldNamed(declaration, "task")?.value as string),
+      )
+    : [];
   const stateChangedMilestones = milestones.filter(
     (milestone) =>
       keptMilestones.has(milestone.id) &&
@@ -217,6 +260,8 @@ function buildAdvancePlan(text: string, document: DocumentNode): AdvancePlan {
     ...removedGates.map((declaration) =>
       advanceDeletionEdit(text, declaration, lines, declaration === lastDeclaration)),
     ...removedMilestones.map((declaration) =>
+      advanceDeletionEdit(text, declaration, lines, declaration === lastDeclaration)),
+    ...removedWorkEvents.map((declaration) =>
       advanceDeletionEdit(text, declaration, lines, declaration === lastDeclaration)),
   ];
   for (const milestone of stateChangedMilestones) {
@@ -248,6 +293,7 @@ function buildAdvancePlan(text: string, document: DocumentNode): AdvancePlan {
     removedMilestoneIds: sortedIds(removedMilestones),
     stateChangedMilestoneIds: sortedIds(stateChangedMilestones),
     retainedSatisfiedEdges,
+    removedWorkEventIds: sortedIds(removedWorkEvents),
   };
 }
 
@@ -255,8 +301,10 @@ function exactRational(value: { readonly numerator: bigint; readonly denominator
   return `${value.numerator}/${value.denominator}`;
 }
 
-function residualProjection(document: DocumentNode): unknown {
-  const graph = buildResidualGraph(document);
+function residualProjection(
+  document: DocumentNode<TargetDeclarationKind>,
+): unknown {
+  const graph = buildResidualGraph(structuralDocument(document));
   return {
     finish: graph.finish,
     durationUnit: graph.durationUnit,
@@ -299,7 +347,9 @@ function assertSame(label: string, before: unknown, after: unknown): void {
   }
 }
 
-function explicitReachedRootIds(document: DocumentNode): readonly string[] {
+function explicitReachedRootIds(
+  document: DocumentNode<TargetDeclarationKind>,
+): readonly string[] {
   const milestones = document.declarations.filter(({ kind }) => kind === "milestone");
   const incomingTargets = new Set(
     document.declarations
@@ -313,7 +363,9 @@ function explicitReachedRootIds(document: DocumentNode): readonly string[] {
     .sort(compareStableStrings);
 }
 
-function allRootIds(document: DocumentNode): readonly string[] {
+function allRootIds(
+  document: DocumentNode<TargetDeclarationKind>,
+): readonly string[] {
   const incomingTargets = new Set(
     document.declarations
       .filter(({ kind }) => kind === "task" || kind === "gate")
@@ -327,13 +379,14 @@ function allRootIds(document: DocumentNode): readonly string[] {
 }
 
 function verifyPostconditions(
-  original: DocumentNode,
+  original: DocumentNode<TargetDeclarationKind>,
   candidateText: string,
-  candidate: DocumentNode,
+  candidate: DocumentNode<TargetDeclarationKind>,
   plan: AdvancePlan,
+  profile: AdvancePlanningProfile,
 ): void {
-  const beforeReached = computeEffectiveReached(original);
-  const afterReached = computeEffectiveReached(candidate);
+  const beforeReached = computeEffectiveReached(structuralDocument(original));
+  const afterReached = computeEffectiveReached(structuralDocument(candidate));
   assertSame(
     "effective reached set",
     plan.keptMilestoneIds.filter((id) => beforeReached.has(id)),
@@ -357,7 +410,19 @@ function verifyPostconditions(
     afterReached.has(candidateFinish),
   );
 
-  const repeated = buildAdvancePlan(candidateText, candidate);
+  if (profile.removeTaskOwnedWorkEvents === true) {
+    const remainingEventIds = candidate.declarations
+      .filter(({ kind }) => kind === "work_event")
+      .map(({ id }) => id)
+      .sort(compareStableStrings);
+    const expectedEventIds = original.declarations
+      .filter(({ kind }) => kind === "work_event")
+      .map(({ id }) => id)
+      .filter((id) => !plan.removedWorkEventIds.includes(id))
+      .sort(compareStableStrings);
+    assertSame("retained work events", expectedEventIds, remainingEventIds);
+  }
+  const repeated = buildAdvancePlan(candidateText, candidate, profile);
   const repeatedEdits = normalizeTextEdits(candidateText, repeated.edits, "advance idempotence");
   if (repeatedEdits.length !== 0) {
     throw new Error("advance postcondition failed: repeated advance is not empty");
@@ -368,6 +433,7 @@ export function planValidatedAdvance(
   text: string,
   validator: AdvanceDocumentValidator,
   options: MutationOptions = {},
+  profile: AdvancePlanningProfile = {},
 ): AdvanceResult {
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
   const originalDigest = digest(text);
@@ -382,7 +448,7 @@ export function planValidatedAdvance(
     );
   }
 
-  const plan = buildAdvancePlan(text, original.document);
+  const plan = buildAdvancePlan(text, original.document, profile);
   const edits = normalizeTextEdits(text, plan.edits, "advance");
   const updatedText = applyTextEdits(text, edits);
   const candidate = validator(updatedText, maximum);
@@ -396,9 +462,15 @@ export function planValidatedAdvance(
     );
   }
 
-  verifyPostconditions(original.document, updatedText, candidate.document, plan);
-  const beforeGraph = buildResidualGraph(original.document);
-  const afterGraph = buildResidualGraph(candidate.document);
+  verifyPostconditions(
+    original.document,
+    updatedText,
+    candidate.document,
+    plan,
+    profile,
+  );
+  const beforeGraph = buildResidualGraph(structuralDocument(original.document));
+  const afterGraph = buildResidualGraph(structuralDocument(candidate.document));
   const readyBefore = readyTaskIds(original.document, beforeGraph.effectiveReached);
   const readyAfter = readyTaskIds(candidate.document, afterGraph.effectiveReached);
 
@@ -429,6 +501,9 @@ export function planValidatedAdvance(
       frontierAfter: afterGraph.frontier,
       readyBefore,
       readyAfter,
+      ...(profile.removeTaskOwnedWorkEvents === true
+        ? { removedWorkEventIds: plan.removedWorkEventIds }
+        : {}),
     },
   };
 }

@@ -106,13 +106,14 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan advances the completed Git history probe", async () => {
+test("project actuals plan retains the accepted finish snapshot", async () => {
   const plan = "plans/project-actuals.pert";
   const [
     source,
     contractAcceptance,
     sourceAcceptance,
     probeAcceptance,
+    finishAcceptance,
   ] = await Promise.all([
     repositoryText(plan),
     repositoryText("docs/process/project-actuals-contract-review.md"),
@@ -121,6 +122,9 @@ test("project actuals plan advances the completed Git history probe", async () =
     ),
     repositoryText(
       "docs/process/project-actuals-git-history-probe-acceptance.md",
+    ),
+    repositoryText(
+      "docs/process/project-actuals-finish-acceptance.md",
     ),
   ]);
   const checked = runJson("document", "check", plan);
@@ -133,9 +137,12 @@ test("project actuals plan advances the completed Git history probe", async () =
     tasks: 6,
     gates: 2,
     errors: 0,
-    warnings: 0,
+    warnings: 1,
   });
-  assert.deepEqual(checked.diagnostics, []);
+  assert.deepEqual(
+    checked.diagnostics.map(({ code }) => code),
+    ["PTDAG-208"],
+  );
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
@@ -156,15 +163,16 @@ test("project actuals plan advances the completed Git history probe", async () =
     /`ACTUAL_GIT_HISTORY_PROBE` is accepted/,
   );
   assert.match(probeAcceptance, /Git commit `2198a0b`/);
+  assert.match(finishAcceptance, /`FINISH_ACTUALS` is accepted/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
-  assert.equal(analyzed.precedence.makespan.numerator, "22");
+  assert.equal(analyzed.precedence.makespan.numerator, "21");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
   assert.equal(analyzed.resource.makespan.numerator, "23");
-  assert.equal(analyzed.resource.resource_delay.numerator, "1");
+  assert.equal(analyzed.resource.resource_delay.numerator, "2");
   assert.equal(
     analyzed.velocity_forecast.precedence_makespan.numerator,
-    "44",
+    "42",
   );
   assert.equal(
     analyzed.velocity_forecast.precedence_makespan.denominator,
@@ -174,14 +182,14 @@ test("project actuals plan advances the completed Git history probe", async () =
   assert.equal(analyzed.velocity_forecast.resource_makespan.denominator, "29");
   assert.deepEqual(next.groups.active, []);
   assert.deepEqual(next.groups.ready, [
-    "FINISH_ACTUALS",
     "PROJECT_HISTORY",
+    "WORK_LIFECYCLE",
   ]);
   assert.deepEqual(next.recommendation.recommended_task_ids, [
-    "FINISH_ACTUALS",
+    "PROJECT_HISTORY",
   ]);
   assert.deepEqual(next.temporal.authority.startable_recommended_task_ids, [
-    "FINISH_ACTUALS",
+    "PROJECT_HISTORY",
   ]);
   assert.deepEqual(
     Object.fromEntries(
@@ -191,8 +199,8 @@ test("project actuals plan advances the completed Git history probe", async () =
       ]),
     ),
     {
-      FINISH_ACTUALS: "recommended",
-      PROJECT_HISTORY: "allowed",
+      PROJECT_HISTORY: "recommended",
+      WORK_LIFECYCLE: "deferred",
     },
   );
 });

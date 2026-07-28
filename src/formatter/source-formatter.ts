@@ -4,6 +4,9 @@ import {
   canonicalizeEventDateTimeSourceToken,
 } from "../model/calendar.js";
 import {
+  canonicalizeExactPersonHoursSourceToken,
+} from "../model/exact-person-hours-source.js";
+import {
   TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
 import type {
@@ -183,11 +186,11 @@ function isPersonHoursFractionValue(
 }
 
 function canonicalPersonHours(value: ExactPersonHoursValue): string {
-  const exact = "numerator" in value
-    ? rational(value.numerator, value.denominator)
-    : rational(value.digits, 10n ** BigInt(value.scale));
-  const hourToken = serializeExactDurationSource(exact, "hour").token;
-  return `${hourToken.slice(0, -1)}ph`;
+  const canonical = canonicalizeExactPersonHoursSourceToken(value.text);
+  if (canonical === null) {
+    throw new Error("validated person-hours value is not canonicalizable");
+  }
+  return canonical;
 }
 
 function isVelocityValue(value: unknown): value is VelocityValue {

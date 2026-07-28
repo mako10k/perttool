@@ -3,6 +3,7 @@ import { compareStableStrings } from "../model/diagnostics.js";
 import type {
   DeclarationNode,
   DocumentNode,
+  TargetDeclarationKind,
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import type { GovernanceSourceSnapshot, PrincipalId } from "./source.js";
@@ -114,7 +115,7 @@ export function normalizeGovernanceRequest(
 }
 
 function comparableField(
-  declaration: DeclarationNode | undefined,
+  declaration: DeclarationNode<TargetDeclarationKind> | undefined,
   name: string,
 ): unknown {
   const field = declaration === undefined ? undefined : fieldNamed(declaration, name);
@@ -132,14 +133,16 @@ function valuesEqual(left: unknown, right: unknown): boolean {
   return left === right;
 }
 
-function projectOf(document: DocumentNode): DeclarationNode | undefined {
+function projectOf(
+  document: DocumentNode<TargetDeclarationKind>,
+): DeclarationNode<TargetDeclarationKind> | undefined {
   return document.declarations.find(({ kind }) => kind === "project");
 }
 
 function structuralDeclarations(
-  document: DocumentNode,
-): ReadonlyMap<string, DeclarationNode> {
-  const result = new Map<string, DeclarationNode>();
+  document: DocumentNode<TargetDeclarationKind>,
+): ReadonlyMap<string, DeclarationNode<TargetDeclarationKind>> {
+  const result = new Map<string, DeclarationNode<TargetDeclarationKind>>();
   for (const declaration of document.declarations) {
     if (
       declaration.kind === "task" ||
@@ -153,8 +156,8 @@ function structuralDeclarations(
 }
 
 function hasStructuralDagChange(
-  original: DocumentNode,
-  candidate: DocumentNode,
+  original: DocumentNode<TargetDeclarationKind>,
+  candidate: DocumentNode<TargetDeclarationKind>,
 ): boolean {
   const originalDeclarations = structuralDeclarations(original);
   const candidateDeclarations = structuralDeclarations(candidate);
@@ -173,8 +176,8 @@ function hasStructuralDagChange(
 }
 
 function fieldChanged(
-  original: DeclarationNode | undefined,
-  candidate: DeclarationNode | undefined,
+  original: DeclarationNode<TargetDeclarationKind> | undefined,
+  candidate: DeclarationNode<TargetDeclarationKind> | undefined,
   name: string,
 ): boolean {
   return !valuesEqual(
@@ -184,8 +187,8 @@ function fieldChanged(
 }
 
 export function classifyGovernanceScopes(
-  original: DocumentNode,
-  candidate: DocumentNode,
+  original: DocumentNode<TargetDeclarationKind>,
+  candidate: DocumentNode<TargetDeclarationKind>,
 ): readonly GovernanceScope[] {
   if (original.text === candidate.text) return Object.freeze([]);
   const before = projectOf(original);
@@ -208,8 +211,13 @@ export function classifyGovernanceScopes(
   return Object.freeze(scopes);
 }
 
+export interface GovernanceAuthoritySource {
+  readonly originalDigest: string;
+  readonly effective: GovernanceSourceSnapshot["effective"];
+}
+
 function scopeDecision(
-  snapshot: GovernanceSourceSnapshot,
+  snapshot: GovernanceAuthoritySource,
   scope: GovernanceScope,
   request: GovernanceRequest,
 ): GovernanceScopeDecision {
@@ -253,7 +261,7 @@ function scopeDecision(
 }
 
 export function evaluateGovernanceAuthority(
-  snapshot: GovernanceSourceSnapshot,
+  snapshot: GovernanceAuthoritySource,
   affectedScopes: readonly GovernanceScope[],
   request: GovernanceRequest,
 ): GovernanceDecisionV1 {

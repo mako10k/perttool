@@ -130,12 +130,17 @@ accepted. Git commit `2198a0b` records the exact completed 5p
 source/history gates are advanced to reached `HISTORY_INPUT_READY`. The
 internal probe binds SHA-1/SHA-256 repository snapshots, first-parent path
 history, raw source digests, typed availability, linked worktrees, and
-source/HEAD races without changing Git or the active public surface. Six tasks
-and 33p remain. Precedence is 22p; the `parallel-sgs` version 1 heuristic
-resource makespan is 23p with 1p resource delay. At the inherited operations
-velocity `29p/2d`, the forecasts are `44/29d` and `46/29d`. Complete
-NextResult v4 recommends and starts only `FINISH_ACTUALS`; `PROJECT_HISTORY`
-is allowed. Public Grammar 5/CLI Contract 6 activation, Git mutation,
+source/HEAD races without changing Git or the active public surface.
+`FINISH_ACTUALS` is complete and retained as done pending its required
+pre-advance commit. Its internal target implements deterministic eventful
+finish, exact measurements, finish-only and complete coverage, governed
+Grammar 5 safe write, and task-owned advance removal without changing the
+active public surface. Five tasks and 28p remain. Precedence is 21p; the
+`parallel-sgs` version 1 heuristic resource makespan is 23p with 2p resource
+delay. At the inherited operations velocity `29p/2d`, the forecasts are
+`42/29d` and `46/29d`. Complete NextResult v4 recommends and starts only
+`PROJECT_HISTORY`; `WORK_LIFECYCLE` is deferred by the selected `CLI_SURFACE`
+capacity witness. Public Grammar 5/CLI Contract 6 activation, Git mutation,
 automatic declared-velocity changes, MIG-08, release publication, and
 dist-tag movement remain outside the authorized scope. This independent
 workstream does not displace `PERT_PLANS` in the English-baseline detail.

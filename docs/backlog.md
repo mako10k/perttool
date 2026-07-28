@@ -298,7 +298,7 @@ architecture decision is normative.
 
 Priority: P0
 
-Status: Contract accepted; internal source Core and Git history probe complete
+Status: Contract accepted; internal source, Git probe, and eventful finish complete
 
 Git history can prove that a task-state snapshot was recorded, but it cannot
 prove the actual event time, active execution duration, person effort, or the
@@ -319,7 +319,11 @@ records the internal Grammar 5 parser, validation, formatter, and exact source
 model without activating the future public contract. The
 [`ACTUAL_GIT_HISTORY_PROBE` acceptance](process/project-actuals-git-history-probe-acceptance.md)
 records the internal read-only first-parent repository adapter, typed
-availability, race handling, and unchanged active public surface.
+availability, race handling, and unchanged active public surface. The
+[`FINISH_ACTUALS` acceptance](process/project-actuals-finish-acceptance.md)
+records atomic eventful finish, exact measurements, deterministic retry,
+governed Grammar 5 safe write, and advance event ownership without activating
+the future public contract.
 
 Required outcomes:
 
@@ -355,8 +359,8 @@ Planned delivery slices:
 | --- | --- | ---: | --- |
 | `ACTUALS_CONTRACT_REVIEW` | Accept source syntax/version, event/lifecycle semantics, history/observation schemas, diagnostics, compatibility, and normative cases | 4p | No unresolved semantic or public-contract decision blocks implementation. |
 | `ACTUAL_SOURCE_CORE` | Grammar 5 work-event and suspended-state parsing, validation, formatting, and exact model | 5p | Complete: internal source round trips and preserves Grammar 1-4 behavior. |
-| `ACTUAL_GIT_HISTORY_PROBE` | Shared read-only repository/path/revision snapshots and typed history availability | 5p | First-parent, shallow, path, race, and unavailable cases are deterministic and Git remains unchanged. |
-| `FINISH_ACTUALS` | Eventful finish, exact measurements, planned baseline, retry, governance, and safe-write composition | 5p | Status and finish event form one validated candidate and installed-active behavior remains unchanged. |
+| `ACTUAL_GIT_HISTORY_PROBE` | Shared read-only repository/path/revision snapshots and typed history availability | 5p | Complete: first-parent, shallow, path, race, and unavailable cases are deterministic and Git remains unchanged. |
+| `FINISH_ACTUALS` | Eventful finish, exact measurements, planned baseline, retry, governance, and safe-write composition | 5p | Complete: status and finish event form one validated candidate and installed-active behavior remains unchanged. |
 | `WORK_LIFECYCLE` | Start, suspend, resume, state reduction, resource/classification handling, and result version target | 7p | Complete/open/finish-only sequences and suspended behavior pass focused tests. |
 | `PROJECT_HISTORY` | Semantic reconstruction, deduplication, advance removal, legacy qualification, Core/text/JSON | 6p | Explicit and legacy evidence remain distinct across real repository histories. |
 | `VELOCITY_OBSERVATION` | Exact Point/hour, qualified Point/active-date, and Point/person-hour observations | 5p | Parallel work is not double-counted and declared velocity is unchanged. |

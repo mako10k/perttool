@@ -1,5 +1,8 @@
 import type { SourceSpan } from "../model/diagnostics.js";
-import type { DocumentNode } from "../model/syntax.js";
+import type {
+  DocumentNode,
+  TargetDeclarationKind,
+} from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import type { TargetGrammar4ValidatedDocument } from "../semantic/target-validator.js";
 
@@ -87,7 +90,7 @@ class ImmutablePrincipalSet implements ReadonlySet<PrincipalId> {
 }
 
 function declaredOwner(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
   fieldName: "goal_owner" | "dag_owner",
 ): PrincipalId | null {
   const project = document.declarations.find(({ kind }) => kind === "project");
@@ -102,7 +105,7 @@ function declaredOwner(
 }
 
 function declaredDelegates(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
   fieldName: "goal_delegates" | "dag_delegates",
 ): readonly PrincipalId[] | null {
   const project = document.declarations.find(({ kind }) => kind === "project");
@@ -128,7 +131,7 @@ function immutableSet(
 }
 
 export function governanceMetadataFromDocument(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
 ): GovernanceMetadata {
   const declared = Object.freeze({
     goalOwner: declaredOwner(document, "goal_owner"),
@@ -146,7 +149,7 @@ export function governanceMetadataFromDocument(
 }
 
 function fieldSource(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
   fieldName:
     | "goal_owner"
     | "goal_delegates"

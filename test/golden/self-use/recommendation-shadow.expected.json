@@ -209,64 +209,75 @@
       ]
     },
     "project-actuals": {
-      "source_digest": "sha256:1b9e388a0d0226499312ceaca51c8d8059fe8ec754d325371e790b305a5c07ed",
+      "source_digest": "sha256:040b25e86ec82bc47f883a567788bd1d9fb7ac46900b0887262e6715b0ea20ed",
       "groups": {
         "active": [],
         "ready": [
-          "FINISH_ACTUALS",
-          "PROJECT_HISTORY"
+          "PROJECT_HISTORY",
+          "WORK_LIFECYCLE"
         ],
         "runnable_now": [
-          "FINISH_ACTUALS",
           "PROJECT_HISTORY"
         ],
         "blocked_now": [],
         "upcoming": [
           "ACTUALS_PUBLIC_CONTRACT",
           "ACTUALS_ACCEPTANCE",
-          "WORK_LIFECYCLE",
           "VELOCITY_OBSERVATION"
         ]
       },
       "recommended_task_ids": [
-        "FINISH_ACTUALS"
+        "PROJECT_HISTORY"
       ],
       "manual_selected_task_ids": [
-        "FINISH_ACTUALS",
         "PROJECT_HISTORY"
       ],
       "tiers": {
-        "FINISH_ACTUALS": "recommended",
-        "PROJECT_HISTORY": "allowed"
+        "PROJECT_HISTORY": "recommended",
+        "WORK_LIFECYCLE": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "FINISH_ACTUALS",
+          "id": "PROJECT_HISTORY",
           "runnable_now": true,
           "precedence_critical": true,
-          "schedule_critical": false,
+          "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
         },
         {
-          "id": "PROJECT_HISTORY",
-          "runnable_now": true,
+          "id": "WORK_LIFECYCLE",
+          "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "1/1",
-          "resource_rejections": []
+          "total_float": "4/1",
+          "resource_rejections": [
+            {
+              "resource_id": "CLI_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "PROJECT_HISTORY"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
         "task_decisions": 2,
         "decision_steps": 12,
-        "facts": 36,
-        "comparisons": 1,
+        "facts": 47,
+        "comparisons": 2,
         "reasons": 8,
-        "descriptions": 3
+        "descriptions": 4
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "recommendation": {
       "source_digest": "sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464",

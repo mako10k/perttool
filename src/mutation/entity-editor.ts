@@ -1,4 +1,7 @@
-import type { DeclarationNode } from "../model/syntax.js";
+import type {
+  DeclarationNode,
+  TargetDeclarationKind,
+} from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import {
   contentTextEndOffset,
@@ -15,7 +18,7 @@ import type { TextEdit } from "./text-edits.js";
 export class EntityEditor {
   readonly lineEnding: "\n" | "\r\n";
   readonly #text: string;
-  readonly #declaration: DeclarationNode;
+  readonly #declaration: DeclarationNode<TargetDeclarationKind>;
   readonly #lines: ReturnType<typeof splitPhysicalLines>;
   readonly #fieldRank: ReadonlyMap<string, number>;
   readonly #deleted: Set<string>;
@@ -24,7 +27,7 @@ export class EntityEditor {
 
   constructor(
     text: string,
-    declaration: DeclarationNode,
+    declaration: DeclarationNode<TargetDeclarationKind>,
     fieldOrder: readonly string[],
     deleted: readonly string[] = [],
   ) {

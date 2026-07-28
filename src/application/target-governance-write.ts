@@ -28,6 +28,14 @@ type TargetGovernancePersistentResult =
   | TargetGovernanceMutationResultV2
   | TargetGovernanceAdvanceResultV2;
 
+export interface DigestBoundGovernanceResult {
+  readonly ok: boolean;
+  readonly originalDigest: string;
+  readonly updatedDigest: string | null;
+  readonly updatedText: string | null;
+  readonly governance: TargetGovernancePersistentResult["governance"];
+}
+
 function writeProjection(
   request: TargetGovernancePersistenceRequest,
   written: boolean,
@@ -39,8 +47,8 @@ function writeProjection(
   });
 }
 
-function candidateForAuthorizedWrite(
-  result: TargetGovernancePersistentResult,
+export function candidateForAuthorizedWrite(
+  result: DigestBoundGovernanceResult,
 ): string | null {
   const decision = result.governance;
   if (

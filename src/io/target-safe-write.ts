@@ -1,10 +1,12 @@
 import type {
   TargetGrammar4Capability,
+  TargetGrammar5Capability,
   TargetGrammar3Capability,
   TargetGrammar2Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar4Document,
+  validateTargetGrammar5Document,
   validateTargetGrammar3Document,
   validateTargetDocument,
 } from "../semantic/target-validator.js";
@@ -48,6 +50,18 @@ function targetGrammar4Validator(
 ): DocumentCandidateValidator {
   return (text) => {
     const checked = validateTargetGrammar4Document(text, capability);
+    return {
+      ok: checked.ok,
+      diagnostics: checked.diagnostics,
+    };
+  };
+}
+
+function targetGrammar5Validator(
+  capability: TargetGrammar5Capability,
+): DocumentCandidateValidator {
+  return (text) => {
+    const checked = validateTargetGrammar5Document(text, capability);
     return {
       ok: checked.ok,
       diagnostics: checked.diagnostics,
@@ -151,6 +165,50 @@ export async function createTargetGrammar4DocumentFileFromSource(
     target,
     candidateText,
     targetGrammar4Validator(capability),
+    options,
+  );
+}
+
+export async function replaceTargetGrammar5DocumentFile(
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar5Capability,
+  options: ReplaceDocumentOptions,
+): Promise<DocumentWriteResult> {
+  return replaceValidatedDocumentFile(
+    target,
+    candidateText,
+    options,
+    targetGrammar5Validator(capability),
+  );
+}
+
+export async function createTargetGrammar5DocumentFile(
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar5Capability,
+  options: CreateDocumentOptions = {},
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFile(
+    target,
+    candidateText,
+    targetGrammar5Validator(capability),
+    options,
+  );
+}
+
+export async function createTargetGrammar5DocumentFileFromSource(
+  source: string,
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar5Capability,
+  options: CreateDocumentFromSourceOptions,
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFileFromSource(
+    source,
+    target,
+    candidateText,
+    targetGrammar5Validator(capability),
     options,
   );
 }
