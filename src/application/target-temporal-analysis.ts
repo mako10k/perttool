@@ -47,6 +47,7 @@ import {
   validateTargetGrammar3Document,
   type TargetGrammar3ValidatedDocument,
   type TargetGrammar4ValidatedDocument,
+  type TargetGrammar5ValidatedDocument,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 import {
@@ -63,7 +64,8 @@ type TargetTemporalCapability =
   | TargetGrammar4Capability;
 type TargetTemporalValidatedDocument =
   | TargetGrammar3ValidatedDocument
-  | TargetGrammar4ValidatedDocument;
+  | TargetGrammar4ValidatedDocument
+  | TargetGrammar5ValidatedDocument;
 
 function validateTargetTemporalDocument(
   text: string,
@@ -387,7 +389,7 @@ function hasTemporalSource(inputs: TargetTemporalInputProjection): boolean {
   );
 }
 
-function scheduleProjection(
+export function projectTargetTemporalSchedule(
   validated: TargetTemporalValidatedDocument,
   inputs: TargetTemporalInputProjection,
   schedule: TemporalPrecedenceSchedule | TemporalResourceSchedule,
@@ -596,13 +598,13 @@ export function analyzeTargetTemporalDocument(
         version: 1 as const,
       }),
       anchor: inputs.anchor,
-      precedence: scheduleProjection(
+      precedence: projectTargetTemporalSchedule(
         validated,
         inputs,
         precedenceSchedule,
         "precedence",
       ),
-      resource: scheduleProjection(
+      resource: projectTargetTemporalSchedule(
         validated,
         inputs,
         resourceSchedule,
@@ -615,13 +617,17 @@ export function analyzeTargetTemporalDocument(
   });
 }
 
-function timeEligibility(
+export function projectTargetTimeEligibility(
   input: TargetTemporalInputProjection["tasks"][number],
 ): TargetTimeEligibility {
   const factId = `temporal:task:${input.taskId}:release`;
   let state: TargetTimeEligibility["state"];
   let code: TargetTimeEligibility["explanation"]["code"];
-  if (input.status === "active" || input.status === "done") {
+  if (
+    input.status === "active" ||
+    input.status === "suspended" ||
+    input.status === "done"
+  ) {
     state = "not_applicable";
     code = "task_already_started";
   } else if (input.declaredNotBefore === null) {
@@ -666,7 +672,7 @@ function timeEligibility(
   });
 }
 
-function temporalTaskRecords(
+export function projectTargetNextTemporalTasks(
   validated: TargetTemporalValidatedDocument,
   inputs: TargetTemporalInputProjection,
   analysis: TargetTemporalAnalysis,
@@ -702,7 +708,7 @@ function temporalTaskRecords(
       return Object.freeze({
         taskId: input.taskId,
         declaredNotBefore: input.declaredNotBefore,
-        timeEligibility: timeEligibility(input),
+        timeEligibility: projectTargetTimeEligibility(input),
         taskDeadline: input.deadline?.deadline ?? null,
         destinationMilestoneId,
         destinationDeadline:
@@ -748,7 +754,11 @@ export function selectTargetTemporalTasks(
   const checked = validateTargetTemporalDocument(text, capability, options);
   const validated = checked.validatedDocument!;
   const inputs = projectTargetTemporalInputs(validated);
-  const tasks = temporalTaskRecords(validated, inputs, analyzed.temporal);
+  const tasks = projectTargetNextTemporalTasks(
+    validated,
+    inputs,
+    analyzed.temporal,
+  );
   const eligibilityById = new Map(
     tasks.map((task) => [task.taskId, task.timeEligibility]),
   );

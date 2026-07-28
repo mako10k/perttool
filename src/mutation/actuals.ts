@@ -1,4 +1,5 @@
 import type {
+  NormalizedLifecycleMutationRequest,
   NormalizedFinishActualsRequest,
   TaskLifecycleState,
 } from "../actuals/lifecycle.js";
@@ -26,44 +27,68 @@ export interface FinishActualsEditPlan {
   readonly fromState: TaskLifecycleState;
 }
 
-function serializeFinishEvent(
-  request: NormalizedFinishActualsRequest,
+export interface LifecycleEditPlan {
+  readonly edits: readonly TextEdit[];
+  readonly task: DeclarationNode<TargetDeclarationKind>;
+  readonly fromState: TaskLifecycleState;
+}
+
+function lifecycleEventKind(
+  request: NormalizedLifecycleMutationRequest,
+): "start" | "suspend" | "resume" | "finish" {
+  return request.kind === "task.finish.actual"
+    ? "finish"
+    : request.kind.slice("task.".length) as "start" | "suspend" | "resume";
+}
+
+function serializeLifecycleEvent(
+  request: NormalizedLifecycleMutationRequest,
+  plannedValue: string | null,
   lineEnding: string,
 ): string {
   const fields = [
     `work_event ${request.event.id}:`,
     "  model 1",
     `  task ${request.taskId}`,
-    "  kind finish",
+    `  kind ${lifecycleEventKind(request)}`,
     `  occurred_at ${request.event.occurredAt}`,
-    ...(request.event.activeTime === null
+    ...(plannedValue === null
+      ? []
+      : [`  planned_value ${plannedValue}`]),
+    ...(request.kind !== "task.finish.actual" ||
+        request.event.activeTime === null
       ? []
       : [`  active_time ${request.event.activeTime}`]),
-    ...(request.event.effort === null
+    ...(request.kind !== "task.finish.actual" ||
+        request.event.effort === null
       ? []
       : [`  effort ${request.event.effort}`]),
+    ...(request.kind !== "task.suspend" || request.event.reason === null
+      ? []
+      : [`  reason ${JSON.stringify(request.event.reason)}`]),
   ];
   return fields.join(lineEnding);
 }
 
-export function planFinishActualsEdits(
+export function planLifecycleEdits(
   text: string,
   validated: TargetGrammar5ValidatedDocument,
-  request: NormalizedFinishActualsRequest,
+  request: NormalizedLifecycleMutationRequest,
   fromState: TaskLifecycleState,
-): FinishActualsEditPlan {
+  plannedValue: string | null,
+): LifecycleEditPlan {
   const task = validated.document.declarations.find(
     (declaration) =>
       declaration.kind === "task" && declaration.id === request.taskId,
   );
   if (task === undefined) {
-    throw new Error("validated finish-actuals edit plan lost its task");
+    throw new Error("validated lifecycle edit plan lost its task");
   }
   const project = validated.document.declarations.find(
     (declaration) => declaration.kind === "project",
   );
   if (project === undefined) {
-    throw new Error("validated finish-actuals edit plan lost its project");
+    throw new Error("validated lifecycle edit plan lost its project");
   }
   const edits: TextEdit[] = [];
   const taskEditor = new EntityEditor(
@@ -71,8 +96,19 @@ export function planFinishActualsEdits(
     task,
     TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER.task,
   );
-  taskEditor.setScalar("status", "done");
-  if (fromState === "blocked") taskEditor.clear("blocked_reason");
+  const targetState: TaskLifecycleState =
+    request.kind === "task.start" || request.kind === "task.resume"
+      ? "active"
+      : request.kind === "task.suspend"
+        ? "suspended"
+        : "done";
+  taskEditor.setScalar("status", targetState);
+  if (
+    fromState === "blocked" &&
+    request.kind === "task.finish.actual"
+  ) {
+    taskEditor.clear("blocked_reason");
+  }
   edits.push(...taskEditor.finish());
 
   const version = fieldNamed(project, "version")?.value ?? 1;
@@ -89,7 +125,7 @@ export function planFinishActualsEdits(
   edits.push(
     appendDeclarationEdit(
       text,
-      serializeFinishEvent(request, lineEnding),
+      serializeLifecycleEvent(request, plannedValue, lineEnding),
       lineEnding,
     ),
   );
@@ -98,4 +134,19 @@ export function planFinishActualsEdits(
     task,
     fromState,
   });
+}
+
+export function planFinishActualsEdits(
+  text: string,
+  validated: TargetGrammar5ValidatedDocument,
+  request: NormalizedFinishActualsRequest,
+  fromState: TaskLifecycleState,
+): FinishActualsEditPlan {
+  return planLifecycleEdits(
+    text,
+    validated,
+    request,
+    fromState,
+    null,
+  );
 }

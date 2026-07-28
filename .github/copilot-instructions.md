@@ -34,11 +34,15 @@ Mandatory summary:
   `PROJECT_HISTORY_READY`. Its internal pure reducer reconstructs explicit
   events, advance removal, qualified legacy Git-recorded transitions, exact
   task summaries, and typed availability from the first-parent probe;
-  deterministic Result v1 text/JSON remains publicly inactive. Four tasks and
-  22p remain; precedence and the `parallel-sgs`
-  version 1 heuristic resource makespan are both 17p with no delay. Complete
-  NextResult v4 recommends and starts only `WORK_LIFECYCLE`;
-  `VELOCITY_OBSERVATION` is allowed.
+  deterministic Result v1 text/JSON remains publicly inactive.
+  `WORK_LIFECYCLE` is complete and retained done pending its pre-advance
+  commit. Its internal target provides exact start/suspend/resume candidates,
+  deterministic retry and refusal, resource release, full remaining-duration
+  schedules, and separate AnalysisResult v4/NextResult v5 suspended handling
+  without changing the active public surface. Three tasks and 15p remain;
+  precedence and the `parallel-sgs` version 1 heuristic resource makespan are
+  both 15p with no delay. Complete NextResult v4 recommends and starts only
+  `VELOCITY_OBSERVATION`.
   Public Grammar 5/CLI Contract 6 activation, Git mutation, velocity adoption,
   MIG-08, publication, and dist-tag movement remain outside scope. The
   independent workstream does not displace `PERT_PLANS`.

@@ -21,13 +21,17 @@ import {
   multiply,
   rational,
 } from "../model/rational.js";
-import type { DeclarationNode } from "../model/syntax.js";
+import type {
+  DeclarationNode,
+  TargetDeclarationKind,
+} from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import type { TargetCalendarValue } from "../model/target-calendar.js";
 import type { DurationUnit, Velocity } from "../model/units.js";
 import type {
   TargetGrammar3ValidatedDocument,
   TargetGrammar4ValidatedDocument,
+  TargetGrammar5ValidatedDocument,
 } from "../semantic/target-validator.js";
 import type {
   TemporalPrecedenceSchedule,
@@ -128,7 +132,7 @@ export interface DeadlineEvaluation {
 }
 
 interface DeadlineSubject {
-  readonly declaration: DeclarationNode;
+  readonly declaration: DeclarationNode<TargetDeclarationKind>;
   readonly kind: "task" | "milestone";
   readonly id: string;
   readonly input: TargetDeadlineInput;
@@ -506,10 +510,14 @@ function deadlineView(
 function predecessorBlockedTaskIds(
   document:
     | TargetGrammar3ValidatedDocument["document"]
-    | TargetGrammar4ValidatedDocument["document"],
+    | TargetGrammar4ValidatedDocument["document"]
+    | TargetGrammar5ValidatedDocument["document"],
   subject: DeadlineSubject,
 ): readonly string[] {
-  const incoming = new Map<string, DeclarationNode[]>();
+  const incoming = new Map<
+    string,
+    DeclarationNode<TargetDeclarationKind>[]
+  >();
   for (const declaration of document.declarations) {
     if (declaration.kind === "task" || declaration.kind === "gate") {
       const list = incoming.get(declaration.to!) ?? [];
@@ -608,7 +616,8 @@ function combined(
 export function evaluateTemporalDeadlines(
   validated:
     | TargetGrammar3ValidatedDocument
-    | TargetGrammar4ValidatedDocument,
+    | TargetGrammar4ValidatedDocument
+    | TargetGrammar5ValidatedDocument,
   inputs: TargetTemporalInputProjection,
   precedenceSchedule: TemporalPrecedenceSchedule,
   resourceSchedule: TemporalResourceSchedule,

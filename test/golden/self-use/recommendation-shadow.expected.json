@@ -209,15 +209,13 @@
       ]
     },
     "project-actuals": {
-      "source_digest": "sha256:f74db95a8e53dd224a6ee4f7a794a6f519d6a1fac17086fd907c5cf7c5c5ac95",
+      "source_digest": "sha256:c02a48dac9ed9344d3b03756979ad71c77d8f527203d43ed005d36ebb2b898a9",
       "groups": {
         "active": [],
         "ready": [
-          "WORK_LIFECYCLE",
           "VELOCITY_OBSERVATION"
         ],
         "runnable_now": [
-          "WORK_LIFECYCLE",
           "VELOCITY_OBSERVATION"
         ],
         "blocked_now": [],
@@ -227,44 +225,36 @@
         ]
       },
       "recommended_task_ids": [
-        "WORK_LIFECYCLE"
+        "VELOCITY_OBSERVATION"
       ],
       "manual_selected_task_ids": [
-        "WORK_LIFECYCLE",
         "VELOCITY_OBSERVATION"
       ],
       "tiers": {
-        "WORK_LIFECYCLE": "recommended",
-        "VELOCITY_OBSERVATION": "allowed"
+        "VELOCITY_OBSERVATION": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "WORK_LIFECYCLE",
+          "id": "VELOCITY_OBSERVATION",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
-        },
-        {
-          "id": "VELOCITY_OBSERVATION",
-          "runnable_now": true,
-          "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "2/1",
-          "resource_rejections": []
         }
       ],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 12,
-        "facts": 36,
-        "comparisons": 1,
-        "reasons": 8,
-        "descriptions": 3
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "recommendation": {
       "source_digest": "sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464",

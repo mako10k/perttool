@@ -67,15 +67,94 @@ export interface FinishActualsMutation {
   readonly event: LifecycleEventInput;
 }
 
-export interface NormalizedFinishActualsRequest {
-  readonly kind: "task.finish.actual";
+export interface StartActualsMutation {
+  readonly kind: "task.start";
   readonly taskId: string;
-  readonly event: {
-    readonly id: string;
-    readonly occurredAt: string;
-    readonly activeTime: string | null;
-    readonly effort: string | null;
-  };
+  readonly event: LifecycleEventInput;
+}
+
+export interface SuspendActualsMutation {
+  readonly kind: "task.suspend";
+  readonly taskId: string;
+  readonly event: LifecycleEventInput;
+}
+
+export interface ResumeActualsMutation {
+  readonly kind: "task.resume";
+  readonly taskId: string;
+  readonly event: LifecycleEventInput;
+}
+
+export type LifecycleMutation =
+  | StartActualsMutation
+  | SuspendActualsMutation
+  | ResumeActualsMutation
+  | FinishActualsMutation;
+
+export type LifecycleMutationKind = LifecycleMutation["kind"];
+
+interface NormalizedLifecycleEventBase {
+  readonly id: string;
+  readonly occurredAt: string;
+}
+
+export type NormalizedLifecycleMutationRequest =
+  | {
+      readonly kind: "task.start";
+      readonly taskId: string;
+      readonly event: NormalizedLifecycleEventBase;
+    }
+  | {
+      readonly kind: "task.suspend";
+      readonly taskId: string;
+      readonly event: NormalizedLifecycleEventBase & {
+        readonly reason: string | null;
+      };
+    }
+  | {
+      readonly kind: "task.resume";
+      readonly taskId: string;
+      readonly event: NormalizedLifecycleEventBase;
+    }
+  | {
+      readonly kind: "task.finish.actual";
+      readonly taskId: string;
+      readonly event: NormalizedLifecycleEventBase & {
+        readonly activeTime: string | null;
+        readonly effort: string | null;
+      };
+    };
+
+export type NormalizedFinishActualsRequest = Extract<
+  NormalizedLifecycleMutationRequest,
+  { readonly kind: "task.finish.actual" }
+>;
+
+export type NormalizedStartActualsRequest = Extract<
+  NormalizedLifecycleMutationRequest,
+  { readonly kind: "task.start" }
+>;
+
+export type NormalizedSuspendActualsRequest = Extract<
+  NormalizedLifecycleMutationRequest,
+  { readonly kind: "task.suspend" }
+>;
+
+export type NormalizedResumeActualsRequest = Extract<
+  NormalizedLifecycleMutationRequest,
+  { readonly kind: "task.resume" }
+>;
+
+export interface LifecycleMutationRequestNormalization {
+  readonly ok: boolean;
+  readonly request: NormalizedLifecycleMutationRequest | null;
+  readonly diagnostics: readonly Diagnostic[];
+}
+
+export interface FinishActualsRequestNormalization {
+  readonly ok: boolean;
+  readonly request: NormalizedFinishActualsRequest | null;
+  readonly diagnostics: readonly Diagnostic[];
 }
 
 export interface LifecycleReduction {
@@ -86,14 +165,13 @@ export interface LifecycleReduction {
   readonly diagnostics: readonly Diagnostic[];
 }
 
-export interface FinishActualsRequestNormalization {
-  readonly ok: boolean;
-  readonly request: NormalizedFinishActualsRequest | null;
-  readonly diagnostics: readonly Diagnostic[];
-}
-
 export function actualsDiagnostic(
-  code: "PTACT-104" | "PTACT-105" | "PTACT-106" | "PTACT-107",
+  code:
+    | "PTACT-104"
+    | "PTACT-105"
+    | "PTACT-106"
+    | "PTACT-107"
+    | "PTACT-108",
   message: string,
   cause: string,
   entityId: string | null,
@@ -114,7 +192,7 @@ export function actualsDiagnostic(
 function invalidRequest(
   taskId: string | null,
   detail: string,
-): FinishActualsRequestNormalization {
+): LifecycleMutationRequestNormalization {
   return Object.freeze({
     ok: false,
     request: null,
@@ -142,9 +220,9 @@ export function deriveWorkEventId(
   return `WE-${createHash("sha256").update(payload, "utf8").digest("hex")}`;
 }
 
-export function normalizeFinishActualsRequest(
+export function normalizeLifecycleMutationRequest(
   input: unknown,
-): FinishActualsRequestNormalization {
+): LifecycleMutationRequestNormalization {
   if (input === null || typeof input !== "object" || Array.isArray(input)) {
     return invalidRequest(null, "request_must_be_object");
   }
@@ -153,7 +231,12 @@ export function normalizeFinishActualsRequest(
     Object.keys(record).some(
       (name) => !["kind", "taskId", "event"].includes(name),
     ) ||
-    record["kind"] !== "task.finish.actual" ||
+    (
+      record["kind"] !== "task.start" &&
+      record["kind"] !== "task.suspend" &&
+      record["kind"] !== "task.resume" &&
+      record["kind"] !== "task.finish.actual"
+    ) ||
     typeof record["taskId"] !== "string" ||
     !identifierPattern.test(record["taskId"])
   ) {
@@ -168,14 +251,32 @@ export function normalizeFinishActualsRequest(
     return invalidRequest(taskId, "event_must_be_object");
   }
   const eventRecord = event as Record<string, unknown>;
+  const kind = record["kind"] as LifecycleMutationKind;
+  const permittedFields: Readonly<Record<
+    LifecycleMutationKind,
+    ReadonlySet<string>
+  >> = {
+    "task.start": new Set(["id", "occurredAt"]),
+    "task.suspend": new Set(["id", "occurredAt", "reason"]),
+    "task.resume": new Set(["id", "occurredAt"]),
+    "task.finish.actual": new Set([
+      "id",
+      "occurredAt",
+      "activeTime",
+      "effort",
+    ]),
+  };
   if (
     Object.keys(eventRecord).some(
-      (name) =>
-        !["id", "occurredAt", "reason", "activeTime", "effort"].includes(name),
-    ) ||
-    "reason" in eventRecord
+      (name) => !permittedFields[kind].has(name),
+    )
   ) {
-    return invalidRequest(taskId, "invalid_finish_event_fields");
+    return invalidRequest(
+      taskId,
+      kind === "task.finish.actual"
+        ? "invalid_finish_event_fields"
+        : `invalid_${kind.slice("task.".length)}_event_fields`,
+    );
   }
   if (typeof eventRecord["occurredAt"] !== "string") {
     return invalidRequest(taskId, "occurred_at_required");
@@ -193,14 +294,48 @@ export function normalizeFinishActualsRequest(
   ) {
     return invalidRequest(taskId, "invalid_event_id");
   }
+  const eventKind: WorkEventKind =
+    kind === "task.finish.actual"
+      ? "finish"
+      : kind.slice("task.".length) as Exclude<WorkEventKind, "finish">;
+  const id = requestedId ?? deriveWorkEventId(taskId, eventKind, occurredAt);
+  if (kind === "task.suspend") {
+    const reason = eventRecord["reason"];
+    if (reason !== undefined && typeof reason !== "string") {
+      return invalidRequest(taskId, "invalid_reason");
+    }
+    return Object.freeze({
+      ok: true,
+      request: Object.freeze({
+        kind,
+        taskId,
+        event: Object.freeze({
+          id,
+          occurredAt,
+          reason: reason ?? null,
+        }),
+      }),
+      diagnostics: Object.freeze([]),
+    });
+  }
+  if (kind === "task.start" || kind === "task.resume") {
+    return Object.freeze({
+      ok: true,
+      request: Object.freeze({
+        kind,
+        taskId,
+        event: Object.freeze({ id, occurredAt }),
+      }),
+      diagnostics: Object.freeze([]),
+    });
+  }
   const activeInput = eventRecord["activeTime"];
   if (activeInput !== undefined && typeof activeInput !== "string") {
     return invalidRequest(taskId, "invalid_active_time");
   }
-  const activeTime =
-    activeInput === undefined
-      ? null
-      : canonicalizeExactDurationSourceToken(activeInput);
+  const activeTime = activeInput === undefined
+    ? null
+    : canonicalizeExactDurationSourceToken(activeInput);
   if (
     activeInput !== undefined &&
     (activeTime === null || !activeInput.endsWith("h"))
@@ -211,20 +346,16 @@ export function normalizeFinishActualsRequest(
   if (effortInput !== undefined && typeof effortInput !== "string") {
     return invalidRequest(taskId, "invalid_effort");
   }
-  const effort =
-    effortInput === undefined
-      ? null
-      : canonicalizeExactPersonHoursSourceToken(effortInput);
+  const effort = effortInput === undefined
+    ? null
+    : canonicalizeExactPersonHoursSourceToken(effortInput);
   if (effortInput !== undefined && effort === null) {
     return invalidRequest(taskId, "invalid_effort");
   }
-  const id =
-    requestedId ??
-    deriveWorkEventId(taskId, "finish", occurredAt);
   return Object.freeze({
     ok: true,
     request: Object.freeze({
-      kind: "task.finish.actual",
+      kind,
       taskId,
       event: Object.freeze({
         id,
@@ -235,6 +366,30 @@ export function normalizeFinishActualsRequest(
     }),
     diagnostics: Object.freeze([]),
   });
+}
+
+export function normalizeFinishActualsRequest(
+  input: unknown,
+): FinishActualsRequestNormalization {
+  const normalized = normalizeLifecycleMutationRequest(input);
+  if (
+    !normalized.ok ||
+    normalized.request === null ||
+    normalized.request.kind !== "task.finish.actual"
+  ) {
+    if (normalized.ok && normalized.request !== null) {
+      return invalidRequest(
+        normalized.request.taskId,
+        "invalid_request_shape",
+      ) as FinishActualsRequestNormalization;
+    }
+    return Object.freeze({
+      ok: false,
+      request: null,
+      diagnostics: normalized.diagnostics,
+    });
+  }
+  return normalized as FinishActualsRequestNormalization;
 }
 
 function eventInstant(event: ActualWorkEvent): Rational {

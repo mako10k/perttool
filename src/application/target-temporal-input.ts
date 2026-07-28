@@ -1,7 +1,9 @@
 import type { Diagnostic } from "../model/diagnostics.js";
 import type {
   DeclarationNode,
+  DocumentNode,
   ExactDurationValue,
+  TargetDeclarationKind,
   VelocityValue,
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
@@ -42,6 +44,7 @@ import {
   validateTargetGrammar3Document,
   type TargetGrammar3ValidatedDocument,
   type TargetGrammar4ValidatedDocument,
+  type TargetGrammar5ValidatedDocument,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 
@@ -108,7 +111,12 @@ export interface TargetMilestoneTemporalInput {
 
 export interface TargetTaskTemporalInput {
   readonly taskId: string;
-  readonly status: "planned" | "active" | "blocked" | "done";
+  readonly status:
+    | "planned"
+    | "active"
+    | "blocked"
+    | "suspended"
+    | "done";
   readonly declaredNotBefore: TargetCalendarValue | null;
   readonly release: TargetReleaseInput;
   readonly deadline: TargetDeadlineInput | null;
@@ -117,7 +125,7 @@ export interface TargetTaskTemporalInput {
 export interface TargetTemporalInputProjection {
   readonly calendar: typeof CALENDAR_ARITHMETIC_IDENTITY;
   readonly documentId: string;
-  readonly grammarVersion: 1 | 2 | 3 | 4;
+  readonly grammarVersion: 1 | 2 | 3 | 4 | 5;
   readonly anchor: TargetCalendarValue | null;
   readonly effectiveProjection: TargetEffectiveProjection;
   readonly milestoneDeadlines: readonly TargetMilestoneTemporalInput[];
@@ -133,8 +141,23 @@ export interface TargetTemporalInputResult {
   readonly diagnosticsTruncated: boolean;
 }
 
+export function assertTemporalScheduleStatusProjection(
+  document: DocumentNode<TargetDeclarationKind>,
+): void {
+  const suspended = document.declarations.find(
+    (declaration) =>
+      declaration.kind === "task" &&
+      fieldNamed(declaration, "status")?.value === "suspended",
+  );
+  if (suspended !== undefined) {
+    throw new TypeError(
+      `temporal scheduling requires a projected non-suspended status for task ${suspended.id}`,
+    );
+  }
+}
+
 function declaredCalendarField(
-  declaration: DeclarationNode,
+  declaration: DeclarationNode<TargetDeclarationKind>,
   name: string,
 ): DeclaredCalendarValue | null {
   const field = fieldNamed(declaration, name);
@@ -192,7 +215,7 @@ function exactDuration(value: unknown): Rational {
 }
 
 function effectiveProjection(
-  project: DeclarationNode,
+  project: DeclarationNode<TargetDeclarationKind>,
 ): {
   readonly value: TargetEffectiveProjection;
   readonly velocity: Velocity | null;
@@ -296,7 +319,7 @@ function relationship(
 }
 
 function deadlineInput(
-  declaration: DeclarationNode,
+  declaration: DeclarationNode<TargetDeclarationKind>,
   anchor: DeclaredCalendarValue | null,
   projection: TargetEffectiveProjection,
   velocity: Velocity | null,
@@ -330,7 +353,8 @@ function deadlineInput(
 export function projectTargetTemporalInputs(
   validated:
     | TargetGrammar3ValidatedDocument
-    | TargetGrammar4ValidatedDocument,
+    | TargetGrammar4ValidatedDocument
+    | TargetGrammar5ValidatedDocument,
 ): TargetTemporalInputProjection {
   const document = validated.document;
   const project = document.declarations.find(
@@ -392,7 +416,9 @@ export function projectTargetTemporalInputs(
               declaration.id,
             );
       const release: TargetReleaseInput =
-        status === "active" || status === "done"
+        status === "active" ||
+          status === "suspended" ||
+          status === "done"
           ? Object.freeze({
               state: "not_applicable",
               bound: null,

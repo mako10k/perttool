@@ -106,7 +106,7 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan advances the accepted project history", async () => {
+test("project actuals plan retains the completed lifecycle snapshot", async () => {
   const plan = "plans/project-actuals.pert";
   const [
     source,
@@ -115,6 +115,7 @@ test("project actuals plan advances the accepted project history", async () => {
     probeAcceptance,
     finishAcceptance,
     historyAcceptance,
+    lifecycleAcceptance,
   ] = await Promise.all([
     repositoryText(plan),
     repositoryText("docs/process/project-actuals-contract-review.md"),
@@ -130,6 +131,9 @@ test("project actuals plan advances the accepted project history", async () => {
     repositoryText(
       "docs/process/project-actuals-history-acceptance.md",
     ),
+    repositoryText(
+      "docs/process/project-actuals-lifecycle-acceptance.md",
+    ),
   ]);
   const checked = runJson("document", "check", plan);
   const analyzed = runJson("dag", "analyze", plan);
@@ -141,9 +145,12 @@ test("project actuals plan advances the accepted project history", async () => {
     tasks: 4,
     gates: 2,
     errors: 0,
-    warnings: 0,
+    warnings: 1,
   });
-  assert.deepEqual(checked.diagnostics, []);
+  assert.deepEqual(
+    checked.diagnostics.map(({ code, entity_id }) => [code, entity_id]),
+    [["PTDAG-208", "LIFECYCLE_READY"]],
+  );
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
@@ -165,6 +172,11 @@ test("project actuals plan advances the accepted project history", async () => {
   assert.match(finishAcceptance, /Git commit `2af13c4`/);
   assert.match(historyAcceptance, /`PROJECT_HISTORY` is accepted/);
   assert.match(historyAcceptance, /Git commit `c0eff39`/);
+  assert.match(lifecycleAcceptance, /`WORK_LIFECYCLE` is accepted/);
+  assert.match(
+    lifecycleAcceptance,
+    /exact completed 7p pre-advance snapshot/,
+  );
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.doesNotMatch(source, /task FINISH_ACTUALS/);
@@ -174,30 +186,35 @@ test("project actuals plan advances the accepted project history", async () => {
     source,
     /milestone PROJECT_HISTORY_READY:[\s\S]*?  state reached/,
   );
-  assert.equal(analyzed.precedence.makespan.numerator, "17");
+  assert.match(
+    source,
+    /task WORK_LIFECYCLE[\s\S]*?  status done/,
+  );
+  assert.doesNotMatch(
+    source,
+    /milestone LIFECYCLE_READY:\n  title[^\n]*\n  state reached/,
+  );
+  assert.equal(analyzed.precedence.makespan.numerator, "15");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
-  assert.equal(analyzed.resource.makespan.numerator, "17");
+  assert.equal(analyzed.resource.makespan.numerator, "15");
   assert.equal(analyzed.resource.resource_delay.numerator, "0");
   assert.equal(
     analyzed.velocity_forecast.precedence_makespan.numerator,
-    "34",
+    "30",
   );
   assert.equal(
     analyzed.velocity_forecast.precedence_makespan.denominator,
     "29",
   );
-  assert.equal(analyzed.velocity_forecast.resource_makespan.numerator, "34");
+  assert.equal(analyzed.velocity_forecast.resource_makespan.numerator, "30");
   assert.equal(analyzed.velocity_forecast.resource_makespan.denominator, "29");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, [
-    "WORK_LIFECYCLE",
+  assert.deepEqual(next.groups.ready, ["VELOCITY_OBSERVATION"]);
+  assert.deepEqual(next.recommendation.recommended_task_ids, [
     "VELOCITY_OBSERVATION",
   ]);
-  assert.deepEqual(next.recommendation.recommended_task_ids, [
-    "WORK_LIFECYCLE",
-  ]);
   assert.deepEqual(next.temporal.authority.startable_recommended_task_ids, [
-    "WORK_LIFECYCLE",
+    "VELOCITY_OBSERVATION",
   ]);
   assert.deepEqual(
     Object.fromEntries(
@@ -207,8 +224,7 @@ test("project actuals plan advances the accepted project history", async () => {
       ]),
     ),
     {
-      WORK_LIFECYCLE: "recommended",
-      VELOCITY_OBSERVATION: "allowed",
+      VELOCITY_OBSERVATION: "recommended",
     },
   );
 });

@@ -1323,11 +1323,14 @@ and internal eventful finish and task-owned advance removal are accepted in
 Internal first-parent semantic reconstruction, explicit-event removal,
 qualified legacy transitions, and exact task summaries are accepted in
 [`project-actuals-history-acceptance.md`](project-actuals-history-acceptance.md).
+Internal start, suspend, resume, resource release, and suspended result
+handling are accepted in
+[`project-actuals-lifecycle-acceptance.md`](project-actuals-lifecycle-acceptance.md).
 The standard package root and CLI remain Grammar 1 through 4 and Contract 5.
 Until the atomic Grammar 5/CLI Contract 6 cutover is accepted, the active
 workflow remains status-only and must not add future event syntax manually or
-invoke the internal actuals or history target modules as an operational
-interface. The target contract is
+invoke the internal actuals, lifecycle, analysis, Next, or history target
+modules as an operational interface. The target contract is
 [`docs/specs/project-actuals.md`](../specs/project-actuals.md).
 
 The runtime history guard in backlog

@@ -141,11 +141,18 @@ task-owned advance removal without changing the active public surface.
 internal reducer reconstructs explicit events, advance removal, qualified
 legacy transitions, exact task summaries, typed availability, and
 deterministic Result v1 text/JSON without public activation.
-Four tasks and 22p remain. Precedence and the `parallel-sgs` version 1
-heuristic resource makespan are both 17p with no resource delay. At the
-inherited operations velocity `29p/2d`, both forecasts are `34/29d`.
-Complete NextResult v4 recommends and starts only `WORK_LIFECYCLE`;
-`VELOCITY_OBSERVATION` is allowed. Public Grammar 5/CLI Contract 6 activation,
+`WORK_LIFECYCLE` is complete and retained done pending its required
+pre-advance commit. Its internal target implements exact
+start/suspend/resume candidates, deterministic retry and refusal, resource
+release, full remaining-duration schedules, and separate AnalysisResult
+v4/NextResult v5 suspended handling without changing the active public
+surface. The acceptance record is
+[`project-actuals-lifecycle-acceptance.md`](../docs/process/project-actuals-lifecycle-acceptance.md).
+Three tasks and 15p remain. Precedence and the `parallel-sgs` version 1
+heuristic resource makespan are both 15p with no resource delay. At the
+inherited operations velocity `29p/2d`, both forecasts are `30/29d`.
+Complete NextResult v4 recommends and starts only `VELOCITY_OBSERVATION`.
+Public Grammar 5/CLI Contract 6 activation,
 Git mutation, automatic declared-velocity changes, MIG-08, release
 publication, and dist-tag movement remain outside the authorized scope. This
 independent workstream does not displace `PERT_PLANS` in the English-baseline

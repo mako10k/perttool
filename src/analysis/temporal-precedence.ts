@@ -2,11 +2,13 @@ import type {
   TargetTemporalCause,
   TargetTemporalInputProjection,
 } from "../application/target-temporal-input.js";
+import { assertTemporalScheduleStatusProjection } from "../application/target-temporal-input.js";
 import type { Rational } from "../model/rational.js";
 import { ZERO, add, maximum } from "../model/rational.js";
 import type {
   TargetGrammar3ValidatedDocument,
   TargetGrammar4ValidatedDocument,
+  TargetGrammar5ValidatedDocument,
 } from "../semantic/target-validator.js";
 import {
   buildResidualGraph,
@@ -180,7 +182,8 @@ function schedule(
 export function analyzeTemporalPrecedenceSchedule(
   validated:
     | TargetGrammar3ValidatedDocument
-    | TargetGrammar4ValidatedDocument,
+    | TargetGrammar4ValidatedDocument
+    | TargetGrammar5ValidatedDocument,
   inputs: TargetTemporalInputProjection,
 ): TemporalPrecedenceSchedule {
   if (
@@ -192,7 +195,10 @@ export function analyzeTemporalPrecedenceSchedule(
       "temporal input projection does not match the validated document",
     );
   }
-  const graph = buildResidualGraph(validated.document);
+  assertTemporalScheduleStatusProjection(validated.document);
+  const graph = buildResidualGraph(
+    validated.document as import("../model/syntax.js").DocumentNode,
+  );
   const releases = releaseInputs(graph, inputs);
   const common = {
     algorithm: TEMPORAL_PRECEDENCE_PROJECTION_IDENTITY,

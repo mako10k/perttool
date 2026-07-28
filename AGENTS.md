@@ -47,11 +47,18 @@ transitions, exact task summaries, and typed incomplete/unavailable outcomes
 from the read-only first-parent probe. Its deterministic
 `Perttool.ProjectHistoryResult.v1` JSON and text target remains absent from
 the active package root and CLI; its acceptance record is
-`docs/process/project-actuals-history-acceptance.md`. Four tasks and 22p
+`docs/process/project-actuals-history-acceptance.md`. `WORK_LIFECYCLE` is
+complete and retained done pending its required pre-advance commit. Its
+internal lifecycle target provides exact start/suspend/resume candidates,
+deterministic retry and refusal, resource release, full remaining-duration
+schedules, and separate `Perttool.AnalysisResult.v4` and
+`Perttool.NextResult.v5` suspended handling without changing the active
+public surface. Its acceptance record is
+`docs/process/project-actuals-lifecycle-acceptance.md`. Three tasks and 15p
 remain; precedence and the `parallel-sgs` version 1 heuristic resource
-makespan are both 17p with no resource delay, and both forecasts at the
-inherited `29p/2d` velocity are `34/29d`. Complete NextResult v4 recommends
-and starts only `WORK_LIFECYCLE`; `VELOCITY_OBSERVATION` is `allowed`.
+makespan are both 15p with no resource delay, and both forecasts at the
+inherited `29p/2d` velocity are `30/29d`. Complete NextResult v4 recommends
+and starts only `VELOCITY_OBSERVATION`.
 Public Grammar 5/CLI Contract 6 activation, Git mutation, automatic velocity
 adoption, MIG-08, release publication, and dist-tag movement remain
 unauthorized. This independent workstream does not displace `PERT_PLANS`.
@@ -130,7 +137,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
-- `src/actuals/`: internal Grammar 5 source projection, deterministic event identity, event sequence reduction, exact measurements, and stored-state validation for task-owned work-event records; start/suspend/resume mutation, history, observations, and public activation remain future slices.
+- `src/actuals/`: internal Grammar 5 source projection, deterministic event identity, exact lifecycle reduction, exact measurements, and stored-state validation for task-owned work-event records; observations and public activation remain future slices.
 - `src/command/`: immutable typed command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, structured usage-error recovery, the retained Contract 4 registry, and the active Contract 5 governance registry and usage projection.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, the retained Contract 4 projection, and the active Contract 5 editing Guide.
 - `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
@@ -147,7 +154,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/parser/`: the active Grammar 1/2/3/4 parser and the internal identity-checked Grammar 5 work-event source capability.
 - `src/semantic/`: active Grammar 1/2/3/4 validated-document boundaries plus the internal Grammar 5 task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3/4 requests for project/task/gate/milestone/resource and atomic batch, governance project fields, exact changed-field Duration generation, canonical advance, internal Grammar 5 atomic finish/event edits and task-owned event removal, source-preserving UTF-16 TextEdit generation, and application rules.
-- `src/application/`: pure services for active Contract 5 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3/4 mutation planning, the exact-Duration version-candidate boundary, governed direct/batch/advance planning, Contract 5 result projections, authorization-before-safe-write orchestration, and internal Grammar 5 eventful-finish/governed-write/advance and ProjectHistoryResult v1 targets.
+- `src/application/`: pure services for active Contract 5 check/project initialization/project metadata/analyze/next, declared temporal input, AnalysisResult v3, release-gated NextResult v4 composition, capability-checked unit migration and Result v2 projection, Grammar 1/2/3/4 mutation planning, the exact-Duration version-candidate boundary, governed direct/batch/advance planning, Contract 5 result projections, authorization-before-safe-write orchestration, and internal Grammar 5 lifecycle/governed-write/advance, suspended AnalysisResult v4/NextResult v5, and ProjectHistoryResult v1 targets.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 

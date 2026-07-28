@@ -123,8 +123,11 @@ function validateCapacityOverrides(
   return diagnostics;
 }
 
-export function analyzeDocument(
-  text: string,
+export function analyzeValidatedDocument(
+  document: DocumentNode,
+  documentId: string,
+  initialDiagnostics: readonly Diagnostic[],
+  diagnosticsAlreadyTruncated: boolean,
   options: AnalyzeOptions = {},
 ): AnalysisResult {
   const mode = options.mode ?? "both";
@@ -132,42 +135,27 @@ export function analyzeDocument(
   const precision = options.precision ?? 3;
   const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
   const overrides = options.capacityOverrides ?? new Map<string, number>();
-  const checked = checkDocument(text, { maxDiagnostics });
-  const diagnostics: Diagnostic[] = [...checked.diagnostics];
-  if (!checked.ok) {
-    return {
-      ok: false,
-      document: checked.document,
-      documentId: checked.documentId,
-      diagnostics,
-      diagnosticsTruncated: checked.diagnosticsTruncated,
-      mode,
-      precision,
-      capacityOverrides: overrides,
-      durationUnit: null,
-      velocity: null,
-      velocityForecast: null,
-      criticalEpsilon: null,
-      precedence: null,
-      resource: null,
-    };
-  }
-  const graph = buildResidualGraph(checked.document);
+  const diagnostics: Diagnostic[] = [...initialDiagnostics];
+  const graph = buildResidualGraph(document);
   diagnostics.push(...validateCapacityOverrides(graph, overrides));
   if (hasErrors(diagnostics)) {
     const limited = limitDiagnostics(sortDiagnostics(diagnostics), maxDiagnostics);
     return {
       ok: false,
-      document: checked.document,
-      documentId: checked.documentId,
+      document,
+      documentId,
       diagnostics: limited.diagnostics,
-      diagnosticsTruncated: checked.diagnosticsTruncated || limited.truncated,
+      diagnosticsTruncated:
+        diagnosticsAlreadyTruncated || limited.truncated,
       mode,
       precision,
       capacityOverrides: overrides,
       durationUnit: graph.durationUnit,
       velocity: graph.velocity,
-      velocityForecast: createVelocityConversion(graph.durationUnit, graph.velocity),
+      velocityForecast: createVelocityConversion(
+        graph.durationUnit,
+        graph.velocity,
+      ),
       criticalEpsilon: graph.criticalEpsilon,
       precedence: null,
       resource: null,
@@ -179,7 +167,10 @@ export function analyzeDocument(
       ? null
       : analyzeResources(graph, internalPrecedence, overrides, maxPaths);
   const precedence = mode === "resource" ? null : internalPrecedence;
-  if (precedence?.critical.pathsTruncated === true || resource?.scheduleCritical.pathsTruncated === true) {
+  if (
+    precedence?.critical.pathsTruncated === true ||
+    resource?.scheduleCritical.pathsTruncated === true
+  ) {
     diagnostics.push(
       diagnostic(
         "PTDAG-302",
@@ -204,18 +195,59 @@ export function analyzeDocument(
   const limited = limitDiagnostics(sortDiagnostics(diagnostics), maxDiagnostics);
   return {
     ok: !hasErrors(diagnostics),
-    document: checked.document,
-    documentId: checked.documentId,
+    document,
+    documentId,
     diagnostics: limited.diagnostics,
-    diagnosticsTruncated: checked.diagnosticsTruncated || limited.truncated,
+    diagnosticsTruncated:
+      diagnosticsAlreadyTruncated || limited.truncated,
     mode,
     precision,
     capacityOverrides: overrides,
     durationUnit: graph.durationUnit,
     velocity: graph.velocity,
-    velocityForecast: createVelocityConversion(graph.durationUnit, graph.velocity),
+    velocityForecast: createVelocityConversion(
+      graph.durationUnit,
+      graph.velocity,
+    ),
     criticalEpsilon: graph.criticalEpsilon,
     precedence,
     resource,
   };
+}
+
+export function analyzeDocument(
+  text: string,
+  options: AnalyzeOptions = {},
+): AnalysisResult {
+  const mode = options.mode ?? "both";
+  const precision = options.precision ?? 3;
+  const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
+  const overrides = options.capacityOverrides ?? new Map<string, number>();
+  const checked = checkDocument(text, { maxDiagnostics });
+  const diagnostics: Diagnostic[] = [...checked.diagnostics];
+  if (!checked.ok) {
+    return {
+      ok: false,
+      document: checked.document,
+      documentId: checked.documentId,
+      diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+      mode,
+      precision,
+      capacityOverrides: overrides,
+      durationUnit: null,
+      velocity: null,
+      velocityForecast: null,
+      criticalEpsilon: null,
+      precedence: null,
+      resource: null,
+    };
+  }
+  return analyzeValidatedDocument(
+    checked.document,
+    checked.documentId!,
+    diagnostics,
+    checked.diagnosticsTruncated,
+    options,
+  );
 }

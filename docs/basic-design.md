@@ -763,7 +763,7 @@ read-only semantic history reconstruction
 
 #### 6.8.1 Source and lifecycle Core
 
-The internal `src/actuals/` source and eventful-finish Core currently owns:
+The internal `src/actuals/` source and lifecycle Core currently owns:
 
 - deterministic event identity and exact fixed-offset time;
 - exact active-time and explicit person-effort source values;
@@ -772,19 +772,27 @@ The internal `src/actuals/` source and eventful-finish Core currently owns:
 - semantic event ordering and exact active-interval reduction; and
 - complete, open, finish-only, and unrecorded coverage classification.
 
-The internal finish application service implements only
-`task.finish.actual`. It normalizes an explicit caller time and exact
-measurements, derives or validates one event ID, validates the pre-change event
-stream and stored state, plans the task state and finish event as one
-candidate, revalidates exact active time, and composes the existing pre-change
-governance decision. Identical retries are no-ops and payload reuse under one
-ID fails closed. Grammar 5 safe-write adapters retain the active digest,
-optimistic-lock, symlink, race, and atomic replacement controls.
+The internal lifecycle application service implements `task.start`,
+`task.suspend`, `task.resume`, and `task.finish.actual`. It normalizes an
+explicit caller time and kind-specific exact inputs, derives or validates one
+event ID, validates the pre-change event stream and stored state, plans the
+task state and event as one candidate, revalidates the lifecycle and exact
+active time, and composes the existing pre-change governance decision. Start
+generates its exact planned-value baseline from the validated task. Start and
+resume fail before candidate generation when active requirements leave
+insufficient snapshot capacity. Identical retries are no-ops and payload reuse
+under one ID fails closed. Grammar 5 safe-write adapters retain the active
+digest, optimistic-lock, symlink, race, and atomic replacement controls.
 
-Start, suspend, and resume mutation and public lifecycle projection remain
-later implementation slices. The internal history reducer now derives
-task-actual summaries from committed snapshots without activating them
-through the public package surface.
+The internal AnalysisResult v4 and NextResult v5 targets project suspended
+tasks without changing the active public result types. Analysis retains the
+complete remaining task duration and makes precedence, resource, temporal,
+and deadline views explicitly conditional on resumption at relative time
+zero. Next keeps suspended tasks out of active, ready, blocked, upcoming,
+runnable, raw recommendation, release-eligibility, and temporal start-authority
+sets. The internal history reducer derives task-actual summaries from
+committed snapshots without activating any of these targets through the public
+package surface.
 
 Grammar 5 adds task-owned top-level `work_event` declarations and the
 `suspended` task state. Exact event EBNF, `h`/`ph` quantities, canonical
@@ -795,8 +803,9 @@ validated source, applies the edit set once, revalidates the final candidate,
 and exposes neither half on failure.
 
 `suspended` tasks occupy no renewable resources and are not ordinary ready or
-blocked tasks. Graph, analysis, recommendation, and public results require
-versioned support before activation. Lifecycle mutation does not implement
+blocked tasks. Their versioned internal graph, analysis, recommendation, and
+result handling is complete, but remains unavailable through the public
+surface before atomic activation. Lifecycle mutation does not implement
 recommendation override or durable authorization audit.
 
 #### 6.8.2 Advance ownership

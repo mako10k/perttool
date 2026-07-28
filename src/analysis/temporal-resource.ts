@@ -2,6 +2,7 @@ import type {
   TargetTemporalCause,
   TargetTemporalInputProjection,
 } from "../application/target-temporal-input.js";
+import { assertTemporalScheduleStatusProjection } from "../application/target-temporal-input.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import type { Rational } from "../model/rational.js";
 import {
@@ -15,6 +16,7 @@ import type { RequirementValue } from "../model/syntax.js";
 import type {
   TargetGrammar3ValidatedDocument,
   TargetGrammar4ValidatedDocument,
+  TargetGrammar5ValidatedDocument,
 } from "../semantic/target-validator.js";
 import {
   buildResidualGraph,
@@ -429,7 +431,8 @@ function schedule(
 export function analyzeTemporalResourceSchedule(
   validated:
     | TargetGrammar3ValidatedDocument
-    | TargetGrammar4ValidatedDocument,
+    | TargetGrammar4ValidatedDocument
+    | TargetGrammar5ValidatedDocument,
   inputs: TargetTemporalInputProjection,
   options: TemporalResourceOptions = {},
 ): TemporalResourceSchedule {
@@ -442,7 +445,10 @@ export function analyzeTemporalResourceSchedule(
       "temporal input projection does not match the validated document",
     );
   }
-  const graph = buildResidualGraph(validated.document);
+  assertTemporalScheduleStatusProjection(validated.document);
+  const graph = buildResidualGraph(
+    validated.document as import("../model/syntax.js").DocumentNode,
+  );
   const maxPaths = options.maxPaths ?? 100;
   if (!Number.isSafeInteger(maxPaths) || maxPaths < 1) {
     throw new TypeError("temporal resource maxPaths must be a positive integer");

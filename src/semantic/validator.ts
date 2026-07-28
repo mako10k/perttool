@@ -925,6 +925,7 @@ function validateWorkEvents(
 function validateGraph(
   document: AnyDocumentNode,
   diagnostics: Diagnostic[],
+  profile: ValidationProfile,
 ): void {
   const firstById = new Map<string, AnyDeclarationNode>();
   for (const declaration of document.declarations) {
@@ -1241,7 +1242,14 @@ function validateGraph(
   }
   for (const task of document.declarations.filter((declaration) => declaration.kind === "task")) {
     const status = fieldNamed(task, "status")?.value ?? "planned";
-    if ((status === "active" || status === "done") && !reached.has(task.from!)) {
+    if (
+      (
+        status === "active" ||
+        status === "done" ||
+        (profile.workEvents && status === "suspended")
+      ) &&
+      !reached.has(task.from!)
+    ) {
       diagnostics.push(
         makeDiagnostic(
           "PTDAG-207",
@@ -1324,7 +1332,7 @@ function validateDocumentWithProfile(
   if (!hasErrors(diagnostics) && profile.workEvents) {
     validateWorkEvents(document, diagnostics);
   }
-  if (!hasErrors(diagnostics)) validateGraph(document, diagnostics);
+  if (!hasErrors(diagnostics)) validateGraph(document, diagnostics, profile);
   return sortDiagnostics(diagnostics);
 }
 
