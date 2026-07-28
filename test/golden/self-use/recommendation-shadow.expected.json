@@ -283,48 +283,30 @@
       "diagnostic_codes": []
     },
     "release-0.4.0": {
-      "source_digest": "sha256:c0d3c4d4ab2fbb40000418f919669f0df6b8d90167820a4024bf06c87b3f4fac",
+      "source_digest": "sha256:8ab64d07ecf3cbc1099336548be023ef6f5b217f9d1cecf539e818a83f4d8323",
       "groups": {
         "active": [],
-        "ready": [
-          "RELEASE_040_CANDIDATE"
+        "ready": [],
+        "runnable_now": [],
+        "blocked_now": [
+          "RELEASE_040_PUBLISH"
         ],
-        "runnable_now": [
-          "RELEASE_040_CANDIDATE"
-        ],
-        "blocked_now": [],
         "upcoming": [
-          "RELEASE_040_PUBLISH",
           "RELEASE_040_ACCEPTANCE"
         ]
       },
-      "recommended_task_ids": [
-        "RELEASE_040_CANDIDATE"
-      ],
-      "manual_selected_task_ids": [
-        "RELEASE_040_CANDIDATE"
-      ],
-      "tiers": {
-        "RELEASE_040_CANDIDATE": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "RELEASE_040_CANDIDATE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": [
         "PTRES-303"

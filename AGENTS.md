@@ -45,15 +45,18 @@ advanced after accepting the Contract 5 readiness record.
 `RELEASE_040_PREPARATION` is complete and advanced after aligning the `0.4.0`
 package identity, CHANGELOG, README, Contract 4-to-5 migration guidance,
 tests, goldens, and full Node.js 22 repository and installed-package gates.
-Ten points remain; the precedence makespan is 10p, and the heuristic resource
-makespan is conditionally 10p with no resource delay if publication
-authorization is resolved at time zero. Inherited velocity is `19p/2d`, and
-both forecasts are `20/19d`. Complete NextResult v4 recommends and starts
-only `RELEASE_040_CANDIDATE`. The current authorization stops after source
-preparation;
+`RELEASE_040_CANDIDATE` is complete and advanced after the clean source,
+version and channel identity, external availability, protected routes, and
+full Node.js 22 gates were reverified. The retained 392-file candidate
+tarball has SHA-256 `010af9ce...7cc4a`. Six points remain; the precedence
+makespan is 6p, and the heuristic resource makespan is conditionally 6p with
+no resource delay if publication authorization is resolved at time zero.
+Observed cumulative velocity is `13p/2d`, and both forecasts are `12/13d`.
+Complete NextResult v4 has no startable recommendation because
 `RELEASE_040_PUBLISH` is blocked pending separate explicit authorization for
-the named `0.4.0` external batch. npm `latest` promotion and Issue #4 closure
-remain separate post-acceptance decisions.
+the named `0.4.0` external batch. The current authorization stops after
+candidate acceptance; npm `latest` promotion and Issue #4 closure remain
+separate post-acceptance decisions.
 
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public schemas and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 

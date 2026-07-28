@@ -85,6 +85,14 @@ source, migration guidance, tests, and package validation. It does not
 authorize Git push, tag creation, GitHub or npm publication, npm `latest`
 promotion, or Issue #4 closure.
 
+Later on 2026-07-28, after the assistant stated that the next bounded scope
+was candidate acceptance without PUBLISH, the user instructed perttool to
+continue toward the release. That authorizes local
+`RELEASE_040_CANDIDATE`, including read-only external availability and
+credential-route checks plus one retained tarball. It does not authorize Git
+push, tag creation, GitHub or npm publication, npm `latest` promotion, or
+Issue #4 closure.
+
 ## Beta gate
 
 1. Accept Issue #2's normative contract, five-provider baseline, Core, text and JSON projections, CLI, package, and security boundaries.

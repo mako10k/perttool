@@ -2,10 +2,10 @@
 project RELEASE_040:
   version 4
   title "perttool 0.4.0 Contract 5 beta release"
-  description "Release suffix-free 0.4.0 beta from the accepted atomic Contract 5 source and one verified tarball. RELEASE_040_GATE_DESIGN, RELEASE_040_CONTRACT_5_READINESS, and RELEASE_040_PREPARATION are complete. Governance acceptance and readiness verified the complete public, owner-aware safe-write, and installed-package boundary; the prepared 0.4.0 source, Contract 4-to-5 migration guidance, tests, goldens, and package identity passed the full Node.js 22 repository and isolated-package gates. Three tasks and 10p remain; precedence and heuristic resource makespans are both 10p with an inherited 20/19d forecast. Complete NextResult v4 recommends RELEASE_040_CANDIDATE. Current authorization stops after source preparation. RELEASE_040_PUBLISH remains blocked pending separate explicit authorization for the named 0.4.0 external batch; npm latest promotion and Issue #4 closure remain separate post-acceptance decisions."
+  description "Release suffix-free 0.4.0 beta from the accepted atomic Contract 5 source and one verified tarball. RELEASE_040_GATE_DESIGN, RELEASE_040_CONTRACT_5_READINESS, RELEASE_040_PREPARATION, and RELEASE_040_CANDIDATE are complete. The clean candidate passed the full Node.js 22 repository and isolated-package gates; package, tag, GitHub Release, npm version, dist-tag baseline, protected routes, and the retained 392-file tarball with SHA-256 010af9ce...7cc4a passed the candidate gate. Two tasks and 6p remain; precedence and heuristic resource makespans are conditionally 6p with observed cumulative 13p/2d velocity and a 12/13d forecast. Complete NextResult v4 has no startable recommendation because RELEASE_040_PUBLISH remains blocked pending separate explicit authorization for the named 0.4.0 external batch. Current authorization stops after candidate acceptance; npm latest promotion and Issue #4 closure remain separate post-acceptance decisions."
   as_of 2026-07-28
   duration_unit point
-  velocity 19p/2d
+  velocity 13p/2d
   finish RELEASE_040_ACCEPTED
   goal_owner user
   dag_owner user
@@ -37,12 +37,10 @@ resource EXTERNAL_RELEASE:
 
 
 
-milestone RELEASE_040_SOURCE_PREPARED:
-  title "Version 0.4.0 release source prepared"
-  state reached
 
 milestone RELEASE_040_CANDIDATE_ACCEPTED:
   title "Version 0.4.0 release candidate accepted"
+  state reached
 
 milestone RELEASE_040_PUBLISHED:
   title "Version 0.4.0 published to GitHub and npm beta"
@@ -53,15 +51,6 @@ milestone RELEASE_040_ACCEPTED:
 
 
 
-task RELEASE_040_CANDIDATE RELEASE_040_SOURCE_PREPARED -> RELEASE_040_CANDIDATE_ACCEPTED:
-  title "Accept one clean 0.4.0 release candidate"
-  description "Review and commit the complete release diff; run Node.js 22 acceptance; prove package, tag, and GitHub Release availability; verify npm baselines and protected routes; build one immutable tarball outside the worktree; and accept its digest. This task performs no external write."
-  duration 4p
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
 
 task RELEASE_040_PUBLISH RELEASE_040_CANDIDATE_ACCEPTED -> RELEASE_040_PUBLISHED:
   title "Publish version 0.4.0 from one immutable tarball"

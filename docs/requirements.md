@@ -1594,8 +1594,9 @@ of the `0.x.x` beta series, is a GitHub prerelease, and is published to npm
 Planning or locally accepting this gate does not authorize Git, GitHub, npm,
 dist-tag, or Issue writes. The user's 2026-07-27 requests authorized
 `RELEASE_040_GATE_DESIGN` and `RELEASE_040_CONTRACT_5_READINESS`; the
-2026-07-28 instruction to perform the next release task authorizes
-`RELEASE_040_PREPARATION`.
+first 2026-07-28 instruction to perform the next release task authorized
+`RELEASE_040_PREPARATION`, and the later instruction to continue after the
+candidate-only scope was stated authorized `RELEASE_040_CANDIDATE`.
 `RELEASE_040_PUBLISH` remains blocked until a separate user instruction
 explicitly authorizes the named `0.4.0` external publication batch. npm
 `latest` promotion and Issue #4 closure are distinct post-acceptance

@@ -58,11 +58,11 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     design,
     /^### Post-MVP Slice 4H: Contract 5 `v0\.4\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Source prepared 1\.1/);
+  assert.match(procedure, /Status: Candidate accepted 1\.2/);
   assert.match(procedure, /Expected pre-publication default: `beta=latest=0\.3\.0`/);
   assert.match(
     procedure,
-    /2026-07-28 instruction to perform the\s+next release task authorizes `RELEASE_040_PREPARATION`/,
+    /instruction to continue authorized\s+`RELEASE_040_CANDIDATE`/,
   );
   assert.match(
     procedure,
@@ -80,12 +80,14 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.doesNotMatch(plan, /^task RELEASE_040_GATE_DESIGN /m);
   assert.doesNotMatch(plan, /^task RELEASE_040_CONTRACT_5_READINESS /m);
   assert.doesNotMatch(plan, /^task RELEASE_040_PREPARATION /m);
+  assert.doesNotMatch(plan, /^task RELEASE_040_CANDIDATE /m);
   assert.doesNotMatch(plan, /^milestone RELEASE_040_CONTRACT_5_READY:/m);
+  assert.doesNotMatch(plan, /^milestone RELEASE_040_SOURCE_PREPARED:/m);
   assert.match(
     plan,
-    /^milestone RELEASE_040_SOURCE_PREPARED:\n(?:  .*\n)*?  state reached$/m,
+    /^milestone RELEASE_040_CANDIDATE_ACCEPTED:\n(?:  .*\n)*?  state reached$/m,
   );
-  assert.match(plan, /Complete NextResult v4 recommends RELEASE_040_CANDIDATE/);
+  assert.match(plan, /Complete NextResult v4 has no startable recommendation/);
   assert.match(plan, /^task RELEASE_040_PUBLISH /m);
   assert.match(plan, /^task RELEASE_040_ACCEPTANCE /m);
   assert.match(
@@ -93,6 +95,10 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     /task RELEASE_040_PUBLISH[\s\S]*?  status blocked[\s\S]*?  blocked_reason "Await separate explicit user authorization/,
   );
   assert.match(plan, /npm latest promotion and Issue #4 closure remain separate/);
+  assert.match(
+    procedure,
+    /010af9ce2290ade99c191b0c6a9ea485d5ae23ec1241113dfbc1d275b387cc4a/,
+  );
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);

@@ -1855,8 +1855,10 @@ The release sequence separates:
 7. independent later decisions for npm `latest` and Issue #4 closure.
 
 The 2026-07-27 requests authorized `RELEASE_040_GATE_DESIGN` and
-`RELEASE_040_CONTRACT_5_READINESS`; the 2026-07-28 instruction to perform the
-next release task authorizes `RELEASE_040_PREPARATION`.
+`RELEASE_040_CONTRACT_5_READINESS`; the first 2026-07-28 instruction to
+perform the next release task authorized `RELEASE_040_PREPARATION`, and the
+later instruction to continue after the candidate-only scope was stated
+authorized `RELEASE_040_CANDIDATE`.
 `RELEASE_040_PUBLISH` remains explicitly blocked in the plan until a separate
 user instruction authorizes the named `0.4.0` external publication batch.
 Plan state records this boundary but is not itself external-write authority.

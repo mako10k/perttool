@@ -62,13 +62,16 @@ governance implementation state. `RELEASE_040_GATE_DESIGN` and
 `RELEASE_040_PREPARATION` is complete and advanced after the full Node.js 22
 repository and installed-package gates. Package identity, CHANGELOG, README, and the
 [Contract 4-to-5 migration guide](../docs/process/cli-contract-5-migration.md)
-are prepared together. Three tasks and 10p remain; both makespans are
-conditionally 10p with no resource delay if publication authorization is
-resolved at time zero, inherited velocity is `19p/2d`, and both forecasts are
-`20/19d`. Complete NextResult v4 recommends `RELEASE_040_CANDIDATE`.
-`RELEASE_040_PUBLISH` remains blocked pending separate authorization for the
-named external batch; npm `latest` promotion and Issue #4 closure remain
-separate post-acceptance decisions.
+are prepared together. `RELEASE_040_CANDIDATE` is also complete and advanced
+after version, external availability, protected routes, full Node.js 22
+acceptance, and one retained 392-file tarball with SHA-256
+`010af9ce...7cc4a` were verified. Two tasks and 6p remain; both makespans are
+conditionally 6p with no resource delay if publication authorization is
+resolved at time zero, observed cumulative velocity is `13p/2d`, and both
+forecasts are `12/13d`. Complete NextResult v4 has no startable
+recommendation because `RELEASE_040_PUBLISH` remains blocked pending separate
+authorization for the named external batch. npm `latest` promotion and Issue
+#4 closure remain separate post-acceptance decisions.
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.
