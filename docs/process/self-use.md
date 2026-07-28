@@ -1108,6 +1108,18 @@ governed advance removed `RELEASE_040_PUBLISH` and
 `RELEASE_040_PUBLISHED`, and produced digest
 `sha256:e7f1f67e134f0351ba676e6dabb576ab5ff13010958ae75f1d2f6e35a6b21769`.
 
+Durable acceptance then reverified the GitHub and npm tarballs through the
+complete installed Contract 5 package workflow, retained common SHA-256
+`010af9ce2290ade99c191b0c6a9ea485d5ae23ec1241113dfbc1d275b387cc4a`,
+and completed `RELEASE_040_ACCEPTANCE`. All six release tasks and 19p are
+accepted over two active days. The pre-advance snapshot has digest
+`sha256:c1bf2fb42e79cf6f0f6b0d8280397ed30085e83dda33a2b27cc979b12173109e`,
+zero precedence and heuristic resource makespans, no ready or recommended
+task, and only the expected `PTDAG-208` advance warning. At acceptance npm
+reported `beta=0.4.0`, unchanged `latest=0.3.0`, and
+`alpha=0.1.0-alpha.2`. The user separately authorized a later one-time
+`perttool@0.4.0` `latest` promotion; Issue #4 closure remains separate.
+
 Stage 1 allowed operations:
 
 - check

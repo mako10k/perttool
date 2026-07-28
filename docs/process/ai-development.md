@@ -216,9 +216,12 @@ The later named PUBLISH authorization pushed release commit and annotated tag
 tarball to npm `beta`. npm reports `beta=0.4.0` and unchanged
 `latest=0.3.0`; the [PUBLISH record](0.4.0-publish.md) preserves the exact
 identity and commands. The completed PUBLISH task is advanced to the reached
-`RELEASE_040_PUBLISHED` frontier. Complete NextResult v4 recommends only
-`RELEASE_040_ACCEPTANCE`. npm `latest` promotion and Issue #4 closure are
-separate post-acceptance decisions.
+`RELEASE_040_PUBLISHED` frontier. Durable acceptance reverified both public
+tarballs, completed all six tasks and 19p at `19p/2d`, and left a
+pre-advance zero-makespan plan with no recommendation. The
+[acceptance record](0.4.0-release-acceptance.md) preserves that boundary.
+The user then separately selected `perttool@0.4.0` for npm `latest`; Issue #4
+closure remains a separate decision.
 
 ### 5.1 Adopted Recommendation authority
 

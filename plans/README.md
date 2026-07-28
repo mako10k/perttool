@@ -65,12 +65,15 @@ repository and installed-package gates. Package identity, CHANGELOG, README, and
 were prepared together. `RELEASE_040_PUBLISH` is complete and advanced: release commit and
 peeled `v0.4.0` target `6b341d1` agree; the retained candidate, GitHub, and npm
 tarballs have common SHA-256 `010af9ce...7cc4a`; npm reports `beta=0.4.0`
-with unchanged `latest=0.3.0`; and both public-package workflows passed. One
-task and 3p remain, both makespans are 3p, observed cumulative velocity is
-`16p/2d`, and the forecast is `3/8d`. Complete NextResult v4 recommends only
-`RELEASE_040_ACCEPTANCE`. npm `latest` promotion and Issue #4 closure remain
-separate post-acceptance decisions. The durable external evidence is in the
-[`v0.4.0` PUBLISH record](../docs/process/0.4.0-publish.md).
+with unchanged `latest=0.3.0`; and both public-package workflows passed.
+Durable acceptance completed all six tasks and 19p over two active days.
+The pre-advance snapshot has zero precedence and heuristic resource
+makespans, no ready or recommended task, and only the expected advance
+warning. The user separately authorized the post-acceptance
+`perttool@0.4.0` `latest` promotion; Issue #4 closure remains separate. The
+durable evidence is in the [`v0.4.0` PUBLISH
+record](../docs/process/0.4.0-publish.md) and [`v0.4.0` acceptance
+record](../docs/process/0.4.0-release-acceptance.md).
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.

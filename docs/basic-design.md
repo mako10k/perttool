@@ -1862,7 +1862,10 @@ authorized `RELEASE_040_CANDIDATE`. After the PUBLISH boundary was stated
 again, the user's instruction to proceed authorized only the named `0.4.0`
 external publication batch. That batch is complete: the release commit and
 peeled tag agree, both public channels contain the candidate bytes, and npm
-reports `beta=0.4.0` with unchanged `latest=0.3.0`. Plan state records these
+reports `beta=0.4.0` with unchanged `latest=0.3.0`. Durable acceptance then
+completed all six release tasks at `19p/2d`; the pre-advance plan has zero
+makespans and no recommendation. The user separately authorized the
+post-acceptance `perttool@0.4.0` `latest` promotion. Plan state records these
 boundaries but is not itself external-write authority.
 
 Exit:
@@ -1873,8 +1876,10 @@ Exit:
   `beta` only under separate named authorization;
 - verify artifact identity and isolated installation from both public
   channels;
-- retain `latest=0.3.0`; and
-- leave npm `latest` promotion and Issue #4 closure as separate decisions.
+- retain `latest=0.3.0` through acceptance;
+- permit only the separately authorized post-acceptance `perttool@0.4.0`
+  `latest` promotion; and
+- leave Issue #4 closure as a separate decision.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

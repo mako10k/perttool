@@ -1601,11 +1601,15 @@ After the PUBLISH boundary was stated again, the user's 2026-07-28
 instruction to proceed separately authorized and completed only the named
 `0.4.0` external publication batch. The release commit and peeled tag agree;
 the candidate, GitHub, and npm tarballs are byte-identical; and npm reports
-`beta=0.4.0` with unchanged `latest=0.3.0`. Release acceptance, npm `latest`
-promotion, and Issue #4 closure remain distinct decisions. The authoritative
-procedure and publication evidence are
+`beta=0.4.0` with unchanged `latest=0.3.0`. All twelve criteria and all six
+release-plan tasks were then accepted at `19p/2d`; the pre-advance snapshot
+has zero makespans and no recommendation. The user's later instruction
+separately selected `perttool@0.4.0` for npm `latest`; Issue #4 closure
+remains a distinct decision. The authoritative procedure and evidence are
 [`docs/process/0.4.0-release.md`](process/0.4.0-release.md) and
-[`docs/process/0.4.0-publish.md`](process/0.4.0-publish.md).
+[`docs/process/0.4.0-publish.md`](process/0.4.0-publish.md), with the
+acceptance decision in
+[`docs/process/0.4.0-release-acceptance.md`](process/0.4.0-release-acceptance.md).
 
 ## 22. Mapping to the initial requirements
 
@@ -1776,11 +1780,13 @@ smoke passed. The
 [`v0.3.0` acceptance record](process/0.3.0-release-acceptance.md) preserves the
 durable evidence.
 
-The accepted repository source and locally packed package now activate
-Grammar 4 and CLI Contract 5 atomically. The independent
+The accepted public `0.4.0` package activates Grammar 4 and CLI Contract 5
+atomically. The independent
 [`plans/release-0.4.0.pert`](../plans/release-0.4.0.pert) release workstream
 selected and published suffix-free beta `0.4.0` after verifying the completed
-governance acceptance, one clean candidate, and one immutable tarball. npm
-reports `beta=0.4.0` with unchanged `latest=0.3.0`; durable release acceptance
-remains the only release-plan task. npm `latest` promotion and Issue #4
-closure remain independent post-acceptance decisions.
+governance acceptance, one clean candidate, and one immutable tarball. All
+six release tasks are complete; the pre-advance state has zero makespans and
+no recommendation at `19p/2d`. At acceptance, npm reported `beta=0.4.0`,
+unchanged `latest=0.3.0`, and `alpha=0.1.0-alpha.2`. The user separately
+authorized the later `latest` promotion; Issue #4 closure remains an
+independent post-acceptance decision.

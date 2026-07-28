@@ -5,7 +5,7 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-The published `0.4.0` package implements Grammar 4 and CLI Contract 5. npm
+The accepted `0.4.0` package implements Grammar 4 and CLI Contract 5. npm
 `beta` resolves to `0.4.0`, while `latest` remains on Contract 4 `0.3.0`.
 Beta releases may contain breaking CLI or schema changes. Version `0.4.0`
 requires Node.js 22 or later. Contract 4 and Contract 3 remain available by

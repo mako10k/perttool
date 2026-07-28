@@ -18,6 +18,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     design,
     procedure,
     publishRecord,
+    acceptanceRecord,
     governanceAcceptance,
     readiness,
     plan,
@@ -33,6 +34,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.4.0-release.md"),
     repositoryText("docs/process/0.4.0-publish.md"),
+    repositoryText("docs/process/0.4.0-release-acceptance.md"),
     repositoryText("docs/process/governance-acceptance.md"),
     repositoryText("docs/process/0.4.0-contract5-readiness.md"),
     repositoryText("plans/release-0.4.0.pert"),
@@ -60,7 +62,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     design,
     /^### Post-MVP Slice 4H: Contract 5 `v0\.4\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Published 1\.3/);
+  assert.match(procedure, /Status: Accepted 1\.4/);
   assert.match(procedure, /Expected pre-publication default: `beta=latest=0\.3\.0`/);
   assert.match(
     procedure,
@@ -82,6 +84,13 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.match(publishRecord, /`beta` \| `0\.4\.0`/);
   assert.match(publishRecord, /`latest` \| `0\.3\.0`/);
   assert.match(publishRecord, /No publish\s+retry occurred/);
+  assert.match(acceptanceRecord, /Document status: Accepted 1\.0/);
+  assert.match(
+    acceptanceRecord,
+    /010af9ce2290ade99c191b0c6a9ea485d5ae23ec1241113dfbc1d275b387cc4a/,
+  );
+  assert.match(acceptanceRecord, /`beta` \| `0\.4\.0`/);
+  assert.match(acceptanceRecord, /`latest` \| `0\.3\.0`/);
   assert.match(governanceAcceptance, /Document status: Accepted/);
   assert.match(governanceAcceptance, /Published package boundary: `0\.3\.0`/);
   assert.match(readiness, /Document status: Accepted 1\.0/);
@@ -102,10 +111,18 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     plan,
     /^milestone RELEASE_040_PUBLISHED:\n(?:  .*\n)*?  state reached$/m,
   );
-  assert.match(plan, /Complete NextResult v4 recommends and starts only RELEASE_040_ACCEPTANCE/);
+  assert.match(
+    plan,
+    /^milestone RELEASE_040_ACCEPTED:\n  title "Version 0\.4\.0 Contract 5 beta accepted"$/m,
+  );
   assert.doesNotMatch(plan, /^task RELEASE_040_PUBLISH /m);
   assert.match(plan, /^task RELEASE_040_ACCEPTANCE /m);
-  assert.match(plan, /npm latest promotion and Issue #4 closure remain separate/);
+  assert.match(plan, /^  status done$/m);
+  assert.match(plan, /complete NextResult v4 has no recommendation/);
+  assert.match(
+    plan,
+    /separately authorized later npm latest promotion and Issue #4 closure remain outside/,
+  );
   assert.match(
     procedure,
     /010af9ce2290ade99c191b0c6a9ea485d5ae23ec1241113dfbc1d275b387cc4a/,

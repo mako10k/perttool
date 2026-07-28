@@ -8,7 +8,7 @@
   release target);
   2026-07-26 (`v0.3.0` explicit `latest` promotion);
   2026-07-27 (`v0.4.0` Contract 5 release target);
-  2026-07-28 (`v0.4.0` beta publication)
+  2026-07-28 (`v0.4.0` beta publication and acceptance)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -100,6 +100,13 @@ and npm `beta` publication batch. The release commit and peeled tag agree,
 and the candidate, GitHub, and npm tarballs are byte-identical. npm now
 reports `beta=0.4.0` and unchanged `latest=0.3.0`. Release acceptance, npm
 `latest` promotion, and Issue #4 closure remain separate decisions.
+
+Later on 2026-07-28, durable acceptance reverified both public tarballs and
+their installed Contract 5 workflows. All six release tasks and 19p are
+accepted over two active days; the pre-advance plan has zero makespans and no
+recommendation. The user then explicitly selected `perttool@0.4.0` for a
+separate post-acceptance npm `latest` promotion. Issue #4 closure remains a
+separate decision.
 
 ## Beta gate
 
