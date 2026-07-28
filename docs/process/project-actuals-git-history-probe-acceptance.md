@@ -7,7 +7,7 @@ boundary. The implementation resolves one regular target file to a
 repository-relative path, binds an optional caller digest and selected
 revision, and returns deterministic first-parent path snapshots without
 activating project history through the standard package root or CLI Contract
-5.
+5. Git commit `2198a0b` records the exact completed 5p pre-advance snapshot.
 
 This acceptance is subordinate to ADR 0006, the Project Actuals and Git
 History Contract, and the shared `ADV-001` read-only inspection boundary. It

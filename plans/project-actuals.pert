@@ -2,7 +2,7 @@
 project PROJECT_ACTUALS:
   version 1
   title "Project actuals and Git-recorded history"
-  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; Git commit f6e93e1 records its completed 4p pre-advance snapshot, and the residual plan retains reached ACTUALS_CONTRACT_READY. ACTUAL_SOURCE_CORE accepted identity-checked internal Grammar 5 parsing, validation, formatting, exact task-owned event projection, and active Grammar 1-4 compatibility; Git commit d6d3d7f records its completed 5p pre-advance snapshot, and the task is advanced to reached ACTUAL_SOURCE_READY. ACTUAL_GIT_HISTORY_PROBE accepted the internal read-only SHA-1/SHA-256 repository/path/revision probe, first-parent raw snapshots, typed availability, linked worktrees, race detection, and unchanged Git/public surfaces; the task is complete and retained as done pending its required pre-advance commit. Six unfinished tasks and 33p remain. Precedence is 22p and the parallel-sgs version 1 heuristic resource makespan is 23p with 1p resource delay; forecasts at 29p/2d are 44/29d and 46/29d. Complete NextResult v4 recommends and starts only FINISH_ACTUALS; PROJECT_HISTORY is allowed. Grammar 5 and CLI Contract 6 remain publicly inactive, and this plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
+  description "Design and implement explicit task work events, lifecycle transitions, read-only Git reconstruction, and exact observed project performance as an independent post-beta workstream. ACTUALS_CONTRACT_REVIEW accepted ADR 0006, Grammar 5 source and migration, Graph semantics 2, Mutation semantics 2, CLI Contract 6 schemas, diagnostics, and fourteen machine-readable PACT cases; Git commit f6e93e1 records its completed 4p pre-advance snapshot. ACTUAL_SOURCE_CORE accepted identity-checked internal Grammar 5 parsing, validation, formatting, exact task-owned event projection, and active Grammar 1-4 compatibility; Git commit d6d3d7f records its completed 5p pre-advance snapshot, and the task is advanced to reached ACTUAL_SOURCE_READY. ACTUAL_GIT_HISTORY_PROBE accepted the internal read-only SHA-1/SHA-256 repository/path/revision probe, first-parent raw snapshots, typed availability, linked worktrees, race detection, and unchanged Git/public surfaces; Git commit 2198a0b records its completed 5p pre-advance snapshot, and the task and satisfied source/history gates are advanced to reached HISTORY_INPUT_READY. Six tasks and 33p remain. Precedence is 22p and the parallel-sgs version 1 heuristic resource makespan is 23p with 1p resource delay; forecasts at 29p/2d are 44/29d and 46/29d. Complete NextResult v4 recommends and starts only FINISH_ACTUALS; PROJECT_HISTORY is allowed. Grammar 5 and CLI Contract 6 remain publicly inactive, and this plan does not authorize Git mutation, automatic declared-velocity changes, MIG-08, release publication, or dist-tag movement."
   as_of 2026-07-28
   duration_unit point
   velocity 29p/2d
@@ -43,16 +43,11 @@ resource PACKAGE_SURFACE:
   title "Package root and installed-workflow acceptance ownership"
   capacity 1
 
-milestone ACTUALS_CONTRACT_READY:
-  title "Project actuals contract accepted"
-  state reached
 
 milestone ACTUAL_SOURCE_READY:
   title "Grammar 5 actual-event source Core ready"
   state reached
 
-milestone GIT_PROBE_READY:
-  title "Read-only Git history probe ready"
 
 milestone FINISH_ACTUALS_READY:
   title "Eventful task finish Core ready"
@@ -62,6 +57,7 @@ milestone LIFECYCLE_READY:
 
 milestone HISTORY_INPUT_READY:
   title "Source and Git history inputs ready"
+  state reached
 
 milestone PROJECT_HISTORY_READY:
   title "Project history interface ready"
@@ -80,15 +76,6 @@ milestone ACTUALS_ACCEPTED:
 
 
 
-task ACTUAL_GIT_HISTORY_PROBE ACTUALS_CONTRACT_READY -> GIT_PROBE_READY:
-  title "Implement the read-only Git history probe"
-  description "Implement the repository-relative path, revision, first-parent snapshot, digest, and typed availability adapter shared with ADV-001 primitives. Cover shallow history, missing HEAD, untracked paths, worktrees, races, unsupported history, and prove that no Git state changes."
-  duration 5p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    GIT_SURFACE 1
 
 task FINISH_ACTUALS ACTUAL_SOURCE_READY -> FINISH_ACTUALS_READY:
   title "Add eventful finish and exact actual measurements"
@@ -111,11 +98,7 @@ task WORK_LIFECYCLE FINISH_ACTUALS_READY -> LIFECYCLE_READY:
     CLI_SURFACE 1
     WRITE_PATH 1
 
-gate SOURCE_HISTORY_GATE ACTUAL_SOURCE_READY -> HISTORY_INPUT_READY:
-  reason "Semantic history requires the accepted Grammar 5 source model"
 
-gate GIT_HISTORY_GATE GIT_PROBE_READY -> HISTORY_INPUT_READY:
-  reason "Semantic history requires repository snapshots and provenance"
 
 task PROJECT_HISTORY HISTORY_INPUT_READY -> PROJECT_HISTORY_READY:
   title "Implement project history reconstruction"

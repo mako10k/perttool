@@ -106,7 +106,7 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan accepts the completed Git history probe", async () => {
+test("project actuals plan advances the completed Git history probe", async () => {
   const plan = "plans/project-actuals.pert";
   const [
     source,
@@ -129,27 +129,25 @@ test("project actuals plan accepts the completed Git history probe", async () =>
 
   assert.deepEqual(checked.summary, {
     resources: 8,
-    milestones: 11,
-    tasks: 7,
-    gates: 4,
+    milestones: 9,
+    tasks: 6,
+    gates: 2,
     errors: 0,
-    warnings: 2,
+    warnings: 0,
   });
-  assert.deepEqual(
-    checked.diagnostics.map(({ code, entity_id }) => [code, entity_id]),
-    [
-      ["PTDAG-208", "GIT_PROBE_READY"],
-      ["PTDAG-208", "HISTORY_INPUT_READY"],
-    ],
-  );
+  assert.deepEqual(checked.diagnostics, []);
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
-  assert.match(
+  assert.doesNotMatch(
     source,
-    /milestone ACTUALS_CONTRACT_READY:[\s\S]*?  state reached/,
+    /milestone ACTUALS_CONTRACT_READY:/,
   );
   assert.match(
     source,
     /milestone ACTUAL_SOURCE_READY:[\s\S]*?  state reached/,
+  );
+  assert.match(
+    source,
+    /milestone HISTORY_INPUT_READY:[\s\S]*?  state reached/,
   );
   assert.match(contractAcceptance, /Plan task: `ACTUALS_CONTRACT_REVIEW`/);
   assert.match(sourceAcceptance, /`ACTUAL_SOURCE_CORE` is accepted/);
@@ -157,11 +155,9 @@ test("project actuals plan accepts the completed Git history probe", async () =>
     probeAcceptance,
     /`ACTUAL_GIT_HISTORY_PROBE` is accepted/,
   );
+  assert.match(probeAcceptance, /Git commit `2198a0b`/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
-  assert.match(
-    source,
-    /task ACTUAL_GIT_HISTORY_PROBE[\s\S]*?  status done/,
-  );
+  assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.equal(analyzed.precedence.makespan.numerator, "22");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
   assert.equal(analyzed.resource.makespan.numerator, "23");
