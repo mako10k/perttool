@@ -1,6 +1,6 @@
 {
   "contract": {
-    "schema_version": "Perttool.NextResult.v4",
+    "schema_version": "Perttool.NextResult.v5",
     "recommendation_interface_version": 1,
     "algorithm_id": "perttool.recommendation-ranking.lexicographic-frontier",
     "algorithm_version": 1,
@@ -19,7 +19,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -43,7 +44,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -67,7 +69,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -100,7 +103,8 @@
         "upcoming": [
           "GOLDEN_UNICODE_AUDIT",
           "ENGLISH_ACCEPTANCE"
-        ]
+        ],
+        "suspended": []
       },
       "recommended_task_ids": [
         "PERT_PLANS"
@@ -139,7 +143,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -165,7 +170,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -189,7 +195,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -209,33 +216,32 @@
       ]
     },
     "project-actuals": {
-      "source_digest": "sha256:b22a63fe1f1b4512d3e612f98cec4f83188a4abc6181d9da4de0795fad11496e",
+      "source_digest": "sha256:e3753fe430f8f2fc9ec078ca977a8f4dd4b7f0775dca23c4788330a7eefefaaa",
       "groups": {
         "active": [],
         "ready": [
-          "ACTUALS_PUBLIC_CONTRACT"
+          "ACTUALS_ACCEPTANCE"
         ],
         "runnable_now": [
-          "ACTUALS_PUBLIC_CONTRACT"
+          "ACTUALS_ACCEPTANCE"
         ],
         "blocked_now": [],
-        "upcoming": [
-          "ACTUALS_ACCEPTANCE"
-        ]
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [
-        "ACTUALS_PUBLIC_CONTRACT"
+        "ACTUALS_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "ACTUALS_PUBLIC_CONTRACT"
+        "ACTUALS_ACCEPTANCE"
       ],
       "tiers": {
-        "ACTUALS_PUBLIC_CONTRACT": "recommended"
+        "ACTUALS_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "ACTUALS_PUBLIC_CONTRACT",
+          "id": "ACTUALS_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -251,7 +257,9 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "recommendation": {
       "source_digest": "sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464",
@@ -260,7 +268,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -286,7 +295,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -310,7 +320,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -334,7 +345,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -358,7 +370,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -382,7 +395,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -406,7 +420,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -430,7 +445,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -454,7 +470,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -478,7 +495,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -502,7 +520,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],
@@ -526,7 +545,8 @@
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": []
+        "upcoming": [],
+        "suspended": []
       },
       "recommended_task_ids": [],
       "manual_selected_task_ids": [],

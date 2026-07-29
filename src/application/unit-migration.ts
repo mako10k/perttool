@@ -1,7 +1,7 @@
 import type { DocumentWriteResult } from "../io/safe-write.js";
 import type { UnitMigrationRequest } from "../migration/request.js";
 import {
-  TARGET_GRAMMAR_4_CAPABILITY,
+  TARGET_GRAMMAR_5_CAPABILITY,
 } from "../parser/document-parser.js";
 import {
   planTargetUnitMigrationResult,
@@ -20,8 +20,8 @@ export type UnitMigrationResult = Omit<
   TargetUnitMigrationResult,
   "sourceGrammarVersion" | "targetGrammarVersion"
 > & {
-  readonly sourceGrammarVersion: 1 | 2 | 3 | 4 | null;
-  readonly targetGrammarVersion: 1 | 2 | 3 | 4 | null;
+  readonly sourceGrammarVersion: 1 | 2 | 3 | 4 | 5 | null;
+  readonly targetGrammarVersion: 1 | 2 | 3 | 4 | 5 | null;
 };
 export type UnitMigrationConvertedField =
   TargetUnitMigrationResultConvertedField;
@@ -39,7 +39,7 @@ export function planUnitMigration(
   const result = planTargetUnitMigrationResult(
     text,
     request,
-    TARGET_GRAMMAR_4_CAPABILITY,
+    TARGET_GRAMMAR_5_CAPABILITY,
     options,
   );
   return result as UnitMigrationResult;

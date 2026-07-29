@@ -5,6 +5,7 @@ import type {
   DocumentNode,
   ExactDurationValue,
   FieldNode,
+  TargetDeclarationKind,
   VelocityValue,
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
@@ -16,7 +17,7 @@ import type {
 
 export const UNIT_MIGRATION_IDENTITY = Object.freeze({
   id: "perttool.unit-migration",
-  version: 2,
+  version: 3,
 } as const);
 
 export type UnitMigrationCause =
@@ -73,7 +74,7 @@ export interface ExactMigrationVelocity extends Velocity {
 }
 
 export interface UnitMigrationDurationField {
-  readonly entityKind: "project" | "task";
+  readonly entityKind: "project" | "task" | "work_event";
   readonly entityId: string;
   readonly fieldPath: string;
   readonly sourceUnit: DurationUnit;
@@ -83,7 +84,11 @@ export interface UnitMigrationDurationField {
 }
 
 export interface UnitMigrationPreservedTemporalField {
-  readonly entityKind: "project" | "milestone" | "task";
+  readonly entityKind:
+    | "project"
+    | "milestone"
+    | "task"
+    | "work_event";
   readonly entityId: string;
   readonly fieldPath: string;
   readonly sourceToken: string;
@@ -92,7 +97,7 @@ export interface UnitMigrationPreservedTemporalField {
 
 export interface UnitMigrationValidatedSource {
   readonly grammarVersion: MigrationGrammarVersion;
-  readonly document: DocumentNode;
+  readonly document: DocumentNode<TargetDeclarationKind>;
 }
 
 export interface PreparedUnitMigrationRequest {
@@ -263,7 +268,7 @@ export function unitMigrationCause(
   return cause(kind, fieldPaths);
 }
 
-function projectFrom(document: DocumentNode) {
+function projectFrom(document: DocumentNode<TargetDeclarationKind>) {
   const project = document.declarations.find(
     (declaration) => declaration.kind === "project",
   );
@@ -273,7 +278,9 @@ function projectFrom(document: DocumentNode) {
   return project;
 }
 
-function sourceDurationUnit(document: DocumentNode): DurationUnit {
+function sourceDurationUnit(
+  document: DocumentNode<TargetDeclarationKind>,
+): DurationUnit {
   const field = fieldNamed(projectFrom(document), "duration_unit");
   if (
     field?.value !== "day" &&
@@ -303,6 +310,13 @@ function durationFieldPath(
     (field.name === "critical_epsilon" || field.name === "target_duration")
   ) {
     return `project.${field.name}`;
+  }
+  if (
+    declarationKind === "work_event" &&
+    parent === field &&
+    field.name === "planned_value"
+  ) {
+    return `work_event.${declarationId}.planned_value`;
   }
   if (declarationKind !== "task") return null;
   if (parent === field && field.name === "duration") {
@@ -337,6 +351,13 @@ function inventoryDurationFields(
     for (const parent of declaration.fields) {
       for (const field of scalarFields(parent)) {
         if (!exactDurationValue(field.value)) continue;
+        if (
+          declaration.kind === "work_event" &&
+          parent === field &&
+          field.name === "active_time"
+        ) {
+          continue;
+        }
         const fieldPath = durationFieldPath(
           declaration.kind,
           declaration.id,
@@ -358,7 +379,10 @@ function inventoryDurationFields(
           );
         }
         fields.push(Object.freeze({
-          entityKind: declaration.kind as "project" | "task",
+          entityKind: declaration.kind as
+            | "project"
+            | "task"
+            | "work_event",
           entityId: declaration.id,
           fieldPath,
           sourceUnit,
@@ -378,7 +402,7 @@ function inventoryDurationFields(
 }
 
 function preservedTemporalFields(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
 ): readonly UnitMigrationPreservedTemporalField[] {
   const fields: UnitMigrationPreservedTemporalField[] = [];
   for (const declaration of document.declarations) {
@@ -390,12 +414,19 @@ function preservedTemporalFields(
             ? `milestone.${declaration.id}.deadline`
             : declaration.kind === "task" && field.name === "not_before"
               ? `task.${declaration.id}.not_before`
-              : declaration.kind === "task" && field.name === "deadline"
-                ? `task.${declaration.id}.deadline`
+            : declaration.kind === "task" && field.name === "deadline"
+              ? `task.${declaration.id}.deadline`
+              : declaration.kind === "work_event" &&
+                  field.name === "occurred_at"
+                ? `work_event.${declaration.id}.occurred_at`
                 : null;
       if (fieldPath === null) continue;
       fields.push(Object.freeze({
-        entityKind: declaration.kind as "project" | "milestone" | "task",
+        entityKind: declaration.kind as
+          | "project"
+          | "milestone"
+          | "task"
+          | "work_event",
         entityId: declaration.id,
         fieldPath,
         sourceToken: field.rawValue,

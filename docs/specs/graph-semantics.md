@@ -1,7 +1,7 @@
 # perttool Graph Semantics Specification
 
 - Document status: Draft 0.3
-- Semantics versions: 1 active; 2 accepted target
+- Semantics versions: 1 and 2 active
 - Created: 2026-07-21
 - Updated: 2026-07-28
 - Related requirements: [../requirements.md](../requirements.md)
@@ -628,7 +628,7 @@ The [Analysis specification](analysis.md) defines duration, PERT/CPM, resource s
 
 For a breaking change to graph semantics, explicitly state the semantics version, fixtures, and migration impact whether or not it also changes the grammar.
 
-Graph semantics version 2 is the accepted, not-yet-active Grammar 5 delta. It
+Graph semantics version 2 is the active Grammar 5 delta. It
 inherits version 1 and adds the following exact rules.
 
 - A `work_event` ID joins the global document-ID namespace, and its task
@@ -655,5 +655,6 @@ inherits version 1 and adds the following exact rules.
 
 Version 2 adds `suspended_task_ids` and
 `conditional_on_suspensions_resumed` to both analysis views and their
-temporal projections. These meanings are activated only with coordinated
-Grammar 5 and CLI Contract 6; semantics version 1 remains unchanged.
+temporal projections. These meanings are active through the coordinated
+Grammar 5 and CLI Contract 6 source cutover; semantics version 1 remains
+unchanged for Grammar 1 through 4.

@@ -2,10 +2,14 @@ import { digestDocumentBytes } from "../io/document-file.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import { mutationDiagnostic } from "../mutation/diagnostics.js";
 import type { TextEdit } from "../mutation/text-edits.js";
-import type { TargetGrammar4Capability } from "../parser/document-parser.js";
+import type {
+  TargetGrammar4Capability,
+  TargetGrammar5Capability,
+} from "../parser/document-parser.js";
 import { GOVERNANCE_DIRECT_EDIT_WARNING } from "../governance/guidance.js";
 import {
   validateTargetGrammar4Document,
+  validateTargetGrammar5Document,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 import type {
@@ -35,7 +39,7 @@ export interface TargetGovernanceProjectInitRequest {
 export interface TargetGovernanceProjectInitResult {
   readonly ok: boolean;
   readonly documentId: string | null;
-  readonly grammarVersion: 1 | 2 | 3 | 4 | null;
+  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | null;
   readonly candidateText: string | null;
   readonly candidateDigest: string | null;
   readonly edits: readonly TextEdit[];
@@ -116,10 +120,10 @@ function requestError(value: unknown): string | undefined {
     (
       !Number.isSafeInteger(request["version"]) ||
       (request["version"] as number) < 1 ||
-      (request["version"] as number) > 4
+      (request["version"] as number) > 5
     )
   ) {
-    return "project init version must be an integer from 1 to 4";
+    return "project init version must be an integer from 1 to 5";
   }
   for (const field of ["asOf", "velocity", "initialMilestoneDeadline"]) {
     if (request[field] !== undefined && typeof request[field] !== "string") {
@@ -157,18 +161,29 @@ function requestError(value: unknown): string | undefined {
     return "project init with point durationUnit requires velocity";
   }
   const governance = hasGovernance(request);
-  if (governance && request["version"] !== undefined && request["version"] !== 4) {
-    return "project init governance fields require version 4";
+  if (
+    governance &&
+    request["version"] !== undefined &&
+    request["version"] !== 4 &&
+    request["version"] !== 5
+  ) {
+    return "project init governance fields require version 4 or 5";
   }
-  const version = governance ? 4 : (request["version"] ?? 1);
+  const version =
+    governance ? (request["version"] ?? 4) : (request["version"] ?? 1);
   if (
     request["initialMilestoneDeadline"] !== undefined &&
     (
-      (version !== 2 && version !== 3 && version !== 4) ||
+      (
+        version !== 2 &&
+        version !== 3 &&
+        version !== 4 &&
+        version !== 5
+      ) ||
       request["asOf"] === undefined
     )
   ) {
-    return "project init initialMilestoneDeadline requires version 2, 3, or 4 and asOf";
+    return "project init initialMilestoneDeadline requires version 2, 3, 4, or 5 and asOf";
   }
   return undefined;
 }
@@ -178,7 +193,9 @@ function principalList(values: readonly string[]): string {
 }
 
 function renderCandidate(request: TargetGovernanceProjectInitRequest): string {
-  const version = hasGovernance(request) ? 4 : (request.version ?? 1);
+  const version = hasGovernance(request)
+    ? (request.version ?? 4)
+    : (request.version ?? 1);
   return [
     GOVERNANCE_DIRECT_EDIT_WARNING,
     `project ${request.projectId}:`,
@@ -213,7 +230,7 @@ function renderCandidate(request: TargetGovernanceProjectInitRequest): string {
 
 export function planTargetGovernanceProjectInit(
   request: unknown,
-  capability: TargetGrammar4Capability,
+  capability: TargetGrammar4Capability | TargetGrammar5Capability,
   options: TargetValidationOptions = {},
 ): TargetGovernanceProjectInitResult {
   const error = requestError(request);
@@ -233,11 +250,9 @@ export function planTargetGovernanceProjectInit(
   const candidateText = renderCandidate(
     request as TargetGovernanceProjectInitRequest,
   );
-  const checked = validateTargetGrammar4Document(
-    candidateText,
-    capability,
-    options,
-  );
+  const checked = capability.grammarVersion === 5
+    ? validateTargetGrammar5Document(candidateText, capability, options)
+    : validateTargetGrammar4Document(candidateText, capability, options);
   if (!checked.ok || checked.validatedDocument === null) {
     return {
       ok: false,

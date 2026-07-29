@@ -83,9 +83,9 @@ test("quick target guidance keeps the preview and persistence distinction", () =
   );
 });
 
-test("active Contract 5 Guide exposes governance through standard names", () => {
+test("active Contract 6 Guide exposes governance through standard names", () => {
   const active = publicApi.getGuide("editing", "detail");
-  assert.equal(active.cliContractVersion, 5);
+  assert.equal(active.cliContractVersion, 6);
   const text = publicApi.renderGuideResult(active);
   assert.match(text, /owner-aware governance/i);
   assert.match(text, /accepted-by-owner/);
@@ -110,6 +110,6 @@ test("generated project, README, and process guidance share the exact warning", 
     );
     assert.match(source, /not\s+authentication/i);
     assert.match(source, /Contract 4/);
-    assert.match(source, /Contract 5/);
+    assert.match(source, /Contract 6/);
   }
 });

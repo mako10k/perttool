@@ -182,7 +182,7 @@ task WORK START -> FINISH:
   );
   const publicExact = publicApi.analyzeDocument(exactSource);
   assert.equal(publicExact.ok, true);
-  assert.equal(publicExact.schemaVersion, "Perttool.AnalysisResult.v3");
+  assert.equal(publicExact.schemaVersion, "Perttool.AnalysisResult.v4");
 
   const malformed = targetAnalyze(
     exactSource.replace("duration 1/3h", "duration 1/0h"),
@@ -214,7 +214,7 @@ test("target Analysis v3 and Next v4 are deterministic and retain Recommendation
   assert.equal(firstNext.temporal.authority.deadlineFactsUsedForRanking, false);
 });
 
-test("active package root keeps temporal helpers internal while CLI uses Contract 5", async () => {
+test("active package root keeps temporal helpers internal while CLI uses Contract 6", async () => {
   for (const targetName of [
     "TARGET_GRAMMAR_3_CAPABILITY",
     "prepareTargetTemporalInputs",
@@ -243,30 +243,30 @@ test("active package root keeps temporal helpers internal while CLI uses Contrac
   assert.equal(help.status, 0, help.stderr);
   assert.equal(guide.status, 0, guide.stderr);
   for (const serialized of [help.stdout, guide.stdout]) {
-    assert.equal(serialized.includes("NextResult.v4"), true);
+    assert.equal(serialized.includes("NextResult.v5"), true);
   }
-  assert.equal(help.stdout.includes("Perttool.AnalysisResult.v3"), true);
+  assert.equal(help.stdout.includes("Perttool.AnalysisResult.v4"), true);
   assert.equal(help.stdout.includes('"not-before"'), true);
   assert.equal(help.stdout.includes('"deadline"'), true);
-  assert.equal(JSON.parse(help.stdout).cli_contract_version, 5);
-  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 5);
+  assert.equal(JSON.parse(help.stdout).cli_contract_version, 6);
+  assert.equal(JSON.parse(guide.stdout).cli_contract_version, 6);
 
   const targetFixture = path.join(
     fixtureDirectory,
     "calendar-offset-v2.pert",
   );
   for (const [route, schemaVersion] of [
-    [["document", "check"], "Perttool.CheckResult.v2"],
+    [["document", "check"], "Perttool.CheckResult.v3"],
     [["project", "show"], "Perttool.ProjectResult.v3"],
-    [["dag", "analyze"], "Perttool.AnalysisResult.v3"],
-    [["dag", "next"], "Perttool.NextResult.v4"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v4"],
+    [["dag", "next"], "Perttool.NextResult.v5"],
   ]) {
     const accepted = runCli([...route, targetFixture, "--format=json"]);
     assert.equal(accepted.status, 0);
     assert.equal(accepted.stderr, "");
     const result = JSON.parse(accepted.stdout);
     assert.equal(result.schema_version, schemaVersion);
-    assert.equal(result.cli_contract_version, 5);
+    assert.equal(result.cli_contract_version, 6);
     assert.equal(result.ok, true);
     assert.equal(result.grammar_version, 2);
   }

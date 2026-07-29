@@ -149,13 +149,20 @@ test("grammar selection rejects noncanonical generated tokens and invalid contex
     ),
     /generated Duration token must be canonical/,
   );
-  assert.throws(
-    () => selectExactDurationGrammarBoundary(
+  assert.deepEqual(
+    selectExactDurationGrammarBoundary(
       5,
       [decimal],
       { migrationChanged: true, velocityDisposition: "retained" },
     ),
-    /source grammar version must be 1, 2, 3, or 4/,
+    {
+      sourceGrammarVersion: 5,
+      targetGrammarVersion: 5,
+      grammarDisposition: "retained",
+      requiresVersionUpgrade: false,
+      reversibility: "values_exact_metadata_changed",
+      qualifications: ["grammar_version_retained_on_inverse"],
+    },
   );
   assert.throws(
     () => selectExactDurationGrammarBoundary(

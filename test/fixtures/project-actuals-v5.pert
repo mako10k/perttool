@@ -1,0 +1,18 @@
+project ACTUALS:
+  version 5
+  title "Project actuals Contract 6"
+  as_of 2026-07-29
+  duration_unit point
+  velocity 6p/1d
+  finish DONE
+
+milestone START:
+  title "Start"
+  state reached
+
+milestone DONE:
+  title "Done"
+
+task WORK START -> DONE:
+  title "Work"
+  duration 3p

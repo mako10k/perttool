@@ -1314,27 +1314,28 @@ Advance procedure:
    ready set, analysis, and next result again.
 8. Commit the advanced present/future plan as a second logical change.
 
-The accepted project-actuals target will make task-owned work events part of
-the exact pre-advance snapshot and removal review. Its internal Grammar 5
-source Core is accepted in
+The active project-actuals contract makes task-owned work events part of the
+exact pre-advance snapshot and removal review. Its Grammar 5 source Core is
+accepted in
 [`project-actuals-source-core-acceptance.md`](project-actuals-source-core-acceptance.md),
 and internal eventful finish and task-owned advance removal are accepted in
 [`project-actuals-finish-acceptance.md`](project-actuals-finish-acceptance.md).
-Internal first-parent semantic reconstruction, explicit-event removal,
+First-parent semantic reconstruction, explicit-event removal,
 qualified legacy transitions, and exact task summaries are accepted in
 [`project-actuals-history-acceptance.md`](project-actuals-history-acceptance.md).
-Internal start, suspend, resume, resource release, and suspended result
+Start, suspend, resume, resource release, and suspended result
 handling are accepted in
 [`project-actuals-lifecycle-acceptance.md`](project-actuals-lifecycle-acceptance.md).
-Internal exact elapsed-hour, qualified active-date, effort-productivity, and
+Exact elapsed-hour, qualified active-date, effort-productivity, and
 Git-recorded observations are accepted in
 [`project-actuals-velocity-observation-acceptance.md`](project-actuals-velocity-observation-acceptance.md).
-The standard package root and CLI remain Grammar 1 through 4 and Contract 5.
-Until the atomic Grammar 5/CLI Contract 6 cutover is accepted, the active
-workflow remains status-only and must not add future event syntax manually or
-invoke the internal actuals, lifecycle, analysis, Next, history, or
-observation target modules as an operational interface. The target contract is
-[`docs/specs/project-actuals.md`](../specs/project-actuals.md).
+The current source package root and CLI activate Grammar 5 and Contract 6
+atomically. Use only the public root and CLI names; target-prefixed modules
+remain internal implementation details. The published `0.4.0` package remains
+Grammar 4 and Contract 5 until a separate release. The active contract is
+[`docs/specs/project-actuals.md`](../specs/project-actuals.md), and the
+source-cutover evidence is
+[`project-actuals-public-contract-acceptance.md`](project-actuals-public-contract-acceptance.md).
 
 The runtime history guard in backlog
 [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history)

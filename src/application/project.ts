@@ -3,7 +3,7 @@ import {
   type TargetGovernanceProjectMetadata,
   type TargetGovernanceProjectMetadataResult,
 } from "./target-governance-project.js";
-import { TARGET_GRAMMAR_4_CAPABILITY } from "../parser/document-parser.js";
+import { TARGET_GRAMMAR_5_CAPABILITY } from "../parser/document-parser.js";
 import type { CheckOptions } from "./check.js";
 
 export type ProjectMetadataDurationUnit = "day" | "hour" | "point";
@@ -16,7 +16,7 @@ export function getProjectMetadata(
 ): ProjectMetadataResult {
   return getTargetGovernanceProjectMetadata(
     text,
-    TARGET_GRAMMAR_4_CAPABILITY,
+    TARGET_GRAMMAR_5_CAPABILITY,
     options,
   );
 }

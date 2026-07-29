@@ -5,6 +5,7 @@ import { serializeExactDurationSource } from "../model/exact-duration-source.js"
 import type {
   DocumentNode,
   FieldNode,
+  TargetDeclarationKind,
   VelocityValue,
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
@@ -32,6 +33,7 @@ import {
   planProjectMutationEdits,
   TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
   TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
+  TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE,
 } from "../mutation/project.js";
 import {
   applyTextEdits,
@@ -41,10 +43,12 @@ import {
 import type {
   TargetGrammar3Capability,
   TargetGrammar4Capability,
+  TargetGrammar5Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar3Document,
   validateTargetGrammar4Document,
+  validateTargetGrammar5Document,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 import {
@@ -225,11 +229,13 @@ function projectConfigurationEdits(
   };
   const planned = planProjectMutationEdits(
     text,
-    prepared.validatedDocument.document,
+    prepared.validatedDocument.document as unknown as DocumentNode,
     { kind: "project.set", set },
-    prepared.sourceGrammarVersion === 4
-      ? TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE
-      : TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
+    prepared.sourceGrammarVersion === 5
+      ? TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE
+      : prepared.sourceGrammarVersion === 4
+        ? TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE
+        : TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
   );
   if (planned.diagnostic !== undefined) {
     throw new Error(
@@ -268,7 +274,7 @@ function scalarFields(field: FieldNode): readonly FieldNode[] {
 }
 
 function candidateDurationTokens(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
 ): readonly {
   readonly fieldPath: string;
   readonly token: string;
@@ -293,6 +299,10 @@ function candidateDurationTokens(
                     field.name === "most_likely" ||
                     field.name === "pessimistic")
                 ? `task.${declaration.id}.estimate.${field.name}`
+                : declaration.kind === "work_event" &&
+                    parent === field &&
+                    field.name === "planned_value"
+                  ? `work_event.${declaration.id}.planned_value`
                 : null;
         if (fieldPath !== null) {
           tokens.push({ fieldPath, token: field.rawValue });
@@ -304,7 +314,7 @@ function candidateDurationTokens(
 }
 
 function candidateTemporalTokens(
-  document: DocumentNode,
+  document: DocumentNode<TargetDeclarationKind>,
 ): readonly {
   readonly fieldPath: string;
   readonly token: string;
@@ -319,8 +329,11 @@ function candidateTemporalTokens(
             ? `milestone.${declaration.id}.deadline`
             : declaration.kind === "task" && field.name === "not_before"
               ? `task.${declaration.id}.not_before`
-              : declaration.kind === "task" && field.name === "deadline"
-                ? `task.${declaration.id}.deadline`
+            : declaration.kind === "task" && field.name === "deadline"
+              ? `task.${declaration.id}.deadline`
+              : declaration.kind === "work_event" &&
+                  field.name === "occurred_at"
+                ? `work_event.${declaration.id}.occurred_at`
                 : null;
       if (fieldPath !== null) {
         tokens.push({ fieldPath, token: field.rawValue });
@@ -346,7 +359,7 @@ function assertCandidatePostconditions(
   prepared: TargetUnitMigrationRequestSuccess,
   targetGrammarVersion: MigrationGrammarVersion,
   convertedFields: readonly ExactUnitMigrationConvertedField[],
-  candidateDocument: DocumentNode,
+  candidateDocument: DocumentNode<TargetDeclarationKind>,
 ): void {
   const project = candidateDocument.declarations.find(
     ({ kind }) => kind === "project",
@@ -398,7 +411,10 @@ function assertCandidatePostconditions(
 export function planTargetUnitMigrationCandidate(
   text: string,
   request: UnitMigrationRequest,
-  capability: TargetGrammar3Capability | TargetGrammar4Capability,
+  capability:
+    | TargetGrammar3Capability
+    | TargetGrammar4Capability
+    | TargetGrammar5Capability,
   options: TargetUnitMigrationCandidateOptions = {},
 ): TargetUnitMigrationCandidate {
   const originalDigest = digest(text);
@@ -451,9 +467,11 @@ export function planTargetUnitMigrationCandidate(
     "unit migration candidate",
   );
   const updatedText = applyTextEdits(text, edits);
-  const candidate = capability.grammarVersion === 4
-    ? validateTargetGrammar4Document(updatedText, capability, options)
-    : validateTargetGrammar3Document(updatedText, capability, options);
+  const candidate = capability.grammarVersion === 5
+    ? validateTargetGrammar5Document(updatedText, capability, options)
+    : capability.grammarVersion === 4
+      ? validateTargetGrammar4Document(updatedText, capability, options)
+      : validateTargetGrammar3Document(updatedText, capability, options);
   if (
     !candidate.ok ||
     candidate.validatedDocument === null ||

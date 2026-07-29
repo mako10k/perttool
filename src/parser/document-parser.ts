@@ -1290,7 +1290,7 @@ export function parseDocument(
   text: string,
   options: ParseOptions = {},
 ): ParseResult {
-  return parseGrammar4CapableDocument(text, options);
+  return activeParseResult(parseGrammar5CapableDocument(text, options));
 }
 
 function parseGrammar3CapableDocument(

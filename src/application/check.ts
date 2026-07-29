@@ -13,6 +13,19 @@ import { validateDocument } from "../semantic/validator.js";
 import {
   projectDeclaredCalendarValue,
 } from "../model/target-calendar.js";
+import {
+  projectActualsSourceModel,
+  type ProjectActualsSourceModel,
+} from "../actuals/source.js";
+import {
+  validateStoredLifecycleState,
+} from "../actuals/lifecycle.js";
+import {
+  TARGET_GRAMMAR_5_CAPABILITY,
+} from "../parser/document-parser.js";
+import {
+  validateTargetGrammar5Document,
+} from "../semantic/target-validator.js";
 
 export interface CheckSummary {
   readonly resources: number;
@@ -41,6 +54,7 @@ export interface TemporalInputs {
 }
 
 export interface CheckResult {
+  readonly schemaVersion: "Perttool.CheckResult.v3";
   readonly ok: boolean;
   readonly document: DocumentNode;
   readonly documentId: string | null;
@@ -49,6 +63,7 @@ export interface CheckResult {
   readonly diagnosticsTruncated: boolean;
   readonly summary: CheckSummary;
   readonly temporalInputs: TemporalInputs | null;
+  readonly actualsInputs: ProjectActualsSourceModel | null;
 }
 
 export interface CheckOptions {
@@ -110,7 +125,23 @@ function temporalInputs(
 export function checkDocument(text: string, options: CheckOptions = {}): CheckResult {
   const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
   const parsed = parseDocument(text, { maxDiagnostics });
-  const validatedDiagnostics = validateDocument(parsed.document, parsed.diagnostics);
+  const semanticDiagnostics = validateDocument(
+    parsed.document,
+    parsed.diagnostics,
+  );
+  const target = validateTargetGrammar5Document(
+    text,
+    TARGET_GRAMMAR_5_CAPABILITY,
+    { maxDiagnostics },
+  );
+  const lifecycleDiagnostics =
+    target.ok && target.validatedDocument !== null
+      ? validateStoredLifecycleState(target.validatedDocument)
+      : [];
+  const validatedDiagnostics = [
+    ...semanticDiagnostics,
+    ...lifecycleDiagnostics,
+  ];
   const limited = limitDiagnostics(validatedDiagnostics, maxDiagnostics);
   const diagnostics = limited.diagnostics;
   const parseFailed = parsed.diagnostics.some(
@@ -140,6 +171,7 @@ export function checkDocument(text: string, options: CheckOptions = {}): CheckRe
     warnings: diagnosticCounts.warnings,
   };
   return {
+    schemaVersion: "Perttool.CheckResult.v3",
     ok: !hasErrors(validatedDiagnostics),
     document: parsed.document,
     documentId: project?.id ?? null,
@@ -148,5 +180,9 @@ export function checkDocument(text: string, options: CheckOptions = {}): CheckRe
     diagnosticsTruncated: parsed.diagnosticsTruncated || limited.truncated,
     summary,
     temporalInputs: temporalInputs(parsed.document, parseFailed),
+    actualsInputs:
+      target.ok && target.validatedDocument !== null
+        ? projectActualsSourceModel(target.validatedDocument)
+        : null,
   };
 }

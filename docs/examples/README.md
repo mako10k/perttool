@@ -12,8 +12,20 @@
 - [temporal-units.md](temporal-units.md): active Grammar 2/3 and Contract 4 boundary cases for calendar projection, deadlines, start authority, exact Decimal-or-fraction Point/time migration, and deterministic text/JSON
 - [governance-source.md](governance-source.md): accepted target Grammar 4 principal, omission-default, declared/effective metadata, compatibility, source-preservation, and unit/recommendation separation cases
 - [governance.md](governance.md): accepted target governance authority and write-path cases for defaults, preview, owner/delegate assertions, atomic batches, safe-write composition, and direct-edit guidance
+- [project-actuals.pert](project-actuals.pert): an active Grammar 5 completed task with explicit start, suspend, resume, and finish evidence
+- [project-actuals.md](project-actuals.md): normative lifecycle, Git-history, and observation cases for CLI Contract 6
 
-`.pert` files in this directory are normative samples for grammar version 1, semantics version 1, and analysis version 1. Grammar 2 source fixtures and Grammar 3 machine acceptance cases live under `test/fixtures/temporal-units/` and are active through Contract 4. `governance-source.md` and `governance.md` contain accepted target Grammar 4/interface cases that remain non-runnable until the atomic governance cutover; their machine baseline lives under `test/fixtures/governance/`. `recommendation.md` contains normative cases for implemented Recommendation interface version 1, and `agent-guidance.md` contains normative cases for implemented Agent Guidance interface version 1. `mermaid-profile.md` is the Mermaid adapter wire contract and export golden; tests fix the byte output of `exportMermaid` and `dag render --to mermaid`.
+`.pert` files in this directory are normative runnable samples. Most retain
+grammar version 1; `project-actuals.pert` exercises active Grammar 5 and CLI
+Contract 6. Grammar 2/3 machine acceptance cases live under
+`test/fixtures/temporal-units/`, Grammar 4 governance cases under
+`test/fixtures/governance/`, and Grammar 5 contract cases under
+`test/fixtures/project-actuals-contract-v1.json`.
+`recommendation.md` contains normative cases for implemented Recommendation
+interface version 1, and `agent-guidance.md` contains normative cases for
+implemented Agent Guidance interface version 1. `mermaid-profile.md` is the
+Mermaid adapter wire contract and export golden; tests fix the byte output of
+`exportMermaid` and `dag render --to mermaid`.
 
 In `pert-estimate.pert`, `DESIGN` has expected value `13/6d` and variance `1/4d^2`. The precedence makespan including `BUILD` is `31/6d`, and the representative critical-task sequence is `[DESIGN, BUILD]`.
 

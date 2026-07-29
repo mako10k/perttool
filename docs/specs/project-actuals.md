@@ -1,12 +1,13 @@
 # Project Actuals and Git History Contract
 
-- Status: Normative target 1.0
+- Status: Normative 1.0
 - Actuals model: 1
 - History model: 1
 - Velocity observation model: 1
-- Target grammar version: 5
-- Target CLI contract version: 6
-- Active compatibility boundary: Grammar 1/2/3/4 and CLI Contract 5 remain unchanged
+- Active grammar version: 5
+- Active CLI contract version: 6
+- Compatibility boundary: Grammar 1/2/3/4 semantics remain available; the
+  published `0.4.0` package remains CLI Contract 5
 
 ## 1. Scope
 
@@ -19,9 +20,11 @@ This specification defines the selected post-beta design for:
 - task and project actual summaries; and
 - observed throughput and effort productivity.
 
-The target is accepted but not implemented by the active package. The independent
-[`project-actuals.pert`](../../plans/project-actuals.pert) plan begins with a
-contract review before source or runtime work. The review is recorded in
+The current source activates this contract atomically through Grammar 5 and
+CLI Contract 6. The independent
+[`project-actuals.pert`](../../plans/project-actuals.pert) workstream retains
+the contract review and implementation evidence; package publication remains
+a separate release boundary. The review is recorded in
 [`project-actuals-contract-review.md`](../process/project-actuals-contract-review.md).
 
 ## 2. Normative language
@@ -156,7 +159,7 @@ activated.
 
 ### 5.2 Transitions
 
-The lifecycle commands have these target transitions.
+The lifecycle commands have these transitions.
 
 | Command | Accepted source state | Target state | Appended event |
 | --- | --- | --- | --- |
@@ -171,8 +174,8 @@ An eventful finish requires an explicit event time and MAY include
 Grammar 1 through 4 compatibility and creates no actual event.
 
 `task start` is a state/evidence mutation, not a new recommendation override
-mechanism. Agents still obey the complete `Perttool.NextResult.v4` authority
-until a later public result version is accepted. MIG-08 and durable
+mechanism. Agents obey the complete `Perttool.NextResult.v5` authority.
+MIG-08 and durable
 authorization audit are outside this contract.
 
 ### 5.3 Sequence validation
@@ -434,7 +437,7 @@ duplicates and are projected in ASCII task-ID order.
 
 ### 9.2 CLI surface
 
-The target public surfaces are:
+The public surfaces are:
 
 ```text
 perttool task start <file> <task-id> --at <date-time> [--event-id <id>]
@@ -729,9 +732,9 @@ The implementation and package acceptance must version:
 - graph/analysis/next handling of `suspended`; and
 - structured unavailable/qualification causes.
 
-No source parser, root export, command, help entry, conditional result field,
-or installed behavior becomes public until every Contract 6 schema and
-Grammar 5 behavior is ready together.
+The current source activates the source parser, root exports, commands, help,
+conditional result fields, and installed-package checks together. No release
+or dist-tag mutation follows from source activation.
 
 ## 10. Diagnostics
 
@@ -806,7 +809,7 @@ warning exits 0 unless warnings-as-errors is selected. `PTHIS-101`,
 
 ### 11.1 Compatibility
 
-- Grammar 1 through 4 reject the future work-event declaration and
+- Grammar 1 through 4 reject the Grammar 5 work-event declaration and
   `suspended`.
 - CLI Contract 5 retains status-only `task finish` and has no lifecycle,
   history, or observation commands.
@@ -848,7 +851,8 @@ The contract review MUST demonstrate:
 10. incomplete and ambiguous history fail closed or remain qualified;
 11. parallel cycle times are not summed for velocity;
 12. observed velocity never changes declared velocity; and
-13. Grammar 1 through 4 and CLI Contract 5 remain unchanged before cutover;
+13. Grammar 1 through 4 and CLI Contract 5 remain unchanged before cutover,
+    and their semantics remain compatible under Contract 6;
 14. source EBNF, contextual keywords, exact units, canonical order, event-ID
     derivation, and unit migration are fixed;
 15. Core/CLI requests, result identities, complete JSON fields, text order,

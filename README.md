@@ -11,6 +11,12 @@ Beta releases may contain breaking CLI or schema changes. Version `0.4.0`
 requires Node.js 22 or later. Contract 4 and Contract 3 remain available by
 pinning `0.3.0` and `0.2.0`, respectively.
 
+The current repository source has moved ahead of that published artifact. It
+atomically implements Grammar 5 and CLI Contract 6, including explicit task
+work events, lifecycle commands, read-only Git history, observed velocity,
+AnalysisResult v4, and NextResult v5. No Contract 6 package or dist-tag change
+is implied by the source cutover.
+
 ## Run without installing
 
 Use `npx` for an occasional invocation and select Contract 5 explicitly:
@@ -90,7 +96,8 @@ Task duration can use deterministic `day`, `hour`, or relative `point` units.
 Point plans declare a project-wide velocity such as `20p/10d`. Analysis keeps
 the exact point result and reports the time conversion separately as a velocity
 forecast. Grammar version 3 also accepts an exact Fraction such as `1/3d`;
-versions 1 and 2 continue to accept Decimal duration tokens.
+versions 1 and 2 continue to accept Decimal duration tokens. Grammar version 5
+adds explicit task-owned work events and the `suspended` lifecycle state.
 
 ## Maintain a plan through the CLI
 
@@ -197,7 +204,7 @@ perttool gate add PLAN.pert APPROVAL NOW DONE \
   --expect-digest 'sha256:...'
 ```
 
-Generated Contract 5 projects carry this maintenance warning:
+Generated Contract 6 source projects carry this maintenance warning:
 
 ```pert
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
@@ -228,6 +235,45 @@ perttool project migrate-unit PLAN.pert \
 Migration is not a `batch apply` member. Re-read and reanalyze the written
 candidate before making a separate mutation.
 
+### Task actuals and Git history
+
+Grammar 5 records each lifecycle transition as a task state change and a
+task-owned work event in one preview-first candidate. Event time is always an
+explicit caller input; perttool does not substitute the system clock or Git
+commit time.
+
+```sh
+perttool task start PLAN.pert WORK \
+  --at 2026-07-29T09:00:00+09:00 --diff
+perttool task suspend PLAN.pert WORK \
+  --at 2026-07-29T11:00:00+09:00 --reason "review" --diff
+perttool task resume PLAN.pert WORK \
+  --at 2026-07-29T12:00:00+09:00 --diff
+perttool task finish PLAN.pert WORK \
+  --at 2026-07-29T15:00:00+09:00 \
+  --active-time 5 --effort 6 --diff
+```
+
+Use the ordinary governance, `--write`, and `--expect-digest` controls after
+reviewing each candidate. `--active-time` is hours and `--effort` is
+person-hours; suffix-free CLI values are normalized to `h` and `ph`.
+
+History is a read-only first-parent Git reconstruction. It distinguishes
+explicit actual event time from Git-recorded transition time and never changes
+Git or declared project velocity:
+
+```sh
+perttool project history PLAN.pert --task WORK --format json
+perttool project observe-velocity PLAN.pert \
+  --task WORK --evidence declared --format json
+```
+
+Observed candidates are evidence, not automatic project metadata changes.
+Adoption, if desired, is a separate reviewed `project set --velocity` write.
+See the [Contract 5-to-6 migration
+guide](docs/process/cli-contract-6-migration.md) for schema and compatibility
+details.
+
 ## Command map
 
 | Goal | Command |
@@ -238,13 +284,15 @@ candidate before making a separate mutation.
 | Canonically format it | `perttool document format <file>` |
 | Initialize a project | `perttool project init ...` |
 | Read project metadata | `perttool project show <file>` |
+| Reconstruct task actuals | `perttool project history <file> ...` |
+| Observe project performance | `perttool project observe-velocity <file> ...` |
 | Change project metadata | `perttool project set <file> ...` |
 | Migrate project units exactly | `perttool project migrate-unit <file> ...` |
 | Analyze schedules | `perttool dag analyze <file>` |
 | Select next work | `perttool dag next <file>` |
 | Remove completed history | `perttool dag advance <file>` |
 | Export or import Mermaid | `perttool dag render`, `perttool dag import` |
-| Maintain tasks | `perttool task add|set|remove|finish` |
+| Maintain tasks | `perttool task add|set|remove|start|suspend|resume|finish` |
 | Maintain gates | `perttool gate add|set|remove` |
 | Maintain milestones | `perttool milestone add|set|remove` |
 | Maintain resources | `perttool resource add|set|remove` |
@@ -263,14 +311,17 @@ perttool guide editing --level detail --format json
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. Contract 5 consumers must check
-`cli_contract_version == 5`; consumers pinned to `0.3.0` must continue to
-require Contract 4. In both cases, check the result-specific `schema_version`
-before reading the rest of a result.
-A complete, known, non-truncated `Perttool.NextResult.v4` with temporal policy
+Use `--format json` for machine consumers. Current-source consumers must check
+`cli_contract_version == 6`; consumers of published `0.4.0` must continue to
+require Contract 5, and consumers pinned to `0.3.0` must require Contract 4.
+In every case, check the result-specific `schema_version` before reading the
+rest of a result.
+A complete, known, non-truncated `Perttool.NextResult.v5` with temporal policy
 `recommendation_v1_plus_release_gate` is required. Start only task IDs in
 `temporal.authority.startable_recommended_task_ids`; do not infer start
 authority from the raw recommended set, the text summary, or `ready` alone.
+Suspended tasks are reported separately and require an explicit `task resume`;
+they are not new-start recommendations.
 
 Mutation JSON returns the candidate text, unified diff, UTF-16 text edits,
 source digest, updated digest, diagnostics, and write result in one envelope.
@@ -281,6 +332,8 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 
 - [Temporal and Unit Interface Contract (CLI Contract 4)](docs/specs/temporal-unit-interface.md)
 - [Owner-Aware Governance Interface Contract (CLI Contract 5)](docs/specs/governance-interface.md)
+- [Project Actuals and Git History Contract (CLI Contract 6)](docs/specs/project-actuals.md)
+- [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)
 - [Contract 4-to-5 migration](docs/process/cli-contract-5-migration.md)
 - [Issue #4 governance implementation acceptance](docs/process/governance-acceptance.md)
 - [CLI Contract 3 compatibility baseline](docs/specs/cli-contract-3.md)

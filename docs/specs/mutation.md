@@ -1,7 +1,7 @@
 # perttool Mutation Semantics Specification
 
 - Document status: Draft 0.8
-- Mutation semantics version: 1
+- Mutation semantics versions: 1 and 2
 - Created: 2026-07-22
 - Requirements: [../requirements.md](../requirements.md)
 - DSL grammar: [dsl-grammar.md](dsl-grammar.md)
@@ -404,10 +404,10 @@ provides the enclosing contract identity.
 ## 12. Grammar version 4 governance source extension
 
 The [Governance Source and Effective-Metadata
-specification](governance-source.md) selects this target extension to Mutation
+specification](governance-source.md) selects this extension to Mutation
 semantics version 1. The [Governance Interface
 contract](governance-interface.md) fixes its public Core and CLI projection.
-It is not active until the atomic Contract 5 cutover.
+It is active through the atomic Contract 5 cutover.
 
 ```ts
 ProjectFieldSet.goalOwner?: PrincipalId;
@@ -444,10 +444,10 @@ After final candidate validation, Governance semantics classifies inserted,
 changed, or removed governance fields against the pre-change snapshot. A
 candidate cannot use its new owner or delegate values to authorize itself.
 
-### 12.1 Accepted lifecycle mutation version 2 extension
+### 12.1 Active lifecycle mutation version 2 extension
 
 The selected [Project Actuals and Git History
-Contract](project-actuals.md) fixes the following not-yet-active Mutation
+Contract](project-actuals.md) fixes the following active Mutation
 semantics version 2 requests:
 
 ```ts

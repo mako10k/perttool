@@ -43,12 +43,12 @@ const nodes: readonly HelpNode[] = [
   {
     id: "syntax",
     title: "DSL syntax",
-    summary: "Grammar versions 1, 2, 3, and 4 for declaring project, governance metadata, resource, milestone, task, and gate.",
+    summary: "Grammar versions 1 through 5 for declaring projects, governance metadata, resources, milestones, tasks, gates, and explicit task work events.",
     quick: [
       {
         id: "declarations",
         title: "Declarations",
-        body: "Place exactly one project first, followed by resource, milestone, task, and gate declarations.",
+        body: "Place exactly one project first, followed by resource, milestone, task, gate, and Grammar 5 work-event declarations.",
       },
     ],
     detail: [
@@ -64,6 +64,7 @@ const nodes: readonly HelpNode[] = [
       "task ID FROM -> TO:",
       "gate ID FROM -> TO:",
       "resource ID:",
+      "work_event ID:",
     ],
     examples: [
       {
@@ -77,6 +78,7 @@ const nodes: readonly HelpNode[] = [
       "syntax.resource",
       "syntax.milestone",
       "syntax.task",
+      "syntax.work-event",
       "syntax.gate",
       "syntax.estimate",
       "syntax.velocity",
@@ -182,6 +184,49 @@ const nodes: readonly HelpNode[] = [
       "analysis.resources",
       "syntax.temporal",
     ],
+  },
+  {
+    id: "syntax.work-event",
+    title: "Work-event syntax",
+    summary: "Grammar 5 records explicit task-owned lifecycle evidence in the same PERT document.",
+    quick: [
+      {
+        id: "identity",
+        title: "Event identity and time",
+        body: "Each work_event has model 1, a task reference, one lifecycle kind, and an explicit fixed-offset occurred_at date-time. Stable event IDs make identical retries deterministic.",
+      },
+    ],
+    detail: [
+      {
+        id: "kind-fields",
+        title: "Kind-specific fields",
+        body: "start records planned_value. suspend may record reason. finish may record active_time in hours and effort in person-hours. Fields forbidden for a kind fail validation.",
+      },
+      {
+        id: "sequence",
+        title: "Lifecycle sequence",
+        body: "A complete sequence starts, may alternate suspend and resume, and finishes once. The stored task state and event-derived state must agree.",
+      },
+    ],
+    syntax: [
+      "work_event ID:",
+      "  model 1",
+      "  task TASK_ID",
+      "  kind start|suspend|resume|finish",
+      "  occurred_at DATE_TIME",
+      "  planned_value DURATION",
+      "  active_time HOURS",
+      "  effort PERSON_HOURS",
+      "  reason \"...\"",
+    ],
+    examples: [
+      {
+        id: "project-actuals",
+        title: "Complete lifecycle",
+        text: "docs/examples/project-actuals.md",
+      },
+    ],
+    related: ["actuals", "syntax.task", "syntax.duration", "editing"],
   },
   {
     id: "syntax.gate",
@@ -519,7 +564,7 @@ const nodes: readonly HelpNode[] = [
   {
     id: "next",
     title: "Next tasks",
-    summary: "Returns NextResult.v4 recommendations, temporal start authority, and active, ready, runnable_now, blocked_now, and upcoming tasks.",
+    summary: "Returns NextResult.v5 recommendations, temporal start authority, and active, ready, runnable_now, blocked_now, and upcoming tasks.",
     quick: [
       {
         id: "classification",
@@ -536,12 +581,12 @@ const nodes: readonly HelpNode[] = [
       {
         id: "consumer-safety",
         title: "Machine-readable explanation",
-        body: "--format json returns a complete Perttool.NextResult.v4 with the unchanged Recommendation version 1 explanation graph and a separate temporal release gate. Consumers validate every identity and do not start when decisive or temporal authority is unknown.",
+        body: "--format json returns a complete Perttool.NextResult.v5 with the unchanged Recommendation version 1 explanation graph and a separate temporal release gate. Consumers validate every identity and do not start when decisive or temporal authority is unknown.",
       },
       {
         id: "authority-adoption",
         title: "AI task selection authority",
-        body: "AI uses only a known Perttool.NextResult.v4 from --format json, Recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, a complete non-truncated trace, and temporal policy recommendation_v1_plus_release_gate. Start only IDs in startable_recommended_task_ids. Stop for unknown, incomplete, malformed, future, or unavailable authority, PTREC diagnostics, and deferred or discouraged selections. Reanalyze after task-state or capacity changes.",
+        body: "AI uses only a known Perttool.NextResult.v5 from --format json, Recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, a complete non-truncated trace, and temporal policy recommendation_v1_plus_release_gate. Start only IDs in startable_recommended_task_ids. Stop for unknown, incomplete, malformed, future, or unavailable authority, PTREC diagnostics, and deferred or discouraged selections. Reanalyze after task-state or capacity changes.",
       },
       {
         id: "selection",
@@ -551,7 +596,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "override-validation",
         title: "Human override validation",
-        body: "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v4 and an explicit request, and cannot bypass a future or unavailable temporal release gate. This is read-only validation and does not change task state, files, Git, or the network.",
+        body: "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v5 and an explicit request, and cannot bypass a future or unavailable temporal release gate. This is read-only validation and does not change task state, files, Git, or the network.",
       },
       {
         id: "explanation",
@@ -641,7 +686,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "batch",
         title: "Batch exclusion and reversibility",
-        body: "Automatic migration is not a batch.apply member. UnitMigrationResult v2 reports exact converted records, grammar and velocity dispositions, qualifications, and whether values and metadata are reversible.",
+        body: "Automatic migration is not a batch.apply member. UnitMigrationResult v3 reports exact converted records, grammar and velocity dispositions, qualifications, and whether values and metadata are reversible.",
       },
     ],
     syntax: [
@@ -656,6 +701,51 @@ const nodes: readonly HelpNode[] = [
       },
     ],
     related: ["editing", "syntax.duration", "syntax.velocity", "syntax.temporal"],
+  },
+  {
+    id: "actuals",
+    title: "Task actuals and lifecycle",
+    summary: "Records explicit start, suspend, resume, and finish evidence and reads qualified Git-recorded project history.",
+    quick: [
+      {
+        id: "explicit-events",
+        title: "Explicit lifecycle evidence",
+        body: "Grammar 5 work events are task-owned evidence. task start, suspend, resume, and eventful finish require an explicit --at value; no command reads the wall clock. Preview, governance, digest, and safe-write controls apply before persistence.",
+      },
+      {
+        id: "read-only-observation",
+        title: "Read-only history and observation",
+        body: "project history reconstructs first-parent evidence without changing Git. project observe-velocity reports exact, qualified candidates separately from project.velocity and never adopts one automatically.",
+      },
+    ],
+    detail: [
+      {
+        id: "legacy-status",
+        title: "Legacy status compatibility",
+        body: "Grammar 1 through 4 retain status-only task finish. In Grammar 5, eventless legacy tasks may use direct planned, active, blocked, or done status changes; once a work event exists, lifecycle commands are required and suspended remains distinct from blocked.",
+      },
+      {
+        id: "advance-ownership",
+        title: "Advance ownership",
+        body: "dag advance removes work events owned by removed done tasks. Commit the exact pre-advance task and event snapshot before applying advance so read-only history can reconstruct the evidence.",
+      },
+    ],
+    syntax: [
+      "perttool task start FILE TASK --at DATE_TIME [--event-id ID]",
+      "perttool task suspend FILE TASK --at DATE_TIME [--event-id ID] [--reason TEXT]",
+      "perttool task resume FILE TASK --at DATE_TIME [--event-id ID]",
+      "perttool task finish FILE TASK --at DATE_TIME [--event-id ID] [--active-time HOURS] [--effort PERSON_HOURS]",
+      "perttool project history FILE [--rev REV] [--task TASK]...",
+      "perttool project observe-velocity FILE [--rev REV] [--task TASK]... [--evidence declared|git-recorded|all]",
+    ],
+    examples: [
+      {
+        id: "complete-lifecycle",
+        title: "Record and inspect a complete lifecycle",
+        text: "perttool task start plan.pert WORK --at 2026-07-29T09:00:00+09:00 --write\nperttool task finish plan.pert WORK --at 2026-07-29T17:00:00+09:00 --active-time 8 --effort 8 --write\nperttool project history plan.pert --task WORK --format json",
+      },
+    ],
+    related: ["editing", "analysis", "next", "syntax"],
   },
   {
     id: "mermaid",

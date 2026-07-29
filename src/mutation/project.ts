@@ -38,6 +38,7 @@ const activeClearableFields = new Set<ProjectClearableField>([
 export interface ProjectMutationProfile {
   readonly exactDurations: boolean;
   readonly governanceSource: boolean;
+  readonly governanceGrammarVersion: 4 | 5;
   readonly fieldOrder: readonly string[];
 }
 
@@ -45,6 +46,7 @@ export const ACTIVE_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
   Object.freeze({
     exactDurations: false,
     governanceSource: false,
+    governanceGrammarVersion: 4,
     fieldOrder: activeFieldOrder,
   });
 
@@ -55,6 +57,7 @@ export const TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
   Object.freeze({
     exactDurations: true,
     governanceSource: false,
+    governanceGrammarVersion: 4,
     fieldOrder: activeFieldOrder,
   });
 
@@ -62,6 +65,7 @@ export const TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
   Object.freeze({
     exactDurations: true,
     governanceSource: true,
+    governanceGrammarVersion: 4,
     fieldOrder: [
       "version",
       "title",
@@ -77,6 +81,12 @@ export const TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE: ProjectMutationProfile =
       "critical_epsilon",
       "target_duration",
     ],
+  });
+
+export const TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE:
+  ProjectMutationProfile = Object.freeze({
+    ...TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
+    governanceGrammarVersion: 5,
   });
 
 function canonicalDuration(
@@ -180,8 +190,12 @@ function requestError(
       set.dagOwner,
       set.dagDelegates,
     ].some((item) => item !== undefined);
-    if (governanceSet && set.version !== undefined && set.version !== 4) {
-      return "setting governance fields requires version 4";
+    if (
+      governanceSet &&
+      set.version !== undefined &&
+      set.version !== profile.governanceGrammarVersion
+    ) {
+      return `setting governance fields requires version ${profile.governanceGrammarVersion}`;
     }
   }
   if (set.version !== undefined && !Number.isSafeInteger(set.version)) {
@@ -268,9 +282,9 @@ function planSet(
     editor.setScalar("version", String(set.version));
   } else if (
     governanceSet &&
-    editor.fieldValue("version") !== 4
+    editor.fieldValue("version") !== profile.governanceGrammarVersion
   ) {
-    editor.setScalar("version", "4");
+    editor.setScalar("version", String(profile.governanceGrammarVersion));
   }
   if (set.title !== undefined) editor.setScalar("title", JSON.stringify(set.title));
   if (set.description !== undefined) editor.setText("description", set.description);

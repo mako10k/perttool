@@ -19,6 +19,7 @@ const topicIds = [
   "syntax.duration",
   "syntax.velocity",
   "syntax.temporal",
+  "syntax.work-event",
   "syntax.indentation",
   "syntax.string",
   "syntax.text",
@@ -31,6 +32,7 @@ const topicIds = [
   "next",
   "editing",
   "editing.unit-migration",
+  "actuals",
   "mermaid",
   "workflows",
   "errors",
@@ -116,10 +118,10 @@ test("mermaid help exposes lossless export and fail-closed import", () => {
   ]);
 });
 
-test("next help exposes the v4 temporal start authority and consumer safety", () => {
+test("next help exposes the v5 temporal start authority and consumer safety", () => {
   const help = getHelp("next", "detail");
   assert.equal(help.ok, true);
-  assert.match(help.summary, /NextResult\.v4/);
+  assert.match(help.summary, /NextResult\.v5/);
   const body = help.sections.map(({ body }) => body).join("\n");
   assert.match(body, /recommended, allowed, deferred, or discouraged/);
   assert.match(body, /temporal release gate/);

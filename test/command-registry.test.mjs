@@ -23,6 +23,8 @@ const expectedPaths = [
   "document format",
   "project init",
   "project show",
+  "project history",
+  "project observe-velocity",
   "project set",
   "project migrate-unit",
   "dag analyze",
@@ -33,6 +35,9 @@ const expectedPaths = [
   "task add",
   "task set",
   "task remove",
+  "task start",
+  "task suspend",
+  "task resume",
   "task finish",
   "gate add",
   "gate set",
@@ -54,7 +59,7 @@ function run(args) {
   });
 }
 
-test("the Contract 5 registry covers the complete active surface exactly once", () => {
+test("the Contract 6 registry covers the complete active surface exactly once", () => {
   assert.equal(COMMAND_REGISTRY.length, expectedPaths.length);
   assert.deepEqual(
     commandRegistryToJson(),
@@ -75,7 +80,7 @@ test("the Contract 5 registry covers the complete active surface exactly once", 
     expectedPaths.length,
   );
   for (const descriptor of COMMAND_REGISTRY) {
-    assert.equal(descriptor.contractVersion, 5, descriptor.operation);
+    assert.equal(descriptor.contractVersion, 6, descriptor.operation);
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(
       descriptor.operands.every(

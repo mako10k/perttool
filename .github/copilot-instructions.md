@@ -34,7 +34,8 @@ Mandatory summary:
   `PROJECT_HISTORY_READY`. Its internal pure reducer reconstructs explicit
   events, advance removal, qualified legacy Git-recorded transitions, exact
   task summaries, and typed availability from the first-parent probe;
-  deterministic Result v1 text/JSON remains publicly inactive.
+  deterministic Result v1 text/JSON remained publicly inactive until the
+  later public-contract cutover.
   `WORK_LIFECYCLE` is complete; Git commit `518a59e` records its exact
   completed 7p pre-advance snapshot, and the task is advanced to reached
   `LIFECYCLE_READY`. Its internal target provides exact
@@ -44,24 +45,27 @@ Mandatory summary:
   surface. `VELOCITY_OBSERVATION` is complete; Git commit `19b060a` records
   its exact completed 5p pre-advance snapshot, and the task and satisfied
   integration gates are advanced to reached `ACTUALS_INTEGRATED_INPUT`. Its
-  pure service derives exact elapsed-hour,
-  active-date, effort-productivity, and separately qualified Git-recorded
-  rates without changing declared velocity or the active public surface. Two
-  tasks and 10p remain; precedence and the `parallel-sgs` version 1 heuristic
-  resource makespan are both 10p with no delay. Complete NextResult v4
-  recommends and starts only `ACTUALS_PUBLIC_CONTRACT`.
-  Public Grammar 5/CLI Contract 6 activation, Git mutation, velocity adoption,
-  MIG-08, publication, and dist-tag movement remain outside scope. The
-  independent workstream does not displace `PERT_PLANS`.
+  pure service derives exact elapsed-hour, active-date, effort-productivity,
+  and separately qualified Git-recorded rates without changing declared
+  velocity. `ACTUALS_PUBLIC_CONTRACT` is complete pending its exact 6p
+  pre-advance commit. The current source atomically activates Grammar 5 and
+  CLI Contract 6 through lifecycle, suspended analysis/Next, history,
+  observation, standard package root, 33-command registry, help, Guide,
+  schemas, examples, and isolated installed workflow. One task and 4p remain;
+  precedence and the `parallel-sgs` version 1 heuristic resource makespan are
+  both 4p with no delay. Complete NextResult v5 recommends and starts only
+  `ACTUALS_ACCEPTANCE`. Git mutation, automatic velocity adoption, MIG-08,
+  publication, and dist-tag movement remain outside scope. The independent
+  workstream does not displace `PERT_PLANS`.
 - The CLI/help review is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted registry-driven design separates command help, domain guide, and agent guidance, includes project initialization and gate maintenance, and rejects renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and installed-package workflow for temporal and exact-unit behavior. The completed plan has no recommendation at `49p/1d`.
 - The first Contract 3 package, suffix-free beta `0.2.0`, is accepted under `plans/release-0.2.0.pert`, `docs/process/0.2.0-release.md`, and its acceptance record. All five release tasks are complete and advanced; release commit/tag identity, common local/GitHub/npm tarball bytes, and installed Contract 3/file-first behavior are verified. Publication moved only `beta`; a separately authorized post-acceptance dist-tag operation then made npm `beta=latest=0.2.0`. The completed release plan remains unchanged with no recommendation at `17p/2d`.
 - The suffix-free Contract 4 beta `0.3.0` is accepted. All six release tasks through `RELEASE_030_ACCEPTANCE` are complete and advanced. Release commit and peeled `v0.3.0` target `af44577` agree; the GitHub prerelease and npm registry tarballs have SHA-256 `197548a4...62074`; a separately authorized post-acceptance operation made npm `beta=latest=0.3.0`, while `alpha=0.1.0-alpha.2`. An unqualified global installation and light Contract 4 smoke passed. The plan has zero makespans, no recommendation, and observed cumulative velocity `19p/2d`.
 - The accepted suffix-free beta `0.4.0` publishes the breaking Grammar 4 and Contract 5 cutover. `plans/release-0.4.0.pert` keeps completed governance implementation state separate. The release commit and peeled `v0.4.0` target `6b341d1` agree, the candidate/GitHub/npm tarballs have common SHA-256 `010af9ce...7cc4a`, and npm reported `beta=0.4.0`, unchanged `latest=0.3.0`, and `alpha=0.1.0-alpha.2` at acceptance. Public-package checks and a registry install passed. All six tasks and 19p are complete and advanced to reached `RELEASE_040_ACCEPTED`; the plan has zero makespans and no recommendation. A separately authorized post-acceptance operation made npm `beta=latest=0.4.0`; an unqualified isolated installation confirmed CLI Contract 5 and Grammar 4. Issue #4 closure remains separate.
 - `TIME-001` and `UNIT-001` are accepted through SU-M5. SU-M5's 23p atomic Contract 4 acceptance is committed at `81b4828`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans have zero makespans and no recommendation. The accepted surface includes Grammar 1/2/3, CLI Contract 4, public result schemas, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
-- The TypeScript CLI MVP, recommendation MIG-01 through MIG-07, and the read-only AI Agent Guidance Registry v1 are accepted. The current source and npm `beta=latest=0.4.0` implement CLI Contract 5 with Grammar 1/2/3/4, owner-aware governed maintenance, exact unit migration, AnalysisResult v3, UnitMigrationResult v2, and a complete known NextResult v4 as normal start authority. Contract 4 `0.3.0` and Contract 3 `0.2.0` remain available by pin. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply/audit remains unavailable until MIG-08.
+- The TypeScript CLI MVP, recommendation MIG-01 through MIG-07, and the read-only AI Agent Guidance Registry v1 are accepted. The current source implements CLI Contract 6 with Grammar 1/2/3/4/5, owner-aware governed lifecycle, read-only history and velocity observation, exact unit migration, AnalysisResult v4, UnitMigrationResult v3, and a complete known NextResult v5 as normal start authority. The published npm `beta=latest=0.4.0` artifact remains CLI Contract 5 and Grammar 4; Contract 4 `0.3.0` and Contract 3 `0.2.0` remain available by pin. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply/audit remains unavailable until MIG-08.
 - The normative precedence order is `docs/requirements.md`, `docs/specs/`, `docs/basic-design.md`, `docs/examples/`, `docs/process/`, and `plans/`.
 - Before a non-trivial change, confirm the current checkout, goal, normative sources, acceptance criteria, non-goals, and verification method.
-- For the “next task,” treat a known, complete, non-truncated `Perttool.NextResult.v4` with temporal policy `recommendation_v1_plus_release_gate` as the authority, choose a workstream from the macro startable recommended work package, and then reanalyze its corresponding detail plan. Start only `startable_recommended_task_ids`; normal selection is limited to a subset of that set, or the complete set plus exactly one resource-feasible, time-eligible allowed task. Do not start for an unknown version/policy, incomplete trace, `PTREC-*`, future/unavailable release eligibility, or deferred/discouraged result; reanalyze after changes to task state, time, or capacity.
+- For the “next task,” treat a known, complete, non-truncated `Perttool.NextResult.v5` with temporal policy `recommendation_v1_plus_release_gate` as the authority, choose a workstream from the macro startable recommended work package, and then reanalyze its corresponding detail plan. Start only `startable_recommended_task_ids`; normal selection is limited to a subset of that set, or the complete set plus exactly one resource-feasible, time-eligible allowed task. Do not start for an unknown version/policy, incomplete trace, `PTREC-*`, future/unavailable release eligibility, or deferred/discouraged result; reanalyze after changes to task state, time, or capacity.
 - Maintain traceability across requirements/specification, design, implementation, and verification.
 - Maintain task=edge, milestone=node, and gate=zero-duration dependency edge; do not convert shared resources into DAG dependencies.
 - Distinguish the precedence critical path from the schedule critical path in a resource schedule.

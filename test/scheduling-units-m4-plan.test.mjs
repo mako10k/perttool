@@ -51,7 +51,10 @@ test("SU-M4 decomposes the selected exact unit-migration target Core", async () 
   assert.doesNotMatch(macro, /milestone UNIT_MIGRATION_ACCEPTED:/);
   assert.doesNotMatch(macro, /^task SU_M2R_RATIONAL_DURATION_WORK_PACKAGE /m);
 
-  assert.match(migration, /Unit migration version: `2`/);
+  assert.match(
+    migration,
+    /Version 2 replaces its representability failure with\s+exact fraction Duration/,
+  );
   assert.match(interfaceSpec, /Perttool\.UnitMigrationResult\.v2/);
 });
 

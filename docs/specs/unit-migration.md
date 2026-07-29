@@ -1,8 +1,8 @@
 # Point and Time-Unit Migration Semantics Specification
 
-- Document status: Normative 2.1
+- Document status: Normative 3.0
 - Unit migration ID: `perttool.unit-migration`
-- Unit migration version: `2`
+- Unit migration version: `3`
 - Created: 2026-07-25
 - Related requirements: [../requirements.md](../requirements.md)
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
@@ -11,7 +11,7 @@
 - Calendar semantics: [temporal-calendar.md](temporal-calendar.md)
 - Public interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Governance source: [governance-source.md](governance-source.md)
-- Project actuals target: [project-actuals.md](project-actuals.md)
+- Project actuals contract: [project-actuals.md](project-actuals.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -25,7 +25,7 @@ a Point project and one explicitly velocity-linked time unit. It defines:
 - exact Rational conversion and canonical Decimal-or-fraction Duration
   serialization;
 - deterministic source-grammar retention or upgrade to grammar version 3,
-  while retaining governance Grammar 4;
+  while retaining governance Grammar 4 and actuals Grammar 5;
 - atomic, source-preserving candidate behavior;
 - no-op, repeated, and inverse migration behavior;
 - the boundary between source migration and read-only velocity forecasts; and
@@ -64,13 +64,14 @@ The current identity is:
 
 ```text
 unit_migration_id       = perttool.unit-migration
-unit_migration_version  = 2
+unit_migration_version  = 3
 ```
 
 Version 1 remains the accepted historical finite-Decimal-only contract for
 grammar versions 1 and 2. Version 2 replaces its representability failure with
 exact fraction Duration and an atomic grammar version 3 upgrade. It does not
-change the permitted directions or velocity formulas.
+change the permitted directions or velocity formulas. Version 3 retains those
+semantics and inventories Grammar 5 `work_event.planned_value`.
 
 The same valid source bytes, target unit, optional replacement velocity, and
 version identity MUST produce the same semantic outcome, converted exact
@@ -186,7 +187,7 @@ original calendar forecast.
 
 ## 7. Complete source-field inventory
 
-Unit migration version 2 rewrites exactly the following source values.
+Unit migration version 3 rewrites exactly the following source values.
 
 | Source location | Migration behavior |
 | --- | --- |
@@ -198,6 +199,7 @@ Unit migration version 2 rewrites exactly the following source values.
 | every task `estimate.optimistic` | Convert |
 | every task `estimate.most_likely` | Convert |
 | every task `estimate.pessimistic` | Convert |
+| every `work_event.planned_value` | Convert |
 
 The following values are not base-unit-bearing migration inputs and remain
 unchanged:
@@ -211,6 +213,8 @@ unchanged:
 - resource capacity and task resource requirements;
 - task priority, owner, tags, block reason, and source;
 - task/gate endpoints and gate reasons; and
+- work-event occurrence time, kind, task reference, active time, effort,
+  reason, and model; and
 - every comment, blank line, and unrelated source token.
 
 The initial temporal scope contains only absolute dates and date-times, so it
@@ -218,11 +222,12 @@ adds no duration-bearing source field to this inventory. Absolute temporal
 values MUST NOT be rewritten merely because the project base unit changes.
 
 Grammar version 2 adds only absolute temporal fields, grammar version 3
-changes only Duration literal syntax, and grammar version 4 adds only
-non-duration governance metadata, so the inventory remains complete for
-grammar versions 1, 2, 3, and 4. If a later grammar version adds a source
+changes only Duration literal syntax, grammar version 4 adds only
+non-duration governance metadata, and the only Grammar 5 base-unit-bearing
+field is `work_event.planned_value`, so the inventory remains complete for
+grammar versions 1, 2, 3, 4, and 5. If a later grammar version adds a source
 field whose meaning is expressed in the project base unit, unit migration
-version 2 fails with
+version 3 fails with
 `unsupported_duration_field` until a new migration version inventories that
 field. It MUST NOT silently leave a base-unit-bearing field unchanged.
 
@@ -291,12 +296,13 @@ After serializing every converted field, select the candidate grammar:
 - retain source grammar version 1 or 2 when every generated token is Decimal;
 - upgrade source grammar version 1 or 2 to explicit version 3 when any
   generated token is a Fraction; and
-- retain source grammar version 3 or 4 regardless of generated token spelling.
+- retain source grammar version 3, 4, or 5 regardless of generated token
+  spelling.
 
 An omitted source `version` means version 1. An upgrade inserts `version 3` in
 canonical project-field order; an explicit version 1 or 2 is replaced
 locally. Grammar selection, unit, velocity, and every converted Duration are
-one atomic candidate. Migration version 2 has no
+one atomic candidate. Migration versions 2 and 3 have no
 `nonrepresentable_decimal` failure.
 
 `grammar_disposition` is `retained` when source and target grammar versions
@@ -306,7 +312,8 @@ version 3.
 A Grammar 4 source is never changed to Grammar 3 merely because Grammar 3 is
 the minimum version that can spell a generated Fraction. Its governance
 fields, list order, omission state, and unrelated tokens remain byte-for-byte
-unchanged.
+unchanged. A Grammar 5 source likewise remains Grammar 5 and preserves all
+actual-evidence fields outside the inventoried planned value.
 
 ## 10. Velocity disposition
 
@@ -373,6 +380,8 @@ or invalid final candidate.
 An ordinary atomic batch can manually set the same fields, but it does not
 thereby claim the inventory, exactness, velocity-disposition, or round-trip
 guarantees of `perttool.unit-migration` version 2.
+Version 3 provides the same guarantees for Grammar 5 and its inventoried
+`work_event.planned_value`.
 
 ## 12. Temporal and analysis preservation
 
@@ -514,7 +523,7 @@ ordinary validation diagnostics.
 
 ## 15. Fail-closed causes
 
-The following semantic causes are stable in unit migration version 2. The
+The following semantic causes are stable in unit migration version 3. The
 interface contract maps them to public diagnostics.
 
 | Cause | Meaning |
@@ -525,11 +534,11 @@ interface contract maps them to public diagnostics.
 | `unsupported_direction` | The request is not Point-to-time, time-to-Point, or a permitted no-op |
 | `velocity_period_mismatch` | The effective velocity period does not match the required time unit |
 | `same_unit_velocity_change` | A same-unit request attempted to change velocity |
-| `unsupported_duration_field` | The source grammar contains a base-unit-bearing field unknown to migration version 2 |
+| `unsupported_duration_field` | The source grammar contains a base-unit-bearing field unknown to migration version 3 |
 | `invalid_candidate` | The complete rewritten source failed ordinary validation |
 
 `nonrepresentable_decimal` belongs only to migration version 1. Migration
-version 2 never emits it because grammar version 3 represents every exact
+versions 2 and 3 never emit it because grammar version 3 represents every exact
 converted Rational as a Decimal or Fraction.
 
 Failures are deterministic and preserve all applicable ordinary parser,
@@ -565,9 +574,9 @@ Runtime implementation MUST use the accepted versioned interface and
 acceptance cases. It MUST NOT treat the existing project/task batch surface as
 the public migration operation.
 
-### 16.1 Accepted unit-migration version 3 delta
+### 16.1 Active unit-migration version 3 delta
 
-Unit migration version 3 is the accepted, not-yet-active Grammar 5 extension.
+Unit migration version 3 is the active Grammar 5 extension.
 It inherits every version 2 formula, velocity rule, exact serializer,
 source-preserving candidate rule, failure cause, and no-op/inverse meaning,
 and changes only this complete inventory and version boundary:
@@ -583,10 +592,10 @@ and changes only this complete inventory and version boundary:
 - accept and retain Grammar 5 even when every generated token is Decimal; and
 - never infer, delete, or alter actual evidence while migrating units.
 
-Unit migration version 2 continues to reject Grammar 5 with
+Unit migration version 2 rejects Grammar 5 with
 `unsupported_duration_field`. Version 3 selects
 `Perttool.UnitMigrationResult.v3` only at the coordinated Grammar 5 and CLI
-Contract 6 cutover. It has no standalone activation or downgrade path.
+Contract 6 cutover. It has no standalone downgrade path.
 
 ## 17. Acceptance for this contract
 
@@ -597,13 +606,15 @@ and the shared machine-readable baseline.
 The semantic contract is accepted only when tests establish all of the
 following.
 
-1. The identity is `perttool.unit-migration` version 2.
+1. The active identity is `perttool.unit-migration` version 3; version 2
+   remains the Contract 4/5 compatibility identity.
 2. Only Point-to-linked-time and matching-time-to-Point directions succeed.
 3. No day/hour relationship is inferred from velocity or calendar constants.
 4. Declared, equal-replacement, different-replacement, and inserted velocity
    dispositions are deterministic.
-5. The field inventory includes project epsilon/target and every task
-   deterministic or three-point estimate value.
+5. The field inventory includes project epsilon/target, every task
+   deterministic or three-point estimate value, and every Grammar 5
+   `work_event.planned_value`.
 6. Absolute temporal values, governance metadata, resources, priorities,
    states, and graph structure remain unchanged.
 7. Conversion uses exact Rational formulas and positive scaling.
@@ -612,14 +623,13 @@ following.
    Fraction, without rounding.
 9. Grammar version 1 or 2 is retained for all-Decimal output; any generated
    Fraction atomically upgrades the candidate to grammar version 3; source
-   Grammar 3 or 4 is retained.
+   Grammar 3, 4, or 5 is retained.
 10. The candidate is one source-preserving, atomically revalidated rewrite.
 11. Same-unit and repeated requests are no-ops and do not rescale.
 12. An inverse with the same effective velocity restores exact source values,
     with lexical, replacement-velocity, and grammar-upgrade qualifications
     stated explicitly.
-13. Grammar version 2 through 4 absolute temporal tokens and Grammar 4
-    governance tokens are preserved byte-for-byte, while existing analysis,
-    calendar, deadline, mutation, and CLI versions remain unchanged.
+13. Absolute temporal tokens, Grammar 4 governance tokens, and Grammar 5
+    actual measurements are preserved byte-for-byte.
 14. Zero denominators and malformed Fraction tokens fail ordinary grammar
     validation before migration and expose no candidate.

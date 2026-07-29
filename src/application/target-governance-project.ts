@@ -10,16 +10,20 @@ import {
   type DeclaredGovernance,
   type EffectiveGovernance,
 } from "../governance/source.js";
-import type { TargetGrammar4Capability } from "../parser/document-parser.js";
+import type {
+  TargetGrammar4Capability,
+  TargetGrammar5Capability,
+} from "../parser/document-parser.js";
 import {
   validateTargetGrammar4Document,
+  validateTargetGrammar5Document,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 import type { ProjectMetadataDurationUnit } from "./project.js";
 
 export interface TargetGovernanceProjectMetadata {
   readonly id: string;
-  readonly version: 1 | 2 | 3 | 4;
+  readonly version: 1 | 2 | 3 | 4 | 5;
   readonly title: string;
   readonly description: string | null;
   readonly asOf: TargetCalendarValue | null;
@@ -39,7 +43,7 @@ export interface TargetGovernanceProjectMetadata {
 export interface TargetGovernanceProjectMetadataResult {
   readonly ok: boolean;
   readonly documentId: string | null;
-  readonly grammarVersion: 1 | 2 | 3 | 4 | null;
+  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | null;
   readonly project: TargetGovernanceProjectMetadata | null;
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticsTruncated: boolean;
@@ -59,10 +63,12 @@ function optionalLiteral(value: unknown): string | null {
 
 export function getTargetGovernanceProjectMetadata(
   text: string,
-  capability: TargetGrammar4Capability,
+  capability: TargetGrammar4Capability | TargetGrammar5Capability,
   options: TargetValidationOptions = {},
 ): TargetGovernanceProjectMetadataResult {
-  const checked = validateTargetGrammar4Document(text, capability, options);
+  const checked = capability.grammarVersion === 5
+    ? validateTargetGrammar5Document(text, capability, options)
+    : validateTargetGrammar4Document(text, capability, options);
   const declaration = checked.validatedDocument?.document.declarations.find(
     ({ kind }) => kind === "project",
   );

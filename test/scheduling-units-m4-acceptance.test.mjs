@@ -111,10 +111,10 @@ test("TUE-012 through TUE-017 compose through the complete internal result", asy
   const pointSource = await fixture("migration-point-v2.pert");
   const forward = plan(pointSource, { targetUnit: "day" });
   assert.equal(forward.ok, true);
-  assert.equal(forward.schemaVersion, "Perttool.UnitMigrationResult.v2");
+  assert.equal(forward.schemaVersion, "Perttool.UnitMigrationResult.v3");
   assert.deepEqual(forward.unitMigration, {
     id: "perttool.unit-migration",
-    version: 2,
+    version: 3,
   });
   assert.equal(forward.grammarDisposition, "retained");
   assert.equal(forward.velocityDisposition, "retained");
@@ -354,7 +354,7 @@ test("stable failure causes are complete and failures expose no candidate", asyn
   }
 });
 
-test("the active package root hides target helpers while Contract 5 retains migration", async () => {
+test("the active package root hides target helpers while Contract 6 retains migration", async () => {
   for (const targetName of [
     "TARGET_GRAMMAR_3_CAPABILITY",
     "prepareTargetUnitMigrationRequest",
@@ -392,10 +392,10 @@ test("the active package root hides target helpers while Contract 5 retains migr
   const guideJson = JSON.parse(guide.stdout);
   assert.equal(helpJson.schema_version, "Perttool.CommandHelpResult.v1");
   assert.equal(guideJson.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(helpJson.cli_contract_version, 5);
-  assert.equal(guideJson.cli_contract_version, 5);
+  assert.equal(helpJson.cli_contract_version, 6);
+  assert.equal(guideJson.cli_contract_version, 6);
   assert.equal(help.stdout.includes("project migrate-unit"), true);
-  assert.equal(help.stdout.includes("Perttool.UnitMigrationResult.v2"), true);
+  assert.equal(help.stdout.includes("Perttool.UnitMigrationResult.v3"), true);
   assert.equal(
     JSON.parse(unitGuide.stdout).topic_id,
     "editing.unit-migration",
@@ -412,8 +412,8 @@ test("the active package root hides target helpers while Contract 5 retains migr
   assert.equal(migrated.status, 0);
   assert.equal(migrated.stderr, "");
   const result = JSON.parse(migrated.stdout);
-  assert.equal(result.schema_version, "Perttool.UnitMigrationResult.v2");
-  assert.equal(result.cli_contract_version, 5);
+  assert.equal(result.schema_version, "Perttool.UnitMigrationResult.v3");
+  assert.equal(result.cli_contract_version, 6);
   assert.equal(result.operation, "project.migrate-unit");
   assert.equal(result.ok, true);
 });

@@ -407,7 +407,7 @@ test("Grammar 5 rejects non-offset event times and invalid exact hour quantities
   }
 });
 
-test("Grammar 1 through 4 remain closed while Grammar 5 accepts suspended and contextual IDs", () => {
+test("Grammar 1 through 4 remain closed while active Grammar 5 accepts suspended and contextual IDs", () => {
   const grammar4 = source({
     version: 4,
     taskId: "work_event",
@@ -439,10 +439,11 @@ test("Grammar 1 through 4 remain closed while Grammar 5 accepts suspended and co
     TARGET_GRAMMAR_5_CAPABILITY,
   );
   assert.equal(target.ok, true);
-  assert.ok(
-    publicApi.parseDocument(suspended).diagnostics.some(
-      ({ code }) => code === "PTDSL-012",
-    ),
+  const parsed = publicApi.parseDocument(suspended);
+  assert.equal(parsed.diagnostics.length, 0);
+  assert.equal(
+    publicApi.validateDocument(parsed.document, parsed.diagnostics).length,
+    0,
   );
 });
 

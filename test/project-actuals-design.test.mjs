@@ -44,8 +44,8 @@ test("project actuals contract fixes source, public, and evidence boundaries", a
   assert.match(grammar, /WorkEventDeclV5 = "work_event"/);
   assert.match(grammar, /PersonHoursV5 = ExactUnsignedV5, "ph"/);
   assert.match(grammar, /Unit migration version 3 accepts Grammar 5/);
-  assert.match(specification, /- Status: Normative target 1\.0/);
-  assert.match(specification, /Target CLI contract version: 6/);
+  assert.match(specification, /- Status: Normative 1\.0/);
+  assert.match(specification, /Active CLI contract version: 6/);
   assert.match(specification, /Perttool\.ProjectHistoryResult\.v1/);
   assert.match(specification, /Perttool\.VelocityObservationResult\.v1/);
   assert.match(specification, /Perttool\.NextResult\.v5/);
@@ -106,7 +106,7 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
-test("project actuals plan retains every accepted internal slice", async () => {
+test("project actuals plan retains every accepted slice and public cutover", async () => {
   const plan = "plans/project-actuals.pert";
   const [
     source,
@@ -117,6 +117,7 @@ test("project actuals plan retains every accepted internal slice", async () => {
     historyAcceptance,
     lifecycleAcceptance,
     observationAcceptance,
+    publicAcceptance,
   ] = await Promise.all([
     repositoryText(plan),
     repositoryText("docs/process/project-actuals-contract-review.md"),
@@ -138,6 +139,9 @@ test("project actuals plan retains every accepted internal slice", async () => {
     repositoryText(
       "docs/process/project-actuals-velocity-observation-acceptance.md",
     ),
+    repositoryText(
+      "docs/process/project-actuals-public-contract-acceptance.md",
+    ),
   ]);
   const checked = runJson("document", "check", plan);
   const analyzed = runJson("dag", "analyze", plan);
@@ -149,9 +153,12 @@ test("project actuals plan retains every accepted internal slice", async () => {
     tasks: 2,
     gates: 0,
     errors: 0,
-    warnings: 0,
+    warnings: 1,
   });
-  assert.deepEqual(checked.diagnostics, []);
+  assert.deepEqual(
+    checked.diagnostics.map(({ code }) => code),
+    ["PTDAG-208"],
+  );
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
@@ -185,6 +192,11 @@ test("project actuals plan retains every accepted internal slice", async () => {
     /exact completed 5p pre-advance snapshot/,
   );
   assert.match(observationAcceptance, /Git commit `19b060a`/);
+  assert.match(
+    publicAcceptance,
+    /`ACTUALS_PUBLIC_CONTRACT` is accepted/,
+  );
+  assert.match(publicAcceptance, /exact completed 6p pre-advance snapshot/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.doesNotMatch(source, /task FINISH_ACTUALS/);
@@ -199,27 +211,31 @@ test("project actuals plan retains every accepted internal slice", async () => {
     source,
     /milestone ACTUALS_INTEGRATED_INPUT:[\s\S]*?  state reached/,
   );
-  assert.equal(analyzed.precedence.makespan.numerator, "10");
+  assert.match(
+    source,
+    /task ACTUALS_PUBLIC_CONTRACT[\s\S]*?  status done/,
+  );
+  assert.equal(analyzed.precedence.makespan.numerator, "4");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
-  assert.equal(analyzed.resource.makespan.numerator, "10");
+  assert.equal(analyzed.resource.makespan.numerator, "4");
   assert.equal(analyzed.resource.resource_delay.numerator, "0");
   assert.equal(
     analyzed.velocity_forecast.precedence_makespan.numerator,
-    "20",
+    "8",
   );
   assert.equal(
     analyzed.velocity_forecast.precedence_makespan.denominator,
     "29",
   );
-  assert.equal(analyzed.velocity_forecast.resource_makespan.numerator, "20");
+  assert.equal(analyzed.velocity_forecast.resource_makespan.numerator, "8");
   assert.equal(analyzed.velocity_forecast.resource_makespan.denominator, "29");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["ACTUALS_PUBLIC_CONTRACT"]);
+  assert.deepEqual(next.groups.ready, ["ACTUALS_ACCEPTANCE"]);
   assert.deepEqual(next.recommendation.recommended_task_ids, [
-    "ACTUALS_PUBLIC_CONTRACT",
+    "ACTUALS_ACCEPTANCE",
   ]);
   assert.deepEqual(next.temporal.authority.startable_recommended_task_ids, [
-    "ACTUALS_PUBLIC_CONTRACT",
+    "ACTUALS_ACCEPTANCE",
   ]);
   assert.deepEqual(
     Object.fromEntries(
@@ -229,12 +245,12 @@ test("project actuals plan retains every accepted internal slice", async () => {
       ]),
     ),
     {
-      ACTUALS_PUBLIC_CONTRACT: "recommended",
+      ACTUALS_ACCEPTANCE: "recommended",
     },
   );
 });
 
-test("active Contract 5 does not expose planned actuals commands", () => {
+test("active Contract 6 exposes the complete project actuals command set", () => {
   const help = runJson("help");
   const actions = Object.fromEntries(
     help.resources.map(({ name, actions: resourceActions }) => [
@@ -243,11 +259,13 @@ test("active Contract 5 does not expose planned actuals commands", () => {
     ]),
   );
 
-  assert.deepEqual(actions.task, ["add", "set", "remove", "finish"]);
-  assert.deepEqual(actions.project, ["init", "show", "set", "migrate-unit"]);
-  assert.equal(actions.task.includes("start"), false);
-  assert.equal(actions.task.includes("suspend"), false);
-  assert.equal(actions.task.includes("resume"), false);
-  assert.equal(actions.project.includes("history"), false);
-  assert.equal(actions.project.includes("observe-velocity"), false);
+  assert.equal(help.cli_contract_version, 6);
+  assert.deepEqual(
+    actions.task,
+    ["add", "finish", "remove", "resume", "set", "start", "suspend"],
+  );
+  assert.deepEqual(
+    actions.project,
+    ["history", "init", "migrate-unit", "observe-velocity", "set", "show"],
+  );
 });

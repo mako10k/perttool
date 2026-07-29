@@ -24,7 +24,7 @@ function run(args, options = {}) {
   });
 }
 
-test("NextResult.v4 publishes the same complete recommendation from Core and CLI", async () => {
+test("NextResult.v5 publishes the same complete recommendation from Core and CLI", async () => {
   const source = await readFile(path.join(root, fixture));
   const sourceDigest = digestDocumentBytes(source);
   const core = selectNextTasks(source.toString("utf8"), { sourceDigest });
@@ -34,8 +34,8 @@ test("NextResult.v4 publishes the same complete recommendation from Core and CLI
   const command = run(["dag", "next", fixture, "--format=json"]);
   assert.equal(command.status, 0, command.stderr);
   const json = JSON.parse(command.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v4");
-  assert.equal(json.cli_contract_version, 5);
+  assert.equal(json.schema_version, "Perttool.NextResult.v5");
+  assert.equal(json.cli_contract_version, 6);
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.source_digest, sourceDigest);
   assert.deepEqual(
@@ -52,7 +52,7 @@ test("NextResult.v4 publishes the same complete recommendation from Core and CLI
   );
 });
 
-test("NextResult.v4 complete empty recommendation preserves v3 fields and adds temporal authority", async () => {
+test("NextResult.v5 complete empty recommendation preserves v3 fields and adds temporal authority", async () => {
   const command = run([
     "dag",
     "next",
@@ -70,13 +70,19 @@ test("NextResult.v4 complete empty recommendation preserves v3 fields and adds t
   const {
     grammar_version: grammarVersion,
     temporal,
+    groups,
     ...retained
   } = actual;
-  assert.deepEqual(retained, {
-    ...expected,
-    schema_version: "Perttool.NextResult.v4",
-    cli_contract_version: 5,
-  });
+  const { suspended, ...retainedGroups } = groups;
+  assert.deepEqual(suspended, []);
+  assert.deepEqual(
+    { ...retained, groups: retainedGroups },
+    {
+      ...expected,
+      schema_version: "Perttool.NextResult.v5",
+      cli_contract_version: 6,
+    },
+  );
   assert.equal(grammarVersion, 1);
   assert.deepEqual(temporal.authority, {
     policy: "recommendation_v1_plus_release_gate",
@@ -100,13 +106,13 @@ test("dag next text publishes four tier sections and preserves operational secti
   const command = run(["dag", "next", fixture, "--color=never"]);
   assert.equal(command.status, 0, command.stderr);
   const expected = await readFile(
-    path.join(testDirectory, "golden/recommendation/v4-text.expected.txt"),
+    path.join(testDirectory, "golden/recommendation/v5-text.expected.txt"),
     "utf8",
   );
   assert.equal(command.stdout, expected);
 });
 
-test("NextResult.v4 JSON is byte deterministic for the same snapshot and options", () => {
+test("NextResult.v5 JSON is byte deterministic for the same snapshot and options", () => {
   const first = run(["dag", "next", fixture, "--format=json"]);
   const second = run(["dag", "next", fixture, "--format=json"]);
   assert.equal(first.status, 0, first.stderr);
@@ -130,11 +136,11 @@ test("CLI recommendation provenance preserves the raw BOM-bound source digest", 
   );
 });
 
-test("dag next command help identifies the breaking v4 consumer boundary", () => {
+test("dag next command help identifies the breaking v5 consumer boundary", () => {
   const command = run(["dag", "next", "--help"]);
   assert.equal(command.status, 0, command.stderr);
-  assert.match(command.stdout, /Perttool\.NextResult\.v4/);
-  assert.match(command.stdout, /CLI contract: 5/);
+  assert.match(command.stdout, /Perttool\.NextResult\.v5/);
+  assert.match(command.stdout, /CLI contract: 6/);
   assert.match(command.stdout, /Output: formats=text,json/);
 });
 

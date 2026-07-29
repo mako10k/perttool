@@ -11,7 +11,7 @@ const root = path.resolve(testDirectory, "..");
 test("all normative examples parse and validate", async () => {
   const examplesDirectory = path.join(root, "docs/examples");
   const names = (await readdir(examplesDirectory)).filter((name) => name.endsWith(".pert"));
-  assert.equal(names.length, 6);
+  assert.equal(names.length, 7);
   for (const name of names) {
     const text = await readFile(path.join(examplesDirectory, name), "utf8");
     const result = checkDocument(text);

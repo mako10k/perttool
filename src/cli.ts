@@ -7,7 +7,7 @@ import type { AnalysisMode } from "./application/analyze.js";
 import {
   analyzeDocument,
   selectNextTasks,
-} from "./application/contract4.js";
+} from "./application/contract6-actuals.js";
 import { checkDocument } from "./application/check.js";
 import { planFormat, type FormatPreviewResult } from "./application/format.js";
 import {
@@ -25,22 +25,38 @@ import {
   getProjectMetadata,
 } from "./application/project.js";
 import {
-  planTargetGovernanceAdvance,
-  planTargetGovernanceBatchMutation,
-  planTargetGovernanceMutation,
-  type TargetGovernanceAdvanceResultV2,
-  type TargetGovernanceMutationResultV2,
-} from "./application/target-governance-mutation.js";
+  planAdvance,
+  planBatchMutation,
+  planFinishActuals,
+  planLifecycle,
+  planMutation,
+  type AdvanceResultV3,
+  type LifecycleResultV3,
+  type MutationResultV3,
+} from "./application/contract6-mutation.js";
 import {
   renderTargetGovernanceDecision,
   renderTargetGovernanceProjectText,
-  targetGovernanceMutationResultToJson,
-  targetGovernanceProjectResultToJson,
   type TargetGovernanceWriteProjection,
 } from "./application/target-governance-projection.js";
 import {
-  persistTargetGovernanceResult,
-} from "./application/target-governance-write.js";
+  contract6MutationResultToJson,
+  contract6ProjectResultToJson,
+  contract6WorkEventToJson,
+} from "./application/contract6-projection.js";
+import {
+  persistTargetActualsResult,
+} from "./application/target-actuals-write.js";
+import {
+  inspectTargetProjectHistoryFile,
+  renderTargetProjectHistoryText,
+  targetProjectHistoryResultToJson,
+} from "./application/target-project-history.js";
+import {
+  observeTargetProjectVelocity,
+  renderTargetVelocityObservationText,
+  targetVelocityObservationResultToJson,
+} from "./application/target-velocity-observation.js";
 import { getAgentHelp } from "./application/agent-help.js";
 import {
   exportMermaid,
@@ -51,29 +67,29 @@ import {
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import {
-  getTargetGovernanceGuide,
-  renderTargetGovernanceGuideResult,
-  serializeTargetGovernanceGuideResult,
-} from "./help/target-governance-guide.js";
+  getActualsGuide,
+  renderActualsGuideResult,
+  serializeActualsGuideResult,
+} from "./help/actuals-guide.js";
 import {
   commandOptionSets,
   type ProjectedCommandDescriptor,
 } from "./command/registry.js";
 import {
-  TARGET_GOVERNANCE_COMMAND_REGISTRY,
-  getTargetGovernanceCommandDiscovery,
-  renderTargetGovernanceCommandHelpResult,
-  serializeTargetGovernanceCommandHelpResult,
-  type TargetGovernanceCommandDescriptor,
-} from "./command/target-governance-discovery.js";
+  ACTUALS_COMMAND_REGISTRY,
+  getActualsCommandDiscovery,
+  renderActualsCommandHelpResult,
+  serializeActualsCommandHelpResult,
+  type ActualsCommandDescriptor,
+} from "./command/actuals-discovery.js";
 import {
   handlerCommandUsageError,
 } from "./command/usage.js";
 import {
-  renderTargetGovernanceCommandUsageError,
-  serializeTargetGovernanceCommandUsageError,
-  validateTargetGovernanceCommandInvocation,
-} from "./command/target-governance-usage.js";
+  renderActualsCommandUsageError,
+  serializeActualsCommandUsageError,
+  validateActualsCommandInvocation,
+} from "./command/actuals-usage.js";
 import { agentGuidanceResultToJson } from "./guidance/projection.js";
 import {
   agentGuidanceExitCode,
@@ -114,8 +130,9 @@ import type {
   TargetGovernanceProjectClearableField,
 } from "./mutation/target-types.js";
 import type { AdvanceDetails } from "./mutation/advance.js";
+import type { LifecycleMutation } from "./actuals/lifecycle.js";
 import {
-  TARGET_GRAMMAR_4_CAPABILITY,
+  TARGET_GRAMMAR_5_CAPABILITY,
 } from "./parser/document-parser.js";
 import { TOOL_VERSION } from "./version.js";
 
@@ -187,7 +204,7 @@ function parseCommandOptions(
   operation: string,
   args: readonly string[],
 ): ParsedOptions {
-  const descriptor = TARGET_GOVERNANCE_COMMAND_REGISTRY.find(
+  const descriptor = ACTUALS_COMMAND_REGISTRY.find(
     (candidate) => candidate.operation === operation,
   );
   if (descriptor === undefined) {
@@ -369,7 +386,7 @@ function cliError(
   if (json) {
     writeJson({
       schema_version: "Perttool.CliError.v1",
-      cli_contract_version: 5,
+      cli_contract_version: 6,
       tool_version: TOOL_VERSION,
       operation,
       ok: false,
@@ -414,8 +431,8 @@ async function runCheck(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.CheckResult.v2",
-      cli_contract_version: 5,
+      schema_version: result.schemaVersion,
+      cli_contract_version: 6,
       tool_version: TOOL_VERSION,
       operation: "document.check",
       ok,
@@ -427,6 +444,14 @@ async function runCheck(args: readonly string[]): Promise<number> {
       grammar_version: result.grammarVersion,
       summary: result.summary,
       temporal_inputs: snakeJson(result.temporalInputs),
+      actuals_inputs:
+        result.actualsInputs === null
+          ? null
+          : {
+              model_version: result.actualsInputs.modelVersion,
+              events:
+                result.actualsInputs.events.map(contract6WorkEventToJson),
+            },
     });
   } else {
     if (ok) {
@@ -479,7 +504,7 @@ async function runProjectShow(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson(
-      targetGovernanceProjectResultToJson(
+      contract6ProjectResultToJson(
         result,
         source,
         input.digest,
@@ -689,8 +714,9 @@ function governanceRequest(
 
 async function persistGovernedResult(
   result:
-    | TargetGovernanceMutationResultV2
-    | TargetGovernanceAdvanceResultV2,
+    | MutationResultV3
+    | LifecycleResultV3
+    | AdvanceResultV3,
   request: EditingWriteRequest,
   sourceOperand: string,
 ): Promise<TargetGovernanceWriteProjection> {
@@ -701,9 +727,9 @@ async function persistGovernedResult(
       written: false,
     });
   }
-  return persistTargetGovernanceResult(
+  return persistTargetActualsResult(
     result,
-    TARGET_GRAMMAR_4_CAPABILITY,
+    TARGET_GRAMMAR_5_CAPABILITY,
     request.mode === "in_place"
       ? {
           mode: "in_place",
@@ -836,7 +862,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.FormatResult.v1",
-      cli_contract_version: 5,
+      cli_contract_version: 6,
       tool_version: TOOL_VERSION,
       operation: "document.format",
       ok,
@@ -879,6 +905,15 @@ function requiredOption(parsed: ParsedOptions, name: string): string {
   const value = parsed.values.get(name);
   if (value === undefined) throw new UsageError(`option --${name} is required`);
   return value;
+}
+
+function exactMeasurementToken(
+  value: string,
+  suffix: "h" | "ph",
+): string {
+  return /^(?:[0-9]+(?:\.[0-9]+)?|[0-9]+\/[1-9][0-9]*)$/.test(value)
+    ? `${value}${suffix}`
+    : value;
 }
 
 function optionalInteger(
@@ -1429,6 +1464,7 @@ async function runMutation(
   let sourceOperand: string;
   let writeRequest: EditingWriteRequest;
   let mutation: TargetGovernanceMutation;
+  let lifecycleMutation: LifecycleMutation | null = null;
 
   if (resource === "batch") {
     if (parsed.positionals.length !== 1) {
@@ -1466,6 +1502,50 @@ async function runMutation(
             : resourceMutationFromOptions(action, parsed);
     sourceOperand = parsed.positionals[0]!;
     writeRequest = editingWriteRequest(parsed, sourceOperand);
+    if (
+      resource === "task" &&
+      action === "finish" &&
+      parsed.values.has("at")
+    ) {
+      lifecycleMutation = {
+        kind: "task.finish.actual",
+        taskId: parsed.positionals[1]!,
+        event: {
+          occurredAt: parsed.values.get("at")!,
+          ...(parsed.values.get("event-id") === undefined
+            ? {}
+            : { id: parsed.values.get("event-id")! }),
+          ...(parsed.values.get("active-time") === undefined
+            ? {}
+            : {
+                activeTime: exactMeasurementToken(
+                  parsed.values.get("active-time")!,
+                  "h",
+                ),
+              }),
+          ...(parsed.values.get("effort") === undefined
+            ? {}
+            : {
+                effort: exactMeasurementToken(
+                  parsed.values.get("effort")!,
+                  "ph",
+                ),
+              }),
+        },
+      };
+    } else if (
+      resource === "task" &&
+      action === "finish" &&
+      (
+        parsed.values.has("event-id") ||
+        parsed.values.has("active-time") ||
+        parsed.values.has("effort")
+      )
+    ) {
+      throw new UsageError(
+        "--event-id, --active-time, and --effort require --at",
+      );
+    }
   }
 
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
@@ -1486,20 +1566,24 @@ async function runMutation(
     updatedLabel: "candidate",
     governance: governanceRequest(parsed, writeRequest),
   };
-  const result = resource === "batch"
-    ? planTargetGovernanceBatchMutation(
+  const result = lifecycleMutation !== null
+    ? planFinishActuals(
+        input.text,
+        lifecycleMutation,
+        mutationOptions,
+      )
+    : resource === "batch"
+    ? planBatchMutation(
         input.text,
         mutation as Extract<
           TargetGovernanceMutation,
           { readonly kind: "batch" }
         >,
-        TARGET_GRAMMAR_4_CAPABILITY,
         mutationOptions,
       )
-    : planTargetGovernanceMutation(
+    : planMutation(
         input.text,
-        mutation,
-        TARGET_GRAMMAR_4_CAPABILITY,
+        mutation as Mutation,
         mutationOptions,
       );
   const warningFailure =
@@ -1527,7 +1611,7 @@ async function runMutation(
   }
   if (format === "json") {
     writeJson(
-      targetGovernanceMutationResultToJson(
+      contract6MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         operation,
         source,
@@ -1570,6 +1654,138 @@ async function runMutation(
   return ok ? 0 : 1;
 }
 
+async function runLifecycleMutation(
+  action: "start" | "suspend" | "resume",
+  args: readonly string[],
+): Promise<number> {
+  const operation = `task.${action}`;
+  const parsed = parseCommandOptions(operation, args);
+  if (parsed.positionals.length !== 2) {
+    throw new UsageError(`task ${action} requires <file> <task-id>`);
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  const writeRequest = editingWriteRequest(parsed, sourceOperand);
+  const event = {
+    occurredAt: requiredOption(parsed, "at"),
+    ...(parsed.values.get("event-id") === undefined
+      ? {}
+      : { id: parsed.values.get("event-id")! }),
+    ...(action !== "suspend" || parsed.values.get("reason") === undefined
+      ? {}
+      : { reason: parsed.values.get("reason")! }),
+  };
+  const mutation: LifecycleMutation =
+    action === "start"
+      ? { kind: "task.start", taskId: parsed.positionals[1]!, event }
+      : action === "suspend"
+        ? { kind: "task.suspend", taskId: parsed.positionals[1]!, event }
+        : { kind: "task.resume", taskId: parsed.positionals[1]!, event };
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      operation,
+      format === "json",
+    );
+  }
+  const result = planLifecycle(input.text, mutation, {
+    maxDiagnostics,
+    originalLabel: source,
+    updatedLabel: "candidate",
+    governance: governanceRequest(parsed, writeRequest),
+  });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (
+      result.diagnosticsTruncated ||
+      result.diagnostics.some(
+        (diagnostic) => diagnostic.severity === "warning",
+      )
+    );
+  const ok = result.ok && !warningFailure;
+  let writeResult: TargetGovernanceWriteProjection = Object.freeze({
+    mode: writeRequest.mode,
+    target: writeRequest.target,
+    written: false,
+  });
+  if (result.ok && ok && writeRequest.mode !== "preview") {
+    try {
+      writeResult = await persistGovernedResult(
+        result,
+        writeRequest,
+        sourceOperand,
+      );
+    } catch (error) {
+      return writeFailureExit(error, operation, format === "json");
+    }
+  }
+  if (format === "json") {
+    writeJson(
+      contract6MutationResultToJson(
+        ok ? result : Object.freeze({ ...result, ok: false }),
+        operation,
+        source,
+        writeResult,
+      ),
+    );
+  } else {
+    if (ok) {
+      if (writeRequest.mode !== "preview") {
+        process.stderr.write(
+          renderGovernanceWriteSummary(
+            operation,
+            writeResult,
+            result.updatedDigest,
+          ),
+        );
+      } else {
+        process.stdout.write(
+          parsed.flags.has("diff")
+            ? (result.diff ?? "")
+            : (result.updatedText ?? ""),
+        );
+        if (!parsed.flags.has("diff")) {
+          process.stderr.write(
+            `PREVIEW ${operation} changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+          );
+        }
+      }
+    }
+    if (result.lifecycle !== null) {
+      process.stderr.write(
+        `LIFECYCLE task=${result.lifecycle.taskId} from=${result.lifecycle.fromState} to=${result.lifecycle.toState} event=${result.lifecycle.event.id} coverage=${result.lifecycle.coverage}\n`,
+      );
+    }
+    if (result.governance !== null) {
+      process.stderr.write(
+        renderTargetGovernanceDecision(result.governance),
+      );
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(
+        `DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`,
+      );
+    }
+  }
+  return ok ? 0 : 1;
+}
+
 function unitMigrationJson(
   result: UnitMigrationResult,
   source: string,
@@ -1585,7 +1801,7 @@ function unitMigrationJson(
   });
   return {
     schema_version: result.schemaVersion,
-    cli_contract_version: 5,
+    cli_contract_version: 6,
     tool_version: TOOL_VERSION,
     operation: "project.migrate-unit",
     ok,
@@ -1746,10 +1962,142 @@ async function runUnitMigration(args: readonly string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
+async function readHistoryForCommand(
+  operation: "project.history" | "project.observe-velocity",
+  parsed: ParsedOptions,
+  format: OutputFormat,
+) {
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError(
+      `${operation.replace(".", " ")} requires exactly one <file>`,
+    );
+  }
+  const source = parsed.positionals[0]!;
+  if (source === "-") {
+    throw new UsageError(`${operation.replace(".", " ")} requires an on-disk file`);
+  }
+  try {
+    return await inspectTargetProjectHistoryFile(
+      {
+        targetPath: source,
+        ...(parsed.values.get("rev") === undefined
+          ? {}
+          : { revision: parsed.values.get("rev")! }),
+        ...(parsed.repeatedValues.get("task") === undefined
+          ? {}
+          : { taskIds: parsed.repeatedValues.get("task")! }),
+      },
+      TARGET_GRAMMAR_5_CAPABILITY,
+    );
+  } catch (error) {
+    return error instanceof Error ? error : new Error(String(error));
+  }
+}
+
+async function runProjectHistory(args: readonly string[]): Promise<number> {
+  const parsed = parseCommandOptions("project.history", args);
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const result = await readHistoryForCommand(
+    "project.history",
+    parsed,
+    format,
+  );
+  if (result instanceof Error) {
+    return cliError(result, 3, "project.history", format === "json");
+  }
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    result.diagnostics.some(
+      (diagnostic) => diagnostic.severity === "warning",
+    );
+  const ok = result.ok && !warningFailure;
+  if (format === "json") {
+    writeJson(
+      targetProjectHistoryResultToJson(
+        ok ? result : Object.freeze({ ...result, ok: false }),
+        parsed.positionals[0]!,
+      ),
+    );
+  } else {
+    if (ok) process.stdout.write(renderTargetProjectHistoryText(result));
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(
+        `${renderDiagnostic(
+          diagnostic,
+          parsed.positionals[0]!,
+          color,
+        )}\n`,
+      );
+    }
+  }
+  return ok ? 0 : 1;
+}
+
+async function runProjectVelocityObservation(
+  args: readonly string[],
+): Promise<number> {
+  const parsed = parseCommandOptions("project.observe-velocity", args);
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const history = await readHistoryForCommand(
+    "project.observe-velocity",
+    parsed,
+    format,
+  );
+  if (history instanceof Error) {
+    return cliError(
+      history,
+      3,
+      "project.observe-velocity",
+      format === "json",
+    );
+  }
+  const evidenceValue = parsed.values.get("evidence") ?? "declared";
+  const evidence =
+    evidenceValue === "git-recorded"
+      ? "git_recorded" as const
+      : evidenceValue as "declared" | "all";
+  const result = observeTargetProjectVelocity(history, {
+    ...(parsed.repeatedValues.get("task") === undefined
+      ? {}
+      : { taskIds: parsed.repeatedValues.get("task")! }),
+    evidence,
+  });
+  const warningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    result.diagnostics.some(
+      (diagnostic) => diagnostic.severity === "warning",
+    );
+  const ok = result.ok && !warningFailure;
+  if (format === "json") {
+    writeJson(
+      targetVelocityObservationResultToJson(
+        ok ? result : Object.freeze({ ...result, ok: false }),
+        parsed.positionals[0]!,
+      ),
+    );
+  } else {
+    if (ok) {
+      process.stdout.write(renderTargetVelocityObservationText(result));
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(
+        `${renderDiagnostic(
+          diagnostic,
+          parsed.positionals[0]!,
+          color,
+        )}\n`,
+      );
+    }
+  }
+  return ok ? 0 : 1;
+}
+
 function renderAdvanceSummary(details: AdvanceDetails): string {
   const list = (ids: readonly string[]): string => ids.join(",") || "-";
   return [
-    `ADVANCE removed_tasks=${list(details.removedTaskIds)} removed_gates=${list(details.removedGateIds)} removed_milestones=${list(details.removedMilestoneIds)}`,
+    `ADVANCE removed_tasks=${list(details.removedTaskIds)} removed_gates=${list(details.removedGateIds)} removed_milestones=${list(details.removedMilestoneIds)} removed_work_events=${list("removedWorkEventIds" in details ? details.removedWorkEventIds as readonly string[] : [])}`,
     `ADVANCE frontier_before=${list(details.frontierBefore)} frontier_after=${list(details.frontierAfter)} ready_before=${list(details.readyBefore)} ready_after=${list(details.readyAfter)}`,
     "",
   ].join("\n");
@@ -1783,9 +2131,8 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       format === "json",
     );
   }
-  const result = planTargetGovernanceAdvance(
+  const result = planAdvance(
     input.text,
-    TARGET_GRAMMAR_4_CAPABILITY,
     {
       maxDiagnostics,
       originalLabel: source,
@@ -1818,7 +2165,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
   }
   if (format === "json") {
     writeJson(
-      targetGovernanceMutationResultToJson(
+      contract6MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         "dag.advance",
         source,
@@ -1898,6 +2245,9 @@ function precedenceJson(
     makespan: rationalJson(result.makespan, unit, precision),
     conditional_on_blocks_resolved: result.conditionalOnBlocksResolved,
     blocked_task_ids: result.blockedTaskIds,
+    conditional_on_suspensions_resumed:
+      result.conditionalOnSuspensionsResumed,
+    suspended_task_ids: result.suspendedTaskIds,
     milestones: result.milestones.map((milestone) => ({
       id: milestone.id,
       earliest: rationalJson(milestone.earliest, unit, precision),
@@ -1954,6 +2304,9 @@ function resourceJson(
     algorithm: result.algorithm,
     conditional_on_blocks_resolved: result.conditionalOnBlocksResolved,
     blocked_task_ids: result.blockedTaskIds,
+    conditional_on_suspensions_resumed:
+      result.conditionalOnSuspensionsResumed,
+    suspended_task_ids: result.suspendedTaskIds,
     capacities: result.capacities.map((capacity) => ({
       id: capacity.id,
       declared: capacity.declared,
@@ -2084,6 +2437,10 @@ function renderAnalysisText(
     result.resource?.conditionalOnBlocksResolved === true;
   const blockedTaskIds =
     result.precedence?.blockedTaskIds ?? result.resource?.blockedTaskIds ?? [];
+  const suspendedTaskIds =
+    result.precedence?.suspendedTaskIds ??
+    result.resource?.suspendedTaskIds ??
+    [];
   const pathsTruncated =
     result.precedence?.critical.pathsTruncated === true ||
     result.resource?.scheduleCritical.pathsTruncated === true;
@@ -2092,6 +2449,8 @@ function renderAnalysisText(
   lines.push(
     `CONDITIONAL_ON_BLOCKS_RESOLVED ${conditional}`,
     `BLOCKED_TASKS ${blockedTaskIds.join(", ") || "-"}`,
+    `CONDITIONAL_ON_SUSPENSIONS_RESUMED ${suspendedTaskIds.length > 0}`,
+    `SUSPENDED_TASKS ${suspendedTaskIds.join(", ") || "-"}`,
     `PATHS_TRUNCATED ${pathsTruncated}`,
     `CAPACITY_OVERRIDES ${overrides.map(([id, capacity]) => `${id}=${capacity}`).join(", ") || "-"}`,
     `VELOCITY ${result.velocity === null ? "-" : velocityText(result.velocity, result.precision)}`,
@@ -2229,6 +2588,8 @@ function renderAnalysisText(
         `ALGORITHM ${projection.algorithm === null ? "-" : `${projection.algorithm.id}@${projection.algorithm.version} optimal=${projection.algorithm.optimal}`}`,
         `CONDITIONAL_ON_BLOCKS_RESOLVED ${projection.conditionalOnBlocksResolved}`,
         `BLOCKED_TASKS ${projection.blockedTaskIds.join(",") || "-"}`,
+        `CONDITIONAL_ON_SUSPENSIONS_RESUMED ${projection.conditionalOnSuspensionsResumed}`,
+        `SUSPENDED_TASKS ${projection.suspendedTaskIds.join(",") || "-"}`,
       );
       for (const task of projection.tasks) {
         lines.push(
@@ -2298,8 +2659,8 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.AnalysisResult.v3",
-      cli_contract_version: 5,
+      schema_version: "Perttool.AnalysisResult.v4",
+      cli_contract_version: 6,
       tool_version: TOOL_VERSION,
       operation: "dag.analyze",
       ok,
@@ -2309,6 +2670,11 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
       diagnostics: result.diagnostics.map(jsonDiagnostic),
       diagnostics_truncated: result.diagnosticsTruncated,
       grammar_version: result.grammarVersion,
+      task_actuals: result.taskActuals.map((actuals) => ({
+        task_id: actuals.taskId,
+        status: actuals.status,
+        coverage: actuals.coverage,
+      })),
       mode: result.mode,
       precision: result.precision,
       ...(result.durationUnit === null
@@ -2447,7 +2813,7 @@ async function runRender(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ExportResult.v1",
-      cli_contract_version: 5,
+      cli_contract_version: 6,
       tool_version: TOOL_VERSION,
       operation: "dag.render",
       ok,
@@ -2549,7 +2915,7 @@ async function runImport(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ImportResult.v1",
-      cli_contract_version: 5,
+      cli_contract_version: 6,
       tool_version: TOOL_VERSION,
       operation: "dag.import",
       ok,
@@ -2645,6 +3011,7 @@ function nextJson(
       runnable_now: result.groups.runnableNow,
       blocked_now: result.groups.blockedNow,
       upcoming: result.groups.upcoming,
+      suspended: result.groups.suspended,
     },
     tasks: result.tasks.map((task) => ({
       id: task.id,
@@ -2874,6 +3241,7 @@ function renderNextText(result: ReturnType<typeof selectNextTasks>): string {
     "rejection",
   );
   section("BLOCKED NOW", result.groups.blockedNow, "blocked");
+  section("SUSPENDED", result.groups.suspended);
   section("UPCOMING", result.groups.upcoming, "explanation");
   lines.push("", "TEMPORAL CONTEXT");
   for (const temporal of result.temporal!.tasks) {
@@ -2936,7 +3304,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     if (format === "json") {
       writeJson({
         schema_version: "Perttool.CliError.v1",
-        cli_contract_version: 5,
+        cli_contract_version: 6,
         tool_version: TOOL_VERSION,
         operation: "dag.next",
         ok: false,
@@ -2956,8 +3324,8 @@ async function runNext(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.NextResult.v4",
-      cli_contract_version: 5,
+      schema_version: "Perttool.NextResult.v5",
+      cli_contract_version: 6,
       recommendation_interface_version: 1,
       tool_version: TOOL_VERSION,
       operation: "dag.next",
@@ -2993,11 +3361,11 @@ function runGuide(args: readonly string[]): number {
   const topicId =
     parsed.positionals.length === 0 ? null : parsed.positionals.join(".");
   const level = helpLevel(parsed.values.get("level"), topicId !== null);
-  const result = getTargetGovernanceGuide(topicId, level);
+  const result = getActualsGuide(topicId, level);
   if (format === "json") {
-    process.stdout.write(serializeTargetGovernanceGuideResult(result));
+    process.stdout.write(serializeActualsGuideResult(result));
   } else {
-    const rendered = renderTargetGovernanceGuideResult(result);
+    const rendered = renderActualsGuideResult(result);
     if (result.ok) {
       process.stdout.write(rendered);
     } else {
@@ -3013,14 +3381,14 @@ function runCommandHelp(args: readonly string[]): number {
     throw new UsageError("help accepts at most <resource> <action>");
   }
   const format = outputFormat(parsed.values.get("format"));
-  const result = getTargetGovernanceCommandDiscovery({
+  const result = getActualsCommandDiscovery({
     resource: parsed.positionals[0] ?? null,
     action: parsed.positionals[1] ?? null,
   });
   if (format === "json") {
-    process.stdout.write(serializeTargetGovernanceCommandHelpResult(result));
+    process.stdout.write(serializeActualsCommandHelpResult(result));
   } else {
-    const rendered = renderTargetGovernanceCommandHelpResult(result);
+    const rendered = renderActualsCommandHelpResult(result);
     if (result.ok) {
       process.stdout.write(rendered);
     } else {
@@ -3053,7 +3421,7 @@ function runAgentHelp(args: readonly string[]): number {
     } = projected;
     writeJson({
       schema_version: schemaVersion,
-      cli_contract_version: 5,
+      cli_contract_version: 6,
       ...payload,
     });
   } else {
@@ -3082,7 +3450,7 @@ function runAgentHelp(args: readonly string[]): number {
 }
 
 async function dispatchCommand(
-  descriptor: TargetGovernanceCommandDescriptor,
+  descriptor: ActualsCommandDescriptor,
   args: readonly string[],
 ): Promise<number> {
   switch (descriptor.operation) {
@@ -3100,6 +3468,10 @@ async function dispatchCommand(
       return runProjectInit(args);
     case "project.show":
       return runProjectShow(args);
+    case "project.history":
+      return runProjectHistory(args);
+    case "project.observe-velocity":
+      return runProjectVelocityObservation(args);
     case "project.migrate-unit":
       return runUnitMigration(args);
     case "dag.analyze":
@@ -3112,6 +3484,12 @@ async function dispatchCommand(
       return runRender(args);
     case "dag.import":
       return runImport(args);
+    case "task.start":
+      return runLifecycleMutation("start", args);
+    case "task.suspend":
+      return runLifecycleMutation("suspend", args);
+    case "task.resume":
+      return runLifecycleMutation("resume", args);
   }
   if (
     descriptor.path.length === 2
@@ -3136,7 +3514,7 @@ async function dispatchCommand(
       args,
     );
   }
-  throw new Error(`no Contract 5 handler for ${descriptor.operation}`);
+  throw new Error(`no Contract 6 handler for ${descriptor.operation}`);
 }
 
 function emitCommandUsage(
@@ -3145,10 +3523,10 @@ function emitCommandUsage(
 ): number {
   if (json) {
     process.stdout.write(
-      serializeTargetGovernanceCommandUsageError(error),
+      serializeActualsCommandUsageError(error),
     );
   } else {
-    process.stderr.write(renderTargetGovernanceCommandUsageError(error));
+    process.stderr.write(renderActualsCommandUsageError(error));
   }
   return 2;
 }
@@ -3161,15 +3539,15 @@ async function main(argv: readonly string[]): Promise<number> {
   if (argv.length === 1 && argv[0] === "--help") {
     return runCommandHelp([]);
   }
-  const validation = validateTargetGovernanceCommandInvocation(argv);
+  const validation = validateActualsCommandInvocation(argv);
   if (!validation.ok) {
     if (jsonRequested(argv)) {
       process.stdout.write(
-        serializeTargetGovernanceCommandUsageError(validation.error),
+        serializeActualsCommandUsageError(validation.error),
       );
     } else {
       process.stderr.write(
-        renderTargetGovernanceCommandUsageError(validation.error),
+        renderActualsCommandUsageError(validation.error),
       );
     }
     return 2;

@@ -581,9 +581,16 @@ test("task identity replacement and unsupported source stay qualified", async (t
   );
 });
 
-test("project history target remains absent from the active package root", async () => {
+test("project history is public without target-prefixed package exports", async () => {
   for (const name of [
     "inspectProjectHistory",
+    "inspectProjectHistoryFile",
+    "projectHistoryResultToJson",
+    "renderProjectHistoryText",
+  ]) {
+    assert.equal(name in publicApi, true, name);
+  }
+  for (const name of [
     "inspectTargetProjectHistory",
     "inspectTargetProjectHistoryFile",
     "targetProjectHistoryResultToJson",
@@ -595,6 +602,6 @@ test("project history target remains absent from the active package root", async
     new URL("../dist/index.d.ts", import.meta.url),
     "utf8",
   );
-  assert.doesNotMatch(declarations, /ProjectHistoryResult/);
-  assert.doesNotMatch(declarations, /inspectTargetProjectHistory/);
+  assert.match(declarations, /ProjectHistoryResultV1/);
+  assert.match(declarations, /inspectProjectHistory/);
 });

@@ -1,7 +1,7 @@
 import type { DocumentWriteResult } from "../io/safe-write.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import type { TextEdit } from "../mutation/text-edits.js";
-import { TARGET_GRAMMAR_4_CAPABILITY } from "../parser/document-parser.js";
+import { TARGET_GRAMMAR_5_CAPABILITY } from "../parser/document-parser.js";
 import { TOOL_VERSION } from "../version.js";
 import {
   planTargetGovernanceProjectInit,
@@ -21,7 +21,7 @@ export interface ProjectInitWrite {
 
 export interface ProjectInitResult {
   readonly schemaVersion: "Perttool.InitResult.v1";
-  readonly cliContractVersion: 5;
+  readonly cliContractVersion: 6;
   readonly toolVersion: string;
   readonly operation: "project.init";
   readonly ok: boolean;
@@ -39,11 +39,11 @@ export interface ProjectInitResult {
 export function planProjectInit(request: unknown): ProjectInitResult {
   const planned = planTargetGovernanceProjectInit(
     request,
-    TARGET_GRAMMAR_4_CAPABILITY,
+    TARGET_GRAMMAR_5_CAPABILITY,
   );
   return Object.freeze({
     schemaVersion: "Perttool.InitResult.v1",
-    cliContractVersion: 5,
+    cliContractVersion: 6,
     toolVersion: TOOL_VERSION,
     operation: "project.init",
     ok: planned.ok,

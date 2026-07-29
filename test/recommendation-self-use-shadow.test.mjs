@@ -31,7 +31,7 @@ const planNames = [
   "mvp",
 ];
 const knownContract = {
-  schema_version: "Perttool.NextResult.v4",
+  schema_version: "Perttool.NextResult.v5",
   recommendation_interface_version: 1,
   algorithm_id: "perttool.recommendation-ranking.lexicographic-frontier",
   algorithm_version: 1,
@@ -153,7 +153,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all twenty self-use plans pass the v4 recommendation shadow gate", async () => {
+test("all twenty self-use plans pass the v5 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(

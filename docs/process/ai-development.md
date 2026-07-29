@@ -112,7 +112,12 @@ npm publication is outside normal close out. Follow the alpha or beta release ga
 
 Before implementation, use the recommended specification work and open matters in `docs/requirements.md`. Propose the "next task" only after confirming that its hard predecessors are closed in the current checkout.
 
-After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert` plans to the canonical sources. In Stage 3, editing commands and `dag advance` may be used as canonical writers through preview-first, expected-digest, and post-write reanalysis procedures. Contract 4 extends the MIG-07 recommendation gate: task selection uses a complete, known `Perttool.NextResult.v4` and its temporal authority as follows.
+After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert`
+plans to the canonical sources. In Stage 3, editing commands and `dag advance`
+may be used as canonical writers through preview-first, expected-digest, and
+post-write reanalysis procedures. Contract 6 retains the MIG-07 recommendation
+gate and temporal release policy: task selection uses a complete, known
+`Perttool.NextResult.v5` and its temporal authority as follows.
 
 1. Run `perttool document check` on `mvp.pert` and the current detail plan to confirm that the plans are valid. Use `perttool project show --format json`, rather than directly viewing the source, to inspect metadata such as project ID, as_of, duration_unit, velocity, and finish
 2. Run `dag analyze` and `dag next --format json` for `mvp.pert`, confirm a known version, complete trace, temporal policy `recommendation_v1_plus_release_gate`, and no `PTREC-*`, then select a workstream from `startable_recommended_task_ids`
@@ -123,8 +128,8 @@ After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert` 
 
 When changing project metadata, inspect the `project set` preview or `--diff`, and use the Stage 3 `--write` procedure with an expected digest for persistence. If a project-wide unit change also requires task duration or estimate changes, combine `project.set` and the related mutations in one atomic batch. Do not depend on visual source inspection or manual editing for normal metadata viewing and editing.
 
-Owner-aware governance is active in repository-source Grammar 4 and CLI
-Contract 5. Governed previews may omit actor and owner confirmation, but
+Owner-aware governance is active in repository-source Grammar 5 and CLI
+Contract 6. Governed previews may omit actor and owner confirmation, but
 persistent goal or DAG changes require an actor. Effective owners and
 delegates have direct authority; another actor must provide repeatable
 `--accepted-by-owner` caller assertions for every affected effective owner.
@@ -144,6 +149,14 @@ Git and human review as separate controls. The published `0.3.0` package
 remains Contract 4 and does not accept governance fields or caller assertions;
 use live command discovery and require the expected contract version rather
 than inferring support from the package name alone.
+
+Grammar 5 lifecycle writes require an explicit event time and atomically
+change task state and append one work event. Preview and inspect the event
+before using the ordinary actor, expected-digest, and safe-write controls.
+`project history` and `project observe-velocity` are read-only: they do not
+commit, stage, or modify Git and do not adopt an observed velocity. Before an
+in-place `dag advance` removes a completed task and its owned events, commit
+the exact eventful source snapshot through the established Git workflow.
 
 Do not directly compare tasks from different detail plans without a macro decision. Do not substitute `groups.ready`, `groups.runnable_now`, the raw recommended set, or the text summary for start authority. With an unknown schema/model/temporal-policy version, incomplete or truncated trace, unknown tier, `PTREC-*`, or future or unavailable temporal eligibility, do not start a task; stop safely. Do not start `deferred` or `discouraged` work under normal authority.
 

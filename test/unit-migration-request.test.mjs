@@ -48,7 +48,7 @@ test("unit migration is public while target request preparation remains capabili
   assert.equal("planUnitMigration" in publicApi, true);
   assert.deepEqual(UNIT_MIGRATION_IDENTITY, {
     id: "perttool.unit-migration",
-    version: 2,
+    version: 3,
   });
   assert.equal(CONTRACT4_COMMAND_REGISTRY.length, 28);
   assert.equal(

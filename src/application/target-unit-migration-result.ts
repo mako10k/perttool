@@ -17,6 +17,7 @@ import type { TextEdit } from "../mutation/text-edits.js";
 import type {
   TargetGrammar3Capability,
   TargetGrammar4Capability,
+  TargetGrammar5Capability,
 } from "../parser/document-parser.js";
 import {
   planTargetUnitMigrationCandidate,
@@ -24,7 +25,7 @@ import {
 } from "./target-unit-migration-candidate.js";
 
 export const TARGET_UNIT_MIGRATION_RESULT_SCHEMA_VERSION =
-  "Perttool.UnitMigrationResult.v2" as const;
+  "Perttool.UnitMigrationResult.v3" as const;
 
 export interface TargetUnitMigrationExactValue extends Rational {
   readonly unit: DurationUnit;
@@ -40,7 +41,7 @@ export interface TargetUnitMigrationEffectiveVelocity {
 }
 
 export interface TargetUnitMigrationResultConvertedField {
-  readonly entityKind: "project" | "task";
+  readonly entityKind: "project" | "task" | "work_event";
   readonly entityId: string;
   readonly fieldPath: string;
   readonly original: TargetUnitMigrationExactValue;
@@ -59,7 +60,7 @@ export interface TargetUnitMigrationResult {
   readonly ok: boolean;
   readonly unitMigration: {
     readonly id: "perttool.unit-migration";
-    readonly version: 2;
+    readonly version: 3;
   };
   readonly documentId: string | null;
   readonly sourceGrammarVersion: MigrationGrammarVersion | null;
@@ -117,7 +118,10 @@ function effectiveVelocity(
 export function planTargetUnitMigrationResult(
   text: string,
   request: UnitMigrationRequest,
-  capability: TargetGrammar3Capability | TargetGrammar4Capability,
+  capability:
+    | TargetGrammar3Capability
+    | TargetGrammar4Capability
+    | TargetGrammar5Capability,
   options: TargetUnitMigrationCandidateOptions = {},
 ): TargetUnitMigrationResult {
   const candidate = planTargetUnitMigrationCandidate(

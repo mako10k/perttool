@@ -2,7 +2,7 @@ export { checkDocument } from "./application/check.js";
 export {
   analyzeDocument,
   selectNextTasks,
-} from "./application/contract4.js";
+} from "./application/contract6-actuals.js";
 export { getAgentHelp } from "./application/agent-help.js";
 export { getProjectMetadata } from "./application/project.js";
 export {
@@ -23,8 +23,10 @@ export {
 export {
   planAdvance,
   planBatchMutation,
+  planFinishActuals,
+  planLifecycle as planLifecycleMutation,
   planMutation,
-} from "./application/contract5-governance.js";
+} from "./application/contract6-mutation.js";
 export {
   planUnitMigration,
   withUnitMigrationWrite,
@@ -40,26 +42,26 @@ export {
   getAgentHelpCommandHelp,
 } from "./command/registry.js";
 export {
-  TARGET_GOVERNANCE_COMMAND_REGISTRY as COMMAND_REGISTRY,
-  getTargetGovernanceCommandDiscovery as getCommandDiscovery,
-  renderTargetGovernanceCommandHelpResult as renderCommandHelpResult,
-  serializeTargetGovernanceCommandHelpResult as serializeCommandHelpResult,
-  targetGovernanceCommandDescriptorToJson as commandDescriptorToJson,
-  targetGovernanceCommandHelpResultToJson as commandHelpResultToJson,
-  targetGovernanceCommandRegistryToJson as commandRegistryToJson,
-} from "./command/target-governance-discovery.js";
+  ACTUALS_COMMAND_REGISTRY as COMMAND_REGISTRY,
+  actualsCommandDescriptorToJson as commandDescriptorToJson,
+  actualsCommandHelpResultToJson as commandHelpResultToJson,
+  actualsCommandRegistryToJson as commandRegistryToJson,
+  getActualsCommandDiscovery as getCommandDiscovery,
+  renderActualsCommandHelpResult as renderCommandHelpResult,
+  serializeActualsCommandHelpResult as serializeCommandHelpResult,
+} from "./command/actuals-discovery.js";
 export {
-  renderTargetGovernanceCommandUsageError as renderCommandUsageError,
-  serializeTargetGovernanceCommandUsageError as serializeCommandUsageError,
-  targetGovernanceCommandUsageErrorToJson as commandUsageErrorToJson,
-  validateTargetGovernanceCommandInvocation as validateCommandInvocation,
-} from "./command/target-governance-usage.js";
+  actualsCommandUsageErrorToJson as commandUsageErrorToJson,
+  renderActualsCommandUsageError as renderCommandUsageError,
+  serializeActualsCommandUsageError as serializeCommandUsageError,
+  validateActualsCommandInvocation as validateCommandInvocation,
+} from "./command/actuals-usage.js";
 export {
-  getTargetGovernanceGuide as getGuide,
-  renderTargetGovernanceGuideResult as renderGuideResult,
-  serializeTargetGovernanceGuideResult as serializeGuideResult,
-  targetGovernanceGuideResultToJson as guideResultToJson,
-} from "./help/target-governance-guide.js";
+  actualsGuideResultToJson as guideResultToJson,
+  getActualsGuide as getGuide,
+  renderActualsGuideResult as renderGuideResult,
+  serializeActualsGuideResult as serializeGuideResult,
+} from "./help/actuals-guide.js";
 export type {
   CommandExample,
   CommandHandler,
@@ -81,19 +83,21 @@ export type {
   CommandUsageSuggestionKind,
 } from "./command/usage.js";
 export type {
-  TargetGovernanceCommandDescriptor as CommandDescriptor,
-  TargetGovernanceCommandDescriptor as ProjectedCommandDescriptor,
-  TargetGovernanceCommandHelpResult as CommandHelpResult,
+  ActualsCommandDescriptor as CommandDescriptor,
+  ActualsCommandDescriptor as ProjectedCommandDescriptor,
+  ActualsCommandHelpResult as CommandHelpResult,
+} from "./command/actuals-discovery.js";
+export type {
   TargetGovernanceOptionDescriptor as OptionDescriptor,
 } from "./command/target-governance-discovery.js";
 export type {
-  TargetGovernanceCommandInvocationValidation as CommandInvocationValidation,
-  TargetGovernanceInvalidCommandInvocation as InvalidCommandInvocation,
-  TargetGovernanceValidCommandInvocation as ValidCommandInvocation,
-} from "./command/target-governance-usage.js";
+  ActualsCommandInvocationValidation as CommandInvocationValidation,
+  ActualsInvalidCommandInvocation as InvalidCommandInvocation,
+  ActualsValidCommandInvocation as ValidCommandInvocation,
+} from "./command/actuals-usage.js";
 export type {
-  TargetGovernanceGuideResult as GuideResult,
-} from "./help/target-governance-guide.js";
+  ActualsGuideResult as GuideResult,
+} from "./help/actuals-guide.js";
 export {
   getAgentGuidance,
   getBundledAgentGuidance,
@@ -240,11 +244,11 @@ export type {
   UnsatisfiedEdgeExplanation,
 } from "./application/next.js";
 export type {
-  AnalysisResultV3 as AnalysisResult,
-  AnalysisResultV3,
-  NextResultV4 as NextResult,
-  NextResultV4,
-} from "./application/contract4.js";
+  AnalysisResultV4 as AnalysisResult,
+  AnalysisResultV4,
+  NextResultV5 as NextResult,
+  NextResultV5,
+} from "./application/contract6-actuals.js";
 export type {
   RecommendationAnalysis,
   RecommendationComparison,
@@ -342,11 +346,12 @@ export type {
   AdvanceRetentionReason,
 } from "./mutation/advance.js";
 export type {
-  AdvanceResultV2 as AdvanceResult,
-  AdvanceResultV2,
-  MutationResultV2 as MutationResult,
-  MutationResultV2,
-} from "./application/contract5-governance.js";
+  AdvanceResultV3 as AdvanceResult,
+  AdvanceResultV3,
+  LifecycleResultV3,
+  MutationResultV3 as MutationResult,
+  MutationResultV3,
+} from "./application/contract6-mutation.js";
 export type { DocumentContent } from "./io/document-file.js";
 export type {
   CreateArtifactOptions,
@@ -429,3 +434,38 @@ export type {
   UnitMigrationRequest,
   UnitMigrationUnavailableCause,
 } from "./migration/request.js";
+export {
+  inspectProjectHistory,
+} from "./history/project-history.js";
+export {
+  observeProjectVelocity,
+} from "./history/velocity-observation.js";
+export {
+  inspectTargetProjectHistoryFile as inspectProjectHistoryFile,
+  renderTargetProjectHistoryText as renderProjectHistoryText,
+  targetProjectHistoryResultToJson as projectHistoryResultToJson,
+} from "./application/target-project-history.js";
+export {
+  renderTargetVelocityObservationText as renderVelocityObservationText,
+  targetVelocityObservationResultToJson as velocityObservationResultToJson,
+} from "./application/target-velocity-observation.js";
+export type {
+  FinishActualsMutation,
+  LifecycleEventInput,
+  LifecycleMutation,
+  ResumeActualsMutation,
+  StartActualsMutation,
+  SuspendActualsMutation,
+  TaskLifecycleState,
+} from "./actuals/lifecycle.js";
+export type {
+  HistoryRequest,
+  ProjectHistoryCoreResult as ProjectHistoryResultV1,
+} from "./history/project-history.js";
+export type {
+  PlanRevisionSnapshot,
+} from "./history/git-probe.js";
+export type {
+  VelocityObservationCoreResult as VelocityObservationResultV1,
+  VelocityObservationRequest,
+} from "./history/velocity-observation.js";

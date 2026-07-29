@@ -153,19 +153,24 @@ surface. The acceptance record is
 completed 5p pre-advance snapshot, and the task and satisfied integration
 gates are advanced to reached `ACTUALS_INTEGRATED_INPUT`. Its pure service
 derives exact elapsed-hour, qualified active-date, effort-productivity, and
-separately qualified Git-recorded rates without changing declared velocity
-or the active public surface. The
+separately qualified Git-recorded rates without changing declared velocity.
+The
 acceptance record is
 [`project-actuals-velocity-observation-acceptance.md`](../docs/process/project-actuals-velocity-observation-acceptance.md).
-Two tasks and 10p remain. Precedence and the `parallel-sgs` version 1
-heuristic resource makespan are both 10p with no resource delay. At the
-inherited operations velocity `29p/2d`, both forecasts are `20/29d`.
-Complete NextResult v4 recommends and starts only `ACTUALS_PUBLIC_CONTRACT`.
-Public Grammar 5/CLI Contract 6 activation,
-Git mutation, automatic declared-velocity changes, MIG-08, release
-publication, and dist-tag movement remain outside the authorized scope. This
-independent workstream does not displace `PERT_PLANS` in the English-baseline
-detail.
+`ACTUALS_PUBLIC_CONTRACT` is complete pending its exact 6p pre-advance commit.
+The current source atomically activates Grammar 5 and CLI Contract 6 through
+the standard parser, formatter, lifecycle and advance mutations, suspended
+analysis/Next results, history, observation, package root, 33-command
+registry, help, Guide, schemas, diagnostics, examples, and isolated installed
+workflow. The acceptance record is
+[`project-actuals-public-contract-acceptance.md`](../docs/process/project-actuals-public-contract-acceptance.md).
+One task and 4p remain. Precedence and the `parallel-sgs` version 1 heuristic
+resource makespan are both 4p with no resource delay. At the inherited
+operations velocity `29p/2d`, both forecasts are `8/29d`. Complete NextResult
+v5 recommends and starts only `ACTUALS_ACCEPTANCE`. Git mutation, automatic
+declared-velocity changes, MIG-08, release publication, and dist-tag movement
+remain outside the authorized scope. This independent workstream does not
+displace `PERT_PLANS` in the English-baseline detail.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

@@ -1,0 +1,47 @@
+project PROJECT_ACTUALS_EXAMPLE:
+  version 5
+  title "Project actuals example"
+  as_of 2026-07-29
+  duration_unit point
+  velocity 6p/1d
+  finish DONE
+
+milestone START:
+  title "Start"
+  state reached
+
+milestone DONE:
+  title "Done"
+
+task WORK START -> DONE:
+  title "Work"
+  duration 3p
+  status done
+
+work_event WE-start:
+  model 1
+  task WORK
+  kind start
+  occurred_at 2026-07-29T09:00:00+09:00
+  planned_value 3p
+
+work_event WE-suspend:
+  model 1
+  task WORK
+  kind suspend
+  occurred_at 2026-07-29T11:00:00+09:00
+  reason "Review"
+
+work_event WE-resume:
+  model 1
+  task WORK
+  kind resume
+  occurred_at 2026-07-29T12:00:00+09:00
+
+work_event WE-finish:
+  model 1
+  task WORK
+  kind finish
+  occurred_at 2026-07-29T15:00:00+09:00
+  active_time 5h
+  effort 6ph

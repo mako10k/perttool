@@ -32,24 +32,24 @@ function plan(text, request) {
   );
 }
 
-test("UnitMigrationResult v2 remains an internal Contract 4 target", () => {
+test("UnitMigrationResult v3 remains an internal Contract 6 implementation boundary", () => {
   assert.equal(
     TARGET_UNIT_MIGRATION_RESULT_SCHEMA_VERSION,
-    "Perttool.UnitMigrationResult.v2",
+    "Perttool.UnitMigrationResult.v3",
   );
   assert.equal("planTargetUnitMigrationResult" in publicApi, false);
   assert.equal("withTargetUnitMigrationWrite" in publicApi, false);
 });
 
-test("TUE-012 projects the complete exact UnitMigrationResult v2 outcome", async () => {
+test("TUE-012 projects the complete exact UnitMigrationResult v3 outcome", async () => {
   const source = await fixture("migration-point-v2.pert");
   const result = plan(source, { targetUnit: "day" });
 
-  assert.equal(result.schemaVersion, "Perttool.UnitMigrationResult.v2");
+  assert.equal(result.schemaVersion, "Perttool.UnitMigrationResult.v3");
   assert.equal(result.ok, true);
   assert.deepEqual(result.unitMigration, {
     id: "perttool.unit-migration",
-    version: 2,
+    version: 3,
   });
   assert.equal(result.documentId, "MIGRATION_POINT");
   assert.equal(result.sourceGrammarVersion, 2);
@@ -164,14 +164,14 @@ test("no-op and Grammar 3 upgrade retain their distinct result meanings", async 
   );
 });
 
-test("invalid UnitMigrationResult v2 projections are complete and deterministic", async () => {
+test("invalid UnitMigrationResult v3 projections are complete and deterministic", async () => {
   const source = await fixture("migration-point-v2.pert");
   const first = plan(source, { targetUnit: "hour" });
   const second = plan(source, { targetUnit: "hour" });
 
   assert.deepEqual(first, second);
   assert.equal(first.ok, false);
-  assert.equal(first.schemaVersion, "Perttool.UnitMigrationResult.v2");
+  assert.equal(first.schemaVersion, "Perttool.UnitMigrationResult.v3");
   assert.equal(first.documentId, "MIGRATION_POINT");
   assert.equal(first.sourceGrammarVersion, 2);
   assert.equal(first.targetGrammarVersion, null);

@@ -338,12 +338,18 @@ The
 records exact declared and qualified Git-recorded rates, deterministic sample
 selection, and unchanged declared velocity without activating the public
 contract.
+The
+[`ACTUALS_PUBLIC_CONTRACT` acceptance](process/project-actuals-public-contract-acceptance.md)
+records the atomic Grammar 5 and CLI Contract 6 source cutover, public root,
+registry/help/Guide, result versions, examples, and isolated installed
+workflow. The published `0.4.0` package remains Grammar 4 and CLI Contract 5
+until a separate release is authorized.
 
 Required outcomes:
 
 - explicit fixed-offset `start`, `suspend`, `resume`, and `finish` events;
 - an atomic task-state and event candidate with no hidden clock input;
-- a distinct future `suspended` state that releases renewable resources;
+- a distinct `suspended` state that releases renewable resources;
 - exact cycle time, active time, person effort, and planned-value provenance;
 - task-owned events removed by advance only after the pre-advance Git
   recoverability boundary;
@@ -358,8 +364,9 @@ Required outcomes:
 
 Compatibility and non-goals:
 
-- Grammar 1 through 4, CLI Contract 5, status-only `task finish`, and current
-  result schemas remain unchanged until atomic activation.
+- Grammar 1 through 4 retain their meanings, and status-only `task finish`
+  remains available for those grammars. The current source uses CLI Contract
+  6; the published `0.4.0` artifact retains CLI Contract 5.
 - History and `ADV-001` share the narrow read-only Git adapter, path/HEAD
   identity, and race-safe inspection primitives. History does not enforce the
   advance decision, and `ADV-001` does not become the history result model.
@@ -378,7 +385,7 @@ Planned delivery slices:
 | `WORK_LIFECYCLE` | Start, suspend, resume, state reduction, resource/classification handling, and result version target | 7p | Complete: exact transitions, open reduction, resource release, suspended result handling, and compatibility pass focused tests. |
 | `PROJECT_HISTORY` | Semantic reconstruction, deduplication, advance removal, legacy qualification, Core/text/JSON | 6p | Complete: explicit and legacy evidence remain distinct across real repository histories. |
 | `VELOCITY_OBSERVATION` | Exact Point/hour, qualified Point/active-date, and Point/person-hour observations | 5p | Complete: parallel work is not double-counted, Git-recorded rates remain qualified, and declared velocity is unchanged. |
-| `ACTUALS_PUBLIC_CONTRACT` | Atomic Grammar 5/CLI Contract 6 registry, help, Guide, schemas, diagnostics, and root activation | 6p | No partial public activation or compatibility alias exists. |
+| `ACTUALS_PUBLIC_CONTRACT` | Atomic Grammar 5/CLI Contract 6 registry, help, Guide, schemas, diagnostics, and root activation | 6p | Complete: no partial public activation or compatibility alias exists. |
 | `ACTUALS_ACCEPTANCE` | Repository, Git, lifecycle, link, package, and installed workflow acceptance | 4p | All normative PACT cases pass with no Git mutation or release side effect. |
 
 ## Scheduling metadata and unit migration

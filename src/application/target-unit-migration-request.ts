@@ -19,12 +19,15 @@ import type {
 import type {
   TargetGrammar3Capability,
   TargetGrammar4Capability,
+  TargetGrammar5Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar3Document,
   validateTargetGrammar4Document,
+  validateTargetGrammar5Document,
   type TargetGrammar3ValidatedDocument,
   type TargetGrammar4ValidatedDocument,
+  type TargetGrammar5ValidatedDocument,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 
@@ -50,7 +53,8 @@ export interface TargetUnitMigrationRequestSuccess
   readonly sourceUnit: DurationUnit;
   readonly validatedDocument:
     | TargetGrammar3ValidatedDocument
-    | TargetGrammar4ValidatedDocument;
+    | TargetGrammar4ValidatedDocument
+    | TargetGrammar5ValidatedDocument;
 }
 
 export interface TargetUnitMigrationRequestFailure
@@ -95,13 +99,18 @@ function invalidOriginal(
 export function prepareTargetUnitMigrationRequest(
   text: string,
   request: UnitMigrationRequest,
-  capability: TargetGrammar3Capability | TargetGrammar4Capability,
+  capability:
+    | TargetGrammar3Capability
+    | TargetGrammar4Capability
+    | TargetGrammar5Capability,
   options: TargetValidationOptions = {},
 ): TargetUnitMigrationRequestPreparation {
   const normalizedRequest = normalizeUnitMigrationRequest(request);
-  const checked = capability.grammarVersion === 4
-    ? validateTargetGrammar4Document(text, capability, options)
-    : validateTargetGrammar3Document(text, capability, options);
+  const checked = capability.grammarVersion === 5
+    ? validateTargetGrammar5Document(text, capability, options)
+    : capability.grammarVersion === 4
+      ? validateTargetGrammar4Document(text, capability, options)
+      : validateTargetGrammar3Document(text, capability, options);
   if (!checked.ok || checked.validatedDocument === null) {
     return invalidOriginal(
       normalizedRequest,

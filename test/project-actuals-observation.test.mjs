@@ -427,9 +427,15 @@ test("selection and history availability are typed without guessing", () => {
   );
 });
 
-test("velocity observation remains internal until Contract 6 activation", () => {
+test("velocity observation is public without target-prefixed package exports", () => {
   for (const name of [
     "observeProjectVelocity",
+    "velocityObservationResultToJson",
+    "renderVelocityObservationText",
+  ]) {
+    assert.equal(name in publicApi, true, name);
+  }
+  for (const name of [
     "observeTargetProjectVelocity",
     "targetVelocityObservationResultToJson",
   ]) {

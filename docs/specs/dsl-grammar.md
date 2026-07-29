@@ -1,7 +1,7 @@
 # perttool DSL Grammar Specification
 
 - Document status: Draft 1.0
-- Grammar versions: 1, 2, 3, and 4 active; 5 accepted target
+- Grammar versions: 1, 2, 3, 4, and 5 active
 - Created: 2026-07-21
 - Updated: 2026-07-28
 - Related requirements: [../requirements.md](../requirements.md)
@@ -21,8 +21,8 @@ The EBNF and field tables through Section 19 are normative for grammar version
 20.2 fixes the active grammar version 3 exact fraction Duration delta selected
 by [Temporal and Unit Interface Contract version
 2](temporal-unit-interface.md). Section 20.3 fixes the active Grammar 4
-governance delta. Section 20.4 fixes the accepted, not-yet-active Grammar 5
-project-actuals delta. See the following representative valid version 1
+governance delta. Section 20.4 fixes the active Grammar 5 project-actuals
+delta. See the following representative valid version 1
 documents.
 
 - [minimal.pert](../examples/minimal.pert)

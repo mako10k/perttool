@@ -93,7 +93,7 @@ function understandsAuthorityContract(result) {
   const authority = result.temporal?.authority;
   const omitted = recommendation?.explanation_status?.omitted_counts;
   if (
-    result.schema_version !== "Perttool.NextResult.v4" ||
+    result.schema_version !== "Perttool.NextResult.v5" ||
     result.recommendation_interface_version !== 1 ||
     result.ok !== true ||
     recommendation == null ||

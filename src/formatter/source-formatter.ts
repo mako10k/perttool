@@ -7,7 +7,7 @@ import {
   canonicalizeExactPersonHoursSourceToken,
 } from "../model/exact-person-hours-source.js";
 import {
-  TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER,
+  TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
 import type {
   DeclarationKind,
@@ -431,6 +431,6 @@ export function formatDocument(text: string, options: FormatOptions = {}): Forma
     text,
     activeValidation(text, options),
     (candidate) => activeValidation(candidate, options),
-    { fieldOrder: TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER },
+    { fieldOrder: TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER },
   );
 }

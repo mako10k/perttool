@@ -108,13 +108,14 @@ fi
       const topicIds = result.topics?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 5 ||
+        result.cli_contract_version !== 6 ||
         result.operation !== "guide" ||
         JSON.stringify(topicIds) !== JSON.stringify([
           "syntax",
           "analysis",
           "next",
           "editing",
+          "actuals",
           "mermaid",
           "workflows",
           "errors",
@@ -134,7 +135,7 @@ fi
       const sectionIds = result.sections?.map(({ id }) => id);
       if (
         result.schema_version !== "Perttool.GuideResult.v1" ||
-        result.cli_contract_version !== 5 ||
+        result.cli_contract_version !== 6 ||
         result.operation !== "guide" ||
         result.topic_id !== "next" ||
         JSON.stringify(sectionIds) !== JSON.stringify([
@@ -198,7 +199,7 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
     process.stdin.on("end", () => {
       const result = JSON.parse(input);
       if (
-        result.schema_version !== "Perttool.MutationResult.v2" ||
+        result.schema_version !== "Perttool.MutationResult.v3" ||
         result.operation !== "project.set" ||
         !result.updated_text?.includes("  as_of 2026-07-23")
       ) process.exit(1);
@@ -227,7 +228,7 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
     process.stdin.on("end", () => {
       const result = JSON.parse(input);
       if (
-        result.schema_version !== "Perttool.NextResult.v4" ||
+        result.schema_version !== "Perttool.NextResult.v5" ||
         result.recommendation_interface_version !== 1 ||
         result.recommendation?.explanation_status?.complete !== true ||
         result.temporal?.authority?.policy !== "recommendation_v1_plus_release_gate"
@@ -238,6 +239,10 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
 node scripts/check-package-file-first.mjs \
   "$installed_cli" \
   "$package_root/file-first-workflow"
+node scripts/check-package-actuals.mjs \
+  "$installed_cli" \
+  "$package_root/actuals-workflow" \
+  "$repo_root/test/fixtures/project-actuals-v5.pert"
 installed_guide_module="$install_prefix/lib/node_modules/$package_name/dist/index.js"
 node --input-type=module - "$installed_guide_module" <<'NODE'
 import { pathToFileURL } from "node:url";
@@ -250,10 +255,10 @@ const text = guide.renderGuideResult(guide.getGuide("syntax", "quick"));
 const missing = guide.guideResultToJson(guide.getGuide("missing", "detail"));
 if (
   index.schema_version !== "Perttool.GuideResult.v1" ||
-  index.cli_contract_version !== 5 ||
+  index.cli_contract_version !== 6 ||
   index.operation !== "guide" ||
-  index.topics?.length !== 8 ||
-  !JSON.stringify(index).includes("Grammar versions 1, 2, 3, and 4") ||
+  index.topics?.length !== 9 ||
+  !JSON.stringify(index).includes("Grammar versions 1 through 5") ||
   !text.startsWith("DSL syntax\n") ||
   missing.diagnostics?.[0]?.help_topic !== null ||
   missing.diagnostics?.[0]?.guide_topic !== "syntax"
@@ -343,17 +348,17 @@ if (
   contract5Help.status !== 0 ||
   contract5Help.stderr !== "" ||
   contract5HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
-  contract5HelpJson.cli_contract_version !== 5 ||
-  contract5HelpJson.commands?.length !== 28 ||
+  contract5HelpJson.cli_contract_version !== 6 ||
+  contract5HelpJson.commands?.length !== 33 ||
   !serializedHelp.includes("project migrate-unit") ||
   !serializedHelp.includes('"not-before"') ||
   !serializedHelp.includes('"deadline"') ||
-  !serializedHelp.includes("Perttool.CheckResult.v2") ||
+  !serializedHelp.includes("Perttool.CheckResult.v3") ||
   !serializedHelp.includes("Perttool.ProjectResult.v3") ||
-  !serializedHelp.includes("Perttool.MutationResult.v2") ||
-  !serializedHelp.includes("Perttool.AnalysisResult.v3") ||
-  !serializedHelp.includes("Perttool.NextResult.v4") ||
-  !serializedHelp.includes("Perttool.UnitMigrationResult.v2") ||
+  !serializedHelp.includes("Perttool.MutationResult.v3") ||
+  !serializedHelp.includes("Perttool.AnalysisResult.v4") ||
+  !serializedHelp.includes("Perttool.NextResult.v5") ||
+  !serializedHelp.includes("Perttool.UnitMigrationResult.v3") ||
   !serializedHelp.includes('"actor"') ||
   !serializedHelp.includes('"accepted-by-owner"') ||
   !serializedHelp.includes('"goal-owner"')
@@ -364,11 +369,11 @@ for (const [fixture, grammarVersion] of [
   [process.argv[7], 3],
 ]) {
   for (const [route, schemaVersion] of [
-    [["document", "check"], "Perttool.CheckResult.v2"],
+    [["document", "check"], "Perttool.CheckResult.v3"],
     [["document", "format"], "Perttool.FormatResult.v1"],
     [["project", "show"], "Perttool.ProjectResult.v3"],
-    [["dag", "analyze"], "Perttool.AnalysisResult.v3"],
-    [["dag", "next"], "Perttool.NextResult.v4"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v4"],
+    [["dag", "next"], "Perttool.NextResult.v5"],
   ]) {
     const result = spawnSync(
       process.argv[5],
@@ -380,7 +385,7 @@ for (const [fixture, grammarVersion] of [
       result.status !== 0 ||
       result.stderr !== "" ||
       json.schema_version !== schemaVersion ||
-      json.cli_contract_version !== 5 ||
+      json.cli_contract_version !== 6 ||
       json.ok !== true ||
       (route[1] === "format"
         ? "grammar_version" in json
@@ -408,7 +413,7 @@ const guidanceCoreJson = JSON.parse(
 if (
   guidanceCli.status !== 0 ||
   guidanceCli.stderr !== "" ||
-  guidanceContract !== 5 ||
+  guidanceContract !== 6 ||
   JSON.stringify(guidanceCliCore) !== JSON.stringify(guidanceCoreJson)
 ) process.exit(1);
 
@@ -428,7 +433,7 @@ const overrideSource = await readFile(process.argv[4], "utf8");
 const overrideNext = api.selectNextTasks(overrideSource);
 if (!overrideNext.ok || overrideNext.recommendation === null) process.exit(1);
 const override = api.validateOverride(overrideNext, {
-  sourceSchemaVersion: "Perttool.NextResult.v4",
+  sourceSchemaVersion: "Perttool.NextResult.v5",
   sourceDigest: overrideNext.recommendation.sourceDigest,
   sourceResultDecisionId: overrideNext.recommendation.resultDecision.id,
   selectedTaskIds: ["OPTIONAL_POLISH"],

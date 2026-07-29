@@ -23,7 +23,7 @@ export interface ExactUnitMigrationValue extends Rational {
 }
 
 export interface ExactUnitMigrationConvertedField {
-  readonly entityKind: "project" | "task";
+  readonly entityKind: "project" | "task" | "work_event";
   readonly entityId: string;
   readonly fieldPath: string;
   readonly original: ExactUnitMigrationValue;

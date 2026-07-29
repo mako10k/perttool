@@ -42,7 +42,7 @@ test("document check JSON is stable and contains no ANSI escape", () => {
   assert.equal(result.stdout.endsWith("\n"), true);
   assert.equal(result.stdout.includes("\u001b"), false);
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.CheckResult.v2");
+  assert.equal(json.schema_version, "Perttool.CheckResult.v3");
   assert.equal(json.document_id, "PARALLEL");
   assert.deepEqual(json.summary, {
     resources: 2,
@@ -157,7 +157,7 @@ test("guide exposes the estimate topic as JSON", () => {
   assert.equal(result.status, 0);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(json.cli_contract_version, 5);
+  assert.equal(json.cli_contract_version, 6);
   assert.equal(json.topic_id, "syntax.estimate");
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
@@ -187,7 +187,7 @@ test("dag analyze defaults to separate precedence and resource JSON results", ()
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.AnalysisResult.v3");
+  assert.equal(json.schema_version, "Perttool.AnalysisResult.v4");
   assert.equal(json.mode, "both");
   assert.equal(json.precedence.makespan.numerator, "6");
   assert.equal(json.resource.makespan.numerator, "8");
@@ -309,12 +309,13 @@ test("dag next JSON separates readiness from the runnable resource subset", () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v4");
+  assert.equal(json.schema_version, "Perttool.NextResult.v5");
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.recommendation.explanation_status.complete, true);
   assert.deepEqual(json.recommendation.recommended_task_ids, ["CORE"]);
   assert.deepEqual(json.groups, {
     active: [],
+    suspended: [],
     ready: ["CORE", "CLI", "DOCS"],
     runnable_now: ["CORE", "CLI"],
     blocked_now: [],
@@ -427,7 +428,7 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   assert.doesNotMatch(preview.stdout, /task BRANCH_A /);
   assert.match(preview.stdout, /milestone A_DONE:[\s\S]*?state reached/);
   assert.match(preview.stderr, /^PREVIEW dag\.advance changed=true /m);
-  assert.match(preview.stderr, /^ADVANCE removed_tasks=BRANCH_A removed_gates=- removed_milestones=-$/m);
+  assert.match(preview.stderr, /^ADVANCE removed_tasks=BRANCH_A removed_gates=- removed_milestones=- removed_work_events=-$/m);
   assert.match(preview.stderr, /^ADVANCE frontier_before=A_DONE,NOW frontier_after=A_DONE,NOW ready_before=- ready_after=-$/m);
 
   const diff = run(["dag", "advance", source, "--diff", "--color=never"]);
@@ -439,7 +440,7 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   const jsonResult = run(["dag", "advance", source, "--format=json"]);
   assert.equal(jsonResult.status, 0, jsonResult.stderr);
   const json = JSON.parse(jsonResult.stdout);
-  assert.equal(json.schema_version, "Perttool.MutationResult.v2");
+  assert.equal(json.schema_version, "Perttool.MutationResult.v3");
   assert.equal(json.operation, "dag.advance");
   assert.equal(json.document_id, "ADVANCE_PARTIAL");
   assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
@@ -447,6 +448,7 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
     removed_task_ids: ["BRANCH_A"],
     removed_gate_ids: [],
     removed_milestone_ids: [],
+    removed_work_event_ids: [],
     frontier_before: ["A_DONE", "NOW"],
     frontier_after: ["A_DONE", "NOW"],
     ready_before: [],
@@ -489,6 +491,7 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
     removed_task_ids: ["WORK"],
     removed_gate_ids: ["RELEASE"],
     removed_milestone_ids: ["MID", "NOW"],
+    removed_work_event_ids: [],
     frontier_before: ["DONE"],
     frontier_after: ["DONE"],
     ready_before: [],
@@ -1052,7 +1055,7 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
   ]);
   assert.equal(added.status, 0, added.stderr);
   const addedJson = JSON.parse(added.stdout);
-  assert.equal(addedJson.schema_version, "Perttool.MutationResult.v2");
+  assert.equal(addedJson.schema_version, "Perttool.MutationResult.v3");
   assert.equal(addedJson.operation, "task.add");
   assert.equal(addedJson.document_id, "MINIMAL");
   assert.equal(addedJson.write.mode, "preview");
@@ -1189,7 +1192,7 @@ test("project show and set expose all metadata without direct source editing", (
   ], { input: readFileSync(path.join(root, "test/fixtures/grammar/all-fields.pert"), "utf8") });
   assert.equal(preview.status, 0, preview.stderr);
   const previewJson = JSON.parse(preview.stdout);
-  assert.equal(previewJson.schema_version, "Perttool.MutationResult.v2");
+  assert.equal(previewJson.schema_version, "Perttool.MutationResult.v3");
   assert.equal(previewJson.operation, "project.set");
   assert.equal(previewJson.source, "<stdin>");
   assert.equal(previewJson.write.mode, "preview");
@@ -1239,7 +1242,7 @@ test("milestone and resource add set remove actions project to mutation Core", (
     const rejected = run([...args, "--format=json"]);
     assert.equal(rejected.status, 1, rejected.stderr);
     const json = JSON.parse(rejected.stdout);
-    assert.equal(json.schema_version, "Perttool.MutationResult.v2");
+    assert.equal(json.schema_version, "Perttool.MutationResult.v3");
     assert.equal(json.ok, false);
     assert.equal(json.updated_text, null);
     assert.equal(json.diff, null);

@@ -14,6 +14,7 @@ test("parallel next selects a deterministic runnable subset", async () => {
   assert.equal(result.ok, true);
   assert.deepEqual(result.groups, {
     active: [],
+    suspended: [],
     ready: ["CORE", "CLI", "DOCS"],
     runnableNow: ["CORE", "CLI"],
     blockedNow: [],

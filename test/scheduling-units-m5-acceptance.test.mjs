@@ -34,7 +34,7 @@ test("SU-M5 acceptance traces every public TUI and TUE observation", async () =>
   assert.match(acceptance, /does not itself push Git/);
 });
 
-test("SU-M5 public root exposes Contract 4 services without target capabilities", () => {
+test("the active public root retains SU-M5 services without target capabilities", () => {
   for (const name of [
     "checkDocument",
     "getProjectMetadata",
@@ -56,5 +56,5 @@ test("SU-M5 public root exposes Contract 4 services without target capabilities"
   ]) {
     assert.equal(name in publicApi, false, name);
   }
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 28);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 33);
 });

@@ -129,8 +129,26 @@ export function planLifecycleEdits(
       lineEnding,
     ),
   );
+  const merged: TextEdit[] = [];
+  for (const edit of edits) {
+    const previous = merged.at(-1);
+    if (
+      previous !== undefined &&
+      previous.startOffset === edit.startOffset &&
+      previous.endOffset === edit.endOffset &&
+      edit.startOffset === edit.endOffset
+    ) {
+      merged[merged.length - 1] = Object.freeze({
+        startOffset: edit.startOffset,
+        endOffset: edit.endOffset,
+        replacement: previous.replacement + edit.replacement,
+      });
+    } else {
+      merged.push(edit);
+    }
+  }
   return Object.freeze({
-    edits: Object.freeze(edits),
+    edits: Object.freeze(merged),
     task,
     fromState,
   });

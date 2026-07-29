@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
-import type { NextResultV4 } from "../application/contract4.js";
-import type { NextTask } from "../application/next.js";
-import type { TargetNextResultV4 } from "../application/target-temporal-analysis.js";
+import type { NextResultV5 } from "../application/contract6-actuals.js";
+import type { TargetActualsNextResultV5 } from "../application/target-actuals-analysis.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import { fieldNamed } from "../model/syntax.js";
@@ -30,7 +29,7 @@ import { TOOL_VERSION } from "../version.js";
 
 const overrideSchemaVersion = "Perttool.OverrideDecision.v1" as const;
 const operation = "recommendation.override.validate" as const;
-const sourceSchemaVersion = "Perttool.NextResult.v4" as const;
+const sourceSchemaVersion = "Perttool.NextResult.v5" as const;
 const digestPattern = /^sha256:[0-9a-f]{64}$/;
 const overrideReasonCodes = new Set<HumanOverrideReasonCode>([
   "human_priority_decision",
@@ -121,7 +120,7 @@ function validUtcSecond(value: unknown): value is string {
 }
 
 function sourceContractError(
-  source: NextResultV4,
+  source: NextResultV5,
   request: OverrideRequest,
 ): string | null {
   try {
@@ -135,7 +134,7 @@ function sourceContractError(
       source.schemaVersion !== sourceSchemaVersion ||
       source.temporal === null
     ) {
-      return "source NextResult.v4 must be successful, untruncated, and include temporal authority";
+      return "source NextResult.v5 must be successful, untruncated, and include temporal authority";
     }
     const recommendation = source.recommendation;
     const authority = source.temporal.authority;
@@ -317,7 +316,7 @@ function triggerCodesForTier(
 }
 
 function declaredCapacities(
-  source: TargetNextResultV4,
+  source: TargetActualsNextResultV5,
 ): ReadonlyMap<string, number> {
   const capacities = new Map<string, number>();
   for (const declaration of source.document.declarations) {
@@ -336,7 +335,13 @@ function declaredCapacities(
 function addTaskUsage(
   usage: Map<string, number>,
   capacities: ReadonlyMap<string, number>,
-  task: NextTask,
+  task: {
+    readonly id: string;
+    readonly requirements: readonly {
+      readonly resourceId: string;
+      readonly units: number;
+    }[];
+  },
   occupants?: Map<string, string[]>,
 ): void {
   for (const requirement of task.requirements) {
@@ -387,7 +392,7 @@ function feasibilityExpression(
 }
 
 function evaluateSelectedSet(
-  source: TargetNextResultV4,
+  source: TargetActualsNextResultV5,
   selectedTaskIds: readonly string[],
 ): {
   readonly feasible: boolean;
@@ -451,7 +456,7 @@ function evaluateSelectedSet(
 }
 
 function negativeReasonIds(
-  source: TargetNextResultV4,
+  source: TargetActualsNextResultV5,
   taskId: string,
 ): readonly string[] {
   const recommendation = source.recommendation!;
@@ -471,7 +476,7 @@ function negativeReasonIds(
 }
 
 function acknowledgementError(
-  source: TargetNextResultV4,
+  source: TargetActualsNextResultV5,
   request: OverrideRequest,
   selectedTaskIds: readonly string[],
 ): string | null {
@@ -511,7 +516,7 @@ function acknowledgementError(
 }
 
 function taskDecisionReferences(
-  source: TargetNextResultV4,
+  source: TargetActualsNextResultV5,
   selectedTaskIds: readonly string[],
   displacesRecommended: boolean,
 ): readonly OverrideTaskDecision[] {
@@ -544,14 +549,14 @@ function taskDecisionReferences(
 }
 
 export function validateOverride(
-  source: NextResultV4,
+  source: NextResultV5,
   request: OverrideRequest,
 ): OverrideValidationResult {
   const sourceError = sourceContractError(source, request);
   if (sourceError !== null) {
     return failure("PTOVR-101", sourceError);
   }
-  const validatedSource = source as TargetNextResultV4;
+  const validatedSource = source as TargetActualsNextResultV5;
   const recommendation = validatedSource.recommendation!;
   if (
     request.sourceDigest !== recommendation.sourceDigest ||

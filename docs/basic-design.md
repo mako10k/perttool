@@ -1569,7 +1569,7 @@ Active Contract 5 schema changes:
 - `Perttool.MutationResult.v2`
 - `Perttool.GovernanceDecision.v1`
 
-Accepted target Contract 6 schema changes:
+Active Contract 6 schema changes:
 
 - `Perttool.CheckResult.v3`
 - `Perttool.AnalysisResult.v4`
@@ -1587,11 +1587,11 @@ Rules:
 - Removing fields, changing semantics, or narrowing enums requires a major schema increase.
 - Emit golden JSON in stable key order.
 
-Every active CLI JSON envelope includes `cli_contract_version=5`. Existing
-result-specific schema versions remain unchanged where Contract 5 preserves
-their payload meanings. At the accepted future cutover, every envelope
-includes `cli_contract_version=6`; the actuals-affected operations always
-return their Contract 6 schema identities, including for older input grammars.
+The published `0.4.0` CLI JSON envelope includes
+`cli_contract_version=5`. The current source-level cutover makes every
+envelope include `cli_contract_version=6`; the actuals-affected operations
+always return their Contract 6 schema identities, including for older input
+grammars.
 
 Reserve DSL version for future introduction as an optional field in the project block. When omitted in the MVP, treat it as version 1 grammar.
 
@@ -2073,20 +2073,17 @@ Exit:
 The independent
 [`project-actuals.pert`](../plans/project-actuals.pert) workstream adopts the
 accepted actuals contract without changing the completed MVP, governance, or
-release plans. Contract review, the internal Grammar 5 source Core, the
-read-only Git probe, eventful finish, and semantic project-history
-reconstruction are complete. They remain behind internal target capabilities.
-The remaining implementation separates:
+release plans. Contract review, the Grammar 5 source Core, the read-only Git
+probe, eventful finish, start/suspend/resume lifecycle, semantic
+project-history reconstruction, and exact observations are complete. The
+current source activates their public root, CLI Contract 6
+registry/help/Guide, suspended AnalysisResult v4/NextResult v5, and
+installed-package checks atomically. Repository and installed-package
+acceptance remains a later plan task.
 
-1. start, suspend, and resume lifecycle behavior;
-2. exact velocity and effort observations;
-3. the atomic Grammar 5/CLI Contract 6 public cutover; and
-4. repository and installed-package acceptance.
-
-The source Core completion does not activate Grammar 5 or CLI Contract 6. The
-slice does not authorize automatic Git mutation, post-advance correction,
-arbitrary branch-union history, automatic declared-velocity changes, MIG-08,
-package publication, or dist-tag movement.
+The source cutover does not authorize automatic Git mutation, post-advance
+correction, arbitrary branch-union history, automatic declared-velocity
+changes, MIG-08, package publication, or dist-tag movement.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

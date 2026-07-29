@@ -1053,11 +1053,12 @@ Must:
   atomic batch requests. File-first maintenance must not require manual source
   rewriting.
 
-The selected but unimplemented actuals target adds eventful `task finish`,
-typed `task start|suspend|resume`, read-only `project history`, and read-only
-`project observe-velocity`. Their final option, result, diagnostic, version,
-and compatibility contracts are fixed before implementation. These commands
-must not appear in active Contract 5 help or dispatch.
+The active source-level actuals contract adds eventful `task finish`, typed
+`task start|suspend|resume`, read-only `project history`, and read-only
+`project observe-velocity` through the atomic Grammar 5 and CLI Contract 6
+surface. Their option, result, diagnostic, version, and compatibility
+contracts are fixed by the Project Actuals specification. The published
+`0.4.0` Contract 5 package does not contain these commands.
 
 ### 12.3 Owner-aware goal and DAG writes
 
@@ -1733,11 +1734,12 @@ AnalysisResult v3, NextResult v4 normal authority, exact unit migration, and
 the installed-package workflow are active in `0.3.0`.
 
 The selected project-actuals workstream has accepted its source and
-public-interface decisions. ADR 0006 is accepted, the Project Actuals and Git
-History Contract is Normative target 1.0, Grammar 5 and CLI Contract 6 are
-closed target boundaries, and every PACT case has a machine-readable fixture.
-The accepted contract remains unimplemented and does not change active Grammar
-1 through 4 or CLI Contract 5.
+public-interface decisions and activated them in the current source. ADR 0006
+is accepted, the Project Actuals and Git History Contract is Normative 1.0,
+Grammar 5 and CLI Contract 6 are one atomic boundary, and every PACT case has
+a machine-readable fixture. Grammar 1 through 4 semantics remain compatible;
+the published `0.4.0` package remains CLI Contract 5 pending a separately
+authorized release.
 
 Resolved design decisions:
 
@@ -1840,7 +1842,7 @@ Before implementation, separate the specifications in the following order.
 17. [x] Project actuals and Git-recorded history contract
     - [x] Accepted same-document event and pre-advance Git architecture in
       [ADR 0006](adr/0006-explicit-work-events-in-git-history.md)
-    - [x] Normative target lifecycle, history, and observation semantics in the
+    - [x] Normative lifecycle, history, and observation semantics in the
       [Project Actuals and Git History Contract](specs/project-actuals.md)
     - [x] Normative PACT cases in
       [Project Actuals Examples](examples/project-actuals.md)
@@ -1848,12 +1850,43 @@ Before implementation, separate the specifications in the following order.
       migration
     - [x] Public schema identities, exact diagnostics/exits, machine fixtures,
       and cross-cutting contract acceptance
+    - [x] Atomic Grammar 5 parser/formatter/lifecycle, suspended analysis and
+      NextResult v5, history, velocity observation, root, CLI, help, Guide,
+      and installed-package check activation
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 
 Item 8 completed its foundation with `TASK_MUTATION_CORE` and `ENTITY_MUTATION_CORE`, added gate add/set/remove Core through `MUT_002_GATE_MAINTENANCE`, and added read-only `project show` and source-preserving `project set` through project-metadata extensions. The Core contract also added an atomic batch that validates only the final candidate for connected-milestone task/gate additions, path replacements, and project-wide unit changes that cannot independently produce valid intermediate DAGs. `MUTATION_CLI_PREVIEW` exposed entity commands and the former `mutation apply` path through preview-first text/JSON surfaces, and `SAFE_WRITE_ACCEPTANCE` connected the same candidate to atomic `--write`, exclusive `--out`, and `--expect-digest`. The Contract 3 cutover now exposes direct gate commands and `batch apply` through that shared path. Item 10 fixed all semantic records in the profile, stable projection, both digests, exact values, and text/JSON parity with golden/unit/E2E tests. Item 11 fail-closedly verifies canonical profile JSON, record order, both digests, semantic-model and projection correspondence, and fixes stable generated IDs and loss reports for plain input, strict-loss, and exclusive `--out` in Core/CLI/E2E.
 
-The analysis implementation has progressed through public `dag next` v4 and read-only `validateOverride`. In addition to Exact Rational values, PERT expected values/variance, precedence CPM, critical-path counts, deterministic resource schedules, capacity overrides, resource arcs, schedule critical paths, next classification, `runnable_now`, resource rejection, and upcoming explanations, it exposes exact temporal schedules, deadline evaluation, release eligibility, and the complete temporal start-authority graph through Core, CLI JSON/text, help, and package. A complete known non-truncated `Perttool.NextResult.v4` is normal authority, and override validation cannot bypass future or unavailable release eligibility. It also exposes `Perttool.OverrideDecision.v1` validation through the public library. It satisfies Slice 2's bootstrap gate, grammar acceptance, safe-write gate, and advance gate, and performs Stage 3 preview-first self-use of advance. Issue #1's product vision, requirement boundary, executability and recommendation model, ranking policy, reason-code taxonomy, structured explanation, Core/text/JSON interface, human-override contract, normative examples, test perspectives, and self-use and implementation-migration policy were accepted in the [cross-cutting design review](process/recommendation-design-review.md). The missing acceptance criterion 16 found by the [MVP release-readiness audit](process/mvp-release-readiness.md) was resolved with all 22 points of MIG-01 through MIG-07 in the [Recommendation implementation plan](../plans/recommendation.pert), five plan shadows, read-only override validation, normal-authority adoption, and an unknown-version safe-stop dry run. The provisional measured Velocity specific to Recommendation is `22p/1d`, with zero detail work remaining. MVP public-alpha acceptance is complete because the same `v0.1.0-alpha.2` artifact was published to the GitHub prerelease and npm `alpha`, including isolated installation from the registry.
+The analysis implementation has progressed through public `dag next` v5 and
+read-only `validateOverride`. In addition to Exact Rational values, PERT
+expected values/variance, precedence CPM, critical-path counts, deterministic
+resource schedules, capacity overrides, resource arcs, schedule critical
+paths, next classification, `runnable_now`, resource rejection, and upcoming
+explanations, it exposes exact temporal schedules, deadline evaluation,
+release eligibility, suspended-state qualification, and the complete temporal
+start-authority graph through Core, CLI JSON/text, help, and package. A
+complete known non-truncated `Perttool.NextResult.v5` is normal authority, and
+override validation cannot bypass future or unavailable release eligibility.
+It also exposes `Perttool.OverrideDecision.v1` validation through the public
+library. It satisfies Slice 2's bootstrap gate, grammar acceptance,
+safe-write gate, and advance gate, and performs Stage 3 preview-first self-use
+of advance. Issue #1's product vision, requirement boundary, executability
+and recommendation model, ranking policy, reason-code taxonomy, structured
+explanation, Core/text/JSON interface, human-override contract, normative
+examples, test perspectives, and self-use and implementation-migration policy
+were accepted in the [cross-cutting design
+review](process/recommendation-design-review.md). The missing acceptance
+criterion 16 found by the [MVP release-readiness
+audit](process/mvp-release-readiness.md) was resolved with all 22 points of
+MIG-01 through MIG-07 in the [Recommendation implementation
+plan](../plans/recommendation.pert), five plan shadows, read-only override
+validation, normal-authority adoption, and an unknown-version safe-stop dry
+run. The provisional measured Velocity specific to Recommendation is
+`22p/1d`, with zero detail work remaining. MVP public-alpha acceptance is
+complete because the same `v0.1.0-alpha.2` artifact was published to the
+GitHub prerelease and npm `alpha`, including isolated installation from the
+registry.
 
 [ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`, and currently recommends `PERT_PLANS`. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 

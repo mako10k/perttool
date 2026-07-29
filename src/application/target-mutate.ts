@@ -10,6 +10,7 @@ import {
   TARGET_GRAMMAR_2_PROJECT_MUTATION_PROFILE,
   TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
   TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
+  TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE,
 } from "../mutation/project.js";
 import {
   TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
@@ -28,13 +29,18 @@ import type {
 import type {
   TargetGrammar3Capability,
   TargetGrammar4Capability,
+  TargetGrammar5Capability,
   TargetGrammar2Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar3Document,
   validateTargetGrammar4Document,
+  validateTargetGrammar5Document,
   validateTargetDocument,
 } from "../semantic/target-validator.js";
+import {
+  validateStoredLifecycleState,
+} from "../actuals/lifecycle.js";
 
 const targetGrammar2MutationPlanningProfile: MutationPlanningProfile =
   Object.freeze({
@@ -53,6 +59,13 @@ const targetGrammar3MutationPlanningProfile: MutationPlanningProfile =
 const targetGrammar4MutationPlanningProfile: MutationPlanningProfile =
   Object.freeze({
     project: TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
+    task: TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
+    milestone: TARGET_MILESTONE_MUTATION_PROFILE,
+  });
+
+const targetGrammar5MutationPlanningProfile: MutationPlanningProfile =
+  Object.freeze({
+    project: TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE,
     task: TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
     milestone: TARGET_MILESTONE_MUTATION_PROFILE,
   });
@@ -117,6 +130,37 @@ function targetGrammar4Validator(
       document: document ?? null,
       documentId: project?.id ?? null,
       diagnostics: checked.diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+    };
+  };
+}
+
+function targetGrammar5Validator(
+  capability: TargetGrammar5Capability,
+): (text: string, maxDiagnostics: number) => MutationDocumentValidation {
+  return (text, maxDiagnostics) => {
+    const checked = validateTargetGrammar5Document(
+      text,
+      capability,
+      { maxDiagnostics },
+    );
+    const document = checked.validatedDocument?.document;
+    const project = document?.declarations.find(
+      (declaration) => declaration.kind === "project",
+    );
+    const lifecycleDiagnostics =
+      checked.validatedDocument === null
+        ? []
+        : validateStoredLifecycleState(checked.validatedDocument);
+    return {
+      ok: checked.ok && lifecycleDiagnostics.length === 0,
+      document: (document ?? null) as unknown as
+        MutationDocumentValidation["document"],
+      documentId: project?.id ?? null,
+      diagnostics: Object.freeze([
+        ...checked.diagnostics,
+        ...lifecycleDiagnostics,
+      ]),
       diagnosticsTruncated: checked.diagnosticsTruncated,
     };
   };
@@ -210,6 +254,37 @@ export function planTargetGrammar4BatchMutation(
     mutation,
     targetGrammar4Validator(capability),
     targetGrammar4MutationPlanningProfile,
+    options,
+    true,
+  );
+}
+
+export function planTargetGrammar5Mutation(
+  text: string,
+  mutation: TargetGovernanceMutation,
+  capability: TargetGrammar5Capability,
+  options: MutationOptions = {},
+): MutationResult {
+  return planValidatedMutationRequest(
+    text,
+    mutation,
+    targetGrammar5Validator(capability),
+    targetGrammar5MutationPlanningProfile,
+    options,
+  );
+}
+
+export function planTargetGrammar5BatchMutation(
+  text: string,
+  mutation: TargetGovernanceBatchMutation,
+  capability: TargetGrammar5Capability,
+  options: MutationOptions = {},
+): MutationResult {
+  return planValidatedMutationRequest(
+    text,
+    mutation,
+    targetGrammar5Validator(capability),
+    targetGrammar5MutationPlanningProfile,
     options,
     true,
   );

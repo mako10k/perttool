@@ -4,6 +4,40 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Added
+
+- Activated Grammar 5 task-owned work events and preview-first
+  `task start|suspend|resume` plus eventful `task finish` with explicit event
+  time, exact active time, exact person effort, deterministic event identity,
+  governance, and safe-write controls.
+- Added read-only first-parent `project history` and
+  `project observe-velocity`, including explicit-event reconstruction,
+  qualified Git-recorded transitions, exact task summaries, and separate
+  elapsed-hour, active-date, effort-productivity, and recorded-evidence
+  candidates.
+- Added public actuals/history/observation Core exports, Contract 6 command
+  discovery and Guide topics, Grammar 5 examples, and isolated installed
+  lifecycle/history/observation checks.
+
+### Changed
+
+- Activated CLI Contract 6 in the current source. Every JSON envelope now
+  reports `cli_contract_version=6`; check, analysis, next, mutation/advance,
+  and unit migration use result versions 3, 4, 5, 3, and 3 respectively.
+- Added suspended-state analysis and `groups.suspended`, while retaining the
+  Recommendation version 1 ranking and
+  `recommendation_v1_plus_release_gate` start-authority policy.
+- Extended exact unit migration through Grammar 5
+  `work_event.planned_value` without changing event time, active time, effort,
+  or declared velocity. The published `0.4.0` artifact remains Grammar 4 and
+  CLI Contract 5 pending a separate release.
+
+### Fixed
+
+- Merged adjacent zero-length task-status and work-event insertions so a
+  lifecycle mutation can atomically start a task whose declaration ends at
+  end of file.
+
 ## [0.4.0] - 2026-07-28
 
 Contract 5 beta release. This version atomically publishes Grammar 4 and

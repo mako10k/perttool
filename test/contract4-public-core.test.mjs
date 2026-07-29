@@ -16,7 +16,7 @@ async function fixture(name) {
   return readFile(path.join(fixtureDirectory, name), "utf8");
 }
 
-test("Contract 5 public Core retains Grammar 3 without target capability exports", async () => {
+test("Contract 6 public Core retains Grammar 3 without target capability exports", async () => {
   const text = await fixture("migration-nonrepresentable-v2.pert");
   const parsed = perttool.parseDocument(text);
   const diagnostics = perttool.validateDocument(
@@ -41,7 +41,7 @@ test("Contract 5 public Core retains Grammar 3 without target capability exports
   }
 });
 
-test("Contract 5 public results retain typed temporal and release-gated views", async () => {
+test("Contract 6 public results retain typed temporal and release-gated views", async () => {
   const text = await fixture("calendar-date-v2.pert");
   const project = perttool.getProjectMetadata(text);
   assert.equal(project.ok, true);
@@ -49,13 +49,13 @@ test("Contract 5 public results retain typed temporal and release-gated views", 
   assert.equal(project.project.finishDeadline.kind, "date");
 
   const analysis = perttool.analyzeDocument(text);
-  assert.equal(analysis.schemaVersion, "Perttool.AnalysisResult.v3");
+  assert.equal(analysis.schemaVersion, "Perttool.AnalysisResult.v4");
   assert.equal(analysis.ok, true);
   assert.equal(analysis.temporal.precedence.state, "available");
   assert.equal(analysis.precedence.makespan.numerator, 2n);
 
   const next = perttool.selectNextTasks(text);
-  assert.equal(next.schemaVersion, "Perttool.NextResult.v4");
+  assert.equal(next.schemaVersion, "Perttool.NextResult.v5");
   assert.deepEqual(next.recommendation.recommendedTaskIds, ["LEAP_WINDOW"]);
   assert.deepEqual(next.groups.runnableNow, []);
   assert.deepEqual(
@@ -64,7 +64,7 @@ test("Contract 5 public results retain typed temporal and release-gated views", 
   );
 });
 
-test("Contract 5 public formatting and mutation preserve exact temporal source", () => {
+test("Contract 6 public formatting and mutation preserve exact temporal source", () => {
   const text = `project PUBLIC_CORE:
   version 3
   title "public core"

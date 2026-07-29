@@ -30,7 +30,7 @@ It defines the following:
 - a repository-native audit policy using Git history
 - stale determination, single use, and full re-analysis after a state change
 
-This specification is a normative contract. MIG-05, on 2026-07-23, implemented read-only `validateOverride`, public types, the `Perttool.OverrideDecision.v1` JSON projection, and the canonical artifact in the library Core. It does not imply that an override command, task-status mutation, Git commit, or audit write has been implemented.
+This specification is a normative contract. MIG-05, on 2026-07-23, implemented read-only `validateOverride`, public types, the `Perttool.OverrideDecision.v1` JSON projection, and the canonical artifact in the library Core. The Grammar 5 and CLI Contract 6 cutover changes its accepted source envelope from `Perttool.NextResult.v4` to `Perttool.NextResult.v5`. It does not imply that an override command, task-status mutation, Git commit, or audit write has been implemented.
 
 ## 2. Normative position
 
@@ -172,7 +172,7 @@ An override reason is not a normal project fact; it is a decision reason asserte
 The request passed to pure validation has the following meaning:
 
 ```text
-source_schema_version          "Perttool.NextResult.v4"
+source_schema_version          "Perttool.NextResult.v5"
 source_digest                  sha256 digest
 source_result_decision_id      string
 selected_task_ids              string[]
@@ -211,7 +211,7 @@ The producer does not perform a network or file lookup for a reference target. D
 ## 8. Override validation
 
 Validation is a pure operation whose only inputs are the source
-`NextResult.v4` and request; it does not change normal ranking or temporal
+`NextResult.v5` and request; it does not change normal ranking or temporal
 eligibility.
 
 ```text
@@ -257,7 +257,7 @@ When `ok=true`, `override` is non-null; when `ok=false`, `override=null`. This i
 override_contract_version        1
 override_id                      "override:sha256:" + 64 lowercase hex digits
 source:
-  schema_version                 "Perttool.NextResult.v4"
+  schema_version                 "Perttool.NextResult.v5"
   tool_version                   string
   source_digest                  sha256 digest
   recommendation_interface_version 1

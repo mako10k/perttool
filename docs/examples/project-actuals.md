@@ -1,13 +1,13 @@
 # Normative Project Actuals Examples
 
-- Status: Normative target examples 1.0
+- Status: Normative examples 1.0
 - Contract: [Project Actuals and Git History Contract](../specs/project-actuals.md)
 
-These examples define semantic outcomes for accepted Grammar 5 and CLI
+These examples define semantic outcomes for active Grammar 5 and CLI
 Contract 6. The corresponding machine-readable dependency matrix is
 [`project-actuals-contract-v1.json`](../../test/fixtures/project-actuals-contract-v1.json).
-The active Grammar 4 parser must reject these future source records until the
-atomic cutover.
+The Contract 6 parser accepts these source records atomically; Grammar 1
+through 4 continue to reject their contextual Grammar 5 spellings.
 
 The canonical complete sequence has this source shape:
 
@@ -158,6 +158,6 @@ not silently use a 24-hour day.
 ## PACT-014: Compatibility boundary
 
 Grammar 1 through 4 reject work-event declarations and `status suspended`.
-CLI Contract 5 continues to expose only status-based task maintenance. No
-future command or conditional result field becomes active before the atomic
-Grammar 5/CLI Contract 6 acceptance.
+The published CLI Contract 5 package continues to expose only status-based
+task maintenance. The current source exposes commands and conditional result
+fields only through the complete Grammar 5/CLI Contract 6 boundary.
