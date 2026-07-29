@@ -248,7 +248,7 @@ complete. Fresh registry reads and an unqualified isolated installation
 confirmed `beta=latest=0.4.0`, CLI Contract 5, and Grammar 4 without changing
 the accepted artifact or completed plan.
 
-The selected next public target is suffix-free beta `0.5.0` for the breaking
+The selected public target is suffix-free beta `0.5.0` for the breaking
 Grammar 5 and CLI Contract 6 cutover. The independent
 [`release-0.5.0.pert`](../../plans/release-0.5.0.pert) plan consumes reached
 project-actuals and English-baseline acceptance without duplicating either
@@ -265,9 +265,12 @@ records its exact pre-advance snapshot, and the task is advanced to reached
 `RELEASE_050_SOURCE_PREPARED`. Candidate acceptance then reverified the clean
 source, publication identities, external availability, protected routes,
 complete repository and installed-package gates, and the retained 468-file
-tarball with SHA-256 `f3ba9b3f...2208c`. Six points remain; precedence and
-heuristic resource makespans are 6p at observed `13p/1d`, both forecasts are
-`6/13d`, and complete NextResult v5 recommends only `RELEASE_050_PUBLISH`.
+tarball with SHA-256 `f3ba9b3f...2208c`. PUBLISH then fixed release commit
+and peeled `v0.5.0` target `af819b4`, byte-identical candidate/GitHub/npm
+tarballs, npm `beta=0.5.0` with unchanged `latest=0.4.0`, and complete
+isolated public-package checks. Three points remain; precedence and heuristic
+resource makespans are 3p at observed `16p/1d`, both forecasts are `3/16d`,
+and complete NextResult v5 recommends only `RELEASE_050_ACCEPTANCE`.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 
 ### 5.1 Adopted Recommendation authority

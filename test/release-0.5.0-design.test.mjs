@@ -17,6 +17,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     adr,
     design,
     procedure,
+    publishRecord,
     readiness,
     actualsAcceptance,
     englishAcceptance,
@@ -32,6 +33,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     repositoryText("docs/adr/0003-beta-versioning.md"),
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.5.0-release.md"),
+    repositoryText("docs/process/0.5.0-publish.md"),
     repositoryText("docs/process/0.5.0-contract6-readiness.md"),
     repositoryText("docs/process/project-actuals-acceptance.md"),
     repositoryText("docs/process/english-baseline-acceptance.md"),
@@ -60,7 +62,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     design,
     /^### Post-MVP Slice 4J: Contract 6 `v0\.5\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Candidate accepted 1\.4/);
+  assert.match(procedure, /Status: Published 1\.5/);
   assert.match(
     procedure,
     /Expected pre-publication default: `beta=latest=0\.4\.0`/,
@@ -73,6 +75,19 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.match(readiness, /starts only `RELEASE_050_PREPARATION`/);
   assert.match(readiness, /exactly 33 commands/);
   assert.match(procedure, /does not authorize npm\s+`latest` promotion/);
+  assert.match(publishRecord, /Document status: Published 1\.0/);
+  assert.match(
+    publishRecord,
+    /af819b44ab0f138c09dc2c96d35b65bc9aad497c/,
+  );
+  assert.match(
+    publishRecord,
+    /f3ba9b3f52dd055618084bde5e9fa51e98adf3e0e29e10ac8c7e09fd4142208c/,
+  );
+  assert.match(publishRecord, /\| `beta` \| `0\.5\.0` \|/);
+  assert.match(publishRecord, /\| `latest` \| `0\.4\.0` \|/);
+  assert.match(publishRecord, /five propagation-time `E404` responses/);
+  assert.match(publishRecord, /No publish\s+retry occurred/);
   assert.match(actualsAcceptance, /`ACTUALS_ACCEPTANCE` is accepted/);
   assert.match(actualsAcceptance, /Grammar 5 and CLI Contract 6 source/);
   assert.match(englishAcceptance, /Status: Accepted and advanced/);
@@ -100,6 +115,10 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     plan,
     /^task RELEASE_050_PUBLISH RELEASE_050_CANDIDATE_ACCEPTED -> RELEASE_050_PUBLISHED:$/m,
   );
+  assert.match(
+    plan,
+    /^task RELEASE_050_PUBLISH[\s\S]*?^  status done$/m,
+  );
   assert.match(plan, /npm latest promotion and Issue #4 closure remain separate/);
 
   const manifest = JSON.parse(manifestText);
@@ -116,11 +135,11 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.match(readme, /npx --yes --package=perttool@0\.5\.0/);
   assert.match(
     readme,
-    /prepared release will move npm `beta` to Contract 6 `0\.5\.0`/,
+    /npm `beta` now resolves to Contract 6 `0\.5\.0`/,
   );
   assert.match(
     migration,
-    /Prepared release target: `perttool@0\.5\.0`/,
+    /Published target: `perttool@0\.5\.0`/,
   );
   assert.equal(manifest.publishConfig.tag, "beta");
 });

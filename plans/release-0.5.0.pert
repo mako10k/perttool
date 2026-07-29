@@ -2,10 +2,10 @@
 project RELEASE_050:
   version 5
   title "perttool 0.5.0 Contract 6 beta release"
-  description "Release suffix-free 0.5.0 beta from the accepted atomic Grammar 5 and CLI Contract 6 source and one verified tarball. RELEASE_050_GATE_DESIGN, RELEASE_050_CONTRACT_6_READINESS, RELEASE_050_PREPARATION, and RELEASE_050_CANDIDATE completed 13p under the user's authorization for the complete named 0.5.0 release and exact post-release local installation. The clean candidate passed the full Node.js 22 repository and isolated-package gates; package, tag, GitHub Release, npm version, dist-tag baseline, protected routes, and the retained 468-file tarball with SHA-256 f3ba9b3f...2208c passed the candidate gate. Six points remain; precedence and heuristic resource makespans are 6p at the observed 13p/1d velocity, both forecast at 6/13d. Complete NextResult v5 recommends RELEASE_050_PUBLISH under the retained named authorization. npm latest promotion and Issue #4 closure remain separate decisions."
+  description "Release suffix-free 0.5.0 beta from the accepted atomic Grammar 5 and CLI Contract 6 source and one verified tarball. RELEASE_050_GATE_DESIGN through RELEASE_050_PUBLISH completed 16p under the user's authorization for the complete named 0.5.0 release and exact post-release local installation. Release commit and peeled v0.5.0 target af819b4 agree; the retained candidate, GitHub, and npm tarballs are byte-identical at SHA-256 f3ba9b3f...2208c; npm reports beta=0.5.0, latest=0.4.0, and alpha=0.1.0-alpha.2; and isolated public-package checks passed. Three points remain; precedence and heuristic resource makespans are 3p at the observed 16p/1d velocity, both forecast at 3/16d. Complete NextResult v5 recommends RELEASE_050_ACCEPTANCE. npm latest promotion and Issue #4 closure remain separate decisions."
   as_of 2026-07-29
   duration_unit point
-  velocity 13p/1d
+  velocity 16p/1d
   finish RELEASE_050_ACCEPTED
   goal_owner user
   dag_owner user
@@ -56,6 +56,7 @@ task RELEASE_050_PUBLISH RELEASE_050_CANDIDATE_ACCEPTED -> RELEASE_050_PUBLISHED
   title "Publish version 0.5.0 from one immutable tarball"
   description "Only after all preceding gates pass and under the user's named 0.5.0 authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.5.0 while latest remains unchanged."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

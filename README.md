@@ -5,14 +5,13 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-The prepared `0.5.0` source implements Grammar 5 and CLI Contract 6,
+The published `0.5.0` beta implements Grammar 5 and CLI Contract 6,
 including explicit task work events, lifecycle commands, read-only Git
-history, observed velocity, AnalysisResult v4, and NextResult v5. Publication
-remains a gated operation; npm `beta` and `latest` still resolve to Contract 5
-`0.4.0` until that operation completes. Beta releases may contain breaking
-CLI or schema changes. Version `0.5.0` requires Node.js 22 or later. Contract
-5, Contract 4, and Contract 3 remain available by pinning `0.4.0`, `0.3.0`,
-and `0.2.0`, respectively.
+history, observed velocity, AnalysisResult v4, and NextResult v5. npm `beta`
+resolves to `0.5.0`, while `latest` remains on Contract 5 `0.4.0`. Beta
+releases may contain breaking CLI or schema changes. Version `0.5.0` requires
+Node.js 22 or later. Contract 5, Contract 4, and Contract 3 remain available
+by pinning `0.4.0`, `0.3.0`, and `0.2.0`, respectively.
 
 ## Run without installing
 
@@ -35,8 +34,7 @@ npm exec --yes --package=perttool@0.5.0 -- perttool project history PLAN.pert --
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
-cache. The `0.5.0` registry commands become available only after the gated
-publication. Pinning `0.4.0` selects Contract 5 and therefore omits Grammar 5
+cache. Pinning `0.4.0` selects Contract 5 and therefore omits Grammar 5
 lifecycle and history; `0.3.0` selects Contract 4, and `0.2.0` selects
 Contract 3.
 
@@ -49,12 +47,9 @@ npm install --global perttool@0.5.0
 perttool --version
 ```
 
-The prepared release will move npm `beta` to Contract 6 `0.5.0` while leaving
-`latest` on Contract 5 `0.4.0`. Before publication, both tags still resolve
-to `0.4.0`, so use a locally packed `0.5.0` artifact for candidate testing.
-After publication, `perttool@beta` follows Contract 6. Contract 5, Contract 4,
-and Contract 3 remain available as exact pins `perttool@0.4.0`,
-`perttool@0.3.0`, and `perttool@0.2.0`.
+npm `beta` now resolves to Contract 6 `0.5.0`, while `latest` remains on
+Contract 5 `0.4.0`. Contract 5, Contract 4, and Contract 3 remain available
+as exact pins `perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`.
 
 ## Plan files
 
@@ -312,10 +307,9 @@ perttool guide editing --level detail --format json
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. Prepared `0.5.0` consumers must
-check `cli_contract_version == 6`; consumers of published `0.4.0` must
-continue to require Contract 5, and consumers pinned to `0.3.0` must require
-Contract 4.
+Use `--format json` for machine consumers. `0.5.0` consumers must check
+`cli_contract_version == 6`; consumers pinned to `0.4.0` must continue to
+require Contract 5, and consumers pinned to `0.3.0` must require Contract 4.
 In every case, check the result-specific `schema_version` before reading the
 rest of a result.
 A complete, known, non-truncated `Perttool.NextResult.v5` with temporal policy

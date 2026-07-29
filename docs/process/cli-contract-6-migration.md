@@ -3,9 +3,9 @@
 - Document status: Source migration guidance 1.0
 - Source contract: CLI Contract 5 and Grammar 1/2/3/4
 - Target contract: CLI Contract 6 and Grammar 1/2/3/4/5
-- Published package boundary: `perttool@0.4.0` remains Contract 5
-- Prepared release target: `perttool@0.5.0`
-- Release status: source prepared under the separate `v0.5.0` release gate
+- Compatibility package boundary: `perttool@0.4.0` remains Contract 5
+- Published target: `perttool@0.5.0`
+- Release status: published to npm `beta` under the separate `v0.5.0` gate
 
 ## 1. Purpose
 
@@ -14,8 +14,8 @@ Contract. It does not provide a compatibility switch or partially add
 actuals fields to Contract 5. A consumer selects one exact installed artifact,
 checks its envelope and result schema, and fails closed on an unknown version.
 
-This source migration does not publish a package, move an npm dist-tag, mutate
-Git, or adopt an observed velocity.
+This migration document does not itself publish a package, move an npm
+dist-tag, mutate Git, or adopt an observed velocity.
 
 ## 2. Atomic boundary
 
