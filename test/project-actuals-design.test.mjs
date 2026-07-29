@@ -231,16 +231,13 @@ test("project actuals plan retains every accepted slice and public cutover", asy
 
   assert.deepEqual(checked.summary, {
     resources: 8,
-    milestones: 2,
-    tasks: 1,
+    milestones: 1,
+    tasks: 0,
     gates: 0,
     errors: 0,
-    warnings: 1,
+    warnings: 0,
   });
-  assert.deepEqual(
-    checked.diagnostics.map(({ code }) => code),
-    ["PTDAG-208"],
-  );
+  assert.deepEqual(checked.diagnostics, []);
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
@@ -282,6 +279,7 @@ test("project actuals plan retains every accepted slice and public cutover", asy
   assert.match(publicAcceptance, /Git commit `753efea`/);
   assert.match(finalAcceptance, /`ACTUALS_ACCEPTANCE` is accepted/);
   assert.match(finalAcceptance, /exact completed 4p pre-advance snapshot/);
+  assert.match(finalAcceptance, /Git commit `f994fa2`/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.doesNotMatch(source, /task FINISH_ACTUALS/);
@@ -294,13 +292,11 @@ test("project actuals plan retains every accepted slice and public cutover", asy
   assert.doesNotMatch(source, /milestone VELOCITY_OBSERVATION_READY:/);
   assert.doesNotMatch(source, /milestone ACTUALS_INTEGRATED_INPUT:/);
   assert.doesNotMatch(source, /task ACTUALS_PUBLIC_CONTRACT/);
+  assert.doesNotMatch(source, /milestone ACTUALS_PUBLIC_READY:/);
+  assert.doesNotMatch(source, /task ACTUALS_ACCEPTANCE /);
   assert.match(
     source,
-    /milestone ACTUALS_PUBLIC_READY:[\s\S]*?  state reached/,
-  );
-  assert.match(
-    source,
-    /task ACTUALS_ACCEPTANCE[\s\S]*?  status done/,
+    /milestone ACTUALS_ACCEPTED:[\s\S]*?  state reached/,
   );
   assert.equal(analyzed.precedence.makespan.numerator, "0");
   assert.equal(analyzed.precedence.makespan.denominator, "1");

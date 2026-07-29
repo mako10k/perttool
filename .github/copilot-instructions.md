@@ -53,7 +53,8 @@ Mandatory summary:
   activates Grammar 5 and CLI Contract 6 through lifecycle, suspended analysis/Next, history,
   observation, standard package root, 33-command registry, help, Guide,
   schemas, examples, and isolated installed workflow. `ACTUALS_ACCEPTANCE` is
-  complete and retained as done pending its required pre-advance commit. Its
+  complete; Git commit `f994fa2` records its exact completed 4p pre-advance
+  snapshot, and the task is advanced to reached `ACTUALS_ACCEPTED`. Its
   fourteen-case trace covers repository, Git, lifecycle, link, package, and
   installed workflows. All nine tasks and 47p are complete with zero
   precedence and heuristic resource makespans and no ready, recommended, or

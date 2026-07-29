@@ -165,8 +165,9 @@ analysis/Next results, history, observation, package root, 33-command
 registry, help, Guide, schemas, diagnostics, examples, and isolated installed
 workflow. The acceptance record is
 [`project-actuals-public-contract-acceptance.md`](../docs/process/project-actuals-public-contract-acceptance.md).
-`ACTUALS_ACCEPTANCE` is complete and retained as done pending its required
-pre-advance commit. Its fourteen-case executable trace covers requirements,
+`ACTUALS_ACCEPTANCE` is complete. Git commit `f994fa2` records its exact
+completed 4p pre-advance snapshot, and the task is advanced to reached
+`ACTUALS_ACCEPTED`. Its fourteen-case executable trace covers requirements,
 source, lifecycle, task-owned advance removal, real first-parent Git
 histories, Core, CLI, schemas, help, package root, temporary link, and
 isolated installed workflows. The acceptance record is

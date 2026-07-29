@@ -10,9 +10,9 @@ effort, task-owned advance removal, read-only first-parent history, and
 read-only velocity observation without adding a Git writer or automatic
 declared-velocity adoption.
 
-The exact completed 4p pre-advance snapshot is retained by the Git commit
-identified in this record after that commit is created. Canonical advance
-will retain only reached `ACTUALS_ACCEPTED`.
+Git commit `f994fa2` retains the exact completed 4p pre-advance snapshot.
+Canonical advance then removed the completed task and preceding reached
+frontier and retained only reached `ACTUALS_ACCEPTED`.
 
 This acceptance does not publish the source tree. The immutable
 `perttool@0.4.0` release remains the separately accepted Grammar 4 and CLI
