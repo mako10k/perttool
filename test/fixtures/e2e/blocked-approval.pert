@@ -1,50 +1,50 @@
 project APPROVAL_RELEASE:
   version 1
-  title "外部承認を含むリリース"
+  title "guarded run"
   as_of 2026-07-21
   duration_unit day
   finish RELEASED
 
 resource DEVELOPERS:
-  title "開発担当枠"
+  title "staff"
   capacity 1
 
 milestone NOW:
-  title "現在"
+  title "T0"
   state reached
 
 milestone SECURITY_APPROVED:
-  title "セキュリティ承認済み"
+  title "Secured OK"
 
 milestone IMPLEMENTED:
-  title "実装完了"
+  title "Done"
 
 milestone RELEASE_READY:
-  title "リリース可能"
+  title "Go now"
 
 milestone RELEASED:
-  title "リリース完了"
+  title "Online"
 
 task SECURITY_REVIEW NOW -> SECURITY_APPROVED:
-  title "外部セキュリティ審査を受ける"
+  title "External check"
   duration 2d
   status blocked
-  blocked_reason "審査会社の回答待ち"
+  blocked_reason "Need firm"
   priority 30
 
 task IMPLEMENT NOW -> IMPLEMENTED:
-  title "指摘対応を実装する"
+  title "Fix notes"
   duration 2d
   priority 20
   requires:
     DEVELOPERS 1
 
 gate SECURITY_READY SECURITY_APPROVED -> RELEASE_READY:
-  reason "外部承認が必要"
+  reason "Need OK"
 
 gate IMPLEMENT_READY IMPLEMENTED -> RELEASE_READY:
-  reason "実装完了が必要"
+  reason "Impl OK"
 
 task RELEASE RELEASE_READY -> RELEASED:
-  title "リリースする"
+  title "Deploy"
   duration 1d

@@ -1,35 +1,35 @@
 project LIVE_INCIDENT:
   version 1
-  title "障害対応中の排他resource"
+  title "exclusive access"
   as_of 2026-07-21
   duration_unit day
   finish CLOSED
 
 resource OPERATORS:
-  title "運用担当枠"
+  title "staff"
   capacity 1
 
 milestone NOW:
-  title "現在"
+  title "T0"
   state reached
 
 milestone MITIGATION_DONE:
-  title "暫定対処完了"
+  title "Stable"
 
 milestone RUNBOOK_DONE:
-  title "手順書更新完了"
+  title "Runbook"
 
 milestone UPDATE_DONE:
-  title "状況報告完了"
+  title "Update"
 
 milestone RESPONSE_READY:
-  title "確認可能"
+  title "Open"
 
 milestone CLOSED:
-  title "対応完了"
+  title "Done"
 
 task MITIGATE NOW -> MITIGATION_DONE:
-  title "暫定対処を実行する"
+  title "Stabilize"
   duration 2d
   status active
   priority 30
@@ -37,28 +37,28 @@ task MITIGATE NOW -> MITIGATION_DONE:
     OPERATORS 1
 
 task STATUS_UPDATE NOW -> UPDATE_DONE:
-  title "関係者へ状況を報告する"
+  title "Send update"
   duration 1d
   priority 20
 
 task RUNBOOK NOW -> RUNBOOK_DONE:
-  title "復旧手順を更新する"
+  title "Edit docs"
   duration 1d
   priority 10
   requires:
     OPERATORS 1
 
 gate MITIGATION_READY MITIGATION_DONE -> RESPONSE_READY:
-  reason "暫定対処完了が必要"
+  reason "Fix first"
 
 gate RUNBOOK_READY RUNBOOK_DONE -> RESPONSE_READY:
-  reason "手順書更新完了が必要"
+  reason "Docs first"
 
 gate UPDATE_READY UPDATE_DONE -> RESPONSE_READY:
-  reason "状況報告完了が必要"
+  reason "Need news"
 
 task VERIFY RESPONSE_READY -> CLOSED:
-  title "復旧を確認する"
+  title "Confirm"
   duration 1d
   requires:
     OPERATORS 1

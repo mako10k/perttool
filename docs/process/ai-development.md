@@ -2,7 +2,7 @@
 
 - Document status: Active 0.6
 - Created: 2026-07-21
-- Updated: 2026-07-27
+- Updated: 2026-07-29
 - Shared instructions: [../../AGENTS.md](../../AGENTS.md)
 - Self-use plan: [self-use.md](self-use.md)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
@@ -51,7 +51,8 @@ AGENTS.md                         shared canonical guidance
 ├── .codex/config.toml               conservative project-local defaults
 ├── docs/process/ai-development.md   rationale and operating workflow
 ├── package.json                     executable repository check
-│   └── npm run check                typecheck, test, docs
+│   └── npm run check                typecheck, test, language, docs, self-use, package
+├── scripts/check-english-baseline.mjs  exact Japanese-script allowlist check
 ├── scripts/check-docs.sh            documentation sub-check
 ├── scripts/publish-npm.sh           npm dry-run and explicit release-tarball publish gate
 └── .github/workflows/ci.yml         same npm check in CI
@@ -87,7 +88,10 @@ npm run check
 git diff --check
 ```
 
-Depending on the change scope, first run `npm run typecheck`, `npm test`, or `npm run check:docs` as narrow checks.
+Depending on the change scope, first run `npm run typecheck`, `npm test`,
+`npm run check:english`, or `npm run check:docs` as narrow checks. The language
+check scans tracked and non-ignored untracked text files and accepts only exact
+lines in the versioned Japanese-script allowlist.
 
 Then use `git diff -- <target-file>` to confirm the following.
 
@@ -164,7 +168,14 @@ The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.m
 
 The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
-ADR 0004 adopts English as the repository baseline immediately. The legacy-surface migration is tracked in `plans/english-baseline.pert`. The `M8_BETA_RELEASED` gate is reached. `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE` were completed and advanced through Stage 3 preview-first writes; the inventory and Unicode allowlist are recorded in `english-surface-inventory.md`, and fresh analysis now recommends `PERT_PLANS`.
+ADR 0004 adopts English as the repository baseline immediately. The
+legacy-surface migration is tracked in `plans/english-baseline.pert`.
+`SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`,
+`RUNTIME_MESSAGES`, `HELP_AND_USAGE`, and `PERT_PLANS` are complete and
+advanced through Stage 3 preview-first writes. `GOLDEN_UNICODE_AUDIT` is
+complete at its pre-advance snapshot: the exact machine-readable allowlist and
+scanner are recorded in `english-surface-inventory.md`, and fresh complete
+NextResult v5 recommends only `ENGLISH_ACCEPTANCE`.
 
 The human/LLM CLI surface review and its eight backlog items are also tracked
 as an independent post-beta workstream in

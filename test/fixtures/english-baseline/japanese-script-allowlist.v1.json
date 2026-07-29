@@ -1,0 +1,23 @@
+{
+  "schema": "Perttool.EnglishBaselineJapaneseScriptAllowlist.v1",
+  "entries": [
+    {
+      "path": "docs/process/english-surface-inventory.md",
+      "line": "rg -l '[\u3041-\u3093\u30a1-\u30f3\u4e00-\u9fa0]' <scope>",
+      "occurrences": 1,
+      "reason": "The migration inventory records the exact repository scanner expression."
+    },
+    {
+      "path": "test/golden/grammar/formatter-roundtrip.expected.pert",
+      "line": "  blocked_reason \"\u5916\u90e8\u627f\u8a8d\"",
+      "occurrences": 1,
+      "reason": "The decoded golden verifies Japanese task-field source preservation."
+    },
+    {
+      "path": "test/golden/grammar/formatter-roundtrip.expected.pert",
+      "line": "  title \"\u30d5\u30a9\u30fc\u30de\u30c3\u30bf\u30fc\"",
+      "occurrences": 1,
+      "reason": "The decoded golden verifies escaped Japanese source round-trip and UTF-16 handling."
+    }
+  ]
+}

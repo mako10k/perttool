@@ -77,7 +77,7 @@ Mandatory summary:
 - Distinguish the precedence critical path from the schedule critical path in a resource schedule.
 - `docs/process/self-use.md` is authorized through Stage 3. Editing/advance writes require preview, review of the diff and removal list, expected digest, and post-write reanalysis.
 - Confirm metadata such as Project ID, as_of, duration_unit, velocity, and finish with `project show --format json`; make changes through `project set` preview/diff and the Stage 3 safe-write procedure. Do not rely on visual source-file inspection or manual editing for the normal workflow.
-- Run repository checks on Node.js 22 or later with `npm ci`, `npm run check`, and `git diff --check`; CI covers Node.js 22 and 24.
+- Run repository checks on Node.js 22 or later with `npm ci`, `npm run check`, and `git diff --check`; use `npm run check:english` for the exact Japanese-script allowlist check. CI covers Node.js 22 and 24.
 - Before staging, inspect the diff and status, and do not include unrelated user changes.
 - Use `secdat exec` for remote writes and GitHub operations, and obtain explicit permission for destructive Git operations.
 - Beta publication uses `beta` and does not itself change `latest`. A later `latest` promotion is a separate dist-tag mutation requiring an explicitly selected version and user permission. Use the release gates, the GitHub-identical tarball for publication, process-limited `NPM_TOKEN`, and the repository `secdat` route.

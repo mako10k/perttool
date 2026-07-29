@@ -1,10 +1,10 @@
 project CYCLE:
-  title "循環"
+  title "CY"
   duration_unit day
   finish DONE
 
 milestone NOW:
-  title "現在"
+  title "T0"
   state reached
 
 milestone A:
@@ -14,20 +14,20 @@ milestone B:
   title "B"
 
 milestone DONE:
-  title "完了"
+  title "OK"
 
 task START NOW -> A:
-  title "開始"
+  title "Go"
   duration 1d
 
 task A_TO_B A -> B:
-  title "AからB"
+  title "A->B"
   duration 1d
 
 task B_TO_A B -> A:
-  title "BからA"
+  title "B->A"
   duration 1d
 
 task RELEASE B -> DONE:
-  title "完了へ"
+  title "End"
   duration 1d

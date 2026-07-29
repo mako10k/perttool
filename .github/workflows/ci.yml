@@ -36,5 +36,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Typecheck, test, documents, and read-only self-use
+      - name: Typecheck, test, language, documents, and read-only self-use
         run: npm run check

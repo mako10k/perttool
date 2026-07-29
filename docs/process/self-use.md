@@ -698,6 +698,23 @@ resource delay, both forecasts are `1/3d`, and fresh complete, non-truncated
 [PERT plan migration acceptance record](english-pert-plans-acceptance.md)
 fixes the scope, invariants, digests, and non-goals.
 
+`GOLDEN_UNICODE_AUDIT` then migrated the remaining repository-authored prose
+in six E2E and four invalid fixtures, retained the dedicated Japanese/emoji
+round-trip fixture, and added an exact, counted, fail-closed Japanese-script
+allowlist to `npm run check` and CI. Pre-migration layout and semantic
+projection digests verify that IDs, endpoints, structured values, declaration
+order, and UTF-16 source layout did not change. The complete gate passed 641
+tests, all 20 self-use plans, 94 Markdown documents, seven PERT examples, and
+the link/package workflows. An expected-digest atomic batch recalibrated the
+cumulative sample to `39p/2d` and finished the 3p task. The exact completed
+pre-advance digest is
+`sha256:9aa145806e7aeee32e7ad97ed45ec1df9a9d954100f3e96bcea8196f1be90e25`.
+One task and 3p remain; precedence and heuristic resource makespans are both
+3p with no resource delay, both forecasts are `2/13d`, and complete
+`NextResult.v5` recommends only `ENGLISH_ACCEPTANCE`. The
+[golden and Unicode audit acceptance record](english-golden-unicode-acceptance.md)
+fixes the allowlist, invariant evidence, verification, and non-goals.
+
 `CLI_001_COMMAND_REGISTRY` then selected `src/command/registry.ts` as the immutable typed registry for all 22 active Contract 2 commands. Dispatch lookup, accepted-option parsing, exact text help, deterministic JSON descriptor projections, operands, defaults, conflicts, input/output modes, effects, result schemas, exit statuses, and examples now share the expanded descriptors. Completeness tests fail when a command path, option, handler, help projection, schema, or example is missing; the public Contract 2 help bytes remain unchanged and `project init` remains unavailable backlog item `MUT-001`. All 255 tests, documentation, eight self-use plans, link checks, and package inspections passed. An atomic batch recalibrated the cumulative plan velocity to `13p/1d` and finished the 8p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:a2efa9b0ef7d1c55cc2892de03ff8dd83e101e98864dd0916e0ebc5abc2c6e0c`. Seven tasks and 36p remain; precedence is 20p, the heuristic resource makespan is 36p with 16p resource delay, and the resource forecast is `36/13d`. Fresh complete `NextResult.v3` recommends `HELP_001_COMMAND_DISCOVERY`.
 
 `HELP_001_COMMAND_DISCOVERY` then added the pure Contract 3 preview in `src/command/discovery.ts`. It derives 23 implemented target paths, accepted renames, examples, resource order, top-level/resource/action lookup, `Perttool.CommandHelpResult.v1`, and deterministic text/JSON from the expanded descriptors. Unknown resources and actions return `PTHLP-002` and `PTHLP-003`; isolated-process tests verify no project read, filesystem mutation, environment discovery, or non-local dependency. `project init` and gate maintenance remain absent because they are not implemented, and the active Contract 2 CLI still rejects public Contract 3 names. All 261 tests, documentation, eight self-use plans, link checks, and package inspections passed. An atomic batch recalibrated cumulative velocity to `18p/1d` and finished the 5p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:555c2fd30244a590184bbe3b953b872cbc5caf59152d6ba92759b7749daf20f0`. Six tasks and 31p remain; precedence is 18p, the heuristic resource makespan is 31p with 13p resource delay, and the forecasts are `1d` and `31/18d`. Fresh complete `NextResult.v3` recommends `MUT_002_GATE_MAINTENANCE`; `project init` remains backlog item `MUT-001`.
@@ -1244,7 +1261,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - the suffix-free `v0.1.0` beta is accepted, and the macro has advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3 is a future backlog-hierarchy and multi-plan-composition design and does not add work packages to the current macro
 - the LSP server, VSIX, and MCP server are independent post-first-beta backlogs and do not add work packages to the current macro
-- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, and `PERT_PLANS`; commit `9d9fdbf` records the exact completed PERT-plan pre-advance snapshot, and `GOLDEN_UNICODE_AUDIT` is its current recommended task.
+- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, and `PERT_PLANS`; commit `9d9fdbf` records the exact completed PERT-plan pre-advance snapshot. `GOLDEN_UNICODE_AUDIT` is complete at pre-advance digest `sha256:9aa145806e7aeee32e7ad97ed45ec1df9a9d954100f3e96bcea8196f1be90e25`, and `ENGLISH_ACCEPTANCE` is the current recommended task.
 
 For the explicitly selected scheduling-and-units workstream, first use a fresh
 complete `NextResult.v3` from `scheduling-units.pert` to select the milestone
@@ -1480,6 +1497,7 @@ Stage 1 entry evidence:
 - English-baseline runtime-message gate: runtime diagnostics are translated and cross-reviewed without changing stable machine contracts; four tasks totaling 14p remain, precedence and resource makespans are both 11p, observed velocity is `28p/1d`, and `HELP_AND_USAGE` is recommended
 - English-baseline help-and-usage gate: structured help and installed-package projections are translated and cross-reviewed without changing command or schema contracts; three tasks totaling 9p remain, precedence and resource makespans are both 9p, observed velocity is `33p/1d`, and `PERT_PLANS` is recommended
 - English-baseline PERT-plan gate: the six remaining plan metadata surfaces and `plans/README.md` are translated without changing stable structure or reconstructing completed history; two tasks totaling 6p remain, precedence and resource makespans are both 6p, observed velocity is `36p/2d`, and `GOLDEN_UNICODE_AUDIT` is recommended
+- English-baseline golden and Unicode gate: the ten remaining repository-authored fixtures are translated with pre-migration source-layout and semantic-structure digests unchanged; an exact counted allowlist retains only three Japanese-script lines, one task totaling 3p remains, precedence and resource makespans are both 3p, observed velocity is `39p/2d`, and `ENGLISH_ACCEPTANCE` is recommended
 - CLI-surface-reset planning gate: the eighth self-use plan maps all eight review backlog IDs one-to-one after a normative design precursor; 9 tasks total 49p, precedence makespan is 33p, heuristic resource makespan is 49p with 16p delay, inherited provisional velocity is `29p/2d`, and `CONTRACT_V3_DESIGN` is the only initial recommendation
 - CLI-surface-reset design gate: requirements, Contract 3 specification, basic design, migration guide, 14 `CLI3-*` cases, and design-consistency tests are accepted without runtime changes; the 5p task is advanced, 44p remain, observed provisional velocity is `5p/1d`, precedence/resource makespans are 28p/44p, `CLI_001_COMMAND_REGISTRY` is recommended, and `project init` remains backlog `MUT-001`
 - CLI-surface-reset gate-maintenance gate: gate add/set/remove Core, atomic batch, source-preserving endpoints/reason, non-cascade rejection, Contract 2 safe-write projection, and three internal Contract 3 descriptors are covered by unit/CLI/E2E/discovery tests; 23p remain, precedence/resource makespans are 15p/23p with 8p delay, observed provisional velocity is `26p/1d`, and `MUT_001_PROJECT_INIT` is recommended

@@ -5,6 +5,7 @@
 - Snapshot: `cc95f5d` before the migration changes in this work
 - Policy: [ADR 0004](../adr/0004-english-repository-baseline.md)
 - Plan task: `SURFACE_INVENTORY`
+- Enforced by: `npm run check:english`
 
 ## Method
 
@@ -70,6 +71,14 @@ they remain explicit Unicode preservation cases. Historical files do not
 receive a blanket exception: only the exact source-faithful literal is
 allowlisted with a reason.
 
+The machine-readable allowlist is
+`test/fixtures/english-baseline/japanese-script-allowlist.v1.json`. Each entry
+binds one repository-relative path, one exact decoded line, an exact occurrence
+count, and a preservation reason. Wildcards and file-wide exceptions are not
+supported. `scripts/check-english-baseline.mjs` scans tracked and non-ignored
+untracked text files, rejects every unmatched Japanese-script line, and also
+rejects stale or over-consumed allowlist entries.
+
 All other Japanese prose in normative examples, E2E fixtures, invalid fixtures,
 current plans, help golden files, and runtime diagnostics is migration debt.
 Those fixtures are repository-authored examples, not user-authored content.
@@ -88,9 +97,10 @@ Migration must not translate or renumber:
 
 ## Review outcome
 
-The inventory confirms that runtime/help translation is bounded to 13 source
-files and their focused tests, while the majority of debt is maintained
-documentation and examples. The allowlist is intentionally smaller than the
-current set of Japanese fixtures. Future migration checks must fail on new
-Japanese-script content unless the exact file and preservation reason are added
-to this document.
+The inventory bounded runtime/help translation to 13 source files and their
+focused tests, while the majority of debt was maintained documentation and
+examples. After the plan, golden, and fixture migration slices, the executable
+allowlist contains three exact lines: the scanner expression in this inventory
+and two decoded Japanese lines in the formatter round-trip golden. New
+Japanese-script content fails unless an exact line and preservation reason are
+added to the machine-readable allowlist and reviewed against this policy.

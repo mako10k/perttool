@@ -1,15 +1,15 @@
 project UNDEFINED:
-  title "未定義endpoint"
+  title "no endpoint"
   duration_unit day
   finish DONE
 
 milestone NOW:
-  title "現在"
+  title "T0"
   state reached
 
 milestone DONE:
-  title "完了"
+  title "OK"
 
 task WORK MISSING -> DONE:
-  title "作業"
+  title "Do"
   duration 1d
