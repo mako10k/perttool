@@ -268,7 +268,9 @@ complete repository and installed-package gates, and the retained 468-file
 tarball with SHA-256 `f3ba9b3f...2208c`. PUBLISH then fixed release commit
 and peeled `v0.5.0` target `af819b4`, byte-identical candidate/GitHub/npm
 tarballs, npm `beta=0.5.0` with unchanged `latest=0.4.0`, and complete
-isolated public-package checks. Three points remain; precedence and heuristic
+isolated public-package checks. Git commit `94a8b62` records the exact
+completed PUBLISH pre-advance snapshot, and the task is advanced to reached
+`RELEASE_050_PUBLISHED`. Three points remain; precedence and heuristic
 resource makespans are 3p at observed `16p/1d`, both forecasts are `3/16d`,
 and complete NextResult v5 recommends only `RELEASE_050_ACCEPTANCE`.
 npm `latest` promotion and Issue #4 closure remain separate decisions.

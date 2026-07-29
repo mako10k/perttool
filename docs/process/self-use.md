@@ -1279,10 +1279,15 @@ registry reads report `beta=0.5.0`, unchanged `latest=0.4.0`, and
 five immediate verification polls observed propagation-time `E404`; no
 publish retry occurred, and fresh registry plus direct HTTP reads established
 durable publication. The exact evidence is in
-[`0.5.0-publish.md`](0.5.0-publish.md). Three points remain; precedence and
-heuristic resource makespans are 3p with zero resource delay, observed
-velocity is `16p/1d`, forecasts are `3/16d`, and complete NextResult v5
-recommends and starts only `RELEASE_050_ACCEPTANCE`.
+[`0.5.0-publish.md`](0.5.0-publish.md). Git commit `94a8b62` preserves the
+exact completed PUBLISH pre-advance snapshot. Canonical governed advance
+removed the task and prior candidate frontier, retained reached
+`RELEASE_050_PUBLISHED`, and produced residual digest
+`sha256:dd834f22577b7336e900e34731a45d7353a3b02636d641284a170b2886a223b1`.
+Three points remain; precedence and heuristic resource makespans are 3p with
+zero resource delay, observed velocity is `16p/1d`, forecasts are `3/16d`,
+and complete NextResult v5 recommends and starts only
+`RELEASE_050_ACCEPTANCE`.
 
 Stage 1 allowed operations:
 

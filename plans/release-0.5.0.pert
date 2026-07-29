@@ -38,12 +38,10 @@ resource EXTERNAL_RELEASE:
 
 
 
-milestone RELEASE_050_CANDIDATE_ACCEPTED:
-  title "Version 0.5.0 release candidate accepted"
-  state reached
 
 milestone RELEASE_050_PUBLISHED:
   title "Version 0.5.0 published to GitHub and npm beta"
+  state reached
 
 milestone RELEASE_050_ACCEPTED:
   title "Version 0.5.0 Contract 6 beta accepted"
@@ -52,17 +50,6 @@ milestone RELEASE_050_ACCEPTED:
 
 
 
-task RELEASE_050_PUBLISH RELEASE_050_CANDIDATE_ACCEPTED -> RELEASE_050_PUBLISHED:
-  title "Publish version 0.5.0 from one immutable tarball"
-  description "Only after all preceding gates pass and under the user's named 0.5.0 authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.5.0 while latest remains unchanged."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
-    EXTERNAL_RELEASE 1
 
 task RELEASE_050_ACCEPTANCE RELEASE_050_PUBLISHED -> RELEASE_050_ACCEPTED:
   title "Record durable 0.5.0 beta acceptance"

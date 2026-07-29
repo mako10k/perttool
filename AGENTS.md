@@ -156,7 +156,9 @@ npm reports `beta=0.5.0`, `latest=0.4.0`, and `alpha=0.1.0-alpha.2`; and
 isolated public-package checks passed. Three points remain; precedence and
 heuristic resource makespans are both 3p with no resource delay, observed
 velocity is `16p/1d`, both forecasts are `3/16d`, and complete NextResult v5
-recommends only `RELEASE_050_ACCEPTANCE`. The user's
+recommends only `RELEASE_050_ACCEPTANCE`. Git commit `94a8b62` records the
+exact completed PUBLISH pre-advance snapshot, and the task is advanced to
+reached `RELEASE_050_PUBLISHED`. The user's
 named release authorization applies only after every predecessor gate passes.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 

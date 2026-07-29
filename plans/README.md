@@ -190,7 +190,9 @@ recommends and starts only `RELEASE_050_PUBLISH`.
 PUBLISH then fixed release commit and peeled `v0.5.0` target `af819b4`,
 byte-identical candidate/GitHub/npm tarballs at SHA-256
 `f3ba9b3f...2208c`, npm `beta=0.5.0` with unchanged `latest=0.4.0`, and
-complete isolated public-package checks. Three points remain; precedence and
+complete isolated public-package checks. Git commit `94a8b62` records the
+exact completed PUBLISH pre-advance snapshot, and the task is advanced to
+reached `RELEASE_050_PUBLISHED`. Three points remain; precedence and
 heuristic resource makespans are both 3p with no resource delay, observed
 release velocity is `16p/1d`, both forecasts are `3/16d`, and complete
 NextResult v5 recommends and starts only `RELEASE_050_ACCEPTANCE`.
