@@ -18,6 +18,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     design,
     procedure,
     publishRecord,
+    acceptanceRecord,
     readiness,
     actualsAcceptance,
     englishAcceptance,
@@ -34,6 +35,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.5.0-release.md"),
     repositoryText("docs/process/0.5.0-publish.md"),
+    repositoryText("docs/process/0.5.0-release-acceptance.md"),
     repositoryText("docs/process/0.5.0-contract6-readiness.md"),
     repositoryText("docs/process/project-actuals-acceptance.md"),
     repositoryText("docs/process/english-baseline-acceptance.md"),
@@ -62,7 +64,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     design,
     /^### Post-MVP Slice 4J: Contract 6 `v0\.5\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Published and advanced 1\.6/);
+  assert.match(procedure, /Status: Accepted pre-advance 1\.7/);
   assert.match(
     procedure,
     /Expected pre-publication default: `beta=latest=0\.4\.0`/,
@@ -88,6 +90,17 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.match(publishRecord, /\| `latest` \| `0\.4\.0` \|/);
   assert.match(publishRecord, /five propagation-time `E404` responses/);
   assert.match(publishRecord, /No publish\s+retry occurred/);
+  assert.match(acceptanceRecord, /Document status: Accepted 1\.0/);
+  assert.match(
+    acceptanceRecord,
+    /f3ba9b3f52dd055618084bde5e9fa51e98adf3e0e29e10ac8c7e09fd4142208c/,
+  );
+  assert.match(acceptanceRecord, /\| `beta` \| `0\.5\.0` \|/);
+  assert.match(acceptanceRecord, /\| `latest` \| `0\.4\.0` \|/);
+  assert.match(
+    acceptanceRecord,
+    /complete Contract 6\s+file-first workflow/,
+  );
   assert.match(actualsAcceptance, /`ACTUALS_ACCEPTANCE` is accepted/);
   assert.match(actualsAcceptance, /Grammar 5 and CLI Contract 6 source/);
   assert.match(englishAcceptance, /Status: Accepted and advanced/);
@@ -112,6 +125,10 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.match(
     plan,
     /^milestone RELEASE_050_PUBLISHED:\n(?:  .*\n)*?  state reached$/m,
+  );
+  assert.match(
+    plan,
+    /^task RELEASE_050_ACCEPTANCE[\s\S]*?^  status done$/m,
   );
   assert.match(plan, /npm latest promotion and Issue #4 closure remain separate/);
 

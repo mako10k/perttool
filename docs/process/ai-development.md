@@ -273,6 +273,11 @@ completed PUBLISH pre-advance snapshot, and the task is advanced to reached
 `RELEASE_050_PUBLISHED`. Three points remain; precedence and heuristic
 resource makespans are 3p at observed `16p/1d`, both forecasts are `3/16d`,
 and complete NextResult v5 recommends only `RELEASE_050_ACCEPTANCE`.
+Independent acceptance then reread both public channels and references,
+reconfirmed three-way artifact identity, and reran both public-package
+workflows. All six tasks and 19p are complete at `19p/1d`; both makespans
+are zero, and complete NextResult v5 has no recommendation. Exact local
+installation remains the ordered post-acceptance step.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 
 ### 5.1 Adopted Recommendation authority

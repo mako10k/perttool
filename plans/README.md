@@ -196,6 +196,11 @@ reached `RELEASE_050_PUBLISHED`. Three points remain; precedence and
 heuristic resource makespans are both 3p with no resource delay, observed
 release velocity is `16p/1d`, both forecasts are `3/16d`, and complete
 NextResult v5 recommends and starts only `RELEASE_050_ACCEPTANCE`.
+Independent acceptance then reread both public channels and references,
+reconfirmed artifact identity, and reran both public-package workflows. All
+six tasks and 19p are complete at observed `19p/1d`; both makespans are zero,
+and complete NextResult v5 has no ready, recommended, or startable task. The
+exact local installation remains the ordered post-acceptance step.
 The user's named `0.5.0`
 authorization applies only after each predecessor gate passes and does not
 include npm `latest` promotion or Issue #4 closure.

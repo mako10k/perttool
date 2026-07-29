@@ -158,7 +158,11 @@ heuristic resource makespans are both 3p with no resource delay, observed
 velocity is `16p/1d`, both forecasts are `3/16d`, and complete NextResult v5
 recommends only `RELEASE_050_ACCEPTANCE`. Git commit `94a8b62` records the
 exact completed PUBLISH pre-advance snapshot, and the task is advanced to
-reached `RELEASE_050_PUBLISHED`. The user's
+reached `RELEASE_050_PUBLISHED`. `RELEASE_050_ACCEPTANCE` is complete after
+independent Git, GitHub, npm, artifact, and installed-package verification.
+All six tasks and 19p are complete at `19p/1d`; both makespans are zero, and
+complete NextResult v5 has no recommendation. Exact local installation
+remains the ordered post-acceptance step. The user's
 named release authorization applies only after every predecessor gate passes.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 

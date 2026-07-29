@@ -2,10 +2,10 @@
 project RELEASE_050:
   version 5
   title "perttool 0.5.0 Contract 6 beta release"
-  description "Release suffix-free 0.5.0 beta from the accepted atomic Grammar 5 and CLI Contract 6 source and one verified tarball. RELEASE_050_GATE_DESIGN through RELEASE_050_PUBLISH completed 16p under the user's authorization for the complete named 0.5.0 release and exact post-release local installation. Release commit and peeled v0.5.0 target af819b4 agree; the retained candidate, GitHub, and npm tarballs are byte-identical at SHA-256 f3ba9b3f...2208c; npm reports beta=0.5.0, latest=0.4.0, and alpha=0.1.0-alpha.2; and isolated public-package checks passed. Three points remain; precedence and heuristic resource makespans are 3p at the observed 16p/1d velocity, both forecast at 3/16d. Complete NextResult v5 recommends RELEASE_050_ACCEPTANCE. npm latest promotion and Issue #4 closure remain separate decisions."
+  description "Release suffix-free 0.5.0 beta from the accepted atomic Grammar 5 and CLI Contract 6 source and one verified tarball. All six tasks and 19p are accepted under the user's authorization for the complete named 0.5.0 release and exact post-release local installation. Release commit and peeled v0.5.0 target af819b4 agree; the retained candidate, GitHub, and npm tarballs are byte-identical at SHA-256 f3ba9b3f...2208c; npm reports beta=0.5.0, latest=0.4.0, and alpha=0.1.0-alpha.2; and independent acceptance reran both public-package workflows. Precedence and heuristic resource makespans are zero at the observed 19p/1d velocity, with no ready or recommended task. The exact local installation remains the separately ordered post-acceptance step. npm latest promotion and Issue #4 closure remain separate decisions."
   as_of 2026-07-29
   duration_unit point
-  velocity 16p/1d
+  velocity 19p/1d
   finish RELEASE_050_ACCEPTED
   goal_owner user
   dag_owner user
@@ -55,6 +55,7 @@ task RELEASE_050_ACCEPTANCE RELEASE_050_PUBLISHED -> RELEASE_050_ACCEPTED:
   title "Record durable 0.5.0 beta acceptance"
   description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball digest, registry integrity and metadata, isolated installation from both public channels, complete Contract 6 behavior, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact, promoting latest, or closing Issue #4."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
