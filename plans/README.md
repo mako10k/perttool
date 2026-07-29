@@ -172,10 +172,13 @@ snapshot, and the task is advanced to reached `RELEASE_050_GATE_ACCEPTED`.
 Git commit `ba84cd8` records the exact completed
 `RELEASE_050_CONTRACT_6_READINESS` pre-advance snapshot after accepting both
 reached inputs and the public Contract 6 boundary; the task is advanced to
-reached `RELEASE_050_CONTRACT_6_READY`. Fourteen points remain; precedence and heuristic resource makespans
-are both 14p with no resource delay, inherited release velocity is `19p/2d`,
-and both forecasts are `28/19d`. Complete NextResult v5 recommends and starts
-only `RELEASE_050_PREPARATION`. The user's named `0.5.0`
+reached `RELEASE_050_CONTRACT_6_READY`. `RELEASE_050_PREPARATION` is complete
+after aligning the `0.5.0` package identity, release guidance, tests, goldens,
+and full repository and isolated-package gates. Ten points remain; precedence
+and heuristic resource makespans are both 10p with no resource delay,
+inherited release velocity is `19p/2d`, and both forecasts are `20/19d`.
+Complete NextResult v5 recommends and starts only `RELEASE_050_CANDIDATE`.
+The user's named `0.5.0`
 authorization applies only after each predecessor gate passes and does not
 include npm `latest` promotion or Issue #4 closure.
 

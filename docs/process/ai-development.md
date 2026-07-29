@@ -258,11 +258,13 @@ completed gate-design pre-advance snapshot, and the task is advanced to
 reached `RELEASE_050_GATE_ACCEPTED`. The Contract 6 readiness record accepts
 the reached implementation and English inputs and the active source/package
 boundary. Git commit `ba84cd8` records its completed 2p pre-advance snapshot,
-and the task is advanced to reached `RELEASE_050_CONTRACT_6_READY`. Fourteen
-points remain; precedence and heuristic resource makespans are 14p at
-inherited `19p/2d`, both forecasts are `28/19d`, and complete NextResult v5
-recommends only `RELEASE_050_PREPARATION`. npm `latest` promotion and Issue #4
-closure remain separate decisions.
+and the task is advanced to reached `RELEASE_050_CONTRACT_6_READY`. Source
+preparation then aligned `0.5.0` identity, release guidance, tests, goldens,
+and the complete repository and isolated-package gates. Ten points remain;
+precedence and heuristic resource makespans are 10p at inherited `19p/2d`,
+both forecasts are `20/19d`, and complete NextResult v5 recommends only
+`RELEASE_050_CANDIDATE`. npm `latest` promotion and Issue #4 closure remain
+separate decisions.
 
 ### 5.1 Adopted Recommendation authority
 

@@ -25,6 +25,8 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     manifestText,
     lockfileText,
     versionSource,
+    changelog,
+    readme,
   ] = await Promise.all([
     repositoryText("docs/requirements.md"),
     repositoryText("docs/adr/0003-beta-versioning.md"),
@@ -38,6 +40,8 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     repositoryText("package.json"),
     repositoryText("package-lock.json"),
     repositoryText("src/version.ts"),
+    repositoryText("CHANGELOG.md"),
+    repositoryText("README.md"),
   ]);
 
   assert.match(
@@ -56,7 +60,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     design,
     /^### Post-MVP Slice 4J: Contract 6 `v0\.5\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Active 1\.2/);
+  assert.match(procedure, /Status: Active 1\.3/);
   assert.match(
     procedure,
     /Expected pre-publication default: `beta=latest=0\.4\.0`/,
@@ -92,13 +96,31 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     plan,
     /^task RELEASE_050_PUBLISH RELEASE_050_CANDIDATE_ACCEPTED -> RELEASE_050_PUBLISHED:$/m,
   );
+  assert.match(
+    plan,
+    /^task RELEASE_050_PREPARATION RELEASE_050_CONTRACT_6_READY -> RELEASE_050_SOURCE_PREPARED:\n(?:  .*\n)*?  status done$/m,
+  );
   assert.match(plan, /npm latest promotion and Issue #4 closure remain separate/);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.4.0");
-  assert.equal(lockfile.version, "0.4.0");
-  assert.equal(lockfile.packages[""].version, "0.4.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.4\.0"/);
+  assert.equal(manifest.version, "0.5.0");
+  assert.equal(lockfile.version, "0.5.0");
+  assert.equal(lockfile.packages[""].version, "0.5.0");
+  assert.match(versionSource, /TOOL_VERSION = "0\.5\.0"/);
+  assert.match(changelog, /^## \[0\.5\.0\] - 2026-07-29$/m);
+  assert.match(
+    changelog,
+    /^\[0\.5\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.4\.0\.\.\.v0\.5\.0$/m,
+  );
+  assert.match(readme, /npx --yes --package=perttool@0\.5\.0/);
+  assert.match(
+    readme,
+    /prepared release will move npm `beta` to Contract 6 `0\.5\.0`/,
+  );
+  assert.match(
+    migration,
+    /Prepared release target: `perttool@0\.5\.0`/,
+  );
   assert.equal(manifest.publishConfig.tag, "beta");
 });

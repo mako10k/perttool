@@ -2,7 +2,7 @@
 project RELEASE_050:
   version 5
   title "perttool 0.5.0 Contract 6 beta release"
-  description "Plan suffix-free 0.5.0 as the first public atomic Grammar 5 and CLI Contract 6 beta. The completed project-actuals and English-baseline plans remain the implementation and repository-language authorities. RELEASE_050_GATE_DESIGN and RELEASE_050_CONTRACT_6_READINESS completed 5p under the user's authorization for the complete named 0.5.0 release and explicit post-release local installation. Fourteen points remain; precedence and heuristic resource makespans are 14p at the inherited 19p/2d release velocity, both forecast at 28/19d. Complete NextResult v5 recommends RELEASE_050_PREPARATION. RELEASE_050_PUBLISH is authorized only after all preceding gates pass and only for the named 0.5.0 GitHub prerelease and npm beta batch. npm latest promotion and Issue #4 closure remain separate decisions."
+  description "Plan suffix-free 0.5.0 as the first public atomic Grammar 5 and CLI Contract 6 beta. The completed project-actuals and English-baseline plans remain the implementation and repository-language authorities. RELEASE_050_GATE_DESIGN, RELEASE_050_CONTRACT_6_READINESS, and RELEASE_050_PREPARATION completed 9p under the user's authorization for the complete named 0.5.0 release and explicit post-release local installation. Ten points remain; precedence and heuristic resource makespans are 10p at the inherited 19p/2d release velocity, both forecast at 20/19d. Complete NextResult v5 recommends RELEASE_050_CANDIDATE. RELEASE_050_PUBLISH is authorized only after all preceding gates pass and only for the named 0.5.0 GitHub prerelease and npm beta batch. npm latest promotion and Issue #4 closure remain separate decisions."
   as_of 2026-07-29
   duration_unit point
   velocity 19p/2d
@@ -58,6 +58,7 @@ task RELEASE_050_PREPARATION RELEASE_050_CONTRACT_6_READY -> RELEASE_050_SOURCE_
   title "Prepare version 0.5.0 release source"
   description "Align package and lockfile identity, CLI version, CHANGELOG, README, Contract 5-to-6 migration guidance, release documentation, tests, goldens, and beta publication validation. Run the complete repository and package gates without remote or registry writes."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

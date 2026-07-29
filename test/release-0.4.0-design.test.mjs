@@ -128,17 +128,20 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.4.0");
-  assert.equal(lockfile.version, "0.4.0");
-  assert.equal(lockfile.packages[""].version, "0.4.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.4\.0"/);
+  assert.equal(manifest.version, "0.5.0");
+  assert.equal(lockfile.version, "0.5.0");
+  assert.equal(lockfile.packages[""].version, "0.5.0");
+  assert.match(versionSource, /TOOL_VERSION = "0\.5\.0"/);
   assert.match(changelog, /^## \[0\.4\.0\] - 2026-07-28$/m);
   assert.match(
     changelog,
     /^\[0\.4\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.3\.0\.\.\.v0\.4\.0$/m,
   );
-  assert.match(readme, /npx --yes --package=perttool@0\.4\.0/);
-  assert.match(readme, /npm `beta` and `latest` now resolve to Contract 5 `0\.4\.0`/);
+  assert.match(readme, /exact pins `perttool@0\.4\.0`/);
+  assert.match(
+    readme,
+    /npm `beta` and `latest` still resolve to Contract 5\s+`0\.4\.0`/,
+  );
   assert.match(
     readme,
     /Moving from `0\.3\.0` Contract 4 to `0\.4\.0` Contract 5 changes every JSON\s+envelope to `cli_contract_version=5`/,

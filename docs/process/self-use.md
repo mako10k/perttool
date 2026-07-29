@@ -1238,6 +1238,17 @@ Fourteen points remain; precedence and heuristic resource makespans are 14p
 with zero resource delay, inherited forecasts are `28/19d`, and complete
 NextResult v5 recommends and starts only `RELEASE_050_PREPARATION`.
 
+Source preparation then aligned the `0.5.0` package, lockfile, CLI identity,
+CHANGELOG, README, Contract 5-to-6 migration guidance, release tests, and
+deterministic goldens. The complete Node.js 22 repository, temporary-link,
+468-file isolated-package, and publish-normalization dry-run gates passed
+without an external mutation. The 4p `RELEASE_050_PREPARATION` task is
+complete at digest
+`sha256:d87eac750abf15c3a0fb3518ddbccc567eaad4c3ae813b804ee6f2ff82d260ee`.
+Ten points remain; precedence and heuristic resource makespans are 10p with
+zero resource delay, inherited forecasts are `20/19d`, and complete
+NextResult v5 recommends and starts only `RELEASE_050_CANDIDATE`.
+
 Stage 1 allowed operations:
 
 - check

@@ -4,7 +4,8 @@
 - Source contract: CLI Contract 5 and Grammar 1/2/3/4
 - Target contract: CLI Contract 6 and Grammar 1/2/3/4/5
 - Published package boundary: `perttool@0.4.0` remains Contract 5
-- Release status: not authorized by this document
+- Prepared release target: `perttool@0.5.0`
+- Release status: source prepared under the separate `v0.5.0` release gate
 
 ## 1. Purpose
 

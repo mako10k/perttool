@@ -2,7 +2,7 @@
   "schema_version": "Perttool.NextResult.v3",
   "cli_contract_version": 3,
   "recommendation_interface_version": 1,
-  "tool_version": "0.4.0",
+  "tool_version": "0.5.0",
   "operation": "dag.next",
   "ok": true,
   "document_id": "REC_007_NO_READY",

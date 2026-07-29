@@ -4,6 +4,14 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-29
+
+Contract 6 beta release. This version atomically publishes Grammar 5,
+explicit task lifecycle evidence, read-only Git history and velocity
+observation, and the English repository baseline. It intentionally changes
+every CLI JSON envelope and several result identities while retaining
+suffix-free `0.x.x` beta product maturity.
+
 ### Added
 
 - Activated Grammar 5 task-owned work events and preview-first
@@ -29,8 +37,8 @@ This project records its notable changes here. The format is based on [Keep a Ch
   `recommendation_v1_plus_release_gate` start-authority policy.
 - Extended exact unit migration through Grammar 5
   `work_event.planned_value` without changing event time, active time, effort,
-  or declared velocity. The published `0.4.0` artifact remains Grammar 4 and
-  CLI Contract 5 pending a separate release.
+  or declared velocity. The prior `0.4.0` artifact remains available as the
+  Grammar 4 and CLI Contract 5 compatibility pin.
 
 ### Fixed
 
@@ -208,7 +216,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/mako10k/perttool/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/mako10k/perttool/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mako10k/perttool/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mako10k/perttool/compare/v0.1.0...v0.2.0
