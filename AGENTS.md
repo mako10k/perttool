@@ -143,7 +143,9 @@ its exact pre-advance snapshot, and the task is advanced to reached
 inputs, active Contract 6 boundary, compatibility, safety, and installed workflows.
 `RELEASE_050_PREPARATION` is complete after aligning the `0.5.0` package
 identity, CHANGELOG, README, Contract 5-to-6 migration guidance, tests,
-goldens, and full Node.js 22 repository and installed-package gates. Ten
+goldens, and full Node.js 22 repository and installed-package gates. Git
+commit `e1e7ccf` records its exact pre-advance snapshot, and the task is
+advanced to reached `RELEASE_050_SOURCE_PREPARED`. Ten
 points remain; precedence and heuristic resource makespans are both 10p with
 no resource delay, inherited velocity is `19p/2d`, both forecasts are
 `20/19d`, and complete NextResult v5 recommends only

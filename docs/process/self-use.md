@@ -1245,6 +1245,10 @@ deterministic goldens. The complete Node.js 22 repository, temporary-link,
 without an external mutation. The 4p `RELEASE_050_PREPARATION` task is
 complete at digest
 `sha256:d87eac750abf15c3a0fb3518ddbccc567eaad4c3ae813b804ee6f2ff82d260ee`.
+Git commit `e1e7ccf` records that exact snapshot. Canonical governed advance
+removed the task and the prior readiness frontier, retained reached
+`RELEASE_050_SOURCE_PREPARED`, and produced residual digest
+`sha256:0e1643bad5486b447b59d0b4ca40d2462e16f31ea76e0c9969da5319d68d2b75`.
 Ten points remain; precedence and heuristic resource makespans are 10p with
 zero resource delay, inherited forecasts are `20/19d`, and complete
 NextResult v5 recommends and starts only `RELEASE_050_CANDIDATE`.

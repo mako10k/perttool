@@ -88,17 +88,15 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.doesNotMatch(plan, /^milestone RELEASE_050_PLANNING_STARTED:/m);
   assert.doesNotMatch(plan, /^task RELEASE_050_CONTRACT_6_READINESS /m);
   assert.doesNotMatch(plan, /^milestone RELEASE_050_GATE_ACCEPTED:/m);
+  assert.doesNotMatch(plan, /^milestone RELEASE_050_CONTRACT_6_READY:/m);
+  assert.doesNotMatch(plan, /^task RELEASE_050_PREPARATION /m);
   assert.match(
     plan,
-    /^milestone RELEASE_050_CONTRACT_6_READY:\n(?:  .*\n)*?  state reached$/m,
+    /^milestone RELEASE_050_SOURCE_PREPARED:\n(?:  .*\n)*?  state reached$/m,
   );
   assert.match(
     plan,
     /^task RELEASE_050_PUBLISH RELEASE_050_CANDIDATE_ACCEPTED -> RELEASE_050_PUBLISHED:$/m,
-  );
-  assert.match(
-    plan,
-    /^task RELEASE_050_PREPARATION RELEASE_050_CONTRACT_6_READY -> RELEASE_050_SOURCE_PREPARED:\n(?:  .*\n)*?  status done$/m,
   );
   assert.match(plan, /npm latest promotion and Issue #4 closure remain separate/);
 

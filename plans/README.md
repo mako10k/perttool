@@ -174,7 +174,9 @@ Git commit `ba84cd8` records the exact completed
 reached inputs and the public Contract 6 boundary; the task is advanced to
 reached `RELEASE_050_CONTRACT_6_READY`. `RELEASE_050_PREPARATION` is complete
 after aligning the `0.5.0` package identity, release guidance, tests, goldens,
-and full repository and isolated-package gates. Ten points remain; precedence
+and full repository and isolated-package gates. Git commit `e1e7ccf` records
+its exact pre-advance snapshot, and the task is advanced to reached
+`RELEASE_050_SOURCE_PREPARED`. Ten points remain; precedence
 and heuristic resource makespans are both 10p with no resource delay,
 inherited release velocity is `19p/2d`, and both forecasts are `20/19d`.
 Complete NextResult v5 recommends and starts only `RELEASE_050_CANDIDATE`.
