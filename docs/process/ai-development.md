@@ -278,8 +278,9 @@ reconfirmed three-way artifact identity, and reran both public-package
 workflows. All six tasks and 19p are complete at `19p/1d`; both makespans
 are zero, and complete NextResult v5 has no recommendation. Git commit
 `bacd413` records the exact completed acceptance pre-advance snapshot, and
-the plan is advanced to reached `RELEASE_050_ACCEPTED`. Exact local
-installation remains the ordered post-acceptance step.
+the plan is advanced to reached `RELEASE_050_ACCEPTED`. The exact
+post-acceptance global installation now resolves to registry
+`perttool@0.5.0` and passed Contract 6, Grammar 5, and history smoke checks.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 
 ### 5.1 Adopted Recommendation authority
