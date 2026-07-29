@@ -1,26 +1,26 @@
 project AGENT_GUIDANCE:
   version 1
-  title "Issue #2 AI Agent Guidance Registry実装計画"
-  description "Codex、GitHub Copilot、Claude Code、Grok Build、Antigravity向けのread-only AI Agent Guidance Registry v1を提供する。Provider固有概念を共通taxonomyへmappingし、offline deterministicなCore、agent help text/JSON、fixture、package acceptanceを同じregistryから提供する。5 task全22pを2026-07-23の1 active dayで完了し、実測Velocityは22p/1dである。受け入れ証跡はdocs/process/agent-guidance-acceptance.mdを正とする。Audit、scaffold、hook実行、enforcement、runtime web refreshは対象外とする。"
+  title "Issue #2 AI Agent Guidance Registry implementation plan"
+  description "Provide the read-only AI Agent Guidance Registry v1 for Codex, GitHub Copilot, Claude Code, Grok Build, and Antigravity. Map provider-specific concepts to a common taxonomy and derive the offline deterministic Core, agent help text and JSON, fixtures, and package acceptance from the same registry. All five tasks and 22p completed on the one active day of 2026-07-23, for a measured velocity of 22p/1d. docs/process/agent-guidance-acceptance.md is the authoritative acceptance record. Audit, scaffolding, hook execution, enforcement, and runtime web refresh are excluded."
   as_of 2026-07-23
   duration_unit point
   velocity 22p/1d
   finish GUIDANCE_ACCEPTED
 
 resource DEVELOPERS:
-  title "Guidance設計・実装担当枠"
+  title "Guidance design and implementation capacity"
   capacity 2
 
 resource REVIEWERS:
-  title "Provider事実・interface・securityレビュー枠"
-  description "Provider mapping、公開schema、hook trust境界の受け入れを同時に1件だけ行う"
+  title "Provider facts, interface, and security review capacity"
+  description "Only one provider mapping, public schema, or hook trust-boundary acceptance runs at a time"
   capacity 1
 
 resource CLI_SURFACE:
-  title "CLI・help公開surface所有枠"
-  description "src/cli.ts、src/index.ts、help registry、CLI testの同時変更を避ける"
+  title "CLI and help public-surface ownership"
+  description "Avoid concurrent changes to src/cli.ts, src/index.ts, the help registry, and CLI tests"
   capacity 1
 
 milestone GUIDANCE_ACCEPTED:
-  title "Issue #2 read-only v1受け入れ完了"
+  title "Issue #2 read-only v1 accepted"
   state reached

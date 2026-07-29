@@ -7,12 +7,12 @@ project PERTTOOL_MVP:
   finish M8_BETA_RELEASED
 
 resource DEVELOPERS:
-  title "実装担当枠"
+  title "Implementation capacity"
   capacity 2
 
 resource REVIEWERS:
-  title "設計・安全性レビュー枠"
-  description "仕様判断と安全性gateは同時に1件だけレビューする"
+  title "Design and safety review capacity"
+  description "Only one specification or safety-gate review runs at a time"
   capacity 1
 
 milestone M8_BETA_RELEASED:

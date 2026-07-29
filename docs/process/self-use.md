@@ -673,6 +673,26 @@ Later that day, `NORMATIVE_DOCS` migrated the requirements, basic design, normat
 
 `HELP_AND_USAGE` then migrated all 65 repository-maintained Japanese help entries in the structured registry, including `dsl help`, the `agent help` command description, safe-editing guidance, Mermaid fail-closed boundaries, and `NextResult.v3` authority guidance. A lightweight translation agent performed the translation and another independently cross-reviewed the source meaning and stable identifiers. Help tests retain the preview/write, normal-authority, safe-stop, reanalysis, read-only override, secret-handling, and unavailable apply/audit boundaries. Linked and packed CLI checks now verify the stable help schema, topic and section IDs, and English-only index and detail projections. An atomic batch recalibrated the cumulative workstream velocity to `33p/1d` and finished the 5p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:540165d6de11dde691c689ccd7d5c1f03e73f5b36557d046e49cf011c7ae8b39`. Three tasks and 9p remain; precedence and resource makespans are both 9p with no resource delay, and fresh complete `NextResult.v3` recommends `PERT_PLANS`.
 
+On 2026-07-29, `PERT_PLANS` migrated the remaining repository-maintained plan
+metadata in `mvp.pert`, `grammar.pert`, `control-plane.pert`,
+`operations.pert`, `recommendation.pert`, and `agent-guidance.pert`, plus the
+current and historical evidence prose in `plans/README.md`. The migration used
+six atomic `batch apply` safe writes and changed only project, resource,
+milestone, task, and gate prose. Existing self-use projections confirm that
+IDs, topology, estimates, states, priorities, and resource requirements are
+unchanged; no completed edge was reconstructed from Git. The plans-scoped
+language scan has no Japanese-script match, and the recommendation shadow
+golden changed only the six translated source digests before the task state
+change. An expected-digest atomic batch set `as_of` to 2026-07-29,
+recalibrated the cumulative sample to `36p/2d`, and finished the 3p task. The
+exact completed pre-advance digest is
+`sha256:46d60e078c894943fac4d42e87910f32b39aca6aa95023c1c2fef4ec89a72866`.
+Two tasks and 6p remain; precedence and resource makespans are both 6p with no
+resource delay, both forecasts are `1/3d`, and fresh complete, non-truncated
+`NextResult.v5` recommends only `GOLDEN_UNICODE_AUDIT`. The
+[PERT plan migration acceptance record](english-pert-plans-acceptance.md)
+fixes the scope, invariants, digests, and non-goals.
+
 `CLI_001_COMMAND_REGISTRY` then selected `src/command/registry.ts` as the immutable typed registry for all 22 active Contract 2 commands. Dispatch lookup, accepted-option parsing, exact text help, deterministic JSON descriptor projections, operands, defaults, conflicts, input/output modes, effects, result schemas, exit statuses, and examples now share the expanded descriptors. Completeness tests fail when a command path, option, handler, help projection, schema, or example is missing; the public Contract 2 help bytes remain unchanged and `project init` remains unavailable backlog item `MUT-001`. All 255 tests, documentation, eight self-use plans, link checks, and package inspections passed. An atomic batch recalibrated the cumulative plan velocity to `13p/1d` and finished the 8p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:a2efa9b0ef7d1c55cc2892de03ff8dd83e101e98864dd0916e0ebc5abc2c6e0c`. Seven tasks and 36p remain; precedence is 20p, the heuristic resource makespan is 36p with 16p resource delay, and the resource forecast is `36/13d`. Fresh complete `NextResult.v3` recommends `HELP_001_COMMAND_DISCOVERY`.
 
 `HELP_001_COMMAND_DISCOVERY` then added the pure Contract 3 preview in `src/command/discovery.ts`. It derives 23 implemented target paths, accepted renames, examples, resource order, top-level/resource/action lookup, `Perttool.CommandHelpResult.v1`, and deterministic text/JSON from the expanded descriptors. Unknown resources and actions return `PTHLP-002` and `PTHLP-003`; isolated-process tests verify no project read, filesystem mutation, environment discovery, or non-local dependency. `project init` and gate maintenance remain absent because they are not implemented, and the active Contract 2 CLI still rejects public Contract 3 names. All 261 tests, documentation, eight self-use plans, link checks, and package inspections passed. An atomic batch recalibrated cumulative velocity to `18p/1d` and finished the 5p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:555c2fd30244a590184bbe3b953b872cbc5caf59152d6ba92759b7749daf20f0`. Six tasks and 31p remain; precedence is 18p, the heuristic resource makespan is 31p with 13p resource delay, and the forecasts are `1d` and `31/18d`. Fresh complete `NextResult.v3` recommends `MUT_002_GATE_MAINTENANCE`; `project init` remains backlog item `MUT-001`.
@@ -760,7 +780,7 @@ DSL version 1 has no working calendar, pause, or work-start time, so it does not
 5. Count parallel work on the same day only once as a day, while including it in the points total.
 6. Defer tasks completed by the calibration itself to the next sample to avoid a cycle.
 
-Recalibration from 2026-07-22 to 2026-07-25:
+Recalibration from 2026-07-22 to 2026-07-29:
 
 | Plan | Closed sample | Completed Point | Active day | Velocity | Remaining forecast |
 | --- | --- | ---: | ---: | --- | --- |
@@ -769,7 +789,7 @@ Recalibration from 2026-07-22 to 2026-07-25:
 | `operations.pert` | formatter/mutation preview, safe write, advance, project metadata CLI | 29p | 2d | `29p/2d` | 0p |
 | `recommendation.pert` | `FIXTURE_BASELINE`, `RANKING_CORE`, `EXPLANATION_CORE`, `NEXT_V3_PUBLICATION`, `SELF_USE_SHADOW`, `OVERRIDE_VALIDATION`, `AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
 | `agent-guidance.pert` | Total 5 tasks | 22p | 1d | `22p/1d` | 0p |
-| `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE` | 33p | 1d | `33p/1d` | resource `3/11d` |
+| `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, `PERT_PLANS` | 36p | 2d | `36p/2d` | resource `1/3d` |
 | `cli-surface-reset.pert` | All 9 tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` | 49p | 1d | `49p/1d` | 0p |
 | `release-0.2.0.pert` | All 5 tasks through `RELEASE_020_ACCEPTANCE` | 17p | 2d | `17p/2d` | 0p |
 | `scheduling-units-m1.pert` | All 7 tasks through `M1_CONTRACT_REVIEW` | 24p | 1d | `24p/1d` | 0p |
@@ -778,7 +798,13 @@ Recalibration from 2026-07-22 to 2026-07-25:
 
 This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, English-baseline migration, and the CLI-surface reset are not averaged because their work types differ. Future detail plans specify the sample from the closest work type as their initial value. `scheduling-units-m2.pert` initially inherited `24p/1d` from SU-M1, replaced it with its own sample after the first task, and now records all six completed SU-M2 tasks as cumulative `24p/1d` on the same active day.
 
-`english-baseline.pert` completed 2p of inventory work, 13p of normative-document migration, 8p of process-and-guidance migration, 5p of runtime-message migration, and 5p of help-and-usage migration on the same active day. Its cumulative observed velocity is now `33p/1d`; the remaining precedence path and resource schedule are both 9p and forecast `3/11d`. This remains a one-day sample and must be recalibrated after work on a different active day or after further task completions.
+`english-baseline.pert` completed 2p of inventory work, 13p of
+normative-document migration, 8p of process-and-guidance migration, 5p of
+runtime-message migration, and 5p of help-and-usage migration on 2026-07-24,
+then completed the 3p PERT-plan migration on 2026-07-29. Its cumulative
+observed velocity is now `36p/2d`; the remaining precedence path and resource
+schedule are both 6p and forecast `1/3d`. This remains a two-day sample and
+must be recalibrated after further task completions.
 
 The `release-0.2.0.pert` workstream completed its 3p gate design and 3p source
 preparation on 2026-07-24, then completed its 3p candidate, 5p distribution,
@@ -1213,7 +1239,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - the suffix-free `v0.1.0` beta is accepted, and the macro has advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3 is a future backlog-hierarchy and multi-plan-composition design and does not add work packages to the current macro
 - the LSP server, VSIX, and MCP server are independent post-first-beta backlogs and do not add work packages to the current macro
-- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`; `PERT_PLANS` is its current recommended task.
+- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`; `PERT_PLANS` is complete at its exact pre-advance snapshot, and `GOLDEN_UNICODE_AUDIT` is its current recommended task.
 
 For the explicitly selected scheduling-and-units workstream, first use a fresh
 complete `NextResult.v3` from `scheduling-units.pert` to select the milestone
@@ -1448,6 +1474,7 @@ Stage 1 entry evidence:
 - English-baseline process-and-guidance gate: repository entrypoints and process/provider guidance are translated and cross-reviewed; five tasks totaling 19p remain, precedence is 11p, resource makespan is 16p with 5p delay, observed velocity is `23p/1d`, and `RUNTIME_MESSAGES` is recommended
 - English-baseline runtime-message gate: runtime diagnostics are translated and cross-reviewed without changing stable machine contracts; four tasks totaling 14p remain, precedence and resource makespans are both 11p, observed velocity is `28p/1d`, and `HELP_AND_USAGE` is recommended
 - English-baseline help-and-usage gate: structured help and installed-package projections are translated and cross-reviewed without changing command or schema contracts; three tasks totaling 9p remain, precedence and resource makespans are both 9p, observed velocity is `33p/1d`, and `PERT_PLANS` is recommended
+- English-baseline PERT-plan gate: the six remaining plan metadata surfaces and `plans/README.md` are translated without changing stable structure or reconstructing completed history; two tasks totaling 6p remain, precedence and resource makespans are both 6p, observed velocity is `36p/2d`, and `GOLDEN_UNICODE_AUDIT` is recommended
 - CLI-surface-reset planning gate: the eighth self-use plan maps all eight review backlog IDs one-to-one after a normative design precursor; 9 tasks total 49p, precedence makespan is 33p, heuristic resource makespan is 49p with 16p delay, inherited provisional velocity is `29p/2d`, and `CONTRACT_V3_DESIGN` is the only initial recommendation
 - CLI-surface-reset design gate: requirements, Contract 3 specification, basic design, migration guide, 14 `CLI3-*` cases, and design-consistency tests are accepted without runtime changes; the 5p task is advanced, 44p remain, observed provisional velocity is `5p/1d`, precedence/resource makespans are 28p/44p, `CLI_001_COMMAND_REGISTRY` is recommended, and `project init` remains backlog `MUT-001`
 - CLI-surface-reset gate-maintenance gate: gate add/set/remove Core, atomic batch, source-preserving endpoints/reason, non-cascade rejection, Contract 2 safe-write projection, and three internal Contract 3 descriptors are covered by unit/CLI/E2E/discovery tests; 23p remain, precedence/resource makespans are 15p/23p with 8p delay, observed provisional velocity is `26p/1d`, and `MUT_001_PROJECT_INIT` is recommended

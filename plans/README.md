@@ -1,15 +1,26 @@
 # Development plans
 
-この directory は、`perttool` 自身の現在・未来の作業計画を `.pert` で管理するために使用する。
+This directory contains `.pert` plans for the present and future work on
+`perttool` itself.
 
-計画は粒度ごとに分離する。
+Plans are separated by level of detail.
 
-- [mvp.pert](mvp.pert): MVPからbetaまでのmacro milestone、work package、resource日程
-- [grammar.pert](grammar.pert): 現在のgrammar sliceを実装taskまで分解した詳細計画
-- [control-plane.pert](control-plane.pert): [Issue #1](https://github.com/mako10k/perttool/issues/1)のAI工程制御設計を完了条件まで分解した詳細計画
-- [operations.pert](operations.pert): formatter preview、mutation preview、safe write、advanceを実ファイル境界とnarrow testへ分解したM1-M4詳細計画
-- [recommendation.pert](recommendation.pert): MIG-01からMIG-07のrecommendation実装、shadow、normal authority adoptionを分解した詳細計画
-- [agent-guidance.pert](agent-guidance.pert): [Issue #2](https://github.com/mako10k/perttool/issues/2)のprovider baseline、common contract、Core、`agent help`、beta受け入れを分解した詳細計画
+- [mvp.pert](mvp.pert): macro milestones, work packages, and resource
+  schedule from the MVP through beta
+- [grammar.pert](grammar.pert): detailed plan that decomposes the current
+  grammar slice into implementation tasks
+- [control-plane.pert](control-plane.pert): detailed plan that decomposes the
+  AI engineering-control design from [Issue #1](https://github.com/mako10k/perttool/issues/1)
+  through its completion criteria
+- [operations.pert](operations.pert): M1-M4 detail that decomposes formatter
+  previews, mutation previews, safe write, and advance by real-file boundary
+  and narrow test
+- [recommendation.pert](recommendation.pert): detailed plan for the MIG-01
+  through MIG-07 recommendation implementation, shadow evaluation, and normal
+  authority adoption
+- [agent-guidance.pert](agent-guidance.pert): detailed plan for the provider
+  baseline, common contract, Core, `agent help`, and beta acceptance from
+  [Issue #2](https://github.com/mako10k/perttool/issues/2)
 - [english-baseline.pert](english-baseline.pert): phased migration of repository-maintained prose, bundled help, diagnostics, current plans, and golden fixtures to the English baseline
 - [governance.pert](governance.pert): independent post-beta requirements, contract, implementation, and acceptance roadmap for [Issue #4](https://github.com/mako10k/perttool/issues/4) owner-aware goal and DAG mutation governance
 - [project-actuals.pert](project-actuals.pert): independent post-beta design,
@@ -42,15 +53,40 @@ that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 requested independent post-beta plans and are not rolled up into the completed
 MVP macro.
 
-2026-07-23にRecommendation detailの`FIXTURE_BASELINE` 2p、`RANKING_CORE` 4p、`EXPLANATION_CORE` 5p、`NEXT_V3_PUBLICATION` 4p、`SELF_USE_SHADOW` 2p、`OVERRIDE_VALIDATION` 3p、`AUTHORITY_ADOPTION` 2pを完了し、累計1 active dayからrecommendation固有の暫定実測Velocityを`22p/1d`へ更新した。Detailの残りは0pである。Macro `RECOMMENDATION_IMPLEMENTATION`と`RELEASE_E2E`も完了し、MVP public alphaを受け入れた。
+On 2026-07-23, the recommendation detail completed `FIXTURE_BASELINE` 2p,
+`RANKING_CORE` 4p, `EXPLANATION_CORE` 5p, `NEXT_V3_PUBLICATION` 4p,
+`SELF_USE_SHADOW` 2p, `OVERRIDE_VALIDATION` 3p, and `AUTHORITY_ADOPTION` 2p.
+Its provisional recommendation-specific measured velocity was updated to
+`22p/1d` from the cumulative one-active-day sample, with no detail work
+remaining. The macro `RECOMMENDATION_IMPLEMENTATION` and `RELEASE_E2E` also
+completed, accepting the MVP public alpha.
 
-同日に人間overrideで前倒ししたnpm publication preflightを、normal recommendationで選ばれた`RELEASE_E2E`から実行した。`v0.1.0-alpha.2`のversion/tag、GitHub asset、npm publish、registry installを同一tarballで検証し、MVP macroを完了した。
+On the same day, the npm publication preflight that a human override had
+started early was executed from the normally recommended `RELEASE_E2E`.
+The version and tag, GitHub asset, npm publication, and registry installation
+for `v0.1.0-alpha.2` were verified from the same tarball, completing the MVP
+macro.
 
 Issue #2 was included in the first beta and accepted after all five `agent-guidance.pert` tasks, totaling 22p, completed in one active day. The measured workstream velocity is `22p/1d`, and the detail plan has no remaining work. The operations velocity, including the explicitly advanced 5p `PROJECT_METADATA_CLI` task, is `29p/2d`.
 
 The suffix-free `v0.1.0` beta was published and [accepted](../docs/process/beta-release-acceptance.md) on 2026-07-23, then explicitly promoted so npm `beta` and `latest` both resolve to `0.1.0`. The macro plan is advanced to the reached `M8_BETA_RELEASED` frontier and has no remaining or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
-ADR 0004 adopts English as the canonical repository language without i18n. `SURFACE_INVENTORY` completed on 2026-07-24 and was advanced after its inventory and Unicode allowlist were recorded. The `english-baseline.pert` detail plan now contains seven remaining tasks totaling 40p. Its precedence makespan is 27p, resource makespan is 30p, first-sample velocity is `2p/1d`, and resource forecast is `15d`. `NORMATIVE_DOCS` is the current recommended task.
+ADR 0004 adopts English as the canonical repository language without i18n.
+`SURFACE_INVENTORY` completed on 2026-07-24 and was advanced after its
+inventory and Unicode allowlist were recorded. At that snapshot,
+`english-baseline.pert` contained seven remaining tasks totaling 40p. Its
+precedence makespan was 27p, resource makespan was 30p, first-sample velocity
+was `2p/1d`, and resource forecast was `15d`; `NORMATIVE_DOCS` was the
+recommended task.
+
+On 2026-07-29, `PERT_PLANS` migrated the six remaining `.pert` metadata
+surfaces and this evidence file without changing stable plan structure or
+reconstructing completed history. The
+[acceptance record](../docs/process/english-pert-plans-acceptance.md) fixes
+the source digests and invariant checks. The exact completed pre-advance
+snapshot has 6p remaining, matching 6p precedence and heuristic resource
+makespans, measured velocity `36p/2d`, and a complete NextResult v5 that
+recommends only `GOLDEN_UNICODE_AUDIT`.
 
 All nine `cli-surface-reset.pert` tasks, totaling 49p from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE`, completed and advanced on 2026-07-24. The active Contract 3 surface uses one typed registry for dispatch and help, separates domain guidance, provides structured usage recovery, exposes project initialization and direct gate maintenance, adds the contract version to every JSON envelope, rejects renamed Contract 2 spellings, and passes the complete isolated installed-package file-first workflow. The detail plan has no remaining or recommended task, and its cumulative plan-specific velocity is `49p/1d`.
 
@@ -177,10 +213,30 @@ version 1 heuristic resource makespan are both zero with no resource delay,
 and complete NextResult v5 has no ready, recommended, or startable task. Git
 mutation, automatic declared-velocity changes, MIG-08, release publication,
 and dist-tag movement remain outside the authorized scope. This independent
-workstream does not displace `PERT_PLANS` in the English-baseline detail.
+workstream does not displace `GOLDEN_UNICODE_AUDIT` in the English-baseline
+detail.
 
-Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
+Velocity is recalibrated per plan from the points in task-completion commits
+and the number of active dates in Asia/Tokyo; the initial estimate does not
+remain fixed indefinitely. Measurements for 2026-07-22 through 2026-07-23
+are `3p/1d` for grammar, `16p/1d` for control-plane design, `29p/2d` for
+operations, `22p/1d` for recommendation, and `22p/1d` for agent guidance.
+Every sample except operations still covers only one active day. The
+[self-use plan](../docs/process/self-use.md) is authoritative for the
+calculation basis and the macro's six-decimal day rounding.
 
-規範仕様は `plans/` ではなく `docs/specs/` に置く。`plans/` は作業状態、Git history は過去を担当する。Macro milestoneは`mvp.pert`、現在sliceの設計・実装状態は対応する詳細planへ記録し、同じtaskを両方で個別管理しない。Stage 3のediting/advance write手順は[自己利用計画](../docs/process/self-use.md)を正とする。
+Normative specifications belong in `docs/specs/`, not `plans/`. The plans
+record work state, while Git history records the past. Record macro milestones
+in `mvp.pert` and the design and implementation state of the current slice in
+the corresponding detail plan; do not manage the same task independently in
+both. The [self-use plan](../docs/process/self-use.md) is authoritative for the
+Stage 3 editing and advance write procedure.
 
-[Issue #2](https://github.com/mako10k/perttool/issues/2)のAI Agent Guidance Registryは、Issue #1のrecommendation契約を各coding agentへ適用するbeta gateである。Read-only v1の範囲は`agent-guidance.pert`を正とし、audit、scaffold、hook実行、enforcementは含めない。[Issue #3](https://github.com/mako10k/perttool/issues/3)のbacklog階層・multi-plan compositionはbetaへ機能依存を追加しない独立した将来backlogとして保持する。
+The AI Agent Guidance Registry from
+[Issue #2](https://github.com/mako10k/perttool/issues/2) is the beta gate that
+applies the Issue #1 recommendation contract to each coding agent.
+`agent-guidance.pert` is authoritative for the read-only v1 scope, which
+excludes audit, scaffolding, hook execution, and enforcement. The backlog
+hierarchy and multi-plan composition from
+[Issue #3](https://github.com/mako10k/perttool/issues/3) remain an independent
+future backlog that does not add a feature dependency to beta.

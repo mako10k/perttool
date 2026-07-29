@@ -1,83 +1,77 @@
 project OPERATIONS:
   version 1
-  title "操作系M1-M4実装計画"
+  title "M1-M4 operations implementation plan"
   description |
-    formatter preview、構造編集preview、safe write、advance、project metadata CLIを実装する詳細plan。
-    Pointは相対規模を表す。2026-07-22にmutation Core 7p、
-    FORMAT_APPLICATION 1p、MUTATION_CLI_PREVIEW 2p、FORMAT_CLI_PREVIEW 2p、
-    SAFE_WRITE_ADAPTER 4p、SAFE_WRITE_ACCEPTANCE 2p、ADVANCE_PLANNER 4p、
-    ADVANCE_CLI_ACCEPTANCE 2pの計24pを1 active dayで完了した。
-    2026-07-23にPROJECT_METADATA_CLI 5pを完了し、累計29p/2 active dayから
-    実測Velocityを29p/2dへ再calibrationした。
-    recommendationとAI Agent Guidance RegistryのM3開始下限は閉じた。Recommendationは
-    MVP public alphaまで完了し、AI Agent Guidance Registryはbeta gateとして独立detail planと
-    macro work packageへ追加した。Multi-plan compositionはbeta後の将来backlogとして扱う。
+    Detailed plan for formatter preview, structural-edit previews, safe write, advance, and the project-metadata CLI.
+    Points express relative size. On 2026-07-22, mutation Core 7p, FORMAT_APPLICATION 1p, MUTATION_CLI_PREVIEW 2p, FORMAT_CLI_PREVIEW 2p, SAFE_WRITE_ADAPTER 4p, SAFE_WRITE_ACCEPTANCE 2p, ADVANCE_PLANNER 4p, and ADVANCE_CLI_ACCEPTANCE 2p completed for 24p over one active day.
+    PROJECT_METADATA_CLI 5p completed on 2026-07-23, recalibrating measured velocity to 29p/2d from the cumulative 29p over two active days.
+    The M3 start thresholds for recommendation and the AI Agent Guidance Registry are closed. Recommendation completed through the MVP public alpha; the AI Agent Guidance Registry was added as an independent detail plan and a beta-gate macro work package. Multi-plan composition remains a future post-beta backlog.
   as_of 2026-07-23
   duration_unit point
   velocity 29p/2d
   finish PROJECT_METADATA_CLI_READY
 
 resource DEVELOPERS:
-  title "実装担当枠"
+  title "Implementation capacity"
   capacity 2
 
 resource REVIEWERS:
-  title "interface・安全性レビュー枠"
-  description "公開CLI契約とwrite safetyの受け入れ判断は同時に1件だけ行う"
+  title "Interface and safety review capacity"
+  description "Only one acceptance decision for the public CLI contract or write safety runs at a time"
   capacity 1
 
 resource CLI_SURFACE:
-  title "CLI公開surface所有枠"
-  description "現行のsrc/cli.ts、src/index.ts、CLI/help testを同時編集しない"
+  title "CLI public-surface ownership"
+  description "Avoid concurrent changes to the current src/cli.ts, src/index.ts, and CLI and help tests"
   capacity 1
 
 resource FILESYSTEM_WRITE:
-  title "filesystem write経路所有枠"
-  description "digest、temporary file、fsync、atomic renameの変更を同時編集しない"
+  title "Filesystem write-path ownership"
+  description "Avoid concurrent changes to digests, temporary files, fsync, and atomic rename"
   capacity 1
 
 milestone NOW:
-  title "操作系roadmap確定"
+  title "Operations roadmap defined"
   state reached
 
 milestone FORMAT_APPLICATION_READY:
-  title "formatter application service完了"
+  title "Formatter application service complete"
 
 milestone FORMAT_PREVIEW_READY:
-  title "dsl format preview受け入れ完了"
+  title "DSL format preview accepted"
 
 milestone TASK_MUTATION_READY:
-  title "task mutation Core完了"
+  title "Task-mutation Core complete"
 
 milestone ENTITY_MUTATION_READY:
-  title "milestone・resource mutation Core完了"
+  title "Milestone and resource mutation Core complete"
 
 milestone MUTATION_PREVIEW_READY:
-  title "構造編集preview受け入れ完了"
+  title "Structural-edit preview accepted"
 
 milestone EDIT_PREVIEW_READY:
-  title "M2 安全な編集preview完了"
+  title "M2 safe editing previews complete"
 
 milestone WRITE_ADAPTER_READY:
-  title "safe-write adapter完了"
+  title "Safe-write adapter complete"
 
 milestone SAFE_WRITE_READY:
-  title "M3 safe-write受け入れ完了"
+  title "M3 safe write accepted"
 
 milestone ADVANCE_PLANNER_READY:
-  title "advance planner完了"
+  title "Advance planner complete"
 
 milestone OPERATIONS_READY:
-  title "M4 advance受け入れ完了"
+  title "M4 advance accepted"
 
 task FORMAT_APPLICATION NOW -> FORMAT_APPLICATION_READY:
-  title "formatter候補をpreview resultへ投影する"
+  title "Project formatter candidates into preview results"
   description |
-    Create: src/application/format.ts。
-    Reuse: src/formatter/source-formatter.ts、TASK_MUTATION_COREで追加したsrc/editing/unified-diff.ts。I/Oとwriteは追加しない。
-    Accept: candidate、changed、UTF-16 TextEdit、unified diff、check判定を再検査済みresultから得る。
-    Test: npm run build && node --test test/formatter.test.mjs。
-    Parallel: TASK_MUTATION_COREと所有fileを共有しない。
+    Create: src/application/format.ts.
+    Reuse: src/formatter/source-formatter.ts and src/editing/unified-diff.ts from TASK_MUTATION_CORE. Do not add I/O or writes.
+    Accept: Obtain candidate, changed, UTF-16 TextEdit, unified diff, and check outcome from the revalidated result.
+    Test: npm run build && node --test test/formatter.test.mjs.
+    Parallel: Do not share owned files with TASK_MUTATION_CORE.
   duration 1p
   status done
   priority 90
@@ -85,12 +79,12 @@ task FORMAT_APPLICATION NOW -> FORMAT_APPLICATION_READY:
     DEVELOPERS 1
 
 task FORMAT_CLI_PREVIEW FORMAT_APPLICATION_READY -> FORMAT_PREVIEW_READY:
-  title "dsl format preview commandを公開する"
+  title "Publish the DSL format preview command"
   description |
-    Modify: src/cli.ts、src/index.ts、test/cli.test.mjs、test/e2e.test.mjs。
-    Accept: default candidate、--diff、--check、text/JSON、stdinを公開し、--writeと--outはまだ拒否する。
-    Test: npm run build && node --test test/formatter.test.mjs test/cli.test.mjs test/e2e.test.mjs。
-    Parallel: mutation Coreとは並行可能だが、他のCLI公開taskとはCLI_SURFACEで直列化する。
+    Modify: src/cli.ts, src/index.ts, test/cli.test.mjs, and test/e2e.test.mjs.
+    Accept: Publish the default candidate, --diff, --check, text and JSON, and stdin; continue to reject --write and --out.
+    Test: npm run build && node --test test/formatter.test.mjs test/cli.test.mjs test/e2e.test.mjs.
+    Parallel: This can run with mutation Core, but CLI_SURFACE serializes it with other public CLI tasks.
   duration 2p
   status done
   priority 90
@@ -100,12 +94,12 @@ task FORMAT_CLI_PREVIEW FORMAT_APPLICATION_READY -> FORMAT_PREVIEW_READY:
     CLI_SURFACE 1
 
 task TASK_MUTATION_CORE NOW -> TASK_MUTATION_READY:
-  title "task mutationを局所TextEditとして実装する"
+  title "Implement task mutations as local TextEdits"
   description |
-    Create: docs/specs/mutation.md、src/mutation/types.ts、src/mutation/text-edits.ts、src/mutation/task.ts、src/application/mutate.ts、src/editing/unified-diff.ts、test/mutation.test.mjs。
-    Accept: task add/set/remove/finishがtargetをexactly-oneで解決し、非重複UTF-16 TextEditと再検査済みcandidateを返す。I/Oは行わない。
-    Test: npm run build && node --test test/mutation.test.mjs。
-    Parallel: FORMAT_APPLICATIONと所有fileを共有しない。
+    Create: docs/specs/mutation.md, src/mutation/types.ts, src/mutation/text-edits.ts, src/mutation/task.ts, src/application/mutate.ts, src/editing/unified-diff.ts, and test/mutation.test.mjs.
+    Accept: task add/set/remove/finish resolves exactly one target and returns non-overlapping UTF-16 TextEdits and a revalidated candidate. Perform no I/O.
+    Test: npm run build && node --test test/mutation.test.mjs.
+    Parallel: Do not share owned files with FORMAT_APPLICATION.
   duration 4p
   status done
   priority 100
@@ -113,13 +107,13 @@ task TASK_MUTATION_CORE NOW -> TASK_MUTATION_READY:
     DEVELOPERS 1
 
 task ENTITY_MUTATION_CORE TASK_MUTATION_READY -> ENTITY_MUTATION_READY:
-  title "milestone・resource mutationを実装する"
+  title "Implement milestone and resource mutations"
   description |
-    Create: src/mutation/milestone.ts、src/mutation/resource.ts、src/mutation/source.ts、src/mutation/entity-editor.ts、src/mutation/diagnostics.ts。
-    Modify: src/mutation/types.ts、src/application/mutate.ts、test/mutation.test.mjs。
-    Accept: milestone/resource add/set/removeが宣言順、comment、無関係fieldを保持し、暗黙cascadeを行わない。Connected milestoneやresource requirementはatomic batchの最終candidateで検査する。
-    Test: npm run build && node --test test/mutation.test.mjs。
-    Parallel: formatter branchとは並行可能で、task mutationの共通plannerを再利用するためTASK_MUTATION_CORE後に行う。
+    Create: src/mutation/milestone.ts, src/mutation/resource.ts, src/mutation/source.ts, src/mutation/entity-editor.ts, and src/mutation/diagnostics.ts.
+    Modify: src/mutation/types.ts, src/application/mutate.ts, and test/mutation.test.mjs.
+    Accept: milestone/resource add/set/remove preserves declaration order, comments, and unrelated fields without an implicit cascade. Validate connected milestones and resource requirements in the final atomic-batch candidate.
+    Test: npm run build && node --test test/mutation.test.mjs.
+    Parallel: This can run with the formatter branch but follows TASK_MUTATION_CORE because it reuses the shared task-mutation planner.
   duration 3p
   status done
   priority 100
@@ -127,12 +121,12 @@ task ENTITY_MUTATION_CORE TASK_MUTATION_READY -> ENTITY_MUTATION_READY:
     DEVELOPERS 1
 
 task MUTATION_CLI_PREVIEW ENTITY_MUTATION_READY -> MUTATION_PREVIEW_READY:
-  title "構造編集preview commandを公開する"
+  title "Publish structural-edit preview commands"
   description |
-    Modify: src/cli.ts、src/index.ts、test/cli.test.mjs、test/e2e.test.mjs。
-    Accept: task/milestone/resource commandのdefault previewと--diffをtext/JSONで公開し、--writeと--outはまだ拒否する。
-    Test: npm run build && node --test test/mutation.test.mjs test/cli.test.mjs test/e2e.test.mjs。
-    Parallel: FORMAT_CLI_PREVIEWとはCLI_SURFACEとREVIEWERSで直列化する。
+    Modify: src/cli.ts, src/index.ts, test/cli.test.mjs, and test/e2e.test.mjs.
+    Accept: Publish default previews and --diff for task, milestone, and resource commands in text and JSON; continue to reject --write and --out.
+    Test: npm run build && node --test test/mutation.test.mjs test/cli.test.mjs test/e2e.test.mjs.
+    Parallel: CLI_SURFACE and REVIEWERS serialize this with FORMAT_CLI_PREVIEW.
   duration 2p
   status done
   priority 100
@@ -142,19 +136,19 @@ task MUTATION_CLI_PREVIEW ENTITY_MUTATION_READY -> MUTATION_PREVIEW_READY:
     CLI_SURFACE 1
 
 gate FORMAT_PREVIEW_GATE FORMAT_PREVIEW_READY -> EDIT_PREVIEW_READY:
-  reason "M2にはformatter previewの受け入れが必要"
+  reason "M2 requires formatter-preview acceptance"
 
 gate MUTATION_PREVIEW_GATE MUTATION_PREVIEW_READY -> EDIT_PREVIEW_READY:
-  reason "M2には構造編集previewの受け入れが必要"
+  reason "M2 requires structural-edit preview acceptance"
 
 task SAFE_WRITE_ADAPTER EDIT_PREVIEW_READY -> WRITE_ADAPTER_READY:
-  title "digest検査とatomic write adapterを実装する"
+  title "Implement the digest check and atomic-write adapter"
   description |
-    Create: src/io/document-file.ts、src/io/safe-write.ts、test/write-safety.test.mjs。
-    Refactor: src/cli.tsの既存raw-byte SHA-256読取を共通化する。
-    Accept: symlink拒否、expected digest再確認、同directory temporary file、flush/fsync、atomic rename、親directory fsync、rename後再検査を行う。
-    Test: npm run build && node --test test/write-safety.test.mjs test/cli.test.mjs。
-    Parallel: filesystem write経路はFILESYSTEM_WRITEで単独所有する。
+    Create: src/io/document-file.ts, src/io/safe-write.ts, and test/write-safety.test.mjs.
+    Refactor: Share the existing raw-byte SHA-256 read in src/cli.ts.
+    Accept: Reject symlinks; recheck the expected digest; use a same-directory temporary file, flush/fsync, atomic rename, and parent-directory fsync; then recheck after rename.
+    Test: npm run build && node --test test/write-safety.test.mjs test/cli.test.mjs.
+    Parallel: FILESYSTEM_WRITE exclusively owns the filesystem write path.
   duration 4p
   status done
   priority 100
@@ -165,12 +159,12 @@ task SAFE_WRITE_ADAPTER EDIT_PREVIEW_READY -> WRITE_ADAPTER_READY:
     FILESYSTEM_WRITE 1
 
 task SAFE_WRITE_ACCEPTANCE WRITE_ADAPTER_READY -> SAFE_WRITE_READY:
-  title "全編集commandのsafe-write gateを受け入れる"
+  title "Accept the safe-write gate for every editing command"
   description |
-    Modify: src/cli.ts、test/e2e.test.mjs、test/self-use.test.mjs。
-    Accept: dsl formatと全mutationの--write/--out/--expect-digest、race拒否、失敗時原本保持、grammar planのtemporary-copy round-tripを検査する。
-    Test: npm run build && node --test test/write-safety.test.mjs test/cli.test.mjs test/e2e.test.mjs test/self-use.test.mjs。
-    Exit: docs/process/self-use.mdのStage 2開始条件を満たす。正本planへのwriteはこのtask完了後まで行わない。
+    Modify: src/cli.ts, test/e2e.test.mjs, and test/self-use.test.mjs.
+    Accept: Verify --write, --out, and --expect-digest for dsl format and every mutation; race rejection; preservation of the original on failure; and a temporary-copy round trip of the grammar plan.
+    Test: npm run build && node --test test/write-safety.test.mjs test/cli.test.mjs test/e2e.test.mjs test/self-use.test.mjs.
+    Exit: Satisfy the Stage 2 entry conditions in docs/process/self-use.md. Do not write an authoritative plan before this task completes.
   duration 2p
   status done
   priority 100
@@ -181,12 +175,12 @@ task SAFE_WRITE_ACCEPTANCE WRITE_ADAPTER_READY -> SAFE_WRITE_READY:
     FILESYSTEM_WRITE 1
 
 task ADVANCE_PLANNER SAFE_WRITE_READY -> ADVANCE_PLANNER_READY:
-  title "合流を保持するadvance plannerを実装する"
+  title "Implement the join-preserving advance planner"
   description |
-    Create: src/mutation/advance.ts、test/advance.test.mjs。
-    Accept: canonical keep/remove set、部分合流条件、before/afterのeffective reached・ready一致、idempotenceをpure MutationResultとして返す。
-    Test: npm run build && node --test test/advance.test.mjs test/analysis.test.mjs test/next.test.mjs。
-    Parallel: safe-write後のMermaid作業とはfile ownership上は並行可能だが、macro resource scheduleに従う。
+    Create: src/mutation/advance.ts and test/advance.test.mjs.
+    Accept: Return the canonical keep/remove set, partial-join conditions, matching effective reached and ready sets before and after, and idempotence as a pure MutationResult.
+    Test: npm run build && node --test test/advance.test.mjs test/analysis.test.mjs test/next.test.mjs.
+    Parallel: File ownership permits this to run with post-safe-write Mermaid work, subject to the macro resource schedule.
   duration 4p
   status done
   priority 100
@@ -194,12 +188,12 @@ task ADVANCE_PLANNER SAFE_WRITE_READY -> ADVANCE_PLANNER_READY:
     DEVELOPERS 1
 
 task ADVANCE_CLI_ACCEPTANCE ADVANCE_PLANNER_READY -> OPERATIONS_READY:
-  title "dag advanceをsafe-write経路で受け入れる"
+  title "Accept dag advance through the safe-write path"
   description |
-    Modify: src/cli.ts、src/index.ts、test/cli.test.mjs、test/e2e.test.mjs、test/self-use.test.mjs。
-    Accept: default preview、--diff、--write、advance固有JSON、削除entity一覧、再実行時empty diff、partial join fixtureを検査する。
-    Test: npm run build && node --test test/advance.test.mjs test/cli.test.mjs test/e2e.test.mjs test/self-use.test.mjs。
-    Exit: docs/process/self-use.mdのStage 3開始条件を満たす。正本planへのadvance writeはこのtask完了後まで行わない。
+    Modify: src/cli.ts, src/index.ts, test/cli.test.mjs, test/e2e.test.mjs, and test/self-use.test.mjs.
+    Accept: Verify the default preview, --diff, --write, advance-specific JSON, removed-entity lists, an empty diff on repetition, and the partial-join fixture.
+    Test: npm run build && node --test test/advance.test.mjs test/cli.test.mjs test/e2e.test.mjs test/self-use.test.mjs.
+    Exit: Satisfy the Stage 3 entry conditions in docs/process/self-use.md. Do not advance an authoritative plan before this task completes.
   duration 2p
   status done
   priority 100
@@ -210,11 +204,11 @@ task ADVANCE_CLI_ACCEPTANCE ADVANCE_PLANNER_READY -> OPERATIONS_READY:
     FILESYSTEM_WRITE 1
 
 milestone PROJECT_METADATA_CLI_READY:
-  title "project metadata CLI受け入れ完了"
+  title "Project metadata CLI accepted"
 
 task PROJECT_METADATA_CLI OPERATIONS_READY -> PROJECT_METADATA_CLI_READY:
-  title "project metadataをCLIから閲覧・編集可能にする"
-  description "Create: src/application/project.ts、src/mutation/project.ts、test/project-metadata.test.mjs。 Modify: requirements、mutation/interface仕様、basic design、CLI、public API、help、package smoke、AI workflow。 Accept: velocityを含む全project metadataをproject showのtext/JSONで返し、project setをpreview-first safe-writeとatomic batchへ接続する。 Test: narrow Core/CLI/E2E後にnpm run checkとgit diff --check。"
+  title "Make project metadata readable and editable through the CLI"
+  description "Create: src/application/project.ts, src/mutation/project.ts, and test/project-metadata.test.mjs. Modify: requirements, mutation and interface specifications, basic design, CLI, public API, help, package smoke, and the AI workflow. Accept: Return every project metadata field, including velocity, through project show text/JSON; connect project set to preview-first safe write and atomic batch. Test: Run the narrow Core/CLI/E2E checks, then npm run check and git diff --check."
   duration 5p
   status done
   priority 100

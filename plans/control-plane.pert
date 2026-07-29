@@ -1,75 +1,73 @@
 project AI_CONTROL_PLANE_DESIGN:
   version 1
-  title "AI工程制御planeの設計"
+  title "AI Project Control Plane design"
   description |
-    GitHub Issue #1を、実行可否と推奨度を分離した決定的かつ説明可能な
-    task recommendation契約へ具体化する。今回は設計のみを扱い、実装は含めない。
-    Pointは設計開始時の相対見積りを保持し、構造化説明model追加後のend-to-end forecastは13pとする。
-    Velocityは2026-07-22の完了9 task、16p、1 active dayの実測へrecalibrationした。
-    2026-07-22のcalibration時点で未完了だったDESIGN_REVIEWは循環を避けて標本に含めず、
-    完了実績は次回calibrationの標本へ送る。
+    Turn GitHub Issue #1 into a deterministic and explainable task-recommendation contract that separates execution eligibility from recommendation strength. This plan covers design only and excludes implementation.
+    Points retain the relative estimates from the start of design; the end-to-end forecast after adding the structured explanation model is 13p.
+    Velocity was recalibrated to the measured 16p/1d from nine tasks completed on 2026-07-22.
+    DESIGN_REVIEW was incomplete at the calibration point and was excluded to avoid a cycle; its completed result is deferred to the next calibration sample.
   as_of 2026-07-22
   duration_unit point
   velocity 16p/1d
   finish CONTROL_PLANE_DESIGN_ACCEPTED
 
 resource DESIGNERS:
-  title "要件・仕様設計枠"
+  title "Requirements and specification design capacity"
   capacity 2
 
 resource REVIEWERS:
-  title "設計受け入れレビュー枠"
+  title "Design acceptance review capacity"
   capacity 1
 
 milestone NOW:
-  title "Issue #1起票済み"
+  title "Issue #1 filed"
   state reached
 
 milestone VISION_DEFINED:
-  title "product visionと設計境界確定"
+  title "Product vision and design boundary defined"
 
 milestone RECOMMENDATION_MODEL_DEFINED:
-  title "実行可否と推奨度model確定"
+  title "Execution eligibility and recommendation model defined"
 
 milestone RANKING_POLICY_DEFINED:
-  title "deterministic ranking policy確定"
+  title "Deterministic ranking policy defined"
 
 milestone REASON_CODES_DEFINED:
-  title "stable reason code確定"
+  title "Stable reason codes defined"
 
 milestone EXPLANATION_INPUT_READY:
-  title "構造化説明の設計入力確定"
+  title "Structured-explanation design input ready"
 
 milestone STRUCTURED_EXPLANATION_DEFINED:
-  title "構造化reason descriptionとdecision trace確定"
+  title "Structured reason descriptions and decision traces defined"
 
 milestone CONTRACT_INPUT_READY:
-  title "interface設計入力確定"
+  title "Interface design input ready"
 
 milestone INTERFACE_CONTRACT_DEFINED:
-  title "textとJSONのinterface契約確定"
+  title "Text and JSON interface contract defined"
 
 milestone OVERRIDE_CONTRACT_DEFINED:
-  title "human override契約確定"
+  title "Human override contract defined"
 
 milestone VALIDATION_INPUT_READY:
-  title "exampleとmigrationの設計入力確定"
+  title "Example and migration design input ready"
 
 milestone NORMATIVE_EXAMPLES_DEFINED:
-  title "normative exampleとtest観点確定"
+  title "Normative examples and test perspectives defined"
 
 milestone PROCESS_MIGRATION_DEFINED:
-  title "self-useとmigration方針確定"
+  title "Self-use and migration policy defined"
 
 milestone DESIGN_REVIEW_READY:
-  title "設計受け入れレビュー可能"
+  title "Design ready for acceptance review"
 
 milestone CONTROL_PLANE_DESIGN_ACCEPTED:
-  title "Issue #1設計完了"
+  title "Issue #1 design complete"
 
 task VISION_REQUIREMENTS NOW -> VISION_DEFINED:
-  title "AI Project Control Planeの目的と境界を要件化する"
-  description "source of truth、global objective、determinism、non-goalをrequirementsへ定義する"
+  title "Define the purpose and boundary of the AI Project Control Plane"
+  description "Define the source of truth, global objective, determinism, and non-goals in the requirements"
   duration 2p
   status done
   priority 100
@@ -77,8 +75,8 @@ task VISION_REQUIREMENTS NOW -> VISION_DEFINED:
     DESIGNERS 1
 
 task RECOMMENDATION_MODEL VISION_DEFINED -> RECOMMENDATION_MODEL_DEFINED:
-  title "実行可否と推奨度のmodelを定義する"
-  description "lifecycle/eligibility、resource selection、recommendation tierを分離し、各tierの形式的意味と構造化説明の必須性を固定する"
+  title "Define the execution-eligibility and recommendation model"
+  description "Separate lifecycle and eligibility, resource selection, and recommendation tiers; fix each tier's formal meaning and the requirement for structured explanations"
   duration 2p
   status done
   priority 90
@@ -86,8 +84,8 @@ task RECOMMENDATION_MODEL VISION_DEFINED -> RECOMMENDATION_MODEL_DEFINED:
     DESIGNERS 1
 
 task RANKING_POLICY RECOMMENDATION_MODEL_DEFINED -> RANKING_POLICY_DEFINED:
-  title "決定的なranking policyを定義する"
-  description "critical、float、priority、unlock、gate/milestone distance、resourceの優先規則、完全なtie-break、winner/alternativeと決定ruleのtraceを固定する"
+  title "Define a deterministic ranking policy"
+  description "Fix precedence rules for criticality, float, priority, unlocks, gate and milestone distance, and resources, plus a complete tie-break and a trace of winners, alternatives, and decision rules"
   duration 2p
   status done
   priority 80
@@ -95,8 +93,8 @@ task RANKING_POLICY RECOMMENDATION_MODEL_DEFINED -> RANKING_POLICY_DEFINED:
     DESIGNERS 1
 
 task REASON_CODE_TAXONOMY RECOMMENDATION_MODEL_DEFINED -> REASON_CODES_DEFINED:
-  title "stable reason code taxonomyを定義する"
-  description "各codeの発生条件、polarity、関連factと未model化情報の扱いを固定する"
+  title "Define the stable reason-code taxonomy"
+  description "Fix the trigger condition and polarity of each code and the treatment of related facts and unmodeled information"
   duration 2p
   status done
   priority 80
@@ -104,8 +102,8 @@ task REASON_CODE_TAXONOMY RECOMMENDATION_MODEL_DEFINED -> REASON_CODES_DEFINED:
     DESIGNERS 1
 
 task HUMAN_OVERRIDE_CONTRACT RECOMMENDATION_MODEL_DEFINED -> OVERRIDE_CONTRACT_DEFINED:
-  title "human overrideの意味とaudit方針を定義する"
-  description "write commandは実装せず、override reasonと再解析契約だけを設計する"
+  title "Define human override semantics and audit policy"
+  description "Design only the override reason and reanalysis contract; do not implement a write command"
   duration 1p
   status done
   priority 60
@@ -113,14 +111,14 @@ task HUMAN_OVERRIDE_CONTRACT RECOMMENDATION_MODEL_DEFINED -> OVERRIDE_CONTRACT_D
     DESIGNERS 1
 
 gate RANKING_EXPLANATION_INPUT RANKING_POLICY_DEFINED -> EXPLANATION_INPUT_READY:
-  reason "構造化decision traceにはranking policyが必要"
+  reason "A structured decision trace requires the ranking policy"
 
 gate REASON_EXPLANATION_INPUT REASON_CODES_DEFINED -> EXPLANATION_INPUT_READY:
-  reason "構造化reason descriptionにはreason code taxonomyが必要"
+  reason "Structured reason descriptions require the reason-code taxonomy"
 
 task STRUCTURED_EXPLANATION_MODEL EXPLANATION_INPUT_READY -> STRUCTURED_EXPLANATION_DEFINED:
-  title "構造化reason descriptionとdecision traceを定義する"
-  description "typed fact、制限付きexpression AST、comparison、decisive/supporting、description keyとparamsを固定し、自然言語textを派生表示とする"
+  title "Define structured reason descriptions and decision traces"
+  description "Fix typed facts, a restricted expression AST, comparisons, decisive and supporting roles, and description keys and parameters; make natural-language text a derived projection"
   duration 2p
   status done
   priority 75
@@ -128,11 +126,11 @@ task STRUCTURED_EXPLANATION_MODEL EXPLANATION_INPUT_READY -> STRUCTURED_EXPLANAT
     DESIGNERS 1
 
 gate EXPLANATION_CONTRACT_INPUT STRUCTURED_EXPLANATION_DEFINED -> CONTRACT_INPUT_READY:
-  reason "interface契約には構造化説明modelが必要"
+  reason "The interface contract requires the structured-explanation model"
 
 task INTERFACE_CONTRACT CONTRACT_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
-  title "Core、text、JSONのrecommendation契約を定義する"
-  description "schema migration、algorithm version、higher-priority参照、decision trace、description projectionとadapter責務を固定する"
+  title "Define the Core, text, and JSON recommendation contract"
+  description "Fix schema migration, algorithm versions, higher-priority references, decision traces, description projection, and adapter responsibilities"
   duration 2p
   status done
   priority 70
@@ -140,14 +138,14 @@ task INTERFACE_CONTRACT CONTRACT_INPUT_READY -> INTERFACE_CONTRACT_DEFINED:
     DESIGNERS 1
 
 gate INTERFACE_VALIDATION_INPUT INTERFACE_CONTRACT_DEFINED -> VALIDATION_INPUT_READY:
-  reason "normative exampleとmigrationにはinterface契約が必要"
+  reason "Normative examples and migration require the interface contract"
 
 gate OVERRIDE_VALIDATION_INPUT OVERRIDE_CONTRACT_DEFINED -> VALIDATION_INPUT_READY:
-  reason "normative exampleとmigrationにはoverride契約が必要"
+  reason "Normative examples and migration require the override contract"
 
 task NORMATIVE_EXAMPLES VALIDATION_INPUT_READY -> NORMATIVE_EXAMPLES_DEFINED:
-  title "競合ケースのnormative exampleとtest観点を定義する"
-  description "critical対priority、resource競合、parallel推奨、gate近傍、全blockedと、なぜAでBではないかのdecision traceを含める"
+  title "Define normative conflict examples and test perspectives"
+  description "Cover criticality versus priority, resource conflicts, parallel recommendations, proximity to a gate, all-blocked input, and a decision trace explaining why A rather than B"
   duration 2p
   status done
   priority 50
@@ -155,8 +153,8 @@ task NORMATIVE_EXAMPLES VALIDATION_INPUT_READY -> NORMATIVE_EXAMPLES_DEFINED:
     DESIGNERS 1
 
 task PROCESS_MIGRATION VALIDATION_INPUT_READY -> PROCESS_MIGRATION_DEFINED:
-  title "self-use flowと実装migration順序を設計する"
-  description "basic designとAI processを整合し、設計後に実装planを再構成できる粒度へ分解する"
+  title "Design the self-use flow and implementation migration order"
+  description "Align the basic design and AI process, then decompose the work finely enough to reconstruct an implementation plan after design"
   duration 1p
   status done
   priority 40
@@ -164,14 +162,14 @@ task PROCESS_MIGRATION VALIDATION_INPUT_READY -> PROCESS_MIGRATION_DEFINED:
     DESIGNERS 1
 
 gate EXAMPLES_REVIEW_INPUT NORMATIVE_EXAMPLES_DEFINED -> DESIGN_REVIEW_READY:
-  reason "設計受け入れにはnormative exampleが必要"
+  reason "Design acceptance requires normative examples"
 
 gate PROCESS_REVIEW_INPUT PROCESS_MIGRATION_DEFINED -> DESIGN_REVIEW_READY:
-  reason "設計受け入れにはself-useとmigration方針が必要"
+  reason "Design acceptance requires the self-use and migration policy"
 
 task DESIGN_REVIEW DESIGN_REVIEW_READY -> CONTROL_PLANE_DESIGN_ACCEPTED:
-  title "Issue #1の設計完了条件を横断レビューする"
-  description "requirements、spec、design、example、process、interfaceの整合を確認する"
+  title "Review the Issue #1 design completion criteria across all surfaces"
+  description "Confirm consistency across requirements, specifications, design, examples, process, and interfaces"
   duration 1p
   status done
   priority 30

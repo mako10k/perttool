@@ -1,55 +1,54 @@
 project GRAMMAR:
   version 1
-  title "DSL文法の受け入れ作業"
+  title "DSL grammar acceptance work"
   description |
-    parser、formatter、help同期の受け入れ作業は完了した。
-    done taskはadvanceのwrite gateが成立するまで保持し、過去はGit履歴を参照する。
-    相対規模をPointで保持し、2026-07-22の直近完了2 task、3p、1 active dayの
-    実測Velocityで日数を予測する。
+    Parser, formatter, and help-synchronization acceptance is complete.
+    Done tasks remain until the advance write gate is satisfied; use Git history for the past.
+    Points retain relative scale, and day forecasts use the measured velocity from the two most recently completed tasks on 2026-07-22: 3p over one active day.
   as_of 2026-07-22
   duration_unit point
   velocity 3p/1d
   finish GRAMMAR_READY
 
 resource DEVELOPERS:
-  title "実装担当枠"
+  title "Implementation capacity"
   capacity 2
 
 resource GRAMMAR_REVIEW:
-  title "文法レビュー枠"
-  description "受け入れfixtureの基準判断は同時に1件だけ行う"
+  title "Grammar review capacity"
+  description "Only one acceptance-fixture decision runs at a time"
   capacity 1
 
 milestone NOW:
-  title "現在"
+  title "Current state"
   state reached
 
 milestone FIELDS_VERIFIED:
-  title "各fieldの受け入れ確認完了"
+  title "All fields accepted"
 
 milestone RECOVERY_VERIFIED:
-  title "error recovery確認完了"
+  title "Error recovery accepted"
 
 milestone TEXT_SPANS_VERIFIED:
-  title "block textとsource span確認完了"
+  title "Block text and source spans accepted"
 
 milestone PARSER_ACCEPTED:
-  title "parser受け入れ完了"
+  title "Parser accepted"
 
 milestone FORMATTER_IMPLEMENTED:
-  title "formatter実装完了"
+  title "Formatter implemented"
 
 milestone FORMATTER_ACCEPTED:
-  title "formatter受け入れ完了"
+  title "Formatter accepted"
 
 milestone HELP_SYNCHRONIZED:
-  title "helpとfixtureの同期完了"
+  title "Help and fixtures synchronized"
 
 milestone GRAMMAR_READY:
-  title "文法slice完了"
+  title "Grammar slice complete"
 
 task FIELD_FIXTURES NOW -> FIELDS_VERIFIED:
-  title "全declaration fieldとinvalid tokenのfixtureを揃える"
+  title "Cover every declaration field and invalid token with fixtures"
   duration 2p
   status done
   priority 30
@@ -58,7 +57,7 @@ task FIELD_FIXTURES NOW -> FIELDS_VERIFIED:
     GRAMMAR_REVIEW 1
 
 task ERROR_RECOVERY NOW -> RECOVERY_VERIFIED:
-  title "複数error recoveryとdiagnostic suppressionを検査する"
+  title "Verify multiple-error recovery and diagnostic suppression"
   duration 3p
   status done
   priority 40
@@ -67,7 +66,7 @@ task ERROR_RECOVERY NOW -> RECOVERY_VERIFIED:
     GRAMMAR_REVIEW 1
 
 task BLOCK_TEXT_SPANS NOW -> TEXT_SPANS_VERIFIED:
-  title "block textのcommon indentとUTF-16 spanを検査する"
+  title "Verify common indentation and UTF-16 spans for block text"
   duration 2p
   status done
   priority 20
@@ -75,16 +74,16 @@ task BLOCK_TEXT_SPANS NOW -> TEXT_SPANS_VERIFIED:
     DEVELOPERS 1
 
 gate FIELDS_ACCEPTANCE FIELDS_VERIFIED -> PARSER_ACCEPTED:
-  reason "全fieldの受け入れ確認が必要"
+  reason "Acceptance of every field is required"
 
 gate RECOVERY_ACCEPTANCE RECOVERY_VERIFIED -> PARSER_ACCEPTED:
-  reason "error recoveryの受け入れ確認が必要"
+  reason "Acceptance of error recovery is required"
 
 gate TEXT_SPANS_ACCEPTANCE TEXT_SPANS_VERIFIED -> PARSER_ACCEPTED:
-  reason "block textとsource spanの受け入れ確認が必要"
+  reason "Acceptance of block text and source spans is required"
 
 task FORMATTER_IMPLEMENT PARSER_ACCEPTED -> FORMATTER_IMPLEMENTED:
-  title "source-preserving formatterを実装する"
+  title "Implement the source-preserving formatter"
   duration 3p
   status done
   priority 20
@@ -92,7 +91,7 @@ task FORMATTER_IMPLEMENT PARSER_ACCEPTED -> FORMATTER_IMPLEMENTED:
     DEVELOPERS 1
 
 task HELP_FIXTURE_SYNC PARSER_ACCEPTED -> HELP_SYNCHRONIZED:
-  title "syntax help sampleとparser fixtureのdrift検査を追加する"
+  title "Detect drift between syntax help samples and parser fixtures"
   duration 1p
   status done
   priority 10
@@ -101,7 +100,7 @@ task HELP_FIXTURE_SYNC PARSER_ACCEPTED -> HELP_SYNCHRONIZED:
     GRAMMAR_REVIEW 1
 
 task FORMATTER_ROUNDTRIP FORMATTER_IMPLEMENTED -> FORMATTER_ACCEPTED:
-  title "formatterのidempotenceとAST同値をgoldenで検査する"
+  title "Verify formatter idempotence and AST equivalence with goldens"
   duration 2p
   status done
   priority 30
@@ -110,7 +109,7 @@ task FORMATTER_ROUNDTRIP FORMATTER_IMPLEMENTED -> FORMATTER_ACCEPTED:
     GRAMMAR_REVIEW 1
 
 gate FORMATTER_READY FORMATTER_ACCEPTED -> GRAMMAR_READY:
-  reason "formatterの受け入れ完了が必要"
+  reason "Formatter acceptance is required"
 
 gate HELP_READY HELP_SYNCHRONIZED -> GRAMMAR_READY:
-  reason "helpとfixtureの同期完了が必要"
+  reason "Help and fixture synchronization is required"

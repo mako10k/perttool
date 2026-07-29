@@ -2,9 +2,9 @@ project ENGLISH_BASELINE:
   version 1
   title "English repository baseline migration"
   description "Migrate repository-maintained prose, bundled help, and diagnostics to the English baseline adopted by ADR 0004. The canonical surface inventory and Unicode allowlist are recorded in docs/process/english-surface-inventory.md. Remaining migration work is tracked by the current tasks. Runtime i18n, translation catalogs, locale negotiation, and translation of user-authored content remain outside this plan."
-  as_of 2026-07-24
+  as_of 2026-07-29
   duration_unit point
-  velocity 33p/1d
+  velocity 36p/2d
   finish ENGLISH_BASELINE_ACCEPTED
 
 resource DEVELOPERS:
@@ -67,6 +67,7 @@ task PERT_PLANS SURFACE_INVENTORY_READY -> PERT_PLANS_READY:
     evidence prose without changing IDs, topology, estimates, state, priority,
     or resource requirements. Do not reconstruct completed history from Git.
   duration 3p
+  status done
   priority 80
   requires:
     DEVELOPERS 1
