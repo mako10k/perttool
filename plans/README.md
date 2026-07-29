@@ -110,9 +110,14 @@ goldens, package contents, and the shared agent entrypoints. The
 [final acceptance record](../docs/process/english-baseline-acceptance.md)
 also confirms the exact three-line Japanese-script allowlist and the absence
 of runtime locale negotiation, translation catalogs, or a `--locale` option.
-All nine tasks and 42p are accepted over two active dates. The completed plan
-has zero precedence and heuristic resource makespans, no remaining or
-recommended task, and measured velocity `42p/2d`.
+The completed pre-advance digest is
+`sha256:e9b306ff0423ad8bc8114a1c1c35affae60e6cd79f1f52fa9cd997c3a7727462`,
+recorded by Git commit `2001cdf`. Governed advance and the accepted-state
+description sync leave residual digest
+`sha256:160e1af66d7bc8c2c8ea6b7a9f62ad7b533ec74e1ae1adc3b5d9f176745362a4`.
+All nine tasks and 42p are accepted and advanced over two active dates. The
+completed plan has zero precedence and heuristic resource makespans, no
+remaining or recommended task, and measured velocity `42p/2d`.
 
 All nine `cli-surface-reset.pert` tasks, totaling 49p from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE`, completed and advanced on 2026-07-24. The active Contract 3 surface uses one typed registry for dispatch and help, separates domain guidance, provides structured usage recovery, exposes project initialization and direct gate maintenance, adds the contract version to every JSON envelope, rejects renamed Contract 2 spellings, and passes the complete isolated installed-package file-first workflow. The detail plan has no remaining or recommended task, and its cumulative plan-specific velocity is `49p/1d`.
 

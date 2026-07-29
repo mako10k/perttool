@@ -719,6 +719,26 @@ with no resource delay, both forecasts are `2/13d`, and complete
 [golden and Unicode audit acceptance record](english-golden-unicode-acceptance.md)
 fixes the allowlist, invariant evidence, verification, and non-goals.
 
+`ENGLISH_ACCEPTANCE` then traced ADR 0004 through requirements, design,
+runtime and diagnostics, help and usage, documentation, plans, tests and
+goldens, package contents, and the shared agent entrypoints. The full gate
+passed 641 tests, 437 scanned text files with exactly three allowlisted lines,
+96 Markdown documents, seven PERT examples, all 20 self-use plans, and the
+link/package workflows. An expected-digest atomic batch recalibrated the
+cumulative sample to `42p/2d` and finished the 3p task. The exact completed
+pre-advance digest is
+`sha256:e9b306ff0423ad8bc8114a1c1c35affae60e6cd79f1f52fa9cd997c3a7727462`,
+recorded by Git commit `2001cdf`. Governed `dag advance` removed the task and
+prior frontier, retained reached `ENGLISH_BASELINE_ACCEPTED`, and preserved an
+empty ready set. A source-preserving `project set` synchronized the accepted
+description; the final residual digest is
+`sha256:160e1af66d7bc8c2c8ea6b7a9f62ad7b533ec74e1ae1adc3b5d9f176745362a4`.
+All nine tasks and 42p are accepted over two active dates. Precedence and
+heuristic resource makespans are zero, and complete NextResult v5 has no ready,
+recommended, or startable task. The
+[final acceptance record](english-baseline-acceptance.md) fixes the trace,
+verification, plan evidence, and non-goals.
+
 `CLI_001_COMMAND_REGISTRY` then selected `src/command/registry.ts` as the immutable typed registry for all 22 active Contract 2 commands. Dispatch lookup, accepted-option parsing, exact text help, deterministic JSON descriptor projections, operands, defaults, conflicts, input/output modes, effects, result schemas, exit statuses, and examples now share the expanded descriptors. Completeness tests fail when a command path, option, handler, help projection, schema, or example is missing; the public Contract 2 help bytes remain unchanged and `project init` remains unavailable backlog item `MUT-001`. All 255 tests, documentation, eight self-use plans, link checks, and package inspections passed. An atomic batch recalibrated the cumulative plan velocity to `13p/1d` and finished the 8p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:a2efa9b0ef7d1c55cc2892de03ff8dd83e101e98864dd0916e0ebc5abc2c6e0c`. Seven tasks and 36p remain; precedence is 20p, the heuristic resource makespan is 36p with 16p resource delay, and the resource forecast is `36/13d`. Fresh complete `NextResult.v3` recommends `HELP_001_COMMAND_DISCOVERY`.
 
 `HELP_001_COMMAND_DISCOVERY` then added the pure Contract 3 preview in `src/command/discovery.ts`. It derives 23 implemented target paths, accepted renames, examples, resource order, top-level/resource/action lookup, `Perttool.CommandHelpResult.v1`, and deterministic text/JSON from the expanded descriptors. Unknown resources and actions return `PTHLP-002` and `PTHLP-003`; isolated-process tests verify no project read, filesystem mutation, environment discovery, or non-local dependency. `project init` and gate maintenance remain absent because they are not implemented, and the active Contract 2 CLI still rejects public Contract 3 names. All 261 tests, documentation, eight self-use plans, link checks, and package inspections passed. An atomic batch recalibrated cumulative velocity to `18p/1d` and finished the 5p task; `dag advance` then removed the completed edge with an expected-digest safe write. The resulting digest is `sha256:555c2fd30244a590184bbe3b953b872cbc5caf59152d6ba92759b7749daf20f0`. Six tasks and 31p remain; precedence is 18p, the heuristic resource makespan is 31p with 13p resource delay, and the forecasts are `1d` and `31/18d`. Fresh complete `NextResult.v3` recommends `MUT_002_GATE_MAINTENANCE`; `project init` remains backlog item `MUT-001`.
@@ -1262,7 +1282,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - the suffix-free `v0.1.0` beta is accepted, and the macro has advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3 is a future backlog-hierarchy and multi-plan-composition design and does not add work packages to the current macro
 - the LSP server, VSIX, and MCP server are independent post-first-beta backlogs and do not add work packages to the current macro
-- The independent English-baseline migration completed all nine tasks through `ENGLISH_ACCEPTANCE`; the final acceptance record traces ADR 0004 across the canonical surfaces, and complete NextResult v5 has no ready, recommended, or startable task.
+- The independent English-baseline migration completed and advanced all nine tasks through `ENGLISH_ACCEPTANCE`; commit `2001cdf` records the final-task pre-advance snapshot, the final acceptance record traces ADR 0004 across the canonical surfaces, and complete NextResult v5 has no ready, recommended, or startable task.
 
 For the explicitly selected scheduling-and-units workstream, first use a fresh
 complete `NextResult.v3` from `scheduling-units.pert` to select the milestone

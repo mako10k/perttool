@@ -1,8 +1,7 @@
 # English repository baseline acceptance
 
-Status: Accepted on 2026-07-29. The exact completed pre-advance snapshot is
-the Git commit that first contains this record; its identifier is added after
-that commit without changing the accepted plan snapshot.
+Status: Accepted and advanced on 2026-07-29. Git commit `2001cdf` records the
+exact completed pre-advance snapshot.
 
 ## Decision
 
@@ -97,10 +96,18 @@ two active dates. Precedence and the `parallel-sgs` version 1 heuristic
 resource makespans are zero with no resource delay. Complete, non-truncated
 `Perttool.NextResult.v5` has no ready, recommended, or startable task.
 
-Governed `dag advance` subsequently removes `ENGLISH_ACCEPTANCE` and its prior
-frontier while retaining reached `ENGLISH_BASELINE_ACCEPTED`. The residual
-digest and exact removal evidence are recorded here after that separate
-advance.
+Governed `dag advance` removed `ENGLISH_ACCEPTANCE` and prior frontier
+milestone `GOLDEN_UNICODE_READY`, then retained reached
+`ENGLISH_BASELINE_ACCEPTED`. It preserved
+`frontier_before=frontier_after=[ENGLISH_BASELINE_ACCEPTED]` and
+`ready_before=ready_after=[]`; the advance candidate digest was
+`sha256:94cfd86cf05c78c5986f0e6dbaf426cb9b3c67826c32c23cddc9522d34704d8a`.
+
+A separate source-preserving `project set` then replaced the stale
+remaining-work description with the accepted-state description. It did not
+change the goal, finish, DAG, velocity, or other project metadata. The final
+residual source digest is
+`sha256:160e1af66d7bc8c2c8ea6b7a9f62ad7b533ec74e1ae1adc3b5d9f176745362a4`.
 
 ## Explicit non-goals
 

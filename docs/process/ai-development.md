@@ -169,10 +169,11 @@ The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.m
 The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
 ADR 0004 adopts English as the repository baseline immediately. All nine tasks
-in `plans/english-baseline.pert` are accepted. The machine-readable allowlist
-and scanner are recorded in `english-surface-inventory.md`, the final
-cross-surface trace is recorded in `english-baseline-acceptance.md`, and fresh
-complete NextResult v5 has no ready, recommended, or startable task.
+in `plans/english-baseline.pert` are accepted and advanced; commit `2001cdf`
+records the final-task pre-advance snapshot. The machine-readable allowlist and
+scanner are recorded in `english-surface-inventory.md`, the final cross-surface
+trace is recorded in `english-baseline-acceptance.md`, and fresh complete
+NextResult v5 has no ready, recommended, or startable task.
 
 The human/LLM CLI surface review and its eight backlog items are also tracked
 as an independent post-beta workstream in
