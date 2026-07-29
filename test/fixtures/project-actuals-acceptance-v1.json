@@ -1,0 +1,237 @@
+{
+  "schema_version": "Perttool.ProjectActualsAcceptanceTrace.v1",
+  "contract_cases": "test/fixtures/project-actuals-contract-v1.json",
+  "cases": [
+    {
+      "id": "PACT-001",
+      "evidence": [
+        {
+          "file": "test/project-actuals-finish.test.mjs",
+          "test": "eventful finish is one source-preserving Grammar 5 candidate"
+        },
+        {
+          "file": "test/project-actuals-public-contract.test.mjs",
+          "test": "Contract 6 publishes Grammar 5 lifecycle, history, and observation without Git or velocity mutation"
+        }
+      ]
+    },
+    {
+      "id": "PACT-002",
+      "evidence": [
+        {
+          "file": "test/project-actuals-finish.test.mjs",
+          "test": "finish validates explicit request time and exact measurement units"
+        },
+        {
+          "file": "test/project-actuals-lifecycle.test.mjs",
+          "test": "start, suspend, and resume append exact evidence atomically"
+        }
+      ]
+    },
+    {
+      "id": "PACT-003",
+      "evidence": [
+        {
+          "file": "test/project-actuals-history.test.mjs",
+          "test": "project history deduplicates declared events and retains advance removal"
+        }
+      ]
+    },
+    {
+      "id": "PACT-004",
+      "evidence": [
+        {
+          "file": "test/project-actuals-finish.test.mjs",
+          "test": "finish-only preserves the exact estimate baseline and clears legacy block"
+        },
+        {
+          "file": "test/project-actuals-history.test.mjs",
+          "test": "finish-only history uses the last committed pre-advance task value"
+        }
+      ]
+    },
+    {
+      "id": "PACT-005",
+      "evidence": [
+        {
+          "file": "test/project-actuals-lifecycle.test.mjs",
+          "test": "suspended tasks retain duration but release resources and remain separately classified"
+        }
+      ]
+    },
+    {
+      "id": "PACT-006",
+      "evidence": [
+        {
+          "file": "test/project-actuals-finish.test.mjs",
+          "test": "identical finish retry is a no-op and payload drift is PTACT-106"
+        },
+        {
+          "file": "test/project-actuals-lifecycle.test.mjs",
+          "test": "lifecycle transitions fail closed on wrong state, legacy gaps, and identity drift"
+        }
+      ]
+    },
+    {
+      "id": "PACT-007",
+      "evidence": [
+        {
+          "file": "test/project-actuals-finish.test.mjs",
+          "test": "actuals advance removes only events owned by removed tasks"
+        },
+        {
+          "file": "test/project-actuals-history.test.mjs",
+          "test": "project history deduplicates declared events and retains advance removal"
+        }
+      ]
+    },
+    {
+      "id": "PACT-008",
+      "evidence": [
+        {
+          "file": "test/project-actuals-history.test.mjs",
+          "test": "legacy Git transitions retain recorded provenance without actual time"
+        }
+      ]
+    },
+    {
+      "id": "PACT-009",
+      "evidence": [
+        {
+          "file": "test/project-actuals-history.test.mjs",
+          "test": "shallow history remains incomplete and never invents actual evidence"
+        }
+      ]
+    },
+    {
+      "id": "PACT-010",
+      "evidence": [
+        {
+          "file": "test/project-actuals-observation.test.mjs",
+          "test": "parallel completed work yields one exact window and separate effort productivity"
+        }
+      ]
+    },
+    {
+      "id": "PACT-011",
+      "evidence": [
+        {
+          "file": "test/project-actuals-observation.test.mjs",
+          "test": "parallel completed work yields one exact window and separate effort productivity"
+        }
+      ]
+    },
+    {
+      "id": "PACT-012",
+      "evidence": [
+        {
+          "file": "test/project-actuals-public-contract.test.mjs",
+          "test": "Contract 6 publishes Grammar 5 lifecycle, history, and observation without Git or velocity mutation"
+        },
+        {
+          "file": "test/project-actuals-observation.test.mjs",
+          "test": "Git-recorded throughput remains separate and never becomes adoptable actual velocity"
+        }
+      ]
+    },
+    {
+      "id": "PACT-013",
+      "evidence": [
+        {
+          "file": "test/project-actuals-observation.test.mjs",
+          "test": "active-date observation uses evidenced dates and fails closed on offset or interval gaps"
+        }
+      ]
+    },
+    {
+      "id": "PACT-014",
+      "evidence": [
+        {
+          "file": "test/project-actuals-source-core.test.mjs",
+          "test": "Grammar 1 through 4 remain closed while active Grammar 5 accepts suspended and contextual IDs"
+        },
+        {
+          "file": "test/project-actuals-public-contract.test.mjs",
+          "test": "Contract 6 keeps legacy status-only finish and rejects it for Grammar 5"
+        }
+      ]
+    }
+  ],
+  "surfaces": [
+    {
+      "id": "requirements_and_cases",
+      "file": "test/project-actuals-design.test.mjs",
+      "test": "project actuals contract fixes source, public, and evidence boundaries"
+    },
+    {
+      "id": "source_core",
+      "file": "test/project-actuals-source-core.test.mjs",
+      "test": "canonical Grammar 5 source validates and projects exact task-owned events"
+    },
+    {
+      "id": "lifecycle",
+      "file": "test/project-actuals-public-contract.test.mjs",
+      "test": "Contract 6 publishes Grammar 5 lifecycle, history, and observation without Git or velocity mutation"
+    },
+    {
+      "id": "advance",
+      "file": "test/project-actuals-finish.test.mjs",
+      "test": "actuals advance removes only events owned by removed tasks"
+    },
+    {
+      "id": "real_git_history",
+      "file": "test/project-actuals-history.test.mjs",
+      "test": "project history deduplicates declared events and retains advance removal"
+    },
+    {
+      "id": "core_observation",
+      "file": "test/project-actuals-observation.test.mjs",
+      "test": "parallel completed work yields one exact window and separate effort productivity"
+    },
+    {
+      "id": "cli",
+      "file": "test/project-actuals-public-contract.test.mjs",
+      "test": "Contract 6 publishes Grammar 5 lifecycle, history, and observation without Git or velocity mutation"
+    },
+    {
+      "id": "schemas",
+      "file": "test/command-registry.test.mjs",
+      "test": "the Contract 6 registry covers the complete active surface exactly once"
+    },
+    {
+      "id": "help",
+      "file": "test/guide.test.mjs",
+      "test": "Contract 6 guide preserves every HelpNode topic and content level"
+    },
+    {
+      "id": "package_root",
+      "file": "test/project-actuals-public-contract.test.mjs",
+      "test": "Contract 6 package root exposes actuals services without target names"
+    },
+    {
+      "id": "linked_cli",
+      "file": "scripts/check-npm-link.sh",
+      "contains": [
+        "test/fixtures/project-actuals-v5.pert",
+        "\"$linked_cli\" task start",
+        "Perttool.MutationResult.v3"
+      ]
+    },
+    {
+      "id": "installed_workflow",
+      "file": "scripts/check-package.sh",
+      "contains": [
+        "scripts/check-package-actuals.mjs"
+      ]
+    },
+    {
+      "id": "published_contract_5_record",
+      "file": "docs/process/0.4.0-release-acceptance.md",
+      "contains": [
+        "Grammar 4 and CLI",
+        "Contract 5 package",
+        "perttool@0.4.0"
+      ]
+    }
+  ]
+}

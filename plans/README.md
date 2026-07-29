@@ -165,13 +165,18 @@ analysis/Next results, history, observation, package root, 33-command
 registry, help, Guide, schemas, diagnostics, examples, and isolated installed
 workflow. The acceptance record is
 [`project-actuals-public-contract-acceptance.md`](../docs/process/project-actuals-public-contract-acceptance.md).
-One task and 4p remain. Precedence and the `parallel-sgs` version 1 heuristic
-resource makespan are both 4p with no resource delay. At the inherited
-operations velocity `29p/2d`, both forecasts are `8/29d`. Complete NextResult
-v5 recommends and starts only `ACTUALS_ACCEPTANCE`. Git mutation, automatic
-declared-velocity changes, MIG-08, release publication, and dist-tag movement
-remain outside the authorized scope. This independent workstream does not
-displace `PERT_PLANS` in the English-baseline detail.
+`ACTUALS_ACCEPTANCE` is complete and retained as done pending its required
+pre-advance commit. Its fourteen-case executable trace covers requirements,
+source, lifecycle, task-owned advance removal, real first-parent Git
+histories, Core, CLI, schemas, help, package root, temporary link, and
+isolated installed workflows. The acceptance record is
+[`project-actuals-acceptance.md`](../docs/process/project-actuals-acceptance.md).
+All nine tasks and 47p are complete. Precedence and the `parallel-sgs`
+version 1 heuristic resource makespan are both zero with no resource delay,
+and complete NextResult v5 has no ready, recommended, or startable task. Git
+mutation, automatic declared-velocity changes, MIG-08, release publication,
+and dist-tag movement remain outside the authorized scope. This independent
+workstream does not displace `PERT_PLANS` in the English-baseline detail.
 
 Velocityは初期見積りを固定し続けず、task完了commitのPointとAsia/Tokyoのactive date数からplanごとに再calibrationする。2026-07-22から23の実測値はgrammarが`3p/1d`、control-plane設計が`16p/1d`、操作系が`29p/2d`、recommendationが`22p/1d`、agent guidanceが`22p/1d`である。操作系以外はまだ1 active dayだけの暫定値であり、算定根拠とmacroの6 decimal day roundは[自己利用計画](../docs/process/self-use.md)を正とする。
 

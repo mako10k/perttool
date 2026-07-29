@@ -106,6 +106,86 @@ test("all fourteen PACT cases have a dependency-ordered machine fixture", async 
   }
 });
 
+test("all fourteen PACT cases retain executable acceptance evidence", async () => {
+  const [contractText, traceText] = await Promise.all([
+    repositoryText("test/fixtures/project-actuals-contract-v1.json"),
+    repositoryText("test/fixtures/project-actuals-acceptance-v1.json"),
+  ]);
+  const contract = JSON.parse(contractText);
+  const trace = JSON.parse(traceText);
+
+  assert.equal(
+    trace.schema_version,
+    "Perttool.ProjectActualsAcceptanceTrace.v1",
+  );
+  assert.equal(
+    trace.contract_cases,
+    "test/fixtures/project-actuals-contract-v1.json",
+  );
+  assert.deepEqual(
+    trace.cases.map(({ id }) => id),
+    contract.cases.map(({ id }) => id),
+  );
+
+  const sourceCache = new Map();
+  async function evidenceSource(file) {
+    if (!sourceCache.has(file)) {
+      sourceCache.set(file, await repositoryText(file));
+    }
+    return sourceCache.get(file);
+  }
+  async function assertEvidence(evidence, label) {
+    const source = await evidenceSource(evidence.file);
+    if (evidence.test !== undefined) {
+      assert.equal(
+        source.includes(`test(${JSON.stringify(evidence.test)}`),
+        true,
+        `${label}: missing test ${evidence.test}`,
+      );
+    }
+    for (const token of evidence.contains ?? []) {
+      assert.equal(
+        source.includes(token),
+        true,
+        `${label}: missing token ${token}`,
+      );
+    }
+  }
+
+  for (const contractCase of trace.cases) {
+    assert.equal(
+      contractCase.evidence.length > 0,
+      true,
+      `${contractCase.id}: missing executable evidence`,
+    );
+    for (const evidence of contractCase.evidence) {
+      await assertEvidence(evidence, contractCase.id);
+    }
+  }
+
+  assert.deepEqual(
+    trace.surfaces.map(({ id }) => id),
+    [
+      "requirements_and_cases",
+      "source_core",
+      "lifecycle",
+      "advance",
+      "real_git_history",
+      "core_observation",
+      "cli",
+      "schemas",
+      "help",
+      "package_root",
+      "linked_cli",
+      "installed_workflow",
+      "published_contract_5_record",
+    ],
+  );
+  for (const surface of trace.surfaces) {
+    await assertEvidence(surface, surface.id);
+  }
+});
+
 test("project actuals plan retains every accepted slice and public cutover", async () => {
   const plan = "plans/project-actuals.pert";
   const [
@@ -118,6 +198,7 @@ test("project actuals plan retains every accepted slice and public cutover", asy
     lifecycleAcceptance,
     observationAcceptance,
     publicAcceptance,
+    finalAcceptance,
   ] = await Promise.all([
     repositoryText(plan),
     repositoryText("docs/process/project-actuals-contract-review.md"),
@@ -142,6 +223,7 @@ test("project actuals plan retains every accepted slice and public cutover", asy
     repositoryText(
       "docs/process/project-actuals-public-contract-acceptance.md",
     ),
+    repositoryText("docs/process/project-actuals-acceptance.md"),
   ]);
   const checked = runJson("document", "check", plan);
   const analyzed = runJson("dag", "analyze", plan);
@@ -153,9 +235,12 @@ test("project actuals plan retains every accepted slice and public cutover", asy
     tasks: 1,
     gates: 0,
     errors: 0,
-    warnings: 0,
+    warnings: 1,
   });
-  assert.deepEqual(checked.diagnostics, []);
+  assert.deepEqual(
+    checked.diagnostics.map(({ code }) => code),
+    ["PTDAG-208"],
+  );
   assert.doesNotMatch(source, /task ACTUALS_CONTRACT_REVIEW/);
   assert.doesNotMatch(
     source,
@@ -195,6 +280,8 @@ test("project actuals plan retains every accepted slice and public cutover", asy
   );
   assert.match(publicAcceptance, /exact completed 6p pre-advance snapshot/);
   assert.match(publicAcceptance, /Git commit `753efea`/);
+  assert.match(finalAcceptance, /`ACTUALS_ACCEPTANCE` is accepted/);
+  assert.match(finalAcceptance, /exact completed 4p pre-advance snapshot/);
   assert.doesNotMatch(source, /task ACTUAL_SOURCE_CORE/);
   assert.doesNotMatch(source, /task ACTUAL_GIT_HISTORY_PROBE/);
   assert.doesNotMatch(source, /task FINISH_ACTUALS/);
@@ -211,28 +298,23 @@ test("project actuals plan retains every accepted slice and public cutover", asy
     source,
     /milestone ACTUALS_PUBLIC_READY:[\s\S]*?  state reached/,
   );
-  assert.equal(analyzed.precedence.makespan.numerator, "4");
+  assert.match(
+    source,
+    /task ACTUALS_ACCEPTANCE[\s\S]*?  status done/,
+  );
+  assert.equal(analyzed.precedence.makespan.numerator, "0");
   assert.equal(analyzed.precedence.makespan.denominator, "1");
-  assert.equal(analyzed.resource.makespan.numerator, "4");
+  assert.equal(analyzed.resource.makespan.numerator, "0");
   assert.equal(analyzed.resource.resource_delay.numerator, "0");
-  assert.equal(
-    analyzed.velocity_forecast.precedence_makespan.numerator,
-    "8",
-  );
-  assert.equal(
-    analyzed.velocity_forecast.precedence_makespan.denominator,
-    "29",
-  );
-  assert.equal(analyzed.velocity_forecast.resource_makespan.numerator, "8");
-  assert.equal(analyzed.velocity_forecast.resource_makespan.denominator, "29");
+  assert.equal(analyzed.velocity_forecast.precedence_makespan.numerator, "0");
+  assert.equal(analyzed.velocity_forecast.resource_makespan.numerator, "0");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["ACTUALS_ACCEPTANCE"]);
-  assert.deepEqual(next.recommendation.recommended_task_ids, [
-    "ACTUALS_ACCEPTANCE",
-  ]);
-  assert.deepEqual(next.temporal.authority.startable_recommended_task_ids, [
-    "ACTUALS_ACCEPTANCE",
-  ]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.recommendation.recommended_task_ids, []);
+  assert.deepEqual(
+    next.temporal.authority.startable_recommended_task_ids,
+    [],
+  );
   assert.deepEqual(
     Object.fromEntries(
       next.recommendation.task_decisions.map(({ subject_task_id, tier }) => [
@@ -240,9 +322,7 @@ test("project actuals plan retains every accepted slice and public cutover", asy
         tier,
       ]),
     ),
-    {
-      ACTUALS_ACCEPTANCE: "recommended",
-    },
+    {},
   );
 });
 

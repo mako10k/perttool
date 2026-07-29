@@ -298,8 +298,7 @@ architecture decision is normative.
 
 Priority: P0
 
-Status: Contract accepted; internal source, Git probe, eventful finish,
-lifecycle, project history, and velocity observation complete
+Status: Accepted in source; release not authorized
 
 Git history can prove that a task-state snapshot was recorded, but it cannot
 prove the actual event time, active execution duration, person effort, or the
@@ -344,6 +343,11 @@ records the atomic Grammar 5 and CLI Contract 6 source cutover, public root,
 registry/help/Guide, result versions, examples, and isolated installed
 workflow. The published `0.4.0` package remains Grammar 4 and CLI Contract 5
 until a separate release is authorized.
+The
+[`ACTUALS_ACCEPTANCE` record](process/project-actuals-acceptance.md)
+closes all fourteen normative PACT cases through executable repository,
+real-Git, linked, packaged, and isolated installed evidence with no automatic
+Git or declared-velocity mutation and no release side effect.
 
 Required outcomes:
 
@@ -386,7 +390,7 @@ Planned delivery slices:
 | `PROJECT_HISTORY` | Semantic reconstruction, deduplication, advance removal, legacy qualification, Core/text/JSON | 6p | Complete: explicit and legacy evidence remain distinct across real repository histories. |
 | `VELOCITY_OBSERVATION` | Exact Point/hour, qualified Point/active-date, and Point/person-hour observations | 5p | Complete: parallel work is not double-counted, Git-recorded rates remain qualified, and declared velocity is unchanged. |
 | `ACTUALS_PUBLIC_CONTRACT` | Atomic Grammar 5/CLI Contract 6 registry, help, Guide, schemas, diagnostics, and root activation | 6p | Complete: no partial public activation or compatibility alias exists. |
-| `ACTUALS_ACCEPTANCE` | Repository, Git, lifecycle, link, package, and installed workflow acceptance | 4p | All normative PACT cases pass with no Git mutation or release side effect. |
+| `ACTUALS_ACCEPTANCE` | Repository, Git, lifecycle, link, package, and installed workflow acceptance | 4p | Complete: all normative PACT cases pass with no automatic Git or velocity mutation and no release side effect. |
 
 ## Scheduling metadata and unit migration
 

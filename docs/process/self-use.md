@@ -1336,6 +1336,12 @@ Grammar 4 and Contract 5 until a separate release. The active contract is
 [`docs/specs/project-actuals.md`](../specs/project-actuals.md), and the
 source-cutover evidence is
 [`project-actuals-public-contract-acceptance.md`](project-actuals-public-contract-acceptance.md).
+The complete fourteen-case repository, real-Git, linked, packaged, and
+installed-workflow trace is accepted in
+[`project-actuals-acceptance.md`](project-actuals-acceptance.md). The source
+workstream has zero remaining makespan and no ready, recommended, or
+startable task. Git mutation, automatic declared-velocity adoption, and
+release publication remain separate boundaries.
 
 The runtime history guard in backlog
 [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history)

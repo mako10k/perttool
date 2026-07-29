@@ -216,48 +216,31 @@
       ]
     },
     "project-actuals": {
-      "source_digest": "sha256:4c84b4013f230d70b0ca63aae37c3f969d1a6262a91c27abbd3e2d1ba5061283",
+      "source_digest": "sha256:b25b0d8c14742e5a14a09dbf95f006b797ba4e095361daad55d9fd303213106b",
       "groups": {
         "active": [],
-        "ready": [
-          "ACTUALS_ACCEPTANCE"
-        ],
-        "runnable_now": [
-          "ACTUALS_ACCEPTANCE"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": [],
         "suspended": []
       },
-      "recommended_task_ids": [
-        "ACTUALS_ACCEPTANCE"
-      ],
-      "manual_selected_task_ids": [
-        "ACTUALS_ACCEPTANCE"
-      ],
-      "tiers": {
-        "ACTUALS_ACCEPTANCE": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "ACTUALS_ACCEPTANCE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "recommendation": {
       "source_digest": "sha256:b683fdacbbff39c0afd7ee20faf6cc4c05c50ece2ea350e4ce15e4a599f61464",

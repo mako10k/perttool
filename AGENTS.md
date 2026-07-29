@@ -70,11 +70,15 @@ the standard parser, formatter, lifecycle and advance mutations, suspended
 analysis/Next results, history, observation, package root, 33-command
 registry, help, Guide, schemas, diagnostics, examples, and isolated installed
 workflow. Its acceptance record is
-`docs/process/project-actuals-public-contract-acceptance.md`. One task and 4p
-remain; precedence and the `parallel-sgs` version 1 heuristic resource
-makespan are both 4p with no resource delay, and both forecasts at the
-inherited `29p/2d` velocity are `8/29d`. Complete NextResult v5 recommends
-and starts only `ACTUALS_ACCEPTANCE`.
+`docs/process/project-actuals-public-contract-acceptance.md`.
+`ACTUALS_ACCEPTANCE` is complete and retained as done pending its required
+pre-advance commit. Its complete fourteen-case trace covers requirements,
+source, lifecycle, advance, real Git histories, Core, CLI, schemas, help,
+package root, temporary link, and isolated installed workflows. Its
+acceptance record is `docs/process/project-actuals-acceptance.md`. All nine
+tasks and 47p are complete; precedence and the `parallel-sgs` version 1
+heuristic resource makespan are both zero with no resource delay. Complete
+NextResult v5 has no ready, recommended, or startable task.
 Git mutation, automatic velocity adoption, MIG-08, release publication, and
 dist-tag movement remain unauthorized. This independent workstream does not
 displace `PERT_PLANS`.

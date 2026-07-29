@@ -52,10 +52,12 @@ Mandatory summary:
   advanced to reached `ACTUALS_PUBLIC_READY`. The current source atomically
   activates Grammar 5 and CLI Contract 6 through lifecycle, suspended analysis/Next, history,
   observation, standard package root, 33-command registry, help, Guide,
-  schemas, examples, and isolated installed workflow. One task and 4p remain;
-  precedence and the `parallel-sgs` version 1 heuristic resource makespan are
-  both 4p with no delay. Complete NextResult v5 recommends and starts only
-  `ACTUALS_ACCEPTANCE`. Git mutation, automatic velocity adoption, MIG-08,
+  schemas, examples, and isolated installed workflow. `ACTUALS_ACCEPTANCE` is
+  complete and retained as done pending its required pre-advance commit. Its
+  fourteen-case trace covers repository, Git, lifecycle, link, package, and
+  installed workflows. All nine tasks and 47p are complete with zero
+  precedence and heuristic resource makespans and no ready, recommended, or
+  startable task. Git mutation, automatic velocity adoption, MIG-08,
   publication, and dist-tag movement remain outside scope. The independent
   workstream does not displace `PERT_PLANS`.
 - The CLI/help review is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted registry-driven design separates command help, domain guide, and agent guidance, includes project initialization and gate maintenance, and rejects renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and installed-package workflow for temporal and exact-unit behavior. The completed plan has no recommendation at `49p/1d`.

@@ -35,6 +35,45 @@ fi
 (
   cd "$link_prefix"
   "$linked_cli" document check "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+  "$linked_cli" document check \
+    "$repo_root/test/fixtures/project-actuals-v5.pert" \
+    --format=json |
+    node -e '
+      let input = "";
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", (chunk) => { input += chunk; });
+      process.stdin.on("end", () => {
+        const result = JSON.parse(input);
+        if (
+          result.schema_version !== "Perttool.CheckResult.v3" ||
+          result.cli_contract_version !== 6 ||
+          result.grammar_version !== 5 ||
+          result.actuals_inputs?.events?.length !== 0
+        ) process.exit(1);
+      });
+    '
+  "$linked_cli" task start \
+    "$repo_root/test/fixtures/project-actuals-v5.pert" \
+    WORK \
+    --at=2026-07-29T09:00:00+09:00 \
+    --actor=user \
+    --format=json |
+    node -e '
+      let input = "";
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", (chunk) => { input += chunk; });
+      process.stdin.on("end", () => {
+        const result = JSON.parse(input);
+        if (
+          result.schema_version !== "Perttool.MutationResult.v3" ||
+          result.cli_contract_version !== 6 ||
+          result.changed !== true ||
+          result.write?.mode !== "preview" ||
+          result.lifecycle?.from_state !== "planned" ||
+          result.lifecycle?.to_state !== "active"
+        ) process.exit(1);
+      });
+    '
   "$linked_cli" guide --format=json |
     node -e '
       let input = "";
