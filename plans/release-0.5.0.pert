@@ -10,9 +10,6 @@ project RELEASE_050:
   goal_owner user
   dag_owner user
 
-milestone RELEASE_050_PLANNING_STARTED:
-  title "Version 0.5.0 release planning started"
-  state reached
 
 resource DEVELOPERS:
   title "Release engineering capacity"
@@ -40,6 +37,7 @@ resource EXTERNAL_RELEASE:
 
 milestone RELEASE_050_GATE_ACCEPTED:
   title "Version 0.5.0 release gate accepted"
+  state reached
 
 milestone RELEASE_050_CONTRACT_6_READY:
   title "Accepted Contract 6 release input verified"
@@ -56,16 +54,6 @@ milestone RELEASE_050_PUBLISHED:
 milestone RELEASE_050_ACCEPTED:
   title "Version 0.5.0 Contract 6 beta accepted"
 
-task RELEASE_050_GATE_DESIGN RELEASE_050_PLANNING_STARTED -> RELEASE_050_GATE_ACCEPTED:
-  title "Define the 0.5.0 Contract 6 release gate"
-  description "Select suffix-free 0.5.0 for the breaking Grammar 5 and Contract 6 cutover. Update requirements, ADR, design, procedure, release PERT, authority boundaries, restart rules, self-use coverage, and latest and Issue exclusions together. This task performs no external write."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
 
 task RELEASE_050_CONTRACT_6_READINESS RELEASE_050_GATE_ACCEPTED -> RELEASE_050_CONTRACT_6_READY:
   title "Verify accepted Contract 6 release input"

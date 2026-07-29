@@ -167,7 +167,9 @@ for the breaking Grammar 5 and CLI Contract 6 cutover without duplicating the
 completed project-actuals or English-baseline workstreams. The 3p
 `RELEASE_050_GATE_DESIGN` task fixes Requirements 21.6, ADR 0003, Slice 4J,
 the release procedure, this self-use plan, and the external authority
-boundary. Sixteen points remain; precedence and heuristic resource makespans
+boundary. Git commit `1641a32` records its exact completed pre-advance
+snapshot, and the task is advanced to reached `RELEASE_050_GATE_ACCEPTED`.
+Sixteen points remain; precedence and heuristic resource makespans
 are both 16p with no resource delay, inherited release velocity is `19p/2d`,
 and both forecasts are `32/19d`. Complete NextResult v5 recommends and starts
 only `RELEASE_050_CONTRACT_6_READINESS`. The user's named `0.5.0`

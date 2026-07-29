@@ -54,7 +54,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     design,
     /^### Post-MVP Slice 4J: Contract 6 `v0\.5\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Planned 1\.0/);
+  assert.match(procedure, /Status: Active 1\.1/);
   assert.match(
     procedure,
     /Expected pre-publication default: `beta=latest=0\.4\.0`/,
@@ -75,9 +75,11 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.match(plan, /^  version 5$/m);
   assert.match(plan, /^  goal_owner user$/m);
   assert.match(plan, /^  dag_owner user$/m);
+  assert.doesNotMatch(plan, /^task RELEASE_050_GATE_DESIGN /m);
+  assert.doesNotMatch(plan, /^milestone RELEASE_050_PLANNING_STARTED:/m);
   assert.match(
     plan,
-    /^task RELEASE_050_GATE_DESIGN RELEASE_050_PLANNING_STARTED -> RELEASE_050_GATE_ACCEPTED:$/m,
+    /^milestone RELEASE_050_GATE_ACCEPTED:\n(?:  .*\n)*?  state reached$/m,
   );
   assert.match(
     plan,

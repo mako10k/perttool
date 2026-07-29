@@ -134,8 +134,9 @@ The selected next release is suffix-free beta `0.5.0` for the atomic Grammar
 5 and CLI Contract 6 cutover. `plans/release-0.5.0.pert` independently tracks
 gate design, accepted project-actuals and English-baseline input, source
 preparation, candidate acceptance, authorized PUBLISH, durable acceptance,
-and the exact post-release local-install boundary. `RELEASE_050_GATE_DESIGN`
-is complete at its pre-advance snapshot. Sixteen points remain; precedence
+and the exact post-release local-install boundary. Git commit `1641a32`
+records the exact completed gate-design pre-advance snapshot; the task is
+advanced to reached `RELEASE_050_GATE_ACCEPTED`. Sixteen points remain; precedence
 and heuristic resource makespans are both 16p with no resource delay,
 inherited velocity is `19p/2d`, both forecasts are `32/19d`, and complete
 NextResult v5 recommends only `RELEASE_050_CONTRACT_6_READINESS`. The user's

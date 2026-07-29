@@ -1210,12 +1210,16 @@ The user then selected and authorized the complete named `0.5.0` release and
 an exact post-release local installation. Contract 6 `project init` created
 `plans/release-0.5.0.pert` as Grammar 5 with explicit goal/DAG owner `user`;
 one governed atomic batch established its six-task 19p release DAG and
-completed the 3p `RELEASE_050_GATE_DESIGN` task. The current pre-advance
-snapshot has five resources, seven milestones, six tasks, and no gates.
+completed the 3p `RELEASE_050_GATE_DESIGN` task. Git commit `1641a32` records
+the exact completed pre-advance snapshot with five resources, seven
+milestones, six tasks, and no gates. Canonical governed advance removed only
+the gate-design task and planning-start milestone, retained reached
+`RELEASE_050_GATE_ACCEPTED`, and produced residual digest
+`sha256:914ee9f43985c5150ffc0e22b2a9be6d0d46540c008954179a3e0808d5083701`.
 Sixteen points remain; precedence and heuristic resource makespans are both
 16p with no resource delay, inherited release velocity is `19p/2d`, and both
 forecasts are `32/19d`. Complete, non-truncated NextResult v5 under
-`recommendation_v1_plus_release_gate` recommends and starts only
+`recommendation_v1_plus_release_gate` still recommends and starts only
 `RELEASE_050_CONTRACT_6_READINESS`. The named authorization applies only
 after each predecessor gate passes. npm `latest` promotion and Issue #4
 closure remain separate decisions.
