@@ -262,11 +262,13 @@ and the task is advanced to reached `RELEASE_050_CONTRACT_6_READY`. Source
 preparation then aligned `0.5.0` identity, release guidance, tests, goldens,
 and the complete repository and isolated-package gates. Git commit `e1e7ccf`
 records its exact pre-advance snapshot, and the task is advanced to reached
-`RELEASE_050_SOURCE_PREPARED`. Ten points remain;
-precedence and heuristic resource makespans are 10p at inherited `19p/2d`,
-both forecasts are `20/19d`, and complete NextResult v5 recommends only
-`RELEASE_050_CANDIDATE`. npm `latest` promotion and Issue #4 closure remain
-separate decisions.
+`RELEASE_050_SOURCE_PREPARED`. Candidate acceptance then reverified the clean
+source, publication identities, external availability, protected routes,
+complete repository and installed-package gates, and the retained 468-file
+tarball with SHA-256 `f3ba9b3f...2208c`. Six points remain; precedence and
+heuristic resource makespans are 6p at observed `13p/1d`, both forecasts are
+`6/13d`, and complete NextResult v5 recommends only `RELEASE_050_PUBLISH`.
+npm `latest` promotion and Issue #4 closure remain separate decisions.
 
 ### 5.1 Adopted Recommendation authority
 

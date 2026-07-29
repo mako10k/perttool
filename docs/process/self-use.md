@@ -1253,6 +1253,21 @@ Ten points remain; precedence and heuristic resource makespans are 10p with
 zero resource delay, inherited forecasts are `20/19d`, and complete
 NextResult v5 recommends and starts only `RELEASE_050_CANDIDATE`.
 
+Candidate acceptance reverified the clean source under Node.js v25.1.0,
+version and channel identity, absent local and remote tag, absent GitHub
+Release, unpublished npm version, unchanged dist-tag baseline, protected
+routes, complete repository and installed-package gates, and one retained
+468-file tarball. Its SHA-256 is
+`f3ba9b3f52dd055618084bde5e9fa51e98adf3e0e29e10ac8c7e09fd4142208c`.
+Canonical governed advance removed `RELEASE_050_CANDIDATE` and the prior
+source frontier, retained reached `RELEASE_050_CANDIDATE_ACCEPTED`, and
+produced residual digest
+`sha256:f024e75607a866555dee4313ca8c272a0c6d56a2f4c5c4e213ac1d36b06e915c`.
+Six points remain; precedence and heuristic resource makespans are 6p with
+zero resource delay, observed velocity is `13p/1d`, forecasts are `6/13d`,
+and complete NextResult v5 recommends and starts only
+`RELEASE_050_PUBLISH`.
+
 Stage 1 allowed operations:
 
 - check

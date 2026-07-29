@@ -180,6 +180,13 @@ its exact pre-advance snapshot, and the task is advanced to reached
 and heuristic resource makespans are both 10p with no resource delay,
 inherited release velocity is `19p/2d`, and both forecasts are `20/19d`.
 Complete NextResult v5 recommends and starts only `RELEASE_050_CANDIDATE`.
+Candidate acceptance then reverified the clean source, external identities
+and availability, protected routes, full gates, and the retained 468-file
+tarball with SHA-256 `f3ba9b3f...2208c`; the task is advanced to reached
+`RELEASE_050_CANDIDATE_ACCEPTED`. Six points remain; precedence and heuristic
+resource makespans are both 6p with no resource delay, observed release
+velocity is `13p/1d`, both forecasts are `6/13d`, and complete NextResult v5
+recommends and starts only `RELEASE_050_PUBLISH`.
 The user's named `0.5.0`
 authorization applies only after each predecessor gate passes and does not
 include npm `latest` promotion or Issue #4 closure.
