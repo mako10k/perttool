@@ -136,10 +136,14 @@ gate design, accepted project-actuals and English-baseline input, source
 preparation, candidate acceptance, authorized PUBLISH, durable acceptance,
 and the exact post-release local-install boundary. Git commit `1641a32`
 records the exact completed gate-design pre-advance snapshot; the task is
-advanced to reached `RELEASE_050_GATE_ACCEPTED`. Sixteen points remain; precedence
-and heuristic resource makespans are both 16p with no resource delay,
-inherited velocity is `19p/2d`, both forecasts are `32/19d`, and complete
-NextResult v5 recommends only `RELEASE_050_CONTRACT_6_READINESS`. The user's
+advanced to reached `RELEASE_050_GATE_ACCEPTED`.
+`RELEASE_050_CONTRACT_6_READINESS` is complete at its exact pre-advance
+snapshot after accepting the reached actuals and English inputs, active
+Contract 6 boundary, compatibility, safety, and installed workflows.
+Fourteen points remain; precedence and heuristic resource makespans are both
+14p with no resource delay, inherited velocity is `19p/2d`, both forecasts
+are `28/19d`, and complete NextResult v5 recommends only
+`RELEASE_050_PREPARATION`. The user's
 named release authorization applies only after every predecessor gate passes.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 

@@ -169,10 +169,12 @@ completed project-actuals or English-baseline workstreams. The 3p
 the release procedure, this self-use plan, and the external authority
 boundary. Git commit `1641a32` records its exact completed pre-advance
 snapshot, and the task is advanced to reached `RELEASE_050_GATE_ACCEPTED`.
-Sixteen points remain; precedence and heuristic resource makespans
-are both 16p with no resource delay, inherited release velocity is `19p/2d`,
-and both forecasts are `32/19d`. Complete NextResult v5 recommends and starts
-only `RELEASE_050_CONTRACT_6_READINESS`. The user's named `0.5.0`
+`RELEASE_050_CONTRACT_6_READINESS` is complete at its exact pre-advance
+snapshot after accepting both reached inputs and the public Contract 6
+boundary. Fourteen points remain; precedence and heuristic resource makespans
+are both 14p with no resource delay, inherited release velocity is `19p/2d`,
+and both forecasts are `28/19d`. Complete NextResult v5 recommends and starts
+only `RELEASE_050_PREPARATION`. The user's named `0.5.0`
 authorization applies only after each predecessor gate passes and does not
 include npm `latest` promotion or Issue #4 closure.
 

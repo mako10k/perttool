@@ -255,10 +255,12 @@ project-actuals and English-baseline acceptance without duplicating either
 workstream. The user authorized the complete named release sequence and an
 exact post-release local installation. Git commit `1641a32` records the exact
 completed gate-design pre-advance snapshot, and the task is advanced to
-reached `RELEASE_050_GATE_ACCEPTED`. Sixteen points remain; precedence and heuristic
-resource makespans are 16p at inherited `19p/2d`, both forecasts are
-`32/19d`, and complete NextResult v5 recommends only
-`RELEASE_050_CONTRACT_6_READINESS`. npm `latest` promotion and Issue #4
+reached `RELEASE_050_GATE_ACCEPTED`. The Contract 6 readiness record accepts
+the reached implementation and English inputs and the active source/package
+boundary; its 2p task is complete at the pre-advance snapshot. Fourteen
+points remain; precedence and heuristic resource makespans are 14p at
+inherited `19p/2d`, both forecasts are `28/19d`, and complete NextResult v5
+recommends only `RELEASE_050_PREPARATION`. npm `latest` promotion and Issue #4
 closure remain separate decisions.
 
 ### 5.1 Adopted Recommendation authority

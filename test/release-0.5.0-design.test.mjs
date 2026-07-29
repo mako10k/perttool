@@ -17,6 +17,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     adr,
     design,
     procedure,
+    readiness,
     actualsAcceptance,
     englishAcceptance,
     migration,
@@ -29,6 +30,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     repositoryText("docs/adr/0003-beta-versioning.md"),
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.5.0-release.md"),
+    repositoryText("docs/process/0.5.0-contract6-readiness.md"),
     repositoryText("docs/process/project-actuals-acceptance.md"),
     repositoryText("docs/process/english-baseline-acceptance.md"),
     repositoryText("docs/process/cli-contract-6-migration.md"),
@@ -54,7 +56,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     design,
     /^### Post-MVP Slice 4J: Contract 6 `v0\.5\.0` beta release$/m,
   );
-  assert.match(procedure, /Status: Active 1\.1/);
+  assert.match(procedure, /Status: Active 1\.2/);
   assert.match(
     procedure,
     /Expected pre-publication default: `beta=latest=0\.4\.0`/,
@@ -63,6 +65,9 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
     procedure,
     /authorizes this complete named `0\.5\.0`\s+sequence/,
   );
+  assert.match(readiness, /Document status: Accepted 1\.0/);
+  assert.match(readiness, /starts only `RELEASE_050_PREPARATION`/);
+  assert.match(readiness, /exactly 33 commands/);
   assert.match(procedure, /does not authorize npm\s+`latest` promotion/);
   assert.match(actualsAcceptance, /`ACTUALS_ACCEPTANCE` is accepted/);
   assert.match(actualsAcceptance, /Grammar 5 and CLI Contract 6 source/);
@@ -84,6 +89,10 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.match(
     plan,
     /^task RELEASE_050_CONTRACT_6_READINESS RELEASE_050_GATE_ACCEPTED -> RELEASE_050_CONTRACT_6_READY:$/m,
+  );
+  assert.match(
+    plan,
+    /^task RELEASE_050_CONTRACT_6_READINESS[\s\S]*?^  status done$/m,
   );
   assert.match(
     plan,

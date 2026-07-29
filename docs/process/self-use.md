@@ -1224,6 +1224,16 @@ forecasts are `32/19d`. Complete, non-truncated NextResult v5 under
 after each predecessor gate passes. npm `latest` promotion and Issue #4
 closure remain separate decisions.
 
+The [Contract 6 readiness record](0.5.0-contract6-readiness.md) then accepted
+the reached project-actuals and English-baseline inputs, active Grammar 5 and
+Contract 6 source/package boundary, retained compatibility and safe-write
+controls, 33-command registry, and installed workflows. The 2p
+`RELEASE_050_CONTRACT_6_READINESS` task is complete at pre-advance digest
+`sha256:ce63915222107023f6a00d00620a3bc93caba00064465afcb17d927dfa231797`.
+Fourteen points remain; precedence and heuristic resource makespans are 14p
+with zero resource delay, inherited forecasts are `28/19d`, and complete
+NextResult v5 recommends and starts only `RELEASE_050_PREPARATION`.
+
 Stage 1 allowed operations:
 
 - check
