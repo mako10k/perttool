@@ -137,9 +137,10 @@ preparation, candidate acceptance, authorized PUBLISH, durable acceptance,
 and the exact post-release local-install boundary. Git commit `1641a32`
 records the exact completed gate-design pre-advance snapshot; the task is
 advanced to reached `RELEASE_050_GATE_ACCEPTED`.
-`RELEASE_050_CONTRACT_6_READINESS` is complete at its exact pre-advance
-snapshot after accepting the reached actuals and English inputs, active
-Contract 6 boundary, compatibility, safety, and installed workflows.
+`RELEASE_050_CONTRACT_6_READINESS` is complete; Git commit `ba84cd8` records
+its exact pre-advance snapshot, and the task is advanced to reached
+`RELEASE_050_CONTRACT_6_READY` after accepting the reached actuals and English
+inputs, active Contract 6 boundary, compatibility, safety, and installed workflows.
 Fourteen points remain; precedence and heuristic resource makespans are both
 14p with no resource delay, inherited velocity is `19p/2d`, both forecasts
 are `28/19d`, and complete NextResult v5 recommends only

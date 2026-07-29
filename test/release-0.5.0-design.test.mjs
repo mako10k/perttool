@@ -82,17 +82,11 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.match(plan, /^  dag_owner user$/m);
   assert.doesNotMatch(plan, /^task RELEASE_050_GATE_DESIGN /m);
   assert.doesNotMatch(plan, /^milestone RELEASE_050_PLANNING_STARTED:/m);
+  assert.doesNotMatch(plan, /^task RELEASE_050_CONTRACT_6_READINESS /m);
+  assert.doesNotMatch(plan, /^milestone RELEASE_050_GATE_ACCEPTED:/m);
   assert.match(
     plan,
-    /^milestone RELEASE_050_GATE_ACCEPTED:\n(?:  .*\n)*?  state reached$/m,
-  );
-  assert.match(
-    plan,
-    /^task RELEASE_050_CONTRACT_6_READINESS RELEASE_050_GATE_ACCEPTED -> RELEASE_050_CONTRACT_6_READY:$/m,
-  );
-  assert.match(
-    plan,
-    /^task RELEASE_050_CONTRACT_6_READINESS[\s\S]*?^  status done$/m,
+    /^milestone RELEASE_050_CONTRACT_6_READY:\n(?:  .*\n)*?  state reached$/m,
   );
   assert.match(
     plan,

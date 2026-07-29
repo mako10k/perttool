@@ -35,12 +35,10 @@ resource EXTERNAL_RELEASE:
   description "Serialize Git push, annotated tag, GitHub Release, npm beta publication, and durable verification."
   capacity 1
 
-milestone RELEASE_050_GATE_ACCEPTED:
-  title "Version 0.5.0 release gate accepted"
-  state reached
 
 milestone RELEASE_050_CONTRACT_6_READY:
   title "Accepted Contract 6 release input verified"
+  state reached
 
 milestone RELEASE_050_SOURCE_PREPARED:
   title "Version 0.5.0 release source prepared"
@@ -55,16 +53,6 @@ milestone RELEASE_050_ACCEPTED:
   title "Version 0.5.0 Contract 6 beta accepted"
 
 
-task RELEASE_050_CONTRACT_6_READINESS RELEASE_050_GATE_ACCEPTED -> RELEASE_050_CONTRACT_6_READY:
-  title "Verify accepted Contract 6 release input"
-  description "Require reached ACTUALS_ACCEPTED and ENGLISH_BASELINE_ACCEPTED plus their acceptance records. Verify public Grammar 5, CLI Contract 6, lifecycle, history, observation, governance, English surfaces, package root, help, Guide, and installed behavior without duplicating implementation state."
-  duration 2p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
 
 task RELEASE_050_PREPARATION RELEASE_050_CONTRACT_6_READY -> RELEASE_050_SOURCE_PREPARED:
   title "Prepare version 0.5.0 release source"

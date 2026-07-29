@@ -1230,6 +1230,10 @@ Contract 6 source/package boundary, retained compatibility and safe-write
 controls, 33-command registry, and installed workflows. The 2p
 `RELEASE_050_CONTRACT_6_READINESS` task is complete at pre-advance digest
 `sha256:ce63915222107023f6a00d00620a3bc93caba00064465afcb17d927dfa231797`.
+Git commit `ba84cd8` records that exact snapshot. Canonical governed advance
+removed the readiness task and prior gate frontier, retained reached
+`RELEASE_050_CONTRACT_6_READY`, and produced residual digest
+`sha256:2768eed58c579c96f7cbbfc1d71ba7a1b77206b868d1f7d327614ed33b2d0ad9`.
 Fourteen points remain; precedence and heuristic resource makespans are 14p
 with zero resource delay, inherited forecasts are `28/19d`, and complete
 NextResult v5 recommends and starts only `RELEASE_050_PREPARATION`.
