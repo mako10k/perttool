@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-07-28
+- Updated: 2026-07-29
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -298,7 +298,7 @@ architecture decision is normative.
 
 Priority: P0
 
-Status: Accepted in source; release not authorized
+Status: Released in `0.5.0` beta (2026-07-29)
 
 Git history can prove that a task-state snapshot was recorded, but it cannot
 prove the actual event time, active execution duration, person effort, or the
@@ -341,8 +341,9 @@ The
 [`ACTUALS_PUBLIC_CONTRACT` acceptance](process/project-actuals-public-contract-acceptance.md)
 records the atomic Grammar 5 and CLI Contract 6 source cutover, public root,
 registry/help/Guide, result versions, examples, and isolated installed
-workflow. The published `0.4.0` package remains Grammar 4 and CLI Contract 5
-until a separate release is authorized.
+workflow. The accepted `0.5.0` package publishes that boundary on npm `beta`;
+npm `latest=0.4.0` remains the Grammar 4 and CLI Contract 5 compatibility
+default.
 The
 [`ACTUALS_ACCEPTANCE` record](process/project-actuals-acceptance.md)
 closes all fourteen normative PACT cases through executable repository,
@@ -370,7 +371,8 @@ Compatibility and non-goals:
 
 - Grammar 1 through 4 retain their meanings, and status-only `task finish`
   remains available for those grammars. The current source uses CLI Contract
-  6; the published `0.4.0` artifact retains CLI Contract 5.
+  6; npm `beta=0.5.0` publishes Contract 6 while `latest=0.4.0` retains
+  Contract 5.
 - History and `ADV-001` share the narrow read-only Git adapter, path/HEAD
   identity, and race-safe inspection primitives. History does not enforce the
   advance decision, and `ADV-001` does not become the history result model.
@@ -458,14 +460,132 @@ supported boundary, define exact history and observation semantics, add
 normative acceptance cases, and estimate independent delivery slices.
 Grammar 5 and CLI Contract 6 remain unchanged until that review is accepted.
 
+## Recommendation override application and audit
+
+### MIG-08: Apply validated overrides with durable single-use audit
+
+Priority: Unset (requires refinement)
+
+Status: Refined contract backlog (not scheduled)
+
+Extend the accepted read-only
+[Recommendation Human Override Contract](specs/recommendation-override.md)
+only after an independent design review selects the persistent apply and audit
+boundary. The existing `validateOverride` API remains advisory and authorizes
+no mutation.
+
+Acceptance:
+
+- the public apply surface and its result identities are versioned before
+  implementation;
+- every request binds one complete `Perttool.NextResult.v5`, source digest,
+  recommendation digest, candidate set, actor assertion, and human reason;
+- a successful decision is single-use and leaves a canonical durable audit
+  artifact rather than relying on an Issue URL, chat record, or mutable log;
+- source persistence and audit persistence are atomic or have an accepted,
+  recoverably idempotent failure protocol;
+- stale, incomplete, temporally ineligible, governance-denied, replayed, or
+  mismatched input fails closed before the source changes;
+- a successful apply requires reanalysis before any later selection; and
+- repository, package, installed-workflow, concurrency, and write-safety tests
+  cover the complete contract.
+
+Non-goals are automatic Git staging or commits, treating caller assertions as
+authentication, automatic velocity mutation, and bypassing temporal or
+owner-aware governance. Git workflow integration remains a separate
+workstream.
+
+## Machine-readable public schemas
+
+### SCHEMA-001: Publish Contract 6 JSON Schema artifacts
+
+Priority: P0
+
+Status: Open in [GitHub Issue #5](https://github.com/mako10k/perttool/issues/5)
+(not scheduled)
+
+Close the gap between the Must-level machine-readable interface requirement
+and the current registry's schema identifiers. The selected design must
+publish resolvable JSON Schema artifacts for every active Contract 6 result,
+keep them synchronized with TypeScript and CLI JSON projections, bundle them
+in the npm package, and validate the isolated installed workflow. Issue #5 is
+the authoritative finding and acceptance inventory; this entry only maps it
+into local work state.
+
+## Hierarchical planning and multi-plan composition
+
+### MULTI-001: Design backlog hierarchy and multi-plan composition
+
+Priority: Unset (requires product and semantic refinement)
+
+Status: Open in [GitHub Issue #3](https://github.com/mako10k/perttool/issues/3)
+(not selected)
+
+Define how a parent backlog or project relates to independently versioned
+child `.pert` documents without silently merging task identity, duration
+units, governance, calendars, resource capacity, or completion state. The
+design must preserve deterministic per-document analysis and specify explicit
+roll-up, cross-plan dependency, history, and failure boundaries before any
+runtime or syntax change.
+
+## Language tooling and adapters
+
+### LSP-001: Design a read-only language server
+
+Priority: Unset
+
+Status: Proposed backlog (not scheduled)
+
+Define an LSP boundary for diagnostics, document symbols, hover, completion,
+and source-safe code actions by reusing the parser, semantic model, help
+registry, and UTF-16 spans. The first accepted slice must remain read-only
+unless a later contract proves that an edit is identical to an existing
+previewed mutation candidate.
+
+### VSIX-001: Package the accepted language server for VS Code
+
+Priority: Unset
+
+Status: Proposed backlog (not scheduled; depends on `LSP-001`)
+
+Package an accepted LSP contract without adding editor-only grammar or
+mutation semantics. Acceptance must cover extension activation, bundled
+runtime identity, offline help, diagnostics, upgrade compatibility, and an
+isolated VS Code extension test.
+
+### MCP-001: Design a fail-closed MCP adapter
+
+Priority: Unset
+
+Status: Proposed backlog (not scheduled)
+
+Define read-only MCP resources and tools from the accepted public Core and
+command registry. Any future write tool must preserve preview, governance,
+digest, safe-write, and audit boundaries and requires separate authorization;
+the initial design must not infer authority from an MCP client connection.
+
+## Portfolio and Issue inventory
+
+### META-001: Keep GitHub Issue and local work-state inventories aligned
+
+Priority: P1
+
+Status: Refined backlog (not scheduled)
+
+Add a repeatable repository review that records each product Issue number,
+live state, local backlog ID, PERT workstream if any, completion evidence, and
+explicit disposition. It must detect stale current-state prose and missing
+Issue labels or mappings without rewriting historical acceptance records.
+Closing an Issue remains a separate decision, and a planning record never
+substitutes for a live GitHub read or authorizes an external mutation.
+
 ## Scheduling metadata and unit migration
 
 ### TIME-001: Add temporal properties and deadline-aware capabilities
 
 Priority: P1
 
-Status: Contract accepted (`SU-M1`); rational-Duration refinement planned
-(`SU-M2R`)
+Status: Complete and released in `0.3.0` (retained by `0.4.0` and `0.5.0`)
 
 Define a coherent temporal model, including `deadline`, and carry it through
 the file-first interface and every affected result projection. Use that model
@@ -500,8 +620,7 @@ Acceptance:
 
 Priority: P1
 
-Status: Contract accepted (`SU-M1`); rational-Duration refinement planned
-(`SU-M2R`)
+Status: Complete and released in `0.3.0` (retained by `0.4.0` and `0.5.0`)
 
 Design a preview-first migration that rewrites a project between `point` and
 its velocity-linked `day` or `hour` unit. This is a source migration, distinct
@@ -574,8 +693,8 @@ project duration unit changes.
 Progress is tracked at two levels:
 
 - [`plans/scheduling-units.pert`](../plans/scheduling-units.pert) is the
-  milestone-level roadmap. `SU-M2R` is complete and advanced; SU-M3 and SU-M4
-  are re-estimated from its accepted semantics.
+  completed and advanced milestone-level roadmap through reached
+  `SCHEDULING_UNITS_ACCEPTED`.
 - [`plans/scheduling-units-m1.pert`](../plans/scheduling-units-m1.pert) tracks
   only the detailed work required to reach `SU-M1`. It does not duplicate
   completion state for later milestones.
@@ -586,15 +705,14 @@ Progress is tracked at two levels:
   tracks the completed and advanced exact rational Duration contract and
   target-only source extension required before SU-M3 and SU-M4.
 - [`plans/scheduling-units-m3.pert`](../plans/scheduling-units-m3.pert)
-  tracks the current six-task temporal deadline and NextResult v4 target Core
-  selected by complete macro Next v3.
+  tracks the completed and advanced six-task temporal deadline and NextResult
+  v4 target Core through `TEMPORAL_DEADLINE_ACCEPTED`.
 - [`plans/scheduling-units-m4.pert`](../plans/scheduling-units-m4.pert)
   tracks the completed and advanced internal unit-migration version 2 Core.
-- Select the milestone work package from a fresh, complete macro `dag next`
-  result, then select daily work from the corresponding milestone-detail plan.
-  When a detail plan reaches its finish, roll up that result once to the macro,
-  reanalyze, and create the next milestone-detail plan from the accepted
-  contract.
+- [`plans/scheduling-units-m5.pert`](../plans/scheduling-units-m5.pert)
+  tracks the completed and advanced atomic Contract 4 cutover and installed
+  acceptance. Each completed detail was rolled up exactly once before the
+  macro advanced.
 
 SU-M1 acceptance:
 
@@ -714,10 +832,10 @@ SU-M2 progress:
   `4101ef7` and advanced. The remaining macro precedence and heuristic resource makespans
   are both `1.958333d` with no delay, and complete Next v3 recommends
   `SU_M3_DEADLINE_CAPABILITY_WORK_PACKAGE`.
-- Active Grammar 1 and CLI Contract 3 remain fixed. Public Contract 4
-  projections, descriptors, help, Guide, package workflows, temporal analysis,
-  Next v4 authority, the public unit-migration command and installed workflow,
-  and publication are explicit non-goals.
+- At the target-only SU-M2/SU-M4 slices, active Grammar 1 and CLI Contract 3
+  remained fixed and public Contract 4 activation was an explicit non-goal.
+  SU-M5 later activated the accepted Grammar 1/2/3 and Contract 4 boundary
+  atomically, and `0.3.0` published it.
 
 ## Strict approval authentication and certificates
 
@@ -855,10 +973,9 @@ ledger semantics to an in-progress Issue #4 implementation slice.
 
 ## Independent post-beta work
 
-Issue #3 (backlog hierarchy and multi-plan composition), the LSP server, the
-VSIX, the MCP server, human override apply/audit, Git integration, and
-`GOV-AUTH-001` strict approval remain independent workstreams. `ADV-001` is the
-refined, unscheduled read-only Git guard for destructive advance writes; it is
-not yet a Contract 3 feature. These items are not prerequisites for the
-CLI/help reset or the current loose owner-aware governance workstream unless a
-later requirements decision explicitly composes them.
+`MULTI-001`, `LSP-001`, `VSIX-001`, `MCP-001`, `MIG-08`, Git integration,
+`GOV-AUTH-001`, `ADV-001`, `SCHEMA-001`, and `META-001` remain independent
+workstreams. `ADV-001` is the refined, unscheduled read-only Git guard for
+destructive advance writes. These items are not implicit prerequisites for an
+accepted workstream unless a later requirements decision explicitly composes
+them.

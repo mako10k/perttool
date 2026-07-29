@@ -1795,20 +1795,20 @@ The atomic Contract 4 acceptance gate is complete: Grammar 1, 2, and 3,
 AnalysisResult v3, NextResult v4 normal authority, exact unit migration, and
 the installed-package workflow are active in `0.3.0`.
 
-The selected project-actuals workstream has accepted its source and
-public-interface decisions and activated them in the current source. ADR 0006
-is accepted, the Project Actuals and Git History Contract is Normative 1.0,
-Grammar 5 and CLI Contract 6 are one atomic boundary, and every PACT case has
-a machine-readable fixture. Grammar 1 through 4 semantics remain compatible;
-the published `0.4.0` package remains CLI Contract 5 pending a separately
-authorized release.
+The project-actuals workstream has accepted its source and public-interface
+decisions and activated them in the current source and the published `0.5.0`
+beta. ADR 0006 is accepted, the Project Actuals and Git History Contract is
+Normative 1.0, Grammar 5 and CLI Contract 6 are one atomic boundary, and every
+PACT case has a machine-readable fixture. Grammar 1 through 4 semantics remain
+compatible; npm `beta=0.5.0` provides Contract 6 while `latest=0.4.0` remains
+the Contract 5 compatibility default.
 
 Resolved design decisions:
 
 - Adoption of AoA with task=edge: [ADR 0001](adr/0001-activity-on-arrow.md)
 - Node.js 22 or later, npm, TypeScript ESM package: [ADR 0005](adr/0005-node-22-runtime-baseline.md)
 - Suffix-free `0.x.x` beta, alpha compatibility boundary, and `v0.2.0`
-  Contract 3 through `v0.4.0` Contract 5 release targets:
+  Contract 3 through `v0.5.0` Contract 6 release targets:
   [ADR 0003](adr/0003-beta-versioning.md)
 - English repository baseline, migration boundary, and current i18n non-goal: [ADR 0004](adr/0004-english-repository-baseline.md)
 - Separation of executability, resource selection, and recommendation level, and tier semantics: [Recommendation Semantics specification](specs/recommendation.md)
@@ -1825,6 +1825,9 @@ Resolved design decisions:
 - Contract 5 package identity, authorization, artifact parity, distribution,
   and acceptance:
   [`v0.4.0` release procedure](process/0.4.0-release.md)
+- Contract 6 package identity, authorization, artifact parity, distribution,
+  and acceptance:
+  [`v0.5.0` release procedure](process/0.5.0-release.md)
 - Date/date-time comparison, `as_of`, exact day/hour/point projection, fixed-offset preservation, continuous-calendar boundaries, and `not_before` release bounds: [Temporal Calendar Semantics specification](specs/temporal-calendar.md)
 - Temporal precedence/resource release scheduling, deadline state, exact margin/lateness, feasibility, blocked/heuristic qualification, risk, and recommendation-version boundary: [Temporal Deadline Semantics specification](specs/temporal-deadline.md)
 - Permitted Point/time directions, effective velocity, complete field inventory, exact Decimal-or-fraction conversion, atomic grammar upgrade, and round-trip qualification: [Point and Time-Unit Migration Semantics specification](specs/unit-migration.md)
@@ -1915,6 +1918,10 @@ Before implementation, separate the specifications in the following order.
     - [x] Atomic Grammar 5 parser/formatter/lifecycle, suspended analysis and
       NextResult v5, history, velocity observation, root, CLI, help, Guide,
       and installed-package check activation
+18. [ ] Publish machine-readable JSON Schema artifacts for every active CLI
+    Contract 6 result and verify descriptor resolution and installed-package
+    availability in [GitHub Issue
+    #5](https://github.com/mako10k/perttool/issues/5) and `SCHEMA-001`
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 
