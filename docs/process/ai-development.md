@@ -248,6 +248,18 @@ complete. Fresh registry reads and an unqualified isolated installation
 confirmed `beta=latest=0.4.0`, CLI Contract 5, and Grammar 4 without changing
 the accepted artifact or completed plan.
 
+The selected next public target is suffix-free beta `0.5.0` for the breaking
+Grammar 5 and CLI Contract 6 cutover. The independent
+[`release-0.5.0.pert`](../../plans/release-0.5.0.pert) plan consumes reached
+project-actuals and English-baseline acceptance without duplicating either
+workstream. The user authorized the complete named release sequence and an
+exact post-release local installation. `RELEASE_050_GATE_DESIGN` is complete
+at its pre-advance snapshot. Sixteen points remain; precedence and heuristic
+resource makespans are 16p at inherited `19p/2d`, both forecasts are
+`32/19d`, and complete NextResult v5 recommends only
+`RELEASE_050_CONTRACT_6_READINESS`. npm `latest` promotion and Issue #4
+closure remain separate decisions.
+
 ### 5.1 Adopted Recommendation authority
 
 MIG-07 established Recommendation version 1 authority. The atomic Contract 4

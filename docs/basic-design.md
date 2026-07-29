@@ -1685,9 +1685,10 @@ The initial self-use target is the DSL grammar design and implementation work.
 - Contract 3 `v0.2.0` beta release: `plans/release-0.2.0.pert`
 - Contract 4 `v0.3.0` beta release: `plans/release-0.3.0.pert`
 - Contract 5 `v0.4.0` beta release: `plans/release-0.4.0.pert`
+- Contract 6 `v0.5.0` beta release: `plans/release-0.5.0.pert`
 - Historical work plans: Git history
 
-`plans/mvp.pert` defines the completed stage gates from MVP through the first beta; the design and implementation tasks for each slice are separated into the corresponding detail plan. Macro work packages roll up the resource makespan of their detail plans and do not duplicate individual task state. Manage grammar implementation in `plans/grammar.pert`, AI process-control design in `plans/control-plane.pert`, operational M1-M4 work in `plans/operations.pert`, MVP recommendation implementation in `plans/recommendation.pert`, and beta Issue #2 in `plans/agent-guidance.pert`. The post-beta English migration, CLI reset, `v0.2.0` release, scheduling/unit roadmap and details, `v0.3.0` release, owner-aware governance, and `v0.4.0` release remain independent in their corresponding plans until a later macro composition decision.
+`plans/mvp.pert` defines the completed stage gates from MVP through the first beta; the design and implementation tasks for each slice are separated into the corresponding detail plan. Macro work packages roll up the resource makespan of their detail plans and do not duplicate individual task state. Manage grammar implementation in `plans/grammar.pert`, AI process-control design in `plans/control-plane.pert`, operational M1-M4 work in `plans/operations.pert`, MVP recommendation implementation in `plans/recommendation.pert`, and beta Issue #2 in `plans/agent-guidance.pert`. The post-beta English migration, CLI reset, `v0.2.0` release, scheduling/unit roadmap and details, `v0.3.0` release, owner-aware governance, `v0.4.0` release, project actuals, and the active `v0.5.0` release remain independent in their corresponding plans until a later macro composition decision.
 
 `.pert` represents the DAG of work that designs and implements specifications; it is not the specification content itself. Do not conflate normative specifications with work state.
 
@@ -2084,6 +2085,43 @@ acceptance remains a later plan task.
 The source cutover does not authorize automatic Git mutation, post-advance
 correction, arbitrary branch-union history, automatic declared-velocity
 changes, MIG-08, package publication, or dist-tag movement.
+
+### Post-MVP Slice 4J: Contract 6 `v0.5.0` beta release
+
+The [`v0.5.0` release procedure](process/0.5.0-release.md) selects the first
+package version for accepted Grammar 5, lifecycle events, read-only project
+history and velocity observation, and CLI Contract 6. The independent
+[`release-0.5.0.pert`](../plans/release-0.5.0.pert) plan consumes reached
+`ACTUALS_ACCEPTED` and `ENGLISH_BASELINE_ACCEPTED` without restoring or
+duplicating either workstream's completed task state.
+
+The release sequence separates:
+
+1. the normative version, acceptance criteria, and authority boundaries;
+2. verification of the accepted Contract 6 and English-baseline inputs;
+3. local package identity, migration guidance, and documentation preparation;
+4. one clean candidate commit and one immutable tarball;
+5. the authorized named Git, GitHub prerelease, and npm `beta` publication;
+6. post-publication durable acceptance; and
+7. exact local installation of `perttool@0.5.0` without moving npm `latest`.
+
+The user's 2026-07-29 instruction authorizes this complete named sequence only
+after each predecessor gate passes. It does not authorize npm `latest`
+promotion, Issue #4 closure, Git mutation by perttool, automatic velocity
+adoption, REOPEN, or any other deferred capability. Plan state is planning
+evidence and does not broaden that authority.
+
+Exit:
+
+- satisfy Requirements 21.6 from one clean release commit and one immutable
+  tarball;
+- prove the accepted actuals and English-baseline inputs before changing
+  release-source identity;
+- publish identical bytes to a GitHub prerelease and npm `beta`;
+- verify public Contract 6 installation and preserve `latest=0.4.0`;
+- record durable release identity and restart evidence; and
+- install and verify exact `perttool@0.5.0` locally only after release
+  acceptance.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

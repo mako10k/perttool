@@ -9,7 +9,8 @@
   2026-07-26 (`v0.3.0` explicit `latest` promotion);
   2026-07-27 (`v0.4.0` Contract 5 release target);
   2026-07-28 (`v0.4.0` beta publication, acceptance, and explicit `latest`
-  promotion)
+  promotion);
+  2026-07-29 (`v0.5.0` Grammar 5 and Contract 6 release target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -42,6 +43,11 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   Grammar 4, owner-aware goal and DAG mutation governance, and the breaking
   CLI Contract 5 surface. `0.3.1` would understate the grammar, JSON schema,
   command-option, and persistent-write authority changes.
+- Select suffix-free `0.5.0` for the first package that publishes accepted
+  Grammar 5 work events and suspended state, governed lifecycle mutations,
+  read-only project history and velocity observation, and the breaking CLI
+  Contract 6 surface. `0.4.1` would understate the grammar, command, result
+  schema, and lifecycle compatibility boundary.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 
@@ -112,6 +118,16 @@ mutation succeeded; fresh registry reads and an unqualified isolated
 installation confirmed `beta=latest=0.4.0`, CLI Contract 5, and Grammar 4.
 Product maturity remains beta, and Issue #4 closure remains a separate
 decision.
+
+On 2026-07-29, after Project Actuals and the independent English repository
+baseline reached acceptance, the user selected and authorized the complete
+named `0.5.0` release flow and an exact post-release local installation. The
+[`v0.5.0` release procedure](../process/0.5.0-release.md) keeps those
+accepted workstreams separate, then sequences release-gate design, Contract 6
+readiness, source preparation, candidate acceptance, Git/GitHub/npm `beta`
+publication, durable acceptance, and the requested local installation.
+That authorization does not include npm `latest` promotion or Issue #4
+closure.
 
 ## Beta gate
 

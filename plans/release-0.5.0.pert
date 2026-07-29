@@ -1,0 +1,121 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_050:
+  version 5
+  title "perttool 0.5.0 Contract 6 beta release"
+  description "Plan suffix-free 0.5.0 as the first public atomic Grammar 5 and CLI Contract 6 beta. The completed project-actuals and English-baseline plans remain the implementation and repository-language authorities. RELEASE_050_GATE_DESIGN completed 3p under the user's authorization for the complete named 0.5.0 release and explicit post-release local installation. Sixteen points remain; precedence and heuristic resource makespans are 16p at the inherited 19p/2d release velocity, both forecast at 32/19d. Complete NextResult v5 recommends RELEASE_050_CONTRACT_6_READINESS. RELEASE_050_PUBLISH is authorized only after all preceding gates pass and only for the named 0.5.0 GitHub prerelease and npm beta batch. npm latest promotion and Issue #4 closure remain separate decisions."
+  as_of 2026-07-29
+  duration_unit point
+  velocity 19p/2d
+  finish RELEASE_050_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_050_PLANNING_STARTED:
+  title "Version 0.5.0 release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize scope, contract, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, CHANGELOG, migration guidance, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub Release, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_050_GATE_ACCEPTED:
+  title "Version 0.5.0 release gate accepted"
+
+milestone RELEASE_050_CONTRACT_6_READY:
+  title "Accepted Contract 6 release input verified"
+
+milestone RELEASE_050_SOURCE_PREPARED:
+  title "Version 0.5.0 release source prepared"
+
+milestone RELEASE_050_CANDIDATE_ACCEPTED:
+  title "Version 0.5.0 release candidate accepted"
+
+milestone RELEASE_050_PUBLISHED:
+  title "Version 0.5.0 published to GitHub and npm beta"
+
+milestone RELEASE_050_ACCEPTED:
+  title "Version 0.5.0 Contract 6 beta accepted"
+
+task RELEASE_050_GATE_DESIGN RELEASE_050_PLANNING_STARTED -> RELEASE_050_GATE_ACCEPTED:
+  title "Define the 0.5.0 Contract 6 release gate"
+  description "Select suffix-free 0.5.0 for the breaking Grammar 5 and Contract 6 cutover. Update requirements, ADR, design, procedure, release PERT, authority boundaries, restart rules, self-use coverage, and latest and Issue exclusions together. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+
+task RELEASE_050_CONTRACT_6_READINESS RELEASE_050_GATE_ACCEPTED -> RELEASE_050_CONTRACT_6_READY:
+  title "Verify accepted Contract 6 release input"
+  description "Require reached ACTUALS_ACCEPTED and ENGLISH_BASELINE_ACCEPTED plus their acceptance records. Verify public Grammar 5, CLI Contract 6, lifecycle, history, observation, governance, English surfaces, package root, help, Guide, and installed behavior without duplicating implementation state."
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+
+task RELEASE_050_PREPARATION RELEASE_050_CONTRACT_6_READY -> RELEASE_050_SOURCE_PREPARED:
+  title "Prepare version 0.5.0 release source"
+  description "Align package and lockfile identity, CLI version, CHANGELOG, README, Contract 5-to-6 migration guidance, release documentation, tests, goldens, and beta publication validation. Run the complete repository and package gates without remote or registry writes."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_050_CANDIDATE RELEASE_050_SOURCE_PREPARED -> RELEASE_050_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.5.0 release candidate"
+  description "Review and commit the complete release diff; run the Node.js baseline acceptance; prove package, tag, and GitHub Release availability; verify npm baselines and protected routes; build one immutable tarball outside the worktree; and accept its digest. This task performs no external write."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_050_PUBLISH RELEASE_050_CANDIDATE_ACCEPTED -> RELEASE_050_PUBLISHED:
+  title "Publish version 0.5.0 from one immutable tarball"
+  description "Only after all preceding gates pass and under the user's named 0.5.0 authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.5.0 while latest remains unchanged."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_050_ACCEPTANCE RELEASE_050_PUBLISHED -> RELEASE_050_ACCEPTED:
+  title "Record durable 0.5.0 beta acceptance"
+  description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball digest, registry integrity and metadata, isolated installation from both public channels, complete Contract 6 behavior, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact, promoting latest, or closing Issue #4."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1

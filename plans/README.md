@@ -31,6 +31,7 @@ Plans are separated by level of detail.
 - [release-0.2.0.pert](release-0.2.0.pert): independent Contract 3 beta release plan covering the version decision, local preparation, candidate gate, authorized distribution, and durable acceptance
 - [release-0.3.0.pert](release-0.3.0.pert): independent Contract 4 beta release plan covering the version gate, accepted scheduling-and-units input, preparation, candidate, authorized publication, and durable acceptance
 - [release-0.4.0.pert](release-0.4.0.pert): independent Contract 5 beta release plan covering the version gate, accepted governance input, preparation, candidate, separately authorized publication, and durable acceptance
+- [release-0.5.0.pert](release-0.5.0.pert): independent Contract 6 beta release plan covering the version gate, accepted project-actuals and English-baseline input, preparation, candidate, authorized publication, durable acceptance, and the post-release exact local installation boundary
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2
@@ -39,7 +40,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All twenty plans pass the self-use gate and are used as inputs to `document
+All twenty-one plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -48,7 +49,7 @@ detail plan. For the explicitly selected scheduling-and-units workstream,
 select a milestone work package from `scheduling-units.pert`, create and accept
 its milestone-detail plan when none is current, and then select a task from
 that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
-`release-0.3.0.pert`, `release-0.4.0.pert`, `governance.pert`,
+`release-0.3.0.pert`, `release-0.4.0.pert`, `release-0.5.0.pert`, `governance.pert`,
 `project-actuals.pert`, and the scheduling-and-units plans are explicitly
 requested independent post-beta plans and are not rolled up into the completed
 MVP macro.
@@ -160,6 +161,18 @@ separate. The
 durable evidence is in the [`v0.4.0` PUBLISH
 record](../docs/process/0.4.0-publish.md) and [`v0.4.0` acceptance
 record](../docs/process/0.4.0-release-acceptance.md).
+
+The independent `release-0.5.0.pert` plan selects suffix-free beta `0.5.0`
+for the breaking Grammar 5 and CLI Contract 6 cutover without duplicating the
+completed project-actuals or English-baseline workstreams. The 3p
+`RELEASE_050_GATE_DESIGN` task fixes Requirements 21.6, ADR 0003, Slice 4J,
+the release procedure, this self-use plan, and the external authority
+boundary. Sixteen points remain; precedence and heuristic resource makespans
+are both 16p with no resource delay, inherited release velocity is `19p/2d`,
+and both forecasts are `32/19d`. Complete NextResult v5 recommends and starts
+only `RELEASE_050_CONTRACT_6_READINESS`. The user's named `0.5.0`
+authorization applies only after each predecessor gate passes and does not
+include npm `latest` promotion or Issue #4 closure.
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.

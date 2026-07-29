@@ -52,7 +52,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   );
   const releaseSection = requirements.split(
     "### 21.5 CLI Contract 5 beta release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split("### 21.6 CLI Contract 6 beta release acceptance criteria")[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],

@@ -1680,6 +1680,68 @@ the accepted artifact or completed plan. The authoritative procedure and evidenc
 acceptance decision in
 [`docs/process/0.4.0-release-acceptance.md`](process/0.4.0-release-acceptance.md).
 
+### 21.6 CLI Contract 6 beta release acceptance criteria
+
+The first package that publishes the accepted project actuals, lifecycle,
+read-only Git history and velocity observation, Grammar 5, and CLI Contract 6
+surface is suffix-free `0.5.0`. It remains part of the `0.x.x` beta series,
+is a GitHub prerelease, and is published to npm `beta`. The release must
+satisfy all of the following.
+
+1. Retain reached `ACTUALS_ACCEPTED` and `ENGLISH_BASELINE_ACCEPTED` in their
+   independent plans and verify both acceptance records without duplicating
+   completed implementation or language-migration task state.
+2. Publish Grammar 5 work events and suspended state; governed start,
+   suspend, resume, and eventful finish; read-only project history and
+   velocity observation; Contract 6 schemas, help, and Guide; and the
+   33-command registry together.
+3. Preserve Grammar 1/2/3/4 meanings, effective governance defaults, and
+   status-only finish compatibility while requiring explicit fixed-offset
+   event times and exact active-time and effort values where Grammar 5
+   lifecycle semantics require them.
+4. Retain Git mutation, automatic declared-velocity adoption, REOPEN,
+   ADV-001, recommendation override apply and audit, MIG-08, Issue
+   synchronization, LSP/VSIX/MCP adapters, and runtime i18n as explicit
+   non-goals.
+5. Align `package.json`, the lockfile root package, CLI/tool version, release
+   commit, annotated `v0.5.0` tag, GitHub asset, and npm package identity.
+6. Provide explicit Contract 5-to-6 migration guidance for envelope and
+   result schemas, new commands and options, Grammar 5 source, suspended
+   selection semantics, Git-history qualifications, and the absence of a
+   Contract 5 runtime switch or compatibility alias.
+7. Pass `npm ci`, `npm run check`, `git diff --check`, package normalization,
+   isolated installation, lifecycle and suspended-state acceptance, real
+   first-parent Git history, observed-velocity qualification, exact unit
+   migration, complete NextResult v5, and the file-first Contract 6 workflow
+   from one clean release source.
+8. Establish before external mutation that `perttool@0.5.0`, `v0.5.0`, and
+   the matching GitHub Release are unused; record npm `beta`, `latest`, and
+   `alpha`; and verify the protected credential routes without displaying
+   secrets.
+9. Generate one immutable tarball outside the worktree, verify it before the
+   first external write, distribute those exact bytes through the GitHub
+   prerelease and npm `beta`, and verify isolated installation from both
+   public channels.
+10. Push and verify one clean release commit and annotated tag only under
+    explicit user authorization for the named `0.5.0` external publication
+    batch.
+11. Verify that publication moves `beta` to `0.5.0`, leaves `latest`
+    unchanged at `0.4.0`, and does not imply stable product maturity.
+12. Record durable identity, common artifact digests, registry metadata,
+    public URLs, Contract 6 behavior, installation results, and restart
+    observations before accepting the release; then verify the separately
+    requested exact local `perttool@0.5.0` installation without changing
+    `latest`.
+
+The user's 2026-07-29 release instruction authorizes the complete named
+`0.5.0` gate, preparation, candidate, Git push, annotated tag, GitHub
+prerelease, npm `beta` publication, durable acceptance, and exact
+post-release local installation after each preceding gate passes. Plan state
+records this scope but is not a substitute for that instruction. The
+authorization does not include npm `latest` promotion, Issue #4 closure, or
+any of the non-goals above. The authoritative procedure is
+[`docs/process/0.5.0-release.md`](process/0.5.0-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

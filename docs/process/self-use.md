@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.58
+- Document status: Active Stage 3 / Revision 2.59
 - Creation date: 2026-07-21
-- Update date: 2026-07-27
+- Update date: 2026-07-29
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -28,6 +28,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/release-0.2.0.pert` | Contract 3 version decision, local preparation, authorized distribution, and acceptance DAG | `.pert` document |
 | `plans/release-0.3.0.pert` | Contract 4 version gate, accepted implementation input, preparation, authorized PUBLISH, and acceptance DAG | `.pert` document |
 | `plans/release-0.4.0.pert` | Contract 5 version gate, accepted governance input, preparation, separately authorized PUBLISH, and acceptance DAG | `.pert` document |
+| `plans/release-0.5.0.pert` | Contract 6 version gate, accepted actuals and English-baseline input, preparation, authorized PUBLISH, acceptance, and exact local-install boundary | `.pert` document |
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
@@ -1205,6 +1206,20 @@ uncached registry read reported `beta=latest=0.4.0` and
 successfully checked the reached Grammar 4 release plan. The immutable
 artifact and completed release plan were unchanged.
 
+The user then selected and authorized the complete named `0.5.0` release and
+an exact post-release local installation. Contract 6 `project init` created
+`plans/release-0.5.0.pert` as Grammar 5 with explicit goal/DAG owner `user`;
+one governed atomic batch established its six-task 19p release DAG and
+completed the 3p `RELEASE_050_GATE_DESIGN` task. The current pre-advance
+snapshot has five resources, seven milestones, six tasks, and no gates.
+Sixteen points remain; precedence and heuristic resource makespans are both
+16p with no resource delay, inherited release velocity is `19p/2d`, and both
+forecasts are `32/19d`. Complete, non-truncated NextResult v5 under
+`recommendation_v1_plus_release_gate` recommends and starts only
+`RELEASE_050_CONTRACT_6_READINESS`. The named authorization applies only
+after each predecessor gate passes. npm `latest` promotion and Issue #4
+closure remain separate decisions.
+
 Stage 1 allowed operations:
 
 - check
@@ -1262,7 +1277,8 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - Independent post-beta CLI/help reset: `cli-surface-reset.pert`
 - Independent Contract 3 `v0.2.0` release: `release-0.2.0.pert`
 - Completed independent Contract 4 `v0.3.0` release: `release-0.3.0.pert`
-- Active independent Contract 5 `v0.4.0` release: `release-0.4.0.pert`
+- Completed independent Contract 5 `v0.4.0` release: `release-0.4.0.pert`
+- Active independent Contract 6 `v0.5.0` release: `release-0.5.0.pert`
 - Independent scheduling/unit milestone roadmap: `scheduling-units.pert`
 - Completed detail only to SU-M1: `scheduling-units-m1.pert`
 - Completed and advanced target-only source/Core detail to SU-M2:
@@ -1569,5 +1585,5 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty-one current plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.
