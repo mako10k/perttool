@@ -82,7 +82,9 @@ heuristic resource makespan are both zero with no resource delay. Complete
 NextResult v5 has no ready, recommended, or startable task.
 Git mutation, automatic velocity adoption, MIG-08, release publication, and
 dist-tag movement remain unauthorized. This independent workstream does not
-displace `PERT_PLANS`.
+displace `PERT_PLANS`. Backlog `ACT-002` records a request-only REOPEN concept
+for completed work. Its feasibility, semantics, implementation, plan, and
+public-contract inclusion are all undecided.
 
 The reviewed CLI/help reset is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted Contract 3 design introduced one typed registry for dispatch, option parsing, text help, and JSON help; separated domain guide and agent guidance; added structured usage recovery, project initialization, and direct gate maintenance; and rejected renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and the installed-package workflow for temporal and exact-unit behavior. The plan has no remaining or recommended task and an observed provisional `49p/1d` velocity.
 

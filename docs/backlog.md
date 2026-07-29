@@ -392,6 +392,72 @@ Planned delivery slices:
 | `ACTUALS_PUBLIC_CONTRACT` | Atomic Grammar 5/CLI Contract 6 registry, help, Guide, schemas, diagnostics, and root activation | 6p | Complete: no partial public activation or compatibility alias exists. |
 | `ACTUALS_ACCEPTANCE` | Repository, Git, lifecycle, link, package, and installed workflow acceptance | 4p | Complete: all normative PACT cases pass with no automatic Git or velocity mutation and no release side effect. |
 
+### ACT-002: Reopen completed work without rewriting actual history
+
+Priority: Unset (request only; requires feasibility review)
+
+Status: Requested backlog (not selected; implementation undecided)
+
+Provide a user-visible REOPEN concept, tentatively `task reopen`, for work that
+was finished but later requires additional execution. This entry records the
+request only. It does not add a requirement, select an implementation, create
+a PERT task, reserve a CLI contract, or authorize a release.
+
+REOPEN must be distinguished from correction. A prior finish event records
+what was asserted at that time and must not silently disappear or acquire a
+different payload merely because more work becomes necessary. If this request
+is selected, the design must preserve that evidence and represent the later
+decision explicitly.
+
+Feasibility questions:
+
+- Is the first version limited to a `done` task that still exists before
+  `dag advance`, or must it also cover a task already removed from the current
+  source?
+- Does reopening retain one stable task identity with multiple execution
+  intervals, create a linked attempt/revision, or require an explicitly new
+  task after advance?
+- Which state follows REOPEN: `active`, `planned`, or a separately modeled
+  state, and must an explicit fixed-offset event time and reason be required?
+- How are the previously reached target milestone, downstream reached
+  closure, active or completed successors, and resource schedules handled
+  without silently reversing unrelated work?
+- How do history and velocity observation retain the earlier completed sample
+  without double-counting planned value, effort, cycle time, or a later
+  finish?
+- Which owner confirmation, governance decision, recoverability proof, and
+  conflict behavior apply before a persistent write?
+- Does the feature require a new work-event model, Grammar version, CLI
+  contract, result schema, and diagnostic family?
+
+Safety boundaries for any future design:
+
+- prior start, suspend, resume, and finish events remain immutable evidence;
+- REOPEN is an explicit source-preserving candidate and never an inferred
+  consequence of a later Git commit;
+- no command automatically stages, commits, rewrites, or pushes Git history;
+- no command automatically changes declared velocity or removes a previously
+  reported observation;
+- downstream milestones or tasks are not silently undone;
+- preview, governance, expected-digest, and safe-write controls remain in
+  force; and
+- post-advance reconstruction fails closed when task identity or the retained
+  source snapshot is incomplete or ambiguous.
+
+Possible design directions, with none selected:
+
+1. append a new `reopen` event to the same pre-advance task and begin another
+   active interval;
+2. create a linked attempt/revision that preserves the completed task as an
+   immutable prior attempt; or
+3. support only pre-advance REOPEN and require an explicit new task for work
+   discovered after advance.
+
+Before implementation can be planned, a contract review must choose the
+supported boundary, define exact history and observation semantics, add
+normative acceptance cases, and estimate independent delivery slices.
+Grammar 5 and CLI Contract 6 remain unchanged until that review is accepted.
+
 ## Scheduling metadata and unit migration
 
 ### TIME-001: Add temporal properties and deadline-aware capabilities
