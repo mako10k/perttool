@@ -90,48 +90,31 @@
       ]
     },
     "english-baseline": {
-      "source_digest": "sha256:fe7241624e95e60f5bca184f8a402e9d0ed5ded4be4f77a0e8404a6a36248d86",
+      "source_digest": "sha256:e9b306ff0423ad8bc8114a1c1c35affae60e6cd79f1f52fa9cd997c3a7727462",
       "groups": {
         "active": [],
-        "ready": [
-          "ENGLISH_ACCEPTANCE"
-        ],
-        "runnable_now": [
-          "ENGLISH_ACCEPTANCE"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": [],
         "suspended": []
       },
-      "recommended_task_ids": [
-        "ENGLISH_ACCEPTANCE"
-      ],
-      "manual_selected_task_ids": [
-        "ENGLISH_ACCEPTANCE"
-      ],
-      "tiers": {
-        "ENGLISH_ACCEPTANCE": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "ENGLISH_ACCEPTANCE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "grammar": {
       "source_digest": "sha256:a929ccbb229db479a8168d74716dbb420885d6b190d755d45708d860d4505aca",

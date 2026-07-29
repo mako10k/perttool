@@ -4,7 +4,7 @@ project ENGLISH_BASELINE:
   description "Migrate repository-maintained prose, bundled help, and diagnostics to the English baseline adopted by ADR 0004. The canonical surface inventory and Unicode allowlist are recorded in docs/process/english-surface-inventory.md. Remaining migration work is tracked by the current tasks. Runtime i18n, translation catalogs, locale negotiation, and translation of user-authored content remain outside this plan."
   as_of 2026-07-29
   duration_unit point
-  velocity 39p/2d
+  velocity 42p/2d
   finish ENGLISH_BASELINE_ACCEPTED
 
 resource DEVELOPERS:
@@ -59,6 +59,7 @@ task ENGLISH_ACCEPTANCE GOLDEN_UNICODE_READY -> ENGLISH_BASELINE_ACCEPTED:
     repository, link, package, documentation, and language-surface checks.
     Confirm that no runtime locale negotiation or translation catalog was added.
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

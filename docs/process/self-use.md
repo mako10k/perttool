@@ -815,7 +815,7 @@ Recalibration from 2026-07-22 to 2026-07-29:
 | `operations.pert` | formatter/mutation preview, safe write, advance, project metadata CLI | 29p | 2d | `29p/2d` | 0p |
 | `recommendation.pert` | `FIXTURE_BASELINE`, `RANKING_CORE`, `EXPLANATION_CORE`, `NEXT_V3_PUBLICATION`, `SELF_USE_SHADOW`, `OVERRIDE_VALIDATION`, `AUTHORITY_ADOPTION` | 22p | 1d | `22p/1d` | 0p |
 | `agent-guidance.pert` | Total 5 tasks | 22p | 1d | `22p/1d` | 0p |
-| `english-baseline.pert` | `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, `PERT_PLANS` | 36p | 2d | `36p/2d` | resource `1/3d` |
+| `english-baseline.pert` | All 9 tasks through `ENGLISH_ACCEPTANCE` | 42p | 2d | `42p/2d` | 0p |
 | `cli-surface-reset.pert` | All 9 tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` | 49p | 1d | `49p/1d` | 0p |
 | `release-0.2.0.pert` | All 5 tasks through `RELEASE_020_ACCEPTANCE` | 17p | 2d | `17p/2d` | 0p |
 | `scheduling-units-m1.pert` | All 7 tasks through `M1_CONTRACT_REVIEW` | 24p | 1d | `24p/1d` | 0p |
@@ -824,13 +824,10 @@ Recalibration from 2026-07-22 to 2026-07-29:
 
 This is neither effort hours nor individual productivity; it is observed throughput per plan. Because the measured sample has few active days, its value is provisional and will be recalibrated when new active days or multiple task completions accumulate. Grammar implementation, control-plane design, operations and editing work, recommendation implementation, agent guidance, English-baseline migration, and the CLI-surface reset are not averaged because their work types differ. Future detail plans specify the sample from the closest work type as their initial value. `scheduling-units-m2.pert` initially inherited `24p/1d` from SU-M1, replaced it with its own sample after the first task, and now records all six completed SU-M2 tasks as cumulative `24p/1d` on the same active day.
 
-`english-baseline.pert` completed 2p of inventory work, 13p of
-normative-document migration, 8p of process-and-guidance migration, 5p of
-runtime-message migration, and 5p of help-and-usage migration on 2026-07-24,
-then completed the 3p PERT-plan migration on 2026-07-29. Its cumulative
-observed velocity is now `36p/2d`; the remaining precedence path and resource
-schedule are both 6p and forecast `1/3d`. This remains a two-day sample and
-must be recalibrated after further task completions.
+`english-baseline.pert` completed 33p through help and usage on 2026-07-24,
+then completed the 3p PERT-plan migration, 3p golden/Unicode audit, and 3p
+final acceptance on 2026-07-29. Its cumulative observed velocity is
+`42p/2d`; no work remains. This remains a two-day sample.
 
 The `release-0.2.0.pert` workstream completed its 3p gate design and 3p source
 preparation on 2026-07-24, then completed its 3p candidate, 5p distribution,
@@ -1240,7 +1237,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - current operations implementation tasks and resource waits: `operations.pert`
 - current recommendation implementation tasks and resource waits: `recommendation.pert`
 - current AI Agent Guidance implementation tasks and resource waits: `agent-guidance.pert`
-- Active post-beta English surface migration: `english-baseline.pert`
+- Completed post-beta English surface migration: `english-baseline.pert`
 - Independent post-beta owner-aware mutation governance: `governance.pert`
 - Independent post-beta CLI/help reset: `cli-surface-reset.pert`
 - Independent Contract 3 `v0.2.0` release: `release-0.2.0.pert`
@@ -1265,7 +1262,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - the suffix-free `v0.1.0` beta is accepted, and the macro has advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3 is a future backlog-hierarchy and multi-plan-composition design and does not add work packages to the current macro
 - the LSP server, VSIX, and MCP server are independent post-first-beta backlogs and do not add work packages to the current macro
-- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, `PERT_PLANS`, and `GOLDEN_UNICODE_AUDIT`; commits `9d9fdbf` and `81ab774` record the exact completed PERT-plan and golden/Unicode pre-advance snapshots, and `ENGLISH_ACCEPTANCE` is the current recommended task.
+- The independent English-baseline migration completed all nine tasks through `ENGLISH_ACCEPTANCE`; the final acceptance record traces ADR 0004 across the canonical surfaces, and complete NextResult v5 has no ready, recommended, or startable task.
 
 For the explicitly selected scheduling-and-units workstream, first use a fresh
 complete `NextResult.v3` from `scheduling-units.pert` to select the milestone

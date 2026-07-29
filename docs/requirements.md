@@ -108,7 +108,7 @@ Must:
 
 - New or substantively modified repository prose uses English.
 - Stable command names, DSL keywords, JSON fields, enum values, schema identifiers, diagnostic codes, reason codes, and typed data remain the machine-readable authority. Natural-language messages alone must not become a machine contract.
-- Existing Japanese content remains explicit migration debt until the phased work in [`plans/english-baseline.pert`](../plans/english-baseline.pert) is accepted.
+- Repository-maintained Japanese prose remains migration debt until the phased work in [`plans/english-baseline.pert`](../plans/english-baseline.pert) is accepted. After acceptance, Japanese-script content is permitted only when exact allowlisted preservation evidence identifies user-authored content, intentional Unicode fixture content, or the scanner's own detection expression.
 - User-authored `.pert` titles, descriptions, source data, and intentional Unicode fixtures are preserved. The tool must not translate them automatically.
 - The language used to communicate with a human is independent from the repository baseline. An agent may answer a Japanese-speaking user in Japanese while writing tracked repository artifacts in English.
 - The same input, options, tool version, and fixed English description registry produce the same output regardless of the process locale.
@@ -1888,7 +1888,7 @@ complete because the same `v0.1.0-alpha.2` artifact was published to the
 GitHub prerelease and npm `alpha`, including isolated installation from the
 registry.
 
-[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`, and currently recommends `PERT_PLANS`. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
 The accepted Contract 3 source and package workflow published suffix-free beta
 `0.2.0` as the first Contract 3 package. All five tasks in

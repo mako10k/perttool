@@ -104,6 +104,16 @@ One task and 3p remain, matching precedence and heuristic resource makespans;
 measured velocity is `39p/2d`, and complete NextResult v5 recommends only
 `ENGLISH_ACCEPTANCE`.
 
+`ENGLISH_ACCEPTANCE` then traced ADR 0004 through requirements, design,
+runtime and diagnostics, help and usage, documentation, plans, tests and
+goldens, package contents, and the shared agent entrypoints. The
+[final acceptance record](../docs/process/english-baseline-acceptance.md)
+also confirms the exact three-line Japanese-script allowlist and the absence
+of runtime locale negotiation, translation catalogs, or a `--locale` option.
+All nine tasks and 42p are accepted over two active dates. The completed plan
+has zero precedence and heuristic resource makespans, no remaining or
+recommended task, and measured velocity `42p/2d`.
+
 All nine `cli-surface-reset.pert` tasks, totaling 49p from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE`, completed and advanced on 2026-07-24. The active Contract 3 surface uses one typed registry for dispatch and help, separates domain guidance, provides structured usage recovery, exposes project initialization and direct gate maintenance, adds the contract version to every JSON envelope, rejects renamed Contract 2 spellings, and passes the complete isolated installed-package file-first workflow. The detail plan has no remaining or recommended task, and its cumulative plan-specific velocity is `49p/1d`.
 
 All five tasks in `release-0.2.0.pert`, totaling 17p, completed and advanced through 2026-07-25. Suffix-free beta `0.2.0` was published from one verified tarball to a GitHub prerelease and npm `beta`; release commit/tag identity, local/GitHub/npm byte parity, and installed Contract 3/file-first behavior were accepted. Publication left `latest=0.1.0` unchanged; a separately authorized post-acceptance operation then made npm `beta=latest=0.2.0`. The completed release plan was not changed by that independent dist-tag mutation and retains zero precedence and heuristic resource makespans, no remaining or recommended task, and cumulative plan-specific velocity `17p/2d`. The durable evidence is in the [`v0.2.0` acceptance record](../docs/process/0.2.0-release-acceptance.md).
@@ -229,8 +239,8 @@ version 1 heuristic resource makespan are both zero with no resource delay,
 and complete NextResult v5 has no ready, recommended, or startable task. Git
 mutation, automatic declared-velocity changes, MIG-08, release publication,
 and dist-tag movement remain outside the authorized scope. This independent
-workstream does not displace `GOLDEN_UNICODE_AUDIT` in the English-baseline
-detail.
+workstream did not displace the separately selected English-baseline
+workstream.
 
 Velocity is recalibrated per plan from the points in task-completion commits
 and the number of active dates in Asia/Tokyo; the initial estimate does not

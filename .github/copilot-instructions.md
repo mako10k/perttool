@@ -5,7 +5,7 @@ Treat `AGENTS.md` as the source of truth for repository guidance shared by Codex
 Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
-- ADR 0004 is active. Existing Japanese surfaces are migration debt in `plans/english-baseline.pert`. `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, and `PERT_PLANS` are complete and advanced; `9d9fdbf` records the exact completed PERT-plan pre-advance snapshot, and complete NextResult v5 now recommends only `GOLDEN_UNICODE_AUDIT`.
+- ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` workflow are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation
@@ -60,7 +60,7 @@ Mandatory summary:
   precedence and heuristic resource makespans and no ready, recommended, or
   startable task. Git mutation, automatic velocity adoption, MIG-08,
   publication, and dist-tag movement remain outside scope. The independent
-  workstream does not displace `GOLDEN_UNICODE_AUDIT`. Backlog `ACT-002` records only an
+  workstream did not displace the separately selected English-baseline workstream. Backlog `ACT-002` records only an
   undecided REOPEN request; it has no selected semantics, implementation,
   plan, or public-contract inclusion.
 - The CLI/help review is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted registry-driven design separates command help, domain guide, and agent guidance, includes project initialization and gate maintenance, and rejects renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and installed-package workflow for temporal and exact-unit behavior. The completed plan has no recommendation at `49p/1d`.

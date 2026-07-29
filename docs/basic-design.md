@@ -1840,7 +1840,7 @@ The [AI Agent Guidance detail plan](../plans/agent-guidance.pert) totals 22p. Us
 
 The migration is split into inventory, runtime messages, bundled help, normative documents, process and agent guidance, current PERT metadata, golden/Unicode audit, and final acceptance. Runtime locale negotiation, translation catalogs, a `--locale` option, and automatic translation of `.pert` content are outside this slice.
 
-The first task remained explicitly blocked until `plans/mvp.pert` reached `M8_BETA_RELEASED`. Because cross-plan dependencies are not yet implemented, that external gate was represented by a stable `blocked_reason`. After beta acceptance, the Stage 3 preview-first unblock procedure removed the reason and changed `SURFACE_INVENTORY` to `planned`. The inventory, normative-document, process-and-guidance, runtime-message, and help-and-usage migrations completed and advanced on 2026-07-24; fresh analysis now recommends `PERT_PLANS`.
+The first task remained explicitly blocked until `plans/mvp.pert` reached `M8_BETA_RELEASED`. Because cross-plan dependencies are not yet implemented, that external gate was represented by a stable `blocked_reason`. After beta acceptance, the Stage 3 preview-first unblock procedure removed the reason and changed `SURFACE_INVENTORY` to `planned`. All nine migration and acceptance tasks are complete; the [final acceptance record](process/english-baseline-acceptance.md) traces this design through runtime, help, documentation, plans, tests, package contents, and agent entrypoints.
 
 ### Post-MVP Slice 4C: CLI Contract 3
 

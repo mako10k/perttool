@@ -21,7 +21,7 @@ English is the canonical language for tracked repository artifacts. New or subst
 
 This rule does not force the conversation language. Agents continue to answer the user in the language requested by the user, including Japanese, while keeping committed artifacts in English. User-authored `.pert` content and explicit Unicode round-trip fixtures are never translated automatically.
 
-The repository does not currently implement i18n, locale negotiation, translation catalogs, or a `--locale` option. Stable codes, field names, enum values, typed facts, and schema versions are the machine contract; natural-language text is a deterministic projection. Existing Japanese content is migrated in bounded tasks from [`plans/english-baseline.pert`](../../plans/english-baseline.pert) after the first beta.
+The repository does not currently implement i18n, locale negotiation, translation catalogs, or a `--locale` option. Stable codes, field names, enum values, typed facts, and schema versions are the machine contract; natural-language text is a deterministic projection. The completed migration and exact intentional-Unicode allowlist are recorded by [`plans/english-baseline.pert`](../../plans/english-baseline.pert) and its [final acceptance record](english-baseline-acceptance.md).
 
 ## 2. Local repositories consulted
 
@@ -168,15 +168,11 @@ The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.m
 
 The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
 
-ADR 0004 adopts English as the repository baseline immediately. The
-legacy-surface migration is tracked in `plans/english-baseline.pert`.
-`SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`,
-`RUNTIME_MESSAGES`, `HELP_AND_USAGE`, and `PERT_PLANS` are complete and
-advanced through Stage 3 preview-first writes. `GOLDEN_UNICODE_AUDIT` is also
-complete and advanced; commit `81ab774` records its exact pre-advance snapshot.
-The machine-readable allowlist and scanner are recorded in
-`english-surface-inventory.md`, and fresh complete NextResult v5 recommends
-only `ENGLISH_ACCEPTANCE`.
+ADR 0004 adopts English as the repository baseline immediately. All nine tasks
+in `plans/english-baseline.pert` are accepted. The machine-readable allowlist
+and scanner are recorded in `english-surface-inventory.md`, the final
+cross-surface trace is recorded in `english-baseline-acceptance.md`, and fresh
+complete NextResult v5 has no ready, recommended, or startable task.
 
 The human/LLM CLI surface review and its eight backlog items are also tracked
 as an independent post-beta workstream in
