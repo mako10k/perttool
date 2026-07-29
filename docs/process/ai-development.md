@@ -276,7 +276,9 @@ and complete NextResult v5 recommends only `RELEASE_050_ACCEPTANCE`.
 Independent acceptance then reread both public channels and references,
 reconfirmed three-way artifact identity, and reran both public-package
 workflows. All six tasks and 19p are complete at `19p/1d`; both makespans
-are zero, and complete NextResult v5 has no recommendation. Exact local
+are zero, and complete NextResult v5 has no recommendation. Git commit
+`bacd413` records the exact completed acceptance pre-advance snapshot, and
+the plan is advanced to reached `RELEASE_050_ACCEPTED`. Exact local
 installation remains the ordered post-acceptance step.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 

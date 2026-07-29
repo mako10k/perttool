@@ -1296,9 +1296,13 @@ identical, and both public tarballs again passed the complete isolated-package
 workflow. The [acceptance record](0.5.0-release-acceptance.md) fixes those
 results. All six tasks and 19p are complete at the observed `19p/1d`
 velocity; precedence and heuristic resource makespans are zero, and complete
-NextResult v5 has no ready, recommended, or startable task. The exact local
-installation remains the separately ordered post-acceptance step. npm
-`latest` and Issue #4 remain unchanged.
+NextResult v5 has no ready, recommended, or startable task. Git commit
+`bacd413` preserves the exact completed acceptance pre-advance snapshot.
+Canonical governed advance removed the final task and published frontier,
+retained reached `RELEASE_050_ACCEPTED`, and produced residual digest
+`sha256:b8ade1fa4ea713407aebf6345fd21a1ef2a6092adbc0385fc9f2c19ede7954b5`.
+The exact local installation remains the separately ordered post-acceptance
+step. npm `latest` and Issue #4 remain unchanged.
 
 Stage 1 allowed operations:
 
@@ -1358,8 +1362,8 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - Independent Contract 3 `v0.2.0` release: `release-0.2.0.pert`
 - Completed independent Contract 4 `v0.3.0` release: `release-0.3.0.pert`
 - Completed independent Contract 5 `v0.4.0` release: `release-0.4.0.pert`
-- Accepted independent Contract 6 `v0.5.0` release awaiting canonical
-  advance and exact local installation: `release-0.5.0.pert`
+- Accepted and advanced independent Contract 6 `v0.5.0` release awaiting
+  exact local installation: `release-0.5.0.pert`
 - Independent scheduling/unit milestone roadmap: `scheduling-units.pert`
 - Completed detail only to SU-M1: `scheduling-units-m1.pert`
 - Completed and advanced target-only source/Core detail to SU-M2:
