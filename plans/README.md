@@ -96,7 +96,10 @@ CI repository gate. The
 [acceptance record](../docs/process/english-golden-unicode-acceptance.md) fixes
 the pre-migration source-layout and semantic-structure evidence. The task is
 complete at pre-advance digest
-`sha256:9aa145806e7aeee32e7ad97ed45ec1df9a9d954100f3e96bcea8196f1be90e25`.
+`sha256:9aa145806e7aeee32e7ad97ed45ec1df9a9d954100f3e96bcea8196f1be90e25`,
+recorded by Git commit `81ab774`. The task is advanced to reached
+`GOLDEN_UNICODE_READY`; the residual digest is
+`sha256:fe7241624e95e60f5bca184f8a402e9d0ed5ded4be4f77a0e8404a6a36248d86`.
 One task and 3p remain, matching precedence and heuristic resource makespans;
 measured velocity is `39p/2d`, and complete NextResult v5 recommends only
 `ENGLISH_ACCEPTANCE`.

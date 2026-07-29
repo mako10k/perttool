@@ -172,10 +172,11 @@ ADR 0004 adopts English as the repository baseline immediately. The
 legacy-surface migration is tracked in `plans/english-baseline.pert`.
 `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`,
 `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, and `PERT_PLANS` are complete and
-advanced through Stage 3 preview-first writes. `GOLDEN_UNICODE_AUDIT` is
-complete at its pre-advance snapshot: the exact machine-readable allowlist and
-scanner are recorded in `english-surface-inventory.md`, and fresh complete
-NextResult v5 recommends only `ENGLISH_ACCEPTANCE`.
+advanced through Stage 3 preview-first writes. `GOLDEN_UNICODE_AUDIT` is also
+complete and advanced; commit `81ab774` records its exact pre-advance snapshot.
+The machine-readable allowlist and scanner are recorded in
+`english-surface-inventory.md`, and fresh complete NextResult v5 recommends
+only `ENGLISH_ACCEPTANCE`.
 
 The human/LLM CLI surface review and its eight backlog items are also tracked
 as an independent post-beta workstream in

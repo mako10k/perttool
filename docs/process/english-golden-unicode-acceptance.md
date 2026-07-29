@@ -1,7 +1,7 @@
 # English golden and Unicode audit acceptance
 
-Status: Accepted on 2026-07-29. The exact completed pre-advance snapshot is
-source digest
+Status: Accepted and advanced on 2026-07-29. Git commit `81ab774` records the
+exact completed pre-advance snapshot at source digest
 `sha256:9aa145806e7aeee32e7ad97ed45ec1df9a9d954100f3e96bcea8196f1be90e25`.
 
 ## Scope
@@ -90,6 +90,13 @@ The preview-first expected-digest atomic batch changed only velocity from
 `36p/2d` to `39p/2d` and set `GOLDEN_UNICODE_AUDIT` to `done`. The completed
 pre-advance plan digest is
 `sha256:9aa145806e7aeee32e7ad97ed45ec1df9a9d954100f3e96bcea8196f1be90e25`.
+
+Governed `dag advance` removed `GOLDEN_UNICODE_AUDIT` and prior frontier
+milestone `ENGLISH_CONTENT_READY`, then marked `GOLDEN_UNICODE_READY` reached.
+It preserved
+`frontier_before=frontier_after=[GOLDEN_UNICODE_READY]` and
+`ready_before=ready_after=[ENGLISH_ACCEPTANCE]`. The residual source digest is
+`sha256:fe7241624e95e60f5bca184f8a402e9d0ed5ded4be4f77a0e8404a6a36248d86`.
 
 One task and 3p remain. Precedence and the `parallel-sgs` version 1 heuristic
 resource makespans are both 3p with no resource delay; both velocity forecasts

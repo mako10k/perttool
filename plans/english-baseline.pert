@@ -33,12 +33,10 @@ resource DOC_SURFACE:
 
 
 
-milestone ENGLISH_CONTENT_READY:
-  title "Canonical English content slices complete"
-  state reached
 
 milestone GOLDEN_UNICODE_READY:
   title "Golden and Unicode audit complete"
+  state reached
 
 milestone ENGLISH_BASELINE_ACCEPTED:
   title "English repository baseline accepted"
@@ -52,20 +50,6 @@ milestone ENGLISH_BASELINE_ACCEPTED:
 
 
 
-task GOLDEN_UNICODE_AUDIT ENGLISH_CONTENT_READY -> GOLDEN_UNICODE_READY:
-  title "Audit golden files and preserve intentional Unicode coverage"
-  description |
-    Update translated byte and JSON golden files, add a repository-local
-    Japanese-script check for canonical surfaces, and allowlist only explicit
-    user-authored, interoperability, or Unicode round-trip fixtures. Verify that
-    stable identifiers and structured data remain unchanged.
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    CLI_SURFACE 1
 
 task ENGLISH_ACCEPTANCE GOLDEN_UNICODE_READY -> ENGLISH_BASELINE_ACCEPTED:
   title "Accept the English repository baseline"

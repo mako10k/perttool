@@ -709,8 +709,12 @@ the link/package workflows. An expected-digest atomic batch recalibrated the
 cumulative sample to `39p/2d` and finished the 3p task. The exact completed
 pre-advance digest is
 `sha256:9aa145806e7aeee32e7ad97ed45ec1df9a9d954100f3e96bcea8196f1be90e25`.
-One task and 3p remain; precedence and heuristic resource makespans are both
-3p with no resource delay, both forecasts are `2/13d`, and complete
+Git commit `81ab774` records that exact snapshot. Governed `dag advance`
+removed the completed task and prior frontier while preserving reached
+`GOLDEN_UNICODE_READY` and the ready set; the residual digest is
+`sha256:fe7241624e95e60f5bca184f8a402e9d0ed5ded4be4f77a0e8404a6a36248d86`.
+One task and 3p remain; precedence and heuristic resource makespans are both 3p
+with no resource delay, both forecasts are `2/13d`, and complete
 `NextResult.v5` recommends only `ENGLISH_ACCEPTANCE`. The
 [golden and Unicode audit acceptance record](english-golden-unicode-acceptance.md)
 fixes the allowlist, invariant evidence, verification, and non-goals.
@@ -1261,7 +1265,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - the suffix-free `v0.1.0` beta is accepted, and the macro has advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3 is a future backlog-hierarchy and multi-plan-composition design and does not add work packages to the current macro
 - the LSP server, VSIX, and MCP server are independent post-first-beta backlogs and do not add work packages to the current macro
-- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, and `PERT_PLANS`; commit `9d9fdbf` records the exact completed PERT-plan pre-advance snapshot. `GOLDEN_UNICODE_AUDIT` is complete at pre-advance digest `sha256:9aa145806e7aeee32e7ad97ed45ec1df9a9d954100f3e96bcea8196f1be90e25`, and `ENGLISH_ACCEPTANCE` is the current recommended task.
+- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, `PERT_PLANS`, and `GOLDEN_UNICODE_AUDIT`; commits `9d9fdbf` and `81ab774` record the exact completed PERT-plan and golden/Unicode pre-advance snapshots, and `ENGLISH_ACCEPTANCE` is the current recommended task.
 
 For the explicitly selected scheduling-and-units workstream, first use a fresh
 complete `NextResult.v3` from `scheduling-units.pert` to select the milestone
