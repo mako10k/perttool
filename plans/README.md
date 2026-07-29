@@ -83,10 +83,11 @@ On 2026-07-29, `PERT_PLANS` migrated the six remaining `.pert` metadata
 surfaces and this evidence file without changing stable plan structure or
 reconstructing completed history. The
 [acceptance record](../docs/process/english-pert-plans-acceptance.md) fixes
-the source digests and invariant checks. The exact completed pre-advance
-snapshot has 6p remaining, matching 6p precedence and heuristic resource
-makespans, measured velocity `36p/2d`, and a complete NextResult v5 that
-recommends only `GOLDEN_UNICODE_AUDIT`.
+the source digests and invariant checks. Git commit `9d9fdbf` records the
+exact completed pre-advance snapshot, and the task is advanced to reached
+`ENGLISH_CONTENT_READY`. The residual plan has 6p remaining, matching 6p
+precedence and heuristic resource makespans, measured velocity `36p/2d`, and
+a complete NextResult v5 that recommends only `GOLDEN_UNICODE_AUDIT`.
 
 All nine `cli-surface-reset.pert` tasks, totaling 49p from `CONTRACT_V3_DESIGN` through `CLI_003_FILE_FIRST_ACCEPTANCE`, completed and advanced on 2026-07-24. The active Contract 3 surface uses one typed registry for dispatch and help, separates domain guidance, provides structured usage recovery, exposes project initialization and direct gate maintenance, adds the contract version to every JSON envelope, rejects renamed Contract 2 spellings, and passes the complete isolated installed-package file-first workflow. The detail plan has no remaining or recommended task, and its cumulative plan-specific velocity is `49p/1d`.
 

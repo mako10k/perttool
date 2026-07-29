@@ -27,28 +27,15 @@ resource DOC_SURFACE:
   capacity 1
 
 
-milestone SURFACE_INVENTORY_READY:
-  title "Migration inventory and allowlist design ready"
-  state reached
-
-milestone RUNTIME_MESSAGES_READY:
-  title "Runtime messages migrated"
-  state reached
-
-milestone HELP_AND_USAGE_READY:
-  title "Bundled help and usage migrated"
-  state reached
 
 
-milestone PROCESS_GUIDANCE_READY:
-  title "Process and agent guidance migrated"
-  state reached
 
-milestone PERT_PLANS_READY:
-  title "Current PERT plans migrated"
+
+
 
 milestone ENGLISH_CONTENT_READY:
   title "Canonical English content slices complete"
+  state reached
 
 milestone GOLDEN_UNICODE_READY:
   title "Golden and Unicode audit complete"
@@ -60,31 +47,10 @@ milestone ENGLISH_BASELINE_ACCEPTED:
 
 
 
-task PERT_PLANS SURFACE_INVENTORY_READY -> PERT_PLANS_READY:
-  title "Migrate current PERT plan metadata to English"
-  description |
-    Translate current and future project, resource, milestone, task, gate, and
-    evidence prose without changing IDs, topology, estimates, state, priority,
-    or resource requirements. Do not reconstruct completed history from Git.
-  duration 3p
-  status done
-  priority 80
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    DOC_SURFACE 1
 
-gate RUNTIME_CONTENT_GATE RUNTIME_MESSAGES_READY -> ENGLISH_CONTENT_READY:
-  reason "English acceptance requires runtime messages"
 
-gate HELP_CONTENT_GATE HELP_AND_USAGE_READY -> ENGLISH_CONTENT_READY:
-  reason "English acceptance requires bundled help and usage"
 
-gate PROCESS_CONTENT_GATE PROCESS_GUIDANCE_READY -> ENGLISH_CONTENT_READY:
-  reason "English acceptance requires normative and process documentation"
 
-gate PLAN_CONTENT_GATE PERT_PLANS_READY -> ENGLISH_CONTENT_READY:
-  reason "English acceptance requires current PERT plans"
 
 task GOLDEN_UNICODE_AUDIT ENGLISH_CONTENT_READY -> GOLDEN_UNICODE_READY:
   title "Audit golden files and preserve intentional Unicode coverage"

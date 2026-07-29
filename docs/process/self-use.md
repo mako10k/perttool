@@ -687,6 +687,11 @@ change. An expected-digest atomic batch set `as_of` to 2026-07-29,
 recalibrated the cumulative sample to `36p/2d`, and finished the 3p task. The
 exact completed pre-advance digest is
 `sha256:46d60e078c894943fac4d42e87910f32b39aca6aa95023c1c2fef4ec89a72866`.
+Git commit `9d9fdbf` records that exact snapshot. Governed `dag advance` then
+removed the completed task, four satisfied gates, and five prior frontier
+milestones while preserving reached `ENGLISH_CONTENT_READY` and the ready set;
+the residual digest is
+`sha256:5ef6da21733179d8d0df03bb83de0fac90257cd91dcb5300f97c9909fb924c86`.
 Two tasks and 6p remain; precedence and resource makespans are both 6p with no
 resource delay, both forecasts are `1/3d`, and fresh complete, non-truncated
 `NextResult.v5` recommends only `GOLDEN_UNICODE_AUDIT`. The
@@ -1239,7 +1244,7 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - the suffix-free `v0.1.0` beta is accepted, and the macro has advanced to `M8_BETA_RELEASED` with no remaining or recommended task
 - Issue #3 is a future backlog-hierarchy and multi-plan-composition design and does not add work packages to the current macro
 - the LSP server, VSIX, and MCP server are independent post-first-beta backlogs and do not add work packages to the current macro
-- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, and `HELP_AND_USAGE`; `PERT_PLANS` is complete at its exact pre-advance snapshot, and `GOLDEN_UNICODE_AUDIT` is its current recommended task.
+- The independent English-baseline migration completed and advanced `SURFACE_INVENTORY`, `NORMATIVE_DOCS`, `PROCESS_AND_GUIDANCE_DOCS`, `RUNTIME_MESSAGES`, `HELP_AND_USAGE`, and `PERT_PLANS`; commit `9d9fdbf` records the exact completed PERT-plan pre-advance snapshot, and `GOLDEN_UNICODE_AUDIT` is its current recommended task.
 
 For the explicitly selected scheduling-and-units workstream, first use a fresh
 complete `NextResult.v3` from `scheduling-units.pert` to select the milestone

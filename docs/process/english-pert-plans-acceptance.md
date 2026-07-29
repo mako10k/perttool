@@ -1,6 +1,7 @@
 # English PERT plan migration acceptance
 
-Status: Accepted on 2026-07-29 at the exact completed pre-advance snapshot.
+Status: Accepted and advanced on 2026-07-29. Git commit `9d9fdbf` records the
+exact completed pre-advance snapshot.
 
 ## Scope
 
@@ -58,6 +59,14 @@ The expected-digest batch that set `PERT_PLANS` to `done`, changed `as_of` to
 `sha256:540165d6de11dde691c689ccd7d5c1f03e73f5b36557d046e49cf011c7ae8b39`
 to the exact completed pre-advance digest
 `sha256:46d60e078c894943fac4d42e87910f32b39aca6aa95023c1c2fef4ec89a72866`.
+Git commit `9d9fdbf` records that snapshot.
+
+Governed `dag advance` removed `PERT_PLANS`, four satisfied content gates, and
+five prior frontier milestones. The operation preserved
+`frontier_before=frontier_after=[ENGLISH_CONTENT_READY]` and
+`ready_before=ready_after=[GOLDEN_UNICODE_AUDIT]`. The residual source digest
+is
+`sha256:5ef6da21733179d8d0df03bb83de0fac90257cd91dcb5300f97c9909fb924c86`.
 
 At that snapshot, two tasks and 6p remain. Precedence and the
 `parallel-sgs` version 1 heuristic resource makespans are both 6p with no
