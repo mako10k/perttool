@@ -8,8 +8,10 @@ services, package root, CLI, command discovery, help, Guide, schemas,
 diagnostics, examples, and installed-package workflow expose the accepted
 project-actuals contract together.
 
-The exact completed 6p pre-advance snapshot is retained by the Git commit
-identified in this record after that commit is created. Package publication,
+Git commit `753efea` retains the exact completed 6p pre-advance snapshot.
+Canonical advance then removed the completed task and preceding reached
+frontier, retained reached `ACTUALS_PUBLIC_READY`, and preserved
+`ACTUALS_ACCEPTANCE` as the only ready recommendation. Package publication,
 release tagging, and npm dist-tag movement remain separate authorization
 boundaries.
 

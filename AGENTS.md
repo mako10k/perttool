@@ -63,8 +63,9 @@ derives exact elapsed-hour, active-date, effort-productivity, and separately
 qualified Git-recorded rates from ProjectHistoryResult v1 without changing
 declared velocity. Its acceptance record is
 `docs/process/project-actuals-velocity-observation-acceptance.md`.
-`ACTUALS_PUBLIC_CONTRACT` is complete pending its exact 6p pre-advance commit.
-The current source atomically activates Grammar 5 and CLI Contract 6 through
+`ACTUALS_PUBLIC_CONTRACT` is complete; Git commit `753efea` records its exact
+completed 6p pre-advance snapshot, and the task is advanced to reached
+`ACTUALS_PUBLIC_READY`. The current source atomically activates Grammar 5 and CLI Contract 6 through
 the standard parser, formatter, lifecycle and advance mutations, suspended
 analysis/Next results, history, observation, package root, 33-command
 registry, help, Guide, schemas, diagnostics, examples, and isolated installed

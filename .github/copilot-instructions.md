@@ -47,9 +47,10 @@ Mandatory summary:
   integration gates are advanced to reached `ACTUALS_INTEGRATED_INPUT`. Its
   pure service derives exact elapsed-hour, active-date, effort-productivity,
   and separately qualified Git-recorded rates without changing declared
-  velocity. `ACTUALS_PUBLIC_CONTRACT` is complete pending its exact 6p
-  pre-advance commit. The current source atomically activates Grammar 5 and
-  CLI Contract 6 through lifecycle, suspended analysis/Next, history,
+  velocity. `ACTUALS_PUBLIC_CONTRACT` is complete; Git commit `753efea`
+  records its exact completed 6p pre-advance snapshot, and the task is
+  advanced to reached `ACTUALS_PUBLIC_READY`. The current source atomically
+  activates Grammar 5 and CLI Contract 6 through lifecycle, suspended analysis/Next, history,
   observation, standard package root, 33-command registry, help, Guide,
   schemas, examples, and isolated installed workflow. One task and 4p remain;
   precedence and the `parallel-sgs` version 1 heuristic resource makespan are
