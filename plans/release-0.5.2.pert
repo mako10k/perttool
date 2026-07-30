@@ -10,9 +10,6 @@ project RELEASE_052:
   goal_owner user
   dag_owner user
 
-milestone RELEASE_052_SELECTED:
-  title "Version 0.5.2 selected"
-  state reached
 
 resource DEVELOPERS:
   title "Release engineering capacity"
@@ -38,11 +35,10 @@ resource EXTERNAL_RELEASE:
   description "Serialize Git push, annotated tag, GitHub Release, npm beta publication, and durable verification."
   capacity 1
 
-milestone RELEASE_052_REVIEW_ACCEPTED:
-  title "Version 0.5.2 compatibility review accepted"
 
 milestone RELEASE_052_SOURCE_PREPARED:
   title "Version 0.5.2 release source prepared"
+  state reached
 
 milestone RELEASE_052_CANDIDATE_ACCEPTED:
   title "Version 0.5.2 release candidate accepted"
@@ -53,29 +49,7 @@ milestone RELEASE_052_PUBLISHED:
 milestone RELEASE_052_ACCEPTED:
   title "Version 0.5.2 compatible JSON Schema patch accepted"
 
-task RELEASE_052_SELF_REVIEW RELEASE_052_SELECTED -> RELEASE_052_REVIEW_ACCEPTED:
-  title "Review compatibility and the complete schema change"
-  description "Review requirements, specification, design, implementation, tests, help, package surface, existing command descriptors, public exports, the default full lookup mode and query projection, strict validation of real Contract 6 outputs, and outline reference resolution. Accept 0.5.2 only if Grammar 5, CLI Contract 6, result identities, existing payload meanings, and default lookup semantics remain compatible. This task performs no external write."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
 
-task RELEASE_052_PREPARATION RELEASE_052_REVIEW_ACCEPTED -> RELEASE_052_SOURCE_PREPARED:
-  title "Prepare version 0.5.2 release source"
-  description "Align package and lockfile identity, CLI version, CHANGELOG, README, compatibility and release documentation, tests, goldens, self-use registration, and beta publication validation. Run the complete repository and package gates without remote or registry writes."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
 
 task RELEASE_052_CANDIDATE RELEASE_052_SOURCE_PREPARED -> RELEASE_052_CANDIDATE_ACCEPTED:
   title "Accept one clean 0.5.2 release candidate"
