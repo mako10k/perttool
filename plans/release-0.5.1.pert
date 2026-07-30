@@ -35,12 +35,10 @@ resource EXTERNAL_RELEASE:
   description "Serialize Git push, annotated tag, GitHub Release, npm beta publication, and durable verification."
   capacity 1
 
-milestone RELEASE_051_REVIEW_ACCEPTED:
-  title "Version 0.5.1 compatibility review accepted"
-  state reached
 
 milestone RELEASE_051_SOURCE_PREPARED:
   title "Version 0.5.1 release source prepared"
+  state reached
 
 milestone RELEASE_051_CANDIDATE_ACCEPTED:
   title "Version 0.5.1 release candidate accepted"
@@ -52,17 +50,6 @@ milestone RELEASE_051_ACCEPTED:
   title "Version 0.5.1 compatible Contract 6 beta patch accepted"
 
 
-task RELEASE_051_PREPARATION RELEASE_051_REVIEW_ACCEPTED -> RELEASE_051_SOURCE_PREPARED:
-  title "Prepare version 0.5.1 release source"
-  description "Align package and lockfile identity, CLI version, CHANGELOG, README, compatibility and release documentation, tests, goldens, self-use registration, and beta publication validation. Run the complete repository and package gates without remote or registry writes."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
 
 task RELEASE_051_CANDIDATE RELEASE_051_SOURCE_PREPARED -> RELEASE_051_CANDIDATE_ACCEPTED:
   title "Accept one clean 0.5.1 release candidate"
