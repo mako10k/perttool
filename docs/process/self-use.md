@@ -1425,9 +1425,11 @@ governance-runtime-warning patch. Its five serial tasks cover trigger and
 compatibility review, version-bearing source preparation, one immutable
 candidate, authorized GitHub/npm beta publication, and durable acceptance.
 The initial 15p plan uses the preceding release's observed `15p/1d`
-velocity. `RELEASE_054_SELF_REVIEW` is complete; source preparation and every
-external mutation remain gated by their predecessors. npm `latest` promotion
-remains outside the named release scope.
+velocity. Self-review, source preparation, and candidate acceptance are
+complete after the clean repository, external preflight, protected-route, and
+retained 491-file package gates passed. The candidate is 521641 bytes with
+SHA-256 `d3123ef0...3c01`; only `RELEASE_054_PUBLISH` is recommended and
+startable. npm `latest` promotion remains outside the named release scope.
 
 Stage 1 allowed operations:
 

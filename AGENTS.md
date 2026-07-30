@@ -252,14 +252,16 @@ separate decision.
 The explicitly authorized compatible `0.5.4` runtime-warning patch is tracked
 in `plans/release-0.5.4.pert`. Its self-review and source preparation are
 complete after the 667-test, 25-plan, 119-Markdown, temporary-link, and
-491-file isolated-package gates passed. The source adds the non-blocking
+491-file isolated-package gates passed. Candidate acceptance repeated the
+clean gates, external availability and protected-route preflight, and retained
+the 521641-byte tarball with SHA-256 `d3123ef0...3c01`. The source adds the non-blocking
 `PTGOV-103` warning when
 a valid governance-not-applicable candidate carries a non-empty
 `acceptedByOwner` set. Default write authority and every versioned result
 identity remain unchanged; existing `--warnings-as-errors` prevents
 persistence. This minimal runtime visibility does not add accepted scopes,
 approval evidence, authentication, or cross-candidate reuse detection.
-`RELEASE_054_CANDIDATE` is the only recommended and startable task. npm
+`RELEASE_054_PUBLISH` is the only recommended and startable task. npm
 `latest` promotion remains a separate decision.
 
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public result schema identities and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
