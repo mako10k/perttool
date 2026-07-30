@@ -2062,6 +2062,16 @@ warnings-as-errors gate prevents persistence before safe-write I/O. A
 machine-readable accepted-scope field, new result identity, authentication,
 or approval artifact remains outside this slice.
 
+The next stateless follow-up classifies the governed half of the same observed
+command set by intent. When
+`applicable=true && intent=preview && acceptedByOwner.length > 0`, the same
+pure diagnostic projection emits `PTGOV-104`. The preview keeps its candidate,
+GovernanceDecision v1, authority facts, and default success. The existing
+warnings-as-errors policy may return exit 1 while keeping the candidate and
+decision visible. Persistent intent never emits this warning, because a
+single persistent decision cannot distinguish a freshly confirmed assertion
+from cross-candidate reuse.
+
 Exit:
 
 - preserve existing documents through explicit effective defaults;
@@ -2300,6 +2310,29 @@ Exit:
 - preserve `latest=0.5.1`; and
 - record durable acceptance without adding accepted scopes, approval
   evidence, authentication, or cross-candidate state.
+
+### Post-MVP Slice 4O: Governed-preview assertion warning
+
+After the accepted `v0.5.4` patch exposed all 18 observed not-applicable
+carryovers, the original 10 governed invocations were classified as five
+previews and five persistent attempts. All five previews already carried an
+owner assertion. This slice adds `PTGOV-104` through the existing pure
+decision-diagnostic path for an applicable preview with a non-empty
+`acceptedByOwner` set.
+
+Exit:
+
+- preserve Grammar 5, CLI Contract 6, GovernanceDecision v1, every command,
+  option, result, schema, and default preview behavior;
+- emit `PTGOV-104` only for
+  `applicable=true && intent=preview && acceptedByOwner.length>0`;
+- retain the valid candidate and decision under default and
+  warnings-as-errors preview handling;
+- emit no `PTGOV-104` for persistent intent, assertion-free preview, or
+  not-applicable candidates;
+- keep `PTGOV-103` as the sole warning for a not-applicable assertion; and
+- add no cross-candidate state, accepted scopes, approval evidence,
+  authentication, or selected release version.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

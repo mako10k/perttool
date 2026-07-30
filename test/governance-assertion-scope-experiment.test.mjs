@@ -81,6 +81,7 @@ test("repository agent policies share the single-candidate boundary", async () =
     assert.match(source, /supplemental machine identity/);
     assert.match(source, /next\s+`dag advance`/);
     assert.match(source, /PTGOV-103/);
+    assert.match(source, /PTGOV-104/);
   }
 });
 
@@ -106,7 +107,9 @@ test("normative guidance fixes scope context without changing interface identity
   assert.match(design, /retaining the version\s+1 decision shape/);
   assert.match(design, /PTGOV-103/);
   assert.match(experiment, /18 ordinary-maintenance invocations/);
-  assert.match(experiment, /does not claim to detect the 10 governed/);
+  assert.match(experiment, /five governed previews/);
+  assert.match(experiment, /five persistent attempts/);
+  assert.match(experiment, /PTGOV-104/);
   assert.match(contract, /Interface version: `1`/);
   assert.match(contract, /Target CLI contract version: `5`/);
 });

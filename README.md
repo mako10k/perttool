@@ -205,7 +205,11 @@ next `dag advance`. See the
 If a valid candidate is not governance-applicable but still receives an owner
 assertion, `PTGOV-103` makes that likely boilerplate visible. It is a warning
 and does not change default write authority; `--warnings-as-errors` prevents
-the write.
+the write. If a governed preview already carries an owner assertion,
+`PTGOV-104` directs the caller back to an assertion-free first preview. Its
+default preview still succeeds; `--warnings-as-errors` exits 1 while retaining
+the candidate and governance decision. Persistent governed authority is
+unchanged.
 
 Contract 5 previews may still omit actor and owner confirmation. A Contract 4
 runtime fails closed on Grammar 4 and governance options; there is no
@@ -377,6 +381,8 @@ require Contract 4. Bundled machine-readable result artifacts require
 Scope-bound, human-readable loose owner-confirmation guidance requires
 `0.5.3`.
 Runtime `PTGOV-103` visibility for unused owner assertions requires `0.5.4`.
+Runtime `PTGOV-104` visibility for assertions on governed previews is present
+only in the current unreleased source.
 In every case, check the result-specific `schema_version` before reading the
 rest of a result.
 A complete, known, non-truncated `Perttool.NextResult.v5` with temporal policy

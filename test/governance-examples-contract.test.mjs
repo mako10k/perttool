@@ -55,11 +55,12 @@ test("governance examples publish one contiguous target-contract baseline", asyn
     denial_diagnostic: "PTGOV-101",
     invalid_core_input_diagnostic: "PTGOV-102",
     unused_assertion_diagnostic: "PTGOV-103",
+    preview_assertion_diagnostic: "PTGOV-104",
     stale_write_diagnostic: "PTIO-501",
   });
 
   const expectedIds = Array.from(
-    { length: 16 },
+    { length: 17 },
     (_, index) => `GOV-${String(index + 1).padStart(3, "0")}`,
   );
   assert.deepEqual(
@@ -256,6 +257,19 @@ test("ordinary, cutover, and presentation cases retain explicit non-goals", asyn
   assert.equal(runtimeWarning.warnings_as_errors_exit_code, 1);
   assert.equal(runtimeWarning.warnings_as_errors_write_allowed, false);
   assert.equal(runtimeWarning.detects_governed_candidate_reuse, false);
+
+  const previewWarning = byId(document, "GOV-017").expected;
+  assert.equal(previewWarning.applicable, true);
+  assert.deepEqual(previewWarning.affected_scopes, ["goal"]);
+  assert.equal(previewWarning.write_authorized, true);
+  assert.deepEqual(previewWarning.diagnostic_codes, ["PTGOV-104"]);
+  assert.equal(previewWarning.severity, "warning");
+  assert.equal(previewWarning.default_exit_code, 0);
+  assert.equal(previewWarning.candidate_retained, true);
+  assert.equal(previewWarning.decision_retained, true);
+  assert.equal(previewWarning.warnings_as_errors_exit_code, 1);
+  assert.deepEqual(previewWarning.persistent_diagnostic_codes, []);
+  assert.equal(previewWarning.detects_cross_candidate_reuse, false);
 });
 
 test("requirements, specifications, design, and source cases link the same examples", async () => {

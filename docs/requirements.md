@@ -1121,6 +1121,13 @@ Must:
   changing `applicable=false`, `writeAuthorized=true`, the default exit-zero
   write behavior, or any result identity. Existing `--warnings-as-errors`
   policy must convert that warning into exit 1 and prevent persistence.
+- A valid governed preview with a non-empty caller-asserted
+  owner-confirmation set must emit a distinct stable warning that directs the
+  caller back to an assertion-free preview. The warning must not change the
+  candidate, GovernanceDecision v1, `writeAuthorized`, the default exit-zero
+  preview, or any persistent governed write. Existing
+  `--warnings-as-errors` policy must convert that preview warning into exit 1
+  while retaining the candidate and decision for inspection.
 - Owner and delegate changes use only the pre-change owner and delegate state
   for authorization. An atomic request cannot self-authorize through values it
   introduces.

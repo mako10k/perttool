@@ -372,6 +372,24 @@ warning does not diagnose a forged assertion, authenticate a principal, bind
 an assertion to a different candidate, or detect reuse between two governed
 candidates.
 
+### 7.2 Owner-confirmation assertion on a governed preview
+
+A valid decision with `applicable=true`, `intent="preview"`, and a non-empty
+`acceptedByOwner` set emits `PTGOV-104` with severity `warning`. The warning
+identifies a preview that skipped the required assertion-free first
+observation of its actual affected scopes.
+
+The warning does not change the decision, candidate, affected scopes,
+required owner confirmations, or `writeAuthorized`. Default preview remains
+successful. Existing warnings-as-errors policy may return exit 1 while
+retaining the candidate and decision for inspection. Persistent intent never
+emits `PTGOV-104`; its authority decision and any `PTGOV-101` denial retain
+their existing meanings.
+
+This warning detects only the assertion on the current governed preview. It
+does not establish whether a later persistent assertion is fresh, whether a
+user confirmed the candidate, or whether two candidates share an assertion.
+
 ## 8. Decision examples
 
 Assume this pre-change snapshot:
@@ -389,6 +407,7 @@ dag delegates: [codex]
 | `project.finish` | write, actor `user` | authorized as goal owner |
 | `project.finish` | write, actor `llm` | authorized as goal delegate |
 | `project.finish` | write, actor `codex` | denied with `PTGOV-101` |
+| `project.finish` | preview, actor `codex`, accepted owner `user` | preview succeeds with `PTGOV-104`; rerun the first preview without the assertion |
 | `project.finish` | write, actor `codex`, accepted owner `user` | authorized by caller-asserted owner confirmation |
 | add a task | write, actor `codex` | authorized as DAG delegate |
 | add a task | write, actor `llm` | denied with `PTGOV-101` |

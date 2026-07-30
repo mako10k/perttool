@@ -155,6 +155,11 @@ preview and confirmation-dependent write without a user-response boundary.
 `PTGOV-103` warns when a valid not-applicable candidate still carries an owner
 assertion. It does not change default write authority; selecting
 `--warnings-as-errors` prevents persistence.
+`PTGOV-104` warns when a valid governed preview already carries an owner
+assertion. Rerun the first preview without it. The default preview remains
+successful; selecting `--warnings-as-errors` returns exit 1 while retaining
+the candidate and governance decision. Persistent governed authority is
+unchanged.
 The complete experimental cases are in the
 [loose assertion scope experiment](governance-assertion-scope-experiment.md).
 

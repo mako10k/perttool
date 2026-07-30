@@ -355,13 +355,40 @@ export function governanceUnusedAssertionDiagnostic(
   });
 }
 
+export function governancePreviewAssertionDiagnostic(
+  decision: GovernanceDecisionV1,
+): Diagnostic | null {
+  if (
+    !decision.applicable ||
+    decision.intent !== "preview" ||
+    decision.acceptedByOwner.length === 0
+  ) {
+    return null;
+  }
+  return Object.freeze({
+    code: "PTGOV-104",
+    severity: "warning",
+    message:
+      "owner confirmation assertion should be omitted from a governed preview",
+    helpTopic: "editing",
+    data: Object.freeze({
+      governance_semantics_version: 1,
+      cause: "owner_confirmation_on_governed_preview",
+      accepted_by_owner: decision.acceptedByOwner,
+      affected_scopes: decision.affectedScopes,
+    }),
+  });
+}
+
 export function governanceDecisionDiagnostics(
   decision: GovernanceDecisionV1,
 ): readonly Diagnostic[] {
   const denial = governanceDenialDiagnostic(decision);
   if (denial !== null) return Object.freeze([denial]);
   const unusedAssertion = governanceUnusedAssertionDiagnostic(decision);
-  return unusedAssertion === null
+  if (unusedAssertion !== null) return Object.freeze([unusedAssertion]);
+  const previewAssertion = governancePreviewAssertionDiagnostic(decision);
+  return previewAssertion === null
     ? Object.freeze([])
-    : Object.freeze([unusedAssertion]);
+    : Object.freeze([previewAssertion]);
 }

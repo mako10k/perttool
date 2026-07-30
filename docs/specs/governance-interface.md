@@ -297,6 +297,9 @@ intents.
 - A not-applicable decision permits the existing write behavior without an
   actor. When it retains one or more caller-asserted owner confirmations, it
   also emits the non-blocking `PTGOV-103` warning specified in Section 8.
+- An applicable preview that retains one or more caller-asserted owner
+  confirmations emits the non-blocking `PTGOV-104` warning specified in
+  Section 8. The candidate and GovernanceDecision remain available.
 
 An owner confirmation never substitutes for the required actor. Candidate
 metadata never changes the pre-change decision.
@@ -627,7 +630,40 @@ This diagnostic makes redundant assertion boilerplate visible. It does not
 prove that an assertion is fresh and does not detect reuse between two
 governed candidates.
 
-### 8.4 Retained exit meanings and priority
+### 8.4 Assertion supplied on a governed preview
+
+A valid candidate with `applicable=true`, `intent="preview"`, and
+`accepted_by_owner.length > 0` emits exactly one diagnostic:
+
+```text
+code       PTGOV-104
+severity   warning
+message    owner confirmation assertion should be omitted from a governed preview
+entity_id  null
+span       null
+related    []
+guide_topic editing
+data:
+  governance_semantics_version  1
+  cause                        owner_confirmation_on_governed_preview
+  accepted_by_owner            string[]
+  affected_scopes              [goal and/or dag]
+```
+
+The warning is emitted after a valid final candidate is classified. It does
+not change GovernanceDecision v1, MutationResult v2/v3, the candidate,
+`write_authorized`, or the default successful preview. With
+`--warnings-as-errors`, the existing warning policy returns exit 1 while
+retaining the candidate and decision. No warning is emitted for persistent
+intent, an empty assertion set, a not-applicable candidate, or the absence of
+a trustworthy candidate.
+
+This diagnostic makes the assertion-free first-preview workflow
+machine-visible. It does not prove whether a later persistent assertion is
+fresh or detect reuse between two governed candidates. A not-applicable
+preview with an assertion emits only `PTGOV-103`.
+
+### 8.5 Retained exit meanings and priority
 
 Contract 5 adds no exit code:
 
@@ -763,8 +799,14 @@ Later examples and implementation acceptance MUST establish at least:
 | GOV-IF-013 | Format, exact unit migration, current new-document import, and read-only operations do not acquire fictional governance authority. |
 | GOV-IF-014 | Contract 5 activation is atomic and an older runtime fails closed on Grammar 4 and governance options. |
 | GOV-IF-015 | Text, JSON, Guide, README, generated warning, and installed-package behavior never claim authentication or prevention of direct editing. |
+| GOV-IF-016 | An applicable preview with an owner assertion emits PTGOV-104 without changing its candidate, decision, default exit, or persistent authority. |
 
 Post-Contract-6 runtime hardening additionally fixes
 `GOV-LOOSE-RT-001`: a not-applicable candidate with a non-empty
 `accepted_by_owner` set emits `PTGOV-103`, while default write authority and
 all versioned result identities remain unchanged.
+
+`GOV-LOOSE-RT-002` covers the next stateless boundary: an applicable preview
+with a non-empty `accepted_by_owner` set emits `PTGOV-104`, while the
+candidate, GovernanceDecision v1, default preview behavior, and persistent
+authority remain unchanged.

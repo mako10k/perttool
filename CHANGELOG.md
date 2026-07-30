@@ -4,6 +4,14 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Changed
+
+- Added `PTGOV-104` as a non-blocking warning when a valid governed preview
+  already carries an owner-confirmation assertion. The candidate, governance
+  decision, default preview, and persistent authority remain unchanged;
+  existing `--warnings-as-errors` returns exit 1 while retaining the preview
+  result.
+
 ## [0.5.4] - 2026-07-30
 
 Compatible CLI Contract 6 and Grammar 5 beta patch. This version adds minimal

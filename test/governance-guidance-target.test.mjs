@@ -52,6 +52,7 @@ test("target Contract 5 editing Guide states the complete governance boundary", 
     "next dag advance",
     "user-response boundary",
     "PTGOV-103",
+    "PTGOV-104",
     "--warnings-as-errors prevents it",
     "not authentication, verified identity, signatures, or a durable approval audit",
     "guidance, not technical prevention",
@@ -87,6 +88,7 @@ test("quick target guidance keeps the preview and persistence distinction", () =
     /assertion-free preview/,
   );
   assert.match(result.sections.at(-1).body, /PTGOV-103/);
+  assert.match(result.sections.at(-1).body, /PTGOV-104/);
   assert.doesNotMatch(
     renderTargetGovernanceGuideResult(result),
     /Pre-change authority/,

@@ -1443,6 +1443,37 @@ test("mutation CLI exposes unused owner assertions and strict mode prevents writ
   assert.match(readFileSync(target, "utf8"), /title "updated"/);
 });
 
+test("governed preview exposes owner assertions and strict mode retains the candidate", () => {
+  const args = [
+    "gate", "add", minimalPath, "APPROVAL", "NOW", "DONE",
+    "--reason", "approval required",
+    "--actor", "codex",
+    "--accepted-by-owner", "user",
+    "--format=json",
+  ];
+  const preview = run(args);
+  assert.equal(preview.status, 0, preview.stderr);
+  const previewJson = JSON.parse(preview.stdout);
+  assert.equal(previewJson.ok, true);
+  assert.equal(previewJson.governance.applicable, true);
+  assert.equal(previewJson.governance.intent, "preview");
+  assert.equal(previewJson.governance.write_authorized, true);
+  assert.deepEqual(previewJson.governance.affected_scopes, ["dag"]);
+  assert.deepEqual(
+    previewJson.diagnostics.map(({ code, severity }) => ({ code, severity })),
+    [{ code: "PTGOV-104", severity: "warning" }],
+  );
+
+  const strict = run([...args.slice(0, -1), "--warnings-as-errors", "--format=json"]);
+  assert.equal(strict.status, 1, strict.stderr);
+  const strictJson = JSON.parse(strict.stdout);
+  assert.equal(strictJson.ok, false);
+  assert.match(strictJson.updated_text, /gate APPROVAL NOW -> DONE:/);
+  assert.equal(strictJson.governance.applicable, true);
+  assert.equal(strictJson.governance.intent, "preview");
+  assert.equal(strictJson.diagnostics[0].code, "PTGOV-104");
+});
+
 test("entity and batch mutation commands share the safe-write path", (t) => {
   const directory = mkdtempSync(path.join(tmpdir(), "perttool-mutation-write-"));
   t.after(() => rmSync(directory, { recursive: true, force: true }));

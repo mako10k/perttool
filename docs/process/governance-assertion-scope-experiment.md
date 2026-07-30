@@ -198,3 +198,38 @@ invocations or the one invocation that failed before a candidate existed.
 Default write authority remains unchanged; existing warnings-as-errors policy
 can prevent persistence. Accepted scopes, approval evidence, authentication,
 and cross-candidate reuse detection remain unselected.
+
+## 9. Governed-invocation classification and second runtime follow-up
+
+The original 10 governed invocations were classified by intent and candidate,
+not only by governance applicability:
+
+- the initial release-plan structural batch had one preview and one
+  persistent attempt; and
+- four distinct `dag advance` candidates each had one preview and one
+  persistent attempt.
+
+This yields five governed previews and five persistent attempts. All five
+governed previews already carried `accepted_by_owner=[user]`, so none
+established the required assertion-free first observation. This is a
+mechanically detectable part of the original carryover: after valid
+actual-change classification,
+`applicable=true && intent=preview && accepted_by_owner.length>0` emits
+`PTGOV-104` as a warning.
+
+`PTGOV-104` leaves the candidate, GovernanceDecision v1,
+`write_authorized`, and default exit-zero preview unchanged. Existing
+warnings-as-errors policy returns exit 1 while retaining the candidate and
+decision. It does not apply to persistent intent and therefore does not
+reinterpret the five persistent attempts. A single persistent decision cannot
+show whether its assertion came from an unchanged user-confirmed preview or
+was carried from an earlier candidate; distinguishing those cases would
+require cross-candidate state or a new binding surface and remains outside
+this follow-up.
+
+Together, `PTGOV-103` directly exposes the 18 not-applicable carryovers and
+`PTGOV-104` directly exposes the five governed previews. The remaining one
+pre-candidate failure and five governed persistent attempts are not claimed
+as detected. This second follow-up adds no option, accepted-scope field,
+approval evidence, authentication, result field, interface identity, or
+cross-candidate state.

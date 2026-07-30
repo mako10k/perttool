@@ -301,6 +301,26 @@ With `--warnings-as-errors`, the command exits 1 and writes nothing. The
 warning makes assertion boilerplate visible; it does not detect reuse between
 two governed candidates.
 
+### GOV-017 Governed preview assertion runtime warning
+
+Previewing a goal change as `codex` with
+`accepted_by_owner=[user]` retains the governed candidate and authority
+decision:
+
+```text
+intent            preview
+applicable        true
+affected_scopes   [goal]
+write_authorized  true
+diagnostic        PTGOV-104 warning
+```
+
+The default preview exits 0. With `--warnings-as-errors`, it exits 1 while
+retaining the candidate and GovernanceDecision for inspection. The same
+assertions on persistent intent do not emit `PTGOV-104`; persistent authority
+continues to follow the existing decision. A not-applicable preview continues
+to emit only `PTGOV-103`.
+
 ## 8. Acceptance map
 
 | Boundary | Cases |
@@ -315,3 +335,4 @@ two governed candidates.
 | invalid input and atomic Contract 5 cutover | GOV-014 |
 | help, installed behavior, and direct-edit guidance | GOV-015 |
 | redundant not-applicable owner assertion | GOV-016 |
+| governed preview owner assertion | GOV-017 |

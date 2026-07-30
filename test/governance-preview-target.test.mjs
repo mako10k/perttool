@@ -180,21 +180,22 @@ test("pre-governance source upgrades atomically but cannot self-authorize", () =
 });
 
 test("owner confirmation and direct delegate authority compose across one batch", () => {
+  const batch = {
+    kind: "batch",
+    mutations: [
+      goalMutation(),
+      {
+        kind: "task.add",
+        id: "WORK",
+        from: "START",
+        to: "FINISH",
+        task: { title: "work", duration: "1d" },
+      },
+    ],
+  };
   const result = planTargetGovernanceBatchMutation(
     source(),
-    {
-      kind: "batch",
-      mutations: [
-        goalMutation(),
-        {
-          kind: "task.add",
-          id: "WORK",
-          from: "START",
-          to: "FINISH",
-          task: { title: "work", duration: "1d" },
-        },
-      ],
-    },
+    batch,
     TARGET_GRAMMAR_4_CAPABILITY,
     {
       governance: {
@@ -221,6 +222,21 @@ test("owner confirmation and direct delegate authority compose across one batch"
     ],
   );
   assert.equal(result.governance.writeAuthorized, true);
+
+  const preview = planTargetGovernanceBatchMutation(
+    source(),
+    batch,
+    TARGET_GRAMMAR_4_CAPABILITY,
+    {
+      governance: {
+        intent: "preview",
+        actor: "codex",
+        acceptedByOwner: ["user"],
+      },
+    },
+  );
+  assert.equal(preview.ok, true);
+  assert.deepEqual(preview.diagnostics.map(({ code }) => code), ["PTGOV-104"]);
 });
 
 test("ordinary persistent maintenance remains applicable=false without actor", () => {
@@ -275,6 +291,45 @@ test("ordinary maintenance with an owner assertion emits PTGOV-103", () => {
   assert.equal(json.diagnostics[0].severity, "warning");
 });
 
+test("governed preview with an owner assertion emits PTGOV-104", () => {
+  const result = planTargetGovernanceMutation(
+    source(),
+    goalMutation(),
+    TARGET_GRAMMAR_4_CAPABILITY,
+    {
+      governance: {
+        intent: "preview",
+        actor: "codex",
+        acceptedByOwner: ["user"],
+      },
+    },
+  );
+  assert.equal(result.ok, true);
+  assert.equal(result.governance.applicable, true);
+  assert.equal(result.governance.writeAuthorized, true);
+  assert.deepEqual(result.governance.affectedScopes, ["goal"]);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTGOV-104"]);
+  assert.equal(
+    result.diagnostics[0].data.cause,
+    "owner_confirmation_on_governed_preview",
+  );
+
+  const persistent = planTargetGovernanceMutation(
+    source(),
+    goalMutation(),
+    TARGET_GRAMMAR_4_CAPABILITY,
+    {
+      governance: {
+        intent: "persist",
+        actor: "codex",
+        acceptedByOwner: ["user"],
+      },
+    },
+  );
+  assert.equal(persistent.ok, true);
+  assert.deepEqual(persistent.diagnostics, []);
+});
+
 test("invalid governance request returns PTGOV-102 without a candidate", () => {
   const result = planTargetGovernanceMutation(
     source(),
@@ -319,6 +374,24 @@ test("advance uses the same actual-change classifier on Grammar 4", () => {
   assert.deepEqual(preview.advance.removedTaskIds, ["WORK"]);
   assert.deepEqual(preview.governance.affectedScopes, ["dag"]);
   assert.equal(preview.governance.writeAuthorized, false);
+
+  const assertedPreview = planTargetGovernanceAdvance(
+    text,
+    TARGET_GRAMMAR_4_CAPABILITY,
+    {
+      governance: {
+        intent: "preview",
+        actor: "codex",
+        acceptedByOwner: ["llm"],
+      },
+    },
+  );
+  assert.equal(assertedPreview.ok, true);
+  assert.equal(assertedPreview.governance.writeAuthorized, true);
+  assert.deepEqual(
+    assertedPreview.diagnostics.map(({ code }) => code),
+    ["PTGOV-104"],
+  );
 
   const delegated = planTargetGovernanceAdvance(
     text,

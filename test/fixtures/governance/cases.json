@@ -15,6 +15,7 @@
     "denial_diagnostic": "PTGOV-101",
     "invalid_core_input_diagnostic": "PTGOV-102",
     "unused_assertion_diagnostic": "PTGOV-103",
+    "preview_assertion_diagnostic": "PTGOV-104",
     "stale_write_diagnostic": "PTIO-501"
   },
   "snapshots": {
@@ -504,6 +505,32 @@
         "warnings_as_errors_exit_code": 1,
         "warnings_as_errors_write_allowed": false,
         "detects_governed_candidate_reuse": false
+      }
+    },
+    {
+      "case_id": "GOV-017",
+      "category": "runtime_hardening",
+      "title": "A governed preview exposes a supplied owner assertion",
+      "snapshot": "DEFAULT",
+      "operation": "project.set",
+      "changes": ["project.finish"],
+      "request": {
+        "intent": "preview",
+        "actor": "codex",
+        "accepted_by_owner": ["user"]
+      },
+      "expected": {
+        "applicable": true,
+        "affected_scopes": ["goal"],
+        "write_authorized": true,
+        "diagnostic_codes": ["PTGOV-104"],
+        "severity": "warning",
+        "default_exit_code": 0,
+        "candidate_retained": true,
+        "decision_retained": true,
+        "warnings_as_errors_exit_code": 1,
+        "persistent_diagnostic_codes": [],
+        "detects_cross_candidate_reuse": false
       }
     }
   ]

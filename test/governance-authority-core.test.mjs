@@ -5,6 +5,7 @@ import {
   evaluateGovernanceAuthority,
   governanceDecisionDiagnostics,
   governanceDenialDiagnostic,
+  governancePreviewAssertionDiagnostic,
   normalizeGovernanceRequest,
 } from "../dist/governance/authority.js";
 import {
@@ -403,4 +404,57 @@ test("ordinary candidates remain authorized and expose unused assertions", () =>
     request({ intent: "persist" }),
   );
   assert.deepEqual(governanceDecisionDiagnostics(assertionFree), []);
+});
+
+test("governed previews expose supplied owner assertions without changing authority", () => {
+  const preview = evaluateGovernanceAuthority(
+    snapshot(source()),
+    ["goal"],
+    request({
+      intent: "preview",
+      actor: "codex",
+      acceptedByOwner: ["user"],
+    }),
+  );
+  assert.equal(preview.applicable, true);
+  assert.equal(preview.writeAuthorized, true);
+  assert.deepEqual(governancePreviewAssertionDiagnostic(preview), {
+    code: "PTGOV-104",
+    severity: "warning",
+    message:
+      "owner confirmation assertion should be omitted from a governed preview",
+    helpTopic: "editing",
+    data: {
+      governance_semantics_version: 1,
+      cause: "owner_confirmation_on_governed_preview",
+      accepted_by_owner: ["user"],
+      affected_scopes: ["goal"],
+    },
+  });
+  assert.deepEqual(governanceDecisionDiagnostics(preview), [
+    governancePreviewAssertionDiagnostic(preview),
+  ]);
+
+  const assertionFreePreview = evaluateGovernanceAuthority(
+    snapshot(source()),
+    ["goal"],
+    request({ intent: "preview", actor: "codex" }),
+  );
+  assert.equal(
+    governancePreviewAssertionDiagnostic(assertionFreePreview),
+    null,
+  );
+  assert.deepEqual(governanceDecisionDiagnostics(assertionFreePreview), []);
+
+  const persistent = evaluateGovernanceAuthority(
+    snapshot(source()),
+    ["goal"],
+    request({
+      intent: "persist",
+      actor: "codex",
+      acceptedByOwner: ["user"],
+    }),
+  );
+  assert.equal(governancePreviewAssertionDiagnostic(persistent), null);
+  assert.deepEqual(governanceDecisionDiagnostics(persistent), []);
 });

@@ -848,7 +848,7 @@ SU-M2 progress:
 
 Priority: P0
 
-Status: Selected minimal runtime warning (2026-07-30)
+Status: Selected second stateless runtime warning (2026-07-30)
 
 The accepted loose governance interface can correctly classify actual goal,
 DAG, and ordinary-maintenance changes while a non-malicious caller still
@@ -881,6 +881,22 @@ invocations while preserving default write authority and all versioned result
 identities. Existing `--warnings-as-errors` may make the warning blocking.
 The change does not add a CLI option, accepted-scope field, approval artifact,
 or detection of reuse between two governed candidates.
+
+A deeper classification of the same 10 governed invocations found five
+previews and five persistent attempts: one pair for initial release-plan
+construction and four pairs for distinct advances. Every governed preview
+already carried the owner assertion. The selected second stateless constraint
+therefore emits `PTGOV-104` when a valid candidate has `applicable=true`,
+`intent=preview`, and a non-empty `accepted_by_owner` set. This detects all
+five observed governed-preview carryovers without warning on the five
+persistent attempts. Default preview behavior and persistent authority remain
+unchanged; `--warnings-as-errors` may make the preview warning blocking while
+retaining its candidate and decision.
+
+The runtime still cannot distinguish a freshly confirmed persistent assertion
+from cross-candidate reuse using one GovernanceDecision. Cross-candidate
+state, accepted scopes, approval evidence, authentication, and new interface
+fields remain outside this selected change.
 
 ## Strict approval authentication and certificates
 

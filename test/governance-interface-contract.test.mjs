@@ -178,6 +178,14 @@ test("governance diagnostics reuse domain exit 1 and retain write-conflict exit 
     contract,
     /With `--warnings-as-errors`, the existing warning policy returns exit\s+1 and prevents the write/,
   );
+  assert.match(
+    contract,
+    /code       PTGOV-104[\s\S]*severity   warning[\s\S]*owner_confirmation_on_governed_preview/,
+  );
+  assert.match(
+    contract,
+    /With\s+`--warnings-as-errors`, the existing warning policy returns exit 1 while\s+retaining the candidate and decision/,
+  );
   assert.match(contract, /Contract 5 adds no exit code/);
   assert.match(
     contract,
