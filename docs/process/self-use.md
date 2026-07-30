@@ -1394,6 +1394,18 @@ complete NextResult v5 recommends and starts only
 `RELEASE_052_ACCEPTANCE`. npm `latest` promotion and Issue #5 closure remain
 separate decisions.
 
+Durable acceptance then independently reread Git, GitHub, npm, artifact, and
+dist-tag state, reran the isolated package gate against both public tarballs,
+and compared installed `0.5.1` and `0.5.2` surfaces. All 116 prior runtime
+exports and 34 command operations remain; the 33 non-schema descriptors are
+byte-identical; the schema command retains `--format` and adds only `--view`
+and `--ref`; and default/full, outline, and detail projections passed. All
+five tasks and 17p are done at `17p/1d`; precedence and heuristic resource
+makespans are zero, and complete NextResult v5 has no ready, recommended, or
+startable task. Canonical acceptance advance remains the next repository-only
+record step. npm `latest` promotion and Issue #5 closure remain separate
+decisions.
+
 Stage 1 allowed operations:
 
 - check

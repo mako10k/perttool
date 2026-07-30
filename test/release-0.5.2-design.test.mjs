@@ -24,6 +24,7 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     design,
     procedure,
     publish,
+    acceptance,
     review,
     schemaContract,
     plan,
@@ -38,6 +39,7 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.5.2-release.md"),
     repositoryText("docs/process/0.5.2-publish.md"),
+    repositoryText("docs/process/0.5.2-release-acceptance.md"),
     repositoryText("docs/process/0.5.2-self-review.md"),
     repositoryText("docs/specs/json-schema.md"),
     repositoryText("plans/release-0.5.2.pert"),
@@ -66,7 +68,7 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
   );
   assert.match(
     procedure,
-    /Status: Published; durable acceptance ready 1\.3/,
+    /Status: Accepted; canonical advance ready 1\.4/,
   );
   assert.match(procedure, /Target version: `0\.5\.2`/);
   assert.match(procedure, /authorizes this complete named sequence/);
@@ -84,6 +86,13 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     /Release commit: `501d4b1ad83184bd12ba86a7fa19f7df2b58789f`/,
   );
   assert.match(publish, /No publish retry occurred/);
+  assert.match(acceptance, /Document status: Accepted 1\.0/);
+  assert.match(acceptance, /all 116 prior runtime exports remain/i);
+  assert.match(
+    acceptance,
+    /33 non-schema command descriptors are byte-identical/,
+  );
+  assert.match(acceptance, /No product failure, compatibility mismatch/);
   assert.match(review, /Document status: Accepted 1\.0/);
   assert.match(review, /No blocking correctness, compatibility, package/);
   assert.match(review, /All 34 commands remain/);

@@ -2,10 +2,10 @@
 project RELEASE_052:
   version 5
   title "perttool 0.5.2 compatible JSON Schema patch release"
-  description "Release suffix-free 0.5.2 beta as a backward-compatible CLI Contract 6 and Grammar 5 patch. Complete nested result schemas and explicit full and reference-based outline/detail views retain the default full lookup mode and query projection, result identities, payload meanings, all 34 commands, and all 116 existing runtime exports. SELF_REVIEW, PREPARATION, CANDIDATE, and PUBLISH completed 14p. Release commit and peeled v0.5.2 target 501d4b1 agree; Node.js 22 and 24 CI run 30517079581 passed; candidate, GitHub, and npm tarballs are byte-identical at SHA-256 e8512f0d3e20764e9397af827f6ea57f8bea7361d1e414102b0350bcaa54bbce; npm beta=0.5.2 and latest=0.5.1. Three points remain; after canonical advance, complete NextResult v5 should recommend only RELEASE_052_ACCEPTANCE. npm latest promotion remains a separate decision."
+  description "Release suffix-free 0.5.2 beta as a backward-compatible CLI Contract 6 and Grammar 5 patch. Complete nested result schemas and explicit full and reference-based outline/detail views retain the default full lookup mode and query projection, result identities, payload meanings, all 34 commands, and all 116 runtime exports. SELF_REVIEW, PREPARATION, CANDIDATE, PUBLISH, and ACCEPTANCE completed 17p over one active day. Release commit and peeled v0.5.2 target 501d4b1 agree; Node.js 22 and 24 CI run 30517079581 passed; candidate, GitHub, and npm tarballs are byte-identical at SHA-256 e8512f0d3e20764e9397af827f6ea57f8bea7361d1e414102b0350bcaa54bbce; both public-package workflows and the exact 0.5.1 compatibility comparison passed; npm beta=0.5.2 and latest=0.5.1. Both makespans are zero and complete NextResult v5 has no recommendation. npm latest promotion and Issue #5 closure remain separate decisions."
   as_of 2026-07-30
   duration_unit point
-  velocity 14p/1d
+  velocity 17p/1d
   finish RELEASE_052_ACCEPTED
   goal_owner user
   dag_owner user
@@ -53,6 +53,7 @@ task RELEASE_052_ACCEPTANCE RELEASE_052_PUBLISHED -> RELEASE_052_ACCEPTED:
   title "Record durable 0.5.2 beta acceptance"
   description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball digest, registry integrity and metadata, isolated installation from both public channels, unchanged Contract 6 and Grammar 5 behavior, full and outline schema discovery, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact or promoting latest."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

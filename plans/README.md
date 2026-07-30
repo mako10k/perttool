@@ -234,11 +234,12 @@ PUBLISH are complete. Release commit and peeled `v0.5.2` target `501d4b1`
 agree; Node.js 22 and 24 CI passed; candidate, GitHub, and npm tarballs are
 byte-identical at SHA-256 `e8512f0d...54bbce`; npm reports `beta=0.5.2`
 with unchanged `latest=0.5.1`; and complete isolated public-package checks
-passed. Three points remain; precedence and heuristic resource makespans are
-both 3p with no resource delay, observed release velocity is `14p/1d`, both
-forecasts are `3/14d`, and complete NextResult v5 recommends and starts only
-`RELEASE_052_ACCEPTANCE`. npm `latest` promotion and Issue #5 closure remain
-separate decisions.
+passed. Durable acceptance independently reverified Git, GitHub, npm, all
+three artifact copies, exact `0.5.1` compatibility, and both public-package
+workflows. All five tasks and 17p are complete at `17p/1d`; both makespans
+are zero, and complete NextResult v5 has no recommendation. Canonical
+acceptance advance remains the next repository-only record step. npm `latest`
+promotion and Issue #5 closure remain separate decisions.
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.

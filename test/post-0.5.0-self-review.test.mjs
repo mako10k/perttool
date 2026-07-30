@@ -94,14 +94,14 @@ test("current guidance records the published 0.5.2 schema boundary", async () =>
     assert.match(guidance, /Issue #5/);
     assert.match(
       guidance,
-      /Issue #5 closure remain(?:s)? (?:a )?separate boundar(?:y|ies)/,
+      /Issue #5 closure remain(?:s)? (?:a )?separate (?:decision|boundary|boundaries)/,
     );
     assert.match(guidance, /0\.5\.2/);
     assert.match(guidance, /outline\/detail/);
   }
   assert.match(
     agents,
-    /`release-0\.5\.0\.pert`, and `release-0\.5\.1\.pert` as completed independent post-beta workstreams; use `release-0\.5\.2\.pert` as the selected compatible schema-patch release workstream/,
+    /`release-0\.5\.0\.pert`, `release-0\.5\.1\.pert`, and `release-0\.5\.2\.pert` as completed independent post-beta workstreams/,
   );
   assert.doesNotMatch(
     agents,

@@ -300,9 +300,13 @@ the default complete lookup/query semantics. Release commit and peeled
 `v0.5.2` target `501d4b1` agree; Node.js 22 and 24 CI passed; candidate,
 GitHub, and npm tarballs are byte-identical at SHA-256
 `e8512f0d...54bbce`; and npm reports `beta=0.5.2` with unchanged
-`latest=0.5.1`. Its independent `plans/release-0.5.2.pert` sequence leaves
-only durable acceptance after canonical PUBLISH advance. The named release
-authorization does not include npm `latest` promotion.
+`latest=0.5.1`. Durable acceptance independently reverified Git, GitHub, npm,
+all three artifact copies, exact `0.5.1` compatibility, and both
+public-package workflows. All five tasks and 17p are complete at `17p/1d`;
+both makespans are zero, and complete NextResult v5 has no recommendation.
+Only canonical acceptance advance remains as a repository record. The named
+release authorization does not include npm `latest` promotion or Issue #5
+closure.
 
 ### 5.1 Adopted Recommendation authority
 
