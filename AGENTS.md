@@ -210,12 +210,16 @@ CHANGELOG, README, release guidance, tests, goldens, and 23-plan self-use
 registration. The complete Node.js 22 gate passed 655 tests, English and
 documentation checks, the temporary-link workflow, the 491-file isolated
 package workflow, and npm publication normalization. After canonical advance,
-`RELEASE_052_CANDIDATE` is the only expected recommendation. Candidate
-publication must retain Grammar 5, CLI Contract 6, result identities, payload
-meanings, default lookup semantics, and npm `latest=0.5.1`. The user's named
-authorization covers the complete `0.5.2` sequence only after each predecessor
-gate passes; npm `latest` promotion and Issue #5 closure remain separate
-decisions.
+`RELEASE_052_CANDIDATE` was the only recommendation and is complete after
+clean Node.js 22 revalidation, absent-version/channel preflight,
+protected-route verification, and isolated acceptance of the retained
+491-file, 519790-byte tarball with SHA-256 `e8512f0d...54bbce`. No external
+state changed during candidate acceptance. `RELEASE_052_PUBLISH` becomes the
+only recommendation after canonical advance. Publication must retain Grammar
+5, CLI Contract 6, result identities, payload meanings, default lookup
+semantics, and npm `latest=0.5.1`. The user's named authorization covers the
+complete `0.5.2` sequence only after each predecessor gate passes; npm
+`latest` promotion and Issue #5 closure remain separate decisions.
 
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public result schema identities and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 

@@ -62,12 +62,17 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     design,
     /^### Post-MVP Slice 4L: Complete JSON Schema `v0\.5\.2` beta patch$/m,
   );
-  assert.match(procedure, /Status: Source prepared 1\.1/);
+  assert.match(procedure, /Status: Candidate accepted 1\.2/);
   assert.match(procedure, /Target version: `0\.5\.2`/);
   assert.match(procedure, /authorizes this complete named sequence/);
   assert.match(procedure, /does not\s+authorize npm `latest` promotion/);
   assert.match(procedure, /passed 655 tests/);
   assert.match(procedure, /all 23 self-use plans/);
+  assert.match(
+    procedure,
+    /e8512f0d3e20764e9397af827f6ea57f8bea7361d1e414102b0350bcaa54bbce/,
+  );
+  assert.match(procedure, /No external state was\s+changed/);
   assert.match(review, /Document status: Accepted 1\.0/);
   assert.match(review, /No blocking correctness, compatibility, package/);
   assert.match(review, /All 34 commands remain/);
