@@ -14,6 +14,7 @@
     "decision": "Perttool.GovernanceDecision.v1",
     "denial_diagnostic": "PTGOV-101",
     "invalid_core_input_diagnostic": "PTGOV-102",
+    "unused_assertion_diagnostic": "PTGOV-103",
     "stale_write_diagnostic": "PTIO-501"
   },
   "snapshots": {
@@ -478,6 +479,31 @@
         "claims_verified_consultation": false,
         "claims_durable_audit": false,
         "claims_direct_edit_prevention": false
+      }
+    },
+    {
+      "case_id": "GOV-016",
+      "category": "runtime_hardening",
+      "title": "A redundant owner assertion is visible without changing default authority",
+      "snapshot": "DEFAULT",
+      "operation": "mutation.plan",
+      "changes": ["task.estimate"],
+      "request": {
+        "intent": "persist",
+        "actor": null,
+        "accepted_by_owner": ["user"]
+      },
+      "expected": {
+        "applicable": false,
+        "affected_scopes": [],
+        "write_authorized": true,
+        "diagnostic_codes": ["PTGOV-103"],
+        "severity": "warning",
+        "default_exit_code": 0,
+        "default_write_allowed": true,
+        "warnings_as_errors_exit_code": 1,
+        "warnings_as_errors_write_allowed": false,
+        "detects_governed_candidate_reuse": false
       }
     }
   ]

@@ -80,16 +80,19 @@ test("repository agent policies share the single-candidate boundary", async () =
     assert.match(source, /diff\s+counts/);
     assert.match(source, /supplemental machine identity/);
     assert.match(source, /next\s+`dag advance`/);
+    assert.match(source, /PTGOV-103/);
   }
 });
 
 test("normative guidance fixes scope context without changing interface identity", async () => {
-  const [requirements, authority, contract, design] = await Promise.all([
-    repositoryFile("docs/requirements.md"),
-    repositoryFile("docs/specs/governance-authority.md"),
-    repositoryFile("docs/specs/governance-interface.md"),
-    repositoryFile("docs/basic-design.md"),
-  ]);
+  const [requirements, authority, contract, design, experiment] =
+    await Promise.all([
+      repositoryFile("docs/requirements.md"),
+      repositoryFile("docs/specs/governance-authority.md"),
+      repositoryFile("docs/specs/governance-interface.md"),
+      repositoryFile("docs/basic-design.md"),
+      repositoryFile("docs/process/governance-assertion-scope-experiment.md"),
+    ]);
 
   assert.match(
     requirements,
@@ -100,7 +103,10 @@ test("normative guidance fixes scope context without changing interface identity
     contract,
     /single-candidate assertion that the named\s+owner was consulted for the previewed affected scopes/,
   );
-  assert.match(design, /without revising the version\s+1 evaluator/);
+  assert.match(design, /retaining the version\s+1 decision shape/);
+  assert.match(design, /PTGOV-103/);
+  assert.match(experiment, /18 ordinary-maintenance invocations/);
+  assert.match(experiment, /does not claim to detect the 10 governed/);
   assert.match(contract, /Interface version: `1`/);
   assert.match(contract, /Target CLI contract version: `5`/);
 });

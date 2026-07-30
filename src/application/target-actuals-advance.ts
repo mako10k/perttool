@@ -3,7 +3,7 @@ import { validateStoredLifecycleState } from "../actuals/lifecycle.js";
 import {
   classifyGovernanceScopes,
   evaluateGovernanceAuthority,
-  governanceDenialDiagnostic,
+  governanceDecisionDiagnostics,
   normalizeGovernanceRequest,
 } from "../governance/authority.js";
 import { governanceMetadataFromDocument } from "../governance/source.js";
@@ -179,14 +179,13 @@ export function planTargetActualsAdvance(
     ),
     normalized.request,
   );
-  const denial = governanceDenialDiagnostic(governance);
-  const diagnostics =
-    denial === null ? base.diagnostics : [...base.diagnostics, denial];
+  const decisionDiagnostics = governanceDecisionDiagnostics(governance);
+  const diagnostics = [...base.diagnostics, ...decisionDiagnostics];
   const limited = limitDiagnostics(sortDiagnostics(diagnostics), maximum);
   return Object.freeze({
     ...base,
     schemaVersion: "Perttool.MutationResult.v3",
-    ok: denial === null,
+    ok: !decisionDiagnostics.some(({ severity }) => severity === "error"),
     governance,
     lifecycle: null,
     advance: base.advance as ActualsAdvanceDetails,

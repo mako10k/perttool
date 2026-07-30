@@ -848,7 +848,7 @@ SU-M2 progress:
 
 Priority: P0
 
-Status: Accepted caller-workflow guard (2026-07-30)
+Status: Selected minimal runtime warning (2026-07-30)
 
 The accepted loose governance interface can correctly classify actual goal,
 DAG, and ordinary-maintenance changes while a non-malicious caller still
@@ -872,11 +872,15 @@ Acceptance:
 - keep strict authentication, signatures, certificates, durable audit, and
   `GOV-AUTH-001` outside this experiment.
 
-The controlled dogfooding run passed all six cases. The accepted outcome
-retains the lightweight caller workflow and does not select a new CLI option,
-result identity, accepted-scope field, or approval artifact. A future observed
-carryover or scope-expansion failure reopens only the smallest runtime
-constraint needed for that failure.
+The controlled dogfooding run passed all six cases. A later objective review
+selected the smallest runtime constraint supported by the original
+observation: emit `PTGOV-103` when a valid candidate has
+`applicable=false` and a non-empty `accepted_by_owner` set. This directly
+detects the 18 ordinary-maintenance carryovers among the 29 observed
+invocations while preserving default write authority and all versioned result
+identities. Existing `--warnings-as-errors` may make the warning blocking.
+The change does not add a CLI option, accepted-scope field, approval artifact,
+or detection of reuse between two governed candidates.
 
 ## Strict approval authentication and certificates
 

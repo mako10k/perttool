@@ -183,3 +183,18 @@ workflow. This result does not select a machine-readable accepted-scope field,
 prove behavior for every future caller, or close `GOV-AUTH-001`. A later
 observed carryover or scope-expansion failure reopens the smallest applicable
 runtime-constraint decision.
+
+## 8. Objective-review runtime follow-up
+
+A later objective review accepted the existing Schema, NextResult v5, and
+repository-instruction surfaces while distinguishing loose owner assertions
+from authentication and arbitrary-LLM runtime enforcement. It selected one
+minimal runtime follow-up: a valid candidate with `applicable=false` and a
+non-empty `accepted_by_owner` set emits `PTGOV-103` as a warning.
+
+This condition directly covers the 18 ordinary-maintenance invocations in the
+original 29-invocation carryover. It does not claim to detect the 10 governed
+invocations or the one invocation that failed before a candidate existed.
+Default write authority remains unchanged; existing warnings-as-errors policy
+can prevent persistence. Accepted scopes, approval evidence, authentication,
+and cross-candidate reuse detection remain unselected.

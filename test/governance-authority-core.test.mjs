@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   classifyGovernanceScopes,
   evaluateGovernanceAuthority,
+  governanceDecisionDiagnostics,
   governanceDenialDiagnostic,
   normalizeGovernanceRequest,
 } from "../dist/governance/authority.js";
@@ -357,7 +358,7 @@ test("candidate delegation cannot authorize the mutation that introduces it", ()
   );
 });
 
-test("ordinary candidates remain authorized without an actor", () => {
+test("ordinary candidates remain authorized and expose unused assertions", () => {
   const decision = evaluateGovernanceAuthority(
     snapshot(source()),
     [],
@@ -380,4 +381,26 @@ test("ordinary candidates remain authorized without an actor", () => {
     scopes: [],
   });
   assert.equal(governanceDenialDiagnostic(decision), null);
+  assert.deepEqual(governanceDecisionDiagnostics(decision), [
+    {
+      code: "PTGOV-103",
+      severity: "warning",
+      message:
+        "owner confirmation assertion is unused because governance is not applicable",
+      helpTopic: "editing",
+      data: {
+        governance_semantics_version: 1,
+        cause: "owner_confirmation_not_applicable",
+        accepted_by_owner: ["user"],
+        affected_scopes: [],
+      },
+    },
+  ]);
+
+  const assertionFree = evaluateGovernanceAuthority(
+    snapshot(source()),
+    [],
+    request({ intent: "persist" }),
+  );
+  assert.deepEqual(governanceDecisionDiagnostics(assertionFree), []);
 });

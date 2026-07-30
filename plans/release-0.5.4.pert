@@ -1,0 +1,110 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_054:
+  version 5
+  title "perttool 0.5.4 governance runtime warning patch release"
+  description "Release suffix-free 0.5.4 beta as a backward-compatible Grammar 5 and CLI Contract 6 patch. Publish PTGOV-103 runtime visibility for unused owner-confirmation assertions without changing default write authority, command, option, result, schema, or runtime payload identities. npm latest promotion remains a separate decision."
+  as_of 2026-07-30
+  duration_unit point
+  velocity 15p/1d
+  finish RELEASE_054_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_054_SELECTED:
+  title "Version 0.5.4 selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize compatibility, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, CHANGELOG, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_054_REVIEW_ACCEPTED:
+  title "Version 0.5.4 compatibility review accepted"
+
+milestone RELEASE_054_SOURCE_PREPARED:
+  title "Version 0.5.4 release source prepared"
+
+milestone RELEASE_054_CANDIDATE_ACCEPTED:
+  title "Version 0.5.4 release candidate accepted"
+
+milestone RELEASE_054_PUBLISHED:
+  title "Version 0.5.4 published to GitHub and npm beta"
+
+milestone RELEASE_054_ACCEPTED:
+  title "Version 0.5.4 governance runtime warning patch accepted"
+
+task RELEASE_054_SELF_REVIEW RELEASE_054_SELECTED -> RELEASE_054_REVIEW_ACCEPTED:
+  title "Review compatibility and the unused-assertion warning"
+  description "Review the observed non-malicious carryover threat, PTGOV-103 trigger and payload, default and strict write behavior, all mutation planning paths, existing command and result identities, tests, package surface, and release safety. Accept 0.5.4 only if the patch remains backward compatible. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_054_PREPARATION RELEASE_054_REVIEW_ACCEPTED -> RELEASE_054_SOURCE_PREPARED:
+  title "Prepare version 0.5.4 release source"
+  description "Align package and lockfile identity, CLI version, CHANGELOG, README, release documentation, tests, goldens, self-use registration, and beta publication validation. Run complete repository and package gates without remote or registry writes."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_054_CANDIDATE RELEASE_054_SOURCE_PREPARED -> RELEASE_054_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.5.4 release candidate"
+  description "Review and commit the complete release diff; run the Node.js baseline acceptance; prove package, tag, GitHub Release, and npm version availability; verify dist-tag baselines and protected routes; build one immutable tarball outside the worktree; and accept its size and digests. This task performs no external write."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_054_PUBLISH RELEASE_054_CANDIDATE_ACCEPTED -> RELEASE_054_PUBLISHED:
+  title "Publish version 0.5.4 from one immutable tarball"
+  description "Only after every predecessor gate passes and under the user's named release authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.5.4 while latest remains unchanged."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_054_ACCEPTANCE RELEASE_054_PUBLISHED -> RELEASE_054_ACCEPTED:
+  title "Record durable 0.5.4 beta acceptance"
+  description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball size and digests, registry integrity and metadata, isolated installation from both public channels, unchanged Contract 6 and Grammar 5 behavior, PTGOV-103 default and strict behavior, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact or promoting latest."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1

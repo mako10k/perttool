@@ -170,6 +170,14 @@ test("governance diagnostics reuse domain exit 1 and retain write-conflict exit 
   );
   assert.match(contract, /`PTGOV-101` is a domain error and exits `1`/);
   assert.match(contract, /Malformed `GovernanceRequestInput` is:[\s\S]*PTGOV-102/);
+  assert.match(
+    contract,
+    /code       PTGOV-103[\s\S]*severity   warning[\s\S]*owner_confirmation_not_applicable/,
+  );
+  assert.match(
+    contract,
+    /With `--warnings-as-errors`, the existing warning policy returns exit\s+1 and prevents the write/,
+  );
   assert.match(contract, /Contract 5 adds no exit code/);
   assert.match(
     contract,

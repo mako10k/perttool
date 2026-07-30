@@ -284,6 +284,23 @@ successful GovernanceDecision. Documentation must not claim that actor or
 owner assertions are authenticated, that consultation was verified or
 durably audited, or that direct editing is technically prevented.
 
+### GOV-016 Redundant owner assertion runtime warning
+
+Changing a task estimate with `accepted_by_owner=[user]` remains ordinary
+maintenance:
+
+```text
+applicable        false
+affected_scopes   []
+write_authorized  true
+diagnostic        PTGOV-103 warning
+```
+
+Default preview and persistence exit 0, and persistence remains allowed.
+With `--warnings-as-errors`, the command exits 1 and writes nothing. The
+warning makes assertion boilerplate visible; it does not detect reuse between
+two governed candidates.
+
 ## 8. Acceptance map
 
 | Boundary | Cases |
@@ -297,3 +314,4 @@ durably audited, or that direct editing is technically prevented.
 | ordinary, no-op, transformation, and creation boundaries | GOV-012..013 |
 | invalid input and atomic Contract 5 cutover | GOV-014 |
 | help, installed behavior, and direct-edit guidance | GOV-015 |
+| redundant not-applicable owner assertion | GOV-016 |

@@ -295,7 +295,8 @@ intents.
   `writeAuthorized=false` adds `PTGOV-101`, returns `ok=false`, and prevents
   every filesystem write.
 - A not-applicable decision permits the existing write behavior without an
-  actor.
+  actor. When it retains one or more caller-asserted owner confirmations, it
+  also emits the non-blocking `PTGOV-103` warning specified in Section 8.
 
 An owner confirmation never substitutes for the required actor. Candidate
 metadata never changes the pre-change decision.
@@ -595,7 +596,38 @@ an invalid principal, repeated `--actor`, duplicate
 A valid but wrong owner assertion is not PTGOV-102; a persistent attempt
 reaches PTGOV-101.
 
-### 8.3 Retained exit meanings and priority
+### 8.3 Assertion supplied when governance is not applicable
+
+A valid candidate with `applicable=false` and
+`accepted_by_owner.length > 0` emits exactly one diagnostic:
+
+```text
+code       PTGOV-103
+severity   warning
+message    owner confirmation assertion is unused because governance is not applicable
+entity_id  null
+span       null
+related    []
+guide_topic editing
+data:
+  governance_semantics_version  1
+  cause                        owner_confirmation_not_applicable
+  accepted_by_owner            string[]
+  affected_scopes              []
+```
+
+The warning is emitted for both preview and persistent intent after a valid
+final candidate is classified. It does not change GovernanceDecision v1,
+MutationResult v2/v3, `write_authorized=true`, or the default successful
+write. With `--warnings-as-errors`, the existing warning policy returns exit
+1 and prevents the write. No warning is emitted when the assertion set is
+empty, when governance is applicable, or when no trustworthy candidate exists.
+
+This diagnostic makes redundant assertion boilerplate visible. It does not
+prove that an assertion is fresh and does not detect reuse between two
+governed candidates.
+
+### 8.4 Retained exit meanings and priority
 
 Contract 5 adds no exit code:
 
@@ -731,3 +763,8 @@ Later examples and implementation acceptance MUST establish at least:
 | GOV-IF-013 | Format, exact unit migration, current new-document import, and read-only operations do not acquire fictional governance authority. |
 | GOV-IF-014 | Contract 5 activation is atomic and an older runtime fails closed on Grammar 4 and governance options. |
 | GOV-IF-015 | Text, JSON, Guide, README, generated warning, and installed-package behavior never claim authentication or prevention of direct editing. |
+
+Post-Contract-6 runtime hardening additionally fixes
+`GOV-LOOSE-RT-001`: a not-applicable candidate with a non-empty
+`accepted_by_owner` set emits `PTGOV-103`, while default write authority and
+all versioned result identities remain unchanged.

@@ -333,3 +333,35 @@ export function governanceDenialDiagnostic(
     }),
   });
 }
+
+export function governanceUnusedAssertionDiagnostic(
+  decision: GovernanceDecisionV1,
+): Diagnostic | null {
+  if (decision.applicable || decision.acceptedByOwner.length === 0) {
+    return null;
+  }
+  return Object.freeze({
+    code: "PTGOV-103",
+    severity: "warning",
+    message:
+      "owner confirmation assertion is unused because governance is not applicable",
+    helpTopic: "editing",
+    data: Object.freeze({
+      governance_semantics_version: 1,
+      cause: "owner_confirmation_not_applicable",
+      accepted_by_owner: decision.acceptedByOwner,
+      affected_scopes: decision.affectedScopes,
+    }),
+  });
+}
+
+export function governanceDecisionDiagnostics(
+  decision: GovernanceDecisionV1,
+): readonly Diagnostic[] {
+  const denial = governanceDenialDiagnostic(decision);
+  if (denial !== null) return Object.freeze([denial]);
+  const unusedAssertion = governanceUnusedAssertionDiagnostic(decision);
+  return unusedAssertion === null
+    ? Object.freeze([])
+    : Object.freeze([unusedAssertion]);
+}

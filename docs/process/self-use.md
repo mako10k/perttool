@@ -1420,6 +1420,15 @@ ready, recommended, or startable task. The completed declarations remain
 until a separately confirmed single-candidate `dag advance`; npm `latest`
 promotion remains outside the named release scope.
 
+The independent `release-0.5.4.pert` workstream then selected the compatible
+governance-runtime-warning patch. Its five serial tasks cover trigger and
+compatibility review, version-bearing source preparation, one immutable
+candidate, authorized GitHub/npm beta publication, and durable acceptance.
+The initial 15p plan uses the preceding release's observed `15p/1d`
+velocity. `RELEASE_054_SELF_REVIEW` is complete; source preparation and every
+external mutation remain gated by their predecessors. npm `latest` promotion
+remains outside the named release scope.
+
 Stage 1 allowed operations:
 
 - check

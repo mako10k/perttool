@@ -241,6 +241,40 @@ test("ordinary persistent maintenance remains applicable=false without actor", (
   assert.equal(renderTargetGovernanceDecision(result.governance), "");
 });
 
+test("ordinary maintenance with an owner assertion emits PTGOV-103", () => {
+  const result = planTargetGovernanceMutation(
+    source(),
+    {
+      kind: "project.set",
+      set: { title: "renamed" },
+    },
+    TARGET_GRAMMAR_4_CAPABILITY,
+    {
+      governance: {
+        intent: "persist",
+        acceptedByOwner: ["user"],
+      },
+    },
+  );
+  assert.equal(result.ok, true);
+  assert.equal(result.governance.applicable, false);
+  assert.equal(result.governance.writeAuthorized, true);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTGOV-103"]);
+  assert.equal(
+    result.diagnostics[0].data.cause,
+    "owner_confirmation_not_applicable",
+  );
+
+  const json = targetGovernanceMutationResultToJson(
+    result,
+    "project.set",
+    "plan.pert",
+  );
+  assert.equal(json.ok, true);
+  assert.deepEqual(json.governance.accepted_by_owner, ["user"]);
+  assert.equal(json.diagnostics[0].severity, "warning");
+});
+
 test("invalid governance request returns PTGOV-102 without a candidate", () => {
   const result = planTargetGovernanceMutation(
     source(),

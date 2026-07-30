@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import {
   classifyGovernanceScopes,
   evaluateGovernanceAuthority,
-  governanceDenialDiagnostic,
+  governanceDecisionDiagnostics,
   normalizeGovernanceRequest,
 } from "../governance/authority.js";
 import { governanceSourceSnapshot } from "../governance/source.js";
@@ -176,8 +176,8 @@ function governedResult<Result extends MutationResult>(
     scopes,
     normalized.request,
   );
-  const denial = governanceDenialDiagnostic(governance);
-  if (denial === null) {
+  const decisionDiagnostics = governanceDecisionDiagnostics(governance);
+  if (decisionDiagnostics.length === 0) {
     return Object.freeze({
       ...base,
       schemaVersion: "Perttool.MutationResult.v2",
@@ -186,13 +186,13 @@ function governedResult<Result extends MutationResult>(
   }
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
   const limited = limitDiagnostics(
-    sortDiagnostics([...base.diagnostics, denial]),
+    sortDiagnostics([...base.diagnostics, ...decisionDiagnostics]),
     maximum,
   );
   return Object.freeze({
     ...base,
     schemaVersion: "Perttool.MutationResult.v2",
-    ok: false,
+    ok: !decisionDiagnostics.some(({ severity }) => severity === "error"),
     governance,
     diagnostics: limited.diagnostics,
     diagnosticsTruncated:

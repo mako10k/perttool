@@ -161,6 +161,24 @@ test("start, suspend, and resume append exact evidence atomically", () => {
   assert.match(resumed.updatedText, /  kind resume/);
 });
 
+test("lifecycle mutation warns about an unused owner assertion", () => {
+  const result = planTargetLifecycleMutation(
+    lifecycleSource(),
+    mutation("task.start", "2026-07-28T09:00:00+09:00"),
+    TARGET_GRAMMAR_5_CAPABILITY,
+    {
+      governance: {
+        intent: "persist",
+        acceptedByOwner: ["user"],
+      },
+    },
+  );
+  assert.equal(result.ok, true);
+  assert.equal(result.governance.applicable, false);
+  assert.equal(result.governance.writeAuthorized, true);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTGOV-103"]);
+});
+
 test("lifecycle transitions fail closed on wrong state, legacy gaps, and identity drift", () => {
   const wrongState = planTargetLifecycleMutation(
     lifecycleSource(),

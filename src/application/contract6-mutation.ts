@@ -11,7 +11,7 @@ import {
 import {
   classifyGovernanceScopes,
   evaluateGovernanceAuthority,
-  governanceDenialDiagnostic,
+  governanceDecisionDiagnostics,
   normalizeGovernanceRequest,
 } from "../governance/authority.js";
 import {
@@ -235,8 +235,8 @@ function governedResult(
     ),
     normalized.request,
   );
-  const denial = governanceDenialDiagnostic(governance);
-  if (denial === null) {
+  const decisionDiagnostics = governanceDecisionDiagnostics(governance);
+  if (decisionDiagnostics.length === 0) {
     return Object.freeze({
       ...base,
       schemaVersion: "Perttool.MutationResult.v3",
@@ -246,13 +246,13 @@ function governedResult(
   }
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
   const limited = limitDiagnostics(
-    sortDiagnostics([...base.diagnostics, denial]),
+    sortDiagnostics([...base.diagnostics, ...decisionDiagnostics]),
     maximum,
   );
   return Object.freeze({
     ...base,
     schemaVersion: "Perttool.MutationResult.v3",
-    ok: false,
+    ok: !decisionDiagnostics.some(({ severity }) => severity === "error"),
     governance,
     lifecycle: null,
     diagnostics: limited.diagnostics,

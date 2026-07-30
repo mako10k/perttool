@@ -1393,6 +1393,56 @@ test("mutation CLI validates write options and suppresses failed candidates", ()
   assert.equal(limitedJson.updated_text, null);
 });
 
+test("mutation CLI exposes unused owner assertions and strict mode prevents write", (t) => {
+  const preview = run([
+    "task", "set", minimalPath, "WORK", "--title", "updated",
+    "--accepted-by-owner", "user", "--format=json",
+  ]);
+  assert.equal(preview.status, 0, preview.stderr);
+  const previewJson = JSON.parse(preview.stdout);
+  assert.equal(previewJson.ok, true);
+  assert.equal(previewJson.governance.applicable, false);
+  assert.deepEqual(previewJson.governance.accepted_by_owner, ["user"]);
+  assert.deepEqual(
+    previewJson.diagnostics.map(({ code, severity }) => ({ code, severity })),
+    [{ code: "PTGOV-103", severity: "warning" }],
+  );
+
+  const directory = mkdtempSync(
+    path.join(tmpdir(), "perttool-governance-warning-"),
+  );
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const target = path.join(directory, "plan.pert");
+  copyFileSync(path.join(root, minimalPath), target);
+  const before = readFileSync(target, "utf8");
+  const sourceDigest = JSON.parse(run([
+    "document", "check", target, "--format=json",
+  ]).stdout).source_digest;
+  const strict = run([
+    "task", "set", target, "WORK", "--title", "updated",
+    "--accepted-by-owner", "user", "--write",
+    "--expect-digest", sourceDigest, "--warnings-as-errors", "--format=json",
+  ]);
+  assert.equal(strict.status, 1, strict.stderr);
+  const strictJson = JSON.parse(strict.stdout);
+  assert.equal(strictJson.ok, false);
+  assert.equal(strictJson.write.written, false);
+  assert.equal(strictJson.diagnostics[0].code, "PTGOV-103");
+  assert.equal(readFileSync(target, "utf8"), before);
+
+  const allowed = run([
+    "task", "set", target, "WORK", "--title", "updated",
+    "--accepted-by-owner", "user", "--write",
+    "--expect-digest", sourceDigest, "--format=json",
+  ]);
+  assert.equal(allowed.status, 0, allowed.stderr);
+  const allowedJson = JSON.parse(allowed.stdout);
+  assert.equal(allowedJson.ok, true);
+  assert.equal(allowedJson.write.written, true);
+  assert.equal(allowedJson.diagnostics[0].code, "PTGOV-103");
+  assert.match(readFileSync(target, "utf8"), /title "updated"/);
+});
+
 test("entity and batch mutation commands share the safe-write path", (t) => {
   const directory = mkdtempSync(path.join(tmpdir(), "perttool-mutation-write-"));
   t.after(() => rmSync(directory, { recursive: true, force: true }));

@@ -21,7 +21,7 @@ import { createUnifiedDiff } from "../editing/unified-diff.js";
 import {
   classifyGovernanceScopes,
   evaluateGovernanceAuthority,
-  governanceDenialDiagnostic,
+  governanceDecisionDiagnostics,
   normalizeGovernanceRequest,
 } from "../governance/authority.js";
 import { governanceMetadataFromDocument } from "../governance/source.js";
@@ -703,16 +703,13 @@ export function planTargetLifecycleMutation(
     ),
     governanceRequest.request,
   );
-  const denial = governanceDenialDiagnostic(governance);
-  const diagnostics =
-    denial === null
-      ? candidate.diagnostics
-      : [...candidate.diagnostics, denial];
+  const decisionDiagnostics = governanceDecisionDiagnostics(governance);
+  const diagnostics = [...candidate.diagnostics, ...decisionDiagnostics];
   const limited = limitDiagnostics(sortDiagnostics(diagnostics), maximum);
   const baseOptions = requestOptions(options);
   return Object.freeze({
     schemaVersion: "Perttool.MutationResult.v3",
-    ok: denial === null,
+    ok: !decisionDiagnostics.some(({ severity }) => severity === "error"),
     documentId: original.documentId,
     changed: updatedText !== text,
     originalDigest,

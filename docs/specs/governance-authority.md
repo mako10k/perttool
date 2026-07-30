@@ -352,6 +352,26 @@ signature, or RBAC failure. Existing `PTDSL-*`, `PTSEM-*`, `PTDAG-*`,
 `PTMUT-*`, `PTCNV-*`, and `PTIO-*` causes retain their meanings and are not
 wrapped as governance errors.
 
+### 7.1 Unused owner-confirmation assertion
+
+A valid decision with `applicable=false` and a non-empty
+`acceptedByOwner` set emits `PTGOV-103` with severity `warning`. It identifies
+an owner-confirmation assertion that cannot contribute to authority because
+the actual candidate affects neither the goal nor the DAG.
+
+The warning does not change the decision:
+
+- `affectedScopes=[]`;
+- `requiredOwnerConfirmations=[]`;
+- `writeAuthorized=true`; and
+- the supplied assertion remains visible in `acceptedByOwner`.
+
+Default preview and persistence remain successful. Existing
+warnings-as-errors policy may reject persistence before filesystem I/O. The
+warning does not diagnose a forged assertion, authenticate a principal, bind
+an assertion to a different candidate, or detect reuse between two governed
+candidates.
+
 ## 8. Decision examples
 
 Assume this pre-change snapshot:
@@ -375,6 +395,7 @@ dag delegates: [codex]
 | change finish and add a task | write, actor `codex` | DAG authorized; goal denied |
 | change finish and add a task | write, actor `codex`, accepted owner `user` | both scopes authorized |
 | update task estimate | write, no actor | governance not applicable |
+| update task estimate | write, accepted owner `user` | governance not applicable; write authorized with `PTGOV-103` warning |
 
 If the goal owner is `user` and DAG owner is `llm`, actor `codex` changing
 both scopes must carry accepted owners `user` and `llm`. A single assertion

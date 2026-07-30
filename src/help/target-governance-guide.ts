@@ -18,7 +18,7 @@ export interface TargetGovernanceGuideResult extends GuideProjectionResult {
 const governanceQuick: HelpSection = Object.freeze({
   id: "owner-aware-governance",
   title: "Owner-aware governance",
-  body: "Start each Contract 5 candidate with an assertion-free preview. Persistent governed changes require an actor: an effective owner or delegate has direct authority, while another actor may provide repeatable --accepted-by-owner caller assertions only for the explicitly confirmed affected scopes of this candidate. Omit them when governance is not applicable and never reuse them across commands.",
+  body: "Start each Contract 5 candidate with an assertion-free preview. Persistent governed changes require an actor: an effective owner or delegate has direct authority, while another actor may provide repeatable --accepted-by-owner caller assertions only for the explicitly confirmed affected scopes of this candidate. Omit them when governance is not applicable and never reuse them across commands. A supplied owner assertion on a not-applicable candidate emits PTGOV-103.",
 });
 
 const governanceDetail: readonly HelpSection[] = Object.freeze([
@@ -30,7 +30,7 @@ const governanceDetail: readonly HelpSection[] = Object.freeze([
   Object.freeze({
     id: "assertion-boundary",
     title: "Caller assertion boundary",
-    body: "--actor and repeatable --accepted-by-owner values are caller-provided assertions. Before a non-direct governed write, present the operation, target, affected scopes, required owners, available modification time, byte size before and after, diff counts, and semantic candidate summary. Keep source and candidate digests as supplemental machine identity rather than the primary human explanation. A loose owner confirmation belongs to that candidate only; do not carry it to later maintenance, a changed candidate, or the next dag advance, and do not chain preview and confirmation-dependent write without a user-response boundary. These values are not authentication, verified identity, signatures, or a durable approval audit.",
+    body: "--actor and repeatable --accepted-by-owner values are caller-provided assertions. Before a non-direct governed write, present the operation, target, affected scopes, required owners, available modification time, byte size before and after, diff counts, and semantic candidate summary. Keep source and candidate digests as supplemental machine identity rather than the primary human explanation. A loose owner confirmation belongs to that candidate only; do not carry it to later maintenance, a changed candidate, or the next dag advance, and do not chain preview and confirmation-dependent write without a user-response boundary. PTGOV-103 warns when an assertion is supplied even though governance is not applicable; the default write remains allowed, while --warnings-as-errors prevents it. These values are not authentication, verified identity, signatures, or a durable approval audit.",
   }),
   Object.freeze({
     id: "direct-edit-boundary",

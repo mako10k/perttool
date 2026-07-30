@@ -1115,6 +1115,12 @@ Must:
   later `dag advance`. A general instruction to perform a workstream or
   release must not silently become confirmation for each later governed
   mutation.
+- A valid candidate with no affected governance scope and a non-empty
+  caller-asserted owner-confirmation set must emit a stable warning. The
+  warning makes accidental assertion boilerplate machine-visible without
+  changing `applicable=false`, `writeAuthorized=true`, the default exit-zero
+  write behavior, or any result identity. Existing `--warnings-as-errors`
+  policy must convert that warning into exit 1 and prevent persistence.
 - Owner and delegate changes use only the pre-change owner and delegate state
   for authorization. An atomic request cannot self-authorize through values it
   introduces.
@@ -1913,6 +1919,48 @@ prerelease, npm `beta` publication, and durable acceptance after every
 predecessor gate passes. It does not authorize npm `latest` promotion. The
 authoritative procedure is
 [`docs/process/0.5.3-release.md`](process/0.5.3-release.md).
+
+### 21.10 Governance runtime warning patch release acceptance criteria
+
+The package that publishes the minimal unused-owner-assertion runtime warning
+is suffix-free `0.5.4`. It remains a CLI Contract 6 and Grammar 5 beta patch,
+is a GitHub prerelease, and is published to npm `beta`.
+
+1. Retain Grammar 5, CLI Contract 6, all existing commands and options,
+   runtime result and schema identities, payload meanings, stable exits, and
+   package-root values.
+2. Emit `PTGOV-103` only after a valid candidate has
+   `applicable=false` and a non-empty `acceptedByOwner` set.
+3. Preserve `writeAuthorized=true`, default exit 0, and default persistence
+   for that not-applicable candidate.
+4. Reuse existing `--warnings-as-errors` policy to return exit 1 and prevent
+   persistence before filesystem I/O.
+5. Apply the same warning projection to direct, batch, lifecycle, and advance
+   mutation planning paths.
+6. Do not add accepted scopes, approval evidence, authentication,
+   cross-candidate state, a new CLI option, result field, or interface
+   identity.
+7. Align package, lockfile, CLI/tool version, release commit, annotated
+   `v0.5.4` tag, GitHub asset, and npm identity.
+8. Pass Node.js 22 repository checks, Node.js 22 and 24 CI, package
+   normalization, temporary-link checks, and isolated installation.
+9. Establish before publication that `perttool@0.5.4`, `v0.5.4`, and the
+   matching GitHub Release are unused; record npm `beta` and `latest`, confirm
+   that `alpha` is absent, and verify protected routes without displaying
+   secrets.
+10. Generate one immutable tarball outside the worktree, distribute those
+    exact bytes through the GitHub prerelease and npm `beta`, and verify
+    isolated installation from both public channels.
+11. Move only `beta` to `0.5.4`, leave `latest=0.5.1` unchanged, and record
+    durable release, tag, artifact, registry, CI, and installed-behavior
+    evidence.
+
+The user's 2026-07-30 release instruction authorizes the complete named
+`0.5.4` judgment, preparation, candidate, Git push, annotated tag, GitHub
+prerelease, npm `beta` publication, and durable acceptance after every
+predecessor gate passes. It does not authorize npm `latest` promotion. The
+authoritative procedure is
+[`docs/process/0.5.4-release.md`](process/0.5.4-release.md).
 
 ## 22. Mapping to the initial requirements
 

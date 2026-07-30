@@ -4,6 +4,20 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.5.4] - 2026-07-30
+
+Compatible CLI Contract 6 and Grammar 5 beta patch. This version adds minimal
+runtime visibility for unused loose owner-confirmation assertions without
+changing default write authority or any command, option, result, schema, or
+runtime payload identity.
+
+### Changed
+
+- Added `PTGOV-103` as a non-blocking runtime warning when a valid
+  governance-not-applicable candidate carries one or more
+  `--accepted-by-owner` assertions. Default write authority is unchanged;
+  existing `--warnings-as-errors` prevents persistence.
+
 ## [0.5.3] - 2026-07-30
 
 Compatible CLI Contract 6 and Grammar 5 beta patch. This version retires the
@@ -270,7 +284,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.4...HEAD
+[0.5.4]: https://github.com/mako10k/perttool/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/mako10k/perttool/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/mako10k/perttool/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/mako10k/perttool/compare/v0.5.0...v0.5.1

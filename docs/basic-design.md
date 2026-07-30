@@ -2044,15 +2044,23 @@ and publication were not part of this activation.
 
 The later
 [loose governance assertion scope experiment](process/governance-assertion-scope-experiment.md)
-addresses a dogfooding failure in caller behavior without revising the version
-1 evaluator. It starts each candidate with an assertion-free preview, requires
-an explicit operation-and-scope context before a non-direct governed write,
-omits loose assertions from ordinary maintenance, and discards confirmation
-after one candidate. The caller projects filesystem modification time when
-available, exact UTF-8 byte sizes, diff counts, and semantic changes as the
-human-facing review surface; digests remain supplemental binding evidence. A
-machine-readable accepted-scope field or a new result identity remains an
-unselected follow-up decision.
+addresses a dogfooding failure in caller behavior while retaining the version
+1 decision shape. It starts each candidate with an assertion-free preview,
+requires an explicit operation-and-scope context before a non-direct governed
+write, omits loose assertions from ordinary maintenance, and discards
+confirmation after one candidate. The caller projects filesystem modification
+time when available, exact UTF-8 byte sizes, diff counts, and semantic changes
+as the human-facing review surface; digests remain supplemental binding
+evidence.
+
+The selected minimal runtime follow-up adds one pure decision-diagnostic
+projection after actual-change classification. When
+`applicable=false && acceptedByOwner.length > 0`, it emits the warning
+`PTGOV-103` through the shared direct, batch, lifecycle, and advance planning
+paths. Default authorization remains successful; the existing
+warnings-as-errors gate prevents persistence before safe-write I/O. A
+machine-readable accepted-scope field, new result identity, authentication,
+or approval artifact remains outside this slice.
 
 Exit:
 
@@ -2261,6 +2269,37 @@ Exit:
 - preserve `latest=0.5.1`; and
 - record durable acceptance without adding strict authentication or an
   accepted-scope field.
+
+### Post-MVP Slice 4N: Governance runtime warning `v0.5.4` beta patch
+
+The [`v0.5.4` release procedure](process/0.5.4-release.md) publishes the
+minimal `PTGOV-103` runtime warning selected from the loose-assertion
+observation. The independent
+[`release-0.5.4.pert`](../plans/release-0.5.4.pert) plan sequences:
+
+1. compatibility, trigger, and complete-diff self-review;
+2. version-bearing source and release-record preparation;
+3. one clean candidate commit and one immutable tarball;
+4. the authorized Git, GitHub prerelease, and npm `beta` publication; and
+5. durable public-channel and installed-package acceptance.
+
+The diagnostic projection runs after actual-change classification and the
+version 1 authority decision. It emits one warning for a not-applicable
+candidate that still carries an owner-confirmation assertion. Default write
+authority remains successful, while the existing warnings-as-errors gate
+prevents persistence before safe-write I/O.
+
+Exit:
+
+- satisfy Requirements 21.10 from one clean release commit and immutable
+  tarball;
+- preserve every command, option, runtime result, schema, and package-root
+  identity;
+- cover direct, batch, lifecycle, and advance planning paths;
+- publish identical bytes to a GitHub prerelease and npm `beta`;
+- preserve `latest=0.5.1`; and
+- record durable acceptance without adding accepted scopes, approval
+  evidence, authentication, or cross-candidate state.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

@@ -54,11 +54,12 @@ test("governance examples publish one contiguous target-contract baseline", asyn
     decision: "Perttool.GovernanceDecision.v1",
     denial_diagnostic: "PTGOV-101",
     invalid_core_input_diagnostic: "PTGOV-102",
+    unused_assertion_diagnostic: "PTGOV-103",
     stale_write_diagnostic: "PTIO-501",
   });
 
   const expectedIds = Array.from(
-    { length: 15 },
+    { length: 16 },
     (_, index) => `GOV-${String(index + 1).padStart(3, "0")}`,
   );
   assert.deepEqual(
@@ -243,6 +244,18 @@ test("ordinary, cutover, and presentation cases retain explicit non-goals", asyn
   assert.equal(presentation.claims_verified_consultation, false);
   assert.equal(presentation.claims_durable_audit, false);
   assert.equal(presentation.claims_direct_edit_prevention, false);
+
+  const runtimeWarning = byId(document, "GOV-016").expected;
+  assert.equal(runtimeWarning.applicable, false);
+  assert.deepEqual(runtimeWarning.affected_scopes, []);
+  assert.equal(runtimeWarning.write_authorized, true);
+  assert.deepEqual(runtimeWarning.diagnostic_codes, ["PTGOV-103"]);
+  assert.equal(runtimeWarning.severity, "warning");
+  assert.equal(runtimeWarning.default_exit_code, 0);
+  assert.equal(runtimeWarning.default_write_allowed, true);
+  assert.equal(runtimeWarning.warnings_as_errors_exit_code, 1);
+  assert.equal(runtimeWarning.warnings_as_errors_write_allowed, false);
+  assert.equal(runtimeWarning.detects_governed_candidate_reuse, false);
 });
 
 test("requirements, specifications, design, and source cases link the same examples", async () => {

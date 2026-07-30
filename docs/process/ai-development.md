@@ -152,6 +152,9 @@ the primary human explanation. Use the assertion only when the current user
 instruction explicitly covers that mutation. Do not copy it to later
 maintenance, a changed candidate, or the next `dag advance`, and do not chain
 preview and confirmation-dependent write without a user-response boundary.
+`PTGOV-103` warns when a valid not-applicable candidate still carries an owner
+assertion. It does not change default write authority; selecting
+`--warnings-as-errors` prevents persistence.
 The complete experimental cases are in the
 [loose assertion scope experiment](governance-assertion-scope-experiment.md).
 
@@ -337,6 +340,15 @@ tasks and 15p are done; both makespans are zero, and complete NextResult v5
 has no recommendation. Completed declarations remain until a separately
 confirmed single-candidate `dag advance`. npm `latest` promotion remains
 separate.
+
+The compatible `0.5.4` patch is selected for the non-blocking `PTGOV-103`
+runtime warning. A valid not-applicable candidate with a non-empty
+owner-confirmation assertion set remains authorized by default, while
+existing `--warnings-as-errors` prevents persistence. The patch retains every
+command, option, result, schema, and package-root identity and does not add
+accepted scopes, evidence, authentication, or cross-candidate state.
+`RELEASE_054_SELF_REVIEW` is complete; release preparation and publication
+remain predecessor-gated, and npm `latest` promotion remains separate.
 
 ### 5.1 Adopted Recommendation authority
 

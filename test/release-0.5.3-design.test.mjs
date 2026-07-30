@@ -58,7 +58,9 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
   );
   const releaseSection = requirements.split(
     "### 21.9 Governance guidance patch release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split(
+    "### 21.10 Governance runtime warning patch release acceptance criteria",
+  )[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
@@ -116,13 +118,16 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.5.3");
-  assert.equal(lockfile.version, "0.5.3");
-  assert.equal(lockfile.packages[""].version, "0.5.3");
+  assert.equal(manifest.version, "0.5.4");
+  assert.equal(lockfile.version, "0.5.4");
+  assert.equal(lockfile.packages[""].version, "0.5.4");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.5\.3"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.5\.4"/);
   assert.match(changelog, /^## \[0\.5\.3\] - 2026-07-30$/m);
-  assert.match(readme, /perttool@0\.5\.3/);
+  assert.match(
+    readme,
+    /Scope-bound, human-readable loose owner-confirmation guidance requires\s+`0\.5\.3`/,
+  );
   assert.match(readme, /`latest` remains on accepted\s+Contract 6 `0\.5\.1`/);
   assert.match(publishScript, /publish_tag" != "beta"/);
   assert.doesNotMatch(publishScript, /^\s*alpha\)$/m);

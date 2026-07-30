@@ -35,6 +35,7 @@ Plans are separated by level of detail.
 - [release-0.5.1.pert](release-0.5.1.pert): independent compatible Contract 6 patch-release plan covering self-review, preparation, candidate, authorized publication, and durable acceptance
 - [release-0.5.2.pert](release-0.5.2.pert): independent compatible Contract 6 complete-schema patch-release plan covering self-review, preparation, candidate, authorized publication, and durable acceptance
 - [release-0.5.3.pert](release-0.5.3.pert): completed compatible Contract 6 governance-guidance patch-release plan covering threat-model review, human-readable confirmation context, preparation, candidate, authorized publication, and durable acceptance; completed declarations remain pending separately confirmed governed advance
+- [release-0.5.4.pert](release-0.5.4.pert): active compatible Contract 6 governance-runtime-warning patch-release plan covering trigger and compatibility review, preparation, candidate, authorized publication, and durable acceptance
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2
@@ -43,7 +44,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All twenty-four plans pass the self-use gate and are used as inputs to `document
+All twenty-five plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -53,7 +54,8 @@ select a milestone work package from `scheduling-units.pert`, create and accept
 its milestone-detail plan when none is current, and then select a task from
 that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.3.0.pert`, `release-0.4.0.pert`, `release-0.5.0.pert`,
-`release-0.5.1.pert`, `release-0.5.2.pert`, `release-0.5.3.pert`, `governance.pert`,
+`release-0.5.1.pert`, `release-0.5.2.pert`, `release-0.5.3.pert`,
+`release-0.5.4.pert`, `governance.pert`,
 `project-actuals.pert`, and the scheduling-and-units plans are explicitly
 requested independent post-beta plans and are not rolled up into the completed
 MVP macro.
