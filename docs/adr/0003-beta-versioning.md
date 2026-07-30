@@ -149,8 +149,10 @@ promotion or Issue #5 closure.
 The named PUBLISH gate then passed. Release commit and peeled `v0.5.1` target
 `31d162a` agree; candidate, GitHub, and npm tarballs are byte-identical at
 SHA-256 `93f3e01a...1339`; npm reports `beta=0.5.1` with unchanged
-`latest=0.4.0`; and both public-package workflows pass. Durable acceptance,
-npm `latest` promotion, and Issue #5 closure remain separate decisions.
+`latest=0.4.0`; and both public-package workflows pass. Durable acceptance
+then independently reverified Git, GitHub, npm, both public artifacts, the
+additive compatibility boundary, and installed workflows. npm `latest`
+promotion and Issue #5 closure remain separate decisions.
 
 ## Beta gate
 

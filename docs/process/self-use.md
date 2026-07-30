@@ -1353,6 +1353,15 @@ and heuristic resource makespans are both 3p with no resource delay, observed
 velocity is `14p/1d`, both forecasts are `3/14d`, and complete NextResult v5
 recommends and starts only `RELEASE_051_ACCEPTANCE`.
 
+Durable acceptance then independently reread Git, GitHub, npm, artifact, and
+dist-tag state and reran the isolated package gate against both public
+tarballs. The exact `0.5.0` comparison confirms that the patch retains Grammar
+5, CLI Contract 6, all 33 prior commands, all 108 prior exports, result
+identities, and normalized payload meanings. All five tasks and 17p are done
+at `17p/1d`; precedence and heuristic resource makespans are zero, and
+complete NextResult v5 has no ready, recommended, or startable task. npm
+`latest` promotion and Issue #5 closure remain separate decisions.
+
 Stage 1 allowed operations:
 
 - check

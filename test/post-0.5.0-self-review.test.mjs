@@ -91,11 +91,11 @@ test("current guidance records the published 0.5.1 schema boundary", async () =>
     assert.match(guidance, /npm `beta=0\.5\.1`/);
     assert.match(guidance, /Git 2\.54 UTC/);
     assert.match(guidance, /Issue #5/);
-    assert.match(guidance, /remain separate boundaries/);
+    assert.match(guidance, /Issue #5 closure remains a separate boundary/);
   }
   assert.match(
     agents,
-    /`release-0\.5\.0\.pert` as completed independent post-beta workstreams/,
+    /`release-0\.5\.0\.pert`, and `release-0\.5\.1\.pert` as completed independent post-beta workstreams/,
   );
   assert.doesNotMatch(
     agents,
