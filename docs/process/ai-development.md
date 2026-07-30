@@ -349,8 +349,10 @@ command, option, result, schema, and package-root identity and does not add
 accepted scopes, evidence, authentication, or cross-candidate state.
 `RELEASE_054_SELF_REVIEW`, source preparation, and candidate acceptance are
 complete. The retained 491-file, 521641-byte tarball has SHA-256
-`d3123ef0...3c01`; only predecessor-gated publication is now recommended and
-startable. npm `latest` promotion remains separate.
+`d3123ef0...3c01`. Release commit, remote main, peeled tag, Node.js 22/24 CI,
+GitHub prerelease, npm `beta=0.5.4`, and the common tarball agree. Only
+durable acceptance is now recommended and startable; `latest=0.5.1` and npm
+`latest` promotion remains separate.
 
 ### 5.1 Adopted Recommendation authority
 

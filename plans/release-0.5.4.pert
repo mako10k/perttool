@@ -92,6 +92,7 @@ task RELEASE_054_PUBLISH RELEASE_054_CANDIDATE_ACCEPTED -> RELEASE_054_PUBLISHED
   title "Publish version 0.5.4 from one immutable tarball"
   description "Only after every predecessor gate passes and under the user's named release authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.5.4 while latest remains unchanged."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
