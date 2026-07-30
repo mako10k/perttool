@@ -331,9 +331,10 @@ package-root identity. Human confirmation leads with available modification
 time, exact UTF-8 sizes, diff counts, and semantic changes; digests remain
 supplemental machine identity. `RELEASE_053_SELF_REVIEW` and
 `RELEASE_053_PREPARATION` are complete. The immutable 491-file candidate was
-accepted after clean revalidation and external preflight, and
-`RELEASE_053_PUBLISH` is the current startable recommendation. npm `latest`
-promotion remains separate.
+accepted after clean revalidation and external preflight. Publication to the
+GitHub prerelease and npm `beta` is complete, and `RELEASE_053_ACCEPTANCE` is
+the current startable recommendation. npm `latest` promotion remains
+separate.
 
 ### 5.1 Adopted Recommendation authority
 
