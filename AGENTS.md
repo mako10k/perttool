@@ -275,7 +275,10 @@ The explicitly authorized compatible `0.5.5` governed-preview-warning patch
 is tracked in `plans/release-0.5.5.pert`. Compatibility self-review is
 complete, and source preparation and candidate acceptance have passed the
 complete Node.js 22 and retained-package gates. The 491-file, 522117-byte
-candidate has SHA-256 `1987db1a...5452`. The selected patch emits non-blocking `PTGOV-104` when a valid
+candidate has SHA-256 `1987db1a...5452`. PUBLISH is complete: release commit
+`04055c9`, peeled tag, Node.js 22/24 CI run `30543700217`, GitHub prerelease,
+npm `beta=0.5.5`, and the common tarball agree; `latest=0.5.1` and alpha
+remains absent. The selected patch emits non-blocking `PTGOV-104` when a valid
 applicable preview carries a non-empty `acceptedByOwner` set. The candidate,
 GovernanceDecision v1, default preview, and persistent authority remain
 unchanged; existing `--warnings-as-errors` returns exit 1 while retaining the
