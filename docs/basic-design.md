@@ -2048,8 +2048,11 @@ addresses a dogfooding failure in caller behavior without revising the version
 1 evaluator. It starts each candidate with an assertion-free preview, requires
 an explicit operation-and-scope context before a non-direct governed write,
 omits loose assertions from ordinary maintenance, and discards confirmation
-after one candidate. A machine-readable accepted-scope field or a new result
-identity remains an unselected follow-up decision.
+after one candidate. The caller projects filesystem modification time when
+available, exact UTF-8 byte sizes, diff counts, and semantic changes as the
+human-facing review surface; digests remain supplemental binding evidence. A
+machine-readable accepted-scope field or a new result identity remains an
+unselected follow-up decision.
 
 Exit:
 
@@ -2226,6 +2229,38 @@ Exit:
 - publish identical bytes to a GitHub prerelease and npm `beta`;
 - preserve `latest=0.5.1`; and
 - record durable acceptance without a Contract 7 or Grammar 6 cutover.
+
+### Post-MVP Slice 4M: Governance guidance `v0.5.3` beta patch
+
+The [`v0.5.3` release procedure](process/0.5.3-release.md) publishes the
+retired-alpha publication guard and the accepted single-candidate,
+scope-bound loose owner-confirmation workflow. The independent
+[`release-0.5.3.pert`](../plans/release-0.5.3.pert) plan sequences:
+
+1. compatibility, threat-model, and complete-diff self-review;
+2. version-bearing source and release-record preparation;
+3. one clean candidate commit and one immutable tarball;
+4. the authorized Git, GitHub prerelease, and npm `beta` publication; and
+5. durable public-channel and installed-package acceptance.
+
+The caller, not the version 1 evaluator, derives the human confirmation
+projection. It combines available filesystem modification time, exact UTF-8
+byte sizes, unified-diff counts, and semantic change classification. Existing
+digests remain machine binding evidence and existing mutation JSON remains
+unchanged.
+
+Exit:
+
+- satisfy Requirements 21.9 from one clean release commit and immutable
+  tarball;
+- preserve every command, option, runtime result, schema, and package-root
+  identity;
+- reject alpha publication while preserving the historical exact pin;
+- pass the accepted six-case workflow and human-readable projection coverage;
+- publish identical bytes to a GitHub prerelease and npm `beta`;
+- preserve `latest=0.5.1`; and
+- record durable acceptance without adding strict authentication or an
+  accepted-scope field.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

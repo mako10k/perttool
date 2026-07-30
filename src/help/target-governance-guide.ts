@@ -30,7 +30,7 @@ const governanceDetail: readonly HelpSection[] = Object.freeze([
   Object.freeze({
     id: "assertion-boundary",
     title: "Caller assertion boundary",
-    body: "--actor and repeatable --accepted-by-owner values are caller-provided assertions. Before a non-direct governed write, present the operation, target, affected scopes, required owners, source and candidate digests, and candidate summary. A loose owner confirmation belongs to that candidate only; do not carry it to later maintenance, a changed candidate, or the next dag advance, and do not chain preview and confirmation-dependent write without a user-response boundary. These values are not authentication, verified identity, signatures, or a durable approval audit.",
+    body: "--actor and repeatable --accepted-by-owner values are caller-provided assertions. Before a non-direct governed write, present the operation, target, affected scopes, required owners, available modification time, byte size before and after, diff counts, and semantic candidate summary. Keep source and candidate digests as supplemental machine identity rather than the primary human explanation. A loose owner confirmation belongs to that candidate only; do not carry it to later maintenance, a changed candidate, or the next dag advance, and do not chain preview and confirmation-dependent write without a user-response boundary. These values are not authentication, verified identity, signatures, or a durable approval audit.",
   }),
   Object.freeze({
     id: "direct-edit-boundary",

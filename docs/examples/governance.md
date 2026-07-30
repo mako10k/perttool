@@ -149,10 +149,12 @@ enters the retained safe-write path, and may report `write.written=true`.
 
 The loose caller workflow does not begin GOV-005 with the assertion. It first
 previews the candidate without `accepted_by_owner`, then presents operation
-`project.set`, scope `goal`, required owner `user`, the source and candidate
-digests, and the `project.finish` change. After matching confirmation, the
-caller uses `accepted_by_owner=[user]` for this unchanged candidate only. It
-does not copy that value to later maintenance or a later `dag advance`.
+`project.set`, scope `goal`, required owner `user`, the available target
+modification time, byte size before and after, diff counts, and the
+`project.finish` change. Source and candidate digests remain supplemental
+machine identity. After matching confirmation, the caller uses
+`accepted_by_owner=[user]` for this unchanged candidate only. It does not copy
+that value to later maintenance or a later `dag advance`.
 
 ### GOV-006 A wrong owner assertion remains a governance denial
 

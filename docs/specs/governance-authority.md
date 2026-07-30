@@ -245,9 +245,12 @@ A preview MUST NOT invent an actor, owner confirmation, or approval event.
 The normal loose caller workflow starts each candidate without an accepted
 owner assertion. A not-applicable candidate is persisted without one. If a
 non-direct governed write needs confirmation, the caller first presents the
-operation, affected scopes, required owners, source and candidate digests, and
-the concrete structural or goal-change summary. This workflow requirement does
-not change the pure version 1 evaluator.
+operation, affected scopes, required owners, the target's current modification
+time when available, byte size before and after, diff addition and deletion
+counts, and the concrete structural or goal-change summary. Source and
+candidate digests are retained as supplemental machine identity rather than
+the primary human explanation. This workflow requirement does not change the
+pure version 1 evaluator.
 
 ### 5.3 Persistent write
 

@@ -75,7 +75,10 @@ test("repository agent policies share the single-candidate boundary", async () =
     assert.match(source, /caller\s+assertion/);
     assert.match(source, /assertion-free preview|First preview\s+without it/);
     assert.match(source, /governance is not applicable|governance\.applicable=false/);
-    assert.match(source, /source and\s+candidate\s+digests/);
+    assert.match(source, /modification time/);
+    assert.match(source, /byte size before and after/);
+    assert.match(source, /diff\s+counts/);
+    assert.match(source, /supplemental machine identity/);
     assert.match(source, /next\s+`dag advance`/);
   }
 });

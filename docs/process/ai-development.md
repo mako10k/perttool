@@ -145,8 +145,10 @@ Treat `--accepted-by-owner` as a single-candidate, scope-bound caller
 assertion, never as workstream or session authority. Start each candidate with
 an assertion-free preview. If governance is not applicable, persist without
 the assertion. If a non-direct governed write needs confirmation, present the
-operation, target, affected scopes, required owners, source and candidate
-digests, and candidate summary; use the assertion only when the current user
+operation, target, affected scopes, required owners, available modification
+time, byte size before and after, diff counts, and semantic candidate summary.
+Keep source and candidate digests as supplemental machine identity rather than
+the primary human explanation. Use the assertion only when the current user
 instruction explicitly covers that mutation. Do not copy it to later
 maintenance, a changed candidate, or the next `dag advance`, and do not chain
 preview and confirmation-dependent write without a user-response boundary.
@@ -320,6 +322,16 @@ Git commit `3f7cc04` records the exact completed acceptance pre-advance
 snapshot, and the plan is advanced to reached `RELEASE_052_ACCEPTED`. The
 named release authorization does not include npm `latest` promotion or Issue
 #5 closure.
+
+The compatible `0.5.3` patch is now the active release-preparation
+workstream. It publishes the beta-only channel guard and single-candidate,
+scope-bound loose owner-confirmation workflow while retaining Grammar 5, CLI
+Contract 6, and every existing command, option, result, schema, and
+package-root identity. Human confirmation leads with available modification
+time, exact UTF-8 sizes, diff counts, and semantic changes; digests remain
+supplemental machine identity. `RELEASE_053_SELF_REVIEW` and
+`RELEASE_053_PREPARATION` are complete, and `RELEASE_053_CANDIDATE` is the
+current startable recommendation. npm `latest` promotion remains separate.
 
 ### 5.1 Adopted Recommendation authority
 

@@ -1107,8 +1107,12 @@ Must:
 - Bundled AI and editing guidance must begin with an owner-assertion-free
   preview, omit owner assertions for a not-applicable candidate, explicitly
   identify the operation and every affected scope before using a loose owner
-  confirmation, and prohibit carrying that confirmation to another candidate
-  or later `dag advance`. A general instruction to perform a workstream or
+  confirmation, and present a human-readable change summary before
+  supplemental machine digests. For a filesystem target, the summary includes
+  the current modification time, byte size before and after, diff addition and
+  deletion counts, and the semantic additions, removals, or field changes.
+  Guidance must prohibit carrying that confirmation to another candidate or
+  later `dag advance`. A general instruction to perform a workstream or
   release must not silently become confirmation for each later governed
   mutation.
 - Owner and delegate changes use only the pre-change owner and delegate state
@@ -1865,6 +1869,50 @@ npm `beta` publication, and durable acceptance after every predecessor gate
 passes. It does not authorize npm `latest` promotion. The authoritative
 procedure is
 [`docs/process/0.5.2-release.md`](process/0.5.2-release.md).
+
+### 21.9 Governance guidance patch release acceptance criteria
+
+The package that publishes the retired-alpha channel guard and the accepted
+single-candidate loose owner-confirmation workflow is suffix-free `0.5.3`.
+It remains a CLI Contract 6 and Grammar 5 beta patch, is a GitHub prerelease,
+and is published to npm `beta`.
+
+1. Retain Grammar 5, CLI Contract 6, all existing commands and options,
+   runtime result and schema identities, payload meanings, stable exits, and
+   package-root values.
+2. Maintain only npm `beta` and `latest`; reject an alpha publication artifact
+   before registry mutation while retaining historical versions by exact pin.
+3. Start every candidate with an owner-assertion-free preview, omit loose
+   owner confirmation for not-applicable changes, and bind confirmation to one
+   unchanged operation and its complete affected scopes.
+4. Present available modification time, exact UTF-8 byte sizes, diff counts,
+   and semantic changes as the primary human confirmation context; retain
+   source and candidate digests only as supplemental machine identity.
+5. Do not add authentication, signatures, evidence artifacts, a new
+   accepted-scope option, a result field, or a new interface identity.
+6. Preserve the accepted six-case controlled dogfooding result and add
+   regression coverage for the human-readable confirmation projection.
+7. Align package, lockfile, CLI/tool version, release commit, annotated
+   `v0.5.3` tag, GitHub asset, and npm identity.
+8. Pass Node.js 22 repository checks, Node.js 22 and 24 CI, package
+   normalization, temporary-link checks, and isolated installation.
+9. Establish before publication that `perttool@0.5.3`, `v0.5.3`, and the
+   matching GitHub Release are unused; record npm `beta` and `latest`, confirm
+   that `alpha` is absent, and verify protected routes without displaying
+   secrets.
+10. Generate one immutable tarball outside the worktree, distribute those
+    exact bytes through the GitHub prerelease and npm `beta`, and verify
+    isolated installation from both public channels.
+11. Move only `beta` to `0.5.3`, leave `latest=0.5.1` unchanged, and record
+    durable release, tag, artifact, registry, CI, and installed-behavior
+    evidence.
+
+The user's 2026-07-30 release instruction authorizes the complete named
+`0.5.3` judgment, preparation, candidate, Git push, annotated tag, GitHub
+prerelease, npm `beta` publication, and durable acceptance after every
+predecessor gate passes. It does not authorize npm `latest` promotion. The
+authoritative procedure is
+[`docs/process/0.5.3-release.md`](process/0.5.3-release.md).
 
 ## 22. Mapping to the initial requirements
 

@@ -1,0 +1,110 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_053:
+  version 5
+  title "perttool 0.5.3 governance guidance patch release"
+  description "Release suffix-free 0.5.3 beta as a backward-compatible Grammar 5 and CLI Contract 6 patch. Publish the retired-alpha channel guard and single-candidate scope-bound owner-confirmation guidance without changing command, option, result, schema, or runtime payload identities. npm latest promotion remains a separate decision."
+  as_of 2026-07-30
+  duration_unit point
+  velocity 17p/1d
+  finish RELEASE_053_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_053_SELECTED:
+  title "Version 0.5.3 selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize compatibility, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, CHANGELOG, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_053_REVIEW_ACCEPTED:
+  title "Version 0.5.3 compatibility review accepted"
+
+milestone RELEASE_053_SOURCE_PREPARED:
+  title "Version 0.5.3 release source prepared"
+
+milestone RELEASE_053_CANDIDATE_ACCEPTED:
+  title "Version 0.5.3 release candidate accepted"
+
+milestone RELEASE_053_PUBLISHED:
+  title "Version 0.5.3 published to GitHub and npm beta"
+
+milestone RELEASE_053_ACCEPTED:
+  title "Version 0.5.3 governance guidance patch accepted"
+
+task RELEASE_053_SELF_REVIEW RELEASE_053_SELECTED -> RELEASE_053_REVIEW_ACCEPTED:
+  title "Review compatibility and the governance guidance change"
+  description "Review the non-malicious threat model, alpha retirement, scope-bound single-candidate workflow, help and Guide projection, existing command and result identities, tests, package surface, and release safety. Accept 0.5.3 only if the patch remains backward compatible. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_053_PREPARATION RELEASE_053_REVIEW_ACCEPTED -> RELEASE_053_SOURCE_PREPARED:
+  title "Prepare version 0.5.3 release source"
+  description "Align package and lockfile identity, CLI version, CHANGELOG, README, release documentation, tests, goldens, self-use registration, and beta publication validation. Run complete repository and package gates without remote or registry writes."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_053_CANDIDATE RELEASE_053_SOURCE_PREPARED -> RELEASE_053_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.5.3 release candidate"
+  description "Review and commit the complete release diff; run the Node.js baseline acceptance; prove package, tag, GitHub Release, and npm version availability; verify dist-tag baselines and protected routes; build one immutable tarball outside the worktree; and accept its digest. This task performs no external write."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_053_PUBLISH RELEASE_053_CANDIDATE_ACCEPTED -> RELEASE_053_PUBLISHED:
+  title "Publish version 0.5.3 from one immutable tarball"
+  description "Only after every predecessor gate passes and under the user's named release authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.5.3 while latest remains unchanged."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_053_ACCEPTANCE RELEASE_053_PUBLISHED -> RELEASE_053_ACCEPTED:
+  title "Record durable 0.5.3 beta acceptance"
+  description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball digest, registry integrity and metadata, isolated installation from both public channels, unchanged Contract 6 and Grammar 5 behavior, scope-bound guidance, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact or promoting latest."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1

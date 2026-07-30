@@ -1407,6 +1407,16 @@ pre-advance snapshot, and canonical governed advance retains only reached
 `RELEASE_052_ACCEPTED`. npm `latest` promotion and Issue #5 closure remain
 separate decisions.
 
+The independent `release-0.5.3.pert` workstream then selected the compatible
+governance-guidance patch. Its five serial tasks cover compatibility and
+threat-model review, version-bearing source preparation, one immutable
+candidate, authorized GitHub/npm beta publication, and durable acceptance.
+The initial 15p plan uses the preceding release's observed `17p/1d` velocity.
+After self-review and source preparation completed, both precedence and
+heuristic resource makespans are 9p with no resource delay. Complete
+NextResult v5 recommends and starts only `RELEASE_053_CANDIDATE`. npm
+`latest` promotion remains outside the named release scope.
+
 Stage 1 allowed operations:
 
 - check

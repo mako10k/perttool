@@ -56,7 +56,7 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
   );
   const releaseSection = requirements.split(
     "### 21.8 Complete JSON Schema patch release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split("### 21.9 Governance guidance patch release acceptance criteria")[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
@@ -114,14 +114,14 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.5.2");
-  assert.equal(lockfile.version, "0.5.2");
-  assert.equal(lockfile.packages[""].version, "0.5.2");
+  assert.equal(manifest.version, "0.5.3");
+  assert.equal(lockfile.version, "0.5.3");
+  assert.equal(lockfile.packages[""].version, "0.5.3");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.deepEqual(Object.keys(manifest.exports), [".", "./schemas/*"]);
-  assert.match(versionSource, /TOOL_VERSION = "0\.5\.2"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.5\.3"/);
   assert.match(changelog, /^## \[0\.5\.2\] - 2026-07-30$/m);
-  assert.match(readme, /perttool@0\.5\.2/);
+  assert.match(readme, /available by pinning `0\.5\.2`/);
   assert.match(readme, /`latest` remains on accepted\s+Contract 6 `0\.5\.1`/);
   assert.equal(COMMAND_REGISTRY.length, 34);
   assert.equal(getJsonSchemaCatalog().length, 18);

@@ -56,16 +56,25 @@ operation: <operation-id>
 target: <document path>
 affected_scopes: [goal and/or dag]
 required_owners: [effective pre-change owners]
-source_digest: <preview governance.source_digest>
-updated_digest: <preview updated_digest>
-candidate_summary: <changed goal fields or structural additions/removals>
+current_modified_at: <filesystem timestamp or unavailable>
+observed_at: <preview observation timestamp>
+size_bytes: <current> -> <candidate>
+diff: <added lines> added, <deleted lines> deleted
+semantic_diff: <changed fields and structural additions/removals>
+machine_identity:
+  source_digest: <preview governance.source_digest>
+  updated_digest: <preview updated_digest>
 ```
 
-For `dag advance`, the candidate summary includes every task, gate, and
-milestone removal reported by the preview. A concise user-facing confirmation
-may summarize this context, but it must name the operation and scopes. The
-caller, not the user, is responsible for retaining the digest details needed
-to distinguish the candidate.
+The human-readable timestamp, size, diff counts, and semantic diff are the
+primary confirmation context. Digests remain necessary to bind the write but
+are supplemental because a person cannot infer the change from them. For
+stdin or another target without filesystem metadata, report the unavailable
+field instead of inventing it. For `dag advance`, the semantic diff includes
+every task, gate, milestone, and work-event removal reported by the preview.
+A concise user-facing confirmation may summarize this context, but it must
+name the operation and scopes. The caller, not the user, is responsible for
+retaining the digest details needed to distinguish the candidate.
 
 A preceding instruction may count only when it explicitly identifies one
 concrete mutation instance and all of its affected scopes. A general
@@ -96,7 +105,7 @@ stale source write but is not itself owner confirmation.
 | ID | Input | Expected caller behavior |
 | --- | --- | --- |
 | GOV-LOOSE-001 | A release instruction followed by `task set --status done` | Preview reports not applicable; write omits `--accepted-by-owner`. |
-| GOV-LOOSE-002 | The same release instruction followed by a structural `dag advance` | Preview stops before write and presents operation `dag.advance`, scope `dag`, required owner, digests, and removals. |
+| GOV-LOOSE-002 | The same release instruction followed by a structural `dag advance` | Preview stops before write and presents operation `dag.advance`, scope `dag`, required owner, available modification time, before/after size, diff counts, removals, and supplemental digests. |
 | GOV-LOOSE-003 | The owner explicitly confirms that one advance candidate | Only that unchanged candidate may use the assertion. |
 | GOV-LOOSE-004 | A second advance becomes available | The first confirmation is not reused; the workflow starts again without an assertion. |
 | GOV-LOOSE-005 | One batch affects both goal and DAG with the same owner | The confirmation context names both scopes; one owner ID may satisfy both only for that candidate. |

@@ -667,7 +667,9 @@ for an invalid governance option targets the exact affected command help.
 - the first preview for each candidate omits owner confirmation;
 - a not-applicable candidate is persisted without owner confirmation;
 - before a non-direct governed write, the caller explicitly identifies the
-  operation, affected scopes, required owners, digests, and candidate summary;
+  operation, affected scopes, required owners, available modification time,
+  byte sizes, diff counts, and semantic candidate summary, with digests shown
+  only as supplemental machine identity;
 - a loose confirmation belongs only to that candidate and is not copied to a
   later command or `dag advance`;
 - the pre-change document determines owners and delegates;

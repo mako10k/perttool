@@ -4,14 +4,23 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-07-30
+
+Compatible CLI Contract 6 and Grammar 5 beta patch. This version retires the
+obsolete alpha publication path and tightens the caller workflow for loose
+owner-confirmation assertions without changing command, option, result,
+schema, or runtime payload identities.
+
 ### Changed
 
 - Retired the obsolete npm `alpha` distribution channel and restricted the
   maintainer publication guard to `beta`. Historical alpha packages remain
   available by exact version pin.
 - Tightened loose owner-confirmation guidance so callers begin with an
-  assertion-free preview, explicitly identify affected scopes, and never
-  carry `--accepted-by-owner` into ordinary maintenance or a later candidate.
+  assertion-free preview, explicitly identify affected scopes, review
+  human-readable timestamps, sizes, and diffs before supplemental digests, and
+  never carry `--accepted-by-owner` into ordinary maintenance or a later
+  candidate.
 
 ## [0.5.2] - 2026-07-30
 
@@ -261,7 +270,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/mako10k/perttool/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/mako10k/perttool/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/mako10k/perttool/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/mako10k/perttool/compare/v0.4.0...v0.5.0
