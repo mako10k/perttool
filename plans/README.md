@@ -237,8 +237,9 @@ with unchanged `latest=0.5.1`; and complete isolated public-package checks
 passed. Durable acceptance independently reverified Git, GitHub, npm, all
 three artifact copies, exact `0.5.1` compatibility, and both public-package
 workflows. All five tasks and 17p are complete at `17p/1d`; both makespans
-are zero, and complete NextResult v5 has no recommendation. Canonical
-acceptance advance remains the next repository-only record step. npm `latest`
+are zero, and complete NextResult v5 has no recommendation. Git commit
+`3f7cc04` records the exact completed acceptance pre-advance snapshot, and
+the plan is advanced to reached `RELEASE_052_ACCEPTED`. npm `latest`
 promotion and Issue #5 closure remain separate decisions.
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.

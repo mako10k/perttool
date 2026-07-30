@@ -68,7 +68,7 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
   );
   assert.match(
     procedure,
-    /Status: Accepted; canonical advance ready 1\.4/,
+    /Status: Accepted and advanced 1\.5/,
   );
   assert.match(procedure, /Target version: `0\.5\.2`/);
   assert.match(procedure, /authorizes this complete named sequence/);

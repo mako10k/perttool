@@ -1402,9 +1402,10 @@ byte-identical; the schema command retains `--format` and adds only `--view`
 and `--ref`; and default/full, outline, and detail projections passed. All
 five tasks and 17p are done at `17p/1d`; precedence and heuristic resource
 makespans are zero, and complete NextResult v5 has no ready, recommended, or
-startable task. Canonical acceptance advance remains the next repository-only
-record step. npm `latest` promotion and Issue #5 closure remain separate
-decisions.
+startable task. Git commit `3f7cc04` records the exact completed acceptance
+pre-advance snapshot, and canonical governed advance retains only reached
+`RELEASE_052_ACCEPTED`. npm `latest` promotion and Issue #5 closure remain
+separate decisions.
 
 Stage 1 allowed operations:
 

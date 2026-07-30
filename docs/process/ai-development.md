@@ -304,9 +304,10 @@ GitHub, and npm tarballs are byte-identical at SHA-256
 all three artifact copies, exact `0.5.1` compatibility, and both
 public-package workflows. All five tasks and 17p are complete at `17p/1d`;
 both makespans are zero, and complete NextResult v5 has no recommendation.
-Only canonical acceptance advance remains as a repository record. The named
-release authorization does not include npm `latest` promotion or Issue #5
-closure.
+Git commit `3f7cc04` records the exact completed acceptance pre-advance
+snapshot, and the plan is advanced to reached `RELEASE_052_ACCEPTED`. The
+named release authorization does not include npm `latest` promotion or Issue
+#5 closure.
 
 ### 5.1 Adopted Recommendation authority
 
