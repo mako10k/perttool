@@ -81,6 +81,7 @@ task RELEASE_055_CANDIDATE RELEASE_055_SOURCE_PREPARED -> RELEASE_055_CANDIDATE_
   title "Accept one clean 0.5.5 release candidate"
   description "Review and commit the complete release diff; run the Node.js baseline acceptance; prove package, tag, GitHub Release, and npm version availability; verify dist-tag baselines and protected routes; build one immutable tarball outside the worktree; and accept its size and digests. This task performs no external write."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

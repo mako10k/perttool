@@ -273,7 +273,9 @@ npm `latest` promotion remains a separate decision.
 
 The explicitly authorized compatible `0.5.5` governed-preview-warning patch
 is tracked in `plans/release-0.5.5.pert`. Compatibility self-review is
-complete. The selected patch emits non-blocking `PTGOV-104` when a valid
+complete, and source preparation and candidate acceptance have passed the
+complete Node.js 22 and retained-package gates. The 491-file, 522117-byte
+candidate has SHA-256 `1987db1a...5452`. The selected patch emits non-blocking `PTGOV-104` when a valid
 applicable preview carries a non-empty `acceptedByOwner` set. The candidate,
 GovernanceDecision v1, default preview, and persistent authority remain
 unchanged; existing `--warnings-as-errors` returns exit 1 while retaining the
