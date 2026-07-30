@@ -237,8 +237,10 @@ publishing the beta-only channel guard and single-candidate, scope-bound,
 human-readable loose owner-confirmation workflow. `RELEASE_053_SELF_REVIEW`
 and `RELEASE_053_PREPARATION` are complete after the 662-test, 24-plan,
 115-Markdown, temporary-link, and 491-file isolated-package gates passed.
-`RELEASE_053_CANDIDATE` is the only current startable recommendation. npm
-`latest` promotion remains a separate decision.
+`RELEASE_053_CANDIDATE` is complete after clean revalidation, unused-version
+and channel preflight, protected-route checks, and acceptance of the retained
+491-file, 520876-byte tarball. `RELEASE_053_PUBLISH` is the only current
+startable recommendation. npm `latest` promotion remains a separate decision.
 
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public result schema identities and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 

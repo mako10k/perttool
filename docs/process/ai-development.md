@@ -330,8 +330,10 @@ Contract 6, and every existing command, option, result, schema, and
 package-root identity. Human confirmation leads with available modification
 time, exact UTF-8 sizes, diff counts, and semantic changes; digests remain
 supplemental machine identity. `RELEASE_053_SELF_REVIEW` and
-`RELEASE_053_PREPARATION` are complete, and `RELEASE_053_CANDIDATE` is the
-current startable recommendation. npm `latest` promotion remains separate.
+`RELEASE_053_PREPARATION` are complete. The immutable 491-file candidate was
+accepted after clean revalidation and external preflight, and
+`RELEASE_053_PUBLISH` is the current startable recommendation. npm `latest`
+promotion remains separate.
 
 ### 5.1 Adopted Recommendation authority
 
