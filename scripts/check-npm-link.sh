@@ -146,6 +146,21 @@ fi
         ) process.exit(1);
       });
     '
+  "$linked_cli" schema Perttool.NextResult.v5 --view=outline --format=json |
+    node -e '
+      let input = "";
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", (chunk) => { input += chunk; });
+      process.stdin.on("end", () => {
+        const result = JSON.parse(input);
+        if (
+          result.query?.view !== "outline" ||
+          Object.hasOwn(result.schema ?? {}, "$defs") ||
+          result.schema?.properties?.groups?.$ref !==
+            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v5.schema.json#/properties/groups"
+        ) process.exit(1);
+      });
+    '
   "$linked_cli" help project init --format=json >/dev/null
   "$linked_cli" agent help codex instruction --format=json >/dev/null
   "$linked_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null

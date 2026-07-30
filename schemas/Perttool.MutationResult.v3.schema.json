@@ -109,17 +109,27 @@
               "type": "string"
             },
             "from_state": {
-              "type": "string"
+              "enum": [
+                "planned",
+                "active",
+                "blocked",
+                "suspended",
+                "done"
+              ]
             },
             "to_state": {
-              "type": "string"
+              "enum": [
+                "active",
+                "suspended",
+                "done"
+              ]
             },
             "event": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/workEvent"
             },
             "coverage": {
               "enum": [
-                "none",
+                "open",
                 "finish_only",
                 "complete"
               ]
@@ -133,9 +143,50 @@
       ]
     },
     "advance": {
-      "type": [
-        "object",
-        "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "removed_task_ids",
+            "removed_gate_ids",
+            "removed_milestone_ids",
+            "removed_work_event_ids",
+            "frontier_before",
+            "frontier_after",
+            "ready_before",
+            "ready_after"
+          ],
+          "properties": {
+            "removed_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_gate_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_milestone_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_work_event_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "frontier_before": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "frontier_after": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "ready_before": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "ready_after": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
       ]
     }
   },

@@ -75,7 +75,11 @@ export {
 export type {
   JsonSchemaCatalogEntry,
   JsonSchemaDiagnostic,
+  JsonSchemaIdentityDiagnostic,
+  JsonSchemaReferenceDiagnostic,
   JsonSchemaResult,
+  JsonSchemaResultOptions,
+  JsonSchemaView,
 } from "./schema/registry.js";
 export type {
   CommandExample,

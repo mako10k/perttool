@@ -61,15 +61,51 @@
       ],
       "properties": {
         "kind": {
-          "type": "string"
+          "enum": [
+            "missing_resource",
+            "unknown_resource",
+            "missing_action",
+            "unknown_action",
+            "unknown_option",
+            "missing_option_value",
+            "unexpected_option_value",
+            "duplicate_option",
+            "invalid_option_value",
+            "missing_operand",
+            "extra_operand",
+            "missing_required_option",
+            "option_conflict",
+            "option_requires"
+          ]
         },
         "token": {
           "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
         },
         "suggestion": {
-          "type": [
-            "object",
-            "null"
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "kind",
+                "value"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "resource",
+                    "action",
+                    "option"
+                  ]
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
           ]
         }
       },

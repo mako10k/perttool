@@ -2,6 +2,206 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/mako10k/perttool/schemas/Perttool.ProjectHistoryResult.v1.schema.json",
   "title": "Perttool.ProjectHistoryResult.v1",
+  "$defs": {
+    "eventHistory": {
+      "type": "object",
+      "required": [
+        "event",
+        "evidence_class",
+        "first_seen_commit_id",
+        "last_seen_commit_id",
+        "removal_commit_id",
+        "payload_digest"
+      ],
+      "properties": {
+        "event": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/workEvent"
+        },
+        "evidence_class": {
+          "const": "declared_actual"
+        },
+        "first_seen_commit_id": {
+          "type": "string"
+        },
+        "last_seen_commit_id": {
+          "type": "string"
+        },
+        "removal_commit_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "payload_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+        }
+      },
+      "additionalProperties": false
+    },
+    "gitRecordedTransition": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "from_state",
+        "to_state",
+        "commit_id",
+        "recorded_at",
+        "source_digest",
+        "evidence_class"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "from_state": {
+          "$ref": "#/$defs/recordedTaskState"
+        },
+        "to_state": {
+          "$ref": "#/$defs/recordedTaskState"
+        },
+        "commit_id": {
+          "type": "string"
+        },
+        "recorded_at": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue"
+        },
+        "source_digest": {
+          "type": "string"
+        },
+        "evidence_class": {
+          "const": "git_recorded_transition"
+        }
+      },
+      "additionalProperties": false
+    },
+    "recordedTaskState": {
+      "enum": [
+        "absent",
+        "planned",
+        "active",
+        "blocked",
+        "suspended",
+        "done"
+      ]
+    },
+    "suspensionInterval": {
+      "type": "object",
+      "required": [
+        "suspend_event_id",
+        "resume_event_id",
+        "start",
+        "finish",
+        "duration"
+      ],
+      "properties": {
+        "suspend_event_id": {
+          "type": "string"
+        },
+        "resume_event_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "start": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/calendarValue"
+        },
+        "finish": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue"
+        },
+        "duration": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableQuantity"
+        }
+      },
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "coverage",
+        "event_ids",
+        "first_start",
+        "last_finish",
+        "suspension_intervals",
+        "cycle_time",
+        "derived_active_time",
+        "explicit_active_time",
+        "effort",
+        "planned_value",
+        "baseline_source",
+        "baseline_event_id",
+        "baseline_commit_id",
+        "qualifiers",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "coverage": {
+          "enum": [
+            "open",
+            "finish_only",
+            "complete",
+            "unrecorded",
+            "unavailable"
+          ]
+        },
+        "event_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "first_start": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue"
+        },
+        "last_finish": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue"
+        },
+        "suspension_intervals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/suspensionInterval"
+          }
+        },
+        "cycle_time": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableQuantity"
+        },
+        "derived_active_time": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableQuantity"
+        },
+        "explicit_active_time": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableQuantity"
+        },
+        "effort": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableQuantity"
+        },
+        "planned_value": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableQuantity"
+        },
+        "baseline_source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "start_baseline",
+            "finish_snapshot",
+            null
+          ]
+        },
+        "baseline_event_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "baseline_commit_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "qualifiers": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "unavailable_causes": {
+          "type": "array",
+          "items": {
+            "$ref": "Perttool.Common.v1.schema.json#/$defs/actualsCause"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "type": "object",
   "required": [
     "schema_version",
@@ -58,80 +258,24 @@
       ]
     },
     "history": {
-      "type": "object",
-      "required": [
-        "id",
-        "version",
-        "status",
-        "traversal",
-        "repository_snapshot_id",
-        "repository_relative_path",
-        "requested_revision",
-        "resolved_revision",
-        "source_digest",
-        "inspected_commit_ids",
-        "unavailable_causes"
-      ],
-      "properties": {
-        "id": {
-          "const": "perttool.project-history"
-        },
-        "version": {
-          "const": 1
-        },
-        "status": {
-          "enum": [
-            "complete",
-            "incomplete",
-            "unavailable"
-          ]
-        },
-        "traversal": {
-          "const": "first_parent"
-        },
-        "repository_snapshot_id": {
-          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
-        },
-        "repository_relative_path": {
-          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
-        },
-        "requested_revision": {
-          "type": "string"
-        },
-        "resolved_revision": {
-          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
-        },
-        "source_digest": {
-          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
-        },
-        "inspected_commit_ids": {
-          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
-        },
-        "unavailable_causes": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        }
-      },
-      "additionalProperties": false
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/historyMetadata"
     },
     "events": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/eventHistory"
       }
     },
     "git_recorded_transitions": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/gitRecordedTransition"
       }
     },
     "tasks": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/task"
       }
     }
   },

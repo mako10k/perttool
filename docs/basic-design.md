@@ -1323,7 +1323,8 @@ delta. It is not added to active dispatch until its atomic cutover gate.
 
 ```text
 perttool help [resource [action]] [--format text|json]
-perttool schema [schema-id] [--format text|json]
+perttool schema [schema-id] [--view full|outline]
+  [--ref <URI-reference>] [--format text|json]
 perttool guide [topic] [subtopic] [--level index|quick|detail]
 perttool document check <file>
 perttool document format <file>
@@ -1482,7 +1483,11 @@ and the supported public library-only override result to one bundled Draft
 not read a project or use the network. The
 [JSON Schema Artifact Contract](specs/json-schema.md) is authoritative for
 the inventory, `$id` convention, package layout, nested records, and
-compatibility rules.
+compatibility rules. Full lookup returns the immutable bundled artifact.
+Outline lookup is a derived display projection: it omits the selected
+layer's definitions, replaces complex nested records with absolute
+references to the complete bundled artifact, and can resolve one such
+reference as a separate detail layer without network access.
 
 ## 12. Post-MVP adapter boundaries
 
@@ -1606,7 +1611,9 @@ Machine-readable Contract 6 artifacts:
 - are discoverable through `perttool schema` and the public schema catalog;
 - include all 17 command-result identities and public library-only
   `Perttool.OverrideDecision.v1`; and
-- reject unknown root fields without changing existing result semantics.
+- enumerate and close every nested result record, use a typed value schema for
+  intentionally open maps, and reject unknown fields without changing
+  existing result semantics.
 
 Rules:
 
@@ -2182,6 +2189,34 @@ Exit:
 - publish identical bytes to a GitHub prerelease and npm `beta`;
 - preserve `latest=0.4.0`; and
 - record durable acceptance without closing Issue #5.
+
+### Post-MVP Slice 4L: Complete JSON Schema `v0.5.2` beta patch
+
+The [`v0.5.2` release procedure](process/0.5.2-release.md) publishes complete
+nested result records and reference-based schema projections without changing
+Grammar 5, CLI Contract 6, or runtime result identities. The independent
+[`release-0.5.2.pert`](../plans/release-0.5.2.pert) plan sequences:
+
+1. compatibility and complete-diff self-review;
+2. version-bearing source and release-record preparation;
+3. one clean candidate commit and one immutable tarball;
+4. the authorized Git, GitHub prerelease, and npm `beta` publication; and
+5. durable public-channel and installed-package acceptance.
+
+The default schema lookup remains the complete bundled artifact and retains
+its original query projection. The opt-in outline projection omits the
+selected layer's definitions, replaces nested records with absolute bundled
+references, and resolves one copied reference as a separate detail layer.
+
+Exit:
+
+- satisfy Requirements 21.8 from one clean release commit and immutable
+  tarball;
+- prove every nested result record is concrete or intentionally typed-open;
+- preserve existing runtime payload meanings and default lookup semantics;
+- publish identical bytes to a GitHub prerelease and npm `beta`;
+- preserve `latest=0.5.1`; and
+- record durable acceptance without a Contract 7 or Grammar 6 cutover.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

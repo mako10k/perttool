@@ -23,6 +23,37 @@
         "null"
       ]
     },
+    "jsonValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        },
+        {
+          "$ref": "#/$defs/jsonObject"
+        }
+      ]
+    },
+    "jsonObject": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/jsonValue"
+      }
+    },
     "stringArray": {
       "type": "array",
       "items": {
@@ -83,7 +114,8 @@
         "severity": {
           "enum": [
             "error",
-            "warning"
+            "warning",
+            "info"
           ]
         },
         "message": {
@@ -105,7 +137,7 @@
         "related": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/relatedLocation"
           }
         },
         "help_topic": {
@@ -119,18 +151,32 @@
         },
         "fixes": {
           "type": "array",
-          "items": {
-            "type": "object"
-          }
+          "maxItems": 0
         },
         "data": {
-          "type": "object"
+          "$ref": "#/$defs/jsonObject"
         },
         "provider_id": {
           "$ref": "#/$defs/nullableString"
         },
         "surface_id": {
           "$ref": "#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "relatedLocation": {
+      "type": "object",
+      "required": [
+        "message",
+        "span"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/span"
         }
       },
       "additionalProperties": false
@@ -234,6 +280,122 @@
         }
       },
       "additionalProperties": false
+    },
+    "displayedRational": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit",
+        "display"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point",
+            "day^2",
+            "hour^2",
+            "point^2",
+            "ratio"
+          ]
+        },
+        "display": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullableDisplayedRational": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/displayedRational"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "velocity": {
+      "type": "object",
+      "required": [
+        "points",
+        "period"
+      ],
+      "properties": {
+        "points": {
+          "$ref": "#/$defs/displayedRational"
+        },
+        "period": {
+          "$ref": "#/$defs/displayedRational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullableVelocity": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/velocity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "velocityForecast": {
+      "type": "object",
+      "required": [
+        "qualifier",
+        "source_unit",
+        "target_unit",
+        "precedence_makespan",
+        "resource_makespan"
+      ],
+      "properties": {
+        "qualifier": {
+          "const": "velocity_forecast"
+        },
+        "source_unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point"
+          ]
+        },
+        "target_unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point"
+          ]
+        },
+        "precedence_makespan": {
+          "$ref": "#/$defs/nullableDisplayedRational"
+        },
+        "resource_makespan": {
+          "$ref": "#/$defs/nullableDisplayedRational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullableVelocityForecast": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/velocityForecast"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "calendarValue": {
       "oneOf": [
@@ -395,6 +557,1138 @@
       },
       "additionalProperties": false
     },
+    "nullableCalendarValue": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/calendarValue"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableQuantity": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/quantity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "temporalExact": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullableTemporalExact": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/temporalExact"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "calendarDifference": {
+      "type": "object",
+      "required": [
+        "kind",
+        "exact"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "calendar_days",
+            "si_seconds"
+          ]
+        },
+        "exact": {
+          "$ref": "#/$defs/rational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullableCalendarDifference": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/calendarDifference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "temporalCause": {
+      "type": "object",
+      "required": [
+        "cause",
+        "underlying_cause",
+        "subject_kind",
+        "subject_id",
+        "task_id"
+      ],
+      "properties": {
+        "cause": {
+          "enum": [
+            "missing_temporal_anchor",
+            "incomparable_temporal_kinds",
+            "date_anchor_has_no_clock",
+            "fractional_date_projection",
+            "calendar_range_overflow",
+            "exact_datetime_text_unavailable",
+            "complete_actual_time_unavailable",
+            "release_bound_unavailable",
+            "precedence_projection_unavailable",
+            "resource_projection_unavailable",
+            "margin_unit_unavailable"
+          ]
+        },
+        "underlying_cause": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "subject_kind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "project",
+            "milestone",
+            "task",
+            null
+          ]
+        },
+        "subject_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "task_id": {
+          "$ref": "#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "temporalCauses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/temporalCause"
+      }
+    },
+    "temporalPoint": {
+      "type": "object",
+      "required": [
+        "state",
+        "relative",
+        "calendar",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "not_applicable",
+            "unavailable",
+            "available"
+          ]
+        },
+        "relative": {
+          "$ref": "#/$defs/nullableTemporalExact"
+        },
+        "calendar": {
+          "$ref": "#/$defs/nullableCalendarValue"
+        },
+        "unavailable_causes": {
+          "$ref": "#/$defs/temporalCauses"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullableTemporalPoint": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/temporalPoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "temporalSchedule": {
+      "type": "object",
+      "required": [
+        "state",
+        "view",
+        "algorithm",
+        "conditional_on_blocks_resolved",
+        "blocked_task_ids",
+        "unavailable_causes",
+        "tasks",
+        "milestones",
+        "conditional_on_suspensions_resumed",
+        "suspended_task_ids"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "absent",
+            "unavailable",
+            "available"
+          ]
+        },
+        "view": {
+          "enum": [
+            "precedence",
+            "resource"
+          ]
+        },
+        "algorithm": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "id",
+                "version",
+                "optimal",
+                "scheduler_id",
+                "scheduler_version"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "optimal": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "scheduler_id": {
+                  "$ref": "#/$defs/nullableString"
+                },
+                "scheduler_version": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conditional_on_blocks_resolved": {
+          "type": "boolean"
+        },
+        "blocked_task_ids": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "unavailable_causes": {
+          "$ref": "#/$defs/temporalCauses"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "declared_not_before",
+              "release_state",
+              "release_bound",
+              "start",
+              "finish",
+              "unavailable_causes"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "declared_not_before": {
+                "$ref": "#/$defs/nullableCalendarValue"
+              },
+              "release_state": {
+                "enum": [
+                  "not_applicable",
+                  "unavailable",
+                  "available"
+                ]
+              },
+              "release_bound": {
+                "$ref": "#/$defs/nullableTemporalExact"
+              },
+              "start": {
+                "$ref": "#/$defs/temporalPoint"
+              },
+              "finish": {
+                "$ref": "#/$defs/temporalPoint"
+              },
+              "unavailable_causes": {
+                "$ref": "#/$defs/temporalCauses"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "milestone_id",
+              "reach",
+              "unavailable_causes"
+            ],
+            "properties": {
+              "milestone_id": {
+                "type": "string"
+              },
+              "reach": {
+                "$ref": "#/$defs/temporalPoint"
+              },
+              "unavailable_causes": {
+                "$ref": "#/$defs/temporalCauses"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "conditional_on_suspensions_resumed": {
+          "type": "boolean"
+        },
+        "suspended_task_ids": {
+          "$ref": "#/$defs/stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "deadlineView": {
+      "type": "object",
+      "required": [
+        "state",
+        "projected_completion",
+        "forecast_relation",
+        "signed_margin",
+        "base_unit_margin",
+        "remaining_margin",
+        "lateness",
+        "assessment",
+        "optimal",
+        "conditional_on_blocks_resolved",
+        "blocked_task_ids",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "not_applicable",
+            "unavailable",
+            "available"
+          ]
+        },
+        "projected_completion": {
+          "$ref": "#/$defs/nullableCalendarValue"
+        },
+        "forecast_relation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "before_deadline",
+            "on_deadline",
+            "after_deadline",
+            null
+          ]
+        },
+        "signed_margin": {
+          "$ref": "#/$defs/nullableCalendarDifference"
+        },
+        "base_unit_margin": {
+          "$ref": "#/$defs/nullableTemporalExact"
+        },
+        "remaining_margin": {
+          "$ref": "#/$defs/nullableTemporalExact"
+        },
+        "lateness": {
+          "$ref": "#/$defs/nullableTemporalExact"
+        },
+        "assessment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "lower_bound_on_time",
+            "lower_bound_late",
+            "heuristic_on_time",
+            "heuristic_late",
+            null
+          ]
+        },
+        "optimal": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "conditional_on_blocks_resolved": {
+          "type": "boolean"
+        },
+        "blocked_task_ids": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "unavailable_causes": {
+          "$ref": "#/$defs/temporalCauses"
+        }
+      },
+      "additionalProperties": false
+    },
+    "deadlineEvaluation": {
+      "type": "object",
+      "required": [
+        "subject",
+        "deadline",
+        "completion_state",
+        "current",
+        "precedence",
+        "resource",
+        "combined_assessment",
+        "conditional_on_blocks_resolved",
+        "blocked_task_ids",
+        "destination_relationship",
+        "conditional_on_suspensions_resumed",
+        "suspended_task_ids"
+      ],
+      "properties": {
+        "subject": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id",
+            "roles"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "task",
+                "milestone"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "roles": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "task",
+                  "milestone",
+                  "project_finish"
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "deadline": {
+          "$ref": "#/$defs/calendarValue"
+        },
+        "completion_state": {
+          "enum": [
+            "incomplete",
+            "complete_actual_time_unavailable"
+          ]
+        },
+        "current": {
+          "type": "object",
+          "required": [
+            "state",
+            "signed_window",
+            "base_unit_window",
+            "unavailable_causes"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "not_due",
+                "due_now",
+                "overdue",
+                "not_applicable",
+                "unavailable"
+              ]
+            },
+            "signed_window": {
+              "$ref": "#/$defs/nullableCalendarDifference"
+            },
+            "base_unit_window": {
+              "$ref": "#/$defs/nullableTemporalExact"
+            },
+            "unavailable_causes": {
+              "$ref": "#/$defs/temporalCauses"
+            }
+          },
+          "additionalProperties": false
+        },
+        "precedence": {
+          "$ref": "#/$defs/deadlineView"
+        },
+        "resource": {
+          "$ref": "#/$defs/deadlineView"
+        },
+        "combined_assessment": {
+          "enum": [
+            "overdue",
+            "forecast_infeasible",
+            "at_risk",
+            "forecast_on_time",
+            "not_proven_late",
+            "not_applicable",
+            "unavailable"
+          ]
+        },
+        "conditional_on_blocks_resolved": {
+          "type": "boolean"
+        },
+        "blocked_task_ids": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "destination_relationship": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "milestone_id",
+                "relation"
+              ],
+              "properties": {
+                "milestone_id": {
+                  "type": "string"
+                },
+                "relation": {
+                  "enum": [
+                    "task_deadline_before_milestone",
+                    "same_deadline",
+                    "task_deadline_after_milestone",
+                    "unavailable",
+                    "deadline_absent"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "conditional_on_suspensions_resumed": {
+          "type": "boolean"
+        },
+        "suspended_task_ids": {
+          "$ref": "#/$defs/stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "temporalAnalysis": {
+      "type": "object",
+      "required": [
+        "interface",
+        "calendar",
+        "deadline",
+        "anchor",
+        "precedence",
+        "resource",
+        "deadline_evaluations"
+      ],
+      "properties": {
+        "interface": {
+          "type": "object",
+          "required": [
+            "id",
+            "version"
+          ],
+          "properties": {
+            "id": {
+              "const": "perttool.temporal-unit-interface"
+            },
+            "version": {
+              "const": 2
+            }
+          },
+          "additionalProperties": false
+        },
+        "calendar": {
+          "type": "object",
+          "required": [
+            "id",
+            "version",
+            "profile_id",
+            "profile_version"
+          ],
+          "properties": {
+            "id": {
+              "const": "perttool.calendar-projection"
+            },
+            "version": {
+              "const": 1
+            },
+            "profile_id": {
+              "const": "perttool.calendar.continuous-fixed-offset"
+            },
+            "profile_version": {
+              "const": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "deadline": {
+          "type": "object",
+          "required": [
+            "id",
+            "version"
+          ],
+          "properties": {
+            "id": {
+              "const": "perttool.deadline-evaluation"
+            },
+            "version": {
+              "const": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "anchor": {
+          "$ref": "#/$defs/nullableCalendarValue"
+        },
+        "precedence": {
+          "$ref": "#/$defs/temporalSchedule"
+        },
+        "resource": {
+          "$ref": "#/$defs/temporalSchedule"
+        },
+        "deadline_evaluations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/deadlineEvaluation"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "historyCause": {
+      "type": "object",
+      "required": [
+        "cause",
+        "commit_id",
+        "task_id",
+        "event_id"
+      ],
+      "properties": {
+        "cause": {
+          "enum": [
+            "no_repository",
+            "no_head",
+            "unknown_revision",
+            "untracked_target",
+            "ambiguous_path",
+            "shallow_boundary",
+            "unsupported_rename",
+            "unsupported_source_version",
+            "task_identity_replaced",
+            "event_payload_changed",
+            "duplicate_event_identity",
+            "head_changed",
+            "target_changed"
+          ]
+        },
+        "commit_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "task_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "event_id": {
+          "$ref": "#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "actualsCause": {
+      "type": "object",
+      "required": [
+        "cause",
+        "commit_id",
+        "task_id",
+        "event_id"
+      ],
+      "properties": {
+        "cause": {
+          "enum": [
+            "missing_start",
+            "missing_finish",
+            "open_suspension",
+            "missing_baseline",
+            "active_time_absent",
+            "effort_absent",
+            "history_incomplete",
+            "history_unavailable"
+          ]
+        },
+        "commit_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "task_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "event_id": {
+          "$ref": "#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "historyMetadata": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "status",
+        "traversal",
+        "repository_snapshot_id",
+        "repository_relative_path",
+        "requested_revision",
+        "resolved_revision",
+        "source_digest",
+        "inspected_commit_ids",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "id": {
+          "const": "perttool.project-history"
+        },
+        "version": {
+          "const": 1
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "unavailable"
+          ]
+        },
+        "traversal": {
+          "const": "first_parent"
+        },
+        "repository_snapshot_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "repository_relative_path": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "requested_revision": {
+          "type": "string"
+        },
+        "resolved_revision": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "source_digest": {
+          "$ref": "#/$defs/nullableDigest"
+        },
+        "inspected_commit_ids": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "unavailable_causes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/historyCause"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "recommendationEntity": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "project",
+            "task",
+            "milestone",
+            "gate",
+            "resource",
+            "policy_rule",
+            "ranking_factor",
+            "negative_fact_kind",
+            "derived_set"
+          ]
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "recommendationScalarValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "boolean"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "integer"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^-?[0-9]+$"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "numerator",
+            "denominator"
+          ],
+          "properties": {
+            "type": {
+              "const": "rational"
+            },
+            "numerator": {
+              "type": "string",
+              "pattern": "^-?[0-9]+$"
+            },
+            "denominator": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*$"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "enum_type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "enum"
+            },
+            "enum_type": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "entity"
+            },
+            "value": {
+              "$ref": "#/$defs/recommendationEntity"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "recommendationValue": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/recommendationScalarValue"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "item_type",
+            "items"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "list",
+                "set"
+              ]
+            },
+            "item_type": {
+              "type": "string"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/recommendationScalarValue"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "key_type",
+            "value_type",
+            "entries"
+          ],
+          "properties": {
+            "type": {
+              "const": "map"
+            },
+            "key_type": {
+              "type": "string"
+            },
+            "value_type": {
+              "type": "string"
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "properties": {
+                  "key": {
+                    "$ref": "#/$defs/recommendationScalarValue"
+                  },
+                  "value": {
+                    "$ref": "#/$defs/recommendationScalarValue"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "recommendationUnit": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "duration"
+            },
+            "value": {
+              "enum": [
+                "day",
+                "hour",
+                "point"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "resource"
+          ],
+          "properties": {
+            "kind": {
+              "const": "resource"
+            },
+            "resource": {
+              "$ref": "#/$defs/recommendationEntity"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ratio"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "nullableRecommendationUnit": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/recommendationUnit"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recommendationExpressionTerm": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "fact_id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "fact"
+            },
+            "fact_id": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "kind": {
+              "const": "literal"
+            },
+            "value": {
+              "$ref": "#/$defs/recommendationValue"
+            },
+            "unit": {
+              "$ref": "#/$defs/nullableRecommendationUnit"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "recommendationExpression": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "left",
+            "relation",
+            "right"
+          ],
+          "properties": {
+            "kind": {
+              "const": "compare"
+            },
+            "left": {
+              "$ref": "#/$defs/recommendationExpressionTerm"
+            },
+            "relation": {
+              "enum": [
+                "equal",
+                "not_equal",
+                "less_than",
+                "less_or_equal",
+                "greater_than",
+                "greater_or_equal",
+                "contains"
+              ]
+            },
+            "right": {
+              "$ref": "#/$defs/recommendationExpressionTerm"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "children"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "all",
+                "any"
+              ]
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/recommendationExpression"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
     "governanceDecision": {
       "type": "object",
       "required": [
@@ -459,8 +1753,60 @@
         "scopes": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/governanceScopeDecision"
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "governanceScopeDecision": {
+      "type": "object",
+      "required": [
+        "scope",
+        "required_owner",
+        "effective_delegates",
+        "actor_direct",
+        "owner_confirmation_required",
+        "owner_confirmation_present",
+        "scope_authorized",
+        "denial_cause"
+      ],
+      "properties": {
+        "scope": {
+          "enum": [
+            "goal",
+            "dag"
+          ]
+        },
+        "required_owner": {
+          "type": "string"
+        },
+        "effective_delegates": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "actor_direct": {
+          "type": "boolean"
+        },
+        "owner_confirmation_required": {
+          "type": "boolean"
+        },
+        "owner_confirmation_present": {
+          "type": "boolean"
+        },
+        "scope_authorized": {
+          "type": "boolean"
+        },
+        "denial_cause": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "actor_required",
+            "owner_confirmation_required",
+            "owner_confirmation_mismatch",
+            null
+          ]
         }
       },
       "additionalProperties": false
@@ -498,8 +1844,47 @@
         "records": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/conversionLoss"
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "conversionLoss": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "element_id",
+        "span",
+        "lossy"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "severity": {
+          "const": "warning"
+        },
+        "message": {
+          "type": "string"
+        },
+        "element_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "span": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/span"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lossy": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false

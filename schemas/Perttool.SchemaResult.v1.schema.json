@@ -38,8 +38,57 @@
       "properties": {
         "schema_id": {
           "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "view": {
+          "enum": [
+            "full",
+            "outline"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
         }
       },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "view"
+            ],
+            "properties": {
+              "view": {}
+            }
+          },
+          "then": {
+            "properties": {
+              "schema_id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "ref"
+            ],
+            "properties": {
+              "ref": {}
+            }
+          },
+          "then": {
+            "required": [
+              "view"
+            ],
+            "properties": {
+              "view": {
+                "const": "outline"
+              }
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "schemas": {
@@ -71,9 +120,13 @@
       }
     },
     "schema": {
-      "type": [
-        "object",
-        "null"
+      "oneOf": [
+        {
+          "$ref": "https://json-schema.org/draft/2020-12/schema"
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "diagnostics": {

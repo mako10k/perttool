@@ -120,13 +120,57 @@
         "milestone_deadlines": {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "required": [
+              "milestone_id",
+              "deadline"
+            ],
+            "properties": {
+              "milestone_id": {
+                "type": "string"
+              },
+              "deadline": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/calendarValue"
+              }
+            },
+            "additionalProperties": false
           }
         },
         "task_constraints": {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "required": [
+              "task_id",
+              "not_before",
+              "deadline"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "not_before": {
+                "oneOf": [
+                  {
+                    "$ref": "Perttool.Common.v1.schema.json#/$defs/calendarValue"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "deadline": {
+                "oneOf": [
+                  {
+                    "$ref": "Perttool.Common.v1.schema.json#/$defs/calendarValue"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
           }
         }
       },

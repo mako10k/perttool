@@ -46,7 +46,9 @@ function valueOption(
   config: {
     readonly required?: boolean;
     readonly repeatable?: boolean;
+    readonly defaultValue?: string | number | boolean | null;
     readonly enumValues?: readonly string[];
+    readonly requires?: readonly string[];
     readonly sharedGroup?:
       TargetGovernanceOptionDescriptor["sharedGroup"];
     readonly description?: string;
@@ -58,10 +60,10 @@ function valueOption(
     valueType,
     required: config.required ?? false,
     repeatable: config.repeatable ?? false,
-    defaultValue: null,
+    defaultValue: config.defaultValue ?? null,
     enumValues: Object.freeze([...(config.enumValues ?? [])]),
     conflicts: Object.freeze([]),
-    requires: Object.freeze([]),
+    requires: Object.freeze([...(config.requires ?? [])]),
     sharedGroup: config.sharedGroup ?? null,
     description: config.description ?? null,
     spelling: Object.freeze({
@@ -170,6 +172,20 @@ const schemaDescriptor: ActualsCommandDescriptor = Object.freeze({
       position: 0,
     }),
   ]),
+  options: Object.freeze([
+    valueOption("view", "schema-view", {
+      defaultValue: "full",
+      enumValues: ["full", "outline"],
+      description:
+        "Return the complete artifact or a reference-based outline projection.",
+    }),
+    valueOption("ref", "URI-reference", {
+      requires: ["view=outline"],
+      description:
+        "Select one bundled reference as the current outline detail layer.",
+    }),
+    ...helpBase.options,
+  ]),
   resultSchemas: Object.freeze([
     "Perttool.SchemaResult.v1",
     "Perttool.CliError.v1",
@@ -181,7 +197,7 @@ const schemaDescriptor: ActualsCommandDescriptor = Object.freeze({
     }),
     Object.freeze({
       code: 1 as const,
-      meaning: "Unknown JSON Schema identity.",
+      meaning: "Unknown schema identity or unavailable bundled reference.",
     }),
     Object.freeze({
       code: 2 as const,
@@ -203,6 +219,18 @@ const schemaDescriptor: ActualsCommandDescriptor = Object.freeze({
       invocation:
         "perttool schema Perttool.NextResult.v5 --format json",
       summary: "Return one bundled JSON Schema artifact.",
+    }),
+    Object.freeze({
+      id: "outline",
+      invocation:
+        "perttool schema Perttool.NextResult.v5 --view outline --format json",
+      summary: "Return a shorter reference-based outer shape.",
+    }),
+    Object.freeze({
+      id: "detail",
+      invocation:
+        "perttool schema Perttool.NextResult.v5 --view outline --ref '#/$defs/recommendation' --format json",
+      summary: "Return one referenced internal detail layer.",
     }),
   ]),
 });

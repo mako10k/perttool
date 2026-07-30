@@ -109,13 +109,133 @@
           "operands": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "object",
+              "required": [
+                "name",
+                "value_type",
+                "required",
+                "position"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value_type": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "position": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
             }
           },
           "options": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "object",
+              "required": [
+                "name",
+                "kind",
+                "value_type",
+                "required",
+                "repeatable",
+                "default",
+                "enum_values",
+                "conflicts",
+                "requires",
+                "shared_group",
+                "description",
+                "spelling"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "flag",
+                    "value"
+                  ]
+                },
+                "value_type": {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "repeatable": {
+                  "type": "boolean"
+                },
+                "default": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "enum_values": {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+                },
+                "conflicts": {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+                },
+                "requires": {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+                },
+                "shared_group": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "enum": [
+                    "diagnostics",
+                    "governance",
+                    "guide",
+                    "preview",
+                    "result",
+                    "write",
+                    null
+                  ]
+                },
+                "description": {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+                },
+                "spelling": {
+                  "type": "object",
+                  "required": [
+                    "cli",
+                    "dsl",
+                    "json"
+                  ],
+                  "properties": {
+                    "cli": {
+                      "type": "string"
+                    },
+                    "dsl": {
+                      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+                    },
+                    "json": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
             }
           },
           "input": {
@@ -126,10 +246,64 @@
             ]
           },
           "output": {
-            "type": "object"
+            "type": "object",
+            "required": [
+              "formats",
+              "payload",
+              "file_effect"
+            ],
+            "properties": {
+              "formats": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "text",
+                    "json"
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "payload": {
+                "enum": [
+                  "result",
+                  "candidate-document",
+                  "artifact"
+                ]
+              },
+              "file_effect": {
+                "enum": [
+                  "none",
+                  "optional-create",
+                  "optional-write-or-create"
+                ]
+              }
+            },
+            "additionalProperties": false
           },
           "stdin": {
-            "type": "object"
+            "type": "object",
+            "required": [
+              "document",
+              "artifact",
+              "request",
+              "mutually_exclusive"
+            ],
+            "properties": {
+              "document": {
+                "type": "boolean"
+              },
+              "artifact": {
+                "type": "boolean"
+              },
+              "request": {
+                "type": "boolean"
+              },
+              "mutually_exclusive": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
           },
           "effect": {
             "enum": [
@@ -144,13 +318,51 @@
           "exit_statuses": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "object",
+              "required": [
+                "code",
+                "meaning"
+              ],
+              "properties": {
+                "code": {
+                  "enum": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    70
+                  ]
+                },
+                "meaning": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "examples": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "object",
+              "required": [
+                "id",
+                "invocation",
+                "summary"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "invocation": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           }
         },

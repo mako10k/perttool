@@ -2,6 +2,238 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/mako10k/perttool/schemas/Perttool.OverrideDecision.v1.schema.json",
   "title": "Perttool.OverrideDecision.v1",
+  "$defs": {
+    "triggerCode": {
+      "enum": [
+        "allowed_replaces_recommended",
+        "deferred_selected",
+        "discouraged_selected"
+      ]
+    },
+    "triggerCodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/triggerCode"
+      }
+    },
+    "reason": {
+      "type": "object",
+      "required": [
+        "code",
+        "text",
+        "evidence_references"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "human_priority_decision",
+            "external_commitment",
+            "incident_response",
+            "plan_correction_pending",
+            "resource_reallocation_pending",
+            "risk_acceptance",
+            "experiment",
+            "other_explicit_reason"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "evidence_references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "kind",
+              "value"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "issue",
+                  "commit",
+                  "document",
+                  "url",
+                  "other"
+                ]
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "selection": {
+      "type": "object",
+      "required": [
+        "selected_task_ids",
+        "retained_recommended_task_ids",
+        "displaced_recommended_task_ids",
+        "selected_nonrecommended_task_ids",
+        "trigger_codes"
+      ],
+      "properties": {
+        "selected_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "retained_recommended_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "displaced_recommended_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "selected_nonrecommended_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "trigger_codes": {
+          "$ref": "#/$defs/triggerCodes"
+        }
+      },
+      "additionalProperties": false
+    },
+    "taskDecision": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "normal_decision_id",
+        "normal_tier",
+        "normal_decisive_step_id",
+        "normal_reason_occurrence_ids",
+        "normal_comparison_ids",
+        "override_selected",
+        "trigger_codes",
+        "acknowledged_negative_fact_reason_ids"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "normal_decision_id": {
+          "type": "string"
+        },
+        "normal_tier": {
+          "enum": [
+            "recommended",
+            "allowed",
+            "deferred",
+            "discouraged"
+          ]
+        },
+        "normal_decisive_step_id": {
+          "type": "string"
+        },
+        "normal_reason_occurrence_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "normal_comparison_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "override_selected": {
+          "const": true
+        },
+        "trigger_codes": {
+          "$ref": "#/$defs/triggerCodes"
+        },
+        "acknowledged_negative_fact_reason_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "feasibility": {
+      "type": "object",
+      "required": [
+        "selected_set_reference",
+        "start_feasible",
+        "active_task_ids",
+        "resource_witnesses",
+        "expression"
+      ],
+      "properties": {
+        "selected_set_reference": {
+          "type": "object",
+          "required": [
+            "kind",
+            "id"
+          ],
+          "properties": {
+            "kind": {
+              "const": "derived_set"
+            },
+            "id": {
+              "const": "O"
+            }
+          },
+          "additionalProperties": false
+        },
+        "start_feasible": {
+          "const": true
+        },
+        "active_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "resource_witnesses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "resource_id",
+              "capacity",
+              "active_usage",
+              "selected_usage",
+              "used",
+              "available_after_selection",
+              "selected_task_ids"
+            ],
+            "properties": {
+              "resource_id": {
+                "type": "string"
+              },
+              "capacity": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "active_usage": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "selected_usage": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "used": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "available_after_selection": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "selected_task_ids": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "expression": {
+          "oneOf": [
+            {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/recommendationExpression"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "type": "object",
   "required": [
     "schema_version",
@@ -140,19 +372,19 @@
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
             },
             "reason": {
-              "type": "object"
+              "$ref": "#/$defs/reason"
             },
             "selection": {
-              "type": "object"
+              "$ref": "#/$defs/selection"
             },
             "task_decisions": {
               "type": "array",
               "items": {
-                "type": "object"
+                "$ref": "#/$defs/taskDecision"
               }
             },
             "feasibility": {
-              "type": "object"
+              "$ref": "#/$defs/feasibility"
             },
             "single_use": {
               "const": true

@@ -2,6 +2,205 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/mako10k/perttool/schemas/Perttool.VelocityObservationResult.v1.schema.json",
   "title": "Perttool.VelocityObservationResult.v1",
+  "$defs": {
+    "observationCause": {
+      "type": "object",
+      "required": [
+        "cause",
+        "task_id",
+        "event_id",
+        "commit_id"
+      ],
+      "properties": {
+        "cause": {
+          "enum": [
+            "no_selected_tasks",
+            "no_complete_sequence",
+            "non_positive_window",
+            "mixed_offsets",
+            "incomplete_active_intervals",
+            "missing_effort",
+            "missing_baseline",
+            "history_incomplete",
+            "history_unavailable",
+            "git_recorded_start_missing",
+            "git_recorded_finish_missing"
+          ]
+        },
+        "task_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "event_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "commit_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rate": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "unit": {
+          "enum": [
+            "point_per_hour",
+            "point_per_day",
+            "point_per_person_hour"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "candidate": {
+      "type": "object",
+      "required": [
+        "id",
+        "measure",
+        "evidence_class",
+        "state",
+        "numerator",
+        "denominator",
+        "rate",
+        "adoptable_velocity_token",
+        "included_task_ids",
+        "excluded",
+        "observation_start",
+        "observation_finish",
+        "baseline_sources",
+        "qualifiers",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "measure": {
+          "enum": [
+            "elapsed_hour_throughput",
+            "active_date_throughput",
+            "effort_productivity",
+            "git_recorded_elapsed_hour_throughput"
+          ]
+        },
+        "evidence_class": {
+          "enum": [
+            "declared_actual",
+            "git_recorded_transition"
+          ]
+        },
+        "state": {
+          "enum": [
+            "available",
+            "unavailable"
+          ]
+        },
+        "numerator": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableQuantity"
+        },
+        "denominator": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableQuantity"
+        },
+        "rate": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/rate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "adoptable_velocity_token": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "included_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "excluded": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "causes"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "causes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/observationCause"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "observation_start": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue"
+        },
+        "observation_finish": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableCalendarValue"
+        },
+        "baseline_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "task_id",
+              "source",
+              "event_id",
+              "commit_id"
+            ],
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "source": {
+                "enum": [
+                  "start_baseline",
+                  "finish_snapshot"
+                ]
+              },
+              "event_id": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+              },
+              "commit_id": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "qualifiers": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "unavailable_causes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/observationCause"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "type": "object",
   "required": [
     "schema_version",
@@ -56,7 +255,7 @@
       ]
     },
     "history": {
-      "type": "object"
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/historyMetadata"
     },
     "observation": {
       "type": "object",
@@ -91,7 +290,7 @@
         "candidates": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/candidate"
           }
         }
       },

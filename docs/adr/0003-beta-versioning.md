@@ -12,7 +12,7 @@
   promotion);
   2026-07-29 (`v0.5.0` Grammar 5 and Contract 6 release target);
   2026-07-30 (`v0.5.1` compatible Contract 6 patch release target and
-  publication)
+  publication; `v0.5.2` compatible JSON Schema patch release target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -56,6 +56,13 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   meanings, command descriptors, result identities, payload meanings, and
   package-root exports are retained; a new minor or Contract 7 would
   overstate this additive and corrective boundary.
+- Select suffix-free `0.5.2` for the backward-compatible Contract 6 patch
+  that completes underspecified nested result schemas and adds explicit
+  `full` and reference-based `outline` schema views. Existing Grammar 5,
+  runtime result identities and payload meanings, default schema lookup
+  mode and query projection, commands, and package-root values are retained;
+  a new minor, Contract 7, or result-identity cutover would overstate this
+  corrective and opt-in boundary.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 
@@ -156,6 +163,14 @@ separately authorized one post-acceptance `latest` mutation; fresh registry
 reads and an unqualified isolated install confirmed `beta=latest=0.5.1`,
 CLI Contract 6, Grammar 5, and schema discovery. Issue #5 closure remains a
 separate decision.
+
+Later on 2026-07-30, after finding that the published schemas still contained
+underspecified nested object placeholders, the user required complete child
+records, requested reference-based compact display, selected `0.5.2`, and
+authorized the complete named release. The
+[`v0.5.2` release procedure](../process/0.5.2-release.md) keeps compatibility
+review, preparation, candidate acceptance, publication, and durable
+acceptance sequential. It does not authorize npm `latest` promotion.
 
 ## Beta gate
 

@@ -1371,6 +1371,14 @@ rules.
 Must:
 
 - Provide JSON Schema for parse/validation reports, analysis results, next results, and conversion loss reports.
+- Preserve complete schema lookup while also providing an outline view that
+  replaces complex nested records with resolvable `$ref` values and can
+  display one referenced detail separately. The existing lookup without a
+  view selection must continue to return the complete artifact.
+- Describe every nested result object with its concrete fields and reject
+  unknown fields at every closed record boundary. An intentionally open map
+  must declare the schema of its values; a bare `type: object` is not a
+  machine-readable contract.
 - Version JSON field names and enums.
 - Include at least `schema_version`, `tool_version`, and `document_id` in JSON output that processes a document. Help/CLI usage results need not have document fields.
 - Do not confuse values rounded for display with values used for calculation.
@@ -1798,6 +1806,53 @@ authorized one npm `latest` dist-tag mutation. Fresh registry reads and an
 unqualified isolated installation confirmed `beta=latest=0.5.1`, CLI
 Contract 6, Grammar 5, and schema discovery. This does not declare a stable
 series or authorize Issue #5 closure.
+
+### 21.8 Complete JSON Schema patch release acceptance criteria
+
+The first package that publishes complete nested result schemas and
+reference-based outline/detail projections is suffix-free `0.5.2`. It
+remains a CLI Contract 6 and Grammar 5 beta patch, is a GitHub prerelease,
+and is published to npm `beta`.
+
+1. Retain Grammar 5, CLI Contract 6, all existing commands, runtime result
+   identities, required payload meanings, stable exits, and package-root
+   values.
+2. Replace every underspecified nested object placeholder with the concrete
+   closed record or a typed open-map value contract that matches real
+   Contract 6 output.
+3. Preserve the default complete lookup mode and original `query` projection,
+   while adding explicit `full` and opt-in `outline` views plus separate
+   bundled reference-detail selection.
+4. Keep outline projections valid Draft 2020-12 schemas with
+   projection-specific identities, absolute references to complete bundled
+   artifacts, no network access, and fail-closed `PTSCH-002` handling.
+5. Validate representative real success, warning, invalid, unavailable,
+   usage-error, mutation, migration, help, guidance, history, observation,
+   full, outline, and detail results with strict Draft 2020-12 validation.
+6. Align package, lockfile, CLI/tool version, release commit, annotated
+   `v0.5.2` tag, GitHub asset, and npm identity without introducing Contract
+   7, Grammar 6, or new runtime result identities.
+7. Pass Node.js 22 repository checks, Node.js 22 and 24 CI, package
+   normalization, temporary-link checks, isolated installation, schema
+   CLI/API parity, and installed full/outline/detail resolution.
+8. Establish before publication that `perttool@0.5.2`, `v0.5.2`, and the
+   matching GitHub Release are unused; record npm `beta`, `latest`, and
+   `alpha`; and verify protected routes without displaying secrets.
+9. Generate one immutable tarball outside the worktree, distribute those
+   exact bytes through the GitHub prerelease and npm `beta`, and verify
+   isolated installation from both public channels.
+10. Push and publish only after every predecessor gate passes and under the
+    user's named `0.5.2` authorization; move `beta` to `0.5.2` while leaving
+    `latest=0.5.1` unchanged.
+11. Record durable release, tag, artifact, registry, CI, and installed
+    behavior evidence without promoting npm `latest`.
+
+The user's 2026-07-30 instruction authorizes the complete named `0.5.2`
+review, preparation, candidate, Git push, annotated tag, GitHub prerelease,
+npm `beta` publication, and durable acceptance after every predecessor gate
+passes. It does not authorize npm `latest` promotion. The authoritative
+procedure is
+[`docs/process/0.5.2-release.md`](process/0.5.2-release.md).
 
 ## 22. Mapping to the initial requirements
 

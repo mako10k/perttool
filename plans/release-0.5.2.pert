@@ -1,0 +1,110 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_052:
+  version 5
+  title "perttool 0.5.2 compatible JSON Schema patch release"
+  description "Release suffix-free 0.5.2 beta as a backward-compatible CLI Contract 6 and Grammar 5 patch. Complete nested result schemas and explicit full and reference-based outline/detail views retain the default full lookup mode and query projection, result identities, payload meanings, all 34 commands, and all 116 existing runtime exports. RELEASE_052_SELF_REVIEW and RELEASE_052_PREPARATION completed 8p under the user's complete named 0.5.2 authorization. The complete Node.js 22 repository, 655-test, 23-plan, temporary-link, and 491-file isolated-package gates passed. Nine points remain; after canonical advance, complete NextResult v5 should recommend only RELEASE_052_CANDIDATE. npm latest promotion remains a separate decision."
+  as_of 2026-07-30
+  duration_unit point
+  velocity 8p/1d
+  finish RELEASE_052_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_052_SELECTED:
+  title "Version 0.5.2 selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize compatibility, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, CHANGELOG, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub Release, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_052_REVIEW_ACCEPTED:
+  title "Version 0.5.2 compatibility review accepted"
+
+milestone RELEASE_052_SOURCE_PREPARED:
+  title "Version 0.5.2 release source prepared"
+
+milestone RELEASE_052_CANDIDATE_ACCEPTED:
+  title "Version 0.5.2 release candidate accepted"
+
+milestone RELEASE_052_PUBLISHED:
+  title "Version 0.5.2 published to GitHub and npm beta"
+
+milestone RELEASE_052_ACCEPTED:
+  title "Version 0.5.2 compatible JSON Schema patch accepted"
+
+task RELEASE_052_SELF_REVIEW RELEASE_052_SELECTED -> RELEASE_052_REVIEW_ACCEPTED:
+  title "Review compatibility and the complete schema change"
+  description "Review requirements, specification, design, implementation, tests, help, package surface, existing command descriptors, public exports, the default full lookup mode and query projection, strict validation of real Contract 6 outputs, and outline reference resolution. Accept 0.5.2 only if Grammar 5, CLI Contract 6, result identities, existing payload meanings, and default lookup semantics remain compatible. This task performs no external write."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_052_PREPARATION RELEASE_052_REVIEW_ACCEPTED -> RELEASE_052_SOURCE_PREPARED:
+  title "Prepare version 0.5.2 release source"
+  description "Align package and lockfile identity, CLI version, CHANGELOG, README, compatibility and release documentation, tests, goldens, self-use registration, and beta publication validation. Run the complete repository and package gates without remote or registry writes."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_052_CANDIDATE RELEASE_052_SOURCE_PREPARED -> RELEASE_052_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.5.2 release candidate"
+  description "Review and commit the complete release diff; run Node.js baseline acceptance; prove package, tag, GitHub Release, and npm version availability; verify dist-tag baselines and protected routes; build one immutable tarball outside the worktree; and accept its digest. This task performs no external write."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_052_PUBLISH RELEASE_052_CANDIDATE_ACCEPTED -> RELEASE_052_PUBLISHED:
+  title "Publish version 0.5.2 from one immutable tarball"
+  description "Only after every predecessor gate passes and under the user's named 0.5.2 authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.5.2 while latest remains unchanged."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_052_ACCEPTANCE RELEASE_052_PUBLISHED -> RELEASE_052_ACCEPTED:
+  title "Record durable 0.5.2 beta acceptance"
+  description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball digest, registry integrity and metadata, isolated installation from both public channels, unchanged Contract 6 and Grammar 5 behavior, full and outline schema discovery, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact or promoting latest."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1

@@ -3408,8 +3408,30 @@ function runJsonSchema(args: readonly string[]): number {
   if (parsed.positionals.length > 1) {
     throw new UsageError("schema accepts at most one <schema-id>");
   }
+  const viewValue = parsed.values.get("view");
+  const view =
+    viewValue === undefined || viewValue === "full" || viewValue === "outline"
+      ? viewValue
+      : (() => {
+          throw new UsageError("--view must be full or outline");
+        })();
+  const reference = parsed.values.get("ref");
+  if (
+    parsed.positionals.length === 0 &&
+    (view !== undefined || reference !== undefined)
+  ) {
+    throw new UsageError(
+      "schema view selection requires one <schema-id>",
+    );
+  }
+  if (reference !== undefined && view !== "outline") {
+    throw new UsageError("--ref requires --view outline");
+  }
   const format = outputFormat(parsed.values.get("format"));
-  const result = getJsonSchemaResult(parsed.positionals[0] ?? null);
+  const result = getJsonSchemaResult(parsed.positionals[0] ?? null, {
+    ...(view === undefined ? {} : { view }),
+    ...(reference === undefined ? {} : { ref: reference }),
+  });
   if (format === "json") {
     process.stdout.write(serializeJsonSchemaResult(result));
   } else {

@@ -2,6 +2,425 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AgentGuidanceResult.v1.schema.json",
   "title": "Perttool.AgentGuidanceResult.v1",
+  "$defs": {
+    "providerId": {
+      "enum": [
+        "codex",
+        "github-copilot",
+        "claude-code",
+        "grok-build",
+        "antigravity"
+      ]
+    },
+    "surfaceId": {
+      "enum": [
+        "instruction",
+        "workflow",
+        "delegated_agent",
+        "enforcement",
+        "prompt",
+        "connector"
+      ]
+    },
+    "supportStatus": {
+      "enum": [
+        "native",
+        "compatible",
+        "preview",
+        "deprecated",
+        "unsupported",
+        "unknown"
+      ]
+    },
+    "scopeId": {
+      "enum": [
+        "repository",
+        "directory",
+        "workspace",
+        "user",
+        "organization",
+        "enterprise",
+        "managed",
+        "session",
+        "conversation",
+        "local",
+        "admin",
+        "system",
+        "plugin",
+        "compatibility"
+      ]
+    },
+    "description": {
+      "type": "object",
+      "required": [
+        "key",
+        "parameters",
+        "text"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "value"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullableDescription": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/description"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "statusEvidence": {
+      "type": "object",
+      "required": [
+        "evidence_kind",
+        "source_ids",
+        "facts",
+        "description"
+      ],
+      "properties": {
+        "evidence_kind": {
+          "enum": [
+            "official_native_documentation",
+            "official_compatibility_documentation",
+            "official_preview_notice",
+            "official_deprecation_notice",
+            "official_unsupported_notice",
+            "insufficient_official_evidence"
+          ]
+        },
+        "source_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "facts": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "description": {
+          "$ref": "#/$defs/nullableDescription"
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "artifact_id",
+        "path",
+        "scope_ids",
+        "primary",
+        "support_status",
+        "status_evidence"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string"
+        },
+        "path": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "scope_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scopeId"
+          }
+        },
+        "primary": {
+          "type": "boolean"
+        },
+        "support_status": {
+          "$ref": "#/$defs/supportStatus"
+        },
+        "status_evidence": {
+          "$ref": "#/$defs/statusEvidence"
+        }
+      },
+      "additionalProperties": false
+    },
+    "surface": {
+      "type": "object",
+      "required": [
+        "surface_id",
+        "support_status",
+        "primary_artifact_id",
+        "artifact_resolution",
+        "provider_terms",
+        "scopes",
+        "artifacts",
+        "guidance_ids",
+        "risk_ids",
+        "status_evidence",
+        "staleness"
+      ],
+      "properties": {
+        "surface_id": {
+          "$ref": "#/$defs/surfaceId"
+        },
+        "support_status": {
+          "$ref": "#/$defs/supportStatus"
+        },
+        "primary_artifact_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "artifact_resolution": {
+          "enum": [
+            "known",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        "provider_terms": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scopeId"
+          }
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          }
+        },
+        "guidance_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "risk_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "status_evidence": {
+          "$ref": "#/$defs/statusEvidence"
+        },
+        "staleness": {
+          "type": "object",
+          "required": [
+            "status",
+            "verified_at",
+            "review_after",
+            "basis_date"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "verified",
+                "review_due",
+                "unknown"
+              ]
+            },
+            "verified_at": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "review_after": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "basis_date": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "provider": {
+      "type": "object",
+      "required": [
+        "provider_id",
+        "display_name",
+        "aliases",
+        "available_surface_ids",
+        "surfaces"
+      ],
+      "properties": {
+        "provider_id": {
+          "$ref": "#/$defs/providerId"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "aliases": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "available_surface_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/surfaceId"
+          }
+        },
+        "surfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/surface"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "guidanceRecord": {
+      "type": "object",
+      "required": [
+        "guidance_id",
+        "origin",
+        "directive",
+        "surface_ids",
+        "description"
+      ],
+      "properties": {
+        "guidance_id": {
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "project_control",
+            "common_surface",
+            "provider"
+          ]
+        },
+        "directive": {
+          "enum": [
+            "must",
+            "should",
+            "may"
+          ]
+        },
+        "surface_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/surfaceId"
+          }
+        },
+        "description": {
+          "$ref": "#/$defs/nullableDescription"
+        }
+      },
+      "additionalProperties": false
+    },
+    "riskRecord": {
+      "type": "object",
+      "required": [
+        "risk_id",
+        "kind",
+        "surface_ids",
+        "mitigation_guidance_ids",
+        "description"
+      ],
+      "properties": {
+        "risk_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "scope",
+            "execution",
+            "delegation",
+            "external_access",
+            "compatibility",
+            "staleness"
+          ]
+        },
+        "surface_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/surfaceId"
+          }
+        },
+        "mitigation_guidance_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "description": {
+          "$ref": "#/$defs/nullableDescription"
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "provider_id",
+        "title",
+        "url",
+        "verified_at"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string"
+        },
+        "provider_id": {
+          "$ref": "#/$defs/providerId"
+        },
+        "title": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "url": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "verified_at": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "provider_id",
+        "surface_id"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "provider_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "surface_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "type": "object",
   "required": [
     "schema_version",
@@ -79,30 +498,66 @@
       "type": "string"
     },
     "query": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "input_provider_id",
+        "canonical_provider_id",
+        "surface_id",
+        "level",
+        "alias_applied"
+      ],
+      "properties": {
+        "input_provider_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "canonical_provider_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/providerId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "surface_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "level": {
+          "enum": [
+            "index",
+            "quick",
+            "detail"
+          ]
+        },
+        "alias_applied": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
     },
     "providers": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/provider"
       }
     },
     "guidance_records": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/guidanceRecord"
       }
     },
     "risk_records": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/riskRecord"
       }
     },
     "sources": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/source"
       }
     },
     "capabilities": {
@@ -144,7 +599,7 @@
     "diagnostics": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/diagnostic"
       }
     }
   },

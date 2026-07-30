@@ -48,6 +48,15 @@ Every root artifact fixes its exact `schema_version` with `const`, fixes
 `cli_contract_version=6` for CLI envelopes, and rejects unknown root fields.
 Nullable and unavailable states remain explicit in the owning result schema.
 
+Every nested object that represents a versioned result record MUST enumerate
+its concrete `properties`, declare the applicable `required` fields, and set
+`additionalProperties=false`. A schema MUST NOT use a bare `type: object` as
+a placeholder for a nested contract. An intentionally extensible JSON map is
+permitted only when `additionalProperties` contains the schema for every map
+value; diagnostic `data` uses the recursive JSON-value definition for this
+purpose. Arrays of records follow the same rule through their `items`
+schemas.
+
 ## 3. Closed result inventory
 
 The command registry and schema catalog MUST remain symmetric. Every
@@ -91,28 +100,60 @@ they are not separate catalog entries.
 The active registry contains the additive, read-only command:
 
 ```text
-perttool schema [schema-id] [--format text|json]
+perttool schema [schema-id]
+  [--view full|outline] [--ref <URI-reference>]
+  [--format text|json]
 ```
 
 Without an operand it returns the complete sorted catalog. With a known
 identity it returns the same catalog and the selected schema object in
-`schema`. JSON output uses `Perttool.SchemaResult.v1`. An unknown identity
-returns exit 1, `ok=false`, `schema=null`, and `PTSCH-001`. Extra operands or
-invalid options use the ordinary `Perttool.CliError.v1` usage boundary and
-exit 2.
+`schema`. JSON output uses `Perttool.SchemaResult.v1`.
+
+The default and explicit `--view full` selection return the complete bundled
+artifact, including its `$defs`. The default selection preserves the original
+`query` projection exactly; an explicitly selected view is reported in the
+optional `query.view` field.
+
+`--view outline` returns a display projection rather than changing the
+bundled validation artifact. The projection:
+
+1. retains the selected layer's scalar, array, composition, and property
+   shape;
+2. replaces a nested object with concrete `properties` by an absolute `$ref`
+   to its location in a bundled complete artifact;
+3. omits the selected layer's `$defs` and rewrites every retained relative
+   `$ref` as an absolute reference to the complete artifact; and
+4. uses a projection-specific `$id`, so it cannot shadow the complete
+   artifact's stable identity.
+
+`--view outline --ref <URI-reference>` resolves one referenced detail and
+returns that detail as the selected outline layer. A local JSON Pointer such
+as `#/$defs/recommendation`, a relative bundled Common reference, or an
+absolute reference copied from an outline is accepted. Resolution is limited
+to the selected root artifact and `Perttool.Common.v1`; it performs no
+network access. `--ref` requires `--view outline` and a schema identity.
+
+An unknown identity returns exit 1, `ok=false`, `schema=null`, and
+`PTSCH-001`. An invalid, unavailable, or non-bundled reference returns exit
+1, `ok=false`, `schema=null`, and `PTSCH-002`. Extra operands, a view without
+a schema identity, or an invalid option combination use the ordinary
+`Perttool.CliError.v1` usage boundary and exit 2.
 
 The public package root exports:
 
 ```text
 getJsonSchemaCatalog()
 getJsonSchema(schemaId)
-getJsonSchemaResult(schemaId)
+getJsonSchemaResult(schemaId, options?)
 ```
 
 The first two provide direct in-process catalog and artifact access. Loaded
 schema values and catalog entries are immutable. Lookup performs local file
 I/O only when a selected artifact is first requested; listing the catalog
-does not read a project and performs no network access.
+does not read a project and performs no network access. The optional result
+options select the same `full` or `outline` view and optional outline
+reference as the CLI. `getJsonSchema(schemaId)` always returns the complete
+artifact.
 
 ## 5. Versioning and compatibility
 
@@ -142,5 +183,10 @@ Repository tests MUST:
    truncated results;
 5. cover the public OverrideDecision projection;
 6. verify schema lookup and unknown-identity behavior; and
-7. prove catalog, artifact, CLI, and public-library access from an isolated
+7. reject unknown fields in representative nested records and statically
+   reject a bare or unclosed nested object contract;
+8. verify that full lookup remains unchanged, outline lookup is shorter and
+   uses resolvable absolute references, and a referenced detail can be
+   selected independently; and
+9. prove catalog, artifact, CLI, and public-library access from an isolated
    packed installation.

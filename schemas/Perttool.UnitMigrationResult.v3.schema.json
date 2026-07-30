@@ -2,6 +2,34 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/mako10k/perttool/schemas/Perttool.UnitMigrationResult.v3.schema.json",
   "title": "Perttool.UnitMigrationResult.v3",
+  "$defs": {
+    "exactValue": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "type": "object",
   "required": [
     "schema_version",
@@ -82,45 +110,105 @@
       "additionalProperties": false
     },
     "source_grammar_version": {
-      "type": [
-        "integer",
-        "null"
+      "oneOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "target_grammar_version": {
-      "type": [
-        "integer",
-        "null"
+      "oneOf": [
+        {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "grammar_disposition": {
       "type": [
         "string",
         "null"
+      ],
+      "enum": [
+        "retained",
+        "upgraded_for_exact_fraction",
+        null
       ]
     },
     "source_unit": {
       "type": [
         "string",
         "null"
+      ],
+      "enum": [
+        "day",
+        "hour",
+        "point",
+        null
       ]
     },
     "target_unit": {
       "type": [
         "string",
         "null"
+      ],
+      "enum": [
+        "day",
+        "hour",
+        "point",
+        null
       ]
     },
     "effective_velocity": {
-      "type": [
-        "object",
-        "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "points",
+            "period"
+          ],
+          "properties": {
+            "points": {
+              "$ref": "#/$defs/exactValue"
+            },
+            "period": {
+              "$ref": "#/$defs/exactValue"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
       ]
     },
     "velocity_disposition": {
       "type": [
         "string",
         "null"
+      ],
+      "enum": [
+        "retained",
+        "replaced",
+        "inserted",
+        null
       ]
     },
     "changed": {
@@ -140,7 +228,11 @@
         ],
         "properties": {
           "entity_kind": {
-            "type": "string"
+            "enum": [
+              "project",
+              "task",
+              "work_event"
+            ]
           },
           "entity_id": {
             "type": "string"
@@ -149,10 +241,10 @@
             "type": "string"
           },
           "original": {
-            "$ref": "Perttool.Common.v1.schema.json#/$defs/quantity"
+            "$ref": "#/$defs/exactValue"
           },
           "converted": {
-            "$ref": "Perttool.Common.v1.schema.json#/$defs/quantity"
+            "$ref": "#/$defs/exactValue"
           },
           "canonical_token": {
             "type": "string"
@@ -165,18 +257,64 @@
       "type": [
         "string",
         "null"
+      ],
+      "enum": [
+        "exact",
+        "values_exact_metadata_changed",
+        "not_applicable",
+        null
       ]
     },
     "qualifications": {
       "type": "array",
       "items": {
-        "type": "object"
+        "enum": [
+          "grammar_upgraded_for_exact_fraction",
+          "grammar_version_retained_on_inverse",
+          "velocity_replaced",
+          "velocity_inserted"
+        ]
       }
     },
     "unavailable_causes": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "cause",
+          "diagnostic_code",
+          "field_paths"
+        ],
+        "properties": {
+          "cause": {
+            "enum": [
+              "invalid_original",
+              "invalid_replacement_velocity",
+              "missing_velocity",
+              "unsupported_direction",
+              "velocity_period_mismatch",
+              "same_unit_velocity_change",
+              "unsupported_duration_field",
+              "invalid_candidate"
+            ]
+          },
+          "diagnostic_code": {
+            "enum": [
+              "PTMIG-401",
+              "PTMIG-402",
+              "PTMIG-403",
+              "PTMIG-404",
+              "PTMIG-405",
+              "PTMIG-406",
+              "PTMIG-407",
+              "PTMIG-409"
+            ]
+          },
+          "field_paths": {
+            "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+          }
+        },
+        "additionalProperties": false
       }
     },
     "original_digest": {

@@ -391,6 +391,35 @@ const selectedSchema = spawnSync(
   { encoding: "utf8" },
 );
 const selectedSchemaJson = JSON.parse(selectedSchema.stdout);
+const outlineSchema = spawnSync(
+  process.argv[5],
+  [
+    "schema",
+    "Perttool.NextResult.v5",
+    "--view=outline",
+    "--format=json",
+  ],
+  { encoding: "utf8" },
+);
+const outlineSchemaJson = JSON.parse(outlineSchema.stdout);
+const detailSchema = spawnSync(
+  process.argv[5],
+  [
+    "schema",
+    "Perttool.NextResult.v5",
+    "--view=outline",
+    "--ref=#/$defs/recommendation",
+    "--format=json",
+  ],
+  { encoding: "utf8" },
+);
+const detailSchemaJson = JSON.parse(detailSchema.stdout);
+const apiOutline = api.jsonSchemaResultToJson(
+  api.getJsonSchemaResult(
+    "Perttool.NextResult.v5",
+    { view: "outline" },
+  ),
+);
 if (
   schemaCatalog.status !== 0 ||
   schemaCatalog.stderr !== "" ||
@@ -403,6 +432,16 @@ if (
     "https://json-schema.org/draft/2020-12/schema" ||
   selectedSchemaJson.schema?.$id !==
     "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v5.schema.json" ||
+  outlineSchema.status !== 0 ||
+  outlineSchema.stderr !== "" ||
+  outlineSchemaJson.query?.view !== "outline" ||
+  Object.hasOwn(outlineSchemaJson.schema ?? {}, "$defs") ||
+  outlineSchemaJson.schema?.properties?.groups?.$ref !==
+    "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v5.schema.json#/properties/groups" ||
+  detailSchema.status !== 0 ||
+  detailSchema.stderr !== "" ||
+  detailSchemaJson.schema?.properties?.result_decision === undefined ||
+  JSON.stringify(apiOutline) !== JSON.stringify(outlineSchemaJson) ||
   api.getJsonSchemaCatalog().length !== 18 ||
   api.getJsonSchema("Perttool.NextResult.v5")?.$id !==
     selectedSchemaJson.schema.$id ||

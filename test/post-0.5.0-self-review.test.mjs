@@ -79,7 +79,7 @@ test("all review findings have durable backlog or Issue owners", async () => {
   );
 });
 
-test("current guidance records the published 0.5.1 schema boundary", async () => {
+test("current guidance records the published 0.5.1 and selected 0.5.2 schema boundaries", async () => {
   const [agents, copilot, requirements, schemaContract] = await Promise.all([
     repositoryText("AGENTS.md"),
     repositoryText(".github/copilot-instructions.md"),
@@ -88,14 +88,19 @@ test("current guidance records the published 0.5.1 schema boundary", async () =>
   ]);
 
   for (const guidance of [agents, copilot]) {
-    assert.match(guidance, /npm `beta=latest=0\.5\.1`/);
+    assert.match(guidance, /npm (?:remains )?`beta=latest=0\.5\.1`/);
     assert.match(guidance, /Git 2\.54 UTC/);
     assert.match(guidance, /Issue #5/);
-    assert.match(guidance, /Issue #5 closure remains a separate boundary/);
+    assert.match(
+      guidance,
+      /Issue #5 closure remain(?:s)? (?:a )?separate boundar(?:y|ies)/,
+    );
+    assert.match(guidance, /0\.5\.2/);
+    assert.match(guidance, /outline\/detail/);
   }
   assert.match(
     agents,
-    /`release-0\.5\.0\.pert`, and `release-0\.5\.1\.pert` as completed independent post-beta workstreams/,
+    /`release-0\.5\.0\.pert`, and `release-0\.5\.1\.pert` as completed independent post-beta workstreams; use `release-0\.5\.2\.pert` as the selected compatible schema-patch release workstream/,
   );
   assert.doesNotMatch(
     agents,
