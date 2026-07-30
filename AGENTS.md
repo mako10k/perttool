@@ -190,7 +190,9 @@ tarballs are byte-identical; npm reports `beta=0.5.1`, unchanged
 passed. `RELEASE_051_ACCEPTANCE` is complete after independent Git, GitHub,
 npm, artifact, compatibility, and installed-package verification. All five
 tasks and 17p are complete at `17p/1d`; both makespans are zero, and complete
-NextResult v5 has no recommendation. The user's named
+NextResult v5 has no recommendation. Git commit `9ecae00` records the exact
+completed acceptance pre-advance snapshot, and the plan is advanced to reached
+`RELEASE_051_ACCEPTED`. The user's named
 release authorization applies only after every predecessor gate passes. npm
 `latest` promotion and Issue #5 closure remain separate decisions.
 

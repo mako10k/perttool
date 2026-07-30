@@ -1360,7 +1360,9 @@ tarballs. The exact `0.5.0` comparison confirms that the patch retains Grammar
 identities, and normalized payload meanings. All five tasks and 17p are done
 at `17p/1d`; precedence and heuristic resource makespans are zero, and
 complete NextResult v5 has no ready, recommended, or startable task. npm
-`latest` promotion and Issue #5 closure remain separate decisions.
+`latest` promotion and Issue #5 closure remain separate decisions. Git commit
+`9ecae00` records the exact completed acceptance pre-advance snapshot, and
+canonical governed advance retains only reached `RELEASE_051_ACCEPTED`.
 
 Stage 1 allowed operations:
 
