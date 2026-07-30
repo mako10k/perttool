@@ -4,6 +4,12 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-30
+
+Compatible CLI Contract 6 and Grammar 5 beta patch. This version adds
+machine-readable result artifacts and corrects Git 2.54 UTC commit-time
+handling without changing existing result identities or payload meanings.
+
 ### Added
 
 - Added bundled Draft 2020-12 artifacts for every active Contract 6 command
@@ -228,7 +234,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/mako10k/perttool/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/mako10k/perttool/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/mako10k/perttool/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mako10k/perttool/compare/v0.2.0...v0.3.0

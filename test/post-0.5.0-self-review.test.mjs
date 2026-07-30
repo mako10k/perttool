@@ -71,7 +71,7 @@ test("all review findings have durable backlog or Issue owners", async () => {
   );
   assert.match(
     backlog,
-    /^Status: Complete in source \(2026-07-30\); release and Issue closure not$/m,
+    /^Status: Complete in source \(2026-07-30\) and selected for `0\.5\.1`; Issue$/m,
   );
   assert.doesNotMatch(
     backlog,

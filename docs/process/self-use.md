@@ -1311,16 +1311,20 @@ Grammar 5 checking, and ProjectHistoryResult v1 reconstruction all pass. npm
 The user selected and authorized the complete compatible `0.5.1` patch
 release on 2026-07-30 after requesting a self-review. The independent
 `plans/release-0.5.1.pert` plan records five sequential tasks and 17p.
-`RELEASE_051_SELF_REVIEW` is complete at 4p after verifying that all 33
-existing command descriptors, 108 existing package exports, result
-identities, Grammar 5, CLI Contract 6, and representative normalized outputs
-remain compatible. The review corrected available real-Git result validation
-and package wildcard-export consumption coverage. Thirteen points remain;
-precedence and heuristic resource makespans are both 13p with no resource
-delay, observed velocity is `4p/1d`, both forecasts are `13/4d`, and complete
-NextResult v5 recommends only `RELEASE_051_PREPARATION`. The source still
-identifies `0.5.0`; no external write has occurred. npm `latest` promotion
-and Issue #5 closure remain separate decisions.
+`RELEASE_051_SELF_REVIEW` and `RELEASE_051_PREPARATION` are complete at 8p
+after verifying that all 33 existing command descriptors, 108 existing
+package exports, result identities, Grammar 5, CLI Contract 6, and
+representative normalized outputs remain compatible. The review corrected
+available real-Git result validation and package wildcard-export consumption
+coverage. Package, lockfile, CLI, CHANGELOG, README, release guidance, tests,
+goldens, and the isolated package now identify `0.5.1`. All 652 tests, 105
+Markdown documents, seven normative PERT examples, twenty-two self-use plans,
+the temporary-link workflow, and the 491-file isolated-package workflow
+passed under Node.js 22. Nine points remain; precedence and heuristic resource
+makespans are both 9p with no resource delay, observed velocity is `8p/1d`,
+both forecasts are `9/8d`, and complete NextResult v5 recommends only
+`RELEASE_051_CANDIDATE`. No external write has occurred. npm `latest`
+promotion and Issue #5 closure remain separate decisions.
 
 Stage 1 allowed operations:
 

@@ -501,8 +501,8 @@ workstream.
 
 Priority: P0
 
-Status: Complete in source (2026-07-30); release and Issue closure not
-authorized
+Status: Complete in source (2026-07-30) and selected for `0.5.1`; Issue
+closure not authorized
 
 Close the gap between the Must-level machine-readable interface requirement
 and the current registry's schema identifiers. The
@@ -512,8 +512,8 @@ OverrideDecision result, stable package-relative paths, local-only
 resolution, and an additive `schema` discovery command. Repository tests
 validate representative CLI/Core results and isolated package access.
 The [source acceptance record](process/json-schema-acceptance.md) retains the
-complete trace. Published `0.5.0` remains unchanged; Issue closure and a
-release are separate external decisions.
+complete trace. The compatible `0.5.1` release is authorized and in
+preparation; Issue closure remains a separate external decision.
 
 ## Hierarchical planning and multi-plan composition
 

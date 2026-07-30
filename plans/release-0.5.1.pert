@@ -2,17 +2,14 @@
 project RELEASE_051:
   version 5
   title "perttool 0.5.1 compatible Contract 6 beta patch release"
-  description "Release suffix-free 0.5.1 beta as a backward-compatible CLI Contract 6 and Grammar 5 patch. The source adds a read-only schema command, bundled Draft 2020-12 result artifacts, package-root schema lookup APIs, and Git 2.54 strict-Z commit-time compatibility without removing or changing existing commands, result identities, payload meanings, or exports. RELEASE_051_SELF_REVIEW completed 4p under the user's authorization for the complete named 0.5.1 release. Thirteen points remain; precedence and heuristic resource makespans are 13p at the observed 4p/1d velocity. Complete NextResult v5 should recommend RELEASE_051_PREPARATION. npm latest promotion and Issue #5 closure remain separate decisions."
+  description "Release suffix-free 0.5.1 beta as a backward-compatible CLI Contract 6 and Grammar 5 patch. The source adds a read-only schema command, bundled Draft 2020-12 result artifacts, package-root schema lookup APIs, and Git 2.54 strict-Z commit-time compatibility without removing or changing existing commands, result identities, payload meanings, or exports. RELEASE_051_SELF_REVIEW and RELEASE_051_PREPARATION completed 8p under the user's authorization for the complete named 0.5.1 release. Package, lockfile, CLI, CHANGELOG, README, release guidance, tests, goldens, and full Node.js 22 repository and 491-file isolated-package gates identify 0.5.1. Nine points remain; precedence and heuristic resource makespans are 9p at the observed 8p/1d velocity. Complete NextResult v5 should recommend RELEASE_051_CANDIDATE. npm latest promotion and Issue #5 closure remain separate decisions."
   as_of 2026-07-30
   duration_unit point
-  velocity 4p/1d
+  velocity 8p/1d
   finish RELEASE_051_ACCEPTED
   goal_owner user
   dag_owner user
 
-milestone RELEASE_051_SELECTED:
-  title "Version 0.5.1 selected"
-  state reached
 
 resource DEVELOPERS:
   title "Release engineering capacity"
@@ -40,6 +37,7 @@ resource EXTERNAL_RELEASE:
 
 milestone RELEASE_051_REVIEW_ACCEPTED:
   title "Version 0.5.1 compatibility review accepted"
+  state reached
 
 milestone RELEASE_051_SOURCE_PREPARED:
   title "Version 0.5.1 release source prepared"
@@ -53,22 +51,12 @@ milestone RELEASE_051_PUBLISHED:
 milestone RELEASE_051_ACCEPTED:
   title "Version 0.5.1 compatible Contract 6 beta patch accepted"
 
-task RELEASE_051_SELF_REVIEW RELEASE_051_SELECTED -> RELEASE_051_REVIEW_ACCEPTED:
-  title "Review compatibility and the complete source change"
-  description "Review requirements, specifications, design, implementation, tests, help, package surface, existing command descriptors, public exports, representative Contract 6 output parity, and the Git 2.54 CI failure. Accept 0.5.1 only if existing Grammar 5, Contract 6 result identities, commands, options, payload meanings, and exports remain compatible. This task performs no external write."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
 
 task RELEASE_051_PREPARATION RELEASE_051_REVIEW_ACCEPTED -> RELEASE_051_SOURCE_PREPARED:
   title "Prepare version 0.5.1 release source"
   description "Align package and lockfile identity, CLI version, CHANGELOG, README, compatibility and release documentation, tests, goldens, self-use registration, and beta publication validation. Run the complete repository and package gates without remote or registry writes."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
