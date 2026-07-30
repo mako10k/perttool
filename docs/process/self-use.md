@@ -1412,11 +1412,13 @@ governance-guidance patch. Its five serial tasks cover compatibility and
 threat-model review, version-bearing source preparation, one immutable
 candidate, authorized GitHub/npm beta publication, and durable acceptance.
 The initial 15p plan uses the preceding release's observed `17p/1d` velocity.
-After self-review, source preparation, candidate acceptance, and publication
-completed, both precedence and heuristic resource makespans are 3p with no
-resource delay. Complete NextResult v5 recommends and starts only
-`RELEASE_053_ACCEPTANCE`. npm `latest` promotion remains outside the named
-release scope.
+Self-review, source preparation, candidate acceptance, publication, and
+durable acceptance are complete. Independent Git, GitHub, npm, artifact, and
+installed-package checks accepted all five tasks and 15p. Both precedence and
+heuristic resource makespans are zero, and complete NextResult v5 has no
+ready, recommended, or startable task. The completed declarations remain
+until a separately confirmed single-candidate `dag advance`; npm `latest`
+promotion remains outside the named release scope.
 
 Stage 1 allowed operations:
 

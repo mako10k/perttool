@@ -323,8 +323,8 @@ snapshot, and the plan is advanced to reached `RELEASE_052_ACCEPTED`. The
 named release authorization does not include npm `latest` promotion or Issue
 #5 closure.
 
-The compatible `0.5.3` patch is now the active release-preparation
-workstream. It publishes the beta-only channel guard and single-candidate,
+The compatible `0.5.3` patch is accepted. It publishes the beta-only channel
+guard and single-candidate,
 scope-bound loose owner-confirmation workflow while retaining Grammar 5, CLI
 Contract 6, and every existing command, option, result, schema, and
 package-root identity. Human confirmation leads with available modification
@@ -332,8 +332,10 @@ time, exact UTF-8 sizes, diff counts, and semantic changes; digests remain
 supplemental machine identity. `RELEASE_053_SELF_REVIEW` and
 `RELEASE_053_PREPARATION` are complete. The immutable 491-file candidate was
 accepted after clean revalidation and external preflight. Publication to the
-GitHub prerelease and npm `beta` is complete, and `RELEASE_053_ACCEPTANCE` is
-the current startable recommendation. npm `latest` promotion remains
+GitHub prerelease and npm `beta` and durable acceptance are complete. All five
+tasks and 15p are done; both makespans are zero, and complete NextResult v5
+has no recommendation. Completed declarations remain until a separately
+confirmed single-candidate `dag advance`. npm `latest` promotion remains
 separate.
 
 ### 5.1 Adopted Recommendation authority

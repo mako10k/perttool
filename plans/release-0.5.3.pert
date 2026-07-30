@@ -104,6 +104,7 @@ task RELEASE_053_ACCEPTANCE RELEASE_053_PUBLISHED -> RELEASE_053_ACCEPTED:
   title "Record durable 0.5.3 beta acceptance"
   description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball digest, registry integrity and metadata, isolated installation from both public channels, unchanged Contract 6 and Grammar 5 behavior, scope-bound guidance, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact or promoting latest."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

@@ -34,7 +34,7 @@ Plans are separated by level of detail.
 - [release-0.5.0.pert](release-0.5.0.pert): independent Contract 6 beta release plan covering the version gate, accepted project-actuals and English-baseline input, preparation, candidate, authorized publication, durable acceptance, and the post-release exact local installation boundary
 - [release-0.5.1.pert](release-0.5.1.pert): independent compatible Contract 6 patch-release plan covering self-review, preparation, candidate, authorized publication, and durable acceptance
 - [release-0.5.2.pert](release-0.5.2.pert): independent compatible Contract 6 complete-schema patch-release plan covering self-review, preparation, candidate, authorized publication, and durable acceptance
-- [release-0.5.3.pert](release-0.5.3.pert): independent compatible Contract 6 governance-guidance patch-release plan covering threat-model review, human-readable confirmation context, preparation, candidate, authorized publication, and durable acceptance
+- [release-0.5.3.pert](release-0.5.3.pert): completed compatible Contract 6 governance-guidance patch-release plan covering threat-model review, human-readable confirmation context, preparation, candidate, authorized publication, and durable acceptance; completed declarations remain pending separately confirmed governed advance
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2

@@ -23,6 +23,7 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
     design,
     procedure,
     publish,
+    acceptance,
     review,
     experiment,
     plan,
@@ -38,6 +39,7 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.5.3-release.md"),
     repositoryText("docs/process/0.5.3-publish.md"),
+    repositoryText("docs/process/0.5.3-release-acceptance.md"),
     repositoryText("docs/process/0.5.3-self-review.md"),
     repositoryText("docs/process/governance-assertion-scope-experiment.md"),
     repositoryText("plans/release-0.5.3.pert"),
@@ -75,6 +77,11 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
   );
   assert.match(publish, /one propagation-time `E404`/);
   assert.match(publish, /No npm publish retry occurred/);
+  assert.match(acceptance, /Document status: Accepted 1\.0/);
+  assert.match(acceptance, /All five release-plan tasks and 15p are complete/);
+  assert.match(acceptance, /corrected\s+field-aware query passed/);
+  assert.match(acceptance, /completed declarations are intentionally retained/);
+  assert.match(acceptance, /52 files\s+changed/);
   assert.match(review, /Document status: Accepted 1\.0/);
   assert.match(review, /raw digests were a poor primary explanation/);
   assert.match(experiment, /current_modified_at/);
