@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.GuideResult.v1.schema.json",
+  "title": "Perttool.GuideResult.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "diagnostics",
+    "topic_id",
+    "level",
+    "title",
+    "summary",
+    "sections",
+    "syntax",
+    "examples",
+    "related",
+    "topics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.GuideResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "guide"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "topic_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "level": {
+      "enum": [
+        "index",
+        "quick",
+        "detail"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "syntax": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "related": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "summary"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

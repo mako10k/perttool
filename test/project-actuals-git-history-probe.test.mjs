@@ -16,6 +16,7 @@ import test from "node:test";
 import * as publicApi from "../dist/index.js";
 import {
   GIT_HISTORY_PROBE_MODEL_VERSION,
+  parseGitCommitMetadata,
   probeGitHistory,
 } from "../dist/history/git-probe.js";
 import { digestDocumentBytes } from "../dist/io/document-file.js";
@@ -123,6 +124,34 @@ async function gitState(repository) {
 function availabilityCauses(result) {
   return result.availability.map(({ cause }) => cause);
 }
+
+test("Git commit metadata accepts strict ISO UTC from Git 2.54", () => {
+  const parent = "a".repeat(40);
+  assert.deepEqual(
+    parseGitCommitMetadata(
+      `${parent}\0${"2026-07-29T09:00:00Z"}`,
+      "sha1",
+    ),
+    {
+      parentCommitIds: [parent],
+      recordedAt: "2026-07-29T09:00:00Z",
+    },
+  );
+  assert.deepEqual(
+    parseGitCommitMetadata(
+      `\0${"2026-07-29T18:00:00+09:00"}`,
+      "sha1",
+    ),
+    {
+      parentCommitIds: [],
+      recordedAt: "2026-07-29T18:00:00+09:00",
+    },
+  );
+  assert.equal(
+    parseGitCommitMetadata(`${"\0"}2026-07-29T09:00:00`, "sha1"),
+    null,
+  );
+});
 
 test("Git history probe returns deterministic first-parent path snapshots without changing Git", async (t) => {
   const repository = await temporaryRepository(t);

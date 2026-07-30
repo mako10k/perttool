@@ -1362,6 +1362,11 @@ defines the Contract 4 temporal/unit schemas retained by Contract 5, and
 [Owner-Aware Governance Interface Contract](specs/governance-interface.md)
 defines the active repository-source `cli_contract_version`, ProjectResult v3,
 MutationResult v2, governance decision, help, and write boundary.
+[Project Actuals and Git History Contract](specs/project-actuals.md) defines
+the active Contract 6 result identities, and the
+[JSON Schema Artifact Contract](specs/json-schema.md) defines their
+machine-readable artifacts, discovery, package layout, and compatibility
+rules.
 
 Must:
 
@@ -1742,6 +1747,52 @@ authorization does not include npm `latest` promotion, Issue #4 closure, or
 any of the non-goals above. The authoritative procedure is
 [`docs/process/0.5.0-release.md`](process/0.5.0-release.md).
 
+### 21.7 Contract 6 compatible patch release acceptance criteria
+
+The first package that publishes the accepted machine-readable Contract 6
+result artifacts and Git 2.54 UTC compatibility is suffix-free `0.5.1`. It
+remains part of the `0.x.x` beta series, is a GitHub prerelease, and is
+published to npm `beta`. The release must satisfy all of the following.
+
+1. Retain Grammar 5 and CLI Contract 6, every existing command descriptor,
+   option, result identity, required payload meaning, stable exit meaning,
+   and package-root export.
+2. Add only the read-only `schema [schema-id]` command, the closed
+   result-schema catalog and lookup APIs, bundled Draft 2020-12 artifacts,
+   and acceptance of strict `Z` or fixed-offset `%cI` Git commit times.
+3. Resolve every advertised result identity to exactly one bundled root
+   artifact, expose the supported library-only OverrideDecision artifact,
+   and reject unknown schema identifiers without document or environment
+   discovery.
+4. Validate representative success, warning, invalid, unavailable,
+   usage-error, truncated, mutation, migration, help, guidance, history, and
+   observation results with a strict Draft 2020-12 validator.
+5. Align package, lockfile, CLI/tool version, release commit, annotated
+   `v0.5.1` tag, GitHub asset, and npm package identity without introducing a
+   Contract 7 or Grammar 6 boundary.
+6. Pass Node.js 22 repository checks, Node.js 22 and 24 CI, package
+   normalization, temporary-link checks, isolated installation, real
+   first-parent Git history, schema CLI/API parity, and package wildcard
+   schema resolution from one clean release source.
+7. Establish before publication that `perttool@0.5.1`, `v0.5.1`, and the
+   matching GitHub Release are unused; record npm `beta`, `latest`, and
+   `alpha`; and verify protected routes without displaying secrets.
+8. Generate one immutable tarball outside the worktree, distribute those
+   exact bytes through the GitHub prerelease and npm `beta`, and verify
+   isolated installation from both public channels.
+9. Push and publish only after every predecessor gate passes and under the
+   user's named `0.5.1` authorization; move `beta` to `0.5.1` while leaving
+   `latest` unchanged at `0.4.0`.
+10. Record durable release, tag, artifact, registry, installed-behavior, CI,
+    and restart evidence without promoting npm `latest` or closing Issue #5.
+
+The user's 2026-07-30 instruction authorizes the complete named `0.5.1`
+self-review, preparation, candidate, Git push, annotated tag, GitHub
+prerelease, npm `beta` publication, and durable acceptance after every
+preceding gate passes. Plan state records this scope but is not a substitute
+for that instruction. The authoritative procedure is
+[`docs/process/0.5.1-release.md`](process/0.5.1-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |
@@ -1918,10 +1969,15 @@ Before implementation, separate the specifications in the following order.
     - [x] Atomic Grammar 5 parser/formatter/lifecycle, suspended analysis and
       NextResult v5, history, velocity observation, root, CLI, help, Guide,
       and installed-package check activation
-18. [ ] Publish machine-readable JSON Schema artifacts for every active CLI
-    Contract 6 result and verify descriptor resolution and installed-package
-    availability in [GitHub Issue
-    #5](https://github.com/mako10k/perttool/issues/5) and `SCHEMA-001`
+18. [x] Publish machine-readable JSON Schema artifacts for every active CLI
+    Contract 6 result and the supported public library-only result; verify
+    descriptor resolution, representative result validation, and
+    installed-package availability under the
+    [JSON Schema Artifact Contract](specs/json-schema.md), [GitHub Issue
+    #5](https://github.com/mako10k/perttool/issues/5), and `SCHEMA-001`.
+    [Source acceptance](process/json-schema-acceptance.md) is complete;
+    release publication and Issue closure remain separate authorization
+    boundaries.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

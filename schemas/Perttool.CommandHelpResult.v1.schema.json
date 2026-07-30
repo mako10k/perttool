@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.CommandHelpResult.v1.schema.json",
+  "title": "Perttool.CommandHelpResult.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "query",
+    "resources",
+    "commands",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.CommandHelpResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "help"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "query": {
+      "type": "object",
+      "required": [
+        "resource",
+        "action"
+      ],
+      "properties": {
+        "resource": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "action": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "summary",
+          "actions"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "actions": {
+            "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "cli_contract_version",
+          "path",
+          "operation",
+          "summary",
+          "operands",
+          "options",
+          "input",
+          "output",
+          "stdin",
+          "effect",
+          "result_schemas",
+          "exit_statuses",
+          "examples"
+        ],
+        "properties": {
+          "cli_contract_version": {
+            "const": 6
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 2
+          },
+          "operation": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "operands": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "input": {
+            "enum": [
+              "none",
+              "document",
+              "artifact"
+            ]
+          },
+          "output": {
+            "type": "object"
+          },
+          "stdin": {
+            "type": "object"
+          },
+          "effect": {
+            "enum": [
+              "read",
+              "preview",
+              "write-or-create"
+            ]
+          },
+          "result_schemas": {
+            "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+          },
+          "exit_statuses": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    }
+  },
+  "additionalProperties": false
+}

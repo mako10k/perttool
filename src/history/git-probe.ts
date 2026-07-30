@@ -382,6 +382,37 @@ function commitId(
   return new RegExp(`^[0-9a-f]{${length}}$`).test(value);
 }
 
+export function parseGitCommitMetadata(
+  value: string,
+  objectFormat: "sha1" | "sha256",
+): {
+  readonly parentCommitIds: readonly string[];
+  readonly recordedAt: string | null;
+} | null {
+  const separatorIndex = value.indexOf("\0");
+  if (separatorIndex === -1) return null;
+  const parentText = value.slice(0, separatorIndex).trim();
+  const recordedAtText = value.slice(separatorIndex + 1).trim();
+  const parentCommitIds = parentText === ""
+    ? []
+    : parentText.split(" ");
+  if (
+    parentCommitIds.some((id) => !commitId(id, objectFormat)) ||
+    (
+      recordedAtText !== "" &&
+      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/.test(
+        recordedAtText,
+      )
+    )
+  ) {
+    return null;
+  }
+  return Object.freeze({
+    parentCommitIds: Object.freeze(parentCommitIds),
+    recordedAt: recordedAtText === "" ? null : recordedAtText,
+  });
+}
+
 function normalizeRepositoryPath(
   repositoryRoot: string,
   targetPath: string,
@@ -639,24 +670,8 @@ export async function probeGitHistory(
     }
     const metadataText = stdoutText(metadataCommand, "commit_metadata");
     if (typeof metadataText !== "string") return metadataText;
-    const separatorIndex = metadataText.indexOf("\0");
-    if (separatorIndex === -1) return malformed("commit_metadata");
-    const parentText = metadataText.slice(0, separatorIndex).trim();
-    const recordedAtText = metadataText.slice(separatorIndex + 1).trim();
-    const parentCommitIds = parentText === ""
-      ? []
-      : parentText.split(" ");
-    if (
-      parentCommitIds.some((id) => !commitId(id, objectFormat)) ||
-      (
-        recordedAtText !== "" &&
-        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/.test(
-          recordedAtText,
-        )
-      )
-    ) {
-      return malformed("commit_metadata");
-    }
+    const metadata = parseGitCommitMetadata(metadataText, objectFormat);
+    if (metadata === null) return malformed("commit_metadata");
 
     const existsCommand = runGit(
       executable,
@@ -705,8 +720,8 @@ export async function probeGitHistory(
       repositorySnapshotId,
       relativePath,
       commitId: inspectedCommitId,
-      parentCommitIds: Object.freeze(parentCommitIds),
-      recordedAt: recordedAtText === "" ? null : recordedAtText,
+      parentCommitIds: metadata.parentCommitIds,
+      recordedAt: metadata.recordedAt,
       sourceDigest,
       source,
     });

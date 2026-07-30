@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.ImportResult.v1.schema.json",
+  "title": "Perttool.ImportResult.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "artifact_format",
+    "profile",
+    "analysis",
+    "capacity_overrides",
+    "artifact",
+    "artifact_digest",
+    "loss_report",
+    "generated_ids",
+    "write"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.ImportResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "dag.import"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "artifact_format": {
+      "const": "pert"
+    },
+    "profile": {
+      "enum": [
+        "perttool",
+        "plain"
+      ]
+    },
+    "analysis": {
+      "enum": [
+        "none",
+        "precedence",
+        "resource",
+        "both"
+      ]
+    },
+    "capacity_overrides": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/capacityOverrides"
+    },
+    "artifact": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "artifact_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "loss_report": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/lossReport"
+    },
+    "generated_ids": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_element",
+          "generated_id"
+        ],
+        "properties": {
+          "source_element": {
+            "type": "string"
+          },
+          "generated_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "write": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/write"
+    }
+  },
+  "additionalProperties": false
+}

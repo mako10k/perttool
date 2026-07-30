@@ -1,0 +1,54 @@
+{
+  "check": {
+    "document_id": "RELEASE_051",
+    "grammar_version": 5,
+    "summary": {
+      "resources": 5,
+      "milestones": 6,
+      "tasks": 5,
+      "gates": 0,
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "13/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "13/4",
+    "precedence_critical_tasks": [
+      "RELEASE_051_PREPARATION",
+      "RELEASE_051_CANDIDATE",
+      "RELEASE_051_PUBLISH",
+      "RELEASE_051_ACCEPTANCE"
+    ],
+    "resource_makespan": "13/1",
+    "resource_forecast": "13/4",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
+    "schedule_critical_tasks": [
+      "RELEASE_051_PREPARATION",
+      "RELEASE_051_CANDIDATE",
+      "RELEASE_051_PUBLISH",
+      "RELEASE_051_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "RELEASE_051_PREPARATION"
+      ],
+      "runnable_now": [
+        "RELEASE_051_PREPARATION"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "RELEASE_051_CANDIDATE",
+        "RELEASE_051_PUBLISH",
+        "RELEASE_051_ACCEPTANCE"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

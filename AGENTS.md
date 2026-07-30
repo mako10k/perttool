@@ -13,7 +13,7 @@ User communication is independent from the repository baseline. Unless the user 
 
 ## Current phase and sources of truth
 
-perttool has accepted its TypeScript CLI MVP, the read-only AI Agent Guidance Registry v1 from Issue #2, and suffix-free beta releases through `v0.5.0`. Version `0.5.0` publishes the atomic Grammar 5 and Contract 6 cutover from one verified tarball and resolves from npm `beta`; npm `latest` remains on `0.4.0`. Version `0.4.0` remains the Contract 5 compatibility artifact, while `0.3.0` and `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by explicit pin. The current source implements Grammar 1/2/3/4/5 reads, registry-driven Contract 6 `help`, separate Contract 6 `guide`, temporal and governed project/task/gate/milestone/resource maintenance, exact lifecycle events, read-only project history and velocity observation, exact `project migrate-unit`, `Perttool.ProjectResult.v3`, `Perttool.MutationResult.v3` with `Perttool.GovernanceDecision.v1`, `Perttool.AnalysisResult.v4`, `Perttool.NextResult.v5`, `Perttool.UnitMigrationResult.v3`, read-only `validateOverride`, source-preserving mutation, and authorization-before-safe-write controls. The result schema identities are active, but Must-level machine-readable JSON Schema artifacts remain absent and are tracked by Issue #5 and backlog `SCHEMA-001`. A complete and known `Perttool.NextResult.v5` with a complete temporal start-authority projection is the normal AI task-selection authority. The macro plan is complete and has no ready task. The independent English-baseline detail plan has completed and advanced all nine tasks through `ENGLISH_ACCEPTANCE`; Git commit `2001cdf` records the exact completed final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the cross-surface trace, and complete NextResult v5 has no ready, recommended, or startable task.
+perttool has accepted its TypeScript CLI MVP, the read-only AI Agent Guidance Registry v1 from Issue #2, and suffix-free beta releases through `v0.5.0`. Version `0.5.0` publishes the atomic Grammar 5 and Contract 6 cutover from one verified tarball and resolves from npm `beta`; npm `latest` remains on `0.4.0`. Version `0.4.0` remains the Contract 5 compatibility artifact, while `0.3.0` and `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by explicit pin. The current source implements Grammar 1/2/3/4/5 reads, registry-driven Contract 6 `help`, separate Contract 6 `guide`, temporal and governed project/task/gate/milestone/resource maintenance, exact lifecycle events, read-only project history and velocity observation, exact `project migrate-unit`, `Perttool.ProjectResult.v3`, `Perttool.MutationResult.v3` with `Perttool.GovernanceDecision.v1`, `Perttool.AnalysisResult.v4`, `Perttool.NextResult.v5`, `Perttool.UnitMigrationResult.v3`, read-only `validateOverride`, source-preserving mutation, and authorization-before-safe-write controls. The current source also bundles Draft 2020-12 artifacts for all seventeen active command-result identities plus public library-only `Perttool.OverrideDecision.v1`, exposes the additive read-only `schema` command and public catalog APIs, and accepts Git 2.54 strict ISO UTC `Z` commit metadata. Published `0.5.0` predates the schema artifacts; release publication and Issue #5 closure remain separate authorization boundaries. A complete and known `Perttool.NextResult.v5` with a complete temporal start-authority projection is the normal AI task-selection authority. The macro plan is complete and has no ready task. The independent English-baseline detail plan has completed and advanced all nine tasks through `ENGLISH_ACCEPTANCE`; Git commit `2001cdf` records the exact completed final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the cross-surface trace, and complete NextResult v5 has no ready, recommended, or startable task.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
@@ -67,8 +67,8 @@ declared velocity. Its acceptance record is
 completed 6p pre-advance snapshot, and the task is advanced to reached
 `ACTUALS_PUBLIC_READY`. The current source atomically activates Grammar 5 and CLI Contract 6 through
 the standard parser, formatter, lifecycle and advance mutations, suspended
-analysis/Next results, history, observation, package root, 33-command
-registry, help, Guide, result schema identities and projections, diagnostics,
+analysis/Next results, history, observation, package root, the original
+33-command cutover registry, help, Guide, result schema identities and projections, diagnostics,
 examples, and isolated installed workflow. Its acceptance record is
 `docs/process/project-actuals-public-contract-acceptance.md`.
 `ACTUALS_ACCEPTANCE` is complete; Git commit `f994fa2` records its exact
@@ -170,6 +170,19 @@ Grammar 5, and history smoke checks. The user's
 named release authorization applies only after every predecessor gate passes.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 
+The explicitly authorized compatible `0.5.1` patch release is tracked in
+`plans/release-0.5.1.pert`. `RELEASE_051_SELF_REVIEW` is complete after
+confirming that the additive read-only schema command, bundled Draft 2020-12
+artifacts, lookup APIs, and Git 2.54 UTC `Z` fix retain existing Grammar 5,
+CLI Contract 6, command descriptors, result identities, payload meanings,
+and package exports. The review corrected available-Git result validation
+and package wildcard-export consumption coverage. Thirteen points remain;
+both makespans are 13p at `4p/1d`, and complete NextResult v5 recommends only
+`RELEASE_051_PREPARATION`. Package identity remains `0.5.0`, and no external
+write has occurred. The user's named release authorization applies only
+after every predecessor gate passes. npm `latest` promotion and Issue #5
+closure remain separate decisions.
+
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public result schema identities and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 
 `project show`, which returns the complete project metadata including velocity, source-preserving `project set`, and atomic-batch `project.set` are also implemented. The observed operational velocity was recalibrated to `29p/2d` from a cumulative 29p over 2 active days, including 5p on 2026-07-23.
@@ -196,7 +209,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `release-0.2.0.pert`, `release-0.3.0.pert`, `release-0.4.0.pert`, and `release-0.5.0.pert` as completed independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `release-0.2.0.pert`, `release-0.3.0.pert`, `release-0.4.0.pert`, and `release-0.5.0.pert` as completed independent post-beta workstreams; use `release-0.5.1.pert` as the current compatible Contract 6 patch-release workstream; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -205,6 +218,8 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 6 editing and actuals Guide.
 - `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
+- `src/schema/`: closed Contract 6 result-schema catalog, local bundled-artifact resolution, `Perttool.SchemaResult.v1`, and deterministic JSON/text projections.
+- `schemas/`: bundled Draft 2020-12 root artifacts for every active command result and the public OverrideDecision result, plus shared local definitions.
 - `src/conversion/`: Mermaid profile/plain export and import, semantic metadata, projection generation, and fail-closed restoration.
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.
 - `src/formatter/`: the active Grammar 1/2/3/4/5 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
@@ -256,7 +271,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all twenty-one self-use plans, including the completed `0.5.0`, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all twenty-two self-use plans, including the current `0.5.1`, completed `0.5.0`, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci

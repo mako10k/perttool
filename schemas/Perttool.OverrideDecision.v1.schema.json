@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.OverrideDecision.v1.schema.json",
+  "title": "Perttool.OverrideDecision.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "diagnostics",
+    "diagnostics_truncated",
+    "override"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.OverrideDecision.v1"
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "recommendation.override.validate"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "const": false
+    },
+    "override": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "override_contract_version",
+            "override_id",
+            "source",
+            "actor",
+            "decided_at",
+            "reason",
+            "selection",
+            "task_decisions",
+            "feasibility",
+            "single_use"
+          ],
+          "properties": {
+            "override_contract_version": {
+              "const": 1
+            },
+            "override_id": {
+              "type": "string",
+              "pattern": "^override:sha256:[0-9a-f]{64}$"
+            },
+            "source": {
+              "type": "object",
+              "required": [
+                "schema_version",
+                "tool_version",
+                "source_digest",
+                "recommendation_interface_version",
+                "ranking_algorithm_id",
+                "ranking_algorithm_version",
+                "reason_taxonomy_version",
+                "explanation_model_version",
+                "expression_version",
+                "description_registry_version",
+                "result_decision_id",
+                "recommended_task_ids",
+                "capacity_overrides"
+              ],
+              "properties": {
+                "schema_version": {
+                  "const": "Perttool.NextResult.v5"
+                },
+                "tool_version": {
+                  "type": "string"
+                },
+                "source_digest": {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+                },
+                "recommendation_interface_version": {
+                  "const": 1
+                },
+                "ranking_algorithm_id": {
+                  "const": "perttool.recommendation-ranking.lexicographic-frontier"
+                },
+                "ranking_algorithm_version": {
+                  "const": 1
+                },
+                "reason_taxonomy_version": {
+                  "const": "1.0"
+                },
+                "explanation_model_version": {
+                  "const": 1
+                },
+                "expression_version": {
+                  "const": 1
+                },
+                "description_registry_version": {
+                  "const": 1
+                },
+                "result_decision_id": {
+                  "type": "string"
+                },
+                "recommended_task_ids": {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+                },
+                "capacity_overrides": {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/capacityOverrides"
+                }
+              },
+              "additionalProperties": false
+            },
+            "actor": {
+              "type": "object",
+              "required": [
+                "kind",
+                "id",
+                "authentication"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "human"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "authentication": {
+                  "const": "caller_asserted"
+                }
+              },
+              "additionalProperties": false
+            },
+            "decided_at": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+            },
+            "reason": {
+              "type": "object"
+            },
+            "selection": {
+              "type": "object"
+            },
+            "task_decisions": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "feasibility": {
+              "type": "object"
+            },
+            "single_use": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

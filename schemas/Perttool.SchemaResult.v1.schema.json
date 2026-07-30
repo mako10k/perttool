@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.SchemaResult.v1.schema.json",
+  "title": "Perttool.SchemaResult.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "query",
+    "schemas",
+    "schema",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.SchemaResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "schema"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "query": {
+      "type": "object",
+      "required": [
+        "schema_id"
+      ],
+      "properties": {
+        "schema_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schemas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "schema_id",
+          "artifact_path",
+          "command_result",
+          "public_library_result"
+        ],
+        "properties": {
+          "schema_id": {
+            "type": "string"
+          },
+          "artifact_path": {
+            "type": "string",
+            "pattern": "^schemas/Perttool\\.[A-Za-z]+(?:[A-Za-z0-9]*)?\\.v[0-9]+\\.schema\\.json$"
+          },
+          "command_result": {
+            "type": "boolean"
+          },
+          "public_library_result": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "schema": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    }
+  },
+  "additionalProperties": false
+}

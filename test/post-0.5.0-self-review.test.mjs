@@ -59,7 +59,7 @@ test("all review findings have durable backlog or Issue owners", async () => {
   }
   assert.match(
     requirements,
-    /^18\. \[ \] Publish machine-readable JSON Schema artifacts/m,
+    /^18\. \[x\] Publish machine-readable JSON Schema artifacts/m,
   );
   assert.match(
     requirements,
@@ -69,9 +69,9 @@ test("all review findings have durable backlog or Issue owners", async () => {
     backlog,
     /^Status: Released in `0\.5\.0` beta \(2026-07-29\)$/m,
   );
-  assert.doesNotMatch(
+  assert.match(
     backlog,
-    /^Status: Accepted in source; release not authorized$/m,
+    /^Status: Complete in source \(2026-07-30\); release and Issue closure not$/m,
   );
   assert.doesNotMatch(
     backlog,
@@ -79,21 +79,22 @@ test("all review findings have durable backlog or Issue owners", async () => {
   );
 });
 
-test("current guidance agrees that 0.5.0 is complete and schemas remain open", async () => {
-  const [agents, copilot, requirements] = await Promise.all([
+test("current guidance separates source schemas from the published 0.5.0 boundary", async () => {
+  const [agents, copilot, requirements, schemaContract] = await Promise.all([
     repositoryText("AGENTS.md"),
     repositoryText(".github/copilot-instructions.md"),
     repositoryText("docs/requirements.md"),
+    repositoryText("docs/specs/json-schema.md"),
   ]);
 
   for (const guidance of [agents, copilot]) {
     assert.match(guidance, /The accepted release is suffix-free beta `0\.5\.0`/);
     assert.match(
       guidance,
-      /machine-readable JSON Schema artifacts remain absent/,
+      /Published `0\.5\.0` predates the schema artifacts/,
     );
     assert.match(guidance, /Issue #5/);
-    assert.match(guidance, /`SCHEMA-001`/);
+    assert.match(guidance, /separate authorization boundaries/);
   }
   assert.match(
     agents,
@@ -107,4 +108,8 @@ test("current guidance agrees that 0.5.0 is complete and schemas remain open", a
     requirements,
     /npm `beta=0\.5\.0` provides Contract 6 while `latest=0\.4\.0` remains/,
   );
+  assert.match(schemaContract, /Document status: Normative 1\.0/);
+  assert.match(schemaContract, /JSON Schema Draft 2020-12/);
+  assert.match(schemaContract, /The first seventeen identities are command results/);
+  assert.match(schemaContract, /`Perttool\.OverrideDecision\.v1`/);
 });

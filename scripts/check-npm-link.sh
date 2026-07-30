@@ -128,6 +128,24 @@ fi
       });
     '
   "$linked_cli" project show "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+  "$linked_cli" schema Perttool.NextResult.v5 --format=json |
+    node -e '
+      let input = "";
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", (chunk) => { input += chunk; });
+      process.stdin.on("end", () => {
+        const result = JSON.parse(input);
+        if (
+          result.schema_version !== "Perttool.SchemaResult.v1" ||
+          result.cli_contract_version !== 6 ||
+          result.schemas?.length !== 18 ||
+          result.schema?.$schema !==
+            "https://json-schema.org/draft/2020-12/schema" ||
+          result.schema?.$id !==
+            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v5.schema.json"
+        ) process.exit(1);
+      });
+    '
   "$linked_cli" help project init --format=json >/dev/null
   "$linked_cli" agent help codex instruction --format=json >/dev/null
   "$linked_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.VelocityObservationResult.v1.schema.json",
+  "title": "Perttool.VelocityObservationResult.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "grammar_version",
+    "history",
+    "observation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.VelocityObservationResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "project.observe-velocity"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "grammar_version": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "history": {
+      "type": "object"
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "history_model_version",
+        "selected_task_ids",
+        "evidence",
+        "candidates"
+      ],
+      "properties": {
+        "id": {
+          "const": "perttool.velocity-observation"
+        },
+        "version": {
+          "const": 1
+        },
+        "history_model_version": {
+          "const": 1
+        },
+        "selected_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "evidence": {
+          "enum": [
+            "declared",
+            "git-recorded",
+            "all"
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AnalysisResult.v4.schema.json",
+  "title": "Perttool.AnalysisResult.v4",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "grammar_version",
+    "task_actuals",
+    "mode",
+    "precision",
+    "precedence",
+    "resource",
+    "temporal"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.AnalysisResult.v4"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "dag.analyze"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "grammar_version": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 5
+    },
+    "task_actuals": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "mode": {
+      "enum": [
+        "precedence",
+        "resource",
+        "both"
+      ]
+    },
+    "precision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9
+    },
+    "duration_unit": {
+      "enum": [
+        "day",
+        "hour",
+        "point"
+      ]
+    },
+    "critical_epsilon": {
+      "type": "object"
+    },
+    "velocity": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "velocity_forecast": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "precedence": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "resource": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "temporal": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

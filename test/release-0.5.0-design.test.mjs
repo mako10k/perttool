@@ -54,7 +54,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   );
   const releaseSection = requirements.split(
     "### 21.6 CLI Contract 6 beta release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split("### 21.7 Contract 6 compatible patch release acceptance criteria")[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],

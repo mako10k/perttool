@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AgentGuidanceResult.v1.schema.json",
+  "title": "Perttool.AgentGuidanceResult.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "guidance_interface_version",
+    "profile_schema_version",
+    "profile_data_version",
+    "guidance_taxonomy_version",
+    "risk_taxonomy_version",
+    "description_registry_version",
+    "description_locale",
+    "staleness_policy_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "profile_digest",
+    "snapshot_as_of",
+    "query",
+    "providers",
+    "guidance_records",
+    "risk_records",
+    "sources",
+    "capabilities",
+    "diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.AgentGuidanceResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "guidance_interface_version": {
+      "const": 1
+    },
+    "profile_schema_version": {
+      "type": "string"
+    },
+    "profile_data_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "guidance_taxonomy_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "risk_taxonomy_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "description_registry_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "description_locale": {
+      "const": "en"
+    },
+    "staleness_policy_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "agent.help"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "profile_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "snapshot_as_of": {
+      "type": "string"
+    },
+    "query": {
+      "type": "object"
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "guidance_records": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "risk_records": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "required": [
+        "reads_project_files",
+        "writes_files",
+        "executes_hooks",
+        "executes_commands",
+        "accesses_network",
+        "reads_provider_state",
+        "writes_provider_state"
+      ],
+      "properties": {
+        "reads_project_files": {
+          "type": "boolean"
+        },
+        "writes_files": {
+          "type": "boolean"
+        },
+        "executes_hooks": {
+          "type": "boolean"
+        },
+        "executes_commands": {
+          "type": "boolean"
+        },
+        "accesses_network": {
+          "type": "boolean"
+        },
+        "reads_provider_state": {
+          "type": "boolean"
+        },
+        "writes_provider_state": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

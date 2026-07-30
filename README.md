@@ -13,6 +13,10 @@ releases may contain breaking CLI or schema changes. Version `0.5.0` requires
 Node.js 22 or later. Contract 5, Contract 4, and Contract 3 remain available
 by pinning `0.4.0`, `0.3.0`, and `0.2.0`, respectively.
 
+The current unreleased source additionally bundles Draft 2020-12 JSON Schema
+artifacts for every active Contract 6 result and the public
+OverrideDecision result. Published `0.5.0` predates these artifacts.
+
 ## Run without installing
 
 Use `npx` for an occasional invocation and select Contract 6 explicitly:
@@ -275,6 +279,7 @@ details.
 | Goal | Command |
 | --- | --- |
 | Discover commands | `perttool help [resource [action]]` |
+| Discover or read JSON Schemas | `perttool schema [schema-id]` |
 | Read domain guidance | `perttool guide [topic [subtopic]]` |
 | Validate a document | `perttool document check <file>` |
 | Canonically format it | `perttool document format <file>` |
@@ -302,8 +307,29 @@ domain concepts. Both run without a document:
 ```sh
 perttool task set --help
 perttool help dag next --format json
+perttool schema --format json
+perttool schema Perttool.NextResult.v5 --format json
 perttool guide editing --level detail --format json
 ```
+
+### JSON Schema artifacts
+
+`perttool schema --format json` returns the complete result-schema catalog.
+Supplying a schema identity returns its Draft 2020-12 artifact in the
+`schema` field of `Perttool.SchemaResult.v1`:
+
+```sh
+perttool schema Perttool.CheckResult.v3 --format json
+```
+
+Packed installations also expose each artifact at
+`perttool/schemas/<schema-id>.schema.json`; relative references resolve
+against the bundled `Perttool.Common.v1.schema.json`. The stable `$id` is an
+identifier only: validation does not require network access. Consumers must
+select compatibility from each result's `schema_version`, not from
+`tool_version`. See the
+[JSON Schema Artifact Contract](docs/specs/json-schema.md) for the complete
+18-result inventory and versioning rules.
 
 ## LLM and automation use
 
@@ -329,6 +355,8 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Temporal and Unit Interface Contract (CLI Contract 4)](docs/specs/temporal-unit-interface.md)
 - [Owner-Aware Governance Interface Contract (CLI Contract 5)](docs/specs/governance-interface.md)
 - [Project Actuals and Git History Contract (CLI Contract 6)](docs/specs/project-actuals.md)
+- [JSON Schema Artifact Contract](docs/specs/json-schema.md)
+- [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)
 - [Contract 4-to-5 migration](docs/process/cli-contract-5-migration.md)
 - [Issue #4 governance implementation acceptance](docs/process/governance-acceptance.md)

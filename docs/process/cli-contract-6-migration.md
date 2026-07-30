@@ -89,6 +89,26 @@ Consumers that cannot migrate atomically must remain pinned to
 `perttool@0.4.0` Contract 5. There is no `--cli-contract 5` alias on a Contract
 6 runtime.
 
+### 4.1 Machine-readable schemas after `0.5.0`
+
+Published `perttool@0.5.0` exposes result schema identities but predates the
+machine-readable artifacts. The current unreleased source closes that gap
+without changing existing result payloads:
+
+```sh
+perttool schema --format json
+perttool schema Perttool.NextResult.v5 --format json
+```
+
+The first command returns the complete catalog. The second returns the
+selected Draft 2020-12 artifact in `Perttool.SchemaResult.v1.schema`. A packed
+version containing this source also exposes
+`perttool/schemas/<schema-id>.schema.json` and the public
+`getJsonSchemaCatalog` and `getJsonSchema` APIs. Consumers MUST resolve
+relative references against the bundled `Perttool.Common.v1.schema.json` and
+MUST NOT require network access. See the
+[JSON Schema Artifact Contract](../specs/json-schema.md).
+
 ## 5. Operator migration
 
 Before enabling lifecycle writes:

@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.59
+- Document status: Active Stage 3 / Revision 2.60
 - Creation date: 2026-07-21
-- Update date: 2026-07-29
+- Update date: 2026-07-30
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -29,6 +29,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/release-0.3.0.pert` | Contract 4 version gate, accepted implementation input, preparation, authorized PUBLISH, and acceptance DAG | `.pert` document |
 | `plans/release-0.4.0.pert` | Contract 5 version gate, accepted governance input, preparation, separately authorized PUBLISH, and acceptance DAG | `.pert` document |
 | `plans/release-0.5.0.pert` | Contract 6 version gate, accepted actuals and English-baseline input, preparation, authorized PUBLISH, acceptance, and exact local-install boundary | `.pert` document |
+| `plans/release-0.5.1.pert` | Compatible Contract 6 patch self-review, preparation, authorized PUBLISH, and durable acceptance | `.pert` document |
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
@@ -1307,6 +1308,20 @@ The resolved executable reports `perttool 0.5.0`; 33-command Contract 6 help,
 Grammar 5 checking, and ProjectHistoryResult v1 reconstruction all pass. npm
 `latest` and Issue #4 remain unchanged.
 
+The user selected and authorized the complete compatible `0.5.1` patch
+release on 2026-07-30 after requesting a self-review. The independent
+`plans/release-0.5.1.pert` plan records five sequential tasks and 17p.
+`RELEASE_051_SELF_REVIEW` is complete at 4p after verifying that all 33
+existing command descriptors, 108 existing package exports, result
+identities, Grammar 5, CLI Contract 6, and representative normalized outputs
+remain compatible. The review corrected available real-Git result validation
+and package wildcard-export consumption coverage. Thirteen points remain;
+precedence and heuristic resource makespans are both 13p with no resource
+delay, observed velocity is `4p/1d`, both forecasts are `13/4d`, and complete
+NextResult v5 recommends only `RELEASE_051_PREPARATION`. The source still
+identifies `0.5.0`; no external write has occurred. npm `latest` promotion
+and Issue #5 closure remain separate decisions.
+
 Stage 1 allowed operations:
 
 - check
@@ -1367,6 +1382,8 @@ Do not add already-completed work merely to recreate history. Refer to Git for n
 - Completed independent Contract 5 `v0.4.0` release: `release-0.4.0.pert`
 - Accepted, advanced, and exactly locally installed independent Contract 6
   `v0.5.0` release: `release-0.5.0.pert`
+- Current compatible Contract 6 `v0.5.1` patch release:
+  `release-0.5.1.pert`
 - Independent scheduling/unit milestone roadmap: `scheduling-units.pert`
 - Completed detail only to SU-M1: `scheduling-units-m1.pert`
 - Completed and advanced target-only source/Core detail to SU-M2:
@@ -1676,5 +1693,5 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty-one current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty-two current plans
 - write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.

@@ -149,11 +149,63 @@ function contract6Descriptor(
 const base = TARGET_GOVERNANCE_COMMAND_REGISTRY.map(contract6Descriptor);
 const finish = base.find(({ operation }) => operation === "task.finish");
 const projectShow = base.find(({ operation }) => operation === "project.show");
-if (finish === undefined || projectShow === undefined) {
+const help = base.find(({ operation }) => operation === "help");
+if (finish === undefined || projectShow === undefined || help === undefined) {
   throw new Error("Contract 6 descriptor bases are unavailable");
 }
 const finishBase = finish;
 const projectShowBase = projectShow;
+const helpBase = help;
+
+const schemaDescriptor: ActualsCommandDescriptor = Object.freeze({
+  ...helpBase,
+  path: Object.freeze(["schema"] as const),
+  operation: "schema",
+  summary: "Lists and resolves bundled JSON Schema artifacts.",
+  operands: Object.freeze([
+    Object.freeze({
+      name: "schema-id",
+      valueType: "schema-id",
+      required: false,
+      position: 0,
+    }),
+  ]),
+  resultSchemas: Object.freeze([
+    "Perttool.SchemaResult.v1",
+    "Perttool.CliError.v1",
+  ]),
+  exitStatuses: Object.freeze([
+    Object.freeze({
+      code: 0 as const,
+      meaning: "Successful JSON Schema lookup.",
+    }),
+    Object.freeze({
+      code: 1 as const,
+      meaning: "Unknown JSON Schema identity.",
+    }),
+    Object.freeze({
+      code: 2 as const,
+      meaning: "CLI usage error.",
+    }),
+    Object.freeze({
+      code: 70 as const,
+      meaning: "Internal invariant or programmer error.",
+    }),
+  ]),
+  examples: Object.freeze([
+    Object.freeze({
+      id: "catalog",
+      invocation: "perttool schema --format json",
+      summary: "Return the complete bundled result-schema catalog.",
+    }),
+    Object.freeze({
+      id: "result",
+      invocation:
+        "perttool schema Perttool.NextResult.v5 --format json",
+      summary: "Return one bundled JSON Schema artifact.",
+    }),
+  ]),
+});
 
 function lifecycleDescriptor(
   action: "start" | "suspend" | "resume",
@@ -262,22 +314,27 @@ function readDescriptor(
 
 export const ACTUALS_COMMAND_REGISTRY:
   readonly ActualsCommandDescriptor[] = Object.freeze(
-    base.flatMap((descriptor) =>
-      descriptor.operation === "project.show"
-        ? [
-            descriptor,
-            readDescriptor("history"),
-            readDescriptor("observe-velocity"),
-          ]
-        : descriptor.operation === "task.finish"
-          ? [
-              lifecycleDescriptor("start"),
-              lifecycleDescriptor("suspend"),
-              lifecycleDescriptor("resume"),
-              descriptor,
-            ]
-          : [descriptor],
-    ),
+    base.flatMap((descriptor) => {
+      if (descriptor.operation === "help") {
+        return [descriptor, schemaDescriptor];
+      }
+      if (descriptor.operation === "project.show") {
+        return [
+          descriptor,
+          readDescriptor("history"),
+          readDescriptor("observe-velocity"),
+        ];
+      }
+      if (descriptor.operation === "task.finish") {
+        return [
+          lifecycleDescriptor("start"),
+          lifecycleDescriptor("suspend"),
+          lifecycleDescriptor("resume"),
+          descriptor,
+        ];
+      }
+      return [descriptor];
+    }),
   );
 
 const baseCatalog = getTargetGovernanceCommandDiscovery({

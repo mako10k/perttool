@@ -62,6 +62,21 @@ export {
   renderActualsGuideResult as renderGuideResult,
   serializeActualsGuideResult as serializeGuideResult,
 } from "./help/actuals-guide.js";
+export {
+  getJsonSchema,
+  getJsonSchemaCatalog,
+  getJsonSchemaResult,
+  jsonSchemaResultToJson,
+  JSON_SCHEMA_DIALECT,
+  JSON_SCHEMA_RESULT_SCHEMA_VERSION,
+  renderJsonSchemaResult,
+  serializeJsonSchemaResult,
+} from "./schema/registry.js";
+export type {
+  JsonSchemaCatalogEntry,
+  JsonSchemaDiagnostic,
+  JsonSchemaResult,
+} from "./schema/registry.js";
 export type {
   CommandExample,
   CommandHandler,

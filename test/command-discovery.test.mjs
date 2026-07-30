@@ -20,6 +20,7 @@ const cli = path.join(root, "dist", "cli.js");
 
 const expectedPaths = [
   "help",
+  "schema",
   "guide",
   "document check",
   "document format",
@@ -84,6 +85,7 @@ const knownSchemas = new Set([
   "Perttool.NextResult.v5",
   "Perttool.ProjectHistoryResult.v1",
   "Perttool.ProjectResult.v3",
+  "Perttool.SchemaResult.v1",
   "Perttool.UnitMigrationResult.v3",
   "Perttool.VelocityObservationResult.v1",
 ]);

@@ -4,6 +4,18 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Added
+
+- Added bundled Draft 2020-12 artifacts for every active Contract 6 command
+  result and public `Perttool.OverrideDecision.v1`, with a closed public
+  catalog, `perttool schema`, package-root lookup APIs, and isolated package
+  validation.
+
+### Fixed
+
+- Accepted the strict ISO `Z` UTC form emitted by Git 2.54 for `%cI` commit
+  metadata while retaining fixed-offset validation.
+
 ## [0.5.0] - 2026-07-29
 
 Contract 6 beta release. This version atomically publishes Grammar 5,

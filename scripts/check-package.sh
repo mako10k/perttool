@@ -68,7 +68,11 @@ for required in \
   package/dist/cli.js \
   package/dist/help/guide.js \
   package/dist/index.js \
-  package/dist/index.d.ts
+  package/dist/index.d.ts \
+  package/schemas/Perttool.Common.v1.schema.json \
+  package/schemas/Perttool.CheckResult.v3.schema.json \
+  package/schemas/Perttool.SchemaResult.v1.schema.json \
+  package/schemas/Perttool.OverrideDecision.v1.schema.json
 do
   if ! grep -Fqx "$required" "$archive_list"; then
     printf 'release tarball is missing %s\n' "$required" >&2
@@ -274,9 +278,16 @@ node --input-type=module - \
   "$repo_root/test/fixtures/rational-duration/contract3-rejection-v3.pert" <<'NODE'
 import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const api = await import(pathToFileURL(process.argv[2]).href);
+const require = createRequire(process.argv[2]);
+const exportedSchemaPath = require.resolve(
+  "perttool/schemas/Perttool.NextResult.v5.schema.json",
+);
+const exportedSchema = JSON.parse(readFileSync(exportedSchemaPath, "utf8"));
 for (const targetName of [
   "TARGET_GRAMMAR_2_CAPABILITY",
   "parseTargetDocument",
@@ -332,6 +343,9 @@ for (const publicName of [
   "planAdvance",
   "getProjectMetadata",
   "getGuide",
+  "getJsonSchema",
+  "getJsonSchemaCatalog",
+  "getJsonSchemaResult",
   "validateCommandInvocation",
 ]) {
   if (typeof api[publicName] !== "function") process.exit(1);
@@ -349,7 +363,8 @@ if (
   contract5Help.stderr !== "" ||
   contract5HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
   contract5HelpJson.cli_contract_version !== 6 ||
-  contract5HelpJson.commands?.length !== 33 ||
+  contract5HelpJson.commands?.length !== 34 ||
+  !serializedHelp.includes("Perttool.SchemaResult.v1") ||
   !serializedHelp.includes("project migrate-unit") ||
   !serializedHelp.includes('"not-before"') ||
   !serializedHelp.includes('"deadline"') ||
@@ -362,6 +377,36 @@ if (
   !serializedHelp.includes('"actor"') ||
   !serializedHelp.includes('"accepted-by-owner"') ||
   !serializedHelp.includes('"goal-owner"')
+) process.exit(1);
+
+const schemaCatalog = spawnSync(
+  process.argv[5],
+  ["schema", "--format=json"],
+  { encoding: "utf8" },
+);
+const schemaCatalogJson = JSON.parse(schemaCatalog.stdout);
+const selectedSchema = spawnSync(
+  process.argv[5],
+  ["schema", "Perttool.NextResult.v5", "--format=json"],
+  { encoding: "utf8" },
+);
+const selectedSchemaJson = JSON.parse(selectedSchema.stdout);
+if (
+  schemaCatalog.status !== 0 ||
+  schemaCatalog.stderr !== "" ||
+  schemaCatalogJson.schema_version !== "Perttool.SchemaResult.v1" ||
+  schemaCatalogJson.schemas?.length !== 18 ||
+  schemaCatalogJson.schema !== null ||
+  selectedSchema.status !== 0 ||
+  selectedSchema.stderr !== "" ||
+  selectedSchemaJson.schema?.$schema !==
+    "https://json-schema.org/draft/2020-12/schema" ||
+  selectedSchemaJson.schema?.$id !==
+    "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v5.schema.json" ||
+  api.getJsonSchemaCatalog().length !== 18 ||
+  api.getJsonSchema("Perttool.NextResult.v5")?.$id !==
+    selectedSchemaJson.schema.$id ||
+  exportedSchema.$id !== selectedSchemaJson.schema.$id
 ) process.exit(1);
 
 for (const [fixture, grammarVersion] of [

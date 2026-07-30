@@ -134,6 +134,11 @@ import type { LifecycleMutation } from "./actuals/lifecycle.js";
 import {
   TARGET_GRAMMAR_5_CAPABILITY,
 } from "./parser/document-parser.js";
+import {
+  getJsonSchemaResult,
+  renderJsonSchemaResult,
+  serializeJsonSchemaResult,
+} from "./schema/registry.js";
 import { TOOL_VERSION } from "./version.js";
 
 type OutputFormat = "text" | "json";
@@ -3398,6 +3403,26 @@ function runCommandHelp(args: readonly string[]): number {
   return result.ok ? 0 : 1;
 }
 
+function runJsonSchema(args: readonly string[]): number {
+  const parsed = parseCommandOptions("schema", args);
+  if (parsed.positionals.length > 1) {
+    throw new UsageError("schema accepts at most one <schema-id>");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const result = getJsonSchemaResult(parsed.positionals[0] ?? null);
+  if (format === "json") {
+    process.stdout.write(serializeJsonSchemaResult(result));
+  } else {
+    const rendered = renderJsonSchemaResult(result);
+    if (result.ok) {
+      process.stdout.write(rendered);
+    } else {
+      process.stderr.write(rendered);
+    }
+  }
+  return result.ok ? 0 : 1;
+}
+
 function runAgentHelp(args: readonly string[]): number {
   const parsed = parseCommandOptions("agent.help", args);
   if (parsed.positionals.length > 2) {
@@ -3456,6 +3481,8 @@ async function dispatchCommand(
   switch (descriptor.operation) {
     case "help":
       return runCommandHelp(args);
+    case "schema":
+      return runJsonSchema(args);
     case "guide":
       return runGuide(args);
     case "document.check":

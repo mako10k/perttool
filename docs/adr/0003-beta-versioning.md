@@ -10,7 +10,8 @@
   2026-07-27 (`v0.4.0` Contract 5 release target);
   2026-07-28 (`v0.4.0` beta publication, acceptance, and explicit `latest`
   promotion);
-  2026-07-29 (`v0.5.0` Grammar 5 and Contract 6 release target)
+  2026-07-29 (`v0.5.0` Grammar 5 and Contract 6 release target);
+  2026-07-30 (`v0.5.1` compatible Contract 6 patch release target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -48,6 +49,12 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   read-only project history and velocity observation, and the breaking CLI
   Contract 6 surface. `0.4.1` would understate the grammar, command, result
   schema, and lifecycle compatibility boundary.
+- Select suffix-free `0.5.1` for the backward-compatible Contract 6 patch
+  that adds read-only JSON Schema discovery and bundled result artifacts and
+  accepts Git 2.54's strict `Z` UTC commit-time form. Existing Grammar 5
+  meanings, command descriptors, result identities, payload meanings, and
+  package-root exports are retained; a new minor or Contract 7 would
+  overstate this additive and corrective boundary.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 
@@ -128,6 +135,15 @@ readiness, source preparation, candidate acceptance, Git/GitHub/npm `beta`
 publication, durable acceptance, and the requested local installation.
 That authorization does not include npm `latest` promotion or Issue #4
 closure.
+
+On 2026-07-30, after source acceptance of the Issue #5 JSON Schema artifacts
+and the Git 2.54 CI correction, the user requested a self-review and
+authorized the complete named `0.5.1` release if no blocking finding
+remained. The [`v0.5.1` release
+procedure](../process/0.5.1-release.md) sequences compatibility review,
+source preparation, candidate acceptance, Git/GitHub/npm `beta`
+publication, and durable acceptance. It does not authorize npm `latest`
+promotion or Issue #5 closure.
 
 ## Beta gate
 

@@ -86,7 +86,7 @@ test("the public package boundary omits every SU-M2 target capability", async ()
   }
 
   const manifest = JSON.parse(await repositoryFile("package.json"));
-  assert.deepEqual(Object.keys(manifest.exports), ["."]);
+  assert.deepEqual(Object.keys(manifest.exports), [".", "./schemas/*"]);
   assert.deepEqual(Object.keys(manifest.exports["."]), ["types", "import"]);
 });
 

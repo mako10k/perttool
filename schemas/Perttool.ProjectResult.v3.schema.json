@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.ProjectResult.v3.schema.json",
+  "title": "Perttool.ProjectResult.v3",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "grammar_version",
+    "project"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.ProjectResult.v3"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "project.show"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "grammar_version": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 5
+    },
+    "project": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "version",
+            "title",
+            "description",
+            "as_of",
+            "duration_unit",
+            "velocity",
+            "finish",
+            "finish_deadline",
+            "governance",
+            "critical_epsilon",
+            "target_duration"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "as_of": {
+              "oneOf": [
+                {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/calendarValue"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "duration_unit": {
+              "enum": [
+                "day",
+                "hour",
+                "point"
+              ]
+            },
+            "velocity": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "finish": {
+              "type": "string"
+            },
+            "finish_deadline": {
+              "oneOf": [
+                {
+                  "$ref": "Perttool.Common.v1.schema.json#/$defs/calendarValue"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "governance": {
+              "type": "object"
+            },
+            "critical_epsilon": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "target_duration": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

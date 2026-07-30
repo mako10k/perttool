@@ -18,6 +18,7 @@ const cli = path.join(root, "dist", "cli.js");
 
 const expectedPaths = [
   "help",
+  "schema",
   "guide",
   "document check",
   "document format",

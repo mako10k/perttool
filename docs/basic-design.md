@@ -166,6 +166,9 @@ perttool/
     check-docs.sh
     check-npm-link.sh
     check-self-use.sh
+  schemas/
+    Perttool.Common.v1.schema.json
+    Perttool.<ResultType>.vN.schema.json
   README.md
   package.json
   tsconfig.json
@@ -225,6 +228,8 @@ perttool/
     semantic/
       target-validator.ts
       validator.ts
+    schema/
+      registry.ts
     cli.ts
     index.ts
     version.ts
@@ -1318,6 +1323,7 @@ delta. It is not added to active dispatch until its atomic cutover gate.
 
 ```text
 perttool help [resource [action]] [--format text|json]
+perttool schema [schema-id] [--format text|json]
 perttool guide [topic] [subtopic] [--level index|quick|detail]
 perttool document check <file>
 perttool document format <file>
@@ -1466,6 +1472,18 @@ The registry and Contract 3 projections were built before public cutover while
 Contract 2 remained advertised. The cutover then changed all breaking
 resource/action and JSON operation mappings in one logical change.
 
+### 11.4 Contract 6 schema discovery
+
+The active Contract 6 registry adds one read-only `schema` descriptor. The
+catalog in `src/schema/registry.ts` maps every advertised result identity
+and the supported public library-only override result to one bundled Draft
+2020-12 artifact under `schemas/`. It renders
+`Perttool.SchemaResult.v1`, resolves artifacts locally and lazily, and does
+not read a project or use the network. The
+[JSON Schema Artifact Contract](specs/json-schema.md) is authoritative for
+the inventory, `$id` convention, package layout, nested records, and
+compatibility rules.
+
 ## 12. Post-MVP adapter boundaries
 
 The LSP server, VSIX/editor adapter, and MCP server are outside the MVP scope. Do not include LSP transport, a VS Code extension, an MCP server, or SDKs in the MVP repository structure, package dependencies, or acceptance tests.
@@ -1578,6 +1596,17 @@ Active Contract 6 schema changes:
 - `Perttool.UnitMigrationResult.v3`
 - `Perttool.ProjectHistoryResult.v1`
 - `Perttool.VelocityObservationResult.v1`
+- `Perttool.SchemaResult.v1`
+
+Machine-readable Contract 6 artifacts:
+
+- use JSON Schema Draft 2020-12;
+- live at `schemas/<schema-id>.schema.json`;
+- use `Perttool.Common.v1.schema.json` for bundled relative references;
+- are discoverable through `perttool schema` and the public schema catalog;
+- include all 17 command-result identities and public library-only
+  `Perttool.OverrideDecision.v1`; and
+- reject unknown root fields without changing existing result semantics.
 
 Rules:
 
@@ -2122,6 +2151,37 @@ Exit:
 - record durable release identity and restart evidence; and
 - install and verify exact `perttool@0.5.0` locally only after release
   acceptance.
+
+### Post-MVP Slice 4K: Compatible Contract 6 `v0.5.1` beta patch
+
+The [`v0.5.1` release procedure](process/0.5.1-release.md) publishes the
+accepted JSON Schema source and Git 2.54 CI correction without changing the
+Grammar 5 or CLI Contract 6 compatibility boundary. The independent
+[`release-0.5.1.pert`](../plans/release-0.5.1.pert) plan sequences:
+
+1. a compatibility and complete-diff self-review;
+2. version-bearing source and release-record preparation;
+3. one clean candidate commit and one immutable tarball;
+4. the authorized Git, GitHub prerelease, and npm `beta` publication; and
+5. durable public-channel and installed-package acceptance.
+
+The additive `schema` dispatcher calls the same pure registry and artifact
+resolver exported by the package root. Bundled artifacts are package data;
+they do not add a grammar version, replace typed TypeScript APIs, or define
+MCP transport schemas. The Git correction widens only the accepted strict
+ISO representation for `%cI`; it does not relax object-format, parent,
+first-parent, source-binding, or read-only history checks.
+
+Exit:
+
+- satisfy Requirements 21.7 from one clean release commit and immutable
+  tarball;
+- show no removal or semantic change to the pre-existing Contract 6 command,
+  result, and export surfaces;
+- pass strict schema validation and Git 2.54 regression coverage;
+- publish identical bytes to a GitHub prerelease and npm `beta`;
+- preserve `latest=0.4.0`; and
+- record durable acceptance without closing Issue #5.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

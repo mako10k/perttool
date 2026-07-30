@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.ProjectHistoryResult.v1.schema.json",
+  "title": "Perttool.ProjectHistoryResult.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "grammar_version",
+    "history",
+    "events",
+    "git_recorded_transitions",
+    "tasks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.ProjectHistoryResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "project.history"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "grammar_version": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "history": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "status",
+        "traversal",
+        "repository_snapshot_id",
+        "repository_relative_path",
+        "requested_revision",
+        "resolved_revision",
+        "source_digest",
+        "inspected_commit_ids",
+        "unavailable_causes"
+      ],
+      "properties": {
+        "id": {
+          "const": "perttool.project-history"
+        },
+        "version": {
+          "const": 1
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "unavailable"
+          ]
+        },
+        "traversal": {
+          "const": "first_parent"
+        },
+        "repository_snapshot_id": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "repository_relative_path": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "requested_revision": {
+          "type": "string"
+        },
+        "resolved_revision": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+        },
+        "source_digest": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+        },
+        "inspected_commit_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "unavailable_causes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "git_recorded_transitions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

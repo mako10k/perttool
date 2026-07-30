@@ -1,0 +1,508 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.Common.v1.schema.json",
+  "title": "perttool shared JSON definitions",
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "nullableDigest": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableString": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "position": {
+      "type": "object",
+      "required": [
+        "offset",
+        "line",
+        "column"
+      ],
+      "properties": {
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "span": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/position"
+        },
+        "end": {
+          "$ref": "#/$defs/position"
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "entity_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "span": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/span"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "help_topic": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "guide_topic": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "expected_syntax": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "fixes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "data": {
+          "type": "object"
+        },
+        "provider_id": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "surface_id": {
+          "$ref": "#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    },
+    "edit": {
+      "type": "object",
+      "required": [
+        "start_offset",
+        "end_offset",
+        "replacement"
+      ],
+      "properties": {
+        "start_offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end_offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "replacement": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "write": {
+      "type": "object",
+      "required": [
+        "mode",
+        "target",
+        "written"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "preview",
+            "in_place",
+            "out"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "written": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rational": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "quantity": {
+      "type": "object",
+      "required": [
+        "numerator",
+        "denominator",
+        "unit"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "unit": {
+          "enum": [
+            "day",
+            "hour",
+            "point",
+            "person_hour"
+          ]
+        },
+        "display": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "calendarValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "source_text",
+            "year",
+            "month",
+            "day"
+          ],
+          "properties": {
+            "kind": {
+              "const": "date"
+            },
+            "source_text": {
+              "type": "string"
+            },
+            "year": {
+              "type": "integer"
+            },
+            "month": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            },
+            "day": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 31
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "source_text",
+            "year",
+            "month",
+            "day",
+            "hour",
+            "minute",
+            "second",
+            "offset_minutes"
+          ],
+          "properties": {
+            "kind": {
+              "const": "date_time"
+            },
+            "source_text": {
+              "type": "string"
+            },
+            "year": {
+              "type": "integer"
+            },
+            "month": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            },
+            "day": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 31
+            },
+            "hour": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 23
+            },
+            "minute": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 59
+            },
+            "second": {
+              "$ref": "#/$defs/rational"
+            },
+            "offset_minutes": {
+              "type": "integer",
+              "minimum": -1439,
+              "maximum": 1439
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "workEvent": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "id",
+        "task_id",
+        "kind",
+        "occurred_at",
+        "planned_value",
+        "active_time",
+        "effort",
+        "reason"
+      ],
+      "properties": {
+        "model_version": {
+          "const": 1
+        },
+        "id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "start",
+            "suspend",
+            "resume",
+            "finish"
+          ]
+        },
+        "occurred_at": {
+          "$ref": "#/$defs/calendarValue"
+        },
+        "planned_value": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "active_time": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "effort": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "$ref": "#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "governanceDecision": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "governance_interface_version",
+        "governance_source_contract_version",
+        "governance_semantics_version",
+        "source_digest",
+        "intent",
+        "applicable",
+        "actor",
+        "accepted_by_owner",
+        "affected_scopes",
+        "required_owner_confirmations",
+        "owner_confirmation_required",
+        "write_authorized",
+        "scopes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "Perttool.GovernanceDecision.v1"
+        },
+        "governance_interface_version": {
+          "const": 1
+        },
+        "governance_source_contract_version": {
+          "const": 1
+        },
+        "governance_semantics_version": {
+          "const": 1
+        },
+        "source_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "intent": {
+          "enum": [
+            "preview",
+            "persist"
+          ]
+        },
+        "applicable": {
+          "type": "boolean"
+        },
+        "actor": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "accepted_by_owner": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "affected_scopes": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "required_owner_confirmations": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "owner_confirmation_required": {
+          "type": "boolean"
+        },
+        "write_authorized": {
+          "type": "boolean"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "capacityOverrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "resource_id",
+          "capacity"
+        ],
+        "properties": {
+          "resource_id": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "lossReport": {
+      "type": "object",
+      "required": [
+        "lossless",
+        "records"
+      ],
+      "properties": {
+        "lossless": {
+          "type": "boolean"
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -501,16 +501,19 @@ workstream.
 
 Priority: P0
 
-Status: Open in [GitHub Issue #5](https://github.com/mako10k/perttool/issues/5)
-(not scheduled)
+Status: Complete in source (2026-07-30); release and Issue closure not
+authorized
 
 Close the gap between the Must-level machine-readable interface requirement
-and the current registry's schema identifiers. The selected design must
-publish resolvable JSON Schema artifacts for every active Contract 6 result,
-keep them synchronized with TypeScript and CLI JSON projections, bundle them
-in the npm package, and validate the isolated installed workflow. Issue #5 is
-the authoritative finding and acceptance inventory; this entry only maps it
-into local work state.
+and the current registry's schema identifiers. The
+[JSON Schema Artifact Contract](specs/json-schema.md) selects Draft 2020-12,
+one closed catalog for every active Contract 6 command result plus the public
+OverrideDecision result, stable package-relative paths, local-only
+resolution, and an additive `schema` discovery command. Repository tests
+validate representative CLI/Core results and isolated package access.
+The [source acceptance record](process/json-schema-acceptance.md) retains the
+complete trace. Published `0.5.0` remains unchanged; Issue closure and a
+release are separate external decisions.
 
 ## Hierarchical planning and multi-plan composition
 
@@ -974,7 +977,7 @@ ledger semantics to an in-progress Issue #4 implementation slice.
 ## Independent post-beta work
 
 `MULTI-001`, `LSP-001`, `VSIX-001`, `MCP-001`, `MIG-08`, Git integration,
-`GOV-AUTH-001`, `ADV-001`, `SCHEMA-001`, and `META-001` remain independent
+`GOV-AUTH-001`, `ADV-001`, and `META-001` remain independent
 workstreams. `ADV-001` is the refined, unscheduled read-only Git guard for
 destructive advance writes. These items are not implicit prerequisites for an
 accepted workstream unless a later requirements decision explicitly composes
