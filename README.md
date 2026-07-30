@@ -15,7 +15,8 @@ remains on the separately accepted `0.5.1`. Beta releases may contain
 breaking CLI or schema changes. Version `0.5.2` requires Node.js 22 or later.
 The first machine-schema Contract 6 artifact remains available by pinning
 `0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
-`0.4.0`, `0.3.0`, and `0.2.0`, respectively.
+`0.4.0`, `0.3.0`, and `0.2.0`, respectively. npm has no maintained `alpha`
+dist-tag; historical `0.1.0-alpha.2` remains available by exact pin.
 
 ## Run without installing
 
@@ -55,7 +56,9 @@ npm `beta` resolves to Contract 6 `0.5.2`; `latest` remains on accepted
 Contract 6 `0.5.1`. The pre-schema Contract 6 artifact remains available as
 `perttool@0.5.0`; Contract 5,
 Contract 4, and Contract 3 remain available as exact pins
-`perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`.
+`perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`. The retired alpha
+preview remains installable only as the exact pin
+`perttool@0.1.0-alpha.2`.
 
 ## Plan files
 

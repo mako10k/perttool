@@ -13,7 +13,7 @@
   2026-07-29 (`v0.5.0` Grammar 5 and Contract 6 release target);
   2026-07-30 (`v0.5.1` compatible Contract 6 patch release target and
   publication; `v0.5.2` compatible JSON Schema patch release target and
-  publication)
+  publication; retirement of the obsolete npm `alpha` dist-tag)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -34,6 +34,11 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
 - Include the read-only AI Agent Guidance Registry v1 from [Issue #2](https://github.com/mako10k/perttool/issues/2) in beta scope.
 - Do not include the backlog hierarchy and multi-plan composition from Issue #3, the LSP server, VSIX, MCP server, or guidance audit, scaffolding, and enforcement in the beta entry gate.
 - Publish to npm under the `beta` dist-tag without changing the existing `latest` tag in that publication operation. After release acceptance, only a separately authorized dist-tag operation explicitly approved by a human may promote the accepted beta to `latest`.
+- Maintain only the npm `beta` and `latest` distribution channels. Do not
+  publish through or retain an `alpha` dist-tag. Historical alpha versions
+  remain installable by exact version pin; reintroducing an alpha channel
+  requires a new release-policy decision and separately authorized dist-tag
+  creation.
 - Publish a suffix-free `0.x.x` GitHub Release as a prerelease to match product maturity.
 - Select suffix-free `0.2.0` for the first package that publishes the accepted
   breaking CLI Contract 3 surface. `0.1.1` would understate the compatibility
@@ -182,6 +187,13 @@ artifact copies, exact `0.5.1` compatibility, and both public-package
 workflows. npm `latest` promotion and Issue #5 closure remain separate
 decisions.
 
+Later on 2026-07-30, the user retired the obsolete npm `alpha` distribution
+channel because it was not part of the maintained beta-to-`latest` flow and
+had remained pinned to `0.1.0-alpha.2`. The separately authorized operation
+removed only the `alpha` dist-tag. It did not unpublish the historical
+version, move `beta=0.5.2` or `latest=0.5.1`, publish a package, alter a
+GitHub Release, promote `latest`, or close Issue #5.
+
 ## Beta gate
 
 1. Accept Issue #2's normative contract, five-provider baseline, Core, text and JSON projections, CLI, package, and security boundaries.
@@ -193,7 +205,9 @@ decisions.
 ## Consequences
 
 - Stable compatibility cannot be inferred from `0.x.x` alone. Users must review the CHANGELOG and schema versions.
-- Replace the publication script's hard-coded `alpha` with parameterized channel validation in the beta release task.
+- The publication script accepts only the maintained `beta` channel.
 - Do not change the current `0.1.0-alpha.2` package; update it to `0.1.0` only in the release commit after Issue #2 acceptance.
+- Keep historical alpha package versions available by exact pin without an
+  active alpha distribution tag.
 - Control the beta transition through Issue #2 and the release gate in the project model, without waiting for external feedback.
 - An unqualified npm install follows the explicitly promoted `latest` tag. Product maturity remains beta until a separate `1.0.0` stable decision.

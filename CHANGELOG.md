@@ -4,6 +4,12 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Changed
+
+- Retired the obsolete npm `alpha` distribution channel and restricted the
+  maintainer publication guard to `beta`. Historical alpha packages remain
+  available by exact version pin.
+
 ## [0.5.2] - 2026-07-30
 
 Compatible CLI Contract 6 and Grammar 5 beta patch. This version completes

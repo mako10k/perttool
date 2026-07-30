@@ -75,24 +75,14 @@ if [[ "$publish_access" != "public" || "$publish_registry" != "https://registry.
   printf 'publishConfig must pin public access and the npmjs registry\n' >&2
   exit 1
 fi
-case "$publish_tag" in
-  alpha)
-    if [[ "$package_version" != *-* ]]; then
-      printf 'alpha publication requires a prerelease version: %s\n' "$package_version" >&2
-      exit 1
-    fi
-    ;;
-  beta)
-    if [[ ! "$package_version" =~ ^0\.[0-9]+\.[0-9]+$ ]]; then
-      printf 'beta publication requires a suffix-free 0.x.x version: %s\n' "$package_version" >&2
-      exit 1
-    fi
-    ;;
-  *)
-    printf 'unsupported publishConfig tag: %s\n' "$publish_tag" >&2
-    exit 1
-    ;;
-esac
+if [[ "$publish_tag" != "beta" ]]; then
+  printf 'unsupported publishConfig tag: %s (only beta is maintained)\n' "$publish_tag" >&2
+  exit 1
+fi
+if [[ ! "$package_version" =~ ^0\.[0-9]+\.[0-9]+$ ]]; then
+  printf 'beta publication requires a suffix-free 0.x.x version: %s\n' "$package_version" >&2
+  exit 1
+fi
 
 publish_output="$inspection_root/npm-publish-output.txt"
 if [[ "$mode" == "--dry-run" ]]; then

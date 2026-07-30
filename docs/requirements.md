@@ -1507,6 +1507,11 @@ The first beta includes the read-only AI Agent Guidance Registry v1 from [Issue 
 7. Fix provider/source drift, aliases, unsupported/unknown states, byte determinism for identical input, and the package-installed CLI with automated tests.
 8. For beta publication, use the same tarball for package checks, GitHub prerelease, the npm `beta` dist-tag, and isolated registry installation; do not change existing `latest` in that publish operation.
 9. Treat promotion of `latest` after release acceptance as an independent dist-tag operation for which the user explicitly selects and authorizes the target version, not as a publish retry or stable declaration.
+10. Maintain only the npm `beta` and `latest` distribution channels. Do not
+    maintain or publish through an `alpha` dist-tag; historical alpha package
+    versions remain available only by explicit version pin. Reintroducing an
+    alpha channel requires a new release-policy decision and separately
+    authorized dist-tag creation.
 
 The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is authoritative for provider/surface/guidance/risk taxonomy; structured evidence for support status; offline profiles; Core/text/JSON; diagnostics; staleness; project-guidance composition; and read-only migration boundaries. Fix conflict cases in the [normative examples](examples/agent-guidance.md).
 
@@ -1914,6 +1919,8 @@ History Contract is Normative 1.0, Grammar 5 and CLI Contract 6 are one atomic
 boundary, and every PACT case has a machine-readable fixture. Grammar 1
 through 4 semantics remain compatible; npm `beta=0.5.2` and `latest=0.5.1`
 provide Contract 6, while Contract 5 remains available by pinning `0.4.0`.
+The obsolete npm `alpha` dist-tag is retired; historical
+`0.1.0-alpha.2` remains available by exact pin.
 
 Resolved design decisions:
 

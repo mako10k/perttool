@@ -110,7 +110,7 @@ Then use `git diff -- <target-file>` to confirm the following.
 5. Perform remote writes through `secdat exec`
 6. After pushing, confirm the local branch and remote tracking branch
 
-npm publication is outside normal close out. Follow the alpha or beta release gate, verify the common tarball, remote commit/tag, and unpublished version, and inject `NPM_TOKEN` through `secdat` only after explicit user permission. Beta publication uses `beta` without moving `latest`. A later `latest` promotion is a separate, explicitly authorized dist-tag mutation. Never retry an ambiguous registry mutation before checking durable state.
+npm publication is outside normal close out. Follow the beta release gate, verify the common tarball, remote commit/tag, and unpublished version, and inject `NPM_TOKEN` through `secdat` only after explicit user permission. Beta publication uses `beta` without moving `latest`. A later `latest` promotion is a separate, explicitly authorized dist-tag mutation. The obsolete `alpha` channel is retired; historical alpha versions remain available only by exact pin. Never retry an ambiguous registry mutation before checking durable state.
 
 ## 5. Next-task selection and self-use
 
