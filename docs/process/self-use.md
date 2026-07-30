@@ -1428,10 +1428,14 @@ The initial 15p plan uses the preceding release's observed `15p/1d`
 velocity. Self-review, source preparation, and candidate acceptance are
 complete after the clean repository, external preflight, protected-route, and
 retained 491-file package gates passed. The candidate is 521641 bytes with
-SHA-256 `d3123ef0...3c01`. Release commit, remote main, peeled tag, Node.js
-22/24 CI, GitHub prerelease, npm `beta=0.5.4`, and the common tarball agree.
-Only `RELEASE_054_ACCEPTANCE` is recommended and startable; `latest=0.5.1`
-and npm `latest` promotion remains outside the named release scope.
+SHA-256 `d3123ef0...3c01`. At publication, release commit, remote main, peeled
+tag, Node.js 22/24 CI, GitHub prerelease, npm `beta=0.5.4`, and the common
+tarball agreed.
+Independent public installation and PTGOV-103 default/strict verification
+accepted all five tasks and 15p. Both makespans are zero, and complete
+NextResult v5 has no recommendation. Completed declarations remain until a
+separately confirmed `dag advance`; `latest=0.5.1` and npm `latest` promotion
+remains outside the named release scope.
 
 Stage 1 allowed operations:
 

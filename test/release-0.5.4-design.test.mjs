@@ -23,6 +23,7 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
     design,
     procedure,
     publish,
+    acceptance,
     review,
     authority,
     contract,
@@ -37,6 +38,7 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.5.4-release.md"),
     repositoryText("docs/process/0.5.4-publish.md"),
+    repositoryText("docs/process/0.5.4-release-acceptance.md"),
     repositoryText("docs/process/0.5.4-self-review.md"),
     repositoryText("src/governance/authority.ts"),
     repositoryText("docs/specs/governance-interface.md"),
@@ -64,6 +66,10 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
   assert.match(publish, /30536185188/);
   assert.match(publish, /The publication was not retried/);
   assert.match(publish, /unchanged `latest=0\.5\.1`/);
+  assert.match(procedure, /0\.5\.4-release-acceptance\.md/);
+  assert.match(acceptance, /58 files with\s+1390 insertions and 158 deletions/);
+  assert.match(acceptance, /write\.written\s+false/);
+  assert.match(acceptance, /NextResult v5 has no ready, recommended, or startable task/);
   assert.match(review, /18 ordinary-maintenance/);
   assert.match(review, /does not claim to\s+detect the 10 governed/);
   assert.match(authority, /code: "PTGOV-103"/);
