@@ -141,7 +141,7 @@ test("only actual scope-capable commands receive the governance assertion group"
     assert.equal(accepted.sharedGroup, "governance");
     assert.equal(
       accepted.description,
-      "Caller assertion that the named effective owner was consulted.",
+      "Single-candidate caller assertion that the named effective owner was consulted for the previewed affected scopes; do not reuse it across commands.",
     );
   }
   for (const operation of [
@@ -206,7 +206,7 @@ test("target project options and help expose the accepted caller-assertion meani
   const text = renderTargetGovernanceCommandHelpResult(help);
   assert.match(
     text,
-    /description=Caller assertion that the named effective owner was consulted\./,
+    /description=Single-candidate caller assertion that the named effective owner was consulted for the previewed affected scopes; do not reuse it across commands\./,
   );
   assert.doesNotMatch(
     text,
@@ -219,7 +219,7 @@ test("target project options and help expose the accepted caller-assertion meani
   );
   assert.equal(
     accepted.description,
-    "Caller assertion that the named effective owner was consulted.",
+    "Single-candidate caller assertion that the named effective owner was consulted for the previewed affected scopes; do not reuse it across commands.",
   );
   assert.equal(
     serializeTargetGovernanceCommandHelpResult(help),

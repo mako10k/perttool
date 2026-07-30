@@ -312,9 +312,10 @@ Contract 5 adds one shared `governance` option group:
 | `--accepted-by-owner` | `principal-id` | yes | empty set | `accepted_by_owner` |
 
 The spelling `--accepted-by-owner` is the caller assertion requested by
-Issue #4. Help MUST describe it as an assertion that the named owner was
-consulted. It MUST NOT describe it as authenticated, verified, signed, or
-recorded in a durable approval ledger.
+Issue #4. Help MUST describe it as a single-candidate assertion that the named
+owner was consulted for the previewed affected scopes and warn that it is not
+reusable across commands. It MUST NOT describe it as authenticated, verified,
+signed, or recorded in a durable approval ledger.
 
 The option group is present on every current direct command whose actual
 candidate can affect a governance scope:
@@ -663,6 +664,12 @@ for an invalid governance option targets the exact affected command help.
 - persistent governed changes require an actor;
 - owners and delegates are direct caller-asserted authority;
 - another actor uses repeatable `--accepted-by-owner`;
+- the first preview for each candidate omits owner confirmation;
+- a not-applicable candidate is persisted without owner confirmation;
+- before a non-direct governed write, the caller explicitly identifies the
+  operation, affected scopes, required owners, digests, and candidate summary;
+- a loose confirmation belongs only to that candidate and is not copied to a
+  later command or `dag advance`;
 - the pre-change document determines owners and delegates;
 - one atomic batch must satisfy every affected scope;
 - assertions are not authenticated or durable audit records; and

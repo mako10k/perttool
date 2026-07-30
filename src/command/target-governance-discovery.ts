@@ -109,7 +109,7 @@ const governanceAssertionOptions = Object.freeze([
     repeatable: true,
     sharedGroup: "governance",
     description:
-      "Caller assertion that the named effective owner was consulted.",
+      "Single-candidate caller assertion that the named effective owner was consulted for the previewed affected scopes; do not reuse it across commands.",
   }),
 ]);
 
@@ -219,7 +219,7 @@ function targetExamples(
       invocation:
         "perttool project set plan.pert --finish NEW_FINISH --actor codex --accepted-by-owner user --write",
       summary:
-        "Persist with a caller assertion that the effective owner was consulted.",
+        "Persist the unchanged previewed goal candidate after its effective owner and scope were explicitly confirmed.",
     }),
   ]);
 }

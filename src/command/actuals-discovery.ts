@@ -84,7 +84,7 @@ const governanceOptions = Object.freeze([
     repeatable: true,
     sharedGroup: "governance",
     description:
-      "Caller assertion that the named effective owner was consulted.",
+      "Single-candidate caller assertion that the named effective owner was consulted for the previewed affected scopes; do not reuse it across commands.",
   }),
 ]);
 

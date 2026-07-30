@@ -109,7 +109,11 @@ semantic set, not the final CLI or JSON shape. Duplicate and syntactically
 invalid assertions are request/interface errors and do not create authority.
 
 An owner-confirmation assertion records that the caller says the named owner was
-consulted. It is not proof of consultation.
+consulted for the affected scopes of the current final candidate. It is not
+proof of consultation, workstream authority, session authority, or authority
+for another candidate. The loose interface does not encode this conversational
+scope; bundled caller guidance therefore starts from an assertion-free preview
+and prohibits carrying an assertion to a later command.
 
 ### 3.4 Authority scopes
 
@@ -238,6 +242,12 @@ not require authority to be established.
   authority decision of not applicable.
 
 A preview MUST NOT invent an actor, owner confirmation, or approval event.
+The normal loose caller workflow starts each candidate without an accepted
+owner assertion. A not-applicable candidate is persisted without one. If a
+non-direct governed write needs confirmation, the caller first presents the
+operation, affected scopes, required owners, source and candidate digests, and
+the concrete structural or goal-change summary. This workflow requirement does
+not change the pure version 1 evaluator.
 
 ### 5.3 Persistent write
 
@@ -418,4 +428,7 @@ Implementations and later normative examples MUST establish at least:
 11. stale source bytes invalidate the complete decision before persistence;
 12. direct editing receives no enforcement claim; and
 13. the same original digest, final candidate, mode, actor, accepted-owner set,
-    and semantics version produce the same ordered decision.
+    and semantics version produce the same ordered decision; and
+14. bundled caller guidance starts each candidate without a loose owner
+    assertion, identifies the affected scopes before confirmation, and does
+    not reuse that confirmation for another candidate.

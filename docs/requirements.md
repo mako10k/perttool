@@ -267,7 +267,7 @@ provide the following.
 | Goal Owner | The principal whose authority governs changes to `project.finish` and goal-governance metadata |
 | DAG Owner | The principal whose authority governs changes to task, gate, and milestone structure and DAG-governance metadata |
 | Delegate | A principal that an owner has declared may perform governed writes within one authority scope |
-| Owner Confirmation | A caller assertion that the named effective owner was consulted; it is neither authentication nor proof of approval |
+| Owner Confirmation | A single-candidate caller assertion that the named effective owner was consulted for the explicitly identified affected scopes; it is neither authentication nor proof of approval |
 | Point | The project-specific unit `p` that AI or people use to estimate relative work size; it is not time itself |
 | Velocity | A project-wide ratio expressing the number of Points that can be completed in a period; for example, `20p/10d` |
 | Velocity Forecast | A forecast that converts Points and days/hours using Velocity, distinct from declared PERT values |
@@ -1104,6 +1104,13 @@ Must:
   pre-change owner for every affected scope. A missing or mismatched assertion
   fails with a stable machine-readable governance diagnostic that identifies
   the required scope and owner without claiming authentication.
+- Bundled AI and editing guidance must begin with an owner-assertion-free
+  preview, omit owner assertions for a not-applicable candidate, explicitly
+  identify the operation and every affected scope before using a loose owner
+  confirmation, and prohibit carrying that confirmation to another candidate
+  or later `dag advance`. A general instruction to perform a workstream or
+  release must not silently become confirmation for each later governed
+  mutation.
 - Owner and delegate changes use only the pre-change owner and delegate state
   for authorization. An atomic request cannot self-authorize through values it
   introduces.

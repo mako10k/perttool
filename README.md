@@ -189,6 +189,15 @@ pre-change document determines owners and delegates, and an atomic batch must
 satisfy every affected scope. These assertions are not authentication,
 verified identity, signatures, or a durable approval audit.
 
+Treat each `--accepted-by-owner` value as a single-candidate, scope-bound
+caller assertion rather than workstream or session authority. First preview
+without it. Omit it when the result reports `governance.applicable=false`.
+Before a non-direct governed write, identify the operation, affected scopes,
+required owners, source and candidate digests, and candidate summary; never
+copy the assertion to later maintenance, a changed candidate, or the next
+`dag advance`. See the
+[loose assertion scope experiment](docs/process/governance-assertion-scope-experiment.md).
+
 Contract 5 previews may still omit actor and owner confirmation. A Contract 4
 runtime fails closed on Grammar 4 and governance options; there is no
 `--cli-contract 4` switch, compatibility alias, or environment toggle. Pin

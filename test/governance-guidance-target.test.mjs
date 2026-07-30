@@ -38,12 +38,16 @@ test("target Contract 5 editing Guide states the complete governance boundary", 
 
   const text = renderTargetGovernanceGuideResult(result);
   for (const expected of [
-    "previews may omit actor and owner confirmation",
+    "assertion-free preview",
     "effective owner or delegate has direct authority",
     "repeatable --accepted-by-owner caller assertions",
-    "every affected effective owner",
+    "explicitly confirmed affected scopes",
+    "never reuse them across commands",
     "digest-bound pre-change document",
     "atomic batch must satisfy every affected scope",
+    "source and candidate digests",
+    "next dag advance",
+    "user-response boundary",
     "not authentication, verified identity, signatures, or a durable approval audit",
     "guidance, not technical prevention",
     "bypass the tool-mediated authority check",
@@ -75,7 +79,7 @@ test("quick target guidance keeps the preview and persistence distinction", () =
   );
   assert.match(
     result.sections.at(-1).body,
-    /Contract 5 previews may omit actor and owner confirmation/,
+    /assertion-free preview/,
   );
   assert.doesNotMatch(
     renderTargetGovernanceGuideResult(result),

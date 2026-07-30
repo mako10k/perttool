@@ -2,7 +2,7 @@
 
 - Document status: Active 0.6
 - Created: 2026-07-21
-- Updated: 2026-07-29
+- Updated: 2026-07-30
 - Shared instructions: [../../AGENTS.md](../../AGENTS.md)
 - Self-use plan: [self-use.md](self-use.md)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
@@ -140,6 +140,18 @@ delegates have direct authority; another actor must provide repeatable
 Always decide authority from the digest-bound pre-change document, and require
 one atomic batch to satisfy every affected scope. These assertions are not
 authentication, verified identity, signatures, or durable audit records.
+
+Treat `--accepted-by-owner` as a single-candidate, scope-bound caller
+assertion, never as workstream or session authority. Start each candidate with
+an assertion-free preview. If governance is not applicable, persist without
+the assertion. If a non-direct governed write needs confirmation, present the
+operation, target, affected scopes, required owners, source and candidate
+digests, and candidate summary; use the assertion only when the current user
+instruction explicitly covers that mutation. Do not copy it to later
+maintenance, a changed candidate, or the next `dag advance`, and do not chain
+preview and confirmation-dependent write without a user-response boundary.
+The complete experimental cases are in the
+[loose assertion scope experiment](governance-assertion-scope-experiment.md).
 
 Generated projects state the direct-edit boundary exactly:
 

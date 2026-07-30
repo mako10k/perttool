@@ -9,6 +9,9 @@ This project records its notable changes here. The format is based on [Keep a Ch
 - Retired the obsolete npm `alpha` distribution channel and restricted the
   maintainer publication guard to `beta`. Historical alpha packages remain
   available by exact version pin.
+- Tightened loose owner-confirmation guidance so callers begin with an
+  assertion-free preview, explicitly identify affected scopes, and never
+  carry `--accepted-by-owner` into ordinary maintenance or a later candidate.
 
 ## [0.5.2] - 2026-07-30
 

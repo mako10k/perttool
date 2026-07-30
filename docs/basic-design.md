@@ -2042,6 +2042,15 @@ The accepted evidence is recorded in
 The published `0.3.0` artifact remains Contract 4; release version selection
 and publication were not part of this activation.
 
+The later
+[loose governance assertion scope experiment](process/governance-assertion-scope-experiment.md)
+addresses a dogfooding failure in caller behavior without revising the version
+1 evaluator. It starts each candidate with an assertion-free preview, requires
+an explicit operation-and-scope context before a non-direct governed write,
+omits loose assertions from ordinary maintenance, and discards confirmation
+after one candidate. A machine-readable accepted-scope field or a new result
+identity remains an unselected follow-up decision.
+
 Exit:
 
 - preserve existing documents through explicit effective defaults;

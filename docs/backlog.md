@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-07-29
+- Updated: 2026-07-30
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -841,6 +841,36 @@ SU-M2 progress:
   remained fixed and public Contract 4 activation was an explicit non-goal.
   SU-M5 later activated the accepted Grammar 1/2/3 and Contract 4 boundary
   atomically, and `0.3.0` published it.
+
+## Loose governance assertion scope
+
+### GOV-LOOSE-001: Prevent assertion carryover
+
+Priority: P0
+
+Status: Active caller-workflow experiment (2026-07-30)
+
+The accepted loose governance interface can correctly classify actual goal,
+DAG, and ordinary-maintenance changes while a non-malicious caller still
+carries one `--accepted-by-owner` spelling into unrelated later commands. The
+[scope experiment](process/governance-assertion-scope-experiment.md) fixes the
+next hypothesis without adding authentication or an approval artifact.
+
+Acceptance:
+
+- begin each candidate with an owner-assertion-free preview;
+- omit owner assertions when governance is not applicable or the actor has
+  direct authority;
+- present the operation, target, affected scopes, required owners, source and
+  candidate digests, and structural summary before a non-direct governed
+  write;
+- treat a matching loose assertion as belonging to that candidate only;
+- never infer that a general work or release instruction confirms a later
+  `dag advance`;
+- pass the six `GOV-LOOSE-*` dogfooding cases before selecting any runtime
+  interface change; and
+- keep strict authentication, signatures, certificates, durable audit, and
+  `GOV-AUTH-001` outside this experiment.
 
 ## Strict approval authentication and certificates
 

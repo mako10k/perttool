@@ -147,6 +147,13 @@ The assertion matches the effective pre-change goal owner. The goal scope has
 `scope_authorized=true`, and no denial cause. The persistent result succeeds,
 enters the retained safe-write path, and may report `write.written=true`.
 
+The loose caller workflow does not begin GOV-005 with the assertion. It first
+previews the candidate without `accepted_by_owner`, then presents operation
+`project.set`, scope `goal`, required owner `user`, the source and candidate
+digests, and the `project.finish` change. After matching confirmation, the
+caller uses `accepted_by_owner=[user]` for this unchanged candidate only. It
+does not copy that value to later maintenance or a later `dag advance`.
+
 ### GOV-006 A wrong owner assertion remains a governance denial
 
 For the same change and actor, `accepted_by_owner=[llm]` does not match the
@@ -213,7 +220,8 @@ source digest changes before commit, the safe-write layer returns
 
 A retry must read the new source, reconstruct the candidate, reclassify its
 actual changes, and derive a fresh governance decision. The prior decision is
-not reusable authority.
+not reusable authority, and the caller does not carry its loose owner
+confirmation into the fresh candidate.
 
 ### GOV-012 Ordinary maintenance and byte-identical candidates are not governed
 
