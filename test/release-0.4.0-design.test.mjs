@@ -137,10 +137,10 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
     changelog,
     /^\[0\.4\.0\]: https:\/\/github\.com\/mako10k\/perttool\/compare\/v0\.3\.0\.\.\.v0\.4\.0$/m,
   );
-  assert.match(readme, /exact pins `perttool@0\.4\.0`/);
+  assert.match(readme, /exact pins\s+`perttool@0\.4\.0`/);
   assert.match(
     readme,
-    /`latest` remains on\s+Contract 5 `0\.4\.0`/,
+    /npm `beta` and `latest` both resolve to Contract 6 `0\.5\.1`/,
   );
   assert.match(
     readme,

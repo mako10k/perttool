@@ -222,8 +222,10 @@ compatibility boundary, and both public-package workflows. All five tasks and
 17p are complete at `17p/1d`; both makespans are zero, and complete NextResult
 v5 has no recommendation. Git commit `9ecae00` records the exact completed
 acceptance pre-advance snapshot, and the plan is advanced to reached
-`RELEASE_051_ACCEPTED`. npm `latest` promotion and Issue #5 closure remain
-separate decisions.
+`RELEASE_051_ACCEPTED`. The user then separately authorized one `latest`
+mutation; fresh registry reads and an unqualified isolated installation
+confirmed `beta=latest=0.5.1`, CLI Contract 6, Grammar 5, and all eighteen
+root schemas. Issue #5 closure remains a separate decision.
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.

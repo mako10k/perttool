@@ -151,8 +151,11 @@ The named PUBLISH gate then passed. Release commit and peeled `v0.5.1` target
 SHA-256 `93f3e01a...1339`; npm reports `beta=0.5.1` with unchanged
 `latest=0.4.0`; and both public-package workflows pass. Durable acceptance
 then independently reverified Git, GitHub, npm, both public artifacts, the
-additive compatibility boundary, and installed workflows. npm `latest`
-promotion and Issue #5 closure remain separate decisions.
+additive compatibility boundary, and installed workflows. The user then
+separately authorized one post-acceptance `latest` mutation; fresh registry
+reads and an unqualified isolated install confirmed `beta=latest=0.5.1`,
+CLI Contract 6, Grammar 5, and schema discovery. Issue #5 closure remains a
+separate decision.
 
 ## Beta gate
 

@@ -88,7 +88,7 @@ test("current guidance records the published 0.5.1 schema boundary", async () =>
   ]);
 
   for (const guidance of [agents, copilot]) {
-    assert.match(guidance, /npm `beta=0\.5\.1`/);
+    assert.match(guidance, /npm `beta=latest=0\.5\.1`/);
     assert.match(guidance, /Git 2\.54 UTC/);
     assert.match(guidance, /Issue #5/);
     assert.match(guidance, /Issue #5 closure remains a separate boundary/);
@@ -103,7 +103,7 @@ test("current guidance records the published 0.5.1 schema boundary", async () =>
   );
   assert.match(
     requirements,
-    /npm `beta=0\.5\.1` provides Contract 6\s+while `latest=0\.4\.0` remains/,
+    /npm `beta=latest=0\.5\.1` provides\s+Contract 6/,
   );
   assert.match(schemaContract, /Document status: Normative 1\.0/);
   assert.match(schemaContract, /JSON Schema Draft 2020-12/);

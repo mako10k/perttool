@@ -10,11 +10,12 @@ including explicit task work events, lifecycle commands, read-only Git
 history, observed velocity, AnalysisResult v4, and NextResult v5. It adds
 Draft 2020-12 artifacts for every active Contract 6 result and the public
 OverrideDecision result, plus Git 2.54 UTC compatibility. npm `beta` resolves
-to `0.5.1`, while `latest` remains on Contract 5 `0.4.0`. Beta releases may
-contain breaking CLI or schema changes. Version `0.5.1` requires Node.js 22
-or later. The compatible pre-schema Contract 6 artifact remains available by
-pinning `0.5.0`; Contract 5, Contract 4, and Contract 3 remain available by
-pinning `0.4.0`, `0.3.0`, and `0.2.0`, respectively.
+to `0.5.1`; a separately authorized post-acceptance promotion also makes
+`latest=0.5.1`. Beta releases may contain breaking CLI or schema changes.
+Version `0.5.1` requires Node.js 22 or later. The compatible pre-schema
+Contract 6 artifact remains available by pinning `0.5.0`; Contract 5,
+Contract 4, and Contract 3 remain available by pinning `0.4.0`, `0.3.0`, and
+`0.2.0`, respectively.
 
 ## Run without installing
 
@@ -46,14 +47,14 @@ Contract 3.
 Install the CLI globally when it is used regularly:
 
 ```sh
-npm install --global perttool@0.5.1
+npm install --global perttool
 perttool --version
 ```
 
-npm `beta` resolves to Contract 6 `0.5.1`, while `latest` remains on
-Contract 5 `0.4.0`. The prior Contract 6 artifact remains available as
-`perttool@0.5.0`; Contract 5, Contract 4, and Contract 3 remain available as
-exact pins `perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`.
+npm `beta` and `latest` both resolve to Contract 6 `0.5.1`. The prior
+Contract 6 artifact remains available as `perttool@0.5.0`; Contract 5,
+Contract 4, and Contract 3 remain available as exact pins
+`perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`.
 
 ## Plan files
 

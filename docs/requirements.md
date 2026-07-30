@@ -1793,6 +1793,12 @@ preceding gate passes. Plan state records this scope but is not a substitute
 for that instruction. The authoritative procedure is
 [`docs/process/0.5.1-release.md`](process/0.5.1-release.md).
 
+After durable acceptance, the user separately selected `perttool@0.5.1` and
+authorized one npm `latest` dist-tag mutation. Fresh registry reads and an
+unqualified isolated installation confirmed `beta=latest=0.5.1`, CLI
+Contract 6, Grammar 5, and schema discovery. This does not declare a stable
+series or authorize Issue #5 closure.
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |
@@ -1851,8 +1857,8 @@ decisions and activated them in the current source and the published `0.5.0`
 and `0.5.1` betas. ADR 0006 is accepted, the Project Actuals and Git History
 Contract is Normative 1.0, Grammar 5 and CLI Contract 6 are one atomic
 boundary, and every PACT case has a machine-readable fixture. Grammar 1
-through 4 semantics remain compatible; npm `beta=0.5.1` provides Contract 6
-while `latest=0.4.0` remains the Contract 5 compatibility default.
+through 4 semantics remain compatible; npm `beta=latest=0.5.1` provides
+Contract 6, while Contract 5 remains available by pinning `0.4.0`.
 
 Resolved design decisions:
 

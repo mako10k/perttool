@@ -1364,6 +1364,16 @@ complete NextResult v5 has no ready, recommended, or startable task. npm
 `9ecae00` records the exact completed acceptance pre-advance snapshot, and
 canonical governed advance retains only reached `RELEASE_051_ACCEPTED`.
 
+The user then separately selected `perttool@0.5.1` for npm `latest`.
+Process-scoped authentication confirmed identity `mako10k`, and the one-time
+`npm dist-tag add perttool@0.5.1 latest` operation succeeded. A fresh npm
+read and the direct registry endpoint reported `beta=latest=0.5.1` and
+`alpha=0.1.0-alpha.2`. An unqualified isolated installation resolved
+`perttool@0.5.1`, reported CLI Contract 6 with 34 commands, checked the reached
+Grammar 5 plan, and listed all eighteen root schemas. The immutable artifact
+and completed release DAG were unchanged; tool-managed project metadata
+records the post-promotion state.
+
 Stage 1 allowed operations:
 
 - check
@@ -1561,10 +1571,11 @@ handling are accepted in
 Exact elapsed-hour, qualified active-date, effort-productivity, and
 Git-recorded observations are accepted in
 [`project-actuals-velocity-observation-acceptance.md`](project-actuals-velocity-observation-acceptance.md).
-The current source package root, CLI, and published npm `beta=0.5.1` package
-activate Grammar 5 and Contract 6 atomically. Use only the public root and CLI
-names; target-prefixed modules remain internal implementation details. npm
-`latest=0.4.0` remains the Grammar 4 and Contract 5 compatibility package.
+The current source package root, CLI, and published npm
+`beta=latest=0.5.1` package activate Grammar 5 and Contract 6 atomically. Use
+only the public root and CLI names; target-prefixed modules remain internal
+implementation details. Grammar 4 and Contract 5 remain available by pinning
+`0.4.0`.
 The active contract is
 [`docs/specs/project-actuals.md`](../specs/project-actuals.md), and the
 source-cutover evidence is

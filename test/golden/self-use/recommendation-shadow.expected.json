@@ -346,7 +346,7 @@
       "diagnostic_codes": []
     },
     "release-0.5.1": {
-      "source_digest": "sha256:ea841f1f0f3414136a94270114346fcb95133a4d183c55f8a1cb0e541ba82953",
+      "source_digest": "sha256:b4fda2a00394142f191100841fd7351ddbf39acd224a2bbe96c22c6828c80ba1",
       "groups": {
         "active": [],
         "ready": [],

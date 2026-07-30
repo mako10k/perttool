@@ -283,6 +283,16 @@ post-acceptance global installation now resolves to registry
 `perttool@0.5.0` and passed Contract 6, Grammar 5, and history smoke checks.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 
+The compatible `0.5.1` patch then published the additive read-only schema
+command, bundled Draft 2020-12 artifacts, public lookup APIs, and Git 2.54 UTC
+compatibility without changing Grammar 5 or CLI Contract 6. After durable
+acceptance and canonical plan advance, the user separately selected
+`perttool@0.5.1` for npm `latest`. One process-scoped
+`npm dist-tag add perttool@0.5.1 latest` mutation succeeded. Fresh npm and
+direct registry reads reported `beta=latest=0.5.1`; an unqualified isolated
+installation confirmed version `0.5.1`, CLI Contract 6, Grammar 5, and all
+eighteen root schemas. Issue #5 closure remains separate.
+
 ### 5.1 Adopted Recommendation authority
 
 MIG-07 established Recommendation version 1 authority. The atomic Contract 4

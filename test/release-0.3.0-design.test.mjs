@@ -104,7 +104,7 @@ test("0.3.0 release gate records Contract 4 publication and acceptance separatel
   assert.match(changelog, /Accepted the `perttool@0\.3\.0` Contract 4 beta/);
   assert.match(
     readme,
-    /Contract 5, Contract 4, and Contract 3 remain available/,
+    /Contract 5,\s+Contract 4, and Contract 3 remain available/,
   );
   assert.equal(manifest.publishConfig.tag, "beta");
 });

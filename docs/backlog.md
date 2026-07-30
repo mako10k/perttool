@@ -341,9 +341,9 @@ The
 [`ACTUALS_PUBLIC_CONTRACT` acceptance](process/project-actuals-public-contract-acceptance.md)
 records the atomic Grammar 5 and CLI Contract 6 source cutover, public root,
 registry/help/Guide, result versions, examples, and isolated installed
-workflow. The accepted `0.5.0` package publishes that boundary on npm `beta`;
-npm `latest=0.4.0` remains the Grammar 4 and CLI Contract 5 compatibility
-default.
+workflow. The accepted `0.5.1` package publishes that boundary on npm
+`beta=latest`; the pre-schema Contract 6 package remains available as `0.5.0`,
+and Grammar 4 with CLI Contract 5 remains available by pinning `0.4.0`.
 The
 [`ACTUALS_ACCEPTANCE` record](process/project-actuals-acceptance.md)
 closes all fourteen normative PACT cases through executable repository,
@@ -371,8 +371,8 @@ Compatibility and non-goals:
 
 - Grammar 1 through 4 retain their meanings, and status-only `task finish`
   remains available for those grammars. The current source uses CLI Contract
-  6; npm `beta=0.5.1` publishes Contract 6 while `latest=0.4.0` retains
-  Contract 5.
+  6; npm `beta=latest=0.5.1` publishes Contract 6 while exact pin `0.4.0`
+  retains Contract 5.
 - History and `ADV-001` share the narrow read-only Git adapter, path/HEAD
   identity, and race-safe inspection primitives. History does not enforce the
   advance decision, and `ADV-001` does not become the history result model.
