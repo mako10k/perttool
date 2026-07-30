@@ -848,7 +848,7 @@ SU-M2 progress:
 
 Priority: P0
 
-Status: Active caller-workflow experiment (2026-07-30)
+Status: Accepted caller-workflow guard (2026-07-30)
 
 The accepted loose governance interface can correctly classify actual goal,
 DAG, and ordinary-maintenance changes while a non-malicious caller still
@@ -871,6 +871,12 @@ Acceptance:
   interface change; and
 - keep strict authentication, signatures, certificates, durable audit, and
   `GOV-AUTH-001` outside this experiment.
+
+The controlled dogfooding run passed all six cases. The accepted outcome
+retains the lightweight caller workflow and does not select a new CLI option,
+result identity, accepted-scope field, or approval artifact. A future observed
+carryover or scope-expansion failure reopens only the smallest runtime
+constraint needed for that failure.
 
 ## Strict approval authentication and certificates
 

@@ -16,6 +16,19 @@ test("loose assertion experiment fixes one bounded non-malicious threat", async 
     "docs/process/governance-assertion-scope-experiment.md",
   );
 
+  assert.match(
+    experiment,
+    /Status: Accepted caller-workflow hypothesis 1\.0/,
+  );
+  assert.match(experiment, /Result: Pass/);
+  assert.match(
+    experiment,
+    /Source commit: `561ed2061058dfd07e8f81bb5be10f16d68721b1`/,
+  );
+  assert.match(
+    experiment,
+    /unconfirmed second advance:[\s\S]*sha256:242b7fe44ec0b812efa0c96cf0df5396eb0e4cf0789290c8e6cc1387432f303a/,
+  );
   for (const expected of [
     "exactly one valid final candidate",
     "affected `goal` and/or `dag` scopes",

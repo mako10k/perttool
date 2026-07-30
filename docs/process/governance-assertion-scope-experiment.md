@@ -1,6 +1,6 @@
 # Loose Governance Assertion Scope Experiment
 
-- Status: Active hypothesis 1.0
+- Status: Accepted caller-workflow hypothesis 1.0
 - Date: 2026-07-30
 - Applies to: non-malicious callers using loose owner-aware governance
 - Does not apply to: strict authentication or approval certificates
@@ -121,3 +121,56 @@ After one controlled dogfooding run:
 - if any case fails, design the smallest runtime constraint that blocks the
   observed failure before considering evidence artifacts; and
 - in either case, keep `GOV-AUTH-001` independent.
+
+## 7. Controlled dogfooding result
+
+- Result: Pass
+- Run date: 2026-07-30
+- Source commit: `561ed2061058dfd07e8f81bb5be10f16d68721b1`
+- Environment: Node.js 22, repository-built CLI, disposable `/tmp` documents
+- Repository writes: none
+
+The run observed the following.
+
+| ID | Observation |
+| --- | --- |
+| GOV-LOOSE-001 | `task.set` preview and write both reported `applicable=false`, `affected_scopes=[]`, and `accepted_by_owner=[]`. The write used only `--expect-digest`. |
+| GOV-LOOSE-002 | The first `dag.advance` preview reported `affected_scopes=[dag]`, `required_owner_confirmations=[user]`, and `accepted_by_owner=[]`, then stopped before writing. |
+| GOV-LOOSE-003 | After the user confirmed the displayed operation, scope, owner, digests, and removal summary, one write used `--accepted-by-owner user`. Its source and updated digests exactly matched the preview. |
+| GOV-LOOSE-004 | Subsequent ordinary maintenance again used no owner assertion. The second `dag.advance` preview reported `accepted_by_owner=[]`, `write_authorized=false`, and a fresh candidate digest; it was not written. |
+| GOV-LOOSE-005 | A same-owner goal-and-DAG batch preview named both `goal` and `dag` while requiring the one distinct owner `user`; no assertion was supplied or carried into it. |
+| GOV-LOOSE-006 | Changing the batch from goal-only to goal-and-DAG changed both `affected_scopes` and `updated_digest`; the earlier candidate context was not widened or reused. |
+
+The captured candidate identities were:
+
+- ordinary maintenance:
+  `sha256:e40b88ab98f83a35d11168a6e25f04f9e6639009f124dcfe3b507bd9e405f589`
+  to
+  `sha256:eee24f612c0ae89596554a3bda5e2e42b8d16c0526002da5e534c43e2d8df82e`;
+- confirmed first advance:
+  `sha256:e40b88ab98f83a35d11168a6e25f04f9e6639009f124dcfe3b507bd9e405f589`
+  to
+  `sha256:d0c150fdb176c74c9999dc67ab7a7fa45aa07b52056679b7502f3a2640a1be00`;
+- assertion-free maintenance after that advance:
+  `sha256:d0c150fdb176c74c9999dc67ab7a7fa45aa07b52056679b7502f3a2640a1be00`
+  to
+  `sha256:ab8ffc6cb6b76561e36755f31221b090b10b6eb30528710d721d2a4285af1525`;
+- unconfirmed second advance:
+  `sha256:ab8ffc6cb6b76561e36755f31221b090b10b6eb30528710d721d2a4285af1525`
+  to
+  `sha256:242b7fe44ec0b812efa0c96cf0df5396eb0e4cf0789290c8e6cc1387432f303a`;
+- goal-only batch:
+  `sha256:e40b88ab98f83a35d11168a6e25f04f9e6639009f124dcfe3b507bd9e405f589`
+  to
+  `sha256:7deb835b192fd91f2d6cbcd022b4a9c5bc88ded390c08b7c1226e4490b9ac4d0`;
+  and
+- goal-and-DAG batch:
+  `sha256:e40b88ab98f83a35d11168a6e25f04f9e6639009f124dcfe3b507bd9e405f589`
+  to
+  `sha256:c67756bd68e10fac98598d20fe3d5394d27074c14d31fb997baec55ca6a9cbdc`.
+
+The accepted first-run conclusion is to retain the lightweight caller
+workflow. This result does not select a machine-readable accepted-scope field,
+prove behavior for every future caller, or close `GOV-AUTH-001`. A later
+observed carryover or scope-expansion failure reopens the smallest applicable
+runtime-constraint decision.
