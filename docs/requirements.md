@@ -1969,6 +1969,52 @@ predecessor gate passes. It does not authorize npm `latest` promotion. The
 authoritative procedure is
 [`docs/process/0.5.4-release.md`](process/0.5.4-release.md).
 
+### 21.11 Governed-preview warning patch release acceptance criteria
+
+The package that publishes the governed-preview owner-assertion warning is
+suffix-free `0.5.5`. It remains a CLI Contract 6 and Grammar 5 beta patch, is
+a GitHub prerelease, and is published to npm `beta`.
+
+1. Retain Grammar 5, CLI Contract 6, all existing commands and options,
+   runtime result and schema identities, payload meanings, persistent exits,
+   and package-root values.
+2. Emit `PTGOV-104` only after a valid candidate has `applicable=true`,
+   `intent="preview"`, and a non-empty `acceptedByOwner` set.
+3. Preserve the candidate, GovernanceDecision v1, `writeAuthorized`, and
+   default exit-zero preview.
+4. Reuse existing `--warnings-as-errors` policy to return exit 1 while
+   retaining the candidate and decision.
+5. Emit no PTGOV-104 for persistent intent, an assertion-free preview, a
+   not-applicable candidate, or an invalid candidate.
+6. Keep PTGOV-103 as the sole loose-assertion warning for a not-applicable
+   candidate.
+7. Apply the same warning projection to direct, batch, and advance mutation
+   planning paths without adding fictional lifecycle governance.
+8. Do not add accepted scopes, approval evidence, authentication,
+   cross-candidate state, a new CLI option, result field, or interface
+   identity.
+9. Align package, lockfile, CLI/tool version, release commit, annotated
+   `v0.5.5` tag, GitHub asset, and npm identity.
+10. Pass Node.js 22 repository checks, Node.js 22 and 24 CI, package
+    normalization, temporary-link checks, and isolated installation.
+11. Establish before publication that `perttool@0.5.5`, `v0.5.5`, and the
+    matching GitHub Release are unused; record npm `beta` and `latest`,
+    confirm that `alpha` is absent, and verify protected routes without
+    displaying secrets.
+12. Generate one immutable tarball outside the worktree, distribute those
+    exact bytes through the GitHub prerelease and npm `beta`, and verify
+    isolated installation from both public channels.
+13. Move only `beta` to `0.5.5`, leave `latest=0.5.1` unchanged, and record
+    durable release, tag, artifact, registry, CI, and installed-behavior
+    evidence.
+
+The user's 2026-07-30 release instruction authorizes the complete named
+`0.5.5` judgment, preparation, candidate, Git push, annotated tag, GitHub
+prerelease, npm `beta` publication, and durable acceptance after every
+predecessor gate passes. It does not authorize npm `latest` promotion. The
+authoritative procedure is
+[`docs/process/0.5.5-release.md`](process/0.5.5-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

@@ -361,6 +361,15 @@ All five tasks and 15p are complete, both makespans are zero, and complete
 NextResult v5 has no recommendation. `latest=0.5.1`, plan advance, and npm
 `latest` promotion remain separate.
 
+The compatible `0.5.5` patch is selected for the non-blocking `PTGOV-104`
+runtime warning. A valid applicable preview with a non-empty
+owner-confirmation assertion set remains successful by default and retains
+its candidate and GovernanceDecision, while existing `--warnings-as-errors`
+returns exit 1 with both still available. Persistent authority is unchanged.
+`RELEASE_055_SELF_REVIEW` is complete. The selected release targets a GitHub
+prerelease and npm `beta`; `latest=0.5.1`, plan advance, and npm `latest`
+promotion remain separate.
+
 ### 5.1 Adopted Recommendation authority
 
 MIG-07 established Recommendation version 1 authority. The atomic Contract 4

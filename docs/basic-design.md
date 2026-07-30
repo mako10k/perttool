@@ -2311,7 +2311,7 @@ Exit:
 - record durable acceptance without adding accepted scopes, approval
   evidence, authentication, or cross-candidate state.
 
-### Post-MVP Slice 4O: Governed-preview assertion warning
+### Post-MVP Slice 4O: Governed-preview assertion warning `v0.5.5` beta patch
 
 After the accepted `v0.5.4` patch exposed all 18 observed not-applicable
 carryovers, the original 10 governed invocations were classified as five
@@ -2320,8 +2320,15 @@ owner assertion. This slice adds `PTGOV-104` through the existing pure
 decision-diagnostic path for an applicable preview with a non-empty
 `acceptedByOwner` set.
 
+The [`v0.5.5` release procedure](process/0.5.5-release.md) and independent
+[`release-0.5.5.pert`](../plans/release-0.5.5.pert) plan sequence
+compatibility review, version-bearing preparation, one immutable candidate,
+authorized GitHub/npm beta publication, and durable public acceptance.
+
 Exit:
 
+- satisfy Requirements 21.11 from one clean release commit and immutable
+  tarball;
 - preserve Grammar 5, CLI Contract 6, GovernanceDecision v1, every command,
   option, result, schema, and default preview behavior;
 - emit `PTGOV-104` only for
@@ -2332,7 +2339,7 @@ Exit:
   not-applicable candidates;
 - keep `PTGOV-103` as the sole warning for a not-applicable assertion; and
 - add no cross-candidate state, accepted scopes, approval evidence,
-  authentication, or selected release version.
+  authentication, npm `latest` promotion, or plan advance.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

@@ -17,7 +17,7 @@ function repositoryText(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
 }
 
-test("0.5.4 release gate binds the governance runtime warning boundary", async () => {
+test("0.5.5 release gate binds the governed-preview warning boundary", async () => {
   const [
     requirements,
     design,
@@ -36,13 +36,13 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
   ] = await Promise.all([
     repositoryText("docs/requirements.md"),
     repositoryText("docs/basic-design.md"),
-    repositoryText("docs/process/0.5.4-release.md"),
-    repositoryText("docs/process/0.5.4-publish.md"),
-    repositoryText("docs/process/0.5.4-release-acceptance.md"),
-    repositoryText("docs/process/0.5.4-self-review.md"),
+    repositoryText("docs/process/0.5.5-release.md"),
+    repositoryText("docs/process/0.5.5-publish.md"),
+    repositoryText("docs/process/0.5.5-release-acceptance.md"),
+    repositoryText("docs/process/0.5.5-self-review.md"),
     repositoryText("src/governance/authority.ts"),
     repositoryText("docs/specs/governance-interface.md"),
-    repositoryText("plans/release-0.5.4.pert"),
+    repositoryText("plans/release-0.5.5.pert"),
     repositoryText("package.json"),
     repositoryText("package-lock.json"),
     repositoryText("src/version.ts"),
@@ -52,40 +52,32 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
 
   assert.match(
     requirements,
-    /^### 21\.10 Governance runtime warning patch release acceptance criteria$/m,
+    /^### 21\.11 Governed-preview warning patch release acceptance criteria$/m,
   );
   assert.match(
     design,
-    /^### Post-MVP Slice 4N: Governance runtime warning `v0\.5\.4` beta patch$/m,
+    /^### Post-MVP Slice 4O: Governed-preview assertion warning `v0\.5\.5` beta patch$/m,
   );
-  assert.match(procedure, /Target version: `0\.5\.4`/);
+  assert.match(procedure, /Target version: `0\.5\.5`/);
   assert.match(procedure, /npm `latest` promotion/);
   assert.match(procedure, /modification time/);
-  assert.match(procedure, /0\.5\.4-publish\.md/);
-  assert.match(publish, /9c2351057c59a57f74a099007316d7ebee5d575a/);
-  assert.match(publish, /30536185188/);
-  assert.match(publish, /The publication was not retried/);
-  assert.match(publish, /unchanged `latest=0\.5\.1`/);
-  assert.match(procedure, /0\.5\.4-release-acceptance\.md/);
-  assert.match(acceptance, /58 files with\s+1390 insertions and 158 deletions/);
-  assert.match(acceptance, /write\.written\s+false/);
-  assert.match(acceptance, /NextResult v5 has no ready, recommended, or startable task/);
-  assert.match(review, /18 ordinary-maintenance/);
-  assert.match(review, /does not claim to\s+detect the 10 governed/);
-  assert.match(authority, /code: "PTGOV-103"/);
-  assert.match(
-    contract,
-    /owner_confirmation_not_applicable/,
-  );
+  assert.match(procedure, /0\.5\.5-publish\.md/);
+  assert.match(publish, /Version: `0\.5\.5`/);
+  assert.match(procedure, /0\.5\.5-release-acceptance\.md/);
+  assert.match(acceptance, /Version: `0\.5\.5`/);
+  assert.match(review, /five previews and\s+five persistent attempts/);
+  assert.match(review, /does not classify the five persistent attempts/);
+  assert.match(authority, /code: "PTGOV-104"/);
+  assert.match(contract, /owner_confirmation_on_governed_preview/);
   assert.match(contract, /`--warnings-as-errors`/);
 
   const checked = checkDocument(plan);
   const metadata = getProjectMetadata(plan);
   assert.equal(checked.ok, true);
   assert.equal(metadata.ok, true);
-  assert.equal(metadata.project.id, "RELEASE_054");
+  assert.equal(metadata.project.id, "RELEASE_055");
   assert.equal(metadata.grammarVersion, 5);
-  assert.equal(metadata.project.finish, "RELEASE_054_ACCEPTED");
+  assert.equal(metadata.project.finish, "RELEASE_055_ACCEPTED");
   assert.equal(metadata.project.governance.effective.goalOwner, "user");
   assert.equal(metadata.project.governance.effective.dagOwner, "user");
   assert.deepEqual(
@@ -93,11 +85,11 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
     [
-      "RELEASE_054_SELF_REVIEW",
-      "RELEASE_054_PREPARATION",
-      "RELEASE_054_CANDIDATE",
-      "RELEASE_054_PUBLISH",
-      "RELEASE_054_ACCEPTANCE",
+      "RELEASE_055_SELF_REVIEW",
+      "RELEASE_055_PREPARATION",
+      "RELEASE_055_CANDIDATE",
+      "RELEASE_055_PUBLISH",
+      "RELEASE_055_ACCEPTANCE",
     ],
   );
 
@@ -108,9 +100,9 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
   assert.equal(lockfile.packages[""].version, "0.5.5");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(versionSource, /TOOL_VERSION = "0\.5\.5"/);
-  assert.match(changelog, /^## \[0\.5\.4\] - 2026-07-30$/m);
+  assert.match(changelog, /^## \[0\.5\.5\] - 2026-07-30$/m);
   assert.match(readme, /perttool@0\.5\.5/);
-  assert.match(readme, /`latest` remains on accepted\s+Contract 6 `0\.5\.1`/);
+  assert.match(readme, /`latest` remains on the\s+separately accepted `0\.5\.1`/);
   assert.equal(COMMAND_REGISTRY.length, 34);
   assert.equal(getJsonSchemaCatalog().length, 18);
 });

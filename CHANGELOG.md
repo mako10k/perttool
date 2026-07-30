@@ -4,6 +4,13 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.5.5] - 2026-07-30
+
+Compatible CLI Contract 6 and Grammar 5 beta patch. This version makes the
+assertion-free first-preview workflow machine-visible without changing any
+candidate, governance decision, persistent authority, command, option, result,
+schema, or runtime payload identity.
+
 ### Changed
 
 - Added `PTGOV-104` as a non-blocking warning when a valid governed preview
@@ -292,7 +299,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.4...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.5...HEAD
+[0.5.5]: https://github.com/mako10k/perttool/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/mako10k/perttool/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/mako10k/perttool/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/mako10k/perttool/compare/v0.5.1...v0.5.2
