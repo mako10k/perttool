@@ -1848,18 +1848,18 @@ the installed-package workflow are active in `0.3.0`.
 
 The project-actuals workstream has accepted its source and public-interface
 decisions and activated them in the current source and the published `0.5.0`
-beta. ADR 0006 is accepted, the Project Actuals and Git History Contract is
-Normative 1.0, Grammar 5 and CLI Contract 6 are one atomic boundary, and every
-PACT case has a machine-readable fixture. Grammar 1 through 4 semantics remain
-compatible; npm `beta=0.5.0` provides Contract 6 while `latest=0.4.0` remains
-the Contract 5 compatibility default.
+and `0.5.1` betas. ADR 0006 is accepted, the Project Actuals and Git History
+Contract is Normative 1.0, Grammar 5 and CLI Contract 6 are one atomic
+boundary, and every PACT case has a machine-readable fixture. Grammar 1
+through 4 semantics remain compatible; npm `beta=0.5.1` provides Contract 6
+while `latest=0.4.0` remains the Contract 5 compatibility default.
 
 Resolved design decisions:
 
 - Adoption of AoA with task=edge: [ADR 0001](adr/0001-activity-on-arrow.md)
 - Node.js 22 or later, npm, TypeScript ESM package: [ADR 0005](adr/0005-node-22-runtime-baseline.md)
 - Suffix-free `0.x.x` beta, alpha compatibility boundary, and `v0.2.0`
-  Contract 3 through `v0.5.0` Contract 6 release targets:
+  Contract 3 through the compatible `v0.5.1` Contract 6 release target:
   [ADR 0003](adr/0003-beta-versioning.md)
 - English repository baseline, migration boundary, and current i18n non-goal: [ADR 0004](adr/0004-english-repository-baseline.md)
 - Separation of executability, resource selection, and recommendation level, and tier semantics: [Recommendation Semantics specification](specs/recommendation.md)

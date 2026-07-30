@@ -1341,6 +1341,18 @@ zero resource delay, observed velocity is `11p/1d`, forecasts are `6/11d`,
 and complete NextResult v5 recommends and starts only
 `RELEASE_051_PUBLISH`.
 
+PUBLISH then fixed release commit and peeled `v0.5.1` target `31d162a`,
+successful Node.js 22 and 24 CI run 30509133874, byte-identical
+candidate/GitHub/npm tarballs at SHA-256 `93f3e01a...1339`, npm
+`beta=0.5.1` with unchanged `latest=0.4.0`, and complete isolated
+public-package checks. The npm publication process returned success but its
+bounded immediate verification exhausted five propagation-time `E404`
+responses. No retry occurred; public, authenticated, and direct registry
+reads then established durable publication. Three points remain; precedence
+and heuristic resource makespans are both 3p with no resource delay, observed
+velocity is `14p/1d`, both forecasts are `3/14d`, and complete NextResult v5
+recommends and starts only `RELEASE_051_ACCEPTANCE`.
+
 Stage 1 allowed operations:
 
 - check
@@ -1538,7 +1550,7 @@ handling are accepted in
 Exact elapsed-hour, qualified active-date, effort-productivity, and
 Git-recorded observations are accepted in
 [`project-actuals-velocity-observation-acceptance.md`](project-actuals-velocity-observation-acceptance.md).
-The current source package root, CLI, and published npm `beta=0.5.0` package
+The current source package root, CLI, and published npm `beta=0.5.1` package
 activate Grammar 5 and Contract 6 atomically. Use only the public root and CLI
 names; target-prefixed modules remain internal implementation details. npm
 `latest=0.4.0` remains the Grammar 4 and Contract 5 compatibility package.

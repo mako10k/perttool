@@ -11,7 +11,8 @@
   2026-07-28 (`v0.4.0` beta publication, acceptance, and explicit `latest`
   promotion);
   2026-07-29 (`v0.5.0` Grammar 5 and Contract 6 release target);
-  2026-07-30 (`v0.5.1` compatible Contract 6 patch release target)
+  2026-07-30 (`v0.5.1` compatible Contract 6 patch release target and
+  publication)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -144,6 +145,12 @@ procedure](../process/0.5.1-release.md) sequences compatibility review,
 source preparation, candidate acceptance, Git/GitHub/npm `beta`
 publication, and durable acceptance. It does not authorize npm `latest`
 promotion or Issue #5 closure.
+
+The named PUBLISH gate then passed. Release commit and peeled `v0.5.1` target
+`31d162a` agree; candidate, GitHub, and npm tarballs are byte-identical at
+SHA-256 `93f3e01a...1339`; npm reports `beta=0.5.1` with unchanged
+`latest=0.4.0`; and both public-package workflows pass. Durable acceptance,
+npm `latest` promotion, and Issue #5 closure remain separate decisions.
 
 ## Beta gate
 

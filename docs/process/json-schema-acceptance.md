@@ -6,7 +6,7 @@
   schemas
 - Normative contract: [JSON Schema Artifact Contract](../specs/json-schema.md)
 - Related issue: [Issue #5](https://github.com/mako10k/perttool/issues/5)
-- Publication status: selected for the authorized `0.5.1` release
+- Publication status: published in `0.5.1`
 - Issue closure status: not authorized
 
 ## 1. Accepted boundary
@@ -21,8 +21,8 @@ closed root objects, and exact result and CLI contract identities.
 The read-only `schema` command lists or resolves the catalog without a project
 file. The package root exposes catalog and lookup APIs. The npm package file
 list and wildcard export include the artifacts. Published `perttool@0.5.0`
-remains unchanged and does not contain this source-level addition; `0.5.1`
-is the selected compatible release target.
+remains unchanged and does not contain this addition; `0.5.1` publishes the
+compatible schema-discovery surface.
 
 ## 2. CI finding and correction
 
@@ -81,6 +81,9 @@ Node.js 22.22.3. The package check produced a 491-file local dry-run tarball
 containing all nineteen schema files, installed it into an isolated prefix,
 and performed no publication.
 
-`npm run check` remains the aggregate acceptance command. Candidate CI on
-Node.js 22 and 24 runs only after the prepared source is pushed through the
-authorized release gate. No Issue mutation is part of this acceptance.
+`npm run check` remains the aggregate acceptance command. Candidate CI
+[run 30509133874](https://github.com/mako10k/perttool/actions/runs/30509133874)
+passed on Node.js 22 and 24. The candidate, GitHub, and npm tarballs are
+byte-identical at SHA-256
+`93f3e01a22a41a7260792cba8df3ec9e47deedd4647b8c61616bb58886941339`.
+No Issue mutation is part of this acceptance.
