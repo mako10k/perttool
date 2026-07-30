@@ -1437,15 +1437,18 @@ NextResult v5 has no recommendation. Completed declarations remain until a
 separately confirmed `dag advance`; `latest=0.5.1` and npm `latest` promotion
 remains outside the named release scope.
 
-The independent `release-0.5.5.pert` workstream selects the compatible
+The independent `release-0.5.5.pert` workstream durably accepts the compatible
 governed-preview-warning patch. Its five serial tasks cover compatibility
 review, version-bearing source preparation, one immutable candidate,
 authorized GitHub/npm beta publication, and durable acceptance. The 15p plan
-uses `15p/1d` velocity. Compatibility self-review is complete after
-classifying the original 10 governed invocations as five previews and five
+uses `15p/1d` velocity. Compatibility self-review classified the original 10
+governed invocations as five previews and five
 persistent attempts. PTGOV-104 covers the five previews without reinterpreting
-the persistent attempts. npm `latest` promotion and plan advance remain
-outside the named release scope.
+the persistent attempts. Release commit `04055c9`, peeled tag, successful
+Node.js 22/24 CI, GitHub prerelease, npm `beta=0.5.5`, and the common
+491-file, 522117-byte tarball agree. All five tasks and 15p are complete with
+zero makespans and no recommendation. npm `latest` promotion and plan advance
+remain outside the named release scope.
 
 Stage 1 allowed operations:
 

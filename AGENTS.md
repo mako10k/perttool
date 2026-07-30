@@ -13,7 +13,43 @@ User communication is independent from the repository baseline. Unless the user 
 
 ## Current phase and sources of truth
 
-perttool has accepted its TypeScript CLI MVP and the read-only AI Agent Guidance Registry v1 from Issue #2, and has durably accepted suffix-free beta releases through `v0.5.4`. Version `0.5.4` retains Grammar 5 and CLI Contract 6 while adding the non-blocking `PTGOV-103` warning to the `0.5.3` beta-only channel guard and single-candidate, scope-bound, human-readable loose owner-confirmation workflow. Version `0.5.2` remains the complete nested-schema and full/outline/detail schema-view artifact. The obsolete npm `alpha` dist-tag is retired, while historical `0.1.0-alpha.2` remains available by exact pin. Version `0.5.1` remains the initial schema-discovery Contract 6 artifact and npm default, `0.5.0` remains the pre-schema Contract 6 artifact, `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by explicit pin. npm reports `beta=0.5.4`, unchanged `latest=0.5.1`, and no `alpha`. The current source implements Grammar 1/2/3/4/5 reads, registry-driven Contract 6 `help`, separate Contract 6 `guide`, temporal and governed project/task/gate/milestone/resource maintenance, exact lifecycle events, read-only project history and velocity observation, exact `project migrate-unit`, `Perttool.ProjectResult.v3`, `Perttool.MutationResult.v3` with `Perttool.GovernanceDecision.v1`, `Perttool.AnalysisResult.v4`, `Perttool.NextResult.v5`, `Perttool.UnitMigrationResult.v3`, read-only `validateOverride`, source-preserving mutation, and authorization-before-safe-write controls. It bundles complete artifacts for all seventeen active command-result identities plus public library-only `Perttool.OverrideDecision.v1`, exposes the additive read-only `schema` command and public catalog APIs, accepts Git 2.54 strict ISO UTC `Z` commit metadata, rejects retired alpha publication, and projects human-readable scope-bound owner-confirmation guidance. The selected `0.5.5` source emits `PTGOV-104` when an applicable preview already carries an owner assertion, without changing its candidate, decision, default success, or persistent authority. npm `latest` promotion and Issue #5 closure remain separate decisions. A complete and known `Perttool.NextResult.v5` with a complete temporal start-authority projection is the normal AI task-selection authority. The macro plan is complete and has no ready task. The independent English-baseline detail plan has completed and advanced all nine tasks through `ENGLISH_ACCEPTANCE`; Git commit `2001cdf` records the exact completed final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the cross-surface trace, and complete NextResult v5 has no ready, recommended, or startable task.
+perttool has accepted its TypeScript CLI MVP and the read-only AI Agent
+Guidance Registry v1 from Issue #2, and has durably accepted suffix-free beta
+releases through `v0.5.5`. Version `0.5.5` retains Grammar 5 and CLI Contract
+6 while adding non-blocking `PTGOV-104` when an applicable preview already
+carries an owner assertion. Version `0.5.4` remains the PTGOV-103,
+beta-channel, and scope-guidance artifact, and `0.5.2` remains the complete
+nested-schema and full/outline/detail schema-view artifact. The obsolete npm
+`alpha` dist-tag is retired, while historical `0.1.0-alpha.2` remains
+available by exact pin. Version `0.5.1` remains the initial schema-discovery
+Contract 6 artifact and npm default, `0.5.0` remains the pre-schema Contract 6
+artifact, `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0`
+and `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available
+by explicit pin. npm reports `beta=0.5.5`, unchanged `latest=0.5.1`, and no
+`alpha`. The current source implements Grammar 1/2/3/4/5 reads,
+registry-driven Contract 6 `help`, separate Contract 6 `guide`, temporal and
+governed project/task/gate/milestone/resource maintenance, exact lifecycle
+events, read-only project history and velocity observation, exact
+`project migrate-unit`, `Perttool.ProjectResult.v3`,
+`Perttool.MutationResult.v3` with `Perttool.GovernanceDecision.v1`,
+`Perttool.AnalysisResult.v4`, `Perttool.NextResult.v5`,
+`Perttool.UnitMigrationResult.v3`, read-only `validateOverride`,
+source-preserving mutation, and authorization-before-safe-write controls. It
+bundles complete artifacts for all seventeen active command-result identities
+plus public library-only `Perttool.OverrideDecision.v1`, exposes the additive
+read-only `schema` command and public catalog APIs, accepts Git 2.54 strict ISO
+UTC `Z` commit metadata, rejects retired alpha publication, and projects
+human-readable scope-bound owner-confirmation guidance. Version `0.5.5` emits
+PTGOV-104 without changing its candidate, decision, default success, or
+persistent authority. npm `latest` promotion and Issue #5 closure remain
+separate decisions. A complete and known `Perttool.NextResult.v5` with a
+complete temporal start-authority projection is the normal AI task-selection
+authority. The macro plan is complete and has no ready task. The independent
+English-baseline detail plan has completed and advanced all nine tasks through
+`ENGLISH_ACCEPTANCE`; Git commit `2001cdf` records the exact completed
+final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md`
+records the cross-surface trace, and complete NextResult v5 has no ready,
+recommended, or startable task.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
@@ -275,15 +311,17 @@ The explicitly authorized compatible `0.5.5` governed-preview-warning patch
 is tracked in `plans/release-0.5.5.pert`. Compatibility self-review is
 complete, and source preparation and candidate acceptance have passed the
 complete Node.js 22 and retained-package gates. The 491-file, 522117-byte
-candidate has SHA-256 `1987db1a...5452`. PUBLISH is complete: release commit
+candidate has SHA-256 `1987db1a...5452`. Durable acceptance is complete:
+release commit
 `04055c9`, peeled tag, Node.js 22/24 CI run `30543700217`, GitHub prerelease,
 npm `beta=0.5.5`, and the common tarball agree; `latest=0.5.1` and alpha
 remains absent. The selected patch emits non-blocking `PTGOV-104` when a valid
 applicable preview carries a non-empty `acceptedByOwner` set. The candidate,
 GovernanceDecision v1, default preview, and persistent authority remain
 unchanged; existing `--warnings-as-errors` returns exit 1 while retaining the
-candidate and decision. The release sequence targets a GitHub prerelease and
-npm `beta`; npm `latest` promotion and plan advance remain separate.
+candidate and decision. All five tasks and 15p are complete with zero
+makespans and no recommendation. npm `latest` promotion and plan advance
+remain separate.
 
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public result schema identities and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 

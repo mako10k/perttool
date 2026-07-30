@@ -104,6 +104,7 @@ task RELEASE_055_ACCEPTANCE RELEASE_055_PUBLISHED -> RELEASE_055_ACCEPTED:
   title "Record durable 0.5.5 beta acceptance"
   description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball size and digests, registry integrity and metadata, isolated installation from both public channels, unchanged Contract 6 and Grammar 5 behavior, PTGOV-104 default and strict preview behavior, beta and unchanged latest tags, and exact commands. Record acceptance without altering the immutable artifact or promoting latest."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
