@@ -2,10 +2,10 @@
 project RELEASE_052:
   version 5
   title "perttool 0.5.2 compatible JSON Schema patch release"
-  description "Release suffix-free 0.5.2 beta as a backward-compatible CLI Contract 6 and Grammar 5 patch. Complete nested result schemas and explicit full and reference-based outline/detail views retain the default full lookup mode and query projection, result identities, payload meanings, all 34 commands, and all 116 existing runtime exports. SELF_REVIEW, PREPARATION, and CANDIDATE completed 11p. Clean Node.js 22 gates passed 655 tests and 23 plans; protected routes and absent channel identities were verified; the retained 491-file, 519790-byte tarball has SHA-256 e8512f0d3e20764e9397af827f6ea57f8bea7361d1e414102b0350bcaa54bbce. Six points remain; after canonical advance, complete NextResult v5 should recommend only RELEASE_052_PUBLISH. npm latest promotion remains a separate decision."
+  description "Release suffix-free 0.5.2 beta as a backward-compatible CLI Contract 6 and Grammar 5 patch. Complete nested result schemas and explicit full and reference-based outline/detail views retain the default full lookup mode and query projection, result identities, payload meanings, all 34 commands, and all 116 existing runtime exports. SELF_REVIEW, PREPARATION, CANDIDATE, and PUBLISH completed 14p. Release commit and peeled v0.5.2 target 501d4b1 agree; Node.js 22 and 24 CI run 30517079581 passed; candidate, GitHub, and npm tarballs are byte-identical at SHA-256 e8512f0d3e20764e9397af827f6ea57f8bea7361d1e414102b0350bcaa54bbce; npm beta=0.5.2 and latest=0.5.1. Three points remain; after canonical advance, complete NextResult v5 should recommend only RELEASE_052_ACCEPTANCE. npm latest promotion remains a separate decision."
   as_of 2026-07-30
   duration_unit point
-  velocity 11p/1d
+  velocity 14p/1d
   finish RELEASE_052_ACCEPTED
   goal_owner user
   dag_owner user
@@ -54,6 +54,7 @@ task RELEASE_052_PUBLISH RELEASE_052_CANDIDATE_ACCEPTED -> RELEASE_052_PUBLISHED
   title "Publish version 0.5.2 from one immutable tarball"
   description "Only after every predecessor gate passes and under the user's named 0.5.2 authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.5.2 while latest remains unchanged."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

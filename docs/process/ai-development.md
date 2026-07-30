@@ -293,15 +293,16 @@ direct registry reads reported `beta=latest=0.5.1`; an unqualified isolated
 installation confirmed version `0.5.1`, CLI Contract 6, Grammar 5, and all
 eighteen root schemas. Issue #5 closure remains separate.
 
-The selected compatible `0.5.2` patch completes every nested result-schema
+The published compatible `0.5.2` patch completes every nested result-schema
 record and adds opt-in full and reference-based outline/detail discovery while
 retaining Grammar 5, CLI Contract 6, result identities, payload meanings, and
-the default complete lookup/query semantics. Its independent
-`plans/release-0.5.2.pert` sequence requires accepted self-review, source
-preparation, one clean immutable candidate, Node.js 22 and 24 CI, identical
-GitHub/npm artifacts, and durable acceptance. The named release authorization
-does not include npm `latest` promotion; publication must move only `beta` and
-leave `latest=0.5.1`.
+the default complete lookup/query semantics. Release commit and peeled
+`v0.5.2` target `501d4b1` agree; Node.js 22 and 24 CI passed; candidate,
+GitHub, and npm tarballs are byte-identical at SHA-256
+`e8512f0d...54bbce`; and npm reports `beta=0.5.2` with unchanged
+`latest=0.5.1`. Its independent `plans/release-0.5.2.pert` sequence leaves
+only durable acceptance after canonical PUBLISH advance. The named release
+authorization does not include npm `latest` promotion.
 
 ### 5.1 Adopted Recommendation authority
 

@@ -71,7 +71,7 @@ test("all review findings have durable backlog or Issue owners", async () => {
   );
   assert.match(
     backlog,
-    /^Status: Published in `0\.5\.1` \(2026-07-30\); Issue closure not authorized$/m,
+    /Status: Complete artifacts published in `0\.5\.2` \(2026-07-30\); Issue closure\s+not authorized/,
   );
   assert.doesNotMatch(
     backlog,
@@ -79,7 +79,7 @@ test("all review findings have durable backlog or Issue owners", async () => {
   );
 });
 
-test("current guidance records the published 0.5.1 and selected 0.5.2 schema boundaries", async () => {
+test("current guidance records the published 0.5.2 schema boundary", async () => {
   const [agents, copilot, requirements, schemaContract] = await Promise.all([
     repositoryText("AGENTS.md"),
     repositoryText(".github/copilot-instructions.md"),
@@ -88,7 +88,8 @@ test("current guidance records the published 0.5.1 and selected 0.5.2 schema bou
   ]);
 
   for (const guidance of [agents, copilot]) {
-    assert.match(guidance, /npm (?:remains )?`beta=latest=0\.5\.1`/);
+    assert.match(guidance, /npm reports `beta=0\.5\.2`/);
+    assert.match(guidance, /`latest=0\.5\.1`/);
     assert.match(guidance, /Git 2\.54 UTC/);
     assert.match(guidance, /Issue #5/);
     assert.match(
@@ -108,7 +109,7 @@ test("current guidance records the published 0.5.1 and selected 0.5.2 schema bou
   );
   assert.match(
     requirements,
-    /npm `beta=latest=0\.5\.1` provides\s+Contract 6/,
+    /npm `beta=0\.5\.2` and `latest=0\.5\.1`\s+provide Contract 6/,
   );
   assert.match(schemaContract, /Document status: Normative 1\.0/);
   assert.match(schemaContract, /JSON Schema Draft 2020-12/);

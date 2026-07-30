@@ -33,6 +33,7 @@ Plans are separated by level of detail.
 - [release-0.4.0.pert](release-0.4.0.pert): independent Contract 5 beta release plan covering the version gate, accepted governance input, preparation, candidate, separately authorized publication, and durable acceptance
 - [release-0.5.0.pert](release-0.5.0.pert): independent Contract 6 beta release plan covering the version gate, accepted project-actuals and English-baseline input, preparation, candidate, authorized publication, durable acceptance, and the post-release exact local installation boundary
 - [release-0.5.1.pert](release-0.5.1.pert): independent compatible Contract 6 patch-release plan covering self-review, preparation, candidate, authorized publication, and durable acceptance
+- [release-0.5.2.pert](release-0.5.2.pert): independent compatible Contract 6 complete-schema patch-release plan covering self-review, preparation, candidate, authorized publication, and durable acceptance
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2
@@ -41,7 +42,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All twenty-two plans pass the self-use gate and are used as inputs to `document
+All twenty-three plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -51,7 +52,7 @@ select a milestone work package from `scheduling-units.pert`, create and accept
 its milestone-detail plan when none is current, and then select a task from
 that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.3.0.pert`, `release-0.4.0.pert`, `release-0.5.0.pert`,
-`release-0.5.1.pert`, `governance.pert`,
+`release-0.5.1.pert`, `release-0.5.2.pert`, `governance.pert`,
 `project-actuals.pert`, and the scheduling-and-units plans are explicitly
 requested independent post-beta plans and are not rolled up into the completed
 MVP macro.
@@ -226,6 +227,18 @@ acceptance pre-advance snapshot, and the plan is advanced to reached
 mutation; fresh registry reads and an unqualified isolated installation
 confirmed `beta=latest=0.5.1`, CLI Contract 6, Grammar 5, and all eighteen
 root schemas. Issue #5 closure remains a separate decision.
+
+The independent `release-0.5.2.pert` plan selects the compatible complete
+schema patch. Self-review, source preparation, candidate acceptance, and
+PUBLISH are complete. Release commit and peeled `v0.5.2` target `501d4b1`
+agree; Node.js 22 and 24 CI passed; candidate, GitHub, and npm tarballs are
+byte-identical at SHA-256 `e8512f0d...54bbce`; npm reports `beta=0.5.2`
+with unchanged `latest=0.5.1`; and complete isolated public-package checks
+passed. Three points remain; precedence and heuristic resource makespans are
+both 3p with no resource delay, observed release velocity is `14p/1d`, both
+forecasts are `3/14d`, and complete NextResult v5 recommends and starts only
+`RELEASE_052_ACCEPTANCE`. npm `latest` promotion and Issue #5 closure remain
+separate decisions.
 
 On 2026-07-26, `TIME-001` and `UNIT-001` reached integrated acceptance.
 SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete and advanced.

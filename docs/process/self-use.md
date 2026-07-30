@@ -1374,6 +1374,26 @@ Grammar 5 plan, and listed all eighteen root schemas. The immutable artifact
 and completed release DAG were unchanged; tool-managed project metadata
 records the post-promotion state.
 
+The independent `release-0.5.2.pert` workstream then completed self-review,
+source preparation, and candidate acceptance for complete nested schemas and
+full and reference-based outline/detail views. The clean Node.js 22 candidate
+passed 655 tests, 109 Markdown documents, seven normative PERT examples, all
+twenty-three self-use plans, and the temporary-link and isolated-package
+workflows. Its retained 491-file tarball has SHA-256
+`e8512f0d3e20764e9397af827f6ea57f8bea7361d1e414102b0350bcaa54bbce`.
+
+PUBLISH then fixed release commit and peeled `v0.5.2` target `501d4b1`,
+successful Node.js 22 and 24 CI run 30517079581, byte-identical
+candidate/GitHub/npm tarballs, npm `beta=0.5.2` with unchanged
+`latest=0.5.1`, and complete isolated public-package checks. The publication
+process and independent registry reads verified the version, integrity,
+artifact identity, and dist-tags without a retry. Three points remain;
+precedence and heuristic resource makespans are both 3p with no resource
+delay, observed velocity is `14p/1d`, both forecasts are `3/14d`, and
+complete NextResult v5 recommends and starts only
+`RELEASE_052_ACCEPTANCE`. npm `latest` promotion and Issue #5 closure remain
+separate decisions.
+
 Stage 1 allowed operations:
 
 - check
@@ -1571,9 +1591,9 @@ handling are accepted in
 Exact elapsed-hour, qualified active-date, effort-productivity, and
 Git-recorded observations are accepted in
 [`project-actuals-velocity-observation-acceptance.md`](project-actuals-velocity-observation-acceptance.md).
-The current source package root, CLI, and published npm
-`beta=latest=0.5.1` package activate Grammar 5 and Contract 6 atomically. Use
-only the public root and CLI names; target-prefixed modules remain internal
+The current source package root, CLI, and published npm `beta=0.5.2` and
+`latest=0.5.1` packages activate Grammar 5 and Contract 6 atomically. Use only
+the public root and CLI names; target-prefixed modules remain internal
 implementation details. Grammar 4 and Contract 5 remain available by pinning
 `0.4.0`.
 The active contract is

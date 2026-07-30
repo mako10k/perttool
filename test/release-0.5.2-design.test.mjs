@@ -23,6 +23,7 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     adr,
     design,
     procedure,
+    publish,
     review,
     schemaContract,
     plan,
@@ -36,6 +37,7 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     repositoryText("docs/adr/0003-beta-versioning.md"),
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.5.2-release.md"),
+    repositoryText("docs/process/0.5.2-publish.md"),
     repositoryText("docs/process/0.5.2-self-review.md"),
     repositoryText("docs/specs/json-schema.md"),
     repositoryText("plans/release-0.5.2.pert"),
@@ -62,7 +64,10 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     design,
     /^### Post-MVP Slice 4L: Complete JSON Schema `v0\.5\.2` beta patch$/m,
   );
-  assert.match(procedure, /Status: Candidate accepted 1\.2/);
+  assert.match(
+    procedure,
+    /Status: Published; durable acceptance ready 1\.3/,
+  );
   assert.match(procedure, /Target version: `0\.5\.2`/);
   assert.match(procedure, /authorizes this complete named sequence/);
   assert.match(procedure, /does not\s+authorize npm `latest` promotion/);
@@ -73,6 +78,12 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     /e8512f0d3e20764e9397af827f6ea57f8bea7361d1e414102b0350bcaa54bbce/,
   );
   assert.match(procedure, /No external state was\s+changed/);
+  assert.match(publish, /Document status: Published 1\.0/);
+  assert.match(
+    publish,
+    /Release commit: `501d4b1ad83184bd12ba86a7fa19f7df2b58789f`/,
+  );
+  assert.match(publish, /No publish retry occurred/);
   assert.match(review, /Document status: Accepted 1\.0/);
   assert.match(review, /No blocking correctness, compatibility, package/);
   assert.match(review, /All 34 commands remain/);
