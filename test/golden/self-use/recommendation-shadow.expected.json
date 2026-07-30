@@ -346,35 +346,34 @@
       "diagnostic_codes": []
     },
     "release-0.5.1": {
-      "source_digest": "sha256:483a8aa95f408c1d4c33c17f9e24b6cab3acd5d93084e33ec5b6774a9500f0ea",
+      "source_digest": "sha256:3f7940749e87d3721af7ef384fd45537c622600fd4f9ed198c4d7af049d5265c",
       "groups": {
         "active": [],
         "ready": [
-          "RELEASE_051_CANDIDATE"
+          "RELEASE_051_PUBLISH"
         ],
         "runnable_now": [
-          "RELEASE_051_CANDIDATE"
+          "RELEASE_051_PUBLISH"
         ],
         "blocked_now": [],
         "upcoming": [
-          "RELEASE_051_PUBLISH",
           "RELEASE_051_ACCEPTANCE"
         ],
         "suspended": []
       },
       "recommended_task_ids": [
-        "RELEASE_051_CANDIDATE"
+        "RELEASE_051_PUBLISH"
       ],
       "manual_selected_task_ids": [
-        "RELEASE_051_CANDIDATE"
+        "RELEASE_051_PUBLISH"
       ],
       "tiers": {
-        "RELEASE_051_CANDIDATE": "recommended"
+        "RELEASE_051_PUBLISH": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RELEASE_051_CANDIDATE",
+          "id": "RELEASE_051_PUBLISH",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

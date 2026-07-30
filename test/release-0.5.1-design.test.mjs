@@ -61,8 +61,13 @@ test("0.5.1 release gate fixes the compatible Contract 6 patch boundary", async 
     /^### Post-MVP Slice 4K: Compatible Contract 6 `v0\.5\.1` beta patch$/m,
   );
   assert.match(procedure, /Target version: `0\.5\.1`/);
+  assert.match(procedure, /Status: Candidate accepted 1\.1/);
   assert.match(procedure, /authorizes this complete named sequence/);
   assert.match(procedure, /does not authorize npm `latest` promotion/);
+  assert.match(
+    procedure,
+    /93f3e01a22a41a7260792cba8df3ec9e47deedd4647b8c61616bb58886941339/,
+  );
   assert.match(review, /Document status: Accepted 1\.0/);
   assert.match(review, /All 33 retained byte-semantically/);
   assert.match(review, /All 108 retained/);

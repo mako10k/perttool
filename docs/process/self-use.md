@@ -1326,6 +1326,21 @@ both forecasts are `9/8d`, and complete NextResult v5 recommends only
 `RELEASE_051_CANDIDATE`. No external write has occurred. npm `latest`
 promotion and Issue #5 closure remain separate decisions.
 
+Candidate acceptance then reverified the clean source under Node.js 22.22.3,
+version and channel identity, absent local and remote tag, absent GitHub
+Release, unpublished npm version, unchanged dist-tag baseline, protected
+routes, complete repository and installed-package gates, and one retained
+491-file tarball. Its SHA-256 is
+`93f3e01a22a41a7260792cba8df3ec9e47deedd4647b8c61616bb58886941339`.
+Canonical governed advance removed `RELEASE_051_CANDIDATE` and the prior
+source frontier, retained reached `RELEASE_051_CANDIDATE_ACCEPTED`, and
+produced residual digest
+`sha256:3f7940749e87d3721af7ef384fd45537c622600fd4f9ed198c4d7af049d5265c`.
+Six points remain; precedence and heuristic resource makespans are 6p with
+zero resource delay, observed velocity is `11p/1d`, forecasts are `6/11d`,
+and complete NextResult v5 recommends and starts only
+`RELEASE_051_PUBLISH`.
+
 Stage 1 allowed operations:
 
 - check

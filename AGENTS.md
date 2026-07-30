@@ -171,19 +171,22 @@ named release authorization applies only after every predecessor gate passes.
 npm `latest` promotion and Issue #4 closure remain separate decisions.
 
 The explicitly authorized compatible `0.5.1` patch release is tracked in
-`plans/release-0.5.1.pert`. `RELEASE_051_SELF_REVIEW` and
-`RELEASE_051_PREPARATION` are complete after
+`plans/release-0.5.1.pert`. `RELEASE_051_SELF_REVIEW`,
+`RELEASE_051_PREPARATION`, and `RELEASE_051_CANDIDATE` are complete and
+advanced after
 confirming that the additive read-only schema command, bundled Draft 2020-12
 artifacts, lookup APIs, and Git 2.54 UTC `Z` fix retain existing Grammar 5,
 CLI Contract 6, command descriptors, result identities, payload meanings,
 and package exports. The review corrected available-Git result validation
 and package wildcard-export consumption coverage. Package, lockfile, CLI,
 CHANGELOG, README, release guidance, tests, goldens, and the full Node.js 22
-repository and 491-file isolated-package gates now identify `0.5.1`. Nine
-points remain; both makespans are 9p at `8p/1d`, and complete NextResult v5
-recommends only `RELEASE_051_CANDIDATE`. No external write has occurred. The
-user's named release authorization applies only after every predecessor gate
-passes. npm `latest` promotion and Issue #5 closure remain separate decisions.
+repository and 491-file isolated-package gates identify `0.5.1`. Clean
+source, channel availability, protected routes, and the retained tarball with
+SHA-256 `93f3e01a...1339` passed candidate acceptance. Six points remain;
+both makespans are 6p at `11p/1d`, and complete NextResult v5 recommends only
+`RELEASE_051_PUBLISH`. No external write has occurred. The user's named
+release authorization applies only after every predecessor gate passes. npm
+`latest` promotion and Issue #5 closure remain separate decisions.
 
 The explicitly selected `TIME-001` and `UNIT-001` workstream is tracked by the milestone-level `plans/scheduling-units.pert` and its milestone details. SU-M1, SU-M2, SU-M2R, SU-M3, SU-M4, and SU-M5 are complete, rolled up once, and advanced. SU-M4's final acceptance snapshot is committed at `bc75b37`; all six detail tasks and 25p are accepted at `25p/1d`. SU-M3's acceptance snapshot is committed at `9c61bac`; all six detail tasks and 23p are accepted at `23p/1d`. SU-M5's atomic Contract 4 acceptance is committed at `81b4828`; all six detail tasks and 23p are accepted at `23p/1d`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans now have zero precedence and heuristic resource makespans and no recommendation. The accepted public surface includes Grammar 1/2/3, CLI Contract 4, public result schema identities and root exports, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
 
