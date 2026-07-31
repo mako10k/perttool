@@ -13,34 +13,32 @@
   },
   "plans": {
     "advance-clean-candidate": {
-      "source_digest": "sha256:f4f8298a9790dc5feda7f270bf49a3c683852435d50ea0b63495b4f4c7e6d75b",
+      "source_digest": "sha256:3ec0f9e31709104f8de155318807d2dc8714da27152ec7ca684ef1569d2e1199",
       "groups": {
         "active": [],
         "ready": [
-          "ADV_CLEAN_CANDIDATE_CORE"
-        ],
-        "runnable_now": [
-          "ADV_CLEAN_CANDIDATE_CORE"
-        ],
-        "blocked_now": [],
-        "upcoming": [
           "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
         ],
+        "runnable_now": [
+          "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
+        ],
+        "blocked_now": [],
+        "upcoming": [],
         "suspended": []
       },
       "recommended_task_ids": [
-        "ADV_CLEAN_CANDIDATE_CORE"
+        "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "ADV_CLEAN_CANDIDATE_CORE"
+        "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
       ],
       "tiers": {
-        "ADV_CLEAN_CANDIDATE_CORE": "recommended"
+        "ADV_CLEAN_CANDIDATE_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "ADV_CLEAN_CANDIDATE_CORE",
+          "id": "ADV_CLEAN_CANDIDATE_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

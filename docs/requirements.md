@@ -2239,6 +2239,15 @@ Before implementation, separate the specifications in the following order.
     manual cleanup edit. The accepted `ADV-001` history guard remains active,
     but release preparation is blocked until this correction passes Core,
     tracked-repository, link, and installed-package acceptance.
+    - [x] Select the terminal-separator ownership and history-correspondence
+      contract with eight dependency-ordered machine cases.
+    - [x] Implement one shared terminal deletion-range planner for the
+      candidate and destructive records, with exact current-prefix mapping to
+      `HEAD` and focused LF, CRLF, BOM, final-newline, comment, and stage-0
+      regression coverage.
+    - [ ] Accept the real tracked CLI write, preview/write byte identity,
+      `git diff --check`, temporary link, installed package, and corrected
+      ADV-001 acceptance trace.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

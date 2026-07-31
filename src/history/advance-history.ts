@@ -8,6 +8,10 @@ import type {
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import {
+  advanceOwnedTerminalSeparatorStart,
+  planAdvanceDeclarationDeletions,
+} from "../mutation/advance-deletion.js";
+import {
   deleteDeclarationEdit,
   splitPhysicalLines,
 } from "../mutation/source.js";
@@ -119,11 +123,20 @@ export function deriveAdvanceDestructiveRecords(
   if (document.text !== text) {
     throw new Error("advance destructive record source does not match document");
   }
-  const lines = splitPhysicalLines(text);
+  const declarationDeletions = new Map(
+    planAdvanceDeclarationDeletions(
+      text,
+      document,
+      (declaration) => selected(declaration, selection),
+    ).map(({ declaration, edit }) => [declaration, edit] as const),
+  );
   const records: AdvanceDestructiveRecordV1[] = [];
   for (const declaration of document.declarations) {
     if (selected(declaration, selection)) {
-      const edit = deleteDeclarationEdit(declaration, lines);
+      const edit = declarationDeletions.get(declaration);
+      if (edit === undefined) {
+        throw new Error("advance destructive selection has no deletion edit");
+      }
       records.push({
         entityKind: declaration.kind as AdvanceDestructiveEntityKind,
         entityId: declaration.id,
@@ -381,7 +394,7 @@ function toByteRange(
   };
 }
 
-function entityRange(
+function baseEntityRange(
   text: string,
   declaration: DeclarationNode<TargetDeclarationKind>,
   field: AdvanceDestructiveRecordV1["field"],
@@ -501,6 +514,22 @@ export function assessAdvanceHistorySafety(
     );
   }
 
+  const declarationRecordKeys = new Set(
+    input.destructiveRecords
+      .filter(({ field }) => field === "declaration")
+      .map(({ entityKind, entityId }) => `${entityKind}:${entityId}`),
+  );
+  const currentDeclarationRanges = new Map(
+    planAdvanceDeclarationDeletions(
+      input.currentText,
+      input.currentDocument,
+      ({ kind, id }) => declarationRecordKeys.has(`${kind}:${id}`),
+    ).map(({ declaration, edit }) => [
+      `${declaration.kind}:${declaration.id}`,
+      { startOffset: edit.startOffset, endOffset: edit.endOffset },
+    ] as const),
+  );
+
   const indexEdits = rawByteEditsV1(input.headSource, input.indexSource);
   const overlapping = new Set<string>();
   let missing = false;
@@ -520,24 +549,61 @@ export function assessAdvanceHistorySafety(
       missing = true;
       continue;
     }
-    const currentRange = entityRange(
+    const currentBaseRange = baseEntityRange(
       input.currentText,
       currentMatches[0]!,
       record.field,
     );
-    const headRange = entityRange(
+    const headBaseRange = baseEntityRange(
       input.headText,
       headMatches[0]!,
       record.field,
     );
+    const currentRange = record.field === "declaration"
+      ? currentDeclarationRanges.get(`${record.entityKind}:${record.entityId}`) ?? null
+      : currentBaseRange;
     if (
       currentRange === null ||
-      headRange === null ||
+      currentBaseRange === null ||
+      headBaseRange === null ||
       currentRange.startOffset !== record.startOffset ||
       currentRange.endOffset !== record.endOffset
     ) {
       invalid = true;
       continue;
+    }
+    let headRange = headBaseRange;
+    if (record.field === "declaration") {
+      const prefix = input.currentText.slice(
+        currentRange.startOffset,
+        currentBaseRange.startOffset,
+      );
+      const suffix = input.currentText.slice(
+        currentBaseRange.endOffset,
+        currentRange.endOffset,
+      );
+      const headOwnedPrefixStart = advanceOwnedTerminalSeparatorStart(
+        input.headText,
+        headMatches[0]!,
+      );
+      const headOwnedPrefix = input.headText.slice(
+        headOwnedPrefixStart,
+        headBaseRange.startOffset,
+      );
+      const headStart = prefix === ""
+        ? headBaseRange.startOffset
+        : headOwnedPrefixStart;
+      const headEnd = suffix === ""
+        ? headBaseRange.endOffset
+        : input.headText.length;
+      if (
+        (prefix !== "" && headOwnedPrefix !== prefix) ||
+        (suffix !== "" && input.headText.slice(headBaseRange.endOffset) !== suffix)
+      ) {
+        overlapping.add(record.entityId);
+        continue;
+      }
+      headRange = { startOffset: headStart, endOffset: headEnd };
     }
     const currentByteRange = toByteRange(
       input.currentText,

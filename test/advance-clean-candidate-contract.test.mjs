@@ -54,7 +54,10 @@ test("ADV-002 fixes a narrow single-candidate terminal-trivia contract", async (
   assert.match(history, /destructive record cover identical current-source bytes/);
   assert.match(history, /changed or staged byte inside an advance-owned/);
   assert.match(design, /preview, separate output, and in-place write share the/);
-  assert.match(backlog, /Status: Contract selected \(2026-07-31; runtime pending; release blocker\)/);
+  assert.match(
+    backlog,
+    /Status: Core accepted \(2026-07-31; end-to-end pending; release blocker\)/,
+  );
   assert.match(acceptance, /- Document status: Accepted target 1\.0/);
   assert.match(acceptance, /Runtime status: not implemented/);
   assert.match(acceptance, /There are no open contract findings/);
@@ -106,7 +109,7 @@ test("all eight repository-clean candidate cases are dependency ordered", async 
   );
 });
 
-test("completed contract plan exposes only the Core task as next authority", async () => {
+test("completed Core plan exposes only final acceptance as next authority", async () => {
   const source = await repositoryText("plans/advance-clean-candidate.pert");
   const checked = checkDocument(source);
   const metadata = getProjectMetadata(source);
@@ -123,15 +126,15 @@ test("completed contract plan exposes only the Core task as next authority", asy
   assert.equal(metadata.project.governance.effective.goalOwner, "user");
   assert.equal(metadata.project.governance.effective.dagOwner, "user");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["ADV_CLEAN_CANDIDATE_CORE"]);
-  assert.deepEqual(next.groups.runnableNow, ["ADV_CLEAN_CANDIDATE_CORE"]);
-  assert.deepEqual(next.groups.upcoming, ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"]);
+  assert.deepEqual(next.groups.ready, ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"]);
+  assert.deepEqual(next.groups.runnableNow, ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"]);
+  assert.deepEqual(next.groups.upcoming, []);
   assert.deepEqual(
     next.recommendation.recommendedTaskIds,
-    ["ADV_CLEAN_CANDIDATE_CORE"],
+    ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"],
   );
   assert.deepEqual(
     next.temporal.authority.startableRecommendedTaskIds,
-    ["ADV_CLEAN_CANDIDATE_CORE"],
+    ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"],
   );
 });

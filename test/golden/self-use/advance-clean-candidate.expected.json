@@ -8,24 +8,22 @@
       "tasks": 3,
       "gates": 0,
       "errors": 0,
-      "warnings": 1
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "6/1",
+    "precedence_makespan": "3/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "12/29",
+    "precedence_forecast": "6/29",
     "precedence_critical_tasks": [
-      "ADV_CLEAN_CANDIDATE_CORE",
       "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
     ],
-    "resource_makespan": "6/1",
-    "resource_forecast": "12/29",
+    "resource_makespan": "3/1",
+    "resource_forecast": "6/29",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "ADV_CLEAN_CANDIDATE_CORE",
       "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
     ]
   },
@@ -33,15 +31,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "ADV_CLEAN_CANDIDATE_CORE"
+        "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
       ],
       "runnable_now": [
-        "ADV_CLEAN_CANDIDATE_CORE"
+        "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
       ],
       "blocked_now": [],
-      "upcoming": [
-        "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
-      ]
+      "upcoming": []
     },
     "resource_rejection": null
   }

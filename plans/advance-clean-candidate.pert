@@ -67,6 +67,7 @@ task ADV_CLEAN_CANDIDATE_CORE ADV_CLEAN_CONTRACT_READY -> ADV_CLEAN_RUNTIME_READ
   title "Normalize orphaned terminal trivia in advance"
   description "Implement the accepted terminal ownership rule in the pure planner and history provenance without changing unrelated source or public identities."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -100,3 +101,18 @@ work_event WE-8ff4878952c88cc85270d697c0b22063c3c03a35bc74ac800a36adc435e7667d:
   occurred_at 2026-07-31T19:35:00+09:00
   active_time 89/720h
   effort 0.12ph
+
+work_event WE-49197da72d30a3d256e97c70d8548ba36563c78fb704b9a298c56f6a0e1057ab:
+  model 1
+  task ADV_CLEAN_CANDIDATE_CORE
+  kind start
+  occurred_at 2026-07-31T19:44:00+09:00
+  planned_value 3p
+
+work_event WE-50f99bd0a6896dc7ec69c65ae536462b53f7eb719cc44bf99ebcf3fcd245114c:
+  model 1
+  task ADV_CLEAN_CANDIDATE_CORE
+  kind finish
+  occurred_at 2026-07-31T19:54:00+09:00
+  active_time 1/6h
+  effort 1/6ph

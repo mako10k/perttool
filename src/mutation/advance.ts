@@ -17,12 +17,7 @@ import type {
 import { fieldNamed } from "../model/syntax.js";
 import { checkDocument } from "../application/check.js";
 import { EntityEditor } from "./entity-editor.js";
-import {
-  deleteDeclarationEdit,
-  lineIndexAt,
-  splitPhysicalLines,
-  type PhysicalLine,
-} from "./source.js";
+import { planAdvanceDeclarationDeletions } from "./advance-deletion.js";
 import { applyTextEdits, normalizeTextEdits } from "./text-edits.js";
 import type { TextEdit } from "./text-edits.js";
 import type { MutationOptions, MutationResult } from "./types.js";
@@ -171,28 +166,6 @@ function classifiedTaskIds(
   return groups;
 }
 
-function advanceDeletionEdit(
-  text: string,
-  declaration: DeclarationNode<TargetDeclarationKind>,
-  lines: readonly PhysicalLine[],
-  isLastDeclaration: boolean,
-): TextEdit {
-  const edit = deleteDeclarationEdit(declaration, lines);
-  if (!isLastDeclaration) return edit;
-
-  let startOffset = edit.startOffset;
-  let lineIndex = lineIndexAt(lines, startOffset);
-  while (lineIndex > 0 && lines[lineIndex - 1]!.text.trim() === "") {
-    lineIndex -= 1;
-    startOffset = lines[lineIndex]!.start;
-  }
-  return {
-    startOffset,
-    endOffset: text.length,
-    replacement: "",
-  };
-}
-
 function structuralDocument(
   document: DocumentNode<TargetDeclarationKind>,
 ): DocumentNode {
@@ -252,18 +225,17 @@ function buildAdvancePlan(
       fieldNamed(milestone, "state")?.value !== "reached",
   );
 
-  const lines = splitPhysicalLines(text);
-  const lastDeclaration = document.declarations.at(-1);
-  const edits: TextEdit[] = [
-    ...removedTasks.map((declaration) =>
-      advanceDeletionEdit(text, declaration, lines, declaration === lastDeclaration)),
-    ...removedGates.map((declaration) =>
-      advanceDeletionEdit(text, declaration, lines, declaration === lastDeclaration)),
-    ...removedMilestones.map((declaration) =>
-      advanceDeletionEdit(text, declaration, lines, declaration === lastDeclaration)),
-    ...removedWorkEvents.map((declaration) =>
-      advanceDeletionEdit(text, declaration, lines, declaration === lastDeclaration)),
-  ];
+  const removedDeclarations = new Set([
+    ...removedTasks,
+    ...removedGates,
+    ...removedMilestones,
+    ...removedWorkEvents,
+  ]);
+  const edits: TextEdit[] = planAdvanceDeclarationDeletions(
+    text,
+    document,
+    (declaration) => removedDeclarations.has(declaration),
+  ).map(({ edit }) => edit);
   for (const milestone of stateChangedMilestones) {
     const editor = new EntityEditor(text, milestone, milestoneFieldOrder);
     editor.setScalar("state", "reached");

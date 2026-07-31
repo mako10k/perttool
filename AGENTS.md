@@ -93,8 +93,9 @@ Published `0.5.5` remains unchanged. Release selection, GitHub Issue mutation,
 npm publication, and dist-tag movement remain separate boundaries.
 
 The explicitly selected `ADV-002` correction is tracked independently in
-`plans/advance-clean-candidate.pert`. `ADV_CLEAN_CANDIDATE_CONTRACT` is
-complete and retained in its exact pre-advance state. Its accepted target
+`plans/advance-clean-candidate.pert`. `ADV_CLEAN_CANDIDATE_CONTRACT` and
+`ADV_CLEAN_CANDIDATE_CORE` are complete and retained in their exact
+pre-advance state. The accepted target
 defines a maximal terminal removed-declaration suffix, narrow
 advance-owned blank-line separator prefixes, identical edit and destructive
 record ranges, exact `HEAD` and stage-0 proof over those prefixes, and one
@@ -102,12 +103,17 @@ byte-identical preview, separate output, and in-place candidate. The
 eight-case matrix is
 `test/fixtures/advance-clean-candidate-contract-v1.json`, and the acceptance
 record is
-`docs/process/advance-clean-candidate-contract-acceptance.md`. The current
-runtime still has the observed eventful-advance trailing-blank-line defect;
-`ADV_CLEAN_CANDIDATE_CORE` is the sole ready, recommended, and startable task.
-Do not globally trim the document or invoke the formatter from advance.
-Runtime implementation, plan advance, release selection, remote writes,
-publication, and dist-tag movement remain separate boundaries.
+`docs/process/advance-clean-candidate-contract-acceptance.md`. The shared
+planner now gives the candidate and destructive records identical terminal
+deletion ranges, removes the observed eventful-advance trailing blank line,
+and maps the exact current prefix into `HEAD`; its bounded evidence is
+`docs/process/advance-clean-candidate-core-acceptance.md`.
+`ADV_CLEAN_CANDIDATE_ACCEPTANCE` is the sole ready, recommended, and startable
+task. Real tracked CLI, preview/write identity, `git diff --check`, temporary
+link, and installed-package acceptance remain pending. Do not globally trim
+the document or invoke the formatter from advance. Final acceptance, plan
+advance, release selection, remote writes, publication, and dist-tag movement
+remain separate boundaries.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
@@ -434,7 +440,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
 - `src/parser/`: the active Grammar 1/2/3/4/5 parser with identity-checked task-owned work-event source.
 - `src/semantic/`: active Grammar 1/2/3/4/5 validated-document boundaries, task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
-- `src/mutation/`: active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance and task-owned event removal; source-preserving UTF-16 TextEdit generation; and application rules.
+- `src/mutation/`: active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
 - `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.

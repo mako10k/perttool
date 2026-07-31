@@ -311,7 +311,7 @@ until that follow-up is accepted.
 
 Priority: P0
 
-Status: Contract selected (2026-07-31; runtime pending; release blocker)
+Status: Core accepted (2026-07-31; end-to-end pending; release blocker)
 
 The final `ADV_HISTORY_ACCEPTANCE` self-use advance exposed a repeatable gap
 between a valid source-preserving candidate and the repository gate. The
@@ -339,6 +339,9 @@ and the independent
 [`plans/advance-clean-candidate.pert`](../plans/advance-clean-candidate.pert)
 workstream. The contract acceptance record is
 [`docs/process/advance-clean-candidate-contract-acceptance.md`](process/advance-clean-candidate-contract-acceptance.md).
+The shared candidate/provenance implementation and its bounded evidence are
+accepted in
+[`docs/process/advance-clean-candidate-core-acceptance.md`](process/advance-clean-candidate-core-acceptance.md).
 
 Required behavior:
 
