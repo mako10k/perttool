@@ -63,7 +63,7 @@ const outputPath = path.join(workspace, "candidate.pert");
 writeFileSync(planPath, source, "utf8");
 
 function invoke(args, expectedStatus = 0) {
-  const result = spawnSync(cli, args, {
+  const result = spawnSync(process.execPath, [cli, ...args], {
     cwd: workspace,
     encoding: "utf8",
   });

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -21,9 +21,15 @@ test("ACC-006 and ACC-007 keep one tracked CLI candidate repository-clean", (t) 
   );
   t.after(() => rmSync(temporaryRoot, { recursive: true, force: true }));
   const workspace = path.join(temporaryRoot, "repository");
+  const nonExecutableCli = path.join(temporaryRoot, "cli.mjs");
+  writeFileSync(
+    nonExecutableCli,
+    `import ${JSON.stringify(pathToFileURL(cli).href)};\n`,
+    { encoding: "utf8", mode: 0o600 },
+  );
   const result = spawnSync(
     process.execPath,
-    [acceptanceScript, cli, workspace],
+    [acceptanceScript, nonExecutableCli, workspace],
     { cwd: root, encoding: "utf8" },
   );
 
