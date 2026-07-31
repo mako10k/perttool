@@ -52,8 +52,9 @@ records the cross-surface trace, and complete NextResult v5 has no ready,
 recommended, or startable task.
 
 The explicitly selected `ADV-001` workstream is tracked independently in
-`plans/advance-history-safety.pert`. `ADV_HISTORY_CONTRACT` is complete and
-remains in the current plan pending its exact pre-advance Git snapshot. The
+`plans/advance-history-safety.pert`. `ADV_HISTORY_CONTRACT` is complete; Git
+commit `2c08618` records its exact pre-advance snapshot, and the task is
+advanced to reached `ADV_HISTORY_CONTRACT_ACCEPTED`. The
 accepted `docs/specs/advance-history-safety.md` fixes history-safety model 1:
 entity/field-owned destructive records, exact raw-byte `HEAD` and stage-0
 index proof, retained-dirty behavior, linked-worktree and complete

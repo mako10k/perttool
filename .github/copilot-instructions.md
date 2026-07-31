@@ -7,8 +7,9 @@ Mandatory summary:
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
-  tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete and remains pending
-  its exact pre-advance Git snapshot. The accepted
+  tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`
+  records its exact pre-advance snapshot, and the task is advanced to reached
+  `ADV_HISTORY_CONTRACT_ACCEPTED`. The accepted
   `docs/specs/advance-history-safety.md` fixes model 1 destructive records,
   exact raw-byte `HEAD` and stage-0 index proof, retained-dirty behavior,
   linked-worktree and complete repository-baseline race boundaries, the narrow

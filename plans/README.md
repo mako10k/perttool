@@ -23,8 +23,8 @@ Plans are separated by level of detail.
   [Issue #2](https://github.com/mako10k/perttool/issues/2)
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
-  for `ADV-001`; the contract is accepted and the probe is the only
-  recommended handoff
+  for `ADV-001`; the contract snapshot is committed and advanced, and the
+  probe is the only recommended handoff
 - [english-baseline.pert](english-baseline.pert): phased migration of repository-maintained prose, bundled help, diagnostics, current plans, and golden fixtures to the English baseline
 - [governance.pert](governance.pert): independent post-beta requirements, contract, implementation, and acceptance roadmap for [Issue #4](https://github.com/mako10k/perttool/issues/4) owner-aware goal and DAG mutation governance
 - [project-actuals.pert](project-actuals.pert): independent post-beta design,

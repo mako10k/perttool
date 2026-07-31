@@ -6,6 +6,8 @@
 - Backlog: `ADV-001`
 - Plan: [`plans/advance-history-safety.pert`](../../plans/advance-history-safety.pert)
 - Plan task: `ADV_HISTORY_CONTRACT`
+- Exact pre-advance snapshot: Git commit `2c08618`
+- Plan state: advanced to reached `ADV_HISTORY_CONTRACT_ACCEPTED`
 - Target history-safety model: 1
 - Active runtime: `perttool@0.5.5`, Grammar 5, CLI Contract 6
 - Runtime status: not implemented

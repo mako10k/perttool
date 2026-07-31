@@ -10,9 +10,6 @@ project ADVANCE_HISTORY_SAFETY:
   goal_owner user
   dag_owner user
 
-milestone ADV_HISTORY_SELECTED:
-  title "Advance history safety selected"
-  state reached
 
 resource DEVELOPERS:
   title "Implementation capacity"
@@ -46,6 +43,7 @@ resource PACKAGE_SURFACE:
 
 milestone ADV_HISTORY_CONTRACT_ACCEPTED:
   title "Advance history safety contract accepted"
+  state reached
 
 milestone ADV_HISTORY_PROBE_READY:
   title "Advance history assessment ready"
@@ -56,16 +54,6 @@ milestone ADV_HISTORY_CLI_READY:
 milestone ADV_HISTORY_ACCEPTED:
   title "Advance history safety accepted"
 
-task ADV_HISTORY_CONTRACT ADV_HISTORY_SELECTED -> ADV_HISTORY_CONTRACT_ACCEPTED:
-  title "Define the advance history safety contract"
-  description "Fix HEAD baseline identity, destructive edit range semantics, dirty overlap classification, unavailable and race outcomes, Contract 6 compatibility, diagnostics, force boundary, shared Git adapter ownership, and a machine-readable acceptance matrix before runtime changes."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    NORMATIVE_SURFACE 1
 
 task ADV_HISTORY_PROBE ADV_HISTORY_CONTRACT_ACCEPTED -> ADV_HISTORY_PROBE_READY:
   title "Implement pure advance history assessment"
@@ -102,16 +90,3 @@ task ADV_HISTORY_ACCEPTANCE ADV_HISTORY_CLI_READY -> ADV_HISTORY_ACCEPTED:
     WRITE_PATH 1
     CLI_SURFACE 1
     PACKAGE_SURFACE 1
-
-work_event WE-7d3f57297e5447dec88ec7a7232e849b4d98d19fa994cbaab746055a9645e491:
-  model 1
-  task ADV_HISTORY_CONTRACT
-  kind start
-  occurred_at 2026-07-31T14:06:18+09:00
-  planned_value 3p
-
-work_event WE-3d9f0ff759df60d8abee4a527ba44efeb3afddddebca6568b15e790adca7716b:
-  model 1
-  task ADV_HISTORY_CONTRACT
-  kind finish
-  occurred_at 2026-07-31T14:18:07+09:00

@@ -185,7 +185,6 @@ test("accepted contract plan recommends only the probe handoff", async () => {
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
     [
-      "ADV_HISTORY_CONTRACT",
       "ADV_HISTORY_PROBE",
       "ADV_HISTORY_CLI",
       "ADV_HISTORY_ACCEPTANCE",
@@ -193,15 +192,16 @@ test("accepted contract plan recommends only the probe handoff", async () => {
   );
   assert.equal(
     checked.document.declarations.find(
-      ({ kind, id }) => kind === "task" && id === "ADV_HISTORY_CONTRACT",
-    ).fields.find(({ name }) => name === "status").value,
-    "done",
+      ({ kind, id }) =>
+        kind === "milestone" && id === "ADV_HISTORY_CONTRACT_ACCEPTED",
+    ).fields.find(({ name }) => name === "state").value,
+    "reached",
   );
   assert.equal(
     checked.document.declarations.filter(
       ({ kind }) => kind === "work_event",
     ).length,
-    2,
+    0,
   );
   assert.equal(analyzed.precedence.makespan.numerator.toString(), "11");
   assert.equal(analyzed.precedence.makespan.denominator.toString(), "1");

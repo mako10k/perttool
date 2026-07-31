@@ -13,7 +13,7 @@
   },
   "plans": {
     "advance-history-safety": {
-      "source_digest": "sha256:1434748c26379bbff602f8a56cf3eab0df2eccd3d875c189c17922280cb587eb",
+      "source_digest": "sha256:2296068f6e544938923a83ed107e6927d1fed0c3e555d6b901f5b3b8168aace0",
       "groups": {
         "active": [],
         "ready": [
@@ -57,9 +57,7 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "agent-guidance": {
       "source_digest": "sha256:ca06697d12d3846f72068bbbc113e20539ba717b0c23735473290dd08bd4f7f4",
