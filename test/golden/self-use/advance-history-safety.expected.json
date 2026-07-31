@@ -1,0 +1,51 @@
+{
+  "check": {
+    "document_id": "ADVANCE_HISTORY_SAFETY",
+    "grammar_version": 5,
+    "summary": {
+      "resources": 7,
+      "milestones": 5,
+      "tasks": 4,
+      "gates": 0,
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "analyze": {
+    "duration_unit": "point",
+    "precedence_makespan": "11/1",
+    "precedence_forecast_unit": "day",
+    "precedence_forecast": "22/29",
+    "precedence_critical_tasks": [
+      "ADV_HISTORY_PROBE",
+      "ADV_HISTORY_CLI",
+      "ADV_HISTORY_ACCEPTANCE"
+    ],
+    "resource_makespan": "11/1",
+    "resource_forecast": "22/29",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
+    "schedule_critical_tasks": [
+      "ADV_HISTORY_PROBE",
+      "ADV_HISTORY_CLI",
+      "ADV_HISTORY_ACCEPTANCE"
+    ]
+  },
+  "next": {
+    "groups": {
+      "active": [],
+      "ready": [
+        "ADV_HISTORY_PROBE"
+      ],
+      "runnable_now": [
+        "ADV_HISTORY_PROBE"
+      ],
+      "blocked_now": [],
+      "upcoming": [
+        "ADV_HISTORY_CLI",
+        "ADV_HISTORY_ACCEPTANCE"
+      ]
+    },
+    "resource_rejection": null
+  }
+}

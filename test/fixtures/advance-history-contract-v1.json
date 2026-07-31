@@ -1,0 +1,259 @@
+{
+  "schema_version": "Perttool.AdvanceHistoryContractCases.v1",
+  "history_safety_model_version": 1,
+  "target_cli_contract_version": 6,
+  "target_result_schema": "Perttool.AdvanceResult.v1",
+  "cases": [
+    {
+      "id": "AHS-001",
+      "depends_on": [],
+      "operation": "preview",
+      "expected": {
+        "status": "not_applicable",
+        "cause": "preview",
+        "git_inspection": false,
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-002",
+      "depends_on": [
+        "AHS-001"
+      ],
+      "operation": "separate_output",
+      "expected": {
+        "status": "not_applicable",
+        "cause": "separate_output",
+        "git_inspection": false,
+        "source_preserved": true
+      }
+    },
+    {
+      "id": "AHS-003",
+      "depends_on": [
+        "AHS-001"
+      ],
+      "operation": "in_place_no_change",
+      "expected": {
+        "status": "not_applicable",
+        "cause": "no_change",
+        "git_inspection": false,
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-004",
+      "depends_on": [
+        "AHS-001"
+      ],
+      "operation": "tracked_exact_baseline",
+      "expected": {
+        "status": "passed",
+        "cause": "baseline_matches",
+        "exit": 0,
+        "written": true
+      }
+    },
+    {
+      "id": "AHS-005",
+      "depends_on": [
+        "AHS-004"
+      ],
+      "operation": "unstaged_destructive_overlap",
+      "expected": {
+        "status": "blocked",
+        "cause": "destructive_overlap",
+        "diagnostic": "PTADV-101",
+        "exit": 1,
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-006",
+      "depends_on": [
+        "AHS-004"
+      ],
+      "operation": "staged_destructive_overlap",
+      "expected": {
+        "status": "blocked",
+        "cause": "destructive_overlap",
+        "diagnostic": "PTADV-101",
+        "exit": 1,
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-007",
+      "depends_on": [
+        "AHS-004"
+      ],
+      "operation": "retained_dirty_range",
+      "expected": {
+        "status": "passed",
+        "cause": "baseline_matches",
+        "index_global_validation_required": false,
+        "written": true
+      }
+    },
+    {
+      "id": "AHS-008",
+      "depends_on": [
+        "AHS-005"
+      ],
+      "operation": "owned_comment_overlap",
+      "expected": {
+        "status": "blocked",
+        "cause": "destructive_overlap",
+        "entity_kind": "task",
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-009",
+      "depends_on": [
+        "AHS-005"
+      ],
+      "operation": "uncommitted_owned_work_event",
+      "expected": {
+        "status": "blocked",
+        "cause": "correspondence_missing",
+        "entity_kind": "work_event",
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-010",
+      "depends_on": [
+        "AHS-001"
+      ],
+      "operation": "missing_repository_baseline",
+      "expected": {
+        "status": "blocked",
+        "causes": [
+          "no_repository",
+          "no_head",
+          "untracked_target"
+        ],
+        "diagnostic": "PTADV-101",
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-011",
+      "depends_on": [
+        "AHS-010"
+      ],
+      "operation": "ambiguous_index_or_path",
+      "expected": {
+        "status": "blocked",
+        "causes": [
+          "unmerged_index",
+          "ambiguous_path"
+        ],
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-012",
+      "depends_on": [
+        "AHS-004"
+      ],
+      "operation": "linked_worktree",
+      "expected": {
+        "status": "passed",
+        "repository_relative_path": true,
+        "written": true
+      }
+    },
+    {
+      "id": "AHS-013",
+      "depends_on": [
+        "AHS-010"
+      ],
+      "operation": "uncommitted_rename",
+      "expected": {
+        "status": "blocked",
+        "causes": [
+          "untracked_target",
+          "ambiguous_path"
+        ],
+        "similarity_inference": false,
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-014",
+      "depends_on": [
+        "AHS-004"
+      ],
+      "operation": "raw_bom_crlf_match",
+      "expected": {
+        "status": "passed",
+        "comparison": "raw_bytes",
+        "written": true
+      }
+    },
+    {
+      "id": "AHS-015",
+      "depends_on": [
+        "AHS-005"
+      ],
+      "operation": "forced_history_loss",
+      "expected": {
+        "status": "forced",
+        "cause": "forced_by_option",
+        "diagnostic": "PTADV-103",
+        "other_gates_preserved": true,
+        "warnings_as_errors_exit": 1,
+        "warnings_as_errors_written": false
+      }
+    },
+    {
+      "id": "AHS-016",
+      "depends_on": [
+        "AHS-004"
+      ],
+      "operation": "source_race_after_assessment",
+      "expected": {
+        "diagnostic": "PTADV-102",
+        "exit": 5,
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-017",
+      "depends_on": [
+        "AHS-004"
+      ],
+      "operation": "repository_baseline_race_after_assessment",
+      "expected": {
+        "diagnostic": "PTADV-102",
+        "changed_binding_any_of": [
+          "head",
+          "stage0_index"
+        ],
+        "exit": 5,
+        "written": false
+      }
+    },
+    {
+      "id": "AHS-018",
+      "depends_on": [
+        "AHS-001",
+        "AHS-004",
+        "AHS-005",
+        "AHS-015",
+        "AHS-016",
+        "AHS-017"
+      ],
+      "operation": "public_and_installed_acceptance",
+      "expected": {
+        "result_schema": "Perttool.AdvanceResult.v1",
+        "schema_complete": true,
+        "text_json_help_guide_parity": true,
+        "package_acceptance": true,
+        "git_mutation": false
+      }
+    }
+  ]
+}

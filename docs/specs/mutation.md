@@ -498,7 +498,11 @@ status maintenance for `planned`, `active`, `blocked`, and `done`.
 Canonical advance in version 2 removes every event owned by each removed task
 in the same candidate and returns `removed_work_event_ids`. It does not remove
 events belonging to retained tasks. The required pre-advance Git snapshot
-procedure remains outside the pure mutation Core.
+procedure remains outside the pure mutation Core. The later
+[Advance History Safety Contract](advance-history-safety.md) requires the
+planner to retain entity/field provenance for each non-empty removal or
+replacement range, but repository and index inspection remain outside this
+Core.
 
 ## 13. Acceptance invariants
 

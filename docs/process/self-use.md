@@ -1828,5 +1828,16 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty-two current plans
-- write state: Stage 3 editing commands remain preview-first. Until backlog [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history) is implemented, an advance write additionally requires the exact pre-advance target snapshot in `HEAD`, followed by diff/deletion review, expected-digest write, reanalysis, and a separate advance commit.
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty-seven current plans
+- ADV-001 contract state: the
+  [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
+  exact destructive records, `HEAD` and stage-0 index proof, retained-dirty
+  behavior, force, result, and diagnostic boundaries. Runtime enforcement is
+  not implemented until the remaining tasks in
+  [`advance-history-safety.pert`](../../plans/advance-history-safety.pert)
+  pass.
+- write state: Stage 3 editing commands remain preview-first. Until the
+  runtime `ADV-001` tasks are accepted, an advance write additionally
+  requires the exact pre-advance target snapshot in `HEAD`, followed by
+  diff/deletion review, expected-digest write, reanalysis, and a separate
+  advance commit.

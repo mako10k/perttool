@@ -21,6 +21,10 @@ Plans are separated by level of detail.
 - [agent-guidance.pert](agent-guidance.pert): detailed plan for the provider
   baseline, common contract, Core, `agent help`, and beta acceptance from
   [Issue #2](https://github.com/mako10k/perttool/issues/2)
+- [advance-history-safety.pert](advance-history-safety.pert): independent
+  post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
+  for `ADV-001`; the contract is accepted and the probe is the only
+  recommended handoff
 - [english-baseline.pert](english-baseline.pert): phased migration of repository-maintained prose, bundled help, diagnostics, current plans, and golden fixtures to the English baseline
 - [governance.pert](governance.pert): independent post-beta requirements, contract, implementation, and acceptance roadmap for [Issue #4](https://github.com/mako10k/perttool/issues/4) owner-aware goal and DAG mutation governance
 - [project-actuals.pert](project-actuals.pert): independent post-beta design,
@@ -45,7 +49,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All twenty-six plans pass the self-use gate and are used as inputs to `document
+All twenty-seven plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -57,7 +61,8 @@ that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.3.0.pert`, `release-0.4.0.pert`, `release-0.5.0.pert`,
 `release-0.5.1.pert`, `release-0.5.2.pert`, `release-0.5.3.pert`,
 `release-0.5.4.pert`, `release-0.5.5.pert`, `governance.pert`,
-`project-actuals.pert`, and the scheduling-and-units plans are explicitly
+`project-actuals.pert`, `advance-history-safety.pert`, and the
+scheduling-and-units plans are explicitly
 requested independent post-beta plans and are not rolled up into the completed
 MVP macro.
 

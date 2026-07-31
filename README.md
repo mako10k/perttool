@@ -403,6 +403,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Temporal and Unit Interface Contract (CLI Contract 4)](docs/specs/temporal-unit-interface.md)
 - [Owner-Aware Governance Interface Contract (CLI Contract 5)](docs/specs/governance-interface.md)
 - [Project Actuals and Git History Contract (CLI Contract 6)](docs/specs/project-actuals.md)
+- [Advance History Safety Contract (ADV-001 target)](docs/specs/advance-history-safety.md)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)

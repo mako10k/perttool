@@ -71,8 +71,26 @@ Must:
   work events owned by a current task. Advance removes those events with the
   task after the exact pre-advance snapshot becomes recoverable from Git.
 - After the join condition is satisfied, the current boundary can advance and unnecessary past portions can be removed mechanically.
+- A changed in-place advance write that removes or replaces current source
+  bytes must fail closed unless every destructive entity or field range is
+  byte-identical to the same repository-relative target in `HEAD` and the
+  stage-0 index has no uncommitted difference in that range.
+- A dirty path or dirty target file is not sufficient reason to reject an
+  advance. Dirty changes outside the destructive ranges, including changes
+  retained byte-for-byte by the candidate, must remain writable.
+- Preview, diff, separate output, an idempotent no-op, and unrelated commands
+  must not acquire a Git requirement from the advance-history guard.
+- The guard must bind repository identity, path, `HEAD`, the stage-0 index,
+  source, and candidate, then recheck source and the complete repository
+  baseline immediately before the existing atomic write.
+- An explicit history-loss override may bypass only this guard. It must remain
+  subject to candidate validation, governance, warning policy, optimistic
+  locking, symlink and race rejection, atomic replacement, and post-write
+  validation.
 
 This document calls this forward operation `advance`. Git is used to inspect history and the difference before and after `advance`.
+The exact proof, force, result, diagnostic, and compatibility rules are in
+the [Advance History Safety Contract](specs/advance-history-safety.md).
 
 ### 2.4 Make the AI Project Control Plane the central purpose
 
@@ -2202,6 +2220,15 @@ Before implementation, separate the specifications in the following order.
     [Source acceptance](process/json-schema-acceptance.md) is complete;
     release publication and Issue closure remain separate authorization
     boundaries.
+19. [ ] Enforce repository-aware history safety for destructive in-place
+    `dag advance` writes under `ADV-001`.
+    - [x] [Advance History Safety Contract](specs/advance-history-safety.md):
+      exact destructive records, `HEAD` and index proof, retained-dirty
+      behavior, force boundary, result identity, diagnostics, and eighteen
+      machine-readable acceptance cases
+    - [ ] Pure assessment and shared read-only Git adapter extension
+    - [ ] In-place CLI enforcement and `Perttool.AdvanceResult.v1`
+    - [ ] Repository, package, and installed-workflow acceptance
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

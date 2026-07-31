@@ -12,6 +12,55 @@
     "description_locale": "en"
   },
   "plans": {
+    "advance-history-safety": {
+      "source_digest": "sha256:1434748c26379bbff602f8a56cf3eab0df2eccd3d875c189c17922280cb587eb",
+      "groups": {
+        "active": [],
+        "ready": [
+          "ADV_HISTORY_PROBE"
+        ],
+        "runnable_now": [
+          "ADV_HISTORY_PROBE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "ADV_HISTORY_CLI",
+          "ADV_HISTORY_ACCEPTANCE"
+        ],
+        "suspended": []
+      },
+      "recommended_task_ids": [
+        "ADV_HISTORY_PROBE"
+      ],
+      "manual_selected_task_ids": [
+        "ADV_HISTORY_PROBE"
+      ],
+      "tiers": {
+        "ADV_HISTORY_PROBE": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "ADV_HISTORY_PROBE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
+    },
     "agent-guidance": {
       "source_digest": "sha256:ca06697d12d3846f72068bbbc113e20539ba717b0c23735473290dd08bd4f7f4",
       "groups": {

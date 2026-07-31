@@ -197,7 +197,7 @@ advances completed history, and validates the final one-frontier document.
 
 Priority: P0
 
-Status: Refined backlog (not scheduled)
+Status: Contract accepted (2026-07-31; runtime not implemented)
 
 `dag advance` deliberately removes declarations and owned leading comments
 that no longer affect the present or future graph. The current source-digest
@@ -284,13 +284,16 @@ Provisional delivery slices:
 | `ADV_HISTORY_CLI` | `dag advance --write` enforcement, explicit force option, descriptor/help projection, and structured result | 4p | In-place writes enforce the guard without weakening existing safe-write controls. |
 | `ADV_HISTORY_ACCEPTANCE` | Race/worktree/encoding cases, E2E, guide/README, link, and installed-package checks | 3p | The complete repository and package gate passes with no automatic Git mutation. |
 
-The estimates are provisional and do not create task state. When this backlog
-item is selected, promote the four slices into one independent detail plan
-rather than adding them to the scheduling-and-units workstream. The contract
-slice must first resolve the current Contract 3 no-Git boundary and decide
-whether its read-only adapter is shared with, sequenced after, or explicitly
-independent from MIG-08. Runtime implementation is not accepted until that
-architecture decision is normative.
+The four slices are promoted into the independent
+[`plans/advance-history-safety.pert`](../plans/advance-history-safety.pert)
+workstream. The selected
+[Advance History Safety Contract](specs/advance-history-safety.md) resolves
+the current Contract 6 boundary: the guard shares repository/path/`HEAD` and
+raw-source capture with the accepted project-history adapter, adds stage-0
+index capture, and remains a separate application decision from both history
+reduction and MIG-08. It targets `Perttool.AdvanceResult.v1` because the
+published MutationResult v3 schema is closed. Runtime implementation remains
+unaccepted until the later probe, CLI, and acceptance tasks pass.
 
 ## Project actuals and Git-recorded history
 

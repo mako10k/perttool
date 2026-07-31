@@ -6,6 +6,19 @@ Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
+- The selected independent `plans/advance-history-safety.pert` workstream
+  tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete and remains pending
+  its exact pre-advance Git snapshot. The accepted
+  `docs/specs/advance-history-safety.md` fixes model 1 destructive records,
+  exact raw-byte `HEAD` and stage-0 index proof, retained-dirty behavior,
+  linked-worktree and complete repository-baseline race boundaries, the narrow
+  `--force-history-loss` target, `Perttool.AdvanceResult.v1`, `PTADV-101`
+  through `PTADV-103`, human-readable modification time, byte-size and diff
+  context, and eighteen machine cases. The active 0.5.5 runtime remains
+  unchanged and still uses the manual pre-advance commit procedure. The
+  residual plan has 11p makespans with no resource delay; complete
+  NextResult v5 recommends and makes startable only `ADV_HISTORY_PROBE`,
+  which is not started. Runtime implementation and release remain separate.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

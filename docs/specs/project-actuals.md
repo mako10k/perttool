@@ -310,6 +310,11 @@ team/resource statistical models are outside version 1.
   resolution, HEAD identity, and race-safe inspection boundary. They remain
   separate application decisions: history reads evidence, while `ADV-001`
   guards a destructive write.
+- The exact `ADV-001` destructive-record, `HEAD` and stage-0 index proof,
+  retained-dirty, force, result, and diagnostic rules are owned by the
+  [Advance History Safety Contract](advance-history-safety.md). This contract
+  continues to own event and declaration source retention, not the write
+  guard's public interface.
 
 Post-advance correction is outside model 1. The history result reports this
 limitation rather than suggesting that Git history was rewritten.

@@ -873,7 +873,62 @@ finish snapshot. The internal application target composes the probe and
 reducer and provides deterministic `Perttool.ProjectHistoryResult.v1` JSON
 and text projections without adding a public command or root export.
 
-#### 6.8.4 Observation service
+#### 6.8.4 Advance history-safety boundary
+
+The accepted
+[Advance History Safety Contract](specs/advance-history-safety.md) reuses
+only the narrow repository/path/`HEAD`/raw-source capture boundary from
+`src/history/`. It does not call the first-parent history application service
+or reducer.
+
+The implementation target has three layers:
+
+1. the advance planner attaches entity- and field-owned provenance to each
+   non-empty removal or replacement range;
+2. a pure `src/history/` assessor maps those ranges to validated `HEAD`,
+   stage-0 index, and current documents and compares their raw bytes; and
+3. the advance write application service runs that assessment after
+   governance authorization and before the existing atomic replacement.
+
+The proof is entity-local rather than repository-dirty or file-dirty. A
+removed declaration includes its owned leading comments; a retained
+milestone state edit owns only the existing state value. This lets an
+unrelated dirty range survive in the candidate without weakening the
+pre-advance history guarantee.
+
+The adapter extends the existing Git boundary with exact `HEAD:<path>` and
+stage-0 index blob capture. It does not use similarity rename inference or
+first-parent traversal for the write decision. Linked worktree discovery,
+object-format handling, repository-relative paths, raw-byte digests, and
+source/`HEAD` race hooks remain shared.
+
+The target write pipeline is:
+
+```text
+safe source capture
+  -> advance candidate and destructive records
+  -> pre-change governance decision
+  -> read-only HEAD/index capture
+  -> pure history-safety assessment
+  -> source and repository-baseline recheck
+  -> existing atomic safe write
+  -> existing post-write verification
+```
+
+The target `Perttool.AdvanceResult.v1` preserves the closed
+`Perttool.MutationResult.v3` contract for every other mutation. It adds a
+complete history-guard record with modification time, byte sizes, diff
+counts, stable entity IDs, status, and cause; digests remain supplemental
+bindings. Runtime implementation must update only the `dag advance`
+descriptor, add one complete root schema, and keep CLI Contract 6 command
+names and unrelated no-Git behavior unchanged.
+
+An explicit `--force-history-loss` changes only a blocked guard to `forced`.
+It does not bypass governance, warning policy, source, `HEAD`, or stage-0
+index rechecks, expected digest, symlink rejection, candidate validation,
+atomic replacement, or post-write verification.
+
+#### 6.8.5 Observation service
 
 The observation service consumes only the versioned history result. It returns
 exact elapsed-hour Point throughput, qualified active-date Point throughput,
@@ -891,7 +946,7 @@ The active project velocity remains the forecast input. A separately
 previewed `project set` may later adopt one compatible observed value; the
 observation service never performs that write.
 
-#### 6.8.5 Public cutover
+#### 6.8.6 Public cutover
 
 The implementation may land internal source, actuals, Git, lifecycle,
 history, and observation slices without exposing them. Public activation is

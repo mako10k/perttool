@@ -1,0 +1,117 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project ADVANCE_HISTORY_SAFETY:
+  version 5
+  title "Advance history safety"
+  description "Implement ADV-001 as an independent post-beta workstream. First accept the HEAD-bound destructive-range contract, then add a pure read-only assessment, enforce it only for changed in-place dag advance writes, and complete race, worktree, encoding, help, and installed-package acceptance. Preserve preview and out behavior, existing safe-write and governance gates, and the no-Git requirement for unrelated commands. Release and external Issue mutations remain separate."
+  as_of 2026-07-31
+  duration_unit point
+  velocity 29p/2d
+  finish ADV_HISTORY_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone ADV_HISTORY_SELECTED:
+  title "Advance history safety selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two implementation slices may run concurrently only when their owned surfaces do not overlap."
+  capacity 2
+
+resource REVIEWERS:
+  title "Normative and safety review capacity"
+  description "Serialize contract, write-boundary, and acceptance review."
+  capacity 1
+
+resource NORMATIVE_SURFACE:
+  title "Requirements, specifications, and acceptance matrix ownership"
+  capacity 1
+
+resource GIT_SURFACE:
+  title "Read-only Git inspection ownership"
+  capacity 1
+
+resource WRITE_PATH:
+  title "Advance and safe-write ownership"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "Command, diagnostic, result, and help ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Repository and installed-package acceptance ownership"
+  capacity 1
+
+milestone ADV_HISTORY_CONTRACT_ACCEPTED:
+  title "Advance history safety contract accepted"
+
+milestone ADV_HISTORY_PROBE_READY:
+  title "Advance history assessment ready"
+
+milestone ADV_HISTORY_CLI_READY:
+  title "Advance history write guard ready"
+
+milestone ADV_HISTORY_ACCEPTED:
+  title "Advance history safety accepted"
+
+task ADV_HISTORY_CONTRACT ADV_HISTORY_SELECTED -> ADV_HISTORY_CONTRACT_ACCEPTED:
+  title "Define the advance history safety contract"
+  description "Fix HEAD baseline identity, destructive edit range semantics, dirty overlap classification, unavailable and race outcomes, Contract 6 compatibility, diagnostics, force boundary, shared Git adapter ownership, and a machine-readable acceptance matrix before runtime changes."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+
+task ADV_HISTORY_PROBE ADV_HISTORY_CONTRACT_ACCEPTED -> ADV_HISTORY_PROBE_READY:
+  title "Implement pure advance history assessment"
+  description "Build a pure destructive-range assessment over the shared read-only Git boundary, bound to repository, path, HEAD, and source digest. Distinguish retained dirty changes from destructive overlap and fail closed when proof is unavailable."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    GIT_SURFACE 1
+
+task ADV_HISTORY_CLI ADV_HISTORY_PROBE_READY -> ADV_HISTORY_CLI_READY:
+  title "Enforce the guard at in-place advance write"
+  description "Compose the assessment with governed dag advance persistence, add the narrowly scoped force option and structured result, recheck source and HEAD before replacement, and preserve preview, out, no-op, and existing safe-write behavior."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    GIT_SURFACE 1
+    WRITE_PATH 1
+    CLI_SURFACE 1
+
+task ADV_HISTORY_ACCEPTANCE ADV_HISTORY_CLI_READY -> ADV_HISTORY_ACCEPTED:
+  title "Accept advance history safety end to end"
+  description "Verify tracked, dirty-overlap, retained-dirty, untracked, no-HEAD, linked-worktree, race, rename, BOM, CRLF, deterministic text and JSON, help, Guide, README, repository, link, and installed-package behavior with no Git mutation or release."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    GIT_SURFACE 1
+    WRITE_PATH 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
+
+work_event WE-7d3f57297e5447dec88ec7a7232e849b4d98d19fa994cbaab746055a9645e491:
+  model 1
+  task ADV_HISTORY_CONTRACT
+  kind start
+  occurred_at 2026-07-31T14:06:18+09:00
+  planned_value 3p
+
+work_event WE-3d9f0ff759df60d8abee4a527ba44efeb3afddddebca6568b15e790adca7716b:
+  model 1
+  task ADV_HISTORY_CONTRACT
+  kind finish
+  occurred_at 2026-07-31T14:18:07+09:00
