@@ -303,7 +303,76 @@ recorded in
 The final eighteen-case repository, link, package, and installed trace is
 recorded in
 [`docs/process/advance-history-acceptance.md`](process/advance-history-acceptance.md).
-Release selection and publication remain separate.
+Post-acceptance dogfooding found the trailing-trivia defect tracked by
+`ADV-002`. Release selection and publication remain separate and are blocked
+until that follow-up is accepted.
+
+### ADV-002: Keep advance candidates repository-clean without a second edit
+
+Priority: P0
+
+Status: Observed in current source (2026-07-31; release blocker)
+
+The final `ADV_HISTORY_ACCEPTANCE` self-use advance exposed a repeatable gap
+between a valid source-preserving candidate and the repository gate. The
+approved preview was 1,737 bytes and ended with five orphaned blank lines
+after the final reached milestone. The in-place write matched that preview,
+but `git diff --check` then failed with `new blank line at EOF`. A separate
+whitespace-only edit reduced the committed plan to 1,732 bytes. The semantic
+graph and history guard remained correct, but the committed bytes no longer
+matched the single approved advance candidate.
+
+The current deletion planner trims preceding blank lines only when deleting
+the declaration that was originally last in the document. When one completed
+task and its consecutive task-owned work events are removed together, blank
+trivia adjacent to the earlier removed declarations survives. Those separate
+unchanged ranges become one trailing blank region after all edits are applied.
+The existing completed-project test covers one final task without work events,
+so it does not reproduce this successful Grammar 5 write path.
+
+Required behavior:
+
+- one `dag advance` preview must describe the exact bytes later written and
+  committed; no manual or formatter follow-up may be required;
+- a candidate that removes a terminal sequence of completed declarations must
+  not turn deletion-adjacent blank trivia into trailing blank lines rejected by
+  `git diff --check`;
+- specify the narrow advance-specific ownership of newly orphaned blank trivia
+  before changing the implementation, while retaining the general
+  source-preserving `TextEdit` rule;
+- preserve BOM, the prevailing LF or CRLF convention, unrelated comments,
+  intentional trivia before retained declarations, and all source bytes
+  outside the exact normalized terminal region;
+- retain candidate validation, idempotence, advance summaries, destructive
+  entity provenance, governance, history assessment, expected-digest checks,
+  race detection, and atomic safe-write behavior; and
+- keep preview, `--out`, in-place write, text, JSON, package-root, and installed
+  behavior byte-consistent.
+
+Acceptance:
+
+- a Core case advances a final Grammar 5 task with committed start and finish
+  work events plus multiple declaration separators, and the result has no
+  trailing blank line;
+- a real tracked-repository CLI case previews and writes that candidate, proves
+  the preview and written bytes are identical, and passes `git diff --check`
+  without a second edit;
+- LF, CRLF, UTF-8 BOM, consecutive removed declarations, an absent final
+  newline, and retained standalone-comment boundaries have focused cases;
+- the history guard still passes only against the exact pre-advance `HEAD` and
+  stage-0 baseline, and the write leaves `HEAD`, index entries, and refs
+  unchanged;
+- temporary-link and isolated installed-package workflows execute the same
+  successful eventful advance and repository-clean check; and
+- the ADV-001 acceptance record is amended to identify the original coverage
+  gap and the accepted regression evidence before release preparation.
+
+Non-goals:
+
+- globally formatting a plan or trimming arbitrary user-authored blank lines;
+- weakening source preservation, history safety, governance, or write locks;
+- treating a manual whitespace patch as part of the approved candidate; or
+- selecting a release version, publishing a package, or moving a dist-tag.
 
 ## Project actuals and Git-recorded history
 
