@@ -19,6 +19,10 @@ This acceptance closes the source workstream only. It does not select a
 release version, publish a package, move an npm dist-tag, push Git state, or
 change a GitHub Issue.
 
+Commit `aa401e4` records the exact completed final-task pre-advance snapshot.
+After separate owner approval, commit `7b07bb8` advances the plan to its sole
+reached `ADV_HISTORY_ACCEPTED` frontier with no task or work-event declaration.
+
 ## 2. Contract trace
 
 The machine-readable cases remain authoritative in

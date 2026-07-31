@@ -221,7 +221,7 @@ test("active runtime exposes the exact CLI result and force boundary", () => {
   );
 });
 
-test("completed acceptance task leaves only the reached final frontier", async () => {
+test("advanced acceptance plan retains only the reached final frontier", async () => {
   const source = await repositoryText("plans/advance-history-safety.pert");
   const checked = checkDocument(source);
   const metadata = getProjectMetadata(source);
@@ -241,20 +241,24 @@ test("completed acceptance task leaves only the reached final frontier", async (
     checked.document.declarations
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
-    ["ADV_HISTORY_ACCEPTANCE"],
+    [],
+  );
+  const milestones = checked.document.declarations.filter(
+    ({ kind }) => kind === "milestone",
+  );
+  assert.deepEqual(
+    milestones.map(({ id }) => id),
+    ["ADV_HISTORY_ACCEPTED"],
   );
   assert.equal(
-    checked.document.declarations.find(
-      ({ kind, id }) =>
-        kind === "milestone" && id === "ADV_HISTORY_CLI_READY",
-    ).fields.find(({ name }) => name === "state").value,
+    milestones[0].fields.find(({ name }) => name === "state").value,
     "reached",
   );
   assert.equal(
     checked.document.declarations.filter(
       ({ kind }) => kind === "work_event",
     ).length,
-    2,
+    0,
   );
   assert.equal(analyzed.precedence.makespan.numerator.toString(), "0");
   assert.equal(analyzed.precedence.makespan.denominator.toString(), "1");
@@ -267,6 +271,10 @@ test("completed acceptance task leaves only the reached final frontier", async (
   assert.equal(next.recommendation.explanationStatus.truncated, false);
   assert.equal(
     next.diagnostics.some(({ code }) => code.startsWith("PTREC-")),
+    false,
+  );
+  assert.equal(
+    next.diagnostics.some(({ code }) => code === "PTDAG-208"),
     false,
   );
 });
