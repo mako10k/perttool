@@ -66,10 +66,12 @@ Mandatory summary:
   root schema, and exact force option boundary. `RELEASE_060_PREPARATION` is
   complete after the 712-test, 29-plan, 138-Markdown, temporary-link, and
   504-file isolated-package gates passed under Node.js 22.
-  `RELEASE_060_CANDIDATE` is active; no candidate or external release mutation
-  exists yet. npm remains
-  `beta=latest=0.5.5` with no alpha. npm `latest`, plan advance, and Issue
-  mutation remain separate.
+  `RELEASE_060_CANDIDATE` is complete after clean source and protected-route
+  preflight accepted the retained 504-file, 543508-byte tarball with SHA-256
+  `6d03e270...e42acd`. Complete NextResult v5 recommends and makes startable
+  only `RELEASE_060_PUBLISH`; no external release mutation exists yet. npm
+  remains `beta=latest=0.5.5` with no alpha. npm `latest`, plan advance, and
+  Issue mutation remain separate.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

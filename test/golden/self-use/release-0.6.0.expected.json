@@ -8,39 +8,38 @@
       "tasks": 5,
       "gates": 0,
       "errors": 0,
-      "warnings": 2
+      "warnings": 3
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "9/1",
+    "precedence_makespan": "6/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "3/5",
+    "precedence_forecast": "2/5",
     "precedence_critical_tasks": [
-      "RELEASE_060_CANDIDATE",
       "RELEASE_060_PUBLISH",
       "RELEASE_060_ACCEPTANCE"
     ],
-    "resource_makespan": "9/1",
-    "resource_forecast": "3/5",
+    "resource_makespan": "6/1",
+    "resource_forecast": "2/5",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "RELEASE_060_CANDIDATE",
       "RELEASE_060_PUBLISH",
       "RELEASE_060_ACCEPTANCE"
     ]
   },
   "next": {
     "groups": {
-      "active": [
-        "RELEASE_060_CANDIDATE"
+      "active": [],
+      "ready": [
+        "RELEASE_060_PUBLISH"
       ],
-      "ready": [],
-      "runnable_now": [],
+      "runnable_now": [
+        "RELEASE_060_PUBLISH"
+      ],
       "blocked_now": [],
       "upcoming": [
-        "RELEASE_060_PUBLISH",
         "RELEASE_060_ACCEPTANCE"
       ]
     },

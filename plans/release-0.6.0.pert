@@ -81,7 +81,7 @@ task RELEASE_060_CANDIDATE RELEASE_060_SOURCE_PREPARED -> RELEASE_060_CANDIDATE_
   title "Accept one clean 0.6.0 release candidate"
   description "Review and commit the complete release diff; repeat the Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify dist-tag baselines and protected routes; build one immutable tarball outside the worktree; and accept its modification time, size, file count, and digests. This task performs no external write."
   duration 3p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -146,3 +146,11 @@ work_event WE-75166935da78f76e6d05eda8227b16277249818c9f8b0e5ed3fb7efde55b302f:
   kind start
   occurred_at 2026-07-31T21:17:50+09:00
   planned_value 3p
+
+work_event WE-1ff00a8f3d401e955f8eed2cd39605e17057ea8e1e34b72c849e6f2c86ed8b5b:
+  model 1
+  task RELEASE_060_CANDIDATE
+  kind finish
+  occurred_at 2026-07-31T21:25:19+09:00
+  active_time 449/3600h
+  effort 449/3600ph
