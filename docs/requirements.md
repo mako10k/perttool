@@ -2033,6 +2033,65 @@ predecessor gate passes. It does not authorize npm `latest` promotion. The
 authoritative procedure is
 [`docs/process/0.5.5-release.md`](process/0.5.5-release.md).
 
+### 21.12 Advance history safety release acceptance criteria
+
+The first package that publishes ADV-001 and ADV-002 is suffix-free `0.6.0`.
+It remains a CLI Contract 6 and Grammar 5 beta, is a GitHub prerelease, and is
+published to npm `beta`.
+
+1. Retain Grammar 5, CLI Contract 6, all existing command paths, existing
+   option names and defaults, every non-advance result identity, and all
+   previously accepted source-preserving and governance controls.
+2. Change only `dag advance` from the closed published
+   `Perttool.MutationResult.v3` result identity to
+   `Perttool.AdvanceResult.v1`, preserving every prior result field and adding
+   the required nullable `history_guard` record.
+3. Publish the complete Draft 2020-12 `Perttool.AdvanceResult.v1` root and
+   advertise it from command discovery, schema catalog, package root, CLI,
+   temporary link, and installed package.
+4. Enforce history-safety model 1 only for changed destructive in-place
+   advance writes. Preview, diff, separate output, no-op, authority denial,
+   and warning denial remain Git-independent.
+5. Prove exact destructive current bytes against `HEAD` and the stage-0 index,
+   permit dirty bytes retained by the candidate, and reject unavailable,
+   overlapping, ambiguous, or raced evidence before safe write.
+6. Add `--force-history-loss` only as an exact in-place recovery input that
+   bypasses one initial history block and cannot bypass governance, warning
+   policy, expected digest, source or repository rechecks, candidate
+   validation, atomic replacement, or post-write verification.
+7. Make modification time, source and candidate byte sizes, diff counts,
+   affected entity IDs, and guard cause primary human context while retaining
+   digests as supplemental machine bindings.
+8. Keep one preview, separate output, and in-place candidate byte-identical.
+   Remove only newly orphaned terminal separator prefixes so the written
+   candidate passes `git diff --check` without a formatter or second edit.
+9. Provide explicit `0.5.5` to `0.6.0` migration guidance for JSON and
+   TypeScript consumers and retain `AdvanceResultV3` only as a deprecated
+   source-compatibility alias for the new result type.
+10. Align package, lockfile, CLI/tool version, release commit, annotated
+    `v0.6.0` tag, GitHub asset, and npm identity.
+11. Pass the complete Node.js 22 repository, temporary-link, isolated-package,
+    and publication-normalization gates and Node.js 22 and 24 CI.
+12. Establish before publication that `perttool@0.6.0`, `v0.6.0`, and the
+    matching GitHub Release are unused; record npm `beta=latest=0.5.5`,
+    confirm that `alpha` is absent, and verify protected routes without
+    displaying secrets.
+13. Generate one immutable tarball outside the worktree, distribute those
+    exact bytes through the GitHub prerelease and npm `beta`, and verify
+    isolated installation from both public channels.
+14. Move only `beta` to `0.6.0`, leave `latest=0.5.5` unchanged, and record
+    durable release, tag, artifact, registry, CI, and installed-behavior
+    evidence.
+15. Keep npm `latest` promotion, release-plan `dag advance`, and Issue mutation
+    outside this release flow as separately authorized operations.
+
+The user's 2026-07-31 release instruction and exact release-plan confirmation
+authorize the complete named `0.6.0` judgment, preparation, candidate, Git
+push, annotated tag, GitHub prerelease, npm `beta` publication, and durable
+acceptance after every predecessor gate passes. They do not authorize npm
+`latest` promotion, release-plan advance, or Issue mutation. The authoritative
+procedure is [`docs/process/0.6.0-release.md`](process/0.6.0-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

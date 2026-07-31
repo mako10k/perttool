@@ -1,0 +1,140 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_060:
+  version 5
+  title "perttool 0.6.0 advance history safety release"
+  description "Release suffix-free 0.6.0 beta as the post-0.5.5 advance history safety boundary. Publish ADV-001 repository-aware destructive-write protection, Perttool.AdvanceResult.v1, and the ADV-002 repository-clean candidate correction while retaining Grammar 5 and CLI Contract 6. npm latest promotion, plan advance, and Issue mutation remain separate decisions."
+  as_of 2026-07-31
+  duration_unit point
+  velocity 15p/1d
+  finish RELEASE_060_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_060_SELECTED:
+  title "Version 0.6.0 selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize compatibility, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, migration guidance, CHANGELOG, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_060_REVIEW_ACCEPTED:
+  title "Version 0.6.0 compatibility review accepted"
+
+milestone RELEASE_060_SOURCE_PREPARED:
+  title "Version 0.6.0 release source prepared"
+
+milestone RELEASE_060_CANDIDATE_ACCEPTED:
+  title "Version 0.6.0 release candidate accepted"
+
+milestone RELEASE_060_PUBLISHED:
+  title "Version 0.6.0 published to GitHub and npm beta"
+
+milestone RELEASE_060_ACCEPTED:
+  title "Version 0.6.0 advance history safety release accepted"
+
+task RELEASE_060_SELF_REVIEW RELEASE_060_SELECTED -> RELEASE_060_REVIEW_ACCEPTED:
+  title "Review the 0.6.0 compatibility and safety boundary"
+  description "Review the MutationResult.v3 to AdvanceResult.v1 cutover for dag advance, public type and schema discovery, the new history guard and force option, failure and race exits, retained Grammar 5 and CLI Contract 6 behavior, ADV-002 correction, tests, migration guidance, package surface, and release safety. Accept 0.6.0 only if the minor version accurately represents the post-0.5.5 compatibility boundary. This task performs no external write."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_060_PREPARATION RELEASE_060_REVIEW_ACCEPTED -> RELEASE_060_SOURCE_PREPARED:
+  title "Prepare version 0.6.0 release source"
+  description "Align package and lockfile identity, CLI version, CHANGELOG, README, release and migration documentation, tests, goldens, self-use registration, and beta publication validation. Run complete Node.js 22 repository and package gates without remote or registry writes."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_060_CANDIDATE RELEASE_060_SOURCE_PREPARED -> RELEASE_060_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.6.0 release candidate"
+  description "Review and commit the complete release diff; repeat the Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify dist-tag baselines and protected routes; build one immutable tarball outside the worktree; and accept its modification time, size, file count, and digests. This task performs no external write."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_060_PUBLISH RELEASE_060_CANDIDATE_ACCEPTED -> RELEASE_060_PUBLISHED:
+  title "Publish version 0.6.0 from one immutable tarball"
+  description "Only after every predecessor gate passes and under the user's 2026-07-31 named release authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.6.0 while latest remains 0.5.5."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_060_ACCEPTANCE RELEASE_060_PUBLISHED -> RELEASE_060_ACCEPTED:
+  title "Record durable 0.6.0 beta acceptance"
+  description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball modification time, size and digests, registry integrity and metadata, isolated installation from both public channels, AdvanceResult.v1 history safety and repository-clean behavior, beta=0.6.0 and unchanged latest=0.5.5, and exact commands. Record acceptance without altering the immutable artifact, advancing this plan, or promoting latest."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+work_event WE-88051b82f94db70730d14fef5a5ec51d3045578e6d053fc2f08232d634c6d657:
+  model 1
+  task RELEASE_060_SELF_REVIEW
+  kind start
+  occurred_at 2026-07-31T20:55:05+09:00
+  planned_value 4p
+
+work_event WE-6cdcfb47eac2dddf3154c4fc82f4bdd79d575f716d5b87447baed3dd482dad7f:
+  model 1
+  task RELEASE_060_SELF_REVIEW
+  kind finish
+  occurred_at 2026-07-31T21:00:46+09:00
+  active_time 341/3600h
+  effort 341/3600ph
+
+work_event WE-e94dd67186015db819cb33d4831055d1c792faf11db6cc651cbdb187d4ea78d1:
+  model 1
+  task RELEASE_060_PREPARATION
+  kind start
+  occurred_at 2026-07-31T21:01:15+09:00
+  planned_value 4p
+
+work_event WE-d19a597b071006969b0b5ef8474b14977516e939f2f9ca02b337cc28ac8b3ef5:
+  model 1
+  task RELEASE_060_PREPARATION
+  kind finish
+  occurred_at 2026-07-31T21:13:34+09:00
+  active_time 739/3600h
+  effort 739/3600ph

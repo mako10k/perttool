@@ -128,10 +128,10 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.5.5");
-  assert.equal(lockfile.version, "0.5.5");
-  assert.equal(lockfile.packages[""].version, "0.5.5");
-  assert.match(versionSource, /TOOL_VERSION = "0\.5\.5"/);
+  assert.equal(manifest.version, "0.6.0");
+  assert.equal(lockfile.version, "0.6.0");
+  assert.equal(lockfile.packages[""].version, "0.6.0");
+  assert.match(versionSource, /TOOL_VERSION = "0\.6\.0"/);
   assert.match(changelog, /^## \[0\.4\.0\] - 2026-07-28$/m);
   assert.match(
     changelog,
@@ -140,7 +140,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.match(readme, /exact pins\s+`perttool@0\.4\.0`/);
   assert.match(
     readme,
-    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.5\.5`/,
+    /npm `beta` resolves to Contract 6 `0\.6\.0`\. npm `latest` and an unqualified\s+install remain on Contract 6 `0\.5\.5`/,
   );
   assert.match(
     readme,

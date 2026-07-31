@@ -1456,6 +1456,20 @@ preview digest. It removed the five completed tasks and five intermediate
 milestones while retaining reached `RELEASE_055_ACCEPTED`; the residual plan
 has no diagnostics, task, recommendation, or makespan.
 
+The independent `release-0.6.0.pert` workstream selects the advance-history
+safety beta minor. The user confirmed its exact 5,289-byte initial candidate
+for goal and DAG scopes; the one write used actor `codex` and the scope-bound
+owner assertion `user`. `RELEASE_060_SELF_REVIEW` is complete after a direct
+Node.js 22 comparison with installed `0.5.5` confirmed unchanged Grammar 5,
+CLI Contract 6, and prior advance JSON fields, plus the deliberate
+`AdvanceResult.v1`, required nullable history guard, nineteenth root schema,
+and exact force option. `RELEASE_060_PREPARATION` is complete after 712 tests,
+29 self-use plans, 138 Markdown files, the temporary-link workflow, and the
+504-file isolated-package gate passed under Node.js 22. Complete NextResult v5
+recommends and makes startable only `RELEASE_060_CANDIDATE`; no candidate, tag,
+GitHub Release, npm publication, latest movement, plan advance, or Issue
+mutation has occurred.
+
 Stage 1 allowed operations:
 
 - check
@@ -1835,7 +1849,7 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty-eight current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all twenty-nine current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty

@@ -4,6 +4,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import {
+  ADVANCE_RESULT_SCHEMA_VERSION,
   COMMAND_REGISTRY,
   checkDocument,
   getJsonSchemaCatalog,
@@ -17,80 +18,80 @@ function repositoryText(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
 }
 
-test("0.5.5 release gate binds the governed-preview warning boundary", async () => {
+test("0.6.0 release gate binds advance history safety and migration", async () => {
   const [
     requirements,
     design,
     procedure,
+    migration,
+    review,
     publish,
     acceptance,
-    review,
-    authority,
-    contract,
     plan,
     manifestText,
     lockfileText,
     versionSource,
+    mutationSource,
     changelog,
     readme,
   ] = await Promise.all([
     repositoryText("docs/requirements.md"),
     repositoryText("docs/basic-design.md"),
-    repositoryText("docs/process/0.5.5-release.md"),
-    repositoryText("docs/process/0.5.5-publish.md"),
-    repositoryText("docs/process/0.5.5-release-acceptance.md"),
-    repositoryText("docs/process/0.5.5-self-review.md"),
-    repositoryText("src/governance/authority.ts"),
-    repositoryText("docs/specs/governance-interface.md"),
-    repositoryText("plans/release-0.5.5.pert"),
+    repositoryText("docs/process/0.6.0-release.md"),
+    repositoryText("docs/process/0.5.5-to-0.6.0-migration.md"),
+    repositoryText("docs/process/0.6.0-self-review.md"),
+    repositoryText("docs/process/0.6.0-publish.md"),
+    repositoryText("docs/process/0.6.0-release-acceptance.md"),
+    repositoryText("plans/release-0.6.0.pert"),
     repositoryText("package.json"),
     repositoryText("package-lock.json"),
     repositoryText("src/version.ts"),
+    repositoryText("src/application/contract6-mutation.ts"),
     repositoryText("CHANGELOG.md"),
     repositoryText("README.md"),
   ]);
 
   assert.match(
     requirements,
-    /^### 21\.11 Governed-preview warning patch release acceptance criteria$/m,
+    /^### 21\.12 Advance history safety release acceptance criteria$/m,
   );
   assert.match(
     design,
-    /^### Post-MVP Slice 4O: Governed-preview assertion warning `v0\.5\.5` beta patch$/m,
+    /^### Post-MVP Slice 4P: Advance history safety `v0\.6\.0` beta minor$/m,
   );
-  assert.match(procedure, /Target version: `0\.5\.5`/);
-  assert.match(procedure, /npm `latest` promotion/);
+  assert.match(procedure, /Target version: `0\.6\.0`/);
+  assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.5\.5`/);
   assert.match(procedure, /modification time/);
-  assert.match(procedure, /0\.5\.5-publish\.md/);
-  assert.match(publish, /Version: `0\.5\.5`/);
-  assert.match(procedure, /0\.5\.5-release-acceptance\.md/);
-  assert.match(acceptance, /Version: `0\.5\.5`/);
-  assert.match(acceptance, /`beta=latest=0\.5\.5`/);
-  assert.match(acceptance, /`PTGOV-101` with `actor_required`/);
-  assert.match(review, /five previews and\s+five persistent attempts/);
-  assert.match(review, /does not classify the five persistent attempts/);
-  assert.match(authority, /code: "PTGOV-104"/);
-  assert.match(contract, /owner_confirmation_on_governed_preview/);
-  assert.match(contract, /`--warnings-as-errors`/);
+  assert.match(procedure, /0\.6\.0-publish\.md/);
+  assert.match(procedure, /0\.6\.0-release-acceptance\.md/);
+  assert.match(migration, /Source result: `Perttool\.MutationResult\.v3`/);
+  assert.match(migration, /Target result: `Perttool\.AdvanceResult\.v1`/);
+  assert.match(migration, /deprecated[\s\S]*source-compatibility alias/);
+  assert.match(review, /`0\.5\.6` would understate/);
+  assert.match(review, /all preserved/);
+  assert.match(publish, /- Status: Pending/);
+  assert.match(acceptance, /- Document status: Pending/);
 
   const checked = checkDocument(plan);
   const metadata = getProjectMetadata(plan);
   assert.equal(checked.ok, true);
   assert.equal(metadata.ok, true);
-  assert.equal(metadata.project.id, "RELEASE_055");
+  assert.equal(metadata.project.id, "RELEASE_060");
   assert.equal(metadata.grammarVersion, 5);
-  assert.equal(metadata.project.finish, "RELEASE_055_ACCEPTED");
+  assert.equal(metadata.project.finish, "RELEASE_060_ACCEPTED");
   assert.equal(metadata.project.governance.effective.goalOwner, "user");
   assert.equal(metadata.project.governance.effective.dagOwner, "user");
   assert.deepEqual(
     checked.document.declarations
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
-    [],
-  );
-  assert.match(
-    plan,
-    /^milestone RELEASE_055_ACCEPTED:\n(?:  .*\n)*?  state reached$/m,
+    [
+      "RELEASE_060_SELF_REVIEW",
+      "RELEASE_060_PREPARATION",
+      "RELEASE_060_CANDIDATE",
+      "RELEASE_060_PUBLISH",
+      "RELEASE_060_ACCEPTANCE",
+    ],
   );
 
   const manifest = JSON.parse(manifestText);
@@ -100,12 +101,11 @@ test("0.5.5 release gate binds the governed-preview warning boundary", async () 
   assert.equal(lockfile.packages[""].version, "0.6.0");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(versionSource, /TOOL_VERSION = "0\.6\.0"/);
-  assert.match(changelog, /^## \[0\.5\.5\] - 2026-07-30$/m);
-  assert.match(readme, /perttool@0\.6\.0/);
-  assert.match(
-    readme,
-    /npm `beta` resolves to `0\.6\.0`; npm `latest` remains `0\.5\.5`/,
-  );
+  assert.match(mutationSource, /@deprecated Use AdvanceResultV1/);
+  assert.match(changelog, /^## \[0\.6\.0\] - 2026-07-31$/m);
+  assert.match(readme, /npm `beta` resolves to `0\.6\.0`/);
+  assert.match(readme, /npm `latest` remains `0\.5\.5`/);
+  assert.equal(ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v1");
   assert.equal(COMMAND_REGISTRY.length, 34);
   assert.equal(getJsonSchemaCatalog().length, 19);
 });

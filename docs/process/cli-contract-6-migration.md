@@ -36,12 +36,13 @@ identities are:
 Format, init, command-help, Guide, agent-guidance, and conversion result schema
 majors remain unchanged, but their envelopes identify Contract 6.
 
-The later compatible ADV-001 source activation keeps CLI Contract 6 but
-changes only current `dag advance` results to
+The later `0.6.0` ADV-001 activation keeps CLI Contract 6 but introduces a
+package-minor result-identity boundary: current `dag advance` results use
 `Perttool.AdvanceResult.v1`. Direct, lifecycle, and batch mutations continue
-to use `Perttool.MutationResult.v3`. Consumers of current source must discover
-and validate the result identity rather than assuming that every Contract 6
-advance has the original `0.5.0` result shape.
+to use `Perttool.MutationResult.v3`. Consumers must discover and validate the
+result identity rather than assuming that every Contract 6 advance has the
+original `0.5.0` through `0.5.5` result shape. See the explicit
+[`0.5.5` to `0.6.0` migration](0.5.5-to-0.6.0-migration.md).
 
 The command registry adds:
 

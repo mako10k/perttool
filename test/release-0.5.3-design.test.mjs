@@ -118,11 +118,11 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.5.5");
-  assert.equal(lockfile.version, "0.5.5");
-  assert.equal(lockfile.packages[""].version, "0.5.5");
+  assert.equal(manifest.version, "0.6.0");
+  assert.equal(lockfile.version, "0.6.0");
+  assert.equal(lockfile.packages[""].version, "0.6.0");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.5\.5"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.6\.0"/);
   assert.match(changelog, /^## \[0\.5\.3\] - 2026-07-30$/m);
   assert.match(
     readme,
@@ -130,7 +130,7 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
   );
   assert.match(
     readme,
-    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.5\.5`/,
+    /npm `beta` resolves to Contract 6 `0\.6\.0`\. npm `latest` and an unqualified\s+install remain on Contract 6 `0\.5\.5`/,
   );
   assert.match(publishScript, /publish_tag" != "beta"/);
   assert.doesNotMatch(publishScript, /^\s*alpha\)$/m);

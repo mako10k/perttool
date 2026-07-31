@@ -4,6 +4,34 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-31
+
+Grammar 5 and CLI Contract 6 beta minor. This version protects destructive
+in-place `dag advance` writes with exact read-only Git evidence and publishes a
+separate closed advance-result identity.
+
+### Added
+
+- Added history-safety model 1 for changed destructive in-place advance
+  writes, including exact current-to-`HEAD` and stage-0 proof, retained-dirty
+  handling, source/repository race rejection, human-readable modification
+  time, byte-size, diff, and entity context, and stable `PTADV-*` diagnostics.
+- Added the exact write-only `--force-history-loss` recovery option. It
+  bypasses only an initial history assessment and does not bypass governance,
+  warning policy, expected digests, races, validation, or atomic replacement.
+- Added the complete `Perttool.AdvanceResult.v1` Draft 2020-12 artifact,
+  command/schema discovery, package APIs, and installed-package validation.
+
+### Changed
+
+- Changed only `dag advance` from the closed published
+  `Perttool.MutationResult.v3` identity to `Perttool.AdvanceResult.v1`,
+  preserving every prior field and adding required nullable `history_guard`.
+  Direct, lifecycle, and batch mutations remain MutationResult v3; Grammar 5
+  and CLI Contract 6 remain active.
+- Changed the package-root `AdvanceResult` alias to `AdvanceResultV1` and kept
+  `AdvanceResultV3` as a deprecated source-compatibility alias.
+
 ### Fixed
 
 - Made one eventful `dag advance` candidate own only the newly orphaned blank
@@ -307,7 +335,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.5.5...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/mako10k/perttool/compare/v0.5.5...v0.6.0
 [0.5.5]: https://github.com/mako10k/perttool/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/mako10k/perttool/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/mako10k/perttool/compare/v0.5.2...v0.5.3

@@ -5,7 +5,7 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-Version `0.5.5` beta implements Grammar 5 and CLI Contract 6,
+Version `0.6.0` beta implements Grammar 5 and CLI Contract 6,
 including explicit task work events, lifecycle commands, read-only Git
 history, observed velocity, AnalysisResult v4, and NextResult v5. It adds
 complete Draft 2020-12 artifacts for every active Contract 6 result and the
@@ -13,9 +13,12 @@ public OverrideDecision result, selectable full and outline schema views,
 Git 2.54 UTC compatibility, and scope-bound human-readable confirmation
 guidance. It warns when an owner-confirmation assertion is supplied for a
 governance-not-applicable candidate and when a governed preview already
-carries one. npm `beta` and `latest` resolve to `0.5.5`. Beta releases may
-contain breaking CLI or schema changes. Version `0.5.5` requires Node.js 22 or
-later.
+carries one. It also protects destructive in-place `dag advance` writes with
+exact `HEAD` and stage-0 evidence, returns `Perttool.AdvanceResult.v1`, and
+keeps preview, separate output, and written candidates repository-clean and
+byte-identical. npm `beta` resolves to `0.6.0`; npm `latest` remains `0.5.5`.
+Beta releases may contain breaking CLI or schema changes. Version `0.6.0`
+requires Node.js 22 or later.
 The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
 and the first machine-schema Contract 6 artifact remains available by pinning
 `0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
@@ -27,19 +30,19 @@ dist-tag; historical `0.1.0-alpha.2` remains available by exact pin.
 Use `npx` for an occasional invocation and select Contract 6 explicitly:
 
 ```sh
-npx --yes --package=perttool@0.5.5 -- perttool --version
-npx --yes --package=perttool@0.5.5 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.5.5 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.5.5 -- perttool project history PLAN.pert --format json
+npx --yes --package=perttool@0.6.0 -- perttool --version
+npx --yes --package=perttool@0.6.0 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.6.0 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.6.0 -- perttool project history PLAN.pert --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.5.5 -- perttool --version
-npm exec --yes --package=perttool@0.5.5 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.5.5 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.5.5 -- perttool project history PLAN.pert --format json
+npm exec --yes --package=perttool@0.6.0 -- perttool --version
+npm exec --yes --package=perttool@0.6.0 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.6.0 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.6.0 -- perttool project history PLAN.pert --format json
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
@@ -56,8 +59,9 @@ npm install --global perttool
 perttool --version
 ```
 
-npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6
-`0.5.5`. The pre-schema Contract 6 artifact remains available as
+npm `beta` resolves to Contract 6 `0.6.0`. npm `latest` and an unqualified
+install remain on Contract 6 `0.5.5` until a separate promotion. The
+pre-schema Contract 6 artifact remains available as
 `perttool@0.5.0`; Contract 5,
 Contract 4, and Contract 3 remain available as exact pins
 `perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`. The retired alpha
@@ -390,12 +394,13 @@ identifier only: validation does not require network access. Consumers must
 select compatibility from each result's `schema_version`, not from
 `tool_version`. See the
 [JSON Schema Artifact Contract](docs/specs/json-schema.md) for the complete
-18-result inventory and versioning rules.
+19-result inventory and versioning rules.
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. `0.5.5`, `0.5.4`, `0.5.3`, `0.5.2`,
-`0.5.1`, and `0.5.0` consumers must check `cli_contract_version == 6`;
+Use `--format json` for machine consumers. `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
+`0.5.2`, `0.5.1`, and `0.5.0` consumers must check
+`cli_contract_version == 6`;
 consumers pinned to `0.4.0`
 must continue to require Contract 5, and consumers pinned to `0.3.0` must
 require Contract 4. Bundled machine-readable result artifacts require
@@ -405,6 +410,9 @@ Scope-bound, human-readable loose owner-confirmation guidance requires
 Runtime `PTGOV-103` visibility for unused owner assertions requires `0.5.4`.
 Runtime `PTGOV-104` visibility for assertions on governed previews requires
 `0.5.5`.
+`Perttool.AdvanceResult.v1`, history-safety model 1, and the
+repository-clean advance candidate require `0.6.0`; see the
+[`0.5.5` to `0.6.0` migration](docs/process/0.5.5-to-0.6.0-migration.md).
 In every case, check the result-specific `schema_version` before reading the
 rest of a result.
 A complete, known, non-truncated `Perttool.NextResult.v5` with temporal policy

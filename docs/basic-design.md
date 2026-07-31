@@ -2431,6 +2431,35 @@ Exit:
 - add no cross-candidate state, accepted scopes, approval evidence,
   authentication, npm `latest` promotion, or plan advance.
 
+### Post-MVP Slice 4P: Advance history safety `v0.6.0` beta minor
+
+The accepted ADV-001 guard closes destructive in-place `dag advance` writes
+over source that is not durably represented by the exact current `HEAD` path
+and stage-0 index. ADV-002 then makes the approved preview itself
+repository-clean by assigning only newly orphaned terminal separator trivia to
+the same candidate and destructive provenance ranges.
+
+The [`v0.6.0` release procedure](process/0.6.0-release.md), explicit
+[`0.5.5` to `0.6.0` migration](process/0.5.5-to-0.6.0-migration.md), and
+independent [`release-0.6.0.pert`](../plans/release-0.6.0.pert) plan sequence
+compatibility review, version-bearing preparation, one immutable candidate,
+authorized GitHub/npm beta publication, and durable public acceptance.
+
+Exit:
+
+- satisfy Requirements 21.12 from one clean release commit and immutable
+  tarball;
+- retain Grammar 5, CLI Contract 6, command paths, existing option defaults,
+  every non-advance result identity, and prior safe-write controls;
+- publish `Perttool.AdvanceResult.v1` for `dag advance`, preserving old fields
+  and adding required nullable history-guard evidence;
+- expose exact `--force-history-loss` without weakening other gates;
+- make preview, separate output, and written candidate byte-identical and
+  directly clean under `git diff --check`;
+- publish identical bytes to a GitHub prerelease and npm `beta` while leaving
+  `latest=0.5.5`; and
+- keep npm `latest` promotion, plan advance, and Issue mutation separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 As an independent future backlog after the first beta, split the work into the following three deliverables.

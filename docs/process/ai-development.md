@@ -386,6 +386,21 @@ Grammar 5. Governed advance used actor `codex`, owner assertion `user`, and
 the exact preview digest; the residual plan has only reached
 `RELEASE_055_ACCEPTED`, no diagnostics, no task, and no recommendation.
 
+The selected `0.6.0` beta minor publishes the accepted ADV-001 history guard
+and ADV-002 repository-clean candidate. Its exact initial 5,289-byte release
+plan was confirmed for goal and DAG scopes. Self-review directly compared the
+installed `0.5.5` artifact and current source under Node.js 22: Grammar 5, CLI
+Contract 6, and every prior advance JSON key remain, while `dag advance`
+selects `Perttool.AdvanceResult.v1`, required nullable `history_guard`, the
+nineteenth root schema, and exact write-only `--force-history-loss`.
+`0.5.6` would understate that result and write-safety boundary. Source
+preparation identifies `0.6.0` and passed 712 tests, 29 self-use plans, 138
+Markdown files, the temporary-link workflow, and the 504-file isolated-package
+gate under Node.js 22. Complete NextResult v5 recommends and makes startable
+only `RELEASE_060_CANDIDATE`; candidate acceptance and every external write
+remain later gates. Publication moves only npm `beta`; `latest=0.5.5`, plan
+advance, and Issue mutation remain outside the named release.
+
 ### 5.1 Adopted Recommendation authority
 
 MIG-07 established Recommendation version 1 authority. The atomic Contract 4

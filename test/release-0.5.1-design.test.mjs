@@ -108,17 +108,17 @@ test("0.5.1 release gate fixes the compatible Contract 6 patch boundary", async 
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.5.5");
-  assert.equal(lockfile.version, "0.5.5");
-  assert.equal(lockfile.packages[""].version, "0.5.5");
+  assert.equal(manifest.version, "0.6.0");
+  assert.equal(lockfile.version, "0.6.0");
+  assert.equal(lockfile.packages[""].version, "0.6.0");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.deepEqual(Object.keys(manifest.exports), [".", "./schemas/*"]);
-  assert.match(versionSource, /TOOL_VERSION = "0\.5\.5"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.6\.0"/);
   assert.match(changelog, /^## \[0\.5\.1\] - 2026-07-30$/m);
   assert.match(readme, /available by pinning\s+`0\.5\.1`/);
   assert.match(
     readme,
-    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.5\.5`/,
+    /npm `beta` resolves to Contract 6 `0\.6\.0`\. npm `latest` and an unqualified\s+install remain on Contract 6 `0\.5\.5`/,
   );
   assert.equal(COMMAND_REGISTRY.length, 34);
   assert.equal(getJsonSchemaCatalog().length, 19);

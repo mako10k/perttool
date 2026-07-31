@@ -56,6 +56,20 @@ Mandatory summary:
   no ready, recommended, or startable task. Do not globally trim or invoke the
   formatter. Plan advance, release, remote writes, publication, and dist-tag
   movement remain separate.
+- The explicitly authorized `plans/release-0.6.0.pert` workstream publishes
+  ADV-001 and ADV-002 as the advance-history-safety beta minor. The exact
+  5,289-byte initial goal/DAG candidate was confirmed and written once with
+  actor `codex` and owner assertion `user`. `RELEASE_060_SELF_REVIEW` is
+  complete after a direct Node.js 22 installed-`0.5.5` comparison confirmed
+  retained Grammar 5, CLI Contract 6, and prior advance JSON keys, plus the
+  deliberate `AdvanceResult.v1`, required nullable `history_guard`, nineteenth
+  root schema, and exact force option boundary. `RELEASE_060_PREPARATION` is
+  complete after the 712-test, 29-plan, 138-Markdown, temporary-link, and
+  504-file isolated-package gates passed under Node.js 22. Complete NextResult
+  v5 recommends and makes startable only `RELEASE_060_CANDIDATE`; no candidate
+  or external release mutation exists yet. npm remains
+  `beta=latest=0.5.5` with no alpha. npm `latest`, plan advance, and Issue
+  mutation remain separate.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

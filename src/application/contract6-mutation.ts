@@ -67,6 +67,7 @@ export interface MutationResultV3 extends MutationResult {
   readonly lifecycle: null;
 }
 
+/** @deprecated Use AdvanceResultV1 for the post-0.5.5 advance result. */
 export type AdvanceResultV3 = AdvanceResultV1;
 export type LifecycleResultV3 = TargetActualsMutationResultV3;
 
