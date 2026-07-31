@@ -1,0 +1,102 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project ADVANCE_CLEAN_CANDIDATE:
+  version 5
+  title "Repository-clean advance candidates"
+  description "Resolve ADV-002 as a bounded post-acceptance correction. First define exact advance ownership for newly orphaned terminal blank trivia and its history provenance, then implement one source-preserving candidate, and finally verify repository, CLI, link, and installed behavior. Preserve comments, BOM, line endings, governance, history safety, and safe-write controls. Release and external mutations remain separate."
+  as_of 2026-07-31
+  duration_unit point
+  velocity 29p/2d
+  finish ADV_CLEAN_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone ADV_CLEAN_START:
+  title "Advance cleanup work started"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Contract and acceptance review capacity"
+  capacity 1
+
+resource NORMATIVE_SURFACE:
+  title "Requirements, specifications, and case-matrix ownership"
+  capacity 1
+
+resource ADVANCE_CORE:
+  title "Advance deletion and candidate ownership"
+  capacity 1
+
+resource WRITE_PATH:
+  title "History guard and safe-write composition"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "CLI and temporary-link verification"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Isolated installed-package verification"
+  capacity 1
+
+milestone ADV_CLEAN_CONTRACT_READY:
+  title "Repository-clean candidate contract ready"
+
+milestone ADV_CLEAN_RUNTIME_READY:
+  title "Repository-clean advance runtime ready"
+
+milestone ADV_CLEAN_ACCEPTED:
+  title "Repository-clean advance accepted"
+
+task ADV_CLEAN_CANDIDATE_CONTRACT ADV_CLEAN_START -> ADV_CLEAN_CONTRACT_READY:
+  title "Define terminal-trivia advance ownership"
+  description "Amend requirements, Mutation semantics, history-safety composition, design, and a target regression matrix so one approved eventful advance candidate needs no second edit."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+  source "ADV-002"
+
+task ADV_CLEAN_CANDIDATE_CORE ADV_CLEAN_CONTRACT_READY -> ADV_CLEAN_RUNTIME_READY:
+  title "Normalize orphaned terminal trivia in advance"
+  description "Implement the accepted terminal ownership rule in the pure planner and history provenance without changing unrelated source or public identities."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    ADVANCE_CORE 1
+    WRITE_PATH 1
+  source "ADV-002"
+
+task ADV_CLEAN_CANDIDATE_ACCEPTANCE ADV_CLEAN_RUNTIME_READY -> ADV_CLEAN_ACCEPTED:
+  title "Accept repository-clean advance end to end"
+  description "Verify Core, tracked CLI, git diff --check, LF/CRLF/BOM/comment boundaries, preview-write identity, temporary link, installed package, and corrected ADV-001 acceptance evidence."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "ADV-002"
+
+work_event WE-0054dabdea9a805e3f5b90cb0af0ceb63a61eceeae11d7f1614bcf9b4a6da8fd:
+  model 1
+  task ADV_CLEAN_CANDIDATE_CONTRACT
+  kind start
+  occurred_at 2026-07-31T19:27:35+09:00
+  planned_value 3p
+
+work_event WE-8ff4878952c88cc85270d697c0b22063c3c03a35bc74ac800a36adc435e7667d:
+  model 1
+  task ADV_CLEAN_CANDIDATE_CONTRACT
+  kind finish
+  occurred_at 2026-07-31T19:35:00+09:00
+  active_time 89/720h
+  effort 0.12ph

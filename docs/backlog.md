@@ -311,7 +311,7 @@ until that follow-up is accepted.
 
 Priority: P0
 
-Status: Observed in current source (2026-07-31; release blocker)
+Status: Contract selected (2026-07-31; runtime pending; release blocker)
 
 The final `ADV_HISTORY_ACCEPTANCE` self-use advance exposed a repeatable gap
 between a valid source-preserving candidate and the repository gate. The
@@ -329,6 +329,16 @@ trivia adjacent to the earlier removed declarations survives. Those separate
 unchanged ranges become one trailing blank region after all edits are applied.
 The existing completed-project test covers one final task without work events,
 so it does not reproduce this successful Grammar 5 write path.
+
+The selected target is fixed in
+[Mutation Semantics](specs/mutation.md#122-adv-002-terminal-separator-target),
+the history-provenance extension in the
+[Advance History Safety Contract](specs/advance-history-safety.md), the
+[machine case matrix](../test/fixtures/advance-clean-candidate-contract-v1.json),
+and the independent
+[`plans/advance-clean-candidate.pert`](../plans/advance-clean-candidate.pert)
+workstream. The contract acceptance record is
+[`docs/process/advance-clean-candidate-contract-acceptance.md`](process/advance-clean-candidate-contract-acceptance.md).
 
 Required behavior:
 

@@ -6,6 +6,7 @@
 - Active CLI contract during design: Contract 6
 - Requirements: [../requirements.md](../requirements.md)
 - Backlog: [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history)
+- Correction target: [`ADV-002`](../backlog.md#adv-002-keep-advance-candidates-repository-clean-without-a-second-edit)
 
 ## 1. Purpose
 
@@ -65,6 +66,15 @@ Offsets are zero-based UTF-16 code units in the exact current source and use
 half-open ranges. `startOffset < endOffset` is required. A declaration record
 includes the leading comments owned by that declaration under Mutation
 Semantics. A zero-width insertion is not destructive.
+
+For the selected `ADV-002` target, a declaration in the terminal
+removed-declaration suffix also owns the exact consecutive blank-line prefix
+defined as advance-owned terminal separator trivia in Mutation Semantics
+Section 12.2. Its `startOffset` moves backward over that prefix, so the edit
+and destructive record cover identical current-source bytes. Ownership stops
+at nonblank standalone trivia and does not expand any retained or interior
+range. This is a narrow extension of the declaration correspondence rule, not
+a global whitespace normalization.
 
 The record set is derived by the advance planner from the same validated
 source and edit set used to build the candidate. An adapter MUST NOT infer
@@ -158,7 +168,8 @@ locates corresponding source ranges in `HEAD` and the current source by exact
 entity kind and ID:
 
 - `field="declaration"` maps to the complete declaration and its owned
-  leading comments;
+  leading comments and, for the `ADV-002` terminal suffix, the exact
+  advance-owned terminal separator prefix;
 - `field="state"` maps only to the existing milestone `state` value range.
 
 Each decoded document must contain at most one corresponding entity because
@@ -193,6 +204,13 @@ description, resource, task, or comment edit outside every destructive record
 does not block merely because it is in the same file. A changed byte inside a
 removed declaration, its owned comments, a removed work event, or a replaced
 state value blocks.
+
+For the `ADV-002` target, a changed or staged byte inside an advance-owned
+terminal separator prefix also blocks. `HEAD` correspondence extends backward
+by the exact same prefix; the assessor never silently adds current-only trivia
+to a recoverable record. Preview remains Git-independent, while the later
+in-place assessment proves the exact bytes that the already constructed
+single candidate removes.
 
 ### 5.2 Unavailable proof
 

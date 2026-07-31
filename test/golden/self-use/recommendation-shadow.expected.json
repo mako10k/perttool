@@ -12,6 +12,54 @@
     "description_locale": "en"
   },
   "plans": {
+    "advance-clean-candidate": {
+      "source_digest": "sha256:f4f8298a9790dc5feda7f270bf49a3c683852435d50ea0b63495b4f4c7e6d75b",
+      "groups": {
+        "active": [],
+        "ready": [
+          "ADV_CLEAN_CANDIDATE_CORE"
+        ],
+        "runnable_now": [
+          "ADV_CLEAN_CANDIDATE_CORE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "ADV_CLEAN_CANDIDATE_ACCEPTANCE"
+        ],
+        "suspended": []
+      },
+      "recommended_task_ids": [
+        "ADV_CLEAN_CANDIDATE_CORE"
+      ],
+      "manual_selected_task_ids": [
+        "ADV_CLEAN_CANDIDATE_CORE"
+      ],
+      "tiers": {
+        "ADV_CLEAN_CANDIDATE_CORE": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "ADV_CLEAN_CANDIDATE_CORE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
+    },
     "advance-history-safety": {
       "source_digest": "sha256:af94ba0e00e508afb68909429833ffd2843235e284d729ffce4d6534dba92bb7",
       "groups": {

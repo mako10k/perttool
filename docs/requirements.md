@@ -2,7 +2,7 @@
 
 - Document status: Draft 0.19
 - Created: 2026-07-21
-- Updated: 2026-07-28
+- Updated: 2026-07-31
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -2230,6 +2230,15 @@ Before implementation, separate the specifications in the following order.
     - [x] In-place CLI enforcement and `Perttool.AdvanceResult.v1`
     - [x] Repository, package, and installed-workflow acceptance under
       [Advance History Safety Acceptance](process/advance-history-acceptance.md)
+20. [ ] Ensure one destructive `dag advance` preview is the exact
+    repository-clean candidate later written and committed under `ADV-002`.
+    Follow the
+    [repository-clean advance candidate plan](../plans/advance-clean-candidate.pert):
+    define narrow ownership of newly orphaned terminal separator trivia,
+    extend destructive provenance over those exact bytes, and require no
+    manual cleanup edit. The accepted `ADV-001` history guard remains active,
+    but release preparation is blocked until this correction passes Core,
+    tracked-repository, link, and installed-package acceptance.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

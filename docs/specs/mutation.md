@@ -504,6 +504,46 @@ planner to retain entity/field provenance for each non-empty removal or
 replacement range, but repository and index inspection remain outside this
 Core.
 
+### 12.2 ADV-002 terminal-separator target
+
+`ADV-002` selects an advance-specific extension to the ordinary
+source-preserving rules. This subsection defines the target contract; the
+current runtime is non-conforming until the independent
+[`advance-clean-candidate.pert`](../../plans/advance-clean-candidate.pert)
+workstream accepts its Core and end-to-end slices.
+
+A **terminal removed-declaration suffix** is the maximal sequence of
+declarations after the last retained declaration, ignoring trivia, when every
+declaration in that sequence is removed by one canonical advance. For each
+removed declaration in this suffix, the consecutive blank physical lines
+immediately before its ordinary owned leading comments or declaration header
+are **advance-owned terminal separator trivia**. The owned prefix stops at the
+previous nonblank trivia, including any standalone comment not already owned
+by the removed declaration.
+
+The planner MUST coalesce the terminal declaration removals with their
+advance-owned separator trivia so applying the one returned edit set cannot
+create a trailing blank physical line. This rule is not a global trim: blank
+lines before retained declarations, blank lines separated from the terminal
+suffix by standalone comments, interior trivia, owned comments, and all
+unrelated source bytes remain unchanged. The final retained declaration or
+standalone comment retains its existing line ending. UTF-8 BOM, the prevailing
+LF or CRLF convention, and an originally absent final newline remain subject
+to the same byte-preservation rules outside the exact owned ranges.
+
+Each owned separator prefix MUST be included in the destructive declaration
+record for the removed entity that follows it. The corresponding `HEAD` range
+extends backward by the same exact prefix; missing, changed, staged, or
+ambiguous bytes therefore fail under history-safety model 1 rather than
+bypassing it. Preview, `--out`, and in-place write MUST consume the identical
+candidate bytes. No formatter or second cleanup edit is part of the advance
+operation.
+
+This extension retains mutation semantics version 2, history-safety model 1,
+CLI Contract 6, `Perttool.AdvanceResult.v1`, existing diagnostics, governance,
+expected-digest and race checks, atomic replacement, and public package
+identities.
+
 ## 13. Acceptance invariants
 
 Automatically verify at least the following.

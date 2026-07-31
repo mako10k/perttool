@@ -1,0 +1,128 @@
+{
+  "schema_version": "Perttool.AdvanceCleanCandidateContractCases.v1",
+  "mutation_semantics_version": 2,
+  "history_safety_model_version": 1,
+  "target_cli_contract_version": 6,
+  "target_result_schema": "Perttool.AdvanceResult.v1",
+  "cases": [
+    {
+      "id": "ACC-001",
+      "depends_on": [],
+      "operation": "eventful_terminal_suffix_reproduction",
+      "expected": {
+        "removed_entity_kinds": [
+          "task",
+          "work_event"
+        ],
+        "multiple_declaration_separators": true,
+        "trailing_blank_physical_lines": 0
+      }
+    },
+    {
+      "id": "ACC-002",
+      "depends_on": [
+        "ACC-001"
+      ],
+      "operation": "terminal_separator_ownership",
+      "expected": {
+        "ownership": "advance_owned_terminal_separator_trivia",
+        "maximal_terminal_removed_declaration_suffix": true,
+        "global_trim": false,
+        "non_overlapping_edits": true
+      }
+    },
+    {
+      "id": "ACC-003",
+      "depends_on": [
+        "ACC-002"
+      ],
+      "operation": "destructive_history_correspondence",
+      "expected": {
+        "destructive_record_includes_owned_prefix": true,
+        "head_correspondence_includes_same_prefix": true,
+        "stage0_overlap_blocks": true,
+        "current_only_prefix_fails_closed": true
+      }
+    },
+    {
+      "id": "ACC-004",
+      "depends_on": [
+        "ACC-002"
+      ],
+      "operation": "retained_trivia_boundaries",
+      "expected": {
+        "standalone_comment_bounds_ownership": true,
+        "retained_declaration_trivia_preserved": true,
+        "interior_trivia_preserved": true,
+        "owned_comments_preserved_by_existing_rule": true
+      }
+    },
+    {
+      "id": "ACC-005",
+      "depends_on": [
+        "ACC-002",
+        "ACC-004"
+      ],
+      "operation": "encoding_and_line_ending_matrix",
+      "expected": {
+        "variants": [
+          "lf",
+          "crlf",
+          "utf8_bom",
+          "absent_final_newline"
+        ],
+        "bytes_outside_owned_ranges_preserved": true,
+        "trailing_blank_physical_lines": 0
+      }
+    },
+    {
+      "id": "ACC-006",
+      "depends_on": [
+        "ACC-003",
+        "ACC-005"
+      ],
+      "operation": "single_candidate_byte_identity",
+      "expected": {
+        "preview_equals_separate_output": true,
+        "preview_equals_in_place_write": true,
+        "manual_cleanup_edit": false,
+        "formatter_invocation": false
+      }
+    },
+    {
+      "id": "ACC-007",
+      "depends_on": [
+        "ACC-006"
+      ],
+      "operation": "tracked_repository_write",
+      "expected": {
+        "git_diff_check_exit": 0,
+        "head_unchanged": true,
+        "index_unchanged": true,
+        "refs_unchanged": true,
+        "history_guard_status": "passed"
+      }
+    },
+    {
+      "id": "ACC-008",
+      "depends_on": [
+        "ACC-001",
+        "ACC-003",
+        "ACC-004",
+        "ACC-005",
+        "ACC-006",
+        "ACC-007"
+      ],
+      "operation": "public_and_installed_acceptance",
+      "expected": {
+        "core_acceptance": true,
+        "cli_acceptance": true,
+        "temporary_link_acceptance": true,
+        "installed_package_acceptance": true,
+        "adv001_acceptance_amended": true,
+        "public_identity_change": false,
+        "release_authorized": false
+      }
+    }
+  ]
+}

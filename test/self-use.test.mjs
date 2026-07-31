@@ -205,6 +205,21 @@ test("advance history safety plan matches the ADV-001 delivery roadmap", async (
   assert.deepEqual(detailedPlanProjection(text), expected);
 });
 
+test("repository-clean advance plan matches the ADV-002 delivery roadmap", async () => {
+  const text = await readFile(
+    path.join(root, "plans/advance-clean-candidate.pert"),
+    "utf8",
+  );
+  const expected = JSON.parse(await readFile(
+    path.join(
+      testDirectory,
+      "golden/self-use/advance-clean-candidate.expected.json",
+    ),
+    "utf8",
+  ));
+  assert.deepEqual(detailedPlanProjection(text), expected);
+});
+
 test("English baseline plan matches the phased post-beta migration roadmap", async () => {
   const text = await readFile(path.join(root, "plans/english-baseline.pert"), "utf8");
   const expected = JSON.parse(await readFile(
