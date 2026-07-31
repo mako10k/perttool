@@ -104,6 +104,7 @@ task RELEASE_060_ACCEPTANCE RELEASE_060_PUBLISHED -> RELEASE_060_ACCEPTED:
   title "Record durable 0.6.0 beta acceptance"
   description "Verify release commit and peeled tag identity, common candidate, GitHub, and npm tarball modification time, size and digests, registry integrity and metadata, isolated installation from both public channels, AdvanceResult.v1 history safety and repository-clean behavior, beta=0.6.0 and unchanged latest=0.5.5, and exact commands. Record acceptance without altering the immutable artifact, advancing this plan, or promoting latest."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -170,3 +171,18 @@ work_event WE-516a31158f48caf60215d6dfd8eb8ec0f1922f5c49bf6dc1759ad5dd47e2dd98:
   occurred_at 2026-07-31T21:43:12+09:00
   active_time 437/3600h
   effort 437/3600ph
+
+work_event WE-460ffe7e73fec7e0475bc8774b4b296940e9539c55e49f7127012ec0c5ca4409:
+  model 1
+  task RELEASE_060_ACCEPTANCE
+  kind start
+  occurred_at 2026-07-31T21:49:37+09:00
+  planned_value 3p
+
+work_event WE-15681f66d9036ed40849d6a08957c5f2063c7354d92655909b6ee35c6a4539ae:
+  model 1
+  task RELEASE_060_ACCEPTANCE
+  kind finish
+  occurred_at 2026-07-31T21:52:28+09:00
+  active_time 0.0475h
+  effort 0.0475ph

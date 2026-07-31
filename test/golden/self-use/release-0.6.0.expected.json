@@ -8,34 +8,26 @@
       "tasks": 5,
       "gates": 0,
       "errors": 0,
-      "warnings": 4
+      "warnings": 5
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "3/1",
+    "precedence_makespan": "0/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "1/5",
-    "precedence_critical_tasks": [
-      "RELEASE_060_ACCEPTANCE"
-    ],
-    "resource_makespan": "3/1",
-    "resource_forecast": "1/5",
+    "precedence_forecast": "0/1",
+    "precedence_critical_tasks": [],
+    "resource_makespan": "0/1",
+    "resource_forecast": "0/1",
     "resource_delay": "0/1",
     "resource_arcs": [],
-    "schedule_critical_tasks": [
-      "RELEASE_060_ACCEPTANCE"
-    ]
+    "schedule_critical_tasks": []
   },
   "next": {
     "groups": {
       "active": [],
-      "ready": [
-        "RELEASE_060_ACCEPTANCE"
-      ],
-      "runnable_now": [
-        "RELEASE_060_ACCEPTANCE"
-      ],
+      "ready": [],
+      "runnable_now": [],
       "blocked_now": [],
       "upcoming": []
     },

@@ -1470,8 +1470,10 @@ repeated the clean gate and protected-route preflight and retained one
 504-file, 543508-byte tarball with SHA-256 `6d03e270...e42acd`. PUBLISH
 completed from those exact bytes: release commit `935b097`, peeled tag,
 successful Node.js 22/24 CI run `30631050662`, GitHub prerelease, npm
-`beta=0.6.0`, and the three tarball copies agree. Complete NextResult v5
-recommends and makes startable only `RELEASE_060_ACCEPTANCE`. npm
+`beta=0.6.0`, and the three tarball copies agree. Independent acceptance
+covered Git, both successful CI snapshots, GitHub, npm, artifact identity,
+installed packages, and the repository-clean history guard. All five tasks
+and 17p are complete with zero makespans and no recommendation. npm
 `latest=0.5.5`, plan advance, and Issue mutation remain separate.
 
 Stage 1 allowed operations:

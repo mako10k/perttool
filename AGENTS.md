@@ -14,22 +14,22 @@ User communication is independent from the repository baseline. Unless the user 
 ## Current phase and sources of truth
 
 perttool has accepted its TypeScript CLI MVP and the read-only AI Agent
-Guidance Registry v1 from Issue #2, has durably accepted suffix-free beta
-releases through `v0.5.5`, and has published `v0.6.0` for durable acceptance.
+Guidance Registry v1 from Issue #2 and has durably accepted suffix-free beta
+releases through `v0.6.0`.
 Version `0.6.0` retains Grammar 5 and CLI Contract 6 while adding repository
 history protection, `Perttool.AdvanceResult.v1`, and the narrow
 `--force-history-loss` boundary to `dag advance`. Version `0.5.5` retains
-Grammar 5 and CLI Contract 6 while adding non-blocking `PTGOV-104` when an applicable preview already
-carries an owner assertion. Version `0.5.4` remains the PTGOV-103,
-beta-channel, and scope-guidance artifact, and `0.5.2` remains the complete
-nested-schema and full/outline/detail schema-view artifact. The obsolete npm
+Grammar 5 and CLI Contract 6 while adding non-blocking `PTGOV-104` when an
+applicable preview already carries an owner assertion. Version `0.5.4` remains
+the PTGOV-103, beta-channel, and scope-guidance artifact, and `0.5.2` remains
+the complete nested-schema and full/outline/detail schema-view artifact. The obsolete npm
 `alpha` dist-tag is retired, while historical `0.1.0-alpha.2` remains
 available by exact pin. Version `0.5.1` remains the initial schema-discovery
 Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
-explicit pin. npm reports `beta=0.6.0`, `latest=0.5.5`, and no `alpha`. The current
-source implements Grammar 1/2/3/4/5 reads,
+explicit pin. npm reports `beta=0.6.0`, `latest=0.5.5`, and no `alpha`. The
+current source implements Grammar 1/2/3/4/5 reads,
 registry-driven Contract 6 `help`, separate Contract 6 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
 events, read-only project history and velocity observation, exact
@@ -136,10 +136,13 @@ source and protected-route preflight accepted the retained 504-file,
 543508-byte tarball with SHA-256 `6d03e270...e42acd`. `RELEASE_060_PUBLISH` is
 complete: release commit `935b097`, peeled tag, successful Node.js 22/24 CI
 run `30631050662`, GitHub prerelease, npm `beta=0.6.0`, and the common tarball
-agree. `RELEASE_060_ACCEPTANCE` is the sole recommended and startable task.
-npm `latest=0.5.5` and no `alpha` remain unchanged. npm `latest` promotion,
-release-plan
-advance, and Issue mutation remain separate decisions.
+agree. `RELEASE_060_ACCEPTANCE` is complete after independent Git, CI,
+GitHub, npm, artifact, installed-package, and repository-clean history-guard
+verification. All five tasks and 17p are complete with zero makespans and no
+recommendation. npm `latest=0.5.5` and no `alpha` remain unchanged. Completed
+declarations remain until separately authorized release-plan advance. npm
+`latest` promotion, release-plan advance, and Issue mutation remain separate
+decisions.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
