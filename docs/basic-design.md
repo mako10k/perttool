@@ -902,6 +902,13 @@ first-parent traversal for the write decision. Linked worktree discovery,
 object-format handling, repository-relative paths, raw-byte digests, and
 source/`HEAD` race hooks remain shared.
 
+The internal `ADV_HISTORY_PROBE` slice implements that boundary in
+`src/history/git-probe.ts` and the pure model-1 record derivation, Myers
+raw-byte alignment, correspondence, and overlap decision in
+`src/history/advance-history.ts`. These internal exports are absent from the
+package root. They do not alter the active advance result or write pipeline;
+the later CLI slice owns their composition into the target pipeline below.
+
 The target write pipeline is:
 
 ```text

@@ -164,7 +164,7 @@ test("active runtime remains unchanged until the later CLI task", () => {
   );
 });
 
-test("accepted contract plan recommends only the probe handoff", async () => {
+test("accepted probe plan recommends only the CLI handoff", async () => {
   const source = await repositoryText("plans/advance-history-safety.pert");
   const checked = checkDocument(source);
   const metadata = getProjectMetadata(source);
@@ -197,22 +197,38 @@ test("accepted contract plan recommends only the probe handoff", async () => {
     ).fields.find(({ name }) => name === "state").value,
     "reached",
   );
-  assert.equal(
-    checked.document.declarations.filter(
-      ({ kind }) => kind === "work_event",
-    ).length,
-    0,
+  assert.deepEqual(
+    checked.document.declarations
+      .filter(({ kind }) => kind === "work_event")
+      .map(({ fields }) =>
+        Object.fromEntries(fields.map(({ name, rawValue }) => [name, rawValue])),
+      ),
+    [
+      {
+        model: "1",
+        task: "ADV_HISTORY_PROBE",
+        kind: "start",
+        occurred_at: "2026-07-31T14:40:08+09:00",
+        planned_value: "4p",
+      },
+      {
+        model: "1",
+        task: "ADV_HISTORY_PROBE",
+        kind: "finish",
+        occurred_at: "2026-07-31T15:07:46+09:00",
+      },
+    ],
   );
-  assert.equal(analyzed.precedence.makespan.numerator.toString(), "11");
+  assert.equal(analyzed.precedence.makespan.numerator.toString(), "7");
   assert.equal(analyzed.precedence.makespan.denominator.toString(), "1");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["ADV_HISTORY_PROBE"]);
-  assert.deepEqual(next.groups.runnableNow, ["ADV_HISTORY_PROBE"]);
+  assert.deepEqual(next.groups.ready, ["ADV_HISTORY_CLI"]);
+  assert.deepEqual(next.groups.runnableNow, ["ADV_HISTORY_CLI"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "ADV_HISTORY_PROBE",
+    "ADV_HISTORY_CLI",
   ]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "ADV_HISTORY_PROBE",
+    "ADV_HISTORY_CLI",
   ]);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);

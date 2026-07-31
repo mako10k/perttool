@@ -13,35 +13,34 @@
   },
   "plans": {
     "advance-history-safety": {
-      "source_digest": "sha256:2296068f6e544938923a83ed107e6927d1fed0c3e555d6b901f5b3b8168aace0",
+      "source_digest": "sha256:eacfcac08c4c82047d4a12fd36e58e77ed951374d3e2740d72ac1ff153e27714",
       "groups": {
         "active": [],
         "ready": [
-          "ADV_HISTORY_PROBE"
+          "ADV_HISTORY_CLI"
         ],
         "runnable_now": [
-          "ADV_HISTORY_PROBE"
+          "ADV_HISTORY_CLI"
         ],
         "blocked_now": [],
         "upcoming": [
-          "ADV_HISTORY_CLI",
           "ADV_HISTORY_ACCEPTANCE"
         ],
         "suspended": []
       },
       "recommended_task_ids": [
-        "ADV_HISTORY_PROBE"
+        "ADV_HISTORY_CLI"
       ],
       "manual_selected_task_ids": [
-        "ADV_HISTORY_PROBE"
+        "ADV_HISTORY_CLI"
       ],
       "tiers": {
-        "ADV_HISTORY_PROBE": "recommended"
+        "ADV_HISTORY_CLI": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "ADV_HISTORY_PROBE",
+          "id": "ADV_HISTORY_CLI",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -57,7 +56,9 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "agent-guidance": {
       "source_digest": "sha256:ca06697d12d3846f72068bbbc113e20539ba717b0c23735473290dd08bd4f7f4",

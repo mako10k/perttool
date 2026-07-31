@@ -2226,7 +2226,7 @@ Before implementation, separate the specifications in the following order.
       exact destructive records, `HEAD` and index proof, retained-dirty
       behavior, force boundary, result identity, diagnostics, and eighteen
       machine-readable acceptance cases
-    - [ ] Pure assessment and shared read-only Git adapter extension
+    - [x] Pure assessment and shared read-only Git adapter extension
     - [ ] In-place CLI enforcement and `Perttool.AdvanceResult.v1`
     - [ ] Repository, package, and installed-workflow acceptance
 

@@ -197,7 +197,7 @@ advances completed history, and validates the final one-frontier document.
 
 Priority: P0
 
-Status: Contract accepted (2026-07-31; runtime not implemented)
+Status: Contract and internal probe accepted (2026-07-31; runtime not enforced)
 
 `dag advance` deliberately removes declarations and owned leading comments
 that no longer affect the present or future graph. The current source-digest
@@ -293,7 +293,10 @@ raw-source capture with the accepted project-history adapter, adds stage-0
 index capture, and remains a separate application decision from both history
 reduction and MIG-08. It targets `Perttool.AdvanceResult.v1` because the
 published MutationResult v3 schema is closed. Runtime implementation remains
-unaccepted until the later probe, CLI, and acceptance tasks pass.
+unaccepted until the later CLI and acceptance tasks pass. The internal probe
+acceptance is recorded in
+[`docs/process/advance-history-probe-acceptance.md`](process/advance-history-probe-acceptance.md);
+it changes no public command, result, schema, help, or write behavior.
 
 ## Project actuals and Git-recorded history
 

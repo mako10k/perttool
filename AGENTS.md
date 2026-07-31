@@ -66,11 +66,14 @@ acceptance record is
 `docs/process/advance-history-contract-acceptance.md`. The active `0.5.5`
 runtime remains unchanged and still requires the manual pre-advance commit
 procedure; it does not expose the target option, result, diagnostics, or
-guard. The residual plan has 11p precedence and heuristic resource
-makespans with no resource delay. Complete NextResult v5 recommends and
-makes startable only `ADV_HISTORY_PROBE`; that task is not started. Runtime
-implementation, release, GitHub Issue mutation, npm publication, and dist-tag
-movement remain separate boundaries.
+guard. `ADV_HISTORY_PROBE` is complete and pending its exact pre-advance
+snapshot commit. Its accepted internal read-only `HEAD`/stage-0-index capture
+and pure destructive-range assessment pass the complete repository gate.
+The residual plan has 7p precedence and heuristic resource makespans with no
+resource delay; complete NextResult v5 recommends and makes startable only
+`ADV_HISTORY_CLI`. The package root, CLI, schemas, help, write path, and
+runtime enforcement remain unchanged. Release, GitHub Issue mutation, npm
+publication, and dist-tag movement remain separate boundaries.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
@@ -391,7 +394,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/formatter/`: the active Grammar 1/2/3/4/5 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4/5 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 6 package surface.
-- `src/history/`: active read-only Git probe, pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection.
+- `src/history/`: active read-only Git probe, pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; plus the internal ADV-001 current-HEAD/stage-0 capture and pure destructive-range assessment target.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.

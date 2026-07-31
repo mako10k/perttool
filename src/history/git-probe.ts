@@ -16,6 +16,7 @@ import {
 import { digestDocumentBytes } from "../io/document-file.js";
 
 export const GIT_HISTORY_PROBE_MODEL_VERSION = 1 as const;
+export const ADVANCE_HISTORY_BASELINE_MODEL_VERSION = 1 as const;
 
 export type GitHistoryStatus = "complete" | "incomplete" | "unavailable";
 
@@ -92,11 +93,57 @@ export type GitHistoryProbeOutcome =
   | GitHistoryProbeResult
   | GitHistoryProbeFailure;
 
+export type AdvanceHistoryBaselineCause =
+  | "no_repository"
+  | "no_head"
+  | "untracked_target"
+  | "ambiguous_path"
+  | "unmerged_index"
+  | "git_unavailable"
+  | "baseline_read_failed"
+  | "correspondence_missing"
+  | "target_changed"
+  | "head_changed"
+  | "index_changed";
+
+export interface AdvanceHistoryBaselineRequest {
+  readonly targetPath: string;
+  readonly expectedSourceDigest?: string;
+}
+
+export interface AdvanceHistoryBaselineDependencies {
+  readonly gitExecutable?: string;
+  readonly afterCapture?: () => void | Promise<void>;
+}
+
+export interface AdvanceHistoryBaselineCapture {
+  readonly ok: true;
+  readonly modelVersion: typeof ADVANCE_HISTORY_BASELINE_MODEL_VERSION;
+  readonly status: "complete" | "unavailable";
+  readonly cause: AdvanceHistoryBaselineCause | null;
+  readonly operation: string | null;
+  readonly objectFormat: "sha1" | "sha256" | null;
+  readonly repositorySnapshotId: string | null;
+  readonly repositoryRelativePath: string | null;
+  readonly headCommitId: string | null;
+  readonly headBlobId: string | null;
+  readonly indexBlobId: string | null;
+  readonly currentSourceDigest: string | null;
+  readonly headSourceDigest: string | null;
+  readonly indexSourceDigest: string | null;
+  readonly sourceModifiedAt: string | null;
+  readonly currentSource: Uint8Array | null;
+  readonly headSource: Uint8Array | null;
+  readonly indexSource: Uint8Array | null;
+}
+
 interface TargetCapture {
   readonly realPath: string;
   readonly digest: string;
   readonly device: bigint;
   readonly inode: bigint;
+  readonly modifiedAt: string;
+  readonly source: Uint8Array;
 }
 
 interface GitCommandSuccess {
@@ -314,6 +361,10 @@ async function captureTarget(path: string): Promise<
         digest: digestDocumentBytes(bytes),
         device: openedStat.dev,
         inode: openedStat.ino,
+        modifiedAt: new Date(
+          Number(openedStat.mtimeNs / 1_000_000n),
+        ).toISOString(),
+        source: new Uint8Array(bytes),
       },
     };
   } catch {
@@ -851,5 +902,496 @@ export async function probeGitHistory(
     inspectedCommitIds: Object.freeze(inspectedCommitIds),
     snapshots: Object.freeze(snapshots),
     availability: allCauses,
+  };
+}
+
+type BaselineFields = Partial<
+  Omit<
+    AdvanceHistoryBaselineCapture,
+    "ok" | "modelVersion" | "status" | "cause" | "operation"
+  >
+>;
+
+function unavailableAdvanceBaseline(
+  cause: AdvanceHistoryBaselineCause,
+  operation: string | null,
+  fields: BaselineFields = {},
+): AdvanceHistoryBaselineCapture {
+  return {
+    ok: true,
+    modelVersion: ADVANCE_HISTORY_BASELINE_MODEL_VERSION,
+    status: "unavailable",
+    cause,
+    operation,
+    objectFormat: fields.objectFormat ?? null,
+    repositorySnapshotId: fields.repositorySnapshotId ?? null,
+    repositoryRelativePath: fields.repositoryRelativePath ?? null,
+    headCommitId: fields.headCommitId ?? null,
+    headBlobId: fields.headBlobId ?? null,
+    indexBlobId: fields.indexBlobId ?? null,
+    currentSourceDigest: fields.currentSourceDigest ?? null,
+    headSourceDigest: fields.headSourceDigest ?? null,
+    indexSourceDigest: fields.indexSourceDigest ?? null,
+    sourceModifiedAt: fields.sourceModifiedAt ?? null,
+    currentSource: fields.currentSource ?? null,
+    headSource: fields.headSource ?? null,
+    indexSource: fields.indexSource ?? null,
+  };
+}
+
+function baselineCommandCause(
+  result: GitCommandResult,
+  operation: string,
+  fields: BaselineFields,
+): AdvanceHistoryBaselineCapture {
+  return unavailableAdvanceBaseline(
+    "git_unavailable",
+    !result.ok && result.kind === "failure"
+      ? result.failure.operation
+      : operation,
+    fields,
+  );
+}
+
+type TreeBlobParse =
+  | { readonly kind: "ok"; readonly blobId: string }
+  | { readonly kind: "missing" }
+  | { readonly kind: "ambiguous" };
+
+function parseTreeBlob(
+  bytes: Buffer,
+  relativePath: string,
+  objectFormat: "sha1" | "sha256",
+): TreeBlobParse {
+  if (bytes.length === 0) return { kind: "missing" };
+  const tab = bytes.indexOf(0x09);
+  if (
+    tab === -1 ||
+    !bytes.subarray(tab + 1).equals(Buffer.from(`${relativePath}\0`, "utf8"))
+  ) {
+    return { kind: "ambiguous" };
+  }
+  const header = bytes.subarray(0, tab).toString("ascii").split(" ");
+  if (
+    header.length !== 3 ||
+    (header[0] !== "100644" && header[0] !== "100755") ||
+    header[1] !== "blob" ||
+    !commitId(header[2]!, objectFormat)
+  ) {
+    return { kind: "ambiguous" };
+  }
+  return { kind: "ok", blobId: header[2]! };
+}
+
+type IndexBlobParse =
+  | { readonly kind: "ok"; readonly blobId: string }
+  | { readonly kind: "missing" }
+  | { readonly kind: "unmerged" }
+  | { readonly kind: "ambiguous" };
+
+function parseIndexBlob(
+  bytes: Buffer,
+  relativePath: string,
+  objectFormat: "sha1" | "sha256",
+): IndexBlobParse {
+  if (bytes.length === 0) return { kind: "missing" };
+  const records = bytes.toString("latin1").split("\0");
+  if (records.at(-1) !== "") return { kind: "ambiguous" };
+  records.pop();
+  if (records.length !== 1) return { kind: "unmerged" };
+  const record = Buffer.from(records[0]!, "latin1");
+  const tab = record.indexOf(0x09);
+  if (
+    tab === -1 ||
+    !record.subarray(tab + 1).equals(Buffer.from(relativePath, "utf8"))
+  ) {
+    return { kind: "ambiguous" };
+  }
+  const header = record.subarray(0, tab).toString("ascii").split(" ");
+  if (header.length !== 3) return { kind: "ambiguous" };
+  if (header[2] !== "0") return { kind: "unmerged" };
+  if (
+    (header[0] !== "100644" && header[0] !== "100755") ||
+    !commitId(header[1]!, objectFormat)
+  ) {
+    return { kind: "ambiguous" };
+  }
+  return { kind: "ok", blobId: header[1]! };
+}
+
+export async function captureAdvanceHistoryBaseline(
+  request: AdvanceHistoryBaselineRequest,
+  dependencies: AdvanceHistoryBaselineDependencies = {},
+): Promise<AdvanceHistoryBaselineCapture> {
+  const executable = dependencies.gitExecutable ?? "git";
+  const targetPath = resolve(request.targetPath);
+  const initialTarget = await captureTarget(targetPath);
+  if (!initialTarget.ok) {
+    return unavailableAdvanceBaseline(
+      "ambiguous" in initialTarget
+        ? "ambiguous_path"
+        : "baseline_read_failed",
+      "ambiguous" in initialTarget
+        ? "target_capture"
+        : initialTarget.failure.operation,
+    );
+  }
+  const targetFields: BaselineFields = {
+    currentSourceDigest: initialTarget.capture.digest,
+    sourceModifiedAt: initialTarget.capture.modifiedAt,
+    currentSource: initialTarget.capture.source,
+  };
+  if (
+    request.expectedSourceDigest !== undefined &&
+    request.expectedSourceDigest !== initialTarget.capture.digest
+  ) {
+    return unavailableAdvanceBaseline(
+      "target_changed",
+      "expected_source",
+      targetFields,
+    );
+  }
+
+  const repositoryCommand = runGit(
+    executable,
+    dirname(initialTarget.capture.realPath),
+    "advance_repository_root",
+    ["rev-parse", "--path-format=absolute", "--show-toplevel"],
+  );
+  if (!repositoryCommand.ok) {
+    if (repositoryCommand.kind === "exit") {
+      return unavailableAdvanceBaseline(
+        "no_repository",
+        "advance_repository_root",
+        targetFields,
+      );
+    }
+    return baselineCommandCause(
+      repositoryCommand,
+      "advance_repository_root",
+      targetFields,
+    );
+  }
+  const repositoryText = stdoutText(
+    repositoryCommand,
+    "advance_repository_root",
+  );
+  if (typeof repositoryText !== "string") {
+    return unavailableAdvanceBaseline(
+      "git_unavailable",
+      repositoryText.operation,
+      targetFields,
+    );
+  }
+
+  let repositoryRoot: string;
+  try {
+    repositoryRoot = await realpath(repositoryText);
+  } catch {
+    return unavailableAdvanceBaseline(
+      "baseline_read_failed",
+      "advance_repository_root",
+      targetFields,
+    );
+  }
+  const relativePath = normalizeRepositoryPath(
+    repositoryRoot,
+    initialTarget.capture.realPath,
+  );
+  if (relativePath === null) {
+    return unavailableAdvanceBaseline(
+      "ambiguous_path",
+      "advance_repository_path",
+      targetFields,
+    );
+  }
+  const pathFields: BaselineFields = {
+    ...targetFields,
+    repositoryRelativePath: relativePath,
+  };
+
+  const headCommand = runGit(
+    executable,
+    repositoryRoot,
+    "advance_resolve_head",
+    ["rev-parse", "--verify", "--end-of-options", "HEAD^{commit}"],
+  );
+  if (!headCommand.ok) {
+    if (headCommand.kind === "exit") {
+      return unavailableAdvanceBaseline(
+        "no_head",
+        "advance_resolve_head",
+        pathFields,
+      );
+    }
+    return baselineCommandCause(
+      headCommand,
+      "advance_resolve_head",
+      pathFields,
+    );
+  }
+
+  const formatCommand = runGit(
+    executable,
+    repositoryRoot,
+    "advance_object_format",
+    ["rev-parse", "--show-object-format=storage"],
+  );
+  if (!formatCommand.ok) {
+    return baselineCommandCause(
+      formatCommand,
+      "advance_object_format",
+      pathFields,
+    );
+  }
+  const formatText = stdoutText(formatCommand, "advance_object_format");
+  if (
+    typeof formatText !== "string" ||
+    (formatText !== "sha1" && formatText !== "sha256")
+  ) {
+    return unavailableAdvanceBaseline(
+      "git_unavailable",
+      typeof formatText === "string"
+        ? "advance_object_format"
+        : formatText.operation,
+      pathFields,
+    );
+  }
+  const objectFormat = formatText;
+  const headText = stdoutText(headCommand, "advance_resolve_head");
+  if (
+    typeof headText !== "string" ||
+    !commitId(headText, objectFormat)
+  ) {
+    return unavailableAdvanceBaseline(
+      "git_unavailable",
+      typeof headText === "string"
+        ? "advance_resolve_head"
+        : headText.operation,
+      { ...pathFields, objectFormat },
+    );
+  }
+  const headCommitId = headText;
+  const headFields: BaselineFields = {
+    ...pathFields,
+    objectFormat,
+    headCommitId,
+  };
+
+  const treeCommand = runGit(
+    executable,
+    repositoryRoot,
+    "advance_head_entry",
+    ["ls-tree", "-z", headCommitId, "--", relativePath],
+  );
+  if (!treeCommand.ok) {
+    return baselineCommandCause(
+      treeCommand,
+      "advance_head_entry",
+      headFields,
+    );
+  }
+  const treeBlob = parseTreeBlob(
+    treeCommand.stdout,
+    relativePath,
+    objectFormat,
+  );
+  if (treeBlob.kind !== "ok") {
+    return unavailableAdvanceBaseline(
+      treeBlob.kind === "missing"
+        ? "untracked_target"
+        : "ambiguous_path",
+      "advance_head_entry",
+      headFields,
+    );
+  }
+  const headBlobId = treeBlob.blobId;
+  const headBlobFields: BaselineFields = {
+    ...headFields,
+    headBlobId,
+  };
+
+  const indexCommand = runGit(
+    executable,
+    repositoryRoot,
+    "advance_index_entry",
+    ["ls-files", "--stage", "-z", "--", relativePath],
+  );
+  if (!indexCommand.ok) {
+    return baselineCommandCause(
+      indexCommand,
+      "advance_index_entry",
+      headBlobFields,
+    );
+  }
+  const indexBlob = parseIndexBlob(
+    indexCommand.stdout,
+    relativePath,
+    objectFormat,
+  );
+  if (indexBlob.kind !== "ok") {
+    return unavailableAdvanceBaseline(
+      indexBlob.kind === "unmerged"
+        ? "unmerged_index"
+        : indexBlob.kind === "missing"
+          ? "correspondence_missing"
+          : "ambiguous_path",
+      "advance_index_entry",
+      headBlobFields,
+    );
+  }
+  const indexBlobId = indexBlob.blobId;
+  const blobFields: BaselineFields = {
+    ...headBlobFields,
+    indexBlobId,
+  };
+
+  const headSourceCommand = runGit(
+    executable,
+    repositoryRoot,
+    "advance_head_source",
+    ["cat-file", "blob", headBlobId],
+  );
+  if (!headSourceCommand.ok) {
+    return baselineCommandCause(
+      headSourceCommand,
+      "advance_head_source",
+      blobFields,
+    );
+  }
+  const indexSourceCommand = runGit(
+    executable,
+    repositoryRoot,
+    "advance_index_source",
+    ["cat-file", "blob", indexBlobId],
+  );
+  if (!indexSourceCommand.ok) {
+    return baselineCommandCause(
+      indexSourceCommand,
+      "advance_index_source",
+      blobFields,
+    );
+  }
+  const headSource = new Uint8Array(headSourceCommand.stdout);
+  const indexSource = new Uint8Array(indexSourceCommand.stdout);
+  const headSourceDigest = digestDocumentBytes(headSource);
+  const indexSourceDigest = digestDocumentBytes(indexSource);
+  const repositorySnapshotId =
+    `git:${objectFormat}:${headCommitId}:index:${indexBlobId}`;
+  const completeFields: BaselineFields = {
+    ...blobFields,
+    repositorySnapshotId,
+    headSourceDigest,
+    indexSourceDigest,
+    headSource,
+    indexSource,
+  };
+
+  if (dependencies.afterCapture !== undefined) {
+    await dependencies.afterCapture();
+  }
+
+  const finalHeadCommand = runGit(
+    executable,
+    repositoryRoot,
+    "advance_recheck_head",
+    ["rev-parse", "--verify", "--end-of-options", "HEAD^{commit}"],
+  );
+  if (!finalHeadCommand.ok) {
+    if (finalHeadCommand.kind === "failure") {
+      return baselineCommandCause(
+        finalHeadCommand,
+        "advance_recheck_head",
+        completeFields,
+      );
+    }
+    return unavailableAdvanceBaseline(
+      "head_changed",
+      "advance_recheck_head",
+      completeFields,
+    );
+  }
+  const finalHeadText = stdoutText(
+    finalHeadCommand,
+    "advance_recheck_head",
+  );
+  if (
+    typeof finalHeadText !== "string" ||
+    finalHeadText !== headCommitId
+  ) {
+    return unavailableAdvanceBaseline(
+      "head_changed",
+      "advance_recheck_head",
+      completeFields,
+    );
+  }
+
+  const finalIndexCommand = runGit(
+    executable,
+    repositoryRoot,
+    "advance_recheck_index",
+    ["ls-files", "--stage", "-z", "--", relativePath],
+  );
+  if (!finalIndexCommand.ok) {
+    if (finalIndexCommand.kind === "failure") {
+      return baselineCommandCause(
+        finalIndexCommand,
+        "advance_recheck_index",
+        completeFields,
+      );
+    }
+    return unavailableAdvanceBaseline(
+      "index_changed",
+      "advance_recheck_index",
+      completeFields,
+    );
+  }
+  const finalIndex = parseIndexBlob(
+    finalIndexCommand.stdout,
+    relativePath,
+    objectFormat,
+  );
+  if (
+    finalIndex.kind !== "ok" ||
+    finalIndex.blobId !== indexBlobId
+  ) {
+    return unavailableAdvanceBaseline(
+      "index_changed",
+      "advance_recheck_index",
+      completeFields,
+    );
+  }
+
+  const finalTarget = await captureTarget(targetPath);
+  if (
+    !finalTarget.ok ||
+    !sameTarget(initialTarget.capture, finalTarget.capture)
+  ) {
+    return unavailableAdvanceBaseline(
+      "target_changed",
+      "advance_recheck_target",
+      completeFields,
+    );
+  }
+
+  return {
+    ok: true,
+    modelVersion: ADVANCE_HISTORY_BASELINE_MODEL_VERSION,
+    status: "complete",
+    cause: null,
+    operation: null,
+    objectFormat,
+    repositorySnapshotId,
+    repositoryRelativePath: relativePath,
+    headCommitId,
+    headBlobId,
+    indexBlobId,
+    currentSourceDigest: initialTarget.capture.digest,
+    headSourceDigest,
+    indexSourceDigest,
+    sourceModifiedAt: initialTarget.capture.modifiedAt,
+    currentSource: initialTarget.capture.source,
+    headSource,
+    indexSource,
   };
 }
