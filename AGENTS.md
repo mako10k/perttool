@@ -78,12 +78,18 @@ before the existing safe write. Preview, separate output, no-op, authority
 denial, and prior warning denial do not inspect Git. Retained dirty ranges are
 allowed, destructive overlap and unavailable proof block, and a captured
 source, `HEAD`, or index race returns exit 5 without writing. Its acceptance
-record is `docs/process/advance-history-cli-acceptance.md`. The residual
-plan has 3p precedence and heuristic resource makespans with no resource
-delay; complete NextResult v5 recommends and makes startable only
-`ADV_HISTORY_ACCEPTANCE`. Targeted package and installed acceptance, release,
-GitHub Issue mutation, npm publication, and dist-tag movement remain separate
-boundaries.
+record is `docs/process/advance-history-cli-acceptance.md`. Git commit
+`805bdd9` records its exact completed pre-advance snapshot, and commit
+`5986cab` advances the plan to reached `ADV_HISTORY_CLI_READY`.
+`ADV_HISTORY_ACCEPTANCE` is complete and retained as the exact final-task
+pre-advance snapshot. Its accepted eighteen-case repository, real CLI race,
+linked-worktree, BOM/CRLF, help, Guide, schema, temporary-link, package-root,
+and isolated installed trace is recorded in
+`docs/process/advance-history-acceptance.md`. All four tasks and 14p are
+complete; precedence and heuristic resource makespans are zero, and complete
+NextResult v5 has no ready, recommended, or startable task. Published `0.5.5`
+remains unchanged. Release selection, GitHub Issue mutation, npm publication,
+dist-tag movement, and the final plan advance remain separate boundaries.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 

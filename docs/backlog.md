@@ -197,8 +197,7 @@ advances completed history, and validates the final one-frontier document.
 
 Priority: P0
 
-Status: Contract and CLI enforcement implemented (2026-07-31; complete
-repository/package acceptance pending)
+Status: Accepted in current source (2026-07-31; release pending)
 
 `dag advance` deliberately removes declarations and owned leading comments
 that no longer affect the present or future graph. The current source-digest
@@ -293,15 +292,18 @@ the current Contract 6 boundary: the guard shares repository/path/`HEAD` and
 raw-source capture with the accepted project-history adapter, adds stage-0
 index capture, and remains a separate application decision from both history
 reduction and MIG-08. It targets `Perttool.AdvanceResult.v1` because the
-published MutationResult v3 schema is closed. CLI enforcement is implemented;
-complete runtime acceptance remains open until the final acceptance task
-passes. The internal probe
+published MutationResult v3 schema is closed. CLI enforcement and complete
+source acceptance are implemented. The internal probe
 acceptance is recorded in
 [`docs/process/advance-history-probe-acceptance.md`](process/advance-history-probe-acceptance.md);
 the later CLI slice composes it into the public command, result, schema, help,
 and write behavior without adding Git mutation. Its bounded acceptance is
 recorded in
 [`docs/process/advance-history-cli-acceptance.md`](process/advance-history-cli-acceptance.md).
+The final eighteen-case repository, link, package, and installed trace is
+recorded in
+[`docs/process/advance-history-acceptance.md`](process/advance-history-acceptance.md).
+Release selection and publication remain separate.
 
 ## Project actuals and Git-recorded history
 

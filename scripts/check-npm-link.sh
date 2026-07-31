@@ -128,6 +128,60 @@ fi
       });
     '
   "$linked_cli" project show "$repo_root/docs/examples/minimal.pert" --format=json >/dev/null
+  "$linked_cli" help dag advance --format=json |
+    node -e '
+      let input = "";
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", (chunk) => { input += chunk; });
+      process.stdin.on("end", () => {
+        const result = JSON.parse(input);
+        const command = result.commands?.[0];
+        if (
+          result.schema_version !== "Perttool.CommandHelpResult.v1" ||
+          JSON.stringify(command?.result_schemas) !== JSON.stringify([
+            "Perttool.AdvanceResult.v1",
+            "Perttool.CliError.v1",
+          ]) ||
+          !command?.options?.some(
+            ({ name }) => name === "force-history-loss",
+          )
+        ) process.exit(1);
+      });
+    '
+  "$linked_cli" guide editing --level=detail --format=json |
+    node -e '
+      let input = "";
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", (chunk) => { input += chunk; });
+      process.stdin.on("end", () => {
+        const result = JSON.parse(input);
+        const serialized = JSON.stringify(result);
+        if (
+          result.schema_version !== "Perttool.GuideResult.v1" ||
+          result.topic_id !== "editing" ||
+          !serialized.includes("PTADV-101") ||
+          !serialized.includes("PTADV-102") ||
+          !serialized.includes("PTADV-103") ||
+          !serialized.includes("--force-history-loss")
+        ) process.exit(1);
+      });
+    '
+  "$linked_cli" schema Perttool.AdvanceResult.v1 --format=json |
+    node -e '
+      let input = "";
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", (chunk) => { input += chunk; });
+      process.stdin.on("end", () => {
+        const result = JSON.parse(input);
+        if (
+          result.schema_version !== "Perttool.SchemaResult.v1" ||
+          result.schemas?.length !== 19 ||
+          result.schema?.$id !==
+            "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v1.schema.json" ||
+          result.schema?.properties?.history_guard === undefined
+        ) process.exit(1);
+      });
+    '
   "$linked_cli" schema Perttool.NextResult.v5 --format=json |
     node -e '
       let input = "";

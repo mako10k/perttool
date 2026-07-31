@@ -67,6 +67,7 @@ function git(...args) {
     0,
     `git ${args.join(" ")}\n${result.stderr}`,
   );
+  return result.stdout.trim();
 }
 
 function checkedDigest() {
@@ -610,13 +611,52 @@ git("config", "user.email", "perttool@example.invalid");
 git("add", "--", path.basename(planPath));
 git("commit", "--quiet", "-m", "pre-advance snapshot");
 
+const advanceHeadBefore = git("rev-parse", "HEAD");
+const advanceIndexBefore = git(
+  "ls-files",
+  "--stage",
+  "--",
+  path.basename(planPath),
+);
+const advanceText = invoke([
+  "dag",
+  "advance",
+  planPath,
+  "--color=never",
+]);
+assert.match(
+  advanceText.stderr,
+  /^HISTORY_GUARD status=not_applicable cause=preview$/m,
+);
+assert.match(
+  advanceText.stderr,
+  /^HISTORY_CHANGE source_bytes=\d+ candidate_bytes=\d+ added_lines=\d+ removed_lines=\d+$/m,
+);
+assert.match(
+  advanceText.stderr,
+  /^HISTORY_ENTITIES destructive=.+ overlapping=-$/m,
+);
+assert.match(
+  advanceText.stderr,
+  /^HISTORY_FORCE requested=false$/m,
+);
+
 const advanced = writeMutation(["dag", "advance", planPath]);
 assert.equal(advanced.operation, "dag.advance");
 assert.equal(advanced.history_guard.status, "passed");
+assert.equal(advanced.history_guard.cause, "baseline_matches");
+assert.equal(advanced.history_guard.force_requested, false);
+assert.equal(advanced.history_guard.repository_relative_path, "file-first.pert");
+assert.equal(advanced.history_guard.head_commit_id, advanceHeadBefore);
 assert.deepEqual(advanced.advance.removed_task_ids, ["BUILD"]);
 assert.deepEqual(advanced.advance.removed_gate_ids, ["APPROVAL"]);
 assert.deepEqual(advanced.advance.removed_milestone_ids, ["READY", "START"]);
 assert.deepEqual(advanced.advance.frontier_after, ["DONE"]);
+assert.equal(git("rev-parse", "HEAD"), advanceHeadBefore);
+assert.equal(
+  git("ls-files", "--stage", "--", path.basename(planPath)),
+  advanceIndexBefore,
+);
 
 const advancedText = readFileSync(planPath, "utf8");
 assert.doesNotMatch(advancedText, /^(?:task BUILD|gate APPROVAL|milestone START|milestone READY):?/m);

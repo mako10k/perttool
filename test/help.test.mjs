@@ -86,6 +86,7 @@ test("editing help exposes preview and explicit safe-write commands", () => {
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--expect-digest/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /--out/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /PTADV-101/);
+  assert.match(help.sections.map(({ body }) => body).join("\n"), /PTADV-102/);
   assert.match(help.sections.map(({ body }) => body).join("\n"), /PTADV-103/);
   assert.ok(
     help.syntax.some((line) => line.includes("--force-history-loss")),

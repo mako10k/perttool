@@ -927,9 +927,13 @@ safe source capture
 `Perttool.MutationResult.v3` contract for every other mutation. It adds a
 complete history-guard record with modification time, byte sizes, diff
 counts, stable entity IDs, status, and cause; digests remain supplemental
-bindings. Runtime implementation must update only the `dag advance`
-descriptor, add one complete root schema, and keep CLI Contract 6 command
-names and unrelated no-Git behavior unchanged.
+bindings. The implementation updates only the `dag advance` descriptor, adds
+one complete root schema, and keeps CLI Contract 6 command names and unrelated
+no-Git behavior unchanged.
+
+The accepted implementation follows that boundary. Its complete repository,
+CLI, schema, temporary-link, package, and installed matrix is recorded in
+[Advance History Safety Acceptance](process/advance-history-acceptance.md).
 
 An explicit `--force-history-loss` changes only a blocked guard to `forced`.
 It does not bypass governance, warning policy, source, `HEAD`, or stage-0

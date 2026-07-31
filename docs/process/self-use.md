@@ -1839,12 +1839,12 @@ Stage 1 entry evidence:
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty
-  behavior, force, result, and diagnostic boundaries. The CLI enforcement,
-  `Perttool.AdvanceResult.v1`, help, and schema slice is implemented; complete
-  repository, link, package, and installed acceptance remains in
-  [`advance-history-safety.pert`](../../plans/advance-history-safety.pert).
+  behavior, force, result, and diagnostic boundaries. CLI enforcement,
+  `Perttool.AdvanceResult.v1`, help, schema, repository, link, package, and
+  installed behavior are accepted under
+  [Advance History Safety Acceptance](advance-history-acceptance.md).
 - write state: Stage 3 editing commands remain preview-first. Until the
-  runtime `ADV-001` workstream is accepted, an advance write still requires
-  the exact pre-advance target snapshot in `HEAD`, the passing guard,
+  accepted source is released, repository self-use still requires the exact
+  pre-advance target snapshot in `HEAD`, the passing guard,
   diff/deletion review, expected-digest write, reanalysis, and a separate
   advance commit.

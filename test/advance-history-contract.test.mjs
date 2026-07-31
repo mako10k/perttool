@@ -144,6 +144,58 @@ test("all eighteen history-safety cases are dependency ordered", async () => {
   );
 });
 
+test("accepted runtime traces all eighteen cases across repository and package gates", async () => {
+  const [
+    acceptance,
+    requirements,
+    backlog,
+    cliTests,
+    packageCheck,
+    installedWorkflow,
+  ] = await Promise.all([
+    repositoryText("docs/process/advance-history-acceptance.md"),
+    repositoryText("docs/requirements.md"),
+    repositoryText("docs/backlog.md"),
+    repositoryText("test/advance-history-cli.test.mjs"),
+    repositoryText("scripts/check-package.sh"),
+    repositoryText("scripts/check-package-file-first.mjs"),
+  ]);
+
+  assert.match(acceptance, /- Document status: Accepted 1\.0/);
+  assert.deepEqual(
+    tableIds(acceptance, "AHS"),
+    expectedIds("AHS", 18),
+  );
+  assert.match(
+    requirements,
+    /19\. \[x\] Enforce repository-aware history safety/,
+  );
+  assert.match(
+    backlog,
+    /Status: Accepted in current source \(2026-07-31; release pending\)/,
+  );
+  for (const id of expectedIds("AHS", 18)) {
+    assert.equal(acceptance.includes(`| \`${id}\` |`), true);
+  }
+  for (const id of [
+    "AHS-008",
+    "AHS-009",
+    "AHS-010",
+    "AHS-011",
+    "AHS-012",
+    "AHS-013",
+    "AHS-014",
+    "AHS-016",
+    "AHS-017",
+  ]) {
+    assert.match(cliTests, new RegExp(id));
+  }
+  assert.match(packageCheck, /Perttool\.AdvanceResult\.v1/);
+  assert.match(packageCheck, /guide editing/);
+  assert.match(installedWorkflow, /advanceHeadBefore/);
+  assert.match(installedWorkflow, /history_guard\.status, "passed"/);
+});
+
 test("active runtime exposes the exact CLI result and force boundary", () => {
   assert.equal(
     ADVANCE_RESULT_SCHEMA_VERSION,
@@ -169,7 +221,7 @@ test("active runtime exposes the exact CLI result and force boundary", () => {
   );
 });
 
-test("completed CLI task hands off only the acceptance slice", async () => {
+test("completed acceptance task leaves only the reached final frontier", async () => {
   const source = await repositoryText("plans/advance-history-safety.pert");
   const checked = checkDocument(source);
   const metadata = getProjectMetadata(source);
@@ -189,15 +241,12 @@ test("completed CLI task hands off only the acceptance slice", async () => {
     checked.document.declarations
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
-    [
-      "ADV_HISTORY_CLI",
-      "ADV_HISTORY_ACCEPTANCE",
-    ],
+    ["ADV_HISTORY_ACCEPTANCE"],
   );
   assert.equal(
     checked.document.declarations.find(
       ({ kind, id }) =>
-        kind === "milestone" && id === "ADV_HISTORY_PROBE_READY",
+        kind === "milestone" && id === "ADV_HISTORY_CLI_READY",
     ).fields.find(({ name }) => name === "state").value,
     "reached",
   );
@@ -207,17 +256,13 @@ test("completed CLI task hands off only the acceptance slice", async () => {
     ).length,
     2,
   );
-  assert.equal(analyzed.precedence.makespan.numerator.toString(), "3");
+  assert.equal(analyzed.precedence.makespan.numerator.toString(), "0");
   assert.equal(analyzed.precedence.makespan.denominator.toString(), "1");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["ADV_HISTORY_ACCEPTANCE"]);
-  assert.deepEqual(next.groups.runnableNow, ["ADV_HISTORY_ACCEPTANCE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "ADV_HISTORY_ACCEPTANCE",
-  ]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "ADV_HISTORY_ACCEPTANCE",
-  ]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);
   assert.equal(

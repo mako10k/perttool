@@ -166,6 +166,8 @@ index. Dirty ranges retained by the candidate are allowed; uncommitted
 destructive overlap or unavailable proof returns `PTADV-101` without writing.
 `Perttool.AdvanceResult.v1.history_guard` reports the status, modification
 time, byte sizes, diff counts, and affected IDs before supplemental digests.
+If the source, `HEAD`, or stage-0 index changes after assessment, `PTADV-102`
+returns exit 5 without writing.
 The exceptional `--force-history-loss` option bypasses only that initial
 history block for the exact in-place request, emits `PTADV-103`, and does not
 bypass governance, warnings-as-errors, expected digests, source/`HEAD`/index
@@ -420,6 +422,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Owner-Aware Governance Interface Contract (CLI Contract 5)](docs/specs/governance-interface.md)
 - [Project Actuals and Git History Contract (CLI Contract 6)](docs/specs/project-actuals.md)
 - [Advance History Safety Contract (ADV-001 target)](docs/specs/advance-history-safety.md)
+- [Advance History Safety source acceptance](docs/process/advance-history-acceptance.md)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)

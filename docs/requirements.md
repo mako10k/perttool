@@ -2220,7 +2220,7 @@ Before implementation, separate the specifications in the following order.
     [Source acceptance](process/json-schema-acceptance.md) is complete;
     release publication and Issue closure remain separate authorization
     boundaries.
-19. [ ] Enforce repository-aware history safety for destructive in-place
+19. [x] Enforce repository-aware history safety for destructive in-place
     `dag advance` writes under `ADV-001`.
     - [x] [Advance History Safety Contract](specs/advance-history-safety.md):
       exact destructive records, `HEAD` and index proof, retained-dirty
@@ -2228,7 +2228,8 @@ Before implementation, separate the specifications in the following order.
       machine-readable acceptance cases
     - [x] Pure assessment and shared read-only Git adapter extension
     - [x] In-place CLI enforcement and `Perttool.AdvanceResult.v1`
-    - [ ] Repository, package, and installed-workflow acceptance
+    - [x] Repository, package, and installed-workflow acceptance under
+      [Advance History Safety Acceptance](process/advance-history-acceptance.md)
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

@@ -156,6 +156,26 @@ fi
       ) process.exit(1);
     });
   '
+"$installed_cli" guide editing --level=detail --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      const serialized = JSON.stringify(result);
+      if (
+        result.schema_version !== "Perttool.GuideResult.v1" ||
+        result.cli_contract_version !== 6 ||
+        result.operation !== "guide" ||
+        result.topic_id !== "editing" ||
+        !serialized.includes("PTADV-101") ||
+        !serialized.includes("PTADV-102") ||
+        !serialized.includes("PTADV-103") ||
+        !serialized.includes("--force-history-loss")
+      ) process.exit(1);
+    });
+  '
 assert_contract2_rejected() {
   set +e
   "$installed_cli" "$@" >/dev/null 2>&1
@@ -289,6 +309,12 @@ const exportedSchemaPath = require.resolve(
   "perttool/schemas/Perttool.NextResult.v5.schema.json",
 );
 const exportedSchema = JSON.parse(readFileSync(exportedSchemaPath, "utf8"));
+const exportedAdvanceSchemaPath = require.resolve(
+  "perttool/schemas/Perttool.AdvanceResult.v1.schema.json",
+);
+const exportedAdvanceSchema = JSON.parse(
+  readFileSync(exportedAdvanceSchemaPath, "utf8"),
+);
 for (const targetName of [
   "TARGET_GRAMMAR_2_CAPABILITY",
   "parseTargetDocument",
@@ -394,6 +420,14 @@ const selectedSchema = spawnSync(
   { encoding: "utf8" },
 );
 const selectedSchemaJson = JSON.parse(selectedSchema.stdout);
+const selectedAdvanceSchema = spawnSync(
+  process.argv[5],
+  ["schema", "Perttool.AdvanceResult.v1", "--format=json"],
+  { encoding: "utf8" },
+);
+const selectedAdvanceSchemaJson = JSON.parse(
+  selectedAdvanceSchema.stdout,
+);
 const outlineSchema = spawnSync(
   process.argv[5],
   [
@@ -435,6 +469,11 @@ if (
     "https://json-schema.org/draft/2020-12/schema" ||
   selectedSchemaJson.schema?.$id !==
     "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v5.schema.json" ||
+  selectedAdvanceSchema.status !== 0 ||
+  selectedAdvanceSchema.stderr !== "" ||
+  selectedAdvanceSchemaJson.schema?.$id !==
+    "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v1.schema.json" ||
+  selectedAdvanceSchemaJson.schema?.properties?.history_guard === undefined ||
   outlineSchema.status !== 0 ||
   outlineSchema.stderr !== "" ||
   outlineSchemaJson.query?.view !== "outline" ||
@@ -448,7 +487,11 @@ if (
   api.getJsonSchemaCatalog().length !== 19 ||
   api.getJsonSchema("Perttool.NextResult.v5")?.$id !==
     selectedSchemaJson.schema.$id ||
-  exportedSchema.$id !== selectedSchemaJson.schema.$id
+  api.getJsonSchema("Perttool.AdvanceResult.v1")?.$id !==
+    selectedAdvanceSchemaJson.schema.$id ||
+  api.ADVANCE_RESULT_SCHEMA_VERSION !== "Perttool.AdvanceResult.v1" ||
+  exportedSchema.$id !== selectedSchemaJson.schema.$id ||
+  exportedAdvanceSchema.$id !== selectedAdvanceSchemaJson.schema.$id
 ) process.exit(1);
 
 for (const [fixture, grammarVersion] of [

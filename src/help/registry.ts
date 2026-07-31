@@ -637,7 +637,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "advance-history",
         title: "Advance history safety",
-        body: "A changed in-place dag advance proves every removed or replaced entity range against the target path in HEAD and the stage-0 index. Dirty ranges retained by the candidate are allowed; destructive uncommitted overlap or unavailable proof emits PTADV-101 and does not write. The result reports modification time, byte and diff counts, entity IDs, and supplemental digests. --force-history-loss bypasses only that initial block for the exact request, emits PTADV-103, and remains subject to governance, warning, digest, race, and atomic-write controls.",
+        body: "A changed in-place dag advance proves every removed or replaced entity range against the target path in HEAD and the stage-0 index. Dirty ranges retained by the candidate are allowed; destructive uncommitted overlap or unavailable proof emits PTADV-101 and does not write. A source, HEAD, or stage-0-index race after assessment emits PTADV-102, returns exit 5, and does not write. The result reports modification time, byte and diff counts, entity IDs, and supplemental digests. --force-history-loss bypasses only that initial block for the exact request, emits PTADV-103, and remains subject to governance, warning, digest, race, and atomic-write controls.",
       },
     ],
     syntax: [

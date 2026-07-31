@@ -57,6 +57,7 @@ task ADV_HISTORY_ACCEPTANCE ADV_HISTORY_CLI_READY -> ADV_HISTORY_ACCEPTED:
   title "Accept advance history safety end to end"
   description "Verify tracked, dirty-overlap, retained-dirty, untracked, no-HEAD, linked-worktree, race, rename, BOM, CRLF, deterministic text and JSON, help, Guide, README, repository, link, and installed-package behavior with no Git mutation or release."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -67,3 +68,17 @@ task ADV_HISTORY_ACCEPTANCE ADV_HISTORY_CLI_READY -> ADV_HISTORY_ACCEPTED:
     CLI_SURFACE 1
     PACKAGE_SURFACE 1
 
+work_event WE-bb9e6943a7c8a4dcbd3d639185e31dc2ab4e333146165a262b6360d6d2ef5c55:
+  model 1
+  task ADV_HISTORY_ACCEPTANCE
+  kind start
+  occurred_at 2026-07-31T16:14:43+09:00
+  planned_value 3p
+
+work_event WE-59081a9b2272c5c474b976e2d4f0aefa5bf4a47567c74791072c412b34b26635:
+  model 1
+  task ADV_HISTORY_ACCEPTANCE
+  kind finish
+  occurred_at 2026-07-31T16:25:38+09:00
+  active_time 131/720h
+  effort 1ph
