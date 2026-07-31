@@ -128,9 +128,8 @@ Contract 6, all prior advance JSON keys, the deliberate
 `--force-history-loss`. `0.5.6` would understate this boundary; Contract 7 or
 Grammar 6 would overstate it. `RELEASE_060_PREPARATION` is complete after the
 712-test, 29-plan, 138-Markdown, temporary-link, and 504-file isolated-package
-gates passed under Node.js 22. Complete NextResult v5 recommends and makes
-startable only `RELEASE_060_CANDIDATE`; no release candidate is yet accepted
-and no external release mutation has occurred. npm remains
+gates passed under Node.js 22. `RELEASE_060_CANDIDATE` is active; no release
+candidate is yet accepted and no external release mutation has occurred. npm remains
 `beta=latest=0.5.5` with no `alpha`. npm `latest` promotion, release-plan
 advance, and Issue mutation remain separate decisions.
 

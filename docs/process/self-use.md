@@ -1465,10 +1465,9 @@ CLI Contract 6, and prior advance JSON fields, plus the deliberate
 `AdvanceResult.v1`, required nullable history guard, nineteenth root schema,
 and exact force option. `RELEASE_060_PREPARATION` is complete after 712 tests,
 29 self-use plans, 138 Markdown files, the temporary-link workflow, and the
-504-file isolated-package gate passed under Node.js 22. Complete NextResult v5
-recommends and makes startable only `RELEASE_060_CANDIDATE`; no candidate, tag,
-GitHub Release, npm publication, latest movement, plan advance, or Issue
-mutation has occurred.
+504-file isolated-package gate passed under Node.js 22.
+`RELEASE_060_CANDIDATE` is active; no candidate, tag, GitHub Release, npm
+publication, latest movement, plan advance, or Issue mutation has occurred.
 
 Stage 1 allowed operations:
 

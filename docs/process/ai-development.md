@@ -396,9 +396,9 @@ nineteenth root schema, and exact write-only `--force-history-loss`.
 `0.5.6` would understate that result and write-safety boundary. Source
 preparation identifies `0.6.0` and passed 712 tests, 29 self-use plans, 138
 Markdown files, the temporary-link workflow, and the 504-file isolated-package
-gate under Node.js 22. Complete NextResult v5 recommends and makes startable
-only `RELEASE_060_CANDIDATE`; candidate acceptance and every external write
-remain later gates. Publication moves only npm `beta`; `latest=0.5.5`, plan
+gate under Node.js 22. `RELEASE_060_CANDIDATE` is active; candidate acceptance
+and every external write remain later gates. Publication moves only npm
+`beta`; `latest=0.5.5`, plan
 advance, and Issue mutation remain outside the named release.
 
 ### 5.1 Adopted Recommendation authority
