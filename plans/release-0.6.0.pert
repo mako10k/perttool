@@ -92,6 +92,7 @@ task RELEASE_060_PUBLISH RELEASE_060_CANDIDATE_ACCEPTED -> RELEASE_060_PUBLISHED
   title "Publish version 0.6.0 from one immutable tarball"
   description "Only after every predecessor gate passes and under the user's 2026-07-31 named release authorization, push and verify the clean release commit and annotated tag, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.6.0 while latest remains 0.5.5."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -154,3 +155,18 @@ work_event WE-1ff00a8f3d401e955f8eed2cd39605e17057ea8e1e34b72c849e6f2c86ed8b5b:
   occurred_at 2026-07-31T21:25:19+09:00
   active_time 449/3600h
   effort 449/3600ph
+
+work_event WE-a7f221e748ab79e827a0f5afcd39627562398f738928719ff9761cdbb57431b0:
+  model 1
+  task RELEASE_060_PUBLISH
+  kind start
+  occurred_at 2026-07-31T21:35:55+09:00
+  planned_value 3p
+
+work_event WE-516a31158f48caf60215d6dfd8eb8ec0f1922f5c49bf6dc1759ad5dd47e2dd98:
+  model 1
+  task RELEASE_060_PUBLISH
+  kind finish
+  occurred_at 2026-07-31T21:43:12+09:00
+  active_time 437/3600h
+  effort 437/3600ph

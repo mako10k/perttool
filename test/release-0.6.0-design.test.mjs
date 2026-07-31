@@ -69,7 +69,14 @@ test("0.6.0 release gate binds advance history safety and migration", async () =
   assert.match(migration, /deprecated[\s\S]*source-compatibility alias/);
   assert.match(review, /`0\.5\.6` would understate/);
   assert.match(review, /all preserved/);
-  assert.match(publish, /- Status: Pending/);
+  assert.match(publish, /- Status: Complete/);
+  assert.match(
+    publish,
+    /Release commit: `935b097420d93597b17819a210e588553b1a4c06`/,
+  );
+  assert.match(publish, /CI:[\s\S]*30631050662/);
+  assert.match(publish, /`beta=0\.6\.0`, unchanged `latest=0\.5\.5`/);
+  assert.match(publish, /publication was[\s\S]*not retried/);
   assert.match(acceptance, /- Document status: Pending/);
 
   const checked = checkDocument(plan);

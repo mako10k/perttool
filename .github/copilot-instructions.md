@@ -15,7 +15,8 @@ Mandatory summary:
   linked-worktree and complete repository-baseline race boundaries, the narrow
   `--force-history-loss` target, `Perttool.AdvanceResult.v1`, `PTADV-101`
   through `PTADV-103`, human-readable modification time, byte-size and diff
-  context, and eighteen machine cases. Published 0.5.5 remains unchanged.
+  context, and eighteen machine cases. The exact pinned 0.5.5 artifact remains
+  unchanged; the later 0.6.0 release is recorded below.
   `ADV_HISTORY_PROBE` is complete and advanced; Git commit `4265621` records
   its exact completed 4p pre-advance snapshot. Its internal read-only baseline
   capture and pure assessment pass the complete repository gate.
@@ -32,8 +33,9 @@ Mandatory summary:
   linked-worktree, encoding, help, Guide, schema, temporary-link, package, and
   installed trace is recorded in
   `docs/process/advance-history-acceptance.md`. All four tasks and 14p are
-  complete and advanced with zero makespans and no recommendation. Published
-  0.5.5 remains unchanged; release remains separate.
+  complete and advanced with zero makespans and no recommendation. The exact
+  pinned 0.5.5 artifact remains unchanged; the later 0.6.0 release is recorded
+  below.
 - The selected independent `plans/advance-clean-candidate.pert` workstream
   tracks the post-acceptance `ADV-002` correction.
   All three tasks through `ADV_CLEAN_CANDIDATE_ACCEPTANCE` are complete and
@@ -54,8 +56,8 @@ Mandatory summary:
   `docs/process/advance-clean-candidate-acceptance.md`. The plan has zero
   precedence and heuristic resource makespans, and complete NextResult v5 has
   no ready, recommended, or startable task. Do not globally trim or invoke the
-  formatter. Plan advance, release, remote writes, publication, and dist-tag
-  movement remain separate.
+  formatter. The later release remained separately gated and is recorded
+  below; plan advance and dist-tag movement remain separate.
 - The explicitly authorized `plans/release-0.6.0.pert` workstream publishes
   ADV-001 and ADV-002 as the advance-history-safety beta minor. The exact
   5,289-byte initial goal/DAG candidate was confirmed and written once with
@@ -68,10 +70,12 @@ Mandatory summary:
   504-file isolated-package gates passed under Node.js 22.
   `RELEASE_060_CANDIDATE` is complete after clean source and protected-route
   preflight accepted the retained 504-file, 543508-byte tarball with SHA-256
-  `6d03e270...e42acd`. Complete NextResult v5 recommends and makes startable
-  only `RELEASE_060_PUBLISH`; no external release mutation exists yet. npm
-  remains `beta=latest=0.5.5` with no alpha. npm `latest`, plan advance, and
-  Issue mutation remain separate.
+  `6d03e270...e42acd`. `RELEASE_060_PUBLISH` is complete: release commit
+  `935b097`, peeled tag, successful Node.js 22/24 CI run `30631050662`, GitHub
+  prerelease, npm `beta=0.6.0`, and the common tarball agree. Complete
+  NextResult v5 recommends and makes startable only `RELEASE_060_ACCEPTANCE`.
+  npm `latest=0.5.5` and no alpha remain unchanged. npm `latest`, plan
+  advance, and Issue mutation remain separate.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation
@@ -141,7 +145,7 @@ Mandatory summary:
 - The explicitly authorized compatible `0.5.4` patch is durably accepted through `plans/release-0.5.4.pert`. Release commit `9c23510`, peeled tag, successful Node.js 22/24 CI run `30536185188`, GitHub prerelease, npm `beta=0.5.4`, and the common 521641-byte tarball with SHA-256 `d3123ef0...3c01` agree; `latest=0.5.1` and alpha remains absent. Independent public installation and PTGOV-103 default/strict verification passed. All five tasks and 15p are complete with zero makespans and no recommendation; completed declarations remain until a separately confirmed `dag advance`. The patch emits non-blocking `PTGOV-103` when a valid governance-not-applicable candidate carries a non-empty `acceptedByOwner` set. Default write authority and every result identity remain unchanged; existing `--warnings-as-errors` prevents persistence. This does not add accepted scopes, approval evidence, authentication, or cross-candidate reuse detection. npm `latest` promotion remains separate.
 - The explicitly authorized compatible `0.5.5` patch is durably accepted through `plans/release-0.5.5.pert`. Release commit `04055c9`, peeled tag, Node.js 22/24 CI run `30543700217`, GitHub prerelease, npm `beta=0.5.5`, and the common 491-file, 522117-byte tarball with SHA-256 `1987db1a...5452` agree; `latest=0.5.1` and alpha remained absent at beta acceptance. It emits non-blocking `PTGOV-104` when a valid applicable preview carries a non-empty `acceptedByOwner` set while preserving the candidate, GovernanceDecision v1, default preview, persistent authority, commands, options, results, and schemas. Existing `--warnings-as-errors` returns exit 1 while retaining the candidate and decision. All five tasks and 15p are complete with zero makespans and no recommendation. The user later separately authorized one npm `latest` mutation and the exact displayed advance candidate. Fresh registry reads and an unqualified installation confirmed `beta=latest=0.5.5`, Contract 6, 34 commands, 18 schemas, and Grammar 5. Governed advance used actor `codex`, owner assertion `user`, and the preview source digest; the residual plan retains reached `RELEASE_055_ACCEPTED` with no diagnostics, task, recommendation, or makespan.
 - `TIME-001` and `UNIT-001` are accepted through SU-M5. SU-M5's 23p atomic Contract 4 acceptance is committed at `81b4828`, the detail is advanced to reached `CONTRACT4_ACCEPTED` at `f15a7ac`, and the macro rolled it up once and advanced to reached `SCHEDULING_UNITS_ACCEPTED` at `507fbb8`. Both plans have zero makespans and no recommendation. The accepted surface includes Grammar 1/2/3, CLI Contract 4, public result schema identities, help, Guide, installed behavior, exact unit migration, and Next v4 normal start authority.
-- The TypeScript CLI MVP, recommendation MIG-01 through MIG-07, and the read-only AI Agent Guidance Registry v1 are accepted. Durably accepted `0.5.5` implements CLI Contract 6 with Grammar 1/2/3/4/5, owner-aware governed lifecycle, read-only history and velocity observation, exact unit migration, AnalysisResult v4, UnitMigrationResult v3, a complete known NextResult v5 as normal start authority, seventeen command-result Draft 2020-12 artifacts plus public OverrideDecision, the additive read-only `schema` command, complete nested schemas, explicit full and reference-based outline/detail views, Git 2.54 UTC `Z` history compatibility, the beta-only channel guard, human-readable scope-bound owner-confirmation guidance, `PTGOV-103`, and `PTGOV-104`. Current unreleased source adds `Perttool.AdvanceResult.v1` as the eighteenth command-result identity and nineteenth root artifact. npm reports `beta=latest=0.5.5` and no `alpha`; historical `0.1.0-alpha.2` remains available by exact pin. Pre-schema Contract 6 `0.5.0`, Contract 5 `0.4.0`, Contract 4 `0.3.0`, and Contract 3 `0.2.0` remain available by pin. Issue #5 closure remains a separate decision. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply/audit remains unavailable until MIG-08.
+- The TypeScript CLI MVP, recommendation MIG-01 through MIG-07, and the read-only AI Agent Guidance Registry v1 are accepted. Durably accepted `0.5.5` implements CLI Contract 6 with Grammar 1/2/3/4/5, owner-aware governed lifecycle, read-only history and velocity observation, exact unit migration, AnalysisResult v4, UnitMigrationResult v3, a complete known NextResult v5 as normal start authority, seventeen command-result Draft 2020-12 artifacts plus public OverrideDecision, the additive read-only `schema` command, complete nested schemas, explicit full and reference-based outline/detail views, Git 2.54 UTC `Z` history compatibility, the beta-only channel guard, human-readable scope-bound owner-confirmation guidance, `PTGOV-103`, and `PTGOV-104`. Published beta `0.6.0` adds `Perttool.AdvanceResult.v1` as the eighteenth command-result identity and nineteenth root artifact. npm reports `beta=0.6.0`, `latest=0.5.5`, and no `alpha`; historical `0.1.0-alpha.2` remains available by exact pin. Pre-schema Contract 6 `0.5.0`, Contract 5 `0.4.0`, Contract 4 `0.3.0`, and Contract 3 `0.2.0` remain available by pin. Issue #5 closure remains a separate decision. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply/audit remains unavailable until MIG-08.
 - The normative precedence order is `docs/requirements.md`, `docs/specs/`, `docs/basic-design.md`, `docs/examples/`, `docs/process/`, and `plans/`.
 - Before a non-trivial change, confirm the current checkout, goal, normative sources, acceptance criteria, non-goals, and verification method.
 - Treat `--accepted-by-owner` as a single-candidate, scope-bound caller assertion, never as workstream or session authority. Start with an assertion-free preview; omit the assertion when governance is not applicable; treat `PTGOV-103` as the not-applicable assertion warning and `PTGOV-104` as the governed-preview assertion warning; present the operation, target, affected scopes, required owners, available modification time, byte size before and after, diff counts, and semantic candidate summary before a non-direct governed write; keep digests as supplemental machine identity; and never copy the assertion to later maintenance, a changed candidate, or the next `dag advance`. Do not chain preview and confirmation-dependent write without a user-response boundary. Follow `docs/process/governance-assertion-scope-experiment.md`.

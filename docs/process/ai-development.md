@@ -398,9 +398,11 @@ preparation identifies `0.6.0` and passed 712 tests, 29 self-use plans, 138
 Markdown files, the temporary-link workflow, and the 504-file isolated-package
 gate under Node.js 22. Candidate acceptance repeated the clean gate and
 protected-route preflight and retained one 504-file, 543508-byte tarball with
-SHA-256 `6d03e270...e42acd`. Complete NextResult v5 recommends and makes
-startable only `RELEASE_060_PUBLISH`; every external write remains in that
-later gate. Publication moves only npm `beta`; `latest=0.5.5`, plan
+SHA-256 `6d03e270...e42acd`. PUBLISH completed from that immutable tarball:
+release commit `935b097`, peeled tag, successful Node.js 22/24 CI run
+`30631050662`, GitHub prerelease, npm `beta=0.6.0`, and all three tarball
+copies agree. Complete NextResult v5 recommends and makes startable only
+`RELEASE_060_ACCEPTANCE`. `latest=0.5.5`, plan
 advance, and Issue mutation remain outside the named release.
 
 ### 5.1 Adopted Recommendation authority

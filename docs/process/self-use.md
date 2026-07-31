@@ -1467,10 +1467,12 @@ and exact force option. `RELEASE_060_PREPARATION` is complete after 712 tests,
 29 self-use plans, 138 Markdown files, the temporary-link workflow, and the
 504-file isolated-package gate passed under Node.js 22. Candidate acceptance
 repeated the clean gate and protected-route preflight and retained one
-504-file, 543508-byte tarball with SHA-256 `6d03e270...e42acd`. Complete
-NextResult v5 recommends and makes startable only `RELEASE_060_PUBLISH`; no
-tag, GitHub Release, npm publication, latest movement, plan advance, or Issue
-mutation has occurred.
+504-file, 543508-byte tarball with SHA-256 `6d03e270...e42acd`. PUBLISH
+completed from those exact bytes: release commit `935b097`, peeled tag,
+successful Node.js 22/24 CI run `30631050662`, GitHub prerelease, npm
+`beta=0.6.0`, and the three tarball copies agree. Complete NextResult v5
+recommends and makes startable only `RELEASE_060_ACCEPTANCE`. npm
+`latest=0.5.5`, plan advance, and Issue mutation remain separate.
 
 Stage 1 allowed operations:
 
@@ -1676,8 +1678,8 @@ handling are accepted in
 Exact elapsed-hour, qualified active-date, effort-productivity, and
 Git-recorded observations are accepted in
 [`project-actuals-velocity-observation-acceptance.md`](project-actuals-velocity-observation-acceptance.md).
-The current source package root, CLI, and published npm
-`beta=latest=0.5.5` package activate Grammar 5 and Contract 6 atomically. Use
+The current source package root, CLI, exact-pinned `0.5.5`, and published npm
+`beta=0.6.0` package activate Grammar 5 and Contract 6 atomically. Use
 only the public root and CLI names; target-prefixed modules remain internal
 implementation details. Grammar 4 and Contract 5 remain available by pinning
 `0.4.0`.
