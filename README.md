@@ -13,9 +13,9 @@ public OverrideDecision result, selectable full and outline schema views,
 Git 2.54 UTC compatibility, and scope-bound human-readable confirmation
 guidance. It warns when an owner-confirmation assertion is supplied for a
 governance-not-applicable candidate and when a governed preview already
-carries one. npm `beta` resolves to `0.5.5`; `latest` remains on the
-separately accepted `0.5.1`. Beta releases may contain breaking CLI or schema
-changes. Version `0.5.5` requires Node.js 22 or later.
+carries one. npm `beta` and `latest` resolve to `0.5.5`. Beta releases may
+contain breaking CLI or schema changes. Version `0.5.5` requires Node.js 22 or
+later.
 The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
 and the first machine-schema Contract 6 artifact remains available by pinning
 `0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
@@ -56,8 +56,8 @@ npm install --global perttool
 perttool --version
 ```
 
-npm `beta` resolves to Contract 6 `0.5.5`; `latest` remains on accepted
-Contract 6 `0.5.1`. The pre-schema Contract 6 artifact remains available as
+npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6
+`0.5.5`. The pre-schema Contract 6 artifact remains available as
 `perttool@0.5.0`; Contract 5,
 Contract 4, and Contract 3 remain available as exact pins
 `perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`. The retired alpha

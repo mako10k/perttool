@@ -369,7 +369,12 @@ returns exit 1 with both still available. Persistent authority is unchanged.
 Release commit `04055c9`, peeled tag, Node.js 22/24 CI, GitHub prerelease,
 npm `beta=0.5.5`, and the common 491-file, 522117-byte tarball agree. All five
 tasks and 15p are complete with zero makespans and no recommendation.
-`latest=0.5.1`, plan advance, and npm `latest` promotion remain separate.
+The user later separately authorized one `latest` mutation and the displayed
+single-candidate plan advance. Fresh registry and unqualified-install checks
+confirmed `beta=latest=0.5.5`, Contract 6, 34 commands, 18 schemas, and
+Grammar 5. Governed advance used actor `codex`, owner assertion `user`, and
+the exact preview digest; the residual plan has only reached
+`RELEASE_055_ACCEPTED`, no diagnostics, no task, and no recommendation.
 
 ### 5.1 Adopted Recommendation authority
 

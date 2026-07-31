@@ -65,6 +65,8 @@ test("0.5.5 release gate binds the governed-preview warning boundary", async () 
   assert.match(publish, /Version: `0\.5\.5`/);
   assert.match(procedure, /0\.5\.5-release-acceptance\.md/);
   assert.match(acceptance, /Version: `0\.5\.5`/);
+  assert.match(acceptance, /`beta=latest=0\.5\.5`/);
+  assert.match(acceptance, /`PTGOV-101` with `actor_required`/);
   assert.match(review, /five previews and\s+five persistent attempts/);
   assert.match(review, /does not classify the five persistent attempts/);
   assert.match(authority, /code: "PTGOV-104"/);
@@ -84,13 +86,11 @@ test("0.5.5 release gate binds the governed-preview warning boundary", async () 
     checked.document.declarations
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
-    [
-      "RELEASE_055_SELF_REVIEW",
-      "RELEASE_055_PREPARATION",
-      "RELEASE_055_CANDIDATE",
-      "RELEASE_055_PUBLISH",
-      "RELEASE_055_ACCEPTANCE",
-    ],
+    [],
+  );
+  assert.match(
+    plan,
+    /^milestone RELEASE_055_ACCEPTED:\n(?:  .*\n)*?  state reached$/m,
   );
 
   const manifest = JSON.parse(manifestText);
@@ -102,7 +102,7 @@ test("0.5.5 release gate binds the governed-preview warning boundary", async () 
   assert.match(versionSource, /TOOL_VERSION = "0\.5\.5"/);
   assert.match(changelog, /^## \[0\.5\.5\] - 2026-07-30$/m);
   assert.match(readme, /perttool@0\.5\.5/);
-  assert.match(readme, /`latest` remains on the\s+separately accepted `0\.5\.1`/);
+  assert.match(readme, /npm `beta` and `latest` resolve to `0\.5\.5`/);
   assert.equal(COMMAND_REGISTRY.length, 34);
   assert.equal(getJsonSchemaCatalog().length, 18);
 });

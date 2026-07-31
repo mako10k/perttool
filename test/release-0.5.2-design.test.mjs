@@ -122,7 +122,10 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
   assert.match(versionSource, /TOOL_VERSION = "0\.5\.5"/);
   assert.match(changelog, /^## \[0\.5\.2\] - 2026-07-30$/m);
   assert.match(readme, /available by pinning `0\.5\.2`/);
-  assert.match(readme, /`latest` remains on accepted\s+Contract 6 `0\.5\.1`/);
+  assert.match(
+    readme,
+    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.5\.5`/,
+  );
   assert.equal(COMMAND_REGISTRY.length, 34);
   assert.equal(getJsonSchemaCatalog().length, 18);
 });

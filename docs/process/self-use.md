@@ -1447,8 +1447,14 @@ persistent attempts. PTGOV-104 covers the five previews without reinterpreting
 the persistent attempts. Release commit `04055c9`, peeled tag, successful
 Node.js 22/24 CI, GitHub prerelease, npm `beta=0.5.5`, and the common
 491-file, 522117-byte tarball agree. All five tasks and 15p are complete with
-zero makespans and no recommendation. npm `latest` promotion and plan advance
-remain outside the named release scope.
+zero makespans and no recommendation. The user later separately authorized
+one `latest` mutation and the exact displayed plan-advance candidate. Fresh
+registry reads and an unqualified isolated installation confirmed
+`beta=latest=0.5.5`, Contract 6, 34 commands, 18 schemas, and Grammar 5. The
+governed advance used actor `codex`, owner assertion `user`, and the exact
+preview digest. It removed the five completed tasks and five intermediate
+milestones while retaining reached `RELEASE_055_ACCEPTED`; the residual plan
+has no diagnostics, task, recommendation, or makespan.
 
 Stage 1 allowed operations:
 
@@ -1647,9 +1653,9 @@ handling are accepted in
 Exact elapsed-hour, qualified active-date, effort-productivity, and
 Git-recorded observations are accepted in
 [`project-actuals-velocity-observation-acceptance.md`](project-actuals-velocity-observation-acceptance.md).
-The current source package root, CLI, and published npm `beta=0.5.2` and
-`latest=0.5.1` packages activate Grammar 5 and Contract 6 atomically. Use only
-the public root and CLI names; target-prefixed modules remain internal
+The current source package root, CLI, and published npm
+`beta=latest=0.5.5` package activate Grammar 5 and Contract 6 atomically. Use
+only the public root and CLI names; target-prefixed modules remain internal
 implementation details. Grammar 4 and Contract 5 remain available by pinning
 `0.4.0`.
 The active contract is

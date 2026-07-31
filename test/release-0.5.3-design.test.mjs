@@ -128,7 +128,10 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
     readme,
     /Scope-bound, human-readable loose owner-confirmation guidance requires\s+`0\.5\.3`/,
   );
-  assert.match(readme, /`latest` remains on accepted\s+Contract 6 `0\.5\.1`/);
+  assert.match(
+    readme,
+    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.5\.5`/,
+  );
   assert.match(publishScript, /publish_tag" != "beta"/);
   assert.doesNotMatch(publishScript, /^\s*alpha\)$/m);
   assert.equal(COMMAND_REGISTRY.length, 34);
