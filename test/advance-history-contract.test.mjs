@@ -185,7 +185,6 @@ test("accepted probe plan recommends only the CLI handoff", async () => {
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
     [
-      "ADV_HISTORY_PROBE",
       "ADV_HISTORY_CLI",
       "ADV_HISTORY_ACCEPTANCE",
     ],
@@ -193,31 +192,15 @@ test("accepted probe plan recommends only the CLI handoff", async () => {
   assert.equal(
     checked.document.declarations.find(
       ({ kind, id }) =>
-        kind === "milestone" && id === "ADV_HISTORY_CONTRACT_ACCEPTED",
+        kind === "milestone" && id === "ADV_HISTORY_PROBE_READY",
     ).fields.find(({ name }) => name === "state").value,
     "reached",
   );
-  assert.deepEqual(
-    checked.document.declarations
-      .filter(({ kind }) => kind === "work_event")
-      .map(({ fields }) =>
-        Object.fromEntries(fields.map(({ name, rawValue }) => [name, rawValue])),
-      ),
-    [
-      {
-        model: "1",
-        task: "ADV_HISTORY_PROBE",
-        kind: "start",
-        occurred_at: "2026-07-31T14:40:08+09:00",
-        planned_value: "4p",
-      },
-      {
-        model: "1",
-        task: "ADV_HISTORY_PROBE",
-        kind: "finish",
-        occurred_at: "2026-07-31T15:07:46+09:00",
-      },
-    ],
+  assert.equal(
+    checked.document.declarations.filter(
+      ({ kind }) => kind === "work_event",
+    ).length,
+    0,
   );
   assert.equal(analyzed.precedence.makespan.numerator.toString(), "7");
   assert.equal(analyzed.precedence.makespan.denominator.toString(), "1");

@@ -41,12 +41,10 @@ resource PACKAGE_SURFACE:
   title "Repository and installed-package acceptance ownership"
   capacity 1
 
-milestone ADV_HISTORY_CONTRACT_ACCEPTED:
-  title "Advance history safety contract accepted"
-  state reached
 
 milestone ADV_HISTORY_PROBE_READY:
   title "Advance history assessment ready"
+  state reached
 
 milestone ADV_HISTORY_CLI_READY:
   title "Advance history write guard ready"
@@ -55,16 +53,6 @@ milestone ADV_HISTORY_ACCEPTED:
   title "Advance history safety accepted"
 
 
-task ADV_HISTORY_PROBE ADV_HISTORY_CONTRACT_ACCEPTED -> ADV_HISTORY_PROBE_READY:
-  title "Implement pure advance history assessment"
-  description "Build a pure destructive-range assessment over the shared read-only Git boundary, bound to repository, path, HEAD, and source digest. Distinguish retained dirty changes from destructive overlap and fail closed when proof is unavailable."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    GIT_SURFACE 1
 
 task ADV_HISTORY_CLI ADV_HISTORY_PROBE_READY -> ADV_HISTORY_CLI_READY:
   title "Enforce the guard at in-place advance write"
@@ -91,16 +79,3 @@ task ADV_HISTORY_ACCEPTANCE ADV_HISTORY_CLI_READY -> ADV_HISTORY_ACCEPTED:
     WRITE_PATH 1
     CLI_SURFACE 1
     PACKAGE_SURFACE 1
-
-work_event WE-55ae2828d19b8bd373a5e689163c63e1bfc2b2bcf163c4039e03dceadfd9d29f:
-  model 1
-  task ADV_HISTORY_PROBE
-  kind start
-  occurred_at 2026-07-31T14:40:08+09:00
-  planned_value 4p
-
-work_event WE-947fb381f9c448d2ca1d49ef9312a261ea2de802911e95e7f7a5163bcd32b267:
-  model 1
-  task ADV_HISTORY_PROBE
-  kind finish
-  occurred_at 2026-07-31T15:07:46+09:00

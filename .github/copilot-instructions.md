@@ -17,12 +17,13 @@ Mandatory summary:
   through `PTADV-103`, human-readable modification time, byte-size and diff
   context, and eighteen machine cases. The active 0.5.5 runtime remains
   unchanged and still uses the manual pre-advance commit procedure.
-  `ADV_HISTORY_PROBE` is complete and pending its exact pre-advance snapshot
-  commit; its internal read-only baseline capture and pure assessment pass
-  the complete repository gate. The residual plan has 7p makespans with no
-  resource delay, and complete NextResult v5 recommends and makes startable
-  only `ADV_HISTORY_CLI`. The public package, CLI, schemas, help, write path,
-  runtime enforcement, and release remain unchanged.
+  `ADV_HISTORY_PROBE` is complete and advanced; Git commit `4265621` records
+  its exact completed 4p pre-advance snapshot. Its internal read-only baseline
+  capture and pure assessment pass the complete repository gate. The residual
+  plan has 7p makespans with no resource delay, and complete NextResult v5
+  recommends and makes startable only `ADV_HISTORY_CLI`. The public package,
+  CLI, schemas, help, write path, runtime enforcement, and release remain
+  unchanged.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

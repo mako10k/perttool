@@ -3,6 +3,7 @@
 - Document status: Accepted 1.0
 - Review date: 2026-07-31
 - Baseline task-start commit: `f3eed2d`
+- Exact completed pre-advance commit: `4265621`
 - Plan: [`plans/advance-history-safety.pert`](../../plans/advance-history-safety.pert)
 - Plan task: `ADV_HISTORY_PROBE`
 - History-safety model: 1
