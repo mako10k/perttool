@@ -225,7 +225,7 @@ test("ACC-003 blocks current or staged changes in an owned terminal separator", 
   assert.deepEqual(stagedMismatch.overlappingEntityIds, ["WE-start"]);
 });
 
-test("Core acceptance remains internal and leaves final acceptance open", async () => {
+test("Core acceptance remains internal and points to final acceptance", async () => {
   const [requirements, backlog, acceptance] = await Promise.all([
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
     readFile(path.join(root, "docs/backlog.md"), "utf8"),
@@ -240,13 +240,14 @@ test("Core acceptance remains internal and leaves final acceptance open", async 
 
   assert.equal("planAdvanceDeclarationDeletions" in publicApi, false);
   assert.match(requirements, /shared terminal deletion-range planner/);
-  assert.match(requirements, /- \[ \] Accept the real tracked CLI write/);
+  assert.match(requirements, /- \[x\] Accept the real tracked CLI write/);
   assert.match(
     backlog,
-    /Status: Core accepted \(2026-07-31; end-to-end pending; release blocker\)/,
+    /Status: Accepted in source \(2026-07-31; release selection pending\)/,
   );
   assert.match(acceptance, /- Document status: Accepted internal 1\.0/);
   assert.match(acceptance, /All 31 focused tests passed/);
-  assert.match(acceptance, /`ACC-007`[\s\S]*\| Pending \|/);
-  assert.match(acceptance, /`ACC-008`[\s\S]*\| Pending \|/);
+  assert.match(acceptance, /end-to-end accepted later under/);
+  assert.match(acceptance, /`ACC-007`[\s\S]*\| Passed later \|/);
+  assert.match(acceptance, /`ACC-008`[\s\S]*\| Passed later \|/);
 });

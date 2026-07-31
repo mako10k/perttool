@@ -10,7 +10,10 @@
 - CLI contract: 6
 - Result identity: `Perttool.AdvanceResult.v1`
 - Runtime status: not implemented
-- Release status: blocked and not authorized
+- Current conformance: accepted later under
+  [`advance-clean-candidate-acceptance.md`](advance-clean-candidate-acceptance.md)
+- Release status at this slice: blocked and not authorized
+- Current release selection: pending and not authorized
 
 ## 1. Decision
 
@@ -24,6 +27,9 @@ This acceptance does not claim runtime conformance. The current deletion
 planner still handles blank lines only for the declaration that was
 originally last. The Core and end-to-end tasks must implement and verify the
 selected target before release preparation can begin.
+
+That statement records this contract slice. The later Core and end-to-end
+acceptance implement and verify the selected target without revising it.
 
 ## 2. Observed cause
 
@@ -125,5 +131,6 @@ complete `npm run check` gate under Node.js v25.1.0:
 
 `git diff --check` also passed after the complete gate. The contract task is
 done and retained in its pre-advance plan snapshot; complete NextResult v5
-identifies only `ADV_CLEAN_CANDIDATE_CORE` as ready, recommended, and
-startable.
+identified only `ADV_CLEAN_CANDIDATE_CORE` as ready, recommended, and
+startable at that slice. The later complete workstream has no remaining task
+authority.

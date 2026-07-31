@@ -6,7 +6,7 @@
 - Active CLI contract during design: Contract 6
 - Requirements: [../requirements.md](../requirements.md)
 - Backlog: [`ADV-001`](../backlog.md#adv-001-guard-advance-writes-that-can-erase-uncommitted-history)
-- Correction target: [`ADV-002`](../backlog.md#adv-002-keep-advance-candidates-repository-clean-without-a-second-edit)
+- Accepted correction: [`ADV-002`](../backlog.md#adv-002-keep-advance-candidates-repository-clean-without-a-second-edit)
 
 ## 1. Purpose
 
@@ -67,7 +67,7 @@ half-open ranges. `startOffset < endOffset` is required. A declaration record
 includes the leading comments owned by that declaration under Mutation
 Semantics. A zero-width insertion is not destructive.
 
-For the selected `ADV-002` target, a declaration in the terminal
+For the accepted `ADV-002` correction, a declaration in the terminal
 removed-declaration suffix also owns the exact consecutive blank-line prefix
 defined as advance-owned terminal separator trivia in Mutation Semantics
 Section 12.2. Its `startOffset` moves backward over that prefix, so the edit
@@ -205,7 +205,7 @@ does not block merely because it is in the same file. A changed byte inside a
 removed declaration, its owned comments, a removed work event, or a replaced
 state value blocks.
 
-For the `ADV-002` target, a changed or staged byte inside an advance-owned
+For the `ADV-002` correction, a changed or staged byte inside an advance-owned
 terminal separator prefix also blocks. `HEAD` correspondence extends backward
 by the exact same prefix; the assessor never silently adds current-only trivia
 to a recoverable record. Preview remains Git-independent, while the later

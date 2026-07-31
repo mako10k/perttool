@@ -36,8 +36,8 @@ Mandatory summary:
   0.5.5 remains unchanged; release remains separate.
 - The selected independent `plans/advance-clean-candidate.pert` workstream
   tracks the post-acceptance `ADV-002` correction.
-  `ADV_CLEAN_CANDIDATE_CONTRACT` and `ADV_CLEAN_CANDIDATE_CORE` are complete
-  and retained before advance. The
+  All three tasks through `ADV_CLEAN_CANDIDATE_ACCEPTANCE` are complete and
+  retained before advance. The
   accepted target defines a maximal terminal removed-declaration suffix,
   narrow advance-owned blank-line separator prefixes, identical edit and
   destructive-record ranges, exact HEAD and stage-0 proof over those prefixes,
@@ -48,12 +48,14 @@ Mandatory summary:
   planner now gives candidate edits and destructive records identical terminal
   deletion ranges, removes the eventful trailing blank line, and maps the
   exact current prefix into `HEAD`; bounded evidence is in
-  `docs/process/advance-clean-candidate-core-acceptance.md`.
-  `ADV_CLEAN_CANDIDATE_ACCEPTANCE` is the sole ready, recommended, and
-  startable task. Real tracked CLI, preview/write identity, `git diff --check`,
-  temporary-link, and installed-package acceptance remain pending. Do not
-  globally trim or invoke the formatter. Final acceptance, plan advance,
-  release, remote writes, publication, and dist-tag movement remain separate.
+  `docs/process/advance-clean-candidate-core-acceptance.md`. Real tracked CLI,
+  preview/output/write identity, `git diff --check`, temporary link, installed
+  package, and the corrected ADV-001 trace are accepted in
+  `docs/process/advance-clean-candidate-acceptance.md`. The plan has zero
+  precedence and heuristic resource makespans, and complete NextResult v5 has
+  no ready, recommended, or startable task. Do not globally trim or invoke the
+  formatter. Plan advance, release, remote writes, publication, and dist-tag
+  movement remain separate.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

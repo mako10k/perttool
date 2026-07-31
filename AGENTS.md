@@ -93,8 +93,8 @@ Published `0.5.5` remains unchanged. Release selection, GitHub Issue mutation,
 npm publication, and dist-tag movement remain separate boundaries.
 
 The explicitly selected `ADV-002` correction is tracked independently in
-`plans/advance-clean-candidate.pert`. `ADV_CLEAN_CANDIDATE_CONTRACT` and
-`ADV_CLEAN_CANDIDATE_CORE` are complete and retained in their exact
+`plans/advance-clean-candidate.pert`. All three tasks through
+`ADV_CLEAN_CANDIDATE_ACCEPTANCE` are complete and retained in their exact
 pre-advance state. The accepted target
 defines a maximal terminal removed-declaration suffix, narrow
 advance-owned blank-line separator prefixes, identical edit and destructive
@@ -107,13 +107,14 @@ record is
 planner now gives the candidate and destructive records identical terminal
 deletion ranges, removes the observed eventful-advance trailing blank line,
 and maps the exact current prefix into `HEAD`; its bounded evidence is
-`docs/process/advance-clean-candidate-core-acceptance.md`.
-`ADV_CLEAN_CANDIDATE_ACCEPTANCE` is the sole ready, recommended, and startable
-task. Real tracked CLI, preview/write identity, `git diff --check`, temporary
-link, and installed-package acceptance remain pending. Do not globally trim
-the document or invoke the formatter from advance. Final acceptance, plan
-advance, release selection, remote writes, publication, and dist-tag movement
-remain separate boundaries.
+`docs/process/advance-clean-candidate-core-acceptance.md`. Real tracked CLI,
+preview/output/write identity, `git diff --check`, temporary link, installed
+package, and the corrected ADV-001 trace are accepted in
+`docs/process/advance-clean-candidate-acceptance.md`. The plan has zero
+precedence and heuristic resource makespans, and complete NextResult v5 has no
+ready, recommended, or startable task. Do not globally trim the document or
+invoke the formatter from advance. Plan advance, release selection, remote
+writes, publication, and dist-tag movement remain separate boundaries.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
@@ -419,7 +420,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
 - `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.5.5.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
-- `scripts/`: repository-local verification commands.
+- `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
 - `src/actuals/`: active Grammar 5 source projection, deterministic event identity, exact lifecycle reduction, exact measurements, and stored-state validation for task-owned work-event records.

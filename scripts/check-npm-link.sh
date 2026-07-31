@@ -217,6 +217,9 @@ fi
         ) process.exit(1);
       });
     '
+  node "$repo_root/scripts/check-advance-clean-candidate.mjs" \
+    "$linked_cli" \
+    "$link_prefix/advance-clean-candidate-workflow" >/dev/null
   "$linked_cli" schema Perttool.NextResult.v5 --view=outline --format=json |
     node -e '
       let input = "";

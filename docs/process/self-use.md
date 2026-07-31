@@ -1843,12 +1843,13 @@ Stage 1 entry evidence:
   `Perttool.AdvanceResult.v1`, help, schema, repository, link, package, and
   installed behavior are accepted under
   [Advance History Safety Acceptance](advance-history-acceptance.md).
-- ADV-002 Core state: the shared advance deletion-range planner now removes
+- ADV-002 acceptance state: the shared advance deletion-range planner removes
   only terminal-suffix separator prefixes, uses the same ranges for destructive
-  records, and maps those exact current prefixes into `HEAD`. Focused Core
-  acceptance covers eventful suffixes, provenance, encodings, final-newline
-  variants, standalone comments, and stage-0 overlap. Real tracked CLI,
-  `git diff --check`, link, and installed-package acceptance remain pending.
+  records, and maps those exact current prefixes into `HEAD`. Core, real
+  tracked CLI, preview/output/write byte identity, `git diff --check`,
+  encoding and comment boundaries, temporary link, and installed-package
+  acceptance are complete. Published packages remain unchanged and release
+  selection remains separate.
 - write state: Stage 3 editing commands remain preview-first. Until the
   accepted source is released, repository self-use still requires the exact
   pre-advance target snapshot in `HEAD`, the passing guard,

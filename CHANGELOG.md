@@ -4,6 +4,14 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Fixed
+
+- Made one eventful `dag advance` candidate own only the newly orphaned blank
+  separator prefixes in its terminal removed-declaration suffix. Preview,
+  separate output, and in-place write now produce the same repository-clean
+  bytes without a formatter or manual cleanup, while the history guard proves
+  the same expanded destructive ranges.
+
 ## [0.5.5] - 2026-07-30
 
 Compatible CLI Contract 6 and Grammar 5 beta patch. This version makes the

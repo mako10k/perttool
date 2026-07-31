@@ -504,13 +504,14 @@ planner to retain entity/field provenance for each non-empty removal or
 replacement range, but repository and index inspection remain outside this
 Core.
 
-### 12.2 ADV-002 terminal-separator target
+### 12.2 ADV-002 terminal-separator correction
 
-`ADV-002` selects an advance-specific extension to the ordinary
-source-preserving rules. This subsection defines the target contract; the
-current runtime is non-conforming until the independent
+`ADV-002` adds an advance-specific extension to the ordinary
+source-preserving rules. The current runtime implements this contract, and the
+independent
 [`advance-clean-candidate.pert`](../../plans/advance-clean-candidate.pert)
-workstream accepts its Core and end-to-end slices.
+workstream accepts its Core and end-to-end slices in
+[Advance Clean Candidate Acceptance](../process/advance-clean-candidate-acceptance.md).
 
 A **terminal removed-declaration suffix** is the maximal sequence of
 declarations after the last retained declaration, ignoring trivia, when every

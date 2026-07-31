@@ -1,7 +1,8 @@
 # Advance History Safety Acceptance
 
-- Document status: Accepted 1.0
+- Document status: Accepted 1.1
 - Review date: 2026-07-31
+- Amendment date: 2026-07-31 (`ADV-002`)
 - Plan: [`plans/advance-history-safety.pert`](../../plans/advance-history-safety.pert)
 - Plan task: `ADV_HISTORY_ACCEPTANCE`
 - History-safety model: 1
@@ -71,7 +72,25 @@ consume that exact statement.
 
 No runtime safety bypass or result-shape defect was found.
 
-## 4. Verification
+### 3.1 ADV-002 repository-clean candidate amendment
+
+The first real post-acceptance advance of an eventful plan exposed a separate
+candidate-composition gap. The approved and written 1,737-byte candidate left
+five orphaned blank lines and failed `git diff --check`; a second manual edit
+produced the 1,732-byte committed plan. `HEAD`, index, refs, history-guard
+decision, semantic advance, and safe-write identity were correct, so this was
+not an ADV-001 recoverability bypass. It was an uncovered interaction between
+ordinary source-preserving ranges for multiple consecutive removed
+declarations.
+
+ADV-002 now assigns only the newly orphaned blank separator prefixes in the
+maximal terminal removed-declaration suffix to the canonical advance. The
+candidate and `AdvanceDestructiveRecordV1` use identical ranges, and the
+history assessor proves the same exact prefix against `HEAD` and stage 0.
+The accepted regression is recorded in
+[`advance-clean-candidate-acceptance.md`](advance-clean-candidate-acceptance.md).
+
+## 4. Original verification
 
 The focused advance-history CLI run passed all ten test groups, including
 real source, `HEAD`, and index race processes. The complete source gate passed:
@@ -90,6 +109,18 @@ real source, `HEAD`, and index race processes. The complete source gate passed:
 The Git commands in the acceptance tests only prepare and observe disposable
 repositories. The history guard itself performs no stage, commit, checkout,
 reset, ref update, push, or other Git mutation.
+
+### 4.1 ADV-002 amendment verification
+
+The shared disposable-repository acceptance executor starts from a 567-byte
+eventful Grammar 5 source and produces one 206-byte candidate with a `+4/-28`
+diff. Preview, separate output, and in-place write are byte-identical. The
+history guard reports `passed/baseline_matches`; `git diff --check` returns 0;
+and `HEAD`, the stage-0 index entry, and refs remain unchanged. The same
+executor passes through the source CLI test, temporary link, and isolated
+installed-package workflow. LF, CRLF, UTF-8 BOM, absent-final-newline,
+standalone-comment, exact-prefix mismatch, and stage-0 overlap remain covered
+by the focused Core matrix.
 
 ## 5. Compatibility and remaining boundaries
 

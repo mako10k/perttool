@@ -172,6 +172,11 @@ The exceptional `--force-history-loss` option bypasses only that initial
 history block for the exact in-place request, emits `PTADV-103`, and does not
 bypass governance, warnings-as-errors, expected digests, source/`HEAD`/index
 rechecks, or atomic-write validation.
+For a terminal sequence of removed tasks and task-owned work events, the same
+candidate also removes only its newly orphaned blank separator prefixes. The
+preview, separate output, and in-place write therefore remain byte-identical
+and do not require a formatter or a second whitespace edit before
+`git diff --check`.
 
 Gate maintenance uses the same base controls:
 

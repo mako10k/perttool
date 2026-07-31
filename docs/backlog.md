@@ -304,14 +304,14 @@ The final eighteen-case repository, link, package, and installed trace is
 recorded in
 [`docs/process/advance-history-acceptance.md`](process/advance-history-acceptance.md).
 Post-acceptance dogfooding found the trailing-trivia defect tracked by
-`ADV-002`. Release selection and publication remain separate and are blocked
-until that follow-up is accepted.
+`ADV-002`. The correction is accepted in source. Release selection and
+publication remain separate.
 
 ### ADV-002: Keep advance candidates repository-clean without a second edit
 
 Priority: P0
 
-Status: Core accepted (2026-07-31; end-to-end pending; release blocker)
+Status: Accepted in source (2026-07-31; release selection pending)
 
 The final `ADV_HISTORY_ACCEPTANCE` self-use advance exposed a repeatable gap
 between a valid source-preserving candidate and the repository gate. The
@@ -322,7 +322,7 @@ whitespace-only edit reduced the committed plan to 1,732 bytes. The semantic
 graph and history guard remained correct, but the committed bytes no longer
 matched the single approved advance candidate.
 
-The current deletion planner trims preceding blank lines only when deleting
+The prior deletion planner trimmed preceding blank lines only when deleting
 the declaration that was originally last in the document. When one completed
 task and its consecutive task-owned work events are removed together, blank
 trivia adjacent to the earlier removed declarations survives. Those separate
@@ -342,6 +342,9 @@ workstream. The contract acceptance record is
 The shared candidate/provenance implementation and its bounded evidence are
 accepted in
 [`docs/process/advance-clean-candidate-core-acceptance.md`](process/advance-clean-candidate-core-acceptance.md).
+The tracked CLI, temporary-link, isolated-package, and corrected ADV-001 trace
+are accepted in
+[`docs/process/advance-clean-candidate-acceptance.md`](process/advance-clean-candidate-acceptance.md).
 
 Required behavior:
 

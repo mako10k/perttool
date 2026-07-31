@@ -10,8 +10,10 @@
 - History-safety model: 1
 - CLI contract: unchanged Contract 6
 - Result identity: unchanged `Perttool.AdvanceResult.v1`
-- Runtime status: Core implemented; end-to-end acceptance pending
-- Release status: blocked and not authorized
+- Runtime status: Core implemented; end-to-end accepted later under
+  [`advance-clean-candidate-acceptance.md`](advance-clean-candidate-acceptance.md)
+- Release status at this slice: blocked and not authorized
+- Current release selection: pending and not authorized
 
 ## 1. Decision
 
@@ -21,9 +23,10 @@ used by canonical advance and by history-safety records. The assessor validates
 those current ranges and maps only their exact owned prefix and suffix into
 `HEAD` before the existing raw-byte and stage-0 checks.
 
-This is not final product acceptance. A real tracked CLI write,
-`git diff --check`, temporary-link behavior, and isolated installed-package
-behavior remain assigned to `ADV_CLEAN_CANDIDATE_ACCEPTANCE`.
+This record remains the bounded Core acceptance rather than final product
+acceptance. The later real tracked CLI write, `git diff --check`,
+temporary-link behavior, and isolated installed-package behavior are recorded
+in the final acceptance document.
 
 ## 2. Implementation boundary
 
@@ -81,9 +84,9 @@ The target matrix remains
 | `ACC-003` | Candidate edits and destructive records have identical ranges; current-prefix mismatch and stage-0 removal block. | Passed |
 | `ACC-004` | A standalone terminal comment remains and bounds prefix ownership. | Passed |
 | `ACC-005` | LF, CRLF, UTF-8 BOM, and absent-final-newline inputs preserve unrelated bytes and remain clean. | Passed |
-| `ACC-006` | Pure preview produces one candidate without formatter or manual cleanup. Separate-output and in-place byte identity remain final acceptance. | Core passed |
-| `ACC-007` | Real tracked CLI write and `git diff --check`. | Pending |
-| `ACC-008` | Link, installed package, and amended ADV-001 acceptance. | Pending |
+| `ACC-006` | Pure preview produces one candidate without formatter or manual cleanup; later final acceptance proves output and write identity. | Passed |
+| `ACC-007` | Real tracked CLI write and `git diff --check`, recorded by final acceptance. | Passed later |
+| `ACC-008` | Link, installed package, and amended ADV-001 acceptance. | Passed later |
 
 ## 5. Compatibility and non-goals
 

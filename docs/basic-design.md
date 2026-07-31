@@ -935,17 +935,17 @@ The accepted implementation follows that boundary. Its complete repository,
 CLI, schema, temporary-link, package, and installed matrix is recorded in
 [Advance History Safety Acceptance](process/advance-history-acceptance.md).
 
-The post-acceptance `ADV-002` correction is tracked independently in
+The accepted `ADV-002` correction is tracked independently in
 [`plans/advance-clean-candidate.pert`](../plans/advance-clean-candidate.pert).
-The current planner can preserve multiple declaration separators that become
+The corrected planner prevents multiple declaration separators from becoming
 one trailing blank region when a final task and its task-owned events are
-removed together. Its selected target keeps one candidate and one provenance
-model: the planner first identifies the maximal terminal removed-declaration
-suffix, extends each affected deletion backward over only its consecutive
+removed together. It keeps one candidate and one provenance model: the
+planner first identifies the maximal terminal removed-declaration suffix,
+extends each affected deletion backward over only its consecutive
 advance-owned blank-line prefix, and emits non-overlapping coalesced edits.
-The destructive record uses that same extended range, and the history
-assessor maps the identical prefix into `HEAD` before applying its existing
-raw-byte and stage-0-index proof.
+The destructive record uses that same extended range, and the history assessor
+maps the identical prefix into `HEAD` before applying its existing raw-byte and
+stage-0-index proof.
 
 This design does not call the formatter and does not trim the complete
 document. Standalone comments bound ownership, retained/interior trivia stays
@@ -954,8 +954,9 @@ same candidate. Core acceptance owns source ranges and provenance; final
 acceptance owns real tracked repositories, `git diff --check`, encodings,
 temporary link, and installed package behavior. Grammar 5, CLI Contract 6,
 history-safety model 1, `Perttool.AdvanceResult.v1`, and every other public
-identity remain unchanged. Until both later slices pass, current source is
-non-conforming to this target and release preparation remains blocked.
+identity remain unchanged. Both slices are accepted in
+[Advance Clean Candidate Acceptance](process/advance-clean-candidate-acceptance.md).
+Release selection remains a separate decision.
 
 An explicit `--force-history-loss` changes only a blocked guard to `forced`.
 It does not bypass governance, warning policy, source, `HEAD`, or stage-0

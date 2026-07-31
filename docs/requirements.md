@@ -2230,7 +2230,7 @@ Before implementation, separate the specifications in the following order.
     - [x] In-place CLI enforcement and `Perttool.AdvanceResult.v1`
     - [x] Repository, package, and installed-workflow acceptance under
       [Advance History Safety Acceptance](process/advance-history-acceptance.md)
-20. [ ] Ensure one destructive `dag advance` preview is the exact
+20. [x] Ensure one destructive `dag advance` preview is the exact
     repository-clean candidate later written and committed under `ADV-002`.
     Follow the
     [repository-clean advance candidate plan](../plans/advance-clean-candidate.pert):
@@ -2245,7 +2245,7 @@ Before implementation, separate the specifications in the following order.
       candidate and destructive records, with exact current-prefix mapping to
       `HEAD` and focused LF, CRLF, BOM, final-newline, comment, and stage-0
       regression coverage.
-    - [ ] Accept the real tracked CLI write, preview/write byte identity,
+    - [x] Accept the real tracked CLI write, preview/write byte identity,
       `git diff --check`, temporary link, installed package, and corrected
       ADV-001 acceptance trace.
 

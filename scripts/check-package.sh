@@ -264,6 +264,9 @@ assert_contract2_rejected mutation apply "$repo_root/docs/examples/minimal.pert"
 node scripts/check-package-file-first.mjs \
   "$installed_cli" \
   "$package_root/file-first-workflow"
+node scripts/check-advance-clean-candidate.mjs \
+  "$installed_cli" \
+  "$package_root/advance-clean-candidate-workflow" >/dev/null
 node scripts/check-package-actuals.mjs \
   "$installed_cli" \
   "$package_root/actuals-workflow" \

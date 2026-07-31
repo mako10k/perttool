@@ -189,6 +189,10 @@ stage-0 index, permits dirty ranges retained by the candidate, and returns
 `--force-history-loss` as an exceptional, exact-request choice: never infer or
 carry it forward, and remember that it bypasses neither owner authority nor
 the warning, digest, source, repository-race, or atomic-write gates.
+The canonical candidate owns only newly orphaned blank separator prefixes in
+its terminal removed-declaration suffix. Do not invoke the formatter or apply
+a second whitespace edit after approval; preview, separate output, and
+in-place write must remain the same bytes and pass `git diff --check` directly.
 
 Do not directly compare tasks from different detail plans without a macro decision. Do not substitute `groups.ready`, `groups.runnable_now`, the raw recommended set, or the text summary for start authority. With an unknown schema/model/temporal-policy version, incomplete or truncated trace, unknown tier, `PTREC-*`, or future or unavailable temporal eligibility, do not start a task; stop safely. Do not start `deferred` or `discouraged` work under normal authority.
 

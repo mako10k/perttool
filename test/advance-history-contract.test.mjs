@@ -161,7 +161,11 @@ test("accepted runtime traces all eighteen cases across repository and package g
     repositoryText("scripts/check-package-file-first.mjs"),
   ]);
 
-  assert.match(acceptance, /- Document status: Accepted 1\.0/);
+  assert.match(acceptance, /- Document status: Accepted 1\.1/);
+  assert.match(
+    acceptance,
+    /ADV-002 repository-clean candidate amendment/,
+  );
   assert.deepEqual(
     tableIds(acceptance, "AHS"),
     expectedIds("AHS", 18),

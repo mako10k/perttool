@@ -79,6 +79,7 @@ task ADV_CLEAN_CANDIDATE_ACCEPTANCE ADV_CLEAN_RUNTIME_READY -> ADV_CLEAN_ACCEPTE
   title "Accept repository-clean advance end to end"
   description "Verify Core, tracked CLI, git diff --check, LF/CRLF/BOM/comment boundaries, preview-write identity, temporary link, installed package, and corrected ADV-001 acceptance evidence."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -116,3 +117,18 @@ work_event WE-50f99bd0a6896dc7ec69c65ae536462b53f7eb719cc44bf99ebcf3fcd245114c:
   occurred_at 2026-07-31T19:54:00+09:00
   active_time 1/6h
   effort 1/6ph
+
+work_event WE-3d4859616e44702e402e6440fa7e737914eb83ea890740aa1de26f0c23be239a:
+  model 1
+  task ADV_CLEAN_CANDIDATE_ACCEPTANCE
+  kind start
+  occurred_at 2026-07-31T20:16:27+09:00
+  planned_value 3p
+
+work_event WE-02d153a964829b5b129952aa7f313e2b27ecca4355bda622e2d66eb0f71192fc:
+  model 1
+  task ADV_CLEAN_CANDIDATE_ACCEPTANCE
+  kind finish
+  occurred_at 2026-07-31T20:22:35+09:00
+  active_time 23/225h
+  effort 23/225ph

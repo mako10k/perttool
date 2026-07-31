@@ -43,10 +43,10 @@ test("ADV-002 fixes a narrow single-candidate terminal-trivia contract", async (
   );
   assert.match(
     requirements,
-    /20\. \[ \] Ensure one destructive `dag advance` preview is the exact/,
+    /20\. \[x\] Ensure one destructive `dag advance` preview is the exact/,
   );
   assert.match(requirements, /repository-clean candidate later written/);
-  assert.match(mutation, /^### 12\.2 ADV-002 terminal-separator target$/m);
+  assert.match(mutation, /^### 12\.2 ADV-002 terminal-separator correction$/m);
   assert.match(mutation, /terminal removed-declaration suffix/);
   assert.match(mutation, /advance-owned terminal separator trivia/);
   assert.match(mutation, /This rule is not a global trim/);
@@ -56,7 +56,7 @@ test("ADV-002 fixes a narrow single-candidate terminal-trivia contract", async (
   assert.match(design, /preview, separate output, and in-place write share the/);
   assert.match(
     backlog,
-    /Status: Core accepted \(2026-07-31; end-to-end pending; release blocker\)/,
+    /Status: Accepted in source \(2026-07-31; release selection pending\)/,
   );
   assert.match(acceptance, /- Document status: Accepted target 1\.0/);
   assert.match(acceptance, /Runtime status: not implemented/);
@@ -109,7 +109,7 @@ test("all eight repository-clean candidate cases are dependency ordered", async 
   );
 });
 
-test("completed Core plan exposes only final acceptance as next authority", async () => {
+test("completed acceptance plan exposes no remaining task authority", async () => {
   const source = await repositoryText("plans/advance-clean-candidate.pert");
   const checked = checkDocument(source);
   const metadata = getProjectMetadata(source);
@@ -126,15 +126,15 @@ test("completed Core plan exposes only final acceptance as next authority", asyn
   assert.equal(metadata.project.governance.effective.goalOwner, "user");
   assert.equal(metadata.project.governance.effective.dagOwner, "user");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"]);
-  assert.deepEqual(next.groups.runnableNow, ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
   assert.deepEqual(next.groups.upcoming, []);
   assert.deepEqual(
     next.recommendation.recommendedTaskIds,
-    ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"],
+    [],
   );
   assert.deepEqual(
     next.temporal.authority.startableRecommendedTaskIds,
-    ["ADV_CLEAN_CANDIDATE_ACCEPTANCE"],
+    [],
   );
 });
