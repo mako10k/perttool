@@ -11,6 +11,10 @@ import type {
   TargetActualsAdvanceResultV3,
 } from "./target-actuals-advance.js";
 import type {
+  AdvanceHistoryGuardV1,
+  AdvanceResultV1,
+} from "./advance-history.js";
+import type {
   TargetActualsMutationResultV3,
 } from "./target-actuals-mutation.js";
 import {
@@ -124,10 +128,34 @@ function lifecycleToJson(
       };
 }
 
+function advanceHistoryGuardToJson(
+  value: AdvanceHistoryGuardV1,
+): Readonly<Record<string, unknown>> {
+  return {
+    model_version: value.modelVersion,
+    status: value.status,
+    cause: value.cause,
+    repository_snapshot_id: value.repositorySnapshotId,
+    repository_relative_path: value.repositoryRelativePath,
+    head_commit_id: value.headCommitId,
+    source_digest: value.sourceDigest,
+    candidate_digest: value.candidateDigest,
+    source_modified_at: value.sourceModifiedAt,
+    source_bytes: value.sourceBytes,
+    candidate_bytes: value.candidateBytes,
+    diff_added_lines: value.diffAddedLines,
+    diff_removed_lines: value.diffRemovedLines,
+    destructive_entity_ids: value.destructiveEntityIds,
+    overlapping_entity_ids: value.overlappingEntityIds,
+    force_requested: value.forceRequested,
+  };
+}
+
 export function contract6MutationResultToJson(
   result:
     | TargetActualsMutationResultV3
-    | TargetActualsAdvanceResultV3,
+    | TargetActualsAdvanceResultV3
+    | AdvanceResultV1,
   operation: string,
   source: string,
   write: TargetGovernanceWriteProjection,
@@ -141,9 +169,14 @@ export function contract6MutationResultToJson(
     write,
   );
   if ("advance" in result) {
+    const historyGuard =
+      "historyGuard" in result ? result.historyGuard : undefined;
     return Object.freeze({
       ...base,
-      schema_version: "Perttool.MutationResult.v3",
+      schema_version:
+        historyGuard === undefined
+          ? "Perttool.MutationResult.v3"
+          : "Perttool.AdvanceResult.v1",
       cli_contract_version: 6,
       lifecycle: null,
       advance:
@@ -160,6 +193,14 @@ export function contract6MutationResultToJson(
               ready_before: result.advance.readyBefore,
               ready_after: result.advance.readyAfter,
             },
+      ...(historyGuard === undefined
+        ? {}
+        : {
+            history_guard:
+              historyGuard === null
+                ? null
+                : advanceHistoryGuardToJson(historyGuard),
+          }),
     });
   }
   return Object.freeze({

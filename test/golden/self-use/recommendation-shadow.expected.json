@@ -13,34 +13,32 @@
   },
   "plans": {
     "advance-history-safety": {
-      "source_digest": "sha256:5ca16cc19bd8926f47eb445bd5eb0264c43a58c998929ed3f2e407a1eeef5145",
+      "source_digest": "sha256:9d06fa84c776f1aa184d3b3cb727e10612b966d7d03f4f1410d341e794295905",
       "groups": {
         "active": [],
         "ready": [
-          "ADV_HISTORY_CLI"
-        ],
-        "runnable_now": [
-          "ADV_HISTORY_CLI"
-        ],
-        "blocked_now": [],
-        "upcoming": [
           "ADV_HISTORY_ACCEPTANCE"
         ],
+        "runnable_now": [
+          "ADV_HISTORY_ACCEPTANCE"
+        ],
+        "blocked_now": [],
+        "upcoming": [],
         "suspended": []
       },
       "recommended_task_ids": [
-        "ADV_HISTORY_CLI"
+        "ADV_HISTORY_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "ADV_HISTORY_CLI"
+        "ADV_HISTORY_ACCEPTANCE"
       ],
       "tiers": {
-        "ADV_HISTORY_CLI": "recommended"
+        "ADV_HISTORY_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "ADV_HISTORY_CLI",
+          "id": "ADV_HISTORY_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -56,7 +54,9 @@
         "reasons": 4,
         "descriptions": 1
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "agent-guidance": {
       "source_digest": "sha256:ca06697d12d3846f72068bbbc113e20539ba717b0c23735473290dd08bd4f7f4",

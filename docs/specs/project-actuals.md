@@ -489,7 +489,7 @@ cutover selects:
 | project show | `Perttool.ProjectResult.v3` | unchanged v3 |
 | analysis | `Perttool.AnalysisResult.v3` | `Perttool.AnalysisResult.v4` |
 | next | `Perttool.NextResult.v4` | `Perttool.NextResult.v5` |
-| mutation and advance | `Perttool.MutationResult.v2` | `Perttool.MutationResult.v3` |
+| direct, lifecycle, batch, and initial-cutover advance | `Perttool.MutationResult.v2` | `Perttool.MutationResult.v3` |
 | unit migration | `Perttool.UnitMigrationResult.v2` | `Perttool.UnitMigrationResult.v3` |
 | history | absent | `Perttool.ProjectHistoryResult.v1` |
 | velocity observation | absent | `Perttool.VelocityObservationResult.v1` |
@@ -497,6 +497,13 @@ cutover selects:
 Format, init, command-help, Guide, agent-guidance, and conversion schemas
 remain at their existing major versions because their payload shapes do not
 change. Their envelopes still identify CLI Contract 6.
+
+The later ADV-001 runtime activation retains CLI Contract 6 and changes only
+`dag advance` to `Perttool.AdvanceResult.v1`. That closed result preserves the
+MutationResult v3 candidate, write, governance, lifecycle, and advance fields
+and adds the required nullable `history_guard`. Direct, lifecycle, and batch
+mutations continue to return `Perttool.MutationResult.v3`; see the
+[Advance History Safety Contract](advance-history-safety.md).
 
 `CheckResult.v3` adds:
 

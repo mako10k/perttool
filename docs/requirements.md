@@ -2227,7 +2227,7 @@ Before implementation, separate the specifications in the following order.
       behavior, force boundary, result identity, diagnostics, and eighteen
       machine-readable acceptance cases
     - [x] Pure assessment and shared read-only Git adapter extension
-    - [ ] In-place CLI enforcement and `Perttool.AdvanceResult.v1`
+    - [x] In-place CLI enforcement and `Perttool.AdvanceResult.v1`
     - [ ] Repository, package, and installed-workflow acceptance
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.

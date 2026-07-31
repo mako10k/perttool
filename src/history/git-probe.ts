@@ -132,9 +132,23 @@ export interface AdvanceHistoryBaselineCapture {
   readonly headSourceDigest: string | null;
   readonly indexSourceDigest: string | null;
   readonly sourceModifiedAt: string | null;
+  readonly targetDevice: bigint | null;
+  readonly targetInode: bigint | null;
   readonly currentSource: Uint8Array | null;
   readonly headSource: Uint8Array | null;
   readonly indexSource: Uint8Array | null;
+}
+
+export type AdvanceHistoryBaselineRecheckCause =
+  | "target_changed"
+  | "head_changed"
+  | "index_changed"
+  | "baseline_read_failed";
+
+export interface AdvanceHistoryBaselineRecheck {
+  readonly ok: boolean;
+  readonly cause: AdvanceHistoryBaselineRecheckCause | null;
+  readonly operation: string | null;
 }
 
 interface TargetCapture {
@@ -933,6 +947,8 @@ function unavailableAdvanceBaseline(
     headSourceDigest: fields.headSourceDigest ?? null,
     indexSourceDigest: fields.indexSourceDigest ?? null,
     sourceModifiedAt: fields.sourceModifiedAt ?? null,
+    targetDevice: fields.targetDevice ?? null,
+    targetInode: fields.targetInode ?? null,
     currentSource: fields.currentSource ?? null,
     headSource: fields.headSource ?? null,
     indexSource: fields.indexSource ?? null,
@@ -1039,6 +1055,8 @@ export async function captureAdvanceHistoryBaseline(
   const targetFields: BaselineFields = {
     currentSourceDigest: initialTarget.capture.digest,
     sourceModifiedAt: initialTarget.capture.modifiedAt,
+    targetDevice: initialTarget.capture.device,
+    targetInode: initialTarget.capture.inode,
     currentSource: initialTarget.capture.source,
   };
   if (
@@ -1390,8 +1408,94 @@ export async function captureAdvanceHistoryBaseline(
     headSourceDigest,
     indexSourceDigest,
     sourceModifiedAt: initialTarget.capture.modifiedAt,
+    targetDevice: initialTarget.capture.device,
+    targetInode: initialTarget.capture.inode,
     currentSource: initialTarget.capture.source,
     headSource,
     indexSource,
   };
+}
+
+export async function recheckAdvanceHistoryBaseline(
+  baseline: AdvanceHistoryBaselineCapture,
+  targetPath: string,
+  dependencies: AdvanceHistoryBaselineDependencies = {},
+): Promise<AdvanceHistoryBaselineRecheck> {
+  if (
+    baseline.status !== "complete" ||
+    baseline.currentSourceDigest === null ||
+    baseline.objectFormat === null ||
+    baseline.repositorySnapshotId === null ||
+    baseline.repositoryRelativePath === null ||
+    baseline.headCommitId === null ||
+    baseline.headBlobId === null ||
+    baseline.indexBlobId === null ||
+    baseline.targetDevice === null ||
+    baseline.targetInode === null
+  ) {
+    return Object.freeze({
+      ok: false,
+      cause: "baseline_read_failed",
+      operation: "advance_recheck_baseline",
+    });
+  }
+  const current = await captureAdvanceHistoryBaseline(
+    {
+      targetPath,
+      expectedSourceDigest: baseline.currentSourceDigest,
+    },
+    dependencies,
+  );
+  if (current.status !== "complete") {
+    const cause =
+      current.cause === "target_changed"
+        ? "target_changed"
+        : current.cause === "head_changed"
+          ? "head_changed"
+          : current.cause === "index_changed"
+            ? "index_changed"
+            : "baseline_read_failed";
+    return Object.freeze({
+      ok: false,
+      cause,
+      operation: current.operation,
+    });
+  }
+  if (
+    current.targetDevice !== baseline.targetDevice ||
+    current.targetInode !== baseline.targetInode
+  ) {
+    return Object.freeze({
+      ok: false,
+      cause: "target_changed",
+      operation: "advance_recheck_target",
+    });
+  }
+  if (
+    current.objectFormat !== baseline.objectFormat ||
+    current.repositoryRelativePath !== baseline.repositoryRelativePath ||
+    current.headCommitId !== baseline.headCommitId ||
+    current.headBlobId !== baseline.headBlobId
+  ) {
+    return Object.freeze({
+      ok: false,
+      cause: "head_changed",
+      operation: "advance_recheck_head",
+    });
+  }
+  if (
+    current.repositorySnapshotId !== baseline.repositorySnapshotId ||
+    current.indexBlobId !== baseline.indexBlobId
+  ) {
+    return Object.freeze({
+      ok: false,
+      cause: "index_changed",
+      operation: "advance_recheck_index",
+    });
+  }
+  return Object.freeze({
+    ok: true,
+    cause: null,
+    operation: null,
+  });
 }

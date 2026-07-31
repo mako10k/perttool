@@ -634,6 +634,11 @@ const nodes: readonly HelpNode[] = [
         title: "Safe write",
         body: "--write atomically replaces a file after comparing the initial-read digest with the digest immediately before writing; --expect-digest adds a caller lock. --out creates a new target without overwriting an existing one. --diff is for previews only.",
       },
+      {
+        id: "advance-history",
+        title: "Advance history safety",
+        body: "A changed in-place dag advance proves every removed or replaced entity range against the target path in HEAD and the stage-0 index. Dirty ranges retained by the candidate are allowed; destructive uncommitted overlap or unavailable proof emits PTADV-101 and does not write. The result reports modification time, byte and diff counts, entity IDs, and supplemental digests. --force-history-loss bypasses only that initial block for the exact request, emits PTADV-103, and remains subject to governance, warning, digest, race, and atomic-write controls.",
+      },
     ],
     syntax: [
       "perttool project init PROJECT_ID --title TITLE --duration-unit UNIT --initial-milestone ID --initial-milestone-title TITLE --finish ID [--out PATH]",
@@ -645,7 +650,7 @@ const nodes: readonly HelpNode[] = [
       "perttool milestone add|set|remove ... [--write [--expect-digest DIGEST] | --out PATH]",
       "perttool resource add|set|remove ... [--write [--expect-digest DIGEST] | --out PATH]",
       "perttool batch apply FILE --request REQUEST.json [--write [--expect-digest DIGEST] | --out PATH]",
-      "perttool dag advance FILE [--diff] [--write [--expect-digest DIGEST] | --out PATH]",
+      "perttool dag advance FILE [--diff] [--write [--expect-digest DIGEST] [--force-history-loss] | --out PATH]",
     ],
     examples: [
       {
@@ -662,6 +667,11 @@ const nodes: readonly HelpNode[] = [
         id: "task-write",
         title: "Commit a reviewed task update",
         text: "perttool task set plan.pert TASK_ID --status active --write --expect-digest sha256:<64 lowercase hex digits>",
+      },
+      {
+        id: "advance-write",
+        title: "Advance committed history",
+        text: "perttool dag advance plan.pert --diff\nperttool dag advance plan.pert --write --expect-digest sha256:<64 lowercase hex digits>",
       },
     ],
     related: ["editing.unit-migration", "syntax.temporal", "workflows"],

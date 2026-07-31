@@ -20,6 +20,9 @@ import type {
 import type {
   TargetActualsAdvanceResultV3,
 } from "./target-actuals-advance.js";
+import type {
+  AdvanceResultV1,
+} from "./advance-history.js";
 
 function writeProjection(
   request: TargetGovernancePersistenceRequest,
@@ -33,7 +36,10 @@ function writeProjection(
 }
 
 export async function persistTargetActualsResult(
-  result: TargetActualsMutationResultV3 | TargetActualsAdvanceResultV3,
+  result:
+    | TargetActualsMutationResultV3
+    | TargetActualsAdvanceResultV3
+    | AdvanceResultV1,
   capability: TargetGrammar5Capability,
   request: TargetGovernancePersistenceRequest,
 ): Promise<TargetGovernanceWriteProjection> {

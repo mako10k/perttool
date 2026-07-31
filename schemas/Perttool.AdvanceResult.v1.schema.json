@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v1.schema.json",
+  "title": "Perttool.AdvanceResult.v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "changed",
+    "original_digest",
+    "updated_digest",
+    "updated_text",
+    "diff",
+    "edits",
+    "write",
+    "governance",
+    "lifecycle",
+    "advance",
+    "history_guard"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.AdvanceResult.v1"
+    },
+    "cli_contract_version": {
+      "const": 6
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "dag.advance"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "changed": {
+      "type": "boolean"
+    },
+    "original_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "updated_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "updated_text": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "diff": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "edits": {
+      "type": "array",
+      "items": {
+        "$ref": "Perttool.Common.v1.schema.json#/$defs/edit"
+      }
+    },
+    "write": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/write"
+    },
+    "governance": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/governanceDecision"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lifecycle": {
+      "type": "null"
+    },
+    "advance": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "removed_task_ids",
+            "removed_gate_ids",
+            "removed_milestone_ids",
+            "removed_work_event_ids",
+            "frontier_before",
+            "frontier_after",
+            "ready_before",
+            "ready_after"
+          ],
+          "properties": {
+            "removed_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_gate_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_milestone_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_work_event_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "frontier_before": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "frontier_after": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "ready_before": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "ready_after": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "history_guard": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "model_version",
+            "status",
+            "cause",
+            "repository_snapshot_id",
+            "repository_relative_path",
+            "head_commit_id",
+            "source_digest",
+            "candidate_digest",
+            "source_modified_at",
+            "source_bytes",
+            "candidate_bytes",
+            "diff_added_lines",
+            "diff_removed_lines",
+            "destructive_entity_ids",
+            "overlapping_entity_ids",
+            "force_requested"
+          ],
+          "properties": {
+            "model_version": {
+              "const": 1
+            },
+            "status": {
+              "enum": [
+                "not_applicable",
+                "passed",
+                "blocked",
+                "forced"
+              ]
+            },
+            "cause": {
+              "enum": [
+                "preview",
+                "separate_output",
+                "no_change",
+                "no_destructive_records",
+                "authority_denied",
+                "warning_denied",
+                "baseline_matches",
+                "destructive_overlap",
+                "no_repository",
+                "no_head",
+                "untracked_target",
+                "ambiguous_path",
+                "unmerged_index",
+                "git_unavailable",
+                "baseline_read_failed",
+                "baseline_invalid",
+                "correspondence_missing",
+                "correspondence_ambiguous",
+                "forced_by_option"
+              ]
+            },
+            "repository_snapshot_id": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "repository_relative_path": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "head_commit_id": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "source_digest": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+            },
+            "candidate_digest": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+            },
+            "source_modified_at": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+            },
+            "source_bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "candidate_bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "diff_added_lines": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "diff_removed_lines": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "destructive_entity_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "overlapping_entity_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "force_requested": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

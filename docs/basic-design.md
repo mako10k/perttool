@@ -905,11 +905,12 @@ source/`HEAD` race hooks remain shared.
 The internal `ADV_HISTORY_PROBE` slice implements that boundary in
 `src/history/git-probe.ts` and the pure model-1 record derivation, Myers
 raw-byte alignment, correspondence, and overlap decision in
-`src/history/advance-history.ts`. These internal exports are absent from the
-package root. They do not alter the active advance result or write pipeline;
-the later CLI slice owns their composition into the target pipeline below.
+`src/history/advance-history.ts`. These internal exports remain absent from
+the package root. `ADV_HISTORY_CLI` composes them through
+`src/application/advance-history.ts` into the active advance write pipeline
+and exports only the versioned result and guard contracts.
 
-The target write pipeline is:
+The active write pipeline is:
 
 ```text
 safe source capture
@@ -922,7 +923,7 @@ safe source capture
   -> existing post-write verification
 ```
 
-The target `Perttool.AdvanceResult.v1` preserves the closed
+`Perttool.AdvanceResult.v1` preserves the closed
 `Perttool.MutationResult.v3` contract for every other mutation. It adds a
 complete history-guard record with modification time, byte sizes, diff
 counts, stable entity IDs, status, and cause; digests remain supplemental

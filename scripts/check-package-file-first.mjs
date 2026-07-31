@@ -52,6 +52,23 @@ function invokeJson(args, options = {}) {
   return value;
 }
 
+function git(...args) {
+  const result = spawnSync("git", ["-C", workspace, ...args], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      GIT_CONFIG_NOSYSTEM: "1",
+      GIT_TERMINAL_PROMPT: "0",
+      LC_ALL: "C",
+    },
+  });
+  assert.equal(
+    result.status,
+    0,
+    `git ${args.join(" ")}\n${result.stderr}`,
+  );
+}
+
 function checkedDigest() {
   const result = invokeJson(["document", "check", planPath]);
   assert.equal(result.schema_version, "Perttool.CheckResult.v3");
@@ -83,7 +100,12 @@ function writeMutation(args, options = {}) {
     [...args, ...assertions, "--write", "--expect-digest", digest],
     { input: options.input },
   );
-  assert.equal(result.schema_version, "Perttool.MutationResult.v3");
+  assert.equal(
+    result.schema_version,
+    args[0] === "dag" && args[1] === "advance"
+      ? "Perttool.AdvanceResult.v1"
+      : "Perttool.MutationResult.v3",
+  );
   assert.deepEqual(result.write, {
     mode: "in_place",
     target: planPath,
@@ -582,8 +604,15 @@ const completedNext = invokeJson(["dag", "next", planPath]);
 assert.deepEqual(completedNext.groups.ready, []);
 assert.deepEqual(completedNext.recommendation.recommended_task_ids, []);
 
+git("init", "--quiet", "-b", "main");
+git("config", "user.name", "Perttool Package Test");
+git("config", "user.email", "perttool@example.invalid");
+git("add", "--", path.basename(planPath));
+git("commit", "--quiet", "-m", "pre-advance snapshot");
+
 const advanced = writeMutation(["dag", "advance", planPath]);
 assert.equal(advanced.operation, "dag.advance");
+assert.equal(advanced.history_guard.status, "passed");
 assert.deepEqual(advanced.advance.removed_task_ids, ["BUILD"]);
 assert.deepEqual(advanced.advance.removed_gate_ids, ["APPROVAL"]);
 assert.deepEqual(advanced.advance.removed_milestone_ids, ["READY", "START"]);

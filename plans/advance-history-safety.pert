@@ -58,6 +58,7 @@ task ADV_HISTORY_CLI ADV_HISTORY_PROBE_READY -> ADV_HISTORY_CLI_READY:
   title "Enforce the guard at in-place advance write"
   description "Compose the assessment with governed dag advance persistence, add the narrowly scoped force option and structured result, recheck source and HEAD before replacement, and preserve preview, out, no-op, and existing safe-write behavior."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -79,3 +80,18 @@ task ADV_HISTORY_ACCEPTANCE ADV_HISTORY_CLI_READY -> ADV_HISTORY_ACCEPTED:
     WRITE_PATH 1
     CLI_SURFACE 1
     PACKAGE_SURFACE 1
+
+work_event WE-8945f58d36b5e5b620e4b5fc1ab7aca0c264dbda9a2ac4ff18a26c4fa5c3ba23:
+  model 1
+  task ADV_HISTORY_CLI
+  kind start
+  occurred_at 2026-07-31T15:20:07+09:00
+  planned_value 4p
+
+work_event WE-eb1700cadf67f6627cd1f09924bf1501ec19b7bedb157321368e5b391340d4e2:
+  model 1
+  task ADV_HISTORY_CLI
+  kind finish
+  occurred_at 2026-07-31T15:46:34+09:00
+  active_time 529/1200h
+  effort 1ph

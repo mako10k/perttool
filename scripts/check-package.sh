@@ -70,6 +70,7 @@ for required in \
   package/dist/index.js \
   package/dist/index.d.ts \
   package/schemas/Perttool.Common.v1.schema.json \
+  package/schemas/Perttool.AdvanceResult.v1.schema.json \
   package/schemas/Perttool.CheckResult.v3.schema.json \
   package/schemas/Perttool.SchemaResult.v1.schema.json \
   package/schemas/Perttool.OverrideDecision.v1.schema.json
@@ -371,6 +372,8 @@ if (
   !serializedHelp.includes("Perttool.CheckResult.v3") ||
   !serializedHelp.includes("Perttool.ProjectResult.v3") ||
   !serializedHelp.includes("Perttool.MutationResult.v3") ||
+  !serializedHelp.includes("Perttool.AdvanceResult.v1") ||
+  !serializedHelp.includes('"force-history-loss"') ||
   !serializedHelp.includes("Perttool.AnalysisResult.v4") ||
   !serializedHelp.includes("Perttool.NextResult.v5") ||
   !serializedHelp.includes("Perttool.UnitMigrationResult.v3") ||
@@ -424,7 +427,7 @@ if (
   schemaCatalog.status !== 0 ||
   schemaCatalog.stderr !== "" ||
   schemaCatalogJson.schema_version !== "Perttool.SchemaResult.v1" ||
-  schemaCatalogJson.schemas?.length !== 18 ||
+  schemaCatalogJson.schemas?.length !== 19 ||
   schemaCatalogJson.schema !== null ||
   selectedSchema.status !== 0 ||
   selectedSchema.stderr !== "" ||
@@ -442,7 +445,7 @@ if (
   detailSchema.stderr !== "" ||
   detailSchemaJson.schema?.properties?.result_decision === undefined ||
   JSON.stringify(apiOutline) !== JSON.stringify(outlineSchemaJson) ||
-  api.getJsonSchemaCatalog().length !== 18 ||
+  api.getJsonSchemaCatalog().length !== 19 ||
   api.getJsonSchema("Perttool.NextResult.v5")?.$id !==
     selectedSchemaJson.schema.$id ||
   exportedSchema.$id !== selectedSchemaJson.schema.$id

@@ -121,5 +121,5 @@ test("0.5.1 release gate fixes the compatible Contract 6 patch boundary", async 
     /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.5\.5`/,
   );
   assert.equal(COMMAND_REGISTRY.length, 34);
-  assert.equal(getJsonSchemaCatalog().length, 18);
+  assert.equal(getJsonSchemaCatalog().length, 19);
 });

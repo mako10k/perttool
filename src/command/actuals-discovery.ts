@@ -74,6 +74,34 @@ function valueOption(
   });
 }
 
+function flagOption(
+  name: string,
+  config: {
+    readonly conflicts?: readonly string[];
+    readonly requires?: readonly string[];
+    readonly description?: string;
+  } = {},
+): TargetGovernanceOptionDescriptor {
+  return Object.freeze({
+    name,
+    kind: "flag",
+    valueType: null,
+    required: false,
+    repeatable: false,
+    defaultValue: false,
+    enumValues: Object.freeze([]),
+    conflicts: Object.freeze([...(config.conflicts ?? [])]),
+    requires: Object.freeze([...(config.requires ?? [])]),
+    sharedGroup: null,
+    description: config.description ?? null,
+    spelling: Object.freeze({
+      cli: `--${name}`,
+      dsl: null,
+      json: name.replaceAll("-", "_"),
+    }),
+  });
+}
+
 const governanceOptions = Object.freeze([
   valueOption("actor", "principal-id", {
     sharedGroup: "governance",
@@ -112,6 +140,7 @@ function contract6Descriptor(
   descriptor: TargetGovernanceCommandDescriptor,
 ): ActualsCommandDescriptor {
   const lifecycleFinish = descriptor.operation === "task.finish";
+  const advance = descriptor.operation === "dag.advance";
   const lifecycleOptions = lifecycleFinish
     ? [
         valueOption("at", "date-time"),
@@ -121,6 +150,17 @@ function contract6Descriptor(
         ...governanceOptions,
       ]
     : [];
+  const advanceOptions = advance
+    ? [
+        flagOption("force-history-loss", {
+          conflicts: ["diff", "out", "stdin"],
+          requires: ["write"],
+          description:
+            "Bypasses only a blocked history assessment for this exact in-place advance request.",
+        }),
+      ]
+    : [];
+  const domainOptions = [...lifecycleOptions, ...advanceOptions];
   const projectionIndex = descriptor.options.findIndex(
     ({ sharedGroup }) =>
       sharedGroup === "preview" ||
@@ -129,14 +169,14 @@ function contract6Descriptor(
       sharedGroup === "result",
   );
   const options =
-    lifecycleOptions.length === 0
+    domainOptions.length === 0
       ? descriptor.options
       : Object.freeze(
           projectionIndex < 0
-            ? [...descriptor.options, ...lifecycleOptions]
+            ? [...descriptor.options, ...domainOptions]
             : [
                 ...descriptor.options.slice(0, projectionIndex),
-                ...lifecycleOptions,
+                ...domainOptions,
                 ...descriptor.options.slice(projectionIndex),
               ],
         );
@@ -144,7 +184,24 @@ function contract6Descriptor(
     ...descriptor,
     contractVersion: 6,
     options,
-    resultSchemas: contract6Schemas(descriptor.resultSchemas),
+    resultSchemas: advance
+      ? Object.freeze([
+          "Perttool.AdvanceResult.v1",
+          "Perttool.CliError.v1",
+        ])
+      : contract6Schemas(descriptor.resultSchemas),
+    examples: advance
+      ? Object.freeze([
+          ...descriptor.examples,
+          Object.freeze({
+            id: "force-history-loss",
+            invocation:
+              "perttool dag advance plan.pert --write --force-history-loss",
+            summary:
+              "Explicitly bypass only a blocked history assessment.",
+          }),
+        ])
+      : descriptor.examples,
   });
 }
 

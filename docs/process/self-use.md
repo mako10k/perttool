@@ -1634,9 +1634,16 @@ Advance procedure:
 5. Check the advance preview and diff.
 6. Check the list of tasks, gates, milestones, state values, and owned comments
    to be removed or replaced.
-7. Write with the reviewed source digest, then check the reached closure,
+7. Confirm that `Perttool.AdvanceResult.v1.history_guard` reports the expected
+   destructive IDs and a passing repository/path/`HEAD`/stage-0-index proof.
+   Write with the reviewed source digest, then check the reached closure,
    ready set, analysis, and next result again.
 8. Commit the advanced present/future plan as a second logical change.
+
+The runtime permits dirty source ranges retained by the candidate, but this
+repository procedure deliberately keeps the exact plan snapshot clean and
+committed before advance. `--force-history-loss` is not part of normal
+self-use authority and is never inferred from an earlier command or approval.
 
 The active project-actuals contract makes task-owned work events part of the
 exact pre-advance snapshot and removal review. Its Grammar 5 source Core is
@@ -1832,12 +1839,12 @@ Stage 1 entry evidence:
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty
-  behavior, force, result, and diagnostic boundaries. Runtime enforcement is
-  not implemented until the remaining tasks in
-  [`advance-history-safety.pert`](../../plans/advance-history-safety.pert)
-  pass.
+  behavior, force, result, and diagnostic boundaries. The CLI enforcement,
+  `Perttool.AdvanceResult.v1`, help, and schema slice is implemented; complete
+  repository, link, package, and installed acceptance remains in
+  [`advance-history-safety.pert`](../../plans/advance-history-safety.pert).
 - write state: Stage 3 editing commands remain preview-first. Until the
-  runtime `ADV-001` tasks are accepted, an advance write additionally
-  requires the exact pre-advance target snapshot in `HEAD`, followed by
+  runtime `ADV-001` workstream is accepted, an advance write still requires
+  the exact pre-advance target snapshot in `HEAD`, the passing guard,
   diff/deletion review, expected-digest write, reanalysis, and a separate
   advance commit.

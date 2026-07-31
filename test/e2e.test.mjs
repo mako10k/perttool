@@ -39,6 +39,25 @@ function runJson(args, expectedStatus = 0, options = {}) {
   return json;
 }
 
+function commitRepository(directory, relativePath) {
+  for (const args of [
+    ["init", "--quiet"],
+    ["config", "user.name", "Perttool Test"],
+    ["config", "user.email", "perttool@example.invalid"],
+    ["add", "--", relativePath],
+    ["commit", "--quiet", "-m", "baseline"],
+  ]) {
+    const result = spawnSync("git", ["-C", directory, ...args], {
+      encoding: "utf8",
+    });
+    assert.equal(
+      result.status,
+      0,
+      `git ${args.join(" ")}\n${result.stderr}`,
+    );
+  }
+}
+
 test("E2E-001: discover commands, validate a plan, and compare capacity what-if", () => {
   const help = run(["--help"]);
   assert.equal(help.status, 0);
@@ -422,6 +441,7 @@ test("E2E-013: advance preview and safe write preserve a partial join", (t) => {
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const copy = path.join(directory, "partial.pert");
   copyFileSync(path.join(root, source), copy);
+  commitRepository(directory, "partial.pert");
   const digest = runJson(["document", "check", copy]).source_digest;
   const written = runJson([
     "dag", "advance", copy, "--write", "--expect-digest", digest,

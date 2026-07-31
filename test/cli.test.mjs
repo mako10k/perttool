@@ -29,6 +29,25 @@ function run(args, options = {}) {
   });
 }
 
+function commitRepository(directory, relativePath) {
+  for (const args of [
+    ["init", "--quiet"],
+    ["config", "user.name", "Perttool Test"],
+    ["config", "user.email", "perttool@example.invalid"],
+    ["add", "--", relativePath],
+    ["commit", "--quiet", "-m", "baseline"],
+  ]) {
+    const result = spawnSync("git", ["-C", directory, ...args], {
+      encoding: "utf8",
+    });
+    assert.equal(
+      result.status,
+      0,
+      `git ${args.join(" ")}\n${result.stderr}`,
+    );
+  }
+}
+
 test("document check text writes data to stdout", () => {
   const result = run(["document", "check", "docs/examples/minimal.pert", "--color", "never"]);
   assert.equal(result.status, 0);
@@ -421,6 +440,7 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   assert.match(help.stdout, /Command: perttool dag advance/);
   assert.match(help.stdout, /0: file type=path-or-stdin required=true/);
   assert.match(help.stdout, /--expect-digest/);
+  assert.match(help.stdout, /--force-history-loss/);
 
   const preview = run(["dag", "advance", source, "--color=never"]);
   assert.equal(preview.status, 0, preview.stderr);
@@ -440,7 +460,7 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   const jsonResult = run(["dag", "advance", source, "--format=json"]);
   assert.equal(jsonResult.status, 0, jsonResult.stderr);
   const json = JSON.parse(jsonResult.stdout);
-  assert.equal(json.schema_version, "Perttool.MutationResult.v3");
+  assert.equal(json.schema_version, "Perttool.AdvanceResult.v1");
   assert.equal(json.operation, "dag.advance");
   assert.equal(json.document_id, "ADVANCE_PARTIAL");
   assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
@@ -457,6 +477,8 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
   assert.match(json.updated_text, /^project ADVANCE_PARTIAL:/);
   assert.match(json.diff, /^--- docs\/examples\/advance-partial-before\.pert/m);
   assert.ok(json.edits.length > 0);
+  assert.equal(json.history_guard.status, "not_applicable");
+  assert.equal(json.history_guard.cause, "preview");
 
   const completeText = [
     "project COMPLETE_GATE:",
@@ -517,6 +539,7 @@ test("dag advance shares safe-write locks and repeated write is a no-op", (t) =>
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const source = path.join(directory, "partial.pert");
   copyFileSync(path.join(root, "docs/examples/advance-partial-before.pert"), source);
+  commitRepository(directory, "partial.pert");
   const initialDigest = JSON.parse(run([
     "document", "check", source, "--format=json",
   ]).stdout).source_digest;

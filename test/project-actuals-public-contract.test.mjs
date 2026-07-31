@@ -192,7 +192,7 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
     "--actor",
     "user",
   ]);
-  assert.equal(advanced.schema_version, "Perttool.MutationResult.v3");
+  assert.equal(advanced.schema_version, "Perttool.AdvanceResult.v1");
   assert.deepEqual(advanced.advance.removed_task_ids, ["WORK"]);
   assert.equal(advanced.advance.removed_work_event_ids.length, 4);
   assert.equal(

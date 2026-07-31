@@ -365,12 +365,21 @@ export type {
   AdvanceRetentionReason,
 } from "./mutation/advance.js";
 export type {
-  AdvanceResultV3 as AdvanceResult,
   AdvanceResultV3,
   LifecycleResultV3,
   MutationResultV3 as MutationResult,
   MutationResultV3,
 } from "./application/contract6-mutation.js";
+export {
+  ADVANCE_RESULT_SCHEMA_VERSION,
+} from "./application/advance-history.js";
+export type {
+  AdvanceHistoryGuardCause,
+  AdvanceHistoryGuardStatus,
+  AdvanceHistoryGuardV1,
+  AdvanceResultV1 as AdvanceResult,
+  AdvanceResultV1,
+} from "./application/advance-history.js";
 export type { DocumentContent } from "./io/document-file.js";
 export type {
   CreateArtifactOptions,

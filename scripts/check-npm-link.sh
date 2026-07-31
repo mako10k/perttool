@@ -138,11 +138,28 @@ fi
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
           result.cli_contract_version !== 6 ||
-          result.schemas?.length !== 18 ||
+          result.schemas?.length !== 19 ||
           result.schema?.$schema !==
             "https://json-schema.org/draft/2020-12/schema" ||
           result.schema?.$id !==
             "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v5.schema.json"
+        ) process.exit(1);
+      });
+    '
+  "$linked_cli" dag advance \
+    "$repo_root/docs/examples/advance-partial-before.pert" \
+    --format=json |
+    node -e '
+      let input = "";
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", (chunk) => { input += chunk; });
+      process.stdin.on("end", () => {
+        const result = JSON.parse(input);
+        if (
+          result.schema_version !== "Perttool.AdvanceResult.v1" ||
+          result.history_guard?.status !== "not_applicable" ||
+          result.history_guard?.cause !== "preview" ||
+          result.history_guard?.destructive_entity_ids?.length === 0
         ) process.exit(1);
       });
     '

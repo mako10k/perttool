@@ -73,6 +73,7 @@ const expectedResources = [
 const knownSchemas = new Set([
   "Perttool.AgentGuidanceResult.v1",
   "Perttool.AnalysisResult.v4",
+  "Perttool.AdvanceResult.v1",
   "Perttool.CheckResult.v3",
   "Perttool.CliError.v1",
   "Perttool.CommandHelpResult.v1",

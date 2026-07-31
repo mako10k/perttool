@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFile } from "node:fs/promises";
+import { lstat, readFile } from "node:fs/promises";
 import process from "node:process";
 import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
@@ -44,6 +44,11 @@ import {
   contract6ProjectResultToJson,
   contract6WorkEventToJson,
 } from "./application/contract6-projection.js";
+import {
+  prepareAdvanceHistory,
+  renderAdvanceHistoryGuard,
+  withAdvanceHistoryRace,
+} from "./application/advance-history.js";
 import {
   persistTargetActualsResult,
 } from "./application/target-actuals-write.js";
@@ -99,6 +104,9 @@ import {
   documentContentFromBytes,
   readDocumentFile,
 } from "./io/document-file.js";
+import {
+  recheckAdvanceHistoryBaseline,
+} from "./history/git-probe.js";
 import {
   createArtifactFile,
   createDocumentFile,
@@ -332,11 +340,31 @@ function renderDiagnostic(
 async function readDocument(source: string): Promise<{
   readonly text: string;
   readonly digest: string;
+  readonly bytes: Buffer;
+  readonly modifiedAt: string | null;
 }> {
   const content = source === "-"
     ? documentContentFromBytes(await readStdin())
     : await readDocumentFile(source);
-  return { text: content.text, digest: content.digest };
+  let modifiedAt: string | null = null;
+  if (source !== "-") {
+    try {
+      const metadata = await lstat(source, { bigint: true });
+      if (metadata.isFile() && !metadata.isSymbolicLink()) {
+        modifiedAt = new Date(
+          Number(metadata.mtimeNs / 1_000_000n),
+        ).toISOString();
+      }
+    } catch {
+      modifiedAt = null;
+    }
+  }
+  return {
+    text: content.text,
+    digest: content.digest,
+    bytes: content.bytes,
+    modifiedAt,
+  };
 }
 
 async function readStdin(): Promise<Buffer> {
@@ -2124,6 +2152,12 @@ async function runAdvance(args: readonly string[]): Promise<number> {
   );
   const sourceOperand = parsed.positionals[0]!;
   const writeRequest = editingWriteRequest(parsed, sourceOperand);
+  const forceRequested = parsed.flags.has("force-history-loss");
+  if (forceRequested && writeRequest.mode !== "in_place") {
+    throw new UsageError(
+      "--force-history-loss can only be used with --write",
+    );
+  }
   const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
   let input: Awaited<ReturnType<typeof readDocument>>;
   try {
@@ -2136,7 +2170,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       format === "json",
     );
   }
-  const result = planAdvance(
+  const planned = planAdvance(
     input.text,
     {
       maxDiagnostics,
@@ -2145,18 +2179,70 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       governance: governanceRequest(parsed, writeRequest),
     },
   );
+  const initialWarningFailure =
+    parsed.flags.has("warnings-as-errors") &&
+    (planned.diagnosticsTruncated ||
+      planned.diagnostics.some(
+        (diagnostic) => diagnostic.severity === "warning",
+      ));
+  const prepared = await prepareAdvanceHistory(
+    input.text,
+    planned,
+    {
+      mode:
+        writeRequest.mode === "out"
+          ? "out"
+          : writeRequest.mode,
+      sourceBytes: input.bytes,
+      sourceModifiedAt: input.modifiedAt,
+      ...(writeRequest.mode === "in_place"
+        ? { targetPath: sourceOperand }
+        : {}),
+      forceRequested,
+      warningDenied: initialWarningFailure,
+      maxDiagnostics,
+    },
+  );
+  let result = prepared.result;
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
     (result.diagnosticsTruncated ||
-      result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
-  const ok = result.ok && !warningFailure;
+      result.diagnostics.some(
+        (diagnostic) => diagnostic.severity === "warning",
+      ));
+  let ok = result.ok && !warningFailure;
+  let historyRace = false;
   let writeResult: TargetGovernanceWriteProjection = Object.freeze({
     mode: writeRequest.mode,
     target: writeRequest.target,
     written: false,
   });
-  if (result.ok) {
+  if (result.updatedText !== null) {
     try {
+      if (
+        ok &&
+        writeRequest.mode === "in_place" &&
+        prepared.baseline !== null &&
+        prepared.baseline.status === "complete" &&
+        (
+          result.historyGuard?.status === "passed" ||
+          result.historyGuard?.status === "forced"
+        )
+      ) {
+        const recheck = await recheckAdvanceHistoryBaseline(
+          prepared.baseline,
+          sourceOperand,
+        );
+        if (!recheck.ok) {
+          result = withAdvanceHistoryRace(
+            result,
+            recheck,
+            maxDiagnostics,
+          );
+          ok = false;
+          historyRace = true;
+        }
+      }
       if (ok && writeRequest.mode !== "preview") {
         writeResult = await persistGovernedResult(
           result,
@@ -2178,26 +2264,39 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       ),
     );
   } else {
-    if (ok && result.advance !== null) {
-      if (writeRequest.mode !== "preview") {
-        process.stderr.write(
-          renderGovernanceWriteSummary(
-            "dag.advance",
-            writeResult,
-            result.updatedDigest,
-          ),
-        );
-      } else {
-        process.stdout.write(
-          parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
-        );
-        if (!parsed.flags.has("diff")) {
+    if (result.advance !== null) {
+      if (ok) {
+        if (writeRequest.mode !== "preview") {
           process.stderr.write(
-            `PREVIEW dag.advance changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+            renderGovernanceWriteSummary(
+              "dag.advance",
+              writeResult,
+              result.updatedDigest,
+            ),
           );
+        } else {
+          process.stdout.write(
+            parsed.flags.has("diff") ? (result.diff ?? "") : (result.updatedText ?? ""),
+          );
+          if (!parsed.flags.has("diff")) {
+            process.stderr.write(
+              `PREVIEW dag.advance changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+            );
+          }
         }
       }
-      process.stderr.write(renderAdvanceSummary(result.advance));
+      if (
+        ok ||
+        result.historyGuard?.status === "blocked" ||
+        result.historyGuard?.status === "forced"
+      ) {
+        process.stderr.write(renderAdvanceSummary(result.advance));
+      }
+    }
+    if (result.historyGuard !== null) {
+      process.stderr.write(
+        renderAdvanceHistoryGuard(result.historyGuard),
+      );
     }
     if (result.governance !== null) {
       process.stderr.write(
@@ -2211,7 +2310,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
     }
   }
-  return ok ? 0 : 1;
+  return ok ? 0 : historyRace ? 5 : 1;
 }
 
 type RationalUnit =

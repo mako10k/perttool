@@ -137,21 +137,32 @@ export function deriveAdvanceDestructiveRecords(
       selection.stateChangedMilestoneIds.includes(declaration.id)
     ) {
       const state = fieldNamed(declaration, "state");
-      if (state === undefined) {
-        throw new Error(
-          `advance state record ${declaration.id} has no existing state`,
-        );
+      if (state !== undefined) {
+        records.push({
+          entityKind: "milestone",
+          entityId: declaration.id,
+          field: "state",
+          startOffset: state.valueSpan.start.offset,
+          endOffset: state.valueSpan.end.offset,
+        });
       }
-      records.push({
-        entityKind: "milestone",
-        entityId: declaration.id,
-        field: "state",
-        startOffset: state.valueSpan.start.offset,
-        endOffset: state.valueSpan.end.offset,
-      });
     }
   }
 
+  const replacedStateIds = selection.stateChangedMilestoneIds.flatMap(
+    (id) => {
+      const matches = document.declarations.filter(
+        ({ kind, id: candidateId }) =>
+          kind === "milestone" && candidateId === id,
+      );
+      if (matches.length !== 1) {
+        throw new Error(
+          `advance state selection has no unique milestone ${id}`,
+        );
+      }
+      return fieldNamed(matches[0]!, "state") === undefined ? [] : [id];
+    },
+  );
   const expected = [
     ...selection.removedTaskIds.map((id) => `task:${id}:declaration`),
     ...selection.removedGateIds.map((id) => `gate:${id}:declaration`),
@@ -161,7 +172,7 @@ export function deriveAdvanceDestructiveRecords(
     ...selection.removedWorkEventIds.map(
       (id) => `work_event:${id}:declaration`,
     ),
-    ...selection.stateChangedMilestoneIds.map(
+    ...replacedStateIds.map(
       (id) => `milestone:${id}:state`,
     ),
   ].sort(compareStableStrings);

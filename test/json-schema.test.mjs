@@ -140,7 +140,7 @@ test("Contract 6 result identities resolve to one closed bundled catalog", () =>
     .map(({ schemaId }) => schemaId);
   assert.deepEqual(commandSchemas, advertised);
   assert.equal(COMMAND_REGISTRY.length, 34);
-  assert.equal(advertised.length, 17);
+  assert.equal(advertised.length, 18);
   assert.deepEqual(
     catalog
       .filter(({ publicLibraryResult }) => publicLibraryResult)
@@ -153,10 +153,10 @@ test("Contract 6 result identities resolve to one closed bundled catalog", () =>
     ...catalog.map(({ schemaId }) => `${schemaId}.schema.json`),
   ].sort();
   assert.deepEqual(schemaFiles(), expectedFiles);
-  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 18);
+  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 19);
   assert.equal(
     new Set(catalog.map(({ artifactPath }) => artifactPath)).size,
-    18,
+    19,
   );
 
   for (const entry of catalog) {
@@ -230,7 +230,7 @@ test("schema command lists, resolves, and rejects schema identities", () => {
   assert.equal(catalog.operation, "schema");
   assert.equal(catalog.ok, true);
   assert.equal(catalog.query.schema_id, null);
-  assert.equal(catalog.schemas.length, 18);
+  assert.equal(catalog.schemas.length, 19);
   assert.equal(catalog.schema, null);
 
   const selected = cliJson([
@@ -625,6 +625,12 @@ test("actual success, invalid, unavailable, and usage results validate", (t) => 
     advanceMutation,
     ["advance"],
     "advance details",
+  );
+  assertRejectsNestedField(
+    ajv,
+    advanceMutation,
+    ["history_guard"],
+    "advance history guard",
   );
   assertRejectsNestedField(
     ajv,

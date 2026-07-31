@@ -4,6 +4,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import {
+  ADVANCE_RESULT_SCHEMA_VERSION,
   COMMAND_REGISTRY,
   analyzeDocument,
   checkDocument,
@@ -143,28 +144,32 @@ test("all eighteen history-safety cases are dependency ordered", async () => {
   );
 });
 
-test("active runtime remains unchanged until the later CLI task", () => {
+test("active runtime exposes the exact CLI result and force boundary", () => {
+  assert.equal(
+    ADVANCE_RESULT_SCHEMA_VERSION,
+    "Perttool.AdvanceResult.v1",
+  );
   const advance = COMMAND_REGISTRY.find(
     ({ path }) => path[0] === "dag" && path[1] === "advance",
   );
   assert.ok(advance);
   assert.deepEqual(
     advance.resultSchemas,
-    ["Perttool.MutationResult.v3", "Perttool.CliError.v1"],
+    ["Perttool.AdvanceResult.v1", "Perttool.CliError.v1"],
   );
   assert.equal(
     advance.options.some(({ name }) => name === "force-history-loss"),
-    false,
+    true,
   );
   assert.equal(
     getJsonSchemaCatalog().some(
       ({ schemaId }) => schemaId === "Perttool.AdvanceResult.v1",
     ),
-    false,
+    true,
   );
 });
 
-test("accepted probe plan recommends only the CLI handoff", async () => {
+test("completed CLI task hands off only the acceptance slice", async () => {
   const source = await repositoryText("plans/advance-history-safety.pert");
   const checked = checkDocument(source);
   const metadata = getProjectMetadata(source);
@@ -200,18 +205,18 @@ test("accepted probe plan recommends only the CLI handoff", async () => {
     checked.document.declarations.filter(
       ({ kind }) => kind === "work_event",
     ).length,
-    0,
+    2,
   );
-  assert.equal(analyzed.precedence.makespan.numerator.toString(), "7");
+  assert.equal(analyzed.precedence.makespan.numerator.toString(), "3");
   assert.equal(analyzed.precedence.makespan.denominator.toString(), "1");
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["ADV_HISTORY_CLI"]);
-  assert.deepEqual(next.groups.runnableNow, ["ADV_HISTORY_CLI"]);
+  assert.deepEqual(next.groups.ready, ["ADV_HISTORY_ACCEPTANCE"]);
+  assert.deepEqual(next.groups.runnableNow, ["ADV_HISTORY_ACCEPTANCE"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "ADV_HISTORY_CLI",
+    "ADV_HISTORY_ACCEPTANCE",
   ]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "ADV_HISTORY_CLI",
+    "ADV_HISTORY_ACCEPTANCE",
   ]);
   assert.equal(next.recommendation.explanationStatus.complete, true);
   assert.equal(next.recommendation.explanationStatus.truncated, false);

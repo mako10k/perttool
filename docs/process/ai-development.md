@@ -183,6 +183,12 @@ before using the ordinary actor, expected-digest, and safe-write controls.
 commit, stage, or modify Git and do not adopt an observed velocity. Before an
 in-place `dag advance` removes a completed task and its owned events, commit
 the exact eventful source snapshot through the established Git workflow.
+The active history guard compares every destructive range with `HEAD` and the
+stage-0 index, permits dirty ranges retained by the candidate, and returns
+`PTADV-101` before persistence when recoverability cannot be proved. Treat
+`--force-history-loss` as an exceptional, exact-request choice: never infer or
+carry it forward, and remember that it bypasses neither owner authority nor
+the warning, digest, source, repository-race, or atomic-write gates.
 
 Do not directly compare tasks from different detail plans without a macro decision. Do not substitute `groups.ready`, `groups.runnable_now`, the raw recommended set, or the text summary for start authority. With an unknown schema/model/temporal-policy version, incomplete or truncated trace, unknown tier, `PTREC-*`, or future or unavailable temporal eligibility, do not start a task; stop safely. Do not start `deferred` or `discouraged` work under normal authority.
 

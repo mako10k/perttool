@@ -36,6 +36,13 @@ identities are:
 Format, init, command-help, Guide, agent-guidance, and conversion result schema
 majors remain unchanged, but their envelopes identify Contract 6.
 
+The later compatible ADV-001 source activation keeps CLI Contract 6 but
+changes only current `dag advance` results to
+`Perttool.AdvanceResult.v1`. Direct, lifecycle, and batch mutations continue
+to use `Perttool.MutationResult.v3`. Consumers of current source must discover
+and validate the result identity rather than assuming that every Contract 6
+advance has the original `0.5.0` result shape.
+
 The command registry adds:
 
 ```text

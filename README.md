@@ -153,11 +153,25 @@ perttool task set PLAN.pert WORK \
 perttool task finish PLAN.pert WORK --diff
 perttool dag next PLAN.pert --format json
 perttool dag advance PLAN.pert --diff
+perttool dag advance PLAN.pert \
+  --write \
+  --expect-digest 'sha256:...'
 ```
 
 All formatter and mutation commands preview by default. `--write` replaces the
 input through the safe-write path, while `--out` exclusively creates a new
-file. Gate maintenance uses the same controls:
+file. A changed in-place `dag advance` additionally verifies removed or
+replaced entity ranges against the target path in Git `HEAD` and the stage-0
+index. Dirty ranges retained by the candidate are allowed; uncommitted
+destructive overlap or unavailable proof returns `PTADV-101` without writing.
+`Perttool.AdvanceResult.v1.history_guard` reports the status, modification
+time, byte sizes, diff counts, and affected IDs before supplemental digests.
+The exceptional `--force-history-loss` option bypasses only that initial
+history block for the exact in-place request, emits `PTADV-103`, and does not
+bypass governance, warnings-as-errors, expected digests, source/`HEAD`/index
+rechecks, or atomic-write validation.
+
+Gate maintenance uses the same base controls:
 
 ```sh
 perttool gate add PLAN.pert APPROVAL NOW DONE \
@@ -395,6 +409,8 @@ they are not new-start recommendations.
 
 Mutation JSON returns the candidate text, unified diff, UTF-16 text edits,
 source digest, updated digest, diagnostics, and write result in one envelope.
+Direct, lifecycle, and batch mutations use `Perttool.MutationResult.v3`;
+`dag advance` uses `Perttool.AdvanceResult.v1`.
 Unknown schema versions, incomplete recommendation traces, `PTREC-*`
 diagnostics, and future or unavailable temporal eligibility must fail closed.
 

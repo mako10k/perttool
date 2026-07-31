@@ -45,8 +45,11 @@ import {
 } from "../semantic/target-validator.js";
 import {
   planTargetActualsAdvance,
-  type TargetActualsAdvanceResultV3,
 } from "./target-actuals-advance.js";
+import {
+  withPreviewAdvanceHistory,
+  type AdvanceResultV1,
+} from "./advance-history.js";
 import {
   planTargetFinishActualsMutation,
   planTargetLifecycleMutation,
@@ -64,7 +67,7 @@ export interface MutationResultV3 extends MutationResult {
   readonly lifecycle: null;
 }
 
-export type AdvanceResultV3 = TargetActualsAdvanceResultV3;
+export type AdvanceResultV3 = AdvanceResultV1;
 export type LifecycleResultV3 = TargetActualsMutationResultV3;
 
 interface ValidOriginal {
@@ -356,10 +359,13 @@ export function planAdvance(
   text: string,
   options: TargetActualsMutationOptions = {},
 ): AdvanceResultV3 {
-  return planTargetActualsAdvance(
+  return withPreviewAdvanceHistory(
     text,
-    TARGET_GRAMMAR_5_CAPABILITY,
-    options,
+    planTargetActualsAdvance(
+      text,
+      TARGET_GRAMMAR_5_CAPABILITY,
+      options,
+    ),
   );
 }
 

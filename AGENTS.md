@@ -32,10 +32,11 @@ governed project/task/gate/milestone/resource maintenance, exact lifecycle
 events, read-only project history and velocity observation, exact
 `project migrate-unit`, `Perttool.ProjectResult.v3`,
 `Perttool.MutationResult.v3` with `Perttool.GovernanceDecision.v1`,
+`Perttool.AdvanceResult.v1` with history-safety model 1,
 `Perttool.AnalysisResult.v4`, `Perttool.NextResult.v5`,
 `Perttool.UnitMigrationResult.v3`, read-only `validateOverride`,
 source-preserving mutation, and authorization-before-safe-write controls. It
-bundles complete artifacts for all seventeen active command-result identities
+bundles complete artifacts for all eighteen active command-result identities
 plus public library-only `Perttool.OverrideDecision.v1`, exposes the additive
 read-only `schema` command and public catalog APIs, accepts Git 2.54 strict ISO
 UTC `Z` commit metadata, rejects retired alpha publication, and projects
@@ -63,16 +64,24 @@ the narrow `--force-history-loss` target, `Perttool.AdvanceResult.v1`,
 `PTADV-101` through `PTADV-103`, human-readable modification time, byte-size
 and diff context, and eighteen machine-readable acceptance cases. Its
 acceptance record is
-`docs/process/advance-history-contract-acceptance.md`. The active `0.5.5`
-runtime remains unchanged and still requires the manual pre-advance commit
-procedure; it does not expose the target option, result, diagnostics, or
-guard. `ADV_HISTORY_PROBE` is complete and advanced; Git commit `4265621`
+`docs/process/advance-history-contract-acceptance.md`. Published `0.5.5`
+remains unchanged and does not include ADV-001. `ADV_HISTORY_PROBE` is
+complete and advanced; Git commit `4265621`
 records its exact completed 4p pre-advance snapshot. Its accepted internal
 read-only `HEAD`/stage-0-index capture and pure destructive-range assessment
-pass the complete repository gate. The residual plan has 7p precedence and
-heuristic resource makespans with no resource delay; complete NextResult v5
-recommends and makes startable only `ADV_HISTORY_CLI`. The package root, CLI,
-schemas, help, write path, and runtime enforcement remain unchanged. Release,
+pass the complete repository gate. `ADV_HISTORY_CLI` is complete and retained
+as the exact pre-advance task snapshot. The current source now exposes the
+narrow `--force-history-loss` option, `Perttool.AdvanceResult.v1`, the
+complete nineteenth root schema, human-readable guard facts, `PTADV-101`
+through `PTADV-103`, and repository/path/`HEAD`/stage-0-index enforcement
+before the existing safe write. Preview, separate output, no-op, authority
+denial, and prior warning denial do not inspect Git. Retained dirty ranges are
+allowed, destructive overlap and unavailable proof block, and a captured
+source, `HEAD`, or index race returns exit 5 without writing. Its acceptance
+record is `docs/process/advance-history-cli-acceptance.md`. The residual
+plan has 3p precedence and heuristic resource makespans with no resource
+delay; complete NextResult v5 recommends and makes startable only
+`ADV_HISTORY_ACCEPTANCE`. Targeted package and installed acceptance, release,
 GitHub Issue mutation, npm publication, and dist-tag movement remain separate
 boundaries.
 
@@ -395,14 +404,14 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/formatter/`: the active Grammar 1/2/3/4/5 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4/5 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 6 package surface.
-- `src/history/`: active read-only Git probe, pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; plus the internal ADV-001 current-HEAD/stage-0 capture and pure destructive-range assessment target.
+- `src/history/`: active read-only Git probe, pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
 - `src/parser/`: the active Grammar 1/2/3/4/5 parser with identity-checked task-owned work-event source.
 - `src/semantic/`: active Grammar 1/2/3/4/5 validated-document boundaries, task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance and task-owned event removal; source-preserving UTF-16 TextEdit generation; and application rules.
-- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, Contract 6 result projections, and authorization-before-safe-write orchestration.
+- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
