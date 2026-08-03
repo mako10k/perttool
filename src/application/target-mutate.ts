@@ -1,8 +1,11 @@
 import {
+  planAtomicMutationEdits,
   planValidatedMutationRequest,
   type MutationDocumentValidation,
   type MutationPlanningProfile,
 } from "./mutate.js";
+import type { DocumentNode, TargetDeclarationKind } from "../model/syntax.js";
+import type { MutationEditPlan } from "../mutation/diagnostics.js";
 import {
   TARGET_MILESTONE_MUTATION_PROFILE,
 } from "../mutation/milestone.js";
@@ -69,6 +72,22 @@ const targetGrammar5MutationPlanningProfile: MutationPlanningProfile =
     task: TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
     milestone: TARGET_MILESTONE_MUTATION_PROFILE,
   });
+
+export function planTargetGrammar5AtomicMutationEdits(
+  text: string,
+  document: DocumentNode<TargetDeclarationKind>,
+  mutation: TargetGovernanceMutation,
+): MutationEditPlan {
+  if (mutation.kind === "batch") {
+    throw new Error("target Grammar 5 atomic edit planning does not accept a batch");
+  }
+  return planAtomicMutationEdits(
+    text,
+    document as unknown as Parameters<typeof planAtomicMutationEdits>[1],
+    mutation,
+    targetGrammar5MutationPlanningProfile,
+  );
+}
 
 function targetGrammar2Validator(
   capability: TargetGrammar2Capability,

@@ -1136,16 +1136,23 @@ ledger semantics to an in-progress Issue #4 implementation slice.
 
 Priority: P0
 
-Status: Design target reviewed (2026-08-03); implementation unplanned
+Status: Implementation in progress (2026-08-03); interface, hash, source, and mutation Cores accepted
 
 Detect when a current/future task plan no longer matches the upstream planning
 basis against which it was last reviewed. The
 [Conditional Plan Assurance Contract](specs/plan-assurance.md),
 [normative examples](examples/plan-assurance.md), and
 [design review](process/plan-assurance-design-review.md) define the semantic
-target. The relation source and mutation mapping are selected, but the
-enclosing grammar version, other assurance records and commands, public
-schemas, implementation plan, and release remain unselected.
+target. The [Plan Assurance Interface
+Contract](specs/plan-assurance-interface.md) selects Grammar 6, CLI Contract 7,
+the remaining source records and mutations, closed results, diagnostics, and
+governance version 2. The
+[`plans/plan-assurance.pert`](../plans/plan-assurance.pert) is the explicitly
+selected implementation workstream. Its interface, pure hash/state Core,
+identity-checked internal Grammar 6 source Core, and governed mutation Core are
+accepted. The workstream recommendation was re-evaluated from the completed
+mutation snapshot; pinpoint hash inspection remains a separately planned input
+to public activation. Release selection remains separate and unselected.
 
 Required outcomes:
 
@@ -1182,7 +1189,7 @@ Before implementation:
   and governance scope;
 - define outcome evidence and correction semantics with the actuals contract;
 - define exact receipt source ownership and advance edits; and
-- create and select an independent `.pert` workstream from a fresh complete
+- follow the selected independent workstream from a fresh complete
   `Perttool.NextResult.v5` authority result.
 
 ## Independent post-beta work

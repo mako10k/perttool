@@ -1,13 +1,14 @@
 # Conditional Plan Assurance Design Review
 
-- Document status: Reviewed Draft 0.2
+- Document status: Superseded design review; interface decisions accepted separately
 - Review date: 2026-08-03
 - Baseline HEAD: `876c224a99f52da453e9ef5aa9aa61e7cab28343`
 - Backlog: [`ASSURE-001`](../backlog.md#assure-001-add-conditional-plan-assurance)
 - Target plan-assurance model: 1
 - Target hash model: 1
 - Active runtime: Grammar 5 and CLI Contract 6
-- Runtime status: not implemented
+- Runtime status: public surface not implemented; later internal hash, source, and mutation Cores accepted
+- Successor contract: [Plan Assurance Interface Contract](../specs/plan-assurance-interface.md)
 
 ## 1. Conclusion
 
@@ -24,14 +25,16 @@ Next result, but it does not change the task plan contract or recursively
 invalidate downstream accepted bases. Plan-content, relation, outcome, or
 frontier-receipt changes do.
 
-This review accepts the design target as internally consistent enough for a
-future source/interface contract. Draft 0.2 selects the `task_relation` source
+This review accepted the design target as internally consistent enough for a
+source/interface contract. Draft 0.2 selected the `task_relation` source
 declaration, explicit `both` pinning, and `plan-dependency add|set|remove`
 maintenance mapping. It is not implementation acceptance. The enclosing
 grammar version, remaining assurance records and commands, public result
-identities, diagnostics, governance-version activation, implementation plan,
-package version, and release remain deliberately unselected. Current runtime
-help, schemas, and behavior remain unchanged.
+identities, diagnostics, governance-version activation, and implementation
+plan were deliberately unselected at this review point. The successor
+interface contract now closes those decisions while leaving package version
+and release unselected. Current runtime help, schemas, and behavior remain
+unchanged.
 
 ## 2. Reviewed authority
 
@@ -110,9 +113,9 @@ assurance hashes when no semantic plan field changed.
 The active Grammar 5 finish event records lifecycle and measurement evidence;
 it does not prove that the delivered outcome conforms to the plan basis. The
 design therefore refuses to equate `done`, event time, effort, Git time, or
-free-form text with conformance. A future source/interface contract must add
-an explicit basis-bound outcome fact and its correction/authority rules before
-assurance can activate.
+free-form text with conformance. The successor interface contract adds an
+explicit basis-bound outcome fact and its correction/authority rules for the
+future activation.
 
 Outcome assessment remains separate from task assurance. A known changed
 outcome remains visible as `changed`, while consumer basis mismatches become
@@ -154,8 +157,9 @@ a blockchain or a permanent history log.
 Recomputation is read-only; it never changes an accepted basis. Initial seal
 and reseal are exact previewed candidates. A task edit, a prior owner
 assertion, or a prior governance decision does not authorize a later reseal.
-The future public cutover needs a distinct `plan_assurance` affected scope, or
-an equally strict accepted owner rule, before persistence is available.
+The successor interface contract selects a distinct `plan_assurance` affected
+scope controlled by the effective pre-change DAG owner for the future public
+cutover.
 
 ### 4.7 SHA-256 does not authenticate the editor
 
@@ -183,10 +187,10 @@ The selection follows existing stable-ID, contextual-keyword, source-span,
 localized edit, candidate validation, preview, and safe-write conventions. A
 relation command never synthesizes an AoA edge.
 
-## 6. Open interface decisions
+## 6. Interface decisions closed by the successor contract
 
-The semantic target is fixed, but implementation must not begin until one
-future source/interface review selects all of the following together:
+The [Plan Assurance Interface Contract](../specs/plan-assurance-interface.md)
+selects all of the following together before implementation:
 
 1. enclosing grammar version and model, seal, outcome, and receipt syntax,
    including their source-preservation and formatter ownership;
@@ -203,8 +207,9 @@ future source/interface review selects all of the following together:
 7. migration from assurance-disabled Grammar 1 through 5 documents; and
 8. an independent `.pert` implementation and acceptance workstream.
 
-Until those decisions are accepted, `ASSURE-001` remains design-only and no
-command, schema, package export, or runtime warning may claim availability.
+Those decisions are now accepted as a target. No command, schema, package
+export, or runtime warning may claim availability before the later atomic
+`ASSURE_PUBLIC_CONTRACT` cutover.
 
 ## 7. Review verification target
 

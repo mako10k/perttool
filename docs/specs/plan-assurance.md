@@ -1,11 +1,12 @@
 # Conditional Plan Assurance Contract
 
-- Status: Draft 0.2
+- Status: Normative target 1.0
 - Plan-assurance model target: 1
 - Hash model target: 1
-- Runtime status: Not implemented
+- Runtime status: Internal hash/state, Grammar 6 source, and governed mutation Cores implemented; public runtime not activated
 - Current compatibility boundary: Grammar 1 through 5 and CLI Contract 6 remain
   unchanged
+- Source and public interface target: [Grammar 6 and CLI Contract 7](plan-assurance-interface.md)
 - Requirements: [../requirements.md](../requirements.md)
 - Active DSL grammar: [dsl-grammar.md](dsl-grammar.md)
 - Backlog: [`ASSURE-001`](../backlog.md#assure-001-add-conditional-plan-assurance)
@@ -35,20 +36,22 @@ Resolve conflicts in this order:
 
 1. Must requirements in `docs/requirements.md`;
 2. this contract;
-3. [DSL Grammar](dsl-grammar.md) for the active Grammar 1 through 5 lexical,
+3. the [Plan Assurance Interface Contract](plan-assurance-interface.md) for
+   Grammar 6 source, CLI Contract 7, result, diagnostic, and governance shape;
+4. [DSL Grammar](dsl-grammar.md) for the active Grammar 1 through 5 lexical,
    syntax, source-span, and compatibility boundary;
-4. [Graph Semantics](graph-semantics.md) for AoA execution dependencies,
+5. [Graph Semantics](graph-semantics.md) for AoA execution dependencies,
    reachability, and advance;
-5. [Recommendation Semantics](recommendation.md) for lifecycle,
+6. [Recommendation Semantics](recommendation.md) for lifecycle,
    recommendation tiers, and reanalysis;
-6. [Project Actuals and Git History](project-actuals.md) for work events and
+7. [Project Actuals and Git History](project-actuals.md) for work events and
    actual evidence;
-7. [Advance History Safety](advance-history-safety.md) for destructive Git
+8. [Advance History Safety](advance-history-safety.md) for destructive Git
    proof;
-8. [Governance Authority](governance-authority.md) and the
+9. [Governance Authority](governance-authority.md) and the
    [Governance Interface](governance-interface.md) for persistent authority;
-9. [Mutation Semantics](mutation.md) and safe-write contracts; and
-10. `docs/basic-design.md`, examples, tests, help, and implementation.
+10. [Mutation Semantics](mutation.md) and safe-write contracts; and
+11. `docs/basic-design.md`, examples, tests, help, and implementation.
 
 Plan assurance is a fourth decision axis. It MUST NOT be represented as task
 `status`, `blocked_reason`, structural readiness, resource feasibility, or a
@@ -93,6 +96,11 @@ The **computed basis hash** is derived from the current task plan contract and
 the current assurance commitments of the task's effective planning
 predecessors. The **accepted basis hash** is the value explicitly accepted at
 initial sealing or after replanning.
+
+The accepted seal also retains the accepted task contract hash and ordered
+planning-input commitments. This component snapshot is the minimum evidence
+needed to distinguish a direct task-contract change, a direct relation change,
+and an inherited predecessor change without retaining old task prose.
 
 Recomputation is read-only. Updating an accepted basis is a separate governed
 mutation and MUST NOT happen implicitly because a computed value changed.
@@ -156,11 +164,10 @@ interface PlanDependencyRelationV1 {
 }
 ```
 
-The target DSL declaration and its maintenance command mapping are fixed in
-Sections 4.4 and 4.5. The enclosing grammar version, assurance-model records,
-seal/outcome/receipt source forms, result schemas, and public activation remain
-future interface-design work. `task_relation` MUST NOT be added to Grammar 5 or
-CLI Contract 6 without an atomic versioned cutover.
+The DSL declaration and its maintenance command mapping are fixed in Sections
+4.4 and 4.5. The interface contract selects Grammar 6, model, seal, outcome,
+receipt, result, and activation boundaries. `task_relation` MUST NOT be added
+to Grammar 5 or CLI Contract 6 outside that atomic cutover.
 
 Validation rules:
 
@@ -228,8 +235,8 @@ retains a user's explicit `both` declaration and declaration location.
 Canonical insertion places a new relation after task/gate declarations and
 before the first `work_event`; when no work event exists, it follows the last
 task/gate or prior `task_relation`. Multiple relations created by one request
-use relation-ID order. The exact placement of later seal, outcome, and receipt
-records remains part of their future source contract.
+use relation-ID order. The interface contract places seal, outcome, and receipt
+records after relations and before work events.
 
 Arrow spelling does not encode the mode. `->` always gives the declared
 predecessor-to-successor orientation inside `task_relation`; the required
@@ -238,7 +245,7 @@ aliases are not accepted by this target.
 
 ### 4.5 Target maintenance command mapping
 
-The future source/interface cutover exposes relation maintenance through the
+The Grammar 6 and CLI Contract 7 cutover exposes relation maintenance through the
 user-facing `plan-dependency` resource:
 
 ```text
@@ -278,9 +285,10 @@ execution dependency remains. Removing explicit `planning_only` removes that
 planning edge. Removing explicit `both` retains implicit `both` while the
 execution dependency remains.
 
-Exact result identities, diagnostics, help projection, batch request envelope,
-and public CLI contract version remain unselected. Current command discovery
-MUST NOT advertise `plan-dependency` before the atomic activation gate.
+The interface contract fixes exact result identities, diagnostics, help
+projection, batch request envelopes, and CLI Contract 7. Current command
+discovery MUST NOT advertise `plan-dependency` before the atomic activation
+gate.
 
 ## 5. Task plan contract hash
 
@@ -295,6 +303,7 @@ digest spelling = sha256:<64 lowercase hexadecimal digits>
 contract domain = Perttool.TaskPlanContract.v1
 basis domain    = Perttool.TaskPlanBasis.v1
 outcome domain  = Perttool.TaskOutcomeCommitment.v1
+changed outcome = Perttool.ChangedTaskOutcomeContract.v1
 receipt domain  = Perttool.FrontierAssuranceReceipt.v1
 ```
 
@@ -343,8 +352,10 @@ Unicode scalar values directly as UTF-8, escapes quotation mark and reverse
 solidus, uses `\b`, `\t`, `\n`, `\f`, and `\r` for those controls, uses
 lowercase `\u00xx` for every other U+0000 through U+001F value, emits no solidus
 escape or insignificant whitespace, and rejects lone surrogates. Exact
-Rational components and other integers are canonical base-10 strings with no
-leading plus or zero padding; zero is `"0"` and denominators are positive.
+Rational components are canonical base-10 strings with no leading plus or zero
+padding; zero is `"0"` and denominators are positive. Scalar integer fields
+such as priority and resource units are safe JSON integers in ordinary
+base-10 form.
 
 The task contract hash is exactly:
 
@@ -425,15 +436,18 @@ completion commitment to consumers. On a usable completion assessment:
   }))
   ```
 
-  and initially requires replanning downstream;
+  Hash model 1 defines that nested contract as the closed object
+  `{ model: "Perttool.ChangedTaskOutcomeContract.v1", summary }`, using the
+  decoded nonempty summary and the same canonical JSON rules. The resulting
+  commitment initially requires replanning downstream;
 - missing or unavailable conformance evidence exports no trustworthy
   commitment and makes affected downstream assurance unavailable; and
 - status alone MUST NOT be treated as conformance evidence.
 
-The future actuals/interface contract must define the closed canonical outcome
-contract, its hash, source record, correction behavior, and caller authority
-for `conformant`, `changed`, and unavailable outcome evidence. The current
-Grammar 5 finish event does not provide it. A changed commitment invalidates
+The interface contract defines the closed changed-outcome summary commitment,
+basis-bound source record, correction behavior, and caller authority for
+`conformant`, `changed`, and unavailable outcome evidence. The current Grammar
+5 finish event does not provide it. A changed commitment invalidates
 existing consumer bases once; after those consumers are replanned and resealed
 against that exact known commitment, it is an accepted planning input and MUST
 NOT keep them permanently `review_required`.
@@ -496,6 +510,11 @@ Every non-verified result returns:
 - accepted and computed full hashes in JSON; and
 - short hashes only as supplemental human-readable identity.
 
+Direct-versus-inherited classification compares the current task contract and
+ordered planning inputs with the accepted seal components. It MUST NOT guess a
+semantic cause from the opaque accepted basis alone. A stored accepted basis
+that does not reproduce from those accepted components is unavailable.
+
 Human output MUST lead with changed semantic fields, relation changes,
 affected tasks, and required action. It MUST NOT ask a human to approve an
 opaque hash alone.
@@ -537,10 +556,9 @@ an explicit judgment that the new upstream basis does not require a downstream
 content change.
 
 Changing enablement, dependency mode, accepted basis, receipt, outcome
-conformance, or seal model changes task-start authority. The future governance
-version MUST classify it in a distinct `plan_assurance` affected scope governed
-by the effective pre-change DAG owner, or define an equally strict accepted
-owner boundary. It is not ordinary status maintenance. Existing
+conformance, or seal model changes task-start authority. Governance interface
+2 classifies it in the distinct `plan_assurance` affected scope governed by the
+effective pre-change DAG owner. It is not ordinary status maintenance. Existing
 single-candidate preview, owner-assertion, expected-digest, race, and safe-write
 rules remain applicable.
 
@@ -611,8 +629,8 @@ ID and have no duplicates. A receipt whose stored hash does not match its
 canonical semantic content is unavailable. The receipt self-hash detects
 accidental record damage; it does not add an external root of trust.
 
-The source contract may encode receipts as top-level machine-managed records or
-an equivalent closed representation. Receipts are retained only while a
+Grammar 6 encodes receipts as top-level machine-managed `assurance_receipt`
+records. Receipts are retained only while a
 current/future task consumes them and are removed with that last dependency.
 Each consumer entry retains the effective pre-advance planning mode because a
 removed projected `both` edge and a removed explicit `planning_only` edge can
@@ -653,9 +671,9 @@ tasks from Git.
 - An enabled but unsealed or partially sealed plan is analyzable for replanning
   but fails closed for affected new starts.
 - Unknown assurance/hash versions and incomplete projections are unavailable.
-- The active CLI, help, Guide, package exports, schemas, release, and installed
-  behavior remain unchanged until a separately accepted interface and runtime
-  cutover.
+- The selected Grammar 6 and CLI Contract 7 interface remains unavailable in
+  the active CLI, help, Guide, package exports, schemas, and installed behavior
+  until the coordinated runtime cutover.
 - Publication, plan advance, Issue mutation, and release-channel changes remain
   separate authorization boundaries.
 
@@ -672,14 +690,13 @@ tasks from Git.
 - cross-project or macro/detail assurance composition;
 - aspect-specific dependency hashes; model 1 hashes the complete closed task
   plan contract; and
-- a public grammar/CLI contract version, remaining assurance-record spelling,
-  result schema number, diagnostic code, or release version before the
-  interface contract selects them.
+- a release version, release plan, publication, or channel change; the public
+  Grammar 6 and CLI Contract 7 interface is selected independently of release.
 
 ## 13. Acceptance cases
 
 The normative examples define dependency-ordered cases `PAS-001` through
-`PAS-014`. A future implementation is not accepted until those cases have one
+`PAS-014`. The complete implementation is not accepted until those cases have one
 machine-readable fixture and complete Core, CLI, schema, help, temporary-link,
 package, installed-package, advance, governance, and compatibility evidence.
 

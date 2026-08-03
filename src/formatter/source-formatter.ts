@@ -10,6 +10,8 @@ import {
   TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
 import type {
+  AcceptedPlanningInputValue,
+  AssuranceConsumerValue,
   DeclarationKind,
   DocumentNode,
   DurationFractionValue,
@@ -57,7 +59,7 @@ export interface FormatValidation {
 export interface SourceFormatProfile {
   readonly fieldOrder:
     Readonly<Record<DeclarationKind, readonly string[]>>
-    & Partial<Readonly<Record<"work_event", readonly string[]>>>;
+    & Partial<Readonly<Record<TargetDeclarationKind, readonly string[]>>>;
 }
 
 interface PhysicalLine {
@@ -207,10 +209,25 @@ function isVelocityValue(value: unknown): value is VelocityValue {
 }
 
 function canonicalFieldValue(field: FieldNode): string | undefined {
-  if (["title", "description", "owner", "source", "blocked_reason", "reason"].includes(field.name)) {
+  if ([
+    "title",
+    "description",
+    "owner",
+    "source",
+    "blocked_reason",
+    "reason",
+    "summary",
+  ].includes(field.name)) {
     return typeof field.value === "string" ? JSON.stringify(field.value) : undefined;
   }
-  if (["version", "capacity", "priority", "model"].includes(field.name)) {
+  if ([
+    "version",
+    "capacity",
+    "priority",
+    "model",
+    "plan_assurance_model",
+    "plan_assurance_hash_model",
+  ].includes(field.name)) {
     return typeof field.value === "number" ? String(field.value) : undefined;
   }
   if (
@@ -283,6 +300,32 @@ function requirementValues(field: FieldNode): readonly RequirementValue[] {
   );
 }
 
+function acceptedInputValues(
+  field: FieldNode,
+): readonly AcceptedPlanningInputValue[] {
+  if (field.name !== "accepted_inputs" || !Array.isArray(field.value)) return [];
+  return field.value.filter(
+    (value): value is AcceptedPlanningInputValue =>
+      typeof value === "object" &&
+      value !== null &&
+      "predecessorTaskId" in value &&
+      "assuranceHash" in value,
+  );
+}
+
+function assuranceConsumerValues(
+  field: FieldNode,
+): readonly AssuranceConsumerValue[] {
+  if (field.name !== "consumers" || !Array.isArray(field.value)) return [];
+  return field.value.filter(
+    (value): value is AssuranceConsumerValue =>
+      typeof value === "object" &&
+      value !== null &&
+      "consumerTaskId" in value &&
+      "consumerSpan" in value,
+  );
+}
+
 function pushEdit(edits: TextEdit[], text: string, edit: TextEdit): void {
   if (text.slice(edit.startOffset, edit.endOffset) !== edit.replacement) edits.push(edit);
 }
@@ -317,7 +360,9 @@ export function formatValidatedSource(
       startOffset: declaration.headerSpan.start.offset,
       endOffset: declaration.headerSpan.end.offset,
       replacement:
-        declaration.kind === "task" || declaration.kind === "gate"
+        declaration.kind === "task" ||
+          declaration.kind === "gate" ||
+          declaration.kind === "task_relation"
           ? `${declaration.kind} ${declaration.id} ${declaration.from!} -> ${declaration.to!}:`
           : `${declaration.kind} ${declaration.id}:`,
     });
@@ -352,7 +397,12 @@ export function formatValidatedSource(
           endOffset: lastLine.end,
           replacement,
         });
-      } else if (field.children !== undefined || field.name === "requires") {
+      } else if (
+        field.children !== undefined ||
+        field.name === "requires" ||
+        field.name === "accepted_inputs" ||
+        field.name === "consumers"
+      ) {
         pushEdit(edits, text, {
           startOffset: fieldLine.start,
           endOffset: fieldLine.end,
@@ -386,6 +436,23 @@ export function formatValidatedSource(
           startOffset: requirementLine.start,
           endOffset: requirementLine.end,
           replacement: `    ${requirement.resourceId} ${requirement.units}`,
+        });
+      }
+      for (const input of acceptedInputValues(field)) {
+        const inputLine = lines[input.span.start.line]!;
+        pushEdit(edits, text, {
+          startOffset: inputLine.start,
+          endOffset: inputLine.end,
+          replacement:
+            `    ${input.predecessorTaskId} ${input.relationMode} ${input.assuranceHash}`,
+        });
+      }
+      for (const consumer of assuranceConsumerValues(field)) {
+        const consumerLine = lines[consumer.span.start.line]!;
+        pushEdit(edits, text, {
+          startOffset: consumerLine.start,
+          endOffset: consumerLine.end,
+          replacement: `    ${consumer.consumerTaskId} ${consumer.relationMode}`,
         });
       }
     }

@@ -18,8 +18,11 @@ import {
   TARGET_GRAMMAR_2_DECLARATION_FIELD_ORDER,
   TARGET_GRAMMAR_4_DECLARATION_FIELD_ORDER,
   TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER,
+  TARGET_GRAMMAR_6_DECLARATION_FIELD_ORDER,
 } from "../model/declaration-fields.js";
 import type {
+  AcceptedPlanningInputValue,
+  AssuranceConsumerValue,
   DeclarationKind,
   DeclarationNode,
   DocumentNode,
@@ -99,6 +102,19 @@ export const TARGET_GRAMMAR_5_CAPABILITY: TargetGrammar5Capability =
     grammarVersion: 5,
   });
 
+export interface TargetGrammar6Capability {
+  readonly id: "perttool.target-grammar-6-assurance-source";
+  readonly version: 1;
+  readonly grammarVersion: 6;
+}
+
+export const TARGET_GRAMMAR_6_CAPABILITY: TargetGrammar6Capability =
+  Object.freeze({
+    id: "perttool.target-grammar-6-assurance-source",
+    version: 1,
+    grammarVersion: 6,
+  });
+
 const identifierPattern = /^[A-Za-z][A-Za-z0-9_-]*$/;
 const declarationKinds = new Set<DeclarationKind>([
   "project",
@@ -110,7 +126,7 @@ const declarationKinds = new Set<DeclarationKind>([
 
 function allowedFieldsFromOrder(
   fieldOrder: Readonly<Record<DeclarationKind, readonly string[]>> &
-    Partial<Readonly<Record<"work_event", readonly string[]>>>,
+    Partial<Readonly<Record<TargetDeclarationKind, readonly string[]>>>,
 ): Readonly<Record<TargetDeclarationKind, ReadonlySet<string>>> {
   return {
     project: new Set(fieldOrder.project),
@@ -118,6 +134,10 @@ function allowedFieldsFromOrder(
     milestone: new Set(fieldOrder.milestone),
     task: new Set(fieldOrder.task),
     gate: new Set(fieldOrder.gate),
+    task_relation: new Set(fieldOrder.task_relation ?? []),
+    plan_seal: new Set(fieldOrder.plan_seal ?? []),
+    task_outcome: new Set(fieldOrder.task_outcome ?? []),
+    assurance_receipt: new Set(fieldOrder.assurance_receipt ?? []),
     work_event: new Set(fieldOrder.work_event ?? []),
   };
 }
@@ -138,6 +158,10 @@ const grammar5AllowedFields: Readonly<
   Record<TargetDeclarationKind, ReadonlySet<string>>
 > = allowedFieldsFromOrder(TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER);
 
+const grammar6AllowedFields: Readonly<
+  Record<TargetDeclarationKind, ReadonlySet<string>>
+> = allowedFieldsFromOrder(TARGET_GRAMMAR_6_DECLARATION_FIELD_ORDER);
+
 interface ParseProfile {
   readonly allowedFields: Readonly<
     Record<TargetDeclarationKind, ReadonlySet<string>>
@@ -147,6 +171,7 @@ interface ParseProfile {
   readonly governanceValues: boolean;
   readonly workEvents: boolean;
   readonly suspendedStatus: boolean;
+  readonly assuranceRecords: boolean;
 }
 
 const grammar1Profile: ParseProfile = {
@@ -156,6 +181,7 @@ const grammar1Profile: ParseProfile = {
   governanceValues: false,
   workEvents: false,
   suspendedStatus: false,
+  assuranceRecords: false,
 };
 
 const grammar2Profile: ParseProfile = {
@@ -165,6 +191,7 @@ const grammar2Profile: ParseProfile = {
   governanceValues: false,
   workEvents: false,
   suspendedStatus: false,
+  assuranceRecords: false,
 };
 
 const grammar3Profile: ParseProfile = {
@@ -174,6 +201,7 @@ const grammar3Profile: ParseProfile = {
   governanceValues: false,
   workEvents: false,
   suspendedStatus: false,
+  assuranceRecords: false,
 };
 
 const grammar4Profile: ParseProfile = {
@@ -183,6 +211,7 @@ const grammar4Profile: ParseProfile = {
   governanceValues: true,
   workEvents: false,
   suspendedStatus: false,
+  assuranceRecords: false,
 };
 
 const grammar5Profile: ParseProfile = {
@@ -192,6 +221,17 @@ const grammar5Profile: ParseProfile = {
   governanceValues: true,
   workEvents: true,
   suspendedStatus: true,
+  assuranceRecords: false,
+};
+
+const grammar6Profile: ParseProfile = {
+  allowedFields: grammar6AllowedFields,
+  typedCalendarValues: true,
+  exactFractionDurations: true,
+  governanceValues: true,
+  workEvents: true,
+  suspendedStatus: true,
+  assuranceRecords: true,
 };
 
 function splitLines(text: string): readonly SourceLine[] {
@@ -491,6 +531,7 @@ function splitPrincipalItems(raw: string): readonly string[] | undefined {
 }
 
 function scalarFieldValue(
+  declarationKind: TargetDeclarationKind,
   name: string,
   rawValue: string,
   profile: ParseProfile,
@@ -501,13 +542,20 @@ function scalarFieldValue(
       ? { value: rawValue, code: "PTDSL-006", topic: "syntax.string" }
       : { value };
   }
-  if (["description", "blocked_reason", "reason"].includes(name)) {
+  if (["description", "blocked_reason", "reason", "summary"].includes(name)) {
     const value = parseString(rawValue);
     return value === undefined
       ? { value: rawValue, code: "PTDSL-006", topic: "syntax.text" }
       : { value };
   }
-  if (["version", "capacity", "priority", "model"].includes(name)) {
+  if ([
+    "version",
+    "capacity",
+    "priority",
+    "model",
+    "plan_assurance_model",
+    "plan_assurance_hash_model",
+  ].includes(name)) {
     const value = parseInteger(rawValue);
     return value === undefined
       ? { value: rawValue, code: "PTDSL-012", topic: "syntax" }
@@ -554,7 +602,13 @@ function scalarFieldValue(
   if (name === "task") {
     return identifierPattern.test(rawValue)
       ? { value: rawValue }
-      : { value: rawValue, code: "PTDSL-004", topic: "syntax.work-event" };
+      : {
+          value: rawValue,
+          code: "PTDSL-004",
+          topic: declarationKind === "work_event"
+            ? "syntax.work-event"
+            : "syntax.plan-assurance",
+        };
   }
   if (name === "kind") {
     return ["start", "suspend", "resume", "finish"].includes(rawValue)
@@ -596,6 +650,15 @@ function scalarFieldValue(
       ? { value: rawValue }
       : { value: rawValue, code: "PTDSL-012", topic: "syntax.milestone" };
   }
+  if (name === "status" && declarationKind === "task_outcome") {
+    return rawValue === "conformant" || rawValue === "changed"
+      ? { value: rawValue }
+      : {
+          value: rawValue,
+          code: "PTASSURE-101",
+          topic: "syntax.plan-assurance",
+        };
+  }
   if (name === "status") {
     const values = profile.suspendedStatus
       ? ["planned", "active", "blocked", "suspended", "done"]
@@ -603,6 +666,52 @@ function scalarFieldValue(
     return values.includes(rawValue)
       ? { value: rawValue }
       : { value: rawValue, code: "PTDSL-012", topic: "syntax.task" };
+  }
+  if (name === "mode") {
+    return ["both", "execution_only", "planning_only"].includes(rawValue)
+      ? { value: rawValue }
+      : {
+          value: rawValue,
+          code: "PTASSURE-101",
+          topic: "syntax.plan-assurance",
+        };
+  }
+  if (name === "outcome") {
+    return rawValue === "conformant" || rawValue === "changed"
+      ? { value: rawValue }
+      : {
+          value: rawValue,
+          code: "PTASSURE-101",
+          topic: "syntax.plan-assurance",
+        };
+  }
+  if ([
+    "producer",
+    "source_milestone",
+  ].includes(name)) {
+    return identifierPattern.test(rawValue)
+      ? { value: rawValue }
+      : {
+          value: rawValue,
+          code: "PTDSL-004",
+          topic: "syntax.plan-assurance",
+        };
+  }
+  if ([
+    "accepted_contract",
+    "accepted_basis",
+    "against_basis",
+    "receipt_hash",
+    "producer_contract_hash",
+    "producer_assurance_hash",
+  ].includes(name)) {
+    return /^sha256:[0-9a-f]{64}$/.test(rawValue)
+      ? { value: rawValue }
+      : {
+          value: rawValue,
+          code: "PTASSURE-101",
+          topic: "syntax.plan-assurance",
+        };
   }
   if (name === "tags") {
     const value = splitTagItems(rawValue);
@@ -806,6 +915,102 @@ function parseNestedRequirements(
   return { requirements, nextIndex: index, endSpan };
 }
 
+function parseNestedAssuranceEntries(
+  lines: readonly SourceLine[],
+  startIndex: number,
+  fieldName: "accepted_inputs" | "consumers",
+  diagnostics: Diagnostic[],
+  trivia: TriviaNode[],
+): {
+  value: readonly (AcceptedPlanningInputValue | AssuranceConsumerValue)[];
+  nextIndex: number;
+  endSpan: SourceSpan;
+} {
+  const values: Array<AcceptedPlanningInputValue | AssuranceConsumerValue> = [];
+  let index = startIndex;
+  let endSpan = lineSpan(lines[startIndex - 1]!);
+  while (index < lines.length) {
+    const line = lines[index]!;
+    const trimmed = line.text.trim();
+    if (trimmed === "" || trimmed.startsWith("#")) {
+      trivia.push({
+        kind: trimmed === "" ? "blank" : "comment",
+        text: line.text,
+        span: lineSpan(line),
+      });
+      endSpan = lineSpan(line);
+      index += 1;
+      continue;
+    }
+    const { indent, hasTab } = leadingIndent(line);
+    if (indent <= 2) break;
+    if (hasTab || indent !== 4) {
+      diagnostics.push(diagnostic(
+        hasTab ? "PTDSL-001" : "PTDSL-002",
+        `The ${fieldName} block must be indented by 4 spaces`,
+        span(line, 0, indent),
+        "syntax.plan-assurance",
+      ));
+      index += 1;
+      if (indent > 4) index = skipIndentedRegion(lines, index, 4);
+      continue;
+    }
+    const content = line.text.slice(4).trimEnd();
+    const inlineCommentStart = findInlineCommentStart(content);
+    if (inlineCommentStart !== undefined) {
+      diagnostics.push(inlineCommentDiagnostic(line, 4 + inlineCommentStart));
+      index += 1;
+      continue;
+    }
+    const match = fieldName === "accepted_inputs"
+      ? /^([A-Za-z][A-Za-z0-9_-]*) +(both|planning_only) +(sha256:[0-9a-f]{64})$/.exec(content)
+      : /^([A-Za-z][A-Za-z0-9_-]*) +(both|planning_only)$/.exec(content);
+    if (match === null) {
+      diagnostics.push(diagnostic(
+        "PTASSURE-101",
+        fieldName === "accepted_inputs"
+          ? "An accepted input must use `TASK_ID both|planning_only sha256:<lower-hex-64>`"
+          : "An assurance consumer must use `TASK_ID both|planning_only`",
+        lineSpan(line),
+        "syntax.plan-assurance",
+      ));
+      index += 1;
+      continue;
+    }
+    const id = match[1]!;
+    const mode = match[2]! as "both" | "planning_only";
+    const idOffset = line.text.indexOf(id, 4);
+    const modeOffset = line.text.indexOf(mode, idOffset + id.length);
+    if (fieldName === "accepted_inputs") {
+      const assuranceHash = match[3]!;
+      const hashOffset = line.text.indexOf(
+        assuranceHash,
+        modeOffset + mode.length,
+      );
+      values.push({
+        predecessorTaskId: id,
+        relationMode: mode,
+        assuranceHash,
+        span: lineSpan(line),
+        predecessorSpan: span(line, idOffset, idOffset + id.length),
+        modeSpan: span(line, modeOffset, modeOffset + mode.length),
+        hashSpan: span(line, hashOffset, hashOffset + assuranceHash.length),
+      });
+    } else {
+      values.push({
+        consumerTaskId: id,
+        relationMode: mode,
+        span: lineSpan(line),
+        consumerSpan: span(line, idOffset, idOffset + id.length),
+        modeSpan: span(line, modeOffset, modeOffset + mode.length),
+      });
+    }
+    endSpan = lineSpan(line);
+    index += 1;
+  }
+  return { value: values, nextIndex: index, endSpan };
+}
+
 function parseBlockText(
   lines: readonly SourceLine[],
   startIndex: number,
@@ -929,6 +1134,14 @@ function isKnownDeclarationHeader(
     /^(?:project|resource|milestone) +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized) ||
     /^(?:task|gate) +[A-Za-z][A-Za-z0-9_-]* +[A-Za-z][A-Za-z0-9_-]* +-> +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized) ||
     (
+      profile.assuranceRecords &&
+      /^task_relation +[A-Za-z][A-Za-z0-9_-]* +[A-Za-z][A-Za-z0-9_-]* +-> +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized)
+    ) ||
+    (
+      profile.assuranceRecords &&
+      /^(?:plan_seal|task_outcome|assurance_receipt) +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized)
+    ) ||
+    (
       profile.workEvents &&
       /^work_event +[A-Za-z][A-Za-z0-9_-]*:$/.test(normalized)
     )
@@ -975,11 +1188,14 @@ function parseDeclarationHeader(
   "span" | "fields"
 > | undefined {
   const normalized = line.text.trimEnd();
-  const edge = /^(task|gate) +([A-Za-z][A-Za-z0-9_-]*) +([A-Za-z][A-Za-z0-9_-]*) +-> +([A-Za-z][A-Za-z0-9_-]*):$/.exec(
+  const edgePattern = profile.assuranceRecords
+    ? /^(task|gate|task_relation) +([A-Za-z][A-Za-z0-9_-]*) +([A-Za-z][A-Za-z0-9_-]*) +-> +([A-Za-z][A-Za-z0-9_-]*):$/
+    : /^(task|gate) +([A-Za-z][A-Za-z0-9_-]*) +([A-Za-z][A-Za-z0-9_-]*) +-> +([A-Za-z][A-Za-z0-9_-]*):$/;
+  const edge = edgePattern.exec(
     normalized,
   );
   if (edge !== null) {
-    const kind = edge[1] as "task" | "gate";
+    const kind = edge[1] as "task" | "gate" | "task_relation";
     const id = edge[2]!;
     const from = edge[3]!;
     const to = edge[4]!;
@@ -999,15 +1215,20 @@ function parseDeclarationHeader(
       arrowSpan: span(line, arrowStart, arrowStart + 2),
     };
   }
-  const simplePattern = profile.workEvents
-    ? /^(project|resource|milestone|work_event) +([A-Za-z][A-Za-z0-9_-]*):$/
-    : /^(project|resource|milestone) +([A-Za-z][A-Za-z0-9_-]*):$/;
+  const simplePattern = profile.assuranceRecords
+    ? /^(project|resource|milestone|plan_seal|task_outcome|assurance_receipt|work_event) +([A-Za-z][A-Za-z0-9_-]*):$/
+    : profile.workEvents
+      ? /^(project|resource|milestone|work_event) +([A-Za-z][A-Za-z0-9_-]*):$/
+      : /^(project|resource|milestone) +([A-Za-z][A-Za-z0-9_-]*):$/;
   const simple = simplePattern.exec(normalized);
   if (simple !== null) {
     const kind = simple[1] as
       | "project"
       | "resource"
       | "milestone"
+      | "plan_seal"
+      | "task_outcome"
+      | "assurance_receipt"
       | "work_event";
     const id = simple[2]!;
     const idStart = line.text.indexOf(id, kind.length + 1);
@@ -1021,7 +1242,16 @@ function parseDeclarationHeader(
   const firstWord = line.text.trim().split(/\s+/, 1)[0] ?? "";
   const knownDeclarationKind =
     declarationKinds.has(firstWord as DeclarationKind) ||
-    (profile.workEvents && firstWord === "work_event");
+    (profile.workEvents && firstWord === "work_event") ||
+    (
+      profile.assuranceRecords &&
+      [
+        "task_relation",
+        "plan_seal",
+        "task_outcome",
+        "assurance_receipt",
+      ].includes(firstWord)
+    );
   diagnostics.push(
     diagnostic(
       knownDeclarationKind ? "PTDSL-004" : "PTDSL-003",
@@ -1125,7 +1355,13 @@ function parseDocumentWithProfile(
       const blockMatch = /^([a-z_]+):$/.exec(content);
       if (blockMatch !== null) {
         const name = blockMatch[1]!;
-        const isKnownBlock = name === "estimate" || name === "requires";
+        const isKnownBlock =
+          name === "estimate" ||
+          name === "requires" ||
+          (
+            profile.assuranceRecords &&
+            (name === "accepted_inputs" || name === "consumers")
+          );
         if (!isKnownBlock || !profile.allowedFields[header.kind].has(name)) {
           diagnostics.push(
             diagnostic(
@@ -1156,6 +1392,25 @@ function parseDocumentWithProfile(
             span: joinSpan(lineSpan(line), parsed.endSpan),
             valueSpan: span(line, keywordStart, keywordStart + name.length),
             children: parsed.children,
+          });
+          declarationEnd = parsed.endSpan;
+          index = parsed.nextIndex;
+          continue;
+        }
+        if (name === "accepted_inputs" || name === "consumers") {
+          const parsed = parseNestedAssuranceEntries(
+            lines,
+            index + 1,
+            name,
+            diagnostics,
+            trivia,
+          );
+          fields.push({
+            name,
+            rawValue: "",
+            value: parsed.value,
+            span: joinSpan(lineSpan(line), parsed.endSpan),
+            valueSpan: span(line, keywordStart, keywordStart + name.length),
           });
           declarationEnd = parsed.endSpan;
           index = parsed.nextIndex;
@@ -1237,7 +1492,7 @@ function parseDocumentWithProfile(
         if (rawValue === "|") index = skipIndentedRegion(lines, index, 2);
         continue;
       }
-      const parsed = scalarFieldValue(name, rawValue, profile);
+      const parsed = scalarFieldValue(header.kind, name, rawValue, profile);
       if (parsed.code !== undefined) {
         diagnostics.push(
           diagnostic(
@@ -1346,6 +1601,20 @@ function parseGrammar5CapableDocument(
     : grammar4;
 }
 
+function parseGrammar6CapableDocument(
+  text: string,
+  options: ParseOptions,
+): ParseResult<TargetDeclarationKind> {
+  const grammar5 = parseGrammar5CapableDocument(text, options);
+  const first = grammar5.document.declarations[0];
+  const version = first?.kind === "project"
+    ? first.fields.find((field) => field.name === "version")?.value
+    : undefined;
+  return version === 6
+    ? parseDocumentWithProfile(text, options, grammar6Profile)
+    : grammar5;
+}
+
 export function parseTargetDocument(
   text: string,
   capability: TargetGrammar2Capability,
@@ -1401,4 +1670,17 @@ export function parseTargetGrammar5Document(
     );
   }
   return parseGrammar5CapableDocument(text, options);
+}
+
+export function parseTargetGrammar6Document(
+  text: string,
+  capability: TargetGrammar6Capability,
+  options: ParseOptions = {},
+): ParseResult<TargetDeclarationKind> {
+  if (capability !== TARGET_GRAMMAR_6_CAPABILITY) {
+    throw new TypeError(
+      "The target Grammar 6 assurance source capability is required",
+    );
+  }
+  return parseGrammar6CapableDocument(text, options);
 }

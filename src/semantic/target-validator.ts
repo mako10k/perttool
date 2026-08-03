@@ -17,10 +17,12 @@ import {
   parseTargetGrammar3Document,
   parseTargetGrammar4Document,
   parseTargetGrammar5Document,
+  parseTargetGrammar6Document,
   parseTargetDocument,
   type TargetGrammar3Capability,
   type TargetGrammar4Capability,
   type TargetGrammar5Capability,
+  type TargetGrammar6Capability,
   type TargetGrammar2Capability,
 } from "../parser/document-parser.js";
 import {
@@ -28,6 +30,7 @@ import {
   validateTargetGrammar3DocumentSemantics,
   validateTargetGrammar4DocumentSemantics,
   validateTargetGrammar5DocumentSemantics,
+  validateTargetGrammar6DocumentSemantics,
 } from "./validator.js";
 
 export interface TargetValidationOptions {
@@ -103,6 +106,25 @@ export interface TargetGrammar5DocumentValidationResult
   > {
   readonly document: DocumentNode<TargetDeclarationKind>;
   readonly validatedDocument: TargetGrammar5ValidatedDocument | null;
+}
+
+const targetGrammar6ValidatedDocumentBrand: unique symbol = Symbol(
+  "perttool.target-grammar-6-validated-document",
+);
+
+export interface TargetGrammar6ValidatedDocument {
+  readonly [targetGrammar6ValidatedDocumentBrand]: true;
+  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | 6;
+  readonly document: DocumentNode<TargetDeclarationKind>;
+}
+
+export interface TargetGrammar6DocumentValidationResult
+  extends Omit<
+    TargetDocumentValidationResult,
+    "document" | "validatedDocument"
+  > {
+  readonly document: DocumentNode<TargetDeclarationKind>;
+  readonly validatedDocument: TargetGrammar6ValidatedDocument | null;
 }
 
 export function validateTargetDocument(
@@ -324,6 +346,67 @@ export function validateTargetGrammar5Document(
     validatedDocument: ok && validatedGrammarVersion !== undefined
       ? Object.freeze({
           [targetGrammar5ValidatedDocumentBrand]: true as const,
+          grammarVersion: validatedGrammarVersion,
+          document: parsed.document,
+        })
+      : null,
+    diagnostics: limited.diagnostics,
+    diagnosticCounts,
+    diagnosticsTruncated: parsed.diagnosticsTruncated || limited.truncated,
+  };
+}
+
+export function validateTargetGrammar6Document(
+  text: string,
+  capability: TargetGrammar6Capability,
+  options: TargetValidationOptions = {},
+): TargetGrammar6DocumentValidationResult {
+  const maxDiagnostics = normalizeMaxDiagnostics(options.maxDiagnostics);
+  const parsed = parseTargetGrammar6Document(
+    text,
+    capability,
+    { maxDiagnostics },
+  );
+  const validatedDiagnostics = validateTargetGrammar6DocumentSemantics(
+    parsed.document,
+    parsed.diagnostics,
+  );
+  const limited = limitDiagnostics(validatedDiagnostics, maxDiagnostics);
+  const project = parsed.document.declarations.find(
+    (declaration) => declaration.kind === "project",
+  );
+  const declaredVersion = project === undefined
+    ? undefined
+    : fieldNamed(project, "version")?.value ?? 1;
+  const parseFailed = parsed.diagnostics.some(
+    (diagnostic) => diagnostic.severity === "error",
+  );
+  const diagnosticCounts = parseFailed
+    ? parsed.diagnosticCounts
+    : countDiagnostics(validatedDiagnostics);
+  const ok = !hasErrors(validatedDiagnostics);
+  const validatedGrammarVersion =
+    declaredVersion === 1 ||
+    declaredVersion === 2 ||
+    declaredVersion === 3 ||
+    declaredVersion === 4 ||
+    declaredVersion === 5 ||
+    declaredVersion === 6
+      ? declaredVersion
+      : undefined;
+  return {
+    ok,
+    document: parsed.document,
+    documentId: project?.id ?? null,
+    grammarVersion: parseFailed
+      ? null
+      : typeof declaredVersion === "number"
+        ? declaredVersion
+        : 1,
+    parseFailed,
+    validatedDocument: ok && validatedGrammarVersion !== undefined
+      ? Object.freeze({
+          [targetGrammar6ValidatedDocumentBrand]: true as const,
           grammarVersion: validatedGrammarVersion,
           document: parsed.document,
         })

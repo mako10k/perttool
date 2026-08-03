@@ -1,0 +1,151 @@
+{
+  "schema_version": "Perttool.PlanAssuranceInterfaceCases.v1",
+  "grammar_version": 6,
+  "cli_contract_version": 7,
+  "plan_assurance_model_version": 1,
+  "hash_model_version": 1,
+  "runtime_status": "internal_hash_source_and_mutation_cores_only",
+  "registered_command_count": 44,
+  "root_schema_count": 20,
+  "source_records": [
+    "task_relation",
+    "plan_seal",
+    "task_outcome",
+    "assurance_receipt"
+  ],
+  "commands": [
+    "plan-assurance show",
+    "plan-assurance hash",
+    "plan-assurance seal",
+    "plan-assurance reseal",
+    "plan-dependency add",
+    "plan-dependency set",
+    "plan-dependency remove",
+    "task-outcome add",
+    "task-outcome set",
+    "task-outcome remove"
+  ],
+  "result_identities": {
+    "check": "Perttool.CheckResult.v4",
+    "project_show": "Perttool.ProjectResult.v4",
+    "analyze": "Perttool.AnalysisResult.v5",
+    "next": "Perttool.NextResult.v6",
+    "mutation": "Perttool.MutationResult.v4",
+    "advance": "Perttool.AdvanceResult.v2",
+    "plan_assurance_show": "Perttool.PlanAssuranceResult.v1",
+    "governance_decision": "Perttool.GovernanceDecision.v2"
+  },
+  "authority_policy": "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",
+  "governance": {
+    "interface_version": 2,
+    "source_contract_version": 1,
+    "new_scope": "plan_assurance",
+    "controlling_owner": "effective_pre_change_dag_owner"
+  },
+  "hash_vectors": [
+    {
+      "name": "task_contract_a",
+      "canonical_utf8": "{\"model\":\"Perttool.TaskPlanContract.v1\",\"task_id\":\"A\",\"from_milestone_id\":\"M0\",\"to_milestone_id\":\"M1\",\"title\":\"A\",\"description\":null,\"duration_or_estimate\":{\"kind\":\"duration\",\"value\":{\"numerator\":\"1\",\"denominator\":\"1\",\"unit\":\"day\"}},\"not_before\":null,\"deadline\":null,\"priority\":0,\"requirements\":[],\"owner\":null,\"tags\":[],\"source\":null}",
+      "sha256": "sha256:e35fe89aabf48b47a19c513e63a7782591e8bf098f79a6b3ad789f905ef3cf2d"
+    },
+    {
+      "name": "task_basis_a",
+      "canonical_utf8": "{\"model\":\"Perttool.TaskPlanBasis.v1\",\"task_contract_hash\":\"sha256:e35fe89aabf48b47a19c513e63a7782591e8bf098f79a6b3ad789f905ef3cf2d\",\"planning_inputs\":[]}",
+      "sha256": "sha256:3923becd976daeca7047a65206633ed3b8210b426f1bf969107728f5261cd489"
+    },
+    {
+      "name": "task_contract_b",
+      "canonical_utf8": "{\"model\":\"Perttool.TaskPlanContract.v1\",\"task_id\":\"B\",\"from_milestone_id\":\"M1\",\"to_milestone_id\":\"M2\",\"title\":\"B\",\"description\":null,\"duration_or_estimate\":{\"kind\":\"duration\",\"value\":{\"numerator\":\"1\",\"denominator\":\"1\",\"unit\":\"day\"}},\"not_before\":null,\"deadline\":null,\"priority\":0,\"requirements\":[],\"owner\":null,\"tags\":[],\"source\":null}",
+      "sha256": "sha256:ccafd4ffb6985b1d11cbb4c91a40e1d634027f73bab5e195d2d63e1179f1aacf"
+    },
+    {
+      "name": "task_basis_b",
+      "canonical_utf8": "{\"model\":\"Perttool.TaskPlanBasis.v1\",\"task_contract_hash\":\"sha256:ccafd4ffb6985b1d11cbb4c91a40e1d634027f73bab5e195d2d63e1179f1aacf\",\"planning_inputs\":[{\"predecessor_task_id\":\"A\",\"relation_mode\":\"both\",\"assurance_hash\":\"sha256:3923becd976daeca7047a65206633ed3b8210b426f1bf969107728f5261cd489\"}]}",
+      "sha256": "sha256:17d1c255bdf3d1f913eb12264c16d64b1abaae4d17e88a224229f550a0830fb9"
+    },
+    {
+      "name": "changed_outcome_contract_a",
+      "canonical_utf8": "{\"model\":\"Perttool.ChangedTaskOutcomeContract.v1\",\"summary\":\"A delivered a versioned alternative\"}",
+      "sha256": "sha256:0b67ac9b301e58d8d9ace9e5bf4d7034fdec47890fa8422a0473bb3a182ec3a0"
+    },
+    {
+      "name": "changed_outcome_commitment_a",
+      "canonical_utf8": "{\"model\":\"Perttool.TaskOutcomeCommitment.v1\",\"task_id\":\"A\",\"against_basis_hash\":\"sha256:3923becd976daeca7047a65206633ed3b8210b426f1bf969107728f5261cd489\",\"changed_outcome_contract_hash\":\"sha256:0b67ac9b301e58d8d9ace9e5bf4d7034fdec47890fa8422a0473bb3a182ec3a0\"}",
+      "sha256": "sha256:3a6a1f163198f68fec99b00dcfcb4dcf584dc864f7c0256faaf08fcad990a889"
+    }
+  ],
+  "cases": [
+    {
+      "id": "PAI-001",
+      "depends_on": [],
+      "operation": "contract_6_non_activation",
+      "expected": { "grammar": 5, "cli_contract": 6, "assurance_commands": false }
+    },
+    {
+      "id": "PAI-002",
+      "depends_on": ["PAI-001"],
+      "operation": "disabled_compatibility",
+      "expected": { "grammar_1_through_5_unchanged": true, "coverage": "not_enabled" }
+    },
+    {
+      "id": "PAI-003",
+      "depends_on": ["PAI-002"],
+      "operation": "atomic_initial_seal",
+      "expected": { "grammar": 6, "model_pair_required": true, "accepted_component_snapshot": true, "partial_baseline": false }
+    },
+    {
+      "id": "PAI-004",
+      "depends_on": ["PAI-003"],
+      "operation": "relation_mutations",
+      "expected": { "modes": ["both", "execution_only", "planning_only"], "arrow_aliases": [] }
+    },
+    {
+      "id": "PAI-005",
+      "depends_on": ["PAI-003", "PAI-004"],
+      "operation": "topological_reseal",
+      "expected": { "repeatable_task": true, "reason_required": true, "automatic_descendant_reseal": false }
+    },
+    {
+      "id": "PAI-006",
+      "depends_on": ["PAI-003"],
+      "operation": "basis_bound_outcome",
+      "expected": { "statuses": ["conformant", "changed"], "changed_summary_required": true, "caller_hash_input": false }
+    },
+    {
+      "id": "PAI-007",
+      "depends_on": ["PAI-005", "PAI-006"],
+      "operation": "advance_receipt",
+      "expected": { "consumer_modes": ["both", "planning_only"], "retained_basis_equal": true, "history_force_bypass": false }
+    },
+    {
+      "id": "PAI-008",
+      "depends_on": ["PAI-003"],
+      "operation": "closed_results_and_schemas",
+      "expected": { "registered_command_count": 44, "root_schema_count": 20, "atomic_cutover": true }
+    },
+    {
+      "id": "PAI-009",
+      "depends_on": ["PAI-003"],
+      "operation": "diagnostics_and_exits",
+      "expected": { "diagnostic_range": "PTASSURE-101..306", "domain_exit": 1, "race_exit": 5 }
+    },
+    {
+      "id": "PAI-010",
+      "depends_on": ["PAI-005", "PAI-006", "PAI-007"],
+      "operation": "governed_assurance_write",
+      "expected": { "governance_interface": 2, "scope": "plan_assurance", "fresh_candidate_authority": true }
+    },
+    {
+      "id": "PAI-011",
+      "depends_on": ["PAI-002", "PAI-008"],
+      "operation": "migration_and_conversion",
+      "expected": { "seal_is_enablement_migration": true, "mermaid_semantic_profile": 2, "disable_command": false }
+    },
+    {
+      "id": "PAI-012",
+      "depends_on": ["PAI-007", "PAI-008", "PAI-009", "PAI-010", "PAI-011"],
+      "operation": "public_activation_gate",
+      "expected": { "grammar": 6, "cli_contract": 7, "release_selected": false, "partial_public_activation": false }
+    }
+  ]
+}

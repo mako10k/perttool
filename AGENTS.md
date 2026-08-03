@@ -144,6 +144,32 @@ declarations remain until separately authorized release-plan advance. npm
 `latest` promotion, release-plan advance, and Issue mutation remain separate
 decisions.
 
+The explicitly selected `ASSURE-001` workstream is tracked independently in
+`plans/plan-assurance.pert`. The user accepted the 9,698-byte initial plan
+candidate affecting goal and DAG scopes; it was written once with actor
+`codex` and the scope-bound owner assertion `user`. The user later accepted
+one exact DAG-only amendment adding the pinpoint hash-inspection task; the
+current ten tasks total 59p.
+`ASSURE_INTERFACE_CONTRACT` is complete after accepting Grammar 6, CLI Contract
+7, all assurance source records and commands, closed results, diagnostics,
+governance interface 2, migration, and six fixed SHA-256 vectors.
+`ASSURE_HASH_CORE` is complete with an internal pure `src/assurance/` evaluator
+for canonical task and outcome commitments, default and explicit planning
+dependencies, topological state propagation, accepted component seals, and
+complete cause paths. `ASSURE_SOURCE_CORE` is complete with an internal,
+identity-checked Grammar 6 parser, validator, formatter, source-span model,
+semantic assurance projection, and frontier receipt self-hash check.
+`ASSURE_MUTATION_CORE` is complete with internal preview-first relation,
+initial-seal, selected-reseal, and outcome mutation planning; mixed
+final-candidate batch composition; GovernanceDecision v2; assurance impact;
+and digest-bound Grammar 6 safe persistence. All four completed declarations
+remain pre-advance. Fresh complete NextResult v5 recommends and authorizes only
+`ASSURE_AUTHORITY_CORE`;
+`ASSURE_HASH_INSPECTION` remains a separately planned public-input task.
+Current Grammar 5, CLI Contract 6,
+package root, package `0.6.0`, release selection, remote writes, publication,
+dist-tag movement, and Issue mutation remain unchanged and separately gated.
+
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
 The explicitly selected project-actuals workstream is tracked independently in
@@ -447,11 +473,12 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.6.0.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.6.0.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
 - `src/actuals/`: active Grammar 5 source projection, deterministic event identity, exact lifecycle reduction, exact measurements, and stored-state validation for task-owned work-event records.
+- `src/assurance/`: internal ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, and impact composition; it is not exported by the active package root or CLI Contract 6.
 - `src/command/`: immutable typed Contract 6 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 6 editing and actuals Guide.
 - `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
@@ -464,13 +491,13 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4/5 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 6 package surface.
 - `src/history/`: active read-only Git probe, pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck.
-- `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5 target-validation adapters.
+- `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5/6 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
 - `src/parser/`: the active Grammar 1/2/3/4/5 parser with identity-checked task-owned work-event source.
 - `src/semantic/`: active Grammar 1/2/3/4/5 validated-document boundaries, task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
-- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
+- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, internal Grammar 6 assurance persistence, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
@@ -511,7 +538,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all twenty-nine self-use plans, including the selected `0.6.0` release, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all thirty self-use plans, including plan-assurance, the selected `0.6.0` release, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci

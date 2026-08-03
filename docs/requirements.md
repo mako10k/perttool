@@ -187,7 +187,9 @@ while the upstream plans on which it was reviewed remain unchanged. This is a
 planning-basis relationship, not another task status, resource dependency,
 recommendation tier, approval certificate, or probability score. The
 [Conditional Plan Assurance Contract](specs/plan-assurance.md) defines the
-target semantic and hash models.
+target semantic and hash models. The [Plan Assurance Interface
+Contract](specs/plan-assurance-interface.md) fixes their Grammar 6 and CLI
+Contract 7 source, result, command, diagnostic, and governance boundary.
 
 Must:
 
@@ -217,6 +219,9 @@ Must:
   and the assurance fields themselves from the task-plan contract hash.
 - Keep the automatically recomputed basis distinct from the last explicitly
   accepted basis. A mismatch must never update or accept itself.
+- Retain enough accepted component commitments to distinguish a direct task
+  contract change, a direct planning-relation change, and an inherited
+  predecessor change; do not infer those causes from one opaque basis hash.
 - Preserve existing documents that do not enable assurance. Once assurance is
   enabled, missing, partial, unknown-version, or mismatched assurance must fail
   closed only for the affected new-start authority while retaining analysis
@@ -788,9 +793,8 @@ Must:
   once and become a valid planning input only after the affected downstream
   plans are explicitly replanned and resealed against it.
 - Keep existing Grammar 1 through 5 and CLI Contract 6 source and result
-  identities unchanged until a future source/interface contract selects and
-  atomically activates the required grammar, results, help, Guide,
-  diagnostics, and migration.
+  identities unchanged until the selected Grammar 6 and CLI Contract 7 target
+  atomically activates its results, help, Guide, diagnostics, and migration.
 
 SHA-256 is the first commitment algorithm, with domain-separated model
 identities and canonical lowercase `sha256:` spelling. The threat model is
@@ -1249,15 +1253,14 @@ surface. Their option, result, diagnostic, version, and compatibility
 contracts are fixed by the Project Actuals specification. The published
 `0.4.0` Contract 5 package does not contain these commands.
 
-The conditional plan-assurance source target adds preview-first
-`plan-dependency add|set|remove` operations in a future atomic interface
-cutover. Their positional operands are file, relation ID, predecessor task ID,
-and successor task ID for `add`; their CLI mode values are `both`,
-`execution-only`, and `planning-only`, mapped to DSL/JSON `both`,
-`execution_only`, and `planning_only`. These operations never create or remove
-AoA edges. A mode conversion that also changes execution dependency must be one
-final-candidate atomic batch. Grammar 1 through 5 and CLI Contract 6 continue
-to reject this unavailable surface.
+The selected conditional plan-assurance interface adds preview-first
+`plan-assurance show|hash|seal|reseal`, `plan-dependency add|set|remove`, and
+`task-outcome add|set|remove` operations in one future atomic Grammar 6 and CLI
+Contract 7 cutover. Relation CLI modes `both`, `execution-only`, and
+`planning-only` map to DSL/JSON `both`, `execution_only`, and `planning_only`.
+These operations never create or remove AoA edges. A mode conversion that also
+changes execution dependency must be one final-candidate atomic batch. Grammar
+1 through 5 and CLI Contract 6 continue to reject this unavailable surface.
 
 ### 12.3 Owner-aware goal and DAG writes
 
@@ -2350,15 +2353,17 @@ provide Contract 6, while Contract 5 remains available by pinning `0.4.0`.
 The obsolete npm `alpha` dist-tag is retired; historical
 `0.1.0-alpha.2` remains available by exact pin.
 
-The conditional plan-assurance target is design-only. Requirements 2.7 and
-7.9, the draft [Conditional Plan Assurance
+The conditional plan-assurance semantic and interface targets are accepted,
+and its internal hash/state, Grammar 6 source, and governed mutation Cores are
+implemented without public activation.
+Requirements 2.7 and 7.9, the [Conditional Plan Assurance
 Contract](specs/plan-assurance.md), its [normative examples](examples/plan-assurance.md),
-and the [design consistency review](process/plan-assurance-design-review.md)
-fix the semantic target plus `task_relation` and
-`plan-dependency add|set|remove`. The enclosing grammar version, remaining
-source records and public commands, result schema identities, diagnostics,
-governance-version cutover, implementation plan, and release remain unselected
-and unavailable in the current runtime.
+the [Plan Assurance Interface Contract](specs/plan-assurance-interface.md), and
+the [design consistency review](process/plan-assurance-design-review.md) fix
+Grammar 6, CLI Contract 7, all assurance records and commands, result schema
+identities, diagnostics, and governance-version cutover. The selected
+implementation plan is active. Package version and release remain unselected,
+and the complete surface remains unavailable in the current runtime.
 
 Resolved design decisions:
 
@@ -2524,11 +2529,23 @@ Before implementation, separate the specifications in the following order.
     - [x] Select top-level `task_relation` syntax, explicit `both` pinning,
       source-preservation rules, and `plan-dependency add|set|remove` mutation
       mapping without activating Grammar 5 or CLI Contract 6.
-    - [ ] Select the enclosing grammar version; assurance model, seal, outcome,
+    - [x] Select the enclosing grammar version; assurance model, seal, outcome,
       and receipt source records; inspection/seal/reseal operations; public
       result identities; diagnostics; Guide/help projection; governance
-      version; and migration.
-    - [ ] Create an independent `.pert` workstream before implementation.
+      version; and migration in the [Plan Assurance Interface
+      Contract](specs/plan-assurance-interface.md).
+    - [x] Create and select the independent
+      [`plans/plan-assurance.pert`](../plans/plan-assurance.pert) workstream
+      from a complete NextResult v5; start only `ASSURE_INTERFACE_CONTRACT`.
+    - [x] Implement and accept the internal deterministic hash/state Core with
+      accepted component seals, six fixed vectors, complete cause paths, and
+      no active package-root or CLI activation in the [Hash Core Acceptance
+      Record](process/plan-assurance-hash-core-acceptance.md).
+    - [x] Implement and accept the identity-checked internal Grammar 6 parser,
+      validator, formatter, source spans, semantic projection, and receipt
+      self-hash boundary without active package-root or CLI activation in the
+      [Source Core Acceptance
+      Record](process/plan-assurance-source-core-acceptance.md).
     - [ ] Implement and accept Core, CLI, schemas, safe write, advance,
       compatibility, package, and installed workflows without changing the
       active Contract 6 surface prematurely.

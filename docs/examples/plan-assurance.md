@@ -1,14 +1,14 @@
 # Conditional Plan Assurance Examples
 
-- Status: Draft 0.2 normative examples
+- Status: Normative target 1.0 examples
 - Contract: [Conditional Plan Assurance](../specs/plan-assurance.md)
-- Runtime status: Not implemented
+- Interface: [Grammar 6 and CLI Contract 7](../specs/plan-assurance-interface.md)
+- Runtime status: Internal hash/state, Grammar 6 source, and governed mutation Cores implemented; Grammar 6 and CLI Contract 7 not activated
 - Case fixture: [`plan-assurance-contract-v1.json`](../../test/fixtures/plan-assurance-contract-v1.json)
 
-The `task_relation` snippets below are the selected future source target. The
-enclosing grammar version and assurance-model, seal, outcome, and receipt
-records are not yet selected, so their inputs remain semantic descriptions.
-The current Grammar 5 parser and CLI Contract 6 do not accept these snippets.
+The snippets below use the selected Grammar 6 source target. The current
+Grammar 5 parser and CLI Contract 6 do not accept these snippets; public
+activation is one later coordinated plan task.
 `A -> B` in an execution diagram means the projected AoA task dependency
 described by the contract; it is not a replacement for task-as-edge source
 notation.
@@ -28,9 +28,48 @@ task_relation REL_PLANNING A -> B:
   reason "B uses A's findings but may start before A finishes"
 ```
 
-Their future CLI modes are `both`, `execution-only`, and `planning-only` under
+Their selected CLI modes are `both`, `execution-only`, and `planning-only` under
 `plan-dependency add|set|remove`. `=>`, `.>`, and other arrow spellings are not
 aliases; the `mode` field carries the distinction.
+
+The selected machine-managed records have these shapes:
+
+```pert
+project ASSURED:
+  version 6
+  plan_assurance_model 1
+  plan_assurance_hash_model 1
+
+plan_seal B:
+  accepted_contract sha256:ccafd4ffb6985b1d11cbb4c91a40e1d634027f73bab5e195d2d63e1179f1aacf
+  accepted_basis sha256:17d1c255bdf3d1f913eb12264c16d64b1abaae4d17e88a224229f550a0830fb9
+  accepted_inputs:
+    A both sha256:3923becd976daeca7047a65206633ed3b8210b426f1bf969107728f5261cd489
+  reason "Initial plan assurance seal"
+
+task_outcome OUT_A:
+  model 1
+  task A
+  against_basis sha256:3923becd976daeca7047a65206633ed3b8210b426f1bf969107728f5261cd489
+  status changed
+  summary "The delivered API returns a different normalized record"
+  reason "Acceptance found a deliberate contract difference"
+
+assurance_receipt AR_A:
+  model 1
+  receipt_hash sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  producer A
+  producer_contract_hash sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  producer_assurance_hash sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  outcome conformant
+  source_milestone M1
+  consumers:
+    B both
+```
+
+Inspection and acceptance use `plan-assurance show|hash|seal|reseal`; dependency
+and outcome evidence use `plan-dependency add|set|remove` and
+`task-outcome add|set|remove`. Callers do not supply accepted basis hashes.
 
 ## PAS-001: Assurance-disabled compatibility
 

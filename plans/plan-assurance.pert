@@ -1,0 +1,284 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project ASSURE_001:
+  version 5
+  title "Conditional plan assurance"
+  description "Implement ASSURE-001 as an independent post-0.6.0 workstream. First accept the complete Grammar 6 and CLI Contract 7 assurance interface, then implement source preservation and semantic hashing, governed assurance mutations, authority composition, assurance-preserving advance, compatibility, one atomic public cutover, and installed-package acceptance. Preserve Grammar 1 through 5, CLI Contract 6, raw recommendation ranking, existing history safety, and the published 0.6.0 artifact until the public-contract gate. Release selection, remote writes, publication, dist-tag movement, and Issue mutation remain separate decisions."
+  as_of 2026-08-03
+  duration_unit point
+  velocity 29p/2d
+  finish ASSURE_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone ASSURE_SELECTED:
+  title "ASSURE-001 selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two implementation slices may run concurrently only when their owned surfaces do not overlap."
+  capacity 2
+
+resource REVIEWERS:
+  title "Normative and acceptance review capacity"
+  description "Serialize interface, public-contract, and final acceptance review."
+  capacity 1
+
+resource NORMATIVE_SURFACE:
+  title "Requirements, specifications, examples, and acceptance ownership"
+  capacity 1
+
+resource SOURCE_SURFACE:
+  title "Grammar, parser, semantic, formatter, and source mutation ownership"
+  capacity 1
+
+resource ASSURANCE_CORE:
+  title "Plan dependency, canonical hash, state, and cause-graph ownership"
+  capacity 1
+
+resource MUTATION_SURFACE:
+  title "Governed assurance mutation and safe-write ownership"
+  capacity 1
+
+resource ADVANCE_SURFACE:
+  title "Advance contraction, receipt, and history-guard composition ownership"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "Command registry, results, schemas, diagnostics, help, and Guide ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Compatibility, repository gates, and installed-package acceptance ownership"
+  capacity 1
+
+milestone ASSURE_CONTRACT_ACCEPTED:
+  title "Plan assurance interface contract accepted"
+
+milestone ASSURE_SOURCE_READY:
+  title "Grammar 6 assurance source Core ready"
+
+milestone ASSURE_HASH_READY:
+  title "Plan assurance hash and state Core ready"
+
+milestone ASSURE_CORE_INPUT:
+  title "Source and assurance Core input accepted"
+
+milestone ASSURE_MUTATION_READY:
+  title "Governed assurance mutation Core ready"
+
+milestone ASSURE_AUTHORITY_READY:
+  title "Assurance-aware decision authority ready"
+
+milestone ASSURE_ADVANCE_READY:
+  title "Assurance-preserving advance ready"
+
+milestone ASSURE_COMPATIBILITY_READY:
+  title "Compatibility and conversion boundaries ready"
+
+milestone ASSURE_PUBLIC_INPUT:
+  title "Complete assurance public-contract input accepted"
+
+milestone ASSURE_PUBLIC_READY:
+  title "Grammar 6 and CLI Contract 7 assurance surface ready"
+
+milestone ASSURE_ACCEPTED:
+  title "Conditional plan assurance accepted"
+
+task ASSURE_INTERFACE_CONTRACT ASSURE_SELECTED -> ASSURE_CONTRACT_ACCEPTED:
+  title "Accept the Grammar 6 and CLI Contract 7 assurance interface"
+  description "Select the complete source forms for project assurance enablement, accepted task bases, task outcomes, frontier receipts, and the already selected task_relation record; fix plan-assurance, plan-dependency, and task-outcome command contracts; select result and policy identities, diagnostics, governance scope, compatibility rules, and dependency-ordered interface cases without activating the runtime or selecting a release."
+  duration 6p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    CLI_SURFACE 1
+
+task ASSURE_SOURCE_CORE ASSURE_CONTRACT_ACCEPTED -> ASSURE_SOURCE_READY:
+  title "Implement the internal Grammar 6 assurance source Core"
+  description "Implement identity-checked parsing, validation, source spans, canonical field order, source-preserving formatting, and semantic projection for the accepted assurance fields and records while retaining exact Grammar 1 through 5 behavior and keeping the active package root and CLI Contract 6 unchanged."
+  duration 6p
+  status done
+  priority 95
+  requires:
+    DEVELOPERS 1
+    SOURCE_SURFACE 1
+
+task ASSURE_HASH_CORE ASSURE_CONTRACT_ACCEPTED -> ASSURE_HASH_READY:
+  title "Implement deterministic plan assurance hashing and states"
+  description "Implement the pure projected planning DAG, stable cycle witness, closed canonical JSON, domain-separated SHA-256 vectors, full topological recurrence, outcome commitments, task states, impact closure, and complete cause paths. Prove status and work-event exclusion and exact full-recomputation determinism without file, Git, network, or clock access."
+  duration 7p
+  status done
+  priority 95
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    ASSURANCE_CORE 1
+
+gate ASSURE_SOURCE_INPUT ASSURE_SOURCE_READY -> ASSURE_CORE_INPUT:
+  reason "Assurance mutations require the accepted source Core"
+
+gate ASSURE_HASH_INPUT ASSURE_HASH_READY -> ASSURE_CORE_INPUT:
+  reason "Assurance mutations require deterministic hash and state semantics"
+
+task ASSURE_MUTATION_CORE ASSURE_CORE_INPUT -> ASSURE_MUTATION_READY:
+  title "Implement assurance relation, seal, reseal, and outcome mutations"
+  description "Implement source-preserving preview candidates for plan-dependency maintenance, atomic enablement and initial seal, basis-bound reseal, and task outcome set/remove; compose candidate validation, impact summaries, the plan_assurance governance scope, assertions, optimistic locking, warnings, and safe-write ordering without automatic hash acceptance."
+  duration 7p
+  status done
+  priority 90
+  requires:
+    DEVELOPERS 1
+    SOURCE_SURFACE 1
+    ASSURANCE_CORE 1
+    MUTATION_SURFACE 1
+
+task ASSURE_AUTHORITY_CORE ASSURE_CORE_INPUT -> ASSURE_AUTHORITY_READY:
+  title "Compose assurance into analysis and new-start authority"
+  description "Add internal assurance-aware check, analysis, Next, and mutation-impact composition that preserves raw recommendation ranking, filters only versioned new-start authority, reports active attention without lifecycle mutation, returns complete cause and action projections, and fails closed for unknown or incomplete assurance inputs."
+  duration 6p
+  status planned
+  priority 90
+  requires:
+    DEVELOPERS 1
+    ASSURANCE_CORE 1
+    CLI_SURFACE 1
+
+task ASSURE_ADVANCE_CONTRACTION ASSURE_MUTATION_READY -> ASSURE_ADVANCE_READY:
+  title "Implement assurance-preserving advance contraction"
+  description "Implement minimal per-consumer frontier receipts, canonical receipt self-hashes, known changed-outcome handling, pruning, exact retained-basis equality, and source-preserving advance edits; compose independently with AdvanceResult history safety and prove that force-history-loss cannot bypass assurance."
+  duration 6p
+  status planned
+  priority 85
+  requires:
+    DEVELOPERS 1
+    ASSURANCE_CORE 1
+    MUTATION_SURFACE 1
+    ADVANCE_SURFACE 1
+
+task ASSURE_COMPATIBILITY ASSURE_CORE_INPUT -> ASSURE_COMPATIBILITY_READY:
+  title "Close assurance compatibility and conversion boundaries"
+  description "Preserve assurance-disabled Grammar 1 through 5 bytes and results; define and implement Grammar 6 formatting, unit migration, project metadata, history, Mermaid loss and round-trip behavior, batch conversion, package inclusion, and direct-edit guidance so no adapter silently drops or invents assurance state."
+  duration 5p
+  status planned
+  priority 85
+  requires:
+    DEVELOPERS 1
+    SOURCE_SURFACE 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
+
+gate ASSURE_ADVANCE_PUBLIC_INPUT ASSURE_ADVANCE_READY -> ASSURE_PUBLIC_INPUT:
+  reason "Public activation requires accepted assurance-preserving advance"
+
+gate ASSURE_AUTHORITY_PUBLIC_INPUT ASSURE_AUTHORITY_READY -> ASSURE_PUBLIC_INPUT:
+  reason "Public activation requires complete assurance start authority"
+
+gate ASSURE_COMPATIBILITY_PUBLIC_INPUT ASSURE_COMPATIBILITY_READY -> ASSURE_PUBLIC_INPUT:
+  reason "Public activation requires accepted compatibility and conversion behavior"
+
+task ASSURE_PUBLIC_CONTRACT ASSURE_PUBLIC_INPUT -> ASSURE_PUBLIC_READY:
+  title "Activate Grammar 6 and CLI Contract 7 atomically"
+  description "Activate the accepted assurance source, commands, policy identities, result versions, schemas, diagnostics, registry, text and JSON help, Guide, package root, and safe-write paths in one cutover. Retain explicit migration and no partial discovery, alias, or mixed-contract behavior; do not select or publish a package release."
+  duration 8p
+  status planned
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    SOURCE_SURFACE 1
+    ASSURANCE_CORE 1
+    MUTATION_SURFACE 1
+    ADVANCE_SURFACE 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task ASSURE_ACCEPTANCE ASSURE_PUBLIC_READY -> ASSURE_ACCEPTED:
+  title "Accept conditional plan assurance end to end"
+  description "Execute the complete dependency-mode, hash-vector, lifecycle-exclusion, changed-outcome, reseal-authority, partial-branch, advance-receipt, history-force, compatibility, real CLI race, schema, help, temporary-link, package, and isolated installed workflow matrix. Record durable acceptance with no release, remote, Issue, or dist-tag mutation."
+  duration 5p
+  status planned
+  priority 75
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NORMATIVE_SURFACE 1
+    SOURCE_SURFACE 1
+    ASSURANCE_CORE 1
+    MUTATION_SURFACE 1
+    ADVANCE_SURFACE 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
+
+work_event WE-344f640d09c0c022edd1dbef2e86dabe1ef6c2e7e9ad941356830d8015dcedf1:
+  model 1
+  task ASSURE_INTERFACE_CONTRACT
+  kind start
+  occurred_at 2026-08-03T18:46:23+09:00
+  planned_value 6p
+
+work_event WE-2afcde20cb369270d026e724608a9cad667d3c0b0b9033d9b8a3997f737c4224:
+  model 1
+  task ASSURE_INTERFACE_CONTRACT
+  kind finish
+  occurred_at 2026-08-03T19:06:50+09:00
+
+work_event WE-8329e728814a6483a2e358eaf7992c5fd6188fd9939d0c1211de7729a2560051:
+  model 1
+  task ASSURE_HASH_CORE
+  kind start
+  occurred_at 2026-08-03T19:07:31+09:00
+  planned_value 7p
+
+work_event WE-202f2379c80f5a347330e6183a1c36b353c41e03f375261efd726b9bf7914279:
+  model 1
+  task ASSURE_HASH_CORE
+  kind finish
+  occurred_at 2026-08-03T19:23:59+09:00
+
+milestone ASSURE_HASH_INSPECTION_READY:
+  title "Read-only task hash inspection ready"
+
+task ASSURE_HASH_INSPECTION ASSURE_CORE_INPUT -> ASSURE_HASH_INSPECTION_READY:
+  title "Implement pinpoint read-only assurance hash inspection"
+  description "Implement the read-only plan-assurance hash command and task-filtered show projection over the shared semantic and hash Core. Require an explicit contract, computed-basis, or exported selector; emit exactly one lowercase SHA-256 digest in text success, retain source identity in structured output, return no digest for unavailable selections, and document that inspection neither updates seals nor authorizes manual reseal."
+  duration 3p
+  status planned
+  priority 90
+  requires:
+    DEVELOPERS 1
+    ASSURANCE_CORE 1
+    CLI_SURFACE 1
+
+gate ASSURE_HASH_INSPECTION_PUBLIC_INPUT ASSURE_HASH_INSPECTION_READY -> ASSURE_PUBLIC_INPUT:
+  reason "Public activation requires deterministic pinpoint hash inspection and direct-edit guidance"
+
+work_event WE-42fc297fdc9554d46c4ade2a1f6c2415a254251bf531204dbbc500635593c0b2:
+  model 1
+  task ASSURE_SOURCE_CORE
+  kind start
+  occurred_at 2026-08-03T20:21:17+09:00
+  planned_value 6p
+
+work_event WE-56aee6faf6e6cb4a2eb6862222d70be288b7558a663e41dadd01268037c31982:
+  model 1
+  task ASSURE_SOURCE_CORE
+  kind finish
+  occurred_at 2026-08-03T20:41:29+09:00
+
+work_event WE-a3099489b07d4c59df27e37a03f88f7bb0bb732eff4df98826d03a09034b95d8:
+  model 1
+  task ASSURE_MUTATION_CORE
+  kind start
+  occurred_at 2026-08-03T20:50:58+09:00
+  planned_value 7p
+
+work_event WE-43e2a2f3ec6f898385db011be5ad87b9ce412071d6ec2c2917da733829dd9dfd:
+  model 1
+  task ASSURE_MUTATION_CORE
+  kind finish
+  occurred_at 2026-08-03T21:10:35+09:00

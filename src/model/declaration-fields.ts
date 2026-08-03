@@ -4,7 +4,7 @@ import type {
 } from "./syntax.js";
 
 function freezeFieldOrder<
-  const T extends Readonly<Record<DeclarationKind, readonly string[]>>,
+  const T extends Readonly<Record<string, readonly string[]>>,
 >(fieldOrder: T): T {
   for (const fields of Object.values(fieldOrder)) Object.freeze(fields);
   return Object.freeze(fieldOrder);
@@ -90,5 +90,53 @@ export const TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER = freezeFieldOrder({
     "active_time",
     "effort",
     "reason",
+  ],
+} as const satisfies Readonly<
+  Record<DeclarationKind | "work_event", readonly string[]>
+>);
+
+export const TARGET_GRAMMAR_6_DECLARATION_FIELD_ORDER = freezeFieldOrder({
+  ...TARGET_GRAMMAR_5_DECLARATION_FIELD_ORDER,
+  project: [
+    "version",
+    "title",
+    "description",
+    "as_of",
+    "duration_unit",
+    "velocity",
+    "finish",
+    "goal_owner",
+    "goal_delegates",
+    "dag_owner",
+    "dag_delegates",
+    "plan_assurance_model",
+    "plan_assurance_hash_model",
+    "critical_epsilon",
+    "target_duration",
+  ],
+  task_relation: ["mode", "reason"],
+  plan_seal: [
+    "accepted_contract",
+    "accepted_basis",
+    "accepted_inputs",
+    "reason",
+  ],
+  task_outcome: [
+    "model",
+    "task",
+    "against_basis",
+    "status",
+    "summary",
+    "reason",
+  ],
+  assurance_receipt: [
+    "model",
+    "receipt_hash",
+    "producer",
+    "producer_contract_hash",
+    "producer_assurance_hash",
+    "outcome",
+    "source_milestone",
+    "consumers",
   ],
 } as const satisfies Readonly<Record<TargetDeclarationKind, readonly string[]>>);

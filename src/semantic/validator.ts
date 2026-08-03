@@ -9,6 +9,8 @@ import {
   sortDiagnostics,
 } from "../model/diagnostics.js";
 import type {
+  AcceptedPlanningInputValue,
+  AssuranceConsumerValue,
   DeclarationNode,
   DocumentNode,
   ExactDurationValue,
@@ -88,6 +90,7 @@ interface ValidationProfile {
   readonly unsupportedVersionMessage: string;
   readonly temporalAnchorGrammarVersions: ReadonlySet<number>;
   readonly workEvents: boolean;
+  readonly assuranceRecords: boolean;
 }
 
 const grammar1ValidationProfile: ValidationProfile = {
@@ -95,6 +98,7 @@ const grammar1ValidationProfile: ValidationProfile = {
   unsupportedVersionMessage: "Only grammar version 1 is supported",
   temporalAnchorGrammarVersions: new Set(),
   workEvents: false,
+  assuranceRecords: false,
 };
 
 const targetValidationProfile: ValidationProfile = {
@@ -102,6 +106,7 @@ const targetValidationProfile: ValidationProfile = {
   unsupportedVersionMessage: "Only grammar versions 1 and 2 are supported",
   temporalAnchorGrammarVersions: new Set([2]),
   workEvents: false,
+  assuranceRecords: false,
 };
 
 const targetGrammar3ValidationProfile: ValidationProfile = {
@@ -109,6 +114,7 @@ const targetGrammar3ValidationProfile: ValidationProfile = {
   unsupportedVersionMessage: "Only grammar versions 1, 2, and 3 are supported",
   temporalAnchorGrammarVersions: new Set([2, 3]),
   workEvents: false,
+  assuranceRecords: false,
 };
 
 const targetGrammar4ValidationProfile: ValidationProfile = {
@@ -117,6 +123,7 @@ const targetGrammar4ValidationProfile: ValidationProfile = {
     "Only grammar versions 1, 2, 3, and 4 are supported",
   temporalAnchorGrammarVersions: new Set([2, 3, 4]),
   workEvents: false,
+  assuranceRecords: false,
 };
 
 const targetGrammar5ValidationProfile: ValidationProfile = {
@@ -125,6 +132,16 @@ const targetGrammar5ValidationProfile: ValidationProfile = {
     "Only grammar versions 1, 2, 3, 4, and 5 are supported",
   temporalAnchorGrammarVersions: new Set([2, 3, 4, 5]),
   workEvents: true,
+  assuranceRecords: false,
+};
+
+const targetGrammar6ValidationProfile: ValidationProfile = {
+  supportedGrammarVersions: new Set([1, 2, 3, 4, 5, 6]),
+  unsupportedVersionMessage:
+    "Only grammar versions 1, 2, 3, 4, 5, and 6 are supported",
+  temporalAnchorGrammarVersions: new Set([2, 3, 4, 5, 6]),
+  workEvents: true,
+  assuranceRecords: true,
 };
 
 function makeDiagnostic(
@@ -922,6 +939,513 @@ function validateWorkEvents(
   }
 }
 
+function assuranceDiagnostic(
+  code: "PTASSURE-101" | "PTASSURE-102",
+  message: string,
+  declaration: AnyDeclarationNode,
+  diagnosticSpan: SourceSpan = declaration.idSpan,
+  data?: Readonly<Record<string, unknown>>,
+): Diagnostic {
+  return makeDiagnostic(
+    code,
+    "error",
+    message,
+    diagnosticSpan,
+    "syntax.plan-assurance",
+    declaration.id,
+    undefined,
+    data,
+  );
+}
+
+function requiredAssuranceField(
+  declaration: AnyDeclarationNode,
+  name: string,
+  diagnostics: Diagnostic[],
+): FieldNode | undefined {
+  const field = fieldNamed(declaration, name);
+  if (field === undefined) {
+    diagnostics.push(assuranceDiagnostic(
+      "PTASSURE-101",
+      `${declaration.kind} ${declaration.id} is missing required field ${name}`,
+      declaration,
+    ));
+  }
+  return field;
+}
+
+function taskPairKey(predecessorTaskId: string, successorTaskId: string): string {
+  return `${predecessorTaskId}\u0000${successorTaskId}`;
+}
+
+function validatePlanAssuranceSource(
+  document: AnyDocumentNode,
+  diagnostics: Diagnostic[],
+): void {
+  const project = document.declarations.find(
+    (declaration) => declaration.kind === "project",
+  );
+  if (project === undefined) return;
+  const model = fieldNamed(project, "plan_assurance_model");
+  const hashModel = fieldNamed(project, "plan_assurance_hash_model");
+  if ((model === undefined) !== (hashModel === undefined)) {
+    diagnostics.push(assuranceDiagnostic(
+      "PTASSURE-101",
+      "project assurance model and hash model must be declared together",
+      project,
+      (model ?? hashModel)!.valueSpan,
+    ));
+  }
+  for (const field of [model, hashModel]) {
+    if (
+      field !== undefined &&
+      (typeof field.value !== "number" || field.value <= 0)
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `${field.name} must be a positive integer`,
+        project,
+        field.valueSpan,
+      ));
+    }
+  }
+
+  const assuranceDeclarations = document.declarations.filter(
+    (declaration) =>
+      declaration.kind === "task_relation" ||
+      declaration.kind === "plan_seal" ||
+      declaration.kind === "task_outcome" ||
+      declaration.kind === "assurance_receipt",
+  );
+  if (
+    assuranceDeclarations.length > 0 &&
+    (model === undefined || hashModel === undefined)
+  ) {
+    for (const declaration of assuranceDeclarations) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `${declaration.kind} requires both project assurance model fields`,
+        declaration,
+      ));
+    }
+    return;
+  }
+
+  const tasks = document.declarations.filter(
+    (declaration) => declaration.kind === "task",
+  );
+  const tasksById = new Map(tasks.map((task) => [task.id, task] as const));
+  const gates = document.declarations.filter(
+    (declaration) => declaration.kind === "gate",
+  );
+  const gateTargets = new Map<string, string[]>();
+  for (const gate of gates) {
+    const targets = gateTargets.get(gate.from!) ?? [];
+    targets.push(gate.to!);
+    gateTargets.set(gate.from!, targets);
+  }
+  for (const targets of gateTargets.values()) targets.sort(compareStableStrings);
+  const gateOnlyReachable = (source: string, target: string): boolean => {
+    if (source === target) return true;
+    const pending = [source];
+    const seen = new Set(pending);
+    while (pending.length > 0) {
+      const current = pending.shift()!;
+      for (const next of gateTargets.get(current) ?? []) {
+        if (next === target) return true;
+        if (!seen.has(next)) {
+          seen.add(next);
+          pending.push(next);
+        }
+      }
+    }
+    return false;
+  };
+  const executionPairs = new Set<string>();
+  for (const predecessor of tasks) {
+    for (const successor of tasks) {
+      if (
+        predecessor !== successor &&
+        gateOnlyReachable(predecessor.to!, successor.from!)
+      ) {
+        executionPairs.add(taskPairKey(predecessor.id, successor.id));
+      }
+    }
+  }
+
+  const explicitByPair = new Map<string, AnyDeclarationNode>();
+  for (const relation of document.declarations.filter(
+    (declaration) => declaration.kind === "task_relation",
+  )) {
+    const modeField = requiredAssuranceField(relation, "mode", diagnostics);
+    const mode = modeField?.value;
+    const reason = fieldNamed(relation, "reason");
+    const predecessor = tasksById.get(relation.from!);
+    const successor = tasksById.get(relation.to!);
+    const key = taskPairKey(relation.from!, relation.to!);
+    if (
+      predecessor === undefined ||
+      successor === undefined ||
+      predecessor === successor
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `task_relation ${relation.id} endpoints must be distinct current tasks`,
+        relation,
+        relation.arrowSpan,
+      ));
+    }
+    const first = explicitByPair.get(key);
+    if (first !== undefined) {
+      diagnostics.push(makeDiagnostic(
+        "PTASSURE-101",
+        "error",
+        `Planning dependency ${relation.from} -> ${relation.to} is duplicated`,
+        relation.arrowSpan!,
+        "syntax.plan-assurance",
+        relation.id,
+        [{ message: "First relation", span: first.arrowSpan! }],
+      ));
+    } else {
+      explicitByPair.set(key, relation);
+    }
+    const directExecution = executionPairs.has(key);
+    if (
+      (mode === "both" || mode === "execution_only") &&
+      !directExecution
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `${String(mode)} relation requires a direct projected execution dependency`,
+        relation,
+        modeField?.valueSpan,
+      ));
+    }
+    if (mode === "planning_only" && directExecution) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        "planning_only relation must not duplicate a direct projected execution dependency",
+        relation,
+        modeField?.valueSpan,
+      ));
+    }
+    if (
+      (mode === "execution_only" || mode === "planning_only") &&
+      (reason === undefined ||
+        typeof reason.value !== "string" ||
+        reason.value.length === 0)
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `${String(mode)} relation requires a nonempty reason`,
+        relation,
+        reason?.valueSpan,
+      ));
+    }
+    if (
+      mode === "both" &&
+      reason !== undefined &&
+      (typeof reason.value !== "string" || reason.value.length === 0)
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        "both relation reason must be nonempty when present",
+        relation,
+        reason.valueSpan,
+      ));
+    }
+  }
+
+  const sealsByTask = new Map<string, AnyDeclarationNode>();
+  for (const seal of document.declarations.filter(
+    (declaration) => declaration.kind === "plan_seal",
+  )) {
+    const task = tasksById.get(seal.id);
+    if (task === undefined) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `plan_seal ${seal.id} must refer to a current task`,
+        seal,
+      ));
+    }
+    const first = sealsByTask.get(seal.id);
+    if (first !== undefined) {
+      diagnostics.push(makeDiagnostic(
+        "PTASSURE-101",
+        "error",
+        `Task ${seal.id} has more than one plan seal`,
+        seal.idSpan,
+        "syntax.plan-assurance",
+        seal.id,
+        [{ message: "First seal", span: first.idSpan }],
+      ));
+    } else {
+      sealsByTask.set(seal.id, seal);
+    }
+    requiredAssuranceField(seal, "accepted_contract", diagnostics);
+    requiredAssuranceField(seal, "accepted_basis", diagnostics);
+    const reason = requiredAssuranceField(seal, "reason", diagnostics);
+    if (
+      reason !== undefined &&
+      (typeof reason.value !== "string" || reason.value.length === 0)
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `plan_seal ${seal.id} requires a nonempty reason`,
+        seal,
+        reason.valueSpan,
+      ));
+    }
+    const acceptedInputs = fieldNamed(seal, "accepted_inputs");
+    if (acceptedInputs === undefined) continue;
+    const values = acceptedInputs.value as readonly AcceptedPlanningInputValue[];
+    if (values.length === 0) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        "accepted_inputs must be omitted when the accepted input set is empty",
+        seal,
+        acceptedInputs.valueSpan,
+      ));
+    }
+    for (let index = 1; index < values.length; index += 1) {
+      if (
+        compareStableStrings(
+          values[index - 1]!.predecessorTaskId,
+          values[index]!.predecessorTaskId,
+        ) >= 0
+      ) {
+        diagnostics.push(assuranceDiagnostic(
+          "PTASSURE-101",
+          "accepted_inputs must have unique predecessor IDs in ascending order",
+          seal,
+          values[index]!.predecessorSpan,
+        ));
+      }
+    }
+  }
+
+  const outcomesByTask = new Map<string, AnyDeclarationNode>();
+  for (const outcome of document.declarations.filter(
+    (declaration) => declaration.kind === "task_outcome",
+  )) {
+    const modelField = requiredAssuranceField(outcome, "model", diagnostics);
+    const taskField = requiredAssuranceField(outcome, "task", diagnostics);
+    requiredAssuranceField(outcome, "against_basis", diagnostics);
+    const statusField = requiredAssuranceField(outcome, "status", diagnostics);
+    const reason = requiredAssuranceField(outcome, "reason", diagnostics);
+    if (
+      modelField !== undefined &&
+      (typeof modelField.value !== "number" || modelField.value <= 0)
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        "task outcome model must be a positive integer",
+        outcome,
+        modelField.valueSpan,
+      ));
+    }
+    const taskId = typeof taskField?.value === "string" ? taskField.value : "";
+    if (!tasksById.has(taskId)) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `task_outcome ${outcome.id} must refer to a current task`,
+        outcome,
+        taskField?.valueSpan,
+      ));
+    } else {
+      const task = tasksById.get(taskId)!;
+      if ((fieldNamed(task, "status")?.value ?? "planned") !== "done") {
+        diagnostics.push(assuranceDiagnostic(
+          "PTASSURE-101",
+          `task_outcome ${outcome.id} requires a completed task`,
+          outcome,
+          taskField?.valueSpan,
+        ));
+      }
+      const first = outcomesByTask.get(taskId);
+      if (first !== undefined) {
+        diagnostics.push(makeDiagnostic(
+          "PTASSURE-101",
+          "error",
+          `Task ${taskId} has more than one outcome record`,
+          taskField!.valueSpan,
+          "syntax.plan-assurance",
+          outcome.id,
+          [{ message: "First outcome", span: first.idSpan }],
+        ));
+      } else {
+        outcomesByTask.set(taskId, outcome);
+      }
+    }
+    if (
+      reason !== undefined &&
+      (typeof reason.value !== "string" || reason.value.length === 0)
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `task_outcome ${outcome.id} requires a nonempty reason`,
+        outcome,
+        reason.valueSpan,
+      ));
+    }
+    const summary = fieldNamed(outcome, "summary");
+    if (
+      statusField?.value === "changed" &&
+      (summary === undefined ||
+        typeof summary.value !== "string" ||
+        summary.value.length === 0)
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `changed task_outcome ${outcome.id} requires a nonempty summary`,
+        outcome,
+        summary?.valueSpan,
+      ));
+    }
+    if (statusField?.value === "conformant" && summary !== undefined) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `conformant task_outcome ${outcome.id} forbids summary`,
+        outcome,
+        summary.valueSpan,
+      ));
+    }
+  }
+
+  const frontierPairs = new Map<string, AnyDeclarationNode>();
+  for (const receipt of document.declarations.filter(
+    (declaration) => declaration.kind === "assurance_receipt",
+  )) {
+    const modelField = requiredAssuranceField(receipt, "model", diagnostics);
+    requiredAssuranceField(receipt, "receipt_hash", diagnostics);
+    const producerField = requiredAssuranceField(receipt, "producer", diagnostics);
+    requiredAssuranceField(receipt, "producer_contract_hash", diagnostics);
+    requiredAssuranceField(receipt, "producer_assurance_hash", diagnostics);
+    requiredAssuranceField(receipt, "outcome", diagnostics);
+    const consumersField = requiredAssuranceField(receipt, "consumers", diagnostics);
+    if (
+      modelField !== undefined &&
+      (typeof modelField.value !== "number" || modelField.value <= 0)
+    ) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        "assurance receipt model must be a positive integer",
+        receipt,
+        modelField.valueSpan,
+      ));
+    }
+    const producer = typeof producerField?.value === "string"
+      ? producerField.value
+      : "";
+    if (tasksById.has(producer)) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        `Assurance receipt producer ${producer} must be historical, not a current task`,
+        receipt,
+        producerField?.valueSpan,
+      ));
+    }
+    if (consumersField === undefined) continue;
+    const consumers = consumersField.value as readonly AssuranceConsumerValue[];
+    if (consumers.length === 0) {
+      diagnostics.push(assuranceDiagnostic(
+        "PTASSURE-101",
+        "assurance receipt consumers must not be empty",
+        receipt,
+        consumersField.valueSpan,
+      ));
+    }
+    for (let index = 0; index < consumers.length; index += 1) {
+      const consumer = consumers[index]!;
+      if (!tasksById.has(consumer.consumerTaskId)) {
+        diagnostics.push(assuranceDiagnostic(
+          "PTASSURE-101",
+          `Assurance consumer ${consumer.consumerTaskId} is not a current task`,
+          receipt,
+          consumer.consumerSpan,
+        ));
+      }
+      const pair = taskPairKey(producer, consumer.consumerTaskId);
+      const first = frontierPairs.get(pair);
+      if (first !== undefined) {
+        diagnostics.push(makeDiagnostic(
+          "PTASSURE-101",
+          "error",
+          `Frontier planning input ${producer} -> ${consumer.consumerTaskId} is duplicated`,
+          consumer.consumerSpan,
+          "syntax.plan-assurance",
+          receipt.id,
+          [{ message: "First receipt", span: first.idSpan }],
+        ));
+      } else {
+        frontierPairs.set(pair, receipt);
+      }
+      if (
+        index > 0 &&
+        compareStableStrings(
+          consumers[index - 1]!.consumerTaskId,
+          consumer.consumerTaskId,
+        ) >= 0
+      ) {
+        diagnostics.push(assuranceDiagnostic(
+          "PTASSURE-101",
+          "assurance receipt consumers must have unique task IDs in ascending order",
+          receipt,
+          consumer.consumerSpan,
+        ));
+      }
+    }
+  }
+
+  if (hasErrors(diagnostics)) return;
+  const successors = new Map(tasks.map((task) => [task.id, [] as string[]]));
+  for (const key of executionPairs) {
+    const [predecessorTaskId, successorTaskId] = key.split("\u0000") as [string, string];
+    const explicit = explicitByPair.get(key);
+    if (
+      explicit !== undefined &&
+      fieldNamed(explicit, "mode")?.value === "execution_only"
+    ) continue;
+    successors.get(predecessorTaskId)!.push(successorTaskId);
+  }
+  for (const [key, relation] of explicitByPair) {
+    if (fieldNamed(relation, "mode")?.value !== "planning_only") continue;
+    const [predecessorTaskId, successorTaskId] = key.split("\u0000") as [string, string];
+    successors.get(predecessorTaskId)!.push(successorTaskId);
+  }
+  for (const values of successors.values()) values.sort(compareStableStrings);
+  const state = new Map<string, "visiting" | "visited">();
+  const stack: string[] = [];
+  let witness: string[] | null = null;
+  const visit = (taskId: string): void => {
+    if (witness !== null) return;
+    state.set(taskId, "visiting");
+    stack.push(taskId);
+    for (const successor of successors.get(taskId) ?? []) {
+      if (state.get(successor) === "visiting") {
+        witness = [...stack.slice(stack.indexOf(successor)), successor];
+        return;
+      }
+      if (state.get(successor) === undefined) visit(successor);
+    }
+    stack.pop();
+    state.set(taskId, "visited");
+  };
+  for (const taskId of [...tasksById.keys()].sort(compareStableStrings)) {
+    if (state.get(taskId) === undefined) visit(taskId);
+  }
+  const cycleWitness = witness as readonly string[] | null;
+  if (cycleWitness !== null) {
+    diagnostics.push(assuranceDiagnostic(
+      "PTASSURE-102",
+      `Effective planning dependency cycle: ${cycleWitness.join(" -> ")}`,
+      project,
+      project.idSpan,
+      { cycle_task_ids: cycleWitness },
+    ));
+  }
+}
+
 function validateGraph(
   document: AnyDocumentNode,
   diagnostics: Diagnostic[],
@@ -929,6 +1453,7 @@ function validateGraph(
 ): void {
   const firstById = new Map<string, AnyDeclarationNode>();
   for (const declaration of document.declarations) {
+    if (declaration.kind === "plan_seal") continue;
     if (reservedWords.has(declaration.id)) {
       diagnostics.push(
         makeDiagnostic(
@@ -1333,6 +1858,9 @@ function validateDocumentWithProfile(
     validateWorkEvents(document, diagnostics);
   }
   if (!hasErrors(diagnostics)) validateGraph(document, diagnostics, profile);
+  if (!hasErrors(diagnostics) && profile.assuranceRecords) {
+    validatePlanAssuranceSource(document, diagnostics);
+  }
   return sortDiagnostics(diagnostics);
 }
 
@@ -1377,5 +1905,16 @@ export function validateTargetGrammar5DocumentSemantics(
     document,
     parseDiagnostics,
     targetGrammar5ValidationProfile,
+  );
+}
+
+export function validateTargetGrammar6DocumentSemantics(
+  document: AnyDocumentNode,
+  parseDiagnostics: readonly Diagnostic[] = [],
+): readonly Diagnostic[] {
+  return validateDocumentWithProfile(
+    document,
+    parseDiagnostics,
+    targetGrammar6ValidationProfile,
   );
 }

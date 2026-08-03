@@ -105,7 +105,7 @@ function validateActiveDocument(
   };
 }
 
-function planAtomicMutationEdits(
+export function planAtomicMutationEdits(
   text: string,
   document: Parameters<typeof planTaskMutationEdits>[1],
   mutation: unknown,
@@ -176,7 +176,7 @@ function batchRequestError(value: unknown): string | undefined {
   return undefined;
 }
 
-function mergeBatchInsertions(edits: readonly TextEdit[]): readonly TextEdit[] {
+export function mergeBatchInsertions(edits: readonly TextEdit[]): readonly TextEdit[] {
   const nonInsertions: TextEdit[] = [];
   const insertions = new Map<number, Array<{ edit: TextEdit; requestIndex: number }>>();
   for (const [requestIndex, edit] of edits.entries()) {

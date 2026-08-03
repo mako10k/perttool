@@ -78,6 +78,23 @@ Mandatory summary:
   and 17p are complete with zero makespans and no recommendation. npm
   `latest=0.5.5` and no alpha remain unchanged. npm `latest`, plan advance,
   and Issue mutation remain separate.
+- The explicitly selected `plans/plan-assurance.pert` workstream tracks
+  `ASSURE-001`. The confirmed 9,698-byte initial goal/DAG candidate was written
+  once with actor `codex` and owner assertion `user`; a later accepted DAG-only
+  amendment adds pinpoint hash inspection. Its ten tasks total 59p.
+  `ASSURE_INTERFACE_CONTRACT` is complete with the Grammar 6/CLI Contract 7
+  interface and six fixed SHA-256 vectors. `ASSURE_HASH_CORE` is complete with
+  the internal pure `src/assurance/` canonical hash, dependency, state, outcome,
+  and cause-path evaluator. `ASSURE_SOURCE_CORE` is complete with the internal
+  identity-checked Grammar 6 parser, validator, formatter, semantic projection,
+  source spans, and receipt self-hash boundary. `ASSURE_MUTATION_CORE` is
+  complete with internal relation, seal, reseal, outcome, mixed-batch,
+  GovernanceDecision v2, impact, and digest-bound Grammar 6 safe-write
+  behavior. All four remain pre-advance. Fresh complete NextResult v5
+  recommends only `ASSURE_AUTHORITY_CORE`; the
+  pinpoint hash-inspection task remains planned. Grammar 5, CLI Contract 6,
+  the package root, package 0.6.0, release selection, and every external
+  mutation remain unchanged.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

@@ -1,12 +1,14 @@
 import type {
   TargetGrammar4Capability,
   TargetGrammar5Capability,
+  TargetGrammar6Capability,
   TargetGrammar3Capability,
   TargetGrammar2Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar4Document,
   validateTargetGrammar5Document,
+  validateTargetGrammar6Document,
   validateTargetGrammar3Document,
   validateTargetDocument,
 } from "../semantic/target-validator.js";
@@ -62,6 +64,18 @@ function targetGrammar5Validator(
 ): DocumentCandidateValidator {
   return (text) => {
     const checked = validateTargetGrammar5Document(text, capability);
+    return {
+      ok: checked.ok,
+      diagnostics: checked.diagnostics,
+    };
+  };
+}
+
+function targetGrammar6Validator(
+  capability: TargetGrammar6Capability,
+): DocumentCandidateValidator {
+  return (text) => {
+    const checked = validateTargetGrammar6Document(text, capability);
     return {
       ok: checked.ok,
       diagnostics: checked.diagnostics,
@@ -209,6 +223,50 @@ export async function createTargetGrammar5DocumentFileFromSource(
     target,
     candidateText,
     targetGrammar5Validator(capability),
+    options,
+  );
+}
+
+export async function replaceTargetGrammar6DocumentFile(
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar6Capability,
+  options: ReplaceDocumentOptions,
+): Promise<DocumentWriteResult> {
+  return replaceValidatedDocumentFile(
+    target,
+    candidateText,
+    options,
+    targetGrammar6Validator(capability),
+  );
+}
+
+export async function createTargetGrammar6DocumentFile(
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar6Capability,
+  options: CreateDocumentOptions = {},
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFile(
+    target,
+    candidateText,
+    targetGrammar6Validator(capability),
+    options,
+  );
+}
+
+export async function createTargetGrammar6DocumentFileFromSource(
+  source: string,
+  target: string,
+  candidateText: string,
+  capability: TargetGrammar6Capability,
+  options: CreateDocumentFromSourceOptions,
+): Promise<DocumentWriteResult> {
+  return createValidatedDocumentFileFromSource(
+    source,
+    target,
+    candidateText,
+    targetGrammar6Validator(capability),
     options,
   );
 }

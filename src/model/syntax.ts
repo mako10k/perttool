@@ -7,7 +7,13 @@ export type DeclarationKind =
   | "task"
   | "gate";
 
-export type TargetDeclarationKind = DeclarationKind | "work_event";
+export type TargetDeclarationKind =
+  | DeclarationKind
+  | "task_relation"
+  | "plan_seal"
+  | "task_outcome"
+  | "assurance_receipt"
+  | "work_event";
 
 export interface DurationValue {
   readonly text: string;
@@ -57,6 +63,24 @@ export interface RequirementValue {
   readonly span: SourceSpan;
   readonly resourceSpan: SourceSpan;
   readonly unitsSpan: SourceSpan;
+}
+
+export interface AcceptedPlanningInputValue {
+  readonly predecessorTaskId: string;
+  readonly relationMode: "both" | "planning_only";
+  readonly assuranceHash: string;
+  readonly span: SourceSpan;
+  readonly predecessorSpan: SourceSpan;
+  readonly modeSpan: SourceSpan;
+  readonly hashSpan: SourceSpan;
+}
+
+export interface AssuranceConsumerValue {
+  readonly consumerTaskId: string;
+  readonly relationMode: "both" | "planning_only";
+  readonly span: SourceSpan;
+  readonly consumerSpan: SourceSpan;
+  readonly modeSpan: SourceSpan;
 }
 
 export interface FieldNode {

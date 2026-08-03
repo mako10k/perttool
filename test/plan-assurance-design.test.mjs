@@ -36,8 +36,11 @@ test("plan assurance design separates dependencies, state, and authority", async
 
   assert.match(requirements, /^### 2\.7 Preserve conditional plan assurance/m);
   assert.match(requirements, /^### 7\.9 Conditional plan assurance/m);
-  assert.match(specification, /- Status: Draft 0\.2/);
-  assert.match(specification, /- Runtime status: Not implemented/);
+  assert.match(specification, /- Status: Normative target 1\.0/);
+  assert.match(
+    specification,
+    /- Runtime status: Internal hash\/state, Grammar 6 source, and governed mutation Cores implemented; public runtime not activated/,
+  );
   assert.match(specification, /Grammar 1 through 5 and CLI Contract 6 remain\s+unchanged/);
 
   for (const mode of ["both", "planning_only", "execution_only"]) {
@@ -63,10 +66,7 @@ test("plan assurance design separates dependencies, state, and authority", async
   assert.match(specification, /`=>`, `\.>`, and other arrow\s+aliases are not accepted/);
   assert.match(specification, /plan-dependency add <file> <id>/);
   assert.match(specification, /plan_dependency\.add\|set\|remove/);
-  assert.match(
-    specification,
-    /public grammar\/CLI contract version, remaining assurance-record spelling/,
-  );
+  assert.match(specification, /Grammar 6 and CLI Contract 7/);
   assert.match(
     specification,
     /explicit `both` record pins the default meaning.*source-preserving formatting and mutation MUST retain/is,
@@ -99,12 +99,12 @@ test("plan assurance design separates dependencies, state, and authority", async
   assert.match(design, /current `Perttool\.NextResult\.v5` remains closed and\s+unchanged/);
   assert.match(design, /per-consumer task ID and effective planning mode/);
   assert.match(review, /No reviewed document requires lifecycle status to enter a plan hash/);
-  assert.match(review, /internally consistent enough for a\s+future source\/interface contract/);
+  assert.match(review, /internally consistent enough for a\s+source\/interface contract/);
   assert.match(review, /It is not implementation acceptance/);
   assert.match(review, /^## 5\. Selected relation source interface/m);
   assert.match(backlog, /^### ASSURE-001: Add conditional plan assurance/m);
-  assert.match(backlog, /implementation unplanned/);
-  assert.match(examples, /`task_relation` snippets below are the selected future source target/);
+  assert.match(backlog, /interface, hash, source, and mutation Cores accepted/);
+  assert.match(examples, /selected Grammar 6 source target/);
 });
 
 test("all fourteen plan assurance design cases are dependency ordered", async () => {
@@ -125,7 +125,10 @@ test("all fourteen plan assurance design cases are dependency ordered", async ()
   );
   assert.equal(fixture.plan_assurance_model_version, 1);
   assert.equal(fixture.hash_model_version, 1);
-  assert.equal(fixture.runtime_status, "not_implemented");
+  assert.equal(
+    fixture.runtime_status,
+    "internal_hash_source_and_mutation_cores_only",
+  );
   assert.equal(fixture.relation_source_target.keyword, "task_relation");
   assert.equal(fixture.relation_source_target.arrow, "->");
   assert.deepEqual(
@@ -189,7 +192,7 @@ test("all fourteen plan assurance design cases are dependency ordered", async ()
   );
 });
 
-test("the active Contract 6 surface does not claim design-only assurance", () => {
+test("the active Contract 6 surface does not claim internal-only assurance", () => {
   const commandPaths = COMMAND_REGISTRY.map(({ path }) => path.join(" "));
   assert.equal(
     commandPaths.some((commandPath) =>
