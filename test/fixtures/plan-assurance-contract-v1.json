@@ -1,0 +1,182 @@
+{
+  "schema_version": "Perttool.PlanAssuranceContractCases.v1",
+  "plan_assurance_model_version": 1,
+  "hash_model_version": 1,
+  "runtime_status": "not_implemented",
+  "relation_source_target": {
+    "keyword": "task_relation",
+    "header_fields": ["id", "predecessor_task_id", "successor_task_id"],
+    "arrow": "->",
+    "mode_field": "mode",
+    "modes": ["both", "execution_only", "planning_only"],
+    "reason_required_for": ["execution_only", "planning_only"],
+    "explicit_both_preserved": true,
+    "punctuation_aliases": []
+  },
+  "relation_cli_target": {
+    "resource": "plan-dependency",
+    "actions": ["add", "set", "remove"],
+    "mode_mapping": {
+      "both": "both",
+      "execution_only": "execution-only",
+      "planning_only": "planning-only"
+    }
+  },
+  "cases": [
+    {
+      "id": "PAS-001",
+      "depends_on": [],
+      "operation": "compatibility_check",
+      "expected": {
+        "coverage": "not_enabled",
+        "current_runtime_unchanged": true
+      }
+    },
+    {
+      "id": "PAS-002",
+      "depends_on": ["PAS-001"],
+      "operation": "verify_unsealed",
+      "expected": {
+        "coverage": "unsealed",
+        "start_authority_withheld": true,
+        "automatic_write": false
+      }
+    },
+    {
+      "id": "PAS-003",
+      "depends_on": ["PAS-002"],
+      "operation": "initial_seal",
+      "expected": {
+        "atomic": true,
+        "default_dependency_mode": "both",
+        "explicit_both_pin_preserved": true,
+        "explicit_both_pin_changes_hash": false,
+        "topological_rebuild": true
+      }
+    },
+    {
+      "id": "PAS-004",
+      "depends_on": ["PAS-003"],
+      "operation": "lifecycle_and_format_change",
+      "expected": {
+        "source_digest_changed": true,
+        "task_plan_hash_changed": false,
+        "reseal_required": false
+      }
+    },
+    {
+      "id": "PAS-005",
+      "depends_on": ["PAS-003"],
+      "operation": "upstream_plan_change",
+      "expected": {
+        "direct_mismatch": ["A"],
+        "inherited_mismatch": ["B", "C"],
+        "required_action": "replan_and_reseal"
+      }
+    },
+    {
+      "id": "PAS-006",
+      "depends_on": ["PAS-003"],
+      "operation": "planning_only_relation",
+      "expected": {
+        "execution_dependency": false,
+        "planning_dependency": true,
+        "readiness_changed": false,
+        "source_mode": "planning_only",
+        "reason_required": true,
+        "aoa_edge_synthesized": false
+      }
+    },
+    {
+      "id": "PAS-007",
+      "depends_on": ["PAS-003"],
+      "operation": "execution_only_relation",
+      "expected": {
+        "execution_dependency": true,
+        "planning_dependency": false,
+        "upstream_plan_change_propagates": false,
+        "source_mode": "execution_only",
+        "reason_required": true,
+        "remove_falls_back_to": "both"
+      }
+    },
+    {
+      "id": "PAS-008",
+      "depends_on": ["PAS-006"],
+      "operation": "planning_cycle",
+      "expected": {
+        "assurance_valid": false,
+        "cycle_witness_required": true,
+        "candidate_available": false,
+        "arrow_alias_accepted": false
+      }
+    },
+    {
+      "id": "PAS-009",
+      "depends_on": ["PAS-003"],
+      "operation": "conformant_finish",
+      "expected": {
+        "exported_commitment_changed": false,
+        "descendant_reseal_required": false
+      }
+    },
+    {
+      "id": "PAS-010",
+      "depends_on": ["PAS-009"],
+      "operation": "changed_or_unavailable_finish",
+      "expected": {
+        "changed_outcome_consumer_state": "review_required",
+        "producer_outcome_state": "changed",
+        "changed_outcome_commitment_versioned": true,
+        "missing_evidence_state": "unavailable",
+        "stale_outcome_basis_state": "unavailable",
+        "automatic_cancel": false
+      }
+    },
+    {
+      "id": "PAS-011",
+      "depends_on": ["PAS-005", "PAS-010"],
+      "operation": "replan_and_reseal",
+      "expected": {
+        "preview_first": true,
+        "fresh_authority": true,
+        "atomic_topological_reseal": true,
+        "known_changed_outcome_can_be_accepted": true
+      }
+    },
+    {
+      "id": "PAS-012",
+      "depends_on": ["PAS-003"],
+      "operation": "add_partial_branch",
+      "expected": {
+        "coverage": "partial",
+        "unaffected_branch_startable": true,
+        "automatic_hash_fill": false
+      }
+    },
+    {
+      "id": "PAS-013",
+      "depends_on": ["PAS-009", "PAS-011"],
+      "operation": "assurance_aware_advance",
+      "expected": {
+        "frontier_receipt_required": true,
+        "receipt_self_hash_required": true,
+        "consumer_relation_mode_preserved": true,
+        "accepted_changed_outcome_receipt_allowed": true,
+        "retained_basis_equal": true,
+        "history_force_bypasses_assurance": false
+      }
+    },
+    {
+      "id": "PAS-014",
+      "depends_on": ["PAS-013"],
+      "operation": "broken_receipt_and_direct_edit",
+      "expected": {
+        "broken_receipt_state": "unavailable",
+        "receipt_self_hash_mismatch_state": "unavailable",
+        "malicious_tamper_resistance_claimed": false,
+        "digital_signature_claimed": false
+      }
+    }
+  ]
+}

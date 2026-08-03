@@ -14,6 +14,7 @@
 - [governance.md](governance.md): accepted target governance authority and write-path cases for defaults, preview, owner/delegate assertions, atomic batches, safe-write composition, and direct-edit guidance
 - [project-actuals.pert](project-actuals.pert): an active Grammar 5 completed task with explicit start, suspend, resume, and finish evidence
 - [project-actuals.md](project-actuals.md): normative lifecycle, Git-history, and observation cases for CLI Contract 6
+- [plan-assurance.md](plan-assurance.md): design-only normative cases for default task/plan dependency, planning-only and execution-only relations, status-free hash propagation, governed resealing, and assurance-preserving advance
 
 `.pert` files in this directory are normative runnable samples. Most retain
 grammar version 1; `project-actuals.pert` exercises active Grammar 5 and CLI
@@ -21,6 +22,10 @@ Contract 6. Grammar 2/3 machine acceptance cases live under
 `test/fixtures/temporal-units/`, Grammar 4 governance cases under
 `test/fixtures/governance/`, and Grammar 5 contract cases under
 `test/fixtures/project-actuals-contract-v1.json`.
+Conditional plan assurance is not implemented in Grammar 5 or CLI Contract 6;
+its selected future `task_relation` snippets and dependency-ordered design
+cases live in
+`test/fixtures/plan-assurance-contract-v1.json`.
 `recommendation.md` contains normative cases for implemented Recommendation
 interface version 1, and `agent-guidance.md` contains normative cases for
 implemented Agent Guidance interface version 1. `mermaid-profile.md` is the

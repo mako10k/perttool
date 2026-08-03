@@ -436,6 +436,8 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Project Actuals and Git History Contract (CLI Contract 6)](docs/specs/project-actuals.md)
 - [Advance History Safety Contract (ADV-001 target)](docs/specs/advance-history-safety.md)
 - [Advance History Safety source acceptance](docs/process/advance-history-acceptance.md)
+- [Conditional Plan Assurance design target (not implemented)](docs/specs/plan-assurance.md)
+- [Conditional Plan Assurance design review](docs/process/plan-assurance-design-review.md)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)

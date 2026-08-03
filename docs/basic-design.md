@@ -1,9 +1,10 @@
 # perttool Basic Design
 
-- Document status: Draft 1.20
+- Document status: Draft 1.22
 - Created: 2026-07-21
-- Updated: 2026-07-28
+- Updated: 2026-08-03
 - Applicable requirements: [requirements.md](requirements.md)
+- DSL grammar: [specs/dsl-grammar.md](specs/dsl-grammar.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
 - Analysis: [specs/analysis.md](specs/analysis.md)
 - Temporal calendar semantics: [specs/temporal-calendar.md](specs/temporal-calendar.md)
@@ -11,6 +12,9 @@
 - Unit migration semantics: [specs/unit-migration.md](specs/unit-migration.md)
 - Temporal and unit interface: [specs/temporal-unit-interface.md](specs/temporal-unit-interface.md)
 - Project actuals and Git history: [specs/project-actuals.md](specs/project-actuals.md)
+- Conditional plan assurance: [specs/plan-assurance.md](specs/plan-assurance.md)
+- Plan assurance examples: [examples/plan-assurance.md](examples/plan-assurance.md)
+- Plan assurance design review: [process/plan-assurance-design-review.md](process/plan-assurance-design-review.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
 - Recommendation ranking: [specs/recommendation-ranking.md](specs/recommendation-ranking.md)
 - Recommendation reasons: [specs/recommendation-reasons.md](specs/recommendation-reasons.md)
@@ -58,6 +62,10 @@ The complete DSL grammar, CLI/JSON contracts, and Mermaid profile are fixed by t
 - Document edits are planned as diffs against source spans and applied only after reparsing and revalidation.
 - Human-readable text and machine-readable JSON are rendered from the same result object.
 - All calculations and orderings are deterministic.
+- Execution dependency, planning dependency, lifecycle, resource feasibility,
+  recommendation, and plan assurance remain separate typed axes.
+- Plan-assurance hashes commit to canonical semantic plan inputs rather than
+  raw source bytes, lifecycle status, work events, or derived analysis.
 - English is the canonical language for repository-maintained artifacts; runtime i18n is not part of the current architecture
 
 TypeScript is selected for the following reasons.
@@ -94,6 +102,9 @@ flowchart LR
   GRAPH --> NEXT[Operational next classifier]
   ANALYZER --> NEXT
   GRAPH --> RECOMMEND[Recommendation evaluator]
+  GRAPH --> ASSURANCE[Plan assurance Core]
+  ASSURANCE --> NEXT
+  ASSURANCE --> TRANSFORM
   NEXT --> RECOMMEND
   ANALYZER --> RECOMMEND
   GRAPH --> TRANSFORM[Mutation / advance planner]
@@ -125,7 +136,7 @@ CLI / future MCP / LSP / VSIX / filesystem
       application services
              |
              v
-syntax / semantic / graph / analyzer / recommendation / transform / governance
+syntax / semantic / graph / analyzer / recommendation / assurance / transform / governance
 ```
 
 The Core layer MUST NOT depend on the following:
@@ -994,6 +1005,364 @@ one coordinated Grammar 5/CLI Contract 6 cutover after:
 - active Contract 5 command discovery proves future commands remain absent
   before cutover; and
 - repository, link, package, and installed-package acceptance pass.
+
+### 6.9 Conditional plan assurance
+
+The design-only [Conditional Plan Assurance
+Contract](specs/plan-assurance.md) adds a pure assurance layer over the
+validated graph. It does not change the current Grammar 5 or CLI Contract 6
+runtime. The target module boundary is `src/assurance/` after an independent
+workstream selects implementation.
+
+The layer consumes semantic task records, projected AoA task dependencies,
+explicit planning-relation records, accepted seals, outcome-conformance facts,
+and frontier receipts. It returns hashes, states, causes, impact closures, and
+advance-preservation checks without reading files, Git, the network, or the
+clock.
+
+```text
+validated AoA graph
+  -> project direct task dependencies through gate-only paths
+  -> apply both/planning-only/execution-only relation policy
+  -> validate planning DAG and stable cycle witness
+  -> project canonical task plan contracts
+  -> hash in planning topological order
+  -> compare computed and accepted bases
+  -> derive task assurance and cause paths
+  -> compose start authority / mutation impact / advance receipts
+```
+
+#### 6.9.1 Execution and planning graph projection
+
+The graph layer remains authoritative for task-as-edge execution. The assurance
+Core creates a separate task projection:
+
+```ts
+type PlanDependencyMode = "both" | "planning_only" | "execution_only";
+
+interface ProjectedTaskDependency {
+  readonly predecessorTaskId: string;
+  readonly successorTaskId: string;
+  readonly gatePathIds: readonly string[];
+}
+
+interface EffectivePlanDependency {
+  readonly relationId: string | null;
+  readonly predecessorTaskId: string;
+  readonly successorTaskId: string;
+  readonly mode: PlanDependencyMode;
+  readonly source: "projected_default" | "explicit";
+}
+```
+
+For each task `b`, walk backward from `src(b)` only through gates. Each task
+whose destination is reached by that walk is one direct projected predecessor.
+Stable ordering uses predecessor task ID and successor task ID. Multiple
+gate-only paths produce one semantic task pair and retain their path IDs only
+for explanation. `relationId` is null for a projected default and retains the
+explicit source ID only for an explicit qualification; it is not a hash input.
+
+The default effective mode is `both`. An explicit `execution_only` record
+removes only the planning edge for an existing projected pair. An explicit
+`planning_only` record adds only a planning edge for a pair without a projected
+execution relation. The AoA graph is never reconstructed from the assurance
+projection.
+
+The planning graph receives its own stable topological sort and cycle witness.
+Resource requirements, shared owners, titles, tags, and conversation context do
+not create implicit planning edges.
+
+The selected future source declaration is deliberately explicit rather than
+encoding mode in punctuation:
+
+```pert
+task_relation REL_A_B A -> B:
+  mode planning_only
+  reason "B uses A's findings but may start before A finishes"
+```
+
+The parser target creates a source-backed relation node with spans for the
+whole declaration, keyword, relation ID, both task endpoints, arrow, each
+field, and decoded field values. Relation IDs use the existing global document
+ID index; endpoints resolve through the task index only. The semantic layer
+requires exactly one mode, applies the conditional reason rule, rejects a
+duplicate task pair, derives the complete effective relation set, and then
+runs the separate planning-cycle check.
+
+`task_relation` and its field/value spellings remain contextual to the future
+grammar. Existing Grammar 1 through 5 parsing and reserved IDs do not change.
+The source formatter preserves explicit declaration placement and `both`
+pinning, while canonical insertion uses field order `mode, reason` and places
+new relations after task/gate declarations and before work events.
+
+The mutation target follows existing entity maintenance:
+
+```text
+plan-dependency add <file> <id> <predecessor> <successor> --mode <mode>
+plan-dependency set <file> <id> [field options]
+plan-dependency remove <file> <id>
+```
+
+CLI kebab-case modes map exactly to snake-case source/JSON modes. Direct
+commands validate one complete candidate; atomic batch composes an AoA edit and
+relation conversion when neither standalone intermediate would be valid. The
+mutation planner returns local UTF-16 edits and the normal assurance-impact
+comparison but never edits accepted bases as a side effect.
+
+#### 6.9.2 Canonical plan contracts
+
+The target canonicalizer produces a closed `TaskPlanContractV1` value after
+normal parsing, reference validation, omission defaults, and exact numeric
+validation:
+
+```ts
+interface TaskPlanContractV1 {
+  readonly model: "Perttool.TaskPlanContract.v1";
+  readonly taskId: string;
+  readonly fromMilestoneId: string;
+  readonly toMilestoneId: string;
+  readonly title: string;
+  readonly description: string | null;
+  readonly durationOrEstimate: CanonicalDurationOrEstimate;
+  readonly notBefore: CanonicalCalendarValue | null;
+  readonly deadline: CanonicalCalendarValue | null;
+  readonly priority: number;
+  readonly requirements: readonly CanonicalRequirement[];
+  readonly owner: string | null;
+  readonly tags: readonly string[];
+  readonly source: string | null;
+}
+```
+
+The canonical JSON writer is internal and closed. It writes keys in contract
+order, exact Rational numerator/denominator strings, sorted requirements and
+tags, explicit nulls, UTF-8, and no insignificant whitespace. It does not reuse
+the raw-byte document digest because status, events, formatting, and unrelated
+entities must not change this hash.
+
+It owns exact RFC 8259 escaping, rejects lone surrogates, and emits decoded
+non-control Unicode directly as UTF-8. It also owns canonical signed integer
+strings and positive-denominator Rational records. Project snapshot fields,
+milestone metadata beyond endpoint IDs, and resource capacity remain inputs to
+their existing analysis/authority axes, not ambient task-contract inputs in
+hash model 1.
+
+The initial target may reuse the platform SHA-256 primitive, but not the
+various application-local `digest(text)` helpers. One assurance hash utility
+owns domain separation, validation, canonical spelling, and test vectors.
+
+#### 6.9.3 Hash evaluation and cause graph
+
+The pure evaluator accepts:
+
+```ts
+interface PlanAssuranceInputV1 {
+  readonly modelVersion: 1;
+  readonly tasks: readonly TaskPlanContractV1[];
+  readonly dependencies: readonly EffectivePlanDependency[];
+  readonly acceptedBasisByTaskId: ReadonlyMap<string, string>;
+  readonly outcomeByTaskId: ReadonlyMap<string, OutcomeConformanceV1>;
+  readonly frontierReceipts: readonly FrontierAssuranceReceiptV1[];
+}
+```
+
+It first computes contract hashes, then computed bases in one complete stable
+topological pass. It retains immediate component hashes so a mismatch can be
+traced to the first changed contract, relation, outcome, or receipt rather than
+reported only as a changed root hash.
+
+```ts
+interface PlanAssuranceTaskResultV1 {
+  readonly taskId: string;
+  readonly status:
+    | "not_applicable"
+    | "unsealed"
+    | "conditional"
+    | "verified"
+    | "review_required"
+    | "unavailable";
+  readonly outcomeStatus:
+    | "unfinished"
+    | "conformant"
+    | "changed"
+    | "unavailable";
+  readonly contractHash: string | null;
+  readonly computedBasisHash: string | null;
+  readonly acceptedBasisHash: string | null;
+  readonly directCauses: readonly PlanAssuranceCauseV1[];
+  readonly inheritedPaths: readonly PlanAssurancePathV1[];
+}
+```
+
+Full recomputation is the reference algorithm. A future cache indexes the
+reverse planning adjacency and recomputes only the changed descendant closure,
+but acceptance compares every incremental result to a fresh full pass.
+
+Task assurance and outcome assessment remain separate fields. A known changed
+outcome remains `changed`; it causes consumer basis mismatches but does not
+permanently label the completed producer or resealed consumers as
+`review_required`.
+
+#### 6.9.4 Unsealed compatibility and initial seal
+
+Documents without the future assurance-model declaration do not enter the
+assurance evaluator and retain current behavior. This avoids one warning per
+task for every Grammar 1 through 5 document.
+
+Enabling the model creates an initial-seal candidate over the complete current
+and future task set. Preview reports the selected model, default and explicit
+dependency counts, task count, frontier receipts, semantic impact, byte sizes,
+diff counts, and source/candidate digests. The writer rejects a partial initial
+seal.
+
+Adding a task or effective planning relation later makes new tasks without
+accepted bases `unsealed`. Existing descendants keep their accepted values and
+become `review_required` when recomputation differs; the ordinary mutation does
+not erase or replace them. Unrelated accepted branches remain usable. Missing
+hashes are never generated as a side effect of check, analyze, Next, format,
+ordinary mutation, lifecycle mutation, or advance preview.
+
+#### 6.9.5 Recommendation and start-authority composition
+
+The assurance evaluator does not rank tasks. Application composition preserves
+raw Recommendation version 1 and applies assurance after ranking, alongside
+the existing temporal start-authority filter.
+
+```text
+raw recommended set
+  -> temporal eligibility policy
+  -> plan assurance policy
+  -> startable recommended task IDs
+```
+
+`conditional` and `verified` pass the assurance filter. `unsealed`,
+`review_required`, and `unavailable` do not. An affected active task is placed
+in a separate attention set; the evaluator never changes its lifecycle.
+
+The result returns a `replan_and_reseal` required action with stable direct
+roots and the full affected closure. This is a control-plane action, not a
+synthetic AoA task. The current `Perttool.NextResult.v5` remains closed and
+unchanged until an interface contract selects a new result and authority-policy
+identity.
+
+#### 6.9.6 Mutation impact and governed reseal
+
+Every assurance-aware task/DAG mutation preview may run the evaluator against
+the original and candidate semantic graphs and return:
+
+- direct plan contracts changed;
+- dependency modes added, removed, or changed;
+- newly unsealed, directly mismatched, and inherited task IDs;
+- active tasks requiring attention;
+- accepted hashes that would remain untouched; and
+- the exact closure eligible for a later reseal.
+
+The ordinary mutation does not update accepted hashes. After the plan is
+reviewed, a distinct reseal planner recomputes the requested closure, requires
+a reason for each hash-only reacceptance, and returns one source-preserving
+candidate. Reseal uses a future `plan_assurance` governance scope controlled by
+the effective pre-change DAG owner. An assertion-free preview precedes any
+candidate-specific owner assertion, and every stale-source retry replans and
+reauthorizes.
+
+The relation command names and relation source record are fixed by Sections
+6.9.1 and Contract 4.5. Assurance inspection, initial-seal, reseal, and outcome
+operation names; their request types; remaining source records; diagnostics;
+and public schemas remain for the future source/interface contract. Current
+help and Guide must not advertise any of them.
+
+#### 6.9.7 Outcome conformance
+
+The current actuals finish event proves occurrence, active time, and optional
+effort; it does not prove semantic outcome conformance. The assurance target
+therefore requires a new explicit fact:
+
+```ts
+interface OutcomeConformanceV1 {
+  readonly taskId: string;
+  readonly againstBasisHash: string;
+  readonly status: "conformant" | "changed";
+  readonly changedOutcomeContractHash: string | null;
+  readonly evidenceRef: string | null;
+}
+```
+
+An unfinished task exports its current computed assurance as a conditional
+plan commitment. A conformant finish bound to that exact basis exports the same
+commitment. A changed outcome exports a domain-separated changed value. A done
+task without acceptable evidence makes consumers unavailable. No adapter
+infers conformance from status, event or Git timestamps, active time, effort,
+or free-form text.
+
+For `conformant`, `changedOutcomeContractHash` is null and the exported value is
+the basis hash. For `changed`, it is the required hash of a future closed
+canonical outcome contract, and the exporter hashes model identity, task ID,
+the basis under which the task ran, and that outcome-contract hash. The first
+changed export invalidates existing consumers. After explicit downstream
+replanning and resealing, the same known changed commitment is an accepted
+input and does not create an endless review loop. Missing or unhashable outcome
+evidence remains unavailable.
+
+The assessment is usable only when `againstBasisHash` equals the producer's
+accepted and current computed basis. Editing a completed producer plan without
+a corresponding reviewed outcome correction makes the producer
+`review_required` and its consumer input unavailable; the old completion
+commitment cannot conceal the later plan edit.
+
+The source/interface design must compose this fact atomically with finish or a
+separate reviewed completion assessment without weakening lifecycle event
+identity. It must also define correction and advance ownership before runtime
+activation.
+
+#### 6.9.8 Assurance-preserving advance
+
+The assurance-aware advance planner runs after the ordinary residual graph is
+known but before its candidate is accepted. For each removed task with at least
+one retained planning consumer, it creates a machine-managed frontier receipt
+containing the task contract hash, recursive assurance hash, known outcome,
+per-consumer task ID and effective planning mode, and optional reached source
+milestone. `execution_only` relations create no receipt because they contribute
+no planning input.
+
+The receipt stores a self-hash over its canonical semantic fields, excluding
+the self-hash field. The evaluator rejects a mismatch as unavailable. This
+catches accidental receipt damage without claiming an external trust root.
+
+Planning-only dependencies may cross a different AoA frontier, so receipt
+ownership is based on retained consumers rather than only structural incoming
+edges. A receipt is retained until its last consumer and is then removable as
+past assurance evidence.
+
+```text
+original assurance evaluation
+  -> ordinary advance residual graph
+  -> crossing planning-dependency inventory
+  -> frontier receipt candidate
+  -> candidate assurance evaluation
+  -> equality check for every retained task basis
+  -> governance and history-safety gates
+  -> existing atomic safe write
+```
+
+The assurance equality check is semantic and Git-independent. The existing
+history guard separately proves the raw destructive ranges. Neither decision
+substitutes for the other, and the narrow history-loss override cannot force an
+assurance mismatch.
+
+#### 6.9.9 Security and activation boundary
+
+The same `.pert` source may contain task plans and accepted hashes. A direct
+editor can therefore replace both. Model 1 gives deterministic drift detection
+and governed tool-mediated resealing, not malicious-edit resistance. Digital
+signatures, private keys, authenticated principals, external transparency
+logs, or a root of trust belong to a separate architecture and cannot be
+claimed from SHA-256 alone.
+
+Public activation is atomic only after requirements, this design, the semantic
+contract, examples, source grammar, governance extension, actuals outcome
+contract, result/interface contract, migration, diagnostics, help/Guide,
+schemas, Core, CLI, advance, and installed-package acceptance agree. Until
+then, all existing result identities and runtime help remain unchanged.
 
 ## 7. Diagnostic Model
 
@@ -2472,6 +2841,13 @@ Fix LSP protocol capabilities, UTF-16 position mapping, VSIX packaging, workspac
 
 ## 18. Matters for detailed design
 
+The design-only [Conditional Plan Assurance Contract](specs/plan-assurance.md)
+determines the target planning-dependency projection, semantic hash recurrence,
+reseal, start-authority filter, and assurance-preserving advance semantics.
+Its enclosing grammar version and remaining public interface are future
+detailed-design matters; `task_relation` and `plan-dependency add|set|remove`
+are selected design inputs but remain unavailable in the current runtime.
+
 The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, done, suspended, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Project Actuals and Git History Contract](specs/project-actuals.md) determines the selected future work-event, lifecycle, history, and observation semantics; the [Governance Source and Effective-Metadata specification](specs/governance-source.md) determines Grammar 4 source, omission defaults, project metadata, and pre-change snapshots; the [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md) determines goal/DAG change classification and pre-change persistent-write authority; the [Owner-Aware Governance Interface Contract](specs/governance-interface.md) determines Core assertions, CLI Contract 5, text/JSON/help projections, diagnostics, exits, and atomic activation; the [Issue #4 Owner-Aware Governance Design Acceptance Review](process/governance-design-acceptance.md) fixes the complete criterion, interface, example, non-goal, and implementation-gate trace; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the active Grammar 1/2/3 and CLI Contract 4 temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomy; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary. [ADR 0006](adr/0006-explicit-work-events-in-git-history.md) defines transient same-document work events and read-only Git durability.
 
 1. Implementation details for CST trivia/comment ownership rules
@@ -2495,6 +2871,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | CLI Contract 3 registry, help/guide split, and file-first maintenance | Sections 12.2, 15, 16, and 21.2 |
 | Temporal/unit grammar, projections, migration, and Contract 4 boundary | Sections 7.6, 7.7, 10.7, 11, 12, 15, 16, and 18 |
 | Project actuals, lifecycle, Git history, and observed velocity | Sections 2.3, 7.8, 9, 12, and 19 |
+| Conditional plan assurance, dependency modes, reseal, and advance contraction | Sections 2.7, 7.9, 9.3, 11, 12.3, and 20.3 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
 | Owner-aware goal/DAG source, authority, and Contract 5 interface/release | Sections 2.6, 7.1, 12.3, 15, 16, and 17 |
 | Mermaid adapter | Chapters 13 and 14 |

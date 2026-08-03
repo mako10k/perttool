@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.19
+- Document status: Draft 0.21
 - Created: 2026-07-21
-- Updated: 2026-07-31
+- Updated: 2026-08-03
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -24,6 +24,9 @@ The central mission of `perttool` is not PERT analysis itself. It is to provide 
 - Extraction of critical tasks and slack
 - Extraction of the “next task” that can be started now
 - Derivation of the task to prioritize in the current project and the reason it takes precedence over other feasible tasks
+- Detection of future task plans whose reviewed upstream planning basis has
+  changed, with explicit replanning and resealing before normal start authority
+  is restored
 - Conversion to visualization formats such as Mermaid
 - Equivalent operations from the CLI, CI, and AI agents using CLI JSON; MCP and editor adapters will be added after the MVP
 
@@ -177,6 +180,71 @@ Must:
 - Preserve all existing parse, semantic, candidate-validation,
   optimistic-lock, safe-write, and Git-history protections.
 
+### 2.7 Preserve conditional plan assurance separately from execution state
+
+`perttool` must be able to state that a downstream task plan remains valid only
+while the upstream plans on which it was reviewed remain unchanged. This is a
+planning-basis relationship, not another task status, resource dependency,
+recommendation tier, approval certificate, or probability score. The
+[Conditional Plan Assurance Contract](specs/plan-assurance.md) defines the
+target semantic and hash models.
+
+Must:
+
+- Derive the planning-dependency DAG from the existing projected task
+  dependency DAG by default. An ordinary task dependency therefore means both
+  execution dependency and planning dependency unless explicitly qualified.
+- Support exactly three relationship modes in the first model: `both`,
+  `planning_only`, and `execution_only`. A planning-only relation affects plan
+  assurance without changing AoA reachability or readiness; an execution-only
+  relation preserves execution order without propagating plan-assurance
+  changes.
+- Represent explicit qualifications with a top-level `task_relation` source
+  declaration containing a stable relation ID, predecessor task ID, successor
+  task ID, required `mode`, and conditionally required human `reason`. Keep the
+  arrow as orientation only; use full mode names rather than punctuation aliases.
+- Keep the AoA graph authoritative for execution. Planning-only relations must
+  not synthesize tasks, gates, milestones, resource requirements, or schedule
+  edges.
+- Validate the effective planning-dependency graph as a separate DAG and return
+  a deterministic cycle witness before hashing when an explicit relation
+  creates a planning cycle.
+- Derive a versioned semantic task-plan contract hash and a recursive planning
+  basis hash. Hashes must be deterministic from the current document and
+  versioned algorithms and require no network, wall clock, or Git access.
+- Exclude task lifecycle status, block reason, milestone state, work events,
+  actual measurements, derived analysis/recommendation fields, source trivia,
+  and the assurance fields themselves from the task-plan contract hash.
+- Keep the automatically recomputed basis distinct from the last explicitly
+  accepted basis. A mismatch must never update or accept itself.
+- Preserve existing documents that do not enable assurance. Once assurance is
+  enabled, missing, partial, unknown-version, or mismatched assurance must fail
+  closed only for the affected new-start authority while retaining analysis
+  needed for replanning.
+- Return direct causes, inherited cause paths, affected task IDs, and the
+  required `replan_and_reseal` control action. Do not create new AoA tasks or
+  rewrite a plan automatically.
+- Require an explicit, preview-first, candidate-bound, governed initial seal or
+  reseal. A hash-only reacceptance without a task-plan edit requires a human
+  reason.
+- Preserve every retained task's computed planning basis across an
+  assurance-aware `dag advance` by contracting still-needed removed
+  commitments into minimal frontier receipts.
+- Keep the advance history-loss force boundary separate. It must not bypass
+  plan-assurance validation or reseal authority.
+- Describe SHA-256 commitments as integrity/freshness seals, not digital
+  signatures, authenticated approvals, blockchains, or proof that a plan or
+  delivered outcome is correct.
+
+Should:
+
+- Let unaffected verified branches retain their normal start authority when a
+  separate planning closure requires replanning.
+- Compute all planning bases in one stable topological pass and explain the
+  earliest changed semantic input rather than leading with opaque hashes.
+- Permit later incremental descendant recomputation only when it is
+  byte-identical to a complete topological recomputation.
+
 ## 3. Problems to solve
 
 - A task list alone makes dependencies and start order hard to see.
@@ -190,6 +258,9 @@ Must:
 - “Tasks that can be done now” and “tasks that should be done now” are not distinguished, causing an AI to optimize locally for an easy-to-start branch task.
 - Project intent and the reasons for task selection are scattered across prompts, chat history, and issue discussions, so the same decision cannot be reproduced from the same plan.
 - Optional features and improvements scheduled for replacement are prioritized, while critical dependencies and work immediately before a gate are postponed.
+- A predecessor investigation, design, or implementation can change while an
+  executor continues to follow downstream tasks that were planned against the
+  prior predecessor content.
 - An executor that is authorized to maintain status or estimates can
   accidentally redefine `project.finish` or restructure the DAG without the
   goal or DAG owner's confirmation.
@@ -226,6 +297,10 @@ provide the following.
 - Preventing a text editor from changing `.pert` bytes
 - Treating governance owners or delegates as recommendation-ranking facts,
   dependency edges, or scheduling resources
+- Treating a same-file hash as a digital signature, malicious-edit defense,
+  distributed ledger, or proof that work satisfied its plan
+- Automatically inventing replacement work, resealing a changed plan, or
+  cancelling active tasks after a plan-assurance mismatch
 - Providing a durable owner-confirmation ledger or combining owner-aware
   mutation authority with recommendation override apply/audit
 - runtime i18n, localization catalogs, or locale negotiation
@@ -281,6 +356,12 @@ provide the following.
 | Schedule Critical | A sequence of tasks that constrains completion time in a feasible schedule including resource waits |
 | Recommendation | Work that should currently be prioritized and its explanation, derived from facts explicit in the project model. The [Recommendation Semantics specification](specs/recommendation.md) is authoritative for its formal meaning. |
 | Override | A decision in which a human intentionally chooses work different from the recommendation and states that fact and its reason |
+| Planning Dependency | A relation in which a successor task plan is conditional on a predecessor's versioned plan assurance; it is separate from execution readiness |
+| Plan Contract | The closed semantic projection of a task's reviewed plan fields, excluding lifecycle, actuals, derived values, and source trivia |
+| Computed Basis | The current hash derived from a task plan contract and its effective planning predecessors |
+| Accepted Basis | The computed basis explicitly accepted by an initial seal or a post-replanning reseal |
+| Plan Assurance | The derived `not_applicable`, `unsealed`, `conditional`, `verified`, `review_required`, or `unavailable` state of a task plan |
+| Frontier Assurance Receipt | A minimal commitment retained across advance when removed past work still supports a current/future planning basis |
 | Principal | A caller-asserted identifier such as `user`, `llm`, or `codex`; it is not an authenticated identity |
 | Goal Owner | The principal whose authority governs changes to `project.finish` and goal-governance metadata |
 | DAG Owner | The principal whose authority governs changes to task, gate, and milestone structure and DAG-governance metadata |
@@ -647,6 +728,76 @@ billing semantics, business calendars, named time zones, statistical
 confidence, automatic velocity adoption, recommendation override apply,
 durable authorization audit, or release operations.
 
+### 7.9 Conditional plan assurance
+
+The selected post-beta design records enough versioned planning-basis
+commitments to detect when current/future task plans no longer match their last
+accepted upstream assumptions. The [Conditional Plan Assurance
+Contract](specs/plan-assurance.md) is authoritative for relation projection,
+hashing, states, resealing, start authority, and advance contraction.
+
+The first semantic model contains:
+
+- a project-level assurance model identity and coverage state;
+- the projected direct task-dependency relation from the AoA graph;
+- explicit planning-dependency relation records for the `both`,
+  `planning_only`, and `execution_only` modes;
+- one versioned semantic task-plan contract hash per task;
+- one automatically computed and one explicitly accepted planning basis per
+  assurance-applicable task;
+- explicit outcome-conformance evidence bound to the basis against which a
+  completed task ran, including a versioned semantic commitment when the
+  outcome changed; and
+- minimal frontier receipts for removed task commitments still consumed by
+  current/future plans, including each consumer and its effective planning
+  mode.
+
+Must:
+
+- Use `both` for projected direct task dependencies by default.
+- Treat a task pair as a direct projected dependency only when the path from
+  the predecessor destination to the successor source contains zero or more
+  gates and no intervening task.
+- Require explicit source facts and a reason for `planning_only` and
+  `execution_only` departures from the default.
+- Use the target source form
+  `task_relation <id> <predecessor> -> <successor>:` with exactly one
+  `mode both|execution_only|planning_only`. Preserve an explicit `both` pin
+  even though its effective graph and hash match the default.
+- Keep relation IDs in the global document ID namespace, resolve both endpoints
+  only to tasks, reject duplicate semantic pairs, and keep relation IDs and
+  reason wording outside the assurance hash.
+- Reject a planning-only record that duplicates an existing projected task
+  dependency and an execution-only record that has no projected task
+  dependency.
+- Hash a closed canonical semantic projection rather than raw `.pert` bytes.
+  Exact Duration/Estimate values, requirements, tags, and optional fields must
+  have deterministic canonical forms.
+- Keep project snapshot fields, milestone metadata other than endpoint IDs,
+  and resource capacity outside task-plan hash model 1. Their existing
+  temporal, deadline, resource, and recommendation authorities remain active;
+  adding them to assurance requires a new hash model.
+- Treat any change to a model-1 task-plan field as a contract change. A later
+  aspect-specific model requires a new version rather than silently narrowing
+  the first model.
+- Preserve the plan hash across status transitions, work-event insertion,
+  formatter-only edits, and equivalent source trivia.
+- Not infer outcome conformance from `done`, a finish time, actual duration,
+  effort, Git time, or an LLM interpretation of free-form text.
+- Allow a known changed-outcome commitment to invalidate existing consumers
+  once and become a valid planning input only after the affected downstream
+  plans are explicitly replanned and resealed against it.
+- Keep existing Grammar 1 through 5 and CLI Contract 6 source and result
+  identities unchanged until a future source/interface contract selects and
+  atomically activates the required grammar, results, help, Guide,
+  diagnostics, and migration.
+
+SHA-256 is the first commitment algorithm, with domain-separated model
+identities and canonical lowercase `sha256:` spelling. The threat model is
+accidental or unreviewed continuation through tool-mediated workflows. Because
+the task and its accepted hash may share one directly editable file, this
+model does not prevent a malicious editor from replacing both.
+
 ## 8. DSL requirements
 
 ### 8.1 Design principles
@@ -796,6 +947,16 @@ Must:
 - Not incorrectly remove `done` tasks still needed to determine a merge.
 - Perform structural validation before changes.
 - Revalidate the DAG, references, frontier, and finish reachability after changes.
+- For an assurance-enabled document, retain a minimal frontier receipt for
+  each removed task commitment still consumed by retained future work and
+  prove that every retained task has the same computed basis before and after
+  advance.
+- Block an assurance-aware advance when a required cross-frontier commitment
+  is unsealed, review-required, unavailable, missing, or changed by
+  contraction. A known changed-outcome commitment may cross only after every
+  retained consumer has explicitly accepted that exact input. A mismatch
+  wholly contained in removed past work with no retained consumer need not
+  block advance.
 - By default, show only the changed document and diff; do not write a file without an explicit request.
 - When writing a file, use atomic replacement from a temporary file and retain the original file on failure.
 
@@ -995,6 +1156,16 @@ Must:
 - Keep recommendation algorithm version 1 unchanged for version 1 documents.
   Deadline-aware recommendation behavior requires a separately versioned
   ranking and explanation contract.
+- Keep plan assurance separate from raw recommendation ranking. An
+  assurance-aware result may preserve a task in the raw recommended set while
+  removing an unsealed, review-required, or unavailable task from new-start
+  authority.
+- Return assurance coverage, per-task state, direct and inherited mismatch
+  IDs, complete cause paths, active-attention IDs, and required replan/reseal
+  actions under a new closed result and policy identity.
+- Do not automatically promote a lower-ranked task because the raw recommended
+  task requires replanning. Unaffected branches proceed only under the normal
+  recommendation and authority contracts.
 
 Should:
 
@@ -1077,6 +1248,16 @@ The active source-level actuals contract adds eventful `task finish`, typed
 surface. Their option, result, diagnostic, version, and compatibility
 contracts are fixed by the Project Actuals specification. The published
 `0.4.0` Contract 5 package does not contain these commands.
+
+The conditional plan-assurance source target adds preview-first
+`plan-dependency add|set|remove` operations in a future atomic interface
+cutover. Their positional operands are file, relation ID, predecessor task ID,
+and successor task ID for `add`; their CLI mode values are `both`,
+`execution-only`, and `planning-only`, mapped to DSL/JSON `both`,
+`execution_only`, and `planning_only`. These operations never create or remove
+AoA edges. A mode conversion that also changes execution dependency must be one
+final-candidate atomic batch. Grammar 1 through 5 and CLI Contract 6 continue
+to reject this unavailable surface.
 
 ### 12.3 Owner-aware goal and DAG writes
 
@@ -1449,6 +1630,12 @@ Recommended workflow:
 6. Preview `finish` when a task is complete and `advance` when a merge is established.
 7. Review the diff and commit it.
 
+For a future assurance-enabled document, insert assurance verification after
+steps 2 and 6. A mismatch is resolved by reviewing or changing the affected
+planning closure, previewing one explicit reseal, persisting it with fresh
+candidate-bound authority, and obtaining a fresh Next result. Verification
+never fills or updates accepted hashes automatically.
+
 Must:
 
 - Do not create large diffs that do not require formatting or structural edits.
@@ -1510,6 +1697,12 @@ Must:
 - Test exclusive resources, capacity of two or more, simultaneous requirements for multiple resources, active oversubscription, and schedule differences caused by capacity changes individually.
 - Verify that CLI JSON and the direct Core API return semantically identical payloads for the same input.
 - Regression-test the lossless Mermaid round-trip profile.
+- Fix dependency-ordered plan-assurance cases for disabled, unsealed, partial,
+  verified, conditional, review-required, and unavailable states; all three
+  dependency modes; cycle rejection; lifecycle exclusion; cause propagation;
+  reseal authority; and assurance-preserving advance.
+- Verify that full and any incremental assurance recomputation return identical
+  hashes and cause paths for the same canonical semantic input.
 
 ## 21. MVP acceptance criteria
 
@@ -2126,6 +2319,8 @@ procedure is [`docs/process/0.6.0-release.md`](process/0.6.0-release.md).
 - Velocity by team/resource and statistical history beyond the selected
   project observation model
 - Plan-diff analysis between Git revisions
+- Conditional plan assurance, planning-only/execution-only relations,
+  governed resealing, and assurance-preserving advance under `ASSURE-001`
 - Web UI and collaborative editing
 - Broad import of arbitrary Mermaid syntax
 - Project-completion probability by Monte Carlo simulation
@@ -2154,6 +2349,16 @@ through 4 semantics remain compatible; npm `beta=0.5.2` and `latest=0.5.1`
 provide Contract 6, while Contract 5 remains available by pinning `0.4.0`.
 The obsolete npm `alpha` dist-tag is retired; historical
 `0.1.0-alpha.2` remains available by exact pin.
+
+The conditional plan-assurance target is design-only. Requirements 2.7 and
+7.9, the draft [Conditional Plan Assurance
+Contract](specs/plan-assurance.md), its [normative examples](examples/plan-assurance.md),
+and the [design consistency review](process/plan-assurance-design-review.md)
+fix the semantic target plus `task_relation` and
+`plan-dependency add|set|remove`. The enclosing grammar version, remaining
+source records and public commands, result schema identities, diagnostics,
+governance-version cutover, implementation plan, and release remain unselected
+and unavailable in the current runtime.
 
 Resolved design decisions:
 
@@ -2307,6 +2512,26 @@ Before implementation, separate the specifications in the following order.
     - [x] Accept the real tracked CLI write, preview/write byte identity,
       `git diff --check`, temporary link, installed package, and corrected
       ADV-001 acceptance trace.
+21. [ ] Implement conditional plan assurance under `ASSURE-001`.
+    - [x] Record design principles, dependency modes, hash recurrence,
+      unsealed compatibility, reseal behavior, and advance contraction in the
+      [Conditional Plan Assurance Contract](specs/plan-assurance.md).
+    - [x] Fix dependency-ordered semantic examples and a machine-readable
+      design fixture in the [Plan Assurance Examples](examples/plan-assurance.md).
+    - [x] Recheck requirements, specification, basic design, examples,
+      governance, actuals, recommendation, and advance boundaries in the
+      [Plan Assurance Design Review](process/plan-assurance-design-review.md).
+    - [x] Select top-level `task_relation` syntax, explicit `both` pinning,
+      source-preservation rules, and `plan-dependency add|set|remove` mutation
+      mapping without activating Grammar 5 or CLI Contract 6.
+    - [ ] Select the enclosing grammar version; assurance model, seal, outcome,
+      and receipt source records; inspection/seal/reseal operations; public
+      result identities; diagnostics; Guide/help projection; governance
+      version; and migration.
+    - [ ] Create an independent `.pert` workstream before implementation.
+    - [ ] Implement and accept Core, CLI, schemas, safe write, advance,
+      compatibility, package, and installed workflows without changing the
+      active Contract 6 surface prematurely.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-07-30
+- Updated: 2026-08-03
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -1130,10 +1130,65 @@ workstream sequenced after the loose owner-aware governance contract it
 extends. Do not add its unresolved authentication, certificate, or durable
 ledger semantics to an in-progress Issue #4 implementation slice.
 
+## Conditional plan assurance
+
+### ASSURE-001: Add conditional plan assurance
+
+Priority: P0
+
+Status: Design target reviewed (2026-08-03); implementation unplanned
+
+Detect when a current/future task plan no longer matches the upstream planning
+basis against which it was last reviewed. The
+[Conditional Plan Assurance Contract](specs/plan-assurance.md),
+[normative examples](examples/plan-assurance.md), and
+[design review](process/plan-assurance-design-review.md) define the semantic
+target. The relation source and mutation mapping are selected, but the
+enclosing grammar version, other assurance records and commands, public
+schemas, implementation plan, and release remain unselected.
+
+Required outcomes:
+
+- derive the planning-dependency DAG from the projected task-dependency DAG by
+  default, with effective `both`, `planning_only`, and `execution_only` modes;
+- preserve top-level `task_relation` records with explicit full-name `mode`,
+  stable global IDs, conditionally required reasons, and no punctuation aliases;
+- maintain those records through preview-first
+  `plan-dependency add|set|remove` and atomic batch operations;
+- keep the AoA execution graph, resources, lifecycle, recommendation, and plan
+  assurance as separate typed concerns;
+- compute domain-separated SHA-256 commitments from canonical semantic task
+  plans and recursively ordered planning inputs while excluding status, work
+  events, actual measurements, source trivia, and derived analysis;
+- retain separate computed and explicitly accepted bases, returning complete
+  cause paths and `replan_and_reseal` without automatic acceptance;
+- preserve assurance-disabled documents, but withhold only affected new-start
+  authority for enabled unsealed, mismatched, unknown, or unavailable state;
+- require an explicit basis-bound, versioned outcome commitment instead of
+  inferring conformance from task completion, time, effort, Git, or free-form
+  text, and allow reviewed downstream plans to accept a known changed outcome;
+- perform preview-first, candidate-bound, governed initial seal and reseal;
+- preserve each retained task's computed basis across `dag advance` through
+  minimal per-consumer frontier receipts; and
+- keep the history-loss force option, digital signatures, authentication,
+  malicious-tamper resistance, automatic replanning, and release operations
+  outside this feature's authority.
+
+Before implementation:
+
+- select one atomic source and public-interface version around the accepted
+  relation target, including the grammar version, remaining records and
+  operations, schemas, policy identities, diagnostics, help, Guide, migration,
+  and governance scope;
+- define outcome evidence and correction semantics with the actuals contract;
+- define exact receipt source ownership and advance edits; and
+- create and select an independent `.pert` workstream from a fresh complete
+  `Perttool.NextResult.v5` authority result.
+
 ## Independent post-beta work
 
 `MULTI-001`, `LSP-001`, `VSIX-001`, `MCP-001`, `MIG-08`, Git integration,
-`GOV-AUTH-001`, `ADV-001`, and `META-001` remain independent
+`GOV-AUTH-001`, `ADV-001`, `ASSURE-001`, and `META-001` remain independent
 workstreams. `ADV-001` is the refined, unscheduled read-only Git guard for
 destructive advance writes. These items are not implicit prerequisites for an
 accepted workstream unless a later requirements decision explicitly composes
