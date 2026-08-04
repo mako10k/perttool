@@ -65,11 +65,12 @@ test("0.7.0 readiness consumes the exact completed ASSURE-001 input", async () =
   assert.match(readiness, /No hidden correctness, compatibility, packaging, or\s+authority finding/);
 });
 
-test("0.7.0 readiness remains historical after publication", async () => {
-  const [releasePlan, readiness, publish, manifestText, versionSource] = await Promise.all([
+test("0.7.0 readiness remains historical after durable acceptance", async () => {
+  const [releasePlan, readiness, publish, acceptance, manifestText, versionSource] = await Promise.all([
     repositoryText("plans/release-0.7.0.pert"),
     repositoryText("docs/process/0.7.0-contract7-readiness.md"),
     repositoryText("docs/process/0.7.0-publish.md"),
+    repositoryText("docs/process/0.7.0-release-acceptance.md"),
     repositoryText("package.json"),
     repositoryText("src/version.ts"),
   ]);
@@ -107,18 +108,21 @@ test("0.7.0 readiness remains historical after publication", async () => {
     releasePlan,
     /^task RELEASE_070_PUBLISH[\s\S]*?^  status done$/m,
   );
+  assert.match(
+    releasePlan,
+    /^task RELEASE_070_ACCEPTANCE[\s\S]*?^  status done$/m,
+  );
   const next = selectNextTasks(releasePlan);
   assert.equal(next.ok, true);
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["RELEASE_070_ACCEPTANCE"]);
-  assert.deepEqual(next.groups.runnableNow, ["RELEASE_070_ACCEPTANCE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_070_ACCEPTANCE"]);
-  assert.deepEqual(
-    next.temporal.authority.startableRecommendedTaskIds,
-    ["RELEASE_070_ACCEPTANCE"],
-  );
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.match(publish, /Status: Complete/);
   assert.match(publish, /`beta=0\.7\.0`, unchanged `latest=0\.6\.0`/);
+  assert.match(acceptance, /Document status: Accepted 1\.0/);
+  assert.match(acceptance, /`beta=latest=0\.7\.0`/);
   assert.match(readiness, /Package identity remains\s+`0\.6\.0`/);
   assert.match(readiness, /does not authorize or perform version-bearing source preparation/);
   assert.match(readiness, /complete repository run passed all 791 tests/);
@@ -156,7 +160,7 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
 
   assert.equal(
     sha256(releasePlan),
-    "sha256:69594c30f524b95ebdfae4a850e66a042fb053f358591565e4491d7c71582110",
+    "sha256:c511a4517759cc9beaa66f013f06fde22b44c4af8e255a093c7836c2a52e8fb7",
   );
   assert.match(
     releasePlan,

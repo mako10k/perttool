@@ -118,6 +118,7 @@ task RELEASE_070_ACCEPTANCE RELEASE_070_PUBLISHED -> RELEASE_070_ACCEPTED:
   title "Record durable 0.7.0 beta acceptance"
   description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball facts and digests, registry integrity and metadata, isolated installation from both public channels, and complete Contract 7 and conditional plan assurance behavior. Preserve the publication-time fact that beta=0.7.0 while latest remained 0.6.0; separately verify the authorized post-publication promotion now reports beta=latest=0.7.0 with no alpha and an unqualified isolated install. Record acceptance and exact commands without altering the immutable artifact, changing npm tags, advancing either plan, or mutating an Issue."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -199,3 +200,18 @@ work_event WE-98fe04447b47adc8595cd4a8fb85f4bc2140fbbe03e3d469b5a2d9f1c17577db:
   occurred_at 2026-08-04T18:26:44+09:00
   active_time 409/3600h
   effort 409/3600ph
+
+work_event WE-3f25a6db24fda7c92f5be340d25c60d25ad123246d0cb7f3a7770800db4178b6:
+  model 1
+  task RELEASE_070_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-04T19:26:43+09:00
+  planned_value 3p
+
+work_event WE-d9b8deea52de0be1f17da95bd13c80cf2afadcd69e4a4c98d4a815f5e18f603f:
+  model 1
+  task RELEASE_070_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-04T19:35:26+09:00
+  active_time 523/3600h
+  effort 523/3600ph

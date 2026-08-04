@@ -21,6 +21,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     candidate,
     publish,
     latestPromotion,
+    releaseAcceptance,
     migration,
     publicAcceptance,
     finalAcceptance,
@@ -38,6 +39,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     repositoryText("docs/process/0.7.0-candidate.md"),
     repositoryText("docs/process/0.7.0-publish.md"),
     repositoryText("docs/process/0.7.0-latest-promotion.md"),
+    repositoryText("docs/process/0.7.0-release-acceptance.md"),
     repositoryText("docs/process/0.6.0-to-0.7.0-migration.md"),
     repositoryText("docs/process/plan-assurance-public-contract-acceptance.md"),
     repositoryText("docs/process/plan-assurance-acceptance.md"),
@@ -67,7 +69,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     design,
     /^### Post-MVP Slice 4Q: Conditional plan assurance `v0\.7\.0` beta minor$/m,
   );
-  assert.match(procedure, /- Status: Published; durable acceptance pending 1\.0/);
+  assert.match(procedure, /- Status: Accepted 1\.0/);
   assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.6\.0`, no `alpha`/);
   assert.match(procedure, /initial 2026-08-04 instruction authorized only\s+`RELEASE_070_GATE_DESIGN`/);
   assert.match(procedure, /later instruction separately authorized\s+`RELEASE_070_CONTRACT_7_READINESS`/);
@@ -90,6 +92,12 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.match(latestPromotion, /`beta=latest=0\.7\.0` with no `alpha`/);
   assert.match(latestPromotion, /the 44-command registry/);
   assert.match(latestPromotion, /the 20-root schema catalog/);
+  assert.match(releaseAcceptance, /- Document status: Accepted 1\.0/);
+  assert.match(releaseAcceptance, /actions\/runs\/30895944899/);
+  assert.match(releaseAcceptance, /actions\/runs\/30900525768/);
+  assert.match(releaseAcceptance, /Pairwise `cmp` passed/);
+  assert.match(releaseAcceptance, /Fresh isolated installations of exact `perttool@0\.7\.0`/);
+  assert.match(releaseAcceptance, /A separate exact `perttool@0\.6\.0` installation remained available/);
   assert.match(migration, /- Status: Accepted 1\.0/);
   assert.match(migration, /`cli_contract_version == 7`/);
   assert.match(migration, /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/);
@@ -115,6 +123,10 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.match(
     plan,
     /^task RELEASE_070_PUBLISH RELEASE_070_CANDIDATE_ACCEPTED -> RELEASE_070_PUBLISHED:\n[\s\S]*?^  status done$/m,
+  );
+  assert.match(
+    plan,
+    /^task RELEASE_070_ACCEPTANCE RELEASE_070_PUBLISHED -> RELEASE_070_ACCEPTED:\n[\s\S]*?^  status done$/m,
   );
   assert.match(plan, /user separately authorizes this exact candidate/);
   assert.match(plan, /Preserve the publication-time fact that beta=0\.7\.0 while latest remained 0\.6\.0/);

@@ -417,7 +417,7 @@ instruction authorized only gate design, and a later instruction separately
 authorized Contract 7 readiness; the next instruction separately authorized
 source preparation; subsequent instructions authorized candidate acceptance
 and PUBLISH. The user then separately authorized the exact `0.7.0` npm
-`latest` promotion, and the current instruction authorizes the narrow
+`latest` promotion, and a following instruction authorized the narrow
 acceptance-condition replan and durable acceptance. The prepared manifest,
 lockfile, and CLI identify `0.7.0`, and
 `docs/process/0.7.0-preparation.md` records the accepted local gate. The
@@ -438,11 +438,13 @@ npm `beta=0.7.0`, and all three tarball copies agree at SHA-256
 absent. Exactly one separately authorized post-publication mutation later made
 `beta=latest=0.7.0`; an unqualified isolated installation confirmed Contract
 7, 44 commands, and 20 schemas. Gate design, Contract 7 readiness, source
-preparation, candidate acceptance, and PUBLISH are complete before advance.
-The acceptance task now preserves both time-bound facts without changing its
-DAG, estimate, or resources. Fresh complete NextResult v6 recommends only
-`RELEASE_070_ACCEPTANCE`. Do not infer authority for either plan advance or
-Issue mutation.
+preparation, candidate acceptance, PUBLISH, and durable acceptance are complete
+before advance. Independent Git, CI, GitHub, npm, byte-identity,
+exact/beta/latest installation, rollback-pin, and complete public-package
+verification passed. All six tasks and 21p are complete with zero makespans,
+and fresh complete NextResult v6 has no ready, recommended, or startable task.
+The acceptance record is `docs/process/0.7.0-release-acceptance.md`. Do not
+infer authority for either plan advance or Issue mutation.
 
 ### 5.1 Adopted Recommendation authority
 

@@ -1488,8 +1488,8 @@ and durable acceptance. The initial 2026-08-04 instruction authorized the
 local gate-design task, and a later instruction separately authorized Contract
 7 readiness; the next instruction separately authorized source preparation;
 subsequent instructions authorized candidate acceptance and PUBLISH. The user
-then separately authorized the exact `0.7.0` npm `latest` promotion, and the
-current instruction authorizes the narrow acceptance-condition replan and
+then separately authorized the exact `0.7.0` npm `latest` promotion, and a
+following instruction authorized the narrow acceptance-condition replan and
 durable acceptance.
 Read-only external checks at the design decision point report
 `beta=latest=0.6.0`, no maintained `alpha`, unused `0.7.0`, and remote main at
@@ -1512,11 +1512,13 @@ commit and peeled `v0.7.0` target `1279e3c` agree; Node.js 22 and 24 CI run
 tarball copies agree at SHA-256 `8585adb5...f4d623`; at publication,
 `latest=0.6.0` and `alpha` remained absent. Exactly one separately authorized
 post-publication mutation later made `beta=latest=0.7.0`; an unqualified
-isolated installation confirmed Contract 7, 44 commands, and 20 schemas. The
-acceptance task now preserves both time-bound facts without changing its DAG,
-estimate, or resources. Fresh complete NextResult v6 recommends only
-`RELEASE_070_ACCEPTANCE`. Durable acceptance, both plan advances, and Issue
-mutation remain separate.
+isolated installation confirmed Contract 7, 44 commands, and 20 schemas.
+Independent Git, CI, GitHub, npm, byte-identity, exact/beta/latest
+installation, rollback-pin, and complete public-package verification passed.
+All six tasks and 21p are complete with zero precedence and heuristic resource
+makespans; fresh complete NextResult v6 has no ready, recommended, or startable
+task. The acceptance record is `docs/process/0.7.0-release-acceptance.md`.
+Both plan advances and Issue mutation remain separate.
 
 Stage 1 allowed operations:
 
