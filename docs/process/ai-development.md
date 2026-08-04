@@ -119,12 +119,13 @@ Before implementation, use the recommended specification work and open matters i
 After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert`
 plans to the canonical sources. In Stage 3, editing commands and `dag advance`
 may be used as canonical writers through preview-first, expected-digest, and
-post-write reanalysis procedures. Contract 6 retains the MIG-07 recommendation
-gate and temporal release policy: task selection uses a complete, known
-`Perttool.NextResult.v5` and its temporal authority as follows.
+post-write reanalysis procedures. Contract 7 retains the MIG-07 recommendation
+gate and adds plan-assurance eligibility after the temporal release policy:
+task selection uses a complete, known `Perttool.NextResult.v6` and its combined
+authority as follows.
 
 1. Run `perttool document check` on `mvp.pert` and the current detail plan to confirm that the plans are valid. Use `perttool project show --format json`, rather than directly viewing the source, to inspect metadata such as project ID, as_of, duration_unit, velocity, and finish
-2. Run `dag analyze` and `dag next --format json` for `mvp.pert`, confirm a known version, complete trace, temporal policy `recommendation_v1_plus_release_gate`, and no `PTREC-*`, then select a workstream from `startable_recommended_task_ids`
+2. Run `dag analyze` and `dag next --format json` for `mvp.pert`, confirm a known version, complete trace, policy `recommendation_v1_plus_release_gate_plus_plan_assurance_v1`, complete assurance authority, and no `PTREC-*` or assurance safe stop, then select a workstream from `startable_recommended_task_ids`
 3. Run `dag analyze` and `dag next --format json` for the detail plan corresponding to that work package, confirm the same consumer gate, then select the detail recommended task
 4. Treat as normal selection either a startable recommended subset or the startable recommended set plus exactly one time-eligible, resource-feasible `allowed` task while retaining every startable recommended task
 5. Explain the decisive step, higher-priority tasks, and comparison from project facts, and confirm external blocks and available resources
@@ -132,8 +133,8 @@ gate and temporal release policy: task selection uses a complete, known
 
 When changing project metadata, inspect the `project set` preview or `--diff`, and use the Stage 3 `--write` procedure with an expected digest for persistence. If a project-wide unit change also requires task duration or estimate changes, combine `project.set` and the related mutations in one atomic batch. Do not depend on visual source inspection or manual editing for normal metadata viewing and editing.
 
-Owner-aware governance is active in repository-source Grammar 5 and CLI
-Contract 6. Governed previews may omit actor and owner confirmation, but
+Owner-aware governance is active in repository-source Grammar 6 and CLI
+Contract 7. Governed previews may omit actor and owner confirmation, but
 persistent goal or DAG changes require an actor. Effective owners and
 delegates have direct authority; another actor must provide repeatable
 `--accepted-by-owner` caller assertions for every affected effective owner.
@@ -409,8 +410,9 @@ outside the named release.
 
 ### 5.1 Adopted Recommendation authority
 
-MIG-07 established Recommendation version 1 authority. The atomic Contract 4
-cutover adds the temporal release gate without changing ranking. Because
+MIG-07 established Recommendation version 1 authority. Contract 4 added the
+temporal release gate and Contract 7 adds assurance eligibility without
+changing ranking. Because
 `AGENTS.md`, `.github/copilot-instructions.md`, help, and safe-stop tests move
 together, normal task selection uses the following as authority.
 
@@ -420,8 +422,9 @@ together, normal task selection uses the following as authority.
    authority, select only a subset of that set or retain it and add one
    time-eligible, resource-feasible allowed task
 4. Confirm the decisive step, higher-priority tasks, and comparison, and explain the selection from project facts
-5. Stop automatic selection for an unknown schema/version or temporal policy,
-   incomplete trace, `PTREC-*`, or future or unavailable temporal eligibility
+5. Stop automatic selection for an unknown schema/version or authority policy,
+   incomplete trace, `PTREC-*`, an assurance safe stop, future or unavailable
+   temporal eligibility, or withheld assurance eligibility
 6. Reanalyze the detail plan after a detail-task start, completion, block, or capacity change; also reanalyze the macro plan if macro work-package status, roll-up duration, or capacity changes
 
 Human instructions to select `deferred` or `discouraged` are distinct from normal recommendations. Until the override-apply gate is met, do not fabricate an applied artifact; AI presents the difference and the not-yet-enabled audit/apply boundary. Provider-specific prompts, skills, agents, and hooks reach the same rules through the Issue #2 guide and do not add provider-specific priority rules.

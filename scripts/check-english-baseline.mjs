@@ -149,7 +149,13 @@ export async function auditEnglishBaseline(repositoryRoot) {
     .sort(compareText);
   const files = [];
   for (const repositoryPath of repositoryPaths) {
-    const content = await readFile(path.join(repositoryRoot, repositoryPath));
+    let content;
+    try {
+      content = await readFile(path.join(repositoryRoot, repositoryPath));
+    } catch (error) {
+      if (error?.code === "ENOENT") continue;
+      throw error;
+    }
     if (content.includes(0)) continue;
     files.push({ path: repositoryPath, text: content.toString("utf8") });
   }

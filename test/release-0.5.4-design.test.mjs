@@ -114,6 +114,6 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
     readme,
     /npm `beta` resolves to Contract 6 `0\.6\.0`\. npm `latest` and an unqualified\s+install remain on Contract 6 `0\.5\.5`/,
   );
-  assert.equal(COMMAND_REGISTRY.length, 34);
-  assert.equal(getJsonSchemaCatalog().length, 19);
+  assert.equal(COMMAND_REGISTRY.length, 44);
+  assert.equal(getJsonSchemaCatalog().length, 20);
 });

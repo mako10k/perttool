@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v5.schema.json",
-  "title": "Perttool.NextResult.v5",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v6.schema.json",
+  "title": "Perttool.NextResult.v6",
   "$defs": {
     "tier": {
       "enum": [
@@ -1033,6 +1033,7 @@
           "type": "object",
           "required": [
             "policy",
+            "complete",
             "recommendation_algorithm",
             "deadline_facts_used_for_ranking",
             "time_eligible_task_ids",
@@ -1040,11 +1041,20 @@
             "time_eligibility_unavailable_task_ids",
             "startable_recommended_task_ids",
             "delayed_recommended_task_ids",
-            "unavailable_recommended_task_ids"
+            "unavailable_recommended_task_ids",
+            "raw_recommended_task_ids",
+            "temporal_startable_recommended_task_ids",
+            "assurance_eligible_task_ids",
+            "assurance_withheld_recommended_task_ids",
+            "assurance_unavailable_recommended_task_ids",
+            "safe_stop_reasons"
           ],
           "properties": {
             "policy": {
-              "const": "recommendation_v1_plus_release_gate"
+              "const": "recommendation_v1_plus_release_gate_plus_plan_assurance_v1"
+            },
+            "complete": {
+              "type": "boolean"
             },
             "recommendation_algorithm": {
               "type": "object",
@@ -1083,6 +1093,37 @@
             },
             "unavailable_recommended_task_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "raw_recommended_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "temporal_startable_recommended_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "assurance_eligible_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "assurance_withheld_recommended_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "assurance_unavailable_recommended_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "safe_stop_reasons": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "unknown_recommendation_interface",
+                  "unknown_ranking_algorithm",
+                  "unknown_recommendation_contract",
+                  "unknown_temporal_authority_policy",
+                  "incomplete_recommendation_trace",
+                  "invalid_recommendation_authority",
+                  "invalid_assurance_evaluation",
+                  "unknown_assurance_model",
+                  "missing_assurance_task_result"
+                ]
+              }
             }
           },
           "additionalProperties": false
@@ -1111,14 +1152,15 @@
     "diagnostics",
     "diagnostics_truncated",
     "grammar_version",
-    "temporal"
+    "temporal",
+    "assurance"
   ],
   "properties": {
     "schema_version": {
-      "const": "Perttool.NextResult.v5"
+      "const": "Perttool.NextResult.v6"
     },
     "cli_contract_version": {
-      "const": 6
+      "const": 7
     },
     "recommendation_interface_version": {
       "const": 1
@@ -1153,7 +1195,7 @@
         "null"
       ],
       "minimum": 1,
-      "maximum": 5
+      "maximum": 6
     },
     "precision": {
       "type": "integer",
@@ -1258,6 +1300,9 @@
           "type": "null"
         }
       ]
+    },
+    "assurance": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullablePlanAssuranceProjection"
     }
   },
   "additionalProperties": false

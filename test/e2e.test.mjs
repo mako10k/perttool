@@ -35,7 +35,7 @@ function runJson(args, expectedStatus = 0, options = {}) {
   assert.equal(result.stderr, "");
   assert.equal(result.stdout.endsWith("\n"), true);
   const json = JSON.parse(result.stdout);
-  assert.equal(json.cli_contract_version, 6);
+  assert.equal(json.cli_contract_version, 7);
   return json;
 }
 
@@ -61,7 +61,7 @@ function commitRepository(directory, relativePath) {
 test("E2E-001: discover commands, validate a plan, and compare capacity what-if", () => {
   const help = run(["--help"]);
   assert.equal(help.status, 0);
-  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 6\)$/m);
+  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 7\)$/m);
   assert.match(help.stdout, /^  document  /m);
   assert.match(help.stdout, /^    check  /m);
   assert.match(help.stdout, /^  project  /m);

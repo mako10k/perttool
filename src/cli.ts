@@ -6,10 +6,13 @@ import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
 import {
   analyzeDocument,
+  checkDocument,
   selectNextTasks,
-} from "./application/contract6-actuals.js";
-import { checkDocument } from "./application/check.js";
-import { planFormat, type FormatPreviewResult } from "./application/format.js";
+} from "./application/contract7-assurance.js";
+import {
+  planFormat,
+  type FormatPreviewResultV7 as FormatPreviewResult,
+} from "./application/contract7-source.js";
 import {
   planProjectInit,
   projectInitResultToJson,
@@ -20,38 +23,55 @@ import {
   planUnitMigration,
   withUnitMigrationWrite,
   type UnitMigrationResult,
-} from "./application/unit-migration.js";
+} from "./application/contract7-unit-migration.js";
 import {
   getProjectMetadata,
-} from "./application/project.js";
+} from "./application/contract7-project.js";
 import {
   planAdvance,
   planBatchMutation,
   planFinishActuals,
   planLifecycle,
   planMutation,
-  type AdvanceResultV3,
-  type LifecycleResultV3,
-  type MutationResultV3,
-} from "./application/contract6-mutation.js";
+  planAssuranceMutation,
+  type AdvanceResultV2,
+  type LifecycleResultV4,
+  type MutationResultV4,
+} from "./application/contract7-mutation.js";
 import {
   renderTargetGovernanceDecision,
-  renderTargetGovernanceProjectText,
   type TargetGovernanceWriteProjection,
 } from "./application/target-governance-projection.js";
 import {
-  contract6MutationResultToJson,
-  contract6ProjectResultToJson,
+  contract7InspectionResultToJson,
+  contract7MutationResultToJson,
+  contract7SnakeJson,
+} from "./application/contract7-projection.js";
+import {
+  contract7ProjectResultToJson,
+  renderContract7ProjectText,
+} from "./application/contract7-project.js";
+import {
   contract6WorkEventToJson,
 } from "./application/contract6-projection.js";
 import {
-  prepareAdvanceHistory,
   renderAdvanceHistoryGuard,
-  withAdvanceHistoryRace,
 } from "./application/advance-history.js";
 import {
-  persistTargetActualsResult,
-} from "./application/target-actuals-write.js";
+  prepareTargetPlanAssuranceAdvanceHistory,
+  withTargetPlanAssuranceAdvanceHistoryRace,
+  type TargetPlanAssuranceAdvanceResultV2WithHistory,
+} from "./application/target-assurance-advance-history.js";
+import {
+  persistTargetPlanAssuranceResult,
+} from "./application/target-assurance-write.js";
+import {
+  inspectTargetPlanAssurance,
+  type PlanAssuranceHashKind,
+} from "./application/target-assurance-inspection.js";
+import type {
+  PlanAssuranceMutation,
+} from "./assurance/mutation.js";
 import {
   inspectTargetProjectHistoryFile,
   renderTargetProjectHistoryText,
@@ -72,29 +92,29 @@ import {
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import {
-  getActualsGuide,
-  renderActualsGuideResult,
-  serializeActualsGuideResult,
-} from "./help/actuals-guide.js";
+  getAssuranceGuide,
+  renderAssuranceGuideResult,
+  serializeAssuranceGuideResult,
+} from "./help/assurance-guide.js";
 import {
   commandOptionSets,
   type ProjectedCommandDescriptor,
 } from "./command/registry.js";
 import {
-  ACTUALS_COMMAND_REGISTRY,
-  getActualsCommandDiscovery,
-  renderActualsCommandHelpResult,
-  serializeActualsCommandHelpResult,
-  type ActualsCommandDescriptor,
-} from "./command/actuals-discovery.js";
+  ASSURANCE_COMMAND_REGISTRY,
+  getAssuranceCommandDiscovery,
+  renderAssuranceCommandHelpResult,
+  serializeAssuranceCommandHelpResult,
+  type AssuranceCommandDescriptor,
+} from "./command/assurance-discovery.js";
 import {
   handlerCommandUsageError,
 } from "./command/usage.js";
 import {
-  renderActualsCommandUsageError,
-  serializeActualsCommandUsageError,
-  validateActualsCommandInvocation,
-} from "./command/actuals-usage.js";
+  renderAssuranceCommandUsageError,
+  serializeAssuranceCommandUsageError,
+  validateAssuranceCommandInvocation,
+} from "./command/assurance-usage.js";
 import { agentGuidanceResultToJson } from "./guidance/projection.js";
 import {
   agentGuidanceExitCode,
@@ -109,8 +129,6 @@ import {
 } from "./history/git-probe.js";
 import {
   createArtifactFile,
-  createDocumentFile,
-  replaceDocumentFile,
   SafeWriteConflictError,
   SafeWriteVerificationError,
   type DocumentWriteResult,
@@ -140,8 +158,16 @@ import type {
 import type { AdvanceDetails } from "./mutation/advance.js";
 import type { LifecycleMutation } from "./actuals/lifecycle.js";
 import {
-  TARGET_GRAMMAR_5_CAPABILITY,
+  TARGET_GRAMMAR_6_CAPABILITY,
 } from "./parser/document-parser.js";
+import {
+  createTargetGrammar6DocumentFile,
+  replaceTargetGrammar6DocumentFile,
+} from "./io/target-safe-write.js";
+import {
+  exportPlanAssuranceMermaid,
+  importPlanAssuranceMermaid,
+} from "./assurance/mermaid.js";
 import {
   getJsonSchemaResult,
   renderJsonSchemaResult,
@@ -217,7 +243,7 @@ function parseCommandOptions(
   operation: string,
   args: readonly string[],
 ): ParsedOptions {
-  const descriptor = ACTUALS_COMMAND_REGISTRY.find(
+  const descriptor = ASSURANCE_COMMAND_REGISTRY.find(
     (candidate) => candidate.operation === operation,
   );
   if (descriptor === undefined) {
@@ -419,7 +445,7 @@ function cliError(
   if (json) {
     writeJson({
       schema_version: "Perttool.CliError.v1",
-      cli_contract_version: 6,
+      cli_contract_version: 7,
       tool_version: TOOL_VERSION,
       operation,
       ok: false,
@@ -465,7 +491,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: result.schemaVersion,
-      cli_contract_version: 6,
+      cli_contract_version: 7,
       tool_version: TOOL_VERSION,
       operation: "document.check",
       ok,
@@ -485,6 +511,9 @@ async function runCheck(args: readonly string[]): Promise<number> {
               events:
                 result.actualsInputs.events.map(contract6WorkEventToJson),
             },
+      assurance: contract7SnakeJson(result.assurance),
+      assurance_state_counts:
+        contract7SnakeJson(result.assuranceStateCounts),
     });
   } else {
     if (ok) {
@@ -537,7 +566,7 @@ async function runProjectShow(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson(
-      contract6ProjectResultToJson(
+      contract7ProjectResultToJson(
         result,
         source,
         input.digest,
@@ -546,7 +575,7 @@ async function runProjectShow(args: readonly string[]): Promise<number> {
     );
   } else {
     if (ok && result.project !== null) {
-      process.stdout.write(renderTargetGovernanceProjectText(result.project));
+      process.stdout.write(renderContract7ProjectText(result.project));
     }
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
@@ -614,7 +643,11 @@ async function runProjectInit(args: readonly string[]): Promise<number> {
   const output = parsed.values.get("out");
   if (result.ok && output !== undefined) {
     try {
-      writeResult = await createDocumentFile(output, result.candidateText!);
+      writeResult = await createTargetGrammar6DocumentFile(
+        output,
+        result.candidateText!,
+        TARGET_GRAMMAR_6_CAPABILITY,
+      );
       result = withProjectInitOutput(result, writeResult);
     } catch (error) {
       return writeFailureExit(error, "project.init", format === "json");
@@ -747,9 +780,10 @@ function governanceRequest(
 
 async function persistGovernedResult(
   result:
-    | MutationResultV3
-    | LifecycleResultV3
-    | AdvanceResultV3,
+    | MutationResultV4
+    | LifecycleResultV4
+    | AdvanceResultV2
+    | TargetPlanAssuranceAdvanceResultV2WithHistory,
   request: EditingWriteRequest,
   sourceOperand: string,
 ): Promise<TargetGovernanceWriteProjection> {
@@ -760,9 +794,9 @@ async function persistGovernedResult(
       written: false,
     });
   }
-  return persistTargetActualsResult(
+  return persistTargetPlanAssuranceResult(
     result,
-    TARGET_GRAMMAR_5_CAPABILITY,
+    TARGET_GRAMMAR_6_CAPABILITY,
     request.mode === "in_place"
       ? {
           mode: "in_place",
@@ -807,13 +841,22 @@ async function commitCandidate(
     );
   }
   return request.mode === "in_place"
-    ? replaceDocumentFile(request.target, candidateText, {
-        initialDigest,
-        ...(request.expectedDigest === undefined
-          ? {}
-          : { expectedDigest: request.expectedDigest }),
-      })
-    : createDocumentFile(request.target, candidateText);
+    ? replaceTargetGrammar6DocumentFile(
+        request.target,
+        candidateText,
+        TARGET_GRAMMAR_6_CAPABILITY,
+        {
+          initialDigest,
+          ...(request.expectedDigest === undefined
+            ? {}
+            : { expectedDigest: request.expectedDigest }),
+        },
+      )
+    : createTargetGrammar6DocumentFile(
+        request.target,
+        candidateText,
+        TARGET_GRAMMAR_6_CAPABILITY,
+      );
 }
 
 function writeFailureExit(error: unknown, operation: string, json: boolean): number {
@@ -895,7 +938,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.FormatResult.v1",
-      cli_contract_version: 6,
+      cli_contract_version: 7,
       tool_version: TOOL_VERSION,
       operation: "document.format",
       ok,
@@ -1644,7 +1687,7 @@ async function runMutation(
   }
   if (format === "json") {
     writeJson(
-      contract6MutationResultToJson(
+      contract7MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         operation,
         source,
@@ -1674,7 +1717,11 @@ async function runMutation(
     }
     if (result.governance !== null) {
       process.stderr.write(
-        renderTargetGovernanceDecision(result.governance),
+        renderTargetGovernanceDecision(
+          result.governance as unknown as Parameters<
+            typeof renderTargetGovernanceDecision
+          >[0],
+        ),
       );
     }
     for (const diagnostic of result.diagnostics) {
@@ -1767,7 +1814,7 @@ async function runLifecycleMutation(
   }
   if (format === "json") {
     writeJson(
-      contract6MutationResultToJson(
+      contract7MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         operation,
         source,
@@ -1804,7 +1851,11 @@ async function runLifecycleMutation(
     }
     if (result.governance !== null) {
       process.stderr.write(
-        renderTargetGovernanceDecision(result.governance),
+        renderTargetGovernanceDecision(
+          result.governance as unknown as Parameters<
+            typeof renderTargetGovernanceDecision
+          >[0],
+        ),
       );
     }
     for (const diagnostic of result.diagnostics) {
@@ -1834,7 +1885,7 @@ function unitMigrationJson(
   });
   return {
     schema_version: result.schemaVersion,
-    cli_contract_version: 6,
+    cli_contract_version: 7,
     tool_version: TOOL_VERSION,
     operation: "project.migrate-unit",
     ok,
@@ -2020,7 +2071,7 @@ async function readHistoryForCommand(
           ? {}
           : { taskIds: parsed.repeatedValues.get("task")! }),
       },
-      TARGET_GRAMMAR_5_CAPABILITY,
+      TARGET_GRAMMAR_6_CAPABILITY,
     );
   } catch (error) {
     return error instanceof Error ? error : new Error(String(error));
@@ -2136,6 +2187,20 @@ function renderAdvanceSummary(details: AdvanceDetails): string {
   ].join("\n");
 }
 
+function renderAssuranceGuard(
+  guard: NonNullable<AdvanceResultV2["assuranceGuard"]>,
+): string {
+  const list = (values: readonly string[]) => values.join(",") || "-";
+  return [
+    `ASSURANCE_GUARD status=${guard.status} cause=${guard.cause}`,
+    `ASSURANCE_GUARD crossing_producers=${list(guard.crossingProducerTaskIds)} created_receipts=${list(guard.createdReceiptIds)} updated_receipts=${list(guard.updatedReceiptIds)} removed_receipts=${list(guard.removedReceiptIds)}`,
+    ...guard.retainedBasisChecks.map((check) =>
+      `ASSURANCE_BASIS task=${check.taskId} before=${check.beforeBasisHash ?? "-"} after=${check.afterBasisHash ?? "-"} equal=${check.equal}`
+    ),
+    "",
+  ].join("\n");
+}
+
 async function runAdvance(args: readonly string[]): Promise<number> {
   const parsed = parseCommandOptions("dag.advance", args);
   if (parsed.positionals.length !== 1) {
@@ -2185,9 +2250,10 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       planned.diagnostics.some(
         (diagnostic) => diagnostic.severity === "warning",
       ));
-  const prepared = await prepareAdvanceHistory(
+  const prepared = await prepareTargetPlanAssuranceAdvanceHistory(
     input.text,
     planned,
+    TARGET_GRAMMAR_6_CAPABILITY,
     {
       mode:
         writeRequest.mode === "out"
@@ -2234,7 +2300,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
           sourceOperand,
         );
         if (!recheck.ok) {
-          result = withAdvanceHistoryRace(
+          result = withTargetPlanAssuranceAdvanceHistoryRace(
             result,
             recheck,
             maxDiagnostics,
@@ -2256,7 +2322,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
   }
   if (format === "json") {
     writeJson(
-      contract6MutationResultToJson(
+      contract7MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         "dag.advance",
         source,
@@ -2298,9 +2364,16 @@ async function runAdvance(args: readonly string[]): Promise<number> {
         renderAdvanceHistoryGuard(result.historyGuard),
       );
     }
+    if (result.assuranceGuard !== null) {
+      process.stderr.write(renderAssuranceGuard(result.assuranceGuard));
+    }
     if (result.governance !== null) {
       process.stderr.write(
-        renderTargetGovernanceDecision(result.governance),
+        renderTargetGovernanceDecision(
+          result.governance as unknown as Parameters<
+            typeof renderTargetGovernanceDecision
+          >[0],
+        ),
       );
     }
     for (const diagnostic of result.diagnostics) {
@@ -2763,8 +2836,8 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.AnalysisResult.v4",
-      cli_contract_version: 6,
+      schema_version: result.schemaVersion,
+      cli_contract_version: 7,
       tool_version: TOOL_VERSION,
       operation: "dag.analyze",
       ok,
@@ -2802,6 +2875,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
           ? null
           : resourceJson(result.resource, result.durationUnit, result.precision),
       temporal: snakeJson(result.temporal),
+      assurance: contract7SnakeJson(result.assurance),
     });
   } else {
     if (ok) process.stdout.write(renderAnalysisText(result));
@@ -2891,12 +2965,43 @@ async function runRender(args: readonly string[]): Promise<number> {
       format === "json",
     );
   }
-  const result = exportMermaid(input.text, {
-    profile,
-    analysis,
-    capacityOverrides: overrides,
-    maxDiagnostics,
-  });
+  const sourceCheck = checkDocument(input.text, { maxDiagnostics });
+  const grammar6 = sourceCheck.grammarVersion === 6;
+  const assuranceExport = grammar6
+    ? exportPlanAssuranceMermaid(
+        input.text,
+        TARGET_GRAMMAR_6_CAPABILITY,
+        {
+          profile: profile === "perttool" ? 2 : "plain",
+          allowLoss: !parsed.flags.has("strict-loss"),
+          analysis,
+          capacityOverrides: overrides,
+          maxDiagnostics,
+        },
+      )
+    : null;
+  const legacyExport = grammar6
+    ? null
+    : exportMermaid(input.text, {
+        profile,
+        analysis,
+        capacityOverrides: overrides,
+        maxDiagnostics,
+      });
+  const result = assuranceExport === null
+    ? legacyExport!
+    : Object.freeze({
+        ok: assuranceExport.ok,
+        documentId: assuranceExport.documentId,
+        diagnostics: assuranceExport.diagnostics,
+        diagnosticsTruncated: assuranceExport.diagnosticsTruncated,
+        profile,
+        analysis,
+        capacityOverrides: overrides,
+        artifact: assuranceExport.artifact,
+        artifactDigest: assuranceExport.artifactDigest,
+        lossReport: assuranceExport.lossReport,
+      });
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
     (result.diagnosticsTruncated ||
@@ -2917,7 +3022,7 @@ async function runRender(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ExportResult.v1",
-      cli_contract_version: 6,
+      cli_contract_version: 7,
       tool_version: TOOL_VERSION,
       operation: "dag.render",
       ok,
@@ -2998,7 +3103,30 @@ async function runImport(args: readonly string[]): Promise<number> {
       format === "json",
     );
   }
-  const result = importMermaid(input.text, { maxDiagnostics });
+  const profile2 = input.text.startsWith(
+    "flowchart LR\n  %% perttool:profile {\"schema_version\":\"Perttool.MermaidProfile.v2\"",
+  );
+  const assuranceImport = profile2
+    ? importPlanAssuranceMermaid(input.text, TARGET_GRAMMAR_6_CAPABILITY)
+    : null;
+  const legacyImport = profile2
+    ? null
+    : importMermaid(input.text, { maxDiagnostics });
+  const result = assuranceImport === null
+    ? legacyImport!
+    : Object.freeze({
+        ok: assuranceImport.ok,
+        documentId: assuranceImport.documentId,
+        diagnostics: assuranceImport.diagnostics,
+        diagnosticsTruncated: assuranceImport.diagnosticsTruncated,
+        profile: "perttool" as const,
+        analysis: assuranceImport.analysis,
+        capacityOverrides: assuranceImport.capacityOverrides,
+        artifact: assuranceImport.sourceText,
+        artifactDigest: assuranceImport.sourceDigest,
+        lossReport: assuranceImport.lossReport,
+        generatedIds: Object.freeze([]),
+      });
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
     (result.diagnosticsTruncated ||
@@ -3011,7 +3139,11 @@ async function runImport(args: readonly string[]): Promise<number> {
   let writeResult: DocumentWriteResult | null = null;
   if (ok && out !== null) {
     try {
-      writeResult = await createDocumentFile(out, result.artifact!);
+      writeResult = await createTargetGrammar6DocumentFile(
+        out,
+        result.artifact!,
+        TARGET_GRAMMAR_6_CAPABILITY,
+      );
     } catch (error) {
       return writeFailureExit(error, "dag.import", format === "json");
     }
@@ -3019,7 +3151,7 @@ async function runImport(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ImportResult.v1",
-      cli_contract_version: 6,
+      cli_contract_version: 7,
       tool_version: TOOL_VERSION,
       operation: "dag.import",
       ok,
@@ -3408,7 +3540,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     if (format === "json") {
       writeJson({
         schema_version: "Perttool.CliError.v1",
-        cli_contract_version: 6,
+        cli_contract_version: 7,
         tool_version: TOOL_VERSION,
         operation: "dag.next",
         ok: false,
@@ -3428,8 +3560,8 @@ async function runNext(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson({
-      schema_version: "Perttool.NextResult.v5",
-      cli_contract_version: 6,
+      schema_version: result.schemaVersion,
+      cli_contract_version: 7,
       recommendation_interface_version: 1,
       tool_version: TOOL_VERSION,
       operation: "dag.next",
@@ -3442,6 +3574,7 @@ async function runNext(args: readonly string[]): Promise<number> {
       grammar_version: result.grammarVersion,
       ...(result.durationUnit === null ? {} : nextJson(result)),
       temporal: snakeJson(result.temporal),
+      assurance: contract7SnakeJson(result.assurance),
     });
   } else {
     if (ok) process.stdout.write(renderNextText(result));
@@ -3465,11 +3598,11 @@ function runGuide(args: readonly string[]): number {
   const topicId =
     parsed.positionals.length === 0 ? null : parsed.positionals.join(".");
   const level = helpLevel(parsed.values.get("level"), topicId !== null);
-  const result = getActualsGuide(topicId, level);
+  const result = getAssuranceGuide(topicId, level);
   if (format === "json") {
-    process.stdout.write(serializeActualsGuideResult(result));
+    process.stdout.write(serializeAssuranceGuideResult(result));
   } else {
-    const rendered = renderActualsGuideResult(result);
+    const rendered = renderAssuranceGuideResult(result);
     if (result.ok) {
       process.stdout.write(rendered);
     } else {
@@ -3485,14 +3618,14 @@ function runCommandHelp(args: readonly string[]): number {
     throw new UsageError("help accepts at most <resource> <action>");
   }
   const format = outputFormat(parsed.values.get("format"));
-  const result = getActualsCommandDiscovery({
+  const result = getAssuranceCommandDiscovery({
     resource: parsed.positionals[0] ?? null,
     action: parsed.positionals[1] ?? null,
   });
   if (format === "json") {
-    process.stdout.write(serializeActualsCommandHelpResult(result));
+    process.stdout.write(serializeAssuranceCommandHelpResult(result));
   } else {
-    const rendered = renderActualsCommandHelpResult(result);
+    const rendered = renderAssuranceCommandHelpResult(result);
     if (result.ok) {
       process.stdout.write(rendered);
     } else {
@@ -3567,7 +3700,7 @@ function runAgentHelp(args: readonly string[]): number {
     } = projected;
     writeJson({
       schema_version: schemaVersion,
-      cli_contract_version: 6,
+      cli_contract_version: 7,
       ...payload,
     });
   } else {
@@ -3595,8 +3728,295 @@ function runAgentHelp(args: readonly string[]): number {
   return agentGuidanceExitCode(result.diagnostics);
 }
 
+function renderPlanAssuranceProjection(
+  value: NonNullable<
+    ReturnType<typeof inspectTargetPlanAssurance>["assurance"]
+  >,
+): string {
+  const list = (values: readonly string[]) => values.join(",") || "-";
+  const lines = [
+    `PLAN_ASSURANCE model=${value.modelVersion ?? "-"} hash_model=${value.hashModelVersion ?? "-"} coverage=${value.coverage}`,
+    `REPLAN_REQUIRED ${list(value.replanRequiredTaskIds)}`,
+    `ACTIVE_ATTENTION ${list(value.activeAttentionRequiredTaskIds)}`,
+  ];
+  for (const task of value.taskResults) {
+    lines.push(
+      `TASK ${task.taskId} status=${task.status} contract=${task.contractHash ?? "-"} computed_basis=${task.computedBasisHash ?? "-"} accepted_basis=${task.acceptedBasisHash ?? "-"} exported=${task.exportedAssuranceHash ?? "-"}`,
+    );
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+async function runPlanAssuranceInspection(
+  action: "show" | "hash",
+  args: readonly string[],
+): Promise<number> {
+  const operation = `plan-assurance.${action}`;
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      operation,
+      format === "json",
+    );
+  }
+  const result = inspectTargetPlanAssurance(
+    input.text,
+    action === "show"
+      ? {
+          operation: "plan-assurance.show",
+          taskIds: parsed.repeatedValues.get("task") ?? Object.freeze([]),
+        }
+      : {
+          operation: "plan-assurance.hash",
+          taskId: parsed.positionals[1]!,
+          kind: requiredOption(parsed, "kind") as PlanAssuranceHashKind,
+        },
+    TARGET_GRAMMAR_6_CAPABILITY,
+    { maxDiagnostics },
+  );
+  const warningFailure = parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated || result.diagnostics.some(({ severity }) =>
+      severity === "warning"
+    ));
+  const ok = result.ok && !warningFailure;
+  if (format === "json") {
+    writeJson(contract7InspectionResultToJson(
+      ok ? result : Object.freeze({ ...result, ok: false }),
+      source,
+    ));
+  } else if (ok) {
+    if (action === "hash") {
+      if (result.selectedHash === null) {
+        throw new Error("successful assurance hash result has no digest");
+      }
+      process.stdout.write(`${result.selectedHash}\n`);
+    } else if (result.assurance !== null) {
+      process.stdout.write(renderPlanAssuranceProjection(result.assurance));
+    }
+  }
+  for (const diagnostic of result.diagnostics) {
+    process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+  }
+  if (result.diagnosticsTruncated) {
+    process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+  }
+  return ok ? 0 : 1;
+}
+
+function dependencyMode(
+  value: string,
+): "both" | "execution_only" | "planning_only" {
+  return value === "execution-only"
+    ? "execution_only"
+    : value === "planning-only"
+      ? "planning_only"
+      : "both";
+}
+
+function assuranceMutationFromOptions(
+  resource: "plan-assurance" | "plan-dependency" | "task-outcome",
+  action: string,
+  parsed: ParsedOptions,
+): PlanAssuranceMutation {
+  if (resource === "plan-assurance") {
+    return action === "seal"
+      ? {
+          kind: "plan_assurance.seal",
+          reason: requiredOption(parsed, "reason"),
+        }
+      : {
+          kind: "plan_assurance.reseal",
+          taskIds: uniqueRepeated(parsed, "task"),
+          reason: requiredOption(parsed, "reason"),
+        };
+  }
+  const id = parsed.positionals[1]!;
+  if (resource === "plan-dependency") {
+    if (action === "add") {
+      return {
+        kind: "plan_dependency.add",
+        id,
+        predecessorTaskId: parsed.positionals[2]!,
+        successorTaskId: parsed.positionals[3]!,
+        mode: dependencyMode(requiredOption(parsed, "mode")),
+        ...(parsed.values.get("reason") === undefined
+          ? {}
+          : { reason: parsed.values.get("reason")! }),
+      };
+    }
+    if (action === "remove") return { kind: "plan_dependency.remove", id };
+    const clear = uniqueRepeated(parsed, "clear");
+    return {
+      kind: "plan_dependency.set",
+      id,
+      ...(parsed.values.get("predecessor") === undefined
+        ? {}
+        : { predecessorTaskId: parsed.values.get("predecessor")! }),
+      ...(parsed.values.get("successor") === undefined
+        ? {}
+        : { successorTaskId: parsed.values.get("successor")! }),
+      ...(parsed.values.get("mode") === undefined
+        ? {}
+        : { mode: dependencyMode(parsed.values.get("mode")!) }),
+      ...(parsed.values.get("reason") === undefined
+        ? {}
+        : { reason: parsed.values.get("reason")! }),
+      ...(clear.includes("reason") ? { clearReason: true } : {}),
+    };
+  }
+  if (action === "add") {
+    return {
+      kind: "task_outcome.add",
+      id,
+      taskId: parsed.positionals[2]!,
+      status: requiredOption(parsed, "status") as "conformant" | "changed",
+      ...(parsed.values.get("summary") === undefined
+        ? {}
+        : { summary: parsed.values.get("summary")! }),
+      reason: requiredOption(parsed, "reason"),
+    };
+  }
+  if (action === "remove") return { kind: "task_outcome.remove", id };
+  const clear = uniqueRepeated(parsed, "clear");
+  return {
+    kind: "task_outcome.set",
+    id,
+    ...(parsed.values.get("status") === undefined
+      ? {}
+      : {
+          status: parsed.values.get("status") as "conformant" | "changed",
+        }),
+    ...(parsed.values.get("summary") === undefined
+      ? {}
+      : { summary: parsed.values.get("summary")! }),
+    ...(clear.includes("summary") ? { clearSummary: true } : {}),
+    ...(parsed.values.get("reason") === undefined
+      ? {}
+      : { reason: parsed.values.get("reason")! }),
+    ...(parsed.flags.has("rebind-current-basis")
+      ? { rebindCurrentBasis: true }
+      : {}),
+  };
+}
+
+async function runAssuranceMutation(
+  resource: "plan-assurance" | "plan-dependency" | "task-outcome",
+  action: string,
+  args: readonly string[],
+): Promise<number> {
+  const operation = `${resource}.${action}`;
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  const writeRequest = editingWriteRequest(parsed, sourceOperand);
+  let input: Awaited<ReturnType<typeof readDocument>>;
+  try {
+    input = await readDocument(sourceOperand);
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      operation,
+      format === "json",
+    );
+  }
+  const result = planAssuranceMutation(
+    input.text,
+    assuranceMutationFromOptions(resource, action, parsed),
+    {
+      maxDiagnostics,
+      originalLabel: source,
+      updatedLabel: "candidate",
+      warningsAsErrors: parsed.flags.has("warnings-as-errors"),
+      governance: governanceRequest(parsed, writeRequest),
+    },
+  );
+  let writeResult: TargetGovernanceWriteProjection = Object.freeze({
+    mode: writeRequest.mode,
+    target: writeRequest.target,
+    written: false,
+  });
+  if (result.ok && writeRequest.mode !== "preview") {
+    try {
+      writeResult = await persistGovernedResult(
+        result,
+        writeRequest,
+        sourceOperand,
+      );
+    } catch (error) {
+      return writeFailureExit(error, operation, format === "json");
+    }
+  }
+  if (format === "json") {
+    writeJson(contract7MutationResultToJson(
+      result,
+      operation,
+      source,
+      writeResult,
+    ));
+  } else {
+    if (result.ok) {
+      if (writeRequest.mode === "preview") {
+        process.stdout.write(parsed.flags.has("diff")
+          ? (result.diff ?? "")
+          : (result.updatedText ?? ""));
+        if (!parsed.flags.has("diff")) {
+          process.stderr.write(
+            `PREVIEW ${operation} changed=${result.changed} original_digest=${result.originalDigest} updated_digest=${result.updatedDigest}\n`,
+          );
+        }
+      } else {
+        process.stderr.write(renderGovernanceWriteSummary(
+          operation,
+          writeResult,
+          result.updatedDigest,
+        ));
+      }
+    }
+    if (result.governance !== null) {
+      process.stderr.write(renderTargetGovernanceDecision(
+        result.governance as unknown as Parameters<
+          typeof renderTargetGovernanceDecision
+        >[0],
+      ));
+    }
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return result.ok ? 0 : 1;
+}
+
 async function dispatchCommand(
-  descriptor: ActualsCommandDescriptor,
+  descriptor: AssuranceCommandDescriptor,
   args: readonly string[],
 ): Promise<number> {
   switch (descriptor.operation) {
@@ -3638,6 +4058,24 @@ async function dispatchCommand(
       return runLifecycleMutation("suspend", args);
     case "task.resume":
       return runLifecycleMutation("resume", args);
+    case "plan-assurance.show":
+      return runPlanAssuranceInspection("show", args);
+    case "plan-assurance.hash":
+      return runPlanAssuranceInspection("hash", args);
+  }
+  if (
+    descriptor.path.length === 2 &&
+    (
+      descriptor.path[0] === "plan-assurance" ||
+      descriptor.path[0] === "plan-dependency" ||
+      descriptor.path[0] === "task-outcome"
+    )
+  ) {
+    return runAssuranceMutation(
+      descriptor.path[0],
+      descriptor.path[1],
+      args,
+    );
   }
   if (
     descriptor.path.length === 2
@@ -3662,7 +4100,7 @@ async function dispatchCommand(
       args,
     );
   }
-  throw new Error(`no Contract 6 handler for ${descriptor.operation}`);
+  throw new Error(`no Contract 7 handler for ${descriptor.operation}`);
 }
 
 function emitCommandUsage(
@@ -3671,10 +4109,10 @@ function emitCommandUsage(
 ): number {
   if (json) {
     process.stdout.write(
-      serializeActualsCommandUsageError(error),
+      serializeAssuranceCommandUsageError(error),
     );
   } else {
-    process.stderr.write(renderActualsCommandUsageError(error));
+    process.stderr.write(renderAssuranceCommandUsageError(error));
   }
   return 2;
 }
@@ -3687,15 +4125,15 @@ async function main(argv: readonly string[]): Promise<number> {
   if (argv.length === 1 && argv[0] === "--help") {
     return runCommandHelp([]);
   }
-  const validation = validateActualsCommandInvocation(argv);
+  const validation = validateAssuranceCommandInvocation(argv);
   if (!validation.ok) {
     if (jsonRequested(argv)) {
       process.stdout.write(
-        serializeActualsCommandUsageError(validation.error),
+        serializeAssuranceCommandUsageError(validation.error),
       );
     } else {
       process.stderr.write(
-        renderActualsCommandUsageError(validation.error),
+        renderAssuranceCommandUsageError(validation.error),
       );
     }
     return 2;

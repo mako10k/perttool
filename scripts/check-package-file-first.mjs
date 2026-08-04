@@ -47,7 +47,7 @@ function invokeJson(args, options = {}) {
   const result = invoke([...args, "--format=json"], options);
   assert.equal(result.stderr, "", `unexpected stderr for: ${args.join(" ")}`);
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 6);
+  assert.equal(value.cli_contract_version, 7);
   if ((options.expectedStatus ?? 0) === 0) assert.equal(value.ok, true);
   return value;
 }
@@ -72,7 +72,7 @@ function git(...args) {
 
 function checkedDigest() {
   const result = invokeJson(["document", "check", planPath]);
-  assert.equal(result.schema_version, "Perttool.CheckResult.v3");
+  assert.equal(result.schema_version, "Perttool.CheckResult.v4");
   assert.ok(
     ["FILE_FIRST", "FILE_FIRST_ACCEPTED"].includes(result.document_id),
   );
@@ -104,8 +104,8 @@ function writeMutation(args, options = {}) {
   assert.equal(
     result.schema_version,
     args[0] === "dag" && args[1] === "advance"
-      ? "Perttool.AdvanceResult.v1"
-      : "Perttool.MutationResult.v3",
+      ? "Perttool.AdvanceResult.v2"
+      : "Perttool.MutationResult.v4",
   );
   assert.deepEqual(result.write, {
     mode: "in_place",
@@ -195,6 +195,8 @@ assert.deepEqual(initialProject.project, {
       dag_delegates: [],
     },
   },
+  plan_assurance_model: null,
+  plan_assurance_hash_model: null,
   critical_epsilon: null,
   target_duration: null,
 });
@@ -218,7 +220,7 @@ assert.deepEqual(
   ["goal", "dag"],
 );
 assert.equal(governanceUpgrade.governance.write_authorized, true);
-assert.match(governanceUpgrade.updated_text, /  version 5\n/);
+assert.match(governanceUpgrade.updated_text, /  version 6\n/);
 
 const initialDigest = invokeJson([
   "document",
@@ -314,7 +316,7 @@ const governancePreview = invokeJson(
   ["batch", "apply", planPath, "--request", "-"],
   { input: JSON.stringify(connectedPlan) },
 );
-assert.equal(governancePreview.schema_version, "Perttool.MutationResult.v3");
+assert.equal(governancePreview.schema_version, "Perttool.MutationResult.v4");
 assert.equal(governancePreview.governance.applicable, true);
 assert.deepEqual(
   governancePreview.governance.affected_scopes,
@@ -424,12 +426,14 @@ assert.deepEqual(fullProject.project, {
       dag_delegates: [],
     },
   },
+  plan_assurance_model: null,
+  plan_assurance_hash_model: null,
   critical_epsilon: "1p",
   target_duration: "8p",
 });
 
 const blockedNext = invokeJson(["dag", "next", planPath]);
-assert.equal(blockedNext.schema_version, "Perttool.NextResult.v5");
+assert.equal(blockedNext.schema_version, "Perttool.NextResult.v6");
 assert.equal(blockedNext.recommendation.explanation_status.complete, true);
 assert.deepEqual(blockedNext.groups.ready, []);
 assert.deepEqual(blockedNext.groups.blocked_now, ["BUILD"]);
@@ -568,7 +572,7 @@ for (const expected of [
 assert.doesNotMatch(maintainedText, /blocked_reason|optimistic|most_likely|pessimistic/);
 
 const analysis = invokeJson(["dag", "analyze", planPath]);
-assert.equal(analysis.schema_version, "Perttool.AnalysisResult.v4");
+assert.equal(analysis.schema_version, "Perttool.AnalysisResult.v5");
 assert.equal(analysis.precedence.makespan.display, "5");
 assert.equal(analysis.resource.makespan.display, "5");
 assert.equal(analysis.temporal.precedence.state, "available");
@@ -765,4 +769,4 @@ assert.match(inverseText, /target_duration 13p/);
 assert.match(inverseText, /deadline 2026-07-30/);
 assert.equal(invokeJson(["document", "check", planPath]).ok, true);
 
-process.stdout.write("installed package Contract 6 file-first acceptance passed\n");
+process.stdout.write("installed package Contract 7 file-first acceptance passed\n");

@@ -267,7 +267,7 @@ test("project history deduplicates declared events and retains advance removal",
     "plans/actuals.pert",
   );
   assert.equal(json.schema_version, "Perttool.ProjectHistoryResult.v1");
-  assert.equal(json.cli_contract_version, 6);
+  assert.equal(json.cli_contract_version, 7);
   assert.equal(json.history.status, "complete");
   assert.equal(json.events.length, 4);
   assert.equal("occurred_at" in json.events[0].event, true);

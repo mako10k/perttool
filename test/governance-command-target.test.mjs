@@ -314,12 +314,12 @@ test("malformed and duplicate target assertions are Contract 5 usage errors", ()
   );
 });
 
-test("active root and CLI expose Contract 6 without target-prefixed helpers", () => {
+test("active root and CLI expose Contract 7 without target-prefixed helpers", () => {
   assert.equal("planTargetGovernanceMutation" in publicApi, false);
   assert.equal("TARGET_GOVERNANCE_COMMAND_REGISTRY" in publicApi, false);
   assert.ok(
     publicApi.COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 6,
+      ({ contractVersion }) => contractVersion === 7,
     ),
   );
   assert.equal(
@@ -364,7 +364,7 @@ test("active root and CLI expose Contract 6 without target-prefixed helpers", ()
   );
   assert.equal(run.status, 0, run.stderr);
   const json = JSON.parse(run.stdout);
-  assert.equal(json.cli_contract_version, 6);
-  assert.equal(json.schema_version, "Perttool.MutationResult.v3");
+  assert.equal(json.cli_contract_version, 7);
+  assert.equal(json.schema_version, "Perttool.MutationResult.v4");
   assert.equal(json.governance.applicable, false);
 });

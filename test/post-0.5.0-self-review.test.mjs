@@ -113,6 +113,6 @@ test("current guidance records the published 0.5.2 schema boundary", async () =>
   );
   assert.match(schemaContract, /Document status: Normative 1\.0/);
   assert.match(schemaContract, /JSON Schema Draft 2020-12/);
-  assert.match(schemaContract, /The first eighteen identities are command results/);
+  assert.match(schemaContract, /The first nineteen identities are command results/);
   assert.match(schemaContract, /`Perttool\.OverrideDecision\.v1`/);
 });

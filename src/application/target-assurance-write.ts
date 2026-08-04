@@ -10,6 +10,7 @@ import {
   createTargetGrammar6DocumentFileFromSource,
   replaceTargetGrammar6DocumentFile,
 } from "../io/target-safe-write.js";
+import { SafeWriteConflictError } from "../io/safe-write.js";
 import type { TargetGrammar6Capability } from "../parser/document-parser.js";
 
 export type TargetPlanAssurancePersistenceRequest =
@@ -69,6 +70,16 @@ export async function persistTargetPlanAssuranceResult(
   capability: TargetGrammar6Capability,
   request: TargetPlanAssurancePersistenceRequest,
 ): Promise<TargetPlanAssuranceWriteProjection> {
+  if (
+    request.mode === "in_place" &&
+    request.expectedDigest !== undefined &&
+    request.expectedDigest !== result.originalDigest
+  ) {
+    throw new SafeWriteConflictError(
+      "expected_digest_mismatch",
+      "--expect-digest does not match the initial document digest",
+    );
+  }
   if ("assuranceGuard" in result) {
     const expectedHistory = request.mode === "in_place"
       ? result.historyGuard?.status === "passed" ||

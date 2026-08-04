@@ -293,10 +293,10 @@ function taskLinkStyle(
     : "stroke:#34495e,stroke-width:2px";
 }
 
-function projectionLines(
+export function renderMermaidProjection(
   document: DocumentNode,
   analysis: AnalysisResult | null,
-  precision: number,
+  precision = 3,
 ): readonly string[] {
   const milestones = document.declarations
     .filter((declaration) => declaration.kind === "milestone")
@@ -495,7 +495,7 @@ export function exportMermaid(
     };
   }
 
-  const projection = projectionLines(document, analysis, precision);
+  const projection = renderMermaidProjection(document, analysis, precision);
   const artifact = profile === "perttool"
     ? profileArtifact(document, projection, analysisMode, capacityOverrides)
     : ["flowchart LR", ...projection, ""].join("\n");

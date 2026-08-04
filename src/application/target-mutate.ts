@@ -42,6 +42,7 @@ import {
   validateTargetGrammar3Document,
   validateTargetGrammar4Document,
   validateTargetGrammar5Document,
+  validateTargetGrammar6Document,
   validateTargetDocument,
 } from "../semantic/target-validator.js";
 import {
@@ -215,6 +216,40 @@ function targetGrammar5Validator(
   };
 }
 
+function targetGrammar6Validator(
+  capability: TargetGrammar6Capability,
+): (text: string, maxDiagnostics: number) => MutationDocumentValidation {
+  return (text, maxDiagnostics) => {
+    const checked = validateTargetGrammar6Document(
+      text,
+      capability,
+      { maxDiagnostics },
+    );
+    const document = checked.validatedDocument?.document;
+    const project = document?.declarations.find(
+      (declaration) => declaration.kind === "project",
+    );
+    const lifecycleDiagnostics = checked.validatedDocument === null
+      ? []
+      : validateStoredLifecycleState(
+          checked.validatedDocument as unknown as Parameters<
+            typeof validateStoredLifecycleState
+          >[0],
+        );
+    return {
+      ok: checked.ok && lifecycleDiagnostics.length === 0,
+      document: (document ?? null) as unknown as
+        MutationDocumentValidation["document"],
+      documentId: project?.id ?? null,
+      diagnostics: Object.freeze([
+        ...checked.diagnostics,
+        ...lifecycleDiagnostics,
+      ]),
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+    };
+  };
+}
+
 export function planTargetMutation(
   text: string,
   mutation: TargetMutation,
@@ -334,6 +369,37 @@ export function planTargetGrammar5BatchMutation(
     mutation,
     targetGrammar5Validator(capability),
     targetGrammar5MutationPlanningProfile,
+    options,
+    true,
+  );
+}
+
+export function planTargetGrammar6Mutation(
+  text: string,
+  mutation: TargetGovernanceMutation,
+  capability: TargetGrammar6Capability,
+  options: MutationOptions = {},
+): MutationResult {
+  return planValidatedMutationRequest(
+    text,
+    mutation,
+    targetGrammar6Validator(capability),
+    targetGrammar6MutationPlanningProfile,
+    options,
+  );
+}
+
+export function planTargetGrammar6BatchMutation(
+  text: string,
+  mutation: TargetGovernanceBatchMutation,
+  capability: TargetGrammar6Capability,
+  options: MutationOptions = {},
+): MutationResult {
+  return planValidatedMutationRequest(
+    text,
+    mutation,
+    targetGrammar6Validator(capability),
+    targetGrammar6MutationPlanningProfile,
     options,
     true,
   );

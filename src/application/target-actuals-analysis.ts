@@ -37,10 +37,13 @@ import type {
 } from "../model/syntax.js";
 import type {
   TargetGrammar5Capability,
+  TargetGrammar6Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar5Document,
+  validateTargetGrammar6Document,
   type TargetGrammar5ValidatedDocument,
+  type TargetGrammar6ValidatedDocument,
 } from "../semantic/target-validator.js";
 import {
   analyzeValidatedDocument,
@@ -69,6 +72,23 @@ export const TARGET_ACTUALS_ANALYSIS_RESULT_SCHEMA_VERSION =
   "Perttool.AnalysisResult.v4" as const;
 export const TARGET_ACTUALS_NEXT_RESULT_SCHEMA_VERSION =
   "Perttool.NextResult.v5" as const;
+
+type TargetActualsCapability =
+  | TargetGrammar5Capability
+  | TargetGrammar6Capability;
+type TargetActualsValidatedDocument =
+  | TargetGrammar5ValidatedDocument
+  | TargetGrammar6ValidatedDocument;
+
+function validateTargetActualsDocument(
+  text: string,
+  capability: TargetActualsCapability,
+  options: AnalyzeOptions & NextOptions = {},
+) {
+  return capability.grammarVersion === 6
+    ? validateTargetGrammar6Document(text, capability, options)
+    : validateTargetGrammar5Document(text, capability, options);
+}
 
 export interface TargetTaskActualsCoverage {
   readonly taskId: string;
@@ -127,7 +147,7 @@ export interface TargetActualsNextGroups extends NextGroups {
 export interface TargetActualsNextResultV5
   extends Omit<NextResultV3, "document" | "groups" | "tasks"> {
   readonly schemaVersion: typeof TARGET_ACTUALS_NEXT_RESULT_SCHEMA_VERSION;
-  readonly grammarVersion: 1 | 2 | 3 | 4 | 5;
+  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | 6;
   readonly document: DocumentNode<TargetDeclarationKind>;
   readonly groups: TargetActualsNextGroups;
   readonly tasks: readonly TargetActualsNextTask[];
@@ -151,7 +171,7 @@ export interface TargetActualsNextResultV5
 }
 
 function failure(
-  checked: ReturnType<typeof validateTargetGrammar5Document>,
+  checked: ReturnType<typeof validateTargetActualsDocument>,
   additionalDiagnostics: readonly Diagnostic[] = [],
   maximum = normalizeMaxDiagnostics(undefined),
 ): TargetActualsAnalysisResultV4 {
@@ -204,7 +224,7 @@ function projectTask(
 }
 
 function projectAnalysisDocument(
-  validated: TargetGrammar5ValidatedDocument,
+  validated: TargetActualsValidatedDocument,
   statusProjection: "planned" | "blocked",
 ): DocumentNode {
   return Object.freeze({
@@ -221,19 +241,21 @@ function projectAnalysisDocument(
 }
 
 function projectValidatedDocument(
-  validated: TargetGrammar5ValidatedDocument,
+  validated: TargetActualsValidatedDocument,
   statusProjection: "planned" | "blocked",
-): TargetGrammar5ValidatedDocument {
+): TargetActualsValidatedDocument {
   return Object.freeze({
     ...validated,
     document: projectAnalysisDocument(validated, statusProjection),
-  }) as TargetGrammar5ValidatedDocument;
+  }) as TargetActualsValidatedDocument;
 }
 
 function taskActuals(
-  validated: TargetGrammar5ValidatedDocument,
+  validated: TargetActualsValidatedDocument,
 ): readonly TargetTaskActualsCoverage[] {
-  const model = projectActualsSourceModel(validated);
+  const model = projectActualsSourceModel(
+    validated as unknown as TargetGrammar5ValidatedDocument,
+  );
   return Object.freeze(
     validated.document.declarations
       .filter(({ kind }) => kind === "task")
@@ -267,11 +289,11 @@ function suspensionCondition(
 
 export function analyzeTargetActualsDocument(
   text: string,
-  capability: TargetGrammar5Capability,
+  capability: TargetActualsCapability,
   options: AnalyzeOptions = {},
 ): TargetActualsAnalysisResultV4 {
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
-  const checked = validateTargetGrammar5Document(
+  const checked = validateTargetActualsDocument(
     text,
     capability,
     { maxDiagnostics: maximum },
@@ -280,7 +302,7 @@ export function analyzeTargetActualsDocument(
     return failure(checked, [], maximum);
   }
   const lifecycleDiagnostics = validateStoredLifecycleState(
-    checked.validatedDocument,
+    checked.validatedDocument as unknown as TargetGrammar5ValidatedDocument,
   );
   if (lifecycleDiagnostics.length > 0) {
     return failure(checked, lifecycleDiagnostics, maximum);
@@ -300,6 +322,8 @@ export function analyzeTargetActualsDocument(
     checked.validatedDocument,
     "planned",
   );
+  const temporalProjected =
+    projected as unknown as TargetGrammar5ValidatedDocument;
   const base = analyzeValidatedDocument(
     projected.document as DocumentNode,
     checked.documentId!,
@@ -322,13 +346,13 @@ export function analyzeTargetActualsDocument(
       diagnosticsTruncated: base.diagnosticsTruncated,
     });
   }
-  const inputs = projectTargetTemporalInputs(projected);
+  const inputs = projectTargetTemporalInputs(temporalProjected);
   const temporalPrecedence = analyzeTemporalPrecedenceSchedule(
-    projected,
+    temporalProjected,
     inputs,
   );
   const temporalResource = analyzeTemporalResourceSchedule(
-    projected,
+    temporalProjected,
     inputs,
     {
       ...(options.capacityOverrides === undefined
@@ -340,7 +364,7 @@ export function analyzeTargetActualsDocument(
     },
   );
   const deadlineEvaluations = evaluateTemporalDeadlines(
-    projected,
+    temporalProjected,
     inputs,
     temporalPrecedence,
     temporalResource,
@@ -355,7 +379,7 @@ export function analyzeTargetActualsDocument(
     anchor: inputs.anchor,
     precedence: Object.freeze({
       ...projectTargetTemporalSchedule(
-        projected,
+        temporalProjected,
         inputs,
         temporalPrecedence,
         "precedence",
@@ -364,7 +388,7 @@ export function analyzeTargetActualsDocument(
     }),
     resource: Object.freeze({
       ...projectTargetTemporalSchedule(
-        projected,
+        temporalProjected,
         inputs,
         temporalResource,
         "resource",
@@ -402,14 +426,14 @@ function digest(text: string): string {
 
 export function selectTargetActualsTasks(
   text: string,
-  capability: TargetGrammar5Capability,
+  capability: TargetActualsCapability,
   options: AnalyzeOptions & NextOptions = {},
 ): TargetActualsNextResultV5 | TargetActualsAnalysisResultV4 {
   const analyzed = analyzeTargetActualsDocument(text, capability, options);
   if (!analyzed.ok || analyzed.base === null || analyzed.temporal === null) {
     return analyzed;
   }
-  const checked = validateTargetGrammar5Document(text, capability, options);
+  const checked = validateTargetActualsDocument(text, capability, options);
   if (!checked.ok || checked.validatedDocument === null) {
     return failure(checked);
   }
@@ -456,9 +480,11 @@ export function selectTargetActualsTasks(
     tasks
       .filter((task) => task.classification === classification)
       .map(({ id }) => id);
-  const inputs = projectTargetTemporalInputs(checked.validatedDocument);
+  const temporalValidated = checked.validatedDocument as unknown as
+    TargetGrammar5ValidatedDocument;
+  const inputs = projectTargetTemporalInputs(temporalValidated);
   const temporalTasks = projectTargetNextTemporalTasks(
-    checked.validatedDocument,
+    temporalValidated,
     inputs,
     analyzed.temporal,
   );

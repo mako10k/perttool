@@ -188,8 +188,15 @@ test("TUI-004 projects exact declared inputs and finish deadline", async () => {
   assert.deepEqual(publicChecked.temporalInputs, checked.temporalInputs);
   const publicProject = publicApi.getProjectMetadata(text);
   assert.equal(publicProject.ok, true);
-  const { governance, ...publicProjectWithoutGovernance } =
+  const {
+    governance,
+    planAssuranceModel,
+    planAssuranceHashModel,
+    ...publicProjectWithoutGovernance
+  } =
     publicProject.project;
+  assert.equal(planAssuranceModel, null);
+  assert.equal(planAssuranceHashModel, null);
   assert.deepEqual(publicProjectWithoutGovernance, project.project);
   assert.deepEqual(governance.declared, {
     goalOwner: null,

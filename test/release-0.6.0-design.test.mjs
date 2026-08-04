@@ -115,7 +115,7 @@ test("0.6.0 release gate binds advance history safety and migration", async () =
   assert.match(changelog, /^## \[0\.6\.0\] - 2026-07-31$/m);
   assert.match(readme, /npm `beta` resolves to `0\.6\.0`/);
   assert.match(readme, /npm `latest` remains `0\.5\.5`/);
-  assert.equal(ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v1");
-  assert.equal(COMMAND_REGISTRY.length, 34);
-  assert.equal(getJsonSchemaCatalog().length, 19);
+  assert.equal(ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v2");
+  assert.equal(COMMAND_REGISTRY.length, 44);
+  assert.equal(getJsonSchemaCatalog().length, 20);
 });

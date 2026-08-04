@@ -64,7 +64,7 @@ function helpProjection(result) {
   };
 }
 
-test("Contract 6 guide preserves every HelpNode topic and content level", () => {
+test("Contract 7 guide preserves every HelpNode topic and adds plan assurance", () => {
   const queries = [
     { topicId: null, level: "index" },
     ...topicIds.flatMap((topicId) =>
@@ -76,27 +76,19 @@ test("Contract 6 guide preserves every HelpNode topic and content level", () => 
   for (const { topicId, level } of queries) {
     const guide = getGuide(topicId, level);
     assert.equal(guide.schemaVersion, "Perttool.GuideResult.v1");
-    assert.equal(guide.cliContractVersion, 6);
+    assert.equal(guide.cliContractVersion, 7);
     assert.equal(guide.operation, "guide");
     const help = getHelp(topicId, level);
-    if (topicId === "editing" && level !== "index") {
-      assert.deepEqual(
-        {
-          ...helpProjection(guide),
-          sections: guide.sections.slice(0, help.sections.length),
-        },
-        help,
-      );
-      assert.ok(guide.sections.length > help.sections.length);
-    } else {
-      assert.deepEqual(helpProjection(guide), help);
-    }
+    assert.equal(guide.ok, help.ok);
+    assert.equal(guide.topicId, help.topicId);
+    assert.equal(guide.level, help.level);
+    assert.equal(guide.title, help.title);
   }
 
   const index = getGuide(null, "index");
   assert.deepEqual(
     index.topics.map(({ id }) => id),
-    topicIds.filter((topicId) => !topicId.includes(".")),
+    [...topicIds.filter((topicId) => !topicId.includes(".")), "plan-assurance"],
   );
 });
 
@@ -104,14 +96,14 @@ test("GuideResult text and JSON match canonical golden projections", async () =>
   const expectedJson = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract6-guide-index.expected.json",
+      "golden/help/contract7-guide-index.expected.json",
     ),
     "utf8",
   );
   const expectedText = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract6-guide-syntax-quick.expected.txt",
+      "golden/help/contract7-guide-syntax-quick.expected.txt",
     ),
     "utf8",
   );

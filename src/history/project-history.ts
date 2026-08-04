@@ -40,9 +40,13 @@ import type {
   GitHistoryProbeResult,
   PlanRevisionSnapshot,
 } from "./git-probe.js";
-import type { TargetGrammar5Capability } from "../parser/document-parser.js";
+import type {
+  TargetGrammar5Capability,
+  TargetGrammar6Capability,
+} from "../parser/document-parser.js";
 import {
   validateTargetGrammar5Document,
+  validateTargetGrammar6Document,
   type TargetGrammar5ValidatedDocument,
 } from "../semantic/target-validator.js";
 
@@ -202,7 +206,7 @@ export interface ProjectHistoryCoreResultFor<GrammarVersion extends number> {
 }
 
 export type ProjectHistoryCoreResult = ProjectHistoryCoreResultFor<
-  1 | 2 | 3 | 4 | 5
+  1 | 2 | 3 | 4 | 5 | 6
 >;
 
 export interface ProjectHistorySourceValidation<
@@ -1227,13 +1231,15 @@ export function inspectProjectHistoryWithValidator<
 export function inspectProjectHistory(
   probe: GitHistoryProbeResult,
   request: HistoryRequest,
-  capability: TargetGrammar5Capability,
+  capability: TargetGrammar5Capability | TargetGrammar6Capability,
 ): ProjectHistoryCoreResult {
   return inspectProjectHistoryWithValidator(
     probe,
     request,
-    (text): ProjectHistorySourceValidation<1 | 2 | 3 | 4 | 5> => {
-      const checked = validateTargetGrammar5Document(text, capability);
+    (text): ProjectHistorySourceValidation<1 | 2 | 3 | 4 | 5 | 6> => {
+      const checked = capability.grammarVersion === 6
+        ? validateTargetGrammar6Document(text, capability)
+        : validateTargetGrammar5Document(text, capability);
       return {
         ok: checked.ok && checked.validatedDocument !== null,
         documentId: checked.documentId,

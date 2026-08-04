@@ -184,7 +184,7 @@ task ASSURE_PUBLIC_CONTRACT ASSURE_PUBLIC_INPUT -> ASSURE_PUBLIC_READY:
   title "Activate Grammar 6 and CLI Contract 7 atomically"
   description "Activate the accepted assurance source, commands, policy identities, result versions, schemas, diagnostics, registry, text and JSON help, Guide, package root, and safe-write paths in one cutover. Retain explicit migration and no partial discovery, alias, or mixed-contract behavior; do not select or publish a package release."
   duration 8p
-  status planned
+  status done
   priority 80
   requires:
     DEVELOPERS 1
@@ -334,3 +334,16 @@ work_event WE-23d577cf16ca4dc134d0db1e105e44f560bdb6eec6c32338a98ba314e2c63f92:
   task ASSURE_HASH_INSPECTION
   kind finish
   occurred_at 2026-08-04T13:49:39+09:00
+
+work_event WE-a3676d4068c9092fc102269575036bbfb47cd4d3a69f7d15e144776d0f118f57:
+  model 1
+  task ASSURE_PUBLIC_CONTRACT
+  kind start
+  occurred_at 2026-08-04T13:57:20+09:00
+  planned_value 8p
+
+work_event WE-1db65eb9580a7c1dc6b0204d3cd97075c7c27912562af34ada258b091a28b65a:
+  model 1
+  task ASSURE_PUBLIC_CONTRACT
+  kind finish
+  occurred_at 2026-08-04T15:51:00+09:00

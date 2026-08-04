@@ -11,6 +11,7 @@
 - Structured explanation: [recommendation-explanation.md](recommendation-explanation.md)
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Temporal start authority: [temporal-unit-interface.md](temporal-unit-interface.md)
+- Plan assurance: [plan-assurance.md](plan-assurance.md)
 - Related issue: [Issue #1](https://github.com/mako10k/perttool/issues/1)
 
 ## 1. Purpose
@@ -30,7 +31,7 @@ It defines the following:
 - a repository-native audit policy using Git history
 - stale determination, single use, and full re-analysis after a state change
 
-This specification is a normative contract. MIG-05, on 2026-07-23, implemented read-only `validateOverride`, public types, the `Perttool.OverrideDecision.v1` JSON projection, and the canonical artifact in the library Core. The Grammar 5 and CLI Contract 6 cutover changes its accepted source envelope from `Perttool.NextResult.v4` to `Perttool.NextResult.v5`. It does not imply that an override command, task-status mutation, Git commit, or audit write has been implemented.
+This specification is a normative contract. MIG-05, on 2026-07-23, implemented read-only `validateOverride`, public types, the `Perttool.OverrideDecision.v1` JSON projection, and the canonical artifact in the library Core. The Grammar 6 and CLI Contract 7 cutover changes its accepted source envelope from `Perttool.NextResult.v5` to `Perttool.NextResult.v6` and makes plan-assurance eligibility non-overridable. It does not imply that an override command, task-status mutation, Git commit, or audit write has been implemented.
 
 ## 2. Normative position
 
@@ -96,6 +97,7 @@ A human override does not bypass any of the following:
 - starting a done task
 - a future `not_before` release
 - an unavailable temporal release relationship
+- an unsealed, review-required, or unavailable plan-assurance state
 - a simultaneous start set that exceeds applied capacity
 - an invalid document, cycle, undefined reference, or analysis-invariant failure
 
@@ -106,7 +108,7 @@ When any of these must change, a human explicitly modifies the project model, su
 Let `R` be the normal recommended set and `O` be the set of ready tasks started now by an override. A valid override satisfies the following:
 
 ```text
-O is a subset of P
+O is a subset of assurance-eligible P
 startFeasible(O) == true
 O differs from an authority-preserving start selection
 ```
@@ -172,7 +174,7 @@ An override reason is not a normal project fact; it is a decision reason asserte
 The request passed to pure validation has the following meaning:
 
 ```text
-source_schema_version          "Perttool.NextResult.v5"
+source_schema_version          "Perttool.NextResult.v6"
 source_digest                  sha256 digest
 source_result_decision_id      string
 selected_task_ids              string[]
@@ -211,8 +213,8 @@ The producer does not perform a network or file lookup for a reference target. D
 ## 8. Override validation
 
 Validation is a pure operation whose only inputs are the source
-`NextResult.v5` and request; it does not change normal ranking or temporal
-eligibility.
+`NextResult.v6` and request; it does not change normal ranking, temporal
+eligibility, or plan-assurance eligibility.
 
 ```text
 validateOverride(sourceNextResult, request): OverrideValidationResult
@@ -223,10 +225,10 @@ Validation order:
 1. understand the source schema, interface, algorithm, taxonomy, and explanation versions
 2. verify that the source result has `ok=true`, is complete, and is not truncated
 3. verify that the source digest and result decision ID match the request
-4. verify that temporal authority is complete and consistent with the source
-   recommendation
-5. verify that every selected task is actually ready, time-eligible, and has a
-   task decision
+4. verify that temporal and plan-assurance authority is complete and
+   consistent with the source recommendation
+5. verify that every selected task is actually ready, time-eligible,
+   assurance-eligible, and has a task decision
 6. derive trigger codes from section 5
 7. evaluate `startFeasible(O)` for selected set `O` exactly, with active allocations and applied capacity
 8. reference from the source trace the negative facts for discouraged tasks, blockers for deferred tasks, and displaced recommended tasks
@@ -257,7 +259,7 @@ When `ok=true`, `override` is non-null; when `ok=false`, `override=null`. This i
 override_contract_version        1
 override_id                      "override:sha256:" + 64 lowercase hex digits
 source:
-  schema_version                 "Perttool.NextResult.v5"
+  schema_version                 "Perttool.NextResult.v6"
   tool_version                   string
   source_digest                  sha256 digest
   recommendation_interface_version 1

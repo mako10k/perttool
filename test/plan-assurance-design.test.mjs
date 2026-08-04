@@ -36,12 +36,15 @@ test("plan assurance design separates dependencies, state, and authority", async
 
   assert.match(requirements, /^### 2\.7 Preserve conditional plan assurance/m);
   assert.match(requirements, /^### 7\.9 Conditional plan assurance/m);
-  assert.match(specification, /- Status: Normative target 1\.0/);
+  assert.match(specification, /- Status: Normative 1\.0/);
   assert.match(
     specification,
-    /- Runtime status: Internal hash\/state, Grammar 6 source, governed mutation,\s+assurance-authority, advance-contraction, compatibility, and read-only\s+hash-inspection Cores\s+implemented; public runtime not activated/,
+    /- Runtime status: Grammar 6 and CLI Contract 7 active in the source CLI,\s+package root, discovery, Guide\/help, schemas, and installed workflows/,
   );
-  assert.match(specification, /Grammar 1 through 5 and CLI Contract 6 remain\s+unchanged/);
+  assert.match(
+    specification,
+    /Grammar 1 through 5 source meaning is retained;\s+exact Contract 6 result identities remain available from published pins/,
+  );
 
   for (const mode of ["both", "planning_only", "execution_only"]) {
     assert.equal(specification.includes(`\`${mode}\``), true, mode);
@@ -96,7 +99,10 @@ test("plan assurance design separates dependencies, state, and authority", async
 
   assert.match(design, /^### 6\.9 Conditional plan assurance/m);
   assert.match(design, /src\/assurance\//);
-  assert.match(design, /current `Perttool\.NextResult\.v5` remains closed and\s+unchanged/);
+  assert.match(
+    design,
+    /active `Perttool\.NextResult\.v6` retains the raw ranking\s+result and exposes the assurance-filtered authority/,
+  );
   assert.match(design, /per-consumer task ID and effective planning mode/);
   assert.match(review, /No reviewed document requires lifecycle status to enter a plan hash/);
   assert.match(review, /internally consistent enough for a\s+source\/interface contract/);
@@ -130,7 +136,7 @@ test("all fourteen plan assurance design cases are dependency ordered", async ()
   assert.equal(fixture.hash_model_version, 1);
   assert.equal(
     fixture.runtime_status,
-    "internal_implementation_through_hash_inspection_only",
+    "active_grammar_6_cli_contract_7",
   );
   assert.equal(fixture.relation_source_target.keyword, "task_relation");
   assert.equal(fixture.relation_source_target.arrow, "->");
@@ -195,24 +201,26 @@ test("all fourteen plan assurance design cases are dependency ordered", async ()
   );
 });
 
-test("the active Contract 6 surface does not claim internal-only assurance", () => {
+test("the active Contract 7 surface exposes plan assurance atomically", () => {
   const commandPaths = COMMAND_REGISTRY.map(({ path }) => path.join(" "));
   assert.equal(
     commandPaths.some((commandPath) =>
       /plan-dependency|assurance|\bseal\b|\breseal\b/.test(commandPath),
     ),
-    false,
+    true,
   );
 
   const schemaIds = getJsonSchemaCatalog().map(({ schemaId }) => schemaId);
-  assert.equal(schemaIds.some((id) => /Assurance/.test(id)), false);
+  assert.equal(schemaIds.some((id) => /PlanAssurance/.test(id)), true);
 
   const source = `project RELATION_TARGET:
-  version 5
-  title "Relation target remains unavailable"
+  version 6
+  title "Relation target is active"
   as_of 2026-08-03
   duration_unit day
   finish M2
+  plan_assurance_model 1
+  plan_assurance_hash_model 1
 
 milestone M0:
   title "Start"
@@ -236,12 +244,10 @@ task B M1 -> M2:
 
 task_relation REL_A_B A -> B:
   mode execution_only
-  reason "Target syntax is not active"
+  reason "Execution-only relation"
 `;
   const checked = checkDocument(source);
-  assert.equal(checked.ok, false);
-  assert.equal(
-    checked.diagnostics.some(({ code }) => code === "PTDSL-003"),
-    true,
-  );
+  assert.equal(checked.ok, true, JSON.stringify(checked.diagnostics));
+  assert.equal(checked.grammarVersion, 6);
+  assert.equal(checked.assurance?.coverage, "unsealed");
 });

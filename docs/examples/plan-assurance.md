@@ -1,6 +1,6 @@
 # Conditional Plan Assurance Examples
 
-- Status: Normative target 1.0 examples
+- Status: Normative 1.0 examples
 - Contract: [Conditional Plan Assurance](../specs/plan-assurance.md)
 - Interface: [Grammar 6 and CLI Contract 7](../specs/plan-assurance-interface.md)
 - Runtime status: Internal hash/state, Grammar 6 source, governed mutation,

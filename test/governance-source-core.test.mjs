@@ -424,7 +424,7 @@ test("exact unit migration retains Grammar 4 governance source", () => {
   assert.match(activeMigrated.updatedText, /goal_owner llm/);
 });
 
-test("Contract 5 root exposes standard governance types without target helpers", async () => {
+test("Contract 7 root exposes standard governance types without target helpers", async () => {
   for (const name of [
     "TARGET_GRAMMAR_4_CAPABILITY",
     "parseTargetGrammar4Document",
@@ -440,7 +440,7 @@ test("Contract 5 root exposes standard governance types without target helpers",
     new URL("../dist/index.d.ts", import.meta.url),
     "utf8",
   );
-  assert.match(declarations, /GovernanceDecisionV1/);
+  assert.match(declarations, /GovernanceDecisionV2/);
   assert.match(declarations, /GovernanceRequestInput/);
   assert.doesNotMatch(declarations, /parseTargetGrammar4Document/);
   const activeInit = perttool.planProjectInit({

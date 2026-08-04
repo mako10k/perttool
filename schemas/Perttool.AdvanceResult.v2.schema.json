@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v1.schema.json",
-  "title": "Perttool.AdvanceResult.v1",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v2.schema.json",
+  "title": "Perttool.AdvanceResult.v2",
   "type": "object",
   "required": [
     "schema_version",
@@ -24,14 +24,15 @@
     "governance",
     "lifecycle",
     "advance",
-    "history_guard"
+    "history_guard",
+    "assurance_guard"
   ],
   "properties": {
     "schema_version": {
-      "const": "Perttool.AdvanceResult.v1"
+      "const": "Perttool.AdvanceResult.v2"
     },
     "cli_contract_version": {
-      "const": 6
+      "const": 7
     },
     "tool_version": {
       "type": "string"
@@ -103,6 +104,8 @@
             "removed_gate_ids",
             "removed_milestone_ids",
             "removed_work_event_ids",
+            "removed_assurance_record_ids",
+            "updated_assurance_receipt_ids",
             "frontier_before",
             "frontier_after",
             "ready_before",
@@ -119,6 +122,12 @@
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
             "removed_work_event_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_assurance_record_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "updated_assurance_receipt_ids": {
               "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
             },
             "frontier_before": {
@@ -247,6 +256,77 @@
         {
           "type": "null"
         }
+      ]
+    },
+    "assurance_guard": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "model_version",
+            "status",
+            "cause",
+            "crossing_producer_task_ids",
+            "created_receipt_ids",
+            "updated_receipt_ids",
+            "removed_receipt_ids",
+            "retained_basis_checks"
+          ],
+          "properties": {
+            "model_version": { "const": 1 },
+            "status": {
+              "enum": ["not_applicable", "passed", "blocked"]
+            },
+            "cause": {
+              "enum": [
+                "not_enabled",
+                "no_change",
+                "basis_preserved",
+                "crossing_commitment_unavailable",
+                "changed_outcome_not_accepted",
+                "retained_receipt_unavailable",
+                "retained_basis_changed"
+              ]
+            },
+            "crossing_producer_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "created_receipt_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "updated_receipt_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_receipt_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "retained_basis_checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "task_id",
+                  "before_basis_hash",
+                  "after_basis_hash",
+                  "equal"
+                ],
+                "properties": {
+                  "task_id": { "type": "string" },
+                  "before_basis_hash": {
+                    "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+                  },
+                  "after_basis_hash": {
+                    "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+                  },
+                  "equal": { "type": "boolean" }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        { "type": "null" }
       ]
     }
   },

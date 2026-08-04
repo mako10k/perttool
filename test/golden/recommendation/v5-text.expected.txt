@@ -1,5 +1,5 @@
 START AUTHORITY
-POLICY recommendation_v1_plus_release_gate
+POLICY recommendation_v1_plus_release_gate_plus_plan_assurance_v1
 STARTABLE RECOMMENDED CRITICAL_FIX
 DELAYED RECOMMENDED -
 UNAVAILABLE RECOMMENDED -

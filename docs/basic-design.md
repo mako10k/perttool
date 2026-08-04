@@ -1,8 +1,8 @@
 # perttool Basic Design
 
-- Document status: Draft 1.22
+- Document status: Draft 1.23
 - Created: 2026-07-21
-- Updated: 2026-08-03
+- Updated: 2026-08-04
 - Applicable requirements: [requirements.md](requirements.md)
 - DSL grammar: [specs/dsl-grammar.md](specs/dsl-grammar.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
@@ -1011,8 +1011,8 @@ one coordinated Grammar 5/CLI Contract 6 cutover after:
 
 The [Conditional Plan Assurance
 Contract](specs/plan-assurance.md) adds a pure assurance layer over the
-validated graph. It does not change the current Grammar 5 or CLI Contract 6
-runtime. The explicitly selected
+validated graph. The source runtime now exposes it through Grammar 6 and CLI
+Contract 7. The explicitly selected
 [`plans/plan-assurance.pert`](../plans/plan-assurance.pert) workstream owns the
 target `src/assurance/` module boundary and atomic public cutover. The [Plan
 Assurance Interface Contract](specs/plan-assurance-interface.md) fixes Grammar
@@ -1094,14 +1094,14 @@ requires exactly one mode, applies the conditional reason rule, rejects a
 duplicate task pair, derives the complete effective relation set, and then
 runs the separate planning-cycle check.
 
-The accepted internal source slice implements this boundary behind the
+The accepted source slice implements this boundary behind the
 identity-checked `TARGET_GRAMMAR_6_CAPABILITY`. It additionally parses and
 projects the two project model fields, task-keyed seals, task outcomes, and
 frontier receipts; validates contextual references and conditional fields;
 checks receipt self-hashes before exposing frontier commitments; and preserves
 BOM, line endings, comments, declaration order, and nested-entry spans. The
-active parser and package root remain Grammar 5 and CLI Contract 6 until the
-atomic public-contract task.
+active parser and package root now bind that capability through the atomic
+Contract 7 adapters.
 
 `task_relation` and its field/value spellings remain contextual to the future
 grammar. Existing Grammar 1 through 5 parsing and reserved IDs do not change.
@@ -1259,9 +1259,9 @@ in a separate attention set; the evaluator never changes its lifecycle.
 
 The result returns a `replan_and_reseal` required action with stable direct
 roots and the full affected closure. This is a control-plane action, not a
-synthetic AoA task. The current `Perttool.NextResult.v5` remains closed and
-unchanged until an interface contract selects a new result and authority-policy
-identity.
+synthetic AoA task. The active `Perttool.NextResult.v6` retains the raw ranking
+result and exposes the assurance-filtered authority under policy
+`recommendation_v1_plus_release_gate_plus_plan_assurance_v1`.
 
 The accepted internal authority slice implements this composition in
 `src/assurance/authority.ts` and
@@ -1270,7 +1270,7 @@ check, analysis, Next, and mutation impact; preserves raw recommendation order;
 passes only `not_applicable`, `conditional`, and `verified`; reports active
 attention without lifecycle mutation; and returns an empty startable set for
 unknown or incomplete recommendation, temporal-authority, model, or task-result
-input. The active public NextResult v5 and its policy remain unchanged.
+input. The public NextResult v6 uses this composition without reranking.
 
 #### 6.9.6 Mutation impact and governed reseal
 
@@ -1305,13 +1305,14 @@ pre-change owner state; and digest-bound Grammar 6 safe persistence. Initial
 seal computes a complete plan baseline without treating a completed task as
 outcome-conformant, while outcome add and rebind derive their basis from the
 equal accepted current value rather than caller-provided hashes. The package
-root and command registry remain Grammar 5 and CLI Contract 6.
+root and command registry expose the accepted Contract 7 wrappers while the
+target-capability functions remain internal.
 
 The relation command names and relation source record are fixed by Sections
 6.9.1 and Contract 4.5. The interface contract fixes assurance inspection,
 initial-seal, reseal, and outcome operations; request types; remaining source
-records; diagnostics; and public schemas. Current help and Guide must not
-advertise any of them before the atomic cutover.
+records; diagnostics; and public schemas. Contract 7 help and Guide advertise
+them only from the same atomic registry cutover.
 
 #### 6.9.7 Outcome conformance
 
@@ -1443,15 +1444,16 @@ record for both assurance project fields and every assurance-owned declaration.
 Such an artifact remains intentionally non-round-trippable.
 
 The internal modules compile under `dist` and are exercised by repository and
-package gates, but `src/index.ts`, the Contract 6 command registry, active help,
-Guide, schema catalog, and installed public workflow remain unchanged. Direct
-edit guidance explains that inspection does not repair or authorize a seal;
-the later public hash command returns supplemental evidence only.
+package gates. `src/index.ts`, the Contract 7 command registry, active help,
+Guide, schema catalog, and installed public workflow expose their accepted
+adapters without exporting the target capability. Direct edit guidance
+explains that inspection does not repair or authorize a seal; the public hash
+command returns supplemental evidence only.
 
 #### 6.9.10 Read-only assurance inspection
 
-`src/application/target-assurance-inspection.ts` is the internal Grammar 6
-application adapter for both future inspection commands. It calls the same
+`src/application/target-assurance-inspection.ts` is the Grammar 6 application
+adapter for both public inspection commands. It calls the same
 validated source projection, evaluator, and authority projection used by
 assurance-aware analysis. It never reads raw task slices to produce a digest.
 
@@ -1474,10 +1476,9 @@ Null is unavailability, not an instruction to recompute through another path.
 
 The hash text renderer is deliberately scalar: success is one canonical
 digest and LF; every failure is an empty body. Diagnostics remain on the
-diagnostic channel or in JSON. The internal result and renderers compile under
-`dist` but remain absent from the active package root, registry, CLI, help,
-Guide, schema catalog, and installed Contract 6 workflow until
-`ASSURE_PUBLIC_CONTRACT`.
+diagnostic channel or in JSON. The result and renderers are exposed through the
+active package root, registry, CLI, help, Guide, schema catalog, and installed
+Contract 7 workflow.
 
 #### 6.9.11 Security and activation boundary
 
@@ -1488,11 +1489,11 @@ signatures, private keys, authenticated principals, external transparency
 logs, or a root of trust belong to a separate architecture and cannot be
 claimed from SHA-256 alone.
 
-Public activation is atomic only after requirements, this design, the semantic
+Public activation is atomic across requirements, this design, the semantic
 contract, examples, source grammar, governance extension, actuals outcome
 contract, result/interface contract, migration, diagnostics, help/Guide,
-schemas, Core, CLI, advance, and installed-package acceptance agree. Until
-then, all existing result identities and runtime help remain unchanged.
+schemas, Core, CLI, advance, and installed-package behavior. Published release
+selection remains a later independent decision.
 
 ## 7. Diagnostic Model
 
@@ -2978,8 +2979,8 @@ The [Plan Assurance Interface Contract](specs/plan-assurance-interface.md)
 fixes Grammar 6, CLI Contract 7, every assurance source record and command,
 closed result identities, diagnostics, migration, and governance version 2.
 [`plans/plan-assurance.pert`](../plans/plan-assurance.pert) owns their
-implementation; the selected surface remains unavailable in the current
-runtime until the atomic public task.
+implementation; the source runtime now exposes the atomic public surface while
+the independent final acceptance task remains.
 
 The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, done, suspended, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Project Actuals and Git History Contract](specs/project-actuals.md) determines the selected future work-event, lifecycle, history, and observation semantics; the [Governance Source and Effective-Metadata specification](specs/governance-source.md) determines Grammar 4 source, omission defaults, project metadata, and pre-change snapshots; the [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md) determines goal/DAG change classification and pre-change persistent-write authority; the [Owner-Aware Governance Interface Contract](specs/governance-interface.md) determines Core assertions, CLI Contract 5, text/JSON/help projections, diagnostics, exits, and atomic activation; the [Issue #4 Owner-Aware Governance Design Acceptance Review](process/governance-design-acceptance.md) fixes the complete criterion, interface, example, non-goal, and implementation-gate trace; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the active Grammar 1/2/3 and CLI Contract 4 temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomy; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary. [ADR 0006](adr/0006-explicit-work-events-in-git-history.md) defines transient same-document work events and read-only Git durability.
 

@@ -1,6 +1,6 @@
 {
   "contract": {
-    "schema_version": "Perttool.NextResult.v5",
+    "schema_version": "Perttool.NextResult.v6",
     "recommendation_interface_version": 1,
     "algorithm_id": "perttool.recommendation-ranking.lexicographic-frontier",
     "algorithm_version": 1,
@@ -246,48 +246,31 @@
       ]
     },
     "plan-assurance": {
-      "source_digest": "sha256:ca3df3b9125e03437fb18dd2edc88e403245cb84b69ce9f4d7220ff7cbad4f24",
+      "source_digest": "sha256:d28c3ebd4b12261eb108dc45e1862b4146c2fcdf22786f3a34de6720b0fbac45",
       "groups": {
-        "active": [],
-        "ready": [
+        "active": [
           "ASSURE_PUBLIC_CONTRACT"
         ],
-        "runnable_now": [
-          "ASSURE_PUBLIC_CONTRACT"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": [
           "ASSURE_ACCEPTANCE"
         ],
         "suspended": []
       },
-      "recommended_task_ids": [
-        "ASSURE_PUBLIC_CONTRACT"
-      ],
-      "manual_selected_task_ids": [
-        "ASSURE_PUBLIC_CONTRACT"
-      ],
-      "tiers": {
-        "ASSURE_PUBLIC_CONTRACT": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "ASSURE_PUBLIC_CONTRACT",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": [
         "PTDAG-208"

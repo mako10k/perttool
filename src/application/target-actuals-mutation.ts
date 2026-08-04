@@ -73,11 +73,37 @@ import type {
 } from "../mutation/types.js";
 import type {
   TargetGrammar5Capability,
+  TargetGrammar6Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar5Document,
+  validateTargetGrammar6Document,
   type TargetGrammar5ValidatedDocument,
+  type TargetGrammar6ValidatedDocument,
 } from "../semantic/target-validator.js";
+
+type TargetActualsCapability =
+  | TargetGrammar5Capability
+  | TargetGrammar6Capability;
+type TargetActualsValidatedDocument =
+  | TargetGrammar5ValidatedDocument
+  | TargetGrammar6ValidatedDocument;
+
+function validateTargetActualsDocument(
+  text: string,
+  capability: TargetActualsCapability,
+  maxDiagnostics: number,
+) {
+  return capability.grammarVersion === 6
+    ? validateTargetGrammar6Document(text, capability, { maxDiagnostics })
+    : validateTargetGrammar5Document(text, capability, { maxDiagnostics });
+}
+
+function asGrammar5Actuals(
+  validated: TargetActualsValidatedDocument,
+): TargetGrammar5ValidatedDocument {
+  return validated as unknown as TargetGrammar5ValidatedDocument;
+}
 
 export interface TargetActualsMutationOptions extends MutationOptions {
   readonly governance?: GovernanceRequestInput;
@@ -221,7 +247,7 @@ function taskExpectedValue(
 }
 
 function plannedValueForStart(
-  validated: TargetGrammar5ValidatedDocument,
+  validated: TargetActualsValidatedDocument,
   task: DeclarationNode<TargetDeclarationKind>,
   request: NormalizedLifecycleMutationRequest,
 ): string | null {
@@ -262,7 +288,7 @@ function requiredSourceState(
 }
 
 function activationCapacityDiagnostics(
-  validated: TargetGrammar5ValidatedDocument,
+  validated: TargetActualsValidatedDocument,
   task: DeclarationNode<TargetDeclarationKind>,
   request: NormalizedLifecycleMutationRequest,
 ): readonly Diagnostic[] {
@@ -333,7 +359,7 @@ function activationCapacityDiagnostics(
 }
 
 function validateLifecycleSource(
-  validated: TargetGrammar5ValidatedDocument,
+  validated: TargetActualsValidatedDocument,
   request: NormalizedLifecycleMutationRequest,
 ): {
   readonly task: DeclarationNode<TargetDeclarationKind>;
@@ -348,7 +374,9 @@ function validateLifecycleSource(
   readonly plannedValue: null;
   readonly diagnostics: readonly Diagnostic[];
 } {
-  const lifecycleDiagnostics = validateStoredLifecycleState(validated);
+  const lifecycleDiagnostics = validateStoredLifecycleState(
+    asGrammar5Actuals(validated),
+  );
   if (lifecycleDiagnostics.length > 0) {
     return {
       task: null,
@@ -381,7 +409,7 @@ function validateLifecycleSource(
   const sameId = validated.document.declarations.find(
     ({ id }) => id === request.event.id,
   );
-  const model = projectActualsSourceModel(validated);
+  const model = projectActualsSourceModel(asGrammar5Actuals(validated));
   if (sameId !== undefined) {
     const existing = model.events.find(({ id }) => id === request.event.id);
     if (
@@ -536,11 +564,11 @@ function validateLifecycleSource(
 }
 
 function lifecycleResult(
-  candidate: TargetGrammar5ValidatedDocument,
+  candidate: TargetActualsValidatedDocument,
   request: NormalizedLifecycleMutationRequest,
   fromState: TaskLifecycleState,
 ): ActualsLifecycleResult {
-  const model = projectActualsSourceModel(candidate);
+  const model = projectActualsSourceModel(asGrammar5Actuals(candidate));
   const event = model.events.find(({ id }) => id === request.event.id);
   if (event === undefined) {
     throw new Error("lifecycle candidate lost its event");
@@ -591,16 +619,12 @@ function requestOptions(
 export function planTargetLifecycleMutation(
   text: string,
   mutation: LifecycleMutation,
-  capability: TargetGrammar5Capability,
+  capability: TargetActualsCapability,
   options: TargetActualsMutationOptions = {},
 ): TargetActualsMutationResultV3 {
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
   const originalDigest = digest(text);
-  const original = validateTargetGrammar5Document(
-    text,
-    capability,
-    { maxDiagnostics: maximum },
-  );
+  const original = validateTargetActualsDocument(text, capability, maximum);
   if (!original.ok || original.validatedDocument === null) {
     return failure(
       text,
@@ -650,7 +674,7 @@ export function planTargetLifecycleMutation(
   } else {
     const planned = planLifecycleEdits(
       text,
-      original.validatedDocument,
+      asGrammar5Actuals(original.validatedDocument),
       normalized.request,
       source.fromState,
       source.plannedValue,
@@ -658,10 +682,10 @@ export function planTargetLifecycleMutation(
     edits = normalizeTextEdits(text, planned.edits, "lifecycle actuals");
   }
   const updatedText = applyTextEdits(text, edits);
-  const candidate = validateTargetGrammar5Document(
+  const candidate = validateTargetActualsDocument(
     updatedText,
     capability,
-    { maxDiagnostics: maximum },
+    maximum,
   );
   if (!candidate.ok || candidate.validatedDocument === null) {
     return failure(
@@ -673,7 +697,7 @@ export function planTargetLifecycleMutation(
     );
   }
   const lifecycleDiagnostics = validateStoredLifecycleState(
-    candidate.validatedDocument,
+    asGrammar5Actuals(candidate.validatedDocument),
   );
   if (lifecycleDiagnostics.length > 0) {
     return failure(
@@ -735,7 +759,7 @@ export function planTargetLifecycleMutation(
 export function planTargetFinishActualsMutation(
   text: string,
   mutation: FinishActualsMutation,
-  capability: TargetGrammar5Capability,
+  capability: TargetActualsCapability,
   options: TargetActualsMutationOptions = {},
 ): TargetActualsMutationResultV3 {
   return planTargetLifecycleMutation(text, mutation, capability, options);

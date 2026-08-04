@@ -2,7 +2,14 @@ import { createHash } from "node:crypto";
 import type {
   ConversionLoss,
   ConversionLossReport,
+  MermaidAnalysisMode,
 } from "../conversion/mermaid.js";
+import { renderMermaidProjection } from "../conversion/mermaid.js";
+import {
+  analyzeDocument,
+  type AnalysisResultV5,
+} from "../application/contract7-assurance.js";
+import type { AnalysisResult } from "../application/analyze.js";
 import { formatTargetGrammar6Document } from "../formatter/target-source-formatter.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";
@@ -26,6 +33,8 @@ export type PlanAssuranceMermaidProfile = 2 | 1 | "plain";
 export interface PlanAssuranceMermaidExportOptions {
   readonly profile?: PlanAssuranceMermaidProfile;
   readonly allowLoss?: boolean;
+  readonly analysis?: MermaidAnalysisMode;
+  readonly capacityOverrides?: ReadonlyMap<string, number>;
   readonly maxDiagnostics?: number;
 }
 
@@ -45,6 +54,8 @@ export interface PlanAssuranceMermaidExportResultV1 {
 export interface PlanAssuranceMermaidImportResultV1 {
   readonly ok: boolean;
   readonly profile: 2;
+  readonly analysis: MermaidAnalysisMode;
+  readonly capacityOverrides: ReadonlyMap<string, number>;
   readonly documentId: string | null;
   readonly sourceText: string | null;
   readonly sourceDigest: string | null;
@@ -63,6 +74,11 @@ interface Profile2Header {
   readonly assurance_semantic_digest: string;
   readonly canonical_source_base64: string;
   readonly projection_digest: string;
+  readonly analysis?: Exclude<MermaidAnalysisMode, "none">;
+  readonly capacity_overrides?: readonly {
+    readonly resource_id: string;
+    readonly capacity: number;
+  }[];
 }
 
 function sha256(text: string | Uint8Array): string {
@@ -171,6 +187,8 @@ function profile2Artifact(
   canonicalSource: string,
   assuranceSemanticDigest: string,
   projection: readonly string[],
+  analysis: MermaidAnalysisMode,
+  capacityOverrides: ReadonlyMap<string, number>,
 ): string {
   const projectionBody = projection.map((line) => `${line}\n`).join("");
   const header: Profile2Header = {
@@ -184,6 +202,17 @@ function profile2Artifact(
       "base64",
     ),
     projection_digest: sha256(projectionBody),
+    ...(analysis === "none"
+      ? {}
+      : {
+          analysis,
+          capacity_overrides: [...capacityOverrides]
+            .sort(([left], [right]) => compareStableStrings(left, right))
+            .map(([resourceId, capacity]) => ({
+              resource_id: resourceId,
+              capacity,
+            })),
+        }),
   };
   return [
     "flowchart LR",
@@ -201,6 +230,15 @@ export function exportPlanAssuranceMermaid(
   options: PlanAssuranceMermaidExportOptions = {},
 ): PlanAssuranceMermaidExportResultV1 {
   const profile = options.profile ?? 2;
+  const analysisMode = options.analysis ?? "none";
+  const capacityOverrides = options.capacityOverrides ?? new Map<string, number>();
+  if (
+    capacityOverrides.size > 0 &&
+    analysisMode !== "resource" &&
+    analysisMode !== "both"
+  ) {
+    throw new RangeError("capacityOverrides require resource or both analysis");
+  }
   const checked = validateTargetGrammar6Document(text, capability, {
     ...(options.maxDiagnostics === undefined
       ? {}
@@ -224,7 +262,35 @@ export function exportPlanAssuranceMermaid(
       diagnosticsTruncated: checked.diagnosticsTruncated,
     });
   }
-  const projection = graphProjection(checked.validatedDocument.document);
+  const analyzed: AnalysisResultV5 | null = analysisMode === "none"
+    ? null
+    : analyzeDocument(text, {
+        mode: analysisMode,
+        capacityOverrides,
+        ...(options.maxDiagnostics === undefined
+          ? {}
+          : { maxDiagnostics: options.maxDiagnostics }),
+      });
+  if (analyzed !== null && !analyzed.ok) {
+    return Object.freeze({
+      ok: false,
+      profile,
+      documentId: analyzed.documentId,
+      artifact: null,
+      artifactDigest: null,
+      canonicalSource: null,
+      assuranceSemanticDigest: null,
+      lossReport: Object.freeze({ lossless: false, records: Object.freeze([]) }),
+      diagnostics: analyzed.diagnostics,
+      diagnosticsTruncated: analyzed.diagnosticsTruncated,
+    });
+  }
+  const projection = analyzed === null
+    ? graphProjection(checked.validatedDocument.document)
+    : renderMermaidProjection(
+        analyzed.document as unknown as DocumentNode,
+        analyzed as unknown as AnalysisResult,
+      );
   const assuranceSemanticDigest = planAssuranceSemanticDigest(
     checked.validatedDocument,
   );
@@ -321,10 +387,15 @@ export function exportPlanAssuranceMermaid(
   const canonicalProjection = graphProjection(
     canonicalChecked.validatedDocument.document,
   );
+  const projected = analysisMode === "none"
+    ? canonicalProjection
+    : projection;
   const artifact = profile2Artifact(
     formatted.formattedText,
     assuranceSemanticDigest,
-    canonicalProjection,
+    projected,
+    analysisMode,
+    capacityOverrides,
   );
   return Object.freeze({
     ok: true,
@@ -344,6 +415,8 @@ function invalidImport(message: string): PlanAssuranceMermaidImportResultV1 {
   return Object.freeze({
     ok: false,
     profile: 2,
+    analysis: "none",
+    capacityOverrides: new Map<string, number>(),
     documentId: null,
     sourceText: null,
     sourceDigest: null,
@@ -370,7 +443,7 @@ function parseHeader(text: string): Profile2Header | null {
     return null;
   }
   const header = value as Record<string, unknown>;
-  const expectedKeys = [
+  const baseKeys = [
     "schema_version",
     "profile",
     "source_fidelity",
@@ -380,6 +453,9 @@ function parseHeader(text: string): Profile2Header | null {
     "canonical_source_base64",
     "projection_digest",
   ];
+  const expectedKeys = header["analysis"] === undefined
+    ? baseKeys
+    : [...baseKeys, "analysis", "capacity_overrides"];
   if (
     JSON.stringify(Object.keys(header)) !== JSON.stringify(expectedKeys) ||
     header["schema_version"] !== "Perttool.MermaidProfile.v2" ||
@@ -389,7 +465,22 @@ function parseHeader(text: string): Profile2Header | null {
     typeof header["source_digest"] !== "string" ||
     typeof header["assurance_semantic_digest"] !== "string" ||
     typeof header["canonical_source_base64"] !== "string" ||
-    typeof header["projection_digest"] !== "string"
+    typeof header["projection_digest"] !== "string" ||
+    (header["analysis"] !== undefined &&
+      (
+        !["precedence", "resource", "both"].includes(
+          header["analysis"] as string,
+        ) ||
+        !Array.isArray(header["capacity_overrides"]) ||
+        header["capacity_overrides"].some((item) =>
+          item === null || typeof item !== "object" || Array.isArray(item) ||
+          typeof (item as Record<string, unknown>)["resource_id"] !== "string" ||
+          !Number.isSafeInteger(
+            (item as Record<string, unknown>)["capacity"],
+          ) ||
+          ((item as Record<string, unknown>)["capacity"] as number) <= 0
+        )
+      ))
   ) {
     return null;
   }
@@ -449,7 +540,19 @@ export function importPlanAssuranceMermaid(
   const reproduced = exportPlanAssuranceMermaid(
     sourceText,
     capability,
-    { profile: 2 },
+    {
+      profile: 2,
+      ...(header.analysis === undefined
+        ? {}
+        : {
+            analysis: header.analysis,
+            capacityOverrides: new Map(
+              header.capacity_overrides!.map(({ resource_id, capacity }) =>
+                [resource_id, capacity] as const
+              ),
+            ),
+          }),
+    },
   );
   if (!reproduced.ok || reproduced.artifact !== text) {
     return invalidImport(
@@ -459,6 +562,12 @@ export function importPlanAssuranceMermaid(
   return Object.freeze({
     ok: true,
     profile: 2,
+    analysis: header.analysis ?? "none",
+    capacityOverrides: new Map(
+      (header.capacity_overrides ?? []).map(({ resource_id, capacity }) =>
+        [resource_id, capacity] as const
+      ),
+    ),
     documentId: checked.documentId,
     sourceText,
     sourceDigest: header.source_digest,

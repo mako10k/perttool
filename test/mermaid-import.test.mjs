@@ -86,7 +86,7 @@ test("profile corruption fails closed with stable phase codes", async () => {
       artifact: artifact.replace('"source":"Issue #10"}', '"source":"Issue #10","unexpected":true}'),
     },
     {
-      expected: "PTCNV-101",
+      expected: "PTCNV-102",
       artifact: artifact.replace("Perttool.MermaidProfile.v1", "Perttool.MermaidProfile.v2"),
     },
     {

@@ -1,9 +1,9 @@
 # perttool DSL Grammar Specification
 
 - Document status: Draft 1.0
-- Grammar versions: 1, 2, 3, 4, and 5 active
+- Grammar versions: 1, 2, 3, 4, 5, and 6 active
 - Created: 2026-07-21
-- Updated: 2026-07-28
+- Updated: 2026-08-04
 - Related requirements: [../requirements.md](../requirements.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 - CLI interface: [interfaces.md](interfaces.md)
@@ -11,6 +11,7 @@
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Temporal and unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Governance source and effective metadata: [governance-source.md](governance-source.md)
+- Conditional plan assurance interface: [plan-assurance-interface.md](plan-assurance-interface.md)
 
 ## 1. Purpose
 
@@ -22,7 +23,8 @@ The EBNF and field tables through Section 19 are normative for grammar version
 by [Temporal and Unit Interface Contract version
 2](temporal-unit-interface.md). Section 20.3 fixes the active Grammar 4
 governance delta. Section 20.4 fixes the active Grammar 5 project-actuals
-delta. See the following representative valid version 1
+delta. Section 20.5 fixes the active Grammar 6 plan-assurance delta. See the
+following representative valid version 1
 documents.
 
 - [minimal.pert](../examples/minimal.pert)
@@ -46,7 +48,8 @@ When a discrepancy is found, do not patch only the lower-precedence artifact; sy
 - Indentation represents blocks.
 - Top-level declarations are limited to `project`, `resource`, `milestone`,
   `task`, and `gate` through Grammar 4. Grammar 5 additionally accepts
-  `work_event`.
+  `work_event`; Grammar 6 additionally accepts `task_relation`, `plan_seal`,
+  `task_outcome`, and `assurance_receipt`.
 - Place task and gate endpoints in the header so that their nature as edges is visually apparent.
 - Use stable IDs, rather than titles, for references.
 - Field order and declaration order do not affect semantics.
@@ -1257,6 +1260,36 @@ It never converts `occurred_at`, `active_time`, `effort`, or `reason`, retains
 Grammar 5, and never removes actual evidence. Unit migration versions 1 and 2
 reject Grammar 5 as unsupported.
 
+### 20.5 Grammar version 6 plan-assurance delta
+
+Grammar version 6 is selected by an explicit `version 6` or by the atomic
+`plan-assurance seal` migration. It inherits every Grammar 5 declaration,
+field, exact-value form, validation rule, contextual keyword, and source
+ownership rule. It adds the paired project fields `plan_assurance_model` and
+`plan_assurance_hash_model` and the top-level `task_relation`, `plan_seal`,
+`task_outcome`, and `assurance_receipt` declarations.
+
+Sections 2.1 through 2.6 of the [Plan Assurance Interface
+Contract](plan-assurance-interface.md) are the normative Grammar 6 EBNF,
+field-presence matrix, nested-entry syntax, canonical field order, contextual
+keyword, global-ID, task-reference, digest-token, and source-ownership delta.
+The semantic hash recurrence, dependency-mode validity, receipt self-hash, and
+outcome meaning are owned by the [Conditional Plan Assurance
+Contract](plan-assurance.md).
+
+Grammar 1 through 5 reject the new project fields and declarations without
+expanding their reserved-ID sets. Grammar 6 without the paired model fields is
+valid with assurance coverage `not_enabled`. When either model field is
+present, both are required. Model 1 accepts only value `1`; an unknown positive
+model value is preserved but its assurance projection is `unavailable`.
+
+Generic formatting, project metadata, unit migration, actuals history, mixed
+batch, and Mermaid operations validate the complete Grammar 6 source and
+candidate. Unit migration never downgrades Grammar 6 and preserves every
+assurance-owned declaration byte-semantically. Semantic Mermaid profile 2 is
+the lossless Grammar 6 carrier; profile 1 or plain output is lossy and requires
+the non-strict conversion boundary.
+
 ## 21. Grammar acceptance
 
 At minimum, a parser implementation automatically checks the following:
@@ -1307,3 +1340,9 @@ At minimum, a parser implementation automatically checks the following:
     downgrades Grammar 5 automatically.
 30. Includes `work_event.planned_value` in unit migration version 3 while
     preserving event time, active time, effort, reason, and Grammar 5.
+31. Keeps Grammar 1 through 5 behavior closed while Grammar 6 accepts exactly
+    the paired assurance project fields and four assurance declarations.
+32. Validates all relation modes, task references, accepted component seals,
+    outcome field conditions, receipt consumers, and receipt self-hashes.
+33. Preserves assurance-owned source through unrelated generic operations and
+    retains Grammar 6 across unit migration and lossless Mermaid profile 2.

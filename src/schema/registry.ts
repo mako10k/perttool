@@ -44,7 +44,7 @@ export type JsonSchemaDiagnostic =
 
 export interface JsonSchemaResult {
   readonly schemaVersion: typeof JSON_SCHEMA_RESULT_SCHEMA_VERSION;
-  readonly cliContractVersion: 6;
+  readonly cliContractVersion: 7;
   readonly toolVersion: string;
   readonly operation: "schema";
   readonly ok: boolean;
@@ -60,9 +60,9 @@ export interface JsonSchemaResult {
 
 const commandResultSchemaIds = Object.freeze([
   "Perttool.AgentGuidanceResult.v1",
-  "Perttool.AnalysisResult.v4",
-  "Perttool.AdvanceResult.v1",
-  "Perttool.CheckResult.v3",
+  "Perttool.AnalysisResult.v5",
+  "Perttool.AdvanceResult.v2",
+  "Perttool.CheckResult.v4",
   "Perttool.CliError.v1",
   "Perttool.CommandHelpResult.v1",
   "Perttool.ExportResult.v1",
@@ -70,10 +70,11 @@ const commandResultSchemaIds = Object.freeze([
   "Perttool.GuideResult.v1",
   "Perttool.ImportResult.v1",
   "Perttool.InitResult.v1",
-  "Perttool.MutationResult.v3",
-  "Perttool.NextResult.v5",
+  "Perttool.MutationResult.v4",
+  "Perttool.NextResult.v6",
+  "Perttool.PlanAssuranceResult.v1",
   "Perttool.ProjectHistoryResult.v1",
-  "Perttool.ProjectResult.v3",
+  "Perttool.ProjectResult.v4",
   JSON_SCHEMA_RESULT_SCHEMA_VERSION,
   "Perttool.UnitMigrationResult.v3",
   "Perttool.VelocityObservationResult.v1",
@@ -392,7 +393,7 @@ export function getJsonSchemaResult(
   }
   return Object.freeze({
     schemaVersion: JSON_SCHEMA_RESULT_SCHEMA_VERSION,
-    cliContractVersion: 6,
+    cliContractVersion: 7,
     toolVersion: TOOL_VERSION,
     operation: "schema",
     ok: diagnostics.length === 0,

@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
-import type { NextResultV5 } from "../application/contract6-actuals.js";
+import type {
+  Contract7NextResultV6,
+  NextResultV6,
+} from "../application/contract7-assurance.js";
 import type { TargetActualsNextResultV5 } from "../application/target-actuals-analysis.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";
@@ -27,9 +30,14 @@ import type {
 } from "./override-types.js";
 import { TOOL_VERSION } from "../version.js";
 
+type OverrideSource = Omit<
+  TargetActualsNextResultV5,
+  "schemaVersion" | "temporal"
+> & Pick<NextResultV6, "schemaVersion" | "temporal">;
+
 const overrideSchemaVersion = "Perttool.OverrideDecision.v1" as const;
 const operation = "recommendation.override.validate" as const;
-const sourceSchemaVersion = "Perttool.NextResult.v5" as const;
+const sourceSchemaVersion = "Perttool.NextResult.v6" as const;
 const digestPattern = /^sha256:[0-9a-f]{64}$/;
 const overrideReasonCodes = new Set<HumanOverrideReasonCode>([
   "human_priority_decision",
@@ -120,7 +128,7 @@ function validUtcSecond(value: unknown): value is string {
 }
 
 function sourceContractError(
-  source: NextResultV5,
+  source: Contract7NextResultV6,
   request: OverrideRequest,
 ): string | null {
   try {
@@ -134,7 +142,7 @@ function sourceContractError(
       source.schemaVersion !== sourceSchemaVersion ||
       source.temporal === null
     ) {
-      return "source NextResult.v5 must be successful, untruncated, and include temporal authority";
+      return "source NextResult.v6 must be successful, untruncated, and include temporal and plan-assurance authority";
     }
     const recommendation = source.recommendation;
     const authority = source.temporal.authority;
@@ -151,7 +159,10 @@ function sourceContractError(
       recommendation.explanationStatus.complete !== true ||
       recommendation.explanationStatus.decisiveChainComplete !== true ||
       recommendation.explanationStatus.truncated !== false ||
-      authority.policy !== "recommendation_v1_plus_release_gate" ||
+      authority.policy !==
+        "recommendation_v1_plus_release_gate_plus_plan_assurance_v1" ||
+      authority.complete !== true ||
+      authority.safeStopReasons.length !== 0 ||
       authority.recommendationAlgorithm.id !== recommendation.algorithm.id ||
       authority.recommendationAlgorithm.version !==
         recommendation.algorithm.version ||
@@ -205,8 +216,11 @@ function sourceContractError(
     ) {
       return "source temporal eligibility authority is inconsistent";
     }
-    const expectedStartable = recommendation.recommendedTaskIds.filter(
+    const expectedTemporalStartable = recommendation.recommendedTaskIds.filter(
       (taskId) => source.groups.runnableNow.includes(taskId),
+    );
+    const expectedStartable = expectedTemporalStartable.filter((taskId) =>
+      authority.assuranceEligibleTaskIds.includes(taskId)
     );
     const expectedDelayed = recommendation.recommendedTaskIds.filter(
       (taskId) => authority.timeIneligibleTaskIds.includes(taskId),
@@ -219,6 +233,14 @@ function sourceContractError(
       !sameMembers(
         authority.startableRecommendedTaskIds,
         expectedStartable,
+      ) ||
+      !sameMembers(
+        authority.rawRecommendedTaskIds,
+        recommendation.recommendedTaskIds,
+      ) ||
+      !sameMembers(
+        authority.temporalStartableRecommendedTaskIds,
+        expectedTemporalStartable,
       ) ||
       !sameMembers(authority.delayedRecommendedTaskIds, expectedDelayed) ||
       !sameMembers(
@@ -316,7 +338,7 @@ function triggerCodesForTier(
 }
 
 function declaredCapacities(
-  source: TargetActualsNextResultV5,
+  source: OverrideSource,
 ): ReadonlyMap<string, number> {
   const capacities = new Map<string, number>();
   for (const declaration of source.document.declarations) {
@@ -392,7 +414,7 @@ function feasibilityExpression(
 }
 
 function evaluateSelectedSet(
-  source: TargetActualsNextResultV5,
+  source: OverrideSource,
   selectedTaskIds: readonly string[],
 ): {
   readonly feasible: boolean;
@@ -456,7 +478,7 @@ function evaluateSelectedSet(
 }
 
 function negativeReasonIds(
-  source: TargetActualsNextResultV5,
+  source: OverrideSource,
   taskId: string,
 ): readonly string[] {
   const recommendation = source.recommendation!;
@@ -476,7 +498,7 @@ function negativeReasonIds(
 }
 
 function acknowledgementError(
-  source: TargetActualsNextResultV5,
+  source: OverrideSource,
   request: OverrideRequest,
   selectedTaskIds: readonly string[],
 ): string | null {
@@ -516,7 +538,7 @@ function acknowledgementError(
 }
 
 function taskDecisionReferences(
-  source: TargetActualsNextResultV5,
+  source: OverrideSource,
   selectedTaskIds: readonly string[],
   displacesRecommended: boolean,
 ): readonly OverrideTaskDecision[] {
@@ -549,14 +571,14 @@ function taskDecisionReferences(
 }
 
 export function validateOverride(
-  source: NextResultV5,
+  source: Contract7NextResultV6,
   request: OverrideRequest,
 ): OverrideValidationResult {
   const sourceError = sourceContractError(source, request);
   if (sourceError !== null) {
     return failure("PTOVR-101", sourceError);
   }
-  const validatedSource = source as TargetActualsNextResultV5;
+  const validatedSource = source as NextResultV6;
   const recommendation = validatedSource.recommendation!;
   if (
     request.sourceDigest !== recommendation.sourceDigest ||
@@ -583,6 +605,9 @@ export function validateOverride(
   const timeEligibleSet = new Set(
     validatedSource.temporal.authority.timeEligibleTaskIds,
   );
+  const assuranceEligibleSet = new Set(
+    validatedSource.temporal.authority.assuranceEligibleTaskIds,
+  );
   const decisionByTask = new Map(
     recommendation.taskDecisions.map((decision) => [
       decision.subjectTaskId,
@@ -593,12 +618,13 @@ export function validateOverride(
     (id) =>
       !readySet.has(id) ||
       !timeEligibleSet.has(id) ||
+      !assuranceEligibleSet.has(id) ||
       !decisionByTask.has(id),
   );
   if (invalidTaskIds.length > 0) {
     return failure(
       "PTOVR-103",
-      "selected task is not an actual ready and time-eligible task with a normal decision",
+      "selected task is not an actual ready, time-eligible, plan-assured task with a normal decision",
       { task_ids: [...invalidTaskIds].sort(compareStableStrings) },
     );
   }

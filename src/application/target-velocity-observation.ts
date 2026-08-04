@@ -13,7 +13,7 @@ import {
 } from "../history/velocity-observation.js";
 import { TOOL_VERSION } from "../version.js";
 
-export const TARGET_VELOCITY_OBSERVATION_CLI_CONTRACT_VERSION = 6 as const;
+export const TARGET_VELOCITY_OBSERVATION_CLI_CONTRACT_VERSION = 7 as const;
 export const TARGET_VELOCITY_OBSERVATION_SCHEMA_VERSION =
   "Perttool.VelocityObservationResult.v1" as const;
 

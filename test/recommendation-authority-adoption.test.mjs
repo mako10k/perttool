@@ -93,7 +93,7 @@ function understandsAuthorityContract(result) {
   const authority = result.temporal?.authority;
   const omitted = recommendation?.explanation_status?.omitted_counts;
   if (
-    result.schema_version !== "Perttool.NextResult.v5" ||
+    result.schema_version !== "Perttool.NextResult.v6" ||
     result.recommendation_interface_version !== 1 ||
     result.ok !== true ||
     recommendation == null ||
@@ -109,7 +109,11 @@ function understandsAuthorityContract(result) {
     recommendation.explanation_status?.complete !== true ||
     recommendation.explanation_status.decisive_chain_complete !== true ||
     recommendation.explanation_status.truncated !== false ||
-    authority?.policy !== "recommendation_v1_plus_release_gate" ||
+    authority?.policy !==
+      "recommendation_v1_plus_release_gate_plus_plan_assurance_v1" ||
+    authority.complete !== true ||
+    !Array.isArray(authority.assurance_eligible_task_ids) ||
+    !Array.isArray(authority.safe_stop_reasons) ||
     authority.recommendation_algorithm?.id !== recommendation.algorithm.id ||
     authority.recommendation_algorithm?.version !==
       recommendation.algorithm.version ||

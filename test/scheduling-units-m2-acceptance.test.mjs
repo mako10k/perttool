@@ -129,11 +129,11 @@ test("the active registry exposes the complete Contract 4 route, options, and sc
 
 test("active Contract 6 routes retain Grammar 2", () => {
   const cases = [
-    [["document", "check"], "Perttool.CheckResult.v3"],
+    [["document", "check"], "Perttool.CheckResult.v4"],
     [["document", "format"], "Perttool.FormatResult.v1"],
-    [["project", "show"], "Perttool.ProjectResult.v3"],
-    [["dag", "analyze"], "Perttool.AnalysisResult.v4"],
-    [["dag", "next"], "Perttool.NextResult.v5"],
+    [["project", "show"], "Perttool.ProjectResult.v4"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v5"],
+    [["dag", "next"], "Perttool.NextResult.v6"],
   ];
 
   for (const [route, schemaVersion] of cases) {
@@ -142,7 +142,7 @@ test("active Contract 6 routes retain Grammar 2", () => {
     assert.equal(result.stderr, "");
     const json = JSON.parse(result.stdout);
     assert.equal(json.schema_version, schemaVersion);
-    assert.equal(json.cli_contract_version, 6);
+    assert.equal(json.cli_contract_version, 7);
     assert.equal(json.ok, true);
     if (schemaVersion !== "Perttool.FormatResult.v1") {
       assert.equal(json.grammar_version, 2);

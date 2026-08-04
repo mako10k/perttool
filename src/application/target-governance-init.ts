@@ -5,11 +5,13 @@ import type { TextEdit } from "../mutation/text-edits.js";
 import type {
   TargetGrammar4Capability,
   TargetGrammar5Capability,
+  TargetGrammar6Capability,
 } from "../parser/document-parser.js";
 import { GOVERNANCE_DIRECT_EDIT_WARNING } from "../governance/guidance.js";
 import {
   validateTargetGrammar4Document,
   validateTargetGrammar5Document,
+  validateTargetGrammar6Document,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
 import type {
@@ -39,7 +41,7 @@ export interface TargetGovernanceProjectInitRequest {
 export interface TargetGovernanceProjectInitResult {
   readonly ok: boolean;
   readonly documentId: string | null;
-  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | null;
+  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | 6 | null;
   readonly candidateText: string | null;
   readonly candidateDigest: string | null;
   readonly edits: readonly TextEdit[];
@@ -120,10 +122,10 @@ function requestError(value: unknown): string | undefined {
     (
       !Number.isSafeInteger(request["version"]) ||
       (request["version"] as number) < 1 ||
-      (request["version"] as number) > 5
+      (request["version"] as number) > 6
     )
   ) {
-    return "project init version must be an integer from 1 to 5";
+    return "project init version must be an integer from 1 to 6";
   }
   for (const field of ["asOf", "velocity", "initialMilestoneDeadline"]) {
     if (request[field] !== undefined && typeof request[field] !== "string") {
@@ -165,9 +167,10 @@ function requestError(value: unknown): string | undefined {
     governance &&
     request["version"] !== undefined &&
     request["version"] !== 4 &&
-    request["version"] !== 5
+    request["version"] !== 5 &&
+    request["version"] !== 6
   ) {
-    return "project init governance fields require version 4 or 5";
+    return "project init governance fields require version 4, 5, or 6";
   }
   const version =
     governance ? (request["version"] ?? 4) : (request["version"] ?? 1);
@@ -178,12 +181,13 @@ function requestError(value: unknown): string | undefined {
         version !== 2 &&
         version !== 3 &&
         version !== 4 &&
-        version !== 5
+        version !== 5 &&
+        version !== 6
       ) ||
       request["asOf"] === undefined
     )
   ) {
-    return "project init initialMilestoneDeadline requires version 2, 3, 4, or 5 and asOf";
+    return "project init initialMilestoneDeadline requires version 2, 3, 4, 5, or 6 and asOf";
   }
   return undefined;
 }
@@ -230,7 +234,10 @@ function renderCandidate(request: TargetGovernanceProjectInitRequest): string {
 
 export function planTargetGovernanceProjectInit(
   request: unknown,
-  capability: TargetGrammar4Capability | TargetGrammar5Capability,
+  capability:
+    | TargetGrammar4Capability
+    | TargetGrammar5Capability
+    | TargetGrammar6Capability,
   options: TargetValidationOptions = {},
 ): TargetGovernanceProjectInitResult {
   const error = requestError(request);
@@ -250,9 +257,11 @@ export function planTargetGovernanceProjectInit(
   const candidateText = renderCandidate(
     request as TargetGovernanceProjectInitRequest,
   );
-  const checked = capability.grammarVersion === 5
-    ? validateTargetGrammar5Document(candidateText, capability, options)
-    : validateTargetGrammar4Document(candidateText, capability, options);
+  const checked = capability.grammarVersion === 6
+    ? validateTargetGrammar6Document(candidateText, capability, options)
+    : capability.grammarVersion === 5
+      ? validateTargetGrammar5Document(candidateText, capability, options)
+      : validateTargetGrammar4Document(candidateText, capability, options);
   if (!checked.ok || checked.validatedDocument === null) {
     return {
       ok: false,

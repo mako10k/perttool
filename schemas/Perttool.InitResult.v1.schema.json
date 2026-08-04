@@ -24,7 +24,7 @@
       "const": "Perttool.InitResult.v1"
     },
     "cli_contract_version": {
-      "const": 6
+      "const": 7
     },
     "tool_version": {
       "type": "string"

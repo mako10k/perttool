@@ -1,17 +1,16 @@
 # Conditional Plan Assurance Interface Contract
 
-- Status: Normative target 1.0
+- Status: Normative 1.0
 - Decision date: 2026-08-03
 - Source grammar target: Grammar 6
 - Public CLI target: CLI Contract 7
 - Plan-assurance model: 1
 - Hash model: 1
-- Runtime status: Internal hash/state, Grammar 6 source, governed mutation,
-  assurance-authority, advance-contraction, compatibility, and read-only
-  hash-inspection Cores
-  implemented; public runtime not activated
+- Runtime status: Grammar 6 and CLI Contract 7 active in the source CLI,
+  package root, discovery, Guide/help, schemas, and installed workflows
 - Semantic contract: [plan-assurance.md](plan-assurance.md)
-- Active compatibility baseline: Grammar 5, CLI Contract 6, and package 0.6.0
+- Published compatibility baseline: Grammar 5, CLI Contract 6, and package
+  0.6.0; the source checkout has not selected a release for Contract 7
 - Workstream: [../../plans/plan-assurance.pert](../../plans/plan-assurance.pert)
 
 ## 1. Decision and scope
@@ -22,9 +21,9 @@ Grammar 5. CLI Contract 7 changes the closed results that must project
 assurance, adds one read-only assurance command and eight assurance mutations,
 and retains every unrelated command spelling.
 
-This contract selects source and interface shape. It does not activate the
-runtime, select a package version, authorize a release, authenticate a caller,
-or claim that a hash is a digital signature.
+This contract selects and now governs the active source/runtime shape. Its
+activation does not select a package version, authorize a release,
+authenticate a caller, or claim that a hash is a digital signature.
 
 Resolve conflicts in this order:
 
@@ -506,8 +505,8 @@ invariant exit 70.
   Mermaid cannot claim lossless Grammar 6 assurance; strict loss rejects the
   artifact, while non-strict loss enumerates every omitted assurance fact.
 - No adapter infers seals, outcomes, or receipts from Git or status.
-- CLI Contract 6 and package 0.6.0 remain unchanged until the public task;
-  exact old-package pins remain the closed-result compatibility route later.
+- Published package 0.6.0 remains unchanged; exact old-package pins are the
+  closed Contract 6 result compatibility route.
 
 The internal compatibility implementation fixes these additional rules before
 public activation:
@@ -532,10 +531,9 @@ public activation:
    reproduction. Profile 1 and plain projections are output only under an
    explicit non-strict loss option and produce one stable loss record for each
    omitted assurance project field and assurance-owned declaration.
-5. Internal compatibility modules are compiled into `dist` for package-gate
-   testing but remain absent from the package root and all Contract 6 discovery
-   surfaces. Public names, result versions, and option spellings land only in
-   `ASSURE_PUBLIC_CONTRACT`.
+5. Compatibility modules remain internally capability-bound, while the
+   standard package root and Contract 7 discovery surfaces expose only the
+   accepted public names, result versions, and option spellings.
 6. Direct-edit guidance leads with semantic fields and affected tasks. A
    pinpoint digest is supplemental inspection evidence: it never edits a
    `plan_seal`, repairs a receipt, accepts a plan, or authorizes reseal/write.
@@ -548,10 +546,10 @@ replanning/reseal, outcomes, dependency modes, advance receipts, and the
 non-signature trust boundary. JSON schemas close every object and validate
 real success, mismatch, unavailable, denied, invalid, and usage results.
 
-Internal Grammar 6 and assurance Core modules may land by plan slice. Before
-`ASSURE_PUBLIC_CONTRACT`, the standard parser, package root, command registry,
-help, schema catalog, CLI, link, and installed package MUST continue exposing
-Grammar 5 and CLI Contract 6 only.
+The completed `ASSURE_PUBLIC_CONTRACT` cutover activates the standard parser,
+package root, 44-command registry, help, 20-root schema catalog, CLI,
+temporary link, and installed package together. No public surface may expose a
+mixed Grammar 5/Contract 6 and Grammar 6/Contract 7 identity set.
 
 ## 9. Fixed hash vectors
 

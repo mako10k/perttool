@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.21
+- Document status: Draft 0.22
 - Created: 2026-07-21
-- Updated: 2026-08-03
+- Updated: 2026-08-04
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -792,10 +792,10 @@ Must:
 - Allow a known changed-outcome commitment to invalidate existing consumers
   once and become a valid planning input only after the affected downstream
   plans are explicitly replanned and resealed against it.
-- Keep existing Grammar 1 through 5 and CLI Contract 6 source and result
-  identities unchanged until the selected Grammar 6 and CLI Contract 7 target
-  atomically activates its results, help, Guide, diagnostics, and migration.
-- Before public activation, provide internal Grammar 6 compatibility adapters
+- Expose Grammar 1 through 6 through one CLI Contract 7 public boundary, while
+  preserving Grammar 1 through 5 source meaning and requiring exact old-package
+  pins for the closed Contract 6 result identities.
+- Provide Grammar 6 compatibility adapters
   for formatting, unit migration, project metadata, project history, atomic
   batch, and Mermaid conversion. Each adapter must validate the complete
   Grammar 6 input and candidate and must neither synthesize assurance facts nor
@@ -810,13 +810,14 @@ Must:
   plain Mermaid must fail under strict loss handling; a non-strict projection
   must enumerate each omitted assurance project field and assurance-owned
   declaration and must not claim round-trip fidelity.
-- Keep internal compatibility modules in the distributable `dist` tree while
-  withholding them from the active package root, command registry, help,
-  schemas, and installed Contract 6 workflow until the atomic public task.
+- Expose the accepted compatibility adapters through the standard package
+  root, command registry, help, schemas, temporary-link workflow, and isolated
+  Contract 7 installation without exporting lower-level target-capability
+  helpers.
 - Direct-edit guidance must state that editing a task, relation, accepted hash,
   outcome, or receipt can invalidate assurance. Hash inspection is read-only;
   it neither repairs a seal nor grants reseal or persistent-write authority.
-- Provide one read-only assurance inspection Core shared by the future
+- Provide one read-only assurance inspection Core shared by the
   `plan-assurance show` and `plan-assurance hash` commands. A hash request must
   identify one task and exactly one of `contract`, `computed-basis`, or
   `exported`; it must select from the semantic evaluator rather than hashing
@@ -2385,16 +2386,17 @@ The obsolete npm `alpha` dist-tag is retired; historical
 `0.1.0-alpha.2` remains available by exact pin.
 
 The conditional plan-assurance semantic and interface targets are accepted,
-and its internal hash/state, Grammar 6 source, governed mutation, and
-assurance-authority Cores are implemented without public activation.
+and the current source activates its hash/state, Grammar 6 source, governed
+mutation, assurance-authority, and public Contract 7 surfaces atomically.
 Requirements 2.7 and 7.9, the [Conditional Plan Assurance
 Contract](specs/plan-assurance.md), its [normative examples](examples/plan-assurance.md),
 the [Plan Assurance Interface Contract](specs/plan-assurance-interface.md), and
 the [design consistency review](process/plan-assurance-design-review.md) fix
 Grammar 6, CLI Contract 7, all assurance records and commands, result schema
 identities, diagnostics, and governance-version cutover. The selected
-implementation plan is active. Package version and release remain unselected,
-and the complete surface remains unavailable in the current runtime.
+implementation plan is active, and its final independent acceptance task
+remains. Package version and release remain unselected; published `0.6.0`
+continues to provide the prior Grammar 5 and Contract 6 surface.
 
 Resolved design decisions:
 
@@ -2583,15 +2585,18 @@ Before implementation, separate the specifications in the following order.
       history provenance, and the independent history-force boundary in the
       [Advance Contraction Acceptance
       Record](process/plan-assurance-advance-contraction-acceptance.md).
-    - [ ] Implement and accept Core, CLI, schemas, safe write, advance,
-      compatibility, package, and installed workflows without changing the
-      active Contract 6 surface prematurely.
+    - [x] Activate Grammar 6 and CLI Contract 7 atomically across Core, CLI,
+      44-command discovery, Guide/help, 20 root schemas, safe write, advance,
+      compatibility, package root, temporary link, and isolated installation.
+    - [ ] Complete the independent cross-surface `ASSURE_ACCEPTANCE` task and
+      retain release selection, publication, plan advance, and Issue mutation
+      as separate decisions.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 
 Item 8 completed its foundation with `TASK_MUTATION_CORE` and `ENTITY_MUTATION_CORE`, added gate add/set/remove Core through `MUT_002_GATE_MAINTENANCE`, and added read-only `project show` and source-preserving `project set` through project-metadata extensions. The Core contract also added an atomic batch that validates only the final candidate for connected-milestone task/gate additions, path replacements, and project-wide unit changes that cannot independently produce valid intermediate DAGs. `MUTATION_CLI_PREVIEW` exposed entity commands and the former `mutation apply` path through preview-first text/JSON surfaces, and `SAFE_WRITE_ACCEPTANCE` connected the same candidate to atomic `--write`, exclusive `--out`, and `--expect-digest`. The Contract 3 cutover now exposes direct gate commands and `batch apply` through that shared path. Item 10 fixed all semantic records in the profile, stable projection, both digests, exact values, and text/JSON parity with golden/unit/E2E tests. Item 11 fail-closedly verifies canonical profile JSON, record order, both digests, semantic-model and projection correspondence, and fixes stable generated IDs and loss reports for plain input, strict-loss, and exclusive `--out` in Core/CLI/E2E.
 
-The analysis implementation has progressed through public `dag next` v5 and
+The analysis implementation has progressed through public `dag next` v6 and
 read-only `validateOverride`. In addition to Exact Rational values, PERT
 expected values/variance, precedence CPM, critical-path counts, deterministic
 resource schedules, capacity overrides, resource arcs, schedule critical
@@ -2599,8 +2604,9 @@ paths, next classification, `runnable_now`, resource rejection, and upcoming
 explanations, it exposes exact temporal schedules, deadline evaluation,
 release eligibility, suspended-state qualification, and the complete temporal
 start-authority graph through Core, CLI JSON/text, help, and package. A
-complete known non-truncated `Perttool.NextResult.v5` is normal authority, and
-override validation cannot bypass future or unavailable release eligibility.
+complete known non-truncated `Perttool.NextResult.v6` is normal authority, and
+override validation cannot bypass future or unavailable release eligibility
+or plan-assurance eligibility.
 It also exposes `Perttool.OverrideDecision.v1` validation through the public
 library. It satisfies Slice 2's bootstrap gate, grammar acceptance,
 safe-write gate, and advance gate, and performs Stage 3 preview-first self-use

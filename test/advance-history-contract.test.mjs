@@ -194,7 +194,7 @@ test("accepted runtime traces all eighteen cases across repository and package g
   ]) {
     assert.match(cliTests, new RegExp(id));
   }
-  assert.match(packageCheck, /Perttool\.AdvanceResult\.v1/);
+  assert.match(packageCheck, /Perttool\.AdvanceResult\.v2/);
   assert.match(packageCheck, /guide editing/);
   assert.match(installedWorkflow, /advanceHeadBefore/);
   assert.match(installedWorkflow, /history_guard\.status, "passed"/);
@@ -203,7 +203,7 @@ test("accepted runtime traces all eighteen cases across repository and package g
 test("active runtime exposes the exact CLI result and force boundary", () => {
   assert.equal(
     ADVANCE_RESULT_SCHEMA_VERSION,
-    "Perttool.AdvanceResult.v1",
+    "Perttool.AdvanceResult.v2",
   );
   const advance = COMMAND_REGISTRY.find(
     ({ path }) => path[0] === "dag" && path[1] === "advance",
@@ -211,7 +211,7 @@ test("active runtime exposes the exact CLI result and force boundary", () => {
   assert.ok(advance);
   assert.deepEqual(
     advance.resultSchemas,
-    ["Perttool.AdvanceResult.v1", "Perttool.CliError.v1"],
+    ["Perttool.AdvanceResult.v2", "Perttool.CliError.v1"],
   );
   assert.equal(
     advance.options.some(({ name }) => name === "force-history-loss"),
@@ -219,7 +219,7 @@ test("active runtime exposes the exact CLI result and force boundary", () => {
   );
   assert.equal(
     getJsonSchemaCatalog().some(
-      ({ schemaId }) => schemaId === "Perttool.AdvanceResult.v1",
+      ({ schemaId }) => schemaId === "Perttool.AdvanceResult.v2",
     ),
     true,
   );

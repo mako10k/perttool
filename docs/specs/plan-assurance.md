@@ -1,15 +1,13 @@
 # Conditional Plan Assurance Contract
 
-- Status: Normative target 1.0
-- Plan-assurance model target: 1
-- Hash model target: 1
-- Runtime status: Internal hash/state, Grammar 6 source, governed mutation,
-  assurance-authority, advance-contraction, compatibility, and read-only
-  hash-inspection Cores
-  implemented; public runtime not activated
-- Current compatibility boundary: Grammar 1 through 5 and CLI Contract 6 remain
-  unchanged
-- Source and public interface target: [Grammar 6 and CLI Contract 7](plan-assurance-interface.md)
+- Status: Normative 1.0
+- Plan-assurance model: 1
+- Hash model: 1
+- Runtime status: Grammar 6 and CLI Contract 7 active in the source CLI,
+  package root, discovery, Guide/help, schemas, and installed workflows
+- Compatibility boundary: Grammar 1 through 5 source meaning is retained;
+  exact Contract 6 result identities remain available from published pins
+- Source and public interface: [Grammar 6 and CLI Contract 7](plan-assurance-interface.md)
 - Requirements: [../requirements.md](../requirements.md)
 - Active DSL grammar: [dsl-grammar.md](dsl-grammar.md)
 - Backlog: [`ASSURE-001`](../backlog.md#assure-001-add-conditional-plan-assurance)
@@ -41,7 +39,7 @@ Resolve conflicts in this order:
 2. this contract;
 3. the [Plan Assurance Interface Contract](plan-assurance-interface.md) for
    Grammar 6 source, CLI Contract 7, result, diagnostic, and governance shape;
-4. [DSL Grammar](dsl-grammar.md) for the active Grammar 1 through 5 lexical,
+4. [DSL Grammar](dsl-grammar.md) for the active Grammar 1 through 6 lexical,
    syntax, source-span, and compatibility boundary;
 5. [Graph Semantics](graph-semantics.md) for AoA execution dependencies,
    reachability, and advance;
@@ -705,22 +703,21 @@ tasks from Git.
 - An enabled but unsealed or partially sealed plan is analyzable for replanning
   but fails closed for affected new starts.
 - Unknown assurance/hash versions and incomplete projections are unavailable.
-- The selected Grammar 6 and CLI Contract 7 interface remains unavailable in
-  the active CLI, help, Guide, package exports, schemas, and installed behavior
-  until the coordinated runtime cutover.
+- The Grammar 6 and CLI Contract 7 interface is active atomically in the CLI,
+  help, Guide, package exports, schemas, and installed behavior.
 - Publication, plan advance, Issue mutation, and release-channel changes remain
   separate authorization boundaries.
 
-Internal Grammar 6 compatibility operations are fail-closed adapters, not a
-partial public activation. Formatting must retain the same semantic assurance
+Grammar 6 compatibility operations remain fail-closed adapters behind the
+public Contract 7 surface. Formatting must retain the same semantic assurance
 projection. Unit migration and unrelated project/batch edits must keep version
 6 and preserve assurance-owned source bytes. History validates Grammar 6 while
 reducing only actuals and never accepts assurance from Git. Mermaid semantic
 profile 2 is the only lossless Grammar 6 conversion; profile 1 and plain output
 require an explicit non-strict loss choice and enumerate each omitted assurance
-fact. The package gate may inspect compiled internal modules, but the active
-root export, CLI registry, help, Guide, schema catalog, and installed Contract 6
-workflow remain unchanged.
+fact. Lower-level target capability helpers remain internal even though the
+standard root export, CLI registry, help, Guide, schema catalog, and installed
+Contract 7 workflow expose the accepted operations.
 
 ## 12. Non-goals for model 1
 

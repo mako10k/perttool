@@ -29,25 +29,25 @@ Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
 explicit pin. npm reports `beta=0.6.0`, `latest=0.5.5`, and no `alpha`. The
-current source implements Grammar 1/2/3/4/5 reads,
-registry-driven Contract 6 `help`, separate Contract 6 `guide`, temporal and
+current source implements Grammar 1/2/3/4/5/6 reads,
+registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
 events, read-only project history and velocity observation, exact
-`project migrate-unit`, `Perttool.ProjectResult.v3`,
-`Perttool.MutationResult.v3` with `Perttool.GovernanceDecision.v1`,
-`Perttool.AdvanceResult.v1` with history-safety model 1,
-`Perttool.AnalysisResult.v4`, `Perttool.NextResult.v5`,
+`project migrate-unit`, `Perttool.ProjectResult.v4`,
+`Perttool.MutationResult.v4` with `Perttool.GovernanceDecision.v2`,
+`Perttool.AdvanceResult.v2` with history-safety and assurance guards,
+`Perttool.AnalysisResult.v5`, `Perttool.NextResult.v6`,
 `Perttool.UnitMigrationResult.v3`, read-only `validateOverride`,
 source-preserving mutation, and authorization-before-safe-write controls. It
-bundles complete artifacts for all eighteen active command-result identities
+bundles complete artifacts for all nineteen active command-result identities
 plus public library-only `Perttool.OverrideDecision.v1`, exposes the additive
 read-only `schema` command and public catalog APIs, accepts Git 2.54 strict ISO
 UTC `Z` commit metadata, rejects retired alpha publication, and projects
 human-readable scope-bound owner-confirmation guidance. Version `0.5.5` emits
 PTGOV-104 without changing its candidate, decision, default success, or
 persistent authority. Issue #5 closure remains a separate decision. A
-complete and known `Perttool.NextResult.v5` with a
-complete temporal start-authority projection is the normal AI task-selection
+complete and known `Perttool.NextResult.v6` with a complete temporal and
+plan-assurance start-authority projection is the normal AI task-selection
 authority. The macro plan is complete and has no ready task. The independent
 English-baseline detail plan has completed and advanced all nine tasks through
 `ENGLISH_ACCEPTANCE`; Git commit `2001cdf` records the exact completed
@@ -173,16 +173,18 @@ composition, and digest-bound separate-output persistence.
 version-preserving unit migration, project metadata, actuals-only history,
 semantic Mermaid profile 2, strict loss reporting, mixed-batch preservation,
 package-inventory enforcement, and direct-edit guidance.
-`ASSURE_HASH_INSPECTION` is complete with one internal source-bound
+`ASSURE_HASH_INSPECTION` is complete with one source-bound
 `Perttool.PlanAssuranceResult.v1` projection, evaluator-ordered task filtering,
 the explicit contract/computed-basis/exported selectors, exact scalar digest
-text, fail-closed unavailable handling, and unchanged Contract 6 discovery.
-All eight completed declarations remain pre-advance. Fresh complete,
-non-truncated NextResult v5 recommends and authorizes only
-`ASSURE_PUBLIC_CONTRACT`.
-Current Grammar 5, CLI Contract 6,
-package root, package `0.6.0`, release selection, remote writes, publication,
-dist-tag movement, and Issue mutation remain unchanged and separately gated.
+text, and fail-closed unavailable handling. `ASSURE_PUBLIC_CONTRACT` is
+complete after atomically activating Grammar 6, CLI Contract 7, 44 commands,
+20 root schemas, the public package root, and the installed-package workflow.
+Its accepted complete gate and boundary are recorded in
+`docs/process/plan-assurance-public-contract-acceptance.md`. All nine completed
+declarations remain pre-advance. Fresh complete, non-truncated NextResult v6
+recommends and authorizes only `ASSURE_ACCEPTANCE`. Published package `0.6.0`,
+release selection, remote writes, publication, dist-tag movement, plan
+advance, and Issue mutation remain unchanged and separately gated.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
@@ -492,26 +494,26 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
 - `src/actuals/`: active Grammar 5 source projection, deterministic event identity, exact lifecycle reduction, exact measurements, and stored-state validation for task-owned work-event records.
-- `src/assurance/`: internal ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, assurance-preserving advance contraction, compatibility source capture and project metadata, direct-edit guidance, and semantic Mermaid profile 2; it is not exported by the active package root or CLI Contract 6.
-- `src/command/`: immutable typed Contract 6 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
-- `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 6 editing and actuals Guide.
+- `src/assurance/`: active ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, assurance-preserving advance contraction, compatibility source capture and project metadata, direct-edit guidance, and semantic Mermaid profile 2; lower-level target-capability helpers remain internal.
+- `src/command/`: immutable typed Contract 7 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
+- `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 7 editing, actuals, and plan-assurance Guide.
 - `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
-- `src/schema/`: closed Contract 6 result-schema catalog, local bundled-artifact resolution, `Perttool.SchemaResult.v1`, and deterministic JSON/text projections.
-- `schemas/`: bundled Draft 2020-12 root artifacts for every active command result and the public OverrideDecision result, plus shared local definitions.
+- `src/schema/`: closed Contract 7 result-schema catalog, local bundled-artifact resolution, `Perttool.SchemaResult.v1`, and deterministic JSON/text projections.
+- `schemas/`: twenty bundled Draft 2020-12 root artifacts for every active command result and the public OverrideDecision result, plus shared local definitions.
 - `src/conversion/`: Mermaid profile/plain export and import, semantic metadata, projection generation, and fail-closed restoration.
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.
-- `src/formatter/`: the active Grammar 1/2/3/4/5 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
+- `src/formatter/`: the active Grammar 1/2/3/4/5/6 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4/5 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 6 package surface.
 - `src/history/`: active read-only Git probe, validated-snapshot-injected pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with internal Grammar 6 history and assurance-record inventory extensions.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5/6 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, localized version-upgrade inputs, and internal retained Grammar 6 migration support.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
-- `src/parser/`: the active Grammar 1/2/3/4/5 parser with identity-checked task-owned work-event source.
-- `src/semantic/`: active Grammar 1/2/3/4/5 validated-document boundaries, task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
+- `src/parser/`: the active Grammar 1/2/3/4/5/6 parser with identity-checked task-owned work-event and plan-assurance source.
+- `src/semantic/`: active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
-- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, internal Grammar 6 assurance mutation, unit migration, advance persistence, and read-only hash inspection, assurance-aware analysis/Next and independent assurance/history guard composition, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
+- `src/application/`: pure services for active Contract 7 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5/6 mutation planning, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
@@ -535,7 +537,7 @@ When the user asks for the “next task,” first present candidates based on re
 
 For the explicitly selected scheduling-and-units workstream, use `scheduling-units.pert` as its macro authority and the current `scheduling-units-m*.pert` as its detail authority. When a detail finish is reached, roll it up once to the matching macro work package, re-estimate later provisional packages, and create only the next milestone-detail plan from accepted semantics.
 
-For normal task selection, use only a known `Perttool.NextResult.v5`, recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale `en`, temporal authority policy `recommendation_v1_plus_release_gate`, and a complete, non-truncated trace as the authority. Start only tasks listed in `startable_recommended_task_ids`. You may choose a subset of that set, or retain the complete startable set with exactly one additional resource-feasible, time-eligible `allowed` task. Do not start for an unknown version or temporal policy, incomplete trace, `PTREC-*`, future or unavailable release eligibility, or a `deferred`/`discouraged` selection; stop safely. Reanalyze rather than reusing the same result after task start, completion, blocking, time, or capacity changes. Do not apply a selection requiring a human override until MIG-08; report its difference from the normal recommendation and the still-unavailable audit/apply boundary.
+For normal task selection, use only a known `Perttool.NextResult.v6`, recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale `en`, authority policy `recommendation_v1_plus_release_gate_plus_plan_assurance_v1`, complete assurance authority, and a complete, non-truncated trace. Start only tasks listed in `startable_recommended_task_ids`. You may choose a subset of that set, or retain the complete startable set with exactly one additional resource-feasible, time-eligible, assurance-eligible `allowed` task. Do not start for an unknown version or authority policy, incomplete trace, `PTREC-*`, assurance safe stop, future or unavailable release eligibility, withheld assurance eligibility, or a `deferred`/`discouraged` selection; stop safely. Reanalyze rather than reusing the same result after task start, completion, blocking, time, capacity, plan, relation, outcome, or assurance changes. Do not apply a selection requiring a human override until MIG-08; report its difference from the normal recommendation and the still-unavailable audit/apply boundary.
 
 For changes affecting correctness, proceed in the order of requirements/specification, design, implementation, and verification by default. If an implementation reveals a gap in a specification, do not encode an assumption only in code; update the applicable normative document first or in the same change.
 

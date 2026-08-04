@@ -1,10 +1,10 @@
-export { checkDocument } from "./application/check.js";
 export {
   analyzeDocument,
+  checkDocument,
   selectNextTasks,
-} from "./application/contract6-actuals.js";
+} from "./application/contract7-assurance.js";
 export { getAgentHelp } from "./application/agent-help.js";
-export { getProjectMetadata } from "./application/project.js";
+export { getProjectMetadata } from "./application/contract7-project.js";
 export {
   planProjectInit,
   projectInitResultToJson,
@@ -12,7 +12,7 @@ export {
   serializeProjectInitResult,
   withProjectInitOutput,
 } from "./application/init.js";
-export { planFormat } from "./application/format.js";
+export { planFormat } from "./application/contract7-source.js";
 export { recommendationAnalysisToJson } from "./recommendation/json.js";
 export {
   canonicalOverrideArtifact,
@@ -26,13 +26,21 @@ export {
   planFinishActuals,
   planLifecycle as planLifecycleMutation,
   planMutation,
-} from "./application/contract6-mutation.js";
+  planAssuranceMutation,
+} from "./application/contract7-mutation.js";
+export {
+  inspectTargetPlanAssurance as inspectPlanAssurance,
+  PLAN_ASSURANCE_INSPECTION_CLI_CONTRACT_VERSION,
+  PLAN_ASSURANCE_RESULT_SCHEMA_VERSION,
+} from "./application/target-assurance-inspection.js";
 export {
   planUnitMigration,
   withUnitMigrationWrite,
-} from "./application/unit-migration.js";
-export { exportMermaid } from "./conversion/mermaid.js";
-export { importMermaid } from "./conversion/mermaid-import.js";
+} from "./application/contract7-unit-migration.js";
+export {
+  exportMermaid,
+  importMermaid,
+} from "./application/contract7-mermaid.js";
 export { buildResidualGraph, computeEffectiveReached } from "./analysis/graph.js";
 export { analyzePrecedence } from "./analysis/precedence.js";
 export { analyzeResources } from "./analysis/resource.js";
@@ -42,26 +50,26 @@ export {
   getAgentHelpCommandHelp,
 } from "./command/registry.js";
 export {
-  ACTUALS_COMMAND_REGISTRY as COMMAND_REGISTRY,
-  actualsCommandDescriptorToJson as commandDescriptorToJson,
-  actualsCommandHelpResultToJson as commandHelpResultToJson,
-  actualsCommandRegistryToJson as commandRegistryToJson,
-  getActualsCommandDiscovery as getCommandDiscovery,
-  renderActualsCommandHelpResult as renderCommandHelpResult,
-  serializeActualsCommandHelpResult as serializeCommandHelpResult,
-} from "./command/actuals-discovery.js";
+  ASSURANCE_COMMAND_REGISTRY as COMMAND_REGISTRY,
+  assuranceCommandDescriptorToJson as commandDescriptorToJson,
+  assuranceCommandHelpResultToJson as commandHelpResultToJson,
+  assuranceCommandRegistryToJson as commandRegistryToJson,
+  getAssuranceCommandDiscovery as getCommandDiscovery,
+  renderAssuranceCommandHelpResult as renderCommandHelpResult,
+  serializeAssuranceCommandHelpResult as serializeCommandHelpResult,
+} from "./command/assurance-discovery.js";
 export {
-  actualsCommandUsageErrorToJson as commandUsageErrorToJson,
-  renderActualsCommandUsageError as renderCommandUsageError,
-  serializeActualsCommandUsageError as serializeCommandUsageError,
-  validateActualsCommandInvocation as validateCommandInvocation,
-} from "./command/actuals-usage.js";
+  assuranceCommandUsageErrorToJson as commandUsageErrorToJson,
+  renderAssuranceCommandUsageError as renderCommandUsageError,
+  serializeAssuranceCommandUsageError as serializeCommandUsageError,
+  validateAssuranceCommandInvocation as validateCommandInvocation,
+} from "./command/assurance-usage.js";
 export {
-  actualsGuideResultToJson as guideResultToJson,
-  getActualsGuide as getGuide,
-  renderActualsGuideResult as renderGuideResult,
-  serializeActualsGuideResult as serializeGuideResult,
-} from "./help/actuals-guide.js";
+  assuranceGuideResultToJson as guideResultToJson,
+  getAssuranceGuide as getGuide,
+  renderAssuranceGuideResult as renderGuideResult,
+  serializeAssuranceGuideResult as serializeGuideResult,
+} from "./help/assurance-guide.js";
 export {
   getJsonSchema,
   getJsonSchemaCatalog,
@@ -102,21 +110,21 @@ export type {
   CommandUsageSuggestionKind,
 } from "./command/usage.js";
 export type {
-  ActualsCommandDescriptor as CommandDescriptor,
-  ActualsCommandDescriptor as ProjectedCommandDescriptor,
-  ActualsCommandHelpResult as CommandHelpResult,
-} from "./command/actuals-discovery.js";
+  AssuranceCommandDescriptor as CommandDescriptor,
+  AssuranceCommandDescriptor as ProjectedCommandDescriptor,
+  AssuranceCommandHelpResult as CommandHelpResult,
+} from "./command/assurance-discovery.js";
 export type {
   TargetGovernanceOptionDescriptor as OptionDescriptor,
 } from "./command/target-governance-discovery.js";
 export type {
-  ActualsCommandInvocationValidation as CommandInvocationValidation,
-  ActualsInvalidCommandInvocation as InvalidCommandInvocation,
-  ActualsValidCommandInvocation as ValidCommandInvocation,
-} from "./command/actuals-usage.js";
+  AssuranceCommandInvocationValidation as CommandInvocationValidation,
+  AssuranceInvalidCommandInvocation as InvalidCommandInvocation,
+  AssuranceValidCommandInvocation as ValidCommandInvocation,
+} from "./command/assurance-usage.js";
 export type {
-  ActualsGuideResult as GuideResult,
-} from "./help/actuals-guide.js";
+  AssuranceGuideResult as GuideResult,
+} from "./help/assurance-guide.js";
 export {
   getAgentGuidance,
   getBundledAgentGuidance,
@@ -142,7 +150,11 @@ export {
   serializeAgentGuidanceProfile,
   validateAgentGuidanceProfile,
 } from "./guidance/validator.js";
-export { formatDocument } from "./formatter/source-formatter.js";
+export {
+  formatDocument,
+  parseDocument,
+  validateDocument,
+} from "./application/contract7-source.js";
 export {
   digestDocumentBytes,
   documentContentFromBytes,
@@ -161,12 +173,10 @@ export {
 } from "./model/diagnostics.js";
 export * from "./model/rational.js";
 export * from "./model/units.js";
-export { parseDocument } from "./parser/document-parser.js";
-export { validateDocument } from "./semantic/validator.js";
 export { GOVERNANCE_DIRECT_EDIT_WARNING } from "./governance/guidance.js";
+export type { CheckResultV4 as CheckResult } from "./application/contract7-assurance.js";
 export type {
   CheckOptions,
-  CheckResult,
   CheckSummary,
   MilestoneDeadlineInput,
   TaskTemporalConstraint,
@@ -176,7 +186,7 @@ export type {
   ProjectMetadata,
   ProjectMetadataDurationUnit,
   ProjectMetadataResult,
-} from "./application/project.js";
+} from "./application/contract7-project.js";
 export type {
   ProjectInitDurationUnit,
   ProjectInitRequest,
@@ -235,10 +245,12 @@ export type {
   ConversionLoss,
   ConversionLossReport,
   MermaidAnalysisMode,
-  MermaidExportOptions,
   MermaidExportResult,
   MermaidProfile,
 } from "./conversion/mermaid.js";
+export type {
+  Contract7MermaidExportOptions as MermaidExportOptions,
+} from "./application/contract7-mermaid.js";
 export type {
   GeneratedId,
   MermaidImportOptions,
@@ -246,8 +258,10 @@ export type {
 } from "./conversion/mermaid-import.js";
 export type {
   FormatPreviewOptions,
-  FormatPreviewResult,
 } from "./application/format.js";
+export type {
+  FormatPreviewResultV7 as FormatPreviewResult,
+} from "./application/contract7-source.js";
 export type {
   AnalysisMode,
   AnalyzeOptions,
@@ -263,11 +277,12 @@ export type {
   UnsatisfiedEdgeExplanation,
 } from "./application/next.js";
 export type {
-  AnalysisResultV4 as AnalysisResult,
-  AnalysisResultV4,
-  NextResultV5 as NextResult,
-  NextResultV5,
-} from "./application/contract6-actuals.js";
+  AnalysisResultV5 as AnalysisResult,
+  AnalysisResultV5,
+  Contract7NextResultV6 as NextResult,
+  Contract7NextResultV6,
+  NextResultV6,
+} from "./application/contract7-assurance.js";
 export type {
   RecommendationAnalysis,
   RecommendationComparison,
@@ -365,19 +380,34 @@ export type {
   AdvanceRetentionReason,
 } from "./mutation/advance.js";
 export type {
-  AdvanceResultV3,
-  LifecycleResultV3,
-  MutationResultV3 as MutationResult,
-  MutationResultV3,
-} from "./application/contract6-mutation.js";
+  AdvanceResultV2 as AdvanceResult,
+  AdvanceResultV2,
+  LifecycleResultV4,
+  MutationResultV4 as MutationResult,
+  MutationResultV4,
+} from "./application/contract7-mutation.js";
+export type {
+  PlanAssuranceHashKind,
+  PlanAssuranceInspectionRequest,
+  TargetPlanAssuranceInspectionResultV1 as PlanAssuranceResultV1,
+} from "./application/target-assurance-inspection.js";
+export type {
+  PlanAssuranceMutation,
+  PlanAssuranceMutationOptions,
+  PlanAssuranceImpactV1,
+} from "./assurance/mutation.js";
+export type {
+  PlanAssuranceProjectionV1,
+  PlanAssuranceStartAuthorityV1,
+  PlanAssuranceStateCountsV1,
+} from "./assurance/authority.js";
 export {
-  ADVANCE_RESULT_SCHEMA_VERSION,
-} from "./application/advance-history.js";
+  PLAN_ASSURANCE_ADVANCE_RESULT_SCHEMA_VERSION as ADVANCE_RESULT_SCHEMA_VERSION,
+} from "./assurance/advance.js";
 export type {
   AdvanceHistoryGuardCause,
   AdvanceHistoryGuardStatus,
   AdvanceHistoryGuardV1,
-  AdvanceResultV1 as AdvanceResult,
   AdvanceResultV1,
 } from "./application/advance-history.js";
 export type { DocumentContent } from "./io/document-file.js";
@@ -433,7 +463,6 @@ export type {
   TaskRequirementInput,
 } from "./mutation/types.js";
 export type {
-  GovernanceDecisionV1,
   GovernanceDenialCause,
   GovernancePersistenceIntent,
   GovernanceRequest,
@@ -441,6 +470,11 @@ export type {
   GovernanceScope,
   GovernanceScopeDecision,
 } from "./governance/types.js";
+export type {
+  PlanAssuranceGovernanceDecisionV2 as GovernanceDecisionV2,
+  PlanAssuranceGovernanceDecisionV2 as GovernanceDecision,
+  PlanAssuranceGovernanceScope,
+} from "./assurance/governance.js";
 export type {
   DeclaredGovernance,
   EffectiveGovernance,
@@ -455,7 +489,7 @@ export type {
   UnitMigrationOptions,
   UnitMigrationResult,
   UnitMigrationWrite,
-} from "./application/unit-migration.js";
+} from "./application/contract7-unit-migration.js";
 export type {
   UnitMigrationCause,
   UnitMigrationDiagnosticCode,

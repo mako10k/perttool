@@ -18,8 +18,10 @@ import type {
   TargetGrammar3Capability,
   TargetGrammar4Capability,
   TargetGrammar5Capability,
+  TargetGrammar6Capability,
 } from "../parser/document-parser.js";
 import {
+  planTargetGrammar6UnitMigrationCandidate,
   planTargetUnitMigrationCandidate,
   type TargetUnitMigrationCandidateOptions,
 } from "./target-unit-migration-candidate.js";
@@ -121,15 +123,23 @@ export function planTargetUnitMigrationResult(
   capability:
     | TargetGrammar3Capability
     | TargetGrammar4Capability
-    | TargetGrammar5Capability,
+    | TargetGrammar5Capability
+    | TargetGrammar6Capability,
   options: TargetUnitMigrationCandidateOptions = {},
 ): TargetUnitMigrationResult {
-  const candidate = planTargetUnitMigrationCandidate(
-    text,
-    request,
-    capability,
-    options,
-  );
+  const candidate = capability.grammarVersion === 6
+    ? planTargetGrammar6UnitMigrationCandidate(
+        text,
+        request,
+        capability,
+        options,
+      )
+    : planTargetUnitMigrationCandidate(
+        text,
+        request,
+        capability,
+        options,
+      );
   return Object.freeze({
     schemaVersion: TARGET_UNIT_MIGRATION_RESULT_SCHEMA_VERSION,
     ok: candidate.ok,

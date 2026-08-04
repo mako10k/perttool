@@ -193,7 +193,7 @@ test("parallel completed work yields one exact window and separate effort produc
     result,
     "plans/observation.pert",
   );
-  assert.equal(json.cli_contract_version, 6);
+  assert.equal(json.cli_contract_version, 7);
   assert.equal(json.source_digest, "sha256:observation");
   assert.equal(
     json.observation.candidates[0].adoptable_velocity_token,

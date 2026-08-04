@@ -36,7 +36,7 @@ test("plan assurance interface fixes one atomic Grammar 6 and Contract 7 target"
       repositoryText("docs/process/plan-assurance-interface-acceptance.md"),
     ]);
 
-  assert.match(semantics, /- Status: Normative target 1\.0/);
+  assert.match(semantics, /- Status: Normative 1\.0/);
   assert.match(contract, /- Source grammar target: Grammar 6/);
   assert.match(contract, /- Public CLI target: CLI Contract 7/);
   assert.match(contract, /44 registered paths/);
@@ -69,7 +69,7 @@ test("plan assurance interface fixes one atomic Grammar 6 and Contract 7 target"
   assert.match(contract, /PTASSURE-203/);
   assert.match(contract, /does not add, replace, or repair a\s+`plan_seal`/);
   assert.match(contract, /Lossless Mermaid support uses semantic profile 2/);
-  assert.match(contract, /Before\s+`ASSURE_PUBLIC_CONTRACT`/);
+  assert.match(contract, /completed `ASSURE_PUBLIC_CONTRACT` cutover/);
 
   for (const sourceRecord of [
     "task_relation",
@@ -116,7 +116,7 @@ test("plan assurance interface cases and SHA-256 vectors are fixed", async () =>
   assert.equal(fixture.cli_contract_version, 7);
   assert.equal(
     fixture.runtime_status,
-    "internal_implementation_through_hash_inspection_only",
+    "active_grammar_6_cli_contract_7",
   );
   assert.equal(fixture.registered_command_count, 44);
   assert.equal(fixture.commands.includes("plan-assurance hash"), true);
@@ -165,7 +165,7 @@ test("plan assurance interface cases and SHA-256 vectors are fixed", async () =>
   }
 });
 
-test("the active Contract 6 surface rejects the selected future interface", () => {
+test("the active Contract 7 surface exposes the selected interface", () => {
   assert.equal("evaluatePlanAssurance" in publicApi, false);
   assert.equal("hashTaskPlanContract" in publicApi, false);
   const commandPaths = COMMAND_REGISTRY.map(({ path: commandPath }) =>
@@ -174,13 +174,13 @@ test("the active Contract 6 surface rejects the selected future interface", () =
   for (const prefix of ["plan-assurance", "plan-dependency", "task-outcome"]) {
     assert.equal(
       commandPaths.some((commandPath) => commandPath.startsWith(prefix)),
-      false,
+      true,
       prefix,
     );
   }
 
   const schemaIds = getJsonSchemaCatalog().map(({ schemaId }) => schemaId);
-  assert.equal(schemaIds.some((id) => /PlanAssurance/.test(id)), false);
+  assert.equal(schemaIds.some((id) => /PlanAssurance/.test(id)), true);
 
   const grammar6Target = `project ASSURED:
   version 6
@@ -204,8 +204,9 @@ task A M0 -> M1:
   status planned
 
 plan_seal A:
+  accepted_contract sha256:e35fe89aabf48b47a19c513e63a7782591e8bf098f79a6b3ad789f905ef3cf2d
   accepted_basis sha256:3923becd976daeca7047a65206633ed3b8210b426f1bf969107728f5261cd489
   reason "Future target"
 `;
-  assert.equal(checkDocument(grammar6Target).ok, false);
+  assert.equal(checkDocument(grammar6Target).ok, true);
 });

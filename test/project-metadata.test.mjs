@@ -57,6 +57,8 @@ test("project metadata exposes every project field without source inspection", (
     finishDeadline: null,
     criticalEpsilon: "0p",
     targetDuration: "20p",
+    planAssuranceModel: null,
+    planAssuranceHashModel: null,
   });
   assert.deepEqual(governance.declared, {
     goalOwner: null,

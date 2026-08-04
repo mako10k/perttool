@@ -1,9 +1,9 @@
 DSL syntax
 
-Grammar versions 1 through 5 for declaring projects, governance metadata, resources, milestones, tasks, gates, and explicit task work events.
+Grammar versions 1 through 6 for declaring projects, governance metadata, resources, milestones, tasks, gates, and explicit task work events.
 
 Declarations
-Place exactly one project first, followed by resource, milestone, task, gate, and Grammar 5 work-event declarations.
+Place exactly one project first, followed by resource, milestone, task, gate, and Grammar 6 work-event declarations.
 
 Syntax:
   project ID:

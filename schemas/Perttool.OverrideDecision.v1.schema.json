@@ -306,7 +306,7 @@
               ],
               "properties": {
                 "schema_version": {
-                  "const": "Perttool.NextResult.v5"
+                  "const": "Perttool.NextResult.v6"
                 },
                 "tool_version": {
                   "type": "string"

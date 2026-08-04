@@ -1689,6 +1689,301 @@
         }
       ]
     },
+    "planAssuranceCause": {
+      "type": "object",
+      "required": [
+        "kind",
+        "direct",
+        "root_task_id",
+        "affected_task_id",
+        "path_task_ids"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "unknown_model",
+            "task_contract_changed",
+            "planning_relation_changed",
+            "predecessor_commitment_changed",
+            "predecessor_unavailable",
+            "frontier_commitment_changed",
+            "accepted_seal_inconsistent",
+            "outcome_missing",
+            "outcome_basis_mismatch",
+            "outcome_invalid",
+            "changed_outcome"
+          ]
+        },
+        "direct": { "type": "boolean" },
+        "root_task_id": { "type": "string" },
+        "affected_task_id": { "type": "string" },
+        "path_task_ids": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "acceptedPlanningInput": {
+      "type": "object",
+      "required": [
+        "predecessor_task_id",
+        "relation_mode",
+        "assurance_hash"
+      ],
+      "properties": {
+        "predecessor_task_id": { "type": "string" },
+        "relation_mode": {
+          "enum": ["both", "planning_only"]
+        },
+        "assurance_hash": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+    "planAssuranceTaskResult": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "status",
+        "outcome_status",
+        "contract_hash",
+        "computed_basis_hash",
+        "accepted_basis_hash",
+        "computed_inputs",
+        "exported_assurance_hash",
+        "direct_causes",
+        "inherited_causes"
+      ],
+      "properties": {
+        "task_id": { "type": "string" },
+        "status": {
+          "enum": [
+            "not_applicable",
+            "unsealed",
+            "conditional",
+            "verified",
+            "review_required",
+            "unavailable"
+          ]
+        },
+        "outcome_status": {
+          "enum": ["unfinished", "conformant", "changed", "unavailable"]
+        },
+        "contract_hash": { "$ref": "#/$defs/nullableDigest" },
+        "computed_basis_hash": { "$ref": "#/$defs/nullableDigest" },
+        "accepted_basis_hash": { "$ref": "#/$defs/nullableDigest" },
+        "computed_inputs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/acceptedPlanningInput" }
+        },
+        "exported_assurance_hash": { "$ref": "#/$defs/nullableDigest" },
+        "direct_causes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/planAssuranceCause" }
+        },
+        "inherited_causes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/planAssuranceCause" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "planAssuranceRequiredAction": {
+      "type": "object",
+      "required": ["kind", "root_task_ids", "affected_task_ids"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "initial_seal",
+            "replan_and_reseal",
+            "restore_assurance_evidence"
+          ]
+        },
+        "root_task_ids": { "$ref": "#/$defs/stringArray" },
+        "affected_task_ids": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "planAssuranceProjection": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "hash_model_version",
+        "coverage",
+        "task_results",
+        "direct_mismatch_task_ids",
+        "inherited_mismatch_task_ids",
+        "replan_required_task_ids",
+        "active_attention_required_task_ids",
+        "required_actions"
+      ],
+      "properties": {
+        "model_version": { "type": ["integer", "null"] },
+        "hash_model_version": { "type": ["integer", "null"] },
+        "coverage": {
+          "enum": ["not_enabled", "unsealed", "partial", "complete"]
+        },
+        "task_results": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/planAssuranceTaskResult" }
+        },
+        "direct_mismatch_task_ids": { "$ref": "#/$defs/stringArray" },
+        "inherited_mismatch_task_ids": { "$ref": "#/$defs/stringArray" },
+        "replan_required_task_ids": { "$ref": "#/$defs/stringArray" },
+        "active_attention_required_task_ids": { "$ref": "#/$defs/stringArray" },
+        "required_actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/planAssuranceRequiredAction" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullablePlanAssuranceProjection": {
+      "oneOf": [
+        { "$ref": "#/$defs/planAssuranceProjection" },
+        { "type": "null" }
+      ]
+    },
+    "planAssuranceStateCounts": {
+      "type": "object",
+      "required": ["task", "outcome"],
+      "properties": {
+        "task": {
+          "type": "object",
+          "required": [
+            "not_applicable",
+            "unsealed",
+            "conditional",
+            "verified",
+            "review_required",
+            "unavailable"
+          ],
+          "properties": {
+            "not_applicable": { "type": "integer", "minimum": 0 },
+            "unsealed": { "type": "integer", "minimum": 0 },
+            "conditional": { "type": "integer", "minimum": 0 },
+            "verified": { "type": "integer", "minimum": 0 },
+            "review_required": { "type": "integer", "minimum": 0 },
+            "unavailable": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "outcome": {
+          "type": "object",
+          "required": ["unfinished", "conformant", "changed", "unavailable"],
+          "properties": {
+            "unfinished": { "type": "integer", "minimum": 0 },
+            "conformant": { "type": "integer", "minimum": 0 },
+            "changed": { "type": "integer", "minimum": 0 },
+            "unavailable": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "planAssuranceEvaluation": {
+      "type": "object",
+      "required": [
+        "ok",
+        "model_version",
+        "hash_model_version",
+        "coverage",
+        "effective_dependencies",
+        "task_results",
+        "direct_mismatch_task_ids",
+        "inherited_mismatch_task_ids",
+        "replan_required_task_ids",
+        "unavailable_task_ids",
+        "diagnostics"
+      ],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "model_version": { "type": ["integer", "null"] },
+        "hash_model_version": { "type": ["integer", "null"] },
+        "coverage": {
+          "enum": ["not_enabled", "unsealed", "partial", "complete", null]
+        },
+        "effective_dependencies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "relation_id",
+              "predecessor_task_id",
+              "successor_task_id",
+              "mode",
+              "explicit"
+            ],
+            "properties": {
+              "relation_id": { "$ref": "#/$defs/nullableString" },
+              "predecessor_task_id": { "type": "string" },
+              "successor_task_id": { "type": "string" },
+              "mode": {
+                "enum": ["both", "execution_only", "planning_only"]
+              },
+              "explicit": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "task_results": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/planAssuranceTaskResult" }
+        },
+        "direct_mismatch_task_ids": { "$ref": "#/$defs/stringArray" },
+        "inherited_mismatch_task_ids": { "$ref": "#/$defs/stringArray" },
+        "replan_required_task_ids": { "$ref": "#/$defs/stringArray" },
+        "unavailable_task_ids": { "$ref": "#/$defs/stringArray" },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "message", "entity_id", "data"],
+            "properties": {
+              "code": { "enum": ["PTASSURE-101", "PTASSURE-102"] },
+              "message": { "type": "string" },
+              "entity_id": { "$ref": "#/$defs/nullableString" },
+              "data": { "$ref": "#/$defs/jsonObject" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "planAssuranceImpact": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "affected_task_ids",
+        "before",
+        "after",
+        "projection"
+      ],
+      "properties": {
+        "model_version": { "const": 1 },
+        "affected_task_ids": { "$ref": "#/$defs/stringArray" },
+        "before": { "$ref": "#/$defs/planAssuranceEvaluation" },
+        "after": { "$ref": "#/$defs/planAssuranceEvaluation" },
+        "projection": {
+          "type": "object",
+          "required": [
+            "model_version",
+            "affected_task_ids",
+            "before",
+            "after",
+            "diagnostics"
+          ],
+          "properties": {
+            "model_version": { "const": 1 },
+            "affected_task_ids": { "$ref": "#/$defs/stringArray" },
+            "before": { "$ref": "#/$defs/nullablePlanAssuranceProjection" },
+            "after": { "$ref": "#/$defs/nullablePlanAssuranceProjection" },
+            "diagnostics": { "$ref": "#/$defs/diagnostics" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "governanceDecision": {
       "type": "object",
       "required": [
@@ -1709,16 +2004,16 @@
       ],
       "properties": {
         "schema_version": {
-          "const": "Perttool.GovernanceDecision.v1"
+          "const": "Perttool.GovernanceDecision.v2"
         },
         "governance_interface_version": {
-          "const": 1
+          "const": 2
         },
         "governance_source_contract_version": {
           "const": 1
         },
         "governance_semantics_version": {
-          "const": 1
+          "const": 2
         },
         "source_digest": {
           "$ref": "#/$defs/digest"
@@ -1775,7 +2070,8 @@
         "scope": {
           "enum": [
             "goal",
-            "dag"
+            "dag",
+            "plan_assurance"
           ]
         },
         "required_owner": {

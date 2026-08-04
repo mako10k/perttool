@@ -21,10 +21,13 @@ import type {
 } from "../history/git-probe.js";
 import { probeGitHistory } from "../history/git-probe.js";
 import type { TargetCalendarValue } from "../model/target-calendar.js";
-import type { TargetGrammar5Capability } from "../parser/document-parser.js";
+import type {
+  TargetGrammar5Capability,
+  TargetGrammar6Capability,
+} from "../parser/document-parser.js";
 import { TOOL_VERSION } from "../version.js";
 
-export const TARGET_PROJECT_HISTORY_CLI_CONTRACT_VERSION = 6 as const;
+export const TARGET_PROJECT_HISTORY_CLI_CONTRACT_VERSION = 7 as const;
 export const TARGET_PROJECT_HISTORY_SCHEMA_VERSION =
   "Perttool.ProjectHistoryResult.v1" as const;
 
@@ -91,7 +94,7 @@ function failedResult(
 export function inspectTargetProjectHistory(
   probe: GitHistoryProbeOutcome,
   request: HistoryRequest,
-  capability: TargetGrammar5Capability,
+  capability: TargetGrammar5Capability | TargetGrammar6Capability,
   options: TargetProjectHistoryOptions = {},
 ): TargetProjectHistoryResultV1 {
   if (!probe.ok) return failedResult(probe, options);
@@ -103,7 +106,7 @@ export function inspectTargetProjectHistory(
 
 export async function inspectTargetProjectHistoryFile(
   request: TargetProjectHistoryFileRequest,
-  capability: TargetGrammar5Capability,
+  capability: TargetGrammar5Capability | TargetGrammar6Capability,
   dependencies: GitHistoryProbeDependencies = {},
 ): Promise<TargetProjectHistoryResultV1> {
   const probe = await probeGitHistory(

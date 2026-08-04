@@ -97,7 +97,7 @@ test("quick target guidance keeps the preview and persistence distinction", () =
 
 test("active Contract 6 Guide exposes governance through standard names", () => {
   const active = publicApi.getGuide("editing", "detail");
-  assert.equal(active.cliContractVersion, 6);
+  assert.equal(active.cliContractVersion, 7);
   const text = publicApi.renderGuideResult(active);
   assert.match(text, /owner-aware governance/i);
   assert.match(text, /accepted-by-owner/);

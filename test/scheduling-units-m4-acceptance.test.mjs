@@ -392,8 +392,8 @@ test("the active package root hides target helpers while Contract 6 retains migr
   const guideJson = JSON.parse(guide.stdout);
   assert.equal(helpJson.schema_version, "Perttool.CommandHelpResult.v1");
   assert.equal(guideJson.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(helpJson.cli_contract_version, 6);
-  assert.equal(guideJson.cli_contract_version, 6);
+  assert.equal(helpJson.cli_contract_version, 7);
+  assert.equal(guideJson.cli_contract_version, 7);
   assert.equal(help.stdout.includes("project migrate-unit"), true);
   assert.equal(help.stdout.includes("Perttool.UnitMigrationResult.v3"), true);
   assert.equal(
@@ -413,7 +413,7 @@ test("the active package root hides target helpers while Contract 6 retains migr
   assert.equal(migrated.stderr, "");
   const result = JSON.parse(migrated.stdout);
   assert.equal(result.schema_version, "Perttool.UnitMigrationResult.v3");
-  assert.equal(result.cli_contract_version, 6);
+  assert.equal(result.cli_contract_version, 7);
   assert.equal(result.operation, "project.migrate-unit");
   assert.equal(result.ok, true);
 });

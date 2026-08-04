@@ -58,6 +58,7 @@ import {
 } from "../application/mutate.js";
 import {
   planTargetGrammar6AtomicMutationEdits,
+  planTargetGrammar6BatchMutation,
 } from "../application/target-mutate.js";
 import { projectPlanAssuranceInput } from "./source.js";
 import type {
@@ -148,6 +149,17 @@ export interface PlanAssuranceBatchMutation {
 export type PlanAssuranceMutation =
   | PlanAssuranceAtomicMutation
   | PlanAssuranceBatchMutation;
+
+function mutationAffectsAssuranceSource(
+  mutation: PlanAssuranceMutation,
+): boolean {
+  if (mutation.kind !== "batch") return true;
+  return mutation.mutations.some((item) =>
+    item.kind.startsWith("plan_assurance.") ||
+    item.kind.startsWith("plan_dependency.") ||
+    item.kind.startsWith("task_outcome.")
+  );
+}
 
 export interface PlanAssuranceMutationOptions {
   readonly maxDiagnostics?: number;
@@ -1019,16 +1031,31 @@ function planBatchEdits(
     item: PlanAssuranceBatchMutation["mutations"][number],
   ): item is PlanAssuranceAtomicMutation =>
     requestFieldsByKind[item.kind] !== undefined;
-  if (!mutation.mutations.some(isAssuranceMutation)) {
-    return { edits: [], diagnostic: assuranceDiagnostic(
-      "PTASSURE-301",
-      "error",
-      "assurance batch requires at least one assurance mutation",
-    ) };
-  }
   const hasOrdinaryMutation = mutation.mutations.some((item) =>
     !isAssuranceMutation(item)
   );
+  const hasAssuranceMutation = mutation.mutations.some(isAssuranceMutation);
+  if (hasOrdinaryMutation && !hasAssuranceMutation) {
+    const result = planTargetGrammar6BatchMutation(
+      text,
+      mutation as unknown as Parameters<
+        typeof planTargetGrammar6BatchMutation
+      >[1],
+      capability,
+    );
+    return result.ok
+      ? { edits: result.edits }
+      : {
+          edits: [],
+          diagnostic: result.diagnostics.find(({ severity }) =>
+            severity === "error"
+          ) ?? assuranceDiagnostic(
+            "PTASSURE-301",
+            "error",
+            "ordinary batch mutation could not produce a valid candidate",
+          ),
+        };
+  }
   if (hasOrdinaryMutation) {
     if (mutation.mutations.some((item) =>
       isAssuranceMutation(item) &&
@@ -1341,7 +1368,9 @@ export function planTargetPlanAssuranceMutation(
             original.validatedDocument.document,
             candidate.validatedDocument.document,
           ),
-          "plan_assurance" as const,
+          ...(mutationAffectsAssuranceSource(mutation)
+            ? ["plan_assurance" as const]
+            : []),
         ])
       : Object.freeze([]),
     normalizedGovernance.request,

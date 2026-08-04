@@ -80,16 +80,16 @@ function inspect(text, request, options = {}) {
   );
 }
 
-test("inspection remains internal with the fixed Contract 7 result identity", () => {
+test("inspection is public under the fixed Contract 7 result identity", () => {
   assert.equal(
     PLAN_ASSURANCE_RESULT_SCHEMA_VERSION,
     "Perttool.PlanAssuranceResult.v1",
   );
   assert.equal(PLAN_ASSURANCE_INSPECTION_CLI_CONTRACT_VERSION, 7);
+  assert.equal("inspectPlanAssurance" in publicApi, true);
   for (const name of [
     "inspectTargetPlanAssurance",
     "renderTargetPlanAssuranceInspectionText",
-    "PLAN_ASSURANCE_RESULT_SCHEMA_VERSION",
   ]) {
     assert.equal(name in publicApi, false, name);
   }

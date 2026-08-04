@@ -5,7 +5,7 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-Version `0.6.0` beta implements Grammar 5 and CLI Contract 6,
+Published version `0.6.0` beta implements Grammar 5 and CLI Contract 6,
 including explicit task work events, lifecycle commands, read-only Git
 history, observed velocity, AnalysisResult v4, and NextResult v5. It adds
 complete Draft 2020-12 artifacts for every active Contract 6 result and the
@@ -17,8 +17,15 @@ carries one. It also protects destructive in-place `dag advance` writes with
 exact `HEAD` and stage-0 evidence, returns `Perttool.AdvanceResult.v1`, and
 keeps preview, separate output, and written candidates repository-clean and
 byte-identical. npm `beta` resolves to `0.6.0`; npm `latest` remains `0.5.5`.
-Beta releases may contain breaking CLI or schema changes. Version `0.6.0`
-requires Node.js 22 or later.
+Beta releases may contain breaking CLI or schema changes.
+
+The current unreleased source atomically activates Grammar 6 and CLI Contract
+7 conditional plan assurance. It exposes 44 commands, 20 root schemas,
+`Perttool.PlanAssuranceResult.v1`, assurance-aware Check/Project/Analysis/Next/
+Mutation/Advance results, `Perttool.GovernanceDecision.v2`, and Mermaid
+semantic profile 2. No package version or release channel has been selected
+for this source change. Both the current source and published `0.6.0` require
+Node.js 22 or later.
 The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
 and the first machine-schema Contract 6 artifact remains available by pinning
 `0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
@@ -111,6 +118,8 @@ the exact point result and reports the time conversion separately as a velocity
 forecast. Grammar version 3 also accepts an exact Fraction such as `1/3d`;
 versions 1 and 2 continue to accept Decimal duration tokens. Grammar version 5
 adds explicit task-owned work events and the `suspended` lifecycle state.
+Grammar version 6 adds conditional plan assurance records and the separate
+planning-dependency modes `both`, `execution_only`, and `planning_only`.
 
 ## Maintain a plan through the CLI
 
@@ -168,7 +177,7 @@ file. A changed in-place `dag advance` additionally verifies removed or
 replaced entity ranges against the target path in Git `HEAD` and the stage-0
 index. Dirty ranges retained by the candidate are allowed; uncommitted
 destructive overlap or unavailable proof returns `PTADV-101` without writing.
-`Perttool.AdvanceResult.v1.history_guard` reports the status, modification
+`Perttool.AdvanceResult.v2.history_guard` reports the status, modification
 time, byte sizes, diff counts, and affected IDs before supplemental digests.
 If the source, `HEAD`, or stage-0 index changes after assessment, `PTADV-102`
 returns exit 5 without writing.
@@ -327,6 +336,35 @@ See the [Contract 5-to-6 migration
 guide](docs/process/cli-contract-6-migration.md) for schema and compatibility
 details.
 
+### Conditional plan assurance
+
+Assurance is opt-in. Initial sealing upgrades the candidate to Grammar 6 and
+records reviewed task contracts and recursive planning bases:
+
+```sh
+perttool plan-assurance seal PLAN.pert \
+  --reason "Initial reviewed planning baseline" --diff
+perttool plan-assurance show PLAN.pert --format json
+perttool plan-assurance hash PLAN.pert WORK --kind computed-basis
+```
+
+The hash command writes exactly one `sha256:` digest plus LF on text success;
+it does not edit or accept a seal. Use `plan-dependency` to qualify the default
+execution-and-planning relation, or to add a planning-only relation:
+
+```sh
+perttool plan-dependency set PLAN.pert REL_A_B \
+  --mode execution-only --reason "Execution order only" --diff
+perttool plan-dependency add PLAN.pert REL_C_D C D \
+  --mode planning-only --reason "D consumes C planning output" --diff
+```
+
+After reviewing a reported affected closure, use a separate governed
+`plan-assurance reseal` candidate. Completed work needs an explicit
+`task-outcome` record; completion status, Git history, and actual duration do
+not imply outcome conformance. `dag next` preserves raw ranking and withholds
+new-start authority from unsealed, review-required, or unavailable plans.
+
 ## Command map
 
 | Goal | Command |
@@ -345,6 +383,10 @@ details.
 | Analyze schedules | `perttool dag analyze <file>` |
 | Select next work | `perttool dag next <file>` |
 | Remove completed history | `perttool dag advance <file>` |
+| Inspect plan assurance | `perttool plan-assurance show|hash <file> ...` |
+| Seal or reseal reviewed plans | `perttool plan-assurance seal|reseal <file> ...` |
+| Maintain planning dependencies | `perttool plan-dependency add|set|remove` |
+| Maintain task outcomes | `perttool task-outcome add|set|remove` |
 | Export or import Mermaid | `perttool dag render`, `perttool dag import` |
 | Maintain tasks | `perttool task add|set|remove|start|suspend|resume|finish` |
 | Maintain gates | `perttool gate add|set|remove` |
@@ -361,8 +403,8 @@ domain concepts. Both run without a document:
 perttool task set --help
 perttool help dag next --format json
 perttool schema --format json
-perttool schema Perttool.NextResult.v5 --format json
-perttool schema Perttool.NextResult.v5 --view outline --format json
+perttool schema Perttool.NextResult.v6 --format json
+perttool schema Perttool.NextResult.v6 --view outline --format json
 perttool guide editing --level detail --format json
 ```
 
@@ -373,7 +415,7 @@ Supplying a schema identity returns its Draft 2020-12 artifact in the
 `schema` field of `Perttool.SchemaResult.v1`:
 
 ```sh
-perttool schema Perttool.CheckResult.v3 --format json
+perttool schema Perttool.CheckResult.v4 --format json
 ```
 
 The default and `--view full` return the complete artifact. For a shorter
@@ -382,8 +424,8 @@ references to the complete bundled artifact. Pass one local, relative, or
 copied absolute reference back with `--ref` to display that internal layer:
 
 ```sh
-perttool schema Perttool.NextResult.v5 --view outline --format json
-perttool schema Perttool.NextResult.v5 --view outline \
+perttool schema Perttool.NextResult.v6 --view outline --format json
+perttool schema Perttool.NextResult.v6 --view outline \
   --ref '#/$defs/recommendation' --format json
 ```
 
@@ -394,11 +436,12 @@ identifier only: validation does not require network access. Consumers must
 select compatibility from each result's `schema_version`, not from
 `tool_version`. See the
 [JSON Schema Artifact Contract](docs/specs/json-schema.md) for the complete
-19-result inventory and versioning rules.
+20-root inventory and versioning rules.
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
+Use `--format json` for machine consumers. The current source requires
+`cli_contract_version == 7`. Published `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
 `0.5.2`, `0.5.1`, and `0.5.0` consumers must check
 `cli_contract_version == 6`;
 consumers pinned to `0.4.0`
@@ -415,8 +458,9 @@ repository-clean advance candidate require `0.6.0`; see the
 [`0.5.5` to `0.6.0` migration](docs/process/0.5.5-to-0.6.0-migration.md).
 In every case, check the result-specific `schema_version` before reading the
 rest of a result.
-A complete, known, non-truncated `Perttool.NextResult.v5` with temporal policy
-`recommendation_v1_plus_release_gate` is required. Start only task IDs in
+A complete, known, non-truncated `Perttool.NextResult.v6` with policy
+`recommendation_v1_plus_release_gate_plus_plan_assurance_v1` is required for
+the current source. Start only task IDs in
 `temporal.authority.startable_recommended_task_ids`; do not infer start
 authority from the raw recommended set, the text summary, or `ready` alone.
 Suspended tasks are reported separately and require an explicit `task resume`;
@@ -424,8 +468,9 @@ they are not new-start recommendations.
 
 Mutation JSON returns the candidate text, unified diff, UTF-16 text edits,
 source digest, updated digest, diagnostics, and write result in one envelope.
-Direct, lifecycle, and batch mutations use `Perttool.MutationResult.v3`;
-`dag advance` uses `Perttool.AdvanceResult.v1`.
+Direct, lifecycle, batch, and assurance mutations use
+`Perttool.MutationResult.v4`; `dag advance` uses
+`Perttool.AdvanceResult.v2`.
 Unknown schema versions, incomplete recommendation traces, `PTREC-*`
 diagnostics, and future or unavailable temporal eligibility must fail closed.
 
@@ -436,8 +481,9 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Project Actuals and Git History Contract (CLI Contract 6)](docs/specs/project-actuals.md)
 - [Advance History Safety Contract (ADV-001 target)](docs/specs/advance-history-safety.md)
 - [Advance History Safety source acceptance](docs/process/advance-history-acceptance.md)
-- [Conditional Plan Assurance design target (public runtime not implemented)](docs/specs/plan-assurance.md)
-- [Conditional Plan Assurance interface target (Grammar 6 / CLI Contract 7)](docs/specs/plan-assurance-interface.md)
+- [Conditional Plan Assurance Contract (active Grammar 6 / CLI Contract 7 source)](docs/specs/plan-assurance.md)
+- [Conditional Plan Assurance Interface Contract](docs/specs/plan-assurance-interface.md)
+- [Conditional Plan Assurance public-contract acceptance](docs/process/plan-assurance-public-contract-acceptance.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
 - [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)
