@@ -75,6 +75,7 @@ interface AdvancePlan {
   readonly stateChangedMilestoneIds: readonly string[];
   readonly retainedSatisfiedEdges: readonly AdvanceRetainedEdge[];
   readonly removedWorkEventIds: readonly string[];
+  readonly extensionDiagnostics: readonly Diagnostic[];
 }
 
 export interface ActualsAdvanceDetails extends AdvanceDetails {
@@ -83,6 +84,28 @@ export interface ActualsAdvanceDetails extends AdvanceDetails {
 
 export interface AdvancePlanningProfile {
   readonly removeTaskOwnedWorkEvents?: boolean;
+  readonly extendPlan?: (
+    text: string,
+    document: DocumentNode<TargetDeclarationKind>,
+    context: AdvancePlanningContext,
+  ) => AdvancePlanningExtension;
+}
+
+export interface AdvancePlanningContext {
+  readonly reachedMilestoneIds: ReadonlySet<string>;
+  readonly keptTasks: readonly DeclarationNode<TargetDeclarationKind>[];
+  readonly keptGates: readonly DeclarationNode<TargetDeclarationKind>[];
+  readonly keptMilestones: readonly DeclarationNode<TargetDeclarationKind>[];
+  readonly removedTasks: readonly DeclarationNode<TargetDeclarationKind>[];
+  readonly removedGates: readonly DeclarationNode<TargetDeclarationKind>[];
+  readonly removedMilestones: readonly DeclarationNode<TargetDeclarationKind>[];
+  readonly removedWorkEvents: readonly DeclarationNode<TargetDeclarationKind>[];
+}
+
+export interface AdvancePlanningExtension {
+  readonly removedDeclarations?: readonly DeclarationNode<TargetDeclarationKind>[];
+  readonly edits?: readonly TextEdit[];
+  readonly diagnostics?: readonly Diagnostic[];
 }
 
 function digest(text: string): string {
@@ -209,6 +232,7 @@ function buildAdvancePlan(
     (edge) => edge.kind === "gate" && !keptEdges.includes(edge),
   );
   const milestones = document.declarations.filter(({ kind }) => kind === "milestone");
+  const retainedMilestones = milestones.filter(({ id }) => keptMilestones.has(id));
   const removedMilestones = milestones.filter(({ id }) => !keptMilestones.has(id));
   const removedTaskIds = new Set(removedTasks.map(({ id }) => id));
   const removedWorkEvents = profile.removeTaskOwnedWorkEvents === true
@@ -225,11 +249,23 @@ function buildAdvancePlan(
       fieldNamed(milestone, "state")?.value !== "reached",
   );
 
+  const extension = profile.extendPlan?.(text, document, Object.freeze({
+    reachedMilestoneIds: reached,
+    keptTasks: Object.freeze(keptTasks),
+    keptGates: Object.freeze(keptGates),
+    keptMilestones: Object.freeze(retainedMilestones),
+    removedTasks: Object.freeze(removedTasks),
+    removedGates: Object.freeze(removedGates),
+    removedMilestones: Object.freeze(removedMilestones),
+    removedWorkEvents: Object.freeze(removedWorkEvents),
+  })) ?? {};
+
   const removedDeclarations = new Set([
     ...removedTasks,
     ...removedGates,
     ...removedMilestones,
     ...removedWorkEvents,
+    ...(extension.removedDeclarations ?? []),
   ]);
   const edits: TextEdit[] = planAdvanceDeclarationDeletions(
     text,
@@ -241,6 +277,7 @@ function buildAdvancePlan(
     editor.setScalar("state", "reached");
     edits.push(...editor.finish());
   }
+  edits.push(...(extension.edits ?? []));
 
   const retainedSatisfiedEdges = keptEdges
     .filter(
@@ -266,6 +303,7 @@ function buildAdvancePlan(
     stateChangedMilestoneIds: sortedIds(stateChangedMilestones),
     retainedSatisfiedEdges,
     removedWorkEventIds: sortedIds(removedWorkEvents),
+    extensionDiagnostics: Object.freeze(extension.diagnostics ?? []),
   };
 }
 
@@ -395,6 +433,9 @@ function verifyPostconditions(
     assertSame("retained work events", expectedEventIds, remainingEventIds);
   }
   const repeated = buildAdvancePlan(candidateText, candidate, profile);
+  if (repeated.extensionDiagnostics.length > 0) {
+    throw new Error("advance postcondition failed: repeated advance extension is blocked");
+  }
   const repeatedEdits = normalizeTextEdits(candidateText, repeated.edits, "advance idempotence");
   if (repeatedEdits.length !== 0) {
     throw new Error("advance postcondition failed: repeated advance is not empty");
@@ -421,6 +462,15 @@ export function planValidatedAdvance(
   }
 
   const plan = buildAdvancePlan(text, original.document, profile);
+  if (plan.extensionDiagnostics.length > 0) {
+    return failure(
+      originalDigest,
+      original.documentId,
+      [...original.diagnostics, ...plan.extensionDiagnostics],
+      maximum,
+      original.diagnosticsTruncated,
+    );
+  }
   const edits = normalizeTextEdits(text, plan.edits, "advance");
   const updatedText = applyTextEdits(text, edits);
   const candidate = validator(updatedText, maximum);

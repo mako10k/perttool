@@ -151,7 +151,7 @@ task ASSURE_ADVANCE_CONTRACTION ASSURE_MUTATION_READY -> ASSURE_ADVANCE_READY:
   title "Implement assurance-preserving advance contraction"
   description "Implement minimal per-consumer frontier receipts, canonical receipt self-hashes, known changed-outcome handling, pruning, exact retained-basis equality, and source-preserving advance edits; compose independently with AdvanceResult history safety and prove that force-history-loss cannot bypass assurance."
   duration 6p
-  status planned
+  status done
   priority 85
   requires:
     DEVELOPERS 1
@@ -295,3 +295,16 @@ work_event WE-07b7e6809e98f8478491b7e2ae1e59eb054dc9bfc085f5915a764bd3851d7b4b:
   task ASSURE_AUTHORITY_CORE
   kind finish
   occurred_at 2026-08-04T10:48:49+09:00
+
+work_event WE-8aae71941b948e5c708adb86bb0f6aa92060d71dd3ee8709cf77e8d00fdc9328:
+  model 1
+  task ASSURE_ADVANCE_CONTRACTION
+  kind start
+  occurred_at 2026-08-04T11:12:46+09:00
+  planned_value 6p
+
+work_event WE-3e9565bf40ae45e6410e6cfb7c1e0a42c763f3a7dad0dc2100c8928693c1145b:
+  model 1
+  task ASSURE_ADVANCE_CONTRACTION
+  kind finish
+  occurred_at 2026-08-04T11:37:59+09:00

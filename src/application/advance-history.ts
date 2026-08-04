@@ -29,6 +29,7 @@ import {
 import type {
   TargetActualsAdvanceResultV3,
 } from "./target-actuals-advance.js";
+import type { AdvanceDocumentValidator } from "../mutation/advance.js";
 
 export const ADVANCE_RESULT_SCHEMA_VERSION =
   "Perttool.AdvanceResult.v1" as const;
@@ -94,6 +95,7 @@ export interface AdvanceHistoryPreparationOptions {
   readonly warningDenied?: boolean;
   readonly maxDiagnostics?: number;
   readonly baselineDependencies?: AdvanceHistoryBaselineDependencies;
+  readonly documentValidator?: AdvanceDocumentValidator;
 }
 
 export interface PreparedAdvanceHistory {
@@ -117,6 +119,7 @@ function diffCounts(diff: string | null): {
 function recordsFor(
   text: string,
   result: TargetActualsAdvanceResultV3 | AdvanceResultV1,
+  validator: AdvanceDocumentValidator = activeAdvanceDocumentValidator,
 ): readonly AdvanceDestructiveRecordV1[] | null {
   if (
     result.updatedText === null ||
@@ -125,20 +128,35 @@ function recordsFor(
   ) {
     return null;
   }
-  const checked = validateTargetGrammar5Document(
-    text,
-    TARGET_GRAMMAR_5_CAPABILITY,
-  );
-  if (!checked.ok || checked.validatedDocument === null) {
+  const checked = validator(text, 1_000);
+  if (!checked.ok) {
     throw new Error(
       "advance history candidate has no validated original document",
     );
   }
   return deriveAdvanceDestructiveRecords(
     text,
-    checked.validatedDocument.document,
+    checked.document,
     result.advance,
   );
+}
+
+function activeAdvanceDocumentValidator(
+  text: string,
+  maxDiagnostics: number,
+): ReturnType<AdvanceDocumentValidator> {
+  const checked = validateTargetGrammar5Document(
+    text,
+    TARGET_GRAMMAR_5_CAPABILITY,
+    { maxDiagnostics },
+  );
+  return {
+    ok: checked.ok,
+    document: checked.document,
+    documentId: checked.documentId,
+    diagnostics: checked.diagnostics,
+    diagnosticsTruncated: checked.diagnosticsTruncated,
+  };
 }
 
 function stableEntityIds(
@@ -351,7 +369,8 @@ export async function prepareAdvanceHistory(
   if (digestDocumentBytes(options.sourceBytes) !== result.originalDigest) {
     throw new Error("advance history source bytes do not match the plan");
   }
-  const records = recordsFor(text, result);
+  const validator = options.documentValidator ?? activeAdvanceDocumentValidator;
+  const records = recordsFor(text, result, validator);
   if (records === null) {
     return Object.freeze({
       result: resultWithGuard(result, null),
@@ -458,19 +477,17 @@ export async function prepareAdvanceHistory(
       baseline,
     });
   }
-  const currentChecked = validateTargetGrammar5Document(
+  const currentChecked = validator(
     current.text,
-    TARGET_GRAMMAR_5_CAPABILITY,
+    normalizeMaxDiagnostics(options.maxDiagnostics),
   );
-  const headChecked = validateTargetGrammar5Document(
+  const headChecked = validator(
     head.text,
-    TARGET_GRAMMAR_5_CAPABILITY,
+    normalizeMaxDiagnostics(options.maxDiagnostics),
   );
   if (
     !currentChecked.ok ||
-    currentChecked.validatedDocument === null ||
-    !headChecked.ok ||
-    headChecked.validatedDocument === null
+    !headChecked.ok
   ) {
     return Object.freeze({
       result: blockedResult(
@@ -486,10 +503,10 @@ export async function prepareAdvanceHistory(
   }
   const assessed = assessAdvanceHistorySafety({
     currentText: current.text,
-    currentDocument: currentChecked.validatedDocument.document,
+    currentDocument: currentChecked.document,
     currentSource: baseline.currentSource,
     headText: head.text,
-    headDocument: headChecked.validatedDocument.document,
+    headDocument: headChecked.document,
     headSource: baseline.headSource,
     indexSource: baseline.indexSource,
     destructiveRecords: records,

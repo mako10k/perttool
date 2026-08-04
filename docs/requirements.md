@@ -2546,6 +2546,12 @@ Before implementation, separate the specifications in the following order.
       self-hash boundary without active package-root or CLI activation in the
       [Source Core Acceptance
       Record](process/plan-assurance-source-core-acceptance.md).
+    - [x] Implement and accept assurance-preserving advance contraction,
+      deterministic receipt IDs and self-hashes, changed-outcome handling,
+      receipt pruning, exact retained-basis equality, Grammar 6 destructive
+      history provenance, and the independent history-force boundary in the
+      [Advance Contraction Acceptance
+      Record](process/plan-assurance-advance-contraction-acceptance.md).
     - [ ] Implement and accept Core, CLI, schemas, safe write, advance,
       compatibility, package, and installed workflows without changing the
       active Contract 6 surface prematurely.

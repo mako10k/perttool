@@ -159,6 +159,15 @@ mode is only `both` or `planning_only`. `source_milestone` is optional and, if
 present, is preserved as an identifier rather than required to resolve after
 advance.
 
+Advance generates one receipt per removed producer. Its preferred ID is
+`AR_<producer-task-id>`. If that ID is already used by a retained globally
+indexed declaration, advance selects the first unused ID in the exact sequence
+`AR_<producer-task-id>_2`, `AR_<producer-task-id>_3`, and so on. IDs of
+declarations removed by the same candidate do not cause a collision. The
+generated receipt records the removed producer's destination milestone as
+`source_milestone`; this is provenance only and is excluded from reference
+resolution after contraction.
+
 All displayed fields except `source_milestone` are required. `receipt_hash`
 is computed over the canonical receipt object with `receipt_hash` omitted.
 Receipt IDs are excluded from the receipt and task-basis hashes.
@@ -397,6 +406,16 @@ MutationResult v4 additionally has `assurance_impact`; AdvanceResult v2 has
 `assurance_guard`; ProjectResult v4 exposes declared model fields; CheckResult
 v4 exposes coverage and aggregate state counts; AnalysisResult v5 and
 NextResult v6 expose the complete projection.
+
+`assurance_guard` is a closed model-1 object with `status` equal to
+`not_applicable`, `passed`, or `blocked`; a stable `cause`; sorted crossing
+producer, created-receipt, updated-receipt, and removed-receipt ID sets; and
+one task-ID-ordered retained-basis check containing the before hash, after
+hash, and equality result. The causes are exactly `not_enabled`, `no_change`,
+`basis_preserved`, `crossing_commitment_unavailable`,
+`changed_outcome_not_accepted`, `retained_receipt_unavailable`, and
+`retained_basis_changed`. A blocked guard makes the result unsuccessful and
+cannot be changed by the history-loss force option.
 
 NextResult v6 retains recommendation interface 1 and ranking algorithm 1. Its
 start-authority policy is exactly:

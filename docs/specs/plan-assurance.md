@@ -655,6 +655,14 @@ removed projected `both` edge and a removed explicit `planning_only` edge can
 otherwise become indistinguishable after the producer leaves the AoA graph.
 `execution_only` has no planning input and therefore creates no receipt.
 
+Advance groups all retained planning consumers of the same removed producer
+into one minimal receipt. It generates the preferred ID `AR_<producer-task-id>`
+or, on a retained global-ID collision, the first free `_2`, `_3`, ... suffix.
+The removed producer's destination milestone is retained as optional source
+provenance. Existing receipts are rewritten and rehashed when only some
+consumers are removed, removed when the last consumer leaves, and blocked as
+unavailable when a retained consumer depends on an invalid model or self-hash.
+
 For every retained task `t`, a normal assurance-aware advance MUST prove:
 
 ```text
@@ -674,6 +682,12 @@ future planning-basis preservation. `--force-history-loss` bypasses neither
 assurance verification nor reseal authority. A future assurance force option,
 if any, requires a separate requirement and MUST NOT reuse the history-loss
 spelling.
+
+The destructive history inventory includes removed `task_relation`,
+`plan_seal`, `task_outcome`, and `assurance_receipt` declarations. A pruned
+receipt additionally owns its replaced `receipt_hash` value and complete
+`consumers` field. Newly inserted receipt bytes are additive and therefore do
+not create a destructive record.
 
 Git remains optional for assurance verification. The exact pre-advance source
 remains durable in Git under the existing procedure, but normal current-plan

@@ -12,6 +12,7 @@ import {
   planAdvanceDeclarationDeletions,
 } from "../mutation/advance-deletion.js";
 import {
+  contentTextEndOffset,
   deleteDeclarationEdit,
   splitPhysicalLines,
 } from "../mutation/source.js";
@@ -22,12 +23,16 @@ export type AdvanceDestructiveEntityKind =
   | "task"
   | "gate"
   | "milestone"
-  | "work_event";
+  | "work_event"
+  | "task_relation"
+  | "plan_seal"
+  | "task_outcome"
+  | "assurance_receipt";
 
 export interface AdvanceDestructiveRecordV1 {
   readonly entityKind: AdvanceDestructiveEntityKind;
   readonly entityId: string;
-  readonly field: "declaration" | "state";
+  readonly field: "declaration" | "state" | "receipt_hash" | "consumers";
   readonly startOffset: number;
   readonly endOffset: number;
 }
@@ -38,6 +43,8 @@ export interface AdvanceDestructiveSelection {
   readonly removedMilestoneIds: readonly string[];
   readonly removedWorkEventIds: readonly string[];
   readonly stateChangedMilestoneIds: readonly string[];
+  readonly removedAssuranceRecordIds?: readonly string[];
+  readonly updatedAssuranceReceiptIds?: readonly string[];
 }
 
 export interface RawByteEditV1 {
@@ -97,6 +104,11 @@ function selected(
       return selection.removedMilestoneIds.includes(declaration.id);
     case "work_event":
       return selection.removedWorkEventIds.includes(declaration.id);
+    case "task_relation":
+    case "plan_seal":
+    case "task_outcome":
+    case "assurance_receipt":
+      return selection.removedAssuranceRecordIds?.includes(declaration.id) ?? false;
     default:
       return false;
   }
@@ -131,6 +143,7 @@ export function deriveAdvanceDestructiveRecords(
     ).map(({ declaration, edit }) => [declaration, edit] as const),
   );
   const records: AdvanceDestructiveRecordV1[] = [];
+  const lines = splitPhysicalLines(text);
   for (const declaration of document.declarations) {
     if (selected(declaration, selection)) {
       const edit = declarationDeletions.get(declaration);
@@ -160,6 +173,32 @@ export function deriveAdvanceDestructiveRecords(
         });
       }
     }
+    if (
+      declaration.kind === "assurance_receipt" &&
+      selection.updatedAssuranceReceiptIds?.includes(declaration.id)
+    ) {
+      const receiptHash = fieldNamed(declaration, "receipt_hash");
+      const consumers = fieldNamed(declaration, "consumers");
+      if (receiptHash === undefined || consumers === undefined) {
+        throw new Error(
+          `advance receipt update selection has incomplete receipt ${declaration.id}`,
+        );
+      }
+      records.push({
+        entityKind: "assurance_receipt",
+        entityId: declaration.id,
+        field: "receipt_hash",
+        startOffset: receiptHash.valueSpan.start.offset,
+        endOffset: receiptHash.valueSpan.end.offset,
+      });
+      records.push({
+        entityKind: "assurance_receipt",
+        entityId: declaration.id,
+        field: "consumers",
+        startOffset: consumers.span.start.offset,
+        endOffset: contentTextEndOffset(consumers, lines),
+      });
+    }
   }
 
   const replacedStateIds = selection.stateChangedMilestoneIds.flatMap(
@@ -185,6 +224,29 @@ export function deriveAdvanceDestructiveRecords(
     ...selection.removedWorkEventIds.map(
       (id) => `work_event:${id}:declaration`,
     ),
+    ...(selection.removedAssuranceRecordIds ?? []).map((id) => {
+      const assuranceKinds: readonly TargetDeclarationKind[] = [
+        "task_relation",
+        "plan_seal",
+        "task_outcome",
+        "assurance_receipt",
+      ];
+      const declaration = document.declarations.find(
+        ({ id: candidate, kind }) =>
+          candidate === id && assuranceKinds.includes(kind),
+      );
+      if (
+        declaration === undefined ||
+        !assuranceKinds.includes(declaration.kind)
+      ) {
+        throw new Error(`advance assurance selection has no record ${id}`);
+      }
+      return `${declaration.kind}:${id}:declaration`;
+    }),
+    ...(selection.updatedAssuranceReceiptIds ?? []).flatMap((id) => [
+      `assurance_receipt:${id}:receipt_hash`,
+      `assurance_receipt:${id}:consumers`,
+    ]),
     ...replacedStateIds.map(
       (id) => `milestone:${id}:state`,
     ),

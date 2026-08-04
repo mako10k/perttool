@@ -1,6 +1,9 @@
 import type {
   TargetPlanAssuranceMutationResultV4,
 } from "../assurance/mutation.js";
+import type {
+  TargetPlanAssuranceAdvanceResultV2WithHistory,
+} from "./target-assurance-advance-history.js";
 import { digestDocumentBytes } from "../io/document-file.js";
 import {
   createTargetGrammar6DocumentFile,
@@ -28,8 +31,12 @@ export interface TargetPlanAssuranceWriteProjection {
   readonly written: boolean;
 }
 
+export type TargetPlanAssuranceWritableResult =
+  | TargetPlanAssuranceMutationResultV4
+  | TargetPlanAssuranceAdvanceResultV2WithHistory;
+
 export function candidateForPlanAssuranceWrite(
-  result: TargetPlanAssuranceMutationResultV4,
+  result: TargetPlanAssuranceWritableResult,
 ): string | null {
   const decision = result.governance;
   if (
@@ -58,10 +65,24 @@ export function candidateForPlanAssuranceWrite(
 }
 
 export async function persistTargetPlanAssuranceResult(
-  result: TargetPlanAssuranceMutationResultV4,
+  result: TargetPlanAssuranceWritableResult,
   capability: TargetGrammar6Capability,
   request: TargetPlanAssurancePersistenceRequest,
 ): Promise<TargetPlanAssuranceWriteProjection> {
+  if ("assuranceGuard" in result) {
+    const expectedHistory = request.mode === "in_place"
+      ? result.historyGuard?.status === "passed" ||
+        result.historyGuard?.status === "forced"
+      : result.historyGuard?.status === "not_applicable" &&
+        result.historyGuard.cause === "separate_output";
+    if (result.assuranceGuard?.status === "blocked" || !expectedHistory) {
+      return Object.freeze({
+        mode: request.mode,
+        target: request.target,
+        written: false,
+      });
+    }
+  }
   const candidate = candidateForPlanAssuranceWrite(result);
   if (candidate === null) {
     return Object.freeze({

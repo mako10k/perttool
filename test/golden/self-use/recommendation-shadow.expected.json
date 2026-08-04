@@ -246,12 +246,11 @@
       ]
     },
     "plan-assurance": {
-      "source_digest": "sha256:1267e4de9d50099fe59e0635d2516a3461f74060ce698f44c362087c2bb4bdb0",
+      "source_digest": "sha256:a5d4b3c2677676f70af45595554afe67f97a9ec0d5dba5f9e758d45f174f3b49",
       "groups": {
         "active": [],
         "ready": [
           "ASSURE_HASH_INSPECTION",
-          "ASSURE_ADVANCE_CONTRACTION",
           "ASSURE_COMPATIBILITY"
         ],
         "runnable_now": [
@@ -265,14 +264,13 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "ASSURE_ADVANCE_CONTRACTION"
+        "ASSURE_COMPATIBILITY"
       ],
       "manual_selected_task_ids": [
         "ASSURE_HASH_INSPECTION"
       ],
       "tiers": {
-        "ASSURE_ADVANCE_CONTRACTION": "recommended",
-        "ASSURE_COMPATIBILITY": "allowed",
+        "ASSURE_COMPATIBILITY": "recommended",
         "ASSURE_HASH_INSPECTION": "deferred"
       },
       "joint_resource_feasible": true,
@@ -282,35 +280,15 @@
           "runnable_now": true,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "3/1",
+          "total_float": "2/1",
           "resource_rejections": []
-        },
-        {
-          "id": "ASSURE_ADVANCE_CONTRACTION",
-          "runnable_now": false,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": [
-            {
-              "resource_id": "ASSURANCE_CORE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "ASSURE_HASH_INSPECTION"
-              ]
-            }
-          ]
         },
         {
           "id": "ASSURE_COMPATIBILITY",
           "runnable_now": false,
-          "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "1/1",
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
           "resource_rejections": [
             {
               "resource_id": "CLI_SURFACE",
@@ -327,12 +305,12 @@
         }
       ],
       "record_counts": {
-        "task_decisions": 3,
-        "decision_steps": 18,
-        "facts": 65,
-        "comparisons": 3,
-        "reasons": 12,
-        "descriptions": 6
+        "task_decisions": 2,
+        "decision_steps": 12,
+        "facts": 47,
+        "comparisons": 2,
+        "reasons": 8,
+        "descriptions": 4
       },
       "diagnostic_codes": [
         "PTDAG-208"

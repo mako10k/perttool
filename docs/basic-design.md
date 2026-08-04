@@ -1375,6 +1375,14 @@ ownership is based on retained consumers rather than only structural incoming
 edges. A receipt is retained until its last consumer and is then removable as
 past assurance evidence.
 
+The planner groups consumers by removed producer and uses
+`AR_<producer-task-id>` as the preferred machine ID, followed by the first free
+`_2`, `_3`, ... suffix when a retained entity already owns the preferred ID.
+It stores the removed task's destination milestone as source provenance.
+Partial consumer removal rewrites only the receipt self-hash and consumer
+field; last-consumer removal deletes the receipt with the same narrow advance
+deletion ownership.
+
 ```text
 original assurance evaluation
   -> ordinary advance residual graph
@@ -1390,6 +1398,14 @@ The assurance equality check is semantic and Git-independent. The existing
 history guard separately proves the raw destructive ranges. Neither decision
 substitutes for the other, and the narrow history-loss override cannot force an
 assurance mismatch.
+
+The implementation reuses the ordinary residual-graph, terminal-separator,
+postcondition, and idempotence planner through one internal extension hook.
+The Grammar 6 extension owns assurance-record deletion, receipt insertion or
+pruning, and retained-basis evaluation. The history adapter accepts the same
+validated Grammar 6 document and extends model-1 destructive provenance to
+removed assurance declarations and pruned receipt fields before the existing
+raw-byte assessment.
 
 #### 6.9.9 Security and activation boundary
 
