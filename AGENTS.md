@@ -180,11 +180,16 @@ text, and fail-closed unavailable handling. `ASSURE_PUBLIC_CONTRACT` is
 complete after atomically activating Grammar 6, CLI Contract 7, 44 commands,
 20 root schemas, the public package root, and the installed-package workflow.
 Its accepted complete gate and boundary are recorded in
-`docs/process/plan-assurance-public-contract-acceptance.md`. All nine completed
-declarations remain pre-advance. Fresh complete, non-truncated NextResult v6
-recommends and authorizes only `ASSURE_ACCEPTANCE`. Published package `0.6.0`,
-release selection, remote writes, publication, dist-tag movement, plan
-advance, and Issue mutation remain unchanged and separately gated.
+`docs/process/plan-assurance-public-contract-acceptance.md`.
+`ASSURE_ACCEPTANCE` is complete after tracing all fourteen semantic and twelve
+interface cases through the Core, public CLI, real output race, schemas, help,
+temporary link, and isolated package. Its accepted gate is recorded in
+`docs/process/plan-assurance-acceptance.md`. All ten tasks and 59p are complete
+and remain in their exact pre-advance state; precedence and heuristic resource
+makespans are zero, and complete NextResult v6 has no ready, recommended, or
+startable task. Published package `0.6.0`, release selection, remote writes,
+publication, dist-tag movement, plan advance, and Issue mutation remain
+unchanged and separately gated.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 

@@ -201,7 +201,7 @@ task ASSURE_ACCEPTANCE ASSURE_PUBLIC_READY -> ASSURE_ACCEPTED:
   title "Accept conditional plan assurance end to end"
   description "Execute the complete dependency-mode, hash-vector, lifecycle-exclusion, changed-outcome, reseal-authority, partial-branch, advance-receipt, history-force, compatibility, real CLI race, schema, help, temporary-link, package, and isolated installed workflow matrix. Record durable acceptance with no release, remote, Issue, or dist-tag mutation."
   duration 5p
-  status planned
+  status done
   priority 75
   requires:
     DEVELOPERS 1
@@ -347,3 +347,16 @@ work_event WE-1db65eb9580a7c1dc6b0204d3cd97075c7c27912562af34ada258b091a28b65a:
   task ASSURE_PUBLIC_CONTRACT
   kind finish
   occurred_at 2026-08-04T15:51:00+09:00
+
+work_event WE-568d2244b3df2cdfabd532857d0e8b6f96d6ab14c2029dacfea460c45f6cf3b1:
+  model 1
+  task ASSURE_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-04T15:54:34+09:00
+  planned_value 5p
+
+work_event WE-b4588cddad87b287e70fa31d9192a9d37f649776a1cdafce7760c4c1f23763e2:
+  model 1
+  task ASSURE_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-04T16:17:19+09:00

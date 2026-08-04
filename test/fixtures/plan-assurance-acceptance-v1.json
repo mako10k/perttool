@@ -1,0 +1,140 @@
+{
+  "schema_version": "Perttool.PlanAssuranceAcceptanceTrace.v1",
+  "semantic_contract_cases": "test/fixtures/plan-assurance-contract-v1.json",
+  "interface_contract_cases": "test/fixtures/plan-assurance-interface-v1.json",
+  "semantic_case_evidence": [
+    {
+      "id": "PAS-001",
+      "evidence": [{ "file": "test/plan-assurance-authority-core.test.mjs", "test": "assurance-disabled compatibility preserves existing start authority" }]
+    },
+    {
+      "id": "PAS-002",
+      "evidence": [{ "file": "test/plan-assurance-authority-core.test.mjs", "test": "unsealed coverage requests one atomic initial seal" }]
+    },
+    {
+      "id": "PAS-003",
+      "evidence": [{ "file": "test/plan-assurance-mutation-core.test.mjs", "test": "initial seal atomically enables Grammar 6 and creates a complete component baseline" }]
+    },
+    {
+      "id": "PAS-004",
+      "evidence": [{ "file": "test/plan-assurance-hash-core.test.mjs", "test": "status, events, trivia, and set order do not enter a task contract hash" }]
+    },
+    {
+      "id": "PAS-005",
+      "evidence": [{ "file": "test/plan-assurance-hash-core.test.mjs", "test": "default both relations propagate one direct cause through the descendant closure" }]
+    },
+    {
+      "id": "PAS-006",
+      "evidence": [{ "file": "test/plan-assurance-hash-core.test.mjs", "test": "planning-only and execution-only keep planning and execution semantics separate" }]
+    },
+    {
+      "id": "PAS-007",
+      "evidence": [{ "file": "test/plan-assurance-hash-core.test.mjs", "test": "planning-only and execution-only keep planning and execution semantics separate" }]
+    },
+    {
+      "id": "PAS-008",
+      "evidence": [{ "file": "test/plan-assurance-hash-core.test.mjs", "test": "planning cycles fail before hashing with a stable witness" }]
+    },
+    {
+      "id": "PAS-009",
+      "evidence": [{ "file": "test/plan-assurance-mutation-core.test.mjs", "test": "outcome add binds the equal current basis and changed evidence invalidates consumers" }]
+    },
+    {
+      "id": "PAS-010",
+      "evidence": [
+        { "file": "test/plan-assurance-hash-core.test.mjs", "test": "changed outcomes invalidate once and become acceptable after consumer reseal" },
+        { "file": "test/plan-assurance-hash-core.test.mjs", "test": "missing completion evidence and inconsistent seals fail closed" }
+      ]
+    },
+    {
+      "id": "PAS-011",
+      "evidence": [
+        { "file": "test/plan-assurance-mutation-core.test.mjs", "test": "relation maintenance is source preserving and never updates accepted hashes" },
+        { "file": "test/plan-assurance-acceptance.test.mjs", "test": "public CLI executes the complete assurance maintenance workflow" }
+      ]
+    },
+    {
+      "id": "PAS-012",
+      "evidence": [{ "file": "test/plan-assurance-authority-core.test.mjs", "test": "one changed root withholds only its affected closure" }]
+    },
+    {
+      "id": "PAS-013",
+      "evidence": [{ "file": "test/plan-assurance-advance-core.test.mjs", "test": "advance contracts one conformant producer into a deterministic receipt and preserves every retained basis" }]
+    },
+    {
+      "id": "PAS-014",
+      "evidence": [{ "file": "test/plan-assurance-advance-core.test.mjs", "test": "an unavailable crossing producer and a damaged retained receipt fail closed" }]
+    }
+  ],
+  "interface_case_evidence": [
+    {
+      "id": "PAI-001",
+      "evidence": [{ "file": "test/plan-assurance-interface-design.test.mjs", "test": "plan assurance interface fixes one atomic Grammar 6 and Contract 7 target" }]
+    },
+    {
+      "id": "PAI-002",
+      "evidence": [{ "file": "test/plan-assurance-compatibility.test.mjs", "test": "compatibility modules ship internally while Contract 6 remains unchanged" }]
+    },
+    {
+      "id": "PAI-003",
+      "evidence": [{ "file": "test/plan-assurance-mutation-core.test.mjs", "test": "initial seal atomically enables Grammar 6 and creates a complete component baseline" }]
+    },
+    {
+      "id": "PAI-004",
+      "evidence": [{ "file": "test/plan-assurance-acceptance.test.mjs", "test": "public CLI executes the complete assurance maintenance workflow" }]
+    },
+    {
+      "id": "PAI-005",
+      "evidence": [{ "file": "test/plan-assurance-acceptance.test.mjs", "test": "public CLI executes the complete assurance maintenance workflow" }]
+    },
+    {
+      "id": "PAI-006",
+      "evidence": [{ "file": "test/plan-assurance-acceptance.test.mjs", "test": "public CLI executes the complete assurance maintenance workflow" }]
+    },
+    {
+      "id": "PAI-007",
+      "evidence": [{ "file": "test/plan-assurance-advance-core.test.mjs", "test": "force-history-loss never bypasses a blocked assurance guard" }]
+    },
+    {
+      "id": "PAI-008",
+      "evidence": [{ "file": "test/plan-assurance-public-contract.test.mjs", "test": "Grammar 6 and CLI Contract 7 activate plan assurance atomically" }]
+    },
+    {
+      "id": "PAI-009",
+      "evidence": [
+        { "file": "test/plan-assurance-hash-inspection.test.mjs", "test": "an unavailable selected hash returns PTASSURE-203 and no text digest" },
+        { "file": "test/plan-assurance-acceptance.test.mjs", "test": "assurance CLI output creation loses a real race without overwriting the winner" }
+      ]
+    },
+    {
+      "id": "PAI-010",
+      "evidence": [{ "file": "test/plan-assurance-mutation-core.test.mjs", "test": "outcome add binds the equal current basis and changed evidence invalidates consumers" }]
+    },
+    {
+      "id": "PAI-011",
+      "evidence": [{ "file": "test/plan-assurance-compatibility.test.mjs", "test": "Mermaid profile 2 round-trips Grammar 6 and older profiles report exact loss" }]
+    },
+    {
+      "id": "PAI-012",
+      "evidence": [{ "file": "test/plan-assurance-public-contract.test.mjs", "test": "Grammar 6 and CLI Contract 7 activate plan assurance atomically" }]
+    }
+  ],
+  "surfaces": [
+    { "id": "requirements_and_cases", "file": "test/plan-assurance-design.test.mjs", "test": "all fourteen plan assurance design cases are dependency ordered" },
+    { "id": "fixed_hash_vectors", "file": "test/plan-assurance-hash-core.test.mjs", "test": "hash model 1 reproduces every fixed interface vector" },
+    { "id": "source_core", "file": "test/plan-assurance-source-core.test.mjs", "test": "validated Grammar 6 source projects contracts, relations, seals, outcomes, receipts, and spans" },
+    { "id": "mutation_and_reseal", "file": "test/plan-assurance-mutation-core.test.mjs", "test": "mutation requests fail closed for preconditions and warning policy" },
+    { "id": "authority_and_partial_branch", "file": "test/plan-assurance-authority-core.test.mjs", "test": "one changed root withholds only its affected closure" },
+    { "id": "advance_and_history_force", "file": "test/plan-assurance-advance-core.test.mjs", "test": "force-history-loss never bypasses a blocked assurance guard" },
+    { "id": "compatibility", "file": "test/plan-assurance-compatibility.test.mjs", "test": "Mermaid profile 2 round-trips Grammar 6 and older profiles report exact loss" },
+    { "id": "public_cli", "file": "test/plan-assurance-acceptance.test.mjs", "test": "public CLI executes the complete assurance maintenance workflow" },
+    { "id": "real_cli_race", "file": "test/plan-assurance-acceptance.test.mjs", "test": "assurance CLI output creation loses a real race without overwriting the winner" },
+    { "id": "schemas", "file": "test/json-schema.test.mjs", "test": "Contract 7 result identities resolve to one closed bundled catalog" },
+    { "id": "help_and_guide", "file": "test/guide.test.mjs", "test": "Contract 7 guide preserves every HelpNode topic and adds plan assurance" },
+    { "id": "package_root", "file": "test/plan-assurance-public-contract.test.mjs", "test": "Grammar 6 and CLI Contract 7 activate plan assurance atomically" },
+    { "id": "temporary_link", "file": "scripts/check-npm-link.sh", "contains": ["help plan-assurance hash", "Perttool.PlanAssuranceResult.v1"] },
+    { "id": "isolated_package", "file": "scripts/check-package.sh", "contains": ["scripts/check-package-assurance.mjs", "Perttool.PlanAssuranceResult.v1"] },
+    { "id": "installed_assurance_workflow", "file": "scripts/check-package-assurance.mjs", "contains": ["plan-assurance", "installed package Contract 7 plan-assurance acceptance passed"] },
+    { "id": "durable_acceptance", "file": "docs/process/plan-assurance-acceptance.md", "contains": ["Document status: Accepted 1.0", "all fourteen semantic `PAS` cases", "all twelve interface `PAI` cases", "no ready, recommended,\nor startable task"] }
+  ]
+}

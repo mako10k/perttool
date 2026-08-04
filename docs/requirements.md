@@ -2550,7 +2550,7 @@ Before implementation, separate the specifications in the following order.
     - [x] Accept the real tracked CLI write, preview/write byte identity,
       `git diff --check`, temporary link, installed package, and corrected
       ADV-001 acceptance trace.
-21. [ ] Implement conditional plan assurance under `ASSURE-001`.
+21. [x] Implement conditional plan assurance under `ASSURE-001`.
     - [x] Record design principles, dependency modes, hash recurrence,
       unsealed compatibility, reseal behavior, and advance contraction in the
       [Conditional Plan Assurance Contract](specs/plan-assurance.md).
@@ -2588,9 +2588,11 @@ Before implementation, separate the specifications in the following order.
     - [x] Activate Grammar 6 and CLI Contract 7 atomically across Core, CLI,
       44-command discovery, Guide/help, 20 root schemas, safe write, advance,
       compatibility, package root, temporary link, and isolated installation.
-    - [ ] Complete the independent cross-surface `ASSURE_ACCEPTANCE` task and
-      retain release selection, publication, plan advance, and Issue mutation
-      as separate decisions.
+    - [x] Complete the independent cross-surface `ASSURE_ACCEPTANCE` task in
+      the [Conditional Plan Assurance Acceptance
+      Record](process/plan-assurance-acceptance.md), while retaining release
+      selection, publication, plan advance, and Issue mutation as separate
+      decisions.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

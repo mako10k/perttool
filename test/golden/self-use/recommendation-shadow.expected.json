@@ -246,17 +246,13 @@
       ]
     },
     "plan-assurance": {
-      "source_digest": "sha256:d28c3ebd4b12261eb108dc45e1862b4146c2fcdf22786f3a34de6720b0fbac45",
+      "source_digest": "sha256:51dc8595b6e1306fd391c8c6da5990d9cc6e74ae30c279daecc15f5b565ea563",
       "groups": {
-        "active": [
-          "ASSURE_PUBLIC_CONTRACT"
-        ],
+        "active": [],
         "ready": [],
         "runnable_now": [],
         "blocked_now": [],
-        "upcoming": [
-          "ASSURE_ACCEPTANCE"
-        ],
+        "upcoming": [],
         "suspended": []
       },
       "recommended_task_ids": [],

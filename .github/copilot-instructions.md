@@ -106,11 +106,15 @@ Mandatory summary:
   atomically activating Grammar 6, CLI Contract 7, 44 commands, 20 root
   schemas, the public package root, and the installed-package workflow. Its
   accepted gate is recorded in
-  `docs/process/plan-assurance-public-contract-acceptance.md`. All nine
-  completed declarations remain pre-advance. Fresh complete NextResult v6
-  recommends and authorizes only `ASSURE_ACCEPTANCE`. Published package 0.6.0,
-  release selection, plan advance, and every external mutation remain
-  unchanged.
+  `docs/process/plan-assurance-public-contract-acceptance.md`.
+  `ASSURE_ACCEPTANCE` is complete after tracing all fourteen semantic and
+  twelve interface cases through the Core, public CLI, real output race,
+  schemas, help, temporary link, and isolated package. Its accepted gate is
+  recorded in `docs/process/plan-assurance-acceptance.md`. All ten tasks and
+  59p are complete and remain in their exact pre-advance state; precedence and
+  heuristic resource makespans are zero, and complete NextResult v6 has no
+  ready, recommended, or startable task. Published package 0.6.0, release
+  selection, plan advance, and every external mutation remain unchanged.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

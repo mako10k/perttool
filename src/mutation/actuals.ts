@@ -112,7 +112,7 @@ export function planLifecycleEdits(
   edits.push(...taskEditor.finish());
 
   const version = fieldNamed(project, "version")?.value ?? 1;
-  if (version !== 5) {
+  if (version !== 5 && version !== 6) {
     const projectEditor = new EntityEditor(
       text,
       project,
