@@ -19,14 +19,14 @@ keeps preview, separate output, and written candidates repository-clean and
 byte-identical. npm `beta` and `latest` resolve to `0.6.0`.
 Beta releases may contain breaking CLI or schema changes.
 
-The current unreleased source atomically activates Grammar 6 and CLI Contract
-7 conditional plan assurance. It exposes 44 commands, 20 root schemas,
+The prepared `0.7.0` source atomically activates Grammar 6 and CLI Contract 7
+conditional plan assurance. It exposes 44 commands, 20 root schemas,
 `Perttool.PlanAssuranceResult.v1`, assurance-aware Check/Project/Analysis/Next/
 Mutation/Advance results, `Perttool.GovernanceDecision.v2`, and Mermaid
-semantic profile 2. Suffix-free beta `0.7.0` is selected for this breaking
-public boundary, but version-bearing source preparation and every publication
-step remain pending. Both the current source and published `0.6.0` require
-Node.js 22 or later.
+semantic profile 2. Its package and CLI identity is `0.7.0`, but no candidate
+or public `perttool@0.7.0` package has been accepted or published. npm
+`beta`, npm `latest`, and unqualified installs therefore remain at published
+Contract 6 `0.6.0`. Both versions require Node.js 22 or later.
 The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
 and the first machine-schema Contract 6 artifact remains available by pinning
 `0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
@@ -457,6 +457,9 @@ Runtime `PTGOV-104` visibility for assertions on governed previews requires
 `Perttool.AdvanceResult.v1`, history-safety model 1, and the
 repository-clean advance candidate require `0.6.0`; see the
 [`0.5.5` to `0.6.0` migration](docs/process/0.5.5-to-0.6.0-migration.md).
+The prepared `0.7.0` source changes to Grammar 6, CLI Contract 7, and
+assurance-aware result identities; see the
+[`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md).
 In every case, check the result-specific `schema_version` before reading the
 rest of a result.
 A complete, known, non-truncated `Perttool.NextResult.v6` with policy
@@ -485,6 +488,8 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Conditional Plan Assurance Contract (active Grammar 6 / CLI Contract 7 source)](docs/specs/plan-assurance.md)
 - [Conditional Plan Assurance Interface Contract](docs/specs/plan-assurance-interface.md)
 - [Conditional Plan Assurance public-contract acceptance](docs/process/plan-assurance-public-contract-acceptance.md)
+- [`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md)
+- [`v0.7.0` release procedure](docs/process/0.7.0-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
 - [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)

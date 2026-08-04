@@ -83,6 +83,7 @@ task RELEASE_070_PREPARATION RELEASE_070_CONTRACT_7_READY -> RELEASE_070_SOURCE_
   title "Prepare version 0.7.0 release source"
   description "Align package and lockfile identity, CLI version, CHANGELOG, README, 0.6.0-to-0.7.0 migration guidance, release documentation, tests, goldens, self-use registration, dependency audit, and beta publication validation. Run the complete Node.js 22 repository and package gates without remote or registry writes."
   duration 5p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -151,3 +152,18 @@ work_event WE-356afc58b579110df6220cb10e43c60c960c40e19cf4e7d7422a337775017945:
   occurred_at 2026-08-04T17:13:52+09:00
   active_time 0.1h
   effort 0.1ph
+
+work_event WE-691313eab157ded5d8b941551ed59d7c3711958de47ae873dadaffa2649e19a8:
+  model 1
+  task RELEASE_070_PREPARATION
+  kind start
+  occurred_at 2026-08-04T17:23:09+09:00
+  planned_value 5p
+
+work_event WE-b21be1dcdf0c4740843668ccb9ad14c6ab1ef08b729502401f62817a09bbe05c:
+  model 1
+  task RELEASE_070_PREPARATION
+  kind finish
+  occurred_at 2026-08-04T17:33:39+09:00
+  active_time 0.175h
+  effort 0.175ph

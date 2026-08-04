@@ -581,36 +581,35 @@
       ]
     },
     "release-0.7.0": {
-      "source_digest": "sha256:f3bce588e273089588dbca0fd3040126e1c13fa36fa7e1d2816ee9eff8e1a50d",
+      "source_digest": "sha256:fcd8a450f36c7c9e34ce1cee5ddc33071053f4ccbf33bad50ab6a8d27a3da361",
       "groups": {
         "active": [],
         "ready": [
-          "RELEASE_070_PREPARATION"
+          "RELEASE_070_CANDIDATE"
         ],
         "runnable_now": [
-          "RELEASE_070_PREPARATION"
+          "RELEASE_070_CANDIDATE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "RELEASE_070_CANDIDATE",
           "RELEASE_070_PUBLISH",
           "RELEASE_070_ACCEPTANCE"
         ],
         "suspended": []
       },
       "recommended_task_ids": [
-        "RELEASE_070_PREPARATION"
+        "RELEASE_070_CANDIDATE"
       ],
       "manual_selected_task_ids": [
-        "RELEASE_070_PREPARATION"
+        "RELEASE_070_CANDIDATE"
       ],
       "tiers": {
-        "RELEASE_070_PREPARATION": "recommended"
+        "RELEASE_070_CANDIDATE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RELEASE_070_PREPARATION",
+          "id": "RELEASE_070_CANDIDATE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

@@ -4,6 +4,38 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-08-04
+
+Grammar 6 and CLI Contract 7 beta minor. This version adds conditional plan
+assurance as a semantic SHA-256 commitment chain while preserving Grammar 1
+through 5 compatibility.
+
+### Added
+
+- Added Grammar 6 plan-assurance declarations, default `both`, explicit
+  `planning_only` and `execution_only` relations, component seals, outcome
+  commitments, frontier receipts, complete cause paths, and fixed semantic
+  hash vectors that exclude lifecycle status and non-semantic trivia.
+- Added ten preview-first assurance commands for inspection, scalar hash
+  lookup, sealing, selected resealing, planning-dependency maintenance, and
+  task-outcome maintenance.
+- Added `Perttool.PlanAssuranceResult.v1`, complete Draft 2020-12 schemas for
+  all 20 result roots, package-root assurance APIs, Contract 7 help and Guide
+  projections, and Mermaid semantic profile 2 round trips.
+
+### Changed
+
+- Changed the public boundary atomically to CLI Contract 7 and the
+  assurance-aware `Perttool.CheckResult.v4`, `Perttool.ProjectResult.v4`,
+  `Perttool.AnalysisResult.v5`, `Perttool.NextResult.v6`,
+  `Perttool.MutationResult.v4`, `Perttool.AdvanceResult.v2`, and nested
+  `Perttool.GovernanceDecision.v2` identities.
+- Changed normal new-task authority to fail closed when an enabled assurance
+  chain is unknown, unsealed, or mismatched. Raw recommendation ranking remains
+  available separately from the authoritative startable set.
+- Changed `dag advance` to compose history-loss protection independently with
+  assurance validation, contraction, and exact frontier-receipt rebuilding.
+
 ## [0.6.0] - 2026-07-31
 
 Grammar 5 and CLI Contract 6 beta minor. This version protects destructive
@@ -335,7 +367,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/mako10k/perttool/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mako10k/perttool/compare/v0.5.5...v0.6.0
 [0.5.5]: https://github.com/mako10k/perttool/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/mako10k/perttool/compare/v0.5.3...v0.5.4

@@ -18,6 +18,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     design,
     procedure,
     readiness,
+    migration,
     publicAcceptance,
     finalAcceptance,
     plan,
@@ -31,6 +32,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.7.0-release.md"),
     repositoryText("docs/process/0.7.0-contract7-readiness.md"),
+    repositoryText("docs/process/0.6.0-to-0.7.0-migration.md"),
     repositoryText("docs/process/plan-assurance-public-contract-acceptance.md"),
     repositoryText("docs/process/plan-assurance-acceptance.md"),
     repositoryText("plans/release-0.7.0.pert"),
@@ -67,6 +69,11 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.match(procedure, /Consumers can roll back by pinning `perttool@0\.6\.0`/);
   assert.match(readiness, /Document status: Accepted 1\.0/);
   assert.match(readiness, /only `RELEASE_070_PREPARATION` ready and recommended/);
+  assert.match(migration, /- Status: Accepted 1\.0/);
+  assert.match(migration, /`cli_contract_version == 7`/);
+  assert.match(migration, /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/);
+  assert.match(migration, /Mermaid semantic profile 2/);
+  assert.match(migration, /Pin `perttool@0\.6\.0`/);
   assert.match(publicAcceptance, /CLI contract: Contract 7/);
   assert.match(publicAcceptance, /44-command registry/);
   assert.match(finalAcceptance, /all 787 tests/);
@@ -92,15 +99,16 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.6.0");
-  assert.equal(lockfile.version, "0.6.0");
-  assert.equal(lockfile.packages[""].version, "0.6.0");
+  assert.equal(manifest.version, "0.7.0");
+  assert.equal(lockfile.version, "0.7.0");
+  assert.equal(lockfile.packages[""].version, "0.7.0");
   assert.equal(lockfile.packages["node_modules/fast-uri"].version, "3.1.5");
-  assert.match(versionSource, /TOOL_VERSION = "0\.6\.0"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.7\.0"/);
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(
     readme,
     /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.6\.0`/,
   );
-  assert.match(readme, /Suffix-free beta `0\.7\.0` is selected/);
+  assert.match(readme, /The prepared `0\.7\.0` source atomically activates/);
+  assert.match(readme, /no candidate\s+or public `perttool@0\.7\.0` package has been accepted or published/);
 });
