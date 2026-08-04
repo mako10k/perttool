@@ -16,15 +16,16 @@ governance-not-applicable candidate and when a governed preview already
 carries one. It also protects destructive in-place `dag advance` writes with
 exact `HEAD` and stage-0 evidence, returns `Perttool.AdvanceResult.v1`, and
 keeps preview, separate output, and written candidates repository-clean and
-byte-identical. npm `beta` resolves to `0.6.0`; npm `latest` remains `0.5.5`.
+byte-identical. npm `beta` and `latest` resolve to `0.6.0`.
 Beta releases may contain breaking CLI or schema changes.
 
 The current unreleased source atomically activates Grammar 6 and CLI Contract
 7 conditional plan assurance. It exposes 44 commands, 20 root schemas,
 `Perttool.PlanAssuranceResult.v1`, assurance-aware Check/Project/Analysis/Next/
 Mutation/Advance results, `Perttool.GovernanceDecision.v2`, and Mermaid
-semantic profile 2. No package version or release channel has been selected
-for this source change. Both the current source and published `0.6.0` require
+semantic profile 2. Suffix-free beta `0.7.0` is selected for this breaking
+public boundary, but version-bearing source preparation and every publication
+step remain pending. Both the current source and published `0.6.0` require
 Node.js 22 or later.
 The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
 and the first machine-schema Contract 6 artifact remains available by pinning
@@ -66,8 +67,8 @@ npm install --global perttool
 perttool --version
 ```
 
-npm `beta` resolves to Contract 6 `0.6.0`. npm `latest` and an unqualified
-install remain on Contract 6 `0.5.5` until a separate promotion. The
+npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6
+`0.6.0`. The
 pre-schema Contract 6 artifact remains available as
 `perttool@0.5.0`; Contract 5,
 Contract 4, and Contract 3 remain available as exact pins

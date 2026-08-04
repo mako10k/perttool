@@ -34,10 +34,9 @@ Plans are separated by level of detail.
 - [plan-assurance.pert](plan-assurance.pert): explicitly selected ASSURE-001
   roadmap from the Grammar 6 and CLI Contract 7 interface through source and
   hash Core, governed mutation, authority, advance, compatibility, atomic
-  public cutover, and installed acceptance; interface, internal hash, source,
-  governed mutation, and assurance authority Cores are complete pre-advance,
-  the plan has 10 tasks and 59p after adding pinpoint hash inspection, and
-  assurance-preserving advance contraction is the current recommendation
+  public cutover, and installed acceptance; all 10 tasks and 59p are complete
+  in the exact pre-advance state, and complete NextResult v6 has no ready,
+  recommended, or startable task
 - [cli-surface-reset.pert](cli-surface-reset.pert): independent post-beta plan that maps the human/LLM CLI review and its eight backlog items into design, implementation, breaking migration, and file-first acceptance
 - [release-0.2.0.pert](release-0.2.0.pert): independent Contract 3 beta release plan covering the version decision, local preparation, candidate gate, authorized distribution, and durable acceptance
 - [release-0.3.0.pert](release-0.3.0.pert): independent Contract 4 beta release plan covering the version gate, accepted scheduling-and-units input, preparation, candidate, authorized publication, and durable acceptance
@@ -49,6 +48,7 @@ Plans are separated by level of detail.
 - [release-0.5.4.pert](release-0.5.4.pert): completed compatible Contract 6 governance-runtime-warning patch-release plan covering trigger and compatibility review, preparation, candidate, authorized publication, and durable acceptance; completed declarations remain pending separately confirmed governed advance
 - [release-0.5.5.pert](release-0.5.5.pert): compatible Contract 6 governed-preview-warning patch-release plan covering compatibility review, preparation, candidate, authorized publication, and durable acceptance
 - [release-0.6.0.pert](release-0.6.0.pert): selected Contract 6 advance-history-safety beta-minor plan covering result-identity and migration review, preparation, candidate, authorized publication, and durable acceptance; npm `latest`, plan advance, and Issue mutation remain separate
+- [release-0.7.0.pert](release-0.7.0.pert): selected Grammar 6 and CLI Contract 7 conditional-plan-assurance beta-minor plan covering release-gate design, accepted ASSURE-001 input, preparation, candidate, separately authorized publication, and durable acceptance; local gate design is complete before advance and Contract 7 readiness remains separately gated
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2
@@ -57,7 +57,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All thirty plans pass the self-use gate and are used as inputs to `document
+All thirty-one plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -68,7 +68,8 @@ its milestone-detail plan when none is current, and then select a task from
 that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.3.0.pert`, `release-0.4.0.pert`, `release-0.5.0.pert`,
 `release-0.5.1.pert`, `release-0.5.2.pert`, `release-0.5.3.pert`,
-`release-0.5.4.pert`, `release-0.5.5.pert`, `release-0.6.0.pert`, `governance.pert`,
+`release-0.5.4.pert`, `release-0.5.5.pert`, `release-0.6.0.pert`,
+`release-0.7.0.pert`, `governance.pert`,
 `project-actuals.pert`, `plan-assurance.pert`, `advance-history-safety.pert`, and the
 scheduling-and-units plans are explicitly
 requested independent post-beta plans and are not rolled up into the completed

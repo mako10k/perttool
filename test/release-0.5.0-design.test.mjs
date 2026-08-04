@@ -157,7 +157,7 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
   assert.match(readme, /npx --yes --package=perttool@0\.6\.0/);
   assert.match(
     readme,
-    /npm `beta` resolves to Contract 6 `0\.6\.0`\. npm `latest` and an unqualified\s+install remain on Contract 6 `0\.5\.5`/,
+    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.6\.0`/,
   );
   assert.match(
     migration,

@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.60
+- Document status: Active Stage 3 / Revision 2.61
 - Creation date: 2026-07-21
-- Update date: 2026-07-30
+- Update date: 2026-08-04
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -30,6 +30,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/release-0.4.0.pert` | Contract 5 version gate, accepted governance input, preparation, separately authorized PUBLISH, and acceptance DAG | `.pert` document |
 | `plans/release-0.5.0.pert` | Contract 6 version gate, accepted actuals and English-baseline input, preparation, authorized PUBLISH, acceptance, and exact local-install boundary | `.pert` document |
 | `plans/release-0.5.1.pert` | Compatible Contract 6 patch self-review, preparation, authorized PUBLISH, and durable acceptance | `.pert` document |
+| `plans/release-0.7.0.pert` | Grammar 6 and Contract 7 release gate, accepted ASSURE-001 input, preparation, separately authorized PUBLISH, and durable acceptance | `.pert` document |
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
@@ -1474,7 +1475,23 @@ successful Node.js 22/24 CI run `30631050662`, GitHub prerelease, npm
 covered Git, both successful CI snapshots, GitHub, npm, artifact identity,
 installed packages, and the repository-clean history guard. All five tasks
 and 17p are complete with zero makespans and no recommendation. npm
-`latest=0.5.5`, plan advance, and Issue mutation remain separate.
+`latest` remained `0.5.5` at release acceptance. The user later separately
+authorized promotion, and the current registry baseline is
+`beta=latest=0.6.0` with no maintained `alpha`; plan advance and Issue mutation
+remain separate.
+
+The independent `release-0.7.0.pert` workstream selects the first public
+Grammar 6 and CLI Contract 7 package for conditional plan assurance. The six
+serial tasks total 21p: release-gate design, accepted Contract 7 readiness,
+source preparation, one immutable candidate, separately authorized PUBLISH,
+and durable acceptance. The 2026-08-04 instruction authorizes only the local
+gate-design task. Read-only external checks at that decision point report
+`beta=latest=0.6.0`, no maintained `alpha`, unused `0.7.0`, and remote main at
+the earlier accepted ASSURE internal-core commit. Version-bearing source,
+candidate creation, push, tag, GitHub/npm publication, acceptance, npm
+`latest`, both plan advances, and Issue mutation remain separate. The gate
+design task is complete before advance; complete NextResult v6 recommends only
+`RELEASE_070_CONTRACT_7_READINESS`.
 
 Stage 1 allowed operations:
 
@@ -1855,7 +1872,7 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-one current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty

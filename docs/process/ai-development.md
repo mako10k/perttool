@@ -408,6 +408,19 @@ history guard. All five tasks and 17p are complete with zero makespans and no
 recommendation. `latest=0.5.5`, plan advance, and Issue mutation remain
 outside the named release.
 
+The selected `0.7.0` beta minor is the first package planned to publish the
+accepted Grammar 6 and CLI Contract 7 conditional-plan-assurance boundary.
+`plans/release-0.7.0.pert` sequences local gate design, Contract 7 readiness,
+version-bearing preparation, one immutable candidate, separately authorized
+GitHub/npm `beta` publication, and durable acceptance. The 2026-08-04
+instruction authorizes only the gate-design task. Do not infer authority for
+readiness, version changes, candidate creation, push, tag, GitHub or npm
+mutation, acceptance, npm `latest`, either plan advance, or Issue mutation.
+The live pre-publication baseline is `beta=latest=0.6.0` with no maintained
+`alpha`; re-read it at candidate and PUBLISH boundaries. The gate-design task
+is complete before advance, and complete NextResult v6 recommends only the
+separately gated Contract 7 readiness task.
+
 ### 5.1 Adopted Recommendation authority
 
 MIG-07 established Recommendation version 1 authority. Contract 4 added the

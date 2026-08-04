@@ -2320,6 +2320,76 @@ acceptance after every predecessor gate passes. They do not authorize npm
 `latest` promotion, release-plan advance, or Issue mutation. The authoritative
 procedure is [`docs/process/0.6.0-release.md`](process/0.6.0-release.md).
 
+### 21.13 Conditional plan assurance release acceptance criteria
+
+The first package that publishes the accepted ASSURE-001 public boundary is
+suffix-free `0.7.0`. It is a Grammar 6 and CLI Contract 7 beta, is published as
+a GitHub prerelease, and moves only npm `beta` during publication.
+
+1. Publish Grammar 6 conditional plan assurance atomically with CLI Contract
+   7, all active command descriptors, complete help and Guide projections,
+   package-root APIs, schemas, and installed-package behavior.
+2. Preserve Grammar 1 through 5 source meanings and normal authority when
+   assurance is not enabled. Report assurance as not enabled rather than
+   synthesizing seals or changing existing task readiness.
+3. Publish default `both`, explicit `planning_only`, and explicit
+   `execution_only` relations without conflating the planning-dependency DAG
+   with execution precedence.
+4. Retain task-plan hash model 1 exclusions for lifecycle status, work events,
+   timestamps, derived scheduling and recommendation values, source trivia,
+   declaration ordering, and accepted hashes themselves.
+5. Publish complete canonical task, recursive basis, component-seal, outcome,
+   and frontier-receipt commitments with the accepted SHA-256 vectors and
+   deterministic cause paths.
+6. Fail closed for enabled but unsealed, partially sealed, unknown-version,
+   mismatched, stale-outcome, or damaged-receipt assurance. Keep such plans
+   analyzable while withholding affected new-start authority and returning
+   explicit required actions.
+7. Publish preview-first initial seal, selected reseal, outcome, and relation
+   mutations with GovernanceDecision v2, assurance impact, digest locking,
+   candidate validation, atomic safe write, and deterministic retry handling.
+8. Publish assurance-aware CheckResult v4, ProjectResult v4, AnalysisResult
+   v5, NextResult v6, MutationResult v4, AdvanceResult v2, and the independent
+   PlanAssuranceResult v1 inspection identity.
+9. Keep `plan-assurance hash` read-only and scalar in text mode. It must emit
+   only an existing evaluator digest and must not repair, seal, reseal,
+   authorize, or guess unavailable evidence.
+10. Preserve accepted planning basis across canonical advance through exact
+    frontier receipts and compose assurance provenance with the independent
+    repository history-safety guard without allowing either force boundary to
+    bypass the other.
+11. Preserve Grammar 6 assurance through formatting, lifecycle, project
+    metadata, history, unit migration, mixed atomic mutation, and Mermaid
+    semantic profile 2. Older Mermaid profiles must report exact loss.
+12. State explicitly that SHA-256 commitments are deterministic drift
+    detection, not digital signatures, authenticated approvals, malicious-edit
+    resistance, an external transparency log, or a root of trust.
+13. Provide explicit `0.6.0` to `0.7.0` migration guidance for CLI, JSON,
+    TypeScript, grammar, governance, recommendation-authority, and Mermaid
+    consumers, with `0.6.0` retained as the rollback pin.
+14. Align package, lockfile, CLI/tool version, release commit, annotated
+    `v0.7.0` tag, GitHub asset, and npm identity. Pass Node.js 22 repository,
+    audit, temporary-link, isolated-package, and publication-normalization
+    gates and Node.js 22 and 24 CI.
+15. Establish before publication that `perttool@0.7.0`, `v0.7.0`, and the
+    matching GitHub Release are unused; record `beta=latest=0.6.0`, confirm
+    that `alpha` is absent, and verify protected routes without displaying
+    secrets.
+16. Generate one immutable tarball outside the worktree, distribute those
+    exact bytes through the GitHub prerelease and npm `beta`, verify isolated
+    installation from both public channels, move only `beta` to `0.7.0`, and
+    leave `latest=0.6.0` unchanged.
+17. Keep npm `latest` promotion, ASSURE-001 advance, release-plan advance,
+    archived-advance implementation, and Issue mutation outside this release
+    flow as separately authorized operations.
+
+The user's 2026-08-04 instruction authorizes only local design of the
+`RELEASE_070_GATE_DESIGN` work package. It does not authorize readiness,
+version-bearing source preparation, candidate acceptance, Git push, tag
+creation, GitHub or npm publication, durable acceptance, npm `latest`
+promotion, either plan advance, or Issue mutation. The authoritative procedure
+is [`docs/process/0.7.0-release.md`](process/0.7.0-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

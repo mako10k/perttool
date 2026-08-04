@@ -28,7 +28,7 @@ available by exact pin. Version `0.5.1` remains the initial schema-discovery
 Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
-explicit pin. npm reports `beta=0.6.0`, `latest=0.5.5`, and no `alpha`. The
+explicit pin. npm reports `beta=latest=0.6.0` and no `alpha`. The
 current source implements Grammar 1/2/3/4/5/6 reads,
 registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
@@ -187,9 +187,22 @@ temporary link, and isolated package. Its accepted gate is recorded in
 `docs/process/plan-assurance-acceptance.md`. All ten tasks and 59p are complete
 and remain in their exact pre-advance state; precedence and heuristic resource
 makespans are zero, and complete NextResult v6 has no ready, recommended, or
-startable task. Published package `0.6.0`, release selection, remote writes,
-publication, dist-tag movement, plan advance, and Issue mutation remain
-unchanged and separately gated.
+startable task. Published package `0.6.0`, remote writes, publication,
+dist-tag movement, plan advance, and Issue mutation remain unchanged and
+separately gated.
+
+The selected `0.7.0` conditional-plan-assurance beta minor is tracked
+independently in `plans/release-0.7.0.pert`. The six serial tasks total 21p
+from `RELEASE_070_GATE_DESIGN` through `RELEASE_070_ACCEPTANCE`. The user's
+2026-08-04 instruction authorizes only local gate design. The gate selects
+suffix-free `0.7.0` for the breaking Grammar 6 and CLI Contract 7 public
+boundary, records `beta=latest=0.6.0` with no maintained `alpha` as the
+read-only channel baseline, and keeps the package identity at `0.6.0` until
+separately authorized source preparation. `RELEASE_070_GATE_DESIGN` is
+complete and retained before advance; complete NextResult v6 recommends only
+`RELEASE_070_CONTRACT_7_READINESS`. Readiness, version-bearing source,
+candidate creation, push, tag, GitHub/npm publication, durable acceptance, npm
+`latest`, both plan advances, and Issue mutation remain separate.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
@@ -494,7 +507,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.6.0.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.7.0.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance and isolated-package inventory checks for internal assurance compatibility and inspection modules.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -559,7 +572,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all thirty self-use plans, including plan-assurance, the selected `0.6.0` release, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all thirty-one self-use plans, including plan-assurance, the selected `0.7.0` and accepted `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci

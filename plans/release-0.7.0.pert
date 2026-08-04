@@ -1,0 +1,137 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_070:
+  version 5
+  title "perttool 0.7.0 conditional plan assurance release"
+  description "Plan suffix-free 0.7.0 as the first public Grammar 6 and CLI Contract 7 beta. The completed ASSURE-001 workstream remains the implementation authority. The 2026-08-04 instruction authorizes only local release-gate design; readiness, source preparation, candidate acceptance, external publication, durable acceptance, npm latest promotion, plan advance, and Issue mutation remain separately gated."
+  as_of 2026-08-04
+  duration_unit point
+  velocity 17p/1d
+  finish RELEASE_070_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_070_PLANNING_STARTED:
+  title "Version 0.7.0 release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize scope, contract, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, CHANGELOG, migration guidance, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_070_GATE_ACCEPTED:
+  title "Version 0.7.0 release gate accepted"
+
+milestone RELEASE_070_CONTRACT_7_READY:
+  title "Accepted Contract 7 release input verified"
+
+milestone RELEASE_070_SOURCE_PREPARED:
+  title "Version 0.7.0 release source prepared"
+
+milestone RELEASE_070_CANDIDATE_ACCEPTED:
+  title "Version 0.7.0 release candidate accepted"
+
+milestone RELEASE_070_PUBLISHED:
+  title "Version 0.7.0 published to GitHub and npm beta"
+
+milestone RELEASE_070_ACCEPTED:
+  title "Version 0.7.0 conditional plan assurance beta accepted"
+
+task RELEASE_070_GATE_DESIGN RELEASE_070_PLANNING_STARTED -> RELEASE_070_GATE_ACCEPTED:
+  title "Define the 0.7.0 Contract 7 release gate"
+  description "Select suffix-free 0.7.0 for the breaking Grammar 6 and CLI Contract 7 cutover. Update requirements, ADR, design, procedure, release PERT, authority boundaries, restart rules, self-use coverage, current channel facts, and latest and Issue exclusions together. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+
+task RELEASE_070_CONTRACT_7_READINESS RELEASE_070_GATE_ACCEPTED -> RELEASE_070_CONTRACT_7_READY:
+  title "Verify accepted Contract 7 release input"
+  description "Require the complete ASSURE-001 pre-advance snapshot and accepted public-contract and final-acceptance records. Verify atomic Grammar 6, CLI Contract 7, assurance-aware authority, mutation, advance, compatibility, hash inspection, schema, package-root, help, Guide, Mermaid profile 2, and installed behavior without duplicating implementation state."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_070_PREPARATION RELEASE_070_CONTRACT_7_READY -> RELEASE_070_SOURCE_PREPARED:
+  title "Prepare version 0.7.0 release source"
+  description "Align package and lockfile identity, CLI version, CHANGELOG, README, 0.6.0-to-0.7.0 migration guidance, release documentation, tests, goldens, self-use registration, dependency audit, and beta publication validation. Run the complete Node.js 22 repository and package gates without remote or registry writes."
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_070_CANDIDATE RELEASE_070_SOURCE_PREPARED -> RELEASE_070_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.7.0 release candidate"
+  description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.6.0, no alpha, and protected routes; build one immutable tarball outside the worktree; and accept its modification time, sizes, file count, digests, and installed Contract 7 behavior. This task performs no external write."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_070_PUBLISH RELEASE_070_CANDIDATE_ACCEPTED -> RELEASE_070_PUBLISHED:
+  title "Publish version 0.7.0 from one immutable tarball"
+  description "Only after every predecessor gate passes and the user separately authorizes this exact candidate and external batch, push and verify the clean release commit and annotated tag, wait for Node.js 22 and 24 CI, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.7.0 while latest remains 0.6.0."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_070_ACCEPTANCE RELEASE_070_PUBLISHED -> RELEASE_070_ACCEPTED:
+  title "Record durable 0.7.0 beta acceptance"
+  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball facts and digests, registry integrity and metadata, isolated installation from both public channels, complete Contract 7 and conditional plan assurance behavior, beta=0.7.0 and unchanged latest=0.6.0, and exact commands. Record acceptance without altering the immutable artifact, advancing either plan, moving latest, or mutating an Issue."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+work_event WE-ab4c6f78ba9e1d63c9465ac2d0f20dccd5c6daab253aaaa1c48b5d2e4885342f:
+  model 1
+  task RELEASE_070_GATE_DESIGN
+  kind start
+  occurred_at 2026-08-04T16:40:27+09:00
+  planned_value 3p
+
+work_event WE-7e2348578fc8bd14639723ccac00afcfdad8c717c7db20152932070b9d85c198:
+  model 1
+  task RELEASE_070_GATE_DESIGN
+  kind finish
+  occurred_at 2026-08-04T16:46:00+09:00
+  active_time 0.0925h
+  effort 0.0925ph

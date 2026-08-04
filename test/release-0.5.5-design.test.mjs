@@ -104,7 +104,7 @@ test("0.5.5 release gate binds the governed-preview warning boundary", async () 
   assert.match(readme, /perttool@0\.6\.0/);
   assert.match(
     readme,
-    /npm `beta` resolves to `0\.6\.0`; npm `latest` remains `0\.5\.5`/,
+    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.6\.0`/,
   );
   assert.equal(COMMAND_REGISTRY.length, 44);
   assert.equal(getJsonSchemaCatalog().length, 20);

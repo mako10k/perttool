@@ -14,7 +14,8 @@
   2026-07-30 (`v0.5.1` compatible Contract 6 patch release target and
   publication; `v0.5.2` compatible JSON Schema patch release target and
   publication; retirement of the obsolete npm `alpha` dist-tag);
-  2026-07-31 (`v0.6.0` advance history safety release target)
+  2026-07-31 (`v0.6.0` advance history safety release target);
+  2026-08-04 (`v0.7.0` conditional plan assurance release target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -79,6 +80,12 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   result-identity and write-safety boundary. Grammar 5, CLI Contract 6 command
   names, existing option defaults, and every non-advance result identity
   remain unchanged, so Contract 7 or Grammar 6 would overstate it.
+- Select suffix-free `0.7.0` for the first package that publishes the accepted
+  Grammar 6 and CLI Contract 7 conditional plan-assurance boundary. The
+  command registry, result identities, governance interface, recommendation
+  start-authority policy, advance semantics, schema catalog, and package root
+  change together. `0.6.1` would understate this breaking public boundary,
+  while `1.0.0` remains reserved for a future stable-series decision.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 

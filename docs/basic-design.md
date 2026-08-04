@@ -2960,6 +2960,37 @@ Exit:
   `latest=0.5.5`; and
 - keep npm `latest` promotion, plan advance, and Issue mutation separate.
 
+### Post-MVP Slice 4Q: Conditional plan assurance `v0.7.0` beta minor
+
+The accepted ASSURE-001 workstream atomically exposes Grammar 6, CLI Contract
+7, conditional planning dependencies, deterministic semantic commitments,
+fail-closed new-start authority, preview-first seal and reseal mutations,
+assurance-preserving advance, read-only pinpoint hash inspection, and Mermaid
+semantic profile 2. Grammar 1 through 5 remain compatible with assurance not
+enabled.
+
+The [`v0.7.0` release procedure](process/0.7.0-release.md) and independent
+[`release-0.7.0.pert`](../plans/release-0.7.0.pert) plan separate gate design,
+Contract 7 readiness, version-bearing source preparation, one immutable
+candidate, separately authorized GitHub/npm beta publication, and durable
+public acceptance.
+
+Exit:
+
+- satisfy Requirements 21.13 from one clean release commit and immutable
+  tarball;
+- require the complete ASSURE-001 pre-advance snapshot and both public-contract
+  and final acceptance records without duplicating implementation state;
+- publish all 44 Contract 7 commands, 20 root schemas, assurance-aware result
+  identities, GovernanceDecision v2, package-root APIs, help, Guide, and
+  installed workflows atomically;
+- preserve the accepted hash vectors, lifecycle exclusions, cause paths,
+  required actions, compatibility, and independent Git history-force boundary;
+- publish identical bytes to a GitHub prerelease and npm `beta` while leaving
+  `latest=0.6.0`; and
+- keep digital signatures, authenticated approval, archived advance, npm
+  `latest` promotion, both plan advances, and Issue mutation separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 As an independent future backlog after the first beta, split the work into the following three deliverables.
@@ -2979,8 +3010,8 @@ The [Plan Assurance Interface Contract](specs/plan-assurance-interface.md)
 fixes Grammar 6, CLI Contract 7, every assurance source record and command,
 closed result identities, diagnostics, migration, and governance version 2.
 [`plans/plan-assurance.pert`](../plans/plan-assurance.pert) owns their
-implementation; the source runtime now exposes the atomic public surface while
-the independent final acceptance task remains.
+implementation; the source runtime exposes the atomic public surface, and the
+independent final acceptance task is complete in its exact pre-advance state.
 
 The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, done, suspended, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Project Actuals and Git History Contract](specs/project-actuals.md) determines the selected future work-event, lifecycle, history, and observation semantics; the [Governance Source and Effective-Metadata specification](specs/governance-source.md) determines Grammar 4 source, omission defaults, project metadata, and pre-change snapshots; the [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md) determines goal/DAG change classification and pre-change persistent-write authority; the [Owner-Aware Governance Interface Contract](specs/governance-interface.md) determines Core assertions, CLI Contract 5, text/JSON/help projections, diagnostics, exits, and atomic activation; the [Issue #4 Owner-Aware Governance Design Acceptance Review](process/governance-design-acceptance.md) fixes the complete criterion, interface, example, non-goal, and implementation-gate trace; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the active Grammar 1/2/3 and CLI Contract 4 temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomy; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary. [ADR 0006](adr/0006-explicit-work-events-in-git-history.md) defines transient same-document work events and read-only Git durability.
 

@@ -130,7 +130,7 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
   );
   assert.match(
     readme,
-    /npm `beta` resolves to Contract 6 `0\.6\.0`\. npm `latest` and an unqualified\s+install remain on Contract 6 `0\.5\.5`/,
+    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.6\.0`/,
   );
   assert.match(publishScript, /publish_tag" != "beta"/);
   assert.doesNotMatch(publishScript, /^\s*alpha\)$/m);

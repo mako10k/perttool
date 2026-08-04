@@ -113,8 +113,10 @@ test("0.6.0 release gate binds advance history safety and migration", async () =
   assert.match(versionSource, /TOOL_VERSION = "0\.6\.0"/);
   assert.match(mutationSource, /@deprecated Use AdvanceResultV1/);
   assert.match(changelog, /^## \[0\.6\.0\] - 2026-07-31$/m);
-  assert.match(readme, /npm `beta` resolves to `0\.6\.0`/);
-  assert.match(readme, /npm `latest` remains `0\.5\.5`/);
+  assert.match(
+    readme,
+    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.6\.0`/,
+  );
   assert.equal(ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v2");
   assert.equal(COMMAND_REGISTRY.length, 44);
   assert.equal(getJsonSchemaCatalog().length, 20);
