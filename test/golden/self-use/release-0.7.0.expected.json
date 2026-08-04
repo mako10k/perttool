@@ -8,27 +8,25 @@
       "tasks": 6,
       "gates": 0,
       "errors": 0,
-      "warnings": 1
+      "warnings": 2
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "18/1",
+    "precedence_makespan": "15/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "18/17",
+    "precedence_forecast": "15/17",
     "precedence_critical_tasks": [
-      "RELEASE_070_CONTRACT_7_READINESS",
       "RELEASE_070_PREPARATION",
       "RELEASE_070_CANDIDATE",
       "RELEASE_070_PUBLISH",
       "RELEASE_070_ACCEPTANCE"
     ],
-    "resource_makespan": "18/1",
-    "resource_forecast": "18/17",
+    "resource_makespan": "15/1",
+    "resource_forecast": "15/17",
     "resource_delay": "0/1",
     "resource_arcs": [],
     "schedule_critical_tasks": [
-      "RELEASE_070_CONTRACT_7_READINESS",
       "RELEASE_070_PREPARATION",
       "RELEASE_070_CANDIDATE",
       "RELEASE_070_PUBLISH",
@@ -39,14 +37,13 @@
     "groups": {
       "active": [],
       "ready": [
-        "RELEASE_070_CONTRACT_7_READINESS"
+        "RELEASE_070_PREPARATION"
       ],
       "runnable_now": [
-        "RELEASE_070_CONTRACT_7_READINESS"
+        "RELEASE_070_PREPARATION"
       ],
       "blocked_now": [],
       "upcoming": [
-        "RELEASE_070_PREPARATION",
         "RELEASE_070_CANDIDATE",
         "RELEASE_070_PUBLISH",
         "RELEASE_070_ACCEPTANCE"

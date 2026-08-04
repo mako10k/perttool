@@ -2383,8 +2383,9 @@ a GitHub prerelease, and moves only npm `beta` during publication.
     archived-advance implementation, and Issue mutation outside this release
     flow as separately authorized operations.
 
-The user's 2026-08-04 instruction authorizes only local design of the
-`RELEASE_070_GATE_DESIGN` work package. It does not authorize readiness,
+The user's initial 2026-08-04 instruction authorized only local design of the
+`RELEASE_070_GATE_DESIGN` work package. A later instruction separately
+authorized `RELEASE_070_CONTRACT_7_READINESS`. Neither instruction authorizes
 version-bearing source preparation, candidate acceptance, Git push, tag
 creation, GitHub or npm publication, durable acceptance, npm `latest`
 promotion, either plan advance, or Issue mutation. The authoritative procedure

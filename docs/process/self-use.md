@@ -1484,14 +1484,17 @@ The independent `release-0.7.0.pert` workstream selects the first public
 Grammar 6 and CLI Contract 7 package for conditional plan assurance. The six
 serial tasks total 21p: release-gate design, accepted Contract 7 readiness,
 source preparation, one immutable candidate, separately authorized PUBLISH,
-and durable acceptance. The 2026-08-04 instruction authorizes only the local
-gate-design task. Read-only external checks at that decision point report
+and durable acceptance. The initial 2026-08-04 instruction authorized the
+local gate-design task, and a later instruction separately authorized Contract
+7 readiness. Read-only external checks at the design decision point report
 `beta=latest=0.6.0`, no maintained `alpha`, unused `0.7.0`, and remote main at
-the earlier accepted ASSURE internal-core commit. Version-bearing source,
+the earlier accepted ASSURE internal-core commit. The readiness record accepts
+the exact completed ASSURE-001 input and active Contract 7 boundary.
+Version-bearing source,
 candidate creation, push, tag, GitHub/npm publication, acceptance, npm
 `latest`, both plan advances, and Issue mutation remain separate. The gate
-design task is complete before advance; complete NextResult v6 recommends only
-`RELEASE_070_CONTRACT_7_READINESS`.
+design and readiness tasks are complete before advance; complete NextResult v6
+recommends only `RELEASE_070_PREPARATION`.
 
 Stage 1 allowed operations:
 

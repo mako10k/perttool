@@ -194,15 +194,18 @@ separately gated.
 The selected `0.7.0` conditional-plan-assurance beta minor is tracked
 independently in `plans/release-0.7.0.pert`. The six serial tasks total 21p
 from `RELEASE_070_GATE_DESIGN` through `RELEASE_070_ACCEPTANCE`. The user's
-2026-08-04 instruction authorizes only local gate design. The gate selects
+initial 2026-08-04 instruction authorized local gate design, and a later
+instruction separately authorized Contract 7 readiness. The gate selects
 suffix-free `0.7.0` for the breaking Grammar 6 and CLI Contract 7 public
 boundary, records `beta=latest=0.6.0` with no maintained `alpha` as the
 read-only channel baseline, and keeps the package identity at `0.6.0` until
-separately authorized source preparation. `RELEASE_070_GATE_DESIGN` is
-complete and retained before advance; complete NextResult v6 recommends only
-`RELEASE_070_CONTRACT_7_READINESS`. Readiness, version-bearing source,
-candidate creation, push, tag, GitHub/npm publication, durable acceptance, npm
-`latest`, both plan advances, and Issue mutation remain separate.
+separately authorized source preparation. `RELEASE_070_GATE_DESIGN` and
+`RELEASE_070_CONTRACT_7_READINESS` are complete and retained before advance;
+the readiness record is `docs/process/0.7.0-contract7-readiness.md`, and
+complete NextResult v6 recommends only `RELEASE_070_PREPARATION`.
+Version-bearing source, candidate creation, push, tag, GitHub/npm publication,
+durable acceptance, npm `latest`, both plan advances, and Issue mutation
+remain separate.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 

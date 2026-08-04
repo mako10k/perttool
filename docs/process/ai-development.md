@@ -412,14 +412,15 @@ The selected `0.7.0` beta minor is the first package planned to publish the
 accepted Grammar 6 and CLI Contract 7 conditional-plan-assurance boundary.
 `plans/release-0.7.0.pert` sequences local gate design, Contract 7 readiness,
 version-bearing preparation, one immutable candidate, separately authorized
-GitHub/npm `beta` publication, and durable acceptance. The 2026-08-04
-instruction authorizes only the gate-design task. Do not infer authority for
-readiness, version changes, candidate creation, push, tag, GitHub or npm
-mutation, acceptance, npm `latest`, either plan advance, or Issue mutation.
+GitHub/npm `beta` publication, and durable acceptance. The initial 2026-08-04
+instruction authorized only gate design, and a later instruction separately
+authorized Contract 7 readiness. Do not infer authority for version changes,
+candidate creation, push, tag, GitHub or npm mutation, acceptance, npm
+`latest`, either plan advance, or Issue mutation.
 The live pre-publication baseline is `beta=latest=0.6.0` with no maintained
-`alpha`; re-read it at candidate and PUBLISH boundaries. The gate-design task
-is complete before advance, and complete NextResult v6 recommends only the
-separately gated Contract 7 readiness task.
+`alpha`; re-read it at candidate and PUBLISH boundaries. Gate design and
+Contract 7 readiness are complete before advance, and complete NextResult v6
+recommends only the separately gated source-preparation task.
 
 ### 5.1 Adopted Recommendation authority
 

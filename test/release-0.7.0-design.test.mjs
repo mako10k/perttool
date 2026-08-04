@@ -17,6 +17,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     adr,
     design,
     procedure,
+    readiness,
     publicAcceptance,
     finalAcceptance,
     plan,
@@ -29,6 +30,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     repositoryText("docs/adr/0003-beta-versioning.md"),
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.7.0-release.md"),
+    repositoryText("docs/process/0.7.0-contract7-readiness.md"),
     repositoryText("docs/process/plan-assurance-public-contract-acceptance.md"),
     repositoryText("docs/process/plan-assurance-acceptance.md"),
     repositoryText("plans/release-0.7.0.pert"),
@@ -49,8 +51,8 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     Array.from({ length: 17 }, (_, index) => index + 1),
   );
-  assert.match(releaseSection, /authorizes only local design/);
-  assert.match(releaseSection, /does not authorize readiness/);
+  assert.match(releaseSection, /initial 2026-08-04 instruction authorized only local design/);
+  assert.match(releaseSection, /later instruction separately\s+authorized `RELEASE_070_CONTRACT_7_READINESS`/);
   assert.match(adr, /Select suffix-free `0\.7\.0`/);
   assert.match(adr, /`0\.6\.1` would understate/);
   assert.match(
@@ -59,10 +61,12 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   );
   assert.match(procedure, /- Status: Planned 1\.0/);
   assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.6\.0`, no `alpha`/);
-  assert.match(procedure, /authorizes only[\s\S]*`RELEASE_070_GATE_DESIGN`/);
-  assert.match(procedure, /does not authorize the readiness/);
+  assert.match(procedure, /initial 2026-08-04 instruction authorized only\s+`RELEASE_070_GATE_DESIGN`/);
+  assert.match(procedure, /later instruction separately authorized\s+`RELEASE_070_CONTRACT_7_READINESS`/);
   assert.match(procedure, /SHA-256 is a digital signature/);
   assert.match(procedure, /Consumers can roll back by pinning `perttool@0\.6\.0`/);
+  assert.match(readiness, /Document status: Accepted 1\.0/);
+  assert.match(readiness, /only `RELEASE_070_PREPARATION` ready and recommended/);
   assert.match(publicAcceptance, /CLI contract: Contract 7/);
   assert.match(publicAcceptance, /44-command registry/);
   assert.match(finalAcceptance, /all 787 tests/);

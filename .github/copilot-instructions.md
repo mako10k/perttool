@@ -117,12 +117,14 @@ Mandatory summary:
   and every external mutation remain unchanged.
 - The selected `plans/release-0.7.0.pert` workstream sequences six serial tasks
   and 21p for the first Grammar 6 and CLI Contract 7 conditional-plan-assurance
-  beta. The 2026-08-04 instruction authorizes only local
-  `RELEASE_070_GATE_DESIGN`. It selects suffix-free `0.7.0`, records the
-  read-only `beta=latest=0.6.0` and absent-alpha baseline, and leaves package
-  identity at `0.6.0`. `RELEASE_070_GATE_DESIGN` is complete before advance,
-  and complete NextResult v6 recommends only
-  `RELEASE_070_CONTRACT_7_READINESS`. Readiness, version-bearing preparation,
+  beta. The initial 2026-08-04 instruction authorized local gate design, and a
+  later instruction separately authorized Contract 7 readiness. The gate
+  selects suffix-free `0.7.0`, records the read-only `beta=latest=0.6.0` and
+  absent-alpha baseline, and leaves package identity at `0.6.0`.
+  `RELEASE_070_GATE_DESIGN` and `RELEASE_070_CONTRACT_7_READINESS` are complete
+  before advance; the readiness record is
+  `docs/process/0.7.0-contract7-readiness.md`, and complete NextResult v6
+  recommends only `RELEASE_070_PREPARATION`. Version-bearing preparation,
   candidate creation, push, tag, GitHub/npm publication, durable acceptance,
   npm `latest`, both plan advances, and Issue mutation remain separate.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.

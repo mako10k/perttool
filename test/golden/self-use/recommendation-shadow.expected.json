@@ -581,18 +581,17 @@
       ]
     },
     "release-0.7.0": {
-      "source_digest": "sha256:d64d4e9bd3869acd7258f09e2eafcc7e0687117e3aaea38ac49835afce26f61d",
+      "source_digest": "sha256:f3bce588e273089588dbca0fd3040126e1c13fa36fa7e1d2816ee9eff8e1a50d",
       "groups": {
         "active": [],
         "ready": [
-          "RELEASE_070_CONTRACT_7_READINESS"
+          "RELEASE_070_PREPARATION"
         ],
         "runnable_now": [
-          "RELEASE_070_CONTRACT_7_READINESS"
+          "RELEASE_070_PREPARATION"
         ],
         "blocked_now": [],
         "upcoming": [
-          "RELEASE_070_PREPARATION",
           "RELEASE_070_CANDIDATE",
           "RELEASE_070_PUBLISH",
           "RELEASE_070_ACCEPTANCE"
@@ -600,18 +599,18 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "RELEASE_070_CONTRACT_7_READINESS"
+        "RELEASE_070_PREPARATION"
       ],
       "manual_selected_task_ids": [
-        "RELEASE_070_CONTRACT_7_READINESS"
+        "RELEASE_070_PREPARATION"
       ],
       "tiers": {
-        "RELEASE_070_CONTRACT_7_READINESS": "recommended"
+        "RELEASE_070_PREPARATION": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RELEASE_070_CONTRACT_7_READINESS",
+          "id": "RELEASE_070_PREPARATION",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
