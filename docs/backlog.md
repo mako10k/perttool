@@ -390,6 +390,76 @@ Non-goals:
 - treating a manual whitespace patch as part of the approved candidate; or
 - selecting a release version, publishing a package, or moving a dist-tag.
 
+### ADV-003: Retain completed out-of-scope work in an opt-in advance mode
+
+Priority: P2
+
+Status: Requested concept (2026-08-04); semantics and delivery plan not selected
+
+Canonical `dag advance` removes completed declarations that no longer
+contribute to the present or future graph. Some review and agent workflows
+would benefit from retaining that source in the plan while clearly excluding
+it from current execution and planning authority. Add an explicitly opt-in
+advance mode that can preserve such material as archived content. The default
+advance mode, candidate bytes, result semantics, and pruning behavior must
+remain unchanged.
+
+The contract must select one representation before implementation. Candidate
+directions include an `archived` marker on retained declarations, a closed
+non-executing archive section in the same document, or a separate archive
+artifact produced by the same preview. Merely leaving ordinary `status done`
+tasks in the active AoA graph is insufficient because it does not distinguish
+intentional archival retention from work still participating in current graph
+semantics.
+
+Required outcomes:
+
+- archival retention is enabled only by an explicit option on one advance
+  request; configuration, environment, prior use, or an agent session must not
+  turn it on implicitly;
+- ordinary `dag advance` remains byte-compatible and continues to prune the
+  same declarations as the current implementation;
+- archived content is excluded from current readiness, recommendation,
+  temporal start authority, precedence CPM, heuristic resource scheduling,
+  finish reachability, and the active plan-assurance dependency DAG;
+- task, gate, milestone, relation, work-event, outcome, receipt, comment, and
+  source-order ownership is handled as one closed model so archival retention
+  cannot create dangling references or ambiguous IDs;
+- preview, `--out`, and in-place write expose one byte-identical candidate,
+  and repeated archival advance is deterministic and idempotent;
+- structured results distinguish removed IDs, retained-current IDs, and
+  archived IDs, and human output explains that archival retention is not new
+  start authority;
+- the design defines whether a later ordinary advance prunes existing archive
+  records and whether archived content is read-only or can be restored through
+  a separately authorized operation; and
+- governance, expected-digest locking, history-safety assessment, source and
+  repository race checks, warning policy, and atomic-write behavior remain in
+  force for every changed candidate.
+
+Open design decisions:
+
+- whether the archive is a new Grammar declaration/state, a document section,
+  or a separate artifact, and which result and CLI contract versions it
+  requires;
+- whether archival scope covers every declaration removed by canonical
+  advance or only completed task packages and their owned evidence;
+- how execution-only, plan-only, and both relations are retained for audit
+  without re-entering the current execution or planning DAG;
+- how archived task contracts, outcomes, assurance seals, and frontier
+  receipts interact with assurance-preserving advance contraction; and
+- how this feature relates to `project history` and the undecided `ACT-002`
+  completed-work reopen concept without making `.pert` an ambiguous second
+  history ledger.
+
+Acceptance must prove that the default candidate is unchanged; one explicit
+archival advance visibly retains a completed out-of-scope task while producing
+the same current analysis and Next authority as its canonically pruned form;
+repeated preview and write are idempotent; archive references remain closed;
+and formatter, schema, help, temporary-link, and isolated-package workflows
+agree. This backlog entry does not select syntax, implement the option, change
+the active Grammar or CLI contract, or authorize plan advance or release work.
+
 ## Project actuals and Git-recorded history
 
 ### ACT-001: Record explicit work lifecycle and observed project performance
