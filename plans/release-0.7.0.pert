@@ -106,6 +106,7 @@ task RELEASE_070_PUBLISH RELEASE_070_CANDIDATE_ACCEPTED -> RELEASE_070_PUBLISHED
   title "Publish version 0.7.0 from one immutable tarball"
   description "Only after every predecessor gate passes and the user separately authorizes this exact candidate and external batch, push and verify the clean release commit and annotated tag, wait for Node.js 22 and 24 CI, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.7.0 while latest remains 0.6.0."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -183,3 +184,18 @@ work_event WE-760feaf7cd764ad907c8cd505fdcd4a5ff3d2a39da27d6e21fa2a09d97443ef3:
   occurred_at 2026-08-04T17:56:35+09:00
   active_time 79/450h
   effort 79/450ph
+
+work_event WE-f6a03c95f5cfa24b51058a95d4e51d977262880290c8d1f9e23658c7d1c8462b:
+  model 1
+  task RELEASE_070_PUBLISH
+  kind start
+  occurred_at 2026-08-04T18:19:55+09:00
+  planned_value 3p
+
+work_event WE-98fe04447b47adc8595cd4a8fb85f4bc2140fbbe03e3d469b5a2d9f1c17577db:
+  model 1
+  task RELEASE_070_PUBLISH
+  kind finish
+  occurred_at 2026-08-04T18:26:44+09:00
+  active_time 409/3600h
+  effort 409/3600ph

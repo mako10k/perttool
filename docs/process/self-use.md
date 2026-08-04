@@ -1503,9 +1503,13 @@ rejected filename. Corrected clean source commit `51984c8` passed the repeated
 complete Node.js 22 and read-only external gates. Its retained 601-file,
 656702-byte candidate has SHA-256 `8585adb5...f4d623` and passed isolated
 Contract 7 file-first and plan-assurance acceptance. Push, tag, GitHub/npm
-publication, durable acceptance, npm `latest`, both plan advances, and Issue
-mutation remain separate. Raw NextResult v6 recommends only
-`RELEASE_070_PUBLISH`, which remains separately authorized.
+publication then completed under the user's separate authorization. Release
+commit and peeled `v0.7.0` target `1279e3c` agree; Node.js 22 and 24 CI run
+`30895944899` passed; the GitHub prerelease, npm `beta=0.7.0`, and all three
+tarball copies agree at SHA-256 `8585adb5...f4d623`; `latest=0.6.0` and absent
+`alpha` remain unchanged. Fresh complete NextResult v6 recommends only
+`RELEASE_070_ACCEPTANCE`. Durable acceptance, npm `latest`, both plan
+advances, and Issue mutation remain separate.
 
 Stage 1 allowed operations:
 

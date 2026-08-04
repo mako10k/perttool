@@ -427,14 +427,16 @@ passed the repeated complete Node.js 22 and read-only external gates. The
 accepted fixed-path 601-file, 656702-byte candidate has SHA-256
 `8585adb5...f4d623` and passed isolated Contract 7 file-first and
 plan-assurance acceptance. Raw recommendation does not override the separate
-publication boundary. Do not infer authority for push, tag, GitHub or npm
-mutation, durable acceptance, npm `latest`, either plan advance, or Issue
-mutation.
-The live pre-publication baseline is `beta=latest=0.6.0` with no maintained
-`alpha`; re-read it at candidate and PUBLISH boundaries. Gate design,
-Contract 7 readiness, source preparation, and candidate acceptance are
-complete before advance. Raw NextResult v6 recommends only
-`RELEASE_070_PUBLISH`, which remains separately authorized.
+publication boundary. The user later separately authorized PUBLISH from that
+unchanged candidate. Release commit and peeled `v0.7.0` target `1279e3c`
+agree; Node.js 22 and 24 CI run `30895944899` passed; the GitHub prerelease,
+npm `beta=0.7.0`, and all three tarball copies agree at SHA-256
+`8585adb5...f4d623`; `latest=0.6.0` and absent `alpha` remain unchanged.
+Gate design, Contract 7 readiness, source preparation, candidate acceptance,
+and PUBLISH are complete before advance. Fresh complete NextResult v6
+recommends only `RELEASE_070_ACCEPTANCE`, which remains a separate decision.
+Do not infer authority for durable acceptance, npm `latest`, either plan
+advance, or Issue mutation.
 
 ### 5.1 Adopted Recommendation authority
 

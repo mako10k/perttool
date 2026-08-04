@@ -19,6 +19,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     procedure,
     readiness,
     candidate,
+    publish,
     migration,
     publicAcceptance,
     finalAcceptance,
@@ -34,6 +35,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     repositoryText("docs/process/0.7.0-release.md"),
     repositoryText("docs/process/0.7.0-contract7-readiness.md"),
     repositoryText("docs/process/0.7.0-candidate.md"),
+    repositoryText("docs/process/0.7.0-publish.md"),
     repositoryText("docs/process/0.6.0-to-0.7.0-migration.md"),
     repositoryText("docs/process/plan-assurance-public-contract-acceptance.md"),
     repositoryText("docs/process/plan-assurance-acceptance.md"),
@@ -63,7 +65,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     design,
     /^### Post-MVP Slice 4Q: Conditional plan assurance `v0\.7\.0` beta minor$/m,
   );
-  assert.match(procedure, /- Status: Candidate accepted 1\.0/);
+  assert.match(procedure, /- Status: Published; durable acceptance pending 1\.0/);
   assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.6\.0`, no `alpha`/);
   assert.match(procedure, /initial 2026-08-04 instruction authorized only\s+`RELEASE_070_GATE_DESIGN`/);
   assert.match(procedure, /later instruction separately authorized\s+`RELEASE_070_CONTRACT_7_READINESS`/);
@@ -76,6 +78,11 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.match(candidate, /Packed size \| `656702` bytes/);
   assert.match(candidate, /SHA-256 \| `8585adb5c3c2c5caeb5c2b453141c1fd87426b918ee235f21a80f557a0f4d623`/);
   assert.match(candidate, /rejected-preliminary-eeff494c3e5af2481bfc4e8f9205a6106cfa3236\.tgz/);
+  assert.match(publish, /- Status: Complete/);
+  assert.match(publish, /Release commit: `1279e3cbdf8f018e84380e62ac7516a2c17aa86e`/);
+  assert.match(publish, /actions\/runs\/30895944899/);
+  assert.match(publish, /`beta=0\.7\.0`, unchanged `latest=0\.6\.0`, and no `alpha`/);
+  assert.match(publish, /SHA-256 `8585adb5c3c2c5caeb5c2b453141c1fd87426b918ee235f21a80f557a0f4d623`/);
   assert.match(migration, /- Status: Accepted 1\.0/);
   assert.match(migration, /`cli_contract_version == 7`/);
   assert.match(migration, /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/);
@@ -100,7 +107,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   );
   assert.match(
     plan,
-    /^task RELEASE_070_PUBLISH RELEASE_070_CANDIDATE_ACCEPTED -> RELEASE_070_PUBLISHED:$/m,
+    /^task RELEASE_070_PUBLISH RELEASE_070_CANDIDATE_ACCEPTED -> RELEASE_070_PUBLISHED:\n[\s\S]*?^  status done$/m,
   );
   assert.match(plan, /user separately authorizes this exact candidate/);
 

@@ -28,8 +28,8 @@ available by exact pin. Version `0.5.1` remains the initial schema-discovery
 Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
-explicit pin. npm reports `beta=latest=0.6.0` and no `alpha`. The
-prepared package `0.7.0` source implements Grammar 1/2/3/4/5/6 reads,
+explicit pin. npm reports `beta=0.7.0`, `latest=0.6.0`, and no `alpha`. The
+published beta `0.7.0` source implements Grammar 1/2/3/4/5/6 reads,
 registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
 events, read-only project history and velocity observation, exact
@@ -211,11 +211,14 @@ under a SHA-bound rejected filename. Corrected clean source commit `51984c8`
 passed the repeated complete Node.js 22 and read-only external gates. Its
 retained 601-file, 656702-byte candidate has SHA-256
 `8585adb5...f4d623` and passed isolated Contract 7 file-first and
-plan-assurance acceptance. Raw NextResult v6 recommends only
-`RELEASE_070_PUBLISH`, which remains a separately authorized external batch.
-No `0.7.0` package is published; push, tag, GitHub/npm publication, durable
-acceptance, npm `latest`, both plan advances, and Issue mutation remain
-separate.
+plan-assurance acceptance. The user later separately authorized PUBLISH from
+that unchanged candidate. Release commit and peeled `v0.7.0` target
+`1279e3c` agree; Node.js 22 and 24 CI run `30895944899` passed; the GitHub
+prerelease, npm `beta=0.7.0`, and the same 601-file tarball agree at SHA-256
+`8585adb5...f4d623`; `latest=0.6.0` and absent `alpha` remain unchanged.
+`RELEASE_070_PUBLISH` is complete, and fresh complete NextResult v6 recommends
+only `RELEASE_070_ACCEPTANCE`. Durable acceptance, npm `latest`, both plan
+advances, and Issue mutation remain separate.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
