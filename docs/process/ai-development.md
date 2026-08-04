@@ -418,14 +418,19 @@ authorized Contract 7 readiness; the next instruction separately authorized
 source preparation; the current instruction separately authorizes candidate
 acceptance. The prepared manifest, lockfile, and CLI identify `0.7.0`, and
 `docs/process/0.7.0-preparation.md` records the accepted local gate. The
-candidate task is active only for clean-source verification, read-only
-external preflight, and one retained tarball. Do not infer authority for push,
-tag, GitHub or npm mutation, durable acceptance, npm `latest`, either plan
-advance, or Issue mutation.
+`RELEASE_070_CANDIDATE` was authorized only for clean-source verification, read-only
+external preflight, and one retained tarball. Final review rejected the
+preliminary SHA-256 `7e57cc89...3ac8a0` tarball because its bundled README
+retained a transient preparation-time claim; the fixed candidate path is empty
+pending a corrected clean build. Raw recommendation does not override this
+gate. Do not infer authority for push, tag, GitHub or npm mutation, durable
+acceptance, npm `latest`, either plan advance, or Issue mutation.
 The live pre-publication baseline is `beta=latest=0.6.0` with no maintained
 `alpha`; re-read it at candidate and PUBLISH boundaries. Gate design,
 Contract 7 readiness, and source preparation are complete before advance;
-`RELEASE_070_CANDIDATE` is active and no later task is startable.
+candidate lifecycle is also complete before advance, but candidate acceptance
+is held pending the corrected replacement. Raw NextResult v6 recommends
+`RELEASE_070_PUBLISH`, which remains withheld and separately authorized.
 
 ### 5.1 Adopted Recommendation authority
 

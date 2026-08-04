@@ -581,32 +581,48 @@
       ]
     },
     "release-0.7.0": {
-      "source_digest": "sha256:d07a81440a7e3d1ae6101af59cff0cf3333aea7d8d959dd302d305f00ce2edd6",
+      "source_digest": "sha256:eec046421867dea08f86bfd50c180f6d5ba00defc9d8a2d92990b853fa2250b5",
       "groups": {
-        "active": [
-          "RELEASE_070_CANDIDATE"
+        "active": [],
+        "ready": [
+          "RELEASE_070_PUBLISH"
         ],
-        "ready": [],
-        "runnable_now": [],
+        "runnable_now": [
+          "RELEASE_070_PUBLISH"
+        ],
         "blocked_now": [],
         "upcoming": [
-          "RELEASE_070_PUBLISH",
           "RELEASE_070_ACCEPTANCE"
         ],
         "suspended": []
       },
-      "recommended_task_ids": [],
-      "manual_selected_task_ids": [],
-      "tiers": {},
+      "recommended_task_ids": [
+        "RELEASE_070_PUBLISH"
+      ],
+      "manual_selected_task_ids": [
+        "RELEASE_070_PUBLISH"
+      ],
+      "tiers": {
+        "RELEASE_070_PUBLISH": "recommended"
+      },
       "joint_resource_feasible": true,
-      "ready_tasks": [],
+      "ready_tasks": [
+        {
+          "id": "RELEASE_070_PUBLISH",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
       "record_counts": {
-        "task_decisions": 0,
-        "decision_steps": 1,
-        "facts": 1,
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
         "comparisons": 0,
-        "reasons": 1,
-        "descriptions": 0
+        "reasons": 4,
+        "descriptions": 1
       },
       "diagnostic_codes": [
         "PTDAG-208"

@@ -1496,10 +1496,14 @@ Source preparation is complete before advance with package and CLI identity
 `0.7.0`; `docs/process/0.7.0-preparation.md` records the migration, audit,
 repository, temporary-link, and installed-package evidence. No candidate was
 accepted or public state changed during preparation. `RELEASE_070_CANDIDATE`
-is active for clean-source verification, read-only external preflight, and one
-retained immutable tarball. Push, tag, GitHub/npm publication, durable
+has a completed lifecycle record, but final review rejected the preliminary
+SHA-256 `7e57cc89...3ac8a0` tarball because its bundled README retained a
+transient preparation-time claim. The intact bytes are preserved under a
+SHA-bound rejected filename and the fixed candidate path is empty pending a
+clean corrected replacement. Push, tag, GitHub/npm publication, durable
 acceptance, npm `latest`, both plan advances, and Issue mutation remain
-separate; no later task is startable.
+separate. Raw NextResult v6 recommends `RELEASE_070_PUBLISH`, but the release
+gate withholds it.
 
 Stage 1 allowed operations:
 

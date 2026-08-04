@@ -65,7 +65,7 @@ test("0.7.0 readiness consumes the exact completed ASSURE-001 input", async () =
   assert.match(readiness, /No hidden correctness, compatibility, packaging, or\s+authority finding/);
 });
 
-test("0.7.0 readiness remains historical after candidate start", async () => {
+test("0.7.0 readiness remains historical after candidate acceptance", async () => {
   const [releasePlan, readiness, manifestText, versionSource] = await Promise.all([
     repositoryText("plans/release-0.7.0.pert"),
     repositoryText("docs/process/0.7.0-contract7-readiness.md"),
@@ -104,11 +104,14 @@ test("0.7.0 readiness remains historical after candidate start", async () => {
   );
   const next = selectNextTasks(releasePlan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.groups.active, ["RELEASE_070_CANDIDATE"]);
-  assert.deepEqual(next.groups.ready, []);
-  assert.deepEqual(next.groups.runnableNow, []);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
+  assert.deepEqual(next.groups.active, []);
+  assert.deepEqual(next.groups.ready, ["RELEASE_070_PUBLISH"]);
+  assert.deepEqual(next.groups.runnableNow, ["RELEASE_070_PUBLISH"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_070_PUBLISH"]);
+  assert.deepEqual(
+    next.temporal.authority.startableRecommendedTaskIds,
+    ["RELEASE_070_PUBLISH"],
+  );
   assert.match(readiness, /Package identity remains\s+`0\.6\.0`/);
   assert.match(readiness, /does not authorize or perform version-bearing source preparation/);
   assert.match(readiness, /complete repository run passed all 791 tests/);
@@ -146,7 +149,7 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
 
   assert.equal(
     sha256(releasePlan),
-    "sha256:d07a81440a7e3d1ae6101af59cff0cf3333aea7d8d959dd302d305f00ce2edd6",
+    "sha256:eec046421867dea08f86bfd50c180f6d5ba00defc9d8a2d92990b853fa2250b5",
   );
   assert.match(
     releasePlan,
@@ -169,8 +172,9 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
   assert.equal(lockfile.packages[""].version, "0.7.0");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(versionSource, /TOOL_VERSION = "0\.7\.0"/);
-  assert.match(readme, /no candidate\s+or public `perttool@0\.7\.0` package has been accepted or published/);
-  assert.match(readme, /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.6\.0`/);
+  assert.match(readme, /Version `0\.7\.0` beta atomically activates Grammar 6 and CLI Contract 7/);
+  assert.match(readme, /does not move npm `latest` from Contract 6\s+`0\.6\.0`/);
+  assert.match(readme, /package=perttool@0\.7\.0/);
   for (const guidance of [agents, copilot, selfUse, aiDevelopment]) {
     assert.match(guidance, /docs\/process\/0\.7\.0-preparation\.md/);
     assert.match(guidance, /RELEASE_070_CANDIDATE/);

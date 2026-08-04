@@ -125,11 +125,15 @@ Mandatory summary:
   absent-alpha baseline. `RELEASE_070_GATE_DESIGN`,
   `RELEASE_070_CONTRACT_7_READINESS`, and `RELEASE_070_PREPARATION` are complete
   before advance. The prepared package and CLI identity is `0.7.0`, its record
-  is `docs/process/0.7.0-preparation.md`, and `RELEASE_070_CANDIDATE` is active
-  for one clean committed source, read-only external preflight, and one
-  retained immutable tarball. No candidate is yet accepted and `0.7.0`
-  remains unpublished. Push, tag, GitHub/npm publication, durable acceptance,
-  npm `latest`, both plan advances, and Issue mutation remain separate.
+  is `docs/process/0.7.0-preparation.md`. `RELEASE_070_CANDIDATE` lifecycle is
+  recorded complete, but final review rejected the preliminary SHA-256
+  `7e57cc89...3ac8a0` tarball because its bundled README retained a transient
+  preparation-time claim. The intact bytes are preserved under a SHA-bound
+  rejected filename, and the fixed candidate path is empty pending a clean
+  corrected replacement. Raw NextResult v6 recommends `RELEASE_070_PUBLISH`,
+  but the release gate withholds it and `0.7.0` remains unpublished. Push,
+  tag, GitHub/npm publication, durable acceptance, npm `latest`, both plan
+  advances, and Issue mutation remain separate.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

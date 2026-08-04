@@ -5,7 +5,7 @@ It validates an Activity-on-Arrow plan, calculates precedence and
 resource-constrained schedules, recommends the next task, and applies
 source-preserving changes through preview-first commands.
 
-Published version `0.6.0` beta implements Grammar 5 and CLI Contract 6,
+Version `0.6.0` implements Grammar 5 and CLI Contract 6,
 including explicit task work events, lifecycle commands, read-only Git
 history, observed velocity, AnalysisResult v4, and NextResult v5. It adds
 complete Draft 2020-12 artifacts for every active Contract 6 result and the
@@ -16,17 +16,18 @@ governance-not-applicable candidate and when a governed preview already
 carries one. It also protects destructive in-place `dag advance` writes with
 exact `HEAD` and stage-0 evidence, returns `Perttool.AdvanceResult.v1`, and
 keeps preview, separate output, and written candidates repository-clean and
-byte-identical. npm `beta` and `latest` resolve to `0.6.0`.
+byte-identical. It remains the npm `latest` compatibility line for this beta
+release.
 Beta releases may contain breaking CLI or schema changes.
 
-The prepared `0.7.0` source atomically activates Grammar 6 and CLI Contract 7
+Version `0.7.0` beta atomically activates Grammar 6 and CLI Contract 7
 conditional plan assurance. It exposes 44 commands, 20 root schemas,
 `Perttool.PlanAssuranceResult.v1`, assurance-aware Check/Project/Analysis/Next/
 Mutation/Advance results, `Perttool.GovernanceDecision.v2`, and Mermaid
-semantic profile 2. Its package and CLI identity is `0.7.0`, but no candidate
-or public `perttool@0.7.0` package has been accepted or published. npm
-`beta`, npm `latest`, and unqualified installs therefore remain at published
-Contract 6 `0.6.0`. Both versions require Node.js 22 or later.
+semantic profile 2. Its package and CLI identity is `0.7.0`, and `beta` is its
+publication channel. This release does not move npm `latest` from Contract 6
+`0.6.0`; channel promotion remains a separate decision. Both versions require
+Node.js 22 or later.
 The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
 and the first machine-schema Contract 6 artifact remains available by pinning
 `0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
@@ -35,41 +36,41 @@ dist-tag; historical `0.1.0-alpha.2` remains available by exact pin.
 
 ## Run without installing
 
-Use `npx` for an occasional invocation and select Contract 6 explicitly:
+After beta publication, use `npx` for an occasional Contract 7 invocation and
+select the version explicitly:
 
 ```sh
-npx --yes --package=perttool@0.6.0 -- perttool --version
-npx --yes --package=perttool@0.6.0 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.6.0 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.6.0 -- perttool project history PLAN.pert --format json
+npx --yes --package=perttool@0.7.0 -- perttool --version
+npx --yes --package=perttool@0.7.0 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.7.0 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.7.0 -- perttool plan-assurance show PLAN.pert --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.6.0 -- perttool --version
-npm exec --yes --package=perttool@0.6.0 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.6.0 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.6.0 -- perttool project history PLAN.pert --format json
+npm exec --yes --package=perttool@0.7.0 -- perttool --version
+npm exec --yes --package=perttool@0.7.0 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.7.0 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.7.0 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
-cache. Pinning `0.4.0` selects Contract 5 and therefore omits Grammar 5
-lifecycle and history; `0.3.0` selects Contract 4, and `0.2.0` selects
+cache. Pinning `0.6.0` selects Contract 6 and omits Grammar 6 assurance;
+`0.4.0` selects Contract 5, `0.3.0` selects Contract 4, and `0.2.0` selects
 Contract 3.
 
 ## Install
 
-Install the CLI globally when it is used regularly:
+Install the Contract 7 CLI globally by exact version when it is used regularly:
 
 ```sh
-npm install --global perttool
+npm install --global perttool@0.7.0
 perttool --version
 ```
 
-npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6
-`0.6.0`. The
-pre-schema Contract 6 artifact remains available as
+This beta release does not move npm `latest`; an unqualified install therefore
+remains on Contract 6 `0.6.0`. The pre-schema Contract 6 artifact remains available as
 `perttool@0.5.0`; Contract 5,
 Contract 4, and Contract 3 remain available as exact pins
 `perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`. The retired alpha
@@ -441,7 +442,7 @@ select compatibility from each result's `schema_version`, not from
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. The current source requires
+Use `--format json` for machine consumers. Version `0.7.0` requires
 `cli_contract_version == 7`. Published `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
 `0.5.2`, `0.5.1`, and `0.5.0` consumers must check
 `cli_contract_version == 6`;
@@ -457,7 +458,7 @@ Runtime `PTGOV-104` visibility for assertions on governed previews requires
 `Perttool.AdvanceResult.v1`, history-safety model 1, and the
 repository-clean advance candidate require `0.6.0`; see the
 [`0.5.5` to `0.6.0` migration](docs/process/0.5.5-to-0.6.0-migration.md).
-The prepared `0.7.0` source changes to Grammar 6, CLI Contract 7, and
+Version `0.7.0` changes to Grammar 6, CLI Contract 7, and
 assurance-aware result identities; see the
 [`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md).
 In every case, check the result-specific `schema_version` before reading the

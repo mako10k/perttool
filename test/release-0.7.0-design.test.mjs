@@ -61,7 +61,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     design,
     /^### Post-MVP Slice 4Q: Conditional plan assurance `v0\.7\.0` beta minor$/m,
   );
-  assert.match(procedure, /- Status: Planned 1\.0/);
+  assert.match(procedure, /- Status: Candidate correction in progress 1\.0/);
   assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.6\.0`, no `alpha`/);
   assert.match(procedure, /initial 2026-08-04 instruction authorized only\s+`RELEASE_070_GATE_DESIGN`/);
   assert.match(procedure, /later instruction separately authorized\s+`RELEASE_070_CONTRACT_7_READINESS`/);
@@ -107,8 +107,8 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(
     readme,
-    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.6\.0`/,
+    /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
   );
-  assert.match(readme, /The prepared `0\.7\.0` source atomically activates/);
-  assert.match(readme, /no candidate\s+or public `perttool@0\.7\.0` package has been accepted or published/);
+  assert.match(readme, /Version `0\.7\.0` beta atomically activates/);
+  assert.match(readme, /package=perttool@0\.7\.0/);
 });
