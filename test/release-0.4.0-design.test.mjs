@@ -140,7 +140,7 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
   assert.match(readme, /exact pins\s+`perttool@0\.4\.0`/);
   assert.match(
     readme,
-    /npm `beta`, npm `latest`, and an unqualified install resolve to Contract 6\s+`0\.6\.0`/,
+    /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
   );
   assert.match(
     readme,
