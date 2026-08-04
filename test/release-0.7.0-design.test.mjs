@@ -20,6 +20,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     readiness,
     candidate,
     publish,
+    latestPromotion,
     migration,
     publicAcceptance,
     finalAcceptance,
@@ -36,6 +37,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     repositoryText("docs/process/0.7.0-contract7-readiness.md"),
     repositoryText("docs/process/0.7.0-candidate.md"),
     repositoryText("docs/process/0.7.0-publish.md"),
+    repositoryText("docs/process/0.7.0-latest-promotion.md"),
     repositoryText("docs/process/0.6.0-to-0.7.0-migration.md"),
     repositoryText("docs/process/plan-assurance-public-contract-acceptance.md"),
     repositoryText("docs/process/plan-assurance-acceptance.md"),
@@ -83,6 +85,11 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.match(publish, /actions\/runs\/30895944899/);
   assert.match(publish, /`beta=0\.7\.0`, unchanged `latest=0\.6\.0`, and no `alpha`/);
   assert.match(publish, /SHA-256 `8585adb5c3c2c5caeb5c2b453141c1fd87426b918ee235f21a80f557a0f4d623`/);
+  assert.match(latestPromotion, /- Status: Complete/);
+  assert.match(latestPromotion, /npm dist-tag add perttool@0\.7\.0 latest/);
+  assert.match(latestPromotion, /`beta=latest=0\.7\.0` with no `alpha`/);
+  assert.match(latestPromotion, /the 44-command registry/);
+  assert.match(latestPromotion, /the 20-root schema catalog/);
   assert.match(migration, /- Status: Accepted 1\.0/);
   assert.match(migration, /`cli_contract_version == 7`/);
   assert.match(migration, /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/);
@@ -110,6 +117,8 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     /^task RELEASE_070_PUBLISH RELEASE_070_CANDIDATE_ACCEPTED -> RELEASE_070_PUBLISHED:\n[\s\S]*?^  status done$/m,
   );
   assert.match(plan, /user separately authorizes this exact candidate/);
+  assert.match(plan, /Preserve the publication-time fact that beta=0\.7\.0 while latest remained 0\.6\.0/);
+  assert.match(plan, /post-publication promotion now reports beta=latest=0\.7\.0/);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);

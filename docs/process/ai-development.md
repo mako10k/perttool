@@ -415,8 +415,11 @@ version-bearing preparation, one immutable candidate, separately authorized
 GitHub/npm `beta` publication, and durable acceptance. The initial 2026-08-04
 instruction authorized only gate design, and a later instruction separately
 authorized Contract 7 readiness; the next instruction separately authorized
-source preparation; the current instruction separately authorizes candidate
-acceptance. The prepared manifest, lockfile, and CLI identify `0.7.0`, and
+source preparation; subsequent instructions authorized candidate acceptance
+and PUBLISH. The user then separately authorized the exact `0.7.0` npm
+`latest` promotion, and the current instruction authorizes the narrow
+acceptance-condition replan and durable acceptance. The prepared manifest,
+lockfile, and CLI identify `0.7.0`, and
 `docs/process/0.7.0-preparation.md` records the accepted local gate. The
 `RELEASE_070_CANDIDATE` was authorized only for clean-source verification,
 read-only external preflight, and one retained tarball. Final review rejected
@@ -431,12 +434,15 @@ publication boundary. The user later separately authorized PUBLISH from that
 unchanged candidate. Release commit and peeled `v0.7.0` target `1279e3c`
 agree; Node.js 22 and 24 CI run `30895944899` passed; the GitHub prerelease,
 npm `beta=0.7.0`, and all three tarball copies agree at SHA-256
-`8585adb5...f4d623`; `latest=0.6.0` and absent `alpha` remain unchanged.
-Gate design, Contract 7 readiness, source preparation, candidate acceptance,
-and PUBLISH are complete before advance. Fresh complete NextResult v6
-recommends only `RELEASE_070_ACCEPTANCE`, which remains a separate decision.
-Do not infer authority for durable acceptance, npm `latest`, either plan
-advance, or Issue mutation.
+`8585adb5...f4d623`; at publication, `latest=0.6.0` and `alpha` remained
+absent. Exactly one separately authorized post-publication mutation later made
+`beta=latest=0.7.0`; an unqualified isolated installation confirmed Contract
+7, 44 commands, and 20 schemas. Gate design, Contract 7 readiness, source
+preparation, candidate acceptance, and PUBLISH are complete before advance.
+The acceptance task now preserves both time-bound facts without changing its
+DAG, estimate, or resources. Fresh complete NextResult v6 recommends only
+`RELEASE_070_ACCEPTANCE`. Do not infer authority for either plan advance or
+Issue mutation.
 
 ### 5.1 Adopted Recommendation authority
 

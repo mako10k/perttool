@@ -156,7 +156,7 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
 
   assert.equal(
     sha256(releasePlan),
-    "sha256:5a5f0af43767cc632646581df299f74b7ed0950bcd921bb7950e9fe55e52c538",
+    "sha256:69594c30f524b95ebdfae4a850e66a042fb053f358591565e4491d7c71582110",
   );
   assert.match(
     releasePlan,

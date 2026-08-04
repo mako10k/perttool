@@ -1487,7 +1487,10 @@ source preparation, one immutable candidate, separately authorized PUBLISH,
 and durable acceptance. The initial 2026-08-04 instruction authorized the
 local gate-design task, and a later instruction separately authorized Contract
 7 readiness; the next instruction separately authorized source preparation;
-the current instruction separately authorizes candidate acceptance.
+subsequent instructions authorized candidate acceptance and PUBLISH. The user
+then separately authorized the exact `0.7.0` npm `latest` promotion, and the
+current instruction authorizes the narrow acceptance-condition replan and
+durable acceptance.
 Read-only external checks at the design decision point report
 `beta=latest=0.6.0`, no maintained `alpha`, unused `0.7.0`, and remote main at
 the earlier accepted ASSURE internal-core commit. The readiness record accepts
@@ -1506,10 +1509,14 @@ Contract 7 file-first and plan-assurance acceptance. Push, tag, GitHub/npm
 publication then completed under the user's separate authorization. Release
 commit and peeled `v0.7.0` target `1279e3c` agree; Node.js 22 and 24 CI run
 `30895944899` passed; the GitHub prerelease, npm `beta=0.7.0`, and all three
-tarball copies agree at SHA-256 `8585adb5...f4d623`; `latest=0.6.0` and absent
-`alpha` remain unchanged. Fresh complete NextResult v6 recommends only
-`RELEASE_070_ACCEPTANCE`. Durable acceptance, npm `latest`, both plan
-advances, and Issue mutation remain separate.
+tarball copies agree at SHA-256 `8585adb5...f4d623`; at publication,
+`latest=0.6.0` and `alpha` remained absent. Exactly one separately authorized
+post-publication mutation later made `beta=latest=0.7.0`; an unqualified
+isolated installation confirmed Contract 7, 44 commands, and 20 schemas. The
+acceptance task now preserves both time-bound facts without changing its DAG,
+estimate, or resources. Fresh complete NextResult v6 recommends only
+`RELEASE_070_ACCEPTANCE`. Durable acceptance, both plan advances, and Issue
+mutation remain separate.
 
 Stage 1 allowed operations:
 

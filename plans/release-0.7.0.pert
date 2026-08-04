@@ -116,7 +116,7 @@ task RELEASE_070_PUBLISH RELEASE_070_CANDIDATE_ACCEPTED -> RELEASE_070_PUBLISHED
 
 task RELEASE_070_ACCEPTANCE RELEASE_070_PUBLISHED -> RELEASE_070_ACCEPTED:
   title "Record durable 0.7.0 beta acceptance"
-  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball facts and digests, registry integrity and metadata, isolated installation from both public channels, complete Contract 7 and conditional plan assurance behavior, beta=0.7.0 and unchanged latest=0.6.0, and exact commands. Record acceptance without altering the immutable artifact, advancing either plan, moving latest, or mutating an Issue."
+  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball facts and digests, registry integrity and metadata, isolated installation from both public channels, and complete Contract 7 and conditional plan assurance behavior. Preserve the publication-time fact that beta=0.7.0 while latest remained 0.6.0; separately verify the authorized post-publication promotion now reports beta=latest=0.7.0 with no alpha and an unqualified isolated install. Record acceptance and exact commands without altering the immutable artifact, changing npm tags, advancing either plan, or mutating an Issue."
   duration 3p
   priority 100
   requires:
