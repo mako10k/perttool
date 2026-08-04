@@ -415,15 +415,17 @@ version-bearing preparation, one immutable candidate, separately authorized
 GitHub/npm `beta` publication, and durable acceptance. The initial 2026-08-04
 instruction authorized only gate design, and a later instruction separately
 authorized Contract 7 readiness; the next instruction separately authorized
-source preparation. The prepared manifest, lockfile, and CLI identify `0.7.0`,
-and `docs/process/0.7.0-preparation.md` records the accepted local gate. Do not
-infer authority for candidate creation, push, tag, GitHub or npm mutation,
-acceptance, npm `latest`, either plan advance, or Issue mutation.
+source preparation; the current instruction separately authorizes candidate
+acceptance. The prepared manifest, lockfile, and CLI identify `0.7.0`, and
+`docs/process/0.7.0-preparation.md` records the accepted local gate. The
+candidate task is active only for clean-source verification, read-only
+external preflight, and one retained tarball. Do not infer authority for push,
+tag, GitHub or npm mutation, durable acceptance, npm `latest`, either plan
+advance, or Issue mutation.
 The live pre-publication baseline is `beta=latest=0.6.0` with no maintained
 `alpha`; re-read it at candidate and PUBLISH boundaries. Gate design,
-Contract 7 readiness, and source preparation are complete before advance, and
-complete NextResult v6 recommends only the separately gated
-`RELEASE_070_CANDIDATE` task.
+Contract 7 readiness, and source preparation are complete before advance;
+`RELEASE_070_CANDIDATE` is active and no later task is startable.
 
 ### 5.1 Adopted Recommendation authority
 

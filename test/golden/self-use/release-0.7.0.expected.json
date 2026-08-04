@@ -33,13 +33,11 @@
   },
   "next": {
     "groups": {
-      "active": [],
-      "ready": [
+      "active": [
         "RELEASE_070_CANDIDATE"
       ],
-      "runnable_now": [
-        "RELEASE_070_CANDIDATE"
-      ],
+      "ready": [],
+      "runnable_now": [],
       "blocked_now": [],
       "upcoming": [
         "RELEASE_070_PUBLISH",

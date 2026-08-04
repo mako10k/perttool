@@ -119,16 +119,17 @@ Mandatory summary:
   and 21p for the first Grammar 6 and CLI Contract 7 conditional-plan-assurance
   beta. The initial 2026-08-04 instruction authorized local gate design, and a
   later instruction separately authorized Contract 7 readiness; the next
-  instruction separately authorized source preparation. The gate
+  instruction separately authorized source preparation; the current
+  instruction separately authorizes candidate acceptance. The gate
   selects suffix-free `0.7.0`, records the read-only `beta=latest=0.6.0` and
   absent-alpha baseline. `RELEASE_070_GATE_DESIGN`,
   `RELEASE_070_CONTRACT_7_READINESS`, and `RELEASE_070_PREPARATION` are complete
   before advance. The prepared package and CLI identity is `0.7.0`, its record
-  is `docs/process/0.7.0-preparation.md`, and complete NextResult v6 recommends
-  only `RELEASE_070_CANDIDATE`. No candidate is accepted and `0.7.0` remains
-  unpublished. Candidate creation, push, tag, GitHub/npm publication, durable
-  acceptance, npm `latest`, both plan advances, and Issue mutation remain
-  separate.
+  is `docs/process/0.7.0-preparation.md`, and `RELEASE_070_CANDIDATE` is active
+  for one clean committed source, read-only external preflight, and one
+  retained immutable tarball. No candidate is yet accepted and `0.7.0`
+  remains unpublished. Push, tag, GitHub/npm publication, durable acceptance,
+  npm `latest`, both plan advances, and Issue mutation remain separate.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation

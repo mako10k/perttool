@@ -95,6 +95,7 @@ task RELEASE_070_CANDIDATE RELEASE_070_SOURCE_PREPARED -> RELEASE_070_CANDIDATE_
   title "Accept one clean 0.7.0 release candidate"
   description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.6.0, no alpha, and protected routes; build one immutable tarball outside the worktree; and accept its modification time, sizes, file count, digests, and installed Contract 7 behavior. This task performs no external write."
   duration 4p
+  status active
   priority 100
   requires:
     DEVELOPERS 1
@@ -167,3 +168,10 @@ work_event WE-b21be1dcdf0c4740843668ccb9ad14c6ab1ef08b729502401f62817a09bbe05c:
   occurred_at 2026-08-04T17:33:39+09:00
   active_time 0.175h
   effort 0.175ph
+
+work_event WE-9a6e18e1d05b9d8265511fd685349f14a5d0ef557bf088ff8ef9d8c2e9680755:
+  model 1
+  task RELEASE_070_CANDIDATE
+  kind start
+  occurred_at 2026-08-04T17:46:03+09:00
+  planned_value 4p
