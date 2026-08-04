@@ -66,6 +66,12 @@ for required in \
   package/LICENSE \
   package/CHANGELOG.md \
   package/dist/cli.js \
+  package/dist/assurance/compatibility.js \
+  package/dist/assurance/compatibility.d.ts \
+  package/dist/assurance/mermaid.js \
+  package/dist/assurance/mermaid.d.ts \
+  package/dist/application/target-assurance-inspection.js \
+  package/dist/application/target-assurance-inspection.d.ts \
   package/dist/help/guide.js \
   package/dist/index.js \
   package/dist/index.d.ts \

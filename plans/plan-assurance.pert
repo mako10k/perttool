@@ -163,7 +163,7 @@ task ASSURE_COMPATIBILITY ASSURE_CORE_INPUT -> ASSURE_COMPATIBILITY_READY:
   title "Close assurance compatibility and conversion boundaries"
   description "Preserve assurance-disabled Grammar 1 through 5 bytes and results; define and implement Grammar 6 formatting, unit migration, project metadata, history, Mermaid loss and round-trip behavior, batch conversion, package inclusion, and direct-edit guidance so no adapter silently drops or invents assurance state."
   duration 5p
-  status planned
+  status done
   priority 85
   requires:
     DEVELOPERS 1
@@ -247,7 +247,7 @@ task ASSURE_HASH_INSPECTION ASSURE_CORE_INPUT -> ASSURE_HASH_INSPECTION_READY:
   title "Implement pinpoint read-only assurance hash inspection"
   description "Implement the read-only plan-assurance hash command and task-filtered show projection over the shared semantic and hash Core. Require an explicit contract, computed-basis, or exported selector; emit exactly one lowercase SHA-256 digest in text success, retain source identity in structured output, return no digest for unavailable selections, and document that inspection neither updates seals nor authorizes manual reseal."
   duration 3p
-  status planned
+  status done
   priority 90
   requires:
     DEVELOPERS 1
@@ -308,3 +308,29 @@ work_event WE-3e9565bf40ae45e6410e6cfb7c1e0a42c763f3a7dad0dc2100c8928693c1145b:
   task ASSURE_ADVANCE_CONTRACTION
   kind finish
   occurred_at 2026-08-04T11:37:59+09:00
+
+work_event WE-5498399d4cd1067ace6c34fc9d80be0d0fe5eba68117c158117746b6d85e3435:
+  model 1
+  task ASSURE_COMPATIBILITY
+  kind start
+  occurred_at 2026-08-04T12:02:22+09:00
+  planned_value 5p
+
+work_event WE-f8a4409f5bb4b8d2f0e83ff5a8b89bce8423cc03e19a23ee0284e86a9d245057:
+  model 1
+  task ASSURE_COMPATIBILITY
+  kind finish
+  occurred_at 2026-08-04T12:51:30+09:00
+
+work_event WE-a3b449f30004a890ae3bc4340c7ca2c555fb7f5ee85614058b2ec0a48e745278:
+  model 1
+  task ASSURE_HASH_INSPECTION
+  kind start
+  occurred_at 2026-08-04T13:35:28+09:00
+  planned_value 3p
+
+work_event WE-23d577cf16ca4dc134d0db1e105e44f560bdb6eec6c32338a98ba314e2c63f92:
+  model 1
+  task ASSURE_HASH_INSPECTION
+  kind finish
+  occurred_at 2026-08-04T13:49:39+09:00

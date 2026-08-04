@@ -168,10 +168,18 @@ active-attention, required-action, and fail-closed new-start authority
 composition. `ASSURE_ADVANCE_CONTRACTION` is complete with internal
 assurance-preserving receipt creation and pruning, exact retained-basis
 equality, Grammar 6 destructive history provenance, independent history-force
-composition, and digest-bound separate-output persistence. All six completed
-declarations remain pre-advance. Fresh complete NextResult v5 recommends and
-authorizes only `ASSURE_COMPATIBILITY`; `ASSURE_HASH_INSPECTION` is raw
-runnable but deferred by normal authority and remains separately planned.
+composition, and digest-bound separate-output persistence.
+`ASSURE_COMPATIBILITY` is complete with internal Grammar 6 formatting,
+version-preserving unit migration, project metadata, actuals-only history,
+semantic Mermaid profile 2, strict loss reporting, mixed-batch preservation,
+package-inventory enforcement, and direct-edit guidance.
+`ASSURE_HASH_INSPECTION` is complete with one internal source-bound
+`Perttool.PlanAssuranceResult.v1` projection, evaluator-ordered task filtering,
+the explicit contract/computed-basis/exported selectors, exact scalar digest
+text, fail-closed unavailable handling, and unchanged Contract 6 discovery.
+All eight completed declarations remain pre-advance. Fresh complete,
+non-truncated NextResult v5 recommends and authorizes only
+`ASSURE_PUBLIC_CONTRACT`.
 Current Grammar 5, CLI Contract 6,
 package root, package `0.6.0`, release selection, remote writes, publication,
 dist-tag movement, and Issue mutation remain unchanged and separately gated.
@@ -480,11 +488,11 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
 - `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.6.0.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
-- `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance.
+- `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance and isolated-package inventory checks for internal assurance compatibility and inspection modules.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
 - `src/actuals/`: active Grammar 5 source projection, deterministic event identity, exact lifecycle reduction, exact measurements, and stored-state validation for task-owned work-event records.
-- `src/assurance/`: internal ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, and assurance-preserving advance contraction; it is not exported by the active package root or CLI Contract 6.
+- `src/assurance/`: internal ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, assurance-preserving advance contraction, compatibility source capture and project metadata, direct-edit guidance, and semantic Mermaid profile 2; it is not exported by the active package root or CLI Contract 6.
 - `src/command/`: immutable typed Contract 6 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 6 editing and actuals Guide.
 - `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
@@ -496,14 +504,14 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/formatter/`: the active Grammar 1/2/3/4/5 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4/5 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 6 package surface.
-- `src/history/`: active read-only Git probe, pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with an internal Grammar 6 assurance-record inventory extension.
+- `src/history/`: active read-only Git probe, validated-snapshot-injected pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with internal Grammar 6 history and assurance-record inventory extensions.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5/6 target-validation adapters.
-- `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, and localized version-upgrade inputs.
+- `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, localized version-upgrade inputs, and internal retained Grammar 6 migration support.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
 - `src/parser/`: the active Grammar 1/2/3/4/5 parser with identity-checked task-owned work-event source.
 - `src/semantic/`: active Grammar 1/2/3/4/5 validated-document boundaries, task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
-- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, internal Grammar 6 assurance mutation and advance persistence, assurance-aware analysis/Next and independent assurance/history guard composition, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
+- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, internal Grammar 6 assurance mutation, unit migration, advance persistence, and read-only hash inspection, assurance-aware analysis/Next and independent assurance/history guard composition, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 

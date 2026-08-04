@@ -8,28 +8,23 @@
       "tasks": 10,
       "gates": 6,
       "errors": 0,
-      "warnings": 7
+      "warnings": 10
     }
   },
   "analyze": {
     "duration_unit": "point",
-    "precedence_makespan": "18/1",
+    "precedence_makespan": "13/1",
     "precedence_forecast_unit": "day",
-    "precedence_forecast": "36/29",
+    "precedence_forecast": "26/29",
     "precedence_critical_tasks": [
-      "ASSURE_COMPATIBILITY",
       "ASSURE_PUBLIC_CONTRACT",
       "ASSURE_ACCEPTANCE"
     ],
-    "resource_makespan": "21/1",
-    "resource_forecast": "42/29",
-    "resource_delay": "3/1",
-    "resource_arcs": [
-      "resource:ASSURE_HASH_INSPECTION:ASSURE_COMPATIBILITY"
-    ],
+    "resource_makespan": "13/1",
+    "resource_forecast": "26/29",
+    "resource_delay": "0/1",
+    "resource_arcs": [],
     "schedule_critical_tasks": [
-      "ASSURE_HASH_INSPECTION",
-      "ASSURE_COMPATIBILITY",
       "ASSURE_PUBLIC_CONTRACT",
       "ASSURE_ACCEPTANCE"
     ]
@@ -38,25 +33,16 @@
     "groups": {
       "active": [],
       "ready": [
-        "ASSURE_HASH_INSPECTION",
-        "ASSURE_COMPATIBILITY"
+        "ASSURE_PUBLIC_CONTRACT"
       ],
       "runnable_now": [
-        "ASSURE_HASH_INSPECTION"
+        "ASSURE_PUBLIC_CONTRACT"
       ],
       "blocked_now": [],
       "upcoming": [
-        "ASSURE_PUBLIC_CONTRACT",
         "ASSURE_ACCEPTANCE"
       ]
     },
-    "resource_rejection": {
-      "task_id": "ASSURE_COMPATIBILITY",
-      "resource_id": "CLI_SURFACE",
-      "capacity": 1,
-      "earlier_selected_task_ids": [
-        "ASSURE_HASH_INSPECTION"
-      ]
-    }
+    "resource_rejection": null
   }
 }

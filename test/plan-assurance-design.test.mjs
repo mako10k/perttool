@@ -39,7 +39,7 @@ test("plan assurance design separates dependencies, state, and authority", async
   assert.match(specification, /- Status: Normative target 1\.0/);
   assert.match(
     specification,
-    /- Runtime status: Internal hash\/state, Grammar 6 source, governed mutation,\s+and assurance-authority Cores implemented; public runtime not activated/,
+    /- Runtime status: Internal hash\/state, Grammar 6 source, governed mutation,\s+assurance-authority, advance-contraction, compatibility, and read-only\s+hash-inspection Cores\s+implemented; public runtime not activated/,
   );
   assert.match(specification, /Grammar 1 through 5 and CLI Contract 6 remain\s+unchanged/);
 
@@ -130,7 +130,7 @@ test("all fourteen plan assurance design cases are dependency ordered", async ()
   assert.equal(fixture.hash_model_version, 1);
   assert.equal(
     fixture.runtime_status,
-    "internal_hash_source_and_mutation_cores_only",
+    "internal_implementation_through_hash_inspection_only",
   );
   assert.equal(fixture.relation_source_target.keyword, "task_relation");
   assert.equal(fixture.relation_source_target.arrow, "->");

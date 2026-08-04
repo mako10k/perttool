@@ -22,6 +22,8 @@ import type {
   MigrationVelocityDisposition,
 } from "../migration/grammar-boundary.js";
 import {
+  normalizeUnitMigrationRequest,
+  prepareUnitMigrationRequest,
   UNIT_MIGRATION_IDENTITY,
   unitMigrationCause,
   type ExactMigrationVelocity,
@@ -34,6 +36,7 @@ import {
   TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
   TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
   TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE,
+  TARGET_GRAMMAR_6_PROJECT_MUTATION_PROFILE,
 } from "../mutation/project.js";
 import {
   applyTextEdits,
@@ -44,13 +47,19 @@ import type {
   TargetGrammar3Capability,
   TargetGrammar4Capability,
   TargetGrammar5Capability,
+  TargetGrammar6Capability,
 } from "../parser/document-parser.js";
 import {
   validateTargetGrammar3Document,
   validateTargetGrammar4Document,
   validateTargetGrammar5Document,
+  validateTargetGrammar6Document,
   type TargetValidationOptions,
 } from "../semantic/target-validator.js";
+import {
+  assuranceOwnedSourceEqual,
+  captureAssuranceOwnedSource,
+} from "../assurance/compatibility.js";
 import {
   prepareTargetUnitMigrationRequest,
   type TargetUnitMigrationRequestFailure,
@@ -63,11 +72,11 @@ export interface TargetUnitMigrationCandidateOptions
   readonly updatedLabel?: string;
 }
 
-interface TargetUnitMigrationCandidateBase {
+interface TargetUnitMigrationCandidateBase<GrammarVersion extends number> {
   readonly unitMigration: typeof UNIT_MIGRATION_IDENTITY;
   readonly documentId: string | null;
-  readonly sourceGrammarVersion: MigrationGrammarVersion | null;
-  readonly targetGrammarVersion: MigrationGrammarVersion | null;
+  readonly sourceGrammarVersion: GrammarVersion | null;
+  readonly targetGrammarVersion: GrammarVersion | null;
   readonly grammarDisposition: MigrationGrammarDisposition | null;
   readonly sourceUnit: DurationUnit | null;
   readonly targetUnit: DurationUnit;
@@ -88,7 +97,7 @@ interface TargetUnitMigrationCandidateBase {
 }
 
 export interface TargetUnitMigrationCandidateSuccess
-  extends TargetUnitMigrationCandidateBase {
+  extends TargetUnitMigrationCandidateBase<MigrationGrammarVersion> {
   readonly ok: true;
   readonly sourceGrammarVersion: MigrationGrammarVersion;
   readonly targetGrammarVersion: MigrationGrammarVersion;
@@ -100,7 +109,7 @@ export interface TargetUnitMigrationCandidateSuccess
 }
 
 export interface TargetUnitMigrationCandidateFailure
-  extends TargetUnitMigrationCandidateBase {
+  extends TargetUnitMigrationCandidateBase<MigrationGrammarVersion> {
   readonly ok: false;
   readonly changed: false;
   readonly convertedFields: readonly [];
@@ -115,6 +124,35 @@ export interface TargetUnitMigrationCandidateFailure
 export type TargetUnitMigrationCandidate =
   | TargetUnitMigrationCandidateSuccess
   | TargetUnitMigrationCandidateFailure;
+
+export interface TargetGrammar6UnitMigrationCandidateSuccess
+  extends TargetUnitMigrationCandidateBase<6> {
+  readonly ok: true;
+  readonly sourceGrammarVersion: 6;
+  readonly targetGrammarVersion: 6;
+  readonly grammarDisposition: "retained";
+  readonly sourceUnit: DurationUnit;
+  readonly updatedDigest: string;
+  readonly updatedText: string;
+  readonly diff: string;
+}
+
+export interface TargetGrammar6UnitMigrationCandidateFailure
+  extends TargetUnitMigrationCandidateBase<6> {
+  readonly ok: false;
+  readonly changed: false;
+  readonly convertedFields: readonly [];
+  readonly reversibility: "not_applicable";
+  readonly qualifications: readonly [];
+  readonly updatedDigest: null;
+  readonly updatedText: null;
+  readonly diff: null;
+  readonly edits: readonly [];
+}
+
+export type TargetGrammar6UnitMigrationCandidate =
+  | TargetGrammar6UnitMigrationCandidateSuccess
+  | TargetGrammar6UnitMigrationCandidateFailure;
 
 function digest(text: string): string {
   return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
@@ -202,7 +240,7 @@ function canonicalVelocity(velocity: ExactMigrationVelocity): string {
 }
 
 function effectiveVelocity(
-  prepared: TargetUnitMigrationRequestSuccess,
+  prepared: Pick<TargetUnitMigrationRequestSuccess, "effectiveVelocity">,
 ): ExactMigrationVelocity {
   if (prepared.effectiveVelocity === null) {
     throw new Error("changing migration has no effective velocity");
@@ -246,7 +284,7 @@ function projectConfigurationEdits(
 }
 
 function durationEdits(
-  prepared: TargetUnitMigrationRequestSuccess,
+  prepared: Pick<TargetUnitMigrationRequestSuccess, "durationInventory">,
   convertedFields: readonly ExactUnitMigrationConvertedField[],
 ): readonly TextEdit[] {
   if (prepared.durationInventory.length !== convertedFields.length) {
@@ -356,8 +394,14 @@ function sourceTemporalTokens(
 }
 
 function assertCandidatePostconditions(
-  prepared: TargetUnitMigrationRequestSuccess,
-  targetGrammarVersion: MigrationGrammarVersion,
+  prepared: Pick<
+    TargetUnitMigrationRequestSuccess,
+    | "targetUnit"
+    | "effectiveVelocity"
+    | "velocityDisposition"
+    | "preservedTemporalFields"
+  >,
+  targetGrammarVersion: number,
   convertedFields: readonly ExactUnitMigrationConvertedField[],
   candidateDocument: DocumentNode<TargetDeclarationKind>,
 ): void {
@@ -501,6 +545,271 @@ export function planTargetUnitMigrationCandidate(
     sourceGrammarVersion: converted.sourceGrammarVersion,
     targetGrammarVersion: converted.targetGrammarVersion,
     grammarDisposition: converted.grammarDisposition,
+    sourceUnit: prepared.sourceUnit,
+    targetUnit: prepared.targetUnit,
+    effectiveVelocity: prepared.effectiveVelocity,
+    velocityDisposition: prepared.velocityDisposition,
+    changed: true,
+    convertedFields: converted.convertedFields,
+    reversibility: converted.reversibility,
+    qualifications: converted.qualifications,
+    unavailableCauses: prepared.unavailableCauses,
+    originalDigest,
+    updatedDigest: digest(updatedText),
+    updatedText,
+    diff: createUnifiedDiff(text, updatedText, {
+      ...(options.originalLabel === undefined
+        ? {}
+        : { originalLabel: options.originalLabel }),
+      ...(options.updatedLabel === undefined
+        ? {}
+        : { updatedLabel: options.updatedLabel }),
+    }),
+    edits: Object.freeze([...edits]),
+    diagnostics: candidate.diagnostics,
+    diagnosticsTruncated: candidate.diagnosticsTruncated,
+  });
+}
+
+function grammar6MigrationFailure(
+  text: string,
+  targetUnit: DurationUnit,
+  values: {
+    readonly documentId?: string | null;
+    readonly sourceGrammarVersion?: 6 | null;
+    readonly sourceUnit?: DurationUnit | null;
+    readonly effectiveVelocity?: ExactMigrationVelocity | null;
+    readonly velocityDisposition?: MigrationVelocityDisposition | null;
+    readonly unavailableCauses?: readonly UnitMigrationUnavailableCause[];
+    readonly diagnostics?: readonly Diagnostic[];
+    readonly diagnosticsTruncated?: boolean;
+  } = {},
+): TargetGrammar6UnitMigrationCandidateFailure {
+  return Object.freeze({
+    ok: false,
+    unitMigration: UNIT_MIGRATION_IDENTITY,
+    documentId: values.documentId ?? null,
+    sourceGrammarVersion: values.sourceGrammarVersion ?? null,
+    targetGrammarVersion: null,
+    grammarDisposition: null,
+    sourceUnit: values.sourceUnit ?? null,
+    targetUnit,
+    effectiveVelocity: values.effectiveVelocity ?? null,
+    velocityDisposition: values.velocityDisposition ?? null,
+    changed: false,
+    convertedFields: Object.freeze([]) as readonly [],
+    reversibility: "not_applicable",
+    qualifications: Object.freeze([]) as readonly [],
+    unavailableCauses: values.unavailableCauses ?? Object.freeze([]),
+    originalDigest: digest(text),
+    updatedDigest: null,
+    updatedText: null,
+    diff: null,
+    edits: Object.freeze([]) as readonly [],
+    diagnostics: values.diagnostics ?? Object.freeze([]),
+    diagnosticsTruncated: values.diagnosticsTruncated ?? false,
+  });
+}
+
+function grammar6ProjectConfigurationEdits(
+  text: string,
+  document: DocumentNode<TargetDeclarationKind>,
+  prepared: Pick<
+    TargetUnitMigrationRequestSuccess,
+    "targetUnit" | "effectiveVelocity" | "velocityDisposition"
+  >,
+): readonly TextEdit[] {
+  const set = {
+    durationUnit: prepared.targetUnit,
+    ...(prepared.velocityDisposition === "replaced" ||
+      prepared.velocityDisposition === "inserted"
+      ? { velocity: canonicalVelocity(effectiveVelocity(prepared)) }
+      : {}),
+  };
+  const planned = planProjectMutationEdits(
+    text,
+    document as unknown as Parameters<typeof planProjectMutationEdits>[1],
+    { kind: "project.set", set },
+    TARGET_GRAMMAR_6_PROJECT_MUTATION_PROFILE,
+  );
+  if (planned.diagnostic !== undefined) {
+    throw new Error(
+      `Grammar 6 unit migration project edit planning failed: ${planned.diagnostic.code}`,
+    );
+  }
+  return planned.edits;
+}
+
+export function planTargetGrammar6UnitMigrationCandidate(
+  text: string,
+  request: UnitMigrationRequest,
+  capability: TargetGrammar6Capability,
+  options: TargetUnitMigrationCandidateOptions = {},
+): TargetGrammar6UnitMigrationCandidate {
+  const normalizedRequest = normalizeUnitMigrationRequest(request);
+  const checked = validateTargetGrammar6Document(text, capability, options);
+  if (
+    !checked.ok ||
+    checked.validatedDocument === null ||
+    checked.validatedDocument.grammarVersion !== 6
+  ) {
+    return grammar6MigrationFailure(text, normalizedRequest.targetUnit, {
+      documentId: checked.documentId,
+      diagnostics: checked.diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+    });
+  }
+  const validated = checked.validatedDocument;
+  const prepared = prepareUnitMigrationRequest(
+    {
+      grammarVersion: 6,
+      document: validated.document,
+    },
+    normalizedRequest,
+  );
+  if (!prepared.ok) {
+    return grammar6MigrationFailure(text, prepared.targetUnit, {
+      documentId: checked.documentId,
+      sourceGrammarVersion: 6,
+      sourceUnit: prepared.sourceUnit,
+      unavailableCauses: prepared.unavailableCauses,
+      diagnostics: checked.diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+    });
+  }
+  const converted = convertPreparedUnitMigrationRequest(prepared);
+  if (
+    converted.sourceGrammarVersion !== 6 ||
+    converted.targetGrammarVersion !== 6 ||
+    converted.grammarDisposition !== "retained"
+  ) {
+    throw new Error("Grammar 6 unit migration did not retain its grammar boundary");
+  }
+  const originalDigest = digest(text);
+  if (!prepared.changed) {
+    return Object.freeze({
+      ok: true,
+      unitMigration: UNIT_MIGRATION_IDENTITY,
+      documentId: checked.documentId,
+      sourceGrammarVersion: 6,
+      targetGrammarVersion: 6,
+      grammarDisposition: "retained",
+      sourceUnit: prepared.sourceUnit,
+      targetUnit: prepared.targetUnit,
+      effectiveVelocity: prepared.effectiveVelocity,
+      velocityDisposition: prepared.velocityDisposition,
+      changed: false,
+      convertedFields: converted.convertedFields,
+      reversibility: converted.reversibility,
+      qualifications: converted.qualifications,
+      unavailableCauses: prepared.unavailableCauses,
+      originalDigest,
+      updatedDigest: originalDigest,
+      updatedText: text,
+      diff: "",
+      edits: Object.freeze([]),
+      diagnostics: checked.diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+    });
+  }
+
+  const protectedBefore = captureAssuranceOwnedSource(text, validated);
+  let edits: readonly TextEdit[];
+  let updatedText: string;
+  try {
+    edits = normalizeTextEdits(
+      text,
+      [
+        ...grammar6ProjectConfigurationEdits(
+          text,
+          validated.document,
+          prepared,
+        ),
+        ...durationEdits(prepared, converted.convertedFields),
+      ],
+      "Grammar 6 unit migration candidate",
+    );
+    updatedText = applyTextEdits(text, edits);
+  } catch (error) {
+    return grammar6MigrationFailure(text, prepared.targetUnit, {
+      documentId: checked.documentId,
+      sourceGrammarVersion: 6,
+      sourceUnit: prepared.sourceUnit,
+      effectiveVelocity: prepared.effectiveVelocity,
+      velocityDisposition: prepared.velocityDisposition,
+      unavailableCauses: Object.freeze([unitMigrationCause("invalid_candidate")]),
+      diagnostics: Object.freeze([
+        ...checked.diagnostics,
+        Object.freeze({
+          code: "PTMIG-409",
+          severity: "error" as const,
+          message: error instanceof Error
+            ? error.message
+            : "Grammar 6 unit migration edit planning failed",
+          helpTopic: "project.migrate-unit",
+        }),
+      ]),
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+    });
+  }
+  const candidate = validateTargetGrammar6Document(
+    updatedText,
+    capability,
+    options,
+  );
+  if (
+    !candidate.ok ||
+    candidate.validatedDocument === null ||
+    candidate.validatedDocument.grammarVersion !== 6
+  ) {
+    return grammar6MigrationFailure(text, prepared.targetUnit, {
+      documentId: checked.documentId,
+      sourceGrammarVersion: 6,
+      sourceUnit: prepared.sourceUnit,
+      effectiveVelocity: prepared.effectiveVelocity,
+      velocityDisposition: prepared.velocityDisposition,
+      unavailableCauses: Object.freeze([unitMigrationCause("invalid_candidate")]),
+      diagnostics: candidate.diagnostics,
+      diagnosticsTruncated: candidate.diagnosticsTruncated,
+    });
+  }
+  if (!assuranceOwnedSourceEqual(
+    protectedBefore,
+    captureAssuranceOwnedSource(updatedText, candidate.validatedDocument),
+  )) {
+    return grammar6MigrationFailure(text, prepared.targetUnit, {
+      documentId: checked.documentId,
+      sourceGrammarVersion: 6,
+      sourceUnit: prepared.sourceUnit,
+      effectiveVelocity: prepared.effectiveVelocity,
+      velocityDisposition: prepared.velocityDisposition,
+      unavailableCauses: Object.freeze([unitMigrationCause("invalid_candidate")]),
+      diagnostics: Object.freeze([
+        ...candidate.diagnostics,
+        Object.freeze({
+          code: "PTMIG-409",
+          severity: "error" as const,
+          message:
+            "Grammar 6 unit migration changed assurance-owned source",
+          helpTopic: "project.migrate-unit",
+        }),
+      ]),
+      diagnosticsTruncated: candidate.diagnosticsTruncated,
+    });
+  }
+  assertCandidatePostconditions(
+    prepared,
+    6,
+    converted.convertedFields,
+    candidate.validatedDocument.document,
+  );
+  return Object.freeze({
+    ok: true,
+    unitMigration: UNIT_MIGRATION_IDENTITY,
+    documentId: checked.documentId,
+    sourceGrammarVersion: 6,
+    targetGrammarVersion: 6,
+    grammarDisposition: "retained",
     sourceUnit: prepared.sourceUnit,
     targetUnit: prepared.targetUnit,
     effectiveVelocity: prepared.effectiveVelocity,

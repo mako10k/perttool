@@ -4,7 +4,7 @@
   "cli_contract_version": 7,
   "plan_assurance_model_version": 1,
   "hash_model_version": 1,
-  "runtime_status": "internal_hash_source_mutation_and_authority_cores_only",
+  "runtime_status": "internal_implementation_through_hash_inspection_only",
   "registered_command_count": 44,
   "root_schema_count": 20,
   "source_records": [
@@ -33,7 +33,34 @@
     "mutation": "Perttool.MutationResult.v4",
     "advance": "Perttool.AdvanceResult.v2",
     "plan_assurance_show": "Perttool.PlanAssuranceResult.v1",
+    "plan_assurance_hash": "Perttool.PlanAssuranceResult.v1",
     "governance_decision": "Perttool.GovernanceDecision.v2"
+  },
+  "inspection": {
+    "hash_kinds": ["contract", "computed-basis", "exported"],
+    "result_root_fields": [
+      "schema_version",
+      "cli_contract_version",
+      "tool_version",
+      "operation",
+      "ok",
+      "document_id",
+      "source",
+      "source_digest",
+      "diagnostics",
+      "diagnostics_truncated",
+      "grammar_version",
+      "selected_task_ids",
+      "task_id",
+      "kind",
+      "selected_hash",
+      "assurance"
+    ],
+    "hash_text_success_pattern": "^sha256:[0-9a-f]{64}\\n$",
+    "unknown_task_diagnostic": "PTASSURE-302",
+    "unavailable_hash_diagnostic": "PTASSURE-203",
+    "failure_text_bytes": 0,
+    "inspection_mutates_source": false
   },
   "authority_policy": "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",
   "required_action_kinds": [

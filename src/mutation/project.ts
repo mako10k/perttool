@@ -38,7 +38,7 @@ const activeClearableFields = new Set<ProjectClearableField>([
 export interface ProjectMutationProfile {
   readonly exactDurations: boolean;
   readonly governanceSource: boolean;
-  readonly governanceGrammarVersion: 4 | 5;
+  readonly governanceGrammarVersion: 4 | 5 | 6;
   readonly fieldOrder: readonly string[];
 }
 
@@ -87,6 +87,29 @@ export const TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE:
   ProjectMutationProfile = Object.freeze({
     ...TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
     governanceGrammarVersion: 5,
+  });
+
+export const TARGET_GRAMMAR_6_PROJECT_MUTATION_PROFILE:
+  ProjectMutationProfile = Object.freeze({
+    ...TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE,
+    governanceGrammarVersion: 6,
+    fieldOrder: [
+      "version",
+      "title",
+      "description",
+      "as_of",
+      "duration_unit",
+      "velocity",
+      "finish",
+      "goal_owner",
+      "goal_delegates",
+      "dag_owner",
+      "dag_delegates",
+      "plan_assurance_model",
+      "plan_assurance_hash_model",
+      "critical_epsilon",
+      "target_duration",
+    ],
   });
 
 function canonicalDuration(

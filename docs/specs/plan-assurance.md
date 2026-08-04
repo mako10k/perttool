@@ -4,7 +4,9 @@
 - Plan-assurance model target: 1
 - Hash model target: 1
 - Runtime status: Internal hash/state, Grammar 6 source, governed mutation,
-  and assurance-authority Cores implemented; public runtime not activated
+  assurance-authority, advance-contraction, compatibility, and read-only
+  hash-inspection Cores
+  implemented; public runtime not activated
 - Current compatibility boundary: Grammar 1 through 5 and CLI Contract 6 remain
   unchanged
 - Source and public interface target: [Grammar 6 and CLI Contract 7](plan-assurance-interface.md)
@@ -708,6 +710,17 @@ tasks from Git.
   until the coordinated runtime cutover.
 - Publication, plan advance, Issue mutation, and release-channel changes remain
   separate authorization boundaries.
+
+Internal Grammar 6 compatibility operations are fail-closed adapters, not a
+partial public activation. Formatting must retain the same semantic assurance
+projection. Unit migration and unrelated project/batch edits must keep version
+6 and preserve assurance-owned source bytes. History validates Grammar 6 while
+reducing only actuals and never accepts assurance from Git. Mermaid semantic
+profile 2 is the only lossless Grammar 6 conversion; profile 1 and plain output
+require an explicit non-strict loss choice and enumerate each omitted assurance
+fact. The package gate may inspect compiled internal modules, but the active
+root export, CLI registry, help, Guide, schema catalog, and installed Contract 6
+workflow remain unchanged.
 
 ## 12. Non-goals for model 1
 

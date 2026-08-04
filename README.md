@@ -444,6 +444,8 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Conditional Plan Assurance internal mutation Core acceptance](docs/process/plan-assurance-mutation-core-acceptance.md)
 - [Conditional Plan Assurance internal authority Core acceptance](docs/process/plan-assurance-authority-core-acceptance.md)
 - [Conditional Plan Assurance internal advance contraction acceptance](docs/process/plan-assurance-advance-contraction-acceptance.md)
+- [Conditional Plan Assurance internal compatibility acceptance](docs/process/plan-assurance-compatibility-acceptance.md)
+- [Conditional Plan Assurance internal hash inspection acceptance](docs/process/plan-assurance-hash-inspection-acceptance.md)
 - [Conditional Plan Assurance design review](docs/process/plan-assurance-design-review.md)
 - [Conditional Plan Assurance implementation plan](plans/plan-assurance.pert)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)

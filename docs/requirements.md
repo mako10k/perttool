@@ -795,6 +795,37 @@ Must:
 - Keep existing Grammar 1 through 5 and CLI Contract 6 source and result
   identities unchanged until the selected Grammar 6 and CLI Contract 7 target
   atomically activates its results, help, Guide, diagnostics, and migration.
+- Before public activation, provide internal Grammar 6 compatibility adapters
+  for formatting, unit migration, project metadata, project history, atomic
+  batch, and Mermaid conversion. Each adapter must validate the complete
+  Grammar 6 input and candidate and must neither synthesize assurance facts nor
+  remove or rewrite assurance-owned source as an incidental effect.
+- Keep Grammar 6 during unit migration. Convert only the declared duration
+  inventory and required project unit/velocity fields; preserve assurance
+  model fields, relations, seals, outcomes, and receipts byte-for-byte.
+- Treat project history as actuals evidence only. It may validate Grammar 6
+  snapshots and reduce task/work-event history, but it must not infer, repair,
+  or accept assurance from Git, status, commits, or removal history.
+- Use Mermaid semantic profile 2 as the lossless Grammar 6 route. Profile 1 and
+  plain Mermaid must fail under strict loss handling; a non-strict projection
+  must enumerate each omitted assurance project field and assurance-owned
+  declaration and must not claim round-trip fidelity.
+- Keep internal compatibility modules in the distributable `dist` tree while
+  withholding them from the active package root, command registry, help,
+  schemas, and installed Contract 6 workflow until the atomic public task.
+- Direct-edit guidance must state that editing a task, relation, accepted hash,
+  outcome, or receipt can invalidate assurance. Hash inspection is read-only;
+  it neither repairs a seal nor grants reseal or persistent-write authority.
+- Provide one read-only assurance inspection Core shared by the future
+  `plan-assurance show` and `plan-assurance hash` commands. A hash request must
+  identify one task and exactly one of `contract`, `computed-basis`, or
+  `exported`; it must select from the semantic evaluator rather than hashing
+  source bytes. Text success is only the selected canonical digest plus LF,
+  while an unknown task or unavailable selection returns no digest.
+- Keep filtered show and hash results source-bound and closed. They must retain
+  global coverage, return task results in evaluator order, retain cause roots
+  entering selected tasks, and expose no task result outside the requested
+  set. Inspection must not accept, persist, or synthesize an assurance record.
 
 SHA-256 is the first commitment algorithm, with domain-separated model
 identities and canonical lowercase `sha256:` spelling. The threat model is

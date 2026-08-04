@@ -7,7 +7,9 @@
 - Plan-assurance model: 1
 - Hash model: 1
 - Runtime status: Internal hash/state, Grammar 6 source, governed mutation,
-  and assurance-authority Cores implemented; public runtime not activated
+  assurance-authority, advance-contraction, compatibility, and read-only
+  hash-inspection Cores
+  implemented; public runtime not activated
 - Semantic contract: [plan-assurance.md](plan-assurance.md)
 - Active compatibility baseline: Grammar 5, CLI Contract 6, and package 0.6.0
 - Workstream: [../../plans/plan-assurance.pert](../../plans/plan-assurance.pert)
@@ -318,6 +320,36 @@ Hash inspection is not seal acceptance. It does not add, replace, or repair a
 `accepted_basis` consistent with its required `accepted_contract` and
 `accepted_inputs`. Formal acceptance still uses governed `seal` or `reseal`.
 
+The internal implementation fixes the closed
+`Perttool.PlanAssuranceResult.v1` root before public activation. Its common
+fields are `schema_version`, `cli_contract_version`, `tool_version`,
+`operation`, `ok`, `document_id`, `source`, `source_digest`, `diagnostics`,
+`diagnostics_truncated`, `grammar_version`, `selected_task_ids`, `task_id`,
+`kind`, `selected_hash`, and `assurance`. `operation` is exactly
+`plan-assurance.show` or `plan-assurance.hash`. The last three selection fields
+are null for `show`; `hash` sets all three except that `selected_hash` remains
+null on failure. `assurance` is the existing closed
+`PlanAssuranceProjectionV1` or null when no valid projection exists.
+
+An omitted `show --task` filter returns every task result. A supplied filter is
+deduplicated, and results retain evaluator task order rather than caller option
+order. `selected_task_ids` uses that same evaluator order. The projection keeps
+global model identities and coverage, intersects
+task-ID aggregate sets and action affected sets with the selection, retains
+the complete root set of each retained action, and retains every direct and
+inherited cause on each selected task. It returns no unselected task result.
+Any unknown selected task fails atomically with `PTASSURE-302` and no partial
+projection.
+
+`hash` uses the same one-task filtered projection, then reads only
+`contract_hash`, `computed_basis_hash`, or `exported_assurance_hash` from that
+task result. A null value produces one error-severity `PTASSURE-203` for that
+task, keeps `selected_hash` null, and renders an empty text body. Parse,
+validation, unknown-task, and unavailable failures also render an empty text
+body. JSON remains complete for recovery. Inspection accepts no mutation,
+governance, write, actor, owner-assertion, Git, clock, network, or raw-byte hash
+input.
+
 ### 4.2 Seal and reseal
 
 `plan-assurance seal` upgrades Grammar 1 through 5 to Grammar 6 when needed,
@@ -476,6 +508,37 @@ invariant exit 70.
 - No adapter infers seals, outcomes, or receipts from Git or status.
 - CLI Contract 6 and package 0.6.0 remain unchanged until the public task;
   exact old-package pins remain the closed-result compatibility route later.
+
+The internal compatibility implementation fixes these additional rules before
+public activation:
+
+1. A generic source operation first validates the complete Grammar 6 document.
+   Formatter output may canonicalize supported source spelling, but its
+   semantic assurance projection and hashes must be identical. Unit migration,
+   project metadata mutation, and unrelated mixed-batch edits preserve the raw
+   project assurance fields and every `task_relation`, `plan_seal`,
+   `task_outcome`, and `assurance_receipt` declaration byte-for-byte.
+2. Unit migration retains declared version 6. It converts only the existing
+   unit-migration duration inventory plus `project.duration_unit` and an
+   explicitly required `project.velocity`; it validates the final candidate
+   with the identity-checked Grammar 6 capability.
+3. Project metadata projects both assurance model identities explicitly.
+   Project history accepts validated Grammar 1 through 6 snapshots but reduces
+   only task/work-event actuals. It does not include assurance acceptance in an
+   actuals result and does not derive assurance from Git.
+4. Semantic Mermaid profile 2 contains a digest-bound canonical Grammar 6
+   carrier and deterministic graph projection. Import validates the carrier,
+   its digest, the complete Grammar 6 semantics, and exact artifact
+   reproduction. Profile 1 and plain projections are output only under an
+   explicit non-strict loss option and produce one stable loss record for each
+   omitted assurance project field and assurance-owned declaration.
+5. Internal compatibility modules are compiled into `dist` for package-gate
+   testing but remain absent from the package root and all Contract 6 discovery
+   surfaces. Public names, result versions, and option spellings land only in
+   `ASSURE_PUBLIC_CONTRACT`.
+6. Direct-edit guidance leads with semantic fields and affected tasks. A
+   pinpoint digest is supplemental inspection evidence: it never edits a
+   `plan_seal`, repairs a receipt, accepts a plan, or authorizes reseal/write.
 
 ## 8. Help, schema, and activation gate
 

@@ -14,6 +14,7 @@ import {
   TARGET_GRAMMAR_3_PROJECT_MUTATION_PROFILE,
   TARGET_GRAMMAR_4_PROJECT_MUTATION_PROFILE,
   TARGET_GRAMMAR_5_PROJECT_MUTATION_PROFILE,
+  TARGET_GRAMMAR_6_PROJECT_MUTATION_PROFILE,
 } from "../mutation/project.js";
 import {
   TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
@@ -33,8 +34,10 @@ import type {
   TargetGrammar3Capability,
   TargetGrammar4Capability,
   TargetGrammar5Capability,
+  TargetGrammar6Capability,
   TargetGrammar2Capability,
 } from "../parser/document-parser.js";
+import { TARGET_GRAMMAR_6_CAPABILITY } from "../parser/document-parser.js";
 import {
   validateTargetGrammar3Document,
   validateTargetGrammar4Document,
@@ -73,6 +76,13 @@ const targetGrammar5MutationPlanningProfile: MutationPlanningProfile =
     milestone: TARGET_MILESTONE_MUTATION_PROFILE,
   });
 
+const targetGrammar6MutationPlanningProfile: MutationPlanningProfile =
+  Object.freeze({
+    project: TARGET_GRAMMAR_6_PROJECT_MUTATION_PROFILE,
+    task: TARGET_GRAMMAR_3_TASK_MUTATION_PROFILE,
+    milestone: TARGET_MILESTONE_MUTATION_PROFILE,
+  });
+
 export function planTargetGrammar5AtomicMutationEdits(
   text: string,
   document: DocumentNode<TargetDeclarationKind>,
@@ -86,6 +96,26 @@ export function planTargetGrammar5AtomicMutationEdits(
     document as unknown as Parameters<typeof planAtomicMutationEdits>[1],
     mutation,
     targetGrammar5MutationPlanningProfile,
+  );
+}
+
+export function planTargetGrammar6AtomicMutationEdits(
+  text: string,
+  document: DocumentNode<TargetDeclarationKind>,
+  mutation: TargetGovernanceMutation,
+  capability: TargetGrammar6Capability,
+): MutationEditPlan {
+  if (capability !== TARGET_GRAMMAR_6_CAPABILITY) {
+    throw new TypeError("target Grammar 6 assurance source capability is required");
+  }
+  if (mutation.kind === "batch") {
+    throw new Error("target Grammar 6 atomic edit planning does not accept a batch");
+  }
+  return planAtomicMutationEdits(
+    text,
+    document as unknown as Parameters<typeof planAtomicMutationEdits>[1],
+    mutation,
+    targetGrammar6MutationPlanningProfile,
   );
 }
 

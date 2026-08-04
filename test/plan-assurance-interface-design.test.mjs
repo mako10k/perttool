@@ -116,10 +116,21 @@ test("plan assurance interface cases and SHA-256 vectors are fixed", async () =>
   assert.equal(fixture.cli_contract_version, 7);
   assert.equal(
     fixture.runtime_status,
-    "internal_hash_source_mutation_and_authority_cores_only",
+    "internal_implementation_through_hash_inspection_only",
   );
   assert.equal(fixture.registered_command_count, 44);
   assert.equal(fixture.commands.includes("plan-assurance hash"), true);
+  assert.equal(
+    fixture.result_identities.plan_assurance_hash,
+    "Perttool.PlanAssuranceResult.v1",
+  );
+  assert.deepEqual(fixture.inspection.hash_kinds, [
+    "contract",
+    "computed-basis",
+    "exported",
+  ]);
+  assert.equal(fixture.inspection.failure_text_bytes, 0);
+  assert.equal(fixture.inspection.inspection_mutates_source, false);
   assert.equal(fixture.root_schema_count, 20);
   assert.equal(
     fixture.authority_policy,

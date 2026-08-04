@@ -2,7 +2,7 @@
   "schema_version": "Perttool.PlanAssuranceContractCases.v1",
   "plan_assurance_model_version": 1,
   "hash_model_version": 1,
-  "runtime_status": "internal_hash_source_and_mutation_cores_only",
+  "runtime_status": "internal_implementation_through_hash_inspection_only",
   "relation_source_target": {
     "keyword": "task_relation",
     "header_fields": ["id", "predecessor_task_id", "successor_task_id"],

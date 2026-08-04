@@ -25,6 +25,7 @@ import {
 } from "../model/rational.js";
 import type {
   DeclarationNode,
+  DocumentNode,
   ExactDurationValue,
   TargetDeclarationKind,
   WorkEventKind,
@@ -188,11 +189,11 @@ export interface ProjectHistoryMetadata {
   readonly unavailableCauses: readonly ProjectHistoryCause[];
 }
 
-export interface ProjectHistoryCoreResult {
+export interface ProjectHistoryCoreResultFor<GrammarVersion extends number> {
   readonly ok: boolean;
   readonly modelVersion: typeof PROJECT_HISTORY_MODEL_VERSION;
   readonly documentId: string | null;
-  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | null;
+  readonly grammarVersion: GrammarVersion | null;
   readonly history: ProjectHistoryMetadata;
   readonly events: readonly WorkEventHistory[];
   readonly gitRecordedTransitions: readonly GitRecordedTransition[];
@@ -200,16 +201,33 @@ export interface ProjectHistoryCoreResult {
   readonly diagnostics: readonly Diagnostic[];
 }
 
+export type ProjectHistoryCoreResult = ProjectHistoryCoreResultFor<
+  1 | 2 | 3 | 4 | 5
+>;
+
+export interface ProjectHistorySourceValidation<
+  GrammarVersion extends number,
+> {
+  readonly ok: boolean;
+  readonly documentId: string | null;
+  readonly grammarVersion: GrammarVersion | null;
+  readonly document: DocumentNode<TargetDeclarationKind>;
+}
+
+export type ProjectHistorySourceValidator<GrammarVersion extends number> = (
+  text: string,
+) => ProjectHistorySourceValidation<GrammarVersion>;
+
 interface ParsedTask {
   readonly state: Exclude<RecordedTaskState, "absent">;
   readonly identity: string;
   readonly plannedValue: ActualQuantity;
 }
 
-interface ParsedSnapshot {
+interface ParsedSnapshot<GrammarVersion extends number> {
   readonly snapshot: PlanRevisionSnapshot;
   readonly documentId: string | null;
-  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | null;
+  readonly grammarVersion: GrammarVersion | null;
   readonly tasks: ReadonlyMap<string, ParsedTask>;
   readonly events: readonly ActualWorkEvent[];
 }
@@ -546,11 +564,11 @@ function decodeSnapshot(snapshot: PlanRevisionSnapshot): string | null {
   }
 }
 
-function parseSnapshot(
+function parseSnapshot<GrammarVersion extends number>(
   snapshot: PlanRevisionSnapshot,
-  capability: TargetGrammar5Capability,
+  validateSource: ProjectHistorySourceValidator<GrammarVersion>,
 ): {
-  readonly parsed: ParsedSnapshot | null;
+  readonly parsed: ParsedSnapshot<GrammarVersion> | null;
   readonly causes: readonly ProjectHistoryCause[];
 } {
   if (snapshot.source === null) {
@@ -572,13 +590,7 @@ function parseSnapshot(
       causes: Object.freeze([unsupportedSnapshot(snapshot)]),
     };
   }
-  const checked = validateTargetGrammar5Document(text, capability);
-  const project = checked.document.declarations.find(
-    ({ kind }) => kind === "project",
-  );
-  const declaredVersion = project === undefined
-    ? null
-    : fieldNamed(project, "version")?.value ?? 1;
+  const checked = validateSource(text);
   const duplicateIds = checked.document.declarations
     .filter(({ kind }) => kind === "work_event")
     .map(({ id }) => id)
@@ -600,14 +612,7 @@ function parseSnapshot(
   }
   if (
     !checked.ok ||
-    checked.validatedDocument === null ||
-    (
-      declaredVersion !== 1 &&
-      declaredVersion !== 2 &&
-      declaredVersion !== 3 &&
-      declaredVersion !== 4 &&
-      declaredVersion !== 5
-    )
+    checked.grammarVersion === null
   ) {
     return {
       parsed: null,
@@ -615,7 +620,7 @@ function parseSnapshot(
     };
   }
   const tasks = new Map<string, ParsedTask>();
-  for (const declaration of checked.validatedDocument.document.declarations) {
+  for (const declaration of checked.document.declarations) {
     if (declaration.kind !== "task") continue;
     tasks.set(declaration.id, {
       state: taskState(declaration),
@@ -627,9 +632,12 @@ function parseSnapshot(
     parsed: {
       snapshot,
       documentId: checked.documentId,
-      grammarVersion: checked.validatedDocument.grammarVersion,
+      grammarVersion: checked.grammarVersion,
       tasks,
-      events: projectActualsSourceModel(checked.validatedDocument).events,
+      events: projectActualsSourceModel({
+        grammarVersion: checked.grammarVersion,
+        document: checked.document,
+      } as unknown as TargetGrammar5ValidatedDocument).events,
     },
     causes: Object.freeze([]),
   };
@@ -891,10 +899,10 @@ function statusForCauses(
     : "complete";
 }
 
-function emptyResult(
+function emptyResult<GrammarVersion extends number>(
   probe: GitHistoryProbeResult,
   causes: readonly ProjectHistoryCause[],
-): ProjectHistoryCoreResult {
+): ProjectHistoryCoreResultFor<GrammarVersion> {
   const sortedCauses = sortedHistoryCauses(causes);
   return Object.freeze({
     ok: false,
@@ -921,11 +929,11 @@ function emptyResult(
   });
 }
 
-function invalidRequestResult(
+function invalidRequestResult<GrammarVersion extends number>(
   probe: GitHistoryProbeResult,
   cause: "duplicate_task" | "invalid_task_id",
   taskId: string | null,
-): ProjectHistoryCoreResult {
+): ProjectHistoryCoreResultFor<GrammarVersion> {
   return Object.freeze({
     ok: false,
     modelVersion: PROJECT_HISTORY_MODEL_VERSION,
@@ -964,11 +972,13 @@ function invalidRequestResult(
   });
 }
 
-export function inspectProjectHistory(
+export function inspectProjectHistoryWithValidator<
+  GrammarVersion extends number,
+>(
   probe: GitHistoryProbeResult,
   request: HistoryRequest,
-  capability: TargetGrammar5Capability,
-): ProjectHistoryCoreResult {
+  validateSource: ProjectHistorySourceValidator<GrammarVersion>,
+): ProjectHistoryCoreResultFor<GrammarVersion> {
   const adapterCauses = probe.availability.map(fromProbeAvailability);
   if (probe.status === "unavailable") {
     return emptyResult(probe, adapterCauses);
@@ -1008,10 +1018,10 @@ export function inspectProjectHistory(
     cause === "shallow_boundary" || cause === "unsupported_rename"
   );
   let documentId: string | null = null;
-  let grammarVersion: ProjectHistoryCoreResult["grammarVersion"] = null;
+  let grammarVersion: GrammarVersion | null = null;
 
   for (const snapshot of probe.snapshots) {
-    const parsedSnapshot = parseSnapshot(snapshot, capability);
+    const parsedSnapshot = parseSnapshot(snapshot, validateSource);
     causes.push(...parsedSnapshot.causes);
     if (parsedSnapshot.parsed === null) {
       transitionContinuityKnown = false;
@@ -1212,4 +1222,25 @@ export function inspectProjectHistory(
     tasks,
     diagnostics: Object.freeze(sortDiagnostics(sortedCauses.map(diagnostic))),
   });
+}
+
+export function inspectProjectHistory(
+  probe: GitHistoryProbeResult,
+  request: HistoryRequest,
+  capability: TargetGrammar5Capability,
+): ProjectHistoryCoreResult {
+  return inspectProjectHistoryWithValidator(
+    probe,
+    request,
+    (text): ProjectHistorySourceValidation<1 | 2 | 3 | 4 | 5> => {
+      const checked = validateTargetGrammar5Document(text, capability);
+      return {
+        ok: checked.ok && checked.validatedDocument !== null,
+        documentId: checked.documentId,
+        grammarVersion: checked.validatedDocument?.grammarVersion ?? null,
+        document:
+          checked.validatedDocument?.document ?? checked.document,
+      };
+    },
+  );
 }

@@ -57,7 +57,7 @@ import {
   mergeBatchInsertions,
 } from "../application/mutate.js";
 import {
-  planTargetGrammar5AtomicMutationEdits,
+  planTargetGrammar6AtomicMutationEdits,
 } from "../application/target-mutate.js";
 import { projectPlanAssuranceInput } from "./source.js";
 import type {
@@ -1046,10 +1046,11 @@ function planBatchEdits(
     for (const item of mutation.mutations) {
       const planned = isAssuranceMutation(item)
         ? planEdits(text, validated, item, capability)
-        : planTargetGrammar5AtomicMutationEdits(
+        : planTargetGrammar6AtomicMutationEdits(
             text,
             validated.document,
             item,
+            capability,
           );
       if (planned.diagnostic !== undefined) return planned;
       if (

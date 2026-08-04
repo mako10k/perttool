@@ -1407,7 +1407,79 @@ validated Grammar 6 document and extends model-1 destructive provenance to
 removed assurance declarations and pruned receipt fields before the existing
 raw-byte assessment.
 
-#### 6.9.9 Security and activation boundary
+#### 6.9.9 Compatibility adapters and conversion boundary
+
+Compatibility uses internal Grammar 6 adapters rather than widening an active
+Grammar 1-through-5 type or command. Each adapter receives the identity-checked
+Grammar 6 capability, validates the complete input, and validates any complete
+candidate. `src/assurance/compatibility.ts` captures assurance-owned source,
+projects project metadata, defines direct-edit guidance, and supplies the
+Grammar 6 history validator. The existing formatter remains the canonical
+formatter Core. Unit migration and mixed batch reuse the ordinary edit planners
+through a Grammar 6 project-field-order profile so assurance fields are not
+misordered or rewritten.
+
+```text
+validated Grammar 6 source
+  -> capture assurance-owned raw fields and declarations
+  -> run one generic operation
+  -> validate the complete Grammar 6 candidate
+  -> compare protected raw assurance source or semantic projection
+  -> return candidate or fail closed
+```
+
+Project history is read-only and shares the actuals reducer through an injected
+validated-snapshot boundary. The Contract 6 wrapper continues to inject the
+Grammar 5 validator and retains its exact public type. The internal assurance
+wrapper injects Grammar 6 validation and may report grammar version 6, while
+the reducer still reads only tasks and work events. Neither route projects
+seals, outcomes, or receipts as Git-derived evidence.
+
+`src/assurance/mermaid.ts` owns semantic profile 2. Its digest-bound canonical
+Grammar 6 carrier and deterministic graph projection must reproduce the exact
+profile artifact on import. A profile-1 or plain request is strict by default;
+an explicit non-strict request emits projection-only Mermaid plus a stable loss
+record for both assurance project fields and every assurance-owned declaration.
+Such an artifact remains intentionally non-round-trippable.
+
+The internal modules compile under `dist` and are exercised by repository and
+package gates, but `src/index.ts`, the Contract 6 command registry, active help,
+Guide, schema catalog, and installed public workflow remain unchanged. Direct
+edit guidance explains that inspection does not repair or authorize a seal;
+the later public hash command returns supplemental evidence only.
+
+#### 6.9.10 Read-only assurance inspection
+
+`src/application/target-assurance-inspection.ts` is the internal Grammar 6
+application adapter for both future inspection commands. It calls the same
+validated source projection, evaluator, and authority projection used by
+assurance-aware analysis. It never reads raw task slices to produce a digest.
+
+```text
+Grammar 6 text + typed inspection request
+  -> identity-checked validation
+  -> complete assurance evaluation and projection
+  -> exact task-set filter
+  -> optional contract/computed/exported selector
+  -> closed PlanAssuranceResult v1
+  -> JSON or deterministic text renderer
+```
+
+Task filters are sets for selection but not a new ordering authority. Selected
+task results retain evaluator order, aggregate task-ID sets are intersected,
+and retained actions keep their complete causal roots while limiting affected
+IDs to selected tasks. An unknown task returns no partial projection. A hash
+request always narrows to one task and selects an existing evaluator field.
+Null is unavailability, not an instruction to recompute through another path.
+
+The hash text renderer is deliberately scalar: success is one canonical
+digest and LF; every failure is an empty body. Diagnostics remain on the
+diagnostic channel or in JSON. The internal result and renderers compile under
+`dist` but remain absent from the active package root, registry, CLI, help,
+Guide, schema catalog, and installed Contract 6 workflow until
+`ASSURE_PUBLIC_CONTRACT`.
+
+#### 6.9.11 Security and activation boundary
 
 The same `.pert` source may contain task plans and accepted hashes. A direct
 editor can therefore replace both. Model 1 gives deterministic drift detection
@@ -2932,7 +3004,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | CLI Contract 3 registry, help/guide split, and file-first maintenance | Sections 12.2, 15, 16, and 21.2 |
 | Temporal/unit grammar, projections, migration, and Contract 4 boundary | Sections 7.6, 7.7, 10.7, 11, 12, 15, 16, and 18 |
 | Project actuals, lifecycle, Git history, and observed velocity | Sections 2.3, 7.8, 9, 12, and 19 |
-| Conditional plan assurance, dependency modes, reseal, and advance contraction | Sections 2.7, 7.9, 9.3, 11, 12.3, and 20.3 |
+| Conditional plan assurance, dependency modes, reseal, advance contraction, and compatibility adapters | Sections 2.7, 7.9, 9.3, 11, 12.3, and 20.3 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
 | Owner-aware goal/DAG source, authority, and Contract 5 interface/release | Sections 2.6, 7.1, 12.3, 15, 16, and 17 |
 | Mermaid adapter | Chapters 13 and 14 |
