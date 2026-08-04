@@ -35,9 +35,9 @@ Plans are separated by level of detail.
   roadmap from the Grammar 6 and CLI Contract 7 interface through source and
   hash Core, governed mutation, authority, advance, compatibility, atomic
   public cutover, and installed acceptance; interface, internal hash, source,
-  and governed mutation Cores are complete pre-advance, the plan has 10 tasks
-  and 59p after adding pinpoint hash inspection, and assurance authority Core
-  is the current recommendation
+  governed mutation, and assurance authority Cores are complete pre-advance,
+  the plan has 10 tasks and 59p after adding pinpoint hash inspection, and
+  assurance-preserving advance contraction is the current recommendation
 - [cli-surface-reset.pert](cli-surface-reset.pert): independent post-beta plan that maps the human/LLM CLI review and its eight backlog items into design, implementation, breaking migration, and file-first acceptance
 - [release-0.2.0.pert](release-0.2.0.pert): independent Contract 3 beta release plan covering the version decision, local preparation, candidate gate, authorized distribution, and durable acceptance
 - [release-0.3.0.pert](release-0.3.0.pert): independent Contract 4 beta release plan covering the version gate, accepted scheduling-and-units input, preparation, candidate, authorized publication, and durable acceptance

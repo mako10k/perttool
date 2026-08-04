@@ -140,7 +140,7 @@ task ASSURE_AUTHORITY_CORE ASSURE_CORE_INPUT -> ASSURE_AUTHORITY_READY:
   title "Compose assurance into analysis and new-start authority"
   description "Add internal assurance-aware check, analysis, Next, and mutation-impact composition that preserves raw recommendation ranking, filters only versioned new-start authority, reports active attention without lifecycle mutation, returns complete cause and action projections, and fails closed for unknown or incomplete assurance inputs."
   duration 6p
-  status planned
+  status done
   priority 90
   requires:
     DEVELOPERS 1
@@ -282,3 +282,16 @@ work_event WE-43e2a2f3ec6f898385db011be5ad87b9ce412071d6ec2c2917da733829dd9dfd:
   task ASSURE_MUTATION_CORE
   kind finish
   occurred_at 2026-08-03T21:10:35+09:00
+
+work_event WE-4c5f57f320ab341bac548934f14fe49fc09b1f085725478bf289b62d1d79f42e:
+  model 1
+  task ASSURE_AUTHORITY_CORE
+  kind start
+  occurred_at 2026-08-04T10:27:41+09:00
+  planned_value 6p
+
+work_event WE-07b7e6809e98f8478491b7e2ae1e59eb054dc9bfc085f5915a764bd3851d7b4b:
+  model 1
+  task ASSURE_AUTHORITY_CORE
+  kind finish
+  occurred_at 2026-08-04T10:48:49+09:00

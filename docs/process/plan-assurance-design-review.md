@@ -7,7 +7,8 @@
 - Target plan-assurance model: 1
 - Target hash model: 1
 - Active runtime: Grammar 5 and CLI Contract 6
-- Runtime status: public surface not implemented; later internal hash, source, and mutation Cores accepted
+- Runtime status: public surface not implemented; later internal hash, source,
+  mutation, and authority Cores accepted
 - Successor contract: [Plan Assurance Interface Contract](../specs/plan-assurance-interface.md)
 
 ## 1. Conclusion

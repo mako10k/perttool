@@ -1136,7 +1136,8 @@ ledger semantics to an in-progress Issue #4 implementation slice.
 
 Priority: P0
 
-Status: Implementation in progress (2026-08-03); interface, hash, source, and mutation Cores accepted
+Status: Implementation in progress (2026-08-04); interface, hash, source,
+mutation, and authority Cores accepted
 
 Detect when a current/future task plan no longer matches the upstream planning
 basis against which it was last reviewed. The
@@ -1149,10 +1150,11 @@ the remaining source records and mutations, closed results, diagnostics, and
 governance version 2. The
 [`plans/plan-assurance.pert`](../plans/plan-assurance.pert) is the explicitly
 selected implementation workstream. Its interface, pure hash/state Core,
-identity-checked internal Grammar 6 source Core, and governed mutation Core are
-accepted. The workstream recommendation was re-evaluated from the completed
-mutation snapshot; pinpoint hash inspection remains a separately planned input
-to public activation. Release selection remains separate and unselected.
+identity-checked internal Grammar 6 source Core, governed mutation Core, and
+fail-closed start-authority composition are accepted. The workstream
+recommendation is re-evaluated after each completed task; pinpoint hash
+inspection remains a separately planned input to public activation. Release
+selection remains separate and unselected.
 
 Required outcomes:
 

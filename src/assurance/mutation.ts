@@ -44,6 +44,10 @@ import {
   sealTaskResult,
 } from "./evaluate.js";
 import {
+  composePlanAssuranceMutationImpact,
+  type PlanAssuranceMutationImpactCompositionV1,
+} from "./authority.js";
+import {
   evaluatePlanAssuranceGovernance,
   normalizePlanAssuranceGovernanceRequest,
   planAssuranceGovernanceDiagnostics,
@@ -158,6 +162,7 @@ export interface PlanAssuranceImpactV1 {
   readonly affectedTaskIds: readonly string[];
   readonly before: PlanAssuranceEvaluationV1;
   readonly after: PlanAssuranceEvaluationV1;
+  readonly projection: PlanAssuranceMutationImpactCompositionV1;
 }
 
 export interface TargetPlanAssuranceMutationResultV4 {
@@ -1154,43 +1159,11 @@ function planBatchEdits(
       }] };
 }
 
-function assuranceWarnings(
-  evaluation: PlanAssuranceEvaluationV1,
-): readonly Diagnostic[] {
-  const diagnostics: Diagnostic[] = [];
-  if (evaluation.coverage === "unsealed" || evaluation.coverage === "partial") {
-    diagnostics.push(assuranceDiagnostic(
-      "PTASSURE-201",
-      "warning",
-      "enabled plan assurance has an unsealed or partially sealed task set",
-      null,
-      { coverage: evaluation.coverage },
-    ));
-  }
-  if (evaluation.replanRequiredTaskIds.length > 0) {
-    diagnostics.push(assuranceDiagnostic(
-      "PTASSURE-202",
-      "warning",
-      "accepted and computed planning bases differ",
-      null,
-      { task_ids: evaluation.replanRequiredTaskIds },
-    ));
-  }
-  if (evaluation.unavailableTaskIds.length > 0) {
-    diagnostics.push(assuranceDiagnostic(
-      "PTASSURE-203",
-      "warning",
-      "plan assurance is unavailable for one or more tasks",
-      null,
-      { task_ids: evaluation.unavailableTaskIds },
-    ));
-  }
-  return Object.freeze(diagnostics);
-}
-
 function impact(
   before: PlanAssuranceEvaluationV1,
   after: PlanAssuranceEvaluationV1,
+  beforeDocument: DocumentNode<TargetDeclarationKind>,
+  afterDocument: DocumentNode<TargetDeclarationKind>,
 ): PlanAssuranceImpactV1 {
   const beforeById = new Map(before.taskResults.map((result) => [result.taskId, result]));
   const affectedTaskIds = after.taskResults
@@ -1204,11 +1177,26 @@ function impact(
         previous.exportedAssuranceHash !== result.exportedAssuranceHash;
     })
     .map((result) => result.taskId);
+  const activeTaskIds = (
+    document: DocumentNode<TargetDeclarationKind>,
+  ): readonly string[] => document.declarations
+    .filter((declaration) =>
+      declaration.kind === "task" &&
+      fieldNamed(declaration, "status")?.value === "active"
+    )
+    .map(({ id }) => id);
   return Object.freeze({
     modelVersion: 1,
     affectedTaskIds: Object.freeze(affectedTaskIds),
     before,
     after,
+    projection: composePlanAssuranceMutationImpact(
+      affectedTaskIds,
+      before,
+      after,
+      activeTaskIds(beforeDocument),
+      activeTaskIds(afterDocument),
+    ),
   });
 }
 
@@ -1357,9 +1345,15 @@ export function planTargetPlanAssuranceMutation(
       : Object.freeze([]),
     normalizedGovernance.request,
   );
+  const assuranceImpact = impact(
+    before,
+    after,
+    original.validatedDocument.document,
+    candidate.validatedDocument.document,
+  );
   const diagnostics = [
     ...candidate.diagnostics,
-    ...assuranceWarnings(after),
+    ...assuranceImpact.projection.diagnostics,
     ...planAssuranceGovernanceDiagnostics(governance),
   ];
   const hasError = diagnostics.some((diagnostic) => diagnostic.severity === "error");
@@ -1380,7 +1374,7 @@ export function planTargetPlanAssuranceMutation(
     }),
     edits,
     governance,
-    assuranceImpact: impact(before, after),
+    assuranceImpact,
     diagnostics: limited.diagnostics,
     diagnosticsTruncated:
       original.diagnosticsTruncated ||

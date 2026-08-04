@@ -246,17 +246,16 @@
       ]
     },
     "plan-assurance": {
-      "source_digest": "sha256:0313f06f5529bd0450877d7a88f607f38b3a724a89dfdd5d5719e9b8d4d33dd3",
+      "source_digest": "sha256:1267e4de9d50099fe59e0635d2516a3461f74060ce698f44c362087c2bb4bdb0",
       "groups": {
         "active": [],
         "ready": [
-          "ASSURE_AUTHORITY_CORE",
           "ASSURE_HASH_INSPECTION",
           "ASSURE_ADVANCE_CONTRACTION",
           "ASSURE_COMPATIBILITY"
         ],
         "runnable_now": [
-          "ASSURE_AUTHORITY_CORE"
+          "ASSURE_HASH_INSPECTION"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -266,57 +265,25 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "ASSURE_AUTHORITY_CORE"
+        "ASSURE_ADVANCE_CONTRACTION"
       ],
       "manual_selected_task_ids": [
-        "ASSURE_AUTHORITY_CORE"
+        "ASSURE_HASH_INSPECTION"
       ],
       "tiers": {
-        "ASSURE_AUTHORITY_CORE": "recommended",
-        "ASSURE_ADVANCE_CONTRACTION": "deferred",
-        "ASSURE_COMPATIBILITY": "deferred",
+        "ASSURE_ADVANCE_CONTRACTION": "recommended",
+        "ASSURE_COMPATIBILITY": "allowed",
         "ASSURE_HASH_INSPECTION": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "ASSURE_AUTHORITY_CORE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        },
-        {
           "id": "ASSURE_HASH_INSPECTION",
-          "runnable_now": false,
+          "runnable_now": true,
           "precedence_critical": false,
           "schedule_critical": true,
           "total_float": "3/1",
-          "resource_rejections": [
-            {
-              "resource_id": "ASSURANCE_CORE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "ASSURE_AUTHORITY_CORE"
-              ]
-            },
-            {
-              "resource_id": "CLI_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "ASSURE_AUTHORITY_CORE"
-              ]
-            }
-          ]
+          "resource_rejections": []
         },
         {
           "id": "ASSURE_ADVANCE_CONTRACTION",
@@ -333,7 +300,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "ASSURE_AUTHORITY_CORE"
+                "ASSURE_HASH_INSPECTION"
               ]
             }
           ]
@@ -353,19 +320,19 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "ASSURE_AUTHORITY_CORE"
+                "ASSURE_HASH_INSPECTION"
               ]
             }
           ]
         }
       ],
       "record_counts": {
-        "task_decisions": 4,
-        "decision_steps": 23,
-        "facts": 127,
-        "comparisons": 5,
-        "reasons": 17,
-        "descriptions": 10
+        "task_decisions": 3,
+        "decision_steps": 18,
+        "facts": 65,
+        "comparisons": 3,
+        "reasons": 12,
+        "descriptions": 6
       },
       "diagnostic_codes": [
         "PTDAG-208"

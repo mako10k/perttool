@@ -92,9 +92,9 @@ registry, schemas, help, Guide, CLI, link, and installed-package workflow still
 expose Grammar 5 and CLI Contract 6. Neither `evaluatePlanAssurance` nor the
 hash helpers are exported from `dist/index.js`.
 
-Source projection and governed assurance mutations are accepted in later
-internal slices. Start authority, advance receipts, compatibility, public
-activation, and end-to-end acceptance remain plan tasks. Package version
+Source projection, governed assurance mutations, and start-authority
+composition are accepted in later internal slices. Advance receipts,
+compatibility, public activation, and end-to-end acceptance remain plan tasks. Package version
 selection, release, remote writes, GitHub
 mutation, npm publication, dist-tag movement, Issue mutation, and plan advance
 are outside this acceptance.

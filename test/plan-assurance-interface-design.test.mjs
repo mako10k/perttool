@@ -47,6 +47,13 @@ test("plan assurance interface fixes one atomic Grammar 6 and Contract 7 target"
     contract,
     /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/,
   );
+  for (const action of [
+    "initial_seal",
+    "replan_and_reseal",
+    "restore_assurance_evidence",
+  ]) {
+    assert.equal(contract.includes(`\`${action}\``), true, action);
+  }
   assert.match(contract, /affected scope\s+`plan_assurance`/);
   assert.match(contract, /PTASSURE-101/);
   assert.match(contract, /PTASSURE-306/);
@@ -109,7 +116,7 @@ test("plan assurance interface cases and SHA-256 vectors are fixed", async () =>
   assert.equal(fixture.cli_contract_version, 7);
   assert.equal(
     fixture.runtime_status,
-    "internal_hash_source_and_mutation_cores_only",
+    "internal_hash_source_mutation_and_authority_cores_only",
   );
   assert.equal(fixture.registered_command_count, 44);
   assert.equal(fixture.commands.includes("plan-assurance hash"), true);
@@ -118,6 +125,11 @@ test("plan assurance interface cases and SHA-256 vectors are fixed", async () =>
     fixture.authority_policy,
     "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",
   );
+  assert.deepEqual(fixture.required_action_kinds, [
+    "initial_seal",
+    "replan_and_reseal",
+    "restore_assurance_evidence",
+  ]);
   assert.equal(fixture.governance.interface_version, 2);
   assert.equal(fixture.governance.new_scope, "plan_assurance");
   assert.deepEqual(fixture.cases.map(({ id }) => id), ids);

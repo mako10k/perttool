@@ -6,7 +6,8 @@
 - Public CLI target: CLI Contract 7
 - Plan-assurance model: 1
 - Hash model: 1
-- Runtime status: Internal hash/state, Grammar 6 source, and governed mutation Cores implemented; public runtime not activated
+- Runtime status: Internal hash/state, Grammar 6 source, governed mutation,
+  and assurance-authority Cores implemented; public runtime not activated
 - Semantic contract: [plan-assurance.md](plan-assurance.md)
 - Active compatibility baseline: Grammar 5, CLI Contract 6, and package 0.6.0
 - Workstream: [../../plans/plan-assurance.pert](../../plans/plan-assurance.pert)
@@ -385,6 +386,12 @@ replan_required_task_ids
 active_attention_required_task_ids
 required_actions
 ```
+
+Each `required_actions` item is a closed object with `kind`,
+`root_task_ids`, and `affected_task_ids`. `kind` is exactly `initial_seal`,
+`replan_and_reseal`, or `restore_assurance_evidence`; the semantic contract
+defines their trigger conditions and exact table-order projection. An action
+is advice for the control plane and is never write authority.
 
 MutationResult v4 additionally has `assurance_impact`; AdvanceResult v2 has
 `assurance_guard`; ProjectResult v4 exposes declared model fields; CheckResult

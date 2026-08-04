@@ -1263,6 +1263,15 @@ synthetic AoA task. The current `Perttool.NextResult.v5` remains closed and
 unchanged until an interface contract selects a new result and authority-policy
 identity.
 
+The accepted internal authority slice implements this composition in
+`src/assurance/authority.ts` and
+`src/application/target-assurance-analysis.ts`. It shares one projection across
+check, analysis, Next, and mutation impact; preserves raw recommendation order;
+passes only `not_applicable`, `conditional`, and `verified`; reports active
+attention without lifecycle mutation; and returns an empty startable set for
+unknown or incomplete recommendation, temporal-authority, model, or task-result
+input. The active public NextResult v5 and its policy remain unchanged.
+
 #### 6.9.6 Mutation impact and governed reseal
 
 Every assurance-aware task/DAG mutation preview may run the evaluator against

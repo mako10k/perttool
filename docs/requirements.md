@@ -2354,8 +2354,8 @@ The obsolete npm `alpha` dist-tag is retired; historical
 `0.1.0-alpha.2` remains available by exact pin.
 
 The conditional plan-assurance semantic and interface targets are accepted,
-and its internal hash/state, Grammar 6 source, and governed mutation Cores are
-implemented without public activation.
+and its internal hash/state, Grammar 6 source, governed mutation, and
+assurance-authority Cores are implemented without public activation.
 Requirements 2.7 and 7.9, the [Conditional Plan Assurance
 Contract](specs/plan-assurance.md), its [normative examples](examples/plan-assurance.md),
 the [Plan Assurance Interface Contract](specs/plan-assurance-interface.md), and

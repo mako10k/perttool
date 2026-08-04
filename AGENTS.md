@@ -162,10 +162,13 @@ semantic assurance projection, and frontier receipt self-hash check.
 `ASSURE_MUTATION_CORE` is complete with internal preview-first relation,
 initial-seal, selected-reseal, and outcome mutation planning; mixed
 final-candidate batch composition; GovernanceDecision v2; assurance impact;
-and digest-bound Grammar 6 safe persistence. All four completed declarations
-remain pre-advance. Fresh complete NextResult v5 recommends and authorizes only
-`ASSURE_AUTHORITY_CORE`;
-`ASSURE_HASH_INSPECTION` remains a separately planned public-input task.
+and digest-bound Grammar 6 safe persistence. `ASSURE_AUTHORITY_CORE` is
+complete with internal assurance-aware check, analysis, Next, mutation-impact,
+active-attention, required-action, and fail-closed new-start authority
+composition. All five completed declarations remain pre-advance. Fresh
+complete NextResult v5 recommends and authorizes only
+`ASSURE_ADVANCE_CONTRACTION`; `ASSURE_HASH_INSPECTION` remains a separately
+planned public-input task.
 Current Grammar 5, CLI Contract 6,
 package root, package `0.6.0`, release selection, remote writes, publication,
 dist-tag movement, and Issue mutation remain unchanged and separately gated.
@@ -478,7 +481,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
 - `src/actuals/`: active Grammar 5 source projection, deterministic event identity, exact lifecycle reduction, exact measurements, and stored-state validation for task-owned work-event records.
-- `src/assurance/`: internal ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, and impact composition; it is not exported by the active package root or CLI Contract 6.
+- `src/assurance/`: internal ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, and assurance-filtered new-start authority; it is not exported by the active package root or CLI Contract 6.
 - `src/command/`: immutable typed Contract 6 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 6 editing and actuals Guide.
 - `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
@@ -497,7 +500,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/parser/`: the active Grammar 1/2/3/4/5 parser with identity-checked task-owned work-event source.
 - `src/semantic/`: active Grammar 1/2/3/4/5 validated-document boundaries, task-owned event validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
-- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, internal Grammar 6 assurance persistence, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
+- `src/application/`: pure services for active Contract 6 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v4, release-gated NextResult v5 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5 mutation planning, governed direct/batch/advance planning, internal Grammar 6 assurance persistence and assurance-aware analysis/Next composition, AdvanceResult v1 history-guard composition, Contract 6 result projections, and authorization-before-safe-write orchestration.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 

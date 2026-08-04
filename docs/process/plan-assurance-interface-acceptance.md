@@ -7,7 +7,8 @@
 - Interface contract: [Grammar 6 and CLI Contract 7](../specs/plan-assurance-interface.md)
 - Case fixture: [`plan-assurance-interface-v1.json`](../../test/fixtures/plan-assurance-interface-v1.json)
 - Active runtime: Grammar 5 and CLI Contract 6
-- Runtime status: interface accepted; later internal hash, source, and mutation Cores implemented; public surface not activated
+- Runtime status: interface accepted; later internal hash, source, mutation,
+  and authority Cores implemented; public surface not activated
 
 ## 1. Acceptance decision
 
@@ -76,8 +77,8 @@ gates include the selected thirty-plan workstream set.
 
 ## 5. Remaining work and boundaries
 
-`ASSURE_HASH_CORE` was implemented in the later internal slice.
-`ASSURE_SOURCE_CORE`, mutation, authority, advance, compatibility,
-public-contract, and complete acceptance tasks remain. No Git push, GitHub
+`ASSURE_HASH_CORE`, `ASSURE_SOURCE_CORE`, mutation, and authority were
+implemented in later internal slices. Advance, compatibility, public-contract,
+and complete acceptance tasks remain. No Git push, GitHub
 mutation, npm publication, dist-tag movement, plan advance, or release decision
 is included here.

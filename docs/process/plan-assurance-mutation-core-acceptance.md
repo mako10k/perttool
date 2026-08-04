@@ -115,10 +115,10 @@ Contract 6.
 
 This slice does not activate Grammar 6 or CLI Contract 7 and does not add the
 read-only `plan-assurance hash` command. Composition into check, analysis,
-Next, active-task attention, and ordinary-mutation impact belongs to
-`ASSURE_AUTHORITY_CORE`. Assurance-aware advance contraction, the public
-cutover, package exports, schemas, help, Guide, and installed acceptance remain
-later plan tasks.
+Next, active-task attention, and ordinary-mutation impact is accepted by the
+later `ASSURE_AUTHORITY_CORE` record. Assurance-aware advance contraction, the
+public cutover, package exports, schemas, help, Guide, and installed acceptance
+remain later plan tasks.
 
 Public registry and request-envelope integration remains part of the atomic
 public-contract path. Plan advance, commit, release selection, remote

@@ -3,7 +3,8 @@
 - Status: Normative target 1.0
 - Plan-assurance model target: 1
 - Hash model target: 1
-- Runtime status: Internal hash/state, Grammar 6 source, and governed mutation Cores implemented; public runtime not activated
+- Runtime status: Internal hash/state, Grammar 6 source, governed mutation,
+  and assurance-authority Cores implemented; public runtime not activated
 - Current compatibility boundary: Grammar 1 through 5 and CLI Contract 6 remain
   unchanged
 - Source and public interface target: [Grammar 6 and CLI Contract 7](plan-assurance-interface.md)
@@ -518,6 +519,23 @@ that does not reproduce from those accepted components is unavailable.
 Human output MUST lead with changed semantic fields, relation changes,
 affected tasks, and required action. It MUST NOT ask a human to approve an
 opaque hash alone.
+
+### 7.4 Required actions
+
+The closed action vocabulary is:
+
+| Kind | Root task IDs | Affected task IDs | Meaning |
+| --- | --- | --- | --- |
+| `initial_seal` | empty | complete current/future task set | Establish the first atomic accepted baseline |
+| `replan_and_reseal` | stable direct mismatch or newly unsealed roots | complete affected planning closure | Review or revise the affected plans, then explicitly accept their new bases |
+| `restore_assurance_evidence` | first unavailable model, task, outcome, or receipt roots | unavailable closure | Repair or supply required evidence before a later reseal can succeed |
+
+Every action record contains `kind`, `root_task_ids`, and
+`affected_task_ids`. IDs are unique and lexicographically ordered. These
+records are emitted in the table order when more than one action applies;
+`initial_seal` excludes `replan_and_reseal`. Actions are read-only
+control-plane projections. They do not create AoA tasks, edit lifecycle state,
+accept a computed hash, or confer persistent mutation authority.
 
 ## 8. Replanning and resealing
 

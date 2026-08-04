@@ -39,7 +39,7 @@ test("plan assurance design separates dependencies, state, and authority", async
   assert.match(specification, /- Status: Normative target 1\.0/);
   assert.match(
     specification,
-    /- Runtime status: Internal hash\/state, Grammar 6 source, and governed mutation Cores implemented; public runtime not activated/,
+    /- Runtime status: Internal hash\/state, Grammar 6 source, governed mutation,\s+and assurance-authority Cores implemented; public runtime not activated/,
   );
   assert.match(specification, /Grammar 1 through 5 and CLI Contract 6 remain\s+unchanged/);
 
@@ -103,7 +103,10 @@ test("plan assurance design separates dependencies, state, and authority", async
   assert.match(review, /It is not implementation acceptance/);
   assert.match(review, /^## 5\. Selected relation source interface/m);
   assert.match(backlog, /^### ASSURE-001: Add conditional plan assurance/m);
-  assert.match(backlog, /interface, hash, source, and mutation Cores accepted/);
+  assert.match(
+    backlog,
+    /interface, hash, source,\s+mutation, and authority Cores accepted/,
+  );
   assert.match(examples, /selected Grammar 6 source target/);
 });
 

@@ -182,6 +182,14 @@ test("relation maintenance is source preserving and never updates accepted hashe
     added.assuranceImpact.after.replanRequiredTaskIds,
     ["B"],
   );
+  assert.deepEqual(
+    added.assuranceImpact.projection.after.requiredActions,
+    [{
+      kind: "replan_and_reseal",
+      rootTaskIds: ["B"],
+      affectedTaskIds: ["B"],
+    }],
+  );
 
   const invalid = mutation(sealed, {
     kind: "plan_dependency.add",

@@ -80,10 +80,10 @@ bind the accepted plan snapshot rather than an intermediate active snapshot.
 ## 5. Remaining boundary
 
 This slice does not activate Grammar 6, CLI Contract 7, the pinpoint hash
-command, public results, schemas, help, Guide, package exports, start
-authority, or assurance-aware advance. The later governed mutation Core is
-accepted separately. `ASSURE_HASH_INSPECTION` owns the read-only scalar hash UX
-after the source and hash inputs join.
+command, public results, schemas, help, Guide, package exports, or
+assurance-aware advance. The later governed mutation and start-authority Cores
+are accepted separately. `ASSURE_HASH_INSPECTION` owns the read-only scalar
+hash UX after the source and hash inputs join.
 
 Plan advance, commit, release selection, remote writes, publication, dist-tag
 movement, and Issue mutation remain separate authorization boundaries.
