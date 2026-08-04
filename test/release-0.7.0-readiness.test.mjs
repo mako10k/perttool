@@ -65,7 +65,7 @@ test("0.7.0 readiness consumes the exact completed ASSURE-001 input", async () =
   assert.match(readiness, /No hidden correctness, compatibility, packaging, or\s+authority finding/);
 });
 
-test("0.7.0 readiness remains historical after source preparation", async () => {
+test("0.7.0 readiness remains historical after candidate start", async () => {
   const [releasePlan, readiness, manifestText, versionSource] = await Promise.all([
     repositoryText("plans/release-0.7.0.pert"),
     repositoryText("docs/process/0.7.0-contract7-readiness.md"),
@@ -104,13 +104,11 @@ test("0.7.0 readiness remains historical after source preparation", async () => 
   );
   const next = selectNextTasks(releasePlan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.groups.ready, ["RELEASE_070_CANDIDATE"]);
-  assert.deepEqual(next.groups.runnableNow, ["RELEASE_070_CANDIDATE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_070_CANDIDATE"]);
-  assert.deepEqual(
-    next.temporal.authority.startableRecommendedTaskIds,
-    ["RELEASE_070_CANDIDATE"],
-  );
+  assert.deepEqual(next.groups.active, ["RELEASE_070_CANDIDATE"]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.match(readiness, /Package identity remains\s+`0\.6\.0`/);
   assert.match(readiness, /does not authorize or perform version-bearing source preparation/);
   assert.match(readiness, /complete repository run passed all 791 tests/);
@@ -148,7 +146,7 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
 
   assert.equal(
     sha256(releasePlan),
-    "sha256:fcd8a450f36c7c9e34ce1cee5ddc33071053f4ccbf33bad50ab6a8d27a3da361",
+    "sha256:d07a81440a7e3d1ae6101af59cff0cf3333aea7d8d959dd302d305f00ce2edd6",
   );
   assert.match(
     releasePlan,
