@@ -418,19 +418,23 @@ authorized Contract 7 readiness; the next instruction separately authorized
 source preparation; the current instruction separately authorizes candidate
 acceptance. The prepared manifest, lockfile, and CLI identify `0.7.0`, and
 `docs/process/0.7.0-preparation.md` records the accepted local gate. The
-`RELEASE_070_CANDIDATE` was authorized only for clean-source verification, read-only
-external preflight, and one retained tarball. Final review rejected the
-preliminary SHA-256 `7e57cc89...3ac8a0` tarball because its bundled README
-retained a transient preparation-time claim; the fixed candidate path is empty
-pending a corrected clean build. Raw recommendation does not override this
-gate. Do not infer authority for push, tag, GitHub or npm mutation, durable
-acceptance, npm `latest`, either plan advance, or Issue mutation.
+`RELEASE_070_CANDIDATE` was authorized only for clean-source verification,
+read-only external preflight, and one retained tarball. Final review rejected
+the preliminary SHA-256 `7e57cc89...3ac8a0` tarball because its bundled README
+retained a transient preparation-time claim; those bytes remain preserved
+under a SHA-bound rejected filename. Corrected clean source commit `51984c8`
+passed the repeated complete Node.js 22 and read-only external gates. The
+accepted fixed-path 601-file, 656702-byte candidate has SHA-256
+`8585adb5...f4d623` and passed isolated Contract 7 file-first and
+plan-assurance acceptance. Raw recommendation does not override the separate
+publication boundary. Do not infer authority for push, tag, GitHub or npm
+mutation, durable acceptance, npm `latest`, either plan advance, or Issue
+mutation.
 The live pre-publication baseline is `beta=latest=0.6.0` with no maintained
 `alpha`; re-read it at candidate and PUBLISH boundaries. Gate design,
-Contract 7 readiness, and source preparation are complete before advance;
-candidate lifecycle is also complete before advance, but candidate acceptance
-is held pending the corrected replacement. Raw NextResult v6 recommends
-`RELEASE_070_PUBLISH`, which remains withheld and separately authorized.
+Contract 7 readiness, source preparation, and candidate acceptance are
+complete before advance. Raw NextResult v6 recommends only
+`RELEASE_070_PUBLISH`, which remains separately authorized.
 
 ### 5.1 Adopted Recommendation authority
 

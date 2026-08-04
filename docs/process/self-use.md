@@ -1496,14 +1496,16 @@ Source preparation is complete before advance with package and CLI identity
 `0.7.0`; `docs/process/0.7.0-preparation.md` records the migration, audit,
 repository, temporary-link, and installed-package evidence. No candidate was
 accepted or public state changed during preparation. `RELEASE_070_CANDIDATE`
-has a completed lifecycle record, but final review rejected the preliminary
-SHA-256 `7e57cc89...3ac8a0` tarball because its bundled README retained a
-transient preparation-time claim. The intact bytes are preserved under a
-SHA-bound rejected filename and the fixed candidate path is empty pending a
-clean corrected replacement. Push, tag, GitHub/npm publication, durable
-acceptance, npm `latest`, both plan advances, and Issue mutation remain
-separate. Raw NextResult v6 recommends `RELEASE_070_PUBLISH`, but the release
-gate withholds it.
+is complete and accepted. Final review rejected the preliminary SHA-256
+`7e57cc89...3ac8a0` tarball because its bundled README retained a transient
+preparation-time claim; the intact bytes remain preserved under a SHA-bound
+rejected filename. Corrected clean source commit `51984c8` passed the repeated
+complete Node.js 22 and read-only external gates. Its retained 601-file,
+656702-byte candidate has SHA-256 `8585adb5...f4d623` and passed isolated
+Contract 7 file-first and plan-assurance acceptance. Push, tag, GitHub/npm
+publication, durable acceptance, npm `latest`, both plan advances, and Issue
+mutation remain separate. Raw NextResult v6 recommends only
+`RELEASE_070_PUBLISH`, which remains separately authorized.
 
 Stage 1 allowed operations:
 

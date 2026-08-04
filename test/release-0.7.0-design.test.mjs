@@ -18,6 +18,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     design,
     procedure,
     readiness,
+    candidate,
     migration,
     publicAcceptance,
     finalAcceptance,
@@ -32,6 +33,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.7.0-release.md"),
     repositoryText("docs/process/0.7.0-contract7-readiness.md"),
+    repositoryText("docs/process/0.7.0-candidate.md"),
     repositoryText("docs/process/0.6.0-to-0.7.0-migration.md"),
     repositoryText("docs/process/plan-assurance-public-contract-acceptance.md"),
     repositoryText("docs/process/plan-assurance-acceptance.md"),
@@ -61,7 +63,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
     design,
     /^### Post-MVP Slice 4Q: Conditional plan assurance `v0\.7\.0` beta minor$/m,
   );
-  assert.match(procedure, /- Status: Candidate correction in progress 1\.0/);
+  assert.match(procedure, /- Status: Candidate accepted 1\.0/);
   assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.6\.0`, no `alpha`/);
   assert.match(procedure, /initial 2026-08-04 instruction authorized only\s+`RELEASE_070_GATE_DESIGN`/);
   assert.match(procedure, /later instruction separately authorized\s+`RELEASE_070_CONTRACT_7_READINESS`/);
@@ -69,6 +71,11 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   assert.match(procedure, /Consumers can roll back by pinning `perttool@0\.6\.0`/);
   assert.match(readiness, /Document status: Accepted 1\.0/);
   assert.match(readiness, /only `RELEASE_070_PREPARATION` ready and recommended/);
+  assert.match(candidate, /Document status: Accepted 1\.0/);
+  assert.match(candidate, /Corrected candidate source commit: `51984c89129eaaf5ba49bbb8456ae235dc461b9d`/);
+  assert.match(candidate, /Packed size \| `656702` bytes/);
+  assert.match(candidate, /SHA-256 \| `8585adb5c3c2c5caeb5c2b453141c1fd87426b918ee235f21a80f557a0f4d623`/);
+  assert.match(candidate, /rejected-preliminary-eeff494c3e5af2481bfc4e8f9205a6106cfa3236\.tgz/);
   assert.match(migration, /- Status: Accepted 1\.0/);
   assert.match(migration, /`cli_contract_version == 7`/);
   assert.match(migration, /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/);

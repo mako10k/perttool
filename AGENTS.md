@@ -204,13 +204,16 @@ read-only channel baseline. `RELEASE_070_GATE_DESIGN`,
 `RELEASE_070_CONTRACT_7_READINESS`, and `RELEASE_070_PREPARATION` are complete
 and retained before advance. The current manifest, lockfile, and CLI identify
 `0.7.0`; the preparation record is `docs/process/0.7.0-preparation.md`.
-`RELEASE_070_CANDIDATE` has a completed lifecycle record, but final review
-rejected the preliminary SHA-256 `7e57cc89...3ac8a0` tarball because its
-bundled README retained a transient preparation-time claim. The intact bytes
-are preserved under a SHA-bound rejected filename, and the fixed candidate
-path is empty pending a clean corrected replacement. Raw NextResult v6
-recommends `RELEASE_070_PUBLISH`, but the release gate withholds it. No
-`0.7.0` package is published; push, tag, GitHub/npm publication, durable
+`RELEASE_070_CANDIDATE` is complete and accepted. Final review rejected the
+preliminary SHA-256 `7e57cc89...3ac8a0` tarball because its bundled README
+retained a transient preparation-time claim; the intact bytes remain preserved
+under a SHA-bound rejected filename. Corrected clean source commit `51984c8`
+passed the repeated complete Node.js 22 and read-only external gates. Its
+retained 601-file, 656702-byte candidate has SHA-256
+`8585adb5...f4d623` and passed isolated Contract 7 file-first and
+plan-assurance acceptance. Raw NextResult v6 recommends only
+`RELEASE_070_PUBLISH`, which remains a separately authorized external batch.
+No `0.7.0` package is published; push, tag, GitHub/npm publication, durable
 acceptance, npm `latest`, both plan advances, and Issue mutation remain
 separate.
 
