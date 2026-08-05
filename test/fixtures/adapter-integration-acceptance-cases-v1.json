@@ -1,0 +1,38 @@
+{
+  "schema_version": "Perttool.AdapterIntegrationAcceptanceCases.v1",
+  "architecture_model_version": 1,
+  "package_version": "0.7.1",
+  "grammar_version": 6,
+  "cli_contract_version": 7,
+  "runtime_matrix": [22, 24],
+  "baseline": {
+    "root_runtime_exports": 122,
+    "core_runtime_exports": 45,
+    "commands": 44,
+    "root_schemas": 20,
+    "root_production_dependencies": 0,
+    "lsp_package_files": 25,
+    "vsix_package_files": 14,
+    "mcp_resources": 4,
+    "mcp_tools": 5,
+    "self_use_plans": 34
+  },
+  "cases": [
+    { "id": "AIA-001", "depends_on": [], "boundary": "accepted_adapter_prerequisites" },
+    { "id": "AIA-002", "depends_on": ["AIA-001"], "boundary": "acyclic_layer_and_import_closure" },
+    { "id": "AIA-003", "depends_on": ["AIA-001", "AIA-002"], "boundary": "private_adapter_distribution_isolation" },
+    { "id": "AIA-004", "depends_on": ["AIA-002", "AIA-003"], "boundary": "root_core_node_command_and_schema_compatibility" },
+    { "id": "AIA-005", "depends_on": ["AIA-004"], "boundary": "core_cli_and_mcp_check_parity" },
+    { "id": "AIA-006", "depends_on": ["AIA-005"], "boundary": "core_cli_mcp_and_graph_analysis_parity" },
+    { "id": "AIA-007", "depends_on": ["AIA-005"], "boundary": "core_cli_and_mcp_next_parity" },
+    { "id": "AIA-008", "depends_on": ["AIA-006"], "boundary": "lsp_graph_and_vsix_presentation_binding" },
+    { "id": "AIA-009", "depends_on": ["AIA-005"], "boundary": "cross_protocol_diagnostic_ownership" },
+    { "id": "AIA-010", "depends_on": ["AIA-005", "AIA-008"], "boundary": "exact_source_digest_uri_generation_and_version_binding" },
+    { "id": "AIA-011", "depends_on": ["AIA-008", "AIA-009"], "boundary": "stale_cancelled_invalid_and_limited_fail_closure" },
+    { "id": "AIA-012", "depends_on": ["AIA-010", "AIA-011"], "boundary": "read_only_capability_and_authority_closure" },
+    { "id": "AIA-013", "depends_on": ["AIA-003", "AIA-012"], "boundary": "isolated_lsp_mcp_and_supported_vscode_host_gates" },
+    { "id": "AIA-014", "depends_on": ["AIA-004", "AIA-013"], "boundary": "temporary_link_and_public_package_inventory" },
+    { "id": "AIA-015", "depends_on": ["AIA-006", "AIA-007", "AIA-014"], "boundary": "complete_repository_and_runtime_matrix_gate" },
+    { "id": "AIA-016", "depends_on": ["AIA-012", "AIA-015"], "boundary": "source_git_configuration_network_publication_and_release_side_effect_closure" }
+  ]
+}
