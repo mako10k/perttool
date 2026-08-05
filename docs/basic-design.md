@@ -3180,9 +3180,15 @@ branches after first-beta acceptance.
   bundled server in a disposable eleven-file VSIX. The next task adds the
   CSP-constrained read-only DAG Webview without semantic duplication or
   arbitrary Mermaid execution.
-- Read-only MCP: use shared Application and Node boundaries for closed local
-  resources/tools, without a CLI subprocess or editor dependency. Preview and
-  persistent mutation are deferred.
+- Read-only MCP: the accepted [protocol contract](specs/mcp-read-contract.md)
+  fixes final revision `2026-07-28`, exact stable server SDK `2.0.0`, local
+  stdio, four immutable registry resources, and five closed tools over shared
+  Application and Node boundaries. Exact inline text or an opaque launcher-
+  registered ID plus expected digest binds document requests; no client path,
+  Git ref, remote source, CLI subprocess, or editor dependency is accepted.
+  Adapter-local closed outputs preserve complete semantic results and limits
+  without inferring authority. Implementation, preview, and persistent
+  mutation remain later tasks.
 
 The LSP server remains the predecessor of VSIX. The MCP branch is independent
 of both after the shared foundation. Adapter package publication, public names,

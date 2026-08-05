@@ -794,7 +794,7 @@ Priority: Selected cross-adapter foundation
 Status: Architecture, Core dependency cleanup, and shared-library boundary
 accepted; editor protocol contract accepted; document-session Core, read-only
 LSP Core, isolated LSP package, private VSIX shell, and Node Host boundary
-accepted (2026-08-05;
+accepted; read-only MCP contract accepted (2026-08-05;
 retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
@@ -854,11 +854,18 @@ record](process/adapter-node-host-acceptance.md) now add a six-port inward
 contract, portable semantic SHA-256, and one default Node composition while
 preserving exact 122-name root/Node identity and the 45-name portable Core.
 `NODE_PORT_BOUNDARY` is complete with exact lifecycle evidence and retained
-before advance. Seven tasks and 36p remain; precedence makespan is 20p and the
-heuristic resource makespan is 29p with 9p resource delay. Complete NextResult
-v6 recommends and makes startable only `MCP_READ_CONTRACT`;
-`CLI_FACADE_PARITY` and `VSIX_DAG_VIEW` are deferred by the current
-resource-feasible selection.
+before advance. The [read-only MCP contract](specs/mcp-read-contract.md) and
+its [acceptance record](process/adapter-mcp-read-contract-acceptance.md) fix
+final MCP revision `2026-07-28`, exact stable server SDK `2.0.0`, local stdio,
+four immutable JSON resources, five closed read-only tools, exact inline and
+digest-bound registered sources, adapter-owned wire schemas, failure
+ownership, hard limits, and semantic parity without the CLI.
+`MCP_READ_CONTRACT` is complete with exact lifecycle evidence and retained
+before advance. Six tasks and 32p remain; precedence makespan is 16p and the
+heuristic resource makespan is 25p with 9p resource delay. Complete NextResult
+v6 recommends and makes startable exactly `MCP_READ_ADAPTER` and
+`VSIX_DAG_VIEW`; `CLI_FACADE_PARITY` is deferred by the current resource-
+feasible selection.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared
@@ -916,12 +923,16 @@ analysis, editor mutation, public extension identity, or publication decision.
 Priority: Selected through `ADAPTER-001`
 
 Status: Planned independently of the editor branch after the shared library,
-Node-port, and read-only MCP contract gates
+Node-port, and accepted read-only MCP contract gates
 
 Define read-only MCP resources and tools from the accepted public Core and
 command registry. Any future write tool must preserve preview, governance,
 digest, safe-write, and audit boundaries and requires separate authorization;
 the initial design must not infer authority from an MCP client connection.
+The accepted [read-only contract](specs/mcp-read-contract.md) selects one
+modern local-stdio protocol and closes its resources, tools, source selectors,
+schemas, diagnostics, limits, cancellation, parity, and side-effect boundary.
+Implementation and installed-artifact acceptance remain selected plan tasks.
 
 ## Portfolio and Issue inventory
 

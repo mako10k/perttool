@@ -1603,13 +1603,22 @@ exact start event
 at `2026-08-05T18:48:48+09:00` through finish event
 `WE-9d9be8b2b1b21978a34a3b84f0de4919890b7c25a551cbcad87e852841d808d6`
 at `2026-08-05T19:02:00+09:00`, with exact active time and effort `11/50h`
-and `11/50ph`. Seven tasks and 36p remain; precedence makespan is 20p and the
-`parallel-sgs` version 1 heuristic resource makespan is 29p with 9p resource
-delay. Inherited velocity `29p/2d` yields `40/29d` and `2d` forecasts. Complete
-NextResult v6 recommends and makes startable only `MCP_READ_CONTRACT`;
-`CLI_FACADE_PARITY` and `VSIX_DAG_VIEW` are deferred by the current
-resource-feasible selection. Source digest is
-`sha256:81a7d8cfa1a7a696c3bde4b99e583a3778d59e251e7de1d8fb32c44a1ef09e52`.
+and `11/50ph`. The accepted [read-only MCP
+contract](../specs/mcp-read-contract.md) fixes final revision `2026-07-28`,
+exact stable server SDK `2.0.0`, local stdio, four immutable resources, five
+closed read-only tools, exact inline and digest-bound registered sources,
+adapter-owned results, failure ownership, hard limits, and parity without a
+CLI subprocess. `MCP_READ_CONTRACT` starts with event
+`WE-a53bbaf695f8dff592f835bbb58f8e3e9d9f5989351960ec82510fe22d02d970`
+at `2026-08-05T19:17:13+09:00` and finishes with event
+`WE-7145073435056597697b7c3e713ccc715273d1bfce06a750ad63f2f74aad4032`
+at `2026-08-05T19:45:00+09:00`, with exact active time and effort
+`1667/3600h` and `1667/3600ph`. Six tasks and 32p remain; precedence makespan
+is 16p and the `parallel-sgs` version 1 heuristic resource makespan is 25p
+with 9p resource delay. Complete NextResult v6 recommends and makes startable
+exactly `MCP_READ_ADAPTER` and `VSIX_DAG_VIEW`; `CLI_FACADE_PARITY` is deferred
+by the current resource-feasible selection. Source digest is
+`sha256:e4461dc339d58773a08d13d857c2ffdbca1245748aa9e9db57458a5bbdc9ed72`.
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 

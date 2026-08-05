@@ -168,6 +168,7 @@ task MCP_READ_CONTRACT ADAPTER_CONTRACT_ACCEPTED -> MCP_CONTRACT_READY:
   title "Accept the fail-closed read-only MCP contract"
   description "Fix MCP resources and read-only tools over shared application use cases, input source selectors, transport and lifecycle, closed schemas, capability discovery, result and diagnostic mapping, local-only behavior, resource limits, and CLI/Core parity. Do not infer authority from connection state and do not expose preview or persistent mutation in this workstream."
   duration 4p
+  status done
   priority 95
   requires:
     DEVELOPERS 1
@@ -481,3 +482,18 @@ work_event WE-9d9be8b2b1b21978a34a3b84f0de4919890b7c25a551cbcad87e852841d808d6:
   occurred_at 2026-08-05T19:02:00+09:00
   active_time 0.22h
   effort 0.22ph
+
+work_event WE-a53bbaf695f8dff592f835bbb58f8e3e9d9f5989351960ec82510fe22d02d970:
+  model 1
+  task MCP_READ_CONTRACT
+  kind start
+  occurred_at 2026-08-05T19:17:13+09:00
+  planned_value 4p
+
+work_event WE-7145073435056597697b7c3e713ccc715273d1bfce06a750ad63f2f74aad4032:
+  model 1
+  task MCP_READ_CONTRACT
+  kind finish
+  occurred_at 2026-08-05T19:45:00+09:00
+  active_time 1667/3600h
+  effort 1667/3600ph

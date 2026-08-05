@@ -290,7 +290,8 @@ read-only MCP adapter, and cross-surface acceptance.
 `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
 `DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
 state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`, and
-`NODE_PORT_BOUNDARY` are also complete and retained before advance. The
+`NODE_PORT_BOUNDARY` are also complete and retained before advance.
+`MCP_READ_CONTRACT` is complete and retained before advance. The
 accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
@@ -334,11 +335,18 @@ bridge, and an exact offline bundled server. Its disposable eleven-file VSIX
 and Node.js 22 server smoke are accepted in
 `docs/process/adapter-vsix-shell-acceptance.md`. The Node Host implementation
 and gate are recorded in `docs/process/adapter-node-host-acceptance.md`.
-Seven tasks and 36p remain. Precedence makespan is 20p; the `parallel-sgs`
-version 1 heuristic resource makespan is 29p with 9p resource delay. Complete
-NextResult v6 recommends and makes startable only `MCP_READ_CONTRACT`;
-`CLI_FACADE_PARITY` and `VSIX_DAG_VIEW` are deferred by the current
-resource-feasible selection. Editor mutation, MCP
+The accepted `docs/specs/mcp-read-contract.md` and
+`docs/process/adapter-mcp-read-contract-acceptance.md` fix final MCP revision
+`2026-07-28`, exact stable server SDK `2.0.0`, local stdio, four immutable JSON
+resources, five closed read-only tools, exact inline and digest-bound
+registered sources, adapter-owned result schemas, failure ownership, hard
+limits, and semantic parity without a CLI subprocess. `MCP_READ_CONTRACT` is
+complete and retained before advance. Six tasks and 32p remain. Precedence
+makespan is 16p; the `parallel-sgs` version 1 heuristic resource makespan is
+25p with 9p resource delay. Complete NextResult v6 recommends and makes
+startable exactly `MCP_READ_ADAPTER` and `VSIX_DAG_VIEW`;
+`CLI_FACADE_PARITY` is deferred by the current resource-feasible selection.
+Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 

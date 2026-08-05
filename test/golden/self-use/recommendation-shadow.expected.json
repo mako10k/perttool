@@ -65,20 +65,20 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:81a7d8cfa1a7a696c3bde4b99e583a3778d59e251e7de1d8fb32c44a1ef09e52",
+      "source_digest": "sha256:e4461dc339d58773a08d13d857c2ffdbca1245748aa9e9db57458a5bbdc9ed72",
       "groups": {
         "active": [],
         "ready": [
-          "MCP_READ_CONTRACT",
+          "MCP_READ_ADAPTER",
           "CLI_FACADE_PARITY",
           "VSIX_DAG_VIEW"
         ],
         "runnable_now": [
-          "MCP_READ_CONTRACT"
+          "MCP_READ_ADAPTER",
+          "VSIX_DAG_VIEW"
         ],
         "blocked_now": [],
         "upcoming": [
-          "MCP_READ_ADAPTER",
           "MCP_ACCEPTANCE",
           "VSIX_ACCEPTANCE",
           "ADAPTER_INTEGRATION_ACCEPTANCE"
@@ -86,20 +86,22 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "MCP_READ_CONTRACT"
+        "MCP_READ_ADAPTER",
+        "VSIX_DAG_VIEW"
       ],
       "manual_selected_task_ids": [
-        "MCP_READ_CONTRACT"
+        "MCP_READ_ADAPTER",
+        "VSIX_DAG_VIEW"
       ],
       "tiers": {
-        "MCP_READ_CONTRACT": "recommended",
-        "VSIX_DAG_VIEW": "deferred",
+        "MCP_READ_ADAPTER": "recommended",
+        "VSIX_DAG_VIEW": "recommended",
         "CLI_FACADE_PARITY": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "MCP_READ_CONTRACT",
+          "id": "MCP_READ_ADAPTER",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -111,48 +113,36 @@
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "10/1",
+          "total_float": "6/1",
           "resource_rejections": [
             {
-              "resource_id": "REVIEWERS",
+              "resource_id": "NODE_SURFACE",
               "capacity": 1,
               "used_before_decision": 1,
               "required": 1,
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "MCP_READ_CONTRACT"
+                "MCP_READ_ADAPTER"
               ]
             }
           ]
         },
         {
           "id": "VSIX_DAG_VIEW",
-          "runnable_now": false,
-          "precedence_critical": false,
+          "runnable_now": true,
+          "precedence_critical": true,
           "schedule_critical": true,
-          "total_float": "4/1",
-          "resource_rejections": [
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "MCP_READ_CONTRACT"
-              ]
-            }
-          ]
+          "total_float": "0/1",
+          "resource_rejections": []
         }
       ],
       "record_counts": {
         "task_decisions": 3,
-        "decision_steps": 18,
-        "facts": 76,
-        "comparisons": 4,
-        "reasons": 12,
+        "decision_steps": 17,
+        "facts": 86,
+        "comparisons": 2,
+        "reasons": 13,
         "descriptions": 7
       },
       "diagnostic_codes": [

@@ -242,6 +242,22 @@ builtins remain confined to logical and concrete Hosts and composition code.
 CLI composition, MCP mapping, VSIX DAG rendering, adapter integration, and
 release selection remain later tasks.
 
+### 3.8 Accepted read-only MCP contract
+
+The [Read-Only MCP Contract](mcp-read-contract.md) fixes MCP protocol model 1
+to final revision `2026-07-28`, exact stable server SDK `2.0.0`, Node.js
+`>=22`, and client-launched local stdio. Discovery lists exactly four immutable
+JSON resources and five closed read-only tools for check, analyze, next, Help,
+and bundled schema lookup.
+
+Document operations accept exact inline text or an opaque launcher-registered
+document ID. Every registered read requires the caller's expected SHA-256;
+wire paths, workspace lookup, Git refs, commits, and remote URLs are absent.
+The contract owns closed adapter-local result identities, bounded protocol and
+source failures, cancellation, complete-result limits, and semantic parity
+without invoking the CLI. It activates no server implementation, dependency,
+mutation, Git operation, public package, or release.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.
