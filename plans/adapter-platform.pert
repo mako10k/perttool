@@ -257,6 +257,7 @@ task VSIX_SHELL LSP_ACCEPTED -> VSIX_SHELL_READY:
   title "Package the TextMate grammar and LSP client VSIX shell"
   description "Implement minimal extension activation for .pert documents, TextMate highlighting, accepted server launch or connection, offline bundled identity, workspace trust behavior, configuration and logging boundaries, and extension lifecycle. Keep semantic intelligence in the LSP and add no editor-only grammar, mutation, telemetry, network fetch, or hidden executable workspace behavior."
   duration 6p
+  status done
   priority 70
   requires:
     DEVELOPERS 1
@@ -449,3 +450,18 @@ work_event WE-fc45ee156774bdfc425a076b1292a7cd7fb268034c4922941d83fec993487bf2:
   occurred_at 2026-08-05T18:14:18+09:00
   active_time 443/3600h
   effort 443/3600ph
+
+work_event WE-60a50883af38ae537d30132940b7d272e6cd184f0e04d1b8f0baab1b3b20678f:
+  model 1
+  task VSIX_SHELL
+  kind start
+  occurred_at 2026-08-05T18:27:38+09:00
+  planned_value 6p
+
+work_event WE-17fd6176771e742a3d1ee2d12f15bbdce9292e5f76a9e13630a056a66ae697cc:
+  model 1
+  task VSIX_SHELL
+  kind finish
+  occurred_at 2026-08-05T18:37:58+09:00
+  active_time 31/180h
+  effort 31/180ph

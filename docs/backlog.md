@@ -793,8 +793,8 @@ Priority: Selected cross-adapter foundation
 
 Status: Architecture, Core dependency cleanup, and shared-library boundary
 accepted; editor protocol contract accepted; document-session Core, read-only
-LSP Core, and isolated LSP package accepted (2026-08-05; retained before
-advance)
+LSP Core, isolated LSP package, and private VSIX shell accepted (2026-08-05;
+retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -842,11 +842,15 @@ retained before advance. Its [isolated acceptance](process/adapter-lsp-acceptanc
 fixes the exact peer-version boundary, 25-file private artifact, separate
 root/server tarballs, and disposable Node.js 22 stdio workflow.
 `LSP_ACCEPTANCE` is complete with exact lifecycle evidence and retained before
-advance. Nine tasks and 47p remain; precedence makespan is 22p and the
-heuristic resource makespan is 36p with 14p resource delay. Complete
-NextResult v6 recommends and makes startable only `VSIX_SHELL`;
-`NODE_PORT_BOUNDARY` is `deferred`, and `MCP_READ_CONTRACT` is `allowed` but
-not selected.
+advance. The [VSIX shell acceptance](process/adapter-vsix-shell-acceptance.md)
+fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation,
+untrusted and virtual workspace support, closed version-bound virtual Help,
+and an offline bundled server in a disposable eleven-file VSIX. `VSIX_SHELL`
+is complete with exact lifecycle evidence and retained before advance. Eight
+tasks and 41p remain; precedence makespan is 21p and the heuristic resource
+makespan is 29p with 8p resource delay. Complete NextResult v6 recommends and
+makes startable only `NODE_PORT_BOUNDARY`; `MCP_READ_CONTRACT` and
+`VSIX_DAG_VIEW` are `allowed` but not selected.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared
@@ -881,8 +885,8 @@ public adapter naming, and release selection remain separate.
 
 Priority: Selected through `ADAPTER-001`
 
-Status: Protocol contract accepted; implementation depends on accepted
-`LSP-001`
+Status: Private TextMate and LSP-client shell accepted; DAG Webview and final
+supported-host acceptance remain in the selected plan
 
 Package an accepted LSP contract without adding editor-only grammar or
 mutation semantics. Acceptance must cover extension activation, bundled
@@ -891,6 +895,13 @@ isolated VS Code extension test. The initial extension also provides a
 read-only DAG Webview for the current LSP document version, with analysis-mode
 selection, source navigation, stale and invalid-state handling, Webview CSP,
 and no arbitrary Mermaid execution or graph-driven mutation.
+
+The accepted private shell packages an eleven-file offline VSIX with exact
+`vscode-languageclient` `9.0.1`, the bundled accepted server, lazy `.pert` and
+Help activation, untrusted and virtual workspace support, a presentation-only
+TextMate grammar, URI/generation/version-bound virtual Help, output-channel
+logging, and deterministic client shutdown. It adds no Webview, parser,
+analysis, editor mutation, public extension identity, or publication decision.
 
 ### MCP-001: Design a fail-closed MCP adapter
 

@@ -1,0 +1,17 @@
+{
+  "schema_version": "Perttool.VsixShellCases.v1",
+  "editor_protocol_model_version": 1,
+  "vscode_engine": "^1.101.0",
+  "cases": [
+    {"id": "VSXS-001", "depends_on": [], "boundary": "private_workspace_and_runtime"},
+    {"id": "VSXS-002", "depends_on": ["VSXS-001"], "boundary": "lazy_pert_activation"},
+    {"id": "VSXS-003", "depends_on": ["VSXS-002"], "boundary": "presentation_only_textmate_grammar"},
+    {"id": "VSXS-004", "depends_on": ["VSXS-001"], "boundary": "exact_language_client_and_handshake"},
+    {"id": "VSXS-005", "depends_on": ["VSXS-004"], "boundary": "offline_bundled_server_stdio"},
+    {"id": "VSXS-006", "depends_on": ["VSXS-005"], "boundary": "untrusted_and_virtual_workspaces"},
+    {"id": "VSXS-007", "depends_on": ["VSXS-004"], "boundary": "closed_version_bound_help"},
+    {"id": "VSXS-008", "depends_on": ["VSXS-007"], "boundary": "read_only_virtual_help_document"},
+    {"id": "VSXS-009", "depends_on": ["VSXS-005", "VSXS-008"], "boundary": "logging_and_lifecycle"},
+    {"id": "VSXS-010", "depends_on": ["VSXS-003", "VSXS-006", "VSXS-009"], "boundary": "isolated_vsix_inventory_and_no_side_effects"}
+  ]
+}

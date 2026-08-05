@@ -3169,9 +3169,12 @@ branches after first-beta acceptance.
   exercises local-stdio initialization, diagnostics, GraphView, shutdown, and
   exit. The private manifest binds the exact root version as a peer without
   leaking its SDK into the public root dependencies.
-- VSIX and DAG: provide TextMate highlighting, the accepted LSP client/server
-  distribution, and a CSP-constrained read-only DAG Webview without semantic
-  duplication or arbitrary Mermaid execution.
+- VSIX and DAG: the private `adapters/vscode` shell now provides VS Code
+  `^1.101.0`, exact language client 9.0.1, TextMate highlighting, untrusted and
+  virtual workspace support, version-bound virtual Help, and an offline
+  bundled server in a disposable eleven-file VSIX. The next task adds the
+  CSP-constrained read-only DAG Webview without semantic duplication or
+  arbitrary Mermaid execution.
 - Read-only MCP: use shared Application and Node boundaries for closed local
   resources/tools, without a CLI subprocess or editor dependency. Preview and
   persistent mutation are deferred.

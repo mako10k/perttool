@@ -289,8 +289,8 @@ read-only MCP adapter, and cross-surface acceptance.
 `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
 `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
 `DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
-state. `LSP_READ_CORE` and `LSP_ACCEPTANCE` are also complete and retained
-before advance. The
+state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, and `VSIX_SHELL` are also complete
+and retained before advance. The
 accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
@@ -323,11 +323,17 @@ facades. The private `adapters/lsp` workspace pins
 local-stdio read-only capability and negotiated Help/GraphView surfaces, and
 is excluded from the public package. The implementation and isolated-package
 records are `docs/process/adapter-lsp-read-core-acceptance.md` and
-`docs/process/adapter-lsp-acceptance.md`. Nine tasks and 47p remain.
-Precedence makespan is 22p; the `parallel-sgs` version 1 heuristic resource
-makespan is 36p with 14p resource delay. Complete NextResult v6 recommends and
-makes startable only `VSIX_SHELL`; `NODE_PORT_BOUNDARY` is `deferred`, and
-`MCP_READ_CONTRACT` is `allowed` but not selected. Editor mutation, MCP
+`docs/process/adapter-lsp-acceptance.md`. The private `adapters/vscode`
+workspace fixes VS Code `^1.101.0`, exact `vscode-languageclient` `9.0.1`,
+lazy `.pert`/Help activation, presentation-only TextMate highlighting,
+untrusted and virtual workspace support, a closed version-bound virtual Help
+bridge, and an exact offline bundled server. Its disposable eleven-file VSIX
+and Node.js 22 server smoke are accepted in
+`docs/process/adapter-vsix-shell-acceptance.md`. Eight tasks and 41p remain.
+Precedence makespan is 21p; the `parallel-sgs` version 1 heuristic resource
+makespan is 29p with 8p resource delay. Complete NextResult v6 recommends and
+makes startable only `NODE_PORT_BOUNDARY`; `MCP_READ_CONTRACT` and
+`VSIX_DAG_VIEW` are `allowed` but not selected. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
@@ -663,6 +669,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
 - `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
 - `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and GraphView wire results, and no public-package inclusion.
+- `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual workspace support, and no DAG Webview or public publication identity yet.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
@@ -711,7 +718,7 @@ npm run check
 git diff --check
 ```
 
-For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
+For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:vsix-shell`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:vsix-shell` builds and packages the private eleven-file offline VSIX in a disposable directory and runs the bundled server through the same stdio lifecycle without installing or publishing the extension. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
 
 - Even for documentation-only changes, run bootstrap checks for the local link, Markdown fences, and normative `.pert` samples.
 - For grammar changes, check valid/invalid examples, field tables, EBNF, diagnostics, and formatter contracts together.

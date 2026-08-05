@@ -1590,14 +1590,18 @@ cancellation/stale rejection. The current Core is an exact portable 45-name,
 `adapters/lsp` workspace implements the accepted stable LSP 3.17.5 stdio
 surface, versioned read-only projections, negotiated Help and four-mode
 GraphView, cancellation/stale rejection, and public-package isolation.
-`LSP_READ_CORE` and its isolated dual-tarball `LSP_ACCEPTANCE` are complete
-with exact lifecycle evidence and retained before advance. Nine tasks and 47p
-remain; precedence makespan is 22p and the `parallel-sgs` version 1 heuristic
-resource makespan is 36p with 14p resource delay. Inherited velocity `29p/2d`
-yields 1.517d and 2.483d forecasts. Complete NextResult v6 recommends and
-makes startable only `VSIX_SHELL`; `NODE_PORT_BOUNDARY` is `deferred`, and
-`MCP_READ_CONTRACT` is `allowed` but not selected. Source digest is
-`sha256:072c05fa5b0d8e0c014fa5616bc140b3ab88bbabf7c039fef816e2c3f30d9382`.
+`LSP_READ_CORE`, its isolated dual-tarball `LSP_ACCEPTANCE`, and the private
+`VSIX_SHELL` are complete with exact lifecycle evidence and retained before
+advance. The VSIX shell fixes VS Code `^1.101.0`, exact language client 9.0.1,
+TextMate presentation, untrusted/virtual workspace support, version-bound
+virtual Help, and an offline bundled server in an eleven-file disposable
+package without adding the DAG Webview. Eight tasks and 41p remain; precedence
+makespan is 21p and the `parallel-sgs` version 1 heuristic resource makespan is
+29p with 8p resource delay. Inherited velocity `29p/2d` yields 1.448d and 2d
+forecasts. Complete NextResult v6 recommends and makes startable only
+`NODE_PORT_BOUNDARY`; `MCP_READ_CONTRACT` and `VSIX_DAG_VIEW` are `allowed`
+but not selected. Source digest is
+`sha256:8b6d6ed28af90495ae7937242b1197528c2ad2afdfb63fd682608f4c54e1ff9c`.
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 

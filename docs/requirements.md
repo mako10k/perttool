@@ -1662,8 +1662,17 @@ exact UTF-16 position conversion, atomic ordered changes, terminal
 desynchronization, validated-snapshot analysis, snapshot-scoped completed
 projection caching, and cancellation/stale rejection. Stateless adapters use
 the same snapshot and analysis functions. It performs no filesystem, Git,
-process, network, editor, mutation, or persistence operation and does not yet
-activate the LSP, GraphView wire result, MCP, or Node Host boundary.
+process, network, editor, mutation, or persistence operation. That Core slice
+did not itself activate the later LSP, GraphView wire result, VSIX, MCP, or
+Node Host boundaries.
+
+The accepted private VSIX shell activates the LSP portion through VS Code
+`^1.101.0`, exact language client 9.0.1, presentation-only TextMate
+highlighting, untrusted and virtual workspace support, a closed
+URI/generation/version-bound virtual Help bridge, and one offline bundled
+server. Its disposable eleven-file VSIX contains no Webview or project code.
+The DAG view, supported-host acceptance, editor mutation, public extension
+identity, release, and publication remain separate.
 
 ## 18. JSON and schemas
 
@@ -2822,7 +2831,7 @@ complete because the same `v0.1.0-alpha.2` artifact was published to the
 GitHub prerelease and npm `alpha`, including isolated installation from the
 registry.
 
-[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, private read-only LSP Core, and isolated LSP package acceptance are complete. The session acceptance extends Core to an exact portable 45-name runtime without changing the 121-name root/Node facades. The LSP implementation uses stable protocol 3.17.5 over local stdio, exposes only the accepted read-only standard and negotiated Help/GraphView surfaces, remains excluded from the public package, and passes the separate Core/server tarball workflow on Node.js 22. Nine tasks and 47p remain; precedence and heuristic resource makespans are 22p and 36p with 14p resource delay. Complete NextResult v6 recommends and makes startable only `VSIX_SHELL`; `NODE_PORT_BOUNDARY` is `deferred`, and `MCP_READ_CONTRACT` is `allowed` but not selected.
+[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, private read-only LSP Core, isolated LSP package acceptance, and private VSIX shell are complete. The session acceptance extends Core to an exact portable 45-name runtime without changing the 121-name root/Node facades. The LSP implementation uses stable protocol 3.17.5 over local stdio, exposes only the accepted read-only standard and negotiated Help/GraphView surfaces, remains excluded from the public package, and passes the separate Core/server tarball workflow on Node.js 22. The private eleven-file VSIX fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation, untrusted/virtual workspace support, closed version-bound virtual Help, and an offline bundled server without adding the DAG Webview. Eight tasks and 41p remain; precedence and heuristic resource makespans are 21p and 29p with 8p resource delay. Complete NextResult v6 recommends and makes startable only `NODE_PORT_BOUNDARY`; `MCP_READ_CONTRACT` and `VSIX_DAG_VIEW` are `allowed` but not selected.
 
 The accepted Contract 3 source and package workflow published suffix-free beta
 `0.2.0` as the first Contract 3 package. All five tasks in

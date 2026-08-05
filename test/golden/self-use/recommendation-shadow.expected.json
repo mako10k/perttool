@@ -65,13 +65,13 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:072c05fa5b0d8e0c014fa5616bc140b3ab88bbabf7c039fef816e2c3f30d9382",
+      "source_digest": "sha256:8b6d6ed28af90495ae7937242b1197528c2ad2afdfb63fd682608f4c54e1ff9c",
       "groups": {
         "active": [],
         "ready": [
           "MCP_READ_CONTRACT",
           "NODE_PORT_BOUNDARY",
-          "VSIX_SHELL"
+          "VSIX_DAG_VIEW"
         ],
         "runnable_now": [
           "MCP_READ_CONTRACT",
@@ -82,23 +82,22 @@
           "MCP_READ_ADAPTER",
           "CLI_FACADE_PARITY",
           "MCP_ACCEPTANCE",
-          "VSIX_DAG_VIEW",
           "VSIX_ACCEPTANCE",
           "ADAPTER_INTEGRATION_ACCEPTANCE"
         ],
         "suspended": []
       },
       "recommended_task_ids": [
-        "VSIX_SHELL"
+        "NODE_PORT_BOUNDARY"
       ],
       "manual_selected_task_ids": [
         "MCP_READ_CONTRACT",
         "NODE_PORT_BOUNDARY"
       ],
       "tiers": {
-        "VSIX_SHELL": "recommended",
-        "NODE_PORT_BOUNDARY": "deferred",
-        "MCP_READ_CONTRACT": "allowed"
+        "NODE_PORT_BOUNDARY": "recommended",
+        "MCP_READ_CONTRACT": "allowed",
+        "VSIX_DAG_VIEW": "allowed"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
@@ -106,24 +105,24 @@
           "id": "MCP_READ_CONTRACT",
           "runnable_now": true,
           "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "2/1",
-          "resource_rejections": []
-        },
-        {
-          "id": "NODE_PORT_BOUNDARY",
-          "runnable_now": true,
-          "precedence_critical": false,
           "schedule_critical": true,
           "total_float": "1/1",
           "resource_rejections": []
         },
         {
-          "id": "VSIX_SHELL",
-          "runnable_now": false,
+          "id": "NODE_PORT_BOUNDARY",
+          "runnable_now": true,
           "precedence_critical": true,
-          "schedule_critical": true,
+          "schedule_critical": false,
           "total_float": "0/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "VSIX_DAG_VIEW",
+          "runnable_now": false,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "5/1",
           "resource_rejections": [
             {
               "resource_id": "DEVELOPERS",
@@ -138,14 +137,14 @@
               ]
             },
             {
-              "resource_id": "PACKAGE_SURFACE",
+              "resource_id": "REVIEWERS",
               "capacity": 1,
               "used_before_decision": 1,
               "required": 1,
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "NODE_PORT_BOUNDARY"
+                "MCP_READ_CONTRACT"
               ]
             }
           ]
@@ -154,10 +153,10 @@
       "record_counts": {
         "task_decisions": 3,
         "decision_steps": 18,
-        "facts": 65,
-        "comparisons": 3,
+        "facts": 54,
+        "comparisons": 2,
         "reasons": 12,
-        "descriptions": 6
+        "descriptions": 5
       },
       "diagnostic_codes": [
         "PTDAG-208"

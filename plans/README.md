@@ -27,13 +27,16 @@ Plans are separated by level of detail.
   parity, document sessions, LSP, VSIX and DAG view, MCP, and integrated
   acceptance; `ADAPTER_ARCHITECTURE_CONTRACT`,
   `CORE_DEPENDENCY_CLEANUP`, `SHARED_LIBRARY_BOUNDARY`,
-  `EDITOR_PROTOCOL_CONTRACT`, `DOCUMENT_SESSION_CORE`, `LSP_READ_CORE`, and
-  `LSP_ACCEPTANCE` are complete and retained before advance; the private LSP
+  `EDITOR_PROTOCOL_CONTRACT`, `DOCUMENT_SESSION_CORE`, `LSP_READ_CORE`,
+  `LSP_ACCEPTANCE`, and `VSIX_SHELL` are complete and retained before advance;
+  the private LSP
   workspace implements stable protocol 3.17.5 over local stdio, is excluded
   from the public package, and passes its isolated dual-tarball Node.js 22
-  gate; 9 tasks and 47p remain at 22p/36p precedence/resource makespans with
-  14p resource delay, and complete NextResult v6 recommends and makes
-  startable only `VSIX_SHELL`
+  gate; the private VSIX shell adds TextMate presentation, exact language
+  client 9.0.1, untrusted/virtual workspace support, version-bound Help, and an
+  offline bundled server without the DAG Webview; 8 tasks and 41p remain at
+  21p/29p precedence/resource makespans with 8p resource delay, and complete
+  NextResult v6 recommends and makes startable only `NODE_PORT_BOUNDARY`
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining

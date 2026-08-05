@@ -581,5 +581,9 @@ implemented only the protocol-neutral snapshot, UTF-16, analysis, cache, and
 invalidation boundary. `LSP_READ_CORE` later implemented the private local-
 stdio language server and GraphView wire mapping against this unchanged
 contract. That later implementation does not retroactively broaden this
-historical contract acceptance; VSIX packaging and editor presentation remain
-separate tasks.
+historical contract acceptance. `VSIX_SHELL` then implemented the private Node
+workspace extension, presentation-only TextMate grammar, exact language
+client, offline bundled server, negotiated and version-bound virtual Help, and
+untrusted/virtual workspace declarations. The DAG Webview, supported-host
+acceptance, editor mutation, public naming, release, and publication remain
+separate.

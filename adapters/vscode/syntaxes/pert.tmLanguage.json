@@ -1,0 +1,78 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "PERT",
+  "scopeName": "source.pert",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "match": "^\\s*(project|milestone|task|gate|resource|relation|plan_contract|outcome|frontier_receipt|work_event)\\b",
+      "name": "keyword.declaration.pert"
+    },
+    {
+      "match": "\\b(active|blocked|done|planned|reached|suspended|both|contract|outcome|start|finish|suspend|resume)\\b",
+      "name": "constant.language.pert"
+    },
+    {
+      "match": "(?<![A-Za-z0-9_])(?:\\d+(?:\\.\\d+)?|\\d+/\\d+)(?:ph|ms|s|min|h|d|w|p|%)?\\b",
+      "name": "constant.numeric.pert"
+    },
+    {
+      "match": "\\b\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2}:\\d{2}(?:Z|[+-]\\d{2}:\\d{2}))?\\b",
+      "name": "constant.other.date.pert"
+    },
+    {
+      "match": "(?<=\\s)->(?=\\s)",
+      "name": "keyword.operator.arrow.pert"
+    },
+    {
+      "match": "\\|\\s*$",
+      "name": "punctuation.definition.block.pert"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "begin": "#",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.pert"
+            }
+          },
+          "end": "$",
+          "name": "comment.line.number-sign.pert"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "begin": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.pert"
+            }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.pert"
+            }
+          },
+          "name": "string.quoted.double.pert",
+          "patterns": [
+            {
+              "match": "\\\\(?:[\\\"nrt]|u[0-9A-Fa-f]{4})",
+              "name": "constant.character.escape.pert"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

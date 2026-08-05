@@ -216,6 +216,15 @@ This verifies a distributable server input without publishing it or adding it
 to the public root tarball. Node.js 22 is exercised directly, while the same
 gate remains part of the repository's Node.js 22/24 CI matrix.
 
+The private VS Code shell is implemented in `adapters/vscode` without changing
+the public package. It fixes VS Code `^1.101.0`, exact
+`vscode-languageclient` `9.0.1`, lazy `.pert` and Help activation,
+presentation-only TextMate highlighting, untrusted and virtual workspace
+support, a closed version-bound Help bridge, and one exact offline bundled
+server. Its disposable VSIX gate packages eleven files and reuses the isolated
+server lifecycle smoke under Node.js 22. The DAG Webview and supported-host
+acceptance remain later plan tasks.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.
