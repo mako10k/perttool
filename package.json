@@ -64,11 +64,12 @@
     "check:english": "node scripts/check-english-baseline.mjs",
     "check:docs": "bash scripts/check-docs.sh",
     "check:lsp-package": "bash scripts/check-lsp-package.sh",
+    "check:mcp-package": "bash scripts/check-mcp-package.sh",
     "check:vsix-shell": "bash scripts/check-vsix-shell.sh",
     "check:link": "bash scripts/check-npm-link.sh",
     "check:package": "bash scripts/check-package.sh",
     "check:self-use": "bash scripts/check-self-use.sh",
-    "check": "npm run typecheck && npm test && npm run check:english && npm run check:docs && npm run check:self-use && npm run check:lsp-package && npm run check:vsix-shell && npm run check:link && npm run check:package"
+    "check": "npm run typecheck && npm test && npm run check:english && npm run check:docs && npm run check:self-use && npm run check:lsp-package && npm run check:mcp-package && npm run check:vsix-shell && npm run check:link && npm run check:package"
   },
   "devDependencies": {
     "@types/node": "22.20.1",

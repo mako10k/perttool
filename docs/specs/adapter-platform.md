@@ -283,6 +283,22 @@ listener, or adapter subprocess. The executable parity cases are fixed in
 Release selection, publication, remote writes, Issue mutation, and plan
 advance remain separate.
 
+### 3.10 Accepted MCP installed state
+
+The final [MCP acceptance record](../process/adapter-mcp-acceptance.md) adds an
+isolated package boundary beyond the implementation slice. The root and
+private MCP tarballs install together with scripts disabled, and the installed
+server proves exact discovery, registered source and digest handling, Domain
+and adapter failure ownership, deterministic two-client parity, offline
+Help/schema, and unchanged project bytes in a non-Git directory.
+
+The stdio entry places a fatal UTF-8, bounded JSON-line transform before the
+SDK transport. Invalid or incomplete JSON cannot be followed by a repaired
+request on the same input stream. A test-only output-ceiling seam may narrow,
+but cannot raise, the normative limit and proves complete-result refusal
+without partial output. No public root export, CLI command, preview, mutation,
+Git, network, configuration, or inferred authority is added.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.

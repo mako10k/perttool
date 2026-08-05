@@ -62,6 +62,8 @@ export interface PerttoolMcpAdapterOptions {
   readonly registrations?: readonly McpRegisteredDocumentV1[];
   readonly host?: NodeHostPorts;
   readonly now?: () => number;
+  /** Narrows, but never raises, the accepted output ceiling for boundary tests. */
+  readonly outputByteLimit?: number;
 }
 
 export interface PerttoolMcpToolResponse {
@@ -133,13 +135,14 @@ function successResult(
 function response(
   value: McpToolResultV1 | McpSourceErrorV1,
   isError: boolean,
+  maximumOutputBytes: number = MCP_LIMITS.outputBytes,
 ): PerttoolMcpToolResponse {
   const text = JSON.stringify(value);
-  if (Buffer.byteLength(text, "utf8") > MCP_LIMITS.outputBytes) {
+  if (Buffer.byteLength(text, "utf8") > maximumOutputBytes) {
     const error = mcpSourceError(
       value.operation,
       "PTMCP-105",
-      `complete result exceeds ${MCP_LIMITS.outputBytes} bytes`,
+      `complete result exceeds ${maximumOutputBytes} bytes`,
       value.source,
     );
     return Object.freeze({
@@ -155,7 +158,10 @@ function response(
   });
 }
 
-function cancelled(operation: McpOperation): PerttoolMcpToolResponse {
+function cancelled(
+  operation: McpOperation,
+  maximumOutputBytes: number = MCP_LIMITS.outputBytes,
+): PerttoolMcpToolResponse {
   return response(
     mcpSourceError(
       operation,
@@ -163,6 +169,7 @@ function cancelled(operation: McpOperation): PerttoolMcpToolResponse {
       "request was cancelled or expired before a result became eligible",
     ),
     true,
+    maximumOutputBytes,
   );
 }
 
@@ -268,6 +275,17 @@ export function createPerttoolMcpAdapter(
 ): PerttoolMcpAdapter {
   const host = options.host ?? createNodeHost();
   const now = options.now ?? Date.now;
+  const outputByteLimit = options.outputByteLimit ?? MCP_LIMITS.outputBytes;
+  if (!Number.isSafeInteger(outputByteLimit) || outputByteLimit < 1) {
+    throw new Error("MCP output byte limit must be a positive safe integer");
+  }
+  const maximumOutputBytes = Math.min(outputByteLimit, MCP_LIMITS.outputBytes);
+  const emit = (
+    value: McpToolResultV1 | McpSourceErrorV1,
+    isError: boolean,
+  ) => response(value, isError, maximumOutputBytes);
+  const cancel = (operation: McpOperation) =>
+    cancelled(operation, maximumOutputBytes);
   const catalog = createRegistrationCatalog(options.registrations);
   const resourceValues = resources();
   let activeTools = 0;
@@ -289,7 +307,7 @@ export function createPerttoolMcpAdapter(
   ): Promise<PerttoolMcpToolResponse> => {
     const operation = operationFor(name, input);
     if (requestBytes(input) > MCP_LIMITS.requestBytes) {
-      return response(
+      return emit(
         mcpSourceError(
           operation,
           "PTMCP-104",
@@ -298,9 +316,9 @@ export function createPerttoolMcpAdapter(
         true,
       );
     }
-    if (signal.aborted) return cancelled(operation);
+    if (signal.aborted) return cancel(operation);
     if (activeTools >= MCP_LIMITS.concurrentTools) {
-      return cancelled(operation);
+      return cancel(operation);
     }
     activeTools += 1;
     const startedAt = now();
@@ -310,14 +328,14 @@ export function createPerttoolMcpAdapter(
       if (name === "perttool_help") {
         const value = input as McpHelpInputV1;
         validateHelpInput(value);
-        if (expired()) return cancelled(operation);
+        if (expired()) return cancel(operation);
         if (value.kind === "command") {
           const application = getCommandDiscovery({
             resource: value.resource ?? null,
             action: value.action ?? null,
           });
-          if (expired()) return cancelled(operation);
-          return response(successResult(
+          if (expired()) return cancel(operation);
+          return emit(successResult(
             name,
             "command_help",
             application.schemaVersion,
@@ -328,8 +346,8 @@ export function createPerttoolMcpAdapter(
         const topic = value.topic_id ?? null;
         const level = value.level ?? (topic === null ? "index" : "quick");
         const application = getGuide(topic, level);
-        if (expired()) return cancelled(operation);
-        return response(successResult(
+        if (expired()) return cancel(operation);
+        return emit(successResult(
           name,
           "guide",
           application.schemaVersion,
@@ -341,7 +359,7 @@ export function createPerttoolMcpAdapter(
       if (name === "perttool_schema") {
         const value = input as McpSchemaInputV1;
         validateSchemaInput(value);
-        if (expired()) return cancelled(operation);
+        if (expired()) return cancel(operation);
         const schemaId = value.schema_id ?? null;
         const application = schemaId === null
           ? getJsonSchemaResult(null)
@@ -351,8 +369,8 @@ export function createPerttoolMcpAdapter(
                 ? {}
                 : { ref: value.ref }),
             });
-        if (expired()) return cancelled(operation);
-        return response(successResult(
+        if (expired()) return cancel(operation);
+        return emit(successResult(
           name,
           "schema_lookup",
           application.schemaVersion,
@@ -368,8 +386,8 @@ export function createPerttoolMcpAdapter(
         catalog,
         host,
       );
-      if (!source.ok) return response(source.error, true);
-      if (expired()) return cancelled(operation);
+      if (!source.ok) return emit(source.error, true);
+      if (expired()) return cancel(operation);
 
       if (name === "perttool_check") {
         const value = input as McpCheckInputV1;
@@ -377,15 +395,15 @@ export function createPerttoolMcpAdapter(
           maxDiagnostics: value.max_diagnostics ?? MCP_LIMITS.defaultDiagnostics,
         });
         if (application.schemaVersion !== definition(name).resultSchemaVersion) {
-          return response(mcpSourceError(
+          return emit(mcpSourceError(
             operation,
             "PTMCP-106",
             "Application check result identity is unavailable",
             source.value.binding,
           ), true);
         }
-        if (expired()) return cancelled(operation);
-        return response(successResult(
+        if (expired()) return cancel(operation);
+        return emit(successResult(
           name,
           operation,
           application.schemaVersion,
@@ -404,15 +422,15 @@ export function createPerttoolMcpAdapter(
           maxDiagnostics: value.max_diagnostics ?? MCP_LIMITS.defaultDiagnostics,
         });
         if (application.schemaVersion !== definition(name).resultSchemaVersion) {
-          return response(mcpSourceError(
+          return emit(mcpSourceError(
             operation,
             "PTMCP-106",
             "Application analysis result identity is unavailable",
             source.value.binding,
           ), true);
         }
-        if (expired()) return cancelled(operation);
-        return response(successResult(
+        if (expired()) return cancel(operation);
+        return emit(successResult(
           name,
           operation,
           application.schemaVersion,
@@ -430,15 +448,15 @@ export function createPerttoolMcpAdapter(
         sourceDigest: source.value.binding.source_digest,
       });
       if (application.schemaVersion !== definition(name).resultSchemaVersion) {
-        return response(mcpSourceError(
+        return emit(mcpSourceError(
           operation,
           "PTMCP-106",
           "Application next result identity is unavailable",
           source.value.binding,
         ), true);
       }
-      if (expired()) return cancelled(operation);
-      return response(successResult(
+      if (expired()) return cancel(operation);
+      return emit(successResult(
         name,
         operation,
         application.schemaVersion,

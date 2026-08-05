@@ -3190,9 +3190,10 @@ branches after first-beta acceptance.
   registered ID plus expected digest binds document requests; no client path,
   Git ref, remote source, CLI subprocess, or editor dependency is accepted.
   Adapter-local closed outputs preserve complete semantic results and limits
-  without inferring authority. The private implementation provides the exact
-  modern stdio mapping; acceptance, preview, and persistent mutation remain
-  later tasks.
+  without inferring authority. The private implementation and installed
+  acceptance provide the exact modern stdio mapping, strict malformed-line
+  fail-closure, two-client parity, and no-write package gate; preview and
+  persistent mutation remain later tasks.
 
 The LSP server remains the predecessor of VSIX. The MCP branch is independent
 of both after the shared foundation. Adapter package publication, public names,

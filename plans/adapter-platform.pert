@@ -316,6 +316,7 @@ task MCP_ACCEPTANCE MCP_READY -> MCP_ACCEPTED:
   title "Accept the read-only MCP adapter"
   description "Verify transport lifecycle, capability and schema closure, malformed and unknown requests, Core and CLI semantic parity, local source identity, diagnostic and output limits, cancellation, offline help, multiple clients, isolated package execution, and proof of no project, Git, configuration, network, preview, persistent mutation, or authority side effect."
   duration 4p
+  status done
   priority 70
   requires:
     DEVELOPERS 1
@@ -545,3 +546,18 @@ work_event WE-80a3a5d16c2e7063b8bb9fefe0cb0922f678368df1cef3fcbbbea701779647ed:
   occurred_at 2026-08-05T21:03:35+09:00
   active_time 209/1200h
   effort 209/1200ph
+
+work_event WE-172e086c4e8462a7ee26b5f68ab654590f221dae7d61538894c61e77d7fd2310:
+  model 1
+  task MCP_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-05T21:13:49+09:00
+  planned_value 4p
+
+work_event WE-30dbf9efeaa090fef2416cce23885d40c14e3dccfd1bd2a4b324019648c1f6b1:
+  model 1
+  task MCP_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-05T21:21:03+09:00
+  active_time 217/1800h
+  effort 217/1800ph

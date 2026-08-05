@@ -1,0 +1,22 @@
+{
+  "schema_version": "Perttool.McpAcceptanceCases.v1",
+  "protocol_model_version": 1,
+  "protocol_revision": "2026-07-28",
+  "workspace": "perttool-mcp-private",
+  "resources": 4,
+  "tools": 5,
+  "cases": [
+    { "id": "MCPA-001", "depends_on": [], "boundary": "isolated-root-and-adapter-packages" },
+    { "id": "MCPA-002", "depends_on": ["MCPA-001"], "boundary": "startup-shutdown-and-eof" },
+    { "id": "MCPA-003", "depends_on": ["MCPA-002"], "boundary": "capability-resource-tool-and-schema-closure" },
+    { "id": "MCPA-004", "depends_on": ["MCPA-003"], "boundary": "inline-registered-and-digest-bound-sources" },
+    { "id": "MCPA-005", "depends_on": ["MCPA-002"], "boundary": "legacy-malformed-and-unknown-requests" },
+    { "id": "MCPA-006", "depends_on": ["MCPA-004"], "boundary": "invalid-document-and-diagnostic-ownership" },
+    { "id": "MCPA-007", "depends_on": ["MCPA-004"], "boundary": "request-source-output-concurrency-deadline-and-cancellation-limits" },
+    { "id": "MCPA-008", "depends_on": ["MCPA-006", "MCPA-007"], "boundary": "core-cli-semantic-parity-and-determinism" },
+    { "id": "MCPA-009", "depends_on": ["MCPA-008"], "boundary": "multiple-client-isolation" },
+    { "id": "MCPA-010", "depends_on": ["MCPA-003"], "boundary": "offline-help-and-schema" },
+    { "id": "MCPA-011", "depends_on": ["MCPA-005", "MCPA-009", "MCPA-010"], "boundary": "no-path-git-network-write-preview-or-authority-side-effect" },
+    { "id": "MCPA-012", "depends_on": ["MCPA-011"], "boundary": "complete-repository-and-lifecycle-acceptance" }
+  ]
+}

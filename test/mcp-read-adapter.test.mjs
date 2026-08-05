@@ -325,6 +325,14 @@ test("startup, argument, request, source, and cancellation limits fail closed", 
   const expiredResult = await expired.executeTool("perttool_help", { kind: "command" });
   assert.equal(expiredResult.structuredContent.diagnostic.code, "PTMCP-107");
 
+  const outputBounded = createPerttoolMcpAdapter({ outputByteLimit: 1 });
+  const outputBoundedResult = await outputBounded.executeTool(
+    "perttool_help",
+    { kind: "command" },
+  );
+  assert.equal(outputBoundedResult.isError, true);
+  assert.equal(outputBoundedResult.structuredContent.diagnostic.code, "PTMCP-105");
+
   const text = await repositoryText("docs/examples/minimal.pert");
   const bytes = Buffer.from(text, "utf8");
   let releaseReads;

@@ -172,8 +172,8 @@ Mandatory summary:
   `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`,
   `DOCUMENT_SESSION_CORE`, `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`,
   `VSIX_DAG_VIEW`, `NODE_PORT_BOUNDARY`, `CLI_FACADE_PARITY`,
-  `MCP_READ_CONTRACT`, and `MCP_READ_ADAPTER` are complete and retained before
-  advance. Their
+  `MCP_READ_CONTRACT`, `MCP_READ_ADAPTER`, and `MCP_ACCEPTANCE` are complete
+  and retained before advance. Their
   accepted specifications and records fix
   the 121-export, 44-command, 20-schema, zero-production-dependency baseline;
   exact twelve-file/nineteen-import migration input; layer and distribution
@@ -214,11 +214,13 @@ Mandatory summary:
   `docs/process/adapter-mcp-read-adapter-acceptance.md`. The CLI now composes
   one private Application facade over the accepted Node Host and retains all
   44 Contract 7 commands and package identities; its record is
-  `docs/process/adapter-cli-facade-parity-acceptance.md`. Three tasks and 13p
-  remain; precedence makespan is 9p and the `parallel-sgs` version 1 heuristic
-  resource makespan is 13p with 4p resource delay. Complete NextResult v6
-  recommends and makes startable only `MCP_ACCEPTANCE`; `VSIX_ACCEPTANCE` is
-  ready but deferred by the current resource-feasible selection.
+  `docs/process/adapter-cli-facade-parity-acceptance.md`. Final MCP acceptance
+  adds the isolated dual-tarball, strict malformed-line, two-client, source-
+  digest, limit, and no-write gate recorded in
+  `docs/process/adapter-mcp-acceptance.md`. Two tasks and 9p remain; precedence
+  and `parallel-sgs` version 1 heuristic resource makespans are both 9p with
+  zero resource delay. Complete NextResult v6 recommends and makes startable
+  only `VSIX_ACCEPTANCE`; `ADAPTER_INTEGRATION_ACCEPTANCE` remains upcoming.
   Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.
@@ -329,7 +331,7 @@ Mandatory summary:
 - Distinguish the precedence critical path from the schedule critical path in a resource schedule.
 - `docs/process/self-use.md` is authorized through Stage 3. Editing/advance writes require preview, review of the diff and removal list, expected digest, and post-write reanalysis.
 - Confirm metadata such as Project ID, as_of, duration_unit, velocity, and finish with `project show --format json`; make changes through `project set` preview/diff and the Stage 3 safe-write procedure. Do not rely on visual source-file inspection or manual editing for the normal workflow.
-- Run repository checks on Node.js 22 or later with `npm ci`, `npm run check`, and `git diff --check`; root build/typecheck include private adapter workspaces, `npm run check:lsp-package` installs the private server beside the exact root Core, `npm run check:vsix-shell` packages and exercises the offline VSIX shell in a disposable directory, and public-package validation excludes `adapters/` from the root tarball. Use `npm run check:english` for the exact Japanese-script allowlist check. CI covers Node.js 22 and 24.
+- Run repository checks on Node.js 22 or later with `npm ci`, `npm run check`, and `git diff --check`; root build/typecheck include private adapter workspaces, `npm run check:lsp-package` installs the private LSP server beside the exact root Core, `npm run check:mcp-package` installs and exercises the private MCP server beside the exact root package without writes, `npm run check:vsix-shell` packages and exercises the offline VSIX and DAG assets in a disposable directory, and public-package validation excludes `adapters/` from the root tarball. Use `npm run check:english` for the exact Japanese-script allowlist check. CI covers Node.js 22 and 24.
 - Before staging, inspect the diff and status, and do not include unrelated user changes.
 - Use `secdat exec` for remote writes and GitHub operations, and obtain explicit permission for destructive Git operations.
 - Beta publication uses `beta` and does not itself change `latest`. The retired `alpha` channel must not be recreated without a new release-policy decision and separate authorization. A later `latest` promotion is a separate dist-tag mutation requiring an explicitly selected version and user permission. Use the release gates, the GitHub-identical tarball for publication, process-limited `NPM_TOKEN`, and the repository `secdat` route.

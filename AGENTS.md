@@ -292,8 +292,8 @@ read-only MCP adapter, and cross-surface acceptance.
 state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`, `VSIX_DAG_VIEW`, and
 `NODE_PORT_BOUNDARY` are also complete and retained before advance.
 `CLI_FACADE_PARITY` is complete and retained before advance.
-`MCP_READ_CONTRACT` and `MCP_READ_ADAPTER` are complete and retained before
-advance. The accepted
+`MCP_READ_CONTRACT`, `MCP_READ_ADAPTER`, and `MCP_ACCEPTANCE` are complete and
+retained before advance. The accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
 `docs/process/adapter-core-dependency-acceptance.md` records fix the
@@ -352,17 +352,20 @@ limits, and semantic parity without a CLI subprocess. The private
 four resources, five tools, digest-bound sources, self-contained adapter
 schemas, hard limits, and direct Application parity without invoking Git,
 persistence, or the CLI. Its implementation record is
-`docs/process/adapter-mcp-read-adapter-acceptance.md`.
-`MCP_READ_CONTRACT` and `MCP_READ_ADAPTER` are complete and retained before
-advance. The CLI now constructs one private Application facade over the
+`docs/process/adapter-mcp-read-adapter-acceptance.md`. The final
+`docs/process/adapter-mcp-acceptance.md` record adds an isolated dual-tarball
+install, two-client parity, strict malformed-line fail-closure, installed
+source/digest/error probing, and before/after file-identity proof.
+`MCP_READ_CONTRACT`, `MCP_READ_ADAPTER`, and `MCP_ACCEPTANCE` are complete and
+retained before advance. The CLI now constructs one private Application facade over the
 accepted Node Host; document bytes/digests, Git history and advance evidence,
 artifact output, and Grammar 6 persistence use injected ports while all 44
 Contract 7 commands and package identities remain unchanged. Its record is
-`docs/process/adapter-cli-facade-parity-acceptance.md`. Three tasks and 13p
-remain. Precedence makespan is 9p; the `parallel-sgs` version 1 heuristic
-resource makespan is 13p with 4p resource delay. Complete NextResult v6
-recommends and makes startable only `MCP_ACCEPTANCE`; `VSIX_ACCEPTANCE` is
-ready but deferred by the current resource-feasible selection.
+`docs/process/adapter-cli-facade-parity-acceptance.md`. Two tasks and 9p
+remain. Precedence and `parallel-sgs` version 1 heuristic resource makespans
+are both 9p with zero resource delay. Complete NextResult v6 recommends and
+makes startable only `VSIX_ACCEPTANCE`; `ADAPTER_INTEGRATION_ACCEPTANCE`
+remains upcoming.
 Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
@@ -671,7 +674,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
 - `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `help-guide-consistency.pert`, `adapter-platform.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.7.1.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
-- `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance and isolated-package inventory checks for internal assurance compatibility and inspection modules.
+- `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance, isolated-package inventory checks for internal assurance compatibility and inspection modules, and isolated LSP/MCP/VSIX gates.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
 - `src/actuals/`: active Grammar 5 source projection, Node-backed deterministic event identity and request normalization, and separately owned pure exact lifecycle reduction, measurements, and stored-state validation for task-owned work-event records.
@@ -701,7 +704,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; the private CLI Application facade with injected Node Host ports; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
 - `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and GraphView wire results, and no public-package inclusion.
 - `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual workspace support, and a restrictive read-only GraphView DAG Webview without public publication identity.
-- `adapters/mcp/`: private Node.js 22 MCP workspace with exact server SDK 2.0.0, modern-only 2026-07-28 local stdio, four immutable resources, five fail-closed read-only tools, digest-bound inline or launcher-registered sources, self-contained output schemas, and no public-package inclusion.
+- `adapters/mcp/`: private Node.js 22 MCP workspace with exact server SDK 2.0.0, modern-only 2026-07-28 local stdio, strict malformed-line fail-closure, four immutable resources, five fail-closed read-only tools, digest-bound inline or launcher-registered sources, self-contained output schemas, isolated two-client/no-write package acceptance, and no public-package inclusion.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
@@ -750,7 +753,7 @@ npm run check
 git diff --check
 ```
 
-For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:vsix-shell`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:vsix-shell` builds and packages the private eleven-file offline VSIX in a disposable directory and runs the bundled server through the same stdio lifecycle without installing or publishing the extension. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
+For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:mcp-package`, `npm run check:vsix-shell`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:mcp-package` packs and installs the private MCP server beside the exact root package, exercises strict modern stdio, discovery, registered source/digest handling, errors, two-client parity, and no-write identity in a disposable prefix, and publishes nothing. `check:vsix-shell` builds and packages the private fourteen-file offline VSIX in a disposable directory and runs the bundled server and DAG assets through their isolated gate without installing or publishing the extension. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
 
 - Even for documentation-only changes, run bootstrap checks for the local link, Markdown fences, and normative `.pert` samples.
 - For grammar changes, check valid/invalid examples, field tables, EBNF, diagnostics, and formatter contracts together.

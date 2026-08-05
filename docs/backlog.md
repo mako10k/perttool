@@ -794,8 +794,9 @@ Priority: Selected cross-adapter foundation
 Status: Architecture, Core dependency cleanup, and shared-library boundary
 accepted; editor protocol contract accepted; document-session Core, read-only
 LSP Core, isolated LSP package, private VSIX shell and DAG Webview, and Node
-Host boundary accepted; CLI facade parity accepted; read-only MCP contract and
-private MCP implementation accepted (2026-08-05; retained before advance)
+Host boundary accepted; CLI facade parity accepted; read-only MCP contract,
+private MCP implementation, and isolated MCP acceptance accepted (2026-08-05;
+retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -881,11 +882,14 @@ eight-source workspace, direct Application parity, exact four-resource and
 five-tool discovery, digest-bound sources, self-contained schemas, hard
 limits, and modern-only protocol stream without Git, persistence, or a CLI
 subprocess. `MCP_READ_ADAPTER` is complete with exact lifecycle evidence and
-retained before advance. Three tasks and 13p remain; precedence makespan is 9p
-and the heuristic resource makespan is 13p with 4p resource delay. Complete
-NextResult v6 recommends and makes startable only `MCP_ACCEPTANCE`;
-`VSIX_ACCEPTANCE` is ready but deferred by the current resource-feasible
-selection.
+retained before advance. The [final MCP acceptance](process/adapter-mcp-acceptance.md)
+adds isolated root/private package installation, strict malformed-line
+fail-closure, two-client semantic parity, installed source/digest/error and
+limit probes, and before/after file-identity proof. `MCP_ACCEPTANCE` is
+complete with exact lifecycle evidence and retained before advance. Two tasks
+and 9p remain; precedence and heuristic resource makespans are both 9p with
+zero resource delay. Complete NextResult v6 recommends and makes startable
+only `VSIX_ACCEPTANCE`; `ADAPTER_INTEGRATION_ACCEPTANCE` remains upcoming.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared
