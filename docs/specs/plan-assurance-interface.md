@@ -11,8 +11,9 @@
 - Semantic contract: [plan-assurance.md](plan-assurance.md)
 - Historical compatibility baseline: Grammar 5, CLI Contract 6, and exact pin
   0.6.0
-- Active package boundary: `beta=latest=0.7.0` after a separately authorized
-  post-publication promotion
+- Active package boundary: `beta=latest=0.7.1` after the separately authorized
+  compatible patch publication and post-publication promotion; `0.7.0`
+  remains the first Contract 7 and Grammar 6 pin
 - Workstream: [../../plans/plan-assurance.pert](../../plans/plan-assurance.pert)
 
 ## 1. Decision and scope

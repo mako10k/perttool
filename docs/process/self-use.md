@@ -1546,9 +1546,13 @@ preparation are complete; package, lockfile, CLI, CHANGELOG, README, tests,
 and package workflow identify `0.7.1`. Candidate acceptance is complete from
 source commit `a05b769` and the retained 601-file, 660003-byte tarball with
 SHA-256 `5bf47231...e4454c`; its exact record is
-`docs/process/0.7.1-candidate.md`. Complete NextResult v6 recommends only
-PUBLISH, but remote publication still requires the separate exact-candidate
-user boundary. npm `latest` promotion, both plan advances, and Issue mutation
+`docs/process/0.7.1-candidate.md`. PUBLISH is complete from release commit
+`eee0f05`, CI run `30969627120`, peeled tag, GitHub prerelease, and one npm
+`beta` publication of the identical artifact. The later separately authorized
+promotion made `beta=latest=0.7.1`; exact, beta, latest, and rollback installs
+passed. Durable acceptance is recorded in
+`docs/process/0.7.1-release-acceptance.md`. All five tasks are complete with
+zero makespans and no recommendation. Both plan advances and Issue mutation
 remain separately gated.
 
 Stage 1 allowed operations:

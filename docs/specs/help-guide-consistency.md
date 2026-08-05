@@ -101,6 +101,9 @@ to `0.7.1`, state that beta publication leaves `latest=0.7.0`, and retain
 `0.7.0` as the rollback pin. The earlier publication-time fact that `latest`
 remained `0.6.0` belongs in the immutable `0.7.0` release record and MUST NOT
 be presented as a later current registry state.
+After the separately authorized `0.7.1` post-publication promotion, current
+repository guidance MUST identify `beta=latest=0.7.1` and unqualified
+`perttool` as `0.7.1` while preserving both earlier publication-time facts.
 
 Requirements, normative examples, interface specifications, and plan indexes
 MUST distinguish these labels:

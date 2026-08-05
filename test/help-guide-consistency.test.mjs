@@ -78,7 +78,7 @@ test("current guidance and historical compatibility labels preserve their bounda
 
   assert.match(
     readme,
-    /npm `beta` and leaves the\s+independently managed `latest` tag at `0\.7\.0`/,
+    /made `beta=latest=0\.7\.1`/,
   );
   assert.match(readme, /package=perttool@0\.7\.1/);
   assert.match(
@@ -87,7 +87,7 @@ test("current guidance and historical compatibility labels preserve their bounda
   );
   assert.match(requirements, /active Grammar 6 and CLI Contract 7 source/);
   assert.match(examples, /active Grammar 6 source contract/);
-  assert.match(assuranceInterface, /Active package boundary: `beta=latest=0\.7\.0`/);
+  assert.match(assuranceInterface, /Active package boundary: `beta=latest=0\.7\.1`/);
   assert.match(contract2, /active source is now CLI Contract 7/);
   assert.match(contract3, /active Contract 7/);
   assert.match(temporalUnits, /historical Grammar 3 and CLI Contract 4/);

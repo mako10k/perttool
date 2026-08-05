@@ -27,6 +27,9 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     review,
     preparation,
     candidate,
+    publication,
+    promotion,
+    acceptance,
     correction,
     plan,
     changelog,
@@ -42,6 +45,9 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     repositoryText("docs/process/0.7.1-self-review.md"),
     repositoryText("docs/process/0.7.1-preparation.md"),
     repositoryText("docs/process/0.7.1-candidate.md"),
+    repositoryText("docs/process/0.7.1-publish.md"),
+    repositoryText("docs/process/0.7.1-latest-promotion.md"),
+    repositoryText("docs/process/0.7.1-release-acceptance.md"),
     repositoryText("docs/process/help-guide-consistency-acceptance.md"),
     repositoryText("plans/release-0.7.1.pert"),
     repositoryText("CHANGELOG.md"),
@@ -68,7 +74,7 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     design,
     /^### Post-MVP Slice 4R: Help and Guide consistency `v0\.7\.1` beta patch$/m,
   );
-  assert.match(procedure, /- Status: Active 1\.0/);
+  assert.match(procedure, /- Status: Accepted 1\.0/);
   assert.match(
     procedure,
     /Expected pre-publication tags: `beta=latest=0\.7\.0`, no `alpha`/,
@@ -99,9 +105,21 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     /SHA-256 \| `5bf4723131b79f04b501ae02b7585c800ac8dc37f0f3a816eff837d670e4454c`/,
   );
   assert.match(candidate, /Complete, non-truncated NextResult v6\s+recommends only `RELEASE_071_PUBLISH`/);
+  assert.match(publication, /- Document status: Accepted 1\.0/);
+  assert.match(publication, /CI run: \[`30969627120`\]/);
+  assert.match(publication, /The publish operation was\s+not retried/);
+  assert.match(promotion, /Final tags: `beta=latest=0\.7\.1`, no `alpha`/);
+  assert.match(promotion, /npm dist-tag add perttool@0\.7\.1 latest/);
+  assert.match(acceptance, /- Document status: Accepted 1\.0/);
+  assert.match(
+    acceptance,
+    /Final plan digest: `sha256:a98401116f8ae5dc554927c49a421321015fb9e5cca53538e7e17c58043a1180`/,
+  );
+  assert.match(acceptance, /All five tasks and 15p are complete/);
   assert.match(changelog, /^## \[0\.7\.1\] - 2026-08-05$/m);
   assert.match(readme, /package=perttool@0\.7\.1/);
-  assert.match(readme, /leaves the\s+independently managed `latest` tag at `0\.7\.0`/);
+  assert.match(readme, /made `beta=latest=0\.7\.1`/);
+  assert.match(readme, /Version `0\.7\.0` remains the exact rollback pin/);
   assert.match(correction, /All 44 registered commands/);
   assert.match(
     correction,
@@ -141,12 +159,9 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     plan,
     /^task RELEASE_071_CANDIDATE[\s\S]*?^  status done$/m,
   );
-  for (const taskId of [
-    "RELEASE_071_PUBLISH",
-    "RELEASE_071_ACCEPTANCE",
-  ]) {
+  for (const taskId of ["RELEASE_071_PUBLISH", "RELEASE_071_ACCEPTANCE"]) {
     const block = plan.split(`task ${taskId} `)[1].split("\ntask ")[0];
-    assert.doesNotMatch(block, /^  status /m, taskId);
+    assert.match(block, /^  status done$/m, taskId);
   }
 
   const manifest = JSON.parse(manifestText);

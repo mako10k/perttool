@@ -33,7 +33,8 @@ Version `0.7.1` is a backward-compatible Contract 7 patch that corrects the
 installed Guide, command Help examples, and diagnostic navigation. It retains
 all 44 command paths, 20 root schemas, result and payload identities,
 package-root exports, and authority policies. Its beta publication does not
-move npm `latest`; `0.7.0` remains the exact rollback pin.
+move npm `latest`; one separately authorized post-publication operation later
+made `beta=latest=0.7.1`. Version `0.7.0` remains the exact rollback pin.
 The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
 and the first machine-schema Contract 6 artifact remains available by pinning
 `0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
@@ -76,10 +77,10 @@ npm install --global perttool@0.7.1
 perttool --version
 ```
 
-The `0.7.1` release procedure publishes only npm `beta` and leaves the
-independently managed `latest` tag at `0.7.0`. Use the exact `0.7.1` pin for
-the corrected Guide and Help behavior; an unqualified installation remains on
-`0.7.0` unless a later, separately authorized promotion changes `latest`.
+The `0.7.1` release procedure published only npm `beta` and initially left the
+independently managed `latest` tag at `0.7.0`. A separately authorized later
+operation made `beta=latest=0.7.1`; both an unqualified installation and the
+exact `0.7.1` pin now select the corrected Guide and Help behavior.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
 Contract 6 artifact remains available as
 `perttool@0.5.0`. Contract 5,

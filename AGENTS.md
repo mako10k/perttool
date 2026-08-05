@@ -267,11 +267,17 @@ package validation to `0.7.1`; its record is
 the clean Node.js 22 gate, read-only external and protected-route preflight,
 and acceptance of the retained 601-file, 660003-byte tarball with SHA-256
 `5bf47231...e4454c`. Its source commit is `a05b769`, and its record is
-`docs/process/0.7.1-candidate.md`. Complete NextResult v6 recommends only
-`RELEASE_071_PUBLISH`, but the exact candidate and external batch require a
-separate user boundary before PUBLISH. npm `latest`
-promotion, both plan advances, Issue mutation, and unrelated work remain
-separately gated.
+`docs/process/0.7.1-candidate.md`. The separately authorized PUBLISH completed
+from release commit `eee0f05`, peeled annotated tag `v0.7.1`, successful
+Node.js 22 and 24 CI run `30969627120`, GitHub prerelease, and one npm
+publication to `beta`. The candidate, GitHub, and npm tarballs agree at the
+same SHA-256. At publication, `beta=0.7.1`, `latest=0.7.0`, and alpha was
+absent. The user then separately authorized one exact `0.7.1` npm `latest`
+promotion; fresh reads and an unqualified installation confirmed
+`beta=latest=0.7.1`, 44 commands, and 20 schemas. Durable acceptance is
+recorded in `docs/process/0.7.1-release-acceptance.md`. All five tasks and 15p
+are complete with zero makespans and no recommendation. Both plan advances,
+Issue mutation, and unrelated work remain separately gated.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3, the LSP server, VSIX, and MCP server remain post-beta backlogs. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 

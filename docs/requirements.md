@@ -2447,6 +2447,11 @@ The user's 2026-08-05 confirmation authorizes the exact initial
 It does not authorize version-bearing source preparation, candidate
 acceptance, Git push, tag creation, GitHub or npm publication, durable
 acceptance, npm `latest` promotion, plan advance, or Issue mutation. The
+later release instruction separately authorized source preparation and
+candidate acceptance; the next instruction separately authorized the exact
+PUBLISH candidate and batch; and a following instruction separately selected
+and authorized the exact `perttool@0.7.1` npm `latest` promotion. None of
+these instructions authorizes either plan advance or Issue mutation. The
 authoritative procedure is
 [`docs/process/0.7.1-release.md`](process/0.7.1-release.md).
 
