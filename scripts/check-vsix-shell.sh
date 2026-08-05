@@ -50,4 +50,16 @@ fi
 
 "$node_binary" "$repository_root/scripts/check-lsp-isolated.mjs" \
   "$unpacked/extension/dist/server/main.cjs"
-printf 'isolated VSIX shell and DAG implementation gate passed\n'
+if [[ "${PERTTOOL_SKIP_VSIX_HOST:-0}" != "1" ]]; then
+  if [[ "$(uname -s)" == "Linux" && -z "${DISPLAY:-}" ]]; then
+    if ! command -v xvfb-run >/dev/null; then
+      printf 'xvfb-run is required for the supported VS Code host gate\n' >&2
+      exit 1
+    fi
+    xvfb-run -a "$node_binary" "$repository_root/scripts/check-vsix-host.mjs" \
+      "$vsix_path"
+  else
+    "$node_binary" "$repository_root/scripts/check-vsix-host.mjs" "$vsix_path"
+  fi
+fi
+printf 'isolated VSIX shell, DAG, and supported-host gate passed\n'

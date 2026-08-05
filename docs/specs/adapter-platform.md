@@ -299,6 +299,30 @@ but cannot raise, the normative limit and proves complete-result refusal
 without partial output. No public root export, CLI command, preview, mutation,
 Git, network, configuration, or inferred authority is added.
 
+### 3.11 Accepted VSIX installed state
+
+The final [VSIX acceptance record](../process/adapter-vsix-acceptance.md) adds
+one real supported-host boundary beyond the shell and DAG implementation
+slices. The exact fourteen-file private VSIX installs into a disposable
+extension directory and activates from that installed artifact under the
+selected minimum VS Code `1.101.0` and its Node.js 22-or-later Extension Host.
+
+Separate clean profiles prove trusted and untrusted activation. File and
+virtual documents exercise the offline bundled LSP, diagnostics, symbols,
+definition navigation, Help, and DAG presentation. Empty, 128-task, rapidly
+edited, and invalid documents cover host integration while the prior exact
+implementation cases retain all four modes, stale/cancelled clearing, source
+binding, CSP, arbitrary-content rejection, responsive layout, and accessible
+outline details.
+
+The installed extension is force-replaced, reactivated, uninstalled, and
+confirmed absent by independent registry readback. Workspace bytes and entries
+and fixed profile settings remain identical. The host cache is outside the
+repository by default, and every profile, extension directory, and workspace
+is removed after the gate. No public package, extension identity, Marketplace
+publication, source edit, configuration mutation, Git operation, telemetry,
+network capability, or inferred authority is added.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.

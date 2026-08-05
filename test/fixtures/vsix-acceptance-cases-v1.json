@@ -1,0 +1,19 @@
+{
+  "schema_version": "Perttool.VsixAcceptanceCases.v1",
+  "editor_protocol_model_version": 1,
+  "vscode_version": "1.101.0",
+  "cases": [
+    { "id": "VSXA-001", "depends_on": [], "boundary": "exact_private_vsix_inventory" },
+    { "id": "VSXA-002", "depends_on": ["VSXA-001"], "boundary": "supported_vscode_and_node_host_identity" },
+    { "id": "VSXA-003", "depends_on": ["VSXA-002"], "boundary": "disposable_install_and_trusted_activation" },
+    { "id": "VSXA-004", "depends_on": ["VSXA-003"], "boundary": "untrusted_and_virtual_activation" },
+    { "id": "VSXA-005", "depends_on": ["VSXA-004"], "boundary": "offline_server_diagnostics_help_and_navigation" },
+    { "id": "VSXA-006", "depends_on": ["VSXA-005"], "boundary": "four_dag_modes_and_source_binding" },
+    { "id": "VSXA-007", "depends_on": ["VSXA-006"], "boundary": "empty_large_and_responsive_graphs" },
+    { "id": "VSXA-008", "depends_on": ["VSXA-006"], "boundary": "rapid_edit_cancellation_stale_and_invalid_states" },
+    { "id": "VSXA-009", "depends_on": ["VSXA-007", "VSXA-008"], "boundary": "csp_and_arbitrary_content_rejection" },
+    { "id": "VSXA-010", "depends_on": ["VSXA-009"], "boundary": "keyboard_theme_motion_and_accessible_outline" },
+    { "id": "VSXA-011", "depends_on": ["VSXA-003", "VSXA-010"], "boundary": "force_replacement_and_uninstall_cleanup" },
+    { "id": "VSXA-012", "depends_on": ["VSXA-011"], "boundary": "source_git_configuration_network_telemetry_and_publication_side_effect_closure" }
+  ]
+}

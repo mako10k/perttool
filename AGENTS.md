@@ -339,7 +339,13 @@ private VSIX adds the `perttool.dag` Webview, four exact GraphView modes,
 closed version-bound messages, binding-checked source navigation, restrictive
 local CSP assets, deterministic SVG presentation, and an accessible exact-
 value outline without moving semantics into the extension. Its implementation
-record is `docs/process/adapter-vsix-dag-view-acceptance.md`. The Node Host
+record is `docs/process/adapter-vsix-dag-view-acceptance.md`. Its final
+`docs/process/adapter-vsix-acceptance.md` gate installs that exact artifact
+with exact `@vscode/test-electron` `3.1.0` under the minimum VS Code `1.101.0`,
+proves trusted/untrusted and virtual activation, offline LSP, navigation,
+Help, empty/large/rapid-edit DAG use, replacement, uninstall readback, and
+unchanged source bytes, and removes its disposable profiles and extension
+directory. The Node Host
 implementation and gate are recorded in
 `docs/process/adapter-node-host-acceptance.md`.
 The accepted `docs/specs/mcp-read-contract.md` and
@@ -361,11 +367,11 @@ retained before advance. The CLI now constructs one private Application facade o
 accepted Node Host; document bytes/digests, Git history and advance evidence,
 artifact output, and Grammar 6 persistence use injected ports while all 44
 Contract 7 commands and package identities remain unchanged. Its record is
-`docs/process/adapter-cli-facade-parity-acceptance.md`. Two tasks and 9p
-remain. Precedence and `parallel-sgs` version 1 heuristic resource makespans
-are both 9p with zero resource delay. Complete NextResult v6 recommends and
-makes startable only `VSIX_ACCEPTANCE`; `ADAPTER_INTEGRATION_ACCEPTANCE`
-remains upcoming.
+`docs/process/adapter-cli-facade-parity-acceptance.md`. Only
+`ADAPTER_INTEGRATION_ACCEPTANCE` and 5p remain. Precedence and `parallel-sgs`
+version 1 heuristic resource makespans are both 5p with zero resource delay.
+Complete NextResult v6 recommends and makes startable only
+`ADAPTER_INTEGRATION_ACCEPTANCE`.
 Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
@@ -753,7 +759,7 @@ npm run check
 git diff --check
 ```
 
-For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:mcp-package`, `npm run check:vsix-shell`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:mcp-package` packs and installs the private MCP server beside the exact root package, exercises strict modern stdio, discovery, registered source/digest handling, errors, two-client parity, and no-write identity in a disposable prefix, and publishes nothing. `check:vsix-shell` builds and packages the private fourteen-file offline VSIX in a disposable directory and runs the bundled server and DAG assets through their isolated gate without installing or publishing the extension. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
+For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:mcp-package`, `npm run check:vsix-shell`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:mcp-package` packs and installs the private MCP server beside the exact root package, exercises strict modern stdio, discovery, registered source/digest handling, errors, two-client parity, and no-write identity in a disposable prefix, and publishes nothing. `check:vsix-shell` builds and packages the private fourteen-file offline VSIX, exercises the bundled server and DAG assets, and uses exact `@vscode/test-electron` `3.1.0` to install, activate, replace, and uninstall it in disposable trusted and untrusted VS Code `1.101.0` profiles. It keeps the host cache outside the repository by default and does not install globally or publish. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
 
 - Even for documentation-only changes, run bootstrap checks for the local link, Markdown fences, and normative `.pert` samples.
 - For grammar changes, check valid/invalid examples, field tables, EBNF, diagnostics, and formatter contracts together.

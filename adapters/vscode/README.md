@@ -11,5 +11,8 @@ binding-checked source navigation.
 The extension does not parse or analyze `.pert` itself. It does not write
 files, access Git, execute workspace code, use a network listener, download
 code, emit telemetry, compute PERT semantics in the Webview, or grant mutation
-or task-start authority. Editor mutation, supported-host acceptance, public
-naming, Marketplace publication, and release selection remain separate work.
+or task-start authority. Its disposable installed gate covers trusted and
+untrusted minimum-host activation, virtual and large graphs, Help/navigation,
+replacement, uninstall readback, and unchanged workspace bytes. Editor
+mutation, public naming, Marketplace publication, and release selection remain
+separate work.

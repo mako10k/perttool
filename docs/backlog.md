@@ -795,8 +795,8 @@ Status: Architecture, Core dependency cleanup, and shared-library boundary
 accepted; editor protocol contract accepted; document-session Core, read-only
 LSP Core, isolated LSP package, private VSIX shell and DAG Webview, and Node
 Host boundary accepted; CLI facade parity accepted; read-only MCP contract,
-private MCP implementation, and isolated MCP acceptance accepted (2026-08-05;
-retained before advance)
+private MCP implementation, isolated MCP acceptance, and installed supported-
+host VSIX acceptance accepted (2026-08-05; retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -886,10 +886,16 @@ retained before advance. The [final MCP acceptance](process/adapter-mcp-acceptan
 adds isolated root/private package installation, strict malformed-line
 fail-closure, two-client semantic parity, installed source/digest/error and
 limit probes, and before/after file-identity proof. `MCP_ACCEPTANCE` is
-complete with exact lifecycle evidence and retained before advance. Two tasks
-and 9p remain; precedence and heuristic resource makespans are both 9p with
-zero resource delay. Complete NextResult v6 recommends and makes startable
-only `VSIX_ACCEPTANCE`; `ADAPTER_INTEGRATION_ACCEPTANCE` remains upcoming.
+complete with exact lifecycle evidence and retained before advance. The
+[final VSIX acceptance](process/adapter-vsix-acceptance.md) installs the exact
+fourteen-file artifact with exact test-electron 3.1.0 under minimum VS Code
+1.101.0, proves trusted/untrusted and virtual activation, offline LSP,
+navigation, Help, empty/large/rapid-edit DAG use, replacement, uninstall
+readback, and unchanged workspace bytes. `VSIX_ACCEPTANCE` is complete with
+exact lifecycle evidence and retained before advance. Only
+`ADAPTER_INTEGRATION_ACCEPTANCE` and 5p remain; precedence and heuristic
+resource makespans are both 5p with zero resource delay. Complete NextResult
+v6 recommends and makes startable only `ADAPTER_INTEGRATION_ACCEPTANCE`.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared

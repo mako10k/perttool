@@ -65,34 +65,32 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:c60e438bbc2415bb12e820ffba0b07c7aeef08da51af9845139faa3b23d33356",
+      "source_digest": "sha256:976c06df80666e06ee438e9559e1f618699a42c8706746c37fdbba4d5e3c6833",
       "groups": {
         "active": [],
         "ready": [
-          "VSIX_ACCEPTANCE"
-        ],
-        "runnable_now": [
-          "VSIX_ACCEPTANCE"
-        ],
-        "blocked_now": [],
-        "upcoming": [
           "ADAPTER_INTEGRATION_ACCEPTANCE"
         ],
+        "runnable_now": [
+          "ADAPTER_INTEGRATION_ACCEPTANCE"
+        ],
+        "blocked_now": [],
+        "upcoming": [],
         "suspended": []
       },
       "recommended_task_ids": [
-        "VSIX_ACCEPTANCE"
+        "ADAPTER_INTEGRATION_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "VSIX_ACCEPTANCE"
+        "ADAPTER_INTEGRATION_ACCEPTANCE"
       ],
       "tiers": {
-        "VSIX_ACCEPTANCE": "recommended"
+        "ADAPTER_INTEGRATION_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "VSIX_ACCEPTANCE",
+          "id": "ADAPTER_INTEGRATION_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

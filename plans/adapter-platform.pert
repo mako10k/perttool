@@ -285,6 +285,7 @@ task VSIX_ACCEPTANCE VSIX_DAG_READY -> VSIX_ACCEPTED:
   title "Accept the VSIX and DAG view in an isolated VS Code workflow"
   description "Verify extension packaging and inventory, supported VS Code and runtime identities, clean and untrusted workspace activation, offline server startup, diagnostics and navigation parity, DAG analysis modes, rapid edits, stale and invalid states, CSP and arbitrary-content rejection, accessibility, upgrade compatibility, uninstall cleanup, and absence of source, Git, configuration, network, telemetry, or publication side effects."
   duration 4p
+  status done
   priority 60
   requires:
     DEVELOPERS 1
@@ -561,3 +562,18 @@ work_event WE-30dbf9efeaa090fef2416cce23885d40c14e3dccfd1bd2a4b324019648c1f6b1:
   occurred_at 2026-08-05T21:21:03+09:00
   active_time 217/1800h
   effort 217/1800ph
+
+work_event WE-e091d3f8d771278f1c3b97d6870e404d5bca6322b3cac1f7bf582e07d1788b51:
+  model 1
+  task VSIX_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-05T21:30:33+09:00
+  planned_value 4p
+
+work_event WE-c3701dd563e124a896c56c563f698a20acd8be7092b1719d731b7d34fbb27409:
+  model 1
+  task VSIX_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-05T21:46:31+09:00
+  active_time 479/1800h
+  effort 479/1800ph

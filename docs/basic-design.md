@@ -3182,7 +3182,10 @@ branches after first-beta acceptance.
   bundled server. Its current fourteen-file VSIX adds the CSP-constrained
   read-only DAG Webview, four GraphView modes, exact source navigation, and an
   accessible outline without semantic duplication or arbitrary Mermaid
-  execution. Supported-host acceptance remains separate.
+  execution. Its installed gate uses exact test-electron 3.1.0 and the minimum
+  VS Code 1.101.0 host to prove trusted/untrusted and virtual activation,
+  offline LSP, navigation, Help, empty/large/rapid-edit DAG use, replacement,
+  uninstall readback, and unchanged workspace bytes in disposable profiles.
 - Read-only MCP: the accepted [protocol contract](specs/mcp-read-contract.md)
   fixes final revision `2026-07-28`, exact stable server SDK `2.0.0`, local
   stdio, four immutable registry resources, and five closed tools over shared
