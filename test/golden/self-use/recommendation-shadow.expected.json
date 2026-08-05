@@ -65,16 +65,15 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:80d34add38f0365a292bb3620111087c62d1c2bec78be9bd9748de04ffc26cce",
+      "source_digest": "sha256:ed242f3abc1967c4d854e2426fdd8a7b01db39591565ba746770206cfd0d572b",
       "groups": {
         "active": [],
         "ready": [
-          "CLI_FACADE_PARITY",
           "MCP_ACCEPTANCE",
           "VSIX_ACCEPTANCE"
         ],
         "runnable_now": [
-          "CLI_FACADE_PARITY"
+          "MCP_ACCEPTANCE"
         ],
         "blocked_now": [],
         "upcoming": [
@@ -83,20 +82,19 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "CLI_FACADE_PARITY"
+        "MCP_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "CLI_FACADE_PARITY"
+        "MCP_ACCEPTANCE"
       ],
       "tiers": {
-        "CLI_FACADE_PARITY": "recommended",
-        "MCP_ACCEPTANCE": "deferred",
+        "MCP_ACCEPTANCE": "recommended",
         "VSIX_ACCEPTANCE": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "CLI_FACADE_PARITY",
+          "id": "MCP_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -104,53 +102,11 @@
           "resource_rejections": []
         },
         {
-          "id": "MCP_ACCEPTANCE",
-          "runnable_now": false,
-          "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "1/1",
-          "resource_rejections": [
-            {
-              "resource_id": "NODE_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "CLI_FACADE_PARITY"
-              ]
-            },
-            {
-              "resource_id": "PACKAGE_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "CLI_FACADE_PARITY"
-              ]
-            },
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "CLI_FACADE_PARITY"
-              ]
-            }
-          ]
-        },
-        {
           "id": "VSIX_ACCEPTANCE",
           "runnable_now": false,
-          "precedence_critical": false,
+          "precedence_critical": true,
           "schedule_critical": true,
-          "total_float": "1/1",
+          "total_float": "0/1",
           "resource_rejections": [
             {
               "resource_id": "PACKAGE_SURFACE",
@@ -160,7 +116,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "CLI_FACADE_PARITY"
+                "MCP_ACCEPTANCE"
               ]
             },
             {
@@ -171,19 +127,19 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "CLI_FACADE_PARITY"
+                "MCP_ACCEPTANCE"
               ]
             }
           ]
         }
       ],
       "record_counts": {
-        "task_decisions": 3,
-        "decision_steps": 18,
-        "facts": 109,
-        "comparisons": 4,
-        "reasons": 15,
-        "descriptions": 10
+        "task_decisions": 2,
+        "decision_steps": 11,
+        "facts": 80,
+        "comparisons": 1,
+        "reasons": 9,
+        "descriptions": 4
       },
       "diagnostic_codes": [
         "PTDAG-208"

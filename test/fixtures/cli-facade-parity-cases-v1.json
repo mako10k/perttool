@@ -1,0 +1,21 @@
+{
+  "schema_version": "Perttool.CliFacadeParityCases.v1",
+  "cli_contract_version": 7,
+  "node_host_port_model_version": 1,
+  "command_count": 44,
+  "root_schema_count": 20,
+  "root_runtime_exports": 122,
+  "core_runtime_exports": 45,
+  "cases": [
+    {"id": "CFP-001", "depends_on": [], "boundary": "application_facade_identity"},
+    {"id": "CFP-002", "depends_on": ["CFP-001"], "boundary": "node_document_and_digest_ports"},
+    {"id": "CFP-003", "depends_on": ["CFP-002"], "boundary": "node_git_evidence_port"},
+    {"id": "CFP-004", "depends_on": ["CFP-002"], "boundary": "node_safe_persistence_port"},
+    {"id": "CFP-005", "depends_on": ["CFP-001"], "boundary": "contract_7_registry_and_usage"},
+    {"id": "CFP-006", "depends_on": ["CFP-002", "CFP-005"], "boundary": "json_and_text_byte_parity"},
+    {"id": "CFP-007", "depends_on": ["CFP-004", "CFP-005"], "boundary": "preview_and_write_safety_parity"},
+    {"id": "CFP-008", "depends_on": ["CFP-005"], "boundary": "help_guide_schema_and_result_identity"},
+    {"id": "CFP-009", "depends_on": ["CFP-006", "CFP-007", "CFP-008"], "boundary": "package_root_and_installed_file_first_parity"},
+    {"id": "CFP-010", "depends_on": ["CFP-003", "CFP-009"], "boundary": "adapter_dependency_and_side_effect_closure"}
+  ]
+}

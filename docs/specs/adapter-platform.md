@@ -239,8 +239,9 @@ reference-identical at 122 runtime names. `perttool/core` remains an exact
 45-name, 34-module portable runtime and exposes only the port types. Domain and
 Application semantic hashing use the portable SHA-256 owner; direct Node
 builtins remain confined to logical and concrete Hosts and composition code.
-CLI composition, MCP mapping, VSIX DAG rendering, adapter integration, and
-release selection remain later tasks.
+The separately accepted CLI composition is recorded in section 3.9. MCP
+acceptance, VSIX supported-host acceptance, adapter integration, and release
+selection remain later tasks.
 
 ### 3.8 Accepted read-only MCP contract
 
@@ -257,6 +258,30 @@ The contract owns closed adapter-local result identities, bounded protocol and
 source failures, cancellation, complete-result limits, and semantic parity
 without invoking the CLI. It activates no server implementation, dependency,
 mutation, Git operation, public package, or release.
+
+### 3.9 Implemented CLI facade state
+
+The CLI composition root now constructs one private
+`createCliApplicationFacade(createNodeHost())` boundary. The facade preserves
+reference identity for the established protocol-neutral Application services
+and binds document bytes and digesting, project-history Git evidence,
+advance-baseline capture and recheck, artifact creation, and Grammar 6 safe
+persistence to the accepted six-port Node Host. Application functions retain
+their existing default signatures; injected ports are additive internal
+composition inputs and do not create a second semantic implementation.
+
+CLI-owned command parsing, Contract 7 validation, text and JSON presentation,
+terminal streams, exit selection, and direct process context remain in the CLI
+adapter. The result identities, 44-command registry, 20-schema catalog,
+122-name root/Node compatibility facades, 45-name portable Core, zero root
+production dependencies, and all preview-first governance, assurance,
+history, symlink, race, and atomic-write behavior remain unchanged.
+
+The dependency closure contains no LSP, VSIX, MCP SDK, adapter server, network
+listener, or adapter subprocess. The executable parity cases are fixed in
+[`cli-facade-parity-cases-v1.json`](../../test/fixtures/cli-facade-parity-cases-v1.json).
+Release selection, publication, remote writes, Issue mutation, and plan
+advance remain separate.
 
 ## 4. Target dependency model
 

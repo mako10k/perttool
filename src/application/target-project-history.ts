@@ -108,8 +108,9 @@ export async function inspectTargetProjectHistoryFile(
   request: TargetProjectHistoryFileRequest,
   capability: TargetGrammar5Capability | TargetGrammar6Capability,
   dependencies: GitHistoryProbeDependencies = {},
+  probe: typeof probeGitHistory = probeGitHistory,
 ): Promise<TargetProjectHistoryResultV1> {
-  const probe = await probeGitHistory(
+  const outcome = await probe(
     {
       targetPath: request.targetPath,
       ...(request.revision === undefined
@@ -122,7 +123,7 @@ export async function inspectTargetProjectHistoryFile(
     dependencies,
   );
   return inspectTargetProjectHistory(
-    probe,
+    outcome,
     request.taskIds === undefined ? {} : { taskIds: request.taskIds },
     capability,
     {

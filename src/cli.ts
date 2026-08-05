@@ -1,88 +1,26 @@
 #!/usr/bin/env node
 
-import { lstat, readFile } from "node:fs/promises";
+import { lstat } from "node:fs/promises";
 import process from "node:process";
 import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
-import {
-  analyzeDocument,
-  checkDocument,
-  selectNextTasks,
-} from "./application/contract7-assurance.js";
-import {
-  planFormat,
-  type FormatPreviewResultV7 as FormatPreviewResult,
-} from "./application/contract7-source.js";
-import {
-  planProjectInit,
-  projectInitResultToJson,
-  renderProjectInitResult,
-  withProjectInitOutput,
-} from "./application/init.js";
-import {
-  planUnitMigration,
-  withUnitMigrationWrite,
-  type UnitMigrationResult,
-} from "./application/contract7-unit-migration.js";
-import {
-  getProjectMetadata,
-} from "./application/contract7-project.js";
-import {
-  planAdvance,
-  planBatchMutation,
-  planFinishActuals,
-  planLifecycle,
-  planMutation,
-  planAssuranceMutation,
-  type AdvanceResultV2,
-  type LifecycleResultV4,
-  type MutationResultV4,
+import type { FormatPreviewResultV7 as FormatPreviewResult } from "./application/contract7-source.js";
+import type { UnitMigrationResult } from "./application/contract7-unit-migration.js";
+import type {
+  AdvanceResultV2,
+  LifecycleResultV4,
+  MutationResultV4,
 } from "./application/contract7-mutation.js";
-import {
-  renderTargetGovernanceDecision,
-  type TargetGovernanceWriteProjection,
-} from "./application/target-governance-projection.js";
-import {
-  contract7InspectionResultToJson,
-  contract7MutationResultToJson,
-  contract7SnakeJson,
-} from "./application/contract7-projection.js";
-import {
-  contract7ProjectResultToJson,
-  renderContract7ProjectText,
-} from "./application/contract7-project.js";
-import {
-  contract6WorkEventToJson,
-} from "./application/contract6-projection.js";
-import {
-  renderAdvanceHistoryGuard,
-} from "./application/advance-history.js";
-import {
-  prepareTargetPlanAssuranceAdvanceHistory,
-  withTargetPlanAssuranceAdvanceHistoryRace,
-  type TargetPlanAssuranceAdvanceResultV2WithHistory,
-} from "./application/target-assurance-advance-history.js";
-import {
-  persistTargetPlanAssuranceResult,
-} from "./application/target-assurance-write.js";
-import {
-  inspectTargetPlanAssurance,
-  type PlanAssuranceHashKind,
-} from "./application/target-assurance-inspection.js";
+import type { TargetGovernanceWriteProjection } from "./application/target-governance-projection.js";
+import type { PlanAssuranceHashKind } from "./application/target-assurance-inspection.js";
 import type {
   PlanAssuranceMutation,
 } from "./assurance/mutation.js";
 import {
-  inspectTargetProjectHistoryFile,
-  renderTargetProjectHistoryText,
-  targetProjectHistoryResultToJson,
-} from "./application/target-project-history.js";
-import {
-  observeTargetProjectVelocity,
-  renderTargetVelocityObservationText,
-  targetVelocityObservationResultToJson,
-} from "./application/target-velocity-observation.js";
-import { getAgentHelp } from "./application/agent-help.js";
+  createCliApplicationFacade,
+  type TargetPlanAssuranceAdvanceResultV2WithHistory,
+} from "./application/cli-facade.js";
+import { createNodeHost } from "./node/host.js";
 import {
   exportMermaid,
   type ConversionLoss,
@@ -121,14 +59,6 @@ import {
   renderAgentGuidanceText,
 } from "./guidance/text.js";
 import {
-  documentContentFromBytes,
-  readDocumentFile,
-} from "./io/document-file.js";
-import {
-  recheckAdvanceHistoryBaseline,
-} from "./history/git-probe.js";
-import {
-  createArtifactFile,
   SafeWriteConflictError,
   SafeWriteVerificationError,
   type DocumentWriteResult,
@@ -161,10 +91,6 @@ import {
   TARGET_GRAMMAR_6_CAPABILITY,
 } from "./parser/document-parser.js";
 import {
-  createTargetGrammar6DocumentFile,
-  replaceTargetGrammar6DocumentFile,
-} from "./io/target-safe-write.js";
-import {
   exportPlanAssuranceMermaid,
   importPlanAssuranceMermaid,
 } from "./assurance/mermaid.js";
@@ -174,6 +100,52 @@ import {
   serializeJsonSchemaResult,
 } from "./schema/registry.js";
 import { TOOL_VERSION } from "./version.js";
+
+const {
+  analyzeDocument,
+  checkDocument,
+  selectNextTasks,
+  planFormat,
+  planProjectInit,
+  projectInitResultToJson,
+  renderProjectInitResult,
+  withProjectInitOutput,
+  planUnitMigration,
+  withUnitMigrationWrite,
+  getProjectMetadata,
+  contract7ProjectResultToJson,
+  renderContract7ProjectText,
+  planAdvance,
+  planBatchMutation,
+  planFinishActuals,
+  planLifecycle,
+  planMutation,
+  planAssuranceMutation,
+  renderTargetGovernanceDecision,
+  contract7InspectionResultToJson,
+  contract7MutationResultToJson,
+  contract7SnakeJson,
+  contract6WorkEventToJson,
+  renderAdvanceHistoryGuard,
+  prepareTargetPlanAssuranceAdvanceHistory,
+  withTargetPlanAssuranceAdvanceHistoryRace,
+  persistTargetPlanAssuranceResult,
+  inspectTargetPlanAssurance,
+  inspectTargetProjectHistoryFile,
+  renderTargetProjectHistoryText,
+  targetProjectHistoryResultToJson,
+  observeTargetProjectVelocity,
+  renderTargetVelocityObservationText,
+  targetVelocityObservationResultToJson,
+  getAgentHelp,
+  documentContentFromBytes,
+  readDocumentContent,
+  readBytes,
+  recheckAdvanceHistoryBaseline,
+  createArtifactFile,
+  createTargetGrammar6DocumentFile,
+  replaceTargetGrammar6DocumentFile,
+} = createCliApplicationFacade(createNodeHost());
 
 type OutputFormat = "text" | "json";
 type ColorMode = "auto" | "always" | "never";
@@ -366,12 +338,12 @@ function renderDiagnostic(
 async function readDocument(source: string): Promise<{
   readonly text: string;
   readonly digest: string;
-  readonly bytes: Buffer;
+  readonly bytes: Uint8Array;
   readonly modifiedAt: string | null;
 }> {
   const content = source === "-"
     ? documentContentFromBytes(await readStdin())
-    : await readDocumentFile(source);
+    : await readDocumentContent(source);
   let modifiedAt: string | null = null;
   if (source !== "-") {
     try {
@@ -1510,7 +1482,7 @@ function previewResultJson(
 }
 
 async function readMutationRequest(source: string): Promise<unknown> {
-  const bytes = source === "-" ? await readStdin() : await readFile(source);
+  const bytes = source === "-" ? await readStdin() : await readBytes(source);
   const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
   try {
     return JSON.parse(text) as unknown;

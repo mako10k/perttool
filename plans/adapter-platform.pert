@@ -205,6 +205,7 @@ task CLI_FACADE_PARITY NODE_PORTS_READY -> CLI_PARITY_READY:
   title "Move the CLI onto the shared application and Node boundaries"
   description "Refactor CLI dispatch to consume the accepted application facade and Node ports while retaining all 44 Contract 7 commands, option validation, text and JSON projections, result and schema identities, exit statuses, package-root exports, help, Guide, and installed file-first behavior. Prove byte and semantic parity without introducing LSP or MCP dependencies."
   duration 5p
+  status done
   priority 80
   requires:
     DEVELOPERS 1
@@ -529,3 +530,18 @@ work_event WE-330a1dfb80ee57a9ebdc9fafbc1702827eeebdc7f9b3b31bc806c4de872c20fd:
   occurred_at 2026-08-05T20:43:00+09:00
   active_time 1/6h
   effort 1/6ph
+
+work_event WE-fa65ad8bf4b4136bde6dfe1b53d7c244351f66973e4bbdfdfd357db1ff933ac4:
+  model 1
+  task CLI_FACADE_PARITY
+  kind start
+  occurred_at 2026-08-05T20:53:08+09:00
+  planned_value 5p
+
+work_event WE-80a3a5d16c2e7063b8bb9fefe0cb0922f678368df1cef3fcbbbea701779647ed:
+  model 1
+  task CLI_FACADE_PARITY
+  kind finish
+  occurred_at 2026-08-05T21:03:35+09:00
+  active_time 209/1200h
+  effort 209/1200ph

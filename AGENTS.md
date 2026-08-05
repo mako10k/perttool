@@ -291,6 +291,7 @@ read-only MCP adapter, and cross-surface acceptance.
 `DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
 state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`, `VSIX_DAG_VIEW`, and
 `NODE_PORT_BOUNDARY` are also complete and retained before advance.
+`CLI_FACADE_PARITY` is complete and retained before advance.
 `MCP_READ_CONTRACT` and `MCP_READ_ADAPTER` are complete and retained before
 advance. The accepted
 `docs/specs/adapter-platform.md` contract,
@@ -353,11 +354,15 @@ schemas, hard limits, and direct Application parity without invoking Git,
 persistence, or the CLI. Its implementation record is
 `docs/process/adapter-mcp-read-adapter-acceptance.md`.
 `MCP_READ_CONTRACT` and `MCP_READ_ADAPTER` are complete and retained before
-advance. Four tasks and 18p remain. Precedence makespan is 10p; the
-`parallel-sgs` version 1 heuristic resource makespan is 18p with 8p resource
-delay. Complete NextResult v6 recommends and makes startable only
-`CLI_FACADE_PARITY`; `MCP_ACCEPTANCE` and `VSIX_ACCEPTANCE` are ready but
-deferred by the current resource-feasible selection.
+advance. The CLI now constructs one private Application facade over the
+accepted Node Host; document bytes/digests, Git history and advance evidence,
+artifact output, and Grammar 6 persistence use injected ports while all 44
+Contract 7 commands and package identities remain unchanged. Its record is
+`docs/process/adapter-cli-facade-parity-acceptance.md`. Three tasks and 13p
+remain. Precedence makespan is 9p; the `parallel-sgs` version 1 heuristic
+resource makespan is 13p with 4p resource delay. Complete NextResult v6
+recommends and makes startable only `MCP_ACCEPTANCE`; `VSIX_ACCEPTANCE` is
+ready but deferred by the current resource-feasible selection.
 Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
@@ -693,7 +698,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/parser/`: the active Grammar 1/2/3/4/5/6 parser with identity-checked task-owned work-event and plan-assurance source.
 - `src/semantic/`: neutral document-check service; active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
-- `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
+- `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; the private CLI Application facade with injected Node Host ports; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
 - `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and GraphView wire results, and no public-package inclusion.
 - `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual workspace support, and a restrictive read-only GraphView DAG Webview without public publication identity.
 - `adapters/mcp/`: private Node.js 22 MCP workspace with exact server SDK 2.0.0, modern-only 2026-07-28 local stdio, four immutable resources, five fail-closed read-only tools, digest-bound inline or launcher-registered sources, self-contained output schemas, and no public-package inclusion.

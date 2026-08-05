@@ -794,8 +794,8 @@ Priority: Selected cross-adapter foundation
 Status: Architecture, Core dependency cleanup, and shared-library boundary
 accepted; editor protocol contract accepted; document-session Core, read-only
 LSP Core, isolated LSP package, private VSIX shell and DAG Webview, and Node
-Host boundary accepted; read-only MCP contract and private MCP implementation
-accepted (2026-08-05; retained before advance)
+Host boundary accepted; CLI facade parity accepted; read-only MCP contract and
+private MCP implementation accepted (2026-08-05; retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -861,7 +861,14 @@ record](process/adapter-node-host-acceptance.md) now add a six-port inward
 contract, portable semantic SHA-256, and one default Node composition while
 preserving exact 122-name root/Node identity and the 45-name portable Core.
 `NODE_PORT_BOUNDARY` is complete with exact lifecycle evidence and retained
-before advance. The [read-only MCP contract](specs/mcp-read-contract.md) and
+before advance. The [CLI facade parity
+acceptance](process/adapter-cli-facade-parity-acceptance.md) records one
+private Application facade over the accepted Node Host, direct use of the
+document/digest, Git-evidence, artifact, and Grammar 6 persistence ports, and
+unchanged 44-command Contract 7, schema, result, package, governance,
+assurance, history, and safe-write behavior. `CLI_FACADE_PARITY` is complete
+with exact lifecycle evidence and retained before advance. The [read-only MCP
+contract](specs/mcp-read-contract.md) and
 its [acceptance record](process/adapter-mcp-read-contract-acceptance.md) fix
 final MCP revision `2026-07-28`, exact stable server SDK `2.0.0`, local stdio,
 four immutable JSON resources, five closed read-only tools, exact inline and
@@ -874,11 +881,11 @@ eight-source workspace, direct Application parity, exact four-resource and
 five-tool discovery, digest-bound sources, self-contained schemas, hard
 limits, and modern-only protocol stream without Git, persistence, or a CLI
 subprocess. `MCP_READ_ADAPTER` is complete with exact lifecycle evidence and
-retained before advance. Four tasks and 18p remain; precedence makespan is 10p
-and the heuristic resource makespan is 18p with 8p resource delay. Complete
-NextResult v6 recommends and makes startable only `CLI_FACADE_PARITY`;
-`MCP_ACCEPTANCE` and `VSIX_ACCEPTANCE` are ready but deferred by the current
-resource-feasible selection.
+retained before advance. Three tasks and 13p remain; precedence makespan is 9p
+and the heuristic resource makespan is 13p with 4p resource delay. Complete
+NextResult v6 recommends and makes startable only `MCP_ACCEPTANCE`;
+`VSIX_ACCEPTANCE` is ready but deferred by the current resource-feasible
+selection.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared

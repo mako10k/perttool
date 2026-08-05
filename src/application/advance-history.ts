@@ -95,6 +95,7 @@ export interface AdvanceHistoryPreparationOptions {
   readonly warningDenied?: boolean;
   readonly maxDiagnostics?: number;
   readonly baselineDependencies?: AdvanceHistoryBaselineDependencies;
+  readonly captureBaseline?: typeof captureAdvanceHistoryBaseline;
   readonly documentValidator?: AdvanceDocumentValidator;
 }
 
@@ -418,7 +419,7 @@ export async function prepareAdvanceHistory(
     throw new Error("in-place advance history assessment requires a path");
   }
 
-  const baseline = await captureAdvanceHistoryBaseline(
+  const baseline = await (options.captureBaseline ?? captureAdvanceHistoryBaseline)(
     {
       targetPath: options.targetPath,
       expectedSourceDigest: result.originalDigest,

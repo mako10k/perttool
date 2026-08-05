@@ -3157,8 +3157,10 @@ branches after first-beta acceptance.
   dependency cleanup, additive Core/Node subpaths, protocol-neutral document
   session, and Node Host separation are accepted. The Host supplies exact
   digest, document/artifact byte, read-only Git, safe-persistence, and bounded
-  process-context ports without selecting Application behavior. CLI facade
-  parity remains a later shared-foundation task.
+  process-context ports without selecting Application behavior. The accepted
+  CLI composition constructs one private Application facade over that Host and
+  routes document/digest, Git evidence, artifact, and Grammar 6 persistence
+  through injected ports without changing Contract 7.
 - Read-only LSP: directly use the shared session and Application services for
   synchronization, diagnostics, symbols, hover, completion, definition/source
   navigation, help, cancellation, and a version-bound graph result. Rename,
@@ -3177,9 +3179,10 @@ branches after first-beta acceptance.
 - VSIX and DAG: the private `adapters/vscode` shell now provides VS Code
   `^1.101.0`, exact language client 9.0.1, TextMate highlighting, untrusted and
   virtual workspace support, version-bound virtual Help, and an offline
-  bundled server in a disposable eleven-file VSIX. The next task adds the
-  CSP-constrained read-only DAG Webview without semantic duplication or
-  arbitrary Mermaid execution.
+  bundled server. Its current fourteen-file VSIX adds the CSP-constrained
+  read-only DAG Webview, four GraphView modes, exact source navigation, and an
+  accessible outline without semantic duplication or arbitrary Mermaid
+  execution. Supported-host acceptance remains separate.
 - Read-only MCP: the accepted [protocol contract](specs/mcp-read-contract.md)
   fixes final revision `2026-07-28`, exact stable server SDK `2.0.0`, local
   stdio, four immutable registry resources, and five closed tools over shared
@@ -3187,8 +3190,9 @@ branches after first-beta acceptance.
   registered ID plus expected digest binds document requests; no client path,
   Git ref, remote source, CLI subprocess, or editor dependency is accepted.
   Adapter-local closed outputs preserve complete semantic results and limits
-  without inferring authority. Implementation, preview, and persistent
-  mutation remain later tasks.
+  without inferring authority. The private implementation provides the exact
+  modern stdio mapping; acceptance, preview, and persistent mutation remain
+  later tasks.
 
 The LSP server remains the predecessor of VSIX. The MCP branch is independent
 of both after the shared foundation. Adapter package publication, public names,

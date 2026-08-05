@@ -1666,13 +1666,14 @@ process, network, editor, mutation, or persistence operation. That Core slice
 did not itself activate the later LSP, GraphView wire result, VSIX, MCP, or
 Node Host boundaries.
 
-The accepted private VSIX shell activates the LSP portion through VS Code
+The accepted private VSIX activates the LSP portion through VS Code
 `^1.101.0`, exact language client 9.0.1, presentation-only TextMate
 highlighting, untrusted and virtual workspace support, a closed
 URI/generation/version-bound virtual Help bridge, and one offline bundled
-server. Its disposable eleven-file VSIX contains no Webview or project code.
-The DAG view, supported-host acceptance, editor mutation, public extension
-identity, release, and publication remain separate.
+server. Its current fourteen-file artifact adds the restrictive read-only
+GraphView DAG Webview without project semantics or arbitrary Mermaid.
+Supported-host acceptance, editor mutation, public extension identity,
+release, and publication remain separate.
 
 The accepted [Node Host boundary](specs/node-host-boundary.md) activates six
 closed inward ports for exact digesting, document and artifact bytes,
@@ -1680,9 +1681,15 @@ read-only Git evidence, established safe persistence, and bounded process
 context. The default composition adds `createNodeHost()` identically to the
 root and `perttool/node`, which now contain 122 runtime values, while
 `perttool/core` remains a 45-name portable runtime. The Host does not select a
-command, task, source, result, authority, or write intent. CLI composition,
-MCP mapping, editor DAG rendering, adapter acceptance, release selection, and
-publication remain separate.
+command, task, source, result, authority, or write intent.
+
+The accepted [CLI facade parity record](process/adapter-cli-facade-parity-acceptance.md)
+composes one private Application facade over that Host. Document bytes and
+digests, project-history and advance Git evidence, artifact creation, and
+Grammar 6 persistence use injected Node ports while all 44 Contract 7
+commands, 20 schemas, root exports, results, Help, Guide, and installed
+file-first behavior retain their existing identity. MCP/VSIX acceptance,
+adapter integration, release selection, and publication remain separate.
 
 The accepted [Read-Only MCP Contract](specs/mcp-read-contract.md) selects final
 MCP revision `2026-07-28`, exact stable server SDK `2.0.0`, Node.js `>=22`, and
@@ -2853,7 +2860,7 @@ complete because the same `v0.1.0-alpha.2` artifact was published to the
 GitHub prerelease and npm `alpha`, including isolated installation from the
 registry.
 
-[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, private read-only LSP Core, isolated LSP package acceptance, private VSIX shell and DAG Webview, Node Host boundary, read-only MCP contract, and private MCP implementation are complete. The current Core is an exact portable 45-name runtime; the additive Node Host factory leaves root and Node key- and reference-identical at 122 names and closes six inward ports without granting semantic or write authority. The LSP implementation uses stable protocol 3.17.5 over local stdio, exposes only the accepted read-only standard and negotiated Help/GraphView surfaces, remains excluded from the public package, and passes the separate Core/server tarball workflow on Node.js 22. The current fourteen-file private VSIX fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation, untrusted/virtual workspace support, closed version-bound virtual Help, an offline bundled server, and a restrictive GraphView-only DAG Webview with four modes, closed messages, source navigation, and an accessible exact-value outline. The private MCP workspace implements final revision `2026-07-28`, exact stable server SDK `2.0.0`, modern-only local stdio, four immutable JSON resources, five closed read-only tools, exact inline and digest-bound registered sources, self-contained adapter schemas, hard limits, and direct Application parity without Git, persistence, or a CLI subprocess. Four tasks and 18p remain; precedence and heuristic resource makespans are 10p and 18p with 8p resource delay. Complete NextResult v6 recommends and makes startable only `CLI_FACADE_PARITY`; `MCP_ACCEPTANCE` and `VSIX_ACCEPTANCE` are ready but deferred by the current resource-feasible selection.
+[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, private read-only LSP Core, isolated LSP package acceptance, private VSIX shell and DAG Webview, Node Host boundary, CLI facade parity, read-only MCP contract, and private MCP implementation are complete. The current Core is an exact portable 45-name runtime; the additive Node Host factory leaves root and Node key- and reference-identical at 122 names and closes six inward ports without granting semantic or write authority. The CLI composes one private Application facade over that Host and routes document/digest, Git evidence, artifact, and Grammar 6 persistence through injected ports without changing its 44 commands. The LSP implementation uses stable protocol 3.17.5 over local stdio, exposes only the accepted read-only standard and negotiated Help/GraphView surfaces, remains excluded from the public package, and passes the separate Core/server tarball workflow on Node.js 22. The current fourteen-file private VSIX fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation, untrusted/virtual workspace support, closed version-bound virtual Help, an offline bundled server, and a restrictive GraphView-only DAG Webview with four modes, closed messages, source navigation, and an accessible exact-value outline. The private MCP workspace implements final revision `2026-07-28`, exact stable server SDK `2.0.0`, modern-only local stdio, four immutable JSON resources, five closed read-only tools, exact inline and digest-bound registered sources, self-contained adapter schemas, hard limits, and direct Application parity without Git, persistence, or a CLI subprocess. Three tasks and 13p remain; precedence and heuristic resource makespans are 9p and 13p with 4p resource delay. Complete NextResult v6 recommends and makes startable only `MCP_ACCEPTANCE`; `VSIX_ACCEPTANCE` is ready but deferred by the current resource-feasible selection.
 
 The accepted Contract 3 source and package workflow published suffix-free beta
 `0.2.0` as the first Contract 3 package. All five tasks in

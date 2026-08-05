@@ -11,7 +11,9 @@ import {
   replaceTargetGrammar6DocumentFile,
 } from "../io/target-safe-write.js";
 import { SafeWriteConflictError } from "../io/safe-write.js";
+import type { SafePersistencePort } from "../ports/node-host.js";
 import type { TargetGrammar6Capability } from "../parser/document-parser.js";
+import { validateTargetGrammar6Document } from "../semantic/target-validator.js";
 
 export type TargetPlanAssurancePersistenceRequest =
   | {
@@ -69,6 +71,7 @@ export async function persistTargetPlanAssuranceResult(
   result: TargetPlanAssuranceWritableResult,
   capability: TargetGrammar6Capability,
   request: TargetPlanAssurancePersistenceRequest,
+  persistence?: SafePersistencePort,
 ): Promise<TargetPlanAssuranceWriteProjection> {
   if (
     request.mode === "in_place" &&
@@ -103,34 +106,73 @@ export async function persistTargetPlanAssuranceResult(
     });
   }
   const output = request.mode === "in_place"
-    ? await replaceTargetGrammar6DocumentFile(
-        request.target,
-        candidate,
-        capability,
-        {
-          initialDigest: result.originalDigest,
-          ...(request.expectedDigest === undefined
-            ? {}
-            : { expectedDigest: request.expectedDigest }),
-        },
-      )
+    ? await (persistence === undefined
+        ? replaceTargetGrammar6DocumentFile(
+            request.target,
+            candidate,
+            capability,
+            {
+              initialDigest: result.originalDigest,
+              ...(request.expectedDigest === undefined
+                ? {}
+                : { expectedDigest: request.expectedDigest }),
+            },
+          )
+        : persistence.replaceValidatedDocument(
+            request.target,
+            candidate,
+            {
+              initialDigest: result.originalDigest,
+              ...(request.expectedDigest === undefined
+                ? {}
+                : { expectedDigest: request.expectedDigest }),
+            },
+            (text) => {
+              const checked = validateTargetGrammar6Document(text, capability);
+              return { ok: checked.ok, diagnostics: checked.diagnostics };
+            },
+          ))
     : request.source === "-"
-      ? await createTargetGrammar6DocumentFile(
-          request.target,
-          candidate,
-          capability,
-          request.fileMode === undefined ? {} : { mode: request.fileMode },
-        )
-      : await createTargetGrammar6DocumentFileFromSource(
-          request.source,
-          request.target,
-          candidate,
-          capability,
-          {
-            initialDigest: result.originalDigest,
-            ...(request.fileMode === undefined ? {} : { mode: request.fileMode }),
-          },
-        );
+      ? await (persistence === undefined
+          ? createTargetGrammar6DocumentFile(
+              request.target,
+              candidate,
+              capability,
+              request.fileMode === undefined ? {} : { mode: request.fileMode },
+            )
+          : persistence.createValidatedDocument(
+              request.target,
+              candidate,
+              (text) => {
+                const checked = validateTargetGrammar6Document(text, capability);
+                return { ok: checked.ok, diagnostics: checked.diagnostics };
+              },
+              request.fileMode === undefined ? {} : { mode: request.fileMode },
+            ))
+      : await (persistence === undefined
+          ? createTargetGrammar6DocumentFileFromSource(
+              request.source,
+              request.target,
+              candidate,
+              capability,
+              {
+                initialDigest: result.originalDigest,
+                ...(request.fileMode === undefined ? {} : { mode: request.fileMode }),
+              },
+            )
+          : persistence.createValidatedDocumentFromSource(
+              request.source,
+              request.target,
+              candidate,
+              (text) => {
+                const checked = validateTargetGrammar6Document(text, capability);
+                return { ok: checked.ok, diagnostics: checked.diagnostics };
+              },
+              {
+                initialDigest: result.originalDigest,
+                ...(request.fileMode === undefined ? {} : { mode: request.fileMode }),
+              },
+            ));
   if (output.digest !== result.updatedDigest) {
     throw new Error("assurance safe-write digest does not match the candidate");
   }
