@@ -1,0 +1,31 @@
+{
+  "name": "perttool-mcp-private",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Private fail-closed read-only MCP adapter for perttool",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "perttool-mcp": "./dist/main.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0"
+  },
+  "peerDependencies": {
+    "perttool": "0.7.1"
+  },
+  "devDependencies": {
+    "perttool": "file:../.."
+  }
+}

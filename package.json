@@ -56,9 +56,9 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && npm run build --workspace perttool-language-server-private && npm run build --workspace perttool-vscode-private",
+    "build": "tsc -p tsconfig.json && npm run build --workspace perttool-language-server-private && npm run build --workspace perttool-vscode-private && npm run build --workspace perttool-mcp-private",
     "prepare": "npm run build",
-    "typecheck": "tsc -p tsconfig.json --noEmit && npm run typecheck --workspace perttool-language-server-private && npm run typecheck --workspace perttool-vscode-private",
+    "typecheck": "tsc -p tsconfig.json --noEmit && npm run typecheck --workspace perttool-language-server-private && npm run typecheck --workspace perttool-vscode-private && npm run typecheck --workspace perttool-mcp-private",
     "test": "npm run build && node --test test/*.test.mjs",
     "test:e2e": "npm run build && node --test test/e2e.test.mjs",
     "check:english": "node scripts/check-english-baseline.mjs",

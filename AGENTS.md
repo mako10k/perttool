@@ -291,8 +291,8 @@ read-only MCP adapter, and cross-surface acceptance.
 `DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
 state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`, and
 `NODE_PORT_BOUNDARY` are also complete and retained before advance.
-`MCP_READ_CONTRACT` is complete and retained before advance. The
-accepted
+`MCP_READ_CONTRACT` and `MCP_READ_ADAPTER` are complete and retained before
+advance. The accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
 `docs/process/adapter-core-dependency-acceptance.md` records fix the
@@ -340,12 +340,18 @@ The accepted `docs/specs/mcp-read-contract.md` and
 `2026-07-28`, exact stable server SDK `2.0.0`, local stdio, four immutable JSON
 resources, five closed read-only tools, exact inline and digest-bound
 registered sources, adapter-owned result schemas, failure ownership, hard
-limits, and semantic parity without a CLI subprocess. `MCP_READ_CONTRACT` is
-complete and retained before advance. Six tasks and 32p remain. Precedence
-makespan is 16p; the `parallel-sgs` version 1 heuristic resource makespan is
-25p with 9p resource delay. Complete NextResult v6 recommends and makes
-startable exactly `MCP_READ_ADAPTER` and `VSIX_DAG_VIEW`;
-`CLI_FACADE_PARITY` is deferred by the current resource-feasible selection.
+limits, and semantic parity without a CLI subprocess. The private
+`adapters/mcp` workspace implements the exact modern-only local-stdio server,
+four resources, five tools, digest-bound sources, self-contained adapter
+schemas, hard limits, and direct Application parity without invoking Git,
+persistence, or the CLI. Its implementation record is
+`docs/process/adapter-mcp-read-adapter-acceptance.md`.
+`MCP_READ_CONTRACT` and `MCP_READ_ADAPTER` are complete and retained before
+advance. Five tasks and 25p remain. Precedence makespan is 16p; the
+`parallel-sgs` version 1 heuristic resource makespan is 25p with 9p resource
+delay. Complete NextResult v6 recommends and makes startable only
+`VSIX_DAG_VIEW`; `CLI_FACADE_PARITY` and `MCP_ACCEPTANCE` are ready but
+deferred by the current resource-feasible selection.
 Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
@@ -684,6 +690,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
 - `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and GraphView wire results, and no public-package inclusion.
 - `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual workspace support, and no DAG Webview or public publication identity yet.
+- `adapters/mcp/`: private Node.js 22 MCP workspace with exact server SDK 2.0.0, modern-only 2026-07-28 local stdio, four immutable resources, five fail-closed read-only tools, digest-bound inline or launcher-registered sources, self-contained output schemas, and no public-package inclusion.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 

@@ -171,8 +171,8 @@ Mandatory summary:
   `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
   `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`,
   `DOCUMENT_SESSION_CORE`, `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`,
-  `NODE_PORT_BOUNDARY`, and `MCP_READ_CONTRACT` are complete and retained
-  before advance. Their
+  `NODE_PORT_BOUNDARY`, `MCP_READ_CONTRACT`, and `MCP_READ_ADAPTER` are
+  complete and retained before advance. Their
   accepted specifications and records fix
   the 121-export, 44-command, 20-schema, zero-production-dependency baseline;
   exact twelve-file/nineteen-import migration input; layer and distribution
@@ -202,12 +202,16 @@ Mandatory summary:
   exact stable server SDK `2.0.0`, local stdio, four immutable JSON resources,
   five closed read-only tools, exact inline and digest-bound registered
   sources, adapter-owned result schemas, failure ownership, hard limits, and
-  semantic parity without a CLI subprocess. `MCP_READ_CONTRACT` is complete
-  and retained before advance. Six tasks and 32p remain; precedence makespan
-  is 16p and the `parallel-sgs` version 1 heuristic resource makespan is 25p
-  with 9p resource delay. Complete NextResult v6 recommends and makes
-  startable exactly `MCP_READ_ADAPTER` and `VSIX_DAG_VIEW`;
-  `CLI_FACADE_PARITY` is deferred by the current resource-feasible selection.
+  semantic parity without a CLI subprocess. The private `adapters/mcp`
+  workspace now implements the exact modern-only stdio server, direct
+  Application parity, self-contained adapter schemas, digest-bound sources,
+  and the accepted hard limits without Git or persistence calls. Its record is
+  `docs/process/adapter-mcp-read-adapter-acceptance.md`. Five tasks and 25p
+  remain; precedence makespan is 16p and the `parallel-sgs` version 1
+  heuristic resource makespan is 25p with 9p resource delay. Complete
+  NextResult v6 recommends and makes startable only `VSIX_DAG_VIEW`;
+  `CLI_FACADE_PARITY` and `MCP_ACCEPTANCE` are ready but deferred by the
+  current resource-feasible selection.
   Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.

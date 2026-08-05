@@ -302,6 +302,7 @@ task MCP_READ_ADAPTER MCP_IMPLEMENTATION_INPUT -> MCP_READY:
   title "Implement the fail-closed read-only MCP adapter"
   description "Implement the accepted local resources and read-only tools over shared application and Node boundaries with closed schemas, explicit capabilities, source identity, bounded diagnostics and output, cancellation, deterministic ordering, and offline help. Do not call the CLI, infer caller authority, expose mutations, fetch remote content, update Git, or write project files."
   duration 7p
+  status done
   priority 80
   requires:
     DEVELOPERS 1
@@ -497,3 +498,18 @@ work_event WE-7145073435056597697b7c3e713ccc715273d1bfce06a750ad63f2f74aad4032:
   occurred_at 2026-08-05T19:45:00+09:00
   active_time 1667/3600h
   effort 1667/3600ph
+
+work_event WE-323972660605a84023ae68dbdf5a96db2962b74d85acdf8c80f15074499957b9:
+  model 1
+  task MCP_READ_ADAPTER
+  kind start
+  occurred_at 2026-08-05T19:54:22+09:00
+  planned_value 7p
+
+work_event WE-c1c6559db94c1b46f5bebbf5e13456ff8384fd54823114309cb4d30fedf1c3d4:
+  model 1
+  task MCP_READ_ADAPTER
+  kind finish
+  occurred_at 2026-08-05T20:20:00+09:00
+  active_time 769/1800h
+  effort 769/1800ph

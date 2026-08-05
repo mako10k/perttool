@@ -1,0 +1,50 @@
+{
+  "schema_version": "Perttool.McpReadAdapterCases.v1",
+  "protocol_model_version": 1,
+  "protocol_revision": "2026-07-28",
+  "sdk": {
+    "package": "@modelcontextprotocol/server",
+    "version": "2.0.0"
+  },
+  "workspace": {
+    "name": "perttool-mcp-private",
+    "private": true,
+    "source_files": [
+      "index.ts",
+      "main.ts",
+      "projection.ts",
+      "protocol.ts",
+      "schema.ts",
+      "server.ts",
+      "source.ts",
+      "stdio.ts"
+    ]
+  },
+  "resources": [
+    "perttool://capabilities",
+    "perttool://help/commands",
+    "perttool://guide/index",
+    "perttool://schemas"
+  ],
+  "tools": [
+    "perttool_check",
+    "perttool_analyze",
+    "perttool_next",
+    "perttool_help",
+    "perttool_schema"
+  ],
+  "cases": [
+    { "id": "MCA-001", "depends_on": [], "boundary": "workspace" },
+    { "id": "MCA-002", "depends_on": ["MCA-001"], "boundary": "discovery" },
+    { "id": "MCA-003", "depends_on": ["MCA-002"], "boundary": "resources" },
+    { "id": "MCA-004", "depends_on": ["MCA-002"], "boundary": "schemas" },
+    { "id": "MCA-005", "depends_on": ["MCA-004"], "boundary": "inline-source" },
+    { "id": "MCA-006", "depends_on": ["MCA-004"], "boundary": "registered-source" },
+    { "id": "MCA-007", "depends_on": ["MCA-005"], "boundary": "domain-invalid" },
+    { "id": "MCA-008", "depends_on": ["MCA-005"], "boundary": "application-parity" },
+    { "id": "MCA-009", "depends_on": ["MCA-006"], "boundary": "limits" },
+    { "id": "MCA-010", "depends_on": ["MCA-008"], "boundary": "cancellation" },
+    { "id": "MCA-011", "depends_on": ["MCA-008"], "boundary": "offline-help" },
+    { "id": "MCA-012", "depends_on": ["MCA-009", "MCA-010", "MCA-011"], "boundary": "side-effects" }
+  ]
+}

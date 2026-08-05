@@ -199,9 +199,11 @@ without Application dispatch.
 
 ## 7. Output, diagnostics, and errors
 
-Every tool registers a fully dereferenced Draft 2020-12 output schema in the
-private adapter. It is closed, has no remote reference, and is not added to the
-public CLI schema catalog. Each MCP result has exactly:
+Every tool registers a self-contained Draft 2020-12 output schema in the
+private adapter. It is closed, has no external or remote reference, and is not
+added to the public CLI schema catalog. Local `$defs` references are permitted
+only within that same schema closure; they are required for recursive JSON
+values in `Perttool.SchemaResult.v1`. Each MCP result has exactly:
 
 - its literal `Perttool.Mcp*Result.v1` `schema_version`;
 - `mcp_protocol_model_version: 1`;
