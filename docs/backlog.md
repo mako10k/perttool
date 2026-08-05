@@ -791,7 +791,8 @@ runtime or syntax change.
 
 Priority: Selected cross-adapter foundation
 
-Status: Architecture, Core dependency cleanup, and shared-library boundary accepted (2026-08-05; retained before advance)
+Status: Architecture, Core dependency cleanup, shared-library boundary, and
+editor protocol contract accepted (2026-08-05; retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -816,10 +817,18 @@ lower-to-Application imports while retaining exact compatibility facades.
 forty-name platform-neutral `perttool/core` runtime and an exact 121-name
 `perttool/node` compatibility facade; isolated package consumption passes
 without selecting a release. `SHARED_LIBRARY_BOUNDARY` is complete with exact
-lifecycle evidence. Thirteen tasks and 70p remain; precedence makespan is 45p
-and the heuristic resource makespan is 49p with 4p resource delay. Complete
-NextResult v6 recommends and permits only `EDITOR_PROTOCOL_CONTRACT`;
-`NODE_PORT_BOUNDARY` is ready and resource-feasible but only `allowed`.
+lifecycle evidence. The [editor protocol contract](specs/editor-protocol.md)
+and its [acceptance record](process/adapter-editor-protocol-acceptance.md) fix
+stable LSP 3.17, UTF-16 URI/version synchronization, cancellation and stale
+handling, the closed read-only capability set,
+`Perttool.GraphViewResult.v1`, four analysis modes, source navigation, VS Code
+`^1.101.0`, offline server distribution, workspace trust, Webview CSP, and
+accessibility. `EDITOR_PROTOCOL_CONTRACT` is complete with exact lifecycle
+evidence and retained before advance. Twelve tasks and 65p remain; precedence
+makespan is 40p and the heuristic resource makespan is 49p with 9p resource
+delay. Complete NextResult v6 recommends and permits only
+`DOCUMENT_SESSION_CORE`; `MCP_READ_CONTRACT` is separately `allowed`, while
+`NODE_PORT_BOUNDARY` is ready but `deferred` by the current joint selection.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared
@@ -834,8 +843,8 @@ and plan advance remain separate decisions.
 
 Priority: Selected through `ADAPTER-001`
 
-Status: Planned; depends on the shared architecture, library, editor protocol,
-and document-session gates
+Status: Contract accepted; implementation depends on the shared library,
+accepted editor protocol, and document-session gates
 
 Define an LSP boundary for diagnostics, document symbols, hover, completion,
 and source-safe code actions by reusing the parser, semantic model, help
@@ -847,7 +856,8 @@ previewed mutation candidate.
 
 Priority: Selected through `ADAPTER-001`
 
-Status: Planned; depends on accepted `LSP-001`
+Status: Protocol contract accepted; implementation depends on accepted
+`LSP-001`
 
 Package an accepted LSP contract without adding editor-only grammar or
 mutation semantics. Acceptance must cover extension activation, bundled

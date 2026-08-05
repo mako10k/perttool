@@ -166,10 +166,7 @@ test("cleanup acceptance, current guidance, and completed plan are aligned", asy
   ]);
   assert.match(specification, /^### 3\.2 Accepted cleanup state$/m);
   assert.match(design, /every reusable source module has zero imports/);
-  assert.match(
-    backlog,
-    /Architecture, Core dependency cleanup, and shared-library boundary accepted/,
-  );
+  assert.match(backlog, /adapter-core-dependency-acceptance\.md/);
   assert.match(acceptance, /- Document status: Accepted 1\.0/);
   assert.deepEqual(
     [...acceptance.matchAll(/^\| `(CDC-\d{3})` \|/gm)].map((match) => match[1]),

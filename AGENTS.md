@@ -286,9 +286,9 @@ compose the shared dependency contract, Core reverse-dependency cleanup,
 library and Node-port boundaries, unchanged CLI facade, protocol-neutral
 document session, read-only LSP, VSIX shell and DAG Webview, fail-closed
 read-only MCP adapter, and cross-surface acceptance.
-`ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`, and
-`SHARED_LIBRARY_BOUNDARY` are complete and retained in their exact pre-advance
-state. The accepted
+`ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
+`SHARED_LIBRARY_BOUNDARY`, and `EDITOR_PROTOCOL_CONTRACT` are complete and
+retained in their exact pre-advance state. The accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
 `docs/process/adapter-core-dependency-acceptance.md` records fix the
@@ -302,11 +302,18 @@ inversion; and zero reusable-module imports into Application. The accepted
 `docs/process/adapter-shared-library-acceptance.md` add a closed forty-name
 platform-neutral Core runtime, an exact 121-name Node facade, root-identical
 Grammar 6 parse/validate/format, and direct isolated-package consumption while
-retaining zero production dependencies. Thirteen tasks and 70p remain.
-Precedence makespan is 45p; the `parallel-sgs` version 1 heuristic resource
-makespan is 49p with 4p resource delay. Complete NextResult v6 recommends and
-permits only `EDITOR_PROTOCOL_CONTRACT`; `NODE_PORT_BOUNDARY` is separately
-ready and resource-feasible but only `allowed`. Editor mutation, MCP
+retaining zero production dependencies. The accepted
+`docs/specs/editor-protocol.md` and
+`docs/process/adapter-editor-protocol-acceptance.md` fix stable LSP 3.17,
+URI/generation/version and UTF-16 synchronization, cancellation and stale
+rejection, the closed read-only capability set,
+`Perttool.GraphViewResult.v1`, four DAG modes, source navigation, VS Code
+`^1.101.0`, offline server distribution, workspace trust, restrictive CSP,
+and accessibility. Twelve tasks and 65p remain. Precedence makespan is 40p;
+the `parallel-sgs` version 1 heuristic resource makespan is 49p with 9p
+resource delay. Complete NextResult v6 recommends and permits only
+`DOCUMENT_SESSION_CORE`; `MCP_READ_CONTRACT` is `allowed`, while
+`NODE_PORT_BOUNDARY` is ready but `deferred`. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 

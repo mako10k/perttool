@@ -536,6 +536,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.7.1` Help and Guide consistency patch procedure](docs/process/0.7.1-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
+- [Editor Protocol Contract](docs/specs/editor-protocol.md)
 - [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
 - [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)
 - [Conditional Plan Assurance internal mutation Core acceptance](docs/process/plan-assurance-mutation-core-acceptance.md)

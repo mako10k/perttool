@@ -138,6 +138,25 @@ fixed by
 No release or Node-port separation is implied by this accepted source
 boundary.
 
+### 3.4 Accepted editor-protocol state
+
+The [Editor Protocol Contract](editor-protocol.md) fixes editor protocol model
+1 before implementation. It selects stable LSP 3.17 over local stdio, exact
+UTF-16 incremental document synchronization, Node.js `>=22`, and VS Code
+`^1.101.0`. The capability set is closed to diagnostics, symbols, hover,
+completion without supplied edits, definition, read-only Help quick fixes, and
+the custom `perttool/graphView` request.
+
+The versioned `Perttool.GraphViewResult.v1` binds exact URI, document
+generation, version, and source digest to one of `none`, `precedence`,
+`resource`, or `both`. Invalid or unavailable projections contain no graph;
+cancelled and stale requests return the stable LSP errors and cannot refresh
+the Webview. The VSIX remains an offline Node workspace extension with an
+exact bundled server, explicit untrusted and virtual workspace support,
+restrictive CSP, closed presentation messages, and an accessible text
+outline. No runtime implementation, adapter dependency, editor mutation, or
+release is implied by this accepted contract.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.

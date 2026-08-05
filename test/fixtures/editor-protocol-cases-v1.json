@@ -1,0 +1,158 @@
+{
+  "schema_version": "Perttool.EditorProtocolCases.v1",
+  "editor_protocol_model_version": 1,
+  "standards": {
+    "lsp_version": "3.17",
+    "lsp_3_18_status": "upcoming_not_selected",
+    "position_encoding": "utf-16",
+    "transport": "stdio",
+    "node_engine": ">=22",
+    "vscode_engine": "^1.101.0",
+    "extension_kind": ["workspace"],
+    "browser_entry": false
+  },
+  "custom_handshake": {
+    "optional_for_standard_lsp": true,
+    "required_for": ["perttool/help", "perttool/graphView", "vscode_dag_view"],
+    "editor_protocol_model_versions": [1],
+    "graph_view_result_schema_versions": ["Perttool.GraphViewResult.v1"],
+    "editor_help_result_schema_versions": ["Perttool.EditorHelpResult.v1"],
+    "unknown_method_error_code": -32601
+  },
+  "document_sync": {
+    "identity": ["uri", "generation", "version", "source_digest"],
+    "version_rule": "strictly_increasing_integer",
+    "change_mode": "incremental_utf16_atomic",
+    "invalid_change_recovery": "terminate_connection_reconnect_and_did_open"
+  },
+  "server_capabilities": [
+    {
+      "id": "diagnostics",
+      "protocol": "textDocument/publishDiagnostics",
+      "operation": "document_check",
+      "mutability": "read_only"
+    },
+    {
+      "id": "document_symbols",
+      "protocol": "textDocument/documentSymbol",
+      "operation": "validated_source_projection",
+      "mutability": "read_only"
+    },
+    {
+      "id": "hover",
+      "protocol": "textDocument/hover",
+      "operation": "entity_and_help_projection",
+      "mutability": "read_only"
+    },
+    {
+      "id": "completion",
+      "protocol": "textDocument/completion",
+      "operation": "grammar_help_projection",
+      "mutability": "user_insert_only"
+    },
+    {
+      "id": "definition",
+      "protocol": "textDocument/definition",
+      "operation": "source_identity_resolution",
+      "mutability": "read_only"
+    },
+    {
+      "id": "help_code_action",
+      "protocol": "textDocument/codeAction",
+      "operation": "diagnostic_help_projection",
+      "mutability": "read_only"
+    },
+    {
+      "id": "help",
+      "protocol": "perttool/help",
+      "operation": "help_topic_projection",
+      "mutability": "read_only"
+    },
+    {
+      "id": "graph_view",
+      "protocol": "perttool/graphView",
+      "operation": "version_bound_graph_projection",
+      "mutability": "read_only"
+    }
+  ],
+  "forbidden_capabilities": [
+    "textDocument/rename",
+    "textDocument/formatting",
+    "textDocument/rangeFormatting",
+    "textDocument/onTypeFormatting",
+    "workspace/executeCommand",
+    "workspace/willCreateFiles",
+    "workspace/willRenameFiles",
+    "workspace/willDeleteFiles"
+  ],
+  "help": {
+    "request_method": "perttool/help",
+    "schema_version": "Perttool.EditorHelpResult.v1",
+    "command_argument_fields": ["documentUri", "documentGeneration", "documentVersion", "topicId"],
+    "result_fields": ["schemaVersion", "editorProtocolModelVersion", "status", "topicId", "level", "content", "relatedTopicIds"],
+    "levels": ["quick", "detail"],
+    "statuses": ["ok", "not_found"],
+    "content_owner": "shared_help_registry",
+    "remote_content": false,
+    "command_links": false
+  },
+  "graph_view": {
+    "request_method": "perttool/graphView",
+    "schema_version": "Perttool.GraphViewResult.v1",
+    "result_fields": ["schemaVersion", "editorProtocolModelVersion", "document", "analysisMode", "status", "complete", "diagnostics", "graph"],
+    "document_fields": ["uri", "generation", "version", "sourceDigest"],
+    "graph_fields": ["projectId", "finishMilestoneId", "milestones", "edges", "precedence", "resource"],
+    "milestone_fields": ["id", "title", "reached", "declarationRange", "selectionRange", "precedence"],
+    "edge_fields": ["id", "kind", "sourceMilestoneId", "targetMilestoneId", "label", "status", "declarationRange", "selectionRange", "expected", "precedence", "resource"],
+    "analysis_modes": ["none", "precedence", "resource", "both"],
+    "statuses": ["current", "invalid", "unavailable"],
+    "stale_error_code": -32801,
+    "cancelled_error_code": -32800,
+    "current_requires_graph": true,
+    "non_current_graph": null,
+    "arbitrary_mermaid": false
+  },
+  "vsix": {
+    "activation": ["onLanguage:pert", "onCommand:perttool.showDag", "onView:perttool.dag"],
+    "workspace_trust": "supported",
+    "virtual_workspaces": "supported",
+    "browser_only": "unsupported",
+    "server_source": "bundled_exact_artifact",
+    "network_download": false,
+    "workspace_executable": false,
+    "telemetry": false
+  },
+  "webview": {
+    "default_src": "none",
+    "script_policy": "nonce_only",
+    "unsafe_inline": false,
+    "unsafe_eval": false,
+    "remote_origins": false,
+    "workspace_resource_roots": false,
+    "messages": ["ready", "selectAnalysisMode", "revealSource"],
+    "message_fields": {
+      "ready": ["kind", "editorProtocolModelVersion"],
+      "selectAnalysisMode": ["kind", "documentUri", "documentGeneration", "documentVersion", "analysisMode"],
+      "revealSource": ["kind", "documentUri", "documentGeneration", "documentVersion", "entityKind", "entityId"]
+    },
+    "accessible_text_outline": true
+  },
+  "cases": [
+    {"id": "EDP-001", "depends_on": [], "boundary": "standards_and_runtime"},
+    {"id": "EDP-002", "depends_on": ["EDP-001"], "boundary": "initialization_capability_closure"},
+    {"id": "EDP-003", "depends_on": ["EDP-002"], "boundary": "document_identity_and_versions"},
+    {"id": "EDP-004", "depends_on": ["EDP-003"], "boundary": "utf16_position_mapping"},
+    {"id": "EDP-005", "depends_on": ["EDP-004"], "boundary": "diagnostics_and_invalid_documents"},
+    {"id": "EDP-006", "depends_on": ["EDP-005"], "boundary": "read_only_language_features"},
+    {"id": "EDP-007", "depends_on": ["EDP-006"], "boundary": "help_and_code_actions"},
+    {"id": "EDP-008", "depends_on": ["EDP-003"], "boundary": "request_cancellation"},
+    {"id": "EDP-009", "depends_on": ["EDP-008"], "boundary": "stale_result_rejection"},
+    {"id": "EDP-010", "depends_on": ["EDP-005", "EDP-009"], "boundary": "graph_view_request"},
+    {"id": "EDP-011", "depends_on": ["EDP-010"], "boundary": "graph_view_result"},
+    {"id": "EDP-012", "depends_on": ["EDP-011"], "boundary": "source_navigation"},
+    {"id": "EDP-013", "depends_on": ["EDP-002"], "boundary": "vsix_activation_and_distribution"},
+    {"id": "EDP-014", "depends_on": ["EDP-013"], "boundary": "workspace_trust_and_runtime"},
+    {"id": "EDP-015", "depends_on": ["EDP-011", "EDP-014"], "boundary": "webview_security_and_accessibility"},
+    {"id": "EDP-016", "depends_on": ["EDP-007", "EDP-012", "EDP-015"], "boundary": "read_only_parity_and_side_effects"}
+  ]
+}

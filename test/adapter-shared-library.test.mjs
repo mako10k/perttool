@@ -155,7 +155,7 @@ test("shared-library acceptance and completed task remain aligned", async () => 
     acceptance,
     /sha256:33a44d94d85ea3134e61033cfea22cc3fad159c7c2fdaf7273ccf48604f1d04c/,
   );
-  assert.match(backlog, /shared-library boundary accepted/);
+  assert.match(backlog, /adapter-shared-library-acceptance\.md/);
   const checked = packageRoot.checkDocument(plan);
   const task = checked.document.declarations.find(
     ({ kind, id }) => kind === "task" && id === "SHARED_LIBRARY_BOUNDARY",

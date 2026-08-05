@@ -168,9 +168,9 @@ Mandatory summary:
   tasks and 91p covering the shared dependency contract, Core decoupling,
   library and Node-port boundaries, CLI parity, document session, read-only
   LSP, VSIX and DAG Webview, read-only MCP, and integrated acceptance.
-  `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`, and
-  `SHARED_LIBRARY_BOUNDARY` are complete and retained before advance. Their
-  accepted specifications and records fix
+  `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
+  `SHARED_LIBRARY_BOUNDARY`, and `EDITOR_PROTOCOL_CONTRACT` are complete and
+  retained before advance. Their accepted specifications and records fix
   the 121-export, 44-command, 20-schema, zero-production-dependency baseline;
   exact twelve-file/nineteen-import migration input; layer and distribution
   boundaries; result and capability ownership; semantic parity; five neutral
@@ -178,11 +178,15 @@ Mandatory summary:
   dependency inversion; zero reusable-module imports into Application; a
   closed forty-name platform-neutral Core runtime; an exact 121-name Node
   facade; root-identical Grammar 6 source functions; and isolated-package
-  subpath consumption. Thirteen tasks and 70p remain; precedence makespan is
-  45p and the `parallel-sgs` version 1 heuristic resource makespan is 49p with
-  4p resource delay. Complete NextResult v6 recommends and permits only
-  `EDITOR_PROTOCOL_CONTRACT`; the ready and resource-feasible
-  `NODE_PORT_BOUNDARY` remains only `allowed`. Editor and MCP
+  subpath consumption; stable LSP 3.17; exact URI/generation/version and
+  UTF-16 behavior; cancellation and stale rejection; the closed read-only
+  capability set; `Perttool.GraphViewResult.v1`; four DAG modes; VS Code
+  `^1.101.0`; offline server distribution; workspace trust; restrictive CSP;
+  and accessibility. Twelve tasks and 65p remain; precedence makespan is 40p
+  and the `parallel-sgs` version 1 heuristic resource makespan is 49p with 9p
+  resource delay. Complete NextResult v6 recommends and permits only
+  `DOCUMENT_SESSION_CORE`; `MCP_READ_CONTRACT` remains `allowed`, while
+  `NODE_PORT_BOUNDARY` is ready but `deferred`. Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five

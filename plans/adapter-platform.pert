@@ -154,6 +154,7 @@ task EDITOR_PROTOCOL_CONTRACT ADAPTER_CONTRACT_ACCEPTED -> EDITOR_PROTOCOL_READY
   title "Accept the LSP, VSIX, and DAG view protocol contract"
   description "Fix the read-only LSP capability set, UTF-16 mapping, document URI and version semantics, cancellation and stale-result rules, help ownership, custom DAG projection request, analysis-mode selection, source navigation, invalid-document behavior, GraphViewResult identity, VSIX activation, workspace trust, CSP, server distribution, and supported-runtime decision. Exclude editor mutation, arbitrary Mermaid execution, and duplicated semantic analysis."
   duration 5p
+  status done
   priority 95
   requires:
     DEVELOPERS 1
@@ -385,3 +386,18 @@ work_event WE-d0106f2a547464069cdcb2e03229105d0228f5f41ee367aeb5b8c1e3bb052585:
   occurred_at 2026-08-05T14:56:29+09:00
   active_time 1831/3600h
   effort 1831/3600ph
+
+work_event WE-b0cdab33b8bb645b0428b29285176091f5c9e819df4609b398626f3d15a53ac8:
+  model 1
+  task EDITOR_PROTOCOL_CONTRACT
+  kind start
+  occurred_at 2026-08-05T15:13:37+09:00
+  planned_value 5p
+
+work_event WE-6631858a1d4a460567c09fd6ed9f333e3a2f4c804b520fb7187e941e00f07f81:
+  model 1
+  task EDITOR_PROTOCOL_CONTRACT
+  kind finish
+  occurred_at 2026-08-05T15:26:34+09:00
+  active_time 259/1200h
+  effort 259/1200ph

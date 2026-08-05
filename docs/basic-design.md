@@ -2162,6 +2162,27 @@ require unrelated wire envelopes to have identical bytes. Unknown identities,
 stale document versions, incomplete results, and unavailable source bindings
 fail closed.
 
+The accepted editor protocol model 1 uses stable LSP 3.17 over local stdio,
+incremental UTF-16 synchronization, Node.js `>=22`, and a minimum VS Code
+engine of `^1.101.0`. The server owns no source file directly: an immutable
+document snapshot is identified by exact LSP URI, open generation, strictly
+increasing integer version, text, and UTF-8 SHA-256 digest. Cancellation,
+close, reopen, or a newer accepted version invalidates older work before
+publication. An invalid version or incremental range terminates the
+desynchronized connection and requires a new connection plus `didOpen`; later
+changes never continue from a possibly divergent snapshot.
+
+`perttool/graphView` accepts the current URI and version plus `none`,
+`precedence`, `resource`, or `both`. Its closed
+`Perttool.GraphViewResult.v1` contains a graph only for a complete current
+projection; invalid and unavailable results carry diagnostics with a null
+graph, while cancelled and stale requests use LSP `-32800` and `-32801`.
+The Webview only lays out and presents this result. It rechecks the binding for
+source navigation and analysis-mode messages, including the open generation,
+and cannot calculate schedule meaning or execute Mermaid.
+The exact protocol, capability, trust, CSP, distribution, and accessibility
+rules are in the [Editor Protocol Contract](specs/editor-protocol.md).
+
 ## 13. Help design
 
 Maintain help as a shared registry rather than scattered strings in code.

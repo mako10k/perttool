@@ -1563,9 +1563,9 @@ tasks total 91p and cover the cross-adapter dependency contract, reverse-
 dependency cleanup, shared library and Node ports, CLI compatibility,
 versioned editor protocol, document session, read-only LSP, VSIX shell and DAG
 Webview, fail-closed read-only MCP, and integrated acceptance.
-`ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`, and
-`SHARED_LIBRARY_BOUNDARY` are complete with exact start/finish evidence and
-retained before advance. The normative
+`ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
+`SHARED_LIBRARY_BOUNDARY`, and `EDITOR_PROTOCOL_CONTRACT` are complete with
+exact start/finish evidence and retained before advance. The normative
 contract fixes the 121-export, 44-command, 20-schema baseline, exact twelve-
 file/nineteen-import migration input, dependency directions, Core/Node
 subpaths, private adapter distribution inputs, capability ownership, and
@@ -1575,12 +1575,16 @@ dependencies, and enforces that only CLI and package-root composition import
 Application externally. The shared-library slice adds the exact forty-name
 portable Core, the exact 121-name Node facade, root-identical Grammar 6 source
 functions, and isolated export-map consumption without adding a production
-dependency or release. Thirteen tasks and 70p remain; precedence makespan is
-45p and the `parallel-sgs` version 1 heuristic resource makespan is 49p with
-4p resource delay. Inherited velocity `29p/2d` yields 3.103d and 3.379d
-forecasts. Complete NextResult v6 recommends and permits only
-`EDITOR_PROTOCOL_CONTRACT`; source digest is
-`sha256:33a44d94d85ea3134e61033cfea22cc3fad159c7c2fdaf7273ccf48604f1d04c`.
+dependency or release. Editor protocol model 1 fixes stable LSP 3.17, exact
+URI/generation/version and UTF-16 behavior, cancellation and stale rejection,
+the closed read-only capability set, `Perttool.GraphViewResult.v1`, four DAG
+analysis modes, source navigation, VS Code `^1.101.0`, offline server
+distribution, workspace trust, restrictive CSP, and accessibility. Twelve
+tasks and 65p remain; precedence makespan is 40p and the `parallel-sgs`
+version 1 heuristic resource makespan is 49p with 9p resource delay. Inherited
+velocity `29p/2d` yields 2.759d and 3.379d forecasts. Complete NextResult v6
+recommends and permits only `DOCUMENT_SESSION_CORE`; source digest is
+`sha256:f5966e1af251ddb8873fb3ce05536ce829493533f49f7789540ae011fdc6f6f1`.
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 

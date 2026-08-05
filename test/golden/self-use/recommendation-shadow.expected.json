@@ -65,21 +65,20 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:33a44d94d85ea3134e61033cfea22cc3fad159c7c2fdaf7273ccf48604f1d04c",
+      "source_digest": "sha256:f5966e1af251ddb8873fb3ce05536ce829493533f49f7789540ae011fdc6f6f1",
       "groups": {
         "active": [],
         "ready": [
-          "EDITOR_PROTOCOL_CONTRACT",
           "MCP_READ_CONTRACT",
+          "DOCUMENT_SESSION_CORE",
           "NODE_PORT_BOUNDARY"
         ],
         "runnable_now": [
-          "EDITOR_PROTOCOL_CONTRACT",
-          "NODE_PORT_BOUNDARY"
+          "MCP_READ_CONTRACT",
+          "DOCUMENT_SESSION_CORE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "DOCUMENT_SESSION_CORE",
           "LSP_READ_CORE",
           "MCP_READ_ADAPTER",
           "CLI_FACADE_PARITY",
@@ -93,21 +92,29 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "EDITOR_PROTOCOL_CONTRACT"
+        "DOCUMENT_SESSION_CORE"
       ],
       "manual_selected_task_ids": [
-        "EDITOR_PROTOCOL_CONTRACT",
-        "NODE_PORT_BOUNDARY"
+        "MCP_READ_CONTRACT",
+        "DOCUMENT_SESSION_CORE"
       ],
       "tiers": {
-        "EDITOR_PROTOCOL_CONTRACT": "recommended",
-        "NODE_PORT_BOUNDARY": "allowed",
-        "MCP_READ_CONTRACT": "deferred"
+        "DOCUMENT_SESSION_CORE": "recommended",
+        "NODE_PORT_BOUNDARY": "deferred",
+        "MCP_READ_CONTRACT": "allowed"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "EDITOR_PROTOCOL_CONTRACT",
+          "id": "MCP_READ_CONTRACT",
+          "runnable_now": true,
+          "precedence_critical": false,
+          "schedule_critical": false,
+          "total_float": "20/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "DOCUMENT_SESSION_CORE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -115,52 +122,45 @@
           "resource_rejections": []
         },
         {
-          "id": "MCP_READ_CONTRACT",
+          "id": "NODE_PORT_BOUNDARY",
           "runnable_now": false,
           "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "25/1",
+          "schedule_critical": true,
+          "total_float": "19/1",
           "resource_rejections": [
             {
-              "resource_id": "ARCHITECTURE_SURFACE",
+              "resource_id": "CORE_SURFACE",
               "capacity": 1,
               "used_before_decision": 1,
               "required": 1,
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "EDITOR_PROTOCOL_CONTRACT"
+                "DOCUMENT_SESSION_CORE"
               ]
             },
             {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
+              "resource_id": "DEVELOPERS",
+              "capacity": 2,
+              "used_before_decision": 2,
               "required": 1,
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "EDITOR_PROTOCOL_CONTRACT"
+                "MCP_READ_CONTRACT",
+                "DOCUMENT_SESSION_CORE"
               ]
             }
           ]
-        },
-        {
-          "id": "NODE_PORT_BOUNDARY",
-          "runnable_now": true,
-          "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "24/1",
-          "resource_rejections": []
         }
       ],
       "record_counts": {
         "task_decisions": 3,
         "decision_steps": 18,
-        "facts": 76,
+        "facts": 65,
         "comparisons": 3,
-        "reasons": 13,
-        "descriptions": 7
+        "reasons": 12,
+        "descriptions": 6
       },
       "diagnostic_codes": [
         "PTDAG-208"
