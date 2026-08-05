@@ -793,7 +793,8 @@ Priority: Selected cross-adapter foundation
 
 Status: Architecture, Core dependency cleanup, and shared-library boundary
 accepted; editor protocol contract accepted; document-session Core, read-only
-LSP Core, isolated LSP package, and private VSIX shell accepted (2026-08-05;
+LSP Core, isolated LSP package, private VSIX shell, and Node Host boundary
+accepted (2026-08-05;
 retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
@@ -847,10 +848,17 @@ fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation,
 untrusted and virtual workspace support, closed version-bound virtual Help,
 and an offline bundled server in a disposable eleven-file VSIX. `VSIX_SHELL`
 is complete with exact lifecycle evidence and retained before advance. Eight
-tasks and 41p remain; precedence makespan is 21p and the heuristic resource
-makespan is 29p with 8p resource delay. Complete NextResult v6 recommends and
-makes startable only `NODE_PORT_BOUNDARY`; `MCP_READ_CONTRACT` and
-`VSIX_DAG_VIEW` are `allowed` but not selected.
+tasks and 41p remain at that shell acceptance snapshot. The accepted [Node
+Host boundary](specs/node-host-boundary.md) and its [acceptance
+record](process/adapter-node-host-acceptance.md) now add a six-port inward
+contract, portable semantic SHA-256, and one default Node composition while
+preserving exact 122-name root/Node identity and the 45-name portable Core.
+`NODE_PORT_BOUNDARY` is complete with exact lifecycle evidence and retained
+before advance. Seven tasks and 36p remain; precedence makespan is 20p and the
+heuristic resource makespan is 29p with 9p resource delay. Complete NextResult
+v6 recommends and makes startable only `MCP_READ_CONTRACT`;
+`CLI_FACADE_PARITY` and `VSIX_DAG_VIEW` are deferred by the current
+resource-feasible selection.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared

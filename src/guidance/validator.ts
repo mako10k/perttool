@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import {
   AGENT_GUIDANCE_DIRECTIVES,
@@ -138,7 +138,7 @@ export function serializeAgentGuidanceProfile(
 }
 
 export function digestAgentGuidanceProfile(canonicalJson: string): string {
-  return `sha256:${createHash("sha256").update(canonicalJson, "utf8").digest("hex")}`;
+  return sha256DigestUtf8(canonicalJson);
 }
 
 export function createAgentGuidanceProfileSnapshot(

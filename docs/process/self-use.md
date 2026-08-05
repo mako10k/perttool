@@ -1586,7 +1586,9 @@ document-session slice adds five Core-only runtime values for frozen
 URI/generation/version/digest snapshots, exact UTF-16 changes, stateless and
 stateful validated-snapshot analysis, snapshot-scoped completed caches, and
 cancellation/stale rejection. The current Core is an exact portable 45-name,
-34-module closure; root and Node remain exact 121-name facades. The private
+34-module closure. The accepted six-port Node Host boundary adds one default
+Node composition and a portable semantic SHA-256 owner; root and Node now
+remain exact 122-name facades. The private
 `adapters/lsp` workspace implements the accepted stable LSP 3.17.5 stdio
 surface, versioned read-only projections, negotiated Help and four-mode
 GraphView, cancellation/stale rejection, and public-package isolation.
@@ -1595,13 +1597,19 @@ GraphView, cancellation/stale rejection, and public-package isolation.
 advance. The VSIX shell fixes VS Code `^1.101.0`, exact language client 9.0.1,
 TextMate presentation, untrusted/virtual workspace support, version-bound
 virtual Help, and an offline bundled server in an eleven-file disposable
-package without adding the DAG Webview. Eight tasks and 41p remain; precedence
-makespan is 21p and the `parallel-sgs` version 1 heuristic resource makespan is
-29p with 8p resource delay. Inherited velocity `29p/2d` yields 1.448d and 2d
-forecasts. Complete NextResult v6 recommends and makes startable only
-`NODE_PORT_BOUNDARY`; `MCP_READ_CONTRACT` and `VSIX_DAG_VIEW` are `allowed`
-but not selected. Source digest is
-`sha256:8b6d6ed28af90495ae7937242b1197528c2ad2afdfb63fd682608f4c54e1ff9c`.
+package without adding the DAG Webview. `NODE_PORT_BOUNDARY` is complete from
+exact start event
+`WE-9ec8f2ce85327b3830e27b14b00d04e0ecd4567bedeb433d5dfa8c221bb1fdd6`
+at `2026-08-05T18:48:48+09:00` through finish event
+`WE-9d9be8b2b1b21978a34a3b84f0de4919890b7c25a551cbcad87e852841d808d6`
+at `2026-08-05T19:02:00+09:00`, with exact active time and effort `11/50h`
+and `11/50ph`. Seven tasks and 36p remain; precedence makespan is 20p and the
+`parallel-sgs` version 1 heuristic resource makespan is 29p with 9p resource
+delay. Inherited velocity `29p/2d` yields `40/29d` and `2d` forecasts. Complete
+NextResult v6 recommends and makes startable only `MCP_READ_CONTRACT`;
+`CLI_FACADE_PARITY` and `VSIX_DAG_VIEW` are deferred by the current
+resource-feasible selection. Source digest is
+`sha256:81a7d8cfa1a7a696c3bde4b99e583a3778d59e251e7de1d8fb32c44a1ef09e52`.
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 

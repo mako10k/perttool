@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import type {
   AcceptedPlanningInputV1,
@@ -75,7 +75,7 @@ export function canonicalJson(value: unknown): string {
 }
 
 export function sha256Canonical(value: unknown): Sha256Digest {
-  return `sha256:${createHash("sha256").update(canonicalJson(value), "utf8").digest("hex")}`;
+  return sha256DigestUtf8(canonicalJson(value)) as Sha256Digest;
 }
 
 export function isSha256Digest(value: string): value is Sha256Digest {

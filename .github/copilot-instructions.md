@@ -169,9 +169,9 @@ Mandatory summary:
   library and Node-port boundaries, CLI parity, document session, read-only
   LSP, VSIX and DAG Webview, read-only MCP, and integrated acceptance.
   `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
-  `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
-  `DOCUMENT_SESSION_CORE`, `LSP_READ_CORE`, `LSP_ACCEPTANCE`, and `VSIX_SHELL`
-  are complete and retained before advance. Their
+  `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`,
+  `DOCUMENT_SESSION_CORE`, `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`,
+  and `NODE_PORT_BOUNDARY` are complete and retained before advance. Their
   accepted specifications and records fix
   the 121-export, 44-command, 20-schema, zero-production-dependency baseline;
   exact twelve-file/nineteen-import migration input; layer and distribution
@@ -186,9 +186,10 @@ Mandatory summary:
   `^1.101.0`; offline server distribution; workspace trust; restrictive CSP;
   and accessibility; five Core-only document snapshot, session, analysis, and
   UTF-16 functions; an exact current 45-name, 34-module portable Core closure;
-  immutable source bindings; atomic changes; completed projection caching; and
-  cancellation/stale rejection while root and Node remain exact 121-name
-  facades. `LSP_READ_CORE` is also complete and retained before advance. Its
+  immutable source bindings; atomic changes; completed projection caching;
+  cancellation/stale rejection; and six closed type-only Node Host ports with
+  one default Node composition. Root and Node now remain exact 122-name
+  facades while Core remains an exact 45-name portable runtime. Its
   private `adapters/lsp` workspace pins stable LSP 3.17.5, provides the closed
   local-stdio read-only and negotiated Help/GraphView surfaces, remains
   excluded from the public package, and passes its isolated dual-tarball
@@ -196,11 +197,11 @@ Mandatory summary:
   `^1.101.0`, exact language client 9.0.1, lazy `.pert`/Help activation,
   TextMate presentation, untrusted/virtual workspace support, closed virtual
   Help, and an offline bundled server in an accepted eleven-file disposable
-  VSIX. Eight tasks and 41p remain; precedence makespan is 21p and the
-  `parallel-sgs` version 1 heuristic resource makespan is 29p with 8p resource
+  VSIX. Seven tasks and 36p remain; precedence makespan is 20p and the
+  `parallel-sgs` version 1 heuristic resource makespan is 29p with 9p resource
   delay. Complete NextResult v6 recommends and makes startable only
-  `NODE_PORT_BOUNDARY`; `MCP_READ_CONTRACT` and `VSIX_DAG_VIEW` are `allowed`
-  but not selected. Editor and MCP
+  `MCP_READ_CONTRACT`; `CLI_FACADE_PARITY` and `VSIX_DAG_VIEW` are deferred by
+  the current resource-feasible selection. Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five

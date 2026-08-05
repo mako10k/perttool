@@ -625,8 +625,8 @@ test("implementation cases are dependency ordered and root compatibility remains
     accepted.add(contractCase.id);
   }
   assert.deepEqual([...accepted], expectedIds("LSPC", 12));
-  assert.equal(Object.keys(packageRoot).length, 121);
-  assert.equal(Object.keys(nodeFacade).length, 121);
+  assert.equal(Object.keys(packageRoot).length, 122);
+  assert.equal(Object.keys(nodeFacade).length, 122);
   assert.equal(Object.keys(core).length, 45);
   assert.ok(Object.keys(packageRoot).every((name) => packageRoot[name] === nodeFacade[name]));
   assert.equal(packageRoot.createPerttoolLanguageServer, undefined);

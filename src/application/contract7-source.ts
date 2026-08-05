@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import {
   formatDocument,
 } from "../core/source.js";
@@ -26,7 +26,7 @@ export interface FormatPreviewResultV7 {
 }
 
 function digest(text: string): string {
-  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
+  return sha256DigestUtf8(text);
 }
 
 export function planFormat(

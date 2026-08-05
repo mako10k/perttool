@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import {
   reduceTaskLifecycle,
   type ActualsCoverage,
@@ -414,9 +414,7 @@ function payloadDigest(projection: WorkEventProjection): string {
     effort: projection.effort,
     reason: projection.reason,
   });
-  return `sha256:${
-    createHash("sha256").update(payload, "utf8").digest("hex")
-  }`;
+  return sha256DigestUtf8(payload);
 }
 
 function historyCause(

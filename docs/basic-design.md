@@ -185,8 +185,11 @@ facade, and schema artifacts. The accepted shared-library slice adds isolated
 root names. `src/core/` originally established a forty-name platform-neutral
 runtime catalog and now additively exposes the five protocol-neutral document-
 session functions from `src/session/`; its exact current catalog has 45 names
-and a 34-module portable closure. `src/node/` remains the exact 121-name Node
-facade over the authoritative root. Active Grammar 6 parse, validate, and
+and a 34-module portable closure. `src/ports/node-host.ts` owns six type-only
+inward port contracts, and `src/node/host.ts` supplies the default Node.js
+composition. `src/node/` and the authoritative root are now exact 122-name
+facades after additively exposing the same `createNodeHost()` factory. Active
+Grammar 6 parse, validate, and
 format functions are reference-identical through Core and root. Pure lifecycle
 reduction and the document session remain separate from Node-only hashing,
 keeping the complete Core runtime closure free of Node builtins, outer
@@ -3151,9 +3154,11 @@ The selected `ADAPTER-001` plan composes a shared foundation and three adapter
 branches after first-beta acceptance.
 
 - Shared foundation: the dependency and distribution contract, reverse-
-  dependency cleanup, additive Core/Node subpaths, and protocol-neutral
-  document session are accepted. Node Host separation and CLI facade parity
-  remain later shared-foundation tasks.
+  dependency cleanup, additive Core/Node subpaths, protocol-neutral document
+  session, and Node Host separation are accepted. The Host supplies exact
+  digest, document/artifact byte, read-only Git, safe-persistence, and bounded
+  process-context ports without selecting Application behavior. CLI facade
+  parity remains a later shared-foundation task.
 - Read-only LSP: directly use the shared session and Application services for
   synchronization, diagnostics, symbols, hover, completion, definition/source
   navigation, help, cancellation, and a version-bound graph result. Rename,

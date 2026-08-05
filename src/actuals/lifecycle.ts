@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256HexUtf8 } from "../model/sha256.js";
 import {
   canonicalizeEventDateTimeSourceToken,
 } from "../model/calendar.js";
@@ -153,7 +153,7 @@ export function deriveWorkEventId(
   const payload =
     `perttool.work-event-id.v1\u0000${taskId}\u0000${kind}` +
     `\u0000${canonicalOccurredAt}`;
-  return `WE-${createHash("sha256").update(payload, "utf8").digest("hex")}`;
+  return `WE-${sha256HexUtf8(payload)}`;
 }
 
 export function normalizeLifecycleMutationRequest(

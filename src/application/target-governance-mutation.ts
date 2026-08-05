@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import {
   classifyGovernanceScopes,
   evaluateGovernanceAuthority,
@@ -62,7 +62,7 @@ interface ValidOriginal {
 }
 
 function digest(text: string): string {
-  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
+  return sha256DigestUtf8(text);
 }
 
 function mutationOptions(

@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import { checkDocument } from "../semantic/check.js";
 import { GOVERNANCE_DIRECT_EDIT_WARNING } from "../governance/guidance.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
@@ -78,7 +78,7 @@ const velocityPattern = /^(?:0|[1-9][0-9]*)(?:\.[0-9]*[1-9])?p\/(?:0|[1-9][0-9]*
 const kinds: readonly RecordKind[] = ["project", "resource", "milestone", "task", "gate"];
 
 function sha256(text: string): string {
-  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
+  return sha256DigestUtf8(text);
 }
 
 function sourceLines(text: string): readonly SourceLine[] {

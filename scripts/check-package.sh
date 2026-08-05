@@ -320,10 +320,13 @@ const snapshot = core.createDocumentSnapshot(
   },
 );
 if (
-  Object.keys(root).length !== 121 ||
-  Object.keys(nodeApi).length !== 121 ||
+  Object.keys(root).length !== 122 ||
+  Object.keys(nodeApi).length !== 122 ||
   Object.keys(core).length !== 45 ||
   !Object.keys(root).every((name) => root[name] === nodeApi[name]) ||
+  typeof root.createNodeHost !== "function" ||
+  root.createNodeHost !== nodeApi.createNodeHost ||
+  "createNodeHost" in core ||
   root.parseDocument !== core.parseDocument ||
   root.validateDocument !== core.validateDocument ||
   root.formatDocument !== core.formatDocument ||

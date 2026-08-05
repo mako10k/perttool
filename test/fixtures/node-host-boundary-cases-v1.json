@@ -1,0 +1,50 @@
+{
+  "schema_version": "Perttool.NodeHostBoundaryCases.v1",
+  "port_model_version": 1,
+  "baseline": {
+    "root_runtime_exports": 121,
+    "node_runtime_exports": 121,
+    "core_runtime_exports": 45,
+    "production_dependencies": 0,
+    "commands": 44,
+    "root_schemas": 20
+  },
+  "target": {
+    "root_runtime_exports": 122,
+    "node_runtime_exports": 122,
+    "core_runtime_exports": 45,
+    "additive_runtime_export": "createNodeHost",
+    "port_contract_source": "src/ports/node-host.ts",
+    "node_host_source": "src/node/host.ts",
+    "typescript_source_files": 157,
+    "production_dependencies": 0,
+    "commands": 44,
+    "root_schemas": 20
+  },
+  "ports": [
+    "digest",
+    "documentBytes",
+    "bundledArtifacts",
+    "gitEvidence",
+    "safePersistence",
+    "processContext"
+  ],
+  "node_builtin_sources": [
+    "src/cli.ts",
+    "src/history/git-probe.ts",
+    "src/io/document-file.ts",
+    "src/io/safe-write.ts",
+    "src/node/host.ts",
+    "src/schema/registry.ts"
+  ],
+  "cases": [
+    {"id": "NHP-001", "depends_on": [], "boundary": "portable_inward_contracts"},
+    {"id": "NHP-002", "depends_on": ["NHP-001"], "boundary": "node_sha256_host"},
+    {"id": "NHP-003", "depends_on": ["NHP-002"], "boundary": "raw_document_and_artifact_sources"},
+    {"id": "NHP-004", "depends_on": ["NHP-003"], "boundary": "read_only_git_evidence"},
+    {"id": "NHP-005", "depends_on": ["NHP-003"], "boundary": "safe_persistence_identity"},
+    {"id": "NHP-006", "depends_on": ["NHP-002"], "boundary": "bounded_process_context"},
+    {"id": "NHP-007", "depends_on": ["NHP-004", "NHP-005", "NHP-006"], "boundary": "root_node_additive_identity"},
+    {"id": "NHP-008", "depends_on": ["NHP-007"], "boundary": "compatibility_and_safety_regression"}
+  ]
+}

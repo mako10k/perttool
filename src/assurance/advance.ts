@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import { validateStoredLifecycleState } from "../actuals/lifecycle.js";
 import { createUnifiedDiff } from "../editing/unified-diff.js";
 import { classifyGovernanceScopes } from "../governance/authority.js";
@@ -146,7 +146,7 @@ const receiptFieldOrder = [
 ] as const;
 
 function digest(text: string): string {
-  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
+  return sha256DigestUtf8(text);
 }
 
 function assuranceAdvanceDiagnostic(

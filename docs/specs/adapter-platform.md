@@ -225,6 +225,23 @@ server. Its disposable VSIX gate packages eleven files and reuses the isolated
 server lifecycle smoke under Node.js 22. The DAG Webview and supported-host
 acceptance remain later plan tasks.
 
+### 3.7 Accepted Node Host state
+
+The [Node Host and Port Boundary](node-host-boundary.md) adds one type-only,
+inward-owned six-port model for exact SHA-256, raw document bytes, bundled
+artifact bytes, read-only Git evidence, established safe persistence, and
+bounded process context. `createNodeHost()` is the default Node.js composition;
+it imports no Application, CLI, LSP, VSIX, or MCP implementation and grants no
+semantic, governance, assurance, task-selection, or write authority.
+
+The package root and `perttool/node` add the same factory and remain key- and
+reference-identical at 122 runtime names. `perttool/core` remains an exact
+45-name, 34-module portable runtime and exposes only the port types. Domain and
+Application semantic hashing use the portable SHA-256 owner; direct Node
+builtins remain confined to logical and concrete Hosts and composition code.
+CLI composition, MCP mapping, VSIX DAG rendering, adapter integration, and
+release selection remain later tasks.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.
@@ -319,9 +336,11 @@ private workspace identity MUST NOT be presented as an available public
 package.
 
 The root `perttool` compatibility facade remains authoritative for its current
-121 runtime export names. The later library-boundary task may add subpath
-exports, but removal, rename, narrowed types, changed meaning, or a changed
-CLI result remains a separately reviewed compatibility decision.
+122 runtime export names. The accepted Node Host slice added only
+`createNodeHost`; removal, rename, narrowed types, changed meaning, or a changed
+CLI result remains a separately reviewed compatibility decision. The verified
+121-name state remains the historical architecture and shared-library
+baseline.
 
 ## 7. Runtime and bundling placement
 

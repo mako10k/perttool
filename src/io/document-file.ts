@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { TextDecoder } from "node:util";
+import { sha256Digest } from "../model/sha256.js";
 
 export interface DocumentContent {
   readonly bytes: Buffer;
@@ -9,7 +9,7 @@ export interface DocumentContent {
 }
 
 export function digestDocumentBytes(bytes: Uint8Array): string {
-  return `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
+  return sha256Digest(bytes);
 }
 
 export function documentContentFromBytes(bytes: Uint8Array): DocumentContent {

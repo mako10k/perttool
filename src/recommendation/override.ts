@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256HexUtf8 } from "../model/sha256.js";
 import type { PlanAssuranceStartAuthorityV1 } from "../assurance/authority.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";
@@ -794,11 +794,9 @@ export function validateOverride(
     feasibility: feasibility.result,
     singleUse: true,
   };
-  const overrideId = `override:sha256:${
-    createHash("sha256")
-      .update(JSON.stringify(overrideDecisionPayloadJson(payload)), "utf8")
-      .digest("hex")
-  }`;
+  const overrideId = `override:sha256:${sha256HexUtf8(
+    JSON.stringify(overrideDecisionPayloadJson(payload)),
+  )}`;
   const override: HumanOverrideDecision = {
     overrideContractVersion: 1,
     overrideId,

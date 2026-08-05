@@ -109,10 +109,21 @@ test("Core source and reusable functions retain package-root identity", async ()
   assert.equal(core.getHelp("syntax", "quick").ok, true);
 });
 
-test("Node subpath is the exact 121-name compatibility facade", async () => {
-  const cases = await fixture();
-  assert.equal(Object.keys(packageRoot).length, cases.runtime.package_root_export_count);
-  assert.equal(Object.keys(nodeApi).length, cases.runtime.node_export_count);
+test("Node subpath retains its exact root compatibility facade", async () => {
+  const [cases, nodeHost] = await Promise.all([
+    fixture(),
+    repositoryText("test/fixtures/node-host-boundary-cases-v1.json").then(JSON.parse),
+  ]);
+  assert.equal(
+    nodeHost.baseline.root_runtime_exports,
+    cases.runtime.package_root_export_count,
+  );
+  assert.equal(
+    nodeHost.baseline.node_runtime_exports,
+    cases.runtime.node_export_count,
+  );
+  assert.equal(Object.keys(packageRoot).length, nodeHost.target.root_runtime_exports);
+  assert.equal(Object.keys(nodeApi).length, nodeHost.target.node_runtime_exports);
   assert.deepEqual(Object.keys(nodeApi), Object.keys(packageRoot));
   for (const name of Object.keys(packageRoot)) {
     assert.equal(nodeApi[name], packageRoot[name], name);

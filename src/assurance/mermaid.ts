@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256Digest, sha256DigestUtf8 } from "../model/sha256.js";
 import type {
   ConversionLoss,
   ConversionLossReport,
@@ -86,7 +86,9 @@ interface Profile2Header {
 }
 
 function sha256(text: string | Uint8Array): string {
-  return `sha256:${createHash("sha256").update(text).digest("hex")}`;
+  return typeof text === "string"
+    ? sha256DigestUtf8(text)
+    : sha256Digest(text);
 }
 
 function diagnostic(

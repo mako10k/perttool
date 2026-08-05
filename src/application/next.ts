@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import {
   analyzeDocument,
   type AnalysisResult,
@@ -281,7 +281,7 @@ export function selectNextTasks(
   const explainDepth = options.explainDepth ?? 1;
   const capacityOverrides = options.capacityOverrides ?? new Map<string, number>();
   const sourceDigest = options.sourceDigest ??
-    `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
+    sha256DigestUtf8(text);
   const analysis = analyzeDocument(text, {
     mode: "both",
     capacityOverrides,

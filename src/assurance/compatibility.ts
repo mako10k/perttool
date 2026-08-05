@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import {
   inspectProjectHistoryWithValidator,
   type HistoryRequest,
@@ -142,7 +142,7 @@ export function planAssuranceSemanticDigest(
   validated: TargetGrammar6ValidatedDocument,
 ): string {
   const bytes = JSON.stringify(projectPlanAssuranceInput(validated));
-  return `sha256:${createHash("sha256").update(bytes, "utf8").digest("hex")}`;
+  return sha256DigestUtf8(bytes);
 }
 
 export interface PlanAssuranceProjectMetadataV1 {

@@ -107,13 +107,15 @@ test("ADAPTER-001 architecture contract aligns requirements, design, and plan", 
 });
 
 test("captured package and reverse-import baselines remain closed", async () => {
-  const [packageText, fixtureText, files] = await Promise.all([
+  const [packageText, fixtureText, nodeHostText, files] = await Promise.all([
     repositoryText("package.json"),
     repositoryText("test/fixtures/adapter-platform-contract-v1.json"),
+    repositoryText("test/fixtures/node-host-boundary-cases-v1.json"),
     typescriptFiles(path.join(root, "src")),
   ]);
   const packageJson = JSON.parse(packageText);
   const fixture = JSON.parse(fixtureText);
+  const nodeHost = JSON.parse(nodeHostText);
   const baseline = fixture.baseline;
 
   assert.equal(
@@ -125,7 +127,14 @@ test("captured package and reverse-import baselines remain closed", async () => 
   assert.equal(packageJson.type, baseline.module_format);
   assert.equal(packageJson.engines.node, ">=22");
   assert.equal(Object.keys(packageJson.dependencies ?? {}).length, 0);
-  assert.equal(Object.keys(packageRoot).length, baseline.package_root_export_count);
+  assert.equal(
+    Object.keys(packageRoot).length,
+    nodeHost.target.root_runtime_exports,
+  );
+  assert.equal(
+    nodeHost.baseline.root_runtime_exports,
+    baseline.package_root_export_count,
+  );
   assert.equal(COMMAND_REGISTRY.length, baseline.command_count);
   assert.equal(getJsonSchemaCatalog().length, baseline.root_schema_count);
   assert.equal(baseline.typescript_source_file_count, 144);

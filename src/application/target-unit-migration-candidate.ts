@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import { createUnifiedDiff } from "../editing/unified-diff.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import { serializeExactDurationSource } from "../model/exact-duration-source.js";
@@ -155,7 +155,7 @@ export type TargetGrammar6UnitMigrationCandidate =
   | TargetGrammar6UnitMigrationCandidateFailure;
 
 function digest(text: string): string {
-  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
+  return sha256DigestUtf8(text);
 }
 
 function failedPreparation(

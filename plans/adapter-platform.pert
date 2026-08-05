@@ -192,6 +192,7 @@ task NODE_PORT_BOUNDARY SHARED_LIBRARY_READY -> NODE_PORTS_READY:
   title "Separate Node.js filesystem, Git, hashing, and persistence ports"
   description "Implement the accepted Node host boundary for raw-byte document reads, schema artifacts, Git probes, hashing, atomic safe writes, races, and process concerns. Keep pure use cases deterministic and injectable, preserve all governance, assurance, history, symlink, expected-digest, and write-verification guarantees, and publish no new adapter automatically."
   duration 5p
+  status done
   priority 85
   requires:
     DEVELOPERS 1
@@ -465,3 +466,18 @@ work_event WE-17fd6176771e742a3d1ee2d12f15bbdce9292e5f76a9e13630a056a66ae697cc:
   occurred_at 2026-08-05T18:37:58+09:00
   active_time 31/180h
   effort 31/180ph
+
+work_event WE-9ec8f2ce85327b3830e27b14b00d04e0ecd4567bedeb433d5dfa8c221bb1fdd6:
+  model 1
+  task NODE_PORT_BOUNDARY
+  kind start
+  occurred_at 2026-08-05T18:48:48+09:00
+  planned_value 5p
+
+work_event WE-9d9be8b2b1b21978a34a3b84f0de4919890b7c25a551cbcad87e852841d808d6:
+  model 1
+  task NODE_PORT_BOUNDARY
+  kind finish
+  occurred_at 2026-08-05T19:02:00+09:00
+  active_time 0.22h
+  effort 0.22ph

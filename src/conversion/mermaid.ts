@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256DigestUtf8 } from "../model/sha256.js";
 import type { AnalysisMode, AnalysisResult } from "../analysis/service.js";
 import { analyzeDocument } from "../analysis/service.js";
 import { checkDocument } from "../semantic/check.js";
@@ -60,7 +60,7 @@ interface SemanticRecord {
 }
 
 function sha256(text: string): string {
-  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
+  return sha256DigestUtf8(text);
 }
 
 function decodedString(

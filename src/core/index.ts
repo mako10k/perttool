@@ -117,6 +117,16 @@ export type {
   JsonSchemaResult,
 } from "../schema/registry.js";
 export type {
+  BundledArtifactSourcePort,
+  DigestPort,
+  DocumentByteSourcePort,
+  GitEvidencePort,
+  NodeHostPorts,
+  ProcessContextPort,
+  SafePersistencePort,
+  Sha256Digest,
+} from "../ports/node-host.js";
+export type {
   ProjectHistoryCoreResult as ProjectHistoryResult,
 } from "../history/project-history.js";
 export type {

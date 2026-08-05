@@ -289,8 +289,8 @@ read-only MCP adapter, and cross-surface acceptance.
 `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
 `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
 `DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
-state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, and `VSIX_SHELL` are also complete
-and retained before advance. The
+state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`, and
+`NODE_PORT_BOUNDARY` are also complete and retained before advance. The
 accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
@@ -317,8 +317,11 @@ and accessibility. The accepted `docs/specs/document-session.md` and
 snapshot, session, analysis, and UTF-16 functions. The exact current Core has
 45 runtime values in a 34-module portable closure; immutable source bindings,
 atomic changes, completed projection caching, and cancellation/stale rejection
-perform no file or editor write, while root and Node remain exact 121-name
-facades. The private `adapters/lsp` workspace pins
+perform no file or editor write. The accepted
+`docs/specs/node-host-boundary.md` adds six closed type-only ports and one
+default Node composition; root and Node are now exact 122-name facades while
+Core remains an exact 45-name portable runtime. The private `adapters/lsp`
+workspace pins
 `vscode-languageserver` `9.0.1` and stable protocol 3.17.5, provides the closed
 local-stdio read-only capability and negotiated Help/GraphView surfaces, and
 is excluded from the public package. The implementation and isolated-package
@@ -329,11 +332,13 @@ lazy `.pert`/Help activation, presentation-only TextMate highlighting,
 untrusted and virtual workspace support, a closed version-bound virtual Help
 bridge, and an exact offline bundled server. Its disposable eleven-file VSIX
 and Node.js 22 server smoke are accepted in
-`docs/process/adapter-vsix-shell-acceptance.md`. Eight tasks and 41p remain.
-Precedence makespan is 21p; the `parallel-sgs` version 1 heuristic resource
-makespan is 29p with 8p resource delay. Complete NextResult v6 recommends and
-makes startable only `NODE_PORT_BOUNDARY`; `MCP_READ_CONTRACT` and
-`VSIX_DAG_VIEW` are `allowed` but not selected. Editor mutation, MCP
+`docs/process/adapter-vsix-shell-acceptance.md`. The Node Host implementation
+and gate are recorded in `docs/process/adapter-node-host-acceptance.md`.
+Seven tasks and 36p remain. Precedence makespan is 20p; the `parallel-sgs`
+version 1 heuristic resource makespan is 29p with 9p resource delay. Complete
+NextResult v6 recommends and makes startable only `MCP_READ_CONTRACT`;
+`CLI_FACADE_PARITY` and `VSIX_DAG_VIEW` are deferred by the current
+resource-feasible selection. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
@@ -663,7 +668,8 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5/6 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, localized version-upgrade inputs, and internal retained Grammar 6 migration support.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
-- `src/node/`: additive `perttool/node` entrypoint that retains exact key and value identity with the established 121-name package root until the separately accepted Node-port cutover.
+- `src/ports/`: inward-owned type-only contracts for exact digesting, raw document and artifact bytes, read-only Git evidence, established safe persistence, and bounded process context.
+- `src/node/`: additive `perttool/node` entrypoint and default Node Host composition; root and Node expose the same 122 runtime values with exact key and reference identity while Core remains portable.
 - `src/parser/`: the active Grammar 1/2/3/4/5/6 parser with identity-checked task-owned work-event and plan-assurance source.
 - `src/semantic/`: neutral document-check service; active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.

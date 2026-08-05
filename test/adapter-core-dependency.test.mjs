@@ -96,7 +96,14 @@ test("Core dependency boundary permits only exact composition consumers", async 
     ).length,
     fixture.target.reverse_dependency_count,
   );
-  assert.equal(files.length, fixture.target.typescript_source_file_count);
+  const nodeHost = JSON.parse(
+    await repositoryText("test/fixtures/node-host-boundary-cases-v1.json"),
+  );
+  assert.equal(
+    nodeHost.baseline.root_runtime_exports,
+    fixture.target.package_root_export_count,
+  );
+  assert.equal(files.length, nodeHost.target.typescript_source_files);
 });
 
 test("relocated services retain exact compatibility facades", async () => {
@@ -124,14 +131,23 @@ test("relocated services retain exact compatibility facades", async () => {
 });
 
 test("public package closure and dependency cases remain stable", async () => {
-  const [fixtureText, packageText] = await Promise.all([
+  const [fixtureText, nodeHostText, packageText] = await Promise.all([
     repositoryText("test/fixtures/adapter-core-dependency-cases-v1.json"),
+    repositoryText("test/fixtures/node-host-boundary-cases-v1.json"),
     repositoryText("package.json"),
   ]);
   const fixture = JSON.parse(fixtureText);
+  const nodeHost = JSON.parse(nodeHostText);
   const packageJson = JSON.parse(packageText);
   assert.equal(Object.keys(packageJson.dependencies ?? {}).length, 0);
-  assert.equal(Object.keys(packageRoot).length, fixture.target.package_root_export_count);
+  assert.equal(
+    Object.keys(packageRoot).length,
+    nodeHost.target.root_runtime_exports,
+  );
+  assert.equal(
+    nodeHost.baseline.root_runtime_exports,
+    fixture.target.package_root_export_count,
+  );
   assert.equal(COMMAND_REGISTRY.length, fixture.target.command_count);
   assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count);
 

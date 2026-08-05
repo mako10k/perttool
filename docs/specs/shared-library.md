@@ -80,6 +80,13 @@ this slice. The later Node-port task may move concrete ownership behind
 inward-owned port contracts, but it MUST preserve these accepted subpath and
 root identities unless a separate compatibility decision changes them.
 
+The later accepted [Node Host boundary](node-host-boundary.md) preserves that
+historical 121-name identity and additively publishes the same
+`createNodeHost()` value through both facades. Their current runtime catalogs
+therefore contain 122 key- and reference-identical values while the Core
+runtime remains 45 names. The `SLB-*` cases continue to describe the exact
+shared-library acceptance snapshot; the `NHP-*` cases own the later state.
+
 The schema registry remains Node-owned because it resolves bundled artifacts
 from the filesystem. Portable consumers may import its result types from
 `perttool/core`; executable schema lookup uses `perttool/node`, and immutable

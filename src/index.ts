@@ -3,6 +3,7 @@ export {
   checkDocument,
   selectNextTasks,
 } from "./application/contract7-assurance.js";
+export { createNodeHost } from "./node/host.js";
 export { getAgentHelp } from "./application/agent-help.js";
 export { getProjectMetadata } from "./application/contract7-project.js";
 export {
@@ -89,6 +90,16 @@ export type {
   JsonSchemaResultOptions,
   JsonSchemaView,
 } from "./schema/registry.js";
+export type {
+  BundledArtifactSourcePort,
+  DigestPort,
+  DocumentByteSourcePort,
+  GitEvidencePort,
+  NodeHostPorts,
+  ProcessContextPort,
+  SafePersistencePort,
+  Sha256Digest,
+} from "./ports/node-host.js";
 export type {
   CommandExample,
   CommandHandler,
