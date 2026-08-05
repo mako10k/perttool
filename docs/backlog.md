@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-08-03
+- Updated: 2026-08-05
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -459,6 +459,90 @@ repeated preview and write are idempotent; archive references remain closed;
 and formatter, schema, help, temporary-link, and isolated-package workflows
 agree. This backlog entry does not select syntax, implement the option, change
 the active Grammar or CLI contract, or authorize plan advance or release work.
+
+## Semantic source control
+
+### SCM-001: Add semantic diff, patch, and three-way merge
+
+Priority: Unset (idea registered; not selected)
+
+Status: Requested backlog (2026-08-05; contract and delivery plan not selected)
+
+Git can merge independent text edits to a `.pert` document, but it cannot use
+the document's entity identities, exact values, graph constraints, lifecycle
+events, or plan-assurance state to decide whether a combined result is safe.
+Add a semantic source-control layer that compares complete valid DSL
+documents, emits a versioned native patch artifact, applies that artifact to a
+complete DSL document, and performs conservative three-way merge.
+
+The primary integration target is Git content addressed by repository-relative
+path and revision, including stage-1/base, stage-2/ours, and
+stage-3/theirs blobs during conflict resolution. Ordinary files and stdin may
+remain adapters to the same pure Core, but they are not the sole source model.
+The detailed non-normative proposal is recorded in the
+[Semantic Diff, Patch, and Three-Way Merge Design Proposal](process/semantic-diff-merge-design.md).
+
+Required outcomes:
+
+- compare two completely parsed and validated Grammar 1 through 6 documents
+  through one closed normalized semantic model rather than line positions;
+- define a versioned, deterministic, invertible native patch artifact with
+  explicit before/after preconditions, semantic identity, and optional
+  exact-source provenance;
+- apply all semantic changes as one final candidate, render them through the
+  source-preserving edit boundary, and expose a candidate only after complete
+  validation;
+- merge base/ours/theirs at entity, field, and keyed-child granularity while
+  returning typed conflicts for divergent values, delete/modify, identity,
+  graph, temporal, resource, lifecycle, assurance, and source-fidelity causes;
+- merge independent task lifecycle progress without silently combining
+  incompatible transitions or changing work-event evidence;
+- preserve comments, trivia, source spelling, and order through a distinct
+  source-fidelity lane so normalized semantic equivalence never silently drops
+  source-only changes;
+- read immutable Git blobs and unmerged index stages with resolved object,
+  object-format, repository-relative-path, and raw-byte identities, without
+  staging, committing, updating refs, or searching unreachable history;
+- support an opt-in Git merge-driver adapter only after the standalone
+  three-way Core is accepted, and never place ordinary conflict markers into a
+  `.pert` candidate that is claimed to be grammatically valid;
+- project a native patch to unified diff only against a concrete source, and
+  convert unified diff to a native patch only when complete before and after
+  DSL documents can be reconstructed and validated; and
+- retain governance, plan-assurance, actuals, advance-history, warning,
+  expected-digest, filesystem-race, and safe-write boundaries rather than
+  treating a clean semantic merge as persistent authority.
+
+Open design decisions:
+
+- the exact normalized semantic model, field-specific set/sequence rules, and
+  whether its first public identity is shared with conversion or remains
+  source-control-specific;
+- the native artifact encoding, exact source-overlay representation, public
+  result identities, CLI paths, and CLI contract version;
+- whether a semantic patch always carries a complete base model, only
+  operation-local before values, or two explicitly versioned profiles;
+- which same-task lifecycle branches are proven prefix/extension merges and
+  which remain concurrent-transition conflicts even when their timestamp union
+  would validate;
+- how a merge driver handles candidates that affect governed scopes or carry
+  new seals, outcomes, receipts, destructive advance contraction, or actuals
+  evidence without an interactive authority channel;
+- whether multiple Git merge bases are always rejected or may use only the
+  virtual ancestor explicitly supplied by Git; and
+- whether source-only comments and trivia are merged through owned anchors,
+  an exact textual side lane, or a conservative combination of both.
+
+Acceptance must include formatting-only changes, exact Rational equivalence,
+independent and divergent field edits, connected graph batches, cycles created
+only by the union, resource and temporal union failures, legacy and eventful
+lifecycle branches, assurance reseal requirements, source-only conflicts,
+SHA-1 and SHA-256 repositories, linked worktrees, index stages, ref races,
+multiple merge bases, unified-diff loss reporting, merge-driver conflict exits,
+and proof that no Git ref/index/history mutation occurs. This backlog entry
+does not select a requirement, syntax, command, schema, Grammar or CLI version,
+PERT workstream, implementation, merge-driver installation, release, or remote
+operation.
 
 ## Project actuals and Git-recorded history
 
@@ -1266,9 +1350,10 @@ Before implementation:
 
 ## Independent post-beta work
 
-`MULTI-001`, `LSP-001`, `VSIX-001`, `MCP-001`, `MIG-08`, Git integration,
+`MULTI-001`, `LSP-001`, `VSIX-001`, `MCP-001`, `MIG-08`, `SCM-001`,
 `GOV-AUTH-001`, `ADV-001`, `ASSURE-001`, and `META-001` remain independent
 workstreams. `ADV-001` is the refined, unscheduled read-only Git guard for
-destructive advance writes. These items are not implicit prerequisites for an
-accepted workstream unless a later requirements decision explicitly composes
-them.
+destructive advance writes, while `SCM-001` records the unselected semantic
+diff, patch, merge, and Git-integration concept. These items are not implicit
+prerequisites for an accepted workstream unless a later requirements decision
+explicitly composes them.
