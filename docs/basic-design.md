@@ -3157,7 +3157,14 @@ branches after first-beta acceptance.
 - Read-only LSP: directly use the shared session and Application services for
   synchronization, diagnostics, symbols, hover, completion, definition/source
   navigation, help, cancellation, and a version-bound graph result. Rename,
-  formatting edits, and other mutation edits are deferred.
+  formatting edits, and other mutation edits are deferred. The implemented
+  server lives in private workspace `adapters/lsp`, pins
+  `vscode-languageserver` `9.0.1` for the stable 3.17.5 protocol, and starts
+  only over local stdio. It maps the accepted closed standard capabilities and
+  negotiated Help/GraphView requests directly from the current document
+  session without CLI, filesystem, Git, network-listener, or editor-write
+  behavior. The workspace is a repository build input but is excluded from the
+  public `perttool` package.
 - VSIX and DAG: provide TextMate highlighting, the accepted LSP client/server
   distribution, and a CSP-constrained read-only DAG Webview without semantic
   duplication or arbitrary Mermaid execution.

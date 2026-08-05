@@ -635,7 +635,10 @@ test("document-session acceptance and completed task remain aligned", async () =
   ]);
   assert.match(specification, /- Document status: Accepted 1\.0/);
   assert.match(acceptance, /- Document status: Accepted 1\.0/);
-  assert.match(acceptance, new RegExp(digestText(plan)));
+  assert.match(
+    acceptance,
+    /sha256:1adc6eb1a054e5ae5919365ba4e96a81b01924a9ca01c0701e9326ca4b8ffe5e/,
+  );
   assert.match(backlog, /adapter-document-session-acceptance\.md/);
   const checked = packageRoot.checkDocument(plan);
   const task = checked.document.declarations.find(

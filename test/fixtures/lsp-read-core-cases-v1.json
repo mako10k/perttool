@@ -1,0 +1,64 @@
+{
+  "schema_version": "Perttool.LspReadCoreCases.v1",
+  "editor_protocol_model_version": 1,
+  "workspace": {
+    "path": "adapters/lsp",
+    "name": "perttool-language-server-private",
+    "private": true,
+    "published": false,
+    "node_engine": ">=22",
+    "sdk": "vscode-languageserver",
+    "sdk_version": "9.0.1",
+    "protocol_dependency_version": "3.17.5",
+    "perttool_dependency": "file:../..",
+    "source_files": [
+      "index.ts",
+      "main.ts",
+      "projection.ts",
+      "protocol.ts",
+      "server.ts",
+      "stdio.ts"
+    ]
+  },
+  "standard_capabilities": [
+    "positionEncoding",
+    "textDocumentSync",
+    "documentSymbolProvider",
+    "hoverProvider",
+    "completionProvider",
+    "definitionProvider",
+    "codeActionProvider"
+  ],
+  "custom_methods": ["perttool/help", "perttool/graphView"],
+  "analysis_modes": ["none", "precedence", "resource", "both"],
+  "error_codes": {
+    "method_not_found": -32601,
+    "invalid_params": -32602,
+    "request_cancelled": -32800,
+    "content_modified": -32801
+  },
+  "side_effects": {
+    "cli_subprocess": false,
+    "filesystem_read": false,
+    "filesystem_write": false,
+    "git": false,
+    "network_listener": false,
+    "editor_edit": false,
+    "telemetry": false,
+    "publication": false
+  },
+  "cases": [
+    {"id": "LSPC-001", "depends_on": [], "boundary": "private_workspace_and_lsp_317_sdk"},
+    {"id": "LSPC-002", "depends_on": ["LSPC-001"], "boundary": "initialization_and_capability_closure"},
+    {"id": "LSPC-003", "depends_on": ["LSPC-002"], "boundary": "document_synchronization"},
+    {"id": "LSPC-004", "depends_on": ["LSPC-003"], "boundary": "versioned_diagnostics"},
+    {"id": "LSPC-005", "depends_on": ["LSPC-004"], "boundary": "symbols_and_definition"},
+    {"id": "LSPC-006", "depends_on": ["LSPC-004"], "boundary": "hover_and_completion"},
+    {"id": "LSPC-007", "depends_on": ["LSPC-006"], "boundary": "negotiated_help_and_read_only_actions"},
+    {"id": "LSPC-008", "depends_on": ["LSPC-005"], "boundary": "closed_graph_view_projection"},
+    {"id": "LSPC-009", "depends_on": ["LSPC-004", "LSPC-008"], "boundary": "invalid_and_unavailable_source"},
+    {"id": "LSPC-010", "depends_on": ["LSPC-003"], "boundary": "cancellation_stale_and_reopen"},
+    {"id": "LSPC-011", "depends_on": ["LSPC-002", "LSPC-010"], "boundary": "stdio_lifecycle"},
+    {"id": "LSPC-012", "depends_on": ["LSPC-007", "LSPC-008", "LSPC-009", "LSPC-011"], "boundary": "read_only_safety_and_compatibility"}
+  ]
+}

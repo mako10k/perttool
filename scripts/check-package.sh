@@ -96,7 +96,7 @@ do
   fi
 done
 
-if grep -Eq '^package/(src|test|docs|plans|scripts|\.github|\.codex)(/|$)|^package/AGENTS\.md$' "$archive_list"; then
+if grep -Eq '^package/(adapters|src|test|docs|plans|scripts|\.github|\.codex)(/|$)|^package/AGENTS\.md$' "$archive_list"; then
   printf 'release tarball contains repository-only files\n' >&2
   exit 1
 fi

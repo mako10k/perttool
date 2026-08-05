@@ -578,5 +578,8 @@ release, publish a VSIX or package, push a remote, or mutate an Issue.
 
 After this contract task was accepted, `DOCUMENT_SESSION_CORE` separately
 implemented only the protocol-neutral snapshot, UTF-16, analysis, cache, and
-invalidation boundary. The LSP and GraphView wire mappings remain unimplemented
-by this historical contract acceptance.
+invalidation boundary. `LSP_READ_CORE` later implemented the private local-
+stdio language server and GraphView wire mapping against this unchanged
+contract. That later implementation does not retroactively broaden this
+historical contract acceptance; VSIX packaging and editor presentation remain
+separate tasks.

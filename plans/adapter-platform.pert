@@ -232,6 +232,7 @@ task LSP_READ_CORE DOCUMENT_SESSION_READY -> LSP_READY:
   title "Implement the read-only perttool language server"
   description "Implement initialize and shutdown, text document synchronization, diagnostics, document symbols, hover, completion, definition and source navigation, help links, cancellation, deterministic ordering, and the accepted custom DAG projection request over the shared document session. Do not invoke the CLI, reimplement domain rules, execute workspace code, or return mutation edits."
   duration 8p
+  status done
   priority 80
   requires:
     DEVELOPERS 1
@@ -417,3 +418,18 @@ work_event WE-5fb6cead4f46949a6950c2fb3f8117aeb7699c5435b886621433f5d8ca72bc9a:
   occurred_at 2026-08-05T16:07:26+09:00
   active_time 1093/3600h
   effort 1093/3600ph
+
+work_event WE-f790fdf110f4eb5bbeef5d2a880673b52e3b1500d27f6e93899ca3fa4ce69b93:
+  model 1
+  task LSP_READ_CORE
+  kind start
+  occurred_at 2026-08-05T16:45:44+09:00
+  planned_value 8p
+
+work_event WE-bf96e9361a1fe9a12f8eedc8cbb7cb81305855467d7e87f4ab271be308cd1cd5:
+  model 1
+  task LSP_READ_CORE
+  kind finish
+  occurred_at 2026-08-05T17:11:28+09:00
+  active_time 193/450h
+  effort 193/450ph

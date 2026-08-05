@@ -1586,13 +1586,17 @@ document-session slice adds five Core-only runtime values for frozen
 URI/generation/version/digest snapshots, exact UTF-16 changes, stateless and
 stateful validated-snapshot analysis, snapshot-scoped completed caches, and
 cancellation/stale rejection. The current Core is an exact portable 45-name,
-34-module closure; root and Node remain exact 121-name facades. Eleven tasks
-and 59p remain; precedence makespan is 34p and the `parallel-sgs` version 1
-heuristic resource makespan is 43p with 9p resource delay. Inherited velocity
-`29p/2d` yields 2.345d and 2.966d forecasts. Complete NextResult v6 recommends
-and makes startable only `LSP_READ_CORE`; `MCP_READ_CONTRACT` is `allowed`,
-and `NODE_PORT_BOUNDARY` is `deferred`. Source digest is
-`sha256:1adc6eb1a054e5ae5919365ba4e96a81b01924a9ca01c0701e9326ca4b8ffe5e`.
+34-module closure; root and Node remain exact 121-name facades. The private
+`adapters/lsp` workspace implements the accepted stable LSP 3.17.5 stdio
+surface, versioned read-only projections, negotiated Help and four-mode
+GraphView, cancellation/stale rejection, and public-package isolation.
+`LSP_READ_CORE` is complete with exact lifecycle evidence and retained before
+advance. Ten tasks and 51p remain; precedence makespan is 26p and the
+`parallel-sgs` version 1 heuristic resource makespan is 40p with 14p resource
+delay. Inherited velocity `29p/2d` yields 1.793d and 2.759d forecasts. Complete
+NextResult v6 recommends and makes startable only `LSP_ACCEPTANCE`;
+`NODE_PORT_BOUNDARY` and `MCP_READ_CONTRACT` are `deferred`. Source digest is
+`sha256:35f330cfd4aa974dde4d4720435dfcddd14ade21e1084294fddb4315ffa4b8ed`.
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 

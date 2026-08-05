@@ -289,7 +289,8 @@ read-only MCP adapter, and cross-surface acceptance.
 `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
 `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
 `DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
-state. The accepted
+state. `LSP_READ_CORE` is also complete and retained before advance. The
+accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
 `docs/process/adapter-core-dependency-acceptance.md` records fix the
@@ -316,11 +317,15 @@ snapshot, session, analysis, and UTF-16 functions. The exact current Core has
 45 runtime values in a 34-module portable closure; immutable source bindings,
 atomic changes, completed projection caching, and cancellation/stale rejection
 perform no file or editor write, while root and Node remain exact 121-name
-facades. Eleven tasks and 59p remain. Precedence makespan is 34p; the
-`parallel-sgs` version 1 heuristic resource makespan is 43p with 9p resource
-delay. Complete NextResult v6 recommends and makes startable only
-`LSP_READ_CORE`; `MCP_READ_CONTRACT` is `allowed`, while
-`NODE_PORT_BOUNDARY` is `deferred`. Editor mutation, MCP
+facades. The private `adapters/lsp` workspace pins
+`vscode-languageserver` `9.0.1` and stable protocol 3.17.5, provides the closed
+local-stdio read-only capability and negotiated Help/GraphView surfaces, and
+is excluded from the public package. Its acceptance record is
+`docs/process/adapter-lsp-read-core-acceptance.md`. Ten tasks and 51p remain.
+Precedence makespan is 26p; the `parallel-sgs` version 1 heuristic resource
+makespan is 40p with 14p resource delay. Complete NextResult v6 recommends and
+makes startable only `LSP_ACCEPTANCE`; `NODE_PORT_BOUNDARY` and
+`MCP_READ_CONTRACT` are `deferred`. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
@@ -655,6 +660,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/semantic/`: neutral document-check service; active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
 - `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
+- `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and GraphView wire results, and no public-package inclusion.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 
@@ -695,7 +701,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. `npm run check` includes check/analyze/next validation for all thirty-four self-use plans, including the selected adapter-platform workstream and `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all thirty-four self-use plans, including the selected adapter-platform workstream and `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci

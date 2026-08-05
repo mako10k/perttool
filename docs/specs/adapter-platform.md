@@ -182,6 +182,31 @@ imports Node crypto nor activates the broader `NODE_PORT_BOUNDARY`. LSP wire
 mapping, GraphView projection, Node composition, CLI migration, MCP transport,
 editor writes, and release selection remain later boundaries.
 
+### 3.6 Implemented read-only LSP state
+
+The language server is isolated in the private `adapters/lsp` workspace. It
+pins `vscode-languageserver` `9.0.1`, whose protocol dependency is stable LSP
+3.17.5, and composes the accepted `perttool/core` document session directly.
+The root package retains zero production dependencies, and the private
+workspace is excluded from the public `perttool` tarball.
+
+The local-stdio server advertises only UTF-16 incremental synchronization,
+diagnostics, document symbols, hover, completion without edits, definition,
+and read-only quick fixes. Standard clients may use those features without a
+perttool handshake. `perttool/help` and `perttool/graphView` are enabled only
+after an exact editor-protocol model 1 handshake. All responses are derived
+from the current URI, generation, version, and source digest; cancellation,
+stale completion, malformed synchronization, invalid DSL, and close/reopen
+cannot publish a stale projection.
+
+`Perttool.GraphViewResult.v1` is projected without Mermaid execution for all
+four closed analysis modes. Source ranges remain exact UTF-16 coordinates,
+and gates remain zero-duration edges without resource ownership. The server
+does not invoke the CLI, read or write files, access Git, listen on a network
+socket, edit an editor document, emit telemetry, or select a release. VSIX,
+Node-port separation, CLI parity, MCP, and integrated acceptance remain later
+tasks.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.
@@ -266,7 +291,7 @@ dependencies are physically isolated from the established package.
 | Distribution unit | Placement and dependency rule |
 | --- | --- |
 | `perttool` | Existing npm package. Retains the CLI binary, the `.` compatibility facade, and `./schemas/*`; the accepted source package adds `./core` and `./node` subpath boundaries without removing or changing existing root names. |
-| Language server | Separate private workspace/distribution input. Depends on accepted `perttool` Core and Node subpaths, owns LSP dependencies, and is not published by implementation acceptance. |
+| Language server | Private `adapters/lsp` workspace. Depends on the accepted Core document session, owns exact `vscode-languageserver` `9.0.1`, uses local stdio, and is excluded from the public `perttool` tarball. |
 | VS Code extension | Separate private VSIX workspace. Bundles or resolves the exact accepted language-server artifact; owns VS Code and Webview dependencies. |
 | MCP server | Separate private workspace/distribution input. Depends on accepted `perttool` Core and Node subpaths, owns MCP dependencies, and has no LSP or VSIX dependency. |
 

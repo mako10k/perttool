@@ -187,11 +187,14 @@ Mandatory summary:
   UTF-16 functions; an exact current 45-name, 34-module portable Core closure;
   immutable source bindings; atomic changes; completed projection caching; and
   cancellation/stale rejection while root and Node remain exact 121-name
-  facades. Eleven tasks and 59p remain; precedence makespan is 34p and the
-  `parallel-sgs` version 1 heuristic resource makespan is 43p with 9p resource
-  delay. Complete NextResult v6 recommends and makes startable only
-  `LSP_READ_CORE`; `MCP_READ_CONTRACT` remains `allowed`, while
-  `NODE_PORT_BOUNDARY` is `deferred`. Editor and MCP
+  facades. `LSP_READ_CORE` is also complete and retained before advance. Its
+  private `adapters/lsp` workspace pins stable LSP 3.17.5, provides the closed
+  local-stdio read-only and negotiated Help/GraphView surfaces, and remains
+  excluded from the public package. Ten tasks and 51p remain; precedence
+  makespan is 26p and the `parallel-sgs` version 1 heuristic resource makespan
+  is 40p with 14p resource delay. Complete NextResult v6 recommends and makes
+  startable only `LSP_ACCEPTANCE`; `NODE_PORT_BOUNDARY` and
+  `MCP_READ_CONTRACT` are `deferred`. Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
@@ -301,7 +304,7 @@ Mandatory summary:
 - Distinguish the precedence critical path from the schedule critical path in a resource schedule.
 - `docs/process/self-use.md` is authorized through Stage 3. Editing/advance writes require preview, review of the diff and removal list, expected digest, and post-write reanalysis.
 - Confirm metadata such as Project ID, as_of, duration_unit, velocity, and finish with `project show --format json`; make changes through `project set` preview/diff and the Stage 3 safe-write procedure. Do not rely on visual source-file inspection or manual editing for the normal workflow.
-- Run repository checks on Node.js 22 or later with `npm ci`, `npm run check`, and `git diff --check`; use `npm run check:english` for the exact Japanese-script allowlist check. CI covers Node.js 22 and 24.
+- Run repository checks on Node.js 22 or later with `npm ci`, `npm run check`, and `git diff --check`; root build/typecheck include private adapter workspaces, while package validation excludes `adapters/` from the public tarball. Use `npm run check:english` for the exact Japanese-script allowlist check. CI covers Node.js 22 and 24.
 - Before staging, inspect the diff and status, and do not include unrelated user changes.
 - Use `secdat exec` for remote writes and GitHub operations, and obtain explicit permission for destructive Git operations.
 - Beta publication uses `beta` and does not itself change `latest`. The retired `alpha` channel must not be recreated without a new release-policy decision and separate authorization. A later `latest` promotion is a separate dist-tag mutation requiring an explicitly selected version and user permission. Use the release gates, the GitHub-identical tarball for publication, process-limited `NPM_TOKEN`, and the repository `secdat` route.

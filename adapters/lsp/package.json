@@ -1,0 +1,20 @@
+{
+  "name": "perttool-language-server-private",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Private read-only LSP 3.17 adapter for perttool",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "perttool": "file:../..",
+    "vscode-languageserver": "9.0.1"
+  }
+}
