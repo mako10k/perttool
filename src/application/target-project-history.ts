@@ -53,7 +53,7 @@ function probeFailureDiagnostic(
     message: malformed
       ? "Git history adapter returned malformed output"
       : "Git history process or filesystem operation failed",
-    helpTopic: "project.history",
+    helpTopic: "actuals",
     data: Object.freeze({
       cause: failure.kind,
       operation: failure.operation,

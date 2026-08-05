@@ -363,6 +363,10 @@ test("Mermaid profile 2 round-trips Grammar 6 and older profiles report exact lo
     assert.equal(lossy.ok, true);
     assert.equal(lossy.lossReport.lossless, false);
     assert.deepEqual(
+      new Set(lossy.lossReport.records.map(({ code }) => code)),
+      new Set(["PTCNV-210"]),
+    );
+    assert.deepEqual(
       lossy.lossReport.records.map(({ elementId }) => elementId),
       protectedBytes(source).map(([, id]) => id),
     );

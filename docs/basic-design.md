@@ -2991,6 +2991,33 @@ Exit:
 - keep digital signatures, authenticated approval, archived advance, npm
   `latest` promotion, both plan advances, and Issue mutation separate.
 
+### Post-MVP Slice 4R: Help and Guide consistency `v0.7.1` beta patch
+
+The accepted `GUIDE-CONSISTENCY-001` workstream corrects the active Contract 7
+Guide, command examples, diagnostic navigation, stable conversion-diagnostic
+coverage, current-state documentation, historical labels, and bounded
+related-topic symmetry. It changes published guidance values without changing
+the Grammar 6 or CLI Contract 7 interface structure.
+
+The [`v0.7.1` release procedure](process/0.7.1-release.md) and independent
+[`release-0.7.1.pert`](../plans/release-0.7.1.pert) plan sequence compatibility
+review, version-bearing source preparation, one immutable candidate,
+separately authorized GitHub/npm beta publication, and durable public
+acceptance.
+
+Exit:
+
+- satisfy Requirements 21.14 from one clean release commit and immutable
+  tarball;
+- retain all 44 Contract 7 commands, 20 root schemas, result identities,
+  payload structure, package-root exports, and authority semantics;
+- publish exact Guide meaning, argument-valid command examples, resolvable
+  diagnostic topics, `PTCNV-210`, and current-versus-historical labels;
+- publish identical bytes to a GitHub prerelease and npm `beta` while leaving
+  `latest=0.7.0`; and
+- keep npm `latest` promotion, both plan advances, Issue mutation, and
+  unrelated backlogs separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 As an independent future backlog after the first beta, split the work into the following three deliverables.

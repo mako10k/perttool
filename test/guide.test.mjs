@@ -17,6 +17,16 @@ import {
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
 
+async function sourceFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const nested = await Promise.all(entries.map(async (entry) => {
+    const entryPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) return sourceFiles(entryPath);
+    return entry.isFile() && entry.name.endsWith(".ts") ? [entryPath] : [];
+  }));
+  return nested.flat();
+}
+
 const topicIds = [
   "syntax",
   "syntax.project",
@@ -146,6 +156,60 @@ test("GuideResult is a domain projection rather than a command contract", () => 
   }
 });
 
+test("active Contract 7 Guide states exact additive identities and authority", async () => {
+  const syntax = getGuide("syntax", "detail");
+  assert.match(syntax.summary, /Grammar versions 1 through 6/);
+  assert.match(
+    getGuide("syntax.project", "detail").sections
+      .map(({ body }) => body).join("\n"),
+    /version 5 adds explicit task work events; and version 6 adds conditional plan-assurance records/,
+  );
+  assert.match(
+    getGuide("syntax.duration", "detail").summary,
+    /Grammar 3 through 6/,
+  );
+  assert.match(
+    getGuide("syntax.temporal", "detail").syntax.join("\n"),
+    /version 2\|3\|4\|5\|6/,
+  );
+
+  const temporal = getGuide("analysis.temporal", "detail");
+  const temporalBody = temporal.sections.map(({ body }) => body).join("\n");
+  assert.match(temporalBody, /AnalysisResult v5/);
+  assert.match(temporalBody, /NextResult v6/);
+
+  const next = getGuide("next", "detail");
+  const nextBody = next.sections.map(({ body }) => body).join("\n");
+  assert.match(next.summary, /NextResult\.v6/);
+  assert.match(
+    nextBody,
+    /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/,
+  );
+  assert.match(nextBody, /assurance-withheld authority/);
+  assert.match(nextBody, /safe-stop reasons/);
+
+  const actualsBody = getGuide("actuals", "detail").sections
+    .map(({ body }) => body).join("\n");
+  assert.match(actualsBody, /Grammar 5 introduces task-owned work events/);
+  assert.match(actualsBody, /Grammar 5 and 6/);
+
+  const assurance = getGuide("plan-assurance", "detail");
+  assert.equal(assurance.examples.length, 3);
+  for (const peer of ["syntax", "analysis", "next", "editing"]) {
+    assert.ok(assurance.related.includes(peer), `plan-assurance -> ${peer}`);
+    assert.ok(
+      getGuide(peer, "detail").related.includes("plan-assurance"),
+      `${peer} -> plan-assurance`,
+    );
+  }
+
+  const source = await readFile(
+    path.join(root, "src/help/assurance-guide.ts"),
+    "utf8",
+  );
+  assert.doesNotMatch(source, /\.replaceAll\(/);
+});
+
 test("unknown guide topics retain PTHLP-001 with a distinct guide link", () => {
   const result = getGuide("missing", "detail");
   assert.equal(result.ok, false);
@@ -182,31 +246,24 @@ test("registered diagnostic links resolve through GuideResult", async () => {
     }
   }
 
-  const explicitlyLinkedSources = [
-    "src/application/analyze.ts",
-    "src/cli.ts",
-    "src/conversion/mermaid-import.ts",
-    "src/help/registry.ts",
-    "src/mutation/diagnostics.ts",
-  ];
   const explicitTopics = new Set();
-  for (const relativePath of explicitlyLinkedSources) {
-    const source = await readFile(path.join(root, relativePath), "utf8");
+  for (const sourcePath of await sourceFiles(path.join(root, "src"))) {
+    const source = await readFile(sourcePath, "utf8");
     for (const match of source.matchAll(
       /helpTopic(?::\s*|\s*=\s*)"([^"]+)"/g,
     )) {
       explicitTopics.add(match[1]);
     }
   }
-  assert.deepEqual([...explicitTopics].sort(), [
-    "analysis.resources",
-    "editing",
-    "errors",
-    "mermaid",
-    "syntax",
-  ]);
   for (const topicId of explicitTopics) {
     assert.equal(getGuide(topicId, "quick").ok, true, topicId);
+  }
+  for (const expected of [
+    "actuals",
+    "editing.unit-migration",
+    "plan-assurance",
+  ]) {
+    assert.ok(explicitTopics.has(expected), expected);
   }
 });
 

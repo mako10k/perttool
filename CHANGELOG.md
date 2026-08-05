@@ -4,6 +4,27 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-08-05
+
+Compatible Grammar 6 and CLI Contract 7 beta patch. This version corrects
+installed Help, Guide, and diagnostic navigation without changing command,
+option, result, schema, payload-structure, package-root, or authority
+identities.
+
+### Fixed
+
+- Corrected the active Guide to state Grammar 6, AnalysisResult v5,
+  NextResult v6, and the combined release, temporal, and plan-assurance start
+  authority directly while preserving additive version history.
+- Made every registered Help example pass active argument validation,
+  including complete operands and required options for all eight assurance
+  mutation commands.
+- Made every literal runtime diagnostic topic resolvable, specified and
+  directly tested `PTCNV-210`, and added bounded reciprocal navigation for
+  the plan-assurance Guide topic.
+- Reconciled current and historical documentation labels without rewriting
+  time-bound release evidence.
+
 ## [0.7.0] - 2026-08-04
 
 Grammar 6 and CLI Contract 7 beta minor. This version adds conditional plan
@@ -367,7 +388,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/mako10k/perttool/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/mako10k/perttool/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mako10k/perttool/compare/v0.5.5...v0.6.0
 [0.5.5]: https://github.com/mako10k/perttool/compare/v0.5.4...v0.5.5

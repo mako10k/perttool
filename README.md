@@ -16,18 +16,24 @@ governance-not-applicable candidate and when a governed preview already
 carries one. It also protects destructive in-place `dag advance` writes with
 exact `HEAD` and stage-0 evidence, returns `Perttool.AdvanceResult.v1`, and
 keeps preview, separate output, and written candidates repository-clean and
-byte-identical. It remains the npm `latest` compatibility line for this beta
-release.
+byte-identical. It remains available as the exact Contract 6 compatibility
+pin `perttool@0.6.0`.
 Beta releases may contain breaking CLI or schema changes.
 
 Version `0.7.0` beta atomically activates Grammar 6 and CLI Contract 7
 conditional plan assurance. It exposes 44 commands, 20 root schemas,
 `Perttool.PlanAssuranceResult.v1`, assurance-aware Check/Project/Analysis/Next/
 Mutation/Advance results, `Perttool.GovernanceDecision.v2`, and Mermaid
-semantic profile 2. Its package and CLI identity is `0.7.0`, and `beta` is its
-publication channel. This release does not move npm `latest` from Contract 6
-`0.6.0`; channel promotion remains a separate decision. Both versions require
-Node.js 22 or later.
+semantic profile 2. Its package and CLI identity is `0.7.0`. At its publication
+boundary, this release does not move npm `latest` from Contract 6 `0.6.0`;
+one separately authorized post-publication operation later made
+`beta=latest=0.7.0`. These Contract 6 and Contract 7 releases require Node.js
+22 or later.
+Version `0.7.1` is a backward-compatible Contract 7 patch that corrects the
+installed Guide, command Help examples, and diagnostic navigation. It retains
+all 44 command paths, 20 root schemas, result and payload identities,
+package-root exports, and authority policies. Its beta publication does not
+move npm `latest`; `0.7.0` remains the exact rollback pin.
 The complete-schema Contract 6 artifact remains available by pinning `0.5.2`,
 and the first machine-schema Contract 6 artifact remains available by pinning
 `0.5.1`; Contract 5, Contract 4, and Contract 3 remain available by pinning
@@ -40,19 +46,19 @@ After beta publication, use `npx` for an occasional Contract 7 invocation and
 select the version explicitly:
 
 ```sh
-npx --yes --package=perttool@0.7.0 -- perttool --version
-npx --yes --package=perttool@0.7.0 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.7.0 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.7.0 -- perttool plan-assurance show PLAN.pert --format json
+npx --yes --package=perttool@0.7.1 -- perttool --version
+npx --yes --package=perttool@0.7.1 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.7.1 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.7.1 -- perttool plan-assurance show PLAN.pert --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.7.0 -- perttool --version
-npm exec --yes --package=perttool@0.7.0 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.7.0 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.7.0 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
+npm exec --yes --package=perttool@0.7.1 -- perttool --version
+npm exec --yes --package=perttool@0.7.1 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.7.1 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.7.1 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
@@ -62,16 +68,21 @@ Contract 3.
 
 ## Install
 
-Install the Contract 7 CLI globally by exact version when it is used regularly:
+Install the corrected Contract 7 CLI globally by exact version when it is used
+regularly:
 
 ```sh
-npm install --global perttool@0.7.0
+npm install --global perttool@0.7.1
 perttool --version
 ```
 
-This beta release does not move npm `latest`; an unqualified install therefore
-remains on Contract 6 `0.6.0`. The pre-schema Contract 6 artifact remains available as
-`perttool@0.5.0`; Contract 5,
+The `0.7.1` release procedure publishes only npm `beta` and leaves the
+independently managed `latest` tag at `0.7.0`. Use the exact `0.7.1` pin for
+the corrected Guide and Help behavior; an unqualified installation remains on
+`0.7.0` unless a later, separately authorized promotion changes `latest`.
+Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
+Contract 6 artifact remains available as
+`perttool@0.5.0`. Contract 5,
 Contract 4, and Contract 3 remain available as exact pins
 `perttool@0.4.0`, `perttool@0.3.0`, and `perttool@0.2.0`. The retired alpha
 preview remains installable only as the exact pin
@@ -442,7 +453,7 @@ select compatibility from each result's `schema_version`, not from
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. Version `0.7.0` requires
+Use `--format json` for machine consumers. Versions `0.7.0` and `0.7.1` require
 `cli_contract_version == 7`. Published `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
 `0.5.2`, `0.5.1`, and `0.5.0` consumers must check
 `cli_contract_version == 6`;
@@ -491,6 +502,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Conditional Plan Assurance public-contract acceptance](docs/process/plan-assurance-public-contract-acceptance.md)
 - [`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md)
 - [`v0.7.0` release procedure](docs/process/0.7.0-release.md)
+- [`v0.7.1` Help and Guide consistency patch procedure](docs/process/0.7.1-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
 - [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)
@@ -501,6 +513,9 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Conditional Plan Assurance internal hash inspection acceptance](docs/process/plan-assurance-hash-inspection-acceptance.md)
 - [Conditional Plan Assurance design review](docs/process/plan-assurance-design-review.md)
 - [Conditional Plan Assurance implementation plan](plans/plan-assurance.pert)
+- [Help and Guide consistency correction](docs/specs/help-guide-consistency.md)
+- [Help and Guide consistency implementation plan](plans/help-guide-consistency.pert)
+- [`v0.7.1` release plan](plans/release-0.7.1.pert)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)

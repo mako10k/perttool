@@ -98,8 +98,8 @@ test("0.7.0 readiness remains historical after durable acceptance", async () => 
   assert.equal(typeof planAssuranceMutation, "function");
 
   const manifest = JSON.parse(manifestText);
-  assert.equal(manifest.version, "0.7.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.7\.0"/);
+  assert.equal(manifest.version, "0.7.1");
+  assert.match(versionSource, /TOOL_VERSION = "0\.7\.1"/);
   assert.match(
     releasePlan,
     /^task RELEASE_070_CONTRACT_7_READINESS[\s\S]*?^  status done$/m,
@@ -174,18 +174,18 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
   assert.match(migration, /`Perttool.NextResult.v5` \| `Perttool.NextResult.v6`/);
   assert.match(migration, /Mermaid semantic profile 2/);
   assert.match(changelog, /^## \[0\.7\.0\] - 2026-08-04$/m);
-  assert.match(changelog, /^\[Unreleased\]: .*\/compare\/v0\.7\.0\.\.\.HEAD$/m);
+  assert.match(changelog, /^\[0\.7\.0\]: .*\/compare\/v0\.6\.0\.\.\.v0\.7\.0$/m);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.7.0");
-  assert.equal(lockfile.version, "0.7.0");
-  assert.equal(lockfile.packages[""].version, "0.7.0");
+  assert.equal(manifest.version, "0.7.1");
+  assert.equal(lockfile.version, "0.7.1");
+  assert.equal(lockfile.packages[""].version, "0.7.1");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.7\.0"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.7\.1"/);
   assert.match(readme, /Version `0\.7\.0` beta atomically activates Grammar 6 and CLI Contract 7/);
   assert.match(readme, /does not move npm `latest` from Contract 6\s+`0\.6\.0`/);
-  assert.match(readme, /package=perttool@0\.7\.0/);
+  assert.match(readme, /`0\.7\.0` remains the exact rollback pin/);
   for (const guidance of [agents, copilot, selfUse, aiDevelopment]) {
     assert.match(guidance, /docs\/process\/0\.7\.0-preparation\.md/);
     assert.match(guidance, /RELEASE_070_CANDIDATE/);

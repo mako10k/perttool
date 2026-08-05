@@ -17,6 +17,7 @@ const planNames = [
   "english-baseline",
   "grammar",
   "governance",
+  "help-guide-consistency",
   "operations",
   "plan-assurance",
   "project-actuals",
@@ -32,6 +33,7 @@ const planNames = [
   "release-0.5.5",
   "release-0.6.0",
   "release-0.7.0",
+  "release-0.7.1",
   "scheduling-units-m1",
   "scheduling-units-m2",
   "scheduling-units-m2r",
@@ -164,7 +166,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all thirty-one self-use plans pass the v6 recommendation shadow gate", async () => {
+test("all thirty-three self-use plans pass the v6 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(

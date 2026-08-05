@@ -4,8 +4,8 @@
 - Actuals model: 1
 - History model: 1
 - Velocity observation model: 1
-- Active grammar version: 5
-- Active CLI contract version: 6
+- Contract grammar version: 5
+- Contract CLI version: 6
 - Compatibility boundary: Grammar 1/2/3/4 semantics remain available; the
   published `0.4.0` package remains CLI Contract 5
 
@@ -20,8 +20,9 @@ This specification defines the selected post-beta design for:
 - task and project actual summaries; and
 - observed throughput and effort productivity.
 
-The current source activates this contract atomically through Grammar 5 and
-CLI Contract 6. The independent
+Grammar 5 and CLI Contract 6 activated this contract atomically. The active
+Grammar 6 and CLI Contract 7 source retains its behavior and adds conditional
+plan assurance without redefining actuals. The independent
 [`project-actuals.pert`](../../plans/project-actuals.pert) workstream retains
 the contract review and implementation evidence; package publication remains
 a separate release boundary. The review is recorded in
@@ -744,9 +745,11 @@ The implementation and package acceptance must version:
 - graph/analysis/next handling of `suspended`; and
 - structured unavailable/qualification causes.
 
-The current source activates the source parser, root exports, commands, help,
-conditional result fields, and installed-package checks together. No release
-or dist-tag mutation follows from source activation.
+The Grammar 5 and CLI Contract 6 cutover activated the source parser, root
+exports, commands, help, conditional result fields, and installed-package
+checks together. The active Grammar 6 and CLI Contract 7 source retains that
+atomic boundary. No release or dist-tag mutation follows from source
+activation.
 
 ## 10. Diagnostics
 

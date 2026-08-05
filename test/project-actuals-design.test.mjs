@@ -45,7 +45,11 @@ test("project actuals contract fixes source, public, and evidence boundaries", a
   assert.match(grammar, /PersonHoursV5 = ExactUnsignedV5, "ph"/);
   assert.match(grammar, /Unit migration version 3 accepts Grammar 5/);
   assert.match(specification, /- Status: Normative 1\.0/);
-  assert.match(specification, /Active CLI contract version: 6/);
+  assert.match(specification, /Contract CLI version: 6/);
+  assert.match(
+    specification,
+    /active\s+Grammar 6 and CLI Contract 7 source retains its behavior/,
+  );
   assert.match(specification, /Perttool\.ProjectHistoryResult\.v1/);
   assert.match(specification, /Perttool\.VelocityObservationResult\.v1/);
   assert.match(specification, /Perttool\.NextResult\.v5/);

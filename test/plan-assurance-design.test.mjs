@@ -113,7 +113,7 @@ test("plan assurance design separates dependencies, state, and authority", async
     backlog,
     /interface, hash, source,\s+mutation, and authority Cores accepted/,
   );
-  assert.match(examples, /selected Grammar 6 source target/);
+  assert.match(examples, /active Grammar 6 source contract/);
 });
 
 test("all fourteen plan assurance design cases are dependency ordered", async () => {

@@ -18,20 +18,20 @@
 - Future recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Future AI Agent Guidance interface: [agent-guidance.md](agent-guidance.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
-- Active CLI contract: [cli-contract-3.md](cli-contract-3.md)
-- Future temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
-- Future governance interface: [governance-interface.md](governance-interface.md)
-- Future project actuals interface: [project-actuals.md](project-actuals.md)
+- Successor CLI Contract 3: [cli-contract-3.md](cli-contract-3.md)
+- Later temporal/unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
+- Later governance interface: [governance-interface.md](governance-interface.md)
+- Later project actuals interface: [project-actuals.md](project-actuals.md)
 
 ## 1. Purpose and MVP Boundary
 
 This is the normative specification that fixes the perttool MVP CLI commands, options, standard input/output, exit codes, text output, and CLI JSON results.
 
 This document records the superseded CLI Contract 2 command surface and remains
-normative only where [CLI Contract 3](cli-contract-3.md) explicitly preserves
-its result payload, stream, exit, or domain meaning. Contract 3 is the active
-command and JSON-envelope contract in the current source. The published
-`0.1.0` artifact still implements this Contract 2 surface.
+normative only where a successor contract explicitly preserves its result
+payload, stream, exit, or domain meaning. Contract 3 was the immediate
+successor; the active source is now CLI Contract 7. The published `0.1.0`
+artifact still implements this Contract 2 surface.
 
 The primary MVP interface is the local CLI. AI agents also use the CLI's `--format json`, rather than MCP, to perform checks, analysis, next-task selection, and preview mutations.
 

@@ -192,9 +192,20 @@ function readDescriptor(
   });
 }
 
+const assuranceMutationExampleInvocations = Object.freeze({
+  "plan-assurance.seal": "perttool plan-assurance seal plan.pert --reason \"Initial reviewed baseline\" --diff",
+  "plan-assurance.reseal": "perttool plan-assurance reseal plan.pert --task BUILD --reason \"Plan revised\" --diff",
+  "plan-dependency.add": "perttool plan-dependency add plan.pert REL_BUILD_TEST BUILD TEST --mode both --reason \"Testing uses the build plan\" --diff",
+  "plan-dependency.set": "perttool plan-dependency set plan.pert REL_BUILD_TEST --mode planning-only --reason \"Planning input only\" --diff",
+  "plan-dependency.remove": "perttool plan-dependency remove plan.pert REL_BUILD_TEST --diff",
+  "task-outcome.add": "perttool task-outcome add plan.pert OUTCOME_BUILD BUILD --status conformant --reason \"Accepted completion evidence\" --diff",
+  "task-outcome.set": "perttool task-outcome set plan.pert OUTCOME_BUILD --status changed --summary \"Scope changed\" --reason \"Reviewed outcome\" --diff",
+  "task-outcome.remove": "perttool task-outcome remove plan.pert OUTCOME_BUILD --diff",
+});
+
 function assuranceMutationDescriptor(
   path: readonly [string, string],
-  operation: string,
+  operation: keyof typeof assuranceMutationExampleInvocations,
   summary: string,
   operands: readonly OperandDescriptor[],
   domainOptions: readonly TargetGovernanceOptionDescriptor[],
@@ -213,7 +224,7 @@ function assuranceMutationDescriptor(
     examples: Object.freeze([
       Object.freeze({
         id: "preview",
-        invocation: `perttool ${path.join(" ")} plan.pert --diff`,
+        invocation: assuranceMutationExampleInvocations[operation],
         summary: "Preview the governed assurance candidate.",
       }),
     ]),

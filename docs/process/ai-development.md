@@ -446,6 +446,17 @@ and fresh complete NextResult v6 has no ready, recommended, or startable task.
 The acceptance record is `docs/process/0.7.0-release-acceptance.md`. Do not
 infer authority for either plan advance or Issue mutation.
 
+The selected `0.7.1` beta patch publishes the accepted
+`GUIDE-CONSISTENCY-001` runtime guidance corrections without changing Grammar
+6, CLI Contract 7, command, option, result, schema, payload-structure,
+package-root, or authority identities. `plans/release-0.7.1.pert` sequences
+compatibility self-review, version-bearing preparation, one immutable
+candidate, separately authorized PUBLISH, and durable acceptance. The user's
+2026-08-05 confirmation authorizes the exact initial plan candidate and local
+`RELEASE_071_SELF_REVIEW` only. Do not infer authority for preparation,
+candidate acceptance, remote writes, publication, npm `latest` promotion,
+plan advance, or Issue mutation.
+
 ### 5.1 Adopted Recommendation authority
 
 MIG-07 established Recommendation version 1 authority. Contract 4 added the

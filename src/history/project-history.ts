@@ -480,7 +480,7 @@ function diagnostic(
     ...(cause.eventId === null && cause.taskId === null
       ? {}
       : { entityId: cause.eventId ?? cause.taskId! }),
-    helpTopic: "project.history",
+    helpTopic: "actuals",
     data: Object.freeze({
       cause: cause.cause,
       commit_id: cause.commitId,
@@ -965,7 +965,7 @@ function invalidRequestResult<GrammarVersion extends number>(
         severity: "error",
         message: "invalid project history task selection",
         ...(taskId === null ? {} : { entityId: taskId }),
-        helpTopic: "project.history",
+        helpTopic: "actuals",
         data: Object.freeze({
           usage_kind: "invalid_option_value",
           cause,

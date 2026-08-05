@@ -218,6 +218,33 @@
       },
       "diagnostic_codes": []
     },
+    "help-guide-consistency": {
+      "source_digest": "sha256:53acadb6ce8e31058b455b327fa2a01089534ea034982c3e90cb1ecced4846e9",
+      "groups": {
+        "active": [],
+        "ready": [],
+        "runnable_now": [],
+        "blocked_now": [],
+        "upcoming": [],
+        "suspended": []
+      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
+      "joint_resource_feasible": true,
+      "ready_tasks": [],
+      "record_counts": {
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
+        "comparisons": 0,
+        "reasons": 1,
+        "descriptions": 0
+      },
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
+    },
     "operations": {
       "source_digest": "sha256:543fa97cbc9d1ac4ab7a25b502328f9468548b55b28d876e29e2a98c0fa40574",
       "groups": {
@@ -602,6 +629,55 @@
         "comparisons": 0,
         "reasons": 1,
         "descriptions": 0
+      },
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
+    },
+    "release-0.7.1": {
+      "source_digest": "sha256:25ab07cca3c3a7c4a6e880d3b429023924a2e8de48aa70314f82887d928877b2",
+      "groups": {
+        "active": [],
+        "ready": [
+          "RELEASE_071_CANDIDATE"
+        ],
+        "runnable_now": [
+          "RELEASE_071_CANDIDATE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "RELEASE_071_PUBLISH",
+          "RELEASE_071_ACCEPTANCE"
+        ],
+        "suspended": []
+      },
+      "recommended_task_ids": [
+        "RELEASE_071_CANDIDATE"
+      ],
+      "manual_selected_task_ids": [
+        "RELEASE_071_CANDIDATE"
+      ],
+      "tiers": {
+        "RELEASE_071_CANDIDATE": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "RELEASE_071_CANDIDATE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
       },
       "diagnostic_codes": [
         "PTDAG-208"

@@ -839,7 +839,7 @@ function observationDiagnostic(
     severity: "error",
     message: "invalid velocity observation selection",
     ...(taskId === null ? {} : { entityId: taskId }),
-    helpTopic: "project.observe-velocity",
+    helpTopic: "actuals",
     data: Object.freeze({
       cause,
       task_id: taskId,

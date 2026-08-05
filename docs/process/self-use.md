@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.61
+- Document status: Active Stage 3 / Revision 2.62
 - Creation date: 2026-07-21
-- Update date: 2026-08-04
+- Update date: 2026-08-05
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -31,6 +31,8 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/release-0.5.0.pert` | Contract 6 version gate, accepted actuals and English-baseline input, preparation, authorized PUBLISH, acceptance, and exact local-install boundary | `.pert` document |
 | `plans/release-0.5.1.pert` | Compatible Contract 6 patch self-review, preparation, authorized PUBLISH, and durable acceptance | `.pert` document |
 | `plans/release-0.7.0.pert` | Grammar 6 and Contract 7 release gate, accepted ASSURE-001 input, preparation, separately authorized PUBLISH, and durable acceptance | `.pert` document |
+| `plans/release-0.7.1.pert` | Compatible Grammar 6 and Contract 7 Help and Guide consistency patch self-review, preparation, separately authorized PUBLISH, and durable acceptance | `.pert` document |
+| `plans/help-guide-consistency.pert` | Independent active Guide, command-example, diagnostic-navigation, documentation, symmetry, and acceptance correction | `.pert` document |
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
 | `plans/scheduling-units-m2.pert` | Completed and advanced task-level detail for target-only temporal source and Core foundations through SU-M2 | `.pert` document |
@@ -1520,6 +1522,31 @@ makespans; fresh complete NextResult v6 has no ready, recommended, or startable
 task. The acceptance record is `docs/process/0.7.0-release-acceptance.md`.
 Both plan advances and Issue mutation remain separate.
 
+The independent `help-guide-consistency.pert` workstream then corrected the
+repository-wide Guide and Help review under
+`docs/specs/help-guide-consistency.md`. Its four serial tasks total 14p and
+cover the correction contract, active Guide and command Help, current and
+historical documentation, and complete acceptance. The active Guide now
+states AnalysisResult v5, NextResult v6, and the combined temporal and
+plan-assurance authority directly; all 44 command examples pass active
+argument parsing, every literal runtime diagnostic topic resolves, and
+`PTCNV-210` is specified and directly tested. All four tasks are complete and
+retained before advance with zero precedence and heuristic resource
+makespans. Complete NextResult v6 has no ready, recommended, or startable task.
+Release, remote writes, publication, Issue mutation, and plan advance remain
+separate.
+
+The independent `release-0.7.1.pert` workstream selects suffix-free `0.7.1`
+for publishing the accepted `GUIDE-CONSISTENCY-001` runtime guidance
+corrections. Its five serial tasks total 15p and separate compatibility
+self-review, version-bearing preparation, one immutable candidate, PUBLISH,
+and durable acceptance. The exact initial plan candidate was confirmed with
+goal and DAG owner `user`. Compatibility self-review and version-bearing source
+preparation are complete; package, lockfile, CLI, CHANGELOG, README, tests,
+and package workflow identify `0.7.1`. Candidate acceptance is next. Remote
+publication, npm `latest` promotion, both plan advances, and Issue mutation
+remain separately gated.
+
 Stage 1 allowed operations:
 
 - check
@@ -1899,7 +1926,7 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-one current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-three current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty

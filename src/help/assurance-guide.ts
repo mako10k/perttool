@@ -4,7 +4,11 @@ import {
   renderGuideResult,
   type GuideProjectionResult,
 } from "./guide.js";
-import type { HelpLevel, HelpSection } from "./registry.js";
+import type {
+  HelpExample,
+  HelpLevel,
+  HelpSection,
+} from "./registry.js";
 import { getActualsGuide } from "./actuals-guide.js";
 
 export interface AssuranceGuideResult extends GuideProjectionResult {
@@ -53,6 +57,137 @@ const detail: readonly HelpSection[] = Object.freeze([
   }),
 ]);
 
+const examples: readonly HelpExample[] = Object.freeze([
+  Object.freeze({
+    id: "inspect",
+    title: "Inspect current assurance",
+    text: "perttool plan-assurance show plan.pert --format json",
+  }),
+  Object.freeze({
+    id: "seal",
+    title: "Preview an initial seal",
+    text: "perttool plan-assurance seal plan.pert --reason \"Initial reviewed baseline\" --diff",
+  }),
+  Object.freeze({
+    id: "reseal",
+    title: "Preview a selected reseal",
+    text: "perttool plan-assurance reseal plan.pert --task BUILD --reason \"Plan revised\" --diff",
+  }),
+]);
+
+interface ActiveTopicOverride {
+  readonly summary?: string;
+  readonly sections?: Readonly<Record<string, string>>;
+  readonly syntax?: readonly string[];
+  readonly related?: readonly string[];
+}
+
+const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
+  Object.freeze({
+    syntax: Object.freeze({
+      summary: "Grammar versions 1 through 6 for declaring projects, governance metadata, resources, milestones, tasks, gates, explicit task work events, and conditional plan-assurance records.",
+      sections: Object.freeze({
+        declarations: "Place exactly one project first, followed by resource, milestone, task, gate, and Grammar 5 work-event declarations. Grammar 6 additionally accepts task_relation, plan_seal, task_outcome, and assurance_receipt declarations.",
+      }),
+      related: Object.freeze([
+        "syntax.project",
+        "syntax.resource",
+        "syntax.milestone",
+        "syntax.task",
+        "syntax.work-event",
+        "syntax.gate",
+        "syntax.estimate",
+        "syntax.velocity",
+        "syntax.temporal",
+        "analysis",
+        "errors",
+        "plan-assurance",
+      ]),
+    }),
+    "syntax.project": Object.freeze({
+      sections: Object.freeze({
+        version: "An omitted version is treated as 1. Version 2 adds temporal fields; version 3 additionally accepts exact Fraction Duration; version 4 adds declared goal and DAG owners and delegates; version 5 adds explicit task work events; and version 6 adds conditional plan-assurance records.",
+      }),
+    }),
+    "syntax.work-event": Object.freeze({
+      summary: "Grammar 5 introduces explicit task-owned lifecycle evidence in the same PERT document, and Grammar 6 retains it unchanged.",
+    }),
+    "syntax.duration": Object.freeze({
+      summary: "An exact Decimal or, in Grammar 3 through 6, reduced Fraction followed by d, h, or p.",
+    }),
+    "syntax.temporal": Object.freeze({
+      summary: "Grammar 2 introduces milestone deadline plus task not_before and deadline fields, retained through Grammar 6.",
+      syntax: Object.freeze([
+        "project ID:",
+        "  version 2|3|4|5|6",
+        "  as_of DATE|OFFSET_DATE_TIME",
+        "milestone ID:",
+        "  deadline DATE|OFFSET_DATE_TIME",
+        "task ID FROM -> TO:",
+        "  not_before DATE|OFFSET_DATE_TIME",
+        "  deadline DATE|OFFSET_DATE_TIME",
+      ]),
+    }),
+    analysis: Object.freeze({
+      related: Object.freeze([
+        "analysis.resources",
+        "analysis.temporal",
+        "next",
+        "plan-assurance",
+      ]),
+    }),
+    "analysis.temporal": Object.freeze({
+      sections: Object.freeze({
+        views: "AnalysisResult v5 retains base analysis and adds temporal precedence, temporal resource, deadline, lifecycle, and plan-assurance projections. The resource view remains heuristic and optimal=false.",
+        ranking: "Deadline facts remain informational for Recommendation version 1. NextResult v6 applies not_before through a separate release gate and then composes conditional plan-assurance eligibility into the final start authority.",
+      }),
+    }),
+    next: Object.freeze({
+      summary: "Returns NextResult.v6 recommendations, temporal and plan-assurance start authority, and active, ready, runnable_now, blocked_now, and upcoming tasks.",
+      sections: Object.freeze({
+        "consumer-safety": "--format json returns a complete Perttool.NextResult.v6 with the unchanged Recommendation version 1 explanation graph, a separate temporal release gate, and conditional plan-assurance authority. Consumers validate every identity and do not start when recommendation, temporal, or assurance authority is unknown.",
+        "authority-adoption": "AI uses only a known Perttool.NextResult.v6 from --format json, Recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, a complete non-truncated trace, and authority policy recommendation_v1_plus_release_gate_plus_plan_assurance_v1. Start only IDs in startable_recommended_task_ids. Stop for unknown, incomplete, malformed, future, unavailable, or assurance-withheld authority, safe-stop reasons, PTREC diagnostics, and deferred or discouraged selections. Reanalyze after task-state, capacity, temporal, relation, outcome, or assurance changes.",
+        "override-validation": "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v6 and an explicit request, and cannot bypass a future or unavailable temporal release gate or withheld plan-assurance authority. This is read-only validation and does not change task state, files, Git, or the network.",
+      }),
+      related: Object.freeze([
+        "analysis",
+        "analysis.resources",
+        "analysis.temporal",
+        "plan-assurance",
+      ]),
+    }),
+    editing: Object.freeze({
+      sections: Object.freeze({
+        "owner-aware-governance": "Start each Contract 7 candidate with an assertion-free preview. Persistent governed changes require an actor: an effective owner or delegate has direct authority, while another actor may provide repeatable --accepted-by-owner caller assertions only for the explicitly confirmed affected scopes of this candidate. Omit them when governance is not applicable and never reuse them across commands. PTGOV-103 warns about an assertion on a not-applicable candidate; PTGOV-104 warns about one on a governed preview.",
+      }),
+      related: Object.freeze([
+        "editing.unit-migration",
+        "syntax.temporal",
+        "workflows",
+        "plan-assurance",
+      ]),
+    }),
+    actuals: Object.freeze({
+      sections: Object.freeze({
+        "explicit-events": "Grammar 5 introduces task-owned work events, and Grammar 6 retains them unchanged. task start, suspend, resume, and eventful finish require an explicit --at value; no command reads the wall clock. Preview, governance, digest, and safe-write controls apply before persistence.",
+        "legacy-status": "Grammar 1 through 4 retain status-only task finish. In Grammar 5 and 6, eventless legacy tasks may use direct planned, active, blocked, or done status changes; once a work event exists, lifecycle commands are required and suspended remains distinct from blocked.",
+      }),
+    }),
+  });
+
+function activeSections(
+  topicId: string | null,
+  sections: readonly HelpSection[],
+): readonly HelpSection[] {
+  if (topicId === null) return sections;
+  const replacements = activeTopicOverrides[topicId]?.sections;
+  if (replacements === undefined) return sections;
+  return Object.freeze(sections.map((section) => Object.freeze({
+    ...section,
+    body: replacements[section.id] ?? section.body,
+  })));
+}
+
 function custom(level: HelpLevel): AssuranceGuideResult {
   return Object.freeze({
     schemaVersion: "Perttool.GuideResult.v1",
@@ -76,10 +211,10 @@ function custom(level: HelpLevel): AssuranceGuideResult {
       "task_outcome ID:",
       "assurance_receipt ID:",
     ]),
-    examples: Object.freeze([]),
+    examples: level === "detail" ? examples : Object.freeze([]),
     related: level === "index"
       ? Object.freeze([])
-      : Object.freeze(["syntax", "editing", "analysis"]),
+      : Object.freeze(["syntax", "editing", "analysis", "next"]),
     topics: Object.freeze([]),
     diagnostics: Object.freeze([]),
   });
@@ -91,30 +226,23 @@ export function getAssuranceGuide(
 ): AssuranceGuideResult {
   if (topicId === "plan-assurance") return custom(level);
   const base = getActualsGuide(topicId, level);
-  const contract7Text = (value: string): string => value
-    .replaceAll("Grammar versions 1 through 5", "Grammar versions 1 through 6")
-    .replaceAll("Grammar 5", "Grammar 6")
-    .replaceAll("NextResult.v5", "NextResult.v6")
-    .replaceAll("Contract 6", "Contract 7");
+  const override = topicId === null
+    ? undefined
+    : activeTopicOverrides[topicId];
   return Object.freeze({
     ...base,
     cliContractVersion: 7,
-    summary: contract7Text(base.summary),
-    sections: Object.freeze(base.sections.map((section) => Object.freeze({
-      ...section,
-      body: contract7Text(section.body),
-    }))),
-    syntax: Object.freeze(base.syntax.map(contract7Text)),
-    examples: Object.freeze(base.examples.map((example) => Object.freeze({
-      ...example,
-      title: contract7Text(example.title),
-      text: contract7Text(example.text),
-    }))),
+    summary: override?.summary ?? base.summary,
+    sections: activeSections(topicId, base.sections),
+    syntax: override?.syntax ?? base.syntax,
+    related: level === "index"
+      ? base.related
+      : override?.related ?? base.related,
     topics: topicId === null
       ? Object.freeze([
           ...base.topics.map((item) => Object.freeze({
             ...item,
-            summary: contract7Text(item.summary),
+            summary: activeTopicOverrides[item.id]?.summary ?? item.summary,
           })),
           topic,
         ])

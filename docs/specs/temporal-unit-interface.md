@@ -3,8 +3,8 @@
 - Document status: Normative 2.0
 - Interface ID: `perttool.temporal-unit-interface`
 - Interface version: `2`
-- Active grammar version: `3`
-- Active CLI contract version: `4`
+- Contract grammar version: `3`
+- Contract CLI version: `4`
 - Created: 2026-07-25
 - Requirements: [../requirements.md](../requirements.md)
 - Grammar: [dsl-grammar.md](dsl-grammar.md)
@@ -17,8 +17,8 @@
 
 ## 1. Purpose and activation boundary
 
-This contract fixes the current public-surface target for the temporal and
-source-unit extension. It selects:
+This contract fixes the historical Grammar 3 and CLI Contract 4 public
+surface for the temporal and source-unit extension. It selects:
 
 - accepted grammar version 2 temporal fields plus grammar version 3 exact
   Fraction Duration;
@@ -35,7 +35,8 @@ SU-M5 after satisfying the applicable `TUI-*` and `TUE-*` cases. It accepts
 grammar versions 1, 2, and 3 and exposes CLI Contract 4, the target schemas,
 temporal and migration commands, and NextResult v4 start authority together.
 Package publication remains a separate release operation and is not
-authorized by this specification.
+authorized by this specification. The active source now retains this behavior
+through additive Grammar 6 and CLI Contract 7 interfaces.
 
 ## 2. Normative position and version matrix
 

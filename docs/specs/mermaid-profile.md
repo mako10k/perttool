@@ -424,6 +424,7 @@ Export losses:
 | Code | Meaning |
 | --- | --- |
 | `PTCNV-206` | plain profile export omitted lossless semantic metadata |
+| `PTCNV-210` | Grammar 6 plan-assurance source record omitted by profile 1 or plain export |
 
 A code's `message` is for human explanation; consumers use the code for branching. Do not reuse the meaning of an existing code for a new case.
 

@@ -746,7 +746,7 @@ export function planTargetGrammar6UnitMigrationCandidate(
           message: error instanceof Error
             ? error.message
             : "Grammar 6 unit migration edit planning failed",
-          helpTopic: "project.migrate-unit",
+          helpTopic: "editing.unit-migration",
         }),
       ]),
       diagnosticsTruncated: checked.diagnosticsTruncated,
@@ -791,7 +791,7 @@ export function planTargetGrammar6UnitMigrationCandidate(
           severity: "error" as const,
           message:
             "Grammar 6 unit migration changed assurance-owned source",
-          helpTopic: "project.migrate-unit",
+          helpTopic: "editing.unit-migration",
         }),
       ]),
       diagnosticsTruncated: candidate.diagnosticsTruncated,

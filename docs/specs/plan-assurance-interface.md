@@ -9,8 +9,10 @@
 - Runtime status: Grammar 6 and CLI Contract 7 active in the source CLI,
   package root, discovery, Guide/help, schemas, and installed workflows
 - Semantic contract: [plan-assurance.md](plan-assurance.md)
-- Published compatibility baseline: Grammar 5, CLI Contract 6, and package
-  0.6.0; the source checkout has not selected a release for Contract 7
+- Historical compatibility baseline: Grammar 5, CLI Contract 6, and exact pin
+  0.6.0
+- Active package boundary: `beta=latest=0.7.0` after a separately authorized
+  post-publication promotion
 - Workstream: [../../plans/plan-assurance.pert](../../plans/plan-assurance.pert)
 
 ## 1. Decision and scope

@@ -11,6 +11,7 @@ import {
   getCommandDiscovery,
   renderCommandHelpResult,
 } from "../dist/index.js";
+import { validateAssuranceCommandInvocation } from "../dist/command/assurance-usage.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -70,6 +71,36 @@ function run(args) {
   });
 }
 
+function invocationTokens(invocation) {
+  const tokens = [];
+  let token = "";
+  let quote = null;
+  for (let index = 0; index < invocation.length; index += 1) {
+    const character = invocation[index];
+    if (quote !== null) {
+      if (character === quote) {
+        quote = null;
+      } else {
+        token += character;
+      }
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      quote = character;
+    } else if (/\s/u.test(character)) {
+      if (token !== "") {
+        tokens.push(token);
+        token = "";
+      }
+    } else {
+      token += character;
+    }
+  }
+  assert.equal(quote, null, invocation);
+  if (token !== "") tokens.push(token);
+  return tokens;
+}
+
 test("the Contract 7 registry covers the complete active surface exactly once", () => {
   assert.equal(COMMAND_REGISTRY.length, expectedPaths.length);
   assert.deepEqual(
@@ -100,6 +131,18 @@ test("the Contract 7 registry covers the complete active surface exactly once", 
       descriptor.operation,
     );
     assert.ok(descriptor.examples.length > 0, descriptor.operation);
+    for (const example of descriptor.examples) {
+      const tokens = invocationTokens(example.invocation);
+      assert.equal(tokens.shift(), "perttool", example.invocation);
+      const validation = validateAssuranceCommandInvocation(tokens);
+      assert.equal(
+        validation.ok,
+        true,
+        validation.ok
+          ? `${descriptor.operation}/${example.id}`
+          : `${descriptor.operation}/${example.id}: ${validation.error.message}`,
+      );
+    }
     assert.ok(descriptor.resultSchemas.length > 0, descriptor.operation);
     assert.ok(descriptor.exitStatuses.length > 0, descriptor.operation);
     assert.deepEqual(

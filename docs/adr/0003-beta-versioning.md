@@ -15,7 +15,8 @@
   publication; `v0.5.2` compatible JSON Schema patch release target and
   publication; retirement of the obsolete npm `alpha` dist-tag);
   2026-07-31 (`v0.6.0` advance history safety release target);
-  2026-08-04 (`v0.7.0` conditional plan assurance release target)
+  2026-08-04 (`v0.7.0` conditional plan assurance release target);
+  2026-08-05 (`v0.7.1` Help and Guide consistency patch target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -86,6 +87,14 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   start-authority policy, advance semantics, schema catalog, and package root
   change together. `0.6.1` would understate this breaking public boundary,
   while `1.0.0` remains reserved for a future stable-series decision.
+- Select suffix-free `0.7.1` for the backward-compatible Contract 7 patch that
+  publishes the accepted `GUIDE-CONSISTENCY-001` corrections to Guide meaning,
+  Help examples, diagnostic navigation, conversion-diagnostic coverage, and
+  current-versus-historical documentation labels. Grammar 6, CLI Contract 7,
+  command and option identities, result and schema identities, payload
+  structure, package-root exports, and authority remain unchanged. Leaving the
+  correction unreleased would strand runtime guidance fixes in source, while
+  `0.8.0` would overstate this corrective boundary.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 

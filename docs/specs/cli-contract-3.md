@@ -19,9 +19,9 @@ maintenance, naming, side effects, result schemas, and acceptance cases.
 
 Contract 3 remains the compatibility contract published as `0.2.0` after the
 atomic `CLI_002_CONTRACT_V3_CUTOVER` change. Published `0.1.0` remains a
-Contract 2 artifact, while the current source has advanced atomically to
-Contract 4 for the separately gated `0.3.0` release. This specification remains
-normative for explicitly pinned Contract 3 consumers.
+Contract 2 artifact. The source subsequently advanced through Contract 4, 5,
+6, and the active Contract 7; this specification remains normative for
+explicitly pinned Contract 3 consumers.
 
 The cutover activated the complete command and JSON namespace at once,
 including direct project initialization and gate maintenance.

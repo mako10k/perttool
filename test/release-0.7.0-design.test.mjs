@@ -56,7 +56,7 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
   );
   const releaseSection = requirements.split(
     "### 21.13 Conditional plan assurance release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split("### 21.14")[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     Array.from({ length: 17 }, (_, index) => index + 1),
@@ -134,16 +134,16 @@ test("0.7.0 release gate binds Contract 7 scope and separate publication authori
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.7.0");
-  assert.equal(lockfile.version, "0.7.0");
-  assert.equal(lockfile.packages[""].version, "0.7.0");
+  assert.equal(manifest.version, "0.7.1");
+  assert.equal(lockfile.version, "0.7.1");
+  assert.equal(lockfile.packages[""].version, "0.7.1");
   assert.equal(lockfile.packages["node_modules/fast-uri"].version, "3.1.5");
-  assert.match(versionSource, /TOOL_VERSION = "0\.7\.0"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.7\.1"/);
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(
     readme,
     /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
   );
   assert.match(readme, /Version `0\.7\.0` beta atomically activates/);
-  assert.match(readme, /package=perttool@0\.7\.0/);
+  assert.match(readme, /`0\.7\.0` remains the exact rollback pin/);
 });

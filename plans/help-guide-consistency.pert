@@ -1,0 +1,95 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project GUIDE_CONSISTENCY:
+  version 6
+  title "Guide and Help consistency remediation"
+  description "Correct the active Contract 7 Guide, command examples, diagnostic navigation, current-state documentation, diagnostic coverage, and bounded related-topic symmetry from the 2026-08-05 repository-wide review. Preserve historical package facts and every public runtime identity. Release, publication, remote writes, Issue mutation, and existing-plan advance remain separate."
+  as_of 2026-08-05
+  duration_unit point
+  velocity 29p/2d
+  finish GUIDE_CONSISTENCY_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone GUIDE_REVIEW_IDENTIFIED:
+  title "Guide and Help review findings identified"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  capacity 1
+
+resource REVIEWERS:
+  title "Contract and acceptance review capacity"
+  capacity 1
+
+resource GUIDE_SURFACE:
+  title "Guide, Help, command example, and diagnostic navigation ownership"
+  capacity 1
+
+resource DOCUMENT_SURFACE:
+  title "Current and historical documentation ownership"
+  capacity 1
+
+resource ACCEPTANCE_SURFACE:
+  title "Focused and complete verification ownership"
+  capacity 1
+
+milestone GUIDE_CONTRACT_READY:
+  title "Help and Guide correction contract ready"
+
+milestone GUIDE_RUNTIME_READY:
+  title "Active Guide and Help runtime corrected"
+
+milestone GUIDE_DOCUMENTS_READY:
+  title "Current and historical documentation reconciled"
+
+milestone GUIDE_CONSISTENCY_ACCEPTED:
+  title "Help and Guide consistency accepted"
+
+task GUIDE_CONSISTENCY_CONTRACT GUIDE_REVIEW_IDENTIFIED -> GUIDE_CONTRACT_READY:
+  title "Define the Help and Guide correction contract"
+  description "Fix the observed causes, exact active identities, executable-example rule, diagnostic-link closure, historical labeling rule, bounded symmetry rule, acceptance cases, and explicit non-goals in one normative correction target and independent plan."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    GUIDE_SURFACE 1
+    DOCUMENT_SURFACE 1
+  source "GUIDE-CONSISTENCY-001"
+
+task GUIDE_RUNTIME_REPAIR GUIDE_CONTRACT_READY -> GUIDE_RUNTIME_READY:
+  title "Repair active Guide and Help behavior"
+  description "Replace semantic prose lifting with an exact Contract 7 projection, correct all assurance mutation examples, resolve every literal diagnostic Guide topic, specify and test PTCNV-210, and add bounded peer-topic reciprocity coverage without changing command or result identities."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    GUIDE_SURFACE 1
+  source "GUIDE-CONSISTENCY-001"
+
+task GUIDE_DOCUMENT_RECONCILIATION GUIDE_RUNTIME_READY -> GUIDE_DOCUMENTS_READY:
+  title "Reconcile current and historical guidance"
+  description "Align README installation facts, requirements, normative assurance examples and interface status, plan index, self-use registration, and agent project maps with accepted 0.7.0 while preserving time-bound release and compatibility records."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DOCUMENT_SURFACE 1
+  source "GUIDE-CONSISTENCY-001"
+
+task GUIDE_CONSISTENCY_ACCEPTANCE GUIDE_DOCUMENTS_READY -> GUIDE_CONSISTENCY_ACCEPTED:
+  title "Accept Help and Guide consistency end to end"
+  description "Trace all seven HGC cases through focused tests, live text and JSON Help and Guide, CLI usage validation, diagnostic links, Node.js 22 complete checks, Markdown and self-use checks, temporary link, isolated package, and clean diff review. Record exact evidence without release or external mutation."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    ACCEPTANCE_SURFACE 1
+  source "GUIDE-CONSISTENCY-001"

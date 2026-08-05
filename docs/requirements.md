@@ -1278,21 +1278,22 @@ Must:
   atomic batch requests. File-first maintenance must not require manual source
   rewriting.
 
-The active source-level actuals contract adds eventful `task finish`, typed
+Grammar 5 and CLI Contract 6 introduced eventful `task finish`, typed
 `task start|suspend|resume`, read-only `project history`, and read-only
-`project observe-velocity` through the atomic Grammar 5 and CLI Contract 6
-surface. Their option, result, diagnostic, version, and compatibility
-contracts are fixed by the Project Actuals specification. The published
-`0.4.0` Contract 5 package does not contain these commands.
+`project observe-velocity`. The active Grammar 6 and CLI Contract 7 source
+retains those interfaces and composes plan-assurance state additively. Their
+option, result, diagnostic, version, and compatibility contracts are fixed by
+the Project Actuals specification. The published `0.4.0` Contract 5 package
+does not contain these commands.
 
-The selected conditional plan-assurance interface adds preview-first
+The active conditional plan-assurance interface provides preview-first
 `plan-assurance show|hash|seal|reseal`, `plan-dependency add|set|remove`, and
-`task-outcome add|set|remove` operations in one future atomic Grammar 6 and CLI
-Contract 7 cutover. Relation CLI modes `both`, `execution-only`, and
+`task-outcome add|set|remove` operations through the accepted atomic Grammar 6
+and CLI Contract 7 cutover. Relation CLI modes `both`, `execution-only`, and
 `planning-only` map to DSL/JSON `both`, `execution_only`, and `planning_only`.
 These operations never create or remove AoA edges. A mode conversion that also
 changes execution dependency must be one final-candidate atomic batch. Grammar
-1 through 5 and CLI Contract 6 continue to reject this unavailable surface.
+1 through 5 and exact CLI Contract 6 pins continue to reject this surface.
 
 ### 12.3 Owner-aware goal and DAG writes
 
@@ -2390,6 +2391,64 @@ version-bearing source preparation, candidate acceptance, Git push, tag
 creation, GitHub or npm publication, durable acceptance, npm `latest`
 promotion, either plan advance, or Issue mutation. The authoritative procedure
 is [`docs/process/0.7.0-release.md`](process/0.7.0-release.md).
+
+### 21.14 Help and Guide consistency patch release acceptance criteria
+
+The package that publishes the accepted `GUIDE-CONSISTENCY-001` correction is
+suffix-free `0.7.1`. It remains a Grammar 6 and CLI Contract 7 beta patch, is
+published as a GitHub prerelease, and moves only npm `beta` during
+publication.
+
+1. Retain Grammar 6, CLI Contract 7, all 44 command paths, option spellings,
+   effects, exits, all 20 root schemas, public result identities, payload
+   structure, package-root exports, governance semantics, and recommendation,
+   temporal, and plan-assurance authority.
+2. Publish exact topic-specific Guide meaning for Grammar 6,
+   `Perttool.AnalysisResult.v5`, `Perttool.NextResult.v6`, and authority policy
+   `recommendation_v1_plus_release_gate_plus_plan_assurance_v1` without
+   unrestricted semantic prose replacement.
+3. Require every registered command example to pass active argument parsing,
+   including every required operand and option for the eight assurance
+   mutations.
+4. Require every literal runtime diagnostic `helpTopic` to resolve through the
+   active Guide; history and velocity observation use `actuals`, and unit
+   migration uses `editing.unit-migration`.
+5. Specify and directly test `PTCNV-210` for Grammar 6 plan-assurance records
+   omitted by Mermaid profile 1 or plain export.
+6. Preserve bounded reciprocal navigation between `plan-assurance` and
+   `syntax`, `analysis`, `next`, and `editing`, without imposing reciprocity on
+   hierarchical index or workflow links.
+7. Keep current installation guidance aligned with `beta=latest=0.7.0` before
+   publication while preserving the distinct publication-time facts of prior
+   releases and exact compatibility pins.
+8. Align package, lockfile, CLI/tool version, release commit, annotated
+   `v0.7.1` tag, GitHub asset, and npm identity without changing a public
+   interface version.
+9. Pass Node.js 22 repository checks, Node.js 22 and 24 CI, dependency audit,
+   documentation and English checks, all self-use plans, temporary-link,
+   isolated-package, and publication-normalization gates.
+10. Establish before publication that `perttool@0.7.1`, `v0.7.1`, and the
+    matching GitHub Release are unused; record `beta=latest=0.7.0`, confirm
+    that `alpha` is absent, and verify protected routes without displaying
+    secrets.
+11. Generate one immutable tarball outside the worktree, distribute those
+    exact bytes through the GitHub prerelease and npm `beta`, verify isolated
+    installation from both public channels, move only `beta` to `0.7.1`, and
+    leave `latest=0.7.0` unchanged.
+12. Verify the corrected Guide, Help examples, diagnostic navigation,
+    conversion diagnostic, exact `0.7.0` rollback pin, and unchanged Contract
+    7 interfaces from the public artifact before durable acceptance.
+13. Keep npm `latest` promotion, either release-plan or correction-plan
+    advance, Issue mutation, and every unrelated backlog item outside this
+    release flow as separately authorized operations.
+
+The user's 2026-08-05 confirmation authorizes the exact initial
+`release-0.7.1.pert` plan candidate and local `RELEASE_071_SELF_REVIEW` only.
+It does not authorize version-bearing source preparation, candidate
+acceptance, Git push, tag creation, GitHub or npm publication, durable
+acceptance, npm `latest` promotion, plan advance, or Issue mutation. The
+authoritative procedure is
+[`docs/process/0.7.1-release.md`](process/0.7.1-release.md).
 
 ## 22. Mapping to the initial requirements
 

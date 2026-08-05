@@ -149,6 +149,39 @@ Mandatory summary:
   NextResult v6 has no ready, recommended, or startable task. The acceptance
   record is `docs/process/0.7.0-release-acceptance.md`; both plan advances and
   Issue mutation remain separate.
+- The selected `plans/help-guide-consistency.pert` workstream tracks
+  `GUIDE-CONSISTENCY-001`. Its accepted
+  `docs/specs/help-guide-consistency.md` target fixes exact active Guide
+  identities and additive version history, argument-valid examples for all 44
+  commands, repository-wide literal diagnostic-link closure, current and
+  historical documentation labels, `PTCNV-210` coverage, and bounded
+  reciprocal plan-assurance navigation. The active Guide now states
+  AnalysisResult v5, NextResult v6, and
+  `recommendation_v1_plus_release_gate_plus_plan_assurance_v1` directly; all
+  eight assurance-mutation examples pass argument parsing, and every literal
+  runtime diagnostic topic resolves. All four tasks and 14p are complete and
+  retained before advance with zero makespans and no startable recommendation.
+  Acceptance is recorded in
+  `docs/process/help-guide-consistency-acceptance.md`; release, remote writes,
+  publication, Issue mutation, and plan advance remain separate.
+- The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
+  serial tasks and 15p. The exact initial goal-and-DAG candidate was written
+  once with actor `codex` and the scope-bound owner assertion `user`.
+  `RELEASE_071_SELF_REVIEW` is complete after selecting suffix-free `0.7.1`
+  for the accepted `GUIDE-CONSISTENCY-001` runtime guidance correction and
+  comparing current source with installed `0.7.0`. Grammar 6, CLI Contract 7,
+  all 44 command structures, 20 schemas, 121 package-root exports,
+  GuideResult v1, payload structure, and authority remain unchanged. Package,
+  lockfile, and CLI still identify `0.7.0`; npm reports
+  `beta=latest=0.7.0`, no `alpha`, and no published `0.7.1`. Only
+  `RELEASE_071_PREPARATION` was next. It is complete after aligning package,
+  lockfile, CLI, CHANGELOG, README, release records, tests, goldens, self-use
+  metadata, and package validation to `0.7.1`; its record is
+  `docs/process/0.7.1-preparation.md`. Only `RELEASE_071_CANDIDATE` is next.
+  Candidate acceptance may proceed locally, but the exact candidate commit
+  and tarball require a separate user boundary before PUBLISH. npm `latest`
+  promotion, both plan advances, Issue mutation, and unrelated work remain
+  separately gated.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.
 - The selected independent `plans/project-actuals.pert` workstream starts from
   accepted ADR 0006, Grammar 5 source/migration, Graph semantics 2, Mutation
