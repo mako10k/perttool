@@ -25,8 +25,9 @@ Plans are separated by level of detail.
   cross-adapter foundation and read-only integration roadmap covering the
   dependency contract, Core decoupling, shared library and Node ports, CLI
   parity, document sessions, LSP, VSIX and DAG view, MCP, and integrated
-  acceptance; all 16 tasks and 91p are planned, and complete NextResult v6
-  recommends only `ADAPTER_ARCHITECTURE_CONTRACT`
+  acceptance; `ADAPTER_ARCHITECTURE_CONTRACT` is complete and retained before
+  advance, 15 tasks and 85p remain, and complete NextResult v6 recommends only
+  `CORE_DEPENDENCY_CLEANUP`
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining
@@ -108,7 +109,7 @@ macro.
 
 Issue #2 was included in the first beta and accepted after all five `agent-guidance.pert` tasks, totaling 22p, completed in one active day. The measured workstream velocity is `22p/1d`, and the detail plan has no remaining work. The operations velocity, including the explicitly advanced 5p `PROJECT_METADATA_CLI` task, is `29p/2d`.
 
-The suffix-free `v0.1.0` beta was published and [accepted](../docs/process/beta-release-acceptance.md) on 2026-07-23, then explicitly promoted so npm `beta` and `latest` both resolve to `0.1.0`. The macro plan is advanced to the reached `M8_BETA_RELEASED` frontier and has no remaining or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+The suffix-free `v0.1.0` beta was published and [accepted](../docs/process/beta-release-acceptance.md) on 2026-07-23, then explicitly promoted so npm `beta` and `latest` both resolve to `0.1.0`. The macro plan is advanced to the reached `M8_BETA_RELEASED` frontier and has no remaining or recommended task. At that acceptance boundary, Issue #3, the LSP server, VSIX, and MCP server remained independent post-beta backlogs. The later selected `ADAPTER-001` plan now composes their shared foundation while retaining adapter-specific gates.
 
 ADR 0004 adopts English as the canonical repository language without i18n.
 `SURFACE_INVENTORY` completed on 2026-07-24 and was advanced after its

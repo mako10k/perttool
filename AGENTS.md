@@ -285,10 +285,17 @@ The explicitly selected `ADAPTER-001` workstream is tracked independently in
 compose the shared dependency contract, Core reverse-dependency cleanup,
 library and Node-port boundaries, unchanged CLI facade, protocol-neutral
 document session, read-only LSP, VSIX shell and DAG Webview, fail-closed
-read-only MCP adapter, and cross-surface acceptance. Precedence makespan is
-61p; the `parallel-sgs` version 1 heuristic resource makespan is 79p with 18p
-resource delay. Complete NextResult v6 recommends and permits only
-`ADAPTER_ARCHITECTURE_CONTRACT`; no task has started. Editor mutation, MCP
+read-only MCP adapter, and cross-surface acceptance.
+`ADAPTER_ARCHITECTURE_CONTRACT` is complete and retained in its exact
+pre-advance state. The accepted `docs/specs/adapter-platform.md` contract and
+`docs/process/adapter-architecture-contract-acceptance.md` record fix the
+121-export, 44-command, 20-schema, zero-production-dependency baseline; the
+exact twelve-file, nineteen-import reverse-dependency input; acyclic layer
+directions; additive Core/Node subpaths; private adapter distribution inputs;
+result and capability ownership; and semantic parity. Fifteen tasks and 85p
+remain. Precedence makespan is 55p; the `parallel-sgs` version 1 heuristic
+resource makespan is 73p with 18p resource delay. Complete NextResult v6
+recommends and permits only `CORE_DEPENDENCY_CLEANUP`. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 

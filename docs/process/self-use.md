@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.63
+- Document status: Active Stage 3 / Revision 2.64
 - Creation date: 2026-07-21
 - Update date: 2026-08-05
 - Related design: [../basic-design.md](../basic-design.md)
@@ -1562,12 +1562,19 @@ architecture boundary without making MCP depend on the editor branch. Its 16
 tasks total 91p and cover the cross-adapter dependency contract, reverse-
 dependency cleanup, shared library and Node ports, CLI compatibility,
 versioned editor protocol, document session, read-only LSP, VSIX shell and DAG
-Webview, fail-closed read-only MCP, and integrated acceptance. Precedence
-makespan is 61p; the `parallel-sgs` version 1 heuristic resource makespan is
-79p with 18p resource delay. Inherited velocity `29p/2d` yields 4.207d and
-5.448d forecasts. Complete NextResult v6 recommends only
-`ADAPTER_ARCHITECTURE_CONTRACT`. Editor and MCP mutation, release selection,
-publication, remote writes, Issue mutation, and plan advance remain separate.
+Webview, fail-closed read-only MCP, and integrated acceptance.
+`ADAPTER_ARCHITECTURE_CONTRACT` is complete with exact start/finish evidence
+and retained before advance. The normative contract fixes the 121-export,
+44-command, 20-schema baseline, exact twelve-file/nineteen-import migration
+input, dependency directions, Core/Node subpaths, private adapter distribution
+inputs, capability ownership, and semantic parity. Fifteen tasks and 85p
+remain; precedence makespan is 55p and the `parallel-sgs` version 1 heuristic
+resource makespan is 73p with 18p resource delay. Inherited velocity `29p/2d`
+yields 3.793d and 5.034d forecasts. Complete NextResult v6 recommends only
+`CORE_DEPENDENCY_CLEANUP`; source digest is
+`sha256:9270caead5ca1abf0c9e6bd76f37a878c3a1a6fbd7b98f69868c3928064194de`.
+Editor and MCP mutation, release selection, publication, remote writes, Issue
+mutation, and plan advance remain separate.
 
 Stage 1 allowed operations:
 

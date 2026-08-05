@@ -130,6 +130,7 @@ task ADAPTER_ARCHITECTURE_CONTRACT ADAPTER_SELECTED -> ADAPTER_CONTRACT_ACCEPTED
   title "Accept the shared adapter architecture contract"
   description "Inventory the active package root and internal dependency graph; fix the allowed domain, application, port, host, protocol, and presentation directions; decide logical versus physical package boundaries, runtime and bundling placement, compatibility facade, stable result ownership, capability discovery, and parity fixtures for CLI, LSP, VSIX, DAG view, and MCP. Keep all runtime behavior and public contracts unchanged during this task."
   duration 6p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -337,3 +338,18 @@ task ADAPTER_INTEGRATION_ACCEPTANCE ADAPTER_INTEGRATION_INPUT -> ADAPTER_ACCEPTE
     VSIX_SURFACE 1
     MCP_SURFACE 1
     PACKAGE_SURFACE 1
+
+work_event WE-055e451b174a06f0bcea9bd529723374606b530f94b14876d412369c92209736:
+  model 1
+  task ADAPTER_ARCHITECTURE_CONTRACT
+  kind start
+  occurred_at 2026-08-05T13:28:32+09:00
+  planned_value 6p
+
+work_event WE-44309124bb0602a9e8d839588cd2f83ae9485e168570b3eb1125549dce4cb579:
+  model 1
+  task ADAPTER_ARCHITECTURE_CONTRACT
+  kind finish
+  occurred_at 2026-08-05T04:40:13+00:00
+  active_time 701/3600h
+  effort 701/3600ph

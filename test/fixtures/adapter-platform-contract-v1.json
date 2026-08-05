@@ -1,0 +1,371 @@
+{
+  "schema_version": "Perttool.AdapterArchitectureContractCases.v1",
+  "architecture_model_version": 1,
+  "baseline": {
+    "captured_on": "2026-08-05",
+    "runtime": "node>=22",
+    "module_format": "module",
+    "root_package": "perttool",
+    "production_dependency_count": 0,
+    "package_root_export_count": 121,
+    "command_count": 44,
+    "root_schema_count": 20,
+    "typescript_source_file_count": 144,
+    "legacy_reverse_dependency_file_count": 12,
+    "legacy_reverse_dependency_import_count": 19
+  },
+  "layers": [
+    {
+      "id": "domain",
+      "may_import": [
+        "domain"
+      ]
+    },
+    {
+      "id": "port",
+      "may_import": [
+        "domain",
+        "port"
+      ]
+    },
+    {
+      "id": "application",
+      "may_import": [
+        "domain",
+        "port",
+        "application"
+      ]
+    },
+    {
+      "id": "host",
+      "may_import": [
+        "domain",
+        "port",
+        "host"
+      ]
+    },
+    {
+      "id": "protocol",
+      "may_import": [
+        "application",
+        "protocol",
+        "presentation"
+      ]
+    },
+    {
+      "id": "presentation",
+      "may_import": [
+        "application_result_contract",
+        "presentation"
+      ]
+    },
+    {
+      "id": "composition",
+      "may_import": [
+        "domain",
+        "port",
+        "application",
+        "host",
+        "protocol",
+        "presentation"
+      ]
+    }
+  ],
+  "distribution_units": [
+    {
+      "id": "perttool",
+      "state": "existing_public_package",
+      "runtime": "node>=22",
+      "owns": [
+        "root_compatibility_facade",
+        "core_subpath",
+        "node_subpath",
+        "cli_binary",
+        "schema_artifacts"
+      ]
+    },
+    {
+      "id": "language_server",
+      "state": "private_until_release",
+      "runtime": "node>=22",
+      "owns": [
+        "lsp_protocol",
+        "document_lifecycle",
+        "server_distribution_input"
+      ]
+    },
+    {
+      "id": "vscode_extension",
+      "state": "private_until_release",
+      "runtime": "vscode_extension_host_and_webview",
+      "owns": [
+        "lsp_client",
+        "textmate_grammar",
+        "dag_webview",
+        "vsix_artifact"
+      ]
+    },
+    {
+      "id": "mcp_server",
+      "state": "private_until_release",
+      "runtime": "node>=22",
+      "owns": [
+        "mcp_protocol",
+        "read_only_resources_and_tools",
+        "server_distribution_input"
+      ]
+    }
+  ],
+  "legacy_reverse_dependencies": [
+    {
+      "id": "LEGACY-001",
+      "source": "src/analysis/temporal-deadline.ts",
+      "target": "src/application/target-temporal-input.ts"
+    },
+    {
+      "id": "LEGACY-002",
+      "source": "src/analysis/temporal-precedence.ts",
+      "target": "src/application/target-temporal-input.ts"
+    },
+    {
+      "id": "LEGACY-003",
+      "source": "src/analysis/temporal-precedence.ts",
+      "target": "src/application/target-temporal-input.ts"
+    },
+    {
+      "id": "LEGACY-004",
+      "source": "src/analysis/temporal-resource.ts",
+      "target": "src/application/target-temporal-input.ts"
+    },
+    {
+      "id": "LEGACY-005",
+      "source": "src/analysis/temporal-resource.ts",
+      "target": "src/application/target-temporal-input.ts"
+    },
+    {
+      "id": "LEGACY-006",
+      "source": "src/assurance/mermaid.ts",
+      "target": "src/application/contract7-assurance.ts"
+    },
+    {
+      "id": "LEGACY-007",
+      "source": "src/assurance/mermaid.ts",
+      "target": "src/application/analyze.ts"
+    },
+    {
+      "id": "LEGACY-008",
+      "source": "src/assurance/mutation.ts",
+      "target": "src/application/mutate.ts"
+    },
+    {
+      "id": "LEGACY-009",
+      "source": "src/assurance/mutation.ts",
+      "target": "src/application/target-mutate.ts"
+    },
+    {
+      "id": "LEGACY-010",
+      "source": "src/conversion/mermaid-import.ts",
+      "target": "src/application/check.ts"
+    },
+    {
+      "id": "LEGACY-011",
+      "source": "src/conversion/mermaid.ts",
+      "target": "src/application/analyze.ts"
+    },
+    {
+      "id": "LEGACY-012",
+      "source": "src/conversion/mermaid.ts",
+      "target": "src/application/analyze.ts"
+    },
+    {
+      "id": "LEGACY-013",
+      "source": "src/conversion/mermaid.ts",
+      "target": "src/application/check.ts"
+    },
+    {
+      "id": "LEGACY-014",
+      "source": "src/formatter/source-formatter.ts",
+      "target": "src/application/check.ts"
+    },
+    {
+      "id": "LEGACY-015",
+      "source": "src/io/safe-write.ts",
+      "target": "src/application/check.ts"
+    },
+    {
+      "id": "LEGACY-016",
+      "source": "src/mutation/advance.ts",
+      "target": "src/application/check.ts"
+    },
+    {
+      "id": "LEGACY-017",
+      "source": "src/mutation/types.ts",
+      "target": "src/application/check.ts"
+    },
+    {
+      "id": "LEGACY-018",
+      "source": "src/recommendation/override.ts",
+      "target": "src/application/contract7-assurance.ts"
+    },
+    {
+      "id": "LEGACY-019",
+      "source": "src/recommendation/override.ts",
+      "target": "src/application/target-actuals-analysis.ts"
+    }
+  ],
+  "cases": [
+    {
+      "id": "ADP-001",
+      "depends_on": [],
+      "boundary": "baseline_closure",
+      "expected": {
+        "root_exports": 121,
+        "commands": 44,
+        "schemas": 20,
+        "production_dependencies": 0
+      }
+    },
+    {
+      "id": "ADP-002",
+      "depends_on": [
+        "ADP-001"
+      ],
+      "boundary": "layer_direction",
+      "expected": {
+        "acyclic": true,
+        "inner_imports_outer": false
+      }
+    },
+    {
+      "id": "ADP-003",
+      "depends_on": [
+        "ADP-002"
+      ],
+      "boundary": "legacy_exceptions",
+      "expected": {
+        "exact_imports": 19,
+        "broad_allowlist": false,
+        "next_owner": "CORE_DEPENDENCY_CLEANUP"
+      }
+    },
+    {
+      "id": "ADP-004",
+      "depends_on": [
+        "ADP-002"
+      ],
+      "boundary": "shared_distribution",
+      "expected": {
+        "root_facade_retained": true,
+        "target_subpaths": [
+          "./core",
+          "./node"
+        ],
+        "adapter_dependencies_in_core": false
+      }
+    },
+    {
+      "id": "ADP-005",
+      "depends_on": [
+        "ADP-004"
+      ],
+      "boundary": "cli_composition",
+      "expected": {
+        "direct_application": true,
+        "adapter_server_required": false,
+        "contract_7_changed": false
+      }
+    },
+    {
+      "id": "ADP-006",
+      "depends_on": [
+        "ADP-004"
+      ],
+      "boundary": "lsp_composition",
+      "expected": {
+        "direct_application": true,
+        "read_only": true,
+        "mutation_edits": false
+      }
+    },
+    {
+      "id": "ADP-007",
+      "depends_on": [
+        "ADP-006"
+      ],
+      "boundary": "vsix_composition",
+      "expected": {
+        "lsp_client": true,
+        "domain_implementation": false,
+        "workspace_code_execution": false
+      }
+    },
+    {
+      "id": "ADP-008",
+      "depends_on": [
+        "ADP-007"
+      ],
+      "boundary": "dag_view",
+      "expected": {
+        "validated_graph_result_only": true,
+        "stale_or_invalid_result": false,
+        "arbitrary_mermaid": false,
+        "graph_mutation": false
+      }
+    },
+    {
+      "id": "ADP-009",
+      "depends_on": [
+        "ADP-004"
+      ],
+      "boundary": "mcp_composition",
+      "expected": {
+        "direct_application": true,
+        "read_only": true,
+        "cli_subprocess": false,
+        "editor_dependency": false
+      }
+    },
+    {
+      "id": "ADP-010",
+      "depends_on": [
+        "ADP-005",
+        "ADP-006",
+        "ADP-009"
+      ],
+      "boundary": "capability_closure",
+      "expected": {
+        "explicit_operation_mapping": true,
+        "mutability_class": true,
+        "unknown_fails_closed": true
+      }
+    },
+    {
+      "id": "ADP-011",
+      "depends_on": [
+        "ADP-008",
+        "ADP-010"
+      ],
+      "boundary": "result_parity",
+      "expected": {
+        "single_application_result": true,
+        "semantic_projection": true,
+        "protocol_byte_identity": false,
+        "deterministic": true
+      }
+    },
+    {
+      "id": "ADP-012",
+      "depends_on": [
+        "ADP-011"
+      ],
+      "boundary": "distribution_safety",
+      "expected": {
+        "publication": false,
+        "network": false,
+        "git_mutation": false,
+        "project_write": false,
+        "global_install": false
+      }
+    }
+  ]
+}

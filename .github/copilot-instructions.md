@@ -165,13 +165,17 @@ Mandatory summary:
   `docs/process/help-guide-consistency-acceptance.md`; release, remote writes,
   publication, Issue mutation, and plan advance remain separate.
 - The selected `plans/adapter-platform.pert` `ADAPTER-001` workstream has 16
-  planned tasks and 91p covering the shared dependency contract, Core
-  decoupling, library and Node-port boundaries, CLI parity, document session,
-  read-only LSP, VSIX and DAG Webview, read-only MCP, and integrated
-  acceptance. Precedence makespan is 61p and the `parallel-sgs` version 1
-  heuristic resource makespan is 79p with 18p resource delay. Complete
-  NextResult v6 recommends and permits only
-  `ADAPTER_ARCHITECTURE_CONTRACT`; no task has started. Editor and MCP
+  tasks and 91p covering the shared dependency contract, Core decoupling,
+  library and Node-port boundaries, CLI parity, document session, read-only
+  LSP, VSIX and DAG Webview, read-only MCP, and integrated acceptance.
+  `ADAPTER_ARCHITECTURE_CONTRACT` is complete and retained before advance. Its
+  accepted specification and record fix the 121-export, 44-command, 20-schema,
+  zero-production-dependency baseline; exact twelve-file/nineteen-import
+  reverse-dependency input; layer and distribution boundaries; result and
+  capability ownership; and semantic parity. Fifteen tasks and 85p remain;
+  precedence makespan is 55p and the `parallel-sgs` version 1 heuristic
+  resource makespan is 73p with 18p resource delay. Complete NextResult v6
+  recommends and permits only `CORE_DEPENDENCY_CLEANUP`. Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five

@@ -1,12 +1,13 @@
 # AI Development Guide
 
-- Document status: Active 0.6
+- Document status: Active 0.7
 - Created: 2026-07-21
-- Updated: 2026-07-30
+- Updated: 2026-08-05
 - Shared instructions: [../../AGENTS.md](../../AGENTS.md)
 - Self-use plan: [self-use.md](self-use.md)
 - Recommendation migration: [recommendation-migration.md](recommendation-migration.md)
 - Recommendation design review: [recommendation-design-review.md](recommendation-design-review.md)
+- Shared adapter architecture: [../specs/adapter-platform.md](../specs/adapter-platform.md)
 - Agent Guidance Provider baseline: [agent-guidance-provider-baseline.md](agent-guidance-provider-baseline.md)
 
 ## 1. Purpose
@@ -199,7 +200,7 @@ Do not directly compare tasks from different detail plans without a macro decisi
 
 The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.md), grammar acceptance, formatter/mutation preview, safe write, Mermaid export/import round trip, and advance Core/CLI are complete and are in Stage 3 self-use. The missing MVP acceptance condition 16 found by the [release-readiness audit](mvp-release-readiness.md) was resolved by MIG-01 through MIG-07, totaling 22p, in the [Recommendation implementation plan](../../plans/recommendation.pert). The [five-plan shadow evaluation](recommendation-shadow-review.md), read-only override validation, normal-authority dry run, unknown-version safe stop, and shared-instruction/help synchronization are accepted. The provisional Recommendation-specific observation is `22p/1d`, and distribution of the same `v0.1.0-alpha.2` artifact through GitHub/npm and registry installation are complete.
 
-The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3 multi-plan composition remains a post-beta backlog. The later selected `ADAPTER-001` plan composes the shared dependency, library, Node Host, CLI parity, document-session, read-only LSP, VSIX/DAG, and read-only MCP gates; its architecture contract is complete and complete NextResult v6 recommends only `CORE_DEPENDENCY_CLEANUP`.
 
 ADR 0004 adopts English as the repository baseline immediately. All nine tasks
 in `plans/english-baseline.pert` are accepted and advanced; commit `2001cdf`

@@ -791,7 +791,7 @@ runtime or syntax change.
 
 Priority: Selected cross-adapter foundation
 
-Status: Selected and planned (2026-08-05; no task started)
+Status: Architecture contract accepted (2026-08-05; retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -800,6 +800,14 @@ accepts the allowed domain, application, port, host, protocol, and
 presentation dependency directions; removes current reverse dependencies;
 then establishes protocol-neutral library, Node-port, document-session, and
 compatibility-facade boundaries before adding adapters.
+
+The normative [Shared Adapter Architecture
+Contract](specs/adapter-platform.md), its twelve machine cases, and the
+[acceptance record](process/adapter-architecture-contract-acceptance.md) fix
+the verified 121-export, 44-command, 20-schema, zero-production-dependency
+baseline and the exact twelve-file, nineteen-import reverse-dependency input.
+`ADAPTER_ARCHITECTURE_CONTRACT` is complete with exact lifecycle evidence;
+complete NextResult v6 recommends only `CORE_DEPENDENCY_CLEANUP`.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared

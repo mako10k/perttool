@@ -65,20 +65,19 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:d7b986982ca913f9b2a356f2b26e7aa8db1355f9b64988d6c70dd044e89ca233",
+      "source_digest": "sha256:9270caead5ca1abf0c9e6bd76f37a878c3a1a6fbd7b98f69868c3928064194de",
       "groups": {
         "active": [],
         "ready": [
-          "ADAPTER_ARCHITECTURE_CONTRACT"
+          "CORE_DEPENDENCY_CLEANUP",
+          "EDITOR_PROTOCOL_CONTRACT",
+          "MCP_READ_CONTRACT"
         ],
         "runnable_now": [
-          "ADAPTER_ARCHITECTURE_CONTRACT"
+          "CORE_DEPENDENCY_CLEANUP"
         ],
         "blocked_now": [],
         "upcoming": [
-          "CORE_DEPENDENCY_CLEANUP",
-          "EDITOR_PROTOCOL_CONTRACT",
-          "MCP_READ_CONTRACT",
           "SHARED_LIBRARY_BOUNDARY",
           "DOCUMENT_SESSION_CORE",
           "NODE_PORT_BOUNDARY",
@@ -95,34 +94,78 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "ADAPTER_ARCHITECTURE_CONTRACT"
+        "CORE_DEPENDENCY_CLEANUP"
       ],
       "manual_selected_task_ids": [
-        "ADAPTER_ARCHITECTURE_CONTRACT"
+        "CORE_DEPENDENCY_CLEANUP"
       ],
       "tiers": {
-        "ADAPTER_ARCHITECTURE_CONTRACT": "recommended"
+        "CORE_DEPENDENCY_CLEANUP": "recommended",
+        "EDITOR_PROTOCOL_CONTRACT": "deferred",
+        "MCP_READ_CONTRACT": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "ADAPTER_ARCHITECTURE_CONTRACT",
+          "id": "CORE_DEPENDENCY_CLEANUP",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
           "total_float": "0/1",
           "resource_rejections": []
+        },
+        {
+          "id": "EDITOR_PROTOCOL_CONTRACT",
+          "runnable_now": false,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "10/1",
+          "resource_rejections": [
+            {
+              "resource_id": "ARCHITECTURE_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "CORE_DEPENDENCY_CLEANUP"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "MCP_READ_CONTRACT",
+          "runnable_now": false,
+          "precedence_critical": false,
+          "schedule_critical": true,
+          "total_float": "35/1",
+          "resource_rejections": [
+            {
+              "resource_id": "ARCHITECTURE_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "CORE_DEPENDENCY_CLEANUP"
+              ]
+            }
+          ]
         }
       ],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
-        "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "task_decisions": 3,
+        "decision_steps": 18,
+        "facts": 76,
+        "comparisons": 4,
+        "reasons": 12,
+        "descriptions": 7
       },
-      "diagnostic_codes": []
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
     },
     "agent-guidance": {
       "source_digest": "sha256:ca06697d12d3846f72068bbbc113e20539ba717b0c23735473290dd08bd4f7f4",

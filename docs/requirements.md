@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.22
+- Document status: Draft 0.23
 - Created: 2026-07-21
-- Updated: 2026-08-04
+- Updated: 2026-08-05
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -1595,17 +1595,56 @@ Must:
 
 ### 17.2 MCP / LSP / VSIX (outside the MVP)
 
-MCP servers, MCP tool schemas, MCP file writes, LSP servers, and VSIX/editor integration are not MVP acceptance criteria. Do not add MCP SDK, LSP transport, or VS Code extension dependencies to the MVP implementation.
+MCP servers, MCP tool schemas, MCP file writes, LSP servers, and VSIX/editor
+integration are not MVP or first-beta acceptance criteria. Their selected
+post-beta composition is tracked by
+[`adapter-platform.pert`](../plans/adapter-platform.pert) and governed by the
+[Shared Adapter Architecture Contract](specs/adapter-platform.md).
 
-When adding adapters after the MVP, do not wrap the CLI process as a subprocess; directly use the shared Application/Core API. Fix MCP-specific action names, tool schemas, write safety, and CLI parity in a separate versioned specification at that time.
+Must:
 
-Keep the following independent deliverables in the future backlog. None becomes a blocker for the first beta.
+- Keep one acyclic Domain, Application, inward-owned port, Host, protocol,
+  presentation, and composition dependency model.
+- Do not wrap the CLI process as a subprocess. CLI, LSP, and MCP directly use
+  the same protocol-neutral Application/Core services.
+- Keep adapter SDKs and transport dependencies outside the shared Core and CLI
+  dependency closure.
+- Retain the current `perttool` package root as a compatibility facade while
+  adding separately consumable Core and Node Host boundaries.
+- Give every adapter capability one explicit neutral operation mapping,
+  mutability class, result owner, deterministic ordering, and fail-closed
+  unknown or unavailable behavior.
+- Prove semantic parity from the same source bytes, digest, options, reference
+  time, and Application result; do not require byte identity between unrelated
+  protocol envelopes.
+- Treat connection, initialization, editor trust, process identity, and Git
+  identity as neither task-selection authority nor mutation authority.
 
-1. **LSP server**: Provide `.pert` diagnostics, completion, definition, rename, and formatting from the shared parser, validator, formatter, and TextEdit. Use UTF-16 code units for LSP positions and fix protocol capabilities and diagnostic mapping in a versioned specification.
-2. **VSIX**: Provide a VS Code extension that supplies code highlighting through a TextMate grammar and starts/connects the LSP server as an LSP client. Do not duplicate language-server semantic rules in the extension; separately define VSIX packaging, supported VS Code versions, workspace trust, and server distribution.
-3. **MCP server**: Start with read-only analysis/help and later provide preview mutation. Directly use the shared Application/Core API and fix tool schema, transport, capabilities, write safety, and CLI/Core parity in a versioned specification.
+The selected first delivery composes the following artifacts without making
+the MCP branch depend on the editor branch.
 
-The LSP server and VSIX have a server/client dependency. The MCP server can be designed and implemented independently of both. Expand the priority, milestones, and estimates for each deliverable into future plans after first-beta acceptance.
+1. **Read-only LSP server**: Provide `.pert` synchronization, diagnostics,
+   document symbols, hover, completion, definition/source navigation, help,
+   cancellation, and a version-bound graph projection from shared parser,
+   validator, analysis, and document-session services. Use UTF-16 code units
+   for protocol positions. Rename, formatting edits, and other mutation edits
+   remain a later editor-mutation contract.
+2. **VSIX and DAG view**: Provide TextMate highlighting and an LSP client
+   without duplicating semantic rules. Add a read-only DAG Webview that renders
+   only the current validated graph result, supports accepted analysis views
+   and source navigation, and fails closed for stale or invalid input. Fix
+   packaging, supported VS Code versions, workspace trust, CSP, accessibility,
+   and server distribution before implementation.
+3. **Read-only MCP server**: Provide closed local analysis, next, schema, and
+   help resources/tools directly over shared Application/Core services. Fix
+   tool schemas, transport, capabilities, source identity, resource limits,
+   diagnostics, and CLI/Core parity. Preview and persistent mutation remain
+   later contracts.
+
+The LSP server is the predecessor of VSIX. MCP is independently contractible
+and implementable after the shared Core and Node Host boundaries. Publication,
+public package names, releases, editor writes, MCP writes, and Issue mutation
+remain separate decisions.
 
 ## 18. JSON and schemas
 
@@ -2764,7 +2803,7 @@ complete because the same `v0.1.0-alpha.2` artifact was published to the
 GitHub prerelease and npm `alpha`, including isolated installation from the
 registry.
 
-[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3, the LSP server, VSIX, and MCP server remain independent post-beta backlogs.
+[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates.
 
 The accepted Contract 3 source and package workflow published suffix-free beta
 `0.2.0` as the first Contract 3 package. All five tasks in

@@ -1,8 +1,8 @@
 # perttool Basic Design
 
-- Document status: Draft 1.23
+- Document status: Draft 1.24
 - Created: 2026-07-21
-- Updated: 2026-08-04
+- Updated: 2026-08-05
 - Applicable requirements: [requirements.md](requirements.md)
 - DSL grammar: [specs/dsl-grammar.md](specs/dsl-grammar.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
@@ -14,6 +14,7 @@
 - Project actuals and Git history: [specs/project-actuals.md](specs/project-actuals.md)
 - Conditional plan assurance: [specs/plan-assurance.md](specs/plan-assurance.md)
 - Plan assurance interface: [specs/plan-assurance-interface.md](specs/plan-assurance-interface.md)
+- Shared adapter architecture: [specs/adapter-platform.md](specs/adapter-platform.md)
 - Plan assurance examples: [examples/plan-assurance.md](examples/plan-assurance.md)
 - Plan assurance design review: [process/plan-assurance-design-review.md](process/plan-assurance-design-review.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
@@ -59,7 +60,9 @@ The complete DSL grammar, CLI/JSON contracts, and Mermaid profile are fixed by t
 - Activity-on-Arrow, in which tasks are edges and milestones are nodes, is the central model.
 - `.pert` documents are authoritative, and normal analysis completes locally.
 - Parsing, semantic validation, and PERT/CPM calculation are consolidated in the shared Core.
-- The MVP uses the CLI as its primary adapter; an LSP server, VSIX, and MCP server are added to the shared Core after the MVP.
+- The MVP uses the CLI as its primary adapter; selected post-beta LSP, VSIX/DAG,
+  and MCP adapters use the accepted shared adapter architecture without
+  duplicating Domain semantics.
 - Document edits are planned as diffs against source spans and applied only after reparsing and revalidation.
 - Human-readable text and machine-readable JSON are rendered from the same result object.
 - All calculations and orderings are deterministic.
@@ -113,10 +116,14 @@ flowchart LR
   TRANSFORM --> GOVERNANCE
   GRAPH --> CONVERTER[Mermaid / JSON converter]
 
+  PORT[Inward-owned port contracts] --> SYNTAX
+  HOST[Node Host implementations] --> PORT
+  APP --> PORT
+
   CLI[CLI adapter] --> APP
-  MCP[Post-MVP MCP adapter] -.-> APP
-  LSP[Post-MVP LSP server] -.-> APP
-  VSIX[Post-MVP VSIX] -.-> LSP
+  MCP[Read-only MCP adapter] -.-> APP
+  LSP[Read-only LSP server] -.-> APP
+  VSIX[VSIX and DAG Webview] -.-> LSP
 
   HELP[Help registry] --> CLI
   HELP -.-> MCP
@@ -128,16 +135,17 @@ flowchart LR
 
 ### 3.1 Dependency Rule
 
-Dependencies point in one direction, from outer layers to inner layers.
+Dependencies follow the acyclic model fixed by the
+[Shared Adapter Architecture Contract](specs/adapter-platform.md).
 
 ```text
-CLI / future MCP / LSP / VSIX / filesystem
-             |
-             v
-      application services
-             |
-             v
-syntax / semantic / graph / analyzer / recommendation / assurance / transform / governance
+composition roots
+      |
+      +--> protocol adapters --> application services --> port contracts --> domain
+      |
+      +--> Node Hosts -------------------------------> port contracts --> domain
+      |
+      +--> adapter presentation --> stable application result contracts
 ```
 
 The Core layer MUST NOT depend on the following:
@@ -151,6 +159,28 @@ The Core layer MUST NOT depend on the following:
 - wall clock time
 
 The reference timestamp, file path, display precision, critical epsilon, and similar values are passed as explicit arguments.
+
+Application services depend on inward-owned port contracts, never on concrete
+Hosts. Node Hosts implement document-byte, artifact, Git, hashing, and safe-
+persistence ports without selecting Domain behavior. CLI, LSP, and MCP call
+Application services directly; none invokes another perttool adapter. VSIX is
+an LSP client and presentation host, and it does not import the parser or
+analyzer. Only composition roots know both an Application service and a
+concrete Host.
+
+The existing lower-layer imports into `src/application/` are measured legacy
+exceptions, not an alternative dependency direction. The exact twelve files
+and nineteen imports are fixed by the adapter architecture contract and its
+machine fixture for removal by `CORE_DEPENDENCY_CLEANUP`.
+
+### 3.2 Distribution boundary
+
+The current `perttool` npm package retains its CLI, `.` compatibility facade,
+and schema artifacts. The shared-library slice adds isolated `./core` and
+`./node` subpath boundaries without removing or changing existing root names.
+LSP, VSIX, and MCP live in separate private workspace/distribution inputs so
+their protocol dependencies do not enter the shared Core or CLI closure.
+Publication names, versions, and dist-tags remain separate release decisions.
 
 ## 4. Repository Structure
 
@@ -2081,9 +2111,42 @@ reference as a separate detail layer without network access.
 
 ## 12. Post-MVP adapter boundaries
 
-The LSP server, VSIX/editor adapter, and MCP server are outside the MVP scope. Do not include LSP transport, a VS Code extension, an MCP server, or SDKs in the MVP repository structure, package dependencies, or acceptance tests.
+The LSP server, VSIX/editor adapter, DAG view, and MCP server remain outside
+the MVP and first-beta acceptance scope. Their selected post-beta foundation is
+the [Shared Adapter Architecture Contract](specs/adapter-platform.md), not an
+extension of CLI Contract 7.
 
-When adding future adapters, use the same application service directly rather than calling a CLI subprocess. Fix adapter-specific transports, request/response schemas, and write authority in versioned specifications separate from the CLI Interface specification.
+The target source and distribution composition is:
+
+```text
+perttool package
+  root compatibility facade
+  core subpath: Domain + protocol-neutral Application contracts/services
+  node subpath: filesystem/Git/hash/artifact/persistence Hosts
+  CLI binary: CLI protocol + CLI presentation + Node composition root
+
+private adapter distribution inputs
+  language server: LSP protocol + document session + Node composition root
+  VSIX: TextMate + LSP client + version-bound DAG Webview
+  MCP server: MCP protocol + read-only capability mapping + Node composition root
+```
+
+The initial language server and MCP adapter are read-only. The VSIX renders a
+restricted `GraphViewResult` obtained for the current LSP document version and
+does not parse `.pert`, execute arbitrary Mermaid, or mutate graph state.
+Editor edits and MCP preview or persistent mutation require later versioned
+contracts.
+
+Application owns semantic requests, results, diagnostics, and deterministic
+ordering. Adapters own protocol envelopes and presentation. A closed neutral
+capability catalog maps each adapter capability to one Application operation
+and mutability class; initialization or connection never grants authority.
+
+Adapter parity compares a documented semantic projection from the same source
+bytes, digest, options, reference time, and Application result. It does not
+require unrelated wire envelopes to have identical bytes. Unknown identities,
+stale document versions, incomplete results, and unavailable source bindings
+fail closed.
 
 ## 13. Help design
 
@@ -2290,7 +2353,12 @@ Should:
 
 ### 15.4 Adapter parity
 
-For the MVP, verify that the library result and CLI JSON semantic payload agree for the same fixture. Explicitly exclude presentation-specific fields from comparison. Test MCP parity when the MCP adapter is added.
+For the MVP, verify that the library result and CLI JSON semantic payload agree
+for the same fixture. For ADAPTER-001, extend each accepted parity fixture with
+exact source bytes and digest, options, reference time, operation and result
+identity, stable semantic fields, deterministic ordering, and documented
+protocol exclusions. LSP, MCP, and GraphView mappings must trace to the same
+Application result without invoking the CLI or recalculating Domain values.
 
 ## 16. Self-use design
 
@@ -3020,13 +3088,27 @@ Exit:
 
 ### Post-MVP Slice 5: Language tooling and MCP
 
-As an independent future backlog after the first beta, split the work into the following three deliverables.
+The selected `ADAPTER-001` plan composes a shared foundation and three adapter
+branches after first-beta acceptance.
 
-- LSP server: directly use `src/application/`, parser/validator, formatter, and source-preserving TextEdit to provide diagnostics, completion, definition, rename, and formatting.
-- VSIX: provide syntax highlighting through a TextMate grammar for `.pert` and an LSP client. Do not duplicate semantic analysis in the extension; make the LSP server the sole source of language intelligence.
-- MCP server: start with read-only analysis/help and extend incrementally to preview mutation. Directly use shared Application/Core APIs rather than CLI subprocesses.
+- Shared foundation: accept the dependency and distribution contract, remove
+  reverse imports, expose Core and Node boundaries, preserve the CLI facade,
+  and add a protocol-neutral document session.
+- Read-only LSP: directly use the shared session and Application services for
+  synchronization, diagnostics, symbols, hover, completion, definition/source
+  navigation, help, cancellation, and a version-bound graph result. Rename,
+  formatting edits, and other mutation edits are deferred.
+- VSIX and DAG: provide TextMate highlighting, the accepted LSP client/server
+  distribution, and a CSP-constrained read-only DAG Webview without semantic
+  duplication or arbitrary Mermaid execution.
+- Read-only MCP: use shared Application and Node boundaries for closed local
+  resources/tools, without a CLI subprocess or editor dependency. Preview and
+  persistent mutation are deferred.
 
-Fix LSP protocol capabilities, UTF-16 position mapping, VSIX packaging, workspace trust, server distribution, and MCP tool schema, transport, and write safety in versioned specifications before each implementation begins. Give each adapter a Core semantic-parity test. Treat the LSP server as the predecessor of VSIX, while planning the MCP server as an independent workstream.
+The LSP server remains the predecessor of VSIX. The MCP branch is independent
+of both after the shared foundation. Adapter package publication, public names,
+release selection, editor/MCP writes, and Issue mutation remain separately
+gated.
 
 ## 18. Matters for detailed design
 
