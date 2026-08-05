@@ -1543,8 +1543,12 @@ self-review, version-bearing preparation, one immutable candidate, PUBLISH,
 and durable acceptance. The exact initial plan candidate was confirmed with
 goal and DAG owner `user`. Compatibility self-review and version-bearing source
 preparation are complete; package, lockfile, CLI, CHANGELOG, README, tests,
-and package workflow identify `0.7.1`. Candidate acceptance is next. Remote
-publication, npm `latest` promotion, both plan advances, and Issue mutation
+and package workflow identify `0.7.1`. Candidate acceptance is complete from
+source commit `a05b769` and the retained 601-file, 660003-byte tarball with
+SHA-256 `5bf47231...e4454c`; its exact record is
+`docs/process/0.7.1-candidate.md`. Complete NextResult v6 recommends only
+PUBLISH, but remote publication still requires the separate exact-candidate
+user boundary. npm `latest` promotion, both plan advances, and Issue mutation
 remain separately gated.
 
 Stage 1 allowed operations:

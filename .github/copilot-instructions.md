@@ -177,9 +177,13 @@ Mandatory summary:
   `RELEASE_071_PREPARATION` was next. It is complete after aligning package,
   lockfile, CLI, CHANGELOG, README, release records, tests, goldens, self-use
   metadata, and package validation to `0.7.1`; its record is
-  `docs/process/0.7.1-preparation.md`. Only `RELEASE_071_CANDIDATE` is next.
-  Candidate acceptance may proceed locally, but the exact candidate commit
-  and tarball require a separate user boundary before PUBLISH. npm `latest`
+  `docs/process/0.7.1-preparation.md`. `RELEASE_071_CANDIDATE` is complete
+  after the clean Node.js 22 gate, read-only external and protected-route
+  preflight, and acceptance of the retained 601-file, 660003-byte tarball with
+  SHA-256 `5bf47231...e4454c`. Its source commit is `a05b769`, and its record
+  is `docs/process/0.7.1-candidate.md`. Complete NextResult v6 recommends only
+  `RELEASE_071_PUBLISH`, but the exact candidate and external batch require a
+  separate user boundary before PUBLISH. npm `latest`
   promotion, both plan advances, Issue mutation, and unrelated work remain
   separately gated.
 - Issue #4 is tracked in independent post-beta `plans/governance.pert`. All twelve tasks through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 source, declared/effective metadata and digest-bound snapshots, actual-change classification, caller-assertion normalization, pre-change decisions, governed direct/batch/advance planning, PTGOV diagnostics, ProjectResult v3, MutationResult v2 with GovernanceDecision v1, the Contract 5 registry/help/usage/Guide surface, authorization-before-safe-write enforcement, generated direct-edit warning, public root, CLI, and installed `0.4.0` and `0.5.0` workflows are accepted and active together. The plan has zero makespans, no remaining or recommended task, and observed velocity `45p/2d`; it remains distinct from recommendation override MIG-08. Issue #4 closure remains separately gated.

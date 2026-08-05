@@ -82,6 +82,7 @@ task RELEASE_071_CANDIDATE RELEASE_071_SOURCE_PREPARED -> RELEASE_071_CANDIDATE_
   title "Accept one clean 0.7.1 release candidate"
   description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.7.0 and no alpha; verify protected routes; build one immutable tarball outside the worktree; and accept its timestamp, sizes, file count, digests, and installed Contract 7 behavior. This task performs no external write."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

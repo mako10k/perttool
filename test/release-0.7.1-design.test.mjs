@@ -26,6 +26,7 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     procedure,
     review,
     preparation,
+    candidate,
     correction,
     plan,
     changelog,
@@ -40,6 +41,7 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     repositoryText("docs/process/0.7.1-release.md"),
     repositoryText("docs/process/0.7.1-self-review.md"),
     repositoryText("docs/process/0.7.1-preparation.md"),
+    repositoryText("docs/process/0.7.1-candidate.md"),
     repositoryText("docs/process/help-guide-consistency-acceptance.md"),
     repositoryText("plans/release-0.7.1.pert"),
     repositoryText("CHANGELOG.md"),
@@ -85,6 +87,18 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     preparation,
     /Completed-plan source digest: `sha256:25ab07cca3c3a7c4a6e880d3b429023924a2e8de48aa70314f82887d928877b2`/,
   );
+  assert.match(candidate, /- Document status: Accepted 1\.0/);
+  assert.match(candidate, /Candidate source commit: `a05b769a65dcebbf3b543538ba4930e065f3e867`/);
+  assert.match(
+    candidate,
+    /Completed-plan source digest: `sha256:986e4200fa452535534ad11f31008de62824cfed70c3665cb35ba1c568610a10`/,
+  );
+  assert.match(candidate, /Packed size \| `660003` bytes/);
+  assert.match(
+    candidate,
+    /SHA-256 \| `5bf4723131b79f04b501ae02b7585c800ac8dc37f0f3a816eff837d670e4454c`/,
+  );
+  assert.match(candidate, /Complete, non-truncated NextResult v6\s+recommends only `RELEASE_071_PUBLISH`/);
   assert.match(changelog, /^## \[0\.7\.1\] - 2026-08-05$/m);
   assert.match(readme, /package=perttool@0\.7\.1/);
   assert.match(readme, /leaves the\s+independently managed `latest` tag at `0\.7\.0`/);
@@ -123,8 +137,11 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
     plan,
     /^task RELEASE_071_PREPARATION[\s\S]*?^  status done$/m,
   );
+  assert.match(
+    plan,
+    /^task RELEASE_071_CANDIDATE[\s\S]*?^  status done$/m,
+  );
   for (const taskId of [
-    "RELEASE_071_CANDIDATE",
     "RELEASE_071_PUBLISH",
     "RELEASE_071_ACCEPTANCE",
   ]) {
