@@ -787,11 +787,35 @@ runtime or syntax change.
 
 ## Language tooling and adapters
 
+### ADAPTER-001: Establish shared adapter foundations
+
+Priority: Selected cross-adapter foundation
+
+Status: Selected and planned (2026-08-05; no task started)
+
+Define and implement the shared architecture that must precede separate CLI,
+LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
+[`adapter-platform.pert`](../plans/adapter-platform.pert) workstream first
+accepts the allowed domain, application, port, host, protocol, and
+presentation dependency directions; removes current reverse dependencies;
+then establishes protocol-neutral library, Node-port, document-session, and
+compatibility-facade boundaries before adding adapters.
+
+The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
+branch depend on the editor branch. CLI, LSP, and MCP consume shared
+application services directly rather than wrapping the CLI; VSIX consumes the
+versioned editor protocol and accepted LSP server rather than duplicating
+semantic analysis. The initial VSIX includes a read-only DAG view derived only
+from a validated, document-version-bound Core projection. Editor mutation,
+MCP mutation, release selection, publication, remote writes, Issue mutation,
+and plan advance remain separate decisions.
+
 ### LSP-001: Design a read-only language server
 
-Priority: Unset
+Priority: Selected through `ADAPTER-001`
 
-Status: Proposed backlog (not scheduled)
+Status: Planned; depends on the shared architecture, library, editor protocol,
+and document-session gates
 
 Define an LSP boundary for diagnostics, document symbols, hover, completion,
 and source-safe code actions by reusing the parser, semantic model, help
@@ -801,20 +825,24 @@ previewed mutation candidate.
 
 ### VSIX-001: Package the accepted language server for VS Code
 
-Priority: Unset
+Priority: Selected through `ADAPTER-001`
 
-Status: Proposed backlog (not scheduled; depends on `LSP-001`)
+Status: Planned; depends on accepted `LSP-001`
 
 Package an accepted LSP contract without adding editor-only grammar or
 mutation semantics. Acceptance must cover extension activation, bundled
 runtime identity, offline help, diagnostics, upgrade compatibility, and an
-isolated VS Code extension test.
+isolated VS Code extension test. The initial extension also provides a
+read-only DAG Webview for the current LSP document version, with analysis-mode
+selection, source navigation, stale and invalid-state handling, Webview CSP,
+and no arbitrary Mermaid execution or graph-driven mutation.
 
 ### MCP-001: Design a fail-closed MCP adapter
 
-Priority: Unset
+Priority: Selected through `ADAPTER-001`
 
-Status: Proposed backlog (not scheduled)
+Status: Planned independently of the editor branch after the shared library,
+Node-port, and read-only MCP contract gates
 
 Define read-only MCP resources and tools from the accepted public Core and
 command registry. Any future write tool must preserve preview, governance,
@@ -1350,10 +1378,12 @@ Before implementation:
 
 ## Independent post-beta work
 
-`MULTI-001`, `LSP-001`, `VSIX-001`, `MCP-001`, `MIG-08`, `SCM-001`,
-`GOV-AUTH-001`, `ADV-001`, `ASSURE-001`, and `META-001` remain independent
-workstreams. `ADV-001` is the refined, unscheduled read-only Git guard for
-destructive advance writes, while `SCM-001` records the unselected semantic
-diff, patch, merge, and Git-integration concept. These items are not implicit
-prerequisites for an accepted workstream unless a later requirements decision
-explicitly composes them.
+`MULTI-001`, `ADAPTER-001`, `MIG-08`, `SCM-001`, `GOV-AUTH-001`, `ADV-001`,
+`ASSURE-001`, and `META-001` remain independent workstreams. `ADAPTER-001`
+explicitly composes `LSP-001`, `VSIX-001`, and `MCP-001` while preserving
+their adapter-specific contracts and the LSP-to-VSIX dependency. `ADV-001` is
+the refined read-only Git guard for destructive advance writes, while
+`SCM-001` records the unselected semantic diff, patch, merge, and Git-
+integration concept. Other items are not implicit prerequisites for an
+accepted workstream unless a later requirements decision explicitly composes
+them.

@@ -1,0 +1,339 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project ADAPTER_PLATFORM:
+  version 6
+  title "Shared adapter foundations and read-only integrations"
+  description "Implement ADAPTER-001 as an independent post-0.7.1 workstream. First accept the cross-adapter architecture, runtime matrix, stable dependency direction, and compatibility boundary; then remove reverse dependencies, establish shared library and Node-port boundaries, retain CLI parity, add a protocol-neutral document session, deliver a read-only LSP, package it in a VSIX with a read-only DAG view, add a fail-closed read-only MCP adapter, and complete cross-surface acceptance. Preserve Grammar 6, CLI Contract 7, current perttool package-root behavior, deterministic semantics, governance, plan assurance, history safety, and safe-write behavior until separately accepted cutovers. Editor mutation, MCP mutation, public contract activation beyond accepted additive surfaces, release selection, publication, remote writes, Issue mutation, and plan advance remain separate decisions."
+  as_of 2026-08-05
+  duration_unit point
+  velocity 29p/2d
+  finish ADAPTER_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone ADAPTER_SELECTED:
+  title "ADAPTER-001 selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two implementation slices may run concurrently only when their owned surfaces do not overlap."
+  capacity 2
+
+resource REVIEWERS:
+  title "Architecture and acceptance review capacity"
+  description "Serialize normative contracts, compatibility review, and final acceptance."
+  capacity 1
+
+resource ARCHITECTURE_SURFACE:
+  title "Cross-adapter architecture ownership"
+  description "Own dependency rules, runtime placement, capability ownership, and adapter isolation."
+  capacity 1
+
+resource CORE_SURFACE:
+  title "Domain and application Core ownership"
+  description "Own protocol-neutral parsing, validation, analysis, mutation planning, projections, and session services."
+  capacity 1
+
+resource NODE_SURFACE:
+  title "Node.js port and host ownership"
+  description "Own filesystem, Git, schema loading, hashing, persistence, and process boundaries."
+  capacity 1
+
+resource CLI_SURFACE:
+  title "CLI compatibility ownership"
+  description "Own command dispatch, options, text and JSON rendering, exit statuses, and compatibility facade behavior."
+  capacity 1
+
+resource EDITOR_PROTOCOL:
+  title "Versioned editor protocol ownership"
+  description "Own document-version binding, UTF-16 locations, graph view results, source navigation, and stale-state signaling."
+  capacity 1
+
+resource LSP_SURFACE:
+  title "Language server ownership"
+  description "Own LSP transport, document lifecycle, capability mapping, cancellation, and server distribution inputs."
+  capacity 1
+
+resource VSIX_SURFACE:
+  title "VS Code extension ownership"
+  description "Own TextMate grammar, extension activation, LSP client, workspace trust, Webview, CSP, and extension packaging."
+  capacity 1
+
+resource MCP_SURFACE:
+  title "MCP adapter ownership"
+  description "Own MCP resources, tools, transport, protocol mapping, and fail-closed capability exposure."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution boundary ownership"
+  description "Own package exports, bundled artifacts, isolated installation, compatibility, and inventory gates without authorizing publication."
+  capacity 1
+
+milestone ADAPTER_CONTRACT_ACCEPTED:
+  title "Cross-adapter architecture contract accepted"
+
+milestone CORE_DECOUPLED:
+  title "Core reverse dependencies removed"
+
+milestone SHARED_LIBRARY_READY:
+  title "Shared library boundary ready"
+
+milestone NODE_PORTS_READY:
+  title "Node.js ports and hosts separated"
+
+milestone CLI_PARITY_READY:
+  title "CLI compatibility facade accepted"
+
+milestone EDITOR_PROTOCOL_READY:
+  title "Editor and DAG view protocol accepted"
+
+milestone DOCUMENT_SESSION_INPUT:
+  title "Document session inputs accepted"
+
+milestone DOCUMENT_SESSION_READY:
+  title "Protocol-neutral document session ready"
+
+milestone LSP_READY:
+  title "Read-only language server ready"
+
+milestone LSP_ACCEPTED:
+  title "Read-only language server accepted"
+
+milestone VSIX_SHELL_READY:
+  title "VS Code extension and LSP client ready"
+
+milestone VSIX_DAG_READY:
+  title "Read-only VS Code DAG view ready"
+
+milestone VSIX_ACCEPTED:
+  title "VS Code extension accepted"
+
+milestone MCP_CONTRACT_READY:
+  title "Read-only MCP contract accepted"
+
+milestone MCP_IMPLEMENTATION_INPUT:
+  title "MCP implementation inputs accepted"
+
+milestone MCP_READY:
+  title "Read-only MCP adapter ready"
+
+milestone MCP_ACCEPTED:
+  title "Read-only MCP adapter accepted"
+
+milestone ADAPTER_INTEGRATION_INPUT:
+  title "All adapter acceptance inputs ready"
+
+milestone ADAPTER_ACCEPTED:
+  title "Shared adapter platform accepted"
+
+task ADAPTER_ARCHITECTURE_CONTRACT ADAPTER_SELECTED -> ADAPTER_CONTRACT_ACCEPTED:
+  title "Accept the shared adapter architecture contract"
+  description "Inventory the active package root and internal dependency graph; fix the allowed domain, application, port, host, protocol, and presentation directions; decide logical versus physical package boundaries, runtime and bundling placement, compatibility facade, stable result ownership, capability discovery, and parity fixtures for CLI, LSP, VSIX, DAG view, and MCP. Keep all runtime behavior and public contracts unchanged during this task."
+  duration 6p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    ARCHITECTURE_SURFACE 1
+    CORE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task CORE_DEPENDENCY_CLEANUP ADAPTER_CONTRACT_ACCEPTED -> CORE_DECOUPLED:
+  title "Remove reverse dependencies from reusable Core modules"
+  description "Move shared option, result, temporal, validation, projection, and hashing contracts to their accepted neutral owners; invert formatter, conversion, mutation, recommendation, assurance, analysis, and I/O composition so lower layers no longer import application orchestration. Add executable dependency-boundary checks and prove unchanged Grammar 1 through 6 and public result behavior."
+  duration 8p
+  priority 95
+  requires:
+    DEVELOPERS 1
+    ARCHITECTURE_SURFACE 1
+    CORE_SURFACE 1
+
+task EDITOR_PROTOCOL_CONTRACT ADAPTER_CONTRACT_ACCEPTED -> EDITOR_PROTOCOL_READY:
+  title "Accept the LSP, VSIX, and DAG view protocol contract"
+  description "Fix the read-only LSP capability set, UTF-16 mapping, document URI and version semantics, cancellation and stale-result rules, help ownership, custom DAG projection request, analysis-mode selection, source navigation, invalid-document behavior, GraphViewResult identity, VSIX activation, workspace trust, CSP, server distribution, and supported-runtime decision. Exclude editor mutation, arbitrary Mermaid execution, and duplicated semantic analysis."
+  duration 5p
+  priority 95
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    ARCHITECTURE_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+
+task MCP_READ_CONTRACT ADAPTER_CONTRACT_ACCEPTED -> MCP_CONTRACT_READY:
+  title "Accept the fail-closed read-only MCP contract"
+  description "Fix MCP resources and read-only tools over shared application use cases, input source selectors, transport and lifecycle, closed schemas, capability discovery, result and diagnostic mapping, local-only behavior, resource limits, and CLI/Core parity. Do not infer authority from connection state and do not expose preview or persistent mutation in this workstream."
+  duration 4p
+  priority 95
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    ARCHITECTURE_SURFACE 1
+    MCP_SURFACE 1
+
+task SHARED_LIBRARY_BOUNDARY CORE_DECOUPLED -> SHARED_LIBRARY_READY:
+  title "Establish the shared library and compatibility facade"
+  description "Implement the accepted physical or subpath library boundary for pure domain logic, protocol-neutral application services, serializable results, schemas, and help data. Retain the current perttool package root as the accepted compatibility facade, prevent adapter dependencies from leaking into shared modules, and verify direct library consumption from isolated installations without selecting a release."
+  duration 7p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    ARCHITECTURE_SURFACE 1
+    CORE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task NODE_PORT_BOUNDARY SHARED_LIBRARY_READY -> NODE_PORTS_READY:
+  title "Separate Node.js filesystem, Git, hashing, and persistence ports"
+  description "Implement the accepted Node host boundary for raw-byte document reads, schema artifacts, Git probes, hashing, atomic safe writes, races, and process concerns. Keep pure use cases deterministic and injectable, preserve all governance, assurance, history, symlink, expected-digest, and write-verification guarantees, and publish no new adapter automatically."
+  duration 5p
+  priority 85
+  requires:
+    DEVELOPERS 1
+    CORE_SURFACE 1
+    NODE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task CLI_FACADE_PARITY NODE_PORTS_READY -> CLI_PARITY_READY:
+  title "Move the CLI onto the shared application and Node boundaries"
+  description "Refactor CLI dispatch to consume the accepted application facade and Node ports while retaining all 44 Contract 7 commands, option validation, text and JSON projections, result and schema identities, exit statuses, package-root exports, help, Guide, and installed file-first behavior. Prove byte and semantic parity without introducing LSP or MCP dependencies."
+  duration 5p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NODE_SURFACE 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
+
+gate SESSION_LIBRARY_INPUT SHARED_LIBRARY_READY -> DOCUMENT_SESSION_INPUT:
+  reason "The document session requires the accepted shared library boundary"
+
+gate SESSION_PROTOCOL_INPUT EDITOR_PROTOCOL_READY -> DOCUMENT_SESSION_INPUT:
+  reason "The document session requires accepted URI, version, UTF-16, and graph-view semantics"
+
+task DOCUMENT_SESSION_CORE DOCUMENT_SESSION_INPUT -> DOCUMENT_SESSION_READY:
+  title "Implement the protocol-neutral document session Core"
+  description "Implement immutable text snapshots bound to URI, document version, raw digest, parse and semantic results, analysis options, cached projections, and cancellation-safe invalidation. Support stateless CLI and MCP calls as adapters while enabling LSP incremental document ownership; return no current graph result for invalid or stale snapshots and perform no filesystem or editor write."
+  duration 6p
+  priority 85
+  requires:
+    DEVELOPERS 1
+    CORE_SURFACE 1
+    EDITOR_PROTOCOL 1
+
+task LSP_READ_CORE DOCUMENT_SESSION_READY -> LSP_READY:
+  title "Implement the read-only perttool language server"
+  description "Implement initialize and shutdown, text document synchronization, diagnostics, document symbols, hover, completion, definition and source navigation, help links, cancellation, deterministic ordering, and the accepted custom DAG projection request over the shared document session. Do not invoke the CLI, reimplement domain rules, execute workspace code, or return mutation edits."
+  duration 8p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    CORE_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+
+task LSP_ACCEPTANCE LSP_READY -> LSP_ACCEPTED:
+  title "Accept the read-only LSP server"
+  description "Verify protocol initialization, UTF-16 ranges, Unicode and block-text spans, rapid version changes, cancellation, invalid and stale documents, multiple documents, capability closure, Core parity, no CLI subprocess, no filesystem mutation, bundled help, deterministic results, and isolated server execution under the accepted runtime matrix."
+  duration 4p
+  priority 75
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task VSIX_SHELL LSP_ACCEPTED -> VSIX_SHELL_READY:
+  title "Package the TextMate grammar and LSP client VSIX shell"
+  description "Implement minimal extension activation for .pert documents, TextMate highlighting, accepted server launch or connection, offline bundled identity, workspace trust behavior, configuration and logging boundaries, and extension lifecycle. Keep semantic intelligence in the LSP and add no editor-only grammar, mutation, telemetry, network fetch, or hidden executable workspace behavior."
+  duration 6p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task VSIX_DAG_VIEW VSIX_SHELL_READY -> VSIX_DAG_READY:
+  title "Implement the read-only VS Code DAG view"
+  description "Render only the validated restricted DAG projection returned for the current LSP document version; support none, precedence, resource, and both analysis views, deterministic refresh, critical and state styling, entity-to-source navigation, accessible fallback details, Webview CSP, and explicit invalid or stale status. Do not execute arbitrary Mermaid, parse .pert in the extension, drag-edit graph state, or persist changes."
+  duration 7p
+  priority 65
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_PROTOCOL 1
+    VSIX_SURFACE 1
+
+task VSIX_ACCEPTANCE VSIX_DAG_READY -> VSIX_ACCEPTED:
+  title "Accept the VSIX and DAG view in an isolated VS Code workflow"
+  description "Verify extension packaging and inventory, supported VS Code and runtime identities, clean and untrusted workspace activation, offline server startup, diagnostics and navigation parity, DAG analysis modes, rapid edits, stale and invalid states, CSP and arbitrary-content rejection, accessibility, upgrade compatibility, uninstall cleanup, and absence of source, Git, configuration, network, telemetry, or publication side effects."
+  duration 4p
+  priority 60
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    PACKAGE_SURFACE 1
+
+gate MCP_NODE_INPUT NODE_PORTS_READY -> MCP_IMPLEMENTATION_INPUT:
+  reason "The MCP adapter requires accepted shared Node source and artifact ports"
+
+gate MCP_CONTRACT_INPUT MCP_CONTRACT_READY -> MCP_IMPLEMENTATION_INPUT:
+  reason "The MCP adapter requires the accepted read-only protocol contract"
+
+task MCP_READ_ADAPTER MCP_IMPLEMENTATION_INPUT -> MCP_READY:
+  title "Implement the fail-closed read-only MCP adapter"
+  description "Implement the accepted local resources and read-only tools over shared application and Node boundaries with closed schemas, explicit capabilities, source identity, bounded diagnostics and output, cancellation, deterministic ordering, and offline help. Do not call the CLI, infer caller authority, expose mutations, fetch remote content, update Git, or write project files."
+  duration 7p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    CORE_SURFACE 1
+    NODE_SURFACE 1
+    MCP_SURFACE 1
+
+task MCP_ACCEPTANCE MCP_READY -> MCP_ACCEPTED:
+  title "Accept the read-only MCP adapter"
+  description "Verify transport lifecycle, capability and schema closure, malformed and unknown requests, Core and CLI semantic parity, local source identity, diagnostic and output limits, cancellation, offline help, multiple clients, isolated package execution, and proof of no project, Git, configuration, network, preview, persistent mutation, or authority side effect."
+  duration 4p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    NODE_SURFACE 1
+    MCP_SURFACE 1
+    PACKAGE_SURFACE 1
+
+gate CLI_INTEGRATION_INPUT CLI_PARITY_READY -> ADAPTER_INTEGRATION_INPUT:
+  reason "Cross-surface acceptance requires unchanged CLI compatibility"
+
+gate VSIX_INTEGRATION_INPUT VSIX_ACCEPTED -> ADAPTER_INTEGRATION_INPUT:
+  reason "Cross-surface acceptance requires the accepted LSP, VSIX, and DAG view"
+
+gate MCP_INTEGRATION_INPUT MCP_ACCEPTED -> ADAPTER_INTEGRATION_INPUT:
+  reason "Cross-surface acceptance requires the accepted read-only MCP adapter"
+
+task ADAPTER_INTEGRATION_ACCEPTANCE ADAPTER_INTEGRATION_INPUT -> ADAPTER_ACCEPTED:
+  title "Accept shared adapter architecture and parity end to end"
+  description "Run dependency-boundary, type, unit, E2E, documentation, schema, command, Core parity, LSP, VSIX, DAG Webview, MCP, temporary-link, package-inventory, and isolated-installation gates across supported runtimes. Record durable acceptance and remaining write-capability backlogs while proving unchanged Grammar 6, CLI Contract 7, governance, assurance, history safety, and safe-write behavior and making no release, publication, remote, Issue, editor-write, MCP-write, or plan-advance mutation."
+  duration 5p
+  priority 55
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    ARCHITECTURE_SURFACE 1
+    CORE_SURFACE 1
+    NODE_SURFACE 1
+    CLI_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    MCP_SURFACE 1
+    PACKAGE_SURFACE 1

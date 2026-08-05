@@ -64,6 +64,66 @@
       },
       "diagnostic_codes": []
     },
+    "adapter-platform": {
+      "source_digest": "sha256:d7b986982ca913f9b2a356f2b26e7aa8db1355f9b64988d6c70dd044e89ca233",
+      "groups": {
+        "active": [],
+        "ready": [
+          "ADAPTER_ARCHITECTURE_CONTRACT"
+        ],
+        "runnable_now": [
+          "ADAPTER_ARCHITECTURE_CONTRACT"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "CORE_DEPENDENCY_CLEANUP",
+          "EDITOR_PROTOCOL_CONTRACT",
+          "MCP_READ_CONTRACT",
+          "SHARED_LIBRARY_BOUNDARY",
+          "DOCUMENT_SESSION_CORE",
+          "NODE_PORT_BOUNDARY",
+          "LSP_READ_CORE",
+          "MCP_READ_ADAPTER",
+          "CLI_FACADE_PARITY",
+          "LSP_ACCEPTANCE",
+          "VSIX_SHELL",
+          "MCP_ACCEPTANCE",
+          "VSIX_DAG_VIEW",
+          "VSIX_ACCEPTANCE",
+          "ADAPTER_INTEGRATION_ACCEPTANCE"
+        ],
+        "suspended": []
+      },
+      "recommended_task_ids": [
+        "ADAPTER_ARCHITECTURE_CONTRACT"
+      ],
+      "manual_selected_task_ids": [
+        "ADAPTER_ARCHITECTURE_CONTRACT"
+      ],
+      "tiers": {
+        "ADAPTER_ARCHITECTURE_CONTRACT": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "ADAPTER_ARCHITECTURE_CONTRACT",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": []
+    },
     "agent-guidance": {
       "source_digest": "sha256:ca06697d12d3846f72068bbbc113e20539ba717b0c23735473290dd08bd4f7f4",
       "groups": {

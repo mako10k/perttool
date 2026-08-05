@@ -21,6 +21,12 @@ Plans are separated by level of detail.
 - [agent-guidance.pert](agent-guidance.pert): detailed plan for the provider
   baseline, common contract, Core, `agent help`, and beta acceptance from
   [Issue #2](https://github.com/mako10k/perttool/issues/2)
+- [adapter-platform.pert](adapter-platform.pert): selected `ADAPTER-001`
+  cross-adapter foundation and read-only integration roadmap covering the
+  dependency contract, Core decoupling, shared library and Node ports, CLI
+  parity, document sessions, LSP, VSIX and DAG view, MCP, and integrated
+  acceptance; all 16 tasks and 91p are planned, and complete NextResult v6
+  recommends only `ADAPTER_ARCHITECTURE_CONTRACT`
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining
@@ -67,7 +73,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All thirty-three plans pass the self-use gate and are used as inputs to `document
+All thirty-four plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -80,7 +86,7 @@ that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.5.1.pert`, `release-0.5.2.pert`, `release-0.5.3.pert`,
 `release-0.5.4.pert`, `release-0.5.5.pert`, `release-0.6.0.pert`,
 `release-0.7.0.pert`, `release-0.7.1.pert`, `governance.pert`,
-`help-guide-consistency.pert`,
+`help-guide-consistency.pert`, `adapter-platform.pert`,
 `project-actuals.pert`, `plan-assurance.pert`, `advance-history-safety.pert`, and the
 scheduling-and-units plans are explicitly
 requested independent post-beta plans and are not rolled up into the completed

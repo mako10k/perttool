@@ -1,6 +1,6 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.62
+- Document status: Active Stage 3 / Revision 2.63
 - Creation date: 2026-07-21
 - Update date: 2026-08-05
 - Related design: [../basic-design.md](../basic-design.md)
@@ -22,6 +22,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/operations.pert` | Current and future DAG from formatter preview through advance | `.pert` document |
 | `plans/recommendation.pert` | MIG-01 to MIG-07 implementation/shadow/adoption DAG | `.pert` document |
 | `plans/agent-guidance.pert` | provider baseline, Core, `agent help`, and beta-acceptance DAG for Issue #2 | `.pert` document |
+| `plans/adapter-platform.pert` | Selected shared adapter architecture, Core and Node boundary, CLI parity, read-only LSP, VSIX DAG view, MCP, and integrated acceptance DAG | `.pert` document |
 | `plans/english-baseline.pert` | Post-beta migration of maintained repository surfaces to canonical English | `.pert` document |
 | `plans/governance.pert` | Independent post-beta Issue #4 owner-aware goal and DAG mutation governance roadmap | `.pert` document |
 | `plans/cli-surface-reset.pert` | Review-derived post-beta CLI/help design, implementation, migration, and acceptance DAG | `.pert` document |
@@ -1555,6 +1556,19 @@ passed. Durable acceptance is recorded in
 zero makespans and no recommendation. Both plan advances and Issue mutation
 remain separately gated.
 
+The explicitly selected `adapter-platform.pert` workstream composes the
+previously separate LSP, VSIX, and MCP backlogs behind one accepted shared
+architecture boundary without making MCP depend on the editor branch. Its 16
+tasks total 91p and cover the cross-adapter dependency contract, reverse-
+dependency cleanup, shared library and Node ports, CLI compatibility,
+versioned editor protocol, document session, read-only LSP, VSIX shell and DAG
+Webview, fail-closed read-only MCP, and integrated acceptance. Precedence
+makespan is 61p; the `parallel-sgs` version 1 heuristic resource makespan is
+79p with 18p resource delay. Inherited velocity `29p/2d` yields 4.207d and
+5.448d forecasts. Complete NextResult v6 recommends only
+`ADAPTER_ARCHITECTURE_CONTRACT`. Editor and MCP mutation, release selection,
+publication, remote writes, Issue mutation, and plan advance remain separate.
+
 Stage 1 allowed operations:
 
 - check
@@ -1934,7 +1948,7 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-three current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-four current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty
