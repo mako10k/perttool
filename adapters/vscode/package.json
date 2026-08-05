@@ -28,7 +28,9 @@
   },
   "activationEvents": [
     "onLanguage:pert",
-    "onCommand:perttool.openHelp"
+    "onCommand:perttool.openHelp",
+    "onCommand:perttool.showDag",
+    "onView:perttool.dag"
   ],
   "contributes": {
     "languages": [
@@ -56,8 +58,23 @@
         "command": "perttool.openHelp",
         "title": "perttool: Open Diagnostic Help",
         "enablement": "editorLangId == pert"
+      },
+      {
+        "command": "perttool.showDag",
+        "title": "perttool: Show DAG",
+        "enablement": "editorLangId == pert"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "perttool.dag",
+          "name": "perttool DAG",
+          "type": "webview",
+          "when": "resourceLangId == pert"
+        }
+      ]
+    }
   },
   "files": [
     "dist",

@@ -1,0 +1,150 @@
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  color: var(--vscode-foreground);
+  background: var(--vscode-sideBar-background);
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  margin: 0;
+  padding: 0.75rem;
+}
+
+header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+h1 {
+  flex: 1 1 auto;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+h2,
+h3 {
+  font-size: 1rem;
+}
+
+select,
+button {
+  color: var(--vscode-button-foreground);
+  background: var(--vscode-button-background);
+  border: 1px solid var(--vscode-button-border, transparent);
+  border-radius: 2px;
+  font: inherit;
+}
+
+select:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}
+
+button {
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+  text-align: left;
+  width: 100%;
+}
+
+button:hover {
+  background: var(--vscode-button-hoverBackground);
+}
+
+#status {
+  border-left: 3px solid var(--vscode-editorInfo-foreground);
+  min-height: 1.4rem;
+  padding-left: 0.5rem;
+}
+
+#status[data-state="invalid"],
+#status[data-state="unavailable"],
+#status[data-state="stale"] {
+  border-left-color: var(--vscode-editorWarning-foreground);
+}
+
+#graph {
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-panel-border);
+  display: block;
+  min-height: 15rem;
+  overflow: auto;
+  width: 100%;
+}
+
+.edge line {
+  marker-end: url("#dag-arrow");
+  stroke: var(--vscode-charts-foreground);
+  stroke-width: 2;
+}
+
+.edge text,
+.milestone text {
+  fill: var(--vscode-foreground);
+  font-size: 12px;
+  text-anchor: middle;
+}
+
+.edge.critical line,
+.milestone.critical circle {
+  stroke: var(--vscode-editorError-foreground);
+  stroke-width: 4;
+}
+
+.edge.schedule-critical line {
+  stroke-dasharray: 8 4;
+}
+
+.edge.status-active line {
+  stroke: var(--vscode-charts-blue);
+}
+
+.edge.status-blocked line,
+.edge.status-suspended line {
+  stroke: var(--vscode-charts-orange);
+}
+
+.edge.status-done line {
+  stroke: var(--vscode-charts-green);
+}
+
+.edge.kind-gate line {
+  stroke-dasharray: 3 3;
+}
+
+.milestone circle {
+  fill: var(--vscode-editor-background);
+  stroke: var(--vscode-charts-foreground);
+  stroke-width: 2;
+}
+
+.milestone.reached circle {
+  fill: var(--vscode-charts-green);
+}
+
+#dag-arrow path {
+  fill: var(--vscode-charts-foreground);
+}
+
+ol,
+ul {
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-block: 0.3rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

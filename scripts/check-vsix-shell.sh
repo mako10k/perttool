@@ -20,6 +20,8 @@ npm run package:list --workspace perttool-vscode-private >"$inventory"
 for required in \
   dist/extension.cjs \
   dist/server/main.cjs \
+  dist/webview/dag.css \
+  dist/webview/dag.js \
   language-configuration.json \
   syntaxes/pert.tmLanguage.json; do
   if ! grep -Fx "$required" "$inventory" >/dev/null; then
@@ -28,8 +30,8 @@ for required in \
   fi
 done
 
-if grep -E '(^|/)(node_modules|webview|media)/' "$inventory" >/dev/null; then
-  printf 'VSIX shell inventory contains an unaccepted dependency or Webview path\n' >&2
+if grep -E '(^|/)(node_modules|media)/' "$inventory" >/dev/null; then
+  printf 'VSIX inventory contains an unaccepted dependency or source asset path\n' >&2
   exit 1
 fi
 
@@ -39,11 +41,13 @@ mkdir -p "$unpacked"
 unzip -q "$vsix_path" -d "$unpacked"
 
 if [[ ! -f "$unpacked/extension/dist/extension.cjs" || \
-      ! -f "$unpacked/extension/dist/server/main.cjs" ]]; then
-  printf 'packaged VSIX shell is missing its client or bundled server\n' >&2
+      ! -f "$unpacked/extension/dist/server/main.cjs" || \
+      ! -f "$unpacked/extension/dist/webview/dag.css" || \
+      ! -f "$unpacked/extension/dist/webview/dag.js" ]]; then
+  printf 'packaged VSIX is missing its client, server, or DAG assets\n' >&2
   exit 1
 fi
 
 "$node_binary" "$repository_root/scripts/check-lsp-isolated.mjs" \
   "$unpacked/extension/dist/server/main.cjs"
-printf 'isolated VSIX shell acceptance passed\n'
+printf 'isolated VSIX shell and DAG implementation gate passed\n'

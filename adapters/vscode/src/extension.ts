@@ -15,6 +15,7 @@ import {
   parseEditorHelpResult,
   parseOpenHelpCommandArgs,
 } from "./bindings.js";
+import { DagViewProvider, dagViewId } from "./dag-view.js";
 
 const helpScheme = "perttool-help";
 let client: LanguageClient | undefined;
@@ -89,10 +90,29 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     clientOptions,
   );
 
+  const dag = new DagViewProvider({
+    extensionUri: context.extensionUri,
+    client: () => client,
+    customCapabilitiesAvailable: () => customCapabilitiesAvailable,
+    output,
+  });
+
   context.subscriptions.push(
     output,
     help,
+    dag,
     vscode.workspace.registerTextDocumentContentProvider(helpScheme, help),
+    vscode.window.registerWebviewViewProvider(dagViewId, dag),
+    vscode.window.onDidChangeActiveTextEditor(() => dag.scheduleRefresh()),
+    vscode.workspace.onDidChangeTextDocument(({ document }) => {
+      dag.documentChanged(document);
+    }),
+    vscode.workspace.onDidCloseTextDocument((document) => {
+      dag.documentClosed(document);
+    }),
+    vscode.commands.registerCommand("perttool.showDag", async () => {
+      await dag.show();
+    }),
     vscode.commands.registerCommand("perttool.openHelp", async (value: unknown) => {
       const args = parseOpenHelpCommandArgs(value);
       if (
@@ -147,6 +167,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         "Custom perttool Help and DAG capabilities are unavailable: incompatible editor protocol handshake.",
       );
     }
+    dag.scheduleRefresh(0);
   } catch (error) {
     output.error(`Language server startup failed: ${String(error)}`);
     await vscode.window.showErrorMessage(

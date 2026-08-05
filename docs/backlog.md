@@ -793,9 +793,9 @@ Priority: Selected cross-adapter foundation
 
 Status: Architecture, Core dependency cleanup, and shared-library boundary
 accepted; editor protocol contract accepted; document-session Core, read-only
-LSP Core, isolated LSP package, private VSIX shell, and Node Host boundary
-accepted; read-only MCP contract and private MCP implementation accepted
-(2026-08-05; retained before advance)
+LSP Core, isolated LSP package, private VSIX shell and DAG Webview, and Node
+Host boundary accepted; read-only MCP contract and private MCP implementation
+accepted (2026-08-05; retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -848,7 +848,14 @@ fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation,
 untrusted and virtual workspace support, closed version-bound virtual Help,
 and an offline bundled server in a disposable eleven-file VSIX. `VSIX_SHELL`
 is complete with exact lifecycle evidence and retained before advance. Eight
-tasks and 41p remain at that shell acceptance snapshot. The accepted [Node
+tasks and 41p remain at that shell acceptance snapshot. The [DAG view
+implementation acceptance](process/adapter-vsix-dag-view-acceptance.md) adds
+the current fourteen-file private VSIX, `perttool.dag`, all four exact
+GraphView modes, closed version-bound messages, binding-checked source
+navigation, restrictive local CSP assets, deterministic SVG presentation, and
+an accessible exact-value outline without duplicating PERT semantics.
+`VSIX_DAG_VIEW` is complete with exact lifecycle evidence and retained before
+advance. The accepted [Node
 Host boundary](specs/node-host-boundary.md) and its [acceptance
 record](process/adapter-node-host-acceptance.md) now add a six-port inward
 contract, portable semantic SHA-256, and one default Node composition while
@@ -867,10 +874,10 @@ eight-source workspace, direct Application parity, exact four-resource and
 five-tool discovery, digest-bound sources, self-contained schemas, hard
 limits, and modern-only protocol stream without Git, persistence, or a CLI
 subprocess. `MCP_READ_ADAPTER` is complete with exact lifecycle evidence and
-retained before advance. Five tasks and 25p remain; precedence makespan is 16p
-and the heuristic resource makespan is 25p with 9p resource delay. Complete
-NextResult v6 recommends and makes startable only `VSIX_DAG_VIEW`;
-`CLI_FACADE_PARITY` and `MCP_ACCEPTANCE` are ready but deferred by the current
+retained before advance. Four tasks and 18p remain; precedence makespan is 10p
+and the heuristic resource makespan is 18p with 8p resource delay. Complete
+NextResult v6 recommends and makes startable only `CLI_FACADE_PARITY`;
+`MCP_ACCEPTANCE` and `VSIX_ACCEPTANCE` are ready but deferred by the current
 resource-feasible selection.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP

@@ -36,7 +36,7 @@ test("VSIX shell cases are complete and dependency ordered", async () => {
   );
 });
 
-test("VSIX manifest activates one private read-only workspace extension", async () => {
+test("VSIX manifest retains the private shell while adding the accepted DAG view", async () => {
   const [manifestText, grammarText, configurationText] = await Promise.all([
     repositoryText("adapters/vscode/package.json"),
     repositoryText("adapters/vscode/syntaxes/pert.tmLanguage.json"),
@@ -56,6 +56,8 @@ test("VSIX manifest activates one private read-only workspace extension", async 
   assert.deepEqual(manifest.activationEvents, [
     "onLanguage:pert",
     "onCommand:perttool.openHelp",
+    "onCommand:perttool.showDag",
+    "onView:perttool.dag",
   ]);
   assert.equal(manifest.devDependencies["vscode-languageclient"], "9.0.1");
   assert.deepEqual(manifest.dependencies ?? {}, {});
@@ -64,10 +66,10 @@ test("VSIX manifest activates one private read-only workspace extension", async 
   assert.equal(manifest.contributes.grammars[0].scopeName, "source.pert");
   assert.equal(grammar.scopeName, "source.pert");
   assert.equal(configuration.comments.lineComment, "#");
-  assert.equal("views" in manifest.contributes, false);
+  assert.equal(manifest.contributes.views.explorer[0].id, "perttool.dag");
 });
 
-test("VSIX client owns only handshake, Help presentation, and bundled stdio", async () => {
+test("VSIX client retains handshake, Help, DAG presentation, and bundled stdio", async () => {
   const [extension, bindings, build, gate, rootManifestText] = await Promise.all([
     repositoryText("adapters/vscode/src/extension.ts"),
     repositoryText("adapters/vscode/src/bindings.ts"),
@@ -80,13 +82,14 @@ test("VSIX client owns only handshake, Help presentation, and bundled stdio", as
   assert.match(extension, /documentSelector: \[\{ language: "pert" \}\]/u);
   assert.match(extension, /isTrusted: false/u);
   assert.match(extension, /registerTextDocumentContentProvider/u);
+  assert.match(extension, /registerWebviewViewProvider/u);
   assert.match(extension, /document\.version === args\.documentVersion/u);
   assert.match(bindings, /Perttool\.EditorHelpResult\.v1/u);
   assert.match(bindings, /Perttool\.GraphViewResult\.v1/u);
   assert.match(build, /\.\.\/lsp\/src\/main\.ts/u);
   assert.match(build, /external: \["vscode"\]/u);
   assert.equal(/node:fs|node:net|node:http/u.test(extension), false);
-  assert.equal(/Webview|createWebviewPanel|registerWebviewViewProvider/u.test(extension), false);
+  assert.match(extension, /DagViewProvider/u);
   assert.match(gate, /check-lsp-isolated\.mjs/u);
   assert.match(rootManifest.scripts.check, /check:vsix-shell/u);
   const mode = (await stat(path.join(root, "scripts/check-vsix-shell.sh"))).mode;

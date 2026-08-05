@@ -1,4 +1,4 @@
-import { mkdir, rm } from "node:fs/promises";
+import { copyFile, mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
@@ -8,6 +8,7 @@ const dist = path.join(workspace, "dist");
 
 await rm(dist, { force: true, recursive: true });
 await mkdir(path.join(dist, "server"), { recursive: true });
+await mkdir(path.join(dist, "webview"), { recursive: true });
 
 await Promise.all([
   build({
@@ -21,6 +22,17 @@ await Promise.all([
     platform: "node",
     sourcemap: true,
     target: "node22",
+  }),
+  build({
+    absWorkingDir: workspace,
+    bundle: true,
+    entryPoints: ["src/webview.ts"],
+    format: "iife",
+    legalComments: "none",
+    outfile: "dist/webview/dag.js",
+    platform: "browser",
+    sourcemap: true,
+    target: "es2022",
   }),
   build({
     absWorkingDir: workspace,
@@ -44,4 +56,8 @@ await Promise.all([
     sourcemap: true,
     target: "node22",
   }),
+  copyFile(
+    path.join(workspace, "webview", "dag.css"),
+    path.join(dist, "webview", "dag.css"),
+  ),
 ]);

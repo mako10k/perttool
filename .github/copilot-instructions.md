@@ -171,8 +171,8 @@ Mandatory summary:
   `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
   `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`,
   `DOCUMENT_SESSION_CORE`, `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`,
-  `NODE_PORT_BOUNDARY`, `MCP_READ_CONTRACT`, and `MCP_READ_ADAPTER` are
-  complete and retained before advance. Their
+  `VSIX_DAG_VIEW`, `NODE_PORT_BOUNDARY`, `MCP_READ_CONTRACT`, and
+  `MCP_READ_ADAPTER` are complete and retained before advance. Their
   accepted specifications and records fix
   the 121-export, 44-command, 20-schema, zero-production-dependency baseline;
   exact twelve-file/nineteen-import migration input; layer and distribution
@@ -197,8 +197,12 @@ Mandatory summary:
   Node.js 22 gate. The private `adapters/vscode` workspace fixes VS Code
   `^1.101.0`, exact language client 9.0.1, lazy `.pert`/Help activation,
   TextMate presentation, untrusted/virtual workspace support, closed virtual
-  Help, and an offline bundled server in an accepted eleven-file disposable
-  VSIX. The accepted read-only MCP contract fixes final revision `2026-07-28`,
+  Help, and an offline bundled server. Its current fourteen-file private VSIX
+  adds the `perttool.dag` Webview, four exact GraphView modes, closed
+  version-bound messages, binding-checked source navigation, restrictive CSP,
+  deterministic SVG presentation, and an accessible exact-value outline; its
+  record is `docs/process/adapter-vsix-dag-view-acceptance.md`. The accepted
+  read-only MCP contract fixes final revision `2026-07-28`,
   exact stable server SDK `2.0.0`, local stdio, four immutable JSON resources,
   five closed read-only tools, exact inline and digest-bound registered
   sources, adapter-owned result schemas, failure ownership, hard limits, and
@@ -206,12 +210,12 @@ Mandatory summary:
   workspace now implements the exact modern-only stdio server, direct
   Application parity, self-contained adapter schemas, digest-bound sources,
   and the accepted hard limits without Git or persistence calls. Its record is
-  `docs/process/adapter-mcp-read-adapter-acceptance.md`. Five tasks and 25p
-  remain; precedence makespan is 16p and the `parallel-sgs` version 1
-  heuristic resource makespan is 25p with 9p resource delay. Complete
-  NextResult v6 recommends and makes startable only `VSIX_DAG_VIEW`;
-  `CLI_FACADE_PARITY` and `MCP_ACCEPTANCE` are ready but deferred by the
-  current resource-feasible selection.
+  `docs/process/adapter-mcp-read-adapter-acceptance.md`. Four tasks and 18p
+  remain; precedence makespan is 10p and the `parallel-sgs` version 1
+  heuristic resource makespan is 18p with 8p resource delay. Complete
+  NextResult v6 recommends and makes startable only `CLI_FACADE_PARITY`;
+  `MCP_ACCEPTANCE` and `VSIX_ACCEPTANCE` are ready but deferred by the current
+  resource-feasible selection.
   Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.

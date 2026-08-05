@@ -1,0 +1,21 @@
+{
+  "schema_version": "Perttool.VsixDagViewCases.v1",
+  "editor_protocol_model_version": 1,
+  "graph_result_schema_version": "Perttool.GraphViewResult.v1",
+  "view_id": "perttool.dag",
+  "analysis_modes": ["none", "precedence", "resource", "both"],
+  "cases": [
+    {"id": "VDV-001", "depends_on": [], "boundary": "manifest_and_activation"},
+    {"id": "VDV-002", "depends_on": ["VDV-001"], "boundary": "closed_graph_result_validation"},
+    {"id": "VDV-003", "depends_on": ["VDV-002"], "boundary": "current_document_binding"},
+    {"id": "VDV-004", "depends_on": ["VDV-003"], "boundary": "four_analysis_modes"},
+    {"id": "VDV-005", "depends_on": ["VDV-003"], "boundary": "invalid_stale_and_cancelled_clear"},
+    {"id": "VDV-006", "depends_on": ["VDV-004"], "boundary": "deterministic_visual_layout"},
+    {"id": "VDV-007", "depends_on": ["VDV-006"], "boundary": "critical_and_state_styling"},
+    {"id": "VDV-008", "depends_on": ["VDV-003"], "boundary": "binding_checked_source_navigation"},
+    {"id": "VDV-009", "depends_on": ["VDV-004", "VDV-008"], "boundary": "closed_webview_messages"},
+    {"id": "VDV-010", "depends_on": ["VDV-009"], "boundary": "restrictive_csp_and_local_assets"},
+    {"id": "VDV-011", "depends_on": ["VDV-006", "VDV-010"], "boundary": "escaped_content_and_accessibility"},
+    {"id": "VDV-012", "depends_on": ["VDV-005", "VDV-007", "VDV-011"], "boundary": "read_only_side_effect_closure"}
+  ]
+}

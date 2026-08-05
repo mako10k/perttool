@@ -272,6 +272,7 @@ task VSIX_DAG_VIEW VSIX_SHELL_READY -> VSIX_DAG_READY:
   title "Implement the read-only VS Code DAG view"
   description "Render only the validated restricted DAG projection returned for the current LSP document version; support none, precedence, resource, and both analysis views, deterministic refresh, critical and state styling, entity-to-source navigation, accessible fallback details, Webview CSP, and explicit invalid or stale status. Do not execute arbitrary Mermaid, parse .pert in the extension, drag-edit graph state, or persist changes."
   duration 7p
+  status done
   priority 65
   requires:
     DEVELOPERS 1
@@ -513,3 +514,18 @@ work_event WE-c1c6559db94c1b46f5bebbf5e13456ff8384fd54823114309cb4d30fedf1c3d4:
   occurred_at 2026-08-05T20:20:00+09:00
   active_time 769/1800h
   effort 769/1800ph
+
+work_event WE-63b3bcf32301fec90e3180bfc216ad4b86149baac39a0696adb6b4306b63ccd0:
+  model 1
+  task VSIX_DAG_VIEW
+  kind start
+  occurred_at 2026-08-05T20:33:00+09:00
+  planned_value 7p
+
+work_event WE-330a1dfb80ee57a9ebdc9fafbc1702827eeebdc7f9b3b31bc806c4de872c20fd:
+  model 1
+  task VSIX_DAG_VIEW
+  kind finish
+  occurred_at 2026-08-05T20:43:00+09:00
+  active_time 1/6h
+  effort 1/6ph

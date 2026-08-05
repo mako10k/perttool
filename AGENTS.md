@@ -289,7 +289,7 @@ read-only MCP adapter, and cross-surface acceptance.
 `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
 `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
 `DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
-state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`, and
+state. `LSP_READ_CORE`, `LSP_ACCEPTANCE`, `VSIX_SHELL`, `VSIX_DAG_VIEW`, and
 `NODE_PORT_BOUNDARY` are also complete and retained before advance.
 `MCP_READ_CONTRACT` and `MCP_READ_ADAPTER` are complete and retained before
 advance. The accepted
@@ -333,8 +333,14 @@ lazy `.pert`/Help activation, presentation-only TextMate highlighting,
 untrusted and virtual workspace support, a closed version-bound virtual Help
 bridge, and an exact offline bundled server. Its disposable eleven-file VSIX
 and Node.js 22 server smoke are accepted in
-`docs/process/adapter-vsix-shell-acceptance.md`. The Node Host implementation
-and gate are recorded in `docs/process/adapter-node-host-acceptance.md`.
+`docs/process/adapter-vsix-shell-acceptance.md`. The current fourteen-file
+private VSIX adds the `perttool.dag` Webview, four exact GraphView modes,
+closed version-bound messages, binding-checked source navigation, restrictive
+local CSP assets, deterministic SVG presentation, and an accessible exact-
+value outline without moving semantics into the extension. Its implementation
+record is `docs/process/adapter-vsix-dag-view-acceptance.md`. The Node Host
+implementation and gate are recorded in
+`docs/process/adapter-node-host-acceptance.md`.
 The accepted `docs/specs/mcp-read-contract.md` and
 `docs/process/adapter-mcp-read-contract-acceptance.md` fix final MCP revision
 `2026-07-28`, exact stable server SDK `2.0.0`, local stdio, four immutable JSON
@@ -347,10 +353,10 @@ schemas, hard limits, and direct Application parity without invoking Git,
 persistence, or the CLI. Its implementation record is
 `docs/process/adapter-mcp-read-adapter-acceptance.md`.
 `MCP_READ_CONTRACT` and `MCP_READ_ADAPTER` are complete and retained before
-advance. Five tasks and 25p remain. Precedence makespan is 16p; the
-`parallel-sgs` version 1 heuristic resource makespan is 25p with 9p resource
+advance. Four tasks and 18p remain. Precedence makespan is 10p; the
+`parallel-sgs` version 1 heuristic resource makespan is 18p with 8p resource
 delay. Complete NextResult v6 recommends and makes startable only
-`VSIX_DAG_VIEW`; `CLI_FACADE_PARITY` and `MCP_ACCEPTANCE` are ready but
+`CLI_FACADE_PARITY`; `MCP_ACCEPTANCE` and `VSIX_ACCEPTANCE` are ready but
 deferred by the current resource-feasible selection.
 Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
@@ -689,7 +695,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
 - `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
 - `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and GraphView wire results, and no public-package inclusion.
-- `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual workspace support, and no DAG Webview or public publication identity yet.
+- `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual workspace support, and a restrictive read-only GraphView DAG Webview without public publication identity.
 - `adapters/mcp/`: private Node.js 22 MCP workspace with exact server SDK 2.0.0, modern-only 2026-07-28 local stdio, four immutable resources, five fail-closed read-only tools, digest-bound inline or launcher-registered sources, self-contained output schemas, and no public-package inclusion.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
