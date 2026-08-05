@@ -65,20 +65,19 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:9270caead5ca1abf0c9e6bd76f37a878c3a1a6fbd7b98f69868c3928064194de",
+      "source_digest": "sha256:69f14c31ab56cb8df4f7d03ef05baf90b1a25e20868488b6da9163d4624d33f4",
       "groups": {
         "active": [],
         "ready": [
-          "CORE_DEPENDENCY_CLEANUP",
           "EDITOR_PROTOCOL_CONTRACT",
-          "MCP_READ_CONTRACT"
+          "MCP_READ_CONTRACT",
+          "SHARED_LIBRARY_BOUNDARY"
         ],
         "runnable_now": [
-          "CORE_DEPENDENCY_CLEANUP"
+          "EDITOR_PROTOCOL_CONTRACT"
         ],
         "blocked_now": [],
         "upcoming": [
-          "SHARED_LIBRARY_BOUNDARY",
           "DOCUMENT_SESSION_CORE",
           "NODE_PORT_BOUNDARY",
           "LSP_READ_CORE",
@@ -94,52 +93,32 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "CORE_DEPENDENCY_CLEANUP"
+        "SHARED_LIBRARY_BOUNDARY"
       ],
       "manual_selected_task_ids": [
-        "CORE_DEPENDENCY_CLEANUP"
+        "EDITOR_PROTOCOL_CONTRACT"
       ],
       "tiers": {
-        "CORE_DEPENDENCY_CLEANUP": "recommended",
+        "SHARED_LIBRARY_BOUNDARY": "recommended",
         "EDITOR_PROTOCOL_CONTRACT": "deferred",
         "MCP_READ_CONTRACT": "deferred"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "CORE_DEPENDENCY_CLEANUP",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        },
-        {
           "id": "EDITOR_PROTOCOL_CONTRACT",
-          "runnable_now": false,
+          "runnable_now": true,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "10/1",
-          "resource_rejections": [
-            {
-              "resource_id": "ARCHITECTURE_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "CORE_DEPENDENCY_CLEANUP"
-              ]
-            }
-          ]
+          "total_float": "2/1",
+          "resource_rejections": []
         },
         {
           "id": "MCP_READ_CONTRACT",
           "runnable_now": false,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "35/1",
+          "total_float": "27/1",
           "resource_rejections": [
             {
               "resource_id": "ARCHITECTURE_SURFACE",
@@ -149,7 +128,49 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "CORE_DEPENDENCY_CLEANUP"
+                "EDITOR_PROTOCOL_CONTRACT"
+              ]
+            },
+            {
+              "resource_id": "REVIEWERS",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "EDITOR_PROTOCOL_CONTRACT"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SHARED_LIBRARY_BOUNDARY",
+          "runnable_now": false,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": [
+            {
+              "resource_id": "ARCHITECTURE_SURFACE",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "EDITOR_PROTOCOL_CONTRACT"
+              ]
+            },
+            {
+              "resource_id": "REVIEWERS",
+              "capacity": 1,
+              "used_before_decision": 1,
+              "required": 1,
+              "deficit": 1,
+              "active_task_ids": [],
+              "earlier_selected_task_ids": [
+                "EDITOR_PROTOCOL_CONTRACT"
               ]
             }
           ]
@@ -158,10 +179,10 @@
       "record_counts": {
         "task_decisions": 3,
         "decision_steps": 18,
-        "facts": 76,
+        "facts": 98,
         "comparisons": 4,
-        "reasons": 12,
-        "descriptions": 7
+        "reasons": 14,
+        "descriptions": 9
       },
       "diagnostic_codes": [
         "PTDAG-208"

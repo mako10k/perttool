@@ -1,4 +1,4 @@
-import { checkDocument, type CheckOptions } from "../application/check.js";
+import { checkDocument, type CheckOptions } from "../semantic/check.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import {
   canonicalizeEventDateTimeSourceToken,

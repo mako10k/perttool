@@ -143,6 +143,7 @@ task CORE_DEPENDENCY_CLEANUP ADAPTER_CONTRACT_ACCEPTED -> CORE_DECOUPLED:
   title "Remove reverse dependencies from reusable Core modules"
   description "Move shared option, result, temporal, validation, projection, and hashing contracts to their accepted neutral owners; invert formatter, conversion, mutation, recommendation, assurance, analysis, and I/O composition so lower layers no longer import application orchestration. Add executable dependency-boundary checks and prove unchanged Grammar 1 through 6 and public result behavior."
   duration 8p
+  status done
   priority 95
   requires:
     DEVELOPERS 1
@@ -353,3 +354,18 @@ work_event WE-44309124bb0602a9e8d839588cd2f83ae9485e168570b3eb1125549dce4cb579:
   occurred_at 2026-08-05T04:40:13+00:00
   active_time 701/3600h
   effort 701/3600ph
+
+work_event WE-baaba75191acd691ad29597e4837a36ba9802051addab5a59646e99c4bb3bc35:
+  model 1
+  task CORE_DEPENDENCY_CLEANUP
+  kind start
+  occurred_at 2026-08-05T13:52:27+09:00
+  planned_value 8p
+
+work_event WE-2c16eecbee8fd831d1fd192c68d664c2dc282f150913137efcdcae959b5d7957:
+  model 1
+  task CORE_DEPENDENCY_CLEANUP
+  kind finish
+  occurred_at 2026-08-05T14:03:35+09:00
+  active_time 167/900h
+  effort 167/900ph

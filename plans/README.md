@@ -25,9 +25,10 @@ Plans are separated by level of detail.
   cross-adapter foundation and read-only integration roadmap covering the
   dependency contract, Core decoupling, shared library and Node ports, CLI
   parity, document sessions, LSP, VSIX and DAG view, MCP, and integrated
-  acceptance; `ADAPTER_ARCHITECTURE_CONTRACT` is complete and retained before
-  advance, 15 tasks and 85p remain, and complete NextResult v6 recommends only
-  `CORE_DEPENDENCY_CLEANUP`
+  acceptance; `ADAPTER_ARCHITECTURE_CONTRACT` and
+  `CORE_DEPENDENCY_CLEANUP` are complete and retained before advance, 14 tasks
+  and 77p remain, and complete NextResult v6 recommends and permits only
+  `SHARED_LIBRARY_BOUNDARY`
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining

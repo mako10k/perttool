@@ -1,4 +1,4 @@
-import type { CheckOptions } from "../application/check.js";
+import type { CheckOptions } from "../semantic/check.js";
 import type { GovernanceRequestInput } from "../governance/types.js";
 import type { PrincipalId } from "../governance/source.js";
 import type { Diagnostic } from "../model/diagnostics.js";

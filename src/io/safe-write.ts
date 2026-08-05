@@ -9,7 +9,7 @@ import {
   type FileHandle,
 } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
-import { checkDocument } from "../application/check.js";
+import { checkDocument } from "../semantic/check.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import {
   digestDocumentBytes,

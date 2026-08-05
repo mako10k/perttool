@@ -15,7 +15,10 @@ import {
 } from "../conversion/mermaid-import.js";
 import type { DocumentNode } from "../model/syntax.js";
 import { TARGET_GRAMMAR_6_CAPABILITY } from "../parser/document-parser.js";
-import { checkDocument } from "./contract7-assurance.js";
+import {
+  analyzeDocument,
+  checkDocument,
+} from "./contract7-assurance.js";
 
 export interface Contract7MermaidExportOptions extends MermaidExportOptions {
   readonly allowLoss?: boolean;
@@ -54,6 +57,7 @@ export function exportMermaid(
         ? {}
         : { maxDiagnostics: options.maxDiagnostics }),
     },
+    analyzeDocument,
   );
   return Object.freeze({
     ok: result.ok,
@@ -84,6 +88,7 @@ export function importMermaid(
   const result = importPlanAssuranceMermaid(
     text,
     TARGET_GRAMMAR_6_CAPABILITY,
+    analyzeDocument,
   );
   const checked = checkDocument(result.sourceText ?? "", {
     ...(options.maxDiagnostics === undefined

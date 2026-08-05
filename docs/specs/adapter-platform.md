@@ -72,11 +72,12 @@ The contract baseline was captured from the committed `0.7.1` source on
 The machine-readable baseline and acceptance cases are
 [`adapter-platform-contract-v1.json`](../../test/fixtures/adapter-platform-contract-v1.json).
 
-### 3.1 Existing reverse dependencies
+### 3.1 Captured reverse-dependency input
 
-The active source has twelve lower-layer files containing nineteen imports
-from `src/application/`. These imports are accepted only as measured migration
-input for `CORE_DEPENDENCY_CLEANUP`; they are not the target architecture.
+The architecture-contract snapshot had twelve lower-layer files containing
+nineteen imports from `src/application/`. These imports are retained as exact
+historical migration input for `CORE_DEPENDENCY_CLEANUP`; they are not the
+target architecture or a continuing allowlist.
 
 | Current owner | Files | Imports into `application/` |
 | --- | ---: | ---: |
@@ -88,10 +89,35 @@ input for `CORE_DEPENDENCY_CLEANUP`; they are not the target architecture.
 | `mutation/` | 2 | 2 |
 | `recommendation/` | 1 | 2 |
 
-The fixture records every exact source and target import. The next task MUST
-remove the reverse dependencies by relocating neutral contracts or inverting
-their use; it MUST NOT hide them with broad allowlists, dynamic imports, or a
-second copy of the same result type.
+The architecture fixture records every exact source and target import. The
+accepted cleanup relocates each reusable implementation or inverts its
+consumer dependency. It does not hide an import with a broad allowlist,
+dynamic import, or a second copy of the same result type.
+
+### 3.2 Accepted cleanup state
+
+After `CORE_DEPENDENCY_CLEANUP`, source outside `src/application/` may import
+Application modules only from the two exact composition/facade files
+`src/cli.ts` and `src/index.ts`. Every other source file has zero imports into
+`src/application/`.
+
+The retained compatibility facades and neutral owners are:
+
+| Compatibility facade | Neutral implementation owner |
+| --- | --- |
+| `src/application/check.ts` | `src/semantic/check.ts` |
+| `src/application/analyze.ts` | `src/analysis/service.ts` |
+| `src/application/mutate.ts` | `src/mutation/planner.ts` |
+| `src/application/target-mutate.ts` | `src/mutation/target-planner.ts` |
+| `src/application/target-temporal-input.ts` | `src/analysis/target-temporal-input.ts` |
+
+Plan-assurance Mermaid projection receives its Application analyzer through
+the inward `PlanAssuranceMermaidAnalyzer` function port. Recommendation
+override validation owns the narrow `OverrideValidationSource` projection it
+consumes. Neither lower module imports Application orchestration.
+
+The executable boundary and compatibility cases are fixed by
+[`adapter-core-dependency-cases-v1.json`](../../test/fixtures/adapter-core-dependency-cases-v1.json).
 
 ## 4. Target dependency model
 
@@ -148,9 +174,10 @@ Additional rules apply.
 
 ## 5. Logical ownership
 
-The existing directory names do not by themselves grant a layer. During
-migration, an executable manifest will classify modules by the following
-logical ownership.
+The existing directory names do not by themselves grant a layer. The
+executable boundary manifest classifies modules by the following logical
+ownership, and later tasks extend that classification as new ports and
+adapters are added.
 
 | Ownership | Responsibilities |
 | --- | --- |

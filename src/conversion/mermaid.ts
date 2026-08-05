@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
-import type { AnalysisMode, AnalysisResult } from "../application/analyze.js";
-import { analyzeDocument } from "../application/analyze.js";
-import { checkDocument } from "../application/check.js";
+import type { AnalysisMode, AnalysisResult } from "../analysis/service.js";
+import { analyzeDocument } from "../analysis/service.js";
+import { checkDocument } from "../semantic/check.js";
 import { computeEffectiveReached } from "../analysis/graph.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";

@@ -1,8 +1,8 @@
 import type {
   TargetTemporalCause,
   TargetTemporalInputProjection,
-} from "../application/target-temporal-input.js";
-import { assertTemporalScheduleStatusProjection } from "../application/target-temporal-input.js";
+} from "./target-temporal-input.js";
+import { assertTemporalScheduleStatusProjection } from "./target-temporal-input.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import type { Rational } from "../model/rational.js";
 import {

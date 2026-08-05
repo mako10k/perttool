@@ -55,11 +55,11 @@ import {
 } from "./governance.js";
 import {
   mergeBatchInsertions,
-} from "../application/mutate.js";
+} from "../mutation/planner.js";
 import {
   planTargetGrammar6AtomicMutationEdits,
   planTargetGrammar6BatchMutation,
-} from "../application/target-mutate.js";
+} from "../mutation/target-planner.js";
 import { projectPlanAssuranceInput } from "./source.js";
 import type {
   AcceptedPlanningInputV1,

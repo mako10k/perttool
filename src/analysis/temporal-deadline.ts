@@ -4,7 +4,7 @@ import type {
   TargetEffectiveProjection,
   TargetTemporalExactValue,
   TargetTemporalInputProjection,
-} from "../application/target-temporal-input.js";
+} from "./target-temporal-input.js";
 import {
   projectRelativeCalendarValue,
   subtractCalendarValues,

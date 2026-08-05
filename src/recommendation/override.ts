@@ -1,13 +1,14 @@
 import { createHash } from "node:crypto";
-import type {
-  Contract7NextResultV6,
-  NextResultV6,
-} from "../application/contract7-assurance.js";
-import type { TargetActualsNextResultV5 } from "../application/target-actuals-analysis.js";
+import type { PlanAssuranceStartAuthorityV1 } from "../assurance/authority.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";
 import { fieldNamed } from "../model/syntax.js";
 import type {
+  DocumentNode,
+  RequirementValue,
+} from "../model/syntax.js";
+import type {
+  RecommendationAnalysis,
   RecommendationEntityReference,
   RecommendationExpression,
   RecommendationExpressionTerm,
@@ -30,10 +31,44 @@ import type {
 } from "./override-types.js";
 import { TOOL_VERSION } from "../version.js";
 
-type OverrideSource = Omit<
-  TargetActualsNextResultV5,
-  "schemaVersion" | "temporal"
-> & Pick<NextResultV6, "schemaVersion" | "temporal">;
+interface OverrideSourceAuthority extends PlanAssuranceStartAuthorityV1 {
+  readonly deadlineFactsUsedForRanking: false;
+  readonly timeEligibleTaskIds: readonly string[];
+  readonly timeIneligibleTaskIds: readonly string[];
+  readonly timeEligibilityUnavailableTaskIds: readonly string[];
+  readonly delayedRecommendedTaskIds: readonly string[];
+  readonly unavailableRecommendedTaskIds: readonly string[];
+}
+
+/** Consumer-owned projection required to validate a NextResult v6 override. */
+export interface OverrideValidationSource {
+  readonly schemaVersion: string;
+  readonly ok: boolean;
+  readonly diagnosticsTruncated: boolean;
+  readonly document: DocumentNode;
+  readonly capacityOverrides: ReadonlyMap<string, number>;
+  readonly groups: {
+    readonly ready: readonly string[];
+    readonly runnableNow: readonly string[];
+  };
+  readonly tasks: readonly {
+    readonly id: string;
+    readonly classification: string;
+    readonly requirements: readonly RequirementValue[];
+  }[];
+  readonly recommendation: RecommendationAnalysis | null;
+  readonly temporal: {
+    readonly authority: OverrideSourceAuthority;
+    readonly tasks: readonly {
+      readonly taskId: string;
+      readonly timeEligibility: {
+        readonly state: "eligible" | "not_yet_eligible" | "unavailable";
+      };
+    }[];
+  } | null;
+}
+
+type OverrideSource = OverrideValidationSource;
 
 const overrideSchemaVersion = "Perttool.OverrideDecision.v1" as const;
 const operation = "recommendation.override.validate" as const;
@@ -128,7 +163,7 @@ function validUtcSecond(value: unknown): value is string {
 }
 
 function sourceContractError(
-  source: Contract7NextResultV6,
+  source: OverrideValidationSource,
   request: OverrideRequest,
 ): string | null {
   try {
@@ -571,15 +606,16 @@ function taskDecisionReferences(
 }
 
 export function validateOverride(
-  source: Contract7NextResultV6,
+  source: OverrideValidationSource,
   request: OverrideRequest,
 ): OverrideValidationResult {
   const sourceError = sourceContractError(source, request);
   if (sourceError !== null) {
     return failure("PTOVR-101", sourceError);
   }
-  const validatedSource = source as NextResultV6;
+  const validatedSource = source;
   const recommendation = validatedSource.recommendation!;
+  const temporal = validatedSource.temporal!;
   if (
     request.sourceDigest !== recommendation.sourceDigest ||
     request.sourceResultDecisionId !== recommendation.resultDecision.id
@@ -603,10 +639,10 @@ export function validateOverride(
   const selectedSet = new Set(request.selectedTaskIds);
   const readySet = new Set(validatedSource.groups.ready);
   const timeEligibleSet = new Set(
-    validatedSource.temporal.authority.timeEligibleTaskIds,
+    temporal.authority.timeEligibleTaskIds,
   );
   const assuranceEligibleSet = new Set(
-    validatedSource.temporal.authority.assuranceEligibleTaskIds,
+    temporal.authority.assuranceEligibleTaskIds,
   );
   const decisionByTask = new Map(
     recommendation.taskDecisions.map((decision) => [

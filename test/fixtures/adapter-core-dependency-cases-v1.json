@@ -1,0 +1,103 @@
+{
+  "schema_version": "Perttool.AdapterCoreDependencyCases.v1",
+  "boundary_model_version": 1,
+  "legacy_input": {
+    "fixture": "test/fixtures/adapter-platform-contract-v1.json",
+    "file_count": 12,
+    "import_count": 19
+  },
+  "target": {
+    "application_prefix": "src/application/",
+    "allowed_external_consumers": [
+      "src/cli.ts",
+      "src/index.ts"
+    ],
+    "reverse_dependency_count": 0,
+    "typescript_source_file_count": 149,
+    "production_dependency_count": 0,
+    "package_root_export_count": 121,
+    "command_count": 44,
+    "root_schema_count": 20
+  },
+  "relocations": [
+    {
+      "facade": "src/application/check.ts",
+      "owner": "src/semantic/check.ts",
+      "facade_source": "export * from \"../semantic/check.js\";\n"
+    },
+    {
+      "facade": "src/application/analyze.ts",
+      "owner": "src/analysis/service.ts",
+      "facade_source": "export * from \"../analysis/service.js\";\n"
+    },
+    {
+      "facade": "src/application/mutate.ts",
+      "owner": "src/mutation/planner.ts",
+      "facade_source": "export * from \"../mutation/planner.js\";\n"
+    },
+    {
+      "facade": "src/application/target-mutate.ts",
+      "owner": "src/mutation/target-planner.ts",
+      "facade_source": "export * from \"../mutation/target-planner.js\";\n"
+    },
+    {
+      "facade": "src/application/target-temporal-input.ts",
+      "owner": "src/analysis/target-temporal-input.ts",
+      "facade_source": "export * from \"../analysis/target-temporal-input.js\";\n"
+    }
+  ],
+  "inversions": [
+    {
+      "consumer": "src/assurance/mermaid.ts",
+      "port": "PlanAssuranceMermaidAnalyzer",
+      "kind": "injected_function"
+    },
+    {
+      "consumer": "src/recommendation/override.ts",
+      "port": "OverrideValidationSource",
+      "kind": "consumer_owned_projection"
+    }
+  ],
+  "cases": [
+    {
+      "id": "CDC-001",
+      "depends_on": [],
+      "boundary": "legacy_input_closure"
+    },
+    {
+      "id": "CDC-002",
+      "depends_on": ["CDC-001"],
+      "boundary": "neutral_owner_relocation"
+    },
+    {
+      "id": "CDC-003",
+      "depends_on": ["CDC-002"],
+      "boundary": "application_consumer_closure"
+    },
+    {
+      "id": "CDC-004",
+      "depends_on": ["CDC-003"],
+      "boundary": "injected_or_consumer_owned_ports"
+    },
+    {
+      "id": "CDC-005",
+      "depends_on": ["CDC-004"],
+      "boundary": "compatibility_facade_identity"
+    },
+    {
+      "id": "CDC-006",
+      "depends_on": ["CDC-005"],
+      "boundary": "public_surface_parity"
+    },
+    {
+      "id": "CDC-007",
+      "depends_on": ["CDC-006"],
+      "boundary": "grammar_and_result_regression"
+    },
+    {
+      "id": "CDC-008",
+      "depends_on": ["CDC-007"],
+      "boundary": "distribution_side_effect"
+    }
+  ]
+}

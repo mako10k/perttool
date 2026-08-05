@@ -2978,6 +2978,7 @@ async function runRender(args: readonly string[]): Promise<number> {
           capacityOverrides: overrides,
           maxDiagnostics,
         },
+        analyzeDocument,
       )
     : null;
   const legacyExport = grammar6
@@ -3107,7 +3108,11 @@ async function runImport(args: readonly string[]): Promise<number> {
     "flowchart LR\n  %% perttool:profile {\"schema_version\":\"Perttool.MermaidProfile.v2\"",
   );
   const assuranceImport = profile2
-    ? importPlanAssuranceMermaid(input.text, TARGET_GRAMMAR_6_CAPABILITY)
+    ? importPlanAssuranceMermaid(
+        input.text,
+        TARGET_GRAMMAR_6_CAPABILITY,
+        analyzeDocument,
+      )
     : null;
   const legacyImport = profile2
     ? null

@@ -168,14 +168,17 @@ Mandatory summary:
   tasks and 91p covering the shared dependency contract, Core decoupling,
   library and Node-port boundaries, CLI parity, document session, read-only
   LSP, VSIX and DAG Webview, read-only MCP, and integrated acceptance.
-  `ADAPTER_ARCHITECTURE_CONTRACT` is complete and retained before advance. Its
-  accepted specification and record fix the 121-export, 44-command, 20-schema,
-  zero-production-dependency baseline; exact twelve-file/nineteen-import
-  reverse-dependency input; layer and distribution boundaries; result and
-  capability ownership; and semantic parity. Fifteen tasks and 85p remain;
-  precedence makespan is 55p and the `parallel-sgs` version 1 heuristic
-  resource makespan is 73p with 18p resource delay. Complete NextResult v6
-  recommends and permits only `CORE_DEPENDENCY_CLEANUP`. Editor and MCP
+  `ADAPTER_ARCHITECTURE_CONTRACT` and `CORE_DEPENDENCY_CLEANUP` are complete
+  and retained before advance. Their accepted specification and records fix
+  the 121-export, 44-command, 20-schema, zero-production-dependency baseline;
+  exact twelve-file/nineteen-import migration input; layer and distribution
+  boundaries; result and capability ownership; semantic parity; five neutral
+  implementation owners with exact Application facades; analyzer and override
+  dependency inversion; and zero reusable-module imports into Application.
+  Fourteen tasks and 77p remain; precedence makespan is 47p and the
+  `parallel-sgs` version 1 heuristic resource makespan is 65p with 18p resource
+  delay. Complete NextResult v6 recommends and permits only
+  `SHARED_LIBRARY_BOUNDARY`. Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five

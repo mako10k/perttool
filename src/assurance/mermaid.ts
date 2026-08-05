@@ -5,11 +5,10 @@ import type {
   MermaidAnalysisMode,
 } from "../conversion/mermaid.js";
 import { renderMermaidProjection } from "../conversion/mermaid.js";
-import {
-  analyzeDocument,
-  type AnalysisResultV5,
-} from "../application/contract7-assurance.js";
-import type { AnalysisResult } from "../application/analyze.js";
+import type {
+  AnalysisResult,
+  AnalyzeOptions,
+} from "../analysis/service.js";
 import { formatTargetGrammar6Document } from "../formatter/target-source-formatter.js";
 import type { Diagnostic } from "../model/diagnostics.js";
 import { compareStableStrings } from "../model/diagnostics.js";
@@ -37,6 +36,11 @@ export interface PlanAssuranceMermaidExportOptions {
   readonly capacityOverrides?: ReadonlyMap<string, number>;
   readonly maxDiagnostics?: number;
 }
+
+export type PlanAssuranceMermaidAnalyzer = (
+  text: string,
+  options: AnalyzeOptions,
+) => AnalysisResult;
 
 export interface PlanAssuranceMermaidExportResultV1 {
   readonly ok: boolean;
@@ -228,6 +232,7 @@ export function exportPlanAssuranceMermaid(
   text: string,
   capability: TargetGrammar6Capability,
   options: PlanAssuranceMermaidExportOptions = {},
+  analyze: PlanAssuranceMermaidAnalyzer | null = null,
 ): PlanAssuranceMermaidExportResultV1 {
   const profile = options.profile ?? 2;
   const analysisMode = options.analysis ?? "none";
@@ -262,9 +267,14 @@ export function exportPlanAssuranceMermaid(
       diagnosticsTruncated: checked.diagnosticsTruncated,
     });
   }
-  const analyzed: AnalysisResultV5 | null = analysisMode === "none"
+  if (analysisMode !== "none" && analyze === null) {
+    throw new TypeError(
+      "plan-assurance Mermaid analysis requires an injected Application analyzer",
+    );
+  }
+  const analyzed: AnalysisResult | null = analysisMode === "none"
     ? null
-    : analyzeDocument(text, {
+    : analyze!(text, {
         mode: analysisMode,
         capacityOverrides,
         ...(options.maxDiagnostics === undefined
@@ -289,7 +299,7 @@ export function exportPlanAssuranceMermaid(
     ? graphProjection(checked.validatedDocument.document)
     : renderMermaidProjection(
         analyzed.document as unknown as DocumentNode,
-        analyzed as unknown as AnalysisResult,
+        analyzed,
       );
   const assuranceSemanticDigest = planAssuranceSemanticDigest(
     checked.validatedDocument,
@@ -490,6 +500,7 @@ function parseHeader(text: string): Profile2Header | null {
 export function importPlanAssuranceMermaid(
   text: string,
   capability: TargetGrammar6Capability,
+  analyze: PlanAssuranceMermaidAnalyzer | null = null,
 ): PlanAssuranceMermaidImportResultV1 {
   if (!text.endsWith("\n") || text.startsWith("\uFEFF") || text.includes("\r")) {
     return invalidImport(
@@ -553,6 +564,7 @@ export function importPlanAssuranceMermaid(
             ),
           }),
     },
+    analyze,
   );
   if (!reproduced.ok || reproduced.artifact !== text) {
     return invalidImport(

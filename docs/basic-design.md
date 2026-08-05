@@ -168,10 +168,14 @@ an LSP client and presentation host, and it does not import the parser or
 analyzer. Only composition roots know both an Application service and a
 concrete Host.
 
-The existing lower-layer imports into `src/application/` are measured legacy
-exceptions, not an alternative dependency direction. The exact twelve files
-and nineteen imports are fixed by the adapter architecture contract and its
-machine fixture for removal by `CORE_DEPENDENCY_CLEANUP`.
+The twelve-file, nineteen-import lower-layer dependency input fixed by the
+adapter architecture contract has been removed. The executable boundary gate
+allows external Application imports only from exact composition/facade entries
+`src/cli.ts` and `src/index.ts`; every reusable source module has zero imports
+into `src/application/`. Five established Application paths remain one-line
+compatibility re-exports of their neutral semantic, analysis, or mutation
+owners. Analyzer injection and a consumer-owned override projection close the
+two dependencies that could not be corrected by relocation alone.
 
 ### 3.2 Distribution boundary
 
@@ -3091,9 +3095,9 @@ Exit:
 The selected `ADAPTER-001` plan composes a shared foundation and three adapter
 branches after first-beta acceptance.
 
-- Shared foundation: accept the dependency and distribution contract, remove
-  reverse imports, expose Core and Node boundaries, preserve the CLI facade,
-  and add a protocol-neutral document session.
+- Shared foundation: the dependency and distribution contract and reverse-
+  dependency cleanup are accepted. Next expose Core and Node boundaries,
+  preserve the CLI facade, and add a protocol-neutral document session.
 - Read-only LSP: directly use the shared session and Application services for
   synchronization, diagnostics, symbols, hover, completion, definition/source
   navigation, help, cancellation, and a version-bound graph result. Rename,

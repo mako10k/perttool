@@ -286,16 +286,20 @@ compose the shared dependency contract, Core reverse-dependency cleanup,
 library and Node-port boundaries, unchanged CLI facade, protocol-neutral
 document session, read-only LSP, VSIX shell and DAG Webview, fail-closed
 read-only MCP adapter, and cross-surface acceptance.
-`ADAPTER_ARCHITECTURE_CONTRACT` is complete and retained in its exact
-pre-advance state. The accepted `docs/specs/adapter-platform.md` contract and
-`docs/process/adapter-architecture-contract-acceptance.md` record fix the
+`ADAPTER_ARCHITECTURE_CONTRACT` and `CORE_DEPENDENCY_CLEANUP` are complete and
+retained in their exact pre-advance state. The accepted
+`docs/specs/adapter-platform.md` contract,
+`docs/process/adapter-architecture-contract-acceptance.md`, and
+`docs/process/adapter-core-dependency-acceptance.md` records fix the
 121-export, 44-command, 20-schema, zero-production-dependency baseline; the
 exact twelve-file, nineteen-import reverse-dependency input; acyclic layer
 directions; additive Core/Node subpaths; private adapter distribution inputs;
-result and capability ownership; and semantic parity. Fifteen tasks and 85p
-remain. Precedence makespan is 55p; the `parallel-sgs` version 1 heuristic
-resource makespan is 73p with 18p resource delay. Complete NextResult v6
-recommends and permits only `CORE_DEPENDENCY_CLEANUP`. Editor mutation, MCP
+result and capability ownership; semantic parity; five neutral implementation
+owners with exact Application facades; analyzer and override dependency
+inversion; and zero reusable-module imports into Application. Fourteen tasks
+and 77p remain. Precedence makespan is 47p; the `parallel-sgs` version 1
+heuristic resource makespan is 65p with 18p resource delay. Complete NextResult
+v6 recommends and permits only `SHARED_LIBRARY_BOUNDARY`. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
@@ -610,7 +614,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/assurance/`: active ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, assurance-preserving advance contraction, compatibility source capture and project metadata, direct-edit guidance, and semantic Mermaid profile 2; lower-level target-capability helpers remain internal.
 - `src/command/`: immutable typed Contract 7 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 7 editing, actuals, and plan-assurance Guide.
-- `src/analysis/`: residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
+- `src/analysis/`: neutral base analysis service and target temporal input projection; residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
 - `src/schema/`: closed Contract 7 result-schema catalog, local bundled-artifact resolution, `Perttool.SchemaResult.v1`, and deterministic JSON/text projections.
 - `schemas/`: twenty bundled Draft 2020-12 root artifacts for every active command result and the public OverrideDecision result, plus shared local definitions.
@@ -624,9 +628,9 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, localized version-upgrade inputs, and internal retained Grammar 6 migration support.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
 - `src/parser/`: the active Grammar 1/2/3/4/5/6 parser with identity-checked task-owned work-event and plan-assurance source.
-- `src/semantic/`: active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
-- `src/mutation/`: active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
-- `src/application/`: pure services for active Contract 7 check/project initialization/project metadata/analyze/next, lifecycle, history, observation, declared temporal input, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, Grammar 1/2/3/4/5/6 mutation planning, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
+- `src/semantic/`: neutral document-check service; active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
+- `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
+- `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.
 

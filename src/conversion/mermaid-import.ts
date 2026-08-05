@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { checkDocument } from "../application/check.js";
+import { checkDocument } from "../semantic/check.js";
 import { GOVERNANCE_DIRECT_EDIT_WARNING } from "../governance/guidance.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { compareStableStrings, normalizeMaxDiagnostics } from "../model/diagnostics.js";

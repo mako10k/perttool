@@ -15,7 +15,7 @@ import type {
   TargetDeclarationKind,
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
-import { checkDocument } from "../application/check.js";
+import { checkDocument } from "../semantic/check.js";
 import { EntityEditor } from "./entity-editor.js";
 import { planAdvanceDeclarationDeletions } from "./advance-deletion.js";
 import { applyTextEdits, normalizeTextEdits } from "./text-edits.js";
