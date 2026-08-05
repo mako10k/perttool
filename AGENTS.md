@@ -289,7 +289,8 @@ read-only MCP adapter, and cross-surface acceptance.
 `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
 `SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
 `DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
-state. `LSP_READ_CORE` is also complete and retained before advance. The
+state. `LSP_READ_CORE` and `LSP_ACCEPTANCE` are also complete and retained
+before advance. The
 accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
@@ -320,12 +321,13 @@ perform no file or editor write, while root and Node remain exact 121-name
 facades. The private `adapters/lsp` workspace pins
 `vscode-languageserver` `9.0.1` and stable protocol 3.17.5, provides the closed
 local-stdio read-only capability and negotiated Help/GraphView surfaces, and
-is excluded from the public package. Its acceptance record is
-`docs/process/adapter-lsp-read-core-acceptance.md`. Ten tasks and 51p remain.
-Precedence makespan is 26p; the `parallel-sgs` version 1 heuristic resource
-makespan is 40p with 14p resource delay. Complete NextResult v6 recommends and
-makes startable only `LSP_ACCEPTANCE`; `NODE_PORT_BOUNDARY` and
-`MCP_READ_CONTRACT` are `deferred`. Editor mutation, MCP
+is excluded from the public package. The implementation and isolated-package
+records are `docs/process/adapter-lsp-read-core-acceptance.md` and
+`docs/process/adapter-lsp-acceptance.md`. Nine tasks and 47p remain.
+Precedence makespan is 22p; the `parallel-sgs` version 1 heuristic resource
+makespan is 36p with 14p resource delay. Complete NextResult v6 recommends and
+makes startable only `VSIX_SHELL`; `NODE_PORT_BOUNDARY` is `deferred`, and
+`MCP_READ_CONTRACT` is `allowed` but not selected. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
@@ -709,7 +711,7 @@ npm run check
 git diff --check
 ```
 
-For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
+For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
 
 - Even for documentation-only changes, run bootstrap checks for the local link, Markdown fences, and normative `.pert` samples.
 - For grammar changes, check valid/invalid examples, field tables, EBNF, diagnostics, and formatter contracts together.

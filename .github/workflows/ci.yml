@@ -36,5 +36,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check root package and private adapter workspaces
+      - name: Check root, isolated LSP, and private adapter workspaces
         run: npm run check

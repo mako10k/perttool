@@ -3164,7 +3164,11 @@ branches after first-beta acceptance.
   negotiated Help/GraphView requests directly from the current document
   session without CLI, filesystem, Git, network-listener, or editor-write
   behavior. The workspace is a repository build input but is excluded from the
-  public `perttool` package.
+  public `perttool` package. The accepted isolated gate packs the root Core and
+  private server separately, installs both into a disposable prefix, and
+  exercises local-stdio initialization, diagnostics, GraphView, shutdown, and
+  exit. The private manifest binds the exact root version as a peer without
+  leaking its SDK into the public root dependencies.
 - VSIX and DAG: provide TextMate highlighting, the accepted LSP client/server
   distribution, and a CSP-constrained read-only DAG Webview without semantic
   duplication or arbitrary Mermaid execution.

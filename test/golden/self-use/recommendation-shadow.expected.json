@@ -65,13 +65,13 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:35f330cfd4aa974dde4d4720435dfcddd14ade21e1084294fddb4315ffa4b8ed",
+      "source_digest": "sha256:072c05fa5b0d8e0c014fa5616bc140b3ab88bbabf7c039fef816e2c3f30d9382",
       "groups": {
         "active": [],
         "ready": [
           "MCP_READ_CONTRACT",
           "NODE_PORT_BOUNDARY",
-          "LSP_ACCEPTANCE"
+          "VSIX_SHELL"
         ],
         "runnable_now": [
           "MCP_READ_CONTRACT",
@@ -81,7 +81,6 @@
         "upcoming": [
           "MCP_READ_ADAPTER",
           "CLI_FACADE_PARITY",
-          "VSIX_SHELL",
           "MCP_ACCEPTANCE",
           "VSIX_DAG_VIEW",
           "VSIX_ACCEPTANCE",
@@ -90,16 +89,16 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "LSP_ACCEPTANCE"
+        "VSIX_SHELL"
       ],
       "manual_selected_task_ids": [
         "MCP_READ_CONTRACT",
         "NODE_PORT_BOUNDARY"
       ],
       "tiers": {
-        "LSP_ACCEPTANCE": "recommended",
+        "VSIX_SHELL": "recommended",
         "NODE_PORT_BOUNDARY": "deferred",
-        "MCP_READ_CONTRACT": "deferred"
+        "MCP_READ_CONTRACT": "allowed"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
@@ -108,7 +107,7 @@
           "runnable_now": true,
           "precedence_critical": false,
           "schedule_critical": false,
-          "total_float": "6/1",
+          "total_float": "2/1",
           "resource_rejections": []
         },
         {
@@ -116,11 +115,11 @@
           "runnable_now": true,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "5/1",
+          "total_float": "1/1",
           "resource_rejections": []
         },
         {
-          "id": "LSP_ACCEPTANCE",
+          "id": "VSIX_SHELL",
           "runnable_now": false,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -148,17 +147,6 @@
               "earlier_selected_task_ids": [
                 "NODE_PORT_BOUNDARY"
               ]
-            },
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "MCP_READ_CONTRACT"
-              ]
             }
           ]
         }
@@ -166,10 +154,10 @@
       "record_counts": {
         "task_decisions": 3,
         "decision_steps": 18,
-        "facts": 76,
-        "comparisons": 4,
+        "facts": 65,
+        "comparisons": 3,
         "reasons": 12,
-        "descriptions": 7
+        "descriptions": 6
       },
       "diagnostic_codes": [
         "PTDAG-208"

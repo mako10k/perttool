@@ -1,0 +1,19 @@
+{
+  "schema_version": "Perttool.LspAcceptanceCases.v1",
+  "editor_protocol_model_version": 1,
+  "runtime_matrix": [22, 24],
+  "cases": [
+    {"id": "LSPA-001", "depends_on": [], "boundary": "exact_private_package_inventory"},
+    {"id": "LSPA-002", "depends_on": ["LSPA-001"], "boundary": "standard_and_custom_initialization"},
+    {"id": "LSPA-003", "depends_on": ["LSPA-002"], "boundary": "utf16_unicode_crlf_and_block_text"},
+    {"id": "LSPA-004", "depends_on": ["LSPA-003"], "boundary": "rapid_incremental_versions"},
+    {"id": "LSPA-005", "depends_on": ["LSPA-004"], "boundary": "cancellation_and_stale_rejection"},
+    {"id": "LSPA-006", "depends_on": ["LSPA-003"], "boundary": "invalid_document_fail_closed"},
+    {"id": "LSPA-007", "depends_on": ["LSPA-003"], "boundary": "multiple_document_generation_isolation"},
+    {"id": "LSPA-008", "depends_on": ["LSPA-006", "LSPA-007"], "boundary": "capability_and_edit_closure"},
+    {"id": "LSPA-009", "depends_on": ["LSPA-008"], "boundary": "bundled_help_and_determinism"},
+    {"id": "LSPA-010", "depends_on": ["LSPA-009"], "boundary": "isolated_dual_tarball_stdio"},
+    {"id": "LSPA-011", "depends_on": ["LSPA-010"], "boundary": "root_package_exclusion_and_compatibility"},
+    {"id": "LSPA-012", "depends_on": ["LSPA-011"], "boundary": "complete_repository_runtime_matrix_gate"}
+  ]
+}

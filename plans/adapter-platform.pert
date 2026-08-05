@@ -244,6 +244,7 @@ task LSP_ACCEPTANCE LSP_READY -> LSP_ACCEPTED:
   title "Accept the read-only LSP server"
   description "Verify protocol initialization, UTF-16 ranges, Unicode and block-text spans, rapid version changes, cancellation, invalid and stale documents, multiple documents, capability closure, Core parity, no CLI subprocess, no filesystem mutation, bundled help, deterministic results, and isolated server execution under the accepted runtime matrix."
   duration 4p
+  status done
   priority 75
   requires:
     DEVELOPERS 1
@@ -433,3 +434,18 @@ work_event WE-bf96e9361a1fe9a12f8eedc8cbb7cb81305855467d7e87f4ab271be308cd1cd5:
   occurred_at 2026-08-05T17:11:28+09:00
   active_time 193/450h
   effort 193/450ph
+
+work_event WE-be55ccb1fd73065eed33e054b6cf54e62f1484e0dddc157628f3d8b888a99291:
+  model 1
+  task LSP_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-05T18:06:55+09:00
+  planned_value 4p
+
+work_event WE-fc45ee156774bdfc425a076b1292a7cd7fb268034c4922941d83fec993487bf2:
+  model 1
+  task LSP_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-05T18:14:18+09:00
+  active_time 443/3600h
+  effort 443/3600ph

@@ -53,7 +53,7 @@ AGENTS.md                         shared canonical guidance
 ├── .codex/config.toml               conservative project-local defaults
 ├── docs/process/ai-development.md   rationale and operating workflow
 ├── package.json                     executable repository and workspace check
-│   └── npm run check                root/private-adapter typecheck, test, language, docs, self-use, package
+│   └── npm run check                root/private-adapter typecheck, test, language, docs, self-use, isolated packages
 ├── adapters/lsp                     private read-only language-server workspace
 ├── scripts/check-english-baseline.mjs  exact Japanese-script allowlist check
 ├── scripts/check-docs.sh            documentation sub-check
@@ -92,9 +92,15 @@ git diff --check
 ```
 
 Depending on the change scope, first run `npm run typecheck`, `npm test`,
-`npm run check:english`, or `npm run check:docs` as narrow checks. The language
+`npm run check:english`, `npm run check:docs`, or
+`npm run check:lsp-package` as narrow checks. The language
 check scans tracked and non-ignored untracked text files and accepts only exact
 lines in the versioned Japanese-script allowlist.
+
+`npm run check:lsp-package` creates separate root and private-LSP tarballs,
+installs both into a disposable prefix, and runs an offline stdio handshake,
+diagnostic, GraphView, shutdown, and exit smoke. It neither publishes a
+package nor changes the public root-package inventory.
 
 Then use `git diff -- <target-file>` to confirm the following.
 
@@ -202,7 +208,7 @@ Do not directly compare tasks from different detail plans without a macro decisi
 
 The 2026-07-22 [Recommendation design acceptance](recommendation-design-review.md), grammar acceptance, formatter/mutation preview, safe write, Mermaid export/import round trip, and advance Core/CLI are complete and are in Stage 3 self-use. The missing MVP acceptance condition 16 found by the [release-readiness audit](mvp-release-readiness.md) was resolved by MIG-01 through MIG-07, totaling 22p, in the [Recommendation implementation plan](../../plans/recommendation.pert). The [five-plan shadow evaluation](recommendation-shadow-review.md), read-only override validation, normal-authority dry run, unknown-version safe stop, and shared-instruction/help synchronization are accepted. The provisional Recommendation-specific observation is `22p/1d`, and distribution of the same `v0.1.0-alpha.2` artifact through GitHub/npm and registry installation are complete.
 
-The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3 multi-plan composition remains a post-beta backlog. The later selected `ADAPTER-001` plan composes the shared dependency, library, Node Host, CLI parity, document-session, read-only LSP, VSIX/DAG, and read-only MCP gates; its architecture contract, Core dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, and private read-only LSP Core are complete. The LSP workspace pins stable protocol 3.17.5, uses local stdio and exact document-session projections, and stays outside the public package. The current exact portable Core has 45 runtime values and a 34-module closure while root/Node remain exact 121-name facades. Ten tasks and 51p remain at 26p/40p precedence/resource makespans with 14p resource delay. Complete NextResult v6 recommends and makes startable only `LSP_ACCEPTANCE`; `NODE_PORT_BOUNDARY` and `MCP_READ_CONTRACT` are `deferred`.
+The first suffix-free beta, `v0.1.0`, is [accepted](beta-release-acceptance.md). One tarball was verified across the GitHub prerelease, npm `beta`, and an isolated registry installation. It was then explicitly promoted to npm `latest`; both tags resolve to `0.1.0`. The macro plan is advanced to `M8_BETA_RELEASED` and has no ready or recommended task. Issue #3 multi-plan composition remains a post-beta backlog. The later selected `ADAPTER-001` plan composes the shared dependency, library, Node Host, CLI parity, document-session, read-only LSP, VSIX/DAG, and read-only MCP gates; its architecture contract, Core dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, private read-only LSP Core, and isolated LSP acceptance are complete. The LSP workspace pins stable protocol 3.17.5, uses local stdio and exact document-session projections, stays outside the public package, and passes the isolated dual-tarball Node.js 22 gate. The current exact portable Core has 45 runtime values and a 34-module closure while root/Node remain exact 121-name facades. Nine tasks and 47p remain at 22p/36p precedence/resource makespans with 14p resource delay. Complete NextResult v6 recommends and makes startable only `VSIX_SHELL`; `NODE_PORT_BOUNDARY` is `deferred`, and `MCP_READ_CONTRACT` is `allowed` but not selected.
 
 ADR 0004 adopts English as the repository baseline immediately. All nine tasks
 in `plans/english-baseline.pert` are accepted and advanced; commit `2001cdf`

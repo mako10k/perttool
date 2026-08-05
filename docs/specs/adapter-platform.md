@@ -207,6 +207,15 @@ socket, edit an editor document, emit telemetry, or select a release. VSIX,
 Node-port separation, CLI parity, MCP, and integrated acceptance remain later
 tasks.
 
+The independent LSP acceptance gate packs the private server and exact
+`perttool` Core as separate artifacts, installs them together in a disposable
+prefix, and exercises the complete local-stdio lifecycle. The private package
+uses exact `perttool` `0.7.1` peer identity plus the repository-only local
+development link; its 25-file artifact contains only `dist/` and its manifest.
+This verifies a distributable server input without publishing it or adding it
+to the public root tarball. Node.js 22 is exercised directly, while the same
+gate remains part of the repository's Node.js 22/24 CI matrix.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.

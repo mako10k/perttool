@@ -99,7 +99,14 @@ test("private workspace pins the stable LSP 3.17 SDK without changing root depen
   assert.equal(Object.keys(packageJson.dependencies ?? {}).length, 0);
   assert.equal(workspace.name, fixture.workspace.name);
   assert.equal(workspace.private, true);
-  assert.equal(workspace.dependencies.perttool, fixture.workspace.perttool_dependency);
+  assert.equal(
+    workspace.peerDependencies.perttool,
+    fixture.workspace.perttool_peer_version,
+  );
+  assert.equal(
+    workspace.devDependencies.perttool,
+    fixture.workspace.perttool_development_dependency,
+  );
   assert.equal(workspace.dependencies[fixture.workspace.sdk], fixture.workspace.sdk_version);
   assert.equal(
     lock.packages["node_modules/vscode-languageserver"].version,

@@ -1590,13 +1590,14 @@ cancellation/stale rejection. The current Core is an exact portable 45-name,
 `adapters/lsp` workspace implements the accepted stable LSP 3.17.5 stdio
 surface, versioned read-only projections, negotiated Help and four-mode
 GraphView, cancellation/stale rejection, and public-package isolation.
-`LSP_READ_CORE` is complete with exact lifecycle evidence and retained before
-advance. Ten tasks and 51p remain; precedence makespan is 26p and the
-`parallel-sgs` version 1 heuristic resource makespan is 40p with 14p resource
-delay. Inherited velocity `29p/2d` yields 1.793d and 2.759d forecasts. Complete
-NextResult v6 recommends and makes startable only `LSP_ACCEPTANCE`;
-`NODE_PORT_BOUNDARY` and `MCP_READ_CONTRACT` are `deferred`. Source digest is
-`sha256:35f330cfd4aa974dde4d4720435dfcddd14ade21e1084294fddb4315ffa4b8ed`.
+`LSP_READ_CORE` and its isolated dual-tarball `LSP_ACCEPTANCE` are complete
+with exact lifecycle evidence and retained before advance. Nine tasks and 47p
+remain; precedence makespan is 22p and the `parallel-sgs` version 1 heuristic
+resource makespan is 36p with 14p resource delay. Inherited velocity `29p/2d`
+yields 1.517d and 2.483d forecasts. Complete NextResult v6 recommends and
+makes startable only `VSIX_SHELL`; `NODE_PORT_BOUNDARY` is `deferred`, and
+`MCP_READ_CONTRACT` is `allowed` but not selected. Source digest is
+`sha256:072c05fa5b0d8e0c014fa5616bc140b3ab88bbabf7c039fef816e2c3f30d9382`.
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 

@@ -792,8 +792,9 @@ runtime or syntax change.
 Priority: Selected cross-adapter foundation
 
 Status: Architecture, Core dependency cleanup, and shared-library boundary
-accepted; editor protocol contract accepted; document-session Core and
-read-only LSP Core accepted (2026-08-05; retained before advance)
+accepted; editor protocol contract accepted; document-session Core, read-only
+LSP Core, and isolated LSP package accepted (2026-08-05; retained before
+advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -837,10 +838,15 @@ implements the exact private workspace, stable LSP 3.17.5 stdio mapping,
 versioned diagnostics and navigation, negotiated Help and four-mode
 `Perttool.GraphViewResult.v1`, cancellation/stale rejection, and package
 isolation. `LSP_READ_CORE` is complete with exact lifecycle evidence and
-retained before advance. Ten tasks and 51p remain; precedence makespan is 26p
-and the heuristic resource makespan is 40p with 14p resource delay. Complete
-NextResult v6 recommends and makes startable only `LSP_ACCEPTANCE`;
-`NODE_PORT_BOUNDARY` and `MCP_READ_CONTRACT` are `deferred`.
+retained before advance. Its [isolated acceptance](process/adapter-lsp-acceptance.md)
+fixes the exact peer-version boundary, 25-file private artifact, separate
+root/server tarballs, and disposable Node.js 22 stdio workflow.
+`LSP_ACCEPTANCE` is complete with exact lifecycle evidence and retained before
+advance. Nine tasks and 47p remain; precedence makespan is 22p and the
+heuristic resource makespan is 36p with 14p resource delay. Complete
+NextResult v6 recommends and makes startable only `VSIX_SHELL`;
+`NODE_PORT_BOUNDARY` is `deferred`, and `MCP_READ_CONTRACT` is `allowed` but
+not selected.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared
@@ -855,8 +861,8 @@ and plan advance remain separate decisions.
 
 Priority: Selected through `ADAPTER-001`
 
-Status: Contract, shared document-session Core, and read-only language-server
-implementation accepted; isolated LSP acceptance remains in the selected plan
+Status: Contract, shared document-session Core, read-only language-server
+implementation, and isolated LSP package accepted
 
 Define an LSP boundary for diagnostics, document symbols, hover, completion,
 and source-safe code actions by reusing the parser, semantic model, help
@@ -866,8 +872,9 @@ previewed mutation candidate.
 
 The accepted implementation is a private local-stdio workspace using exact
 stable LSP 3.17.5 dependencies. It provides only the contract's standard
-read-only capabilities plus negotiated Help and GraphView requests, and it is
-excluded from the public `perttool` tarball. VSIX packaging, editor mutation,
+read-only capabilities plus negotiated Help and GraphView requests, is
+excluded from the public `perttool` tarball, and passes the separate installed
+Core/server tarball workflow on Node.js 22. VSIX packaging, editor mutation,
 public adapter naming, and release selection remain separate.
 
 ### VSIX-001: Package the accepted language server for VS Code
