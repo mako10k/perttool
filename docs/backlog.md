@@ -791,7 +791,7 @@ runtime or syntax change.
 
 Priority: Selected cross-adapter foundation
 
-Status: Architecture contract and Core dependency cleanup accepted (2026-08-05; retained before advance)
+Status: Architecture, Core dependency cleanup, and shared-library boundary accepted (2026-08-05; retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -810,8 +810,16 @@ baseline and the exact twelve-file, nineteen-import reverse-dependency input.
 the [Core dependency cleanup acceptance
 record](process/adapter-core-dependency-acceptance.md) removes all nineteen
 lower-to-Application imports while retaining exact compatibility facades.
-`CORE_DEPENDENCY_CLEANUP` is complete with exact lifecycle evidence; complete
-NextResult v6 recommends and permits only `SHARED_LIBRARY_BOUNDARY`.
+`CORE_DEPENDENCY_CLEANUP` is complete with exact lifecycle evidence. The
+[shared-library contract](specs/shared-library.md) and
+[acceptance record](process/adapter-shared-library-acceptance.md) add a closed
+forty-name platform-neutral `perttool/core` runtime and an exact 121-name
+`perttool/node` compatibility facade; isolated package consumption passes
+without selecting a release. `SHARED_LIBRARY_BOUNDARY` is complete with exact
+lifecycle evidence. Thirteen tasks and 70p remain; precedence makespan is 45p
+and the heuristic resource makespan is 49p with 4p resource delay. Complete
+NextResult v6 recommends and permits only `EDITOR_PROTOCOL_CONTRACT`;
+`NODE_PORT_BOUNDARY` is ready and resource-feasible but only `allowed`.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared

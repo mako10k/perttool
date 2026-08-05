@@ -168,17 +168,21 @@ Mandatory summary:
   tasks and 91p covering the shared dependency contract, Core decoupling,
   library and Node-port boundaries, CLI parity, document session, read-only
   LSP, VSIX and DAG Webview, read-only MCP, and integrated acceptance.
-  `ADAPTER_ARCHITECTURE_CONTRACT` and `CORE_DEPENDENCY_CLEANUP` are complete
-  and retained before advance. Their accepted specification and records fix
+  `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`, and
+  `SHARED_LIBRARY_BOUNDARY` are complete and retained before advance. Their
+  accepted specifications and records fix
   the 121-export, 44-command, 20-schema, zero-production-dependency baseline;
   exact twelve-file/nineteen-import migration input; layer and distribution
   boundaries; result and capability ownership; semantic parity; five neutral
   implementation owners with exact Application facades; analyzer and override
-  dependency inversion; and zero reusable-module imports into Application.
-  Fourteen tasks and 77p remain; precedence makespan is 47p and the
-  `parallel-sgs` version 1 heuristic resource makespan is 65p with 18p resource
-  delay. Complete NextResult v6 recommends and permits only
-  `SHARED_LIBRARY_BOUNDARY`. Editor and MCP
+  dependency inversion; zero reusable-module imports into Application; a
+  closed forty-name platform-neutral Core runtime; an exact 121-name Node
+  facade; root-identical Grammar 6 source functions; and isolated-package
+  subpath consumption. Thirteen tasks and 70p remain; precedence makespan is
+  45p and the `parallel-sgs` version 1 heuristic resource makespan is 49p with
+  4p resource delay. Complete NextResult v6 recommends and permits only
+  `EDITOR_PROTOCOL_CONTRACT`; the ready and resource-feasible
+  `NODE_PORT_BOUNDARY` remains only `allowed`. Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five

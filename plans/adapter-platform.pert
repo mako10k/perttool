@@ -178,6 +178,7 @@ task SHARED_LIBRARY_BOUNDARY CORE_DECOUPLED -> SHARED_LIBRARY_READY:
   title "Establish the shared library and compatibility facade"
   description "Implement the accepted physical or subpath library boundary for pure domain logic, protocol-neutral application services, serializable results, schemas, and help data. Retain the current perttool package root as the accepted compatibility facade, prevent adapter dependencies from leaking into shared modules, and verify direct library consumption from isolated installations without selecting a release."
   duration 7p
+  status done
   priority 90
   requires:
     DEVELOPERS 1
@@ -369,3 +370,18 @@ work_event WE-2c16eecbee8fd831d1fd192c68d664c2dc282f150913137efcdcae959b5d7957:
   occurred_at 2026-08-05T14:03:35+09:00
   active_time 167/900h
   effort 167/900ph
+
+work_event WE-4f8f5c6b30e84c3e4a49387db5f707f16d3aa18e2dfe12e68998b98d0b75f767:
+  model 1
+  task SHARED_LIBRARY_BOUNDARY
+  kind start
+  occurred_at 2026-08-05T14:25:58+09:00
+  planned_value 7p
+
+work_event WE-d0106f2a547464069cdcb2e03229105d0228f5f41ee367aeb5b8c1e3bb052585:
+  model 1
+  task SHARED_LIBRARY_BOUNDARY
+  kind finish
+  occurred_at 2026-08-05T14:56:29+09:00
+  active_time 1831/3600h
+  effort 1831/3600ph

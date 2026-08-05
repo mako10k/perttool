@@ -65,21 +65,21 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:69f14c31ab56cb8df4f7d03ef05baf90b1a25e20868488b6da9163d4624d33f4",
+      "source_digest": "sha256:33a44d94d85ea3134e61033cfea22cc3fad159c7c2fdaf7273ccf48604f1d04c",
       "groups": {
         "active": [],
         "ready": [
           "EDITOR_PROTOCOL_CONTRACT",
           "MCP_READ_CONTRACT",
-          "SHARED_LIBRARY_BOUNDARY"
+          "NODE_PORT_BOUNDARY"
         ],
         "runnable_now": [
-          "EDITOR_PROTOCOL_CONTRACT"
+          "EDITOR_PROTOCOL_CONTRACT",
+          "NODE_PORT_BOUNDARY"
         ],
         "blocked_now": [],
         "upcoming": [
           "DOCUMENT_SESSION_CORE",
-          "NODE_PORT_BOUNDARY",
           "LSP_READ_CORE",
           "MCP_READ_ADAPTER",
           "CLI_FACADE_PARITY",
@@ -93,14 +93,15 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "SHARED_LIBRARY_BOUNDARY"
-      ],
-      "manual_selected_task_ids": [
         "EDITOR_PROTOCOL_CONTRACT"
       ],
+      "manual_selected_task_ids": [
+        "EDITOR_PROTOCOL_CONTRACT",
+        "NODE_PORT_BOUNDARY"
+      ],
       "tiers": {
-        "SHARED_LIBRARY_BOUNDARY": "recommended",
-        "EDITOR_PROTOCOL_CONTRACT": "deferred",
+        "EDITOR_PROTOCOL_CONTRACT": "recommended",
+        "NODE_PORT_BOUNDARY": "allowed",
         "MCP_READ_CONTRACT": "deferred"
       },
       "joint_resource_feasible": true,
@@ -108,17 +109,17 @@
         {
           "id": "EDITOR_PROTOCOL_CONTRACT",
           "runnable_now": true,
-          "precedence_critical": false,
+          "precedence_critical": true,
           "schedule_critical": true,
-          "total_float": "2/1",
+          "total_float": "0/1",
           "resource_rejections": []
         },
         {
           "id": "MCP_READ_CONTRACT",
           "runnable_now": false,
           "precedence_critical": false,
-          "schedule_critical": true,
-          "total_float": "27/1",
+          "schedule_critical": false,
+          "total_float": "25/1",
           "resource_rejections": [
             {
               "resource_id": "ARCHITECTURE_SURFACE",
@@ -145,44 +146,21 @@
           ]
         },
         {
-          "id": "SHARED_LIBRARY_BOUNDARY",
-          "runnable_now": false,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": [
-            {
-              "resource_id": "ARCHITECTURE_SURFACE",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "EDITOR_PROTOCOL_CONTRACT"
-              ]
-            },
-            {
-              "resource_id": "REVIEWERS",
-              "capacity": 1,
-              "used_before_decision": 1,
-              "required": 1,
-              "deficit": 1,
-              "active_task_ids": [],
-              "earlier_selected_task_ids": [
-                "EDITOR_PROTOCOL_CONTRACT"
-              ]
-            }
-          ]
+          "id": "NODE_PORT_BOUNDARY",
+          "runnable_now": true,
+          "precedence_critical": false,
+          "schedule_critical": false,
+          "total_float": "24/1",
+          "resource_rejections": []
         }
       ],
       "record_counts": {
         "task_decisions": 3,
         "decision_steps": 18,
-        "facts": 98,
-        "comparisons": 4,
-        "reasons": 14,
-        "descriptions": 9
+        "facts": 76,
+        "comparisons": 3,
+        "reasons": 13,
+        "descriptions": 7
       },
       "diagnostic_codes": [
         "PTDAG-208"

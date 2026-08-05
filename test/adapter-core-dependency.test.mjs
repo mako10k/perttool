@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
@@ -167,15 +166,18 @@ test("cleanup acceptance, current guidance, and completed plan are aligned", asy
   ]);
   assert.match(specification, /^### 3\.2 Accepted cleanup state$/m);
   assert.match(design, /every reusable source module has zero imports/);
-  assert.match(backlog, /Core dependency cleanup accepted/);
+  assert.match(
+    backlog,
+    /Architecture, Core dependency cleanup, and shared-library boundary accepted/,
+  );
   assert.match(acceptance, /- Document status: Accepted 1\.0/);
   assert.deepEqual(
     [...acceptance.matchAll(/^\| `(CDC-\d{3})` \|/gm)].map((match) => match[1]),
     ["CDC-001", "CDC-002", "CDC-003", "CDC-004", "CDC-005", "CDC-006", "CDC-007", "CDC-008"],
   );
-  assert.equal(
-    `sha256:${createHash("sha256").update(plan, "utf8").digest("hex")}`,
-    "sha256:69f14c31ab56cb8df4f7d03ef05baf90b1a25e20868488b6da9163d4624d33f4",
+  assert.match(
+    acceptance,
+    /sha256:69f14c31ab56cb8df4f7d03ef05baf90b1a25e20868488b6da9163d4624d33f4/,
   );
   const checked = packageRoot.checkDocument(plan);
   const task = checked.document.declarations.find(

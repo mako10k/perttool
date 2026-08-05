@@ -4,6 +4,14 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Added
+
+- Added source-package `perttool/core` and `perttool/node` subpath exports.
+  Core provides a closed platform-neutral Grammar 6 source, graph-analysis,
+  exact-arithmetic, diagnostic, Help, Guide, and projection surface; Node is
+  reference-identical to the existing 121-name package-root facade. No release
+  containing these subpaths has been selected or published.
+
 ## [0.7.1] - 2026-08-05
 
 Compatible Grammar 6 and CLI Contract 7 beta patch. This version corrects

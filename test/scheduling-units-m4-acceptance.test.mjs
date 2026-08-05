@@ -368,7 +368,12 @@ test("the active package root hides target helpers while Contract 6 retains migr
   }
 
   const manifest = JSON.parse(await repositoryFile("package.json"));
-  assert.deepEqual(Object.keys(manifest.exports), [".", "./schemas/*"]);
+  assert.deepEqual(Object.keys(manifest.exports), [
+    ".",
+    "./core",
+    "./node",
+    "./schemas/*",
+  ]);
   assert.equal("planUnitMigration" in publicApi, true);
   assert.equal(CONTRACT4_COMMAND_REGISTRY.length, 28);
   assert.ok(

@@ -1,45 +1,16 @@
 import { createHash } from "node:crypto";
+import {
+  formatDocument,
+} from "../core/source.js";
+export {
+  formatDocument,
+  parseDocument,
+  validateDocument,
+} from "../core/source.js";
 import { createUnifiedDiff } from "../editing/unified-diff.js";
-import {
-  formatTargetGrammar6Document,
-} from "../formatter/target-source-formatter.js";
-import type { FormatResult } from "../formatter/source-formatter.js";
 import type { Diagnostic } from "../model/diagnostics.js";
-import type { ParseResult, TargetDeclarationKind } from "../model/syntax.js";
 import type { TextEdit } from "../mutation/text-edits.js";
-import {
-  parseTargetGrammar6Document,
-  TARGET_GRAMMAR_6_CAPABILITY,
-  type ParseOptions,
-} from "../parser/document-parser.js";
-import {
-  validateTargetGrammar6DocumentSemantics,
-} from "../semantic/validator.js";
 import type { FormatPreviewOptions } from "./format.js";
-
-export function parseDocument(
-  text: string,
-  options: ParseOptions = {},
-): ParseResult<TargetDeclarationKind> {
-  return parseTargetGrammar6Document(
-    text,
-    TARGET_GRAMMAR_6_CAPABILITY,
-    options,
-  );
-}
-
-export const validateDocument = validateTargetGrammar6DocumentSemantics;
-
-export function formatDocument(
-  text: string,
-  options: ParseOptions = {},
-): FormatResult {
-  return formatTargetGrammar6Document(
-    text,
-    TARGET_GRAMMAR_6_CAPABILITY,
-    options,
-  );
-}
 
 export interface FormatPreviewResultV7 {
   readonly ok: boolean;

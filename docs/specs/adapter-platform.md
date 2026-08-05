@@ -119,6 +119,25 @@ consumes. Neither lower module imports Application orchestration.
 The executable boundary and compatibility cases are fixed by
 [`adapter-core-dependency-cases-v1.json`](../../test/fixtures/adapter-core-dependency-cases-v1.json).
 
+### 3.3 Accepted shared-library state
+
+The additive [`perttool/core` and `perttool/node` boundary](shared-library.md)
+is active in the source package. Core has a closed forty-name runtime catalog
+for Grammar 6 source operations, graph analysis, exact arithmetic,
+diagnostics, Help, Guide, and deterministic projections. Its complete static
+runtime closure contains no `node:` or external import and no Application,
+CLI, I/O, history, schema-loader, or adapter module. Pure work-event lifecycle
+reduction is separated from the Node-only event-identifier generator so the
+active source formatter remains portable.
+
+The Node subpath is key- and reference-identical to all 121 existing package-
+root exports. The root remains authoritative, schema artifact loading stays
+Node-owned, and `./schemas/*` is unchanged. The exact executable cases are
+fixed by
+[`adapter-shared-library-cases-v1.json`](../../test/fixtures/adapter-shared-library-cases-v1.json).
+No release or Node-port separation is implied by this accepted source
+boundary.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.
@@ -202,7 +221,7 @@ dependencies are physically isolated from the established package.
 
 | Distribution unit | Placement and dependency rule |
 | --- | --- |
-| `perttool` | Existing npm package. Retains the CLI binary, the `.` compatibility facade, and `./schemas/*`. The shared-library task adds `./core` and `./node` subpath boundaries without removing or changing existing root names. |
+| `perttool` | Existing npm package. Retains the CLI binary, the `.` compatibility facade, and `./schemas/*`; the accepted source package adds `./core` and `./node` subpath boundaries without removing or changing existing root names. |
 | Language server | Separate private workspace/distribution input. Depends on accepted `perttool` Core and Node subpaths, owns LSP dependencies, and is not published by implementation acceptance. |
 | VS Code extension | Separate private VSIX workspace. Bundles or resolves the exact accepted language-server artifact; owns VS Code and Webview dependencies. |
 | MCP server | Separate private workspace/distribution input. Depends on accepted `perttool` Core and Node subpaths, owns MCP dependencies, and has no LSP or VSIX dependency. |

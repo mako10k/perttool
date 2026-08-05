@@ -1,0 +1,140 @@
+{
+  "schema_version": "Perttool.AdapterSharedLibraryCases.v1",
+  "boundary_model_version": 1,
+  "package_exports": {
+    "core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "node": {
+      "types": "./dist/node/index.d.ts",
+      "import": "./dist/node/index.js"
+    }
+  },
+  "runtime": {
+    "package_root_export_count": 121,
+    "node_export_count": 121,
+    "core_export_count": 40,
+    "core_exports": [
+      "DEFAULT_MAX_DIAGNOSTICS",
+      "GOVERNANCE_DIRECT_EDIT_WARNING",
+      "MAX_DIAGNOSTICS_LIMIT",
+      "ONE",
+      "ZERO",
+      "absolute",
+      "add",
+      "analyzePrecedence",
+      "analyzeResources",
+      "buildResidualGraph",
+      "compare",
+      "compareStableStrings",
+      "computeEffectiveReached",
+      "convertWithVelocity",
+      "countDiagnostics",
+      "createVelocityConversion",
+      "divide",
+      "durationSuffix",
+      "formatDecimal",
+      "formatDocument",
+      "getGuide",
+      "getHelp",
+      "guideResultToJson",
+      "hasErrors",
+      "isZero",
+      "limitDiagnostics",
+      "maximum",
+      "minimum",
+      "multiply",
+      "normalizeMaxDiagnostics",
+      "parseDocument",
+      "rational",
+      "rationalFromDuration",
+      "recommendationAnalysisToJson",
+      "renderGuideResult",
+      "serializeGuideResult",
+      "sortDiagnostics",
+      "square",
+      "subtract",
+      "validateDocument"
+    ],
+    "core_runtime_module_count": 32,
+    "core_external_specifiers": [],
+    "core_forbidden_prefixes": [
+      "dist/application/",
+      "dist/cli.js",
+      "dist/command/",
+      "dist/conversion/",
+      "dist/history/",
+      "dist/io/",
+      "dist/schema/"
+    ],
+    "source_identity_exports": [
+      "parseDocument",
+      "validateDocument",
+      "formatDocument"
+    ],
+    "facade_identity_exports": [
+      "getHelp",
+      "getGuide",
+      "renderGuideResult",
+      "serializeGuideResult",
+      "buildResidualGraph",
+      "analyzePrecedence",
+      "analyzeResources",
+      "rational"
+    ]
+  },
+  "package": {
+    "production_dependency_count": 0,
+    "command_count": 44,
+    "root_schema_count": 20,
+    "required_artifacts": [
+      "package/dist/core/index.js",
+      "package/dist/core/index.d.ts",
+      "package/dist/node/index.js",
+      "package/dist/node/index.d.ts"
+    ]
+  },
+  "cases": [
+    {
+      "id": "SLB-001",
+      "depends_on": [],
+      "boundary": "manifest_subpaths"
+    },
+    {
+      "id": "SLB-002",
+      "depends_on": ["SLB-001"],
+      "boundary": "core_runtime_catalog"
+    },
+    {
+      "id": "SLB-003",
+      "depends_on": ["SLB-002"],
+      "boundary": "core_runtime_closure"
+    },
+    {
+      "id": "SLB-004",
+      "depends_on": ["SLB-003"],
+      "boundary": "active_source_identity"
+    },
+    {
+      "id": "SLB-005",
+      "depends_on": ["SLB-004"],
+      "boundary": "root_node_facade_identity"
+    },
+    {
+      "id": "SLB-006",
+      "depends_on": ["SLB-005"],
+      "boundary": "schema_help_result_ownership"
+    },
+    {
+      "id": "SLB-007",
+      "depends_on": ["SLB-006"],
+      "boundary": "isolated_package_consumption"
+    },
+    {
+      "id": "SLB-008",
+      "depends_on": ["SLB-007"],
+      "boundary": "compatibility_and_side_effects"
+    }
+  ]
+}

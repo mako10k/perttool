@@ -89,6 +89,36 @@ Contract 4, and Contract 3 remain available as exact pins
 preview remains installable only as the exact pin
 `perttool@0.1.0-alpha.2`.
 
+## Library subpaths in the current source
+
+The unreleased source package provides two additive library boundaries:
+
+```js
+import {
+  formatDocument,
+  getGuide,
+  parseDocument,
+  validateDocument,
+} from "perttool/core";
+import {
+  getJsonSchemaCatalog,
+  readDocumentFile,
+} from "perttool/node";
+```
+
+`perttool/core` is the closed platform-neutral Grammar 6 source, graph,
+exact-arithmetic, diagnostic, Help, Guide, and projection surface. Its runtime
+closure has no Node builtin or external package. `perttool/node` exposes the
+same 121 runtime values as the existing `perttool` root, including file,
+schema, Git, hashing, and safe-write APIs that still require Node.js 22 or
+later. Bundled JSON artifacts remain available through
+`perttool/schemas/<schema-id>.schema.json`.
+
+These subpaths describe the current checkout and are not present in already
+published `0.7.1`. A later release decision is required before registry
+consumers can use them. See the
+[Shared Library Boundary](docs/specs/shared-library.md).
+
 ## Plan files
 
 A `.pert` file is the source of truth and is intended to remain directly
@@ -505,6 +535,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.7.0` release procedure](docs/process/0.7.0-release.md)
 - [`v0.7.1` Help and Guide consistency patch procedure](docs/process/0.7.1-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
+- [Shared Library Boundary](docs/specs/shared-library.md)
 - [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
 - [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)
 - [Conditional Plan Assurance internal mutation Core acceptance](docs/process/plan-assurance-mutation-core-acceptance.md)

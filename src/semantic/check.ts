@@ -19,7 +19,7 @@ import {
 } from "../actuals/source.js";
 import {
   validateStoredLifecycleState,
-} from "../actuals/lifecycle.js";
+} from "../actuals/reduction.js";
 import {
   TARGET_GRAMMAR_5_CAPABILITY,
 } from "../parser/document-parser.js";

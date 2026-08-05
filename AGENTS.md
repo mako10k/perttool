@@ -286,8 +286,9 @@ compose the shared dependency contract, Core reverse-dependency cleanup,
 library and Node-port boundaries, unchanged CLI facade, protocol-neutral
 document session, read-only LSP, VSIX shell and DAG Webview, fail-closed
 read-only MCP adapter, and cross-surface acceptance.
-`ADAPTER_ARCHITECTURE_CONTRACT` and `CORE_DEPENDENCY_CLEANUP` are complete and
-retained in their exact pre-advance state. The accepted
+`ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`, and
+`SHARED_LIBRARY_BOUNDARY` are complete and retained in their exact pre-advance
+state. The accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
 `docs/process/adapter-core-dependency-acceptance.md` records fix the
@@ -296,10 +297,16 @@ exact twelve-file, nineteen-import reverse-dependency input; acyclic layer
 directions; additive Core/Node subpaths; private adapter distribution inputs;
 result and capability ownership; semantic parity; five neutral implementation
 owners with exact Application facades; analyzer and override dependency
-inversion; and zero reusable-module imports into Application. Fourteen tasks
-and 77p remain. Precedence makespan is 47p; the `parallel-sgs` version 1
-heuristic resource makespan is 65p with 18p resource delay. Complete NextResult
-v6 recommends and permits only `SHARED_LIBRARY_BOUNDARY`. Editor mutation, MCP
+inversion; and zero reusable-module imports into Application. The accepted
+`docs/specs/shared-library.md` and
+`docs/process/adapter-shared-library-acceptance.md` add a closed forty-name
+platform-neutral Core runtime, an exact 121-name Node facade, root-identical
+Grammar 6 parse/validate/format, and direct isolated-package consumption while
+retaining zero production dependencies. Thirteen tasks and 70p remain.
+Precedence makespan is 45p; the `parallel-sgs` version 1 heuristic resource
+makespan is 49p with 4p resource delay. Complete NextResult v6 recommends and
+permits only `EDITOR_PROTOCOL_CONTRACT`; `NODE_PORT_BOUNDARY` is separately
+ready and resource-feasible but only `allowed`. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
@@ -610,9 +617,10 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance and isolated-package inventory checks for internal assurance compatibility and inspection modules.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
-- `src/actuals/`: active Grammar 5 source projection, deterministic event identity, exact lifecycle reduction, exact measurements, and stored-state validation for task-owned work-event records.
+- `src/actuals/`: active Grammar 5 source projection, Node-backed deterministic event identity and request normalization, and separately owned pure exact lifecycle reduction, measurements, and stored-state validation for task-owned work-event records.
 - `src/assurance/`: active ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, assurance-preserving advance contraction, compatibility source capture and project metadata, direct-edit guidance, and semantic Mermaid profile 2; lower-level target-capability helpers remain internal.
 - `src/command/`: immutable typed Contract 7 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
+- `src/core/`: additive platform-neutral `perttool/core` entrypoint and the unique active Grammar 6 parse/validate/format facade; its closed runtime catalog has no Node, Application, CLI, I/O, history, schema-loader, or adapter dependency.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 7 editing, actuals, and plan-assurance Guide.
 - `src/analysis/`: neutral base analysis service and target temporal input projection; residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
@@ -627,6 +635,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5/6 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, localized version-upgrade inputs, and internal retained Grammar 6 migration support.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
+- `src/node/`: additive `perttool/node` entrypoint that retains exact key and value identity with the established 121-name package root until the separately accepted Node-port cutover.
 - `src/parser/`: the active Grammar 1/2/3/4/5/6 parser with identity-checked task-owned work-event and plan-assurance source.
 - `src/semantic/`: neutral document-check service; active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.

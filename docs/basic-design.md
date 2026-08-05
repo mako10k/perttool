@@ -179,9 +179,17 @@ two dependencies that could not be corrected by relocation alone.
 
 ### 3.2 Distribution boundary
 
-The current `perttool` npm package retains its CLI, `.` compatibility facade,
-and schema artifacts. The shared-library slice adds isolated `./core` and
-`./node` subpath boundaries without removing or changing existing root names.
+The current `perttool` source package retains its CLI, `.` compatibility
+facade, and schema artifacts. The accepted shared-library slice adds isolated
+`./core` and `./node` subpath boundaries without removing or changing existing
+root names. `src/core/` owns the forty-name platform-neutral runtime catalog
+and portable type facade; `src/node/` is the exact 121-name Node facade over
+the authoritative root. Active Grammar 6 parse, validate, and format functions
+are reference-identical through Core and root. Pure lifecycle reduction is
+separate from Node-only event-ID hashing, keeping the complete Core runtime
+closure free of Node builtins, outer Application modules, I/O, history,
+schema loading, CLI, and adapter code. The exact contract is
+[`docs/specs/shared-library.md`](specs/shared-library.md).
 LSP, VSIX, and MCP live in separate private workspace/distribution inputs so
 their protocol dependencies do not enter the shared Core or CLI closure.
 Publication names, versions, and dist-tags remain separate release decisions.
@@ -219,6 +227,8 @@ perttool/
   package.json
   tsconfig.json
   src/
+    core/
+    node/
     application/
       agent-help.ts
       analyze.ts

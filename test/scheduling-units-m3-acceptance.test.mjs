@@ -230,7 +230,12 @@ test("active package root keeps temporal helpers internal while CLI uses Contrac
   }
 
   const manifest = JSON.parse(await repositoryFile("package.json"));
-  assert.deepEqual(Object.keys(manifest.exports), [".", "./schemas/*"]);
+  assert.deepEqual(Object.keys(manifest.exports), [
+    ".",
+    "./core",
+    "./node",
+    "./schemas/*",
+  ]);
   assert.equal(CONTRACT4_COMMAND_REGISTRY.length, 28);
   assert.ok(
     CONTRACT4_COMMAND_REGISTRY.every(

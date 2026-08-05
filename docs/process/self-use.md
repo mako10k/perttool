@@ -1563,20 +1563,24 @@ tasks total 91p and cover the cross-adapter dependency contract, reverse-
 dependency cleanup, shared library and Node ports, CLI compatibility,
 versioned editor protocol, document session, read-only LSP, VSIX shell and DAG
 Webview, fail-closed read-only MCP, and integrated acceptance.
-`ADAPTER_ARCHITECTURE_CONTRACT` and `CORE_DEPENDENCY_CLEANUP` are complete
-with exact start/finish evidence and retained before advance. The normative
+`ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`, and
+`SHARED_LIBRARY_BOUNDARY` are complete with exact start/finish evidence and
+retained before advance. The normative
 contract fixes the 121-export, 44-command, 20-schema baseline, exact twelve-
 file/nineteen-import migration input, dependency directions, Core/Node
 subpaths, private adapter distribution inputs, capability ownership, and
 semantic parity. The cleanup moves five reusable implementations to neutral
 owners behind exact compatibility facades, inverts analyzer and override
 dependencies, and enforces that only CLI and package-root composition import
-Application externally. Fourteen tasks and 77p remain; precedence makespan is
-47p and the `parallel-sgs` version 1 heuristic resource makespan is 65p with
-18p resource delay. Inherited velocity `29p/2d` yields 3.241d and 4.483d
+Application externally. The shared-library slice adds the exact forty-name
+portable Core, the exact 121-name Node facade, root-identical Grammar 6 source
+functions, and isolated export-map consumption without adding a production
+dependency or release. Thirteen tasks and 70p remain; precedence makespan is
+45p and the `parallel-sgs` version 1 heuristic resource makespan is 49p with
+4p resource delay. Inherited velocity `29p/2d` yields 3.103d and 3.379d
 forecasts. Complete NextResult v6 recommends and permits only
-`SHARED_LIBRARY_BOUNDARY`; source digest is
-`sha256:69f14c31ab56cb8df4f7d03ef05baf90b1a25e20868488b6da9163d4624d33f4`.
+`EDITOR_PROTOCOL_CONTRACT`; source digest is
+`sha256:33a44d94d85ea3134e61033cfea22cc3fad159c7c2fdaf7273ccf48604f1d04c`.
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 

@@ -75,8 +75,12 @@ for required in \
   package/dist/application/contract7-assurance.js \
   package/dist/application/contract7-mermaid.js \
   package/dist/help/guide.js \
+  package/dist/core/index.js \
+  package/dist/core/index.d.ts \
   package/dist/index.js \
   package/dist/index.d.ts \
+  package/dist/node/index.js \
+  package/dist/node/index.d.ts \
   package/schemas/Perttool.Common.v1.schema.json \
   package/schemas/Perttool.AdvanceResult.v2.schema.json \
   package/schemas/Perttool.CheckResult.v4.schema.json \
@@ -287,6 +291,35 @@ node scripts/check-package-actuals.mjs \
   "$installed_cli" \
   "$package_root/actuals-workflow" \
   "$repo_root/test/fixtures/project-actuals-v5.pert"
+installed_package_root="$install_prefix/lib/node_modules/$package_name"
+(
+  cd "$installed_package_root"
+  node --input-type=module - \
+    "$repo_root/docs/examples/minimal.pert" <<'NODE'
+import { readFile } from "node:fs/promises";
+import * as core from "perttool/core";
+import * as nodeApi from "perttool/node";
+import * as root from "perttool";
+
+const source = await readFile(process.argv[2], "utf8");
+const parsed = core.parseDocument(source);
+const formatted = core.formatDocument(source);
+if (
+  Object.keys(root).length !== 121 ||
+  Object.keys(nodeApi).length !== 121 ||
+  Object.keys(core).length !== 40 ||
+  !Object.keys(root).every((name) => root[name] === nodeApi[name]) ||
+  root.parseDocument !== core.parseDocument ||
+  root.validateDocument !== core.validateDocument ||
+  root.formatDocument !== core.formatDocument ||
+  parsed.diagnostics.length !== 0 ||
+  core.validateDocument(parsed.document, parsed.diagnostics).length !== 0 ||
+  formatted.ok !== true ||
+  formatted.formattedText !== source ||
+  core.getGuide(null, "index").ok !== true
+) process.exit(1);
+NODE
+)
 installed_guide_module="$install_prefix/lib/node_modules/$package_name/dist/index.js"
 node --input-type=module - "$installed_guide_module" <<'NODE'
 import { pathToFileURL } from "node:url";
