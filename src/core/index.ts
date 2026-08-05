@@ -27,6 +27,13 @@ export {
 export * from "../model/rational.js";
 export * from "../model/units.js";
 export { GOVERNANCE_DIRECT_EDIT_WARNING } from "../governance/guidance.js";
+export {
+  analyzeDocumentSnapshot,
+  createDocumentSession,
+  createDocumentSnapshot,
+  documentOffsetToPosition,
+  documentPositionToOffset,
+} from "../session/document-session.js";
 
 export type {
   AnalysisEdge,
@@ -123,3 +130,25 @@ export type {
   PlanAssuranceStartAuthorityV1,
   PlanAssuranceStateCountsV1,
 } from "../assurance/authority.js";
+export type {
+  DocumentAnalysisMode,
+  DocumentAnalysisOptions,
+  DocumentAnalysisProjection,
+  DocumentBinding,
+  DocumentContentChange,
+  DocumentPosition,
+  DocumentProjectionRequest,
+  DocumentProjectionResult,
+  DocumentProjectionStatus,
+  DocumentRange,
+  DocumentSemanticResult,
+  DocumentSession,
+  DocumentSessionAnalysisResult,
+  DocumentSessionChange,
+  DocumentSessionFailureReason,
+  DocumentSessionTransition,
+  DocumentSnapshot,
+  DocumentSnapshotInput,
+  DocumentSnapshotOptions,
+  DocumentSourceDigest,
+} from "../session/document-session.js";

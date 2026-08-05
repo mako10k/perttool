@@ -77,6 +77,8 @@ for required in \
   package/dist/help/guide.js \
   package/dist/core/index.js \
   package/dist/core/index.d.ts \
+  package/dist/session/document-session.js \
+  package/dist/session/document-session.d.ts \
   package/dist/index.js \
   package/dist/index.d.ts \
   package/dist/node/index.js \
@@ -297,6 +299,7 @@ installed_package_root="$install_prefix/lib/node_modules/$package_name"
   node --input-type=module - \
     "$repo_root/docs/examples/minimal.pert" <<'NODE'
 import { readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import * as core from "perttool/core";
 import * as nodeApi from "perttool/node";
 import * as root from "perttool";
@@ -304,10 +307,22 @@ import * as root from "perttool";
 const source = await readFile(process.argv[2], "utf8");
 const parsed = core.parseDocument(source);
 const formatted = core.formatDocument(source);
+const snapshot = core.createDocumentSnapshot(
+  {
+    uri: "file:///installed/minimal.pert",
+    generation: "installed-1",
+    version: 1,
+    text: source,
+  },
+  {
+    digestText: (text) =>
+      `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`,
+  },
+);
 if (
   Object.keys(root).length !== 121 ||
   Object.keys(nodeApi).length !== 121 ||
-  Object.keys(core).length !== 40 ||
+  Object.keys(core).length !== 45 ||
   !Object.keys(root).every((name) => root[name] === nodeApi[name]) ||
   root.parseDocument !== core.parseDocument ||
   root.validateDocument !== core.validateDocument ||
@@ -316,6 +331,8 @@ if (
   core.validateDocument(parsed.document, parsed.diagnostics).length !== 0 ||
   formatted.ok !== true ||
   formatted.formattedText !== source ||
+  snapshot.semantic.ok !== true ||
+  core.analyzeDocumentSnapshot(snapshot, { mode: "both" }).complete !== true ||
   core.getGuide(null, "index").ok !== true
 ) process.exit(1);
 NODE

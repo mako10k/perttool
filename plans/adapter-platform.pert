@@ -221,6 +221,7 @@ task DOCUMENT_SESSION_CORE DOCUMENT_SESSION_INPUT -> DOCUMENT_SESSION_READY:
   title "Implement the protocol-neutral document session Core"
   description "Implement immutable text snapshots bound to URI, document version, raw digest, parse and semantic results, analysis options, cached projections, and cancellation-safe invalidation. Support stateless CLI and MCP calls as adapters while enabling LSP incremental document ownership; return no current graph result for invalid or stale snapshots and perform no filesystem or editor write."
   duration 6p
+  status done
   priority 85
   requires:
     DEVELOPERS 1
@@ -401,3 +402,18 @@ work_event WE-6631858a1d4a460567c09fd6ed9f333e3a2f4c804b520fb7187e941e00f07f81:
   occurred_at 2026-08-05T15:26:34+09:00
   active_time 259/1200h
   effort 259/1200ph
+
+work_event WE-08490253b2a6afc3f568b5c501725a04527f2a9a2a22bd3a1a503abc22ed7192:
+  model 1
+  task DOCUMENT_SESSION_CORE
+  kind start
+  occurred_at 2026-08-05T15:49:13+09:00
+  planned_value 6p
+
+work_event WE-5fb6cead4f46949a6950c2fb3f8117aeb7699c5435b886621433f5d8ca72bc9a:
+  model 1
+  task DOCUMENT_SESSION_CORE
+  kind finish
+  occurred_at 2026-08-05T16:07:26+09:00
+  active_time 1093/3600h
+  effort 1093/3600ph

@@ -31,7 +31,8 @@ external package, Application implementation, CLI command module, I/O module,
 Git/history module, schema-artifact loader, process state, network state, or
 adapter module. It MUST NOT start a process or perform I/O at module load.
 
-The closed runtime catalog contains forty names in these groups:
+The accepted `SHARED_LIBRARY_BOUNDARY` runtime catalog contained forty names
+in these groups:
 
 - active Grammar 6 `parseDocument`, `validateDocument`, and `formatDocument`;
 - residual-graph, precedence, and heuristic resource analysis functions;
@@ -56,6 +57,15 @@ Current file-backed Contract 7 Application result types remain available from
 the root and Node facades until their concrete hashing and Host dependencies
 are separated by `NODE_PORT_BOUNDARY`; Core does not point outward merely to
 re-export those types.
+
+The later accepted [Document Session Core](document-session.md) is an additive
+extension of this same boundary. It retains all forty original runtime values
+and adds five Core-only document snapshot, session, analysis, and UTF-16
+conversion functions. The current exact catalog therefore has 45 names and a
+34-module portable runtime closure. The original `SLB-*` fixture remains the
+historical boundary baseline; the exact current inventory and closure are
+owned by the `DSC-*` fixture. Neither the root nor `perttool/node` re-exports
+the five later values.
 
 ## 3. Node and compatibility facades
 
@@ -107,8 +117,8 @@ decisions.
 | Case | Boundary | Required result |
 | --- | --- | --- |
 | `SLB-001` | Manifest | additive `./core` and `./node` targets are exact |
-| `SLB-002` | Core catalog | the exact forty runtime names are closed and deterministic |
-| `SLB-003` | Core closure | no Node builtin, external package, outer layer, or side effect enters Core |
+| `SLB-002` | Core catalog | the original exact forty runtime names remain present and deterministic |
+| `SLB-003` | Core closure | no Node builtin, external package, outer layer, or side effect enters the additive Core closure |
 | `SLB-004` | Source identity | Grammar 6 parse, validate, and format are identical through root and Core |
 | `SLB-005` | Node facade | all 121 root values and the Node subpath are key- and reference-identical |
 | `SLB-006` | Schema and Help | types are portable; executable schema loading stays Node-owned; Help and Guide run in Core |

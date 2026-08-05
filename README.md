@@ -95,6 +95,11 @@ The unreleased source package provides two additive library boundaries:
 
 ```js
 import {
+  analyzeDocumentSnapshot,
+  createDocumentSession,
+  createDocumentSnapshot,
+  documentOffsetToPosition,
+  documentPositionToOffset,
   formatDocument,
   getGuide,
   parseDocument,
@@ -107,17 +112,22 @@ import {
 ```
 
 `perttool/core` is the closed platform-neutral Grammar 6 source, graph,
-exact-arithmetic, diagnostic, Help, Guide, and projection surface. Its runtime
-closure has no Node builtin or external package. `perttool/node` exposes the
-same 121 runtime values as the existing `perttool` root, including file,
-schema, Git, hashing, and safe-write APIs that still require Node.js 22 or
-later. Bundled JSON artifacts remain available through
-`perttool/schemas/<schema-id>.schema.json`.
+exact-arithmetic, diagnostic, Help, Guide, projection, and document-session
+surface. Immutable snapshots and sessions bind exact URI, generation, version,
+text digest, parse/semantic state, UTF-16 positions, analysis options, and
+cancellation-safe caches without filesystem or editor access. The caller
+supplies the SHA-256 function. Its runtime closure has no Node builtin or
+external package. `perttool/node` exposes the same 121 runtime values as the
+existing `perttool` root, including file, schema, Git, hashing, and safe-write
+APIs that still require Node.js 22 or later. Bundled JSON artifacts remain
+available through `perttool/schemas/<schema-id>.schema.json`.
 
 These subpaths describe the current checkout and are not present in already
 published `0.7.1`. A later release decision is required before registry
 consumers can use them. See the
 [Shared Library Boundary](docs/specs/shared-library.md).
+The protocol-neutral state contract is the
+[Document Session Core](docs/specs/document-session.md).
 
 ## Plan files
 
@@ -537,6 +547,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
+- [Document Session Core](docs/specs/document-session.md)
 - [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
 - [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)
 - [Conditional Plan Assurance internal mutation Core acceptance](docs/process/plan-assurance-mutation-core-acceptance.md)

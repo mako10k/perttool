@@ -140,7 +140,8 @@ diverge from the client, so any version or change failure marks the connection
 desynchronized, cancels all pending work, clears adapter-owned presentation
 state, and terminates the stdio connection without serving another request.
 Recovery requires a new connection and a fresh `didOpen`; a later incremental
-change cannot repair the old generation. The later document session owns one
+change cannot repair the old generation. The implemented
+[Document Session Core](document-session.md) owns one
 immutable snapshot containing URI, generation, version, exact text, UTF-8
 SHA-256 source digest, parse result, validation result, and derived caches.
 
@@ -574,3 +575,8 @@ It records the exact task lifecycle in the local plan only.
 Acceptance does not implement or package the server or extension, start
 `DOCUMENT_SESSION_CORE`, mutate an editor document, advance the plan, select a
 release, publish a VSIX or package, push a remote, or mutate an Issue.
+
+After this contract task was accepted, `DOCUMENT_SESSION_CORE` separately
+implemented only the protocol-neutral snapshot, UTF-16, analysis, cache, and
+invalidation boundary. The LSP and GraphView wire mappings remain unimplemented
+by this historical contract acceptance.

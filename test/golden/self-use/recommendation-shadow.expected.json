@@ -65,21 +65,20 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:f5966e1af251ddb8873fb3ce05536ce829493533f49f7789540ae011fdc6f6f1",
+      "source_digest": "sha256:1adc6eb1a054e5ae5919365ba4e96a81b01924a9ca01c0701e9326ca4b8ffe5e",
       "groups": {
         "active": [],
         "ready": [
           "MCP_READ_CONTRACT",
-          "DOCUMENT_SESSION_CORE",
-          "NODE_PORT_BOUNDARY"
+          "NODE_PORT_BOUNDARY",
+          "LSP_READ_CORE"
         ],
         "runnable_now": [
           "MCP_READ_CONTRACT",
-          "DOCUMENT_SESSION_CORE"
+          "NODE_PORT_BOUNDARY"
         ],
         "blocked_now": [],
         "upcoming": [
-          "LSP_READ_CORE",
           "MCP_READ_ADAPTER",
           "CLI_FACADE_PARITY",
           "LSP_ACCEPTANCE",
@@ -92,14 +91,14 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "DOCUMENT_SESSION_CORE"
+        "LSP_READ_CORE"
       ],
       "manual_selected_task_ids": [
         "MCP_READ_CONTRACT",
-        "DOCUMENT_SESSION_CORE"
+        "NODE_PORT_BOUNDARY"
       ],
       "tiers": {
-        "DOCUMENT_SESSION_CORE": "recommended",
+        "LSP_READ_CORE": "recommended",
         "NODE_PORT_BOUNDARY": "deferred",
         "MCP_READ_CONTRACT": "allowed"
       },
@@ -110,23 +109,23 @@
           "runnable_now": true,
           "precedence_critical": false,
           "schedule_critical": false,
-          "total_float": "20/1",
-          "resource_rejections": []
-        },
-        {
-          "id": "DOCUMENT_SESSION_CORE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
+          "total_float": "14/1",
           "resource_rejections": []
         },
         {
           "id": "NODE_PORT_BOUNDARY",
-          "runnable_now": false,
+          "runnable_now": true,
           "precedence_critical": false,
           "schedule_critical": true,
-          "total_float": "19/1",
+          "total_float": "13/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "LSP_READ_CORE",
+          "runnable_now": false,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
           "resource_rejections": [
             {
               "resource_id": "CORE_SURFACE",
@@ -136,7 +135,7 @@
               "deficit": 1,
               "active_task_ids": [],
               "earlier_selected_task_ids": [
-                "DOCUMENT_SESSION_CORE"
+                "NODE_PORT_BOUNDARY"
               ]
             },
             {
@@ -148,7 +147,7 @@
               "active_task_ids": [],
               "earlier_selected_task_ids": [
                 "MCP_READ_CONTRACT",
-                "DOCUMENT_SESSION_CORE"
+                "NODE_PORT_BOUNDARY"
               ]
             }
           ]

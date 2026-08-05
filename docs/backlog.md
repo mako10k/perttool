@@ -792,7 +792,8 @@ runtime or syntax change.
 Priority: Selected cross-adapter foundation
 
 Status: Architecture, Core dependency cleanup, shared-library boundary, and
-editor protocol contract accepted (2026-08-05; retained before advance)
+editor protocol contract accepted; document-session Core also accepted
+(2026-08-05; retained before advance)
 
 Define and implement the shared architecture that must precede separate CLI,
 LSP, VSIX, DAG-view, and MCP adapter delivery. The selected
@@ -824,11 +825,17 @@ handling, the closed read-only capability set,
 `Perttool.GraphViewResult.v1`, four analysis modes, source navigation, VS Code
 `^1.101.0`, offline server distribution, workspace trust, Webview CSP, and
 accessibility. `EDITOR_PROTOCOL_CONTRACT` is complete with exact lifecycle
-evidence and retained before advance. Twelve tasks and 65p remain; precedence
-makespan is 40p and the heuristic resource makespan is 49p with 9p resource
-delay. Complete NextResult v6 recommends and permits only
-`DOCUMENT_SESSION_CORE`; `MCP_READ_CONTRACT` is separately `allowed`, while
-`NODE_PORT_BOUNDARY` is ready but `deferred` by the current joint selection.
+evidence and retained before advance. The [document-session
+contract](specs/document-session.md) and [acceptance
+record](process/adapter-document-session-acceptance.md) implement immutable
+URI/generation/version/digest-bound Grammar 6 snapshots, exact UTF-16 changes,
+validated-snapshot analysis, snapshot-scoped caching, and cancellation/stale
+rejection through an exact 45-name portable Core. `DOCUMENT_SESSION_CORE` is
+complete with exact lifecycle evidence and retained before advance. Eleven
+tasks and 59p remain; precedence makespan is 34p and the heuristic resource
+makespan is 43p with 9p resource delay. Complete NextResult v6 recommends and
+makes startable only `LSP_READ_CORE`; `MCP_READ_CONTRACT` is `allowed`, while
+`NODE_PORT_BOUNDARY` is `deferred`.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared
@@ -843,8 +850,8 @@ and plan advance remain separate decisions.
 
 Priority: Selected through `ADAPTER-001`
 
-Status: Contract accepted; implementation depends on the shared library,
-accepted editor protocol, and document-session gates
+Status: Contract and shared document-session Core accepted; language-server
+implementation is the only startable recommendation
 
 Define an LSP boundary for diagnostics, document symbols, hover, completion,
 and source-safe code actions by reusing the parser, semantic model, help

@@ -182,14 +182,17 @@ two dependencies that could not be corrected by relocation alone.
 The current `perttool` source package retains its CLI, `.` compatibility
 facade, and schema artifacts. The accepted shared-library slice adds isolated
 `./core` and `./node` subpath boundaries without removing or changing existing
-root names. `src/core/` owns the forty-name platform-neutral runtime catalog
-and portable type facade; `src/node/` is the exact 121-name Node facade over
-the authoritative root. Active Grammar 6 parse, validate, and format functions
-are reference-identical through Core and root. Pure lifecycle reduction is
-separate from Node-only event-ID hashing, keeping the complete Core runtime
-closure free of Node builtins, outer Application modules, I/O, history,
-schema loading, CLI, and adapter code. The exact contract is
-[`docs/specs/shared-library.md`](specs/shared-library.md).
+root names. `src/core/` originally established a forty-name platform-neutral
+runtime catalog and now additively exposes the five protocol-neutral document-
+session functions from `src/session/`; its exact current catalog has 45 names
+and a 34-module portable closure. `src/node/` remains the exact 121-name Node
+facade over the authoritative root. Active Grammar 6 parse, validate, and
+format functions are reference-identical through Core and root. Pure lifecycle
+reduction and the document session remain separate from Node-only hashing,
+keeping the complete Core runtime closure free of Node builtins, outer
+Application modules, I/O, history, schema loading, CLI, and adapter code. The
+exact contracts are [`docs/specs/shared-library.md`](specs/shared-library.md)
+and [`docs/specs/document-session.md`](specs/document-session.md).
 LSP, VSIX, and MCP live in separate private workspace/distribution inputs so
 their protocol dependencies do not enter the shared Core or CLI closure.
 Publication names, versions, and dist-tags remain separate release decisions.
@@ -286,6 +289,8 @@ perttool/
       validator.ts
     schema/
       registry.ts
+    session/
+      document-session.ts
     cli.ts
     index.ts
     version.ts
@@ -2183,6 +2188,25 @@ and cannot calculate schedule meaning or execute Mermaid.
 The exact protocol, capability, trust, CSP, distribution, and accessibility
 rules are in the [Editor Protocol Contract](specs/editor-protocol.md).
 
+The implemented protocol-neutral session receives hashing as an explicit
+synchronous function and never reads a path or environment value. Each frozen
+snapshot owns exact text, binding, parse tree, semantic diagnostics, and
+truncation state. Ranged content changes resolve sequentially against a
+temporary candidate and publish one new snapshot only after all ranges and the
+new digest succeed. Invalid DSL remains synchronized for diagnostics; a
+lifecycle, version, range, or digest failure clears the connection-local map
+and makes the session terminally desynchronized.
+
+Generic projections receive the captured snapshot and a caller-owned cache
+key. The cache is a weak snapshot-keyed map populated only after computation,
+cancellation, and complete binding rechecks succeed. The analysis convenience
+path snapshots mutable capacity overrides, includes all semantic options in a
+stable key, and invokes the neutral validated-document analyzer without
+reparsing. A close, reopen, accepted change, cancellation, invalid source, or
+diagnostic truncation cannot return a current semantic value. The exact state,
+API, and cases are in the [Document Session Core
+specification](specs/document-session.md).
+
 ## 13. Help design
 
 Maintain help as a shared registry rather than scattered strings in code.
@@ -3126,9 +3150,10 @@ Exit:
 The selected `ADAPTER-001` plan composes a shared foundation and three adapter
 branches after first-beta acceptance.
 
-- Shared foundation: the dependency and distribution contract and reverse-
-  dependency cleanup are accepted. Next expose Core and Node boundaries,
-  preserve the CLI facade, and add a protocol-neutral document session.
+- Shared foundation: the dependency and distribution contract, reverse-
+  dependency cleanup, additive Core/Node subpaths, and protocol-neutral
+  document session are accepted. Node Host separation and CLI facade parity
+  remain later shared-foundation tasks.
 - Read-only LSP: directly use the shared session and Application services for
   synchronization, diagnostics, symbols, hover, completion, definition/source
   navigation, help, cancellation, and a version-bound graph result. Rename,

@@ -1564,27 +1564,35 @@ dependency cleanup, shared library and Node ports, CLI compatibility,
 versioned editor protocol, document session, read-only LSP, VSIX shell and DAG
 Webview, fail-closed read-only MCP, and integrated acceptance.
 `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
-`SHARED_LIBRARY_BOUNDARY`, and `EDITOR_PROTOCOL_CONTRACT` are complete with
-exact start/finish evidence and retained before advance. The normative
+`SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
+`DOCUMENT_SESSION_CORE` are complete with exact start/finish evidence and
+retained before advance. The normative
 contract fixes the 121-export, 44-command, 20-schema baseline, exact twelve-
 file/nineteen-import migration input, dependency directions, Core/Node
 subpaths, private adapter distribution inputs, capability ownership, and
 semantic parity. The cleanup moves five reusable implementations to neutral
 owners behind exact compatibility facades, inverts analyzer and override
 dependencies, and enforces that only CLI and package-root composition import
-Application externally. The shared-library slice adds the exact forty-name
-portable Core, the exact 121-name Node facade, root-identical Grammar 6 source
-functions, and isolated export-map consumption without adding a production
-dependency or release. Editor protocol model 1 fixes stable LSP 3.17, exact
-URI/generation/version and UTF-16 behavior, cancellation and stale rejection,
-the closed read-only capability set, `Perttool.GraphViewResult.v1`, four DAG
+Application externally. The shared-library slice establishes the original
+forty-name portable Core, the exact 121-name Node facade, root-identical
+Grammar 6 source functions, and isolated export-map consumption without adding
+a production dependency or release. Editor protocol model 1 fixes stable LSP
+3.17, exact URI/generation/version and UTF-16 behavior, cancellation and stale
+rejection, the closed read-only capability set, `Perttool.GraphViewResult.v1`,
+four DAG
 analysis modes, source navigation, VS Code `^1.101.0`, offline server
-distribution, workspace trust, restrictive CSP, and accessibility. Twelve
-tasks and 65p remain; precedence makespan is 40p and the `parallel-sgs`
-version 1 heuristic resource makespan is 49p with 9p resource delay. Inherited
-velocity `29p/2d` yields 2.759d and 3.379d forecasts. Complete NextResult v6
-recommends and permits only `DOCUMENT_SESSION_CORE`; source digest is
-`sha256:f5966e1af251ddb8873fb3ce05536ce829493533f49f7789540ae011fdc6f6f1`.
+distribution, workspace trust, restrictive CSP, and accessibility. The
+document-session slice adds five Core-only runtime values for frozen
+URI/generation/version/digest snapshots, exact UTF-16 changes, stateless and
+stateful validated-snapshot analysis, snapshot-scoped completed caches, and
+cancellation/stale rejection. The current Core is an exact portable 45-name,
+34-module closure; root and Node remain exact 121-name facades. Eleven tasks
+and 59p remain; precedence makespan is 34p and the `parallel-sgs` version 1
+heuristic resource makespan is 43p with 9p resource delay. Inherited velocity
+`29p/2d` yields 2.345d and 2.966d forecasts. Complete NextResult v6 recommends
+and makes startable only `LSP_READ_CORE`; `MCP_READ_CONTRACT` is `allowed`,
+and `NODE_PORT_BOUNDARY` is `deferred`. Source digest is
+`sha256:1adc6eb1a054e5ae5919365ba4e96a81b01924a9ca01c0701e9326ca4b8ffe5e`.
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 

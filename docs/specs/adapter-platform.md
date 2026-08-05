@@ -122,8 +122,9 @@ The executable boundary and compatibility cases are fixed by
 ### 3.3 Accepted shared-library state
 
 The additive [`perttool/core` and `perttool/node` boundary](shared-library.md)
-is active in the source package. Core has a closed forty-name runtime catalog
-for Grammar 6 source operations, graph analysis, exact arithmetic,
+is active in the source package. Its initially accepted Core slice has the
+closed forty-name baseline catalog for Grammar 6 source operations, graph
+analysis, exact arithmetic,
 diagnostics, Help, Guide, and deterministic projections. Its complete static
 runtime closure contains no `node:` or external import and no Application,
 CLI, I/O, history, schema-loader, or adapter module. Pure work-event lifecycle
@@ -156,6 +157,30 @@ exact bundled server, explicit untrusted and virtual workspace support,
 restrictive CSP, closed presentation messages, and an accessible text
 outline. No runtime implementation, adapter dependency, editor mutation, or
 release is implied by this accepted contract.
+
+### 3.5 Implemented document-session state
+
+The protocol-neutral [Document Session Core](document-session.md) is exposed
+only through `perttool/core`. It owns immutable Grammar 6 snapshots bound to
+exact URI, open generation, strictly increasing version, synchronized text,
+and injected UTF-8 SHA-256 identity. It applies ordered UTF-16 ranged changes
+atomically, preserves invalid source as a current diagnostic snapshot, and
+terminally desynchronizes after lifecycle, version, range, or digest failure.
+
+The session reuses each snapshot's parse and semantic result for `none`,
+`precedence`, `resource`, and `both` analysis. Completed generic and analysis
+projections are cached only for the exact immutable snapshot; cancellation,
+close, reopen, change, or binding mismatch cannot publish or cache stale work.
+Stateless adapters may use the same snapshot and analysis functions without a
+connection-owned document map.
+
+This additive slice extends the portable Core from its original forty values
+to an exact 45-name, 34-module closure with zero runtime imports outside the
+package. The package root and `perttool/node` remain exact 121-name facades.
+Hashing is an explicit synchronous inward function port, so this slice neither
+imports Node crypto nor activates the broader `NODE_PORT_BOUNDARY`. LSP wire
+mapping, GraphView projection, Node composition, CLI migration, MCP transport,
+editor writes, and release selection remain later boundaries.
 
 ## 4. Target dependency model
 

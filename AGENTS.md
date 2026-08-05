@@ -287,8 +287,9 @@ library and Node-port boundaries, unchanged CLI facade, protocol-neutral
 document session, read-only LSP, VSIX shell and DAG Webview, fail-closed
 read-only MCP adapter, and cross-surface acceptance.
 `ADAPTER_ARCHITECTURE_CONTRACT`, `CORE_DEPENDENCY_CLEANUP`,
-`SHARED_LIBRARY_BOUNDARY`, and `EDITOR_PROTOCOL_CONTRACT` are complete and
-retained in their exact pre-advance state. The accepted
+`SHARED_LIBRARY_BOUNDARY`, `EDITOR_PROTOCOL_CONTRACT`, and
+`DOCUMENT_SESSION_CORE` are complete and retained in their exact pre-advance
+state. The accepted
 `docs/specs/adapter-platform.md` contract,
 `docs/process/adapter-architecture-contract-acceptance.md`, and
 `docs/process/adapter-core-dependency-acceptance.md` records fix the
@@ -309,11 +310,17 @@ URI/generation/version and UTF-16 synchronization, cancellation and stale
 rejection, the closed read-only capability set,
 `Perttool.GraphViewResult.v1`, four DAG modes, source navigation, VS Code
 `^1.101.0`, offline server distribution, workspace trust, restrictive CSP,
-and accessibility. Twelve tasks and 65p remain. Precedence makespan is 40p;
-the `parallel-sgs` version 1 heuristic resource makespan is 49p with 9p
-resource delay. Complete NextResult v6 recommends and permits only
-`DOCUMENT_SESSION_CORE`; `MCP_READ_CONTRACT` is `allowed`, while
-`NODE_PORT_BOUNDARY` is ready but `deferred`. Editor mutation, MCP
+and accessibility. The accepted `docs/specs/document-session.md` and
+`docs/process/adapter-document-session-acceptance.md` expose five Core-only
+snapshot, session, analysis, and UTF-16 functions. The exact current Core has
+45 runtime values in a 34-module portable closure; immutable source bindings,
+atomic changes, completed projection caching, and cancellation/stale rejection
+perform no file or editor write, while root and Node remain exact 121-name
+facades. Eleven tasks and 59p remain. Precedence makespan is 34p; the
+`parallel-sgs` version 1 heuristic resource makespan is 43p with 9p resource
+delay. Complete NextResult v6 recommends and makes startable only
+`LSP_READ_CORE`; `MCP_READ_CONTRACT` is `allowed`, while
+`NODE_PORT_BOUNDARY` is `deferred`. Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
@@ -627,11 +634,12 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/actuals/`: active Grammar 5 source projection, Node-backed deterministic event identity and request normalization, and separately owned pure exact lifecycle reduction, measurements, and stored-state validation for task-owned work-event records.
 - `src/assurance/`: active ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, assurance-preserving advance contraction, compatibility source capture and project metadata, direct-edit guidance, and semantic Mermaid profile 2; lower-level target-capability helpers remain internal.
 - `src/command/`: immutable typed Contract 7 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
-- `src/core/`: additive platform-neutral `perttool/core` entrypoint and the unique active Grammar 6 parse/validate/format facade; its closed runtime catalog has no Node, Application, CLI, I/O, history, schema-loader, or adapter dependency.
+- `src/core/`: additive platform-neutral `perttool/core` entrypoint and the unique active Grammar 6 parse/validate/format facade; its current exact 45-name runtime catalog has no Node, Application, CLI, I/O, history, schema-loader, or adapter dependency.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 7 editing, actuals, and plan-assurance Guide.
 - `src/analysis/`: neutral base analysis service and target temporal input projection; residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
 - `src/schema/`: closed Contract 7 result-schema catalog, local bundled-artifact resolution, `Perttool.SchemaResult.v1`, and deterministic JSON/text projections.
+- `src/session/`: protocol-neutral immutable document snapshots, exact UTF-16 conversion and ordered incremental changes, URI/generation/version/digest binding, validated-snapshot analysis, snapshot-scoped completed projection caches, and cancellation/stale/desynchronization handling exposed only through `perttool/core`.
 - `schemas/`: twenty bundled Draft 2020-12 root artifacts for every active command result and the public OverrideDecision result, plus shared local definitions.
 - `src/conversion/`: Mermaid profile/plain export and import, semantic metadata, projection generation, and fail-closed restoration.
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.

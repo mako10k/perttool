@@ -1654,6 +1654,16 @@ restricted workspace-safe VSIX activation, and a closed accessible Webview.
 It does not activate an implementation, editor mutation, public package, or
 release.
 
+The implemented [Document Session Core](specs/document-session.md) activates
+the protocol-neutral in-memory part of that contract through `perttool/core`.
+It provides immutable URI/generation/version/digest-bound Grammar 6 snapshots,
+exact UTF-16 position conversion, atomic ordered changes, terminal
+desynchronization, validated-snapshot analysis, snapshot-scoped completed
+projection caching, and cancellation/stale rejection. Stateless adapters use
+the same snapshot and analysis functions. It performs no filesystem, Git,
+process, network, editor, mutation, or persistence operation and does not yet
+activate the LSP, GraphView wire result, MCP, or Node Host boundary.
+
 ## 18. JSON and schemas
 
 The [Mutation Semantics specification](specs/mutation.md) is authoritative for
@@ -2811,7 +2821,7 @@ complete because the same `v0.1.0-alpha.2` artifact was published to the
 GitHub prerelease and npm `alpha`, including isolated installation from the
 registry.
 
-[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, and editor protocol contract are complete. Complete NextResult v6 recommends and permits only `DOCUMENT_SESSION_CORE`; `MCP_READ_CONTRACT` is `allowed`, while `NODE_PORT_BOUNDARY` is ready but `deferred` by the current joint selection.
+[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, and protocol-neutral document-session Core are complete. The session acceptance extends Core to an exact portable 45-name runtime without changing the 121-name root/Node facades. Eleven tasks and 59p remain; precedence and heuristic resource makespans are 34p and 43p with 9p resource delay. Complete NextResult v6 recommends and makes startable only `LSP_READ_CORE`; `MCP_READ_CONTRACT` is `allowed`, while `NODE_PORT_BOUNDARY` is `deferred`.
 
 The accepted Contract 3 source and package workflow published suffix-free beta
 `0.2.0` as the first Contract 3 package. All five tasks in
