@@ -347,6 +347,25 @@ inventory. Editor or MCP mutation, a public adapter package or extension
 identity, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate decisions.
 
+### 3.13 Private historical editor extension state
+
+The later `HIST-DAG-001` workstream extends only the private bundled LSP and
+VSIX under the distinct
+[Historical Editor Protocol](historical-editor-protocol.md). It negotiates
+`perttool/historicalGraphView` and `perttool/historicalSource` independently
+from current-document GraphView, composes the existing historical Application
+service directly, and permits bounded Git discovery and immutable object reads
+only for a trusted local `file` workspace target.
+
+The VSIX renders snapshot, proved-lineage, and timeline results with the four
+analysis modes as an orthogonal selector. Source navigation resolves opaque
+retained IDs server-side, verifies the full commit/blob/digest/UTF-16 binding,
+and opens an exact read-only `perttool-history` virtual document. The Webview
+receives no repository identity, filesystem path, Git output, or raw source.
+Current GraphView, all public package facades, CLI identities and schemas,
+MCP, editor bytes, and Git state remain unchanged. The accepted implementation
+trace is [Historical LSP and VSIX Acceptance](../process/historical-vsix-acceptance.md).
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.

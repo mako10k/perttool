@@ -34,5 +34,6 @@ if [[ ! -f "$server_entry" ]]; then
   exit 1
 fi
 
-"$node_binary" "$repository_root/scripts/check-lsp-isolated.mjs" "$server_entry"
+"$node_binary" "$repository_root/scripts/check-lsp-isolated.mjs" \
+  "$server_entry" "$repository_root/plans/historical-dag.pert"
 printf 'isolated LSP package acceptance passed\n'

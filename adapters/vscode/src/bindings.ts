@@ -3,12 +3,19 @@ export const graphViewResultSchemaVersion =
   "Perttool.GraphViewResult.v1" as const;
 export const editorHelpResultSchemaVersion =
   "Perttool.EditorHelpResult.v1" as const;
+export const historicalEditorProtocolModelVersion = 1 as const;
+export const historicalGraphViewResultSchemaVersion =
+  "Perttool.HistoricalGraphViewResult.v1" as const;
+export const historicalSourceResultSchemaVersion =
+  "Perttool.HistoricalSourceResult.v1" as const;
 
 export type GraphViewAnalysisMode =
   | "none"
   | "precedence"
   | "resource"
   | "both";
+export type HistoricalGraphView = "snapshot" | "lineage" | "timeline";
+export type HistoricalGraphAncestryProfile = "first_parent" | "three_way";
 
 export interface GraphViewPositionV1 {
   readonly line: number;
@@ -129,6 +136,105 @@ export interface GraphViewResultV1 {
   readonly graph: GraphViewGraphV1 | null;
 }
 
+export interface HistoricalSourceBindingV1 {
+  readonly repository_id: string;
+  readonly repository_relative_path: string;
+  readonly commit_id: string;
+  readonly blob_id: string;
+  readonly source_digest: `sha256:${string}`;
+  readonly range: Readonly<Record<string, unknown>>;
+  readonly declaration_kind: string;
+  readonly source_id: string;
+  readonly owner_path: string;
+  readonly binding_id: `sha256:${string}`;
+}
+
+export interface HistoricalGraphEditorProjectionV1 {
+  readonly model: "Perttool.HistoricalDagModel.v1";
+  readonly model_version: 1;
+  readonly transition_model_version: 1;
+  readonly status: "complete" | "incomplete" | "unavailable";
+  readonly request: Readonly<Record<string, unknown>>;
+  readonly evidence: Readonly<Record<string, unknown>>;
+  readonly effective_checkpoint_id: string | null;
+  readonly selected_snapshot_commit_id: string | null;
+  readonly checkpoints: readonly Readonly<Record<string, unknown>>[];
+  readonly snapshot: Readonly<Record<string, unknown>> | null;
+  readonly lineage: Readonly<Record<string, unknown>> | null;
+  readonly timeline: Readonly<Record<string, unknown>> | null;
+  readonly analysis: Readonly<Record<string, unknown>>;
+  readonly source_bindings: readonly HistoricalSourceBindingV1[];
+  readonly causes: readonly Readonly<Record<string, unknown>>[];
+  readonly limits: Readonly<Record<string, unknown>>;
+}
+
+export interface HistoricalGraphViewResultV1 {
+  readonly schemaVersion: typeof historicalGraphViewResultSchemaVersion;
+  readonly historicalEditorProtocolModelVersion:
+    typeof historicalEditorProtocolModelVersion;
+  readonly historyResultId: `sha256:${string}`;
+  readonly document: {
+    readonly uri: string;
+    readonly generation: string;
+    readonly version: number;
+    readonly sourceDigest: `sha256:${string}`;
+  };
+  readonly status: "complete" | "incomplete" | "unavailable";
+  readonly complete: boolean;
+  readonly diagnostics: {
+    readonly items: readonly GraphViewDiagnosticV1[];
+    readonly truncated: boolean;
+  };
+  readonly historicalGraph: HistoricalGraphEditorProjectionV1 | null;
+}
+
+export interface HistoricalSourceResultV1 {
+  readonly schemaVersion: typeof historicalSourceResultSchemaVersion;
+  readonly historicalEditorProtocolModelVersion:
+    typeof historicalEditorProtocolModelVersion;
+  readonly historyResultId: `sha256:${string}`;
+  readonly bindingId: `sha256:${string}`;
+  readonly virtualDocument: {
+    readonly uri: string;
+    readonly languageId: "pert";
+    readonly repositoryRelativePath: string;
+    readonly commitId: string;
+    readonly blobId: string;
+    readonly sourceDigest: `sha256:${string}`;
+    readonly text: string;
+    readonly range: GraphViewRangeV1;
+  };
+}
+
+export interface HistoricalWebviewPresentationV1 {
+  readonly historyResultId: `sha256:${string}`;
+  readonly document: HistoricalGraphViewResultV1["document"];
+  readonly status: HistoricalGraphViewResultV1["status"];
+  readonly complete: boolean;
+  readonly diagnostics: HistoricalGraphViewResultV1["diagnostics"];
+  readonly historicalGraph: null | {
+    readonly model: "Perttool.HistoricalDagModel.v1";
+    readonly status: "complete" | "incomplete" | "unavailable";
+    readonly request: Readonly<Record<string, unknown>>;
+    readonly evidence: Readonly<Record<string, unknown>>;
+    readonly effectiveCheckpointId: string | null;
+    readonly selectedSnapshotCommitId: string | null;
+    readonly checkpoints: readonly Readonly<Record<string, unknown>>[];
+    readonly snapshot: Readonly<Record<string, unknown>> | null;
+    readonly lineage: Readonly<Record<string, unknown>> | null;
+    readonly timeline: Readonly<Record<string, unknown>> | null;
+    readonly analysis: Readonly<Record<string, unknown>>;
+    readonly causes: readonly Readonly<Record<string, unknown>>[];
+    readonly navigation: readonly {
+      readonly bindingId: `sha256:${string}`;
+      readonly commitId: string;
+      readonly sourceId: string;
+      readonly ownerPath: string;
+      readonly declarationKind: string;
+    }[];
+  };
+}
+
 export type WebviewToExtensionMessageV1 =
   | {
       readonly kind: "ready";
@@ -148,6 +254,23 @@ export type WebviewToExtensionMessageV1 =
       readonly documentVersion: number;
       readonly entityKind: "milestone" | "task" | "gate";
       readonly entityId: string;
+    }
+  | {
+      readonly kind: "requestHistoricalGraph";
+      readonly documentUri: string;
+      readonly documentGeneration: string;
+      readonly documentVersion: number;
+      readonly requestedEndpoint: string;
+      readonly lowerBoundary: string | null;
+      readonly ancestryProfile: HistoricalGraphAncestryProfile;
+      readonly view: HistoricalGraphView;
+      readonly snapshotCommitId: string | null;
+      readonly analysisMode: GraphViewAnalysisMode;
+    }
+  | {
+      readonly kind: "revealHistoricalSource";
+      readonly historyResultId: `sha256:${string}`;
+      readonly bindingId: `sha256:${string}`;
     };
 
 export interface OpenHelpCommandArgsV1 {
@@ -272,6 +395,26 @@ export function hasAcceptedEditorHandshake(value: unknown): boolean {
     perttool.editorProtocolModelVersion === editorProtocolModelVersion &&
     perttool.graphViewResultSchemaVersion === graphViewResultSchemaVersion &&
     perttool.editorHelpResultSchemaVersion === editorHelpResultSchemaVersion
+  );
+}
+
+export function hasAcceptedHistoricalHandshake(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  const perttool = value.perttool;
+  return (
+    isRecord(perttool) &&
+    perttool.historicalEditorProtocolModelVersion ===
+      historicalEditorProtocolModelVersion &&
+    perttool.historicalGraphViewResultSchemaVersion ===
+      historicalGraphViewResultSchemaVersion &&
+    perttool.historicalSourceResultSchemaVersion ===
+      historicalSourceResultSchemaVersion &&
+    Array.isArray(perttool.historicalGraphViews) &&
+    JSON.stringify(perttool.historicalGraphViews) ===
+      JSON.stringify(["snapshot", "lineage", "timeline"]) &&
+    Array.isArray(perttool.historicalAncestryProfiles) &&
+    JSON.stringify(perttool.historicalAncestryProfiles) ===
+      JSON.stringify(["first_parent", "three_way"])
   );
 }
 
@@ -593,6 +736,248 @@ export function parseGraphViewResult(value: unknown): GraphViewResultV1 | null {
   return JSON.parse(JSON.stringify(result)) as GraphViewResultV1;
 }
 
+function historicalSourcePosition(value: unknown): boolean {
+  return isRecord(value) &&
+    hasExactKeys(value, ["column", "line", "offset"]) &&
+    Number.isSafeInteger(value.offset) && (value.offset as number) >= 0 &&
+    Number.isSafeInteger(value.line) && (value.line as number) >= 0 &&
+    Number.isSafeInteger(value.column) && (value.column as number) >= 0;
+}
+
+function historicalSourceBinding(
+  value: unknown,
+): value is HistoricalSourceBindingV1 {
+  return isRecord(value) &&
+    hasExactKeys(value, [
+      "binding_id",
+      "blob_id",
+      "commit_id",
+      "declaration_kind",
+      "owner_path",
+      "range",
+      "repository_id",
+      "repository_relative_path",
+      "source_digest",
+      "source_id",
+    ]) &&
+    nonEmptyString(value.repository_id) &&
+    nonEmptyString(value.repository_relative_path) &&
+    /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/u.test(String(value.commit_id)) &&
+    /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/u.test(String(value.blob_id)) &&
+    /^sha256:[0-9a-f]{64}$/u.test(String(value.source_digest)) &&
+    /^sha256:[0-9a-f]{64}$/u.test(String(value.binding_id)) &&
+    nonEmptyString(value.declaration_kind) &&
+    nonEmptyString(value.source_id) &&
+    nonEmptyString(value.owner_path) &&
+    isRecord(value.range) &&
+    hasExactKeys(value.range, ["end", "start"]) &&
+    historicalSourcePosition(value.range.start) &&
+    historicalSourcePosition(value.range.end);
+}
+
+function records(value: unknown): value is readonly Readonly<Record<string, unknown>>[] {
+  return Array.isArray(value) && value.every(isRecord);
+}
+
+function historicalProjection(
+  value: unknown,
+): value is HistoricalGraphEditorProjectionV1 {
+  return isRecord(value) &&
+    hasExactKeys(value, [
+      "analysis",
+      "causes",
+      "checkpoints",
+      "effective_checkpoint_id",
+      "evidence",
+      "limits",
+      "lineage",
+      "model",
+      "model_version",
+      "request",
+      "selected_snapshot_commit_id",
+      "snapshot",
+      "source_bindings",
+      "status",
+      "timeline",
+      "transition_model_version",
+    ]) &&
+    value.model === "Perttool.HistoricalDagModel.v1" &&
+    value.model_version === 1 &&
+    value.transition_model_version === 1 &&
+    (value.status === "complete" || value.status === "incomplete" ||
+      value.status === "unavailable") &&
+    isRecord(value.request) &&
+    isRecord(value.evidence) &&
+    (value.effective_checkpoint_id === null ||
+      nonEmptyString(value.effective_checkpoint_id)) &&
+    (value.selected_snapshot_commit_id === null ||
+      nonEmptyString(value.selected_snapshot_commit_id)) &&
+    records(value.checkpoints) &&
+    (value.snapshot === null || isRecord(value.snapshot)) &&
+    (value.lineage === null || isRecord(value.lineage)) &&
+    (value.timeline === null || isRecord(value.timeline)) &&
+    isRecord(value.analysis) &&
+    Array.isArray(value.source_bindings) &&
+    value.source_bindings.every(historicalSourceBinding) &&
+    records(value.causes) &&
+    isRecord(value.limits);
+}
+
+export function parseHistoricalGraphViewResult(
+  value: unknown,
+): HistoricalGraphViewResultV1 | null {
+  if (
+    !isRecord(value) ||
+    !hasExactKeys(value, [
+      "complete",
+      "diagnostics",
+      "document",
+      "historicalEditorProtocolModelVersion",
+      "historicalGraph",
+      "historyResultId",
+      "schemaVersion",
+      "status",
+    ]) ||
+    value.schemaVersion !== historicalGraphViewResultSchemaVersion ||
+    value.historicalEditorProtocolModelVersion !==
+      historicalEditorProtocolModelVersion ||
+    !/^sha256:[0-9a-f]{64}$/u.test(String(value.historyResultId)) ||
+    !isRecord(value.document) ||
+    !hasExactKeys(value.document, ["generation", "sourceDigest", "uri", "version"]) ||
+    !nonEmptyString(value.document.uri) ||
+    !nonEmptyString(value.document.generation) ||
+    !Number.isSafeInteger(value.document.version) ||
+    (value.document.version as number) < 0 ||
+    !/^sha256:[0-9a-f]{64}$/u.test(String(value.document.sourceDigest)) ||
+    (value.status !== "complete" && value.status !== "incomplete" &&
+      value.status !== "unavailable") ||
+    typeof value.complete !== "boolean" ||
+    value.complete !== (value.status === "complete") ||
+    !isRecord(value.diagnostics) ||
+    !hasExactKeys(value.diagnostics, ["items", "truncated"]) ||
+    !Array.isArray(value.diagnostics.items) ||
+    !value.diagnostics.items.every(diagnostic) ||
+    typeof value.diagnostics.truncated !== "boolean" ||
+    (value.historicalGraph !== null &&
+      !historicalProjection(value.historicalGraph)) ||
+    (value.historicalGraph !== null &&
+      value.historicalGraph.status !== value.status)
+  ) return null;
+  return JSON.parse(JSON.stringify(value)) as HistoricalGraphViewResultV1;
+}
+
+export function parseHistoricalSourceResult(
+  value: unknown,
+): HistoricalSourceResultV1 | null {
+  if (
+    !isRecord(value) ||
+    !hasExactKeys(value, [
+      "bindingId",
+      "historicalEditorProtocolModelVersion",
+      "historyResultId",
+      "schemaVersion",
+      "virtualDocument",
+    ]) ||
+    value.schemaVersion !== historicalSourceResultSchemaVersion ||
+    value.historicalEditorProtocolModelVersion !==
+      historicalEditorProtocolModelVersion ||
+    !/^sha256:[0-9a-f]{64}$/u.test(String(value.historyResultId)) ||
+    !/^sha256:[0-9a-f]{64}$/u.test(String(value.bindingId)) ||
+    !isRecord(value.virtualDocument) ||
+    !hasExactKeys(value.virtualDocument, [
+      "blobId",
+      "commitId",
+      "languageId",
+      "range",
+      "repositoryRelativePath",
+      "sourceDigest",
+      "text",
+      "uri",
+    ]) ||
+    value.virtualDocument.languageId !== "pert" ||
+    !nonEmptyString(value.virtualDocument.repositoryRelativePath) ||
+    !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/u.test(
+      String(value.virtualDocument.commitId),
+    ) ||
+    !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/u.test(
+      String(value.virtualDocument.blobId),
+    ) ||
+    !/^sha256:[0-9a-f]{64}$/u.test(String(value.virtualDocument.sourceDigest)) ||
+    typeof value.virtualDocument.text !== "string" ||
+    !range(value.virtualDocument.range) ||
+    !nonEmptyString(value.virtualDocument.uri)
+  ) return null;
+  try {
+    if (new URL(value.virtualDocument.uri).protocol !== "perttool-history:") {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+  return JSON.parse(JSON.stringify(value)) as HistoricalSourceResultV1;
+}
+
+const webviewEvidenceKeys = [
+  "status",
+  "ancestry_profile",
+  "object_format",
+  "requested_endpoint",
+  "resolved_endpoint",
+  "requested_lower_boundary",
+  "resolved_lower_boundary",
+  "oldest_inspected_commit_id",
+  "inspected_commit_ids",
+  "aggregate_raw_snapshot_bytes",
+] as const;
+
+export function historicalWebviewPresentation(
+  result: HistoricalGraphViewResultV1,
+): HistoricalWebviewPresentationV1 {
+  const graph = result.historicalGraph;
+  if (graph === null) {
+    return {
+      historyResultId: result.historyResultId,
+      document: result.document,
+      status: result.status,
+      complete: result.complete,
+      diagnostics: result.diagnostics,
+      historicalGraph: null,
+    };
+  }
+  const evidence: Record<string, unknown> = {};
+  for (const key of webviewEvidenceKeys) evidence[key] = graph.evidence[key] ?? null;
+  return JSON.parse(JSON.stringify({
+    historyResultId: result.historyResultId,
+    document: result.document,
+    status: result.status,
+    complete: result.complete,
+    diagnostics: result.diagnostics,
+    historicalGraph: {
+      model: graph.model,
+      status: graph.status,
+      request: graph.request,
+      evidence,
+      effectiveCheckpointId: graph.effective_checkpoint_id,
+      selectedSnapshotCommitId: graph.selected_snapshot_commit_id,
+      checkpoints: graph.checkpoints,
+      snapshot: graph.snapshot,
+      lineage: graph.lineage,
+      timeline: graph.timeline,
+      analysis: graph.analysis,
+      causes: graph.causes,
+      navigation: graph.source_bindings
+        .filter((binding) => binding.owner_path === binding.source_id)
+        .map((binding) => ({
+          bindingId: binding.binding_id,
+          commitId: binding.commit_id,
+          sourceId: binding.source_id,
+          ownerPath: binding.owner_path,
+          declarationKind: binding.declaration_kind,
+        })),
+    },
+  })) as HistoricalWebviewPresentationV1;
+}
+
 export function parseWebviewMessage(
   value: unknown,
 ): WebviewToExtensionMessageV1 | null {
@@ -637,6 +1022,58 @@ export function parseWebviewMessage(
     (value.entityKind === "milestone" ||
       value.entityKind === "task" ||
       value.entityKind === "gate")
+  ) {
+    return value as unknown as WebviewToExtensionMessageV1;
+  }
+  if (
+    value.kind === "requestHistoricalGraph" &&
+    hasExactKeys(value, [
+      "analysisMode",
+      "ancestryProfile",
+      "documentGeneration",
+      "documentUri",
+      "documentVersion",
+      "kind",
+      "lowerBoundary",
+      "requestedEndpoint",
+      "snapshotCommitId",
+      "view",
+    ]) &&
+    common &&
+    typeof value.requestedEndpoint === "string" &&
+    value.requestedEndpoint.length > 0 &&
+    value.requestedEndpoint.length <= 1_024 &&
+    !/[\u0000\r\n]/u.test(value.requestedEndpoint) &&
+    (
+      value.lowerBoundary === null ||
+      (
+        typeof value.lowerBoundary === "string" &&
+        value.lowerBoundary.length > 0 &&
+        value.lowerBoundary.length <= 1_024 &&
+        !/[\u0000\r\n]/u.test(value.lowerBoundary)
+      )
+    ) &&
+    (value.ancestryProfile === "first_parent" ||
+      value.ancestryProfile === "three_way") &&
+    (value.view === "snapshot" || value.view === "lineage" ||
+      value.view === "timeline") &&
+    (
+      value.snapshotCommitId === null ||
+      (
+        value.view === "snapshot" &&
+        typeof value.snapshotCommitId === "string" &&
+        /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/u.test(value.snapshotCommitId)
+      )
+    ) &&
+    graphMode(value.analysisMode)
+  ) {
+    return value as unknown as WebviewToExtensionMessageV1;
+  }
+  if (
+    value.kind === "revealHistoricalSource" &&
+    hasExactKeys(value, ["bindingId", "historyResultId", "kind"]) &&
+    /^sha256:[0-9a-f]{64}$/u.test(String(value.historyResultId)) &&
+    /^sha256:[0-9a-f]{64}$/u.test(String(value.bindingId))
   ) {
     return value as unknown as WebviewToExtensionMessageV1;
   }

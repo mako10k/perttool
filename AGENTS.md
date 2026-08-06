@@ -492,8 +492,8 @@ cancellation, staleness, immutable virtual documents, exact hard limits,
 `PTHED-101` through `PTHED-105`, restrictive Webview input, accessibility, and
 no-write behavior. Its eighteen dependency-ordered machine cases are in
 `test/fixtures/historical-editor-protocol-cases-v1.json`, and its acceptance
-record is `docs/process/historical-editor-contract-acceptance.md`. The contract
-does not activate either method or change current GraphView, LSP, VSIX,
+record is `docs/process/historical-editor-contract-acceptance.md`. That contract
+slice did not activate either method or change current GraphView, LSP, VSIX,
 package, command, schema, or runtime catalogs. `HISTORICAL_EDITOR_CONTRACT` is
 complete. Its status-only write changed plan digest
 `sha256:f74371c9...6ad786` to `sha256:3c25ba69...abf428` without an owner
@@ -508,6 +508,33 @@ once with actor `codex` and that owner assertion. Readback shows complete
 assurance with no unavailable task, mismatch, replan requirement, or required
 action. Fresh complete NextResult v6 recommends and makes startable only
 `HISTORICAL_VSIX`.
+The private bundled LSP and VSIX now implement the separately negotiated
+`perttool/historicalGraphView` and `perttool/historicalSource` methods. The
+server composes the historical Application service directly, permits bounded
+read-only Git discovery and immutable object reads only for an eligible trusted
+local `file` workspace, binds URI/generation/version/source digest, retains
+bounded connection-local results, and verifies exact commit/blob/digest/owner/
+UTF-16 source bindings. The VSIX presents snapshot, proved-lineage, and
+timeline views with the four analysis modes as an orthogonal selector, sends
+only a sanitized presentation clone to its restrictive Webview, and opens
+verified read-only `perttool-history` documents. Current GraphView, public
+package facades, CLI commands and schemas, MCP, source bytes, and Git state
+remain unchanged. Its eighteen dependency-ordered cases are in
+`test/fixtures/historical-editor-runtime-cases-v1.json`, and its accepted
+implementation record is `docs/process/historical-vsix-acceptance.md`.
+`HISTORICAL_VSIX` is complete and retained before advance. Its status-only
+write changed the plan digest from `sha256:9be391c7...5b8561` to
+`sha256:6b89163c...8dec9` without an owner assertion. Its exact basis-bound
+outcome assertion-free preview is bound to accepted basis
+`sha256:7edcde414...1c03657d`, reason
+`Accepted historical LSP and VSIX implementation and eighteen closed cases`,
+completed source digest `sha256:6b89163c...8dec9`, and candidate digest
+`sha256:a89ef57c...8ead1e`. It affects only `plan_assurance`, requires the
+candidate-bound `user` assertion, and was separately confirmed and written
+once with actor `codex` and that owner assertion. Readback shows complete
+assurance with no unavailable task, mismatch, replan requirement, or required
+action. Fresh complete NextResult v6 recommends and makes startable only
+`HISTORICAL_DAG_ACCEPTANCE`.
 
 Backlog `VSIX-ASSURE-001` records the requested semantic presentation of
 unsealed, sealed-and-consistent, and broken-seal states. The current editor
@@ -848,8 +875,8 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/semantic/`: neutral document-check service; active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
 - `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; the private CLI Application facade with injected Node Host ports; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, project history, historical DAG snapshot/lineage/timeline and single-checkpoint analysis, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
-- `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and GraphView wire results, and no public-package inclusion.
-- `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual workspace support, and a restrictive read-only GraphView DAG Webview without public publication identity.
+- `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and current GraphView wire results, separately negotiated historical GraphView/source results, a bundled private historical Application/Git-read composition, and no public-package inclusion.
+- `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual current-workspace support, a restrictive read-only current/historical DAG Webview, trusted local historical controls, and verified immutable `perttool-history` source documents without public publication identity.
 - `adapters/mcp/`: private Node.js 22 MCP workspace with exact server SDK 2.0.0, modern-only 2026-07-28 local stdio, strict malformed-line fail-closure, four immutable resources, five fail-closed read-only tools, digest-bound inline or launcher-registered sources, self-contained output schemas, isolated two-client/no-write package acceptance, and no public-package inclusion.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.
 - `package.json`: Node.js 22 or later, npm scripts, and binary/library entrypoints.

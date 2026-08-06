@@ -273,34 +273,32 @@
       ]
     },
     "historical-dag": {
-      "source_digest": "sha256:9be391c7e3983e2c47693f1340c8d135374caf440e82ceff1aec68d1465b8561",
+      "source_digest": "sha256:a89ef57c89379f589070d2a1eeb46a31583552aa001cd1a3e7e337760d8ead1e",
       "groups": {
         "active": [],
         "ready": [
-          "HISTORICAL_VSIX"
-        ],
-        "runnable_now": [
-          "HISTORICAL_VSIX"
-        ],
-        "blocked_now": [],
-        "upcoming": [
           "HISTORICAL_DAG_ACCEPTANCE"
         ],
+        "runnable_now": [
+          "HISTORICAL_DAG_ACCEPTANCE"
+        ],
+        "blocked_now": [],
+        "upcoming": [],
         "suspended": []
       },
       "recommended_task_ids": [
-        "HISTORICAL_VSIX"
+        "HISTORICAL_DAG_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "HISTORICAL_VSIX"
+        "HISTORICAL_DAG_ACCEPTANCE"
       ],
       "tiers": {
-        "HISTORICAL_VSIX": "recommended"
+        "HISTORICAL_DAG_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "HISTORICAL_VSIX",
+          "id": "HISTORICAL_DAG_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

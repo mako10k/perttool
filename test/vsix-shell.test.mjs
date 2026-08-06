@@ -94,7 +94,7 @@ test("VSIX client retains handshake, Help, DAG presentation, and bundled stdio",
   assert.match(extension, /document\.version === args\.documentVersion/u);
   assert.match(bindings, /Perttool\.EditorHelpResult\.v1/u);
   assert.match(bindings, /Perttool\.GraphViewResult\.v1/u);
-  assert.match(build, /\.\.\/lsp\/src\/main\.ts/u);
+  assert.match(build, /\.\.\/lsp\/runtime\/main\.ts/u);
   assert.match(build, /external: \["vscode"\]/u);
   assert.equal(/node:fs|node:net|node:http/u.test(extension), false);
   assert.match(extension, /DagViewProvider/u);

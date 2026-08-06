@@ -232,7 +232,7 @@ test("all eighteen historical editor cases are complete and dependency ordered",
   assert.deepEqual([...accepted], expectedIds("HED", 18));
 });
 
-test("historical editor contract aligns the repository and completed task", async () => {
+test("historical editor contract remains aligned after the private implementation", async () => {
   const [
     specification,
     requirements,
@@ -274,18 +274,19 @@ test("historical editor contract aligns the repository and completed task", asyn
     plan,
     /task HISTORICAL_EDITOR_CONTRACT[\s\S]*?status done/u,
   );
+  assert.match(plan, /task HISTORICAL_VSIX[\s\S]*?status done/u);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.groups.ready, ["HISTORICAL_VSIX"]);
+  assert.deepEqual(next.groups.ready, ["HISTORICAL_DAG_ACCEPTANCE"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_VSIX",
+    "HISTORICAL_DAG_ACCEPTANCE",
   ]);
   assert.deepEqual(
     next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
     [],
   );
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_VSIX",
+    "HISTORICAL_DAG_ACCEPTANCE",
   ]);
-  assert.doesNotMatch(lspProtocol, /historicalGraphView/u);
-  assert.doesNotMatch(vscodeBindings, /HistoricalGraphView/u);
+  assert.match(lspProtocol, /HistoricalGraphViewResultV1/u);
+  assert.match(vscodeBindings, /HistoricalGraphViewResultV1/u);
 });

@@ -152,6 +152,18 @@ async function main() {
     await mkdir(extensionsDirectory, { recursive: true });
     await mkdir(workspace, { recursive: true });
     await cp(path.join(repositoryRoot, "docs", "examples", "minimal.pert"), workspaceFile);
+    await runProcess("git", ["init", "--quiet"], { cwd: workspace });
+    await runProcess("git", ["add", "--", "plan.pert"], { cwd: workspace });
+    await runProcess("git", [
+      "-c",
+      "user.name=perttool acceptance",
+      "-c",
+      "user.email=acceptance@example.invalid",
+      "commit",
+      "--quiet",
+      "-m",
+      "historical VSIX fixture",
+    ], { cwd: workspace });
     const sourceBefore = await readFile(workspaceFile);
     const entriesBefore = await readdir(workspace);
     const isWsl = /microsoft/iu.test(

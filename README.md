@@ -45,6 +45,10 @@ The current unreleased source adds the read-only `dag history` command and
 `Perttool.HistoricalGraphResult.v1` without changing Grammar 6 or CLI Contract
 7. The source registry therefore has 45 commands and 21 root schemas; the
 published `0.7.1` package remains the 44-command, 20-schema compatibility pin.
+The repository-only VSIX also adds separately negotiated historical snapshot,
+proved-lineage, and timeline views for trusted local Git workspaces plus
+verified read-only immutable source navigation. Those adapter results are not
+CLI schemas or public package exports, and no public VSIX release is selected.
 
 ## Run without installing
 

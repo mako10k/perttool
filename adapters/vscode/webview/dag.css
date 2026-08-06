@@ -30,6 +30,7 @@ h3 {
 }
 
 select,
+input,
 button {
   color: var(--vscode-button-foreground);
   background: var(--vscode-button-background);
@@ -39,10 +40,29 @@ button {
 }
 
 select:focus-visible,
+input:focus-visible,
 button:focus-visible,
 [role="button"]:focus-visible {
   outline: 2px solid var(--vscode-focusBorder);
   outline-offset: 2px;
+}
+
+fieldset {
+  border: 1px solid var(--vscode-panel-border);
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: minmax(7rem, auto) minmax(10rem, 1fr);
+  margin-block: 0.75rem;
+}
+
+fieldset button {
+  grid-column: 1 / -1;
+}
+
+input {
+  color: var(--vscode-input-foreground);
+  background: var(--vscode-input-background);
+  border-color: var(--vscode-input-border, var(--vscode-panel-border));
 }
 
 button {
@@ -115,6 +135,15 @@ button:hover {
 
 .edge.kind-gate line {
   stroke-dasharray: 3 3;
+}
+
+.historical.retired {
+  opacity: 0.62;
+}
+
+.historical.retired line,
+.historical.retired circle {
+  stroke-dasharray: 5 4;
 }
 
 .milestone circle {

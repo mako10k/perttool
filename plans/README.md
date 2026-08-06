@@ -42,8 +42,11 @@ Plans are separated by level of detail.
   `HISTORICAL_CLI` and its separately owner-confirmed exact basis-bound outcome
   are complete; the separate historical editor protocol and eighteen cases are
   accepted, and `HISTORICAL_EDITOR_CONTRACT` plus its separately owner-
-  confirmed exact basis-bound outcome are complete; only `HISTORICAL_VSIX` is
-  ready, recommended, and startable
+  confirmed exact basis-bound outcome are complete; the private historical
+  LSP/VSIX implementation, eighteen runtime cases, and status-only lifecycle
+  are complete; its exact basis-bound outcome is separately owner-confirmed
+  and complete, and only final cross-surface acceptance is ready, recommended,
+  and startable
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining

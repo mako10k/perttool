@@ -542,8 +542,9 @@ leaving an old graph presented as current.
   [Historical Editor Protocol Contract](historical-editor-protocol.md) owns
   that request, result, trust, and immutable-blob navigation model. Current
   `perttool/graphView` accepts no Git path or revision and
-  `Perttool.GraphViewResult.v1` remains unchanged; the historical methods are
-  not active until their later implementation task.
+  `Perttool.GraphViewResult.v1` remains unchanged. The later
+  `HISTORICAL_VSIX` task activates the separate historical methods only in the
+  private bundled LSP/VSIX and does not extend this current-document result.
 - No arbitrary Mermaid, HTML, SVG, script, or graph layout input is executed.
 - Editor mutation, graph mutation, rename, formatting, persistence, public
   package naming, release selection, publication, and plan advance remain

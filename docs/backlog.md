@@ -549,15 +549,18 @@ operation.
 Priority: Selected through the independent `HIST-DAG-001` workstream
 
 Status: First-parent normative contract, internal transition model, bounded
-immutable Git evidence, pure linear reconstruction, and the separate
-read-only CLI result are implemented (2026-08-06). The separate historical
-editor protocol contract is accepted; LSP and VSIX presentation remain
-unimplemented. The linear reconstruction task and
+immutable Git evidence, pure linear reconstruction, the separate read-only CLI
+result, and the private historical LSP/VSIX presentation are implemented
+(2026-08-06). The separate historical editor protocol contract is accepted.
+The linear reconstruction task and
 its separately owner-confirmed basis-bound assurance outcome are complete.
 The CLI task and its separately owner-confirmed basis-bound assurance outcome
 are complete. `HISTORICAL_EDITOR_CONTRACT` and its separately owner-confirmed
-basis-bound assurance outcome are complete. Only `HISTORICAL_VSIX` is now
-ready, recommended, and startable in the selected plan.
+basis-bound assurance outcome are complete. `HISTORICAL_VSIX` implementation
+acceptance and its status-only lifecycle are complete. Its exact basis-bound
+outcome is separately owner-confirmed and complete. Only
+`HISTORICAL_DAG_ACCEPTANCE` is ready, recommended, and startable under complete
+plan assurance.
 
 The current DAG renderer and VSIX GraphView correctly project one complete
 current source, which can contain only one residual milestone after canonical
@@ -637,10 +640,18 @@ repository selection, exact result/blob/digest/range navigation, cancellation,
 staleness, hard limits, restrictive Webview input, accessibility, and no-write
 behavior without changing the current GraphView v1. Its acceptance record is
 [`historical-editor-contract-acceptance.md`](process/historical-editor-contract-acceptance.md).
+The private bundled server and VSIX now implement those methods without a CLI
+subprocess. They retain connection-bound graph results, validate immutable
+blob/digest/range navigation, render snapshot, proved-lineage, and timeline
+views with an independent four-mode analysis selector, and fail closed before
+Git access outside a trusted local file workspace. The eighteen implementation
+cases and supported-host evidence are recorded in
+[`historical-vsix-acceptance.md`](process/historical-vsix-acceptance.md).
 Current `project history`, `dag render`, `Perttool.GraphViewResult.v1`, Grammar
 6, CLI Contract 7, MCP capabilities, and all read/write authority boundaries
-remain unchanged. Historical LSP/VSIX implementation, Git or editor mutation, release, remote
-publication, Issue mutation, and plan advance remain separately gated.
+remain unchanged. Git or editor mutation, cross-surface final acceptance,
+release, remote publication, Issue mutation, and plan advance remain
+separately gated.
 
 ## Project actuals and Git-recorded history
 

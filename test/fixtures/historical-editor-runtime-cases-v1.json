@@ -1,0 +1,29 @@
+{
+  "schema_version": "Perttool.HistoricalEditorRuntimeCases.v1",
+  "historical_editor_protocol_model_version": 1,
+  "methods": ["perttool/historicalGraphView", "perttool/historicalSource"],
+  "views": ["snapshot", "lineage", "timeline"],
+  "analysis_modes": ["none", "precedence", "resource", "both"],
+  "retained_result_limit": 32,
+  "virtual_document_limit": 32,
+  "cases": [
+    {"id": "HVI-001", "depends_on": [], "boundary": "private_bundled_application_composition"},
+    {"id": "HVI-002", "depends_on": ["HVI-001"], "boundary": "independent_protocol_negotiation"},
+    {"id": "HVI-003", "depends_on": ["HVI-002"], "boundary": "trusted_file_workspace_eligibility"},
+    {"id": "HVI-004", "depends_on": ["HVI-003"], "boundary": "nearest_repository_and_linked_worktree"},
+    {"id": "HVI-005", "depends_on": ["HVI-002", "HVI-004"], "boundary": "closed_historical_graph_request"},
+    {"id": "HVI-006", "depends_on": ["HVI-005"], "boundary": "document_generation_version_digest_binding"},
+    {"id": "HVI-007", "depends_on": ["HVI-006"], "boundary": "cancellation_staleness_and_replacement"},
+    {"id": "HVI-008", "depends_on": ["HVI-005", "HVI-007"], "boundary": "application_semantic_parity_wrapper"},
+    {"id": "HVI-009", "depends_on": ["HVI-008"], "boundary": "snapshot_presentation"},
+    {"id": "HVI-010", "depends_on": ["HVI-008"], "boundary": "proved_lineage_presentation"},
+    {"id": "HVI-011", "depends_on": ["HVI-008"], "boundary": "timeline_presentation"},
+    {"id": "HVI-012", "depends_on": ["HVI-009", "HVI-010", "HVI-011"], "boundary": "orthogonal_analysis_selector"},
+    {"id": "HVI-013", "depends_on": ["HVI-008"], "boundary": "canonical_result_and_binding_ids"},
+    {"id": "HVI-014", "depends_on": ["HVI-013"], "boundary": "verified_immutable_virtual_source"},
+    {"id": "HVI-015", "depends_on": ["HVI-007", "HVI-014"], "boundary": "hard_limits_and_fail_closed_errors"},
+    {"id": "HVI-016", "depends_on": ["HVI-012", "HVI-014"], "boundary": "closed_webview_clone_and_messages"},
+    {"id": "HVI-017", "depends_on": ["HVI-016"], "boundary": "accessible_current_retired_and_timeline_output"},
+    {"id": "HVI-018", "depends_on": ["HVI-015", "HVI-017"], "boundary": "read_only_installed_no_write_closure"}
+  ]
+}

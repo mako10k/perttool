@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
-const [serverEntry] = process.argv.slice(2);
+const [serverEntry, historicalTarget] = process.argv.slice(2);
 if (serverEntry === undefined || !path.isAbsolute(serverEntry)) {
   throw new Error("expected one absolute isolated language-server entry path");
 }
@@ -70,8 +72,7 @@ function waitFor(predicate) {
   });
 }
 
-const uri = "untitled:perttool-isolated-acceptance";
-const source = `project ISOLATED:
+const fallbackSource = `project ISOLATED:
   version 6
   title "isolated 😀"
   description |
@@ -90,6 +91,12 @@ task WORK NOW -> DONE:
   title "work"
   duration 1d
 `;
+const uri = historicalTarget === undefined
+  ? "untitled:perttool-isolated-acceptance"
+  : pathToFileURL(path.resolve(historicalTarget)).toString();
+const source = historicalTarget === undefined
+  ? fallbackSource
+  : await readFile(path.resolve(historicalTarget), "utf8");
 
 send({
   jsonrpc: "2.0",
@@ -104,6 +111,23 @@ send({
         editorProtocolModelVersions: [1],
         graphViewResultSchemaVersions: ["Perttool.GraphViewResult.v1"],
         editorHelpResultSchemaVersions: ["Perttool.EditorHelpResult.v1"],
+        ...(historicalTarget === undefined
+          ? {}
+          : {
+              historicalEditorProtocolModelVersions: [1],
+              historicalGraphViewResultSchemaVersions: [
+                "Perttool.HistoricalGraphViewResult.v1",
+              ],
+              historicalSourceResultSchemaVersions: [
+                "Perttool.HistoricalSourceResult.v1",
+              ],
+              historicalLocalRepository: {
+                workspaceTrust: "trusted",
+                workspaceFolderUris: [
+                  pathToFileURL(path.dirname(path.resolve(historicalTarget))).toString(),
+                ],
+              },
+            }),
       },
     },
   },
@@ -130,7 +154,14 @@ const diagnostics = await waitFor(
     message.params.uri === uri,
 );
 assert.equal(diagnostics.params.version, 1);
-assert.deepEqual(diagnostics.params.diagnostics, []);
+if (historicalTarget === undefined) {
+  assert.deepEqual(diagnostics.params.diagnostics, []);
+} else {
+  assert.equal(
+    diagnostics.params.diagnostics.some(({ severity }) => severity === 1),
+    false,
+  );
+}
 
 send({
   jsonrpc: "2.0",
@@ -146,8 +177,65 @@ const graph = await waitFor((message) => message.id === 2);
 assert.equal(graph.result.schemaVersion, "Perttool.GraphViewResult.v1");
 assert.equal(graph.result.status, "current");
 assert.equal(graph.result.complete, true);
-assert.deepEqual(graph.result.graph.edges.map(({ id }) => id), ["WORK"]);
+if (historicalTarget === undefined) {
+  assert.deepEqual(graph.result.graph.edges.map(({ id }) => id), ["WORK"]);
+} else {
+  assert.ok(graph.result.graph.edges.length > 0);
+}
 assert.equal(graph.result.graph.resource.optimal, false);
+
+if (historicalTarget !== undefined) {
+  assert.equal(
+    initialized.result.capabilities.experimental.perttool
+      .historicalEditorProtocolModelVersion,
+    1,
+  );
+  send({
+    jsonrpc: "2.0",
+    id: 4,
+    method: "perttool/historicalGraphView",
+    params: {
+      textDocument: { uri },
+      documentVersion: 1,
+      requestedEndpoint: "HEAD",
+      lowerBoundary: null,
+      ancestryProfile: "first_parent",
+      view: "snapshot",
+      snapshotCommitId: null,
+      analysisMode: "none",
+    },
+  });
+  const historical = await waitFor((message) => message.id === 4);
+  assert.equal(
+    historical.result.schemaVersion,
+    "Perttool.HistoricalGraphViewResult.v1",
+  );
+  assert.ok(["complete", "incomplete"].includes(historical.result.status));
+  assert.ok(historical.result.historicalGraph.source_bindings.length > 0);
+  const binding = historical.result.historicalGraph.source_bindings.find(
+    (candidate) => candidate.owner_path === candidate.source_id,
+  );
+  assert.ok(binding);
+  send({
+    jsonrpc: "2.0",
+    id: 5,
+    method: "perttool/historicalSource",
+    params: {
+      textDocument: { uri },
+      documentVersion: 1,
+      historyResultId: historical.result.historyResultId,
+      bindingId: binding.binding_id,
+    },
+  });
+  const historicalSource = await waitFor((message) => message.id === 5);
+  assert.equal(
+    historicalSource.result.schemaVersion,
+    "Perttool.HistoricalSourceResult.v1",
+  );
+  assert.equal(historicalSource.result.bindingId, binding.binding_id);
+  assert.equal(historicalSource.result.virtualDocument.languageId, "pert");
+  assert.match(historicalSource.result.virtualDocument.uri, /^perttool-history:/u);
+}
 
 send({ jsonrpc: "2.0", id: 3, method: "shutdown", params: null });
 const shutdown = await waitFor((message) => message.id === 3);

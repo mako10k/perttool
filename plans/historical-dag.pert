@@ -176,6 +176,7 @@ task HISTORICAL_VSIX HISTORICAL_EDITOR_CONTRACT_READY -> HISTORICAL_VSIX_READY:
   title "Implement historical DAG views in LSP and VSIX"
   description "Implement the accepted separate LSP mapping and read-only VS Code presentation for snapshot, proven lineage and timeline views. Retain current four analysis modes as an independent selector, bind navigation to immutable virtual blob documents, clear stale results, fail closed outside trusted local repositories, preserve current GraphView and workspace bytes, and add no editor mutation or public release operation."
   duration 8p
+  status done
   priority 70
   requires:
     DEVELOPERS 1
@@ -297,3 +298,10 @@ task_outcome OUTCOME_HISTORICAL_EDITOR_CONTRACT:
   against_basis sha256:37373a2e9cccc95d76c5d4e0174fcbcf9026e4c284233db5c0adbd58d26949e1
   status conformant
   reason "Accepted historical editor protocol and eighteen closed cases"
+
+task_outcome OUTCOME_HISTORICAL_VSIX:
+  model 1
+  task HISTORICAL_VSIX
+  against_basis sha256:7edcde41483bb18ff3923bc6f2b9de8148e482195f266b42a1e3a0f51c03657d
+  status conformant
+  reason "Accepted historical LSP and VSIX implementation and eighteen closed cases"

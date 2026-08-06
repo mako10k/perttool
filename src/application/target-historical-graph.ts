@@ -69,6 +69,7 @@ export interface HistoricalGraphRequestV1 {
   readonly snapshotCommitId?: string;
   readonly analysisMode?: HistoricalGraphAnalysisModeV1;
   readonly maxDiagnostics?: number;
+  readonly expectedSourceDigest?: string;
 }
 
 export interface HistoricalGraphGitEvidencePortV1 {
@@ -594,6 +595,9 @@ export async function inspectTargetHistoricalGraphFile(
   }
   const evidence = await gitEvidence.probe({
     targetPath: request.targetPath,
+    ...(request.expectedSourceDigest === undefined
+      ? {}
+      : { expectedSourceDigest: request.expectedSourceDigest }),
     ...(request.requestedEndpoint === undefined
       ? {}
       : { requestedEndpoint: request.requestedEndpoint }),

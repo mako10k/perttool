@@ -40,12 +40,24 @@ import {
   EDITOR_HELP_SCHEMA_VERSION,
   EDITOR_PROTOCOL_MODEL_VERSION,
   GRAPH_VIEW_SCHEMA_VERSION,
+  HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+  HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION,
+  HISTORICAL_SOURCE_SCHEMA_VERSION,
   PerttoolProtocolError,
   isGraphViewAnalysisMode,
+  isHistoricalGraphAncestryProfile,
+  isHistoricalGraphView,
   type EditorHelpParamsV1,
   type EditorHelpResultV1,
   type GraphViewParamsV1,
   type GraphViewResultV1,
+  type HistoricalEditorApplicationV1,
+  type HistoricalGraphEditorProjectionV1,
+  type HistoricalGraphViewParamsV1,
+  type HistoricalGraphViewResultV1,
+  type HistoricalSourceBindingV1,
+  type HistoricalSourceParamsV1,
+  type HistoricalSourceResultV1,
   type PerttoolExperimentalCapabilitiesV1,
 } from "./protocol.js";
 
@@ -56,10 +68,12 @@ export interface PerttoolLanguageServerOptions {
   readonly onFatalSynchronization?: (
     reason: DocumentSessionFailureReason,
   ) => void;
+  readonly historicalApplication?: HistoricalEditorApplicationV1;
 }
 
 export interface PerttoolLanguageServer {
   readonly customProtocolNegotiated: boolean;
+  readonly historicalProtocolNegotiated: boolean;
   readonly stopped: boolean;
   initialize(params: InitializeParams): InitializeResult;
   didOpen(params: DidOpenTextDocumentParams): void;
@@ -84,6 +98,14 @@ export interface PerttoolLanguageServer {
   ): Promise<readonly CodeAction[]>;
   help(params: unknown, signal?: AbortSignal): Promise<EditorHelpResultV1>;
   graphView(params: unknown, signal?: AbortSignal): Promise<GraphViewResultV1>;
+  historicalGraphView(
+    params: unknown,
+    signal?: AbortSignal,
+  ): Promise<HistoricalGraphViewResultV1>;
+  historicalSource(
+    params: unknown,
+    signal?: AbortSignal,
+  ): Promise<HistoricalSourceResultV1>;
   shutdown(): void;
   exit(): void;
 }
@@ -171,8 +193,59 @@ function customProtocolSelected(options: unknown): boolean {
   );
 }
 
+interface HistoricalSessionV1 {
+  readonly workspaceTrust: "trusted" | "untrusted";
+  readonly workspaceFolderUris: readonly string[];
+}
+
+function historicalProtocolSelected(
+  options: unknown,
+  applicationAvailable: boolean,
+): HistoricalSessionV1 | null {
+  if (!applicationAvailable || !record(options) || !record(options["perttool"])) {
+    return null;
+  }
+  const perttool = options["perttool"];
+  const local = perttool["historicalLocalRepository"];
+  if (
+    !Array.isArray(perttool["historicalEditorProtocolModelVersions"]) ||
+    !Array.isArray(perttool["historicalGraphViewResultSchemaVersions"]) ||
+    !Array.isArray(perttool["historicalSourceResultSchemaVersions"]) ||
+    !record(local) ||
+    !exactKeys(local, ["workspaceTrust", "workspaceFolderUris"]) ||
+    (local["workspaceTrust"] !== "trusted" &&
+      local["workspaceTrust"] !== "untrusted") ||
+    !Array.isArray(local["workspaceFolderUris"]) ||
+    !local["workspaceFolderUris"].every((uri) =>
+      typeof uri === "string" && isAbsoluteDocumentUri(uri)
+    )
+  ) {
+    return null;
+  }
+  if (
+    !perttool["historicalEditorProtocolModelVersions"].includes(
+      HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+    ) ||
+    !perttool["historicalGraphViewResultSchemaVersions"].includes(
+      HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION,
+    ) ||
+    !perttool["historicalSourceResultSchemaVersions"].includes(
+      HISTORICAL_SOURCE_SCHEMA_VERSION,
+    )
+  ) {
+    return null;
+  }
+  return Object.freeze({
+    workspaceTrust: local["workspaceTrust"],
+    workspaceFolderUris: Object.freeze([
+      ...local["workspaceFolderUris"] as string[],
+    ]),
+  });
+}
+
 function initializeCapabilities(
   custom: boolean,
+  historical: boolean,
 ): InitializeResult["capabilities"] {
   const experimental: PerttoolExperimentalCapabilitiesV1 = {
     perttool: {
@@ -180,6 +253,17 @@ function initializeCapabilities(
       graphViewResultSchemaVersion: GRAPH_VIEW_SCHEMA_VERSION,
       editorHelpResultSchemaVersion: EDITOR_HELP_SCHEMA_VERSION,
       graphViewAnalysisModes: ["none", "precedence", "resource", "both"],
+      ...(historical
+        ? {
+            historicalEditorProtocolModelVersion:
+              HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+            historicalGraphViewResultSchemaVersion:
+              HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION,
+            historicalSourceResultSchemaVersion: HISTORICAL_SOURCE_SCHEMA_VERSION,
+            historicalGraphViews: ["snapshot", "lineage", "timeline"] as const,
+            historicalAncestryProfiles: ["first_parent", "three_way"] as const,
+          }
+        : {}),
     },
   };
   return {
@@ -236,6 +320,97 @@ function validateGraphViewParams(value: unknown): GraphViewParamsV1 {
   };
 }
 
+function validRevision(value: unknown, nullable = false): boolean {
+  if (nullable && value === null) return true;
+  return typeof value === "string" && value.length > 0 && value.length <= 1_024 &&
+    !/[\u0000\r\n]/u.test(value);
+}
+
+function validateHistoricalGraphViewParams(
+  value: unknown,
+): HistoricalGraphViewParamsV1 {
+  if (
+    !record(value) ||
+    !exactKeys(value, [
+      "textDocument",
+      "documentVersion",
+      "requestedEndpoint",
+      "lowerBoundary",
+      "ancestryProfile",
+      "view",
+      "snapshotCommitId",
+      "analysisMode",
+    ]) ||
+    !record(value["textDocument"]) ||
+    !exactKeys(value["textDocument"], ["uri"]) ||
+    typeof value["textDocument"]["uri"] !== "string" ||
+    !isAbsoluteDocumentUri(value["textDocument"]["uri"]) ||
+    !Number.isSafeInteger(value["documentVersion"]) ||
+    !validRevision(value["requestedEndpoint"]) ||
+    !validRevision(value["lowerBoundary"], true) ||
+    !isHistoricalGraphAncestryProfile(value["ancestryProfile"]) ||
+    !isHistoricalGraphView(value["view"]) ||
+    (
+      value["snapshotCommitId"] !== null &&
+      (
+        typeof value["snapshotCommitId"] !== "string" ||
+        !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/u.test(value["snapshotCommitId"])
+      )
+    ) ||
+    (value["view"] !== "snapshot" && value["snapshotCommitId"] !== null) ||
+    !isGraphViewAnalysisMode(value["analysisMode"])
+  ) {
+    throw new PerttoolProtocolError(
+      ErrorCodes.InvalidParams,
+      "perttool/historicalGraphView parameters are invalid",
+    );
+  }
+  return {
+    textDocument: { uri: value["textDocument"]["uri"] },
+    documentVersion: value["documentVersion"] as number,
+    requestedEndpoint: value["requestedEndpoint"] as string,
+    lowerBoundary: value["lowerBoundary"] as string | null,
+    ancestryProfile: value["ancestryProfile"],
+    view: value["view"],
+    snapshotCommitId: value["snapshotCommitId"] as string | null,
+    analysisMode: value["analysisMode"],
+  };
+}
+
+function validateHistoricalSourceParams(
+  value: unknown,
+): HistoricalSourceParamsV1 {
+  if (
+    !record(value) ||
+    !exactKeys(value, [
+      "textDocument",
+      "documentVersion",
+      "historyResultId",
+      "bindingId",
+    ]) ||
+    !record(value["textDocument"]) ||
+    !exactKeys(value["textDocument"], ["uri"]) ||
+    typeof value["textDocument"]["uri"] !== "string" ||
+    !isAbsoluteDocumentUri(value["textDocument"]["uri"]) ||
+    !Number.isSafeInteger(value["documentVersion"]) ||
+    typeof value["historyResultId"] !== "string" ||
+    !/^sha256:[0-9a-f]{64}$/u.test(value["historyResultId"]) ||
+    typeof value["bindingId"] !== "string" ||
+    !/^sha256:[0-9a-f]{64}$/u.test(value["bindingId"])
+  ) {
+    throw new PerttoolProtocolError(
+      ErrorCodes.InvalidParams,
+      "perttool/historicalSource parameters are invalid",
+    );
+  }
+  return {
+    textDocument: { uri: value["textDocument"]["uri"] },
+    documentVersion: value["documentVersion"] as number,
+    historyResultId: value["historyResultId"] as `sha256:${string}`,
+    bindingId: value["bindingId"] as `sha256:${string}`,
+  };
+}
+
 function projectionError(status: DocumentProjectionStatus): PerttoolProtocolError {
   if (status === "cancelled") {
     return new PerttoolProtocolError(
@@ -253,15 +428,67 @@ function isAborted(signal: AbortSignal | undefined): boolean {
   return signal?.aborted === true;
 }
 
+function canonicalJson(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => canonicalJson(item)).join(",")}]`;
+  }
+  const entries = Object.entries(value as Readonly<Record<string, unknown>>)
+    .sort(([left], [right]) => left.localeCompare(right));
+  return `{${entries.map(([key, child]) =>
+    `${JSON.stringify(key)}:${canonicalJson(child)}`
+  ).join(",")}}`;
+}
+
+function historicalDiagnostic(
+  code: "PTHED-101" | "PTHED-102" | "PTHED-103" | "PTHED-104" | "PTHED-105",
+  message: string,
+) {
+  return Object.freeze({
+    code,
+    severity: "warning" as const,
+    message,
+    range: null,
+    related: Object.freeze([]),
+    helpTopic: "historical-dag",
+  });
+}
+
+interface RetainedHistoricalResultV1 {
+  readonly targetPath: string;
+  readonly result: HistoricalGraphViewResultV1;
+  readonly bindings: ReadonlyMap<`sha256:${string}`, HistoricalSourceBindingV1>;
+}
+
+function historicalProjectionMatchesRequest(
+  projection: HistoricalGraphEditorProjectionV1,
+  request: HistoricalGraphViewParamsV1,
+): boolean {
+  return projection.request["requested_endpoint"] === request.requestedEndpoint &&
+    projection.request["requested_lower_boundary"] === request.lowerBoundary &&
+    projection.request["ancestry_profile"] === request.ancestryProfile &&
+    projection.request["view"] === request.view &&
+    projection.request["snapshot_commit_id"] === request.snapshotCommitId &&
+    projection.request["analysis_mode"] === request.analysisMode;
+}
+
 class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
   readonly #session: DocumentSession;
   readonly #publishDiagnostics: (params: PublishDiagnosticsParams) => void;
   readonly #onFatalSynchronization:
     | ((reason: DocumentSessionFailureReason) => void)
     | undefined;
+  readonly #digestText: (text: string) => string;
+  readonly #historicalApplication: HistoricalEditorApplicationV1 | undefined;
   readonly #openVersions = new Map<string, number>();
+  readonly #historicalRequests = new Map<string, number>();
+  readonly #retainedHistorical = new Map<
+    `sha256:${string}`,
+    RetainedHistoricalResultV1
+  >();
   #initialized = false;
   #customProtocolNegotiated = false;
+  #historicalSession: HistoricalSessionV1 | null = null;
   #stopped = false;
 
   constructor(options: PerttoolLanguageServerOptions) {
@@ -273,10 +500,16 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     });
     this.#publishDiagnostics = options.publishDiagnostics;
     this.#onFatalSynchronization = options.onFatalSynchronization;
+    this.#digestText = options.digestText;
+    this.#historicalApplication = options.historicalApplication;
   }
 
   get customProtocolNegotiated(): boolean {
     return this.#customProtocolNegotiated;
+  }
+
+  get historicalProtocolNegotiated(): boolean {
+    return this.#historicalSession !== null;
   }
 
   get stopped(): boolean {
@@ -301,11 +534,30 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     }
   }
 
+  #requireHistoricalProtocol(): HistoricalSessionV1 {
+    if (this.#historicalSession === null) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.MethodNotFound,
+        "perttool historical editor protocol was not negotiated",
+      );
+    }
+    return this.#historicalSession;
+  }
+
+  #invalidateHistoricalDocument(uri: string): void {
+    this.#historicalRequests.set(uri, (this.#historicalRequests.get(uri) ?? 0) + 1);
+    for (const [id, retained] of this.#retainedHistorical) {
+      if (retained.result.document.uri === uri) this.#retainedHistorical.delete(id);
+    }
+  }
+
   #fatal(reason: DocumentSessionFailureReason): void {
     for (const [uri, version] of this.#openVersions) {
       this.#publishDiagnostics({ uri, version, diagnostics: [] });
     }
     this.#openVersions.clear();
+    this.#historicalRequests.clear();
+    this.#retainedHistorical.clear();
     this.#session.dispose();
     this.#stopped = true;
     this.#onFatalSynchronization?.(reason);
@@ -347,9 +599,16 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     this.#customProtocolNegotiated = customProtocolSelected(
       params.initializationOptions,
     );
+    this.#historicalSession = historicalProtocolSelected(
+      params.initializationOptions,
+      this.#historicalApplication !== undefined,
+    );
     this.#initialized = true;
     return {
-      capabilities: initializeCapabilities(this.#customProtocolNegotiated),
+      capabilities: initializeCapabilities(
+        this.#customProtocolNegotiated,
+        this.#historicalSession !== null,
+      ),
       serverInfo: { name: "perttool language server", version: "0.0.0-private" },
     };
   }
@@ -384,6 +643,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
       this.#fatal(transition.reason ?? "snapshot_unavailable");
       return;
     }
+    this.#invalidateHistoricalDocument(uri);
     this.#openVersions.set(uri, version as number);
     this.#publishDiagnostics(publishedDiagnostics(transition.snapshot));
   }
@@ -419,6 +679,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
       this.#fatal(transition.reason ?? "snapshot_unavailable");
       return;
     }
+    this.#invalidateHistoricalDocument(uri);
     this.#openVersions.set(uri, version as number);
     this.#publishDiagnostics(publishedDiagnostics(transition.snapshot));
   }
@@ -436,6 +697,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     }
     const uri = params["textDocument"]["uri"];
     const version = this.#openVersions.get(uri);
+    this.#invalidateHistoricalDocument(uri);
     this.#session.close(uri);
     this.#openVersions.delete(uri);
     this.#publishDiagnostics({
@@ -595,10 +857,297 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     );
   }
 
+  #sha256(value: unknown): `sha256:${string}` {
+    const digest = this.#digestText(canonicalJson(value));
+    if (!/^sha256:[0-9a-f]{64}$/u.test(digest)) {
+      throw new Error("historical editor digest port returned an invalid digest");
+    }
+    return digest as `sha256:${string}`;
+  }
+
+  #unavailableHistoricalResult(
+    snapshot: DocumentSnapshot,
+    request: HistoricalGraphViewParamsV1,
+    message: string,
+  ): HistoricalGraphViewResultV1 {
+    const document = {
+      uri: snapshot.binding.uri,
+      generation: snapshot.binding.generation,
+      version: snapshot.binding.version,
+      sourceDigest: snapshot.binding.sourceDigest,
+    } as const;
+    return Object.freeze({
+      schemaVersion: HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION,
+      historicalEditorProtocolModelVersion:
+        HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+      historyResultId: this.#sha256({
+        historicalEditorProtocolModelVersion:
+          HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+        document,
+        request,
+        status: "unavailable",
+        message,
+      }),
+      document,
+      status: "unavailable",
+      complete: false,
+      diagnostics: Object.freeze({
+        items: Object.freeze([historicalDiagnostic("PTHED-101", message)]),
+        truncated: false,
+      }),
+      historicalGraph: null,
+    });
+  }
+
+  async historicalGraphView(
+    params: unknown,
+    signal?: AbortSignal,
+  ): Promise<HistoricalGraphViewResultV1> {
+    this.#ensureRunning();
+    const historicalSession = this.#requireHistoricalProtocol();
+    const accepted = validateHistoricalGraphViewParams(params);
+    const snapshot = this.#session.current(accepted.textDocument.uri);
+    if (snapshot === null) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.InvalidParams,
+        "perttool/historicalGraphView document is not open",
+      );
+    }
+    if (snapshot.binding.version !== accepted.documentVersion) {
+      throw projectionError("stale");
+    }
+    if (isAborted(signal)) throw projectionError("cancelled");
+    const requestSerial = (this.#historicalRequests.get(snapshot.binding.uri) ?? 0) + 1;
+    this.#historicalRequests.set(snapshot.binding.uri, requestSerial);
+    const currentBinding = snapshot.binding;
+
+    if (historicalSession.workspaceTrust !== "trusted") {
+      return this.#unavailableHistoricalResult(
+        snapshot,
+        accepted,
+        "PTHED-101: historical repository access requires a trusted workspace",
+      );
+    }
+    const application = this.#historicalApplication;
+    if (application === undefined) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.MethodNotFound,
+        "perttool historical Application service is unavailable",
+      );
+    }
+    const localTarget = await application.resolveLocalTarget(
+      accepted.textDocument.uri,
+      historicalSession.workspaceFolderUris,
+    );
+    if (isAborted(signal)) throw projectionError("cancelled");
+    if (localTarget === null) {
+      return this.#unavailableHistoricalResult(
+        snapshot,
+        accepted,
+        "PTHED-101: the document is not an eligible local workspace PERT file",
+      );
+    }
+
+    const inspected = await application.inspect(
+      localTarget.targetPath,
+      accepted,
+      currentBinding.sourceDigest,
+    );
+    if (isAborted(signal)) throw projectionError("cancelled");
+    const after = this.#session.current(accepted.textDocument.uri);
+    if (
+      this.#historicalRequests.get(snapshot.binding.uri) !== requestSerial ||
+      after === null ||
+      after.binding.generation !== currentBinding.generation ||
+      after.binding.version !== currentBinding.version ||
+      after.binding.sourceDigest !== currentBinding.sourceDigest
+    ) {
+      throw projectionError("stale");
+    }
+
+    const bindingMap = new Map<
+      `sha256:${string}`,
+      HistoricalSourceBindingV1
+    >();
+    if (
+      inspected.projection !== null &&
+      !historicalProjectionMatchesRequest(inspected.projection, accepted)
+    ) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.InternalError,
+        "PTHED-105: historical Application result does not match the request",
+      );
+    }
+    const projection = inspected.projection === null
+      ? null
+      : Object.freeze({
+          ...inspected.projection,
+          source_bindings: Object.freeze(
+            inspected.projection.source_bindings.map((binding) => {
+              const bindingId = this.#sha256({
+                historicalEditorProtocolModelVersion:
+                  HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+                repositoryId: binding.repository_id,
+                repositoryRelativePath: binding.repository_relative_path,
+                commitId: binding.commit_id,
+                blobId: binding.blob_id,
+                sourceDigest: binding.source_digest,
+                declarationKind: binding.declaration_kind,
+                sourceId: binding.source_id,
+                ownerPath: binding.owner_path,
+                range: binding.range,
+              });
+              bindingMap.set(bindingId, binding);
+              return Object.freeze({ ...binding, binding_id: bindingId });
+            }),
+          ),
+        }) satisfies HistoricalGraphEditorProjectionV1;
+    const document = {
+      uri: currentBinding.uri,
+      generation: currentBinding.generation,
+      version: currentBinding.version,
+      sourceDigest: currentBinding.sourceDigest,
+    } as const;
+    const semanticProjectionDigest = this.#sha256(projection);
+    const evidence = projection?.evidence;
+    const historyResultId = this.#sha256({
+      historicalEditorProtocolModelVersion:
+        HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+      document,
+      request: projection?.request ?? accepted,
+      evidence: evidence === undefined
+        ? null
+        : {
+            repository_id: evidence["repository_id"] ?? null,
+            repository_read_snapshot_id:
+              evidence["repository_read_snapshot_id"] ?? null,
+            resolved_endpoint: evidence["resolved_endpoint"] ?? null,
+            resolved_lower_boundary: evidence["resolved_lower_boundary"] ?? null,
+          },
+      semanticProjectionDigest,
+    });
+    const status = projection?.status ?? "unavailable";
+    const result: HistoricalGraphViewResultV1 = Object.freeze({
+      schemaVersion: HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION,
+      historicalEditorProtocolModelVersion:
+        HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+      historyResultId,
+      document,
+      status,
+      complete: status === "complete",
+      diagnostics: Object.freeze({
+        items: Object.freeze(inspected.diagnostics.map((diagnostic) =>
+          Object.freeze({
+            ...diagnostic,
+            range: null,
+            related: Object.freeze([]),
+            helpTopic: "historical-dag",
+          })
+        )),
+        truncated: inspected.diagnosticsTruncated,
+      }),
+      historicalGraph: projection,
+    });
+
+    for (const [id, retained] of this.#retainedHistorical) {
+      if (retained.result.document.uri === document.uri) {
+        this.#retainedHistorical.delete(id);
+      }
+    }
+    while (this.#retainedHistorical.size >= 32) {
+      const oldest = this.#retainedHistorical.keys().next().value as
+        | `sha256:${string}`
+        | undefined;
+      if (oldest === undefined) break;
+      this.#retainedHistorical.delete(oldest);
+    }
+    this.#retainedHistorical.set(historyResultId, Object.freeze({
+      targetPath: localTarget.targetPath,
+      result,
+      bindings: bindingMap,
+    }));
+    return result;
+  }
+
+  async historicalSource(
+    params: unknown,
+    signal?: AbortSignal,
+  ): Promise<HistoricalSourceResultV1> {
+    this.#ensureRunning();
+    this.#requireHistoricalProtocol();
+    const accepted = validateHistoricalSourceParams(params);
+    if (isAborted(signal)) throw projectionError("cancelled");
+    const retained = this.#retainedHistorical.get(accepted.historyResultId);
+    const snapshot = this.#session.current(accepted.textDocument.uri);
+    if (
+      retained === undefined ||
+      snapshot === null ||
+      retained.result.document.uri !== accepted.textDocument.uri ||
+      retained.result.document.version !== accepted.documentVersion ||
+      snapshot.binding.generation !== retained.result.document.generation ||
+      snapshot.binding.version !== retained.result.document.version ||
+      snapshot.binding.sourceDigest !== retained.result.document.sourceDigest
+    ) {
+      throw projectionError("stale");
+    }
+    const binding = retained.bindings.get(accepted.bindingId);
+    if (binding === undefined || this.#historicalApplication === undefined) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.InvalidRequest,
+        "PTHED-103: retained historical source binding is unavailable",
+      );
+    }
+    const loaded = await this.#historicalApplication.loadSource(
+      retained.targetPath,
+      binding,
+    );
+    if (isAborted(signal)) throw projectionError("cancelled");
+    const current = this.#session.current(accepted.textDocument.uri);
+    if (
+      loaded === null ||
+      current === null ||
+      current.binding.generation !== retained.result.document.generation ||
+      current.binding.version !== retained.result.document.version ||
+      current.binding.sourceDigest !== retained.result.document.sourceDigest ||
+      this.#retainedHistorical.get(accepted.historyResultId) !== retained
+    ) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.InvalidRequest,
+        "PTHED-103: historical blob or retained result verification failed",
+      );
+    }
+    const repositoryToken = this.#sha256(binding.repository_id).slice(7, 23);
+    const basename = binding.repository_relative_path.split("/").at(-1) ?? "plan.pert";
+    const virtualUri = new URL(
+      `perttool-history://${repositoryToken}/${accepted.bindingId.slice(7)}/${encodeURIComponent(`${binding.commit_id} ${basename}`)}`,
+    );
+    virtualUri.searchParams.set("commit", binding.commit_id);
+    return Object.freeze({
+      schemaVersion: HISTORICAL_SOURCE_SCHEMA_VERSION,
+      historicalEditorProtocolModelVersion:
+        HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
+      historyResultId: accepted.historyResultId,
+      bindingId: accepted.bindingId,
+      virtualDocument: Object.freeze({
+        uri: virtualUri.toString(),
+        languageId: "pert",
+        repositoryRelativePath: binding.repository_relative_path,
+        commitId: binding.commit_id,
+        blobId: binding.blob_id,
+        sourceDigest: binding.source_digest,
+        text: loaded.text,
+        range: loaded.range,
+      }),
+    });
+  }
+
   shutdown(): void {
     if (this.#stopped) return;
     this.#session.dispose();
     this.#openVersions.clear();
+    this.#historicalRequests.clear();
+    this.#retainedHistorical.clear();
+    this.#historicalSession = null;
     this.#stopped = true;
   }
 

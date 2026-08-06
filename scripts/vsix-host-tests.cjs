@@ -114,6 +114,26 @@ async function run() {
   });
   assert.equal(definitions[0].uri.toString(), document.uri.toString());
   await vscode.commands.executeCommand("perttool.showDag");
+  const historicalStatus = await vscode.commands.executeCommand(
+    "perttool.showDag",
+    {
+      historical: true,
+      openFirstHistoricalSource: expectedTrust === "trusted",
+    },
+  );
+  if (expectedTrust === "trusted") {
+    assert.ok(
+      ["complete", "incomplete"].includes(historicalStatus),
+      `unexpected trusted historical status: ${String(historicalStatus)}`,
+    );
+    const historicalDocument = vscode.window.activeTextEditor?.document;
+    assert.equal(historicalDocument?.uri.scheme, "perttool-history");
+    assert.equal(historicalDocument?.isDirty, false);
+    assert.match(historicalDocument?.uri.path ?? "", /[0-9a-f]{40,64}/u);
+    assert.match(historicalDocument?.getText() ?? "", /project /u);
+  } else {
+    assert.equal(historicalStatus, "unavailable");
+  }
 
   const virtual = await openVirtualPert(source);
   const virtualSymbols = await waitFor("virtual document symbols", async () => {

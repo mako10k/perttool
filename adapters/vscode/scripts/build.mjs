@@ -48,7 +48,7 @@ await Promise.all([
   build({
     absWorkingDir: workspace,
     bundle: true,
-    entryPoints: ["../lsp/src/main.ts"],
+    entryPoints: ["../lsp/runtime/main.ts"],
     format: "cjs",
     legalComments: "none",
     outfile: "dist/server/main.cjs",

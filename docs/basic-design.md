@@ -3495,13 +3495,13 @@ Host port object, or adapter capabilities. Three-way ancestry, semantic
 patch/merge, MCP history, editor mutation, releases, remote writes, and plan
 advance remain independent.
 
-The accepted historical editor contract now fixes the next adapter boundary
-without activating it. The active LSP/VSIX capability set remains unchanged;
-there is no new runtime name, command, schema artifact, package, or extension
-contribution. The later `HISTORICAL_VSIX` implementation must compose the same
-Application result directly, negotiate both historical editor result versions,
-scope Git reads to the trusted selected local repository, verify immutable
-source navigation, and preserve current GraphView and workspace bytes.
+The accepted historical editor contract fixes a separate adapter boundary.
+`HISTORICAL_VSIX` now composes the same Application result directly in the
+private bundled language server, negotiates both historical editor result
+versions, scopes Git reads to the trusted selected local repository, verifies
+immutable blob source navigation, and preserves current GraphView and
+workspace bytes. The implementation adds no public runtime name, CLI command,
+CLI schema artifact, or public extension contribution.
 
 Exit for the contract task:
 

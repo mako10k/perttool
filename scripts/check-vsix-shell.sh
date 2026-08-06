@@ -51,7 +51,8 @@ if [[ ! -f "$unpacked/extension/dist/extension.cjs" || \
 fi
 
 "$node_binary" "$repository_root/scripts/check-lsp-isolated.mjs" \
-  "$unpacked/extension/dist/server/main.cjs"
+  "$unpacked/extension/dist/server/main.cjs" \
+  "$repository_root/plans/historical-dag.pert"
 if [[ "${PERTTOOL_SKIP_VSIX_HOST:-0}" != "1" ]]; then
   if [[ "$(uname -s)" == "Linux" && -z "${DISPLAY:-}" ]]; then
     if ! command -v xvfb-run >/dev/null; then

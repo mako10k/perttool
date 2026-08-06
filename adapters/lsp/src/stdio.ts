@@ -7,7 +7,10 @@ import {
   type Connection,
 } from "vscode-languageserver/node.js";
 import { createPerttoolLanguageServer } from "./server.js";
-import { PerttoolProtocolError } from "./protocol.js";
+import {
+  PerttoolProtocolError,
+  type HistoricalEditorApplicationV1,
+} from "./protocol.js";
 
 function digestText(text: string): string {
   return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
@@ -41,6 +44,9 @@ async function protocolResult<Value>(operation: () => Promise<Value>): Promise<V
 export function startPerttoolStdioServer(
   input: Readable = process.stdin,
   output: Writable = process.stdout,
+  options: {
+    readonly historicalApplication?: HistoricalEditorApplicationV1;
+  } = {},
 ): Connection {
   const connection = createConnection(input, output);
   const server = createPerttoolLanguageServer({
@@ -54,6 +60,9 @@ export function startPerttoolStdioServer(
         process.exitCode = 1;
       });
     },
+    ...(options.historicalApplication === undefined
+      ? {}
+      : { historicalApplication: options.historicalApplication }),
   });
 
   connection.onInitialize((params) => {
@@ -114,6 +123,18 @@ export function startPerttoolStdioServer(
   connection.onRequest("perttool/graphView", (params: unknown, token) =>
     protocolResult(() =>
       withCancellation(token, (signal) => server.graphView(params, signal))
+    )
+  );
+  connection.onRequest("perttool/historicalGraphView", (params: unknown, token) =>
+    protocolResult(() =>
+      withCancellation(token, (signal) =>
+        server.historicalGraphView(params, signal)
+      )
+    )
+  );
+  connection.onRequest("perttool/historicalSource", (params: unknown, token) =>
+    protocolResult(() =>
+      withCancellation(token, (signal) => server.historicalSource(params, signal))
     )
   );
 

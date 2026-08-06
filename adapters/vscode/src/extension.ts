@@ -12,14 +12,20 @@ import {
   graphViewResultSchemaVersion,
   graphBindingMatches,
   hasAcceptedEditorHandshake,
+  hasAcceptedHistoricalHandshake,
+  historicalEditorProtocolModelVersion,
+  historicalGraphViewResultSchemaVersion,
+  historicalSourceResultSchemaVersion,
   parseEditorHelpResult,
   parseOpenHelpCommandArgs,
 } from "./bindings.js";
 import { DagViewProvider, dagViewId } from "./dag-view.js";
 
 const helpScheme = "perttool-help";
+const historicalScheme = "perttool-history";
 let client: LanguageClient | undefined;
 let customCapabilitiesAvailable = false;
+let historicalCapabilitiesAvailable = false;
 
 class HelpContentProvider implements vscode.TextDocumentContentProvider {
   readonly #content = new Map<string, string>();
@@ -48,6 +54,57 @@ class HelpContentProvider implements vscode.TextDocumentContentProvider {
   }
 }
 
+class HistoricalContentProvider implements vscode.TextDocumentContentProvider {
+  readonly #content = new Map<string, string>();
+  readonly #change = new vscode.EventEmitter<vscode.Uri>();
+
+  readonly onDidChange = this.#change.event;
+
+  provideTextDocumentContent(uri: vscode.Uri): string {
+    return this.#content.get(uri.toString()) ??
+      "Historical perttool source is no longer retained.";
+  }
+
+  async open(result: import("./bindings.js").HistoricalSourceResultV1): Promise<boolean> {
+    const uri = vscode.Uri.parse(result.virtualDocument.uri, true);
+    if (uri.scheme !== historicalScheme) return false;
+    if (!this.#content.has(uri.toString()) && this.#content.size >= 32) {
+      const open = new Set(
+        vscode.workspace.textDocuments
+          .filter((document) => document.uri.scheme === historicalScheme)
+          .map((document) => document.uri.toString()),
+      );
+      const evictable = [...this.#content.keys()].find((key) => !open.has(key));
+      if (evictable === undefined) return false;
+      this.#content.delete(evictable);
+    }
+    this.#content.delete(uri.toString());
+    this.#content.set(uri.toString(), result.virtualDocument.text);
+    this.#change.fire(uri);
+    const document = await vscode.workspace.openTextDocument(uri);
+    if (
+      document.languageId !== "pert" ||
+      document.getText() !== result.virtualDocument.text ||
+      document.isDirty
+    ) return false;
+    const editor = await vscode.window.showTextDocument(document, { preview: true });
+    const range = new vscode.Range(
+      result.virtualDocument.range.start.line,
+      result.virtualDocument.range.start.character,
+      result.virtualDocument.range.end.line,
+      result.virtualDocument.range.end.character,
+    );
+    editor.selection = new vscode.Selection(range.start, range.end);
+    editor.revealRange(range, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+    return true;
+  }
+
+  dispose(): void {
+    this.#change.dispose();
+    this.#content.clear();
+  }
+}
+
 function activeDocumentMatches(args: {
   readonly documentUri: string;
   readonly documentVersion: number;
@@ -63,6 +120,7 @@ function activeDocumentMatches(args: {
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const output = vscode.window.createOutputChannel("perttool", { log: true });
   const help = new HelpContentProvider();
+  const historical = new HistoricalContentProvider();
   const serverModule = context.asAbsolutePath(
     path.join("dist", "server", "main.cjs"),
   );
@@ -77,6 +135,20 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         editorProtocolModelVersions: [editorProtocolModelVersion],
         graphViewResultSchemaVersions: [graphViewResultSchemaVersion],
         editorHelpResultSchemaVersions: [editorHelpResultSchemaVersion],
+        historicalEditorProtocolModelVersions: [
+          historicalEditorProtocolModelVersion,
+        ],
+        historicalGraphViewResultSchemaVersions: [
+          historicalGraphViewResultSchemaVersion,
+        ],
+        historicalSourceResultSchemaVersions: [
+          historicalSourceResultSchemaVersion,
+        ],
+        historicalLocalRepository: {
+          workspaceTrust: vscode.workspace.isTrusted ? "trusted" : "untrusted",
+          workspaceFolderUris:
+            vscode.workspace.workspaceFolders?.map(({ uri }) => uri.toString()) ?? [],
+        },
       },
     },
     markdown: { isTrusted: false, supportHtml: false },
@@ -94,14 +166,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     extensionUri: context.extensionUri,
     client: () => client,
     customCapabilitiesAvailable: () => customCapabilitiesAvailable,
+    historicalCapabilitiesAvailable: () => historicalCapabilitiesAvailable,
+    openHistoricalSource: (result) => historical.open(result),
     output,
   });
 
   context.subscriptions.push(
     output,
     help,
+    historical,
     dag,
     vscode.workspace.registerTextDocumentContentProvider(helpScheme, help),
+    vscode.workspace.registerTextDocumentContentProvider(
+      historicalScheme,
+      historical,
+    ),
     vscode.window.registerWebviewViewProvider(dagViewId, dag),
     vscode.window.onDidChangeActiveTextEditor(() => dag.scheduleRefresh()),
     vscode.workspace.onDidChangeTextDocument(({ document }) => {
@@ -110,8 +189,30 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.workspace.onDidCloseTextDocument((document) => {
       dag.documentClosed(document);
     }),
-    vscode.commands.registerCommand("perttool.showDag", async () => {
-      await dag.show();
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      historicalCapabilitiesAvailable = false;
+      dag.invalidateHistorical(
+        "Workspace roots changed; reload the window before reading history again.",
+      );
+    }),
+    vscode.workspace.onDidGrantWorkspaceTrust(() => {
+      historicalCapabilitiesAvailable = false;
+      dag.invalidateHistorical(
+        "Workspace trust changed; reload the window before reading history again.",
+      );
+    }),
+    vscode.commands.registerCommand("perttool.showDag", async (value?: unknown) => {
+      return await dag.show(
+        typeof value === "object" && value !== null &&
+            "historical" in value && value.historical === true
+          ? {
+              historical: true,
+              openFirstHistoricalSource:
+                "openFirstHistoricalSource" in value &&
+                value.openFirstHistoricalSource === true,
+            }
+          : undefined,
+      );
     }),
     vscode.commands.registerCommand("perttool.openHelp", async (value: unknown) => {
       const args = parseOpenHelpCommandArgs(value);
@@ -162,9 +263,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await client.start();
     const experimental = client.initializeResult?.capabilities.experimental;
     customCapabilitiesAvailable = hasAcceptedEditorHandshake(experimental);
+    historicalCapabilitiesAvailable =
+      hasAcceptedHistoricalHandshake(experimental);
     if (!customCapabilitiesAvailable) {
       output.warn(
         "Custom perttool Help and DAG capabilities are unavailable: incompatible editor protocol handshake.",
+      );
+    }
+    if (!historicalCapabilitiesAvailable) {
+      output.warn(
+        "Historical DAG capabilities are unavailable: incompatible historical editor handshake.",
       );
     }
     dag.scheduleRefresh(0);
@@ -180,5 +288,6 @@ export async function deactivate(): Promise<void> {
   const running = client;
   client = undefined;
   customCapabilitiesAvailable = false;
+  historicalCapabilitiesAvailable = false;
   if (running !== undefined) await running.stop();
 }

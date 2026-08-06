@@ -3044,8 +3044,11 @@ Before implementation, separate the specifications in the following order.
       for trusted local repository selection, versioned graph/source methods,
       immutable blob navigation, cancellation, staleness, CSP, accessibility,
       limits, and no-write behavior.
-    - [ ] Implement the accepted historical LSP methods and local VSIX
-      presentation.
+    - [x] Implement the accepted historical LSP methods, trusted local Git
+      composition, snapshot/lineage/timeline presentation, and immutable
+      read-only source navigation in the private bundled VSIX. The accepted
+      trace is
+      [`historical-vsix-acceptance.md`](process/historical-vsix-acceptance.md).
     - [ ] Complete cross-surface no-write acceptance. Three-way ancestry still
       requires a separately accepted `SCM-001` model and later workstream.
 

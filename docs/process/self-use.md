@@ -2030,8 +2030,12 @@ Stage 1 entry evidence:
   `Perttool.HistoricalSourceResult.v1`, trusted local repository selection,
   exact result/blob/digest/range navigation, cancellation, staleness, limits,
   restrictive Webview input, accessibility, and no-write boundary are accepted
-  as an inactive design. Current GraphView, LSP, VSIX, package catalogs, and
-  workspace bytes remain unchanged; implementation and release remain later.
+  as a distinct design. The later private LSP/VSIX implementation activates
+  both methods for trusted local file workspaces, presents snapshot, proved-
+  lineage, and timeline views with an independent four-mode analysis selector,
+  and opens only verified immutable `perttool-history` documents. Current
+  GraphView, public package catalogs, and workspace bytes remain unchanged;
+  cross-surface final acceptance and release remain later.
 - write state: Stage 3 editing commands remain preview-first. Until the
   accepted source is released, repository self-use still requires the exact
   pre-advance target snapshot in `HEAD`, the passing guard,

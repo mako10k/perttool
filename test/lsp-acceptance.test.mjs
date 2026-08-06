@@ -56,7 +56,9 @@ test("private LSP package is installable beside the exact accepted Core", async 
   assert.match(packageGate, /check-lsp-isolated\.mjs/u);
   assert.match(smoke, /perttool\/graphView/u);
   assert.match(smoke, /analysisMode: "both"/u);
-  assert.equal(/node:fs|node:net|node:http/u.test(smoke), false);
+  assert.equal(/node:net|node:http/u.test(smoke), false);
+  assert.match(smoke, /node:fs\/promises/u);
+  assert.match(smoke, /perttool\/historicalGraphView/u);
   const mode = (await stat(path.join(root, "scripts/check-lsp-package.sh"))).mode;
   assert.notEqual(mode & 0o111, 0);
 });

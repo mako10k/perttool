@@ -55,11 +55,11 @@ boundary. The later `HISTORICAL_CLI` task now activates one additive read-only
 command and one root schema while retaining the same Grammar 6 and CLI
 Contract 7 versions. Current `Perttool.ProjectHistoryResult.v1`,
 `Perttool.GraphViewResult.v1`, the 122-name root/Node facades, the 45-name Core
-facade, active LSP/VSIX/MCP capabilities, and every read/write authority remain
+facade, active MCP capabilities, and every read/write authority remain
 unchanged. The active CLI registry has 45 commands and the active catalog has
-21 root schemas. The historical editor contract is accepted as an inactive
-adapter design and does not add either of its result identities to that CLI
-schema catalog.
+21 root schemas. The historical editor contract was accepted separately, and
+the later private LSP/VSIX implementation activates its two adapter-only result
+identities without adding either identity to the CLI schema catalog.
 
 Historical reconstruction observes committed objects only. It never stages,
 commits, checks out, resets, merges, rebases, updates a ref or the index,
@@ -741,9 +741,9 @@ repository selection, cancellation, staleness, immutable virtual documents,
 CSP, accessibility, and presentation. It fixes separate
 `perttool/historicalGraphView` and `perttool/historicalSource` methods and
 separate result versions without changing current-document GraphView. Their
-runtime implementation remains absent. Untrusted, virtual, non-file, or non-
-repository historical requests are unavailable without regressing current-
-document GraphView.
+runtime implementation is now private to the bundled LSP and VSIX. Untrusted,
+virtual, non-file, or non-repository historical requests are unavailable
+without regressing current-document GraphView.
 
 The current MCP adapter accepts neither client paths nor Git refs and remains
 unchanged. Historical MCP access would require a separate registered-source

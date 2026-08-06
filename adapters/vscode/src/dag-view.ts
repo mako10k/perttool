@@ -4,10 +4,16 @@ import type { LanguageClient } from "vscode-languageclient/node.js";
 import {
   editorProtocolModelVersion,
   findGraphEntityRange,
+  historicalWebviewPresentation,
   parseGraphViewResult,
+  parseHistoricalGraphViewResult,
+  parseHistoricalSourceResult,
   parseWebviewMessage,
   type GraphViewAnalysisMode,
   type GraphViewResultV1,
+  type HistoricalGraphViewResultV1,
+  type HistoricalSourceResultV1,
+  type HistoricalWebviewPresentationV1,
   type WebviewToExtensionMessageV1,
 } from "./bindings.js";
 
@@ -29,18 +35,29 @@ interface DagRenderMessageV1 {
   readonly message: string;
   readonly analysisMode: GraphViewAnalysisMode;
   readonly result: GraphViewResultV1 | null;
+  readonly historicalResult: HistoricalWebviewPresentationV1 | null;
+  readonly scope: "current" | "historical";
 }
 
 export interface DagViewProviderOptions {
   readonly extensionUri: vscode.Uri;
   readonly client: () => LanguageClient | undefined;
   readonly customCapabilitiesAvailable: () => boolean;
+  readonly historicalCapabilitiesAvailable: () => boolean;
+  readonly openHistoricalSource: (
+    result: HistoricalSourceResultV1,
+  ) => Promise<boolean>;
   readonly output: vscode.LogOutputChannel;
 }
 
 function activePertDocument(): vscode.TextDocument | null {
   const document = vscode.window.activeTextEditor?.document;
-  return document?.languageId === "pert" ? document : null;
+  if (document?.languageId === "pert" && document.uri.scheme !== "perttool-history") {
+    return document;
+  }
+  return vscode.window.visibleTextEditors.find(({ document: candidate }) =>
+    candidate.languageId === "pert" && candidate.uri.scheme !== "perttool-history"
+  )?.document ?? null;
 }
 
 function errorCode(error: unknown): number | null {
@@ -57,7 +74,10 @@ function errorCode(error: unknown): number | null {
 
 function bindingMatches(
   result: GraphViewResultV1,
-  message: Exclude<WebviewToExtensionMessageV1, { readonly kind: "ready" }>,
+  message: Extract<
+    WebviewToExtensionMessageV1,
+    { readonly documentUri: string }
+  >,
 ): boolean {
   return (
     result.document.uri === message.documentUri &&
@@ -88,6 +108,8 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
   #view: vscode.WebviewView | undefined;
   #mode: GraphViewAnalysisMode = "both";
   #result: GraphViewResultV1 | null = null;
+  #historicalResult: HistoricalGraphViewResultV1 | null = null;
+  #scope: "current" | "historical" = "current";
   #requestSerial = 0;
   #cancellation: vscode.CancellationTokenSource | undefined;
   #refreshTimer: ReturnType<typeof setTimeout> | undefined;
@@ -98,6 +120,8 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     message: "Open a .pert document to display its DAG.",
     analysisMode: "both",
     result: null,
+    historicalResult: null,
+    scope: "current",
   };
 
   constructor(options: DagViewProviderOptions) {
@@ -127,9 +151,52 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.scheduleRefresh(0);
   }
 
-  async show(): Promise<void> {
+  async show(options?: {
+    readonly historical?: boolean;
+    readonly openFirstHistoricalSource?: boolean;
+  }): Promise<
+    HistoricalGraphViewResultV1["status"] | "missing_document" |
+      "missing_result" | "capability_unavailable" | "request_failed" | undefined
+  > {
+    if (options?.historical !== true) {
+      await vscode.commands.executeCommand(`${dagViewId}.focus`);
+      this.scheduleRefresh(0);
+      return undefined;
+    }
+    if (this.#refreshTimer !== undefined) {
+      clearTimeout(this.#refreshTimer);
+      this.#refreshTimer = undefined;
+    }
+    await this.refresh(true);
+    const document = activePertDocument();
+    const result = this.#result;
+    if (document === null) return "missing_document";
+    if (result === null) return "missing_result";
+    if (!this.#options.historicalCapabilitiesAvailable()) {
+      return "capability_unavailable";
+    }
     await vscode.commands.executeCommand(`${dagViewId}.focus`);
-    this.scheduleRefresh(0);
+    const historical = await this.#requestHistorical({
+      kind: "requestHistoricalGraph",
+      documentUri: result.document.uri,
+      documentGeneration: result.document.generation,
+      documentVersion: result.document.version,
+      requestedEndpoint: "HEAD",
+      lowerBoundary: null,
+      ancestryProfile: "first_parent",
+      view: "lineage",
+      snapshotCommitId: null,
+      analysisMode: "none",
+    }, document, result);
+    if (historical !== null && options.openFirstHistoricalSource === true) {
+      const bindingId = historical.historicalGraph?.source_bindings.find(
+        (binding) => binding.owner_path === binding.source_id,
+      )?.binding_id;
+      if (bindingId !== undefined) {
+        await this.#openHistoricalBinding(historical, bindingId);
+      }
+    }
+    return historical?.status ?? "request_failed";
   }
 
   scheduleRefresh(delay = 40): void {
@@ -142,18 +209,30 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
 
   documentChanged(document: vscode.TextDocument): void {
     if (activePertDocument()?.uri.toString() === document.uri.toString()) {
+      this.invalidateHistorical("The historical DAG was cleared after a document change.");
       this.scheduleRefresh();
     }
   }
 
   documentClosed(document: vscode.TextDocument): void {
-    if (this.#result?.document.uri === document.uri.toString()) {
+    if (
+      this.#result?.document.uri === document.uri.toString() ||
+      this.#historicalResult?.document.uri === document.uri.toString()
+    ) {
       this.#clear("empty", "The displayed document was closed.");
     }
   }
 
-  async refresh(): Promise<void> {
-    if (this.#view !== undefined && !this.#view.visible) return;
+  invalidateHistorical(message: string): void {
+    this.#historicalResult = null;
+    if (this.#scope === "historical") {
+      this.#scope = "current";
+      this.#publish("stale", message, this.#result);
+    }
+  }
+
+  async refresh(force = false): Promise<void> {
+    if (!force && this.#view !== undefined && !this.#view.visible) return;
     const document = activePertDocument();
     if (document === null) {
       this.#clear("empty", "Open a .pert document to display its DAG.");
@@ -177,6 +256,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       uri: document.uri.toString(),
       version: document.version,
     };
+    this.#scope = "current";
     this.#result = null;
     this.#publish("loading", `Loading ${this.#mode} DAG analysis…`, null);
 
@@ -255,6 +335,10 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       message,
       analysisMode: this.#mode,
       result,
+      historicalResult: this.#historicalResult === null
+        ? null
+        : historicalWebviewPresentation(this.#historicalResult),
+      scope: this.#scope,
     };
     void this.#view?.webview.postMessage(this.#presentation);
   }
@@ -267,6 +351,8 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#requestSerial += 1;
     this.#cancellation?.cancel();
     this.#result = diagnosticResult;
+    this.#historicalResult = null;
+    this.#scope = "current";
     this.#publish(state, message, diagnosticResult);
   }
 
@@ -275,6 +361,25 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     if (message === null) return;
     if (message.kind === "ready") {
       await this.#view?.webview.postMessage(this.#presentation);
+      return;
+    }
+    if (message.kind === "revealHistoricalSource") {
+      const result = this.#historicalResult;
+      const document = activePertDocument();
+      const client = this.#options.client();
+      if (
+        result === null || document === null || client === undefined ||
+        !this.#options.historicalCapabilitiesAvailable() ||
+        result.historyResultId !== message.historyResultId ||
+        result.document.uri !== document.uri.toString() ||
+        result.document.version !== document.version
+      ) {
+        this.invalidateHistorical(
+          "The historical source action no longer matches the active result.",
+        );
+        return;
+      }
+      await this.#openHistoricalBinding(result, message.bindingId);
       return;
     }
     const result = this.#result;
@@ -287,6 +392,10 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       document.version !== message.documentVersion
     ) {
       this.#clear("stale", "The DAG action no longer matches the active document.");
+      return;
+    }
+    if (message.kind === "requestHistoricalGraph") {
+      await this.#requestHistorical(message, document, result);
       return;
     }
     if (message.kind === "selectAnalysisMode") {
@@ -310,6 +419,139 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     editor.revealRange(target, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
   }
 
+  async #openHistoricalBinding(
+    result: HistoricalGraphViewResultV1,
+    bindingId: `sha256:${string}`,
+  ): Promise<boolean> {
+    const client = this.#options.client();
+    if (client === undefined || !this.#options.historicalCapabilitiesAvailable()) {
+      return false;
+    }
+    try {
+      const raw = await client.sendRequest<unknown>("perttool/historicalSource", {
+        textDocument: { uri: result.document.uri },
+        documentVersion: result.document.version,
+        historyResultId: result.historyResultId,
+        bindingId,
+      });
+      const source = parseHistoricalSourceResult(raw);
+      if (
+        source === null ||
+        source.historyResultId !== result.historyResultId ||
+        source.bindingId !== bindingId ||
+        !await this.#options.openHistoricalSource(source)
+      ) {
+        this.#options.output.warn("Historical source result failed closed validation.");
+        return false;
+      }
+      return true;
+    } catch (error) {
+      this.#options.output.warn(
+        `Historical source request failed closed: ${String(error)}`,
+      );
+      return false;
+    }
+  }
+
+  async #requestHistorical(
+    message: Extract<
+      WebviewToExtensionMessageV1,
+      { readonly kind: "requestHistoricalGraph" }
+    >,
+    document: vscode.TextDocument,
+    currentResult: GraphViewResultV1,
+  ): Promise<HistoricalGraphViewResultV1 | null> {
+    if (this.#refreshTimer !== undefined) {
+      clearTimeout(this.#refreshTimer);
+      this.#refreshTimer = undefined;
+    }
+    this.#scope = "historical";
+    this.#mode = message.analysisMode;
+    this.#historicalResult = null;
+    if (!this.#options.historicalCapabilitiesAvailable()) {
+      this.#publish(
+        "unavailable",
+        "Historical DAG access is unavailable for this workspace session.",
+        currentResult,
+      );
+      return null;
+    }
+    const client = this.#options.client();
+    if (client === undefined) return null;
+    const serial = ++this.#requestSerial;
+    this.#cancellation?.cancel();
+    this.#cancellation?.dispose();
+    const cancellation = new vscode.CancellationTokenSource();
+    this.#cancellation = cancellation;
+    this.#publish(
+      "loading",
+      `Loading historical ${message.view} view at ${message.requestedEndpoint}…`,
+      currentResult,
+    );
+    try {
+      const raw = await client.sendRequest<unknown>(
+        "perttool/historicalGraphView",
+        {
+          textDocument: { uri: message.documentUri },
+          documentVersion: message.documentVersion,
+          requestedEndpoint: message.requestedEndpoint,
+          lowerBoundary: message.lowerBoundary,
+          ancestryProfile: message.ancestryProfile,
+          view: message.view,
+          snapshotCommitId: message.snapshotCommitId,
+          analysisMode: message.analysisMode,
+        },
+        cancellation.token,
+      );
+      if (serial !== this.#requestSerial || cancellation.token.isCancellationRequested) {
+        return null;
+      }
+      const active = activePertDocument();
+      const result = parseHistoricalGraphViewResult(raw);
+      if (
+        active === null || result === null ||
+        active.uri.toString() !== document.uri.toString() ||
+        active.version !== document.version ||
+        result.document.uri !== message.documentUri ||
+        result.document.generation !== message.documentGeneration ||
+        result.document.version !== message.documentVersion
+      ) {
+        this.invalidateHistorical(
+          "The historical DAG result became stale before presentation.",
+        );
+        return null;
+      }
+      this.#historicalResult = result;
+      const state = result.status === "unavailable" ? "unavailable" : "current";
+      this.#publish(
+        state,
+        `Historical ${message.view} is ${result.status}; resolved immutable evidence is shown below.`,
+        currentResult,
+      );
+      return result;
+    } catch (error) {
+      if (serial !== this.#requestSerial) return null;
+      const code = errorCode(error);
+      this.#historicalResult = null;
+      if (code === -32800 || cancellation.token.isCancellationRequested) {
+        this.#publish("cancelled", "The historical DAG request was cancelled.", currentResult);
+      } else if (code === -32801) {
+        this.#publish("stale", "The historical DAG result was rejected as stale.", currentResult);
+      } else {
+        this.#options.output.warn(
+          `Historical DAG request failed closed: ${String(error)}`,
+        );
+        this.#publish("unavailable", "The historical DAG request is unavailable.", currentResult);
+      }
+      return null;
+    } finally {
+      if (this.#cancellation === cancellation) {
+        cancellation.dispose();
+        this.#cancellation = undefined;
+      }
+    }
+  }
+
   #html(webview: vscode.Webview, assetRoot: vscode.Uri): string {
     const token = nonce();
     const stylesheet = webview.asWebviewUri(
@@ -328,6 +570,11 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
 <body>
   <header>
     <h1>perttool DAG</h1>
+    <label for="dag-scope">Scope</label>
+    <select id="dag-scope" aria-label="DAG scope">
+      <option value="current" selected>Current document</option>
+      <option value="historical">Git history</option>
+    </select>
     <label for="analysis-mode">Analysis</label>
     <select id="analysis-mode" aria-label="DAG analysis mode">
       <option value="none">Topology</option>
@@ -336,6 +583,27 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       <option value="both" selected>Both</option>
     </select>
   </header>
+  <fieldset id="historical-controls" hidden>
+    <legend>Historical query</legend>
+    <label for="historical-endpoint">Endpoint</label>
+    <input id="historical-endpoint" value="HEAD" maxlength="1024" spellcheck="false">
+    <label for="historical-lower">Lower boundary</label>
+    <input id="historical-lower" maxlength="1024" spellcheck="false" placeholder="optional">
+    <label for="historical-ancestry">Ancestry</label>
+    <select id="historical-ancestry">
+      <option value="first_parent" selected>First parent</option>
+      <option value="three_way">Three way (unsupported)</option>
+    </select>
+    <label for="historical-view">View</label>
+    <select id="historical-view">
+      <option value="snapshot">Snapshot</option>
+      <option value="lineage" selected>Proved lineage</option>
+      <option value="timeline">Timeline</option>
+    </select>
+    <label for="historical-snapshot">Snapshot commit</label>
+    <input id="historical-snapshot" maxlength="64" spellcheck="false" placeholder="optional full object ID">
+    <button id="historical-run" type="button">Load historical DAG</button>
+  </fieldset>
   <p id="status" role="status" aria-live="polite"></p>
   <main>
     <svg id="graph" role="img" aria-label="PERT activity-on-arrow graph"></svg>
@@ -360,5 +628,6 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#disposables.splice(0).forEach((item) => item.dispose());
     this.#view = undefined;
     this.#result = null;
+    this.#historicalResult = null;
   }
 }

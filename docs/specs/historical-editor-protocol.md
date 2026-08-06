@@ -12,7 +12,8 @@
 ## 1. Scope
 
 This contract fixes the separate local editor boundary for read-only historical
-DAG reconstruction before LSP or VSIX implementation. It owns:
+DAG reconstruction. It was accepted before LSP or VSIX implementation and
+owns:
 
 - one negotiated `perttool/historicalGraphView` request and the closed
   `Perttool.HistoricalGraphViewResult.v1` wrapper;
@@ -25,9 +26,11 @@ DAG reconstruction before LSP or VSIX implementation. It owns:
 - cancellation, staleness, repository-race, and hard-limit behavior; and
 - immutable virtual documents, Webview security, and accessibility.
 
-The contract does not activate either custom method. It adds no current LSP
-capability, schema artifact, package export, command, extension contribution,
-Git write, editor write, public VSIX identity, release, or publication.
+Contract acceptance alone did not activate either custom method. The later
+`HISTORICAL_VSIX` implementation now activates both methods only inside the
+private bundled LSP and VSIX. It adds no CLI schema artifact, public package
+export, command, Git write, editor write, public VSIX identity, release, or
+publication.
 
 ## 2. Compatibility and ownership
 
@@ -48,9 +51,9 @@ virtual-document registration, layout, and accessibility. It must not parse a
 `.pert` source, invoke the CLI, classify transitions, union topology, calculate
 analysis, or weaken a typed unavailable result.
 
-The initial implementation may remain private to `adapters/lsp` and
-`adapters/vscode`. It does not add a public package-root, Core, or Node export
-and does not change the public `NodeHostPorts.v1` object.
+The implementation is private to `adapters/lsp` and `adapters/vscode`. It does
+not add a public package-root, Core, or Node export and does not change the
+public `NodeHostPorts.v1` object.
 
 ## 3. Negotiation and capability closure
 
@@ -462,7 +465,9 @@ backlog, selected plan, machine cases, contract tests, English/documentation/
 self-use checks, complete repository gate, and reviewed diff to agree.
 
 Acceptance records only the contract task's local lifecycle. The following
-`HISTORICAL_VSIX` task owns LSP and VSIX implementation, SDK mapping, private
-package changes, supported-host installation evidence, and runtime no-write
-proof. Task-outcome acceptance, plan advance, commit, push, release, public
-VSIX installation, and publication remain separately gated.
+`HISTORICAL_VSIX` task owns the now-present LSP and VSIX implementation, SDK
+mapping, private package changes, supported-host installation evidence, and
+runtime no-write proof. Its implementation record is
+[Historical LSP and VSIX Acceptance](../process/historical-vsix-acceptance.md).
+Task-outcome acceptance, plan advance, commit, push, release, public VSIX
+installation, and publication remain separately gated.

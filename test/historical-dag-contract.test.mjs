@@ -95,7 +95,7 @@ test("historical DAG contract fixes the selected first-parent boundary", async (
   assert.match(design, /### Post-MVP Slice 6: Historical DAG reconstruction/u);
   assert.match(
     backlog,
-    /Status: First-parent normative contract, internal transition model, bounded\nimmutable Git evidence, pure linear reconstruction, and the separate\nread-only CLI result are implemented/u,
+    /Status: First-parent normative contract, internal transition model, bounded\nimmutable Git evidence, pure linear reconstruction, the separate read-only CLI\nresult, and the private historical LSP\/VSIX presentation are implemented/u,
   );
   assert.match(proposal, /Document status: Superseded design input 0\.2/u);
   assert.match(proposal, /Normative successor: \[Historical DAG Reconstruction Contract\]/u);
@@ -197,7 +197,7 @@ test("the later CLI task activates the reserved additive surface", () => {
   );
 });
 
-test("accepted historical editor outcome makes only VSIX startable", async () => {
+test("accepted historical VSIX makes only final acceptance startable", async () => {
   const [
     source,
     acceptance,
@@ -205,6 +205,7 @@ test("accepted historical editor outcome makes only VSIX startable", async () =>
     linearAcceptance,
     cliAcceptance,
     editorAcceptance,
+    vsixAcceptance,
     selfUse,
   ] = await Promise.all([
     repositoryText("plans/historical-dag.pert"),
@@ -213,6 +214,7 @@ test("accepted historical editor outcome makes only VSIX startable", async () =>
     repositoryText("docs/process/historical-linear-core-acceptance.md"),
     repositoryText("docs/process/historical-cli-acceptance.md"),
     repositoryText("docs/process/historical-editor-contract-acceptance.md"),
+    repositoryText("docs/process/historical-vsix-acceptance.md"),
     repositoryText("scripts/check-self-use.sh"),
   ]);
   const checked = checkDocument(source);
@@ -247,6 +249,11 @@ test("accepted historical editor outcome makes only VSIX startable", async () =>
     source,
     /task HISTORICAL_EDITOR_CONTRACT[\s\S]*?status done/u,
   );
+  assert.match(source, /task HISTORICAL_VSIX[\s\S]*?status done/u);
+  assert.match(
+    source,
+    /task_outcome OUTCOME_HISTORICAL_VSIX:[\s\S]*?task HISTORICAL_VSIX[\s\S]*?status conformant/u,
+  );
   assert.match(
     source,
     /task_outcome OUTCOME_HISTORICAL_TRANSITION_MODEL:[\s\S]*?task HISTORICAL_TRANSITION_MODEL[\s\S]*?status conformant/u,
@@ -263,12 +270,12 @@ test("accepted historical editor outcome makes only VSIX startable", async () =>
     source,
     /task_outcome OUTCOME_HISTORICAL_CLI:[\s\S]*?task HISTORICAL_CLI[\s\S]*?status conformant/u,
   );
-  assert.deepEqual(next.groups.ready, ["HISTORICAL_VSIX"]);
+  assert.deepEqual(next.groups.ready, ["HISTORICAL_DAG_ACCEPTANCE"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_VSIX",
+    "HISTORICAL_DAG_ACCEPTANCE",
   ]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_VSIX",
+    "HISTORICAL_DAG_ACCEPTANCE",
   ]);
   assert.deepEqual(
     next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
@@ -300,6 +307,8 @@ test("accepted historical editor outcome makes only VSIX startable", async () =>
     editorAcceptance,
     /only `HISTORICAL_VSIX` as ready,\s+recommended, and startable/u,
   );
+  assert.match(vsixAcceptance, /completed-task gate passes 955 tests/u);
+  assert.match(vsixAcceptance, /candidate digest\s+`sha256:6b89163c/u);
   assert.match(selfUse, /plans\/historical-dag\.pert/u);
   assert.match(selfUse, /35 plans; check, analyze, next/u);
 });
