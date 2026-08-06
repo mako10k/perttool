@@ -1,6 +1,6 @@
 # perttool Basic Design
 
-- Document status: Draft 1.24
+- Document status: Draft 1.25
 - Created: 2026-07-21
 - Updated: 2026-08-05
 - Applicable requirements: [requirements.md](requirements.md)
@@ -14,6 +14,7 @@
 - Project actuals and Git history: [specs/project-actuals.md](specs/project-actuals.md)
 - Conditional plan assurance: [specs/plan-assurance.md](specs/plan-assurance.md)
 - Plan assurance interface: [specs/plan-assurance-interface.md](specs/plan-assurance-interface.md)
+- Task refinement and assurance boundaries: [specs/task-refinement.md](specs/task-refinement.md)
 - Shared adapter architecture: [specs/adapter-platform.md](specs/adapter-platform.md)
 - Plan assurance examples: [examples/plan-assurance.md](examples/plan-assurance.md)
 - Plan assurance design review: [process/plan-assurance-design-review.md](process/plan-assurance-design-review.md)
@@ -68,6 +69,8 @@ The complete DSL grammar, CLI/JSON contracts, and Mermaid profile are fixed by t
 - All calculations and orderings are deterministic.
 - Execution dependency, planning dependency, lifecycle, resource feasibility,
   recommendation, and plan assurance remain separate typed axes.
+- Task refinement is a separate non-execution, non-assurance hierarchy; it
+  cannot suppress review or compose macro and detail schedules implicitly.
 - Plan-assurance hashes commit to canonical semantic plan inputs rather than
   raw source bytes, lifecycle status, work events, or derived analysis.
 - English is the canonical language for repository-maintained artifacts; runtime i18n is not part of the current architecture
@@ -1546,6 +1549,146 @@ contract, examples, source grammar, governance extension, actuals outcome
 contract, result/interface contract, migration, diagnostics, help/Guide,
 schemas, Core, CLI, advance, and installed-package behavior. Published release
 selection remains a later independent decision.
+
+### 6.10 Task refinement and assurance boundaries
+
+The future refinement Core follows the
+[Task Refinement and Assurance Boundary Contract](specs/task-refinement.md).
+It adds a composition view beside independently validated plan documents; it
+does not change the AST, AoA graph, analysis, or active assurance evaluator of
+either document.
+
+The minimal semantic input is:
+
+```ts
+interface ResolvedTaskReferenceV1 {
+  readonly documentIdentity: string;
+  readonly taskId: string;
+}
+
+interface TaskRefinementPartitionV1 {
+  readonly model: "Perttool.TaskRefinementPartition.v1";
+  readonly parent: ResolvedTaskReferenceV1;
+  readonly children: readonly ResolvedTaskReferenceV1[];
+  readonly relation: "partition";
+}
+```
+
+`documentIdentity` is an already resolved identity supplied by a future
+composition adapter. The semantic Core does not resolve files, paths, URIs,
+project IDs, Git revisions, or network locations. The interface contract must
+later select the source locator and prove that two references resolve to the
+intended documents before invoking the Core.
+
+#### 6.10.1 Refinement projection
+
+The validator builds a directed parent-to-child refinement graph from complete
+partition records. It validates task reference existence against injected
+document catalogs, a minimum child count of two, child uniqueness, one active
+partition per parent, one direct parent per child, one child document per
+partition, and acyclicity. Children are projected in stable resolved-reference
+order. Validation is linear in the number of referenced tasks and refinement
+edges, excluding stable sort cost.
+
+The projected relation state is `declared_partition`. The Core does not parse
+task prose into sets and does not expose `verified_mece`. The mathematical
+partition meaning is a human assertion over an uninterpreted task scope.
+
+The projection is read-only and affects none of the following:
+
+- the per-document AoA graph;
+- precedence or resource schedules;
+- task duration, estimates, requirements, lifecycle, or actuals;
+- recommendation or start authority;
+- governance decisions; or
+- task-plan contracts, accepted bases, computed bases, or exported assurance
+  commitments.
+
+Macro and detail documents are analyzed separately. A macro result contains
+the parent; a detail result contains the children. No result contains both as
+one schedule, and no automatic roll-up or double counting is possible.
+
+#### 6.10.2 Default assurance projection
+
+The default composed assurance view retains the parent as its only refinement-
+boundary node. Children may have independent local assurance, but those
+commitments are not planning inputs to the macro parent or its successors.
+
+A detail edit therefore changes only the detail and composition source
+identities. It does not produce a parent mismatch or a descendant replan
+action. A parent edit continues through the active model-1 assurance evaluator
+without consulting the refinement relation. An unavailable refinement view
+does not alter the independently complete macro result.
+
+There is no negative authority record. In particular, the model has no
+`skip_review`, `no_recheck`, signed waiver, or hash-excluded policy switch.
+Non-propagation is derived solely from the detail nodes being outside the
+upper assurance graph.
+
+#### 6.10.3 Boundary transition planning
+
+A future transition planner consumes one fully resolved composition snapshot
+and returns either one complete candidate or a typed refusal. It does not
+perform persistence.
+
+Expansion performs the following pure transition:
+
+```text
+before: external predecessors -> parent -> external successors
+after:  explicitly mapped detail nodes and relations replace parent
+```
+
+Contraction performs the inverse transition:
+
+```text
+before: explicitly mapped detail nodes and relations
+after:  normalized transferable relations -> parent -> successors
+```
+
+Both planners bind the old boundary, parent, child set, relation set, source
+identities, target task commitments, and affected closure. They validate the
+final planning DAG and return complete removed, added, transferred, residual,
+and affected-task projections. They never mutate the AoA graph or infer a
+relation solely from `partition`.
+
+Expansion requires an explicit mapping for every new relation. Contraction
+may calculate exact common normalized relation candidates, but any relation
+whose endpoint or mode cannot be transferred without changing meaning is a
+residual. Exact contraction refuses until every residual is either retained
+outside the contraction or replaced by a separately reviewed explicit
+relation change. Parent duration, resources, completion, and prose are never
+synthesized from details.
+
+The first transition model accepts only unstarted boundary tasks without work
+events, outcomes, frontier receipts, or other historical evidence. This avoids
+inventing actuals reassignment or history contraction semantics.
+
+After a successful pure plan, a future Application service must preview and
+authorize one complete transition, persist it without a half-expanded or half-
+contracted state, and recompute and reseal the affected assurance closure. The
+storage design must provide atomicity across every selected source or choose a
+single composition-owned source; the semantic draft does not choose between
+those interfaces.
+
+For a transition with no intervening change, expand-contract-expand returns
+the same normalized upper relation mapping. Fresh candidate-bound seals remain
+required because the participating assurance nodes changed.
+
+#### 6.10.4 Activation boundary
+
+No parser, source record, module, command, result, schema, help, migration, or
+package export is active from this design. Before implementation,
+`MULTI-001` must separately select:
+
+1. cross-document identity, relocation, and local resolution;
+2. source ownership and persistence, including atomic transaction behavior;
+3. grammar and CLI contract versions;
+4. Core, Application, result, diagnostic, schema, help, and Guide interfaces;
+5. migration and compatibility behavior;
+6. an independent implementation plan; and
+7. release and installed-package acceptance boundaries.
+
+Current Grammar 6, CLI Contract 7, and plan-assurance model 1 remain unchanged.
 
 ## 7. Diagnostic Model
 
@@ -3179,13 +3322,23 @@ branches after first-beta acceptance.
 - VSIX and DAG: the private `adapters/vscode` shell now provides VS Code
   `^1.101.0`, exact language client 9.0.1, TextMate highlighting, untrusted and
   virtual workspace support, version-bound virtual Help, and an offline
-  bundled server. Its current fourteen-file VSIX adds the CSP-constrained
+  bundled server. Its accepted fourteen-file VSIX adds the CSP-constrained
   read-only DAG Webview, four GraphView modes, exact source navigation, and an
   accessible outline without semantic duplication or arbitrary Mermaid
   execution. Its installed gate uses exact test-electron 3.1.0 and the minimum
   VS Code 1.101.0 host to prove trusted/untrusted and virtual activation,
   offline LSP, navigation, Help, empty/large/rapid-edit DAG use, replacement,
   uninstall readback, and unchanged workspace bytes in disposable profiles.
+  The separately selected [public identity and presentation
+  decision](specs/vsix-public-identity.md) targets
+  `mako10k.perttool-vscode`, display name `perttool`, and an independent
+  initial `0.1.0` release line. Its Activity-on-Arrow PNG is the fifteenth file
+  in the current private artifact without activating the public manifest.
+  Publisher ownership proof, manifest cutover, retained candidate acceptance,
+  and every external publication remain later release gates. The selected
+  delivery order now stops after retained local VSIX installation and
+  representative stabilization; GitHub Release, Marketplace, and Open VSX are
+  deferred until a later explicit decision.
 - Read-only MCP: the accepted [protocol contract](specs/mcp-read-contract.md)
   fixes final revision `2026-07-28`, exact stable server SDK `2.0.0`, local
   stdio, four immutable registry resources, and five closed tools over shared
@@ -3225,6 +3378,12 @@ closed result identities, diagnostics, migration, and governance version 2.
 implementation; the source runtime exposes the atomic public surface, and the
 independent final acceptance task is complete in its exact pre-advance state.
 
+The [Task Refinement and Assurance Boundary Contract](specs/task-refinement.md)
+fixes only the draft semantic separation between a declared detail partition,
+macro-only default assurance, and explicit expansion/contraction. `MULTI-001`
+still owns source identity, persistence, interface, migration, implementation,
+and release decisions; this design does not activate them.
+
 The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DSL EBNF and error recovery; the [Graph Semantics specification](specs/graph-semantics.md) determines reached, ready, done, suspended, gate, resource, and advance; the [Analysis specification](specs/analysis.md) determines PERT/CPM and resource schedules; the [Mutation Semantics specification](specs/mutation.md) determines Core requests for project/task/gate/milestone/resource mutation, local TextEdit, atomic batch, and comment ownership; the [Project Actuals and Git History Contract](specs/project-actuals.md) determines the selected future work-event, lifecycle, history, and observation semantics; the [Governance Source and Effective-Metadata specification](specs/governance-source.md) determines Grammar 4 source, omission defaults, project metadata, and pre-change snapshots; the [Owner-Aware Mutation Governance Semantics specification](specs/governance-authority.md) determines goal/DAG change classification and pre-change persistent-write authority; the [Owner-Aware Governance Interface Contract](specs/governance-interface.md) determines Core assertions, CLI Contract 5, text/JSON/help projections, diagnostics, exits, and atomic activation; the [Issue #4 Owner-Aware Governance Design Acceptance Review](process/governance-design-acceptance.md) fixes the complete criterion, interface, example, non-goal, and implementation-gate trace; the [Recommendation Semantics specification](specs/recommendation.md) determines the model for executability and recommendation strength; [Ranking Policy](specs/recommendation-ranking.md) and [Reason Taxonomy](specs/recommendation-reasons.md) determine recommendation order and reasons; the [Structured Explanation specification](specs/recommendation-explanation.md) determines the explanation graph; the [Recommendation Interface Contract specification](specs/recommendation-interface.md) determines Core/text/JSON for recommendations; the [Override Contract specification](specs/recommendation-override.md) determines human overrides; the [CLI Interface specification](specs/interfaces.md) retains Contract 2 payload and write-safety meanings that Contract 3 preserves; the [CLI Contract 3 specification](specs/cli-contract-3.md) determines the active command/help reset and JSON envelope; and the [Temporal and Unit Interface Contract](specs/temporal-unit-interface.md) determines the active Grammar 1/2/3 and CLI Contract 4 temporal/unit result, mutation, help, diagnostic, and authority boundary. The [AI Agent Guidance Registry specification](specs/agent-guidance.md) is the source of truth for agent-guidance provider, surface, guidance, and risk taxonomy; support evidence; profiles; Core/text/JSON; diagnostics; and migration boundaries. [ADR 0003](adr/0003-beta-versioning.md) and the [beta release procedure](process/beta-release.md) define beta versioning and the release gate. [ADR 0004](adr/0004-english-repository-baseline.md) defines the repository language baseline and migration boundary. [ADR 0006](adr/0006-explicit-work-events-in-git-history.md) defines transient same-document work events and read-only Git durability.
 
 1. Implementation details for CST trivia/comment ownership rules
@@ -3249,6 +3408,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | Temporal/unit grammar, projections, migration, and Contract 4 boundary | Sections 7.6, 7.7, 10.7, 11, 12, 15, 16, and 18 |
 | Project actuals, lifecycle, Git history, and observed velocity | Sections 2.3, 7.8, 9, 12, and 19 |
 | Conditional plan assurance, dependency modes, reseal, advance contraction, and compatibility adapters | Sections 2.7, 7.9, 9.3, 11, 12.3, and 20.3 |
+| Task-refinement partitions and assurance-boundary expansion/contraction | Sections 2.8, 7.10, 20.3, 23, 24, and 25 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
 | Owner-aware goal/DAG source, authority, and Contract 5 interface/release | Sections 2.6, 7.1, 12.3, 15, 16, and 17 |
 | Mermaid adapter | Chapters 13 and 14 |

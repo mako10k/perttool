@@ -37,10 +37,11 @@ test("VSIX shell cases are complete and dependency ordered", async () => {
 });
 
 test("VSIX manifest retains the private shell while adding the accepted DAG view", async () => {
-  const [manifestText, grammarText, configurationText] = await Promise.all([
+  const [manifestText, grammarText, configurationText, iconBytes] = await Promise.all([
     repositoryText("adapters/vscode/package.json"),
     repositoryText("adapters/vscode/syntaxes/pert.tmLanguage.json"),
     repositoryText("adapters/vscode/language-configuration.json"),
+    readFile(path.join(root, "adapters/vscode/icon.png")),
   ]);
   const manifest = JSON.parse(manifestText);
   const grammar = JSON.parse(grammarText);
@@ -60,6 +61,13 @@ test("VSIX manifest retains the private shell while adding the accepted DAG view
     "onView:perttool.dag",
   ]);
   assert.equal(manifest.devDependencies["vscode-languageclient"], "9.0.1");
+  assert.equal(manifest.icon, "icon.png");
+  assert.equal(manifest.files.includes("icon.png"), true);
+  assert.deepEqual(iconBytes.subarray(0, 8), Buffer.from([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+  ]));
+  assert.equal(iconBytes.readUInt32BE(16) >= 256, true);
+  assert.equal(iconBytes.readUInt32BE(20) >= 256, true);
   assert.deepEqual(manifest.dependencies ?? {}, {});
   assert.equal(manifest.contributes.languages[0].id, "pert");
   assert.deepEqual(manifest.contributes.languages[0].extensions, [".pert"]);

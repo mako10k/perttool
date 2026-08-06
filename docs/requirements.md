@@ -1,6 +1,6 @@
 # perttool Requirements
 
-- Document status: Draft 0.23
+- Document status: Draft 0.24
 - Created: 2026-07-21
 - Updated: 2026-08-05
 - Scope: MVP and subsequent extension boundaries
@@ -27,6 +27,8 @@ The central mission of `perttool` is not PERT analysis itself. It is to provide 
 - Detection of future task plans whose reviewed upstream planning basis has
   changed, with explicit replanning and resealing before normal start authority
   is restored
+- Declaration of a macro task's closed detail partition without silently
+  composing schedules or weakening the macro assurance boundary
 - Conversion to visualization formats such as Mermaid
 - Equivalent operations from the CLI, CI, and AI agents using CLI JSON; MCP and editor adapters will be added after the MVP
 
@@ -250,6 +252,61 @@ Should:
 - Permit later incremental descendant recomputation only when it is
   byte-identical to a complete topological recomputation.
 
+### 2.8 Keep macro assurance above task refinement
+
+The future multi-plan model must be able to relate one macro task to one closed
+set of detail tasks without treating task prose as formal set theory. The
+[Task Refinement and Assurance Boundary Contract](specs/task-refinement.md)
+defines the semantic target. It is a draft design and does not change active
+Grammar 6 or CLI Contract 7.
+
+Must for the future refinement model:
+
+- Represent one macro-to-detail decomposition as one n-ary `partition`
+  relation with exactly one parent and at least two distinct children, rather
+  than separate containment, pairwise-exclusion, and coverage records.
+- Define `partition` as the declaration that the child scopes are contained
+  by, pairwise disjoint within, and jointly exhaustive of the parent scope.
+- Call this state `declared_partition`; do not claim that task titles,
+  descriptions, an LLM, a hash, or a signature mechanically proves MECE.
+- Keep macro and detail documents independently valid and analyzable. Do not
+  create a combined execution or resource schedule, and do not count both the
+  parent and children in one schedule.
+- Keep the refinement graph separate from the AoA execution graph, planning-
+  dependency DAG, lifecycle, actuals, resources, recommendation, governance,
+  and start authority.
+- Use only the macro task in the upper assurance graph by default. Refinement
+  records and detail task contracts must not enter the macro task's plan
+  contract, basis, exported commitment, or downstream assurance closure.
+- Let detail edits remain below the macro assurance boundary. A parent edit
+  remains an ordinary plan-contract change and must retain existing replan and
+  reseal behavior.
+- Provide no `skip_review`, `no_recheck`, waiver, or equivalent authority bit.
+- Require assurance-boundary expansion and contraction to be explicit,
+  preview-first, complete-closure, and atomic. The partition relation alone
+  must not generate or transfer planning dependencies.
+- On expansion, replace the parent boundary with explicitly selected child
+  nodes and relations. On contraction, transfer only exact normalized common
+  relations, report every residual, and never silently generalize a child-only
+  dependency to the whole parent.
+- Require a reviewed parent plan contract during contraction; do not derive
+  parent duration, resources, lifecycle, or completion from child values.
+- Limit the first transition model to unstarted tasks without work events,
+  outcomes, receipts, or other historical evidence requiring reassignment.
+- Preserve the partition and detail plan when assurance contracts back to the
+  parent.
+
+Should:
+
+- Restrict the first refinement graph to an acyclic forest with one active
+  partition per parent, one direct parent per child, and one detail document
+  per direct child set.
+- Make exact expansion/contraction relation mapping deterministic and
+  round-trippable when no task or relation changes between transitions.
+- Leave source syntax, document locators, persistence, multi-file transaction,
+  CLI/result/schema versions, migration, and release selection to a separate
+  interface contract before implementation.
+
 ## 3. Problems to solve
 
 - A task list alone makes dependencies and start order hard to see.
@@ -367,6 +424,9 @@ provide the following.
 | Accepted Basis | The computed basis explicitly accepted by an initial seal or a post-replanning reseal |
 | Plan Assurance | The derived `not_applicable`, `unsealed`, `conditional`, `verified`, `review_required`, or `unavailable` state of a task plan |
 | Frontier Assurance Receipt | A minimal commitment retained across advance when removed past work still supports a current/future planning basis |
+| Task Refinement | A non-execution, non-assurance relation from one macro task to one closed detail-task set |
+| Declared Partition | A human-declared assertion that detail scopes form a disjoint and exhaustive partition of a parent scope; it is not machine-proven MECE |
+| Assurance Boundary | The task set whose commitments participate in an upper planning-assurance graph; refinement does not move this boundary implicitly |
 | Principal | A caller-asserted identifier such as `user`, `llm`, or `codex`; it is not an authenticated identity |
 | Goal Owner | The principal whose authority governs changes to `project.finish` and goal-governance metadata |
 | DAG Owner | The principal whose authority governs changes to task, gate, and milestone structure and DAG-governance metadata |
@@ -833,6 +893,31 @@ identities and canonical lowercase `sha256:` spelling. The threat model is
 accidental or unreviewed continuation through tool-mediated workflows. Because
 the task and its accepted hash may share one directly editable file, this
 model does not prevent a malicious editor from replacing both.
+
+### 7.10 Task refinement partitions
+
+Refinement model 1 contains one semantic record, identified by one resolved
+parent task reference, with a closed set of at least two resolved child task
+references and relation kind `partition`. The source spelling and storage
+location are not selected by this requirement.
+
+The semantic relation means:
+
+```text
+scope(parent) = disjoint_union(scope(child_1), ..., scope(child_n))
+```
+
+The machine-readable model validates reference existence, distinctness,
+single-parent ownership, one active partition per parent, one detail document
+per direct child set, deterministic ordering, and acyclicity. It does not
+validate semantic set membership from natural-language plan content.
+
+The default assurance projection contains the macro parent only. Detail tasks
+may be analyzed or assured locally, but they do not affect the macro assurance
+graph until a separately accepted boundary expansion explicitly maps and
+reseals the affected relations. Contraction performs the inverse mapping while
+retaining the detail plan and partition. Neither transition changes the AoA
+graph, schedule, resources, lifecycle, or actuals implicitly.
 
 ## 8. DSL requirements
 
@@ -1670,14 +1755,27 @@ The accepted private VSIX activates the LSP portion through VS Code
 `^1.101.0`, exact language client 9.0.1, presentation-only TextMate
 highlighting, untrusted and virtual workspace support, a closed
 URI/generation/version-bound virtual Help bridge, and one offline bundled
-server. Its current fourteen-file artifact adds the restrictive read-only
-GraphView DAG Webview without project semantics or arbitrary Mermaid.
+server. Its accepted fourteen-file artifact adds the restrictive read-only
+GraphView DAG Webview without project semantics or arbitrary Mermaid. The
+selected presentation icon is the fifteenth file in the current private VSIX.
 The separately accepted [installed supported-host
 gate](process/adapter-vsix-acceptance.md) now uses exact test-electron 3.1.0
 and minimum VS Code 1.101.0 to prove trusted/untrusted and virtual activation,
 offline LSP/navigation/Help, empty/large/rapid-edit DAG use, replacement,
 uninstall readback, and unchanged workspace bytes. Editor mutation, public
 extension identity, release, and publication remain separate.
+
+The separately selected [VSIX Public Identity and Presentation
+Decision](specs/vsix-public-identity.md) fixes the intended public name
+`mako10k.perttool-vscode`, display name `perttool`, independent initial
+extension version `0.1.0`, retained artifact and tag names, icon, listing
+metadata, and a local-VSIX-first stabilization sequence. The current
+private manifest remains active until release preparation proves Publisher
+ownership and atomically cuts over its identity and installed-host evidence.
+This selection does not authorize Publisher registration, a release, tag,
+push, asset upload, Marketplace publication, stable promotion, or Open VSX.
+GitHub Release and every extension registry remain deferred until a later
+explicit decision made after local installation and representative use.
 
 The accepted [Node Host boundary](specs/node-host-boundary.md) activates six
 closed inward ports for exact digesting, document and artifact bytes,
@@ -1850,6 +1948,11 @@ Must:
   reseal authority; and assurance-preserving advance.
 - Verify that full and any incremental assurance recomputation return identical
   hashes and cause paths for the same canonical semantic input.
+- Fix dependency-ordered task-refinement design cases for independent macro and
+  detail analysis, declared partition validation, semantic non-proof, macro
+  assurance isolation, parent-change propagation, atomic expansion,
+  contraction, residual refusal, historical refusal, and deterministic
+  relation round trips.
 
 ## 21. MVP acceptance criteria
 
@@ -2594,7 +2697,9 @@ authoritative procedure is
 - Time-varying resource capacity and resource availability dates
 - Advanced resource modeling including shifts, skills, and assignee calendars
 - Exact optimization of resource-constrained schedules
-- Include/import for multiple project documents
+- Include/import for multiple project documents, including the runtime source,
+  locator, persistence, and transaction interface for the drafted task-
+  refinement model
 - Statistical analysis of actual time and forecast accuracy beyond the
   selected exact observation model
 - Velocity by team/resource and statistical history beyond the selected
@@ -2643,6 +2748,15 @@ identities, diagnostics, and governance-version cutover. The selected
 implementation plan is active, and its final independent acceptance task
 remains. Package version and release remain unselected; published `0.6.0`
 continues to provide the prior Grammar 5 and Contract 6 surface.
+
+The macro/detail conversation has selected the minimal semantic draft in the
+[Task Refinement and Assurance Boundary Contract](specs/task-refinement.md):
+one declared partition, macro-only upper assurance by default, and explicit
+atomic expansion or contraction when the assurance boundary must move. The
+draft intentionally does not select source syntax, a cross-document locator,
+persistence, a multi-file transaction, public interfaces, migration, an
+implementation plan, or a release. `MULTI-001` remains unselected for runtime
+implementation.
 
 Resolved design decisions:
 
@@ -2839,6 +2953,16 @@ Before implementation, separate the specifications in the following order.
       Record](process/plan-assurance-acceptance.md), while retaining release
       selection, publication, plan advance, and Issue mutation as separate
       decisions.
+22. [ ] Select the task-refinement source and public interface under
+    `MULTI-001` before implementation.
+    - [x] Record the minimal semantic draft for one declared partition,
+      macro-only upper assurance, and explicit boundary expansion/contraction.
+    - [x] Fix dependency-ordered semantic design cases and a machine-readable
+      design fixture.
+    - [ ] Select cross-document identity, source location, relocation,
+      persistence, and atomic transaction behavior.
+    - [ ] Select grammar/CLI versions, Core/result/schema/help surfaces,
+      migration, implementation plan, and acceptance gates.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 
@@ -2875,7 +2999,7 @@ complete because the same `v0.1.0-alpha.2` artifact was published to the
 GitHub prerelease and npm `alpha`, including isolated installation from the
 registry.
 
-[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, private read-only LSP Core, isolated LSP package acceptance, private VSIX shell and DAG Webview, supported-host VSIX acceptance, Node Host boundary, CLI facade parity, read-only MCP contract, private MCP implementation, isolated MCP acceptance, and final cross-surface integration acceptance are complete. The current Core is an exact portable 45-name runtime; the additive Node Host factory leaves root and Node key- and reference-identical at 122 names and closes six inward ports without granting semantic or write authority. The CLI composes one private Application facade over that Host and routes document/digest, Git evidence, artifact, and Grammar 6 persistence through injected ports without changing its 44 commands. The LSP implementation uses stable protocol 3.17.5 over local stdio, exposes only the accepted read-only standard and negotiated Help/GraphView surfaces, remains excluded from the public package, and passes the separate Core/server tarball workflow on Node.js 22. The current fourteen-file private VSIX fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation, untrusted/virtual workspace support, closed version-bound virtual Help, an offline bundled server, and a restrictive GraphView-only DAG Webview with four modes, closed messages, source navigation, and an accessible exact-value outline. Its installed gate uses exact test-electron 3.1.0 to prove trusted/untrusted minimum-host activation, virtual and large graphs, Help/navigation, replacement, uninstall readback, and source identity. The private MCP workspace implements final revision `2026-07-28`, exact stable server SDK `2.0.0`, modern-only local stdio, four immutable JSON resources, five closed read-only tools, exact inline and digest-bound registered sources, self-contained adapter schemas, hard limits, strict malformed-line fail-closure, isolated dual-tarball execution, and direct Application parity without Git, persistence, or a CLI subprocess. The final integration acceptance closes sixteen dependency-ordered cases across exact Core/CLI/MCP semantics, LSP GraphView and VSIX binding, diagnostic ownership, package isolation, the supported editor host, all 34 self-use plans, and no-write side-effect proof. All sixteen tasks and 91p are complete and retained before advance; precedence and heuristic resource makespans are zero, resource delay is zero, and complete NextResult v6 has no recommendation or startable task.
+[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, private read-only LSP Core, isolated LSP package acceptance, private VSIX shell and DAG Webview, supported-host VSIX acceptance, Node Host boundary, CLI facade parity, read-only MCP contract, private MCP implementation, isolated MCP acceptance, and final cross-surface integration acceptance are complete. The current Core is an exact portable 45-name runtime; the additive Node Host factory leaves root and Node key- and reference-identical at 122 names and closes six inward ports without granting semantic or write authority. The CLI composes one private Application facade over that Host and routes document/digest, Git evidence, artifact, and Grammar 6 persistence through injected ports without changing its 44 commands. The LSP implementation uses stable protocol 3.17.5 over local stdio, exposes only the accepted read-only standard and negotiated Help/GraphView surfaces, remains excluded from the public package, and passes the separate Core/server tarball workflow on Node.js 22. The current fifteen-file private VSIX fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation, untrusted/virtual workspace support, closed version-bound virtual Help, an offline bundled server, and a restrictive GraphView-only DAG Webview with four modes, closed messages, source navigation, and an accessible exact-value outline. Its installed gate uses exact test-electron 3.1.0 to prove trusted/untrusted minimum-host activation, virtual and large graphs, Help/navigation, replacement, uninstall readback, and source identity. The private MCP workspace implements final revision `2026-07-28`, exact stable server SDK `2.0.0`, modern-only local stdio, four immutable JSON resources, five closed read-only tools, exact inline and digest-bound registered sources, self-contained adapter schemas, hard limits, strict malformed-line fail-closure, isolated dual-tarball execution, and direct Application parity without Git, persistence, or a CLI subprocess. The final integration acceptance closes sixteen dependency-ordered cases across exact Core/CLI/MCP semantics, LSP GraphView and VSIX binding, diagnostic ownership, package isolation, the supported editor host, all 34 self-use plans, and no-write side-effect proof. All sixteen tasks and 91p are complete and retained before advance; precedence and heuristic resource makespans are zero, resource delay is zero, and complete NextResult v6 has no recommendation or startable task.
 
 The accepted Contract 3 source and package workflow published suffix-free beta
 `0.2.0` as the first Contract 3 package. All five tasks in

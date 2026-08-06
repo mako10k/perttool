@@ -729,7 +729,9 @@ Contract 7 workflow expose the accepted operations.
 - automatic creation of replacement tasks, dependencies, estimates, or plans;
 - automatic cancellation, suspension, rollback, or rework of active tasks;
 - storing complete historical plans or work events in the current document;
-- cross-project or macro/detail assurance composition;
+- cross-project or macro/detail assurance composition; the future semantic
+  draft in [Task Refinement and Assurance Boundaries](task-refinement.md) does
+  not change or enter model 1;
 - aspect-specific dependency hashes; model 1 hashes the complete closed task
   plan contract; and
 - a release version, release plan, publication, or channel change; the public

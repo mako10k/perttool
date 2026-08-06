@@ -578,7 +578,9 @@ floating point.
 - authenticated signatures, key management, or an external trust root;
 - a permanent ledger or complete historical plans in current source;
 - automatic replanning, resealing, suspension, cancellation, or rollback;
-- public cross-project or macro/detail assurance composition;
+- public cross-project or macro/detail assurance composition; the future
+  semantic draft in [Task Refinement and Assurance
+  Boundaries](task-refinement.md) does not add an active interface;
 - model-1 disable or downgrade;
 - package version selection, release plan, Git push, GitHub mutation, npm
   publication, dist-tag movement, or Issue mutation.

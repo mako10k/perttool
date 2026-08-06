@@ -1,0 +1,126 @@
+{
+  "schema_version": "Perttool.TaskRefinementContractCases.v1",
+  "refinement_model_version": 1,
+  "runtime_status": "design_only",
+  "relation": {
+    "kind": "partition",
+    "arity": "one_parent_many_children",
+    "minimum_child_count": 2,
+    "graph_shape": "forest",
+    "machine_proves_mece": false,
+    "assurance_effect": "none_by_default"
+  },
+  "cases": [
+    {
+      "id": "TRF-001",
+      "depends_on": [],
+      "operation": "load_independent_macro_and_detail_plans",
+      "expected": {
+        "combined_schedule": false,
+        "double_counting": false,
+        "include_import_implied": false
+      }
+    },
+    {
+      "id": "TRF-002",
+      "depends_on": ["TRF-001"],
+      "operation": "declare_partition",
+      "expected": {
+        "record_shape": "n_ary",
+        "relation_state": "declared_partition",
+        "child_set_closed": true,
+        "verified_mece_claimed": false
+      }
+    },
+    {
+      "id": "TRF-003",
+      "depends_on": ["TRF-002"],
+      "operation": "validate_refinement_forest",
+      "expected": {
+        "duplicate_child_rejected": true,
+        "multiple_parent_rejected": true,
+        "cycle_rejected": true,
+        "mixed_detail_document_rejected": true,
+        "best_effort_partition": false
+      }
+    },
+    {
+      "id": "TRF-004",
+      "depends_on": ["TRF-002"],
+      "operation": "inspect_semantic_proof_boundary",
+      "expected": {
+        "task_text_inference": false,
+        "signature_proves_mece": false,
+        "state": "declared_partition"
+      }
+    },
+    {
+      "id": "TRF-005",
+      "depends_on": ["TRF-002"],
+      "operation": "change_detail_below_macro_boundary",
+      "expected": {
+        "macro_contract_changed": false,
+        "macro_basis_changed": false,
+        "macro_descendant_reseal_required": false,
+        "no_recheck_authority_recorded": false
+      }
+    },
+    {
+      "id": "TRF-006",
+      "depends_on": ["TRF-002"],
+      "operation": "change_macro_parent",
+      "expected": {
+        "ordinary_assurance_applies": true,
+        "partition_waives_mismatch": false,
+        "affected_descendant_reseal_required": true
+      }
+    },
+    {
+      "id": "TRF-007",
+      "depends_on": ["TRF-005", "TRF-006"],
+      "operation": "expand_assurance_boundary",
+      "expected": {
+        "relation_mapping_explicit": true,
+        "partition_auto_fanout": false,
+        "atomic": true,
+        "complete_target_commitments_required": true,
+        "fresh_reseal_required": true
+      }
+    },
+    {
+      "id": "TRF-008",
+      "depends_on": ["TRF-007"],
+      "operation": "contract_assurance_boundary",
+      "expected": {
+        "parent_contract_synthesized": false,
+        "common_relation_modes_preserved": true,
+        "detail_tasks_deleted": false,
+        "atomic": true,
+        "fresh_reseal_required": true
+      }
+    },
+    {
+      "id": "TRF-009",
+      "depends_on": ["TRF-008"],
+      "operation": "refuse_residual_or_historical_contraction",
+      "expected": {
+        "residual_reported": true,
+        "silent_generalization": false,
+        "active_or_historical_transition_available": false,
+        "evidence_reassigned": false
+      }
+    },
+    {
+      "id": "TRF-010",
+      "depends_on": ["TRF-008", "TRF-009"],
+      "operation": "verify_round_trip_and_runtime_boundary",
+      "expected": {
+        "normalized_relation_mapping_equal": true,
+        "fresh_seals_required": true,
+        "active_grammar_changed": false,
+        "active_cli_contract_changed": false,
+        "implementation_authorized": false
+      }
+    }
+  ]
+}

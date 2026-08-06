@@ -544,6 +544,52 @@ does not select a requirement, syntax, command, schema, Grammar or CLI version,
 PERT workstream, implementation, merge-driver installation, release, or remote
 operation.
 
+### HIST-DAG-001: Reconstruct and visualize historical DAGs
+
+Priority: Unset (design proposal recorded; not selected)
+
+Status: Read-only ancestry and lineage design proposal recorded (2026-08-06);
+normative contract and delivery plan not selected
+
+The current DAG renderer and VSIX GraphView correctly project one complete
+current source, which can contain only one residual milestone after canonical
+advance. Add a separate read-only historical projection that treats one Git
+revision as the newer query boundary, folds ordered valid semantic checkpoints,
+freezes explicit actual evidence, and rehydrates topology removed by a proven
+canonical advance without treating every historical entity as one blind graph
+union.
+
+The detailed non-normative proposal is recorded in the
+[Historical DAG Reconstruction and Git-Ancestry Design
+Proposal](process/historical-dag-design.md). Its selected direction is:
+
+- keep the requested and resolved endpoint distinct from the oldest inspected
+  ancestor and from the newest valid effective checkpoint;
+- begin with one deterministic first-parent profile that reports its limited
+  ancestry scope explicitly;
+- classify each source independently and split continuity at invalid,
+  unsupported, missing, or ambiguous snapshots rather than skipping them;
+- reuse stable work-event freezing and conflict rules from project history;
+- recognize retired topology only when the prior snapshot's exact canonical
+  advance candidate equals the next semantic snapshot;
+- provide separate snapshot, proven lineage, and timeline views, orthogonal to
+  the existing four analysis modes;
+- make a cumulative lineage unavailable when identity reuse, an invalid gap,
+  an ambiguous topology rewrite, or a union-only cycle prevents proof;
+- bind navigation to immutable commit/blob/source identities rather than
+  current worktree ranges; and
+- add a later three-way ancestry profile only through the shared `SCM-001`
+  base/ours/theirs semantic model and conflict rules.
+
+Before implementation, select a normative requirement, historical result and
+model identities, lower-boundary and deleted-path behavior, entity-epoch and
+hard-limit contracts, CLI/Core/schema/help surfaces, editor trust and virtual-
+blob navigation, a PERT workstream, compatibility, and release gates. Current
+`project history`, `dag render`, `Perttool.GraphViewResult.v1`, Grammar 6, CLI
+Contract 7, MCP capabilities, and all read/write authority boundaries remain
+unchanged. This entry authorizes no Git, editor-profile, remote, publication,
+or plan mutation.
+
 ## Project actuals and Git-recorded history
 
 ### ACT-001: Record explicit work lifecycle and observed project performance
@@ -775,8 +821,9 @@ decision.
 
 Priority: Unset (requires product and semantic refinement)
 
-Status: Open in [GitHub Issue #3](https://github.com/mako10k/perttool/issues/3)
-(not selected)
+Status: Minimal semantic draft recorded (2026-08-05); open in
+[GitHub Issue #3](https://github.com/mako10k/perttool/issues/3), with runtime
+work not selected
 
 Define how a parent backlog or project relates to independently versioned
 child `.pert` documents without silently merging task identity, duration
@@ -784,6 +831,35 @@ units, governance, calendars, resource capacity, or completion state. The
 design must preserve deterministic per-document analysis and specify explicit
 roll-up, cross-plan dependency, history, and failure boundaries before any
 runtime or syntax change.
+
+The [Task Refinement and Assurance Boundary
+Contract](specs/task-refinement.md), its [normative design
+cases](examples/task-refinement.md), and the machine-readable
+`test/fixtures/task-refinement-contract-v1.json` record the selected minimal
+semantic draft:
+
+- one n-ary `partition` relates one macro task to one closed detail-task set;
+- `partition` declares containment, pairwise exclusion, and complete coverage
+  without claiming that natural-language task scope is machine-proven MECE;
+- macro and detail documents remain independently analyzable and are never
+  counted in one combined schedule;
+- the macro task alone participates in the upper assurance graph by default;
+- refinement does not create a planning dependency or a review waiver;
+- detail changes do not propagate above that boundary, while parent changes
+  retain ordinary assurance behavior;
+- explicit atomic expansion may replace the parent boundary with selected
+  detail nodes and relations;
+- explicit atomic contraction may restore the parent boundary and transfer
+  only exact common normalized relations; and
+- the first transition model excludes active or historical work rather than
+  inventing evidence reassignment.
+
+This semantic draft does not authorize implementation. Before runtime work,
+`MULTI-001` must still select cross-document identity and relocation, source
+ownership, persistence and atomic transaction behavior, grammar and CLI
+versions, Core/result/schema/help surfaces, migration, a PERT implementation
+plan, and release gates. Current Grammar 6, CLI Contract 7, package exports,
+and plan-assurance model 1 remain unchanged.
 
 ## Language tooling and adapters
 
@@ -851,7 +927,7 @@ and an offline bundled server in a disposable eleven-file VSIX. `VSIX_SHELL`
 is complete with exact lifecycle evidence and retained before advance. Eight
 tasks and 41p remain at that shell acceptance snapshot. The [DAG view
 implementation acceptance](process/adapter-vsix-dag-view-acceptance.md) adds
-the current fourteen-file private VSIX, `perttool.dag`, all four exact
+the accepted fourteen-file private VSIX, `perttool.dag`, all four exact
 GraphView modes, closed version-bound messages, binding-checked source
 navigation, restrictive local CSP assets, deterministic SVG presentation, and
 an accessible exact-value outline without duplicating PERT semantics.
@@ -934,8 +1010,8 @@ public adapter naming, and release selection remain separate.
 
 Priority: Selected through `ADAPTER-001`
 
-Status: Private TextMate and LSP-client shell accepted; DAG Webview and final
-supported-host acceptance remain in the selected plan
+Status: Private TextMate/LSP-client shell, DAG Webview, and final supported-
+host acceptance complete; public identity release remains separate
 
 Package an accepted LSP contract without adding editor-only grammar or
 mutation semantics. Acceptance must cover extension activation, bundled
@@ -951,6 +1027,37 @@ Help activation, untrusted and virtual workspace support, a presentation-only
 TextMate grammar, URI/generation/version-bound virtual Help, output-channel
 logging, and deterministic client shutdown. It adds no Webview, parser,
 analysis, editor mutation, public extension identity, or publication decision.
+The accepted DAG and installed-host slices later produced the fourteen-file
+private implementation. The selected presentation icon is now the fifteenth
+file in the private VSIX without activating its separately selected public
+identity.
+
+### VSIX-REL-001: Release the read-only VS Code extension
+
+Priority: Selected identity; release plan not created
+
+Status: Public identity and icon selected (2026-08-06); local-VSIX-first
+stabilization selected; manifest cutover and local installation not started;
+public distribution deferred
+
+The [VSIX Public Identity and Presentation
+Decision](specs/vsix-public-identity.md) selects manifest name
+`perttool-vscode`, display name `perttool`, intended Publisher `mako10k`,
+initial independent version `0.1.0`, tag `vscode-v0.1.0`, retained artifact
+`perttool-vscode-0.1.0.vsix`, and the project-owned Activity-on-Arrow icon.
+The current private manifest remains the active installed-test identity until
+release preparation proves Publisher ownership and changes every identity-
+bound test and artifact atomically.
+
+Create an independent release plan before manifest cutover. It must retain the
+accepted read-only capability and no-write boundary, bind the bundled perttool
+version and source commit, retain one SHA-256-identified VSIX, read the exact
+local VS Code profile and installed extension state before mutation, and prove
+install, representative use, replacement, uninstall, and rollback without
+changing `.pert` bytes. GitHub Release, Marketplace, and Open VSX are deferred
+and require a later explicit user decision after local stabilization. No
+external write or local editor-profile mutation is authorized by this backlog
+selection.
 
 ### MCP-001: Design a fail-closed MCP adapter
 
@@ -1497,12 +1604,14 @@ Before implementation:
 
 ## Independent post-beta work
 
-`MULTI-001`, `ADAPTER-001`, `MIG-08`, `SCM-001`, `GOV-AUTH-001`, `ADV-001`,
-`ASSURE-001`, and `META-001` remain independent workstreams. `ADAPTER-001`
+`MULTI-001`, `ADAPTER-001`, `MIG-08`, `SCM-001`, `HIST-DAG-001`,
+`GOV-AUTH-001`, `ADV-001`, `ASSURE-001`, and `META-001` remain independent
+workstreams. `ADAPTER-001`
 explicitly composes `LSP-001`, `VSIX-001`, and `MCP-001` while preserving
 their adapter-specific contracts and the LSP-to-VSIX dependency. `ADV-001` is
 the refined read-only Git guard for destructive advance writes, while
 `SCM-001` records the unselected semantic diff, patch, merge, and Git-
-integration concept. Other items are not implicit prerequisites for an
-accepted workstream unless a later requirements decision explicitly composes
-them.
+integration concept. `HIST-DAG-001` records the separate read-only historical
+graph projection and depends on `SCM-001` only for its later three-way profile.
+Other items are not implicit prerequisites for an accepted workstream unless a
+later requirements decision explicitly composes them.

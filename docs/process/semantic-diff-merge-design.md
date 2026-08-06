@@ -10,6 +10,7 @@
   [Conditional Plan Assurance](../specs/plan-assurance.md),
   [Advance History Safety](../specs/advance-history-safety.md), and
   [Mermaid Profile](../specs/mermaid-profile.md)
+- Related future consumer: [Historical DAG Reconstruction and Git Ancestry](historical-dag-design.md)
 - Active source boundary: Grammar 6 and CLI Contract 7
 - Proposed implementation: none
 - External side effects authorized by this proposal: none
@@ -60,6 +61,12 @@ this proposal can build.
 The proposed feature therefore needs a new closed whole-document semantic
 projection, a new delta model, and a new three-way decision Core. It must not
 repurpose the first-parent history reducer as a merge engine.
+
+The separate `HIST-DAG-001` proposal may use the same semantic projection for
+chronological transition classification. Its initial first-parent fold does
+not require a public patch artifact, but its later three-way ancestry profile
+must consume this proposal's accepted base/ours/theirs decision rather than
+defining incompatible merge rules.
 
 ## 3. Goals and non-goals
 

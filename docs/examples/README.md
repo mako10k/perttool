@@ -15,6 +15,7 @@
 - [project-actuals.pert](project-actuals.pert): an active Grammar 5 completed task with explicit start, suspend, resume, and finish evidence
 - [project-actuals.md](project-actuals.md): normative lifecycle, Git-history, and observation cases for CLI Contract 6
 - [plan-assurance.md](plan-assurance.md): normative target cases for default task/plan dependency, planning-only and execution-only relations, status-free hash propagation, governed resealing, and assurance-preserving advance
+- [task-refinement.md](task-refinement.md): draft semantic cases for one declared macro/detail partition, macro-only default assurance, explicit boundary expansion/contraction, residual refusal, and the unchanged runtime boundary
 
 `.pert` files in this directory are normative runnable samples. Most retain
 grammar version 1; `project-actuals.pert` exercises active Grammar 5 and CLI
@@ -31,6 +32,9 @@ interface version 1, and `agent-guidance.md` contains normative cases for
 implemented Agent Guidance interface version 1. `mermaid-profile.md` is the
 Mermaid adapter wire contract and export golden; tests fix the byte output of
 `exportMermaid` and `dag render --to mermaid`.
+`task-refinement.md` is a future semantic-design case set, not active `.pert`
+syntax. Its machine-readable design fixture is
+`test/fixtures/task-refinement-contract-v1.json`.
 
 In `pert-estimate.pert`, `DESIGN` has expected value `13/6d` and variance `1/4d^2`. The precedence makespan including `BUILD` is `31/6d`, and the representative critical-task sequence is `[DESIGN, BUILD]`.
 

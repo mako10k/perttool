@@ -22,6 +22,7 @@ for required in \
   dist/server/main.cjs \
   dist/webview/dag.css \
   dist/webview/dag.js \
+  icon.png \
   language-configuration.json \
   syntaxes/pert.tmLanguage.json; do
   if ! grep -Fx "$required" "$inventory" >/dev/null; then
@@ -43,8 +44,9 @@ unzip -q "$vsix_path" -d "$unpacked"
 if [[ ! -f "$unpacked/extension/dist/extension.cjs" || \
       ! -f "$unpacked/extension/dist/server/main.cjs" || \
       ! -f "$unpacked/extension/dist/webview/dag.css" || \
-      ! -f "$unpacked/extension/dist/webview/dag.js" ]]; then
-  printf 'packaged VSIX is missing its client, server, or DAG assets\n' >&2
+      ! -f "$unpacked/extension/dist/webview/dag.js" || \
+      ! -f "$unpacked/extension/icon.png" ]]; then
+  printf 'packaged VSIX is missing its client, server, icon, or DAG assets\n' >&2
   exit 1
 fi
 
