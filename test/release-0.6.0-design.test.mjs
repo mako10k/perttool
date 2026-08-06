@@ -118,6 +118,6 @@ test("0.6.0 release gate binds advance history safety and migration", async () =
     /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
   );
   assert.equal(ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v2");
-  assert.equal(COMMAND_REGISTRY.length, 44);
-  assert.equal(getJsonSchemaCatalog().length, 20);
+  assert.equal(COMMAND_REGISTRY.length, 45);
+  assert.equal(getJsonSchemaCatalog().length, 21);
 });

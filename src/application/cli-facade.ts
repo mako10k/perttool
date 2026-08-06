@@ -83,6 +83,13 @@ import {
   renderTargetVelocityObservationText,
   targetVelocityObservationResultToJson,
 } from "./target-velocity-observation.js";
+import {
+  inspectTargetHistoricalGraphFile,
+  renderTargetHistoricalGraphText,
+  targetHistoricalGraphResultToJson,
+  type HistoricalGraphGitEvidencePortV1,
+  type HistoricalGraphRequestV1,
+} from "./target-historical-graph.js";
 
 function grammar6Validator(capability: TargetGrammar6Capability) {
   return (text: string) => {
@@ -109,7 +116,10 @@ function decodeDocumentBytes(host: NodeHostPorts, bytes: Uint8Array) {
  * The returned values are references to the established Application services;
  * the wrappers only bind environmental work to the supplied Host ports.
  */
-export function createCliApplicationFacade(host: NodeHostPorts) {
+export function createCliApplicationFacade(
+  host: NodeHostPorts,
+  historicalGitEvidence?: HistoricalGraphGitEvidencePortV1,
+) {
   const readDocumentContent = async (path: string) =>
     decodeDocumentBytes(host, await host.documentBytes.read(path));
   const createTargetGrammar6Document = (
@@ -167,6 +177,14 @@ export function createCliApplicationFacade(host: NodeHostPorts) {
     request,
     host.safePersistence,
   );
+  const inspectHistoricalGraphFile = (
+    request: HistoricalGraphRequestV1,
+  ) => {
+    if (historicalGitEvidence === undefined) {
+      throw new Error("historical Git evidence Host is unavailable");
+    }
+    return inspectTargetHistoricalGraphFile(request, historicalGitEvidence);
+  };
 
   return Object.freeze({
     hostModelVersion: host.modelVersion,
@@ -205,6 +223,9 @@ export function createCliApplicationFacade(host: NodeHostPorts) {
     observeTargetProjectVelocity,
     renderTargetVelocityObservationText,
     targetVelocityObservationResultToJson,
+    inspectTargetHistoricalGraphFile: inspectHistoricalGraphFile,
+    renderTargetHistoricalGraphText,
+    targetHistoricalGraphResultToJson,
     getAgentHelp,
     documentContentFromBytes: (bytes: Uint8Array) =>
       decodeDocumentBytes(host, bytes),

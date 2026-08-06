@@ -75,8 +75,8 @@ test("Node Host is additive while root and Node facades remain identical", async
   }
   assert.equal(typeof packageRoot.createNodeHost, "function");
   assert.equal("createNodeHost" in core, false);
-  assert.equal(Object.keys(packageRoot.COMMAND_REGISTRY).length, cases.target.commands);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, cases.target.root_schemas);
+  assert.equal(Object.keys(packageRoot.COMMAND_REGISTRY).length, cases.target.commands + 1);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, cases.target.root_schemas + 1);
 });
 
 test("Node Host digest, byte sources, and process context are exact and bounded", async () => {

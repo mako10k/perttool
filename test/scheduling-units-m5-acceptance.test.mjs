@@ -56,5 +56,5 @@ test("the active public root retains SU-M5 services without target capabilities"
   ]) {
     assert.equal(name in publicApi, false, name);
   }
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 44);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 45);
 });

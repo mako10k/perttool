@@ -549,10 +549,13 @@ operation.
 Priority: Selected through the independent `HIST-DAG-001` workstream
 
 Status: First-parent normative contract, internal transition model, bounded
-immutable Git evidence, and pure linear reconstruction implemented
-(2026-08-06); public CLI and editor interfaces remain unimplemented. The
-reconstruction task and its separately owner-confirmed basis-bound assurance
-outcome are complete.
+immutable Git evidence, pure linear reconstruction, and the separate
+read-only CLI result are implemented (2026-08-06). The editor interface and
+VSIX presentation remain unimplemented. The linear reconstruction task and
+its separately owner-confirmed basis-bound assurance outcome are complete.
+The CLI task and its separately owner-confirmed basis-bound assurance outcome
+are complete. Only `HISTORICAL_EDITOR_CONTRACT` is now ready, recommended, and
+startable in the selected plan.
 
 The current DAG renderer and VSIX GraphView correctly project one complete
 current source, which can contain only one residual milestone after canonical
@@ -590,10 +593,9 @@ delivery order is tracked in
 - fail closed for a three-way request until the shared `SCM-001`
   base/ours/theirs semantic model and conflict rules are separately accepted.
 
-The contract reserves `Perttool.HistoricalDagModel.v1`,
-`Perttool.HistoricalTransitionModel.v1`, future
-`Perttool.HistoricalGraphResult.v1`, and `PTHDG-101` through `PTHDG-106`
-without activating them. Its twenty dependency-ordered machine cases are in
+The contract fixes `Perttool.HistoricalDagModel.v1`,
+`Perttool.HistoricalTransitionModel.v1`, `Perttool.HistoricalGraphResult.v1`,
+and `PTHDG-101` through `PTHDG-106`. Its twenty dependency-ordered model cases are in
 [`historical-dag-contract-v1.json`](../test/fixtures/historical-dag-contract-v1.json).
 The shared internal transition model and its twelve closed cases are now
 implemented and accepted in
@@ -615,13 +617,18 @@ limits. Its twelve closed cases and acceptance record are
 and
 [`historical-linear-core-acceptance.md`](process/historical-linear-core-acceptance.md).
 Its status-only lifecycle write and separately confirmed conformant outcome are
-complete. Fresh complete NextResult v6 now recommends and makes startable only
-`HISTORICAL_CLI`. Current
-`project history`, `dag render`,
-`Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, MCP capabilities,
-and all read/write authority boundaries remain unchanged. Runtime work, Git or
-editor mutation, release, remote publication, Issue mutation, and plan advance
-remain separately gated.
+complete. The active `dag history` CLI now maps opaque endpoint/lower-boundary
+refs, exact full-ID snapshot selection, first-parent/snapshot/lineage/timeline
+requests, single-checkpoint analysis, immutable source bindings, hard limits,
+typed incomplete/unavailable diagnostics, and fail-closed three-way requests
+to one closed Contract 7 result. Command discovery has 45 commands and the
+schema catalog has 21 roots; root/Core/Node runtime names remain unchanged.
+Its twelve interface cases and package gate are recorded in
+[`historical-cli-acceptance.md`](process/historical-cli-acceptance.md).
+Current `project history`, `dag render`, `Perttool.GraphViewResult.v1`, Grammar
+6, CLI Contract 7, MCP capabilities, and all read/write authority boundaries
+remain unchanged. Editor work, Git or editor mutation, release, remote
+publication, Issue mutation, and plan advance remain separately gated.
 
 ## Project actuals and Git-recorded history
 
@@ -1096,6 +1103,42 @@ stale decoration, preserve TextMate fallback, perform no `.pert` write, grant
 no reseal or owner-confirmation authority, and remain independent of the four
 GraphView analysis modes and the historical-DAG delivery. Release selection,
 local installation, Marketplace publication, and Open VSX remain separate.
+
+### VSIX-DAG-PRESENT-001: Compact DAG labels and exact time summaries
+
+Priority: Requested; scheduling not selected
+
+Status: Presentation design backlog (2026-08-06); not part of the active
+GraphView protocol or private VSIX
+
+Make dense DAGs easier to scan without changing graph identity or analysis
+semantics. Milestones and tasks should use deterministic compact display IDs
+such as `M01` and `T01` in the graph. Each graph label must remain an active
+link to a lower detail-list entry carrying the same compact ID. That entry must
+retain the original entity ID, title and description and preserve exact
+source-navigation behavior; the design must also define a keyboard-accessible
+return or focus path from the detail entry to the graph occurrence.
+
+Show residual time, remaining time, and task time as distinct values. A
+normative presentation contract must define those three terms precisely and
+must not silently equate total float, unfinished task duration, or projected
+time to the finish milestone. Exact source units and rational values remain
+primary. When the project duration unit is `point` and the declared velocity
+supports an exact conversion, also show the corresponding hour/day values
+using the accepted velocity and duration-conversion semantics. If either
+conversion is unavailable, display that fact instead of assuming a workday
+length or rounding through binary floating point.
+
+Compact-ID allocation must be deterministic for a URI/generation/version and
+view, remain stable across presentation-only redraws, distinguish milestone
+and task namespaces, and preserve the existing source entity identity behind
+every link. The accessible lower list must expose the same values without
+depending on SVG color or geometry. Historical occurrences need a separate
+binding decision because the same source ID may have multiple occurrence and
+value epochs; this backlog does not alter `Perttool.GraphViewResult.v1`, the
+four current analysis modes, historical-DAG contracts, `.pert` bytes, or any
+editor mutation authority. Protocol/version selection, implementation, local
+installation, release, Marketplace publication, and Open VSX remain separate.
 
 ### VSIX-REL-001: Release the read-only VS Code extension
 

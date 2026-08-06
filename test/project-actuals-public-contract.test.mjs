@@ -246,7 +246,7 @@ test("Contract 7 package root retains actuals services without target names", ()
   ]) {
     assert.equal(name in publicApi, false, name);
   }
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 44);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 45);
   assert.equal(
     publicApi.COMMAND_REGISTRY.every(
       ({ contractVersion }) => contractVersion === 7,

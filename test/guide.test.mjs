@@ -98,7 +98,11 @@ test("Contract 7 guide preserves every HelpNode topic and adds plan assurance", 
   const index = getGuide(null, "index");
   assert.deepEqual(
     index.topics.map(({ id }) => id),
-    [...topicIds.filter((topicId) => !topicId.includes(".")), "plan-assurance"],
+    [
+      ...topicIds.filter((topicId) => !topicId.includes(".")),
+      "plan-assurance",
+      "historical-dag",
+    ],
   );
 });
 

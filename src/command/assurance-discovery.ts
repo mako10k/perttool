@@ -34,6 +34,7 @@ function valueOption(
   config: {
     readonly required?: boolean;
     readonly repeatable?: boolean;
+    readonly defaultValue?: string | number | boolean | null;
     readonly enumValues?: readonly string[];
     readonly conflicts?: readonly string[];
     readonly requires?: readonly string[];
@@ -46,7 +47,7 @@ function valueOption(
     valueType,
     required: config.required ?? false,
     repeatable: config.repeatable ?? false,
-    defaultValue: null,
+    defaultValue: config.defaultValue ?? null,
     enumValues: Object.freeze([...(config.enumValues ?? [])]),
     conflicts: Object.freeze([...(config.conflicts ?? [])]),
     requires: Object.freeze([...(config.requires ?? [])]),
@@ -144,6 +145,65 @@ const mutationOptions = mutationTemplate.options.filter(({ sharedGroup }) =>
   sharedGroup !== null
 );
 const file = operand("file", 0, "path-or-stdin");
+
+const historicalGraphCommand: AssuranceCommandDescriptor = Object.freeze({
+  ...readTemplate,
+  path: Object.freeze(["dag", "history"] as const),
+  operation: "dag.history",
+  summary: "Reconstructs a bounded read-only first-parent historical DAG.",
+  operands: Object.freeze([file]),
+  options: Object.freeze([
+    valueOption("rev", "git-revision", { defaultValue: "HEAD" }),
+    valueOption("base", "git-revision"),
+    valueOption("history", "historical-ancestry-profile", {
+      defaultValue: "first-parent",
+      enumValues: ["first-parent", "three-way"],
+      description: "Selects the explicit ancestry profile; three-way fails closed in model 1.",
+    }),
+    valueOption("view", "historical-graph-view", {
+      defaultValue: "lineage",
+      enumValues: ["snapshot", "lineage", "timeline"],
+    }),
+    valueOption("snapshot", "full-git-object-id", {
+      description: "Selects an inspected full commit ID and is valid only with --view snapshot.",
+    }),
+    valueOption("analysis", "graph-analysis-mode", {
+      defaultValue: "none",
+      enumValues: ["none", "precedence", "resource", "both"],
+    }),
+    ...readOptions,
+  ]),
+  stdin: Object.freeze({
+    document: false,
+    artifact: false,
+    request: false,
+    mutuallyExclusive: false,
+  }),
+  effect: "read",
+  output: Object.freeze({
+    formats: Object.freeze(["text", "json"] as const),
+    payload: "result" as const,
+    fileEffect: "none" as const,
+  }),
+  resultSchemas: Object.freeze([
+    "Perttool.HistoricalGraphResult.v1",
+    "Perttool.CliError.v1",
+  ]),
+  exitStatuses: Object.freeze([
+    Object.freeze({ code: 0, meaning: "Historical graph result is available." }),
+    Object.freeze({ code: 1, meaning: "Historical graph result is unavailable or warning policy failed." }),
+    Object.freeze({ code: 2, meaning: "CLI usage error." }),
+    Object.freeze({ code: 3, meaning: "Git process or filesystem input error." }),
+    Object.freeze({ code: 70, meaning: "Internal invariant or programmer error." }),
+  ]),
+  examples: Object.freeze([
+    Object.freeze({
+      id: "lineage",
+      invocation: "perttool dag history plan.pert --rev HEAD --history first-parent --view lineage --analysis none --format json",
+      summary: "Return proved first-parent lineage without changing Git or the plan.",
+    }),
+  ]),
+});
 
 function readDescriptor(
   action: "show" | "hash",
@@ -334,7 +394,9 @@ const assuranceCommands: readonly AssuranceCommandDescriptor[] = Object.freeze([
 
 export const ASSURANCE_COMMAND_REGISTRY:
   readonly AssuranceCommandDescriptor[] = Object.freeze([
-    ...base,
+    ...base.flatMap((descriptor) => descriptor.operation === "dag.render"
+      ? [descriptor, historicalGraphCommand]
+      : [descriptor]),
     ...assuranceCommands,
   ]);
 

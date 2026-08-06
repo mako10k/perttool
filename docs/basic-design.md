@@ -3448,13 +3448,23 @@ one valid checkpoint. Historical source navigation uses immutable
 repository/path/commit/blob/digest/range bindings rather than current document
 versions.
 
-The contract reserves `Perttool.HistoricalGraphResult.v1` and `PTHDG-101`
-through `PTHDG-106`, but they are not active command or schema identities in
-this slice. Current `Perttool.ProjectHistoryResult.v1`,
-`Perttool.GraphViewResult.v1`, 44 commands, 20 schemas, Grammar 6, and CLI
-Contract 7 remain unchanged. The later CLI and editor tasks own activation and
-isolated acceptance. Three-way ancestry, semantic patch/merge, MCP history,
-editor mutation, releases, remote writes, and plan advance are independent.
+The later CLI slice activates `Perttool.HistoricalGraphResult.v1`,
+`PTHDG-101` through `PTHDG-106`, `dag history`, and the `historical-dag` Guide
+topic through `src/application/target-historical-graph.ts` and the private
+Node composition in `src/node/historical-host.ts`. It accepts one on-disk
+path, opaque `--rev` and `--base` Git spellings, an explicit ancestry profile,
+three separate views, one optional full-object-ID snapshot, and one of four
+analysis modes. The Application service invokes the bounded Git port and pure
+linear fold directly, binds analysis to one checkpoint, and projects one
+closed schema without a CLI subprocess or Git/source write.
+
+This additive cut changes the active Contract 7 inventory from 44 to 45
+commands and from 20 to 21 root schemas. It does not change Grammar 6, the CLI
+contract version, `Perttool.ProjectHistoryResult.v1`,
+`Perttool.GraphViewResult.v1`, root/Core/Node runtime exports, the public Node
+Host port object, or adapter capabilities. Three-way ancestry, semantic
+patch/merge, MCP history, editor mutation, releases, remote writes, and plan
+advance remain independent.
 
 Exit for the contract task:
 

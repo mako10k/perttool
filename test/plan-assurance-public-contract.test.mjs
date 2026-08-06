@@ -23,8 +23,8 @@ test("Grammar 6 and CLI Contract 7 activate plan assurance atomically", async ()
     path.join(root, "docs", "examples", "minimal.pert"),
     "utf8",
   );
-  assert.equal(perttool.COMMAND_REGISTRY.length, 44);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 20);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 45);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 21);
   assert.equal(perttool.getJsonSchema("Perttool.NextResult.v5"), null);
   assert.equal(perttool.getJsonSchema("Perttool.AdvanceResult.v1"), null);
   assert.ok(perttool.getJsonSchema("Perttool.PlanAssuranceResult.v1"));

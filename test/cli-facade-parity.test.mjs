@@ -140,15 +140,15 @@ test("Contract 7 CLI bytes retain direct Application semantics", async () => {
   });
 });
 
-test("CLI retains 44 commands, 20 schemas, and root compatibility", () => {
+test("CLI adds historical DAG discovery and retains root compatibility", () => {
   const help = runCli("help", "--format=json");
   const schemas = runCli("schema", "--format=json");
   assert.equal(help.status, 0, help.stderr);
   assert.equal(schemas.status, 0, schemas.stderr);
-  assert.equal(JSON.parse(help.stdout).commands.length, 44);
-  assert.equal(JSON.parse(schemas.stdout).schemas.length, 20);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 44);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 20);
+  assert.equal(JSON.parse(help.stdout).commands.length, 45);
+  assert.equal(JSON.parse(schemas.stdout).schemas.length, 21);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 45);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 21);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
   assert.equal(Object.keys(packageRoot).length, 122);
   assert.equal(Object.keys(core).length, 45);
@@ -163,7 +163,7 @@ test("CLI composition has no editor or MCP dependency", async () => {
     repositoryText("src/application/cli-facade.ts"),
     repositoryText("package.json"),
   ]);
-  assert.match(source, /createCliApplicationFacade\(createNodeHost\(\)\)/u);
+  assert.match(source, /createCliApplicationFacade\([\s\S]*createNodeHost\(\),[\s\S]*createHistoricalGraphGitEvidenceHost\(\),[\s\S]*\)/u);
   assert.equal(/from "\.\/history\/git-probe\.js"/u.test(source), false);
   assert.equal(/from "\.\/io\/(?:document-file|target-safe-write)\.js"/u.test(source), false);
   assert.equal(/adapters\/(?:lsp|vscode|mcp)|vscode-language|modelcontextprotocol/u.test(source), false);

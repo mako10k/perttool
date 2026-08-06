@@ -520,8 +520,8 @@ test("HLR-012 keeps the public runtime and source bytes unchanged", async () => 
     ),
   );
   assert.equal("reconstructHistoricalLinearHistory" in publicApi, false);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 44);
-  assert.equal(publicApi.getJsonSchemaCatalog().length, 20);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 45);
+  assert.equal(publicApi.getJsonSchemaCatalog().length, 21);
   assert.equal(Object.keys(publicApi).length, 122);
   const original = source();
   const input = evidence([original]);

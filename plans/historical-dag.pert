@@ -150,6 +150,7 @@ task HISTORICAL_CLI HISTORICAL_LINEAR_CORE_READY -> HISTORICAL_CLI_READY:
   title "Expose the read-only historical DAG CLI result"
   description "Add one separate read-only command, request, closed result, schema, help and Guide projection over the Node Git host and shared historical Core. Preserve current project history and dag render results, distinguish ancestry profile and view completeness, bind every historical source range to immutable blob identity, enforce hard limits, and retain Contract 7 compatibility until an explicitly accepted interface version decision."
   duration 5p
+  status done
   priority 80
   requires:
     DEVELOPERS 1
@@ -281,3 +282,10 @@ task_outcome OUTCOME_HISTORICAL_LINEAR_CORE:
   against_basis sha256:dd9be23404e1de0ea3d496f0a013258b1f563cb272e33edd2be0d88bd6bdb4e4
   status conformant
   reason "Accepted pure checkpoint, lineage, and timeline reconstruction and twelve closed cases"
+
+task_outcome OUTCOME_HISTORICAL_CLI:
+  model 1
+  task HISTORICAL_CLI
+  against_basis sha256:a526dada04d1c296dab1fe20c710b9850f626d86356b66eb7c32576dafe3f88e
+  status conformant
+  reason "Accepted read-only historical CLI and twelve closed cases"

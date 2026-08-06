@@ -68,6 +68,7 @@ const commandResultSchemaIds = Object.freeze([
   "Perttool.ExportResult.v1",
   "Perttool.FormatResult.v1",
   "Perttool.GuideResult.v1",
+  "Perttool.HistoricalGraphResult.v1",
   "Perttool.ImportResult.v1",
   "Perttool.InitResult.v1",
   "Perttool.MutationResult.v4",

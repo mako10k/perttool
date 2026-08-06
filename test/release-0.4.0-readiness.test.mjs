@@ -73,7 +73,7 @@ test("0.4.0 readiness observes the atomic public Contract 5 boundary", async () 
       "  finish DONE\n  goal_owner user\n  dag_owner user",
     );
 
-  assert.equal(COMMAND_REGISTRY.length, 44);
+  assert.equal(COMMAND_REGISTRY.length, 45);
   for (const route of [
     "guide",
     "project show",

@@ -33,6 +33,7 @@ const expectedPaths = [
   "dag next",
   "dag advance",
   "dag render",
+  "dag history",
   "dag import",
   "task add",
   "task set",

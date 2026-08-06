@@ -131,6 +131,6 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     readme,
     /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
   );
-  assert.equal(COMMAND_REGISTRY.length, 44);
-  assert.equal(getJsonSchemaCatalog().length, 20);
+  assert.equal(COMMAND_REGISTRY.length, 45);
+  assert.equal(getJsonSchemaCatalog().length, 21);
 });

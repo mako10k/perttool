@@ -456,11 +456,30 @@ actor `codex` and the candidate-bound `user` assertion for `plan_assurance`.
 Readback shows complete assurance with no unavailable task, mismatch, replan
 requirement, or required action. Fresh complete NextResult v6 recommends and
 makes startable only `HISTORICAL_CLI`.
-Current `project history`, `dag render`,
-`Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, 44 commands, and 20
-schemas remain unchanged. Runtime work, three-way ancestry, semantic patch or
-merge, MCP history, editor mutation, release selection, publication, remote
-writes, Issue mutation, and plan advance remain separate.
+The current source now implements the additive read-only `dag history`
+command over a private Node Git-evidence composition and the pure linear Core.
+It activates `Perttool.HistoricalGraphResult.v1`, the twenty-first root
+schema, `PTHDG-101` through `PTHDG-106`, exact snapshot/lineage/timeline views,
+single-checkpoint analysis, immutable source bindings, hard limits, Help, and
+the `historical-dag` Guide topic. The active Contract 7 registry therefore has
+45 commands and 21 schemas. Root/Node remain exact 122-name facades, Core
+remains an exact 45-name portable runtime, and the public Node Host port object
+is unchanged. Current `project history`, `dag render`,
+`Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7 meanings, LSP, VSIX,
+and MCP remain unchanged. Three-way ancestry, semantic patch or merge, MCP
+history, editor mutation, release selection, publication, remote writes,
+Issue mutation, and plan advance remain separate.
+`HISTORICAL_CLI` is complete. Its status-only write changed plan digest
+`sha256:0ca50c85...b905c6` to `sha256:ccaf594b...ff8a3c` without an owner
+assertion. The assertion-free `OUTCOME_HISTORICAL_CLI` preview is bound to
+accepted basis `sha256:a526dada...3f88e`, reason
+`Accepted read-only historical CLI and twelve closed cases`, and candidate
+digest `sha256:f74371c9...ad786`. It affects only `plan_assurance`, requires the
+candidate-bound `user` assertion, and was separately confirmed and written
+once with actor `codex` and that owner assertion. Readback shows complete
+assurance with no unavailable task, mismatch, replan requirement, or required
+action. Fresh complete NextResult v6 recommends and makes startable only
+`HISTORICAL_EDITOR_CONTRACT`.
 
 Backlog `VSIX-ASSURE-001` records the requested semantic presentation of
 unsealed, sealed-and-consistent, and broken-seal states. The current editor
@@ -780,27 +799,27 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/assurance/`: active ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, assurance-preserving advance contraction, compatibility source capture and project metadata, direct-edit guidance, and semantic Mermaid profile 2; lower-level target-capability helpers remain internal.
 - `src/command/`: immutable typed Contract 7 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
 - `src/core/`: additive platform-neutral `perttool/core` entrypoint and the unique active Grammar 6 parse/validate/format facade; its current exact 45-name runtime catalog has no Node, Application, CLI, I/O, history, schema-loader, or adapter dependency.
-- `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 7 editing, actuals, and plan-assurance Guide.
+- `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 7 editing, actuals, plan-assurance, and historical-DAG Guide.
 - `src/analysis/`: neutral base analysis service and target temporal input projection; residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
 - `src/schema/`: closed Contract 7 result-schema catalog, local bundled-artifact resolution, `Perttool.SchemaResult.v1`, and deterministic JSON/text projections.
 - `src/session/`: protocol-neutral immutable document snapshots, exact UTF-16 conversion and ordered incremental changes, URI/generation/version/digest binding, validated-snapshot analysis, snapshot-scoped completed projection caches, and cancellation/stale/desynchronization handling exposed only through `perttool/core`.
-- `schemas/`: twenty bundled Draft 2020-12 root artifacts for every active command result and the public OverrideDecision result, plus shared local definitions.
+- `schemas/`: twenty-one bundled Draft 2020-12 root artifacts for every active command result and the public OverrideDecision result, plus shared local definitions.
 - `src/conversion/`: Mermaid profile/plain export and import, semantic metadata, projection generation, and fail-closed restoration.
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.
 - `src/formatter/`: the active Grammar 1/2/3/4/5/6 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4/5 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 6 package surface.
-- `src/history/`: active read-only Git probe, validated-snapshot-injected pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; the internal model-1 whole-document historical transition projection, source-fidelity separation, adjacent classification, and deterministic occurrence/value/topology epochs; the internal bounded endpoint/lower-boundary first-parent commit/parent/blob/raw-source evidence probe with opaque repository/read-snapshot identity, exact input limits, shallow completeness, and race refusal; the internal pure checkpoint, selected-snapshot, continuity, frozen-evidence, proved-lineage, timeline, canonical-advance-proof, immutable-source-binding, and fail-closed output-limit reconstruction; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with internal Grammar 6 history and assurance-record inventory extensions.
+- `src/history/`: active read-only Git probe, validated-snapshot-injected pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; the model-1 whole-document historical transition projection, source-fidelity separation, adjacent classification, and deterministic occurrence/value/topology epochs; the bounded endpoint/lower-boundary first-parent commit/parent/blob/raw-source evidence probe with opaque repository/read-snapshot identity, exact input limits, shallow completeness, and race refusal; the pure checkpoint, selected-snapshot, continuity, frozen-evidence, proved-lineage, timeline, canonical-advance-proof, immutable-source-binding, and fail-closed output-limit reconstruction consumed by the active historical CLI; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with internal Grammar 6 history and assurance-record inventory extensions.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5/6 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, localized version-upgrade inputs, and internal retained Grammar 6 migration support.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
 - `src/ports/`: inward-owned type-only contracts for exact digesting, raw document and artifact bytes, read-only Git evidence, established safe persistence, and bounded process context.
-- `src/node/`: additive `perttool/node` entrypoint and default Node Host composition; root and Node expose the same 122 runtime values with exact key and reference identity while Core remains portable.
+- `src/node/`: additive `perttool/node` entrypoint, default public Node Host composition, and private historical Git-evidence CLI composition; root and Node expose the same 122 runtime values with exact key and reference identity while Core remains portable.
 - `src/parser/`: the active Grammar 1/2/3/4/5/6 parser with identity-checked task-owned work-event and plan-assurance source.
 - `src/semantic/`: neutral document-check service; active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
-- `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; the private CLI Application facade with injected Node Host ports; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, history, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
+- `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; the private CLI Application facade with injected Node Host ports; pure services for active Contract 7 project initialization/project metadata/next, lifecycle, project history, historical DAG snapshot/lineage/timeline and single-checkpoint analysis, observation, AnalysisResult v5, release- and assurance-gated NextResult v6 composition, exact unit migration and Result v3 projection, governed direct/batch/advance planning, assurance mutation, unit migration, advance persistence, read-only hash inspection, independent assurance/history guard composition, AdvanceResult v2 projection, Contract 7 result projections, and authorization-before-safe-write orchestration.
 - `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and GraphView wire results, and no public-package inclusion.
 - `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual workspace support, and a restrictive read-only GraphView DAG Webview without public publication identity.
 - `adapters/mcp/`: private Node.js 22 MCP workspace with exact server SDK 2.0.0, modern-only 2026-07-28 local stdio, strict malformed-line fail-closure, four immutable resources, five fail-closed read-only tools, digest-bound inline or launcher-registered sources, self-contained output schemas, isolated two-client/no-write package acceptance, and no public-package inclusion.

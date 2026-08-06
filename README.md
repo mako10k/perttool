@@ -41,6 +41,11 @@ and the first machine-schema Contract 6 artifact remains available by pinning
 `0.4.0`, `0.3.0`, and `0.2.0`, respectively. npm has no maintained `alpha`
 dist-tag; historical `0.1.0-alpha.2` remains available by exact pin.
 
+The current unreleased source adds the read-only `dag history` command and
+`Perttool.HistoricalGraphResult.v1` without changing Grammar 6 or CLI Contract
+7. The source registry therefore has 45 commands and 21 root schemas; the
+published `0.7.1` package remains the 44-command, 20-schema compatibility pin.
+
 ## Run without installing
 
 After beta publication, use `npx` for an occasional Contract 7 invocation and
@@ -437,6 +442,7 @@ new-start authority from unsealed, review-required, or unavailable plans.
 | Analyze schedules | `perttool dag analyze <file>` |
 | Select next work | `perttool dag next <file>` |
 | Remove completed history | `perttool dag advance <file>` |
+| Reconstruct committed DAG history | `perttool dag history <file> ...` |
 | Inspect plan assurance | `perttool plan-assurance show|hash <file> ...` |
 | Seal or reseal reviewed plans | `perttool plan-assurance seal|reseal <file> ...` |
 | Maintain planning dependencies | `perttool plan-dependency add|set|remove` |
@@ -456,10 +462,12 @@ domain concepts. Both run without a document:
 ```sh
 perttool task set --help
 perttool help dag next --format json
+perttool help dag history --format json
 perttool schema --format json
 perttool schema Perttool.NextResult.v6 --format json
 perttool schema Perttool.NextResult.v6 --view outline --format json
 perttool guide editing --level detail --format json
+perttool guide historical-dag --level detail --format json
 ```
 
 ### JSON Schema artifacts
@@ -489,8 +497,8 @@ against the bundled `Perttool.Common.v1.schema.json`. The stable `$id` is an
 identifier only: validation does not require network access. Consumers must
 select compatibility from each result's `schema_version`, not from
 `tool_version`. See the
-[JSON Schema Artifact Contract](docs/specs/json-schema.md) for the complete
-20-root inventory and versioning rules.
+[JSON Schema Artifact Contract](docs/specs/json-schema.md) for the current
+21-root source inventory and versioning rules.
 
 ## LLM and automation use
 

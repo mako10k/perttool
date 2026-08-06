@@ -63,7 +63,7 @@ test("0.3.0 readiness observes the complete public Contract 4 boundary", async (
 
   assert.match(m3Acceptance, /no open SU-M3 acceptance findings/);
   assert.match(m5Acceptance, /There are no open SU-M5 acceptance findings/);
-  assert.equal(COMMAND_REGISTRY.length, 44);
+  assert.equal(COMMAND_REGISTRY.length, 45);
   for (const route of [
     "project migrate-unit",
     "dag analyze",

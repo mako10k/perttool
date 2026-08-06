@@ -97,6 +97,7 @@ fi
             "errors",
             "samples",
             "plan-assurance",
+            "historical-dag",
           ]) ||
           /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
         ) process.exit(1);
@@ -176,7 +177,7 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
-          result.schemas?.length !== 20 ||
+          result.schemas?.length !== 21 ||
           result.schema?.$id !==
             "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v2.schema.json" ||
           result.schema?.properties?.history_guard === undefined
@@ -193,7 +194,7 @@ fi
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
           result.cli_contract_version !== 7 ||
-          result.schemas?.length !== 20 ||
+          result.schemas?.length !== 21 ||
           result.schema?.$schema !==
             "https://json-schema.org/draft/2020-12/schema" ||
           result.schema?.$id !==

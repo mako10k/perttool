@@ -1,0 +1,68 @@
+{
+  "schema_version": "Perttool.HistoricalCliCases.v1",
+  "cli_contract_version": 7,
+  "result_schema": "Perttool.HistoricalGraphResult.v1",
+  "command": "dag history",
+  "cases": [
+    {
+      "id": "HCLI-001",
+      "depends_on": [],
+      "boundary": "additive_command_schema_help_guide"
+    },
+    {
+      "id": "HCLI-002",
+      "depends_on": ["HCLI-001"],
+      "boundary": "default_head_first_parent_lineage_none"
+    },
+    {
+      "id": "HCLI-003",
+      "depends_on": ["HCLI-002"],
+      "boundary": "inclusive_endpoint_and_lower_boundary"
+    },
+    {
+      "id": "HCLI-004",
+      "depends_on": ["HCLI-003"],
+      "boundary": "exact_full_object_id_snapshot"
+    },
+    {
+      "id": "HCLI-005",
+      "depends_on": ["HCLI-004"],
+      "boundary": "proved_canonical_advance_lineage"
+    },
+    {
+      "id": "HCLI-006",
+      "depends_on": ["HCLI-003"],
+      "boundary": "ordered_timeline_and_continuity_segments"
+    },
+    {
+      "id": "HCLI-007",
+      "depends_on": ["HCLI-004"],
+      "boundary": "single_checkpoint_analysis"
+    },
+    {
+      "id": "HCLI-008",
+      "depends_on": ["HCLI-005", "HCLI-006"],
+      "boundary": "immutable_source_bindings"
+    },
+    {
+      "id": "HCLI-009",
+      "depends_on": ["HCLI-006"],
+      "boundary": "typed_incomplete_and_warning_policy"
+    },
+    {
+      "id": "HCLI-010",
+      "depends_on": ["HCLI-001"],
+      "boundary": "three_way_refusal_before_git"
+    },
+    {
+      "id": "HCLI-011",
+      "depends_on": ["HCLI-001", "HCLI-008"],
+      "boundary": "isolated_installed_package"
+    },
+    {
+      "id": "HCLI-012",
+      "depends_on": ["HCLI-009", "HCLI-010", "HCLI-011"],
+      "boundary": "no_write_and_compatibility"
+    }
+  ]
+}

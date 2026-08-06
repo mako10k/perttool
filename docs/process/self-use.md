@@ -2016,6 +2016,14 @@ Stage 1 entry evidence:
   encoding and comment boundaries, temporary link, and installed-package
   acceptance are complete. Published packages remain unchanged and release
   selection remains separate.
+- HIST-DAG-001 CLI gate: `dag history` composes the bounded immutable Git
+  evidence and pure linear reconstruction through a private Application/Node
+  path; snapshot, proved-lineage, timeline, single-checkpoint analysis,
+  `Perttool.HistoricalGraphResult.v1`, Help, Guide, strict schema, temporary
+  link, and isolated-package behavior are accepted without changing the
+  package-root/Node/Core catalogs or writing source or Git state. Historical
+  editor protocol, VSIX presentation, three-way ancestry, semantic merge, and
+  release remain separate.
 - write state: Stage 3 editing commands remain preview-first. Until the
   accepted source is released, repository self-use still requires the exact
   pre-advance target snapshot in `HEAD`, the passing guard,

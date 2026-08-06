@@ -21,6 +21,56 @@ const topic = Object.freeze({
   summary: "Verifies whether accepted task plans still match their recursive planning basis.",
 });
 
+const historicalTopic = Object.freeze({
+  id: "historical-dag",
+  title: "Historical DAG reconstruction",
+  summary: "Reconstructs exact snapshots, proved lineage, or an ordered first-parent timeline from immutable Git evidence.",
+});
+
+const historicalQuick: readonly HelpSection[] = Object.freeze([
+  Object.freeze({
+    id: "bounds-and-view",
+    title: "Bounds and view",
+    body: "dag history binds one on-disk file, an inclusive --rev endpoint, and an optional inclusive --base first-parent boundary. snapshot selects one exact checkpoint, lineage includes retired topology only after proved canonical advance, and timeline preserves ordered epochs and gaps.",
+  }),
+  Object.freeze({
+    id: "safe-reading",
+    title: "Safe reading",
+    body: "The command reads committed Git objects only. It does not use current worktree bytes as historical evidence, mutate a source, index or ref, or grant task, governance, assurance, or write authority.",
+  }),
+]);
+
+const historicalDetail: readonly HelpSection[] = Object.freeze([
+  Object.freeze({
+    id: "analysis",
+    title: "Checkpoint-bound analysis",
+    body: "--analysis none, precedence, resource, or both is independent of the selected view. Analysis runs against one valid selected or endpoint checkpoint, never against cumulative lineage or a union of timeline epochs.",
+  }),
+  Object.freeze({
+    id: "navigation",
+    title: "Immutable source bindings",
+    body: "Every historical source range is bound to repository, relative path, commit, blob, source digest, and UTF-16 range evidence. Consumers must verify all bindings before opening historical bytes.",
+  }),
+  Object.freeze({
+    id: "three-way",
+    title: "Three-way deferral",
+    body: "--history three-way fails closed with PTHDG-106 in model 1 and performs no side-lane inspection. Semantic merge remains a separate SCM-001 decision.",
+  }),
+]);
+
+const historicalExamples: readonly HelpExample[] = Object.freeze([
+  Object.freeze({
+    id: "lineage",
+    title: "Inspect proved lineage",
+    text: "perttool dag history plan.pert --rev HEAD --history first-parent --view lineage --analysis none --format json",
+  }),
+  Object.freeze({
+    id: "snapshot",
+    title: "Inspect one listed checkpoint",
+    text: "perttool dag history plan.pert --view snapshot --snapshot 0123456789012345678901234567890123456789 --analysis both --format json",
+  }),
+]);
+
 const quick: readonly HelpSection[] = Object.freeze([
   Object.freeze({
     id: "verify-and-seal",
@@ -220,11 +270,42 @@ function custom(level: HelpLevel): AssuranceGuideResult {
   });
 }
 
+function historical(level: HelpLevel): AssuranceGuideResult {
+  return Object.freeze({
+    schemaVersion: "Perttool.GuideResult.v1",
+    cliContractVersion: 7,
+    toolVersion: TOOL_VERSION,
+    operation: "guide",
+    ok: true,
+    topicId: historicalTopic.id,
+    level,
+    title: historicalTopic.title,
+    summary: historicalTopic.summary,
+    sections: level === "index"
+      ? Object.freeze([])
+      : level === "quick"
+        ? historicalQuick
+        : Object.freeze([...historicalQuick, ...historicalDetail]),
+    syntax: level === "index" ? Object.freeze([]) : Object.freeze([
+      "perttool dag history <file> [--rev <endpoint>] [--base <lower-boundary>]",
+      "  [--history first-parent|three-way] [--view snapshot|lineage|timeline]",
+      "  [--snapshot <full-commit-id>] [--analysis none|precedence|resource|both]",
+    ]),
+    examples: level === "detail" ? historicalExamples : Object.freeze([]),
+    related: level === "index"
+      ? Object.freeze([])
+      : Object.freeze(["analysis", "actuals", "plan-assurance"]),
+    topics: Object.freeze([]),
+    diagnostics: Object.freeze([]),
+  });
+}
+
 export function getAssuranceGuide(
   topicId: string | null,
   level: HelpLevel,
 ): AssuranceGuideResult {
   if (topicId === "plan-assurance") return custom(level);
+  if (topicId === "historical-dag") return historical(level);
   const base = getActualsGuide(topicId, level);
   const override = topicId === null
     ? undefined
@@ -245,6 +326,7 @@ export function getAssuranceGuide(
             summary: activeTopicOverrides[item.id]?.summary ?? item.summary,
           })),
           topic,
+          historicalTopic,
         ])
       : base.topics,
   });

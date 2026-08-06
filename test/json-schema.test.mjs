@@ -139,8 +139,8 @@ test("Contract 7 result identities resolve to one closed bundled catalog", () =>
     .filter(({ commandResult }) => commandResult)
     .map(({ schemaId }) => schemaId);
   assert.deepEqual(commandSchemas, advertised);
-  assert.equal(COMMAND_REGISTRY.length, 44);
-  assert.equal(advertised.length, 19);
+  assert.equal(COMMAND_REGISTRY.length, 45);
+  assert.equal(advertised.length, 20);
   assert.deepEqual(
     catalog
       .filter(({ publicLibraryResult }) => publicLibraryResult)
@@ -153,10 +153,10 @@ test("Contract 7 result identities resolve to one closed bundled catalog", () =>
     ...catalog.map(({ schemaId }) => `${schemaId}.schema.json`),
   ].sort();
   assert.deepEqual(schemaFiles(), expectedFiles);
-  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 20);
+  assert.equal(new Set(catalog.map(({ schemaId }) => schemaId)).size, 21);
   assert.equal(
     new Set(catalog.map(({ artifactPath }) => artifactPath)).size,
-    20,
+    21,
   );
 
   for (const entry of catalog) {
@@ -230,7 +230,7 @@ test("schema command lists, resolves, and rejects schema identities", () => {
   assert.equal(catalog.operation, "schema");
   assert.equal(catalog.ok, true);
   assert.equal(catalog.query.schema_id, null);
-  assert.equal(catalog.schemas.length, 20);
+  assert.equal(catalog.schemas.length, 21);
   assert.equal(catalog.schema, null);
 
   const selected = cliJson([
@@ -549,6 +549,13 @@ test("actual success, invalid, unavailable, and usage results validate", (t) => 
     advanceMutation,
     exactUnitMigration,
     unavailableUnitMigration,
+    cliJson([
+      "dag",
+      "history",
+      path.join(root, "plans", "historical-dag.pert"),
+      "--view",
+      "lineage",
+    ]),
   ];
 
   for (const [index, result] of results.entries()) {

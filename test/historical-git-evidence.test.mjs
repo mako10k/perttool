@@ -415,8 +415,8 @@ test("HGE-010 through HGE-012 preserve Git state and the active public surface",
     ["captureAdvanceBaseline", "probeHistory", "recheckAdvanceBaseline"],
   );
   assert.equal(Object.keys(publicApi).length, 122);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 44);
-  assert.equal(publicApi.getJsonSchemaCatalog().length, 20);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 45);
+  assert.equal(publicApi.getJsonSchemaCatalog().length, 21);
   assert.equal("probeHistoricalGitEvidence" in publicApi, false);
   assert.equal("HISTORICAL_GIT_EVIDENCE_MODEL_VERSION" in publicApi, false);
 });

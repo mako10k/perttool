@@ -100,6 +100,29 @@ function validateValues(
       );
     }
   }
+  if (invocation.descriptor.operation === "dag.history") {
+    const snapshot = repeated.get("snapshot")?.[0];
+    const view = repeated.get("view")?.[0] ?? "lineage";
+    if (snapshot !== undefined && view !== "snapshot") {
+      return invalid(
+        invocation.descriptor,
+        "option_conflict",
+        "option --snapshot requires --view snapshot",
+        snapshot,
+      );
+    }
+    if (
+      snapshot !== undefined &&
+      !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/u.test(snapshot)
+    ) {
+      return invalid(
+        invocation.descriptor,
+        "invalid_option_value",
+        "option --snapshot requires a lower-case full Git object ID",
+        snapshot,
+      );
+    }
+  }
   return invocation;
 }
 

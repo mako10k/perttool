@@ -20,7 +20,13 @@ import {
   createCliApplicationFacade,
   type TargetPlanAssuranceAdvanceResultV2WithHistory,
 } from "./application/cli-facade.js";
+import type {
+  HistoricalGraphAnalysisModeV1,
+  HistoricalGraphAncestryProfileV1,
+  HistoricalGraphViewV1,
+} from "./application/target-historical-graph.js";
 import { createNodeHost } from "./node/host.js";
+import { createHistoricalGraphGitEvidenceHost } from "./node/historical-host.js";
 import {
   exportMermaid,
   type ConversionLoss,
@@ -145,7 +151,13 @@ const {
   createArtifactFile,
   createTargetGrammar6DocumentFile,
   replaceTargetGrammar6DocumentFile,
-} = createCliApplicationFacade(createNodeHost());
+  inspectTargetHistoricalGraphFile,
+  renderTargetHistoricalGraphText,
+  targetHistoricalGraphResultToJson,
+} = createCliApplicationFacade(
+  createNodeHost(),
+  createHistoricalGraphGitEvidenceHost(),
+);
 
 type OutputFormat = "text" | "json";
 type ColorMode = "auto" | "always" | "never";
@@ -2090,6 +2102,86 @@ async function runProjectHistory(args: readonly string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
+async function runHistoricalGraph(args: readonly string[]): Promise<number> {
+  const parsed = parseCommandOptions("dag.history", args);
+  if (parsed.positionals.length !== 1) {
+    throw new UsageError("dag history requires exactly one <file>");
+  }
+  const source = parsed.positionals[0]!;
+  if (source === "-") {
+    throw new UsageError("dag history requires an on-disk file");
+  }
+  const format = outputFormat(parsed.values.get("format"));
+  const color = colorMode(parsed.values.get("color"), format);
+  const maxDiagnostics = boundedInteger(
+    parsed.values.get("max-diagnostics"),
+    "max-diagnostics",
+    100,
+    1,
+    1000,
+  );
+  const ancestry = enumOption<"first-parent" | "three-way">(
+    parsed.values.get("history"),
+    "history",
+    new Set(["first-parent", "three-way"]),
+  ) ?? "first-parent";
+  const view = enumOption<HistoricalGraphViewV1>(
+    parsed.values.get("view"),
+    "view",
+    new Set(["snapshot", "lineage", "timeline"]),
+  ) ?? "lineage";
+  const analysis = enumOption<HistoricalGraphAnalysisModeV1>(
+    parsed.values.get("analysis"),
+    "analysis",
+    new Set(["none", "precedence", "resource", "both"]),
+  ) ?? "none";
+  const ancestryProfile: HistoricalGraphAncestryProfileV1 =
+    ancestry === "first-parent" ? "first_parent" : "three_way";
+  let result: Awaited<ReturnType<typeof inspectTargetHistoricalGraphFile>>;
+  try {
+    result = await inspectTargetHistoricalGraphFile({
+      targetPath: source,
+      requestedEndpoint: parsed.values.get("rev") ?? "HEAD",
+      ...(parsed.values.get("base") === undefined
+        ? {}
+        : { lowerBoundary: parsed.values.get("base")! }),
+      ancestryProfile,
+      view,
+      ...(parsed.values.get("snapshot") === undefined
+        ? {}
+        : { snapshotCommitId: parsed.values.get("snapshot")! }),
+      analysisMode: analysis,
+      maxDiagnostics,
+    });
+  } catch (error) {
+    return cliError(
+      error instanceof Error ? error : new Error(String(error)),
+      3,
+      "dag.history",
+      format === "json",
+    );
+  }
+  const warningFailure = parsed.flags.has("warnings-as-errors") &&
+    (result.diagnosticsTruncated || result.diagnostics.some(
+      ({ severity }) => severity === "warning",
+    ));
+  const ok = result.ok && !warningFailure;
+  if (format === "json") {
+    writeJson(targetHistoricalGraphResultToJson(
+      ok ? result : Object.freeze({ ...result, ok: false }),
+    ));
+  } else {
+    if (ok) process.stdout.write(renderTargetHistoricalGraphText(result));
+    for (const diagnostic of result.diagnostics) {
+      process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    if (result.diagnosticsTruncated) {
+      process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
+    }
+  }
+  return ok ? 0 : 1;
+}
+
 async function runProjectVelocityObservation(
   args: readonly string[],
 ): Promise<number> {
@@ -4027,6 +4119,8 @@ async function dispatchCommand(
       return runAdvance(args);
     case "dag.render":
       return runRender(args);
+    case "dag.history":
+      return runHistoricalGraph(args);
     case "dag.import":
       return runImport(args);
     case "task.start":

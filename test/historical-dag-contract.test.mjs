@@ -95,7 +95,7 @@ test("historical DAG contract fixes the selected first-parent boundary", async (
   assert.match(design, /### Post-MVP Slice 6: Historical DAG reconstruction/u);
   assert.match(
     backlog,
-    /Status: First-parent normative contract, internal transition model, bounded\nimmutable Git evidence, and pure linear reconstruction implemented/u,
+    /Status: First-parent normative contract, internal transition model, bounded\nimmutable Git evidence, pure linear reconstruction, and the separate\nread-only CLI result are implemented/u,
   );
   assert.match(proposal, /Document status: Superseded design input 0\.2/u);
   assert.match(proposal, /Normative successor: \[Historical DAG Reconstruction Contract\]/u);
@@ -180,35 +180,37 @@ test("all twenty historical DAG cases are dependency ordered and closed", async 
   );
 });
 
-test("contract selection leaves the active runtime surface unchanged", () => {
-  assert.equal(COMMAND_REGISTRY.length, 44);
+test("the later CLI task activates the reserved additive surface", () => {
+  assert.equal(COMMAND_REGISTRY.length, 45);
   assert.equal(
     COMMAND_REGISTRY.some(
       ({ path: commandPath }) =>
         commandPath[0] === "dag" && commandPath[1] === "history",
     ),
-    false,
+    true,
   );
   const catalog = getJsonSchemaCatalog();
-  assert.equal(catalog.length, 20);
+  assert.equal(catalog.length, 21);
   assert.equal(
     catalog.some(({ schemaId }) => schemaId === "Perttool.HistoricalGraphResult.v1"),
-    false,
+    true,
   );
 });
 
-test("accepted linear Core makes only the historical CLI startable", async () => {
+test("accepted historical CLI makes only the editor contract startable", async () => {
   const [
     source,
     acceptance,
     transitionAcceptance,
     linearAcceptance,
+    cliAcceptance,
     selfUse,
   ] = await Promise.all([
     repositoryText("plans/historical-dag.pert"),
     repositoryText("docs/process/historical-dag-contract-acceptance.md"),
     repositoryText("docs/process/historical-transition-model-acceptance.md"),
     repositoryText("docs/process/historical-linear-core-acceptance.md"),
+    repositoryText("docs/process/historical-cli-acceptance.md"),
     repositoryText("scripts/check-self-use.sh"),
   ]);
   const checked = checkDocument(source);
@@ -238,6 +240,7 @@ test("accepted linear Core makes only the historical CLI startable", async () =>
     source,
     /task HISTORICAL_LINEAR_CORE[\s\S]*?status done/u,
   );
+  assert.match(source, /task HISTORICAL_CLI[\s\S]*?status done/u);
   assert.match(
     source,
     /task_outcome OUTCOME_HISTORICAL_TRANSITION_MODEL:[\s\S]*?task HISTORICAL_TRANSITION_MODEL[\s\S]*?status conformant/u,
@@ -250,12 +253,16 @@ test("accepted linear Core makes only the historical CLI startable", async () =>
     source,
     /task_outcome OUTCOME_HISTORICAL_LINEAR_CORE:[\s\S]*?task HISTORICAL_LINEAR_CORE[\s\S]*?status conformant/u,
   );
-  assert.deepEqual(next.groups.ready, ["HISTORICAL_CLI"]);
+  assert.match(
+    source,
+    /task_outcome OUTCOME_HISTORICAL_CLI:[\s\S]*?task HISTORICAL_CLI[\s\S]*?status conformant/u,
+  );
+  assert.deepEqual(next.groups.ready, ["HISTORICAL_EDITOR_CONTRACT"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_CLI",
+    "HISTORICAL_EDITOR_CONTRACT",
   ]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_CLI",
+    "HISTORICAL_EDITOR_CONTRACT",
   ]);
   assert.deepEqual(
     next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
@@ -276,6 +283,11 @@ test("accepted linear Core makes only the historical CLI startable", async () =>
   assert.match(
     linearAcceptance,
     /candidate digest\s+`sha256:0ca50c852105de6266e962f589597fd0e10d5a03748e3615e9e64af2a6b905c6`/u,
+  );
+  assert.match(cliAcceptance, /Document status: Accepted 1\.0/u);
+  assert.match(
+    cliAcceptance,
+    /only `HISTORICAL_EDITOR_CONTRACT` as\s+ready, recommended, and startable/u,
   );
   assert.match(selfUse, /plans\/historical-dag\.pert/u);
   assert.match(selfUse, /35 plans; check, analyze, next/u);

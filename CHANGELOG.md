@@ -6,6 +6,12 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ### Added
 
+- Added the read-only `dag history` command with bounded inclusive Git revision
+  inputs, explicit first-parent scope, snapshot, proved-lineage, and timeline
+  views, optional single-checkpoint analysis, immutable source bindings,
+  `Perttool.HistoricalGraphResult.v1`, and the `historical-dag` Guide topic.
+  Three-way ancestry remains fail-closed and release selection remains
+  separate.
 - Added source-package `perttool/core` and `perttool/node` subpath exports.
   Core provides a closed platform-neutral Grammar 6 source, graph-analysis,
   exact-arithmetic, diagnostic, Help, Guide, and projection surface; Node is

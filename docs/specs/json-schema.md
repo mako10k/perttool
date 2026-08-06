@@ -74,6 +74,7 @@ and every cataloged command result is advertised by at least one descriptor.
 | `Perttool.ExportResult.v1` | Mermaid export result |
 | `Perttool.FormatResult.v1` | formatter result |
 | `Perttool.GuideResult.v1` | domain Guide result |
+| `Perttool.HistoricalGraphResult.v1` | bounded read-only historical DAG result |
 | `Perttool.ImportResult.v1` | Mermaid import result |
 | `Perttool.InitResult.v1` | project initialization result |
 | `Perttool.MutationResult.v4` | direct, lifecycle, batch, and assurance mutation result |
@@ -86,7 +87,7 @@ and every cataloged command result is advertised by at least one descriptor.
 | `Perttool.VelocityObservationResult.v1` | observed-velocity result |
 | `Perttool.OverrideDecision.v1` | supported public library-only result |
 
-The first nineteen identities are command results. OverrideDecision is not a
+The first twenty identities are command results. OverrideDecision is not a
 CLI command result, but its public root projection is a supported contract and
 therefore has a root artifact.
 

@@ -1,0 +1,654 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.HistoricalGraphResult.v1.schema.json",
+  "title": "Perttool.HistoricalGraphResult.v1",
+  "$defs": {
+    "nullableString": {
+      "type": ["string", "null"]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "nullableDigest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "exactValue": {
+      "type": "object",
+      "required": ["numerator", "denominator", "unit"],
+      "properties": {
+        "numerator": { "type": "string", "pattern": "^-?[0-9]+$" },
+        "denominator": { "type": "string", "pattern": "^[1-9][0-9]*$" },
+        "unit": { "enum": ["day", "hour", "point", "person_hour"] }
+      },
+      "additionalProperties": false
+    },
+    "analysisExactValue": {
+      "type": "object",
+      "required": ["numerator", "denominator", "unit"],
+      "properties": {
+        "numerator": { "type": "string", "pattern": "^-?[0-9]+$" },
+        "denominator": { "type": "string", "pattern": "^[1-9][0-9]*$" },
+        "unit": { "enum": ["day", "hour", "point"] }
+      },
+      "additionalProperties": false
+    },
+    "calendarDate": {
+      "type": "object",
+      "required": ["kind", "year", "month", "day"],
+      "properties": {
+        "kind": { "const": "date" },
+        "year": { "type": "integer" },
+        "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "day": { "type": "integer", "minimum": 1, "maximum": 31 }
+      },
+      "additionalProperties": false
+    },
+    "calendarDateTime": {
+      "type": "object",
+      "required": ["kind", "year", "month", "day", "hour", "minute", "second", "offset_minutes"],
+      "properties": {
+        "kind": { "const": "date_time" },
+        "year": { "type": "integer" },
+        "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "day": { "type": "integer", "minimum": 1, "maximum": 31 },
+        "hour": { "type": "integer", "minimum": 0, "maximum": 23 },
+        "minute": { "type": "integer", "minimum": 0, "maximum": 59 },
+        "second": {
+          "type": "object",
+          "required": ["numerator", "denominator"],
+          "properties": {
+            "numerator": { "type": "string", "pattern": "^-?[0-9]+$" },
+            "denominator": { "type": "string", "pattern": "^[1-9][0-9]*$" }
+          },
+          "additionalProperties": false
+        },
+        "offset_minutes": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "calendarValue": {
+      "oneOf": [
+        { "$ref": "#/$defs/calendarDate" },
+        { "$ref": "#/$defs/calendarDateTime" }
+      ]
+    },
+    "nullableCalendarValue": {
+      "oneOf": [
+        { "$ref": "#/$defs/calendarValue" },
+        { "type": "null" }
+      ]
+    },
+    "timing": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "value"],
+          "properties": {
+            "kind": { "const": "duration" },
+            "value": { "$ref": "#/$defs/exactValue" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "optimistic", "most_likely", "pessimistic"],
+          "properties": {
+            "kind": { "const": "estimate" },
+            "optimistic": { "$ref": "#/$defs/exactValue" },
+            "most_likely": { "$ref": "#/$defs/exactValue" },
+            "pessimistic": { "$ref": "#/$defs/exactValue" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "milestoneSemantic": {
+      "type": "object",
+      "required": ["id", "title", "description", "state", "deadline", "tags"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "$ref": "#/$defs/nullableString" },
+        "state": { "enum": ["planned", "reached"] },
+        "deadline": { "$ref": "#/$defs/nullableCalendarValue" },
+        "tags": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "taskSemantic": {
+      "type": "object",
+      "required": ["id", "from_milestone_id", "to_milestone_id", "plan", "lifecycle"],
+      "properties": {
+        "id": { "type": "string" },
+        "from_milestone_id": { "type": "string" },
+        "to_milestone_id": { "type": "string" },
+        "plan": {
+          "type": "object",
+          "required": ["title", "description", "timing", "not_before", "deadline", "priority", "requirements", "owner", "tags", "source"],
+          "properties": {
+            "title": { "type": "string" },
+            "description": { "$ref": "#/$defs/nullableString" },
+            "timing": { "$ref": "#/$defs/timing" },
+            "not_before": { "$ref": "#/$defs/nullableCalendarValue" },
+            "deadline": { "$ref": "#/$defs/nullableCalendarValue" },
+            "priority": { "type": "integer" },
+            "requirements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["resource_id", "units"],
+                "properties": {
+                  "resource_id": { "type": "string" },
+                  "units": { "type": "integer", "minimum": 1 }
+                },
+                "additionalProperties": false
+              }
+            },
+            "owner": { "$ref": "#/$defs/nullableString" },
+            "tags": { "$ref": "#/$defs/stringArray" },
+            "source": { "$ref": "#/$defs/nullableString" }
+          },
+          "additionalProperties": false
+        },
+        "lifecycle": {
+          "type": "object",
+          "required": ["status", "blocked_reason"],
+          "properties": {
+            "status": { "enum": ["planned", "active", "blocked", "suspended", "done"] },
+            "blocked_reason": { "$ref": "#/$defs/nullableString" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "gateSemantic": {
+      "type": "object",
+      "required": ["id", "from_milestone_id", "to_milestone_id", "reason"],
+      "properties": {
+        "id": { "type": "string" },
+        "from_milestone_id": { "type": "string" },
+        "to_milestone_id": { "type": "string" },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "resourceSemantic": {
+      "type": "object",
+      "required": ["id", "title", "description", "capacity", "tags"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "$ref": "#/$defs/nullableString" },
+        "capacity": { "type": "integer", "minimum": 1 },
+        "tags": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "entitySemantic": {
+      "oneOf": [
+        { "$ref": "#/$defs/milestoneSemantic" },
+        { "$ref": "#/$defs/taskSemantic" },
+        { "$ref": "#/$defs/gateSemantic" },
+        { "$ref": "#/$defs/resourceSemantic" }
+      ]
+    },
+    "transition": {
+      "type": "object",
+      "required": ["class", "causes", "semantic_changed", "source_changed", "changed_axes", "is_merge_commit", "canonical_advance"],
+      "properties": {
+        "class": { "enum": ["initial", "representation_only", "evidence_extension", "lifecycle_projection", "future_plan_edit", "canonical_advance", "ambiguous_edit", "conflict"] },
+        "causes": {
+          "type": "array",
+          "items": { "enum": ["event_payload_changed", "identity_ambiguous", "ambiguous_edit", "noncanonical_removal", "topology_conflict"] }
+        },
+        "semantic_changed": { "type": "boolean" },
+        "source_changed": { "type": "boolean" },
+        "changed_axes": {
+          "type": "array",
+          "items": { "enum": ["planning", "lifecycle", "actual_evidence", "governance", "assurance", "topology"] }
+        },
+        "is_merge_commit": { "type": "boolean" },
+        "canonical_advance": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["planner_version", "candidate_semantic_digest"],
+              "properties": {
+                "planner_version": { "type": "string" },
+                "candidate_semantic_digest": { "$ref": "#/$defs/digest" }
+              },
+              "additionalProperties": false
+            },
+            { "type": "null" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "occurrence": {
+      "type": "object",
+      "required": ["entity_kind", "source_id", "occurrence_id", "value_epoch_ordinal", "semantic", "from_occurrence_id", "to_occurrence_id", "first_observed_commit_id", "last_observed_commit_id", "retired_at_commit_id"],
+      "properties": {
+        "entity_kind": { "enum": ["milestone", "task", "gate", "resource"] },
+        "source_id": { "type": "string" },
+        "occurrence_id": { "$ref": "#/$defs/nullableString" },
+        "value_epoch_ordinal": { "type": ["integer", "null"], "minimum": 1 },
+        "semantic": { "$ref": "#/$defs/entitySemantic" },
+        "from_occurrence_id": { "$ref": "#/$defs/nullableString" },
+        "to_occurrence_id": { "$ref": "#/$defs/nullableString" },
+        "first_observed_commit_id": { "type": "string" },
+        "last_observed_commit_id": { "type": "string" },
+        "retired_at_commit_id": { "$ref": "#/$defs/nullableString" }
+      },
+      "additionalProperties": false
+    },
+    "snapshotGraph": {
+      "type": "object",
+      "required": ["project_id", "semantic_digest", "topology_epoch_id", "occurrences"],
+      "properties": {
+        "project_id": { "type": "string" },
+        "semantic_digest": { "$ref": "#/$defs/digest" },
+        "topology_epoch_id": { "$ref": "#/$defs/nullableString" },
+        "occurrences": { "type": "array", "items": { "$ref": "#/$defs/occurrence" } }
+      },
+      "additionalProperties": false
+    },
+    "checkpointSummary": {
+      "type": "object",
+      "required": ["commit_id", "parent_commit_ids", "blob_id", "source_digest", "recorded_at", "is_merge_commit", "segment_ordinal", "assurance", "semantic_digest", "topology_epoch_id", "transition", "occurrence_count", "source_binding_count"],
+      "properties": {
+        "commit_id": { "type": "string" },
+        "parent_commit_ids": { "$ref": "#/$defs/stringArray" },
+        "blob_id": { "type": "string" },
+        "source_digest": { "$ref": "#/$defs/digest" },
+        "recorded_at": { "$ref": "#/$defs/nullableString" },
+        "is_merge_commit": { "type": "boolean" },
+        "segment_ordinal": { "type": "integer", "minimum": 1 },
+        "assurance": { "enum": ["verified", "withheld", "not_enabled", "unavailable"] },
+        "semantic_digest": { "$ref": "#/$defs/digest" },
+        "topology_epoch_id": { "$ref": "#/$defs/nullableString" },
+        "transition": { "$ref": "#/$defs/transition" },
+        "occurrence_count": { "type": "integer", "minimum": 0 },
+        "source_binding_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["commit_id", "parent_commit_ids", "blob_id", "source_digest", "recorded_at", "is_merge_commit", "segment_ordinal", "assurance", "semantic_digest", "topology_epoch_id", "transition", "occurrence_count", "source_binding_count", "graph"],
+      "properties": {
+        "commit_id": { "type": "string" },
+        "parent_commit_ids": { "$ref": "#/$defs/stringArray" },
+        "blob_id": { "type": "string" },
+        "source_digest": { "$ref": "#/$defs/digest" },
+        "recorded_at": { "$ref": "#/$defs/nullableString" },
+        "is_merge_commit": { "type": "boolean" },
+        "segment_ordinal": { "type": "integer", "minimum": 1 },
+        "assurance": { "enum": ["verified", "withheld", "not_enabled", "unavailable"] },
+        "semantic_digest": { "$ref": "#/$defs/digest" },
+        "topology_epoch_id": { "$ref": "#/$defs/nullableString" },
+        "transition": { "$ref": "#/$defs/transition" },
+        "occurrence_count": { "type": "integer", "minimum": 0 },
+        "source_binding_count": { "type": "integer", "minimum": 0 },
+        "graph": { "$ref": "#/$defs/snapshotGraph" }
+      },
+      "additionalProperties": false
+    },
+    "workEvent": {
+      "type": "object",
+      "required": ["id", "model", "task_id", "kind", "occurred_at", "planned_value", "active_time", "effort", "reason"],
+      "properties": {
+        "id": { "type": "string" },
+        "model": { "const": 1 },
+        "task_id": { "type": "string" },
+        "kind": { "enum": ["start", "suspend", "resume", "finish"] },
+        "occurred_at": { "$ref": "#/$defs/calendarValue" },
+        "planned_value": { "oneOf": [{ "$ref": "#/$defs/exactValue" }, { "type": "null" }] },
+        "active_time": { "oneOf": [{ "$ref": "#/$defs/exactValue" }, { "type": "null" }] },
+        "effort": { "oneOf": [{ "$ref": "#/$defs/exactValue" }, { "type": "null" }] },
+        "reason": { "$ref": "#/$defs/nullableString" }
+      },
+      "additionalProperties": false
+    },
+    "lineage": {
+      "type": "object",
+      "required": ["project_id", "endpoint_checkpoint_id", "occurrences", "current_occurrence_ids", "retired_occurrence_ids", "frozen_work_events", "canonical_advance_proofs"],
+      "properties": {
+        "project_id": { "type": "string" },
+        "endpoint_checkpoint_id": { "type": "string" },
+        "occurrences": { "type": "array", "items": { "$ref": "#/$defs/occurrence" } },
+        "current_occurrence_ids": { "$ref": "#/$defs/stringArray" },
+        "retired_occurrence_ids": { "$ref": "#/$defs/stringArray" },
+        "frozen_work_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "task_occurrence_id", "first_observed_commit_id", "last_observed_commit_id", "event"],
+            "properties": {
+              "id": { "type": "string" },
+              "task_occurrence_id": { "type": "string" },
+              "first_observed_commit_id": { "type": "string" },
+              "last_observed_commit_id": { "type": "string" },
+              "event": { "$ref": "#/$defs/workEvent" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "canonical_advance_proofs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from_commit_id", "to_commit_id", "from_blob_id", "to_blob_id", "from_source_digest", "to_source_digest", "planner_version", "candidate_semantic_digest", "removed_occurrence_ids", "retained_occurrence_ids", "removed_task_ids", "removed_gate_ids", "removed_milestone_ids", "removed_work_event_ids", "removed_assurance_record_ids", "state_changed_milestone_ids"],
+            "properties": {
+              "from_commit_id": { "type": "string" },
+              "to_commit_id": { "type": "string" },
+              "from_blob_id": { "type": "string" },
+              "to_blob_id": { "type": "string" },
+              "from_source_digest": { "$ref": "#/$defs/digest" },
+              "to_source_digest": { "$ref": "#/$defs/digest" },
+              "planner_version": { "type": "string" },
+              "candidate_semantic_digest": { "$ref": "#/$defs/digest" },
+              "removed_occurrence_ids": { "$ref": "#/$defs/stringArray" },
+              "retained_occurrence_ids": { "$ref": "#/$defs/stringArray" },
+              "removed_task_ids": { "$ref": "#/$defs/stringArray" },
+              "removed_gate_ids": { "$ref": "#/$defs/stringArray" },
+              "removed_milestone_ids": { "$ref": "#/$defs/stringArray" },
+              "removed_work_event_ids": { "$ref": "#/$defs/stringArray" },
+              "removed_assurance_record_ids": { "$ref": "#/$defs/stringArray" },
+              "state_changed_milestone_ids": { "$ref": "#/$defs/stringArray" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeline": {
+      "type": "object",
+      "required": ["entries", "segments"],
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["commit_id", "parent_commit_ids", "blob_id", "source_digest", "recorded_at", "is_merge_commit", "validity", "assurance", "segment_ordinal", "semantic_digest", "topology_epoch_id", "transition", "graph", "diagnostic_codes"],
+            "properties": {
+              "commit_id": { "type": "string" },
+              "parent_commit_ids": { "$ref": "#/$defs/stringArray" },
+              "blob_id": { "$ref": "#/$defs/nullableString" },
+              "source_digest": { "$ref": "#/$defs/nullableDigest" },
+              "recorded_at": { "$ref": "#/$defs/nullableString" },
+              "is_merge_commit": { "type": "boolean" },
+              "validity": { "enum": ["source_missing", "source_invalid", "grammar_unsupported", "syntax_invalid", "semantic_invalid", "semantic_valid"] },
+              "assurance": { "enum": ["verified", "withheld", "not_enabled", "unavailable"] },
+              "segment_ordinal": { "type": ["integer", "null"], "minimum": 1 },
+              "semantic_digest": { "$ref": "#/$defs/nullableDigest" },
+              "topology_epoch_id": { "$ref": "#/$defs/nullableString" },
+              "transition": { "oneOf": [{ "$ref": "#/$defs/transition" }, { "type": "null" }] },
+              "graph": { "oneOf": [{ "$ref": "#/$defs/snapshotGraph" }, { "type": "null" }] },
+              "diagnostic_codes": { "$ref": "#/$defs/stringArray" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["ordinal", "first_commit_id", "last_commit_id", "checkpoint_commit_ids"],
+            "properties": {
+              "ordinal": { "type": "integer", "minimum": 1 },
+              "first_commit_id": { "type": "string" },
+              "last_commit_id": { "type": "string" },
+              "checkpoint_commit_ids": { "$ref": "#/$defs/stringArray" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sourceBinding": {
+      "type": "object",
+      "required": ["repository_id", "repository_relative_path", "commit_id", "blob_id", "source_digest", "range", "declaration_kind", "source_id", "owner_path"],
+      "properties": {
+        "repository_id": { "type": "string" },
+        "repository_relative_path": { "type": "string" },
+        "commit_id": { "type": "string" },
+        "blob_id": { "type": "string" },
+        "source_digest": { "$ref": "#/$defs/digest" },
+        "range": {
+          "type": "object",
+          "required": ["start", "end"],
+          "properties": {
+            "start": { "$ref": "#/$defs/position" },
+            "end": { "$ref": "#/$defs/position" }
+          },
+          "additionalProperties": false
+        },
+        "declaration_kind": { "type": "string" },
+        "source_id": { "type": "string" },
+        "owner_path": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "position": {
+      "type": "object",
+      "required": ["offset", "line", "column"],
+      "properties": {
+        "offset": { "type": "integer", "minimum": 0 },
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object",
+      "required": ["status", "mode", "checkpoint_commit_id", "source_digest", "document_id", "grammar_version", "precision", "duration_unit", "milestones", "edges", "precedence", "resource", "diagnostic_codes"],
+      "properties": {
+        "status": { "enum": ["not_requested", "complete", "unavailable"] },
+        "mode": { "enum": ["none", "precedence", "resource", "both"] },
+        "checkpoint_commit_id": { "$ref": "#/$defs/nullableString" },
+        "source_digest": { "$ref": "#/$defs/nullableDigest" },
+        "document_id": { "$ref": "#/$defs/nullableString" },
+        "grammar_version": { "type": ["integer", "null"] },
+        "precision": { "type": "integer", "minimum": 0 },
+        "duration_unit": { "type": ["string", "null"], "enum": ["day", "hour", "point", null] },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source_id", "occurrence_id", "earliest", "latest", "slack", "critical"],
+            "properties": {
+              "source_id": { "type": "string" },
+              "occurrence_id": { "type": "string" },
+              "earliest": { "$ref": "#/$defs/analysisExactValue" },
+              "latest": { "$ref": "#/$defs/analysisExactValue" },
+              "slack": { "$ref": "#/$defs/analysisExactValue" },
+              "critical": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source_id", "occurrence_id", "kind", "precedence", "resource"],
+            "properties": {
+              "source_id": { "type": "string" },
+              "occurrence_id": { "type": "string" },
+              "kind": { "enum": ["task", "gate"] },
+              "precedence": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": ["earliest_start", "earliest_finish", "latest_start", "latest_finish", "total_float", "free_float", "critical", "driving"],
+                    "properties": {
+                      "earliest_start": { "$ref": "#/$defs/analysisExactValue" },
+                      "earliest_finish": { "$ref": "#/$defs/analysisExactValue" },
+                      "latest_start": { "$ref": "#/$defs/analysisExactValue" },
+                      "latest_finish": { "$ref": "#/$defs/analysisExactValue" },
+                      "total_float": { "$ref": "#/$defs/analysisExactValue" },
+                      "free_float": { "$ref": "#/$defs/analysisExactValue" },
+                      "critical": { "type": "boolean" },
+                      "driving": { "type": "boolean" }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "type": "null" }
+                ]
+              },
+              "resource": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": ["scheduled_start", "scheduled_finish", "resource_delay", "schedule_critical"],
+                    "properties": {
+                      "scheduled_start": { "$ref": "#/$defs/analysisExactValue" },
+                      "scheduled_finish": { "$ref": "#/$defs/analysisExactValue" },
+                      "resource_delay": { "$ref": "#/$defs/analysisExactValue" },
+                      "schedule_critical": { "type": "boolean" }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "type": "null" }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "precedence": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["makespan", "critical_milestone_occurrence_ids", "critical_task_occurrence_ids", "critical_gate_occurrence_ids", "representative_path_occurrence_ids"],
+              "properties": {
+                "makespan": { "$ref": "#/$defs/analysisExactValue" },
+                "critical_milestone_occurrence_ids": { "$ref": "#/$defs/stringArray" },
+                "critical_task_occurrence_ids": { "$ref": "#/$defs/stringArray" },
+                "critical_gate_occurrence_ids": { "$ref": "#/$defs/stringArray" },
+                "representative_path_occurrence_ids": { "$ref": "#/$defs/stringArray" }
+              },
+              "additionalProperties": false
+            },
+            { "type": "null" }
+          ]
+        },
+        "resource": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["algorithm_id", "algorithm_version", "optimal", "makespan", "resource_delay", "schedule_critical_task_occurrence_ids"],
+              "properties": {
+                "algorithm_id": { "const": "parallel-sgs" },
+                "algorithm_version": { "const": 1 },
+                "optimal": { "const": false },
+                "makespan": { "$ref": "#/$defs/analysisExactValue" },
+                "resource_delay": { "$ref": "#/$defs/analysisExactValue" },
+                "schedule_critical_task_occurrence_ids": { "$ref": "#/$defs/stringArray" }
+              },
+              "additionalProperties": false
+            },
+            { "type": "null" }
+          ]
+        },
+        "diagnostic_codes": { "$ref": "#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "cause": {
+      "type": "object",
+      "required": ["cause", "commit_id", "subject", "limit", "actual"],
+      "properties": {
+        "cause": { "enum": ["no_repository", "no_head", "unknown_revision", "ambiguous_revision", "non_commit_revision", "endpoint_path_missing", "lower_path_missing", "lower_not_first_parent_ancestor", "shallow_origin", "unsupported_object_format", "object_read_failed", "repository_race", "source_missing", "source_invalid", "grammar_unsupported", "syntax_invalid", "semantic_invalid", "assurance_withheld", "event_payload_changed", "identity_ambiguous", "ambiguous_edit", "noncanonical_removal", "topology_conflict", "lineage_cycle", "hard_limit", "git_unavailable", "unsupported_ancestry_profile"] },
+        "commit_id": { "$ref": "#/$defs/nullableString" },
+        "subject": { "enum": ["evidence", "snapshot", "assurance", "transition", "lineage", "limit"] },
+        "limit": { "type": ["string", "null"], "enum": ["entityValueEpochs", "transitionRecords", "renderedGraphOccurrences", "historicalSourceBindings", null] },
+        "actual": { "type": ["integer", "null"], "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "document_id", "source", "source_digest", "diagnostics", "diagnostics_truncated", "model", "model_version", "transition_model_version", "status", "request", "evidence", "effective_checkpoint_id", "selected_snapshot_commit_id", "checkpoints", "snapshot", "lineage", "timeline", "analysis", "source_bindings", "causes", "limits"],
+  "properties": {
+    "schema_version": { "const": "Perttool.HistoricalGraphResult.v1" },
+    "cli_contract_version": { "const": 7 },
+    "tool_version": { "type": "string" },
+    "operation": { "const": "dag.history" },
+    "ok": { "type": "boolean" },
+    "document_id": { "$ref": "#/$defs/nullableString" },
+    "source": { "type": "string" },
+    "source_digest": { "$ref": "#/$defs/nullableDigest" },
+    "diagnostics": { "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics" },
+    "diagnostics_truncated": { "type": "boolean" },
+    "model": { "const": "Perttool.HistoricalDagModel.v1" },
+    "model_version": { "const": 1 },
+    "transition_model_version": { "const": 1 },
+    "status": { "enum": ["complete", "incomplete", "unavailable"] },
+    "request": {
+      "type": "object",
+      "required": ["requested_endpoint", "requested_lower_boundary", "ancestry_profile", "view", "snapshot_commit_id", "analysis_mode"],
+      "properties": {
+        "requested_endpoint": { "type": "string" },
+        "requested_lower_boundary": { "$ref": "#/$defs/nullableString" },
+        "ancestry_profile": { "enum": ["first_parent", "three_way"] },
+        "view": { "enum": ["snapshot", "lineage", "timeline"] },
+        "snapshot_commit_id": { "$ref": "#/$defs/nullableString" },
+        "analysis_mode": { "enum": ["none", "precedence", "resource", "both"] }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["status", "ancestry_profile", "object_format", "repository_id", "repository_relative_path", "repository_read_snapshot_id", "requested_endpoint", "resolved_endpoint", "requested_lower_boundary", "resolved_lower_boundary", "oldest_inspected_commit_id", "inspected_commit_ids", "aggregate_raw_snapshot_bytes"],
+      "properties": {
+        "status": { "enum": ["complete", "incomplete", "unavailable"] },
+        "ancestry_profile": { "const": "first_parent" },
+        "object_format": { "type": ["string", "null"], "enum": ["sha1", "sha256", null] },
+        "repository_id": { "$ref": "#/$defs/nullableString" },
+        "repository_relative_path": { "$ref": "#/$defs/nullableString" },
+        "repository_read_snapshot_id": { "$ref": "#/$defs/nullableString" },
+        "requested_endpoint": { "type": "string" },
+        "resolved_endpoint": { "$ref": "#/$defs/nullableString" },
+        "requested_lower_boundary": { "$ref": "#/$defs/nullableString" },
+        "resolved_lower_boundary": { "$ref": "#/$defs/nullableString" },
+        "oldest_inspected_commit_id": { "$ref": "#/$defs/nullableString" },
+        "inspected_commit_ids": { "$ref": "#/$defs/stringArray" },
+        "aggregate_raw_snapshot_bytes": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "effective_checkpoint_id": { "$ref": "#/$defs/nullableString" },
+    "selected_snapshot_commit_id": { "type": "string" },
+    "checkpoints": { "type": "array", "items": { "$ref": "#/$defs/checkpointSummary" } },
+    "snapshot": { "oneOf": [{ "$ref": "#/$defs/snapshot" }, { "type": "null" }] },
+    "lineage": { "oneOf": [{ "$ref": "#/$defs/lineage" }, { "type": "null" }] },
+    "timeline": { "oneOf": [{ "$ref": "#/$defs/timeline" }, { "type": "null" }] },
+    "analysis": { "$ref": "#/$defs/analysis" },
+    "source_bindings": { "type": "array", "items": { "$ref": "#/$defs/sourceBinding" } },
+    "causes": { "type": "array", "items": { "$ref": "#/$defs/cause" } },
+    "limits": {
+      "type": "object",
+      "required": ["inspected_commits", "raw_bytes_per_snapshot", "aggregate_raw_snapshot_bytes", "entity_value_epochs", "transition_records", "rendered_graph_occurrences", "historical_source_bindings"],
+      "properties": {
+        "inspected_commits": { "type": "integer", "minimum": 0 },
+        "raw_bytes_per_snapshot": { "type": "integer", "minimum": 0 },
+        "aggregate_raw_snapshot_bytes": { "type": "integer", "minimum": 0 },
+        "entity_value_epochs": { "type": "integer", "minimum": 0 },
+        "transition_records": { "type": "integer", "minimum": 0 },
+        "rendered_graph_occurrences": { "type": "integer", "minimum": 0 },
+        "historical_source_bindings": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

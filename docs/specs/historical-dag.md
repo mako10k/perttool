@@ -48,11 +48,14 @@ The applicable order is:
 6. the current-document [Editor Protocol](editor-protocol.md); and
 7. process guidance under `docs/process/`.
 
-This contract fixes a target model and implementation boundary. It does not
-activate a command, package export, schema artifact, LSP request, VSIX feature,
-or release. Current `Perttool.ProjectHistoryResult.v1`,
-`Perttool.GraphViewResult.v1`, all 44 Contract 7 commands, all 20 root schemas,
-Grammar 6 source, and every read/write authority remain unchanged.
+The initial contract acceptance fixed only the model and implementation
+boundary. The later `HISTORICAL_CLI` task now activates one additive read-only
+command and one root schema while retaining the same Grammar 6 and CLI
+Contract 7 versions. Current `Perttool.ProjectHistoryResult.v1`,
+`Perttool.GraphViewResult.v1`, the 122-name root/Node facades, the 45-name Core
+facade, LSP, VSIX, MCP, and every read/write authority remain unchanged. The
+active CLI registry has 45 commands and the active catalog has 21 root
+schemas.
 
 Historical reconstruction observes committed objects only. It never stages,
 commits, checks out, resets, merges, rebases, updates a ref or the index,
@@ -67,7 +70,7 @@ The first implementation targets these closed identities:
 historical DAG model       Perttool.HistoricalDagModel.v1
 transition model           Perttool.HistoricalTransitionModel.v1
 ancestry profile           first_parent
-future result              Perttool.HistoricalGraphResult.v1
+active CLI result          Perttool.HistoricalGraphResult.v1
 diagnostics                PTHDG-101 through PTHDG-106
 ```
 
@@ -75,15 +78,16 @@ The Domain owns semantic snapshot normalization, occurrence identity,
 transition classification, frozen evidence, graph epochs, and lineage proof.
 The Application layer owns request validation, result status, analysis
 composition, and fail-closed cause projection. Inward-owned Git ports own only
-captured immutable evidence. A Node Host owns repository discovery, object
-reads, linked-worktree resolution, process bounds, and race capture. Future
-CLI, LSP, and VSIX adapters own only their protocol envelopes and
-presentation.
+captured immutable evidence. A private Node CLI composition owns repository
+discovery, object reads, linked-worktree resolution, process bounds, and race
+capture without changing the public `NodeHostPorts.v1` shape. The CLI owns
+only its option and text/JSON envelopes. Future LSP and VSIX adapters own only
+their protocol envelopes and presentation.
 
-`Perttool.HistoricalGraphResult.v1` is reserved for the later public-interface
-task. It must be a new closed result rather than an extension of either current
-history or GraphView results. This contract does not add that identity to the
-active schema catalog.
+`Perttool.HistoricalGraphResult.v1` is the active closed CLI result. It is a
+new result rather than an extension of either current history or GraphView
+results and is the twenty-first root in the active schema catalog. It adds no
+new package-root runtime function or Core/Node facade value.
 
 ## 4. Closed request semantics
 
@@ -94,9 +98,9 @@ interface HistoricalGraphRequestV1 {
   readonly targetPath: string;
   readonly requestedEndpoint?: string;
   readonly lowerBoundary?: string;
-  readonly ancestryProfile: "first_parent";
+  readonly ancestryProfile: "first_parent" | "three_way";
   readonly view: "snapshot" | "lineage" | "timeline";
-  readonly snapshotRevision?: string;
+  readonly snapshotCommitId?: string;
   readonly analysisMode: "none" | "precedence" | "resource" | "both";
 }
 ```
@@ -111,13 +115,35 @@ commit and immediately freezes that full object ID. A spelling that resolves
 to zero objects, multiple objects, or a non-commit is unavailable. Commit time
 does not select or reorder revisions.
 
-`snapshotRevision` is optional and valid only for `view="snapshot"`. It must
-resolve to an inspected commit between the inclusive boundaries. Without it,
-the selected snapshot is the resolved endpoint. An invalid endpoint is never
+`snapshotCommitId` is optional and valid only for `view="snapshot"`. The
+active CLI spelling `--snapshot` accepts only a lower-case full SHA-1 or
+SHA-256 commit ID that is already in the inspected inclusive sequence; this
+avoids a second mutable-ref resolution after evidence capture. Without it, the
+selected snapshot is the resolved endpoint. An invalid endpoint is never
 silently replaced by an older valid graph. The result may report the newest
 earlier semantic checkpoint as `effective_checkpoint_id`, but a consumer must
-make that exact commit an explicit `snapshotRevision` in a new request before
+make that exact commit an explicit `snapshotCommitId` in a new request before
 displaying it as the selected graph.
+
+### 4.1 Active CLI mapping
+
+The additive read-only command is:
+
+```text
+perttool dag history <file>
+  [--rev <endpoint>] [--base <inclusive-lower-boundary>]
+  [--history first-parent|three-way]
+  [--view snapshot|lineage|timeline]
+  [--snapshot <full-lower-case-commit-id>]
+  [--analysis none|precedence|resource|both]
+```
+
+The defaults are `HEAD`, omitted lower boundary, `first-parent`, `lineage`,
+and `none`. The file must be an on-disk path; stdin is rejected. `--rev` and
+`--base` retain the opaque Git revision semantics in Section 5. `three-way` is
+an accepted request spelling that returns `PTHDG-106` before Git inspection.
+The shared diagnostic limit, warning policy, text/JSON format, and color
+options retain Contract 7 meanings.
 
 ## 5. Endpoint, lower boundary, and traversal
 
@@ -541,10 +567,10 @@ timeline, or selected-snapshot array. The production limits are exactly those
 in Section 13; smaller overrides are not public request fields and exist only
 for deterministic dependency tests.
 
-This internal result is the model-1 Domain handoff, not the reserved public
-`Perttool.HistoricalGraphResult.v1`. It is absent from the package root,
-Core/Node facades, Node Host port object, command registry, schema catalog,
-LSP, VSIX, and MCP surfaces.
+This internal result remains the model-1 Domain handoff, not the public
+`Perttool.HistoricalGraphResult.v1` envelope. The active private Application
+service consumes it, but it remains absent from the package root, Core/Node
+facades, public Node Host port object, LSP, VSIX, and MCP surfaces.
 
 ## 11. Views and analysis
 
@@ -595,7 +621,7 @@ have null analysis fields.
 
 ## 12. Status, causes, and diagnostics
 
-The future result status is one of:
+The active result status is one of:
 
 - `complete`: the requested view is completely proved for the explicit
   first-parent bounds;
@@ -648,8 +674,12 @@ Diagnostics own these categories:
 | `PTHDG-105` | Repository, ref, blob, or source binding became stale or raced |
 | `PTHDG-106` | The requested ancestry profile is unsupported; model 1 supports only `first_parent` |
 
-No code is active until the later interface task registers the closed result,
-schema, help, and Guide projection.
+The active command registers this diagnostic family in its closed result,
+schema, command Help, and `historical-dag` Guide topic. Incomplete results use
+warnings and remain successful unless `--warnings-as-errors` is selected;
+unavailable results use errors and exit 1. Process or filesystem failures that
+prevent a result envelope use the established input exit 3, and usage errors
+use exit 2.
 
 ## 13. Hard limits and caching
 
@@ -762,10 +792,11 @@ The dependency order is:
 2. the shared internal transition projection;
 3. bounded immutable first-parent Git evidence;
 4. the pure checkpoint, lineage, and timeline fold;
-5. one separate read-only Node/CLI result and isolated acceptance;
+5. one separate read-only Node/CLI result and isolated acceptance, now active;
 6. a distinct historical editor contract and VSIX presentation; and
 7. only after `SCM-001`, a separately versioned optional three-way profile.
 
-Runtime implementation, current-plan task completion, `dag advance`, public
-version selection, release, publication, remote writes, Issue mutation, and
-any Git/editor mutation require their own authority and acceptance.
+Historical editor implementation, current-plan task outcome acceptance,
+`dag advance`, public version selection, release, publication, remote writes,
+Issue mutation, and any Git/editor mutation require their own authority and
+acceptance.

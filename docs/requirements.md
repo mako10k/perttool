@@ -3023,7 +3023,11 @@ Before implementation, separate the specifications in the following order.
     - [x] Implement snapshot, proved lineage, and timeline reconstruction. The
       accepted internal Core trace is
       [`historical-linear-core-acceptance.md`](process/historical-linear-core-acceptance.md).
-    - [ ] Expose a separate read-only CLI result and isolated package gate.
+    - [x] Expose the separate read-only `dag history` command,
+      `Perttool.HistoricalGraphResult.v1`, the twenty-first root schema,
+      command Help and Guide topic, and an isolated installed-package gate.
+      The accepted trace is
+      [`historical-cli-acceptance.md`](process/historical-cli-acceptance.md).
     - [ ] Accept a distinct historical editor protocol and local VSIX
       presentation.
     - [ ] Complete cross-surface no-write acceptance. Three-way ancestry still

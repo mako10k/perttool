@@ -74,7 +74,11 @@ for required in \
   package/dist/application/target-assurance-inspection.d.ts \
   package/dist/application/contract7-assurance.js \
   package/dist/application/contract7-mermaid.js \
+  package/dist/application/target-historical-graph.js \
+  package/dist/application/target-historical-graph.d.ts \
   package/dist/help/guide.js \
+  package/dist/history/historical-graph.js \
+  package/dist/history/historical-graph.d.ts \
   package/dist/core/index.js \
   package/dist/core/index.d.ts \
   package/dist/session/document-session.js \
@@ -83,9 +87,12 @@ for required in \
   package/dist/index.d.ts \
   package/dist/node/index.js \
   package/dist/node/index.d.ts \
+  package/dist/node/historical-host.js \
+  package/dist/node/historical-host.d.ts \
   package/schemas/Perttool.Common.v1.schema.json \
   package/schemas/Perttool.AdvanceResult.v2.schema.json \
   package/schemas/Perttool.CheckResult.v4.schema.json \
+  package/schemas/Perttool.HistoricalGraphResult.v1.schema.json \
   package/schemas/Perttool.PlanAssuranceResult.v1.schema.json \
   package/schemas/Perttool.SchemaResult.v1.schema.json \
   package/schemas/Perttool.OverrideDecision.v1.schema.json
@@ -141,8 +148,32 @@ fi
           "errors",
           "samples",
           "plan-assurance",
+          "historical-dag",
         ]) ||
         /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
+      ) process.exit(1);
+    });
+  '
+"$installed_cli" dag history "$repo_root/plans/historical-dag.pert" \
+  --rev HEAD --base HEAD --history first-parent --view lineage --analysis none \
+  --format=json |
+  node -e '
+    let input = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (chunk) => { input += chunk; });
+    process.stdin.on("end", () => {
+      const result = JSON.parse(input);
+      if (
+        result.schema_version !== "Perttool.HistoricalGraphResult.v1" ||
+        result.cli_contract_version !== 7 ||
+        result.operation !== "dag.history" ||
+        result.ok !== true ||
+        result.status !== "complete" ||
+        result.request?.ancestry_profile !== "first_parent" ||
+        result.request?.view !== "lineage" ||
+        result.lineage?.occurrences?.length < 2 ||
+        result.source_bindings?.length < 1 ||
+        result.diagnostics?.length !== 0
       ) process.exit(1);
     });
   '
@@ -354,7 +385,7 @@ if (
   index.schema_version !== "Perttool.GuideResult.v1" ||
   index.cli_contract_version !== 7 ||
   index.operation !== "guide" ||
-  index.topics?.length !== 10 ||
+  index.topics?.length !== 11 ||
   !JSON.stringify(index).includes("Grammar versions 1 through 6") ||
   !text.startsWith("DSL syntax\n") ||
   missing.diagnostics?.[0]?.help_topic !== null ||
@@ -464,7 +495,7 @@ if (
   contract5Help.stderr !== "" ||
   contract5HelpJson.schema_version !== "Perttool.CommandHelpResult.v1" ||
   contract5HelpJson.cli_contract_version !== 7 ||
-  contract5HelpJson.commands?.length !== 44 ||
+  contract5HelpJson.commands?.length !== 45 ||
   !serializedHelp.includes("Perttool.SchemaResult.v1") ||
   !serializedHelp.includes("project migrate-unit") ||
   !serializedHelp.includes('"not-before"') ||
@@ -544,7 +575,7 @@ if (
   schemaCatalog.status !== 0 ||
   schemaCatalog.stderr !== "" ||
   schemaCatalogJson.schema_version !== "Perttool.SchemaResult.v1" ||
-  schemaCatalogJson.schemas?.length !== 20 ||
+  schemaCatalogJson.schemas?.length !== 21 ||
   schemaCatalogJson.schema !== null ||
   selectedSchema.status !== 0 ||
   selectedSchema.stderr !== "" ||
@@ -572,7 +603,7 @@ if (
   detailSchema.stderr !== "" ||
   detailSchemaJson.schema?.properties?.result_decision === undefined ||
   JSON.stringify(apiOutline) !== JSON.stringify(outlineSchemaJson) ||
-  api.getJsonSchemaCatalog().length !== 20 ||
+  api.getJsonSchemaCatalog().length !== 21 ||
   api.getJsonSchema("Perttool.NextResult.v6")?.$id !==
     selectedSchemaJson.schema.$id ||
   api.getJsonSchema("Perttool.AdvanceResult.v2")?.$id !==

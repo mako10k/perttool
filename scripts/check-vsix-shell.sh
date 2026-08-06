@@ -58,10 +58,13 @@ if [[ "${PERTTOOL_SKIP_VSIX_HOST:-0}" != "1" ]]; then
       printf 'xvfb-run is required for the supported VS Code host gate\n' >&2
       exit 1
     fi
-    xvfb-run -a "$node_binary" "$repository_root/scripts/check-vsix-host.mjs" \
-      "$vsix_path"
+    env -u VSCODE_IPC_HOOK_CLI -u ELECTRON_RUN_AS_NODE \
+      -u VSCODE_ESM_ENTRYPOINT xvfb-run -a "$node_binary" \
+      "$repository_root/scripts/check-vsix-host.mjs" "$vsix_path"
   else
-    "$node_binary" "$repository_root/scripts/check-vsix-host.mjs" "$vsix_path"
+    env -u VSCODE_IPC_HOOK_CLI -u ELECTRON_RUN_AS_NODE \
+      -u VSCODE_ESM_ENTRYPOINT "$node_binary" \
+      "$repository_root/scripts/check-vsix-host.mjs" "$vsix_path"
   fi
 fi
 printf 'isolated VSIX shell, DAG, and supported-host gate passed\n'

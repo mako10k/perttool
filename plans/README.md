@@ -28,18 +28,20 @@ Plans are separated by level of detail.
   acceptance; `ADAPTER_ARCHITECTURE_CONTRACT`,
   `CORE_DEPENDENCY_CLEANUP`, `SHARED_LIBRARY_BOUNDARY`,
   `EDITOR_PROTOCOL_CONTRACT`, `DOCUMENT_SESSION_CORE`, `LSP_READ_CORE`,
-  `LSP_ACCEPTANCE`, `VSIX_SHELL`, and `NODE_PORT_BOUNDARY` are complete and
-  retained before advance;
-  the private LSP
-  workspace implements stable protocol 3.17.5 over local stdio, is excluded
-  from the public package, and passes its isolated dual-tarball Node.js 22
-  gate; the private VSIX shell adds TextMate presentation, exact language
-  client 9.0.1, untrusted/virtual workspace support, version-bound Help, and an
-  offline bundled server without the DAG Webview; the accepted six-port Node
-  Host composition leaves Core at 45 names and root/Node identical at 122
-  names; 7 tasks and 36p remain at 20p/29p precedence/resource makespans with
-  9p resource delay, and complete NextResult v6 recommends and makes startable
-  only `MCP_READ_CONTRACT`
+  `LSP_ACCEPTANCE`, `VSIX_SHELL`, `VSIX_DAG_VIEW`, `NODE_PORT_BOUNDARY`,
+  `CLI_FACADE_PARITY`, all three MCP tasks, and final integration acceptance
+  are complete and retained before advance; all sixteen tasks and 91p are
+  complete with zero makespans and no recommendation
+- [historical-dag.pert](historical-dag.pert): selected `HIST-DAG-001`
+  first-parent historical reconstruction roadmap covering the normative
+  contract, shared transition model, bounded immutable Git evidence, pure
+  checkpoint/lineage/timeline reconstruction, separate read-only CLI result,
+  editor contract, VSIX presentation, and final acceptance; the first four
+  implementation inputs are accepted, and the additive `dag history` command,
+  twenty-first root schema, and isolated package path are implemented;
+  `HISTORICAL_CLI` and its separately owner-confirmed exact basis-bound outcome
+  are complete, and only `HISTORICAL_EDITOR_CONTRACT` is ready, recommended,
+  and startable
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining
@@ -86,7 +88,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All thirty-four plans pass the self-use gate and are used as inputs to `document
+All thirty-five plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -100,7 +102,8 @@ that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.5.4.pert`, `release-0.5.5.pert`, `release-0.6.0.pert`,
 `release-0.7.0.pert`, `release-0.7.1.pert`, `governance.pert`,
 `help-guide-consistency.pert`, `adapter-platform.pert`,
-`project-actuals.pert`, `plan-assurance.pert`, `advance-history-safety.pert`, and the
+`project-actuals.pert`, `plan-assurance.pert`, `historical-dag.pert`,
+`advance-history-safety.pert`, and the
 scheduling-and-units plans are explicitly
 requested independent post-beta plans and are not rolled up into the completed
 MVP macro.
