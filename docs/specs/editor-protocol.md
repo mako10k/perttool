@@ -182,6 +182,10 @@ identifier selection range from the same snapshot. Completion items contain
 `label`, `kind`, `detail`, and documentation only. They contain no `textEdit`,
 `additionalTextEdits`, or command; accepting the client's default label
 insertion is an explicit user editor action, not a perttool mutation preview.
+Definition resolution is declaration-kind aware. A `plan_seal` header carries
+the referenced task ID, so it never shadows the same-ID task declaration; a
+task identifier resolves to the task range even when the seal appears earlier
+in a preserved noncanonical declaration order.
 
 The only model-1 code actions have kind `quickfix`, contain no `edit`, and use
 the client-owned `perttool.openHelp` command with a closed argument containing

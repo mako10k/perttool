@@ -387,9 +387,12 @@ function validateLifecycleSource(
     };
   }
   const declaration = validated.document.declarations.find(
-    ({ id }) => id === request.taskId,
+    ({ kind, id }) => kind === "task" && id === request.taskId,
   );
-  if (declaration === undefined || declaration.kind !== "task") {
+  if (declaration === undefined) {
+    const sameId = validated.document.declarations.find(
+      ({ kind, id }) => kind !== "plan_seal" && id === request.taskId,
+    );
     return {
       task: null,
       fromState: null,
@@ -398,8 +401,8 @@ function validateLifecycleSource(
       diagnostics: Object.freeze([
         invalidSourceDiagnostic(
           request.taskId,
-          declaration === undefined ? "missing_task" : "wrong_entity_kind",
-          declaration,
+          sameId === undefined ? "missing_task" : "wrong_entity_kind",
+          sameId,
         ),
       ]),
     };

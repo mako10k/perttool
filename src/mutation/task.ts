@@ -4,6 +4,7 @@ import type {
   DocumentNode,
   FieldNode,
   RequirementValue,
+  TargetDeclarationKind,
 } from "../model/syntax.js";
 import { fieldNamed } from "../model/syntax.js";
 import {
@@ -30,12 +31,12 @@ import type {
   TaskRequirementInput,
 } from "./types.js";
 import {
-  appendDeclarationEdit,
   contentEndOffset,
   contentTextEndOffset,
   deleteDeclarationEdit,
   deleteFieldEdit,
   fieldInsertionOffset,
+  insertDeclarationsBeforeKinds,
   insertionText,
   leadingCommentStart,
   lineIndexAt,
@@ -335,6 +336,7 @@ function serializeTask(
 
 function addTaskPlan(
   text: string,
+  document: DocumentNode,
   mutation: AddTaskMutation | Extract<TargetTaskMutation, { kind: "task.add" }>,
   profile: TaskMutationProfile,
 ): TaskMutationPlan {
@@ -360,10 +362,17 @@ function addTaskPlan(
   const lineEnding = majorLineEnding(text);
   return {
     edits: [
-      appendDeclarationEdit(
+      insertDeclarationsBeforeKinds(
         text,
-        serializeTask(mutation, lineEnding, profile),
-        lineEnding,
+        document,
+        [serializeTask(mutation, lineEnding, profile)],
+        new Set([
+          "task_relation",
+          "plan_seal",
+          "task_outcome",
+          "assurance_receipt",
+          "work_event",
+        ]),
       ),
     ],
   };
@@ -800,7 +809,12 @@ export function planTaskMutationEdits(
       diagnostic: mutationDiagnostic("PTMUT-301", requestError),
     };
   }
-  const entity = document.declarations.find(({ id }) => id === mutation.id);
+  const declarations = document.declarations as readonly DeclarationNode<
+    TargetDeclarationKind
+  >[];
+  const entity = declarations.find(
+    ({ kind, id }) => kind !== "plan_seal" && id === mutation.id,
+  );
   if (mutation.kind === "task.add") {
     if (entity !== undefined) {
       return {
@@ -812,9 +826,13 @@ export function planTaskMutationEdits(
         ),
       };
     }
-    return addTaskPlan(text, mutation, profile);
+    return addTaskPlan(text, document, mutation, profile);
   }
-  if (entity === undefined) {
+  const task = declarations.find(
+    (candidate): candidate is DeclarationNode<"task"> =>
+      candidate.kind === "task" && candidate.id === mutation.id,
+  );
+  if (task === undefined && entity === undefined) {
     return {
       edits: [],
       diagnostic: mutationDiagnostic(
@@ -823,7 +841,7 @@ export function planTaskMutationEdits(
       ),
     };
   }
-  if (entity.kind !== "task") {
+  if (task === undefined) {
     return {
       edits: [],
       diagnostic: mutationDiagnostic(
@@ -835,17 +853,17 @@ export function planTaskMutationEdits(
   }
   const lines = splitPhysicalLines(text);
   if (mutation.kind === "task.remove") {
-    return { edits: [deleteDeclarationEdit(entity, lines)] };
+    return { edits: [deleteDeclarationEdit(task, lines)] };
   }
   if (mutation.kind === "task.finish") {
-    return planSetTask(text, entity, {
+    return planSetTask(text, task, {
       kind: "task.set",
       id: mutation.id,
       set: { status: "done" },
-      ...(fieldNamed(entity, "blocked_reason") === undefined
+      ...(fieldNamed(task, "blocked_reason") === undefined
         ? {}
         : { clear: ["blocked_reason"] }),
     }, profile);
   }
-  return planSetTask(text, entity, mutation, profile);
+  return planSetTask(text, task, mutation, profile);
 }

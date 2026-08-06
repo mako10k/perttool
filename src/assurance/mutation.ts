@@ -20,10 +20,9 @@ import type {
 import { fieldNamed } from "../model/syntax.js";
 import { EntityEditor } from "../mutation/entity-editor.js";
 import {
-  appendDeclarationEdit,
   contentTextEndOffset,
   deleteDeclarationEdit,
-  leadingCommentStart,
+  insertDeclarationsBeforeKinds,
   majorLineEnding,
   serializeTextField,
   splitPhysicalLines,
@@ -358,32 +357,6 @@ function validMode(value: unknown): value is PlanDependencyMode {
   return value === "both" || value === "execution_only" || value === "planning_only";
 }
 
-function insertDeclarations(
-  text: string,
-  document: DocumentNode<TargetDeclarationKind>,
-  serialized: readonly string[],
-  beforeKinds: ReadonlySet<TargetDeclarationKind>,
-): TextEdit {
-  const lineEnding = majorLineEnding(text);
-  const later = document.declarations.find((declaration) =>
-    beforeKinds.has(declaration.kind)
-  );
-  if (later === undefined) {
-    return appendDeclarationEdit(
-      text,
-      serialized.join(`${lineEnding}${lineEnding}`),
-      lineEnding,
-    );
-  }
-  const lines = splitPhysicalLines(text);
-  const offset = leadingCommentStart(lines, later.headerSpan.start.offset, 0);
-  return {
-    startOffset: offset,
-    endOffset: offset,
-    replacement: `${serialized.join(`${lineEnding}${lineEnding}`)}${lineEnding}${lineEnding}`,
-  };
-}
-
 function serializeAcceptedInputs(
   inputs: readonly AcceptedPlanningInputV1[],
   lineEnding: string,
@@ -544,7 +517,7 @@ function planRelation(
         "PTASSURE-302", "error", `entity ID ${mutation.id} is already in use`, mutation.id,
       ) };
     }
-    return { edits: [insertDeclarations(
+    return { edits: [insertDeclarationsBeforeKinds(
       text,
       document,
       [serializeRelation(mutation, majorLineEnding(text))],
@@ -725,7 +698,7 @@ function planInitialSeal(
       "PTASSURE-303", "error", "initial seal requires every missing task basis to be available",
     ) };
   }
-  const sealEdit = insertDeclarations(
+  const sealEdit = insertDeclarationsBeforeKinds(
     text,
     validated.document,
     seals,
@@ -935,7 +908,7 @@ function planOutcome(
         "PTASSURE-302", "error", `task ${mutation.taskId} already has an outcome`, mutation.taskId,
       ) };
     }
-    return { edits: [insertDeclarations(
+    return { edits: [insertDeclarationsBeforeKinds(
       text,
       validated.document,
       [serializeOutcome(
@@ -1090,7 +1063,7 @@ function planBatchEdits(
         const serialized = planned.edits[0]!.replacement
           .replace(/^(?:\r?\n)+/, "")
           .replace(/(?:\r?\n)+$/, "");
-        edits.push(insertDeclarations(
+        edits.push(insertDeclarationsBeforeKinds(
           text,
           validated.document,
           [serialized],

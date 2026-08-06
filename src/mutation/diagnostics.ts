@@ -1,5 +1,8 @@
 import type { Diagnostic } from "../model/diagnostics.js";
-import type { DeclarationNode } from "../model/syntax.js";
+import type {
+  DeclarationNode,
+  TargetDeclarationKind,
+} from "../model/syntax.js";
 import type { TextEdit } from "./text-edits.js";
 
 export interface MutationEditPlan {
@@ -16,7 +19,7 @@ export type MutationDiagnosticCode =
 export function mutationDiagnostic(
   code: MutationDiagnosticCode,
   message: string,
-  entity?: DeclarationNode,
+  entity?: DeclarationNode<TargetDeclarationKind>,
 ): Diagnostic {
   return {
     code,

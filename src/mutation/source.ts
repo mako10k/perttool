@@ -1,5 +1,6 @@
 import type {
   DeclarationNode,
+  DocumentNode,
   FieldNode,
   RequirementValue,
   TargetDeclarationKind,
@@ -214,5 +215,31 @@ export function appendDeclarationEdit(
     startOffset: text.length,
     endOffset: text.length,
     replacement: `${prefix}${serialized}${lineEnding}`,
+  };
+}
+
+export function insertDeclarationsBeforeKinds<Kind extends TargetDeclarationKind>(
+  text: string,
+  document: DocumentNode<Kind>,
+  serialized: readonly string[],
+  beforeKinds: ReadonlySet<TargetDeclarationKind>,
+): TextEdit {
+  const lineEnding = majorLineEnding(text);
+  const later = document.declarations.find((declaration) =>
+    beforeKinds.has(declaration.kind)
+  );
+  if (later === undefined) {
+    return appendDeclarationEdit(
+      text,
+      serialized.join(`${lineEnding}${lineEnding}`),
+      lineEnding,
+    );
+  }
+  const lines = splitPhysicalLines(text);
+  const offset = leadingCommentStart(lines, later.headerSpan.start.offset, 0);
+  return {
+    startOffset: offset,
+    endOffset: offset,
+    replacement: `${serialized.join(`${lineEnding}${lineEnding}`)}${lineEnding}${lineEnding}`,
   };
 }

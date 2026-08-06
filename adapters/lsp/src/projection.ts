@@ -297,9 +297,11 @@ export function definition(
   if (offset === null) return null;
   const id = wordAt(snapshot.text, offset);
   if (id === null) return null;
-  const declaration = snapshot.parse.document.declarations.find(
+  const matches = snapshot.parse.document.declarations.filter(
     (candidate) => candidate.id === id,
   );
+  const declaration = matches.find(({ kind }) => kind !== "plan_seal") ??
+    matches[0];
   return declaration === undefined
     ? null
     : {

@@ -240,6 +240,19 @@ Canonical top-level insertion order after tasks and gates is:
 4. `assurance_receipt` by record ID; and
 5. `work_event` by existing event ownership rules.
 
+A direct task or gate addition MUST insert before the first declaration in
+that list. In particular, it MUST NOT append a new task after an existing
+`plan_seal`, outcome, receipt, or work event merely because those records are
+already present.
+
+The identifier in a `plan_seal` header is the referenced task ID, not an
+entity declaration that can shadow the task. Any task-specific mutation,
+lifecycle operation, or editor identity lookup MUST resolve the pair
+`(kind=task, id)` independently of declaration order. A valid source with a
+same-ID task and seal remains valid and has two distinct source ranges. An
+implementation may use a generic ID lookup only where the operation is
+defined over the global non-seal entity namespace.
+
 Formatting preserves existing declaration order, explicit `both` records,
 comments, blank lines, BOM, and line endings. Removal owns the declaration and
 its leading comment block under the existing rules. Advance additionally owns
