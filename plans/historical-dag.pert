@@ -1,0 +1,251 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project HISTORICAL_DAG:
+  version 6
+  title "Historical DAG reconstruction"
+  description "Implement HIST-DAG-001 as an independent read-only workstream. Accept a normative historical-DAG contract, share one whole-document semantic transition model with SCM-001, extend immutable Git evidence for bounded first-parent inspection, reconstruct exact checkpoints and proven canonical-advance lineage, expose a separate CLI result, define a distinct editor protocol, add trusted local-repository history presentation to the VSIX, and complete isolated acceptance. Preserve current project history, GraphViewResult v1, Grammar 6, CLI Contract 7, plan assurance, governance, history safety, and every no-write boundary. Three-way ancestry, semantic patch and merge implementation, editor or MCP mutation, release selection, publication, remote writes, Issue mutation, and plan advance remain separate decisions."
+  as_of 2026-08-06
+  duration_unit point
+  velocity 29p/2d
+  finish HISTORICAL_DAG_ACCEPTED
+  goal_owner user
+  dag_owner user
+  plan_assurance_model 1
+  plan_assurance_hash_model 1
+
+milestone HISTORICAL_DAG_SELECTED:
+  title "HIST-DAG-001 selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two implementation slices may run concurrently only when their owned surfaces do not overlap."
+  capacity 2
+
+resource REVIEWERS:
+  title "Contract and acceptance review capacity"
+  description "Serialize normative contracts, semantic identity review, and final acceptance."
+  capacity 1
+
+resource SEMANTIC_MODEL:
+  title "Whole-document semantic model ownership"
+  description "Own entity identity, exact-value normalization, transition classes, and SCM-compatible delta semantics."
+  capacity 1
+
+resource HISTORY_SURFACE:
+  title "Read-only history ownership"
+  description "Own revision bounds, immutable Git evidence, checkpoint continuity, actual freezing, and canonical-advance proof."
+  capacity 1
+
+resource NODE_SURFACE:
+  title "Node Git host ownership"
+  description "Own repository discovery, Git object reads, hard limits, linked worktrees, and read-snapshot races."
+  capacity 1
+
+resource CLI_SURFACE:
+  title "CLI and result ownership"
+  description "Own command discovery, request validation, text and JSON results, schemas, diagnostics, and compatibility."
+  capacity 1
+
+resource EDITOR_PROTOCOL:
+  title "Historical editor protocol ownership"
+  description "Own immutable blob bindings, view and analysis axes, trust, cancellation, limits, and source navigation."
+  capacity 1
+
+resource LSP_SURFACE:
+  title "Language server ownership"
+  description "Own the separate historical request mapping and stale or unavailable fail-closed behavior."
+  capacity 1
+
+resource VSIX_SURFACE:
+  title "VS Code history presentation ownership"
+  description "Own repository selection, checkpoint, lineage and timeline presentation, and immutable source navigation."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and isolation ownership"
+  description "Own public and private inventories, isolated installation, compatibility, and no-write acceptance."
+  capacity 1
+
+milestone HISTORICAL_DAG_CONTRACT_ACCEPTED:
+  title "Historical DAG contract accepted"
+
+milestone HISTORICAL_TRANSITION_MODEL_READY:
+  title "Shared historical transition model ready"
+
+milestone HISTORICAL_GIT_PROBE_READY:
+  title "Bounded historical Git evidence ready"
+
+milestone HISTORICAL_LINEAR_INPUT:
+  title "Linear reconstruction inputs ready"
+
+milestone HISTORICAL_LINEAR_CORE_READY:
+  title "First-parent historical Core ready"
+
+milestone HISTORICAL_CLI_READY:
+  title "Historical DAG CLI ready"
+
+milestone HISTORICAL_EDITOR_CONTRACT_READY:
+  title "Historical editor contract accepted"
+
+milestone HISTORICAL_VSIX_READY:
+  title "Historical DAG VSIX view ready"
+
+milestone HISTORICAL_DAG_ACCEPTED:
+  title "Historical DAG reconstruction accepted"
+
+task HISTORICAL_DAG_CONTRACT HISTORICAL_DAG_SELECTED -> HISTORICAL_DAG_CONTRACT_ACCEPTED:
+  title "Accept the historical DAG reconstruction contract"
+  description "Promote the selected design into one normative contract and machine-readable acceptance matrix. Fix endpoint and lower-boundary semantics, first-parent scope, source validity classes, continuity gaps, actual-evidence freezing, canonical-advance proof, entity epochs, snapshot, lineage and timeline views, hard limits, result ownership, diagnostics, source bindings, compatibility, and explicit three-way deferral without changing runtime behavior."
+  duration 6p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SEMANTIC_MODEL 1
+    HISTORY_SURFACE 1
+    CLI_SURFACE 1
+    EDITOR_PROTOCOL 1
+
+task HISTORICAL_TRANSITION_MODEL HISTORICAL_DAG_CONTRACT_ACCEPTED -> HISTORICAL_TRANSITION_MODEL_READY:
+  title "Implement the shared semantic transition model"
+  description "Add one pure closed whole-document semantic projection and chronological transition classifier shared with future SCM-001 work. Preserve exact Rational meanings, source-fidelity separation, lifecycle and assurance axes, occurrence and topology epochs, deterministic digests and ordering, and fail closed on identity reuse or contradictory frozen meaning without publishing a semantic patch or merge surface."
+  duration 7p
+  priority 95
+  requires:
+    DEVELOPERS 1
+    SEMANTIC_MODEL 1
+
+task HISTORICAL_GIT_PROBE HISTORICAL_DAG_CONTRACT_ACCEPTED -> HISTORICAL_GIT_PROBE_READY:
+  title "Extend bounded immutable Git history evidence"
+  description "Reuse the accepted read-only Git port and add exact endpoint and optional lower-boundary proof, commit and blob identities, hard limits, path and object-format bindings, first-parent scope, linked-worktree and shallow behavior, and ref, source and limit races required by historical graphs. Keep current project history byte-compatible and perform no branch union, rename search, checkout, index or ref mutation."
+  duration 5p
+  priority 92
+  requires:
+    DEVELOPERS 1
+    HISTORY_SURFACE 1
+    NODE_SURFACE 1
+
+gate HISTORICAL_TRANSITION_INPUT HISTORICAL_TRANSITION_MODEL_READY -> HISTORICAL_LINEAR_INPUT:
+  reason "Linear reconstruction requires the accepted semantic transition model"
+
+gate HISTORICAL_GIT_INPUT HISTORICAL_GIT_PROBE_READY -> HISTORICAL_LINEAR_INPUT:
+  reason "Linear reconstruction requires bounded immutable Git evidence"
+
+task HISTORICAL_LINEAR_CORE HISTORICAL_LINEAR_INPUT -> HISTORICAL_LINEAR_CORE_READY:
+  title "Implement first-parent checkpoint and lineage reconstruction"
+  description "Fold valid snapshots in chronological first-parent order, split invalid continuity segments, reuse exact actual-event conflicts, prove canonical advance by exact semantic candidate equality, retain retired topology only when proved, and project snapshot, cumulative lineage and timeline results. Never infer transitions across gaps or run current CPM over mixed historical epochs."
+  duration 8p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SEMANTIC_MODEL 1
+    HISTORY_SURFACE 1
+
+task HISTORICAL_CLI HISTORICAL_LINEAR_CORE_READY -> HISTORICAL_CLI_READY:
+  title "Expose the read-only historical DAG CLI result"
+  description "Add one separate read-only command, request, closed result, schema, help and Guide projection over the Node Git host and shared historical Core. Preserve current project history and dag render results, distinguish ancestry profile and view completeness, bind every historical source range to immutable blob identity, enforce hard limits, and retain Contract 7 compatibility until an explicitly accepted interface version decision."
+  duration 5p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    HISTORY_SURFACE 1
+    NODE_SURFACE 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task HISTORICAL_EDITOR_CONTRACT HISTORICAL_CLI_READY -> HISTORICAL_EDITOR_CONTRACT_READY:
+  title "Accept the historical editor and navigation contract"
+  description "Define a new versioned historical request and result without changing GraphViewResult v1. Fix trusted local-repository selection, exact commit, blob, digest and range navigation, checkpoint, lineage and timeline view binding, orthogonal analysis modes, cancellation, staleness, virtual and untrusted unavailability, hard limits, accessibility, CSP, and no-write behavior."
+  duration 5p
+  priority 75
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+
+task HISTORICAL_VSIX HISTORICAL_EDITOR_CONTRACT_READY -> HISTORICAL_VSIX_READY:
+  title "Implement historical DAG views in LSP and VSIX"
+  description "Implement the accepted separate LSP mapping and read-only VS Code presentation for snapshot, proven lineage and timeline views. Retain current four analysis modes as an independent selector, bind navigation to immutable virtual blob documents, clear stale results, fail closed outside trusted local repositories, preserve current GraphView and workspace bytes, and add no editor mutation or public release operation."
+  duration 8p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    HISTORY_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+
+task HISTORICAL_DAG_ACCEPTANCE HISTORICAL_VSIX_READY -> HISTORICAL_DAG_ACCEPTED:
+  title "Accept historical DAG reconstruction across CLI and VSIX"
+  description "Trace every normative case through pure Core, SHA-1 and SHA-256 repositories, linked worktrees, CLI, result schema, help, LSP, VSIX, immutable navigation, temporary link and isolated packages. Prove one-node current plans can yield a multi-node proven lineage after canonical advance, invalid or ambiguous streams fail closed, first-parent scope is explicit, current public identities remain compatible, and no Git, source, editor-profile, remote or publication state changes."
+  duration 5p
+  priority 60
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SEMANTIC_MODEL 1
+    HISTORY_SURFACE 1
+    NODE_SURFACE 1
+    CLI_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    PACKAGE_SURFACE 1
+
+plan_seal HISTORICAL_CLI:
+  accepted_contract sha256:f5efa7b6562e463e7b256a793f2e4d3b6453c07ae3137237e007569e19d406d7
+  accepted_basis sha256:a526dada04d1c296dab1fe20c710b9850f626d86356b66eb7c32576dafe3f88e
+  accepted_inputs:
+    HISTORICAL_LINEAR_CORE both sha256:dd9be23404e1de0ea3d496f0a013258b1f563cb272e33edd2be0d88bd6bdb4e4
+  reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
+
+plan_seal HISTORICAL_DAG_ACCEPTANCE:
+  accepted_contract sha256:1503379474eff03aaad40df9fbeb0d6e70e705c3d199dd35b5b89f431e102452
+  accepted_basis sha256:cce0e3c757a51cf09215980303509d1aad9e5bbb90d11acf48790e962a894626
+  accepted_inputs:
+    HISTORICAL_VSIX both sha256:7edcde41483bb18ff3923bc6f2b9de8148e482195f266b42a1e3a0f51c03657d
+  reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
+
+plan_seal HISTORICAL_DAG_CONTRACT:
+  accepted_contract sha256:2d9d28f84455a89cc8b48fc0fbfe264f5d9b93f7e74eb09a5540fad984a1d38b
+  accepted_basis sha256:cf8ba6ded9b8a556f064d61a85d4a527f2bcca71a8f98dbd7f8878206de60e6b
+  reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
+
+plan_seal HISTORICAL_EDITOR_CONTRACT:
+  accepted_contract sha256:0d1aeef4a57d0ea32d96301403aff290c412abbe7f335860a28b134687fa1bbe
+  accepted_basis sha256:37373a2e9cccc95d76c5d4e0174fcbcf9026e4c284233db5c0adbd58d26949e1
+  accepted_inputs:
+    HISTORICAL_CLI both sha256:a526dada04d1c296dab1fe20c710b9850f626d86356b66eb7c32576dafe3f88e
+  reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
+
+plan_seal HISTORICAL_GIT_PROBE:
+  accepted_contract sha256:5e5ceb78b8ead7853b19204134d3e427087c944c37e0eb19e56fb369b8250acf
+  accepted_basis sha256:74e303429cde361891ccac977b6c1c98b492128acef630b500751cf19929a0de
+  accepted_inputs:
+    HISTORICAL_DAG_CONTRACT both sha256:cf8ba6ded9b8a556f064d61a85d4a527f2bcca71a8f98dbd7f8878206de60e6b
+  reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
+
+plan_seal HISTORICAL_LINEAR_CORE:
+  accepted_contract sha256:57cc6eef3457143a9d851b3732a7eb5611cb98c10d69d30c7c419977551512ef
+  accepted_basis sha256:dd9be23404e1de0ea3d496f0a013258b1f563cb272e33edd2be0d88bd6bdb4e4
+  accepted_inputs:
+    HISTORICAL_GIT_PROBE both sha256:74e303429cde361891ccac977b6c1c98b492128acef630b500751cf19929a0de
+    HISTORICAL_TRANSITION_MODEL both sha256:7c782b2f9c36f44e6d8eda4c5b13b64bded3569a6c5ea497ab9854b640225b8b
+  reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
+
+plan_seal HISTORICAL_TRANSITION_MODEL:
+  accepted_contract sha256:7e252fa8f40a57673591ec9cfe9b7639c49d201b2c5055b5286d1d5327d45d06
+  accepted_basis sha256:7c782b2f9c36f44e6d8eda4c5b13b64bded3569a6c5ea497ab9854b640225b8b
+  accepted_inputs:
+    HISTORICAL_DAG_CONTRACT both sha256:cf8ba6ded9b8a556f064d61a85d4a527f2bcca71a8f98dbd7f8878206de60e6b
+  reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
+
+plan_seal HISTORICAL_VSIX:
+  accepted_contract sha256:b1ec3d6853c099af766775007086638092981dbc02bb672de940c036f6aacb64
+  accepted_basis sha256:7edcde41483bb18ff3923bc6f2b9de8148e482195f266b42a1e3a0f51c03657d
+  accepted_inputs:
+    HISTORICAL_EDITOR_CONTRACT both sha256:37373a2e9cccc95d76c5d4e0174fcbcf9026e4c284233db5c0adbd58d26949e1
+  reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
