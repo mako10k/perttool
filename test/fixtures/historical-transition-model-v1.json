@@ -1,0 +1,82 @@
+{
+  "schema_version": "Perttool.HistoricalTransitionModelCases.v1",
+  "model": "Perttool.HistoricalTransitionModel.v1",
+  "model_version": 1,
+  "classes": [
+    "initial",
+    "representation_only",
+    "evidence_extension",
+    "lifecycle_projection",
+    "future_plan_edit",
+    "canonical_advance",
+    "ambiguous_edit",
+    "conflict"
+  ],
+  "cases": [
+    {
+      "id": "HTM-001",
+      "boundary": "whole_document_projection",
+      "expected": "closed_exact_semantics"
+    },
+    {
+      "id": "HTM-002",
+      "boundary": "source_fidelity_separation",
+      "expected": "representation_only"
+    },
+    {
+      "id": "HTM-003",
+      "boundary": "lifecycle_and_evidence_axes",
+      "expected": "lifecycle_projection"
+    },
+    {
+      "id": "HTM-004",
+      "boundary": "stable_event_payload",
+      "expected": "event_payload_changed"
+    },
+    {
+      "id": "HTM-005",
+      "boundary": "future_plan_edit",
+      "expected": "future_plan_edit"
+    },
+    {
+      "id": "HTM-006",
+      "boundary": "frozen_meaning",
+      "expected": "conflict"
+    },
+    {
+      "id": "HTM-007",
+      "boundary": "canonical_advance_exact_candidate",
+      "expected": "canonical_advance"
+    },
+    {
+      "id": "HTM-008",
+      "boundary": "noncanonical_removal",
+      "expected": "ambiguous_edit"
+    },
+    {
+      "id": "HTM-009",
+      "boundary": "occurrence_and_value_epochs",
+      "expected": "deterministic"
+    },
+    {
+      "id": "HTM-010",
+      "boundary": "ambiguous_identity_reuse",
+      "expected": "identity_ambiguous"
+    },
+    {
+      "id": "HTM-011",
+      "boundary": "topology_epoch",
+      "expected": "deterministic"
+    },
+    {
+      "id": "HTM-012",
+      "boundary": "private_no_write_surface",
+      "expected": "unchanged_public_contract"
+    }
+  ],
+  "vectors": {
+    "planned_semantic_digest": "sha256:d6d63d5a5d97145a69b44ad77e3e8e72d565f8341bdb7cb7bedd84fa485179be",
+    "task_occurrence_id": "HDGE-99dba68d5f85502053efaf36db48c4c0ce15a66256050112f6386651c89862cd",
+    "base_topology_epoch_id": "HDGT-36c26990ba7c6df24ad134bb056498080b06bd83836f57b80f61f353dc094fe5"
+  }
+}

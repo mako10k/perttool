@@ -111,6 +111,7 @@ task HISTORICAL_TRANSITION_MODEL HISTORICAL_DAG_CONTRACT_ACCEPTED -> HISTORICAL_
   title "Implement the shared semantic transition model"
   description "Add one pure closed whole-document semantic projection and chronological transition classifier shared with future SCM-001 work. Preserve exact Rational meanings, source-fidelity separation, lifecycle and assurance axes, occurrence and topology epochs, deterministic digests and ordering, and fail closed on identity reuse or contradictory frozen meaning without publishing a semantic patch or merge surface."
   duration 7p
+  status done
   priority 95
   requires:
     DEVELOPERS 1
@@ -257,3 +258,10 @@ task_outcome OUTCOME_HISTORICAL_DAG_CONTRACT:
   against_basis sha256:cf8ba6ded9b8a556f064d61a85d4a527f2bcca71a8f98dbd7f8878206de60e6b
   status conformant
   reason "Accepted normative contract and twenty dependency-ordered cases"
+
+task_outcome OUTCOME_HISTORICAL_TRANSITION_MODEL:
+  model 1
+  task HISTORICAL_TRANSITION_MODEL
+  against_basis sha256:7c782b2f9c36f44e6d8eda4c5b13b64bded3569a6c5ea497ab9854b640225b8b
+  status conformant
+  reason "Accepted pure transition model and twelve closed cases"

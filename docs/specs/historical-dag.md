@@ -269,6 +269,101 @@ semantics. `future_plan_edit` cannot change already frozen meaning.
 extend cumulative lineage. `conflict` records contradictory identity,
 evidence, assurance, or topology and selects no winning value.
 
+### 8.1 Closed internal projection record
+
+Transition model 1 uses one immutable internal projection wrapper:
+
+```ts
+interface HistoricalTransitionProjectionV1 {
+  readonly model_version: 1;
+  readonly semantic_digest: `sha256:${string}`;
+  readonly semantic: HistoricalTransitionSemanticModelV1;
+  readonly axes: {
+    readonly planning: `sha256:${string}`;
+    readonly lifecycle: `sha256:${string}`;
+    readonly actual_evidence: `sha256:${string}`;
+    readonly governance: `sha256:${string}`;
+    readonly assurance: `sha256:${string}`;
+    readonly topology: `sha256:${string}`;
+  };
+  readonly source_fidelity: HistoricalTransitionSourceFidelityV1;
+}
+```
+
+The closed semantic record begins with
+`model="Perttool.HistoricalTransitionModel.v1"` and `model_version=1`.
+It contains, in this fixed order, project, resources, milestones, tasks,
+gates, work events, task relations, plan seals, task outcomes, and assurance
+receipts. The project record contains effective Grammar version, all ordinary
+project meaning, declared and effective governance, and declared assurance
+model values. A task separates its plan and lifecycle records. Assurance-owned
+records remain separate rather than being folded into a task display record.
+
+Normalization follows these exact rules:
+
+- Decimal and Fraction quantities reduce to numerator and denominator strings
+  plus `day`, `hour`, `point`, or `person_hour`; exact zero is `0/1`;
+- calendar values retain calendar fields, exact fractional second, and numeric
+  offset, but exclude `sourceText`;
+- omitted ordinary semantic defaults project as their effective values,
+  including milestone/task planned state, priority zero, empty requirements
+  and tags, and critical epsilon zero in the project unit;
+- governance retains both declared omission and its effective owner/delegate
+  meaning because declaration affects authority review;
+- resources, milestones, tasks, gates, work events, task relations, outcomes,
+  and receipts sort by decoded Unicode-scalar ID; plan seals sort by task ID;
+- requirements sort by resource ID, tags and principal sets sort by decoded
+  Unicode scalar, accepted inputs sort by predecessor task ID, and receipt
+  consumers sort by consumer task ID; and
+- declaration order, field order, comments, blank lines, indentation, BOM,
+  line endings, final-newline state, string escape spelling, and equivalent
+  exact-number spelling are excluded.
+
+The semantic digest is the existing Grammar-6 canonical JSON SHA-256 over the
+complete semantic record. Axis digests use the same canonical encoder and are
+comparison indexes only; they are not plan-assurance hashes, approvals,
+signatures, or authority. Planning excludes milestone and task lifecycle,
+actual evidence contains work events, governance contains declared and
+effective governance, assurance contains model values and every
+assurance-owned record, and topology contains only milestone IDs plus task and
+gate endpoint identity.
+
+The source-fidelity lane contains the raw UTF-8 source SHA-256, UTF-16 document
+length, physical declaration and field ordinals, raw field tokens, and cloned
+UTF-16 declaration, ID, field, value, and nested-field ranges. It is excluded
+from every semantic digest. The raw digest preserves the identity of comments
+and other trivia even though the internal ownership index does not copy their
+text into the semantic record.
+
+### 8.2 Deterministic adjacent classification
+
+The pure classifier applies this fail-closed order to two adjacent valid
+projections in one continuity segment:
+
+1. no preceding checkpoint is `initial`;
+2. equal complete semantic digests are `representation_only` regardless of
+   source-fidelity difference;
+3. changed project identity, a changed payload under one work-event ID, or a
+   changed immutable outcome or receipt is `conflict`;
+4. one complete compatible canonical-advance candidate bound to the preceding
+   digest and semantically equal to the current projection is
+   `canonical_advance` only when it used no force, owner assertion, repository
+   proof, or persistence assumption;
+5. any entity, event, relation, seal, outcome, or receipt removal without that
+   exact candidate is `ambiguous_edit` with `noncanonical_removal`;
+6. changing the plan of a task already frozen by a work event, outcome, or
+   producer receipt is `conflict`;
+7. otherwise, additive evidence without lifecycle change is
+   `evidence_extension`, the same additive evidence with a lifecycle change is
+   `lifecycle_projection`, and a remaining unfrozen semantic change is
+   `future_plan_edit`.
+
+Merge provenance is an independent boolean in every case. The later linear
+Core must supply the compatible canonical planner candidate and separately
+verify its exact removed/retained summary. Supplying a projection or digest to
+this classifier never grants advance, governance, assurance, history-safety,
+or persistence authority.
+
 ## 9. Occurrences, epochs, and frozen evidence
 
 ### 9.1 Occurrence identity
@@ -298,6 +393,25 @@ SHA-256 of its canonical transition-model JSON. Formatting-only changes do not
 create either epoch. Disappearance and later reuse of one source ID creates a
 new occurrence only when every intervening transition is known; otherwise it
 is `identity_ambiguous` and cumulative lineage is unavailable.
+
+The internal chronological projection accepts only ordered valid checkpoints
+and an explicit `connected_to_previous` bit. A disconnected input clears every
+active occurrence. Reappearance of any previously seen project/kind/source-ID
+identity after that boundary returns null occurrence and value-epoch identity
+with `identity_ambiguous`; it does not assign the current commit as a guessed
+introduction. The same rule applies when an untrustworthy transition occurred
+while the source ID was absent. A continuously present entity retains its
+occurrence; a changed complete entity record increments its value ordinal;
+representation-only input increments neither.
+
+The exact topology-epoch digest input is canonical JSON with
+`model`, `model_version`, and `topology` keys. `topology` is the ordered array
+of task records followed by gate records; each record contains entity kind,
+source ID, edge occurrence ID, from-milestone occurrence ID, and to-milestone
+occurrence ID. If any required occurrence is ambiguous, the topology epoch is
+null rather than a digest over a partial graph. Fixed `HDGE-*` and `HDGT-*`
+vectors are versioned in
+[`historical-transition-model-v1.json`](../../test/fixtures/historical-transition-model-v1.json).
 
 ### 9.2 Actual evidence
 

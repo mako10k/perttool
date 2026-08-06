@@ -3393,6 +3393,21 @@ enumeration remains outside portable Core. Application composes one request,
 status, typed causes, and single-checkpoint analysis. Adapters must not parse
 Git output, infer semantic transitions, union epochs, or calculate analysis.
 
+`src/history/historical-transition.ts` now implements that first pure boundary.
+It consumes only an identity-checked validated document, canonicalizes all
+Grammar 1 through 6 project, topology, exact-value, lifecycle, actual,
+governance, and assurance meaning, and returns a complete semantic digest plus
+separate planning, lifecycle, actual-evidence, governance, assurance, and
+topology digests. Raw-source identity, declaration and field order, lexical
+tokens, and UTF-16 ownership ranges remain in a separate source-fidelity lane.
+The same module classifies adjacent valid checkpoints, requires exact pure
+planner-candidate equality for `canonical_advance`, protects frozen events and
+task meaning, and derives deterministic `HDGE-*` occurrence, consecutive value,
+and `HDGT-*` topology epochs. It has no Node, Git, filesystem, CLI, Application,
+schema, adapter, or persistence dependency and is not re-exported by the public
+root, Core, or Node facade. Its accepted trace is
+[Historical Transition Model Acceptance](process/historical-transition-model-acceptance.md).
+
 The initial path is one repository-relative file between an inclusive
 first-parent lower boundary and inclusive endpoint. Invalid inputs split
 continuity. Explicit actuals freeze under the existing actuals rules. Removed

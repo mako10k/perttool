@@ -548,8 +548,9 @@ operation.
 
 Priority: Selected through the independent `HIST-DAG-001` workstream
 
-Status: First-parent normative contract selected (2026-08-06); runtime not
-implemented
+Status: First-parent normative contract and internal transition model
+implemented (2026-08-06); Git evidence, reconstruction, and interfaces remain
+unimplemented
 
 The current DAG renderer and VSIX GraphView correctly project one complete
 current source, which can contain only one residual milestone after canonical
@@ -592,9 +593,13 @@ The contract reserves `Perttool.HistoricalDagModel.v1`,
 `Perttool.HistoricalGraphResult.v1`, and `PTHDG-101` through `PTHDG-106`
 without activating them. Its twenty dependency-ordered machine cases are in
 [`historical-dag-contract-v1.json`](../test/fixtures/historical-dag-contract-v1.json).
-The next implementation task is the shared internal transition model, but it
-may start only from a fresh complete plan recommendation after contract task
-completion. Current `project history`, `dag render`,
+The shared internal transition model and its twelve closed cases are now
+implemented and accepted in
+[`historical-transition-model-acceptance.md`](process/historical-transition-model-acceptance.md).
+Its task status is complete, while the exact conformant assurance outcome
+is now registered against its accepted basis. Complete assurance has no
+unavailable task or required action, and the independent bounded Git probe is
+the sole startable recommendation. Current `project history`, `dag render`,
 `Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, MCP capabilities,
 and all read/write authority boundaries remain unchanged. Runtime work, Git or
 editor mutation, release, remote publication, Issue mutation, and plan advance
@@ -1041,6 +1046,38 @@ The accepted DAG and installed-host slices later produced the fourteen-file
 private implementation. The selected presentation icon is now the fifteenth
 file in the private VSIX without activating its separately selected public
 identity.
+
+### VSIX-ASSURE-001: Show plan-seal state with semantic highlighting
+
+Priority: Requested; scheduling not selected
+
+Status: Design backlog (2026-08-06); not part of the active editor protocol or
+private VSIX
+
+Make plan-assurance seal state visible in `.pert` source through semantic
+highlighting with at least three user-facing presentation categories:
+
+- unsealed;
+- sealed and consistent with the computed basis; and
+- broken seal.
+
+These categories are a presentation request, not a replacement for the active
+assurance states (`unsealed`, `conditional`, `verified`, `review_required`, and
+the fail-closed unavailable cases). A normative editor contract must decide the
+exact mapping, distinguish seal integrity from outcome and start authority,
+bind highlights to document URI, generation, version, digest, task and
+`plan_seal` source ranges, and define invalid, stale, partial, unknown-version,
+and inherited-mismatch behavior. Hover or another accessible projection must
+retain the exact machine state rather than relying on color alone.
+
+The semantic projection belongs in shared assurance/Core services and the LSP;
+the VSIX must not reimplement seal evaluation. The current editor protocol
+explicitly advertises no semantic-token capability, so activation requires a
+separately accepted protocol/version and compatibility decision. It must clear
+stale decoration, preserve TextMate fallback, perform no `.pert` write, grant
+no reseal or owner-confirmation authority, and remain independent of the four
+GraphView analysis modes and the historical-DAG delivery. Release selection,
+local installation, Marketplace publication, and Open VSX remain separate.
 
 ### VSIX-REL-001: Release the read-only VS Code extension
 

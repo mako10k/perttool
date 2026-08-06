@@ -93,7 +93,10 @@ test("historical DAG contract fixes the selected first-parent boundary", async (
     /\[Historical DAG Reconstruction Contract\]\(historical-dag\.md\)/u,
   );
   assert.match(design, /### Post-MVP Slice 6: Historical DAG reconstruction/u);
-  assert.match(backlog, /Status: First-parent normative contract selected/u);
+  assert.match(
+    backlog,
+    /Status: First-parent normative contract and internal transition model\nimplemented/u,
+  );
   assert.match(proposal, /Document status: Superseded design input 0\.2/u);
   assert.match(proposal, /Normative successor: \[Historical DAG Reconstruction Contract\]/u);
   assert.match(
@@ -194,10 +197,11 @@ test("contract selection leaves the active runtime surface unchanged", () => {
   );
 });
 
-test("accepted contract plan opens two ready implementation inputs", async () => {
-  const [source, acceptance, selfUse] = await Promise.all([
+test("completed transition model leaves the bounded Git probe ready", async () => {
+  const [source, acceptance, transitionAcceptance, selfUse] = await Promise.all([
     repositoryText("plans/historical-dag.pert"),
     repositoryText("docs/process/historical-dag-contract-acceptance.md"),
+    repositoryText("docs/process/historical-transition-model-acceptance.md"),
     repositoryText("scripts/check-self-use.sh"),
   ]);
   const checked = checkDocument(source);
@@ -215,20 +219,27 @@ test("accepted contract plan opens two ready implementation inputs", async () =>
     source,
     /task HISTORICAL_DAG_CONTRACT[\s\S]*?status done/u,
   );
-  assert.deepEqual(next.groups.ready, [
-    "HISTORICAL_TRANSITION_MODEL",
+  assert.match(
+    source,
+    /task HISTORICAL_TRANSITION_MODEL[\s\S]*?status done/u,
+  );
+  assert.match(
+    source,
+    /task_outcome OUTCOME_HISTORICAL_TRANSITION_MODEL:[\s\S]*?task HISTORICAL_TRANSITION_MODEL[\s\S]*?status conformant/u,
+  );
+  assert.deepEqual(next.groups.ready, ["HISTORICAL_GIT_PROBE"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, [
     "HISTORICAL_GIT_PROBE",
   ]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_TRANSITION_MODEL",
-  ]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_TRANSITION_MODEL",
+    "HISTORICAL_GIT_PROBE",
   ]);
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /There are no open normative contract findings/u);
   assert.deepEqual(tableIds(acceptance, "HDGR"), expectedIds("HDGR", 14));
+  assert.match(transitionAcceptance, /Document status: Accepted 1\.0/u);
+  assert.match(transitionAcceptance, /all 35 self-use plans/u);
   assert.match(selfUse, /plans\/historical-dag\.pert/u);
   assert.match(selfUse, /35 plans; check, analyze, next/u);
 });

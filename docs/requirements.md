@@ -3012,7 +3012,11 @@ Before implementation, separate the specifications in the following order.
       [Historical DAG Reconstruction Contract](specs/historical-dag.md).
     - [x] Fix twenty dependency-ordered machine-readable contract cases in
       [`historical-dag-contract-v1.json`](../test/fixtures/historical-dag-contract-v1.json).
-    - [ ] Implement the shared internal whole-document transition projection.
+    - [x] Implement the shared internal whole-document transition projection,
+      chronological classification, and deterministic occurrence/value/topology
+      epoch identities without activating a public patch, merge, or history
+      result surface. The accepted trace is
+      [`historical-transition-model-acceptance.md`](process/historical-transition-model-acceptance.md).
     - [ ] Extend bounded immutable first-parent Git evidence without changing
       current project-history behavior.
     - [ ] Implement snapshot, proved lineage, and timeline reconstruction.

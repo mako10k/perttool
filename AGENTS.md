@@ -400,16 +400,35 @@ dependency-ordered machine cases are in
 `test/fixtures/historical-dag-contract-v1.json`, and its acceptance record is
 `docs/process/historical-dag-contract-acceptance.md`.
 `HISTORICAL_DAG_CONTRACT` is complete and retained in its exact pre-advance
-state with a conformant basis-bound outcome. Seven tasks and 38p remain;
-precedence and `parallel-sgs` version 1 heuristic resource makespans are both
-38p with zero resource delay. Fresh complete NextResult v6 makes
-`HISTORICAL_TRANSITION_MODEL` the only recommended and startable task;
-`HISTORICAL_GIT_PROBE` is ready and allowed with 2p total float but is not in
-the normal recommended set. Current `project history`, `dag render`,
+state with a conformant basis-bound outcome. The pure internal
+`src/history/historical-transition.ts` implementation now projects closed
+Grammar 1 through 6 semantics apart from source fidelity, preserves exact
+Rational and calendar meaning, separates planning, lifecycle, evidence,
+governance, assurance, and topology axes, classifies adjacent checkpoints,
+requires exact unforced canonical-advance candidate equality, and derives
+deterministic `HDGE-*` occurrence, consecutive value, and `HDGT-*` topology
+epochs while failing closed on stable-event conflicts, frozen-plan changes,
+noncanonical removal, project discontinuity, and ambiguous ID reuse. Its twelve
+cases and fixed digest vectors are in
+`test/fixtures/historical-transition-model-v1.json`; its technical acceptance
+record is `docs/process/historical-transition-model-acceptance.md`.
+`HISTORICAL_TRANSITION_MODEL` is complete and retained before advance. Its
+exact basis-bound conformant outcome is registered with the separately
+confirmed `user` assertion for the `plan_assurance` scope. Complete assurance
+has no unavailable task or required action. The current complete NextResult v6
+recommends and makes startable only `HISTORICAL_GIT_PROBE`.
+Current `project history`, `dag render`,
 `Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, 44 commands, and 20
 schemas remain unchanged. Runtime work, three-way ancestry, semantic patch or
 merge, MCP history, editor mutation, release selection, publication, remote
 writes, Issue mutation, and plan advance remain separate.
+
+Backlog `VSIX-ASSURE-001` records the requested semantic presentation of
+unsealed, sealed-and-consistent, and broken-seal states. The current editor
+protocol explicitly does not advertise semantic tokens, so the request remains
+a separate protocol and presentation design item. It does not change the
+active TextMate grammar, GraphView modes, assurance meanings, editor bytes,
+reseal authority, VSIX release selection, or publication state.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
@@ -733,7 +752,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/formatter/`: the active Grammar 1/2/3/4/5/6 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4/5 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 6 package surface.
-- `src/history/`: active read-only Git probe, validated-snapshot-injected pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with internal Grammar 6 history and assurance-record inventory extensions.
+- `src/history/`: active read-only Git probe, validated-snapshot-injected pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; the internal model-1 whole-document historical transition projection, source-fidelity separation, adjacent classification, and deterministic occurrence/value/topology epochs; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with internal Grammar 6 history and assurance-record inventory extensions.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5/6 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, localized version-upgrade inputs, and internal retained Grammar 6 migration support.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.
