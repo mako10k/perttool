@@ -1,0 +1,38 @@
+{
+  "schema_version": "Perttool.HistoricalDagAcceptanceCases.v1",
+  "historical_dag_model_version": 1,
+  "runtime_matrix": [22, 24],
+  "published_baseline": {
+    "version": "0.7.1",
+    "commands": 44,
+    "root_schemas": 20,
+    "root_runtime_exports": 121
+  },
+  "accepted_source_boundary": {
+    "grammar_version": 6,
+    "cli_contract_version": 7,
+    "commands": 45,
+    "root_schemas": 21,
+    "root_runtime_exports": 122,
+    "core_runtime_exports": 45,
+    "root_production_dependencies": 0
+  },
+  "cases": [
+    {"id":"HDA-001","depends_on":[],"boundary":"accepted_contract_and_adapter_prerequisites"},
+    {"id":"HDA-002","depends_on":["HDA-001"],"boundary":"closed_transition_model_and_exact_values"},
+    {"id":"HDA-003","depends_on":["HDA-001"],"boundary":"sha1_sha256_linked_worktree_git_evidence"},
+    {"id":"HDA-004","depends_on":["HDA-002","HDA-003"],"boundary":"valid_invalid_and_ambiguous_continuity"},
+    {"id":"HDA-005","depends_on":["HDA-004"],"boundary":"canonical_advance_multi_occurrence_lineage"},
+    {"id":"HDA-006","depends_on":["HDA-005"],"boundary":"first_parent_endpoint_and_inclusive_lower_bound"},
+    {"id":"HDA-007","depends_on":["HDA-005","HDA-006"],"boundary":"snapshot_lineage_timeline_and_single_checkpoint_analysis"},
+    {"id":"HDA-008","depends_on":["HDA-007"],"boundary":"cli_result_schema_help_and_guide"},
+    {"id":"HDA-009","depends_on":["HDA-007"],"boundary":"trusted_historical_editor_negotiation"},
+    {"id":"HDA-010","depends_on":["HDA-009"],"boundary":"vsix_views_and_orthogonal_analysis_modes"},
+    {"id":"HDA-011","depends_on":["HDA-009","HDA-010"],"boundary":"immutable_historical_source_navigation"},
+    {"id":"HDA-012","depends_on":["HDA-008","HDA-011"],"boundary":"kind_qualified_task_and_seal_identity"},
+    {"id":"HDA-013","depends_on":["HDA-008","HDA-012"],"boundary":"additive_public_source_surface_and_private_adapter_isolation"},
+    {"id":"HDA-014","depends_on":["HDA-011","HDA-013"],"boundary":"temporary_link_and_isolated_package_workflows"},
+    {"id":"HDA-015","depends_on":["HDA-004","HDA-014"],"boundary":"complete_repository_and_runtime_matrix_gate"},
+    {"id":"HDA-016","depends_on":["HDA-012","HDA-015"],"boundary":"source_git_editor_remote_and_publication_no_write_closure"}
+  ]
+}
