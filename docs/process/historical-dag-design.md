@@ -1,9 +1,10 @@
 # Historical DAG Reconstruction and Git-Ancestry Design Proposal
 
-- Document status: Backlog design proposal 0.1; non-normative and not selected
+- Document status: Superseded design input 0.2; non-normative
 - Recorded: 2026-08-06
 - Baseline HEAD: `2fa8b53622f564d63a5c03621aa06b2e33455adc`
 - Backlog: [`HIST-DAG-001`](../backlog.md#hist-dag-001-reconstruct-and-visualize-historical-dags)
+- Normative successor: [Historical DAG Reconstruction Contract](../specs/historical-dag.md)
 - Related current contracts: [Project Actuals and Git History](../specs/project-actuals.md),
   [Graph Semantics](../specs/graph-semantics.md),
   [Analysis](../specs/analysis.md),
@@ -11,7 +12,8 @@
   [Conditional Plan Assurance](../specs/plan-assurance.md)
 - Related future proposal: [Semantic Diff, Patch, and Three-Way Merge](semantic-diff-merge-design.md)
 - Active source boundary: Grammar 6 and CLI Contract 7
-- Proposed implementation: none
+- Selected workstream: [`plans/historical-dag.pert`](../../plans/historical-dag.pert)
+- Runtime implementation: none at contract selection
 - External side effects authorized by this proposal: none
 
 ## 1. Purpose
@@ -22,7 +24,7 @@ pre-advance snapshot has been committed. A current-document DAG can correctly
 contain one milestone even though Git contains the complete progression that
 led to that frontier.
 
-This proposal defines a read-only historical DAG model that can reconstruct
+This proposal supplied the design input for a read-only historical DAG model that can reconstruct
 that progression without treating one selected Git blob as the complete
 history. It separates:
 
@@ -35,11 +37,12 @@ history. It separates:
 - a current snapshot, a proven cumulative lineage DAG, and a timeline of graph
   epochs.
 
-The first implementation slice should support a deterministic first-parent
+The accepted normative contract selects a deterministic first-parent
 fold. A later three-way profile may reconcile both merge parents only through
 the shared semantic source-control model proposed by `SCM-001`. This document
-does not activate either slice, change the current history result, extend the
-current editor request, or select a release.
+does not itself activate that slice, change the current history result, extend
+the current editor request, or select a release. Where this proposal differs
+from the normative successor, the successor controls.
 
 ## 2. Confirmed current boundary
 
@@ -591,7 +594,11 @@ The implementation and acceptance harness must prove that repository refs,
 index, worktree, source files, configuration, and external state remain
 unchanged.
 
-## 14. Acceptance cases for a later contract
+## 14. Design cases supplied to the normative contract
+
+The accepted contract retains all twenty IDs but resolves `HDG-015` through
+`HDG-017` as fail-closed three-way deferral cases. Their earlier behavior ideas
+below remain historical design input and are not active requirements.
 
 | ID | Required case |
 | --- | --- |
@@ -616,9 +623,10 @@ unchanged.
 | `HDG-019` | Historical navigation binds commit/blob/digest/range and never applies that range to mismatched current bytes. |
 | `HDG-020` | SHA-1/SHA-256, linked worktrees, shallow history, rename, ref/source races, hard limits, and no-write proof retain typed outcomes. |
 
-## 15. Staged delivery boundary
+## 15. Selected staged delivery boundary
 
-A later workstream should retain this dependency order:
+The selected [`historical-dag.pert`](../../plans/historical-dag.pert)
+workstream retains this dependency order:
 
 1. accept a normative historical-DAG contract and machine-readable cases;
 2. factor or version the shared whole-document semantic transition model;
@@ -631,24 +639,20 @@ A later workstream should retain this dependency order:
 The first-parent fold and current-document VSIX stabilization do not need to
 wait for Git merge-driver installation or write-capable SCM integration.
 
-## 16. Decisions still required before implementation
+## 16. Decisions resolved by the normative contract
 
-- the normative requirement and result/model names;
-- whether endpoint-path deletion is unsupported or uses an explicit tombstone
-  locator;
-- the exact optional lower-boundary inclusion rule;
-- the canonical entity-occurrence and topology-epoch encoding;
-- whether a lineage result may expose only the last complete continuity
-  segment or must return no lineage after any affecting gap;
-- hard-limit values and caching rules;
-- the exact relationship between current analysis values and retired-epoch
-  presentation;
-- unique-base versus explicit-virtual-base behavior for complex merges;
-- the editor trust, repository selection, and historical virtual-document
-  contract;
-- public CLI, Core, schema, Help, Guide, package, and diagnostic versions; and
-- the independent implementation, release, and compatibility plan.
+The [Historical DAG Reconstruction Contract](../specs/historical-dag.md)
+selects the normative requirement, model and future result identities,
+unsupported deleted-endpoint behavior, inclusive lower-boundary rule,
+occurrence and epoch encoding, no-lineage behavior after an affecting gap,
+fixed hard limits and cache keys, single-checkpoint analysis ownership,
+immutable source binding, diagnostics, and explicit three-way deferral. The
+independent selected plan fixes their delivery order.
 
-Until those decisions are accepted, current `project history`, `dag render`,
+The later `HISTORICAL_CLI` and `HISTORICAL_EDITOR_CONTRACT` tasks still own
+public command activation and the complete trusted-editor/virtual-document
+protocol. Three-way merge-base behavior still belongs to `SCM-001` and a later
+model. Current `project history`, `dag render`,
 `Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, and every read/write
-authority boundary remain unchanged.
+authority boundary remain unchanged until those later tasks are separately
+accepted.

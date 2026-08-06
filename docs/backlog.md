@@ -546,10 +546,10 @@ operation.
 
 ### HIST-DAG-001: Reconstruct and visualize historical DAGs
 
-Priority: Unset (design proposal recorded; not selected)
+Priority: Selected through the independent `HIST-DAG-001` workstream
 
-Status: Read-only ancestry and lineage design proposal recorded (2026-08-06);
-normative contract and delivery plan not selected
+Status: First-parent normative contract selected (2026-08-06); runtime not
+implemented
 
 The current DAG renderer and VSIX GraphView correctly project one complete
 current source, which can contain only one residual milestone after canonical
@@ -559,9 +559,12 @@ freezes explicit actual evidence, and rehydrates topology removed by a proven
 canonical advance without treating every historical entity as one blind graph
 union.
 
-The detailed non-normative proposal is recorded in the
+The original non-normative proposal is recorded in the
 [Historical DAG Reconstruction and Git-Ancestry Design
-Proposal](process/historical-dag-design.md). Its selected direction is:
+Proposal](process/historical-dag-design.md). The selected normative authority is
+the [Historical DAG Reconstruction Contract](specs/historical-dag.md), and the
+delivery order is tracked in
+[`plans/historical-dag.pert`](../plans/historical-dag.pert). It fixes:
 
 - keep the requested and resolved endpoint distinct from the oldest inspected
   ancestor and from the newest valid effective checkpoint;
@@ -576,19 +579,26 @@ Proposal](process/historical-dag-design.md). Its selected direction is:
   the existing four analysis modes;
 - make a cumulative lineage unavailable when identity reuse, an invalid gap,
   an ambiguous topology rewrite, or a union-only cycle prevents proof;
-- bind navigation to immutable commit/blob/source identities rather than
-  current worktree ranges; and
-- add a later three-way ancestry profile only through the shared `SCM-001`
-  base/ours/theirs semantic model and conflict rules.
+- return no cumulative lineage across an affecting gap rather than relabeling
+  the newest segment as complete;
+- bind source navigation to immutable commit/blob/digest/range evidence;
+- enforce exact commit, byte, epoch, transition, graph, and binding limits
+  without silent truncation; and
+- fail closed for a three-way request until the shared `SCM-001`
+  base/ours/theirs semantic model and conflict rules are separately accepted.
 
-Before implementation, select a normative requirement, historical result and
-model identities, lower-boundary and deleted-path behavior, entity-epoch and
-hard-limit contracts, CLI/Core/schema/help surfaces, editor trust and virtual-
-blob navigation, a PERT workstream, compatibility, and release gates. Current
-`project history`, `dag render`, `Perttool.GraphViewResult.v1`, Grammar 6, CLI
-Contract 7, MCP capabilities, and all read/write authority boundaries remain
-unchanged. This entry authorizes no Git, editor-profile, remote, publication,
-or plan mutation.
+The contract reserves `Perttool.HistoricalDagModel.v1`,
+`Perttool.HistoricalTransitionModel.v1`, future
+`Perttool.HistoricalGraphResult.v1`, and `PTHDG-101` through `PTHDG-106`
+without activating them. Its twenty dependency-ordered machine cases are in
+[`historical-dag-contract-v1.json`](../test/fixtures/historical-dag-contract-v1.json).
+The next implementation task is the shared internal transition model, but it
+may start only from a fresh complete plan recommendation after contract task
+completion. Current `project history`, `dag render`,
+`Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, MCP capabilities,
+and all read/write authority boundaries remain unchanged. Runtime work, Git or
+editor mutation, release, remote publication, Issue mutation, and plan advance
+remain separately gated.
 
 ## Project actuals and Git-recorded history
 

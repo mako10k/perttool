@@ -831,6 +831,11 @@ warning exits 0 unless warnings-as-errors is selected. `PTHIS-101`,
 - Existing plans require no migration until they opt into Grammar 5.
 - Analysis of the same Grammar 1 through 4 source under the same active
   versions remains byte-deterministic.
+- The separate
+  [Historical DAG Reconstruction Contract](historical-dag.md) reuses stable
+  event identity and first-parent Git evidence but owns checkpoint continuity,
+  canonical-advance topology, epochs, and a future distinct result.
+  `Perttool.ProjectHistoryResult.v1` remains actuals-only and unchanged.
 
 ### 11.2 Non-goals
 

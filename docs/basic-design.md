@@ -1,8 +1,8 @@
 # perttool Basic Design
 
-- Document status: Draft 1.25
+- Document status: Draft 1.26
 - Created: 2026-07-21
-- Updated: 2026-08-05
+- Updated: 2026-08-06
 - Applicable requirements: [requirements.md](requirements.md)
 - DSL grammar: [specs/dsl-grammar.md](specs/dsl-grammar.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
@@ -12,6 +12,7 @@
 - Unit migration semantics: [specs/unit-migration.md](specs/unit-migration.md)
 - Temporal and unit interface: [specs/temporal-unit-interface.md](specs/temporal-unit-interface.md)
 - Project actuals and Git history: [specs/project-actuals.md](specs/project-actuals.md)
+- Historical DAG reconstruction: [specs/historical-dag.md](specs/historical-dag.md)
 - Conditional plan assurance: [specs/plan-assurance.md](specs/plan-assurance.md)
 - Plan assurance interface: [specs/plan-assurance-interface.md](specs/plan-assurance-interface.md)
 - Task refinement and assurance boundaries: [specs/task-refinement.md](specs/task-refinement.md)
@@ -3365,6 +3366,60 @@ The LSP server remains the predecessor of VSIX. The MCP branch is independent
 of both after the shared foundation. Adapter package publication, public names,
 release selection, editor/MCP writes, and Issue mutation remain separately
 gated.
+
+### Post-MVP Slice 6: Historical DAG reconstruction
+
+The selected `HIST-DAG-001` workstream adds one read-only history projection
+without changing the meaning or dependencies of the current GraphView,
+project-history reducer, or adapter platform.
+
+```text
+Node Git Host
+  -> bounded commit/blob evidence
+  -> normalized whole-document transition Core
+  -> first-parent checkpoint and lineage fold
+  -> HistoricalGraph Application result
+       +-> later read-only CLI presentation
+       +-> later historical editor request
+             -> VSIX checkpoint / lineage / timeline presentation
+```
+
+The [Historical DAG Reconstruction Contract](specs/historical-dag.md) fixes
+model 1 before runtime implementation. The transition Core owns exact semantic
+identity and representation-only separation and is compatible with later
+`SCM-001` work. The existing `src/history/` boundary remains the natural owner
+for the pure fold and inward-port evidence consumption; Node-specific Git
+enumeration remains outside portable Core. Application composes one request,
+status, typed causes, and single-checkpoint analysis. Adapters must not parse
+Git output, infer semantic transitions, union epochs, or calculate analysis.
+
+The initial path is one repository-relative file between an inclusive
+first-parent lower boundary and inclusive endpoint. Invalid inputs split
+continuity. Explicit actuals freeze under the existing actuals rules. Removed
+topology enters cumulative lineage only through exact semantic equality with
+the compatible canonical advance candidate. Snapshot, lineage, and timeline
+are separate from the four existing analysis modes, and analysis is bound to
+one valid checkpoint. Historical source navigation uses immutable
+repository/path/commit/blob/digest/range bindings rather than current document
+versions.
+
+The contract reserves `Perttool.HistoricalGraphResult.v1` and `PTHDG-101`
+through `PTHDG-106`, but they are not active command or schema identities in
+this slice. Current `Perttool.ProjectHistoryResult.v1`,
+`Perttool.GraphViewResult.v1`, 44 commands, 20 schemas, Grammar 6, and CLI
+Contract 7 remain unchanged. The later CLI and editor tasks own activation and
+isolated acceptance. Three-way ancestry, semantic patch/merge, MCP history,
+editor mutation, releases, remote writes, and plan advance are independent.
+
+Exit for the contract task:
+
+- requirements, normative contract, design, backlog, and the selected plan
+  agree on first-parent-only scope and unchanged runtime;
+- twenty dependency-ordered machine cases fix bounds, validity, continuity,
+  evidence, canonical advance, epochs, views, analysis, immutable navigation,
+  hard limits, no-write behavior, and three-way deferral; and
+- the complete repository and 35-plan self-use gates pass before the task's
+  exact pre-advance snapshot is committed.
 
 ## 18. Matters for detailed design
 

@@ -1,0 +1,345 @@
+{
+  "schema_version": "Perttool.HistoricalDagContractCases.v1",
+  "historical_dag_model_version": 1,
+  "historical_transition_model_version": 1,
+  "ancestry_profiles": [
+    "first_parent"
+  ],
+  "target_result_schema": "Perttool.HistoricalGraphResult.v1",
+  "active_runtime_unchanged": {
+    "grammar_version": 6,
+    "cli_contract_version": 7,
+    "commands": 44,
+    "root_schemas": 20,
+    "project_history_result": "Perttool.ProjectHistoryResult.v1",
+    "graph_view_result": "Perttool.GraphViewResult.v1"
+  },
+  "hard_limits": {
+    "inspected_commits": 2048,
+    "raw_bytes_per_snapshot": 8388608,
+    "aggregate_raw_snapshot_bytes": 134217728,
+    "entity_value_epochs": 100000,
+    "transition_records": 2047,
+    "rendered_graph_occurrences": 20000,
+    "historical_source_bindings": 100000
+  },
+  "cases": [
+    {
+      "id": "HDG-001",
+      "depends_on": [],
+      "operation": "single_valid_endpoint",
+      "expected": {
+        "status": "complete",
+        "ancestry_profile": "first_parent",
+        "checkpoint_count": 1,
+        "selected_view": "snapshot",
+        "invented_history": false
+      }
+    },
+    {
+      "id": "HDG-002",
+      "depends_on": [
+        "HDG-001"
+      ],
+      "operation": "resolve_endpoint_spellings",
+      "input_spellings": [
+        "branch",
+        "tag",
+        "full_sha",
+        "abbreviated_sha",
+        "tilde_ancestor",
+        "first_parent_selector",
+        "second_parent_selector"
+      ],
+      "expected": {
+        "exactly_one_commit_required": true,
+        "requested_and_resolved_preserved": true,
+        "time_based_selection": false
+      }
+    },
+    {
+      "id": "HDG-003",
+      "depends_on": [
+        "HDG-002"
+      ],
+      "operation": "inclusive_traversal_bounds",
+      "expected": {
+        "omitted_lower_starts_at": "oldest_reachable_first_parent_path_commit",
+        "explicit_lower_included": true,
+        "endpoint_included": true,
+        "lower_must_be_first_parent_ancestor": true,
+        "lower_equals_endpoint_checkpoint_count": 1
+      }
+    },
+    {
+      "id": "HDG-004",
+      "depends_on": [
+        "HDG-001",
+        "HDG-003"
+      ],
+      "operation": "invalid_endpoint_with_earlier_valid_checkpoint",
+      "expected": {
+        "status": "incomplete",
+        "selected_snapshot": null,
+        "effective_checkpoint_metadata_allowed": true,
+        "explicit_snapshot_revision_required_to_display": true,
+        "endpoint_identity_preserved": true
+      }
+    },
+    {
+      "id": "HDG-005",
+      "depends_on": [
+        "HDG-004"
+      ],
+      "operation": "invalid_middle_snapshot",
+      "expected": {
+        "status": "incomplete",
+        "continuity_segments": 2,
+        "lineage": null,
+        "timeline_available": true,
+        "cross_gap_inference": false
+      }
+    },
+    {
+      "id": "HDG-006",
+      "depends_on": [
+        "HDG-001"
+      ],
+      "operation": "stable_event_repetition_and_advance_removal",
+      "expected": {
+        "event_occurrences": 1,
+        "identical_payload_deduplicated": true,
+        "frozen_before_removal": true,
+        "removal_requires_canonical_advance": true,
+        "git_time_is_actual_time": false
+      }
+    },
+    {
+      "id": "HDG-007",
+      "depends_on": [
+        "HDG-006"
+      ],
+      "operation": "changed_payload_under_stable_event_id",
+      "expected": {
+        "status": "incomplete",
+        "cause": "event_payload_changed",
+        "diagnostic": "PTHDG-103",
+        "selected_payload": null,
+        "lineage": null
+      }
+    },
+    {
+      "id": "HDG-008",
+      "depends_on": [
+        "HDG-001"
+      ],
+      "operation": "formatting_only_change",
+      "expected": {
+        "transition_class": "representation_only",
+        "semantic_digest_equal": true,
+        "new_entity_epoch": false,
+        "new_topology_epoch": false
+      }
+    },
+    {
+      "id": "HDG-009",
+      "depends_on": [
+        "HDG-006",
+        "HDG-008"
+      ],
+      "operation": "valid_future_plan_edit",
+      "expected": {
+        "transition_class": "future_plan_edit",
+        "deterministic_epoch_order": true,
+        "frozen_actuals_changed": false,
+        "binary_float_identity": false
+      }
+    },
+    {
+      "id": "HDG-010",
+      "depends_on": [
+        "HDG-006",
+        "HDG-009"
+      ],
+      "operation": "exact_canonical_advance",
+      "expected": {
+        "transition_class": "canonical_advance",
+        "candidate_semantic_equality": true,
+        "current_frontier_milestones": 1,
+        "lineage_milestones_minimum": 2,
+        "retired_topology_rehydrated": true
+      }
+    },
+    {
+      "id": "HDG-011",
+      "depends_on": [
+        "HDG-010"
+      ],
+      "operation": "noncanonical_manual_deletion",
+      "expected": {
+        "transition_class_any_of": [
+          "ambiguous_edit",
+          "conflict"
+        ],
+        "cause": "noncanonical_removal",
+        "partial_advance_acceptance": false,
+        "lineage": null
+      }
+    },
+    {
+      "id": "HDG-012",
+      "depends_on": [
+        "HDG-009"
+      ],
+      "operation": "source_id_disappears_and_reappears_after_unknown_boundary",
+      "expected": {
+        "cause": "identity_ambiguous",
+        "new_occurrence_inferred": false,
+        "lineage": null,
+        "timeline_available": true
+      }
+    },
+    {
+      "id": "HDG-013",
+      "depends_on": [
+        "HDG-009",
+        "HDG-012"
+      ],
+      "operation": "cycle_exists_only_in_epoch_union",
+      "expected": {
+        "individual_snapshots_valid": true,
+        "source_cycle_diagnostic": false,
+        "cause": "lineage_cycle",
+        "lineage": null,
+        "timeline_available": true
+      }
+    },
+    {
+      "id": "HDG-014",
+      "depends_on": [
+        "HDG-003",
+        "HDG-009"
+      ],
+      "operation": "first_parent_merge_result",
+      "expected": {
+        "all_direct_parent_ids_recorded": true,
+        "side_only_commits_inspected": false,
+        "comparison_parent": "first_parent",
+        "is_merge_commit": true,
+        "repository_wide_completeness_claim": false
+      }
+    },
+    {
+      "id": "HDG-015",
+      "depends_on": [
+        "HDG-014"
+      ],
+      "operation": "request_three_way_profile",
+      "expected": {
+        "status": "unavailable",
+        "cause": "unsupported_ancestry_profile",
+        "diagnostic": "PTHDG-106",
+        "side_lanes_inspected": false,
+        "merge_candidate": null
+      }
+    },
+    {
+      "id": "HDG-016",
+      "depends_on": [
+        "HDG-015"
+      ],
+      "operation": "divergent_side_branch_actual_evidence",
+      "expected": {
+        "first_parent_side_reconciliation": false,
+        "selected_side_payload": null,
+        "scm_001_required": true,
+        "git_mutation": false
+      }
+    },
+    {
+      "id": "HDG-017",
+      "depends_on": [
+        "HDG-015"
+      ],
+      "operation": "multiple_merge_bases_or_virtual_ancestor",
+      "expected": {
+        "status": "unavailable",
+        "merge_base_selected": false,
+        "order_or_time_heuristic": false,
+        "virtual_ancestor_supported": false
+      }
+    },
+    {
+      "id": "HDG-018",
+      "depends_on": [
+        "HDG-001",
+        "HDG-010",
+        "HDG-013"
+      ],
+      "operation": "view_and_analysis_cross_product",
+      "views": [
+        "snapshot",
+        "lineage",
+        "timeline"
+      ],
+      "analysis_modes": [
+        "none",
+        "precedence",
+        "resource",
+        "both"
+      ],
+      "expected": {
+        "combinations": 12,
+        "analysis_checkpoint_count": 1,
+        "analysis_over_mixed_epochs": false,
+        "retired_analysis_fields": null
+      }
+    },
+    {
+      "id": "HDG-019",
+      "depends_on": [
+        "HDG-001",
+        "HDG-018"
+      ],
+      "operation": "navigate_historical_declaration",
+      "expected": {
+        "required_bindings": [
+          "repository_id",
+          "repository_relative_path",
+          "commit_id",
+          "blob_id",
+          "source_digest",
+          "utf16_range"
+        ],
+        "blob_verification_required": true,
+        "current_worktree_range_reuse": false,
+        "virtual_document_write": false
+      }
+    },
+    {
+      "id": "HDG-020",
+      "depends_on": [
+        "HDG-002",
+        "HDG-003",
+        "HDG-005",
+        "HDG-014",
+        "HDG-019"
+      ],
+      "operation": "repository_limits_races_and_side_effect_closure",
+      "expected": {
+        "object_formats": [
+          "sha1",
+          "sha256"
+        ],
+        "linked_worktree_supported": true,
+        "shallow_origin_status": "incomplete",
+        "deleted_endpoint_status": "unavailable",
+        "race_diagnostic": "PTHDG-105",
+        "limit_diagnostic": "PTHDG-104",
+        "silent_truncation": false,
+        "source_git_index_ref_config_writes": 0,
+        "external_writes": 0
+      }
+    }
+  ]
+}

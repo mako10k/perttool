@@ -97,6 +97,43 @@ This document calls this forward operation `advance`. Git is used to inspect his
 The exact proof, force, result, diagnostic, and compatibility rules are in
 the [Advance History Safety Contract](specs/advance-history-safety.md).
 
+Git history must also support a separate read-only reconstruction of topology
+that canonical advance has removed. The exact first-parent model is defined by
+the [Historical DAG Reconstruction Contract](specs/historical-dag.md).
+
+Must:
+
+- Bind one repository-relative path, one exact inclusive endpoint commit, and
+  an optional exact inclusive first-parent lower boundary without guessing a
+  deleted path, rename, merge base, or branch union.
+- Keep the requested revision, resolved endpoint, oldest inspected input,
+  effective valid checkpoint, and selected snapshot distinct.
+- Classify every inspected source independently and preserve invalid,
+  unsupported, missing, shallow, ambiguous, or raced inputs as typed gaps
+  rather than skipping them and claiming continuity.
+- Reuse stable explicit work-event identity and payload-conflict rules, freeze
+  accepted evidence before removal, and never substitute Git time for actual
+  time.
+- Rehydrate retired topology only when the complete compatible canonical
+  advance candidate is semantically equal to the next checkpoint with no
+  unrelated semantic change.
+- Expose snapshot, proved lineage, and timeline as distinct views. Keep them
+  orthogonal to `none`, `precedence`, `resource`, and `both`, and run analysis
+  only on one valid checkpoint rather than a union of historical epochs.
+- Make cumulative lineage unavailable after an affecting continuity gap,
+  ambiguous identity reuse, contradictory frozen evidence, noncanonical
+  removal, or union-only cycle. Keep independently valid timeline segments.
+- Bind historical navigation to exact repository, path, commit, blob, source
+  digest, and UTF-16 range evidence; never apply a historical range to
+  mismatched current worktree bytes.
+- Enforce fixed commit, byte, epoch, transition, graph, and binding limits
+  without presenting a truncated graph as complete.
+- Report `first_parent` scope explicitly. Three-way ancestry remains
+  unavailable until `SCM-001` accepts the shared normalized semantic delta and
+  conflict model.
+- Perform no source, worktree, index, ref, configuration, repository, editor,
+  or external write and grant no current execution or mutation authority.
+
 ### 2.4 Make the AI Project Control Plane the central purpose
 
 `perttool` is a control plane that determines which work an AI or human should prioritize now from the current state of the whole project, rather than merely listing feasible tasks. Its purpose is not to maximize the number of completed tasks; it is to prioritize work that helps shorten the time to the declared project finish while respecting dependencies, resource capacity, explicit priorities, gates, and milestones.
@@ -2705,6 +2742,8 @@ authoritative procedure is
 - Velocity by team/resource and statistical history beyond the selected
   project observation model
 - Plan-diff analysis between Git revisions
+- Three-way or arbitrary branch-union historical DAG reconstruction; the
+  selected first-parent contract is tracked separately under `HIST-DAG-001`
 - Conditional plan assurance, planning-only/execution-only relations,
   governed resealing, and assurance-preserving advance under `ASSURE-001`
 - Web UI and collaborative editing
@@ -2963,6 +3002,25 @@ Before implementation, separate the specifications in the following order.
       persistence, and atomic transaction behavior.
     - [ ] Select grammar/CLI versions, Core/result/schema/help surfaces,
       migration, implementation plan, and acceptance gates.
+23. [ ] Implement read-only historical DAG reconstruction under
+    `HIST-DAG-001` and the independent
+    [`plans/historical-dag.pert`](../plans/historical-dag.pert) workstream.
+    - [x] Select the first-parent endpoint, inclusive lower-boundary,
+      continuity, frozen-evidence, canonical-advance, occurrence/epoch, view,
+      analysis, hard-limit, future-result, diagnostic, source-binding, and
+      three-way-deferral rules in the
+      [Historical DAG Reconstruction Contract](specs/historical-dag.md).
+    - [x] Fix twenty dependency-ordered machine-readable contract cases in
+      [`historical-dag-contract-v1.json`](../test/fixtures/historical-dag-contract-v1.json).
+    - [ ] Implement the shared internal whole-document transition projection.
+    - [ ] Extend bounded immutable first-parent Git evidence without changing
+      current project-history behavior.
+    - [ ] Implement snapshot, proved lineage, and timeline reconstruction.
+    - [ ] Expose a separate read-only CLI result and isolated package gate.
+    - [ ] Accept a distinct historical editor protocol and local VSIX
+      presentation.
+    - [ ] Complete cross-surface no-write acceptance. Three-way ancestry still
+      requires a separately accepted `SCM-001` model and later workstream.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.
 

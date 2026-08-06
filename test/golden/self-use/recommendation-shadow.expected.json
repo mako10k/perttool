@@ -272,6 +272,70 @@
         "PTDAG-208"
       ]
     },
+    "historical-dag": {
+      "source_digest": "sha256:0359bb7c88ef8a21c85ffbb8865feab2a11bbd801f65c98642830b82254cba20",
+      "groups": {
+        "active": [],
+        "ready": [
+          "HISTORICAL_TRANSITION_MODEL",
+          "HISTORICAL_GIT_PROBE"
+        ],
+        "runnable_now": [
+          "HISTORICAL_TRANSITION_MODEL",
+          "HISTORICAL_GIT_PROBE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "HISTORICAL_LINEAR_CORE",
+          "HISTORICAL_CLI",
+          "HISTORICAL_EDITOR_CONTRACT",
+          "HISTORICAL_VSIX",
+          "HISTORICAL_DAG_ACCEPTANCE"
+        ],
+        "suspended": []
+      },
+      "recommended_task_ids": [
+        "HISTORICAL_TRANSITION_MODEL"
+      ],
+      "manual_selected_task_ids": [
+        "HISTORICAL_TRANSITION_MODEL",
+        "HISTORICAL_GIT_PROBE"
+      ],
+      "tiers": {
+        "HISTORICAL_TRANSITION_MODEL": "recommended",
+        "HISTORICAL_GIT_PROBE": "allowed"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "HISTORICAL_TRANSITION_MODEL",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "HISTORICAL_GIT_PROBE",
+          "runnable_now": true,
+          "precedence_critical": false,
+          "schedule_critical": false,
+          "total_float": "2/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 2,
+        "decision_steps": 12,
+        "facts": 36,
+        "comparisons": 1,
+        "reasons": 8,
+        "descriptions": 3
+      },
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
+    },
     "operations": {
       "source_digest": "sha256:543fa97cbc9d1ac4ab7a25b502328f9468548b55b28d876e29e2a98c0fa40574",
       "groups": {

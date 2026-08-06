@@ -536,6 +536,11 @@ leaving an old graph presented as current.
   settings, emit telemetry, fetch remote content, or publish artifacts.
 - TextMate highlighting is presentation only and cannot override parser or
   semantic diagnostics.
+- The selected
+  [Historical DAG Reconstruction Contract](historical-dag.md) requires a
+  later distinct Git-backed request, result, trust, and immutable-blob
+  navigation contract. Current `perttool/graphView` accepts no Git path or
+  revision and `Perttool.GraphViewResult.v1` remains unchanged.
 - No arbitrary Mermaid, HTML, SVG, script, or graph layout input is executed.
 - Editor mutation, graph mutation, rename, formatting, persistence, public
   package naming, release selection, publication, and plan advance remain

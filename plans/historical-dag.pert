@@ -97,6 +97,7 @@ task HISTORICAL_DAG_CONTRACT HISTORICAL_DAG_SELECTED -> HISTORICAL_DAG_CONTRACT_
   title "Accept the historical DAG reconstruction contract"
   description "Promote the selected design into one normative contract and machine-readable acceptance matrix. Fix endpoint and lower-boundary semantics, first-parent scope, source validity classes, continuity gaps, actual-evidence freezing, canonical-advance proof, entity epochs, snapshot, lineage and timeline views, hard limits, result ownership, diagnostics, source bindings, compatibility, and explicit three-way deferral without changing runtime behavior."
   duration 6p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -249,3 +250,10 @@ plan_seal HISTORICAL_VSIX:
   accepted_inputs:
     HISTORICAL_EDITOR_CONTRACT both sha256:37373a2e9cccc95d76c5d4e0174fcbcf9026e4c284233db5c0adbd58d26949e1
   reason "Initial reviewed HIST-DAG-001 first-parent delivery baseline"
+
+task_outcome OUTCOME_HISTORICAL_DAG_CONTRACT:
+  model 1
+  task HISTORICAL_DAG_CONTRACT
+  against_basis sha256:cf8ba6ded9b8a556f064d61a85d4a527f2bcca71a8f98dbd7f8878206de60e6b
+  status conformant
+  reason "Accepted normative contract and twenty dependency-ordered cases"

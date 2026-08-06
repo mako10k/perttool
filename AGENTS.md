@@ -380,6 +380,37 @@ Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
+The explicitly selected `HIST-DAG-001` workstream is tracked independently in
+`plans/historical-dag.pert`. Its eight tasks total 44p from
+`HISTORICAL_DAG_CONTRACT` through `HISTORICAL_DAG_ACCEPTANCE` and sequence one
+normative first-parent contract, a shared whole-document transition model,
+bounded immutable Git evidence, pure checkpoint/lineage/timeline
+reconstruction, a distinct read-only CLI result, a separate historical editor
+contract, VSIX presentation, and cross-surface acceptance. The accepted
+`docs/specs/historical-dag.md` contract fixes
+`Perttool.HistoricalDagModel.v1`,
+`Perttool.HistoricalTransitionModel.v1`, future
+`Perttool.HistoricalGraphResult.v1`, inclusive endpoint and lower-boundary
+semantics, explicit `first_parent` scope, source-validity gaps, stable actual
+freezing, exact canonical-advance proof, deterministic `HDGE-*` occurrence and
+`HDGT-*` topology epochs, snapshot/lineage/timeline views, single-checkpoint
+analysis, exact hard limits, immutable source bindings, `PTHDG-101` through
+`PTHDG-106`, and fail-closed three-way deferral to `SCM-001`. Its twenty
+dependency-ordered machine cases are in
+`test/fixtures/historical-dag-contract-v1.json`, and its acceptance record is
+`docs/process/historical-dag-contract-acceptance.md`.
+`HISTORICAL_DAG_CONTRACT` is complete and retained in its exact pre-advance
+state with a conformant basis-bound outcome. Seven tasks and 38p remain;
+precedence and `parallel-sgs` version 1 heuristic resource makespans are both
+38p with zero resource delay. Fresh complete NextResult v6 makes
+`HISTORICAL_TRANSITION_MODEL` the only recommended and startable task;
+`HISTORICAL_GIT_PROBE` is ready and allowed with 2p total float but is not in
+the normal recommended set. Current `project history`, `dag render`,
+`Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, 44 commands, and 20
+schemas remain unchanged. Runtime work, three-way ancestry, semantic patch or
+merge, MCP history, editor mutation, release selection, publication, remote
+writes, Issue mutation, and plan advance remain separate.
+
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
 The explicitly selected project-actuals workstream is tracked independently in
@@ -683,7 +714,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `help-guide-consistency.pert`, `adapter-platform.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.7.1.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `help-guide-consistency.pert`, `adapter-platform.pert`, `historical-dag.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.7.1.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance, isolated-package inventory checks for internal assurance compatibility and inspection modules, and isolated LSP/MCP/VSIX gates.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -755,7 +786,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all thirty-four self-use plans, including the selected adapter-platform workstream and `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all thirty-five self-use plans, including the selected historical-DAG and adapter-platform workstreams and `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci
