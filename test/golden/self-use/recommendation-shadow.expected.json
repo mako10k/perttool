@@ -273,18 +273,17 @@
       ]
     },
     "historical-dag": {
-      "source_digest": "sha256:0fbcdb6fb8da3dd9122395f54dd33b87e544b4f34db6028cefe79db10e79257c",
+      "source_digest": "sha256:fb5e0054792d7a46ff631cd19f38d54f7a788014a91c667671edc0b65f37e139",
       "groups": {
         "active": [],
         "ready": [
-          "HISTORICAL_GIT_PROBE"
+          "HISTORICAL_LINEAR_CORE"
         ],
         "runnable_now": [
-          "HISTORICAL_GIT_PROBE"
+          "HISTORICAL_LINEAR_CORE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "HISTORICAL_LINEAR_CORE",
           "HISTORICAL_CLI",
           "HISTORICAL_EDITOR_CONTRACT",
           "HISTORICAL_VSIX",
@@ -293,18 +292,18 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "HISTORICAL_GIT_PROBE"
+        "HISTORICAL_LINEAR_CORE"
       ],
       "manual_selected_task_ids": [
-        "HISTORICAL_GIT_PROBE"
+        "HISTORICAL_LINEAR_CORE"
       ],
       "tiers": {
-        "HISTORICAL_GIT_PROBE": "recommended"
+        "HISTORICAL_LINEAR_CORE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "HISTORICAL_GIT_PROBE",
+          "id": "HISTORICAL_LINEAR_CORE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

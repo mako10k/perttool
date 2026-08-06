@@ -121,6 +121,7 @@ task HISTORICAL_GIT_PROBE HISTORICAL_DAG_CONTRACT_ACCEPTED -> HISTORICAL_GIT_PRO
   title "Extend bounded immutable Git history evidence"
   description "Reuse the accepted read-only Git port and add exact endpoint and optional lower-boundary proof, commit and blob identities, hard limits, path and object-format bindings, first-parent scope, linked-worktree and shallow behavior, and ref, source and limit races required by historical graphs. Keep current project history byte-compatible and perform no branch union, rename search, checkout, index or ref mutation."
   duration 5p
+  status done
   priority 92
   requires:
     DEVELOPERS 1
@@ -265,3 +266,10 @@ task_outcome OUTCOME_HISTORICAL_TRANSITION_MODEL:
   against_basis sha256:7c782b2f9c36f44e6d8eda4c5b13b64bded3569a6c5ea497ab9854b640225b8b
   status conformant
   reason "Accepted pure transition model and twelve closed cases"
+
+task_outcome OUTCOME_HISTORICAL_GIT_PROBE:
+  model 1
+  task HISTORICAL_GIT_PROBE
+  against_basis sha256:74e303429cde361891ccac977b6c1c98b492128acef630b500751cf19929a0de
+  status conformant
+  reason "Accepted bounded immutable Git evidence and twelve closed cases"

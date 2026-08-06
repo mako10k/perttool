@@ -3408,6 +3408,21 @@ schema, adapter, or persistence dependency and is not re-exported by the public
 root, Core, or Node facade. Its accepted trace is
 [Historical Transition Model Acceptance](process/historical-transition-model-acceptance.md).
 
+`probeHistoricalGitEvidence` in the existing Node-owned
+`src/history/git-probe.ts` now implements the second input boundary. It freezes
+one opaque endpoint before traversal, accepts one inclusive first-parent lower
+bound, captures exact commit/parent/blob/raw-byte/digest evidence, appends an
+unchanged endpoint, and binds the ordered evidence to an opaque common-Git-dir
+repository identity and complete read-snapshot ID. It enforces the fixed
+commit, per-snapshot, and aggregate-byte limits, supports SHA-1, SHA-256 and
+linked worktrees, distinguishes omitted shallow origin from a proved explicit
+shallow bound, and rechecks refs, common-directory identity, and the no-follow
+target binding after capture. The existing project-history and advance-history
+functions remain unchanged. The new probe remains an internal compiled module;
+the public package root, Core/Node facades, `createNodeHost` port shape, CLI,
+schemas, LSP, VSIX, and MCP do not expose it in this slice. Its accepted trace
+is [Historical Git Evidence Acceptance](process/historical-git-evidence-acceptance.md).
+
 The initial path is one repository-relative file between an inclusive
 first-parent lower boundary and inclusive endpoint. Invalid inputs split
 continuity. Explicit actuals freeze under the existing actuals rules. Removed

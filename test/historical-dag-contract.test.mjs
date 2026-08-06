@@ -95,7 +95,7 @@ test("historical DAG contract fixes the selected first-parent boundary", async (
   assert.match(design, /### Post-MVP Slice 6: Historical DAG reconstruction/u);
   assert.match(
     backlog,
-    /Status: First-parent normative contract and internal transition model\nimplemented/u,
+    /Status: First-parent normative contract, internal transition model, and bounded\nimmutable Git evidence implemented/u,
   );
   assert.match(proposal, /Document status: Superseded design input 0\.2/u);
   assert.match(proposal, /Normative successor: \[Historical DAG Reconstruction Contract\]/u);
@@ -197,7 +197,7 @@ test("contract selection leaves the active runtime surface unchanged", () => {
   );
 });
 
-test("completed transition model leaves the bounded Git probe ready", async () => {
+test("completed Git probe makes only the historical linear Core startable", async () => {
   const [source, acceptance, transitionAcceptance, selfUse] = await Promise.all([
     repositoryText("plans/historical-dag.pert"),
     repositoryText("docs/process/historical-dag-contract-acceptance.md"),
@@ -225,15 +225,27 @@ test("completed transition model leaves the bounded Git probe ready", async () =
   );
   assert.match(
     source,
+    /task HISTORICAL_GIT_PROBE[\s\S]*?status done/u,
+  );
+  assert.match(
+    source,
     /task_outcome OUTCOME_HISTORICAL_TRANSITION_MODEL:[\s\S]*?task HISTORICAL_TRANSITION_MODEL[\s\S]*?status conformant/u,
   );
-  assert.deepEqual(next.groups.ready, ["HISTORICAL_GIT_PROBE"]);
+  assert.match(
+    source,
+    /task_outcome OUTCOME_HISTORICAL_GIT_PROBE:[\s\S]*?task HISTORICAL_GIT_PROBE[\s\S]*?status conformant/u,
+  );
+  assert.deepEqual(next.groups.ready, ["HISTORICAL_LINEAR_CORE"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_GIT_PROBE",
+    "HISTORICAL_LINEAR_CORE",
   ]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_GIT_PROBE",
+    "HISTORICAL_LINEAR_CORE",
   ]);
+  assert.deepEqual(
+    next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
+    [],
+  );
   assert.match(acceptance, /Document status: Accepted 1\.0/u);
   assert.match(acceptance, /Runtime status: not implemented/u);
   assert.match(acceptance, /There are no open normative contract findings/u);

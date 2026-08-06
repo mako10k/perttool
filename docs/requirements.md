@@ -3017,8 +3017,9 @@ Before implementation, separate the specifications in the following order.
       epoch identities without activating a public patch, merge, or history
       result surface. The accepted trace is
       [`historical-transition-model-acceptance.md`](process/historical-transition-model-acceptance.md).
-    - [ ] Extend bounded immutable first-parent Git evidence without changing
-      current project-history behavior.
+    - [x] Extend bounded immutable first-parent Git evidence without changing
+      current project-history behavior. The accepted trace is
+      [`historical-git-evidence-acceptance.md`](process/historical-git-evidence-acceptance.md).
     - [ ] Implement snapshot, proved lineage, and timeline reconstruction.
     - [ ] Expose a separate read-only CLI result and isolated package gate.
     - [ ] Accept a distinct historical editor protocol and local VSIX

@@ -548,9 +548,11 @@ operation.
 
 Priority: Selected through the independent `HIST-DAG-001` workstream
 
-Status: First-parent normative contract and internal transition model
-implemented (2026-08-06); Git evidence, reconstruction, and interfaces remain
-unimplemented
+Status: First-parent normative contract, internal transition model, and bounded
+immutable Git evidence implemented (2026-08-06); reconstruction and interfaces
+remain unimplemented. The Git-probe task is complete, but its separately
+owner-confirmed basis-bound outcome is registered; complete assurance now makes
+only the dependent reconstruction task startable.
 
 The current DAG renderer and VSIX GraphView correctly project one complete
 current source, which can contain only one residual milestone after canonical
@@ -598,8 +600,15 @@ implemented and accepted in
 [`historical-transition-model-acceptance.md`](process/historical-transition-model-acceptance.md).
 Its task status is complete, while the exact conformant assurance outcome
 is now registered against its accepted basis. Complete assurance has no
-unavailable task or required action, and the independent bounded Git probe is
-the sole startable recommendation. Current `project history`, `dag render`,
+unavailable task or required action. The bounded internal Git evidence now
+freezes exact endpoint and lower-boundary commits, ordered parent/blob/source
+bindings, fixed input limits, SHA-1/SHA-256 and linked-worktree identity,
+shallow completeness, and ref/path races without changing current history.
+Its acceptance record is
+[`historical-git-evidence-acceptance.md`](process/historical-git-evidence-acceptance.md).
+The plan lifecycle and assurance outcome for that implementation remain to be
+completed before selecting its dependent reconstruction task. Current
+`project history`, `dag render`,
 `Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, MCP capabilities,
 and all read/write authority boundaries remain unchanged. Runtime work, Git or
 editor mutation, release, remote publication, Issue mutation, and plan advance

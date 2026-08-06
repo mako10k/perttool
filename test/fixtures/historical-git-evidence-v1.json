@@ -1,0 +1,24 @@
+{
+  "schema_version": "Perttool.HistoricalGitEvidenceCases.v1",
+  "model_version": 1,
+  "ancestry_profile": "first_parent",
+  "limits": {
+    "inspected_commits": 2048,
+    "raw_bytes_per_snapshot": 8388608,
+    "aggregate_raw_snapshot_bytes": 134217728
+  },
+  "cases": [
+    {"id": "HGE-001", "depends_on": [], "boundary": "opaque_endpoint_resolution_and_freeze"},
+    {"id": "HGE-002", "depends_on": ["HGE-001"], "boundary": "inclusive_lower_and_repeated_endpoint"},
+    {"id": "HGE-003", "depends_on": ["HGE-002"], "boundary": "equal_lower_and_endpoint"},
+    {"id": "HGE-004", "depends_on": ["HGE-001"], "boundary": "first_parent_merge_and_all_parent_evidence"},
+    {"id": "HGE-005", "depends_on": ["HGE-002"], "boundary": "endpoint_lower_and_lane_refusal"},
+    {"id": "HGE-006", "depends_on": ["HGE-001"], "boundary": "sha1_sha256_and_linked_worktree_identity"},
+    {"id": "HGE-007", "depends_on": ["HGE-002"], "boundary": "shallow_origin_and_explicit_available_boundary"},
+    {"id": "HGE-008", "depends_on": ["HGE-002"], "boundary": "commit_snapshot_and_aggregate_hard_limits"},
+    {"id": "HGE-009", "depends_on": ["HGE-001"], "boundary": "ref_path_and_read_snapshot_races"},
+    {"id": "HGE-010", "depends_on": ["HGE-004", "HGE-009"], "boundary": "determinism_no_write_and_no_absolute_path"},
+    {"id": "HGE-011", "depends_on": ["HGE-006"], "boundary": "internal_node_probe_and_unchanged_public_facades"},
+    {"id": "HGE-012", "depends_on": ["HGE-003", "HGE-005", "HGE-007", "HGE-008", "HGE-010", "HGE-011"], "boundary": "linear_core_handoff_without_public_activation"}
+  ]
+}

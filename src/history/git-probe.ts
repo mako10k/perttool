@@ -17,6 +17,13 @@ import { digestDocumentBytes } from "../io/document-file.js";
 
 export const GIT_HISTORY_PROBE_MODEL_VERSION = 1 as const;
 export const ADVANCE_HISTORY_BASELINE_MODEL_VERSION = 1 as const;
+export const HISTORICAL_GIT_EVIDENCE_MODEL_VERSION = 1 as const;
+
+export const HISTORICAL_GIT_EVIDENCE_LIMITS = Object.freeze({
+  inspectedCommits: 2_048,
+  rawBytesPerSnapshot: 8_388_608,
+  aggregateRawSnapshotBytes: 134_217_728,
+});
 
 export type GitHistoryStatus = "complete" | "incomplete" | "unavailable";
 
@@ -91,6 +98,105 @@ export interface GitHistoryProbeFailure {
 
 export type GitHistoryProbeOutcome =
   | GitHistoryProbeResult
+  | GitHistoryProbeFailure;
+
+export type HistoricalGitEvidenceStatus =
+  | "complete"
+  | "incomplete"
+  | "unavailable";
+
+export type HistoricalGitEvidenceCause =
+  | "no_repository"
+  | "no_head"
+  | "unknown_revision"
+  | "ambiguous_revision"
+  | "non_commit_revision"
+  | "endpoint_path_missing"
+  | "lower_path_missing"
+  | "lower_not_first_parent_ancestor"
+  | "shallow_origin"
+  | "unsupported_object_format"
+  | "object_read_failed"
+  | "repository_race"
+  | "hard_limit"
+  | "ambiguous_path"
+  | "target_changed";
+
+export type HistoricalGitEvidenceSubject =
+  | "repository"
+  | "endpoint"
+  | "lower_boundary"
+  | "target_path"
+  | "inspection";
+
+export interface HistoricalGitEvidenceCauseRecord {
+  readonly cause: HistoricalGitEvidenceCause;
+  readonly subject: HistoricalGitEvidenceSubject;
+  readonly commitId: string | null;
+  readonly limit: keyof typeof HISTORICAL_GIT_EVIDENCE_LIMITS | null;
+  readonly actual: number | null;
+}
+
+export interface HistoricalGitEvidenceLimits {
+  readonly inspectedCommits: number;
+  readonly rawBytesPerSnapshot: number;
+  readonly aggregateRawSnapshotBytes: number;
+}
+
+export interface HistoricalGitInspectionSnapshot {
+  readonly modelVersion: typeof HISTORICAL_GIT_EVIDENCE_MODEL_VERSION;
+  readonly objectFormat: "sha1" | "sha256";
+  readonly repositoryId: string;
+  readonly repositoryReadSnapshotId: string;
+  readonly repositoryRelativePath: string;
+  readonly commitId: string;
+  readonly parentCommitIds: readonly string[];
+  readonly blobId: string | null;
+  readonly sourceDigest: string | null;
+  readonly source: Uint8Array | null;
+  readonly recordedAt: string | null;
+  readonly isMergeCommit: boolean;
+  readonly isEndpoint: boolean;
+  readonly isLowerBoundary: boolean;
+}
+
+export interface HistoricalGitEvidenceRequest {
+  readonly targetPath: string;
+  readonly requestedEndpoint?: string;
+  readonly lowerBoundary?: string;
+  readonly expectedSourceDigest?: string;
+}
+
+export interface HistoricalGitEvidenceDependencies {
+  readonly gitExecutable?: string;
+  readonly afterEvidence?: () => void | Promise<void>;
+  readonly limits?: Partial<HistoricalGitEvidenceLimits>;
+}
+
+export interface HistoricalGitEvidenceResult {
+  readonly ok: true;
+  readonly modelVersion: typeof HISTORICAL_GIT_EVIDENCE_MODEL_VERSION;
+  readonly status: HistoricalGitEvidenceStatus;
+  readonly ancestryProfile: "first_parent";
+  readonly objectFormat: "sha1" | "sha256" | null;
+  readonly repositoryId: string | null;
+  readonly repositoryReadSnapshotId: string | null;
+  readonly repositoryRelativePath: string | null;
+  readonly requestedEndpoint: string;
+  readonly resolvedEndpoint: string | null;
+  readonly requestedLowerBoundary: string | null;
+  readonly resolvedLowerBoundary: string | null;
+  readonly oldestInspectedCommitId: string | null;
+  readonly currentSourceDigest: string | null;
+  readonly aggregateRawSnapshotBytes: number;
+  readonly limits: HistoricalGitEvidenceLimits;
+  readonly inspectedCommitIds: readonly string[];
+  readonly snapshots: readonly HistoricalGitInspectionSnapshot[];
+  readonly causes: readonly HistoricalGitEvidenceCauseRecord[];
+}
+
+export type HistoricalGitEvidenceOutcome =
+  | HistoricalGitEvidenceResult
   | GitHistoryProbeFailure;
 
 export type AdvanceHistoryBaselineCause =
@@ -917,6 +1023,883 @@ export async function probeGitHistory(
     snapshots: Object.freeze(snapshots),
     availability: allCauses,
   };
+}
+
+type HistoricalResolvedRevision =
+  | { readonly ok: true; readonly commitId: string }
+  | {
+      readonly ok: false;
+      readonly cause:
+        | "unknown_revision"
+        | "ambiguous_revision"
+        | "non_commit_revision";
+    }
+  | { readonly ok: false; readonly failure: GitHistoryProbeFailure };
+
+type HistoricalTreeEntry =
+  | { readonly kind: "missing" }
+  | {
+      readonly kind: "object";
+      readonly mode: string;
+      readonly objectType: string;
+      readonly objectId: string;
+    };
+
+interface PendingHistoricalSnapshot {
+  readonly commitId: string;
+  readonly parentCommitIds: readonly string[];
+  readonly blobId: string | null;
+  readonly sourceDigest: string | null;
+  readonly source: Uint8Array | null;
+  readonly recordedAt: string | null;
+  readonly isEndpoint: boolean;
+  readonly isLowerBoundary: boolean;
+}
+
+function historicalLimits(
+  overrides: Partial<HistoricalGitEvidenceLimits> | undefined,
+): HistoricalGitEvidenceLimits {
+  function select(
+    name: keyof HistoricalGitEvidenceLimits,
+  ): number {
+    const value = overrides?.[name] ?? HISTORICAL_GIT_EVIDENCE_LIMITS[name];
+    return Number.isSafeInteger(value) && value > 0
+      ? value
+      : HISTORICAL_GIT_EVIDENCE_LIMITS[name];
+  }
+  return Object.freeze({
+    inspectedCommits: select("inspectedCommits"),
+    rawBytesPerSnapshot: select("rawBytesPerSnapshot"),
+    aggregateRawSnapshotBytes: select("aggregateRawSnapshotBytes"),
+  });
+}
+
+function historicalCause(
+  cause: HistoricalGitEvidenceCause,
+  subject: HistoricalGitEvidenceSubject,
+  options: {
+    readonly commitId?: string | null;
+    readonly limit?: keyof HistoricalGitEvidenceLimits | null;
+    readonly actual?: number | null;
+  } = {},
+): HistoricalGitEvidenceCauseRecord {
+  return Object.freeze({
+    cause,
+    subject,
+    commitId: options.commitId ?? null,
+    limit: options.limit ?? null,
+    actual: options.actual ?? null,
+  });
+}
+
+interface HistoricalResultFields {
+  readonly objectFormat?: "sha1" | "sha256" | null;
+  readonly repositoryId?: string | null;
+  readonly repositoryReadSnapshotId?: string | null;
+  readonly repositoryRelativePath?: string | null;
+  readonly resolvedEndpoint?: string | null;
+  readonly resolvedLowerBoundary?: string | null;
+  readonly oldestInspectedCommitId?: string | null;
+  readonly currentSourceDigest?: string | null;
+  readonly aggregateRawSnapshotBytes?: number;
+  readonly inspectedCommitIds?: readonly string[];
+  readonly snapshots?: readonly HistoricalGitInspectionSnapshot[];
+}
+
+function historicalEvidenceResult(
+  request: HistoricalGitEvidenceRequest,
+  limits: HistoricalGitEvidenceLimits,
+  status: HistoricalGitEvidenceStatus,
+  causes: readonly HistoricalGitEvidenceCauseRecord[],
+  fields: HistoricalResultFields = {},
+): HistoricalGitEvidenceResult {
+  return Object.freeze({
+    ok: true,
+    modelVersion: HISTORICAL_GIT_EVIDENCE_MODEL_VERSION,
+    status,
+    ancestryProfile: "first_parent",
+    objectFormat: fields.objectFormat ?? null,
+    repositoryId: fields.repositoryId ?? null,
+    repositoryReadSnapshotId: fields.repositoryReadSnapshotId ?? null,
+    repositoryRelativePath: fields.repositoryRelativePath ?? null,
+    requestedEndpoint: request.requestedEndpoint ?? "HEAD",
+    resolvedEndpoint: fields.resolvedEndpoint ?? null,
+    requestedLowerBoundary: request.lowerBoundary ?? null,
+    resolvedLowerBoundary: fields.resolvedLowerBoundary ?? null,
+    oldestInspectedCommitId: fields.oldestInspectedCommitId ?? null,
+    currentSourceDigest: fields.currentSourceDigest ?? null,
+    aggregateRawSnapshotBytes: fields.aggregateRawSnapshotBytes ?? 0,
+    limits,
+    inspectedCommitIds: Object.freeze([
+      ...(fields.inspectedCommitIds ?? []),
+    ]),
+    snapshots: Object.freeze([...(fields.snapshots ?? [])]),
+    causes: Object.freeze([...causes]),
+  });
+}
+
+function parseHistoricalCommitList(
+  result: GitCommandSuccess,
+  operation: string,
+  objectFormat: "sha1" | "sha256",
+): string[] | GitHistoryProbeFailure {
+  const text = stdoutText(result, operation);
+  if (typeof text !== "string") return text;
+  const values = text === "" ? [] : text.split("\n");
+  if (
+    values.some((value) => !commitId(value, objectFormat)) ||
+    new Set(values).size !== values.length
+  ) {
+    return malformed(operation);
+  }
+  return values;
+}
+
+function resolveHistoricalRevision(
+  executable: string,
+  repositoryRoot: string,
+  spelling: string,
+  objectFormat: "sha1" | "sha256",
+  operation: string,
+): HistoricalResolvedRevision {
+  const commitCommand = runGit(
+    executable,
+    repositoryRoot,
+    operation,
+    [
+      "rev-parse",
+      "--verify",
+      "--end-of-options",
+      `${spelling}^{commit}`,
+    ],
+  );
+  if (commitCommand.ok) {
+    const text = stdoutText(commitCommand, operation);
+    if (typeof text !== "string") return { ok: false, failure: text };
+    if (!commitId(text, objectFormat)) {
+      return { ok: false, failure: malformed(operation) };
+    }
+    return { ok: true, commitId: text };
+  }
+  if (commitCommand.kind === "failure") {
+    return { ok: false, failure: commitCommand.failure };
+  }
+
+  if (/^[0-9a-fA-F]{4,64}$/.test(spelling)) {
+    const disambiguate = runGit(
+      executable,
+      repositoryRoot,
+      `${operation}_disambiguate`,
+      ["rev-parse", `--disambiguate=${spelling.toLowerCase()}`],
+    );
+    if (!disambiguate.ok) {
+      if (disambiguate.kind === "failure") {
+        return { ok: false, failure: disambiguate.failure };
+      }
+    } else {
+      const candidates = parseHistoricalCommitList(
+        disambiguate,
+        `${operation}_disambiguate`,
+        objectFormat,
+      );
+      if (!Array.isArray(candidates)) {
+        return { ok: false, failure: candidates };
+      }
+      if (candidates.length > 1) {
+        return { ok: false, cause: "ambiguous_revision" };
+      }
+    }
+  }
+
+  const objectCommand = runGit(
+    executable,
+    repositoryRoot,
+    `${operation}_object`,
+    [
+      "rev-parse",
+      "--verify",
+      "--end-of-options",
+      `${spelling}^{object}`,
+    ],
+  );
+  if (!objectCommand.ok) {
+    return objectCommand.kind === "failure"
+      ? { ok: false, failure: objectCommand.failure }
+      : { ok: false, cause: "unknown_revision" };
+  }
+  const objectText = stdoutText(objectCommand, `${operation}_object`);
+  if (typeof objectText !== "string") {
+    return { ok: false, failure: objectText };
+  }
+  if (!commitId(objectText, objectFormat)) {
+    return { ok: false, failure: malformed(`${operation}_object`) };
+  }
+  return { ok: false, cause: "non_commit_revision" };
+}
+
+function readHistoricalTreeEntry(
+  executable: string,
+  repositoryRoot: string,
+  commit: string,
+  relativePath: string,
+  objectFormat: "sha1" | "sha256",
+  operation: string,
+): HistoricalTreeEntry | GitHistoryProbeFailure {
+  const command = runGit(
+    executable,
+    repositoryRoot,
+    operation,
+    ["ls-tree", "-z", commit, "--", relativePath],
+  );
+  if (!command.ok) {
+    return command.kind === "failure"
+      ? command.failure
+      : commandFailure(operation);
+  }
+  if (command.stdout.length === 0) return { kind: "missing" };
+  const text = stdoutText(command, operation);
+  if (typeof text !== "string") return text;
+  const match = /^([0-7]{6}) ([a-z]+) ([0-9a-f]+)\t([^\u0000]+)\u0000?$/.exec(
+    text,
+  );
+  if (
+    match === null ||
+    match[4] !== relativePath ||
+    !commitId(match[3]!, objectFormat)
+  ) {
+    return malformed(operation);
+  }
+  return Object.freeze({
+    kind: "object",
+    mode: match[1]!,
+    objectType: match[2]!,
+    objectId: match[3]!,
+  });
+}
+
+function regularHistoricalBlob(entry: HistoricalTreeEntry): boolean {
+  return entry.kind === "object" &&
+    entry.objectType === "blob" &&
+    (entry.mode === "100644" || entry.mode === "100755");
+}
+
+function repositoryIdentity(commonDirectory: string): string {
+  const digest = digestDocumentBytes(Buffer.from(commonDirectory, "utf8"));
+  return `git-repository:${digest}`;
+}
+
+export async function probeHistoricalGitEvidence(
+  request: HistoricalGitEvidenceRequest,
+  dependencies: HistoricalGitEvidenceDependencies = {},
+): Promise<HistoricalGitEvidenceOutcome> {
+  const limits = historicalLimits(dependencies.limits);
+  const requestedEndpoint = request.requestedEndpoint ?? "HEAD";
+  const executable = dependencies.gitExecutable ?? "git";
+  const targetPath = resolve(request.targetPath);
+  const initialTarget = await captureTarget(targetPath);
+  if (!initialTarget.ok) {
+    if ("ambiguous" in initialTarget) {
+      return historicalEvidenceResult(
+        request,
+        limits,
+        "unavailable",
+        [historicalCause("ambiguous_path", "target_path")],
+      );
+    }
+    return initialTarget.failure;
+  }
+
+  const repositoryCommand = runGit(
+    executable,
+    dirname(initialTarget.capture.realPath),
+    "historical_repository_root",
+    ["rev-parse", "--path-format=absolute", "--show-toplevel"],
+  );
+  if (!repositoryCommand.ok) {
+    if (repositoryCommand.kind === "failure") {
+      return repositoryCommand.failure;
+    }
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [historicalCause("no_repository", "repository")],
+      { currentSourceDigest: initialTarget.capture.digest },
+    );
+  }
+  const repositoryText = stdoutText(
+    repositoryCommand,
+    "historical_repository_root",
+  );
+  if (typeof repositoryText !== "string") return repositoryText;
+
+  let repositoryRoot: string;
+  try {
+    repositoryRoot = await realpath(repositoryText);
+  } catch {
+    return commandFailure("historical_repository_root");
+  }
+  const relativePath = normalizeRepositoryPath(
+    repositoryRoot,
+    initialTarget.capture.realPath,
+  );
+  if (relativePath === null) {
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [historicalCause("ambiguous_path", "target_path")],
+      { currentSourceDigest: initialTarget.capture.digest },
+    );
+  }
+
+  const headCommand = runGit(
+    executable,
+    repositoryRoot,
+    "historical_resolve_head",
+    ["rev-parse", "--verify", "--end-of-options", "HEAD^{commit}"],
+  );
+  if (!headCommand.ok) {
+    if (headCommand.kind === "failure") return headCommand.failure;
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [historicalCause("no_head", "repository")],
+      {
+        repositoryRelativePath: relativePath,
+        currentSourceDigest: initialTarget.capture.digest,
+      },
+    );
+  }
+
+  const formatCommand = runGit(
+    executable,
+    repositoryRoot,
+    "historical_object_format",
+    ["rev-parse", "--show-object-format=storage"],
+  );
+  if (!formatCommand.ok) {
+    return formatCommand.kind === "failure"
+      ? formatCommand.failure
+      : commandFailure("historical_object_format");
+  }
+  const formatText = stdoutText(
+    formatCommand,
+    "historical_object_format",
+  );
+  if (typeof formatText !== "string") return formatText;
+  if (formatText !== "sha1" && formatText !== "sha256") {
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [historicalCause("unsupported_object_format", "repository")],
+      {
+        repositoryRelativePath: relativePath,
+        currentSourceDigest: initialTarget.capture.digest,
+      },
+    );
+  }
+  const objectFormat = formatText;
+
+  const commonCommand = runGit(
+    executable,
+    repositoryRoot,
+    "historical_common_directory",
+    ["rev-parse", "--path-format=absolute", "--git-common-dir"],
+  );
+  if (!commonCommand.ok) {
+    return commonCommand.kind === "failure"
+      ? commonCommand.failure
+      : commandFailure("historical_common_directory");
+  }
+  const commonText = stdoutText(
+    commonCommand,
+    "historical_common_directory",
+  );
+  if (typeof commonText !== "string") return commonText;
+  let commonDirectory: string;
+  try {
+    commonDirectory = await realpath(commonText);
+  } catch {
+    return commandFailure("historical_common_directory");
+  }
+  const repositoryId = repositoryIdentity(commonDirectory);
+  const baseFields: HistoricalResultFields = {
+    objectFormat,
+    repositoryId,
+    repositoryRelativePath: relativePath,
+    currentSourceDigest: initialTarget.capture.digest,
+  };
+
+  if (
+    request.expectedSourceDigest !== undefined &&
+    request.expectedSourceDigest !== initialTarget.capture.digest
+  ) {
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [historicalCause("target_changed", "target_path")],
+      baseFields,
+    );
+  }
+
+  const endpoint = resolveHistoricalRevision(
+    executable,
+    repositoryRoot,
+    requestedEndpoint,
+    objectFormat,
+    "historical_resolve_endpoint",
+  );
+  if (!endpoint.ok) {
+    if ("failure" in endpoint) return endpoint.failure;
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [historicalCause(endpoint.cause, "endpoint")],
+      baseFields,
+    );
+  }
+  const resolvedEndpoint = endpoint.commitId;
+  const endpointFields: HistoricalResultFields = {
+    ...baseFields,
+    resolvedEndpoint,
+  };
+
+  const entryCache = new Map<string, HistoricalTreeEntry>();
+  const endpointEntry = readHistoricalTreeEntry(
+    executable,
+    repositoryRoot,
+    resolvedEndpoint,
+    relativePath,
+    objectFormat,
+    "historical_endpoint_tree",
+  );
+  if ("ok" in endpointEntry) return endpointEntry;
+  entryCache.set(resolvedEndpoint, endpointEntry);
+  if (!regularHistoricalBlob(endpointEntry)) {
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [
+        historicalCause("endpoint_path_missing", "endpoint", {
+          commitId: resolvedEndpoint,
+        }),
+      ],
+      endpointFields,
+    );
+  }
+
+  const shallowCommand = runGit(
+    executable,
+    repositoryRoot,
+    "historical_shallow_state",
+    ["rev-parse", "--is-shallow-repository"],
+  );
+  if (!shallowCommand.ok) {
+    return shallowCommand.kind === "failure"
+      ? shallowCommand.failure
+      : commandFailure("historical_shallow_state");
+  }
+  const shallowText = stdoutText(
+    shallowCommand,
+    "historical_shallow_state",
+  );
+  if (typeof shallowText !== "string") return shallowText;
+  if (shallowText !== "true" && shallowText !== "false") {
+    return malformed("historical_shallow_state");
+  }
+  const shallow = shallowText === "true";
+
+  const laneCommand = runGit(
+    executable,
+    repositoryRoot,
+    "historical_first_parent_lane",
+    ["rev-list", "--first-parent", "--reverse", resolvedEndpoint],
+  );
+  if (!laneCommand.ok) {
+    return laneCommand.kind === "failure"
+      ? laneCommand.failure
+      : commandFailure("historical_first_parent_lane");
+  }
+  const lane = parseHistoricalCommitList(
+    laneCommand,
+    "historical_first_parent_lane",
+    objectFormat,
+  );
+  if (!Array.isArray(lane)) return lane;
+  if (lane.length === 0 || lane.at(-1) !== resolvedEndpoint) {
+    return malformed("historical_first_parent_lane");
+  }
+  const laneOrder = new Map(lane.map((id, index) => [id, index]));
+
+  let resolvedLowerBoundary: string | null = null;
+  let lowerIndex = 0;
+  if (request.lowerBoundary !== undefined) {
+    const lower = resolveHistoricalRevision(
+      executable,
+      repositoryRoot,
+      request.lowerBoundary,
+      objectFormat,
+      "historical_resolve_lower",
+    );
+    if (!lower.ok) {
+      if ("failure" in lower) return lower.failure;
+      return historicalEvidenceResult(
+        request,
+        limits,
+        "unavailable",
+        [historicalCause(lower.cause, "lower_boundary")],
+        endpointFields,
+      );
+    }
+    resolvedLowerBoundary = lower.commitId;
+    const index = laneOrder.get(resolvedLowerBoundary);
+    if (index === undefined) {
+      return historicalEvidenceResult(
+        request,
+        limits,
+        "unavailable",
+        [
+          historicalCause(
+            shallow
+              ? "shallow_origin"
+              : "lower_not_first_parent_ancestor",
+            "lower_boundary",
+            { commitId: resolvedLowerBoundary },
+          ),
+        ],
+        { ...endpointFields, resolvedLowerBoundary },
+      );
+    }
+    lowerIndex = index;
+    const lowerEntry = resolvedLowerBoundary === resolvedEndpoint
+      ? endpointEntry
+      : readHistoricalTreeEntry(
+          executable,
+          repositoryRoot,
+          resolvedLowerBoundary,
+          relativePath,
+          objectFormat,
+          "historical_lower_tree",
+        );
+    if ("ok" in lowerEntry) return lowerEntry;
+    entryCache.set(resolvedLowerBoundary, lowerEntry);
+    if (!regularHistoricalBlob(lowerEntry)) {
+      return historicalEvidenceResult(
+        request,
+        limits,
+        "unavailable",
+        [
+          historicalCause("lower_path_missing", "lower_boundary", {
+            commitId: resolvedLowerBoundary,
+          }),
+        ],
+        { ...endpointFields, resolvedLowerBoundary },
+      );
+    }
+  }
+
+  const changesCommand = runGit(
+    executable,
+    repositoryRoot,
+    "historical_path_changes",
+    [
+      "rev-list",
+      "--first-parent",
+      "--full-history",
+      "--reverse",
+      resolvedEndpoint,
+      "--",
+      relativePath,
+    ],
+  );
+  if (!changesCommand.ok) {
+    return changesCommand.kind === "failure"
+      ? changesCommand.failure
+      : commandFailure("historical_path_changes");
+  }
+  const pathChanges = parseHistoricalCommitList(
+    changesCommand,
+    "historical_path_changes",
+    objectFormat,
+  );
+  if (!Array.isArray(pathChanges)) return pathChanges;
+  if (pathChanges.some((id) => !laneOrder.has(id))) {
+    return malformed("historical_path_changes");
+  }
+
+  const selected = new Set<string>();
+  if (resolvedLowerBoundary !== null) selected.add(resolvedLowerBoundary);
+  for (const id of pathChanges) {
+    const index = laneOrder.get(id)!;
+    if (index >= lowerIndex) selected.add(id);
+  }
+  selected.add(resolvedEndpoint);
+  const inspectedCommitIds = [...selected].sort(
+    (left, right) => laneOrder.get(left)! - laneOrder.get(right)!,
+  );
+  if (inspectedCommitIds.length > limits.inspectedCommits) {
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [
+        historicalCause("hard_limit", "inspection", {
+          limit: "inspectedCommits",
+          actual: inspectedCommitIds.length,
+        }),
+      ],
+      { ...endpointFields, resolvedLowerBoundary },
+    );
+  }
+
+  const pending: PendingHistoricalSnapshot[] = [];
+  let aggregateRawSnapshotBytes = 0;
+  for (const inspectedCommitId of inspectedCommitIds) {
+    const metadataCommand = runGit(
+      executable,
+      repositoryRoot,
+      "historical_commit_metadata",
+      ["show", "-s", "--format=%P%x00%cI", inspectedCommitId],
+    );
+    if (!metadataCommand.ok) {
+      return metadataCommand.kind === "failure"
+        ? metadataCommand.failure
+        : historicalEvidenceResult(
+            request,
+            limits,
+            "unavailable",
+            [
+              historicalCause("object_read_failed", "inspection", {
+                commitId: inspectedCommitId,
+              }),
+            ],
+            { ...endpointFields, resolvedLowerBoundary },
+          );
+    }
+    const metadataText = stdoutText(
+      metadataCommand,
+      "historical_commit_metadata",
+    );
+    if (typeof metadataText !== "string") return metadataText;
+    const metadata = parseGitCommitMetadata(metadataText, objectFormat);
+    if (metadata === null) return malformed("historical_commit_metadata");
+
+    let entry = entryCache.get(inspectedCommitId);
+    if (entry === undefined) {
+      const read = readHistoricalTreeEntry(
+        executable,
+        repositoryRoot,
+        inspectedCommitId,
+        relativePath,
+        objectFormat,
+        "historical_snapshot_tree",
+      );
+      if ("ok" in read) return read;
+      entry = read;
+      entryCache.set(inspectedCommitId, entry);
+    }
+
+    let blobId: string | null = null;
+    let source: Uint8Array | null = null;
+    let sourceDigest: string | null = null;
+    if (entry.kind === "object" && entry.objectType === "blob") {
+      blobId = entry.objectId;
+      const sourceCommand = runGit(
+        executable,
+        repositoryRoot,
+        "historical_snapshot_blob",
+        ["cat-file", "blob", blobId],
+      );
+      if (!sourceCommand.ok) {
+        return sourceCommand.kind === "failure"
+          ? sourceCommand.failure
+          : historicalEvidenceResult(
+              request,
+              limits,
+              "unavailable",
+              [
+                historicalCause("object_read_failed", "inspection", {
+                  commitId: inspectedCommitId,
+                }),
+              ],
+              { ...endpointFields, resolvedLowerBoundary },
+            );
+      }
+      if (sourceCommand.stdout.length > limits.rawBytesPerSnapshot) {
+        return historicalEvidenceResult(
+          request,
+          limits,
+          "unavailable",
+          [
+            historicalCause("hard_limit", "inspection", {
+              commitId: inspectedCommitId,
+              limit: "rawBytesPerSnapshot",
+              actual: sourceCommand.stdout.length,
+            }),
+          ],
+          { ...endpointFields, resolvedLowerBoundary },
+        );
+      }
+      const nextAggregate =
+        aggregateRawSnapshotBytes + sourceCommand.stdout.length;
+      if (nextAggregate > limits.aggregateRawSnapshotBytes) {
+        return historicalEvidenceResult(
+          request,
+          limits,
+          "unavailable",
+          [
+            historicalCause("hard_limit", "inspection", {
+              commitId: inspectedCommitId,
+              limit: "aggregateRawSnapshotBytes",
+              actual: nextAggregate,
+            }),
+          ],
+          { ...endpointFields, resolvedLowerBoundary },
+        );
+      }
+      aggregateRawSnapshotBytes = nextAggregate;
+      source = new Uint8Array(sourceCommand.stdout);
+      sourceDigest = digestDocumentBytes(source);
+    }
+
+    pending.push(Object.freeze({
+      commitId: inspectedCommitId,
+      parentCommitIds: Object.freeze([...metadata.parentCommitIds]),
+      blobId,
+      sourceDigest,
+      source,
+      recordedAt: metadata.recordedAt,
+      isEndpoint: inspectedCommitId === resolvedEndpoint,
+      isLowerBoundary: inspectedCommitId === resolvedLowerBoundary,
+    }));
+  }
+
+  const readSnapshotDigest = digestDocumentBytes(Buffer.from(JSON.stringify({
+    model: "Perttool.HistoricalGitEvidence.v1",
+    objectFormat,
+    repositoryId,
+    repositoryRelativePath: relativePath,
+    resolvedEndpoint,
+    resolvedLowerBoundary,
+    snapshots: pending.map((snapshot) => ({
+      commitId: snapshot.commitId,
+      parentCommitIds: snapshot.parentCommitIds,
+      blobId: snapshot.blobId,
+      sourceDigest: snapshot.sourceDigest,
+    })),
+  }), "utf8"));
+  const repositoryReadSnapshotId = `git-read:${readSnapshotDigest}`;
+
+  if (dependencies.afterEvidence !== undefined) {
+    await dependencies.afterEvidence();
+  }
+
+  const finalEndpoint = resolveHistoricalRevision(
+    executable,
+    repositoryRoot,
+    requestedEndpoint,
+    objectFormat,
+    "historical_recheck_endpoint",
+  );
+  if (!finalEndpoint.ok) {
+    if ("failure" in finalEndpoint) return finalEndpoint.failure;
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [historicalCause("repository_race", "endpoint")],
+      { ...endpointFields, resolvedLowerBoundary },
+    );
+  }
+  let finalLowerCommit: string | null = null;
+  if (request.lowerBoundary !== undefined) {
+    const finalLower = resolveHistoricalRevision(
+      executable,
+      repositoryRoot,
+      request.lowerBoundary,
+      objectFormat,
+      "historical_recheck_lower",
+    );
+    if (!finalLower.ok) {
+      if ("failure" in finalLower) return finalLower.failure;
+      return historicalEvidenceResult(
+        request,
+        limits,
+        "unavailable",
+        [historicalCause("repository_race", "lower_boundary")],
+        { ...endpointFields, resolvedLowerBoundary },
+      );
+    }
+    finalLowerCommit = finalLower.commitId;
+  }
+  const finalTarget = await captureTarget(targetPath);
+  let finalCommonDirectory: string | null = null;
+  try {
+    finalCommonDirectory = await realpath(commonText);
+  } catch {
+    finalCommonDirectory = null;
+  }
+  if (
+    finalEndpoint.commitId !== resolvedEndpoint ||
+    finalLowerCommit !== resolvedLowerBoundary ||
+    finalCommonDirectory !== commonDirectory ||
+    !finalTarget.ok ||
+    !sameTarget(initialTarget.capture, finalTarget.capture)
+  ) {
+    return historicalEvidenceResult(
+      request,
+      limits,
+      "unavailable",
+      [historicalCause("repository_race", "repository")],
+      { ...endpointFields, resolvedLowerBoundary },
+    );
+  }
+
+  const snapshots = pending.map((snapshot) => Object.freeze({
+    modelVersion: HISTORICAL_GIT_EVIDENCE_MODEL_VERSION,
+    objectFormat,
+    repositoryId,
+    repositoryReadSnapshotId,
+    repositoryRelativePath: relativePath,
+    commitId: snapshot.commitId,
+    parentCommitIds: snapshot.parentCommitIds,
+    blobId: snapshot.blobId,
+    sourceDigest: snapshot.sourceDigest,
+    source: snapshot.source,
+    recordedAt: snapshot.recordedAt,
+    isMergeCommit: snapshot.parentCommitIds.length > 1,
+    isEndpoint: snapshot.isEndpoint,
+    isLowerBoundary: snapshot.isLowerBoundary,
+  } satisfies HistoricalGitInspectionSnapshot));
+  const causes = shallow && resolvedLowerBoundary === null
+    ? [
+        historicalCause("shallow_origin", "repository", {
+          commitId: inspectedCommitIds[0] ?? null,
+        }),
+      ]
+    : [];
+
+  return historicalEvidenceResult(
+    request,
+    limits,
+    causes.length === 0 ? "complete" : "incomplete",
+    causes,
+    {
+      ...endpointFields,
+      repositoryReadSnapshotId,
+      resolvedLowerBoundary,
+      oldestInspectedCommitId: inspectedCommitIds[0] ?? null,
+      aggregateRawSnapshotBytes,
+      inspectedCommitIds,
+      snapshots,
+    },
+  );
 }
 
 type BaselineFields = Partial<

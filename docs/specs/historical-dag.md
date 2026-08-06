@@ -188,6 +188,55 @@ identity, and a repository/read-snapshot race fail closed. The public result
 must not expose command stderr, environment values, credentials, absolute
 paths, or temporary paths.
 
+### 6.1 Accepted internal bounded-evidence record
+
+The internal Node-backed implementation is
+`probeHistoricalGitEvidence` in `src/history/git-probe.ts`. It returns model 1
+evidence only; it is not re-exported by the package root, Core, Node facade, or
+the public `createNodeHost` port object. The existing project-history probe and
+advance-history capture retain their exact requests, results, and behavior.
+
+The request keeps `targetPath`, `requestedEndpoint`, and `lowerBoundary` as
+separate values. `requestedEndpoint` defaults to `HEAD`. The result records:
+
+- `ancestryProfile="first_parent"` and status `complete`, `incomplete`, or
+  `unavailable`;
+- the requested and full resolved endpoint, optional requested and full
+  resolved lower boundary, and oldest inspected commit;
+- SHA-1 or SHA-256 object format, one opaque repository ID, repository-relative
+  path, and one complete read-snapshot ID;
+- each selected commit, every direct parent in Git order, exact blob ID or
+  absence, raw bytes, SHA-256 source digest, committer-time provenance, merge
+  flag, endpoint flag, and lower-boundary flag; and
+- applied input limits, aggregate raw bytes, and closed typed causes.
+
+The opaque repository ID is a SHA-256 token over the resolved common Git
+directory binding. Linked worktrees therefore share it, while the absolute
+directory never leaves the Host. The read-snapshot ID binds model, object
+format, repository ID, relative path, resolved bounds, ordered commits,
+parents, blob IDs, and source digests. It is evidence identity only, not a Git
+object ID, assurance hash, signature, cache authority, or write authority.
+
+Enumeration first resolves and freezes the endpoint. An explicit lower bound
+must resolve to a commit on that endpoint's first-parent lane and must contain
+a regular target blob. The selected sequence is the lower input when present,
+every later first-parent target-blob change, and the endpoint even when its
+blob repeats. Equal lower and endpoint bounds produce one input. Without an
+explicit lower bound, the oldest reachable target introduction is selected;
+an omitted shallow prefix yields `incomplete/shallow_origin`. An explicit
+available shallow lower bound may be complete because the requested lane from
+that bound is fully proved.
+
+Endpoint and lower-boundary regular-blob requirements fail before any graph is
+returned. Commit-count, per-snapshot byte, and aggregate-byte overflow also
+return no snapshots. Production uses the exact Section 13 input limits;
+smaller dependency-only overrides exist solely for deterministic boundary
+tests and are not caller request fields. After capture, the Host re-resolves
+both requested bounds and rechecks the common-directory and no-follow target
+binding. Any mismatch returns `unavailable/repository_race` with no graph.
+Full object IDs remain frozen inputs, merge side commits remain excluded, and
+no enumeration or commit timestamp repairs a failed bound.
+
 ## 7. Snapshot validity and continuity
 
 Each input follows this fixed classification pipeline:
