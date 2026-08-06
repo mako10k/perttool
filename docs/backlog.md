@@ -548,11 +548,11 @@ operation.
 
 Priority: Selected through the independent `HIST-DAG-001` workstream
 
-Status: First-parent normative contract, internal transition model, and bounded
-immutable Git evidence implemented (2026-08-06); reconstruction and interfaces
-remain unimplemented. The Git-probe task is complete, but its separately
-owner-confirmed basis-bound outcome is registered; complete assurance now makes
-only the dependent reconstruction task startable.
+Status: First-parent normative contract, internal transition model, bounded
+immutable Git evidence, and pure linear reconstruction implemented
+(2026-08-06); public CLI and editor interfaces remain unimplemented. The
+reconstruction task and its separately owner-confirmed basis-bound assurance
+outcome are complete.
 
 The current DAG renderer and VSIX GraphView correctly project one complete
 current source, which can contain only one residual milestone after canonical
@@ -606,8 +606,17 @@ bindings, fixed input limits, SHA-1/SHA-256 and linked-worktree identity,
 shallow completeness, and ref/path races without changing current history.
 Its acceptance record is
 [`historical-git-evidence-acceptance.md`](process/historical-git-evidence-acceptance.md).
-The plan lifecycle and assurance outcome for that implementation remain to be
-completed before selecting its dependent reconstruction task. Current
+The internal `reconstructHistoricalLinearHistory` fold now classifies every
+source, preserves gaps and timeline segments, freezes actual evidence, proves
+exact canonical advance, reconstructs current and retired lineage occurrences,
+and binds navigation ranges to immutable Git evidence under the four output
+limits. Its twelve closed cases and acceptance record are
+[`historical-linear-core-v1.json`](../test/fixtures/historical-linear-core-v1.json)
+and
+[`historical-linear-core-acceptance.md`](process/historical-linear-core-acceptance.md).
+Its status-only lifecycle write and separately confirmed conformant outcome are
+complete. Fresh complete NextResult v6 now recommends and makes startable only
+`HISTORICAL_CLI`. Current
 `project history`, `dag render`,
 `Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, MCP capabilities,
 and all read/write authority boundaries remain unchanged. Runtime work, Git or

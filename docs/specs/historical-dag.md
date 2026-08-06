@@ -499,6 +499,53 @@ last valid planned and actual context. A partial match, manual deletion,
 simultaneous future edit, gap, unsupported planner version, forced historical
 write, or unavailable candidate is not partially accepted as advance.
 
+### 10.1 Accepted internal linear reconstruction
+
+The pure internal implementation is
+`reconstructHistoricalLinearHistory` in
+`src/history/historical-graph.ts`. It consumes one complete, incomplete, or
+unavailable `Perttool.HistoricalGitEvidence.v1` value and optional
+dependency-only output-limit overrides. It performs no repository discovery,
+object read, source write, cache persistence, or adapter projection.
+
+The fold first validates the complete evidence binding and exact raw-source
+digest, then applies the Section 7 pipeline independently to every inspection
+input. Only semantic-valid inputs become immutable checkpoints. Invalid inputs
+remain ordered timeline entries, close the current continuity segment, and
+prevent lineage from crossing the gap. Plan assurance remains a separate
+`verified`, `withheld`, `not_enabled`, or `unavailable` observation and never
+repairs semantic validity.
+
+For every connected pair, the implementation invokes the active pure
+assurance-preserving canonical-advance planner in preview mode. A transition
+is passed to the transition classifier as a canonical-advance candidate only
+when the candidate semantic digest and the complete removed-task, gate,
+milestone, work-event, assurance-record, retained-frontier, and state-change
+summary equal the observed next checkpoint. The proof records planner version
+`perttool.canonical-advance.v1` and both immutable commit/blob/source bindings;
+it grants no mutation authority.
+
+The result contains the selected exact snapshot, all semantic checkpoints,
+ordered timeline entries and continuity segments, cumulative lineage or null,
+frozen work events, canonical-advance proofs, current and retired occurrence
+IDs, immutable declaration/field/child UTF-16 source bindings, applied limits,
+and typed causes. Lineage is emitted only for one complete endpoint-bound lane
+with continuous project identity, accepted transition classes, closed
+milestone endpoints, and an acyclic cumulative topology. It is never repaired
+by dropping an occurrence or selecting a value from a conflict.
+
+Output counts are preflighted before constructing the transition sequence or
+graph arrays. Any entity-epoch, transition, rendered-occurrence, or source-
+binding overflow returns `incomplete/hard_limit` with no checkpoint, lineage,
+timeline, or selected-snapshot array. The production limits are exactly those
+in Section 13; smaller overrides are not public request fields and exist only
+for deterministic dependency tests.
+
+This internal result is the model-1 Domain handoff, not the reserved public
+`Perttool.HistoricalGraphResult.v1`. It is absent from the package root,
+Core/Node facades, Node Host port object, command registry, schema catalog,
+LSP, VSIX, and MCP surfaces.
+
 ## 11. Views and analysis
 
 Historical view and analysis mode are orthogonal:

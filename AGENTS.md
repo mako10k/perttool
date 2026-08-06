@@ -434,6 +434,28 @@ resulting plan digest is `sha256:fb5e0054...37e139`. Complete assurance has no
 unavailable task, mismatch, replan requirement, or required action. Fresh
 complete NextResult v6 recommends and makes startable only
 `HISTORICAL_LINEAR_CORE`.
+The pure internal `reconstructHistoricalLinearHistory` implementation in
+`src/history/historical-graph.ts` now validates the immutable evidence binding,
+classifies every Grammar 1 through 6 source, retains invalid continuity gaps,
+observes assurance independently, freezes exact work events, invokes the
+compatible canonical-advance planner in preview mode, verifies its complete
+candidate and summary, and reconstructs exact checkpoints, selected snapshot,
+timeline segments, current and retired lineage occurrences, advance proofs,
+and immutable UTF-16 source bindings under four fail-closed output limits. Its
+twelve cases are in `test/fixtures/historical-linear-core-v1.json`, and its
+technical acceptance record is
+`docs/process/historical-linear-core-acceptance.md`. It remains absent from the
+public root/Core/Node facades, Node Host ports, CLI, schemas, LSP, VSIX, and MCP.
+`HISTORICAL_LINEAR_CORE` is complete and retained before advance. Its
+status-only write changed the plan digest from `sha256:fb5e0054...37e139` to
+`sha256:60bce146...97975` without an owner assertion. Its exact assertion-free
+conformant outcome preview is bound to accepted basis
+`sha256:dd9be234...db4e4` and candidate digest
+`sha256:0ca50c85...b905c6`. It was separately confirmed and written once with
+actor `codex` and the candidate-bound `user` assertion for `plan_assurance`.
+Readback shows complete assurance with no unavailable task, mismatch, replan
+requirement, or required action. Fresh complete NextResult v6 recommends and
+makes startable only `HISTORICAL_CLI`.
 Current `project history`, `dag render`,
 `Perttool.GraphViewResult.v1`, Grammar 6, CLI Contract 7, 44 commands, and 20
 schemas remain unchanged. Runtime work, three-way ancestry, semantic patch or
@@ -769,7 +791,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/formatter/`: the active Grammar 1/2/3/4/5/6 source-preserving formatter Core; exact values use canonical Decimal-or-Fraction serialization.
 - `src/guidance/`: read-only pure Core that provides versioned offline AI Agent Guidance profiles, validation, queries, index/quick/detail projections, and deterministic JSON/text.
 - `src/governance/`: Grammar 4/5 declared/effective governance metadata, the exact generated direct-edit warning, and one pure actual-change classifier, caller-assertion normalizer, pre-change authority evaluator, and PTGOV diagnostic projection used by the active Contract 6 package surface.
-- `src/history/`: active read-only Git probe, validated-snapshot-injected pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; the internal model-1 whole-document historical transition projection, source-fidelity separation, adjacent classification, and deterministic occurrence/value/topology epochs; the internal bounded endpoint/lower-boundary first-parent commit/parent/blob/raw-source evidence probe with opaque repository/read-snapshot identity, exact input limits, shallow completeness, and race refusal; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with internal Grammar 6 history and assurance-record inventory extensions.
+- `src/history/`: active read-only Git probe, validated-snapshot-injected pure semantic reducer, and pure velocity observation Core for SHA-1/SHA-256 repository/path/revision binding, first-parent raw snapshots, declared-event deduplication/removal, qualified legacy transitions, exact task summaries and rates, typed availability, linked worktrees, and race detection; the internal model-1 whole-document historical transition projection, source-fidelity separation, adjacent classification, and deterministic occurrence/value/topology epochs; the internal bounded endpoint/lower-boundary first-parent commit/parent/blob/raw-source evidence probe with opaque repository/read-snapshot identity, exact input limits, shallow completeness, and race refusal; the internal pure checkpoint, selected-snapshot, continuity, frozen-evidence, proved-lineage, timeline, canonical-advance-proof, immutable-source-binding, and fail-closed output-limit reconstruction; plus the active ADV-001 current-HEAD/stage-0 capture, destructive-range assessment, and pre-write baseline recheck with internal Grammar 6 history and assurance-record inventory extensions.
 - `src/io/`: raw-byte document reads, digests, symlink/race rejection, atomic safe-write mechanics, guarded existing-document output creation, and separate internal Grammar 2/3/4/5/6 target-validation adapters.
 - `src/migration/`: exact unit-migration request validation, velocity selection, stable causes, complete Duration inventory, preserved-temporal snapshots, exact Rational conversion records, canonical target tokens, and exact-Duration grammar selection, compatibility, reversibility, localized version-upgrade inputs, and internal retained Grammar 6 migration support.
 - `src/model/`: shared syntax/CST records, diagnostics, exact Rational arithmetic, units, internal declared calendar values plus exact Gregorian/fixed-offset comparison and projection, additive exact Duration Fraction values, and exact Decimal-or-Fraction source serialization.

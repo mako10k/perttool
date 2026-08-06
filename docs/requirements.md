@@ -3020,7 +3020,9 @@ Before implementation, separate the specifications in the following order.
     - [x] Extend bounded immutable first-parent Git evidence without changing
       current project-history behavior. The accepted trace is
       [`historical-git-evidence-acceptance.md`](process/historical-git-evidence-acceptance.md).
-    - [ ] Implement snapshot, proved lineage, and timeline reconstruction.
+    - [x] Implement snapshot, proved lineage, and timeline reconstruction. The
+      accepted internal Core trace is
+      [`historical-linear-core-acceptance.md`](process/historical-linear-core-acceptance.md).
     - [ ] Expose a separate read-only CLI result and isolated package gate.
     - [ ] Accept a distinct historical editor protocol and local VSIX
       presentation.

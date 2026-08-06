@@ -95,7 +95,7 @@ test("historical DAG contract fixes the selected first-parent boundary", async (
   assert.match(design, /### Post-MVP Slice 6: Historical DAG reconstruction/u);
   assert.match(
     backlog,
-    /Status: First-parent normative contract, internal transition model, and bounded\nimmutable Git evidence implemented/u,
+    /Status: First-parent normative contract, internal transition model, bounded\nimmutable Git evidence, and pure linear reconstruction implemented/u,
   );
   assert.match(proposal, /Document status: Superseded design input 0\.2/u);
   assert.match(proposal, /Normative successor: \[Historical DAG Reconstruction Contract\]/u);
@@ -197,11 +197,18 @@ test("contract selection leaves the active runtime surface unchanged", () => {
   );
 });
 
-test("completed Git probe makes only the historical linear Core startable", async () => {
-  const [source, acceptance, transitionAcceptance, selfUse] = await Promise.all([
+test("accepted linear Core makes only the historical CLI startable", async () => {
+  const [
+    source,
+    acceptance,
+    transitionAcceptance,
+    linearAcceptance,
+    selfUse,
+  ] = await Promise.all([
     repositoryText("plans/historical-dag.pert"),
     repositoryText("docs/process/historical-dag-contract-acceptance.md"),
     repositoryText("docs/process/historical-transition-model-acceptance.md"),
+    repositoryText("docs/process/historical-linear-core-acceptance.md"),
     repositoryText("scripts/check-self-use.sh"),
   ]);
   const checked = checkDocument(source);
@@ -229,18 +236,26 @@ test("completed Git probe makes only the historical linear Core startable", asyn
   );
   assert.match(
     source,
+    /task HISTORICAL_LINEAR_CORE[\s\S]*?status done/u,
+  );
+  assert.match(
+    source,
     /task_outcome OUTCOME_HISTORICAL_TRANSITION_MODEL:[\s\S]*?task HISTORICAL_TRANSITION_MODEL[\s\S]*?status conformant/u,
   );
   assert.match(
     source,
     /task_outcome OUTCOME_HISTORICAL_GIT_PROBE:[\s\S]*?task HISTORICAL_GIT_PROBE[\s\S]*?status conformant/u,
   );
-  assert.deepEqual(next.groups.ready, ["HISTORICAL_LINEAR_CORE"]);
+  assert.match(
+    source,
+    /task_outcome OUTCOME_HISTORICAL_LINEAR_CORE:[\s\S]*?task HISTORICAL_LINEAR_CORE[\s\S]*?status conformant/u,
+  );
+  assert.deepEqual(next.groups.ready, ["HISTORICAL_CLI"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_LINEAR_CORE",
+    "HISTORICAL_CLI",
   ]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_LINEAR_CORE",
+    "HISTORICAL_CLI",
   ]);
   assert.deepEqual(
     next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
@@ -252,6 +267,16 @@ test("completed Git probe makes only the historical linear Core startable", asyn
   assert.deepEqual(tableIds(acceptance, "HDGR"), expectedIds("HDGR", 14));
   assert.match(transitionAcceptance, /Document status: Accepted 1\.0/u);
   assert.match(transitionAcceptance, /all 35 self-use plans/u);
+  assert.match(linearAcceptance, /Document status: Accepted 1\.0/u);
+  assert.match(
+    linearAcceptance,
+    /complete\s+repository gate passes 939 tests/u,
+  );
+  assert.match(linearAcceptance, /isolated 665-file/u);
+  assert.match(
+    linearAcceptance,
+    /candidate digest\s+`sha256:0ca50c852105de6266e962f589597fd0e10d5a03748e3615e9e64af2a6b905c6`/u,
+  );
   assert.match(selfUse, /plans\/historical-dag\.pert/u);
   assert.match(selfUse, /35 plans; check, analyze, next/u);
 });

@@ -273,18 +273,17 @@
       ]
     },
     "historical-dag": {
-      "source_digest": "sha256:fb5e0054792d7a46ff631cd19f38d54f7a788014a91c667671edc0b65f37e139",
+      "source_digest": "sha256:0ca50c852105de6266e962f589597fd0e10d5a03748e3615e9e64af2a6b905c6",
       "groups": {
         "active": [],
         "ready": [
-          "HISTORICAL_LINEAR_CORE"
+          "HISTORICAL_CLI"
         ],
         "runnable_now": [
-          "HISTORICAL_LINEAR_CORE"
+          "HISTORICAL_CLI"
         ],
         "blocked_now": [],
         "upcoming": [
-          "HISTORICAL_CLI",
           "HISTORICAL_EDITOR_CONTRACT",
           "HISTORICAL_VSIX",
           "HISTORICAL_DAG_ACCEPTANCE"
@@ -292,18 +291,18 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "HISTORICAL_LINEAR_CORE"
+        "HISTORICAL_CLI"
       ],
       "manual_selected_task_ids": [
-        "HISTORICAL_LINEAR_CORE"
+        "HISTORICAL_CLI"
       ],
       "tiers": {
-        "HISTORICAL_LINEAR_CORE": "recommended"
+        "HISTORICAL_CLI": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "HISTORICAL_LINEAR_CORE",
+          "id": "HISTORICAL_CLI",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

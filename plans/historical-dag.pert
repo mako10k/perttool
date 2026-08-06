@@ -138,6 +138,7 @@ task HISTORICAL_LINEAR_CORE HISTORICAL_LINEAR_INPUT -> HISTORICAL_LINEAR_CORE_RE
   title "Implement first-parent checkpoint and lineage reconstruction"
   description "Fold valid snapshots in chronological first-parent order, split invalid continuity segments, reuse exact actual-event conflicts, prove canonical advance by exact semantic candidate equality, retain retired topology only when proved, and project snapshot, cumulative lineage and timeline results. Never infer transitions across gaps or run current CPM over mixed historical epochs."
   duration 8p
+  status done
   priority 90
   requires:
     DEVELOPERS 1
@@ -273,3 +274,10 @@ task_outcome OUTCOME_HISTORICAL_GIT_PROBE:
   against_basis sha256:74e303429cde361891ccac977b6c1c98b492128acef630b500751cf19929a0de
   status conformant
   reason "Accepted bounded immutable Git evidence and twelve closed cases"
+
+task_outcome OUTCOME_HISTORICAL_LINEAR_CORE:
+  model 1
+  task HISTORICAL_LINEAR_CORE
+  against_basis sha256:dd9be23404e1de0ea3d496f0a013258b1f563cb272e33edd2be0d88bd6bdb4e4
+  status conformant
+  reason "Accepted pure checkpoint, lineage, and timeline reconstruction and twelve closed cases"

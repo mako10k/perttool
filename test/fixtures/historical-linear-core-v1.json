@@ -1,0 +1,26 @@
+{
+  "schema_version": "Perttool.HistoricalLinearCoreCases.v1",
+  "historical_dag_model_version": 1,
+  "transition_model_version": 1,
+  "ancestry_profile": "first_parent",
+  "limits": {
+    "entity_value_epochs": 100000,
+    "transition_records": 2047,
+    "rendered_graph_occurrences": 20000,
+    "historical_source_bindings": 100000
+  },
+  "cases": [
+    {"id":"HLR-001","depends_on":[],"boundary":"single_snapshot_and_exact_selection"},
+    {"id":"HLR-002","depends_on":["HLR-001"],"boundary":"source_validity_and_continuity_segments"},
+    {"id":"HLR-003","depends_on":["HLR-001"],"boundary":"representation_and_future_epochs"},
+    {"id":"HLR-004","depends_on":["HLR-003"],"boundary":"stable_actual_freezing_and_conflict"},
+    {"id":"HLR-005","depends_on":["HLR-004"],"boundary":"exact_canonical_advance_lineage"},
+    {"id":"HLR-006","depends_on":["HLR-005"],"boundary":"noncanonical_removal_refusal"},
+    {"id":"HLR-007","depends_on":["HLR-002"],"boundary":"ambiguous_identity_reuse"},
+    {"id":"HLR-008","depends_on":["HLR-005"],"boundary":"union_only_cycle"},
+    {"id":"HLR-009","depends_on":["HLR-003"],"boundary":"first_parent_merge_provenance"},
+    {"id":"HLR-010","depends_on":["HLR-001"],"boundary":"output_hard_limits"},
+    {"id":"HLR-011","depends_on":["HLR-001","HLR-010"],"boundary":"immutable_source_bindings_and_determinism"},
+    {"id":"HLR-012","depends_on":["HLR-011"],"boundary":"public_compatibility_and_no_write"}
+  ]
+}

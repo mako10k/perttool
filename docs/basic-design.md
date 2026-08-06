@@ -3423,6 +3423,21 @@ the public package root, Core/Node facades, `createNodeHost` port shape, CLI,
 schemas, LSP, VSIX, and MCP do not expose it in this slice. Its accepted trace
 is [Historical Git Evidence Acceptance](process/historical-git-evidence-acceptance.md).
 
+`reconstructHistoricalLinearHistory` in
+`src/history/historical-graph.ts` now implements the pure fold boundary. It
+validates the injected evidence and raw-source digests, classifies every
+Grammar 1 through 6 input, splits continuity at gaps, observes assurance
+separately, invokes the existing assurance-preserving advance planner only in
+preview mode, and verifies the candidate semantic digest plus its complete
+removal and state-change summary before accepting canonical advance. It emits
+immutable checkpoints, exact selected snapshot, timeline segments, frozen
+events, current and retired lineage occurrences, advance proofs, and commit/
+blob/digest/UTF-16 source bindings. Output limits are preflighted before graph
+allocation and fail closed without truncation. The module imports no Node, CLI,
+Application, adapter, schema, or persistence owner and remains absent from all
+public facades. Its accepted trace is
+[Historical Linear Core Acceptance](process/historical-linear-core-acceptance.md).
+
 The initial path is one repository-relative file between an inclusive
 first-parent lower boundary and inclusive endpoint. Invalid inputs split
 continuity. Explicit actuals freeze under the existing actuals rules. Removed
