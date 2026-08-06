@@ -1,0 +1,228 @@
+{
+  "schema_version": "Perttool.HistoricalEditorProtocolCases.v1",
+  "historical_editor_protocol_model_version": 1,
+  "methods": {
+    "graph": "perttool/historicalGraphView",
+    "source": "perttool/historicalSource"
+  },
+  "result_schemas": [
+    "Perttool.HistoricalGraphViewResult.v1",
+    "Perttool.HistoricalSourceResult.v1"
+  ],
+  "unchanged_identities": {
+    "editor_protocol_model_version": 1,
+    "current_graph_method": "perttool/graphView",
+    "current_graph_schema": "Perttool.GraphViewResult.v1",
+    "grammar_version": 6,
+    "cli_contract_version": 7,
+    "cli_command_count": 45,
+    "cli_schema_count": 21,
+    "root_node_runtime_names": 122,
+    "core_runtime_names": 45
+  },
+  "negotiation": {
+    "model_versions": [1],
+    "graph_result_versions": ["Perttool.HistoricalGraphViewResult.v1"],
+    "source_result_versions": ["Perttool.HistoricalSourceResult.v1"],
+    "unknown_method_error_code": -32601,
+    "invalid_params_error_code": -32602
+  },
+  "eligibility": {
+    "workspace_trust": "trusted",
+    "document_scheme": "file",
+    "workspace_root_scheme": "file",
+    "target_kind": "regular_no_follow_pert_file",
+    "repository_selection": "nearest_containing_worktree",
+    "linked_worktrees": true,
+    "unavailable_before_git": [
+      "untrusted_workspace",
+      "virtual_workspace",
+      "non_file_document",
+      "untitled_document",
+      "browser_only_host",
+      "outside_workspace_root",
+      "symlink_target",
+      "non_regular_target",
+      "no_repository"
+    ]
+  },
+  "graph_request": {
+    "fields": [
+      "textDocument",
+      "documentVersion",
+      "requestedEndpoint",
+      "lowerBoundary",
+      "ancestryProfile",
+      "view",
+      "snapshotCommitId",
+      "analysisMode"
+    ],
+    "defaults": {
+      "requestedEndpoint": "HEAD",
+      "lowerBoundary": null,
+      "ancestryProfile": "first_parent",
+      "view": "lineage",
+      "snapshotCommitId": null,
+      "analysisMode": "none"
+    },
+    "ancestry_profiles": ["first_parent", "three_way"],
+    "views": ["snapshot", "lineage", "timeline"],
+    "analysis_modes": ["none", "precedence", "resource", "both"],
+    "revision_max_utf16": 1024,
+    "revision_forbidden": ["nul", "cr", "lf"],
+    "git_shell": false,
+    "git_option_terminator": true
+  },
+  "graph_result": {
+    "schema_version": "Perttool.HistoricalGraphViewResult.v1",
+    "fields": [
+      "schemaVersion",
+      "historicalEditorProtocolModelVersion",
+      "historyResultId",
+      "document",
+      "status",
+      "complete",
+      "diagnostics",
+      "historicalGraph"
+    ],
+    "document_fields": ["uri", "generation", "version", "sourceDigest"],
+    "statuses": ["complete", "incomplete", "unavailable"],
+    "semantic_payload_fields": [
+      "model",
+      "model_version",
+      "transition_model_version",
+      "status",
+      "request",
+      "evidence",
+      "effective_checkpoint_id",
+      "selected_snapshot_commit_id",
+      "checkpoints",
+      "snapshot",
+      "lineage",
+      "timeline",
+      "analysis",
+      "source_bindings",
+      "causes",
+      "limits"
+    ],
+    "excluded_cli_fields": [
+      "schema_version",
+      "cli_contract_version",
+      "tool_version",
+      "operation",
+      "ok",
+      "document_id",
+      "source",
+      "source_digest",
+      "diagnostics",
+      "diagnostics_truncated"
+    ],
+    "stale_error_code": -32801,
+    "cancelled_error_code": -32800
+  },
+  "source_request": {
+    "fields": [
+      "textDocument",
+      "documentVersion",
+      "historyResultId",
+      "bindingId"
+    ],
+    "result_schema": "Perttool.HistoricalSourceResult.v1",
+    "result_fields": [
+      "schemaVersion",
+      "historicalEditorProtocolModelVersion",
+      "historyResultId",
+      "bindingId",
+      "virtualDocument"
+    ],
+    "virtual_document_fields": [
+      "uri",
+      "languageId",
+      "repositoryRelativePath",
+      "commitId",
+      "blobId",
+      "sourceDigest",
+      "text",
+      "range"
+    ],
+    "uri_scheme": "perttool-history",
+    "language_id": "pert",
+    "provider": "read_only_content",
+    "caller_supplied_path": false,
+    "caller_supplied_range": false
+  },
+  "limits": {
+    "inspected_commits": 2048,
+    "raw_bytes_per_snapshot": 8388608,
+    "aggregate_raw_snapshot_bytes": 134217728,
+    "entity_value_epochs": 100000,
+    "transition_records": 2047,
+    "rendered_graph_occurrences": 20000,
+    "historical_source_bindings": 100000,
+    "retained_results_per_connection": 32,
+    "loaded_virtual_documents_per_connection": 32
+  },
+  "diagnostics": [
+    "PTHED-101",
+    "PTHED-102",
+    "PTHED-103",
+    "PTHED-104",
+    "PTHED-105"
+  ],
+  "webview": {
+    "messages": ["requestHistoricalGraph", "revealHistoricalSource"],
+    "message_fields": {
+      "requestHistoricalGraph": [
+        "kind",
+        "documentUri",
+        "documentGeneration",
+        "documentVersion",
+        "requestedEndpoint",
+        "lowerBoundary",
+        "ancestryProfile",
+        "view",
+        "snapshotCommitId",
+        "analysisMode"
+      ],
+      "revealHistoricalSource": ["kind", "historyResultId", "bindingId"]
+    },
+    "receives_raw_source": false,
+    "receives_repository_id": false,
+    "receives_workspace_path": false,
+    "arbitrary_mermaid": false,
+    "default_src": "none",
+    "script_policy": "nonce_only",
+    "accessible_text_outline": true
+  },
+  "side_effects": {
+    "application_composition": "direct",
+    "cli_subprocess": false,
+    "git_reads": true,
+    "git_writes": false,
+    "editor_writes": false,
+    "workspace_execution": false,
+    "network": false,
+    "telemetry": false,
+    "persistent_cache": false
+  },
+  "cases": [
+    {"id": "HED-001", "depends_on": [], "boundary": "identity_and_current_graph_compatibility"},
+    {"id": "HED-002", "depends_on": ["HED-001"], "boundary": "negotiation_and_capability_closure"},
+    {"id": "HED-003", "depends_on": ["HED-002"], "boundary": "trusted_local_workspace_selection"},
+    {"id": "HED-004", "depends_on": ["HED-003"], "boundary": "repository_path_and_linked_worktree"},
+    {"id": "HED-005", "depends_on": ["HED-002", "HED-004"], "boundary": "closed_graph_request_and_safe_refs"},
+    {"id": "HED-006", "depends_on": ["HED-005"], "boundary": "document_generation_version_digest_binding"},
+    {"id": "HED-007", "depends_on": ["HED-006"], "boundary": "cancellation_staleness_and_clear"},
+    {"id": "HED-008", "depends_on": ["HED-005", "HED-007"], "boundary": "closed_result_and_cli_semantic_parity"},
+    {"id": "HED-009", "depends_on": ["HED-008"], "boundary": "snapshot_view"},
+    {"id": "HED-010", "depends_on": ["HED-008"], "boundary": "proved_lineage_view"},
+    {"id": "HED-011", "depends_on": ["HED-008"], "boundary": "timeline_gaps_and_epochs"},
+    {"id": "HED-012", "depends_on": ["HED-009", "HED-010", "HED-011"], "boundary": "orthogonal_single_checkpoint_analysis"},
+    {"id": "HED-013", "depends_on": ["HED-008"], "boundary": "result_and_source_binding_ids"},
+    {"id": "HED-014", "depends_on": ["HED-013"], "boundary": "immutable_virtual_source_navigation"},
+    {"id": "HED-015", "depends_on": ["HED-007", "HED-014"], "boundary": "repository_races_and_hard_limits"},
+    {"id": "HED-016", "depends_on": ["HED-012", "HED-014"], "boundary": "webview_messages_and_csp"},
+    {"id": "HED-017", "depends_on": ["HED-016"], "boundary": "accessibility_and_state_announcement"},
+    {"id": "HED-018", "depends_on": ["HED-015", "HED-017"], "boundary": "read_only_parity_and_no_side_effects"}
+  ]
+}

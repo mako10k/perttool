@@ -163,6 +163,7 @@ task HISTORICAL_EDITOR_CONTRACT HISTORICAL_CLI_READY -> HISTORICAL_EDITOR_CONTRA
   title "Accept the historical editor and navigation contract"
   description "Define a new versioned historical request and result without changing GraphViewResult v1. Fix trusted local-repository selection, exact commit, blob, digest and range navigation, checkpoint, lineage and timeline view binding, orthogonal analysis modes, cancellation, staleness, virtual and untrusted unavailability, hard limits, accessibility, CSP, and no-write behavior."
   duration 5p
+  status done
   priority 75
   requires:
     DEVELOPERS 1
@@ -289,3 +290,10 @@ task_outcome OUTCOME_HISTORICAL_CLI:
   against_basis sha256:a526dada04d1c296dab1fe20c710b9850f626d86356b66eb7c32576dafe3f88e
   status conformant
   reason "Accepted read-only historical CLI and twelve closed cases"
+
+task_outcome OUTCOME_HISTORICAL_EDITOR_CONTRACT:
+  model 1
+  task HISTORICAL_EDITOR_CONTRACT
+  against_basis sha256:37373a2e9cccc95d76c5d4e0174fcbcf9026e4c284233db5c0adbd58d26949e1
+  status conformant
+  reason "Accepted historical editor protocol and eighteen closed cases"

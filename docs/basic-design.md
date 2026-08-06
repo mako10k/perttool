@@ -1,6 +1,6 @@
 # perttool Basic Design
 
-- Document status: Draft 1.26
+- Document status: Draft 1.27
 - Created: 2026-07-21
 - Updated: 2026-08-06
 - Applicable requirements: [requirements.md](requirements.md)
@@ -13,6 +13,7 @@
 - Temporal and unit interface: [specs/temporal-unit-interface.md](specs/temporal-unit-interface.md)
 - Project actuals and Git history: [specs/project-actuals.md](specs/project-actuals.md)
 - Historical DAG reconstruction: [specs/historical-dag.md](specs/historical-dag.md)
+- Historical editor protocol: [specs/historical-editor-protocol.md](specs/historical-editor-protocol.md)
 - Conditional plan assurance: [specs/plan-assurance.md](specs/plan-assurance.md)
 - Plan assurance interface: [specs/plan-assurance-interface.md](specs/plan-assurance-interface.md)
 - Task refinement and assurance boundaries: [specs/task-refinement.md](specs/task-refinement.md)
@@ -2335,6 +2336,34 @@ and cannot calculate schedule meaning or execute Mermaid.
 The exact protocol, capability, trust, CSP, distribution, and accessibility
 rules are in the [Editor Protocol Contract](specs/editor-protocol.md).
 
+The accepted
+[Historical Editor Protocol Contract](specs/historical-editor-protocol.md)
+adds a separate model-1 design without extending the current request or result.
+`perttool/historicalGraphView` wraps the shared historical semantic payload in
+`Perttool.HistoricalGraphViewResult.v1` with exact current-document and
+connection-retained result bindings. `perttool/historicalSource` resolves only
+a retained opaque binding and returns `Perttool.HistoricalSourceResult.v1`
+after re-reading the exact blob and verifying repository, commit, blob, source
+digest, owner, and UTF-16 range. Neither method is active until the later
+implementation task.
+
+Historical selection is available only for a trusted local `file` workspace,
+one regular no-follow `.pert` target below an exact negotiated workspace root,
+and its nearest containing Git worktree. Untrusted, virtual, non-file,
+browser-only, outside-root, symlink, and non-repository inputs become typed
+unavailable results before Git traversal while current GraphView behavior is
+unchanged. The result carries a lossless subset of the existing historical CLI
+semantic projection, not the CLI envelope or host path. Snapshot, proved
+lineage, and timeline are separate from the four analysis modes.
+
+The future VSIX presentation clears stale results, passes only closed query or
+opaque result/binding IDs from the Webview, and opens verified historical bytes
+through a read-only `perttool-history` virtual document. The Webview receives
+no source text, repository ID, workspace path, Git output, or caller-supplied
+range. Exact historical and editor cache limits, `PTHDG-*` plus `PTHED-*`
+failure ownership, existing restrictive CSP, deterministic accessible outline,
+and no Git/editor write boundary are normative.
+
 The implemented protocol-neutral session receives hashing as an explicit
 synchronous function and never reads a path or environment value. Each frozen
 snapshot owns exact text, binding, parse tree, semantic diagnostics, and
@@ -3465,6 +3494,14 @@ contract version, `Perttool.ProjectHistoryResult.v1`,
 Host port object, or adapter capabilities. Three-way ancestry, semantic
 patch/merge, MCP history, editor mutation, releases, remote writes, and plan
 advance remain independent.
+
+The accepted historical editor contract now fixes the next adapter boundary
+without activating it. The active LSP/VSIX capability set remains unchanged;
+there is no new runtime name, command, schema artifact, package, or extension
+contribution. The later `HISTORICAL_VSIX` implementation must compose the same
+Application result directly, negotiate both historical editor result versions,
+scope Git reads to the trusted selected local repository, verify immutable
+source navigation, and preserve current GraphView and workspace bytes.
 
 Exit for the contract task:
 

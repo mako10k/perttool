@@ -45,17 +45,21 @@ The applicable order is:
    [Mutation Semantics](mutation.md), and
    [Conditional Plan Assurance](plan-assurance.md);
 5. snapshot analysis in [Analysis](analysis.md);
-6. the current-document [Editor Protocol](editor-protocol.md); and
-7. process guidance under `docs/process/`.
+6. the current-document [Editor Protocol](editor-protocol.md);
+7. the distinct [Historical Editor Protocol](historical-editor-protocol.md);
+   and
+8. process guidance under `docs/process/`.
 
 The initial contract acceptance fixed only the model and implementation
 boundary. The later `HISTORICAL_CLI` task now activates one additive read-only
 command and one root schema while retaining the same Grammar 6 and CLI
 Contract 7 versions. Current `Perttool.ProjectHistoryResult.v1`,
 `Perttool.GraphViewResult.v1`, the 122-name root/Node facades, the 45-name Core
-facade, LSP, VSIX, MCP, and every read/write authority remain unchanged. The
-active CLI registry has 45 commands and the active catalog has 21 root
-schemas.
+facade, active LSP/VSIX/MCP capabilities, and every read/write authority remain
+unchanged. The active CLI registry has 45 commands and the active catalog has
+21 root schemas. The historical editor contract is accepted as an inactive
+adapter design and does not add either of its result identities to that CLI
+schema catalog.
 
 Historical reconstruction observes committed objects only. It never stages,
 commits, checks out, resets, merges, rebases, updates a ref or the index,
@@ -731,10 +735,15 @@ historical range to current worktree bytes because the path or URI happens to
 match. Current `perttool/graphView` remains URI/generation/version-bound and
 accepts no Git revision.
 
-The later editor contract owns trusted local-repository selection,
-cancellation, staleness, virtual documents, CSP, accessibility, and
-presentation. Until then, untrusted, virtual, non-file, or non-repository Git
-requests are unavailable without regressing current-document GraphView.
+The accepted
+[Historical Editor Protocol](historical-editor-protocol.md) owns trusted local-
+repository selection, cancellation, staleness, immutable virtual documents,
+CSP, accessibility, and presentation. It fixes separate
+`perttool/historicalGraphView` and `perttool/historicalSource` methods and
+separate result versions without changing current-document GraphView. Their
+runtime implementation remains absent. Untrusted, virtual, non-file, or non-
+repository historical requests are unavailable without regressing current-
+document GraphView.
 
 The current MCP adapter accepts neither client paths nor Git refs and remains
 unchanged. Historical MCP access would require a separate registered-source
@@ -793,10 +802,11 @@ The dependency order is:
 3. bounded immutable first-parent Git evidence;
 4. the pure checkpoint, lineage, and timeline fold;
 5. one separate read-only Node/CLI result and isolated acceptance, now active;
-6. a distinct historical editor contract and VSIX presentation; and
-7. only after `SCM-001`, a separately versioned optional three-way profile.
+6. a distinct historical editor contract, now accepted;
+7. LSP and VSIX historical presentation; and
+8. only after `SCM-001`, a separately versioned optional three-way profile.
 
-Historical editor implementation, current-plan task outcome acceptance,
+Historical LSP/VSIX implementation, current-plan task outcome acceptance,
 `dag advance`, public version selection, release, publication, remote writes,
 Issue mutation, and any Git/editor mutation require their own authority and
 acceptance.

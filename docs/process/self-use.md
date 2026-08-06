@@ -2024,6 +2024,14 @@ Stage 1 entry evidence:
   package-root/Node/Core catalogs or writing source or Git state. Historical
   editor protocol, VSIX presentation, three-way ancestry, semantic merge, and
   release remain separate.
+- HIST-DAG-001 historical editor contract gate: the separately negotiated
+  `perttool/historicalGraphView` and `perttool/historicalSource` methods,
+  `Perttool.HistoricalGraphViewResult.v1` and
+  `Perttool.HistoricalSourceResult.v1`, trusted local repository selection,
+  exact result/blob/digest/range navigation, cancellation, staleness, limits,
+  restrictive Webview input, accessibility, and no-write boundary are accepted
+  as an inactive design. Current GraphView, LSP, VSIX, package catalogs, and
+  workspace bytes remain unchanged; implementation and release remain later.
 - write state: Stage 3 editing commands remain preview-first. Until the
   accepted source is released, repository self-use still requires the exact
   pre-advance target snapshot in `HEAD`, the passing guard,

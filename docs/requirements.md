@@ -1777,6 +1777,17 @@ The accepted read-only server and its isolated dual-tarball package gate
 implement the LSP portion without activating editor mutation, a public adapter
 package, VSIX publication, or release selection.
 
+The accepted
+[Historical Editor Protocol Contract](specs/historical-editor-protocol.md)
+keeps `perttool/graphView` and `Perttool.GraphViewResult.v1` unchanged while
+fixing a separately negotiated `perttool/historicalGraphView` result and
+retained immutable-source request. Historical access is limited to an exact
+trusted local `file` workspace and selected repository path, binds URI,
+generation, version, ref, commit, blob, digest, and UTF-16 range, fails closed
+for untrusted or virtual inputs, preserves the three historical views and four
+orthogonal analysis modes, and grants no Git/editor mutation or release
+authority. LSP and VSIX implementation remains a later task.
+
 The implemented [Document Session Core](specs/document-session.md) activates
 the protocol-neutral in-memory part of that contract through `perttool/core`.
 It provides immutable URI/generation/version/digest-bound Grammar 6 snapshots,
@@ -3028,7 +3039,12 @@ Before implementation, separate the specifications in the following order.
       command Help and Guide topic, and an isolated installed-package gate.
       The accepted trace is
       [`historical-cli-acceptance.md`](process/historical-cli-acceptance.md).
-    - [ ] Accept a distinct historical editor protocol and local VSIX
+    - [x] Accept the distinct
+      [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)
+      for trusted local repository selection, versioned graph/source methods,
+      immutable blob navigation, cancellation, staleness, CSP, accessibility,
+      limits, and no-write behavior.
+    - [ ] Implement the accepted historical LSP methods and local VSIX
       presentation.
     - [ ] Complete cross-surface no-write acceptance. Three-way ancestry still
       requires a separately accepted `SCM-001` model and later workstream.

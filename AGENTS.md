@@ -478,8 +478,36 @@ digest `sha256:f74371c9...ad786`. It affects only `plan_assurance`, requires the
 candidate-bound `user` assertion, and was separately confirmed and written
 once with actor `codex` and that owner assertion. Readback shows complete
 assurance with no unavailable task, mismatch, replan requirement, or required
-action. Fresh complete NextResult v6 recommends and makes startable only
+action. Before the historical editor contract task was completed, fresh
+complete NextResult v6 recommended and made startable only
 `HISTORICAL_EDITOR_CONTRACT`.
+The accepted `docs/specs/historical-editor-protocol.md` contract now fixes
+historical editor protocol model 1, separately negotiated
+`perttool/historicalGraphView` and `perttool/historicalSource` methods,
+`Perttool.HistoricalGraphViewResult.v1` and
+`Perttool.HistoricalSourceResult.v1`, trusted local `file` workspace and
+repository selection, exact document/result/commit/blob/digest/range bindings,
+snapshot/lineage/timeline presentation, four orthogonal analysis modes,
+cancellation, staleness, immutable virtual documents, exact hard limits,
+`PTHED-101` through `PTHED-105`, restrictive Webview input, accessibility, and
+no-write behavior. Its eighteen dependency-ordered machine cases are in
+`test/fixtures/historical-editor-protocol-cases-v1.json`, and its acceptance
+record is `docs/process/historical-editor-contract-acceptance.md`. The contract
+does not activate either method or change current GraphView, LSP, VSIX,
+package, command, schema, or runtime catalogs. `HISTORICAL_EDITOR_CONTRACT` is
+complete. Its status-only write changed plan digest
+`sha256:f74371c9...6ad786` to `sha256:3c25ba69...abf428` without an owner
+assertion.
+The assertion-free `OUTCOME_HISTORICAL_EDITOR_CONTRACT` preview is bound to
+accepted basis `sha256:37373a2e...d26949e1`, reason
+`Accepted historical editor protocol and eighteen closed cases`, completed
+source digest `sha256:3c25ba69...abf428`, and candidate digest
+`sha256:9be391c7...5b8561`. It affects only `plan_assurance`, requires the
+candidate-bound `user` assertion, and was separately confirmed and written
+once with actor `codex` and that owner assertion. Readback shows complete
+assurance with no unavailable task, mismatch, replan requirement, or required
+action. Fresh complete NextResult v6 recommends and makes startable only
+`HISTORICAL_VSIX`.
 
 Backlog `VSIX-ASSURE-001` records the requested semantic presentation of
 unsealed, sealed-and-consistent, and broken-seal states. The current editor

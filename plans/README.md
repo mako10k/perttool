@@ -40,8 +40,10 @@ Plans are separated by level of detail.
   implementation inputs are accepted, and the additive `dag history` command,
   twenty-first root schema, and isolated package path are implemented;
   `HISTORICAL_CLI` and its separately owner-confirmed exact basis-bound outcome
-  are complete, and only `HISTORICAL_EDITOR_CONTRACT` is ready, recommended,
-  and startable
+  are complete; the separate historical editor protocol and eighteen cases are
+  accepted, and `HISTORICAL_EDITOR_CONTRACT` plus its separately owner-
+  confirmed exact basis-bound outcome are complete; only `HISTORICAL_VSIX` is
+  ready, recommended, and startable
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining

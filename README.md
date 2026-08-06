@@ -555,6 +555,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
+- [Historical Editor Protocol Contract](docs/specs/historical-editor-protocol.md)
 - [Document Session Core](docs/specs/document-session.md)
 - [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
 - [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)

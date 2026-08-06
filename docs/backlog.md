@@ -550,12 +550,14 @@ Priority: Selected through the independent `HIST-DAG-001` workstream
 
 Status: First-parent normative contract, internal transition model, bounded
 immutable Git evidence, pure linear reconstruction, and the separate
-read-only CLI result are implemented (2026-08-06). The editor interface and
-VSIX presentation remain unimplemented. The linear reconstruction task and
+read-only CLI result are implemented (2026-08-06). The separate historical
+editor protocol contract is accepted; LSP and VSIX presentation remain
+unimplemented. The linear reconstruction task and
 its separately owner-confirmed basis-bound assurance outcome are complete.
 The CLI task and its separately owner-confirmed basis-bound assurance outcome
-are complete. Only `HISTORICAL_EDITOR_CONTRACT` is now ready, recommended, and
-startable in the selected plan.
+are complete. `HISTORICAL_EDITOR_CONTRACT` and its separately owner-confirmed
+basis-bound assurance outcome are complete. Only `HISTORICAL_VSIX` is now
+ready, recommended, and startable in the selected plan.
 
 The current DAG renderer and VSIX GraphView correctly project one complete
 current source, which can contain only one residual milestone after canonical
@@ -625,9 +627,19 @@ to one closed Contract 7 result. Command discovery has 45 commands and the
 schema catalog has 21 roots; root/Core/Node runtime names remain unchanged.
 Its twelve interface cases and package gate are recorded in
 [`historical-cli-acceptance.md`](process/historical-cli-acceptance.md).
+The historical editor protocol contract is accepted with eighteen dependency-
+ordered cases. Its normative authority is
+[Historical Editor Protocol](specs/historical-editor-protocol.md). It fixes separate
+`perttool/historicalGraphView` and `perttool/historicalSource` methods,
+`Perttool.HistoricalGraphViewResult.v1` and
+`Perttool.HistoricalSourceResult.v1`, trusted local `file` workspace and
+repository selection, exact result/blob/digest/range navigation, cancellation,
+staleness, hard limits, restrictive Webview input, accessibility, and no-write
+behavior without changing the current GraphView v1. Its acceptance record is
+[`historical-editor-contract-acceptance.md`](process/historical-editor-contract-acceptance.md).
 Current `project history`, `dag render`, `Perttool.GraphViewResult.v1`, Grammar
 6, CLI Contract 7, MCP capabilities, and all read/write authority boundaries
-remain unchanged. Editor work, Git or editor mutation, release, remote
+remain unchanged. Historical LSP/VSIX implementation, Git or editor mutation, release, remote
 publication, Issue mutation, and plan advance remain separately gated.
 
 ## Project actuals and Git-recorded history

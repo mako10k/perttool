@@ -197,13 +197,14 @@ test("the later CLI task activates the reserved additive surface", () => {
   );
 });
 
-test("accepted historical CLI makes only the editor contract startable", async () => {
+test("accepted historical editor outcome makes only VSIX startable", async () => {
   const [
     source,
     acceptance,
     transitionAcceptance,
     linearAcceptance,
     cliAcceptance,
+    editorAcceptance,
     selfUse,
   ] = await Promise.all([
     repositoryText("plans/historical-dag.pert"),
@@ -211,6 +212,7 @@ test("accepted historical CLI makes only the editor contract startable", async (
     repositoryText("docs/process/historical-transition-model-acceptance.md"),
     repositoryText("docs/process/historical-linear-core-acceptance.md"),
     repositoryText("docs/process/historical-cli-acceptance.md"),
+    repositoryText("docs/process/historical-editor-contract-acceptance.md"),
     repositoryText("scripts/check-self-use.sh"),
   ]);
   const checked = checkDocument(source);
@@ -243,6 +245,10 @@ test("accepted historical CLI makes only the editor contract startable", async (
   assert.match(source, /task HISTORICAL_CLI[\s\S]*?status done/u);
   assert.match(
     source,
+    /task HISTORICAL_EDITOR_CONTRACT[\s\S]*?status done/u,
+  );
+  assert.match(
+    source,
     /task_outcome OUTCOME_HISTORICAL_TRANSITION_MODEL:[\s\S]*?task HISTORICAL_TRANSITION_MODEL[\s\S]*?status conformant/u,
   );
   assert.match(
@@ -257,12 +263,12 @@ test("accepted historical CLI makes only the editor contract startable", async (
     source,
     /task_outcome OUTCOME_HISTORICAL_CLI:[\s\S]*?task HISTORICAL_CLI[\s\S]*?status conformant/u,
   );
-  assert.deepEqual(next.groups.ready, ["HISTORICAL_EDITOR_CONTRACT"]);
+  assert.deepEqual(next.groups.ready, ["HISTORICAL_VSIX"]);
   assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_EDITOR_CONTRACT",
+    "HISTORICAL_VSIX",
   ]);
   assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_EDITOR_CONTRACT",
+    "HISTORICAL_VSIX",
   ]);
   assert.deepEqual(
     next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
@@ -288,6 +294,11 @@ test("accepted historical CLI makes only the editor contract startable", async (
   assert.match(
     cliAcceptance,
     /only `HISTORICAL_EDITOR_CONTRACT` as\s+ready, recommended, and startable/u,
+  );
+  assert.match(editorAcceptance, /Document status: Accepted 1\.0/u);
+  assert.match(
+    editorAcceptance,
+    /only `HISTORICAL_VSIX` as ready,\s+recommended, and startable/u,
   );
   assert.match(selfUse, /plans\/historical-dag\.pert/u);
   assert.match(selfUse, /35 plans; check, analyze, next/u);

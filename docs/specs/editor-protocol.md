@@ -538,9 +538,12 @@ leaving an old graph presented as current.
   semantic diagnostics.
 - The selected
   [Historical DAG Reconstruction Contract](historical-dag.md) requires a
-  later distinct Git-backed request, result, trust, and immutable-blob
-  navigation contract. Current `perttool/graphView` accepts no Git path or
-  revision and `Perttool.GraphViewResult.v1` remains unchanged.
+  distinct Git-backed editor boundary. The accepted
+  [Historical Editor Protocol Contract](historical-editor-protocol.md) owns
+  that request, result, trust, and immutable-blob navigation model. Current
+  `perttool/graphView` accepts no Git path or revision and
+  `Perttool.GraphViewResult.v1` remains unchanged; the historical methods are
+  not active until their later implementation task.
 - No arbitrary Mermaid, HTML, SVG, script, or graph layout input is executed.
 - Editor mutation, graph mutation, rename, formatting, persistence, public
   package naming, release selection, publication, and plan advance remain
