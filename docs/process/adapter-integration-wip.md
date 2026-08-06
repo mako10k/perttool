@@ -1,11 +1,12 @@
 # Adapter Integration Acceptance WIP Handoff
 
-- Document status: WIP 1
+- Document status: Superseded 1
 - Date: 2026-08-05
 - Workstream: `ADAPTER-001`
 - Active task: `ADAPTER_INTEGRATION_ACCEPTANCE`
 - Plan: [../../plans/adapter-platform.pert](../../plans/adapter-platform.pert)
 - Machine cases: [../../test/fixtures/adapter-integration-acceptance-cases-v1.json](../../test/fixtures/adapter-integration-acceptance-cases-v1.json)
+- Final record: [adapter-integration-acceptance.md](adapter-integration-acceptance.md)
 
 ## Frozen state
 
@@ -20,9 +21,11 @@ The WIP adds sixteen dependency-ordered integration cases and executable
 cross-surface probes for current package boundaries, exact Core/CLI/MCP check,
 analyze, and next parity, LSP-to-GraphView-to-VSIX projection identity,
 diagnostic ownership, and unchanged source bytes and directory inventory.
-The task remains active and must not be reported as accepted.
+This frozen state was later superseded by the final accepted record. The task
+was suspended at the WIP commit time, resumed at the verified continuation
+boundary, and completed without treating the overnight handoff as active work.
 
-## Resume checklist
+## Closed resume checklist
 
 1. Run the focused integration test and correct any remaining failed
    assumptions without weakening the accepted protocol contracts.
@@ -37,6 +40,9 @@ The task remains active and must not be reported as accepted.
    and digest-bound write only after all evidence passes; then regenerate the
    self-use recommendation golden and rerun the complete gate.
 6. Commit the accepted pre-advance state. Do not advance the plan.
+
+All six steps are closed by the final record. This file remains only as the
+exact cross-machine handoff evidence and is not the current status source.
 
 Release version selection, public adapter identities, publication, tags,
 dist-tags, remote Issue mutation, editor mutation, MCP mutation, and plan

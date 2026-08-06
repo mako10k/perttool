@@ -323,6 +323,30 @@ is removed after the gate. No public package, extension identity, Marketplace
 publication, source edit, configuration mutation, Git operation, telemetry,
 network capability, or inferred authority is added.
 
+### 3.12 Accepted integrated state
+
+The final [integration acceptance
+record](../process/adapter-integration-acceptance.md) composes the accepted
+Core, Node Host, CLI facade, LSP, VSIX, and MCP slices without creating a new
+semantic implementation or public adapter identity. Dependency-ordered
+`AIA-001` through `AIA-016` retain the exact 122-name root/Node facade,
+45-name portable Core, 44 Contract 7 commands, 20 root schemas, and zero root
+production dependencies while closing adapter import and package boundaries.
+
+For exact source bytes and SHA-256 identity, Core, CLI, and MCP check,
+analysis, and next payloads are semantically equal after removal of their
+documented envelopes. The LSP GraphView binds the same analysis to exact URI,
+generation, document version, mode, source digest, and navigation records;
+the VSIX consumes only that closed result. Invalid source retains one shared
+diagnostic owner and each protocol fails closed at its accepted boundary.
+
+The complete repository gate includes all 34 self-use plans, isolated LSP and
+MCP packages, the supported VS Code host, temporary linking, and the isolated
+public package. Cross-adapter probes preserve source bytes and directory
+inventory. Editor or MCP mutation, a public adapter package or extension
+identity, release selection, publication, remote writes, Issue mutation, and
+plan advance remain separate decisions.
+
 ## 4. Target dependency model
 
 The allowed dependency graph is acyclic.

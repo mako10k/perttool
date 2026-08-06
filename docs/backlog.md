@@ -892,10 +892,14 @@ fourteen-file artifact with exact test-electron 3.1.0 under minimum VS Code
 1.101.0, proves trusted/untrusted and virtual activation, offline LSP,
 navigation, Help, empty/large/rapid-edit DAG use, replacement, uninstall
 readback, and unchanged workspace bytes. `VSIX_ACCEPTANCE` is complete with
-exact lifecycle evidence and retained before advance. Only
-`ADAPTER_INTEGRATION_ACCEPTANCE` and 5p remain; precedence and heuristic
-resource makespans are both 5p with zero resource delay. Complete NextResult
-v6 recommends and makes startable only `ADAPTER_INTEGRATION_ACCEPTANCE`.
+exact lifecycle evidence and retained before advance. The [final integration
+acceptance](process/adapter-integration-acceptance.md) closes sixteen
+dependency-ordered semantic-parity, protocol-binding, dependency,
+distribution, installed-adapter, and no-write cases.
+`ADAPTER_INTEGRATION_ACCEPTANCE` is complete with exact lifecycle evidence and
+retained before advance. All sixteen tasks and 91p are complete; precedence
+and heuristic resource makespans are zero with zero resource delay, and
+complete NextResult v6 has no recommendation or startable task.
 
 The plan composes `LSP-001`, `VSIX-001`, and `MCP-001` without making the MCP
 branch depend on the editor branch. CLI, LSP, and MCP consume shared

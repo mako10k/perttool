@@ -367,11 +367,15 @@ retained before advance. The CLI now constructs one private Application facade o
 accepted Node Host; document bytes/digests, Git history and advance evidence,
 artifact output, and Grammar 6 persistence use injected ports while all 44
 Contract 7 commands and package identities remain unchanged. Its record is
-`docs/process/adapter-cli-facade-parity-acceptance.md`. Only
-`ADAPTER_INTEGRATION_ACCEPTANCE` and 5p remain. Precedence and `parallel-sgs`
-version 1 heuristic resource makespans are both 5p with zero resource delay.
-Complete NextResult v6 recommends and makes startable only
-`ADAPTER_INTEGRATION_ACCEPTANCE`.
+`docs/process/adapter-cli-facade-parity-acceptance.md`. The final
+`docs/process/adapter-integration-acceptance.md` record closes sixteen
+dependency-ordered semantic-parity, protocol-binding, dependency,
+distribution, installed-adapter, supported-host, complete self-use, and
+no-write cases. `ADAPTER_INTEGRATION_ACCEPTANCE` is complete and retained
+before advance. All sixteen tasks and 91p are complete; precedence and
+`parallel-sgs` version 1 heuristic resource makespans are zero with zero
+resource delay, and complete NextResult v6 has no ready, recommended, or
+startable task.
 Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.

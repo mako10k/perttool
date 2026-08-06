@@ -65,46 +65,27 @@
       "diagnostic_codes": []
     },
     "adapter-platform": {
-      "source_digest": "sha256:976c06df80666e06ee438e9559e1f618699a42c8706746c37fdbba4d5e3c6833",
+      "source_digest": "sha256:8aaeedea6ceb2e300947392cc551e9d6459ee5c66f5a10f8486a336696a31baa",
       "groups": {
         "active": [],
-        "ready": [
-          "ADAPTER_INTEGRATION_ACCEPTANCE"
-        ],
-        "runnable_now": [
-          "ADAPTER_INTEGRATION_ACCEPTANCE"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
         "upcoming": [],
         "suspended": []
       },
-      "recommended_task_ids": [
-        "ADAPTER_INTEGRATION_ACCEPTANCE"
-      ],
-      "manual_selected_task_ids": [
-        "ADAPTER_INTEGRATION_ACCEPTANCE"
-      ],
-      "tiers": {
-        "ADAPTER_INTEGRATION_ACCEPTANCE": "recommended"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "ADAPTER_INTEGRATION_ACCEPTANCE",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 1,
-        "decision_steps": 6,
-        "facts": 18,
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
         "comparisons": 0,
-        "reasons": 4,
-        "descriptions": 1
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": [
         "PTDAG-208"

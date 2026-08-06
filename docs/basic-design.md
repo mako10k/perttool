@@ -3198,6 +3198,16 @@ branches after first-beta acceptance.
   fail-closure, two-client parity, and no-write package gate; preview and
   persistent mutation remain later tasks.
 
+The final [adapter integration
+acceptance](process/adapter-integration-acceptance.md) closes sixteen
+dependency-ordered cases across exact Core/CLI/MCP check, analysis, and next
+semantics; LSP GraphView and VSIX source-binding parity; shared diagnostic
+ownership; acyclic imports and isolated distribution; the supported VS Code
+host; all 34 self-use plans; temporary linking; the public-package inventory;
+and unchanged source bytes and adapter directory inventory. All sixteen tasks
+and 91p are complete and retained before advance, both remaining makespans are
+zero, and complete NextResult v6 has no start authority.
+
 The LSP server remains the predecessor of VSIX. The MCP branch is independent
 of both after the shared foundation. Adapter package publication, public names,
 release selection, editor/MCP writes, and Issue mutation remain separately

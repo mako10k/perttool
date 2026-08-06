@@ -222,11 +222,15 @@ Mandatory summary:
   `docs/process/adapter-cli-facade-parity-acceptance.md`. Final MCP acceptance
   adds the isolated dual-tarball, strict malformed-line, two-client, source-
   digest, limit, and no-write gate recorded in
-  `docs/process/adapter-mcp-acceptance.md`. Only
-  `ADAPTER_INTEGRATION_ACCEPTANCE` and 5p remain; precedence and `parallel-sgs`
-  version 1 heuristic resource makespans are both 5p with zero resource delay.
-  Complete NextResult v6 recommends and makes startable only
-  `ADAPTER_INTEGRATION_ACCEPTANCE`.
+  `docs/process/adapter-mcp-acceptance.md`. The final
+  `docs/process/adapter-integration-acceptance.md` record closes sixteen
+  dependency-ordered semantic-parity, protocol-binding, dependency,
+  distribution, installed-adapter, supported-host, complete self-use, and
+  no-write cases. `ADAPTER_INTEGRATION_ACCEPTANCE` is complete and retained
+  before advance. All sixteen tasks and 91p are complete; precedence and
+  `parallel-sgs` version 1 heuristic resource makespans are zero with zero
+  resource delay, and complete NextResult v6 has no ready, recommended, or
+  startable task.
   Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.

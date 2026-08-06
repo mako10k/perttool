@@ -390,3 +390,53 @@ test("cross-adapter reads preserve exact source bytes and directory inventory", 
     await rm(temporary, { recursive: true, force: true });
   }
 });
+
+test("integration acceptance and completed lifecycle remain aligned", async () => {
+  const [
+    acceptance,
+    handoff,
+    specification,
+    requirements,
+    design,
+    backlog,
+    development,
+    agentGuidance,
+    copilotGuidance,
+    plan,
+  ] = await Promise.all([
+    repositoryText("docs/process/adapter-integration-acceptance.md"),
+    repositoryText("docs/process/adapter-integration-wip.md"),
+    repositoryText("docs/specs/adapter-platform.md"),
+    repositoryText("docs/requirements.md"),
+    repositoryText("docs/basic-design.md"),
+    repositoryText("docs/backlog.md"),
+    repositoryText("docs/process/ai-development.md"),
+    repositoryText("AGENTS.md"),
+    repositoryText(".github/copilot-instructions.md"),
+    repositoryText("plans/adapter-platform.pert"),
+  ]);
+  assert.match(acceptance, /Document status: Accepted 1\.0/u);
+  assert.match(acceptance, /Task: `ADAPTER_INTEGRATION_ACCEPTANCE`/u);
+  assert.match(
+    acceptance,
+    /WE-824f41f4d363765d848e70b1f70f747a0d82b6a198bdd370161c3a0f892b477a/u,
+  );
+  assert.match(acceptance, /sha256:8aaeedea6ceb2e300947392cc551e9d6459ee5c66f5a10f8486a336696a31baa/u);
+  assert.match(handoff, /Document status: Superseded 1/u);
+  assert.match(specification, /### 3\.12 Accepted integrated state/u);
+  for (const document of [
+    requirements,
+    design,
+    backlog,
+    development,
+    agentGuidance,
+    copilotGuidance,
+  ]) {
+    assert.match(document, /All sixteen tasks\s+and 91p are complete/u);
+  }
+  assert.match(plan, /task ADAPTER_INTEGRATION_ACCEPTANCE[\s\S]*?status done/u);
+  assert.match(
+    plan,
+    /work_event WE-824f41f4d363765d848e70b1f70f747a0d82b6a198bdd370161c3a0f892b477a:/u,
+  );
+});

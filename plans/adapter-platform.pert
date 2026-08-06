@@ -339,7 +339,7 @@ task ADAPTER_INTEGRATION_ACCEPTANCE ADAPTER_INTEGRATION_INPUT -> ADAPTER_ACCEPTE
   title "Accept shared adapter architecture and parity end to end"
   description "Run dependency-boundary, type, unit, E2E, documentation, schema, command, Core parity, LSP, VSIX, DAG Webview, MCP, temporary-link, package-inventory, and isolated-installation gates across supported runtimes. Record durable acceptance and remaining write-capability backlogs while proving unchanged Grammar 6, CLI Contract 7, governance, assurance, history safety, and safe-write behavior and making no release, publication, remote, Issue, editor-write, MCP-write, or plan-advance mutation."
   duration 5p
-  status active
+  status done
   priority 55
   requires:
     DEVELOPERS 1
@@ -585,3 +585,24 @@ work_event WE-c2a977991aa842f98bf893d13cac1d4e9debdc6910e5bed5b4457579cbbc6823:
   kind start
   occurred_at 2026-08-05T21:57:18+09:00
   planned_value 5p
+
+work_event WE-c43669d98efac38aeeac500535ed70211720fe72f8af80ba5bba1f8e18dacc4a:
+  model 1
+  task ADAPTER_INTEGRATION_ACCEPTANCE
+  kind suspend
+  occurred_at 2026-08-05T22:05:17+09:00
+  reason "End-of-day WIP handoff"
+
+work_event WE-533dc70122b079ecd22b1c67bde37a3124a09bfabb95f69b6c0fde8a329e0e87:
+  model 1
+  task ADAPTER_INTEGRATION_ACCEPTANCE
+  kind resume
+  occurred_at 2026-08-06T13:09:25+09:00
+
+work_event WE-824f41f4d363765d848e70b1f70f747a0d82b6a198bdd370161c3a0f892b477a:
+  model 1
+  task ADAPTER_INTEGRATION_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-06T13:10:58+09:00
+  active_time 143/900h
+  effort 143/900ph
