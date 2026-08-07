@@ -1576,11 +1576,15 @@ gate; its completed plan digest is `sha256:0cce301f...858dc457`. Candidate
 acceptance is complete from clean source commit `f9be1cc` and the retained
 679-file, 2753740-byte tarball with SHA-256
 `d761e2a1...1ac00b28`; its exact record is
-`docs/process/0.8.0-candidate.md`. Complete NextResult v6 recommends only
-`RELEASE_080_PUBLISH`. The frozen candidate and exact external write batch
-still require separate authorization. External writes, publication, npm
-`latest`, VSIX publication, plan advance, and Issue mutation remain
-separately gated.
+`docs/process/0.8.0-candidate.md`. The separately authorized PUBLISH completed
+from release commit `db5c2f8`, CI run `31154880011`, peeled tag, GitHub
+prerelease, and one npm `beta` publication. Candidate, GitHub, and npm
+tarballs are byte-identical; exact and beta installed acceptance passed.
+Durable acceptance is recorded in
+`docs/process/0.8.0-release-acceptance.md`. All six tasks and 22p are complete
+with zero makespans and no recommendation. npm `latest`, public VSIX
+publication, both input-plan advances, release-plan advance, and Issue
+mutation remain separately gated.
 
 The explicitly selected `adapter-platform.pert` workstream composes the
 previously separate LSP, VSIX, and MCP backlogs behind one accepted shared

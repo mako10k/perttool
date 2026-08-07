@@ -107,6 +107,7 @@ task RELEASE_080_PUBLISH RELEASE_080_CANDIDATE_ACCEPTED -> RELEASE_080_PUBLISHED
   title "Publish version 0.8.0 from one immutable tarball"
   description "Only after every predecessor gate passes and the user separately authorizes the exact candidate and external batch, push and verify the clean release commit and annotated tag, wait for Node.js 22 and 24 CI, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.8.0 while latest remains 0.7.1. Do not publish the private VSIX, LSP, or MCP adapters."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -118,6 +119,7 @@ task RELEASE_080_ACCEPTANCE RELEASE_080_PUBLISHED -> RELEASE_080_ACCEPTED:
   title "Record durable 0.8.0 beta acceptance"
   description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball bytes, registry integrity and metadata, exact and beta isolated installation, 45 commands, 21 schemas, 122 root exports, dag history, HistoricalGraphResult v1, Core and Node subpaths, declaration identity, private-adapter exclusion, compatibility, and rollback pin 0.7.1. Record evidence without changing npm latest, publishing a VSIX, advancing a plan, or mutating an Issue."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

@@ -596,11 +596,24 @@ dry-run succeeded; no protection claim is made. Exact installed-package,
 historical-DAG, public-facade, schema, declaration-identity, and private-
 adapter-exclusion checks passed. Its record is
 `docs/process/0.8.0-candidate.md`, and completed plan digest is
-`sha256:d91f752c...f3249b3c`. Complete NextResult v6 recommends and makes
-startable only `RELEASE_080_PUBLISH`. PUBLISH remains subject to a separate
-authorization for the frozen candidate and exact external batch. Remote
-writes, publication, npm `latest`, public VSIX identity or publication, plan
-advance, and Issue mutation remain separate. Initial plan acceptance is recorded in
+`sha256:d91f752c...f3249b3c`. The user then separately authorized the exact
+candidate and six-mutation external PUBLISH batch. Release commit and peeled
+annotated `v0.8.0` tag target `db5c2f8`; Node.js 22 and 24 CI run
+`31154880011` passed; GitHub prerelease `366565943`, npm `beta=0.8.0`, and the
+same 679-file tarball agree at SHA-256 `d761e2a1...1ac00b28`. The first
+GitHub Release route failed before mutation for missing `workflow` scope;
+readback showed no Release, and the unchanged request succeeded once through
+the established process-scoped route. npm accepted one publish, while the
+short internal readback window returned propagation E404; the operation was
+not retried, and fresh reads established durable publication at
+`2026-08-07T06:48:55.944Z`. Exact and beta installations expose 45 commands,
+21 schemas, 122 root and Node exports, 45 Core exports, historical DAG, and
+the declaration-identity correction. `latest=0.7.1` and absent `alpha` remain
+unchanged. Durable acceptance is recorded in
+`docs/process/0.8.0-release-acceptance.md`; all six tasks and 22p are complete
+with zero makespans and no recommendation. npm `latest`, public VSIX identity
+or publication, both input-plan advances, release-plan advance, and Issue
+mutation remain separate. Initial plan acceptance is recorded in
 `docs/process/0.8.0-release-plan-acceptance.md`.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.

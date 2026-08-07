@@ -98,17 +98,14 @@ six serial tasks totaling 22p, and makes startable only
 
 ## Remaining separately authorized order
 
-1. Present the accepted immutable `0.8.0` candidate from source commit
-   `f9be1cc`, 679 files, 2753740 bytes, and SHA-256
-   `d761e2a159d2d60eb981efda403cc6b00c4eac9e31503b2e857c0b851ac00b28`
-   together with the release commit, exact external destinations, bodies,
-   refs, and maximum write count.
-2. Publish only after that exact candidate authorization boundary. npm `latest`,
-   Marketplace publication, plan advance, and Issue mutation remain separate.
+The separately authorized `0.8.0` PUBLISH and durable acceptance are complete
+from release commit `db5c2f8` and the retained SHA-256
+`d761e2a159d2d60eb981efda403cc6b00c4eac9e31503b2e857c0b851ac00b28`.
+npm `latest`, Marketplace or Open VSX publication, both input-plan advances,
+release-plan advance, and Issue mutation remain separate.
 
-No tag, GitHub Release, npm publication, dist-tag movement, Marketplace
-operation, plan advance, or Issue mutation was performed in this WIP slice.
-The only editor-profile mutations were the two separately authorized local
-extension installations described above. Plan mutations were the separately
-confirmed final historical task status and outcome writes and the exact
-initial `0.8.0` release-plan write described above.
+Annotated `v0.8.0`, the GitHub prerelease, and npm `beta=0.8.0` now agree with
+the accepted artifact; `latest=0.7.1` remains unchanged. No Marketplace,
+Open VSX, npm `latest`, plan-advance, or Issue mutation was performed. The only
+editor-profile mutations remain the two separately authorized local extension
+installations described above.
