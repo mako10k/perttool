@@ -1,0 +1,30 @@
+{
+  "schema_version": "Perttool.DagPresentationCases.v1",
+  "layout_engine": {
+    "package": "@dagrejs/dagre",
+    "version": "3.1.0",
+    "direction": "LR"
+  },
+  "default_history": {
+    "requested_endpoint": "HEAD",
+    "lower_boundary": null,
+    "ancestry_profile": "first_parent",
+    "view": "lineage",
+    "snapshot_commit_id": null,
+    "analysis_mode": "both"
+  },
+  "cases": [
+    {"id":"DGP-001","depends_on":[],"boundary":"engine"},
+    {"id":"DGP-002","depends_on":["DGP-001"],"boundary":"layered_layout"},
+    {"id":"DGP-003","depends_on":[],"boundary":"defaults"},
+    {"id":"DGP-004","depends_on":["DGP-003"],"boundary":"progressive_disclosure"},
+    {"id":"DGP-005","depends_on":[],"boundary":"focus_identity"},
+    {"id":"DGP-006","depends_on":["DGP-005"],"boundary":"focus_binding"},
+    {"id":"DGP-007","depends_on":["DGP-005"],"boundary":"frontier"},
+    {"id":"DGP-008","depends_on":["DGP-006","DGP-007"],"boundary":"start_authority"},
+    {"id":"DGP-009","depends_on":["DGP-002","DGP-008"],"boundary":"critical_path"},
+    {"id":"DGP-010","depends_on":["DGP-002"],"boundary":"viewport"},
+    {"id":"DGP-011","depends_on":["DGP-004","DGP-009","DGP-010"],"boundary":"accessibility_security"},
+    {"id":"DGP-012","depends_on":["DGP-001","DGP-006","DGP-011"],"boundary":"distribution_no_write"}
+  ]
+}

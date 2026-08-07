@@ -139,9 +139,12 @@ interface HistoricalGraphViewParamsV1 {
 }
 ```
 
-The VSIX's initial values are `HEAD`, null lower boundary, `first_parent`,
-`lineage`, null snapshot, and `none`. All fields are transmitted explicitly;
-the server applies no hidden editor-specific default. `snapshotCommitId` is
+The original model-1 VSIX values are `HEAD`, null lower boundary,
+`first_parent`, `lineage`, null snapshot, and `none`. The later
+[DAG Presentation and Focus Contract](dag-presentation.md) changes only the
+private presentation default to `both` and progressive disclosure. All fields
+are still transmitted explicitly; the server applies no hidden editor-specific
+default. `snapshotCommitId` is
 non-null only for `snapshot` and retains the full lower-case object-ID rule.
 `three_way` remains a valid spelling that returns the historical model's
 typed unsupported result before Git inspection.
@@ -414,9 +417,10 @@ The deterministic text outline exposes, in semantic order:
 
 Timeline controls announce the selected checkpoint and never imply that a
 union-only path existed at one commit. Retired topology is labelled as retired.
-The separate `VSIX-DAG-PRESENT-001` backlog owns compact `M01`/`T01` labels and
-residual/remaining/task-time summaries. The separate `VSIX-ASSURE-001` backlog
-owns seal semantic highlighting; neither is activated by this contract.
+The separately selected `VSIX-DAG-PRESENT-001` contract owns compact
+`M01`/`T01`/`G01` labels and residual/remaining/task-time summaries without
+changing this historical result. The separate `VSIX-ASSURE-001` backlog owns
+seal semantic highlighting; it is not activated by this contract.
 
 ## 14. Side-effect boundary
 

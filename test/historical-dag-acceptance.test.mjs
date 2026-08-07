@@ -138,3 +138,39 @@ test("accepted source exposes the additive history surface and read-only CLI", (
   assert.equal(after.status, 0, after.stderr);
   assert.equal(after.stdout, before.stdout);
 });
+
+test("historical DAG plan retains the accepted final lifecycle before advance", async () => {
+  const source = await readFile(path.join(root, "plans/historical-dag.pert"), "utf8");
+  const acceptance = await readFile(
+    path.join(root, "docs/process/historical-dag-acceptance.md"),
+    "utf8",
+  );
+  const checked = perttool.checkDocument(source);
+  const next = perttool.selectNextTasks(source);
+
+  assert.equal(checked.ok, true);
+  assert.match(
+    source,
+    /task HISTORICAL_DAG_ACCEPTANCE[\s\S]*?status done/u,
+  );
+  assert.match(
+    source,
+    /task_outcome OUTCOME_HISTORICAL_DAG_ACCEPTANCE:[\s\S]*?against_basis sha256:cce0e3c757a51cf09215980303509d1aad9e5bbb90d11acf48790e962a894626[\s\S]*?status conformant/u,
+  );
+  assert.equal(next.ok, true);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
+  assert.deepEqual(next.assurance.directMismatchTaskIds, []);
+  assert.deepEqual(next.assurance.inheritedMismatchTaskIds, []);
+  assert.deepEqual(next.assurance.replanRequiredTaskIds, []);
+  assert.deepEqual(next.assurance.activeAttentionRequiredTaskIds, []);
+  assert.deepEqual(next.assurance.requiredActions, []);
+  assert.match(acceptance, /passed 961 tests/u);
+  assert.match(
+    acceptance,
+    /final candidate and source digest is\s+`sha256:3a1b78e7e7012ebd0fba568cf10f0a0ca23d20fc33fd834f719b1681a64ea3ef`/u,
+  );
+  assert.match(acceptance, /intentionally retained before advance/u);
+});

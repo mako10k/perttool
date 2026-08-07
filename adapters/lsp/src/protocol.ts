@@ -3,6 +3,8 @@ import type { Range } from "vscode-languageserver/node.js";
 export const EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
 export const GRAPH_VIEW_SCHEMA_VERSION = "Perttool.GraphViewResult.v1" as const;
 export const EDITOR_HELP_SCHEMA_VERSION = "Perttool.EditorHelpResult.v1" as const;
+export const DAG_FOCUS_PROTOCOL_MODEL_VERSION = 1 as const;
+export const DAG_FOCUS_SCHEMA_VERSION = "Perttool.DagFocusResult.v1" as const;
 export const HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
 export const HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION =
   "Perttool.HistoricalGraphViewResult.v1" as const;
@@ -27,6 +29,10 @@ export interface PerttoolInitializationOptionsV1 {
     readonly editorHelpResultSchemaVersions: readonly [
       "Perttool.EditorHelpResult.v1",
     ];
+    readonly dagFocusProtocolModelVersions?: readonly [1];
+    readonly dagFocusResultSchemaVersions?: readonly [
+      "Perttool.DagFocusResult.v1",
+    ];
     readonly historicalEditorProtocolModelVersions?: readonly [1];
     readonly historicalGraphViewResultSchemaVersions?: readonly [
       "Perttool.HistoricalGraphViewResult.v1",
@@ -47,6 +53,8 @@ export interface PerttoolExperimentalCapabilitiesV1 {
     readonly graphViewResultSchemaVersion: "Perttool.GraphViewResult.v1";
     readonly editorHelpResultSchemaVersion: "Perttool.EditorHelpResult.v1";
     readonly graphViewAnalysisModes: readonly GraphViewAnalysisMode[];
+    readonly dagFocusProtocolModelVersion?: 1;
+    readonly dagFocusResultSchemaVersion?: "Perttool.DagFocusResult.v1";
     readonly historicalEditorProtocolModelVersion?: 1;
     readonly historicalGraphViewResultSchemaVersion?:
       "Perttool.HistoricalGraphViewResult.v1";
@@ -195,6 +203,58 @@ export interface GraphViewResultV1 {
   readonly graph: GraphViewGraphV1 | null;
 }
 
+export interface DagFocusParamsV1 {
+  readonly textDocument: { readonly uri: string };
+  readonly documentVersion: number;
+}
+
+export interface DagFocusProjectionV1 {
+  readonly frontierMilestoneIds: readonly string[];
+  readonly activeTaskIds: readonly string[];
+  readonly readyTaskIds: readonly string[];
+  readonly recommendedTaskIds: readonly string[];
+  readonly startableTaskIds: readonly string[];
+  readonly safeStopReasons: readonly string[];
+  readonly entities: readonly {
+    readonly kind: "milestone" | "task" | "gate";
+    readonly id: string;
+    readonly compactId: string;
+    readonly title: string;
+    readonly description: string | null;
+  }[];
+  readonly timeSummary: {
+    readonly residualTime: GraphViewExactValueV1;
+    readonly remainingTime: GraphViewExactValueV1;
+    readonly taskTimes: readonly {
+      readonly taskId: string;
+      readonly taskTime: GraphViewExactValueV1;
+      readonly pointForecast: GraphViewExactValueV1 | null;
+    }[];
+    readonly pointConversion: {
+      readonly status: "available" | "unavailable" | "not_applicable";
+      readonly targetUnit: "day" | "hour" | null;
+      readonly residualTime: GraphViewExactValueV1 | null;
+      readonly remainingTime: GraphViewExactValueV1 | null;
+      readonly reason: string | null;
+    };
+  };
+}
+
+export interface DagFocusResultV1 {
+  readonly schemaVersion: typeof DAG_FOCUS_SCHEMA_VERSION;
+  readonly dagFocusProtocolModelVersion: typeof DAG_FOCUS_PROTOCOL_MODEL_VERSION;
+  readonly document: {
+    readonly uri: string;
+    readonly generation: string;
+    readonly version: number;
+    readonly sourceDigest: `sha256:${string}`;
+  };
+  readonly status: "current" | "invalid" | "unavailable";
+  readonly complete: boolean;
+  readonly reason: string | null;
+  readonly focus: DagFocusProjectionV1 | null;
+}
+
 export interface HistoricalGraphViewParamsV1 {
   readonly textDocument: { readonly uri: string };
   readonly documentVersion: number;
@@ -335,6 +395,19 @@ export interface HistoricalEditorApplicationV1 {
     targetPath: string,
     binding: HistoricalSourceBindingV1,
   ) => Promise<{ readonly text: string; readonly range: Range } | null>;
+}
+
+export interface DagFocusApplicationInspectionV1 {
+  readonly status: "current" | "unavailable";
+  readonly reason: string | null;
+  readonly focus: DagFocusProjectionV1 | null;
+}
+
+export interface DagFocusApplicationV1 {
+  readonly inspect: (
+    text: string,
+    expectedSourceDigest: `sha256:${string}`,
+  ) => DagFocusApplicationInspectionV1 | PromiseLike<DagFocusApplicationInspectionV1>;
 }
 
 export class PerttoolProtocolError extends Error {

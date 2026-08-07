@@ -3,6 +3,9 @@ export const graphViewResultSchemaVersion =
   "Perttool.GraphViewResult.v1" as const;
 export const editorHelpResultSchemaVersion =
   "Perttool.EditorHelpResult.v1" as const;
+export const dagFocusProtocolModelVersion = 1 as const;
+export const dagFocusResultSchemaVersion =
+  "Perttool.DagFocusResult.v1" as const;
 export const historicalEditorProtocolModelVersion = 1 as const;
 export const historicalGraphViewResultSchemaVersion =
   "Perttool.HistoricalGraphViewResult.v1" as const;
@@ -16,6 +19,37 @@ export type GraphViewAnalysisMode =
   | "both";
 export type HistoricalGraphView = "snapshot" | "lineage" | "timeline";
 export type HistoricalGraphAncestryProfile = "first_parent" | "three_way";
+
+export function allocateHistoricalCompactIds(
+  occurrences: readonly Readonly<Record<string, unknown>>[],
+): ReadonlyMap<string, string> {
+  const mapping = new Map<string, string>();
+  const kinds = [
+    ["milestone", "M"],
+    ["task", "T"],
+    ["gate", "G"],
+  ] as const;
+  for (const [kind, prefix] of kinds) {
+    const selected = occurrences
+      .filter((occurrence) =>
+        occurrence["entity_kind"] === kind &&
+        typeof occurrence["occurrence_id"] === "string"
+      )
+      .sort((left, right) => {
+        const leftId = String(left["occurrence_id"]);
+        const rightId = String(right["occurrence_id"]);
+        return leftId < rightId ? -1 : leftId > rightId ? 1 : 0;
+      });
+    const width = Math.max(2, String(selected.length).length);
+    selected.forEach((occurrence, index) => {
+      mapping.set(
+        String(occurrence["occurrence_id"]),
+        `${prefix}${String(index + 1).padStart(width, "0")}`,
+      );
+    });
+  }
+  return mapping;
+}
 
 export interface GraphViewPositionV1 {
   readonly line: number;
@@ -134,6 +168,48 @@ export interface GraphViewResultV1 {
     readonly truncated: boolean;
   };
   readonly graph: GraphViewGraphV1 | null;
+}
+
+export interface DagFocusProjectionV1 {
+  readonly frontierMilestoneIds: readonly string[];
+  readonly activeTaskIds: readonly string[];
+  readonly readyTaskIds: readonly string[];
+  readonly recommendedTaskIds: readonly string[];
+  readonly startableTaskIds: readonly string[];
+  readonly safeStopReasons: readonly string[];
+  readonly entities: readonly {
+    readonly kind: "milestone" | "task" | "gate";
+    readonly id: string;
+    readonly compactId: string;
+    readonly title: string;
+    readonly description: string | null;
+  }[];
+  readonly timeSummary: {
+    readonly residualTime: GraphViewExactValueV1;
+    readonly remainingTime: GraphViewExactValueV1;
+    readonly taskTimes: readonly {
+      readonly taskId: string;
+      readonly taskTime: GraphViewExactValueV1;
+      readonly pointForecast: GraphViewExactValueV1 | null;
+    }[];
+    readonly pointConversion: {
+      readonly status: "available" | "unavailable" | "not_applicable";
+      readonly targetUnit: "day" | "hour" | null;
+      readonly residualTime: GraphViewExactValueV1 | null;
+      readonly remainingTime: GraphViewExactValueV1 | null;
+      readonly reason: string | null;
+    };
+  };
+}
+
+export interface DagFocusResultV1 {
+  readonly schemaVersion: typeof dagFocusResultSchemaVersion;
+  readonly dagFocusProtocolModelVersion: typeof dagFocusProtocolModelVersion;
+  readonly document: GraphViewResultV1["document"];
+  readonly status: "current" | "invalid" | "unavailable";
+  readonly complete: boolean;
+  readonly reason: string | null;
+  readonly focus: DagFocusProjectionV1 | null;
 }
 
 export interface HistoricalSourceBindingV1 {
@@ -398,6 +474,16 @@ export function hasAcceptedEditorHandshake(value: unknown): boolean {
   );
 }
 
+export function hasAcceptedDagFocusHandshake(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  const perttool = value.perttool;
+  return (
+    isRecord(perttool) &&
+    perttool.dagFocusProtocolModelVersion === dagFocusProtocolModelVersion &&
+    perttool.dagFocusResultSchemaVersion === dagFocusResultSchemaVersion
+  );
+}
+
 export function hasAcceptedHistoricalHandshake(value: unknown): boolean {
   if (!isRecord(value)) return false;
   const perttool = value.perttool;
@@ -483,6 +569,80 @@ function exactValue(value: unknown): value is GraphViewExactValueV1 {
     typeof value.unit === "string" &&
     typeof value.display === "string"
   );
+}
+
+function dagDisplayEntity(value: unknown): boolean {
+  if (!isRecord(value) || !hasExactKeys(value, [
+    "compactId",
+    "description",
+    "id",
+    "kind",
+    "title",
+  ])) return false;
+  const prefix = value.kind === "milestone"
+    ? "M"
+    : value.kind === "task"
+      ? "T"
+      : value.kind === "gate"
+        ? "G"
+        : null;
+  return prefix !== null && nonEmptyString(value.id) &&
+    typeof value.compactId === "string" &&
+    new RegExp(`^${prefix}[0-9]{2,}$`, "u").test(value.compactId) &&
+    nonEmptyString(value.title) &&
+    (value.description === null || typeof value.description === "string");
+}
+
+function dagTimeSummary(value: unknown): boolean {
+  if (!isRecord(value) || !hasExactKeys(value, [
+    "pointConversion",
+    "remainingTime",
+    "residualTime",
+    "taskTimes",
+  ]) || !exactValue(value.residualTime) || !exactValue(value.remainingTime) ||
+    !Array.isArray(value.taskTimes) ||
+    !value.taskTimes.every((task) =>
+      isRecord(task) &&
+      hasExactKeys(task, ["pointForecast", "taskId", "taskTime"]) &&
+      nonEmptyString(task.taskId) && exactValue(task.taskTime) &&
+      (task.pointForecast === null || exactValue(task.pointForecast))
+    ) || !isRecord(value.pointConversion) ||
+    !hasExactKeys(value.pointConversion, [
+      "reason",
+      "remainingTime",
+      "residualTime",
+      "status",
+      "targetUnit",
+    ])) return false;
+  const conversion = value.pointConversion;
+  const baseUnit = value.residualTime.unit;
+  if (value.remainingTime.unit !== baseUnit ||
+    value.taskTimes.some((task) => task.taskTime.unit !== baseUnit) ||
+    new Set(value.taskTimes.map((task) => String(task.taskId))).size !==
+      value.taskTimes.length) return false;
+  if (conversion.status === "available") {
+    return baseUnit === "point" &&
+      (conversion.targetUnit === "hour" || conversion.targetUnit === "day") &&
+      exactValue(conversion.residualTime) && exactValue(conversion.remainingTime) &&
+      conversion.residualTime.unit === conversion.targetUnit &&
+      conversion.remainingTime.unit === conversion.targetUnit &&
+      value.taskTimes.every((task) =>
+        exactValue(task.pointForecast) &&
+        task.pointForecast.unit === conversion.targetUnit
+      ) &&
+      conversion.reason === null;
+  }
+  if (conversion.status === "not_applicable") {
+    return (baseUnit === "day" || baseUnit === "hour") &&
+      value.taskTimes.every((task) => task.pointForecast === null) &&
+      conversion.targetUnit === null && conversion.residualTime === null &&
+      conversion.remainingTime === null && conversion.reason === null;
+  }
+  return conversion.status === "unavailable" && baseUnit === "point" &&
+    value.taskTimes.every((task) => task.pointForecast === null) &&
+    conversion.targetUnit === null &&
+    conversion.residualTime === null && conversion.remainingTime === null &&
+    nonEmptyString(conversion.reason);
 }
 
 function diagnostic(value: unknown): value is GraphViewDiagnosticV1 {
@@ -734,6 +894,91 @@ export function parseGraphViewResult(value: unknown): GraphViewResultV1 | null {
   const result = value as unknown as GraphViewResultV1;
   if (!modeProjectionIsClosed(result)) return null;
   return JSON.parse(JSON.stringify(result)) as GraphViewResultV1;
+}
+
+export function parseDagFocusResult(value: unknown): DagFocusResultV1 | null {
+  if (
+    !isRecord(value) ||
+    !hasExactKeys(value, [
+      "complete",
+      "dagFocusProtocolModelVersion",
+      "document",
+      "focus",
+      "reason",
+      "schemaVersion",
+      "status",
+    ]) ||
+    value.schemaVersion !== dagFocusResultSchemaVersion ||
+    value.dagFocusProtocolModelVersion !== dagFocusProtocolModelVersion ||
+    !isRecord(value.document) ||
+    !hasExactKeys(value.document, ["generation", "sourceDigest", "uri", "version"]) ||
+    !nonEmptyString(value.document.uri) ||
+    !nonEmptyString(value.document.generation) ||
+    !Number.isSafeInteger(value.document.version) ||
+    (value.document.version as number) < 0 ||
+    typeof value.document.sourceDigest !== "string" ||
+    !/^sha256:[0-9a-f]{64}$/u.test(value.document.sourceDigest) ||
+    (value.status !== "current" &&
+      value.status !== "invalid" &&
+      value.status !== "unavailable") ||
+    typeof value.complete !== "boolean" ||
+    (value.reason !== null && typeof value.reason !== "string")
+  ) return null;
+  if (value.focus !== null) {
+    if (
+      !isRecord(value.focus) ||
+      !hasExactKeys(value.focus, [
+        "activeTaskIds",
+        "entities",
+        "frontierMilestoneIds",
+        "readyTaskIds",
+        "recommendedTaskIds",
+        "safeStopReasons",
+        "startableTaskIds",
+        "timeSummary",
+      ]) ||
+      !stringArray(value.focus.activeTaskIds) ||
+      !stringArray(value.focus.frontierMilestoneIds) ||
+      !stringArray(value.focus.readyTaskIds) ||
+      !stringArray(value.focus.recommendedTaskIds) ||
+      !stringArray(value.focus.safeStopReasons) ||
+      !stringArray(value.focus.startableTaskIds) ||
+      !Array.isArray(value.focus.entities) ||
+      !value.focus.entities.every(dagDisplayEntity) ||
+      !dagTimeSummary(value.focus.timeSummary)
+    ) return null;
+    const focus = value.focus as unknown as DagFocusProjectionV1;
+    const entityKeys = focus.entities.map((entity) =>
+      `${String(entity.kind)}\u0000${String(entity.id)}`
+    );
+    const compactIds = focus.entities.map((entity) => String(entity.compactId));
+    const milestoneIds = new Set(focus.entities
+      .filter((entity) => entity.kind === "milestone")
+      .map((entity) => String(entity.id)));
+    const taskIds = new Set(focus.entities
+      .filter((entity) => entity.kind === "task")
+      .map((entity) => String(entity.id)));
+    const taskTimeIds = new Set(focus.timeSummary.taskTimes.map((task) =>
+      String(task.taskId)
+    ));
+    if (new Set(entityKeys).size !== entityKeys.length ||
+      new Set(compactIds).size !== compactIds.length ||
+      !focus.frontierMilestoneIds.every((id) => milestoneIds.has(id)) ||
+      ![
+        focus.activeTaskIds,
+        focus.readyTaskIds,
+        focus.recommendedTaskIds,
+        focus.startableTaskIds,
+      ].every((ids) => ids.every((id) => taskIds.has(id))) ||
+      taskIds.size !== taskTimeIds.size ||
+      ![...taskIds].every((id) => taskTimeIds.has(id))) return null;
+  }
+  if (
+    (value.status === "current") !== value.complete ||
+    (value.status === "current") !== (value.focus !== null) ||
+    (value.status === "current" ? value.reason !== null : value.reason === null)
+  ) return null;
+  return JSON.parse(JSON.stringify(value)) as DagFocusResultV1;
 }
 
 function historicalSourcePosition(value: unknown): boolean {

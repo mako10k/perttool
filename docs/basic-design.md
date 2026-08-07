@@ -2,7 +2,7 @@
 
 - Document status: Draft 1.27
 - Created: 2026-07-21
-- Updated: 2026-08-06
+- Updated: 2026-08-07
 - Applicable requirements: [requirements.md](requirements.md)
 - DSL grammar: [specs/dsl-grammar.md](specs/dsl-grammar.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
@@ -3502,6 +3502,28 @@ versions, scopes Git reads to the trusted selected local repository, verifies
 immutable blob source navigation, and preserves current GraphView and
 workspace bytes. The implementation adds no public runtime name, CLI command,
 CLI schema artifact, or public extension contribution.
+
+The later [DAG Presentation and Focus Contract](specs/dag-presentation.md)
+keeps those result identities unchanged while adding a separately negotiated
+private `perttool/dagFocus` projection. Its internal Application owner reuses
+complete `Perttool.NextResult.v6` start authority and derives the reached
+unfinished milestone frontier; the LSP only binds that projection to the open
+document. The VSIX bundles exact `@dagrejs/dagre` `3.1.0` to lay out both
+current and historical topology left-to-right, then retains SVG ownership for
+source navigation, current/critical/next styles, zoom, fit, scrolling, panning,
+and accessibility. Historical `HEAD`, first-parent lineage, and `both` analysis
+load from one scope selection, while the complete query remains under an
+advanced disclosure. No layout fact becomes semantic authority.
+
+The selected
+[DAG Compact Labels and Exact Time Summary Contract](specs/dag-compact-presentation.md)
+extends that unreleased private focus payload with source-order `Mnn`, `Tnn`,
+and `Gnn` display metadata plus exact residual, resource-remaining, and task
+time values. Application code owns current rational and velocity semantics;
+the Webview owns only historical occurrence-ID label allocation and renders
+unavailable facts without reconstructing missing historical values. Compact
+labels link to accessible original-identity details and never enter semantic or
+source-navigation requests.
 
 Exit for the contract task:
 

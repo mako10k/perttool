@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.24
+- Document status: Draft 0.26
 - Created: 2026-07-21
-- Updated: 2026-08-05
+- Updated: 2026-08-07
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -133,6 +133,23 @@ Must:
   conflict model.
 - Perform no source, worktree, index, ref, configuration, repository, editor,
   or external write and grant no current execution or mutation authority.
+- Give the private editor DAG a useful no-configuration default. The primary
+  presentation must visibly prioritize the current milestone frontier, the
+  critical path, and tasks with exact current start authority; detailed
+  historical query parameters remain available through progressive disclosure.
+- Use a deterministic directed-graph layout with bounded zoom, fit, native
+  scrolling, pointer panning, keyboard access, and an equivalent text outline.
+  Layout code must not infer project semantics. The exact private adapter
+  boundary is defined by the [DAG Presentation and Focus Contract](specs/dag-presentation.md).
+- Use deterministic compact `Mnn`, `Tnn`, and `Gnn` graph labels without
+  replacing source or historical occurrence identity. Each label must link to
+  an accessible detail row that retains original ID, title, description, exact
+  source navigation, and a return path to the graph.
+- Keep residual precedence makespan, resource-scheduled remaining makespan,
+  and per-task PERT expected time distinct. Show exact Point-to-hour/day
+  forecasts only when declared velocity permits them, and label unavailable
+  conversion rather than assuming a workday. The exact boundary is defined by
+  the [DAG Compact Labels and Exact Time Summary Contract](specs/dag-compact-presentation.md).
 
 ### 2.4 Make the AI Project Control Plane the central purpose
 

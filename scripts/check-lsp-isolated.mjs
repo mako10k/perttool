@@ -180,7 +180,8 @@ assert.equal(graph.result.complete, true);
 if (historicalTarget === undefined) {
   assert.deepEqual(graph.result.graph.edges.map(({ id }) => id), ["WORK"]);
 } else {
-  assert.ok(graph.result.graph.edges.length > 0);
+  assert.ok(graph.result.graph.milestones.length > 0);
+  assert.equal(graph.result.graph.finishMilestoneId, "HISTORICAL_DAG_ACCEPTED");
 }
 assert.equal(graph.result.graph.resource.optimal, false);
 

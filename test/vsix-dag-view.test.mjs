@@ -181,9 +181,15 @@ test("Webview assets retain restrictive CSP, escaped content, and accessibility"
   assert.match(webview, /textContent =/u);
   assert.match(webview, /replaceChildren/u);
   assert.equal(/innerHTML|insertAdjacentHTML|eval\(|new Function|fetch\(/u.test(webview), false);
-  assert.equal(/mermaid|calculatePert|criticalPath|topological/u.test(webview), false);
+  assert.equal(
+    /mermaid|calculatePert|analyzePrecedence|selectNextTasks|topological/u.test(webview),
+    false,
+  );
+  assert.match(webview, /@dagrejs\/dagre/u);
+  assert.match(webview, /fitGraph/u);
+  assert.match(provider, /Advanced history query/u);
   assert.match(provider, /aria-live="polite"/u);
-  assert.match(provider, /Accessible DAG outline/u);
+  assert.match(provider, /Entity details and accessible outline/u);
   assert.match(stylesheet, /focus-visible/u);
   assert.match(stylesheet, /prefers-reduced-motion/u);
   assert.match(stylesheet, /--vscode-focusBorder/u);

@@ -5,11 +5,17 @@ language server for offline local or remote VS Code workspace extension hosts.
 It activates for `.pert` documents, supplies presentation-only TextMate
 highlighting, exposes read-only diagnostic Help, and renders both the current
 version-bound `Perttool.GraphViewResult.v1` and the separately negotiated
-historical graph result through a restrictive local Webview. Current graphs
-provide four analysis modes, accessible text details, and binding-checked
-source navigation. In a trusted local file workspace, historical controls add
-explicit endpoint/lower-boundary, snapshot/proved-lineage/timeline, and the
-same independent four-mode analysis selection. Historical source actions open
+historical graph result through a restrictive local Webview. Exact
+`Perttool.DagFocusResult.v1` data keeps the current milestone frontier,
+critical path, and startable tasks prominent. Exact bundled Dagre layout,
+zoom, fit, native scrolling, and pointer or keyboard navigation remain
+presentation-only. Compact `Mnn`, `Tnn`, and `Gnn` graph links open accessible
+original-identity details, while exact residual, resource-remaining, and task
+time summaries retain qualified Point forecasts. In a trusted local file
+workspace, selecting history loads
+the HEAD first-parent lineage with complete analysis; endpoint/lower-boundary,
+snapshot/proved-lineage/timeline, and four-mode analysis controls remain under
+progressive disclosure. Historical source actions open
 verified immutable `perttool-history` documents rather than worktree ranges.
 
 The extension does not parse or analyze `.pert` itself. Its bundled server may
@@ -17,7 +23,7 @@ perform bounded read-only Git discovery and immutable object reads only for an
 eligible trusted historical request. Neither component writes files or Git,
 executes workspace code, uses a network listener, downloads code, emits
 telemetry, computes PERT semantics in the Webview, or grants mutation or task-
-start authority. Its disposable installed gate covers trusted and untrusted
+start authority of its own. Its disposable installed gate covers trusted and untrusted
 minimum-host activation, virtual and large current graphs, historical graph
 and immutable-source behavior, Help/navigation, replacement, uninstall
 readback, and unchanged workspace bytes. Editor mutation, public naming,

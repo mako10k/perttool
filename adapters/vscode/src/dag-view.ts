@@ -5,11 +5,13 @@ import {
   editorProtocolModelVersion,
   findGraphEntityRange,
   historicalWebviewPresentation,
+  parseDagFocusResult,
   parseGraphViewResult,
   parseHistoricalGraphViewResult,
   parseHistoricalSourceResult,
   parseWebviewMessage,
   type GraphViewAnalysisMode,
+  type DagFocusResultV1,
   type GraphViewResultV1,
   type HistoricalGraphViewResultV1,
   type HistoricalSourceResultV1,
@@ -35,6 +37,7 @@ interface DagRenderMessageV1 {
   readonly message: string;
   readonly analysisMode: GraphViewAnalysisMode;
   readonly result: GraphViewResultV1 | null;
+  readonly focusResult: DagFocusResultV1 | null;
   readonly historicalResult: HistoricalWebviewPresentationV1 | null;
   readonly scope: "current" | "historical";
 }
@@ -44,6 +47,7 @@ export interface DagViewProviderOptions {
   readonly client: () => LanguageClient | undefined;
   readonly customCapabilitiesAvailable: () => boolean;
   readonly historicalCapabilitiesAvailable: () => boolean;
+  readonly dagFocusCapabilitiesAvailable: () => boolean;
   readonly openHistoricalSource: (
     result: HistoricalSourceResultV1,
   ) => Promise<boolean>;
@@ -108,6 +112,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
   #view: vscode.WebviewView | undefined;
   #mode: GraphViewAnalysisMode = "both";
   #result: GraphViewResultV1 | null = null;
+  #focusResult: DagFocusResultV1 | null = null;
   #historicalResult: HistoricalGraphViewResultV1 | null = null;
   #scope: "current" | "historical" = "current";
   #requestSerial = 0;
@@ -120,6 +125,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     message: "Open a .pert document to display its DAG.",
     analysisMode: "both",
     result: null,
+    focusResult: null,
     historicalResult: null,
     scope: "current",
   };
@@ -258,18 +264,36 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     };
     this.#scope = "current";
     this.#result = null;
+    this.#focusResult = null;
     this.#publish("loading", `Loading ${this.#mode} DAG analysis…`, null);
 
     try {
-      const raw = await client.sendRequest<unknown>(
-        "perttool/graphView",
-        {
-          textDocument: { uri: binding.uri },
-          documentVersion: binding.version,
-          analysisMode: this.#mode,
-        },
-        cancellation.token,
-      );
+      const [raw, rawFocus] = await Promise.all([
+        client.sendRequest<unknown>(
+          "perttool/graphView",
+          {
+            textDocument: { uri: binding.uri },
+            documentVersion: binding.version,
+            analysisMode: this.#mode,
+          },
+          cancellation.token,
+        ),
+        this.#options.dagFocusCapabilitiesAvailable()
+          ? client.sendRequest<unknown>(
+              "perttool/dagFocus",
+              {
+                textDocument: { uri: binding.uri },
+                documentVersion: binding.version,
+              },
+              cancellation.token,
+            ).catch((error: unknown) => {
+              this.#options.output.warn(
+                `DAG focus request failed closed: ${String(error)}`,
+              );
+              return null;
+            })
+          : Promise.resolve(null),
+      ]);
       if (serial !== this.#requestSerial || cancellation.token.isCancellationRequested) {
         return;
       }
@@ -283,6 +307,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
         return;
       }
       const result = parseGraphViewResult(raw);
+      const focusResult = rawFocus === null ? null : parseDagFocusResult(rawFocus);
       if (
         result === null ||
         result.document.uri !== binding.uri ||
@@ -291,6 +316,19 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       ) {
         this.#clear("unavailable", "The DAG result failed closed validation.");
         return;
+      }
+      if (
+        focusResult !== null &&
+        (
+          focusResult.document.uri !== binding.uri ||
+          focusResult.document.generation !== result.document.generation ||
+          focusResult.document.version !== binding.version ||
+          focusResult.document.sourceDigest !== result.document.sourceDigest
+        )
+      ) {
+        this.#options.output.warn("DAG focus result failed closed binding validation.");
+      } else {
+        this.#focusResult = focusResult;
       }
       if (result.status === "current") {
         this.#result = result;
@@ -335,6 +373,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       message,
       analysisMode: this.#mode,
       result,
+      focusResult: this.#focusResult,
       historicalResult: this.#historicalResult === null
         ? null
         : historicalWebviewPresentation(this.#historicalResult),
@@ -351,6 +390,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#requestSerial += 1;
     this.#cancellation?.cancel();
     this.#result = diagnosticResult;
+    this.#focusResult = null;
     this.#historicalResult = null;
     this.#scope = "current";
     this.#publish(state, message, diagnosticResult);
@@ -570,51 +610,77 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
 <body>
   <header>
     <h1>perttool DAG</h1>
-    <label for="dag-scope">Scope</label>
+    <label class="visually-hidden" for="dag-scope">DAG scope</label>
     <select id="dag-scope" aria-label="DAG scope">
       <option value="current" selected>Current document</option>
       <option value="historical">Git history</option>
     </select>
-    <label for="analysis-mode">Analysis</label>
-    <select id="analysis-mode" aria-label="DAG analysis mode">
-      <option value="none">Topology</option>
-      <option value="precedence">Precedence</option>
-      <option value="resource">Resource</option>
-      <option value="both" selected>Both</option>
-    </select>
   </header>
-  <fieldset id="historical-controls" hidden>
-    <legend>Historical query</legend>
-    <label for="historical-endpoint">Endpoint</label>
-    <input id="historical-endpoint" value="HEAD" maxlength="1024" spellcheck="false">
-    <label for="historical-lower">Lower boundary</label>
-    <input id="historical-lower" maxlength="1024" spellcheck="false" placeholder="optional">
-    <label for="historical-ancestry">Ancestry</label>
-    <select id="historical-ancestry">
-      <option value="first_parent" selected>First parent</option>
-      <option value="three_way">Three way (unsupported)</option>
-    </select>
-    <label for="historical-view">View</label>
-    <select id="historical-view">
-      <option value="snapshot">Snapshot</option>
-      <option value="lineage" selected>Proved lineage</option>
-      <option value="timeline">Timeline</option>
-    </select>
-    <label for="historical-snapshot">Snapshot commit</label>
-    <input id="historical-snapshot" maxlength="64" spellcheck="false" placeholder="optional full object ID">
-    <button id="historical-run" type="button">Load historical DAG</button>
-  </fieldset>
+  <details id="view-options">
+    <summary>View options</summary>
+    <fieldset>
+      <legend>Schedule analysis</legend>
+      <label for="analysis-mode">Analysis</label>
+      <select id="analysis-mode" aria-label="DAG analysis mode">
+        <option value="none">Topology</option>
+        <option value="precedence">Precedence</option>
+        <option value="resource">Resource</option>
+        <option value="both" selected>Critical path and resources</option>
+      </select>
+    </fieldset>
+  </details>
+  <details id="historical-controls" hidden>
+    <summary>Advanced history query</summary>
+    <fieldset>
+      <legend>Historical query</legend>
+      <label for="historical-endpoint">Endpoint</label>
+      <input id="historical-endpoint" value="HEAD" maxlength="1024" spellcheck="false">
+      <label for="historical-lower">Lower boundary</label>
+      <input id="historical-lower" maxlength="1024" spellcheck="false" placeholder="optional">
+      <label for="historical-ancestry">Ancestry</label>
+      <select id="historical-ancestry">
+        <option value="first_parent" selected>First parent</option>
+        <option value="three_way">Three way (unsupported)</option>
+      </select>
+      <label for="historical-view">View</label>
+      <select id="historical-view">
+        <option value="snapshot">Snapshot</option>
+        <option value="lineage" selected>Proved lineage</option>
+        <option value="timeline">Timeline</option>
+      </select>
+      <label for="historical-snapshot">Snapshot commit</label>
+      <input id="historical-snapshot" maxlength="64" spellcheck="false" placeholder="optional full object ID">
+      <button id="historical-run" type="button">Reload historical DAG</button>
+    </fieldset>
+  </details>
   <p id="status" role="status" aria-live="polite"></p>
   <main>
-    <svg id="graph" role="img" aria-label="PERT activity-on-arrow graph"></svg>
-    <section id="outline-section" aria-labelledby="outline-heading">
-      <h2 id="outline-heading">Accessible DAG outline</h2>
+    <section id="focus-summary" aria-label="Current plan focus">
+      <article><h2>Current milestone</h2><div id="current-milestones"></div></article>
+      <article><h2>Critical path</h2><div id="critical-path"></div></article>
+      <article><h2>Next to start</h2><div id="next-tasks"></div></article>
+      <article><h2>Exact time</h2><div id="time-summary"></div></article>
+    </section>
+    <nav id="graph-toolbar" aria-label="DAG navigation">
+      <button id="zoom-out" type="button" aria-label="Zoom out">−</button>
+      <output id="zoom-level" aria-live="polite">100%</output>
+      <button id="zoom-in" type="button" aria-label="Zoom in">+</button>
+      <button id="zoom-fit" type="button">Fit</button>
+      <span class="legend current">Current</span>
+      <span class="legend critical">Critical path</span>
+      <span class="legend next">Next</span>
+    </nav>
+    <div id="graph-viewport" tabindex="0" aria-label="Scrollable PERT DAG viewport">
+      <svg id="graph" role="img" aria-label="PERT activity-on-arrow graph"></svg>
+    </div>
+    <details id="outline-section">
+      <summary id="outline-heading">Entity details and accessible outline</summary>
       <div id="outline"></div>
-    </section>
-    <section aria-labelledby="diagnostics-heading">
-      <h2 id="diagnostics-heading">Diagnostics</h2>
-      <ul id="diagnostics"></ul>
-    </section>
+    </details>
+    <details>
+      <summary id="diagnostics-heading">Diagnostics</summary>
+      <ul id="diagnostics" aria-labelledby="diagnostics-heading"></ul>
+    </details>
   </main>
   <script nonce="${token}" src="${script}"></script>
 </body>
@@ -628,6 +694,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#disposables.splice(0).forEach((item) => item.dispose());
     this.#view = undefined;
     this.#result = null;
+    this.#focusResult = null;
     this.#historicalResult = null;
   }
 }

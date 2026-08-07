@@ -49,6 +49,12 @@ The repository-only VSIX also adds separately negotiated historical snapshot,
 proved-lineage, and timeline views for trusted local Git workspaces plus
 verified read-only immutable source navigation. Those adapter results are not
 CLI schemas or public package exports, and no public VSIX release is selected.
+The private DAG presentation additionally bundles a deterministic left-to-right
+Dagre layout, one-step historical defaults, bounded zoom/fit/scroll/pan, and a
+separately negotiated exact current-frontier and NextResult v6 start-authority
+focus result. Compact `Mnn`/`Tnn`/`Gnn` graph labels link to original-identity
+details, and exact residual, resource-remaining, and task-time summaries keep
+qualified Point forecasts distinct. Layout never becomes project semantics.
 
 ## Run without installing
 
@@ -560,6 +566,10 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
 - [Historical Editor Protocol Contract](docs/specs/historical-editor-protocol.md)
+- [DAG Presentation and Focus Contract](docs/specs/dag-presentation.md)
+- [DAG presentation and focus acceptance](docs/process/dag-presentation-acceptance.md)
+- [DAG Compact Labels and Exact Time Summary Contract](docs/specs/dag-compact-presentation.md)
+- [DAG compact presentation acceptance](docs/process/dag-compact-presentation-acceptance.md)
 - [Document Session Core](docs/specs/document-session.md)
 - [Conditional Plan Assurance internal hash Core acceptance](docs/process/plan-assurance-hash-core-acceptance.md)
 - [Conditional Plan Assurance internal source Core acceptance](docs/process/plan-assurance-source-core-acceptance.md)

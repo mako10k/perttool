@@ -189,6 +189,7 @@ task HISTORICAL_DAG_ACCEPTANCE HISTORICAL_VSIX_READY -> HISTORICAL_DAG_ACCEPTED:
   title "Accept historical DAG reconstruction across CLI and VSIX"
   description "Trace every normative case through pure Core, SHA-1 and SHA-256 repositories, linked worktrees, CLI, result schema, help, LSP, VSIX, immutable navigation, temporary link and isolated packages. Prove one-node current plans can yield a multi-node proven lineage after canonical advance, invalid or ambiguous streams fail closed, first-parent scope is explicit, current public identities remain compatible, and no Git, source, editor-profile, remote or publication state changes."
   duration 5p
+  status done
   priority 60
   requires:
     DEVELOPERS 1
@@ -305,3 +306,10 @@ task_outcome OUTCOME_HISTORICAL_VSIX:
   against_basis sha256:7edcde41483bb18ff3923bc6f2b9de8148e482195f266b42a1e3a0f51c03657d
   status conformant
   reason "Accepted historical LSP and VSIX implementation and eighteen closed cases"
+
+task_outcome OUTCOME_HISTORICAL_DAG_ACCEPTANCE:
+  model 1
+  task HISTORICAL_DAG_ACCEPTANCE
+  against_basis sha256:cce0e3c757a51cf09215980303509d1aad9e5bbb90d11acf48790e962a894626
+  status conformant
+  reason "Accepted historical DAG reconstruction and sixteen closed cases"

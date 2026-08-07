@@ -275,18 +275,18 @@ test("historical editor contract remains aligned after the private implementatio
     /task HISTORICAL_EDITOR_CONTRACT[\s\S]*?status done/u,
   );
   assert.match(plan, /task HISTORICAL_VSIX[\s\S]*?status done/u);
+  assert.match(
+    plan,
+    /task HISTORICAL_DAG_ACCEPTANCE[\s\S]*?status done/u,
+  );
   assert.equal(next.ok, true);
-  assert.deepEqual(next.groups.ready, ["HISTORICAL_DAG_ACCEPTANCE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_DAG_ACCEPTANCE",
-  ]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
   assert.deepEqual(
     next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
     [],
   );
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_DAG_ACCEPTANCE",
-  ]);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.match(lspProtocol, /HistoricalGraphViewResultV1/u);
   assert.match(vscodeBindings, /HistoricalGraphViewResultV1/u);
 });

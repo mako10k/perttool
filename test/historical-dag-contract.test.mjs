@@ -270,13 +270,17 @@ test("accepted historical VSIX makes only final acceptance startable", async () 
     source,
     /task_outcome OUTCOME_HISTORICAL_CLI:[\s\S]*?task HISTORICAL_CLI[\s\S]*?status conformant/u,
   );
-  assert.deepEqual(next.groups.ready, ["HISTORICAL_DAG_ACCEPTANCE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "HISTORICAL_DAG_ACCEPTANCE",
-  ]);
-  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, [
-    "HISTORICAL_DAG_ACCEPTANCE",
-  ]);
+  assert.match(
+    source,
+    /task HISTORICAL_DAG_ACCEPTANCE[\s\S]*?status done/u,
+  );
+  assert.match(
+    source,
+    /task_outcome OUTCOME_HISTORICAL_DAG_ACCEPTANCE:[\s\S]*?task HISTORICAL_DAG_ACCEPTANCE[\s\S]*?against_basis sha256:cce0e3c757a51cf09215980303509d1aad9e5bbb90d11acf48790e962a894626[\s\S]*?status conformant/u,
+  );
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
   assert.deepEqual(
     next.temporal.authority.assuranceUnavailableRecommendedTaskIds,
     [],

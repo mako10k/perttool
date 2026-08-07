@@ -536,6 +536,25 @@ assurance with no unavailable task, mismatch, replan requirement, or required
 action. Fresh complete NextResult v6 recommends and makes startable only
 `HISTORICAL_DAG_ACCEPTANCE`.
 
+`HISTORICAL_DAG_ACCEPTANCE` is now complete and retained before advance. Its
+separately confirmed conformant outcome is bound to accepted basis
+`sha256:cce0e3c7...a894626`, and final plan source digest is
+`sha256:3a1b78e7...64ea3ef`. Complete assurance has no unavailable task,
+mismatch, replan requirement, required action, ready task, recommendation, or
+startable task. The selected local `DAG-UX-001` and
+`VSIX-DAG-PRESENT-001` presentation slices add exact bundled Dagre 3.1.0,
+default-first history, bounded pan/zoom/fit/scroll, exact current focus,
+source-order `Mnn`/`Tnn`/`Gnn` current labels, view-local historical occurrence
+labels, accessible graph/detail return paths, and distinct exact precedence
+residual, resource remaining, and task time summaries. The preceding 18-file
+private VSIX was installed once locally before the compact-label slice. The
+user later separately authorized one local replacement with the exact 18-file,
+2,188,896-byte compact VSIX at SHA-256
+`ac10f4df...a812e6`; installed client, bindings, server, Webview, and CSS bytes
+match that artifact. Grammar 6, CLI Contract 7, public facades, GraphView and
+historical result identities, source bytes, release, remote, publication,
+Issue, and plan-advance state remain unchanged.
+
 Backlog `VSIX-ASSURE-001` records the requested semantic presentation of
 unsealed, sealed-and-consistent, and broken-seal states. The current editor
 protocol explicitly does not advertise semantic tokens, so the request remains

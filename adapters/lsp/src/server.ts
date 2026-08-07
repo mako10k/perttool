@@ -39,6 +39,8 @@ import {
 import {
   EDITOR_HELP_SCHEMA_VERSION,
   EDITOR_PROTOCOL_MODEL_VERSION,
+  DAG_FOCUS_PROTOCOL_MODEL_VERSION,
+  DAG_FOCUS_SCHEMA_VERSION,
   GRAPH_VIEW_SCHEMA_VERSION,
   HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
   HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION,
@@ -49,6 +51,10 @@ import {
   isHistoricalGraphView,
   type EditorHelpParamsV1,
   type EditorHelpResultV1,
+  type DagFocusApplicationV1,
+  type DagFocusParamsV1,
+  type DagFocusProjectionV1,
+  type DagFocusResultV1,
   type GraphViewParamsV1,
   type GraphViewResultV1,
   type HistoricalEditorApplicationV1,
@@ -69,11 +75,13 @@ export interface PerttoolLanguageServerOptions {
     reason: DocumentSessionFailureReason,
   ) => void;
   readonly historicalApplication?: HistoricalEditorApplicationV1;
+  readonly dagFocusApplication?: DagFocusApplicationV1;
 }
 
 export interface PerttoolLanguageServer {
   readonly customProtocolNegotiated: boolean;
   readonly historicalProtocolNegotiated: boolean;
+  readonly dagFocusProtocolNegotiated: boolean;
   readonly stopped: boolean;
   initialize(params: InitializeParams): InitializeResult;
   didOpen(params: DidOpenTextDocumentParams): void;
@@ -98,6 +106,7 @@ export interface PerttoolLanguageServer {
   ): Promise<readonly CodeAction[]>;
   help(params: unknown, signal?: AbortSignal): Promise<EditorHelpResultV1>;
   graphView(params: unknown, signal?: AbortSignal): Promise<GraphViewResultV1>;
+  dagFocus(params: unknown, signal?: AbortSignal): Promise<DagFocusResultV1>;
   historicalGraphView(
     params: unknown,
     signal?: AbortSignal,
@@ -193,6 +202,24 @@ function customProtocolSelected(options: unknown): boolean {
   );
 }
 
+function dagFocusProtocolSelected(
+  options: unknown,
+  applicationAvailable: boolean,
+): boolean {
+  if (!applicationAvailable || !record(options) || !record(options["perttool"])) {
+    return false;
+  }
+  const perttool = options["perttool"];
+  return (
+    Array.isArray(perttool["dagFocusProtocolModelVersions"]) &&
+    perttool["dagFocusProtocolModelVersions"].includes(
+      DAG_FOCUS_PROTOCOL_MODEL_VERSION,
+    ) &&
+    Array.isArray(perttool["dagFocusResultSchemaVersions"]) &&
+    perttool["dagFocusResultSchemaVersions"].includes(DAG_FOCUS_SCHEMA_VERSION)
+  );
+}
+
 interface HistoricalSessionV1 {
   readonly workspaceTrust: "trusted" | "untrusted";
   readonly workspaceFolderUris: readonly string[];
@@ -246,6 +273,7 @@ function historicalProtocolSelected(
 function initializeCapabilities(
   custom: boolean,
   historical: boolean,
+  dagFocus: boolean,
 ): InitializeResult["capabilities"] {
   const experimental: PerttoolExperimentalCapabilitiesV1 = {
     perttool: {
@@ -253,6 +281,12 @@ function initializeCapabilities(
       graphViewResultSchemaVersion: GRAPH_VIEW_SCHEMA_VERSION,
       editorHelpResultSchemaVersion: EDITOR_HELP_SCHEMA_VERSION,
       graphViewAnalysisModes: ["none", "precedence", "resource", "both"],
+      ...(dagFocus
+        ? {
+            dagFocusProtocolModelVersion: DAG_FOCUS_PROTOCOL_MODEL_VERSION,
+            dagFocusResultSchemaVersion: DAG_FOCUS_SCHEMA_VERSION,
+          }
+        : {}),
       ...(historical
         ? {
             historicalEditorProtocolModelVersion:
@@ -318,6 +352,190 @@ function validateGraphViewParams(value: unknown): GraphViewParamsV1 {
     documentVersion: value["documentVersion"] as number,
     analysisMode: value["analysisMode"],
   };
+}
+
+function validateDagFocusParams(value: unknown): DagFocusParamsV1 {
+  if (
+    !record(value) ||
+    !exactKeys(value, ["textDocument", "documentVersion"]) ||
+    !record(value["textDocument"]) ||
+    !exactKeys(value["textDocument"], ["uri"]) ||
+    typeof value["textDocument"]["uri"] !== "string" ||
+    !isAbsoluteDocumentUri(value["textDocument"]["uri"]) ||
+    !Number.isSafeInteger(value["documentVersion"])
+  ) {
+    throw new PerttoolProtocolError(
+      ErrorCodes.InvalidParams,
+      "perttool/dagFocus parameters are invalid",
+    );
+  }
+  return {
+    textDocument: { uri: value["textDocument"]["uri"] },
+    documentVersion: value["documentVersion"] as number,
+  };
+}
+
+function validStringArray(value: unknown): value is readonly string[] {
+  return Array.isArray(value) && value.every((item) =>
+    typeof item === "string" && item.length > 0
+  );
+}
+
+function validDagExactValue(value: unknown): boolean {
+  return record(value) && exactKeys(value, [
+    "numerator",
+    "denominator",
+    "unit",
+    "display",
+  ]) &&
+    typeof value["numerator"] === "string" &&
+    /^-?(?:0|[1-9][0-9]*)$/u.test(value["numerator"]) &&
+    typeof value["denominator"] === "string" &&
+    /^(?:[1-9][0-9]*)$/u.test(value["denominator"]) &&
+    (value["unit"] === "point" || value["unit"] === "hour" ||
+      value["unit"] === "day") &&
+    typeof value["display"] === "string" && value["display"].length > 0;
+}
+
+function validDagDisplayEntity(value: unknown): boolean {
+  if (!record(value) || !exactKeys(value, [
+    "kind",
+    "id",
+    "compactId",
+    "title",
+    "description",
+  ])) return false;
+  const prefix = value["kind"] === "milestone"
+    ? "M"
+    : value["kind"] === "task"
+      ? "T"
+      : value["kind"] === "gate"
+        ? "G"
+        : null;
+  return prefix !== null &&
+    typeof value["id"] === "string" && value["id"].length > 0 &&
+    typeof value["compactId"] === "string" &&
+    new RegExp(`^${prefix}[0-9]{2,}$`, "u").test(value["compactId"]) &&
+    typeof value["title"] === "string" && value["title"].length > 0 &&
+    (value["description"] === null || typeof value["description"] === "string");
+}
+
+function validDagTimeSummary(value: unknown): boolean {
+  if (!record(value) || !exactKeys(value, [
+    "residualTime",
+    "remainingTime",
+    "taskTimes",
+    "pointConversion",
+  ]) ||
+    !validDagExactValue(value["residualTime"]) ||
+    !validDagExactValue(value["remainingTime"]) ||
+    !Array.isArray(value["taskTimes"]) ||
+    !value["taskTimes"].every((task) =>
+      record(task) && exactKeys(task, ["taskId", "taskTime", "pointForecast"]) &&
+      typeof task["taskId"] === "string" && task["taskId"].length > 0 &&
+      validDagExactValue(task["taskTime"]) &&
+      (task["pointForecast"] === null || validDagExactValue(task["pointForecast"]))
+    ) ||
+    !record(value["pointConversion"]) ||
+    !exactKeys(value["pointConversion"], [
+      "status",
+      "targetUnit",
+      "residualTime",
+      "remainingTime",
+      "reason",
+    ])) return false;
+  const residual = value["residualTime"] as Readonly<Record<string, unknown>>;
+  const remaining = value["remainingTime"] as Readonly<Record<string, unknown>>;
+  const taskTimes = value["taskTimes"] as readonly Readonly<Record<string, unknown>>[];
+  if (residual["unit"] !== remaining["unit"] ||
+    taskTimes.some((task) =>
+      (task["taskTime"] as Readonly<Record<string, unknown>>)["unit"] !==
+        residual["unit"]
+    ) ||
+    new Set(taskTimes.map(({ taskId }) => String(taskId))).size !== taskTimes.length) {
+    return false;
+  }
+  const conversion = value["pointConversion"];
+  if (
+    conversion["status"] !== "available" &&
+    conversion["status"] !== "unavailable" &&
+    conversion["status"] !== "not_applicable"
+  ) return false;
+  if (conversion["status"] === "available") {
+    return residual["unit"] === "point" &&
+      (conversion["targetUnit"] === "hour" || conversion["targetUnit"] === "day") &&
+      validDagExactValue(conversion["residualTime"]) &&
+      validDagExactValue(conversion["remainingTime"]) &&
+      (conversion["residualTime"] as Readonly<Record<string, unknown>>)["unit"] ===
+        conversion["targetUnit"] &&
+      (conversion["remainingTime"] as Readonly<Record<string, unknown>>)["unit"] ===
+        conversion["targetUnit"] &&
+      taskTimes.every((task) =>
+        record(task["pointForecast"]) &&
+        task["pointForecast"]["unit"] === conversion["targetUnit"]
+      ) &&
+      conversion["reason"] === null;
+  }
+  return (conversion["status"] === "unavailable"
+      ? residual["unit"] === "point"
+      : residual["unit"] === "day" || residual["unit"] === "hour") &&
+    taskTimes.every((task) => task["pointForecast"] === null) &&
+    conversion["targetUnit"] === null &&
+    conversion["residualTime"] === null &&
+    conversion["remainingTime"] === null &&
+    (conversion["status"] === "not_applicable"
+      ? conversion["reason"] === null
+      : typeof conversion["reason"] === "string" && conversion["reason"].length > 0);
+}
+
+function validDagFocusProjection(value: unknown): value is DagFocusProjectionV1 {
+  if (!record(value) || !exactKeys(value, [
+    "frontierMilestoneIds",
+    "activeTaskIds",
+    "readyTaskIds",
+    "recommendedTaskIds",
+    "startableTaskIds",
+    "safeStopReasons",
+    "entities",
+    "timeSummary",
+  ])) return false;
+  const stringLists = [
+    value["frontierMilestoneIds"],
+    value["activeTaskIds"],
+    value["readyTaskIds"],
+    value["recommendedTaskIds"],
+    value["startableTaskIds"],
+    value["safeStopReasons"],
+  ];
+  if (!stringLists.every(validStringArray) ||
+    !Array.isArray(value["entities"]) ||
+    !value["entities"].every(validDagDisplayEntity) ||
+    !validDagTimeSummary(value["timeSummary"])) return false;
+  const entities = value["entities"] as readonly Readonly<Record<string, unknown>>[];
+  const entityKeys = entities.map(({ kind, id }) => `${String(kind)}\u0000${String(id)}`);
+  const compactIds = entities.map(({ compactId }) => String(compactId));
+  const milestones = new Set(
+    entities.filter(({ kind }) => kind === "milestone").map(({ id }) => String(id)),
+  );
+  const tasks = new Set(
+    entities.filter(({ kind }) => kind === "task").map(({ id }) => String(id)),
+  );
+  const summary = value["timeSummary"] as Readonly<Record<string, unknown>>;
+  const taskTimes = summary["taskTimes"] as readonly Readonly<Record<string, unknown>>[];
+  const taskTimeIds = new Set(taskTimes.map(({ taskId }) => String(taskId)));
+  const taskLists = [
+    value["activeTaskIds"],
+    value["readyTaskIds"],
+    value["recommendedTaskIds"],
+    value["startableTaskIds"],
+  ] as readonly (readonly string[])[];
+  return new Set(entityKeys).size === entityKeys.length &&
+    new Set(compactIds).size === compactIds.length &&
+    [...value["frontierMilestoneIds"] as readonly string[]].every((id) =>
+      milestones.has(id)
+    ) &&
+    taskLists.every((ids) => ids.every((id) => tasks.has(id))) &&
+    tasks.size === taskTimeIds.size && [...tasks].every((id) => taskTimeIds.has(id));
 }
 
 function validRevision(value: unknown, nullable = false): boolean {
@@ -454,6 +672,23 @@ function historicalDiagnostic(
   });
 }
 
+function dagFocusResult(
+  snapshot: DocumentSnapshot,
+  status: DagFocusResultV1["status"],
+  focus: DagFocusProjectionV1 | null,
+  reason: string | null,
+): DagFocusResultV1 {
+  return Object.freeze({
+    schemaVersion: DAG_FOCUS_SCHEMA_VERSION,
+    dagFocusProtocolModelVersion: DAG_FOCUS_PROTOCOL_MODEL_VERSION,
+    document: snapshot.binding,
+    status,
+    complete: status === "current",
+    reason,
+    focus,
+  });
+}
+
 interface RetainedHistoricalResultV1 {
   readonly targetPath: string;
   readonly result: HistoricalGraphViewResultV1;
@@ -480,6 +715,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     | undefined;
   readonly #digestText: (text: string) => string;
   readonly #historicalApplication: HistoricalEditorApplicationV1 | undefined;
+  readonly #dagFocusApplication: DagFocusApplicationV1 | undefined;
   readonly #openVersions = new Map<string, number>();
   readonly #historicalRequests = new Map<string, number>();
   readonly #retainedHistorical = new Map<
@@ -488,6 +724,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
   >();
   #initialized = false;
   #customProtocolNegotiated = false;
+  #dagFocusProtocolNegotiated = false;
   #historicalSession: HistoricalSessionV1 | null = null;
   #stopped = false;
 
@@ -502,6 +739,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     this.#onFatalSynchronization = options.onFatalSynchronization;
     this.#digestText = options.digestText;
     this.#historicalApplication = options.historicalApplication;
+    this.#dagFocusApplication = options.dagFocusApplication;
   }
 
   get customProtocolNegotiated(): boolean {
@@ -510,6 +748,10 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
 
   get historicalProtocolNegotiated(): boolean {
     return this.#historicalSession !== null;
+  }
+
+  get dagFocusProtocolNegotiated(): boolean {
+    return this.#dagFocusProtocolNegotiated;
   }
 
   get stopped(): boolean {
@@ -542,6 +784,16 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
       );
     }
     return this.#historicalSession;
+  }
+
+  #requireDagFocusProtocol(): DagFocusApplicationV1 {
+    if (!this.#dagFocusProtocolNegotiated || this.#dagFocusApplication === undefined) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.MethodNotFound,
+        "perttool DAG focus protocol was not negotiated",
+      );
+    }
+    return this.#dagFocusApplication;
   }
 
   #invalidateHistoricalDocument(uri: string): void {
@@ -603,11 +855,17 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
       params.initializationOptions,
       this.#historicalApplication !== undefined,
     );
+    this.#dagFocusProtocolNegotiated = this.#customProtocolNegotiated &&
+      dagFocusProtocolSelected(
+        params.initializationOptions,
+        this.#dagFocusApplication !== undefined,
+      );
     this.#initialized = true;
     return {
       capabilities: initializeCapabilities(
         this.#customProtocolNegotiated,
         this.#historicalSession !== null,
+        this.#dagFocusProtocolNegotiated,
       ),
       serverInfo: { name: "perttool language server", version: "0.0.0-private" },
     };
@@ -855,6 +1113,83 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
         analysis: projection.analysis,
       },
     );
+  }
+
+  async dagFocus(
+    params: unknown,
+    signal?: AbortSignal,
+  ): Promise<DagFocusResultV1> {
+    this.#ensureRunning();
+    const application = this.#requireDagFocusProtocol();
+    const accepted = validateDagFocusParams(params);
+    const snapshot = this.#session.current(accepted.textDocument.uri);
+    if (snapshot === null) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.InvalidParams,
+        "perttool/dagFocus document is not open",
+      );
+    }
+    if (snapshot.binding.version !== accepted.documentVersion) {
+      throw projectionError("stale");
+    }
+    const projected = await this.#session.project<DagFocusResultV1>({
+      binding: snapshot.binding,
+      cacheKey: "lsp:dagFocus:v1",
+      ...(signal === undefined ? {} : { signal }),
+      allowInvalid: true,
+      allowTruncated: true,
+      compute: async (current) => {
+        if (!current.semantic.ok) {
+          return dagFocusResult(
+            current,
+            "invalid",
+            null,
+            "The synchronized document is invalid.",
+          );
+        }
+        if (current.semantic.diagnosticsTruncated) {
+          return dagFocusResult(
+            current,
+            "unavailable",
+            null,
+            "The synchronized document diagnostics are truncated.",
+          );
+        }
+        const inspected: unknown = await application.inspect(
+          current.text,
+          current.binding.sourceDigest,
+        );
+        if (
+          !record(inspected) ||
+          !exactKeys(inspected, ["status", "reason", "focus"]) ||
+          inspected["status"] !== "current" ||
+          inspected["reason"] !== null ||
+          !validDagFocusProjection(inspected["focus"])
+        ) {
+          return dagFocusResult(
+            current,
+            "unavailable",
+            null,
+            record(inspected) &&
+                typeof inspected["reason"] === "string" &&
+                inspected["reason"].length > 0
+              ? inspected["reason"]
+              : "Complete DAG focus semantics are unavailable.",
+          );
+        }
+        return dagFocusResult(current, "current", inspected["focus"], null);
+      },
+    });
+    if (
+      projected.status === "cancelled" ||
+      projected.status === "stale" ||
+      projected.status === "closed" ||
+      projected.status === "desynchronized"
+    ) {
+      throw projectionError(projected.status);
+    }
+    if (projected.value === null) throw projectionError("stale");
+    return projected.value;
   }
 
   #sha256(value: unknown): `sha256:${string}` {
@@ -1148,6 +1483,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     this.#historicalRequests.clear();
     this.#retainedHistorical.clear();
     this.#historicalSession = null;
+    this.#dagFocusProtocolNegotiated = false;
     this.#stopped = true;
   }
 

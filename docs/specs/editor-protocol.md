@@ -474,8 +474,12 @@ runtime-unavailable message rather than falling back to duplicated semantics.
 
 ## 11. Webview security and accessibility
 
-The DAG Webview receives only a cloned current `GraphViewResult.v1` semantic
-projection and closed presentation messages. It uses no Node integration.
+The model-1 DAG Webview receives a cloned current `GraphViewResult.v1` semantic
+projection and closed presentation messages. The later separately negotiated
+[DAG Presentation and Focus Contract](dag-presentation.md) may add only its
+closed, document-bound `Perttool.DagFocusResult.v1` presentation projection;
+it does not extend GraphView v1 or permit Webview semantic computation. The
+Webview uses no Node integration.
 Following the official
 [Webview security guidance](https://code.visualstudio.com/api/extension-guides/webview#security),
 it has minimum capabilities, no workspace resource roots, and this minimum

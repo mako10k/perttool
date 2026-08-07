@@ -18,6 +18,11 @@ header {
   gap: 0.5rem;
 }
 
+main {
+  display: grid;
+  gap: 0.75rem;
+}
+
 h1 {
   flex: 1 1 auto;
   font-size: 1.1rem;
@@ -27,6 +32,17 @@ h1 {
 h2,
 h3 {
   font-size: 1rem;
+}
+
+details {
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.55rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
 }
 
 select,
@@ -52,7 +68,7 @@ fieldset {
   display: grid;
   gap: 0.4rem;
   grid-template-columns: minmax(7rem, auto) minmax(10rem, 1fr);
-  margin-block: 0.75rem;
+  margin-block: 0.65rem 0.2rem;
 }
 
 fieldset button {
@@ -72,6 +88,16 @@ button {
   width: 100%;
 }
 
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 button:hover {
   background: var(--vscode-button-hoverBackground);
 }
@@ -88,76 +114,265 @@ button:hover {
   border-left-color: var(--vscode-editorWarning-foreground);
 }
 
-#graph {
-  background: var(--vscode-editor-background);
-  border: 1px solid var(--vscode-panel-border);
-  display: block;
-  min-height: 15rem;
-  overflow: auto;
-  width: 100%;
+#focus-summary {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.edge line {
+#focus-summary article {
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 0.55rem;
+}
+
+#focus-summary h2 {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
+.focus-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.focus-list li {
+  margin: 0;
+}
+
+.focus-list button {
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  width: auto;
+}
+
+.focus-empty {
+  color: var(--vscode-descriptionForeground);
+  margin: 0;
+}
+
+#time-summary dl {
+  display: grid;
+  gap: 0.2rem 0.4rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  margin: 0;
+}
+
+#time-summary dt {
+  font-weight: 600;
+}
+
+#time-summary dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+#graph-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+#graph-toolbar button {
+  min-width: 2rem;
+  text-align: center;
+  width: auto;
+}
+
+#zoom-level {
+  min-width: 3.5rem;
+  text-align: center;
+}
+
+.legend {
+  align-items: center;
+  display: inline-flex;
+  font-size: 0.78rem;
+  gap: 0.25rem;
+  margin-left: 0.35rem;
+}
+
+.legend::before {
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  content: "";
+  height: 0.6rem;
+  width: 0.9rem;
+}
+
+.legend.current {
+  color: var(--vscode-charts-blue);
+}
+
+.legend.critical {
+  color: var(--vscode-editorError-foreground);
+}
+
+.legend.next {
+  color: var(--vscode-charts-green);
+}
+
+#graph-viewport {
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 8px;
+  cursor: grab;
+  height: clamp(20rem, 56vh, 48rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  position: relative;
+  resize: vertical;
+}
+
+#graph-viewport.panning {
+  cursor: grabbing;
+  user-select: none;
+}
+
+#graph {
+  display: block;
+  max-width: none;
+  min-height: 15rem;
+  transform-origin: 0 0;
+}
+
+.edge path {
+  fill: none;
   marker-end: url("#dag-arrow");
   stroke: var(--vscode-charts-foreground);
+  stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-width: 2;
+}
+
+.edge-label-background {
+  fill: var(--vscode-editor-background);
+  stroke: var(--vscode-panel-border);
+  stroke-width: 1;
+}
+
+.edge:hover .edge-label-background,
+.milestone:hover rect {
+  filter: brightness(1.1);
 }
 
 .edge text,
 .milestone text {
   fill: var(--vscode-foreground);
   font-size: 12px;
+  pointer-events: none;
   text-anchor: middle;
 }
 
-.edge.critical line,
-.milestone.critical circle {
+.milestone-title {
+  fill: var(--vscode-descriptionForeground) !important;
+  font-size: 10px !important;
+}
+
+.edge.critical path {
   stroke: var(--vscode-editorError-foreground);
   stroke-width: 4;
 }
 
-.edge.schedule-critical line {
+.milestone.critical rect {
+  stroke: var(--vscode-editorError-foreground);
+}
+
+.milestone.current rect {
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--vscode-charts-blue) 55%, transparent));
+  stroke: var(--vscode-charts-blue);
+  stroke-width: 4;
+}
+
+.edge.next .edge-label-background {
+  fill: color-mix(in srgb, var(--vscode-charts-green) 18%, var(--vscode-editor-background));
+  stroke: var(--vscode-charts-green);
+  stroke-width: 3;
+}
+
+.edge.ready:not(.next) .edge-label-background {
+  stroke: var(--vscode-charts-blue);
+  stroke-width: 2;
+}
+
+.edge.schedule-critical path {
   stroke-dasharray: 8 4;
 }
 
-.edge.status-active line {
+.edge.status-active path {
   stroke: var(--vscode-charts-blue);
 }
 
-.edge.status-blocked line,
-.edge.status-suspended line {
+.edge.status-blocked path,
+.edge.status-suspended path {
   stroke: var(--vscode-charts-orange);
 }
 
-.edge.status-done line {
+.edge.status-done path {
   stroke: var(--vscode-charts-green);
 }
 
-.edge.kind-gate line {
+.edge.kind-gate path {
   stroke-dasharray: 3 3;
 }
 
 .historical.retired {
-  opacity: 0.62;
+  opacity: 0.56;
 }
 
-.historical.retired line,
-.historical.retired circle {
+.historical.retired path,
+.historical.retired rect {
   stroke-dasharray: 5 4;
 }
 
-.milestone circle {
+.milestone rect {
   fill: var(--vscode-editor-background);
   stroke: var(--vscode-charts-foreground);
   stroke-width: 2;
 }
 
-.milestone.reached circle {
-  fill: var(--vscode-charts-green);
+.milestone.reached rect {
+  fill: color-mix(in srgb, var(--vscode-charts-green) 22%, var(--vscode-editor-background));
 }
 
 #dag-arrow path {
   fill: var(--vscode-charts-foreground);
+  stroke: none;
+}
+
+#outline-section button {
+  width: auto;
+}
+
+.entity-detail {
+  border-left: 3px solid var(--vscode-panel-border);
+  padding: 0.3rem 0.5rem;
+}
+
+.entity-detail:focus {
+  border-left-color: var(--vscode-focusBorder);
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}
+
+.entity-detail h4,
+.entity-detail p {
+  margin-block: 0.25rem;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 
 ol,
@@ -167,6 +382,16 @@ ul {
 
 li {
   margin-block: 0.3rem;
+}
+
+@media (max-width: 640px) {
+  #focus-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .legend {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,65 @@
+{
+  "schema_version": "Perttool.DagCompactPresentationCases.v1",
+  "cases": [
+    {
+      "id": "DCP-001",
+      "depends_on": [],
+      "boundary": "selection",
+      "expected": "local read-only presentation only"
+    },
+    {
+      "id": "DCP-002",
+      "depends_on": ["DCP-001"],
+      "boundary": "current compact identity",
+      "expected": "source-order Mnn Tnn Gnn namespaces"
+    },
+    {
+      "id": "DCP-003",
+      "depends_on": ["DCP-002"],
+      "boundary": "historical compact identity",
+      "expected": "view-local occurrence order keeps epochs distinct"
+    },
+    {
+      "id": "DCP-004",
+      "depends_on": ["DCP-002", "DCP-003"],
+      "boundary": "graph to detail",
+      "expected": "compact link focuses original identity details"
+    },
+    {
+      "id": "DCP-005",
+      "depends_on": ["DCP-004"],
+      "boundary": "detail navigation",
+      "expected": "return focus and exact source binding"
+    },
+    {
+      "id": "DCP-006",
+      "depends_on": ["DCP-002"],
+      "boundary": "exact time meanings",
+      "expected": "precedence residual resource remaining and PERT task time"
+    },
+    {
+      "id": "DCP-007",
+      "depends_on": ["DCP-006"],
+      "boundary": "Point conversion",
+      "expected": "exact declared velocity or explicit unavailable"
+    },
+    {
+      "id": "DCP-008",
+      "depends_on": ["DCP-003", "DCP-006"],
+      "boundary": "historical limits",
+      "expected": "checkpoint values only and unavailable facts labelled"
+    },
+    {
+      "id": "DCP-009",
+      "depends_on": ["DCP-004", "DCP-007", "DCP-008"],
+      "boundary": "closed protocol",
+      "expected": "malformed duplicate stale invalid incomplete fail closed"
+    },
+    {
+      "id": "DCP-010",
+      "depends_on": ["DCP-005", "DCP-009"],
+      "boundary": "side effects",
+      "expected": "private no-write no-publication delivery"
+    }
+  ]
+}

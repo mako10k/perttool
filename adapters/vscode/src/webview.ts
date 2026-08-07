@@ -1,7 +1,11 @@
+import { Graph, layout, type Point } from "@dagrejs/dagre";
 import {
+  allocateHistoricalCompactIds,
   editorProtocolModelVersion,
+  parseDagFocusResult,
   parseGraphViewResult,
   type GraphViewAnalysisMode,
+  type DagFocusResultV1,
   type GraphViewEdgeV1,
   type GraphViewExactValueV1,
   type GraphViewResultV1,
@@ -32,6 +36,7 @@ interface RenderMessageV1 {
   readonly message: string;
   readonly analysisMode: GraphViewAnalysisMode;
   readonly result: GraphViewResultV1 | null;
+  readonly focusResult: DagFocusResultV1 | null;
   readonly historicalResult: HistoricalWebviewPresentationV1 | null;
   readonly scope: "current" | "historical";
 }
@@ -40,11 +45,21 @@ const vscode = acquireVsCodeApi();
 const svgNamespace = "http://www.w3.org/2000/svg";
 const status = requiredElement("status");
 const graph = requiredElement("graph") as unknown as SVGSVGElement;
+const viewport = requiredElement("graph-viewport");
+const zoomOut = requiredElement("zoom-out") as HTMLButtonElement;
+const zoomIn = requiredElement("zoom-in") as HTMLButtonElement;
+const zoomFit = requiredElement("zoom-fit") as HTMLButtonElement;
+const zoomLevel = requiredElement("zoom-level") as HTMLOutputElement;
+const currentMilestones = requiredElement("current-milestones");
+const criticalPath = requiredElement("critical-path");
+const nextTasks = requiredElement("next-tasks");
+const timeSummary = requiredElement("time-summary");
+const outlineSection = requiredElement("outline-section") as HTMLDetailsElement;
 const outline = requiredElement("outline");
 const diagnostics = requiredElement("diagnostics");
 const mode = requiredElement("analysis-mode") as HTMLSelectElement;
 const scope = requiredElement("dag-scope") as HTMLSelectElement;
-const historicalControls = requiredElement("historical-controls") as HTMLFieldSetElement;
+const historicalControls = requiredElement("historical-controls") as HTMLDetailsElement;
 const historicalEndpoint = requiredElement("historical-endpoint") as HTMLInputElement;
 const historicalLower = requiredElement("historical-lower") as HTMLInputElement;
 const historicalAncestry = requiredElement("historical-ancestry") as HTMLSelectElement;
@@ -52,7 +67,11 @@ const historicalView = requiredElement("historical-view") as HTMLSelectElement;
 const historicalSnapshot = requiredElement("historical-snapshot") as HTMLInputElement;
 const historicalRun = requiredElement("historical-run") as HTMLButtonElement;
 let current: GraphViewResultV1 | null = null;
+let currentFocus: DagFocusResultV1 | null = null;
 let currentHistorical: HistoricalWebviewPresentationV1 | null = null;
+let layoutWidth = 420;
+let layoutHeight = 260;
+let zoom = 1;
 historicalSnapshot.disabled = true;
 
 function requiredElement(id: string): HTMLElement {
@@ -151,6 +170,7 @@ function renderMessage(value: unknown): RenderMessageV1 | null {
     !exactKeys(record, [
       "analysisMode",
       "editorProtocolModelVersion",
+      "focusResult",
       "historicalResult",
       "kind",
       "message",
@@ -170,6 +190,10 @@ function renderMessage(value: unknown): RenderMessageV1 | null {
   }
   const result = record.result === null ? null : parseGraphViewResult(record.result);
   if (record.result !== null && result === null) return null;
+  const focusResult = record.focusResult === null
+    ? null
+    : parseDagFocusResult(record.focusResult);
+  if (record.focusResult !== null && focusResult === null) return null;
   const historicalResult = record.historicalResult === null
     ? null
     : historicalPresentation(record.historicalResult);
@@ -185,6 +209,7 @@ function renderMessage(value: unknown): RenderMessageV1 | null {
     message: record.message,
     analysisMode: record.analysisMode,
     result,
+    focusResult,
     historicalResult,
     scope: record.scope,
   };
@@ -202,6 +227,66 @@ function exactText(value: GraphViewExactValueV1 | null): string {
     : `${value.display} ${value.unit} (${value.numerator}/${value.denominator})`;
 }
 
+function compactEntity(
+  kind: "milestone" | "task" | "gate",
+  id: string,
+) {
+  return currentFocus?.status === "current"
+    ? currentFocus.focus?.entities.find((entity) =>
+        entity.kind === kind && entity.id === id
+      ) ?? null
+    : null;
+}
+
+function compactId(
+  kind: "milestone" | "task" | "gate",
+  id: string,
+): string {
+  return compactEntity(kind, id)?.compactId ?? id;
+}
+
+function currentDetailId(
+  kind: "milestone" | "task" | "gate",
+  id: string,
+): string {
+  return `detail-current-${compactId(kind, id)}`;
+}
+
+function currentGraphId(
+  kind: "milestone" | "task" | "gate",
+  id: string,
+): string {
+  return `graph-current-${compactId(kind, id)}`;
+}
+
+function focusDomElement(id: string): void {
+  const target = document.getElementById(id);
+  if (target === null) return;
+  target.focus({ preventScroll: true });
+  target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+}
+
+function makeDetailLink(
+  element: Element,
+  compact: string,
+  detailId: string,
+): void {
+  element.setAttribute("role", "link");
+  element.setAttribute("tabindex", "0");
+  element.setAttribute("aria-label", `Show details for ${compact}`);
+  const reveal = (): void => {
+    outlineSection.open = true;
+    requestAnimationFrame(() => focusDomElement(detailId));
+  };
+  element.addEventListener("click", reveal);
+  element.addEventListener("keydown", (event) => {
+    if (event instanceof KeyboardEvent && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      reveal();
+    }
+  });
+}
+
 function entityMessage(
   result: GraphViewResultV1,
   entityKind: "milestone" | "task" | "gate",
@@ -217,108 +302,180 @@ function entityMessage(
   });
 }
 
-function makeInteractive(
-  element: Element,
-  result: GraphViewResultV1,
-  entityKind: "milestone" | "task" | "gate",
-  entityId: string,
-): void {
-  element.setAttribute("role", "button");
-  element.setAttribute("tabindex", "0");
-  element.setAttribute("aria-label", `Reveal ${entityKind} ${entityId} in source`);
-  const reveal = (): void => entityMessage(result, entityKind, entityId);
-  element.addEventListener("click", reveal);
-  element.addEventListener("keydown", (event) => {
-    if (event instanceof KeyboardEvent && (event.key === "Enter" || event.key === " ")) {
-      event.preventDefault();
-      reveal();
-    }
-  });
-}
-
-function edgeClass(edge: GraphViewEdgeV1): string {
+function edgeClass(
+  edge: GraphViewEdgeV1,
+  focus: DagFocusResultV1 | null,
+): string {
   const values = ["edge", `kind-${edge.kind}`];
   if (edge.status !== null) values.push(`status-${edge.status}`);
   if (edge.precedence?.critical === true) values.push("critical");
   if (edge.precedence?.driving === true) values.push("driving");
   if (edge.resource?.scheduleCritical === true) values.push("schedule-critical");
+  if (focus?.focus?.readyTaskIds.includes(edge.id) === true) values.push("ready");
+  if (focus?.focus?.startableTaskIds.includes(edge.id) === true) values.push("next");
   return values.join(" ");
 }
 
-function renderGraph(result: GraphViewResultV1): void {
-  graph.replaceChildren();
-  if (result.graph === null) return;
-  const semantic = result.graph;
-  const count = Math.max(semantic.milestones.length, 1);
-  const columns = Math.max(1, Math.ceil(Math.sqrt(count)));
-  const rows = Math.ceil(count / columns);
-  const width = Math.max(420, columns * 230 + 80);
-  const height = Math.max(260, rows * 180 + 80);
-  graph.setAttribute("viewBox", `0 0 ${width} ${height}`);
-
+function markerDefinition(): SVGDefsElement {
   const marker = svgElement("marker");
   marker.setAttribute("id", "dag-arrow");
   marker.setAttribute("viewBox", "0 0 10 10");
   marker.setAttribute("refX", "9");
   marker.setAttribute("refY", "5");
-  marker.setAttribute("markerWidth", "6");
-  marker.setAttribute("markerHeight", "6");
+  marker.setAttribute("markerWidth", "7");
+  marker.setAttribute("markerHeight", "7");
   marker.setAttribute("orient", "auto-start-reverse");
   const arrow = svgElement("path");
   arrow.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
   marker.append(arrow);
   const defs = svgElement("defs");
   defs.append(marker);
-  graph.append(defs);
+  return defs;
+}
 
-  const positions = new Map<string, { readonly x: number; readonly y: number }>();
-  semantic.milestones.forEach((item, index) => {
-    positions.set(item.id, {
-      x: 150 + (index % columns) * 230,
-      y: 90 + Math.floor(index / columns) * 180,
-    });
+function pathData(points: readonly Point[]): string {
+  return points.map(({ x, y }, index) =>
+    `${index === 0 ? "M" : "L"} ${x.toFixed(2)} ${y.toFixed(2)}`
+  ).join(" ");
+}
+
+function boundedLabel(value: string, maximum = 30): string {
+  return value.length <= maximum ? value : `${value.slice(0, maximum - 1)}…`;
+}
+
+function edgeLabelWidth(value: string): number {
+  return Math.max(56, Math.min(112, value.length * 7 + 26));
+}
+
+function applyZoom(next: number): void {
+  zoom = Math.max(0.3, Math.min(2.5, next));
+  graph.style.width = `${Math.ceil(layoutWidth * zoom)}px`;
+  graph.style.height = `${Math.ceil(layoutHeight * zoom)}px`;
+  zoomLevel.value = `${Math.round(zoom * 100)}%`;
+}
+
+function fitGraph(): void {
+  const availableWidth = Math.max(1, viewport.clientWidth - 4);
+  const availableHeight = Math.max(1, viewport.clientHeight - 4);
+  applyZoom(Math.min(1.5, availableWidth / layoutWidth, availableHeight / layoutHeight));
+  viewport.scrollTo({ left: 0, top: 0, behavior: "auto" });
+}
+
+function setGraphExtent(width: number, height: number): void {
+  layoutWidth = Math.max(420, Math.ceil(width));
+  layoutHeight = Math.max(260, Math.ceil(height));
+  graph.setAttribute("viewBox", `0 0 ${layoutWidth} ${layoutHeight}`);
+  requestAnimationFrame(fitGraph);
+}
+
+function renderGraph(result: GraphViewResultV1): void {
+  graph.replaceChildren();
+  if (result.graph === null) return;
+  const semantic = result.graph;
+  const dag = new Graph({ directed: true, multigraph: true });
+  dag.setGraph({
+    rankdir: "LR",
+    ranker: "network-simplex",
+    align: "UL",
+    nodesep: 48,
+    edgesep: 20,
+    ranksep: 104,
+    marginx: 48,
+    marginy: 48,
   });
+  dag.setDefaultEdgeLabel(() => ({}));
+  for (const milestone of semantic.milestones) {
+    dag.setNode(milestone.id, { width: 88, height: 48 });
+  }
+  for (const edge of semantic.edges) {
+    const displayId = compactId(edge.kind, edge.id);
+    dag.setEdge(
+      edge.sourceMilestoneId,
+      edge.targetMilestoneId,
+      {
+        width: edgeLabelWidth(displayId),
+        height: 30,
+        weight: edge.precedence?.critical === true ? 8 : 1,
+        minlen: 1,
+        labelpos: "c",
+      },
+      edge.id,
+    );
+  }
+  layout(dag);
+  const extent = dag.graph();
+  setGraphExtent(extent.width ?? 420, extent.height ?? 260);
+  graph.append(markerDefinition());
 
   for (const edge of semantic.edges) {
-    const source = positions.get(edge.sourceMilestoneId);
-    const target = positions.get(edge.targetMilestoneId);
-    if (source === undefined || target === undefined) continue;
+    const positioned = dag.edge({
+      v: edge.sourceMilestoneId,
+      w: edge.targetMilestoneId,
+      name: edge.id,
+    });
+    if (positioned === undefined || positioned.points === undefined) continue;
     const group = svgElement("g");
-    group.setAttribute("class", edgeClass(edge));
-    makeInteractive(group, result, edge.kind, edge.id);
-    const line = svgElement("line");
-    line.setAttribute("x1", String(source.x));
-    line.setAttribute("y1", String(source.y));
-    line.setAttribute("x2", String(target.x));
-    line.setAttribute("y2", String(target.y));
-    line.setAttribute("marker-end", "url(#dag-arrow)");
+    group.setAttribute("class", edgeClass(edge, currentFocus));
+    const displayId = compactId(edge.kind, edge.id);
+    group.setAttribute("id", currentGraphId(edge.kind, edge.id));
+    makeDetailLink(group, displayId, currentDetailId(edge.kind, edge.id));
+    const path = svgElement("path");
+    path.setAttribute("d", pathData(positioned.points));
+    path.setAttribute("marker-end", "url(#dag-arrow)");
+    const background = svgElement("rect");
+    const width = positioned.width ?? edgeLabelWidth(displayId);
+    const height = positioned.height ?? 30;
+    background.setAttribute("class", "edge-label-background");
+    background.setAttribute("x", String((positioned.x ?? 0) - width / 2));
+    background.setAttribute("y", String((positioned.y ?? 0) - height / 2));
+    background.setAttribute("width", String(width));
+    background.setAttribute("height", String(height));
+    background.setAttribute("rx", "8");
     const label = svgElement("text");
-    label.setAttribute("x", String((source.x + target.x) / 2));
-    label.setAttribute("y", String((source.y + target.y) / 2 - 10));
-    label.textContent = edge.label;
-    group.append(line, label);
+    label.setAttribute("x", String(positioned.x ?? 0));
+    label.setAttribute("y", String((positioned.y ?? 0) + 4));
+    label.textContent = displayId;
+    const title = svgElement("title");
+    title.textContent = `${displayId}: ${edge.id}; ${edge.label}`;
+    group.append(title, path, background, label);
     graph.append(group);
   }
 
   for (const milestone of semantic.milestones) {
-    const point = positions.get(milestone.id);
-    if (point === undefined) continue;
+    const point = dag.node(milestone.id);
+    if (point === undefined || point.x === undefined || point.y === undefined) continue;
     const group = svgElement("g");
     const classes = ["milestone"];
     if (milestone.reached) classes.push("reached");
     if (milestone.precedence?.critical === true) classes.push("critical");
+    if (
+      currentFocus?.status === "current" &&
+      currentFocus.focus?.frontierMilestoneIds.includes(milestone.id) === true
+    ) classes.push("current");
     group.setAttribute("class", classes.join(" "));
     group.setAttribute("transform", `translate(${point.x} ${point.y})`);
-    makeInteractive(group, result, "milestone", milestone.id);
-    const circle = svgElement("circle");
-    circle.setAttribute("r", "25");
+    const displayId = compactId("milestone", milestone.id);
+    group.setAttribute("id", currentGraphId("milestone", milestone.id));
+    makeDetailLink(
+      group,
+      displayId,
+      currentDetailId("milestone", milestone.id),
+    );
+    const node = svgElement("rect");
+    node.setAttribute("x", "-44");
+    node.setAttribute("y", "-24");
+    node.setAttribute("width", "88");
+    node.setAttribute("height", "48");
+    node.setAttribute("rx", "12");
     const id = svgElement("text");
     id.setAttribute("class", "milestone-id");
-    id.setAttribute("y", "45");
-    id.textContent = milestone.id;
+    id.setAttribute("y", "4");
+    id.textContent = displayId;
     const title = svgElement("title");
-    title.textContent = `${milestone.title}; ${milestone.reached ? "reached" : "unreached"}`;
-    group.append(title, circle, id);
+    title.textContent = `${displayId}: ${milestone.id}; ${milestone.title}; ${
+      milestone.reached ? "reached" : "unreached"
+    }`;
+    group.append(title, node, id);
     graph.append(group);
   }
 }
@@ -369,33 +526,12 @@ function navigationFor(
   ) ?? navigation.find((binding) => binding.sourceId === sourceId) ?? null;
 }
 
-function makeHistoricalInteractive(
-  element: Element,
-  presentation: HistoricalWebviewPresentationV1,
-  occurrence: Record<string, unknown>,
-): void {
-  const navigation = navigationFor(presentation, occurrence);
-  if (navigation === null) return;
-  element.setAttribute("role", "button");
-  element.setAttribute("tabindex", "0");
-  element.setAttribute(
-    "aria-label",
-    `Open immutable ${navigation.declarationKind} ${navigation.sourceId} at commit ${navigation.commitId}`,
-  );
-  const reveal = (): void => {
-    vscode.postMessage({
-      kind: "revealHistoricalSource",
-      historyResultId: presentation.historyResultId,
-      bindingId: navigation.bindingId,
-    });
-  };
-  element.addEventListener("click", reveal);
-  element.addEventListener("keydown", (event) => {
-    if (event instanceof KeyboardEvent && (event.key === "Enter" || event.key === " ")) {
-      event.preventDefault();
-      reveal();
-    }
-  });
+function historicalDetailId(displayId: string): string {
+  return `detail-history-${displayId}`;
+}
+
+function historicalGraphId(displayId: string): string {
+  return `graph-history-${displayId}`;
 }
 
 function historicalLabel(occurrence: Record<string, unknown>): string {
@@ -416,75 +552,145 @@ function renderHistoricalGraph(presentation: HistoricalWebviewPresentationV1): v
   const edges = occurrences.filter((item) =>
     item["entity_kind"] === "task" || item["entity_kind"] === "gate"
   );
-  const columns = Math.max(1, Math.ceil(Math.sqrt(Math.max(milestones.length, 1))));
-  const rows = Math.max(1, Math.ceil(milestones.length / columns));
-  const width = Math.max(420, columns * 230 + 80);
-  const height = Math.max(260, rows * 180 + 80);
-  graph.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  const marker = svgElement("marker");
-  marker.setAttribute("id", "dag-arrow");
-  marker.setAttribute("viewBox", "0 0 10 10");
-  marker.setAttribute("refX", "9");
-  marker.setAttribute("refY", "5");
-  marker.setAttribute("markerWidth", "6");
-  marker.setAttribute("markerHeight", "6");
-  marker.setAttribute("orient", "auto-start-reverse");
-  const arrow = svgElement("path");
-  arrow.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
-  marker.append(arrow);
-  const defs = svgElement("defs");
-  defs.append(marker);
-  graph.append(defs);
-  const positions = new Map<string, { readonly x: number; readonly y: number }>();
-  milestones.forEach((item, index) => {
-    const id = String(item["occurrence_id"] ?? "");
-    positions.set(id, {
-      x: 150 + (index % columns) * 230,
-      y: 90 + Math.floor(index / columns) * 180,
-    });
+  const displayIds = allocateHistoricalCompactIds(occurrences);
+  const historical = presentation.historicalGraph;
+  const analysis = historical === null ? null : historical.analysis;
+  const precedence = record(analysis?.["precedence"])
+    ? analysis["precedence"]
+    : null;
+  const criticalMilestones = new Set(
+    Array.isArray(precedence?.["critical_milestone_occurrence_ids"])
+      ? precedence["critical_milestone_occurrence_ids"].map(String)
+      : [],
+  );
+  const criticalEdges = new Set(
+    Array.isArray(precedence?.["representative_path_occurrence_ids"])
+      ? precedence["representative_path_occurrence_ids"].map(String)
+      : [],
+  );
+  const dag = new Graph({ directed: true, multigraph: true });
+  dag.setGraph({
+    rankdir: "LR",
+    ranker: "network-simplex",
+    align: "UL",
+    nodesep: 48,
+    edgesep: 20,
+    ranksep: 104,
+    marginx: 48,
+    marginy: 48,
   });
+  dag.setDefaultEdgeLabel(() => ({}));
+  for (const milestone of milestones) {
+    dag.setNode(String(milestone["occurrence_id"] ?? ""), {
+      width: 88,
+      height: 48,
+    });
+  }
   for (const edge of edges) {
-    const source = positions.get(String(edge["from_occurrence_id"] ?? ""));
-    const target = positions.get(String(edge["to_occurrence_id"] ?? ""));
-    if (source === undefined || target === undefined) continue;
+    const occurrenceId = String(edge["occurrence_id"] ?? "");
+    const label = displayIds.get(occurrenceId) ?? String(edge["source_id"] ?? "?");
+    dag.setEdge(
+      String(edge["from_occurrence_id"] ?? ""),
+      String(edge["to_occurrence_id"] ?? ""),
+      {
+        width: edgeLabelWidth(label),
+        height: 30,
+        weight: criticalEdges.has(occurrenceId) ? 8 : 1,
+        minlen: 1,
+        labelpos: "c",
+      },
+      occurrenceId,
+    );
+  }
+  layout(dag);
+  const extent = dag.graph();
+  setGraphExtent(extent.width ?? 420, extent.height ?? 260);
+  graph.append(markerDefinition());
+  for (const edge of edges) {
+    const occurrenceId = String(edge["occurrence_id"] ?? "");
+    const positioned = dag.edge({
+      v: String(edge["from_occurrence_id"] ?? ""),
+      w: String(edge["to_occurrence_id"] ?? ""),
+      name: occurrenceId,
+    });
+    if (positioned === undefined || positioned.points === undefined) continue;
     const group = svgElement("g");
     const classes = ["edge", `kind-${String(edge["entity_kind"])}`, "historical"];
     if (edge["retired_at_commit_id"] !== null) classes.push("retired");
+    if (criticalEdges.has(occurrenceId)) classes.push("critical");
+    if (
+      edge["retired_at_commit_id"] === null &&
+      currentFocus?.focus?.readyTaskIds.includes(String(edge["source_id"])) === true
+    ) classes.push("ready");
+    if (
+      edge["retired_at_commit_id"] === null &&
+      currentFocus?.focus?.startableTaskIds.includes(String(edge["source_id"])) === true
+    ) classes.push("next");
     group.setAttribute("class", classes.join(" "));
-    makeHistoricalInteractive(group, presentation, edge);
-    const line = svgElement("line");
-    line.setAttribute("x1", String(source.x));
-    line.setAttribute("y1", String(source.y));
-    line.setAttribute("x2", String(target.x));
-    line.setAttribute("y2", String(target.y));
-    line.setAttribute("marker-end", "url(#dag-arrow)");
+    const displayId = displayIds.get(occurrenceId) ?? String(edge["source_id"] ?? "?");
+    group.setAttribute("id", historicalGraphId(displayId));
+    makeDetailLink(group, displayId, historicalDetailId(displayId));
+    const path = svgElement("path");
+    path.setAttribute("d", pathData(positioned.points));
+    path.setAttribute("marker-end", "url(#dag-arrow)");
+    const labelText = displayId;
+    const width = positioned.width ?? edgeLabelWidth(labelText);
+    const height = positioned.height ?? 30;
+    const background = svgElement("rect");
+    background.setAttribute("class", "edge-label-background");
+    background.setAttribute("x", String((positioned.x ?? 0) - width / 2));
+    background.setAttribute("y", String((positioned.y ?? 0) - height / 2));
+    background.setAttribute("width", String(width));
+    background.setAttribute("height", String(height));
+    background.setAttribute("rx", "8");
     const label = svgElement("text");
-    label.setAttribute("x", String((source.x + target.x) / 2));
-    label.setAttribute("y", String((source.y + target.y) / 2 - 10));
-    label.textContent = historicalLabel(edge);
-    group.append(line, label);
+    label.setAttribute("x", String(positioned.x ?? 0));
+    label.setAttribute("y", String((positioned.y ?? 0) + 4));
+    label.textContent = labelText;
+    const title = svgElement("title");
+    title.textContent = `${displayId}: ${String(edge["source_id"])}; ${
+      historicalLabel(edge)
+    }`;
+    group.append(title, path, background, label);
     graph.append(group);
   }
   for (const milestone of milestones) {
-    const point = positions.get(String(milestone["occurrence_id"] ?? ""));
-    if (point === undefined) continue;
+    const occurrenceId = String(milestone["occurrence_id"] ?? "");
+    const point = dag.node(occurrenceId);
+    if (point === undefined || point.x === undefined || point.y === undefined) continue;
     const group = svgElement("g");
     const classes = ["milestone", "historical"];
     if (milestone["retired_at_commit_id"] !== null) classes.push("retired");
+    if (criticalMilestones.has(occurrenceId)) classes.push("critical");
+    if (
+      milestone["retired_at_commit_id"] === null &&
+      currentFocus?.focus?.frontierMilestoneIds.includes(
+        String(milestone["source_id"]),
+      ) === true
+    ) classes.push("current");
     group.setAttribute("class", classes.join(" "));
     group.setAttribute("transform", `translate(${point.x} ${point.y})`);
-    makeHistoricalInteractive(group, presentation, milestone);
-    const circle = svgElement("circle");
-    circle.setAttribute("r", "25");
-    const label = svgElement("text");
-    label.setAttribute("class", "milestone-id");
-    label.setAttribute("y", "45");
-    label.textContent = String(milestone["source_id"] ?? "unknown");
+    const displayId = displayIds.get(occurrenceId) ??
+      String(milestone["source_id"] ?? "?");
+    group.setAttribute("id", historicalGraphId(displayId));
+    makeDetailLink(group, displayId, historicalDetailId(displayId));
+    const node = svgElement("rect");
+    node.setAttribute("x", "-44");
+    node.setAttribute("y", "-24");
+    node.setAttribute("width", "88");
+    node.setAttribute("height", "48");
+    node.setAttribute("rx", "12");
+    const id = svgElement("text");
+    id.setAttribute("class", "milestone-id");
+    id.setAttribute("y", "4");
+    id.textContent = displayId;
     const title = svgElement("title");
-    title.textContent = `${historicalLabel(milestone)}; ${
+    title.textContent = `${displayId}: ${String(milestone["source_id"])}; ${
+      historicalLabel(milestone)
+    }; ${
       milestone["retired_at_commit_id"] === null ? "current" : "retired"
     }; occurrence ${String(milestone["occurrence_id"] ?? "unknown")}`;
-    group.append(title, circle, label);
+    group.append(title, node, id);
     graph.append(group);
   }
 }
@@ -524,6 +730,43 @@ function edgeDetails(edge: GraphViewEdgeV1): string {
   return values.join("; ");
 }
 
+function backToGraphButton(graphId: string, compact: string): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = `Back to ${compact} in graph`;
+  button.addEventListener("click", () => focusDomElement(graphId));
+  return button;
+}
+
+function taskTimeText(taskId: string): string {
+  const task = currentFocus?.focus?.timeSummary.taskTimes.find((item) =>
+    item.taskId === taskId
+  );
+  if (task === undefined) return "task time unavailable";
+  return `task time ${exactText(task.taskTime)}${
+    task.pointForecast === null
+      ? ""
+      : `; velocity forecast ${exactText(task.pointForecast)}`
+  }`;
+}
+
+function detailIntroduction(
+  compact: string,
+  originalId: string,
+  title: string,
+  description: string | null,
+): readonly HTMLElement[] {
+  const heading = document.createElement("h4");
+  heading.textContent = `${compact} — ${originalId}`;
+  const titleText = document.createElement("p");
+  titleText.textContent = `Title: ${title}`;
+  const descriptionText = document.createElement("p");
+  descriptionText.textContent = description === null || description.length === 0
+    ? "Description: not declared"
+    : `Description: ${description}`;
+  return [heading, titleText, descriptionText];
+}
+
 function renderOutline(result: GraphViewResultV1): void {
   outline.replaceChildren();
   if (result.graph === null) return;
@@ -534,12 +777,31 @@ function renderOutline(result: GraphViewResultV1): void {
   const milestoneList = document.createElement("ol");
   for (const item of result.graph.milestones) {
     const row = document.createElement("li");
-    row.append(revealButton(
-      result,
-      "milestone",
-      item.id,
-      `${item.id}: ${item.title}; ${item.reached ? "reached" : "unreached"}; slack ${exactText(item.precedence?.slack ?? null)}`,
-    ));
+    const entity = compactEntity("milestone", item.id);
+    const displayId = entity?.compactId ?? item.id;
+    row.id = currentDetailId("milestone", item.id);
+    row.className = "entity-detail";
+    row.tabIndex = -1;
+    const facts = document.createElement("p");
+    facts.textContent =
+      `${item.reached ? "Reached" : "Unreached"}; ` +
+      `slack ${exactText(item.precedence?.slack ?? null)}.`;
+    const actions = document.createElement("div");
+    actions.className = "detail-actions";
+    actions.append(
+      revealButton(result, "milestone", item.id, "Open source"),
+      backToGraphButton(currentGraphId("milestone", item.id), displayId),
+    );
+    row.append(
+      ...detailIntroduction(
+        displayId,
+        item.id,
+        entity?.title ?? item.title,
+        entity?.description ?? null,
+      ),
+      facts,
+      actions,
+    );
     milestoneList.append(row);
   }
   const edgeHeading = document.createElement("h3");
@@ -547,12 +809,31 @@ function renderOutline(result: GraphViewResultV1): void {
   const edgeList = document.createElement("ol");
   for (const item of result.graph.edges) {
     const row = document.createElement("li");
-    row.append(revealButton(
-      result,
-      item.kind,
-      item.id,
-      `${item.kind} ${item.id}: ${item.label}; ${edgeDetails(item)}`,
-    ));
+    const entity = compactEntity(item.kind, item.id);
+    const displayId = entity?.compactId ?? item.id;
+    row.id = currentDetailId(item.kind, item.id);
+    row.className = "entity-detail";
+    row.tabIndex = -1;
+    const facts = document.createElement("p");
+    facts.textContent = `${edgeDetails(item)}; ${
+      item.kind === "task" ? taskTimeText(item.id) : "task time not applicable"
+    }.`;
+    const actions = document.createElement("div");
+    actions.className = "detail-actions";
+    actions.append(
+      revealButton(result, item.kind, item.id, "Open source"),
+      backToGraphButton(currentGraphId(item.kind, item.id), displayId),
+    );
+    row.append(
+      ...detailIntroduction(
+        displayId,
+        item.id,
+        entity?.title ?? item.label,
+        entity?.description ?? null,
+      ),
+      facts,
+      actions,
+    );
     edgeList.append(row);
   }
   outline.append(project, milestoneHeading, milestoneList, edgeHeading, edgeList);
@@ -600,21 +881,46 @@ function renderHistoricalOutline(
   const occurrenceHeading = document.createElement("h3");
   occurrenceHeading.textContent = "Historical occurrences";
   const occurrenceList = document.createElement("ol");
-  for (const occurrence of historicalOccurrences(presentation)) {
+  const occurrences = historicalOccurrences(presentation);
+  const displayIds = allocateHistoricalCompactIds(occurrences);
+  for (const occurrence of occurrences) {
     const item = document.createElement("li");
+    const occurrenceId = String(occurrence["occurrence_id"] ?? "unknown");
+    const displayId = displayIds.get(occurrenceId) ??
+      String(occurrence["source_id"] ?? "unknown");
+    item.id = historicalDetailId(displayId);
+    item.className = "entity-detail";
+    item.tabIndex = -1;
+    const semantic = record(occurrence["semantic"])
+      ? occurrence["semantic"]
+      : null;
+    const description = semantic !== null && typeof semantic["description"] === "string"
+      ? semantic["description"]
+      : null;
+    item.append(...detailIntroduction(
+      displayId,
+      String(occurrence["source_id"] ?? "unknown"),
+      historicalLabel(occurrence),
+      description,
+    ));
     const summary = document.createElement("p");
     summary.textContent =
       `${String(occurrence["entity_kind"] ?? "entity")} ` +
-      `${String(occurrence["source_id"] ?? "unknown")}: ` +
-      `${historicalLabel(occurrence)}; occurrence ` +
-      `${String(occurrence["occurrence_id"] ?? "unknown")}; first ` +
+      `occurrence ${occurrenceId}; first ` +
       `${String(occurrence["first_observed_commit_id"] ?? "unknown")}; last ` +
       `${String(occurrence["last_observed_commit_id"] ?? "unknown")}; ` +
       `${occurrence["retired_at_commit_id"] === null ? "current" :
-        `retired at ${String(occurrence["retired_at_commit_id"])}`}.`;
+        `retired at ${String(occurrence["retired_at_commit_id"])}`}; ` +
+      `${occurrence["entity_kind"] === "task"
+        ? "task time unavailable in HistoricalGraphResult.v1"
+        : "task time not applicable"}.`;
     item.append(summary);
+    const actions = document.createElement("div");
+    actions.className = "detail-actions";
     const reveal = historicalRevealButton(presentation, occurrence);
-    if (reveal !== null) item.append(reveal);
+    if (reveal !== null) actions.append(reveal);
+    actions.append(backToGraphButton(historicalGraphId(displayId), displayId));
+    item.append(actions);
     occurrenceList.append(item);
   }
   const timelineHeading = document.createElement("h3");
@@ -687,8 +993,177 @@ function renderDiagnostics(
   }
 }
 
+function focusButtons(
+  container: HTMLElement,
+  result: GraphViewResultV1 | null,
+  ids: readonly string[],
+  entity: "milestone" | "edge",
+  empty: string,
+): void {
+  container.replaceChildren();
+  if (ids.length === 0) {
+    const text = document.createElement("p");
+    text.className = "focus-empty";
+    text.textContent = empty;
+    container.append(text);
+    return;
+  }
+  const list = document.createElement("ul");
+  list.className = "focus-list";
+  for (const id of ids) {
+    const item = document.createElement("li");
+    if (result?.graph === null || result === null) {
+      item.textContent = id;
+    } else if (entity === "milestone") {
+      const semantic = compactEntity("milestone", id);
+      item.append(revealButton(
+        result,
+        "milestone",
+        id,
+        semantic === null ? id : `${semantic.compactId} · ${semantic.title}`,
+      ));
+    } else {
+      const edge = result.graph.edges.find((candidate) => candidate.id === id);
+      if (edge === undefined) item.textContent = id;
+      else {
+        const semantic = compactEntity(edge.kind, id);
+        const taskTime = edge.kind === "task"
+          ? currentFocus?.focus?.timeSummary.taskTimes.find((value) =>
+              value.taskId === id
+            ) ?? null
+          : null;
+        const time = taskTime === null
+          ? ""
+          : ` · ${taskTime.taskTime.display}${
+              taskTime.taskTime.unit === "point" ? "p" :
+                taskTime.taskTime.unit === "hour" ? "h" : "d"
+            }${taskTime.pointForecast === null
+              ? ""
+              : ` → ${taskTime.pointForecast.display}${
+                  taskTime.pointForecast.unit === "hour" ? "h" : "d"
+                }`}`;
+        item.append(revealButton(
+          result,
+          edge.kind,
+          id,
+          `${semantic?.compactId ?? id} · ${semantic?.title ?? edge.label}${time}`,
+        ));
+      }
+    }
+    list.append(item);
+  }
+  container.append(list);
+}
+
+function historicalExactText(value: unknown): string {
+  if (!record(value)) return "unavailable";
+  const display = value["display"];
+  const unit = value["unit"];
+  const numerator = value["numerator"];
+  const denominator = value["denominator"];
+  return typeof display === "string" && typeof unit === "string" &&
+      typeof numerator === "string" && typeof denominator === "string"
+    ? `${display} ${unit} (${numerator}/${denominator})`
+    : "unavailable";
+}
+
+function renderTimeSummary(
+  scopeValue: "current" | "historical",
+  focusResult: DagFocusResultV1 | null,
+  historicalResult: HistoricalWebviewPresentationV1 | null,
+): void {
+  timeSummary.replaceChildren();
+  const list = document.createElement("dl");
+  const add = (term: string, value: string): void => {
+    const label = document.createElement("dt");
+    label.textContent = term;
+    const description = document.createElement("dd");
+    description.textContent = value;
+    list.append(label, description);
+  };
+  if (scopeValue === "current") {
+    const summary = focusResult?.status === "current"
+      ? focusResult.focus?.timeSummary ?? null
+      : null;
+    if (summary === null) {
+      add("Residual", "Unavailable");
+      add("Remaining", "Unavailable");
+    } else {
+      const conversion = summary.pointConversion;
+      add(
+        "Residual",
+        `${exactText(summary.residualTime)}${conversion.residualTime === null
+          ? ""
+          : `; ${exactText(conversion.residualTime)} by velocity`}`,
+      );
+      add(
+        "Remaining",
+        `${exactText(summary.remainingTime)}${conversion.remainingTime === null
+          ? ""
+          : `; ${exactText(conversion.remainingTime)} by velocity`}`,
+      );
+      if (conversion.status === "unavailable") {
+        add("Point conversion", conversion.reason ?? "Unavailable");
+      }
+    }
+  } else {
+    const analysis = historicalResult?.historicalGraph?.analysis ?? null;
+    const precedence = record(analysis?.["precedence"])
+      ? analysis["precedence"]
+      : null;
+    const resource = record(analysis?.["resource"])
+      ? analysis["resource"]
+      : null;
+    add("Residual", historicalExactText(precedence?.["makespan"]));
+    add("Remaining", historicalExactText(resource?.["makespan"]));
+    if (analysis?.["duration_unit"] === "point") {
+      add(
+        "Point conversion",
+        "Unavailable: the historical result does not carry checkpoint velocity.",
+      );
+    }
+  }
+  timeSummary.append(list);
+}
+
+function renderFocusSummary(
+  result: GraphViewResultV1 | null,
+  focusResult: DagFocusResultV1 | null,
+): void {
+  const focus = focusResult?.status === "current" ? focusResult.focus : null;
+  focusButtons(
+    currentMilestones,
+    result,
+    focus?.frontierMilestoneIds ?? [],
+    "milestone",
+    focusResult === null ? "Focus unavailable" : "No current frontier",
+  );
+  focusButtons(
+    criticalPath,
+    result,
+    result?.graph?.precedence?.representativePathEdgeIds ?? [],
+    "edge",
+    result?.analysisMode === "none" || result?.analysisMode === "resource"
+      ? "Enable critical-path analysis"
+      : "No remaining critical path",
+  );
+  const safeStop = focus?.safeStopReasons ?? [];
+  focusButtons(
+    nextTasks,
+    result,
+    focus?.startableTaskIds ?? [],
+    "edge",
+    safeStop.length > 0
+      ? `Safe stop: ${safeStop.join(", ")}`
+      : focusResult === null
+        ? "Start authority unavailable"
+        : "No task is startable now",
+  );
+}
+
 function render(value: RenderMessageV1): void {
   current = value.result;
+  currentFocus = value.focusResult;
   currentHistorical = value.historicalResult;
   status.textContent = value.message;
   status.dataset.state = value.state;
@@ -696,6 +1171,8 @@ function render(value: RenderMessageV1): void {
   scope.value = value.scope;
   historicalControls.hidden = value.scope !== "historical";
   mode.disabled = value.result === null;
+  renderFocusSummary(value.result, value.focusResult);
+  renderTimeSummary(value.scope, value.focusResult, value.historicalResult);
   graph.replaceChildren();
   outline.replaceChildren();
   if (value.scope === "historical") {
@@ -779,7 +1256,6 @@ function requestHistoricalGraph(): void {
 scope.addEventListener("change", () => {
   historicalControls.hidden = scope.value !== "historical";
   if (scope.value === "historical") {
-    mode.value = "none";
     requestHistoricalGraph();
   } else if (current !== null) {
     render({
@@ -789,6 +1265,7 @@ scope.addEventListener("change", () => {
       message: "The current document DAG is selected.",
       analysisMode: current.analysisMode,
       result: current,
+      focusResult: currentFocus,
       historicalResult: currentHistorical,
       scope: "current",
     });
@@ -800,6 +1277,62 @@ historicalView.addEventListener("change", () => {
   if (historicalView.value !== "snapshot") historicalSnapshot.value = "";
 });
 historicalRun.addEventListener("click", requestHistoricalGraph);
+
+zoomOut.addEventListener("click", () => applyZoom(zoom / 1.2));
+zoomIn.addEventListener("click", () => applyZoom(zoom * 1.2));
+zoomFit.addEventListener("click", fitGraph);
+
+viewport.addEventListener("wheel", (event) => {
+  if (!(event.ctrlKey || event.metaKey)) return;
+  event.preventDefault();
+  const bounds = viewport.getBoundingClientRect();
+  const contentX = (viewport.scrollLeft + event.clientX - bounds.left) / zoom;
+  const contentY = (viewport.scrollTop + event.clientY - bounds.top) / zoom;
+  applyZoom(event.deltaY < 0 ? zoom * 1.12 : zoom / 1.12);
+  viewport.scrollLeft = contentX * zoom - (event.clientX - bounds.left);
+  viewport.scrollTop = contentY * zoom - (event.clientY - bounds.top);
+}, { passive: false });
+
+viewport.addEventListener("keydown", (event) => {
+  if (event.key === "+" || event.key === "=") {
+    event.preventDefault();
+    applyZoom(zoom * 1.2);
+  } else if (event.key === "-") {
+    event.preventDefault();
+    applyZoom(zoom / 1.2);
+  } else if (event.key === "0") {
+    event.preventDefault();
+    fitGraph();
+  }
+});
+
+let pan: { readonly x: number; readonly y: number; readonly left: number; readonly top: number } | null = null;
+viewport.addEventListener("pointerdown", (event) => {
+  if (event.button !== 0 || (event.target !== viewport && event.target !== graph)) return;
+  pan = {
+    x: event.clientX,
+    y: event.clientY,
+    left: viewport.scrollLeft,
+    top: viewport.scrollTop,
+  };
+  viewport.setPointerCapture(event.pointerId);
+  viewport.classList.add("panning");
+});
+viewport.addEventListener("pointermove", (event) => {
+  if (pan === null) return;
+  viewport.scrollLeft = pan.left - (event.clientX - pan.x);
+  viewport.scrollTop = pan.top - (event.clientY - pan.y);
+});
+const stopPan = (event: PointerEvent): void => {
+  if (pan === null) return;
+  pan = null;
+  viewport.classList.remove("panning");
+  if (viewport.hasPointerCapture(event.pointerId)) {
+    viewport.releasePointerCapture(event.pointerId);
+  }
+};
+viewport.addEventListener("pointerup", stopPan);
+viewport.addEventListener("pointercancel", stopPan);
 
 window.addEventListener("message", (event: MessageEvent<unknown>) => {
   const message = renderMessage(event.data);

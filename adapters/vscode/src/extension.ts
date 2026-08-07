@@ -7,10 +7,13 @@ import {
   type ServerOptions,
 } from "vscode-languageclient/node.js";
 import {
+  dagFocusProtocolModelVersion,
+  dagFocusResultSchemaVersion,
   editorHelpResultSchemaVersion,
   editorProtocolModelVersion,
   graphViewResultSchemaVersion,
   graphBindingMatches,
+  hasAcceptedDagFocusHandshake,
   hasAcceptedEditorHandshake,
   hasAcceptedHistoricalHandshake,
   historicalEditorProtocolModelVersion,
@@ -26,6 +29,7 @@ const historicalScheme = "perttool-history";
 let client: LanguageClient | undefined;
 let customCapabilitiesAvailable = false;
 let historicalCapabilitiesAvailable = false;
+let dagFocusCapabilitiesAvailable = false;
 
 class HelpContentProvider implements vscode.TextDocumentContentProvider {
   readonly #content = new Map<string, string>();
@@ -135,6 +139,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         editorProtocolModelVersions: [editorProtocolModelVersion],
         graphViewResultSchemaVersions: [graphViewResultSchemaVersion],
         editorHelpResultSchemaVersions: [editorHelpResultSchemaVersion],
+        dagFocusProtocolModelVersions: [dagFocusProtocolModelVersion],
+        dagFocusResultSchemaVersions: [dagFocusResultSchemaVersion],
         historicalEditorProtocolModelVersions: [
           historicalEditorProtocolModelVersion,
         ],
@@ -167,6 +173,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     client: () => client,
     customCapabilitiesAvailable: () => customCapabilitiesAvailable,
     historicalCapabilitiesAvailable: () => historicalCapabilitiesAvailable,
+    dagFocusCapabilitiesAvailable: () => dagFocusCapabilitiesAvailable,
     openHistoricalSource: (result) => historical.open(result),
     output,
   });
@@ -265,6 +272,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     customCapabilitiesAvailable = hasAcceptedEditorHandshake(experimental);
     historicalCapabilitiesAvailable =
       hasAcceptedHistoricalHandshake(experimental);
+    dagFocusCapabilitiesAvailable = hasAcceptedDagFocusHandshake(experimental);
     if (!customCapabilitiesAvailable) {
       output.warn(
         "Custom perttool Help and DAG capabilities are unavailable: incompatible editor protocol handshake.",
@@ -273,6 +281,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     if (!historicalCapabilitiesAvailable) {
       output.warn(
         "Historical DAG capabilities are unavailable: incompatible historical editor handshake.",
+      );
+    }
+    if (!dagFocusCapabilitiesAvailable) {
+      output.warn(
+        "DAG focus capability is unavailable: incompatible focus protocol handshake.",
       );
     }
     dag.scheduleRefresh(0);
@@ -289,5 +302,6 @@ export async function deactivate(): Promise<void> {
   client = undefined;
   customCapabilitiesAvailable = false;
   historicalCapabilitiesAvailable = false;
+  dagFocusCapabilitiesAvailable = false;
   if (running !== undefined) await running.stop();
 }

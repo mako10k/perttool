@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-08-05
+- Updated: 2026-08-07
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -558,9 +558,16 @@ The CLI task and its separately owner-confirmed basis-bound assurance outcome
 are complete. `HISTORICAL_EDITOR_CONTRACT` and its separately owner-confirmed
 basis-bound assurance outcome are complete. `HISTORICAL_VSIX` implementation
 acceptance and its status-only lifecycle are complete. Its exact basis-bound
-outcome is separately owner-confirmed and complete. Only
-`HISTORICAL_DAG_ACCEPTANCE` is ready, recommended, and startable under complete
-plan assurance.
+outcome is separately owner-confirmed and complete.
+`HISTORICAL_DAG_ACCEPTANCE` and its separately owner-confirmed basis-bound
+outcome are complete. Complete plan assurance has no ready, recommended,
+runnable, or startable task; the plan is retained before advance.
+
+The separately selected `DAG-UX-001` improvement is specified by the
+[DAG Presentation and Focus Contract](specs/dag-presentation.md). It gives the
+private current and historical DAG a default-first interface, exact current
+frontier and start-authority focus, Dagre layout, and bounded zoom, fit,
+scroll, and pan behavior without changing the accepted historical model.
 
 The current DAG renderer and VSIX GraphView correctly project one complete
 current source, which can contain only one residual milestone after canonical
@@ -1129,10 +1136,12 @@ local installation, Marketplace publication, and Open VSX remain separate.
 
 ### VSIX-DAG-PRESENT-001: Compact DAG labels and exact time summaries
 
-Priority: Requested; scheduling not selected
+Priority: Selected local presentation improvement
 
-Status: Presentation design backlog (2026-08-06); not part of the active
-GraphView protocol or private VSIX
+Status: Accepted local implementation and separately authorized local
+installation (2026-08-07). The active private focus result and installed VSIX
+implement the [compact presentation contract](specs/dag-compact-presentation.md);
+public release and plan selection remain separate.
 
 Make dense DAGs easier to scan without changing graph identity or analysis
 semantics. Milestones and tasks should use deterministic compact display IDs
@@ -1153,15 +1162,16 @@ conversion is unavailable, display that fact instead of assuming a workday
 length or rounding through binary floating point.
 
 Compact-ID allocation must be deterministic for a URI/generation/version and
-view, remain stable across presentation-only redraws, distinguish milestone
-and task namespaces, and preserve the existing source entity identity behind
-every link. The accessible lower list must expose the same values without
-depending on SVG color or geometry. Historical occurrences need a separate
-binding decision because the same source ID may have multiple occurrence and
-value epochs; this backlog does not alter `Perttool.GraphViewResult.v1`, the
-four current analysis modes, historical-DAG contracts, `.pert` bytes, or any
-editor mutation authority. Protocol/version selection, implementation, local
-installation, release, Marketplace publication, and Open VSX remain separate.
+view, remain stable across presentation-only redraws, distinguish milestone,
+task, and gate namespaces, and preserve the existing source entity identity
+behind every link. The accessible lower list must expose the same values
+without depending on SVG color or geometry. Historical occurrences use a
+selected view-local occurrence-ID order so the same source ID in multiple
+epochs receives distinct compact IDs. This item does not alter
+`Perttool.GraphViewResult.v1`, the four current analysis modes, historical-DAG
+results, `.pert` bytes, or any editor mutation authority. The preceding and
+compact local installations are complete; release, Marketplace publication,
+and Open VSX remain separate.
 
 ### VSIX-REL-001: Release the read-only VS Code extension
 

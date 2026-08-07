@@ -2,6 +2,7 @@
 
 - Document status: Accepted 1.0
 - Date: 2026-08-06
+- Final lifecycle verification: 2026-08-07
 - Workstream: `HIST-DAG-001`
 - Task: `HISTORICAL_DAG_ACCEPTANCE`
 - Normative model: [../specs/historical-dag.md](../specs/historical-dag.md)
@@ -67,18 +68,38 @@ after. Existing real-repository tests cover SHA-1, SHA-256, merge first-parent
 selection, linked worktrees, canonical advance, invalid sources, immutable
 blob navigation, and all hard limits.
 
-The complete Node.js 22 repository gate is:
+The complete Node.js 22 repository gate was run through the selected NVM
+runtime so that npm scripts and every child process inherited Node.js 22:
 
 ```sh
-/home/katsumata-m/.nvm/versions/node/v22.22.3/bin/npm run check
+source /home/katsumata-m/.nvm/nvm.sh
+nvm exec 22.22.3 npm run check
 git diff --check
 ```
 
 It includes the full test suite, English and documentation baselines, every
 self-use plan, isolated LSP and MCP packages, the trusted and untrusted minimum
 VS Code host, temporary package linking, npm publication dry-run, and isolated
-installed Contract 7 and plan-assurance workflows. The final counts and plan
-lifecycle binding are recorded after the completed-task candidate is verified.
+installed Contract 7 and plan-assurance workflows. The gate passed 961 tests,
+775 checked repository text files, 210 Markdown files, 7 PERT examples, all 35
+self-use plans, the isolated LSP and MCP packages, the minimum VS Code 1.101.0
+trusted and untrusted host cases, the temporary-link workflow, and the
+675-file isolated package workflow. The retained package is 2.7 MB compressed
+and 6.3 MB unpacked.
+
+The final status-only mutation changed the source digest from
+`sha256:a89ef57c89379f589070d2a1eeb46a31583552aa001cd1a3e7e337760d8ead1e`
+to
+`sha256:e67be36dc0374c0d27c3ec7e51a3fd04872f685c5b340d22d6f04902f9a75f72`.
+The separately confirmed outcome is bound to accepted basis
+`sha256:cce0e3c757a51cf09215980303509d1aad9e5bbb90d11acf48790e962a894626`
+and was written once with actor `codex` and the candidate-bound owner assertion
+`user`. Its final candidate and source digest is
+`sha256:3a1b78e7e7012ebd0fba568cf10f0a0ca23d20fc33fd834f719b1681a64ea3ef`.
+Readback reports all eight task-assurance results verified and conformant, no
+direct or inherited mismatch, no replan, no active attention or required
+action, and no ready, recommended, runnable, or startable task. The plan is
+intentionally retained before advance.
 
 No acceptance probe changes source bytes, Git objects, refs, index state,
 editor configuration, extension installation outside disposable profiles,

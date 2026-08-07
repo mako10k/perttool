@@ -9,6 +9,7 @@ import {
 import { createPerttoolLanguageServer } from "./server.js";
 import {
   PerttoolProtocolError,
+  type DagFocusApplicationV1,
   type HistoricalEditorApplicationV1,
 } from "./protocol.js";
 
@@ -46,6 +47,7 @@ export function startPerttoolStdioServer(
   output: Writable = process.stdout,
   options: {
     readonly historicalApplication?: HistoricalEditorApplicationV1;
+    readonly dagFocusApplication?: DagFocusApplicationV1;
   } = {},
 ): Connection {
   const connection = createConnection(input, output);
@@ -63,6 +65,9 @@ export function startPerttoolStdioServer(
     ...(options.historicalApplication === undefined
       ? {}
       : { historicalApplication: options.historicalApplication }),
+    ...(options.dagFocusApplication === undefined
+      ? {}
+      : { dagFocusApplication: options.dagFocusApplication }),
   });
 
   connection.onInitialize((params) => {
@@ -123,6 +128,11 @@ export function startPerttoolStdioServer(
   connection.onRequest("perttool/graphView", (params: unknown, token) =>
     protocolResult(() =>
       withCancellation(token, (signal) => server.graphView(params, signal))
+    )
+  );
+  connection.onRequest("perttool/dagFocus", (params: unknown, token) =>
+    protocolResult(() =>
+      withCancellation(token, (signal) => server.dagFocus(params, signal))
     )
   );
   connection.onRequest("perttool/historicalGraphView", (params: unknown, token) =>

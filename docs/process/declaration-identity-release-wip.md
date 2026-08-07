@@ -53,24 +53,52 @@ commands, 21 root schemas, and 122 root runtime exports. After final historical
 acceptance, the correct complete-source release candidate is a `0.8.0` beta
 minor. A maintenance-branch `0.7.2` backport was considered but not selected.
 
-## Exact continuation order
+## Continued state on 2026-08-07
 
-1. Rerun the complete Node.js 22 gate above and record final counts in
-   `historical-dag-acceptance.md`.
-2. Preview and write only `status done` for `HISTORICAL_DAG_ACCEPTANCE`, then
-   preview its conformant outcome against accepted basis
-   `sha256:cce0e3c757a51cf09215980303509d1aad9e5bbb90d11acf48790e962a894626`.
-   Apply the outcome only with the required candidate-bound `user` assertion.
-3. Recheck complete assurance and confirm no ready, recommended, or startable
-   historical task. Commit the final accepted workstream without advancing it.
-4. Create and accept a separate `0.8.0` release plan covering the already
+The interrupted gate was rerun successfully. The final historical task was
+then completed, its exact conformant outcome was separately confirmed and
+written once with actor `codex` and candidate-bound owner assertion `user`, and
+complete assurance readback reports no ready, recommended, runnable, or
+startable task. The accepted basis remains
+`sha256:cce0e3c757a51cf09215980303509d1aad9e5bbb90d11acf48790e962a894626`;
+the final plan source digest is
+`sha256:3a1b78e7e7012ebd0fba568cf10f0a0ca23d20fc33fd834f719b1681a64ea3ef`.
+The plan remains intentionally retained before advance.
+
+The subsequent `DAG-UX-001` local slice replaces the private VSIX grid renderer
+with pinned Dagre, adds bounded pan, zoom, fit, and native scrolling, defaults
+historical queries, progressively discloses advanced controls, and projects
+the current milestone, critical path, and exact Contract 7 start authority.
+Its acceptance record is [dag-presentation-acceptance.md](dag-presentation-acceptance.md).
+
+The user then requested local installation before selecting compact DAG labels.
+The exact predecessor 18-file VSIX with SHA-256
+`5dff03a7438121a6090ed7610789066c97597618459e3bb9e46d4519d3aaac8e` was
+installed once as `perttool-private.perttool-vscode-private@0.0.0`, with core
+installed bytes verified against the artifact. The separately selected
+`VSIX-DAG-PRESENT-001` implementation is accepted in
+[dag-compact-presentation-acceptance.md](dag-compact-presentation-acceptance.md)
+and was later separately packaged and installed once in the user's normal
+profile. The 18-file compact VSIX is 2,188,896 bytes with SHA-256
+`ac10f4dfe00d1154d282fb737b117a85fcaf7e23b6d2b412e4f7299bd8a812e6`.
+It adds compact graph/detail identity and exact time summaries without changing
+the release boundary.
+
+## Remaining separately authorized order
+
+1. Commit the final accepted historical and DAG presentation work without
+   advancing either plan.
+2. Create and accept a separate `0.8.0` release plan covering the already
    accepted adapter platform, historical DAG, and declaration-identity fix.
-5. Prepare and validate one immutable candidate. Freeze its source commit,
+3. Prepare and validate one immutable candidate. Freeze its source commit,
    file count, byte size, SHA-256, external destinations, and maximum writes
    before publication.
-6. Publish only after the exact candidate authorization boundary. npm `latest`,
+4. Publish only after the exact candidate authorization boundary. npm `latest`,
    Marketplace publication, plan advance, and Issue mutation remain separate.
 
 No tag, GitHub Release, npm publication, dist-tag movement, Marketplace
-operation, extension installation, plan status/outcome mutation, plan advance,
-or Issue mutation was performed in this WIP slice.
+operation, plan advance, or Issue mutation was performed in this WIP slice.
+The only editor-profile mutations were the two separately authorized local
+extension installations described above. The only plan mutations were the
+separately confirmed final historical task status and outcome writes described
+above.
