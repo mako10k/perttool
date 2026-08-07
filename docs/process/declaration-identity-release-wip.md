@@ -98,11 +98,12 @@ six serial tasks totaling 22p, and makes startable only
 
 ## Remaining separately authorized order
 
-1. Prepare and validate one immutable `0.8.0` candidate from the completed
-   gate-design, input-readiness, and source-preparation state. Freeze its source commit,
-   file count, byte size, SHA-256, external destinations, and maximum writes
-   before publication.
-2. Publish only after the exact candidate authorization boundary. npm `latest`,
+1. Present the accepted immutable `0.8.0` candidate from source commit
+   `f9be1cc`, 679 files, 2753740 bytes, and SHA-256
+   `d761e2a159d2d60eb981efda403cc6b00c4eac9e31503b2e857c0b851ac00b28`
+   together with the release commit, exact external destinations, bodies,
+   refs, and maximum write count.
+2. Publish only after that exact candidate authorization boundary. npm `latest`,
    Marketplace publication, plan advance, and Issue mutation remain separate.
 
 No tag, GitHub Release, npm publication, dist-tag movement, Marketplace

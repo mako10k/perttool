@@ -1573,9 +1573,14 @@ peer, tests, CHANGELOG, README, migration, and release records now identify
 `0.8.0`. Source preparation passed all 973 tests, all 36 self-use plans,
 isolated adapter gates, temporary linking, and the 679-file installed-package
 gate; its completed plan digest is `sha256:0cce301f...858dc457`. Candidate
-acceptance, external writes,
-publication, npm `latest`, VSIX publication, plan advance, and Issue mutation
-remain separately gated.
+acceptance is complete from clean source commit `f9be1cc` and the retained
+679-file, 2753740-byte tarball with SHA-256
+`d761e2a1...1ac00b28`; its exact record is
+`docs/process/0.8.0-candidate.md`. Complete NextResult v6 recommends only
+`RELEASE_080_PUBLISH`. The frozen candidate and exact external write batch
+still require separate authorization. External writes, publication, npm
+`latest`, VSIX publication, plan advance, and Issue mutation remain
+separately gated.
 
 The explicitly selected `adapter-platform.pert` workstream composes the
 previously separate LSP, VSIX, and MCP backlogs behind one accepted shared

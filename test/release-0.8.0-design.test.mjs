@@ -23,6 +23,7 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
     gate,
     readiness,
     preparation,
+    candidate,
     migration,
     plan,
     manifestText,
@@ -41,6 +42,7 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
       repositoryText("docs/process/0.8.0-gate-design.md"),
       repositoryText("docs/process/0.8.0-input-readiness.md"),
       repositoryText("docs/process/0.8.0-preparation.md"),
+      repositoryText("docs/process/0.8.0-candidate.md"),
       repositoryText("docs/process/0.7.1-to-0.8.0-migration.md"),
       repositoryText("plans/release-0.8.0.pert"),
       repositoryText("package.json"),
@@ -89,6 +91,18 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
     preparation,
     /Completed-plan source digest: `sha256:0cce301fc769e276ffc45626147a8d20f38bfcbced1b565e417aee5e858dc457`/u,
   );
+  assert.match(candidate, /- Document status: Accepted 1\.0/u);
+  assert.match(
+    candidate,
+    /Candidate source commit: `f9be1ccdea04d7f029383f398d6b742d8962f09d`/u,
+  );
+  assert.match(candidate, /Packed size \| `2753740` bytes/u);
+  assert.match(candidate, /Files \| `679`/u);
+  assert.match(
+    candidate,
+    /SHA-256 \| `d761e2a159d2d60eb981efda403cc6b00c4eac9e31503b2e857c0b851ac00b28`/u,
+  );
+  assert.match(candidate, /no branch-protection claim/u);
   assert.match(migration, /Existing Grammar 1 through 6 documents/u);
   assert.match(migration, /Pin `perttool@0\.7\.1`/u);
 
@@ -112,6 +126,22 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
       "RELEASE_080_CANDIDATE",
       "RELEASE_080_PUBLISH",
       "RELEASE_080_ACCEPTANCE",
+    ],
+  );
+  assert.deepEqual(
+    checked.document.declarations
+      .filter(({ kind }) => kind === "task")
+      .map(({ id, fields }) => [
+        id,
+        fields.find(({ name }) => name === "status")?.value ?? "planned",
+      ]),
+    [
+      ["RELEASE_080_GATE_DESIGN", "done"],
+      ["RELEASE_080_INPUT_READINESS", "done"],
+      ["RELEASE_080_PREPARATION", "done"],
+      ["RELEASE_080_CANDIDATE", "done"],
+      ["RELEASE_080_PUBLISH", "planned"],
+      ["RELEASE_080_ACCEPTANCE", "planned"],
     ],
   );
 
