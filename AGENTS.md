@@ -15,7 +15,7 @@ User communication is independent from the repository baseline. Unless the user 
 
 perttool has accepted its TypeScript CLI MVP and the read-only AI Agent
 Guidance Registry v1 from Issue #2 and has durably accepted suffix-free beta
-releases through `v0.7.1`.
+releases through `v0.8.0`.
 Version `0.6.0` retains Grammar 5 and CLI Contract 6 while adding repository
 history protection, `Perttool.AdvanceResult.v1`, and the narrow
 `--force-history-loss` boundary to `dag advance`. Version `0.5.5` retains
@@ -28,7 +28,7 @@ available by exact pin. Version `0.5.1` remains the initial schema-discovery
 Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
-explicit pin. npm reports `beta=latest=0.7.1` and no `alpha`. The
+explicit pin. npm reports `beta=latest=0.8.0` and no `alpha`. The
 durably accepted beta `0.7.0` source implements Grammar 1/2/3/4/5/6 reads,
 registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
@@ -608,12 +608,18 @@ short internal readback window returned propagation E404; the operation was
 not retried, and fresh reads established durable publication at
 `2026-08-07T06:48:55.944Z`. Exact and beta installations expose 45 commands,
 21 schemas, 122 root and Node exports, 45 Core exports, historical DAG, and
-the declaration-identity correction. `latest=0.7.1` and absent `alpha` remain
-unchanged. Durable acceptance is recorded in
+the declaration-identity correction. At publication and durable acceptance,
+`latest=0.7.1` and absent `alpha` remained unchanged. Durable acceptance is
+recorded in
 `docs/process/0.8.0-release-acceptance.md`; all six tasks and 22p are complete
-with zero makespans and no recommendation. npm `latest`, public VSIX identity
-or publication, both input-plan advances, release-plan advance, and Issue
-mutation remain separate. Initial plan acceptance is recorded in
+with zero makespans and no recommendation. The user later separately
+authorized one exact npm `latest` mutation; direct registry and fresh-cache
+readback established `beta=latest=0.8.0`, no `alpha`, and unchanged package
+integrity, while unqualified global and isolated installations resolved to
+`perttool 0.8.0` with 45 commands and 21 schemas. Its record is
+`docs/process/0.8.0-latest-promotion.md`. Public VSIX identity or publication,
+both input-plan advances, release-plan advance, and Issue mutation remain
+separate. Initial plan acceptance is recorded in
 `docs/process/0.8.0-release-plan-acceptance.md`.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.

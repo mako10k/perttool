@@ -26,6 +26,7 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
     candidate,
     publication,
     acceptance,
+    latestPromotion,
     migration,
     plan,
     manifestText,
@@ -47,6 +48,7 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
       repositoryText("docs/process/0.8.0-candidate.md"),
       repositoryText("docs/process/0.8.0-publish.md"),
       repositoryText("docs/process/0.8.0-release-acceptance.md"),
+      repositoryText("docs/process/0.8.0-latest-promotion.md"),
       repositoryText("docs/process/0.7.1-to-0.8.0-migration.md"),
       repositoryText("plans/release-0.8.0.pert"),
       repositoryText("package.json"),
@@ -81,6 +83,7 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
     /Expected pre-publication tags: `beta=latest=0\.7\.1`, no `alpha`/u,
   );
   assert.match(procedure, /user authorizes the frozen candidate and write set/u);
+  assert.match(procedure, /0\.8\.0-latest-promotion\.md/u);
   assert.match(gate, /- Document status: Accepted 1\.0/u);
   assert.match(gate, /\| Commands \| 44 \| 45 \|/u);
   assert.match(gate, /\| Root schemas \| 20 \| 21 \|/u);
@@ -112,13 +115,18 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
   assert.match(publication, /GitHub prerelease `366565943`/u);
   assert.match(publication, /submitted exactly once to npm `beta`/u);
   assert.match(publication, /The publish operation was\s+not retried/u);
-  assert.match(acceptance, /- Document status: Accepted 1\.0/u);
+  assert.match(acceptance, /- Document status: Accepted and latest-promoted 1\.1/u);
   assert.match(
     acceptance,
     /Final plan digest: `sha256:e5b59c620a2c0f13093a0697b7c4060a767129b14193ed4c3b23f00e5e4298df`/u,
   );
   assert.match(acceptance, /`perttool@beta` \| `perttool 0\.8\.0`/u);
   assert.match(acceptance, /`perttool@latest` \| `perttool 0\.7\.1`/u);
+  assert.match(acceptance, /beta=latest=0\.8\.0/u);
+  assert.match(latestPromotion, /- Document status: Accepted 1\.0/u);
+  assert.match(latestPromotion, /npm dist-tag add perttool@0\.8\.0 latest/u);
+  assert.match(latestPromotion, /beta=latest=0\.8\.0/u);
+  assert.match(latestPromotion, /resolved to `perttool 0\.8\.0`/u);
   assert.match(migration, /Existing Grammar 1 through 6 documents/u);
   assert.match(migration, /Pin `perttool@0\.7\.1`/u);
 
@@ -173,7 +181,8 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
   assert.match(versionSource, /TOOL_VERSION = "0\.8\.0"/u);
   assert.match(changelog, /^## \[0\.8\.0\] - 2026-08-07$/m);
   assert.match(readme, /package=perttool@0\.8\.0/u);
-  assert.match(readme, /leaves independently managed\s+`latest=0\.7\.1`/u);
+  assert.match(readme, /left independently managed\s+`latest=0\.7\.1`/u);
+  assert.match(readme, /`beta=latest=0\.8\.0`/u);
   assert.deepEqual(Object.keys(manifest.exports), [
     ".",
     "./core",

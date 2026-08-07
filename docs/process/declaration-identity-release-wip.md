@@ -98,14 +98,17 @@ six serial tasks totaling 22p, and makes startable only
 
 ## Remaining separately authorized order
 
-The separately authorized `0.8.0` PUBLISH and durable acceptance are complete
-from release commit `db5c2f8` and the retained SHA-256
+The separately authorized `0.8.0` PUBLISH, durable acceptance, and later npm
+`latest` promotion are complete from release commit `db5c2f8` and the retained
+SHA-256
 `d761e2a159d2d60eb981efda403cc6b00c4eac9e31503b2e857c0b851ac00b28`.
-npm `latest`, Marketplace or Open VSX publication, both input-plan advances,
-release-plan advance, and Issue mutation remain separate.
+Marketplace or Open VSX publication, both input-plan advances, release-plan
+advance, and Issue mutation remain separate.
 
 Annotated `v0.8.0`, the GitHub prerelease, and npm `beta=0.8.0` now agree with
-the accepted artifact; `latest=0.7.1` remains unchanged. No Marketplace,
-Open VSX, npm `latest`, plan-advance, or Issue mutation was performed. The only
-editor-profile mutations remain the two separately authorized local extension
-installations described above.
+the accepted artifact. One later separately authorized npm mutation made
+`beta=latest=0.8.0`; direct registry, fresh-cache npm, and unqualified global
+and isolated installation readback passed. No Marketplace, Open VSX,
+plan-advance, or Issue mutation was performed. The editor-profile mutations
+remain the separately authorized local extension installations described
+above.

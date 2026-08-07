@@ -46,8 +46,9 @@ the read-only `dag history` command, `Perttool.HistoricalGraphResult.v1`, and
 the declaration-identity correction without changing Grammar 6 or CLI
 Contract 7. It exposes 45 commands, 21 root schemas, 122 reference-identical
 root and Node runtime exports, and 45 portable Core runtime exports. Its beta
-publication moves only npm `beta` and leaves independently managed
-`latest=0.7.1`; use `0.7.1` as the exact rollback pin.
+publication moved only npm `beta` and left independently managed
+`latest=0.7.1`; one separately authorized post-acceptance operation later made
+`beta=latest=0.8.0`. Use `0.7.1` as the exact rollback pin.
 The repository-only VSIX also adds separately negotiated historical snapshot,
 proved-lineage, and timeline views for trusted local Git workspaces plus
 verified read-only immutable source navigation. Those adapter results are not
@@ -95,11 +96,12 @@ npm install --global perttool@0.8.0
 perttool --version
 ```
 
-The `0.8.0` release procedure publishes only npm `beta` and leaves the
-independently managed `latest` tag at `0.7.1`. Select `0.8.0` explicitly for
-the new public subpaths and historical DAG command; an unqualified install
-continues to select `0.7.1` unless a later operation separately promotes
-`latest`.
+The `0.8.0` release procedure published only npm `beta` and left the
+independently managed `latest` tag at `0.7.1`. A separately authorized
+post-acceptance operation later promoted `0.8.0`; npm now reports
+`beta=latest=0.8.0`, so an unqualified global installation selects `0.8.0`.
+The exact pin remains the reproducible form for the public subpaths and
+historical DAG command.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
 Contract 6 artifact remains available as
 `perttool@0.5.0`. Contract 5,

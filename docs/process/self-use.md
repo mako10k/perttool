@@ -1582,9 +1582,15 @@ prerelease, and one npm `beta` publication. Candidate, GitHub, and npm
 tarballs are byte-identical; exact and beta installed acceptance passed.
 Durable acceptance is recorded in
 `docs/process/0.8.0-release-acceptance.md`. All six tasks and 22p are complete
-with zero makespans and no recommendation. npm `latest`, public VSIX
-publication, both input-plan advances, release-plan advance, and Issue
-mutation remain separately gated.
+with zero makespans and no recommendation. At acceptance, npm `latest`, public
+VSIX publication, both input-plan advances, release-plan advance, and Issue
+mutation remained separately gated. The user later separately authorized one
+npm `latest` mutation. Direct registry and fresh-cache npm reads established
+`beta=latest=0.8.0`, no `alpha`, and unchanged package integrity; unqualified
+global and isolated installations resolved to `perttool 0.8.0`, 45 commands,
+and 21 schemas. The exact post-acceptance record is
+`docs/process/0.8.0-latest-promotion.md`. Public VSIX publication, both
+input-plan advances, release-plan advance, and Issue mutation remain separate.
 
 The explicitly selected `adapter-platform.pert` workstream composes the
 previously separate LSP, VSIX, and MCP backlogs behind one accepted shared
