@@ -53,6 +53,7 @@ function run(args, expectedStatus = 0, cwd = root) {
   const result = spawnSync(process.execPath, [cli, ...args], {
     cwd,
     encoding: "utf8",
+    maxBuffer: 16 * 1024 * 1024,
   });
   assert.equal(
     result.status,
