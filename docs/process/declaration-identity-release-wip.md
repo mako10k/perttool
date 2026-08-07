@@ -84,21 +84,30 @@ profile. The 18-file compact VSIX is 2,188,896 bytes with SHA-256
 It adds compact graph/detail identity and exact time summaries without changing
 the release boundary.
 
+Commit `2b1e12684dcf2a25faa50ff7db6ae8dc49b98288` records the final accepted
+historical and DAG presentation source without advancing a plan. The user then
+accepted the exact initial [`release-0.8.0.pert`](../../plans/release-0.8.0.pert)
+candidate. Contract 7 `project init` created the 489-byte base, and one
+separately confirmed 18-mutation atomic batch used actor `codex` and the
+candidate-bound owner assertion `user` for goal and DAG scopes. The resulting
+6,734-byte plan has digest
+`sha256:a26bb205f5eb4ee4bb6616bee2d74877c3162f26be090473d435a4515fadc69c`,
+six serial tasks totaling 22p, and makes startable only
+`RELEASE_080_GATE_DESIGN`. Its exact evidence is in
+[0.8.0-release-plan-acceptance.md](0.8.0-release-plan-acceptance.md).
+
 ## Remaining separately authorized order
 
-1. Commit the final accepted historical and DAG presentation work without
-   advancing either plan.
-2. Create and accept a separate `0.8.0` release plan covering the already
-   accepted adapter platform, historical DAG, and declaration-identity fix.
-3. Prepare and validate one immutable candidate. Freeze its source commit,
+1. Prepare and validate one immutable `0.8.0` candidate from the completed
+   gate-design, input-readiness, and source-preparation state. Freeze its source commit,
    file count, byte size, SHA-256, external destinations, and maximum writes
    before publication.
-4. Publish only after the exact candidate authorization boundary. npm `latest`,
+2. Publish only after the exact candidate authorization boundary. npm `latest`,
    Marketplace publication, plan advance, and Issue mutation remain separate.
 
 No tag, GitHub Release, npm publication, dist-tag movement, Marketplace
 operation, plan advance, or Issue mutation was performed in this WIP slice.
 The only editor-profile mutations were the two separately authorized local
-extension installations described above. The only plan mutations were the
-separately confirmed final historical task status and outcome writes described
-above.
+extension installations described above. Plan mutations were the separately
+confirmed final historical task status and outcome writes and the exact
+initial `0.8.0` release-plan write described above.

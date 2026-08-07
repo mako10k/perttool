@@ -4,6 +4,12 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-08-07
+
+Additive Grammar 6 and CLI Contract 7 beta minor. This version publishes the
+adapter-platform library boundary, read-only historical DAG reconstruction,
+and the declaration-identity correction.
+
 ### Added
 
 - Added the read-only `dag history` command with bounded inclusive Git revision
@@ -15,8 +21,19 @@ This project records its notable changes here. The format is based on [Keep a Ch
 - Added source-package `perttool/core` and `perttool/node` subpath exports.
   Core provides a closed platform-neutral Grammar 6 source, graph-analysis,
   exact-arithmetic, diagnostic, Help, Guide, and projection surface; Node is
-  reference-identical to the existing 121-name package-root facade. No release
-  containing these subpaths has been selected or published.
+  reference-identical to the 122-name package-root facade.
+
+### Changed
+
+- Increased the Contract 7 registry from 44 to 45 commands, the root schema
+  catalog from 20 to 21 identities, and the root facade from 121 to 122 runtime
+  exports without changing Grammar or CLI Contract versions.
+
+### Fixed
+
+- Made task insertion, mutation, lifecycle, and LSP definition distinguish a
+  task declaration from its same-ID `plan_seal` while preserving existing
+  valid noncanonical source order.
 
 ## [0.7.1] - 2026-08-05
 
@@ -402,7 +419,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/mako10k/perttool/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/mako10k/perttool/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/mako10k/perttool/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mako10k/perttool/compare/v0.5.5...v0.6.0

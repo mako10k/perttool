@@ -83,7 +83,7 @@ test("historical DAG contract fixes the selected first-parent boundary", async (
     requirements,
     /\[Historical DAG Reconstruction Contract\]\(specs\/historical-dag\.md\)/u,
   );
-  assert.match(requirements, /23\. \[ \] Implement read-only historical DAG reconstruction/u);
+  assert.match(requirements, /23\. \[x\] Implement read-only historical DAG reconstruction/u);
   assert.match(
     actuals,
     /\[Historical DAG Reconstruction Contract\]\(historical-dag\.md\)/u,
@@ -314,5 +314,5 @@ test("accepted historical VSIX makes only final acceptance startable", async () 
   assert.match(vsixAcceptance, /completed-task gate passes 955 tests/u);
   assert.match(vsixAcceptance, /candidate digest\s+`sha256:6b89163c/u);
   assert.match(selfUse, /plans\/historical-dag\.pert/u);
-  assert.match(selfUse, /35 plans; check, analyze, next/u);
+  assert.match(selfUse, /36 plans; check, analyze, next/u);
 });

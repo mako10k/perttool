@@ -3321,6 +3321,38 @@ Exit:
 - keep npm `latest` promotion, both plan advances, Issue mutation, and
   unrelated backlogs separate.
 
+### Post-MVP Slice 4S: Adapter platform and historical DAG `v0.8.0` beta minor
+
+The accepted `ADAPTER-001` and `HIST-DAG-001` workstreams and the compatible
+`DECL-ID-001` correction form one additive public-package boundary after
+`0.7.1`. Grammar 6 and CLI Contract 7 remain active. The root and Node facades
+are key- and reference-identical at 122 runtime values, the portable Core has
+45 runtime values, the command registry has 45 commands, and the root schema
+catalog has 21 identities.
+
+The [`v0.8.0` release procedure](process/0.8.0-release.md) and independent
+[`release-0.8.0.pert`](../plans/release-0.8.0.pert) plan sequence release-gate
+design, accepted-input verification, version-bearing source preparation, one
+immutable candidate, separately authorized GitHub/npm beta publication, and
+durable public acceptance.
+
+Exit:
+
+- satisfy Requirements 21.15 from one clean release commit and immutable
+  tarball;
+- publish `perttool/core`, reference-identical `perttool/node`, read-only
+  `dag history`, `Perttool.HistoricalGraphResult.v1`, its schema, Help, Guide,
+  and installed workflows;
+- retain all prior Grammar 6 and Contract 7 meanings, governance, assurance,
+  history safety, and safe-write behavior;
+- preserve the declaration-identity correction without reordering existing
+  valid source;
+- exclude the private LSP, VSIX, and MCP packages from the public tarball;
+- publish identical bytes to a GitHub prerelease and npm `beta` while leaving
+  `latest=0.7.1`; and
+- keep npm `latest` promotion, VSIX publication, plan advance, Issue mutation,
+  `SCM-001`, and unrelated backlogs separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 The selected `ADAPTER-001` plan composes a shared foundation and three adapter

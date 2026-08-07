@@ -1,7 +1,7 @@
 {
   "schema_version": "Perttool.AdapterIntegrationAcceptanceCases.v1",
   "architecture_model_version": 1,
-  "package_version": "0.7.1",
+  "package_version": "0.8.0",
   "grammar_version": 6,
   "cli_contract_version": 7,
   "runtime_matrix": [22, 24],

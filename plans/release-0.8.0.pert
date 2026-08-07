@@ -1,0 +1,125 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_080:
+  version 6
+  title "perttool 0.8.0 historical DAG and adapter platform beta release"
+  description "Release suffix-free 0.8.0 beta as the additive post-0.7.1 adapter-platform and historical-DAG boundary. Publish the accepted Core and Node subpaths, read-only dag history command, Perttool.HistoricalGraphResult.v1, and declaration-identity correction while retaining Grammar 6 and CLI Contract 7 semantics. The private LSP, VSIX, and MCP workspaces remain excluded from the public npm package; VSIX public identity, Marketplace and Open VSX publication, npm latest promotion, plan advance, and Issue mutation remain separate."
+  as_of 2026-08-07
+  duration_unit point
+  velocity 29p/2d
+  finish RELEASE_080_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_080_PLANNING_STARTED:
+  title "Version 0.8.0 release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize scope, compatibility, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, migration guidance, CHANGELOG, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_080_GATE_ACCEPTED:
+  title "Version 0.8.0 release gate accepted"
+
+milestone RELEASE_080_INPUTS_READY:
+  title "Accepted 0.8.0 release inputs verified"
+
+milestone RELEASE_080_SOURCE_PREPARED:
+  title "Version 0.8.0 release source prepared"
+
+milestone RELEASE_080_CANDIDATE_ACCEPTED:
+  title "Version 0.8.0 release candidate accepted"
+
+milestone RELEASE_080_PUBLISHED:
+  title "Version 0.8.0 published to GitHub and npm beta"
+
+milestone RELEASE_080_ACCEPTED:
+  title "Version 0.8.0 adapter and historical DAG beta accepted"
+
+task RELEASE_080_GATE_DESIGN RELEASE_080_PLANNING_STARTED -> RELEASE_080_GATE_ACCEPTED:
+  title "Define the 0.8.0 additive public-surface release gate"
+  description "Select suffix-free 0.8.0 for the additive public boundary after 0.7.1. Bind the accepted adapter platform, historical DAG, and declaration-identity inputs; verify the 44-to-45 command, 20-to-21 schema, and 121-to-122 root-export changes while retaining Grammar 6 and CLI Contract 7; update requirements, ADR, design, procedure, plan metadata, and tests together; and fix private-adapter, VSIX publication, npm latest, plan advance, and Issue exclusions. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_080_INPUT_READINESS RELEASE_080_GATE_ACCEPTED -> RELEASE_080_INPUTS_READY:
+  title "Verify accepted 0.8.0 release inputs"
+  description "Require the complete retained pre-advance ADAPTER-001 and HIST-DAG-001 plans and their final acceptance records plus the accepted DECL-ID-001 correction. Verify Core and Node subpaths, unchanged CLI facade, private read-only adapters, dag history, HistoricalGraphResult v1, schema, Help, Guide, installed behavior, declaration identity, compatibility, and no-write boundaries without duplicating implementation state. This task performs no external write."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_080_PREPARATION RELEASE_080_INPUTS_READY -> RELEASE_080_SOURCE_PREPARED:
+  title "Prepare version 0.8.0 release source"
+  description "Align package and lockfile identity, CLI version, CHANGELOG, README, 0.7.1-to-0.8.0 migration guidance, release documentation, tests, goldens, self-use registration, dependency and package inventory audits, and beta publication validation. Run the complete Node.js 22 repository and installed-package gates without remote or registry writes."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_080_CANDIDATE RELEASE_080_SOURCE_PREPARED -> RELEASE_080_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.8.0 release candidate"
+  description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.7.1 with no alpha and verify protected routes; build one immutable tarball outside the worktree; and accept its timestamp, sizes, file count, digests, public package inventory, installed dag history and Core and Node subpath behavior, and declaration-identity regression. This task performs no external write."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_080_PUBLISH RELEASE_080_CANDIDATE_ACCEPTED -> RELEASE_080_PUBLISHED:
+  title "Publish version 0.8.0 from one immutable tarball"
+  description "Only after every predecessor gate passes and the user separately authorizes the exact candidate and external batch, push and verify the clean release commit and annotated tag, wait for Node.js 22 and 24 CI, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.8.0 while latest remains 0.7.1. Do not publish the private VSIX, LSP, or MCP adapters."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_080_ACCEPTANCE RELEASE_080_PUBLISHED -> RELEASE_080_ACCEPTED:
+  title "Record durable 0.8.0 beta acceptance"
+  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball bytes, registry integrity and metadata, exact and beta isolated installation, 45 commands, 21 schemas, 122 root exports, dag history, HistoricalGraphResult v1, Core and Node subpaths, declaration identity, private-adapter exclusion, compatibility, and rollback pin 0.7.1. Record evidence without changing npm latest, publishing a VSIX, advancing a plan, or mutating an Issue."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1

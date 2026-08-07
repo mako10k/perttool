@@ -41,10 +41,13 @@ and the first machine-schema Contract 6 artifact remains available by pinning
 `0.4.0`, `0.3.0`, and `0.2.0`, respectively. npm has no maintained `alpha`
 dist-tag; historical `0.1.0-alpha.2` remains available by exact pin.
 
-The current unreleased source adds the read-only `dag history` command and
-`Perttool.HistoricalGraphResult.v1` without changing Grammar 6 or CLI Contract
-7. The source registry therefore has 45 commands and 21 root schemas; the
-published `0.7.1` package remains the 44-command, 20-schema compatibility pin.
+Version `0.8.0` adds the public `perttool/core` and `perttool/node` subpaths,
+the read-only `dag history` command, `Perttool.HistoricalGraphResult.v1`, and
+the declaration-identity correction without changing Grammar 6 or CLI
+Contract 7. It exposes 45 commands, 21 root schemas, 122 reference-identical
+root and Node runtime exports, and 45 portable Core runtime exports. Its beta
+publication moves only npm `beta` and leaves independently managed
+`latest=0.7.1`; use `0.7.1` as the exact rollback pin.
 The repository-only VSIX also adds separately negotiated historical snapshot,
 proved-lineage, and timeline views for trusted local Git workspaces plus
 verified read-only immutable source navigation. Those adapter results are not
@@ -62,19 +65,19 @@ After beta publication, use `npx` for an occasional Contract 7 invocation and
 select the version explicitly:
 
 ```sh
-npx --yes --package=perttool@0.7.1 -- perttool --version
-npx --yes --package=perttool@0.7.1 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.7.1 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.7.1 -- perttool plan-assurance show PLAN.pert --format json
+npx --yes --package=perttool@0.8.0 -- perttool --version
+npx --yes --package=perttool@0.8.0 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.8.0 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.8.0 -- perttool dag history PLAN.pert --rev HEAD --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.7.1 -- perttool --version
-npm exec --yes --package=perttool@0.7.1 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.7.1 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.7.1 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
+npm exec --yes --package=perttool@0.8.0 -- perttool --version
+npm exec --yes --package=perttool@0.8.0 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.8.0 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.8.0 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
@@ -84,18 +87,19 @@ Contract 3.
 
 ## Install
 
-Install the corrected Contract 7 CLI globally by exact version when it is used
+Install the additive Contract 7 CLI globally by exact version when it is used
 regularly:
 
 ```sh
-npm install --global perttool@0.7.1
+npm install --global perttool@0.8.0
 perttool --version
 ```
 
-The `0.7.1` release procedure published only npm `beta` and initially left the
-independently managed `latest` tag at `0.7.0`. A separately authorized later
-operation made `beta=latest=0.7.1`; both an unqualified installation and the
-exact `0.7.1` pin now select the corrected Guide and Help behavior.
+The `0.8.0` release procedure publishes only npm `beta` and leaves the
+independently managed `latest` tag at `0.7.1`. Select `0.8.0` explicitly for
+the new public subpaths and historical DAG command; an unqualified install
+continues to select `0.7.1` unless a later operation separately promotes
+`latest`.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
 Contract 6 artifact remains available as
 `perttool@0.5.0`. Contract 5,
@@ -104,9 +108,9 @@ Contract 4, and Contract 3 remain available as exact pins
 preview remains installable only as the exact pin
 `perttool@0.1.0-alpha.2`.
 
-## Library subpaths in the current source
+## Library subpaths in `0.8.0`
 
-The unreleased source package provides two additive library boundaries:
+Version `0.8.0` provides two additive library boundaries:
 
 ```js
 import {
@@ -132,14 +136,12 @@ surface. Immutable snapshots and sessions bind exact URI, generation, version,
 text digest, parse/semantic state, UTF-16 positions, analysis options, and
 cancellation-safe caches without filesystem or editor access. The caller
 supplies the SHA-256 function. Its runtime closure has no Node builtin or
-external package. `perttool/node` exposes the same 121 runtime values as the
+external package. `perttool/node` exposes the same 122 runtime values as the
 existing `perttool` root, including file, schema, Git, hashing, and safe-write
 APIs that still require Node.js 22 or later. Bundled JSON artifacts remain
 available through `perttool/schemas/<schema-id>.schema.json`.
 
-These subpaths describe the current checkout and are not present in already
-published `0.7.1`. A later release decision is required before registry
-consumers can use them. See the
+These subpaths are absent from the `0.7.1` rollback package. See the
 [Shared Library Boundary](docs/specs/shared-library.md).
 The protocol-neutral state contract is the
 [Document Session Core](docs/specs/document-session.md).
@@ -512,7 +514,8 @@ select compatibility from each result's `schema_version`, not from
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. Versions `0.7.0` and `0.7.1` require
+Use `--format json` for machine consumers. Versions `0.7.0`, `0.7.1`, and
+`0.8.0` require
 `cli_contract_version == 7`. Published `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
 `0.5.2`, `0.5.1`, and `0.5.0` consumers must check
 `cli_contract_version == 6`;
@@ -533,6 +536,9 @@ assurance-aware result identities; see the
 [`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md).
 In every case, check the result-specific `schema_version` before reading the
 rest of a result.
+Version `0.8.0` adds `dag history`, `Perttool.HistoricalGraphResult.v1`, and
+the Core and Node subpaths without changing CLI Contract 7; see the
+[`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md).
 A complete, known, non-truncated `Perttool.NextResult.v6` with policy
 `recommendation_v1_plus_release_gate_plus_plan_assurance_v1` is required for
 the current source. Start only task IDs in
@@ -562,6 +568,8 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md)
 - [`v0.7.0` release procedure](docs/process/0.7.0-release.md)
 - [`v0.7.1` Help and Guide consistency patch procedure](docs/process/0.7.1-release.md)
+- [`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md)
+- [`v0.8.0` release procedure](docs/process/0.8.0-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
@@ -583,6 +591,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Help and Guide consistency correction](docs/specs/help-guide-consistency.md)
 - [Help and Guide consistency implementation plan](plans/help-guide-consistency.pert)
 - [`v0.7.1` release plan](plans/release-0.7.1.pert)
+- [`v0.8.0` release plan](plans/release-0.8.0.pert)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)

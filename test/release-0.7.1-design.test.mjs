@@ -63,7 +63,7 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
   );
   const releaseSection = requirements.split(
     "### 21.14 Help and Guide consistency patch release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split("### 21.15")[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     Array.from({ length: 13 }, (_, index) => index + 1),
@@ -117,7 +117,7 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
   );
   assert.match(acceptance, /All five tasks and 15p are complete/);
   assert.match(changelog, /^## \[0\.7\.1\] - 2026-08-05$/m);
-  assert.match(readme, /package=perttool@0\.7\.1/);
+  assert.match(readme, /package=perttool@0\.8\.0/);
   assert.match(readme, /made `beta=latest=0\.7\.1`/);
   assert.match(readme, /Version `0\.7\.0` remains the exact rollback pin/);
   assert.match(correction, /All 44 registered commands/);
@@ -166,10 +166,10 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.7.1");
-  assert.equal(lockfile.version, "0.7.1");
-  assert.equal(lockfile.packages[""].version, "0.7.1");
-  assert.match(versionSource, /TOOL_VERSION = "0\.7\.1"/);
+  assert.equal(manifest.version, "0.8.0");
+  assert.equal(lockfile.version, "0.8.0");
+  assert.equal(lockfile.packages[""].version, "0.8.0");
+  assert.match(versionSource, /TOOL_VERSION = "0\.8\.0"/);
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.equal(COMMAND_REGISTRY.length, 45);
   assert.equal(getJsonSchemaCatalog().length, 21);

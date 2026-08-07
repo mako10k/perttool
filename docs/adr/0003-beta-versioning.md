@@ -16,7 +16,8 @@
   publication; retirement of the obsolete npm `alpha` dist-tag);
   2026-07-31 (`v0.6.0` advance history safety release target);
   2026-08-04 (`v0.7.0` conditional plan assurance release target);
-  2026-08-05 (`v0.7.1` Help and Guide consistency patch target)
+  2026-08-05 (`v0.7.1` Help and Guide consistency patch target);
+  2026-08-07 (`v0.8.0` adapter platform and historical DAG beta target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -95,6 +96,15 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   structure, package-root exports, and authority remain unchanged. Leaving the
   correction unreleased would strand runtime guidance fixes in source, while
   `0.8.0` would overstate this corrective boundary.
+- Select suffix-free `0.8.0` for the additive Contract 7 package that publishes
+  the accepted `perttool/core` and `perttool/node` subpaths, read-only
+  `dag history`, `Perttool.HistoricalGraphResult.v1`, the twenty-first root
+  schema, the 122-name root and Node facade, and the declaration-identity
+  correction. `0.7.2` would understate the new command, schema, and public
+  subpath boundary. Grammar 6, CLI Contract 7, existing meanings, and
+  start-authority semantics remain unchanged, so a new Grammar or Contract
+  version would overstate it. Private LSP, VSIX, and MCP packages remain
+  excluded from the public npm artifact.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 

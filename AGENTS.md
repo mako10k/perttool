@@ -15,7 +15,7 @@ User communication is independent from the repository baseline. Unless the user 
 
 perttool has accepted its TypeScript CLI MVP and the read-only AI Agent
 Guidance Registry v1 from Issue #2 and has durably accepted suffix-free beta
-releases through `v0.7.0`.
+releases through `v0.7.1`.
 Version `0.6.0` retains Grammar 5 and CLI Contract 6 while adding repository
 history protection, `Perttool.AdvanceResult.v1`, and the narrow
 `--force-history-loss` boundary to `dag advance`. Version `0.5.5` retains
@@ -28,7 +28,7 @@ available by exact pin. Version `0.5.1` remains the initial schema-discovery
 Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
-explicit pin. npm reports `beta=latest=0.7.0` and no `alpha`. The
+explicit pin. npm reports `beta=latest=0.7.1` and no `alpha`. The
 durably accepted beta `0.7.0` source implements Grammar 1/2/3/4/5/6 reads,
 registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
@@ -562,6 +562,37 @@ a separate protocol and presentation design item. It does not change the
 active TextMate grammar, GraphView modes, assurance meanings, editor bytes,
 reseal authority, VSIX release selection, or publication state.
 
+The explicitly selected `0.8.0` additive beta release is tracked independently
+in `plans/release-0.8.0.pert`. Its six serial tasks total 22p from
+`RELEASE_080_GATE_DESIGN` through `RELEASE_080_ACCEPTANCE` and cover the
+release gate, accepted adapter-platform, historical-DAG and declaration-
+identity inputs, source preparation, one immutable candidate, separately
+authorized PUBLISH, and durable acceptance. Contract 7 `project init` created
+the exact 489-byte Grammar 6 base. The user then confirmed the exact 6,734-byte
+18-mutation candidate affecting goal and DAG scopes; it was written once with
+actor `codex`, the candidate-bound owner assertion `user`, and final digest
+`sha256:a26bb205...fadc69c`. Both precedence and `parallel-sgs` version 1
+resource makespans were initially 22p with zero delay.
+`RELEASE_080_GATE_DESIGN` is complete after accepting Requirements 21.15,
+ADR 0003, the Post-MVP 4S design slice, the release procedure, exact public
+counts, private-adapter exclusions, and focused regression coverage.
+`RELEASE_080_INPUT_READINESS` is complete after directly rechecking the
+retained complete `ADAPTER-001` and `HIST-DAG-001` plans, their final
+acceptance records, `DECL-ID-001`, the public package catalogs, compatibility,
+and no-write boundaries. Their records are
+`docs/process/0.8.0-gate-design.md` and
+`docs/process/0.8.0-input-readiness.md`. `RELEASE_080_PREPARATION` is complete
+after package, lockfile, adapter-peer, MCP, CLI, CHANGELOG, README, migration,
+tests, and goldens were aligned to `0.8.0`; zero-vulnerability install and the
+complete Node.js 22 gate passed 973 tests, 36 self-use plans, isolated adapter
+gates, temporary linking, and the 679-file public-package workflow. Its record
+is `docs/process/0.8.0-preparation.md`, and completed plan digest is
+`sha256:0cce301f...858dc457`. Complete NextResult v6 recommends and makes
+startable only `RELEASE_080_CANDIDATE`. Candidate acceptance, remote writes, publication,
+npm `latest`, public VSIX identity or publication, plan advance, and Issue
+mutation remain separate. Initial plan acceptance is recorded in
+`docs/process/0.8.0-release-plan-acceptance.md`.
+
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
 The explicitly selected project-actuals workstream is tracked independently in
@@ -865,7 +896,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `docs/adr/`: adopted architecture and runtime decisions.
 - `docs/examples/`: normative parser and analysis samples.
 - `docs/process/`: operating procedures for self-use and AI development.
-- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `help-guide-consistency.pert`, `adapter-platform.pert`, `historical-dag.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.7.1.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
+- `plans/`: current and future work for perttool. Use `mvp.pert` as the completed macro roadmap through the first beta; use `grammar.pert`, `control-plane.pert`, `operations.pert`, `recommendation.pert`, `agent-guidance.pert`, and `governance.pert` as Stage 3 preview-first detail plans; use `english-baseline.pert`, `cli-surface-reset.pert`, `project-actuals.pert`, `plan-assurance.pert`, `help-guide-consistency.pert`, `adapter-platform.pert`, `historical-dag.pert`, `advance-history-safety.pert`, `advance-clean-candidate.pert`, and `release-0.2.0.pert` through `release-0.8.0.pert` as independent post-beta workstreams; and use `scheduling-units.pert` plus completed `scheduling-units-m1.pert` through `scheduling-units-m5.pert` as the accepted milestone/detail records for `TIME-001` and `UNIT-001`.
 - `scripts/`: repository-local verification commands, including the shared disposable tracked-repository executor for repository-clean advance acceptance, isolated-package inventory checks for internal assurance compatibility and inspection modules, and isolated LSP/MCP/VSIX gates.
 - `.github/workflows/`: CI using the same entry points as local verification.
 - `src/`: TypeScript parser, validator, Core API, CLI, and help implementations.
@@ -937,7 +968,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all thirty-five self-use plans, including the selected historical-DAG and adapter-platform workstreams and `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all thirty-six self-use plans, including the selected `0.8.0` release, historical-DAG and adapter-platform workstreams, `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci
@@ -945,7 +976,7 @@ npm run check
 git diff --check
 ```
 
-For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:mcp-package`, `npm run check:vsix-shell`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:mcp-package` packs and installs the private MCP server beside the exact root package, exercises strict modern stdio, discovery, registered source/digest handling, errors, two-client parity, and no-write identity in a disposable prefix, and publishes nothing. `check:vsix-shell` builds and packages the private fourteen-file offline VSIX, exercises the bundled server and DAG assets, and uses exact `@vscode/test-electron` `3.1.0` to install, activate, replace, and uninstall it in disposable trusted and untrusted VS Code `1.101.0` profiles. It keeps the host cache outside the repository by default and does not install globally or publish. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
+For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:mcp-package`, `npm run check:vsix-shell`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:mcp-package` packs and installs the private MCP server beside the exact root package, exercises strict modern stdio, discovery, registered source/digest handling, errors, two-client parity, and no-write identity in a disposable prefix, and publishes nothing. `check:vsix-shell` builds and packages the private eighteen-file offline VSIX, exercises the bundled server and DAG assets, and uses exact `@vscode/test-electron` `3.1.0` to install, activate, replace, and uninstall it in disposable trusted and untrusted VS Code `1.101.0` profiles. It keeps the host cache outside the repository by default and does not install globally or publish. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
 
 - Even for documentation-only changes, run bootstrap checks for the local link, Markdown fences, and normative `.pert` samples.
 - For grammar changes, check valid/invalid examples, field tables, EBNF, diagnostics, and formatter contracts together.

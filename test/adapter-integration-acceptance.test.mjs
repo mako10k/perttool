@@ -143,20 +143,20 @@ test("package and dependency boundaries remain isolated and compatible", async (
   const lsp = JSON.parse(lspManifestText);
   const vscode = JSON.parse(vscodeManifestText);
   const mcp = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.7.1");
+  assert.equal(manifest.version, "0.8.0");
   assert.deepEqual(manifest.files, ["dist", "schemas", "CHANGELOG.md"]);
   assert.deepEqual(manifest.dependencies ?? {}, {});
   assert.deepEqual(manifest.workspaces, ["adapters/*"]);
   assert.equal(lsp.private, true);
   assert.deepEqual(lsp.dependencies, { "vscode-languageserver": "9.0.1" });
-  assert.equal(lsp.peerDependencies.perttool, "0.7.1");
+  assert.equal(lsp.peerDependencies.perttool, "0.8.0");
   assert.equal(vscode.private, true);
   assert.deepEqual(vscode.dependencies ?? {}, {});
   assert.equal(vscode.devDependencies["vscode-languageclient"], "9.0.1");
   assert.equal(vscode.devDependencies["@vscode/test-electron"], "3.1.0");
   assert.equal(mcp.private, true);
   assert.deepEqual(mcp.dependencies, { "@modelcontextprotocol/server": "2.0.0" });
-  assert.equal(mcp.peerDependencies.perttool, "0.7.1");
+  assert.equal(mcp.peerDependencies.perttool, "0.8.0");
 
   assert.equal(Object.keys(packageRoot).length, 122);
   assert.equal(Object.keys(nodeApi).length, 122);

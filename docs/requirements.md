@@ -2734,6 +2734,68 @@ these instructions authorizes either plan advance or Issue mutation. The
 authoritative procedure is
 [`docs/process/0.7.1-release.md`](process/0.7.1-release.md).
 
+### 21.15 Adapter platform and historical DAG beta release acceptance criteria
+
+The package that publishes the accepted `ADAPTER-001`, `HIST-DAG-001`, and
+`DECL-ID-001` inputs is suffix-free `0.8.0`. It remains Grammar 6 and CLI
+Contract 7, is published as a GitHub prerelease, and moves only npm `beta`
+during publication.
+
+1. Retain Grammar 6, CLI Contract 7, existing command meanings and option
+   spellings, all prior result and schema meanings, governance, history
+   safety, source-preserving mutation, and recommendation, temporal, and
+   plan-assurance authority.
+2. Publish the additive `perttool/core` and `perttool/node` subpaths while
+   keeping the root and Node facades key- and reference-identical at exactly
+   122 runtime exports and the portable Core at exactly 45 runtime exports.
+3. Publish the read-only `dag history` command,
+   `Perttool.HistoricalGraphResult.v1`, the twenty-first root schema, Help,
+   Guide, bounded first-parent evidence, snapshot, proved-lineage, timeline,
+   immutable source bindings, and single-checkpoint analysis.
+4. Increase the Contract 7 registry from 44 to 45 commands and the root
+   schema catalog from 20 to 21 without changing Grammar or CLI Contract
+   versions.
+5. Publish the accepted declaration-identity correction so task mutation,
+   lifecycle, and LSP definition distinguish a task from its same-ID
+   `plan_seal`, while preserving valid noncanonical source order.
+6. Keep private LSP, VSIX, and MCP workspace packages out of the public npm
+   package. Do not publish the VSIX or activate Marketplace, Open VSX, editor
+   mutation, or MCP mutation in this release.
+7. Require the retained complete pre-advance adapter and historical-DAG plans,
+   their final acceptance records, and the declaration-identity acceptance
+   record without duplicating their implementation state.
+8. Align package, both root lockfile identities, CLI/tool version, CHANGELOG,
+   README, migration guidance, release commit, annotated `v0.8.0` tag, GitHub
+   asset, and npm identity.
+9. Pass the complete Node.js 22 repository gate, Node.js 22 and 24 CI,
+   dependency audit, documentation and English checks, all self-use plans,
+   adapter package gates, temporary-link, isolated-package, and publication-
+   normalization gates.
+10. Establish before publication that `perttool@0.8.0`, local and remote
+    `v0.8.0`, and the matching GitHub Release are unused; record
+    `beta=latest=0.7.1`, confirm that `alpha` is absent, and verify protected
+    routes without displaying secrets.
+11. Generate one immutable tarball outside the worktree, distribute those
+    exact bytes through the GitHub prerelease and npm `beta`, verify isolated
+    installation from both public channels, move only `beta` to `0.8.0`, and
+    leave `latest=0.7.1` unchanged.
+12. Verify 45 commands, 21 schemas, 122 root and Node exports, 45 Core exports,
+    `dag history`, both public subpaths, declaration identity, private-adapter
+    exclusion, exact and beta installation, and the `0.7.1` rollback pin
+    before durable acceptance.
+13. Keep npm `latest` promotion, public VSIX identity and publication, both
+    input-plan advances, release-plan advance, Issue mutation, `SCM-001`, and
+    unrelated backlogs outside this release flow as separately authorized
+    operations.
+
+The user's 2026-08-07 release instruction authorizes local gate design, input
+readiness, source preparation, and candidate acceptance in dependency order.
+It does not identify an immutable future candidate. The exact release commit,
+tarball, tag, GitHub Release body and assets, npm publication, and maximum
+external writes must be presented at a later user boundary before PUBLISH.
+The authoritative procedure is
+[`docs/process/0.8.0-release.md`](process/0.8.0-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |
@@ -3030,7 +3092,7 @@ Before implementation, separate the specifications in the following order.
       persistence, and atomic transaction behavior.
     - [ ] Select grammar/CLI versions, Core/result/schema/help surfaces,
       migration, implementation plan, and acceptance gates.
-23. [ ] Implement read-only historical DAG reconstruction under
+23. [x] Implement read-only historical DAG reconstruction under
     `HIST-DAG-001` and the independent
     [`plans/historical-dag.pert`](../plans/historical-dag.pert) workstream.
     - [x] Select the first-parent endpoint, inclusive lower-boundary,
@@ -3066,7 +3128,7 @@ Before implementation, separate the specifications in the following order.
       read-only source navigation in the private bundled VSIX. The accepted
       trace is
       [`historical-vsix-acceptance.md`](process/historical-vsix-acceptance.md).
-    - [ ] Complete cross-surface no-write acceptance. Three-way ancestry still
+    - [x] Complete cross-surface no-write acceptance. Three-way ancestry still
       requires a separately accepted `SCM-001` model and later workstream.
 
 Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/validator, `dsl help syntax`, multiple-error recovery, validation-phase suppression, diagnostic limits, common indentation and UTF-16 spans for block text, the source-preserving formatter Core, formatter idempotence and AST-equivalence goldens, as well as syntax-help samples, related links, diagnostic `helpTopic`, and drift checks for parser fixtures, satisfying all grammar-acceptance items.

@@ -48,7 +48,10 @@ test("compact presentation cases and selected contract are closed", async () => 
   assert.match(contract, /Document status: Accepted 1\.0/u);
   assert.match(contract, /`residualTime` is the precedence CPM makespan/u);
   assert.match(contract, /`remainingTime` is the `parallel-sgs` version 1/u);
-  assert.match(backlog, /Status: Accepted local implementation \(2026-08-07\)/u);
+  assert.match(
+    backlog,
+    /Status: Accepted local implementation and separately authorized local\s+installation \(2026-08-07\)/u,
+  );
   assert.match(requirements, /deterministic compact `Mnn`, `Tnn`, and `Gnn`/u);
 });
 
@@ -214,13 +217,15 @@ test("Webview uses compact graph links and original-identity details", async () 
   assert.doesNotMatch(webview, /convertWithVelocity|formatDecimal|rational\(/u);
 });
 
-test("predecessor local installation evidence is exact and separately bounded", async () => {
+test("predecessor and compact local installation evidence is exact and bounded", async () => {
   const acceptance = await repositoryText(
     "docs/process/dag-compact-presentation-acceptance.md",
   );
   assert.match(acceptance, /5dff03a7438121a6090ed7610789066c97597618459e3bb9e46d4519d3aaac8e/u);
   assert.match(acceptance, /code --install-extension/u);
   assert.match(acceptance, /perttool-private\.perttool-vscode-private@0\.0\.0/u);
-  assert.match(acceptance, /installed artifact is intentionally the predecessor snapshot/u);
-  assert.match(acceptance, /local installation, release selection, publication/u);
+  assert.match(acceptance, /predecessor artifact intentionally did not contain/u);
+  assert.match(acceptance, /ac10f4dfe00d1154d282fb737b117a85fcaf7e23b6d2b412e4f7299bd8a812e6/u);
+  assert.match(acceptance, /Installed markers include\s+`compactId`, `allocateHistoricalCompactIds`, and `timeSummary`/u);
+  assert.match(acceptance, /Release selection, publication, commit, push/u);
 });

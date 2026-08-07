@@ -1,8 +1,8 @@
 # `perttool` self-use plan
 
-- Document status: Active Stage 3 / Revision 2.64
+- Document status: Active Stage 3 / Revision 2.66
 - Creation date: 2026-07-21
-- Update date: 2026-08-05
+- Update date: 2026-08-07
 - Related design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose
@@ -33,6 +33,7 @@ The initial scope is DSL grammar design and implementation. However, avoid a cyc
 | `plans/release-0.5.1.pert` | Compatible Contract 6 patch self-review, preparation, authorized PUBLISH, and durable acceptance | `.pert` document |
 | `plans/release-0.7.0.pert` | Grammar 6 and Contract 7 release gate, accepted ASSURE-001 input, preparation, separately authorized PUBLISH, and durable acceptance | `.pert` document |
 | `plans/release-0.7.1.pert` | Compatible Grammar 6 and Contract 7 Help and Guide consistency patch self-review, preparation, separately authorized PUBLISH, and durable acceptance | `.pert` document |
+| `plans/release-0.8.0.pert` | Additive adapter-platform, historical-DAG, and declaration-identity beta gate, preparation, separately authorized PUBLISH, and durable acceptance | `.pert` document |
 | `plans/help-guide-consistency.pert` | Independent active Guide, command-example, diagnostic-navigation, documentation, symmetry, and acceptance correction | `.pert` document |
 | `plans/scheduling-units.pert` | Milestone-level roadmap for temporal properties, deadline capabilities, and unit migration | `.pert` document |
 | `plans/scheduling-units-m1.pert` | Task-level detail required only to reach the SU-M1 contract | `.pert` document |
@@ -1556,6 +1557,26 @@ passed. Durable acceptance is recorded in
 zero makespans and no recommendation. Both plan advances and Issue mutation
 remain separately gated.
 
+The independent `release-0.8.0.pert` workstream selects suffix-free `0.8.0`
+for the additive adapter-platform, historical-DAG, and declaration-identity
+public-package boundary. Its six serial tasks total 22p and separate release-
+gate design, accepted-input readiness, version-bearing preparation, one
+immutable candidate, separately authorized PUBLISH, and durable acceptance.
+The exact initial plan candidate was confirmed with goal and DAG owner `user`.
+`RELEASE_080_GATE_DESIGN` accepts Requirements 21.15, ADR 0003, the Post-MVP
+4S design slice, the release procedure, 45 commands, 21 schemas, 122 root and
+Node exports, 45 Core exports, and private-adapter exclusions.
+`RELEASE_080_INPUT_READINESS` directly rechecks the retained complete adapter
+and historical plans and their final records plus `DECL-ID-001`; its completed
+plan digest is `sha256:4b3f887a...386628cf5`. Package, lockfile, CLI, adapter
+peer, tests, CHANGELOG, README, migration, and release records now identify
+`0.8.0`. Source preparation passed all 973 tests, all 36 self-use plans,
+isolated adapter gates, temporary linking, and the 679-file installed-package
+gate; its completed plan digest is `sha256:0cce301f...858dc457`. Candidate
+acceptance, external writes,
+publication, npm `latest`, VSIX publication, plan advance, and Issue mutation
+remain separately gated.
+
 The explicitly selected `adapter-platform.pert` workstream composes the
 previously separate LSP, VSIX, and MCP backlogs behind one accepted shared
 architecture boundary without making MCP depend on the editor branch. Its 16
@@ -2001,7 +2022,14 @@ Stage 1 entry evidence:
   SU-M5 detail totals 23p at `23p/1d`, with 16p precedence, 23p
   reviewer-constrained heuristic resources, 7p delay, and recommendation
   `CONTRACT4_PUBLIC_CORE`.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-five current plans
+- `v0.8.0` release-plan acceptance: Contract 7 `project init` created the
+  489-byte Grammar 6 base, and one separately confirmed goal-and-DAG atomic
+  batch produced the exact 6,734-byte, six-task, 22p plan at digest
+  `sha256:a26bb205f5eb4ee4bb6616bee2d74877c3162f26be090473d435a4515fadc69c`.
+  Both makespans are 22p with zero delay, and complete NextResult v6 makes
+  startable only `RELEASE_080_GATE_DESIGN`. Release preparation, publication,
+  npm `latest`, VSIX publication, and plan advance remain separate.
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-six current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty
