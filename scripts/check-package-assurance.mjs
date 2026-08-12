@@ -46,7 +46,11 @@ function invoke(args, expectedStatus = 0) {
 
 function invokeJson(args) {
   const result = invoke([...args, "--format=json"]);
-  assert.equal(result.stderr, "");
+  assert.ok(
+    result.stderr === "" ||
+      /^PTSEM-114 warning: duration_unit day is deprecated;/.test(result.stderr),
+    result.stderr,
+  );
   const value = JSON.parse(result.stdout);
   assert.equal(value.ok, true);
   assert.equal(value.cli_contract_version, 7);
@@ -87,7 +91,7 @@ const hash = invoke([
   "--kind",
   "contract",
 ]);
-assert.equal(hash.stderr, "");
+assert.match(hash.stderr, /^PTSEM-114 warning: duration_unit day is deprecated;/);
 assert.match(hash.stdout, /^sha256:[0-9a-f]{64}\n$/);
 assert.equal(hash.stdout, `${work.contract_hash}\n`);
 

@@ -53,7 +53,7 @@ function workflowSource() {
   return `project ASSURANCE_CLI_ACCEPTANCE:
   version 5
   title "Assurance CLI acceptance"
-  duration_unit day
+  duration_unit point
   finish DONE
   dag_owner user
 
@@ -75,25 +75,25 @@ milestone DONE:
 
 task A START -> A_READY:
   title "Plan A"
-  duration 1d
+  duration 1p
   status planned
   priority 100
 
 task B A_READY -> B_READY:
   title "Plan B"
-  duration 1d
+  duration 1p
   status planned
   priority 90
 
 task C START -> C_READY:
   title "Plan C"
-  duration 1d
+  duration 1p
   status planned
   priority 80
 
 task D C_READY -> DONE:
   title "Plan D"
-  duration 1d
+  duration 1p
   status planned
   priority 70
 

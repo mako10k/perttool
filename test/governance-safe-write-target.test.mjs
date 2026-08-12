@@ -34,7 +34,7 @@ function source({
     "  version 4",
     '  title "governed"',
     "  as_of 2026-07-27",
-    "  duration_unit day",
+    "  duration_unit point",
     "  finish FINISH",
     "  goal_owner user",
     "  goal_delegates [llm]",
@@ -52,7 +52,7 @@ function source({
       ? [
           "task BASE START -> FINISH:",
           '  title "base"',
-          "  duration 1d",
+          "  duration 1p",
           "",
         ]
       : []),
@@ -318,7 +318,7 @@ test("batch out writes and advance out conflicts use one guarded adapter", async
           id: "WORK",
           from: "START",
           to: "FINISH",
-          task: { title: "work", duration: "1d" },
+          task: { title: "work", duration: "1p" },
         },
       ],
     },
@@ -354,7 +354,7 @@ test("batch out writes and advance out conflicts use one guarded adapter", async
     work: [
       "task WORK START -> FINISH:",
       '  title "work"',
-      "  duration 1d",
+      "  duration 1p",
       "  status done",
       "",
     ],

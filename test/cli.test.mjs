@@ -52,7 +52,7 @@ test("document check text writes data to stdout", () => {
   const result = run(["document", "check", "docs/examples/minimal.pert", "--color", "never"]);
   assert.equal(result.status, 0);
   assert.match(result.stdout, /^OK docs\/examples\/minimal\.pert project=MINIMAL /);
-  assert.equal(result.stderr, "");
+  assert.match(result.stderr, /^PTSEM-114 warning: duration_unit day is deprecated;/);
 });
 
 test("document check JSON is stable and contains no ANSI escape", () => {
@@ -69,7 +69,7 @@ test("document check JSON is stable and contains no ANSI escape", () => {
     tasks: 5,
     gates: 5,
     errors: 0,
-    warnings: 0,
+    warnings: 1,
   });
 });
 
@@ -225,7 +225,7 @@ test("dag analyze text keeps precedence and heuristic resource sections distinct
     "--color=never",
   ]);
   assert.equal(result.status, 0);
-  assert.equal(result.stderr, "");
+  assert.match(result.stderr, /^PTSEM-114 warning: duration_unit day is deprecated;/);
   for (const section of [
     "QUALIFIERS",
     "PRECEDENCE",
@@ -383,7 +383,7 @@ test("dag next text uses stable operational sections and explanations", () => {
     "--color=never",
   ]);
   assert.equal(result.status, 0);
-  assert.equal(result.stderr, "");
+  assert.match(result.stderr, /^PTSEM-114 warning: duration_unit day is deprecated;/);
   const sections = [
     "ACTIVE",
     "RUNNABLE NOW",
@@ -615,7 +615,9 @@ test("invalid capacity override is a usage or analysis error at the correct boun
     "--format=json",
   ]);
   assert.equal(unknown.status, 1);
-  assert.equal(JSON.parse(unknown.stdout).diagnostics[0].code, "PTSEM-206");
+  assert.ok(
+    JSON.parse(unknown.stdout).diagnostics.some(({ code }) => code === "PTSEM-206"),
+  );
 });
 
 test("analysis help documents exact arithmetic and capacity what-if", () => {
@@ -676,7 +678,7 @@ test("dag render exposes Core-identical Mermaid in text and JSON", () => {
   ]);
   assert.equal(text.status, 0, text.stderr);
   assert.equal(text.stdout, expected.artifact);
-  assert.equal(text.stderr, "");
+  assert.match(text.stderr, /^PTSEM-114 warning: duration_unit day is deprecated;/);
 
   const jsonResult = run([
     "dag", "render", minimalPath, "--to=mermaid", "--format=json",
@@ -1355,7 +1357,7 @@ test("batch apply supports request or document stdin but rejects a shared stdin"
   });
   assert.equal(nested.status, 1);
   const nestedJson = JSON.parse(nested.stdout);
-  assert.equal(nestedJson.diagnostics[0].code, "PTMUT-301");
+  assert.ok(nestedJson.diagnostics.some(({ code }) => code === "PTMUT-301"));
   assert.equal(nestedJson.updated_text, null);
 
   const nonBatch = run([
@@ -1363,7 +1365,7 @@ test("batch apply supports request or document stdin but rejects a shared stdin"
   ], { input: JSON.stringify({ kind: "task.finish", id: "WORK" }) });
   assert.equal(nonBatch.status, 1);
   const nonBatchJson = JSON.parse(nonBatch.stdout);
-  assert.equal(nonBatchJson.diagnostics[0].code, "PTMUT-301");
+  assert.ok(nonBatchJson.diagnostics.some(({ code }) => code === "PTMUT-301"));
   assert.equal(nonBatchJson.updated_text, null);
 });
 
@@ -1434,7 +1436,10 @@ test("mutation CLI exposes unused owner assertions and strict mode prevents writ
   assert.deepEqual(previewJson.governance.accepted_by_owner, ["user"]);
   assert.deepEqual(
     previewJson.diagnostics.map(({ code, severity }) => ({ code, severity })),
-    [{ code: "PTGOV-103", severity: "warning" }],
+    [
+      { code: "PTSEM-114", severity: "warning" },
+      { code: "PTGOV-103", severity: "warning" },
+    ],
   );
 
   const directory = mkdtempSync(
@@ -1456,7 +1461,7 @@ test("mutation CLI exposes unused owner assertions and strict mode prevents writ
   const strictJson = JSON.parse(strict.stdout);
   assert.equal(strictJson.ok, false);
   assert.equal(strictJson.write.written, false);
-  assert.equal(strictJson.diagnostics[0].code, "PTGOV-103");
+  assert.ok(strictJson.diagnostics.some(({ code }) => code === "PTGOV-103"));
   assert.equal(readFileSync(target, "utf8"), before);
 
   const allowed = run([
@@ -1468,7 +1473,7 @@ test("mutation CLI exposes unused owner assertions and strict mode prevents writ
   const allowedJson = JSON.parse(allowed.stdout);
   assert.equal(allowedJson.ok, true);
   assert.equal(allowedJson.write.written, true);
-  assert.equal(allowedJson.diagnostics[0].code, "PTGOV-103");
+  assert.ok(allowedJson.diagnostics.some(({ code }) => code === "PTGOV-103"));
   assert.match(readFileSync(target, "utf8"), /title "updated"/);
 });
 
@@ -1490,7 +1495,10 @@ test("governed preview exposes owner assertions and strict mode retains the cand
   assert.deepEqual(previewJson.governance.affected_scopes, ["dag"]);
   assert.deepEqual(
     previewJson.diagnostics.map(({ code, severity }) => ({ code, severity })),
-    [{ code: "PTGOV-104", severity: "warning" }],
+    [
+      { code: "PTSEM-114", severity: "warning" },
+      { code: "PTGOV-104", severity: "warning" },
+    ],
   );
 
   const strict = run([...args.slice(0, -1), "--warnings-as-errors", "--format=json"]);
@@ -1500,7 +1508,7 @@ test("governed preview exposes owner assertions and strict mode retains the cand
   assert.match(strictJson.updated_text, /gate APPROVAL NOW -> DONE:/);
   assert.equal(strictJson.governance.applicable, true);
   assert.equal(strictJson.governance.intent, "preview");
-  assert.equal(strictJson.diagnostics[0].code, "PTGOV-104");
+  assert.ok(strictJson.diagnostics.some(({ code }) => code === "PTGOV-104"));
 });
 
 test("entity and batch mutation commands share the safe-write path", (t) => {
@@ -1534,7 +1542,7 @@ test("entity and batch mutation commands share the safe-write path", (t) => {
   assert.equal(milestone.stdout, "");
   assert.match(
     milestone.stderr,
-    new RegExp(`^WRITE milestone\\.set mode=in_place target=${milestonePath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} digest=sha256:[0-9a-f]{64} written=true\\n$`),
+    new RegExp(`^WRITE milestone\\.set mode=in_place target=${milestonePath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} digest=sha256:[0-9a-f]{64} written=true\\nPTSEM-114 warning:`),
   );
   assert.match(readFileSync(milestonePath, "utf8"), /title "released"/);
 

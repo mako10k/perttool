@@ -512,7 +512,7 @@ const commandDefinitions: readonly CommandDefinition[] = [
       valueOption("as-of", { valueType: "date-or-date-time", dsl: "as_of" }),
       valueOption("duration-unit", {
         valueType: "duration-unit",
-        enumValues: ["day", "hour", "point"],
+        enumValues: ["point", "day", "hour"],
         dsl: "duration_unit",
       }),
       valueOption("velocity", { valueType: "velocity", dsl: "velocity" }),
@@ -534,7 +534,7 @@ const commandDefinitions: readonly CommandDefinition[] = [
     textHelp: [
       "Usage: perttool project set <file> [field options]",
       "  [--id <id>] [--version <integer>] [--title <text>] [--description <text>]",
-      "  [--as-of <date-or-date-time>] [--duration-unit day|hour|point]",
+      "  [--as-of <date-or-date-time>] [--duration-unit point|day|hour]",
       "  [--velocity <velocity>] [--finish <milestone-id>]",
       "  [--critical-epsilon <duration>] [--target-duration <duration>]",
       "  [--clear description|as_of|velocity|critical_epsilon|target_duration]...",

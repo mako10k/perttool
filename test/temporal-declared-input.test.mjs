@@ -88,14 +88,17 @@ test("TUI-004 projects exact declared inputs and finish deadline", async () => {
   assert.equal(checked.ok, true);
   assert.equal(checked.documentId, "CALENDAR_OFFSET");
   assert.equal(checked.grammarVersion, 2);
-  assert.deepEqual(checked.diagnostics, []);
+  assert.deepEqual(
+    checked.diagnostics.map(({ code, severity }) => [code, severity]),
+    [["PTSEM-114", "warning"]],
+  );
   assert.deepEqual(checked.summary, {
     resources: 0,
     milestones: 2,
     tasks: 1,
     gates: 0,
     errors: 0,
-    warnings: 0,
+    warnings: 1,
   });
   assert.deepEqual(checked.temporalInputs, {
     anchor: dateTime(
@@ -175,7 +178,7 @@ test("TUI-004 projects exact declared inputs and finish deadline", async () => {
       criticalEpsilon: null,
       targetDuration: null,
     },
-    diagnostics: [],
+    diagnostics: checked.diagnostics,
     diagnosticsTruncated: false,
   });
   assert.deepEqual(

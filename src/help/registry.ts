@@ -95,7 +95,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "required",
         title: "Required fields",
-        body: "title, duration_unit, and finish are required. Point documents also require a positive velocity.",
+        body: "title, duration_unit, and finish are required. New projects default to point estimates. Velocity is optional and adds a separate day/hour forecast.",
       },
     ],
     detail: [
@@ -108,7 +108,7 @@ const nodes: readonly HelpNode[] = [
     syntax: [
       "project ID:",
       "  title \"...\"",
-      "  duration_unit day|hour|point",
+      "  duration_unit point|day|hour",
       "  finish MILESTONE_ID",
     ],
     examples: [
@@ -338,7 +338,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "forecast",
         title: "Velocity forecast",
-        body: "duration_unit point requires velocity. PERT values are calculated in p and converted values are returned separately as a velocity forecast.",
+        body: "duration_unit point is the default. PERT values are calculated in p; when velocity is present, converted values are returned separately as a day/hour forecast. day and hour units are deprecated and emit PTSEM-114 with project migrate-unit guidance.",
       },
     ],
     detail: [
@@ -641,7 +641,7 @@ const nodes: readonly HelpNode[] = [
       },
     ],
     syntax: [
-      "perttool project init PROJECT_ID --title TITLE --duration-unit UNIT --initial-milestone ID --initial-milestone-title TITLE --finish ID [--out PATH]",
+      "perttool project init PROJECT_ID --title TITLE [--duration-unit point|day|hour] --initial-milestone ID --initial-milestone-title TITLE --finish ID [--out PATH]",
       "perttool project show FILE [--format text|json]",
       "perttool project set FILE [--velocity VELOCITY]... [--write [--expect-digest DIGEST] | --out PATH]",
       "perttool document format FILE [--check] [--diff] [--write [--expect-digest DIGEST] | --out PATH]",

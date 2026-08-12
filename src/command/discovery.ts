@@ -352,8 +352,8 @@ function projectInitDescriptor(): ProjectedCommandDescriptor {
       }),
       targetValueOption("duration-unit", {
         valueType: "duration-unit",
-        required: true,
-        enumValues: ["day", "hour", "point"],
+        defaultValue: "point",
+        enumValues: ["point", "day", "hour"],
         dsl: "duration_unit",
       }),
       targetValueOption("initial-milestone", {
@@ -425,12 +425,12 @@ function projectInitDescriptor(): ProjectedCommandDescriptor {
     examples: Object.freeze([
       Object.freeze({
         id: "preview",
-        invocation: "perttool project init SAMPLE --title \"Sample project\" --duration-unit day --initial-milestone START --initial-milestone-title \"Project started\" --finish START",
+        invocation: "perttool project init SAMPLE --title \"Sample project\" --initial-milestone START --initial-milestone-title \"Project started\" --finish START",
         summary: "Preview the complete smallest valid project document.",
       }),
       Object.freeze({
         id: "out",
-        invocation: "perttool project init SAMPLE --title \"Sample project\" --duration-unit day --initial-milestone START --initial-milestone-title \"Project started\" --finish START --out plan.pert",
+        invocation: "perttool project init SAMPLE --title \"Sample project\" --initial-milestone START --initial-milestone-title \"Project started\" --finish START --out plan.pert",
         summary: "Create a new project document without overwriting a path.",
       }),
     ]),

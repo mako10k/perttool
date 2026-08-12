@@ -22,20 +22,19 @@ import {
   withProjectInitOutput,
 } from "../dist/index.js";
 
-const dayRequest = {
+const pointRequest = {
   projectId: "SAMPLE",
   title: "Sample project",
-  durationUnit: "day",
   initialMilestone: "START",
   initialMilestoneTitle: "Project started",
   finish: "START",
 };
 
-const dayCandidate = `${GOVERNANCE_DIRECT_EDIT_WARNING}
+const pointCandidate = `${GOVERNANCE_DIRECT_EDIT_WARNING}
 project SAMPLE:
   version 1
   title "Sample project"
-  duration_unit day
+  duration_unit point
   finish START
 
 milestone START:
@@ -50,7 +49,7 @@ function workspace(t) {
 }
 
 test("project init returns the deterministic smallest valid document", () => {
-  const result = planProjectInit(dayRequest);
+  const result = planProjectInit(pointRequest);
 
   assert.equal(result.ok, true);
   assert.equal(result.schemaVersion, "Perttool.InitResult.v1");
@@ -59,12 +58,12 @@ test("project init returns the deterministic smallest valid document", () => {
   assert.equal(result.documentId, "SAMPLE");
   assert.equal(result.source, null);
   assert.equal(result.sourceDigest, null);
-  assert.equal(result.candidateText, dayCandidate);
+  assert.equal(result.candidateText, pointCandidate);
   assert.match(result.candidateDigest, /^sha256:[0-9a-f]{64}$/);
   assert.deepEqual(result.edits, [{
     startOffset: 0,
     endOffset: 0,
-    replacement: dayCandidate,
+    replacement: pointCandidate,
   }]);
   assert.deepEqual(result.write, {
     mode: "preview",
@@ -73,9 +72,9 @@ test("project init returns the deterministic smallest valid document", () => {
   });
   assert.deepEqual(result.diagnostics, []);
   assert.equal(result.diagnosticsTruncated, false);
-  assert.equal(renderProjectInitResult(result), dayCandidate);
+  assert.equal(renderProjectInitResult(result), pointCandidate);
 
-  const checked = checkDocument(dayCandidate);
+  const checked = checkDocument(pointCandidate);
   assert.equal(checked.ok, true);
   assert.deepEqual(checked.summary, {
     resources: 0,
@@ -89,7 +88,7 @@ test("project init returns the deterministic smallest valid document", () => {
 
 test("project init emits optional fields in grammar order and preserves string meaning", () => {
   const result = planProjectInit({
-    ...dayRequest,
+    ...pointRequest,
     title: "Quoted \"project\"\nnext",
     version: 1,
     asOf: "2026-07-24T09:30:00+09:00",
@@ -104,7 +103,7 @@ project SAMPLE:
   version 1
   title "Quoted \\"project\\"\\nnext"
   as_of 2026-07-24T09:30:00+09:00
-  duration_unit day
+  duration_unit point
   velocity 10p/2d
   finish START
 
@@ -116,22 +115,50 @@ milestone START:
   assert.equal(checkDocument(result.candidateText).ok, true);
 });
 
+test("project init retains deprecated time units with point migration guidance", () => {
+  for (const durationUnit of ["day", "hour"]) {
+    const result = planProjectInit({ ...pointRequest, durationUnit });
+    assert.equal(result.ok, true);
+    assert.equal(result.diagnostics.length, 1);
+    assert.deepEqual(
+      {
+        code: result.diagnostics[0]?.code,
+        severity: result.diagnostics[0]?.severity,
+        helpTopic: result.diagnostics[0]?.helpTopic,
+        data: result.diagnostics[0]?.data,
+      },
+      {
+        code: "PTSEM-114",
+        severity: "warning",
+        helpTopic: "editing.unit-migration",
+        data: {
+          deprecated_unit: durationUnit,
+          replacement_unit: "point",
+          migration_command:
+            "perttool project migrate-unit <file> --to-unit point --replacement-velocity <points>p/<period>d|h",
+        },
+      },
+    );
+    assert.match(result.diagnostics[0]?.message ?? "", /is deprecated/);
+  }
+});
+
 test("project init fails closed for invalid requests and invalid candidates", () => {
   const cases = [
     {
-      request: { ...dayRequest, durationUnit: "point" },
-      message: /point durationUnit requires velocity/,
+      request: { ...pointRequest, durationUnit: "week" },
+      message: /durationUnit must be day, hour, or point/,
     },
     {
-      request: { ...dayRequest, finish: "END" },
+      request: { ...pointRequest, finish: "END" },
       message: /finish must equal initialMilestone/,
     },
     {
-      request: { ...dayRequest, template: "kanban" },
+      request: { ...pointRequest, template: "kanban" },
       message: /unsupported fields/,
     },
     {
-      request: { ...dayRequest, projectId: "not valid" },
+      request: { ...pointRequest, projectId: "not valid" },
       message: undefined,
     },
   ];
@@ -152,7 +179,7 @@ test("project init fails closed for invalid requests and invalid candidates", ()
 });
 
 test("project init JSON projection is complete and byte deterministic", () => {
-  const result = planProjectInit(dayRequest);
+  const result = planProjectInit(pointRequest);
   const json = projectInitResultToJson(result);
 
   assert.deepEqual(Object.keys(json), [
@@ -174,7 +201,7 @@ test("project init JSON projection is complete and byte deterministic", () => {
   assert.deepEqual(json.edits, [{
     start_offset: 0,
     end_offset: 0,
-    replacement: dayCandidate,
+    replacement: pointCandidate,
   }]);
   assert.deepEqual(json.write, {
     mode: "preview",
@@ -183,7 +210,7 @@ test("project init JSON projection is complete and byte deterministic", () => {
   });
   assert.equal(
     serializeProjectInitResult(result),
-    serializeProjectInitResult(planProjectInit(dayRequest)),
+    serializeProjectInitResult(planProjectInit(pointRequest)),
   );
   assert.ok(serializeProjectInitResult(result).endsWith("\n"));
 });
@@ -191,7 +218,7 @@ test("project init JSON projection is complete and byte deterministic", () => {
 test("project init composes with exclusive safe output and records the write", async (t) => {
   const directory = workspace(t);
   const output = path.join(directory, "plan.pert");
-  const result = planProjectInit(dayRequest);
+  const result = planProjectInit(pointRequest);
   assert.equal(result.ok, true);
 
   const write = await createDocumentFile(output, result.candidateText);
@@ -201,7 +228,7 @@ test("project init composes with exclusive safe output and records the write", a
     target: output,
     written: true,
   });
-  assert.equal(readFileSync(output, "utf8"), dayCandidate);
+  assert.equal(readFileSync(output, "utf8"), pointCandidate);
   assert.equal((await readDocumentFile(output)).digest, result.candidateDigest);
   assert.throws(
     () => withProjectInitOutput(result, {

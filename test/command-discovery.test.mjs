@@ -259,7 +259,7 @@ test("project init discovery covers the complete public Contract 7 target", () =
     ),
     [
       ["title", true, null, []],
-      ["duration-unit", true, null, []],
+      ["duration-unit", false, "point", []],
       ["initial-milestone", true, null, []],
       ["initial-milestone-title", true, null, []],
       ["finish", true, null, []],

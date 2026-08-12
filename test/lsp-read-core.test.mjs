@@ -177,7 +177,12 @@ test("incremental synchronization publishes exact versioned diagnostics and clos
   const source = await repositoryText("docs/examples/minimal.pert");
   const { server, diagnostics, fatal } = createServer();
   open(server, source);
-  assert.deepEqual(diagnostics.at(-1), { uri, version: 1, diagnostics: [] });
+  assert.equal(diagnostics.at(-1).uri, uri);
+  assert.equal(diagnostics.at(-1).version, 1);
+  assert.deepEqual(
+    diagnostics.at(-1).diagnostics.map(({ code, severity }) => [code, severity]),
+    [["PTSEM-114", 2]],
+  );
 
   server.didChange({
     textDocument: { uri, version: 3 },
@@ -195,7 +200,10 @@ test("incremental synchronization publishes exact versioned diagnostics and clos
   assert.equal(server.stopped, false);
   assert.deepEqual(fatal, []);
   assert.equal(diagnostics.at(-1).version, 3);
-  assert.equal(diagnostics.at(-1).diagnostics.length, 0);
+  assert.deepEqual(
+    diagnostics.at(-1).diagnostics.map(({ code }) => code),
+    ["PTSEM-114"],
+  );
   const symbols = await server.documentSymbol({ textDocument: { uri } });
   assert.equal(symbols[0].name, "RENAMED");
 

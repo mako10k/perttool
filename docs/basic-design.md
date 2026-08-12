@@ -437,9 +437,10 @@ This prevents criticality decisions and tie breaks from depending on runtime flo
 
 The MVP uses a single duration unit within each document.
 
-- `duration_unit day` uses `d`.
-- `duration_unit hour` uses `h`.
-- `duration_unit point` uses `p` and requires `velocity <points>p/<period>d|h`.
+- `duration_unit point` is the default and uses `p`; optional `velocity <points>p/<period>d|h` adds a separate forecast.
+- `duration_unit day` uses `d` and is a deprecated compatible input.
+- `duration_unit hour` uses `h` and is a deprecated compatible input.
+- Valid day/hour documents emit `PTSEM-114` with `project migrate-unit --to-unit point` guidance.
 - Mixing units is a semantic error.
 - Points and days/hours are converted as exact rationals using project-wide velocity.
 - Converted values are kept separately from baseline PERT values as a velocity forecast.

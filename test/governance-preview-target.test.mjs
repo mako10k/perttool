@@ -32,7 +32,7 @@ function source({
     "  version 4",
     '  title "governed"',
     "  as_of 2026-07-27",
-    "  duration_unit day",
+    "  duration_unit point",
     "  finish FINISH",
     `  goal_owner ${goalOwner}`,
     `  goal_delegates ${goalDelegates}`,
@@ -50,7 +50,7 @@ function source({
       ? [
           "task BASE START -> FINISH:",
           '  title "base"',
-          "  duration 1d",
+          "  duration 1p",
           "",
         ]
       : []),
@@ -70,7 +70,7 @@ function legacySource() {
     "project LEGACY:",
     "  version 1",
     '  title "legacy"',
-    "  duration_unit day",
+    "  duration_unit point",
     "  finish FINISH",
     "",
     "milestone START:",
@@ -82,7 +82,7 @@ function legacySource() {
     "",
     "task BASE START -> FINISH:",
     '  title "base"',
-    "  duration 1d",
+    "  duration 1p",
     "",
   ].join("\n");
 }
@@ -189,7 +189,7 @@ test("owner confirmation and direct delegate authority compose across one batch"
         id: "WORK",
         from: "START",
         to: "FINISH",
-        task: { title: "work", duration: "1d" },
+        task: { title: "work", duration: "1p" },
       },
     ],
   };
@@ -361,7 +361,7 @@ test("advance uses the same actual-change classifier on Grammar 4", () => {
     work: [
       "task WORK START -> FINISH:",
       '  title "work"',
-      "  duration 1d",
+      "  duration 1p",
       "  status done",
       "",
     ],

@@ -128,7 +128,10 @@ test("TUE-012 projects the complete exact UnitMigrationResult v3 outcome", async
     target: null,
     written: false,
   });
-  assert.deepEqual(result.diagnostics, []);
+  assert.deepEqual(
+    result.diagnostics.map(({ code, severity }) => [code, severity]),
+    [["PTSEM-114", "warning"]],
+  );
   assert.equal(result.diagnosticsTruncated, false);
 });
 

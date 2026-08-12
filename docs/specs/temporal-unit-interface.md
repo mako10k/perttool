@@ -722,6 +722,7 @@ they must not advertise unavailable commands or fields.
 | Code | Meaning | Guide topic |
 | --- | --- | --- |
 | `PTSEM-112` | A v2/v3 `deadline` or `not_before` exists without `project.as_of` | `syntax.temporal` |
+| `PTSEM-114` | A valid project uses deprecated `duration_unit day|hour`; migrate to `point` | `editing.unit-migration` |
 
 Calendar and deadline unavailability in a valid document is result data, not
 a diagnostic or exit 1. Invalid literals retain `PTDSL-008`.

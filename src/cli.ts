@@ -576,7 +576,7 @@ async function runProjectInit(args: readonly string[]): Promise<number> {
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
   const durationUnit = enumOption<"day" | "hour" | "point">(
-    requiredOption(parsed, "duration-unit"),
+    parsed.values.get("duration-unit") ?? "point",
     "duration-unit",
     new Set(["day", "hour", "point"]),
   )!;

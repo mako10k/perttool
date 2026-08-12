@@ -513,14 +513,16 @@ Optional fields:
 - `description`: a multiline description
 - `critical_epsilon`: the tolerance for including near-critical work in critical display under exact Rational calculation
 - `target_duration`: the target duration from the current boundary to `finish`
-- `velocity`: the project-wide ratio for converting between Points and days/hours; required when `duration_unit point`
+- `velocity`: the optional project-wide ratio for converting between Points and days/hours
 
 Constraints:
 
 - A task's duration/estimate, `critical_epsilon`, and `target_duration` use the project's base unit.
+- New projects default to `duration_unit point`. `day` and `hour` remain compatible deprecated inputs and emit `PTSEM-114` with `project migrate-unit --to-unit point` guidance.
 - `velocity` expresses a positive Point quantity and a positive period as `<points>p/<period>d` or `<points>p/<period>h`.
 - When specifying velocity with `duration_unit day|hour`, the period suffix matches the project's base unit.
 - With `duration_unit point`, the period suffix of velocity determines whether conversion is to `day` or `hour`.
+- Without velocity, Point analysis remains available and the separate velocity forecast is unavailable.
 - A velocity-derived value is explicitly named `velocity_forecast` and does not replace a declared PERT value.
 - Velocity does not imply a relationship between `1d` and `1h`, business days, or working hours.
 - A document declaring any task or milestone temporal property requires

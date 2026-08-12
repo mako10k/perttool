@@ -108,7 +108,7 @@ test("Grammar 6 and CLI Contract 7 activate plan assurance atomically", async ()
     ]);
     assert.equal(hash.status, 0, hash.stderr);
     assert.equal(hash.stdout, `${work.contractHash}\n`);
-    assert.equal(hash.stderr, "");
+    assert.match(hash.stderr, /^PTSEM-114 warning: duration_unit day is deprecated;/);
 
     const show = run([
       "plan-assurance",

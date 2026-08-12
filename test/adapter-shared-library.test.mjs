@@ -101,7 +101,12 @@ test("Core source and reusable functions retain package-root identity", async ()
   const source = await repositoryText("docs/examples/minimal.pert");
   const parsed = core.parseDocument(source);
   assert.equal(parsed.diagnostics.length, 0);
-  assert.equal(core.validateDocument(parsed.document, parsed.diagnostics).length, 0);
+  assert.deepEqual(
+    core.validateDocument(parsed.document, parsed.diagnostics).map(
+      ({ code, severity }) => [code, severity],
+    ),
+    [["PTSEM-114", "warning"]],
+  );
   const formatted = core.formatDocument(source);
   assert.equal(formatted.ok, true);
   assert.equal(formatted.formattedText, source);

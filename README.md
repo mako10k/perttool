@@ -151,14 +151,15 @@ The protocol-neutral state contract is the
 ## Plan files
 
 A `.pert` file is the source of truth and is intended to remain directly
-readable. This temporal plan has one one-day task:
+readable. This temporal plan has one one-day forecast from a one-Point task:
 
 ```text
 project EXAMPLE:
   version 2
   title "Example plan"
   as_of 2026-07-26
-  duration_unit day
+  duration_unit point
+  velocity 1p/1d
   finish DONE
 
 milestone NOW:
@@ -171,7 +172,7 @@ milestone DONE:
 
 task WORK NOW -> DONE:
   title "Do the work"
-  duration 1d
+  duration 1p
   not_before 2026-07-26
   deadline 2026-07-27
 ```
@@ -185,10 +186,13 @@ perttool dag analyze PLAN.pert
 perttool dag next PLAN.pert --format json
 ```
 
-Task duration can use deterministic `day`, `hour`, or relative `point` units.
-Point plans declare a project-wide velocity such as `20p/10d`. Analysis keeps
-the exact point result and reports the time conversion separately as a velocity
-forecast. Grammar version 3 also accepts an exact Fraction such as `1/3d`;
+Task estimates default to relative `point` units. A Point plan may declare a
+project-wide velocity such as `20p/10d`; analysis then keeps the exact Point
+result and reports the time conversion separately as a velocity forecast.
+Without velocity, Point analysis remains available without a time forecast.
+The compatible `day` and `hour` units are deprecated and emit `PTSEM-114` with
+`project migrate-unit --to-unit point` guidance. Grammar version 3 also accepts
+an exact Fraction such as `1/3p`;
 versions 1 and 2 continue to accept Decimal duration tokens. Grammar version 5
 adds explicit task-owned work events and the `suspended` lifecycle state.
 Grammar version 6 adds conditional plan assurance records and the separate
@@ -204,14 +208,12 @@ smallest valid document and then create a new file exclusively:
 ```sh
 perttool project init EXAMPLE \
   --title "Example plan" \
-  --duration-unit day \
   --initial-milestone NOW \
   --initial-milestone-title "Current frontier" \
   --finish NOW
 
 perttool project init EXAMPLE \
   --title "Example plan" \
-  --duration-unit day \
   --initial-milestone NOW \
   --initial-milestone-title "Current frontier" \
   --finish NOW \

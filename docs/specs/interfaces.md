@@ -391,13 +391,18 @@ perttool mutation apply <file> --request <json-file|->
 perttool project set <file>
   [--id <id>] [--version <integer>]
   [--title <text>] [--description <text>] [--as-of <date-or-date-time>]
-  [--duration-unit day|hour|point] [--velocity <velocity>]
+  [--duration-unit point|day|hour] [--velocity <velocity>]
   [--finish <milestone-id>]
   [--critical-epsilon <duration>] [--target-duration <duration>]
   [--clear description|as_of|velocity|critical_epsilon|target_duration]...
 ```
 
 At least one change option is required. A set option for the same field as `--clear` cannot be specified at the same time. Because the project declaration is exactly one, it takes no target-ID operand. Recheck the final candidate, including `duration_unit`, velocity, all durations, and finish references. A project-wide unit change that simultaneously requires related task changes includes `project.set` and other atomic mutations in a `mutation apply` batch.
+
+`project init` defaults `--duration-unit` to `point`. Point analysis does not
+require velocity; velocity adds only the separate day/hour forecast. Valid
+`day` and `hour` documents remain readable but emit `PTSEM-114` with the
+`project migrate-unit --to-unit point` recovery path.
 
 ### 7.3 task
 

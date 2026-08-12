@@ -458,6 +458,32 @@ function validateFieldConstraints(
       ) {
         const expectedSuffix =
           durationUnit.value === "day" ? "d" : durationUnit.value === "hour" ? "h" : "p";
+        if (durationUnit.value === "day" || durationUnit.value === "hour") {
+          diagnostics.push(
+            makeDiagnostic(
+              "PTSEM-114",
+              "warning",
+              `duration_unit ${durationUnit.value} is deprecated; migrate estimates to points with perttool project migrate-unit <file> --to-unit point${
+                velocityField === undefined
+                  ? " --replacement-velocity <points>p/<period>d|h"
+                  : ""
+              }`,
+              durationUnit.valueSpan,
+              "editing.unit-migration",
+              declaration.id,
+              undefined,
+              {
+                deprecated_unit: durationUnit.value,
+                replacement_unit: "point",
+                migration_command: `perttool project migrate-unit <file> --to-unit point${
+                  velocityField === undefined
+                    ? " --replacement-velocity <points>p/<period>d|h"
+                    : ""
+                }`,
+              },
+            ),
+          );
+        }
         for (const candidate of document.declarations) {
           for (const field of candidate.fields) {
             const values = field.children ?? [field];
@@ -484,18 +510,6 @@ function validateFieldConstraints(
               }
             }
           }
-        }
-        if (durationUnit.value === "point" && velocityField === undefined) {
-          diagnostics.push(
-            makeDiagnostic(
-              "PTSEM-111",
-              "error",
-              "duration_unit point requires velocity",
-              durationUnit.valueSpan,
-              "syntax.velocity",
-              declaration.id,
-            ),
-          );
         }
         if (velocity !== undefined) {
           if (isZeroDuration(velocity.points) || isZeroDuration(velocity.period)) {
@@ -1860,6 +1874,11 @@ function validateDocumentWithProfile(
   if (!hasErrors(diagnostics)) validateGraph(document, diagnostics, profile);
   if (!hasErrors(diagnostics) && profile.assuranceRecords) {
     validatePlanAssuranceSource(document, diagnostics);
+  }
+  if (hasErrors(diagnostics)) {
+    return sortDiagnostics(
+      diagnostics.filter(({ code }) => code !== "PTSEM-114"),
+    );
   }
   return sortDiagnostics(diagnostics);
 }

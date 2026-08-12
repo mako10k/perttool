@@ -282,12 +282,15 @@ test("point duration and project velocity parse as exact structured values", asy
   );
 });
 
-test("point projects and time projects enforce velocity constraints", () => {
+test("point projects allow optional velocity and time projects enforce velocity constraints", () => {
   const document = (durationUnit, velocity, duration) =>
     `project VELOCITY_RULE:\n  title "velocity"\n  duration_unit ${durationUnit}\n${velocity === null ? "" : `  velocity ${velocity}\n`}  finish DONE\n\nmilestone NOW:\n  title "now"\n  state reached\n\nmilestone DONE:\n  title "done"\n\ntask WORK NOW -> DONE:\n  title "work"\n  duration ${duration}\n`;
 
+  const pointWithoutVelocity = checkDocument(document("point", null, "1p"));
+  assert.equal(pointWithoutVelocity.ok, true);
+  assert.deepEqual(pointWithoutVelocity.diagnostics, []);
+
   for (const [text, code] of [
-    [document("point", null, "1p"), "PTSEM-111"],
     [document("point", "0p/1d", "1p"), "PTSEM-111"],
     [document("day", "10p/8h", "1d"), "PTSEM-111"],
   ]) {

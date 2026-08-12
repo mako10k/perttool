@@ -215,7 +215,10 @@ test("active Contract 5 formatter retains Grammar 2", async () => {
     source,
     TARGET_GRAMMAR_2_CAPABILITY,
   ).formattedText);
-  assert.deepEqual(active.diagnostics, []);
+  assert.deepEqual(
+    active.diagnostics.map(({ code, severity }) => [code, severity]),
+    [["PTSEM-114", "warning"]],
+  );
 });
 
 test("target formatter exposes no candidate for invalid temporal source", () => {

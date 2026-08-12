@@ -686,6 +686,7 @@ An analyzable Graph must not be generated from a document with parse or field-va
 | `PTSEM-111` | Invalid velocity constraint | `syntax.velocity` |
 | `PTSEM-112` | Grammar v2/v3 temporal field without `project.as_of` | `syntax.temporal` |
 | `PTSEM-113` | Duplicate principal in one governance delegate list | `syntax.project` |
+| `PTSEM-114` | Deprecated `duration_unit day|hour`; migrate to Point estimates | `editing.unit-migration` |
 
 Graph diagnostic codes are fixed by the [Graph Semantics specification](graph-semantics.md).
 

@@ -115,7 +115,7 @@ test("0.4.0 readiness observes the atomic public Contract 5 boundary", async () 
   );
   assert.equal(preview.governance.intent, "preview");
   assert.equal(preview.governance.writeAuthorized, false);
-  assert.deepEqual(preview.diagnostics, []);
+  assert.deepEqual(preview.diagnostics.map(({ code }) => code), ["PTSEM-114"]);
 
   const denied = planMutation(governed, mutation, {
     governance: { intent: "persist", actor: "codex" },
@@ -123,7 +123,7 @@ test("0.4.0 readiness observes the atomic public Contract 5 boundary", async () 
   assert.equal(denied.ok, false);
   assert.deepEqual(
     denied.diagnostics.map(({ code }) => code),
-    ["PTGOV-101"],
+    ["PTSEM-114", "PTGOV-101"],
   );
   assert.equal(denied.governance.writeAuthorized, false);
 
@@ -136,7 +136,7 @@ test("0.4.0 readiness observes the atomic public Contract 5 boundary", async () 
   });
   assert.equal(authorized.ok, true);
   assert.equal(authorized.governance.writeAuthorized, true);
-  assert.deepEqual(authorized.diagnostics, []);
+  assert.deepEqual(authorized.diagnostics.map(({ code }) => code), ["PTSEM-114"]);
 
   assert.match(GOVERNANCE_DIRECT_EDIT_WARNING, /direct DSL editing bypasses/);
   for (const identity of [

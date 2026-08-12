@@ -24,7 +24,7 @@ export { GOVERNANCE_DIRECT_EDIT_WARNING };
 export interface TargetGovernanceProjectInitRequest {
   readonly projectId: string;
   readonly title: string;
-  readonly durationUnit: ProjectInitDurationUnit;
+  readonly durationUnit?: ProjectInitDurationUnit;
   readonly initialMilestone: string;
   readonly initialMilestoneTitle: string;
   readonly finish: string;
@@ -111,6 +111,7 @@ function requestError(value: unknown): string | undefined {
     }
   }
   if (
+    request["durationUnit"] !== undefined &&
     request["durationUnit"] !== "day" &&
     request["durationUnit"] !== "hour" &&
     request["durationUnit"] !== "point"
@@ -159,9 +160,6 @@ function requestError(value: unknown): string | undefined {
   if (request["finish"] !== request["initialMilestone"]) {
     return "project init finish must equal initialMilestone in initialization version 1";
   }
-  if (request["durationUnit"] === "point" && request["velocity"] === undefined) {
-    return "project init with point durationUnit requires velocity";
-  }
   const governance = hasGovernance(request);
   if (
     governance &&
@@ -206,7 +204,7 @@ function renderCandidate(request: TargetGovernanceProjectInitRequest): string {
     `  version ${version}`,
     `  title ${JSON.stringify(request.title)}`,
     ...(request.asOf === undefined ? [] : [`  as_of ${request.asOf}`]),
-    `  duration_unit ${request.durationUnit}`,
+    `  duration_unit ${request.durationUnit ?? "point"}`,
     ...(request.velocity === undefined ? [] : [`  velocity ${request.velocity}`]),
     `  finish ${request.finish}`,
     ...(request.goalOwner === undefined

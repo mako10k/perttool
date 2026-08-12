@@ -116,9 +116,10 @@ test("project set updates and clears project fields with local edits", () => {
       "target_duration",
     ],
   });
-  assert.equal(cleared.ok, false);
-  assert.equal(cleared.updatedText, null);
-  assert.ok(cleared.diagnostics.some(({ code }) => code === "PTSEM-111"));
+  assert.equal(cleared.ok, true);
+  assert.ok(cleared.updatedText);
+  assert.doesNotMatch(cleared.updatedText, /^  velocity /m);
+  assert.deepEqual(cleared.diagnostics, []);
 
   const clearDayOptionals = planMutation(dayPlan.replace(
     "  duration_unit day",

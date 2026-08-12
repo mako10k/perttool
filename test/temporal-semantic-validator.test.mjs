@@ -72,7 +72,7 @@ task WORK not_before -> deadline:
     TARGET_GRAMMAR_2_CAPABILITY,
   );
   assert.equal(result.ok, true);
-  assert.deepEqual(result.diagnostics, []);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTSEM-114"]);
   assert.equal(result.validatedDocument?.grammarVersion, 1);
   assert.equal(Object.isFrozen(result.validatedDocument), true);
 });
@@ -192,7 +192,7 @@ test("TUE-006 mixed temporal kinds remain a valid source boundary", async () => 
     TARGET_GRAMMAR_2_CAPABILITY,
   );
   assert.equal(result.ok, true);
-  assert.deepEqual(result.diagnostics, []);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTSEM-114"]);
   assert.equal(result.validatedDocument?.grammarVersion, 2);
   assert.equal(field(result, "MIXED_KIND", "as_of").value.kind, "date");
   assert.equal(
@@ -225,7 +225,7 @@ task WORK START -> FINISH:
     TARGET_GRAMMAR_2_CAPABILITY,
   );
   assert.equal(result.ok, true);
-  assert.deepEqual(result.diagnostics, []);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTSEM-114"]);
   assert.deepEqual(field(result, "DATE_HOUR", "as_of").value, {
     kind: "date",
     sourceText: "2026-07-25",
@@ -246,7 +246,7 @@ test("TUE-011 retains temporal history without inventing actual time", async () 
     TARGET_GRAMMAR_2_CAPABILITY,
   );
   assert.equal(result.ok, true);
-  assert.deepEqual(result.diagnostics, []);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTSEM-114"]);
   assert.equal(field(result, "HISTORICAL", "status").value, "done");
   assert.equal(
     field(result, "HISTORICAL", "not_before").value.sourceText,
@@ -297,7 +297,7 @@ task WORK START -> FINISH:
     TARGET_GRAMMAR_2_CAPABILITY,
   );
   assert.equal(result.ok, true);
-  assert.deepEqual(result.diagnostics, []);
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTSEM-114"]);
   assert.equal(field(result, "WORK", "status").value, "active");
   assert.equal(
     field(result, "WORK", "not_before").value.sourceText,
@@ -356,7 +356,7 @@ task WORK START -> FINISH:
       TARGET_GRAMMAR_2_CAPABILITY,
     );
     assert.equal(result.ok, true);
-    assert.deepEqual(result.diagnostics, []);
+    assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTSEM-114"]);
   } finally {
     globalThis.Date = OriginalDate;
   }
