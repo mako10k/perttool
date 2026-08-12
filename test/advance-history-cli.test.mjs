@@ -14,6 +14,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { planAdvance } from "../dist/index.js";
+import { planTargetPlanAssuranceMutation } from "../dist/assurance/mutation.js";
 import {
   prepareAdvanceHistory,
   withAdvanceHistoryRace,
@@ -21,6 +22,7 @@ import {
 import {
   recheckAdvanceHistoryBaseline,
 } from "../dist/history/git-probe.js";
+import { TARGET_GRAMMAR_6_CAPABILITY } from "../dist/parser/document-parser.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -56,6 +58,79 @@ const baseSource = [
   "  duration 1p",
   "",
 ].join("\n");
+
+function terminalReceiptSource() {
+  const base = [
+    "project RECEIPT_EOF:",
+    "  version 5",
+    '  title "receipt EOF regression"',
+    "  as_of 2026-08-12",
+    "  duration_unit point",
+    "  velocity 2p/1d",
+    "  finish M2",
+    "  dag_owner user",
+    "",
+    "milestone M0:",
+    '  title "start"',
+    "  state reached",
+    "",
+    "milestone M1:",
+    '  title "frontier"',
+    "",
+    "milestone M2:",
+    '  title "finish"',
+    "",
+    "task A M0 -> M1:",
+    '  title "producer"',
+    "  duration 1p",
+    "  status done",
+    "",
+    "task B M1 -> M2:",
+    '  title "consumer"',
+    "  duration 1p",
+    "  status planned",
+    "",
+  ].join("\n");
+  const sealed = planTargetPlanAssuranceMutation(
+    base,
+    { kind: "plan_assurance.seal", reason: "Accepted regression basis" },
+    TARGET_GRAMMAR_6_CAPABILITY,
+    { governance: { intent: "preview" } },
+  );
+  assert.equal(sealed.ok, true);
+  const outcome = planTargetPlanAssuranceMutation(
+    sealed.updatedText,
+    {
+      kind: "task_outcome.add",
+      id: "OUT_A",
+      taskId: "A",
+      status: "conformant",
+      reason: "Accepted producer outcome",
+    },
+    TARGET_GRAMMAR_6_CAPABILITY,
+    { governance: { intent: "preview" } },
+  );
+  assert.equal(outcome.ok, true);
+  return [
+    outcome.updatedText.trimEnd(),
+    "",
+    "work_event WE_A_START:",
+    "  model 1",
+    "  task A",
+    "  kind start",
+    "  occurred_at 2026-08-12T09:00:00+09:00",
+    "  planned_value 1p",
+    "",
+    "work_event WE_A_FINISH:",
+    "  model 1",
+    "  task A",
+    "  kind finish",
+    "  occurred_at 2026-08-12T10:00:00+09:00",
+    "  active_time 1h",
+    "  effort 1ph",
+    "",
+  ].join("\n");
+}
 
 function git(repository, ...args) {
   const result = spawnSync("git", ["-C", repository, ...args], {
@@ -311,6 +386,31 @@ test("AHS-004 and AHS-007 tracked and retained-dirty writes pass without Git mut
     assert.equal(repeated.history_guard.status, "not_applicable");
     assert.equal(repeated.history_guard.cause, "no_change");
   }
+});
+
+test("Issue 9 EOF receipt candidate is identical across preview, out, and write", (t) => {
+  const { directory, pathname } = temporaryPlan(t, {
+    source: terminalReceiptSource(),
+  });
+  const preview = runJson(["dag", "advance", pathname]);
+  assert.equal(preview.ok, true);
+  assert.match(preview.updated_text, /assurance_receipt AR_A:/);
+  assert.doesNotMatch(preview.updated_text, /work_event WE_A_/);
+
+  const output = path.join(directory, "candidate.pert");
+  const separate = runJson([
+    "dag", "advance", pathname, "--out", output, "--actor", "user",
+  ]);
+  assert.equal(separate.ok, true);
+  assert.equal(separate.updated_text, preview.updated_text);
+  assert.equal(readFileSync(output, "utf8"), preview.updated_text);
+
+  const written = runJson([
+    "dag", "advance", pathname, "--write", "--actor", "user",
+  ]);
+  assert.equal(written.ok, true);
+  assert.equal(written.updated_text, preview.updated_text);
+  assert.equal(readFileSync(pathname, "utf8"), preview.updated_text);
 });
 
 test("AHS-005, AHS-006, and AHS-007 destructive overlap blocks while retained staged syntax passes", (t) => {
