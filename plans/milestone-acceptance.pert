@@ -1,6 +1,6 @@
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
 project MILESTONE_ACCEPTANCE:
-  version 6
+  version 7
   title "Milestone outcome acceptance"
   description "Implement MILESTONE-ACCEPT-001 as an independent Grammar 7 and CLI Contract 8 workstream. Separate AoA graph closure from milestone outcome acceptance, require committed migration provenance, add complete milestone criterion-set revisions and caller-asserted evidence receipts, govern all writes through the existing DAG owner scope, block canonical advance atomically until every affected milestone is accepted, preserve prior revisions through Git, expose one public semantic owner, and complete installed cross-surface acceptance. Downstream task-assurance invalidation, strict authentication, external verification services, partial advance, release selection, publication, remote writes, Issue mutation, and plan advance remain separate decisions."
   as_of 2026-08-12
@@ -10,6 +10,17 @@ project MILESTONE_ACCEPTANCE:
   goal_owner user
   dag_owner user
 
+
+milestone_acceptance_migration GRAMMAR_7_BASELINE:
+  model 1
+  repository git:sha1:6e0bd91915411dd8becb3a85037fcafbbea81ef9:index:39c97be36c1a7372ec3966c45a1956f2a0238805
+  path "plans/milestone-acceptance.pert"
+  object_format sha1
+  head 6e0bd91915411dd8becb3a85037fcafbbea81ef9
+  blob 39c97be36c1a7372ec3966c45a1956f2a0238805
+  source_digest sha256:87af54d632a52134f35cc7ad5fbbee0552cf51033e6ee3f1da6c17c59ce249eb
+  candidate_digest sha256:da17cf449b0dbd1e6d8e4d86908a3ada36f2cd41590750f0b82c1499f450d8ce
+  grandfathered MILESTONE_ACCEPTANCE_SELECTED
 milestone MILESTONE_ACCEPTANCE_SELECTED:
   title "MILESTONE-ACCEPT-001 selected"
   state reached
@@ -211,3 +222,136 @@ task MILESTONE_ACCEPTANCE_ACCEPTANCE MILESTONE_ACCEPTANCE_INTEGRATED -> MILESTON
     HISTORY_SURFACE 1
     ADAPTER_SURFACE 1
     PACKAGE_SURFACE 1
+
+milestone_criterion_set MAC_CONTRACT_R1:
+  milestone MILESTONE_ACCEPTANCE_CONTRACT_ACCEPTED
+  revision R1
+  commitment sha256:78da000e579e14d30cd2486da109319867336b829d46abe4e04da275ed9ca67e
+  criterion ACCEPTED required artifact "Accepted contract and closed cases"
+
+milestone_criterion_set MAC_SOURCE_R1:
+  milestone MILESTONE_ACCEPTANCE_SOURCE_READY
+  revision R1
+  commitment sha256:d9f7fa24fdf2c4974936b44b2dd26ddccf19a4866ca00583d08ea9824ad1936a
+  criterion ACCEPTED required artifact "Accepted Grammar 7 source and migration"
+
+milestone_criterion_set MAC_CORE_R1:
+  milestone MILESTONE_ACCEPTANCE_CORE_READY
+  revision R1
+  commitment sha256:4d86e4d66c6d18f67c3b9006688f040b705ab749d5f7a5f765dce6a9827d0b8f
+  criterion ACCEPTED required artifact "Accepted milestone acceptance evaluator"
+
+milestone_criterion_set MAC_MUTATION_R1:
+  milestone MILESTONE_ACCEPTANCE_MUTATION_READY
+  revision R1
+  commitment sha256:2810482c403f6b9d58c88ecb2076f1ef30a562f3198a3a96054b73f2eed3f0df
+  criterion ACCEPTED required artifact "Accepted governed acceptance mutations"
+
+milestone_criterion_set MAC_ADVANCE_R1:
+  milestone MILESTONE_ACCEPTANCE_ADVANCE_READY
+  revision R1
+  commitment sha256:bc163411c97476b3263c548d89ff0bce5f796c897d4373a877015986673ae033
+  criterion ACCEPTED required artifact "Accepted all-or-nothing advance composition"
+
+milestone_criterion_set MAC_PUBLIC_R1:
+  milestone MILESTONE_ACCEPTANCE_PUBLIC_READY
+  revision R1
+  commitment sha256:635c9387c79b437ddfaa8bc292abc15cd9e3c674fbc23eefb7b6398d516b3066
+  criterion ACCEPTED required artifact "Accepted Contract 8 public boundary"
+
+milestone_criterion_set MAC_HISTORY_R1:
+  milestone MILESTONE_ACCEPTANCE_HISTORY_READY
+  revision R1
+  commitment sha256:c1e679469e23780ab7411c28b0974436e96c8f71320cedd35a0791b5257eb3cf
+  criterion ACCEPTED required artifact "Accepted historical reconstruction"
+
+milestone_acceptance_receipt MAC_CONTRACT_ACCEPTED:
+  model 1
+  set MAC_CONTRACT_R1
+  set_commitment sha256:78da000e579e14d30cd2486da109319867336b829d46abe4e04da275ed9ca67e
+  criterion ACCEPTED
+  criterion_commitment sha256:dd0467c761d6b97ca991fc4c7641f2083c9e2fd23217c8a13180cfbf5c02953e
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-contract-acceptance.md"
+  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
+  verifier codex
+  occurred_at 2026-08-12T13:03:35Z
+
+milestone_acceptance_receipt MAC_SOURCE_ACCEPTED:
+  model 1
+  set MAC_SOURCE_R1
+  set_commitment sha256:d9f7fa24fdf2c4974936b44b2dd26ddccf19a4866ca00583d08ea9824ad1936a
+  criterion ACCEPTED
+  criterion_commitment sha256:129a5615827cbe6227b3e51cdb1b0c0f02b733a79fc957691e3aae1bbcb8950e
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-source-acceptance.md"
+  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
+  verifier codex
+  occurred_at 2026-08-12T13:03:35Z
+
+milestone_acceptance_receipt MAC_CORE_ACCEPTED:
+  model 1
+  set MAC_CORE_R1
+  set_commitment sha256:4d86e4d66c6d18f67c3b9006688f040b705ab749d5f7a5f765dce6a9827d0b8f
+  criterion ACCEPTED
+  criterion_commitment sha256:7d4574ee15964337b072138dfadf624e7d42a150ceacc3bc822670a701d5da9f
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-core-acceptance.md"
+  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
+  verifier codex
+  occurred_at 2026-08-12T13:03:35Z
+
+milestone_acceptance_receipt MAC_MUTATION_ACCEPTED:
+  model 1
+  set MAC_MUTATION_R1
+  set_commitment sha256:2810482c403f6b9d58c88ecb2076f1ef30a562f3198a3a96054b73f2eed3f0df
+  criterion ACCEPTED
+  criterion_commitment sha256:1e0617f8b0b64e1210329b00d087d4dedc7fe01bb2df503460e14b5372a3eff0
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-mutation-acceptance.md"
+  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
+  verifier codex
+  occurred_at 2026-08-12T13:03:35Z
+
+milestone_acceptance_receipt MAC_ADVANCE_ACCEPTED:
+  model 1
+  set MAC_ADVANCE_R1
+  set_commitment sha256:bc163411c97476b3263c548d89ff0bce5f796c897d4373a877015986673ae033
+  criterion ACCEPTED
+  criterion_commitment sha256:82c9e08efebccf56cbdb2d8b4616c7d749118dbf4519f0992c87c3d348ec590b
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-advance-acceptance.md"
+  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
+  verifier codex
+  occurred_at 2026-08-12T13:03:35Z
+
+milestone_acceptance_receipt MAC_PUBLIC_ACCEPTED:
+  model 1
+  set MAC_PUBLIC_R1
+  set_commitment sha256:635c9387c79b437ddfaa8bc292abc15cd9e3c674fbc23eefb7b6398d516b3066
+  criterion ACCEPTED
+  criterion_commitment sha256:39178a08a95ff6465591a017804db77a80a56e138ab0ffb4efb7c2014cb38e09
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-public-contract-acceptance.md"
+  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
+  verifier codex
+  occurred_at 2026-08-12T13:03:35Z
+
+milestone_acceptance_receipt MAC_HISTORY_ACCEPTED:
+  model 1
+  set MAC_HISTORY_R1
+  set_commitment sha256:c1e679469e23780ab7411c28b0974436e96c8f71320cedd35a0791b5257eb3cf
+  criterion ACCEPTED
+  criterion_commitment sha256:af75c8175dabc338e2ed85866490b225e65137c9603ca2b7c6e800f7b71a500f
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-history-acceptance.md"
+  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
+  verifier codex
+  occurred_at 2026-08-12T13:03:35Z
