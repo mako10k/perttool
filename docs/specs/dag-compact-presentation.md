@@ -54,6 +54,14 @@ compact ID is never accepted as a source-navigation or task-authority input.
 
 ## 4. Exact time meanings
 
+The Webview retains exact numerator, denominator, unit, and display values in
+its bound result and exposes the unrounded value as a tooltip. Its primary
+time presentation is intentionally compact: values of at least 24 hours use
+days rounded to at most two decimal places (`1.34d`), shorter values use
+minute-rounded `h:mm` (`1:23`), and Point values retain the `p` suffix. This
+24-hour display convention is presentation-only and does not change analysis,
+velocity, calendar, LSP, CLI, or JSON semantics.
+
 The current private Application projection owns these meanings:
 
 - `residualTime` is the precedence CPM makespan of the validated residual DAG;

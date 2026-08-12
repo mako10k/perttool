@@ -41,7 +41,7 @@
       "id": "DCP-007",
       "depends_on": ["DCP-006"],
       "boundary": "Point conversion",
-      "expected": "exact declared velocity or explicit unavailable"
+      "expected": "exact declared velocity or explicit unavailable; day hundredths and minute-precision presentation"
     },
     {
       "id": "DCP-008",

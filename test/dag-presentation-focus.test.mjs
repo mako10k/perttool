@@ -109,6 +109,42 @@ test("DAG presentation cases select one bounded engine and default", async () =>
   assert.ok(graph.edge({ v: "NOW", w: "DONE", name: "WORK" }).points.length >= 2);
 });
 
+test("VSIX time presentation uses day hundredths and minute precision", async () => {
+  const bindings = await import(
+    `${pathToFileURL(path.join(root, "adapters/vscode/dist/bindings.mjs")).href}?time`
+  );
+  const exact = (numerator, denominator, unit, display) => ({
+    numerator,
+    denominator,
+    unit,
+    display,
+  });
+  assert.equal(
+    bindings.formatPresentationDuration(exact("617", "500", "day", "1.234")),
+    "1.23d",
+  );
+  assert.equal(
+    bindings.formatPresentationDuration(exact("2839", "500", "hour", "5.678")),
+    "5:41",
+  );
+  assert.equal(
+    bindings.formatPresentationDuration(exact("83", "60", "hour", "1.383333")),
+    "1:23",
+  );
+  assert.equal(
+    bindings.formatPresentationDuration(exact("804", "25", "hour", "32.16")),
+    "1.34d",
+  );
+  assert.equal(
+    bindings.formatPresentationDuration(exact("1", "2", "day", "0.5")),
+    "12:00",
+  );
+  assert.equal(
+    bindings.formatPresentationDuration(exact("5", "2", "point", "2.5")),
+    "2.5p",
+  );
+});
+
 test("Application focus reuses exact NextResult v6 authority", async () => {
   const source = await repositoryText("docs/examples/minimal.pert");
   const result = inspectEditorDagFocus(source, digestText(source));

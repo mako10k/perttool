@@ -2,6 +2,7 @@ import { Graph, layout, type Point } from "@dagrejs/dagre";
 import {
   allocateHistoricalCompactIds,
   editorProtocolModelVersion,
+  formatPresentationDuration,
   parseDagFocusResult,
   parseGraphViewResult,
   type GraphViewAnalysisMode,
@@ -222,6 +223,12 @@ function svgElement<K extends keyof SVGElementTagNameMap>(
 }
 
 function exactText(value: GraphViewExactValueV1 | null): string {
+  return value === null
+    ? "unavailable"
+    : formatPresentationDuration(value);
+}
+
+function exactTitle(value: GraphViewExactValueV1 | null): string {
   return value === null
     ? "unavailable"
     : `${value.display} ${value.unit} (${value.numerator}/${value.denominator})`;
@@ -1034,14 +1041,10 @@ function focusButtons(
           : null;
         const time = taskTime === null
           ? ""
-          : ` · ${taskTime.taskTime.display}${
-              taskTime.taskTime.unit === "point" ? "p" :
-                taskTime.taskTime.unit === "hour" ? "h" : "d"
-            }${taskTime.pointForecast === null
+          : ` · ${formatPresentationDuration(taskTime.taskTime)}${
+            taskTime.pointForecast === null
               ? ""
-              : ` → ${taskTime.pointForecast.display}${
-                  taskTime.pointForecast.unit === "hour" ? "h" : "d"
-                }`}`;
+              : ` → ${formatPresentationDuration(taskTime.pointForecast)}`}`;
         item.append(revealButton(
           result,
           edge.kind,
@@ -1063,6 +1066,18 @@ function historicalExactText(value: unknown): string {
   const denominator = value["denominator"];
   return typeof display === "string" && typeof unit === "string" &&
       typeof numerator === "string" && typeof denominator === "string"
+    ? formatPresentationDuration({ display, unit, numerator, denominator })
+    : "unavailable";
+}
+
+function historicalExactTitle(value: unknown): string {
+  if (!record(value)) return "unavailable";
+  const display = value["display"];
+  const unit = value["unit"];
+  const numerator = value["numerator"];
+  const denominator = value["denominator"];
+  return typeof display === "string" && typeof unit === "string" &&
+      typeof numerator === "string" && typeof denominator === "string"
     ? `${display} ${unit} (${numerator}/${denominator})`
     : "unavailable";
 }
@@ -1074,11 +1089,12 @@ function renderTimeSummary(
 ): void {
   timeSummary.replaceChildren();
   const list = document.createElement("dl");
-  const add = (term: string, value: string): void => {
+  const add = (term: string, value: string, exact: string | null = null): void => {
     const label = document.createElement("dt");
     label.textContent = term;
     const description = document.createElement("dd");
     description.textContent = value;
+    if (exact !== null) description.title = `Exact: ${exact}`;
     list.append(label, description);
   };
   if (scopeValue === "current") {
@@ -1095,12 +1111,18 @@ function renderTimeSummary(
         `${exactText(summary.residualTime)}${conversion.residualTime === null
           ? ""
           : `; ${exactText(conversion.residualTime)} by velocity`}`,
+        `${exactTitle(summary.residualTime)}${conversion.residualTime === null
+          ? ""
+          : `; ${exactTitle(conversion.residualTime)} by velocity`}`,
       );
       add(
         "Remaining",
         `${exactText(summary.remainingTime)}${conversion.remainingTime === null
           ? ""
           : `; ${exactText(conversion.remainingTime)} by velocity`}`,
+        `${exactTitle(summary.remainingTime)}${conversion.remainingTime === null
+          ? ""
+          : `; ${exactTitle(conversion.remainingTime)} by velocity`}`,
       );
       if (conversion.status === "unavailable") {
         add("Point conversion", conversion.reason ?? "Unavailable");
@@ -1114,8 +1136,16 @@ function renderTimeSummary(
     const resource = record(analysis?.["resource"])
       ? analysis["resource"]
       : null;
-    add("Residual", historicalExactText(precedence?.["makespan"]));
-    add("Remaining", historicalExactText(resource?.["makespan"]));
+    add(
+      "Residual",
+      historicalExactText(precedence?.["makespan"]),
+      historicalExactTitle(precedence?.["makespan"]),
+    );
+    add(
+      "Remaining",
+      historicalExactText(resource?.["makespan"]),
+      historicalExactTitle(resource?.["makespan"]),
+    );
     if (analysis?.["duration_unit"] === "point") {
       add(
         "Point conversion",

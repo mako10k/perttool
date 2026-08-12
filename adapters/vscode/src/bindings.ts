@@ -68,6 +68,58 @@ export interface GraphViewExactValueV1 {
   readonly display: string;
 }
 
+function roundPositiveRatio(numerator: bigint, denominator: bigint): bigint {
+  return (numerator * 2n + denominator) / (denominator * 2n);
+}
+
+function formatDayRatio(
+  numerator: bigint,
+  denominator: bigint,
+): string {
+  const negative = numerator < 0n;
+  const magnitude = negative ? -numerator : numerator;
+  const hundredths = roundPositiveRatio(magnitude * 100n, denominator);
+  const whole = hundredths / 100n;
+  const fraction = (hundredths % 100n).toString().padStart(2, "0")
+    .replace(/0+$/u, "");
+  return `${negative ? "-" : ""}${whole}${fraction.length === 0 ? "" : `.${fraction}`}d`;
+}
+
+function formatHourMinuteRatio(
+  minuteNumerator: bigint,
+  denominator: bigint,
+): string {
+  const negative = minuteNumerator < 0n;
+  const magnitude = negative ? -minuteNumerator : minuteNumerator;
+  const minutes = roundPositiveRatio(magnitude, denominator);
+  const hours = minutes / 60n;
+  const minutePart = (minutes % 60n).toString().padStart(2, "0");
+  return `${negative ? "-" : ""}${hours}:${minutePart}`;
+}
+
+export function formatPresentationDuration(
+  value: GraphViewExactValueV1,
+): string {
+  if (!/^-?[0-9]+$/u.test(value.numerator) || !/^[1-9][0-9]*$/u.test(value.denominator)) {
+    return `${value.display} ${value.unit}`;
+  }
+  const numerator = BigInt(value.numerator);
+  const denominator = BigInt(value.denominator);
+  if (value.unit === "day") {
+    return numerator >= denominator
+      ? formatDayRatio(numerator, denominator)
+      : formatHourMinuteRatio(numerator * 1_440n, denominator);
+  }
+  if (value.unit === "hour") {
+    return numerator >= denominator * 24n
+      ? formatDayRatio(numerator, denominator * 24n)
+      : formatHourMinuteRatio(numerator * 60n, denominator);
+  }
+  return value.unit === "point"
+    ? `${value.display}p`
+    : `${value.display} ${value.unit}`;
+}
+
 export interface GraphViewDiagnosticV1 {
   readonly code: string;
   readonly severity: "error" | "warning" | "info";

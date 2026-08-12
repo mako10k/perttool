@@ -10,8 +10,9 @@ historical graph result through a restrictive local Webview. Exact
 critical path, and startable tasks prominent. Exact bundled Dagre layout,
 zoom, fit, native scrolling, and pointer or keyboard navigation remain
 presentation-only. Compact `Mnn`, `Tnn`, and `Gnn` graph links open accessible
-original-identity details, while exact residual, resource-remaining, and task
-time summaries retain qualified Point forecasts. In a trusted local file
+original-identity details, while residual, resource-remaining, and task time
+summaries use compact day-hundredth or minute-precision display and retain
+exact values in tooltips plus qualified Point forecasts. In a trusted local file
 workspace, selecting history loads
 the HEAD first-parent lineage with complete analysis; endpoint/lower-boundary,
 snapshot/proved-lineage/timeline, and four-mode analysis controls remain under
