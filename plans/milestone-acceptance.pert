@@ -11,19 +11,6 @@ project MILESTONE_ACCEPTANCE:
   dag_owner user
 
 
-milestone_acceptance_migration GRAMMAR_7_BASELINE:
-  model 1
-  repository git:sha1:6e0bd91915411dd8becb3a85037fcafbbea81ef9:index:39c97be36c1a7372ec3966c45a1956f2a0238805
-  path "plans/milestone-acceptance.pert"
-  object_format sha1
-  head 6e0bd91915411dd8becb3a85037fcafbbea81ef9
-  blob 39c97be36c1a7372ec3966c45a1956f2a0238805
-  source_digest sha256:87af54d632a52134f35cc7ad5fbbee0552cf51033e6ee3f1da6c17c59ce249eb
-  candidate_digest sha256:da17cf449b0dbd1e6d8e4d86908a3ada36f2cd41590750f0b82c1499f450d8ce
-  grandfathered MILESTONE_ACCEPTANCE_SELECTED
-milestone MILESTONE_ACCEPTANCE_SELECTED:
-  title "MILESTONE-ACCEPT-001 selected"
-  state reached
 
 resource DEVELOPERS:
   title "Implementation capacity"
@@ -75,26 +62,18 @@ resource PACKAGE_SURFACE:
   description "Own public inventory, private adapter exclusion, temporary link, isolated installation, and supported-host checks."
   capacity 1
 
-milestone MILESTONE_ACCEPTANCE_CONTRACT_ACCEPTED:
-  title "Milestone acceptance contract accepted"
 
-milestone MILESTONE_ACCEPTANCE_SOURCE_READY:
-  title "Grammar 7 source and migration ready"
 
-milestone MILESTONE_ACCEPTANCE_CORE_READY:
-  title "Milestone acceptance evaluator ready"
 
-milestone MILESTONE_ACCEPTANCE_MUTATION_READY:
-  title "Governed criterion and receipt mutations ready"
 
-milestone MILESTONE_ACCEPTANCE_ADVANCE_READY:
-  title "Acceptance-aware canonical advance ready"
 
 milestone MILESTONE_ACCEPTANCE_PUBLIC_READY:
   title "Grammar 7 and Contract 8 public surface ready"
+  state reached
 
 milestone MILESTONE_ACCEPTANCE_HISTORY_READY:
   title "Migration and historical reconstruction ready"
+  state reached
 
 milestone MILESTONE_ACCEPTANCE_ADAPTER_READY:
   title "Read-only adapter projections ready"
@@ -105,91 +84,12 @@ milestone MILESTONE_ACCEPTANCE_INTEGRATED:
 milestone MILESTONE_ACCEPTANCE_ACCEPTED:
   title "Milestone outcome acceptance accepted"
 
-task MILESTONE_ACCEPTANCE_CONTRACT MILESTONE_ACCEPTANCE_SELECTED -> MILESTONE_ACCEPTANCE_CONTRACT_ACCEPTED:
-  title "Accept the milestone outcome acceptance contract"
-  description "Fix Grammar 7 and CLI Contract 8, closure and acceptance axes, complete criterion-set revisions, required and optional aggregation, receipt identity and caller assertions, DAG-owner governance, committed migration baseline, provisional and canonical advance states, diagnostics, results, compatibility, and a dependency-ordered machine acceptance matrix without changing runtime behavior."
-  duration 6p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    SOURCE_MODEL 1
-    ACCEPTANCE_MODEL 1
-    ADVANCE_SURFACE 1
-    PUBLIC_SURFACE 1
 
-task MILESTONE_ACCEPTANCE_SOURCE MILESTONE_ACCEPTANCE_CONTRACT_ACCEPTED -> MILESTONE_ACCEPTANCE_SOURCE_READY:
-  title "Implement Grammar 7 source and committed migration"
-  description "Implement identity-checked Grammar 7 parsing, validation, formatting and source spans for milestone criterion-set revisions and owned receipts. Add preparation-only migration from an exact committed HEAD and stage-0 source with a repository/path/commit/blob/digest-bound grandfather baseline, no inferred criterion or evidence, atomic whole-set replacement, and Git-retained deletion of the prior revision and receipts."
-  duration 8p
-  status done
-  priority 95
-  requires:
-    DEVELOPERS 1
-    SOURCE_MODEL 1
-    ACCEPTANCE_MODEL 1
-    HISTORY_SURFACE 1
 
-task MILESTONE_ACCEPTANCE_CORE MILESTONE_ACCEPTANCE_SOURCE_READY -> MILESTONE_ACCEPTANCE_CORE_READY:
-  title "Implement the pure milestone acceptance evaluator"
-  description "Derive exact criterion and milestone states from one current set revision and its commitment-bound receipts. Require at least one required criterion, keep optional observations non-blocking, return deterministic blocking IDs, honor only the migration-bound grandfather set, normalize self-asserted UTC Z times without clock authority, and keep task plan assurance unchanged in model 1."
-  duration 6p
-  status done
-  priority 90
-  requires:
-    DEVELOPERS 1
-    ACCEPTANCE_MODEL 1
 
-task MILESTONE_ACCEPTANCE_MUTATION MILESTONE_ACCEPTANCE_CORE_READY -> MILESTONE_ACCEPTANCE_MUTATION_READY:
-  title "Implement governed criterion and receipt mutations"
-  description "Add preview-first replace, verify, fail, unavailable, revoke, waive and show operations. Bind every candidate to the pre-change DAG owner scope, keep actor, verifier and owner assertions distinct and unauthenticated, make exact replay idempotent, reject conflicting identity reuse, remove the old revision and owned receipts atomically, and retain the existing digest, warning, symlink, race and safe-write controls."
-  duration 8p
-  status done
-  priority 85
-  requires:
-    DEVELOPERS 1
-    ACCEPTANCE_MODEL 1
-    MUTATION_SURFACE 1
 
-task MILESTONE_ACCEPTANCE_ADVANCE MILESTONE_ACCEPTANCE_MUTATION_READY -> MILESTONE_ACCEPTANCE_ADVANCE_READY:
-  title "Compose all-or-nothing acceptance-aware advance"
-  description "Produce a pure provisional plan, affected milestone set, candidate and diff before Git inspection. Block the entire operation with explanatory criterion IDs when any affected non-grandfathered closure-derived milestone is not accepted; provide no partial or general-force path; promote only a passed provisional plan to the canonical candidate and then compose plan assurance, governance, history safety, races and persistence in order."
-  duration 8p
-  status done
-  priority 80
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    ACCEPTANCE_MODEL 1
-    ADVANCE_SURFACE 1
-    HISTORY_SURFACE 1
 
-task MILESTONE_ACCEPTANCE_PUBLIC MILESTONE_ACCEPTANCE_ADVANCE_READY -> MILESTONE_ACCEPTANCE_PUBLIC_READY:
-  title "Activate Grammar 7 and CLI Contract 8 atomically"
-  description "Expose the accepted source, evaluator, migration, mutations and advance through one registry-driven public boundary. Add closed results and schemas, old-document migration diagnostics and exits, document check warnings, analyze and Next projections, text, JSON, Help, Guide, public exports, package inventory, temporary-link and isolated installed workflows while retaining exact older read-only compatibility."
-  duration 8p
-  status done
-  priority 75
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    SOURCE_MODEL 1
-    ACCEPTANCE_MODEL 1
-    PUBLIC_SURFACE 1
-    PACKAGE_SURFACE 1
 
-task MILESTONE_ACCEPTANCE_HISTORY MILESTONE_ACCEPTANCE_PUBLIC_READY -> MILESTONE_ACCEPTANCE_HISTORY_READY:
-  title "Accept migration and historical reconstruction"
-  description "Prove clean committed migration in SHA-1 and SHA-256 repositories, linked worktrees, stage-0 and source races, exact grandfather provenance, Git-retained deleted criterion revisions and receipts, checkpoint-specific Contract 7 and 8 evaluation, acceptance-aware canonical advance proof, continuity gaps, hard limits, and no inferred historical acceptance."
-  duration 6p
-  status done
-  priority 70
-  requires:
-    DEVELOPERS 1
-    HISTORY_SURFACE 1
-    SOURCE_MODEL 1
-    ACCEPTANCE_MODEL 1
 
 task MILESTONE_ACCEPTANCE_ADAPTERS MILESTONE_ACCEPTANCE_PUBLIC_READY -> MILESTONE_ACCEPTANCE_ADAPTER_READY:
   title "Project milestone acceptance through read-only adapters"
@@ -223,36 +123,6 @@ task MILESTONE_ACCEPTANCE_ACCEPTANCE MILESTONE_ACCEPTANCE_INTEGRATED -> MILESTON
     ADAPTER_SURFACE 1
     PACKAGE_SURFACE 1
 
-milestone_criterion_set MAC_CONTRACT_R1:
-  milestone MILESTONE_ACCEPTANCE_CONTRACT_ACCEPTED
-  revision R1
-  commitment sha256:78da000e579e14d30cd2486da109319867336b829d46abe4e04da275ed9ca67e
-  criterion ACCEPTED required artifact "Accepted contract and closed cases"
-
-milestone_criterion_set MAC_SOURCE_R1:
-  milestone MILESTONE_ACCEPTANCE_SOURCE_READY
-  revision R1
-  commitment sha256:d9f7fa24fdf2c4974936b44b2dd26ddccf19a4866ca00583d08ea9824ad1936a
-  criterion ACCEPTED required artifact "Accepted Grammar 7 source and migration"
-
-milestone_criterion_set MAC_CORE_R1:
-  milestone MILESTONE_ACCEPTANCE_CORE_READY
-  revision R1
-  commitment sha256:4d86e4d66c6d18f67c3b9006688f040b705ab749d5f7a5f765dce6a9827d0b8f
-  criterion ACCEPTED required artifact "Accepted milestone acceptance evaluator"
-
-milestone_criterion_set MAC_MUTATION_R1:
-  milestone MILESTONE_ACCEPTANCE_MUTATION_READY
-  revision R1
-  commitment sha256:2810482c403f6b9d58c88ecb2076f1ef30a562f3198a3a96054b73f2eed3f0df
-  criterion ACCEPTED required artifact "Accepted governed acceptance mutations"
-
-milestone_criterion_set MAC_ADVANCE_R1:
-  milestone MILESTONE_ACCEPTANCE_ADVANCE_READY
-  revision R1
-  commitment sha256:bc163411c97476b3263c548d89ff0bce5f796c897d4373a877015986673ae033
-  criterion ACCEPTED required artifact "Accepted all-or-nothing advance composition"
-
 milestone_criterion_set MAC_PUBLIC_R1:
   milestone MILESTONE_ACCEPTANCE_PUBLIC_READY
   revision R1
@@ -264,71 +134,6 @@ milestone_criterion_set MAC_HISTORY_R1:
   revision R1
   commitment sha256:c1e679469e23780ab7411c28b0974436e96c8f71320cedd35a0791b5257eb3cf
   criterion ACCEPTED required artifact "Accepted historical reconstruction"
-
-milestone_acceptance_receipt MAC_CONTRACT_ACCEPTED:
-  model 1
-  set MAC_CONTRACT_R1
-  set_commitment sha256:78da000e579e14d30cd2486da109319867336b829d46abe4e04da275ed9ca67e
-  criterion ACCEPTED
-  criterion_commitment sha256:dd0467c761d6b97ca991fc4c7641f2083c9e2fd23217c8a13180cfbf5c02953e
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/milestone-acceptance-contract-acceptance.md"
-  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
-  verifier codex
-  occurred_at 2026-08-12T13:03:35Z
-
-milestone_acceptance_receipt MAC_SOURCE_ACCEPTED:
-  model 1
-  set MAC_SOURCE_R1
-  set_commitment sha256:d9f7fa24fdf2c4974936b44b2dd26ddccf19a4866ca00583d08ea9824ad1936a
-  criterion ACCEPTED
-  criterion_commitment sha256:129a5615827cbe6227b3e51cdb1b0c0f02b733a79fc957691e3aae1bbcb8950e
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/milestone-acceptance-source-acceptance.md"
-  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
-  verifier codex
-  occurred_at 2026-08-12T13:03:35Z
-
-milestone_acceptance_receipt MAC_CORE_ACCEPTED:
-  model 1
-  set MAC_CORE_R1
-  set_commitment sha256:4d86e4d66c6d18f67c3b9006688f040b705ab749d5f7a5f765dce6a9827d0b8f
-  criterion ACCEPTED
-  criterion_commitment sha256:7d4574ee15964337b072138dfadf624e7d42a150ceacc3bc822670a701d5da9f
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/milestone-acceptance-core-acceptance.md"
-  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
-  verifier codex
-  occurred_at 2026-08-12T13:03:35Z
-
-milestone_acceptance_receipt MAC_MUTATION_ACCEPTED:
-  model 1
-  set MAC_MUTATION_R1
-  set_commitment sha256:2810482c403f6b9d58c88ecb2076f1ef30a562f3198a3a96054b73f2eed3f0df
-  criterion ACCEPTED
-  criterion_commitment sha256:1e0617f8b0b64e1210329b00d087d4dedc7fe01bb2df503460e14b5372a3eff0
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/milestone-acceptance-mutation-acceptance.md"
-  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
-  verifier codex
-  occurred_at 2026-08-12T13:03:35Z
-
-milestone_acceptance_receipt MAC_ADVANCE_ACCEPTED:
-  model 1
-  set MAC_ADVANCE_R1
-  set_commitment sha256:bc163411c97476b3263c548d89ff0bce5f796c897d4373a877015986673ae033
-  criterion ACCEPTED
-  criterion_commitment sha256:82c9e08efebccf56cbdb2d8b4616c7d749118dbf4519f0992c87c3d348ec590b
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/milestone-acceptance-advance-acceptance.md"
-  evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
-  verifier codex
-  occurred_at 2026-08-12T13:03:35Z
 
 milestone_acceptance_receipt MAC_PUBLIC_ACCEPTED:
   model 1
