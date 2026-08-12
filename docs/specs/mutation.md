@@ -540,6 +540,15 @@ bypassing it. Preview, `--out`, and in-place write MUST consume the identical
 candidate bytes. No formatter or second cleanup edit is part of the advance
 operation.
 
+When the terminal suffix contains consecutive removed declarations, the
+planner processes them in source order. The first declaration may own its
+complete desired separator prefix. Every later deletion starts no earlier
+than the preceding terminal deletion's end, so no separator byte belongs to
+two edits. This disjoint-range rule applies equally to assurance records and
+work events, including LF, CRLF, multiple blank lines, and present or absent
+final newlines. It does not shrink the terminal suffix as a whole, change the
+candidate, or weaken destructive history provenance.
+
 This extension retains mutation semantics version 2, history-safety model 1,
 CLI Contract 6, `Perttool.AdvanceResult.v1`, existing diagnostics, governance,
 expected-digest and race checks, atomic replacement, and public package

@@ -2044,7 +2044,7 @@ Stage 1 entry evidence:
   Both makespans are 22p with zero delay, and complete NextResult v6 makes
   startable only `RELEASE_080_GATE_DESIGN`. Release preparation, publication,
   npm `latest`, VSIX publication, and plan advance remain separate.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-six current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-seven current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty
@@ -2059,6 +2059,21 @@ Stage 1 entry evidence:
   encoding and comment boundaries, temporary link, and installed-package
   acceptance are complete. Published packages remain unchanged and release
   selection remains separate.
+- MILESTONE-ACCEPT-001 history gate: Contract 7 and older checkpoints remain
+  explicitly not applicable, Grammar 7 checkpoints bind the exact migration,
+  criterion, receipt, and evaluator epochs, and only one byte-identical passed
+  acceptance-aware candidate becomes a canonical-advance proof. The 1,031-test
+  complete gate, 37-plan self-use, and 709-file isolated package pass; the
+  history task is complete before the user-requested committed migration and
+  canonical plan advance, and complete NextResult v7 recommends only
+  `MILESTONE_ACCEPTANCE_ADAPTERS`.
+- Issue #11 release input: consecutive terminal assurance and work-event
+  deletions now own disjoint separator-byte ranges in source order. One and
+  multiple LF/CRLF separators, both final-newline states, Issue #9 EOF receipt
+  creation, retained work events, exact destructive ranges, and tracked
+  preview/output/write identity pass without weakening history or assurance
+  guards. This correction and MILESTONE-ACCEPT-001 are required inputs to the
+  next selected release; version selection and publication remain separate.
 - HIST-DAG-001 CLI gate: `dag history` composes the bounded immutable Git
   evidence and pure linear reconstruction through a private Application/Node
   path; snapshot, proved-lineage, timeline, single-checkpoint analysis,

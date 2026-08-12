@@ -97,7 +97,7 @@
     },
     {
       "id": "PAI-008",
-      "evidence": [{ "file": "test/plan-assurance-public-contract.test.mjs", "test": "Grammar 6 and CLI Contract 7 activate plan assurance atomically" }]
+      "evidence": [{ "file": "test/plan-assurance-public-contract.test.mjs", "test": "Contract 8 retains the Grammar 6 plan-assurance surface" }]
     },
     {
       "id": "PAI-009",
@@ -116,7 +116,7 @@
     },
     {
       "id": "PAI-012",
-      "evidence": [{ "file": "test/plan-assurance-public-contract.test.mjs", "test": "Grammar 6 and CLI Contract 7 activate plan assurance atomically" }]
+      "evidence": [{ "file": "test/plan-assurance-public-contract.test.mjs", "test": "Contract 8 retains the Grammar 6 plan-assurance surface" }]
     }
   ],
   "surfaces": [
@@ -129,12 +129,12 @@
     { "id": "compatibility", "file": "test/plan-assurance-compatibility.test.mjs", "test": "Mermaid profile 2 round-trips Grammar 6 and older profiles report exact loss" },
     { "id": "public_cli", "file": "test/plan-assurance-acceptance.test.mjs", "test": "public CLI executes the complete assurance maintenance workflow" },
     { "id": "real_cli_race", "file": "test/plan-assurance-acceptance.test.mjs", "test": "assurance CLI output creation loses a real race without overwriting the winner" },
-    { "id": "schemas", "file": "test/json-schema.test.mjs", "test": "Contract 7 result identities resolve to one closed bundled catalog" },
-    { "id": "help_and_guide", "file": "test/guide.test.mjs", "test": "Contract 7 guide preserves every HelpNode topic and adds plan assurance" },
-    { "id": "package_root", "file": "test/plan-assurance-public-contract.test.mjs", "test": "Grammar 6 and CLI Contract 7 activate plan assurance atomically" },
+    { "id": "schemas", "file": "test/json-schema.test.mjs", "test": "Contract 8 result identities resolve to one closed bundled catalog" },
+    { "id": "help_and_guide", "file": "test/guide.test.mjs", "test": "Contract 8 guide preserves every HelpNode topic and adds plan assurance" },
+    { "id": "package_root", "file": "test/plan-assurance-public-contract.test.mjs", "test": "Contract 8 retains the Grammar 6 plan-assurance surface" },
     { "id": "temporary_link", "file": "scripts/check-npm-link.sh", "contains": ["help plan-assurance hash", "Perttool.PlanAssuranceResult.v1"] },
     { "id": "isolated_package", "file": "scripts/check-package.sh", "contains": ["scripts/check-package-assurance.mjs", "Perttool.PlanAssuranceResult.v1"] },
-    { "id": "installed_assurance_workflow", "file": "scripts/check-package-assurance.mjs", "contains": ["plan-assurance", "installed package Contract 7 plan-assurance acceptance passed"] },
+    { "id": "installed_assurance_workflow", "file": "scripts/check-package-assurance.mjs", "contains": ["plan-assurance", "installed package Contract 8 plan-assurance compatibility passed"] },
     { "id": "durable_acceptance", "file": "docs/process/plan-assurance-acceptance.md", "contains": ["Document status: Accepted 1.0", "all fourteen semantic `PAS` cases", "all twelve interface `PAI` cases", "no ready, recommended,\nor startable task"] }
   ]
 }

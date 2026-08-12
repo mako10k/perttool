@@ -40,7 +40,7 @@ interface OverrideSourceAuthority extends PlanAssuranceStartAuthorityV1 {
   readonly unavailableRecommendedTaskIds: readonly string[];
 }
 
-/** Consumer-owned projection required to validate a NextResult v6 override. */
+/** Consumer-owned projection required to validate a NextResult v7 override. */
 export interface OverrideValidationSource {
   readonly schemaVersion: string;
   readonly ok: boolean;
@@ -72,7 +72,7 @@ type OverrideSource = OverrideValidationSource;
 
 const overrideSchemaVersion = "Perttool.OverrideDecision.v1" as const;
 const operation = "recommendation.override.validate" as const;
-const sourceSchemaVersion = "Perttool.NextResult.v6" as const;
+const sourceSchemaVersion = "Perttool.NextResult.v7" as const;
 const digestPattern = /^sha256:[0-9a-f]{64}$/;
 const overrideReasonCodes = new Set<HumanOverrideReasonCode>([
   "human_priority_decision",
@@ -177,7 +177,7 @@ function sourceContractError(
       source.schemaVersion !== sourceSchemaVersion ||
       source.temporal === null
     ) {
-      return "source NextResult.v6 must be successful, untruncated, and include temporal and plan-assurance authority";
+      return "source NextResult.v7 must be successful, untruncated, and include temporal and plan-assurance authority";
     }
     const recommendation = source.recommendation;
     const authority = source.temporal.authority;

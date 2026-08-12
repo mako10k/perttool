@@ -390,6 +390,31 @@ Non-goals:
 - treating a manual whitespace patch as part of the approved candidate; or
 - selecting a release version, publishing a package, or moving a dist-tag.
 
+#### Issue #11: Disjoint consecutive terminal deletion ranges
+
+Status: Accepted in source (2026-08-12); required input to the next selected
+release together with `MILESTONE-ACCEPT-001`
+
+Issue #11 exposed one narrower range-composition defect after ADV-002: a
+multiline terminal assurance declaration could already end after the blank
+separator byte that the following terminal declaration independently claimed
+as its prefix. The resulting one-byte overlap failed with `PTCLI-070` before
+candidate construction.
+
+The bounded correction retains the accepted ADV-002 ownership model and
+processes the terminal suffix in source order, clamping each later start to
+the preceding deletion end. The twelve-case matrix is
+[`advance-terminal-separator-issue-11-v1.json`](../test/fixtures/advance-terminal-separator-issue-11-v1.json),
+and the acceptance record is
+[`issue-11-terminal-deletion-acceptance.md`](process/issue-11-terminal-deletion-acceptance.md).
+It covers one and multiple blank lines, CRLF, both final-newline states,
+cross-frontier receipt retention, exact destructive ranges, the Issue #9 EOF
+receipt regression, a retained work event, and preview/output/write identity.
+
+Issue #11 and the accepted milestone-acceptance workstream are mandatory
+inputs to the next release plan. The exact version, release plan, candidate,
+publication, dist-tag movement, and Issue mutation remain separate decisions.
+
 ### ADV-003: Retain completed out-of-scope work in an opt-in advance mode
 
 Priority: P2
@@ -1746,7 +1771,8 @@ Before implementation:
 ## Independent post-beta work
 
 `MULTI-001`, `ADAPTER-001`, `MIG-08`, `SCM-001`, `HIST-DAG-001`,
-`GOV-AUTH-001`, `ADV-001`, `ASSURE-001`, and `META-001` remain independent
+`GOV-AUTH-001`, `ADV-001`, `ASSURE-001`, `MILESTONE-ACCEPT-001`, and
+`META-001` remain independent
 workstreams. `ADAPTER-001`
 explicitly composes `LSP-001`, `VSIX-001`, and `MCP-001` while preserving
 their adapter-specific contracts and the LSP-to-VSIX dependency. `ADV-001` is
@@ -1756,3 +1782,74 @@ integration concept. `HIST-DAG-001` records the separate read-only historical
 graph projection and depends on `SCM-001` only for its later three-way profile.
 Other items are not implicit prerequisites for an accepted workstream unless a
 later requirements decision explicitly composes them.
+
+### MILESTONE-ACCEPT-001: Separate graph closure from milestone outcome acceptance
+
+Priority: P0
+
+Status: Contract, source/migration, evaluator, governed mutation,
+acceptance-aware advance, atomic Grammar 7 / Contract 8 public runtime, and
+historical reconstruction accepted (2026-08-12); read-only adapter projection
+remains
+
+Prevent a completed incoming task set from being treated as proof that the
+outcome named by a milestone has been accepted. Current effective-reached
+closure remains a graph fact; the Grammar 7 acceptance model must represent
+separately declared outcome criteria and their evidence before Contract 8
+canonical advance can remove that milestone and its supporting completed history.
+
+The normative target is the
+[Milestone Outcome Acceptance Contract](specs/milestone-acceptance.md), and
+the selected implementation roadmap is
+[`plans/milestone-acceptance.pert`](../plans/milestone-acceptance.pert).
+
+Required outcomes:
+
+- keep graph closure, explicit `state reached`, and outcome acceptance as
+  separate typed facts rather than changing a milestone title or task
+  description into machine authority;
+- add stable milestone criterion identity, required versus optional meaning,
+  closed evidence kinds, evidence references, verified source revision or
+  digest, verification time and verifier, status, and owner-bound waiver
+  provenance through one accepted source model;
+- derive a closed milestone acceptance projection that distinguishes at least
+  undeclared, pending, satisfied, failed, unavailable, and waived criteria and
+  reports every blocking criterion ID deterministically;
+- add preview-first, idempotent, source-preserving receipt operations rather
+  than requiring routine hand edits, with candidate-bound governance for
+  verification and waiver writes;
+- withhold canonical `dag advance` removal when a closure-reached milestone
+  has an unsatisfied required criterion, without allowing a general force
+  option to bypass the criterion;
+- expose closure and acceptance independently in analysis, Next authority,
+  human-readable output, JSON results, schemas, Help, and Guide while
+  preserving one semantic owner across adapters;
+- retain read-only check and analysis of older Grammar documents, require an
+  explicit Grammar 7 migration before Contract 8 acceptance mutation or
+  advance, and block an affected non-grandfathered `not_declared` milestone
+  without implying that a strong milestone title is verified evidence; and
+- prove source preservation, receipt identity and replay, stale evidence,
+  owner waiver, advance contraction, history reconstruction, package, and
+  installed-workflow behavior without selecting a release or performing an
+  external write.
+
+Before implementation:
+
+- fix Grammar 7 and CLI Contract 8 as one atomic boundary, including a
+  preparation-only migration from an exact committed source, compact
+  commit/path/blob/digest-bound grandfather provenance, old-document
+  diagnostics, and no inferred criterion or evidence;
+- retain explicit `state reached` as a graph-only assertion, never outcome
+  evidence, and bind the migration-only grandfather set to exact provenance;
+- define criterion-set revision, atomic whole-set replacement and deletion of
+  the old revision and its owned receipts from current source, Git-retained
+  prior history, revocation, failure, unavailable, waiver, self-asserted UTC
+  time, and verifier identity rules;
+- compose the new receipts with Grammar 6 plan-assurance receipts, actual work
+  events, governance scopes, exact source digests, advance history safety, and
+  historical DAG reconstruction without reusing one as proof of another;
+- specify all-or-nothing advance over a provisional affected-milestone set,
+  at-least-one-required criterion validation, retained dirty ranges, blocked
+  explanatory output, and acceptance-before-history-safety ordering; and
+- select and owner-confirm an independent PERT workstream from a complete
+  preview before changing normative contracts or runtime behavior.

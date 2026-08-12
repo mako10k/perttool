@@ -134,6 +134,6 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
   );
   assert.match(publishScript, /publish_tag" != "beta"/);
   assert.doesNotMatch(publishScript, /^\s*alpha\)$/m);
-  assert.equal(COMMAND_REGISTRY.length, 45);
-  assert.equal(getJsonSchemaCatalog().length, 21);
+  assert.equal(COMMAND_REGISTRY.length, 53);
+  assert.equal(getJsonSchemaCatalog().length, 23);
 });

@@ -13,18 +13,20 @@ import {
 import {
   analyzeDocument,
   checkDocument,
-  selectNextTasks,
-} from "./contract7-assurance.js";
-import {
-  planAdvance,
+  getProjectMetadata,
   planAssuranceMutation,
   planBatchMutation,
   planFinishActuals,
+  planFormat,
   planLifecycle,
   planMutation,
+  planUnitMigration,
+  selectNextTasks,
+} from "./contract8-milestone-acceptance.js";
+import {
+  planAdvance,
 } from "./contract7-mutation.js";
 import {
-  getProjectMetadata,
   contract7ProjectResultToJson,
   renderContract7ProjectText,
 } from "./contract7-project.js";
@@ -34,10 +36,6 @@ import {
   contract7SnakeJson,
 } from "./contract7-projection.js";
 import {
-  planFormat,
-} from "./contract7-source.js";
-import {
-  planUnitMigration,
   withUnitMigrationWrite,
 } from "./contract7-unit-migration.js";
 import {
@@ -47,7 +45,9 @@ import {
   getAgentHelp,
 } from "./agent-help.js";
 import {
+  prepareAdvanceHistory as prepareGenericAdvanceHistory,
   renderAdvanceHistoryGuard,
+  withAdvanceHistoryRace,
 } from "./advance-history.js";
 import {
   planProjectInit,
@@ -167,6 +167,12 @@ export function createCliApplicationFacade(
       captureBaseline: host.gitEvidence.captureAdvanceBaseline,
     },
   );
+  const prepareGenericHistory = (
+    ...args: Parameters<typeof prepareGenericAdvanceHistory>
+  ) => prepareGenericAdvanceHistory(args[0], args[1], {
+    ...args[2],
+    captureBaseline: host.gitEvidence.captureAdvanceBaseline,
+  });
   const persistPlanAssuranceResult = (
     result: TargetPlanAssuranceWritableResult,
     capability: TargetGrammar6Capability,
@@ -185,7 +191,6 @@ export function createCliApplicationFacade(
     }
     return inspectTargetHistoricalGraphFile(request, historicalGitEvidence);
   };
-
   return Object.freeze({
     hostModelVersion: host.modelVersion,
     analyzeDocument,
@@ -214,6 +219,8 @@ export function createCliApplicationFacade(
     contract6WorkEventToJson,
     renderAdvanceHistoryGuard,
     prepareTargetPlanAssuranceAdvanceHistory: prepareAdvanceHistory,
+    prepareAdvanceHistory: prepareGenericHistory,
+    withAdvanceHistoryRace,
     withTargetPlanAssuranceAdvanceHistoryRace,
     persistTargetPlanAssuranceResult: persistPlanAssuranceResult,
     inspectTargetPlanAssurance,
@@ -232,9 +239,12 @@ export function createCliApplicationFacade(
     readDocumentContent,
     readBytes: host.documentBytes.read,
     recheckAdvanceHistoryBaseline: host.gitEvidence.recheckAdvanceBaseline,
+    captureAdvanceHistoryBaseline: host.gitEvidence.captureAdvanceBaseline,
     createArtifactFile: host.safePersistence.createArtifact,
+    createValidatedDocumentFile: host.safePersistence.createValidatedDocument,
     createTargetGrammar6DocumentFile: createTargetGrammar6Document,
     replaceTargetGrammar6DocumentFile: replaceTargetGrammar6Document,
+    replaceValidatedDocumentFile: host.safePersistence.replaceValidatedDocument,
   });
 }
 

@@ -24,7 +24,7 @@ function run(args, options = {}) {
   });
 }
 
-test("NextResult.v6 publishes the same complete recommendation from Core and CLI", async () => {
+test("NextResult.v7 publishes the same complete recommendation from Core and CLI", async () => {
   const source = await readFile(path.join(root, fixture));
   const sourceDigest = digestDocumentBytes(source);
   const core = selectNextTasks(source.toString("utf8"), { sourceDigest });
@@ -34,8 +34,8 @@ test("NextResult.v6 publishes the same complete recommendation from Core and CLI
   const command = run(["dag", "next", fixture, "--format=json"]);
   assert.equal(command.status, 0, command.stderr);
   const json = JSON.parse(command.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v6");
-  assert.equal(json.cli_contract_version, 7);
+  assert.equal(json.schema_version, "Perttool.NextResult.v7");
+  assert.equal(json.cli_contract_version, 8);
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.source_digest, sourceDigest);
   assert.deepEqual(
@@ -52,7 +52,7 @@ test("NextResult.v6 publishes the same complete recommendation from Core and CLI
   );
 });
 
-test("NextResult.v6 complete empty recommendation preserves operational fields and adds assurance authority", async () => {
+test("NextResult.v7 complete empty recommendation preserves operational fields and adds assurance authority", async () => {
   const command = run([
     "dag",
     "next",
@@ -80,8 +80,9 @@ test("NextResult.v6 complete empty recommendation preserves operational fields a
     { ...retained, groups: retainedGroups },
     {
       ...expected,
-      schema_version: "Perttool.NextResult.v6",
-      cli_contract_version: 7,
+      schema_version: "Perttool.NextResult.v7",
+      cli_contract_version: 8,
+      acceptance: null,
     },
   );
   assert.equal(grammarVersion, 1);
@@ -145,11 +146,11 @@ test("CLI recommendation provenance preserves the raw BOM-bound source digest", 
   );
 });
 
-test("dag next command help identifies the Contract 7 v6 consumer boundary", () => {
+test("dag next command help identifies the Contract 8 v7 consumer boundary", () => {
   const command = run(["dag", "next", "--help"]);
   assert.equal(command.status, 0, command.stderr);
-  assert.match(command.stdout, /Perttool\.NextResult\.v6/);
-  assert.match(command.stdout, /CLI contract: 7/);
+  assert.match(command.stdout, /Perttool\.NextResult\.v7/);
+  assert.match(command.stdout, /CLI contract: 8/);
   assert.match(command.stdout, /Output: formats=text,json/);
 });
 

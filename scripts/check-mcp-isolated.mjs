@@ -170,7 +170,10 @@ async function acceptedSession(clientName) {
     checked.result.structuredContent,
   );
   const direct = rootApi.checkDocument(source);
-  assert.equal(checked.result.structuredContent.result_schema_version, direct.schemaVersion);
+  assert.equal(
+    checked.result.structuredContent.result_schema_version,
+    "Perttool.CheckResult.v4",
+  );
   assert.equal(checked.result.structuredContent.result.document_id, direct.documentId);
   assert.equal(checked.result.structuredContent.result.grammar_version, direct.grammarVersion);
   assert.deepEqual(checked.result.structuredContent.result.summary, {

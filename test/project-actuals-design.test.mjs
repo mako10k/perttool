@@ -326,7 +326,7 @@ test("project actuals plan retains every accepted slice and public cutover", asy
   );
 });
 
-test("active Contract 7 retains the complete project actuals command set", () => {
+test("active Contract 8 retains the complete project actuals command set", () => {
   const help = runJson("help");
   const actions = Object.fromEntries(
     help.resources.map(({ name, actions: resourceActions }) => [
@@ -335,7 +335,7 @@ test("active Contract 7 retains the complete project actuals command set", () =>
     ]),
   );
 
-  assert.equal(help.cli_contract_version, 7);
+  assert.equal(help.cli_contract_version, 8);
   assert.deepEqual(
     actions.task,
     ["add", "finish", "remove", "resume", "set", "start", "suspend"],

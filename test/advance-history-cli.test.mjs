@@ -13,7 +13,14 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { planAdvance } from "../dist/index.js";
+import {
+  planAcceptanceReceiptMutation,
+  planAdvance,
+  planCriterionSetReplacement,
+  planMilestoneAcceptanceAdvance,
+  planMilestoneAcceptanceMigration,
+} from "../dist/index.js";
+import { sha256DigestUtf8 } from "../dist/model/sha256.js";
 import { planTargetPlanAssuranceMutation } from "../dist/assurance/mutation.js";
 import {
   prepareAdvanceHistory,
@@ -23,12 +30,13 @@ import {
   recheckAdvanceHistoryBaseline,
 } from "../dist/history/git-probe.js";
 import { TARGET_GRAMMAR_6_CAPABILITY } from "../dist/parser/document-parser.js";
+import { buildIssue11AdvanceSource } from "./support/advance-terminal-issue-11.mjs";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
 const cli = path.join(root, "dist", "cli.js");
 
-const baseSource = [
+const legacyBaseSource = [
   "project DEMO:",
   "  version 5",
   '  title "demo"',
@@ -58,6 +66,54 @@ const baseSource = [
   "  duration 1p",
   "",
 ].join("\n");
+
+function acceptanceReadyAdvanceSource(text) {
+  const migrated = planMilestoneAcceptanceMigration(text, {
+    repositoryId: "advance-history-test",
+    repositoryRelativePath: "plan.pert",
+    objectFormat: "sha1",
+    headCommit: "a".repeat(40),
+    headBlob: "b".repeat(40),
+    stage0Blob: "b".repeat(40),
+    sourceDigest: sha256DigestUtf8(text),
+  });
+  assert.equal(migrated.ok, true);
+  let candidate = migrated.candidateText;
+  const provisional = planMilestoneAcceptanceAdvance(candidate, {
+    provisionalPlanner: (baseText) => planAdvance(baseText),
+  });
+  for (const [index, blocked] of provisional.acceptanceGuard?.blockedMilestones.entries() ?? []) {
+    const setId = `ACCEPT_${blocked.milestoneId}_${index + 1}`;
+    const criterionId = `ACCEPTED_${index + 1}`;
+    const replacement = planCriterionSetReplacement(candidate, {
+      milestoneId: blocked.milestoneId,
+      setId,
+      revisionId: "R1",
+      criteria: [{
+        criterionId,
+        required: true,
+        evidenceKind: "owner",
+        description: "Accepted for advance history regression",
+      }],
+    });
+    assert.equal(replacement.ok, true);
+    const waived = planAcceptanceReceiptMutation(replacement.updatedText, {
+      setId,
+      criterionId,
+      receiptId: `WAIVE_${blocked.milestoneId}_${index + 1}`,
+      action: "waive",
+      reason: "Accepted historical regression fixture",
+    });
+    assert.equal(waived.ok, true);
+    candidate = waived.updatedText;
+  }
+  assert.equal(planMilestoneAcceptanceAdvance(candidate, {
+    provisionalPlanner: (baseText) => planAdvance(baseText),
+  }).ok, true);
+  return candidate;
+}
+
+const baseSource = acceptanceReadyAdvanceSource(legacyBaseSource);
 
 function terminalReceiptSource() {
   const base = [
@@ -111,7 +167,7 @@ function terminalReceiptSource() {
     { governance: { intent: "preview" } },
   );
   assert.equal(outcome.ok, true);
-  return [
+  return acceptanceReadyAdvanceSource([
     outcome.updatedText.trimEnd(),
     "",
     "work_event WE_A_START:",
@@ -129,7 +185,7 @@ function terminalReceiptSource() {
     "  active_time 1h",
     "  effort 1ph",
     "",
-  ].join("\n");
+  ].join("\n"));
 }
 
 function git(repository, ...args) {
@@ -311,7 +367,7 @@ process.exit(result.status ?? 70);
 test("AHS-001 through AHS-003 preview, out, and no-op avoid Git", (t) => {
   const { directory, pathname } = temporaryPlan(t, { repository: false });
   const preview = runJson(["dag", "advance", pathname]);
-  assert.equal(preview.schema_version, "Perttool.AdvanceResult.v2");
+  assert.equal(preview.schema_version, "Perttool.AdvanceResult.v3");
   assert.equal(preview.history_guard.status, "not_applicable");
   assert.equal(preview.history_guard.cause, "preview");
   assert.equal(preview.history_guard.repository_snapshot_id, null);
@@ -409,6 +465,39 @@ test("Issue 9 EOF receipt candidate is identical across preview, out, and write"
     "dag", "advance", pathname, "--write", "--actor", "user",
   ]);
   assert.equal(written.ok, true);
+  assert.equal(written.updated_text, preview.updated_text);
+  assert.equal(readFileSync(pathname, "utf8"), preview.updated_text);
+});
+
+test("Issue 11 consecutive terminal declarations retain preview, out, and write identity", (t) => {
+  const { directory, pathname } = temporaryPlan(t, {
+    source: acceptanceReadyAdvanceSource(buildIssue11AdvanceSource()),
+  });
+  const preview = runJson(["dag", "advance", pathname]);
+  assert.equal(preview.ok, true);
+  assert.equal(preview.assurance_guard.status, "passed");
+  assert.equal(preview.assurance_guard.cause, "basis_preserved");
+  assert.match(preview.updated_text, /assurance_receipt AR_A:/u);
+  assert.doesNotMatch(preview.updated_text, /AR_OLD_|OUT_A|WE_A_/u);
+
+  const output = path.join(directory, "candidate.pert");
+  const separate = runJson([
+    "dag", "advance", pathname, "--out", output, "--actor", "user",
+  ]);
+  assert.equal(separate.ok, true);
+  assert.equal(separate.updated_digest, preview.updated_digest);
+  assert.equal(separate.updated_text, preview.updated_text);
+  assert.equal(readFileSync(output, "utf8"), preview.updated_text);
+
+  const written = runJson([
+    "dag", "advance", pathname, "--write", "--actor", "user",
+  ]);
+  assert.equal(written.ok, true);
+  assert.equal(written.history_guard.status, "passed");
+  assert.equal(written.history_guard.cause, "baseline_matches");
+  assert.equal(written.assurance_guard.status, "passed");
+  assert.equal(written.assurance_guard.cause, "basis_preserved");
+  assert.equal(written.updated_digest, preview.updated_digest);
   assert.equal(written.updated_text, preview.updated_text);
   assert.equal(readFileSync(pathname, "utf8"), preview.updated_text);
 });
@@ -598,18 +687,18 @@ test("AHS-015 governance denial precedes Git and force option usage is closed", 
 });
 
 async function preparePassingGuard(pathname) {
-  const planned = planAdvance(baseSource, {
+  const planned = planAdvance(legacyBaseSource, {
     governance: {
       intent: "persist",
       actor: "user",
     },
   });
   const prepared = await prepareAdvanceHistory(
-    baseSource,
+    legacyBaseSource,
     planned,
     {
       mode: "in_place",
-      sourceBytes: Buffer.from(baseSource, "utf8"),
+      sourceBytes: Buffer.from(legacyBaseSource, "utf8"),
       sourceModifiedAt: statSync(pathname).mtime.toISOString(),
       targetPath: pathname,
     },
@@ -625,12 +714,12 @@ test("AHS-016 and AHS-017 application rechecks become PTADV-102", async (t) => {
     "head_changed",
     "index_changed",
   ]) {
-    const { directory, pathname } = temporaryPlan(t);
+    const { directory, pathname } = temporaryPlan(t, { source: legacyBaseSource });
     const prepared = await preparePassingGuard(pathname);
     if (expectedCause === "target_changed") {
       writeFileSync(
         pathname,
-        baseSource.replace('title "next"', 'title "raced next"'),
+        legacyBaseSource.replace('title "next"', 'title "raced next"'),
         "utf8",
       );
     } else if (expectedCause === "head_changed") {
@@ -640,11 +729,11 @@ test("AHS-016 and AHS-017 application rechecks become PTADV-102", async (t) => {
     } else {
       writeFileSync(
         pathname,
-        baseSource.replace('title "next"', 'title "staged next"'),
+        legacyBaseSource.replace('title "next"', 'title "staged next"'),
         "utf8",
       );
       git(directory, "add", "--", "plan.pert");
-      writeFileSync(pathname, baseSource, "utf8");
+      writeFileSync(pathname, legacyBaseSource, "utf8");
     }
     const recheck = await recheckAdvanceHistoryBaseline(
       prepared.baseline,

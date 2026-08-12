@@ -1,6 +1,6 @@
 {
   "contract": {
-    "schema_version": "Perttool.NextResult.v6",
+    "schema_version": "Perttool.NextResult.v7",
     "recommendation_interface_version": 1,
     "algorithm_id": "perttool.recommendation-ranking.lexicographic-frontier",
     "algorithm_version": 1,
@@ -294,6 +294,66 @@
         "comparisons": 0,
         "reasons": 1,
         "descriptions": 0
+      },
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
+    },
+    "milestone-acceptance": {
+      "source_digest": "sha256:159fe5d75ffca46097aa034ebeb3c0b6cc2e5a1d1be11678d5389008f5e0a748",
+      "groups": {
+        "active": [],
+        "ready": [
+          "MILESTONE_ACCEPTANCE_HISTORY",
+          "MILESTONE_ACCEPTANCE_ADAPTERS"
+        ],
+        "runnable_now": [
+          "MILESTONE_ACCEPTANCE_HISTORY",
+          "MILESTONE_ACCEPTANCE_ADAPTERS"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "MILESTONE_ACCEPTANCE_ACCEPTANCE"
+        ],
+        "suspended": []
+      },
+      "recommended_task_ids": [
+        "MILESTONE_ACCEPTANCE_HISTORY"
+      ],
+      "manual_selected_task_ids": [
+        "MILESTONE_ACCEPTANCE_HISTORY",
+        "MILESTONE_ACCEPTANCE_ADAPTERS"
+      ],
+      "tiers": {
+        "MILESTONE_ACCEPTANCE_HISTORY": "recommended",
+        "MILESTONE_ACCEPTANCE_ADAPTERS": "allowed"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "MILESTONE_ACCEPTANCE_HISTORY",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        },
+        {
+          "id": "MILESTONE_ACCEPTANCE_ADAPTERS",
+          "runnable_now": true,
+          "precedence_critical": false,
+          "schedule_critical": false,
+          "total_float": "1/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 2,
+        "decision_steps": 12,
+        "facts": 36,
+        "comparisons": 1,
+        "reasons": 8,
+        "descriptions": 3
       },
       "diagnostic_codes": [
         "PTDAG-208"

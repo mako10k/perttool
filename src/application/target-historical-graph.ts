@@ -1,7 +1,7 @@
 import {
   analyzeDocument,
-  type AnalysisResultV5,
-} from "./contract7-assurance.js";
+  type AnalysisResultV6,
+} from "./contract8-milestone-acceptance.js";
 import {
   HISTORICAL_DAG_MODEL_ID,
   HISTORICAL_DAG_MODEL_VERSION,
@@ -16,6 +16,9 @@ import {
   type HistoricalSourceBindingV1,
   type HistoricalTimelineV1,
 } from "../history/historical-graph.js";
+import type {
+  HistoricalMilestoneAcceptanceHistoryV1,
+} from "../history/milestone-acceptance-history.js";
 import type {
   HistoricalGitEvidenceOutcome,
   HistoricalGitEvidenceRequest,
@@ -36,7 +39,7 @@ import type { Rational } from "../model/rational.js";
 import type { DurationUnit } from "../model/units.js";
 import { TOOL_VERSION } from "../version.js";
 
-export const TARGET_HISTORICAL_GRAPH_CLI_CONTRACT_VERSION = 7 as const;
+export const TARGET_HISTORICAL_GRAPH_CLI_CONTRACT_VERSION = 8 as const;
 export const TARGET_HISTORICAL_GRAPH_SCHEMA_VERSION =
   "Perttool.HistoricalGraphResult.v1" as const;
 
@@ -175,6 +178,8 @@ export interface TargetHistoricalGraphResultV1 {
   readonly snapshot: HistoricalCheckpointV1 | null;
   readonly lineage: HistoricalLineageV1 | null;
   readonly timeline: HistoricalTimelineV1 | null;
+  readonly milestoneAcceptanceHistory:
+    HistoricalMilestoneAcceptanceHistoryV1 | null;
   readonly analysis: HistoricalGraphAnalysisV1;
   readonly causes: readonly HistoricalGraphPublicCauseV1[];
   readonly diagnostics: readonly Diagnostic[];
@@ -182,6 +187,7 @@ export interface TargetHistoricalGraphResultV1 {
 }
 
 function deepFreeze<T>(value: T): T {
+  if (ArrayBuffer.isView(value)) return value;
   if (value !== null && typeof value === "object" && !Object.isFrozen(value)) {
     for (const child of Object.values(value as Record<string, unknown>)) {
       deepFreeze(child);
@@ -320,7 +326,7 @@ function occurrenceId(
 }
 
 function analysisProjection(
-  result: AnalysisResultV5,
+  result: AnalysisResultV6,
   checkpoint: HistoricalCheckpointV1,
 ): HistoricalGraphAnalysisV1 {
   if (!result.ok || result.durationUnit === null) {
@@ -567,6 +573,8 @@ function result(
     timeline: projectedRequest.view === "timeline"
       ? values.linear?.timeline ?? null
       : null,
+    milestoneAcceptanceHistory:
+      values.linear?.milestone_acceptance_history ?? null,
     analysis: values.analysis,
     causes: [...values.causes],
     diagnostics: limited.diagnostics,
@@ -732,6 +740,87 @@ function diagnosticToJson(
   };
 }
 
+function milestoneAcceptanceEvaluationToJson(
+  evaluation: NonNullable<
+    HistoricalMilestoneAcceptanceHistoryV1["checkpoints"][number]["evaluation"]
+  >,
+): Readonly<Record<string, unknown>> {
+  return {
+    ok: evaluation.ok,
+    model_version: evaluation.modelVersion,
+    grammar_version: evaluation.grammarVersion,
+    milestones: evaluation.milestones.map((milestone) => ({
+      milestone_id: milestone.milestoneId,
+      closure: milestone.closure,
+      acceptance: milestone.acceptance,
+      grandfathered: milestone.grandfathered,
+      criterion_set_id: milestone.criterionSetId,
+      criterion_revision_id: milestone.criterionRevisionId,
+      criterion_set_commitment: milestone.criterionSetCommitment,
+      criteria: milestone.criteria.map((criterion) => ({
+        criterion_id: criterion.criterionId,
+        required: criterion.required,
+        evidence_kind: criterion.evidenceKind,
+        commitment: criterion.commitment,
+        state: criterion.state,
+        effective_receipt_id: criterion.effectiveReceiptId,
+        evidence_reference: criterion.evidenceReference,
+        evidence_revision: criterion.evidenceRevision,
+        verifier: criterion.verifier,
+        asserted_at: criterion.assertedAt,
+        waiver_reason: criterion.waiverReason,
+        revoked_receipt_ids: criterion.revokedReceiptIds,
+      })),
+      blocking_required_criterion_ids:
+        milestone.blockingRequiredCriterionIds,
+    })),
+    diagnostics: evaluation.diagnostics.map((diagnostic) => ({
+      code: diagnostic.code,
+      message: diagnostic.message,
+      milestone_id: diagnostic.milestoneId,
+      criterion_id: diagnostic.criterionId,
+      receipt_ids: diagnostic.receiptIds,
+    })),
+  };
+}
+
+function milestoneAcceptanceHistoryToJson(
+  history: HistoricalMilestoneAcceptanceHistoryV1 | null,
+): Readonly<Record<string, unknown>> | null {
+  if (history === null) return null;
+  return {
+    model: history.model,
+    model_version: history.model_version,
+    status: history.status,
+    checkpoints: history.checkpoints.map((checkpoint) => ({
+      commit_id: checkpoint.commit_id,
+      blob_id: checkpoint.blob_id,
+      source_digest: checkpoint.source_digest,
+      grammar_version: checkpoint.grammar_version,
+      status: checkpoint.status,
+      evaluation: checkpoint.evaluation === null
+        ? null
+        : milestoneAcceptanceEvaluationToJson(checkpoint.evaluation),
+      records: checkpoint.records.map((record) => ({
+        kind: record.kind,
+        id: record.id,
+        owner_id: record.owner_id,
+        revision_id: record.revision_id,
+        action: record.action,
+        commitment: record.commitment,
+        source_range: {
+          start: positionToJson(record.source_range.start),
+          end: positionToJson(record.source_range.end),
+        },
+      })),
+      diagnostic_codes: checkpoint.diagnostic_codes,
+    })),
+    canonical_advance_proofs: history.canonical_advance_proofs,
+    causes: history.causes,
+    limits: history.limits,
+  };
+}
+
 export function targetHistoricalGraphResultToJson(
   value: TargetHistoricalGraphResultV1,
 ): Readonly<Record<string, unknown>> {
@@ -780,6 +869,8 @@ export function targetHistoricalGraphResultToJson(
     snapshot: snapshotToJson(value.snapshot),
     lineage: value.lineage,
     timeline: value.timeline,
+    milestone_acceptance_history:
+      milestoneAcceptanceHistoryToJson(value.milestoneAcceptanceHistory),
     analysis,
     source_bindings: allSourceBindings(linear),
     causes: value.causes,
@@ -845,6 +936,16 @@ export function renderTargetHistoricalGraphText(
   for (const entry of value.timeline?.entries ?? []) {
     lines.push(
       `TIMELINE commit=${entry.commit_id} validity=${entry.validity} segment=${entry.segment_ordinal ?? "-"} transition=${entry.transition?.class ?? "-"} topology=${entry.topology_epoch_id ?? "-"}`,
+    );
+  }
+  for (const checkpoint of value.milestoneAcceptanceHistory?.checkpoints ?? []) {
+    lines.push(
+      `ACCEPTANCE_CHECKPOINT commit=${checkpoint.commit_id} grammar=${checkpoint.grammar_version ?? "-"} status=${checkpoint.status} records=${checkpoint.records.length}`,
+    );
+  }
+  for (const proof of value.milestoneAcceptanceHistory?.canonical_advance_proofs ?? []) {
+    lines.push(
+      `ACCEPTANCE_ADVANCE from=${proof.from_commit_id} to=${proof.to_commit_id} affected=${proof.affected_milestone_ids.join(",") || "-"} accepted=${proof.accepted_milestone_ids.join(",") || "-"} grandfathered=${proof.grandfathered_milestone_ids.join(",") || "-"}`,
     );
   }
   lines.push(

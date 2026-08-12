@@ -165,7 +165,7 @@ test("HCLI-001 discovers one additive Contract 7 command and schema", () => {
     operation === "dag.history"
   );
   assert.notEqual(descriptor, undefined);
-  assert.equal(COMMAND_REGISTRY.length, 45);
+  assert.equal(COMMAND_REGISTRY.length, 53);
   assert.deepEqual(descriptor.path, ["dag", "history"]);
   assert.equal(descriptor.effect, "read");
   assert.equal(descriptor.stdin.document, false);
@@ -173,7 +173,7 @@ test("HCLI-001 discovers one additive Contract 7 command and schema", () => {
     "Perttool.HistoricalGraphResult.v1",
     "Perttool.CliError.v1",
   ]);
-  assert.equal(getJsonSchemaCatalog().length, 21);
+  assert.equal(getJsonSchemaCatalog().length, 23);
 
   const help = runJson(["help", "dag", "history"]);
   assert.equal(help.ok, true);

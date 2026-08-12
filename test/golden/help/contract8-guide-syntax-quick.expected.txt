@@ -1,0 +1,16 @@
+DSL syntax
+
+Grammar versions 1 through 7 for declaring projects, governance metadata, resources, milestones, tasks, gates, explicit task work events, conditional plan-assurance records, and milestone acceptance evidence.
+
+Declarations
+Place exactly one project first, followed by resource, milestone, task, gate, and Grammar 5 work-event declarations. Grammar 6 additionally accepts task_relation, plan_seal, task_outcome, and assurance_receipt declarations. Grammar 7 additionally accepts milestone criterion sets, acceptance receipts, and one migration baseline.
+
+Syntax:
+  project ID:
+  milestone ID:
+  task ID FROM -> TO:
+  gate ID FROM -> TO:
+  resource ID:
+  work_event ID:
+
+Related: syntax.project, syntax.resource, syntax.milestone, syntax.task, syntax.work-event, syntax.gate, syntax.estimate, syntax.velocity, syntax.temporal, analysis, errors, plan-assurance

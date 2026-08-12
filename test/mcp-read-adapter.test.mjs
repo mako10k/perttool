@@ -25,7 +25,7 @@ import {
   checkDocument,
   createNodeHost,
   selectNextTasks,
-} from "../dist/index.js";
+} from "../dist/node/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");

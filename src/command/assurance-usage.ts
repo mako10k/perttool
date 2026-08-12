@@ -39,7 +39,7 @@ function helpTarget(
 ): CommandHelpTarget {
   return descriptor.path.length === 1
     ? Object.freeze({ resource: descriptor.path[0], action: null })
-    : Object.freeze({ resource: descriptor.path[0], action: descriptor.path[1] });
+    : Object.freeze({ resource: descriptor.path[0], action: descriptor.path.slice(1).join(" ") });
 }
 
 function invalid(
@@ -143,7 +143,7 @@ export function validateAssuranceCommandInvocation(
 export function assuranceCommandUsageErrorToJson(
   error: CommandUsageError,
 ): Readonly<Record<string, unknown>> {
-  return commandUsageErrorToJsonForContract(error, 7);
+  return commandUsageErrorToJsonForContract(error, 8);
 }
 
 export function serializeAssuranceCommandUsageError(

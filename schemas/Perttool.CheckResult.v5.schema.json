@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.CheckResult.v4.schema.json",
-  "title": "Perttool.CheckResult.v4",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.CheckResult.v5.schema.json",
+  "title": "Perttool.CheckResult.v5",
   "type": "object",
   "required": [
     "schema_version",
@@ -19,14 +19,15 @@
     "temporal_inputs",
     "actuals_inputs",
     "assurance",
-    "assurance_state_counts"
+    "assurance_state_counts",
+    "acceptance"
   ],
   "properties": {
     "schema_version": {
-      "const": "Perttool.CheckResult.v4"
+      "const": "Perttool.CheckResult.v5"
     },
     "cli_contract_version": {
-      "const": 7
+      "const": 8
     },
     "tool_version": {
       "type": "string"
@@ -205,6 +206,12 @@
     },
     "assurance_state_counts": {
       "$ref": "Perttool.Common.v1.schema.json#/$defs/planAssuranceStateCounts"
+    },
+    "acceptance": {
+      "oneOf": [
+        { "$ref": "Perttool.MilestoneAcceptanceResult.v1.schema.json#/$defs/acceptanceModel" },
+        { "type": "null" }
+      ]
     }
   },
   "additionalProperties": false

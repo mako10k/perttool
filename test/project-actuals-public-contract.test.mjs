@@ -39,7 +39,7 @@ function cliJson(args, expectedStatus = 0) {
   );
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.cli_contract_version, 7);
+  assert.equal(json.cli_contract_version, 8);
   return json;
 }
 
@@ -82,7 +82,7 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
   assert.equal(git(directory, ["rev-list", "--count", "HEAD"]), "1");
 
   const checked = cliJson(["document", "check", pathname]);
-  assert.equal(checked.schema_version, "Perttool.CheckResult.v4");
+  assert.equal(checked.schema_version, "Perttool.CheckResult.v5");
   assert.equal(checked.grammar_version, 5);
   assert.deepEqual(checked.actuals_inputs.events, []);
 
@@ -91,7 +91,7 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
     "start",
     "2026-07-29T09:00:00+09:00",
   );
-  assert.equal(started.schema_version, "Perttool.MutationResult.v4");
+  assert.equal(started.schema_version, "Perttool.MutationResult.v5");
   assert.equal(started.lifecycle.from_state, "planned");
   assert.equal(started.lifecycle.to_state, "active");
   assert.equal(started.lifecycle.event.kind, "start");
@@ -104,14 +104,14 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
     ["--reason", "review"],
   );
   const suspendedAnalysis = cliJson(["dag", "analyze", pathname]);
-  assert.equal(suspendedAnalysis.schema_version, "Perttool.AnalysisResult.v5");
+  assert.equal(suspendedAnalysis.schema_version, "Perttool.AnalysisResult.v6");
   assert.deepEqual(suspendedAnalysis.precedence.suspended_task_ids, ["WORK"]);
   assert.equal(
     suspendedAnalysis.precedence.conditional_on_suspensions_resumed,
     true,
   );
   const suspendedNext = cliJson(["dag", "next", pathname]);
-  assert.equal(suspendedNext.schema_version, "Perttool.NextResult.v6");
+  assert.equal(suspendedNext.schema_version, "Perttool.NextResult.v7");
   assert.deepEqual(suspendedNext.groups.suspended, ["WORK"]);
   assert.deepEqual(suspendedNext.groups.ready, []);
 
@@ -191,14 +191,14 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
     pathname,
     "--actor",
     "user",
-  ]);
-  assert.equal(advanced.schema_version, "Perttool.AdvanceResult.v2");
-  assert.deepEqual(advanced.advance.removed_task_ids, ["WORK"]);
-  assert.equal(advanced.advance.removed_work_event_ids.length, 4);
+  ], 1);
+  assert.equal(advanced.schema_version, "Perttool.AdvanceResult.v3");
+  assert.equal(advanced.diagnostics[0].code, "PTMAC-101");
+  assert.equal(advanced.advance, null);
   assert.equal(
     readFileSync(pathname, "utf8").includes("work_event"),
     true,
-    "advance remains a preview without --write",
+    "Contract 8 blocks old-document advance before migration",
   );
 });
 
@@ -209,7 +209,7 @@ test("Contract 6 keeps legacy status-only finish and rejects it for Grammar 5", 
     "docs/examples/minimal.pert",
     "WORK",
   ]);
-  assert.equal(legacy.schema_version, "Perttool.MutationResult.v4");
+  assert.equal(legacy.schema_version, "Perttool.MutationResult.v5");
   assert.equal(legacy.ok, true);
   assert.equal(legacy.lifecycle, null);
 
@@ -226,7 +226,7 @@ test("Contract 6 keeps legacy status-only finish and rejects it for Grammar 5", 
   );
 });
 
-test("Contract 7 package root retains actuals services without target names", () => {
+test("Contract 8 package root retains actuals services without target names", () => {
   for (const name of [
     "planLifecycleMutation",
     "planFinishActuals",
@@ -246,10 +246,10 @@ test("Contract 7 package root retains actuals services without target names", ()
   ]) {
     assert.equal(name in publicApi, false, name);
   }
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 45);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 53);
   assert.equal(
     publicApi.COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 7,
+      ({ contractVersion }) => contractVersion === 8,
     ),
     true,
   );

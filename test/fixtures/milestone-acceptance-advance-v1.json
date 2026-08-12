@@ -1,0 +1,17 @@
+{
+  "schema_version": "Perttool.MilestoneAcceptanceAdvanceCases.v1",
+  "cases": [
+    {"id":"MAA-001","depends_on":[],"boundary":"older_grammar_requires_migration_before_planning"},
+    {"id":"MAA-002","depends_on":["MAA-001"],"boundary":"pure_provisional_plan_precedes_git_or_canonical_guards"},
+    {"id":"MAA-003","depends_on":["MAA-002"],"boundary":"affected_set_is_removed_or_newly_explicit_reached_milestones"},
+    {"id":"MAA-004","depends_on":["MAA-003"],"boundary":"migration_bound_grandfathered_milestone_does_not_require_acceptance"},
+    {"id":"MAA-005","depends_on":["MAA-003"],"boundary":"undeclared_pending_failed_and_unavailable_non_grandfathered_milestones_block"},
+    {"id":"MAA-006","depends_on":["MAA-005"],"boundary":"blocked_result_retains_explanatory_candidate_diff_edits_and_ids"},
+    {"id":"MAA-007","depends_on":["MAA-006"],"boundary":"one_blocker_blocks_the_entire_candidate_without_partial_advance"},
+    {"id":"MAA-008","depends_on":["MAA-005"],"boundary":"accepted_or_required_waived_milestone_passes"},
+    {"id":"MAA-009","depends_on":["MAA-008"],"boundary":"passed_provisional_candidate_is_promoted_byte_identically"},
+    {"id":"MAA-010","depends_on":["MAA-006","MAA-009"],"boundary":"canonical_assurance_governance_history_and_write_composition_runs_only_after_acceptance"},
+    {"id":"MAA-011","depends_on":["MAA-010"],"boundary":"history_force_cannot_bypass_acceptance"},
+    {"id":"MAA-012","depends_on":["MAA-007","MAA-009","MAA-011"],"boundary":"acceptance_records_follow_removed_milestones_and_public_contract_remains_inactive"}
+  ]
+}

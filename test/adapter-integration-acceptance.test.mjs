@@ -158,14 +158,23 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.deepEqual(mcp.dependencies, { "@modelcontextprotocol/server": "2.0.0" });
   assert.equal(mcp.peerDependencies.perttool, "0.8.0");
 
-  assert.equal(Object.keys(packageRoot).length, 122);
-  assert.equal(Object.keys(nodeApi).length, 122);
+  assert.equal(Object.keys(packageRoot).length, 129);
+  assert.equal(Object.keys(nodeApi).length, 129);
   assert.equal(Object.keys(core).length, 45);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 45);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 21);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 53);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
+  const contract7AdapterServices = new Set([
+    "analyzeDocument",
+    "checkDocument",
+    "selectNextTasks",
+  ]);
   for (const name of Object.keys(packageRoot)) {
-    assert.equal(packageRoot[name], nodeApi[name], name);
+    if (contract7AdapterServices.has(name)) {
+      assert.notEqual(packageRoot[name], nodeApi[name], name);
+    } else {
+      assert.equal(packageRoot[name], nodeApi[name], name);
+    }
   }
 
   const [rootSources, lspSources, vscodeSources, mcpSources] = await Promise.all([
@@ -184,14 +193,14 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.equal(/vscode-language|adapters\/(?:lsp|vscode)|dist\/cli|node:child_process/u.test(mcpSources), false);
 });
 
-test("Core, CLI, and MCP share exact check, analyze, and next semantics", async () => {
+test("Contract 8 CLI and Contract 7 adapters preserve the explicit compatibility boundary", async () => {
   const source = await repositoryText("docs/examples/minimal.pert");
   const sourceDigest = digestText(source);
   const adapter = createPerttoolMcpAdapter();
   const cases = [
-    { tool: "perttool_check", cli: ["document", "check"], schema: "Perttool.CheckResult.v4" },
-    { tool: "perttool_analyze", cli: ["dag", "analyze"], schema: "Perttool.AnalysisResult.v5" },
-    { tool: "perttool_next", cli: ["dag", "next"], schema: "Perttool.NextResult.v6" },
+    { tool: "perttool_check", cli: ["document", "check"], currentSchema: "Perttool.CheckResult.v5", adapterSchema: "Perttool.CheckResult.v4" },
+    { tool: "perttool_analyze", cli: ["dag", "analyze"], currentSchema: "Perttool.AnalysisResult.v6", adapterSchema: "Perttool.AnalysisResult.v5" },
+    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v7", adapterSchema: "Perttool.NextResult.v6" },
   ];
   const mcpResults = new Map();
   for (const acceptanceCase of cases) {
@@ -204,21 +213,23 @@ test("Core, CLI, and MCP share exact check, analyze, and next semantics", async 
       source: { kind: "inline", text: source },
     });
     assert.equal(mcpResult.isError, false, acceptanceCase.tool);
-    assert.equal(cliWire.schema_version, acceptanceCase.schema);
-    assert.equal(mcpResult.structuredContent.result_schema_version, acceptanceCase.schema);
+    assert.equal(cliWire.schema_version, acceptanceCase.currentSchema);
+    assert.equal(mcpResult.structuredContent.result_schema_version, acceptanceCase.adapterSchema);
     assert.equal(cliWire.source_digest, sourceDigest);
     assert.equal(mcpResult.structuredContent.source.source_digest, sourceDigest);
+    const { acceptance, ...contract7Payload } = cliPayload(cliWire);
+    assert.equal(acceptance, null);
     assert.deepEqual(
       mcpResult.structuredContent.result,
-      cliPayload(cliWire),
+      contract7Payload,
       acceptanceCase.tool,
     );
     mcpResults.set(acceptanceCase.tool, mcpResult.structuredContent.result);
   }
 
-  const check = packageRoot.checkDocument(source);
-  const analyze = packageRoot.analyzeDocument(source);
-  const next = packageRoot.selectNextTasks(source, { sourceDigest });
+  const check = nodeApi.checkDocument(source);
+  const analyze = nodeApi.analyzeDocument(source);
+  const next = nodeApi.selectNextTasks(source, { sourceDigest });
   const checkWire = mcpResults.get("perttool_check");
   const analyzeWire = mcpResults.get("perttool_analyze");
   const nextWire = mcpResults.get("perttool_next");

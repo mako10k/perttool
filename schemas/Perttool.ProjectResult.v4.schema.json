@@ -22,7 +22,7 @@
       "const": "Perttool.ProjectResult.v4"
     },
     "cli_contract_version": {
-      "const": 7
+      "const": 8
     },
     "tool_version": {
       "type": "string"
@@ -54,7 +54,7 @@
         "null"
       ],
       "minimum": 1,
-      "maximum": 6
+          "maximum": 7
     },
     "project": {
       "oneOf": [

@@ -53,7 +53,7 @@ function invokeJson(args) {
   );
   const value = JSON.parse(result.stdout);
   assert.equal(value.ok, true);
-  assert.equal(value.cli_contract_version, 7);
+  assert.equal(value.cli_contract_version, 8);
   return value;
 }
 
@@ -62,9 +62,9 @@ const sealed = invokeJson([
   "seal",
   retainedPlan,
   "--reason",
-  "Installed package Contract 7 acceptance",
+  "Installed package Contract 8 compatibility acceptance",
 ]);
-assert.equal(sealed.schema_version, "Perttool.MutationResult.v4");
+assert.equal(sealed.schema_version, "Perttool.MutationResult.v5");
 assert.equal(
   sealed.governance?.schema_version,
   "Perttool.GovernanceDecision.v2",
@@ -96,7 +96,7 @@ assert.match(hash.stdout, /^sha256:[0-9a-f]{64}\n$/);
 assert.equal(hash.stdout, `${work.contract_hash}\n`);
 
 const next = invokeJson(["dag", "next", sealedPlan]);
-assert.equal(next.schema_version, "Perttool.NextResult.v6");
+assert.equal(next.schema_version, "Perttool.NextResult.v7");
 assert.equal(
   next.temporal?.authority?.policy,
   "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",
@@ -107,5 +107,5 @@ assert.deepEqual(
 );
 
 process.stdout.write(
-  "installed package Contract 7 plan-assurance acceptance passed\n",
+  "installed package Contract 8 plan-assurance compatibility passed\n",
 );

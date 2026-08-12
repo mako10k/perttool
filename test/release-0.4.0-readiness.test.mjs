@@ -73,7 +73,7 @@ test("0.4.0 readiness observes the atomic public Contract 5 boundary", async () 
       "  finish DONE\n  goal_owner user\n  dag_owner user",
     );
 
-  assert.equal(COMMAND_REGISTRY.length, 45);
+  assert.equal(COMMAND_REGISTRY.length, 53);
   for (const route of [
     "guide",
     "project show",
@@ -107,7 +107,7 @@ test("0.4.0 readiness observes the atomic public Contract 5 boundary", async () 
     set: { goalOwner: "admin" },
   };
   const preview = planMutation(governed, mutation);
-  assert.equal(preview.schemaVersion, "Perttool.MutationResult.v4");
+  assert.equal(preview.schemaVersion, "Perttool.MutationResult.v5");
   assert.equal(preview.ok, true);
   assert.equal(
     preview.governance.schemaVersion,

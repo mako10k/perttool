@@ -27,7 +27,7 @@
       "const": "Perttool.FormatResult.v1"
     },
     "cli_contract_version": {
-      "const": 7
+      "const": 8
     },
     "tool_version": {
       "type": "string"

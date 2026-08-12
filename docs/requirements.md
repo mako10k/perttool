@@ -361,6 +361,48 @@ Should:
   CLI/result/schema versions, migration, and release selection to a separate
   interface contract before implementation.
 
+### 2.9 Separate graph closure from milestone outcome acceptance
+
+Grammar 7 and CLI Contract 8 must add milestone outcome acceptance without
+changing AoA closure into evidence. The normative target is the
+[Milestone Outcome Acceptance Contract](specs/milestone-acceptance.md).
+
+Must:
+
+- Keep effective-reached closure, explicit `state reached`, and milestone
+  outcome acceptance as separate typed facts.
+- Represent one complete, commitment-bound criterion-set revision per
+  milestone. A declared set contains at least one required criterion;
+  optional criteria are visible but non-blocking.
+- Replace the whole criterion set atomically and remove the old revision and
+  all owned receipts from current source without implicit continuation. Git
+  retains the previous snapshot.
+- Treat verifier and verification time as caller assertions, not
+  authentication or trusted time, and require no external service.
+- Apply existing pre-change DAG-owner governance to criterion replacement and
+  every verification, failure, unavailable, revocation, and waiver write.
+- Keep Grammar 1 through 6 readable, but require preparation-only Grammar 7
+  migration before Contract 8 acceptance mutation or advance.
+- Require an exact committed pre-migration source and persist a compact
+  repository/path/commit/blob/digest-bound baseline for only the milestone IDs
+  explicitly reached before migration.
+- Generate no criterion or evidence from titles, descriptions, task status,
+  tests, Git, work events, or plan-assurance records.
+- Build a pure provisional advance plan first, then block the entire advance
+  when any affected non-grandfathered closure-derived milestone is not
+  accepted. Return explanatory blockers without a persistable candidate.
+- Provide no partial advance and no general acceptance force. A
+  criterion-specific, reason-bearing, owner-governed waiver is the only bypass
+  for one unmet required criterion.
+- Run milestone acceptance before the independent history-safety Git guard.
+- Keep milestone criterion commitments outside task-plan assurance hashes and
+  downstream start authority in model 1.
+- Activate Grammar 7 parsing, formatting, migration, results, schemas,
+  diagnostics, Help, Guide, exports, package behavior, and Contract 8 commands
+  atomically. Keep the selected LSP, VSIX, and MCP projection read-only.
+- Reconstruct deleted criterion revisions and receipts only from exact Git
+  checkpoints and never infer historical acceptance.
+
 ## 3. Problems to solve
 
 - A task list alone makes dependencies and start order hard to see.
@@ -974,6 +1016,26 @@ graph until a separately accepted boundary expansion explicitly maps and
 reseals the affected relations. Contraction performs the inverse mapping while
 retaining the detail plan and partition. Neither transition changes the AoA
 graph, schedule, resources, lifecycle, or actuals implicitly.
+
+### 7.11 Milestone outcome acceptance
+
+Milestone-acceptance model 1 adds a milestone-scoped criterion-set revision
+and stable owned receipts after Grammar 7 migration. Criterion kinds are the
+closed set `test`, `command`, `artifact`, `observation`, and `owner`.
+Receipt actions are `verify`, `fail`, `unavailable`, `revoke`, and `waive`.
+
+Required criteria derive milestone acceptance as `pending`, `accepted`,
+`failed`, or `unavailable`; an absent set is `not_declared`. Optional states
+remain observable but do not enter the blocking list. Receipt identity,
+revision, set commitment, criterion commitment, evidence reference, asserted
+verifier, and asserted UTC `Z` time are exact inputs. Timestamp order has no
+authority.
+
+The migration baseline is a versioned source record, not acceptance evidence.
+It binds the exact committed pre-migration source and only its stored reached
+milestone set. Analysis and Next use one pure acceptance projection, while
+Contract 8 advance uses it as an all-or-nothing guard before history safety.
+Adapters project the Application result and do not infer or mutate acceptance.
 
 ## 8. DSL requirements
 

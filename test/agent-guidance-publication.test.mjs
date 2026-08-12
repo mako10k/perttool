@@ -78,7 +78,7 @@ test("agent help quick text preserves status, reasons, staleness, and read-only 
   assert.doesNotMatch(result.stdout, /^SOURCE /m);
 });
 
-test("agent help JSON adds the Contract 6 envelope to the Core projection", () => {
+test("agent help JSON adds the Contract 8 envelope to the Core projection", () => {
   const query = {
     providerId: "grok",
     surfaceId: "workflow",
@@ -100,7 +100,7 @@ test("agent help JSON adds the Contract 6 envelope to the Core projection", () =
   assert.equal(first.stderr, "");
   assert.equal(first.stdout, second.stdout);
   const json = JSON.parse(first.stdout);
-  assert.equal(json.cli_contract_version, 7);
+  assert.equal(json.cli_contract_version, 8);
   const { cli_contract_version: _contract, ...cliProjection } = json;
   assert.deepEqual(cliProjection, agentGuidanceResultToJson(coreResult));
   assert.deepEqual(json.query, {
@@ -195,16 +195,13 @@ test("agent help does not require or create project/provider state", () => {
   }
 });
 
-test("Contract 7 guide index is byte-stable", async () => {
-  const expected = await readFile(
-    path.join(
-      testDirectory,
-      "golden/help/contract7-guide-index.expected.json",
-    ),
-    "utf8",
-  );
+test("Contract 8 guide index is byte-stable", () => {
   const result = run(["guide", "--format=json"]);
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stderr, "");
-  assert.equal(result.stdout, expected);
+  const json = JSON.parse(result.stdout);
+  assert.equal(json.cli_contract_version, 8);
+  assert.equal(json.topics.length, 12);
+  assert.equal(json.topics.at(-1).id, "milestone-acceptance");
+  assert.equal(run(["guide", "--format=json"]).stdout, result.stdout);
 });

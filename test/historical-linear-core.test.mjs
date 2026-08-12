@@ -279,7 +279,7 @@ test("HLR-002 classifies invalid sources and never crosses a continuity gap", ()
   assert.equal(invalidEndpoint.effective_checkpoint_id, commits[0]);
 
   const unsupported = reconstructHistoricalLinearHistory(evidence([
-    source().replace("version 5", "version 7"),
+    source().replace("version 5", "version 8"),
   ]));
   assert.equal(unsupported.timeline.entries[0].validity, "grammar_unsupported");
 
@@ -520,9 +520,9 @@ test("HLR-012 keeps the public runtime and source bytes unchanged", async () => 
     ),
   );
   assert.equal("reconstructHistoricalLinearHistory" in publicApi, false);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 45);
-  assert.equal(publicApi.getJsonSchemaCatalog().length, 21);
-  assert.equal(Object.keys(publicApi).length, 122);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 53);
+  assert.equal(publicApi.getJsonSchemaCatalog().length, 23);
+  assert.equal(Object.keys(publicApi).length, 129);
   const original = source();
   const input = evidence([original]);
   reconstructHistoricalLinearHistory(input);

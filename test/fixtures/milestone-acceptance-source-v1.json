@@ -1,0 +1,19 @@
+{
+  "schema_version": "Perttool.MilestoneAcceptanceSourceCases.v1",
+  "model_version": 1,
+  "runtime_status": "internal_target_only",
+  "cases": [
+    {"id":"MAS-001","depends_on":[],"boundary":"grammar6_base_validation_is_reused"},
+    {"id":"MAS-002","depends_on":["MAS-001"],"boundary":"grammar7_three_closed_record_identities"},
+    {"id":"MAS-003","depends_on":["MAS-002"],"boundary":"criterion_set_nonempty_required_unique_and_committed"},
+    {"id":"MAS-004","depends_on":["MAS-003"],"boundary":"receipt_exact_set_and_criterion_binding"},
+    {"id":"MAS-005","depends_on":["MAS-004"],"boundary":"verify_kind_reference_revision_verifier_and_utc_z"},
+    {"id":"MAS-006","depends_on":["MAS-004"],"boundary":"revoke_exact_existing_receipt_and_waive_reason"},
+    {"id":"MAS-007","depends_on":["MAS-002"],"boundary":"source_spans_and_canonical_record_order"},
+    {"id":"MAS-008","depends_on":["MAS-001"],"boundary":"committed_head_stage0_and_source_identity_required"},
+    {"id":"MAS-009","depends_on":["MAS-008"],"boundary":"sha1_sha256_linkable_opaque_repository_binding"},
+    {"id":"MAS-010","depends_on":["MAS-008"],"boundary":"sorted_explicit_reached_only_grandfather_set"},
+    {"id":"MAS-011","depends_on":["MAS-010"],"boundary":"migration_adds_no_criterion_receipt_waiver_or_acceptance"},
+    {"id":"MAS-012","depends_on":["MAS-007","MAS-011"],"boundary":"internal_capability_no_public_catalog_or_runtime_change"}
+  ]
+}

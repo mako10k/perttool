@@ -1,11 +1,30 @@
 export {
   analyzeDocument,
   checkDocument,
+  getProjectMetadata,
+  planAssuranceMutation,
+  planBatchMutation,
+  planFinishActuals,
+  planFormat,
+  planLifecycle as planLifecycleMutation,
+  planMutation,
+  planUnitMigration,
   selectNextTasks,
-} from "./application/contract7-assurance.js";
+} from "./application/contract8-milestone-acceptance.js";
+export {
+  planMilestoneAcceptanceMigration,
+  recheckCommittedMigrationProof,
+} from "./milestone-acceptance/migration.js";
+export {
+  persistMilestoneAcceptanceMutation,
+  planAcceptanceReceiptMutation,
+  planCriterionSetReplacement,
+  showMilestoneAcceptance,
+} from "./milestone-acceptance/mutation.js";
+export { planMilestoneAcceptanceAdvance } from "./milestone-acceptance/advance.js";
+export const ADVANCE_RESULT_SCHEMA_VERSION = "Perttool.AdvanceResult.v3" as const;
 export { createNodeHost } from "./node/host.js";
 export { getAgentHelp } from "./application/agent-help.js";
-export { getProjectMetadata } from "./application/contract7-project.js";
 export {
   planProjectInit,
   projectInitResultToJson,
@@ -13,7 +32,6 @@ export {
   serializeProjectInitResult,
   withProjectInitOutput,
 } from "./application/init.js";
-export { planFormat } from "./application/contract7-source.js";
 export { recommendationAnalysisToJson } from "./recommendation/json.js";
 export {
   canonicalOverrideArtifact,
@@ -23,11 +41,6 @@ export {
 } from "./recommendation/override.js";
 export {
   planAdvance,
-  planBatchMutation,
-  planFinishActuals,
-  planLifecycle as planLifecycleMutation,
-  planMutation,
-  planAssuranceMutation,
 } from "./application/contract7-mutation.js";
 export {
   inspectTargetPlanAssurance as inspectPlanAssurance,
@@ -35,7 +48,6 @@ export {
   PLAN_ASSURANCE_RESULT_SCHEMA_VERSION,
 } from "./application/target-assurance-inspection.js";
 export {
-  planUnitMigration,
   withUnitMigrationWrite,
 } from "./application/contract7-unit-migration.js";
 export {
@@ -185,7 +197,20 @@ export {
 export * from "./model/rational.js";
 export * from "./model/units.js";
 export { GOVERNANCE_DIRECT_EDIT_WARNING } from "./governance/guidance.js";
-export type { CheckResultV4 as CheckResult } from "./application/contract7-assurance.js";
+export type {
+  AdvanceResultV3 as AdvanceResult,
+  AdvanceResultV3,
+  AnalysisResultV6 as AnalysisResult,
+  AnalysisResultV6,
+  CheckResultV5 as CheckResult,
+  CheckResultV5,
+  LifecycleResultV5 as LifecycleResult,
+  LifecycleResultV5,
+  MutationResultV5 as MutationResult,
+  MutationResultV5,
+  NextResultV7 as NextResult,
+  NextResultV7,
+} from "./application/contract8-milestone-acceptance.js";
 export type {
   CheckOptions,
   CheckSummary,
@@ -288,9 +313,7 @@ export type {
   UnsatisfiedEdgeExplanation,
 } from "./application/next.js";
 export type {
-  AnalysisResultV5 as AnalysisResult,
   AnalysisResultV5,
-  Contract7NextResultV6 as NextResult,
   Contract7NextResultV6,
   NextResultV6,
 } from "./application/contract7-assurance.js";
@@ -391,10 +414,8 @@ export type {
   AdvanceRetentionReason,
 } from "./mutation/advance.js";
 export type {
-  AdvanceResultV2 as AdvanceResult,
   AdvanceResultV2,
   LifecycleResultV4,
-  MutationResultV4 as MutationResult,
   MutationResultV4,
 } from "./application/contract7-mutation.js";
 export type {
@@ -412,9 +433,6 @@ export type {
   PlanAssuranceStartAuthorityV1,
   PlanAssuranceStateCountsV1,
 } from "./assurance/authority.js";
-export {
-  PLAN_ASSURANCE_ADVANCE_RESULT_SCHEMA_VERSION as ADVANCE_RESULT_SCHEMA_VERSION,
-} from "./assurance/advance.js";
 export type {
   AdvanceHistoryGuardCause,
   AdvanceHistoryGuardStatus,

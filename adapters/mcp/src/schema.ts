@@ -68,8 +68,15 @@ function publicSemanticSchema(
   schemaId: string,
   prefix: string,
 ): SemanticSchemaLayer {
-  const source = getJsonSchema(schemaId);
-  if (source === null) throw new Error(`missing public schema: ${schemaId}`);
+  const activeSchemaId = schemaId === "Perttool.CheckResult.v4"
+    ? "Perttool.CheckResult.v5"
+    : schemaId === "Perttool.AnalysisResult.v5"
+      ? "Perttool.AnalysisResult.v6"
+      : schemaId === "Perttool.NextResult.v6"
+        ? "Perttool.NextResult.v7"
+        : schemaId;
+  const source = getJsonSchema(activeSchemaId);
+  if (source === null) throw new Error(`unavailable public schema: ${activeSchemaId}`);
   const cloned = cloneJson(source);
   if (!isObject(cloned)) throw new Error(`invalid public schema: ${schemaId}`);
   const sourceProperties = cloned["properties"];
@@ -83,12 +90,17 @@ function publicSemanticSchema(
     throw new Error(`public schema has no closed root: ${schemaId}`);
   }
   const properties = Object.fromEntries(
-    Object.entries(sourceProperties).filter(([key]) => !facadeFields.has(key)),
+    Object.entries(sourceProperties).filter(([key]) =>
+      !facadeFields.has(key) &&
+      !(activeSchemaId !== schemaId && key === "acceptance")
+    ),
   ) as { [key: string]: MutableJson };
   const semantic: MutableJson = {
     type: "object",
-    required: sourceRequired.filter(
-      (key): key is string => typeof key === "string" && !facadeFields.has(key),
+    required: sourceRequired.filter((key): key is string =>
+      typeof key === "string" &&
+      !facadeFields.has(key) &&
+      !(activeSchemaId !== schemaId && key === "acceptance")
     ),
     properties,
     additionalProperties: false,

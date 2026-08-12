@@ -18,13 +18,13 @@ function run(args) {
   });
 }
 
-test("Grammar 6 and CLI Contract 7 activate plan assurance atomically", async () => {
+test("Contract 8 retains the Grammar 6 plan-assurance surface", async () => {
   const source = await readFile(
     path.join(root, "docs", "examples", "minimal.pert"),
     "utf8",
   );
-  assert.equal(perttool.COMMAND_REGISTRY.length, 45);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 21);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 53);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 23);
   assert.equal(perttool.getJsonSchema("Perttool.NextResult.v5"), null);
   assert.equal(perttool.getJsonSchema("Perttool.AdvanceResult.v1"), null);
   assert.ok(perttool.getJsonSchema("Perttool.PlanAssuranceResult.v1"));
@@ -36,7 +36,7 @@ test("Grammar 6 and CLI Contract 7 activate plan assurance atomically", async ()
     reason: "Public Contract 7 acceptance",
   });
   assert.equal(sealed.ok, true, JSON.stringify(sealed.diagnostics));
-  assert.equal(sealed.schemaVersion, "Perttool.MutationResult.v4");
+  assert.equal(sealed.schemaVersion, "Perttool.MutationResult.v5");
   assert.equal(
     sealed.governance?.schemaVersion,
     "Perttool.GovernanceDecision.v2",
@@ -44,7 +44,7 @@ test("Grammar 6 and CLI Contract 7 activate plan assurance atomically", async ()
   assert.ok(sealed.updatedText);
 
   const checked = perttool.checkDocument(sealed.updatedText);
-  assert.equal(checked.schemaVersion, "Perttool.CheckResult.v4");
+  assert.equal(checked.schemaVersion, "Perttool.CheckResult.v5");
   assert.equal(checked.grammarVersion, 6);
   assert.equal(checked.assurance?.coverage, "complete");
   const work = checked.assurance.taskResults.find(({ taskId }) =>
@@ -54,7 +54,7 @@ test("Grammar 6 and CLI Contract 7 activate plan assurance atomically", async ()
   assert.equal(work?.status, "verified");
 
   const next = perttool.selectNextTasks(sealed.updatedText);
-  assert.equal(next.schemaVersion, "Perttool.NextResult.v6");
+  assert.equal(next.schemaVersion, "Perttool.NextResult.v7");
   assert.equal(
     next.temporal.authority.policy,
     "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",
@@ -119,7 +119,7 @@ test("Grammar 6 and CLI Contract 7 activate plan assurance atomically", async ()
     assert.equal(show.status, 0, show.stderr);
     const shown = JSON.parse(show.stdout);
     assert.equal(shown.schema_version, "Perttool.PlanAssuranceResult.v1");
-    assert.equal(shown.cli_contract_version, 7);
+    assert.equal(shown.cli_contract_version, 8);
     assert.equal(shown.assurance.coverage, "complete");
   } finally {
     await rm(temporary, { recursive: true, force: true });

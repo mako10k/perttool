@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v2.schema.json",
-  "title": "Perttool.AdvanceResult.v2",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v3.schema.json",
+  "title": "Perttool.AdvanceResult.v3",
   "type": "object",
   "required": [
     "schema_version",
@@ -25,14 +25,15 @@
     "lifecycle",
     "advance",
     "history_guard",
-    "assurance_guard"
+    "assurance_guard",
+    "acceptance_guard"
   ],
   "properties": {
     "schema_version": {
-      "const": "Perttool.AdvanceResult.v2"
+      "const": "Perttool.AdvanceResult.v3"
     },
     "cli_contract_version": {
-      "const": 7
+      "const": 8
     },
     "tool_version": {
       "type": "string"
@@ -319,6 +320,36 @@
                     "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
                   },
                   "equal": { "type": "boolean" }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        { "type": "null" }
+      ]
+    },
+    "acceptance_guard": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["model_version", "status", "affected_milestone_ids", "grandfathered_milestone_ids", "accepted_milestone_ids", "blocked_milestones"],
+          "properties": {
+            "model_version": { "const": 1 },
+            "status": { "enum": ["passed", "blocked"] },
+            "affected_milestone_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+            "grandfathered_milestone_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+            "accepted_milestone_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+            "blocked_milestones": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["milestone_id", "acceptance", "blocking_required_criterion_ids"],
+                "properties": {
+                  "milestone_id": { "type": "string" },
+                  "acceptance": { "enum": ["not_declared", "pending", "accepted", "failed", "unavailable"] },
+                  "blocking_required_criterion_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
                 },
                 "additionalProperties": false
               }

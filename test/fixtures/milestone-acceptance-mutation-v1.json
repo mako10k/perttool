@@ -1,0 +1,19 @@
+{
+  "schema_version": "Perttool.MilestoneAcceptanceMutationCases.v1",
+  "cases": [
+    {"id":"MAM-001","depends_on":[],"boundary":"invalid_or_pre_grammar_7_source_fails_before_candidate"},
+    {"id":"MAM-002","depends_on":["MAM-001"],"boundary":"whole_set_preview_has_exact_commitments"},
+    {"id":"MAM-003","depends_on":["MAM-002"],"boundary":"replacement_removes_prior_set_and_all_owned_receipts"},
+    {"id":"MAM-004","depends_on":["MAM-002"],"boundary":"every_candidate_affects_only_pre_change_dag_scope"},
+    {"id":"MAM-005","depends_on":["MAM-004"],"boundary":"preview_returns_candidate_without_owner_confirmation"},
+    {"id":"MAM-006","depends_on":["MAM-004"],"boundary":"persist_denial_retains_candidate_but_is_not_persistable"},
+    {"id":"MAM-007","depends_on":["MAM-006"],"boundary":"actor_owner_or_candidate_bound_owner_assertion_authorizes"},
+    {"id":"MAM-008","depends_on":["MAM-002"],"boundary":"verify_binds_exact_evidence_and_self_asserted_provenance"},
+    {"id":"MAM-009","depends_on":["MAM-008"],"boundary":"fail_and_unavailable_are_explicit_terminal_facts"},
+    {"id":"MAM-010","depends_on":["MAM-008"],"boundary":"revoke_names_one_earlier_terminal_receipt"},
+    {"id":"MAM-011","depends_on":["MAM-008"],"boundary":"required_reason_bearing_waiver_only"},
+    {"id":"MAM-012","depends_on":["MAM-008"],"boundary":"exact_receipt_replay_is_idempotent_and_conflicting_reuse_fails"},
+    {"id":"MAM-013","depends_on":["MAM-007"],"boundary":"digest_symlink_source_race_and_candidate_validation_use_existing_safe_write"},
+    {"id":"MAM-014","depends_on":["MAM-003","MAM-010","MAM-011","MAM-012","MAM-013"],"boundary":"show_and_mutations_share_the_pure_evaluator_without_public_activation"}
+  ]
+}

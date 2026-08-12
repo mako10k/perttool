@@ -1,0 +1,17 @@
+{
+  "schema_version": "Perttool.MilestoneAcceptanceHistoryCases.v1",
+  "cases": [
+    {"id":"MAH-001","depends_on":[],"boundary":"contract_7_checkpoint_has_no_inferred_acceptance"},
+    {"id":"MAH-002","depends_on":["MAH-001"],"boundary":"grammar_7_selects_acceptance_model_1"},
+    {"id":"MAH-003","depends_on":["MAH-002"],"boundary":"migration_provenance_matches_exact_repository_path_commit_blob_and_digest"},
+    {"id":"MAH-004","depends_on":["MAH-003"],"boundary":"sha1_sha256_and_linked_repository_identity_are_opaque"},
+    {"id":"MAH-005","depends_on":["MAH-003"],"boundary":"missing_lower_baseline_fails_closed"},
+    {"id":"MAH-006","depends_on":["MAH-002"],"boundary":"criterion_revisions_and_receipts_are_checkpoint_epochs"},
+    {"id":"MAH-007","depends_on":["MAH-006"],"boundary":"deleted_records_remain_only_in_prior_git_checkpoint"},
+    {"id":"MAH-008","depends_on":["MAH-003","MAH-006"],"boundary":"canonical_advance_requires_exact_acceptance_aware_candidate_bytes"},
+    {"id":"MAH-009","depends_on":["MAH-008"],"boundary":"blocked_acceptance_candidate_cannot_be_historical_authority"},
+    {"id":"MAH-010","depends_on":["MAH-002"],"boundary":"contract_regression_and_invalid_source_form_continuity_gaps"},
+    {"id":"MAH-011","depends_on":["MAH-006"],"boundary":"record_and_checkpoint_hard_limits_fail_closed"},
+    {"id":"MAH-012","depends_on":["MAH-001","MAH-008","MAH-011"],"boundary":"public_history_projection_is_deterministic_and_read_only"}
+  ]
+}

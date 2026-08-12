@@ -1,0 +1,20 @@
+{
+  "schema_version": "Perttool.MilestoneAcceptanceCoreCases.v1",
+  "model_version": 1,
+  "cases": [
+    {"id":"MAE-001","depends_on":[],"boundary":"closure_and_acceptance_independent_axes"},
+    {"id":"MAE-002","depends_on":["MAE-001"],"boundary":"absent_set_is_not_declared"},
+    {"id":"MAE-003","depends_on":["MAE-002"],"boundary":"migration_grandfather_flag_does_not_invent_acceptance"},
+    {"id":"MAE-004","depends_on":["MAE-001"],"boundary":"required_pending_blocks_in_declaration_order"},
+    {"id":"MAE-005","depends_on":["MAE-004"],"boundary":"verify_satisfies_exact_criterion"},
+    {"id":"MAE-006","depends_on":["MAE-004"],"boundary":"fail_precedes_unavailable_and_pending_aggregation"},
+    {"id":"MAE-007","depends_on":["MAE-004"],"boundary":"unavailable_precedes_pending_aggregation"},
+    {"id":"MAE-008","depends_on":["MAE-005"],"boundary":"required_owner_waiver_satisfies_with_reason"},
+    {"id":"MAE-009","depends_on":["MAE-005"],"boundary":"optional_states_visible_and_nonblocking"},
+    {"id":"MAE-010","depends_on":["MAE-005"],"boundary":"explicit_revoke_returns_only_named_terminal_to_pending"},
+    {"id":"MAE-011","depends_on":["MAE-010"],"boundary":"replacement_terminal_requires_prior_explicit_revoke"},
+    {"id":"MAE-012","depends_on":["MAE-010"],"boundary":"revoke_target_same_criterion_earlier_and_once"},
+    {"id":"MAE-013","depends_on":["MAE-008"],"boundary":"optional_waiver_invalid"},
+    {"id":"MAE-014","depends_on":["MAE-003","MAE-011","MAE-013"],"boundary":"deterministic_internal_projection_no_assurance_or_public_change"}
+  ]
+}

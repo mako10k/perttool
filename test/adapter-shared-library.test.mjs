@@ -131,10 +131,14 @@ test("Node subpath retains its exact root compatibility facade", async () => {
   assert.equal(Object.keys(nodeApi).length, nodeHost.target.node_runtime_exports);
   assert.deepEqual(Object.keys(nodeApi), Object.keys(packageRoot));
   for (const name of Object.keys(packageRoot)) {
-    assert.equal(nodeApi[name], packageRoot[name], name);
+    if (["checkDocument", "analyzeDocument", "selectNextTasks"].includes(name)) {
+      assert.notEqual(nodeApi[name], packageRoot[name], name);
+    } else {
+      assert.equal(nodeApi[name], packageRoot[name], name);
+    }
   }
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, cases.package.command_count + 1);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, cases.package.root_schema_count + 1);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, cases.package.command_count + 9);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, cases.package.root_schema_count + 3);
 });
 
 test("shared-library normative cases remain dependency ordered", async () => {

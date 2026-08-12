@@ -25,7 +25,7 @@ import type { ProjectMetadataDurationUnit } from "./project.js";
 
 export interface TargetGovernanceProjectMetadata {
   readonly id: string;
-  readonly version: 1 | 2 | 3 | 4 | 5 | 6;
+  readonly version: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   readonly title: string;
   readonly description: string | null;
   readonly asOf: TargetCalendarValue | null;
@@ -47,7 +47,7 @@ export interface TargetGovernanceProjectMetadata {
 export interface TargetGovernanceProjectMetadataResult {
   readonly ok: boolean;
   readonly documentId: string | null;
-  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | 6 | null;
+  readonly grammarVersion: 1 | 2 | 3 | 4 | 5 | 6 | 7 | null;
   readonly project: TargetGovernanceProjectMetadata | null;
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticsTruncated: boolean;

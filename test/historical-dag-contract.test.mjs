@@ -181,7 +181,7 @@ test("all twenty historical DAG cases are dependency ordered and closed", async 
 });
 
 test("the later CLI task activates the reserved additive surface", () => {
-  assert.equal(COMMAND_REGISTRY.length, 45);
+  assert.equal(COMMAND_REGISTRY.length, 53);
   assert.equal(
     COMMAND_REGISTRY.some(
       ({ path: commandPath }) =>
@@ -190,7 +190,7 @@ test("the later CLI task activates the reserved additive surface", () => {
     true,
   );
   const catalog = getJsonSchemaCatalog();
-  assert.equal(catalog.length, 21);
+  assert.equal(catalog.length, 23);
   assert.equal(
     catalog.some(({ schemaId }) => schemaId === "Perttool.HistoricalGraphResult.v1"),
     true,
@@ -314,5 +314,5 @@ test("accepted historical VSIX makes only final acceptance startable", async () 
   assert.match(vsixAcceptance, /completed-task gate passes 955 tests/u);
   assert.match(vsixAcceptance, /candidate digest\s+`sha256:6b89163c/u);
   assert.match(selfUse, /plans\/historical-dag\.pert/u);
-  assert.match(selfUse, /36 plans; check, analyze, next/u);
+  assert.match(selfUse, /37 plans; check, analyze, next/u);
 });

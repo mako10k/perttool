@@ -145,9 +145,10 @@ Before implementation, use the recommended specification work and open matters i
 After meeting Stage 1 of `docs/process/self-use.md`, add perttool's own `.pert`
 plans to the canonical sources. In Stage 3, editing commands and `dag advance`
 may be used as canonical writers through preview-first, expected-digest, and
-post-write reanalysis procedures. Contract 7 retains the MIG-07 recommendation
-gate and adds plan-assurance eligibility after the temporal release policy:
-task selection uses a complete, known `Perttool.NextResult.v6` and its combined
+post-write reanalysis procedures. Contract 8 retains the MIG-07 recommendation
+gate, plan-assurance eligibility, and the separate milestone-acceptance
+projection after the temporal release policy: task selection uses a complete,
+known `Perttool.NextResult.v7` and its combined
 authority as follows.
 
 1. Run `perttool document check` on `mvp.pert` and the current detail plan to confirm that the plans are valid. Use `perttool project show --format json`, rather than directly viewing the source, to inspect metadata such as project ID, as_of, duration_unit, velocity, and finish
@@ -159,8 +160,8 @@ authority as follows.
 
 When changing project metadata, inspect the `project set` preview or `--diff`, and use the Stage 3 `--write` procedure with an expected digest for persistence. If a project-wide unit change also requires task duration or estimate changes, combine `project.set` and the related mutations in one atomic batch. Do not depend on visual source inspection or manual editing for normal metadata viewing and editing.
 
-Owner-aware governance is active in repository-source Grammar 6 and CLI
-Contract 7. Governed previews may omit actor and owner confirmation, but
+Owner-aware governance is active in repository-source Grammar 7 and CLI
+Contract 8. Governed previews may omit actor and owner confirmation, but
 persistent goal or DAG changes require an actor. Effective owners and
 delegates have direct authority; another actor must provide repeatable
 `--accepted-by-owner` caller assertions for every affected effective owner.

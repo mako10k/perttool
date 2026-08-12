@@ -18,13 +18,17 @@ import {
 import type { TargetGovernanceOptionDescriptor } from "./target-governance-discovery.js";
 
 export interface AssuranceCommandDescriptor
-  extends Omit<ActualsCommandDescriptor, "contractVersion"> {
-  readonly contractVersion: 7;
+  extends Omit<ActualsCommandDescriptor, "contractVersion" | "path"> {
+  readonly contractVersion: 8;
+  readonly path:
+    | readonly [command: string]
+    | readonly [resource: string, action: string]
+    | readonly [resource: string, group: string, action: string];
 }
 
 export interface AssuranceCommandHelpResult
   extends Omit<ActualsCommandHelpResult, "cliContractVersion" | "commands"> {
-  readonly cliContractVersion: 7;
+  readonly cliContractVersion: 8;
   readonly commands: readonly AssuranceCommandDescriptor[];
 }
 
@@ -118,8 +122,21 @@ function contract7Descriptor(
 ): AssuranceCommandDescriptor {
   return Object.freeze({
     ...descriptor,
-    contractVersion: 7,
-    resultSchemas: Object.freeze(descriptor.resultSchemas.map(contract7Schema)),
+    contractVersion: 8,
+    operands: descriptor.operation === "help"
+      ? Object.freeze([
+          ...descriptor.operands,
+          Object.freeze({ name: "subaction", valueType: "command-action", required: false, position: 2 }),
+        ])
+      : descriptor.operands,
+    resultSchemas: Object.freeze(descriptor.resultSchemas.map(contract7Schema).map((schema) =>
+      schema === "Perttool.CheckResult.v4" ? "Perttool.CheckResult.v5"
+        : schema === "Perttool.AnalysisResult.v5" ? "Perttool.AnalysisResult.v6"
+          : schema === "Perttool.NextResult.v6" ? "Perttool.NextResult.v7"
+            : schema === "Perttool.MutationResult.v4" ? "Perttool.MutationResult.v5"
+              : schema === "Perttool.AdvanceResult.v2" ? "Perttool.AdvanceResult.v3"
+                : schema
+    )),
     examples: Object.freeze(descriptor.examples.map((example) =>
       Object.freeze({
         ...example,
@@ -205,6 +222,74 @@ const historicalGraphCommand: AssuranceCommandDescriptor = Object.freeze({
   ]),
 });
 
+function milestoneAcceptanceDescriptor(
+  action: "replace" | "verify" | "fail" | "unavailable" | "revoke" | "waive" | "show",
+): AssuranceCommandDescriptor {
+  const read = action === "show";
+  return Object.freeze({
+    ...(read ? readTemplate : mutationTemplate),
+    contractVersion: 8,
+    path: Object.freeze(["milestone", "acceptance", action] as const),
+    operation: `milestone-acceptance.${action}`,
+    summary: read ? "Shows milestone closure and acceptance separately." : `Previews or persists milestone acceptance ${action}.`,
+    operands: Object.freeze(read
+      ? [file]
+      : action === "replace"
+        ? [file, operand("milestone-id", 1), operand("set-id", 2), operand("revision-id", 3)]
+        : [file, operand("set-id", 1), operand("criterion-id", 2), operand("receipt-id", 3)]),
+    options: Object.freeze(read ? readOptions : [
+      ...(action === "replace"
+        ? [valueOption("criterion", "criterion-declaration", { required: true, repeatable: true })]
+        : [
+            ...(action === "verify" ? [
+              valueOption("evidence-kind", "criterion-evidence-kind", { required: true, enumValues: ["test", "command", "artifact", "observation", "owner"] }),
+              valueOption("evidence-reference", "text", { required: true }),
+              valueOption("evidence-revision", "revision-or-none", { required: true }),
+              valueOption("verifier", "principal-id", { required: true }),
+              valueOption("occurred-at", "utc-z-time", { required: true }),
+            ] : []),
+            ...(action === "revoke" ? [valueOption("revokes", "receipt-id", { required: true })] : []),
+            ...(["fail", "unavailable", "waive"].includes(action) ? [valueOption("reason", "text", { required: action === "waive" })] : []),
+          ]),
+      ...mutationOptions,
+    ]),
+    effect: read ? "read" : "write-or-create",
+    resultSchemas: Object.freeze([read ? "Perttool.MilestoneAcceptanceResult.v1" : "Perttool.MutationResult.v5", "Perttool.CliError.v1"]),
+    examples: Object.freeze([Object.freeze({
+      id: "default",
+      invocation: read
+        ? "perttool milestone acceptance show plan.pert"
+        : action === "replace"
+          ? "perttool milestone acceptance replace plan.pert DONE DONE_R1 R1 --criterion COMPLETE:required:owner:Accepted"
+          : action === "verify"
+            ? "perttool milestone acceptance verify plan.pert DONE_R1 COMPLETE RCPT_DONE --evidence-kind owner --evidence-reference reviewed --evidence-revision none --verifier user --occurred-at 2026-08-12T12:00:00Z"
+            : action === "revoke"
+              ? "perttool milestone acceptance revoke plan.pert DONE_R1 COMPLETE REVOKE_DONE --revokes RCPT_DONE"
+              : `perttool milestone acceptance ${action} plan.pert DONE_R1 COMPLETE ${action.toUpperCase()}_DONE${action === "waive" ? " --reason Accepted" : ""}`,
+      summary: read ? "Show current milestone acceptance." : `Preview milestone acceptance ${action}.`,
+    })]),
+  });
+}
+
+const documentMigrateCommand: AssuranceCommandDescriptor = Object.freeze({
+  ...mutationTemplate,
+  contractVersion: 8,
+  path: Object.freeze(["document", "migrate"] as const),
+  operation: "document.migrate",
+  summary: "Prepares an exact committed document for Grammar 7.",
+  operands: Object.freeze([file]),
+  options: Object.freeze([
+    valueOption("target-grammar", "integer", { required: true, enumValues: ["7"] }),
+    ...mutationOptions,
+  ]),
+  resultSchemas: Object.freeze(["Perttool.MilestoneAcceptanceMigrationResult.v1", "Perttool.CliError.v1"]),
+  examples: Object.freeze([Object.freeze({
+    id: "preview",
+    invocation: "perttool document migrate plan.pert --target-grammar 7",
+    summary: "Preview the Grammar 7 migration candidate.",
+  })]),
+});
+
 function readDescriptor(
   action: "show" | "hash",
 ): AssuranceCommandDescriptor {
@@ -278,7 +363,7 @@ function assuranceMutationDescriptor(
     operands: Object.freeze([...operands]),
     options: Object.freeze([...domainOptions, ...mutationOptions]),
     resultSchemas: Object.freeze([
-      "Perttool.MutationResult.v4",
+      "Perttool.MutationResult.v5",
       "Perttool.CliError.v1",
     ]),
     examples: Object.freeze([
@@ -398,6 +483,8 @@ export const ASSURANCE_COMMAND_REGISTRY:
       ? [descriptor, historicalGraphCommand]
       : [descriptor]),
     ...assuranceCommands,
+    documentMigrateCommand,
+    ...(["replace", "verify", "fail", "unavailable", "revoke", "waive", "show"] as const).map(milestoneAcceptanceDescriptor),
   ]);
 
 const actualsCatalog = getActualsCommandDiscovery({ resource: null, action: null });
@@ -409,6 +496,7 @@ for (const [name, summary] of [
   ["plan-assurance", "Inspect, initialize, and reaccept conditional plan assurance."],
   ["plan-dependency", "Maintain explicit execution and planning relations."],
   ["task-outcome", "Maintain basis-bound completed-task outcomes."],
+  ["milestone", "Maintain milestones and inspect milestone outcome acceptance."],
 ] as const) {
   summaries.set(name, Object.freeze({ name, summary, actions: Object.freeze([]) }));
 }
@@ -416,8 +504,8 @@ const resourceSummaries: readonly CommandResourceSummary[] = Object.freeze(
   [...summaries.values()].map((resource) => Object.freeze({
     ...resource,
     actions: Object.freeze(ASSURANCE_COMMAND_REGISTRY
-      .filter(({ path }) => path.length === 2 && path[0] === resource.name)
-      .map(({ path }) => path[1]!)
+      .filter(({ path }) => path.length >= 2 && path[0] === resource.name)
+      .map(({ path }) => path.slice(1).join(" "))
       .sort()),
   })),
 );
@@ -447,7 +535,7 @@ function result(
 ): AssuranceCommandHelpResult {
   return Object.freeze({
     schemaVersion: "Perttool.CommandHelpResult.v1",
-    cliContractVersion: 7,
+    cliContractVersion: 8,
     toolVersion: TOOL_VERSION,
     operation: "help",
     ok: diagnostics.length === 0,
@@ -479,7 +567,7 @@ export function getAssuranceCommandDiscovery(
           query,
         )])
       : result(query, [resource], ASSURANCE_COMMAND_REGISTRY.filter(
-          ({ path }) => path.length === 2 && path[0] === query.resource,
+          ({ path }) => path.length >= 2 && path[0] === query.resource,
         ), []);
   }
   const resource = resourceSummaries.find(({ name }) => name === query.resource);
@@ -488,7 +576,7 @@ export function getAssuranceCommandDiscovery(
       "PTHLP-002", `unknown command resource: ${query.resource}`, query,
     )]);
   }
-  const command = commandsByPath.get(`${query.resource}\0${query.action}`);
+  const command = commandsByPath.get(`${query.resource}\0${query.action.replaceAll(" ", "\0")}`);
   return command === undefined
     ? result(query, [], [], [helpDiagnostic(
         "PTHLP-003",
@@ -529,7 +617,16 @@ export function serializeAssuranceCommandHelpResult(
 export function renderAssuranceCommandHelpResult(
   value: AssuranceCommandHelpResult,
 ): string {
+  const renderable = Object.freeze({
+    ...value,
+    commands: Object.freeze(value.commands.map((descriptor) => descriptor.path.length === 3
+      ? Object.freeze({
+          ...descriptor,
+          path: Object.freeze([descriptor.path[0], `${descriptor.path[1]} ${descriptor.path[2]}`] as const),
+        })
+      : descriptor)),
+  });
   return renderActualsCommandHelpResult(
-    value as unknown as ActualsCommandHelpResult,
-  ).replaceAll("CLI Contract 6", "CLI Contract 7");
+    renderable as unknown as ActualsCommandHelpResult,
+  ).replaceAll("CLI Contract 6", "CLI Contract 8");
 }

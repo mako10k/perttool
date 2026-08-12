@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { pathToFileURL } from "node:url";
 
 const [cli, workspace] = process.argv.slice(2);
 if (cli === undefined || workspace === undefined) {
@@ -15,6 +17,13 @@ if (cli === undefined || workspace === undefined) {
 if (!path.isAbsolute(cli) || !path.isAbsolute(workspace)) {
   process.stderr.write("CLI and workspace must use absolute paths\n");
   process.exit(2);
+}
+const publicApi = await import(pathToFileURL(
+  path.join(path.dirname(realpathSync(cli)), "index.js"),
+).href);
+
+function digest(text) {
+  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
 }
 
 const source = [
@@ -60,7 +69,37 @@ const source = [
 mkdirSync(workspace);
 const planPath = path.join(workspace, "eventful.pert");
 const outputPath = path.join(workspace, "candidate.pert");
-writeFileSync(planPath, source, "utf8");
+const migrated = publicApi.planMilestoneAcceptanceMigration(source, {
+  repositoryId: "advance-clean-candidate-test",
+  repositoryRelativePath: "eventful.pert",
+  objectFormat: "sha1",
+  headCommit: "a".repeat(40),
+  headBlob: "b".repeat(40),
+  stage0Blob: "b".repeat(40),
+  sourceDigest: digest(source),
+});
+assert.equal(migrated.ok, true);
+const replaced = publicApi.planCriterionSetReplacement(migrated.candidateText, {
+  milestoneId: "DONE",
+  setId: "DONE_R1",
+  revisionId: "R1",
+  criteria: [{
+    criterionId: "COMPLETE",
+    required: true,
+    evidenceKind: "owner",
+    description: "Completed work is accepted",
+  }],
+});
+assert.equal(replaced.ok, true);
+const waived = publicApi.planAcceptanceReceiptMutation(replaced.updatedText, {
+  setId: "DONE_R1",
+  criterionId: "COMPLETE",
+  receiptId: "WAIVE_DONE",
+  action: "waive",
+  reason: "Accepted repository-clean advance regression",
+});
+assert.equal(waived.ok, true);
+writeFileSync(planPath, waived.updatedText, "utf8");
 
 function invoke(args, expectedStatus = 0) {
   const result = spawnSync(process.execPath, [cli, ...args], {
@@ -112,14 +151,14 @@ git("init", "--quiet", "-b", "main");
 git("config", "user.name", "Perttool Acceptance");
 git("config", "user.email", "perttool@example.invalid");
 git("add", "--", path.basename(planPath));
-git("commit", "--quiet", "-m", "eventful pre-advance snapshot");
+git("commit", "--quiet", "-m", "acceptance-ready pre-advance snapshot");
 
 const headBefore = git("rev-parse", "HEAD");
 const indexBefore = git("ls-files", "--stage", "--", path.basename(planPath));
 const refsBefore = git("show-ref", "--head");
 
 const preview = invokeJson(["dag", "advance", planPath]);
-assert.equal(preview.schema_version, "Perttool.AdvanceResult.v2");
+assert.equal(preview.schema_version, "Perttool.AdvanceResult.v3");
 assert.equal(preview.changed, true);
 assert.equal(preview.write.mode, "preview");
 assert.equal(preview.write.written, false);

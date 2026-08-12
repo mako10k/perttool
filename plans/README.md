@@ -47,6 +47,16 @@ Plans are separated by level of detail.
   are complete; its exact basis-bound outcome is separately owner-confirmed
   and complete, and only final cross-surface acceptance is ready, recommended,
   and startable
+- [milestone-acceptance.pert](milestone-acceptance.pert): selected
+  `MILESTONE-ACCEPT-001` Grammar 7 and CLI Contract 8 roadmap covering the
+  normative contract, committed source migration, pure acceptance evaluator,
+  governed criterion and receipt mutations, all-or-nothing advance, atomic
+  public activation, historical reconstruction, read-only adapter projection,
+  and final cross-surface acceptance; the contract, Grammar 7 source/migration,
+  pure evaluator, governed mutation, acceptance-aware canonical advance, and
+  atomic Contract 8 public activation, and historical reconstruction slices
+  are complete before advance; complete NextResult v7 recommends only the
+  read-only adapter projection
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining

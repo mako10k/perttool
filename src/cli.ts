@@ -92,6 +92,9 @@ import type {
   TargetGovernanceProjectClearableField,
 } from "./mutation/target-types.js";
 import type { AdvanceDetails } from "./mutation/advance.js";
+import { applyTextEdits, normalizeTextEdits } from "./mutation/text-edits.js";
+import { createUnifiedDiff } from "./editing/unified-diff.js";
+import { sha256DigestUtf8 } from "./model/sha256.js";
 import type { LifecycleMutation } from "./actuals/lifecycle.js";
 import {
   TARGET_GRAMMAR_6_CAPABILITY,
@@ -106,11 +109,29 @@ import {
   serializeJsonSchemaResult,
 } from "./schema/registry.js";
 import { TOOL_VERSION } from "./version.js";
+import {
+  analyzeDocument as analyzeContract8Document,
+  checkDocument as checkContract8Document,
+  selectNextTasks as selectContract8NextTasks,
+} from "./application/contract8-milestone-acceptance.js";
+import {
+  persistMilestoneAcceptanceMutation,
+  planAcceptanceReceiptMutation,
+  planCriterionSetReplacement,
+  showMilestoneAcceptance,
+} from "./milestone-acceptance/mutation.js";
+import {
+  planMilestoneAcceptanceMigration,
+  recheckCommittedMigrationProof,
+  type CommittedMigrationProofV1,
+} from "./milestone-acceptance/migration.js";
+import { MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY, milestoneAcceptanceBaseText, parseMilestoneAcceptanceSource } from "./milestone-acceptance/source.js";
+import { planMilestoneAcceptanceAdvance } from "./milestone-acceptance/advance.js";
 
 const {
-  analyzeDocument,
-  checkDocument,
-  selectNextTasks,
+  analyzeDocument: _analyzeContract7Document,
+  checkDocument: _checkContract7Document,
+  selectNextTasks: _selectContract7NextTasks,
   planFormat,
   planProjectInit,
   projectInitResultToJson,
@@ -134,6 +155,8 @@ const {
   contract6WorkEventToJson,
   renderAdvanceHistoryGuard,
   prepareTargetPlanAssuranceAdvanceHistory,
+  prepareAdvanceHistory,
+  withAdvanceHistoryRace,
   withTargetPlanAssuranceAdvanceHistoryRace,
   persistTargetPlanAssuranceResult,
   inspectTargetPlanAssurance,
@@ -148,9 +171,12 @@ const {
   readDocumentContent,
   readBytes,
   recheckAdvanceHistoryBaseline,
+  captureAdvanceHistoryBaseline,
   createArtifactFile,
+  createValidatedDocumentFile,
   createTargetGrammar6DocumentFile,
   replaceTargetGrammar6DocumentFile,
+  replaceValidatedDocumentFile,
   inspectTargetHistoricalGraphFile,
   renderTargetHistoricalGraphText,
   targetHistoricalGraphResultToJson,
@@ -158,6 +184,27 @@ const {
   createNodeHost(),
   createHistoricalGraphGitEvidenceHost(),
 );
+const analyzeDocument = analyzeContract8Document;
+const checkDocument = checkContract8Document;
+const selectNextTasks = selectContract8NextTasks;
+
+function contract8MutationResultToJson(
+  result: Parameters<typeof contract7MutationResultToJson>[0] | Readonly<Record<string, unknown>>,
+  ...args: Tail<Parameters<typeof contract7MutationResultToJson>>
+): Readonly<Record<string, unknown>> {
+  return Object.freeze({
+    ...contract7MutationResultToJson(
+      result as Parameters<typeof contract7MutationResultToJson>[0],
+      ...args,
+    ),
+    schema_version: "Perttool.MutationResult.v5",
+    cli_contract_version: 8,
+  });
+}
+
+type Tail<T extends readonly unknown[]> = T extends readonly [unknown, ...infer Rest]
+  ? Rest
+  : never;
 
 type OutputFormat = "text" | "json";
 type ColorMode = "auto" | "always" | "never";
@@ -386,7 +433,12 @@ async function readStdin(): Promise<Buffer> {
 }
 
 function writeJson(value: unknown): void {
-  process.stdout.write(`${JSON.stringify(value)}\n`);
+  const contract8Value =
+    typeof value === "object" && value !== null && !Array.isArray(value) &&
+      "cli_contract_version" in value
+      ? { ...value, cli_contract_version: 8 }
+      : value;
+  process.stdout.write(`${JSON.stringify(contract8Value)}\n`);
 }
 
 function snakeJson(value: unknown): unknown {
@@ -429,7 +481,7 @@ function cliError(
   if (json) {
     writeJson({
       schema_version: "Perttool.CliError.v1",
-      cli_contract_version: 7,
+      cli_contract_version: 8,
       tool_version: TOOL_VERSION,
       operation,
       ok: false,
@@ -475,7 +527,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: result.schemaVersion,
-      cli_contract_version: 7,
+      cli_contract_version: 8,
       tool_version: TOOL_VERSION,
       operation: "document.check",
       ok,
@@ -498,6 +550,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
       assurance: contract7SnakeJson(result.assurance),
       assurance_state_counts:
         contract7SnakeJson(result.assuranceStateCounts),
+      acceptance: snakeJson(result.acceptance),
     });
   } else {
     if (ok) {
@@ -797,6 +850,42 @@ async function persistGovernedResult(
   );
 }
 
+async function persistContract8CandidateResult(
+  result: {
+    readonly ok: boolean;
+    readonly changed: boolean;
+    readonly originalDigest: string;
+    readonly updatedText: string | null;
+    readonly governance: { readonly writeAuthorized: boolean } | null;
+  },
+  request: EditingWriteRequest,
+): Promise<TargetGovernanceWriteProjection> {
+  if (request.mode === "preview" || !result.changed) {
+    return Object.freeze({ mode: request.mode, target: request.target, written: false });
+  }
+  if (!result.ok || !result.governance?.writeAuthorized || result.updatedText === null) {
+    throw new TypeError("authorized Contract 8 result does not contain a digest-bound candidate");
+  }
+  const validator = (candidate: string) => {
+    const parsed = parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
+    return { ok: parsed.ok, diagnostics: [] };
+  };
+  if (request.mode === "in_place") {
+    await replaceValidatedDocumentFile(
+      request.target,
+      result.updatedText,
+      {
+        initialDigest: result.originalDigest,
+        ...(request.expectedDigest === undefined ? {} : { expectedDigest: request.expectedDigest }),
+      },
+      validator,
+    );
+  } else {
+    await createValidatedDocumentFile(request.target, result.updatedText, validator);
+  }
+  return Object.freeze({ mode: request.mode, target: request.target, written: true });
+}
+
 function assertExpectedDigest(
   request: EditingWriteRequest,
   initialDigest: string,
@@ -823,6 +912,32 @@ async function commitCandidate(
       "invalid_candidate",
       "successful editing result has no candidate text",
     );
+  }
+  const acceptanceSource = parseMilestoneAcceptanceSource(
+    candidateText,
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  );
+  if (acceptanceSource.grammarVersion === 7) {
+    const validator = (candidate: string) => {
+      const parsed = parseMilestoneAcceptanceSource(
+        candidate,
+        MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+      );
+      return { ok: parsed.ok, diagnostics: [] };
+    };
+    return request.mode === "in_place"
+      ? replaceValidatedDocumentFile(
+          request.target,
+          candidateText,
+          {
+            initialDigest,
+            ...(request.expectedDigest === undefined
+              ? {}
+              : { expectedDigest: request.expectedDigest }),
+          },
+          validator,
+        )
+      : createValidatedDocumentFile(request.target, candidateText, validator);
   }
   return request.mode === "in_place"
     ? replaceTargetGrammar6DocumentFile(
@@ -922,7 +1037,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.FormatResult.v1",
-      cli_contract_version: 7,
+      cli_contract_version: 8,
       tool_version: TOOL_VERSION,
       operation: "document.format",
       ok,
@@ -1659,11 +1774,7 @@ async function runMutation(
   if (result.ok) {
     try {
       if (ok && writeRequest.mode !== "preview") {
-        writeResult = await persistGovernedResult(
-          result,
-          writeRequest,
-          sourceOperand,
-        );
+        writeResult = await persistContract8CandidateResult(result, writeRequest);
       }
     } catch (error) {
       return writeFailureExit(error, operation, format === "json");
@@ -1671,7 +1782,7 @@ async function runMutation(
   }
   if (format === "json") {
     writeJson(
-      contract7MutationResultToJson(
+      contract8MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         operation,
         source,
@@ -1787,18 +1898,14 @@ async function runLifecycleMutation(
   });
   if (result.ok && ok && writeRequest.mode !== "preview") {
     try {
-      writeResult = await persistGovernedResult(
-        result,
-        writeRequest,
-        sourceOperand,
-      );
+      writeResult = await persistContract8CandidateResult(result, writeRequest);
     } catch (error) {
       return writeFailureExit(error, operation, format === "json");
     }
   }
   if (format === "json") {
     writeJson(
-      contract7MutationResultToJson(
+      contract8MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         operation,
         source,
@@ -1869,7 +1976,7 @@ function unitMigrationJson(
   });
   return {
     schema_version: result.schemaVersion,
-    cli_contract_version: 7,
+    cli_contract_version: 8,
     tool_version: TOOL_VERSION,
     operation: "project.migrate-unit",
     ok,
@@ -2299,8 +2406,56 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       format === "json",
     );
   }
-  const planned = planAdvance(
-    input.text,
+  const acceptancePlan = planMilestoneAcceptanceAdvance(input.text, {
+    maxDiagnostics,
+    originalLabel: source,
+    updatedLabel: "candidate",
+    provisionalPlanner: (baseText) => planAdvance(baseText, {
+      maxDiagnostics,
+      originalLabel: source,
+      updatedLabel: "candidate",
+    }),
+  });
+  if (!acceptancePlan.ok) {
+    if (format === "json") writeJson({
+      schema_version: "Perttool.AdvanceResult.v3",
+      cli_contract_version: 8,
+      tool_version: TOOL_VERSION,
+      operation: "dag.advance",
+      ok: false,
+      document_id: /^project ([A-Za-z][A-Za-z0-9_-]*):$/mu.exec(input.text)?.[1] ?? null,
+      source,
+      source_digest: input.digest,
+      diagnostics: acceptancePlan.diagnostics.map(jsonDiagnostic),
+      diagnostics_truncated: false,
+      changed: acceptancePlan.provisional !== null,
+      original_digest: acceptancePlan.originalDigest,
+      updated_digest: acceptancePlan.provisional?.updatedDigest ?? null,
+      updated_text: acceptancePlan.provisional?.updatedText ?? null,
+      diff: acceptancePlan.provisional?.diff ?? null,
+      edits: snakeJson(acceptancePlan.provisional?.edits ?? []),
+      write: { mode: writeRequest.mode, target: writeRequest.target, written: false },
+      governance: null,
+      lifecycle: null,
+      advance: acceptancePlan.provisional === null ? null : snakeJson({
+        ...acceptancePlan.provisional.advance,
+        removedWorkEventIds: [],
+        removedAssuranceRecordIds: [],
+        updatedAssuranceReceiptIds: [],
+      }),
+      history_guard: null,
+      assurance_guard: null,
+      acceptance_guard: snakeJson(acceptancePlan.acceptanceGuard),
+    });
+    else {
+      if (acceptancePlan.provisional !== null) process.stdout.write(parsed.flags.has("diff") ? acceptancePlan.provisional.diff : acceptancePlan.provisional.updatedText);
+      for (const diagnostic of acceptancePlan.diagnostics) process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
+    }
+    return 1;
+  }
+  const contract7BaseText = milestoneAcceptanceBaseText(input.text);
+  const contract7Planned = planAdvance(
+    contract7BaseText,
     {
       maxDiagnostics,
       originalLabel: source,
@@ -2308,16 +2463,50 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       governance: governanceRequest(parsed, writeRequest),
     },
   );
+  const combinedEdits = contract7Planned.updatedText === null
+    ? contract7Planned.edits
+    : normalizeTextEdits(
+        input.text,
+        [...contract7Planned.edits, ...acceptancePlan.provisional!.edits].filter(
+          (edit, index, values) => values.findIndex((candidate) =>
+            candidate.startOffset === edit.startOffset &&
+            candidate.endOffset === edit.endOffset &&
+            candidate.replacement === edit.replacement
+          ) === index,
+        ),
+        "Contract 8 acceptance-aware advance",
+      );
+  const combinedText = contract7Planned.updatedText === null
+    ? null
+    : applyTextEdits(input.text, combinedEdits);
+  const combinedSource = combinedText === null
+    ? null
+    : parseMilestoneAcceptanceSource(combinedText, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
+  if (combinedSource !== null && !combinedSource.ok) {
+    throw new Error("acceptance-aware assurance advance lost Grammar 7 validation");
+  }
+  const planned = Object.freeze({
+    ...contract7Planned,
+    schemaVersion: "Perttool.AdvanceResult.v3" as const,
+    originalDigest: input.digest,
+    updatedText: combinedText,
+    updatedDigest: combinedText === null ? null : sha256DigestUtf8(combinedText),
+    diff: combinedText === null ? null : createUnifiedDiff(input.text, combinedText, {
+      originalLabel: source,
+      updatedLabel: "candidate",
+    }),
+    edits: combinedEdits,
+    acceptanceGuard: acceptancePlan.acceptanceGuard,
+  });
   const initialWarningFailure =
     parsed.flags.has("warnings-as-errors") &&
     (planned.diagnosticsTruncated ||
       planned.diagnostics.some(
         (diagnostic) => diagnostic.severity === "warning",
       ));
-  const prepared = await prepareTargetPlanAssuranceAdvanceHistory(
+  const preparedBase = await prepareAdvanceHistory(
     input.text,
-    planned,
-    TARGET_GRAMMAR_6_CAPABILITY,
+    planned as never,
     {
       mode:
         writeRequest.mode === "out"
@@ -2331,8 +2520,30 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       forceRequested,
       warningDenied: initialWarningFailure,
       maxDiagnostics,
+      documentValidator: (candidateText, candidateMaxDiagnostics) => {
+        const acceptanceSource = parseMilestoneAcceptanceSource(candidateText, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
+        const checked = checkContract8Document(candidateText, { maxDiagnostics: candidateMaxDiagnostics });
+        return {
+          ok: checked.ok && acceptanceSource.ok,
+          document: checked.document,
+          documentId: checked.documentId,
+          diagnostics: checked.diagnostics,
+          diagnosticsTruncated: checked.diagnosticsTruncated,
+        };
+      },
     },
   );
+  const prepared = Object.freeze({
+    ...preparedBase,
+    result: Object.freeze({
+      ...preparedBase.result,
+      schemaVersion: "Perttool.AdvanceResult.v3" as const,
+      governance: planned.governance,
+      assuranceGuard: planned.assuranceGuard,
+      acceptanceGuard: acceptancePlan.acceptanceGuard,
+      advance: planned.advance,
+    }),
+  });
   let result = prepared.result;
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
@@ -2364,35 +2575,37 @@ async function runAdvance(args: readonly string[]): Promise<number> {
           sourceOperand,
         );
         if (!recheck.ok) {
-          result = withTargetPlanAssuranceAdvanceHistoryRace(
-            result,
-            recheck,
-            maxDiagnostics,
-          );
+          result = Object.freeze({
+            ...withAdvanceHistoryRace(result as never, recheck, maxDiagnostics),
+            schemaVersion: "Perttool.AdvanceResult.v3" as const,
+            governance: result.governance,
+            assuranceGuard: result.assuranceGuard,
+            acceptanceGuard: result.acceptanceGuard,
+            advance: result.advance,
+          });
           ok = false;
           historyRace = true;
         }
       }
       if (ok && writeRequest.mode !== "preview") {
-        writeResult = await persistGovernedResult(
-          result,
-          writeRequest,
-          sourceOperand,
-        );
+        writeResult = await persistContract8CandidateResult(result, writeRequest);
       }
     } catch (error) {
       return writeFailureExit(error, "dag.advance", format === "json");
     }
   }
   if (format === "json") {
-    writeJson(
-      contract7MutationResultToJson(
-        ok ? result : Object.freeze({ ...result, ok: false }),
+    writeJson({
+      ...contract7MutationResultToJson(
+        (ok ? result : Object.freeze({ ...result, ok: false })) as never,
         "dag.advance",
         source,
         writeResult,
       ),
-    );
+      schema_version: "Perttool.AdvanceResult.v3",
+      cli_contract_version: 8,
+      acceptance_guard: snakeJson(result.acceptanceGuard),
+    });
   } else {
     if (result.advance !== null) {
       if (ok) {
@@ -2901,7 +3114,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: result.schemaVersion,
-      cli_contract_version: 7,
+      cli_contract_version: 8,
       tool_version: TOOL_VERSION,
       operation: "dag.analyze",
       ok,
@@ -2940,6 +3153,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
           : resourceJson(result.resource, result.durationUnit, result.precision),
       temporal: snakeJson(result.temporal),
       assurance: contract7SnakeJson(result.assurance),
+      acceptance: snakeJson(result.acceptance),
     });
   } else {
     if (ok) process.stdout.write(renderAnalysisText(result));
@@ -3087,7 +3301,7 @@ async function runRender(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ExportResult.v1",
-      cli_contract_version: 7,
+      cli_contract_version: 8,
       tool_version: TOOL_VERSION,
       operation: "dag.render",
       ok,
@@ -3220,7 +3434,7 @@ async function runImport(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.ImportResult.v1",
-      cli_contract_version: 7,
+      cli_contract_version: 8,
       tool_version: TOOL_VERSION,
       operation: "dag.import",
       ok,
@@ -3609,7 +3823,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     if (format === "json") {
       writeJson({
         schema_version: "Perttool.CliError.v1",
-        cli_contract_version: 7,
+        cli_contract_version: 8,
         tool_version: TOOL_VERSION,
         operation: "dag.next",
         ok: false,
@@ -3630,7 +3844,7 @@ async function runNext(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: result.schemaVersion,
-      cli_contract_version: 7,
+      cli_contract_version: 8,
       recommendation_interface_version: 1,
       tool_version: TOOL_VERSION,
       operation: "dag.next",
@@ -3644,6 +3858,7 @@ async function runNext(args: readonly string[]): Promise<number> {
       ...(result.durationUnit === null ? {} : nextJson(result)),
       temporal: snakeJson(result.temporal),
       assurance: contract7SnakeJson(result.assurance),
+      acceptance: snakeJson(result.acceptance),
     });
   } else {
     if (ok) process.stdout.write(renderNextText(result));
@@ -3655,6 +3870,130 @@ async function runNext(args: readonly string[]): Promise<number> {
     }
   }
   return ok ? 0 : 1;
+}
+
+async function runMilestoneAcceptance(action: string, args: readonly string[]): Promise<number> {
+  const operation = `milestone-acceptance.${action}`;
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const sourceOperand = parsed.positionals[0];
+  if (sourceOperand === undefined) throw new UsageError(`${operation} requires <file>`);
+  const input = await readDocument(sourceOperand);
+  if (action === "show") {
+    if (parsed.positionals.length !== 1) throw new UsageError("milestone acceptance show requires exactly one <file>");
+    const result = checkDocument(input.text).acceptance ?? showMilestoneAcceptance(input.text, []);
+    if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceResult.v1", cli_contract_version: 8, tool_version: TOOL_VERSION, operation, ok: result.ok, milestones: snakeJson(result.milestones), diagnostics: snakeJson(result.diagnostics) });
+    else process.stdout.write(`${result.milestones.map(({ milestoneId, closure, acceptance }) => `${milestoneId} closure=${closure} acceptance=${acceptance}`).join("\n")}\n`);
+    return result.ok ? 0 : 1;
+  }
+  if (parsed.positionals.length !== 4) throw new UsageError(`${operation} requires four operands`);
+  const request = editingWriteRequest(parsed, sourceOperand);
+  if (request.mode === "out") throw new UsageError(`${operation} does not support --out in Contract 8`);
+  const governance = governanceRequest(parsed, request);
+  let result;
+  if (action === "replace") {
+    const criteria = (parsed.repeatedValues.get("criterion") ?? []).map((value) => {
+      const [criterionId, requiredText, evidenceKind, ...description] = value.split(":");
+      if (criterionId === undefined || !["required", "optional"].includes(requiredText ?? "") || !["test", "command", "artifact", "observation", "owner"].includes(evidenceKind ?? "") || description.length === 0) throw new UsageError("--criterion must be ID:required|optional:kind:description");
+      return { criterionId, required: requiredText === "required", evidenceKind: evidenceKind as "test" | "command" | "artifact" | "observation" | "owner", description: description.join(":") };
+    });
+    result = planCriterionSetReplacement(input.text, { milestoneId: parsed.positionals[1]!, setId: parsed.positionals[2]!, revisionId: parsed.positionals[3]!, criteria }, { governance });
+  } else {
+    result = planAcceptanceReceiptMutation(input.text, {
+      setId: parsed.positionals[1]!, criterionId: parsed.positionals[2]!, receiptId: parsed.positionals[3]!, action: action as "verify" | "fail" | "unavailable" | "revoke" | "waive",
+      ...(parsed.values.get("evidence-kind") === undefined ? {} : { evidenceKind: parsed.values.get("evidence-kind") as "test" | "command" | "artifact" | "observation" | "owner" }),
+      ...(parsed.values.get("evidence-reference") === undefined ? {} : { evidenceReference: parsed.values.get("evidence-reference")! }),
+      ...(parsed.values.get("evidence-revision") === undefined ? {} : { evidenceRevision: parsed.values.get("evidence-revision")! }),
+      ...(parsed.values.get("verifier") === undefined ? {} : { verifier: parsed.values.get("verifier")! }),
+      ...(parsed.values.get("occurred-at") === undefined ? {} : { occurredAt: parsed.values.get("occurred-at")! }),
+      ...(parsed.values.get("reason") === undefined ? {} : { reason: parsed.values.get("reason")! }),
+      ...(parsed.values.get("revokes") === undefined ? {} : { revokes: parsed.values.get("revokes")! }),
+    }, { governance });
+  }
+  let written = false;
+  if (result.ok && request.mode === "in_place" && result.changed) {
+    await persistMilestoneAcceptanceMutation(sourceOperand, result, request.expectedDigest);
+    written = true;
+  }
+  if (format === "json") writeJson({
+    schema_version: "Perttool.MutationResult.v5",
+    cli_contract_version: 8,
+    tool_version: TOOL_VERSION,
+    operation,
+    ok: result.ok,
+    document_id: /^project ([A-Za-z][A-Za-z0-9_-]*):$/mu.exec(input.text)?.[1] ?? null,
+    source: sourceOperand,
+    source_digest: input.digest,
+    diagnostics: result.diagnostics.map((code) => jsonDiagnostic({
+      code,
+      severity: code === "PTGOV-103" || code === "PTGOV-104" ? "warning" : "error",
+      message: code,
+      helpTopic: "editing",
+    })),
+    diagnostics_truncated: false,
+    changed: result.changed,
+    original_digest: result.originalDigest,
+    updated_digest: result.updatedDigest,
+    updated_text: result.updatedText,
+    diff: result.updatedText === null ? null : createUnifiedDiff(input.text, result.updatedText, { originalLabel: sourceOperand, updatedLabel: "candidate" }),
+    edits: result.changed && result.updatedText !== null ? [{ start_offset: 0, end_offset: input.text.length, replacement: result.updatedText }] : [],
+    write: { mode: request.mode, target: request.target, written },
+    governance: result.governance === null ? null : {
+      ...snakeJson(result.governance) as Readonly<Record<string, unknown>>,
+      schema_version: "Perttool.GovernanceDecision.v2",
+      governance_interface_version: 2,
+      governance_semantics_version: 2,
+    },
+    lifecycle: null,
+    assurance_impact: null,
+  });
+  else if (result.updatedText !== null) process.stdout.write(result.updatedText);
+  return result.ok ? 0 : 1;
+}
+
+async function runDocumentMigration(args: readonly string[]): Promise<number> {
+  const parsed = parseCommandOptions("document.migrate", args);
+  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "7") throw new UsageError("document migrate requires <file> --target-grammar 7");
+  const sourceOperand = parsed.positionals[0]!;
+  if (sourceOperand === "-") throw new UsageError("document migrate requires a repository file");
+  const format = outputFormat(parsed.values.get("format"));
+  const input = await readDocument(sourceOperand);
+  const baseline = await captureAdvanceHistoryBaseline({ targetPath: sourceOperand, expectedSourceDigest: input.digest });
+  const toProof = (value: typeof baseline): CommittedMigrationProofV1 | null =>
+    value.status === "complete" && value.repositorySnapshotId !== null &&
+      value.repositoryRelativePath !== null && value.objectFormat !== null &&
+      value.headCommitId !== null && value.headBlobId !== null &&
+      value.indexBlobId !== null && value.currentSourceDigest !== null
+      ? {
+          repositoryId: value.repositorySnapshotId,
+          repositoryRelativePath: value.repositoryRelativePath,
+          objectFormat: value.objectFormat,
+          headCommit: value.headCommitId,
+          headBlob: value.headBlobId,
+          stage0Blob: value.indexBlobId,
+          sourceDigest: value.currentSourceDigest as `sha256:${string}`,
+        }
+      : null;
+  const proof = toProof(baseline);
+  let result = proof === null
+    ? { ok: false, modelVersion: 1 as const, changed: false, sourceGrammarVersion: null, targetGrammarVersion: null, sourceDigest: input.digest as `sha256:${string}`, candidateDigest: null, grandfatheredMilestoneIds: Object.freeze([]), candidateText: null, diagnostics: Object.freeze(["PTMAC-109"]) }
+    : planMilestoneAcceptanceMigration(input.text, proof);
+  let race = false;
+  if (result.ok && result.changed && result.candidateText !== null && parsed.flags.has("write")) {
+    const current = toProof(await captureAdvanceHistoryBaseline({
+      targetPath: sourceOperand,
+      expectedSourceDigest: input.digest,
+    }));
+    if (proof === null || current === null || !recheckCommittedMigrationProof(proof, current)) {
+      result = Object.freeze({ ...result, ok: false, diagnostics: Object.freeze(["PTMAC-110"]) });
+      race = true;
+    } else {
+      await replaceValidatedDocumentFile(sourceOperand, result.candidateText, { initialDigest: input.digest, ...(parsed.values.get("expect-digest") === undefined ? {} : { expectedDigest: parsed.values.get("expect-digest")! }) }, (candidate) => ({ ok: parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY).ok, diagnostics: [] }));
+    }
+  }
+  if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceMigrationResult.v1", cli_contract_version: 8, tool_version: TOOL_VERSION, operation: "document.migrate", ...snakeJson(result) as Readonly<Record<string, unknown>> });
+  else if (result.candidateText !== null) process.stdout.write(result.candidateText);
+  return result.ok ? 0 : race ? 5 : 1;
 }
 
 function runGuide(args: readonly string[]): number {
@@ -3683,13 +4022,13 @@ function runGuide(args: readonly string[]): number {
 
 function runCommandHelp(args: readonly string[]): number {
   const parsed = parseCommandOptions("help", args);
-  if (parsed.positionals.length > 2) {
-    throw new UsageError("help accepts at most <resource> <action>");
+  if (parsed.positionals.length > 3) {
+    throw new UsageError("help accepts at most <resource> <group> <action>");
   }
   const format = outputFormat(parsed.values.get("format"));
   const result = getAssuranceCommandDiscovery({
     resource: parsed.positionals[0] ?? null,
-    action: parsed.positionals[1] ?? null,
+    action: parsed.positionals.length < 2 ? null : parsed.positionals.slice(1).join(" "),
   });
   if (format === "json") {
     process.stdout.write(serializeAssuranceCommandHelpResult(result));
@@ -3769,7 +4108,7 @@ function runAgentHelp(args: readonly string[]): number {
     } = projected;
     writeJson({
       schema_version: schemaVersion,
-      cli_contract_version: 7,
+      cli_contract_version: 8,
       ...payload,
     });
   } else {
@@ -4032,17 +4371,13 @@ async function runAssuranceMutation(
   });
   if (result.ok && writeRequest.mode !== "preview") {
     try {
-      writeResult = await persistGovernedResult(
-        result,
-        writeRequest,
-        sourceOperand,
-      );
+      writeResult = await persistContract8CandidateResult(result, writeRequest);
     } catch (error) {
       return writeFailureExit(error, operation, format === "json");
     }
   }
   if (format === "json") {
-    writeJson(contract7MutationResultToJson(
+    writeJson(contract8MutationResultToJson(
       result,
       operation,
       source,
@@ -4099,6 +4434,8 @@ async function dispatchCommand(
       return runCheck(args);
     case "document.format":
       return runFormat(args);
+    case "document.migrate":
+      return runDocumentMigration(args);
     case "agent.help":
       return runAgentHelp(args);
     case "project.init":
@@ -4129,6 +4466,14 @@ async function dispatchCommand(
       return runLifecycleMutation("suspend", args);
     case "task.resume":
       return runLifecycleMutation("resume", args);
+    case "milestone-acceptance.show":
+    case "milestone-acceptance.replace":
+    case "milestone-acceptance.verify":
+    case "milestone-acceptance.fail":
+    case "milestone-acceptance.unavailable":
+    case "milestone-acceptance.revoke":
+    case "milestone-acceptance.waive":
+      return runMilestoneAcceptance(descriptor.path[2]!, args);
     case "plan-assurance.show":
       return runPlanAssuranceInspection("show", args);
     case "plan-assurance.hash":
@@ -4171,7 +4516,7 @@ async function dispatchCommand(
       args,
     );
   }
-  throw new Error(`no Contract 7 handler for ${descriptor.operation}`);
+  throw new Error(`no Contract 8 handler for ${descriptor.operation}`);
 }
 
 function emitCommandUsage(

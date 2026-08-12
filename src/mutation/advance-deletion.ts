@@ -61,6 +61,7 @@ export function planAdvanceDeclarationDeletions(
 
   const lines = splitPhysicalLines(text);
   const lastDeclaration = document.declarations.at(-1);
+  let previousTerminalEnd: number | undefined;
   return document.declarations
     .filter((declaration) => selected.has(declaration))
     .map((declaration) => {
@@ -69,7 +70,7 @@ export function planAdvanceDeclarationDeletions(
         return { declaration, edit: ordinary };
       }
 
-      const startOffset = terminalSeparatorStart(
+      const desiredStart = terminalSeparatorStart(
         lines,
         ordinary.startOffset,
       );
@@ -78,6 +79,10 @@ export function planAdvanceDeclarationDeletions(
           text.slice(ordinary.endOffset).trim() === ""
         ? text.length
         : ordinary.endOffset;
+      const startOffset = previousTerminalEnd === undefined
+        ? desiredStart
+        : Math.max(desiredStart, previousTerminalEnd);
+      previousTerminalEnd = endOffset;
       return {
         declaration,
         edit: { startOffset, endOffset, replacement: "" },

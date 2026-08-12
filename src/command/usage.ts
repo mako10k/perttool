@@ -99,7 +99,7 @@ function commandUsageIndex(
       continue;
     }
     const [resource, action] = descriptor.path;
-    commandsByPath.set(`${resource}\0${action}`, descriptor);
+    commandsByPath.set(descriptor.path.join("\0"), descriptor);
     const actions = resourceActions.get(resource);
     if (actions === undefined) {
       resources.push(resource);
@@ -127,7 +127,7 @@ function helpTarget(
     ? Object.freeze({ resource: descriptor.path[0], action: null })
     : Object.freeze({
         resource: descriptor.path[0],
-        action: descriptor.path[1],
+        action: descriptor.path.slice(1).join(" "),
       });
 }
 
@@ -536,9 +536,15 @@ function validateCommandInvocationWithIndex(
   }
 
   const action = argv[1]!;
-  const descriptor = index.commandsByPath.get(
-    `${resource}\0${action}`,
-  );
+  let descriptor: ProjectedCommandDescriptor | undefined;
+  let consumed = 0;
+  for (let length = Math.min(argv.length, 3); length >= 2; length -= 1) {
+    descriptor = index.commandsByPath.get(argv.slice(0, length).join("\0"));
+    if (descriptor !== undefined) {
+      consumed = length;
+      break;
+    }
+  }
   if (descriptor === undefined) {
     return usageError(
       "unknown_action",
@@ -549,7 +555,7 @@ function validateCommandInvocationWithIndex(
       nearestSuggestion(action, actions, "action"),
     );
   }
-  return validateDescriptorArguments(descriptor, argv.slice(2));
+  return validateDescriptorArguments(descriptor, argv.slice(consumed));
 }
 
 export function validateCommandInvocationAgainstRegistry(

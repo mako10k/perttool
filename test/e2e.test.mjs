@@ -11,6 +11,14 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import {
+  planAcceptanceReceiptMutation,
+  planAdvance,
+  planCriterionSetReplacement,
+  planMilestoneAcceptanceAdvance,
+  planMilestoneAcceptanceMigration,
+} from "../dist/index.js";
+import { sha256DigestUtf8 } from "../dist/model/sha256.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -35,8 +43,51 @@ function runJson(args, expectedStatus = 0, options = {}) {
   assert.equal(result.stderr, "");
   assert.equal(result.stdout.endsWith("\n"), true);
   const json = JSON.parse(result.stdout);
-  assert.equal(json.cli_contract_version, 7);
+  assert.equal(json.cli_contract_version, 8);
   return json;
+}
+
+function acceptanceReadyAdvanceSource(text) {
+  const migrated = planMilestoneAcceptanceMigration(text, {
+    repositoryId: "e2e-test",
+    repositoryRelativePath: "partial.pert",
+    objectFormat: "sha1",
+    headCommit: "a".repeat(40),
+    headBlob: "b".repeat(40),
+    stage0Blob: "b".repeat(40),
+    sourceDigest: sha256DigestUtf8(text),
+  });
+  assert.equal(migrated.ok, true);
+  let candidate = migrated.candidateText;
+  const provisional = planMilestoneAcceptanceAdvance(candidate, {
+    provisionalPlanner: (baseText) => planAdvance(baseText),
+  });
+  for (const [index, blocked] of provisional.acceptanceGuard?.blockedMilestones.entries() ?? []) {
+    const setId = `ACCEPT_${blocked.milestoneId}_${index + 1}`;
+    const criterionId = `ACCEPTED_${index + 1}`;
+    const replacement = planCriterionSetReplacement(candidate, {
+      milestoneId: blocked.milestoneId,
+      setId,
+      revisionId: "R1",
+      criteria: [{
+        criterionId,
+        required: true,
+        evidenceKind: "owner",
+        description: "Accepted for end-to-end advance regression",
+      }],
+    });
+    assert.equal(replacement.ok, true);
+    const waived = planAcceptanceReceiptMutation(replacement.updatedText, {
+      setId,
+      criterionId,
+      receiptId: `WAIVE_${blocked.milestoneId}_${index + 1}`,
+      action: "waive",
+      reason: "Accepted end-to-end advance regression fixture",
+    });
+    assert.equal(waived.ok, true);
+    candidate = waived.updatedText;
+  }
+  return candidate;
 }
 
 function commitRepository(directory, relativePath) {
@@ -61,7 +112,7 @@ function commitRepository(directory, relativePath) {
 test("E2E-001: discover commands, validate a plan, and compare capacity what-if", () => {
   const help = run(["--help"]);
   assert.equal(help.status, 0);
-  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 7\)$/m);
+  assert.match(help.stdout, /^perttool command catalog \(CLI Contract 8\)$/m);
   assert.match(help.stdout, /^  document  /m);
   assert.match(help.stdout, /^    check  /m);
   assert.match(help.stdout, /^  project  /m);
@@ -424,8 +475,13 @@ test("E2E-012: Mermaid export preserves semantics and analysis context", (t) => 
 test("E2E-013: advance preview and safe write preserve a partial join", (t) => {
   const source = "docs/examples/advance-partial-before.pert";
   const beforeText = readFileSync(path.join(root, source), "utf8");
-  const beforeNext = runJson(["dag", "next", source]);
-  const preview = runJson(["dag", "advance", source]);
+  const acceptedText = acceptanceReadyAdvanceSource(beforeText);
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-advance-e2e-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const copy = path.join(directory, "partial.pert");
+  writeFileSync(copy, acceptedText, "utf8");
+  const beforeNext = runJson(["dag", "next", copy]);
+  const preview = runJson(["dag", "advance", copy]);
   assert.equal(preview.changed, true);
   assert.deepEqual(preview.advance.removed_task_ids, ["BRANCH_A"]);
   assert.deepEqual(preview.advance.frontier_before, ["A_DONE", "NOW"]);
@@ -437,10 +493,6 @@ test("E2E-013: advance preview and safe write preserve a partial join", (t) => {
   const afterNext = runJson(["dag", "next", "-"], 0, { input: preview.updated_text });
   assert.deepEqual(afterNext.groups, beforeNext.groups);
 
-  const directory = mkdtempSync(path.join(tmpdir(), "perttool-advance-e2e-"));
-  t.after(() => rmSync(directory, { recursive: true, force: true }));
-  const copy = path.join(directory, "partial.pert");
-  copyFileSync(path.join(root, source), copy);
   commitRepository(directory, "partial.pert");
   const digest = runJson(["document", "check", copy]).source_digest;
   const written = runJson([

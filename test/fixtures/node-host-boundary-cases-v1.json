@@ -10,16 +10,16 @@
     "root_schemas": 20
   },
   "target": {
-    "root_runtime_exports": 122,
-    "node_runtime_exports": 122,
+    "root_runtime_exports": 129,
+    "node_runtime_exports": 129,
     "core_runtime_exports": 45,
     "additive_runtime_export": "createNodeHost",
     "port_contract_source": "src/ports/node-host.ts",
     "node_host_source": "src/node/host.ts",
-    "typescript_source_files": 161,
+    "typescript_source_files": 168,
     "production_dependencies": 0,
-    "commands": 44,
-    "root_schemas": 20
+    "commands": 52,
+    "root_schemas": 22
   },
   "ports": [
     "digest",

@@ -1,0 +1,213 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project MILESTONE_ACCEPTANCE:
+  version 6
+  title "Milestone outcome acceptance"
+  description "Implement MILESTONE-ACCEPT-001 as an independent Grammar 7 and CLI Contract 8 workstream. Separate AoA graph closure from milestone outcome acceptance, require committed migration provenance, add complete milestone criterion-set revisions and caller-asserted evidence receipts, govern all writes through the existing DAG owner scope, block canonical advance atomically until every affected milestone is accepted, preserve prior revisions through Git, expose one public semantic owner, and complete installed cross-surface acceptance. Downstream task-assurance invalidation, strict authentication, external verification services, partial advance, release selection, publication, remote writes, Issue mutation, and plan advance remain separate decisions."
+  as_of 2026-08-12
+  duration_unit point
+  velocity 29p/2d
+  finish MILESTONE_ACCEPTANCE_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone MILESTONE_ACCEPTANCE_SELECTED:
+  title "MILESTONE-ACCEPT-001 selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two implementation slices may run concurrently only when owned surfaces do not overlap."
+  capacity 2
+
+resource REVIEWERS:
+  title "Contract review capacity"
+  description "Serialize normative, compatibility, and final acceptance decisions."
+  capacity 1
+
+resource SOURCE_MODEL:
+  title "Grammar and source ownership"
+  description "Own Grammar 7 records, source identity, migration, formatting, spans, and source preservation."
+  capacity 1
+
+resource ACCEPTANCE_MODEL:
+  title "Milestone acceptance semantics"
+  description "Own criterion revision, receipt evaluation, aggregation, grandfathering, and blocking identities."
+  capacity 1
+
+resource MUTATION_SURFACE:
+  title "Governed mutation ownership"
+  description "Own preview-first criterion and receipt operations, DAG governance, and safe persistence composition."
+  capacity 1
+
+resource ADVANCE_SURFACE:
+  title "Canonical advance ownership"
+  description "Own provisional planning, acceptance guards, canonical-candidate promotion, and all-or-nothing contraction."
+  capacity 1
+
+resource PUBLIC_SURFACE:
+  title "Contract 8 public ownership"
+  description "Own command registry, results, schemas, diagnostics, Help, Guide, exports, and compatibility."
+  capacity 1
+
+resource HISTORY_SURFACE:
+  title "Git history ownership"
+  description "Own committed migration proof, destructive history safety, criterion epochs, and historical reconstruction."
+  capacity 1
+
+resource ADAPTER_SURFACE:
+  title "Read-only adapter ownership"
+  description "Own LSP, VSIX, and MCP projections without acceptance mutation or semantic reimplementation."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and isolation ownership"
+  description "Own public inventory, private adapter exclusion, temporary link, isolated installation, and supported-host checks."
+  capacity 1
+
+milestone MILESTONE_ACCEPTANCE_CONTRACT_ACCEPTED:
+  title "Milestone acceptance contract accepted"
+
+milestone MILESTONE_ACCEPTANCE_SOURCE_READY:
+  title "Grammar 7 source and migration ready"
+
+milestone MILESTONE_ACCEPTANCE_CORE_READY:
+  title "Milestone acceptance evaluator ready"
+
+milestone MILESTONE_ACCEPTANCE_MUTATION_READY:
+  title "Governed criterion and receipt mutations ready"
+
+milestone MILESTONE_ACCEPTANCE_ADVANCE_READY:
+  title "Acceptance-aware canonical advance ready"
+
+milestone MILESTONE_ACCEPTANCE_PUBLIC_READY:
+  title "Grammar 7 and Contract 8 public surface ready"
+
+milestone MILESTONE_ACCEPTANCE_HISTORY_READY:
+  title "Migration and historical reconstruction ready"
+
+milestone MILESTONE_ACCEPTANCE_ADAPTER_READY:
+  title "Read-only adapter projections ready"
+
+milestone MILESTONE_ACCEPTANCE_INTEGRATED:
+  title "History and adapter inputs integrated"
+
+milestone MILESTONE_ACCEPTANCE_ACCEPTED:
+  title "Milestone outcome acceptance accepted"
+
+task MILESTONE_ACCEPTANCE_CONTRACT MILESTONE_ACCEPTANCE_SELECTED -> MILESTONE_ACCEPTANCE_CONTRACT_ACCEPTED:
+  title "Accept the milestone outcome acceptance contract"
+  description "Fix Grammar 7 and CLI Contract 8, closure and acceptance axes, complete criterion-set revisions, required and optional aggregation, receipt identity and caller assertions, DAG-owner governance, committed migration baseline, provisional and canonical advance states, diagnostics, results, compatibility, and a dependency-ordered machine acceptance matrix without changing runtime behavior."
+  duration 6p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SOURCE_MODEL 1
+    ACCEPTANCE_MODEL 1
+    ADVANCE_SURFACE 1
+    PUBLIC_SURFACE 1
+
+task MILESTONE_ACCEPTANCE_SOURCE MILESTONE_ACCEPTANCE_CONTRACT_ACCEPTED -> MILESTONE_ACCEPTANCE_SOURCE_READY:
+  title "Implement Grammar 7 source and committed migration"
+  description "Implement identity-checked Grammar 7 parsing, validation, formatting and source spans for milestone criterion-set revisions and owned receipts. Add preparation-only migration from an exact committed HEAD and stage-0 source with a repository/path/commit/blob/digest-bound grandfather baseline, no inferred criterion or evidence, atomic whole-set replacement, and Git-retained deletion of the prior revision and receipts."
+  duration 8p
+  status done
+  priority 95
+  requires:
+    DEVELOPERS 1
+    SOURCE_MODEL 1
+    ACCEPTANCE_MODEL 1
+    HISTORY_SURFACE 1
+
+task MILESTONE_ACCEPTANCE_CORE MILESTONE_ACCEPTANCE_SOURCE_READY -> MILESTONE_ACCEPTANCE_CORE_READY:
+  title "Implement the pure milestone acceptance evaluator"
+  description "Derive exact criterion and milestone states from one current set revision and its commitment-bound receipts. Require at least one required criterion, keep optional observations non-blocking, return deterministic blocking IDs, honor only the migration-bound grandfather set, normalize self-asserted UTC Z times without clock authority, and keep task plan assurance unchanged in model 1."
+  duration 6p
+  status done
+  priority 90
+  requires:
+    DEVELOPERS 1
+    ACCEPTANCE_MODEL 1
+
+task MILESTONE_ACCEPTANCE_MUTATION MILESTONE_ACCEPTANCE_CORE_READY -> MILESTONE_ACCEPTANCE_MUTATION_READY:
+  title "Implement governed criterion and receipt mutations"
+  description "Add preview-first replace, verify, fail, unavailable, revoke, waive and show operations. Bind every candidate to the pre-change DAG owner scope, keep actor, verifier and owner assertions distinct and unauthenticated, make exact replay idempotent, reject conflicting identity reuse, remove the old revision and owned receipts atomically, and retain the existing digest, warning, symlink, race and safe-write controls."
+  duration 8p
+  status done
+  priority 85
+  requires:
+    DEVELOPERS 1
+    ACCEPTANCE_MODEL 1
+    MUTATION_SURFACE 1
+
+task MILESTONE_ACCEPTANCE_ADVANCE MILESTONE_ACCEPTANCE_MUTATION_READY -> MILESTONE_ACCEPTANCE_ADVANCE_READY:
+  title "Compose all-or-nothing acceptance-aware advance"
+  description "Produce a pure provisional plan, affected milestone set, candidate and diff before Git inspection. Block the entire operation with explanatory criterion IDs when any affected non-grandfathered closure-derived milestone is not accepted; provide no partial or general-force path; promote only a passed provisional plan to the canonical candidate and then compose plan assurance, governance, history safety, races and persistence in order."
+  duration 8p
+  status done
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    ACCEPTANCE_MODEL 1
+    ADVANCE_SURFACE 1
+    HISTORY_SURFACE 1
+
+task MILESTONE_ACCEPTANCE_PUBLIC MILESTONE_ACCEPTANCE_ADVANCE_READY -> MILESTONE_ACCEPTANCE_PUBLIC_READY:
+  title "Activate Grammar 7 and CLI Contract 8 atomically"
+  description "Expose the accepted source, evaluator, migration, mutations and advance through one registry-driven public boundary. Add closed results and schemas, old-document migration diagnostics and exits, document check warnings, analyze and Next projections, text, JSON, Help, Guide, public exports, package inventory, temporary-link and isolated installed workflows while retaining exact older read-only compatibility."
+  duration 8p
+  status done
+  priority 75
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SOURCE_MODEL 1
+    ACCEPTANCE_MODEL 1
+    PUBLIC_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task MILESTONE_ACCEPTANCE_HISTORY MILESTONE_ACCEPTANCE_PUBLIC_READY -> MILESTONE_ACCEPTANCE_HISTORY_READY:
+  title "Accept migration and historical reconstruction"
+  description "Prove clean committed migration in SHA-1 and SHA-256 repositories, linked worktrees, stage-0 and source races, exact grandfather provenance, Git-retained deleted criterion revisions and receipts, checkpoint-specific Contract 7 and 8 evaluation, acceptance-aware canonical advance proof, continuity gaps, hard limits, and no inferred historical acceptance."
+  duration 6p
+  status done
+  priority 70
+  requires:
+    DEVELOPERS 1
+    HISTORY_SURFACE 1
+    SOURCE_MODEL 1
+    ACCEPTANCE_MODEL 1
+
+task MILESTONE_ACCEPTANCE_ADAPTERS MILESTONE_ACCEPTANCE_PUBLIC_READY -> MILESTONE_ACCEPTANCE_ADAPTER_READY:
+  title "Project milestone acceptance through read-only adapters"
+  description "Extend document sessions, LSP, VSIX and MCP read results with exact closure, acceptance, criterion, blocker and provenance projections from the shared Application service. Add navigation and accessible presentation without implementing acceptance mutations, external verification, semantic recomputation, source writes, public VSIX release or MCP history."
+  duration 5p
+  priority 65
+  requires:
+    DEVELOPERS 1
+    ADAPTER_SURFACE 1
+
+gate MILESTONE_ACCEPTANCE_HISTORY_INPUT MILESTONE_ACCEPTANCE_HISTORY_READY -> MILESTONE_ACCEPTANCE_INTEGRATED:
+  reason "Final acceptance requires committed migration and historical reconstruction"
+
+gate MILESTONE_ACCEPTANCE_ADAPTER_INPUT MILESTONE_ACCEPTANCE_ADAPTER_READY -> MILESTONE_ACCEPTANCE_INTEGRATED:
+  reason "Final acceptance requires read-only adapter parity"
+
+task MILESTONE_ACCEPTANCE_ACCEPTANCE MILESTONE_ACCEPTANCE_INTEGRATED -> MILESTONE_ACCEPTANCE_ACCEPTED:
+  title "Accept milestone outcome acceptance across all surfaces"
+  description "Trace the complete normative matrix through Grammar 7 source preservation, migration, evaluator, governance, every receipt lifecycle, all-or-nothing advance, assurance and history guards, old documents, joins and multiple affected milestones, CLI, schemas, Help, Guide, package root, temporary link, isolated package, LSP, VSIX and MCP. Prove no release, publication, remote, Issue, external-service or plan-advance side effect."
+  duration 5p
+  priority 60
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SOURCE_MODEL 1
+    ACCEPTANCE_MODEL 1
+    MUTATION_SURFACE 1
+    ADVANCE_SURFACE 1
+    PUBLIC_SURFACE 1
+    HISTORY_SURFACE 1
+    ADAPTER_SURFACE 1
+    PACKAGE_SURFACE 1

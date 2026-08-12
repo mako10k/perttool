@@ -63,6 +63,14 @@ const expectedPaths = [
   "task-outcome add",
   "task-outcome set",
   "task-outcome remove",
+  "document migrate",
+  "milestone acceptance replace",
+  "milestone acceptance verify",
+  "milestone acceptance fail",
+  "milestone acceptance unavailable",
+  "milestone acceptance revoke",
+  "milestone acceptance waive",
+  "milestone acceptance show",
 ];
 
 function run(args) {
@@ -102,7 +110,7 @@ function invocationTokens(invocation) {
   return tokens;
 }
 
-test("the Contract 7 registry covers the complete active surface exactly once", () => {
+test("the Contract 8 registry covers the complete active surface exactly once", () => {
   assert.equal(COMMAND_REGISTRY.length, expectedPaths.length);
   assert.deepEqual(
     commandRegistryToJson(),
@@ -123,7 +131,7 @@ test("the Contract 7 registry covers the complete active surface exactly once", 
     expectedPaths.length,
   );
   for (const descriptor of COMMAND_REGISTRY) {
-    assert.equal(descriptor.contractVersion, 7, descriptor.operation);
+    assert.equal(descriptor.contractVersion, 8, descriptor.operation);
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(
       descriptor.operands.every(
@@ -198,10 +206,10 @@ test("top-level and exact command help are active-registry projections", () => {
   assert.equal(top.stdout, renderCommandHelpResult(topResult));
 
   for (const descriptor of COMMAND_REGISTRY) {
-    const [resource, action] = descriptor.path;
+    const [resource, ...actionParts] = descriptor.path;
     const query = getCommandDiscovery({
       resource,
-      action: action ?? null,
+      action: actionParts.length === 0 ? null : actionParts.join(" "),
     });
     const result = run([...descriptor.path, "--help"]);
     assert.equal(result.status, 0, `${descriptor.operation}: ${result.stderr}`);

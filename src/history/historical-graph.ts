@@ -4,6 +4,12 @@ import { canonicalJson } from "../assurance/canonical.js";
 import { evaluatePlanAssurance } from "../assurance/evaluate.js";
 import { projectPlanAssuranceInput } from "../assurance/source.js";
 import { sha256Digest } from "../model/sha256.js";
+import { planMilestoneAcceptanceAdvance } from "../milestone-acceptance/advance.js";
+import {
+  MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  milestoneAcceptanceBaseText,
+  parseMilestoneAcceptanceSource,
+} from "../milestone-acceptance/source.js";
 import { TARGET_GRAMMAR_6_CAPABILITY } from "../parser/document-parser.js";
 import {
   validateTargetGrammar6Document,
@@ -30,6 +36,10 @@ import {
   type HistoricalTransitionSemanticModelV1,
   type HistoricalWorkEventSemanticV1,
 } from "./historical-transition.js";
+import {
+  reconstructHistoricalMilestoneAcceptance,
+  type HistoricalMilestoneAcceptanceHistoryV1,
+} from "./milestone-acceptance-history.js";
 
 export const HISTORICAL_DAG_MODEL_VERSION = 1 as const;
 export const HISTORICAL_DAG_MODEL_ID = "Perttool.HistoricalDagModel.v1" as const;
@@ -270,6 +280,8 @@ export interface HistoricalLinearCoreResultV1 {
   readonly checkpoints: readonly HistoricalCheckpointV1[];
   readonly lineage: HistoricalLineageV1 | null;
   readonly timeline: HistoricalTimelineV1 | null;
+  readonly milestone_acceptance_history:
+    HistoricalMilestoneAcceptanceHistoryV1;
   readonly causes: readonly HistoricalLinearCauseRecordV1[];
   readonly limits: HistoricalLinearCoreLimitsV1;
 }
@@ -280,6 +292,7 @@ interface ProcessedSnapshot {
   readonly assurance: HistoricalAssuranceObservationV1;
   readonly text: string | null;
   readonly projection: HistoricalTransitionProjectionV1 | null;
+  readonly grammarVersion: number | null;
   readonly diagnosticCodes: readonly string[];
   readonly segmentOrdinal: number | null;
 }
@@ -429,6 +442,7 @@ function processSnapshot(
       assurance: "unavailable",
       text: null,
       projection: null,
+      grammarVersion: null,
       diagnosticCodes: [],
     };
   }
@@ -439,6 +453,7 @@ function processSnapshot(
       assurance: "unavailable",
       text: null,
       projection: null,
+      grammarVersion: null,
       diagnosticCodes: [],
     };
   }
@@ -455,17 +470,26 @@ function processSnapshot(
       assurance: "unavailable",
       text: null,
       projection: null,
+      grammarVersion: null,
       diagnosticCodes: [],
     };
   }
-  const checked = validateTargetGrammar6Document(
+  const acceptanceSource = parseMilestoneAcceptanceSource(
     text,
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  );
+  const grammarVersion = acceptanceSource.grammarVersion;
+  const checked = validateTargetGrammar6Document(
+    grammarVersion === 7 ? milestoneAcceptanceBaseText(text) : text,
     TARGET_GRAMMAR_6_CAPABILITY,
   );
-  const diagnosticCodes = checked.diagnostics.map(({ code }) => code);
+  const diagnosticCodes = [
+    ...checked.diagnostics.map(({ code }) => code),
+    ...acceptanceSource.diagnostics.map(({ code }) => code),
+  ];
   if (
-    checked.grammarVersion !== null &&
-    ![1, 2, 3, 4, 5, 6].includes(checked.grammarVersion)
+    grammarVersion !== null &&
+    ![1, 2, 3, 4, 5, 6, 7].includes(grammarVersion)
   ) {
     return {
       evidence: snapshot,
@@ -473,6 +497,7 @@ function processSnapshot(
       assurance: "unavailable",
       text,
       projection: null,
+      grammarVersion,
       diagnosticCodes,
     };
   }
@@ -483,16 +508,21 @@ function processSnapshot(
       assurance: "unavailable",
       text,
       projection: null,
+      grammarVersion,
       diagnosticCodes,
     };
   }
-  if (!checked.ok || checked.validatedDocument === null) {
+  if (
+    !checked.ok || checked.validatedDocument === null ||
+    (grammarVersion === 7 && !acceptanceSource.ok)
+  ) {
     return {
       evidence: snapshot,
       validity: "semantic_invalid",
       assurance: "unavailable",
       text,
       projection: null,
+      grammarVersion,
       diagnosticCodes,
     };
   }
@@ -506,6 +536,7 @@ function processSnapshot(
       assurance: "unavailable",
       text,
       projection: null,
+      grammarVersion,
       diagnosticCodes: [
         ...diagnosticCodes,
         ...lifecycleDiagnostics.map(({ code }) => code),
@@ -521,6 +552,7 @@ function processSnapshot(
     assurance: classifyAssurance(projection, checked.validatedDocument),
     text,
     projection,
+    grammarVersion,
     diagnosticCodes,
   };
 }
@@ -640,6 +672,7 @@ HistoricalSourceBindingV1["range"] {
 function sourceBindings(
   snapshot: HistoricalGitInspectionSnapshot,
   projection: HistoricalTransitionProjectionV1,
+  text: string,
 ): readonly HistoricalSourceBindingV1[] {
   if (
     snapshot.blobId === null || snapshot.sourceDigest === null
@@ -680,13 +713,40 @@ function sourceBindings(
       }
     }
   }
+  const acceptance = parseMilestoneAcceptanceSource(
+    text,
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  );
+  if (acceptance.grammarVersion === 7 && acceptance.ok) {
+    for (const record of acceptance.records) {
+      bindings.push({
+        ...common,
+        range: cloneRange(record.span),
+        declaration_kind: record.kind,
+        source_id: record.id,
+        owner_path: record.id,
+      });
+      if (record.kind === "milestone_criterion_set") {
+        for (const criterion of record.criteria) {
+          bindings.push({
+            ...common,
+            range: cloneRange(criterion.span),
+            declaration_kind: record.kind,
+            source_id: record.id,
+            owner_path: `${record.id}.${criterion.criterionId}`,
+          });
+        }
+      }
+    }
+  }
   return deepFreeze(bindings);
 }
 
 function countSourceBindings(
   projection: HistoricalTransitionProjectionV1,
+  text: string,
 ): number {
-  return projection.source_fidelity.declarations.reduce(
+  const base = projection.source_fidelity.declarations.reduce(
     (declarationTotal, declaration) =>
       declarationTotal + 1 + declaration.fields.reduce(
         (fieldTotal, field) => fieldTotal + 1 + field.child_ranges.length,
@@ -694,6 +754,19 @@ function countSourceBindings(
       ),
     0,
   );
+  const acceptance = parseMilestoneAcceptanceSource(
+    text,
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  );
+  return base + (acceptance.grammarVersion === 7 && acceptance.ok
+    ? acceptance.records.reduce(
+        (sum, record) => sum + 1 +
+          (record.kind === "milestone_criterion_set"
+            ? record.criteria.length
+            : 0),
+        0,
+      )
+    : 0);
 }
 
 function removedAssuranceIds(
@@ -721,52 +794,88 @@ function stateChangedMilestones(
 
 function canonicalAdvanceAttempt(
   previousText: string,
+  currentText: string,
   previous: HistoricalTransitionProjectionV1,
   current: HistoricalTransitionProjectionV1,
 ): CanonicalAdvanceAttempt | null {
-  const result = planTargetPlanAssuranceAdvance(
+  const acceptanceSource = parseMilestoneAcceptanceSource(
     previousText,
-    TARGET_GRAMMAR_6_CAPABILITY,
-    { governance: { intent: "preview" } },
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
   );
+  const acceptancePlan = acceptanceSource.grammarVersion === 7
+    ? planMilestoneAcceptanceAdvance(previousText, {
+        provisionalPlanner: (baseText) => planTargetPlanAssuranceAdvance(
+          baseText,
+          TARGET_GRAMMAR_6_CAPABILITY,
+          { governance: { intent: "preview" } },
+        ),
+      })
+    : null;
+  const contract7Plan = acceptancePlan === null
+    ? planTargetPlanAssuranceAdvance(
+        previousText,
+        TARGET_GRAMMAR_6_CAPABILITY,
+        { governance: { intent: "preview" } },
+      )
+    : null;
   if (
-    !result.ok || !result.changed || result.updatedText === null ||
-    result.advance === null || result.assuranceGuard?.status === "blocked"
+    acceptancePlan !== null &&
+    (!acceptancePlan.ok || !acceptancePlan.persistable)
+  ) return null;
+  if (contract7Plan?.assuranceGuard?.status === "blocked") return null;
+  const result = acceptancePlan?.canonical ?? contract7Plan;
+  if (
+    result === null || !result.ok || !result.changed ||
+    result.updatedText === null || result.advance === null
   ) return null;
   const checked = validateTargetGrammar6Document(
-    result.updatedText,
+    acceptanceSource.grammarVersion === 7
+      ? milestoneAcceptanceBaseText(result.updatedText)
+      : result.updatedText,
     TARGET_GRAMMAR_6_CAPABILITY,
   );
   if (!checked.ok || checked.validatedDocument === null) return null;
   const candidateProjection = projectHistoricalTransitionModel(
     checked.validatedDocument,
   );
+  const extended = result.advance as typeof result.advance & {
+    readonly removedWorkEventIds?: readonly string[];
+    readonly removedAssuranceRecordIds?: readonly string[];
+    readonly updatedAssuranceReceiptIds?: readonly string[];
+  };
+  const summary: CanonicalAdvanceAttempt["summary"] = {
+    ...result.advance,
+    removedWorkEventIds: extended.removedWorkEventIds ?? [],
+    removedAssuranceRecordIds: extended.removedAssuranceRecordIds ?? [],
+    updatedAssuranceReceiptIds: extended.updatedAssuranceReceiptIds ?? [],
+  };
   const beforeSemantic = previous.semantic;
   const afterSemantic = current.semantic;
   const summaryVerified =
+    result.updatedText === currentText &&
     candidateProjection.semantic_digest === current.semantic_digest &&
     sameStrings(
-      result.advance.removedTaskIds,
+      summary.removedTaskIds,
       removedIds(beforeSemantic.tasks, afterSemantic.tasks),
     ) &&
     sameStrings(
-      result.advance.removedGateIds,
+      summary.removedGateIds,
       removedIds(beforeSemantic.gates, afterSemantic.gates),
     ) &&
     sameStrings(
-      result.advance.removedMilestoneIds,
+      summary.removedMilestoneIds,
       removedIds(beforeSemantic.milestones, afterSemantic.milestones),
     ) &&
     sameStrings(
-      result.advance.removedWorkEventIds,
+      summary.removedWorkEventIds,
       removedIds(beforeSemantic.work_events, afterSemantic.work_events),
     ) &&
     sameStrings(
-      result.advance.removedAssuranceRecordIds,
+      summary.removedAssuranceRecordIds,
       removedAssuranceIds(beforeSemantic, afterSemantic),
     ) &&
     sameStrings(
-      result.advance.stateChangedMilestoneIds,
+      summary.stateChangedMilestoneIds,
       stateChangedMilestones(beforeSemantic, afterSemantic),
     );
   return {
@@ -780,7 +889,7 @@ function canonicalAdvanceAttempt(
       repository_proof_assumed: false,
       persistence_assumed: false,
     },
-    summary: result.advance,
+    summary,
     summaryVerified,
   };
 }
@@ -841,6 +950,8 @@ function emptyResult(
     checkpoints: [],
     lineage: null,
     timeline: null,
+    milestone_acceptance_history:
+      reconstructHistoricalMilestoneAcceptance(evidence),
     causes: uniqueCauses(causes),
     limits,
   });
@@ -873,6 +984,8 @@ function outputLimitResult(
     checkpoints: [],
     lineage: null,
     timeline: null,
+    milestone_acceptance_history:
+      reconstructHistoricalMilestoneAcceptance(evidence),
     causes: uniqueCauses(causes),
     limits,
   });
@@ -1037,7 +1150,8 @@ export function reconstructHistoricalLinearHistory(
     [
       "historicalSourceBindings",
       valid.reduce(
-        (sum, snapshot) => sum + countSourceBindings(snapshot.projection),
+        (sum, snapshot) =>
+          sum + countSourceBindings(snapshot.projection, snapshot.text),
         0,
       ),
       limits.historicalSourceBindings,
@@ -1069,6 +1183,7 @@ export function reconstructHistoricalLinearHistory(
     const attempt = connected
       ? canonicalAdvanceAttempt(
           previous.text,
+          snapshot.text,
           previous.projection,
           snapshot.projection,
         )
@@ -1132,7 +1247,11 @@ export function reconstructHistoricalLinearHistory(
       semantic_digest: snapshot.projection.semantic_digest,
       transition: sequenceCheckpoint.transition,
       graph,
-      source_bindings: sourceBindings(snapshot.evidence, snapshot.projection),
+      source_bindings: sourceBindings(
+        snapshot.evidence,
+        snapshot.projection,
+        snapshot.text,
+      ),
     }));
   }
 
@@ -1423,6 +1542,8 @@ export function reconstructHistoricalLinearHistory(
     checkpoints,
     lineage,
     timeline,
+    milestone_acceptance_history:
+      reconstructHistoricalMilestoneAcceptance(evidence),
     causes: finalCauses,
     limits,
   });

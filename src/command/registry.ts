@@ -64,7 +64,8 @@ export interface ProjectedCommandDescriptor {
   readonly contractVersion: 2 | 3 | 4;
   readonly path:
     | readonly [command: string]
-    | readonly [resource: string, action: string];
+    | readonly [resource: string, action: string]
+    | readonly [resource: string, group: string, action: string];
   readonly operation: string;
   readonly summary: string;
   readonly operands: readonly OperandDescriptor[];

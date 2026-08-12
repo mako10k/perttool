@@ -3568,6 +3568,87 @@ Exit for the contract task:
 - the complete repository and 35-plan self-use gates pass before the task's
   exact pre-advance snapshot is committed.
 
+### Milestone outcome acceptance Contract 8 slice
+
+The selected `MILESTONE-ACCEPT-001` workstream is tracked in
+[`plans/milestone-acceptance.pert`](../plans/milestone-acceptance.pert). The
+[Milestone Outcome Acceptance Contract](specs/milestone-acceptance.md) selects
+Grammar 7, CLI Contract 8, and milestone-acceptance model 1 as one atomic
+boundary. That boundary is active in the current unreleased source.
+
+The Domain owner keeps effective-reached closure unchanged and evaluates one
+complete milestone criterion-set revision plus its exact receipts. Required
+criteria gate acceptance; optional criteria remain observable. Whole-set
+replacement removes the prior revision and owned receipts from current source
+without changing task-plan assurance model 1. Git remains the historical
+owner.
+
+Migration requires exact committed `HEAD` and stage-0 bytes and writes a
+compact repository/path/commit/blob/digest-bound grandfather baseline for the
+pre-migration explicit reached set. It generates no criteria or evidence.
+Contract 8 advance first produces a pure provisional plan, blocks the entire
+operation with explanatory criterion IDs when acceptance is incomplete, and
+only then promotes the exact plan to the existing assurance, governance,
+history-safety, race, and safe-write sequence.
+
+Application services expose the same projection to analyze, Next, mutation,
+and advance. Text, JSON, LSP, VSIX, and MCP do not reimplement semantics. The
+selected adapter work is read-only. Authentication, trusted time, external
+verification, partial advance, downstream task invalidation, release,
+publication, remote writes, Issue mutation, and plan advance remain outside
+this slice.
+
+The contract task exits only after the dependency-ordered `MAC-001` through
+`MAC-025` matrix, requirements, specification, design, backlog, selected plan,
+and focused contract tests agree while the active Grammar 6 and Contract 7
+runtime remain unchanged.
+
+The accepted source slice was first implemented behind the internal
+`perttool.target-grammar-7-milestone-acceptance-source` capability. It reuses
+Grammar 6 validation for the unchanged document body and exclusively owns the
+three Grammar 7 records. The pure migration planner requires exact committed
+source, `HEAD`, stage-0, object-format, repository, and path evidence and emits
+only the version change and compact grandfather baseline.
+
+The accepted pure evaluator now owns criterion receipt lifecycle and milestone
+aggregation. It accepts closure as a separate input, preserves milestone and
+criterion declaration order, requires explicit same-criterion revocation
+before a replacement terminal receipt, exposes optional states without making
+them blockers, and returns normalized caller-asserted provenance without a
+clock or authentication. It remains internal and does not alter task-plan
+assurance or start authority.
+
+The accepted internal mutation slice composes that source and evaluator with
+the existing governance and safe-write owners. Whole-set replacement deletes
+the prior revision and every owned receipt in one candidate. Receipt planning
+supports verify, fail, unavailable, revoke, and required-only waiver; exact
+replay is a no-op and conflicting identity reuse fails closed. Every changed
+candidate affects only the pre-change `dag` scope. Preview needs no owner
+confirmation, while persistence requires the existing actor or candidate-bound
+owner-confirmation decision and retains digest, regular-file, symlink, source-
+race, candidate-validation, and post-write verification controls. Contract 8
+now exposes that composition through the public package root and registry
+without duplicating its mutation semantics.
+
+The accepted internal advance slice now creates the complete source-valid
+provisional contraction before invoking any later canonical guard. Its exact
+affected set is the closure-derived milestones that the plan removes or makes
+explicitly reached. Migration-bound grandfathered milestones pass separately;
+each other affected milestone must be accepted by the shared evaluator. A
+blocked result retains the complete candidate, diff, edits, and ordered
+criterion blockers but is not persistable and does not invoke the canonical
+assurance, governance, history-safety, race, or write composition. A passed
+plan may be promoted only when the canonical result preserves its candidate
+bytes and digest exactly. There is no partial or acceptance-force path.
+
+The accepted public slice atomically activates 53 commands, 23 root schemas,
+the Grammar 7 check/analysis/Next projections, migration, acceptance
+inspection and mutations, and acceptance-aware canonical advance. Its
+[acceptance record](process/milestone-acceptance-public-contract-acceptance.md)
+proves the temporary-link and isolated-package boundaries while retaining
+older documents as read-only inputs. Historical reconstruction and read-only
+adapter projection remain separate successor tasks.
+
 ## 18. Matters for detailed design
 
 The [Conditional Plan Assurance Contract](specs/plan-assurance.md)
@@ -3611,6 +3692,7 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 | Project actuals, lifecycle, Git history, and observed velocity | Sections 2.3, 7.8, 9, 12, and 19 |
 | Conditional plan assurance, dependency modes, reseal, advance contraction, and compatibility adapters | Sections 2.7, 7.9, 9.3, 11, 12.3, and 20.3 |
 | Task-refinement partitions and assurance-boundary expansion/contraction | Sections 2.8, 7.10, 20.3, 23, 24, and 25 |
+| Milestone outcome acceptance, committed migration, governed receipts, and all-or-nothing advance | Sections 2.9, 7.11, 19, and 20.3 |
 | Mutation/atomic write | Section 9.3; Chapter 12; Section 20.1 |
 | Owner-aware goal/DAG source, authority, and Contract 5 interface/release | Sections 2.6, 7.1, 12.3, 15, 16, and 17 |
 | Mermaid adapter | Chapters 13 and 14 |

@@ -60,6 +60,15 @@ focus result. Compact `Mnn`/`Tnn`/`Gnn` graph labels link to original-identity
 details, and exact residual, resource-remaining, and task-time summaries keep
 qualified Point forecasts distinct. Layout never becomes project semantics.
 
+The current unreleased repository source atomically activates Grammar 7 and
+CLI Contract 8 for milestone acceptance. It exposes 53 commands, 23 root
+schemas, 129 root and Node runtime exports, `Perttool.CheckResult.v5`,
+`Perttool.AnalysisResult.v6`, `Perttool.NextResult.v7`,
+`Perttool.MutationResult.v5`, `Perttool.AdvanceResult.v3`, committed migration,
+criterion-set replacement, caller-asserted receipts, and acceptance-aware
+canonical advance. This source boundary is not part of published `0.8.0` and
+does not select a release or mutate npm tags.
+
 ## Run without installing
 
 After beta publication, use `npx` for an occasional Contract 7 invocation and
@@ -252,7 +261,7 @@ file. A changed in-place `dag advance` additionally verifies removed or
 replaced entity ranges against the target path in Git `HEAD` and the stage-0
 index. Dirty ranges retained by the candidate are allowed; uncommitted
 destructive overlap or unavailable proof returns `PTADV-101` without writing.
-`Perttool.AdvanceResult.v2.history_guard` reports the status, modification
+`Perttool.AdvanceResult.v3.history_guard` reports the status, modification
 time, byte sizes, diff counts, and affected IDs before supplemental digests.
 If the source, `HEAD`, or stage-0 index changes after assessment, `PTADV-102`
 returns exit 5 without writing.
@@ -264,7 +273,9 @@ For a terminal sequence of removed tasks and task-owned work events, the same
 candidate also removes only its newly orphaned blank separator prefixes. The
 preview, separate output, and in-place write therefore remain byte-identical
 and do not require a formatter or a second whitespace edit before
-`git diff --check`.
+`git diff --check`. Consecutive terminal assurance records and work events are
+processed in source order so each separator byte belongs to at most one
+deletion range.
 
 Gate maintenance uses the same base controls:
 
@@ -467,6 +478,7 @@ new-start authority from unsealed, review-required, or unavailable plans.
 | Maintain tasks | `perttool task add|set|remove|start|suspend|resume|finish` |
 | Maintain gates | `perttool gate add|set|remove` |
 | Maintain milestones | `perttool milestone add|set|remove` |
+| Maintain milestone acceptance | `perttool milestone acceptance show|replace|verify|fail|unavailable|revoke|waive` |
 | Maintain resources | `perttool resource add|set|remove` |
 | Apply an atomic batch | `perttool batch apply` |
 | Read coding-agent guidance | `perttool agent help` |
@@ -480,8 +492,8 @@ perttool task set --help
 perttool help dag next --format json
 perttool help dag history --format json
 perttool schema --format json
-perttool schema Perttool.NextResult.v6 --format json
-perttool schema Perttool.NextResult.v6 --view outline --format json
+perttool schema Perttool.NextResult.v7 --format json
+perttool schema Perttool.NextResult.v7 --view outline --format json
 perttool guide editing --level detail --format json
 perttool guide historical-dag --level detail --format json
 ```
@@ -493,7 +505,7 @@ Supplying a schema identity returns its Draft 2020-12 artifact in the
 `schema` field of `Perttool.SchemaResult.v1`:
 
 ```sh
-perttool schema Perttool.CheckResult.v4 --format json
+perttool schema Perttool.CheckResult.v5 --format json
 ```
 
 The default and `--view full` return the complete artifact. For a shorter
@@ -502,8 +514,8 @@ references to the complete bundled artifact. Pass one local, relative, or
 copied absolute reference back with `--ref` to display that internal layer:
 
 ```sh
-perttool schema Perttool.NextResult.v6 --view outline --format json
-perttool schema Perttool.NextResult.v6 --view outline \
+perttool schema Perttool.NextResult.v7 --view outline --format json
+perttool schema Perttool.NextResult.v7 --view outline \
   --ref '#/$defs/recommendation' --format json
 ```
 
@@ -514,11 +526,12 @@ identifier only: validation does not require network access. Consumers must
 select compatibility from each result's `schema_version`, not from
 `tool_version`. See the
 [JSON Schema Artifact Contract](docs/specs/json-schema.md) for the current
-21-root source inventory and versioning rules.
+23-root source inventory and versioning rules.
 
 ## LLM and automation use
 
-Use `--format json` for machine consumers. Versions `0.7.0`, `0.7.1`, and
+Use `--format json` for machine consumers. The current unreleased source
+requires `cli_contract_version == 8`. Published versions `0.7.0`, `0.7.1`, and
 `0.8.0` require
 `cli_contract_version == 7`. Published `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
 `0.5.2`, `0.5.1`, and `0.5.0` consumers must check
@@ -543,7 +556,7 @@ rest of a result.
 Version `0.8.0` adds `dag history`, `Perttool.HistoricalGraphResult.v1`, and
 the Core and Node subpaths without changing CLI Contract 7; see the
 [`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md).
-A complete, known, non-truncated `Perttool.NextResult.v6` with policy
+A complete, known, non-truncated `Perttool.NextResult.v7` with policy
 `recommendation_v1_plus_release_gate_plus_plan_assurance_v1` is required for
 the current source. Start only task IDs in
 `temporal.authority.startable_recommended_task_ids`; do not infer start
@@ -554,8 +567,11 @@ they are not new-start recommendations.
 Mutation JSON returns the candidate text, unified diff, UTF-16 text edits,
 source digest, updated digest, diagnostics, and write result in one envelope.
 Direct, lifecycle, batch, and assurance mutations use
-`Perttool.MutationResult.v4`; `dag advance` uses
-`Perttool.AdvanceResult.v2`.
+`Perttool.MutationResult.v5`; milestone acceptance mutations use that same
+identity, and `dag advance` uses `Perttool.AdvanceResult.v3`. Current-source
+advance requires Grammar 7; migrate a committed older document with
+`perttool document migrate --target-grammar 7`, then declare criteria through
+the milestone acceptance commands before relying on canonical advance.
 Unknown schema versions, incomplete recommendation traces, `PTREC-*`
 diagnostics, and future or unavailable temporal eligibility must fail closed.
 
@@ -566,8 +582,9 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [Project Actuals and Git History Contract (CLI Contract 6)](docs/specs/project-actuals.md)
 - [Advance History Safety Contract (ADV-001 target)](docs/specs/advance-history-safety.md)
 - [Advance History Safety source acceptance](docs/process/advance-history-acceptance.md)
-- [Conditional Plan Assurance Contract (active Grammar 6 / CLI Contract 7 source)](docs/specs/plan-assurance.md)
+- [Conditional Plan Assurance Contract (retained Grammar 6 / CLI Contract 7 boundary)](docs/specs/plan-assurance.md)
 - [Conditional Plan Assurance Interface Contract](docs/specs/plan-assurance-interface.md)
+- [Milestone Acceptance Contract (active Grammar 7 / CLI Contract 8 source)](docs/specs/milestone-acceptance.md)
 - [Conditional Plan Assurance public-contract acceptance](docs/process/plan-assurance-public-contract-acceptance.md)
 - [`0.6.0` to `0.7.0` migration](docs/process/0.6.0-to-0.7.0-migration.md)
 - [`v0.7.0` release procedure](docs/process/0.7.0-release.md)

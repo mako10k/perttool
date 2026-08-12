@@ -233,11 +233,11 @@ test("the public package root hides target helpers while Contract 4 exposes acce
 
 test("active Contract 6 routes retain Grammar 3", () => {
   const cases = [
-    [["document", "check"], "Perttool.CheckResult.v4"],
+    [["document", "check"], "Perttool.CheckResult.v5"],
     [["document", "format"], "Perttool.FormatResult.v1"],
     [["project", "show"], "Perttool.ProjectResult.v4"],
-    [["dag", "analyze"], "Perttool.AnalysisResult.v5"],
-    [["dag", "next"], "Perttool.NextResult.v6"],
+    [["dag", "analyze"], "Perttool.AnalysisResult.v6"],
+    [["dag", "next"], "Perttool.NextResult.v7"],
   ];
 
   for (const [route, schemaVersion] of cases) {
@@ -246,7 +246,7 @@ test("active Contract 6 routes retain Grammar 3", () => {
     assert.equal(result.stderr, "");
     const json = JSON.parse(result.stdout);
     assert.equal(json.schema_version, schemaVersion);
-    assert.equal(json.cli_contract_version, 7);
+    assert.equal(json.cli_contract_version, 8);
     assert.equal(json.ok, true);
     if (schemaVersion !== "Perttool.FormatResult.v1") {
       assert.equal(json.grammar_version, 3);

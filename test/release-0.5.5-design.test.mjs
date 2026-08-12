@@ -106,6 +106,6 @@ test("0.5.5 release gate binds the governed-preview warning boundary", async () 
     readme,
     /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
   );
-  assert.equal(COMMAND_REGISTRY.length, 45);
-  assert.equal(getJsonSchemaCatalog().length, 21);
+  assert.equal(COMMAND_REGISTRY.length, 53);
+  assert.equal(getJsonSchemaCatalog().length, 23);
 });

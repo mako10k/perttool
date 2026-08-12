@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.MilestoneAcceptanceResult.v1.schema.json",
+  "title": "Perttool.MilestoneAcceptanceResult.v1",
+  "type": "object",
+  "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "milestones", "diagnostics"],
+  "properties": {
+    "schema_version": { "const": "Perttool.MilestoneAcceptanceResult.v1" },
+    "cli_contract_version": { "const": 8 },
+    "tool_version": { "type": "string" },
+    "operation": { "const": "milestone-acceptance.show" },
+    "ok": { "type": "boolean" },
+    "milestones": { "type": "array", "items": { "$ref": "#/$defs/milestone" } },
+    "diagnostics": { "type": "array", "items": { "$ref": "#/$defs/evaluationDiagnostic" } }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "nullableString": { "type": ["string", "null"] },
+    "criterion": {
+      "type": "object",
+      "required": ["criterion_id", "required", "evidence_kind", "commitment", "state", "effective_receipt_id", "evidence_reference", "evidence_revision", "verifier", "asserted_at", "waiver_reason", "revoked_receipt_ids"],
+      "properties": {
+        "criterion_id": { "type": "string" },
+        "required": { "type": "boolean" },
+        "evidence_kind": { "enum": ["test", "command", "artifact", "observation", "owner"] },
+        "commitment": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+        "state": { "enum": ["pending", "satisfied", "failed", "unavailable", "waived"] },
+        "effective_receipt_id": { "$ref": "#/$defs/nullableString" },
+        "evidence_reference": { "$ref": "#/$defs/nullableString" },
+        "evidence_revision": { "$ref": "#/$defs/nullableString" },
+        "verifier": { "$ref": "#/$defs/nullableString" },
+        "asserted_at": { "$ref": "#/$defs/nullableString" },
+        "waiver_reason": { "$ref": "#/$defs/nullableString" },
+        "revoked_receipt_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "milestone": {
+      "type": "object",
+      "required": ["milestone_id", "closure", "acceptance", "grandfathered", "criterion_set_id", "criterion_revision_id", "criterion_set_commitment", "criteria", "blocking_required_criterion_ids"],
+      "properties": {
+        "milestone_id": { "type": "string" },
+        "closure": { "enum": ["unreached", "reached"] },
+        "acceptance": { "enum": ["not_declared", "pending", "accepted", "failed", "unavailable"] },
+        "grandfathered": { "type": "boolean" },
+        "criterion_set_id": { "$ref": "#/$defs/nullableString" },
+        "criterion_revision_id": { "$ref": "#/$defs/nullableString" },
+        "criterion_set_commitment": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest" },
+        "criteria": { "type": "array", "items": { "$ref": "#/$defs/criterion" } },
+        "blocking_required_criterion_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "evaluationDiagnostic": {
+      "type": "object",
+      "required": ["code", "message", "milestone_id", "criterion_id", "receipt_ids"],
+      "properties": {
+        "code": { "enum": ["PTMAC-103", "PTMAC-104", "PTMAC-105"] },
+        "message": { "type": "string" },
+        "milestone_id": { "$ref": "#/$defs/nullableString" },
+        "criterion_id": { "$ref": "#/$defs/nullableString" },
+        "receipt_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+      },
+      "additionalProperties": false
+    },
+    "acceptanceModel": {
+      "type": "object",
+      "required": ["ok", "model_version", "grammar_version", "milestones", "diagnostics"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "model_version": { "const": 1 },
+        "grammar_version": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "milestones": { "type": "array", "items": { "$ref": "#/$defs/milestone" } },
+        "diagnostics": { "type": "array", "items": { "$ref": "#/$defs/evaluationDiagnostic" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

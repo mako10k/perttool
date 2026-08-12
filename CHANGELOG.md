@@ -4,6 +4,22 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+### Added
+
+- Added Grammar 7 milestone criterion sets, caller-asserted evidence receipts,
+  committed migration provenance, a separate acceptance evaluator, Contract 8
+  results and commands, and an all-or-nothing acceptance guard for canonical
+  advance while retaining graph closure as a distinct fact.
+- Added checkpoint-specific milestone-acceptance history to
+  `Perttool.HistoricalGraphResult.v1`, including exact migration provenance,
+  criterion and receipt epochs, and acceptance-aware canonical-advance proof.
+
+### Fixed
+
+- Made consecutive terminal declaration deletions own disjoint separator-byte
+  ranges. This fixes Issue #11 without changing candidate bytes, assurance or
+  history guard meanings, or the Issue #9 EOF receipt insertion behavior.
+
 ## [0.8.0] - 2026-08-07
 
 Additive Grammar 6 and CLI Contract 7 beta minor. This version publishes the

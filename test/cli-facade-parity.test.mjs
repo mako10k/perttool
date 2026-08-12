@@ -116,7 +116,7 @@ test("CLI environmental work is bound to supplied Node Host ports", async () => 
   }
 });
 
-test("Contract 7 CLI bytes retain direct Application semantics", async () => {
+test("Contract 8 CLI bytes retain direct Application semantics", async () => {
   const file = "docs/examples/minimal.pert";
   const first = runCli("document", "check", file, "--format=json");
   const second = runCli("document", "check", file, "--format=json");
@@ -126,8 +126,8 @@ test("Contract 7 CLI bytes retain direct Application semantics", async () => {
   assert.equal(first.stderr, second.stderr);
   const wire = JSON.parse(first.stdout);
   const direct = packageRoot.checkDocument(await repositoryText(file));
-  assert.equal(wire.schema_version, "Perttool.CheckResult.v4");
-  assert.equal(wire.cli_contract_version, 7);
+  assert.equal(wire.schema_version, "Perttool.CheckResult.v5");
+  assert.equal(wire.cli_contract_version, 8);
   assert.equal(wire.document_id, direct.documentId);
   assert.equal(wire.grammar_version, direct.grammarVersion);
   assert.deepEqual(wire.summary, {
@@ -140,20 +140,24 @@ test("Contract 7 CLI bytes retain direct Application semantics", async () => {
   });
 });
 
-test("CLI adds historical DAG discovery and retains root compatibility", () => {
+test("CLI activates milestone acceptance and retains bounded Node compatibility", () => {
   const help = runCli("help", "--format=json");
   const schemas = runCli("schema", "--format=json");
   assert.equal(help.status, 0, help.stderr);
   assert.equal(schemas.status, 0, schemas.stderr);
-  assert.equal(JSON.parse(help.stdout).commands.length, 45);
-  assert.equal(JSON.parse(schemas.stdout).schemas.length, 21);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 45);
-  assert.equal(packageRoot.getJsonSchemaCatalog().length, 21);
+  assert.equal(JSON.parse(help.stdout).commands.length, 53);
+  assert.equal(JSON.parse(schemas.stdout).schemas.length, 23);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 53);
+  assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
-  assert.equal(Object.keys(packageRoot).length, 122);
+  assert.equal(Object.keys(packageRoot).length, 129);
   assert.equal(Object.keys(core).length, 45);
   for (const name of Object.keys(packageRoot)) {
-    assert.equal(packageRoot[name], nodeApi[name], name);
+    if (["checkDocument", "analyzeDocument", "selectNextTasks"].includes(name)) {
+      assert.notEqual(packageRoot[name], nodeApi[name], name);
+    } else {
+      assert.equal(packageRoot[name], nodeApi[name], name);
+    }
   }
 });
 

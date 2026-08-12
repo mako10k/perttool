@@ -45,8 +45,8 @@ fi
       process.stdin.on("end", () => {
         const result = JSON.parse(input);
         if (
-          result.schema_version !== "Perttool.CheckResult.v4" ||
-          result.cli_contract_version !== 7 ||
+          result.schema_version !== "Perttool.CheckResult.v5" ||
+          result.cli_contract_version !== 8 ||
           result.grammar_version !== 5 ||
           result.actuals_inputs?.events?.length !== 0
         ) process.exit(1);
@@ -65,8 +65,8 @@ fi
       process.stdin.on("end", () => {
         const result = JSON.parse(input);
         if (
-          result.schema_version !== "Perttool.MutationResult.v4" ||
-          result.cli_contract_version !== 7 ||
+          result.schema_version !== "Perttool.MutationResult.v5" ||
+          result.cli_contract_version !== 8 ||
           result.changed !== true ||
           result.write?.mode !== "preview" ||
           result.lifecycle?.from_state !== "planned" ||
@@ -84,7 +84,7 @@ fi
         const topicIds = result.topics?.map(({ id }) => id);
         if (
           result.schema_version !== "Perttool.GuideResult.v1" ||
-          result.cli_contract_version !== 7 ||
+          result.cli_contract_version !== 8 ||
           result.operation !== "guide" ||
           JSON.stringify(topicIds) !== JSON.stringify([
             "syntax",
@@ -98,6 +98,7 @@ fi
             "samples",
             "plan-assurance",
             "historical-dag",
+            "milestone-acceptance",
           ]) ||
           /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
         ) process.exit(1);
@@ -113,7 +114,7 @@ fi
         const sectionIds = result.sections?.map(({ id }) => id);
         if (
           result.schema_version !== "Perttool.GuideResult.v1" ||
-          result.cli_contract_version !== 7 ||
+          result.cli_contract_version !== 8 ||
           result.operation !== "guide" ||
           result.topic_id !== "next" ||
           JSON.stringify(sectionIds) !== JSON.stringify([
@@ -141,7 +142,7 @@ fi
         if (
           result.schema_version !== "Perttool.CommandHelpResult.v1" ||
           JSON.stringify(command?.result_schemas) !== JSON.stringify([
-            "Perttool.AdvanceResult.v2",
+            "Perttool.AdvanceResult.v3",
             "Perttool.CliError.v1",
           ]) ||
           !command?.options?.some(
@@ -168,7 +169,7 @@ fi
         ) process.exit(1);
       });
     '
-  "$linked_cli" schema Perttool.AdvanceResult.v2 --format=json |
+  "$linked_cli" schema Perttool.AdvanceResult.v3 --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -177,14 +178,14 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
-          result.schemas?.length !== 21 ||
+          result.schemas?.length !== 23 ||
           result.schema?.$id !==
-            "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v2.schema.json" ||
+            "https://github.com/mako10k/perttool/schemas/Perttool.AdvanceResult.v3.schema.json" ||
           result.schema?.properties?.history_guard === undefined
         ) process.exit(1);
       });
     '
-  "$linked_cli" schema Perttool.NextResult.v6 --format=json |
+  "$linked_cli" schema Perttool.NextResult.v7 --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -193,36 +194,44 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
-          result.cli_contract_version !== 7 ||
-          result.schemas?.length !== 21 ||
+          result.cli_contract_version !== 8 ||
+          result.schemas?.length !== 23 ||
           result.schema?.$schema !==
             "https://json-schema.org/draft/2020-12/schema" ||
           result.schema?.$id !==
-            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v6.schema.json"
+            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v7.schema.json"
         ) process.exit(1);
       });
     '
-  "$linked_cli" dag advance \
+  set +e
+  legacy_advance_json=$("$linked_cli" dag advance \
     "$repo_root/docs/examples/advance-partial-before.pert" \
-    --format=json |
-    node -e '
+    --format=json)
+  legacy_advance_status=$?
+  set -e
+  if [[ "$legacy_advance_status" -ne 1 ]]; then
+    printf 'legacy advance migration boundary returned %s\n' "$legacy_advance_status" >&2
+    exit 1
+  fi
+  printf '%s\n' "$legacy_advance_json" | node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
       process.stdin.on("data", (chunk) => { input += chunk; });
       process.stdin.on("end", () => {
         const result = JSON.parse(input);
         if (
-          result.schema_version !== "Perttool.AdvanceResult.v2" ||
-          result.history_guard?.status !== "not_applicable" ||
-          result.history_guard?.cause !== "preview" ||
-          result.history_guard?.destructive_entity_ids?.length === 0
+          result.schema_version !== "Perttool.AdvanceResult.v3" ||
+          result.cli_contract_version !== 8 ||
+          result.diagnostics?.[0]?.code !== "PTMAC-101" ||
+          result.history_guard !== null ||
+          result.acceptance_guard !== null
         ) process.exit(1);
       });
     '
   node "$repo_root/scripts/check-advance-clean-candidate.mjs" \
     "$linked_cli" \
     "$link_prefix/advance-clean-candidate-workflow" >/dev/null
-  "$linked_cli" schema Perttool.NextResult.v6 --view=outline --format=json |
+  "$linked_cli" schema Perttool.NextResult.v7 --view=outline --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -233,7 +242,7 @@ fi
           result.query?.view !== "outline" ||
           Object.hasOwn(result.schema ?? {}, "$defs") ||
           result.schema?.properties?.groups?.$ref !==
-            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v6.schema.json#/properties/groups"
+            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v7.schema.json#/properties/groups"
         ) process.exit(1);
       });
     '

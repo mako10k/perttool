@@ -19,7 +19,7 @@
       "const": "Perttool.CommandHelpResult.v1"
     },
     "cli_contract_version": {
-      "const": 7
+      "const": 8
     },
     "tool_version": {
       "type": "string"
@@ -90,7 +90,7 @@
         ],
         "properties": {
           "cli_contract_version": {
-            "const": 7
+            "const": 8
           },
           "path": {
             "type": "array",
@@ -98,7 +98,7 @@
               "type": "string"
             },
             "minItems": 1,
-            "maxItems": 2
+            "maxItems": 3
           },
           "operation": {
             "type": "string"

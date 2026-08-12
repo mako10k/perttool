@@ -8,7 +8,7 @@ import {
 
 export interface GuideProjectionResult extends HelpResult {
   readonly schemaVersion: "Perttool.GuideResult.v1";
-  readonly cliContractVersion: 4 | 5 | 6 | 7;
+  readonly cliContractVersion: 4 | 5 | 6 | 7 | 8;
   readonly toolVersion: string;
   readonly operation: "guide";
 }

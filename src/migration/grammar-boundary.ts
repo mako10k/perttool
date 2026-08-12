@@ -3,7 +3,7 @@ import {
   type ExactDurationSourceToken,
 } from "../model/exact-duration-source.js";
 
-export type MigrationGrammarVersion = 1 | 2 | 3 | 4 | 5 | 6;
+export type MigrationGrammarVersion = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export type MigrationGrammarDisposition =
   | "retained"
@@ -48,10 +48,11 @@ function requireGrammarVersion(
     value !== 3 &&
     value !== 4 &&
     value !== 5 &&
-    value !== 6
+    value !== 6 &&
+    value !== 7
   ) {
     throw new RangeError(
-      "source grammar version must be 1, 2, 3, 4, 5, or 6",
+      "source grammar version must be 1, 2, 3, 4, 5, 6, or 7",
     );
   }
 }
@@ -130,6 +131,7 @@ export function selectExactDurationGrammarBoundary(
     sourceGrammarVersion !== 4 &&
     sourceGrammarVersion !== 5 &&
     sourceGrammarVersion !== 6 &&
+    sourceGrammarVersion !== 7 &&
     fractionRequired
   ) {
     throw new TypeError("a no-op migration cannot require a grammar upgrade");
@@ -139,6 +141,7 @@ export function selectExactDurationGrammarBoundary(
     sourceGrammarVersion !== 4 &&
     sourceGrammarVersion !== 5 &&
     sourceGrammarVersion !== 6 &&
+    sourceGrammarVersion !== 7 &&
     fractionRequired;
   const targetGrammarVersion = requiresVersionUpgrade
     ? 3
@@ -152,7 +155,8 @@ export function selectExactDurationGrammarBoundary(
       sourceGrammarVersion === 3 ||
       sourceGrammarVersion === 4 ||
       sourceGrammarVersion === 5 ||
-      sourceGrammarVersion === 6
+      sourceGrammarVersion === 6 ||
+      sourceGrammarVersion === 7
     ) &&
     generatedTokens.length > 0 &&
     !fractionRequired

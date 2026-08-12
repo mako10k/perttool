@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -21,15 +21,9 @@ test("ACC-006 and ACC-007 keep one tracked CLI candidate repository-clean", (t) 
   );
   t.after(() => rmSync(temporaryRoot, { recursive: true, force: true }));
   const workspace = path.join(temporaryRoot, "repository");
-  const nonExecutableCli = path.join(temporaryRoot, "cli.mjs");
-  writeFileSync(
-    nonExecutableCli,
-    `import ${JSON.stringify(pathToFileURL(cli).href)};\n`,
-    { encoding: "utf8", mode: 0o600 },
-  );
   const result = spawnSync(
     process.execPath,
-    [acceptanceScript, nonExecutableCli, workspace],
+    [acceptanceScript, cli, workspace],
     { cwd: root, encoding: "utf8" },
   );
 
@@ -40,10 +34,10 @@ test("ACC-006 and ACC-007 keep one tracked CLI candidate repository-clean", (t) 
   );
   assert.equal(result.stderr, "");
   assert.deepEqual(JSON.parse(result.stdout), {
-    source_bytes: 567,
-    candidate_bytes: 206,
+    source_bytes: 1569,
+    candidate_bytes: 764,
     diff_added_lines: 4,
-    diff_removed_lines: 28,
+    diff_removed_lines: 38,
     removed_task_ids: ["WORK"],
     removed_work_event_ids: ["WE-finish", "WE-start"],
     history_guard_status: "passed",

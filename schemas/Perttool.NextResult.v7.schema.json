@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v6.schema.json",
-  "title": "Perttool.NextResult.v6",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v7.schema.json",
+  "title": "Perttool.NextResult.v7",
   "$defs": {
     "tier": {
       "enum": [
@@ -1153,14 +1153,15 @@
     "diagnostics_truncated",
     "grammar_version",
     "temporal",
-    "assurance"
+    "assurance",
+    "acceptance"
   ],
   "properties": {
     "schema_version": {
-      "const": "Perttool.NextResult.v6"
+      "const": "Perttool.NextResult.v7"
     },
     "cli_contract_version": {
-      "const": 7
+      "const": 8
     },
     "recommendation_interface_version": {
       "const": 1
@@ -1303,6 +1304,12 @@
     },
     "assurance": {
       "$ref": "Perttool.Common.v1.schema.json#/$defs/nullablePlanAssuranceProjection"
+    },
+    "acceptance": {
+      "oneOf": [
+        { "$ref": "Perttool.MilestoneAcceptanceResult.v1.schema.json#/$defs/acceptanceModel" },
+        { "type": "null" }
+      ]
     }
   },
   "additionalProperties": false

@@ -437,6 +437,103 @@
       },
       "additionalProperties": false
     },
+    "historicalMilestoneAcceptanceRecord": {
+      "type": "object",
+      "required": ["kind", "id", "owner_id", "revision_id", "action", "commitment", "source_range"],
+      "properties": {
+        "kind": { "enum": ["milestone_criterion_set", "milestone_acceptance_receipt", "milestone_acceptance_migration"] },
+        "id": { "type": "string" },
+        "owner_id": { "type": "string" },
+        "revision_id": { "$ref": "#/$defs/nullableString" },
+        "action": { "type": ["string", "null"], "enum": ["verify", "fail", "unavailable", "revoke", "waive", null] },
+        "commitment": { "$ref": "#/$defs/nullableDigest" },
+        "source_range": {
+          "type": "object",
+          "required": ["start", "end"],
+          "properties": {
+            "start": { "$ref": "#/$defs/position" },
+            "end": { "$ref": "#/$defs/position" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "historicalMilestoneAcceptance": {
+      "type": "object",
+      "required": ["model", "model_version", "status", "checkpoints", "canonical_advance_proofs", "causes", "limits"],
+      "properties": {
+        "model": { "const": "Perttool.HistoricalMilestoneAcceptanceModel.v1" },
+        "model_version": { "const": 1 },
+        "status": { "enum": ["complete", "incomplete", "unavailable"] },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["commit_id", "blob_id", "source_digest", "grammar_version", "status", "evaluation", "records", "diagnostic_codes"],
+            "properties": {
+              "commit_id": { "type": "string" },
+              "blob_id": { "$ref": "#/$defs/nullableString" },
+              "source_digest": { "$ref": "#/$defs/nullableDigest" },
+              "grammar_version": { "type": ["integer", "null"], "minimum": 1 },
+              "status": { "enum": ["not_applicable", "available", "unavailable"] },
+              "evaluation": {
+                "oneOf": [
+                  { "$ref": "Perttool.MilestoneAcceptanceResult.v1.schema.json#/$defs/acceptanceModel" },
+                  { "type": "null" }
+                ]
+              },
+              "records": { "type": "array", "items": { "$ref": "#/$defs/historicalMilestoneAcceptanceRecord" } },
+              "diagnostic_codes": { "$ref": "#/$defs/stringArray" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "canonical_advance_proofs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from_commit_id", "to_commit_id", "planner_version", "candidate_digest", "affected_milestone_ids", "grandfathered_milestone_ids", "accepted_milestone_ids", "removed_record_ids"],
+            "properties": {
+              "from_commit_id": { "type": "string" },
+              "to_commit_id": { "type": "string" },
+              "planner_version": { "const": "perttool.milestone-acceptance-advance.v1" },
+              "candidate_digest": { "$ref": "#/$defs/digest" },
+              "affected_milestone_ids": { "$ref": "#/$defs/stringArray" },
+              "grandfathered_milestone_ids": { "$ref": "#/$defs/stringArray" },
+              "accepted_milestone_ids": { "$ref": "#/$defs/stringArray" },
+              "removed_record_ids": { "$ref": "#/$defs/stringArray" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "causes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["cause", "commit_id", "record_id", "limit", "actual"],
+            "properties": {
+              "cause": { "enum": ["evidence_binding_invalid", "source_missing", "source_invalid", "grammar_unsupported", "migration_missing", "migration_baseline_unavailable", "migration_provenance_mismatch", "contract_regression", "acceptance_bypassed", "hard_limit"] },
+              "commit_id": { "$ref": "#/$defs/nullableString" },
+              "record_id": { "$ref": "#/$defs/nullableString" },
+              "limit": { "type": ["string", "null"], "enum": ["checkpoints", "records", null] },
+              "actual": { "type": ["integer", "null"], "minimum": 0 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "limits": {
+          "type": "object",
+          "required": ["checkpoints", "records"],
+          "properties": {
+            "checkpoints": { "const": 2048 },
+            "records": { "const": 100000 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "position": {
       "type": "object",
       "required": ["offset", "line", "column"],
@@ -577,10 +674,10 @@
     }
   },
   "type": "object",
-  "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "document_id", "source", "source_digest", "diagnostics", "diagnostics_truncated", "model", "model_version", "transition_model_version", "status", "request", "evidence", "effective_checkpoint_id", "selected_snapshot_commit_id", "checkpoints", "snapshot", "lineage", "timeline", "analysis", "source_bindings", "causes", "limits"],
+  "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "document_id", "source", "source_digest", "diagnostics", "diagnostics_truncated", "model", "model_version", "transition_model_version", "status", "request", "evidence", "effective_checkpoint_id", "selected_snapshot_commit_id", "checkpoints", "snapshot", "lineage", "timeline", "milestone_acceptance_history", "analysis", "source_bindings", "causes", "limits"],
   "properties": {
     "schema_version": { "const": "Perttool.HistoricalGraphResult.v1" },
-    "cli_contract_version": { "const": 7 },
+    "cli_contract_version": { "const": 8 },
     "tool_version": { "type": "string" },
     "operation": { "const": "dag.history" },
     "ok": { "type": "boolean" },
@@ -632,6 +729,7 @@
     "snapshot": { "oneOf": [{ "$ref": "#/$defs/snapshot" }, { "type": "null" }] },
     "lineage": { "oneOf": [{ "$ref": "#/$defs/lineage" }, { "type": "null" }] },
     "timeline": { "oneOf": [{ "$ref": "#/$defs/timeline" }, { "type": "null" }] },
+    "milestone_acceptance_history": { "oneOf": [{ "$ref": "#/$defs/historicalMilestoneAcceptance" }, { "type": "null" }] },
     "analysis": { "$ref": "#/$defs/analysis" },
     "source_bindings": { "type": "array", "items": { "$ref": "#/$defs/sourceBinding" } },
     "causes": { "type": "array", "items": { "$ref": "#/$defs/cause" } },

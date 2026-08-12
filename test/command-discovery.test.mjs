@@ -64,10 +64,18 @@ const expectedPaths = [
   "task-outcome add",
   "task-outcome set",
   "task-outcome remove",
+  "document migrate",
+  "milestone acceptance replace",
+  "milestone acceptance verify",
+  "milestone acceptance fail",
+  "milestone acceptance unavailable",
+  "milestone acceptance revoke",
+  "milestone acceptance waive",
+  "milestone acceptance show",
 ];
 
 const expectedResources = [
-  ["document", ["check", "format"]],
+  ["document", ["check", "format", "migrate"]],
   [
     "project",
     ["history", "init", "migrate-unit", "observe-velocity", "set", "show"],
@@ -75,7 +83,7 @@ const expectedResources = [
   ["dag", ["advance", "analyze", "history", "import", "next", "render"]],
   ["task", ["add", "finish", "remove", "resume", "set", "start", "suspend"]],
   ["gate", ["add", "remove", "set"]],
-  ["milestone", ["add", "remove", "set"]],
+  ["milestone", ["acceptance fail", "acceptance replace", "acceptance revoke", "acceptance show", "acceptance unavailable", "acceptance verify", "acceptance waive", "add", "remove", "set"]],
   ["resource", ["add", "remove", "set"]],
   ["batch", ["apply"]],
   ["agent", ["help"]],
@@ -86,9 +94,9 @@ const expectedResources = [
 
 const knownSchemas = new Set([
   "Perttool.AgentGuidanceResult.v1",
-  "Perttool.AnalysisResult.v5",
-  "Perttool.AdvanceResult.v2",
-  "Perttool.CheckResult.v4",
+  "Perttool.AnalysisResult.v6",
+  "Perttool.AdvanceResult.v3",
+  "Perttool.CheckResult.v5",
   "Perttool.CliError.v1",
   "Perttool.CommandHelpResult.v1",
   "Perttool.ExportResult.v1",
@@ -97,8 +105,10 @@ const knownSchemas = new Set([
   "Perttool.HistoricalGraphResult.v1",
   "Perttool.ImportResult.v1",
   "Perttool.InitResult.v1",
-  "Perttool.MutationResult.v4",
-  "Perttool.NextResult.v6",
+  "Perttool.MilestoneAcceptanceMigrationResult.v1",
+  "Perttool.MilestoneAcceptanceResult.v1",
+  "Perttool.MutationResult.v5",
+  "Perttool.NextResult.v7",
   "Perttool.PlanAssuranceResult.v1",
   "Perttool.ProjectHistoryResult.v1",
   "Perttool.ProjectResult.v4",
@@ -114,7 +124,7 @@ function runCli(args) {
   });
 }
 
-test("Contract 7 command discovery projects every implemented capability in canonical order", () => {
+test("Contract 8 command discovery projects every implemented capability in canonical order", () => {
   assert.deepEqual(
     COMMAND_REGISTRY.map(({ path: commandPath }) =>
       commandPath.join(" ")
@@ -127,7 +137,7 @@ test("Contract 7 command discovery projects every implemented capability in cano
   );
   assert.ok(
     COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 7,
+      ({ contractVersion }) => contractVersion === 8,
     ),
   );
   for (const descriptor of COMMAND_REGISTRY) {
@@ -154,7 +164,7 @@ test("Contract 7 command discovery projects every implemented capability in cano
   const top = getCommandDiscovery({ resource: null, action: null });
   assert.equal(top.ok, true);
   assert.equal(top.schemaVersion, "Perttool.CommandHelpResult.v1");
-  assert.equal(top.cliContractVersion, 7);
+  assert.equal(top.cliContractVersion, 8);
   assert.equal(top.operation, "help");
   assert.deepEqual(
     top.resources.map(({ name, actions }) => [name, actions]),
@@ -163,16 +173,17 @@ test("Contract 7 command discovery projects every implemented capability in cano
   assert.deepEqual(top.commands, COMMAND_REGISTRY);
   const topText = renderCommandHelpResult(top);
   for (const commandPath of expectedPaths) {
-    const [resource, action] = commandPath.split(" ");
-    if (action === undefined) {
+    const [resource, ...actionParts] = commandPath.split(" ");
+    if (actionParts.length === 0) {
       assert.match(topText, new RegExp(`^  ${resource}  `, "m"));
     } else {
+      const action = actionParts.join(" ");
       assert.match(topText, new RegExp(`^    ${action}  `, "m"));
     }
   }
 });
 
-test("Contract 7 projections are the active public surface", () => {
+test("Contract 8 projections are the active public surface", () => {
   const guide = getCommandDiscovery({ resource: "guide", action: null });
   assert.equal(guide.ok, true);
   assert.deepEqual(guide.commands[0]?.path, ["guide"]);
@@ -228,13 +239,13 @@ test("Contract 7 projections are the active public surface", () => {
     const result = runCli(args);
     assert.equal(result.status, 2, `${args.join(" ")}: ${result.stderr}`);
     const json = JSON.parse(result.stdout);
-    assert.equal(json.cli_contract_version, 7);
+    assert.equal(json.cli_contract_version, 8);
     assert.equal(json.help_target.resource, null);
     assert.equal(json.help_target.action, null);
   }
 });
 
-test("project init discovery covers the complete public Contract 7 target", () => {
+test("project init discovery covers the complete public Contract 8 target", () => {
   const result = getCommandDiscovery({
     resource: "project",
     action: "init",
@@ -305,7 +316,7 @@ test("project init discovery covers the complete public Contract 7 target", () =
   );
 });
 
-test("gate discovery covers the complete public Contract 7 mutation surface", () => {
+test("gate discovery covers the complete public Contract 8 mutation surface", () => {
   const add = getCommandDiscovery({ resource: "gate", action: "add" });
   assert.equal(add.ok, true);
   assert.deepEqual(
@@ -336,7 +347,7 @@ test("gate discovery covers the complete public Contract 7 mutation surface", ()
     assert.equal(result.commands[0]?.effect, "preview");
     assert.deepEqual(
       result.commands[0]?.resultSchemas,
-      ["Perttool.MutationResult.v4", "Perttool.CliError.v1"],
+      ["Perttool.MutationResult.v5", "Perttool.CliError.v1"],
     );
   }
 });

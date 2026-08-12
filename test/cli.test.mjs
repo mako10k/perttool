@@ -13,7 +13,15 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { exportMermaid } from "../dist/index.js";
+import {
+  exportMermaid,
+  planAcceptanceReceiptMutation,
+  planAdvance,
+  planCriterionSetReplacement,
+  planMilestoneAcceptanceAdvance,
+  planMilestoneAcceptanceMigration,
+} from "../dist/index.js";
+import { sha256DigestUtf8 } from "../dist/model/sha256.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -48,6 +56,52 @@ function commitRepository(directory, relativePath) {
   }
 }
 
+function acceptanceReadyAdvanceSource(text) {
+  const migrated = planMilestoneAcceptanceMigration(text, {
+    repositoryId: "cli-test",
+    repositoryRelativePath: "plan.pert",
+    objectFormat: "sha1",
+    headCommit: "a".repeat(40),
+    headBlob: "b".repeat(40),
+    stage0Blob: "b".repeat(40),
+    sourceDigest: sha256DigestUtf8(text),
+  });
+  assert.equal(migrated.ok, true);
+  let candidate = migrated.candidateText;
+  const provisional = planMilestoneAcceptanceAdvance(candidate, {
+    provisionalPlanner: (baseText) => planAdvance(baseText),
+  });
+  for (const [index, blocked] of provisional.acceptanceGuard?.blockedMilestones.entries() ?? []) {
+    const setId = `ACCEPT_${blocked.milestoneId}_${index + 1}`;
+    const criterionId = `ACCEPTED_${index + 1}`;
+    const replacement = planCriterionSetReplacement(candidate, {
+      milestoneId: blocked.milestoneId,
+      setId,
+      revisionId: "R1",
+      criteria: [{
+        criterionId,
+        required: true,
+        evidenceKind: "owner",
+        description: "Accepted for CLI advance regression",
+      }],
+    });
+    assert.equal(replacement.ok, true);
+    const waived = planAcceptanceReceiptMutation(replacement.updatedText, {
+      setId,
+      criterionId,
+      receiptId: `WAIVE_${blocked.milestoneId}_${index + 1}`,
+      action: "waive",
+      reason: "Accepted CLI advance regression fixture",
+    });
+    assert.equal(waived.ok, true);
+    candidate = waived.updatedText;
+  }
+  assert.equal(planMilestoneAcceptanceAdvance(candidate, {
+    provisionalPlanner: (baseText) => planAdvance(baseText),
+  }).ok, true);
+  return candidate;
+}
+
 test("document check text writes data to stdout", () => {
   const result = run(["document", "check", "docs/examples/minimal.pert", "--color", "never"]);
   assert.equal(result.status, 0);
@@ -61,7 +115,7 @@ test("document check JSON is stable and contains no ANSI escape", () => {
   assert.equal(result.stdout.endsWith("\n"), true);
   assert.equal(result.stdout.includes("\u001b"), false);
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.CheckResult.v4");
+  assert.equal(json.schema_version, "Perttool.CheckResult.v5");
   assert.equal(json.document_id, "PARALLEL");
   assert.deepEqual(json.summary, {
     resources: 2,
@@ -176,7 +230,7 @@ test("guide exposes the estimate topic as JSON", () => {
   assert.equal(result.status, 0);
   const json = JSON.parse(result.stdout);
   assert.equal(json.schema_version, "Perttool.GuideResult.v1");
-  assert.equal(json.cli_contract_version, 7);
+  assert.equal(json.cli_contract_version, 8);
   assert.equal(json.topic_id, "syntax.estimate");
   assert.ok(json.syntax.includes("    optimistic 1d"));
 });
@@ -206,7 +260,7 @@ test("dag analyze defaults to separate precedence and resource JSON results", ()
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.AnalysisResult.v5");
+  assert.equal(json.schema_version, "Perttool.AnalysisResult.v6");
   assert.equal(json.mode, "both");
   assert.equal(json.precedence.makespan.numerator, "6");
   assert.equal(json.resource.makespan.numerator, "8");
@@ -328,7 +382,7 @@ test("dag next JSON separates readiness from the runnable resource subset", () =
   assert.equal(result.status, 0);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.schema_version, "Perttool.NextResult.v6");
+  assert.equal(json.schema_version, "Perttool.NextResult.v7");
   assert.equal(json.recommendation_interface_version, 1);
   assert.equal(json.recommendation.explanation_status.complete, true);
   assert.deepEqual(json.recommendation.recommended_task_ids, ["CORE"]);
@@ -432,9 +486,14 @@ test("dag next accepts stdin and rejects an invalid explanation depth", async ()
   assert.equal(JSON.parse(invalid.stdout).diagnostics[0].code, "PTCLI-001");
 });
 
-test("dag advance exposes candidate, diff, structured summary, and stdin preview", () => {
-  const source = "docs/examples/advance-partial-before.pert";
-  const sourceText = readFileSync(path.join(root, source), "utf8");
+test("dag advance exposes candidate, diff, structured summary, and stdin preview", (t) => {
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-advance-preview-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const source = path.join(directory, "advance-partial-before.pert");
+  const sourceText = acceptanceReadyAdvanceSource(
+    readFileSync(path.join(root, "docs/examples/advance-partial-before.pert"), "utf8"),
+  );
+  writeFileSync(source, sourceText, "utf8");
   const help = run(["dag", "advance", "--help"]);
   assert.equal(help.status, 0, help.stderr);
   assert.match(help.stdout, /Command: perttool dag advance/);
@@ -453,14 +512,14 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
 
   const diff = run(["dag", "advance", source, "--diff", "--color=never"]);
   assert.equal(diff.status, 0, diff.stderr);
-  assert.match(diff.stdout, /^--- docs\/examples\/advance-partial-before\.pert/m);
+  assert.match(diff.stdout, /^--- .*advance-partial-before\.pert/m);
   assert.match(diff.stdout, /^-task BRANCH_A NOW -> A_DONE:$/m);
   assert.match(diff.stderr, /removed_tasks=BRANCH_A/);
 
   const jsonResult = run(["dag", "advance", source, "--format=json"]);
   assert.equal(jsonResult.status, 0, jsonResult.stderr);
   const json = JSON.parse(jsonResult.stdout);
-  assert.equal(json.schema_version, "Perttool.AdvanceResult.v2");
+  assert.equal(json.schema_version, "Perttool.AdvanceResult.v3");
   assert.equal(json.operation, "dag.advance");
   assert.equal(json.document_id, "ADVANCE_PARTIAL");
   assert.deepEqual(json.write, { mode: "preview", target: null, written: false });
@@ -477,13 +536,14 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
     updated_assurance_receipt_ids: [],
   });
   assert.match(json.updated_text, /^project ADVANCE_PARTIAL:/);
-  assert.match(json.diff, /^--- docs\/examples\/advance-partial-before\.pert/m);
+  assert.match(json.diff, /^--- .*advance-partial-before\.pert/m);
   assert.ok(json.edits.length > 0);
   assert.equal(json.history_guard.status, "not_applicable");
   assert.equal(json.history_guard.cause, "preview");
 
   const completeText = [
     "project COMPLETE_GATE:",
+    "  version 1",
     "  title \"complete gate\"",
     "  duration_unit day",
     "  finish DONE",
@@ -508,7 +568,7 @@ test("dag advance exposes candidate, diff, structured summary, and stdin preview
     "",
   ].join("\n");
   const complete = run(["dag", "advance", "-", "--format=json"], {
-    input: completeText,
+    input: acceptanceReadyAdvanceSource(completeText),
   });
   assert.equal(complete.status, 0, complete.stderr);
   assert.deepEqual(JSON.parse(complete.stdout).advance, {
@@ -542,7 +602,13 @@ test("dag advance shares safe-write locks and repeated write is a no-op", (t) =>
   const directory = mkdtempSync(path.join(tmpdir(), "perttool-advance-write-"));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const source = path.join(directory, "partial.pert");
-  copyFileSync(path.join(root, "docs/examples/advance-partial-before.pert"), source);
+  writeFileSync(
+    source,
+    acceptanceReadyAdvanceSource(
+      readFileSync(path.join(root, "docs/examples/advance-partial-before.pert"), "utf8"),
+    ),
+    "utf8",
+  );
   commitRepository(directory, "partial.pert");
   const initialDigest = JSON.parse(run([
     "document", "check", source, "--format=json",
@@ -569,14 +635,29 @@ test("dag advance shares safe-write locks and repeated write is a no-op", (t) =>
   assert.deepEqual(repeatedJson.advance.removed_task_ids, []);
 
   const outPath = path.join(directory, "candidate.pert");
+  const outSource = path.join(directory, "partial-out.pert");
+  writeFileSync(
+    outSource,
+    acceptanceReadyAdvanceSource(
+      readFileSync(path.join(root, "docs/examples/advance-partial-before.pert"), "utf8"),
+    ),
+    "utf8",
+  );
   const out = run([
-    "dag", "advance", "docs/examples/advance-partial-before.pert",
+    "dag", "advance", outSource,
     "--out", outPath, "--actor", "user", "--format=json",
   ]);
   assert.equal(out.status, 0, out.stderr);
   assert.equal(JSON.parse(out.stdout).write.written, true);
   assert.equal(readFileSync(outPath, "utf8"), JSON.parse(out.stdout).updated_text);
 
+  writeFileSync(
+    source,
+    acceptanceReadyAdvanceSource(
+      readFileSync(path.join(root, "docs/examples/advance-partial-before.pert"), "utf8"),
+    ),
+    "utf8",
+  );
   const stale = run([
     "dag", "advance", source, "--write",
     "--expect-digest", `sha256:${"0".repeat(64)}`,
@@ -1084,7 +1165,7 @@ test("task mutation commands expose candidate, diff, JSON, and stdin previews", 
   ]);
   assert.equal(added.status, 0, added.stderr);
   const addedJson = JSON.parse(added.stdout);
-  assert.equal(addedJson.schema_version, "Perttool.MutationResult.v4");
+  assert.equal(addedJson.schema_version, "Perttool.MutationResult.v5");
   assert.equal(addedJson.operation, "task.add");
   assert.equal(addedJson.document_id, "MINIMAL");
   assert.equal(addedJson.write.mode, "preview");
@@ -1223,7 +1304,7 @@ test("project show and set expose all metadata without direct source editing", (
   ], { input: readFileSync(path.join(root, "test/fixtures/grammar/all-fields.pert"), "utf8") });
   assert.equal(preview.status, 0, preview.stderr);
   const previewJson = JSON.parse(preview.stdout);
-  assert.equal(previewJson.schema_version, "Perttool.MutationResult.v4");
+  assert.equal(previewJson.schema_version, "Perttool.MutationResult.v5");
   assert.equal(previewJson.operation, "project.set");
   assert.equal(previewJson.source, "<stdin>");
   assert.equal(previewJson.write.mode, "preview");
@@ -1273,7 +1354,7 @@ test("milestone and resource add set remove actions project to mutation Core", (
     const rejected = run([...args, "--format=json"]);
     assert.equal(rejected.status, 1, rejected.stderr);
     const json = JSON.parse(rejected.stdout);
-    assert.equal(json.schema_version, "Perttool.MutationResult.v4");
+    assert.equal(json.schema_version, "Perttool.MutationResult.v5");
     assert.equal(json.ok, false);
     assert.equal(json.updated_text, null);
     assert.equal(json.diff, null);

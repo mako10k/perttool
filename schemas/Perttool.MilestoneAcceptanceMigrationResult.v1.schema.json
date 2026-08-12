@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.MilestoneAcceptanceMigrationResult.v1.schema.json",
+  "title": "Perttool.MilestoneAcceptanceMigrationResult.v1",
+  "type": "object",
+  "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "model_version", "changed", "source_grammar_version", "target_grammar_version", "source_digest", "candidate_digest", "grandfathered_milestone_ids", "candidate_text", "diagnostics"],
+  "properties": {
+    "schema_version": { "const": "Perttool.MilestoneAcceptanceMigrationResult.v1" },
+    "cli_contract_version": { "const": 8 },
+    "tool_version": { "type": "string" },
+    "operation": { "const": "document.migrate" },
+    "ok": { "type": "boolean" },
+    "model_version": { "const": 1 },
+    "changed": { "type": "boolean" },
+    "source_grammar_version": { "type": ["integer", "null"] },
+    "target_grammar_version": { "enum": [7, null] },
+    "source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+    "candidate_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest" },
+    "grandfathered_milestone_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" },
+    "candidate_text": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+    "diagnostics": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

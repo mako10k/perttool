@@ -280,7 +280,7 @@ task WORK START -> FINISH:
   );
   const publicResult = publicApi.analyzeDocument(text);
   assert.equal(publicResult.ok, true);
-  assert.equal(publicResult.schemaVersion, "Perttool.AnalysisResult.v5");
+  assert.equal(publicResult.schemaVersion, "Perttool.AnalysisResult.v6");
   assert.equal(publicResult.precedence.makespan.numerator, 1n);
   assert.equal(publicResult.precedence.makespan.denominator, 3n);
   assert.equal(

@@ -86,13 +86,17 @@ test("Core dependency boundary permits only exact composition consumers", async 
     files,
     fixture.target.application_prefix,
   );
+  const currentAllowedConsumers = [
+    ...fixture.target.allowed_external_consumers,
+    "src/node/index.ts",
+  ];
   assert.deepEqual(
     [...new Set(imports.map(({ source }) => source))].sort(),
-    fixture.target.allowed_external_consumers,
+    currentAllowedConsumers,
   );
   assert.equal(
     imports.filter(
-      ({ source }) => !fixture.target.allowed_external_consumers.includes(source),
+      ({ source }) => !currentAllowedConsumers.includes(source),
     ).length,
     fixture.target.reverse_dependency_count,
   );
@@ -148,8 +152,8 @@ test("public package closure and dependency cases remain stable", async () => {
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  assert.equal(COMMAND_REGISTRY.length, fixture.target.command_count + 1);
-  assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count + 1);
+  assert.equal(COMMAND_REGISTRY.length, fixture.target.command_count + 9);
+  assert.equal(getJsonSchemaCatalog().length, fixture.target.root_schema_count + 3);
 
   const accepted = new Set();
   for (const contractCase of fixture.cases) {

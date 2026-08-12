@@ -74,7 +74,7 @@ function helpProjection(result) {
   };
 }
 
-test("Contract 7 guide preserves every HelpNode topic and adds plan assurance", () => {
+test("Contract 8 guide preserves every HelpNode topic and adds plan assurance", () => {
   const queries = [
     { topicId: null, level: "index" },
     ...topicIds.flatMap((topicId) =>
@@ -86,7 +86,7 @@ test("Contract 7 guide preserves every HelpNode topic and adds plan assurance", 
   for (const { topicId, level } of queries) {
     const guide = getGuide(topicId, level);
     assert.equal(guide.schemaVersion, "Perttool.GuideResult.v1");
-    assert.equal(guide.cliContractVersion, 7);
+    assert.equal(guide.cliContractVersion, 8);
     assert.equal(guide.operation, "guide");
     const help = getHelp(topicId, level);
     assert.equal(guide.ok, help.ok);
@@ -102,6 +102,7 @@ test("Contract 7 guide preserves every HelpNode topic and adds plan assurance", 
       ...topicIds.filter((topicId) => !topicId.includes(".")),
       "plan-assurance",
       "historical-dag",
+      "milestone-acceptance",
     ],
   );
 });
@@ -110,14 +111,14 @@ test("GuideResult text and JSON match canonical golden projections", async () =>
   const expectedJson = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract7-guide-index.expected.json",
+      "golden/help/contract8-guide-index.expected.json",
     ),
     "utf8",
   );
   const expectedText = await readFile(
     path.join(
       testDirectory,
-      "golden/help/contract7-guide-syntax-quick.expected.txt",
+      "golden/help/contract8-guide-syntax-quick.expected.txt",
     ),
     "utf8",
   );
@@ -160,31 +161,31 @@ test("GuideResult is a domain projection rather than a command contract", () => 
   }
 });
 
-test("active Contract 7 Guide states exact additive identities and authority", async () => {
+test("active Contract 8 Guide states exact additive identities and authority", async () => {
   const syntax = getGuide("syntax", "detail");
-  assert.match(syntax.summary, /Grammar versions 1 through 6/);
+  assert.match(syntax.summary, /Grammar versions 1 through 7/);
   assert.match(
     getGuide("syntax.project", "detail").sections
       .map(({ body }) => body).join("\n"),
-    /version 5 adds explicit task work events; and version 6 adds conditional plan-assurance records/,
+    /version 6 adds conditional plan-assurance records; and version 7 adds milestone acceptance records/,
   );
   assert.match(
     getGuide("syntax.duration", "detail").summary,
-    /Grammar 3 through 6/,
+    /Grammar 3 through 7/,
   );
   assert.match(
     getGuide("syntax.temporal", "detail").syntax.join("\n"),
-    /version 2\|3\|4\|5\|6/,
+    /version 2\|3\|4\|5\|6\|7/,
   );
 
   const temporal = getGuide("analysis.temporal", "detail");
   const temporalBody = temporal.sections.map(({ body }) => body).join("\n");
-  assert.match(temporalBody, /AnalysisResult v5/);
-  assert.match(temporalBody, /NextResult v6/);
+  assert.match(temporalBody, /AnalysisResult v6/);
+  assert.match(temporalBody, /NextResult v7/);
 
   const next = getGuide("next", "detail");
   const nextBody = next.sections.map(({ body }) => body).join("\n");
-  assert.match(next.summary, /NextResult\.v6/);
+  assert.match(next.summary, /NextResult\.v7/);
   assert.match(
     nextBody,
     /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/,
@@ -195,7 +196,7 @@ test("active Contract 7 Guide states exact additive identities and authority", a
   const actualsBody = getGuide("actuals", "detail").sections
     .map(({ body }) => body).join("\n");
   assert.match(actualsBody, /Grammar 5 introduces task-owned work events/);
-  assert.match(actualsBody, /Grammar 5 and 6/);
+  assert.match(actualsBody, /Grammar 5 through 7/);
 
   const assurance = getGuide("plan-assurance", "detail");
   assert.equal(assurance.examples.length, 3);

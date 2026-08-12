@@ -12,7 +12,7 @@ import type {
 import { getActualsGuide } from "./actuals-guide.js";
 
 export interface AssuranceGuideResult extends GuideProjectionResult {
-  readonly cliContractVersion: 7;
+  readonly cliContractVersion: 8;
 }
 
 const topic = Object.freeze({
@@ -25,6 +25,11 @@ const historicalTopic = Object.freeze({
   id: "historical-dag",
   title: "Historical DAG reconstruction",
   summary: "Reconstructs exact snapshots, proved lineage, or an ordered first-parent timeline from immutable Git evidence.",
+});
+const milestoneAcceptanceTopic = Object.freeze({
+  id: "milestone-acceptance",
+  title: "Milestone outcome acceptance",
+  summary: "Keeps graph closure separate from criterion-bound milestone outcome acceptance.",
 });
 
 const historicalQuick: readonly HelpSection[] = Object.freeze([
@@ -135,9 +140,9 @@ interface ActiveTopicOverride {
 const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
   Object.freeze({
     syntax: Object.freeze({
-      summary: "Grammar versions 1 through 6 for declaring projects, governance metadata, resources, milestones, tasks, gates, explicit task work events, and conditional plan-assurance records.",
+      summary: "Grammar versions 1 through 7 for declaring projects, governance metadata, resources, milestones, tasks, gates, explicit task work events, conditional plan-assurance records, and milestone acceptance evidence.",
       sections: Object.freeze({
-        declarations: "Place exactly one project first, followed by resource, milestone, task, gate, and Grammar 5 work-event declarations. Grammar 6 additionally accepts task_relation, plan_seal, task_outcome, and assurance_receipt declarations.",
+        declarations: "Place exactly one project first, followed by resource, milestone, task, gate, and Grammar 5 work-event declarations. Grammar 6 additionally accepts task_relation, plan_seal, task_outcome, and assurance_receipt declarations. Grammar 7 additionally accepts milestone criterion sets, acceptance receipts, and one migration baseline.",
       }),
       related: Object.freeze([
         "syntax.project",
@@ -156,20 +161,20 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
     }),
     "syntax.project": Object.freeze({
       sections: Object.freeze({
-        version: "An omitted version is treated as 1. Version 2 adds temporal fields; version 3 additionally accepts exact Fraction Duration; version 4 adds declared goal and DAG owners and delegates; version 5 adds explicit task work events; and version 6 adds conditional plan-assurance records.",
+        version: "An omitted version is treated as 1. Version 2 adds temporal fields; version 3 additionally accepts exact Fraction Duration; version 4 adds declared goal and DAG owners and delegates; version 5 adds explicit task work events; version 6 adds conditional plan-assurance records; and version 7 adds milestone acceptance records.",
       }),
     }),
     "syntax.work-event": Object.freeze({
       summary: "Grammar 5 introduces explicit task-owned lifecycle evidence in the same PERT document, and Grammar 6 retains it unchanged.",
     }),
     "syntax.duration": Object.freeze({
-      summary: "An exact Decimal or, in Grammar 3 through 6, reduced Fraction followed by d, h, or p.",
+      summary: "An exact Decimal or, in Grammar 3 through 7, reduced Fraction followed by d, h, or p.",
     }),
     "syntax.temporal": Object.freeze({
       summary: "Grammar 2 introduces milestone deadline plus task not_before and deadline fields, retained through Grammar 6.",
       syntax: Object.freeze([
         "project ID:",
-        "  version 2|3|4|5|6",
+        "  version 2|3|4|5|6|7",
         "  as_of DATE|OFFSET_DATE_TIME",
         "milestone ID:",
         "  deadline DATE|OFFSET_DATE_TIME",
@@ -188,16 +193,16 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
     }),
     "analysis.temporal": Object.freeze({
       sections: Object.freeze({
-        views: "AnalysisResult v5 retains base analysis and adds temporal precedence, temporal resource, deadline, lifecycle, and plan-assurance projections. The resource view remains heuristic and optimal=false.",
-        ranking: "Deadline facts remain informational for Recommendation version 1. NextResult v6 applies not_before through a separate release gate and then composes conditional plan-assurance eligibility into the final start authority.",
+        views: "AnalysisResult v6 retains base analysis and adds temporal precedence, temporal resource, deadline, lifecycle, plan-assurance, and milestone-acceptance projections. The resource view remains heuristic and optimal=false.",
+        ranking: "Deadline facts remain informational for Recommendation version 1. NextResult v7 applies not_before through a separate release gate and then composes conditional plan-assurance eligibility into the final start authority.",
       }),
     }),
     next: Object.freeze({
-      summary: "Returns NextResult.v6 recommendations, temporal and plan-assurance start authority, and active, ready, runnable_now, blocked_now, and upcoming tasks.",
+      summary: "Returns NextResult.v7 recommendations, temporal and plan-assurance start authority, milestone acceptance, and active, ready, runnable_now, blocked_now, and upcoming tasks.",
       sections: Object.freeze({
-        "consumer-safety": "--format json returns a complete Perttool.NextResult.v6 with the unchanged Recommendation version 1 explanation graph, a separate temporal release gate, and conditional plan-assurance authority. Consumers validate every identity and do not start when recommendation, temporal, or assurance authority is unknown.",
-        "authority-adoption": "AI uses only a known Perttool.NextResult.v6 from --format json, Recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, a complete non-truncated trace, and authority policy recommendation_v1_plus_release_gate_plus_plan_assurance_v1. Start only IDs in startable_recommended_task_ids. Stop for unknown, incomplete, malformed, future, unavailable, or assurance-withheld authority, safe-stop reasons, PTREC diagnostics, and deferred or discouraged selections. Reanalyze after task-state, capacity, temporal, relation, outcome, or assurance changes.",
-        "override-validation": "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v6 and an explicit request, and cannot bypass a future or unavailable temporal release gate or withheld plan-assurance authority. This is read-only validation and does not change task state, files, Git, or the network.",
+        "consumer-safety": "--format json returns a complete Perttool.NextResult.v7 with the unchanged Recommendation version 1 explanation graph, a separate temporal release gate, conditional plan-assurance authority, and a separate milestone-acceptance projection. Consumers validate every identity and do not start when recommendation, temporal, or assurance authority is unknown.",
+        "authority-adoption": "AI uses only a known Perttool.NextResult.v7 from --format json, Recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, a complete non-truncated trace, and authority policy recommendation_v1_plus_release_gate_plus_plan_assurance_v1. Start only IDs in startable_recommended_task_ids. Stop for unknown, incomplete, malformed, future, unavailable, or assurance-withheld authority, safe-stop reasons, PTREC diagnostics, and deferred or discouraged selections. Reanalyze after task-state, capacity, temporal, relation, outcome, assurance, or acceptance changes.",
+        "override-validation": "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v7 and an explicit request, and cannot bypass a future or unavailable temporal release gate or withheld plan-assurance authority. This is read-only validation and does not change task state, files, Git, or the network.",
       }),
       related: Object.freeze([
         "analysis",
@@ -220,7 +225,7 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
     actuals: Object.freeze({
       sections: Object.freeze({
         "explicit-events": "Grammar 5 introduces task-owned work events, and Grammar 6 retains them unchanged. task start, suspend, resume, and eventful finish require an explicit --at value; no command reads the wall clock. Preview, governance, digest, and safe-write controls apply before persistence.",
-        "legacy-status": "Grammar 1 through 4 retain status-only task finish. In Grammar 5 and 6, eventless legacy tasks may use direct planned, active, blocked, or done status changes; once a work event exists, lifecycle commands are required and suspended remains distinct from blocked.",
+        "legacy-status": "Grammar 1 through 4 retain status-only task finish. In Grammar 5 through 7, eventless legacy tasks may use direct planned, active, blocked, or done status changes; once a work event exists, lifecycle commands are required and suspended remains distinct from blocked.",
       }),
     }),
   });
@@ -241,7 +246,7 @@ function activeSections(
 function custom(level: HelpLevel): AssuranceGuideResult {
   return Object.freeze({
     schemaVersion: "Perttool.GuideResult.v1",
-    cliContractVersion: 7,
+    cliContractVersion: 8,
     toolVersion: TOOL_VERSION,
     operation: "guide",
     ok: true,
@@ -273,7 +278,7 @@ function custom(level: HelpLevel): AssuranceGuideResult {
 function historical(level: HelpLevel): AssuranceGuideResult {
   return Object.freeze({
     schemaVersion: "Perttool.GuideResult.v1",
-    cliContractVersion: 7,
+    cliContractVersion: 8,
     toolVersion: TOOL_VERSION,
     operation: "guide",
     ok: true,
@@ -306,13 +311,32 @@ export function getAssuranceGuide(
 ): AssuranceGuideResult {
   if (topicId === "plan-assurance") return custom(level);
   if (topicId === "historical-dag") return historical(level);
+  if (topicId === "milestone-acceptance") return Object.freeze({
+    schemaVersion: "Perttool.GuideResult.v1",
+    cliContractVersion: 8,
+    toolVersion: TOOL_VERSION,
+    operation: "guide",
+    ok: true,
+    topicId,
+    level,
+    title: milestoneAcceptanceTopic.title,
+    summary: milestoneAcceptanceTopic.summary,
+    sections: level === "index" ? Object.freeze([]) : Object.freeze([
+      Object.freeze({ id: "workflow", title: "Workflow", body: "Migrate an exact committed source to Grammar 7, replace one complete milestone criterion set, add explicit receipts, inspect with milestone acceptance show, and advance only after every affected non-grandfathered milestone is accepted." }),
+      Object.freeze({ id: "authority", title: "Authority", body: "Verifier and UTC Z time are caller assertions. Every receipt write uses the pre-change DAG owner scope. A required reason-bearing waiver is the only criterion-specific bypass; partial advance and general acceptance force do not exist." }),
+    ]),
+    syntax: level === "index" ? Object.freeze([]) : Object.freeze(["milestone_criterion_set ID:", "milestone_acceptance_receipt ID:", "milestone_acceptance_migration ID:"]),
+    examples: Object.freeze([]),
+    related: level === "index" ? Object.freeze([]) : Object.freeze(["editing", "workflows"]),
+    topics: Object.freeze([]), diagnostics: Object.freeze([]),
+  });
   const base = getActualsGuide(topicId, level);
   const override = topicId === null
     ? undefined
     : activeTopicOverrides[topicId];
   return Object.freeze({
     ...base,
-    cliContractVersion: 7,
+    cliContractVersion: 8,
     summary: override?.summary ?? base.summary,
     sections: activeSections(topicId, base.sections),
     syntax: override?.syntax ?? base.syntax,
@@ -327,6 +351,7 @@ export function getAssuranceGuide(
           })),
           topic,
           historicalTopic,
+          milestoneAcceptanceTopic,
         ])
       : base.topics,
   });
