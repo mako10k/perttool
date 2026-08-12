@@ -26,6 +26,7 @@ import {
   type AdvancePlanningExtension,
   type AdvanceResult,
 } from "../mutation/advance.js";
+import { advanceOwnedTerminalSeparatorStart } from "../mutation/advance-deletion.js";
 import { EntityEditor } from "../mutation/entity-editor.js";
 import {
   appendDeclarationEdit,
@@ -300,6 +301,12 @@ function receiptInsertions(
   const firstRetainedEvent = document.declarations.find((declaration) =>
     declaration.kind === "work_event" && !removed.has(declaration)
   );
+  let firstTerminalRemoved: DeclarationNode<TargetDeclarationKind> | undefined;
+  for (let index = document.declarations.length - 1; index >= 0; index -= 1) {
+    const declaration = document.declarations[index]!;
+    if (!removed.has(declaration)) break;
+    firstTerminalRemoved = declaration;
+  }
   const groups = new Map<number, PlannedReceipt[]>();
   for (const receipt of [...receipts].sort((left, right) =>
     compareStableStrings(left.id, right.id)
@@ -308,7 +315,9 @@ function receiptInsertions(
       compareStableStrings(candidate.id, receipt.id) > 0
     );
     const target = later ?? firstRetainedEvent;
-    const offset = target === undefined
+    const offset = target === undefined && firstTerminalRemoved !== undefined
+      ? advanceOwnedTerminalSeparatorStart(text, firstTerminalRemoved)
+      : target === undefined
       ? text.length
       : leadingCommentStart(lines, target.headerSpan.start.offset, 0);
     groups.set(offset, [...(groups.get(offset) ?? []), receipt]);

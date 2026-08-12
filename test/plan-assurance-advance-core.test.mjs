@@ -149,6 +149,42 @@ function sealed(outcome = "conformant", lineEnding = "\n") {
   });
 }
 
+function withTerminalWorkEvents(text, { retainConsumerEvent = false } = {}) {
+  const sourceText = retainConsumerEvent
+    ? text.replace("  status planned", "  status active")
+    : text;
+  return [
+    sourceText.trimEnd(),
+    "",
+    "work_event WE_A_START:",
+    "  model 1",
+    "  task A",
+    "  kind start",
+    "  occurred_at 2026-08-04T09:00:00+09:00",
+    "  planned_value 1p",
+    "",
+    "work_event WE_A_FINISH:",
+    "  model 1",
+    "  task A",
+    "  kind finish",
+    "  occurred_at 2026-08-04T10:00:00+09:00",
+    "  active_time 1h",
+    "  effort 1ph",
+    ...(retainConsumerEvent
+      ? [
+          "",
+          "work_event WE_B_START:",
+          "  model 1",
+          "  task B",
+          "  kind start",
+          "  occurred_at 2026-08-04T10:00:00+09:00",
+          "  planned_value 1p",
+        ]
+      : []),
+    "",
+  ].join("\n");
+}
+
 function advance(text, governance = { intent: "preview" }) {
   return planTargetPlanAssuranceAdvance(
     text,
@@ -214,6 +250,38 @@ test("advance contracts one conformant producer into a deterministic receipt and
   assert.equal(repeated.ok, true);
   assert.equal(repeated.changed, false);
   assert.equal(repeated.updatedText, result.updatedText);
+});
+
+test("receipt creation precedes a terminal removed work-event suffix", () => {
+  const original = withTerminalWorkEvents(sealed());
+  assertValid(original);
+  const result = advance(original);
+  assert.equal(
+    result.ok,
+    true,
+    result.diagnostics.map(({ code, message }) => `${code} ${message}`).join("; "),
+  );
+  assert.match(result.updatedText, /assurance_receipt AR_A:/);
+  assert.doesNotMatch(result.updatedText, /work_event WE_A_/);
+  assert.equal(result.edits.some((edit) =>
+    edit.startOffset === edit.endOffset &&
+    edit.replacement.startsWith("assurance_receipt AR_A:")
+  ), true);
+  assertValid(result.updatedText);
+});
+
+test("receipt creation retains its existing work-event anchor when a consumer event remains", () => {
+  const original = withTerminalWorkEvents(sealed(), { retainConsumerEvent: true });
+  assertValid(original);
+  const result = advance(original);
+  assert.equal(
+    result.ok,
+    true,
+    result.diagnostics.map(({ code, message }) => `${code} ${message}`).join("; "),
+  );
+  assert.match(result.updatedText, /assurance_receipt AR_A:[\s\S]*work_event WE_B_START:/);
+  assert.doesNotMatch(result.updatedText, /work_event WE_A_/);
+  assertValid(result.updatedText);
 });
 
 test("changed outcome crossing blocks until the retained consumer accepts the exact commitment", () => {
