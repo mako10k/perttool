@@ -4,6 +4,19 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-08-12
+
+Compatible Grammar 6 and CLI Contract 7 beta patch. This version corrects a
+`dag advance` mutation-planning overlap without changing commands, schemas,
+result identities, payload meanings, or authority.
+
+### Fixed
+
+- Made assurance frontier-receipt creation use the beginning of an
+  advance-owned terminal declaration suffix when every terminal `work_event`
+  is removed. Preview, separate output, and in-place write now produce the
+  same valid candidate instead of failing with `PTCLI-070`.
+
 ## [0.8.0] - 2026-08-07
 
 Additive Grammar 6 and CLI Contract 7 beta minor. This version publishes the
@@ -419,7 +432,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/mako10k/perttool/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/mako10k/perttool/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/mako10k/perttool/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/mako10k/perttool/compare/v0.6.0...v0.7.0

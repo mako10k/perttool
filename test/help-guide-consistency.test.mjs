@@ -80,7 +80,7 @@ test("current guidance and historical compatibility labels preserve their bounda
     readme,
     /made `beta=latest=0\.7\.1`/,
   );
-  assert.match(readme, /package=perttool@0\.8\.0/);
+  assert.match(readme, /package=perttool@0\.8\.1/);
   assert.match(
     readme,
     /At its publication\s+boundary, this release does not move npm `latest` from Contract 6 `0\.6\.0`/,

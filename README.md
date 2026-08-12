@@ -60,25 +60,30 @@ focus result. Compact `Mnn`/`Tnn`/`Gnn` graph labels link to original-identity
 details, and exact residual, resource-remaining, and task-time summaries keep
 qualified Point forecasts distinct. Layout never becomes project semantics.
 
+Version `0.8.1` is a backward-compatible Contract 7 patch for `dag advance`.
+It preserves assurance frontier receipts when all terminal work events belong
+to removed tasks, while retaining the `0.8.0` command, schema, package-export,
+and authority boundaries. Use `0.8.0` as the exact rollback pin.
+
 ## Run without installing
 
 After beta publication, use `npx` for an occasional Contract 7 invocation and
 select the version explicitly:
 
 ```sh
-npx --yes --package=perttool@0.8.0 -- perttool --version
-npx --yes --package=perttool@0.8.0 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.8.0 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.8.0 -- perttool dag history PLAN.pert --rev HEAD --format json
+npx --yes --package=perttool@0.8.1 -- perttool --version
+npx --yes --package=perttool@0.8.1 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.8.1 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.8.1 -- perttool dag history PLAN.pert --rev HEAD --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.8.0 -- perttool --version
-npm exec --yes --package=perttool@0.8.0 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.8.0 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.8.0 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
+npm exec --yes --package=perttool@0.8.1 -- perttool --version
+npm exec --yes --package=perttool@0.8.1 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.8.1 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.8.1 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
@@ -92,16 +97,13 @@ Install the additive Contract 7 CLI globally by exact version when it is used
 regularly:
 
 ```sh
-npm install --global perttool@0.8.0
+npm install --global perttool@0.8.1
 perttool --version
 ```
 
-The `0.8.0` release procedure published only npm `beta` and left the
-independently managed `latest` tag at `0.7.1`. A separately authorized
-post-acceptance operation later promoted `0.8.0`; npm now reports
-`beta=latest=0.8.0`, so an unqualified global installation selects `0.8.0`.
-The exact pin remains the reproducible form for the public subpaths and
-historical DAG command.
+The `0.8.1` release publishes the compatible correction to npm `beta` and
+`latest`. The exact pin remains the reproducible form for the public subpaths,
+historical DAG command, and corrected advance behavior.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
 Contract 6 artifact remains available as
 `perttool@0.5.0`. Contract 5,
