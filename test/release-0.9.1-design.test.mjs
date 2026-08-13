@@ -21,6 +21,7 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
     design,
     procedure,
     review,
+    acceptance,
     correction,
     plan,
     manifestText,
@@ -39,6 +40,7 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.9.1-release.md"),
     repositoryText("docs/process/0.9.1-self-review.md"),
+    repositoryText("docs/process/0.9.1-release-acceptance.md"),
     repositoryText("docs/process/issue-8-current-velocity-acceptance.md"),
     repositoryText("plans/release-0.9.1.pert"),
     repositoryText("package.json"),
@@ -75,7 +77,9 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   assert.match(review, /- Document status: Accepted 1\.0/u);
   assert.match(review, /Accepted implementation commit: `e433a3c/u);
   assert.match(review, /\| Commands \| 53 \| 53 \|/u);
-  assert.match(correction, /Release status: Selected for `0\.9\.1`/u);
+  assert.match(acceptance, /- Document status: Accepted 1\.0/u);
+  assert.match(acceptance, /one GraphQL[\s\S]*closed Issue #8/u);
+  assert.match(correction, /Release status: Released and durably accepted in `0\.9\.1`; Issue closed/u);
   assert.match(correction, /Exact current operand/u);
 
   const checked = perttool.checkDocument(plan);
@@ -100,10 +104,12 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   assert.match(plan, /task RELEASE_091_SELF_REVIEW[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_091_PREPARATION[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_091_CANDIDATE[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_091_PUBLISH[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_091_ACCEPTANCE[\s\S]*?status done/u);
 
   const next = perttool.selectNextTasks(plan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_091_PUBLISH"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
@@ -117,7 +123,7 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   assert.match(versionSource, /TOOL_VERSION = "0\.9\.1"/u);
   assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.1"/u);
   assert.match(changelog, /^## \[0\.9\.1\] - 2026-08-13$/m);
-  assert.match(readme, /Version `0\.9\.1` is the selected compatible Contract 8 patch/u);
+  assert.match(readme, /Version `0\.9\.1` is the durably accepted compatible Contract 8 patch/u);
   assert.match(planIndex, /All thirty-nine plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.1\.pert/u);
 

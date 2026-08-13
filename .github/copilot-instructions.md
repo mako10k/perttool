@@ -27,12 +27,15 @@ Mandatory summary:
 - The selected `plans/release-0.9.1.pert` workstream publishes the compatible
   ACT-003 / Issue #8 current-velocity observation correction. Its
   compatibility review, source preparation, and immutable candidate
-  acceptance are complete and identify
+  acceptance and beta publication are complete and identify
   `0.9.1`; Grammar 7, Contract 8, 53 commands, 23 schemas, 129 root/Node
   exports, 45 Core exports, result/schema identities, and authority remain
-  unchanged. Release, push, and Issue #8 update are authorized only after the
-  ordered gates. npm `latest`, plan advance, public VSIX publication, and
-  unrelated work remain separate.
+  unchanged. Release commit and peeled `v0.9.1` target `ddb12dc`; CI run
+  `31684442125` passed; GitHub and npm beta use the exact accepted tarball.
+  Durable public, installed, and Issue #8 acceptance is complete; Issue #8 is
+  closed with the `bug` label retained. All five tasks are complete and no
+  task is startable. npm `latest=0.9.0`, plan advance, public VSIX publication,
+  and unrelated work remain separate.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
   tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`

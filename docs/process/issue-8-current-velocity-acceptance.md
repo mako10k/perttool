@@ -4,7 +4,7 @@
 - Acceptance date: 2026-08-13
 - Backlog: [`ACT-003`](../backlog.md#act-003-observe-current-declared-actuals-before-commit)
 - External report: [GitHub Issue #8](https://github.com/mako10k/perttool/issues/8)
-- Release status: Selected for `0.9.1`
+- Release status: Released and durably accepted in `0.9.1`; Issue closed
 
 ## 1. Accepted correction
 
@@ -58,6 +58,8 @@ the unchanged public facade counts.
 
 ## 4. Remaining boundaries
 
-The separately accepted [`0.9.1` release procedure](0.9.1-release.md) now
-authorizes the ordered release and Issue #8 completion workflow. npm `latest`
-promotion, plan advance, and unrelated backlog work remain separate.
+The separately accepted [`0.9.1` release procedure](0.9.1-release.md) and
+[`0.9.1` durable release acceptance](0.9.1-release-acceptance.md) record the
+ordered publication and installed regression. Issue #8 is closed with the
+public evidence comment. npm `latest` promotion, plan advance, and unrelated
+backlog work remain separate.

@@ -28,12 +28,11 @@ available by exact pin. Version `0.5.1` remains the initial schema-discovery
 Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
-explicit pin. npm reports `beta=latest=0.9.0` and no `alpha`. Version `0.9.0`
+explicit pin. npm reports `beta=0.9.1`, `latest=0.9.0`, and no `alpha`. Version `0.9.0`
 is the Grammar 7 and CLI Contract 8 milestone-acceptance beta; `0.8.1` is its
 compatible Grammar 6 and CLI Contract 7 rollback pin. Version `0.9.1` is the
-selected compatible Contract 8 current-velocity observation patch; candidate
-acceptance is complete, while publication, npm `latest`, Issue #8 completion,
-and plan advance remain ordered boundaries. The
+durably accepted compatible Contract 8 current-velocity observation patch;
+npm `latest` and plan advance remain separate boundaries. The
 durably accepted beta `0.7.0` source implements Grammar 1/2/3/4/5/6 reads,
 registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
@@ -675,17 +674,25 @@ lockfile, CLI, MCP, adapter peer, documentation, test, golden, and self-use
 identities to `0.9.1`. The complete Node.js 22 gate passed 1,045 tests, 39
 self-use plans, the private-adapter and temporary-link workflows, and the
 713-file isolated package workflow; its record is
-`docs/process/0.9.1-preparation.md`. npm still reports
-`beta=latest=0.9.0` with no `alpha`,
-and `v0.9.1`, its GitHub Release, and `perttool@0.9.1` are unused.
+`docs/process/0.9.1-preparation.md`. At candidate preflight, npm reported
+`beta=latest=0.9.0` with no `alpha`, and `v0.9.1`, its GitHub Release, and
+`perttool@0.9.1` were unused.
 `RELEASE_091_CANDIDATE` is complete after the clean Node.js 22 gate,
 read-only external and route preflight, and acceptance of the retained
 713-file, 2808175-byte tarball from source commit `b8dba7e`; its SHA-256 is
 `27b4d8d...3e77bf`, and its record is
-`docs/process/0.9.1-candidate.md`. The user's
-2026-08-13 instruction authorizes the ordered release, push, and Issue #8
-update after all predecessor gates. npm `latest`, plan advance, public VSIX
-publication, and unrelated work remain separate.
+`docs/process/0.9.1-candidate.md`. Release commit and peeled annotated
+`v0.9.1` target `ddb12dc`; Node.js 22 and 24 CI run `31684442125` passed;
+GitHub prerelease `369785842`, npm `beta=0.9.1`, and the same tarball agree.
+At publication, `latest=0.9.0` and `alpha` remained absent. The publication
+record is `docs/process/0.9.1-publish.md`. Durable acceptance independently
+verified Git, CI, GitHub, npm, byte identity, exact and beta installation, the
+real Issue #8 uncommitted-finish regression, and the exact `0.9.0` rollback
+pin. Issue #8 was then closed once with the evidence comment while retaining
+only its `bug` label. All five tasks and 15p are complete with zero makespans
+and no ready, recommended, or startable task; the acceptance record is
+`docs/process/0.9.1-release-acceptance.md`. npm `latest=0.9.0`, plan advance,
+public VSIX publication, and unrelated work remain separate.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 

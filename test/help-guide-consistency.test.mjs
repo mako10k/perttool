@@ -87,9 +87,9 @@ test("current guidance and historical compatibility labels preserve their bounda
     /made `beta=latest=0\.7\.1`/,
   );
   assert.match(readme, /package=perttool@0\.9\.1/);
-  assert.match(readme, /npm currently reports\s+`beta=latest=0\.9\.0`/);
+  assert.match(readme, /npm reports `beta=0\.9\.1`, `latest=0\.9\.0`, and no `alpha`/);
   assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/);
-  assert.match(readme, /Version `0\.9\.1` is the selected compatible Contract 8 patch/);
+  assert.match(readme, /Version `0\.9\.1` is the durably accepted compatible Contract 8 patch/);
   assert.match(
     readme,
     /At its publication\s+boundary, this release does not move npm `latest` from Contract 6 `0\.6\.0`/,

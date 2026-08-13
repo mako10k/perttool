@@ -74,18 +74,19 @@ commands, 23 root schemas, 129 root and Node runtime exports,
 `Perttool.MutationResult.v5`, `Perttool.AdvanceResult.v3`, committed migration,
 criterion-set replacement, caller-asserted receipts, and acceptance-aware
 canonical advance. Its accepted release commit, annotated tag, GitHub
-prerelease, and npm artifact agree, and npm currently reports
-`beta=latest=0.9.0` with no `alpha`. Version `0.8.1` remains the exact Grammar
+prerelease, and npm artifact agree. npm `latest` remains `0.9.0`, while the
+newer compatible patch below is available through `beta`. Version `0.8.1` remains the exact Grammar
 6 and CLI Contract 7 rollback pin.
 
-Version `0.9.1` is the selected compatible Contract 8 patch for `ACT-003` and
-GitHub Issue #8. It makes declared velocity observation use the exact current
+Version `0.9.1` is the durably accepted compatible Contract 8 patch for
+`ACT-003` and GitHub Issue #8. It makes declared velocity observation use the exact current
 operand, including a just-written uncommitted finish, while keeping
 Git-recorded evidence bound to the selected first-parent revision. It retains
 all 53 commands, 23 root schemas, 129 root and Node exports, 45 Core exports,
-result and schema identities, and authority. Source identities are prepared
-as `0.9.1`; publication moves only npm `beta`, while `latest`, plan advance,
-public VSIX publication, and unrelated work remain separate.
+result and schema identities, and authority. Release commit, peeled tag,
+GitHub prerelease, npm artifact, and installed regression agree; Issue #8 is
+closed. npm reports `beta=0.9.1`, `latest=0.9.0`, and no `alpha`. npm `latest`,
+plan advance, public VSIX publication, and unrelated work remain separate.
 
 The private adapters now project that same Contract 8 acceptance model without
 adding write authority. The LSP negotiates a separate version-bound milestone
@@ -137,8 +138,8 @@ perttool --version
 ```
 
 The accepted `0.9.0` release was separately promoted to both public tags. The
-`0.9.1` publication changes only npm `beta`; until an independent promotion is
-authorized, an unqualified global installation continues to select `0.9.0`.
+accepted `0.9.1` publication changed only npm `beta`; until an independent
+promotion is authorized, an unqualified global installation continues to select `0.9.0`.
 The exact `0.9.1` pin is the reproducible form for the current declared
 velocity correction.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
@@ -634,6 +635,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`0.8.1` to `0.9.0` migration](docs/process/0.8.1-to-0.9.0-migration.md)
 - [`v0.9.0` release procedure](docs/process/0.9.0-release.md)
 - [`v0.9.1` release procedure](docs/process/0.9.1-release.md)
+- [`v0.9.1` durable release acceptance](docs/process/0.9.1-release-acceptance.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
