@@ -4,7 +4,7 @@
 - Acceptance date: 2026-08-13
 - Backlog: [`ACT-003`](../backlog.md#act-003-observe-current-declared-actuals-before-commit)
 - External report: [GitHub Issue #8](https://github.com/mako10k/perttool/issues/8)
-- Release status: Not selected
+- Release status: Selected for `0.9.1`
 
 ## 1. Accepted correction
 
@@ -58,5 +58,6 @@ the unchanged public facade counts.
 
 ## 4. Remaining boundaries
 
-This acceptance authorizes no Issue mutation, push, release selection,
-publication, npm dist-tag change, plan advance, or unrelated backlog work.
+The separately accepted [`0.9.1` release procedure](0.9.1-release.md) now
+authorizes the ordered release and Issue #8 completion workflow. npm `latest`
+promotion, plan advance, and unrelated backlog work remain separate.

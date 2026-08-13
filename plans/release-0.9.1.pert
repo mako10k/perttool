@@ -1,0 +1,121 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_091:
+  version 6
+  title "perttool 0.9.1 current velocity observation patch release"
+  description "Release suffix-free 0.9.1 beta as a backward-compatible Grammar 7 and CLI Contract 8 patch for ACT-003 and Issue #8. Bind declared candidates to the exact current operand while retaining selected-revision Git-recorded candidates, result and schema identities, public facade counts, authority, and no automatic velocity adoption. npm latest promotion and plan advance remain separate."
+  as_of 2026-08-13
+  duration_unit point
+  velocity 15p/1d
+  finish RELEASE_091_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_091_PLANNING_STARTED:
+  title "Version 0.9.1 release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize compatibility, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, CHANGELOG, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_091_REVIEW_ACCEPTED:
+  title "Version 0.9.1 compatibility review accepted"
+
+milestone RELEASE_091_SOURCE_PREPARED:
+  title "Version 0.9.1 release source prepared"
+
+milestone RELEASE_091_CANDIDATE_ACCEPTED:
+  title "Version 0.9.1 release candidate accepted"
+
+milestone RELEASE_091_PUBLISHED:
+  title "Version 0.9.1 published to GitHub and npm beta"
+
+milestone RELEASE_091_ACCEPTED:
+  title "Version 0.9.1 current velocity patch accepted"
+
+task RELEASE_091_SELF_REVIEW RELEASE_091_PLANNING_STARTED -> RELEASE_091_REVIEW_ACCEPTED:
+  title "Review the 0.9.1 compatibility and release boundary"
+  description "Confirm ACT-003 and Issue #8 acceptance, select patch version 0.9.1, prove unchanged Grammar 7, CLI Contract 8, command, option, result, schema, payload, public-facade, and authority identities, fix the procedure and plan, and record why 0.9.1 accurately represents the boundary. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+  source "ACT-003"
+
+task RELEASE_091_PREPARATION RELEASE_091_REVIEW_ACCEPTED -> RELEASE_091_SOURCE_PREPARED:
+  title "Prepare version 0.9.1 release source"
+  description "Align package and lockfile identity, CLI version, adapter peer versions, CHANGELOG, README, release documentation, tests, goldens, self-use registration, dependency audit, and beta publication validation. Run the complete Node.js 22 repository and package gates without remote or registry writes."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "ACT-003"
+
+task RELEASE_091_CANDIDATE RELEASE_091_SOURCE_PREPARED -> RELEASE_091_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.9.1 release candidate"
+  description "Commit and recheck the complete release diff; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.9.0 and no alpha; verify protected routes; build one immutable tarball outside the worktree; and accept its exact identity and installed Contract 8 behavior. This task performs no external write."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+  source "ACT-003"
+
+task RELEASE_091_PUBLISH RELEASE_091_CANDIDATE_ACCEPTED -> RELEASE_091_PUBLISHED:
+  title "Publish version 0.9.1 from one immutable tarball"
+  description "Only after every predecessor gate passes and the exact external batch is authorized, push and verify the clean release commit and annotated tag, require Node.js 22 and 24 CI, publish the GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.9.1 while latest remains 0.9.0."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+  source "ACT-003"
+
+task RELEASE_091_ACCEPTANCE RELEASE_091_PUBLISHED -> RELEASE_091_ACCEPTED:
+  title "Record durable 0.9.1 beta acceptance"
+  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub and npm tarball bytes, registry integrity and metadata, exact and beta isolated installation, Issue #8 behavior, compatibility, and rollback pin. Update Issue #8 after durable acceptance without changing latest, advancing the plan, or starting unrelated work."
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "ACT-003"
+
+work_event WE-c29bd5bd2fab9577c108ede206d244d09bca7cf4673d8f552d282e4a19f6128d:
+  model 1
+  task RELEASE_091_SELF_REVIEW
+  kind finish
+  occurred_at 2026-08-13T17:27:00+09:00
+  active_time 1h
+  effort 1ph
