@@ -1,8 +1,8 @@
 # perttool Basic Design
 
-- Document status: Draft 1.27
+- Document status: Draft 1.28
 - Created: 2026-07-21
-- Updated: 2026-08-07
+- Updated: 2026-08-13
 - Applicable requirements: [requirements.md](requirements.md)
 - DSL grammar: [specs/dsl-grammar.md](specs/dsl-grammar.md)
 - Graph semantics: [specs/graph-semantics.md](specs/graph-semantics.md)
@@ -18,6 +18,7 @@
 - Plan assurance interface: [specs/plan-assurance-interface.md](specs/plan-assurance-interface.md)
 - Task refinement and assurance boundaries: [specs/task-refinement.md](specs/task-refinement.md)
 - Shared adapter architecture: [specs/adapter-platform.md](specs/adapter-platform.md)
+- Tiered editor mutations: [specs/editor-mutations.md](specs/editor-mutations.md)
 - Plan assurance examples: [examples/plan-assurance.md](examples/plan-assurance.md)
 - Plan assurance design review: [process/plan-assurance-design-review.md](process/plan-assurance-design-review.md)
 - Recommendation semantics: [specs/recommendation.md](specs/recommendation.md)
@@ -2345,6 +2346,29 @@ source navigation and analysis-mode messages, including the open generation,
 and cannot calculate schedule meaning or execute Mermaid.
 The exact protocol, capability, trust, CSP, distribution, and accessibility
 rules are in the [Editor Protocol Contract](specs/editor-protocol.md).
+
+The additive
+[Tiered Editor Mutation Contract](specs/editor-mutations.md) defines editor
+protocol model 2 without changing the active model-1 server. Domain owns one
+`Perttool.EditorSemanticFingerprint.v1` over the complete checked document,
+normalized forward and inverse edits, affected semantic identities, and the
+strictest `E0 < E1 < E2 < E3` classification of one complete final candidate.
+Application composes this evidence with existing governance, plan-assurance,
+milestone-acceptance, advance, and history-safety services. The LSP maps only
+accepted gates to standard formatting, closed Code Actions, or the two custom
+preview/apply requests; it never invokes the CLI or writes a file. VS Code
+owns explicit review and versioned buffer application. Formatting is the sole
+save-integrated surface, and even it returns edits only after complete semantic
+fingerprint equality. A plan-assurance hash is insufficient because it omits
+semantic fields that formatting must still preserve.
+
+The four classes are activation gates, not implementation shortcuts. `E1`
+requires a complete unsealed affected closure and a closed repair registry;
+`E2` requires an exact inverse independent of Undo; `E3` keeps existing
+candidate-bound owner assertions, assurance records, and exact advance Git
+evidence. Strictest-class precedence prevents an atomic candidate from being
+split or downgraded. The contract-only slice adds no capability, schema,
+export, command, dependency, contribution, package, or release.
 
 The accepted
 [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)

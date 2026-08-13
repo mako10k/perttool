@@ -32,6 +32,14 @@ Plans are separated by level of detail.
   `CLI_FACADE_PARITY`, all three MCP tasks, and final integration acceptance
   are complete and retained before advance; all sixteen tasks and 91p are
   complete with zero makespans and no recommendation
+- [editor-mutations.pert](editor-mutations.pert): selected
+  `EDITOR-MUTATION-001` roadmap from additive Editor Protocol model 2 and the
+  strict `E0` through `E3` classification contract through whole-document
+  formatting, completely unsealed repair, non-destructive recoverable edits,
+  authority-sensitive assurance/governance/advance interaction, and final
+  private LSP/VSIX acceptance; the contract task is complete and retained
+  before advance, while model-2 runtime activation starts with the separate
+  `EDITOR_FORMAT_CORE` task
 - [historical-dag.pert](historical-dag.pert): selected `HIST-DAG-001`
   first-parent historical reconstruction roadmap covering the normative
   contract, shared transition model, bounded immutable Git evidence, pure
@@ -110,7 +118,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All thirty-nine plans pass the self-use gate and are used as inputs to `document
+All forty plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -126,6 +134,7 @@ that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.9.0.pert`, `release-0.9.1.pert`,
 `governance.pert`,
 `help-guide-consistency.pert`, `adapter-platform.pert`,
+`editor-mutations.pert`,
 `project-actuals.pert`, `plan-assurance.pert`, `historical-dag.pert`,
 `milestone-acceptance.pert`,
 `advance-history-safety.pert`, and the

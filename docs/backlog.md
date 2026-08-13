@@ -1194,6 +1194,40 @@ no reseal or owner-confirmation authority, and remain independent of the four
 GraphView analysis modes and the historical-DAG delivery. Release selection,
 local installation, Marketplace publication, and Open VSX remain separate.
 
+### EDITOR-MUTATION-001: Add tiered VSIX editor mutations
+
+Priority: Selected through GitHub Issue #13
+
+Status: Editor Protocol model 2 contract accepted (2026-08-13); runtime
+activation proceeds through the independent plan
+
+The selected [`editor-mutations.pert`](../plans/editor-mutations.pert)
+workstream replaces the permanent read-only editor ceiling with four ordered
+mutation classes. The normative
+[Tiered Editor Mutation Contract](specs/editor-mutations.md) classifies one
+complete final candidate by the strictest applicable class:
+
+- `E0` proves complete semantic equivalence and permits standard
+  whole-document formatting, including user-enabled format on save;
+- `E1` permits validated registry repairs only when the complete affected
+  assurance closure is unsealed;
+- `E2` permits another non-destructive semantic edit only with an independent
+  exact recovery and explicit preview; and
+- `E3` retains dedicated review and fresh candidate-bound authority for seal,
+  accepted assurance, milestone acceptance, governed goal/DAG, destructive,
+  and advance operations.
+
+Strictest-class precedence prevents an atomic candidate from being split or
+downgraded. Workspace trust, process or Git identity, and model negotiation do
+not grant authority. The language server plans bound edits through shared
+Core/Application services and the editor applies them; neither adapter invokes
+the CLI or writes a workspace file directly. Model 1 remains read-only. The
+contract task adds no model-2 capability, and the first runtime slice is only
+`E0` whole-document formatting. Semantic assurance highlighting,
+graph-driven mutation beyond the accepted classes, MCP mutation, public VSIX
+identity/publication, release selection, Issue mutation, remote writes, and
+plan advance remain separate.
+
 ### VSIX-DAG-PRESENT-001: Compact DAG labels and exact time summaries
 
 Priority: Selected local presentation improvement

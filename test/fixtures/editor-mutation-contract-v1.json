@@ -1,0 +1,227 @@
+{
+  "schema_version": "Perttool.EditorMutationContractCases.v1",
+  "editor_protocol_model_version": 2,
+  "active_editor_protocol_model_versions": [1],
+  "activation_state": "contract_only",
+  "class_order": ["E0", "E1", "E2", "E3"],
+  "classes": [
+    {
+      "id": "E0",
+      "meaning": "complete_semantic_equivalence",
+      "surface": "textDocument/formatting",
+      "implicit_maximum": "user_enabled_format_on_save",
+      "recovery": "exact_original_binding_and_normalized_inverse"
+    },
+    {
+      "id": "E1",
+      "meaning": "validated_completely_unsealed_repair",
+      "surface": "quickfix_or_source.fixAll.perttool",
+      "implicit_maximum": "homogeneous_unsealed_closure_and_complete_validation",
+      "recovery": "exact_original_binding_and_normalized_inverse"
+    },
+    {
+      "id": "E2",
+      "meaning": "non_destructive_recoverable_semantic_edit",
+      "surface": "explicit_command_preview_then_workspace_edit",
+      "implicit_maximum": "never",
+      "recovery": "independent_exact_inverse_required"
+    },
+    {
+      "id": "E3",
+      "meaning": "authority_sensitive_or_destructive_operation",
+      "surface": "dedicated_review_ui",
+      "implicit_maximum": "never",
+      "recovery": "operation_specific_authority_and_history_boundary"
+    }
+  ],
+  "classification": {
+    "unit": "complete_final_candidate",
+    "precedence": "strictest_applicable_class",
+    "unknown": "unavailable_no_edit",
+    "semantic_fingerprint": "Perttool.EditorSemanticFingerprint.v1",
+    "assurance_hash_sufficient_for_e0": false,
+    "required_evidence": [
+      "document_binding",
+      "candidate_digest",
+      "complete_validation",
+      "normalized_edits",
+      "affected_entities_and_fields",
+      "semantic_fingerprints",
+      "assurance_effects",
+      "governance_scopes",
+      "destructive_ranges",
+      "recovery",
+      "history_guard_when_applicable"
+    ]
+  },
+  "document_binding_fields": [
+    "documentUri",
+    "documentGeneration",
+    "documentVersion",
+    "sourceDigest"
+  ],
+  "negotiation": {
+    "model_2_offer": [2, 1],
+    "selection": "highest_mutually_supported",
+    "omitted_handshake": 1,
+    "model_1_offer": 1,
+    "unsupported_only": "custom_methods_unavailable",
+    "authority_from_negotiation": false
+  },
+  "capability_gates": [
+    {
+      "gate": "EDITOR_FORMAT_CORE_READY",
+      "protocols": ["textDocument/formatting"],
+      "classes": ["E0"]
+    },
+    {
+      "gate": "EDITOR_REPAIR_ACCEPTED",
+      "protocols": ["textDocument/codeAction:quickfix", "textDocument/codeAction:source.fixAll.perttool"],
+      "classes": ["E1"]
+    },
+    {
+      "gate": "EDITOR_RECOVERABLE_ACCEPTED",
+      "protocols": ["perttool/editorMutationPreview", "perttool/editorMutationApply"],
+      "classes": ["E2"]
+    },
+    {
+      "gate": "EDITOR_AUTHORITY_UI_READY",
+      "protocols": ["perttool/editorMutationPreview", "perttool/editorMutationApply", "vscode_dedicated_review_ui"],
+      "classes": ["E3"]
+    }
+  ],
+  "forbidden_capabilities": [
+    "textDocument/rangeFormatting",
+    "textDocument/onTypeFormatting",
+    "textDocument/rename",
+    "workspace/executeCommand",
+    "workspace/willCreateFiles",
+    "workspace/willRenameFiles",
+    "workspace/willDeleteFiles"
+  ],
+  "e0": {
+    "semantic_equivalence": "complete_fingerprint_equality",
+    "format_options": "validate_required_shape_then_use_perttool_canonical_format",
+    "edits": "ordered_non_overlapping_smallest_core_ranges_utf16",
+    "unchanged": "empty_array",
+    "idempotent": true,
+    "extension_changes_format_on_save_setting": false
+  },
+  "e1": {
+    "repair_registry": "closed_versioned",
+    "closure": "affected_tasks_plus_planning_dependencies_and_changed_dependents",
+    "required_before_and_after_state": "unsealed",
+    "automatic_rule": "homogeneous_e1_complete_unsealed_closure_and_second_validation",
+    "forbidden_effects": [
+      "seal_or_reseal",
+      "accepted_task_outcome",
+      "accepted_milestone_outcome",
+      "advance_receipt",
+      "governance_scope",
+      "sealed_basis_change",
+      "declaration_removal",
+      "git_or_history_proof",
+      "lifecycle_or_work_event_change",
+      "owner_assertion"
+    ]
+  },
+  "e2": {
+    "implicit": false,
+    "destructive": false,
+    "preview_required": true,
+    "workspace_edit_required": true,
+    "recovery_independent_of_undo": true,
+    "inverse_proof": "candidate_plus_inverse_equals_exact_original_bytes"
+  },
+  "e3_causes": [
+    "plan_seal_or_reseal",
+    "accepted_task_outcome_or_basis",
+    "frontier_receipt",
+    "milestone_acceptance",
+    "sealed_planning_basis_change",
+    "goal_governance_scope",
+    "dag_governance_scope",
+    "declaration_or_accepted_evidence_deletion",
+    "dag_advance",
+    "force_history_loss",
+    "git_or_history_safety_evidence"
+  ],
+  "e3_forbidden_surfaces": [
+    "textDocument/formatting",
+    "textDocument/codeAction",
+    "source.fixAll.perttool",
+    "format_on_save",
+    "automatic_repair"
+  ],
+  "custom_methods": {
+    "preview": "perttool/editorMutationPreview",
+    "apply": "perttool/editorMutationApply",
+    "preview_schema": "Perttool.EditorMutationPreviewResult.v1",
+    "apply_schema": "Perttool.EditorMutationApplyResult.v1",
+    "statuses": ["preview", "authorized", "denied", "invalid", "unavailable", "stale"],
+    "preview_grants_authority": false,
+    "server_applies_workspace_edit": false,
+    "editor_applies_workspace_edit": true
+  },
+  "diagnostic_codes": [
+    "PTEDM-101",
+    "PTEDM-102",
+    "PTEDM-103",
+    "PTEDM-104",
+    "PTEDM-105",
+    "PTEDM-106",
+    "PTEDM-107",
+    "PTEDM-108",
+    "PTEDM-109",
+    "PTEDM-110"
+  ],
+  "hard_limits": {
+    "source_utf8_bytes": 8388608,
+    "candidate_utf8_bytes": 8388608,
+    "forward_edits": 10000,
+    "inverse_edits": 10000,
+    "replacement_utf8_bytes_each_direction": 8388608,
+    "affected_entity_field_identities": 20000,
+    "diff_utf8_bytes": 1048576,
+    "retained_previews_per_connection": 8,
+    "retained_preview_recovery_utf8_bytes_per_connection": 33554432
+  },
+  "active_baseline": {
+    "grammar_version": 7,
+    "cli_contract_version": 8,
+    "command_count": 53,
+    "root_schema_count": 23,
+    "root_export_count": 129,
+    "node_export_count": 129,
+    "core_export_count": 45,
+    "tool_version": "0.9.1",
+    "lsp_model_versions": [1],
+    "document_formatting_provider": false
+  },
+  "cases": [
+    { "id": "EMC-001", "depends_on": [], "boundary": "baseline", "expected": "model_1_active_model_2_contract_only" },
+    { "id": "EMC-002", "depends_on": ["EMC-001"], "boundary": "negotiation", "expected": "ordered_offer_highest_common_and_model_1_fallback" },
+    { "id": "EMC-003", "depends_on": ["EMC-002"], "boundary": "binding", "expected": "exact_document_and_candidate_binding_with_stale_checks" },
+    { "id": "EMC-004", "depends_on": ["EMC-003"], "boundary": "fingerprint", "expected": "complete_semantics_not_source_or_assurance_hash" },
+    { "id": "EMC-005", "depends_on": ["EMC-004"], "boundary": "precedence", "expected": "strictest_class_over_complete_final_candidate" },
+    { "id": "EMC-006", "depends_on": ["EMC-005"], "boundary": "unknown", "expected": "fail_closed_without_edit" },
+    { "id": "EMC-007", "depends_on": ["EMC-006"], "boundary": "e0_identity", "expected": "valid_equal_idempotent_exact_edits" },
+    { "id": "EMC-008", "depends_on": ["EMC-007"], "boundary": "e0_protocol", "expected": "whole_document_formatting_only" },
+    { "id": "EMC-009", "depends_on": ["EMC-008"], "boundary": "e0_save", "expected": "user_enabled_only_and_no_stale_edit" },
+    { "id": "EMC-010", "depends_on": ["EMC-009"], "boundary": "e1_closure", "expected": "complete_unsealed_before_and_after" },
+    { "id": "EMC-011", "depends_on": ["EMC-010"], "boundary": "e1_interaction", "expected": "quickfix_fixall_and_guarded_automatic" },
+    { "id": "EMC-012", "depends_on": ["EMC-011"], "boundary": "e1_exclusion", "expected": "no_authority_destructive_lifecycle_or_history_effect" },
+    { "id": "EMC-013", "depends_on": ["EMC-012"], "boundary": "e2_recovery", "expected": "independent_exact_inverse" },
+    { "id": "EMC-014", "depends_on": ["EMC-013"], "boundary": "e2_interaction", "expected": "explicit_preview_then_editor_workspace_edit" },
+    { "id": "EMC-015", "depends_on": ["EMC-014"], "boundary": "e2_exclusion", "expected": "no_destructive_or_e3_cause" },
+    { "id": "EMC-016", "depends_on": ["EMC-015"], "boundary": "e3_assurance", "expected": "accepted_assurance_changes_are_e3" },
+    { "id": "EMC-017", "depends_on": ["EMC-016"], "boundary": "e3_governance", "expected": "current_candidate_bound_governance_decision" },
+    { "id": "EMC-018", "depends_on": ["EMC-017"], "boundary": "e3_advance", "expected": "canonical_contraction_and_exact_history_safety" },
+    { "id": "EMC-019", "depends_on": ["EMC-018"], "boundary": "e3_interaction", "expected": "dedicated_review_never_implicit" },
+    { "id": "EMC-020", "depends_on": ["EMC-019"], "boundary": "preview_apply", "expected": "preview_no_authority_apply_rechecks_mutable_evidence" },
+    { "id": "EMC-021", "depends_on": ["EMC-020"], "boundary": "editor_ownership", "expected": "server_plans_editor_applies_once" },
+    { "id": "EMC-022", "depends_on": ["EMC-021"], "boundary": "recovery_failure", "expected": "missing_mismatch_or_limit_fails_closed" },
+    { "id": "EMC-023", "depends_on": ["EMC-022"], "boundary": "limits_diagnostics", "expected": "exact_closed_inventory_no_complete_truncation" },
+    { "id": "EMC-024", "depends_on": ["EMC-023"], "boundary": "compatibility", "expected": "active_public_and_private_runtime_unchanged" }
+  ]
+}

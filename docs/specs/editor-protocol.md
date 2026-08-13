@@ -534,6 +534,13 @@ leaving an old graph presented as current.
 
 ## 12. Compatibility, authority, and non-goals
 
+The later accepted
+[Tiered Editor Mutation Contract](editor-mutations.md) adds opt-in editor
+protocol model 2 and does not revise model 1. A client that omits model 2 or
+selects model 1 continues to receive this exact read-only capability set. The
+model-2 contract task itself does not advertise formatting or any mutation;
+its implementation gates own all future capability changes.
+
 - Grammar 6, CLI Contract 7, 44 commands, 20 CLI schemas, 121 root exports,
   and the accepted Core/Node source subpaths do not change.
 - LSP and GraphView results are adapter contracts, not write authority,
@@ -554,9 +561,10 @@ leaving an old graph presented as current.
   `HISTORICAL_VSIX` task activates the separate historical methods only in the
   private bundled LSP/VSIX and does not extend this current-document result.
 - No arbitrary Mermaid, HTML, SVG, script, or graph layout input is executed.
-- Editor mutation, graph mutation, rename, formatting, persistence, public
-  package naming, release selection, publication, and plan advance remain
-  separate contracts and decisions.
+- Under model 1, editor mutation, graph mutation, rename, formatting,
+  persistence, public package naming, release selection, publication, and plan
+  advance remain unavailable. Model 2 may add only the closed operations and
+  staged gates fixed by the Tiered Editor Mutation Contract.
 
 ## 13. Normative cases
 

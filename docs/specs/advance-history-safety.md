@@ -442,6 +442,13 @@ History-safety model 1 does not:
 - mutate Git, publish a package, move a dist-tag, or close an Issue; or
 - guarantee recovery after an explicit force.
 
+The later [Tiered Editor Mutation Contract](editor-mutations.md) classifies
+advance and history-loss authority as editor mutation class `E3`. Editor
+presentation does not change this model: the exact repository, raw-byte
+`HEAD`, stage-0 index, destructive-range, retained-dirty, force, and race
+checks remain mandatory immediately before an editor returns an authorized
+advance `WorkspaceEdit`.
+
 ## 12. Runtime activation gate
 
 This contract alone does not activate the guard. Runtime acceptance requires:

@@ -188,6 +188,12 @@ version 1:
 Ordinary maintenance still passes every existing request, parse, semantic,
 candidate, optimistic-lock, and safe-write check.
 
+The later [Tiered Editor Mutation Contract](editor-mutations.md) classifies
+document formatting as `E0` only after complete semantic equivalence is
+proved. That editor classification does not change the governance scope rules
+above. Any editor candidate that does affect `goal` or `dag` is strict class
+`E3` and still requires this exact candidate-bound authority decision.
+
 ### 4.5 Atomic and mixed changes
 
 The affected scope set for an atomic batch is the union of the scopes of all

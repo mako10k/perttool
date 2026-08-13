@@ -265,6 +265,23 @@ Mandatory summary:
   Editor and MCP
   mutation, release selection, publication, remote writes, Issue mutation,
   and plan advance remain separate.
+- The selected `plans/editor-mutations.pert` `EDITOR-MUTATION-001` workstream
+  contains eleven serial tasks and 77p. Its accepted
+  `docs/specs/editor-mutations.md` contract adds opt-in Editor Protocol model
+  2 while retaining active model 1 unchanged. One complete final candidate is
+  classified by the strictest of `E0` complete semantic equivalence, `E1`
+  completely unsealed validated repair, `E2` non-destructive recoverable
+  semantic edit, and `E3` assurance-, governance-, destructive-, or advance-
+  sensitive work. Complete semantic fingerprints are distinct from source and
+  plan-assurance hashes; exact bindings, inverse recovery, candidate-bound
+  authority, advance history safety, ten `PTEDM-*` diagnostics, and fixed hard
+  limits fail closed. `EDITOR_MUTATION_CONTRACT` is complete and retained
+  before advance. Its separately confirmed conformant outcome was written once
+  with actor `codex`, the candidate-bound `user` assertion, and current source
+  digest `sha256:e5ebb94a...9436ca`; complete assurance recommends only
+  `EDITOR_FORMAT_CORE`. The private LSP still advertises only model 1 and no
+  formatter. MCP mutation, public VSIX publication, release selection, remote
+  writes, Issue mutation, and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
   serial tasks and 15p. The exact initial goal-and-DAG candidate was written
   once with actor `codex` and the scope-bound owner assertion `user`.

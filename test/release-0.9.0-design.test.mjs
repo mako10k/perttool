@@ -177,7 +177,7 @@ test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 
     readme,
     /`beta=0\.9\.1`, `latest=0\.9\.0`, and no `alpha`/u,
   );
-  assert.match(planIndex, /All thirty-nine plans pass/u);
+  assert.match(planIndex, /All forty plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.0\.pert/u);
   assert.match(lspIsolatedScript, /responseTimeoutMilliseconds = 15_000/u);
 

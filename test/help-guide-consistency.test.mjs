@@ -131,9 +131,11 @@ test("repository policy and self-use registration include the accepted workstrea
   }
   assert.match(selfUseScript, /plans\/help-guide-consistency\.pert/);
   assert.match(selfUseScript, /plans\/adapter-platform\.pert/);
-  assert.match(selfUseScript, /39 plans; check, analyze, next/);
-  assert.match(selfUseGuide, /all thirty-nine current plans/);
+  assert.match(selfUseScript, /plans\/editor-mutations\.pert/);
+  assert.match(selfUseScript, /40 plans; check, analyze, next/);
+  assert.match(selfUseGuide, /all forty current plans/);
   assert.match(planIndex, /`help-guide-consistency\.pert`/);
-  assert.match(planIndex, /All thirty-nine plans pass/);
+  assert.match(planIndex, /`editor-mutations\.pert`/);
+  assert.match(planIndex, /All forty plans pass/);
   assert.match(planIndex, /accepted reached final milestone/);
 });

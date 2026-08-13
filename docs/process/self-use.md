@@ -1658,6 +1658,27 @@ by the current resource-feasible selection. Source digest is
 Editor and MCP mutation, release selection, publication, remote writes, Issue
 mutation, and plan advance remain separate.
 
+The separately selected `editor-mutations.pert` workstream implements GitHub
+Issue #13 without retroactively changing `ADAPTER-001`. Its 11 serial tasks
+total 77p from `EDITOR_MUTATION_CONTRACT` through
+`EDITOR_MUTATION_ACCEPTANCE`. The accepted
+[Tiered Editor Mutation Contract](../specs/editor-mutations.md) fixes additive
+Editor Protocol model 2, the strict `E0 < E1 < E2 < E3` classification of one
+complete final candidate, complete semantic fingerprint evidence, exact
+document and candidate bindings, independent recovery, staged interaction,
+candidate-bound governance and assurance, exact advance history safety,
+closed diagnostics, hard limits, and model-1 compatibility. The contract task
+activates no mutation capability; the active private LSP still selects only
+model 1 and does not advertise document formatting. Its separately confirmed
+conformant outcome was written once with actor `codex`, the candidate-bound
+`user` assertion, accepted basis `sha256:166d04ca...0294b6`, and resulting
+source digest `sha256:e5ebb94a...9436ca`. Complete assurance has no required
+action, and fresh complete NextResult v7 recommends only
+`EDITOR_FORMAT_CORE`. Later repair, recoverable-edit, and authority-sensitive
+slices remain dependency gated. MCP mutation, public VSIX publication,
+release selection, remote writes, Issue mutation, and plan advance remain
+separate.
+
 Stage 1 allowed operations:
 
 - check
@@ -2076,7 +2097,7 @@ Stage 1 entry evidence:
   `sha256:59b5fbbe...d4e71a` retains only accepted reached
   `RELEASE_090_ACCEPTED`, with zero tasks and makespans, no diagnostic, and no
   ready, recommended, or startable task.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-nine current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all forty current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty

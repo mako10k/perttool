@@ -124,7 +124,7 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.1"/u);
   assert.match(changelog, /^## \[0\.9\.1\] - 2026-08-13$/m);
   assert.match(readme, /Version `0\.9\.1` is the durably accepted compatible Contract 8 patch/u);
-  assert.match(planIndex, /All thirty-nine plans pass/u);
+  assert.match(planIndex, /All forty plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.1\.pert/u);
 
   assert.equal(Object.keys(perttool).length, 129);

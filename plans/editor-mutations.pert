@@ -1,0 +1,363 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project EDITOR_MUTATION:
+  version 6
+  title "Tiered VSIX editor mutations"
+  description "Implement Issue #13 as an independent post-0.9.1 editor-mutation workstream. Replace the permanent read-only adapter ceiling with additive Editor Protocol model 2 and four ordered mutation classes. First accept the cross-tier contract and E0 document formatting, then add E1 unsealed repair, E2 recoverable semantic edits, and E3 authority-sensitive seal, governance, and advance workflows through deliberately staged gates. Preserve Editor Protocol model 1, Grammar 7, CLI Contract 8, shared Core and Application semantics, governance, plan assurance, history safety, and editor recovery. MCP mutation, graph-driven editing outside the accepted classes, public VSIX publication, release selection, remote writes, Issue mutation, and plan advance remain separate decisions."
+  as_of 2026-08-13
+  duration_unit point
+  velocity 29p/2d
+  finish EDITOR_MUTATION_ACCEPTED
+  goal_owner user
+  dag_owner user
+  plan_assurance_model 1
+  plan_assurance_hash_model 1
+
+milestone EDITOR_MUTATION_SELECTED:
+  title "Issue #13 tiered editor mutations selected"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two slices may run concurrently only when their complete candidate and adapter surfaces do not overlap."
+  capacity 2
+
+resource REVIEWERS:
+  title "Contract and acceptance review capacity"
+  description "Serialize cross-tier classification, authority, compatibility, and final acceptance decisions."
+  capacity 1
+
+resource EDITOR_CONTRACT:
+  title "Tiered editor contract ownership"
+  description "Own E0 through E3 classification, escalation, recovery, interaction, and compatibility semantics."
+  capacity 1
+
+resource SEMANTIC_MODEL:
+  title "Whole-document semantic model ownership"
+  description "Own complete semantic equivalence, candidate classification, and deterministic evidence."
+  capacity 1
+
+resource MUTATION_SURFACE:
+  title "Mutation and recovery ownership"
+  description "Own source-preserving candidates, inverse edits, candidate validation, optimistic locking, and recoverability."
+  capacity 1
+
+resource EDITOR_PROTOCOL:
+  title "Versioned editor protocol ownership"
+  description "Own model negotiation, URI, generation, version, digest, UTF-16, cancellation, and stale-result binding."
+  capacity 1
+
+resource LSP_SURFACE:
+  title "Language server ownership"
+  description "Own standard and custom LSP capability mapping without a CLI subprocess or direct unbound write."
+  capacity 1
+
+resource VSIX_SURFACE:
+  title "VS Code interaction ownership"
+  description "Own formatter integration, code actions, previews, review UI, accessibility, trust, and editor-applied changes."
+  capacity 1
+
+resource AUTHORITY_SURFACE:
+  title "Governance and plan-assurance ownership"
+  description "Own affected-scope classification, accepted-basis protection, candidate-bound assertions, and start-authority effects."
+  capacity 1
+
+resource ADVANCE_SURFACE:
+  title "Advance and history-safety ownership"
+  description "Own canonical contraction, receipts, Git evidence, destructive ranges, races, and history-loss boundaries."
+  capacity 1
+
+resource NODE_SURFACE:
+  title "Node host ownership"
+  description "Own eligible repository discovery and immutable Git evidence needed by authority-sensitive editor operations."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Adapter packaging and compatibility ownership"
+  description "Own private LSP and VSIX inventories, supported-host gates, isolated packages, and compatibility without publication."
+  capacity 1
+
+milestone EDITOR_MUTATION_CONTRACT_ACCEPTED:
+  title "Tiered editor mutation contract accepted"
+
+milestone EDITOR_FORMAT_CORE_READY:
+  title "E0 formatter Core and LSP ready"
+
+milestone EDITOR_FORMAT_ACCEPTED:
+  title "E0 document formatting accepted"
+
+milestone EDITOR_REPAIR_CONTRACT_ACCEPTED:
+  title "E1 unsealed repair contract accepted"
+
+milestone EDITOR_REPAIR_ACCEPTED:
+  title "E1 unsealed repair accepted"
+
+milestone EDITOR_RECOVERABLE_CONTRACT_ACCEPTED:
+  title "E2 recoverable edit contract accepted"
+
+milestone EDITOR_RECOVERABLE_ACCEPTED:
+  title "E2 recoverable semantic edits accepted"
+
+milestone EDITOR_AUTHORITY_CONTRACT_ACCEPTED:
+  title "E3 authority-sensitive editor contract accepted"
+
+milestone EDITOR_AUTHORITY_ADAPTER_READY:
+  title "E3 authority-sensitive adapter ready"
+
+milestone EDITOR_AUTHORITY_UI_READY:
+  title "E3 review UI ready"
+
+milestone EDITOR_MUTATION_ACCEPTED:
+  title "Tiered VSIX editor mutations accepted"
+
+task EDITOR_MUTATION_CONTRACT EDITOR_MUTATION_SELECTED -> EDITOR_MUTATION_CONTRACT_ACCEPTED:
+  title "Accept the tiered editor mutation and protocol model 2 contract"
+  description "Extend the accepted adapter and editor contracts with additive Editor Protocol model 2. Define closed E0 through E3 classes, strictest-class precedence over complete final candidates, semantic and authority evidence, escalation, recovery, UI behavior, capability negotiation, diagnostics, hard limits, and model 1 compatibility. Record dependency-ordered machine cases without activating an editor mutation capability."
+  duration 8p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_CONTRACT 1
+    SEMANTIC_MODEL 1
+    EDITOR_PROTOCOL 1
+    AUTHORITY_SURFACE 1
+    ADVANCE_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_FORMAT_CORE EDITOR_MUTATION_CONTRACT_ACCEPTED -> EDITOR_FORMAT_CORE_READY:
+  title "Implement E0 semantic equivalence and LSP formatting"
+  description "Add a formatter-specific complete semantic-equivalence proof and bind the existing Core formatDocument result to synchronized URI, generation, version, digest, cancellation, and UTF-16 edits. Negotiate model 2 and advertise only whole-document formatting to compatible clients. Reject invalid, stale, cancelled, malformed, or post-format-invalid results without partial edits, filesystem or Git access, settings changes, or a CLI subprocess."
+  duration 6p
+  priority 95
+  requires:
+    DEVELOPERS 1
+    SEMANTIC_MODEL 1
+    MUTATION_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_FORMAT_ACCEPTANCE EDITOR_FORMAT_CORE_READY -> EDITOR_FORMAT_ACCEPTED:
+  title "Accept E0 Format Document and format-on-save"
+  description "Integrate the private VSIX with standard Format Document and user-enabled format-on-save, then verify byte identity with Core, idempotence, complete semantic equivalence, no-op, BOM, CRLF, comments, Unicode, invalid input, rapid edits, cancellation, stale rejection, local, untitled, untrusted and virtual documents, unchanged non-target documents, model 1 compatibility, isolated packages, and the supported VS Code host. Keep range, on-type, E1, E2, and E3 editing unavailable."
+  duration 6p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_CONTRACT 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_REPAIR_CONTRACT EDITOR_FORMAT_ACCEPTED -> EDITOR_REPAIR_CONTRACT_ACCEPTED:
+  title "Accept the E1 unsealed repair contract"
+  description "Define a closed repair and refactoring taxonomy confined to a completely unsealed affected planning closure. Fix candidate classification, assurance-impact proof, diagnostic ownership, explicit and opt-in automatic interactions, Fix All composition, escalation when any accepted basis or protected scope is affected, and the prohibition on implicit sealing, hash acceptance, authority restoration, or lifecycle invention."
+  duration 6p
+  priority 85
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_CONTRACT 1
+    SEMANTIC_MODEL 1
+    AUTHORITY_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_REPAIR_ACCEPTANCE EDITOR_REPAIR_CONTRACT_ACCEPTED -> EDITOR_REPAIR_ACCEPTED:
+  title "Implement and accept E1 unsealed repair actions"
+  description "Implement accepted E1 candidate planning through the shared Core and Application boundary, expose only eligible Quick Fix, Fix All, and accepted opt-in automatic repairs, and apply complete validated WorkspaceEdits through the editor. Test mixed fixes, changing assurance closure, cancellation, staleness, malformed candidates, escalation, undo and exact recovery evidence, model 1 and E0 compatibility, isolated packages, and supported-host behavior without direct persistence or authority synthesis."
+  duration 7p
+  priority 80
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SEMANTIC_MODEL 1
+    MUTATION_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    AUTHORITY_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_RECOVERABLE_CONTRACT EDITOR_REPAIR_ACCEPTED -> EDITOR_RECOVERABLE_CONTRACT_ACCEPTED:
+  title "Accept the E2 recoverable semantic-edit contract"
+  description "Define the closed E2 non-destructive category and its boundary from E1 and E3. Require preservation of declarations and accepted authority records, exact source and candidate identity, candidate validation, semantic impact, explicit preview, inverse-edit or equivalent recovery evidence independent of editor Undo, version-bound WorkspaceEdit application, no implicit save, and deterministic escalation for destructive or authority-sensitive effects."
+  duration 6p
+  priority 75
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_CONTRACT 1
+    SEMANTIC_MODEL 1
+    MUTATION_SURFACE 1
+    AUTHORITY_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_RECOVERABLE_ACCEPTANCE EDITOR_RECOVERABLE_CONTRACT_ACCEPTED -> EDITOR_RECOVERABLE_ACCEPTED:
+  title "Implement and accept E2 previewed recoverable edits"
+  description "Implement one shared E2 classification and preview result over existing source-preserving mutation planners, exact forward and recovery edits, digests, impact and diagnostics. Add an accessible VSIX preview and explicit apply flow that rechecks the current binding before an editor WorkspaceEdit. Verify recovery, multi-edit atomicity, invalid, stale and concurrent documents, refusal and escalation, no automatic save, E0 and E1 compatibility, isolated packages, and the supported host."
+  duration 8p
+  priority 70
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SEMANTIC_MODEL 1
+    MUTATION_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_AUTHORITY_CONTRACT EDITOR_RECOVERABLE_ACCEPTED -> EDITOR_AUTHORITY_CONTRACT_ACCEPTED:
+  title "Accept the E3 authority-sensitive editor contract"
+  description "Define dedicated review sessions for initial seal, reseal, accepted assurance records, governed goal and DAG changes, and canonical advance. Fix eligible document and repository boundaries, exact operation and candidate identity, scope and assurance impacts, owner assertion and actor handling, confirmation non-reuse, apply ordering, editor recovery, advance HEAD and stage-0 proof, linked worktrees, races, destructive ranges, and a distinct history-loss override confirmation without changing underlying authority semantics."
+  duration 8p
+  priority 65
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_CONTRACT 1
+    EDITOR_PROTOCOL 1
+    AUTHORITY_SURFACE 1
+    ADVANCE_SURFACE 1
+    NODE_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_AUTHORITY_ADAPTER EDITOR_AUTHORITY_CONTRACT_ACCEPTED -> EDITOR_AUTHORITY_ADAPTER_READY:
+  title "Implement the E3 authority-sensitive adapter boundary"
+  description "Compose the accepted E3 operations directly over shared Application services and bounded Node ports without invoking the CLI or duplicating mutation semantics. Return exact candidate, diff, scope, assurance, recovery, history and warning evidence; bind every preview and apply to URI, generation, version, source digest, operation inputs, repository snapshot and candidate digest; and fail closed on unavailable authority, Git proof, limits, stale state, cancellation, or any race."
+  duration 8p
+  priority 60
+  requires:
+    DEVELOPERS 1
+    SEMANTIC_MODEL 1
+    MUTATION_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    AUTHORITY_SURFACE 1
+    ADVANCE_SURFACE 1
+    NODE_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_AUTHORITY_UI EDITOR_AUTHORITY_ADAPTER_READY -> EDITOR_AUTHORITY_UI_READY:
+  title "Implement the E3 deliberate review and confirmation UI"
+  description "Add an accessible dedicated VSIX review UI that identifies the operation, affected scopes, old and new digests, complete diff, semantic and assurance impacts, destructive and history facts, recovery evidence, actor and required owner assertion. Exclude E3 from formatting, automatic repair, Fix All and implicit save; require fresh final confirmation for the exact candidate and a separate confirmation for any history-loss override; clear every approval on edit, close, cancellation, apply, error, or retry."
+  duration 8p
+  priority 55
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_CONTRACT 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    AUTHORITY_SURFACE 1
+    ADVANCE_SURFACE 1
+  source "Issue #13"
+
+task EDITOR_MUTATION_ACCEPTANCE EDITOR_AUTHORITY_UI_READY -> EDITOR_MUTATION_ACCEPTED:
+  title "Accept tiered VSIX editor mutations end to end"
+  description "Trace every E0 through E3 normative case through complete classification, Core, Application, LSP, VSIX, supported-host, untrusted and virtual boundaries, local repositories, SHA-1 and SHA-256, linked worktrees, governance, assurance, history safety, cancellation, races, recovery, accessibility, isolated packages, and model 1 compatibility. Prove strictest-class escalation, no authority synthesis or reusable confirmation, unchanged CLI and MCP behavior, and no release, publication, remote, Issue, or plan-advance mutation."
+  duration 6p
+  priority 50
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    EDITOR_CONTRACT 1
+    SEMANTIC_MODEL 1
+    MUTATION_SURFACE 1
+    EDITOR_PROTOCOL 1
+    LSP_SURFACE 1
+    VSIX_SURFACE 1
+    AUTHORITY_SURFACE 1
+    ADVANCE_SURFACE 1
+    NODE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "Issue #13"
+
+plan_seal EDITOR_AUTHORITY_ADAPTER:
+  accepted_contract sha256:528081b4bd2f6e4b9ae746f3a2d04031b43a94565e5250d5a3d5ed9ca1ae4cce
+  accepted_basis sha256:89095efb7eeab39aa671eab6778c2371021fdcc974fa91fea686b448463050d7
+  accepted_inputs:
+    EDITOR_AUTHORITY_CONTRACT both sha256:72b9c24cca49d8d19afd40dbb8c419a0008918875017a3be6e4026124ac24198
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_AUTHORITY_CONTRACT:
+  accepted_contract sha256:91268ee3a664a3b3c7583479a5d34f243d08658f4a33624e1710f05c7ae0c324
+  accepted_basis sha256:72b9c24cca49d8d19afd40dbb8c419a0008918875017a3be6e4026124ac24198
+  accepted_inputs:
+    EDITOR_RECOVERABLE_ACCEPTANCE both sha256:36a490b27f28a05111a571518193cc03ede06ba833f1c72bb94b21edab402737
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_AUTHORITY_UI:
+  accepted_contract sha256:14d48aa79c822e4df96bde3954a6fa7e9606d7ed0f08965a7eed2357f46fbb7e
+  accepted_basis sha256:e448771434b4379a35a8b06644c9e69ec7e89837fc21a7574c4803d567e158a6
+  accepted_inputs:
+    EDITOR_AUTHORITY_ADAPTER both sha256:89095efb7eeab39aa671eab6778c2371021fdcc974fa91fea686b448463050d7
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_FORMAT_ACCEPTANCE:
+  accepted_contract sha256:7bfb28b22c4a7c5bd6ceb0c7717ab2e58a04558d11427e556ed99253ea7ea491
+  accepted_basis sha256:2163ddabb2819b389137753bbacc9fa33b3e5a585360de8a5f101f4a58f823e0
+  accepted_inputs:
+    EDITOR_FORMAT_CORE both sha256:7c0e42ed247799e4ce04340673670749a3aa39620000893f434a55ff5a392572
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_FORMAT_CORE:
+  accepted_contract sha256:06f0d5b2af539f4cfa55d05e65236298a0721247a73d3ef88244f987923e973d
+  accepted_basis sha256:7c0e42ed247799e4ce04340673670749a3aa39620000893f434a55ff5a392572
+  accepted_inputs:
+    EDITOR_MUTATION_CONTRACT both sha256:166d04cab88b3e00035c43305179b6a70ada31556ec5ef64175443a5470294b6
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_MUTATION_ACCEPTANCE:
+  accepted_contract sha256:bc3c0fa5c36517d2ae193a2896799d09eb108f25eb9e57f5de52b3565626ffca
+  accepted_basis sha256:8bdc3fe9693bd6dc27ef08bf5cc9bb5a9e0d46425fbd5d781051779d98324361
+  accepted_inputs:
+    EDITOR_AUTHORITY_UI both sha256:e448771434b4379a35a8b06644c9e69ec7e89837fc21a7574c4803d567e158a6
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_MUTATION_CONTRACT:
+  accepted_contract sha256:c37f3d5d5170fa41982ef71f6020c3916d4bdd1bc29fed05973e782d65f4ef6d
+  accepted_basis sha256:166d04cab88b3e00035c43305179b6a70ada31556ec5ef64175443a5470294b6
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_RECOVERABLE_ACCEPTANCE:
+  accepted_contract sha256:58881bf683204b4c21afc01517e286aaa600114896ec1d738d0d9c2891fd95dd
+  accepted_basis sha256:36a490b27f28a05111a571518193cc03ede06ba833f1c72bb94b21edab402737
+  accepted_inputs:
+    EDITOR_RECOVERABLE_CONTRACT both sha256:142a359ed9182ba2694602827a89c960eec4a3e3b8f0f35045048ae4278f3aa2
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_RECOVERABLE_CONTRACT:
+  accepted_contract sha256:e3ef6bc73619d496bd5425d71eb331f9b89e7dc0d3e2cf72040c52845ff391d4
+  accepted_basis sha256:142a359ed9182ba2694602827a89c960eec4a3e3b8f0f35045048ae4278f3aa2
+  accepted_inputs:
+    EDITOR_REPAIR_ACCEPTANCE both sha256:f02742aec1ba14384e042d1c815a363362dd876d5529cc5cff012cc967c8d5ff
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_REPAIR_ACCEPTANCE:
+  accepted_contract sha256:2129d6211c9acd9793d667ae1c7de3d6ec6670a30ae37453e980369270b4ffcc
+  accepted_basis sha256:f02742aec1ba14384e042d1c815a363362dd876d5529cc5cff012cc967c8d5ff
+  accepted_inputs:
+    EDITOR_REPAIR_CONTRACT both sha256:9f7292b4879cdb59d27daba0456112760319d05c77e8b352973a74a70f08f6a6
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+plan_seal EDITOR_REPAIR_CONTRACT:
+  accepted_contract sha256:3d8f80074a273959c86f81cb16433b2aad9c5e1692d618d62ce8527190988646
+  accepted_basis sha256:9f7292b4879cdb59d27daba0456112760319d05c77e8b352973a74a70f08f6a6
+  accepted_inputs:
+    EDITOR_FORMAT_ACCEPTANCE both sha256:2163ddabb2819b389137753bbacc9fa33b3e5a585360de8a5f101f4a58f823e0
+  reason "Initial reviewed Issue #13 tiered editor mutation baseline"
+
+task_outcome OUTCOME_EDITOR_MUTATION_CONTRACT:
+  model 1
+  task EDITOR_MUTATION_CONTRACT
+  against_basis sha256:166d04cab88b3e00035c43305179b6a70ada31556ec5ef64175443a5470294b6
+  status conformant
+  reason "Accepted tiered editor mutation contract and twenty-four closed cases"

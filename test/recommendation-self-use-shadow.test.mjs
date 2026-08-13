@@ -15,6 +15,7 @@ const planNames = [
   "agent-guidance",
   "cli-surface-reset",
   "control-plane",
+  "editor-mutations",
   "english-baseline",
   "grammar",
   "governance",
@@ -172,7 +173,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all thirty-nine self-use plans pass the v7 recommendation shadow gate", async () => {
+test("all forty self-use plans pass the v7 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(

@@ -385,6 +385,32 @@ Editor mutation, MCP
 mutation, release selection, publication, remote writes, Issue mutation, and
 plan advance remain separate.
 
+The explicitly selected `EDITOR-MUTATION-001` workstream is tracked
+independently in `plans/editor-mutations.pert`. Its eleven serial tasks total
+77p from `EDITOR_MUTATION_CONTRACT` through `EDITOR_MUTATION_ACCEPTANCE`. The
+accepted `docs/specs/editor-mutations.md` contract selects additive Editor
+Protocol model 2 while retaining active model 1 unchanged. It classifies one
+complete final candidate by the strictest of `E0` complete semantic
+equivalence, `E1` completely unsealed validated repair, `E2` non-destructive
+recoverable semantic edit, and `E3` assurance-, governance-, destructive-, or
+advance-sensitive operation. `Perttool.EditorSemanticFingerprint.v1` is
+distinct from source and plan-assurance hashes; exact document/candidate
+bindings, independent recovery, candidate-bound authority, advance history
+safety, `PTEDM-101` through `PTEDM-110`, and exact hard limits fail closed.
+The 24 dependency-ordered cases are in
+`test/fixtures/editor-mutation-contract-v1.json`, and acceptance is recorded
+in `docs/process/editor-mutation-contract-acceptance.md`.
+`EDITOR_MUTATION_CONTRACT` is complete and retained before advance. Its exact
+conformant outcome was separately confirmed and written once with actor
+`codex`, the candidate-bound `user` assertion, accepted basis
+`sha256:166d04ca...0294b6`, and final plan source digest
+`sha256:e5ebb94a...9436ca`. Complete assurance has no required action and fresh
+complete NextResult v7 recommends only `EDITOR_FORMAT_CORE`. The active
+private LSP still selects only model 1 and does not advertise document
+formatting. Model-2 activation starts only with that next task. MCP mutation,
+public VSIX publication, release selection, remote writes, Issue mutation,
+and plan advance remain separate.
+
 The explicitly selected `HIST-DAG-001` workstream is tracked independently in
 `plans/historical-dag.pert`. Its eight tasks total 44p from
 `HISTORICAL_DAG_CONTRACT` through `HISTORICAL_DAG_ACCEPTANCE` and sequence one
@@ -1077,7 +1103,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all thirty-nine self-use plans, including the selected `0.9.1` patch, milestone acceptance, the accepted `0.9.0` and `0.8.0` releases, historical-DAG and adapter-platform workstreams, `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all forty self-use plans, including the selected editor-mutations workstream, the `0.9.1` patch, milestone acceptance, the accepted `0.9.0` and `0.8.0` releases, historical-DAG and adapter-platform workstreams, `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci

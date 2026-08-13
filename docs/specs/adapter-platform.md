@@ -158,6 +158,20 @@ restrictive CSP, closed presentation messages, and an accessible text
 outline. No runtime implementation, adapter dependency, editor mutation, or
 release is implied by this accepted contract.
 
+#### 3.4.1 Additive editor-mutation contract
+
+The later accepted
+[Tiered Editor Mutation Contract](editor-mutations.md) selects editor protocol
+model 2 as an additive opt-in extension. It retains model 1 unchanged and
+classifies one complete final candidate by the strictest of `E0` semantic
+equivalence, `E1` completely unsealed repair, `E2` non-destructive recoverable
+semantic edit, and `E3` authority-sensitive assurance, governance,
+destructive, or advance work. Domain and Application retain semantic and
+authority ownership; the LSP only maps negotiated capabilities and the VSIX
+only presents review and applies versioned editor edits. The contract task
+activates no capability or runtime and does not revise this architecture's
+dependency directions.
+
 ### 3.5 Implemented document-session state
 
 The protocol-neutral [Document Session Core](document-session.md) is exposed

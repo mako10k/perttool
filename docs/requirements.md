@@ -1,8 +1,8 @@
 # perttool Requirements
 
-- Document status: Draft 0.26
+- Document status: Draft 0.27
 - Created: 2026-07-21
-- Updated: 2026-08-07
+- Updated: 2026-08-13
 - Scope: MVP and subsequent extension boundaries
 - Intended file extension: `.pert` (provisional)
 
@@ -1868,6 +1868,23 @@ restricted workspace-safe VSIX activation, and a closed accessible Webview.
 The accepted read-only server and its isolated dual-tarball package gate
 implement the LSP portion without activating editor mutation, a public adapter
 package, VSIX publication, or release selection.
+
+The accepted
+[Tiered Editor Mutation Contract](specs/editor-mutations.md) selects additive,
+opt-in editor protocol model 2 without weakening model 1. It classifies each
+complete final candidate by the strictest of four ordered classes: `E0`
+complete semantic equivalence, `E1` validated repair confined to a completely
+unsealed assurance closure, `E2` another non-destructive semantic edit with an
+independent exact recovery, and `E3` assurance-, governance-, destructive-, or
+advance-sensitive work. Only `E0` may integrate with the standard
+whole-document formatter and user-enabled format on save. `E1` is limited to
+closed Quick Fix/Fix All repairs, `E2` requires an explicit preview and
+editor-applied `WorkspaceEdit`, and `E3` requires a dedicated review UI plus
+fresh candidate-bound authority. Model negotiation, workspace trust, process
+identity, repository identity, and a plan-assurance hash alone never prove
+semantic equivalence or grant write authority. The contract task does not
+activate model 2; implementation proceeds through the independent
+[`editor-mutations.pert`](../plans/editor-mutations.pert) gates.
 
 The accepted
 [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)

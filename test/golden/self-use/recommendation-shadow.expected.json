@@ -168,6 +168,62 @@
         "PTDAG-208"
       ]
     },
+    "editor-mutations": {
+      "source_digest": "sha256:e5ebb94a7c2c17040ef60da8035da30053d30cba0b727e6c44a8fc12b79436ca",
+      "groups": {
+        "active": [],
+        "ready": [
+          "EDITOR_FORMAT_CORE"
+        ],
+        "runnable_now": [
+          "EDITOR_FORMAT_CORE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "EDITOR_FORMAT_ACCEPTANCE",
+          "EDITOR_REPAIR_CONTRACT",
+          "EDITOR_REPAIR_ACCEPTANCE",
+          "EDITOR_RECOVERABLE_CONTRACT",
+          "EDITOR_RECOVERABLE_ACCEPTANCE",
+          "EDITOR_AUTHORITY_CONTRACT",
+          "EDITOR_AUTHORITY_ADAPTER",
+          "EDITOR_AUTHORITY_UI",
+          "EDITOR_MUTATION_ACCEPTANCE"
+        ],
+        "suspended": []
+      },
+      "recommended_task_ids": [
+        "EDITOR_FORMAT_CORE"
+      ],
+      "manual_selected_task_ids": [
+        "EDITOR_FORMAT_CORE"
+      ],
+      "tiers": {
+        "EDITOR_FORMAT_CORE": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "EDITOR_FORMAT_CORE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
+    },
     "english-baseline": {
       "source_digest": "sha256:160e1af66d7bc8c2c8ea6b7a9f62ad7b533ec74e1ae1adc3b5d9f176745362a4",
       "groups": {

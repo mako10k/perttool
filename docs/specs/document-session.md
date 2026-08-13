@@ -249,7 +249,16 @@ selection remain gated by the separate MCP contract and Node-port tasks.
   GraphView mapping, VSIX, MCP, Node ports, release, publication, and plan
   advance remain later boundaries.
 
-## 11. Normative cases
+## 11. Later editor-mutation composition
+
+The accepted [Tiered Editor Mutation Contract](editor-mutations.md) reuses
+this exact immutable snapshot, UTF-16, cancellation, and stale-result model.
+It does not add mutation planning to the document session. Later model-2
+services may consume a frozen snapshot and return normalized edits, but the
+session still neither applies an edit nor writes a file, and a newer version
+invalidates every retained candidate.
+
+## 12. Normative cases
 
 | Case | Boundary | Required result |
 | --- | --- | --- |
@@ -269,7 +278,7 @@ selection remain gated by the separate MCP contract and Node-port tasks.
 The machine fixture owns the exact runtime inventory and dependency-ordered
 case list.
 
-## 12. Acceptance boundary
+## 13. Acceptance boundary
 
 Acceptance requires the twelve machine cases, focused Core tests, source and
 package boundary checks, existing compatibility suites, English and document

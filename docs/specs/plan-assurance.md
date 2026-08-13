@@ -154,6 +154,14 @@ remains, that candidate is invalid until the relation is atomically changed to
 execution dependency remains falls back to implicit `both` and does not change
 the computed basis.
 
+The later [Tiered Editor Mutation Contract](editor-mutations.md) does not use
+this plan-assurance hash as proof of complete editor semantic equivalence. Its
+`Perttool.EditorSemanticFingerprint.v1` includes the complete checked document,
+including fields intentionally omitted from assurance hashes. Changing a
+planning basis protected by an accepted seal, or adding, changing, removing,
+or resealing an assurance record, is strict editor mutation class `E3` and
+retains the existing candidate-bound assurance authority.
+
 ### 4.2 Relation record
 
 The semantic source model for an explicit relation is:
