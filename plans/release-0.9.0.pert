@@ -1,0 +1,125 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_090:
+  version 6
+  title "perttool 0.9.0 milestone acceptance beta release"
+  description "Release suffix-free 0.9.0 beta as the first Grammar 7 and CLI Contract 8 public boundary after 0.8.1. Publish milestone criterion sets, caller-asserted receipts, committed migration provenance, acceptance-aware analysis, Next and canonical advance, historical milestone acceptance, and the accepted read-only adapter projections. Retain public Core and Node subpaths while excluding private LSP, VSIX, and MCP workspaces. Candidate acceptance, push, tag, GitHub prerelease, npm beta publication, latest promotion, plan advance, and Issue mutation remain separately gated."
+  as_of 2026-08-13
+  duration_unit point
+  velocity 29p/2d
+  finish RELEASE_090_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_090_PLANNING_STARTED:
+  title "Version 0.9.0 release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize scope, compatibility, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, migration guidance, CHANGELOG, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_090_GATE_ACCEPTED:
+  title "Version 0.9.0 release gate accepted"
+
+milestone RELEASE_090_INPUTS_READY:
+  title "Accepted 0.9.0 release inputs verified"
+
+milestone RELEASE_090_SOURCE_PREPARED:
+  title "Version 0.9.0 release source prepared"
+
+milestone RELEASE_090_CANDIDATE_ACCEPTED:
+  title "Version 0.9.0 release candidate accepted"
+
+milestone RELEASE_090_PUBLISHED:
+  title "Version 0.9.0 published to GitHub and npm beta"
+
+milestone RELEASE_090_ACCEPTED:
+  title "Version 0.9.0 milestone acceptance beta accepted"
+
+task RELEASE_090_GATE_DESIGN RELEASE_090_PLANNING_STARTED -> RELEASE_090_GATE_ACCEPTED:
+  title "Define the 0.9.0 Grammar 7 and Contract 8 release gate"
+  description "Select suffix-free 0.9.0 for the breaking public boundary after 0.8.1. Bind accepted milestone acceptance, historical reconstruction, Help and documentation consistency, Point-default, Issue 9 and Issue 11 inputs; verify the 45-to-53 command, 21-to-23 schema, 122-to-129 root and Node export, Grammar 6-to-7, and Contract 7-to-8 transitions; update requirements, ADR, design, procedure, plan metadata, migration guidance, and tests together; and fix private-adapter, VSIX publication, npm latest, plan advance, and Issue exclusions. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_090_INPUT_READINESS RELEASE_090_GATE_ACCEPTED -> RELEASE_090_INPUTS_READY:
+  title "Verify accepted 0.9.0 release inputs"
+  description "Require the canonically advanced MILESTONE-ACCEPT-001 plan and its final cross-surface acceptance, the accepted historical milestone-acceptance trace, current Help and documentation reconciliation, the Point-default and private VSIX duration slices, and the Issue 9 and Issue 11 advance corrections. Verify Grammar 7, Contract 8, 53 commands, 23 schemas, 129 root and Node exports, 45 Core exports, public package inventory, migration, compatibility, and no-write boundaries without duplicating implementation state. This task performs no external write."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_090_PREPARATION RELEASE_090_INPUTS_READY -> RELEASE_090_SOURCE_PREPARED:
+  title "Prepare version 0.9.0 release source"
+  description "Align package and lockfile identity, CLI and MCP versions, adapter peer versions, CHANGELOG, README, 0.8.1-to-0.9.0 migration guidance, release documentation, tests, goldens, self-use registration, dependency and package inventory audits, and beta publication validation. Run the complete Node.js 22 repository and installed-package gates without remote or registry writes."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_090_CANDIDATE RELEASE_090_SOURCE_PREPARED -> RELEASE_090_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.9.0 release candidate"
+  description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.8.1 with no alpha and verify authenticated routes; build one immutable tarball outside the worktree; and accept its timestamp, sizes, file count, digests, public package inventory, installed Contract 8 behavior, and migration regressions. This task performs no external write."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_090_PUBLISH RELEASE_090_CANDIDATE_ACCEPTED -> RELEASE_090_PUBLISHED:
+  title "Publish version 0.9.0 from one immutable tarball"
+  description "Only after every predecessor gate passes and the user separately authorizes the exact candidate and external batch, push and verify the clean release commit and annotated tag, wait for Node.js 22 and 24 CI, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.9.0 while latest remains 0.8.1. Do not publish the private VSIX, LSP, or MCP adapters."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_090_ACCEPTANCE RELEASE_090_PUBLISHED -> RELEASE_090_ACCEPTED:
+  title "Record durable 0.9.0 beta acceptance"
+  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball bytes, registry integrity and metadata, exact and beta isolated installation, Grammar 7, Contract 8, 53 commands, 23 schemas, 129 root and Node exports, 45 Core exports, milestone acceptance, historical reconstruction, private-adapter exclusion, compatibility, migration, and rollback pin 0.8.1. Record evidence without changing npm latest, publishing a VSIX, advancing a plan, or mutating an Issue."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1

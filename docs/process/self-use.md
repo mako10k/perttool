@@ -2044,7 +2044,7 @@ Stage 1 entry evidence:
   Both makespans are 22p with zero delay, and complete NextResult v6 makes
   startable only `RELEASE_080_GATE_DESIGN`. Release preparation, publication,
   npm `latest`, VSIX publication, and plan advance remain separate.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-seven current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-eight current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty

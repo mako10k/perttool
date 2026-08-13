@@ -1,7 +1,7 @@
 export const MCP_PROTOCOL_MODEL_VERSION = 1 as const;
 export const MCP_PROTOCOL_REVISION = "2026-07-28" as const;
 export const MCP_SERVER_NAME = "perttool" as const;
-export const MCP_SERVER_VERSION = "0.8.0" as const;
+export const MCP_SERVER_VERSION = "0.9.0" as const;
 
 export const MCP_LIMITS = Object.freeze({
   requestBytes: 262_144,

@@ -3354,6 +3354,34 @@ Exit:
 - keep npm `latest` promotion, VSIX publication, plan advance, Issue mutation,
   `SCM-001`, and unrelated backlogs separate.
 
+### Post-MVP Slice 4T: Milestone acceptance `v0.9.0` beta minor
+
+The accepted `MILESTONE-ACCEPT-001` workstream and its historical, Help,
+Guide, package, LSP, VSIX, and MCP acceptance form the first Grammar 7 and CLI
+Contract 8 public boundary after `0.8.1`. The root and Node facades are key-
+and reference-identical at 129 runtime values, the portable Core remains 45
+runtime values, the command registry has 53 commands, and the root schema
+catalog has 23 identities.
+
+The [`v0.9.0` release procedure](process/0.9.0-release.md) and independent
+[`release-0.9.0.pert`](../plans/release-0.9.0.pert) plan sequence release-gate
+design, accepted-input verification, version-bearing source preparation, one
+immutable candidate, separately authorized GitHub/npm beta publication, and
+durable public acceptance.
+
+Exit:
+
+- satisfy Requirements 21.16 from one clean release commit and immutable
+  tarball;
+- publish Grammar 7, Contract 8, milestone acceptance, committed migration,
+  historical reconstruction, Help, Guide, schemas, and installed workflows;
+- preserve Grammar 1 through 6 reads and keep old result identities distinct;
+- retain public Core and Node subpaths while excluding private adapters;
+- publish identical bytes to a GitHub prerelease and npm `beta` while leaving
+  `latest=0.8.1`; and
+- keep candidate acceptance, external publication, npm `latest`, VSIX
+  publication, plan advance, Issue mutation, and unrelated work separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 The selected `ADAPTER-001` plan composes a shared foundation and three adapter

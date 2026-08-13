@@ -8,12 +8,16 @@ Mandatory summary:
 - The current published beta is `perttool@0.8.1`; npm reports
   `beta=latest=0.8.1`, with no `alpha`. It is the compatible Grammar 6 and CLI
   Contract 7 Issue #9 advance-receipt patch, and `0.8.0` is its rollback pin.
-- The current unreleased source atomically activates Grammar 7 and CLI
+- The current source atomically activates Grammar 7 and CLI
   Contract 8 with 53 commands, 23 root schemas, 129 root and Node exports,
   and `Perttool.NextResult.v7`. All milestone-acceptance work is complete and
   canonically advanced; the residual plan has no diagnostic, task,
-  recommendation, or startable task. The branch still reports tool version
-  `0.8.0`; release selection and version preparation remain separate.
+  recommendation, or startable task. The selected `plans/release-0.9.0.pert`
+  workstream has completed local gate design, input readiness, and source
+  preparation. Package, lockfile, CLI, and adapter peers identify `0.9.0`,
+  while candidate acceptance, the candidate-record commit or push, tag,
+  publication, `latest`, remote writes, Issue mutation, and plan advance
+  remain separate.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
   tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`

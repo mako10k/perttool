@@ -2863,6 +2863,60 @@ external writes must be presented at a later user boundary before PUBLISH.
 The authoritative procedure is
 [`docs/process/0.8.0-release.md`](process/0.8.0-release.md).
 
+### 21.16 Milestone acceptance beta release acceptance criteria
+
+The first package that publishes Grammar 7 and CLI Contract 8 milestone
+outcome acceptance is suffix-free `0.9.0`. It is published as a GitHub
+prerelease and moves only npm `beta` during publication.
+
+1. Publish Grammar 7 criterion-set, acceptance-receipt, and committed-
+   migration declarations without changing the accepted meanings of Grammar
+   1 through 6 documents.
+2. Publish CLI Contract 8 with 53 commands, 23 root schemas, 129 key- and
+   reference-identical root and Node runtime exports, and 45 portable Core
+   runtime exports.
+3. Publish the active versioned Check v5, Analysis v6, Next v7, Mutation v5,
+   Advance v3, milestone migration v1, and milestone acceptance v1 results and
+   bundled schemas without reinterpreting Contract 7 identities.
+4. Keep graph closure separate from outcome acceptance and fail canonical
+   advance atomically unless every affected non-grandfathered milestone is
+   accepted.
+5. Require clean committed in-place migration provenance, grandfather only the
+   exact reached set, infer no criteria or acceptance, and retain Grammar 1
+   through 6 read compatibility.
+6. Publish milestone acceptance consistently through Core, CLI, historical
+   DAG, Help, Guide, package root, Core and Node subpaths, and installed public
+   package workflows.
+7. Require the private LSP, VSIX, and MCP acceptance projections as release
+   evidence while excluding those workspaces and the VSIX from the public npm
+   artifact.
+8. Include the Point-default migration guidance and accepted Issue #9 and
+   Issue #11 advance corrections without changing their separately versioned
+   semantics.
+9. Align package, lockfile, CLI and MCP versions, adapter peers, CHANGELOG,
+   README, migration guidance, release records, tests, goldens, self-use,
+   annotated tag, GitHub asset, and npm identity.
+10. Pass the complete Node.js 22 repository gate, Node.js 22 and 24 CI,
+    dependency audit, English and documentation checks, all self-use plans,
+    adapter package gates, temporary link, isolated package, and beta-only
+    publication normalization.
+11. Before publication, establish that `perttool@0.9.0`, local and remote
+    `v0.9.0`, and the matching GitHub Release are unused; record
+    `beta=latest=0.8.1`, confirm `alpha` absent, and verify authenticated routes
+    without displaying credentials.
+12. Generate one immutable tarball outside the worktree, distribute those
+    exact bytes through the GitHub prerelease and npm `beta`, and verify exact
+    and beta isolated installation while leaving `latest=0.8.1` unchanged.
+13. Keep candidate acceptance, PUBLISH, durable acceptance, npm `latest`
+    promotion, public VSIX identity, plan advance, Issue mutation, and
+    unrelated backlog work at their explicit separate boundaries.
+
+The user's 2026-08-13 instruction authorizes the current documentation commit,
+`v0.8.1` baseline integration, local release-plan creation, gate design, input
+readiness, and source preparation. It does not authorize candidate acceptance
+or any external write. The authoritative procedure is
+[`docs/process/0.9.0-release.md`](process/0.9.0-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

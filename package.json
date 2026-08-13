@@ -1,6 +1,6 @@
 {
   "name": "perttool",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Document-based PERT/CPM and resource scheduling CLI",
   "keywords": [
     "pert",

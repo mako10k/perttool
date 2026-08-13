@@ -1,16 +1,16 @@
 {
   "schema_version": "Perttool.OverrideDecision.v1",
-  "tool_version": "0.8.1",
+  "tool_version": "0.9.0",
   "operation": "recommendation.override.validate",
   "ok": true,
   "diagnostics": [],
   "diagnostics_truncated": false,
   "override": {
     "override_contract_version": 1,
-    "override_id": "override:sha256:9ae93de64a5a9cebaddbfdd10d5dbade66e76e29676ff66fff1a3e4c31226be2",
+    "override_id": "override:sha256:92e6be2b31632abdd7682cef8bcb75306d2dead0c4af8ab53beefddbc161330d",
     "source": {
       "schema_version": "Perttool.NextResult.v7",
-      "tool_version": "0.8.1",
+      "tool_version": "0.9.0",
       "source_digest": "sha256:9e4f50ba3f0774b1e09d97185b413ddc8f3ccf3d7484f4b4cf315e116109d3bc",
       "recommendation_interface_version": 1,
       "ranking_algorithm_id": "perttool.recommendation-ranking.lexicographic-frontier",

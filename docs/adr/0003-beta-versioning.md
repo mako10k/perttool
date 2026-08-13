@@ -17,7 +17,9 @@
   2026-07-31 (`v0.6.0` advance history safety release target);
   2026-08-04 (`v0.7.0` conditional plan assurance release target);
   2026-08-05 (`v0.7.1` Help and Guide consistency patch target);
-  2026-08-07 (`v0.8.0` adapter platform and historical DAG beta target)
+  2026-08-07 (`v0.8.0` adapter platform and historical DAG beta target);
+  2026-08-13 (`v0.9.0` Grammar 7 and CLI Contract 8 milestone-acceptance
+  target)
 - Supersedes: ADR 0002's decision to consider `v0.1.0` a stable candidate
 
 ## Context
@@ -105,6 +107,15 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   start-authority semantics remain unchanged, so a new Grammar or Contract
   version would overstate it. Private LSP, VSIX, and MCP packages remain
   excluded from the public npm artifact.
+- Select suffix-free `0.9.0` for the first package that publishes Grammar 7,
+  CLI Contract 8, milestone criterion sets and receipts, committed migration,
+  acceptance-aware check, analysis, Next and canonical advance, historical
+  milestone acceptance, and the accepted read-only adapter projections. The
+  public command, result, schema, authority, migration, and root-export
+  boundaries change together. `0.8.2` would understate this breaking public
+  boundary, while `1.0.0` remains reserved for a future stable-series
+  decision. Private LSP, VSIX, and MCP packages remain excluded from the
+  public npm artifact.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 
