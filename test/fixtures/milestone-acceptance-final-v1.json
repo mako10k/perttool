@@ -1,0 +1,21 @@
+{
+  "schema_version": "Perttool.MilestoneAcceptanceFinalCases.v1",
+  "cases": [
+    {"id":"MAF-001","depends_on":[],"boundary":"normative_contract_and_closed_matrix"},
+    {"id":"MAF-002","depends_on":["MAF-001"],"boundary":"grammar7_source_and_committed_migration"},
+    {"id":"MAF-003","depends_on":["MAF-002"],"boundary":"pure_evaluator_and_receipt_lifecycle"},
+    {"id":"MAF-004","depends_on":["MAF-003"],"boundary":"governed_source_preserving_mutation"},
+    {"id":"MAF-005","depends_on":["MAF-004"],"boundary":"all_or_nothing_acceptance_aware_advance"},
+    {"id":"MAF-006","depends_on":["MAF-003"],"boundary":"checkpoint_specific_historical_reconstruction"},
+    {"id":"MAF-007","depends_on":["MAF-005"],"boundary":"atomic_contract8_public_surface"},
+    {"id":"MAF-008","depends_on":["MAF-007"],"boundary":"closed_results_schemas_help_and_guide"},
+    {"id":"MAF-009","depends_on":["MAF-007"],"boundary":"root_node_and_core_package_boundaries"},
+    {"id":"MAF-010","depends_on":["MAF-009"],"boundary":"temporary_link_and_isolated_package"},
+    {"id":"MAF-011","depends_on":["MAF-007"],"boundary":"version_bound_lsp_projection"},
+    {"id":"MAF-012","depends_on":["MAF-011"],"boundary":"accessible_vsix_projection_and_navigation"},
+    {"id":"MAF-013","depends_on":["MAF-007"],"boundary":"closed_mcp_contract8_payload_parity"},
+    {"id":"MAF-014","depends_on":["MAF-006","MAF-010","MAF-012","MAF-013"],"boundary":"complete_repository_and_supported_host_gate"},
+    {"id":"MAF-015","depends_on":["MAF-014"],"boundary":"source_and_distribution_no_write_proof"},
+    {"id":"MAF-016","depends_on":["MAF-015"],"boundary":"release_remote_issue_and_plan_advance_remain_separate"}
+  ]
+}

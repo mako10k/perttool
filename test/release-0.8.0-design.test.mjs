@@ -195,11 +195,7 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
   assert.equal(Object.keys(core).length, 45);
   assert.deepEqual(Object.keys(perttool), Object.keys(nodeApi));
   for (const name of Object.keys(perttool)) {
-    if (["checkDocument", "analyzeDocument", "selectNextTasks"].includes(name)) {
-      assert.notEqual(perttool[name], nodeApi[name], name);
-    } else {
-      assert.equal(perttool[name], nodeApi[name], name);
-    }
+    assert.equal(perttool[name], nodeApi[name], name);
   }
   assert.equal(perttool.COMMAND_REGISTRY.length, 53);
   assert.equal(perttool.getJsonSchemaCatalog().length, 23);

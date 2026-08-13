@@ -86,10 +86,7 @@ test("Core dependency boundary permits only exact composition consumers", async 
     files,
     fixture.target.application_prefix,
   );
-  const currentAllowedConsumers = [
-    ...fixture.target.allowed_external_consumers,
-    "src/node/index.ts",
-  ];
+  const currentAllowedConsumers = fixture.target.allowed_external_consumers;
   assert.deepEqual(
     [...new Set(imports.map(({ source }) => source))].sort(),
     currentAllowedConsumers,
@@ -107,7 +104,7 @@ test("Core dependency boundary permits only exact composition consumers", async 
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  assert.equal(files.length, nodeHost.target.typescript_source_files + 2);
+  assert.equal(files.length, nodeHost.target.typescript_source_files + 3);
 });
 
 test("relocated services retain exact compatibility facades", async () => {

@@ -6,6 +6,9 @@ export const editorHelpResultSchemaVersion =
 export const dagFocusProtocolModelVersion = 1 as const;
 export const dagFocusResultSchemaVersion =
   "Perttool.DagFocusResult.v1" as const;
+export const milestoneAcceptanceEditorProtocolModelVersion = 1 as const;
+export const milestoneAcceptanceViewResultSchemaVersion =
+  "Perttool.MilestoneAcceptanceViewResult.v1" as const;
 export const historicalEditorProtocolModelVersion = 1 as const;
 export const historicalGraphViewResultSchemaVersion =
   "Perttool.HistoricalGraphViewResult.v1" as const;
@@ -264,6 +267,78 @@ export interface DagFocusResultV1 {
   readonly focus: DagFocusProjectionV1 | null;
 }
 
+export interface MilestoneAcceptanceSourceBindingV1 {
+  readonly bindingId: string;
+  readonly declarationKind:
+    | "milestone"
+    | "milestone_criterion_set"
+    | "criterion"
+    | "milestone_acceptance_receipt"
+    | "milestone_acceptance_migration";
+  readonly sourceId: string;
+  readonly ownerMilestoneId: string | null;
+  readonly ownerCriterionId: string | null;
+  readonly range: GraphViewRangeV1;
+}
+
+export interface MilestoneAcceptanceCriterionViewV1 {
+  readonly criterionId: string;
+  readonly description: string;
+  readonly required: boolean;
+  readonly evidenceKind: "test" | "command" | "artifact" | "observation" | "owner";
+  readonly commitment: `sha256:${string}`;
+  readonly state: "pending" | "satisfied" | "failed" | "unavailable" | "waived";
+  readonly effectiveReceiptId: string | null;
+  readonly evidenceReference: string | null;
+  readonly evidenceRevision: string | null;
+  readonly verifier: string | null;
+  readonly assertedAt: string | null;
+  readonly waiverReason: string | null;
+  readonly revokedReceiptIds: readonly string[];
+  readonly criterionBindingId: string;
+  readonly effectiveReceiptBindingId: string | null;
+  readonly revokedReceiptBindingIds: readonly string[];
+}
+
+export interface MilestoneAcceptanceMilestoneViewV1 {
+  readonly milestoneId: string;
+  readonly title: string;
+  readonly closure: "unreached" | "reached";
+  readonly acceptance:
+    | "not_applicable"
+    | "not_declared"
+    | "pending"
+    | "accepted"
+    | "failed"
+    | "unavailable";
+  readonly grandfathered: boolean;
+  readonly criterionSetId: string | null;
+  readonly criterionRevisionId: string | null;
+  readonly criterionSetCommitment: `sha256:${string}` | null;
+  readonly criteria: readonly MilestoneAcceptanceCriterionViewV1[];
+  readonly blockingRequiredCriterionIds: readonly string[];
+  readonly milestoneBindingId: string;
+  readonly criterionSetBindingId: string | null;
+}
+
+export interface MilestoneAcceptanceViewResultV1 {
+  readonly schemaVersion: typeof milestoneAcceptanceViewResultSchemaVersion;
+  readonly milestoneAcceptanceEditorProtocolModelVersion:
+    typeof milestoneAcceptanceEditorProtocolModelVersion;
+  readonly document: GraphViewResultV1["document"];
+  readonly status: "current" | "invalid" | "unavailable";
+  readonly complete: boolean;
+  readonly reason: string | null;
+  readonly acceptance: null | {
+    readonly modelVersion: 1;
+    readonly grammarVersion: number;
+    readonly availability: "available" | "not_applicable";
+    readonly milestones: readonly MilestoneAcceptanceMilestoneViewV1[];
+    readonly migration: Readonly<Record<string, unknown>> | null;
+    readonly sourceBindings: readonly MilestoneAcceptanceSourceBindingV1[];
+  };
+}
+
 export interface HistoricalSourceBindingV1 {
   readonly repository_id: string;
   readonly repository_relative_path: string;
@@ -382,6 +457,13 @@ export type WebviewToExtensionMessageV1 =
       readonly documentVersion: number;
       readonly entityKind: "milestone" | "task" | "gate";
       readonly entityId: string;
+    }
+  | {
+      readonly kind: "revealAcceptanceSource";
+      readonly documentUri: string;
+      readonly documentGeneration: string;
+      readonly documentVersion: number;
+      readonly bindingId: string;
     }
   | {
       readonly kind: "requestHistoricalGraph";
@@ -533,6 +615,18 @@ export function hasAcceptedDagFocusHandshake(value: unknown): boolean {
     isRecord(perttool) &&
     perttool.dagFocusProtocolModelVersion === dagFocusProtocolModelVersion &&
     perttool.dagFocusResultSchemaVersion === dagFocusResultSchemaVersion
+  );
+}
+
+export function hasAcceptedMilestoneAcceptanceHandshake(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  const perttool = value.perttool;
+  return (
+    isRecord(perttool) &&
+    perttool.milestoneAcceptanceEditorProtocolModelVersion ===
+      milestoneAcceptanceEditorProtocolModelVersion &&
+    perttool.milestoneAcceptanceViewResultSchemaVersion ===
+      milestoneAcceptanceViewResultSchemaVersion
   );
 }
 
@@ -1033,6 +1127,141 @@ export function parseDagFocusResult(value: unknown): DagFocusResultV1 | null {
   return JSON.parse(JSON.stringify(value)) as DagFocusResultV1;
 }
 
+function nullableString(value: unknown): boolean {
+  return value === null || typeof value === "string";
+}
+
+function milestoneAcceptanceSourceBinding(value: unknown): boolean {
+  return isRecord(value) && hasExactKeys(value, [
+    "bindingId",
+    "declarationKind",
+    "ownerCriterionId",
+    "ownerMilestoneId",
+    "range",
+    "sourceId",
+  ]) && nonEmptyString(value.bindingId) && nonEmptyString(value.sourceId) &&
+    [
+      "milestone",
+      "milestone_criterion_set",
+      "criterion",
+      "milestone_acceptance_receipt",
+      "milestone_acceptance_migration",
+    ].includes(String(value.declarationKind)) &&
+    nullableString(value.ownerMilestoneId) &&
+    nullableString(value.ownerCriterionId) && range(value.range);
+}
+
+function milestoneAcceptanceCriterion(value: unknown): boolean {
+  return isRecord(value) && hasExactKeys(value, [
+    "assertedAt",
+    "commitment",
+    "criterionBindingId",
+    "criterionId",
+    "description",
+    "effectiveReceiptBindingId",
+    "effectiveReceiptId",
+    "evidenceKind",
+    "evidenceReference",
+    "evidenceRevision",
+    "required",
+    "revokedReceiptBindingIds",
+    "revokedReceiptIds",
+    "state",
+    "verifier",
+    "waiverReason",
+  ]) && nonEmptyString(value.criterionId) &&
+    typeof value.description === "string" && typeof value.required === "boolean" &&
+    ["test", "command", "artifact", "observation", "owner"].includes(
+      String(value.evidenceKind),
+    ) && /^sha256:[0-9a-f]{64}$/u.test(String(value.commitment)) &&
+    ["pending", "satisfied", "failed", "unavailable", "waived"].includes(
+      String(value.state),
+    ) && nullableString(value.effectiveReceiptId) &&
+    nullableString(value.evidenceReference) && nullableString(value.evidenceRevision) &&
+    nullableString(value.verifier) && nullableString(value.assertedAt) &&
+    nullableString(value.waiverReason) && stringArray(value.revokedReceiptIds) &&
+    nonEmptyString(value.criterionBindingId) &&
+    nullableString(value.effectiveReceiptBindingId) &&
+    stringArray(value.revokedReceiptBindingIds);
+}
+
+function milestoneAcceptanceMilestone(value: unknown): boolean {
+  return isRecord(value) && hasExactKeys(value, [
+    "acceptance",
+    "blockingRequiredCriterionIds",
+    "closure",
+    "criteria",
+    "criterionRevisionId",
+    "criterionSetBindingId",
+    "criterionSetCommitment",
+    "criterionSetId",
+    "grandfathered",
+    "milestoneBindingId",
+    "milestoneId",
+    "title",
+  ]) && nonEmptyString(value.milestoneId) && typeof value.title === "string" &&
+    (value.closure === "unreached" || value.closure === "reached") &&
+    [
+      "not_applicable",
+      "not_declared",
+      "pending",
+      "accepted",
+      "failed",
+      "unavailable",
+    ].includes(String(value.acceptance)) && typeof value.grandfathered === "boolean" &&
+    nullableString(value.criterionSetId) && nullableString(value.criterionRevisionId) &&
+    (value.criterionSetCommitment === null ||
+      /^sha256:[0-9a-f]{64}$/u.test(String(value.criterionSetCommitment))) &&
+    Array.isArray(value.criteria) && value.criteria.every(milestoneAcceptanceCriterion) &&
+    stringArray(value.blockingRequiredCriterionIds) &&
+    nonEmptyString(value.milestoneBindingId) && nullableString(value.criterionSetBindingId);
+}
+
+export function parseMilestoneAcceptanceViewResult(
+  value: unknown,
+): MilestoneAcceptanceViewResultV1 | null {
+  if (!isRecord(value) || !hasExactKeys(value, [
+    "acceptance",
+    "complete",
+    "document",
+    "milestoneAcceptanceEditorProtocolModelVersion",
+    "reason",
+    "schemaVersion",
+    "status",
+  ]) || value.schemaVersion !== milestoneAcceptanceViewResultSchemaVersion ||
+    value.milestoneAcceptanceEditorProtocolModelVersion !==
+      milestoneAcceptanceEditorProtocolModelVersion || !isRecord(value.document) ||
+    !hasExactKeys(value.document, ["generation", "sourceDigest", "uri", "version"]) ||
+    !nonEmptyString(value.document.uri) || !nonEmptyString(value.document.generation) ||
+    !Number.isSafeInteger(value.document.version) ||
+    !/^sha256:[0-9a-f]{64}$/u.test(String(value.document.sourceDigest)) ||
+    !["current", "invalid", "unavailable"].includes(String(value.status)) ||
+    typeof value.complete !== "boolean" || !nullableString(value.reason)) return null;
+  if (value.acceptance !== null) {
+    if (!isRecord(value.acceptance) || !hasExactKeys(value.acceptance, [
+      "availability",
+      "grammarVersion",
+      "migration",
+      "milestones",
+      "modelVersion",
+      "sourceBindings",
+    ]) || value.acceptance.modelVersion !== 1 ||
+      !Number.isSafeInteger(value.acceptance.grammarVersion) ||
+      !["available", "not_applicable"].includes(String(value.acceptance.availability)) ||
+      !Array.isArray(value.acceptance.milestones) ||
+      !value.acceptance.milestones.every(milestoneAcceptanceMilestone) ||
+      (value.acceptance.migration !== null && !isRecord(value.acceptance.migration)) ||
+      !Array.isArray(value.acceptance.sourceBindings) ||
+      !value.acceptance.sourceBindings.every(milestoneAcceptanceSourceBinding) ||
+      new Set(value.acceptance.sourceBindings.map((item) => item.bindingId)).size !==
+        value.acceptance.sourceBindings.length) return null;
+  }
+  if ((value.status === "current") !== value.complete ||
+    (value.status === "current") !== (value.acceptance !== null) ||
+    (value.status === "current" ? value.reason !== null : value.reason === null)) return null;
+  return JSON.parse(JSON.stringify(value)) as MilestoneAcceptanceViewResultV1;
+}
+
 function historicalSourcePosition(value: unknown): boolean {
   return isRecord(value) &&
     hasExactKeys(value, ["column", "line", "offset"]) &&
@@ -1323,6 +1552,19 @@ export function parseWebviewMessage(
     return value as unknown as WebviewToExtensionMessageV1;
   }
   if (
+    value.kind === "revealAcceptanceSource" &&
+    hasExactKeys(value, [
+      "bindingId",
+      "documentGeneration",
+      "documentUri",
+      "documentVersion",
+      "kind",
+    ]) &&
+    common && nonEmptyString(value.bindingId)
+  ) {
+    return value as unknown as WebviewToExtensionMessageV1;
+  }
+  if (
     value.kind === "requestHistoricalGraph" &&
     hasExactKeys(value, [
       "analysisMode",
@@ -1390,4 +1632,14 @@ export function findGraphEntityRange(
   return result.graph.edges.find(
     ({ id, kind }) => id === entityId && kind === entityKind,
   )?.selectionRange ?? null;
+}
+
+export function findMilestoneAcceptanceSourceRange(
+  result: MilestoneAcceptanceViewResultV1,
+  bindingId: string,
+): GraphViewRangeV1 | null {
+  if (result.status !== "current" || result.acceptance === null) return null;
+  return result.acceptance.sourceBindings.find(
+    (binding) => binding.bindingId === bindingId,
+  )?.range ?? null;
 }

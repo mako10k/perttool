@@ -66,6 +66,15 @@ export interface DocumentSnapshotInput {
 export interface DocumentSnapshotOptions {
   readonly digestText: (text: string) => string;
   readonly maxDiagnostics?: number;
+  readonly prepareDocument?: (
+    text: string,
+    maxDiagnostics: number,
+  ) => DocumentSnapshotPreparation;
+}
+
+export interface DocumentSnapshotPreparation {
+  readonly analysisText: string;
+  readonly diagnostics: readonly Diagnostic[];
 }
 
 export type DocumentAnalysisMode = "none" | AnalysisMode;
@@ -282,14 +291,36 @@ function digestText(
   return digest as DocumentSourceDigest;
 }
 
+function coordinateCompatibleSource(original: string, projected: string): boolean {
+  if (original.length !== projected.length) return false;
+  for (let offset = 0; offset < original.length; offset += 1) {
+    const originalCode = original.charCodeAt(offset);
+    const projectedCode = projected.charCodeAt(offset);
+    const originalLineBreak = originalCode === 0x0a || originalCode === 0x0d;
+    const projectedLineBreak = projectedCode === 0x0a || projectedCode === 0x0d;
+    if (
+      originalLineBreak !== projectedLineBreak ||
+      originalLineBreak && originalCode !== projectedCode
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function createDocumentSnapshot(
   input: DocumentSnapshotInput,
   options: DocumentSnapshotOptions,
 ): DocumentSnapshot {
   validateSnapshotInput(input);
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
-  const parse = parseDocument(input.text, { maxDiagnostics: maximum });
-  const semanticDiagnostics = validateDocument(
+  const prepared = options.prepareDocument?.(input.text, maximum);
+  const analysisText = prepared?.analysisText ?? input.text;
+  if (!coordinateCompatibleSource(input.text, analysisText)) {
+    throw new TypeError("document preparation changed source coordinates");
+  }
+  const parse = parseDocument(analysisText, { maxDiagnostics: maximum });
+  const semanticDiagnostics = prepared?.diagnostics ?? validateDocument(
     parse.document,
     parse.diagnostics,
   );
@@ -521,6 +552,9 @@ class ProtocolNeutralDocumentSession implements DocumentSession {
       ...(options.maxDiagnostics === undefined
         ? {}
         : { maxDiagnostics: options.maxDiagnostics }),
+      ...(options.prepareDocument === undefined
+        ? {}
+        : { prepareDocument: options.prepareDocument }),
     });
   }
 

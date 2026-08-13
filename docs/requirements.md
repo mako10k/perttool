@@ -399,7 +399,9 @@ Must:
   downstream start authority in model 1.
 - Activate Grammar 7 parsing, formatting, migration, results, schemas,
   diagnostics, Help, Guide, exports, package behavior, and Contract 8 commands
-  atomically. Keep the selected LSP, VSIX, and MCP projection read-only.
+  atomically. Keep the selected LSP, VSIX, and MCP projection read-only. The
+  exact editor negotiation, binding, accessibility, and MCP parity boundary is
+  the [Milestone Acceptance Read-only Adapter Contract](specs/milestone-acceptance-editor-protocol.md).
 - Reconstruct deleted criterion revisions and receipts only from exact Git
   checkpoints and never infer historical acceptance.
 

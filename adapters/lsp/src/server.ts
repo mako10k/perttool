@@ -21,6 +21,7 @@ import {
 } from "vscode-languageserver/node.js";
 import {
   createDocumentSession,
+  documentOffsetToPosition,
   type DocumentProjectionStatus,
   type DocumentSession,
   type DocumentSessionFailureReason,
@@ -42,6 +43,8 @@ import {
   DAG_FOCUS_PROTOCOL_MODEL_VERSION,
   DAG_FOCUS_SCHEMA_VERSION,
   GRAPH_VIEW_SCHEMA_VERSION,
+  MILESTONE_ACCEPTANCE_EDITOR_PROTOCOL_MODEL_VERSION,
+  MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION,
   HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
   HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION,
   HISTORICAL_SOURCE_SCHEMA_VERSION,
@@ -64,6 +67,11 @@ import {
   type HistoricalSourceBindingV1,
   type HistoricalSourceParamsV1,
   type HistoricalSourceResultV1,
+  type MilestoneAcceptanceEditorApplicationV1,
+  type MilestoneAcceptanceSourceBindingV1,
+  type MilestoneAcceptanceViewParamsV1,
+  type MilestoneAcceptanceViewProjectionV1,
+  type MilestoneAcceptanceViewResultV1,
   type PerttoolExperimentalCapabilitiesV1,
 } from "./protocol.js";
 
@@ -76,12 +84,14 @@ export interface PerttoolLanguageServerOptions {
   ) => void;
   readonly historicalApplication?: HistoricalEditorApplicationV1;
   readonly dagFocusApplication?: DagFocusApplicationV1;
+  readonly milestoneAcceptanceApplication?: MilestoneAcceptanceEditorApplicationV1;
 }
 
 export interface PerttoolLanguageServer {
   readonly customProtocolNegotiated: boolean;
   readonly historicalProtocolNegotiated: boolean;
   readonly dagFocusProtocolNegotiated: boolean;
+  readonly milestoneAcceptanceProtocolNegotiated: boolean;
   readonly stopped: boolean;
   initialize(params: InitializeParams): InitializeResult;
   didOpen(params: DidOpenTextDocumentParams): void;
@@ -107,6 +117,10 @@ export interface PerttoolLanguageServer {
   help(params: unknown, signal?: AbortSignal): Promise<EditorHelpResultV1>;
   graphView(params: unknown, signal?: AbortSignal): Promise<GraphViewResultV1>;
   dagFocus(params: unknown, signal?: AbortSignal): Promise<DagFocusResultV1>;
+  milestoneAcceptanceView(
+    params: unknown,
+    signal?: AbortSignal,
+  ): Promise<MilestoneAcceptanceViewResultV1>;
   historicalGraphView(
     params: unknown,
     signal?: AbortSignal,
@@ -220,6 +234,26 @@ function dagFocusProtocolSelected(
   );
 }
 
+function milestoneAcceptanceProtocolSelected(
+  options: unknown,
+  applicationAvailable: boolean,
+): boolean {
+  if (!applicationAvailable || !record(options) || !record(options["perttool"])) {
+    return false;
+  }
+  const perttool = options["perttool"];
+  return (
+    Array.isArray(perttool["milestoneAcceptanceEditorProtocolModelVersions"]) &&
+    perttool["milestoneAcceptanceEditorProtocolModelVersions"].includes(
+      MILESTONE_ACCEPTANCE_EDITOR_PROTOCOL_MODEL_VERSION,
+    ) &&
+    Array.isArray(perttool["milestoneAcceptanceViewResultSchemaVersions"]) &&
+    perttool["milestoneAcceptanceViewResultSchemaVersions"].includes(
+      MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION,
+    )
+  );
+}
+
 interface HistoricalSessionV1 {
   readonly workspaceTrust: "trusted" | "untrusted";
   readonly workspaceFolderUris: readonly string[];
@@ -274,6 +308,7 @@ function initializeCapabilities(
   custom: boolean,
   historical: boolean,
   dagFocus: boolean,
+  milestoneAcceptance: boolean,
 ): InitializeResult["capabilities"] {
   const experimental: PerttoolExperimentalCapabilitiesV1 = {
     perttool: {
@@ -285,6 +320,14 @@ function initializeCapabilities(
         ? {
             dagFocusProtocolModelVersion: DAG_FOCUS_PROTOCOL_MODEL_VERSION,
             dagFocusResultSchemaVersion: DAG_FOCUS_SCHEMA_VERSION,
+          }
+        : {}),
+      ...(milestoneAcceptance
+        ? {
+            milestoneAcceptanceEditorProtocolModelVersion:
+              MILESTONE_ACCEPTANCE_EDITOR_PROTOCOL_MODEL_VERSION,
+            milestoneAcceptanceViewResultSchemaVersion:
+              MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION,
           }
         : {}),
       ...(historical
@@ -373,6 +416,95 @@ function validateDagFocusParams(value: unknown): DagFocusParamsV1 {
     textDocument: { uri: value["textDocument"]["uri"] },
     documentVersion: value["documentVersion"] as number,
   };
+}
+
+function validateMilestoneAcceptanceViewParams(
+  value: unknown,
+): MilestoneAcceptanceViewParamsV1 {
+  if (
+    !record(value) ||
+    !exactKeys(value, ["textDocument", "documentVersion"]) ||
+    !record(value["textDocument"]) ||
+    !exactKeys(value["textDocument"], ["uri"]) ||
+    typeof value["textDocument"]["uri"] !== "string" ||
+    !isAbsoluteDocumentUri(value["textDocument"]["uri"]) ||
+    !Number.isSafeInteger(value["documentVersion"])
+  ) {
+    throw new PerttoolProtocolError(
+      ErrorCodes.InvalidParams,
+      "perttool/milestoneAcceptanceView parameters are invalid",
+    );
+  }
+  return {
+    textDocument: { uri: value["textDocument"]["uri"] },
+    documentVersion: value["documentVersion"] as number,
+  };
+}
+
+function milestoneAcceptanceRange(
+  text: string,
+  span: {
+    readonly start: { readonly offset: number };
+    readonly end: { readonly offset: number };
+  },
+) {
+  const start = documentOffsetToPosition(text, span.start.offset);
+  const end = documentOffsetToPosition(text, span.end.offset);
+  if (start === null || end === null) {
+    throw new Error("milestone acceptance source range is not representable as UTF-16");
+  }
+  return { start, end };
+}
+
+function milestoneAcceptanceViewProjection(
+  text: string,
+  value: unknown,
+): MilestoneAcceptanceViewProjectionV1 | null {
+  if (
+    !record(value) ||
+    value["modelVersion"] !== 1 ||
+    !Number.isSafeInteger(value["grammarVersion"]) ||
+    (value["availability"] !== "available" && value["availability"] !== "not_applicable") ||
+    !Array.isArray(value["milestones"]) ||
+    !Array.isArray(value["sourceBindings"])
+  ) return null;
+  const sourceBindings: MilestoneAcceptanceSourceBindingV1[] = [];
+  for (const item of value["sourceBindings"]) {
+    if (
+      !record(item) ||
+      typeof item["bindingId"] !== "string" ||
+      typeof item["sourceId"] !== "string" ||
+      typeof item["declarationKind"] !== "string" ||
+      !record(item["span"]) ||
+      !record(item["span"]["start"]) ||
+      !record(item["span"]["end"]) ||
+      !Number.isSafeInteger(item["span"]["start"]["offset"]) ||
+      !Number.isSafeInteger(item["span"]["end"]["offset"])
+    ) return null;
+    sourceBindings.push({
+      bindingId: item["bindingId"],
+      declarationKind: item["declarationKind"] as MilestoneAcceptanceSourceBindingV1["declarationKind"],
+      sourceId: item["sourceId"],
+      ownerMilestoneId: typeof item["ownerMilestoneId"] === "string"
+        ? item["ownerMilestoneId"]
+        : null,
+      ownerCriterionId: typeof item["ownerCriterionId"] === "string"
+        ? item["ownerCriterionId"]
+        : null,
+      range: milestoneAcceptanceRange(text, item["span"] as never),
+    });
+  }
+  if (new Set(sourceBindings.map(({ bindingId }) => bindingId)).size !== sourceBindings.length) {
+    return null;
+  }
+  return Object.freeze({
+    modelVersion: 1,
+    grammarVersion: value["grammarVersion"] as number,
+    availability: value["availability"],
+    milestones: Object.freeze(value["milestones"] as MilestoneAcceptanceViewProjectionV1["milestones"]),
+    migration: (value["migration"] ?? null) as MilestoneAcceptanceViewProjectionV1["migration"],
+    sourceBindings: Object.freeze(sourceBindings),
+  });
 }
 
 function validStringArray(value: unknown): value is readonly string[] {
@@ -716,6 +848,9 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
   readonly #digestText: (text: string) => string;
   readonly #historicalApplication: HistoricalEditorApplicationV1 | undefined;
   readonly #dagFocusApplication: DagFocusApplicationV1 | undefined;
+  readonly #milestoneAcceptanceApplication:
+    | MilestoneAcceptanceEditorApplicationV1
+    | undefined;
   readonly #openVersions = new Map<string, number>();
   readonly #historicalRequests = new Map<string, number>();
   readonly #retainedHistorical = new Map<
@@ -725,6 +860,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
   #initialized = false;
   #customProtocolNegotiated = false;
   #dagFocusProtocolNegotiated = false;
+  #milestoneAcceptanceProtocolNegotiated = false;
   #historicalSession: HistoricalSessionV1 | null = null;
   #stopped = false;
 
@@ -734,12 +870,20 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
       ...(options.maxDiagnostics === undefined
         ? {}
         : { maxDiagnostics: options.maxDiagnostics }),
+      ...(options.milestoneAcceptanceApplication === undefined
+        ? {}
+        : {
+            prepareDocument:
+              options.milestoneAcceptanceApplication.prepareDocument,
+          }),
     });
     this.#publishDiagnostics = options.publishDiagnostics;
     this.#onFatalSynchronization = options.onFatalSynchronization;
     this.#digestText = options.digestText;
     this.#historicalApplication = options.historicalApplication;
     this.#dagFocusApplication = options.dagFocusApplication;
+    this.#milestoneAcceptanceApplication =
+      options.milestoneAcceptanceApplication;
   }
 
   get customProtocolNegotiated(): boolean {
@@ -752,6 +896,10 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
 
   get dagFocusProtocolNegotiated(): boolean {
     return this.#dagFocusProtocolNegotiated;
+  }
+
+  get milestoneAcceptanceProtocolNegotiated(): boolean {
+    return this.#milestoneAcceptanceProtocolNegotiated;
   }
 
   get stopped(): boolean {
@@ -794,6 +942,19 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
       );
     }
     return this.#dagFocusApplication;
+  }
+
+  #requireMilestoneAcceptanceProtocol(): MilestoneAcceptanceEditorApplicationV1 {
+    if (
+      !this.#milestoneAcceptanceProtocolNegotiated ||
+      this.#milestoneAcceptanceApplication === undefined
+    ) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.MethodNotFound,
+        "perttool milestone acceptance editor protocol was not negotiated",
+      );
+    }
+    return this.#milestoneAcceptanceApplication;
   }
 
   #invalidateHistoricalDocument(uri: string): void {
@@ -860,12 +1021,18 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
         params.initializationOptions,
         this.#dagFocusApplication !== undefined,
       );
+    this.#milestoneAcceptanceProtocolNegotiated =
+      this.#customProtocolNegotiated && milestoneAcceptanceProtocolSelected(
+        params.initializationOptions,
+        this.#milestoneAcceptanceApplication !== undefined,
+      );
     this.#initialized = true;
     return {
       capabilities: initializeCapabilities(
         this.#customProtocolNegotiated,
         this.#historicalSession !== null,
         this.#dagFocusProtocolNegotiated,
+        this.#milestoneAcceptanceProtocolNegotiated,
       ),
       serverInfo: { name: "perttool language server", version: "0.0.0-private" },
     };
@@ -1192,6 +1359,83 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     return projected.value;
   }
 
+  async milestoneAcceptanceView(
+    params: unknown,
+    signal?: AbortSignal,
+  ): Promise<MilestoneAcceptanceViewResultV1> {
+    this.#ensureRunning();
+    const application = this.#requireMilestoneAcceptanceProtocol();
+    const accepted = validateMilestoneAcceptanceViewParams(params);
+    const snapshot = this.#session.current(accepted.textDocument.uri);
+    if (snapshot === null) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.InvalidParams,
+        "perttool/milestoneAcceptanceView document is not open",
+      );
+    }
+    if (snapshot.binding.version !== accepted.documentVersion) {
+      throw projectionError("stale");
+    }
+    const result = await this.#session.project<MilestoneAcceptanceViewResultV1>({
+      binding: snapshot.binding,
+      cacheKey: "lsp:milestoneAcceptanceView:v1",
+      ...(signal === undefined ? {} : { signal }),
+      allowInvalid: true,
+      allowTruncated: true,
+      compute: async (current) => {
+        const inspected = await application.inspect(
+          current.text,
+          current.binding.sourceDigest,
+        );
+        if (!record(inspected)) {
+          return Object.freeze({
+            schemaVersion: MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION,
+            milestoneAcceptanceEditorProtocolModelVersion:
+              MILESTONE_ACCEPTANCE_EDITOR_PROTOCOL_MODEL_VERSION,
+            document: current.binding,
+            status: "unavailable" as const,
+            complete: false,
+            reason: "Complete milestone acceptance semantics are unavailable.",
+            acceptance: null,
+          });
+        }
+        const status = inspected["status"];
+        const reason = typeof inspected["reason"] === "string"
+          ? inspected["reason"]
+          : null;
+        const acceptance = milestoneAcceptanceViewProjection(
+          current.text,
+          inspected["acceptance"],
+        );
+        const currentStatus = status === "current" && acceptance !== null;
+        return Object.freeze({
+          schemaVersion: MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION,
+          milestoneAcceptanceEditorProtocolModelVersion:
+            MILESTONE_ACCEPTANCE_EDITOR_PROTOCOL_MODEL_VERSION,
+          document: current.binding,
+          status: currentStatus
+            ? "current" as const
+            : status === "invalid"
+              ? "invalid" as const
+              : "unavailable" as const,
+          complete: currentStatus,
+          reason: currentStatus
+            ? null
+            : reason ?? "Complete milestone acceptance semantics are unavailable.",
+          acceptance: currentStatus ? acceptance : null,
+        });
+      },
+    });
+    if (
+      result.status === "cancelled" ||
+      result.status === "stale" ||
+      result.status === "closed" ||
+      result.status === "desynchronized"
+    ) throw projectionError(result.status);
+    if (result.value === null) throw projectionError("stale");
+    return result.value;
+  }
+
   #sha256(value: unknown): `sha256:${string}` {
     const digest = this.#digestText(canonicalJson(value));
     if (!/^sha256:[0-9a-f]{64}$/u.test(digest)) {
@@ -1484,6 +1728,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     this.#retainedHistorical.clear();
     this.#historicalSession = null;
     this.#dagFocusProtocolNegotiated = false;
+    this.#milestoneAcceptanceProtocolNegotiated = false;
     this.#stopped = true;
   }
 

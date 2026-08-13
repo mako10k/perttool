@@ -69,6 +69,19 @@ criterion-set replacement, caller-asserted receipts, and acceptance-aware
 canonical advance. This source boundary is not part of published `0.8.0` and
 does not select a release or mutate npm tags.
 
+The private adapters now project that same Contract 8 acceptance model without
+adding write authority. The LSP negotiates a separate version-bound milestone
+acceptance result, the VSIX presents criteria, blockers, and receipt provenance
+with verified source navigation, and the MCP check, analysis, and Next tools
+retain acceptance in their unchanged wire v1 envelopes. The public npm package
+still excludes all three private adapter workspaces.
+
+The complete local cross-surface gate passes with no remaining PERT task. The
+newly reached adapter, integration, and final milestones intentionally remain
+`not_declared` until their criterion and receipt candidates receive separate
+DAG-owner confirmation. Release selection, version preparation, publication,
+remote writes, and plan advance remain separate.
+
 ## Run without installing
 
 After beta publication, use `npx` for an occasional Contract 7 invocation and

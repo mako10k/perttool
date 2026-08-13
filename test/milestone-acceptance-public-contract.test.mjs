@@ -6,7 +6,6 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import * as rootApi from "../dist/index.js";
 import * as nodeApi from "../dist/node/index.js";
-import { sha256DigestUtf8 } from "../dist/model/sha256.js";
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cli = path.join(repository, "dist/cli.js");
@@ -63,22 +62,17 @@ test("older grammars remain readable but advance fails before Git history inspec
 
 test("Grammar 7 check projects separate closure and acceptance with criterion guidance", async () => {
   const source = await readFile(path.join(repository, "plans/milestone-acceptance.pert"), "utf8");
-  const proof = {
-    repositoryId: "repository",
-    repositoryRelativePath: "plans/milestone-acceptance.pert",
-    objectFormat: "sha1",
-    headCommit: "a".repeat(40),
-    headBlob: "b".repeat(40),
-    stage0Blob: "b".repeat(40),
-    sourceDigest: sha256DigestUtf8(source),
-  };
-  const migrated = rootApi.planMilestoneAcceptanceMigration(source, proof);
-  assert.equal(migrated.ok, true);
-  const checked = rootApi.checkDocument(migrated.candidateText);
+  const checked = rootApi.checkDocument(source);
   assert.equal(checked.schemaVersion, "Perttool.CheckResult.v5");
   assert.equal(checked.grammarVersion, 7);
-  assert.equal(checked.acceptance.milestones.every(({ closure, acceptance }) =>
-    (closure === "reached" || closure === "unreached") && acceptance === "not_declared"
+  assert.equal(checked.acceptance.milestones.every(({ closure }) =>
+    closure === "reached" || closure === "unreached"
+  ), true);
+  assert.equal(checked.acceptance.milestones.some(({ acceptance }) =>
+    acceptance === "accepted"
+  ), true);
+  assert.equal(checked.acceptance.milestones.some(({ acceptance }) =>
+    acceptance === "not_declared"
   ), true);
   assert.equal(checked.diagnostics.some(({ code }) => code === "PTMAC-102"), true);
 });

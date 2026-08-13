@@ -5,6 +5,7 @@ import {
   formatPresentationDuration,
   parseDagFocusResult,
   parseGraphViewResult,
+  parseMilestoneAcceptanceViewResult,
   type GraphViewAnalysisMode,
   type DagFocusResultV1,
   type GraphViewEdgeV1,
@@ -13,6 +14,7 @@ import {
   type HistoricalGraphAncestryProfile,
   type HistoricalGraphView,
   type HistoricalWebviewPresentationV1,
+  type MilestoneAcceptanceViewResultV1,
 } from "./bindings.js";
 
 interface VsCodeApi {
@@ -39,6 +41,7 @@ interface RenderMessageV1 {
   readonly result: GraphViewResultV1 | null;
   readonly focusResult: DagFocusResultV1 | null;
   readonly historicalResult: HistoricalWebviewPresentationV1 | null;
+  readonly acceptanceResult: MilestoneAcceptanceViewResultV1 | null;
   readonly scope: "current" | "historical";
 }
 
@@ -55,6 +58,7 @@ const currentMilestones = requiredElement("current-milestones");
 const criticalPath = requiredElement("critical-path");
 const nextTasks = requiredElement("next-tasks");
 const timeSummary = requiredElement("time-summary");
+const milestoneAcceptance = requiredElement("milestone-acceptance");
 const outlineSection = requiredElement("outline-section") as HTMLDetailsElement;
 const outline = requiredElement("outline");
 const diagnostics = requiredElement("diagnostics");
@@ -70,6 +74,7 @@ const historicalRun = requiredElement("historical-run") as HTMLButtonElement;
 let current: GraphViewResultV1 | null = null;
 let currentFocus: DagFocusResultV1 | null = null;
 let currentHistorical: HistoricalWebviewPresentationV1 | null = null;
+let currentAcceptance: MilestoneAcceptanceViewResultV1 | null = null;
 let layoutWidth = 420;
 let layoutHeight = 260;
 let zoom = 1;
@@ -169,6 +174,7 @@ function renderMessage(value: unknown): RenderMessageV1 | null {
   const record = value as Record<string, unknown>;
   if (
     !exactKeys(record, [
+      "acceptanceResult",
       "analysisMode",
       "editorProtocolModelVersion",
       "focusResult",
@@ -199,6 +205,10 @@ function renderMessage(value: unknown): RenderMessageV1 | null {
     ? null
     : historicalPresentation(record.historicalResult);
   if (record.historicalResult !== null && historicalResult === null) return null;
+  const acceptanceResult = record.acceptanceResult === null
+    ? null
+    : parseMilestoneAcceptanceViewResult(record.acceptanceResult);
+  if (record.acceptanceResult !== null && acceptanceResult === null) return null;
   if (
     record.scope === "current" && record.state === "current" &&
     result?.status !== "current"
@@ -212,6 +222,7 @@ function renderMessage(value: unknown): RenderMessageV1 | null {
     result,
     focusResult,
     historicalResult,
+    acceptanceResult,
     scope: record.scope,
   };
 }
@@ -1191,10 +1202,121 @@ function renderFocusSummary(
   );
 }
 
+function acceptanceSourceButton(
+  result: MilestoneAcceptanceViewResultV1,
+  bindingId: string,
+  label: string,
+): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = label;
+  button.addEventListener("click", () => {
+    vscode.postMessage({
+      kind: "revealAcceptanceSource",
+      documentUri: result.document.uri,
+      documentGeneration: result.document.generation,
+      documentVersion: result.document.version,
+      bindingId,
+    });
+  });
+  return button;
+}
+
+function renderMilestoneAcceptance(
+  result: MilestoneAcceptanceViewResultV1 | null,
+): void {
+  milestoneAcceptance.replaceChildren();
+  if (result === null) {
+    milestoneAcceptance.textContent = "Milestone acceptance view is unavailable.";
+    return;
+  }
+  if (result.status !== "current" || result.acceptance === null) {
+    milestoneAcceptance.textContent = result.reason ??
+      "Milestone acceptance view is unavailable.";
+    return;
+  }
+  const summary = document.createElement("p");
+  summary.textContent = result.acceptance.availability === "available"
+    ? `Grammar ${result.acceptance.grammarVersion}; acceptance model 1.`
+    : `Grammar ${result.acceptance.grammarVersion}; milestone acceptance is not applicable.`;
+  const list = document.createElement("ol");
+  for (const item of result.acceptance.milestones) {
+    const row = document.createElement("li");
+    row.className = `acceptance-${item.acceptance}`;
+    const heading = document.createElement("h3");
+    heading.textContent = `${item.milestoneId}: ${item.title}`;
+    const state = document.createElement("p");
+    state.textContent = `Closure ${item.closure}; acceptance ${item.acceptance}${
+      item.grandfathered ? "; grandfathered" : ""
+    }.`;
+    const actions = document.createElement("div");
+    actions.className = "detail-actions";
+    actions.append(acceptanceSourceButton(
+      result,
+      item.milestoneBindingId,
+      "Open milestone",
+    ));
+    if (item.criterionSetBindingId !== null) {
+      actions.append(acceptanceSourceButton(
+        result,
+        item.criterionSetBindingId,
+        "Open criteria",
+      ));
+    }
+    row.append(heading, state, actions);
+    if (item.blockingRequiredCriterionIds.length > 0) {
+      const blocked = document.createElement("p");
+      blocked.textContent =
+        `Blocking required criteria: ${item.blockingRequiredCriterionIds.join(", ")}.`;
+      row.append(blocked);
+    }
+    if (item.criteria.length > 0) {
+      const criteria = document.createElement("ul");
+      for (const criterion of item.criteria) {
+        const criterionRow = document.createElement("li");
+        const detail = document.createElement("p");
+        detail.textContent = `${criterion.criterionId} (${criterion.required
+          ? "required"
+          : "optional"}, ${criterion.evidenceKind}): ${criterion.state}. ${
+          criterion.description
+        }`;
+        const provenance = document.createElement("p");
+        provenance.textContent = criterion.effectiveReceiptId === null
+          ? "No effective receipt."
+          : `Receipt ${criterion.effectiveReceiptId}; verifier ${
+            criterion.verifier ?? "unavailable"
+          }; asserted ${criterion.assertedAt ?? "unavailable"}; evidence ${
+            criterion.evidenceReference ?? "unavailable"
+          } @ ${criterion.evidenceRevision ?? "unavailable"}.`;
+        const criterionActions = document.createElement("div");
+        criterionActions.className = "detail-actions";
+        criterionActions.append(acceptanceSourceButton(
+          result,
+          criterion.criterionBindingId,
+          "Open criterion",
+        ));
+        if (criterion.effectiveReceiptBindingId !== null) {
+          criterionActions.append(acceptanceSourceButton(
+            result,
+            criterion.effectiveReceiptBindingId,
+            "Open receipt",
+          ));
+        }
+        criterionRow.append(detail, provenance, criterionActions);
+        criteria.append(criterionRow);
+      }
+      row.append(criteria);
+    }
+    list.append(row);
+  }
+  milestoneAcceptance.append(summary, list);
+}
+
 function render(value: RenderMessageV1): void {
   current = value.result;
   currentFocus = value.focusResult;
   currentHistorical = value.historicalResult;
+  currentAcceptance = value.acceptanceResult;
   status.textContent = value.message;
   status.dataset.state = value.state;
   mode.value = value.analysisMode;
@@ -1203,6 +1325,7 @@ function render(value: RenderMessageV1): void {
   mode.disabled = value.result === null;
   renderFocusSummary(value.result, value.focusResult);
   renderTimeSummary(value.scope, value.focusResult, value.historicalResult);
+  renderMilestoneAcceptance(value.acceptanceResult);
   graph.replaceChildren();
   outline.replaceChildren();
   if (value.scope === "historical") {
@@ -1297,6 +1420,7 @@ scope.addEventListener("change", () => {
       result: current,
       focusResult: currentFocus,
       historicalResult: currentHistorical,
+      acceptanceResult: currentAcceptance,
       scope: "current",
     });
   }

@@ -300,60 +300,27 @@
       ]
     },
     "milestone-acceptance": {
-      "source_digest": "sha256:159fe5d75ffca46097aa034ebeb3c0b6cc2e5a1d1be11678d5389008f5e0a748",
+      "source_digest": "sha256:1c3fb5e271776d7c1df23bc2ae6207b6c57bfa6d718b031c24e8da2006d26a9e",
       "groups": {
         "active": [],
-        "ready": [
-          "MILESTONE_ACCEPTANCE_HISTORY",
-          "MILESTONE_ACCEPTANCE_ADAPTERS"
-        ],
-        "runnable_now": [
-          "MILESTONE_ACCEPTANCE_HISTORY",
-          "MILESTONE_ACCEPTANCE_ADAPTERS"
-        ],
+        "ready": [],
+        "runnable_now": [],
         "blocked_now": [],
-        "upcoming": [
-          "MILESTONE_ACCEPTANCE_ACCEPTANCE"
-        ],
+        "upcoming": [],
         "suspended": []
       },
-      "recommended_task_ids": [
-        "MILESTONE_ACCEPTANCE_HISTORY"
-      ],
-      "manual_selected_task_ids": [
-        "MILESTONE_ACCEPTANCE_HISTORY",
-        "MILESTONE_ACCEPTANCE_ADAPTERS"
-      ],
-      "tiers": {
-        "MILESTONE_ACCEPTANCE_HISTORY": "recommended",
-        "MILESTONE_ACCEPTANCE_ADAPTERS": "allowed"
-      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
       "joint_resource_feasible": true,
-      "ready_tasks": [
-        {
-          "id": "MILESTONE_ACCEPTANCE_HISTORY",
-          "runnable_now": true,
-          "precedence_critical": true,
-          "schedule_critical": true,
-          "total_float": "0/1",
-          "resource_rejections": []
-        },
-        {
-          "id": "MILESTONE_ACCEPTANCE_ADAPTERS",
-          "runnable_now": true,
-          "precedence_critical": false,
-          "schedule_critical": false,
-          "total_float": "1/1",
-          "resource_rejections": []
-        }
-      ],
+      "ready_tasks": [],
       "record_counts": {
-        "task_decisions": 2,
-        "decision_steps": 12,
-        "facts": 36,
-        "comparisons": 1,
-        "reasons": 8,
-        "descriptions": 3
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
+        "comparisons": 0,
+        "reasons": 1,
+        "descriptions": 0
       },
       "diagnostic_codes": [
         "PTDAG-208"

@@ -164,17 +164,8 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.equal(packageRoot.COMMAND_REGISTRY.length, 53);
   assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
-  const contract7AdapterServices = new Set([
-    "analyzeDocument",
-    "checkDocument",
-    "selectNextTasks",
-  ]);
   for (const name of Object.keys(packageRoot)) {
-    if (contract7AdapterServices.has(name)) {
-      assert.notEqual(packageRoot[name], nodeApi[name], name);
-    } else {
-      assert.equal(packageRoot[name], nodeApi[name], name);
-    }
+    assert.equal(packageRoot[name], nodeApi[name], name);
   }
 
   const [rootSources, lspSources, vscodeSources, mcpSources] = await Promise.all([
@@ -193,14 +184,14 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.equal(/vscode-language|adapters\/(?:lsp|vscode)|dist\/cli|node:child_process/u.test(mcpSources), false);
 });
 
-test("Contract 8 CLI and Contract 7 adapters preserve the explicit compatibility boundary", async () => {
+test("Contract 8 CLI and read-only adapters preserve the shared Application boundary", async () => {
   const source = await repositoryText("docs/examples/minimal.pert");
   const sourceDigest = digestText(source);
   const adapter = createPerttoolMcpAdapter();
   const cases = [
-    { tool: "perttool_check", cli: ["document", "check"], currentSchema: "Perttool.CheckResult.v5", adapterSchema: "Perttool.CheckResult.v4" },
-    { tool: "perttool_analyze", cli: ["dag", "analyze"], currentSchema: "Perttool.AnalysisResult.v6", adapterSchema: "Perttool.AnalysisResult.v5" },
-    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v7", adapterSchema: "Perttool.NextResult.v6" },
+    { tool: "perttool_check", cli: ["document", "check"], currentSchema: "Perttool.CheckResult.v5" },
+    { tool: "perttool_analyze", cli: ["dag", "analyze"], currentSchema: "Perttool.AnalysisResult.v6" },
+    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v7" },
   ];
   const mcpResults = new Map();
   for (const acceptanceCase of cases) {
@@ -214,14 +205,12 @@ test("Contract 8 CLI and Contract 7 adapters preserve the explicit compatibility
     });
     assert.equal(mcpResult.isError, false, acceptanceCase.tool);
     assert.equal(cliWire.schema_version, acceptanceCase.currentSchema);
-    assert.equal(mcpResult.structuredContent.result_schema_version, acceptanceCase.adapterSchema);
+    assert.equal(mcpResult.structuredContent.result_schema_version, acceptanceCase.currentSchema);
     assert.equal(cliWire.source_digest, sourceDigest);
     assert.equal(mcpResult.structuredContent.source.source_digest, sourceDigest);
-    const { acceptance, ...contract7Payload } = cliPayload(cliWire);
-    assert.equal(acceptance, null);
     assert.deepEqual(
       mcpResult.structuredContent.result,
-      contract7Payload,
+      cliPayload(cliWire),
       acceptanceCase.tool,
     );
     mcpResults.set(acceptanceCase.tool, mcpResult.structuredContent.result);

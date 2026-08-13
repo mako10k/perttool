@@ -172,7 +172,7 @@ async function acceptedSession(clientName) {
   const direct = rootApi.checkDocument(source);
   assert.equal(
     checked.result.structuredContent.result_schema_version,
-    "Perttool.CheckResult.v4",
+    "Perttool.CheckResult.v5",
   );
   assert.equal(checked.result.structuredContent.result.document_id, direct.documentId);
   assert.equal(checked.result.structuredContent.result.grammar_version, direct.grammarVersion);
@@ -184,6 +184,7 @@ async function acceptedSession(clientName) {
     errors: direct.summary.errors,
     warnings: direct.summary.warnings,
   });
+  assert.equal(checked.result.structuredContent.result.acceptance, null);
 
   const mismatch = await session.request(7, "tools/call", {
     name: "perttool_check",

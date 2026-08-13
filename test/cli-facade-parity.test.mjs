@@ -140,7 +140,7 @@ test("Contract 8 CLI bytes retain direct Application semantics", async () => {
   });
 });
 
-test("CLI activates milestone acceptance and retains bounded Node compatibility", () => {
+test("CLI and Node activate the same milestone acceptance services", () => {
   const help = runCli("help", "--format=json");
   const schemas = runCli("schema", "--format=json");
   assert.equal(help.status, 0, help.stderr);
@@ -153,11 +153,7 @@ test("CLI activates milestone acceptance and retains bounded Node compatibility"
   assert.equal(Object.keys(packageRoot).length, 129);
   assert.equal(Object.keys(core).length, 45);
   for (const name of Object.keys(packageRoot)) {
-    if (["checkDocument", "analyzeDocument", "selectNextTasks"].includes(name)) {
-      assert.notEqual(packageRoot[name], nodeApi[name], name);
-    } else {
-      assert.equal(packageRoot[name], nodeApi[name], name);
-    }
+    assert.equal(packageRoot[name], nodeApi[name], name);
   }
 });
 

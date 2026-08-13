@@ -1,0 +1,17 @@
+{
+  "schema_version": "Perttool.MilestoneAcceptanceAdapterCases.v1",
+  "editor_protocol_model_version": 1,
+  "editor_result_schema_version": "Perttool.MilestoneAcceptanceViewResult.v1",
+  "cases": [
+    { "id": "MAA-001", "depends_on": [], "boundary": "document session", "expected": "Grammar 7 source remains URI, generation, version, and digest bound" },
+    { "id": "MAA-002", "depends_on": ["MAA-001"], "boundary": "LSP negotiation", "expected": "separate exact version pair or method unavailable" },
+    { "id": "MAA-003", "depends_on": ["MAA-002"], "boundary": "LSP projection", "expected": "closure, acceptance, criteria, blockers, and provenance from one Application result" },
+    { "id": "MAA-004", "depends_on": ["MAA-003"], "boundary": "source navigation", "expected": "binding-checked UTF-16 ranges for milestone, set, criterion, receipt, and any retained migration" },
+    { "id": "MAA-005", "depends_on": ["MAA-003"], "boundary": "older grammar", "expected": "explicit not_applicable projection without source rewrite" },
+    { "id": "MAA-006", "depends_on": ["MAA-003"], "boundary": "stale and cancellation", "expected": "no stale or cancelled result becomes current" },
+    { "id": "MAA-007", "depends_on": ["MAA-004"], "boundary": "VSIX", "expected": "accessible state, blocker, provenance, and source actions without semantic recomputation" },
+    { "id": "MAA-008", "depends_on": ["MAA-003"], "boundary": "MCP", "expected": "Contract 8 check, analysis, and Next results retain acceptance" },
+    { "id": "MAA-009", "depends_on": ["MAA-007", "MAA-008"], "boundary": "read-only", "expected": "no acceptance mutation, Git write, editor write, or CLI subprocess" },
+    { "id": "MAA-010", "depends_on": ["MAA-009"], "boundary": "compatibility", "expected": "GraphView v1 and MCP wire v1 identities remain unchanged" }
+  ]
+}

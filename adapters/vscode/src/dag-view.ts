@@ -4,11 +4,13 @@ import type { LanguageClient } from "vscode-languageclient/node.js";
 import {
   editorProtocolModelVersion,
   findGraphEntityRange,
+  findMilestoneAcceptanceSourceRange,
   historicalWebviewPresentation,
   parseDagFocusResult,
   parseGraphViewResult,
   parseHistoricalGraphViewResult,
   parseHistoricalSourceResult,
+  parseMilestoneAcceptanceViewResult,
   parseWebviewMessage,
   type GraphViewAnalysisMode,
   type DagFocusResultV1,
@@ -16,6 +18,7 @@ import {
   type HistoricalGraphViewResultV1,
   type HistoricalSourceResultV1,
   type HistoricalWebviewPresentationV1,
+  type MilestoneAcceptanceViewResultV1,
   type WebviewToExtensionMessageV1,
 } from "./bindings.js";
 
@@ -39,6 +42,7 @@ interface DagRenderMessageV1 {
   readonly result: GraphViewResultV1 | null;
   readonly focusResult: DagFocusResultV1 | null;
   readonly historicalResult: HistoricalWebviewPresentationV1 | null;
+  readonly acceptanceResult: MilestoneAcceptanceViewResultV1 | null;
   readonly scope: "current" | "historical";
 }
 
@@ -48,6 +52,7 @@ export interface DagViewProviderOptions {
   readonly customCapabilitiesAvailable: () => boolean;
   readonly historicalCapabilitiesAvailable: () => boolean;
   readonly dagFocusCapabilitiesAvailable: () => boolean;
+  readonly milestoneAcceptanceCapabilitiesAvailable: () => boolean;
   readonly openHistoricalSource: (
     result: HistoricalSourceResultV1,
   ) => Promise<boolean>;
@@ -114,6 +119,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
   #result: GraphViewResultV1 | null = null;
   #focusResult: DagFocusResultV1 | null = null;
   #historicalResult: HistoricalGraphViewResultV1 | null = null;
+  #acceptanceResult: MilestoneAcceptanceViewResultV1 | null = null;
   #scope: "current" | "historical" = "current";
   #requestSerial = 0;
   #cancellation: vscode.CancellationTokenSource | undefined;
@@ -127,6 +133,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     result: null,
     focusResult: null,
     historicalResult: null,
+    acceptanceResult: null,
     scope: "current",
   };
 
@@ -265,10 +272,11 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#scope = "current";
     this.#result = null;
     this.#focusResult = null;
+    this.#acceptanceResult = null;
     this.#publish("loading", `Loading ${this.#mode} DAG analysis…`, null);
 
     try {
-      const [raw, rawFocus] = await Promise.all([
+      const [raw, rawFocus, rawAcceptance] = await Promise.all([
         client.sendRequest<unknown>(
           "perttool/graphView",
           {
@@ -293,6 +301,21 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
               return null;
             })
           : Promise.resolve(null),
+        this.#options.milestoneAcceptanceCapabilitiesAvailable()
+          ? client.sendRequest<unknown>(
+              "perttool/milestoneAcceptanceView",
+              {
+                textDocument: { uri: binding.uri },
+                documentVersion: binding.version,
+              },
+              cancellation.token,
+            ).catch((error: unknown) => {
+              this.#options.output.warn(
+                `Milestone acceptance request failed closed: ${String(error)}`,
+              );
+              return null;
+            })
+          : Promise.resolve(null),
       ]);
       if (serial !== this.#requestSerial || cancellation.token.isCancellationRequested) {
         return;
@@ -308,6 +331,9 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       }
       const result = parseGraphViewResult(raw);
       const focusResult = rawFocus === null ? null : parseDagFocusResult(rawFocus);
+      const acceptanceResult = rawAcceptance === null
+        ? null
+        : parseMilestoneAcceptanceViewResult(rawAcceptance);
       if (
         result === null ||
         result.document.uri !== binding.uri ||
@@ -329,6 +355,19 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
         this.#options.output.warn("DAG focus result failed closed binding validation.");
       } else {
         this.#focusResult = focusResult;
+      }
+      if (
+        acceptanceResult !== null &&
+        acceptanceResult.document.uri === binding.uri &&
+        acceptanceResult.document.generation === result.document.generation &&
+        acceptanceResult.document.version === binding.version &&
+        acceptanceResult.document.sourceDigest === result.document.sourceDigest
+      ) {
+        this.#acceptanceResult = acceptanceResult;
+      } else if (rawAcceptance !== null) {
+        this.#options.output.warn(
+          "Milestone acceptance result failed closed binding validation.",
+        );
       }
       if (result.status === "current") {
         this.#result = result;
@@ -377,6 +416,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       historicalResult: this.#historicalResult === null
         ? null
         : historicalWebviewPresentation(this.#historicalResult),
+      acceptanceResult: this.#acceptanceResult,
       scope: this.#scope,
     };
     void this.#view?.webview.postMessage(this.#presentation);
@@ -391,6 +431,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#cancellation?.cancel();
     this.#result = diagnosticResult;
     this.#focusResult = null;
+    this.#acceptanceResult = null;
     this.#historicalResult = null;
     this.#scope = "current";
     this.#publish(state, message, diagnosticResult);
@@ -432,6 +473,20 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       document.version !== message.documentVersion
     ) {
       this.#clear("stale", "The DAG action no longer matches the active document.");
+      return;
+    }
+    if (message.kind === "revealAcceptanceSource") {
+      const acceptance = this.#acceptanceResult;
+      const target = acceptance === null
+        ? null
+        : findMilestoneAcceptanceSourceRange(acceptance, message.bindingId);
+      if (target === null) return;
+      const editor = vscode.window.visibleTextEditors.find(({ document: candidate }) =>
+        candidate.uri.toString() === document.uri.toString()
+      ) ?? await vscode.window.showTextDocument(document, { preview: false });
+      const range = asRange(target);
+      editor.selection = new vscode.Selection(range.start, range.end);
+      editor.revealRange(range, vscode.TextEditorRevealType.InCenterIfOutsideViewport);
       return;
     }
     if (message.kind === "requestHistoricalGraph") {
@@ -661,6 +716,10 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       <article><h2>Next to start</h2><div id="next-tasks"></div></article>
       <article><h2>Exact time</h2><div id="time-summary"></div></article>
     </section>
+    <details id="milestone-acceptance-section">
+      <summary>Milestone outcome acceptance</summary>
+      <div id="milestone-acceptance"></div>
+    </details>
     <nav id="graph-toolbar" aria-label="DAG navigation">
       <button id="zoom-out" type="button" aria-label="Zoom out">−</button>
       <output id="zoom-level" aria-live="polite">100%</output>
@@ -695,6 +754,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#view = undefined;
     this.#result = null;
     this.#focusResult = null;
+    this.#acceptanceResult = null;
     this.#historicalResult = null;
   }
 }

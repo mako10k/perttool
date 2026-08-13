@@ -63,9 +63,13 @@ test("milestone acceptance contract fixes the separate state and version boundar
   assert.match(design, /^### Milestone outcome acceptance Contract 8 slice$/mu);
   assert.match(
     backlog,
-    /Status: Contract, source\/migration, evaluator, governed mutation,\s+acceptance-aware advance, and atomic Grammar 7 \/ Contract 8 public runtime\s+accepted \(2026-08-12\); historical reconstruction and read-only adapter\s+projection remain/u,
+    /Status: Contract, source\/migration, evaluator, governed mutation,\s+acceptance-aware advance, atomic Grammar 7 \/ Contract 8 public runtime, and\s+historical reconstruction accepted \(2026-08-12\); read-only LSP, VSIX, and MCP\s+adapter projection and final cross-surface gate accepted locally \(2026-08-13\);\s+newly reached milestone criterion declarations remain separately owner-gated/u,
   );
-  assert.match(plan, /^task MILESTONE_ACCEPTANCE_CONTRACT /mu);
+  assert.doesNotMatch(plan, /^task MILESTONE_ACCEPTANCE_CONTRACT /mu);
+  assert.match(
+    plan,
+    /task MILESTONE_ACCEPTANCE_ADAPTERS[\s\S]*?\n  status done\n/u,
+  );
 });
 
 test("criterion, receipt, governance, and assurance boundaries are closed", async () => {
@@ -146,28 +150,23 @@ test("all twenty-five contract cases are dependency ordered", async () => {
   assert.equal(cases.runtime_status, "public_active");
 });
 
-test("active runtime exposes Contract 8 while retaining Grammar 6 read compatibility", async () => {
+test("active runtime and current plan expose Contract 8 while older inputs remain readable", async () => {
   const plan = await repositoryText("plans/milestone-acceptance.pert");
   const checked = checkDocument(plan);
   assert.equal(checked.ok, true);
-  assert.equal(checked.grammarVersion, 6);
+  assert.equal(checked.grammarVersion, 7);
   assert.equal(COMMAND_REGISTRY.length, 53);
   assert.equal(getJsonSchemaCatalog().length, 23);
   assert.match(
     plan,
-    /task MILESTONE_ACCEPTANCE_CONTRACT[\s\S]*?\n  status done\n/u,
+    /task MILESTONE_ACCEPTANCE_ADAPTERS[\s\S]*?\n  status done\n/u,
   );
 
   const next = selectNextTasks(plan, {
     capacityOverrides: new Map([["DEVELOPERS", 1]]),
   });
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "MILESTONE_ACCEPTANCE_HISTORY",
-  ]);
-  assert.deepEqual(next.groups.runnableNow, ["MILESTONE_ACCEPTANCE_HISTORY"]);
-  assert.deepEqual(next.groups.ready, [
-    "MILESTONE_ACCEPTANCE_HISTORY",
-    "MILESTONE_ACCEPTANCE_ADAPTERS",
-  ]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.groups.runnableNow, []);
+  assert.deepEqual(next.groups.ready, []);
 });

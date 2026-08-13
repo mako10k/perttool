@@ -24,12 +24,12 @@ export const MCP_RESOURCE_DEFINITIONS = Object.freeze([
   Object.freeze({
     uri: "perttool://help/commands",
     name: "perttool command help",
-    description: "Complete Contract 7 command discovery.",
+    description: "Complete Contract 8 command discovery.",
   }),
   Object.freeze({
     uri: "perttool://guide/index",
     name: "perttool guide index",
-    description: "Contract 7 Guide topic index.",
+    description: "Contract 8 Guide topic index.",
   }),
   Object.freeze({
     uri: "perttool://schemas",
@@ -44,7 +44,7 @@ export const MCP_TOOL_DEFINITIONS = Object.freeze([
     title: "Check a PERT document",
     description: "Parse and validate one exact PERT document without changing it.",
     operation: "document_check",
-    resultSchemaVersion: "Perttool.CheckResult.v4",
+    resultSchemaVersion: "Perttool.CheckResult.v5",
     wireSchemaVersion: "Perttool.McpCheckResult.v1",
   }),
   Object.freeze({
@@ -52,7 +52,7 @@ export const MCP_TOOL_DEFINITIONS = Object.freeze([
     title: "Analyze a PERT document",
     description: "Compute deterministic precedence and resource analysis without changing the document.",
     operation: "dag_analyze",
-    resultSchemaVersion: "Perttool.AnalysisResult.v5",
+    resultSchemaVersion: "Perttool.AnalysisResult.v6",
     wireSchemaVersion: "Perttool.McpAnalyzeResult.v1",
   }),
   Object.freeze({
@@ -60,13 +60,13 @@ export const MCP_TOOL_DEFINITIONS = Object.freeze([
     title: "Select next PERT tasks",
     description: "Return recommendation and complete start-authority evidence without changing the document.",
     operation: "dag_next",
-    resultSchemaVersion: "Perttool.NextResult.v6",
+    resultSchemaVersion: "Perttool.NextResult.v7",
     wireSchemaVersion: "Perttool.McpNextResult.v1",
   }),
   Object.freeze({
     name: "perttool_help",
     title: "Read perttool help",
-    description: "Read deterministic Contract 7 command help or Guide content.",
+    description: "Read deterministic Contract 8 command help or Guide content.",
     operation: "command_help",
     resultSchemaVersion: "Perttool.CommandHelpResult.v1",
     wireSchemaVersion: "Perttool.McpHelpResult.v1",

@@ -275,6 +275,9 @@ The selected adapter slice is read-only. LSP, VSIX, and MCP may project
 closure, acceptance, criteria, blockers, provenance, and source navigation
 from the Application result. They add no acceptance mutation, external
 verification, semantic inference, editor write, or public extension release.
+The exact separately negotiated editor and active Contract 8 MCP boundary is
+defined by the
+[Milestone Acceptance Read-only Adapter Contract](milestone-acceptance-editor-protocol.md).
 
 ## 11. Historical reconstruction
 

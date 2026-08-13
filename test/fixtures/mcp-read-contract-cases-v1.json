@@ -45,21 +45,21 @@
     {
       "name": "perttool_check",
       "operation": "document_check",
-      "application_result_schema": "Perttool.CheckResult.v4",
+      "application_result_schema": "Perttool.CheckResult.v5",
       "mcp_result_schema": "Perttool.McpCheckResult.v1",
       "input_fields": ["source", "max_diagnostics"]
     },
     {
       "name": "perttool_analyze",
       "operation": "dag_analyze",
-      "application_result_schema": "Perttool.AnalysisResult.v5",
+      "application_result_schema": "Perttool.AnalysisResult.v6",
       "mcp_result_schema": "Perttool.McpAnalyzeResult.v1",
       "input_fields": ["source", "schedule", "capacities", "max_paths", "precision", "max_diagnostics"]
     },
     {
       "name": "perttool_next",
       "operation": "dag_next",
-      "application_result_schema": "Perttool.NextResult.v6",
+      "application_result_schema": "Perttool.NextResult.v7",
       "mcp_result_schema": "Perttool.McpNextResult.v1",
       "input_fields": ["source", "capacities", "explain_depth", "precision", "max_diagnostics"]
     },

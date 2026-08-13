@@ -89,8 +89,8 @@ The exact static resource list is:
 | URI | Name | Shared owner | Representation |
 | --- | --- | --- | --- |
 | `perttool://capabilities` | `perttool capabilities` | MCP adapter contract and neutral capability catalog | `Perttool.McpCapabilities.v1` |
-| `perttool://help/commands` | `perttool command help` | Contract 7 command registry | top-level `Perttool.CommandHelpResult.v1` projection |
-| `perttool://guide/index` | `perttool guide index` | Contract 7 Guide registry | index `Perttool.GuideResult.v1` projection |
+| `perttool://help/commands` | `perttool command help` | active Contract 8 command registry | top-level `Perttool.CommandHelpResult.v1` projection |
+| `perttool://guide/index` | `perttool guide index` | active Contract 8 Guide registry | index `Perttool.GuideResult.v1` projection |
 | `perttool://schemas` | `perttool schema catalog` | bundled schema registry | catalog `Perttool.SchemaResult.v1` projection |
 
 Every resource has media type `application/json` and returns one UTF-8 text
@@ -156,9 +156,9 @@ The exact tool list is:
 
 | Tool | Neutral operation | Application result | MCP wire result |
 | --- | --- | --- | --- |
-| `perttool_check` | `document_check` | `Perttool.CheckResult.v4` | `Perttool.McpCheckResult.v1` |
-| `perttool_analyze` | `dag_analyze` | `Perttool.AnalysisResult.v5` | `Perttool.McpAnalyzeResult.v1` |
-| `perttool_next` | `dag_next` | `Perttool.NextResult.v6` | `Perttool.McpNextResult.v1` |
+| `perttool_check` | `document_check` | `Perttool.CheckResult.v5` | `Perttool.McpCheckResult.v1` |
+| `perttool_analyze` | `dag_analyze` | `Perttool.AnalysisResult.v6` | `Perttool.McpAnalyzeResult.v1` |
+| `perttool_next` | `dag_next` | `Perttool.NextResult.v7` | `Perttool.McpNextResult.v1` |
 | `perttool_help` | `command_help` or `guide` | `Perttool.CommandHelpResult.v1` or `Perttool.GuideResult.v1` | `Perttool.McpHelpResult.v1` |
 | `perttool_schema` | `schema_lookup` | `Perttool.SchemaResult.v1` | `Perttool.McpSchemaResult.v1` |
 
@@ -184,13 +184,13 @@ authority evaluation.
 `perttool_help` has discriminator `kind`. `command` accepts nullable
 `resource` and `action`, with an action requiring a resource. `guide` accepts
 nullable `topic_id` and level `index`, `quick`, or `detail`, subject to the
-same combinations as Contract 7 Guide. It returns an explicit not-found
+same combinations as the active Contract 8 Guide. It returns an explicit not-found
 Application result rather than guessing a command or topic.
 
 `perttool_schema` accepts nullable `schema_id`, view `full` or `outline`, and
 nullable `ref`. A null schema ID permits only the default full catalog. A
 reference requires one schema ID and outline view. Only the bundled twenty-
-schema catalog is available.
+three-schema catalog is available.
 
 `warnings-as-errors`, color, text output selection, CLI source labels, and CLI
 exit statuses are adapter concerns and are not MCP semantic options. Unknown,
@@ -213,18 +213,19 @@ values in `Perttool.SchemaResult.v1`. Each MCP result has exactly:
 - a JSON-safe, closed semantic `result` projection.
 
 The adapter projection uses the shared diagnostic, exact Rational, temporal,
-actuals, assurance, recommendation, help, and schema meanings. It does not
+actuals, assurance, milestone-acceptance, recommendation, help, and schema
+meanings. It does not
 serialize CST internals, JavaScript `Map`, `bigint`, absolute paths, process
 metadata, or client metadata. MCP wire identities are adapter contracts: they
 are not aliases for CLI result identities and are not inserted into the
-twenty-schema CLI catalog.
+twenty-three-schema CLI catalog.
 
 For successful and domain-invalid calls, `structuredContent` is the complete
 MCP result and `content` contains exactly one `application/json` text
 serialization of the same object. A domain-invalid check, analysis, or next
 result keeps all bounded Domain diagnostics and uses `isError: true`; it is not
 converted into a transport error. In particular, an incomplete or truncated
-`Perttool.NextResult.v6` remains visibly incomplete or truncated and cannot be
+`Perttool.NextResult.v7` remains visibly incomplete or truncated and cannot be
 treated as start authority.
 
 Source and adapter failures use closed `Perttool.McpSourceError.v1` structured

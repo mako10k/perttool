@@ -341,6 +341,7 @@ export function projectCheckResult(result: CheckResult): JsonObject {
         },
     assurance: snakeJson(result.assurance),
     assurance_state_counts: snakeJson(result.assuranceStateCounts),
+    acceptance: snakeJson(result.acceptance),
   });
 }
 
@@ -378,6 +379,7 @@ export function projectAnalysisResult(result: AnalysisResult): JsonObject {
       : resourceJson(result.resource, result.durationUnit, result.precision),
     temporal: snakeJson(result.temporal),
     assurance: snakeJson(result.assurance),
+    acceptance: snakeJson(result.acceptance),
   });
 }
 
@@ -408,6 +410,7 @@ export function projectNextResult(result: NextResult): JsonObject {
     grammar_version: result.grammarVersion,
     temporal: snakeJson(result.temporal),
     assurance: snakeJson(result.assurance),
+    acceptance: snakeJson(result.acceptance),
   };
   if (result.durationUnit === null || result.recommendation === null) {
     return Object.freeze(common);

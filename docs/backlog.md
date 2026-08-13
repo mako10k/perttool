@@ -1789,8 +1789,9 @@ Priority: P0
 
 Status: Contract, source/migration, evaluator, governed mutation,
 acceptance-aware advance, atomic Grammar 7 / Contract 8 public runtime, and
-historical reconstruction accepted (2026-08-12); read-only adapter projection
-remains
+historical reconstruction accepted (2026-08-12); read-only LSP, VSIX, and MCP
+adapter projection and final cross-surface gate accepted locally (2026-08-13);
+newly reached milestone criterion declarations remain separately owner-gated
 
 Prevent a completed incoming task set from being treated as proof that the
 outcome named by a milestone has been accepted. Current effective-reached

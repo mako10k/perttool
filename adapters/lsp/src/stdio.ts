@@ -11,6 +11,7 @@ import {
   PerttoolProtocolError,
   type DagFocusApplicationV1,
   type HistoricalEditorApplicationV1,
+  type MilestoneAcceptanceEditorApplicationV1,
 } from "./protocol.js";
 
 function digestText(text: string): string {
@@ -48,6 +49,7 @@ export function startPerttoolStdioServer(
   options: {
     readonly historicalApplication?: HistoricalEditorApplicationV1;
     readonly dagFocusApplication?: DagFocusApplicationV1;
+    readonly milestoneAcceptanceApplication?: MilestoneAcceptanceEditorApplicationV1;
   } = {},
 ): Connection {
   const connection = createConnection(input, output);
@@ -68,6 +70,12 @@ export function startPerttoolStdioServer(
     ...(options.dagFocusApplication === undefined
       ? {}
       : { dagFocusApplication: options.dagFocusApplication }),
+    ...(options.milestoneAcceptanceApplication === undefined
+      ? {}
+      : {
+          milestoneAcceptanceApplication:
+            options.milestoneAcceptanceApplication,
+        }),
   });
 
   connection.onInitialize((params) => {
@@ -133,6 +141,13 @@ export function startPerttoolStdioServer(
   connection.onRequest("perttool/dagFocus", (params: unknown, token) =>
     protocolResult(() =>
       withCancellation(token, (signal) => server.dagFocus(params, signal))
+    )
+  );
+  connection.onRequest("perttool/milestoneAcceptanceView", (params: unknown, token) =>
+    protocolResult(() =>
+      withCancellation(token, (signal) =>
+        server.milestoneAcceptanceView(params, signal)
+      )
     )
   );
   connection.onRequest("perttool/historicalGraphView", (params: unknown, token) =>

@@ -16,9 +16,12 @@ import {
   hasAcceptedDagFocusHandshake,
   hasAcceptedEditorHandshake,
   hasAcceptedHistoricalHandshake,
+  hasAcceptedMilestoneAcceptanceHandshake,
   historicalEditorProtocolModelVersion,
   historicalGraphViewResultSchemaVersion,
   historicalSourceResultSchemaVersion,
+  milestoneAcceptanceEditorProtocolModelVersion,
+  milestoneAcceptanceViewResultSchemaVersion,
   parseEditorHelpResult,
   parseOpenHelpCommandArgs,
 } from "./bindings.js";
@@ -30,6 +33,7 @@ let client: LanguageClient | undefined;
 let customCapabilitiesAvailable = false;
 let historicalCapabilitiesAvailable = false;
 let dagFocusCapabilitiesAvailable = false;
+let milestoneAcceptanceCapabilitiesAvailable = false;
 
 class HelpContentProvider implements vscode.TextDocumentContentProvider {
   readonly #content = new Map<string, string>();
@@ -141,6 +145,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         editorHelpResultSchemaVersions: [editorHelpResultSchemaVersion],
         dagFocusProtocolModelVersions: [dagFocusProtocolModelVersion],
         dagFocusResultSchemaVersions: [dagFocusResultSchemaVersion],
+        milestoneAcceptanceEditorProtocolModelVersions: [
+          milestoneAcceptanceEditorProtocolModelVersion,
+        ],
+        milestoneAcceptanceViewResultSchemaVersions: [
+          milestoneAcceptanceViewResultSchemaVersion,
+        ],
         historicalEditorProtocolModelVersions: [
           historicalEditorProtocolModelVersion,
         ],
@@ -174,6 +184,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     customCapabilitiesAvailable: () => customCapabilitiesAvailable,
     historicalCapabilitiesAvailable: () => historicalCapabilitiesAvailable,
     dagFocusCapabilitiesAvailable: () => dagFocusCapabilitiesAvailable,
+    milestoneAcceptanceCapabilitiesAvailable: () =>
+      milestoneAcceptanceCapabilitiesAvailable,
     openHistoricalSource: (result) => historical.open(result),
     output,
   });
@@ -273,6 +285,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     historicalCapabilitiesAvailable =
       hasAcceptedHistoricalHandshake(experimental);
     dagFocusCapabilitiesAvailable = hasAcceptedDagFocusHandshake(experimental);
+    milestoneAcceptanceCapabilitiesAvailable =
+      hasAcceptedMilestoneAcceptanceHandshake(experimental);
     if (!customCapabilitiesAvailable) {
       output.warn(
         "Custom perttool Help and DAG capabilities are unavailable: incompatible editor protocol handshake.",
@@ -286,6 +300,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     if (!dagFocusCapabilitiesAvailable) {
       output.warn(
         "DAG focus capability is unavailable: incompatible focus protocol handshake.",
+      );
+    }
+    if (!milestoneAcceptanceCapabilitiesAvailable) {
+      output.warn(
+        "Milestone acceptance capability is unavailable: incompatible editor handshake.",
       );
     }
     dag.scheduleRefresh(0);
@@ -303,5 +322,6 @@ export async function deactivate(): Promise<void> {
   customCapabilitiesAvailable = false;
   historicalCapabilitiesAvailable = false;
   dagFocusCapabilitiesAvailable = false;
+  milestoneAcceptanceCapabilitiesAvailable = false;
   if (running !== undefined) await running.stop();
 }

@@ -45,6 +45,8 @@ function rewriteReferences(
     if (key === "$ref" && typeof child === "string") {
       if (child.startsWith("Perttool.Common.v1.schema.json#/$defs/")) {
         result[key] = `#/$defs/${commonPrefix}${child.slice(child.lastIndexOf("/") + 1)}`;
+      } else if (child.startsWith("Perttool.MilestoneAcceptanceResult.v1.schema.json#/$defs/")) {
+        result[key] = `#/$defs/acceptance_${child.slice(child.lastIndexOf("/") + 1)}`;
       } else if (child.startsWith("#/$defs/")) {
         result[key] = `#/$defs/${common ? commonPrefix : localPrefix}${child.slice(8)}`;
       } else if (child === "https://json-schema.org/draft/2020-12/schema") {
@@ -68,15 +70,8 @@ function publicSemanticSchema(
   schemaId: string,
   prefix: string,
 ): SemanticSchemaLayer {
-  const activeSchemaId = schemaId === "Perttool.CheckResult.v4"
-    ? "Perttool.CheckResult.v5"
-    : schemaId === "Perttool.AnalysisResult.v5"
-      ? "Perttool.AnalysisResult.v6"
-      : schemaId === "Perttool.NextResult.v6"
-        ? "Perttool.NextResult.v7"
-        : schemaId;
-  const source = getJsonSchema(activeSchemaId);
-  if (source === null) throw new Error(`unavailable public schema: ${activeSchemaId}`);
+  const source = getJsonSchema(schemaId);
+  if (source === null) throw new Error(`unavailable public schema: ${schemaId}`);
   const cloned = cloneJson(source);
   if (!isObject(cloned)) throw new Error(`invalid public schema: ${schemaId}`);
   const sourceProperties = cloned["properties"];
@@ -91,16 +86,14 @@ function publicSemanticSchema(
   }
   const properties = Object.fromEntries(
     Object.entries(sourceProperties).filter(([key]) =>
-      !facadeFields.has(key) &&
-      !(activeSchemaId !== schemaId && key === "acceptance")
+      !facadeFields.has(key)
     ),
   ) as { [key: string]: MutableJson };
   const semantic: MutableJson = {
     type: "object",
     required: sourceRequired.filter((key): key is string =>
       typeof key === "string" &&
-      !facadeFields.has(key) &&
-      !(activeSchemaId !== schemaId && key === "acceptance")
+      !facadeFields.has(key)
     ),
     properties,
     additionalProperties: false,
@@ -137,6 +130,24 @@ function commonDefinitions(): Readonly<Record<string, MutableJson>> {
     Object.entries(definitions).map(([key, value]) => [
       `common_${key}`,
       rewriteReferences(value, "", "common_", true),
+    ]),
+  );
+}
+
+function acceptanceDefinitions(): Readonly<Record<string, MutableJson>> {
+  const source = getJsonSchema("Perttool.MilestoneAcceptanceResult.v1");
+  if (source === null) {
+    throw new Error("unavailable public milestone acceptance schema");
+  }
+  const cloned = cloneJson(source);
+  const definitions = isObject(cloned) ? cloned["$defs"] : undefined;
+  if (!isObject(cloned) || definitions === undefined || !isObject(definitions)) {
+    throw new Error("invalid public milestone acceptance schema");
+  }
+  return Object.fromEntries(
+    Object.entries(definitions).map(([key, value]) => [
+      `acceptance_${key}`,
+      rewriteReferences(value, "acceptance_", "common_", false),
     ]),
   );
 }
@@ -237,6 +248,7 @@ function toolOutputSchema(name: McpToolName): McpJsonSchema {
   };
   const definitions = {
     ...commonDefinitions(),
+    ...acceptanceDefinitions(),
     ...Object.assign({}, ...layers.map(({ definitions: value }) => value)),
   };
   return Object.freeze({

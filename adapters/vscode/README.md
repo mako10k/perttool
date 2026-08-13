@@ -18,6 +18,11 @@ the HEAD first-parent lineage with complete analysis; endpoint/lower-boundary,
 snapshot/proved-lineage/timeline, and four-mode analysis controls remain under
 progressive disclosure. Historical source actions open
 verified immutable `perttool-history` documents rather than worktree ranges.
+The separately negotiated milestone-acceptance result presents graph closure,
+criterion acceptance, blockers, and caller-asserted receipt provenance from the
+shared Contract 8 Application service. Its source actions resolve only retained
+current-document binding IDs; the Webview neither evaluates acceptance nor
+receives filesystem paths.
 
 The extension does not parse or analyze `.pert` itself. Its bundled server may
 perform bounded read-only Git discovery and immutable object reads only for an

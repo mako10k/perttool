@@ -3649,6 +3649,26 @@ proves the temporary-link and isolated-package boundaries while retaining
 older documents as read-only inputs. Historical reconstruction and read-only
 adapter projection remain separate successor tasks.
 
+The accepted historical successor reconstructs checkpoint-specific criterion
+sets, receipts, acceptance, and canonical-advance proof without inferring
+evidence. The accepted read-only adapter successor is fixed by the
+[Milestone Acceptance Read-only Adapter Contract](specs/milestone-acceptance-editor-protocol.md).
+It injects one coordinate-compatible Grammar 7 session preparation into the
+existing LSP cache, negotiates a separate digest- and version-bound acceptance
+result, and maps only Application-owned source spans to UTF-16 ranges. The
+VSIX validates and presents that result with accessible source actions. MCP
+keeps its four resources, five tools, and wire v1 envelopes while its semantic
+payloads advance to the active Contract 8 check, analysis, and Next results.
+The root and Node facades now have identical names and runtime values. None of
+these adapters gains acceptance mutation, editor write, Git write, external
+verification, or release authority.
+
+The final cross-surface gate composes all accepted records, private adapters,
+supported-host execution, temporary linking, and isolated package behavior.
+Completing its PERT task reaches the final graph milestone but does not itself
+declare or verify milestone outcome criteria. Those governed source mutations,
+canonical plan advance, and release selection remain separate operations.
+
 ## 18. Matters for detailed design
 
 The [Conditional Plan Assurance Contract](specs/plan-assurance.md)

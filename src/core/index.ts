@@ -160,5 +160,6 @@ export type {
   DocumentSnapshot,
   DocumentSnapshotInput,
   DocumentSnapshotOptions,
+  DocumentSnapshotPreparation,
   DocumentSourceDigest,
 } from "../session/document-session.js";

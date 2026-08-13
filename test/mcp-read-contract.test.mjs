@@ -78,9 +78,9 @@ test("MCP resources and tools are exact, closed, and read only", async () => {
     openWorldHint: false,
   });
   assert.deepEqual(cases.tools.map(({ application_result_schema }) => application_result_schema), [
-    "Perttool.CheckResult.v4",
-    "Perttool.AnalysisResult.v5",
-    "Perttool.NextResult.v6",
+    "Perttool.CheckResult.v5",
+    "Perttool.AnalysisResult.v6",
+    "Perttool.NextResult.v7",
     "Perttool.CommandHelpResult.v1|Perttool.GuideResult.v1",
     "Perttool.SchemaResult.v1",
   ]);

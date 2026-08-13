@@ -1,10 +1,14 @@
 import type { Range } from "vscode-languageserver/node.js";
+import type { Diagnostic } from "perttool/core";
 
 export const EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
 export const GRAPH_VIEW_SCHEMA_VERSION = "Perttool.GraphViewResult.v1" as const;
 export const EDITOR_HELP_SCHEMA_VERSION = "Perttool.EditorHelpResult.v1" as const;
 export const DAG_FOCUS_PROTOCOL_MODEL_VERSION = 1 as const;
 export const DAG_FOCUS_SCHEMA_VERSION = "Perttool.DagFocusResult.v1" as const;
+export const MILESTONE_ACCEPTANCE_EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
+export const MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION =
+  "Perttool.MilestoneAcceptanceViewResult.v1" as const;
 export const HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
 export const HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION =
   "Perttool.HistoricalGraphViewResult.v1" as const;
@@ -33,6 +37,10 @@ export interface PerttoolInitializationOptionsV1 {
     readonly dagFocusResultSchemaVersions?: readonly [
       "Perttool.DagFocusResult.v1",
     ];
+    readonly milestoneAcceptanceEditorProtocolModelVersions?: readonly [1];
+    readonly milestoneAcceptanceViewResultSchemaVersions?: readonly [
+      "Perttool.MilestoneAcceptanceViewResult.v1",
+    ];
     readonly historicalEditorProtocolModelVersions?: readonly [1];
     readonly historicalGraphViewResultSchemaVersions?: readonly [
       "Perttool.HistoricalGraphViewResult.v1",
@@ -55,6 +63,9 @@ export interface PerttoolExperimentalCapabilitiesV1 {
     readonly graphViewAnalysisModes: readonly GraphViewAnalysisMode[];
     readonly dagFocusProtocolModelVersion?: 1;
     readonly dagFocusResultSchemaVersion?: "Perttool.DagFocusResult.v1";
+    readonly milestoneAcceptanceEditorProtocolModelVersion?: 1;
+    readonly milestoneAcceptanceViewResultSchemaVersion?:
+      "Perttool.MilestoneAcceptanceViewResult.v1";
     readonly historicalEditorProtocolModelVersion?: 1;
     readonly historicalGraphViewResultSchemaVersion?:
       "Perttool.HistoricalGraphViewResult.v1";
@@ -255,6 +266,98 @@ export interface DagFocusResultV1 {
   readonly focus: DagFocusProjectionV1 | null;
 }
 
+export interface MilestoneAcceptanceViewParamsV1 {
+  readonly textDocument: { readonly uri: string };
+  readonly documentVersion: number;
+}
+
+export interface MilestoneAcceptanceSourceBindingV1 {
+  readonly bindingId: string;
+  readonly declarationKind:
+    | "milestone"
+    | "milestone_criterion_set"
+    | "criterion"
+    | "milestone_acceptance_receipt"
+    | "milestone_acceptance_migration";
+  readonly sourceId: string;
+  readonly ownerMilestoneId: string | null;
+  readonly ownerCriterionId: string | null;
+  readonly range: Range;
+}
+
+export interface MilestoneAcceptanceCriterionViewV1 {
+  readonly criterionId: string;
+  readonly description: string;
+  readonly required: boolean;
+  readonly evidenceKind: "test" | "command" | "artifact" | "observation" | "owner";
+  readonly commitment: `sha256:${string}`;
+  readonly state: "pending" | "satisfied" | "failed" | "unavailable" | "waived";
+  readonly effectiveReceiptId: string | null;
+  readonly evidenceReference: string | null;
+  readonly evidenceRevision: string | null;
+  readonly verifier: string | null;
+  readonly assertedAt: string | null;
+  readonly waiverReason: string | null;
+  readonly revokedReceiptIds: readonly string[];
+  readonly criterionBindingId: string;
+  readonly effectiveReceiptBindingId: string | null;
+  readonly revokedReceiptBindingIds: readonly string[];
+}
+
+export interface MilestoneAcceptanceMilestoneViewV1 {
+  readonly milestoneId: string;
+  readonly title: string;
+  readonly closure: "unreached" | "reached";
+  readonly acceptance:
+    | "not_applicable"
+    | "not_declared"
+    | "pending"
+    | "accepted"
+    | "failed"
+    | "unavailable";
+  readonly grandfathered: boolean;
+  readonly criterionSetId: string | null;
+  readonly criterionRevisionId: string | null;
+  readonly criterionSetCommitment: `sha256:${string}` | null;
+  readonly criteria: readonly MilestoneAcceptanceCriterionViewV1[];
+  readonly blockingRequiredCriterionIds: readonly string[];
+  readonly milestoneBindingId: string;
+  readonly criterionSetBindingId: string | null;
+}
+
+export interface MilestoneAcceptanceMigrationViewV1 {
+  readonly migrationId: string;
+  readonly repositoryId: string;
+  readonly path: string;
+  readonly objectFormat: "sha1" | "sha256";
+  readonly head: string;
+  readonly blob: string;
+  readonly sourceDigest: `sha256:${string}`;
+  readonly candidateDigest: `sha256:${string}`;
+  readonly grandfatheredMilestoneIds: readonly string[];
+  readonly sourceBindingId: string;
+}
+
+export interface MilestoneAcceptanceViewProjectionV1 {
+  readonly modelVersion: 1;
+  readonly grammarVersion: number;
+  readonly availability: "available" | "not_applicable";
+  readonly milestones: readonly MilestoneAcceptanceMilestoneViewV1[];
+  readonly migration: MilestoneAcceptanceMigrationViewV1 | null;
+  readonly sourceBindings: readonly MilestoneAcceptanceSourceBindingV1[];
+}
+
+export interface MilestoneAcceptanceViewResultV1 {
+  readonly schemaVersion: typeof MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION;
+  readonly milestoneAcceptanceEditorProtocolModelVersion:
+    typeof MILESTONE_ACCEPTANCE_EDITOR_PROTOCOL_MODEL_VERSION;
+  readonly document: GraphViewResultV1["document"];
+  readonly status: "current" | "invalid" | "unavailable";
+  readonly complete: boolean;
+  readonly reason: string | null;
+  readonly acceptance: MilestoneAcceptanceViewProjectionV1 | null;
+}
+
 export interface HistoricalGraphViewParamsV1 {
   readonly textDocument: { readonly uri: string };
   readonly documentVersion: number;
@@ -408,6 +511,20 @@ export interface DagFocusApplicationV1 {
     text: string,
     expectedSourceDigest: `sha256:${string}`,
   ) => DagFocusApplicationInspectionV1 | PromiseLike<DagFocusApplicationInspectionV1>;
+}
+
+export interface MilestoneAcceptanceEditorApplicationV1 {
+  readonly prepareDocument: (
+    text: string,
+    maxDiagnostics: number,
+  ) => {
+    readonly analysisText: string;
+    readonly diagnostics: readonly Diagnostic[];
+  };
+  readonly inspect: (
+    text: string,
+    expectedSourceDigest: `sha256:${string}`,
+  ) => unknown | PromiseLike<unknown>;
 }
 
 export class PerttoolProtocolError extends Error {

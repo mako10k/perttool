@@ -71,11 +71,7 @@ test("Node Host is additive while root and Node facades remain identical", async
   assert.equal(Object.keys(core).length, cases.target.core_runtime_exports);
   assert.deepEqual(Object.keys(nodeApi), Object.keys(packageRoot));
   for (const name of Object.keys(packageRoot)) {
-    if (["checkDocument", "analyzeDocument", "selectNextTasks"].includes(name)) {
-      assert.notEqual(nodeApi[name], packageRoot[name], name);
-    } else {
-      assert.equal(nodeApi[name], packageRoot[name], name);
-    }
+    assert.equal(nodeApi[name], packageRoot[name], name);
   }
   assert.equal(typeof packageRoot.createNodeHost, "function");
   assert.equal("createNodeHost" in core, false);

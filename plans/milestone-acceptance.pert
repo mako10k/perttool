@@ -95,6 +95,7 @@ task MILESTONE_ACCEPTANCE_ADAPTERS MILESTONE_ACCEPTANCE_PUBLIC_READY -> MILESTON
   title "Project milestone acceptance through read-only adapters"
   description "Extend document sessions, LSP, VSIX and MCP read results with exact closure, acceptance, criterion, blocker and provenance projections from the shared Application service. Add navigation and accessible presentation without implementing acceptance mutations, external verification, semantic recomputation, source writes, public VSIX release or MCP history."
   duration 5p
+  status done
   priority 65
   requires:
     DEVELOPERS 1
@@ -110,6 +111,7 @@ task MILESTONE_ACCEPTANCE_ACCEPTANCE MILESTONE_ACCEPTANCE_INTEGRATED -> MILESTON
   title "Accept milestone outcome acceptance across all surfaces"
   description "Trace the complete normative matrix through Grammar 7 source preservation, migration, evaluator, governance, every receipt lifecycle, all-or-nothing advance, assurance and history guards, old documents, joins and multiple affected milestones, CLI, schemas, Help, Guide, package root, temporary link, isolated package, LSP, VSIX and MCP. Prove no release, publication, remote, Issue, external-service or plan-advance side effect."
   duration 5p
+  status done
   priority 60
   requires:
     DEVELOPERS 1
@@ -160,3 +162,60 @@ milestone_acceptance_receipt MAC_HISTORY_ACCEPTED:
   evidence_revision 6e0bd91915411dd8becb3a85037fcafbbea81ef9
   verifier codex
   occurred_at 2026-08-12T13:03:35Z
+
+milestone_criterion_set MAC_ADAPTER_R1:
+  milestone MILESTONE_ACCEPTANCE_ADAPTER_READY
+  revision R1
+  commitment sha256:020a8dad0cde945b54f450a54a843ba821a13077f791bf2150bd49a808ba8a94
+  criterion ACCEPTED required artifact "Accepted read-only LSP, VSIX, and MCP adapter projection"
+
+milestone_acceptance_receipt MAC_ADAPTER_ACCEPTED:
+  model 1
+  set MAC_ADAPTER_R1
+  set_commitment sha256:020a8dad0cde945b54f450a54a843ba821a13077f791bf2150bd49a808ba8a94
+  criterion ACCEPTED
+  criterion_commitment sha256:b2c533833d732a33f4b9bb4a408304d289f5a7329c8a66f481a0f88446b977cb
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-adapter-acceptance.md"
+  evidence_revision none
+  verifier codex
+  occurred_at 2026-08-13T02:13:56Z
+
+milestone_criterion_set MAC_INTEGRATED_R1:
+  milestone MILESTONE_ACCEPTANCE_INTEGRATED
+  revision R1
+  commitment sha256:45d48f638158ee0f414e83eea278ca2c7d7f4185a0a1d403402630d319b92407
+  criterion ACCEPTED required artifact "Accepted history and read-only adapter integration"
+
+milestone_criterion_set MAC_ACCEPTED_R1:
+  milestone MILESTONE_ACCEPTANCE_ACCEPTED
+  revision R1
+  commitment sha256:ac28e9ee36fb7c0487163821aaa35d4a5c2c2d24ee0281ebfea26d9a713b41ad
+  criterion ACCEPTED required artifact "Accepted milestone outcome acceptance across all surfaces"
+
+milestone_acceptance_receipt MAC_INTEGRATED_ACCEPTED:
+  model 1
+  set MAC_INTEGRATED_R1
+  set_commitment sha256:45d48f638158ee0f414e83eea278ca2c7d7f4185a0a1d403402630d319b92407
+  criterion ACCEPTED
+  criterion_commitment sha256:d211a812fe3ec304f49a0550e8e717b9af0c4c9522e7820c7105d814e18865ab
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-acceptance.md"
+  evidence_revision none
+  verifier codex
+  occurred_at 2026-08-13T02:25:26Z
+
+milestone_acceptance_receipt MAC_FINAL_ACCEPTED:
+  model 1
+  set MAC_ACCEPTED_R1
+  set_commitment sha256:ac28e9ee36fb7c0487163821aaa35d4a5c2c2d24ee0281ebfea26d9a713b41ad
+  criterion ACCEPTED
+  criterion_commitment sha256:57348d62f4384ac32f14837ad808d881655405c840f7a07abf80098375123465
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/milestone-acceptance-acceptance.md"
+  evidence_revision none
+  verifier codex
+  occurred_at 2026-08-13T02:25:26Z

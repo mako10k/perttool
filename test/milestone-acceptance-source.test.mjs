@@ -103,18 +103,14 @@ test("source capability remains internal while Contract 8 catalogs are active", 
   assert.equal(root.checkDocument(base).grammarVersion, 6);
 });
 
-test("accepted public activation leaves history and adapters startable", async () => {
+test("completed milestone acceptance workstream has no startable task", async () => {
   const root = await import("../dist/index.js");
   const plan = await readFile(new URL("../plans/milestone-acceptance.pert", import.meta.url), "utf8");
-  assert.match(plan, /task MILESTONE_ACCEPTANCE_SOURCE[\s\S]*?\n  status done\n/u);
+  assert.doesNotMatch(plan, /task MILESTONE_ACCEPTANCE_SOURCE\b/u);
+  assert.doesNotMatch(plan, /task MILESTONE_ACCEPTANCE_HISTORY\b/u);
   const next = root.selectNextTasks(plan);
-  assert.deepEqual(next.groups.ready, [
-    "MILESTONE_ACCEPTANCE_HISTORY",
-    "MILESTONE_ACCEPTANCE_ADAPTERS",
-  ]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, [
-    "MILESTONE_ACCEPTANCE_HISTORY",
-  ]);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
 });
 
 test("all twelve source cases are dependency ordered", async () => {
