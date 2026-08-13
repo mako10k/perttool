@@ -2060,6 +2060,12 @@ Stage 1 entry evidence:
   heuristic resource makespans and zero delay. Complete NextResult v7
   recommends only `RELEASE_090_ACCEPTANCE`; durable acceptance, `latest`,
   public VSIX publication, and plan advance remain separate.
+- `v0.9.0` durable acceptance: independent Git, CI, GitHub, npm, artifact,
+  exact and beta installation, rollback, Grammar 1 through 7, Contract 8,
+  milestone-acceptance, historical, migration, export, schema, and private-
+  adapter-exclusion checks passed. All six tasks and 22p are complete with
+  zero makespans; complete NextResult v7 has no ready, recommended, or
+  startable task. npm `latest=0.8.1` and absent `alpha` remain unchanged.
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-eight current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes

@@ -119,6 +119,7 @@ task RELEASE_090_ACCEPTANCE RELEASE_090_PUBLISHED -> RELEASE_090_ACCEPTED:
   title "Record durable 0.9.0 beta acceptance"
   description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball bytes, registry integrity and metadata, exact and beta isolated installation, Grammar 7, Contract 8, 53 commands, 23 schemas, 129 root and Node exports, 45 Core exports, milestone acceptance, historical reconstruction, private-adapter exclusion, compatibility, migration, and rollback pin 0.8.1. Record evidence without changing npm latest, publishing a VSIX, advancing a plan, or mutating an Issue."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
