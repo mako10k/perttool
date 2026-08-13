@@ -137,3 +137,117 @@ task RELEASE_090_ACCEPTANCE RELEASE_090_PUBLISHED -> RELEASE_090_ACCEPTED:
     REVIEWERS 1
     RELEASE_SURFACE 1
     PACKAGE_SURFACE 1
+
+milestone_criterion_set RELEASE_090_GATE_R1:
+  milestone RELEASE_090_GATE_ACCEPTED
+  revision R1
+  commitment sha256:a39ef6f4397847f2b990f292063320eccb61d37285797d16923c1bc3504077de
+  criterion GATE_ACCEPTED required artifact "Accepted version 0.9.0 release gate"
+
+milestone_acceptance_receipt RELEASE_090_GATE_EVIDENCE:
+  model 1
+  set RELEASE_090_GATE_R1
+  set_commitment sha256:a39ef6f4397847f2b990f292063320eccb61d37285797d16923c1bc3504077de
+  criterion GATE_ACCEPTED
+  criterion_commitment sha256:8c8b02a0b26cae32948b2d7747a68ec1ec9d9d64b04622934205167e94f3173b
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.0-gate-design.md"
+  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
+  verifier codex
+  occurred_at 2026-08-13T06:54:55Z
+
+milestone_criterion_set RELEASE_090_INPUTS_R1:
+  milestone RELEASE_090_INPUTS_READY
+  revision R1
+  commitment sha256:f96ec56869dcb8fb77f133d2f1809cc7ec7c83b2413630ff1a8e83a2db84e14e
+  criterion INPUTS_ACCEPTED required artifact "Accepted version 0.9.0 release inputs"
+
+milestone_acceptance_receipt RELEASE_090_INPUTS_EVIDENCE:
+  model 1
+  set RELEASE_090_INPUTS_R1
+  set_commitment sha256:f96ec56869dcb8fb77f133d2f1809cc7ec7c83b2413630ff1a8e83a2db84e14e
+  criterion INPUTS_ACCEPTED
+  criterion_commitment sha256:5ed3f28b5ed4a3ab3f498bc71ce79ddd9d1c67c6e66c9d0ee83b9eb7cc13868b
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.0-input-readiness.md"
+  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
+  verifier codex
+  occurred_at 2026-08-13T06:54:55Z
+
+milestone_criterion_set RELEASE_090_SOURCE_R1:
+  milestone RELEASE_090_SOURCE_PREPARED
+  revision R1
+  commitment sha256:dee82aa61498a052c94d1dc3430b84a9aaa30784de42153e7c1a7d6b3436a2c7
+  criterion SOURCE_ACCEPTED required artifact "Accepted version 0.9.0 prepared source"
+
+milestone_acceptance_receipt RELEASE_090_SOURCE_EVIDENCE:
+  model 1
+  set RELEASE_090_SOURCE_R1
+  set_commitment sha256:dee82aa61498a052c94d1dc3430b84a9aaa30784de42153e7c1a7d6b3436a2c7
+  criterion SOURCE_ACCEPTED
+  criterion_commitment sha256:8a094cb0e6110e4b85d5c4354003f5461f4ae73cbc8128bbd5359c3299c239b2
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.0-preparation.md"
+  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
+  verifier codex
+  occurred_at 2026-08-13T06:54:55Z
+
+milestone_criterion_set RELEASE_090_CANDIDATE_R1:
+  milestone RELEASE_090_CANDIDATE_ACCEPTED
+  revision R1
+  commitment sha256:5946b2b0290708fc80925bcb61bd5d5206b64444e1cca57af4eecc554e9acb5e
+  criterion CANDIDATE_ACCEPTED required artifact "Accepted immutable version 0.9.0 candidate"
+
+milestone_acceptance_receipt RELEASE_090_CANDIDATE_EVIDENCE:
+  model 1
+  set RELEASE_090_CANDIDATE_R1
+  set_commitment sha256:5946b2b0290708fc80925bcb61bd5d5206b64444e1cca57af4eecc554e9acb5e
+  criterion CANDIDATE_ACCEPTED
+  criterion_commitment sha256:cb9d6c6e1d4e2a588b7ce8396704fafff16c5b4b6c303af1690676eb42d68e61
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.0-candidate.md"
+  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
+  verifier codex
+  occurred_at 2026-08-13T06:54:55Z
+
+milestone_criterion_set RELEASE_090_PUBLISH_R1:
+  milestone RELEASE_090_PUBLISHED
+  revision R1
+  commitment sha256:56491edf6c970fc15863aad394853a996a702fc5e91265b3b7d3d2f25c724ec3
+  criterion PUBLISH_ACCEPTED required artifact "Accepted version 0.9.0 beta publication"
+
+milestone_acceptance_receipt RELEASE_090_PUBLISH_EVIDENCE:
+  model 1
+  set RELEASE_090_PUBLISH_R1
+  set_commitment sha256:56491edf6c970fc15863aad394853a996a702fc5e91265b3b7d3d2f25c724ec3
+  criterion PUBLISH_ACCEPTED
+  criterion_commitment sha256:8b1e00439e04b20bd4fda805d8b63f19d2116ccb214c5079ebd0bf8c5db3e503
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.0-publish.md"
+  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
+  verifier codex
+  occurred_at 2026-08-13T06:54:55Z
+
+milestone_criterion_set RELEASE_090_ACCEPTANCE_R1:
+  milestone RELEASE_090_ACCEPTED
+  revision R1
+  commitment sha256:78572eaaece70ebefa40613e5334eaa51a1efdfdc936e787635d4a6c0a1a2f66
+  criterion RELEASE_ACCEPTED required artifact "Accepted durable version 0.9.0 release"
+
+milestone_acceptance_receipt RELEASE_090_ACCEPTANCE_EVIDENCE:
+  model 1
+  set RELEASE_090_ACCEPTANCE_R1
+  set_commitment sha256:78572eaaece70ebefa40613e5334eaa51a1efdfdc936e787635d4a6c0a1a2f66
+  criterion RELEASE_ACCEPTED
+  criterion_commitment sha256:395889e7f7bb0efcd24ccdf0be427016467a7d380bf738d46207037eb0abb2a2
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.0-release-acceptance.md"
+  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
+  verifier codex
+  occurred_at 2026-08-13T06:54:55Z
