@@ -1,6 +1,6 @@
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
 project RELEASE_090:
-  version 6
+  version 7
   title "perttool 0.9.0 milestone acceptance beta release"
   description "Release suffix-free 0.9.0 beta as the first Grammar 7 and CLI Contract 8 public boundary after 0.8.1. Publish milestone criterion sets, caller-asserted receipts, committed migration provenance, acceptance-aware analysis, Next and canonical advance, historical milestone acceptance, and the accepted read-only adapter projections. Retain public Core and Node subpaths while excluding private LSP, VSIX, and MCP workspaces. Candidate acceptance, push, tag, GitHub prerelease, npm beta publication, latest promotion, plan advance, and Issue mutation remain separately gated."
   as_of 2026-08-13
@@ -10,6 +10,17 @@ project RELEASE_090:
   goal_owner user
   dag_owner user
 
+
+milestone_acceptance_migration GRAMMAR_7_BASELINE:
+  model 1
+  repository git:sha1:4a78e586525e526d34ae8956efce8f1f1c4cd771:index:29614dac5f6b6bf823a2e584100fb80494b37d36
+  path "plans/release-0.9.0.pert"
+  object_format sha1
+  head 4a78e586525e526d34ae8956efce8f1f1c4cd771
+  blob 29614dac5f6b6bf823a2e584100fb80494b37d36
+  source_digest sha256:0fdc2a843bb6cc40f6e8e97bc3d327bae10c26128aa060546c0fb3450f9c77a2
+  candidate_digest sha256:3fb812df577e43b95217e17e0055c0116be38e8ddbf5f243a213c08a10adcb39
+  grandfathered RELEASE_090_PLANNING_STARTED
 milestone RELEASE_090_PLANNING_STARTED:
   title "Version 0.9.0 release planning started"
   state reached
