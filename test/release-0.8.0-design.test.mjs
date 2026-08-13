@@ -173,12 +173,12 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
   const lockfile = JSON.parse(lockfileText);
   const lspManifest = JSON.parse(lspManifestText);
   const mcpManifest = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.8.0");
-  assert.equal(lockfile.version, "0.8.0");
-  assert.equal(lockfile.packages[""].version, "0.8.0");
-  assert.equal(lspManifest.peerDependencies.perttool, "0.8.0");
-  assert.equal(mcpManifest.peerDependencies.perttool, "0.8.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.8\.0"/u);
+  assert.equal(manifest.version, "0.8.1");
+  assert.equal(lockfile.version, "0.8.1");
+  assert.equal(lockfile.packages[""].version, "0.8.1");
+  assert.equal(lspManifest.peerDependencies.perttool, "0.8.1");
+  assert.equal(mcpManifest.peerDependencies.perttool, "0.8.1");
+  assert.match(versionSource, /TOOL_VERSION = "0\.8\.1"/u);
   assert.match(changelog, /^## \[0\.8\.0\] - 2026-08-07$/m);
   assert.match(readme, /package=perttool@0\.8\.1/u);
   assert.match(readme, /use\s+`0\.8\.0` as the exact rollback pin/u);
