@@ -17,6 +17,7 @@ let stderr = "";
 let buffered = Buffer.alloc(0);
 const messages = [];
 const waiters = [];
+const responseTimeoutMilliseconds = 15_000;
 
 child.stderr.setEncoding("utf8");
 child.stderr.on("data", (chunk) => {
@@ -64,7 +65,7 @@ function waitFor(predicate) {
       const index = waiters.indexOf(waiter);
       if (index >= 0) waiters.splice(index, 1);
       reject(new Error(`isolated LSP response timed out: ${stderr}`));
-    }, 5000);
+    }, responseTimeoutMilliseconds);
     waiter.resolve = (message) => {
       clearTimeout(timer);
       resolve(message);

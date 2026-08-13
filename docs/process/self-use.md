@@ -2044,6 +2044,14 @@ Stage 1 entry evidence:
   Both makespans are 22p with zero delay, and complete NextResult v6 makes
   startable only `RELEASE_080_GATE_DESIGN`. Release preparation, publication,
   npm `latest`, VSIX publication, and plan advance remain separate.
+- `v0.9.0` candidate acceptance: clean source commit `5cb7bc8` passed the
+  complete Node.js 22 gate and produced one retained 713-file candidate at
+  SHA-256 `88e51bfe...37345e7`. Its exact installed package exposes Grammar 7,
+  CLI Contract 8, 53 commands, 23 schemas, 129 identical root and Node exports,
+  and 45 Core exports. Four tasks and 16p are complete; 6p remain with matching
+  precedence and heuristic resource makespans and zero resource delay.
+  Complete NextResult v7 recommends only `RELEASE_090_PUBLISH`, but
+  publication and every external write remain separately authorized.
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-eight current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes

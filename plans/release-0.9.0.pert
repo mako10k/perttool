@@ -96,6 +96,7 @@ task RELEASE_090_CANDIDATE RELEASE_090_SOURCE_PREPARED -> RELEASE_090_CANDIDATE_
   title "Accept one clean 0.9.0 release candidate"
   description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.8.1 with no alpha and verify authenticated routes; build one immutable tarball outside the worktree; and accept its timestamp, sizes, file count, digests, public package inventory, installed Contract 8 behavior, and migration regressions. This task performs no external write."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
