@@ -725,7 +725,7 @@ const nodes: readonly HelpNode[] = [
       {
         id: "read-only-observation",
         title: "Read-only history and observation",
-        body: "project history reconstructs first-parent evidence without changing Git. project observe-velocity reports exact, qualified candidates separately from project.velocity and never adopts one automatically.",
+        body: "project history reconstructs first-parent evidence without changing Git. project observe-velocity uses the exact current operand for declared evidence, the selected first-parent revision for git-recorded evidence, and keeps both separate for all. It reports exact, qualified candidates separately from project.velocity and never adopts one automatically.",
       },
     ],
     detail: [

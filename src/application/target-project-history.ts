@@ -18,6 +18,7 @@ import type {
   GitHistoryProbeFailure,
   GitHistoryProbeRequest,
   GitHistoryProbeOutcome,
+  GitHistoryProbeResult,
 } from "../history/git-probe.js";
 import { probeGitHistory } from "../history/git-probe.js";
 import type { TargetCalendarValue } from "../model/target-calendar.js";
@@ -42,6 +43,13 @@ export interface TargetProjectHistoryOptions {
 
 export interface TargetProjectHistoryFileRequest
   extends GitHistoryProbeRequest, HistoryRequest {}
+
+export interface TargetCurrentProjectActualsSource {
+  readonly bytes: Uint8Array;
+  readonly digest: string;
+}
+
+const CURRENT_PROJECT_ACTUALS_REVISION = "CURRENT" as const;
 
 function probeFailureDiagnostic(
   failure: GitHistoryProbeFailure,
@@ -132,6 +140,68 @@ export async function inspectTargetProjectHistoryFile(
         : { requestedRevision: request.revision }),
     },
   );
+}
+
+/**
+ * Reduces declared actuals from the exact current operand bytes. The synthetic
+ * single snapshot is only an internal bridge to the established pure reducer;
+ * Git provenance is removed before the result is returned.
+ */
+export function inspectTargetCurrentProjectActuals(
+  source: TargetCurrentProjectActualsSource,
+  request: HistoryRequest,
+  capability: TargetGrammar5Capability | TargetGrammar6Capability,
+): ProjectHistoryCoreResult {
+  const probe: GitHistoryProbeResult = Object.freeze({
+    ok: true,
+    modelVersion: 1,
+    status: "complete",
+    traversal: "first_parent",
+    objectFormat: null,
+    repositorySnapshotId: null,
+    repositoryRelativePath: null,
+    requestedRevision: CURRENT_PROJECT_ACTUALS_REVISION,
+    resolvedRevision: null,
+    headCommitId: null,
+    currentSourceDigest: source.digest,
+    selectedSourceDigest: source.digest,
+    inspectedCommitIds: Object.freeze([CURRENT_PROJECT_ACTUALS_REVISION]),
+    snapshots: Object.freeze([
+      Object.freeze({
+        repositorySnapshotId: CURRENT_PROJECT_ACTUALS_REVISION,
+        relativePath: "",
+        commitId: CURRENT_PROJECT_ACTUALS_REVISION,
+        parentCommitIds: Object.freeze([]),
+        recordedAt: null,
+        sourceDigest: source.digest,
+        source: new Uint8Array(source.bytes),
+      }),
+    ]),
+    availability: Object.freeze([]),
+  });
+  const reduced = inspectProjectHistory(probe, request, capability);
+  return Object.freeze({
+    ...reduced,
+    history: Object.freeze({
+      ...reduced.history,
+      repositorySnapshotId: null,
+      repositoryRelativePath: null,
+      requestedRevision: CURRENT_PROJECT_ACTUALS_REVISION,
+      resolvedRevision: null,
+      sourceDigest: source.digest,
+      inspectedCommitIds: Object.freeze([]),
+    }),
+    events: Object.freeze([]),
+    gitRecordedTransitions: Object.freeze([]),
+    tasks: Object.freeze(
+      reduced.tasks.map((task) =>
+        Object.freeze({
+          ...task,
+          baselineCommitId: null,
+        })
+      ),
+    ),
+  });
 }
 
 function positionToJson(position: SourceSpan["start"]): {

@@ -1492,6 +1492,14 @@ option, result, diagnostic, version, and compatibility contracts are fixed by
 the Project Actuals specification. The published `0.4.0` Contract 5 package
 does not contain these commands.
 
+`project observe-velocity --evidence declared` must observe the exact current
+operand bytes, including a valid uncommitted finish written by `task finish`.
+`--evidence git-recorded` remains bound to the selected first-parent revision,
+and `--evidence all` must retain both inputs as separate candidates. The result
+must expose the current operand digest separately from the nested selected
+history digest, fail closed on an operand race, and perform no source or Git
+write.
+
 The active conditional plan-assurance interface provides preview-first
 `plan-assurance show|hash|seal|reseal`, `plan-dependency add|set|remove`, and
 `task-outcome add|set|remove` operations through the accepted atomic Grammar 6

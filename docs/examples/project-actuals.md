@@ -161,3 +161,14 @@ Grammar 1 through 4 reject work-event declarations and `status suspended`.
 The published CLI Contract 5 package continues to expose only status-based
 task maintenance. The current source exposes commands and conditional result
 fields only through the complete Grammar 5/CLI Contract 6 boundary.
+
+## ACT003-001: Current declared observation correction
+
+Given an active task whose start event is committed, `task finish --write`
+adds a valid finish event without committing it. A following
+`project observe-velocity --evidence declared` includes that finish, binds the
+top-level `source_digest` to the current operand, and leaves
+`history.source_digest` bound to the selected commit. `git-recorded` continues
+to use only the selected revision, while `all` returns the current declared
+and revision-bound recorded candidates separately. None of the three
+observations changes the plan bytes, index, `HEAD`, or declared velocity.

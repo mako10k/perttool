@@ -345,6 +345,14 @@ History emits two distinct evidence classes.
 2. `git_recorded_transition`: a legacy task-state or source transition and the
    commit where it was recorded.
 
+For `project observe-velocity`, `declared_actual` is reduced from the exact
+current operand bytes captured for that invocation. It is not replaced by the
+selected Git revision merely because history is inspected in the same
+command. `git_recorded_transition` remains derived only from the selected
+first-parent Git history. `evidence=all` composes those two inputs without
+copying current work events into Git history or copying recorded transitions
+into declared actuals. `project history` remains revision-bound.
+
 A commit author or committer time may be returned as `recorded_at` provenance.
 It MUST NOT populate `occurred_at`, actual start/finish, cycle time, active
 time, deadline compliance, or default velocity samples.
@@ -439,8 +447,11 @@ observeProjectVelocity(
 additionally contains a target path and optional revision. A velocity request
 contains an optional task-ID set and
 `evidence="declared"|"git_recorded"|"all"`. Omitted task IDs select every
-recoverable task; omitted evidence selects `declared`. Request arrays reject
-duplicates and are projected in ASCII task-ID order.
+recoverable task from the applicable evidence input; omitted evidence selects
+`declared`. For `declared` and `all`, the current operand is the task-selection
+and declared-actual authority. For `git_recorded`, the selected revision is
+the authority. Request arrays reject duplicates and are projected in ASCII
+task-ID order.
 
 ### 9.2 CLI surface
 
@@ -728,13 +739,25 @@ qualified `recorded_not_actual`, and never supplies an adoptable token.
 `evidence=all` returns separate declared and recorded candidates; it never
 mixes their numerators or denominators.
 
+For `evidence=declared` and `evidence=all`, the result envelope
+`source_digest` identifies the exact current operand bytes and
+`history.source_digest` independently identifies the selected Git snapshot.
+The two values may differ after an uncommitted lifecycle write. For
+`evidence=git_recorded`, both identify the selected Git snapshot. A target
+change after current-byte capture fails closed through the existing history
+race diagnostic. History incompleteness remains visible, but it does not
+replace an otherwise valid current declared sample with an older committed
+sample.
+
 ### 9.6 Text projection
 
 History text begins with one `HISTORY` line naming status, revision, path, and
 models, then stable `EVENT`, `RECORDED_TRANSITION`, and `TASK_ACTUAL` lines.
 Observation text begins with `OBSERVATION`, then one `VELOCITY_CANDIDATE` line
-per candidate. A null value is `-`; qualifiers and causes are comma-separated
-stable IDs. Text never labels a recorded transition as actual.
+per candidate. The `OBSERVATION` line projects `source_digest` and
+`history_source_digest` separately under the same bindings as JSON. A null
+value is `-`; qualifiers and causes are comma-separated stable IDs. Text never
+labels a recorded transition as actual.
 
 ### 9.7 Atomic activation
 

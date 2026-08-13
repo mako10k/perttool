@@ -225,6 +225,7 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
     actuals: Object.freeze({
       sections: Object.freeze({
         "explicit-events": "Grammar 5 introduces task-owned work events; Grammars 6 and 7 retain them unchanged. task start, suspend, resume, and eventful finish require an explicit --at value; no command reads the wall clock. Preview, governance, digest, and safe-write controls apply before persistence.",
+        "read-only-observation": "project history remains bound to selected first-parent Git evidence. project observe-velocity uses the exact current operand for declared evidence, the selected revision for git-recorded evidence, and returns both as separate candidates for all. The top source digest and nested history source digest identify those inputs independently, and no observation changes the source, Git, or project.velocity.",
         "legacy-status": "Grammar 1 through 4 retain status-only task finish. In Grammar 5 through 7, eventless legacy tasks may use direct planned, active, blocked, or done status changes; once a work event exists, lifecycle commands are required and suspended remains distinct from blocked.",
       }),
     }),

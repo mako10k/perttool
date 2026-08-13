@@ -73,6 +73,7 @@ import {
   renderTargetGovernanceDecision,
 } from "./target-governance-projection.js";
 import {
+  inspectTargetCurrentProjectActuals,
   inspectTargetProjectHistoryFile,
   renderTargetProjectHistoryText,
   targetProjectHistoryResultToJson,
@@ -224,6 +225,7 @@ export function createCliApplicationFacade(
     withTargetPlanAssuranceAdvanceHistoryRace,
     persistTargetPlanAssuranceResult: persistPlanAssuranceResult,
     inspectTargetPlanAssurance,
+    inspectTargetCurrentProjectActuals,
     inspectTargetProjectHistoryFile: inspectProjectHistoryFile,
     renderTargetProjectHistoryText,
     targetProjectHistoryResultToJson,

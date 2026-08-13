@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-08-07
+- Updated: 2026-08-13
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -786,6 +786,41 @@ Planned delivery slices:
 | `VELOCITY_OBSERVATION` | Exact Point/hour, qualified Point/active-date, and Point/person-hour observations | 5p | Complete: parallel work is not double-counted, Git-recorded rates remain qualified, and declared velocity is unchanged. |
 | `ACTUALS_PUBLIC_CONTRACT` | Atomic Grammar 5/CLI Contract 6 registry, help, Guide, schemas, diagnostics, and root activation | 6p | Complete: no partial public activation or compatibility alias exists. |
 | `ACTUALS_ACCEPTANCE` | Repository, Git, lifecycle, link, package, and installed workflow acceptance | 4p | Complete: all normative PACT cases pass with no automatic Git or velocity mutation and no release side effect. |
+
+### ACT-003: Observe current declared actuals before commit
+
+Priority: P0
+
+Status: Locally accepted correction (2026-08-13); release and Issue mutation
+remain separate
+
+GitHub [Issue #8](https://github.com/mako10k/perttool/issues/8) reports that
+`project observe-velocity --evidence declared` ignored a valid uncommitted
+finish written by `task finish` because both declared and Git-recorded
+candidates were reduced from the selected committed history. The correction
+retains one read-only result while giving each evidence class its actual input.
+
+Acceptance:
+
+- `declared` reduces the exact current operand and includes a valid
+  uncommitted finish;
+- `git-recorded` remains bound to the selected first-parent revision;
+- `all` returns current declared and revision-bound recorded candidates
+  separately;
+- top-level `source_digest` identifies the current operand for `declared` and
+  `all`, while `history.source_digest` continues to identify the selected
+  revision;
+- the current operand is captured before history inspection and an intervening
+  target change fails closed through the existing race boundary;
+- `project history`, public Core semantics, result and schema identities,
+  package exports, command counts, and schema counts remain unchanged; and
+- focused real-CLI and complete repository gates prove that observation does
+  not write the plan, index, `HEAD`, or declared velocity.
+
+The accepted evidence is recorded in
+[`issue-8-current-velocity-acceptance.md`](process/issue-8-current-velocity-acceptance.md).
+Closing or commenting on Issue #8, selecting a release, publishing, pushing,
+and moving a dist-tag remain separately authorized operations.
 
 ### ACT-002: Reopen completed work without rewriting actual history
 

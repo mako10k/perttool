@@ -21,15 +21,107 @@ export interface TargetVelocityObservationResultV1
   extends VelocityObservationCoreResult {
   readonly schemaVersion:
     typeof TARGET_VELOCITY_OBSERVATION_SCHEMA_VERSION;
+  readonly sourceDigest: string | null;
+}
+
+export interface TargetVelocityObservationOptions {
+  readonly currentActuals?: ProjectHistoryCoreResult;
+  readonly currentSourceDigest?: string;
+}
+
+function uniqueDiagnostics(
+  diagnostics: readonly Diagnostic[],
+): readonly Diagnostic[] {
+  const seen = new Set<string>();
+  return Object.freeze(diagnostics.filter((diagnostic) => {
+    const key = JSON.stringify(diagnostic);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }));
+}
+
+function historyWithSelectedCurrentTasks(
+  history: ProjectHistoryCoreResult,
+  current: ProjectHistoryCoreResult,
+  selectedTaskIds: readonly string[],
+): ProjectHistoryCoreResult {
+  const historicalIds = new Set(history.tasks.map(({ taskId }) => taskId));
+  const currentById = new Map(
+    current.tasks.map((task) => [task.taskId, task] as const),
+  );
+  const missing = selectedTaskIds
+    .filter((taskId) => !historicalIds.has(taskId))
+    .flatMap((taskId) => {
+      const task = currentById.get(taskId);
+      return task === undefined ? [] : [task];
+    });
+  return missing.length === 0
+    ? history
+    : Object.freeze({
+        ...history,
+        tasks: Object.freeze([...history.tasks, ...missing]),
+      });
 }
 
 export function observeTargetProjectVelocity(
   history: ProjectHistoryCoreResult,
   request: VelocityObservationRequest = {},
+  options: TargetVelocityObservationOptions = {},
 ): TargetVelocityObservationResultV1 {
+  const evidence = request.evidence ?? "declared";
+  const current = options.currentActuals;
+  const currentSourceDigest = options.currentSourceDigest;
+  if (
+    current === undefined ||
+    currentSourceDigest === undefined ||
+    evidence === "git_recorded" ||
+    (evidence !== "declared" && evidence !== "all")
+  ) {
+    const observed = observeProjectVelocity(history, request);
+    return Object.freeze({
+      schemaVersion: TARGET_VELOCITY_OBSERVATION_SCHEMA_VERSION,
+      sourceDigest: history.history.sourceDigest,
+      ...observed,
+    });
+  }
+
+  const selectedTaskIds = Object.freeze(
+    request.taskIds === undefined
+      ? current.tasks.map(({ taskId }) => taskId)
+      : [...request.taskIds],
+  );
+  const declared = observeProjectVelocity(current, {
+    taskIds: selectedTaskIds,
+    evidence: "declared",
+  });
+  const recorded = evidence === "all"
+    ? observeProjectVelocity(
+        historyWithSelectedCurrentTasks(history, current, selectedTaskIds),
+        { taskIds: selectedTaskIds, evidence: "git_recorded" },
+      )
+    : null;
   return Object.freeze({
     schemaVersion: TARGET_VELOCITY_OBSERVATION_SCHEMA_VERSION,
-    ...observeProjectVelocity(history, request),
+    sourceDigest: currentSourceDigest,
+    ok: history.ok && declared.ok && (recorded?.ok ?? true),
+    modelVersion: declared.modelVersion,
+    documentId: current.documentId,
+    grammarVersion: current.grammarVersion,
+    history: history.history,
+    observation: Object.freeze({
+      ...declared.observation,
+      evidence,
+      candidates: Object.freeze([
+        ...declared.observation.candidates,
+        ...(recorded?.observation.candidates ?? []),
+      ]),
+    }),
+    diagnostics: uniqueDiagnostics([
+      ...declared.diagnostics,
+      ...(recorded?.diagnostics ?? []),
+      ...history.diagnostics,
+    ]),
   });
 }
 
@@ -176,7 +268,7 @@ export function targetVelocityObservationResultToJson(
     ok: result.ok,
     document_id: result.documentId,
     source,
-    source_digest: result.history.sourceDigest,
+    source_digest: result.sourceDigest,
     diagnostics: result.diagnostics.map(diagnosticToJson),
     diagnostics_truncated: false,
     grammar_version: result.grammarVersion,
@@ -257,7 +349,11 @@ export function renderTargetVelocityObservationText(
       result.observation.selectedTaskIds.length === 0
         ? "-"
         : result.observation.selectedTaskIds.join(",")
-    } history_status=${result.history.status} models=history:1,observation:1`,
+    } history_status=${result.history.status} source_digest=${
+      scalar(result.sourceDigest)
+    } history_source_digest=${
+      scalar(result.history.sourceDigest)
+    } models=history:1,observation:1`,
   ];
   for (const value of result.observation.candidates) {
     lines.push(

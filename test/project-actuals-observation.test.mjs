@@ -202,6 +202,8 @@ test("parallel completed work yields one exact window and separate effort produc
   const text = renderTargetVelocityObservationText(result);
   assert.equal(text, renderTargetVelocityObservationText(result));
   assert.match(text, /^OBSERVATION evidence=declared/m);
+  assert.match(text, /source_digest=sha256:observation/u);
+  assert.match(text, /history_source_digest=sha256:observation/u);
   assert.match(
     text,
     /^VELOCITY_CANDIDATE id=declared_elapsed_hour_throughput/m,
@@ -424,6 +426,37 @@ test("selection and history availability are typed without guessing", () => {
       ({ cause }) => cause,
     ),
     ["no_selected_tasks"],
+  );
+});
+
+test("target composition preserves incomplete-history warning without suppressing current declared evidence", () => {
+  const recordedHistory = history({
+    tasks: [task({ id: "A" })],
+    status: "incomplete",
+    diagnostics: [{
+      code: "PTHIS-102",
+      severity: "warning",
+      message: "history incomplete",
+    }],
+  });
+  const currentActuals = history({ tasks: [task({ id: "A" })] });
+  const result = observeTargetProjectVelocity(
+    recordedHistory,
+    { evidence: "declared" },
+    {
+      currentActuals,
+      currentSourceDigest: "sha256:current",
+    },
+  );
+
+  assert.equal(result.ok, true);
+  assert.equal(result.sourceDigest, "sha256:current");
+  assert.equal(result.history.status, "incomplete");
+  assert.equal(result.history.sourceDigest, "sha256:observation");
+  assert.deepEqual(result.diagnostics.map(({ code }) => code), ["PTHIS-102"]);
+  assert.equal(
+    candidate(result, "elapsed_hour_throughput").state,
+    "available",
   );
 });
 

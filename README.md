@@ -440,6 +440,12 @@ perttool project observe-velocity PLAN.pert \
   --task WORK --evidence declared --format json
 ```
 
+Declared observations use the exact current `PLAN.pert` bytes, so a valid
+uncommitted lifecycle write is visible immediately. Git-recorded observations
+remain bound to the selected revision; `--evidence all` returns both as
+separate candidates. JSON exposes the current operand as `source_digest` and
+the selected revision as `history.source_digest`.
+
 Observed candidates are evidence, not automatic project metadata changes.
 Adoption, if desired, is a separate reviewed `project set --velocity` write.
 See the [Contract 5-to-6 migration

@@ -339,6 +339,13 @@ Mandatory summary:
   workstream did not displace the separately selected English-baseline workstream. Backlog `ACT-002` records only an
   undecided REOPEN request; it has no selected semantics, implementation,
   plan, or public-contract inclusion.
+- The locally accepted `ACT-003` correction for GitHub Issue #8 makes
+  `project observe-velocity` reduce declared candidates from the exact current
+  operand while retaining selected-revision Git-recorded candidates and nested
+  history provenance. Its real-CLI and documentation evidence is
+  `docs/process/issue-8-current-velocity-acceptance.md`. The public Core,
+  result/schema identities, `project history`, package exports, release,
+  remote, Issue, and publication state remain unchanged.
 - The CLI/help review is tracked independently in `plans/cli-surface-reset.pert`. All nine tasks through `CLI_003_FILE_FIRST_ACCEPTANCE` are complete and advanced. Its accepted registry-driven design separates command help, domain guide, and agent guidance, includes project initialization and gate maintenance, and rejects renamed Contract 2 spellings. Contract 4 retains those invariants while extending every active JSON envelope and installed-package workflow for temporal and exact-unit behavior. The completed plan has no recommendation at `49p/1d`.
 - The first Contract 3 package, suffix-free beta `0.2.0`, is accepted under `plans/release-0.2.0.pert`, `docs/process/0.2.0-release.md`, and its acceptance record. All five release tasks are complete and advanced; release commit/tag identity, common local/GitHub/npm tarball bytes, and installed Contract 3/file-first behavior are verified. Publication moved only `beta`; a separately authorized post-acceptance dist-tag operation then made npm `beta=latest=0.2.0`. The completed release plan remains unchanged with no recommendation at `17p/2d`.
 - The suffix-free Contract 4 beta `0.3.0` is accepted. All six release tasks through `RELEASE_030_ACCEPTANCE` are complete and advanced. Release commit and peeled `v0.3.0` target `af44577` agree; the GitHub prerelease and npm registry tarballs have SHA-256 `197548a4...62074`; a separately authorized post-acceptance operation made npm `beta=latest=0.3.0`, while `alpha=0.1.0-alpha.2`. An unqualified global installation and light Contract 4 smoke passed. The plan has zero makespans, no recommendation, and observed cumulative velocity `19p/2d`.

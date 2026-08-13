@@ -1035,11 +1035,20 @@ atomic replacement, or post-write verification.
 
 #### 6.8.5 Observation service
 
-The observation service consumes only the versioned history result. It returns
-exact elapsed-hour Point throughput, qualified active-date Point throughput,
-and Point/person-hour productivity separately. It does not sum parallel cycle
-times, infer effort from resources, equate one day with 24 hours, read the
-current clock, or mutate declared velocity.
+The pure public observation service consumes one versioned history result. The
+CLI target compositor preserves that Core while selecting two distinct inputs:
+current operand bytes are reduced through the same pure actual-summary model
+for declared candidates, and the selected first-parent history result remains
+the sole input for Git-recorded candidates. `all` combines the separately
+computed candidates without merging their evidence. The target envelope binds
+the current operand digest independently from the nested selected-history
+digest and passes the captured current digest into the existing target-race
+check.
+
+The service returns exact elapsed-hour Point throughput, qualified active-date
+Point throughput, and Point/person-hour productivity separately. It does not
+sum parallel cycle times, infer effort from resources, equate one day with 24
+hours, read the current clock, or mutate declared velocity.
 
 The history reducer retains an eventless task's exact value at its
 Git-recorded `done` transition as a qualified `finish_snapshot` baseline.

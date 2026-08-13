@@ -160,6 +160,7 @@ const {
   withTargetPlanAssuranceAdvanceHistoryRace,
   persistTargetPlanAssuranceResult,
   inspectTargetPlanAssurance,
+  inspectTargetCurrentProjectActuals,
   inspectTargetProjectHistoryFile,
   renderTargetProjectHistoryText,
   targetProjectHistoryResultToJson,
@@ -2141,6 +2142,7 @@ async function readHistoryForCommand(
   operation: "project.history" | "project.observe-velocity",
   parsed: ParsedOptions,
   format: OutputFormat,
+  expectedSourceDigest?: string,
 ) {
   if (parsed.positionals.length !== 1) {
     throw new UsageError(
@@ -2161,6 +2163,9 @@ async function readHistoryForCommand(
         ...(parsed.repeatedValues.get("task") === undefined
           ? {}
           : { taskIds: parsed.repeatedValues.get("task")! }),
+        ...(expectedSourceDigest === undefined
+          ? {}
+          : { expectedSourceDigest }),
       },
       TARGET_GRAMMAR_6_CAPABILITY,
     );
@@ -2295,10 +2300,30 @@ async function runProjectVelocityObservation(
   const parsed = parseCommandOptions("project.observe-velocity", args);
   const format = outputFormat(parsed.values.get("format"));
   const color = colorMode(parsed.values.get("color"), format);
+  const evidenceValue = parsed.values.get("evidence") ?? "declared";
+  const evidence =
+    evidenceValue === "git-recorded"
+      ? "git_recorded" as const
+      : evidenceValue as "declared" | "all";
+  const source = parsed.positionals[0];
+  let current: Awaited<ReturnType<typeof readDocumentContent>> | null = null;
+  if (evidence !== "git_recorded" && source !== undefined && source !== "-") {
+    try {
+      current = await readDocumentContent(source);
+    } catch (error) {
+      return cliError(
+        error instanceof Error ? error : new Error(String(error)),
+        3,
+        "project.observe-velocity",
+        format === "json",
+      );
+    }
+  }
   const history = await readHistoryForCommand(
     "project.observe-velocity",
     parsed,
     format,
+    current?.digest,
   );
   if (history instanceof Error) {
     return cliError(
@@ -2308,17 +2333,23 @@ async function runProjectVelocityObservation(
       format === "json",
     );
   }
-  const evidenceValue = parsed.values.get("evidence") ?? "declared";
-  const evidence =
-    evidenceValue === "git-recorded"
-      ? "git_recorded" as const
-      : evidenceValue as "declared" | "all";
+  const taskIds = parsed.repeatedValues.get("task");
+  const currentActuals = current === null
+    ? null
+    : inspectTargetCurrentProjectActuals(
+        { bytes: current.bytes, digest: current.digest },
+        taskIds === undefined ? {} : { taskIds },
+        TARGET_GRAMMAR_6_CAPABILITY,
+      );
   const result = observeTargetProjectVelocity(history, {
-    ...(parsed.repeatedValues.get("task") === undefined
-      ? {}
-      : { taskIds: parsed.repeatedValues.get("task")! }),
+    ...(taskIds === undefined ? {} : { taskIds }),
     evidence,
-  });
+  }, currentActuals === null || current === null
+    ? {}
+    : {
+        currentActuals,
+        currentSourceDigest: current.digest,
+      });
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
     result.diagnostics.some(
