@@ -26,7 +26,8 @@ Mandatory summary:
   publication and unrelated work remain separate.
 - The selected `plans/release-0.9.1.pert` workstream publishes the compatible
   ACT-003 / Issue #8 current-velocity observation correction. Its
-  compatibility review and source preparation are complete and identify
+  compatibility review, source preparation, and immutable candidate
+  acceptance are complete and identify
   `0.9.1`; Grammar 7, Contract 8, 53 commands, 23 schemas, 129 root/Node
   exports, 45 Core exports, result/schema identities, and authority remain
   unchanged. Release, push, and Issue #8 update are authorized only after the

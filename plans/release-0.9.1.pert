@@ -82,6 +82,7 @@ task RELEASE_091_CANDIDATE RELEASE_091_SOURCE_PREPARED -> RELEASE_091_CANDIDATE_
   title "Accept one clean 0.9.1 release candidate"
   description "Commit and recheck the complete release diff; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.9.0 and no alpha; verify protected routes; build one immutable tarball outside the worktree; and accept its exact identity and installed Contract 8 behavior. This task performs no external write."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -126,5 +127,13 @@ work_event WE-70d67e264c1fc958be89654ef2060db87e62661d3b56f1955e656f78f555db3b:
   task RELEASE_091_PREPARATION
   kind finish
   occurred_at 2026-08-13T17:45:00+09:00
+  active_time 2h
+  effort 2ph
+
+work_event WE-006ab7b8ad1c9eeed2475ec09d863b47358bace941275d658611a796cf5f0d21:
+  model 1
+  task RELEASE_091_CANDIDATE
+  kind finish
+  occurred_at 2026-08-13T17:54:00+09:00
   active_time 2h
   effort 2ph

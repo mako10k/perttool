@@ -31,9 +31,9 @@ Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 explicit pin. npm reports `beta=latest=0.9.0` and no `alpha`. Version `0.9.0`
 is the Grammar 7 and CLI Contract 8 milestone-acceptance beta; `0.8.1` is its
 compatible Grammar 6 and CLI Contract 7 rollback pin. Version `0.9.1` is the
-selected compatible Contract 8 current-velocity observation patch; source
-preparation is complete, while candidate acceptance, publication, npm
-`latest`, Issue #8 completion, and plan advance remain ordered boundaries. The
+selected compatible Contract 8 current-velocity observation patch; candidate
+acceptance is complete, while publication, npm `latest`, Issue #8 completion,
+and plan advance remain ordered boundaries. The
 durably accepted beta `0.7.0` source implements Grammar 1/2/3/4/5/6 reads,
 registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
@@ -677,7 +677,12 @@ self-use plans, the private-adapter and temporary-link workflows, and the
 713-file isolated package workflow; its record is
 `docs/process/0.9.1-preparation.md`. npm still reports
 `beta=latest=0.9.0` with no `alpha`,
-and `v0.9.1`, its GitHub Release, and `perttool@0.9.1` are unused. The user's
+and `v0.9.1`, its GitHub Release, and `perttool@0.9.1` are unused.
+`RELEASE_091_CANDIDATE` is complete after the clean Node.js 22 gate,
+read-only external and route preflight, and acceptance of the retained
+713-file, 2808175-byte tarball from source commit `b8dba7e`; its SHA-256 is
+`27b4d8d...3e77bf`, and its record is
+`docs/process/0.9.1-candidate.md`. The user's
 2026-08-13 instruction authorizes the ordered release, push, and Issue #8
 update after all predecessor gates. npm `latest`, plan advance, public VSIX
 publication, and unrelated work remain separate.

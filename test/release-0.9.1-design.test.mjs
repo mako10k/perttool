@@ -99,10 +99,11 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   );
   assert.match(plan, /task RELEASE_091_SELF_REVIEW[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_091_PREPARATION[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_091_CANDIDATE[\s\S]*?status done/u);
 
   const next = perttool.selectNextTasks(plan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_091_CANDIDATE"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_091_PUBLISH"]);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
