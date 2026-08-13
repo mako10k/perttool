@@ -103,8 +103,9 @@ interface DocumentSnapshot {
 }
 ```
 
-The active Grammar 6 parser and validator are the only syntax and semantic
-owners. Parser diagnostics seed semantic validation. Diagnostics use the
+The portable session Core's Grammar 6 parser and validator are its only syntax
+and semantic owners; Contract 8 adapters prepare Grammar 7 separately. Parser
+diagnostics seed semantic validation. Diagnostics use the
 existing deterministic order and configured limit. `semantic.ok` is false for
 any complete error set; truncation remains separately visible. Invalid DSL is
 a current immutable snapshot with diagnostics, not a synchronization failure.

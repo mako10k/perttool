@@ -59,6 +59,9 @@ test("current guidance and historical compatibility labels preserve their bounda
     requirements,
     examples,
     assuranceInterface,
+    grammar,
+    milestoneAcceptance,
+    override,
     contract2,
     contract3,
     temporalUnits,
@@ -69,6 +72,9 @@ test("current guidance and historical compatibility labels preserve their bounda
     read("docs/requirements.md"),
     read("docs/examples/plan-assurance.md"),
     read("docs/specs/plan-assurance-interface.md"),
+    read("docs/specs/dsl-grammar.md"),
+    read("docs/specs/milestone-acceptance.md"),
+    read("docs/specs/recommendation-override.md"),
     read("docs/specs/interfaces.md"),
     read("docs/specs/cli-contract-3.md"),
     read("docs/specs/temporal-unit-interface.md"),
@@ -80,18 +86,28 @@ test("current guidance and historical compatibility labels preserve their bounda
     readme,
     /made `beta=latest=0\.7\.1`/,
   );
-  assert.match(readme, /package=perttool@0\.8\.0/);
+  assert.match(readme, /package=perttool@0\.8\.1/);
+  assert.match(readme, /npm currently reports `beta=latest=0\.8\.1`/);
+  assert.match(readme, /current unreleased repository source atomically activates Grammar 7 and\s+CLI Contract 8/);
   assert.match(
     readme,
     /At its publication\s+boundary, this release does not move npm `latest` from Contract 6 `0\.6\.0`/,
   );
-  assert.match(requirements, /active Grammar 6 and CLI Contract 7 source/);
-  assert.match(examples, /active Grammar 6 source contract/);
-  assert.match(assuranceInterface, /Active package boundary: `beta=latest=0\.7\.1`/);
-  assert.match(contract2, /active source is now CLI Contract 7/);
-  assert.match(contract3, /active Contract 7/);
+  assert.match(requirements, /active Grammar 7 and CLI\s+Contract 8 source/);
+  assert.match(requirements, /Perttool\.NextResult\.v7/);
+  assert.match(examples, /retained Grammar 6 assurance source contract/);
+  assert.match(examples, /Grammar 7 and CLI Contract 8 source successor/);
+  assert.match(assuranceInterface, /Published package boundary: `beta=latest=0\.8\.1`/);
+  assert.match(assuranceInterface, /Contract 8 source successor/);
+  assert.match(grammar, /Grammar versions: 1, 2, 3, 4, 5, 6, and 7 active/);
+  assert.match(grammar, /^### 20\.6 Grammar version 7 milestone-acceptance delta/m);
+  assert.match(milestoneAcceptance, /Status: Normative 1\.0/);
+  assert.match(milestoneAcceptance, /Active source CLI contract: Contract 8/);
+  assert.match(override, /source_schema_version\s+"Perttool\.NextResult\.v7"/);
+  assert.match(contract2, /active source is now CLI Contract 8/);
+  assert.match(contract3, /active Contract 8/);
   assert.match(temporalUnits, /historical Grammar 3 and CLI Contract 4/);
-  assert.match(projectActuals, /active Grammar 6 and CLI Contract 7 source retains/);
+  assert.match(projectActuals, /active Grammar 7 and CLI Contract 8 source retains/);
   assert.match(governance, /Pre-cutover Contract 4 identity/);
 });
 
@@ -108,10 +124,14 @@ test("repository policy and self-use registration include the accepted workstrea
   for (const policy of [agents, copilot]) {
     assert.match(policy, /GUIDE-CONSISTENCY-001/);
     assert.match(policy, /help-guide-consistency-acceptance\.md/);
+    assert.match(policy, /Perttool\.NextResult\.v7/);
+    assert.match(policy, /beta=latest=0\.8\.1/);
   }
   assert.match(selfUseScript, /plans\/help-guide-consistency\.pert/);
   assert.match(selfUseScript, /plans\/adapter-platform\.pert/);
   assert.match(selfUseScript, /37 plans; check, analyze, next/);
   assert.match(selfUseGuide, /all thirty-seven current plans/);
   assert.match(planIndex, /`help-guide-consistency\.pert`/);
+  assert.match(planIndex, /All thirty-seven plans pass/);
+  assert.match(planIndex, /accepted reached final milestone/);
 });

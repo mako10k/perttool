@@ -432,7 +432,10 @@ test("integration acceptance and completed lifecycle remain aligned", async () =
     agentGuidance,
     copilotGuidance,
   ]) {
-    assert.match(document, /All sixteen tasks\s+and 91p are complete/u);
+    assert.match(
+      document,
+      /All sixteen tasks\s+and 91p\s+(?:are|remain) complete/u,
+    );
   }
   assert.match(plan, /task ADAPTER_INTEGRATION_ACCEPTANCE[\s\S]*?status done/u);
   assert.match(

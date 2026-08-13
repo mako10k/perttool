@@ -134,7 +134,8 @@ Expected:
 
 - both expansions produce the same normalized upper relation mapping;
 - fresh candidate-bound seals are still required;
-- no active Grammar 6, CLI Contract 7, package, or schema surface changes;
+- at this design slice, no Grammar 6, CLI Contract 7, package, or schema
+  surface changes;
 - storage, document locator, multi-file transaction, interface, migration,
   and release decisions remain separate; and
 - implementation cannot begin from this semantic draft alone.

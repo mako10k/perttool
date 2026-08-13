@@ -165,13 +165,13 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
       }),
     }),
     "syntax.work-event": Object.freeze({
-      summary: "Grammar 5 introduces explicit task-owned lifecycle evidence in the same PERT document, and Grammar 6 retains it unchanged.",
+      summary: "Grammar 5 introduces explicit task-owned lifecycle evidence in the same PERT document; Grammars 6 and 7 retain it unchanged.",
     }),
     "syntax.duration": Object.freeze({
       summary: "An exact Decimal or, in Grammar 3 through 7, reduced Fraction followed by d, h, or p.",
     }),
     "syntax.temporal": Object.freeze({
-      summary: "Grammar 2 introduces milestone deadline plus task not_before and deadline fields, retained through Grammar 6.",
+      summary: "Grammar 2 introduces milestone deadline plus task not_before and deadline fields, retained through Grammar 7.",
       syntax: Object.freeze([
         "project ID:",
         "  version 2|3|4|5|6|7",
@@ -213,7 +213,7 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
     }),
     editing: Object.freeze({
       sections: Object.freeze({
-        "owner-aware-governance": "Start each Contract 7 candidate with an assertion-free preview. Persistent governed changes require an actor: an effective owner or delegate has direct authority, while another actor may provide repeatable --accepted-by-owner caller assertions only for the explicitly confirmed affected scopes of this candidate. Omit them when governance is not applicable and never reuse them across commands. PTGOV-103 warns about an assertion on a not-applicable candidate; PTGOV-104 warns about one on a governed preview.",
+        "owner-aware-governance": "Start each current Contract 8 candidate with an assertion-free preview. Persistent governed changes require an actor: an effective owner or delegate has direct authority, while another actor may provide repeatable --accepted-by-owner caller assertions only for the explicitly confirmed affected scopes of this candidate. Omit them when governance is not applicable and never reuse them across commands. PTGOV-103 warns about an assertion on a not-applicable candidate; PTGOV-104 warns about one on a governed preview.",
       }),
       related: Object.freeze([
         "editing.unit-migration",
@@ -224,7 +224,7 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
     }),
     actuals: Object.freeze({
       sections: Object.freeze({
-        "explicit-events": "Grammar 5 introduces task-owned work events, and Grammar 6 retains them unchanged. task start, suspend, resume, and eventful finish require an explicit --at value; no command reads the wall clock. Preview, governance, digest, and safe-write controls apply before persistence.",
+        "explicit-events": "Grammar 5 introduces task-owned work events; Grammars 6 and 7 retain them unchanged. task start, suspend, resume, and eventful finish require an explicit --at value; no command reads the wall clock. Preview, governance, digest, and safe-write controls apply before persistence.",
         "legacy-status": "Grammar 1 through 4 retain status-only task finish. In Grammar 5 through 7, eventless legacy tasks may use direct planned, active, blocked, or done status changes; once a work event exists, lifecycle commands are required and suspended remains distinct from blocked.",
       }),
     }),

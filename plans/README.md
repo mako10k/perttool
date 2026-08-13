@@ -36,27 +36,19 @@ Plans are separated by level of detail.
   first-parent historical reconstruction roadmap covering the normative
   contract, shared transition model, bounded immutable Git evidence, pure
   checkpoint/lineage/timeline reconstruction, separate read-only CLI result,
-  editor contract, VSIX presentation, and final acceptance; the first four
-  implementation inputs are accepted, and the additive `dag history` command,
-  twenty-first root schema, and isolated package path are implemented;
-  `HISTORICAL_CLI` and its separately owner-confirmed exact basis-bound outcome
-  are complete; the separate historical editor protocol and eighteen cases are
-  accepted, and `HISTORICAL_EDITOR_CONTRACT` plus its separately owner-
-  confirmed exact basis-bound outcome are complete; the private historical
-  LSP/VSIX implementation, eighteen runtime cases, and status-only lifecycle
-  are complete; its exact basis-bound outcome is separately owner-confirmed
-  and complete, and only final cross-surface acceptance is ready, recommended,
-  and startable
+  editor contract, VSIX presentation, and final acceptance; all eight tasks and
+  44p are complete and retained before advance, the additive `dag history`
+  command and twenty-first root schema are active, and a fresh complete
+  NextResult v7 has no ready, recommended, or startable task
 - [milestone-acceptance.pert](milestone-acceptance.pert): selected
   `MILESTONE-ACCEPT-001` Grammar 7 and CLI Contract 8 roadmap covering the
   normative contract, committed source migration, pure acceptance evaluator,
   governed criterion and receipt mutations, all-or-nothing advance, atomic
   public activation, historical reconstruction, read-only adapter projection,
-  and final cross-surface acceptance; the contract, Grammar 7 source/migration,
-  pure evaluator, governed mutation, acceptance-aware canonical advance, and
-  atomic Contract 8 public activation, and historical reconstruction slices
-  are complete before advance; complete NextResult v7 recommends only the
-  read-only adapter projection
+  and final cross-surface acceptance; all tasks, criteria, receipts, adapters,
+  and final acceptance are complete, and the plan was canonically advanced to
+  the accepted reached final milestone with no diagnostic, task,
+  recommendation, or startable task
 - [advance-history-safety.pert](advance-history-safety.pert): independent
   post-beta contract, pure probe, in-place CLI guard, and acceptance roadmap
   for `ADV-001`; all four tasks are accepted and advanced, with no remaining
@@ -71,7 +63,7 @@ Plans are separated by level of detail.
   roadmap from the Grammar 6 and CLI Contract 7 interface through source and
   hash Core, governed mutation, authority, advance, compatibility, atomic
   public cutover, and installed acceptance; all 10 tasks and 59p are complete
-  in the exact pre-advance state, and complete NextResult v6 has no ready,
+  in the exact pre-advance state, and complete NextResult v7 has no ready,
   recommended, or startable task
 - [help-guide-consistency.pert](help-guide-consistency.pert): independent
   `GUIDE-CONSISTENCY-001` correction roadmap covering the active Guide,
@@ -90,11 +82,15 @@ Plans are separated by level of detail.
 - [release-0.5.5.pert](release-0.5.5.pert): compatible Contract 6 governed-preview-warning patch-release plan covering compatibility review, preparation, candidate, authorized publication, and durable acceptance
 - [release-0.6.0.pert](release-0.6.0.pert): selected Contract 6 advance-history-safety beta-minor plan covering result-identity and migration review, preparation, candidate, authorized publication, and durable acceptance; npm `latest`, plan advance, and Issue mutation remain separate
 - [release-0.7.0.pert](release-0.7.0.pert): completed Grammar 6 and CLI Contract 7 conditional-plan-assurance beta-minor plan covering release-gate design, accepted ASSURE-001 input, preparation, candidate, separately authorized publication and `latest` promotion, and durable acceptance; all six tasks and 21p are complete with no recommendation
-- [release-0.7.1.pert](release-0.7.1.pert): selected compatible Grammar 6 and
-  CLI Contract 7 Help and Guide consistency patch plan; compatibility
-  self-review and version-bearing preparation are complete, while candidate
-  acceptance, PUBLISH, durable acceptance, `latest` promotion, and plan
-  advance remain separately gated
+- [release-0.7.1.pert](release-0.7.1.pert): completed compatible Grammar 6 and
+  CLI Contract 7 Help and Guide consistency patch plan; candidate acceptance,
+  publication, durable acceptance, and the separately authorized `latest`
+  promotion are complete, while plan advance remains separate
+- [release-0.8.0.pert](release-0.8.0.pert): completed additive Grammar 6 and
+  CLI Contract 7 release plan for the Core/Node subpaths, historical DAG, and
+  declaration identity; publication, durable acceptance, and the separately
+  authorized `latest` promotion are complete, while plan advance remains
+  separate
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2
@@ -103,7 +99,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All thirty-five plans pass the self-use gate and are used as inputs to `document
+All thirty-seven plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -115,9 +111,11 @@ that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.3.0.pert`, `release-0.4.0.pert`, `release-0.5.0.pert`,
 `release-0.5.1.pert`, `release-0.5.2.pert`, `release-0.5.3.pert`,
 `release-0.5.4.pert`, `release-0.5.5.pert`, `release-0.6.0.pert`,
-`release-0.7.0.pert`, `release-0.7.1.pert`, `governance.pert`,
+`release-0.7.0.pert`, `release-0.7.1.pert`, `release-0.8.0.pert`,
+`governance.pert`,
 `help-guide-consistency.pert`, `adapter-platform.pert`,
 `project-actuals.pert`, `plan-assurance.pert`, `historical-dag.pert`,
+`milestone-acceptance.pert`,
 `advance-history-safety.pert`, and the
 scheduling-and-units plans are explicitly
 requested independent post-beta plans and are not rolled up into the completed

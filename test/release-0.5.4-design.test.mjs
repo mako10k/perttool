@@ -109,7 +109,7 @@ test("0.5.4 release gate binds the governance runtime warning boundary", async (
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.match(versionSource, /TOOL_VERSION = "0\.8\.0"/);
   assert.match(changelog, /^## \[0\.5\.4\] - 2026-07-30$/m);
-  assert.match(readme, /npx --yes --package=perttool@0\.8\.0/);
+  assert.match(readme, /npx --yes --package=perttool@0\.8\.1/);
   assert.match(
     readme,
     /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,

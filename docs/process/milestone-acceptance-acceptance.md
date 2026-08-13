@@ -109,3 +109,19 @@ The isolated public-package gate was repeated over this final plan and record
 state. The current 713-file `perttool@0.8.0` package again passed Contract 8
 file-first and plan-assurance compatibility checks; npm publication remained a
 dry-run against tag `beta`.
+
+## Post-advance documentation and Guide reconciliation
+
+The user's subsequent documentation-reconciliation instruction aligns current
+Guide prose, normative entry points, repository-agent policy, and the plan
+index with Grammar 7, CLI Contract 8, 53 commands, 23 schemas,
+`Perttool.NextResult.v7`, and the advanced residual plan. The dated
+`GUIDE-CONSISTENCY-001` records remain the historical Contract 7 correction
+boundary instead of being rewritten as if Contract 8 existed in 2026-08-05.
+
+Read-only npm and GitHub readback also established the separately published
+compatible `v0.8.1` Contract 7 patch and `beta=latest=0.8.1`. Current
+installation guidance now uses that exact pin while explicitly retaining the
+unreleased branch's `0.8.0` tool identity and the separate future release-
+selection boundary. No package version, tag, Release, dist-tag, remote ref,
+Issue, or plan state changed during this reconciliation.

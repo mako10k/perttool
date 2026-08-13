@@ -165,7 +165,7 @@ test("plan assurance interface cases and SHA-256 vectors are fixed", async () =>
   }
 });
 
-test("the active Contract 7 surface exposes the selected interface", () => {
+test("the active Contract 8 surface retains the selected assurance interface", () => {
   assert.equal("evaluatePlanAssurance" in publicApi, false);
   assert.equal("hashTaskPlanContract" in publicApi, false);
   const commandPaths = COMMAND_REGISTRY.map(({ path: commandPath }) =>

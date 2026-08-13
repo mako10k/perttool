@@ -34,12 +34,13 @@ adapter module. It MUST NOT start a process or perform I/O at module load.
 The accepted `SHARED_LIBRARY_BOUNDARY` runtime catalog contained forty names
 in these groups:
 
-- active Grammar 6 `parseDocument`, `validateDocument`, and `formatDocument`;
+- portable Grammar 6 `parseDocument`, `validateDocument`, and `formatDocument`;
 - residual-graph, precedence, and heuristic resource analysis functions;
 - exact Rational and unit conversion values and functions;
 - deterministic diagnostic utilities;
-- the domain Help registry and active Contract 7 Guide query, JSON,
-  serialization, and text projections;
+- the domain Help registry and Guide query, JSON, serialization, and text
+  projections (Contract 7 at this accepted boundary and Contract 8 in the
+  current successor);
 - the recommendation-analysis JSON projection; and
 - the generated direct-edit guidance constant.
 

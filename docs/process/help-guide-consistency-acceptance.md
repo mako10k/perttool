@@ -10,6 +10,11 @@
 - Active CLI contract: CLI Contract 7
 - Public identities: unchanged
 
+This record preserves the 2026-08-05 Contract 7 acceptance boundary. The
+current repository successor is Grammar 7 and CLI Contract 8; its current
+Guide and documentation identities are verified separately by the milestone-
+acceptance acceptance record and current consistency tests.
+
 ## 1. Decision
 
 Accept the complete correction of the active Guide, command Help examples,

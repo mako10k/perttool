@@ -41,9 +41,9 @@ test("milestone acceptance contract fixes the separate state and version boundar
     repositoryText("plans/milestone-acceptance.pert"),
   ]);
 
-  assert.match(specification, /- Status: Normative target 1\.0/u);
-  assert.match(specification, /Target grammar: Grammar 7/u);
-  assert.match(specification, /Target CLI contract: Contract 8/u);
+  assert.match(specification, /- Status: Normative 1\.0/u);
+  assert.match(specification, /Active source grammar: Grammar 7/u);
+  assert.match(specification, /Active source CLI contract: Contract 8/u);
   assert.match(specification, /closure\s+unreached \| reached/u);
   assert.match(
     specification,

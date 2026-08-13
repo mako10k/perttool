@@ -60,14 +60,22 @@ focus result. Compact `Mnn`/`Tnn`/`Gnn` graph labels link to original-identity
 details, and exact residual, resource-remaining, and task-time summaries keep
 qualified Point forecasts distinct. Layout never becomes project semantics.
 
+Version `0.8.1` is a backward-compatible Contract 7 patch for `dag advance`.
+It preserves assurance frontier receipts when all terminal work events belong
+to removed tasks, while retaining the `0.8.0` command, schema, package-export,
+and authority boundaries. npm currently reports `beta=latest=0.8.1`; use
+`0.8.0` as the exact rollback pin.
+
 The current unreleased repository source atomically activates Grammar 7 and
 CLI Contract 8 for milestone acceptance. It exposes 53 commands, 23 root
 schemas, 129 root and Node runtime exports, `Perttool.CheckResult.v5`,
 `Perttool.AnalysisResult.v6`, `Perttool.NextResult.v7`,
 `Perttool.MutationResult.v5`, `Perttool.AdvanceResult.v3`, committed migration,
 criterion-set replacement, caller-asserted receipts, and acceptance-aware
-canonical advance. This source boundary is not part of published `0.8.0` and
-does not select a release or mutate npm tags.
+canonical advance. This source boundary is not part of published `0.8.0` or
+`0.8.1` and does not select a release or mutate npm tags. The unreleased
+branch still reports tool version `0.8.0`; version preparation remains a
+separate release decision.
 
 The private adapters now project that same Contract 8 acceptance model without
 adding write authority. The LSP negotiates a separate version-bound milestone
@@ -89,19 +97,19 @@ After beta publication, use `npx` for an occasional Contract 7 invocation and
 select the version explicitly:
 
 ```sh
-npx --yes --package=perttool@0.8.0 -- perttool --version
-npx --yes --package=perttool@0.8.0 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.8.0 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.8.0 -- perttool dag history PLAN.pert --rev HEAD --format json
+npx --yes --package=perttool@0.8.1 -- perttool --version
+npx --yes --package=perttool@0.8.1 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.8.1 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.8.1 -- perttool dag history PLAN.pert --rev HEAD --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.8.0 -- perttool --version
-npm exec --yes --package=perttool@0.8.0 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.8.0 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.8.0 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
+npm exec --yes --package=perttool@0.8.1 -- perttool --version
+npm exec --yes --package=perttool@0.8.1 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.8.1 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.8.1 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
@@ -115,16 +123,17 @@ Install the additive Contract 7 CLI globally by exact version when it is used
 regularly:
 
 ```sh
-npm install --global perttool@0.8.0
+npm install --global perttool@0.8.1
 perttool --version
 ```
 
 The `0.8.0` release procedure published only npm `beta` and left the
-independently managed `latest` tag at `0.7.1`. A separately authorized
-post-acceptance operation later promoted `0.8.0`; npm now reports
-`beta=latest=0.8.0`, so an unqualified global installation selects `0.8.0`.
-The exact pin remains the reproducible form for the public subpaths and
-historical DAG command.
+independently managed `latest` tag at `0.7.1`; a separately authorized
+post-acceptance operation later promoted `0.8.0`. The compatible `0.8.1`
+release then moved its accepted patch to both public tags. npm now reports
+`beta=latest=0.8.1`, so an unqualified global installation selects `0.8.1`.
+The exact pin remains the reproducible form for the public subpaths,
+historical DAG command, and corrected advance behavior.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
 Contract 6 artifact remains available as
 `perttool@0.5.0`. Contract 5,
@@ -545,8 +554,8 @@ select compatibility from each result's `schema_version`, not from
 ## LLM and automation use
 
 Use `--format json` for machine consumers. The current unreleased source
-requires `cli_contract_version == 8`. Published versions `0.7.0`, `0.7.1`, and
-`0.8.0` require
+requires `cli_contract_version == 8`. Published versions `0.7.0`, `0.7.1`,
+`0.8.0`, and `0.8.1` require
 `cli_contract_version == 7`. Published `0.6.0`, `0.5.5`, `0.5.4`, `0.5.3`,
 `0.5.2`, `0.5.1`, and `0.5.0` consumers must check
 `cli_contract_version == 6`;
@@ -570,6 +579,8 @@ rest of a result.
 Version `0.8.0` adds `dag history`, `Perttool.HistoricalGraphResult.v1`, and
 the Core and Node subpaths without changing CLI Contract 7; see the
 [`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md).
+Version `0.8.1` retains those interfaces and corrects assurance-receipt
+placement in an advance-owned terminal deletion suffix.
 A complete, known, non-truncated `Perttool.NextResult.v7` with policy
 `recommendation_v1_plus_release_gate_plus_plan_assurance_v1` is required for
 the current source. Start only task IDs in
@@ -605,6 +616,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.7.1` Help and Guide consistency patch procedure](docs/process/0.7.1-release.md)
 - [`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md)
 - [`v0.8.0` release procedure](docs/process/0.8.0-release.md)
+- [`v0.8.1` release procedure](docs/process/0.8.1-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)

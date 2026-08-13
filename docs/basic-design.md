@@ -1317,8 +1317,8 @@ in a separate attention set; the evaluator never changes its lifecycle.
 
 The result returns a `replan_and_reseal` required action with stable direct
 roots and the full affected closure. This is a control-plane action, not a
-synthetic AoA task. The active `Perttool.NextResult.v6` retains the raw ranking
-result and exposes the assurance-filtered authority under policy
+synthetic AoA task. The initial Contract 7 `Perttool.NextResult.v6` retained
+the raw ranking result and exposed the assurance-filtered authority under policy
 `recommendation_v1_plus_release_gate_plus_plan_assurance_v1`.
 
 The accepted internal authority slice implements this composition in

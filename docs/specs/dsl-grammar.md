@@ -1,9 +1,9 @@
 # perttool DSL Grammar Specification
 
 - Document status: Draft 1.0
-- Grammar versions: 1, 2, 3, 4, 5, and 6 active
+- Grammar versions: 1, 2, 3, 4, 5, 6, and 7 active
 - Created: 2026-07-21
-- Updated: 2026-08-04
+- Updated: 2026-08-13
 - Related requirements: [../requirements.md](../requirements.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 - CLI interface: [interfaces.md](interfaces.md)
@@ -12,6 +12,7 @@
 - Temporal and unit interface: [temporal-unit-interface.md](temporal-unit-interface.md)
 - Governance source and effective metadata: [governance-source.md](governance-source.md)
 - Conditional plan assurance interface: [plan-assurance-interface.md](plan-assurance-interface.md)
+- Milestone outcome acceptance: [milestone-acceptance.md](milestone-acceptance.md)
 
 ## 1. Purpose
 
@@ -23,7 +24,8 @@ The EBNF and field tables through Section 19 are normative for grammar version
 by [Temporal and Unit Interface Contract version
 2](temporal-unit-interface.md). Section 20.3 fixes the active Grammar 4
 governance delta. Section 20.4 fixes the active Grammar 5 project-actuals
-delta. Section 20.5 fixes the active Grammar 6 plan-assurance delta. See the
+delta. Section 20.5 fixes the Grammar 6 plan-assurance delta. Section 20.6
+fixes the active Grammar 7 milestone-acceptance delta. See the
 following representative valid version 1
 documents.
 
@@ -1291,6 +1293,24 @@ assurance-owned declaration byte-semantically. Semantic Mermaid profile 2 is
 the lossless Grammar 6 carrier; profile 1 or plain output is lossy and requires
 the non-strict conversion boundary.
 
+### 20.6 Grammar version 7 milestone-acceptance delta
+
+Grammar version 7 is selected only by the committed-source
+`document migrate --target-grammar 7` workflow. It inherits every Grammar 6
+declaration, field, exact-value form, validation rule, contextual keyword,
+and source-ownership rule. It adds the top-level
+`milestone_criterion_set`, `milestone_acceptance_receipt`, and
+`milestone_acceptance_migration` declarations.
+
+Sections 4, 5, and 7 of the [Milestone Outcome Acceptance
+Contract](milestone-acceptance.md) are the normative Grammar 7 field-presence,
+canonical-order, commitment, receipt, migration-provenance, source-ownership,
+and semantic-validation delta. Grammar 1 through 6 reject these declarations
+without expanding their reserved-ID sets. Grammar 7 formatting and unrelated
+source-preserving operations retain acceptance-owned semantics, while
+criterion replacement, receipt mutation, and canonical advance use their
+dedicated Contract 8 guards.
+
 ## 21. Grammar acceptance
 
 At minimum, a parser implementation automatically checks the following:
@@ -1347,3 +1367,11 @@ At minimum, a parser implementation automatically checks the following:
     outcome field conditions, receipt consumers, and receipt self-hashes.
 33. Preserves assurance-owned source through unrelated generic operations and
     retains Grammar 6 across unit migration and lossless Mermaid profile 2.
+34. Keeps Grammar 1 through 6 behavior closed while Grammar 7 accepts exactly
+    milestone criterion sets, acceptance receipts, and one migration baseline.
+35. Validates criterion commitments, receipt kinds and required fields,
+    revocation references, waiver reasons, and migration provenance through
+    the milestone-acceptance model.
+36. Preserves acceptance-owned source through unrelated operations and blocks
+    canonical advance unless every affected non-grandfathered milestone is
+    accepted.

@@ -20,6 +20,19 @@ This project records its notable changes here. The format is based on [Keep a Ch
   ranges. This fixes Issue #11 without changing candidate bytes, assurance or
   history guard meanings, or the Issue #9 EOF receipt insertion behavior.
 
+## [0.8.1] - 2026-08-12
+
+Compatible Grammar 6 and CLI Contract 7 beta patch. This version corrects a
+`dag advance` mutation-planning overlap without changing commands, schemas,
+result identities, payload meanings, or authority.
+
+### Fixed
+
+- Made assurance frontier-receipt creation use the beginning of an
+  advance-owned terminal declaration suffix when every terminal `work_event`
+  is removed. Preview, separate output, and in-place write now produce the
+  same valid candidate instead of failing with `PTCLI-070`.
+
 ## [0.8.0] - 2026-08-07
 
 Additive Grammar 6 and CLI Contract 7 beta minor. This version publishes the

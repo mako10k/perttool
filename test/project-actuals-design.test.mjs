@@ -48,7 +48,7 @@ test("project actuals contract fixes source, public, and evidence boundaries", a
   assert.match(specification, /Contract CLI version: 6/);
   assert.match(
     specification,
-    /active\s+Grammar 6 and CLI Contract 7 source retains its behavior/,
+    /active Grammar 7 and CLI Contract 8 source retains both without redefining\s+actuals/,
   );
   assert.match(specification, /Perttool\.ProjectHistoryResult\.v1/);
   assert.match(specification, /Perttool\.VelocityObservationResult\.v1/);

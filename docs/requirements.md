@@ -1485,8 +1485,9 @@ Must:
 
 Grammar 5 and CLI Contract 6 introduced eventful `task finish`, typed
 `task start|suspend|resume`, read-only `project history`, and read-only
-`project observe-velocity`. The active Grammar 6 and CLI Contract 7 source
-retains those interfaces and composes plan-assurance state additively. Their
+`project observe-velocity`. Grammar 6 and CLI Contract 7 retained those
+interfaces while composing plan-assurance state; the active Grammar 7 and CLI
+Contract 8 source retains both and adds milestone acceptance separately. Their
 option, result, diagnostic, version, and compatibility contracts are fixed by
 the Project Actuals specification. The published `0.4.0` Contract 5 package
 does not contain these commands.
@@ -2931,18 +2932,19 @@ provide Contract 6, while Contract 5 remains available by pinning `0.4.0`.
 The obsolete npm `alpha` dist-tag is retired; historical
 `0.1.0-alpha.2` remains available by exact pin.
 
-The conditional plan-assurance semantic and interface targets are accepted,
-and the current source activates its hash/state, Grammar 6 source, governed
-mutation, assurance-authority, and public Contract 7 surfaces atomically.
+The conditional plan-assurance semantic and interface targets are accepted.
+Grammar 6 and CLI Contract 7 first activated their hash/state, governed
+mutation, assurance authority, and public surfaces atomically; the active
+Grammar 7 and CLI Contract 8 source retains those meanings unchanged.
 Requirements 2.7 and 7.9, the [Conditional Plan Assurance
 Contract](specs/plan-assurance.md), its [normative examples](examples/plan-assurance.md),
 the [Plan Assurance Interface Contract](specs/plan-assurance-interface.md), and
 the [design consistency review](process/plan-assurance-design-review.md) fix
 Grammar 6, CLI Contract 7, all assurance records and commands, result schema
 identities, diagnostics, and governance-version cutover. The selected
-implementation plan is active, and its final independent acceptance task
-remains. Package version and release remain unselected; published `0.6.0`
-continues to provide the prior Grammar 5 and Contract 6 surface.
+implementation plan and independent acceptance are complete with no remaining
+task. Published `0.8.1` retains the Grammar 6 and Contract 7 package boundary;
+release selection for the current Contract 8 source remains separate.
 
 The macro/detail conversation has selected the minimal semantic draft in the
 [Task Refinement and Assurance Boundary Contract](specs/task-refinement.md):
@@ -3201,7 +3203,7 @@ Item 7 is complete. It fixed `dsl check`, source-backed CST/AST, resolver/valida
 
 Item 8 completed its foundation with `TASK_MUTATION_CORE` and `ENTITY_MUTATION_CORE`, added gate add/set/remove Core through `MUT_002_GATE_MAINTENANCE`, and added read-only `project show` and source-preserving `project set` through project-metadata extensions. The Core contract also added an atomic batch that validates only the final candidate for connected-milestone task/gate additions, path replacements, and project-wide unit changes that cannot independently produce valid intermediate DAGs. `MUTATION_CLI_PREVIEW` exposed entity commands and the former `mutation apply` path through preview-first text/JSON surfaces, and `SAFE_WRITE_ACCEPTANCE` connected the same candidate to atomic `--write`, exclusive `--out`, and `--expect-digest`. The Contract 3 cutover now exposes direct gate commands and `batch apply` through that shared path. Item 10 fixed all semantic records in the profile, stable projection, both digests, exact values, and text/JSON parity with golden/unit/E2E tests. Item 11 fail-closedly verifies canonical profile JSON, record order, both digests, semantic-model and projection correspondence, and fixes stable generated IDs and loss reports for plain input, strict-loss, and exclusive `--out` in Core/CLI/E2E.
 
-The analysis implementation has progressed through public `dag next` v6 and
+The analysis implementation has progressed through public `dag next` v7 and
 read-only `validateOverride`. In addition to Exact Rational values, PERT
 expected values/variance, precedence CPM, critical-path counts, deterministic
 resource schedules, capacity overrides, resource arcs, schedule critical
@@ -3209,7 +3211,7 @@ paths, next classification, `runnable_now`, resource rejection, and upcoming
 explanations, it exposes exact temporal schedules, deadline evaluation,
 release eligibility, suspended-state qualification, and the complete temporal
 start-authority graph through Core, CLI JSON/text, help, and package. A
-complete known non-truncated `Perttool.NextResult.v6` is normal authority, and
+complete known non-truncated `Perttool.NextResult.v7` is normal authority, and
 override validation cannot bypass future or unavailable release eligibility
 or plan-assurance eligibility.
 It also exposes `Perttool.OverrideDecision.v1` validation through the public
@@ -3232,7 +3234,24 @@ complete because the same `v0.1.0-alpha.2` artifact was published to the
 GitHub prerelease and npm `alpha`, including isolated installation from the
 registry.
 
-[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free `0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only AI Agent Guidance Registry v1 and the [`v0.1.0` beta distribution](process/beta-release-acceptance.md) are accepted. The macro plan is complete and has no remaining task. The independent English-baseline plan has completed all nine tasks, and the [final acceptance record](process/english-baseline-acceptance.md) traces ADR 0004 across the accepted repository surface. Issue #3 multi-plan composition remains a post-beta backlog; the selected `ADAPTER-001` workstream now composes the shared foundation, read-only LSP, VSIX/DAG view, and read-only MCP delivery while retaining their protocol-specific gates. Its architecture contract, Core reverse-dependency cleanup, additive Core/Node shared-library boundary, editor protocol contract, protocol-neutral document-session Core, private read-only LSP Core, isolated LSP package acceptance, private VSIX shell and DAG Webview, supported-host VSIX acceptance, Node Host boundary, CLI facade parity, read-only MCP contract, private MCP implementation, isolated MCP acceptance, and final cross-surface integration acceptance are complete. The current Core is an exact portable 45-name runtime; the additive Node Host factory leaves root and Node key- and reference-identical at 122 names and closes six inward ports without granting semantic or write authority. The CLI composes one private Application facade over that Host and routes document/digest, Git evidence, artifact, and Grammar 6 persistence through injected ports without changing its 44 commands. The LSP implementation uses stable protocol 3.17.5 over local stdio, exposes only the accepted read-only standard and negotiated Help/GraphView surfaces, remains excluded from the public package, and passes the separate Core/server tarball workflow on Node.js 22. The current fifteen-file private VSIX fixes VS Code `^1.101.0`, exact language client 9.0.1, TextMate presentation, untrusted/virtual workspace support, closed version-bound virtual Help, an offline bundled server, and a restrictive GraphView-only DAG Webview with four modes, closed messages, source navigation, and an accessible exact-value outline. Its installed gate uses exact test-electron 3.1.0 to prove trusted/untrusted minimum-host activation, virtual and large graphs, Help/navigation, replacement, uninstall readback, and source identity. The private MCP workspace implements final revision `2026-07-28`, exact stable server SDK `2.0.0`, modern-only local stdio, four immutable JSON resources, five closed read-only tools, exact inline and digest-bound registered sources, self-contained adapter schemas, hard limits, strict malformed-line fail-closure, isolated dual-tarball execution, and direct Application parity without Git, persistence, or a CLI subprocess. The final integration acceptance closes sixteen dependency-ordered cases across exact Core/CLI/MCP semantics, LSP GraphView and VSIX binding, diagnostic ownership, package isolation, the supported editor host, all 34 self-use plans, and no-write side-effect proof. All sixteen tasks and 91p are complete and retained before advance; precedence and heuristic resource makespans are zero, resource delay is zero, and complete NextResult v6 has no recommendation or startable task.
+[ADR 0003](adr/0003-beta-versioning.md) defines the first beta as suffix-free
+`0.1.0` and subsequent `0.x.x` versions as beta releases. Issue #2's read-only
+AI Agent Guidance Registry v1 and the [`v0.1.0` beta
+distribution](process/beta-release-acceptance.md) are accepted. The macro plan
+and independent English-baseline plan are complete. Issue #3 multi-plan
+composition remains a post-beta backlog; the completed `ADAPTER-001`
+workstream composes the shared foundation, read-only LSP, VSIX/DAG views, and
+read-only MCP delivery while retaining protocol-specific gates. The portable
+Core remains an exact 45-name runtime, and the accepted Node Host boundary
+retains 122 key- and reference-identical root and Node exports. At adapter
+acceptance, the CLI routed Grammar 6 persistence through injected ports and
+retained its 44 commands; the active Contract 8 wrapper now exposes 53
+commands without changing those ports. The private LSP, eighteen-file VSIX,
+and MCP workspaces retain their accepted read-only and no-publication
+boundaries. The adapter integration gate closed sixteen dependency-ordered
+cases against the then-current 34 self-use plans. All sixteen tasks and 91p
+remain complete before advance, both makespans and resource delay are zero,
+and a fresh complete NextResult v7 has no recommendation or startable task.
 
 The accepted Contract 3 source and package workflow published suffix-free beta
 `0.2.0` as the first Contract 3 package. All five tasks in

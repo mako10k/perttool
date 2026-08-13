@@ -3,11 +3,13 @@
 - Status: Normative 1.0
 - Plan-assurance model: 1
 - Hash model: 1
-- Runtime status: Grammar 6 and CLI Contract 7 active in the source CLI,
-  package root, discovery, Guide/help, schemas, and installed workflows
+- Initial runtime boundary: Grammar 6 and CLI Contract 7
+- Current runtime status: assurance model 1 remains active unchanged inside
+  the Grammar 7 and CLI Contract 8 source CLI, package root, discovery,
+  Guide/help, schemas, and installed workflows
 - Compatibility boundary: Grammar 1 through 5 source meaning is retained;
   exact Contract 6 result identities remain available from published pins
-- Source and public interface: [Grammar 6 and CLI Contract 7](plan-assurance-interface.md)
+- Initial source and public interface: [Grammar 6 and CLI Contract 7](plan-assurance-interface.md)
 - Requirements: [../requirements.md](../requirements.md)
 - Active DSL grammar: [dsl-grammar.md](dsl-grammar.md)
 - Backlog: [`ASSURE-001`](../backlog.md#assure-001-add-conditional-plan-assurance)
@@ -38,8 +40,9 @@ Resolve conflicts in this order:
 1. Must requirements in `docs/requirements.md`;
 2. this contract;
 3. the [Plan Assurance Interface Contract](plan-assurance-interface.md) for
-   Grammar 6 source, CLI Contract 7, result, diagnostic, and governance shape;
-4. [DSL Grammar](dsl-grammar.md) for the active Grammar 1 through 6 lexical,
+   the initial Grammar 6 source, CLI Contract 7, result, diagnostic, and
+   governance shape;
+4. [DSL Grammar](dsl-grammar.md) for the active Grammar 1 through 7 lexical,
    syntax, source-span, and compatibility boundary;
 5. [Graph Semantics](graph-semantics.md) for AoA execution dependencies,
    reachability, and advance;
@@ -703,13 +706,14 @@ tasks from Git.
 - An enabled but unsealed or partially sealed plan is analyzable for replanning
   but fails closed for affected new starts.
 - Unknown assurance/hash versions and incomplete projections are unavailable.
-- The Grammar 6 and CLI Contract 7 interface is active atomically in the CLI,
-  help, Guide, package exports, schemas, and installed behavior.
+- Grammar 6 and CLI Contract 7 first activated this interface atomically. The
+  current Grammar 7 and CLI Contract 8 source retains its assurance meanings,
+  commands, authority, and compatibility behavior.
 - Publication, plan advance, Issue mutation, and release-channel changes remain
   separate authorization boundaries.
 
 Grammar 6 compatibility operations remain fail-closed adapters behind the
-public Contract 7 surface. Formatting must retain the same semantic assurance
+current public Contract 8 surface. Formatting must retain the same semantic assurance
 projection. Unit migration and unrelated project/batch edits must keep version
 6 and preserve assurance-owned source bytes. History validates Grammar 6 while
 reducing only actuals and never accepts assurance from Git. Mermaid semantic

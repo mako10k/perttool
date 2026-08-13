@@ -1,9 +1,10 @@
 # Milestone Outcome Acceptance Contract
 
-- Status: Normative target 1.0
+- Status: Normative 1.0
 - Milestone-acceptance model version: 1
-- Target grammar: Grammar 7
-- Target CLI contract: Contract 8
+- Active source grammar: Grammar 7
+- Active source CLI contract: Contract 8
+- Published compatibility boundary: `perttool@0.8.1`, Grammar 6, CLI Contract 7
 - Requirements: [../requirements.md](../requirements.md)
 - Backlog: [`MILESTONE-ACCEPT-001`](../backlog.md#milestone-accept-001-separate-graph-closure-from-milestone-outcome-acceptance)
 - Plan: [`plans/milestone-acceptance.pert`](../../plans/milestone-acceptance.pert)

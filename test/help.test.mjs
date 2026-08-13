@@ -124,7 +124,7 @@ test("mermaid help exposes lossless export and fail-closed import", () => {
   ]);
 });
 
-test("next help exposes the v5 temporal start authority and consumer safety", () => {
+test("retained Core Help exposes the v5 temporal authority baseline", () => {
   const help = getHelp("next", "detail");
   assert.equal(help.ok, true);
   assert.match(help.summary, /NextResult\.v5/);

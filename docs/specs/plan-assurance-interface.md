@@ -6,14 +6,14 @@
 - Public CLI target: CLI Contract 7
 - Plan-assurance model: 1
 - Hash model: 1
-- Runtime status: Grammar 6 and CLI Contract 7 active in the source CLI,
-  package root, discovery, Guide/help, schemas, and installed workflows
+- Initial runtime boundary: Grammar 6 and CLI Contract 7
+- Current runtime status: retained unchanged by the Grammar 7 and CLI
+  Contract 8 source successor
 - Semantic contract: [plan-assurance.md](plan-assurance.md)
 - Historical compatibility baseline: Grammar 5, CLI Contract 6, and exact pin
   0.6.0
-- Active package boundary: `beta=latest=0.7.1` after the separately authorized
-  compatible patch publication and post-publication promotion; `0.7.0`
-  remains the first Contract 7 and Grammar 6 pin
+- Published package boundary: `beta=latest=0.8.1`; `0.7.0` remains the first
+  Contract 7 and Grammar 6 pin, and `0.7.1` remains its Guide-consistency patch
 - Workstream: [../../plans/plan-assurance.pert](../../plans/plan-assurance.pert)
 
 ## 1. Decision and scope
@@ -24,8 +24,10 @@ Grammar 5. CLI Contract 7 changes the closed results that must project
 assurance, adds one read-only assurance command and eight assurance mutations,
 and retains every unrelated command spelling.
 
-This contract selects and now governs the active source/runtime shape. Its
-activation does not select a package version, authorize a release,
+This contract governs the first assurance source/runtime shape. The active
+Grammar 7 and Contract 8 successor retains these assurance meanings while
+adding milestone acceptance separately. Its activation does not select a
+package version, authorize a release,
 authenticate a caller, or claim that a hash is a digital signature.
 
 Resolve conflicts in this order:

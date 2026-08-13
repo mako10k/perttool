@@ -177,6 +177,14 @@ test("active Contract 8 Guide states exact additive identities and authority", a
     getGuide("syntax.temporal", "detail").syntax.join("\n"),
     /version 2\|3\|4\|5\|6\|7/,
   );
+  assert.match(
+    getGuide("syntax.temporal", "detail").summary,
+    /retained through Grammar 7/,
+  );
+  assert.match(
+    getGuide("syntax.work-event", "detail").summary,
+    /Grammars 6 and 7 retain it unchanged/,
+  );
 
   const temporal = getGuide("analysis.temporal", "detail");
   const temporalBody = temporal.sections.map(({ body }) => body).join("\n");
@@ -196,7 +204,12 @@ test("active Contract 8 Guide states exact additive identities and authority", a
   const actualsBody = getGuide("actuals", "detail").sections
     .map(({ body }) => body).join("\n");
   assert.match(actualsBody, /Grammar 5 introduces task-owned work events/);
+  assert.match(actualsBody, /Grammars 6 and 7 retain them unchanged/);
   assert.match(actualsBody, /Grammar 5 through 7/);
+
+  const editingBody = getGuide("editing", "detail").sections
+    .map(({ body }) => body).join("\n");
+  assert.match(editingBody, /current Contract 8 candidate/);
 
   const assurance = getGuide("plan-assurance", "detail");
   assert.equal(assurance.examples.length, 3);

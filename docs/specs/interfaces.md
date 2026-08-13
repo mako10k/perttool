@@ -30,7 +30,7 @@ This is the normative specification that fixes the perttool MVP CLI commands, op
 This document records the superseded CLI Contract 2 command surface and remains
 normative only where a successor contract explicitly preserves its result
 payload, stream, exit, or domain meaning. Contract 3 was the immediate
-successor; the active source is now CLI Contract 7. The published `0.1.0`
+successor; the active source is now CLI Contract 8. The published `0.1.0`
 artifact still implements this Contract 2 surface.
 
 The primary MVP interface is the local CLI. AI agents also use the CLI's `--format json`, rather than MCP, to perform checks, analysis, next-task selection, and preview mutations.

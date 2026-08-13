@@ -20,9 +20,10 @@ This specification defines the selected post-beta design for:
 - task and project actual summaries; and
 - observed throughput and effort productivity.
 
-Grammar 5 and CLI Contract 6 activated this contract atomically. The active
-Grammar 6 and CLI Contract 7 source retains its behavior and adds conditional
-plan assurance without redefining actuals. The independent
+Grammar 5 and CLI Contract 6 activated this contract atomically. Grammar 6
+and CLI Contract 7 retained it while adding conditional plan assurance; the
+active Grammar 7 and CLI Contract 8 source retains both without redefining
+actuals. The independent
 [`project-actuals.pert`](../../plans/project-actuals.pert) workstream retains
 the contract review and implementation evidence; package publication remains
 a separate release boundary. The review is recorded in
@@ -747,7 +748,7 @@ The implementation and package acceptance must version:
 
 The Grammar 5 and CLI Contract 6 cutover activated the source parser, root
 exports, commands, help, conditional result fields, and installed-package
-checks together. The active Grammar 6 and CLI Contract 7 source retains that
+checks together. The active Grammar 7 and CLI Contract 8 source retains that
 atomic boundary. No release or dist-tag mutation follows from source
 activation.
 

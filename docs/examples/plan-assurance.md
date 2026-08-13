@@ -3,11 +3,12 @@
 - Status: Normative 1.0 examples
 - Contract: [Conditional Plan Assurance](../specs/plan-assurance.md)
 - Interface: [Grammar 6 and CLI Contract 7](../specs/plan-assurance-interface.md)
-- Runtime status: Grammar 6 and CLI Contract 7 active in the source CLI,
-  package root, Guide/help, schemas, and installed `0.7.0` workflows
+- Initial runtime boundary: Grammar 6 and CLI Contract 7 in `0.7.0`
+- Current runtime status: these assurance examples remain valid under the
+  Grammar 7 and CLI Contract 8 source successor
 - Case fixture: [`plan-assurance-contract-v1.json`](../../test/fixtures/plan-assurance-contract-v1.json)
 
-The snippets below use the active Grammar 6 source contract. Grammar 1 through
+The snippets below use the retained Grammar 6 assurance source contract. Grammar 1 through
 5 and exact CLI Contract 6 package pins do not accept these assurance records;
 `0.7.0` is the first public package that does.
 `A -> B` in an execution diagram means the projected AoA task dependency

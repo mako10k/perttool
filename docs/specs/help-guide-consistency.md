@@ -1,6 +1,6 @@
 # Help and Guide Consistency
 
-- Status: Accepted correction contract 1.0
+- Status: Accepted correction contract 1.0; retained Contract 7 baseline
 - Review date: 2026-08-05
 - Workstream: `GUIDE-CONSISTENCY-001`
 - Active source grammar: Grammar 6, with Grammar 1 through 5 compatibility
@@ -8,6 +8,12 @@
 - Accepted input package: `perttool@0.7.0`
 - Selected release package: `perttool@0.7.1`
 - Result identities: unchanged
+- Current successor: [Milestone Outcome Acceptance Contract](milestone-acceptance.md),
+  Grammar 7, and CLI Contract 8
+
+All references to the active Guide or current package below are scoped to the
+2026-08-05 correction boundary. They are retained as historical acceptance
+facts; current repository guidance follows the successor named above.
 
 ## 1. Purpose
 

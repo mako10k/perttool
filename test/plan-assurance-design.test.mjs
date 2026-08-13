@@ -39,7 +39,7 @@ test("plan assurance design separates dependencies, state, and authority", async
   assert.match(specification, /- Status: Normative 1\.0/);
   assert.match(
     specification,
-    /- Runtime status: Grammar 6 and CLI Contract 7 active in the source CLI,\s+package root, discovery, Guide\/help, schemas, and installed workflows/,
+    /- Initial runtime boundary: Grammar 6 and CLI Contract 7[\s\S]*Current runtime status:[\s\S]*Grammar 7 and CLI Contract 8 source CLI/,
   );
   assert.match(
     specification,
@@ -101,7 +101,7 @@ test("plan assurance design separates dependencies, state, and authority", async
   assert.match(design, /src\/assurance\//);
   assert.match(
     design,
-    /active `Perttool\.NextResult\.v6` retains the raw ranking\s+result and exposes the assurance-filtered authority/,
+    /initial Contract 7 `Perttool\.NextResult\.v6` retained\s+the raw ranking result and exposed the assurance-filtered authority/,
   );
   assert.match(design, /per-consumer task ID and effective planning mode/);
   assert.match(review, /No reviewed document requires lifecycle status to enter a plan hash/);
@@ -113,7 +113,7 @@ test("plan assurance design separates dependencies, state, and authority", async
     backlog,
     /interface, hash, source,\s+mutation, and authority Cores accepted/,
   );
-  assert.match(examples, /active Grammar 6 source contract/);
+  assert.match(examples, /retained Grammar 6 assurance source contract/);
 });
 
 test("all fourteen plan assurance design cases are dependency ordered", async () => {
@@ -201,7 +201,7 @@ test("all fourteen plan assurance design cases are dependency ordered", async ()
   );
 });
 
-test("the active Contract 7 surface exposes plan assurance atomically", () => {
+test("the active Contract 8 surface retains plan assurance atomically", () => {
   const commandPaths = COMMAND_REGISTRY.map(({ path }) => path.join(" "));
   assert.equal(
     commandPaths.some((commandPath) =>
