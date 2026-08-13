@@ -14,7 +14,7 @@ function repositoryText(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
 }
 
-test("0.9.0 candidate binds Grammar 7 and CLI Contract 8 without publication", async () => {
+test("0.9.0 publication binds Grammar 7 and CLI Contract 8 without latest promotion", async () => {
   const [
     requirements,
     adr,
@@ -24,6 +24,7 @@ test("0.9.0 candidate binds Grammar 7 and CLI Contract 8 without publication", a
     readiness,
     preparation,
     candidate,
+    publication,
     migration,
     planAcceptance,
     plan,
@@ -47,6 +48,7 @@ test("0.9.0 candidate binds Grammar 7 and CLI Contract 8 without publication", a
     repositoryText("docs/process/0.9.0-input-readiness.md"),
     repositoryText("docs/process/0.9.0-preparation.md"),
     repositoryText("docs/process/0.9.0-candidate.md"),
+    repositoryText("docs/process/0.9.0-publish.md"),
     repositoryText("docs/process/0.8.1-to-0.9.0-migration.md"),
     repositoryText("docs/process/0.9.0-release-plan-acceptance.md"),
     repositoryText("plans/release-0.9.0.pert"),
@@ -82,7 +84,7 @@ test("0.9.0 candidate binds Grammar 7 and CLI Contract 8 without publication", a
   );
   assert.match(procedure, /- Status: Accepted 1\.0/u);
   assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.8\.1`, no `alpha`/u);
-  assert.match(procedure, /They do not\s+authorize PUBLISH or any external mutation/u);
+  assert.match(procedure, /That batch is complete/u);
   assert.match(gate, /- Document status: Accepted 1\.0/u);
   assert.match(gate, /\| Commands \| 45 \| 53 \|/u);
   assert.match(gate, /\| Root schemas \| 21 \| 23 \|/u);
@@ -100,6 +102,14 @@ test("0.9.0 candidate binds Grammar 7 and CLI Contract 8 without publication", a
   assert.match(candidate, /Completed-plan source digest: `sha256:9bd6fea7/u);
   assert.match(candidate, /SHA-256 \| `88e51bfee536a62a980c83f2af77af6245a5ce578ec9aac4153b2e8f237345e7`/u);
   assert.match(candidate, /Complete, non-truncated NextResult v7 recommends and makes startable only/u);
+  assert.match(publication, /- Document status: Accepted 1\.0/u);
+  assert.match(publication, /Release commit: `3aca4f0d863407d5f2abd9a09741dae85731c0b0`/u);
+  assert.match(publication, /Annotated tag object: `de108f5a159cb69bd59446f5d0082776f16cee72`/u);
+  assert.match(publication, /CI run: \[`31670558276`\]/u);
+  assert.match(publication, /GitHub prerelease `369687054`/u);
+  assert.match(publication, /beta=0\.9\.0/u);
+  assert.match(publication, /unchanged\s+`latest=0\.8\.1`/u);
+  assert.match(publication, /Completed-plan source digest: `sha256:4a53e9ce/u);
   assert.match(migration, /Existing Grammar 1 through 6 documents remain readable/u);
   assert.match(migration, /Use exact `perttool@0\.8\.1` as the rollback pin/u);
   assert.match(planAcceptance, /Accepted source digest: `sha256:104c58d0/u);
@@ -136,7 +146,7 @@ test("0.9.0 candidate binds Grammar 7 and CLI Contract 8 without publication", a
       ["RELEASE_090_INPUT_READINESS", "done"],
       ["RELEASE_090_PREPARATION", "done"],
       ["RELEASE_090_CANDIDATE", "done"],
-      ["RELEASE_090_PUBLISH", "planned"],
+      ["RELEASE_090_PUBLISH", "done"],
       ["RELEASE_090_ACCEPTANCE", "planned"],
     ],
   );
@@ -170,5 +180,5 @@ test("0.9.0 candidate binds Grammar 7 and CLI Contract 8 without publication", a
   assert.equal(perttool.COMMAND_REGISTRY.length, 53);
   assert.equal(perttool.getJsonSchemaCatalog().length, 23);
   assert.equal(manifest.files.includes("adapters"), false);
-  assert.match(procedure, /Candidate acceptance is complete from source commit `5cb7bc8`/u);
+  assert.match(procedure, /PUBLISH is complete from release commit `3aca4f0`/u);
 });

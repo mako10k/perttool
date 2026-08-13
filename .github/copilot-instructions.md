@@ -13,12 +13,12 @@ Mandatory summary:
   and `Perttool.NextResult.v7`. All milestone-acceptance work is complete and
   canonically advanced; the residual plan has no diagnostic, task,
   recommendation, or startable task. The selected `plans/release-0.9.0.pert`
-  workstream has completed local gate design, input readiness, source
-  preparation, and candidate acceptance. Source commit `5cb7bc8` produced the
-  retained 713-file candidate at SHA-256 `88e51bfe...37345e7`; complete
-  NextResult v7 recommends only `RELEASE_090_PUBLISH`. The candidate-record
-  commit or push, tag, publication, `latest`, remote writes, Issue mutation,
-  and plan advance remain separate.
+  workstream has completed local gates, candidate acceptance, and PUBLISH.
+  Release commit and peeled `v0.9.0` target `3aca4f0`; CI passed; GitHub and
+  npm `beta=0.9.0` match the retained candidate at SHA-256
+  `88e51bfe...37345e7`. Complete NextResult v7 recommends only
+  `RELEASE_090_ACCEPTANCE`. Durable acceptance, `latest`, public VSIX
+  publication, record push, Issue mutation, and plan advance remain separate.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
   tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`

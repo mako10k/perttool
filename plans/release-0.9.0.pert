@@ -107,6 +107,7 @@ task RELEASE_090_PUBLISH RELEASE_090_CANDIDATE_ACCEPTED -> RELEASE_090_PUBLISHED
   title "Publish version 0.9.0 from one immutable tarball"
   description "Only after every predecessor gate passes and the user separately authorizes the exact candidate and external batch, push and verify the clean release commit and annotated tag, wait for Node.js 22 and 24 CI, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.9.0 while latest remains 0.8.1. Do not publish the private VSIX, LSP, or MCP adapters."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

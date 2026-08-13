@@ -2052,6 +2052,14 @@ Stage 1 entry evidence:
   precedence and heuristic resource makespans and zero resource delay.
   Complete NextResult v7 recommends only `RELEASE_090_PUBLISH`, but
   publication and every external write remain separately authorized.
+- `v0.9.0` PUBLISH gate: release commit and peeled annotated tag target
+  `3aca4f0`; Node.js 22 and 24 CI run `31670558276` passed; GitHub prerelease
+  and npm `beta=0.9.0` use the same 713-file tarball at SHA-256
+  `88e51bfe...37345e7`; publication retained `latest=0.8.1` and no `alpha`.
+  Five tasks and 19p are complete; 3p remain with matching precedence and
+  heuristic resource makespans and zero delay. Complete NextResult v7
+  recommends only `RELEASE_090_ACCEPTANCE`; durable acceptance, `latest`,
+  public VSIX publication, and plan advance remain separate.
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-eight current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes

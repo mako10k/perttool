@@ -768,34 +768,32 @@
       ]
     },
     "release-0.9.0": {
-      "source_digest": "sha256:9bd6fea777dd00eafdbc072e0c8556ad028071ac1b92e2cbe7a8cde394b01e5a",
+      "source_digest": "sha256:4a53e9cec6746bff8b2448a3f481a3fc6d2859e78b9a149312278565b8f2d6b7",
       "groups": {
         "active": [],
         "ready": [
-          "RELEASE_090_PUBLISH"
-        ],
-        "runnable_now": [
-          "RELEASE_090_PUBLISH"
-        ],
-        "blocked_now": [],
-        "upcoming": [
           "RELEASE_090_ACCEPTANCE"
         ],
+        "runnable_now": [
+          "RELEASE_090_ACCEPTANCE"
+        ],
+        "blocked_now": [],
+        "upcoming": [],
         "suspended": []
       },
       "recommended_task_ids": [
-        "RELEASE_090_PUBLISH"
+        "RELEASE_090_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "RELEASE_090_PUBLISH"
+        "RELEASE_090_ACCEPTANCE"
       ],
       "tiers": {
-        "RELEASE_090_PUBLISH": "recommended"
+        "RELEASE_090_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "RELEASE_090_PUBLISH",
+          "id": "RELEASE_090_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,

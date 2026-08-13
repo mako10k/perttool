@@ -93,9 +93,9 @@ Plans are separated by level of detail.
   separate
 - [release-0.9.0.pert](release-0.9.0.pert): selected Grammar 7 and CLI
   Contract 8 milestone-acceptance beta-minor plan; gate design, input
-  readiness, source preparation, and immutable candidate acceptance are
-  complete, while publication, `latest`, remote writes, and plan advance
-  remain separate
+  readiness, source preparation, immutable candidate acceptance, and PUBLISH
+  are complete, while durable acceptance, `latest`, public VSIX publication,
+  remote record publication, and plan advance remain separate
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2
