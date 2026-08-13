@@ -2065,7 +2065,17 @@ Stage 1 entry evidence:
   milestone-acceptance, historical, migration, export, schema, and private-
   adapter-exclusion checks passed. All six tasks and 22p are complete with
   zero makespans; complete NextResult v7 has no ready, recommended, or
-  startable task. npm `latest=0.8.1` and absent `alpha` remain unchanged.
+  startable task. At that immutable acceptance boundary npm `latest=0.8.1`
+  and absent `alpha` remained unchanged.
+- `v0.9.0` post-acceptance closure: one separately authorized npm dist-tag
+  mutation made `beta=latest=0.9.0` with no `alpha`; Issues #10 and #11 were
+  closed with exact release evidence; and the accepted record was pushed.
+  The completed plan was migrated to Grammar 7, given six artifact criteria
+  and verify receipts at committed snapshot `23e1664`, and canonically
+  advanced without history force. Residual digest
+  `sha256:59b5fbbe...d4e71a` retains only accepted reached
+  `RELEASE_090_ACCEPTED`, with zero tasks and makespans, no diagnostic, and no
+  ready, recommended, or startable task.
 - CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all thirty-eight current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes

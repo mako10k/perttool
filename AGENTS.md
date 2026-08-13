@@ -15,7 +15,7 @@ User communication is independent from the repository baseline. Unless the user 
 
 perttool has accepted its TypeScript CLI MVP and the read-only AI Agent
 Guidance Registry v1 from Issue #2 and has durably accepted suffix-free beta
-releases through `v0.8.1`.
+releases through `v0.9.0`.
 Version `0.6.0` retains Grammar 5 and CLI Contract 6 while adding repository
 history protection, `Perttool.AdvanceResult.v1`, and the narrow
 `--force-history-loss` boundary to `dag advance`. Version `0.5.5` retains
@@ -28,9 +28,9 @@ available by exact pin. Version `0.5.1` remains the initial schema-discovery
 Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
-explicit pin. npm reports `beta=latest=0.8.1` and no `alpha`. Version `0.8.1`
-is the compatible Grammar 6 and CLI Contract 7 Issue #9 advance-receipt patch;
-`0.8.0` remains its rollback pin. The
+explicit pin. npm reports `beta=latest=0.9.0` and no `alpha`. Version `0.9.0`
+is the Grammar 7 and CLI Contract 8 milestone-acceptance beta; `0.8.1` is its
+compatible Grammar 6 and CLI Contract 7 rollback pin. The
 durably accepted beta `0.7.0` source implements Grammar 1/2/3/4/5/6 reads,
 registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
@@ -637,24 +637,26 @@ retains only accepted reached milestone `MILESTONE_ACCEPTANCE_ACCEPTED` and
 has no diagnostics, task, recommendation, or startable task.
 
 The explicitly selected `0.9.0` milestone-acceptance beta minor is tracked in
-`plans/release-0.9.0.pert`. Its six serial tasks total 22p from
-`RELEASE_090_GATE_DESIGN` through `RELEASE_090_ACCEPTANCE`. The exact initial
-18-mutation candidate was written once with actor `codex`, the scope-bound
-owner assertion `user`, and source digest
-`sha256:104c58d045c1920ec9afe72fb63aeff39306f6880e468a41139372b9b6be0701`.
-Gate design, input readiness, local source preparation, candidate acceptance,
-the separately authorized PUBLISH batch, and durable acceptance are complete
-and retained before advance. Release commit and peeled annotated `v0.9.0`
-target `3aca4f0` agree; Node.js 22 and 24 CI run `31670558276` passed; GitHub
-prerelease `369687054`, npm `beta=0.9.0`, and the retained 713-file tarball
-agree at SHA-256 `88e51bfe...37345e7`. Independent exact, beta, latest, and
-rollback installations, Grammar 1 through 7, Contract 8, milestone acceptance,
-historical reconstruction, migration, public exports and schemas, and private-
-adapter exclusion passed. All six tasks and 22p are complete at plan digest
-`sha256:0fdc2a84...9c77a2`; both makespans are zero, and complete NextResult v7
-has no ready, recommended, or startable task. npm `latest=0.8.1` and absent
-`alpha` remain unchanged. `latest`, public VSIX publication, remote record
-publication, Issue mutation, and plan advance remain separate.
+`plans/release-0.9.0.pert`. Its six serial tasks and 22p through
+`RELEASE_090_ACCEPTANCE` completed before canonical advance. Release commit
+and peeled annotated `v0.9.0` target `3aca4f0`; Node.js 22 and 24 CI run
+`31670558276` passed; GitHub prerelease `369687054`, npm `0.9.0`, and the
+retained 713-file tarball agree at SHA-256 `88e51bfe...37345e7`. Independent
+Grammar 1 through 7, Contract 8, milestone acceptance, historical
+reconstruction, migration, public export/schema, private-adapter exclusion,
+and exact, beta, latest, and rollback installation checks passed. Accepted
+record commit `4a78e58` was pushed to the work-in-progress branch. A separately
+authorized npm mutation made `beta=latest=0.9.0` with no `alpha`, and Issues
+#10 and #11 were closed with release evidence. The completed Grammar 6 plan
+was migrated at commit `dd00725`; six artifact criteria and receipts were
+frozen at pre-advance commit `23e1664`; and history- and acceptance-guarded
+advance completed without force. Residual Grammar 7 digest
+`sha256:59b5fbbe...d4e71a` retains only accepted reached milestone
+`RELEASE_090_ACCEPTED`, has zero tasks and makespans, no diagnostic, and no
+ready, recommended, or startable task. Records are
+`docs/process/0.9.0-latest-promotion.md` and
+`docs/process/0.9.0-post-acceptance-operations.md`. Public VSIX publication
+and unrelated work remain separate.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 

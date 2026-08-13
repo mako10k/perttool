@@ -92,9 +92,11 @@ Plans are separated by level of detail.
   authorized `latest` promotion are complete, while plan advance remains
   separate
 - [release-0.9.0.pert](release-0.9.0.pert): completed Grammar 7 and CLI
-  Contract 8 milestone-acceptance beta-minor plan; publication and durable
-  acceptance are complete, while `latest`, public VSIX publication, remote
-  record publication, and plan advance remain separate
+  Contract 8 milestone-acceptance beta-minor plan; publication, durable
+  acceptance, `latest` promotion, record push, Issue #10/#11 closure, and
+  canonical advance are complete; the residual plan retains only accepted
+  reached `RELEASE_090_ACCEPTED`, while public VSIX publication remains
+  separate
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2

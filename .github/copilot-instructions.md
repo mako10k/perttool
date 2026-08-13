@@ -5,22 +5,25 @@ Treat `AGENTS.md` as the source of truth for repository guidance shared by Codex
 Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
-- The current published beta is `perttool@0.9.0`; npm reports `beta=0.9.0`,
-  `latest=0.8.1`, and no `alpha`. Version `0.8.1` is the compatible Grammar 6
-  and CLI Contract 7 rollback pin.
+- The current published beta is `perttool@0.9.0`; npm reports
+  `beta=latest=0.9.0` and no `alpha`. Version `0.8.1` is the compatible
+  Grammar 6 and CLI Contract 7 rollback pin.
 - The current source atomically activates Grammar 7 and CLI
   Contract 8 with 53 commands, 23 root schemas, 129 root and Node exports,
   and `Perttool.NextResult.v7`. All milestone-acceptance work is complete and
   canonically advanced; the residual plan has no diagnostic, task,
   recommendation, or startable task. The selected `plans/release-0.9.0.pert`
-  workstream has completed local gates, candidate acceptance, PUBLISH, and
-  durable acceptance. Release commit and peeled `v0.9.0` target `3aca4f0`;
-  CI passed; GitHub and npm `beta=0.9.0` match the retained candidate at
-  SHA-256 `88e51bfe...37345e7`. All six tasks and 22p are complete at plan
-  digest `sha256:0fdc2a84...9c77a2`, both makespans are zero, and complete
-  NextResult v7 has no ready, recommended, or startable task. `latest`, public
-  VSIX publication, record push, Issue mutation, and plan advance remain
-  separate.
+  workstream completed local gates, candidate acceptance, PUBLISH, and durable
+  acceptance. Release commit and peeled `v0.9.0` target `3aca4f0`; CI passed;
+  GitHub and npm match the retained candidate at SHA-256
+  `88e51bfe...37345e7`. The accepted record was pushed, npm now reports
+  `beta=latest=0.9.0` with no `alpha`, and Issues #10 and #11 are closed with
+  release evidence. The Grammar 6 plan was migrated and given six accepted
+  artifact criteria before history- and acceptance-guarded canonical advance.
+  Residual Grammar 7 digest `sha256:59b5fbbe...d4e71a` retains only accepted
+  reached milestone `RELEASE_090_ACCEPTED`, has zero tasks and makespans, no
+  diagnostic, and no ready, recommended, or startable task. Public VSIX
+  publication and unrelated work remain separate.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
   tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`

@@ -11,19 +11,6 @@ project RELEASE_090:
   dag_owner user
 
 
-milestone_acceptance_migration GRAMMAR_7_BASELINE:
-  model 1
-  repository git:sha1:4a78e586525e526d34ae8956efce8f1f1c4cd771:index:29614dac5f6b6bf823a2e584100fb80494b37d36
-  path "plans/release-0.9.0.pert"
-  object_format sha1
-  head 4a78e586525e526d34ae8956efce8f1f1c4cd771
-  blob 29614dac5f6b6bf823a2e584100fb80494b37d36
-  source_digest sha256:0fdc2a843bb6cc40f6e8e97bc3d327bae10c26128aa060546c0fb3450f9c77a2
-  candidate_digest sha256:3fb812df577e43b95217e17e0055c0116be38e8ddbf5f243a213c08a10adcb39
-  grandfathered RELEASE_090_PLANNING_STARTED
-milestone RELEASE_090_PLANNING_STARTED:
-  title "Version 0.9.0 release planning started"
-  state reached
 
 resource DEVELOPERS:
   title "Release engineering capacity"
@@ -49,189 +36,14 @@ resource EXTERNAL_RELEASE:
   description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
   capacity 1
 
-milestone RELEASE_090_GATE_ACCEPTED:
-  title "Version 0.9.0 release gate accepted"
 
-milestone RELEASE_090_INPUTS_READY:
-  title "Accepted 0.9.0 release inputs verified"
 
-milestone RELEASE_090_SOURCE_PREPARED:
-  title "Version 0.9.0 release source prepared"
 
-milestone RELEASE_090_CANDIDATE_ACCEPTED:
-  title "Version 0.9.0 release candidate accepted"
 
-milestone RELEASE_090_PUBLISHED:
-  title "Version 0.9.0 published to GitHub and npm beta"
 
 milestone RELEASE_090_ACCEPTED:
   title "Version 0.9.0 milestone acceptance beta accepted"
-
-task RELEASE_090_GATE_DESIGN RELEASE_090_PLANNING_STARTED -> RELEASE_090_GATE_ACCEPTED:
-  title "Define the 0.9.0 Grammar 7 and Contract 8 release gate"
-  description "Select suffix-free 0.9.0 for the breaking public boundary after 0.8.1. Bind accepted milestone acceptance, historical reconstruction, Help and documentation consistency, Point-default, Issue 9 and Issue 11 inputs; verify the 45-to-53 command, 21-to-23 schema, 122-to-129 root and Node export, Grammar 6-to-7, and Contract 7-to-8 transitions; update requirements, ADR, design, procedure, plan metadata, migration guidance, and tests together; and fix private-adapter, VSIX publication, npm latest, plan advance, and Issue exclusions. This task performs no external write."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
-
-task RELEASE_090_INPUT_READINESS RELEASE_090_GATE_ACCEPTED -> RELEASE_090_INPUTS_READY:
-  title "Verify accepted 0.9.0 release inputs"
-  description "Require the canonically advanced MILESTONE-ACCEPT-001 plan and its final cross-surface acceptance, the accepted historical milestone-acceptance trace, current Help and documentation reconciliation, the Point-default and private VSIX duration slices, and the Issue 9 and Issue 11 advance corrections. Verify Grammar 7, Contract 8, 53 commands, 23 schemas, 129 root and Node exports, 45 Core exports, public package inventory, migration, compatibility, and no-write boundaries without duplicating implementation state. This task performs no external write."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
-
-task RELEASE_090_PREPARATION RELEASE_090_INPUTS_READY -> RELEASE_090_SOURCE_PREPARED:
-  title "Prepare version 0.9.0 release source"
-  description "Align package and lockfile identity, CLI and MCP versions, adapter peer versions, CHANGELOG, README, 0.8.1-to-0.9.0 migration guidance, release documentation, tests, goldens, self-use registration, dependency and package inventory audits, and beta publication validation. Run the complete Node.js 22 repository and installed-package gates without remote or registry writes."
-  duration 5p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
-
-task RELEASE_090_CANDIDATE RELEASE_090_SOURCE_PREPARED -> RELEASE_090_CANDIDATE_ACCEPTED:
-  title "Accept one clean 0.9.0 release candidate"
-  description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; verify beta=latest=0.8.1 with no alpha and verify authenticated routes; build one immutable tarball outside the worktree; and accept its timestamp, sizes, file count, digests, public package inventory, installed Contract 8 behavior, and migration regressions. This task performs no external write."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
-
-task RELEASE_090_PUBLISH RELEASE_090_CANDIDATE_ACCEPTED -> RELEASE_090_PUBLISHED:
-  title "Publish version 0.9.0 from one immutable tarball"
-  description "Only after every predecessor gate passes and the user separately authorizes the exact candidate and external batch, push and verify the clean release commit and annotated tag, wait for Node.js 22 and 24 CI, publish the GitHub prerelease and SHA256SUMS, install its asset, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.9.0 while latest remains 0.8.1. Do not publish the private VSIX, LSP, or MCP adapters."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
-    EXTERNAL_RELEASE 1
-
-task RELEASE_090_ACCEPTANCE RELEASE_090_PUBLISHED -> RELEASE_090_ACCEPTED:
-  title "Record durable 0.9.0 beta acceptance"
-  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub, and npm tarball bytes, registry integrity and metadata, exact and beta isolated installation, Grammar 7, Contract 8, 53 commands, 23 schemas, 129 root and Node exports, 45 Core exports, milestone acceptance, historical reconstruction, private-adapter exclusion, compatibility, migration, and rollback pin 0.8.1. Record evidence without changing npm latest, publishing a VSIX, advancing a plan, or mutating an Issue."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
-
-milestone_criterion_set RELEASE_090_GATE_R1:
-  milestone RELEASE_090_GATE_ACCEPTED
-  revision R1
-  commitment sha256:a39ef6f4397847f2b990f292063320eccb61d37285797d16923c1bc3504077de
-  criterion GATE_ACCEPTED required artifact "Accepted version 0.9.0 release gate"
-
-milestone_acceptance_receipt RELEASE_090_GATE_EVIDENCE:
-  model 1
-  set RELEASE_090_GATE_R1
-  set_commitment sha256:a39ef6f4397847f2b990f292063320eccb61d37285797d16923c1bc3504077de
-  criterion GATE_ACCEPTED
-  criterion_commitment sha256:8c8b02a0b26cae32948b2d7747a68ec1ec9d9d64b04622934205167e94f3173b
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.0-gate-design.md"
-  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
-  verifier codex
-  occurred_at 2026-08-13T06:54:55Z
-
-milestone_criterion_set RELEASE_090_INPUTS_R1:
-  milestone RELEASE_090_INPUTS_READY
-  revision R1
-  commitment sha256:f96ec56869dcb8fb77f133d2f1809cc7ec7c83b2413630ff1a8e83a2db84e14e
-  criterion INPUTS_ACCEPTED required artifact "Accepted version 0.9.0 release inputs"
-
-milestone_acceptance_receipt RELEASE_090_INPUTS_EVIDENCE:
-  model 1
-  set RELEASE_090_INPUTS_R1
-  set_commitment sha256:f96ec56869dcb8fb77f133d2f1809cc7ec7c83b2413630ff1a8e83a2db84e14e
-  criterion INPUTS_ACCEPTED
-  criterion_commitment sha256:5ed3f28b5ed4a3ab3f498bc71ce79ddd9d1c67c6e66c9d0ee83b9eb7cc13868b
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.0-input-readiness.md"
-  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
-  verifier codex
-  occurred_at 2026-08-13T06:54:55Z
-
-milestone_criterion_set RELEASE_090_SOURCE_R1:
-  milestone RELEASE_090_SOURCE_PREPARED
-  revision R1
-  commitment sha256:dee82aa61498a052c94d1dc3430b84a9aaa30784de42153e7c1a7d6b3436a2c7
-  criterion SOURCE_ACCEPTED required artifact "Accepted version 0.9.0 prepared source"
-
-milestone_acceptance_receipt RELEASE_090_SOURCE_EVIDENCE:
-  model 1
-  set RELEASE_090_SOURCE_R1
-  set_commitment sha256:dee82aa61498a052c94d1dc3430b84a9aaa30784de42153e7c1a7d6b3436a2c7
-  criterion SOURCE_ACCEPTED
-  criterion_commitment sha256:8a094cb0e6110e4b85d5c4354003f5461f4ae73cbc8128bbd5359c3299c239b2
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.0-preparation.md"
-  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
-  verifier codex
-  occurred_at 2026-08-13T06:54:55Z
-
-milestone_criterion_set RELEASE_090_CANDIDATE_R1:
-  milestone RELEASE_090_CANDIDATE_ACCEPTED
-  revision R1
-  commitment sha256:5946b2b0290708fc80925bcb61bd5d5206b64444e1cca57af4eecc554e9acb5e
-  criterion CANDIDATE_ACCEPTED required artifact "Accepted immutable version 0.9.0 candidate"
-
-milestone_acceptance_receipt RELEASE_090_CANDIDATE_EVIDENCE:
-  model 1
-  set RELEASE_090_CANDIDATE_R1
-  set_commitment sha256:5946b2b0290708fc80925bcb61bd5d5206b64444e1cca57af4eecc554e9acb5e
-  criterion CANDIDATE_ACCEPTED
-  criterion_commitment sha256:cb9d6c6e1d4e2a588b7ce8396704fafff16c5b4b6c303af1690676eb42d68e61
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.0-candidate.md"
-  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
-  verifier codex
-  occurred_at 2026-08-13T06:54:55Z
-
-milestone_criterion_set RELEASE_090_PUBLISH_R1:
-  milestone RELEASE_090_PUBLISHED
-  revision R1
-  commitment sha256:56491edf6c970fc15863aad394853a996a702fc5e91265b3b7d3d2f25c724ec3
-  criterion PUBLISH_ACCEPTED required artifact "Accepted version 0.9.0 beta publication"
-
-milestone_acceptance_receipt RELEASE_090_PUBLISH_EVIDENCE:
-  model 1
-  set RELEASE_090_PUBLISH_R1
-  set_commitment sha256:56491edf6c970fc15863aad394853a996a702fc5e91265b3b7d3d2f25c724ec3
-  criterion PUBLISH_ACCEPTED
-  criterion_commitment sha256:8b1e00439e04b20bd4fda805d8b63f19d2116ccb214c5079ebd0bf8c5db3e503
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.0-publish.md"
-  evidence_revision 4a78e586525e526d34ae8956efce8f1f1c4cd771
-  verifier codex
-  occurred_at 2026-08-13T06:54:55Z
+  state reached
 
 milestone_criterion_set RELEASE_090_ACCEPTANCE_R1:
   milestone RELEASE_090_ACCEPTED

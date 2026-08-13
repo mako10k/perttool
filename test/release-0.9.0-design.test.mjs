@@ -14,7 +14,7 @@ function repositoryText(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
 }
 
-test("0.9.0 durable acceptance binds Grammar 7 and CLI Contract 8 without latest promotion", async () => {
+test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 8", async () => {
   const [
     requirements,
     adr,
@@ -26,6 +26,8 @@ test("0.9.0 durable acceptance binds Grammar 7 and CLI Contract 8 without latest
     candidate,
     publication,
     acceptance,
+    latestPromotion,
+    postAcceptance,
     migration,
     planAcceptance,
     plan,
@@ -51,6 +53,8 @@ test("0.9.0 durable acceptance binds Grammar 7 and CLI Contract 8 without latest
     repositoryText("docs/process/0.9.0-candidate.md"),
     repositoryText("docs/process/0.9.0-publish.md"),
     repositoryText("docs/process/0.9.0-release-acceptance.md"),
+    repositoryText("docs/process/0.9.0-latest-promotion.md"),
+    repositoryText("docs/process/0.9.0-post-acceptance-operations.md"),
     repositoryText("docs/process/0.8.1-to-0.9.0-migration.md"),
     repositoryText("docs/process/0.9.0-release-plan-acceptance.md"),
     repositoryText("plans/release-0.9.0.pert"),
@@ -87,6 +91,8 @@ test("0.9.0 durable acceptance binds Grammar 7 and CLI Contract 8 without latest
   assert.match(procedure, /- Status: Accepted 1\.0/u);
   assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.8\.1`, no `alpha`/u);
   assert.match(procedure, /That batch is complete/u);
+  assert.match(procedure, /## 8\. Post-acceptance closure/u);
+  assert.match(procedure, /beta=latest=0\.9\.0/u);
   assert.match(gate, /- Document status: Accepted 1\.0/u);
   assert.match(gate, /\| Commands \| 45 \| 53 \|/u);
   assert.match(gate, /\| Root schemas \| 21 \| 23 \|/u);
@@ -112,13 +118,25 @@ test("0.9.0 durable acceptance binds Grammar 7 and CLI Contract 8 without latest
   assert.match(publication, /beta=0\.9\.0/u);
   assert.match(publication, /unchanged\s+`latest=0\.8\.1`/u);
   assert.match(publication, /Completed-plan source digest: `sha256:4a53e9ce/u);
-  assert.match(acceptance, /- Document status: Accepted 1\.0/u);
+  assert.match(acceptance, /- Document status: Accepted and post-acceptance operations complete 1\.1/u);
   assert.match(acceptance, /- Public verification: complete/u);
-  assert.match(acceptance, /Final plan digest: `sha256:0fdc2a84/u);
+  assert.match(acceptance, /Durable-acceptance plan digest: `sha256:0fdc2a84/u);
   assert.match(acceptance, /beta=0\.9\.0/u);
   assert.match(acceptance, /unchanged `latest=0\.8\.1`/u);
   assert.match(acceptance, /All six tasks and 22p are\s+complete/u);
   assert.match(acceptance, /no ready,\s+recommended, or startable task/u);
+  assert.match(acceptance, /residual digest is\s+`sha256:59b5fbbe/iu);
+  assert.match(latestPromotion, /- Document status: Accepted 1\.0/u);
+  assert.match(latestPromotion, /Final tags: `beta=latest=0\.9\.0`, no `alpha`/u);
+  assert.match(latestPromotion, /Registry modification time: `2026-08-13T06:49:54\.643Z`/u);
+  assert.match(latestPromotion, /executed exactly once through `secdat`/u);
+  assert.match(postAcceptance, /Accepted record commit: `4a78e586/u);
+  assert.match(postAcceptance, /Migration commit: `dd007253/u);
+  assert.match(postAcceptance, /Pre-advance evidence commit: `23e166430/u);
+  assert.match(postAcceptance, /Residual plan digest: `sha256:59b5fbbe/u);
+  assert.match(postAcceptance, /Issue \[#10\]/u);
+  assert.match(postAcceptance, /Issue \[#11\]/u);
+  assert.match(postAcceptance, /History guard model 1 passed with cause `baseline_matches`/u);
   assert.match(migration, /Existing Grammar 1 through 6 documents remain readable/u);
   assert.match(migration, /Use exact `perttool@0\.8\.1` as the rollback pin/u);
   assert.match(planAcceptance, /Accepted source digest: `sha256:104c58d0/u);
@@ -128,37 +146,19 @@ test("0.9.0 durable acceptance binds Grammar 7 and CLI Contract 8 without latest
   assert.equal(checked.ok, true);
   assert.equal(metadata.ok, true);
   assert.equal(metadata.project.id, "RELEASE_090");
-  assert.equal(metadata.grammarVersion, 6);
+  assert.equal(metadata.grammarVersion, 7);
   assert.equal(metadata.project.finish, "RELEASE_090_ACCEPTED");
   assert.deepEqual(
     checked.document.declarations
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
-    [
-      "RELEASE_090_GATE_DESIGN",
-      "RELEASE_090_INPUT_READINESS",
-      "RELEASE_090_PREPARATION",
-      "RELEASE_090_CANDIDATE",
-      "RELEASE_090_PUBLISH",
-      "RELEASE_090_ACCEPTANCE",
-    ],
+    [],
   );
-  assert.deepEqual(
-    checked.document.declarations
-      .filter(({ kind }) => kind === "task")
-      .map(({ id, fields }) => [
-        id,
-        fields.find(({ name }) => name === "status")?.value ?? "planned",
-      ]),
-    [
-      ["RELEASE_090_GATE_DESIGN", "done"],
-      ["RELEASE_090_INPUT_READINESS", "done"],
-      ["RELEASE_090_PREPARATION", "done"],
-      ["RELEASE_090_CANDIDATE", "done"],
-      ["RELEASE_090_PUBLISH", "done"],
-      ["RELEASE_090_ACCEPTANCE", "done"],
-    ],
-  );
+  assert.match(plan, /^milestone RELEASE_090_ACCEPTED:$/m);
+  assert.match(plan, /^  state reached$/m);
+  assert.match(plan, /^milestone_criterion_set RELEASE_090_ACCEPTANCE_R1:$/m);
+  assert.match(plan, /^milestone_acceptance_receipt RELEASE_090_ACCEPTANCE_EVIDENCE:$/m);
+  assert.doesNotMatch(plan, /^milestone_acceptance_migration /m);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
@@ -191,6 +191,7 @@ test("0.9.0 durable acceptance binds Grammar 7 and CLI Contract 8 without latest
   assert.equal(manifest.files.includes("adapters"), false);
   assert.match(procedure, /PUBLISH is complete from release commit `3aca4f0`/u);
   assert.match(procedure, /^## 7\. Durable acceptance stopping point$/m);
+  assert.match(procedure, /0\.9\.0-post-acceptance-operations\.md/u);
   assert.match(
     procedure,
     /complete\s+NextResult v7 has no ready, recommended, or startable task/u,
