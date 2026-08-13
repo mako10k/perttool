@@ -89,6 +89,22 @@ active, ready, runnable, blocked, upcoming, suspended, recommended, or
 startable task. Release selection and every publication or remote-write action
 remain separate.
 
+## Canonical plan advance
+
+The user separately authorized a local pre-advance commit and the exact
+canonical advance. Commit `c96e522316b1f15fba7ce2ae4623a759f33ea8a2`
+preserves the complete accepted source before contraction. One
+expected-digest in-place advance changed the plan from
+`sha256:1c3fb5e2...26a9e` to `sha256:a729f5b3...e9066`; the history guard passed
+against that commit and stage-0 index without force.
+
+Readback of the 3,893-byte residual plan has no diagnostic, task,
+recommendation, or startable task. It retains only the reached final milestone,
+`MAC_ACCEPTED_R1`, and `MAC_FINAL_ACCEPTED`; the removed workstream and evidence
+remain recoverable from the pre-advance commit. This record accompanies the
+separately requested post-advance local commit. No remote or release state
+changed.
+
 The isolated public-package gate was repeated over this final plan and record
 state. The current 713-file `perttool@0.8.0` package again passed Contract 8
 file-first and plan-assurance compatibility checks; npm publication remained a

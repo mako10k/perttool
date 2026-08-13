@@ -82,10 +82,9 @@ test("Contract 8 package and private adapters retain one read-only semantic boun
   for (const name of Object.keys(packageRoot)) {
     assert.equal(packageRoot[name], nodeFacade[name], name);
   }
-  assert.match(plan, /task MILESTONE_ACCEPTANCE_ADAPTERS[\s\S]*?\n  status done\n/u);
-  assert.match(plan, /task MILESTONE_ACCEPTANCE_ACCEPTANCE[\s\S]*?\n  status done\n/u);
-  assert.match(plan, /milestone_acceptance_receipt MAC_ADAPTER_ACCEPTED:/u);
-  assert.match(plan, /milestone_acceptance_receipt MAC_INTEGRATED_ACCEPTED:/u);
+  assert.doesNotMatch(plan, /^task /mu);
+  assert.doesNotMatch(plan, /milestone_acceptance_receipt MAC_ADAPTER_ACCEPTED:/u);
+  assert.doesNotMatch(plan, /milestone_acceptance_receipt MAC_INTEGRATED_ACCEPTED:/u);
   assert.match(plan, /milestone_acceptance_receipt MAC_FINAL_ACCEPTED:/u);
   assert.match(lsp, /milestoneAcceptanceView/u);
   assert.match(vscode, /parseMilestoneAcceptanceViewResult/u);

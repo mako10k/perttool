@@ -63,13 +63,12 @@ test("milestone acceptance contract fixes the separate state and version boundar
   assert.match(design, /^### Milestone outcome acceptance Contract 8 slice$/mu);
   assert.match(
     backlog,
-    /Status: Contract, source\/migration, evaluator, governed mutation,\s+acceptance-aware advance, atomic Grammar 7 \/ Contract 8 public runtime, and\s+historical reconstruction accepted \(2026-08-12\); read-only LSP, VSIX, and MCP\s+adapter projection and final cross-surface gate accepted locally \(2026-08-13\);\s+newly reached milestone criterion declarations remain separately owner-gated/u,
+    /Status: Contract, source\/migration, evaluator, governed mutation,\s+acceptance-aware advance, atomic Grammar 7 \/ Contract 8 public runtime, and\s+historical reconstruction accepted \(2026-08-12\); read-only LSP, VSIX, and MCP\s+adapter projection, final cross-surface gate, criteria, and receipts accepted,\s+and the plan canonically advanced locally \(2026-08-13\)/u,
   );
   assert.doesNotMatch(plan, /^task MILESTONE_ACCEPTANCE_CONTRACT /mu);
-  assert.match(
-    plan,
-    /task MILESTONE_ACCEPTANCE_ADAPTERS[\s\S]*?\n  status done\n/u,
-  );
+  assert.doesNotMatch(plan, /^task MILESTONE_ACCEPTANCE_ADAPTERS /mu);
+  assert.doesNotMatch(plan, /^task MILESTONE_ACCEPTANCE_ACCEPTANCE /mu);
+  assert.match(plan, /^milestone_acceptance_receipt MAC_FINAL_ACCEPTED:/mu);
 });
 
 test("criterion, receipt, governance, and assurance boundaries are closed", async () => {
@@ -157,10 +156,8 @@ test("active runtime and current plan expose Contract 8 while older inputs remai
   assert.equal(checked.grammarVersion, 7);
   assert.equal(COMMAND_REGISTRY.length, 53);
   assert.equal(getJsonSchemaCatalog().length, 23);
-  assert.match(
-    plan,
-    /task MILESTONE_ACCEPTANCE_ADAPTERS[\s\S]*?\n  status done\n/u,
-  );
+  assert.doesNotMatch(plan, /^task /mu);
+  assert.match(plan, /^milestone_acceptance_receipt MAC_FINAL_ACCEPTED:/mu);
 
   const next = selectNextTasks(plan, {
     capacityOverrides: new Map([["DEVELOPERS", 1]]),

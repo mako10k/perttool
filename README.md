@@ -76,11 +76,12 @@ with verified source navigation, and the MCP check, analysis, and Next tools
 retain acceptance in their unchanged wire v1 envelopes. The public npm package
 still excludes all three private adapter workspaces.
 
-The complete local cross-surface gate passes with no remaining PERT task. The
-newly reached adapter, integration, and final milestones intentionally remain
-`not_declared` until their criterion and receipt candidates receive separate
-DAG-owner confirmation. Release selection, version preparation, publication,
-remote writes, and plan advance remain separate.
+The complete local cross-surface gate passes. All milestone criteria and
+receipts were separately owner-confirmed, and the completed plan was
+canonically advanced from its committed pre-advance snapshot. The residual
+plan has no diagnostics, remaining task, recommendation, or startable task.
+Release selection, version preparation, publication, and remote writes remain
+separate.
 
 ## Run without installing
 

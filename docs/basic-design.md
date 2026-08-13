@@ -3669,6 +3669,12 @@ Completing its PERT task reaches the final graph milestone but does not itself
 declare or verify milestone outcome criteria. Those governed source mutations,
 canonical plan advance, and release selection remain separate operations.
 
+The user later separately confirmed the adapter, integrated, and final
+criterion and receipt candidates, the exact committed pre-advance snapshot,
+and one canonical advance. The residual plan retains only the reached and
+accepted final milestone with no diagnostics or remaining task. Release
+selection, publication, and remote writes remain separate.
+
 ## 18. Matters for detailed design
 
 The [Conditional Plan Assurance Contract](specs/plan-assurance.md)

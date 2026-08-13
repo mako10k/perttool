@@ -300,7 +300,7 @@
       ]
     },
     "milestone-acceptance": {
-      "source_digest": "sha256:1c3fb5e271776d7c1df23bc2ae6207b6c57bfa6d718b031c24e8da2006d26a9e",
+      "source_digest": "sha256:a729f5b3dc1565a2666068b9ccd4dc140288f41273289ad8bfabdb9afcbe9066",
       "groups": {
         "active": [],
         "ready": [],
@@ -322,9 +322,7 @@
         "reasons": 1,
         "descriptions": 0
       },
-      "diagnostic_codes": [
-        "PTDAG-208"
-      ]
+      "diagnostic_codes": []
     },
     "operations": {
       "source_digest": "sha256:543fa97cbc9d1ac4ab7a25b502328f9468548b55b28d876e29e2a98c0fa40574",

@@ -60,21 +60,19 @@ test("older grammars remain readable but advance fails before Git history inspec
   assert.equal(advanceResult.acceptance_guard, null);
 });
 
-test("Grammar 7 check projects separate closure and acceptance with criterion guidance", async () => {
+test("Grammar 7 check projects the advanced final acceptance without criterion guidance", async () => {
   const source = await readFile(path.join(repository, "plans/milestone-acceptance.pert"), "utf8");
   const checked = rootApi.checkDocument(source);
   assert.equal(checked.schemaVersion, "Perttool.CheckResult.v5");
   assert.equal(checked.grammarVersion, 7);
+  assert.equal(checked.acceptance.milestones.length, 1);
   assert.equal(checked.acceptance.milestones.every(({ closure }) =>
-    closure === "reached" || closure === "unreached"
+    closure === "reached"
   ), true);
-  assert.equal(checked.acceptance.milestones.some(({ acceptance }) =>
+  assert.equal(checked.acceptance.milestones.every(({ acceptance }) =>
     acceptance === "accepted"
   ), true);
-  assert.equal(checked.acceptance.milestones.some(({ acceptance }) =>
-    acceptance === "not_declared"
-  ), true);
-  assert.equal(checked.diagnostics.some(({ code }) => code === "PTMAC-102"), true);
+  assert.equal(checked.diagnostics.some(({ code }) => code === "PTMAC-102"), false);
 });
 
 test("public acceptance record closes the source and installed boundary only", async () => {

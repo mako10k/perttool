@@ -94,11 +94,7 @@ test("Grammar 7 LSP projection preserves binding, semantics, and source ranges",
   open(server, source);
   assert.deepEqual(
     published.at(-1).diagnostics.map(({ code }) => code),
-    [
-      "PTDAG-208",
-      "PTDAG-208",
-      "PTDAG-208",
-    ],
+    [],
   );
   const graph = await server.graphView({
     textDocument: { uri },
@@ -117,10 +113,6 @@ test("Grammar 7 LSP projection preserves binding, semantics, and source ranges",
       [milestoneId, closure, acceptance]
     ),
     [
-      ["MILESTONE_ACCEPTANCE_PUBLIC_READY", "reached", "accepted"],
-      ["MILESTONE_ACCEPTANCE_HISTORY_READY", "reached", "accepted"],
-      ["MILESTONE_ACCEPTANCE_ADAPTER_READY", "reached", "accepted"],
-      ["MILESTONE_ACCEPTANCE_INTEGRATED", "reached", "accepted"],
       ["MILESTONE_ACCEPTANCE_ACCEPTED", "reached", "accepted"],
     ],
   );
@@ -131,12 +123,9 @@ test("Grammar 7 LSP projection preserves binding, semantics, and source ranges",
     const startLine = source.split("\n")[binding.range.start.line];
     assert.notEqual(startLine, undefined, binding.bindingId);
   }
-  assert.ok(bindings.has("milestone:MILESTONE_ACCEPTANCE_PUBLIC_READY"));
-  assert.ok(bindings.has("milestone_criterion_set:MAC_PUBLIC_R1"));
-  assert.ok(bindings.has("criterion:MAC_PUBLIC_R1:ACCEPTED"));
-  assert.ok(bindings.has("milestone_acceptance_receipt:MAC_PUBLIC_ACCEPTED"));
-  assert.ok(bindings.has("milestone_acceptance_receipt:MAC_ADAPTER_ACCEPTED"));
-  assert.ok(bindings.has("milestone_acceptance_receipt:MAC_INTEGRATED_ACCEPTED"));
+  assert.ok(bindings.has("milestone:MILESTONE_ACCEPTANCE_ACCEPTED"));
+  assert.ok(bindings.has("milestone_criterion_set:MAC_ACCEPTED_R1"));
+  assert.ok(bindings.has("criterion:MAC_ACCEPTED_R1:ACCEPTED"));
   assert.ok(bindings.has("milestone_acceptance_receipt:MAC_FINAL_ACCEPTED"));
   assert.equal(result.acceptance.migration, null);
 });
@@ -184,7 +173,7 @@ test("MCP retains Contract 8 acceptance under unchanged wire identities", async 
     assert.deepEqual(
       result.structuredContent.result.acceptance.milestones.slice(0, 2)
         .map(({ acceptance }) => acceptance),
-      ["accepted", "accepted"],
+      ["accepted"],
     );
   }
 });
@@ -201,12 +190,14 @@ test("VSIX validates and presents read-only milestone acceptance", async () => {
     `${pathToFileURL(path.join(root, "adapters/vscode/dist/bindings.mjs")).href}?acceptance`
   );
   assert.deepEqual(bindings.parseMilestoneAcceptanceViewResult(result), result);
-  assert.equal(
-    bindings.findMilestoneAcceptanceSourceRange(
-      result,
-      "milestone_acceptance_receipt:MAC_PUBLIC_ACCEPTED",
-    ).start.line,
-    139,
+  const receiptRange = bindings.findMilestoneAcceptanceSourceRange(
+    result,
+    "milestone_acceptance_receipt:MAC_FINAL_ACCEPTED",
+  );
+  assert.ok(receiptRange);
+  assert.match(
+    source.split("\n")[receiptRange.start.line],
+    /^milestone_acceptance_receipt MAC_FINAL_ACCEPTED:$/u,
   );
   const [dagView, webview] = await Promise.all([
     repositoryText("adapters/vscode/src/dag-view.ts"),
