@@ -1,6 +1,6 @@
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
 project EDITOR_MUTATION:
-  version 6
+  version 7
   title "Tiered VSIX editor mutations"
   description "Implement Issue #13 as an independent post-0.9.1 editor-mutation workstream. Replace the permanent read-only adapter ceiling with additive Editor Protocol model 2 and four ordered mutation classes. First accept the cross-tier contract and E0 document formatting, then add E1 unsealed repair, E2 recoverable semantic edits, and E3 authority-sensitive seal, governance, and advance workflows through deliberately staged gates. Preserve Editor Protocol model 1, Grammar 7, CLI Contract 8, shared Core and Application semantics, governance, plan assurance, history safety, and editor recovery. MCP mutation, graph-driven editing outside the accepted classes, public VSIX publication, release selection, remote writes, Issue mutation, and plan advance remain separate decisions."
   as_of 2026-08-13
@@ -12,6 +12,17 @@ project EDITOR_MUTATION:
   plan_assurance_model 1
   plan_assurance_hash_model 1
 
+
+milestone_acceptance_migration GRAMMAR_7_BASELINE:
+  model 1
+  repository git:sha1:0365b7f570ec35c2e6106be8b25fbcc01f0ed4a5:index:379ff6fa1c447e013798234b25c8113175fb7d5b
+  path "plans/editor-mutations.pert"
+  object_format sha1
+  head 0365b7f570ec35c2e6106be8b25fbcc01f0ed4a5
+  blob 379ff6fa1c447e013798234b25c8113175fb7d5b
+  source_digest sha256:e5ebb94a7c2c17040ef60da8035da30053d30cba0b727e6c44a8fc12b79436ca
+  candidate_digest sha256:14f30a1ccfe17cb228dc63989375bfd20e38bf6f64f1651c027674955a525243
+  grandfathered EDITOR_MUTATION_SELECTED
 milestone EDITOR_MUTATION_SELECTED:
   title "Issue #13 tiered editor mutations selected"
   state reached
