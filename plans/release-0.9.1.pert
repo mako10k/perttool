@@ -69,6 +69,7 @@ task RELEASE_091_PREPARATION RELEASE_091_REVIEW_ACCEPTED -> RELEASE_091_SOURCE_P
   title "Prepare version 0.9.1 release source"
   description "Align package and lockfile identity, CLI version, adapter peer versions, CHANGELOG, README, release documentation, tests, goldens, self-use registration, dependency audit, and beta publication validation. Run the complete Node.js 22 repository and package gates without remote or registry writes."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -119,3 +120,11 @@ work_event WE-c29bd5bd2fab9577c108ede206d244d09bca7cf4673d8f552d282e4a19f6128d:
   occurred_at 2026-08-13T17:27:00+09:00
   active_time 1h
   effort 1ph
+
+work_event WE-70d67e264c1fc958be89654ef2060db87e62661d3b56f1955e656f78f555db3b:
+  model 1
+  task RELEASE_091_PREPARATION
+  kind finish
+  occurred_at 2026-08-13T17:45:00+09:00
+  active_time 2h
+  effort 2ph

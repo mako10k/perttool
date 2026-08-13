@@ -128,10 +128,10 @@ test("0.4.0 release gate keeps Contract 5 acceptance and publication separate", 
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.9.0");
-  assert.equal(lockfile.version, "0.9.0");
-  assert.equal(lockfile.packages[""].version, "0.9.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.0"/);
+  assert.equal(manifest.version, "0.9.1");
+  assert.equal(lockfile.version, "0.9.1");
+  assert.equal(lockfile.packages[""].version, "0.9.1");
+  assert.match(versionSource, /TOOL_VERSION = "0\.9\.1"/);
   assert.match(changelog, /^## \[0\.4\.0\] - 2026-07-28$/m);
   assert.match(
     changelog,

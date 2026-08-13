@@ -2925,6 +2925,40 @@ readiness, and source preparation. It does not authorize candidate acceptance
 or any external write. The authoritative procedure is
 [`docs/process/0.9.0-release.md`](process/0.9.0-release.md).
 
+### 21.17 Current velocity observation patch release acceptance criteria
+
+The compatible correction for `ACT-003` and GitHub Issue #8 is suffix-free
+`0.9.1`. It is published as a GitHub prerelease and moves only npm `beta`
+during publication.
+
+1. Bind declared velocity candidates to the exact current operand, including
+   a just-written uncommitted `task finish`.
+2. Keep Git-recorded candidates and nested history provenance bound to the
+   selected first-parent revision, and project both evidence classes
+   separately for `--evidence all`.
+3. Retain Grammar 7, CLI Contract 8, all 53 commands, 23 root schemas, 129
+   root and Node exports, 45 Core exports, result and schema identities,
+   payload structure, and authority.
+4. Keep observation read-only, retain `project history`, preserve applicable
+   history diagnostics, and never adopt an observed value automatically.
+5. Align package, lockfile, CLI and MCP versions, adapter peers, CHANGELOG,
+   README, release records, tests, goldens, and self-use to `0.9.1`.
+6. Pass the complete Node.js 22 repository and package gates and Node.js 22
+   and 24 CI from the exact release commit.
+7. Establish that `perttool@0.9.1`, local and remote `v0.9.1`, and the matching
+   GitHub Release are unused; establish `beta=latest=0.9.0` and no `alpha`.
+8. Freeze one immutable tarball outside the worktree and distribute exactly
+   those bytes through one GitHub prerelease and one npm `beta` publication.
+9. Verify exact and beta installed Issue #8 behavior, common public artifact
+   bytes, registry integrity, the exact `0.9.0` rollback pin, and unchanged
+   `latest=0.9.0` before closing Issue #8 with release evidence.
+10. Keep npm `latest` promotion, release-plan advance, public VSIX
+    publication, and unrelated work separate.
+
+The user's 2026-08-13 instruction authorizes the ordered release, push, and
+Issue #8 update only after every predecessor gate passes. The authoritative
+procedure is [`docs/process/0.9.1-release.md`](process/0.9.1-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

@@ -314,5 +314,5 @@ test("accepted historical VSIX makes only final acceptance startable", async () 
   assert.match(vsixAcceptance, /completed-task gate passes 955 tests/u);
   assert.match(vsixAcceptance, /candidate digest\s+`sha256:6b89163c/u);
   assert.match(selfUse, /plans\/historical-dag\.pert/u);
-  assert.match(selfUse, /38 plans; check, analyze, next/u);
+  assert.match(selfUse, /39 plans; check, analyze, next/u);
 });

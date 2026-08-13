@@ -23,7 +23,7 @@
     "@modelcontextprotocol/server": "2.0.0"
   },
   "peerDependencies": {
-    "perttool": "0.9.0"
+    "perttool": "0.9.1"
   },
   "devDependencies": {
     "perttool": "file:../.."

@@ -86,9 +86,10 @@ test("current guidance and historical compatibility labels preserve their bounda
     readme,
     /made `beta=latest=0\.7\.1`/,
   );
-  assert.match(readme, /package=perttool@0\.8\.1/);
-  assert.match(readme, /npm currently reports `beta=latest=0\.8\.1`/);
-  assert.match(readme, /Version `0\.9\.0` is the selected, locally prepared beta release for the current\s+Grammar 7 and CLI Contract 8/);
+  assert.match(readme, /package=perttool@0\.9\.1/);
+  assert.match(readme, /npm currently reports\s+`beta=latest=0\.9\.0`/);
+  assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/);
+  assert.match(readme, /Version `0\.9\.1` is the selected compatible Contract 8 patch/);
   assert.match(
     readme,
     /At its publication\s+boundary, this release does not move npm `latest` from Contract 6 `0\.6\.0`/,
@@ -130,9 +131,9 @@ test("repository policy and self-use registration include the accepted workstrea
   }
   assert.match(selfUseScript, /plans\/help-guide-consistency\.pert/);
   assert.match(selfUseScript, /plans\/adapter-platform\.pert/);
-  assert.match(selfUseScript, /38 plans; check, analyze, next/);
-  assert.match(selfUseGuide, /all thirty-eight current plans/);
+  assert.match(selfUseScript, /39 plans; check, analyze, next/);
+  assert.match(selfUseGuide, /all thirty-nine current plans/);
   assert.match(planIndex, /`help-guide-consistency\.pert`/);
-  assert.match(planIndex, /All thirty-eight plans pass/);
+  assert.match(planIndex, /All thirty-nine plans pass/);
   assert.match(planIndex, /accepted reached final milestone/);
 });

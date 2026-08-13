@@ -3391,6 +3391,31 @@ Exit:
 - keep candidate acceptance, external publication, npm `latest`, VSIX
   publication, plan advance, Issue mutation, and unrelated work separate.
 
+### Post-MVP Slice 4U: Current velocity observation `v0.9.1` patch
+
+The accepted `ACT-003` correction retains the Grammar 7 and CLI Contract 8
+public boundary while separating exact current declared evidence from
+selected-revision Git-recorded evidence in `project observe-velocity`.
+
+The [`v0.9.1` release procedure](process/0.9.1-release.md) and independent
+[`release-0.9.1.pert`](../plans/release-0.9.1.pert) plan sequence compatibility
+review, version-bearing source preparation, one immutable candidate, the
+authorized GitHub/npm beta publication, durable installed verification, and
+the Issue #8 completion update.
+
+Exit:
+
+- satisfy Requirements 21.17 from one clean release commit and immutable
+  tarball;
+- preserve all Contract 8 command, result, schema, facade, and authority
+  identities;
+- publish identical bytes to one GitHub prerelease and npm `beta` while
+  leaving `latest=0.9.0`;
+- verify the current uncommitted-finish workflow and exact `0.9.0` rollback;
+  and
+- keep npm `latest`, plan advance, public VSIX publication, and unrelated work
+  separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 The selected `ADAPTER-001` plan composes a shared foundation and three adapter

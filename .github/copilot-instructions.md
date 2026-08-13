@@ -24,6 +24,14 @@ Mandatory summary:
   reached milestone `RELEASE_090_ACCEPTED`, has zero tasks and makespans, no
   diagnostic, and no ready, recommended, or startable task. Public VSIX
   publication and unrelated work remain separate.
+- The selected `plans/release-0.9.1.pert` workstream publishes the compatible
+  ACT-003 / Issue #8 current-velocity observation correction. Its
+  compatibility review and source preparation are complete and identify
+  `0.9.1`; Grammar 7, Contract 8, 53 commands, 23 schemas, 129 root/Node
+  exports, 45 Core exports, result/schema identities, and authority remain
+  unchanged. Release, push, and Issue #8 update are authorized only after the
+  ordered gates. npm `latest`, plan advance, public VSIX publication, and
+  unrelated work remain separate.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
   tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`

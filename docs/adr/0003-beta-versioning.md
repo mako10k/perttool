@@ -116,6 +116,12 @@ Operating long-lived SemVer prerelease suffixes would duplicate the product matu
   boundary, while `1.0.0` remains reserved for a future stable-series
   decision. Private LSP, VSIX, and MCP packages remain excluded from the
   public npm artifact.
+- Select suffix-free `0.9.1` for the compatible correction that binds
+  declared velocity observation to the exact current operand while retaining
+  revision-bound Git-recorded evidence. Grammar 7, CLI Contract 8, command,
+  result, schema, export, and authority identities remain unchanged. Leaving
+  the correction unreleased would strand the installed workflow, while a new
+  minor would overstate the boundary.
 
 On 2026-07-23, after `v0.1.0` beta acceptance, the user explicitly promoted `perttool@0.1.0` to npm `latest`. The `beta` tag continues to point to the same version, and `alpha` remains on `0.1.0-alpha.2`.
 

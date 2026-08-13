@@ -88,6 +88,6 @@ test("public acceptance record closes the source and installed boundary only", a
   assert.match(acceptance, /all 37 plans/);
   assert.match(acceptance, /705 files/);
   assert.match(acceptance, /does not authorize either successor, plan advance, release/);
-  assert.match(readme, /Version `0\.9\.0` is the selected, locally prepared beta release for the current\s+Grammar 7 and CLI Contract 8/);
+  assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/);
   assert.match(schemaContract, /Active CLI contract version: 8/);
 });

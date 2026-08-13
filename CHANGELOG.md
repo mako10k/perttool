@@ -4,6 +4,19 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-08-13
+
+Backward-compatible Grammar 7 and CLI Contract 8 beta patch. This version
+corrects the source binding used by current declared velocity observation.
+
+### Fixed
+
+- Made `project observe-velocity --evidence declared` evaluate the exact
+  current operand, including a just-written uncommitted `task finish`, while
+  keeping `git-recorded` candidates bound to the selected first-parent
+  revision. `--evidence all` now preserves both sources and their digests
+  separately without automatically changing declared project velocity.
+
 ## [0.9.0] - 2026-08-13
 
 Breaking Grammar 7 and CLI Contract 8 beta minor. This version publishes
@@ -453,7 +466,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/mako10k/perttool/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/mako10k/perttool/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/mako10k/perttool/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/mako10k/perttool/compare/v0.7.1...v0.8.0

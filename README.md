@@ -63,21 +63,29 @@ qualified Point forecasts distinct. Layout never becomes project semantics.
 Version `0.8.1` is a backward-compatible Contract 7 patch for `dag advance`.
 It preserves assurance frontier receipts when all terminal work events belong
 to removed tasks, while retaining the `0.8.0` command, schema, package-export,
-and authority boundaries. npm currently reports `beta=latest=0.8.1`; use
-`0.8.0` as the exact rollback pin.
+and authority boundaries. It remains available by exact pin; use `0.8.0` as
+the prior Contract 7 rollback pin.
 
-Version `0.9.0` is the selected, locally prepared beta release for the current
-Grammar 7 and CLI Contract 8 milestone-acceptance boundary. It exposes 53
+Version `0.9.0` is the published Grammar 7 and CLI Contract 8
+milestone-acceptance beta. It exposes 53
 commands, 23 root schemas, 129 root and Node runtime exports,
 `Perttool.CheckResult.v5`,
 `Perttool.AnalysisResult.v6`, `Perttool.NextResult.v7`,
 `Perttool.MutationResult.v5`, `Perttool.AdvanceResult.v3`, committed migration,
 criterion-set replacement, caller-asserted receipts, and acceptance-aware
-canonical advance. Package, lockfile, CLI, and private adapter peer identities
-are prepared as `0.9.0`, while the published npm baseline remains
-`beta=latest=0.8.1`. Candidate acceptance, any Git push or tag, GitHub and npm
-publication, dist-tag movement, Issue mutation, and plan advance remain
-separate decisions.
+canonical advance. Its accepted release commit, annotated tag, GitHub
+prerelease, and npm artifact agree, and npm currently reports
+`beta=latest=0.9.0` with no `alpha`. Version `0.8.1` remains the exact Grammar
+6 and CLI Contract 7 rollback pin.
+
+Version `0.9.1` is the selected compatible Contract 8 patch for `ACT-003` and
+GitHub Issue #8. It makes declared velocity observation use the exact current
+operand, including a just-written uncommitted finish, while keeping
+Git-recorded evidence bound to the selected first-parent revision. It retains
+all 53 commands, 23 root schemas, 129 root and Node exports, 45 Core exports,
+result and schema identities, and authority. Source identities are prepared
+as `0.9.1`; publication moves only npm `beta`, while `latest`, plan advance,
+public VSIX publication, and unrelated work remain separate.
 
 The private adapters now project that same Contract 8 acceptance model without
 adding write authority. The LSP negotiates a separate version-bound milestone
@@ -94,23 +102,23 @@ Candidate acceptance, publication, and remote writes remain separate.
 
 ## Run without installing
 
-After beta publication, use `npx` for an occasional Contract 7 invocation and
+After beta publication, use `npx` for an occasional Contract 8 invocation and
 select the version explicitly:
 
 ```sh
-npx --yes --package=perttool@0.8.1 -- perttool --version
-npx --yes --package=perttool@0.8.1 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.8.1 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.8.1 -- perttool dag history PLAN.pert --rev HEAD --format json
+npx --yes --package=perttool@0.9.1 -- perttool --version
+npx --yes --package=perttool@0.9.1 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.9.1 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.9.1 -- perttool project observe-velocity PLAN.pert --evidence declared --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.8.1 -- perttool --version
-npm exec --yes --package=perttool@0.8.1 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.8.1 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.8.1 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
+npm exec --yes --package=perttool@0.9.1 -- perttool --version
+npm exec --yes --package=perttool@0.9.1 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.9.1 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.9.1 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
@@ -120,21 +128,19 @@ Contract 3.
 
 ## Install
 
-Install the additive Contract 7 CLI globally by exact version when it is used
+Install the Contract 8 CLI globally by exact version when it is used
 regularly:
 
 ```sh
-npm install --global perttool@0.8.1
+npm install --global perttool@0.9.1
 perttool --version
 ```
 
-The `0.8.0` release procedure published only npm `beta` and left the
-independently managed `latest` tag at `0.7.1`; a separately authorized
-post-acceptance operation later promoted `0.8.0`. The compatible `0.8.1`
-release then moved its accepted patch to both public tags. npm now reports
-`beta=latest=0.8.1`, so an unqualified global installation selects `0.8.1`.
-The exact pin remains the reproducible form for the public subpaths,
-historical DAG command, and corrected advance behavior.
+The accepted `0.9.0` release was separately promoted to both public tags. The
+`0.9.1` publication changes only npm `beta`; until an independent promotion is
+authorized, an unqualified global installation continues to select `0.9.0`.
+The exact `0.9.1` pin is the reproducible form for the current declared
+velocity correction.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
 Contract 6 artifact remains available as
 `perttool@0.5.0`. Contract 5,
@@ -587,7 +593,8 @@ Version `0.8.0` adds `dag history`, `Perttool.HistoricalGraphResult.v1`, and
 the Core and Node subpaths without changing CLI Contract 7; see the
 [`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md).
 Version `0.8.1` retains those interfaces and corrects assurance-receipt
-placement in an advance-owned terminal deletion suffix.
+placement in an advance-owned terminal deletion suffix. Versions `0.9.0` and
+`0.9.1` use CLI Contract 8.
 A complete, known, non-truncated `Perttool.NextResult.v7` with policy
 `recommendation_v1_plus_release_gate_plus_plan_assurance_v1` is required for
 the current source. Start only task IDs in
@@ -626,6 +633,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.8.1` release procedure](docs/process/0.8.1-release.md)
 - [`0.8.1` to `0.9.0` migration](docs/process/0.8.1-to-0.9.0-migration.md)
 - [`v0.9.0` release procedure](docs/process/0.9.0-release.md)
+- [`v0.9.1` release procedure](docs/process/0.9.1-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
@@ -649,6 +657,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.7.1` release plan](plans/release-0.7.1.pert)
 - [`v0.8.0` release plan](plans/release-0.8.0.pert)
 - [`v0.9.0` release plan](plans/release-0.9.0.pert)
+- [`v0.9.1` release plan](plans/release-0.9.1.pert)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)
