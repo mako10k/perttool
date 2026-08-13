@@ -372,3 +372,22 @@ task_outcome OUTCOME_EDITOR_MUTATION_CONTRACT:
   against_basis sha256:166d04cab88b3e00035c43305179b6a70ada31556ec5ef64175443a5470294b6
   status conformant
   reason "Accepted tiered editor mutation contract and twenty-four closed cases"
+
+milestone_criterion_set EDITOR_MUTATION_CONTRACT_ACCEPTED_R1:
+  milestone EDITOR_MUTATION_CONTRACT_ACCEPTED
+  revision R1
+  commitment sha256:9960966829860257ea4f47a2379d50c2d52451a16183dda72028b487f6b7d6f9
+  criterion CONTRACT_ACCEPTED required artifact "Accepted tiered editor mutation contract and twenty-four closed cases"
+
+milestone_acceptance_receipt EDITOR_MUTATION_CONTRACT_EVIDENCE:
+  model 1
+  set EDITOR_MUTATION_CONTRACT_ACCEPTED_R1
+  set_commitment sha256:9960966829860257ea4f47a2379d50c2d52451a16183dda72028b487f6b7d6f9
+  criterion CONTRACT_ACCEPTED
+  criterion_commitment sha256:01902bfdf75b7f4b5d8d6e3ef68a6c497273aa05cf7e4b1d343e3af3149a0767
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/editor-mutation-contract-acceptance.md"
+  evidence_revision 0365b7f570ec35c2e6106be8b25fbcc01f0ed4a5
+  verifier codex
+  occurred_at 2026-08-13T10:43:05Z
