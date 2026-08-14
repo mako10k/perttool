@@ -822,6 +822,46 @@ The accepted evidence is recorded in
 Closing or commenting on Issue #8, selecting a release, publishing, pushing,
 and moving a dist-tag remain separately authorized operations.
 
+### ACT-004: Emit only grammar-valid adoptable velocity tokens
+
+Priority: P1
+
+Status: Open bug (2026-08-14); [Issue
+#7](https://github.com/mako10k/perttool/issues/7); correction not selected
+
+The observation reducer can serialize an exact rational Point/hour rate such
+as `7200/827p/1h`, while the active Velocity parser accepts only integer or
+decimal Point and period components. The non-null token therefore claims an
+adoptable value that `project set --velocity` rejects before writing.
+
+Acceptance requires every non-null `adoptable_velocity_token` to round-trip
+through the exact active Velocity grammar and `project set` without rounding
+or semantic drift. An exact rate that cannot be represented must retain its
+machine-readable rational rate but expose no misleading adoptable token and a
+closed, explicit unavailable cause. Grammar expansion, if selected instead,
+requires its own versioned compatibility decision. Declared velocity must not
+be changed automatically.
+
+### ACT-005: Resolve ambiguous Git rename inference explicitly
+
+Priority: P1
+
+Status: Open bug (2026-08-14); [Issue
+#6](https://github.com/mako10k/perttool/issues/6); interface not selected
+
+The Git history probe treats any detected `R...` entry as
+`unsupported_rename`, and the current `project history` and
+`project observe-velocity` descriptors expose no caller control to establish
+an intentionally new history root or identify a reviewed predecessor. Similar
+new plans can therefore remain incomplete despite a distinct project ID and a
+Git create record.
+
+The correction must preserve fail-closed automatic inference while adding one
+explicit, auditable provenance choice bound to repository, path, revision,
+project identity, and source digest. It must not silently accept a guessed
+rename, rewrite Git, or reuse the choice across a changed candidate. The
+documented two-commit bootstrap remains a workaround, not the target contract.
+
 ### ACT-002: Reopen completed work without rewriting actual history
 
 Priority: Unset (request only; requires feasibility review)
@@ -1011,6 +1051,46 @@ advance, public VSIX publication, and unrelated work remain separate.
 Durable publication and the three completed Issue readbacks are recorded in
 [`0.9.3-release-acceptance.md`](process/0.9.3-release-acceptance.md).
 
+### ADV-006: Preserve acceptance contracts for every retained milestone
+
+Priority: P0
+
+Status: Open regression (2026-08-14); [Issue
+#19](https://github.com/mako10k/perttool/issues/19); implementation and release
+not started
+
+Contract 8 `dag advance` can report a successful, diagnostic-free candidate
+while deleting criterion sets owned by milestones that remain in the residual
+DAG. The resulting plan introduces `PTMAC-102` warnings and cannot pass the
+repository warnings-as-errors gate. This is a destructive correctness defect:
+the current acceptance contract for unfinished work can be lost even though
+the milestone and its successor work remain.
+
+The current composition protects acceptance records for
+`stateChangedMilestoneIds`, but Issue #19 demonstrates that this is narrower
+than the complete retained-milestone ownership boundary. The correction must
+be based on the final retained graph and complete candidate, not record order,
+terminal separator topology, or a warning-gate exception.
+
+Acceptance:
+
+- criterion sets and receipts for every retained milestone survive unchanged
+  unless one atomic validated mutation deliberately replaces them;
+- records for milestones actually removed by advance are still contracted;
+- retained reached-frontier, unchanged successor, branch, and project-finish
+  milestones are covered with interleaved acceptance, assurance, lifecycle,
+  and terminal records;
+- a successful candidate introduces no `PTMAC-102` warning relative to a
+  warnings-clean source and passes `document check --warnings-as-errors`;
+- preview, separate output, in-place write, and installed-package candidates
+  remain byte-identical; and
+- acceptance, assurance, governance, history, source/digest race, and
+  `--force-history-loss` boundaries remain fail-closed and unchanged.
+
+This P0 interrupts the normal editor-mutation frontier. It does not authorize
+a gate bypass, manual reconstruction of lost criteria, publication, npm tag
+movement, remote source push, or Issue closure.
+
 ## Recommendation override application and audit
 
 ### MIG-08: Apply validated overrides with durable single-use audit
@@ -1070,9 +1150,30 @@ decision.
 
 ## Hierarchical planning and multi-plan composition
 
+### PLAN-POOL-001: Add a planning pool and bounded work windows
+
+Priority: P2
+
+Status: Design request (2026-08-14); [Issue
+#12](https://github.com/mako10k/perttool/issues/12); implementation plan not
+selected
+
+Add stable project-owned work outside the executable graph and persisted or ad
+hoc windows around the existing strict DAG. Pool placement, window membership,
+and task lifecycle remain separate facts. Only an explicit governed promotion
+may create executable task projections, and a narrow deferral may return only
+eligible unstarted work without rewriting actual history.
+
+The strict AoA DAG, single `project.finish`, global recommendation authority,
+milestone acceptance, plan assurance, actuals, velocity, and canonical advance
+remain unchanged. The first selected contract must close work identity,
+link/split/merge cardinality, shaping, window lifecycle and timeboxes,
+promotion/deferral, CLI and schema surfaces, history, compatibility, and the
+boundary with multi-document `MULTI-001` before runtime work begins.
+
 ### MULTI-001: Design backlog hierarchy and multi-plan composition
 
-Priority: Unset (requires product and semantic refinement)
+Priority: P3
 
 Status: Minimal semantic draft recorded (2026-08-05); open in
 [GitHub Issue #3](https://github.com/mako10k/perttool/issues/3), with runtime
@@ -1319,7 +1420,7 @@ local installation, Marketplace publication, and Open VSX remain separate.
 
 ### EDITOR-MUTATION-001: Add tiered VSIX editor mutations
 
-Priority: Selected through GitHub Issue #13
+Priority: P2 (selected workstream; paused behind open P0/P1 corrections)
 
 Status: Editor Protocol model 2, E0 whole-document formatting, and the E1
 unsealed repair contract accepted (2026-08-14); E1 implementation is next in
@@ -1448,6 +1549,26 @@ schemas, diagnostics, limits, cancellation, parity, and side-effect boundary.
 Implementation and installed-artifact acceptance remain selected plan tasks.
 
 ## Portfolio and Issue inventory
+
+Live GitHub readback on 2026-08-14 found seven open Issues. Each has exactly
+one priority label, and each now has one local backlog identity. This ranking
+orders the interruption and planning frontier; it does not itself authorize
+implementation, release, publication, remote source writes, or Issue closure.
+
+| Rank | GitHub Issue | Local backlog | Priority | Current disposition |
+| ---: | --- | --- | --- | --- |
+| 1 | [#19](https://github.com/mako10k/perttool/issues/19) | `ADV-006` | P0 | Stop normal feature progression; correct retained acceptance-record loss before another `dag advance` delivery. |
+| 2 | [#7](https://github.com/mako10k/perttool/issues/7) | `ACT-004` | P1 | Make the observation-to-update token contract truthful after the P0 correction. |
+| 3 | [#6](https://github.com/mako10k/perttool/issues/6) | `ACT-005` | P1 | Design an explicit auditable provenance choice after the bounded token correction. |
+| 4 | [#13](https://github.com/mako10k/perttool/issues/13) | `EDITOR-MUTATION-001` | P2 | Retain accepted E0 and E1-contract state; pause E1 runtime implementation. |
+| 5 | [#18](https://github.com/mako10k/perttool/issues/18) | `STATIC-001` | P2 | Continue ratcheted debt reduction after correctness bugs. |
+| 6 | [#12](https://github.com/mako10k/perttool/issues/12) | `PLAN-POOL-001` | P2 | Retain as a separately planned single-project design workstream. |
+| 7 | [#3](https://github.com/mako10k/perttool/issues/3) | `MULTI-001` | P3 | Keep deferred to the genuine multi-document boundary superseded nowhere else. |
+
+The live priority mutation in this review changed only Issue #7 from P0 to P1.
+Issue #19 remains the sole P0. Issues #6 and #7 are P1; Issues #12, #13, and
+#18 are P2; and Issue #3 is P3. No Issue body, comment, state, or non-priority
+label was changed.
 
 ### META-001: Keep GitHub Issue and local work-state inventories aligned
 

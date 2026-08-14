@@ -468,6 +468,18 @@ Range/on-type formatting, E1 implementation, E2, E3, MCP mutation, public VSIX
 publication, release selection, remote writes, Issue mutation, and plan advance
 remain separate.
 
+The live 2026-08-14 open-Issue review is recorded in
+`docs/process/issue-priority-review-2026-08-14.md`. Issue #19 / `ADV-006` is
+the sole P0 because successful `dag advance` can discard criterion sets for
+retained milestones and introduce `PTMAC-102`; it preempts normal feature
+progression. Issues #7 / `ACT-004` and #6 / `ACT-005` are P1. Issues #13,
+#18, and #12 are P2, and Issue #3 is P3. Only Issue #7's priority label changed,
+from P0 to P1, and live readback confirmed all seven open Issues have exactly
+one priority label. This product ordering does not rewrite the accepted
+`editor-mutations.pert` assurance frontier: `EDITOR_REPAIR_ACCEPTANCE` remains
+its only startable task but is paused. No #19 implementation, hotfix release,
+remote source write, Issue closure, or plan advance is selected by the review.
+
 The explicitly selected `HIST-DAG-001` workstream is tracked independently in
 `plans/historical-dag.pert`. Its eight tasks total 44p from
 `HISTORICAL_DAG_CONTRACT` through `HISTORICAL_DAG_ACCEPTANCE` and sequence one

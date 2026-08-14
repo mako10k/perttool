@@ -1758,6 +1758,18 @@ complete NextResult v7 recommends and makes startable only
 publication, remote write, Issue mutation, or plan advance occurred in this
 contract slice.
 
+The following live open-Issue review then reset the product interruption order
+without rewriting the selected plan. Seven Issues were open. Issue #19 /
+`ADV-006` is the sole P0 and pauses `EDITOR_REPAIR_ACCEPTANCE`; Issues #7 /
+`ACT-004` and #6 / `ACT-005` are P1; Issues #13, #18, and #12 are P2; and
+Issue #3 is P3. Repository inspection confirmed the #19 retained-criterion,
+#7 Velocity-token/parser, and #6 rename-control boundaries. Exactly one remote
+mutation changed #7 from P0 to P1, and immediate plus complete readback showed
+one priority label on every open Issue. The durable trace is
+[issue-priority-review-2026-08-14.md](issue-priority-review-2026-08-14.md).
+No bug implementation, release, remote source push, Issue close, or plan
+advance followed from that priority review.
+
 Stage 1 allowed operations:
 
 - check

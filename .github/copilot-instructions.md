@@ -350,6 +350,17 @@ Mandatory summary:
   type formatting, E1 implementation, E2, E3, MCP mutation, public VSIX
   publication, release selection, remote writes, Issue mutation, and plan
   advance remain separate.
+- The live 2026-08-14 open-Issue review is recorded in
+  `docs/process/issue-priority-review-2026-08-14.md`. Issue #19 / `ADV-006` is
+  the sole P0 and preempts normal feature work because successful `dag advance`
+  can discard retained-milestone criterion sets and introduce `PTMAC-102`.
+  Issues #7 / `ACT-004` and #6 / `ACT-005` are P1; Issues #13, #18, and #12
+  are P2; and Issue #3 is P3. Only #7 changed remotely, from P0 to P1, and
+  readback confirmed exactly one priority label on every open Issue. This
+  product ordering pauses but does not rewrite the accepted plan-assurance
+  frontier: `EDITOR_REPAIR_ACCEPTANCE` remains the only startable task. The
+  review does not select a #19 implementation, release, remote source write,
+  Issue closure, or plan advance.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
   serial tasks and 15p. The exact initial goal-and-DAG candidate was written
   once with actor `codex` and the scope-bound owner assertion `user`.
