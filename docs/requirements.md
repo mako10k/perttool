@@ -3078,6 +3078,35 @@ release, local exact installation, and Issues #14, #16, and #17 completion only
 after every predecessor gate passes. The authoritative procedure is
 [`docs/process/0.9.3-release.md`](process/0.9.3-release.md).
 
+### 21.20 Retained milestone acceptance preservation correction criteria
+
+The compatible correction for GitHub Issue #19 restores the Contract 8
+ownership boundary after `0.9.3`. Its release version and publication remain
+separate decisions.
+
+1. Derive protected acceptance-record spans from every milestone retained in
+   the final advance graph, not only milestones whose state changes.
+2. Preserve every criterion set and receipt owned by a retained milestone
+   byte-for-byte across reached-frontier, unchanged successor, branch, and
+   project-finish topologies.
+3. Continue to contract every criterion set and receipt owned by a milestone
+   actually removed by advance.
+4. Check the complete composed candidate as Grammar 7 and CLI Contract 8 and
+   project its diagnostics instead of reusing the lower Contract 7 result.
+5. Introduce no `PTMAC-102` diagnostic relative to a warnings-clean source,
+   and pass `document check --warnings-as-errors` for a successful candidate.
+6. Keep preview, separate-output, and clean tracked in-place write candidates
+   byte-identical.
+7. Retain milestone acceptance, plan assurance, governance, history safety,
+   source and digest race, and `--force-history-loss` boundaries unchanged.
+8. Reproduce the reported image-platform failure read-only and prove that all
+   six retained criterion sets survive while only the removed milestone's set
+   contracts.
+9. Pass the complete repository, documentation, duplication, complexity,
+   static-analysis, and isolated-package gates before release selection.
+10. Keep consumer-plan mutation, release selection, publication, npm dist-tag
+    movement, Issue closure, plan advance, and unrelated feature work separate.
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

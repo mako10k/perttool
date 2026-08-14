@@ -254,7 +254,7 @@ function composeProvisionalBase(
   const protectedBaseEdits = preserveMilestoneAcceptanceRecords(
     text,
     plannedBase.edits,
-    plannedBase.advance.stateChangedMilestoneIds,
+    plannedBase.advance.keptMilestoneIds,
   );
   const edits = normalizeTextEdits(
     text,

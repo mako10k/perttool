@@ -1767,8 +1767,17 @@ Issue #3 is P3. Repository inspection confirmed the #19 retained-criterion,
 mutation changed #7 from P0 to P1, and immediate plus complete readback showed
 one priority label on every open Issue. The durable trace is
 [issue-priority-review-2026-08-14.md](issue-priority-review-2026-08-14.md).
-No bug implementation, release, remote source push, Issue close, or plan
-advance followed from that priority review.
+The subsequent local Issue #19 correction used llmthink to distinguish the
+record-ownership cause from the stale-final-diagnostics detection escape. The
+advance composition now protects all retained milestone records through
+`keptMilestoneIds`, preserves explicit removed-milestone contraction, and
+checks the complete Contract 8 candidate before projecting diagnostics. The
+synthetic branch case and read-only image-platform replay are recorded in
+[issue-19-advance-criterion-acceptance.md](issue-19-advance-criterion-acceptance.md),
+with the structured RCA in
+[issue-19-advance-criterion-rca.think](issue-19-advance-criterion-rca.think).
+No release, remote source push, Issue close, or plan advance followed from the
+priority review or local correction.
 
 Stage 1 allowed operations:
 

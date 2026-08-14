@@ -477,8 +477,13 @@ progression. Issues #7 / `ACT-004` and #6 / `ACT-005` are P1. Issues #13,
 from P0 to P1, and live readback confirmed all seven open Issues have exactly
 one priority label. This product ordering does not rewrite the accepted
 `editor-mutations.pert` assurance frontier: `EDITOR_REPAIR_ACCEPTANCE` remains
-its only startable task but is paused. No #19 implementation, hotfix release,
-remote source write, Issue closure, or plan advance is selected by the review.
+its only startable task but is paused. The local #19 correction now protects
+all `keptMilestoneIds` and rechecks the final Contract 8 candidate; its
+llmthink RCA and acceptance evidence are recorded in
+`docs/process/issue-19-advance-criterion-rca.think` and
+`docs/process/issue-19-advance-criterion-acceptance.md`. The published `0.9.3`
+remains affected. Hotfix release selection, remote source write, Issue
+closure, and plan advance remain separate.
 
 The explicitly selected `HIST-DAG-001` workstream is tracked independently in
 `plans/historical-dag.pert`. Its eight tasks total 44p from

@@ -359,8 +359,12 @@ Mandatory summary:
   readback confirmed exactly one priority label on every open Issue. This
   product ordering pauses but does not rewrite the accepted plan-assurance
   frontier: `EDITOR_REPAIR_ACCEPTANCE` remains the only startable task. The
-  review does not select a #19 implementation, release, remote source write,
-  Issue closure, or plan advance.
+  local #19 correction now protects all `keptMilestoneIds` and rechecks the
+  final Contract 8 candidate. Its llmthink RCA and acceptance evidence are in
+  `docs/process/issue-19-advance-criterion-rca.think` and
+  `docs/process/issue-19-advance-criterion-acceptance.md`; the published
+  `0.9.3` remains affected. Release selection, remote source write, Issue
+  closure, and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
   serial tasks and 15p. The exact initial goal-and-DAG candidate was written
   once with actor `codex` and the scope-bound owner assertion `user`.

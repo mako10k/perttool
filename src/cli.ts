@@ -69,7 +69,12 @@ import {
   SafeWriteVerificationError,
   type DocumentWriteResult,
 } from "./io/safe-write.js";
-import type { Diagnostic, SourceSpan } from "./model/diagnostics.js";
+import {
+  limitDiagnostics,
+  sortDiagnostics,
+  type Diagnostic,
+  type SourceSpan,
+} from "./model/diagnostics.js";
 import type { Rational } from "./model/rational.js";
 import { formatDecimal } from "./model/rational.js";
 import type { DurationUnit, Velocity } from "./model/units.js";
@@ -2393,6 +2398,28 @@ function renderAdvanceSummary(details: AdvanceDetails): string {
   ].join("\n");
 }
 
+function mergeAdvanceCandidateDiagnostics(
+  candidateDiagnostics: readonly Diagnostic[],
+  operationDiagnostics: readonly Diagnostic[],
+  maximum: number,
+): ReturnType<typeof limitDiagnostics> {
+  const identities = new Set<string>();
+  const unique = [...candidateDiagnostics, ...operationDiagnostics].filter(
+    (diagnostic) => {
+      const identity = [
+        diagnostic.code,
+        diagnostic.severity,
+        diagnostic.message,
+        diagnostic.entityId ?? "",
+      ].join("\u0000");
+      if (identities.has(identity)) return false;
+      identities.add(identity);
+      return true;
+    },
+  );
+  return limitDiagnostics(sortDiagnostics(unique), maximum);
+}
+
 function renderAssuranceGuard(
   guard: NonNullable<AdvanceResultV2["assuranceGuard"]>,
 ): string {
@@ -2506,7 +2533,7 @@ async function runAdvance(args: readonly string[]): Promise<number> {
           ...preserveMilestoneAcceptanceRecords(
             input.text,
             contract7Planned.edits,
-            acceptancePlan.provisional!.advance.stateChangedMilestoneIds,
+            acceptancePlan.provisional!.advance.keptMilestoneIds,
           ),
           ...acceptancePlan.provisional!.edits,
         ]),
@@ -2515,12 +2542,19 @@ async function runAdvance(args: readonly string[]): Promise<number> {
   const combinedText = contract7Planned.updatedText === null
     ? null
     : applyTextEdits(input.text, combinedEdits);
-  const combinedSource = combinedText === null
+  const combinedCheck = combinedText === null
     ? null
-    : parseMilestoneAcceptanceSource(combinedText, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
-  if (combinedSource !== null && !combinedSource.ok) {
-    throw new Error("acceptance-aware assurance advance lost Grammar 7 validation");
+    : checkContract8Document(combinedText, { maxDiagnostics });
+  if (combinedCheck !== null && !combinedCheck.ok) {
+    throw new Error("acceptance-aware assurance advance lost Contract 8 validation");
   }
+  const combinedDiagnostics = combinedCheck === null
+    ? null
+    : mergeAdvanceCandidateDiagnostics(
+        combinedCheck.diagnostics,
+        contract7Planned.diagnostics,
+        maxDiagnostics,
+      );
   const planned = Object.freeze({
     ...contract7Planned,
     schemaVersion: "Perttool.AdvanceResult.v3" as const,
@@ -2532,12 +2566,18 @@ async function runAdvance(args: readonly string[]): Promise<number> {
       updatedLabel: "candidate",
     }),
     edits: combinedEdits,
+    diagnostics:
+      combinedDiagnostics?.diagnostics ?? contract7Planned.diagnostics,
+    diagnosticsTruncated:
+      contract7Planned.diagnosticsTruncated ||
+      (combinedCheck?.diagnosticsTruncated ?? false) ||
+      (combinedDiagnostics?.truncated ?? false),
     acceptanceGuard: acceptancePlan.acceptanceGuard,
   });
   const initialWarningFailure =
     parsed.flags.has("warnings-as-errors") &&
-    (planned.diagnosticsTruncated ||
-      planned.diagnostics.some(
+    (contract7Planned.diagnosticsTruncated ||
+      contract7Planned.diagnostics.some(
         (diagnostic) => diagnostic.severity === "warning",
       ));
   const preparedBase = await prepareAdvanceHistory(

@@ -45,8 +45,9 @@ Plans are separated by level of detail.
   evidence, and its conformant outcome are accepted at final plan digest
   `sha256:fac511d0...87af00`, and fresh NextResult v7 recommends only
   `EDITOR_REPAIR_ACCEPTANCE`; the separate 2026-08-14 product-Issue review
-  pauses that implementation frontier behind P0 `ADV-006` without mutating
-  this accepted plan or its assurance result
+  pauses that implementation frontier behind P0 `ADV-006`; the Issue #19
+  correction is locally accepted, but its patch release and Issue disposition
+  remain separate, without mutating this accepted plan or its assurance result
 - [historical-dag.pert](historical-dag.pert): selected `HIST-DAG-001`
   first-parent historical reconstruction roadmap covering the normative
   contract, shared transition model, bounded immutable Git evidence, pure

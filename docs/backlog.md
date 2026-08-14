@@ -1055,9 +1055,9 @@ Durable publication and the three completed Issue readbacks are recorded in
 
 Priority: P0
 
-Status: Open regression (2026-08-14); [Issue
-#19](https://github.com/mako10k/perttool/issues/19); implementation and release
-not started
+Status: Local correction accepted (2026-08-14); [Issue
+#19](https://github.com/mako10k/perttool/issues/19) and the published `0.9.3`
+remain open; release selection has not started
 
 Contract 8 `dag advance` can report a successful, diagnostic-free candidate
 while deleting criterion sets owned by milestones that remain in the residual
@@ -1071,6 +1071,16 @@ The current composition protects acceptance records for
 than the complete retained-milestone ownership boundary. The correction must
 be based on the final retained graph and complete candidate, not record order,
 terminal separator topology, or a warning-gate exception.
+
+The local correction now protects exact record spans for
+`keptMilestoneIds`, retains the explicit contraction for
+`removedMilestoneIds`, and rechecks the final composed Contract 8 candidate
+before projecting diagnostics. The synthetic branch topology, real CLI
+preview/output/write identity, final-diagnostic regression, and read-only
+image-platform replay are recorded in
+[`issue-19-advance-criterion-acceptance.md`](process/issue-19-advance-criterion-acceptance.md).
+The RCA source and finalized llmthink structure are recorded in
+[`issue-19-advance-criterion-rca.think`](process/issue-19-advance-criterion-rca.think).
 
 Acceptance:
 
@@ -1557,7 +1567,7 @@ implementation, release, publication, remote source writes, or Issue closure.
 
 | Rank | GitHub Issue | Local backlog | Priority | Current disposition |
 | ---: | --- | --- | --- | --- |
-| 1 | [#19](https://github.com/mako10k/perttool/issues/19) | `ADV-006` | P0 | Stop normal feature progression; correct retained acceptance-record loss before another `dag advance` delivery. |
+| 1 | [#19](https://github.com/mako10k/perttool/issues/19) | `ADV-006` | P0 | Local correction is accepted; keep normal feature progression paused until a separately selected patch is released and verified. |
 | 2 | [#7](https://github.com/mako10k/perttool/issues/7) | `ACT-004` | P1 | Make the observation-to-update token contract truthful after the P0 correction. |
 | 3 | [#6](https://github.com/mako10k/perttool/issues/6) | `ACT-005` | P1 | Design an explicit auditable provenance choice after the bounded token correction. |
 | 4 | [#13](https://github.com/mako10k/perttool/issues/13) | `EDITOR-MUTATION-001` | P2 | Retain accepted E0 and E1-contract state; pause E1 runtime implementation. |
