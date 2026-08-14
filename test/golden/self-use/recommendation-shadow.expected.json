@@ -169,18 +169,17 @@
       ]
     },
     "editor-mutations": {
-      "source_digest": "sha256:62b134ef7ba9cfafe37d6d747632599c20985475d5fd5c0ad9b2eba8ea53ad48",
+      "source_digest": "sha256:fac511d01ca7bcb632203fb1e255723a82f19043cb3731a7e92f71d55987af00",
       "groups": {
         "active": [],
         "ready": [
-          "EDITOR_REPAIR_CONTRACT"
+          "EDITOR_REPAIR_ACCEPTANCE"
         ],
         "runnable_now": [
-          "EDITOR_REPAIR_CONTRACT"
+          "EDITOR_REPAIR_ACCEPTANCE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "EDITOR_REPAIR_ACCEPTANCE",
           "EDITOR_RECOVERABLE_CONTRACT",
           "EDITOR_RECOVERABLE_ACCEPTANCE",
           "EDITOR_AUTHORITY_CONTRACT",
@@ -191,18 +190,18 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "EDITOR_REPAIR_CONTRACT"
+        "EDITOR_REPAIR_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "EDITOR_REPAIR_CONTRACT"
+        "EDITOR_REPAIR_ACCEPTANCE"
       ],
       "tiers": {
-        "EDITOR_REPAIR_CONTRACT": "recommended"
+        "EDITOR_REPAIR_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "EDITOR_REPAIR_CONTRACT",
+          "id": "EDITOR_REPAIR_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
