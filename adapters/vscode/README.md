@@ -1,8 +1,9 @@
 # perttool VS Code Extension (Private)
 
-This repository-only extension bundles the accepted read-only perttool
+This repository-only extension bundles the accepted perttool
 language server for offline local or remote VS Code workspace extension hosts.
-It activates for `.pert` documents, supplies presentation-only TextMate
+It activates for `.pert` documents, negotiates Editor Protocol model 2 with
+model 1 fallback, supplies presentation-only TextMate
 highlighting, exposes read-only diagnostic Help, and renders both the current
 version-bound `Perttool.GraphViewResult.v1` and the separately negotiated
 historical graph result through a restrictive local Webview. Exact
@@ -18,6 +19,9 @@ the HEAD first-parent lineage with complete analysis; endpoint/lower-boundary,
 snapshot/proved-lineage/timeline, and four-mode analysis controls remain under
 progressive disclosure. Historical source actions open
 verified immutable `perttool-history` documents rather than worktree ranges.
+Successful model-2 negotiation also exposes standard whole-document Format
+Document. User-enabled `editor.formatOnSave` uses the same E0 semantic-
+equivalence proof; the extension does not enable or modify that setting.
 The separately negotiated milestone-acceptance result presents graph closure,
 criterion acceptance, blockers, and caller-asserted receipt provenance from the
 shared Contract 8 Application service. Its source actions resolve only retained
@@ -29,10 +33,14 @@ perform bounded read-only Git discovery and immutable object reads only for an
 eligible trusted historical request. Neither component writes files or Git,
 executes workspace code, uses a network listener, downloads code, emits
 telemetry, computes PERT semantics in the Webview, or grants mutation or task-
-start authority of its own. Its disposable installed gate covers trusted and untrusted
+start authority of its own. Formatting edits are computed by the portable Core,
+returned through standard LSP, and applied only by the editor. Range and on-type
+formatting plus E1 through E3 mutations remain unavailable. Its disposable
+installed gate covers trusted and untrusted
 minimum-host activation, virtual and large current graphs, historical graph
-and immutable-source behavior, Help/navigation, replacement, uninstall
-readback, and unchanged workspace bytes. Editor mutation, public naming,
+and immutable-source behavior, Format Document, user-enabled format-on-save,
+Help/navigation, replacement, uninstall readback, and bounded target-only
+workspace changes. Further editor mutation, public naming,
 Marketplace publication, and release selection remain separate work.
 
 The selected future public presentation uses display name `perttool`, manifest

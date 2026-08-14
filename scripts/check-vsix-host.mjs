@@ -78,6 +78,10 @@ async function writeProfile(profile, trustEnabled) {
     "security.workspace.trust.enabled": trustEnabled,
     "security.workspace.trust.startupPrompt": "never",
     "telemetry.telemetryLevel": "off",
+    "[pert]": {
+      "editor.defaultFormatter": extensionId,
+      "editor.formatOnSave": true,
+    },
   }, null, 2)}\n`;
   const settingsPath = path.join(user, "settings.json");
   await writeFile(settingsPath, settings, "utf8");
@@ -99,6 +103,7 @@ async function runHost({
   profile,
   workspace,
   workspaceFile,
+  formatOnSaveFile,
   trust,
 }) {
   const testsPath = path.join(repositoryRoot, "scripts", "vsix-host-tests.cjs");
@@ -120,6 +125,7 @@ async function runHost({
   const result = await runProcess(executable, args, {
     env: {
       PERTTOOL_HOST_EXPECTED_TRUST: trust,
+      PERTTOOL_HOST_FORMAT_ON_SAVE_FILE: formatOnSaveFile,
       PERTTOOL_HOST_WORKSPACE_FILE: workspaceFile,
     },
   });
@@ -149,9 +155,17 @@ async function main() {
     const managementProfile = path.join(temporaryRoot, "management-profile");
     const workspace = path.join(temporaryRoot, "workspace");
     const workspaceFile = path.join(workspace, "plan.pert");
+    const trustedFormatFile = path.join(workspace, "format-trusted.pert");
+    const untrustedFormatFile = path.join(workspace, "format-untrusted.pert");
     await mkdir(extensionsDirectory, { recursive: true });
     await mkdir(workspace, { recursive: true });
     await cp(path.join(repositoryRoot, "docs", "examples", "minimal.pert"), workspaceFile);
+    const canonical = await readFile(workspaceFile, "utf8");
+    const formatSource = `\uFEFF# Café Ω\r\n${canonical.replaceAll("\n", "\r\n")}`
+      .replace("duration 1d", "duration 1.0d");
+    const expectedFormatted = formatSource.replace("duration 1.0d", "duration 1d");
+    await writeFile(trustedFormatFile, formatSource, "utf8");
+    await writeFile(untrustedFormatFile, formatSource, "utf8");
     await runProcess("git", ["init", "--quiet"], { cwd: workspace });
     await runProcess("git", ["add", "--", "plan.pert"], { cwd: workspace });
     await runProcess("git", [
@@ -202,9 +216,12 @@ async function main() {
       profile: trustedProfile,
       workspace,
       workspaceFile,
+      formatOnSaveFile: trustedFormatFile,
       trust: "trusted",
     });
     assert.equal(digest(await readFile(trustedSettings.settingsPath)), trustedSettings.digest);
+    assert.equal(await readFile(trustedFormatFile, "utf8"), expectedFormatted);
+    assert.equal(await readFile(untrustedFormatFile, "utf8"), formatSource);
 
     await runProcess(cli, [
       ...extensionArgs,
@@ -223,12 +240,15 @@ async function main() {
       profile: untrustedProfile,
       workspace,
       workspaceFile,
+      formatOnSaveFile: untrustedFormatFile,
       trust: "untrusted",
     });
     assert.equal(digest(await readFile(untrustedSettings.settingsPath)), untrustedSettings.digest);
 
     assert.deepEqual(await readdir(workspace), entriesBefore);
     assert.equal(digest(await readFile(workspaceFile)), digest(sourceBefore));
+    assert.equal(await readFile(trustedFormatFile, "utf8"), expectedFormatted);
+    assert.equal(await readFile(untrustedFormatFile, "utf8"), expectedFormatted);
 
     const uninstall = await runProcess(cli, [
       ...extensionArgs,

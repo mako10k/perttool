@@ -68,11 +68,32 @@ async function openVirtualPert(content) {
   return document;
 }
 
+function applyDocumentEdits(document, source, edits) {
+  return [...edits]
+    .map((edit) => ({
+      start: document.offsetAt(edit.range.start),
+      end: document.offsetAt(edit.range.end),
+      text: edit.newText,
+    }))
+    .sort((left, right) => right.start - left.start || right.end - left.end)
+    .reduce(
+      (candidate, edit) =>
+        candidate.slice(0, edit.start) + edit.text + candidate.slice(edit.end),
+      source,
+    );
+}
+
+function noDocumentEdits(value) {
+  return value === undefined || (Array.isArray(value) && value.length === 0);
+}
+
 async function run() {
   const expectedTrust = process.env.PERTTOOL_HOST_EXPECTED_TRUST;
+  const formatOnSaveFile = process.env.PERTTOOL_HOST_FORMAT_ON_SAVE_FILE;
   const workspaceFile = process.env.PERTTOOL_HOST_WORKSPACE_FILE;
   assert.ok(expectedTrust === "trusted" || expectedTrust === "untrusted");
   assert.ok(workspaceFile);
+  assert.ok(formatOnSaveFile);
   assert.equal(vscode.version, "1.101.0");
   assert.ok(Number.parseInt(process.versions.node, 10) >= 22);
   assert.equal(vscode.workspace.isTrusted, expectedTrust === "trusted");
@@ -103,6 +124,48 @@ async function run() {
     ),
     false,
   );
+
+  const formatDocument = await vscode.workspace.openTextDocument(formatOnSaveFile);
+  const formatEditor = await vscode.window.showTextDocument(formatDocument, {
+    preview: false,
+  });
+  const formatSource = formatDocument.getText();
+  assert.match(formatSource, /# Café Ω\r?\n/u);
+  assert.match(formatSource, /duration 1\.0d/u);
+  const formatEdits = await waitFor("Format Document provider", async () => {
+    const result = await vscode.commands.executeCommand(
+      "vscode.executeFormatDocumentProvider",
+      formatDocument.uri,
+      { tabSize: 8, insertSpaces: false },
+    );
+    return Array.isArray(result) && result.length > 0 ? result : null;
+  });
+  const expectedFormatted = formatSource.replace("duration 1.0d", "duration 1d");
+  assert.equal(
+    applyDocumentEdits(formatDocument, formatSource, formatEdits),
+    expectedFormatted,
+  );
+  await formatEditor.edit((builder) => {
+    const durationLine = Array.from(
+      { length: formatDocument.lineCount },
+      (_, index) => formatDocument.lineAt(index),
+    ).find(({ text }) => text.includes("duration 1.0d"));
+    assert.ok(durationLine);
+    builder.insert(durationLine.range.end, " ");
+  });
+  assert.equal(formatDocument.isDirty, true);
+  assert.equal(await formatDocument.save(), true);
+  await waitFor("user-enabled format on save", () =>
+    formatDocument.getText() === expectedFormatted ? formatDocument : null
+  );
+  assert.equal(formatDocument.isDirty, false);
+  const repeatedEdits = await vscode.commands.executeCommand(
+    "vscode.executeFormatDocumentProvider",
+    formatDocument.uri,
+    { tabSize: 2, insertSpaces: true },
+  );
+  assert.equal(noDocumentEdits(repeatedEdits), true);
+  await vscode.window.showTextDocument(document, { preview: false });
   const workPosition = document.positionAt(source.indexOf("WORK") + 1);
   const definitions = await waitFor("workspace definition navigation", async () => {
     const result = await vscode.commands.executeCommand(
@@ -141,6 +204,39 @@ async function run() {
     return Array.isArray(result) && result.length > 0 ? result : null;
   });
   assert.ok(virtualSymbols.length > 0);
+
+  const virtualSource = virtual.getText().replace("duration 1d", "duration 1.0d");
+  const virtualEditorForFormat = vscode.window.activeTextEditor;
+  assert.ok(virtualEditorForFormat);
+  await virtualEditorForFormat.edit((builder) => {
+    const start = virtual.positionAt(virtual.getText().indexOf("duration 1d"));
+    builder.replace(
+      new vscode.Range(start, virtual.positionAt(virtual.getText().indexOf("duration 1d") + 11)),
+      "duration 1.0d",
+    );
+  });
+  assert.equal(virtual.getText(), virtualSource);
+  const virtualFormatEdits = await waitFor("virtual Format Document provider", async () => {
+    const result = await vscode.commands.executeCommand(
+      "vscode.executeFormatDocumentProvider",
+      virtual.uri,
+      { tabSize: 2, insertSpaces: true },
+    );
+    return Array.isArray(result) && result.length > 0 ? result : null;
+  });
+  const virtualWorkspaceEdit = new vscode.WorkspaceEdit();
+  for (const edit of virtualFormatEdits) {
+    virtualWorkspaceEdit.replace(virtual.uri, edit.range, edit.newText);
+  }
+  assert.equal(await vscode.workspace.applyEdit(virtualWorkspaceEdit), true);
+  assert.equal(virtual.getText(), source);
+  const rangeEdits = await vscode.commands.executeCommand(
+    "vscode.executeFormatRangeProvider",
+    virtual.uri,
+    new vscode.Range(new vscode.Position(0, 0), new vscode.Position(1, 0)),
+    { tabSize: 2, insertSpaces: true },
+  );
+  assert.equal(noDocumentEdits(rangeEdits), true);
 
   const virtualEditor = vscode.window.activeTextEditor;
   assert.ok(virtualEditor);
@@ -183,6 +279,12 @@ async function run() {
     diagnostics[0].range,
   );
   assert.ok(Array.isArray(actions) && actions.length > 0);
+  const invalidFormatEdits = await vscode.commands.executeCommand(
+    "vscode.executeFormatDocumentProvider",
+    invalid.uri,
+    { tabSize: 2, insertSpaces: true },
+  );
+  assert.equal(noDocumentEdits(invalidFormatEdits), true);
   const helpAction = actions.find((action) => action.command?.command === "perttool.openHelp");
   assert.ok(helpAction?.command);
   await vscode.commands.executeCommand(

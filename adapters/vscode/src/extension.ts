@@ -10,11 +10,12 @@ import {
   dagFocusProtocolModelVersion,
   dagFocusResultSchemaVersion,
   editorHelpResultSchemaVersion,
-  editorProtocolModelVersion,
+  editorProtocolModelVersions,
   graphViewResultSchemaVersion,
   graphBindingMatches,
   hasAcceptedDagFocusHandshake,
   hasAcceptedEditorHandshake,
+  hasAcceptedEditorMutationHandshake,
   hasAcceptedHistoricalHandshake,
   hasAcceptedMilestoneAcceptanceHandshake,
   historicalEditorProtocolModelVersion,
@@ -34,6 +35,7 @@ let customCapabilitiesAvailable = false;
 let historicalCapabilitiesAvailable = false;
 let dagFocusCapabilitiesAvailable = false;
 let milestoneAcceptanceCapabilitiesAvailable = false;
+let formattingCapabilitiesAvailable = false;
 
 class HelpContentProvider implements vscode.TextDocumentContentProvider {
   readonly #content = new Map<string, string>();
@@ -140,7 +142,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     documentSelector: [{ language: "pert" }],
     initializationOptions: {
       perttool: {
-        editorProtocolModelVersions: [editorProtocolModelVersion],
+        editorProtocolModelVersions,
         graphViewResultSchemaVersions: [graphViewResultSchemaVersion],
         editorHelpResultSchemaVersions: [editorHelpResultSchemaVersion],
         dagFocusProtocolModelVersions: [dagFocusProtocolModelVersion],
@@ -168,6 +170,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       },
     },
     markdown: { isTrusted: false, supportHtml: false },
+    middleware: {
+      provideDocumentFormattingEdits: (document, options, token, next) =>
+        formattingCapabilitiesAvailable
+          ? next(document, options, token)
+          : [],
+    },
     outputChannel: output,
   };
 
@@ -282,6 +290,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await client.start();
     const experimental = client.initializeResult?.capabilities.experimental;
     customCapabilitiesAvailable = hasAcceptedEditorHandshake(experimental);
+    formattingCapabilitiesAvailable =
+      hasAcceptedEditorMutationHandshake(experimental);
     historicalCapabilitiesAvailable =
       hasAcceptedHistoricalHandshake(experimental);
     dagFocusCapabilitiesAvailable = hasAcceptedDagFocusHandshake(experimental);
@@ -290,6 +300,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     if (!customCapabilitiesAvailable) {
       output.warn(
         "Custom perttool Help and DAG capabilities are unavailable: incompatible editor protocol handshake.",
+      );
+    }
+    if (!formattingCapabilitiesAvailable) {
+      output.info(
+        "Format Document is unavailable: editor protocol model 2 was not negotiated.",
       );
     }
     if (!historicalCapabilitiesAvailable) {
@@ -323,5 +338,6 @@ export async function deactivate(): Promise<void> {
   historicalCapabilitiesAvailable = false;
   dagFocusCapabilitiesAvailable = false;
   milestoneAcceptanceCapabilitiesAvailable = false;
+  formattingCapabilitiesAvailable = false;
   if (running !== undefined) await running.stop();
 }

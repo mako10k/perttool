@@ -1,7 +1,7 @@
 {
   "name": "perttool-vscode-private",
   "displayName": "perttool (Private)",
-  "description": "Private read-only VS Code language client for perttool",
+  "description": "Private VS Code language client with proved E0 formatting for perttool",
   "version": "0.0.0",
   "private": true,
   "publisher": "perttool-private",

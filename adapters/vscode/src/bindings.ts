@@ -1,4 +1,9 @@
 export const editorProtocolModelVersion = 1 as const;
+export const editorMutationProtocolModelVersion = 2 as const;
+export const editorProtocolModelVersions = [
+  editorMutationProtocolModelVersion,
+  editorProtocolModelVersion,
+] as const;
 export const graphViewResultSchemaVersion =
   "Perttool.GraphViewResult.v1" as const;
 export const editorHelpResultSchemaVersion =
@@ -602,10 +607,19 @@ export function hasAcceptedEditorHandshake(value: unknown): boolean {
   const perttool = value.perttool;
   return (
     isRecord(perttool) &&
-    perttool.editorProtocolModelVersion === editorProtocolModelVersion &&
+    editorProtocolModelVersions.includes(
+      perttool.editorProtocolModelVersion as 1 | 2,
+    ) &&
     perttool.graphViewResultSchemaVersion === graphViewResultSchemaVersion &&
     perttool.editorHelpResultSchemaVersion === editorHelpResultSchemaVersion
   );
+}
+
+export function hasAcceptedEditorMutationHandshake(value: unknown): boolean {
+  if (!hasAcceptedEditorHandshake(value) || !isRecord(value)) return false;
+  const perttool = value.perttool;
+  return isRecord(perttool) &&
+    perttool.editorProtocolModelVersion === editorMutationProtocolModelVersion;
 }
 
 export function hasAcceptedDagFocusHandshake(value: unknown): boolean {

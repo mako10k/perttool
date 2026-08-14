@@ -1,0 +1,34 @@
+{
+  "schema_version": "Perttool.EditorFormatAcceptanceCases.v1",
+  "offered_editor_protocol_model_versions": [2, 1],
+  "selected_editor_protocol_model_version": 2,
+  "compatible_editor_protocol_model_version": 1,
+  "vscode_version": "1.101.0",
+  "capabilities": {
+    "document_formatting": true,
+    "format_on_save": "user_enabled_only",
+    "range_formatting": false,
+    "on_type_formatting": false,
+    "e1_e2_e3": false
+  },
+  "cases": [
+    { "id": "EFA-001", "depends_on": [], "boundary": "model_2_negotiation" },
+    { "id": "EFA-002", "depends_on": ["EFA-001"], "boundary": "model_1_fallback" },
+    { "id": "EFA-003", "depends_on": ["EFA-001"], "boundary": "standard_format_document" },
+    { "id": "EFA-004", "depends_on": ["EFA-003"], "boundary": "exact_core_edit_identity" },
+    { "id": "EFA-005", "depends_on": ["EFA-004"], "boundary": "idempotent_no_op" },
+    { "id": "EFA-006", "depends_on": ["EFA-003"], "boundary": "user_enabled_format_on_save" },
+    { "id": "EFA-007", "depends_on": ["EFA-006"], "boundary": "bom_crlf_comment_unicode" },
+    { "id": "EFA-008", "depends_on": ["EFA-003"], "boundary": "invalid_no_edit" },
+    { "id": "EFA-009", "depends_on": ["EFA-003"], "boundary": "cancellation_stale_no_edit" },
+    { "id": "EFA-010", "depends_on": ["EFA-003"], "boundary": "local_file" },
+    { "id": "EFA-011", "depends_on": ["EFA-003"], "boundary": "untitled_virtual_document" },
+    { "id": "EFA-012", "depends_on": ["EFA-010"], "boundary": "untrusted_workspace" },
+    { "id": "EFA-013", "depends_on": ["EFA-010", "EFA-011"], "boundary": "non_target_identity" },
+    { "id": "EFA-014", "depends_on": ["EFA-003"], "boundary": "range_on_type_absent" },
+    { "id": "EFA-015", "depends_on": ["EFA-014"], "boundary": "e1_e2_e3_absent" },
+    { "id": "EFA-016", "depends_on": ["EFA-013", "EFA-015"], "boundary": "isolated_vsix_inventory" },
+    { "id": "EFA-017", "depends_on": ["EFA-016"], "boundary": "supported_host" },
+    { "id": "EFA-018", "depends_on": ["EFA-017"], "boundary": "settings_git_network_publication_closure" }
+  ]
+}
