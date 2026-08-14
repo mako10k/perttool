@@ -19,6 +19,7 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
     review,
     correction,
     preparation,
+    candidate,
     backlog,
     plan,
     manifestText,
@@ -39,6 +40,7 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
     repositoryText("docs/process/0.9.2-self-review.md"),
     repositoryText("docs/process/issue-15-point-no-velocity-acceptance.md"),
     repositoryText("docs/process/0.9.2-preparation.md"),
+    repositoryText("docs/process/0.9.2-candidate.md"),
     repositoryText("docs/backlog.md"),
     repositoryText("plans/release-0.9.2.pert"),
     repositoryText("package.json"),
@@ -61,6 +63,7 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
   assert.match(review, /exact peeled `v0\.9\.1` commit `ddb12dc/u);
   assert.match(correction, /`velocity_forecast=null`/u);
   assert.match(preparation, /all 1,048 Node\.js tests/u);
+  assert.match(candidate, /5347f4b0e7c38b44f4f6ee34ca71dd2389fcf88da3ad52b85c7b64f82e980edb/u);
   assert.match(backlog, /^### ANALYSIS-001: Analyze point plans without declared velocity$/m);
   assert.match(commonSchema, /"missing_velocity"/u);
 
@@ -87,9 +90,10 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
   assert.match(plan, /task RELEASE_092_SELF_REVIEW[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_092_CORRECTION[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_092_PREPARATION[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_092_CANDIDATE[\s\S]*?status done/u);
   const next = perttool.selectNextTasks(plan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_092_CANDIDATE"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_092_PUBLISH"]);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);

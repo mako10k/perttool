@@ -708,7 +708,13 @@ and the 712-file isolated package. Its record is
 `docs/process/0.9.2-preparation.md`; complete NextResult v7 recommends and
 makes startable only `RELEASE_092_CANDIDATE`. npm reports
 `beta=0.9.1`, `latest=0.9.0`, and no `alpha`; `perttool@0.9.2`, remote
-`v0.9.2`, and its GitHub Release are unused. The user's 2026-08-14 emergency
+`v0.9.2`, and its GitHub Release are unused. `RELEASE_092_CANDIDATE` is
+complete after the clean Node.js 22 gate,
+read-only external and authenticated-route preflight, and acceptance of the
+retained 712-file, 798088-byte tarball from source commit `06435cc`; its
+SHA-256 is `5347f4b0...bec275f`, and its record is
+`docs/process/0.9.2-candidate.md`. Complete NextResult v7 recommends and makes
+startable only `RELEASE_092_PUBLISH`. The user's 2026-08-14 emergency
 instruction authorizes the ordered patch, release, exact local installation,
 and Issue #15 completion after all predecessor gates. npm `latest`, public
 VSIX publication, plan advance, and unrelated work remain separate.
