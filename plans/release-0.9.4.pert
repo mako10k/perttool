@@ -93,6 +93,7 @@ task RELEASE_094_CANDIDATE RELEASE_094_SOURCE_PREPARED -> RELEASE_094_CANDIDATE_
   title "Accept one clean 0.9.4 release candidate"
   description "Commit and recheck the complete release diff; prove package, tag, GitHub Release, and npm version availability; verify beta=0.9.3, latest=0.9.0, and no alpha; verify authenticated routes; retain one immutable tarball outside the worktree; and accept its exact identity and installed Issue 19 behavior. This task performs no external write."
   duration 2p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -147,3 +148,11 @@ work_event WE-094-preparation:
   occurred_at 2026-08-14T17:56:49+09:00
   active_time 3h
   effort 3ph
+
+work_event WE-094-candidate:
+  model 1
+  task RELEASE_094_CANDIDATE
+  kind finish
+  occurred_at 2026-08-14T18:00:20+09:00
+  active_time 2h
+  effort 2ph
