@@ -54,7 +54,7 @@ test("0.9.4 retains Contract 8 while correcting Issue 19", async () => {
   assert.equal(checked.ok, true);
   assert.equal(metadata.ok, true);
   assert.equal(metadata.project.id, "RELEASE_094");
-  assert.equal(metadata.grammarVersion, 6);
+  assert.equal(metadata.grammarVersion, 7);
   assert.equal(metadata.project.finish, "RELEASE_094_ACCEPTED");
   assert.match(plan, /task RELEASE_094_SELF_REVIEW[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_094_CORRECTION[\s\S]*?status done/u);

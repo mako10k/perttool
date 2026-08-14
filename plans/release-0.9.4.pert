@@ -185,3 +185,117 @@ work_event WE-094-acceptance:
   occurred_at 2026-08-14T18:13:39+09:00
   active_time 1h
   effort 1ph
+
+milestone_criterion_set RELEASE_094_REVIEW_R1:
+  milestone RELEASE_094_REVIEW_ACCEPTED
+  revision R1
+  commitment sha256:1084b73259fb9921f5909b370d06e7c65415b9f437a084fe197ac4773ddcaf26
+  criterion REVIEW_ACCEPTED required artifact "Accepted version 0.9.4 compatibility review"
+
+milestone_criterion_set RELEASE_094_CORRECTION_R1:
+  milestone RELEASE_094_CORRECTION_ACCEPTED
+  revision R1
+  commitment sha256:8467b03fab7d895f8e8d3047aee93fa126f2e98dc8f3da50165fd208a4abecaa
+  criterion CORRECTION_ACCEPTED required artifact "Accepted Issue 19 retained milestone correction"
+
+milestone_criterion_set RELEASE_094_SOURCE_R1:
+  milestone RELEASE_094_SOURCE_PREPARED
+  revision R1
+  commitment sha256:ac65bd315e8e34e70e9c2f84856affd6416c4f6b4aab8036aa1185feb189f94d
+  criterion SOURCE_ACCEPTED required artifact "Accepted version 0.9.4 prepared source"
+
+milestone_criterion_set RELEASE_094_CANDIDATE_R1:
+  milestone RELEASE_094_CANDIDATE_ACCEPTED
+  revision R1
+  commitment sha256:fce4b4800d9e2e9071cf4255437ccce94313e1e9c080151cf4c9c65e83385ee7
+  criterion CANDIDATE_ACCEPTED required artifact "Accepted immutable version 0.9.4 candidate"
+
+milestone_criterion_set RELEASE_094_PUBLISH_R1:
+  milestone RELEASE_094_PUBLISHED
+  revision R1
+  commitment sha256:4a038aeebf6d9e7834c79f4c349e98ad3232b627baf40c59e6985311e8beb6e1
+  criterion PUBLISH_ACCEPTED required artifact "Accepted version 0.9.4 publication"
+
+milestone_criterion_set RELEASE_094_ACCEPTANCE_R1:
+  milestone RELEASE_094_ACCEPTED
+  revision R1
+  commitment sha256:ec7a8f61b3283ad5786e869f37ffb59f511c0fc1afd7b30d58a699baa1ae3441
+  criterion RELEASE_ACCEPTED required artifact "Accepted durable version 0.9.4 release"
+
+milestone_acceptance_receipt RELEASE_094_REVIEW_EVIDENCE:
+  model 1
+  set RELEASE_094_REVIEW_R1
+  set_commitment sha256:1084b73259fb9921f5909b370d06e7c65415b9f437a084fe197ac4773ddcaf26
+  criterion REVIEW_ACCEPTED
+  criterion_commitment sha256:af252a1f8a2de561c1312ea6e358335e2df9fb9b35b62a6998724c500a5906bf
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.4-self-review.md"
+  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
+  verifier codex
+  occurred_at 2026-08-14T09:19:08Z
+
+milestone_acceptance_receipt RELEASE_094_CORRECTION_EVIDENCE:
+  model 1
+  set RELEASE_094_CORRECTION_R1
+  set_commitment sha256:8467b03fab7d895f8e8d3047aee93fa126f2e98dc8f3da50165fd208a4abecaa
+  criterion CORRECTION_ACCEPTED
+  criterion_commitment sha256:382da8623dd45ecaadee067969b569ec8578751d171dd3e92194f1ef926b06b6
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/issue-19-advance-criterion-acceptance.md"
+  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
+  verifier codex
+  occurred_at 2026-08-14T09:19:08Z
+
+milestone_acceptance_receipt RELEASE_094_SOURCE_EVIDENCE:
+  model 1
+  set RELEASE_094_SOURCE_R1
+  set_commitment sha256:ac65bd315e8e34e70e9c2f84856affd6416c4f6b4aab8036aa1185feb189f94d
+  criterion SOURCE_ACCEPTED
+  criterion_commitment sha256:963ed6019ee56c0279ab4b425ef4cab4900c9fb7e55222ef2e9ce68b6cdc3abf
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.4-preparation.md"
+  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
+  verifier codex
+  occurred_at 2026-08-14T09:19:08Z
+
+milestone_acceptance_receipt RELEASE_094_CANDIDATE_EVIDENCE:
+  model 1
+  set RELEASE_094_CANDIDATE_R1
+  set_commitment sha256:fce4b4800d9e2e9071cf4255437ccce94313e1e9c080151cf4c9c65e83385ee7
+  criterion CANDIDATE_ACCEPTED
+  criterion_commitment sha256:49a738de196ec86976f2a9403fc3f60d01f87b7ca8cc826c80751aa9690aa8d4
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.4-candidate.md"
+  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
+  verifier codex
+  occurred_at 2026-08-14T09:19:08Z
+
+milestone_acceptance_receipt RELEASE_094_PUBLISH_EVIDENCE:
+  model 1
+  set RELEASE_094_PUBLISH_R1
+  set_commitment sha256:4a038aeebf6d9e7834c79f4c349e98ad3232b627baf40c59e6985311e8beb6e1
+  criterion PUBLISH_ACCEPTED
+  criterion_commitment sha256:5c8190571acb1c2269c39dff1ee43803b61558a2e149c85163cbffe02d8eb76f
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.4-publish.md"
+  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
+  verifier codex
+  occurred_at 2026-08-14T09:19:08Z
+
+milestone_acceptance_receipt RELEASE_094_ACCEPTANCE_EVIDENCE:
+  model 1
+  set RELEASE_094_ACCEPTANCE_R1
+  set_commitment sha256:ec7a8f61b3283ad5786e869f37ffb59f511c0fc1afd7b30d58a699baa1ae3441
+  criterion RELEASE_ACCEPTED
+  criterion_commitment sha256:542981ccc927d1557e1c74296fd65f78bb6c33a11dd2f33307cccf1c72d4381e
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.4-release-acceptance.md"
+  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
+  verifier codex
+  occurred_at 2026-08-14T09:19:08Z
