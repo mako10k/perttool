@@ -1837,6 +1837,35 @@ Before implementation:
 - follow the selected independent workstream from a fresh complete
   `Perttool.NextResult.v5` authority result.
 
+### ASSURE-002: Make plan-assurance inspection Grammar 7 aware
+
+Priority: P0
+
+Status: Backlog (2026-08-14); [Issue
+#14](https://github.com/mako10k/perttool/issues/14) open
+
+The public Contract 8 `plan-assurance show` and `plan-assurance hash` commands
+reject an active Grammar 7 plan even when `dag next` successfully evaluates
+the same source and projects complete plan assurance. Direct CLI reproduction
+against `plans/editor-mutations.pert` reports old-grammar `PTDSL-005` and
+`PTDSL-003` diagnostics for governance, plan-assurance, and milestone-
+acceptance declarations. The shared inspection dispatch currently passes the
+Grammar 6 capability directly for both actions instead of preparing the
+active Grammar 7 source.
+
+Acceptance requires both inspection actions to accept valid Grammar 7 input,
+retain Grammar 6 compatibility and fail-closed invalid-input handling, and
+preserve selected-task and exact `contract`, `computed-basis`, and `exported`
+hash behavior. The `show` projection must agree semantically with the
+assurance projection embedded in `dag next` for the same source. Coverage must
+include file and stdin operands plus an isolated installed-package workflow,
+with no plan, Git, network, or other persistent mutation.
+
+This item does not authorize new assurance semantics, a Grammar or CLI
+contract version change, plan mutation or advance, release selection,
+publication, dist-tag movement, remote branch writes, or unrelated editor-
+mutation work.
+
 ## Independent post-beta work
 
 `MULTI-001`, `ADAPTER-001`, `MIG-08`, `SCM-001`, `HIST-DAG-001`,
