@@ -1015,9 +1015,8 @@ Durable publication and the three completed Issue readbacks are recorded in
 
 Priority: P0
 
-Status: Local correction accepted (2026-08-14); [Issue
-#19](https://github.com/mako10k/perttool/issues/19) remains open pending the
-selected compatible `0.9.4` release
+Status: Released and accepted in `0.9.4`; [Issue
+#19](https://github.com/mako10k/perttool/issues/19) closed (2026-08-14)
 
 Contract 8 `dag advance` can report a successful, diagnostic-free candidate
 while deleting criterion sets owned by milestones that remain in the residual
@@ -1051,8 +1050,12 @@ The implementation and real-plan evidence are recorded in
 [`issue-19-advance-criterion-acceptance.md`](process/issue-19-advance-criterion-acceptance.md),
 and the llmthink RCA is
 [`issue-19-advance-criterion-rca.think`](process/issue-19-advance-criterion-rca.think).
-Release publication, Issue closure, npm `latest`, public VSIX publication, and
-consumer-plan mutation remain separately ordered boundaries.
+Release commit `094132c`, successful CI run `31786430400`, GitHub and npm
+artifacts at SHA-256 `63a12ddf...d6fe53b`, exact and beta installations, and
+the `0.9.3` rollback replay are accepted in
+[`0.9.4-release-acceptance.md`](process/0.9.4-release-acceptance.md). Issue #19
+is closed with release evidence and retains only `bug`. npm `latest`, public
+VSIX publication, and consumer-plan mutation remain separate boundaries.
 
 ### STATIC-001: Reduce the reviewed duplicate and complexity baseline
 

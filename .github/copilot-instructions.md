@@ -5,12 +5,12 @@ Treat `AGENTS.md` as the source of truth for repository guidance shared by Codex
 Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
-- The current published beta is `perttool@0.9.3`; npm reports
-  `beta=0.9.3`, `latest=0.9.0`, and no `alpha`. Version `0.9.3` is the
-  compatible Issues #14/#16/#17 emergency patch; peeled `v0.9.3` and
-  `origin/main` agree at `7755d3e`, and all three Issues are closed with
-  release evidence. Version `0.9.2` remains the exact rollback pin containing
-  the Issue #15 correction.
+- The current published beta is `perttool@0.9.4`; npm reports
+  `beta=0.9.4`, `latest=0.9.0`, and no `alpha`. Version `0.9.4` is the
+  compatible Issue #19 emergency patch; peeled `v0.9.4` and `origin/main`
+  agree at `094132c`, CI passed, the GitHub and npm artifacts agree at
+  SHA-256 `63a12ddf...d6fe53b`, and Issue #19 is closed with release evidence.
+  Version `0.9.3` remains the exact rollback pin.
 - The current source atomically activates Grammar 7 and CLI
   Contract 8 with 53 commands, 23 root schemas, 129 root and Node exports,
   and `Perttool.NextResult.v7`. All milestone-acceptance work is complete and
@@ -48,6 +48,13 @@ Mandatory summary:
   `0.9.2` rollback, and all three public replays passed. All six tasks are
   complete before advance. npm `latest`, plan advance, public VSIX
   publication, and unrelated work remain separate.
+- The `plans/release-0.9.4.pert` workstream published and durably accepted the
+  compatible Issue #19 retained-milestone criterion correction. It also adds
+  pinned jscpd and Lizard repository/CI ratchets without changing Grammar 7,
+  Contract 8, 53 commands, 23 schemas, 129 root/Node exports, 45 Core exports,
+  authority, or force semantics. All six tasks are complete before canonical
+  advance; npm `latest`, public VSIX publication, and unrelated work remain
+  separate.
 - Install the exact Python tools from `requirements-static-analysis.txt` before
   the complete repository gate. `npm run check:static` composes TypeScript
   type checking with pinned jscpd duplicate and Lizard complexity ratchets;

@@ -75,7 +75,7 @@ commands, 23 root schemas, 129 root and Node runtime exports,
 criterion-set replacement, caller-asserted receipts, and acceptance-aware
 canonical advance. Its accepted release commit, annotated tag, GitHub
 prerelease, and npm artifact agree, and npm currently reports
-`latest=0.9.0`, `beta=0.9.3`, and no `alpha`. Version `0.8.1` remains the
+`latest=0.9.0`, `beta=0.9.4`, and no `alpha`. Version `0.8.1` remains the
 exact Grammar 6 and CLI Contract 7 rollback pin.
 
 Version `0.9.1` is the published compatible Contract 8 patch for `ACT-003` and
@@ -99,19 +99,23 @@ show|hash`, composes acceptance-aware terminal deletions without weakening the
 shared edit guard, and preserves complete criterion-set/receipt evidence for
 retained reached milestones. It retains all public identities and authority.
 The accepted release commit, annotated tag, GitHub prerelease, and npm
-artifact agree; npm reports `beta=0.9.3`, `latest=0.9.0`, and no `alpha`.
+artifact agree; at its publication npm reported `beta=0.9.3`,
+`latest=0.9.0`, and no `alpha`.
 Issues #14, #16, and #17 are closed with release evidence. Plan advance,
 public VSIX publication, and unrelated work remain separate.
 
 Version `0.9.4` is the compatible Contract 8 emergency patch for GitHub Issue
-#19. It preserves criterion sets and receipts for every milestone retained by
+#19. It is published and preserves criterion sets and receipts for every milestone retained by
 `dag advance`, validates the complete final candidate before history or
 persistence decisions, and projects deterministic candidate diagnostics. It
 also makes pinned jscpd duplicate and Lizard complexity ratchets part of the
 repository and CI static-analysis gate. Grammar 7, CLI Contract 8, all 53
 commands, 23 root schemas, 129 root and Node exports, 45 Core exports, public
-authority, and force semantics remain unchanged. Version `0.9.3` is the exact
-rollback pin.
+authority, and force semantics remain unchanged. Its release commit, peeled
+tag, Node.js 22 and 24 CI, GitHub prerelease, npm artifact, and common
+SHA-256 `63a12ddf...d6fe53b` agree. npm reports `beta=0.9.4`,
+`latest=0.9.0`, and no `alpha`; Issue #19 is closed with release evidence.
+Version `0.9.3` is the exact rollback pin.
 
 The private adapters now project that same Contract 8 acceptance model without
 adding write authority. The LSP negotiates a separate version-bound milestone
@@ -663,6 +667,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.9.1` release procedure](docs/process/0.9.1-release.md)
 - [`v0.9.2` release procedure](docs/process/0.9.2-release.md)
 - [`v0.9.3` release procedure](docs/process/0.9.3-release.md)
+- [`v0.9.4` release procedure](docs/process/0.9.4-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
@@ -689,6 +694,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.9.1` release plan](plans/release-0.9.1.pert)
 - [`v0.9.2` release plan](plans/release-0.9.2.pert)
 - [`v0.9.3` release plan](plans/release-0.9.3.pert)
+- [`v0.9.4` release plan](plans/release-0.9.4.pert)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)
