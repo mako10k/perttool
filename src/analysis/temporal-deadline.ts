@@ -227,6 +227,9 @@ function baseUnitValue(
   difference: CalendarDifference,
   projection: TargetEffectiveProjection,
 ): { readonly value: Rational | null; readonly cause: CalendarUnavailableCause | null } {
+  if (projection.baseUnit === "point" && projection.velocity === null) {
+    return { value: null, cause: "missing_velocity" };
+  }
   if (
     difference.kind === "calendar_days" &&
     projection.effectiveUnit === "hour"
@@ -414,6 +417,14 @@ function deadlineView(
       view,
       schedule.unavailableCauses[0]?.cause ??
         (anchor === null ? "missing_temporal_anchor" : null),
+    );
+  }
+  if (projection.effectiveUnit === null) {
+    return unavailableView(
+      subject,
+      blockedTaskIds,
+      view,
+      "missing_velocity",
     );
   }
   const projected = projectRelativeCalendarValue(

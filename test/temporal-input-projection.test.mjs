@@ -146,6 +146,47 @@ test("point input projection retains effective velocity and exact point values",
   ]);
 });
 
+test("point temporal input without velocity is explicitly unavailable", () => {
+  const text = `project POINT_WITHOUT_VELOCITY:
+  version 3
+  title "point without velocity"
+  as_of 2026-08-14
+  duration_unit point
+  finish FINISH
+
+milestone START:
+  title "start"
+  state reached
+
+milestone FINISH:
+  title "finish"
+
+task WORK START -> FINISH:
+  title "work"
+  duration 1p
+  not_before 2026-08-15
+`;
+  const result = prepareTargetTemporalInputs(
+    text,
+    TARGET_GRAMMAR_3_CAPABILITY,
+  );
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.projection.effectiveProjection, {
+    baseUnit: "point",
+    effectiveUnit: null,
+    qualifier: "velocity_forecast",
+    velocity: null,
+  });
+  assert.equal(result.projection.tasks[0].release.state, "unavailable");
+  assert.deepEqual(result.projection.tasks[0].release.unavailableCauses, [{
+    cause: "missing_velocity",
+    underlyingCause: null,
+    subjectKind: "task",
+    subjectId: "WORK",
+    taskId: "WORK",
+  }]);
+});
+
 test("Grammar 3 fractions are retained by active Contract 5", () => {
   const text = `project FRACTIONAL_TEMPORAL:
   version 3

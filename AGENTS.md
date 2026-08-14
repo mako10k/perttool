@@ -28,12 +28,14 @@ available by exact pin. Version `0.5.1` remains the initial schema-discovery
 Contract 6 artifact, `0.5.0` remains the pre-schema Contract 6 artifact,
 `0.4.0` remains the Contract 5 compatibility artifact, and `0.3.0` and
 `0.2.0` remain the prior Contract 4 and Contract 3 artifacts, all available by
-explicit pin. npm reports `beta=latest=0.9.0` and no `alpha`. Version `0.9.0`
+explicit pin. npm reports `beta=0.9.1`, `latest=0.9.0`, and no `alpha`. Version `0.9.0`
 is the Grammar 7 and CLI Contract 8 milestone-acceptance beta; `0.8.1` is its
 compatible Grammar 6 and CLI Contract 7 rollback pin. Version `0.9.1` is the
-selected compatible Contract 8 current-velocity observation patch; candidate
-acceptance is complete, while publication, npm `latest`, Issue #8 completion,
-and plan advance remain ordered boundaries. The
+published compatible Contract 8 current-velocity observation patch. Version
+`0.9.2` is the selected compatible emergency patch for Issue #15; the focused
+correction is accepted locally, while source preparation, candidate,
+publication, npm `latest`, Issue completion, and plan advance retain their
+ordered boundaries. The
 durably accepted beta `0.7.0` source implements Grammar 1/2/3/4/5/6 reads,
 registry-driven Contract 7 `help`, separate Contract 7 `guide`, temporal and
 governed project/task/gate/milestone/resource maintenance, exact lifecycle
@@ -687,6 +689,30 @@ read-only external and route preflight, and acceptance of the retained
 update after all predecessor gates. npm `latest`, plan advance, public VSIX
 publication, and unrelated work remain separate.
 
+The explicitly selected compatible `0.9.2` Point-without-velocity emergency
+patch is tracked in `plans/release-0.9.2.pert`. `RELEASE_092_SELF_REVIEW` and
+`RELEASE_092_CORRECTION` are complete after reproducing Issue #15 in the
+active local `0.9.1` installation and exact peeled `v0.9.1` source, then
+accepting the narrow temporal-layer correction. Valid Point plans without a
+declared velocity retain Point-valued precedence, resource, recommendation,
+and start-authority facts, with nullable forecasts; temporal conversion that
+actually needs a rate reports `missing_velocity`. Grammar 7, CLI Contract 8,
+53 commands, 23 root schemas, 129 root and Node exports, 45 Core exports,
+result and schema identities, validation, recommendation, governance, and
+mutation authority remain unchanged. The isolated worktree is based on exact
+commit `ddb12dc97e8be34965654c84f01bc330a4a2e5cf`.
+`RELEASE_092_PREPARATION` is complete after aligning every version-bearing
+surface and passing the complete Node.js 22 gate: 1,048 tests, 40 self-use
+plans, documentation and English checks, private adapters, temporary link,
+and the 712-file isolated package. Its record is
+`docs/process/0.9.2-preparation.md`; complete NextResult v7 recommends and
+makes startable only `RELEASE_092_CANDIDATE`. npm reports
+`beta=0.9.1`, `latest=0.9.0`, and no `alpha`; `perttool@0.9.2`, remote
+`v0.9.2`, and its GitHub Release are unused. The user's 2026-08-14 emergency
+instruction authorizes the ordered patch, release, exact local installation,
+and Issue #15 completion after all predecessor gates. npm `latest`, public
+VSIX publication, plan advance, and unrelated work remain separate.
+
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
 The explicitly selected project-actuals workstream is tracked independently in
@@ -1070,7 +1096,7 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all thirty-nine self-use plans, including the selected `0.9.1` patch, milestone acceptance, the accepted `0.9.0` and `0.8.0` releases, historical-DAG and adapter-platform workstreams, `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all forty self-use plans, including the selected `0.9.2` and published `0.9.1` patches, milestone acceptance, the accepted `0.9.0` and `0.8.0` releases, historical-DAG and adapter-platform workstreams, `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci

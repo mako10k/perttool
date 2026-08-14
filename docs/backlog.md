@@ -888,6 +888,43 @@ supported boundary, define exact history and observation semantics, add
 normative acceptance cases, and estimate independent delivery slices.
 Grammar 5 and CLI Contract 6 remain unchanged until that review is accepted.
 
+## Analysis resilience
+
+### ANALYSIS-001: Analyze point plans without declared velocity
+
+Priority: P0
+
+Status: Emergency correction selected for `0.9.2` (2026-08-14)
+
+GitHub [Issue #15](https://github.com/mako10k/perttool/issues/15) reports that
+valid Point plans without the optional project `velocity` passed `document
+check` and `project show` but crashed `dag analyze` and `dag next` while the
+temporal projection layer dereferenced the absent value. The correction keeps
+base schedules and recommendation facts in Points and represents unavailable
+calendar conversion explicitly.
+
+Acceptance:
+
+- `document check` and `project show` continue to accept `duration_unit point`
+  with `velocity: null`;
+- `dag analyze` succeeds in precedence, resource, and combined modes and keeps
+  every base schedule value in Points;
+- `dag next` retains recommendation and start authority and keeps task timing
+  facts in Points;
+- `velocity_forecast` and per-task forecast values are `null` rather than
+  inferred from a default conversion;
+- a temporal source that genuinely requires Point-to-calendar conversion
+  reports `missing_velocity` instead of throwing;
+- file and stdin operands produce the same semantic result; and
+- Grammar 7, CLI Contract 8, command, result, schema, facade, validation,
+  recommendation, governance, and mutation identities remain unchanged.
+
+The accepted local evidence is recorded in
+[`issue-15-point-no-velocity-acceptance.md`](process/issue-15-point-no-velocity-acceptance.md).
+The separately authorized emergency release is tracked by
+[`release-0.9.2.pert`](../plans/release-0.9.2.pert). npm `latest`, public VSIX
+publication, unrelated work, and release-plan advance remain separate.
+
 ## Recommendation override application and audit
 
 ### MIG-08: Apply validated overrides with durable single-use audit

@@ -9,19 +9,17 @@ import * as nodeApi from "../dist/node/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
+const repositoryText = (relativePath) => readFile(path.join(root, relativePath), "utf8");
 
-function repositoryText(relativePath) {
-  return readFile(path.join(root, relativePath), "utf8");
-}
-
-test("0.9.1 release retains Contract 8 while fixing current velocity source binding", async () => {
+test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async () => {
   const [
     requirements,
-    adr,
     design,
     procedure,
     review,
     correction,
+    preparation,
+    backlog,
     plan,
     manifestText,
     lockfileText,
@@ -33,14 +31,16 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
     readme,
     planIndex,
     selfUseScript,
+    commonSchema,
   ] = await Promise.all([
     repositoryText("docs/requirements.md"),
-    repositoryText("docs/adr/0003-beta-versioning.md"),
     repositoryText("docs/basic-design.md"),
-    repositoryText("docs/process/0.9.1-release.md"),
-    repositoryText("docs/process/0.9.1-self-review.md"),
-    repositoryText("docs/process/issue-8-current-velocity-acceptance.md"),
-    repositoryText("plans/release-0.9.1.pert"),
+    repositoryText("docs/process/0.9.2-release.md"),
+    repositoryText("docs/process/0.9.2-self-review.md"),
+    repositoryText("docs/process/issue-15-point-no-velocity-acceptance.md"),
+    repositoryText("docs/process/0.9.2-preparation.md"),
+    repositoryText("docs/backlog.md"),
+    repositoryText("plans/release-0.9.2.pert"),
     repositoryText("package.json"),
     repositoryText("package-lock.json"),
     repositoryText("src/version.ts"),
@@ -51,59 +51,45 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
     repositoryText("README.md"),
     repositoryText("plans/README.md"),
     repositoryText("scripts/check-self-use.sh"),
+    repositoryText("schemas/Perttool.Common.v1.schema.json"),
   ]);
 
-  assert.match(
-    requirements,
-    /^### 21\.17 Current velocity observation patch release acceptance criteria$/m,
-  );
-  const releaseSection = requirements.split(
-    "### 21.17 Current velocity observation patch release acceptance criteria",
-  )[1].split("### 21.18")[0];
-  assert.deepEqual(
-    [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
-    Array.from({ length: 10 }, (_, index) => index + 1),
-  );
-  assert.match(adr, /Select suffix-free `0\.9\.1`/u);
-  assert.match(
-    design,
-    /^### Post-MVP Slice 4U: Current velocity observation `v0\.9\.1` patch$/m,
-  );
+  assert.match(requirements, /^### 21\.18 Point-without-velocity emergency patch release acceptance criteria$/m);
+  assert.match(design, /^### Post-MVP Slice 4V: Point-without-velocity `v0\.9\.2` emergency patch$/m);
   assert.match(procedure, /- Status: Accepted 1\.0/u);
-  assert.match(procedure, /Expected pre-publication tags: `beta=latest=0\.9\.0`, no `alpha`/u);
-  assert.match(procedure, /npm `latest` promotion, release-plan advance/u);
-  assert.match(review, /- Document status: Accepted 1\.0/u);
-  assert.match(review, /Accepted implementation commit: `e433a3c/u);
-  assert.match(review, /\| Commands \| 53 \| 53 \|/u);
-  assert.match(correction, /Release status: Selected for `0\.9\.1`/u);
-  assert.match(correction, /Exact current operand/u);
+  assert.match(procedure, /Expected pre-publication tags: `beta=0\.9\.1`, `latest=0\.9\.0`, no `alpha`/u);
+  assert.match(review, /exact peeled `v0\.9\.1` commit `ddb12dc/u);
+  assert.match(correction, /`velocity_forecast=null`/u);
+  assert.match(preparation, /all 1,048 Node\.js tests/u);
+  assert.match(backlog, /^### ANALYSIS-001: Analyze point plans without declared velocity$/m);
+  assert.match(commonSchema, /"missing_velocity"/u);
 
   const checked = perttool.checkDocument(plan);
   const metadata = perttool.getProjectMetadata(plan);
   assert.equal(checked.ok, true);
   assert.equal(metadata.ok, true);
-  assert.equal(metadata.project.id, "RELEASE_091");
+  assert.equal(metadata.project.id, "RELEASE_092");
   assert.equal(metadata.grammarVersion, 6);
-  assert.equal(metadata.project.finish, "RELEASE_091_ACCEPTED");
+  assert.equal(metadata.project.finish, "RELEASE_092_ACCEPTED");
   assert.deepEqual(
     checked.document.declarations
       .filter(({ kind }) => kind === "task")
       .map(({ id }) => id),
     [
-      "RELEASE_091_SELF_REVIEW",
-      "RELEASE_091_PREPARATION",
-      "RELEASE_091_CANDIDATE",
-      "RELEASE_091_PUBLISH",
-      "RELEASE_091_ACCEPTANCE",
+      "RELEASE_092_SELF_REVIEW",
+      "RELEASE_092_CORRECTION",
+      "RELEASE_092_PREPARATION",
+      "RELEASE_092_CANDIDATE",
+      "RELEASE_092_PUBLISH",
+      "RELEASE_092_ACCEPTANCE",
     ],
   );
-  assert.match(plan, /task RELEASE_091_SELF_REVIEW[\s\S]*?status done/u);
-  assert.match(plan, /task RELEASE_091_PREPARATION[\s\S]*?status done/u);
-  assert.match(plan, /task RELEASE_091_CANDIDATE[\s\S]*?status done/u);
-
+  assert.match(plan, /task RELEASE_092_SELF_REVIEW[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_092_CORRECTION[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_092_PREPARATION[\s\S]*?status done/u);
   const next = perttool.selectNextTasks(plan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_091_PUBLISH"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_092_CANDIDATE"]);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
@@ -116,10 +102,10 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   assert.equal(mcpManifest.peerDependencies.perttool, "0.9.2");
   assert.match(versionSource, /TOOL_VERSION = "0\.9\.2"/u);
   assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.2"/u);
-  assert.match(changelog, /^## \[0\.9\.1\] - 2026-08-13$/m);
-  assert.match(readme, /Version `0\.9\.1` is the published compatible Contract 8 patch/u);
+  assert.match(changelog, /^## \[0\.9\.2\] - 2026-08-14$/m);
+  assert.match(readme, /Version `0\.9\.2` is the selected compatible Contract 8 emergency patch/u);
   assert.match(planIndex, /All forty plans pass/u);
-  assert.match(selfUseScript, /plans\/release-0\.9\.1\.pert/u);
+  assert.match(selfUseScript, /plans\/release-0\.9\.2\.pert/u);
 
   assert.equal(Object.keys(perttool).length, 129);
   assert.equal(Object.keys(nodeApi).length, 129);
@@ -128,8 +114,4 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   for (const name of Object.keys(perttool)) {
     assert.equal(perttool[name], nodeApi[name], name);
   }
-  assert.equal(perttool.COMMAND_REGISTRY.length, 53);
-  assert.equal(perttool.getJsonSchemaCatalog().length, 23);
-  assert.deepEqual(manifest.files, ["dist", "schemas", "CHANGELOG.md"]);
-  assert.equal(manifest.files.includes("adapters"), false);
 });
