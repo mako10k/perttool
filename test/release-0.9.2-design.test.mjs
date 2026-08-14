@@ -20,6 +20,8 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
     correction,
     preparation,
     candidate,
+    publication,
+    acceptance,
     backlog,
     plan,
     manifestText,
@@ -41,6 +43,8 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
     repositoryText("docs/process/issue-15-point-no-velocity-acceptance.md"),
     repositoryText("docs/process/0.9.2-preparation.md"),
     repositoryText("docs/process/0.9.2-candidate.md"),
+    repositoryText("docs/process/0.9.2-publish.md"),
+    repositoryText("docs/process/0.9.2-release-acceptance.md"),
     repositoryText("docs/backlog.md"),
     repositoryText("plans/release-0.9.2.pert"),
     repositoryText("package.json"),
@@ -64,6 +68,8 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
   assert.match(correction, /`velocity_forecast=null`/u);
   assert.match(preparation, /all 1,048 Node\.js tests/u);
   assert.match(candidate, /5347f4b0e7c38b44f4f6ee34ca71dd2389fcf88da3ad52b85c7b64f82e980edb/u);
+  assert.match(publication, /Repository checks 31762661717/u);
+  assert.match(acceptance, /Issue #15 received one evidence comment/u);
   assert.match(backlog, /^### ANALYSIS-001: Analyze point plans without declared velocity$/m);
   assert.match(commonSchema, /"missing_velocity"/u);
 
@@ -91,9 +97,13 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
   assert.match(plan, /task RELEASE_092_CORRECTION[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_092_PREPARATION[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_092_CANDIDATE[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_092_PUBLISH[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_092_ACCEPTANCE[\s\S]*?status done/u);
   const next = perttool.selectNextTasks(plan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_092_PUBLISH"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.groups.ready, []);
+  assert.deepEqual(next.temporal.authority.startableRecommendedTaskIds, []);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
