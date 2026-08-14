@@ -1695,6 +1695,15 @@ model 1, so Format Document and format-on-save integration remain in the next
 task. E1 through E3, release, public VSIX publication, remote writes, Issue
 mutation, and plan advance remain separate.
 
+After the complete Node.js 22 gate and exact implementation review,
+`EDITOR_FORMAT_CORE` was marked done with one expected-digest status-only
+write. The source digest changed from `sha256:3323fecd...cc627d` to
+`sha256:32606859...f7609b`; governance was not applicable, and no owner
+assertion was supplied. Implementation commit `5245235` is the bounded
+artifact evidence. The reached-milestone criterion set and receipt and the
+plan-assurance outcome remain separate candidate-bound owner-confirmation
+steps, so `EDITOR_FORMAT_ACCEPTANCE` is not yet start-authorized.
+
 Stage 1 allowed operations:
 
 - check

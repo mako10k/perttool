@@ -169,18 +169,17 @@
       ]
     },
     "editor-mutations": {
-      "source_digest": "sha256:3323fecd03f61cc3e2604f7cd6d2fb9e7c638035a7217e02e8ee4301fecc627d",
+      "source_digest": "sha256:32606859083f842c53a5ca961b4df0e275b9d31f303137ca15e2b7145af7609b",
       "groups": {
         "active": [],
         "ready": [
-          "EDITOR_FORMAT_CORE"
+          "EDITOR_FORMAT_ACCEPTANCE"
         ],
         "runnable_now": [
-          "EDITOR_FORMAT_CORE"
+          "EDITOR_FORMAT_ACCEPTANCE"
         ],
         "blocked_now": [],
         "upcoming": [
-          "EDITOR_FORMAT_ACCEPTANCE",
           "EDITOR_REPAIR_CONTRACT",
           "EDITOR_REPAIR_ACCEPTANCE",
           "EDITOR_RECOVERABLE_CONTRACT",
@@ -193,18 +192,18 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "EDITOR_FORMAT_CORE"
+        "EDITOR_FORMAT_ACCEPTANCE"
       ],
       "manual_selected_task_ids": [
-        "EDITOR_FORMAT_CORE"
+        "EDITOR_FORMAT_ACCEPTANCE"
       ],
       "tiers": {
-        "EDITOR_FORMAT_CORE": "recommended"
+        "EDITOR_FORMAT_ACCEPTANCE": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "EDITOR_FORMAT_CORE",
+          "id": "EDITOR_FORMAT_ACCEPTANCE",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -221,7 +220,8 @@
         "descriptions": 1
       },
       "diagnostic_codes": [
-        "PTDAG-208"
+        "PTDAG-208",
+        "PTASSURE-203"
       ]
     },
     "english-baseline": {

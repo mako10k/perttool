@@ -99,7 +99,15 @@ forty read-only self-use plans, isolated LSP and MCP packages, the supported
 VS Code 1.101.0 trusted/untrusted host workflow, temporary linking, and the
 717-file isolated public-package workflow. `git diff --check` also passed.
 
-This task performs no release selection, package or VSIX publication, VSIX
-installation, remote write, GitHub Issue mutation, or plan advance. Task status
-and the separately governed conformant outcome are recorded only after the
-complete gate and exact candidate review.
+Implementation commit `5245235` records the accepted code, cases, and guidance.
+After that exact revision and gate were reviewed, one previewed expected-digest
+`task finish --write` added only `status done` for `EDITOR_FORMAT_CORE`. The
+write changed plan source digest `sha256:3323fecd...cc627d` to
+`sha256:32606859...f7609b`; governance was not applicable and no owner
+assertion was supplied.
+
+The reached-milestone criterion set and receipt and the separately governed
+conformant task outcome remain preview-first, candidate-bound mutations. They
+are not written without fresh owner confirmation. This task performs no
+release selection, package or VSIX publication, VSIX installation, remote
+write, GitHub Issue mutation, or plan advance.

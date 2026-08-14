@@ -414,9 +414,13 @@ remain read-only. Its fourteen dependency-ordered cases and accepted boundary
 are recorded in `test/fixtures/editor-format-core-v1.json` and
 `docs/process/editor-format-core-acceptance.md`. The private VSIX still offers
 only model 1, so Format Document and user-enabled format-on-save integration
-remain in `EDITOR_FORMAT_ACCEPTANCE`. The plan task status and its separately
-governed conformant outcome remain pending until the complete gate and exact
-candidate review finish. E1 through E3, MCP mutation, public VSIX publication,
+remain in `EDITOR_FORMAT_ACCEPTANCE`. `EDITOR_FORMAT_CORE` is complete and
+retained before advance; its status-only write changed the plan digest from
+`sha256:3323fecd...cc627d` to `sha256:32606859...f7609b` without an owner
+assertion. The implementation commit is `5245235`. The reached-milestone
+criterion set and receipt and the separately governed conformant outcome
+remain pending exact candidate-bound owner confirmation, so the successor is
+not yet start-authorized. E1 through E3, MCP mutation, public VSIX publication,
 release selection, remote writes, Issue mutation, and plan advance remain
 separate.
 

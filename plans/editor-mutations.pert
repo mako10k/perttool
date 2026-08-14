@@ -140,6 +140,7 @@ task EDITOR_FORMAT_CORE EDITOR_MUTATION_CONTRACT_ACCEPTED -> EDITOR_FORMAT_CORE_
   title "Implement E0 semantic equivalence and LSP formatting"
   description "Add a formatter-specific complete semantic-equivalence proof and bind the existing Core formatDocument result to synchronized URI, generation, version, digest, cancellation, and UTF-16 edits. Negotiate model 2 and advertise only whole-document formatting to compatible clients. Reject invalid, stale, cancelled, malformed, or post-format-invalid results without partial edits, filesystem or Git access, settings changes, or a CLI subprocess."
   duration 6p
+  status done
   priority 95
   requires:
     DEVELOPERS 1

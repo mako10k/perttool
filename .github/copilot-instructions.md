@@ -285,10 +285,14 @@ Mandatory summary:
   connection may select model 2 and then receives only standard whole-document
   formatting; model-1 connections remain read-only. The private VSIX still
   offers model 1, so Format Document and format-on-save integration remain in
-  `EDITOR_FORMAT_ACCEPTANCE`. The plan task status and separately governed
-  conformant outcome remain pending the complete gate and exact candidate
-  review. E1 through E3, MCP mutation, public VSIX publication, release
-  selection, remote writes, Issue mutation, and plan advance remain separate.
+  `EDITOR_FORMAT_ACCEPTANCE`. `EDITOR_FORMAT_CORE` is complete and retained
+  before advance; implementation commit `5245235` passed the complete gate,
+  and the status-only plan write required no owner assertion. Its reached-
+  milestone criterion set and receipt and separately governed conformant
+  outcome remain pending exact candidate-bound owner confirmation, so the
+  successor is not yet start-authorized. E1 through E3, MCP mutation, public
+  VSIX publication, release selection, remote writes, Issue mutation, and plan
+  advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
   serial tasks and 15p. The exact initial goal-and-DAG candidate was written
   once with actor `codex` and the scope-bound owner assertion `user`.
