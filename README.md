@@ -92,9 +92,17 @@ for `ANALYSIS-001` and GitHub Issue #15. It keeps valid Point plans without a
 declared velocity Point-valued through `dag analyze` and `dag next`, leaves
 velocity forecasts null, and reports calendar conversion as unavailable
 without inventing a rate. It retains all public identities and authority;
-Issue #15 is closed. npm reports `beta=0.9.2`, `latest=0.9.0`, and no `alpha`.
-npm `latest`, plan advance, public VSIX publication, and unrelated work remain
-separate.
+Issue #15 is closed, and `0.9.2` remains the exact rollback pin for `0.9.3`.
+
+Version `0.9.3` is the published compatible Contract 8 emergency patch for
+GitHub Issues #14, #16, and #17. It restores Grammar 7 `plan-assurance
+show|hash`, composes acceptance-aware terminal deletions without weakening the
+shared edit guard, and preserves complete criterion-set/receipt evidence for
+retained reached milestones. It retains all public identities and authority.
+The accepted release commit, annotated tag, GitHub prerelease, and npm
+artifact agree; npm reports `beta=0.9.3`, `latest=0.9.0`, and no `alpha`.
+Issues #14, #16, and #17 are closed with release evidence. Plan advance,
+public VSIX publication, and unrelated work remain separate.
 
 The private adapters now project that same Contract 8 acceptance model without
 adding write authority. The LSP negotiates a separate version-bound milestone
@@ -115,19 +123,19 @@ After beta publication, use `npx` for an occasional Contract 8 invocation and
 select the version explicitly:
 
 ```sh
-npx --yes --package=perttool@0.9.2 -- perttool --version
-npx --yes --package=perttool@0.9.2 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.9.2 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.9.2 -- perttool project observe-velocity PLAN.pert --evidence declared --format json
+npx --yes --package=perttool@0.9.3 -- perttool --version
+npx --yes --package=perttool@0.9.3 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.9.3 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.9.3 -- perttool plan-assurance show PLAN.pert --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.9.2 -- perttool --version
-npm exec --yes --package=perttool@0.9.2 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.9.2 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.9.2 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
+npm exec --yes --package=perttool@0.9.3 -- perttool --version
+npm exec --yes --package=perttool@0.9.3 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.9.3 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.9.3 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
@@ -141,14 +149,15 @@ Install the Contract 8 CLI globally by exact version when it is used
 regularly:
 
 ```sh
-npm install --global perttool@0.9.2
+npm install --global perttool@0.9.3
 perttool --version
 ```
 
 The accepted `0.9.0` release was separately promoted to both public tags. The
-accepted `0.9.2` publication changed only npm `beta`; until an independent
-promotion is authorized, an unqualified global installation continues to
-select `0.9.0`. The exact `0.9.2` pin is the reproducible form for the Issue
+`0.9.3` publication changes only npm `beta`; until an independent promotion is
+authorized, an unqualified global installation continues to select `0.9.0`.
+The exact `0.9.3` pin is the reproducible form for the Issues #14, #16, and #17
+corrections. Version `0.9.2` remains the rollback pin that includes the Issue
 #15 correction.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
 Contract 6 artifact remains available as
@@ -603,7 +612,7 @@ the Core and Node subpaths without changing CLI Contract 7; see the
 [`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md).
 Version `0.8.1` retains those interfaces and corrects assurance-receipt
 placement in an advance-owned terminal deletion suffix. Versions `0.9.0`,
-`0.9.1`, and `0.9.2` use CLI Contract 8.
+`0.9.1`, `0.9.2`, and `0.9.3` use CLI Contract 8.
 A complete, known, non-truncated `Perttool.NextResult.v7` with policy
 `recommendation_v1_plus_release_gate_plus_plan_assurance_v1` is required for
 the current source. Start only task IDs in
@@ -646,6 +655,9 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.9.1` durable release acceptance](docs/process/0.9.1-release-acceptance.md)
 - [`v0.9.2` release procedure](docs/process/0.9.2-release.md)
 - [`v0.9.2` durable release acceptance](docs/process/0.9.2-release-acceptance.md)
+- [`v0.9.3` release procedure](docs/process/0.9.3-release.md)
+- [`v0.9.3` publication record](docs/process/0.9.3-publish.md)
+- [`v0.9.3` durable release acceptance](docs/process/0.9.3-release-acceptance.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
@@ -671,6 +683,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.9.0` release plan](plans/release-0.9.0.pert)
 - [`v0.9.1` release plan](plans/release-0.9.1.pert)
 - [`v0.9.2` release plan](plans/release-0.9.2.pert)
+- [`v0.9.3` release plan](plans/release-0.9.3.pert)
 - [JSON Schema Artifact Contract](docs/specs/json-schema.md)
 - [JSON Schema source acceptance](docs/process/json-schema-acceptance.md)
 - [Contract 5-to-6 migration](docs/process/cli-contract-6-migration.md)

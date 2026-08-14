@@ -2156,7 +2156,7 @@ Stage 1 entry evidence:
   `sha256:59b5fbbe...d4e71a` retains only accepted reached
   `RELEASE_090_ACCEPTED`, with zero tasks and makespans, no diagnostic, and no
   ready, recommended, or startable task.
-- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all forty-one current plans
+- CI entrypoint: `npm run check` invokes `npm run check:self-use` and validates all forty-two current plans
 - ADV-001 contract state: the
   [Advance History Safety Contract](../specs/advance-history-safety.md) fixes
   exact destructive records, `HEAD` and stage-0 index proof, retained-dirty

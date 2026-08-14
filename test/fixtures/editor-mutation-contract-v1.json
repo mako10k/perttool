@@ -194,7 +194,7 @@
     "root_export_count": 129,
     "node_export_count": 129,
     "core_export_count": 45,
-    "tool_version": "0.9.2",
+    "tool_version": "0.9.3",
     "lsp_model_versions": [1],
     "document_formatting_provider": false
   },

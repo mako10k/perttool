@@ -65,24 +65,55 @@ function diagnostic(message: string, blocked: MilestoneAcceptanceAdvanceGuardV1[
 function validator(text: string, maxDiagnostics: number): AdvanceDocumentValidation {
   const acceptance = parseMilestoneAcceptanceSource(text, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
   const base = validateTargetGrammar6Document(milestoneAcceptanceBaseText(text), TARGET_GRAMMAR_6_CAPABILITY, { maxDiagnostics });
+  const acceptanceDiagnostics = acceptance.diagnostics.map(({ code, message, span }): Diagnostic =>
+    Object.freeze({
+      code,
+      severity: "error",
+      message,
+      span,
+      helpTopic: "editing",
+      data: Object.freeze({}),
+    })
+  );
+  const diagnostics = [...base.diagnostics, ...acceptanceDiagnostics];
   return {
     ok: acceptance.ok && base.ok,
     document: { ...base.document, text },
     documentId: base.documentId,
-    diagnostics: base.diagnostics,
-    diagnosticsTruncated: base.diagnosticsTruncated,
+    diagnostics: Object.freeze(diagnostics.slice(0, maxDiagnostics)),
+    diagnosticsTruncated:
+      base.diagnosticsTruncated || diagnostics.length > maxDiagnostics,
   };
 }
 
 function acceptanceRemovalExtension(text: string) {
-  const source = parseMilestoneAcceptanceSource(text, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
-  return (_unusedText: string, _document: unknown, context: { readonly removedMilestones: readonly { readonly id: string }[] }) => {
-    const removedMilestones = new Set(context.removedMilestones.map(({ id }) => id));
-    const sets = source.records.filter((record): record is MilestoneCriterionSetSourceV1 => record.kind === "milestone_criterion_set" && removedMilestones.has(record.milestoneId));
+  const source = parseMilestoneAcceptanceSource(
+    text,
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  );
+  return (_unusedText: string, _document: unknown, context: {
+    readonly removedMilestones: readonly { readonly id: string }[];
+  }) => {
+    const affectedMilestones = new Set(
+      context.removedMilestones.map(({ id }) => id),
+    );
+    const sets = source.records.filter(
+      (record): record is MilestoneCriterionSetSourceV1 =>
+        record.kind === "milestone_criterion_set" &&
+        affectedMilestones.has(record.milestoneId),
+    );
     const setIds = new Set(sets.map(({ id }) => id));
-    const receipts = source.records.filter((record): record is MilestoneAcceptanceReceiptSourceV1 => record.kind === "milestone_acceptance_receipt" && setIds.has(record.setId));
+    const receipts = source.records.filter(
+      (record): record is MilestoneAcceptanceReceiptSourceV1 =>
+        record.kind === "milestone_acceptance_receipt" &&
+        setIds.has(record.setId),
+    );
     return {
-      edits: Object.freeze([...sets, ...receipts].map(({ span }) => ({ startOffset: span.start.offset, endOffset: span.end.offset, replacement: "" }))),
+      edits: Object.freeze([...sets, ...receipts].map(({ span }) => ({
+        startOffset: span.start.offset,
+        endOffset: span.end.offset,
+        replacement: "",
+      }))),
     };
   };
 }
@@ -107,6 +138,165 @@ function acceptanceRemovalEdits(
   }));
 }
 
+export function coalesceMilestoneAcceptanceDeletionOverlaps<T extends {
+  readonly startOffset: number;
+  readonly endOffset: number;
+  readonly replacement: string;
+}>(edits: readonly T[]) {
+  const retained = edits
+    .filter(({ replacement }) => replacement !== "")
+    .filter((edit, index, values) => values.findIndex((candidate) =>
+      candidate.startOffset === edit.startOffset &&
+      candidate.endOffset === edit.endOffset &&
+      candidate.replacement === edit.replacement
+    ) === index);
+  const deletions = edits
+    .filter(({ replacement }) => replacement === "")
+    .sort((left, right) =>
+      left.startOffset - right.startOffset || left.endOffset - right.endOffset
+    );
+  const merged: { startOffset: number; endOffset: number; replacement: "" }[] = [];
+  for (const deletion of deletions) {
+    const previous = merged.at(-1);
+    if (previous !== undefined && deletion.startOffset < previous.endOffset) {
+      previous.endOffset = Math.max(previous.endOffset, deletion.endOffset);
+    } else {
+      merged.push({
+        startOffset: deletion.startOffset,
+        endOffset: deletion.endOffset,
+        replacement: "",
+      });
+    }
+  }
+  return [...retained, ...merged];
+}
+
+function acceptanceRecordSpans(
+  text: string,
+  milestoneIds: readonly string[],
+) {
+  const source = parseMilestoneAcceptanceSource(
+    text,
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  );
+  const milestones = new Set(milestoneIds);
+  const sets = source.records.filter(
+    (record): record is MilestoneCriterionSetSourceV1 =>
+      record.kind === "milestone_criterion_set" &&
+      milestones.has(record.milestoneId),
+  );
+  const setIds = new Set(sets.map(({ id }) => id));
+  return [...sets, ...source.records.filter(
+    (record): record is MilestoneAcceptanceReceiptSourceV1 =>
+      record.kind === "milestone_acceptance_receipt" &&
+      setIds.has(record.setId),
+  )].map(({ span }) => ({
+    startOffset: span.start.offset,
+    endOffset: span.end.offset,
+  }));
+}
+
+export function preserveMilestoneAcceptanceRecords<T extends {
+  readonly startOffset: number;
+  readonly endOffset: number;
+  readonly replacement: string;
+}>(
+  text: string,
+  edits: readonly T[],
+  milestoneIds: readonly string[],
+) {
+  const protectedSpans = acceptanceRecordSpans(text, milestoneIds);
+  return edits.flatMap((edit) => {
+    if (edit.replacement !== "") return [edit];
+    let segments = [{
+      startOffset: edit.startOffset,
+      endOffset: edit.endOffset,
+      replacement: "",
+    }];
+    for (const protectedSpan of protectedSpans) {
+      segments = segments.flatMap((segment) => {
+        if (
+          protectedSpan.endOffset <= segment.startOffset ||
+          protectedSpan.startOffset >= segment.endOffset
+        ) return [segment];
+        return [
+          ...(segment.startOffset < protectedSpan.startOffset
+            ? [{
+                startOffset: segment.startOffset,
+                endOffset: protectedSpan.startOffset,
+                replacement: "" as const,
+              }]
+            : []),
+          ...(protectedSpan.endOffset < segment.endOffset
+            ? [{
+                startOffset: protectedSpan.endOffset,
+                endOffset: segment.endOffset,
+                replacement: "" as const,
+              }]
+            : []),
+        ];
+      });
+    }
+    return segments;
+  });
+}
+
+function composeProvisionalBase(
+  text: string,
+  plannedBase: AdvanceResult,
+  options: MilestoneAcceptanceAdvanceOptionsV1,
+): AdvanceResult {
+  if (
+    !plannedBase.ok ||
+    plannedBase.updatedText === null ||
+    plannedBase.advance === null
+  ) return plannedBase;
+  const protectedBaseEdits = preserveMilestoneAcceptanceRecords(
+    text,
+    plannedBase.edits,
+    plannedBase.advance.stateChangedMilestoneIds,
+  );
+  const edits = normalizeTextEdits(
+    text,
+    coalesceMilestoneAcceptanceDeletionOverlaps([
+      ...protectedBaseEdits,
+      ...acceptanceRemovalEdits(
+        text,
+        plannedBase.advance.removedMilestoneIds,
+      ),
+    ]),
+    "milestone acceptance provisional advance",
+  );
+  const updatedText = applyTextEdits(text, edits);
+  const checked = validator(updatedText, options.maxDiagnostics ?? 100);
+  if (!checked.ok) {
+    return Object.freeze({
+      ...plannedBase,
+      ok: false,
+      changed: false,
+      originalDigest: sha256DigestUtf8(text),
+      updatedText: null,
+      updatedDigest: null,
+      diff: null,
+      edits: Object.freeze([]),
+      diagnostics: checked.diagnostics,
+      diagnosticsTruncated: checked.diagnosticsTruncated,
+      advance: null,
+    });
+  }
+  return Object.freeze({
+    ...plannedBase,
+    originalDigest: sha256DigestUtf8(text),
+    updatedText,
+    updatedDigest: sha256DigestUtf8(updatedText),
+    diff: createUnifiedDiff(text, updatedText, {
+      originalLabel: options.originalLabel ?? "original",
+      updatedLabel: options.updatedLabel ?? "updated",
+    }),
+    edits,
+  });
+}
+
 export function planMilestoneAcceptanceAdvance(text: string, options: MilestoneAcceptanceAdvanceOptionsV1 = {}): MilestoneAcceptanceAdvanceResultV1 {
   const source = parseMilestoneAcceptanceSource(text, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
   if (!source.ok || source.grammarVersion !== 7) {
@@ -114,35 +304,12 @@ export function planMilestoneAcceptanceAdvance(text: string, options: MilestoneA
     return Object.freeze({ modelVersion: 1, ok: false, persistable: false, originalDigest: sha256DigestUtf8(text), provisional: null, acceptanceGuard: null, canonical: null, diagnostics: Object.freeze([migrationRequired]) });
   }
   const plannedBase = options.provisionalPlanner === undefined
-    ? planValidatedAdvance(text, validator, options, { extendPlan: acceptanceRemovalExtension(text) as never })
+    ? planValidatedAdvance(text, validator, options, {
+        extendPlan: acceptanceRemovalExtension(text) as never,
+        prepareEdits: coalesceMilestoneAcceptanceDeletionOverlaps,
+      })
     : options.provisionalPlanner(milestoneAcceptanceBaseText(text));
-  let provisionalBase = plannedBase;
-  if (
-    options.provisionalPlanner !== undefined &&
-    plannedBase.ok &&
-    plannedBase.updatedText !== null &&
-    plannedBase.advance !== null
-  ) {
-    const edits = normalizeTextEdits(
-      text,
-      [...plannedBase.edits, ...acceptanceRemovalEdits(text, plannedBase.advance.removedMilestoneIds)],
-      "milestone acceptance provisional advance",
-    );
-    const updatedText = applyTextEdits(text, edits);
-    const checked = validator(updatedText, options.maxDiagnostics ?? 100);
-    if (!checked.ok) throw new Error("milestone acceptance provisional planner lost Grammar 7 validation");
-    provisionalBase = Object.freeze({
-      ...plannedBase,
-      originalDigest: sha256DigestUtf8(text),
-      updatedText,
-      updatedDigest: sha256DigestUtf8(updatedText),
-      diff: createUnifiedDiff(text, updatedText, {
-        originalLabel: options.originalLabel ?? "original",
-        updatedLabel: options.updatedLabel ?? "updated",
-      }),
-      edits,
-    });
-  }
+  const provisionalBase = composeProvisionalBase(text, plannedBase, options);
   if (!provisionalBase.ok || provisionalBase.updatedText === null || provisionalBase.updatedDigest === null || provisionalBase.diff === null || provisionalBase.advance === null) {
     return Object.freeze({ modelVersion: 1, ok: false, persistable: false, originalDigest: provisionalBase.originalDigest, provisional: null, acceptanceGuard: null, canonical: null, diagnostics: provisionalBase.diagnostics });
   }

@@ -18,6 +18,7 @@ import {
   planBatchMutation,
   planFinishActuals,
   planFormat,
+  inspectPlanAssurance,
   planLifecycle,
   planMutation,
   planUnitMigration,
@@ -61,9 +62,6 @@ import {
   type TargetPlanAssuranceAdvanceHistoryOptions,
   type TargetPlanAssuranceAdvanceResultV2WithHistory,
 } from "./target-assurance-advance-history.js";
-import {
-  inspectTargetPlanAssurance,
-} from "./target-assurance-inspection.js";
 import {
   persistTargetPlanAssuranceResult,
   type TargetPlanAssurancePersistenceRequest,
@@ -224,7 +222,7 @@ export function createCliApplicationFacade(
     withAdvanceHistoryRace,
     withTargetPlanAssuranceAdvanceHistoryRace,
     persistTargetPlanAssuranceResult: persistPlanAssuranceResult,
-    inspectTargetPlanAssurance,
+    inspectTargetPlanAssurance: inspectPlanAssurance,
     inspectTargetCurrentProjectActuals,
     inspectTargetProjectHistoryFile: inspectProjectHistoryFile,
     renderTargetProjectHistoryText,

@@ -659,11 +659,6 @@
         "length": 77,
         "parameters": 3
       },
-      "src/milestone-acceptance/advance.ts:planMilestoneAcceptanceAdvance": {
-        "cyclomaticComplexity": 25,
-        "length": 60,
-        "parameters": 2
-      },
       "src/milestone-acceptance/mutation.ts:receiptBlock": {
         "cyclomaticComplexity": 16,
         "length": 13,

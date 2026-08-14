@@ -3015,6 +3015,54 @@ release, local exact installation, and Issue #15 completion only after every
 predecessor gate passes. The authoritative procedure is
 [`docs/process/0.9.2-release.md`](process/0.9.2-release.md).
 
+### 21.19 Contract 8 emergency gate correction release acceptance criteria
+
+The compatible corrections for GitHub Issues #14, #16, and #17 are
+suffix-free `0.9.3`. It is published as a GitHub prerelease and moves only npm
+`beta` during publication.
+
+1. Make `plan-assurance show` and `plan-assurance hash` accept valid Grammar 7
+   file and stdin operands through the Contract 8 basis while reporting the
+   exact original grammar version and source digest.
+2. Preserve task filters and all three scalar hash selectors and make their
+   task facts equal the corresponding `dag next` assurance facts.
+3. Keep invalid Grammar 7 input fail-closed with source diagnostics and retain
+   unchanged Grammar 6 inspection behavior and read-only effects.
+4. Compose overlapping pure deletions only inside the Grammar 7 acceptance
+   layer while leaving shared `TextEdit` overlap rejection unchanged.
+5. Split Contract 7 deletion ranges around criterion sets and receipts owned
+   by retained state-changed milestones; remove those records only with a
+   removed milestone declaration.
+6. Prove receipt-between-events and receipt-after-events topologies across
+   final-newline, separator, retained-event, preview, separate-output, and
+   clean tracked in-place write cases without force options.
+7. Preserve milestone acceptance, plan assurance, governance, history safety,
+   Issue #9, Issue #11, repository-clean candidate, and later-advance evidence
+   behavior.
+8. Retain Grammar 7, CLI Contract 8, all 53 commands, 23 root schemas, 129
+   root and Node exports, 45 Core exports, result and schema identities, and
+   authority.
+9. Align package, lockfile, CLI and MCP versions, adapter peers, CHANGELOG,
+   README, release records, tests, goldens, and self-use to `0.9.3`.
+10. Pass the complete Node.js 22 repository, static-analysis, package, and
+    installed-package gates and Node.js 22 and 24 CI from the exact release
+    commit.
+11. Establish that `perttool@0.9.3`, local and remote `v0.9.3`, and the
+    matching GitHub Release are unused; establish `beta=0.9.2`,
+    `latest=0.9.0`, and no `alpha`.
+12. Freeze one immutable tarball outside the worktree and distribute exactly
+    those bytes through one GitHub prerelease and one npm `beta` publication.
+13. Verify exact and beta installed behavior for all three Issues, common
+    public artifact bytes, registry integrity, the exact `0.9.2` rollback pin,
+    and unchanged `latest=0.9.0` before updating the Issues with evidence.
+14. Keep npm `latest` promotion, release-plan advance, public VSIX
+    publication, and unrelated work separate.
+
+The user's 2026-08-14 emergency instruction authorizes the ordered patch,
+release, local exact installation, and Issues #14, #16, and #17 completion only
+after every predecessor gate passes. The authoritative procedure is
+[`docs/process/0.9.3-release.md`](process/0.9.3-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

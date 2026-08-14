@@ -57,7 +57,7 @@ test("source static analysis is pinned, ratcheted, documented, and required by C
     length: 100,
     parameters: 6,
   });
-  assert.equal(Object.keys(baseline.lizard.functions).length, 174);
+  assert.equal(Object.keys(baseline.lizard.functions).length, 173);
 
   assert.match(workflow, /actions\/setup-python@v6/u);
   assert.match(workflow, /pip install --requirement requirements-static-analysis\.txt/u);

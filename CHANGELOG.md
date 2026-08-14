@@ -4,6 +4,23 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.9.3] - 2026-08-14
+
+Backward-compatible Grammar 7 and CLI Contract 8 emergency beta patch. This
+version corrects plan-assurance inspection and acceptance-aware advance
+composition for GitHub Issues #14, #16, and #17.
+
+### Fixed
+
+- Made `plan-assurance show` and `plan-assurance hash` inspect valid Grammar 7
+  sources through the Contract 8 basis while retaining the exact original
+  grammar version and source digest.
+- Made Grammar 7 `dag advance` compose terminal pure deletions around
+  milestone-acceptance records without weakening shared overlap checks or
+  orphaning criterion sets and receipts for retained reached milestones.
+- Made invalid provisional candidates return source diagnostics instead of an
+  uncaught `PTCLI-070` invariant error.
+
 ## [0.9.2] - 2026-08-14
 
 Backward-compatible Grammar 7 and CLI Contract 8 beta patch. This version
@@ -478,7 +495,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.2...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.3...HEAD
+[0.9.3]: https://github.com/mako10k/perttool/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/mako10k/perttool/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/mako10k/perttool/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/mako10k/perttool/compare/v0.8.1...v0.9.0

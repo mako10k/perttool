@@ -24,7 +24,7 @@ duplication or zero high-complexity functions. The reviewed baseline records:
 
 - no more than 148 clones, 2,746 duplicated lines, 15,252 duplicated tokens,
   and 3.37 percent duplication; and
-- 174 named legacy Lizard entries with an exact per-metric upper bound.
+- 173 named legacy Lizard entries with an exact per-metric upper bound.
 
 A new Lizard violation, any increase in a recorded function metric, a stale
 entry after an improvement, or any jscpd maximum increase fails. Removing a
@@ -59,7 +59,7 @@ The local Node.js 22.22.3 acceptance run completed with:
 
 - exact jscpd 5.0.15: 148 clones, 2,746 duplicated lines, 15,252 duplicated
   tokens, and 3.363 percent duplication;
-- exact Lizard 1.23.0: 3,524 functions and 174 reviewed legacy entries;
+- exact Lizard 1.23.0: 3,540 functions and 173 reviewed legacy entries;
 - 1,069 of 1,069 Node.js tests;
 - the 897-file English baseline, 269 Markdown documents, seven PERT examples,
   and all forty-one self-use plans; and

@@ -126,7 +126,11 @@ import {
   type CommittedMigrationProofV1,
 } from "./milestone-acceptance/migration.js";
 import { MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY, milestoneAcceptanceBaseText, parseMilestoneAcceptanceSource } from "./milestone-acceptance/source.js";
-import { planMilestoneAcceptanceAdvance } from "./milestone-acceptance/advance.js";
+import {
+  coalesceMilestoneAcceptanceDeletionOverlaps,
+  planMilestoneAcceptanceAdvance,
+  preserveMilestoneAcceptanceRecords,
+} from "./milestone-acceptance/advance.js";
 
 const {
   analyzeDocument: _analyzeContract7Document,
@@ -2498,13 +2502,14 @@ async function runAdvance(args: readonly string[]): Promise<number> {
     ? contract7Planned.edits
     : normalizeTextEdits(
         input.text,
-        [...contract7Planned.edits, ...acceptancePlan.provisional!.edits].filter(
-          (edit, index, values) => values.findIndex((candidate) =>
-            candidate.startOffset === edit.startOffset &&
-            candidate.endOffset === edit.endOffset &&
-            candidate.replacement === edit.replacement
-          ) === index,
-        ),
+        coalesceMilestoneAcceptanceDeletionOverlaps([
+          ...preserveMilestoneAcceptanceRecords(
+            input.text,
+            contract7Planned.edits,
+            acceptancePlan.provisional!.advance.stateChangedMilestoneIds,
+          ),
+          ...acceptancePlan.provisional!.edits,
+        ]),
         "Contract 8 acceptance-aware advance",
       );
   const combinedText = contract7Planned.updatedText === null

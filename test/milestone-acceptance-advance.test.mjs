@@ -1,10 +1,14 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { planMilestoneAcceptanceAdvance } from "../dist/milestone-acceptance/advance.js";
+import {
+  planAdvance,
+  planMilestoneAcceptanceAdvance,
+} from "../dist/index.js";
 import { planMilestoneAcceptanceMigration } from "../dist/milestone-acceptance/migration.js";
 import { planAcceptanceReceiptMutation, planCriterionSetReplacement } from "../dist/milestone-acceptance/mutation.js";
 import { sha256DigestUtf8 } from "../dist/model/sha256.js";
+import { buildEmergencyAdvanceSource } from "./support/emergency-advance-grammar7.mjs";
 
 const base = `project P:\n  version 6\n  title "P"\n  duration_unit point\n  finish DONE\n  dag_owner user\n\nmilestone START:\n  title "Start"\n  state reached\n\nmilestone MID:\n  title "Mid"\n\nmilestone DONE:\n  title "Done"\n\ntask BUILD START -> MID:\n  title "Build"\n  duration 1p\n  status done\n\ntask SHIP MID -> DONE:\n  title "Ship"\n  duration 1p\n`;
 const proof = { repositoryId: "repo", repositoryRelativePath: "p.pert", objectFormat: "sha1", headCommit: "a".repeat(40), headBlob: "b".repeat(40), stage0Blob: "b".repeat(40), sourceDigest: sha256DigestUtf8(base) };
@@ -109,6 +113,74 @@ test("terminal advance removes retired acceptance records and preserves retained
   assert.equal(second.ok, true);
   assert.doesNotMatch(second.canonical.updatedText, /MID_R1|MID_OK|BUILD_OK/u);
   assert.match(second.canonical.updatedText, /DONE_R1|DONE_OK|SHIP_OK/u);
+});
+
+test("Issue 16 and Issue 17 Grammar 7 EOF topologies compose one valid candidate", () => {
+  for (const topology of [
+    "receipt-between-events",
+    "receipt-after-events",
+  ]) {
+    for (const finalNewline of [true, false]) {
+      for (const separatorBlankLines of [1, 2]) {
+        for (const retainedEvent of [false, true]) {
+          const source = buildEmergencyAdvanceSource({
+            topology,
+            finalNewline,
+            separatorBlankLines,
+            retainedEvent,
+          });
+          const result = planMilestoneAcceptanceAdvance(source, {
+            provisionalPlanner: (text) => planAdvance(text),
+          });
+          assert.equal(
+            result.ok,
+            true,
+            JSON.stringify({
+              topology,
+              finalNewline,
+              separatorBlankLines,
+              retainedEvent,
+              diagnostics: result.diagnostics,
+            }),
+          );
+          assert.equal(result.acceptanceGuard.status, "passed");
+          assert.equal(result.canonical.updatedText, result.provisional.updatedText);
+          assert.match(
+            result.canonical.updatedText,
+            /M1_R1|RCPT_M1_ACCEPTED|M1_ACCEPTED/u,
+          );
+          assert.doesNotMatch(result.canonical.updatedText, /work_event WE_A_/u);
+          if (retainedEvent) {
+            assert.match(result.canonical.updatedText, /work_event WE_B_START:/u);
+          }
+        }
+      }
+    }
+  }
+});
+
+test("invalid provisional candidates return source diagnostics instead of PTCLI-070", () => {
+  const source = accepted();
+  const result = planMilestoneAcceptanceAdvance(source, {
+    provisionalPlanner: (baseText) => {
+      const planned = planAdvance(baseText);
+      const title = baseText.indexOf('"P"');
+      assert.notEqual(title, -1);
+      return {
+        ...planned,
+        edits: [
+          ...planned.edits,
+          { startOffset: title, endOffset: title + 3, replacement: '"P' },
+        ],
+      };
+    },
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.provisional, null);
+  assert.equal(
+    result.diagnostics.some(({ code }) => code.startsWith("PTDSL-")),
+    true,
+  );
 });
 
 test("advance is exported through the Contract 8 public boundary", async () => {

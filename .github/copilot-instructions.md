@@ -5,10 +5,14 @@ Treat `AGENTS.md` as the source of truth for repository guidance shared by Codex
 Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
-- The current published beta is `perttool@0.9.2`; npm reports
-  `beta=0.9.2`, `latest=0.9.0`, and no `alpha`. Version `0.9.0` is the exact
-  suffix-free Grammar 7 and CLI Contract 8 rollback pin, while version `0.8.1`
-  remains the compatible Grammar 6 and CLI Contract 7 rollback pin.
+- The current published beta is `perttool@0.9.3`; npm reports
+  `beta=0.9.3`, `latest=0.9.0`, and no `alpha`. Version `0.9.3` is the
+  compatible Issues #14/#16/#17 emergency patch; peeled `v0.9.3` and
+  `origin/main` agree at `7755d3e`, and all three Issues are closed with
+  release evidence. Version `0.9.2` remains the exact rollback pin containing
+  the Issue #15 correction, version `0.9.0` remains the suffix-free Grammar 7
+  and CLI Contract 8 rollback pin, and version `0.8.1` remains the compatible
+  Grammar 6 and CLI Contract 7 rollback pin.
 - The current source atomically activates Grammar 7 and CLI
   Contract 8 with 53 commands, 23 root schemas, 129 root and Node exports,
   and `Perttool.NextResult.v7`. All milestone-acceptance work is complete and
@@ -44,6 +48,17 @@ Mandatory summary:
   GitHub, npm beta, and the retained candidate agree; Issue #15 is closed.
   Grammar 7, Contract 8, public identities, npm `latest`, plan advance, public
   VSIX publication, and unrelated work remain unchanged and separate.
+- The `plans/release-0.9.3.pert` workstream published and durably accepted the
+  compatible Contract 8 emergency corrections for Issues #14, #16, and #17.
+  Grammar 7 assurance inspection and acceptance-aware advance composition are restored
+  without changing Grammar 7, Contract 8, 53 commands, 23 schemas, 129
+  root/Node exports, 45 Core exports, shared TextEdit strictness, or any
+  acceptance, assurance, history, governance, and persistence authority.
+  Release commit and peeled tag `7755d3e`, Node.js 22/24 CI, GitHub, npm, and
+  the common SHA-256 `a86c552b...bcad9708` agree. Exact/beta installation,
+  `0.9.2` rollback, and all three public replays passed. All six tasks are
+  complete before advance. npm `latest`, plan advance, public VSIX
+  publication, and unrelated work remain separate.
 - Install the exact Python tools from `requirements-static-analysis.txt` before
   the complete repository gate. `npm run check:static` composes TypeScript
   type checking with pinned jscpd duplicate and Lizard complexity ratchets;

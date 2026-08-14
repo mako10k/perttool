@@ -5,7 +5,12 @@ import {
   milestoneAcceptanceBaseText,
   parseMilestoneAcceptanceSource,
 } from "../milestone-acceptance/source.js";
-import type { Diagnostic } from "../model/diagnostics.js";
+import {
+  limitDiagnostics,
+  normalizeMaxDiagnostics,
+  sortDiagnostics,
+  type Diagnostic,
+} from "../model/diagnostics.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";
 import { createUnifiedDiff } from "../editing/unified-diff.js";
 import { applyTextEdits } from "../mutation/text-edits.js";
@@ -44,6 +49,12 @@ import {
   type ProjectMetadataResult,
 } from "./contract7-project.js";
 import type { CheckOptions } from "./check.js";
+import {
+  inspectTargetPlanAssurance as inspectContract7PlanAssurance,
+  type PlanAssuranceInspectionRequest,
+  type TargetPlanAssuranceInspectionResultV1,
+} from "./target-assurance-inspection.js";
+import type { TargetGrammar6Capability } from "../parser/document-parser.js";
 
 export const CHECK_RESULT_V5 = "Perttool.CheckResult.v5" as const;
 export const ANALYSIS_RESULT_V6 = "Perttool.AnalysisResult.v6" as const;
@@ -151,6 +162,44 @@ function sourceDiagnostics(text: string): readonly Diagnostic[] {
     helpTopic: "editing",
     data: Object.freeze({}),
   })));
+}
+
+export function inspectPlanAssurance(
+  text: string,
+  request: PlanAssuranceInspectionRequest,
+  capability: TargetGrammar6Capability,
+  options: { readonly maxDiagnostics?: number } = {},
+): TargetPlanAssuranceInspectionResultV1 {
+  const source = parseMilestoneAcceptanceSource(
+    text,
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  );
+  if (source.grammarVersion !== 7) {
+    return inspectContract7PlanAssurance(text, request, capability, options);
+  }
+
+  const base = inspectContract7PlanAssurance(
+    milestoneAcceptanceBaseText(text),
+    request,
+    capability,
+    options,
+  );
+  const extra = sourceDiagnostics(text);
+  const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
+  const limited = limitDiagnostics(
+    sortDiagnostics([...base.diagnostics, ...extra]),
+    maximum,
+  );
+  return Object.freeze({
+    ...base,
+    ok: base.ok && extra.length === 0,
+    documentId: source.documentId ?? base.documentId,
+    grammarVersion: 7,
+    sourceDigest: sha256DigestUtf8(text),
+    diagnostics: Object.freeze(limited.diagnostics),
+    diagnosticsTruncated:
+      base.diagnosticsTruncated || limited.truncated,
+  });
 }
 
 function missingCriterionWarnings(text: string, acceptance: MilestoneAcceptanceModelResultV1 | null): readonly Diagnostic[] {

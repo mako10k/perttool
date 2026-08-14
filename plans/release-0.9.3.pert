@@ -1,0 +1,176 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_093:
+  version 6
+  title "perttool 0.9.3 Contract 8 emergency correction release"
+  description "Release suffix-free 0.9.3 beta as a compatible Grammar 7 and CLI Contract 8 patch for Issues #14, #16, and #17. Restore Grammar 7 plan-assurance inspection and valid acceptance-aware advance composition without weakening acceptance, assurance, history, governance, or persistence gates. npm latest promotion and plan advance remain separate."
+  as_of 2026-08-14
+  duration_unit point
+  velocity 21p/1d
+  finish RELEASE_093_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_093_PLANNING_STARTED:
+  title "Version 0.9.3 emergency release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Emergency correction capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Compatibility and safety review capacity"
+  description "Serialize correction, candidate, publication, and durable acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  capacity 1
+
+milestone RELEASE_093_REVIEW_ACCEPTED:
+  title "Version 0.9.3 compatibility review accepted"
+
+milestone RELEASE_093_CORRECTIONS_ACCEPTED:
+  title "Issues 14, 16, and 17 corrections accepted"
+
+milestone RELEASE_093_SOURCE_PREPARED:
+  title "Version 0.9.3 release source prepared"
+
+milestone RELEASE_093_CANDIDATE_ACCEPTED:
+  title "Version 0.9.3 release candidate accepted"
+
+milestone RELEASE_093_PUBLISHED:
+  title "Version 0.9.3 published to GitHub and npm beta"
+
+milestone RELEASE_093_ACCEPTED:
+  title "Version 0.9.3 emergency patch accepted"
+
+task RELEASE_093_SELF_REVIEW RELEASE_093_PLANNING_STARTED -> RELEASE_093_REVIEW_ACCEPTED:
+  title "Review the 0.9.3 compatibility and emergency boundary"
+  description "Freeze the exact v0.9.2 public baseline and current beta/latest channels, reproduce Issues #14, #16, and #17 without modifying consumer repositories, accept the compatible patch boundary, and confirm unchanged Grammar 7, CLI Contract 8, public catalogs, authority, and force boundaries. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+  source "ASSURE-002 ADV-004 ADV-005"
+
+task RELEASE_093_CORRECTIONS RELEASE_093_REVIEW_ACCEPTED -> RELEASE_093_CORRECTIONS_ACCEPTED:
+  title "Accept the three Contract 8 emergency corrections"
+  description "Validate Grammar 7 before plan-assurance inspection and rebind the exact source identity; coalesce only overlapping pure deletions; contract acceptance evidence with removed milestones while preserving it for retained state-changed milestones; return candidate diagnostics; and pass the complete file, stdin, EOF topology, retained-event, preview, output, write, and consumer-replay regression matrix without bypasses."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+  source "ASSURE-002 ADV-004 ADV-005"
+
+task RELEASE_093_PREPARATION RELEASE_093_CORRECTIONS_ACCEPTED -> RELEASE_093_SOURCE_PREPARED:
+  title "Prepare version 0.9.3 release source"
+  description "Align package and lockfile identity, CLI version, adapter peer versions, MCP server identity, CHANGELOG, README, release documentation, tests, goldens, self-use registration, dependency audit, static analysis, and beta publication validation. Run the complete Node.js 22 repository and package gates without remote or registry writes."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "ASSURE-002 ADV-004 ADV-005"
+
+task RELEASE_093_CANDIDATE RELEASE_093_SOURCE_PREPARED -> RELEASE_093_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.9.3 release candidate"
+  description "Commit and recheck the complete release diff; prove package, tag, GitHub Release, and npm version availability; verify beta=0.9.2, latest=0.9.0, and no alpha; verify authenticated routes; retain one immutable tarball outside the worktree; and accept its exact identity and installed emergency behavior. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+  source "ASSURE-002 ADV-004 ADV-005"
+
+task RELEASE_093_PUBLISH RELEASE_093_CANDIDATE_ACCEPTED -> RELEASE_093_PUBLISHED:
+  title "Publish version 0.9.3 from one immutable tarball"
+  description "Only after every predecessor gate passes, push and verify the clean release commit and annotated tag, require Node.js 22 and 24 CI, publish one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.9.3 while latest remains 0.9.0."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+  source "ASSURE-002 ADV-004 ADV-005"
+
+task RELEASE_093_ACCEPTANCE RELEASE_093_PUBLISHED -> RELEASE_093_ACCEPTED:
+  title "Record durable 0.9.3 emergency patch acceptance"
+  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub and npm tarball bytes, registry integrity and metadata, exact and beta installations, all three emergency behaviors, compatibility, and the exact 0.9.2 rollback pin. Update Issues #14, #16, and #17 after durable acceptance without changing latest, advancing the plan, or starting unrelated work."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "ASSURE-002 ADV-004 ADV-005"
+
+work_event WE-093-self-review:
+  model 1
+  task RELEASE_093_SELF_REVIEW
+  kind finish
+  occurred_at 2026-08-14T13:10:00+09:00
+  active_time 1h
+  effort 1ph
+
+work_event WE-093-corrections:
+  model 1
+  task RELEASE_093_CORRECTIONS
+  kind finish
+  occurred_at 2026-08-14T13:17:00+09:00
+  active_time 2h
+  effort 2ph
+
+work_event WE-093-preparation:
+  model 1
+  task RELEASE_093_PREPARATION
+  kind finish
+  occurred_at 2026-08-14T14:20:00+09:00
+  active_time 3h
+  effort 3ph
+
+work_event WE-093-candidate:
+  model 1
+  task RELEASE_093_CANDIDATE
+  kind finish
+  occurred_at 2026-08-14T14:46:00+09:00
+  active_time 2h
+  effort 2ph
+
+work_event WE-093-publish:
+  model 1
+  task RELEASE_093_PUBLISH
+  kind finish
+  occurred_at 2026-08-14T13:55:00+09:00
+  active_time 1h
+  effort 1ph
+
+work_event WE-093-acceptance:
+  model 1
+  task RELEASE_093_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-14T13:58:00+09:00
+  active_time 1h
+  effort 1ph
