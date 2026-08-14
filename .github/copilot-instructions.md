@@ -218,7 +218,7 @@ Mandatory summary:
   capability set; `Perttool.GraphViewResult.v1`; four DAG modes; VS Code
   `^1.101.0`; offline server distribution; workspace trust; restrictive CSP;
   and accessibility; five Core-only document snapshot, session, analysis, and
-  UTF-16 functions; an exact current 45-name, 34-module portable Core closure;
+  UTF-16 functions; an exact current 45-name, 36-module portable Core closure;
   immutable source bindings; atomic changes; completed projection caching;
   cancellation/stale rejection; and six closed type-only Node Host ports with
   one default Node composition. Root and Node now remain exact 122-name
@@ -279,9 +279,16 @@ Mandatory summary:
   before advance. Its separately confirmed conformant outcome was written once
   with actor `codex`, the candidate-bound `user` assertion, and current source
   digest `sha256:e5ebb94a...9436ca`; complete assurance recommends only
-  `EDITOR_FORMAT_CORE`. The private LSP still advertises only model 1 and no
-  formatter. MCP mutation, public VSIX publication, release selection, remote
-  writes, Issue mutation, and plan advance remain separate.
+  `EDITOR_FORMAT_CORE`. The current E0 implementation adds the Core-owned
+  complete semantic fingerprint and a binding-, validation-, equality-, and
+  idempotence-checked session format projection. A compatible private-LSP
+  connection may select model 2 and then receives only standard whole-document
+  formatting; model-1 connections remain read-only. The private VSIX still
+  offers model 1, so Format Document and format-on-save integration remain in
+  `EDITOR_FORMAT_ACCEPTANCE`. The plan task status and separately governed
+  conformant outcome remain pending the complete gate and exact candidate
+  review. E1 through E3, MCP mutation, public VSIX publication, release
+  selection, remote writes, Issue mutation, and plan advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
   serial tasks and 15p. The exact initial goal-and-DAG candidate was written
   once with actor `codex` and the scope-bound owner assertion `user`.

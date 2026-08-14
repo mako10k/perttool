@@ -1679,6 +1679,22 @@ slices remain dependency gated. MCP mutation, public VSIX publication,
 release selection, remote writes, Issue mutation, and plan advance remain
 separate.
 
+`EDITOR_FORMAT_CORE` then adds the pure
+`Perttool.EditorSemanticFingerprint.v1` owner to the portable Core closure and
+one session-level E0 format projection. The proof accepts only exact normalized
+Core formatter edits whose complete Grammar 1 through 7 candidate validates,
+has the same semantic fingerprint, reproduces the candidate bytes, and is
+idempotent. The private LSP now selects model 2 from an ordered `[2, 1]` offer
+and advertises only `textDocument/formatting`; model-1 connections remain
+read-only. URI/generation/version/source-digest binding, UTF-16 edits,
+cancellation, staleness, invalid and truncated input, malformed formatter
+results, fixed limits, and production stdio Grammar 7 behavior are covered by
+fourteen dependency-ordered cases. The server returns edits only and performs
+no filesystem, Git, CLI, settings, or editor mutation. The VSIX still offers
+model 1, so Format Document and format-on-save integration remain in the next
+task. E1 through E3, release, public VSIX publication, remote writes, Issue
+mutation, and plan advance remain separate.
+
 Stage 1 allowed operations:
 
 - check

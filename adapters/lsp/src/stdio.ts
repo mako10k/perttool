@@ -128,6 +128,13 @@ export function startPerttoolStdioServer(
       ])
     )
   );
+  connection.onDocumentFormatting((params, token) =>
+    protocolResult(() =>
+      withCancellation(token, async (signal) => [
+        ...await server.documentFormatting(params, signal),
+      ])
+    )
+  );
   connection.onRequest("perttool/help", (params: unknown, token) =>
     protocolResult(() =>
       withCancellation(token, (signal) => server.help(params, signal))

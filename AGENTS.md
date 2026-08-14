@@ -322,7 +322,7 @@ rejection, the closed read-only capability set,
 and accessibility. The accepted `docs/specs/document-session.md` and
 `docs/process/adapter-document-session-acceptance.md` expose five Core-only
 snapshot, session, analysis, and UTF-16 functions. The exact current Core has
-45 runtime values in a 34-module portable closure; immutable source bindings,
+45 runtime values in a 36-module portable closure; immutable source bindings,
 atomic changes, completed projection caching, and cancellation/stale rejection
 perform no file or editor write. The accepted
 `docs/specs/node-host-boundary.md` adds six closed type-only ports and one
@@ -405,11 +405,20 @@ conformant outcome was separately confirmed and written once with actor
 `codex`, the candidate-bound `user` assertion, accepted basis
 `sha256:166d04ca...0294b6`, and final plan source digest
 `sha256:e5ebb94a...9436ca`. Complete assurance has no required action and fresh
-complete NextResult v7 recommends only `EDITOR_FORMAT_CORE`. The active
-private LSP still selects only model 1 and does not advertise document
-formatting. Model-2 activation starts only with that next task. MCP mutation,
-public VSIX publication, release selection, remote writes, Issue mutation,
-and plan advance remain separate.
+complete NextResult v7 recommends only `EDITOR_FORMAT_CORE`. The current E0
+implementation adds the Core-owned complete semantic fingerprint and a
+binding-, validation-, equality-, and idempotence-checked session format
+projection. The private LSP selects model 2 only from a compatible offer and
+then advertises only standard whole-document formatting; model-1 connections
+remain read-only. Its fourteen dependency-ordered cases and accepted boundary
+are recorded in `test/fixtures/editor-format-core-v1.json` and
+`docs/process/editor-format-core-acceptance.md`. The private VSIX still offers
+only model 1, so Format Document and user-enabled format-on-save integration
+remain in `EDITOR_FORMAT_ACCEPTANCE`. The plan task status and its separately
+governed conformant outcome remain pending until the complete gate and exact
+candidate review finish. E1 through E3, MCP mutation, public VSIX publication,
+release selection, remote writes, Issue mutation, and plan advance remain
+separate.
 
 The explicitly selected `HIST-DAG-001` workstream is tracked independently in
 `plans/historical-dag.pert`. Its eight tasks total 44p from
@@ -1038,11 +1047,12 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/assurance/`: active ASSURE-001 Grammar 6 source projection, model-1 canonical JSON and SHA-256 commitments, projected planning dependencies, frontier receipt self-hashes, full topological evaluation, outcome commitments, cause paths, fail-closed assurance states, preview-first assurance mutations, GovernanceDecision v2, impact composition, active attention, required actions, assurance-filtered new-start authority, assurance-preserving advance contraction, compatibility source capture and project metadata, direct-edit guidance, and semantic Mermaid profile 2; lower-level target-capability helpers remain internal.
 - `src/command/`: immutable typed Contract 8 command descriptors, shared-option expansion, dispatch lookup, deterministic text/JSON help projections, and structured usage-error recovery.
 - `src/core/`: additive platform-neutral `perttool/core` entrypoint and the retained portable Grammar 6 parse/validate/format facade; its current exact 45-name runtime catalog has no Node, Application, CLI, I/O, history, schema-loader, or adapter dependency.
+- `src/editor/`: portable complete editor-semantic fingerprint ownership for exact E0 equivalence, distinct from source and plan-assurance hashes.
 - `src/help/`: the structured domain HelpNode registry, retained Core help data, and the active Contract 8 editing, actuals, plan-assurance, historical-DAG, and milestone-acceptance Guide.
 - `src/analysis/`: neutral base analysis service and target temporal input projection; residual graph, precedence CPM, resource-schedule implementations, internal release-aware temporal precedence and resource schedulers, and exact deadline evaluation using Rational values.
 - `src/recommendation/`: pure Core that derives candidate facts, complete order, selection horizon, joint-feasible recommended sets, tiers, a typed explanation graph, PTREC invariants, JSON projections, read-only override validation, and canonical artifacts from actual ready tasks.
 - `src/schema/`: closed Contract 8 result-schema catalog, local bundled-artifact resolution, `Perttool.SchemaResult.v1`, and deterministic JSON/text projections.
-- `src/session/`: protocol-neutral immutable document snapshots, exact UTF-16 conversion and ordered incremental changes, URI/generation/version/digest binding, validated-snapshot analysis, snapshot-scoped completed projection caches, and cancellation/stale/desynchronization handling exposed only through `perttool/core`.
+- `src/session/`: protocol-neutral immutable document snapshots, exact UTF-16 conversion and ordered incremental changes, URI/generation/version/digest binding, validated-snapshot analysis, complete semantic fingerprints, fail-closed idempotent E0 format projection, snapshot-scoped completed projection caches, and cancellation/stale/desynchronization handling exposed only through `perttool/core`.
 - `schemas/`: twenty-three bundled Draft 2020-12 root artifacts for every active command result and the public OverrideDecision result, plus shared local definitions.
 - `src/conversion/`: Mermaid profile/plain export and import, semantic metadata, projection generation, and fail-closed restoration.
 - `src/editing/`: deterministic unified diff shared by formatter and mutation.
@@ -1060,7 +1070,7 @@ Do not conceal an inconsistency by changing only a lower-precedence document. Fo
 - `src/semantic/`: neutral document-check service; active Grammar 1/2/3/4/5/6 validated-document boundaries, task-owned event and assurance validation, exact cross-form Duration constraints, temporal-anchor validation, and duplicate-principal validation.
 - `src/mutation/`: neutral base and target mutation planners; active Grammar 1/2/3/4/5 requests for project/task/gate/milestone/resource, lifecycle, and atomic batch; governance project fields; exact changed-field Duration generation; canonical advance, task-owned event removal, and the narrow shared terminal-separator deletion planner; source-preserving UTF-16 TextEdit generation; and application rules.
 - `src/application/`: exact compatibility re-exports for neutral check, analyze, mutation, target-mutation, and temporal-input implementations; the private CLI Application facade with injected Node Host ports; retained Contract 7 services plus active Contract 8 Grammar 7 preparation, milestone acceptance, `AnalysisResult.v6`, `NextResult.v7`, `MutationResult.v5`, and `AdvanceResult.v3` composition; project metadata, lifecycle, project history, historical DAG, observation, exact unit migration, assurance mutation and inspection, independent acceptance/assurance/history guards, and authorization-before-safe-write orchestration.
-- `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, read-only standard projections, negotiated Help and current GraphView wire results, separately negotiated historical GraphView/source results, a bundled private historical Application/Git-read composition, and no public-package inclusion.
+- `adapters/lsp/`: private Node.js 22 language-server workspace with stable LSP 3.17.5 local-stdio composition, exact document-session synchronization, model-1 read-only fallback, opt-in model-2 standard whole-document E0 formatting, negotiated Help and current GraphView wire results, separately negotiated historical GraphView/source results, a bundled private historical Application/Git-read composition, and no public-package inclusion.
 - `adapters/vscode/`: private VS Code `^1.101.0` Node workspace extension with presentation-only TextMate grammar, exact language client, closed version-bound virtual Help, offline bundled server, untrusted/virtual current-workspace support, a restrictive read-only current/historical DAG Webview, trusted local historical controls, and verified immutable `perttool-history` source documents without public publication identity.
 - `adapters/mcp/`: private Node.js 22 MCP workspace with exact server SDK 2.0.0, modern-only 2026-07-28 local stdio, strict malformed-line fail-closure, four immutable resources, five fail-closed read-only tools, digest-bound inline or launcher-registered sources, self-contained output schemas, isolated two-client/no-write package acceptance, and no public-package inclusion.
 - `test/`: fixtures for the Node.js built-in test runner; analysis/next/formatter/mutation/conversion/write-safety and target-governance Core unit tests; and CLI integration/E2E tests.

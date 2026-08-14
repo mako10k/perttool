@@ -10,6 +10,7 @@ import {
   type DidChangeTextDocumentParams,
   type DidCloseTextDocumentParams,
   type DidOpenTextDocumentParams,
+  type DocumentFormattingParams,
   type DocumentSymbol,
   type DocumentSymbolParams,
   type Hover,
@@ -18,10 +19,12 @@ import {
   type InitializeResult,
   type Location,
   type PublishDiagnosticsParams,
+  type TextEdit as LspTextEdit,
 } from "vscode-languageserver/node.js";
 import {
   createDocumentSession,
   documentOffsetToPosition,
+  type DocumentFormatResult,
   type DocumentProjectionStatus,
   type DocumentSession,
   type DocumentSessionFailureReason,
@@ -39,6 +42,7 @@ import {
 } from "./projection.js";
 import {
   EDITOR_HELP_SCHEMA_VERSION,
+  EDITOR_MUTATION_PROTOCOL_MODEL_VERSION,
   EDITOR_PROTOCOL_MODEL_VERSION,
   DAG_FOCUS_PROTOCOL_MODEL_VERSION,
   DAG_FOCUS_SCHEMA_VERSION,
@@ -54,6 +58,7 @@ import {
   isHistoricalGraphView,
   type EditorHelpParamsV1,
   type EditorHelpResultV1,
+  type EditorProtocolModelVersion,
   type DagFocusApplicationV1,
   type DagFocusParamsV1,
   type DagFocusProjectionV1,
@@ -89,6 +94,7 @@ export interface PerttoolLanguageServerOptions {
 
 export interface PerttoolLanguageServer {
   readonly customProtocolNegotiated: boolean;
+  readonly editorProtocolModelVersion: EditorProtocolModelVersion | null;
   readonly historicalProtocolNegotiated: boolean;
   readonly dagFocusProtocolNegotiated: boolean;
   readonly milestoneAcceptanceProtocolNegotiated: boolean;
@@ -114,6 +120,10 @@ export interface PerttoolLanguageServer {
     params: CodeActionParams,
     signal?: AbortSignal,
   ): Promise<readonly CodeAction[]>;
+  documentFormatting(
+    params: DocumentFormattingParams,
+    signal?: AbortSignal,
+  ): Promise<readonly LspTextEdit[]>;
   help(params: unknown, signal?: AbortSignal): Promise<EditorHelpResultV1>;
   graphView(params: unknown, signal?: AbortSignal): Promise<GraphViewResultV1>;
   dagFocus(params: unknown, signal?: AbortSignal): Promise<DagFocusResultV1>;
@@ -199,21 +209,66 @@ function incrementalChanges(value: unknown): readonly {
   return result;
 }
 
-function customProtocolSelected(options: unknown): boolean {
-  if (!record(options) || !record(options["perttool"])) return false;
+function validateDocumentFormattingParams(
+  value: unknown,
+): DocumentFormattingParams {
+  if (
+    !record(value) ||
+    !record(value["textDocument"]) ||
+    typeof value["textDocument"]["uri"] !== "string" ||
+    !isAbsoluteDocumentUri(value["textDocument"]["uri"]) ||
+    !record(value["options"]) ||
+    !Number.isSafeInteger(value["options"]["tabSize"]) ||
+    (value["options"]["tabSize"] as number) <= 0 ||
+    typeof value["options"]["insertSpaces"] !== "boolean"
+  ) {
+    throw new PerttoolProtocolError(
+      ErrorCodes.InvalidParams,
+      "textDocument/formatting parameters are invalid",
+    );
+  }
+  for (const name of [
+    "trimTrailingWhitespace",
+    "insertFinalNewline",
+    "trimFinalNewlines",
+  ]) {
+    const option = value["options"][name];
+    if (option !== undefined && typeof option !== "boolean") {
+      throw new PerttoolProtocolError(
+        ErrorCodes.InvalidParams,
+        `textDocument/formatting option ${name} is invalid`,
+      );
+    }
+  }
+  return value as unknown as DocumentFormattingParams;
+}
+
+function customProtocolSelected(
+  options: unknown,
+): EditorProtocolModelVersion | null {
+  if (!record(options) || !record(options["perttool"])) return null;
   const perttool = options["perttool"];
   if (
     !Array.isArray(perttool["editorProtocolModelVersions"]) ||
     !Array.isArray(perttool["graphViewResultSchemaVersions"]) ||
     !Array.isArray(perttool["editorHelpResultSchemaVersions"])
   ) {
-    return false;
+    return null;
   }
-  return (
-    perttool["editorProtocolModelVersions"].includes(EDITOR_PROTOCOL_MODEL_VERSION) &&
-    perttool["graphViewResultSchemaVersions"].includes(GRAPH_VIEW_SCHEMA_VERSION) &&
-    perttool["editorHelpResultSchemaVersions"].includes(EDITOR_HELP_SCHEMA_VERSION)
-  );
+  const offered = perttool["editorProtocolModelVersions"];
+  if (
+    offered.length === 0 ||
+    !offered.every((version) => Number.isSafeInteger(version) && version > 0) ||
+    new Set(offered).size !== offered.length ||
+    !perttool["graphViewResultSchemaVersions"].includes(GRAPH_VIEW_SCHEMA_VERSION) ||
+    !perttool["editorHelpResultSchemaVersions"].includes(EDITOR_HELP_SCHEMA_VERSION)
+  ) return null;
+  if (offered.includes(EDITOR_MUTATION_PROTOCOL_MODEL_VERSION)) {
+    return EDITOR_MUTATION_PROTOCOL_MODEL_VERSION;
+  }
+  return offered.includes(EDITOR_PROTOCOL_MODEL_VERSION)
+    ? EDITOR_PROTOCOL_MODEL_VERSION
+    : null;
 }
 
 function dagFocusProtocolSelected(
@@ -305,7 +360,7 @@ function historicalProtocolSelected(
 }
 
 function initializeCapabilities(
-  custom: boolean,
+  editorProtocolModelVersion: EditorProtocolModelVersion | null,
   historical: boolean,
   dagFocus: boolean,
   milestoneAcceptance: boolean,
@@ -351,7 +406,18 @@ function initializeCapabilities(
     completionProvider: { resolveProvider: false },
     definitionProvider: true,
     codeActionProvider: { codeActionKinds: [CodeActionKind.QuickFix] },
-    ...(custom ? { experimental } : {}),
+    ...(editorProtocolModelVersion === EDITOR_MUTATION_PROTOCOL_MODEL_VERSION
+      ? { documentFormattingProvider: true }
+      : {}),
+    ...(editorProtocolModelVersion === null ? {} : {
+      experimental: {
+        ...experimental,
+        perttool: {
+          ...experimental.perttool,
+          editorProtocolModelVersion,
+        },
+      },
+    }),
   };
 }
 
@@ -839,7 +905,7 @@ function historicalProjectionMatchesRequest(
     projection.request["analysis_mode"] === request.analysisMode;
 }
 
-class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
+class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
   readonly #session: DocumentSession;
   readonly #publishDiagnostics: (params: PublishDiagnosticsParams) => void;
   readonly #onFatalSynchronization:
@@ -858,7 +924,7 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     RetainedHistoricalResultV1
   >();
   #initialized = false;
-  #customProtocolNegotiated = false;
+  #editorProtocolModelVersion: EditorProtocolModelVersion | null = null;
   #dagFocusProtocolNegotiated = false;
   #milestoneAcceptanceProtocolNegotiated = false;
   #historicalSession: HistoricalSessionV1 | null = null;
@@ -887,7 +953,11 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
   }
 
   get customProtocolNegotiated(): boolean {
-    return this.#customProtocolNegotiated;
+    return this.#editorProtocolModelVersion !== null;
+  }
+
+  get editorProtocolModelVersion(): EditorProtocolModelVersion | null {
+    return this.#editorProtocolModelVersion;
   }
 
   get historicalProtocolNegotiated(): boolean {
@@ -916,10 +986,22 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
   }
 
   #requireCustomProtocol(): void {
-    if (!this.#customProtocolNegotiated) {
+    if (this.#editorProtocolModelVersion === null) {
       throw new PerttoolProtocolError(
         ErrorCodes.MethodNotFound,
         "perttool custom protocol was not negotiated",
+      );
+    }
+  }
+
+  #requireFormattingProtocol(): void {
+    if (
+      this.#editorProtocolModelVersion !==
+        EDITOR_MUTATION_PROTOCOL_MODEL_VERSION
+    ) {
+      throw new PerttoolProtocolError(
+        ErrorCodes.MethodNotFound,
+        "PTEDM-101: editor protocol model 2 formatting was not negotiated",
       );
     }
   }
@@ -1009,27 +1091,27 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
         "perttool language server requires UTF-16 positions",
       );
     }
-    this.#customProtocolNegotiated = customProtocolSelected(
+    this.#editorProtocolModelVersion = customProtocolSelected(
       params.initializationOptions,
     );
     this.#historicalSession = historicalProtocolSelected(
       params.initializationOptions,
       this.#historicalApplication !== undefined,
     );
-    this.#dagFocusProtocolNegotiated = this.#customProtocolNegotiated &&
+    this.#dagFocusProtocolNegotiated = this.#editorProtocolModelVersion !== null &&
       dagFocusProtocolSelected(
         params.initializationOptions,
         this.#dagFocusApplication !== undefined,
       );
     this.#milestoneAcceptanceProtocolNegotiated =
-      this.#customProtocolNegotiated && milestoneAcceptanceProtocolSelected(
+      this.#editorProtocolModelVersion !== null && milestoneAcceptanceProtocolSelected(
         params.initializationOptions,
         this.#milestoneAcceptanceApplication !== undefined,
       );
     this.#initialized = true;
     return {
       capabilities: initializeCapabilities(
-        this.#customProtocolNegotiated,
+        this.#editorProtocolModelVersion,
         this.#historicalSession !== null,
         this.#dagFocusProtocolNegotiated,
         this.#milestoneAcceptanceProtocolNegotiated,
@@ -1207,13 +1289,53 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
     params: CodeActionParams,
     signal?: AbortSignal,
   ): Promise<readonly CodeAction[]> {
-    if (!this.#customProtocolNegotiated) return [];
+    if (this.#editorProtocolModelVersion === null) return [];
     return await this.#project(
       params.textDocument.uri,
       `lsp:codeAction:v1:${JSON.stringify(params.range)}:${JSON.stringify(params.context.diagnostics)}`,
       signal,
       (snapshot) => helpCodeActions(snapshot, params),
     ) ?? [];
+  }
+
+  async documentFormatting(
+    params: DocumentFormattingParams,
+    signal?: AbortSignal,
+  ): Promise<readonly LspTextEdit[]> {
+    this.#ensureRunning();
+    this.#requireFormattingProtocol();
+    const accepted = validateDocumentFormattingParams(params);
+    const snapshot = this.#session.current(accepted.textDocument.uri);
+    if (snapshot === null) return Object.freeze([]);
+    const formatted: DocumentFormatResult = await this.#session.format(
+      snapshot.binding,
+      signal,
+    );
+    if (
+      formatted.status === "cancelled" ||
+      formatted.status === "stale" ||
+      formatted.status === "closed" ||
+      formatted.status === "desynchronized"
+    ) throw projectionError(formatted.status);
+    if (formatted.status !== "current" || !formatted.complete) {
+      return Object.freeze([]);
+    }
+    const edits: LspTextEdit[] = [];
+    for (const edit of formatted.edits) {
+      const start = documentOffsetToPosition(snapshot.text, edit.startOffset);
+      const end = documentOffsetToPosition(snapshot.text, edit.endOffset);
+      if (start === null || end === null) {
+        throw new PerttoolProtocolError(
+          ErrorCodes.InternalError,
+          "PTEDM-103: formatter edit is not representable as UTF-16",
+        );
+      }
+      edits.push(Object.freeze({
+        range: Object.freeze({ start, end }),
+        newText: edit.replacement,
+      }));
+    }
+    return Object.freeze(edits);
   }
 
   async help(
@@ -1740,5 +1862,5 @@ class ReadOnlyPerttoolLanguageServer implements PerttoolLanguageServer {
 export function createPerttoolLanguageServer(
   options: PerttoolLanguageServerOptions,
 ): PerttoolLanguageServer {
-  return new ReadOnlyPerttoolLanguageServer(options);
+  return new PerttoolLanguageServerImplementation(options);
 }

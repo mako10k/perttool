@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
@@ -10,7 +9,6 @@ import * as nodeFacade from "../dist/node/index.js";
 import { checkDocument } from "../dist/index.js";
 import {
   EDITOR_PROTOCOL_MODEL_VERSION,
-  createPerttoolLanguageServer,
 } from "../adapters/lsp/dist/index.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -18,10 +16,6 @@ const root = path.resolve(testDirectory, "..");
 
 function repositoryText(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
-}
-
-function digestText(text) {
-  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
 }
 
 function expectedIds(prefix, count) {
@@ -145,33 +139,12 @@ test("custom preview, apply, diagnostics, and hard limits are closed", async () 
   });
 });
 
-test("contract acceptance does not activate model 2 or formatting", async () => {
+test("contract fixture retains its exact pre-activation model-1 baseline", async () => {
   const cases = await fixture();
   const packageJson = JSON.parse(await repositoryText("package.json"));
-  const server = createPerttoolLanguageServer({
-    digestText,
-    publishDiagnostics: () => undefined,
-  });
-  const initialized = server.initialize({
-    processId: null,
-    rootUri: null,
-    capabilities: { general: { positionEncodings: ["utf-16"] } },
-    initializationOptions: {
-      perttool: {
-        editorProtocolModelVersions: [2, 1],
-        graphViewResultSchemaVersions: ["Perttool.GraphViewResult.v1"],
-        editorHelpResultSchemaVersions: ["Perttool.EditorHelpResult.v1"],
-      },
-    },
-  });
-
   assert.equal(EDITOR_PROTOCOL_MODEL_VERSION, 1);
-  assert.equal(
-    initialized.capabilities.experimental.perttool.editorProtocolModelVersion,
-    1,
-  );
-  assert.equal(initialized.capabilities.documentFormattingProvider, undefined);
-  assert.equal(typeof server.documentFormatting, "undefined");
+  assert.deepEqual(cases.active_editor_protocol_model_versions, [1]);
+  assert.equal(cases.active_baseline.document_formatting_provider, false);
   assert.equal(packageJson.version, cases.active_baseline.tool_version);
   assert.equal(Object.keys(packageRoot).length, cases.active_baseline.root_export_count);
   assert.equal(Object.keys(nodeFacade).length, cases.active_baseline.node_export_count);

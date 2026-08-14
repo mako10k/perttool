@@ -191,7 +191,8 @@ facade, and schema artifacts. The accepted shared-library slice adds isolated
 root names. `src/core/` originally established a forty-name platform-neutral
 runtime catalog and now additively exposes the five protocol-neutral document-
 session functions from `src/session/`; its exact current catalog has 45 names
-and a 34-module portable closure. `src/ports/node-host.ts` owns six type-only
+and a 36-module portable closure after adding the internal editor semantic-
+fingerprint owner. `src/ports/node-host.ts` owns six type-only
 inward port contracts, and `src/node/host.ts` supplies the default Node.js
 composition. `src/node/` and the authoritative root are now exact 122-name
 facades after additively exposing the same `createNodeHost()` factory. Active
@@ -2349,7 +2350,9 @@ rules are in the [Editor Protocol Contract](specs/editor-protocol.md).
 
 The additive
 [Tiered Editor Mutation Contract](specs/editor-mutations.md) defines editor
-protocol model 2 without changing the active model-1 server. Domain owns one
+protocol model 2 while preserving model 1 as the exact read-only fallback.
+The first accepted implementation gate activates model 2 only when a client
+offers it and adds only standard whole-document formatting. Domain owns one
 `Perttool.EditorSemanticFingerprint.v1` over the complete checked document,
 normalized forward and inverse edits, affected semantic identities, and the
 strictest `E0 < E1 < E2 < E3` classification of one complete final candidate.
@@ -2362,13 +2365,27 @@ save-integrated surface, and even it returns edits only after complete semantic
 fingerprint equality. A plan-assurance hash is insufficient because it omits
 semantic fields that formatting must still preserve.
 
+The Core document session now derives a fingerprint for every complete valid
+snapshot, including normalized Grammar 7 milestone-acceptance records supplied
+through the existing coordinate-preserving preparation boundary. Its E0
+formatter projection accepts only normalized Core edits that reproduce the
+exact candidate, retain equal fingerprints, pass full candidate validation,
+remain within the fixed input/edit limits, and become a no-op on repetition.
+The LSP maps those offsets to UTF-16 `TextEdit` values only after a complete
+URI/generation/version/source-digest and cancellation recheck. Invalid,
+truncated, malformed, over-limit, cancelled, or stale work exposes no edit.
+The server does not read or write a path, invoke Git or the CLI, apply an edit,
+or change editor settings.
+
 The four classes are activation gates, not implementation shortcuts. `E1`
 requires a complete unsealed affected closure and a closed repair registry;
 `E2` requires an exact inverse independent of Undo; `E3` keeps existing
 candidate-bound owner assertions, assurance records, and exact advance Git
 evidence. Strictest-class precedence prevents an atomic candidate from being
-split or downgraded. The contract-only slice adds no capability, schema,
-export, command, dependency, contribution, package, or release.
+split or downgraded. The E0 slice adds no range/on-type formatting, E1 through
+E3 method, command, schema, public runtime export, dependency, VSIX
+contribution, package identity, or release. The private VSIX continues to
+offer model 1 until its separate `EDITOR_FORMAT_ACCEPTANCE` task.
 
 The accepted
 [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)

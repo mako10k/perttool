@@ -5,6 +5,7 @@ export {
 } from "./server.js";
 export {
   EDITOR_HELP_SCHEMA_VERSION,
+  EDITOR_MUTATION_PROTOCOL_MODEL_VERSION,
   EDITOR_PROTOCOL_MODEL_VERSION,
   DAG_FOCUS_PROTOCOL_MODEL_VERSION,
   DAG_FOCUS_SCHEMA_VERSION,
@@ -20,6 +21,7 @@ export {
   isHistoricalGraphView,
   type EditorHelpParamsV1,
   type EditorHelpResultV1,
+  type EditorProtocolModelVersion,
   type DagFocusApplicationInspectionV1,
   type DagFocusApplicationV1,
   type DagFocusParamsV1,

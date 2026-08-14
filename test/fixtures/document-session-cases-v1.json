@@ -3,7 +3,7 @@
   "session_model_version": 1,
   "core": {
     "runtime_export_count": 45,
-    "runtime_module_count": 34,
+    "runtime_module_count": 36,
     "new_runtime_exports": [
       "analyzeDocumentSnapshot",
       "createDocumentSession",

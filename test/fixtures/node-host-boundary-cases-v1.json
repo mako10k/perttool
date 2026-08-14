@@ -16,7 +16,7 @@
     "additive_runtime_export": "createNodeHost",
     "port_contract_source": "src/ports/node-host.ts",
     "node_host_source": "src/node/host.ts",
-    "typescript_source_files": 168,
+    "typescript_source_files": 169,
     "production_dependencies": 0,
     "commands": 52,
     "root_schemas": 22

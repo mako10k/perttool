@@ -15,6 +15,19 @@ import type {
   ParseResult,
   TargetDeclarationKind,
 } from "../model/syntax.js";
+import {
+  createEditorSemanticFingerprint,
+  type EditorSemanticFingerprintV1,
+} from "../editor/semantic-fingerprint.js";
+import {
+  formatDocument as formatCoreDocument,
+} from "../core/source.js";
+import type { FormatResult } from "../formatter/source-formatter.js";
+import {
+  applyTextEdits,
+  normalizeTextEdits,
+  type TextEdit,
+} from "../mutation/text-edits.js";
 import { parseDocument, validateDocument } from "../core/source.js";
 
 const sha256Pattern = /^sha256:[0-9a-f]{64}$/;
@@ -47,6 +60,7 @@ export interface DocumentSemanticResult {
   readonly ok: boolean;
   readonly diagnostics: readonly Diagnostic[];
   readonly diagnosticsTruncated: boolean;
+  readonly fingerprint: EditorSemanticFingerprintV1 | null;
 }
 
 export interface DocumentSnapshot {
@@ -66,6 +80,10 @@ export interface DocumentSnapshotInput {
 export interface DocumentSnapshotOptions {
   readonly digestText: (text: string) => string;
   readonly maxDiagnostics?: number;
+  readonly formatDocument?: (
+    text: string,
+    options: { readonly maxDiagnostics: number },
+  ) => FormatResult;
   readonly prepareDocument?: (
     text: string,
     maxDiagnostics: number,
@@ -75,6 +93,23 @@ export interface DocumentSnapshotOptions {
 export interface DocumentSnapshotPreparation {
   readonly analysisText: string;
   readonly diagnostics: readonly Diagnostic[];
+  readonly semanticFingerprintExtensions?: readonly unknown[];
+}
+
+export interface DocumentFormatSemanticEvidenceV1 {
+  readonly schemaVersion: "Perttool.EditorFormatSemanticEvidence.v1";
+  readonly originalFingerprint: EditorSemanticFingerprintV1;
+  readonly candidateFingerprint: EditorSemanticFingerprintV1;
+}
+
+export interface DocumentFormatResult {
+  readonly status: DocumentProjectionStatus;
+  readonly binding: DocumentBinding;
+  readonly complete: boolean;
+  readonly changed: boolean;
+  readonly candidateSourceDigest: DocumentSourceDigest | null;
+  readonly semanticEvidence: DocumentFormatSemanticEvidenceV1 | null;
+  readonly edits: readonly TextEdit[];
 }
 
 export type DocumentAnalysisMode = "none" | AnalysisMode;
@@ -167,6 +202,10 @@ export interface DocumentSession {
     options?: DocumentAnalysisOptions,
     signal?: AbortSignal,
   ): Promise<DocumentSessionAnalysisResult>;
+  format(
+    binding: DocumentBinding,
+    signal?: AbortSignal,
+  ): Promise<DocumentFormatResult>;
   dispose(): void;
 }
 
@@ -331,10 +370,18 @@ export function createDocumentSnapshot(
     version: input.version,
     sourceDigest: digestText(input.text, options.digestText),
   };
+  const semanticOk = !hasErrors(semanticDiagnostics);
+  const diagnosticsTruncated = parse.diagnosticsTruncated || limited.truncated;
   const semantic: DocumentSemanticResult = {
-    ok: !hasErrors(semanticDiagnostics),
+    ok: semanticOk,
     diagnostics: Object.freeze([...limited.diagnostics]),
-    diagnosticsTruncated: parse.diagnosticsTruncated || limited.truncated,
+    diagnosticsTruncated,
+    fingerprint: semanticOk && !diagnosticsTruncated
+      ? createEditorSemanticFingerprint(
+          parse.document,
+          prepared?.semanticFingerprintExtensions ?? [],
+        )
+      : null,
   };
   freezeTree(parse);
   freezeTree(binding);
@@ -552,6 +599,9 @@ class ProtocolNeutralDocumentSession implements DocumentSession {
       ...(options.maxDiagnostics === undefined
         ? {}
         : { maxDiagnostics: options.maxDiagnostics }),
+      ...(options.formatDocument === undefined
+        ? {}
+        : { formatDocument: options.formatDocument }),
       ...(options.prepareDocument === undefined
         ? {}
         : { prepareDocument: options.prepareDocument }),
@@ -763,6 +813,121 @@ class ProtocolNeutralDocumentSession implements DocumentSession {
       analysis: value.analysis,
       cached: projection.cached,
     });
+  }
+
+  async format(
+    binding: DocumentBinding,
+    signal?: AbortSignal,
+  ): Promise<DocumentFormatResult> {
+    const empty = (
+      status: DocumentProjectionStatus,
+    ): DocumentFormatResult => Object.freeze({
+      status,
+      binding,
+      complete: false,
+      changed: false,
+      candidateSourceDigest: null,
+      semanticEvidence: null,
+      edits: Object.freeze([]),
+    });
+    const projected = await this.project<DocumentFormatResult>({
+      binding,
+      cacheKey: "editor-format:e0:v1",
+      ...(signal === undefined ? {} : { signal }),
+      compute: (snapshot) => {
+        const maximum = normalizeMaxDiagnostics(this.#options.maxDiagnostics);
+        const formatter = this.#options.formatDocument ?? formatCoreDocument;
+        const sourceBytes = new TextEncoder().encode(snapshot.text).byteLength;
+        if (sourceBytes > 8_388_608 || snapshot.semantic.fingerprint === null) {
+          return empty("unavailable");
+        }
+        try {
+          const formatted = formatter(
+            snapshot.parse.document.text,
+            { maxDiagnostics: maximum },
+          );
+          if (
+            !formatted.ok ||
+            formatted.formattedText === null ||
+            formatted.diagnosticsTruncated ||
+            formatted.edits.length > 10_000
+          ) return empty("unavailable");
+          const normalized = normalizeTextEdits(
+            snapshot.parse.document.text,
+            formatted.edits,
+            "editor formatter",
+          );
+          if (
+            normalized.length !== formatted.edits.length ||
+            normalized.some((edit, index) => {
+              const supplied = formatted.edits[index];
+              return supplied === undefined ||
+                edit.startOffset !== supplied.startOffset ||
+                edit.endOffset !== supplied.endOffset ||
+                edit.replacement !== supplied.replacement;
+            }) ||
+            applyTextEdits(snapshot.parse.document.text, normalized) !==
+              formatted.formattedText
+          ) return empty("unavailable");
+          const replacementBytes = normalized.reduce(
+            (total, edit) => total + new TextEncoder().encode(edit.replacement).byteLength,
+            0,
+          );
+          if (replacementBytes > 8_388_608) return empty("unavailable");
+          const candidateText = applyTextEdits(snapshot.text, normalized);
+          if (new TextEncoder().encode(candidateText).byteLength > 8_388_608) {
+            return empty("unavailable");
+          }
+          const candidate = createDocumentSnapshot(
+            {
+              uri: snapshot.binding.uri,
+              generation: snapshot.binding.generation,
+              version: snapshot.binding.version,
+              text: candidateText,
+            },
+            this.#options,
+          );
+          if (
+            !candidate.semantic.ok ||
+            candidate.semantic.diagnosticsTruncated ||
+            candidate.semantic.fingerprint === null ||
+            candidate.semantic.fingerprint.digest !==
+              snapshot.semantic.fingerprint.digest
+          ) return empty("unavailable");
+          const repeated = formatter(
+            candidate.parse.document.text,
+            { maxDiagnostics: maximum },
+          );
+          if (
+            !repeated.ok ||
+            repeated.formattedText !== candidate.parse.document.text ||
+            repeated.changed ||
+            repeated.edits.length !== 0 ||
+            repeated.diagnosticsTruncated
+          ) return empty("unavailable");
+          const evidence: DocumentFormatSemanticEvidenceV1 = Object.freeze({
+            schemaVersion: "Perttool.EditorFormatSemanticEvidence.v1",
+            originalFingerprint: snapshot.semantic.fingerprint,
+            candidateFingerprint: candidate.semantic.fingerprint,
+          });
+          return Object.freeze({
+            status: "current" as const,
+            binding: snapshot.binding,
+            complete: true,
+            changed: normalized.length > 0,
+            candidateSourceDigest: candidate.binding.sourceDigest,
+            semanticEvidence: evidence,
+            edits: Object.freeze([...normalized]),
+          });
+        } catch {
+          return empty("unavailable");
+        }
+      },
+    });
+    if (projected.status !== "current" || projected.value === null) {
+      return empty(projected.status);
+    }
+    return projected.value;
   }
 
   dispose(): void {

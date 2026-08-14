@@ -1,0 +1,44 @@
+{
+  "schema_version": "Perttool.EditorFormatCoreCases.v1",
+  "editor_protocol_model_versions": [2, 1],
+  "semantic_fingerprint_schema_version": "Perttool.EditorSemanticFingerprint.v1",
+  "semantic_evidence_schema_version": "Perttool.EditorFormatSemanticEvidence.v1",
+  "capabilities": {
+    "document_formatting": true,
+    "range_formatting": false,
+    "on_type_formatting": false,
+    "rename": false,
+    "execute_command": false
+  },
+  "hard_limits": {
+    "source_utf8_bytes": 8388608,
+    "candidate_utf8_bytes": 8388608,
+    "forward_edits": 10000,
+    "replacement_utf8_bytes": 8388608
+  },
+  "side_effects": {
+    "cli_subprocess": false,
+    "filesystem_read": false,
+    "filesystem_write": false,
+    "git": false,
+    "network_listener": false,
+    "settings_change": false,
+    "editor_apply": false
+  },
+  "cases": [
+    { "id": "EFC-001", "depends_on": [], "boundary": "fingerprint", "expected": "complete_semantics_only" },
+    { "id": "EFC-002", "depends_on": ["EFC-001"], "boundary": "candidate", "expected": "exact_core_edits_and_digest" },
+    { "id": "EFC-003", "depends_on": ["EFC-002"], "boundary": "idempotence", "expected": "unchanged_empty_edits" },
+    { "id": "EFC-004", "depends_on": ["EFC-003"], "boundary": "grammar_7", "expected": "milestone_acceptance_semantics_preserved" },
+    { "id": "EFC-005", "depends_on": ["EFC-004"], "boundary": "invalid", "expected": "no_edit" },
+    { "id": "EFC-006", "depends_on": ["EFC-005"], "boundary": "malformed", "expected": "unavailable_no_partial_edit" },
+    { "id": "EFC-007", "depends_on": ["EFC-006"], "boundary": "limits", "expected": "unavailable_no_truncation" },
+    { "id": "EFC-008", "depends_on": ["EFC-007"], "boundary": "cancellation", "expected": "request_cancelled_no_edit" },
+    { "id": "EFC-009", "depends_on": ["EFC-008"], "boundary": "staleness", "expected": "content_modified_no_edit" },
+    { "id": "EFC-010", "depends_on": ["EFC-009"], "boundary": "negotiation", "expected": "highest_common_model_2" },
+    { "id": "EFC-011", "depends_on": ["EFC-010"], "boundary": "model_1", "expected": "unchanged_read_only_fallback" },
+    { "id": "EFC-012", "depends_on": ["EFC-011"], "boundary": "formatting_options", "expected": "validate_shape_ignore_preferences" },
+    { "id": "EFC-013", "depends_on": ["EFC-012"], "boundary": "stdio", "expected": "standard_lsp_request_only" },
+    { "id": "EFC-014", "depends_on": ["EFC-013"], "boundary": "effects", "expected": "core_and_lsp_no_write" }
+  ]
+}

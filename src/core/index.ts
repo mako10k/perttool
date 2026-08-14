@@ -141,6 +141,8 @@ export type {
   PlanAssuranceStateCountsV1,
 } from "../assurance/authority.js";
 export type {
+  DocumentFormatResult,
+  DocumentFormatSemanticEvidenceV1,
   DocumentAnalysisMode,
   DocumentAnalysisOptions,
   DocumentAnalysisProjection,
@@ -163,3 +165,6 @@ export type {
   DocumentSnapshotPreparation,
   DocumentSourceDigest,
 } from "../session/document-session.js";
+export type {
+  EditorSemanticFingerprintV1,
+} from "../editor/semantic-fingerprint.js";

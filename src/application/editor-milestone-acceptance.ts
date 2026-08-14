@@ -20,6 +20,7 @@ export const EDITOR_MILESTONE_ACCEPTANCE_MODEL_VERSION = 1 as const;
 export interface EditorMilestoneAcceptanceDocumentPreparationV1 {
   readonly analysisText: string;
   readonly diagnostics: readonly Diagnostic[];
+  readonly semanticFingerprintExtensions: readonly unknown[];
 }
 
 export interface EditorMilestoneAcceptanceSourceBindingV1 {
@@ -169,9 +170,68 @@ export function prepareEditorMilestoneAcceptanceDocument(
   const checked = checkDocument(text, {
     ...(maxDiagnostics === undefined ? {} : { maxDiagnostics }),
   });
+  const source = parseMilestoneAcceptanceSource(
+    text,
+    MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY,
+  );
+  const records = source.records.map((record) => {
+    if (record.kind === "milestone_criterion_set") {
+      return Object.freeze({
+        kind: record.kind,
+        id: record.id,
+        milestoneId: record.milestoneId,
+        revisionId: record.revisionId,
+        commitment: record.commitment,
+        criteria: Object.freeze(record.criteria.map((criterion) => Object.freeze({
+          criterionId: criterion.criterionId,
+          required: criterion.required,
+          evidenceKind: criterion.evidenceKind,
+          description: criterion.description,
+          commitment: criterion.commitment,
+        }))),
+      });
+    }
+    if (record.kind === "milestone_acceptance_migration") {
+      return Object.freeze({
+        kind: record.kind,
+        id: record.id,
+        model: record.model,
+        repositoryId: record.repositoryId,
+        path: record.path,
+        objectFormat: record.objectFormat,
+        head: record.head,
+        blob: record.blob,
+        sourceDigest: record.sourceDigest,
+        candidateDigest: record.candidateDigest,
+        grandfatheredMilestoneIds: record.grandfatheredMilestoneIds,
+      });
+    }
+    return Object.freeze({
+      kind: record.kind,
+      id: record.id,
+      model: record.model,
+      setId: record.setId,
+      setCommitment: record.setCommitment,
+      criterionId: record.criterionId,
+      criterionCommitment: record.criterionCommitment,
+      action: record.action,
+      evidenceKind: record.evidenceKind,
+      evidenceReference: record.evidenceReference,
+      evidenceRevision: record.evidenceRevision,
+      verifier: record.verifier,
+      occurredAt: record.occurredAt,
+      reason: record.reason,
+      revokes: record.revokes,
+    });
+  });
   return Object.freeze({
     analysisText: milestoneAcceptanceBaseText(text),
     diagnostics: checked.diagnostics,
+    semanticFingerprintExtensions: Object.freeze([Object.freeze({
+      schemaVersion: "Perttool.MilestoneAcceptanceSemanticFingerprintInput.v1",
+      grammarVersion: source.grammarVersion,
+      records: Object.freeze(records),
+    })]),
   });
 }
 

@@ -2,6 +2,10 @@ import type { Range } from "vscode-languageserver/node.js";
 import type { Diagnostic } from "perttool/core";
 
 export const EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
+export const EDITOR_MUTATION_PROTOCOL_MODEL_VERSION = 2 as const;
+export type EditorProtocolModelVersion =
+  | typeof EDITOR_PROTOCOL_MODEL_VERSION
+  | typeof EDITOR_MUTATION_PROTOCOL_MODEL_VERSION;
 export const GRAPH_VIEW_SCHEMA_VERSION = "Perttool.GraphViewResult.v1" as const;
 export const EDITOR_HELP_SCHEMA_VERSION = "Perttool.EditorHelpResult.v1" as const;
 export const DAG_FOCUS_PROTOCOL_MODEL_VERSION = 1 as const;
@@ -26,7 +30,7 @@ export type GraphViewAnalysisMode =
 
 export interface PerttoolInitializationOptionsV1 {
   readonly perttool: {
-    readonly editorProtocolModelVersions: readonly [1];
+    readonly editorProtocolModelVersions: readonly number[];
     readonly graphViewResultSchemaVersions: readonly [
       "Perttool.GraphViewResult.v1",
     ];
@@ -57,7 +61,7 @@ export interface PerttoolInitializationOptionsV1 {
 
 export interface PerttoolExperimentalCapabilitiesV1 {
   readonly perttool: {
-    readonly editorProtocolModelVersion: 1;
+    readonly editorProtocolModelVersion: EditorProtocolModelVersion;
     readonly graphViewResultSchemaVersion: "Perttool.GraphViewResult.v1";
     readonly editorHelpResultSchemaVersion: "Perttool.EditorHelpResult.v1";
     readonly graphViewAnalysisModes: readonly GraphViewAnalysisMode[];
