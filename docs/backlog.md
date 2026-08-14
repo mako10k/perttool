@@ -1443,8 +1443,9 @@ local installation, Marketplace publication, and Open VSX remain separate.
 Priority: P2 (selected workstream; resumed after resolved P0)
 
 Status: Editor Protocol model 2, E0 whole-document formatting, and the closed
-E1 unsealed repair implementation are locally accepted (2026-08-14); durable
-plan-assurance evidence remains separately gated
+E1 unsealed repair implementation and status-only task completion are locally
+accepted (2026-08-14); milestone and plan-assurance evidence remain separately
+gated
 
 The selected [`editor-mutations.pert`](../plans/editor-mutations.pert)
 workstream replaces the permanent read-only editor ceiling with four ordered
@@ -1486,7 +1487,12 @@ accepted model-2 Quick Fix and Fix All mappings. Grammar 6/7 exact recovery,
 protected-state failure closure, stdio composition, and supported-host
 application plus Undo are recorded in
 [`editor-repair-acceptance.md`](process/editor-repair-acceptance.md). Semantic
-assurance highlighting,
+Implementation commit `58ed7a6` passed the complete 1,098-test and package
+gate. The status-only write changed plan digest to
+`sha256:bb9fd570...04d3b4`. `EDITOR_REPAIR_ACCEPTED` is reached but has no
+criterion or receipt, and `EDITOR_REPAIR_ACCEPTANCE` has no outcome, so the
+current frontier is fresh candidate-bound evidence restoration rather than the
+structurally ready E2 contract. Semantic assurance highlighting,
 graph-driven mutation beyond the accepted classes, MCP mutation, public VSIX
 identity/publication, release selection, Issue mutation, remote writes, and
 plan advance remain separate.

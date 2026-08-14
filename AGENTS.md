@@ -472,9 +472,21 @@ E0 formatting, all public counts, and direct-write ownership remain unchanged.
 Its 24-case trace and llmthink RCA are
 `docs/process/editor-repair-acceptance.md` and
 `docs/process/editor-repair-acceptance-rca.think`.
-Range/on-type formatting, durable milestone evidence, E2, E3, MCP mutation, public VSIX
-publication, release selection, remote writes, Issue mutation, and plan advance
-remain separate.
+Implementation commit `58ed7a6` passed the complete 1,098-test, static,
+supported-host, adapter, self-use, temporary-link, and 725-file package gate.
+`EDITOR_REPAIR_ACCEPTANCE` is complete and retained before advance; its exact
+status-only write changed the plan digest to
+`sha256:bb9fd570...04d3b4` without an owner assertion. The reached
+`EDITOR_REPAIR_ACCEPTED` milestone has no declared criterion or receipt, and
+the task has no outcome, so complete assurance reports seven unavailable task
+results and requires `restore_assurance_evidence` rooted at
+`EDITOR_REPAIR_ACCEPTANCE`. Although the structural Next result makes
+`EDITOR_RECOVERABLE_CONTRACT` ready and recommended, starting it before that
+evidence is restored adds active-attention `PTASSURE-204`; it is not the
+current execution frontier. Fresh candidate-bound criterion, receipt, and
+outcome confirmations remain separate. Range/on-type formatting, E2, E3, MCP
+mutation, public VSIX publication, release selection, remote writes, Issue
+mutation, and plan advance remain separate.
 
 The live 2026-08-14 Issue review and post-`0.9.4` readback are recorded in
 `docs/process/issue-priority-review-2026-08-14.md`. The accepted `0.9.4`

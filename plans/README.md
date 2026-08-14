@@ -47,8 +47,12 @@ Plans are separated by level of detail.
   evidence, and its conformant outcome are accepted at final plan digest
   `sha256:fac511d0...87af00`; the separate `0.9.4` flow resolved `ADV-006`,
   closed Issue #19, and left no open P0. Local E1 acceptance is recorded in
-  `docs/process/editor-repair-acceptance.md`; durable milestone evidence and
-  the resulting next frontier remain separate from that implementation
+  `docs/process/editor-repair-acceptance.md`; implementation commit `58ed7a6`
+  passed the complete gate, and the exact status-only completion changed the
+  digest to `sha256:bb9fd570...04d3b4`. The reached E1 milestone is not yet
+  accepted and the E1 outcome is missing, so fresh candidate-bound criterion,
+  receipt, and outcome evidence are the current frontier before the structural
+  E2 recommendation
 - [historical-dag.pert](historical-dag.pert): selected `HIST-DAG-001`
   first-parent historical reconstruction roadmap covering the normative
   contract, shared transition model, bounded immutable Git evidence, pure

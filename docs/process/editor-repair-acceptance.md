@@ -96,15 +96,26 @@ tags remain unchanged.
 ## 5. Plan and authority boundary
 
 The complete repository gate passed after the focused and dependency-boundary
-corrections: type checking, the complete repository test suite, English and Markdown,
-43-plan self-use, isolated LSP and MCP packages, supported-host VSIX, temporary
-link, and the 725-file public package workflow. The exact expected-digest
-status-only preview changes plan digest `sha256:fac511d0...87af00` to
-`sha256:bb9fd570...04d3b4`, marks only `EDITOR_REPAIR_ACCEPTANCE` done, and
-correctly reports that a separate outcome is required to restore downstream
-assurance. Reached-milestone criteria, acceptance receipts, and a conformant
-plan-assurance outcome require their own fresh candidate-bound confirmation
-and are not implied by implementation acceptance.
+corrections: type checking, 1,098 tests, English and Markdown, 43-plan
+self-use, isolated LSP and MCP packages, supported-host VSIX, temporary link,
+and the 725-file public package workflow. Implementation commit `58ed7a6`
+fixes those exact accepted bytes.
+
+The exact expected-digest status-only write then changed plan digest
+`sha256:fac511d0...87af00` to `sha256:bb9fd570...04d3b4` and marked only
+`EDITOR_REPAIR_ACCEPTANCE` done. Readback reports closure of
+`EDITOR_REPAIR_ACCEPTED`, but its milestone acceptance is `not_declared` and
+the task outcome is unavailable because it is missing. Seven assurance task
+results are therefore unavailable and the required action is
+`restore_assurance_evidence` rooted at `EDITOR_REPAIR_ACCEPTANCE`. Although
+`dag next` projects `EDITOR_RECOVERABLE_CONTRACT` as the structural ready and
+recommended task, a start preview adds `PTASSURE-204` active-attention state;
+it is not the current execution frontier.
+
+Reached-milestone criteria, an acceptance receipt bound to a committed
+revision, and a conformant plan-assurance outcome require their own fresh
+candidate-bound confirmations and are not implied by implementation
+acceptance. The current execution frontier is that evidence sequence, not E2.
 
 E2/E3 work, persistent local VSIX installation, release selection, public VSIX
 publication, remote writes, Issue mutation, npm mutation, and plan advance

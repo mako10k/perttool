@@ -362,8 +362,14 @@ Mandatory summary:
   formatting, public counts, and direct-write ownership remain unchanged. Its
   RCA and 24-case trace are in
   `docs/process/editor-repair-acceptance-rca.think` and
-  `docs/process/editor-repair-acceptance.md`. Range/on-type formatting,
-  durable milestone evidence, E2, E3, MCP mutation, public VSIX
+  `docs/process/editor-repair-acceptance.md`. Implementation commit `58ed7a6`
+  passed the complete 1,098-test and package gate. The status-only completion
+  changed plan digest to `sha256:bb9fd570...04d3b4`; the reached milestone has
+  no criterion or receipt and the completed task has no outcome. Complete
+  assurance therefore requires `restore_assurance_evidence` rooted at
+  `EDITOR_REPAIR_ACCEPTANCE`. The structural E2 recommendation must not be
+  started before fresh candidate-bound criterion, receipt, and outcome
+  confirmations restore that evidence. Range/on-type formatting, E2, E3, MCP mutation, public VSIX
   publication, release selection, remote writes, Issue mutation, and plan
   advance remain separate.
 - The live 2026-08-14 Issue review and post-`0.9.4` readback are recorded in

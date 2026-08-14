@@ -579,3 +579,26 @@ test("E0 formatting and current public identities remain unchanged", async () =>
   assert.equal("planEditorRepair" in rootIndex, false);
   assert.equal("planEditorRepair" in coreIndex, false);
 });
+
+test("the E1 task is complete at the separate assurance-evidence boundary", async () => {
+  const [plan, acceptance] = await Promise.all([
+    repositoryText("plans/editor-mutations.pert"),
+    repositoryText("docs/process/editor-repair-acceptance.md"),
+  ]);
+  const taskStart = plan.indexOf(
+    "task EDITOR_REPAIR_ACCEPTANCE EDITOR_REPAIR_CONTRACT_ACCEPTED -> " +
+      "EDITOR_REPAIR_ACCEPTED:",
+  );
+  const taskEnd = plan.indexOf("\ntask EDITOR_RECOVERABLE_CONTRACT ", taskStart);
+  assert.notEqual(taskStart, -1);
+  assert.notEqual(taskEnd, -1);
+  assert.match(plan.slice(taskStart, taskEnd), /\n  status done\n/u);
+  assert.equal(
+    digestText(plan),
+    "sha256:bb9fd570b828c0dd9643e2739434d9963ea4c202710eed685a2d16115704d3b4",
+  );
+  assert.doesNotMatch(plan, /milestone_criterion_set EDITOR_REPAIR_ACCEPTED_/u);
+  assert.doesNotMatch(plan, /task_outcome OUTCOME_EDITOR_REPAIR_ACCEPTANCE:/u);
+  assert.match(acceptance, /Implementation commit `58ed7a6`/u);
+  assert.match(acceptance, /`restore_assurance_evidence`/u);
+});

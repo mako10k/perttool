@@ -184,6 +184,7 @@ task EDITOR_REPAIR_ACCEPTANCE EDITOR_REPAIR_CONTRACT_ACCEPTED -> EDITOR_REPAIR_A
   title "Implement and accept E1 unsealed repair actions"
   description "Implement accepted E1 candidate planning through the shared Core and Application boundary, expose only eligible Quick Fix, Fix All, and accepted opt-in automatic repairs, and apply complete validated WorkspaceEdits through the editor. Test mixed fixes, changing assurance closure, cancellation, staleness, malformed candidates, escalation, undo and exact recovery evidence, model 1 and E0 compatibility, isolated packages, and supported-host behavior without direct persistence or authority synthesis."
   duration 7p
+  status done
   priority 80
   requires:
     DEVELOPERS 1

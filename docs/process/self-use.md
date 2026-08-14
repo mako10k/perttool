@@ -1789,8 +1789,15 @@ mapping existed after contract acceptance. The local implementation now adds
 those three bounded owners, activates only model-2 `quickfix` and
 `source.fixAll.perttool`, and retains model 1, E0 formatting, public counts,
 direct-write ownership, release, and persistent VSIX state. The 24-case trace
-is [editor-repair-acceptance.md](editor-repair-acceptance.md); durable
-milestone evidence and the subsequent plan frontier remain separately gated.
+is [editor-repair-acceptance.md](editor-repair-acceptance.md). Implementation
+commit `58ed7a6` passed the complete 1,098-test and package gate. One
+expected-digest status-only write then marked `EDITOR_REPAIR_ACCEPTANCE` done
+and changed the plan digest from `sha256:fac511d0...87af00` to
+`sha256:bb9fd570...04d3b4`. Readback shows the target milestone reached but
+not accepted and the E1 outcome missing. Complete assurance requires
+`restore_assurance_evidence`; fresh criterion, receipt, and outcome
+confirmations are therefore the current frontier before E2, and plan advance
+remains separately gated.
 
 Stage 1 allowed operations:
 
