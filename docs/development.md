@@ -8,6 +8,7 @@ This document contains repository-maintainer guidance. The root
 - Node.js 22 or 24
 - npm
 - Git
+- Python 3 and the pinned `requirements-static-analysis.txt` tools
 
 Node.js 22 is the minimum supported runtime. CI verifies both the minimum and
 the current active LTS line. The runtime has no third-party production
@@ -19,6 +20,9 @@ dependencies.
 git clone https://github.com/mako10k/perttool.git
 cd perttool
 npm ci
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install --requirement requirements-static-analysis.txt
 npm run check
 git diff --check
 ```
@@ -27,12 +31,25 @@ Focused checks are available when iterating:
 
 ```sh
 npm run typecheck
+npm run check:duplication
+npm run check:complexity
+npm run check:static
 npm test
 npm run test:e2e
 npm run check:docs
 npm run check:link
 npm run check:package
 ```
+
+`check:static` composes TypeScript type checking, jscpd duplicate detection,
+and Lizard function-complexity analysis. The pinned tools scan `src/`, private
+adapter source/runtime directories, and `scripts/`; generated `dist/`,
+dependencies, tests, fixtures, and documentation are outside this source-code
+gate. `config/static-analysis-baseline.json` is a reviewed ratchet: new
+complexity violations, worsening legacy functions, stale legacy entries, or
+increased clone, duplicated-line, duplicated-token, or percentage totals fail.
+Reducing a legacy violation requires removing its stale baseline entry in the
+same reviewed change.
 
 `check:link` uses a temporary user prefix and does not modify the real npm
 global prefix. `check:package` creates a release tarball in a temporary

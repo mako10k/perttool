@@ -33,8 +33,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
 
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Install static-analysis dependencies
+        run: python -m pip install --requirement requirements-static-analysis.txt
 
       - name: Check root, isolated LSP/VSIX, and private adapter workspaces
         run: npm run check

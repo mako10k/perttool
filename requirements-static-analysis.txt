@@ -1,0 +1,2 @@
+# Python tools used only by repository static-analysis gates.
+lizard==1.23.0

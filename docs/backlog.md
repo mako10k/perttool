@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-08-13
+- Updated: 2026-08-14
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -1902,6 +1902,32 @@ This item does not authorize new assurance semantics, a Grammar or CLI
 contract version change, plan mutation or advance, release selection,
 publication, dist-tag movement, remote branch writes, or unrelated editor-
 mutation work.
+
+### STATIC-001: Reduce the reviewed duplicate and complexity baseline
+
+Priority: P2
+
+Status: Backlog (2026-08-14); [Issue
+#18](https://github.com/mako10k/perttool/issues/18) open
+
+The source static-analysis gate now prevents growth beyond 148 jscpd clones,
+2,746 duplicated lines, 15,252 duplicated tokens, and 3.37 percent duplication,
+and prevents new or worsened Lizard violations beyond the reviewed 174-function
+legacy baseline. Reduce these existing findings without weakening the pinned
+tool versions, scan scope, thresholds, or ratchet semantics.
+
+Acceptance:
+
+- refactor by semantic owner and retain current public and private-adapter
+  behavior through focused and complete repository checks;
+- reduce at least one jscpd absolute maximum or remove at least one Lizard
+  legacy entry in each accepted slice;
+- update the baseline only after the corresponding source improvement passes;
+  and
+- do not trade one removed finding for a new clone or complexity violation.
+
+This item does not authorize a public-contract change, release selection,
+publication, remote write, or unrelated implementation cleanup.
 
 ## Independent post-beta work
 

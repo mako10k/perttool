@@ -1,0 +1,889 @@
+{
+  "jscpd": {
+    "version": "5.0.15",
+    "maxClones": 148,
+    "maxDuplicatedLines": 2746,
+    "maxDuplicatedTokens": 15252,
+    "maxPercentage": 3.37
+  },
+  "lizard": {
+    "version": "1.23.0",
+    "thresholds": {
+      "cyclomaticComplexity": 15,
+      "length": 100,
+      "parameters": 6
+    },
+    "functions": {
+      "adapters/lsp/runtime/historical-service.ts:loadSource": {
+        "cyclomaticComplexity": 25,
+        "length": 89,
+        "parameters": 2
+      },
+      "adapters/lsp/src/projection.ts:escapeMarkdown": {
+        "cyclomaticComplexity": 1,
+        "length": 399,
+        "parameters": 1
+      },
+      "adapters/lsp/src/server.ts:historicalProtocolSelected": {
+        "cyclomaticComplexity": 17,
+        "length": 46,
+        "parameters": 2
+      },
+      "adapters/lsp/src/server.ts:milestoneAcceptanceViewProjection": {
+        "cyclomaticComplexity": 21,
+        "length": 52,
+        "parameters": 2
+      },
+      "adapters/lsp/src/server.ts:validDagTimeSummary": {
+        "cyclomaticComplexity": 40,
+        "length": 69,
+        "parameters": 1
+      },
+      "adapters/lsp/src/server.ts:validateHistoricalGraphViewParams": {
+        "cyclomaticComplexity": 18,
+        "length": 52,
+        "parameters": 1
+      },
+      "adapters/lsp/src/stdio.ts:startPerttoolStdioServer": {
+        "cyclomaticComplexity": 1,
+        "length": 130,
+        "parameters": 3
+      },
+      "adapters/mcp/src/server.ts:createPerttoolMcpAdapter": {
+        "cyclomaticComplexity": 63,
+        "length": 197,
+        "parameters": 1
+      },
+      "adapters/vscode/src/dag-view.ts:#receive": {
+        "cyclomaticComplexity": 26,
+        "length": 76,
+        "parameters": 1
+      },
+      "adapters/vscode/src/dag-view.ts:#requestHistorical": {
+        "cyclomaticComplexity": 22,
+        "length": 98,
+        "parameters": 3
+      },
+      "adapters/vscode/src/dag-view.ts:refresh": {
+        "cyclomaticComplexity": 43,
+        "length": 155,
+        "parameters": 1
+      },
+      "adapters/vscode/src/extension.ts:activate": {
+        "cyclomaticComplexity": 11,
+        "length": 203,
+        "parameters": 1
+      },
+      "adapters/vscode/src/webview.ts:historicalPresentation": {
+        "cyclomaticComplexity": 31,
+        "length": 62,
+        "parameters": 1
+      },
+      "adapters/vscode/src/webview.ts:renderGraph": {
+        "cyclomaticComplexity": 32,
+        "length": 113,
+        "parameters": 1
+      },
+      "adapters/vscode/src/webview.ts:renderHistoricalGraph": {
+        "cyclomaticComplexity": 70,
+        "length": 151,
+        "parameters": 1
+      },
+      "adapters/vscode/src/webview.ts:renderMessage": {
+        "cyclomaticComplexity": 27,
+        "length": 65,
+        "parameters": 1
+      },
+      "adapters/vscode/src/webview.ts:requestHistoricalGraph": {
+        "cyclomaticComplexity": 16,
+        "length": 36,
+        "parameters": 0
+      },
+      "scripts/check-english-baseline.mjs:validateAllowlist": {
+        "cyclomaticComplexity": 26,
+        "length": 61,
+        "parameters": 1
+      },
+      "scripts/check-mcp-isolated.mjs:acceptedSession": {
+        "cyclomaticComplexity": 4,
+        "length": 101,
+        "parameters": 1
+      },
+      "scripts/check-vsix-host.mjs:main": {
+        "cyclomaticComplexity": 7,
+        "length": 142,
+        "parameters": 0
+      },
+      "scripts/check-vsix-host.mjs:runHost": {
+        "cyclomaticComplexity": 2,
+        "length": 38,
+        "parameters": 8
+      },
+      "scripts/vsix-host-tests.cjs:run": {
+        "cyclomaticComplexity": 13,
+        "length": 221,
+        "parameters": 0
+      },
+      "src/actuals/lifecycle.ts:normalizeLifecycleMutationRequest": {
+        "cyclomaticComplexity": 45,
+        "length": 149,
+        "parameters": 1
+      },
+      "src/actuals/reduction.ts:reduceTaskLifecycle": {
+        "cyclomaticComplexity": 25,
+        "length": 94,
+        "parameters": 1
+      },
+      "src/actuals/source.ts:eventFromDeclaration": {
+        "cyclomaticComplexity": 16,
+        "length": 54,
+        "parameters": 1
+      },
+      "src/analysis/precedence.ts:analyzePrecedence": {
+        "cyclomaticComplexity": 14,
+        "length": 109,
+        "parameters": 2
+      },
+      "src/analysis/resource.ts:addConstraint": {
+        "cyclomaticComplexity": 1,
+        "length": 14,
+        "parameters": 8
+      },
+      "src/analysis/resource.ts:buildResourceArc": {
+        "cyclomaticComplexity": 5,
+        "length": 17,
+        "parameters": 7
+      },
+      "src/analysis/resource.ts:scheduleCritical": {
+        "cyclomaticComplexity": 27,
+        "length": 131,
+        "parameters": 6
+      },
+      "src/analysis/resource.ts:scheduleTasks": {
+        "cyclomaticComplexity": 23,
+        "length": 224,
+        "parameters": 3
+      },
+      "src/analysis/service.ts:analyzeValidatedDocument": {
+        "cyclomaticComplexity": 17,
+        "length": 93,
+        "parameters": 5
+      },
+      "src/analysis/target-temporal-input.ts:projectTargetTemporalInputs": {
+        "cyclomaticComplexity": 17,
+        "length": 126,
+        "parameters": 1
+      },
+      "src/analysis/target-temporal-input.ts:relationship": {
+        "cyclomaticComplexity": 3,
+        "length": 44,
+        "parameters": 7
+      },
+      "src/analysis/temporal-deadline.ts:currentState": {
+        "cyclomaticComplexity": 13,
+        "length": 104,
+        "parameters": 3
+      },
+      "src/analysis/temporal-deadline.ts:deadlineView": {
+        "cyclomaticComplexity": 68,
+        "length": 346,
+        "parameters": 7
+      },
+      "src/analysis/temporal-resource.ts:schedule": {
+        "cyclomaticComplexity": 18,
+        "length": 207,
+        "parameters": 4
+      },
+      "src/application/advance-history.ts:guard": {
+        "cyclomaticComplexity": 13,
+        "length": 37,
+        "parameters": 7
+      },
+      "src/application/advance-history.ts:prepareAdvanceHistory": {
+        "cyclomaticComplexity": 24,
+        "length": 179,
+        "parameters": 3
+      },
+      "src/application/cli-facade.ts:createCliApplicationFacade": {
+        "cyclomaticComplexity": 1,
+        "length": 132,
+        "parameters": 2
+      },
+      "src/application/contract7-assurance.ts:checkDocument": {
+        "cyclomaticComplexity": 17,
+        "length": 70,
+        "parameters": 2
+      },
+      "src/application/contract7-assurance.ts:temporalInputs": {
+        "cyclomaticComplexity": 19,
+        "length": 48,
+        "parameters": 2
+      },
+      "src/application/contract7-mutation.ts:lifecycleResult": {
+        "cyclomaticComplexity": 13,
+        "length": 108,
+        "parameters": 3
+      },
+      "src/application/editor-dag-focus.ts:inspectEditorDagFocus": {
+        "cyclomaticComplexity": 23,
+        "length": 117,
+        "parameters": 2
+      },
+      "src/application/next.ts:selectNextTasksFromAnalysis": {
+        "cyclomaticComplexity": 18,
+        "length": 100,
+        "parameters": 3
+      },
+      "src/application/target-actuals-advance.ts:planTargetActualsAdvance": {
+        "cyclomaticComplexity": 13,
+        "length": 130,
+        "parameters": 3
+      },
+      "src/application/target-actuals-analysis.ts:analyzeTargetActualsDocument": {
+        "cyclomaticComplexity": 6,
+        "length": 114,
+        "parameters": 3
+      },
+      "src/application/target-actuals-analysis.ts:selectTargetActualsTasks": {
+        "cyclomaticComplexity": 16,
+        "length": 121,
+        "parameters": 3
+      },
+      "src/application/target-actuals-mutation.ts:eventPayloadMatches": {
+        "cyclomaticComplexity": 21,
+        "length": 50,
+        "parameters": 3
+      },
+      "src/application/target-actuals-mutation.ts:planTargetLifecycleMutation": {
+        "cyclomaticComplexity": 13,
+        "length": 141,
+        "parameters": 4
+      },
+      "src/application/target-assurance-inspection.ts:inspectTargetPlanAssurance": {
+        "cyclomaticComplexity": 15,
+        "length": 152,
+        "parameters": 4
+      },
+      "src/application/target-assurance-write.ts:persistTargetPlanAssuranceResult": {
+        "cyclomaticComplexity": 22,
+        "length": 115,
+        "parameters": 4
+      },
+      "src/application/target-governance-init.ts:requestError": {
+        "cyclomaticComplexity": 45,
+        "length": 100,
+        "parameters": 1
+      },
+      "src/application/target-governance-project.ts:getTargetGovernanceProjectMetadata": {
+        "cyclomaticComplexity": 27,
+        "length": 104,
+        "parameters": 3
+      },
+      "src/application/target-historical-graph.ts:analysisProjection": {
+        "cyclomaticComplexity": 13,
+        "length": 143,
+        "parameters": 2
+      },
+      "src/application/target-historical-graph.ts:causeDiagnostic": {
+        "cyclomaticComplexity": 23,
+        "length": 53,
+        "parameters": 2
+      },
+      "src/application/target-historical-graph.ts:renderTargetHistoricalGraphText": {
+        "cyclomaticComplexity": 27,
+        "length": 54,
+        "parameters": 1
+      },
+      "src/application/target-historical-graph.ts:result": {
+        "cyclomaticComplexity": 22,
+        "length": 55,
+        "parameters": 2
+      },
+      "src/application/target-historical-graph.ts:targetHistoricalGraphResultToJson": {
+        "cyclomaticComplexity": 45,
+        "length": 76,
+        "parameters": 1
+      },
+      "src/application/target-project.ts:getTargetProjectMetadata": {
+        "cyclomaticComplexity": 21,
+        "length": 61,
+        "parameters": 3
+      },
+      "src/application/target-temporal-analysis.ts:(anonymous)": {
+        "cyclomaticComplexity": 17,
+        "length": 25,
+        "parameters": 0
+      },
+      "src/application/target-temporal-analysis.ts:projectTargetTemporalSchedule": {
+        "cyclomaticComplexity": 8,
+        "length": 131,
+        "parameters": 4
+      },
+      "src/application/target-unit-migration-candidate.ts:assertCandidatePostconditions": {
+        "cyclomaticComplexity": 16,
+        "length": 60,
+        "parameters": 4
+      },
+      "src/application/target-unit-migration-candidate.ts:candidateDurationTokens": {
+        "cyclomaticComplexity": 20,
+        "length": 39,
+        "parameters": 1
+      },
+      "src/application/target-unit-migration-candidate.ts:grammar6MigrationFailure": {
+        "cyclomaticComplexity": 17,
+        "length": 41,
+        "parameters": 3
+      },
+      "src/application/target-unit-migration-candidate.ts:planTargetGrammar6UnitMigrationCandidate": {
+        "cyclomaticComplexity": 15,
+        "length": 195,
+        "parameters": 4
+      },
+      "src/application/target-unit-migration-candidate.ts:planTargetUnitMigrationCandidate": {
+        "cyclomaticComplexity": 8,
+        "length": 120,
+        "parameters": 4
+      },
+      "src/application/target-velocity-observation.ts:observeTargetProjectVelocity": {
+        "cyclomaticComplexity": 18,
+        "length": 62,
+        "parameters": 3
+      },
+      "src/assurance/advance.ts:(anonymous)": {
+        "cyclomaticComplexity": 43,
+        "length": 224,
+        "parameters": 0
+      },
+      "src/assurance/advance.ts:extensionFor": {
+        "cyclomaticComplexity": 1,
+        "length": 234,
+        "parameters": 2
+      },
+      "src/assurance/advance.ts:planTargetPlanAssuranceAdvance": {
+        "cyclomaticComplexity": 14,
+        "length": 111,
+        "parameters": 3
+      },
+      "src/assurance/authority.ts:baseSafeStopReasons": {
+        "cyclomaticComplexity": 21,
+        "length": 56,
+        "parameters": 2
+      },
+      "src/assurance/canonical.ts:encodeCanonicalJson": {
+        "cyclomaticComplexity": 18,
+        "length": 67,
+        "parameters": 1
+      },
+      "src/assurance/compatibility.ts:getPlanAssuranceProjectMetadata": {
+        "cyclomaticComplexity": 22,
+        "length": 78,
+        "parameters": 3
+      },
+      "src/assurance/evaluate.ts:compareSealComponents": {
+        "cyclomaticComplexity": 17,
+        "length": 103,
+        "parameters": 5
+      },
+      "src/assurance/evaluate.ts:deriveRelations": {
+        "cyclomaticComplexity": 24,
+        "length": 101,
+        "parameters": 2
+      },
+      "src/assurance/evaluate.ts:evaluatePlanAssurance": {
+        "cyclomaticComplexity": 94,
+        "length": 415,
+        "parameters": 1
+      },
+      "src/assurance/mutation.ts:mutationRequestShapeError": {
+        "cyclomaticComplexity": 24,
+        "length": 41,
+        "parameters": 2
+      },
+      "src/assurance/mutation.ts:outcomeRequestError": {
+        "cyclomaticComplexity": 27,
+        "length": 47,
+        "parameters": 1
+      },
+      "src/assurance/mutation.ts:planBatchEdits": {
+        "cyclomaticComplexity": 42,
+        "length": 182,
+        "parameters": 4
+      },
+      "src/assurance/mutation.ts:planInitialSeal": {
+        "cyclomaticComplexity": 19,
+        "length": 119,
+        "parameters": 4
+      },
+      "src/assurance/mutation.ts:planOutcome": {
+        "cyclomaticComplexity": 16,
+        "length": 72,
+        "parameters": 3
+      },
+      "src/assurance/mutation.ts:planReseal": {
+        "cyclomaticComplexity": 17,
+        "length": 86,
+        "parameters": 3
+      },
+      "src/assurance/mutation.ts:planTargetPlanAssuranceMutation": {
+        "cyclomaticComplexity": 24,
+        "length": 184,
+        "parameters": 4
+      },
+      "src/assurance/mutation.ts:relationRequestError": {
+        "cyclomaticComplexity": 23,
+        "length": 50,
+        "parameters": 1
+      },
+      "src/assurance/source.ts:frontierInputs": {
+        "cyclomaticComplexity": 20,
+        "length": 67,
+        "parameters": 1
+      },
+      "src/cli.ts:renderDiagnostic": {
+        "cyclomaticComplexity": 40,
+        "length": 194,
+        "parameters": 3
+      },
+      "src/cli.ts:runMilestoneAcceptance": {
+        "cyclomaticComplexity": 54,
+        "length": 100,
+        "parameters": 2
+      },
+      "src/command/actuals-usage.ts:validateValues": {
+        "cyclomaticComplexity": 24,
+        "length": 87,
+        "parameters": 1
+      },
+      "src/command/assurance-discovery.ts:milestoneAcceptanceDescriptor": {
+        "cyclomaticComplexity": 16,
+        "length": 50,
+        "parameters": 1
+      },
+      "src/command/assurance-usage.ts:validateValues": {
+        "cyclomaticComplexity": 20,
+        "length": 65,
+        "parameters": 1
+      },
+      "src/command/discovery.ts:projectInitDescriptor": {
+        "cyclomaticComplexity": 1,
+        "length": 103,
+        "parameters": 0
+      },
+      "src/command/registry.ts:valueOption": {
+        "cyclomaticComplexity": 17,
+        "length": 17,
+        "parameters": 2
+      },
+      "src/command/usage.ts:validateDescriptorArguments": {
+        "cyclomaticComplexity": 42,
+        "length": 239,
+        "parameters": 2
+      },
+      "src/conversion/mermaid-import.ts:importProfile": {
+        "cyclomaticComplexity": 25,
+        "length": 102,
+        "parameters": 3
+      },
+      "src/conversion/mermaid-import.ts:parseHeader": {
+        "cyclomaticComplexity": 20,
+        "length": 72,
+        "parameters": 2
+      },
+      "src/conversion/mermaid-import.ts:serializeProfileRecords": {
+        "cyclomaticComplexity": 16,
+        "length": 74,
+        "parameters": 1
+      },
+      "src/conversion/mermaid-import.ts:validateRecordShape": {
+        "cyclomaticComplexity": 32,
+        "length": 104,
+        "parameters": 1
+      },
+      "src/conversion/mermaid.ts:exportMermaid": {
+        "cyclomaticComplexity": 17,
+        "length": 117,
+        "parameters": 2
+      },
+      "src/editing/unified-diff.ts:createUnifiedDiff": {
+        "cyclomaticComplexity": 16,
+        "length": 60,
+        "parameters": 3
+      },
+      "src/formatter/source-formatter.ts:canonicalFieldValue": {
+        "cyclomaticComplexity": 27,
+        "length": 81,
+        "parameters": 1
+      },
+      "src/governance/authority.ts:normalizeGovernanceRequest": {
+        "cyclomaticComplexity": 20,
+        "length": 53,
+        "parameters": 1
+      },
+      "src/guidance/profile.ts:makeSurface": {
+        "cyclomaticComplexity": 17,
+        "length": 62,
+        "parameters": 2
+      },
+      "src/guidance/validator.ts:checkEvidence": {
+        "cyclomaticComplexity": 8,
+        "length": 48,
+        "parameters": 7
+      },
+      "src/guidance/validator.ts:validateAgentGuidanceProfile": {
+        "cyclomaticComplexity": 91,
+        "length": 385,
+        "parameters": 1
+      },
+      "src/help/assurance-guide.ts:getAssuranceGuide": {
+        "cyclomaticComplexity": 16,
+        "length": 53,
+        "parameters": 2
+      },
+      "src/history/advance-history.ts:assessAdvanceHistorySafety": {
+        "cyclomaticComplexity": 36,
+        "length": 195,
+        "parameters": 1
+      },
+      "src/history/advance-history.ts:deriveAdvanceDestructiveRecords": {
+        "cyclomaticComplexity": 17,
+        "length": 136,
+        "parameters": 3
+      },
+      "src/history/advance-history.ts:myersOperations": {
+        "cyclomaticComplexity": 31,
+        "length": 96,
+        "parameters": 2
+      },
+      "src/history/advance-history.ts:rawByteEditsV1": {
+        "cyclomaticComplexity": 16,
+        "length": 61,
+        "parameters": 2
+      },
+      "src/history/git-probe.ts:captureAdvanceHistoryBaseline": {
+        "cyclomaticComplexity": 43,
+        "length": 380,
+        "parameters": 2
+      },
+      "src/history/git-probe.ts:historicalEvidenceResult": {
+        "cyclomaticComplexity": 27,
+        "length": 33,
+        "parameters": 5
+      },
+      "src/history/git-probe.ts:probeGitHistory": {
+        "cyclomaticComplexity": 76,
+        "length": 404,
+        "parameters": 2
+      },
+      "src/history/git-probe.ts:probeHistoricalGitEvidence": {
+        "cyclomaticComplexity": 87,
+        "length": 613,
+        "parameters": 2
+      },
+      "src/history/git-probe.ts:recheckAdvanceHistoryBaseline": {
+        "cyclomaticComplexity": 23,
+        "length": 83,
+        "parameters": 3
+      },
+      "src/history/git-probe.ts:unavailable": {
+        "cyclomaticComplexity": 19,
+        "length": 38,
+        "parameters": 3
+      },
+      "src/history/git-probe.ts:unavailableAdvanceBaseline": {
+        "cyclomaticComplexity": 31,
+        "length": 30,
+        "parameters": 3
+      },
+      "src/history/historical-graph.ts:canonicalAdvanceAttempt": {
+        "cyclomaticComplexity": 30,
+        "length": 103,
+        "parameters": 4
+      },
+      "src/history/historical-graph.ts:evidenceBindingValid": {
+        "cyclomaticComplexity": 22,
+        "length": 31,
+        "parameters": 1
+      },
+      "src/history/historical-graph.ts:processSnapshot": {
+        "cyclomaticComplexity": 15,
+        "length": 127,
+        "parameters": 1
+      },
+      "src/history/historical-graph.ts:reconstructHistoricalLinearHistory": {
+        "cyclomaticComplexity": 74,
+        "length": 504,
+        "parameters": 2
+      },
+      "src/history/historical-transition.ts:classifyHistoricalTransition": {
+        "cyclomaticComplexity": 24,
+        "length": 192,
+        "parameters": 3
+      },
+      "src/history/historical-transition.ts:projectHistoricalTransitionSequence": {
+        "cyclomaticComplexity": 57,
+        "length": 211,
+        "parameters": 1
+      },
+      "src/history/historical-transition.ts:taskSemantic": {
+        "cyclomaticComplexity": 17,
+        "length": 47,
+        "parameters": 1
+      },
+      "src/history/milestone-acceptance-history.ts:evaluateCheckpoint": {
+        "cyclomaticComplexity": 11,
+        "length": 110,
+        "parameters": 1
+      },
+      "src/history/milestone-acceptance-history.ts:migrationCauses": {
+        "cyclomaticComplexity": 25,
+        "length": 91,
+        "parameters": 3
+      },
+      "src/history/milestone-acceptance-history.ts:reconstructHistoricalMilestoneAcceptance": {
+        "cyclomaticComplexity": 22,
+        "length": 98,
+        "parameters": 1
+      },
+      "src/history/project-history.ts:summaryForTask": {
+        "cyclomaticComplexity": 53,
+        "length": 161,
+        "parameters": 6
+      },
+      "src/history/velocity-observation.ts:recordedSelection": {
+        "cyclomaticComplexity": 16,
+        "length": 81,
+        "parameters": 2
+      },
+      "src/migration/grammar-boundary.ts:selectExactDurationGrammarBoundary": {
+        "cyclomaticComplexity": 30,
+        "length": 77,
+        "parameters": 3
+      },
+      "src/milestone-acceptance/advance.ts:planMilestoneAcceptanceAdvance": {
+        "cyclomaticComplexity": 25,
+        "length": 60,
+        "parameters": 2
+      },
+      "src/milestone-acceptance/mutation.ts:receiptBlock": {
+        "cyclomaticComplexity": 16,
+        "length": 13,
+        "parameters": 3
+      },
+      "src/milestone-acceptance/source.ts:parseMilestoneAcceptanceSource": {
+        "cyclomaticComplexity": 29,
+        "length": 164,
+        "parameters": 2
+      },
+      "src/model/calendar-arithmetic.ts:projectRelativeCalendarValue": {
+        "cyclomaticComplexity": 8,
+        "length": 105,
+        "parameters": 3
+      },
+      "src/model/calendar.ts:parseDeclaredCalendarValue": {
+        "cyclomaticComplexity": 16,
+        "length": 64,
+        "parameters": 1
+      },
+      "src/mutation/actuals.ts:planLifecycleEdits": {
+        "cyclomaticComplexity": 19,
+        "length": 85,
+        "parameters": 5
+      },
+      "src/mutation/milestone.ts:definitionError": {
+        "cyclomaticComplexity": 16,
+        "length": 37,
+        "parameters": 2
+      },
+      "src/mutation/milestone.ts:planSet": {
+        "cyclomaticComplexity": 26,
+        "length": 38,
+        "parameters": 4
+      },
+      "src/mutation/milestone.ts:setRequestError": {
+        "cyclomaticComplexity": 37,
+        "length": 92,
+        "parameters": 2
+      },
+      "src/mutation/planner.ts:planValidatedMutationRequest": {
+        "cyclomaticComplexity": 9,
+        "length": 102,
+        "parameters": 6
+      },
+      "src/mutation/project.ts:planSet": {
+        "cyclomaticComplexity": 27,
+        "length": 85,
+        "parameters": 4
+      },
+      "src/mutation/project.ts:requestError": {
+        "cyclomaticComplexity": 43,
+        "length": 149,
+        "parameters": 2
+      },
+      "src/mutation/resource.ts:setRequestError": {
+        "cyclomaticComplexity": 21,
+        "length": 37,
+        "parameters": 1
+      },
+      "src/mutation/source.ts:leadingCommentStart": {
+        "cyclomaticComplexity": 9,
+        "length": 119,
+        "parameters": 3
+      },
+      "src/mutation/task.ts:planSetTask": {
+        "cyclomaticComplexity": 72,
+        "length": 252,
+        "parameters": 4
+      },
+      "src/mutation/task.ts:setRequestError": {
+        "cyclomaticComplexity": 54,
+        "length": 154,
+        "parameters": 2
+      },
+      "src/mutation/task.ts:taskDefinitionError": {
+        "cyclomaticComplexity": 24,
+        "length": 63,
+        "parameters": 2
+      },
+      "src/parser/document-parser.ts:parseBlockText": {
+        "cyclomaticComplexity": 19,
+        "length": 95,
+        "parameters": 3
+      },
+      "src/parser/document-parser.ts:parseDocumentWithProfile": {
+        "cyclomaticComplexity": 38,
+        "length": 271,
+        "parameters": 3
+      },
+      "src/parser/document-parser.ts:parseNestedEstimate": {
+        "cyclomaticComplexity": 16,
+        "length": 87,
+        "parameters": 5
+      },
+      "src/parser/document-parser.ts:scalarFieldValue": {
+        "cyclomaticComplexity": 68,
+        "length": 205,
+        "parameters": 4
+      },
+      "src/parser/document-parser.ts:splitTagItems": {
+        "cyclomaticComplexity": 18,
+        "length": 31,
+        "parameters": 1
+      },
+      "src/recommendation/explanation-validation.ts:validateDescriptionSources": {
+        "cyclomaticComplexity": 24,
+        "length": 111,
+        "parameters": 5
+      },
+      "src/recommendation/explanation-validation.ts:validateRecommendationAnalysis": {
+        "cyclomaticComplexity": 121,
+        "length": 362,
+        "parameters": 1
+      },
+      "src/recommendation/explanation-validation.ts:validateScalar": {
+        "cyclomaticComplexity": 16,
+        "length": 34,
+        "parameters": 1
+      },
+      "src/recommendation/explanation-validation.ts:validateValue": {
+        "cyclomaticComplexity": 21,
+        "length": 45,
+        "parameters": 1
+      },
+      "src/recommendation/explanation.ts:addDescription": {
+        "cyclomaticComplexity": 1,
+        "length": 27,
+        "parameters": 7
+      },
+      "src/recommendation/explanation.ts:addResourceWitness": {
+        "cyclomaticComplexity": 1,
+        "length": 111,
+        "parameters": 4
+      },
+      "src/recommendation/override.ts:sourceContractError": {
+        "cyclomaticComplexity": 43,
+        "length": 146,
+        "parameters": 2
+      },
+      "src/recommendation/override.ts:validateOverride": {
+        "cyclomaticComplexity": 23,
+        "length": 216,
+        "parameters": 2
+      },
+      "src/recommendation/ranking.ts:descendingNumber": {
+        "cyclomaticComplexity": 107,
+        "length": 467,
+        "parameters": 2
+      },
+      "src/schema/registry.ts:getJsonSchemaResult": {
+        "cyclomaticComplexity": 18,
+        "length": 69,
+        "parameters": 2
+      },
+      "src/semantic/check.ts:checkDocument": {
+        "cyclomaticComplexity": 17,
+        "length": 67,
+        "parameters": 2
+      },
+      "src/semantic/check.ts:temporalInputs": {
+        "cyclomaticComplexity": 19,
+        "length": 53,
+        "parameters": 2
+      },
+      "src/semantic/target-validator.ts:validateTargetGrammar3Document": {
+        "cyclomaticComplexity": 16,
+        "length": 59,
+        "parameters": 3
+      },
+      "src/semantic/target-validator.ts:validateTargetGrammar4Document": {
+        "cyclomaticComplexity": 17,
+        "length": 60,
+        "parameters": 3
+      },
+      "src/semantic/target-validator.ts:validateTargetGrammar5Document": {
+        "cyclomaticComplexity": 18,
+        "length": 61,
+        "parameters": 3
+      },
+      "src/semantic/target-validator.ts:validateTargetGrammar6Document": {
+        "cyclomaticComplexity": 19,
+        "length": 60,
+        "parameters": 3
+      },
+      "src/semantic/validator.ts:makeDiagnostic": {
+        "cyclomaticComplexity": 1,
+        "length": 23,
+        "parameters": 8
+      },
+      "src/semantic/validator.ts:validateFieldConstraints": {
+        "cyclomaticComplexity": 86,
+        "length": 382,
+        "parameters": 3
+      },
+      "src/semantic/validator.ts:validateGraph": {
+        "cyclomaticComplexity": 80,
+        "length": 390,
+        "parameters": 3
+      },
+      "src/semantic/validator.ts:validatePlanAssuranceSource": {
+        "cyclomaticComplexity": 98,
+        "length": 469,
+        "parameters": 2
+      },
+      "src/semantic/validator.ts:validateWorkEvents": {
+        "cyclomaticComplexity": 27,
+        "length": 176,
+        "parameters": 2
+      },
+      "src/session/document-session.ts:compute": {
+        "cyclomaticComplexity": 24,
+        "length": 89,
+        "parameters": 1
+      },
+      "src/session/document-session.ts:format": {
+        "cyclomaticComplexity": 3,
+        "length": 114,
+        "parameters": 2
+      }
+    }
+  }
+}

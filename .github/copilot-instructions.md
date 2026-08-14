@@ -5,9 +5,10 @@ Treat `AGENTS.md` as the source of truth for repository guidance shared by Codex
 Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
-- The current published beta is `perttool@0.9.0`; npm reports
-  `beta=latest=0.9.0` and no `alpha`. Version `0.8.1` is the compatible
-  Grammar 6 and CLI Contract 7 rollback pin.
+- The current published beta is `perttool@0.9.2`; npm reports
+  `beta=0.9.2`, `latest=0.9.0`, and no `alpha`. Version `0.9.0` is the exact
+  suffix-free Grammar 7 and CLI Contract 8 rollback pin, while version `0.8.1`
+  remains the compatible Grammar 6 and CLI Contract 7 rollback pin.
 - The current source atomically activates Grammar 7 and CLI
   Contract 8 with 53 commands, 23 root schemas, 129 root and Node exports,
   and `Perttool.NextResult.v7`. All milestone-acceptance work is complete and
@@ -36,6 +37,17 @@ Mandatory summary:
   closed with the `bug` label retained. All five tasks are complete and no
   task is startable. npm `latest=0.9.0`, plan advance, public VSIX publication,
   and unrelated work remain separate.
+- The accepted `plans/release-0.9.2.pert` emergency patch keeps valid Point
+  plans without declared velocity Point-valued through analysis and Next,
+  leaves velocity forecasts null, and reports calendar conversion as
+  unavailable. Release commit and peeled `v0.9.2` target `b47a0a4`; CI,
+  GitHub, npm beta, and the retained candidate agree; Issue #15 is closed.
+  Grammar 7, Contract 8, public identities, npm `latest`, plan advance, public
+  VSIX publication, and unrelated work remain unchanged and separate.
+- Install the exact Python tools from `requirements-static-analysis.txt` before
+  the complete repository gate. `npm run check:static` composes TypeScript
+  type checking with pinned jscpd duplicate and Lizard complexity ratchets;
+  `npm run check` includes that gate and all repository acceptance checks.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
   tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`

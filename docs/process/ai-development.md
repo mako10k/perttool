@@ -53,10 +53,13 @@ AGENTS.md                         shared canonical guidance
 ├── .codex/config.toml               conservative project-local defaults
 ├── docs/process/ai-development.md   rationale and operating workflow
 ├── package.json                     executable repository and workspace check
-│   └── npm run check                root/private-adapter typecheck, test, language, docs, self-use, isolated packages
+│   ├── npm run check:static         typecheck plus duplicate and complexity ratchets
+│   └── npm run check                static analysis, test, language, docs, self-use, isolated packages
 ├── adapters/lsp                     private read-only language-server workspace
 ├── adapters/vscode                  private read-only VS Code workspace extension
 ├── scripts/check-english-baseline.mjs  exact Japanese-script allowlist check
+├── scripts/check-duplication.mjs       jscpd clone-count and percentage ratchet
+├── scripts/check-complexity.mjs        Lizard function-metric ratchet
 ├── scripts/check-docs.sh            documentation sub-check
 ├── scripts/publish-npm.sh           npm dry-run and explicit release-tarball publish gate
 └── .github/workflows/ci.yml         same npm check in CI
@@ -88,11 +91,13 @@ The common checks at this stage are:
 
 ```sh
 npm ci
+python -m pip install --requirement requirements-static-analysis.txt
 npm run check
 git diff --check
 ```
 
-Depending on the change scope, first run `npm run typecheck`, `npm test`,
+Depending on the change scope, first run `npm run typecheck`, `npm run
+check:duplication`, `npm run check:complexity`, `npm run check:static`, `npm test`,
 `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`,
 `npm run check:mcp-package`, or `npm run check:vsix-shell` as narrow checks.
 The language
@@ -601,7 +606,8 @@ This trial confirmed that main and other worktrees can remain clean and file con
 The TypeScript scaffold fixes the following.
 
 - Node.js 22 or later, npm, ESM, and TypeScript 7.0
-- `npm ci`, `npm run build`, `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:link`, `npm run check:package`, and `npm run check`
+- `npm ci`, `npm run build`, `npm run typecheck`, `npm run check:duplication`, `npm run check:complexity`, `npm run check:static`, `npm test`, `npm run test:e2e`, `npm run check:link`, `npm run check:package`, and `npm run check`
+- CI installs exact jscpd `5.0.15` from the npm lockfile and Lizard `1.23.0` from `requirements-static-analysis.txt` before running the same static-analysis gate
 - CI runs `npm run check` on Node.js 22 and 24
 - Sources are in `src/`, tests/fixtures are in `test/`, and generated artifacts are in `dist/`
 - `node_modules/`, `dist/`, coverage, and tsbuildinfo are not tracked by Git

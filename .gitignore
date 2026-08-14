@@ -2,6 +2,7 @@
 
 # Node.js / TypeScript implementation artifacts
 node_modules/
+.venv/
 dist/
 coverage/
 *.tsbuildinfo
