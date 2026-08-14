@@ -95,16 +95,16 @@ test("0.9.3 retains Contract 8 while restoring all three emergency gates", async
   const lockfile = JSON.parse(lockfileText);
   const lspManifest = JSON.parse(lspManifestText);
   const mcpManifest = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.9.3");
-  assert.equal(lockfile.version, "0.9.3");
-  assert.equal(lockfile.packages[""].version, "0.9.3");
-  assert.equal(lspManifest.peerDependencies.perttool, "0.9.3");
-  assert.equal(mcpManifest.peerDependencies.perttool, "0.9.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.3"/u);
-  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.3"/u);
+  assert.equal(manifest.version, "0.9.4");
+  assert.equal(lockfile.version, "0.9.4");
+  assert.equal(lockfile.packages[""].version, "0.9.4");
+  assert.equal(lspManifest.peerDependencies.perttool, "0.9.4");
+  assert.equal(mcpManifest.peerDependencies.perttool, "0.9.4");
+  assert.match(versionSource, /TOOL_VERSION = "0\.9\.4"/u);
+  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.4"/u);
   assert.match(changelog, /^## \[0\.9\.3\] - 2026-08-14$/m);
   assert.match(readme, /Version `0\.9\.3` is the published compatible Contract 8 emergency patch/u);
-  assert.match(planIndex, /All forty-one plans pass/u);
+  assert.match(planIndex, /All forty-two plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.3\.pert/u);
 
   assert.equal(perttool.COMMAND_REGISTRY.length, 53);

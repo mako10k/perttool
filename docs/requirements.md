@@ -3046,6 +3046,41 @@ release, local exact installation, and Issues #14, #16, and #17 completion only
 after every predecessor gate passes. The authoritative procedure is
 [`docs/process/0.9.3-release.md`](process/0.9.3-release.md).
 
+### 21.20 Retained milestone acceptance preservation patch criteria
+
+The compatible correction for GitHub Issue #19 is suffix-free `0.9.4`. It
+retains Grammar 7 and CLI Contract 8 and moves only npm `beta` during
+publication.
+
+1. Derive protected acceptance-record spans from every milestone retained in
+   the final advance graph, not only milestones whose state changes.
+2. Preserve every criterion set and receipt owned by a retained milestone
+   byte-for-byte across reached-frontier, unchanged successor, branch, and
+   project-finish topologies.
+3. Continue to contract every criterion set and receipt owned by a milestone
+   actually removed by advance.
+4. Check the complete composed candidate as Grammar 7 and CLI Contract 8 and
+   project its diagnostics together with operation diagnostics instead of
+   reusing only the lower Contract 7 result.
+5. Introduce no `PTMAC-102` diagnostic relative to a warnings-clean source,
+   and pass `document check --warnings-as-errors` for a successful candidate.
+6. Keep preview, separate-output, and clean tracked in-place write candidates
+   byte-identical.
+7. Retain milestone acceptance, plan assurance, governance, history safety,
+   source and digest race, and `--force-history-loss` boundaries unchanged.
+8. Reproduce the reported image-platform failure read-only and prove that all
+   six retained criterion sets survive while only the removed milestone's set
+   contracts.
+9. Retain all 53 commands, 23 root schemas, 129 root and Node exports, 45 Core
+   exports, result identities, and public authority meanings.
+10. Pass the complete repository, documentation, isolated-package, and
+    installed exact-package gates before release.
+11. Publish one immutable tarball to one GitHub prerelease and npm `beta`,
+    verify the exact `0.9.3` rollback, and close Issue #19 only after durable
+    acceptance.
+12. Keep npm `latest`, public VSIX publication, consumer-plan mutation, and
+    unrelated feature work separate.
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

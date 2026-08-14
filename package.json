@@ -1,6 +1,6 @@
 {
   "name": "perttool",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Document-based PERT/CPM and resource scheduling CLI",
   "keywords": [
     "pert",
@@ -61,6 +61,9 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && npm run typecheck --workspace perttool-language-server-private && npm run typecheck --workspace perttool-vscode-private && npm run typecheck --workspace perttool-mcp-private",
     "test": "npm run build && node --test test/*.test.mjs",
     "test:e2e": "npm run build && node --test test/e2e.test.mjs",
+    "check:duplication": "node scripts/check-duplication.mjs",
+    "check:complexity": "node scripts/check-complexity.mjs",
+    "check:static": "npm run typecheck && npm run check:duplication && npm run check:complexity",
     "check:english": "node scripts/check-english-baseline.mjs",
     "check:docs": "bash scripts/check-docs.sh",
     "check:lsp-package": "bash scripts/check-lsp-package.sh",
@@ -69,11 +72,12 @@
     "check:link": "bash scripts/check-npm-link.sh",
     "check:package": "bash scripts/check-package.sh",
     "check:self-use": "bash scripts/check-self-use.sh",
-    "check": "npm run typecheck && npm test && npm run check:english && npm run check:docs && npm run check:self-use && npm run check:lsp-package && npm run check:mcp-package && npm run check:vsix-shell && npm run check:link && npm run check:package"
+    "check": "npm run check:static && npm test && npm run check:english && npm run check:docs && npm run check:self-use && npm run check:lsp-package && npm run check:mcp-package && npm run check:vsix-shell && npm run check:link && npm run check:package"
   },
   "devDependencies": {
     "@types/node": "22.20.1",
     "ajv": "^8.20.0",
+    "jscpd": "5.0.15",
     "typescript": "7.0.2"
   }
 }

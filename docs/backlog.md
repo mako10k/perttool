@@ -1011,6 +1011,74 @@ advance, public VSIX publication, and unrelated work remain separate.
 Durable publication and the three completed Issue readbacks are recorded in
 [`0.9.3-release-acceptance.md`](process/0.9.3-release-acceptance.md).
 
+### ADV-006: Preserve acceptance contracts for every retained milestone
+
+Priority: P0
+
+Status: Local correction accepted (2026-08-14); [Issue
+#19](https://github.com/mako10k/perttool/issues/19) remains open pending the
+selected compatible `0.9.4` release
+
+Contract 8 `dag advance` can report a successful, diagnostic-free candidate
+while deleting criterion sets owned by milestones that remain in the residual
+DAG. The resulting plan introduces `PTMAC-102` warnings and cannot pass the
+repository warnings-as-errors gate. This is a destructive correctness defect:
+the current acceptance contract for unfinished work can be lost even though
+the milestone and its successor work remain.
+
+The `0.9.3` composition protects acceptance records for
+`stateChangedMilestoneIds`, but Issue #19 demonstrates that this is narrower
+than the complete retained-milestone ownership boundary. The accepted local
+correction protects exact record spans for `keptMilestoneIds`, retains the
+explicit contraction for `removedMilestoneIds`, and rechecks the final
+composed Contract 8 candidate before projecting diagnostics.
+
+Acceptance:
+
+- criterion sets and receipts for every retained milestone survive unchanged;
+- records for milestones actually removed by advance are still contracted;
+- retained reached-frontier, unchanged successor, branch, and project-finish
+  milestones are covered with interleaved acceptance, assurance, lifecycle,
+  and terminal records;
+- a successful candidate introduces no `PTMAC-102` warning relative to a
+  warnings-clean source and passes `document check --warnings-as-errors`;
+- preview, separate output, in-place write, and installed-package candidates
+  remain byte-identical; and
+- acceptance, assurance, governance, history, source/digest race, and
+  `--force-history-loss` boundaries remain fail-closed and unchanged.
+
+The implementation and real-plan evidence are recorded in
+[`issue-19-advance-criterion-acceptance.md`](process/issue-19-advance-criterion-acceptance.md),
+and the llmthink RCA is
+[`issue-19-advance-criterion-rca.think`](process/issue-19-advance-criterion-rca.think).
+Release publication, Issue closure, npm `latest`, public VSIX publication, and
+consumer-plan mutation remain separately ordered boundaries.
+
+### STATIC-001: Reduce the reviewed duplicate and complexity baseline
+
+Priority: P2
+
+Status: Backlog (2026-08-14); [Issue
+#18](https://github.com/mako10k/perttool/issues/18) open
+
+The source static-analysis gate prevents growth beyond its reviewed jscpd
+clone and duplication maxima and prevents new or worsened Lizard violations
+beyond the exact legacy-function baseline. Reduce these findings without
+weakening pinned tool versions, scan scope, thresholds, or ratchet semantics.
+
+Acceptance:
+
+- refactor by semantic owner and retain current public and private-adapter
+  behavior through focused and complete repository checks;
+- reduce at least one jscpd maximum or one Lizard legacy entry per accepted
+  slice;
+- update the baseline only after the corresponding source improvement passes;
+  and
+- do not trade one removed finding for a new clone or complexity violation.
+
+This item does not authorize a public-contract change, release selection,
+publication, remote write, or unrelated implementation cleanup.
+
 ## Recommendation override application and audit
 
 ### MIG-08: Apply validated overrides with durable single-use audit

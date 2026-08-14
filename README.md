@@ -103,6 +103,16 @@ artifact agree; npm reports `beta=0.9.3`, `latest=0.9.0`, and no `alpha`.
 Issues #14, #16, and #17 are closed with release evidence. Plan advance,
 public VSIX publication, and unrelated work remain separate.
 
+Version `0.9.4` is the compatible Contract 8 emergency patch for GitHub Issue
+#19. It preserves criterion sets and receipts for every milestone retained by
+`dag advance`, validates the complete final candidate before history or
+persistence decisions, and projects deterministic candidate diagnostics. It
+also makes pinned jscpd duplicate and Lizard complexity ratchets part of the
+repository and CI static-analysis gate. Grammar 7, CLI Contract 8, all 53
+commands, 23 root schemas, 129 root and Node exports, 45 Core exports, public
+authority, and force semantics remain unchanged. Version `0.9.3` is the exact
+rollback pin.
+
 The private adapters now project that same Contract 8 acceptance model without
 adding write authority. The LSP negotiates a separate version-bound milestone
 acceptance result, the VSIX presents criteria, blockers, and receipt provenance
@@ -122,19 +132,19 @@ After beta publication, use `npx` for an occasional Contract 8 invocation and
 select the version explicitly:
 
 ```sh
-npx --yes --package=perttool@0.9.3 -- perttool --version
-npx --yes --package=perttool@0.9.3 -- perttool document check PLAN.pert
-npx --yes --package=perttool@0.9.3 -- perttool dag next PLAN.pert --format json
-npx --yes --package=perttool@0.9.3 -- perttool plan-assurance show PLAN.pert --format json
+npx --yes --package=perttool@0.9.4 -- perttool --version
+npx --yes --package=perttool@0.9.4 -- perttool document check PLAN.pert
+npx --yes --package=perttool@0.9.4 -- perttool dag next PLAN.pert --format json
+npx --yes --package=perttool@0.9.4 -- perttool plan-assurance show PLAN.pert --format json
 ```
 
 The equivalent explicit `npm exec` form is:
 
 ```sh
-npm exec --yes --package=perttool@0.9.3 -- perttool --version
-npm exec --yes --package=perttool@0.9.3 -- perttool document check PLAN.pert
-npm exec --yes --package=perttool@0.9.3 -- perttool dag analyze PLAN.pert
-npm exec --yes --package=perttool@0.9.3 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
+npm exec --yes --package=perttool@0.9.4 -- perttool --version
+npm exec --yes --package=perttool@0.9.4 -- perttool document check PLAN.pert
+npm exec --yes --package=perttool@0.9.4 -- perttool dag analyze PLAN.pert
+npm exec --yes --package=perttool@0.9.4 -- perttool plan-assurance hash PLAN.pert WORK --kind contract
 ```
 
 `npx` and `npm exec` may download the selected package version into the npm
@@ -148,16 +158,16 @@ Install the Contract 8 CLI globally by exact version when it is used
 regularly:
 
 ```sh
-npm install --global perttool@0.9.3
+npm install --global perttool@0.9.4
 perttool --version
 ```
 
 The accepted `0.9.0` release was separately promoted to both public tags. The
-`0.9.3` publication changes only npm `beta`; until an independent promotion is
+`0.9.4` publication changes only npm `beta`; until an independent promotion is
 authorized, an unqualified global installation continues to select `0.9.0`.
-The exact `0.9.3` pin is the reproducible form for the Issues #14, #16, and #17
-corrections. Version `0.9.2` remains the rollback pin that includes the Issue
-#15 correction.
+The exact `0.9.4` pin is the reproducible form for the Issue #19 correction.
+Version `0.9.3` remains the rollback pin for the Issues #14, #16, and #17
+corrections.
 Contract 6 remains available by exact pinning `perttool@0.6.0`; the pre-schema
 Contract 6 artifact remains available as
 `perttool@0.5.0`. Contract 5,
@@ -611,7 +621,7 @@ the Core and Node subpaths without changing CLI Contract 7; see the
 [`0.7.1` to `0.8.0` migration](docs/process/0.7.1-to-0.8.0-migration.md).
 Version `0.8.1` retains those interfaces and corrects assurance-receipt
 placement in an advance-owned terminal deletion suffix. Versions `0.9.0`,
-`0.9.1`, `0.9.2`, and `0.9.3` use CLI Contract 8.
+`0.9.1`, `0.9.2`, `0.9.3`, and `0.9.4` use CLI Contract 8.
 A complete, known, non-truncated `Perttool.NextResult.v7` with policy
 `recommendation_v1_plus_release_gate_plus_plan_assurance_v1` is required for
 the current source. Start only task IDs in

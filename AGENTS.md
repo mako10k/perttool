@@ -746,6 +746,21 @@ has no ready, recommended, or startable task. Records are
 `docs/process/0.9.3-release-acceptance.md`. npm `latest`, public VSIX
 publication, release-plan advance, and unrelated work remain separate.
 
+The selected compatible `0.9.4` emergency patch is tracked independently in
+`plans/release-0.9.4.pert`. Its six serial tasks total 15p from
+`RELEASE_094_SELF_REVIEW` through `RELEASE_094_ACCEPTANCE`. Self-review and the
+Issue #19 correction are complete. The accepted source retains criterion sets
+and receipts for every milestone kept by `dag advance`, contracts only records
+owned by removed milestones, checks the complete final Contract 8 candidate,
+and merges its diagnostics deterministically. The release source also adds
+pinned jscpd 5.0.15 duplicate and Lizard 1.23.0 complexity ratchets to
+`check:static` and CI without changing Grammar 7, CLI Contract 8, the 53
+commands, 23 root schemas, 129 root and Node exports, 45 Core exports, public
+authority, or force semantics. Source preparation, candidate acceptance,
+publication, Issue #19 closure, and the explicitly authorized canonical plan
+advance remain dependency-ordered gates. npm `latest`, public VSIX publication,
+consumer writes, and unrelated plan advances remain separate.
+
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 
 The explicitly selected project-actuals workstream is tracked independently in
@@ -1129,13 +1144,19 @@ For changes affecting correctness, proceed in the order of requirements/specific
 
 ## Validation
 
-Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all forty-one self-use plans, including the selected `0.9.3`, published `0.9.2`, and published `0.9.1` patches, milestone acceptance, the accepted `0.9.0` and `0.8.0` releases, historical-DAG and adapter-platform workstreams, `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
+Run the repository checks from the root with Node.js 22 or later. CI verifies Node.js 22 and 24. Root `build` and `typecheck` include every private adapter workspace while the public package check excludes `adapters/` from the tarball. `npm run check` includes check/analyze/next validation for all forty-two self-use plans, including the selected `0.9.4`, published `0.9.3`, `0.9.2`, and `0.9.1` patches, milestone acceptance, the accepted `0.9.0` and `0.8.0` releases, historical-DAG and adapter-platform workstreams, `0.7.1` patch, help-guide consistency, plan-assurance, the accepted `0.7.0` and `0.6.0` releases, repository-clean advance correction, advance-history safety, the accepted `0.5.5` and completed `0.5.4`, `0.5.3`, `0.5.2`, `0.5.1`, and `0.5.0` release plans, project-actuals, owner-aware governance, scheduling-and-units macro, SU-M1/SU-M2/SU-M2R/SU-M3/SU-M4/SU-M5 detail, `0.3.0`, and `0.4.0` plans.
 
 ```sh
 npm ci
 npm run check
 git diff --check
 ```
+
+Install the pinned Python tools from `requirements-static-analysis.txt` before
+the complete gate. `npm run check:static` combines TypeScript type checking
+with pinned jscpd duplicate and Lizard complexity ratchets. Narrow static
+checks are `npm run check:duplication`, `npm run check:complexity`, and
+`npm run check:static`; the complete `npm run check` begins with that gate.
 
 For narrow checks, use `npm run typecheck`, `npm test`, `npm run test:e2e`, `npm run check:english`, `npm run check:docs`, `npm run check:lsp-package`, `npm run check:mcp-package`, `npm run check:vsix-shell`, `npm run check:link`, and `npm run check:package`. `check:english` scans tracked and non-ignored untracked text files and permits Japanese-script content only through the exact versioned allowlist. `check:lsp-package` packs the private language server and root Core separately, installs both into a disposable prefix, and exercises exact stdio initialization, diagnostics, GraphView, shutdown, and exit without publishing either artifact. `check:mcp-package` packs and installs the private MCP server beside the exact root package, exercises strict modern stdio, discovery, registered source/digest handling, errors, two-client parity, and no-write identity in a disposable prefix, and publishes nothing. `check:vsix-shell` builds and packages the private eighteen-file offline VSIX, exercises the bundled server and DAG assets, and uses exact `@vscode/test-electron` `3.1.0` to install, activate, replace, and uninstall it in disposable trusted and untrusted VS Code `1.101.0` profiles. It keeps the host cache outside the repository by default and does not install globally or publish. `check:link` links into a temporary user prefix to inspect the CLI and does not change the real user prefix. `check:package` creates a release tarball in a temporary directory; checks exclusion of repository-only files and npm publish normalization dry-run; installs into an isolated prefix; and runs the complete installed-package file-first workflow. `bash scripts/check-docs.sh` is the documentation-only lower-level entry point.
 

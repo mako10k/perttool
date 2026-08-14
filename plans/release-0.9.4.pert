@@ -1,0 +1,149 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_094:
+  version 6
+  title "perttool 0.9.4 Issue 19 emergency correction release"
+  description "Release suffix-free 0.9.4 beta as a compatible Grammar 7 and CLI Contract 8 patch for Issue #19. Preserve all live milestone criterion sets and validate the complete final advance candidate without weakening milestone acceptance, plan assurance, history, governance, static-analysis, or persistence gates. npm latest promotion and unrelated plan advances remain separate."
+  as_of 2026-08-14
+  duration_unit point
+  velocity 15p/1d
+  finish RELEASE_094_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_094_PLANNING_STARTED:
+  title "Version 0.9.4 emergency release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Emergency correction capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Compatibility and safety review capacity"
+  description "Serialize correction, candidate, publication, and durable acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  capacity 1
+
+milestone RELEASE_094_REVIEW_ACCEPTED:
+  title "Version 0.9.4 compatibility review accepted"
+
+milestone RELEASE_094_CORRECTION_ACCEPTED:
+  title "Issue 19 correction accepted"
+
+milestone RELEASE_094_SOURCE_PREPARED:
+  title "Version 0.9.4 release source prepared"
+
+milestone RELEASE_094_CANDIDATE_ACCEPTED:
+  title "Version 0.9.4 release candidate accepted"
+
+milestone RELEASE_094_PUBLISHED:
+  title "Version 0.9.4 published to GitHub and npm beta"
+
+milestone RELEASE_094_ACCEPTED:
+  title "Version 0.9.4 emergency patch accepted"
+
+task RELEASE_094_SELF_REVIEW RELEASE_094_PLANNING_STARTED -> RELEASE_094_REVIEW_ACCEPTED:
+  title "Review the 0.9.4 compatibility and emergency boundary"
+  description "Freeze the exact v0.9.3 public baseline and current beta/latest channels, reproduce Issue #19, accept the compatible patch boundary, and confirm unchanged Grammar 7, CLI Contract 8, public catalogs, authority, force, and acceptance meanings. This task performs no external write."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+  source "ADV-006 Issue #19"
+
+task RELEASE_094_CORRECTION RELEASE_094_REVIEW_ACCEPTED -> RELEASE_094_CORRECTION_ACCEPTED:
+  title "Accept the Issue 19 advance correction"
+  description "Retain acceptance evidence for every milestone kept in the candidate, contract only removed milestones, validate the complete final candidate, merge candidate diagnostics with operation diagnostics, and pass focused regression, history-safety, static-analysis, and documentation gates without bypasses."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+  source "ADV-006 Issue #19"
+
+task RELEASE_094_PREPARATION RELEASE_094_CORRECTION_ACCEPTED -> RELEASE_094_SOURCE_PREPARED:
+  title "Prepare version 0.9.4 release source"
+  description "Align package and lockfile identity, CLI version, adapter peer versions, MCP server identity, CHANGELOG, README, release documentation, tests, goldens, self-use registration, dependency audit, jscpd duplication analysis, Lizard complexity analysis, and beta publication validation. Run the complete Node.js 22 repository and package gates without external writes."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "ADV-006 STATIC-001 Issue #19"
+
+task RELEASE_094_CANDIDATE RELEASE_094_SOURCE_PREPARED -> RELEASE_094_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.9.4 release candidate"
+  description "Commit and recheck the complete release diff; prove package, tag, GitHub Release, and npm version availability; verify beta=0.9.3, latest=0.9.0, and no alpha; verify authenticated routes; retain one immutable tarball outside the worktree; and accept its exact identity and installed Issue 19 behavior. This task performs no external write."
+  duration 2p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+  source "ADV-006 Issue #19"
+
+task RELEASE_094_PUBLISH RELEASE_094_CANDIDATE_ACCEPTED -> RELEASE_094_PUBLISHED:
+  title "Publish version 0.9.4 from one immutable tarball"
+  description "Only after every predecessor gate passes, push and verify the clean release commit and annotated tag, require Node.js 22 and 24 CI, publish one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.9.4 while latest remains 0.9.0."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+  source "ADV-006 Issue #19"
+
+task RELEASE_094_ACCEPTANCE RELEASE_094_PUBLISHED -> RELEASE_094_ACCEPTED:
+  title "Record durable 0.9.4 emergency patch acceptance"
+  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub and npm tarball bytes, registry integrity and metadata, exact and beta installations, the real Issue 19 behavior, compatibility, and the exact 0.9.3 rollback pin. Close Issue #19 only after durable acceptance, then canonically advance this plan without changing npm latest or unrelated plans."
+  duration 1p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "ADV-006 Issue #19"
+
+work_event WE-094-self-review:
+  model 1
+  task RELEASE_094_SELF_REVIEW
+  kind finish
+  occurred_at 2026-08-14T17:38:48+09:00
+  active_time 1h
+  effort 1ph
+
+work_event WE-094-correction:
+  model 1
+  task RELEASE_094_CORRECTION
+  kind finish
+  occurred_at 2026-08-14T17:40:25+09:00
+  active_time 2h
+  effort 2ph
+
+work_event WE-094-preparation:
+  model 1
+  task RELEASE_094_PREPARATION
+  kind finish
+  occurred_at 2026-08-14T17:56:49+09:00
+  active_time 3h
+  effort 3ph

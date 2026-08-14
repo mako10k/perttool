@@ -2,8 +2,10 @@
 
 - Status: Accepted correction target
 - Date: 2026-08-14
-- Scope: GitHub Issues #14, #16, and #17
-- Release target: compatible patch `0.9.3`
+- Scope: GitHub Issues #14, #16, #17, and the post-`0.9.3` Issue #19
+  correction
+- Release targets: compatible patch `0.9.3` for the original three Issues and
+  compatible patch `0.9.4` for Issue #19
 
 ## Purpose
 
@@ -11,14 +13,17 @@ This contract restores behavior already required by Grammar 7 and CLI
 Contract 8. It does not add a command, grammar construct, result identity,
 schema, authority policy, or force boundary.
 
-The correction has three inseparable public outcomes:
+The correction contract has four inseparable public outcomes:
 
 1. read-only plan-assurance inspection accepts a valid Grammar 7 source;
 2. advance composition treats overlapping pure deletion edits as one exact
    deletion union; and
 3. milestone-acceptance evidence contracts with removed milestone
    declarations and remains byte-valid with retained milestones changed to
-   `state reached`.
+   `state reached`; and
+4. every acceptance record owned by every retained milestone remains
+   byte-identical, and the complete composed Contract 8 candidate is checked
+   before its diagnostics are returned.
 
 ## Grammar 7 plan-assurance inspection
 
@@ -67,14 +72,23 @@ records, the composition layer splits that pure deletion around their exact
 source spans. This preserves the accepted evidence needed when the retained
 milestone is removed by a later advance and prevents an orphan receipt.
 
+The same byte-preservation rule applies to every retained milestone, whether
+or not advance changes that milestone's state. Protection is derived from the
+final `keptMilestoneIds` set. Only records owned by `removedMilestoneIds` are
+contracted. Record order, branch topology, a project finish role, or an
+interleaved assurance, lifecycle, or terminal declaration must not narrow
+that ownership boundary.
+
 The acceptance guard still evaluates the exact pre-advance source before
 canonical composition. Criterion satisfaction or waiver is not inferred, and
 no force option bypasses it. Plan-assurance receipt synthesis and history-loss
 proof remain later independent guards over the resulting candidate.
 
-If the composed candidate is invalid, the operation returns the available
-source diagnostics and a non-persistable result. It must not replace those
-diagnostics with an uncaught internal-invariant error.
+The complete composed candidate is checked as Contract 8 before result
+diagnostics are projected. If it is invalid, the operation returns the final
+candidate diagnostics and a non-persistable result. It must not reuse stale
+Contract 7 diagnostics or replace the available diagnostics with an uncaught
+internal-invariant error.
 
 ## Compatibility and exclusions
 
@@ -105,6 +119,12 @@ Repository acceptance must include:
 - preview, `--out`, and clean tracked `--write` byte identity for both advance
   topologies;
 - direct replay of the two reported image-platform revisions without modifying
-  that repository; and
+  that repository;
+- an Issue #19 multi-branch topology in which a lower-layer deletion crosses
+  criterion sets owned by both a state-changed and an unchanged retained
+  milestone, with preview, separate-output, and tracked-write byte identity;
+- read-only replay of the reported image-platform Issue #19 plan, proving that
+  all six retained criterion sets survive, the removed milestone's set is
+  contracted, and the candidate passes warnings-as-errors; and
 - the complete Node.js 22 repository, package, documentation, static-analysis,
   and release-artifact gates before publication.

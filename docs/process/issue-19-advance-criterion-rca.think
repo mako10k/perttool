@@ -1,0 +1,75 @@
+framework DecisionAudit
+
+domain AdvanceCriterionRetention:
+  description "Root-cause analysis for GitHub Issue #19 and ADV-006"
+
+problem P1:
+  "Why can Contract 8 dag advance report a successful candidate while deleting criterion sets owned by milestones retained in the residual DAG?"
+
+step S1:
+  premise PR1:
+    "Acceptance criterion sets and their receipts are milestone-owned records: advance may remove them only when their owning milestone leaves the residual graph"
+
+step S2:
+  evidence EV1:
+    "A read-only preview of image/plans/image-platform.pert at source digest sha256:52e3feb15e3937fbe662a288d500527636ee3db33261c4629f6fa67055d9f7d7 returned ok true, diagnostics empty, and candidate digest sha256:0e68a855416f897657758b8561248087fefca8f0bcc9e9044697dfea36e565c0 while removing six criterion sets for retained milestones"
+    resource:
+      file "../image/plans/image-platform.pert"
+      label "Read-only Issue #19 reproduction operand"
+
+step S3:
+  evidence EV2:
+    "The source document check had only three PTDAG-208 closure warnings; checking the preview candidate added six PTMAC-102 missing-criterion warnings for DETERMINISTIC_RASTER_READY, DETERMINISTIC_BATCH_READY, I2I_GUIDANCE_READY, ADVANCED_IMAGE_EDITING_READY, DETERMINISTIC_COLOR_READY, and EDIT_INTERMEDIATE_PREVIEWS_READY"
+
+step S4:
+  evidence EV3:
+    "Offset inspection found three normalized deletion ranges that crossed seven criterion-set spans: six belonged to retained milestones and one belonged to removed I2I_CONTROL_READY"
+
+step S5:
+  evidence EV4:
+    "milestoneAcceptanceBaseText preserves offsets but masks Grammar 7 acceptance declarations as comment-shaped Grammar 6 trivia; lower-layer assurance deletion ranges can therefore own and delete those masked spans"
+    resource:
+      file "src/milestone-acceptance/source.ts"
+      label "Offset-preserving Contract 8 base projection"
+
+step S6:
+  evidence EV5:
+    "Both provisional and final CLI composition call preserveMilestoneAcceptanceRecords with stateChangedMilestoneIds, so they protect only retained milestones whose state field changes to reached and omit other retained milestones"
+    resource:
+      file "src/milestone-acceptance/advance.ts"
+      label "Provisional acceptance-aware advance composition"
+    resource:
+      file "src/cli.ts"
+      label "Final Contract 8 CLI composition"
+
+step S7:
+  evidence EV6:
+    "The same advance result already carries keptMilestoneIds, while acceptanceRemovalEdits separately and explicitly removes sets and receipts owned by removedMilestoneIds"
+
+step S8:
+  evidence EV7:
+    "After composing the final candidate, the CLI checks only acceptance-source syntax before retaining Contract 7 candidate diagnostics; it does not project the complete Contract 8 document-check diagnostics from the final candidate"
+
+step S9:
+  decision D1 based_on P1, PR1, EV1, EV2, EV3, EV4, EV5, EV6:
+    "The root cause is a protection-scope mismatch: offset-preserving Grammar 7 masking lets lower-layer deletion ownership cross acceptance records, but composition protects only state-changed retained milestones instead of every retained milestone"
+
+step S10:
+  decision D2 based_on P1, EV2, EV7:
+    "The detection escape is stale final-candidate validation: Contract 8 diagnostics are not recomputed after the last mixed-layer edit composition, so PTMAC-102 is absent from the successful advance result"
+
+step S11:
+  decision D3 based_on PR1, EV5, EV6, D1:
+    "The minimal ownership correction is to split lower-layer deletions around acceptance records for keptMilestoneIds at both composition sites while retaining explicit deletion for removedMilestoneIds"
+
+step S12:
+  decision D4 based_on EV1, EV2, EV3, D2, D3:
+    "Acceptance must include a multi-branch regression with unchanged and state-changed retained milestones, exact criterion and receipt preservation, legitimate removed-milestone contraction, complete final-candidate Contract 8 diagnostics, and preview-output-write byte identity"
+
+step S13:
+  decision D5 based_on D1, D3:
+    "The deletion coalescer, terminal separator ownership, milestone acceptance meanings, assurance contraction, history force boundary, and plan grammar do not need semantic expansion for this correction"
+
+step S14:
+  pending PD1:
+    "Patch release selection, publication, npm tag movement, remote source push, Issue mutation, and plan advance remain separate after local correction acceptance"

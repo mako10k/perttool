@@ -1,0 +1,27 @@
+{
+  "path": [
+    "src",
+    "adapters/lsp/src",
+    "adapters/lsp/runtime",
+    "adapters/mcp/src",
+    "adapters/vscode/src",
+    "scripts"
+  ],
+  "format": [
+    "typescript",
+    "javascript"
+  ],
+  "crossFormats": "js-ts",
+  "mode": "strict",
+  "minLines": 8,
+  "minTokens": 60,
+  "threshold": 3.39,
+  "reporters": [
+    "threshold"
+  ],
+  "ignore": [
+    "**/dist/**",
+    "**/node_modules/**"
+  ],
+  "gitignore": true
+}

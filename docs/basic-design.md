@@ -3475,6 +3475,41 @@ Exit:
 - keep npm `latest`, plan advance, public VSIX publication, and unrelated work
   separate.
 
+### Post-MVP Slice 4X: Retained milestone acceptance patch `v0.9.4`
+
+The `ADV-006` correction keeps the existing Contract 8 advance pipeline and
+changes only its acceptance-record ownership input and final validation seam.
+The milestone-acceptance composition layer subtracts every exact source span
+owned by `keptMilestoneIds` from lower-layer pure deletion ranges. Existing
+acceptance-removal edits continue to delete records owned by
+`removedMilestoneIds`.
+
+After assurance and acceptance edits are composed, the CLI checks the complete
+candidate through the Grammar 7 checker. Candidate diagnostics are combined
+with operation diagnostics under the existing deterministic limit. Preview,
+separate-output, and in-place persistence continue to consume that one
+candidate, and the existing authority, history, source/digest race, and
+safe-write layers remain unchanged.
+
+The independent `release-0.9.4.pert` plan sequences compatibility review,
+Issue #19 source acceptance, version-bearing preparation, one immutable
+candidate, authorized publication, durable public verification, Issue closure,
+and the separately authorized final plan advance.
+
+Exit:
+
+- satisfy Requirements 21.20 with a multi-branch regression whose lower-layer
+  deletion crosses acceptance records for both changed and unchanged retained
+  milestones;
+- replay the reported image-platform plan without modifying it and retain all
+  six affected criterion sets while contracting the removed set;
+- pass the final candidate through warnings-as-errors and prove byte identity
+  across preview, separate output, and clean tracked write;
+- publish one byte-identical GitHub/npm beta artifact and verify the `0.9.3`
+  rollback before closing Issue #19; and
+- keep npm `latest`, public VSIX publication, consumer writes, and unrelated
+  editor work separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 The selected `ADAPTER-001` plan composes a shared foundation and three adapter

@@ -249,6 +249,14 @@ function runJson(args, expectedStatus = 0, options = {}) {
   return JSON.parse(result.stdout);
 }
 
+function diagnosticByCode(result, code) {
+  const diagnostic = result.diagnostics.find(
+    (candidate) => candidate.code === code,
+  );
+  assert.ok(diagnostic, `missing diagnostic ${code}`);
+  return diagnostic;
+}
+
 function realGitPath() {
   const executable = (process.env.PATH ?? "")
     .split(path.delimiter)
@@ -563,7 +571,11 @@ test("AHS-005, AHS-006, and AHS-007 destructive overlap blocks while retained st
     assert.equal(blocked.history_guard.status, "blocked");
     assert.equal(blocked.history_guard.cause, "destructive_overlap");
     assert.deepEqual(blocked.history_guard.overlapping_entity_ids, ["DONE"]);
-    assert.equal(blocked.diagnostics.at(-1).code, "PTADV-101");
+    assert.equal(diagnosticByCode(blocked, "PTADV-101").code, "PTADV-101");
+    assert.equal(
+      blocked.diagnostics.some(({ code }) => code === "PTMAC-102"),
+      true,
+    );
     assert.equal(readFileSync(pathname, "utf8"), dirty);
 
     const forced = runJson([
@@ -637,7 +649,7 @@ test("AHS-010 and AHS-015 unavailable proof blocks while force preserves warning
   ], 1);
   assert.equal(blocked.history_guard.status, "blocked");
   assert.equal(blocked.history_guard.cause, "no_repository");
-  assert.deepEqual(blocked.diagnostics.at(-1).data.entity_ids, [
+  assert.deepEqual(diagnosticByCode(blocked, "PTADV-101").data.entity_ids, [
     "DONE",
     "MID",
     "START",
@@ -676,8 +688,8 @@ test("AHS-010 and AHS-015 unavailable proof blocks while force preserves warning
   assert.equal(forced.history_guard.status, "forced");
   assert.equal(forced.history_guard.cause, "forced_by_option");
   assert.equal(forced.history_guard.force_requested, true);
-  assert.equal(forced.diagnostics.at(-1).code, "PTADV-103");
-  assert.deepEqual(forced.diagnostics.at(-1).data.entity_ids, [
+  assert.equal(diagnosticByCode(forced, "PTADV-103").code, "PTADV-103");
+  assert.deepEqual(diagnosticByCode(forced, "PTADV-103").data.entity_ids, [
     "DONE",
     "MID",
     "START",
@@ -788,7 +800,7 @@ test("AHS-016 and AHS-017 application rechecks become PTADV-102", async (t) => {
     assert.equal(recheck.cause, expectedCause);
     const raced = withAdvanceHistoryRace(prepared.result, recheck);
     assert.equal(raced.ok, false);
-    assert.equal(raced.diagnostics.at(-1).code, "PTADV-102");
+    assert.equal(diagnosticByCode(raced, "PTADV-102").code, "PTADV-102");
   }
 });
 
@@ -1053,9 +1065,10 @@ test("AHS-016 and AHS-017 CLI races return exit 5 without candidate writes", (t)
     });
     assert.equal(raced.ok, false);
     assert.equal(raced.write.written, false);
-    assert.equal(raced.diagnostics.at(-1).code, "PTADV-102");
+    const diagnostic = diagnosticByCode(raced, "PTADV-102");
+    assert.equal(diagnostic.code, "PTADV-102");
     assert.equal(
-      raced.diagnostics.at(-1).data.cause,
+      diagnostic.data.cause,
       kind === "source" ? "target_changed" : `${kind}_changed`,
     );
     assert.doesNotMatch(

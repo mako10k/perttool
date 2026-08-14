@@ -48,6 +48,10 @@ Mandatory summary:
   `0.9.2` rollback, and all three public replays passed. All six tasks are
   complete before advance. npm `latest`, plan advance, public VSIX
   publication, and unrelated work remain separate.
+- Install the exact Python tools from `requirements-static-analysis.txt` before
+  the complete repository gate. `npm run check:static` composes TypeScript
+  type checking with pinned jscpd duplicate and Lizard complexity ratchets;
+  `npm run check` includes that gate and all repository acceptance checks.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
   tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`
