@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -11,11 +12,16 @@ const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
 const cli = path.join(root, "dist", "cli.js");
 
-function run(args) {
+function run(args, options = {}) {
   return spawnSync(process.execPath, [cli, ...args], {
     cwd: root,
     encoding: "utf8",
+    ...options,
   });
+}
+
+function digest(text) {
+  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
 }
 
 test("Contract 8 retains the Grammar 6 plan-assurance surface", async () => {
@@ -121,6 +127,108 @@ test("Contract 8 retains the Grammar 6 plan-assurance surface", async () => {
     assert.equal(shown.schema_version, "Perttool.PlanAssuranceResult.v1");
     assert.equal(shown.cli_contract_version, 8);
     assert.equal(shown.assurance.coverage, "complete");
+  } finally {
+    await rm(temporary, { recursive: true, force: true });
+  }
+});
+
+test("Issue 14 inspects valid Grammar 7 plans through file and stdin without mutation", async () => {
+  const source = await readFile(
+    path.join(root, "docs", "examples", "minimal.pert"),
+    "utf8",
+  );
+  const sealed = perttool.planAssuranceMutation(source, {
+    kind: "plan_assurance.seal",
+    reason: "Accepted Grammar 7 inspection regression basis",
+  });
+  assert.equal(sealed.ok, true, JSON.stringify(sealed.diagnostics));
+  const migrated = perttool.planMilestoneAcceptanceMigration(
+    sealed.updatedText,
+    {
+      repositoryId: "issue-14-regression",
+      repositoryRelativePath: "grammar7.pert",
+      objectFormat: "sha1",
+      headCommit: "a".repeat(40),
+      headBlob: "b".repeat(40),
+      stage0Blob: "b".repeat(40),
+      sourceDigest: digest(sealed.updatedText),
+    },
+  );
+  assert.equal(migrated.ok, true, JSON.stringify(migrated.diagnostics));
+  const temporary = await mkdtemp(path.join(os.tmpdir(), "perttool-issue-14-"));
+  try {
+    const plan = path.join(temporary, "grammar7.pert");
+    await writeFile(plan, migrated.candidateText, "utf8");
+    const before = await readFile(plan, "utf8");
+
+    const nextRun = run(["dag", "next", plan, "--format=json"]);
+    assert.equal(nextRun.status, 0, nextRun.stderr);
+    const next = JSON.parse(nextRun.stdout);
+    const work = next.assurance.task_results.find(({ task_id: id }) =>
+      id === "WORK"
+    );
+    assert.ok(work);
+
+    for (const operand of [
+      { args: [plan], options: {} },
+      { args: ["-"], options: { input: migrated.candidateText } },
+    ]) {
+      const shownRun = run([
+        "plan-assurance",
+        "show",
+        ...operand.args,
+        "--task",
+        "WORK",
+        "--format=json",
+      ], operand.options);
+      assert.equal(shownRun.status, 0, shownRun.stderr);
+      const shown = JSON.parse(shownRun.stdout);
+      assert.equal(shown.ok, true);
+      assert.equal(shown.cli_contract_version, 8);
+      assert.equal(shown.grammar_version, 7);
+      assert.equal(shown.source_digest, digest(migrated.candidateText));
+      assert.deepEqual(shown.selected_task_ids, ["WORK"]);
+      assert.deepEqual(shown.assurance.task_results, [work]);
+
+      for (const [kind, property] of [
+        ["contract", "contract_hash"],
+        ["computed-basis", "computed_basis_hash"],
+        ["exported", "exported_assurance_hash"],
+      ]) {
+        const hashRun = run([
+          "plan-assurance",
+          "hash",
+          ...operand.args,
+          "WORK",
+          "--kind",
+          kind,
+          "--format=json",
+        ], operand.options);
+        assert.equal(hashRun.status, 0, hashRun.stderr);
+        const selected = JSON.parse(hashRun.stdout);
+        assert.equal(selected.ok, true);
+        assert.equal(selected.grammar_version, 7);
+        assert.equal(selected.selected_hash, work[property]);
+      }
+    }
+
+    assert.equal(await readFile(plan, "utf8"), before);
+
+    const invalid = `${migrated.candidateText.trimEnd()}\n\nmilestone_acceptance_receipt BROKEN:\n  model 1\n`;
+    const rejected = run([
+      "plan-assurance",
+      "show",
+      "-",
+      "--format=json",
+    ], { input: invalid });
+    assert.equal(rejected.status, 1, rejected.stderr);
+    const failure = JSON.parse(rejected.stdout);
+    assert.equal(failure.ok, false);
+    assert.equal(failure.grammar_version, 7);
+    assert.equal(
+      failure.diagnostics.some(({ code }) => code.startsWith("PTMAC-")),
+      true,
+    );
   } finally {
     await rm(temporary, { recursive: true, force: true });
   }

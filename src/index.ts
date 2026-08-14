@@ -2,6 +2,7 @@ export {
   analyzeDocument,
   checkDocument,
   getProjectMetadata,
+  inspectPlanAssurance,
   planAssuranceMutation,
   planBatchMutation,
   planFinishActuals,
@@ -43,7 +44,6 @@ export {
   planAdvance,
 } from "./application/contract7-mutation.js";
 export {
-  inspectTargetPlanAssurance as inspectPlanAssurance,
   PLAN_ASSURANCE_INSPECTION_CLI_CONTRACT_VERSION,
   PLAN_ASSURANCE_RESULT_SCHEMA_VERSION,
 } from "./application/target-assurance-inspection.js";

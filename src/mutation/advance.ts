@@ -84,6 +84,9 @@ export interface ActualsAdvanceDetails extends AdvanceDetails {
 
 export interface AdvancePlanningProfile {
   readonly removeTaskOwnedWorkEvents?: boolean;
+  readonly prepareEdits?: (
+    edits: readonly TextEdit[],
+  ) => readonly TextEdit[];
   readonly extendPlan?: (
     text: string,
     document: DocumentNode<TargetDeclarationKind>,
@@ -436,7 +439,11 @@ function verifyPostconditions(
   if (repeated.extensionDiagnostics.length > 0) {
     throw new Error("advance postcondition failed: repeated advance extension is blocked");
   }
-  const repeatedEdits = normalizeTextEdits(candidateText, repeated.edits, "advance idempotence");
+  const repeatedEdits = normalizeTextEdits(
+    candidateText,
+    profile.prepareEdits?.(repeated.edits) ?? repeated.edits,
+    "advance idempotence",
+  );
   if (repeatedEdits.length !== 0) {
     throw new Error("advance postcondition failed: repeated advance is not empty");
   }
@@ -471,7 +478,11 @@ export function planValidatedAdvance(
       original.diagnosticsTruncated,
     );
   }
-  const edits = normalizeTextEdits(text, plan.edits, "advance");
+  const edits = normalizeTextEdits(
+    text,
+    profile.prepareEdits?.(plan.edits) ?? plan.edits,
+    "advance",
+  );
   const updatedText = applyTextEdits(text, edits);
   const candidate = validator(updatedText, maximum);
   if (!candidate.ok) {

@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-08-13
+- Updated: 2026-08-14
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -924,6 +924,89 @@ The accepted local evidence is recorded in
 The separately authorized emergency release is tracked by
 [`release-0.9.2.pert`](../plans/release-0.9.2.pert). npm `latest`, public VSIX
 publication, unrelated work, and release-plan advance remain separate.
+
+## Contract 8 emergency corrections
+
+### ASSURE-002: Inspect active Grammar 7 plan assurance
+
+Priority: P0
+
+Status: Emergency correction selected for `0.9.3` (2026-08-14)
+
+GitHub [Issue #14](https://github.com/mako10k/perttool/issues/14) reports that
+the read-only `plan-assurance show` and `plan-assurance hash` commands pass an
+active Grammar 7 source directly to the Grammar 6 inspection boundary. The
+commands must validate the Grammar 7 envelope, inspect its offset-preserving
+Grammar 6 basis, and rebind the result to the exact original source without
+changing assurance meanings or write authority.
+
+Acceptance:
+
+- valid Grammar 7 file and stdin operands support filtered `show` and all
+  three scalar hash selectors;
+- the projection agrees with `dag next` for the same source;
+- the result reports Grammar 7 and the exact original source digest;
+- Grammar 6 compatibility remains unchanged and invalid input fails closed;
+- the installed-package workflow exercises Grammar 7 inspection; and
+- inspection does not mutate the plan, Git, network, or other persistent
+  state.
+
+### ADV-004: Compose acceptance deletion with terminal EOF advance edits
+
+Priority: P0
+
+Status: Emergency correction selected for `0.9.3` (2026-08-14)
+
+GitHub [Issue #16](https://github.com/mako10k/perttool/issues/16) reports an
+ambiguous-looking but semantically identical overlap between pure deletion
+ranges when an accepted Grammar 7 receipt lies between completed-task events
+and the finish event owns the terminal EOF suffix. Pure overlapping deletions
+must be coalesced as their exact union while every overlap involving insertion
+or replacement remains an invariant failure.
+
+Acceptance:
+
+- receipt-between-events candidates succeed with and without a retained
+  downstream event;
+- final-newline and separator variants preserve one valid candidate;
+- preview, separate output, and in-place write are byte-identical;
+- acceptance, assurance, and history guards remain enforced without force;
+  and
+- the Issue #9 and #11 terminal regressions remain green.
+
+### ADV-005: Remove reached-milestone acceptance evidence during advance
+
+Priority: P0
+
+Status: Emergency correction selected for `0.9.3` (2026-08-14)
+
+GitHub [Issue #17](https://github.com/mako10k/perttool/issues/17) reports that
+a Contract 7 deletion range can cross the criterion set of a retained
+milestone changed to `reached`, while leaving its EOF receipt behind. The
+Grammar 7 composition must preserve both records for that retained milestone
+and remove both only when the milestone declaration itself leaves the residual
+graph.
+
+Acceptance:
+
+- a verified receipt appended after completed-task events produces a valid
+  candidate without reordering or force flags;
+- acceptance records contract with removed milestone declarations, while
+  deletion ranges split around evidence owned by retained state-changed
+  milestones;
+- final-newline variants and a retained declaration after the receipt remain
+  valid;
+- preview, separate output, and in-place write are byte-identical;
+- candidate-validation failures return source diagnostics instead of only an
+  internal CLI error; and
+- acceptance, assurance, history, Issue #9, Issue #11, and Issue #16 gates
+  remain enforced.
+
+The shared compatible correction contract is
+[`contract8-emergency-corrections.md`](specs/contract8-emergency-corrections.md).
+The emergency release is tracked independently by
+[`release-0.9.3.pert`](../plans/release-0.9.3.pert). npm `latest`, release-plan
+advance, public VSIX publication, and unrelated work remain separate.
 
 ## Recommendation override application and audit
 

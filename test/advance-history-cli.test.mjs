@@ -31,6 +31,7 @@ import {
 } from "../dist/history/git-probe.js";
 import { TARGET_GRAMMAR_6_CAPABILITY } from "../dist/parser/document-parser.js";
 import { buildIssue11AdvanceSource } from "./support/advance-terminal-issue-11.mjs";
+import { buildEmergencyAdvanceSource } from "./support/emergency-advance-grammar7.mjs";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -501,6 +502,50 @@ test("Issue 11 consecutive terminal declarations retain preview, out, and write 
   assert.equal(written.updated_text, preview.updated_text);
   assert.equal(readFileSync(pathname, "utf8"), preview.updated_text);
 });
+
+for (const [issue, topology] of [
+  ["Issue 16", "receipt-between-events"],
+  ["Issue 17", "receipt-after-events"],
+]) {
+  test(`${issue} Grammar 7 preview, out, and write candidates are identical`, (t) => {
+    const { directory, pathname } = temporaryPlan(t, {
+      source: buildEmergencyAdvanceSource({ topology }),
+    });
+    const preview = runJson(["dag", "advance", pathname]);
+    assert.equal(preview.ok, true);
+    assert.equal(preview.acceptance_guard.status, "passed");
+    assert.equal(preview.assurance_guard.status, "passed");
+    assert.match(
+      preview.updated_text,
+      /milestone_criterion_set M1_R1:/u,
+    );
+    assert.match(
+      preview.updated_text,
+      /milestone_acceptance_receipt RCPT_M1_ACCEPTED:/u,
+    );
+    assert.doesNotMatch(preview.updated_text, /work_event WE_A_/u);
+
+    const output = path.join(directory, "candidate.pert");
+    const separate = runJson([
+      "dag", "advance", pathname, "--out", output, "--actor", "user",
+    ]);
+    assert.equal(separate.ok, true);
+    assert.equal(separate.updated_digest, preview.updated_digest);
+    assert.equal(separate.updated_text, preview.updated_text);
+    assert.equal(readFileSync(output, "utf8"), preview.updated_text);
+
+    const written = runJson([
+      "dag", "advance", pathname, "--write", "--actor", "user",
+    ]);
+    assert.equal(written.ok, true);
+    assert.equal(written.history_guard.status, "passed");
+    assert.equal(written.acceptance_guard.status, "passed");
+    assert.equal(written.assurance_guard.status, "passed");
+    assert.equal(written.updated_digest, preview.updated_digest);
+    assert.equal(written.updated_text, preview.updated_text);
+    assert.equal(readFileSync(pathname, "utf8"), preview.updated_text);
+  });
+}
 
 test("AHS-005, AHS-006, and AHS-007 destructive overlap blocks while retained staged syntax passes", (t) => {
   {
