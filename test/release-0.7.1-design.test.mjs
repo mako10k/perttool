@@ -117,7 +117,7 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
   );
   assert.match(acceptance, /All five tasks and 15p are complete/);
   assert.match(changelog, /^## \[0\.7\.1\] - 2026-08-05$/m);
-  assert.match(readme, /package=perttool@0\.9\.2/);
+  assert.match(readme, /package=perttool@0\.9\.3/);
   assert.match(readme, /made `beta=latest=0\.7\.1`/);
   assert.match(readme, /Version `0\.7\.0` remains the exact rollback pin/);
   assert.match(correction, /All 44 registered commands/);
@@ -166,10 +166,10 @@ test("0.7.1 release gate binds the compatible Help and Guide patch boundary", as
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.9.2");
-  assert.equal(lockfile.version, "0.9.2");
-  assert.equal(lockfile.packages[""].version, "0.9.2");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.2"/);
+  assert.equal(manifest.version, "0.9.3");
+  assert.equal(lockfile.version, "0.9.3");
+  assert.equal(lockfile.packages[""].version, "0.9.3");
+  assert.match(versionSource, /TOOL_VERSION = "0\.9\.3"/);
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.equal(COMMAND_REGISTRY.length, 53);
   assert.equal(getJsonSchemaCatalog().length, 23);

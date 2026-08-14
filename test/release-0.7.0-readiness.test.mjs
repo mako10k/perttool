@@ -98,8 +98,8 @@ test("0.7.0 readiness remains historical after durable acceptance", async () => 
   assert.equal(typeof planAssuranceMutation, "function");
 
   const manifest = JSON.parse(manifestText);
-  assert.equal(manifest.version, "0.9.2");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.2"/);
+  assert.equal(manifest.version, "0.9.3");
+  assert.match(versionSource, /TOOL_VERSION = "0\.9\.3"/);
   assert.match(
     releasePlan,
     /^task RELEASE_070_CONTRACT_7_READINESS[\s\S]*?^  status done$/m,
@@ -178,11 +178,11 @@ test("0.7.0 preparation aligns the local package and leaves publication separate
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.9.2");
-  assert.equal(lockfile.version, "0.9.2");
-  assert.equal(lockfile.packages[""].version, "0.9.2");
+  assert.equal(manifest.version, "0.9.3");
+  assert.equal(lockfile.version, "0.9.3");
+  assert.equal(lockfile.packages[""].version, "0.9.3");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.2"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.9\.3"/);
   assert.match(readme, /Version `0\.7\.0` beta atomically activates Grammar 6 and CLI Contract 7/);
   assert.match(readme, /does not move npm `latest` from Contract 6\s+`0\.6\.0`/);
   assert.match(readme, /`0\.7\.0` remains the exact rollback pin/);

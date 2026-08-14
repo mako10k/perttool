@@ -11,15 +11,14 @@ const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
 const repositoryText = (relativePath) => readFile(path.join(root, relativePath), "utf8");
 
-test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async () => {
+test("0.9.3 retains Contract 8 while restoring all three emergency gates", async () => {
   const [
     requirements,
     design,
     procedure,
     review,
     correction,
-    preparation,
-    candidate,
+    contract,
     backlog,
     plan,
     manifestText,
@@ -32,17 +31,15 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
     readme,
     planIndex,
     selfUseScript,
-    commonSchema,
   ] = await Promise.all([
     repositoryText("docs/requirements.md"),
     repositoryText("docs/basic-design.md"),
-    repositoryText("docs/process/0.9.2-release.md"),
-    repositoryText("docs/process/0.9.2-self-review.md"),
-    repositoryText("docs/process/issue-15-point-no-velocity-acceptance.md"),
-    repositoryText("docs/process/0.9.2-preparation.md"),
-    repositoryText("docs/process/0.9.2-candidate.md"),
+    repositoryText("docs/process/0.9.3-release.md"),
+    repositoryText("docs/process/0.9.3-self-review.md"),
+    repositoryText("docs/process/issue-14-16-17-acceptance.md"),
+    repositoryText("docs/specs/contract8-emergency-corrections.md"),
     repositoryText("docs/backlog.md"),
-    repositoryText("plans/release-0.9.2.pert"),
+    repositoryText("plans/release-0.9.3.pert"),
     repositoryText("package.json"),
     repositoryText("package-lock.json"),
     repositoryText("src/version.ts"),
@@ -53,47 +50,36 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
     repositoryText("README.md"),
     repositoryText("plans/README.md"),
     repositoryText("scripts/check-self-use.sh"),
-    repositoryText("schemas/Perttool.Common.v1.schema.json"),
   ]);
 
-  assert.match(requirements, /^### 21\.18 Point-without-velocity emergency patch release acceptance criteria$/m);
-  assert.match(design, /^### Post-MVP Slice 4V: Point-without-velocity `v0\.9\.2` emergency patch$/m);
-  assert.match(procedure, /- Status: Accepted 1\.0/u);
-  assert.match(procedure, /Expected pre-publication tags: `beta=0\.9\.1`, `latest=0\.9\.0`, no `alpha`/u);
-  assert.match(review, /exact peeled `v0\.9\.1` commit `ddb12dc/u);
-  assert.match(correction, /`velocity_forecast=null`/u);
-  assert.match(preparation, /all 1,048 Node\.js tests/u);
-  assert.match(candidate, /5347f4b0e7c38b44f4f6ee34ca71dd2389fcf88da3ad52b85c7b64f82e980edb/u);
-  assert.match(backlog, /^### ANALYSIS-001: Analyze point plans without declared velocity$/m);
-  assert.match(commonSchema, /"missing_velocity"/u);
+  assert.match(requirements, /^### 21\.19 Contract 8 emergency gate correction release acceptance criteria$/m);
+  assert.match(design, /^### Post-MVP Slice 4W: Contract 8 emergency gate patch `v0\.9\.3`$/m);
+  assert.match(procedure, /Expected pre-publication tags: `beta=0\.9\.2`, `latest=0\.9\.0`, no `alpha`/u);
+  assert.match(review, /Public baseline: `b47a0a450f83070340fc52df88a0243f80ef795e`/u);
+  assert.match(correction, /The shared edit normalizer still rejects all overlaps/u);
+  assert.match(contract, /must first parse the complete\s+Grammar 7 source/u);
+  assert.match(contract, /retained milestone changed to `state reached` keeps its criterion\s+set and receipts/u);
+  for (const id of ["ASSURE-002", "ADV-004", "ADV-005"]) {
+    assert.match(backlog, new RegExp(`^### ${id}:`, "m"));
+  }
+  assert.equal(
+    [...backlog.matchAll(/^Status: Emergency correction selected for `0\.9\.3` \(2026-08-14\)$/gm)].length,
+    3,
+  );
 
   const checked = perttool.checkDocument(plan);
   const metadata = perttool.getProjectMetadata(plan);
   assert.equal(checked.ok, true);
   assert.equal(metadata.ok, true);
-  assert.equal(metadata.project.id, "RELEASE_092");
+  assert.equal(metadata.project.id, "RELEASE_093");
   assert.equal(metadata.grammarVersion, 6);
-  assert.equal(metadata.project.finish, "RELEASE_092_ACCEPTED");
-  assert.deepEqual(
-    checked.document.declarations
-      .filter(({ kind }) => kind === "task")
-      .map(({ id }) => id),
-    [
-      "RELEASE_092_SELF_REVIEW",
-      "RELEASE_092_CORRECTION",
-      "RELEASE_092_PREPARATION",
-      "RELEASE_092_CANDIDATE",
-      "RELEASE_092_PUBLISH",
-      "RELEASE_092_ACCEPTANCE",
-    ],
-  );
-  assert.match(plan, /task RELEASE_092_SELF_REVIEW[\s\S]*?status done/u);
-  assert.match(plan, /task RELEASE_092_CORRECTION[\s\S]*?status done/u);
-  assert.match(plan, /task RELEASE_092_PREPARATION[\s\S]*?status done/u);
-  assert.match(plan, /task RELEASE_092_CANDIDATE[\s\S]*?status done/u);
+  assert.equal(metadata.project.finish, "RELEASE_093_ACCEPTED");
+  assert.match(plan, /task RELEASE_093_SELF_REVIEW[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_093_CORRECTIONS[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_093_PREPARATION[\s\S]*?status done/u);
   const next = perttool.selectNextTasks(plan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_092_PUBLISH"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_093_CANDIDATE"]);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
@@ -106,16 +92,16 @@ test("0.9.2 retains Contract 8 while fixing Point plans without velocity", async
   assert.equal(mcpManifest.peerDependencies.perttool, "0.9.3");
   assert.match(versionSource, /TOOL_VERSION = "0\.9\.3"/u);
   assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.3"/u);
-  assert.match(changelog, /^## \[0\.9\.2\] - 2026-08-14$/m);
-  assert.match(readme, /Version `0\.9\.2` is the selected compatible Contract 8 emergency patch/u);
+  assert.match(changelog, /^## \[0\.9\.3\] - 2026-08-14$/m);
+  assert.match(readme, /Version `0\.9\.3` is the selected compatible Contract 8 emergency patch/u);
   assert.match(planIndex, /All forty-one plans pass/u);
-  assert.match(selfUseScript, /plans\/release-0\.9\.2\.pert/u);
+  assert.match(selfUseScript, /plans\/release-0\.9\.3\.pert/u);
 
+  assert.equal(perttool.COMMAND_REGISTRY.length, 53);
+  assert.equal(perttool.getJsonSchemaCatalog().length, 23);
   assert.equal(Object.keys(perttool).length, 129);
   assert.equal(Object.keys(nodeApi).length, 129);
   assert.equal(Object.keys(core).length, 45);
   assert.deepEqual(Object.keys(perttool), Object.keys(nodeApi));
-  for (const name of Object.keys(perttool)) {
-    assert.equal(perttool[name], nodeApi[name], name);
-  }
+  for (const name of Object.keys(perttool)) assert.equal(perttool[name], nodeApi[name], name);
 });

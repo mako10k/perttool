@@ -80,6 +80,7 @@ task RELEASE_093_PREPARATION RELEASE_093_CORRECTIONS_ACCEPTED -> RELEASE_093_SOU
   title "Prepare version 0.9.3 release source"
   description "Align package and lockfile identity, CLI version, adapter peer versions, MCP server identity, CHANGELOG, README, release documentation, tests, goldens, self-use registration, dependency audit, static analysis, and beta publication validation. Run the complete Node.js 22 repository and package gates without remote or registry writes."
   duration 5p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -138,3 +139,11 @@ work_event WE-093-corrections:
   occurred_at 2026-08-14T13:17:00+09:00
   active_time 2h
   effort 2ph
+
+work_event WE-093-preparation:
+  model 1
+  task RELEASE_093_PREPARATION
+  kind finish
+  occurred_at 2026-08-14T14:20:00+09:00
+  active_time 3h
+  effort 3ph

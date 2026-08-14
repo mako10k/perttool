@@ -888,6 +888,55 @@
         "PTDAG-208"
       ]
     },
+    "release-0.9.3": {
+      "source_digest": "sha256:abf0368edaccf5ccf277623746d06b3161d2c01ba13fa20f0d9f5af6e51639eb",
+      "groups": {
+        "active": [],
+        "ready": [
+          "RELEASE_093_CANDIDATE"
+        ],
+        "runnable_now": [
+          "RELEASE_093_CANDIDATE"
+        ],
+        "blocked_now": [],
+        "upcoming": [
+          "RELEASE_093_PUBLISH",
+          "RELEASE_093_ACCEPTANCE"
+        ],
+        "suspended": []
+      },
+      "recommended_task_ids": [
+        "RELEASE_093_CANDIDATE"
+      ],
+      "manual_selected_task_ids": [
+        "RELEASE_093_CANDIDATE"
+      ],
+      "tiers": {
+        "RELEASE_093_CANDIDATE": "recommended"
+      },
+      "joint_resource_feasible": true,
+      "ready_tasks": [
+        {
+          "id": "RELEASE_093_CANDIDATE",
+          "runnable_now": true,
+          "precedence_critical": true,
+          "schedule_critical": true,
+          "total_float": "0/1",
+          "resource_rejections": []
+        }
+      ],
+      "record_counts": {
+        "task_decisions": 1,
+        "decision_steps": 6,
+        "facts": 18,
+        "comparisons": 0,
+        "reasons": 4,
+        "descriptions": 1
+      },
+      "diagnostic_codes": [
+        "PTDAG-208"
+      ]
+    },
     "scheduling-units-m1": {
       "source_digest": "sha256:3d9e421d3da2517b98256a41dda0b074f54ba73332095bf26a5e789a0e851af1",
       "groups": {

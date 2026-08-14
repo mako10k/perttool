@@ -86,7 +86,7 @@ test("current guidance and historical compatibility labels preserve their bounda
     readme,
     /made `beta=latest=0\.7\.1`/,
   );
-  assert.match(readme, /package=perttool@0\.9\.2/);
+  assert.match(readme, /package=perttool@0\.9\.3/);
   assert.match(readme, /npm currently reports\s+`latest=0\.9\.0`, `beta=0\.9\.1`, and no `alpha`/);
   assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/);
   assert.match(readme, /Version `0\.9\.2` is the selected compatible Contract 8 emergency patch/);
@@ -131,9 +131,9 @@ test("repository policy and self-use registration include the accepted workstrea
   }
   assert.match(selfUseScript, /plans\/help-guide-consistency\.pert/);
   assert.match(selfUseScript, /plans\/adapter-platform\.pert/);
-  assert.match(selfUseScript, /40 plans; check, analyze, next/);
-  assert.match(selfUseGuide, /all forty current plans/);
+  assert.match(selfUseScript, /41 plans; check, analyze, next/);
+  assert.match(selfUseGuide, /all forty-one current plans/);
   assert.match(planIndex, /`help-guide-consistency\.pert`/);
-  assert.match(planIndex, /All forty plans pass/);
+  assert.match(planIndex, /All forty-one plans pass/);
   assert.match(planIndex, /accepted reached final milestone/);
 });

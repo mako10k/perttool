@@ -3445,6 +3445,36 @@ Exit:
 - keep npm `latest`, plan advance, public VSIX publication, and unrelated work
   separate.
 
+### Post-MVP Slice 4W: Contract 8 emergency gate patch `v0.9.3`
+
+The selected ASSURE-002, ADV-004, and ADV-005 correction retains Grammar 7
+and CLI Contract 8. The Contract 8 inspection facade validates Grammar 7,
+inspects its offset-preserving Grammar 6 basis, and rebinds the exact original
+source identity. The milestone-acceptance advance wrapper composes only its
+own overlapping pure deletions and splits base deletion ranges around evidence
+owned by retained reached milestones; the shared edit normalizer and all
+acceptance, assurance, governance, and history guards remain unchanged.
+
+The [`v0.9.3` release procedure](process/0.9.3-release.md) and independent
+[`release-0.9.3.pert`](../plans/release-0.9.3.pert) plan sequence compatibility
+review, three-Issue correction acceptance, version-bearing source preparation,
+one immutable candidate, authorized GitHub/npm beta publication, durable
+installed verification, local exact installation, and Issue completion.
+
+Exit:
+
+- satisfy Requirements 21.19 from one clean release commit and immutable
+  tarball;
+- preserve every Contract 8 command, result, schema, facade, authority, shared
+  edit, and force boundary;
+- pass Grammar 7 inspection and both EOF advance topologies without consumer
+  workarounds or force flags;
+- publish identical bytes to one GitHub prerelease and npm `beta` while
+  leaving `latest=0.9.0`;
+- verify exact and beta behavior plus the exact `0.9.2` rollback; and
+- keep npm `latest`, plan advance, public VSIX publication, and unrelated work
+  separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 The selected `ADAPTER-001` plan composes a shared foundation and three adapter
