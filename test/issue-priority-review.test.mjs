@@ -10,7 +10,7 @@ function repositoryText(relativePath) {
   return readFile(path.join(root, relativePath), "utf8");
 }
 
-test("the live open-Issue review has one ordered local backlog mapping", async () => {
+test("the post-0.9.4 open-Issue review has one ordered local backlog mapping", async () => {
   const [backlog, review, agents, copilot, plansReadme] = await Promise.all([
     repositoryText("docs/backlog.md"),
     repositoryText("docs/process/issue-priority-review-2026-08-14.md"),
@@ -19,7 +19,6 @@ test("the live open-Issue review has one ordered local backlog mapping", async (
     repositoryText("plans/README.md"),
   ]);
   const mappings = [
-    [19, "ADV-006", "P0"],
     [7, "ACT-004", "P1"],
     [6, "ACT-005", "P1"],
     [13, "EDITOR-MUTATION-001", "P2"],
@@ -40,9 +39,10 @@ test("the live open-Issue review has one ordered local backlog mapping", async (
       new RegExp(`\\x60${localId}\\x60 for #${issue}`, "u"),
     );
   }
-  assert.match(review, /Issue #19 is the sole P0/u);
+  assert.match(review, /no open P0/u);
   assert.match(review, /Issue #7 changed from `priority:P0` to `priority:P1`/u);
-  assert.match(backlog, /This P0 interrupts the normal editor-mutation frontier/u);
+  assert.match(backlog, /Status: Released and accepted in `0\.9\.4`/u);
+  assert.match(backlog, /There is no open P0/u);
   for (const text of [agents, copilot, plansReadme]) {
     assert.match(text, /ADV-006/u);
     assert.match(text, /EDITOR_REPAIR_ACCEPTANCE/u);

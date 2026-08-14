@@ -1,18 +1,22 @@
 # Issue #19 retained milestone acceptance correction
 
-- Status: Local source accepted
+- Status: Released and accepted in `0.9.4`
 - Date: 2026-08-14
 - Scope: `ADV-006` implementation and repository evidence
-- External state: Issue #19 remains open; published `0.9.3` remains affected
+- Selected release: compatible patch `0.9.4`
+- External state: Issue #19 is closed with release evidence; npm
+  `beta=0.9.4`, `latest=0.9.0`, and no `alpha`
 
 ## Decision
 
 The local correction is accepted. Contract 8 `dag advance` now protects the
 exact acceptance-record spans owned by every milestone in
 `keptMilestoneIds`, continues to remove records owned by
-`removedMilestoneIds`, and reports diagnostics from the complete composed
-Contract 8 candidate. Release selection, publication, consumer-plan writes,
-Issue closure, plan advance, and resumed editor work remain separate.
+`removedMilestoneIds`, and combines diagnostics from the complete composed
+Contract 8 candidate with operation diagnostics. The immutable `0.9.4`
+candidate, publication, durable readback, Issue closure, and canonical release-
+plan advance are complete. Consumer-plan writes and resumed editor work remain
+separate.
 
 ## RCA
 
@@ -58,16 +62,17 @@ but removed the retained criterion sets for:
 - `EDIT_INTERMEDIATE_PREVIEWS_READY_R1`.
 
 A fresh candidate check reported six `PTMAC-102` diagnostics. The separate
-`I2I_CONTROL_READY_R1` set belonged to the milestone actually removed by advance
-and was correctly contracted.
+`I2I_CONTROL_READY_R1` set belonged to the milestone actually removed by
+advance and was correctly contracted.
 
 ## Correction
 
 `composeProvisionalBase` and final CLI composition now pass
 `keptMilestoneIds` to the accepted exact-span preservation function. Existing
 acceptance-removal edits remain derived from `removedMilestoneIds`. After all
-assurance and acceptance edits are composed, the CLI executes the complete
-Contract 8 checker and uses that result's diagnostics and truncation state.
+assurance and acceptance edits are composed, the CLI checks the complete
+Contract 8 candidate and deterministically combines its diagnostics with
+operation diagnostics under the existing limit.
 
 No command, grammar construct, schema, result identity, authority policy,
 force option, shared edit-normalization rule, or persistence boundary changed.
@@ -82,11 +87,11 @@ properties:
    proves all retained records remain byte-identical;
 2. real CLI preview, separate output, and clean tracked in-place write produce
    the same candidate, pass the history guard, and pass
-   `document check --warnings-as-errors`; and
+   `document check --warnings-as-errors`;
 3. removal of a retained finish criterion set is reported as final-candidate
    `PTMAC-102`, proving that diagnostics are not stale; and
 4. requirements, design, correction contract, acceptance record, and backlog
-   retain the same local-versus-release boundary.
+   agree.
 
 The corrected read-only image-platform preview retained all six affected sets,
 removed only `I2I_CONTROL_READY_R1`, and produced candidate digest
@@ -120,6 +125,11 @@ not modify the selected plan or resume its paused task.
 These gates establish repository compatibility; the specific Issue #19
 behavior is owned by the focused Core and real CLI cases above.
 
-This record does not select a version, create a release plan, modify a consumer
-plan, push a source revision, publish a package, move a dist-tag, close Issue
-#19, advance a plan, or resume `EDITOR_REPAIR_ACCEPTANCE`.
+The later immutable `0.9.4` candidate passed the complete repository,
+documentation, static-analysis, private-adapter, temporary-link, isolated-
+package, exact installed-package, and rollback gates. Release commit
+`094132c`, CI run `31786430400`, GitHub and npm tarballs at SHA-256
+`63a12ddf...d6fe53b`, exact and beta installations, and Issue #19 closure are
+durably accepted. The release plan was then advanced through committed Grammar
+7 evidence without force. npm `latest`, public VSIX publication, consumer-plan
+writes, and unrelated feature work remain separate.

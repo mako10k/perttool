@@ -4,6 +4,27 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.9.4] - 2026-08-14
+
+Backward-compatible Grammar 7 and CLI Contract 8 emergency beta patch. This
+version corrects acceptance-record retention and final candidate validation
+for GitHub Issue #19 and adds pinned repository duplicate and complexity
+ratchets.
+
+### Fixed
+
+- Made `dag advance` preserve criterion sets and receipts for every milestone
+  retained in the residual graph, including unchanged successor, branch, and
+  project-finish milestones.
+- Made the complete composed Contract 8 advance candidate pass document
+  validation before history and persistence decisions, with deterministic
+  candidate and operation diagnostics.
+
+### Development
+
+- Added pinned jscpd 5.0.15 duplication and Lizard 1.23.0 complexity gates to
+  the local `check:static` workflow and Node.js 22/24 CI.
+
 ## [0.9.3] - 2026-08-14
 
 Backward-compatible Grammar 7 and CLI Contract 8 emergency beta patch. This
@@ -495,7 +516,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.3...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.4...HEAD
+[0.9.4]: https://github.com/mako10k/perttool/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/mako10k/perttool/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/mako10k/perttool/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/mako10k/perttool/compare/v0.9.0...v0.9.1

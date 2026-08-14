@@ -86,8 +86,8 @@ test("current guidance and historical compatibility labels preserve their bounda
     readme,
     /made `beta=latest=0\.7\.1`/,
   );
-  assert.match(readme, /package=perttool@0\.9\.3/);
-  assert.match(readme, /npm reports `beta=0\.9\.3`, `latest=0\.9\.0`, and no `alpha`/);
+  assert.match(readme, /package=perttool@0\.9\.4/);
+  assert.match(readme, /npm currently reports\s+`latest=0\.9\.0`, `beta=0\.9\.4`, and no `alpha`/);
   assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/);
   assert.match(readme, /Version `0\.9\.1` is the durably accepted compatible Contract 8 patch/);
   assert.match(readme, /Version `0\.9\.2` is the durably accepted compatible Contract 8 emergency patch/);
@@ -128,17 +128,19 @@ test("repository policy and self-use registration include the accepted workstrea
     assert.match(policy, /help-guide-consistency-acceptance\.md/);
     assert.match(policy, /Perttool\.NextResult\.v7/);
     assert.match(policy, /beta=latest=0\.9\.0/);
-    assert.match(policy, /0\.8\.1.*rollback pin/s);
+    assert.match(policy, /0\.9\.2.*rollback pin/s);
   }
   assert.match(selfUseScript, /plans\/help-guide-consistency\.pert/);
   assert.match(selfUseScript, /plans\/adapter-platform\.pert/);
   assert.match(selfUseScript, /plans\/editor-mutations\.pert/);
   assert.match(selfUseScript, /plans\/release-0\.9\.3\.pert/);
-  assert.match(selfUseScript, /42 plans; check, analyze, next/);
-  assert.match(selfUseGuide, /all forty-two current plans/);
+  assert.match(selfUseScript, /plans\/release-0\.9\.4\.pert/);
+  assert.match(selfUseScript, /43 plans; check, analyze, next/);
+  assert.match(selfUseGuide, /all forty-three current plans/);
   assert.match(planIndex, /`help-guide-consistency\.pert`/);
   assert.match(planIndex, /`editor-mutations\.pert`/);
   assert.match(planIndex, /release-0\.9\.3\.pert/);
-  assert.match(planIndex, /All forty-two plans pass/);
+  assert.match(planIndex, /release-0\.9\.4\.pert/);
+  assert.match(planIndex, /All forty-three plans pass/);
   assert.match(planIndex, /accepted reached final milestone/);
 });

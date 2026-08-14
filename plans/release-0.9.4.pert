@@ -1,0 +1,62 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_094:
+  version 7
+  title "perttool 0.9.4 Issue 19 emergency correction release"
+  description "Release suffix-free 0.9.4 beta as a compatible Grammar 7 and CLI Contract 8 patch for Issue #19. Preserve all live milestone criterion sets and validate the complete final advance candidate without weakening milestone acceptance, plan assurance, history, governance, static-analysis, or persistence gates. npm latest promotion and unrelated plan advances remain separate."
+  as_of 2026-08-14
+  duration_unit point
+  velocity 15p/1d
+  finish RELEASE_094_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+
+
+resource DEVELOPERS:
+  title "Emergency correction capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Compatibility and safety review capacity"
+  description "Serialize correction, candidate, publication, and durable acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  capacity 1
+
+
+
+
+
+
+milestone RELEASE_094_ACCEPTED:
+  title "Version 0.9.4 emergency patch accepted"
+  state reached
+
+milestone_criterion_set RELEASE_094_ACCEPTANCE_R1:
+  milestone RELEASE_094_ACCEPTED
+  revision R1
+  commitment sha256:ec7a8f61b3283ad5786e869f37ffb59f511c0fc1afd7b30d58a699baa1ae3441
+  criterion RELEASE_ACCEPTED required artifact "Accepted durable version 0.9.4 release"
+
+milestone_acceptance_receipt RELEASE_094_ACCEPTANCE_EVIDENCE:
+  model 1
+  set RELEASE_094_ACCEPTANCE_R1
+  set_commitment sha256:ec7a8f61b3283ad5786e869f37ffb59f511c0fc1afd7b30d58a699baa1ae3441
+  criterion RELEASE_ACCEPTED
+  criterion_commitment sha256:542981ccc927d1557e1c74296fd65f78bb6c33a11dd2f33307cccf1c72d4381e
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.9.4-release-acceptance.md"
+  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
+  verifier codex
+  occurred_at 2026-08-14T09:19:08Z

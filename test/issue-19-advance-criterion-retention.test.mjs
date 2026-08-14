@@ -381,5 +381,5 @@ test("Issue #19 correction boundary is documented across normative surfaces", ()
   assert.match(contract, /final `keptMilestoneIds` set/u);
   assert.match(acceptance, /docs-process-issue-19-advance-criterion-rca/u);
   assert.match(acceptance, /sha256:26d3a6dc49da2da3c73e3384573cd33/u);
-  assert.match(backlog, /Status: Local correction accepted \(2026-08-14\)/u);
+  assert.match(backlog, /Status: Released and accepted in `0\.9\.4`/u);
 });

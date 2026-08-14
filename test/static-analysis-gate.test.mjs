@@ -50,6 +50,8 @@ test("source static analysis is pinned, ratcheted, documented, and required by C
   assert.deepEqual(jscpd.ignore, ["**/dist/**", "**/node_modules/**"]);
   assert.equal(baseline.jscpd.version, "5.0.15");
   assert.equal(baseline.jscpd.maxClones, 148);
+  assert.equal(baseline.jscpd.maxDuplicatedLines, 2746);
+  assert.equal(baseline.jscpd.maxDuplicatedTokens, 15252);
   assert.equal(baseline.jscpd.maxPercentage, 3.37);
   assert.equal(baseline.lizard.version, "1.23.0");
   assert.deepEqual(baseline.lizard.thresholds, {

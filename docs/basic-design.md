@@ -3544,7 +3544,7 @@ Exit:
 - keep npm `latest`, plan advance, public VSIX publication, and unrelated work
   separate.
 
-### Post-MVP Slice 4X: Retained milestone acceptance preservation
+### Post-MVP Slice 4X: Retained milestone acceptance patch `v0.9.4`
 
 The `ADV-006` correction keeps the existing Contract 8 advance pipeline and
 changes only its acceptance-record ownership input and final validation seam.
@@ -3554,12 +3554,16 @@ acceptance-removal edits continue to delete records owned by
 `removedMilestoneIds`.
 
 After assurance and acceptance edits are composed, the CLI checks the complete
-candidate through the Grammar 7 checker. The resulting Contract 8 diagnostics
-are the result diagnostics; a stale Contract 7 diagnostic set is not reused.
-Preview, separate-output, and in-place persistence continue to consume that
-one candidate, and the existing authority, history, source/digest race, and
+candidate through the Grammar 7 checker. Candidate diagnostics are combined
+with operation diagnostics under the existing deterministic limit. Preview,
+separate-output, and in-place persistence continue to consume that one
+candidate, and the existing authority, history, source/digest race, and
 safe-write layers remain unchanged.
 
+The independent `release-0.9.4.pert` plan sequences compatibility review,
+Issue #19 source acceptance, version-bearing preparation, one immutable
+candidate, authorized publication, durable public verification, Issue closure,
+and the separately authorized final plan advance.
 Exit:
 
 - satisfy Requirements 21.20 with a multi-branch regression whose lower-layer
@@ -3570,9 +3574,11 @@ Exit:
 - pass the final candidate through warnings-as-errors and prove byte identity
   across preview, separate output, and clean tracked write;
 - pass repository duplication, complexity, static-analysis, documentation,
-  and isolated-package gates; and
-- keep release selection, publication, Issue closure, plan advance, consumer
-  writes, and unrelated editor work separate.
+  isolated-package, and installed-package gates;
+- publish one byte-identical GitHub/npm beta artifact and verify the `0.9.3`
+  rollback before closing Issue #19; and
+- keep npm `latest`, public VSIX publication, consumer writes, and unrelated
+  editor work separate.
 
 ### Post-MVP Slice 5: Language tooling and MCP
 

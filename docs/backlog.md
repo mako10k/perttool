@@ -1055,9 +1055,8 @@ Durable publication and the three completed Issue readbacks are recorded in
 
 Priority: P0
 
-Status: Local correction accepted (2026-08-14); [Issue
-#19](https://github.com/mako10k/perttool/issues/19) and the published `0.9.3`
-remain open; release selection has not started
+Status: Released and accepted in `0.9.4`; [Issue
+#19](https://github.com/mako10k/perttool/issues/19) closed (2026-08-14)
 
 Contract 8 `dag advance` can report a successful, diagnostic-free candidate
 while deleting criterion sets owned by milestones that remain in the residual
@@ -1066,7 +1065,7 @@ repository warnings-as-errors gate. This is a destructive correctness defect:
 the current acceptance contract for unfinished work can be lost even though
 the milestone and its successor work remain.
 
-The current composition protects acceptance records for
+The `0.9.3` composition protects acceptance records for
 `stateChangedMilestoneIds`, but Issue #19 demonstrates that this is narrower
 than the complete retained-milestone ownership boundary. The correction must
 be based on the final retained graph and complete candidate, not record order,
@@ -1097,9 +1096,20 @@ Acceptance:
 - acceptance, assurance, governance, history, source/digest race, and
   `--force-history-loss` boundaries remain fail-closed and unchanged.
 
-This P0 interrupts the normal editor-mutation frontier. It does not authorize
-a gate bypass, manual reconstruction of lost criteria, publication, npm tag
-movement, remote source push, or Issue closure.
+The implementation and real-plan evidence are recorded in
+[`issue-19-advance-criterion-acceptance.md`](process/issue-19-advance-criterion-acceptance.md),
+and the llmthink RCA is
+[`issue-19-advance-criterion-rca.think`](process/issue-19-advance-criterion-rca.think).
+Release commit `094132c`, successful CI run `31786430400`, GitHub and npm
+artifacts at SHA-256 `63a12ddf...d6fe53b`, exact and beta installations, and
+the `0.9.3` rollback replay are accepted in
+[`0.9.4-release-acceptance.md`](process/0.9.4-release-acceptance.md). Issue #19
+is closed with release evidence and retains only `bug`. npm `latest`, public
+VSIX publication, and consumer-plan mutation remain separate boundaries.
+
+The emergency interruption is now resolved. The selected editor-mutation
+frontier resumes from its separately retained plan state; no gate bypass or
+manual reconstruction of consumer criteria was used.
 
 ## Recommendation override application and audit
 
@@ -1560,24 +1570,25 @@ Implementation and installed-artifact acceptance remain selected plan tasks.
 
 ## Portfolio and Issue inventory
 
-Live GitHub readback on 2026-08-14 found seven open Issues. Each has exactly
-one priority label, and each now has one local backlog identity. This ranking
-orders the interruption and planning frontier; it does not itself authorize
-implementation, release, publication, remote source writes, or Issue closure.
+Live GitHub readback after Issue #19 closure on 2026-08-14 found six open
+Issues. Each has exactly one priority label and one local backlog identity.
+There is no open P0. This ranking orders the planning frontier; it does not
+itself authorize implementation, release, publication, remote source writes,
+or Issue mutation.
 
 | Rank | GitHub Issue | Local backlog | Priority | Current disposition |
 | ---: | --- | --- | --- | --- |
-| 1 | [#19](https://github.com/mako10k/perttool/issues/19) | `ADV-006` | P0 | Local correction is accepted; keep normal feature progression paused until a separately selected patch is released and verified. |
-| 2 | [#7](https://github.com/mako10k/perttool/issues/7) | `ACT-004` | P1 | Make the observation-to-update token contract truthful after the P0 correction. |
-| 3 | [#6](https://github.com/mako10k/perttool/issues/6) | `ACT-005` | P1 | Design an explicit auditable provenance choice after the bounded token correction. |
-| 4 | [#13](https://github.com/mako10k/perttool/issues/13) | `EDITOR-MUTATION-001` | P2 | Retain accepted E0 and E1-contract state; pause E1 runtime implementation. |
-| 5 | [#18](https://github.com/mako10k/perttool/issues/18) | `STATIC-001` | P2 | Continue ratcheted debt reduction after correctness bugs. |
-| 6 | [#12](https://github.com/mako10k/perttool/issues/12) | `PLAN-POOL-001` | P2 | Retain as a separately planned single-project design workstream. |
-| 7 | [#3](https://github.com/mako10k/perttool/issues/3) | `MULTI-001` | P3 | Keep deferred to the genuine multi-document boundary superseded nowhere else. |
+| 1 | [#7](https://github.com/mako10k/perttool/issues/7) | `ACT-004` | P1 | Make the observation-to-update token contract truthful. |
+| 2 | [#6](https://github.com/mako10k/perttool/issues/6) | `ACT-005` | P1 | Design an explicit auditable provenance choice after the bounded token correction. |
+| 3 | [#13](https://github.com/mako10k/perttool/issues/13) | `EDITOR-MUTATION-001` | P2 | Resume the accepted editor-mutation frontier subject to its own plan authority. |
+| 4 | [#18](https://github.com/mako10k/perttool/issues/18) | `STATIC-001` | P2 | Continue ratcheted debt reduction after correctness bugs. |
+| 5 | [#12](https://github.com/mako10k/perttool/issues/12) | `PLAN-POOL-001` | P2 | Retain as a separately planned single-project design workstream. |
+| 6 | [#3](https://github.com/mako10k/perttool/issues/3) | `MULTI-001` | P3 | Keep deferred to the genuine multi-document boundary superseded nowhere else. |
 
-The live priority mutation in this review changed only Issue #7 from P0 to P1.
-Issue #19 remains the sole P0. Issues #6 and #7 are P1; Issues #12, #13, and
-#18 are P2; and Issue #3 is P3. No Issue body, comment, state, or non-priority
+The earlier priority mutation changed only Issue #7 from P0 to P1. The later
+accepted `0.9.4` flow closed Issue #19 and removed its P0 label. Issues #6 and
+#7 are now the open P1 frontier; Issues #12, #13, and #18 are P2; and Issue #3
+is P3. No remaining Issue body, comment, state, or non-priority
 label was changed.
 
 ### META-001: Keep GitHub Issue and local work-state inventories aligned

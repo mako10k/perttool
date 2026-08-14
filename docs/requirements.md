@@ -3078,11 +3078,11 @@ release, local exact installation, and Issues #14, #16, and #17 completion only
 after every predecessor gate passes. The authoritative procedure is
 [`docs/process/0.9.3-release.md`](process/0.9.3-release.md).
 
-### 21.20 Retained milestone acceptance preservation correction criteria
+### 21.20 Retained milestone acceptance preservation patch criteria
 
-The compatible correction for GitHub Issue #19 restores the Contract 8
-ownership boundary after `0.9.3`. Its release version and publication remain
-separate decisions.
+The compatible correction for GitHub Issue #19 is suffix-free `0.9.4`. It
+retains Grammar 7 and CLI Contract 8 and moves only npm `beta` during
+publication.
 
 1. Derive protected acceptance-record spans from every milestone retained in
    the final advance graph, not only milestones whose state changes.
@@ -3092,7 +3092,8 @@ separate decisions.
 3. Continue to contract every criterion set and receipt owned by a milestone
    actually removed by advance.
 4. Check the complete composed candidate as Grammar 7 and CLI Contract 8 and
-   project its diagnostics instead of reusing the lower Contract 7 result.
+   project its diagnostics together with operation diagnostics instead of
+   reusing only the lower Contract 7 result.
 5. Introduce no `PTMAC-102` diagnostic relative to a warnings-clean source,
    and pass `document check --warnings-as-errors` for a successful candidate.
 6. Keep preview, separate-output, and clean tracked in-place write candidates
@@ -3102,10 +3103,16 @@ separate decisions.
 8. Reproduce the reported image-platform failure read-only and prove that all
    six retained criterion sets survive while only the removed milestone's set
    contracts.
-9. Pass the complete repository, documentation, duplication, complexity,
-   static-analysis, and isolated-package gates before release selection.
-10. Keep consumer-plan mutation, release selection, publication, npm dist-tag
-    movement, Issue closure, plan advance, and unrelated feature work separate.
+9. Retain all 53 commands, 23 root schemas, 129 root and Node exports, 45 Core
+   exports, result identities, and public authority meanings.
+10. Pass the complete repository, documentation, duplication, complexity,
+    static-analysis, isolated-package, and installed exact-package gates
+    before release.
+11. Publish one immutable tarball to one GitHub prerelease and npm `beta`,
+    verify the exact `0.9.3` rollback, and close Issue #19 only after durable
+    acceptance.
+12. Keep npm `latest`, public VSIX publication, consumer-plan mutation, and
+    unrelated feature work separate.
 
 ## 22. Mapping to the initial requirements
 

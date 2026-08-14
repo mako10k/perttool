@@ -2,10 +2,10 @@
 
 - Status: Accepted correction target
 - Date: 2026-08-14
-- Scope: GitHub Issues #14, #16, and #17, plus the post-`0.9.3` Issue #19
+- Scope: GitHub Issues #14, #16, #17, and the post-`0.9.3` Issue #19
   correction
-- Release target: compatible patch `0.9.3` for the original three Issues;
-  Issue #19 patch version not selected
+- Release targets: compatible patch `0.9.3` for the original three Issues and
+  compatible patch `0.9.4` for Issue #19
 
 ## Purpose
 
