@@ -77,9 +77,10 @@ test("0.9.3 retains Contract 8 while restoring all three emergency gates", async
   assert.match(plan, /task RELEASE_093_SELF_REVIEW[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_093_CORRECTIONS[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_093_PREPARATION[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_093_CANDIDATE[\s\S]*?status done/u);
   const next = perttool.selectNextTasks(plan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_093_CANDIDATE"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_093_PUBLISH"]);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
