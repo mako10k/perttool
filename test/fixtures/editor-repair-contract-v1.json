@@ -2,7 +2,7 @@
   "schema_version": "Perttool.EditorRepairContractCases.v1",
   "parent_contract": "Perttool.EditorMutationContractCases.v1",
   "editor_protocol_model_version": 2,
-  "activation_state": "contract_only",
+  "activation_state": "active",
   "activation_gate": "EDITOR_REPAIR_ACCEPTED",
   "registry": {
     "id": "perttool.editor-repair",
@@ -164,11 +164,11 @@
     "core_export_count": 45,
     "active_editor_protocol_model_versions": [2, 1],
     "document_formatting_provider": true,
-    "edit_bearing_repair_code_action": false,
-    "source_fix_all_perttool": false
+    "edit_bearing_repair_code_action": true,
+    "source_fix_all_perttool": true
   },
   "cases": [
-    { "id": "ERC-001", "depends_on": [], "boundary": "baseline", "expected": "e0_model_2_active_e1_edits_inactive" },
+    { "id": "ERC-001", "depends_on": [], "boundary": "baseline", "expected": "e0_model_2_and_e1_repair_active" },
     { "id": "ERC-002", "depends_on": ["ERC-001"], "boundary": "registry", "expected": "one_repair_zero_refactoring_unknown_unavailable" },
     { "id": "ERC-003", "depends_on": ["ERC-002"], "boundary": "diagnostic", "expected": "only_current_ptsem_114_selects_entry" },
     { "id": "ERC-004", "depends_on": ["ERC-003"], "boundary": "day_conversion", "expected": "declared_day_velocity_exact_to_point" },
@@ -189,6 +189,6 @@
     { "id": "ERC-019", "depends_on": ["ERC-018"], "boundary": "classification", "expected": "strictest_complete_candidate_cannot_split_or_downgrade" },
     { "id": "ERC-020", "depends_on": ["ERC-019"], "boundary": "recovery", "expected": "forward_and_inverse_exact_bytes" },
     { "id": "ERC-021", "depends_on": ["ERC-020"], "boundary": "failure", "expected": "cancel_stale_or_limit_has_no_applicable_edit" },
-    { "id": "ERC-022", "depends_on": ["ERC-021"], "boundary": "compatibility", "expected": "contract_only_no_runtime_or_release_change" }
+    { "id": "ERC-022", "depends_on": ["ERC-021"], "boundary": "compatibility", "expected": "e1_activation_preserves_public_runtime_and_release_identity" }
   ]
 }

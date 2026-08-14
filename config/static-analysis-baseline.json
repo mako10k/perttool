@@ -109,21 +109,6 @@
         "length": 101,
         "parameters": 1
       },
-      "scripts/check-vsix-host.mjs:main": {
-        "cyclomaticComplexity": 7,
-        "length": 142,
-        "parameters": 0
-      },
-      "scripts/check-vsix-host.mjs:runHost": {
-        "cyclomaticComplexity": 2,
-        "length": 38,
-        "parameters": 8
-      },
-      "scripts/vsix-host-tests.cjs:run": {
-        "cyclomaticComplexity": 13,
-        "length": 221,
-        "parameters": 0
-      },
       "src/actuals/lifecycle.ts:normalizeLifecycleMutationRequest": {
         "cyclomaticComplexity": 45,
         "length": 149,

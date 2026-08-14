@@ -2404,16 +2404,17 @@ assurance/milestone record, accepted basis, lifecycle effect, destructive
 range, history dependency, mixed class, stale binding, truncation, or limit
 failure withholds the complete E1 action rather than splitting it.
 
-The future LSP mapping returns at most one preferred diagnostic-bound
+The active private LSP mapping returns at most one preferred diagnostic-bound
 `quickfix` or one document-scoped `source.fixAll.perttool` action containing a
 versioned `documentChanges` WorkspaceEdit and no command. Fix All deduplicates
 the project-level warning and validates the composed candidate twice.
 Automatic use is limited to an explicit client request for the Fix All kind;
-the VSIX never changes `editor.codeActionsOnSave`. The accepted contract adds
-no current protocol capability. Grammar 7 unit-migration composition, the
-Core/Application repair candidate, and edit-bearing Code Actions remain work
-for `EDITOR_REPAIR_ACCEPTANCE`; the existing model-1-compatible Help Code
-Actions remain read-only.
+the VSIX never changes `editor.codeActionsOnSave`. The pure repair evaluator
+owns complete E1 classification and inverse proof, Application composes the
+Grammar 6/7 migration and assurance evidence, and the LSP performs only current
+diagnostic, binding, cancellation, and UTF-16 mapping checks. Existing
+model-1-compatible Help Code Actions remain read-only. This composition is the
+bounded `EDITOR_REPAIR_ACCEPTANCE` implementation.
 
 The accepted
 [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)

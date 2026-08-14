@@ -259,10 +259,18 @@ mixed classes, and partial application fail closed. The contract slice does
 not activate those actions. Its task, reached milestone evidence, and
 conformant outcome are accepted at implementation commit `e4681530`, accepted
 basis `sha256:9f7292b4...08f6a6`, and final plan digest
-`sha256:fac511d0...87af00`. Complete assurance has no required action, and fresh
-NextResult v7 makes only `EDITOR_REPAIR_ACCEPTANCE` startable. Later runtime
-mutation classes, release, public VSIX publication, remote writes, Issue
-changes, and plan advance remain separately gated.
+`sha256:fac511d0...87af00`. The following implementation composes the existing
+Grammar 6/7 unit migration, complete unsealed assurance proof, protected-record
+classification, normalized recovery edits, and current document binding in a
+pure evaluator plus Application facade for `EDITOR_REPAIR_ACCEPTANCE`. The
+private model-2 LSP now maps only
+an eligible result to one preferred Quick Fix or atomic Fix All; model 1,
+public package identities, and direct-write ownership remain unchanged. Its
+RCA and local acceptance are recorded in
+[`editor-repair-acceptance-rca.think`](editor-repair-acceptance-rca.think) and
+[`editor-repair-acceptance.md`](editor-repair-acceptance.md). Durable
+milestone evidence, later mutation classes, release, public VSIX publication,
+remote writes, Issue changes, and plan advance remain separately gated.
 
 ADR 0004 adopts English as the repository baseline immediately. All nine tasks
 in `plans/english-baseline.pert` are accepted and advanced; commit `2001cdf`

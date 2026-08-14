@@ -1,12 +1,13 @@
 # E1 Unsealed Editor Repair Contract
 
-Status: Accepted design target for `EDITOR_REPAIR_CONTRACT`
+Status: Accepted contract and implemented target for `EDITOR_REPAIR_ACCEPTANCE`
 
 This contract refines class `E1` of the
 [Tiered Editor Mutation Contract](editor-mutations.md). It fixes the first
 closed repair registry, the exact unsealed-closure proof, and the standard LSP
-interaction. It does not activate an edit-bearing Code Action. Runtime
-activation remains gated by `EDITOR_REPAIR_ACCEPTED` in
+interaction. The current private LSP implementation activates that closed
+surface for editor protocol model 2. Later mutation classes remain gated by
+their independent tasks in
 [`plans/editor-mutations.pert`](../../plans/editor-mutations.pert).
 
 ## 1. Scope and non-goals
@@ -41,13 +42,13 @@ an accepted contract amendment; an unregistered operation is not `E1`.
 
 ## 2. Verified baseline and ownership
 
-The contract is based on source version `0.9.3`, Grammar 7, CLI Contract 8,
+The implementation retains source version `0.9.4`, Grammar 7, CLI Contract 8,
 53 commands, 23 root schemas, 129 root and Node runtime exports, and 45 Core
 runtime exports. Editor Protocol model 2 and whole-document `E0` formatting
-are active in the private LSP and VSIX. The existing `textDocument/codeAction`
-surface remains the model-1-compatible, read-only Help action: it carries a
-command and no `WorkspaceEdit`. `source.fixAll.perttool` and every edit-bearing
-repair action remain inactive at this contract slice.
+remain active in the private LSP and VSIX. When the private repair Application
+is composed, model 2 adds only the accepted edit-bearing `quickfix` and
+`source.fixAll.perttool` actions. Model 1 retains only its compatible read-only
+Help action, which carries a command and no `WorkspaceEdit`.
 
 Ownership is fixed as follows:
 
@@ -297,25 +298,28 @@ versioned `WorkspaceEdit`; save remains a separate user/editor action.
 
 ## 12. Activation and compatibility boundary
 
-Acceptance of this contract changes documentation and test fixtures only.
-Until `EDITOR_REPAIR_ACCEPTANCE` is independently accepted:
+The current implementation composes the shared Grammar 6 unit-migration path
+for Grammar 6 and Grammar 7 buffers without changing its CLI meaning. A pure
+editor evaluator proves the complete E1 candidate and recovery evidence; the
+Application layer composes parsing, migration, assurance, and protected-record
+evidence; and the private LSP maps the accepted result to the two standard Code
+Action kinds fixed by this contract.
 
-- model 2 advertises whole-document formatting but no
-  `source.fixAll.perttool` capability;
-- existing read-only Help Code Actions remain unchanged for model 1 and 2;
-- no Code Action contains a repair `WorkspaceEdit`;
-- model 1 remains read-only;
+- model 2 advertises `quickfix` and `source.fixAll.perttool` only when the
+  repair Application is present;
+- eligible actions contain one versioned `documentChanges` WorkspaceEdit and
+  no command;
+- read-only Help remains available, and model 1 remains read-only;
 - E0 formatting behavior and all current CLI, package, schema, MCP, historical,
   DAG, governance, assurance, and milestone-acceptance identities remain
   unchanged; and
-- package version `0.9.3`, npm tags, installed VSIX state, release state,
-  Issue #13, and plan-advance state remain unchanged.
+- package version `0.9.4`, npm tags, persistent installed VSIX state, release
+  state, Issue #13, and plan-advance state remain unchanged.
 
-The implementation task must extend the shared Grammar 6 unit-migration path
-to Grammar 7 without changing its current CLI meaning, implement the exact
-candidate/closure projection, activate only the two accepted Code Action
-kinds for model 2, and pass the machine cases below before this boundary can
-move.
+The implementation cases are in
+[`test/fixtures/editor-repair-acceptance-v1.json`](../../test/fixtures/editor-repair-acceptance-v1.json),
+and the accepted trace is recorded in
+[`docs/process/editor-repair-acceptance.md`](../process/editor-repair-acceptance.md).
 
 ## 13. Machine-readable acceptance cases
 
@@ -325,7 +329,7 @@ They are dependency ordered and closed:
 
 | ID | Boundary | Expected result |
 | --- | --- | --- |
-| `ERC-001` | baseline | E0 model 2 active; edit-bearing E1 actions inactive |
+| `ERC-001` | baseline | E0 model 2 and the closed E1 repair surface are active |
 | `ERC-002` | registry | one repair, no refactoring, unknown IDs unavailable |
 | `ERC-003` | diagnostic | only current `PTSEM-114` selects the repair |
 | `ERC-004` | day conversion | existing day velocity converts exactly to points |
@@ -346,5 +350,4 @@ They are dependency ordered and closed:
 | `ERC-019` | classification | strictest whole-candidate class cannot be split or downgraded |
 | `ERC-020` | recovery | forward and inverse reproduce exact candidate and source bytes |
 | `ERC-021` | cancellation/staleness/limits | fail closed without an applicable edit |
-| `ERC-022` | compatibility | contract-only artifacts change no active runtime or release state |
-
+| `ERC-022` | compatibility | private E1 activation changes no public or release identity |

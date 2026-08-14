@@ -1,0 +1,69 @@
+framework DecisionAudit
+
+domain EditorRepairActivation:
+  description "Root-cause analysis for EDITOR_REPAIR_ACCEPTANCE"
+
+problem P1:
+  "Why is the accepted duration_unit_to_point E1 repair unavailable through the active model-2 editor protocol?"
+
+step S1:
+  premise PR1:
+    "The accepted child contract permits one buffer-only Grammar 6 or 7 duration-unit repair only when the complete source and candidate assurance closure is unsealed and exact recovery is proved"
+
+step S2:
+  evidence EV1:
+    "The accepted E1 child contract fixes the unsealed-closure boundary, and the existing Contract 8 planUnitMigration application already lifts the Grammar 6 unit-migration candidate through Grammar 7 milestone-acceptance masking and returns exact normalized edits without changing the CLI command contract"
+    resource:
+      file "docs/specs/editor-repairs.md"
+      label "Accepted E1 repair contract"
+    resource:
+      file "src/application/contract8-milestone-acceptance.ts"
+      label "Existing Contract 8 unit-migration composition"
+
+step S3:
+  evidence EV2:
+    "The current DocumentSession implements only analysis and E0 formatting projections; it has no repair candidate projection or inverse-recovery evidence"
+    resource:
+      file "src/session/document-session.ts"
+      label "Protocol-neutral session boundary"
+
+step S4:
+  evidence EV3:
+    "The current language server advertises only quickfix Code Actions and maps textDocument/codeAction exclusively to read-only Help commands with no WorkspaceEdit"
+    resource:
+      file "adapters/lsp/src/server.ts"
+      label "Active LSP Code Action routing"
+    resource:
+      file "adapters/lsp/src/projection.ts"
+      label "Read-only Help Code Action projection"
+
+step S5:
+  evidence EV4:
+    "The accepted contract fixture explicitly records edit-bearing repair actions and source.fixAll.perttool as inactive until EDITOR_REPAIR_ACCEPTED"
+    resource:
+      file "test/fixtures/editor-repair-contract-v1.json"
+      label "Contract-only activation baseline"
+
+step S6:
+  decision D1 based_on P1, PR1, EV1, EV2, EV3, EV4:
+    "The root cause is the deliberate activation gap after contract acceptance: exact unit conversion exists, but no E1-specific whole-candidate classifier, unsealed-closure proof, inverse proof, Application facade, or model-2 edit-bearing Code Action route composes it"
+
+step S7:
+  decision D2 based_on PR1, EV1, D1:
+    "The minimal implementation reuses Contract 8 planUnitMigration and adds a pure editor-repair evaluator that proves exact inventory, complete before-and-after unsealed assurance, unchanged identities and relations, hard limits, normalized forward and inverse bytes, and strict E1 classification"
+
+step S8:
+  decision D3 based_on EV2, EV3, D2:
+    "Application owns the immutable repair request composition; the private runtime injects it into the LSP; model 2 alone maps an eligible result to one versioned documentChanges WorkspaceEdit for quickfix or source.fixAll.perttool"
+
+step S9:
+  decision D4 based_on PR1, EV3, D3:
+    "Model 1, Help Code Actions, E0 formatting, unsupported automatic requests, protected evidence, stale or cancelled bindings, mixed candidates, direct persistence, settings changes, CLI subprocesses, and public command or schema identities remain unchanged or fail closed"
+
+step S10:
+  decision D5 based_on D2, D3, D4:
+    "Acceptance requires Core and Application candidate cases, direct LSP and stdio Quick Fix and Fix All cases, exact inverse recovery, Grammar 6 and 7 coverage, protected-boundary refusal, model-1 compatibility, supported VS Code host application and Undo, isolated packages, and complete repository gates"
+
+step S11:
+  pending PD1:
+    "Task completion, milestone evidence, outcome acceptance, plan advance, release selection, public VSIX publication, Issue mutation, and other remote writes remain separate after implementation evidence passes"

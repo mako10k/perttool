@@ -1,5 +1,6 @@
 import {
   CodeActionKind,
+  CodeActionTriggerKind,
   ErrorCodes,
   LSPErrorCodes,
   type CodeAction,
@@ -24,6 +25,7 @@ import {
 import {
   createDocumentSession,
   documentOffsetToPosition,
+  documentPositionToOffset,
   type DocumentFormatResult,
   type DocumentProjectionStatus,
   type DocumentSession,
@@ -58,6 +60,8 @@ import {
   isHistoricalGraphView,
   type EditorHelpParamsV1,
   type EditorHelpResultV1,
+  type EditorRepairApplicationV1,
+  type EditorRepairApplicationProjectionV1,
   type EditorProtocolModelVersion,
   type DagFocusApplicationV1,
   type DagFocusParamsV1,
@@ -90,6 +94,7 @@ export interface PerttoolLanguageServerOptions {
   readonly historicalApplication?: HistoricalEditorApplicationV1;
   readonly dagFocusApplication?: DagFocusApplicationV1;
   readonly milestoneAcceptanceApplication?: MilestoneAcceptanceEditorApplicationV1;
+  readonly editorRepairApplication?: EditorRepairApplicationV1;
 }
 
 export interface PerttoolLanguageServer {
@@ -364,6 +369,7 @@ function initializeCapabilities(
   historical: boolean,
   dagFocus: boolean,
   milestoneAcceptance: boolean,
+  editorRepair: boolean,
 ): InitializeResult["capabilities"] {
   const experimental: PerttoolExperimentalCapabilitiesV1 = {
     perttool: {
@@ -405,7 +411,13 @@ function initializeCapabilities(
     hoverProvider: true,
     completionProvider: { resolveProvider: false },
     definitionProvider: true,
-    codeActionProvider: { codeActionKinds: [CodeActionKind.QuickFix] },
+    codeActionProvider: {
+      codeActionKinds:
+        editorProtocolModelVersion === EDITOR_MUTATION_PROTOCOL_MODEL_VERSION &&
+          editorRepair
+          ? [CodeActionKind.QuickFix, "source.fixAll.perttool"]
+          : [CodeActionKind.QuickFix],
+    },
     ...(editorProtocolModelVersion === EDITOR_MUTATION_PROTOCOL_MODEL_VERSION
       ? { documentFormattingProvider: true }
       : {}),
@@ -840,6 +852,158 @@ function projectionError(status: DocumentProjectionStatus): PerttoolProtocolErro
   );
 }
 
+const editorRepairFixAllKind = "source.fixAll.perttool" as const;
+
+function samePosition(
+  left: { readonly line: number; readonly character: number },
+  right: { readonly line: number; readonly character: number },
+): boolean {
+  return left.line === right.line && left.character === right.character;
+}
+
+function currentRepairDiagnostics(
+  snapshot: DocumentSnapshot,
+  params: CodeActionParams,
+): readonly CodeActionParams["context"]["diagnostics"][number][] {
+  const sourceDiagnostic = snapshot.semantic.diagnostics.find(
+    ({ code }) => code === "PTSEM-114",
+  );
+  if (
+    sourceDiagnostic?.span === undefined ||
+    snapshot.semantic.diagnosticsTruncated
+  ) return Object.freeze([]);
+  const start = documentOffsetToPosition(
+    snapshot.text,
+    sourceDiagnostic.span.start.offset,
+  );
+  const end = documentOffsetToPosition(
+    snapshot.text,
+    sourceDiagnostic.span.end.offset,
+  );
+  if (start === null || end === null) return Object.freeze([]);
+  return Object.freeze(params.context.diagnostics.filter((diagnostic) => {
+    const data = record(diagnostic.data) ? diagnostic.data : null;
+    return diagnostic.source === "perttool" &&
+      diagnostic.code === "PTSEM-114" &&
+      data?.["code"] === "PTSEM-114" &&
+      data["diagnosticsTruncated"] === false &&
+      samePosition(diagnostic.range.start, start) &&
+      samePosition(diagnostic.range.end, end);
+  }));
+}
+
+function repairInteraction(
+  params: CodeActionParams,
+): "quickfix" | typeof editorRepairFixAllKind | null {
+  const automatic = params.context.triggerKind === CodeActionTriggerKind.Automatic;
+  const only = params.context.only;
+  if (automatic) {
+    return only?.length === 1 && only[0] === editorRepairFixAllKind
+      ? editorRepairFixAllKind
+      : null;
+  }
+  if (only === undefined || only.length === 0) return "quickfix";
+  if (only.length !== 1) return null;
+  return only[0] === CodeActionKind.QuickFix
+    ? "quickfix"
+    : only[0] === editorRepairFixAllKind
+      ? editorRepairFixAllKind
+      : null;
+}
+
+function requestRangeIntersectsDiagnostic(
+  snapshot: DocumentSnapshot,
+  params: CodeActionParams,
+  diagnostic: CodeActionParams["context"]["diagnostics"][number],
+): boolean {
+  const requestStart = documentPositionToOffset(snapshot.text, params.range.start);
+  const requestEnd = documentPositionToOffset(snapshot.text, params.range.end);
+  const diagnosticStart = documentPositionToOffset(
+    snapshot.text,
+    diagnostic.range.start,
+  );
+  const diagnosticEnd = documentPositionToOffset(snapshot.text, diagnostic.range.end);
+  if (
+    requestStart === null || requestEnd === null ||
+    diagnosticStart === null || diagnosticEnd === null
+  ) return false;
+  return requestStart <= diagnosticEnd && diagnosticStart <= requestEnd;
+}
+
+function editorRepairAction(
+  snapshot: DocumentSnapshot,
+  repair: EditorRepairApplicationProjectionV1,
+  matchingDiagnostics: readonly CodeActionParams["context"]["diagnostics"][number][],
+  interaction: "quickfix" | typeof editorRepairFixAllKind,
+  automatic: boolean,
+  digestText: (text: string) => string,
+): CodeAction | null {
+  if (
+    repair.registry.id !== "perttool.editor-repair" ||
+    repair.registry.version !== 1 ||
+    repair.repairId !== "duration_unit_to_point" ||
+    repair.binding.documentUri !== snapshot.binding.uri ||
+    repair.binding.documentGeneration !== snapshot.binding.generation ||
+    repair.binding.documentVersion !== snapshot.binding.version ||
+    repair.binding.sourceDigest !== snapshot.binding.sourceDigest ||
+    repair.interaction !== interaction ||
+    repair.automatic !== automatic ||
+    repair.status !== "applicable" ||
+    !repair.complete ||
+    repair.strictClass !== "E1" ||
+    repair.candidateSourceDigest === null ||
+    matchingDiagnostics.length === 0
+  ) return null;
+  const edits: LspTextEdit[] = [];
+  const candidateParts: string[] = [];
+  let cursor = 0;
+  for (const edit of repair.forwardEdits) {
+    if (
+      !Number.isSafeInteger(edit.startOffset) ||
+      !Number.isSafeInteger(edit.endOffset) ||
+      edit.startOffset < cursor ||
+      edit.endOffset < edit.startOffset ||
+      edit.endOffset > snapshot.text.length ||
+      typeof edit.replacement !== "string"
+    ) return null;
+    const start = documentOffsetToPosition(snapshot.text, edit.startOffset);
+    const end = documentOffsetToPosition(snapshot.text, edit.endOffset);
+    if (start === null || end === null) return null;
+    candidateParts.push(
+      snapshot.text.slice(cursor, edit.startOffset),
+      edit.replacement,
+    );
+    cursor = edit.endOffset;
+    edits.push({ range: { start, end }, newText: edit.replacement });
+  }
+  if (edits.length === 0) return null;
+  candidateParts.push(snapshot.text.slice(cursor));
+  if (digestText(candidateParts.join("")) !== repair.candidateSourceDigest) {
+    return null;
+  }
+  return {
+    title: "Migrate duration unit to point",
+    kind: repair.interaction,
+    ...(repair.interaction === "quickfix" ? { isPreferred: true } : {}),
+    diagnostics: [matchingDiagnostics[0]!],
+    edit: {
+      documentChanges: [{
+        textDocument: {
+          uri: snapshot.binding.uri,
+          version: snapshot.binding.version,
+        },
+        edits,
+      }],
+    },
+    data: {
+      registry: repair.registry,
+      repairId: repair.repairId,
+      sourceDigest: snapshot.binding.sourceDigest,
+      candidateDigest: repair.candidateSourceDigest,
+    },
+  };
+}
+
 function isAborted(signal: AbortSignal | undefined): boolean {
   return signal?.aborted === true;
 }
@@ -917,6 +1081,7 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
   readonly #milestoneAcceptanceApplication:
     | MilestoneAcceptanceEditorApplicationV1
     | undefined;
+  readonly #editorRepairApplication: EditorRepairApplicationV1 | undefined;
   readonly #openVersions = new Map<string, number>();
   readonly #historicalRequests = new Map<string, number>();
   readonly #retainedHistorical = new Map<
@@ -950,6 +1115,7 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
     this.#dagFocusApplication = options.dagFocusApplication;
     this.#milestoneAcceptanceApplication =
       options.milestoneAcceptanceApplication;
+    this.#editorRepairApplication = options.editorRepairApplication;
   }
 
   get customProtocolNegotiated(): boolean {
@@ -1115,6 +1281,7 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
         this.#historicalSession !== null,
         this.#dagFocusProtocolNegotiated,
         this.#milestoneAcceptanceProtocolNegotiated,
+        this.#editorRepairApplication !== undefined,
       ),
       serverInfo: { name: "perttool language server", version: "0.0.0-private" },
     };
@@ -1218,7 +1385,7 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
     uri: string,
     cacheKey: string,
     signal: AbortSignal | undefined,
-    compute: (snapshot: DocumentSnapshot) => Value,
+    compute: (snapshot: DocumentSnapshot) => Value | PromiseLike<Value>,
   ): Promise<Value | null> {
     this.#ensureRunning();
     const snapshot = this.#session.current(uri);
@@ -1292,9 +1459,59 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
     if (this.#editorProtocolModelVersion === null) return [];
     return await this.#project(
       params.textDocument.uri,
-      `lsp:codeAction:v1:${JSON.stringify(params.range)}:${JSON.stringify(params.context.diagnostics)}`,
+      `lsp:codeAction:v2:${JSON.stringify(params.range)}:${JSON.stringify(params.context)}`,
       signal,
-      (snapshot) => helpCodeActions(snapshot, params),
+      async (snapshot) => {
+        const includeHelp = params.context.only === undefined ||
+          params.context.only.includes(CodeActionKind.QuickFix);
+        const help = includeHelp ? helpCodeActions(snapshot, params) : [];
+        if (
+          this.#editorProtocolModelVersion !==
+            EDITOR_MUTATION_PROTOCOL_MODEL_VERSION ||
+          this.#editorRepairApplication === undefined
+        ) return Object.freeze([...help]);
+        const interaction = repairInteraction(params);
+        if (interaction === null) return Object.freeze([...help]);
+        const matching = currentRepairDiagnostics(snapshot, params);
+        if (matching.length === 0) return Object.freeze([...help]);
+        try {
+          const repair = await this.#editorRepairApplication.plan(
+            snapshot.text,
+            {
+              binding: {
+                documentUri: snapshot.binding.uri,
+                documentGeneration: snapshot.binding.generation,
+                documentVersion: snapshot.binding.version,
+                sourceDigest: snapshot.binding.sourceDigest,
+              },
+              interaction,
+              automatic:
+                params.context.triggerKind === CodeActionTriggerKind.Automatic,
+              matchingDiagnosticCount: matching.length,
+              requestedRangeIntersectsDiagnostic:
+                interaction === editorRepairFixAllKind ||
+                requestRangeIntersectsDiagnostic(
+                  snapshot,
+                  params,
+                  matching[0]!,
+                ),
+            },
+          );
+          const automatic =
+            params.context.triggerKind === CodeActionTriggerKind.Automatic;
+          const action = editorRepairAction(
+            snapshot,
+            repair,
+            matching,
+            interaction,
+            automatic,
+            this.#digestText,
+          );
+          return Object.freeze(action === null ? [...help] : [...help, action]);
+        } catch {
+          return Object.freeze([...help]);
+        }
+      },
     ) ?? [];
   }
 

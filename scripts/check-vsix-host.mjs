@@ -96,19 +96,10 @@ async function installedExtensionPath(extensionsDirectory) {
   return path.join(extensionsDirectory, entries[0]);
 }
 
-async function runHost({
-  executable,
-  extensionPath,
-  extensionsDirectory,
-  profile,
-  workspace,
-  workspaceFile,
-  formatOnSaveFile,
-  trust,
-}) {
+async function runHost(host, fixture, trust) {
   const testsPath = path.join(repositoryRoot, "scripts", "vsix-host-tests.cjs");
   const args = [
-    workspace,
+    fixture.workspace,
     "--no-sandbox",
     "--disable-gpu-sandbox",
     "--disable-updates",
@@ -117,22 +108,156 @@ async function runHost({
     "--no-cached-data",
     "--disable-extensions",
     `--extensionTestsPath=${testsPath}`,
-    `--extensionDevelopmentPath=${extensionPath}`,
-    `--user-data-dir=${profile}`,
-    `--extensions-dir=${extensionsDirectory}`,
+    `--extensionDevelopmentPath=${host.extensionPath}`,
+    `--user-data-dir=${host.profile}`,
+    `--extensions-dir=${host.extensionsDirectory}`,
   ];
   if (trust === "trusted") args.push("--disable-workspace-trust");
-  const result = await runProcess(executable, args, {
+  const result = await runProcess(host.executable, args, {
     env: {
       PERTTOOL_HOST_EXPECTED_TRUST: trust,
-      PERTTOOL_HOST_FORMAT_ON_SAVE_FILE: formatOnSaveFile,
-      PERTTOOL_HOST_WORKSPACE_FILE: workspaceFile,
+      PERTTOOL_HOST_FORMAT_ON_SAVE_FILE: fixture.formatOnSaveFile,
+      PERTTOOL_HOST_WORKSPACE_FILE: fixture.workspaceFile,
+      PERTTOOL_HOST_REPAIR_FILE: fixture.repairFile,
     },
   });
   assert.match(
     result.stdout,
     new RegExp(`perttool VSIX host acceptance passed \\(${trust}\\)`),
   );
+}
+
+async function prepareWorkspace(temporaryRoot) {
+  const workspace = path.join(temporaryRoot, "workspace");
+  const workspaceFile = path.join(workspace, "plan.pert");
+  const trustedFormatFile = path.join(workspace, "format-trusted.pert");
+  const untrustedFormatFile = path.join(workspace, "format-untrusted.pert");
+  const repairFile = path.join(workspace, "repair.pert");
+  await mkdir(workspace, { recursive: true });
+  await cp(path.join(repositoryRoot, "docs", "examples", "minimal.pert"), workspaceFile);
+  const canonical = await readFile(workspaceFile, "utf8");
+  const formatSource = `\uFEFF# Café Ω\r\n${canonical.replaceAll("\n", "\r\n")}`
+    .replace("duration 1d", "duration 1.0d");
+  const expectedFormatted = formatSource.replace("duration 1.0d", "duration 1d");
+  await writeFile(trustedFormatFile, formatSource, "utf8");
+  await writeFile(untrustedFormatFile, formatSource, "utf8");
+  const repairSource = [
+    "project HOST_REPAIR:",
+    "  version 6",
+    '  title "Supported-host E1 repair"',
+    "  duration_unit day",
+    "  velocity 2p/1d",
+    "  finish DONE",
+    "  plan_assurance_model 1",
+    "  plan_assurance_hash_model 1",
+    "",
+    "milestone START:",
+    '  title "Start"',
+    "  state reached",
+    "",
+    "milestone DONE:",
+    '  title "Done"',
+    "",
+    "task WORK START -> DONE:",
+    '  title "Work"',
+    "  duration 1d",
+    "",
+  ].join("\n");
+  await writeFile(repairFile, repairSource, "utf8");
+  await runProcess("git", ["init", "--quiet"], { cwd: workspace });
+  await runProcess("git", ["add", "--", "plan.pert"], { cwd: workspace });
+  await runProcess("git", [
+    "-c",
+    "user.name=perttool acceptance",
+    "-c",
+    "user.email=acceptance@example.invalid",
+    "commit",
+    "--quiet",
+    "-m",
+    "historical VSIX fixture",
+  ], { cwd: workspace });
+  return {
+    workspace,
+    workspaceFile,
+    trustedFormatFile,
+    untrustedFormatFile,
+    repairFile,
+    formatSource,
+    expectedFormatted,
+    sourceBefore: await readFile(workspaceFile),
+    repairBefore: await readFile(repairFile),
+    entriesBefore: await readdir(workspace),
+  };
+}
+
+async function installExtension(
+  cli,
+  extensionArgs,
+  vsixPath,
+  extensionsDirectory,
+) {
+  await runProcess(cli, [
+    ...extensionArgs,
+    "--install-extension",
+    path.resolve(vsixPath),
+    "--force",
+  ]);
+  return installedExtensionPath(extensionsDirectory);
+}
+
+async function assertInstalledExtension(cli, extensionArgs) {
+  const listed = await runProcess(cli, [
+    ...extensionArgs,
+    "--list-extensions",
+    "--show-versions",
+  ]);
+  assert.deepEqual(
+    listed.stdout.trim().split(/\r?\n/u).filter(Boolean),
+    [`${extensionId}@0.0.0`],
+  );
+}
+
+async function acceptHostProfile(
+  temporaryRoot,
+  executable,
+  extensionsDirectory,
+  extensionPath,
+  fixture,
+  trust,
+) {
+  const profile = path.join(temporaryRoot, `${trust}-profile`);
+  const settings = await writeProfile(profile, trust === "untrusted");
+  const formatOnSaveFile = trust === "trusted"
+    ? fixture.trustedFormatFile
+    : fixture.untrustedFormatFile;
+  await runHost(
+    { executable, extensionPath, extensionsDirectory, profile },
+    { ...fixture, formatOnSaveFile },
+    trust,
+  );
+  assert.equal(digest(await readFile(settings.settingsPath)), settings.digest);
+}
+
+async function uninstallExtension(cli, extensionArgs, isWsl) {
+  const uninstall = await runProcess(cli, [
+    ...extensionArgs,
+    "--uninstall-extension",
+    extensionId,
+  ], {
+    // The unsupported standalone Linux desktop build can abort after its
+    // CLI has completed uninstall under WSL. Accept that post-success signal
+    // only on WSL and require an independent clean registry readback below.
+    acceptedExitCodes: isWsl ? [0, 134] : [0],
+  });
+  if (uninstall.code === 134) {
+    assert.match(uninstall.stdout, /was successfully uninstalled/iu);
+  }
+  const afterUninstall = await runProcess(cli, [
+    ...extensionArgs,
+    "--list-extensions",
+    "--show-versions",
+  ]);
+  assert.equal(afterUninstall.stdout.trim(), "");
 }
 
 async function main() {
@@ -153,33 +278,8 @@ async function main() {
     });
     const extensionsDirectory = path.join(temporaryRoot, "extensions");
     const managementProfile = path.join(temporaryRoot, "management-profile");
-    const workspace = path.join(temporaryRoot, "workspace");
-    const workspaceFile = path.join(workspace, "plan.pert");
-    const trustedFormatFile = path.join(workspace, "format-trusted.pert");
-    const untrustedFormatFile = path.join(workspace, "format-untrusted.pert");
     await mkdir(extensionsDirectory, { recursive: true });
-    await mkdir(workspace, { recursive: true });
-    await cp(path.join(repositoryRoot, "docs", "examples", "minimal.pert"), workspaceFile);
-    const canonical = await readFile(workspaceFile, "utf8");
-    const formatSource = `\uFEFF# Café Ω\r\n${canonical.replaceAll("\n", "\r\n")}`
-      .replace("duration 1d", "duration 1.0d");
-    const expectedFormatted = formatSource.replace("duration 1.0d", "duration 1d");
-    await writeFile(trustedFormatFile, formatSource, "utf8");
-    await writeFile(untrustedFormatFile, formatSource, "utf8");
-    await runProcess("git", ["init", "--quiet"], { cwd: workspace });
-    await runProcess("git", ["add", "--", "plan.pert"], { cwd: workspace });
-    await runProcess("git", [
-      "-c",
-      "user.name=perttool acceptance",
-      "-c",
-      "user.email=acceptance@example.invalid",
-      "commit",
-      "--quiet",
-      "-m",
-      "historical VSIX fixture",
-    ], { cwd: workspace });
-    const sourceBefore = await readFile(workspaceFile);
-    const entriesBefore = await readdir(workspace);
+    const fixture = await prepareWorkspace(temporaryRoot);
     const isWsl = /microsoft/iu.test(
       await readFile("/proc/version", "utf8").catch(() => ""),
     );
@@ -189,86 +289,62 @@ async function main() {
       `--user-data-dir=${managementProfile}`,
       `--extensions-dir=${extensionsDirectory}`,
     ];
-    await runProcess(cli, [
-      ...extensionArgs,
-      "--install-extension",
-      path.resolve(vsixPath),
-      "--force",
-    ]);
-    let installedPath = await installedExtensionPath(extensionsDirectory);
-
-    const listed = await runProcess(cli, [
-      ...extensionArgs,
-      "--list-extensions",
-      "--show-versions",
-    ]);
-    assert.deepEqual(
-      listed.stdout.trim().split(/\r?\n/u).filter(Boolean),
-      [`${extensionId}@0.0.0`],
+    let installedPath = await installExtension(
+      cli,
+      extensionArgs,
+      vsixPath,
+      extensionsDirectory,
+    );
+    await assertInstalledExtension(cli, extensionArgs);
+    await acceptHostProfile(
+      temporaryRoot,
+      executable,
+      extensionsDirectory,
+      installedPath,
+      fixture,
+      "trusted",
+    );
+    assert.equal(
+      await readFile(fixture.trustedFormatFile, "utf8"),
+      fixture.expectedFormatted,
+    );
+    assert.equal(
+      await readFile(fixture.untrustedFormatFile, "utf8"),
+      fixture.formatSource,
     );
 
-    const trustedProfile = path.join(temporaryRoot, "trusted-profile");
-    const trustedSettings = await writeProfile(trustedProfile, false);
-    await runHost({
-      executable,
-      extensionPath: installedPath,
+    installedPath = await installExtension(
+      cli,
+      extensionArgs,
+      vsixPath,
       extensionsDirectory,
-      profile: trustedProfile,
-      workspace,
-      workspaceFile,
-      formatOnSaveFile: trustedFormatFile,
-      trust: "trusted",
-    });
-    assert.equal(digest(await readFile(trustedSettings.settingsPath)), trustedSettings.digest);
-    assert.equal(await readFile(trustedFormatFile, "utf8"), expectedFormatted);
-    assert.equal(await readFile(untrustedFormatFile, "utf8"), formatSource);
-
-    await runProcess(cli, [
-      ...extensionArgs,
-      "--install-extension",
-      path.resolve(vsixPath),
-      "--force",
-    ]);
-    installedPath = await installedExtensionPath(extensionsDirectory);
-
-    const untrustedProfile = path.join(temporaryRoot, "untrusted-profile");
-    const untrustedSettings = await writeProfile(untrustedProfile, true);
-    await runHost({
+    );
+    await acceptHostProfile(
+      temporaryRoot,
       executable,
-      extensionPath: installedPath,
       extensionsDirectory,
-      profile: untrustedProfile,
-      workspace,
-      workspaceFile,
-      formatOnSaveFile: untrustedFormatFile,
-      trust: "untrusted",
-    });
-    assert.equal(digest(await readFile(untrustedSettings.settingsPath)), untrustedSettings.digest);
-
-    assert.deepEqual(await readdir(workspace), entriesBefore);
-    assert.equal(digest(await readFile(workspaceFile)), digest(sourceBefore));
-    assert.equal(await readFile(trustedFormatFile, "utf8"), expectedFormatted);
-    assert.equal(await readFile(untrustedFormatFile, "utf8"), expectedFormatted);
-
-    const uninstall = await runProcess(cli, [
-      ...extensionArgs,
-      "--uninstall-extension",
-      extensionId,
-    ], {
-      // The unsupported standalone Linux desktop build can abort after its
-      // CLI has completed uninstall under WSL. Accept that post-success signal
-      // only on WSL and require an independent clean registry readback below.
-      acceptedExitCodes: isWsl ? [0, 134] : [0],
-    });
-    if (uninstall.code === 134) {
-      assert.match(uninstall.stdout, /was successfully uninstalled/iu);
-    }
-    const afterUninstall = await runProcess(cli, [
-      ...extensionArgs,
-      "--list-extensions",
-      "--show-versions",
-    ]);
-    assert.equal(afterUninstall.stdout.trim(), "");
+      installedPath,
+      fixture,
+      "untrusted",
+    );
+    assert.deepEqual(await readdir(fixture.workspace), fixture.entriesBefore);
+    assert.equal(
+      digest(await readFile(fixture.workspaceFile)),
+      digest(fixture.sourceBefore),
+    );
+    assert.equal(
+      digest(await readFile(fixture.repairFile)),
+      digest(fixture.repairBefore),
+    );
+    assert.equal(
+      await readFile(fixture.trustedFormatFile, "utf8"),
+      fixture.expectedFormatted,
+    );
+    assert.equal(
+      await readFile(fixture.untrustedFormatFile, "utf8"),
+      fixture.expectedFormatted,
+    );
+    await uninstallExtension(cli, extensionArgs, isWsl);
 
     process.stdout.write(
       `supported VS Code ${vscodeVersion} trusted/untrusted install, host, replacement, and uninstall acceptance passed\n`,

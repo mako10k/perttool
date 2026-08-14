@@ -463,29 +463,28 @@ mixed classes, and partial repair fail closed. Its twenty-two cases are in
 `EDITOR_REPAIR_CONTRACT`, its reached-milestone evidence, and its conformant
 outcome are accepted at implementation commit `e4681530`, accepted basis
 `sha256:9f7292b4...08f6a6`, and final plan digest
-`sha256:fac511d0...87af00`. Complete assurance has no required action, and fresh
-NextResult v7 selects only `EDITOR_REPAIR_ACCEPTANCE`. The contract adds no
-edit-bearing Code Action.
-Range/on-type formatting, E1 implementation, E2, E3, MCP mutation, public VSIX
+`sha256:fac511d0...87af00`. The current private implementation composes the
+existing Grammar 6/7 unit migration, complete unsealed assurance proof,
+protected-record classification, exact recovery, and current document binding
+through one pure evaluator and Application facade. Model 2 exposes only the
+accepted preferred Quick Fix and atomic `source.fixAll.perttool`; model 1,
+E0 formatting, all public counts, and direct-write ownership remain unchanged.
+Its 24-case trace and llmthink RCA are
+`docs/process/editor-repair-acceptance.md` and
+`docs/process/editor-repair-acceptance-rca.think`.
+Range/on-type formatting, durable milestone evidence, E2, E3, MCP mutation, public VSIX
 publication, release selection, remote writes, Issue mutation, and plan advance
 remain separate.
 
-The live 2026-08-14 open-Issue review is recorded in
-`docs/process/issue-priority-review-2026-08-14.md`. Issue #19 / `ADV-006` is
-the sole P0 because successful `dag advance` can discard criterion sets for
-retained milestones and introduce `PTMAC-102`; it preempts normal feature
-progression. Issues #7 / `ACT-004` and #6 / `ACT-005` are P1. Issues #13,
-#18, and #12 are P2, and Issue #3 is P3. Only Issue #7's priority label changed,
-from P0 to P1, and live readback confirmed all seven open Issues have exactly
-one priority label. This product ordering does not rewrite the accepted
-`editor-mutations.pert` assurance frontier: `EDITOR_REPAIR_ACCEPTANCE` remains
-its only startable task but is paused. The local #19 correction now protects
-all `keptMilestoneIds` and rechecks the final Contract 8 candidate; its
-llmthink RCA and acceptance evidence are recorded in
-`docs/process/issue-19-advance-criterion-rca.think` and
-`docs/process/issue-19-advance-criterion-acceptance.md`. The published `0.9.3`
-remains affected. Hotfix release selection, remote source write, Issue
-closure, and plan advance remain separate.
+The live 2026-08-14 Issue review and post-`0.9.4` readback are recorded in
+`docs/process/issue-priority-review-2026-08-14.md`. The accepted `0.9.4`
+release corrected `ADV-006`, closed Issue #19 with release evidence, and left
+no open P0. Issues #7 / `ACT-004` and #6 / `ACT-005` are P1. Issues #13, #18,
+and #12 are P2, and Issue #3 is P3. The selected editor plan therefore resumed
+from its independently retained `EDITOR_REPAIR_ACCEPTANCE` authority. The
+published `0.9.4` and exact rollback evidence are in
+`docs/process/0.9.4-release-acceptance.md`; no later Issue mutation or another
+release is implied by the editor implementation.
 
 The explicitly selected `HIST-DAG-001` workstream is tracked independently in
 `plans/historical-dag.pert`. Its eight tasks total 44p from

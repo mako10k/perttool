@@ -1779,6 +1779,19 @@ with the structured RCA in
 No release, remote source push, Issue close, or plan advance followed from the
 priority review or local correction.
 
+The later separately authorized `0.9.4` release, durable acceptance, Issue #19
+closure, and release-plan advance removed that P0 interruption. Final live
+readback found no open P0; Issues #7 and #6 remain P1, and the selected editor
+workstream resumed from `EDITOR_REPAIR_ACCEPTANCE`. Its llmthink RCA identified
+a deliberate activation gap: the exact unit-migration service existed, but no
+E1 whole-candidate evaluator, Application composition, or edit-bearing LSP
+mapping existed after contract acceptance. The local implementation now adds
+those three bounded owners, activates only model-2 `quickfix` and
+`source.fixAll.perttool`, and retains model 1, E0 formatting, public counts,
+direct-write ownership, release, and persistent VSIX state. The 24-case trace
+is [editor-repair-acceptance.md](editor-repair-acceptance.md); durable
+milestone evidence and the subsequent plan frontier remain separately gated.
+
 Stage 1 allowed operations:
 
 - check

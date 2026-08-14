@@ -1,5 +1,5 @@
 import type { Range } from "vscode-languageserver/node.js";
-import type { Diagnostic } from "perttool/core";
+import type { Diagnostic, TextEdit } from "perttool/core";
 
 export const EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
 export const EDITOR_MUTATION_PROTOCOL_MODEL_VERSION = 2 as const;
@@ -85,6 +85,43 @@ export interface OpenHelpCommandArgsV1 {
   readonly documentGeneration: string;
   readonly documentVersion: number;
   readonly topicId: string;
+}
+
+export interface EditorRepairApplicationRequestV1 {
+  readonly binding: {
+    readonly documentUri: string;
+    readonly documentGeneration: string;
+    readonly documentVersion: number;
+    readonly sourceDigest: `sha256:${string}`;
+  };
+  readonly interaction: "quickfix" | "source.fixAll.perttool";
+  readonly automatic: boolean;
+  readonly matchingDiagnosticCount: number;
+  readonly requestedRangeIntersectsDiagnostic: boolean;
+}
+
+export interface EditorRepairApplicationProjectionV1 {
+  readonly registry: {
+    readonly id: "perttool.editor-repair";
+    readonly version: 1;
+  };
+  readonly repairId: "duration_unit_to_point";
+  readonly binding: EditorRepairApplicationRequestV1["binding"];
+  readonly interaction: "quickfix" | "source.fixAll.perttool";
+  readonly automatic: boolean;
+  readonly status: "applicable" | "unavailable";
+  readonly complete: boolean;
+  readonly strictClass: "E1" | null;
+  readonly candidateSourceDigest: `sha256:${string}` | null;
+  readonly forwardEdits: readonly TextEdit[];
+}
+
+export interface EditorRepairApplicationV1 {
+  readonly plan: (
+    text: string,
+    request: EditorRepairApplicationRequestV1,
+  ) => EditorRepairApplicationProjectionV1 |
+    PromiseLike<EditorRepairApplicationProjectionV1>;
 }
 
 export interface EditorHelpParamsV1 {

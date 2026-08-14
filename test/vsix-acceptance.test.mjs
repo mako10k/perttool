@@ -78,8 +78,10 @@ test("installed host gate preserves workspace bytes and uses disposable profiles
   const host = await repositoryText("scripts/check-vsix-host.mjs");
   assert.match(host, /mkdtemp\(path\.join\(tmpdir\(\), "perttool-vsix-host-"\)\)/u);
   assert.match(host, /telemetry\.telemetryLevel/u);
-  assert.match(host, /digest\(await readFile\(workspaceFile\)\), digest\(sourceBefore\)/u);
-  assert.match(host, /await readdir\(workspace\), entriesBefore/u);
+  assert.match(host, /digest\(await readFile\(fixture\.workspaceFile\)\)/u);
+  assert.match(host, /digest\(fixture\.sourceBefore\)/u);
+  assert.match(host, /await readdir\(fixture\.workspace\)/u);
+  assert.match(host, /fixture\.entriesBefore/u);
   assert.match(host, /await rm\(temporaryRoot, \{ recursive: true, force: true \}\)/u);
   assert.equal(/git |git\.|npm publish|vsce publish/iu.test(host), false);
 });

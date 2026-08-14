@@ -97,9 +97,11 @@ test("format acceptance keeps direct persistence and external mutation out of th
   assert.equal(/node:fs|node:child_process|\bgit\b|npm publish|vsce publish/iu.test(extension), false);
   assert.match(host, /vscode\.workspace\.applyEdit/u);
   assert.match(host, /formatDocument\.save\(\)/u);
-  assert.match(gate, /digest\(await readFile\(workspaceFile\)\), digest\(sourceBefore\)/u);
-  assert.match(gate, /trustedSettings\.settingsPath/u);
-  assert.match(gate, /untrustedSettings\.settingsPath/u);
+  assert.match(gate, /digest\(await readFile\(fixture\.workspaceFile\)\)/u);
+  assert.match(gate, /digest\(fixture\.sourceBefore\)/u);
+  assert.match(gate, /settings\.settingsPath/u);
+  assert.match(gate, /"trusted"/u);
+  assert.match(gate, /"untrusted"/u);
   assert.match(shell, /package:vsix/u);
   assert.match(shell, /node_modules\|media/u);
 });

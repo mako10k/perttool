@@ -1898,8 +1898,11 @@ governance scope, declaration removal, lifecycle invention, history proof,
 seal, owner assertion, or authority restoration. Explicit Quick Fix and atomic
 `source.fixAll.perttool` behavior use versioned editor-applied WorkspaceEdits;
 automatic use requires explicit editor-owned opt-in and repeats complete
-binding/candidate validation. The child contract itself activates no repair
-Code Action; implementation remains gated by `EDITOR_REPAIR_ACCEPTANCE`.
+binding/candidate validation. The current private implementation now maps that
+closed proof to one preferred Quick Fix or one atomic Fix All for model 2. It
+keeps model 1 read-only and changes no CLI, schema, public export, MCP, release,
+or persistent VSIX identity. This is the bounded `EDITOR_REPAIR_ACCEPTANCE`
+implementation; later editor classes remain separate.
 
 The accepted
 [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)

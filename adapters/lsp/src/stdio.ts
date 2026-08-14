@@ -10,9 +10,17 @@ import { createPerttoolLanguageServer } from "./server.js";
 import {
   PerttoolProtocolError,
   type DagFocusApplicationV1,
+  type EditorRepairApplicationV1,
   type HistoricalEditorApplicationV1,
   type MilestoneAcceptanceEditorApplicationV1,
 } from "./protocol.js";
+
+interface StdioServerOptions {
+  readonly historicalApplication?: HistoricalEditorApplicationV1;
+  readonly dagFocusApplication?: DagFocusApplicationV1;
+  readonly milestoneAcceptanceApplication?: MilestoneAcceptanceEditorApplicationV1;
+  readonly editorRepairApplication?: EditorRepairApplicationV1;
+}
 
 function digestText(text: string): string {
   return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
@@ -43,17 +51,11 @@ async function protocolResult<Value>(operation: () => Promise<Value>): Promise<V
   }
 }
 
-export function startPerttoolStdioServer(
-  input: Readable = process.stdin,
-  output: Writable = process.stdout,
-  options: {
-    readonly historicalApplication?: HistoricalEditorApplicationV1;
-    readonly dagFocusApplication?: DagFocusApplicationV1;
-    readonly milestoneAcceptanceApplication?: MilestoneAcceptanceEditorApplicationV1;
-  } = {},
-): Connection {
-  const connection = createConnection(input, output);
-  const server = createPerttoolLanguageServer({
+function createStdioLanguageServer(
+  connection: Connection,
+  options: StdioServerOptions,
+) {
+  return createPerttoolLanguageServer({
     digestText,
     publishDiagnostics: (params) => {
       void connection.sendDiagnostics(params);
@@ -76,7 +78,19 @@ export function startPerttoolStdioServer(
           milestoneAcceptanceApplication:
             options.milestoneAcceptanceApplication,
         }),
+    ...(options.editorRepairApplication === undefined
+      ? {}
+      : { editorRepairApplication: options.editorRepairApplication }),
   });
+}
+
+export function startPerttoolStdioServer(
+  input: Readable = process.stdin,
+  output: Writable = process.stdout,
+  options: StdioServerOptions = {},
+): Connection {
+  const connection = createConnection(input, output);
+  const server = createStdioLanguageServer(connection, options);
 
   connection.onInitialize((params) => {
     try {

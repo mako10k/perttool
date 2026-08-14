@@ -1440,11 +1440,11 @@ local installation, Marketplace publication, and Open VSX remain separate.
 
 ### EDITOR-MUTATION-001: Add tiered VSIX editor mutations
 
-Priority: P2 (selected workstream; paused behind open P0/P1 corrections)
+Priority: P2 (selected workstream; resumed after resolved P0)
 
-Status: Editor Protocol model 2, E0 whole-document formatting, and the E1
-unsealed repair contract accepted (2026-08-14); E1 implementation is next in
-the independent plan
+Status: Editor Protocol model 2, E0 whole-document formatting, and the closed
+E1 unsealed repair implementation are locally accepted (2026-08-14); durable
+plan-assurance evidence remains separately gated
 
 The selected [`editor-mutations.pert`](../plans/editor-mutations.pert)
 workstream replaces the permanent read-only editor ceiling with four ordered
@@ -1478,10 +1478,15 @@ withholds any protected record, work event, inferred value, governance,
 history, destructive, lifecycle, or authority-sensitive candidate. Its 22
 closed cases are recorded in
 [`editor-repair-contract-v1.json`](../test/fixtures/editor-repair-contract-v1.json).
-The task, reached-milestone evidence, and conformant outcome are accepted at
-final plan digest `sha256:fac511d0...87af00`; fresh complete NextResult v7 makes
-only `EDITOR_REPAIR_ACCEPTANCE` startable. No edit-bearing E1 action is active
-yet. Semantic assurance highlighting,
+The contract task, reached-milestone evidence, and conformant outcome are
+accepted at final plan digest `sha256:fac511d0...87af00`. The current private
+`EDITOR_REPAIR_ACCEPTANCE` runtime adds one pure E1 evaluator, one Application
+composition, and only the
+accepted model-2 Quick Fix and Fix All mappings. Grammar 6/7 exact recovery,
+protected-state failure closure, stdio composition, and supported-host
+application plus Undo are recorded in
+[`editor-repair-acceptance.md`](process/editor-repair-acceptance.md). Semantic
+assurance highlighting,
 graph-driven mutation beyond the accepted classes, MCP mutation, public VSIX
 identity/publication, release selection, Issue mutation, remote writes, and
 plan advance remain separate.
@@ -2154,7 +2159,7 @@ Status: Backlog (2026-08-14); [Issue
 
 The source static-analysis gate now prevents growth beyond 148 jscpd clones,
 2,746 duplicated lines, 15,252 duplicated tokens, and 3.37 percent duplication,
-and prevents new or worsened Lizard violations beyond the reviewed 173-function
+and prevents new or worsened Lizard violations beyond the reviewed 170-function
 legacy baseline. Reduce these existing findings without weakening the pinned
 tool versions, scan scope, thresholds, or ratchet semantics.
 

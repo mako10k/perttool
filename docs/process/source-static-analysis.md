@@ -59,7 +59,7 @@ The local Node.js 22.22.3 acceptance run completed with:
 
 - exact jscpd 5.0.15: 148 clones, 2,746 duplicated lines, 15,252 duplicated
   tokens, and 3.363 percent duplication;
-- exact Lizard 1.23.0: 3,540 functions and 173 reviewed legacy entries;
+- exact Lizard 1.23.0: 3,571 functions and 170 reviewed legacy entries;
 - 1,069 of 1,069 Node.js tests;
 - the 897-file English baseline, 269 Markdown documents, seven PERT examples,
   and all forty-one self-use plans; and

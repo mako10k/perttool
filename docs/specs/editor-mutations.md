@@ -28,9 +28,10 @@ adapter MUST NOT split, hide, or relabel a stricter member of an atomic
 candidate to obtain a less cautious interaction.
 
 This contract fixes classification, evidence, protocol, recovery, interaction,
-authority, diagnostics, and limits. It does not implement or advertise any
-mutation capability. `EDITOR_FORMAT_CORE` is the first task allowed to
-activate model 2, and it may activate only `E0` whole-document formatting.
+authority, diagnostics, and limits. Its acceptance did not itself implement or
+advertise a mutation capability. The later accepted E0 tasks activated model 2
+and whole-document formatting; the current E1 implementation adds only the
+closed repair surface in Section 6.
 
 ## 2. Preserved baseline
 
@@ -204,8 +205,10 @@ registry `perttool.editor-repair` version 1 to the single
 with an existing sufficient velocity and a whole-plan closure that is
 `unsealed` before and after. Version 1 contains no refactoring, inferred input,
 work-event change, protected record, or partial Fix All. That child contract is
-contract-only until `EDITOR_REPAIR_ACCEPTANCE`; it does not yet activate an
-edit-bearing Code Action or `source.fixAll.perttool`.
+now implemented by one pure evaluator, one Application composition, and the
+private model-2 LSP. It activates only a diagnostic-bound `quickfix` and the
+atomic `source.fixAll.perttool`; model 1 remains read-only and the public
+package surface is unchanged.
 
 ## 7. Class E2: non-destructive recoverable semantic edit
 

@@ -40,14 +40,15 @@ Plans are separated by level of detail.
   private LSP/VSIX acceptance; the contract, E0 Core/LSP, and E0 VSIX acceptance
   tasks are complete and retained before advance; the accepted E1 child
   contract fixes a single registry-v1 `duration_unit_to_point` repair, exact
-  whole-plan unsealed closure proof, and atomic Quick Fix/Fix All behavior
-  without activating an edit; `EDITOR_REPAIR_CONTRACT`, its reached-milestone
+  whole-plan unsealed closure proof, and atomic Quick Fix/Fix All behavior;
+  the current private implementation activates only those model-2 actions
+  through a pure evaluator and Application facade for
+  `EDITOR_REPAIR_ACCEPTANCE`; `EDITOR_REPAIR_CONTRACT`, its reached-milestone
   evidence, and its conformant outcome are accepted at final plan digest
-  `sha256:fac511d0...87af00`, and fresh NextResult v7 recommends only
-  `EDITOR_REPAIR_ACCEPTANCE`; the separate 2026-08-14 product-Issue review
-  pauses that implementation frontier behind P0 `ADV-006`; the Issue #19
-  correction is locally accepted, but its patch release and Issue disposition
-  remain separate, without mutating this accepted plan or its assurance result
+  `sha256:fac511d0...87af00`; the separate `0.9.4` flow resolved `ADV-006`,
+  closed Issue #19, and left no open P0. Local E1 acceptance is recorded in
+  `docs/process/editor-repair-acceptance.md`; durable milestone evidence and
+  the resulting next frontier remain separate from that implementation
 - [historical-dag.pert](historical-dag.pert): selected `HIST-DAG-001`
   first-parent historical reconstruction roadmap covering the normative
   contract, shared transition model, bounded immutable Git evidence, pure

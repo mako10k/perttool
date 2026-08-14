@@ -28,7 +28,7 @@ test("E1 registry version 1 contains one bounded repair and no refactoring", asy
   const cases = await fixture();
   assert.equal(cases.schema_version, "Perttool.EditorRepairContractCases.v1");
   assert.equal(cases.parent_contract, "Perttool.EditorMutationContractCases.v1");
-  assert.equal(cases.activation_state, "contract_only");
+  assert.equal(cases.activation_state, "active");
   assert.equal(cases.activation_gate, "EDITOR_REPAIR_ACCEPTED");
   assert.deepEqual(cases.registry.categories, ["repair", "refactoring"]);
   assert.equal(cases.registry.version, 1);
@@ -140,14 +140,15 @@ test("all twenty-two E1 contract cases are complete and dependency ordered", asy
   );
 });
 
-test("contract acceptance changes no current E0, package, or repair runtime", async () => {
-  const [cases, packageJsonText, server, protocol, vscodeManifestText] =
+test("E1 activation preserves public counts and adds only the accepted private repair runtime", async () => {
+  const [cases, packageJsonText, server, protocol, vscodeManifestText, acceptance] =
     await Promise.all([
       fixture(),
       repositoryText("package.json"),
       repositoryText("adapters/lsp/src/server.ts"),
       repositoryText("adapters/lsp/src/protocol.ts"),
       repositoryText("adapters/vscode/package.json"),
+      repositoryText("docs/process/editor-repair-contract-acceptance.md"),
     ]);
   const packageJson = JSON.parse(packageJsonText);
   const vscodeManifest = JSON.parse(vscodeManifestText);
@@ -158,9 +159,12 @@ test("contract acceptance changes no current E0, package, or repair runtime", as
   assert.equal(Object.keys(nodeFacade).length, cases.active_baseline.node_export_count);
   assert.equal(Object.keys(core).length, cases.active_baseline.core_export_count);
   assert.match(server, /documentFormattingProvider: true/u);
-  assert.equal(/source\.fixAll\.perttool/u.test(server), false);
-  assert.equal(/duration_unit_to_point/u.test(server), false);
-  assert.equal(/EditorRepairCandidateV1/u.test(protocol), false);
+  assert.match(server, /source\.fixAll\.perttool/u);
+  assert.match(protocol, /duration_unit_to_point/u);
+  assert.match(protocol, /EditorRepairApplicationProjectionV1/u);
+  assert.equal(cases.active_baseline.edit_bearing_repair_code_action, true);
+  assert.equal(cases.active_baseline.source_fix_all_perttool, true);
+  assert.match(acceptance, /This acceptance adds no runtime capability/u);
   assert.equal(
     vscodeManifest.contributes.commands.some(({ command }) =>
       /repair|fixAll/iu.test(command),
@@ -201,7 +205,7 @@ test("normative E1 contract and parent boundary are cross-linked", async () => {
   assert.match(contract, /Registry version 1 contains one `repair` and no `refactoring`/u);
   assert.match(contract, /EDITOR_REPAIR_ACCEPTANCE/u);
   assert.match(parent, /E1 Unsealed Editor Repair Contract/u);
-  assert.match(parent, /contract-only/u);
+  assert.match(parent, /private model-2 LSP/u);
   assert.match(acceptance, /ERC-001` through `ERC-022/u);
   assert.match(acceptance, /EDITOR_REPAIR_ACCEPTANCE/u);
   for (const text of [
