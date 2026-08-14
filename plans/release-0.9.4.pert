@@ -1,6 +1,6 @@
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
 project RELEASE_094:
-  version 6
+  version 7
   title "perttool 0.9.4 Issue 19 emergency correction release"
   description "Release suffix-free 0.9.4 beta as a compatible Grammar 7 and CLI Contract 8 patch for Issue #19. Preserve all live milestone criterion sets and validate the complete final advance candidate without weakening milestone acceptance, plan assurance, history, governance, static-analysis, or persistence gates. npm latest promotion and unrelated plan advances remain separate."
   as_of 2026-08-14
@@ -10,6 +10,17 @@ project RELEASE_094:
   goal_owner user
   dag_owner user
 
+
+milestone_acceptance_migration GRAMMAR_7_BASELINE:
+  model 1
+  repository git:sha1:2709e15874608b0b5499c901f2e22911a22e21ec:index:94f9fcf72c47e8ffac984f209cab18e601bd16b9
+  path "plans/release-0.9.4.pert"
+  object_format sha1
+  head 2709e15874608b0b5499c901f2e22911a22e21ec
+  blob 94f9fcf72c47e8ffac984f209cab18e601bd16b9
+  source_digest sha256:367e2e12c1e838253960af330bbee559e18923e4f15d18e0e9fc8ac17895a3b5
+  candidate_digest sha256:5f2d7bec2f5be86b6e5478f81c00e7fb3af783ac33681a548608f80d97c50020
+  grandfathered RELEASE_094_PLANNING_STARTED
 milestone RELEASE_094_PLANNING_STARTED:
   title "Version 0.9.4 emergency release planning started"
   state reached
