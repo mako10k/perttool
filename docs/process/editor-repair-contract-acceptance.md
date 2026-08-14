@@ -56,6 +56,20 @@ The source audit also confirmed:
 - current edit-bearing E1 Code Actions and `source.fixAll.perttool` are absent,
   while existing read-only Help Code Actions remain compatible.
 
+## Plan acceptance
+
+The status-only completion changed the selected plan digest from
+`sha256:62b134ef...53ad48` to `sha256:fbe19daf...134914` without an owner
+assertion. The criterion set and receipt were then separately confirmed and
+written with fresh candidate-bound `user` assertions. The receipt binds this
+record at implementation commit `e4681530dc2da2918b046f0a41ea94edfe94799e`.
+The separately confirmed conformant outcome is bound to accepted basis
+`sha256:9f7292b4...08f6a6`. Final plan digest
+`sha256:fac511d01ca7bcb632203fb1e255723a82f19043cb3731a7e92f71d55987af00`
+has complete assurance with no unavailable task, mismatch, replan requirement,
+or required action. Fresh complete NextResult v7 recommends and makes
+startable only `EDITOR_REPAIR_ACCEPTANCE`.
+
 ## Unchanged boundaries
 
 This acceptance adds no runtime capability. `EDITOR_REPAIR_ACCEPTANCE` remains

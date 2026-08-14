@@ -458,10 +458,12 @@ events, inferred input, governance/history/destructive/lifecycle effects,
 mixed classes, and partial repair fail closed. Its twenty-two cases are in
 `test/fixtures/editor-repair-contract-v1.json`, and its acceptance record is
 `docs/process/editor-repair-contract-acceptance.md`.
-`EDITOR_REPAIR_CONTRACT` artifacts are complete. Its status-only plan mutation,
-reached-milestone evidence, and separately governed conformant outcome remain
-to be recorded before fresh NextResult may select
-`EDITOR_REPAIR_ACCEPTANCE`. The contract adds no edit-bearing Code Action.
+`EDITOR_REPAIR_CONTRACT`, its reached-milestone evidence, and its conformant
+outcome are accepted at implementation commit `e4681530`, accepted basis
+`sha256:9f7292b4...08f6a6`, and final plan digest
+`sha256:fac511d0...87af00`. Complete assurance has no required action, and fresh
+NextResult v7 selects only `EDITOR_REPAIR_ACCEPTANCE`. The contract adds no
+edit-bearing Code Action.
 Range/on-type formatting, E1 implementation, E2, E3, MCP mutation, public VSIX
 publication, release selection, remote writes, Issue mutation, and plan advance
 remain separate.

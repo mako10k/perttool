@@ -342,9 +342,11 @@ Mandatory summary:
   effects, mixed classes, and partial repair fail closed. Its twenty-two cases
   are in `test/fixtures/editor-repair-contract-v1.json`, and the acceptance
   record is `docs/process/editor-repair-contract-acceptance.md`.
-  `EDITOR_REPAIR_CONTRACT` artifacts are complete, but its status/evidence/
-  outcome plan writes remain separate before `EDITOR_REPAIR_ACCEPTANCE` can
-  become startable. The contract adds no active edit-bearing action. Range/on-
+  `EDITOR_REPAIR_CONTRACT`, its reached-milestone evidence, and its conformant
+  outcome are accepted at final plan digest `sha256:fac511d0...87af00`.
+  Complete assurance has no required action, and fresh NextResult v7 makes only
+  `EDITOR_REPAIR_ACCEPTANCE` startable. The contract adds no active
+  edit-bearing action. Range/on-
   type formatting, E1 implementation, E2, E3, MCP mutation, public VSIX
   publication, release selection, remote writes, Issue mutation, and plan
   advance remain separate.

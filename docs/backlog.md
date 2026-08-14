@@ -1357,8 +1357,9 @@ withholds any protected record, work event, inferred value, governance,
 history, destructive, lifecycle, or authority-sensitive candidate. Its 22
 closed cases are recorded in
 [`editor-repair-contract-v1.json`](../test/fixtures/editor-repair-contract-v1.json).
-`EDITOR_REPAIR_ACCEPTANCE` is the next implementation frontier after the
-task's separate plan evidence is accepted; no edit-bearing E1 action is active
+The task, reached-milestone evidence, and conformant outcome are accepted at
+final plan digest `sha256:fac511d0...87af00`; fresh complete NextResult v7 makes
+only `EDITOR_REPAIR_ACCEPTANCE` startable. No edit-bearing E1 action is active
 yet. Semantic assurance highlighting,
 graph-driven mutation beyond the accepted classes, MCP mutation, public VSIX
 identity/publication, release selection, Issue mutation, remote writes, and

@@ -1749,10 +1749,14 @@ governance, history, or destructive boundaries. Its 22 dependency-ordered
 cases and contract-only runtime check are recorded in
 `test/fixtures/editor-repair-contract-v1.json` and
 `docs/process/editor-repair-contract-acceptance.md`. The contract artifacts are
-complete; task status, reached-milestone evidence, and a conformant outcome
-remain separate exact writes before `EDITOR_REPAIR_ACCEPTANCE` becomes
-startable. No release, persistent VSIX installation, public publication,
-remote write, Issue mutation, or plan advance occurred in this contract slice.
+complete. The status-only completion, separately confirmed criterion set and
+receipt, and separately confirmed conformant outcome bind implementation commit
+`e4681530`, accepted basis `sha256:9f7292b4...08f6a6`, and final plan digest
+`sha256:fac511d0...87af00`. Complete assurance has no required action, and fresh
+complete NextResult v7 recommends and makes startable only
+`EDITOR_REPAIR_ACCEPTANCE`. No release, persistent VSIX installation, public
+publication, remote write, Issue mutation, or plan advance occurred in this
+contract slice.
 
 Stage 1 allowed operations:
 

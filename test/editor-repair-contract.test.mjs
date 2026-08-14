@@ -182,6 +182,7 @@ test("normative E1 contract and parent boundary are cross-linked", async () => {
     plansReadme,
     agents,
     copilot,
+    selectedPlan,
   ] = await Promise.all([
     repositoryText("docs/specs/editor-repairs.md"),
     repositoryText("docs/specs/editor-mutations.md"),
@@ -194,6 +195,7 @@ test("normative E1 contract and parent boundary are cross-linked", async () => {
     repositoryText("plans/README.md"),
     repositoryText("AGENTS.md"),
     repositoryText(".github/copilot-instructions.md"),
+    repositoryText("plans/editor-mutations.pert"),
   ]);
   assert.match(contract, /^# E1 Unsealed Editor Repair Contract$/mu);
   assert.match(contract, /Registry version 1 contains one `repair` and no `refactoring`/u);
@@ -215,4 +217,21 @@ test("normative E1 contract and parent boundary are cross-linked", async () => {
     assert.match(text, /duration_unit_to_point/u);
     assert.match(text, /EDITOR_REPAIR_ACCEPTANCE/u);
   }
+  for (const text of [
+    acceptance,
+    backlog,
+    aiDevelopment,
+    selfUse,
+    plansReadme,
+    agents,
+    copilot,
+  ]) {
+    assert.match(text, /fac511d0/u);
+  }
+  assert.match(selectedPlan, /task EDITOR_REPAIR_CONTRACT[\s\S]*?status done/u);
+  assert.match(selectedPlan, /milestone_criterion_set EDITOR_REPAIR_CONTRACT_ACCEPTED_R1/u);
+  assert.match(selectedPlan, /milestone_acceptance_receipt EDITOR_REPAIR_CONTRACT_EVIDENCE/u);
+  assert.match(selectedPlan, /evidence_revision e4681530dc2da2918b046f0a41ea94edfe94799e/u);
+  assert.match(selectedPlan, /task_outcome OUTCOME_EDITOR_REPAIR_CONTRACT/u);
+  assert.match(selectedPlan, /against_basis sha256:9f7292b4879cdb59d27daba0456112760319d05c77e8b352973a74a70f08f6a6/u);
 });

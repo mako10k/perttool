@@ -41,9 +41,9 @@ Plans are separated by level of detail.
   tasks are complete and retained before advance; the accepted E1 child
   contract fixes a single registry-v1 `duration_unit_to_point` repair, exact
   whole-plan unsealed closure proof, and atomic Quick Fix/Fix All behavior
-  without activating an edit; `EDITOR_REPAIR_CONTRACT` artifacts are complete,
-  while its separate task-status, reached-milestone, and outcome writes remain
-  required before fresh NextResult v7 may recommend only
+  without activating an edit; `EDITOR_REPAIR_CONTRACT`, its reached-milestone
+  evidence, and its conformant outcome are accepted at final plan digest
+  `sha256:fac511d0...87af00`, and fresh NextResult v7 recommends only
   `EDITOR_REPAIR_ACCEPTANCE`
 - [historical-dag.pert](historical-dag.pert): selected `HIST-DAG-001`
   first-parent historical reconstruction roadmap covering the normative

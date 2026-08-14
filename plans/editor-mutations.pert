@@ -170,6 +170,7 @@ task EDITOR_REPAIR_CONTRACT EDITOR_FORMAT_ACCEPTED -> EDITOR_REPAIR_CONTRACT_ACC
   title "Accept the E1 unsealed repair contract"
   description "Define a closed repair and refactoring taxonomy confined to a completely unsealed affected planning closure. Fix candidate classification, assurance-impact proof, diagnostic ownership, explicit and opt-in automatic interactions, Fix All composition, escalation when any accepted basis or protected scope is affected, and the prohibition on implicit sealing, hash acceptance, authority restoration, or lifecycle invention."
   duration 6p
+  status done
   priority 85
   requires:
     DEVELOPERS 1
@@ -445,3 +446,29 @@ task_outcome OUTCOME_EDITOR_FORMAT_ACCEPTANCE:
   against_basis sha256:2163ddabb2819b389137753bbacc9fa33b3e5a585360de8a5f101f4a58f823e0
   status conformant
   reason "Accepted E0 Format Document and format-on-save with eighteen closed cases"
+
+milestone_criterion_set EDITOR_REPAIR_CONTRACT_ACCEPTED_R1:
+  milestone EDITOR_REPAIR_CONTRACT_ACCEPTED
+  revision R1
+  commitment sha256:ecb5b1b47e7d3a0f3a4dd8dbe129157054235f754b4b2a1d0b4c389798695777
+  criterion REPAIR_CONTRACT_ACCEPTED required artifact "Accepted E1 unsealed repair contract and twenty-two closed cases"
+
+milestone_acceptance_receipt EDITOR_REPAIR_CONTRACT_EVIDENCE:
+  model 1
+  set EDITOR_REPAIR_CONTRACT_ACCEPTED_R1
+  set_commitment sha256:ecb5b1b47e7d3a0f3a4dd8dbe129157054235f754b4b2a1d0b4c389798695777
+  criterion REPAIR_CONTRACT_ACCEPTED
+  criterion_commitment sha256:9aba0b5a018d12b249b4fc7de492dfa70ea76ce6157d621325c0a489397cc68d
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/editor-repair-contract-acceptance.md"
+  evidence_revision e4681530dc2da2918b046f0a41ea94edfe94799e
+  verifier codex
+  occurred_at 2026-08-14T07:28:33Z
+
+task_outcome OUTCOME_EDITOR_REPAIR_CONTRACT:
+  model 1
+  task EDITOR_REPAIR_CONTRACT
+  against_basis sha256:9f7292b4879cdb59d27daba0456112760319d05c77e8b352973a74a70f08f6a6
+  status conformant
+  reason "Accepted E1 unsealed repair contract and twenty-two closed cases"
