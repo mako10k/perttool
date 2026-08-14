@@ -2390,6 +2390,32 @@ model-2 handshake is accepted. User-enabled format-on-save uses that same
 operation; the extension does not contribute or change editor settings.
 
 The accepted
+[E1 Unsealed Editor Repair Contract](specs/editor-repairs.md) fixes the first
+registry as `perttool.editor-repair` version 1 with one entry,
+`duration_unit_to_point`, and no refactoring entry. Core reuses the exact unit-
+migration conversion and `PTSEM-114` meaning, but the editor composition is
+stricter than the CLI operation: it supplies no replacement velocity, rejects
+work-event inventory, evaluates every plan task, and requires complete
+assurance coverage plus every task status to be `unsealed` in both the source
+and candidate. The conversion has no goal/DAG governance scope, deletes no
+record, preserves absolute temporal bytes, and must reproduce exact source and
+candidate bytes through normalized inverse and forward edits. Any protected
+assurance/milestone record, accepted basis, lifecycle effect, destructive
+range, history dependency, mixed class, stale binding, truncation, or limit
+failure withholds the complete E1 action rather than splitting it.
+
+The future LSP mapping returns at most one preferred diagnostic-bound
+`quickfix` or one document-scoped `source.fixAll.perttool` action containing a
+versioned `documentChanges` WorkspaceEdit and no command. Fix All deduplicates
+the project-level warning and validates the composed candidate twice.
+Automatic use is limited to an explicit client request for the Fix All kind;
+the VSIX never changes `editor.codeActionsOnSave`. The accepted contract adds
+no current protocol capability. Grammar 7 unit-migration composition, the
+Core/Application repair candidate, and edit-bearing Code Actions remain work
+for `EDITOR_REPAIR_ACCEPTANCE`; the existing model-1-compatible Help Code
+Actions remain read-only.
+
+The accepted
 [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)
 adds a separate model-1 design without extending the current request or result.
 `perttool/historicalGraphView` wraps the shared historical semantic payload in

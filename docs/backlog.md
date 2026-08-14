@@ -1321,8 +1321,9 @@ local installation, Marketplace publication, and Open VSX remain separate.
 
 Priority: Selected through GitHub Issue #13
 
-Status: Editor Protocol model 2 contract and E0 whole-document formatting
-accepted (2026-08-14); E1 repair design is next in the independent plan
+Status: Editor Protocol model 2, E0 whole-document formatting, and the E1
+unsealed repair contract accepted (2026-08-14); E1 implementation is next in
+the independent plan
 
 The selected [`editor-mutations.pert`](../plans/editor-mutations.pert)
 workstream replaces the permanent read-only editor ceiling with four ordered
@@ -1346,8 +1347,19 @@ not grant authority. The language server plans bound edits through shared
 Core/Application services and the editor applies them; neither adapter invokes
 the CLI or writes a workspace file directly. Model 1 remains read-only. The
 contract task added no model-2 capability. The accepted first runtime slice is
-only `E0` whole-document formatting; `EDITOR_REPAIR_CONTRACT` is the next
-verified frontier. Semantic assurance highlighting,
+only `E0` whole-document formatting. The accepted
+[E1 repair child contract](specs/editor-repairs.md) fixes registry version 1 to
+one exact `duration_unit_to_point` repair for the `PTSEM-114` day/hour-to-point
+conversion with an existing velocity,
+a complete before/after whole-plan `unsealed` proof, atomic Quick Fix/Fix All,
+and explicit editor-owned automatic opt-in. It contains no refactoring and
+withholds any protected record, work event, inferred value, governance,
+history, destructive, lifecycle, or authority-sensitive candidate. Its 22
+closed cases are recorded in
+[`editor-repair-contract-v1.json`](../test/fixtures/editor-repair-contract-v1.json).
+`EDITOR_REPAIR_ACCEPTANCE` is the next implementation frontier after the
+task's separate plan evidence is accepted; no edit-bearing E1 action is active
+yet. Semantic assurance highlighting,
 graph-driven mutation beyond the accepted classes, MCP mutation, public VSIX
 identity/publication, release selection, Issue mutation, remote writes, and
 plan advance remain separate.

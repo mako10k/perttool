@@ -332,9 +332,22 @@ Mandatory summary:
   integrated merge revision `a569a47`, and final plan digest
   `sha256:62b134ef...53ad48` has no unavailable task, mismatch, replan
   requirement, or required action. Fresh complete NextResult v7 recommends and
-  makes startable only `EDITOR_REPAIR_CONTRACT`. Range/on-type formatting, E1
-  implementation, E2, E3, MCP mutation, public VSIX publication, release
-  selection, remote writes, Issue mutation, and plan advance remain separate.
+  makes startable only `EDITOR_REPAIR_CONTRACT`. Its accepted
+  `docs/specs/editor-repairs.md` child contract fixes registry version 1 to the
+  single `duration_unit_to_point` repair and no refactoring, using an existing
+  compatible velocity, complete Grammar 6 or 7 validation, every task
+  `unsealed` before and after, exact forward/inverse bytes, atomic Quick
+  Fix/Fix All, and explicit editor-owned automatic opt-in. Protected records,
+  work events, inferred input, governance/history/destructive/lifecycle
+  effects, mixed classes, and partial repair fail closed. Its twenty-two cases
+  are in `test/fixtures/editor-repair-contract-v1.json`, and the acceptance
+  record is `docs/process/editor-repair-contract-acceptance.md`.
+  `EDITOR_REPAIR_CONTRACT` artifacts are complete, but its status/evidence/
+  outcome plan writes remain separate before `EDITOR_REPAIR_ACCEPTANCE` can
+  become startable. The contract adds no active edit-bearing action. Range/on-
+  type formatting, E1 implementation, E2, E3, MCP mutation, public VSIX
+  publication, release selection, remote writes, Issue mutation, and plan
+  advance remain separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
   serial tasks and 15p. The exact initial goal-and-DAG candidate was written
   once with actor `codex` and the scope-bound owner assertion `user`.

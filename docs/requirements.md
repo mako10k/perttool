@@ -1887,6 +1887,21 @@ activate model 2; implementation proceeds through the independent
 [`editor-mutations.pert`](../plans/editor-mutations.pert) gates.
 
 The accepted
+[E1 Unsealed Editor Repair Contract](specs/editor-repairs.md) narrows the first
+repair registry to one exact `PTSEM-114` operation:
+`duration_unit_to_point`. It consumes an existing compatible declared
+velocity, validates one complete Grammar 6 or Grammar 7 candidate, and requires
+every task in the complete affected planning closure to be `unsealed` before
+and after. Registry version 1 contains no refactoring and permits no inferred
+velocity, work-event change, protected assurance or milestone record,
+governance scope, declaration removal, lifecycle invention, history proof,
+seal, owner assertion, or authority restoration. Explicit Quick Fix and atomic
+`source.fixAll.perttool` behavior use versioned editor-applied WorkspaceEdits;
+automatic use requires explicit editor-owned opt-in and repeats complete
+binding/candidate validation. The child contract itself activates no repair
+Code Action; implementation remains gated by `EDITOR_REPAIR_ACCEPTANCE`.
+
+The accepted
 [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)
 keeps `perttool/graphView` and `Perttool.GraphViewResult.v1` unchanged while
 fixing a separately negotiated `perttool/historicalGraphView` result and

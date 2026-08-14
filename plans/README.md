@@ -38,8 +38,13 @@ Plans are separated by level of detail.
   formatting, completely unsealed repair, non-destructive recoverable edits,
   authority-sensitive assurance/governance/advance interaction, and final
   private LSP/VSIX acceptance; the contract, E0 Core/LSP, and E0 VSIX acceptance
-  tasks are complete and retained before advance, while fresh complete
-  NextResult v7 recommends only the separate `EDITOR_REPAIR_CONTRACT` task
+  tasks are complete and retained before advance; the accepted E1 child
+  contract fixes a single registry-v1 `duration_unit_to_point` repair, exact
+  whole-plan unsealed closure proof, and atomic Quick Fix/Fix All behavior
+  without activating an edit; `EDITOR_REPAIR_CONTRACT` artifacts are complete,
+  while its separate task-status, reached-milestone, and outcome writes remain
+  required before fresh NextResult v7 may recommend only
+  `EDITOR_REPAIR_ACCEPTANCE`
 - [historical-dag.pert](historical-dag.pert): selected `HIST-DAG-001`
   first-parent historical reconstruction roadmap covering the normative
   contract, shared transition model, bounded immutable Git evidence, pure

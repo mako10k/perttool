@@ -1,0 +1,194 @@
+{
+  "schema_version": "Perttool.EditorRepairContractCases.v1",
+  "parent_contract": "Perttool.EditorMutationContractCases.v1",
+  "editor_protocol_model_version": 2,
+  "activation_state": "contract_only",
+  "activation_gate": "EDITOR_REPAIR_ACCEPTED",
+  "registry": {
+    "id": "perttool.editor-repair",
+    "version": 1,
+    "categories": ["repair", "refactoring"],
+    "entries": [
+      {
+        "id": "duration_unit_to_point",
+        "category": "repair",
+        "source_diagnostic": "PTSEM-114",
+        "source_grammar_versions": [6, 7],
+        "source_units": ["day", "hour"],
+        "target_unit": "point",
+        "replacement_velocity": null,
+        "quickfix_title": "Migrate duration unit to point",
+        "explicit_kind": "quickfix",
+        "document_kind": "source.fixAll.perttool",
+        "automatic_eligible": true
+      }
+    ],
+    "refactoring_entry_count": 0,
+    "unknown_entry": "unavailable_no_edit"
+  },
+  "source_requirements": {
+    "complete": true,
+    "diagnostics_truncated": false,
+    "valid": true,
+    "assurance_model_version": 1,
+    "assurance_hash_model_version": 1,
+    "actionable_diagnostic_count": 1,
+    "declared_velocity_required": true,
+    "replacement_velocity_allowed": false
+  },
+  "candidate_requirements": {
+    "same_grammar": true,
+    "target_unit": "point",
+    "retain_velocity_token": true,
+    "complete_validation": true,
+    "diagnostics_truncated": false,
+    "governance_scopes": [],
+    "destructive_record_ranges": [],
+    "declaration_identity_sets_equal": true,
+    "planning_relation_identity_sets_equal": true,
+    "strict_class": "E1"
+  },
+  "conversion_inventory": {
+    "allowed_field_paths": [
+      "project.duration_unit",
+      "project.critical_epsilon",
+      "project.target_duration",
+      "task.*.duration",
+      "task.*.estimate.optimistic",
+      "task.*.estimate.most_likely",
+      "task.*.estimate.pessimistic"
+    ],
+    "forbidden_field_paths": [
+      "project.velocity",
+      "work_event.*.planned_value",
+      "work_event.*.occurred_at",
+      "task.*.status",
+      "task.*.actual_effort",
+      "task.*.actual_time"
+    ],
+    "absolute_temporal_tokens": "byte_identical"
+  },
+  "closure": {
+    "direct": "task_contract_or_computed_basis_changed_by_unit_context_or_converted_duration",
+    "fixed_point": [
+      "direct_affected_tasks",
+      "recursive_explicit_planning_predecessors",
+      "recursive_dependents_with_changed_computed_basis"
+    ],
+    "registry_v1_scope": "all_plan_tasks",
+    "source_coverage": "unsealed",
+    "candidate_coverage": "unsealed",
+    "source_task_status": "unsealed",
+    "candidate_task_status": "unsealed",
+    "accepted_basis_allowed": false,
+    "protected_records_allowed": false
+  },
+  "protected_record_kinds": [
+    "plan_seal",
+    "task_outcome",
+    "assurance_receipt",
+    "milestone_criterion_set",
+    "milestone_acceptance_receipt"
+  ],
+  "binding_fields": [
+    "documentUri",
+    "documentGeneration",
+    "documentVersion",
+    "sourceDigest"
+  ],
+  "candidate_evidence": [
+    "registry_identity",
+    "repair_id",
+    "document_binding",
+    "source_and_candidate_digests",
+    "converted_field_inventory",
+    "normalized_forward_and_inverse_edits",
+    "affected_task_and_relation_paths",
+    "before_and_after_assurance",
+    "governance_scopes",
+    "destructive_ranges",
+    "diagnostics_and_limits",
+    "interaction_and_trigger",
+    "strict_class_and_completeness"
+  ],
+  "interactions": {
+    "quickfix": {
+      "explicit_only": true,
+      "range_intersects_source_diagnostic": true,
+      "maximum_actions": 1,
+      "preferred": true,
+      "workspace_edit_form": "documentChanges",
+      "contains_command": false
+    },
+    "fix_all": {
+      "kind": "source.fixAll.perttool",
+      "scope": "one_document",
+      "registry_order_then_source_range": true,
+      "registry_v1_maximum_operations": 1,
+      "duplicate_diagnostics": "deduplicate",
+      "partial_application": false,
+      "second_candidate_validation": true
+    },
+    "automatic": {
+      "client_kind_must_be_explicit": "source.fixAll.perttool",
+      "extension_changes_code_actions_on_save": false,
+      "quickfix": false,
+      "mixed_class": false,
+      "second_binding_check": true
+    }
+  },
+  "recovery": {
+    "forward_applied_to_source": "exact_candidate_bytes",
+    "inverse_applied_to_candidate": "exact_source_bytes",
+    "editor_undo_supported": true,
+    "independent_retained_recovery": false
+  },
+  "diagnostic_ownership": {
+    "PTSEM-114": "semantic_validator",
+    "PTMIG-401..409": "unit_migration",
+    "PTEDM-102": "editor_classification_or_closure",
+    "PTEDM-104": "editor_stale_binding",
+    "PTEDM-105": "editor_recovery",
+    "PTEDM-107": "editor_interaction",
+    "PTEDM-108": "editor_limit",
+    "PTEDM-110": "editor_candidate"
+  },
+  "active_baseline": {
+    "tool_version": "0.9.3",
+    "grammar_version": 7,
+    "cli_contract_version": 8,
+    "command_count": 53,
+    "root_schema_count": 23,
+    "root_export_count": 129,
+    "node_export_count": 129,
+    "core_export_count": 45,
+    "active_editor_protocol_model_versions": [2, 1],
+    "document_formatting_provider": true,
+    "edit_bearing_repair_code_action": false,
+    "source_fix_all_perttool": false
+  },
+  "cases": [
+    { "id": "ERC-001", "depends_on": [], "boundary": "baseline", "expected": "e0_model_2_active_e1_edits_inactive" },
+    { "id": "ERC-002", "depends_on": ["ERC-001"], "boundary": "registry", "expected": "one_repair_zero_refactoring_unknown_unavailable" },
+    { "id": "ERC-003", "depends_on": ["ERC-002"], "boundary": "diagnostic", "expected": "only_current_ptsem_114_selects_entry" },
+    { "id": "ERC-004", "depends_on": ["ERC-003"], "boundary": "day_conversion", "expected": "declared_day_velocity_exact_to_point" },
+    { "id": "ERC-005", "depends_on": ["ERC-004"], "boundary": "hour_conversion", "expected": "declared_hour_velocity_exact_to_point" },
+    { "id": "ERC-006", "depends_on": ["ERC-005"], "boundary": "velocity", "expected": "missing_incompatible_or_replacement_never_inferred" },
+    { "id": "ERC-007", "depends_on": ["ERC-006"], "boundary": "grammar", "expected": "complete_valid_grammar_6_or_7_only" },
+    { "id": "ERC-008", "depends_on": ["ERC-007"], "boundary": "inventory", "expected": "exact_duration_inventory_and_temporal_preservation" },
+    { "id": "ERC-009", "depends_on": ["ERC-008"], "boundary": "work_event", "expected": "work_event_change_withheld" },
+    { "id": "ERC-010", "depends_on": ["ERC-009"], "boundary": "closure", "expected": "all_tasks_and_planning_dependencies_proven" },
+    { "id": "ERC-011", "depends_on": ["ERC-010"], "boundary": "before_state", "expected": "source_coverage_and_every_task_unsealed" },
+    { "id": "ERC-012", "depends_on": ["ERC-011"], "boundary": "after_state", "expected": "candidate_coverage_and_every_task_unsealed" },
+    { "id": "ERC-013", "depends_on": ["ERC-012"], "boundary": "protected_evidence", "expected": "seal_outcome_receipt_or_acceptance_is_e3" },
+    { "id": "ERC-014", "depends_on": ["ERC-013"], "boundary": "governance_history", "expected": "protected_scope_deletion_or_history_is_e3" },
+    { "id": "ERC-015", "depends_on": ["ERC-014"], "boundary": "quickfix", "expected": "one_preferred_diagnostic_bound_versioned_edit" },
+    { "id": "ERC-016", "depends_on": ["ERC-015"], "boundary": "fix_all", "expected": "one_deduplicated_atomic_document_candidate" },
+    { "id": "ERC-017", "depends_on": ["ERC-016"], "boundary": "automatic", "expected": "explicit_opt_in_source_fix_all_only" },
+    { "id": "ERC-018", "depends_on": ["ERC-017"], "boundary": "composition", "expected": "conflict_mixed_or_partial_yields_no_edit" },
+    { "id": "ERC-019", "depends_on": ["ERC-018"], "boundary": "classification", "expected": "strictest_complete_candidate_cannot_split_or_downgrade" },
+    { "id": "ERC-020", "depends_on": ["ERC-019"], "boundary": "recovery", "expected": "forward_and_inverse_exact_bytes" },
+    { "id": "ERC-021", "depends_on": ["ERC-020"], "boundary": "failure", "expected": "cancel_stale_or_limit_has_no_applicable_edit" },
+    { "id": "ERC-022", "depends_on": ["ERC-021"], "boundary": "compatibility", "expected": "contract_only_no_runtime_or_release_change" }
+  ]
+}

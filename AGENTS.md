@@ -448,6 +448,20 @@ outcome is bound to accepted basis `sha256:2163ddab...58f823e0`. Final source
 digest `sha256:62b134ef...53ad48` has complete assurance with no unavailable
 task, mismatch, replan requirement, or required action. Fresh complete
 NextResult v7 recommends and makes startable only `EDITOR_REPAIR_CONTRACT`.
+The accepted `docs/specs/editor-repairs.md` child contract fixes registry
+`perttool.editor-repair` version 1 to one `duration_unit_to_point` repair and no
+refactoring. It requires an existing compatible declared velocity, complete
+Grammar 6 or 7 validation, every plan task `unsealed` before and after, exact
+forward/inverse bytes, atomic Quick Fix/Fix All composition, and explicit
+editor-owned automatic opt-in. Protected assurance or milestone records, work
+events, inferred input, governance/history/destructive/lifecycle effects,
+mixed classes, and partial repair fail closed. Its twenty-two cases are in
+`test/fixtures/editor-repair-contract-v1.json`, and its acceptance record is
+`docs/process/editor-repair-contract-acceptance.md`.
+`EDITOR_REPAIR_CONTRACT` artifacts are complete. Its status-only plan mutation,
+reached-milestone evidence, and separately governed conformant outcome remain
+to be recorded before fresh NextResult may select
+`EDITOR_REPAIR_ACCEPTANCE`. The contract adds no edit-bearing Code Action.
 Range/on-type formatting, E1 implementation, E2, E3, MCP mutation, public VSIX
 publication, release selection, remote writes, Issue mutation, and plan advance
 remain separate.

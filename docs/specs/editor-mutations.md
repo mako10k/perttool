@@ -198,6 +198,15 @@ validation of the composed final candidate succeeds. `E1` never creates a
 seal, reseals content, supplies an owner assertion, or restores start
 authority implicitly.
 
+The accepted [E1 Unsealed Editor Repair Contract](editor-repairs.md) fixes
+registry `perttool.editor-repair` version 1 to the single
+`duration_unit_to_point` repair. It accepts only exact `PTSEM-114` conversion
+with an existing sufficient velocity and a whole-plan closure that is
+`unsealed` before and after. Version 1 contains no refactoring, inferred input,
+work-event change, protected record, or partial Fix All. That child contract is
+contract-only until `EDITOR_REPAIR_ACCEPTANCE`; it does not yet activate an
+edit-bearing Code Action or `source.fixAll.perttool`.
+
 ## 7. Class E2: non-destructive recoverable semantic edit
 
 `E2` covers a semantic change that is not `E0` or `E1`, triggers no `E3` rule,

@@ -1740,9 +1740,19 @@ bound `user` assertions. The receipt binds integrated merge revision `a569a47`;
 the outcome binds accepted basis `sha256:2163ddab...58f823e0`; and final plan
 digest `sha256:62b134ef...53ad48` has complete assurance with no required
 action. Fresh complete NextResult v7 recommends only
-`EDITOR_REPAIR_CONTRACT`. No release, persistent VSIX installation, public
-publication, remote write, Issue mutation, or plan advance occurred in this
-acceptance slice.
+`EDITOR_REPAIR_CONTRACT`. Its accepted
+[E1 child contract](../specs/editor-repairs.md) fixes registry version 1 to the
+single `duration_unit_to_point` repair with an existing compatible velocity,
+all plan tasks unsealed before and after, atomic versioned Quick Fix/Fix All,
+exact recovery, and strict escalation at protected, lifecycle, work-event,
+governance, history, or destructive boundaries. Its 22 dependency-ordered
+cases and contract-only runtime check are recorded in
+`test/fixtures/editor-repair-contract-v1.json` and
+`docs/process/editor-repair-contract-acceptance.md`. The contract artifacts are
+complete; task status, reached-milestone evidence, and a conformant outcome
+remain separate exact writes before `EDITOR_REPAIR_ACCEPTANCE` becomes
+startable. No release, persistent VSIX installation, public publication,
+remote write, Issue mutation, or plan advance occurred in this contract slice.
 
 Stage 1 allowed operations:
 
