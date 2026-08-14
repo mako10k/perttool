@@ -762,12 +762,15 @@ GitHub, and npm 712-file tarballs agree at SHA-256
 `63a12ddf...d6fe53b`. npm reports `beta=0.9.4`, `latest=0.9.0`, and no
 `alpha`. Exact and beta installations, the `0.9.3` rollback pin, and the real
 Issue #19 replay passed. Issue #19 is closed with one evidence comment,
-retains `bug`, and no longer has `priority:P0`. All six tasks and 15p are
-complete in committed pre-advance state; complete NextResult v7 has no ready,
-recommended, or startable task. Records are `docs/process/0.9.4-publish.md`
-and `docs/process/0.9.4-release-acceptance.md`. npm `latest`, public VSIX
-publication, canonical release-plan advance, consumer writes, and unrelated
-plan advances remain separate.
+retains `bug`, and no longer has `priority:P0`. All six tasks and 15p completed
+before Grammar 7 migration and six artifact-bound criteria and receipts were
+committed at `881fa72`. History- and acceptance-guarded canonical advance
+retains only accepted reached `RELEASE_094_ACCEPTED`; residual digest
+`sha256:2c7a228b...a7723136` has no diagnostic, task, recommendation, or
+startable task. Records are `docs/process/0.9.4-publish.md`,
+`docs/process/0.9.4-release-acceptance.md`, and
+`docs/process/0.9.4-post-acceptance-operations.md`. npm `latest`, public VSIX
+publication, consumer writes, and unrelated plan advances remain separate.
 
 Issue #4 is tracked in the independent `plans/governance.pert` post-beta workstream. All twelve tasks from `GOV_REQUIREMENTS` through `GOV_ACCEPTANCE` are complete and advanced. Grammar 4 parsing, declared/effective metadata and digest-bound snapshots, formatting, project init/show/set and batch fields, unit-migration preservation, deterministic actual-change classification, caller-assertion normalization, pre-change authority decisions, PTGOV diagnostics, governed direct/batch/advance previews, ProjectResult v3, MutationResult v2, GovernanceDecision v1, the complete Contract 5 registry/help/usage projection, guarded in-place/existing-document-out persistence, the exact generated direct-edit warning, and the Contract 5 editing Guide are active through the standard package root, CLI, and installed `0.4.0` and `0.5.0` workflows. Preview, denied, invalid, and stale decisions fail closed before or within the retained safe-write gates. The plan has zero precedence and heuristic resource makespans, no remaining or recommended task, and an observed velocity of `45p/2d`. Issue #4 closure remains a separate authorization boundary. Issue #3 multi-plan composition remains a post-beta backlog, while LSP, VSIX, DAG view, and MCP are now composed by the selected `ADAPTER-001` plan. Human override apply, durable audit, and Git integration remain unavailable until MIG-08.
 

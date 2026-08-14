@@ -11,19 +11,6 @@ project RELEASE_094:
   dag_owner user
 
 
-milestone_acceptance_migration GRAMMAR_7_BASELINE:
-  model 1
-  repository git:sha1:2709e15874608b0b5499c901f2e22911a22e21ec:index:94f9fcf72c47e8ffac984f209cab18e601bd16b9
-  path "plans/release-0.9.4.pert"
-  object_format sha1
-  head 2709e15874608b0b5499c901f2e22911a22e21ec
-  blob 94f9fcf72c47e8ffac984f209cab18e601bd16b9
-  source_digest sha256:367e2e12c1e838253960af330bbee559e18923e4f15d18e0e9fc8ac17895a3b5
-  candidate_digest sha256:5f2d7bec2f5be86b6e5478f81c00e7fb3af783ac33681a548608f80d97c50020
-  grandfathered RELEASE_094_PLANNING_STARTED
-milestone RELEASE_094_PLANNING_STARTED:
-  title "Version 0.9.4 emergency release planning started"
-  state reached
 
 resource DEVELOPERS:
   title "Emergency correction capacity"
@@ -46,246 +33,20 @@ resource EXTERNAL_RELEASE:
   title "Authorized external release mutation"
   capacity 1
 
-milestone RELEASE_094_REVIEW_ACCEPTED:
-  title "Version 0.9.4 compatibility review accepted"
 
-milestone RELEASE_094_CORRECTION_ACCEPTED:
-  title "Issue 19 correction accepted"
 
-milestone RELEASE_094_SOURCE_PREPARED:
-  title "Version 0.9.4 release source prepared"
 
-milestone RELEASE_094_CANDIDATE_ACCEPTED:
-  title "Version 0.9.4 release candidate accepted"
 
-milestone RELEASE_094_PUBLISHED:
-  title "Version 0.9.4 published to GitHub and npm beta"
 
 milestone RELEASE_094_ACCEPTED:
   title "Version 0.9.4 emergency patch accepted"
-
-task RELEASE_094_SELF_REVIEW RELEASE_094_PLANNING_STARTED -> RELEASE_094_REVIEW_ACCEPTED:
-  title "Review the 0.9.4 compatibility and emergency boundary"
-  description "Freeze the exact v0.9.3 public baseline and current beta/latest channels, reproduce Issue #19, accept the compatible patch boundary, and confirm unchanged Grammar 7, CLI Contract 8, public catalogs, authority, force, and acceptance meanings. This task performs no external write."
-  duration 2p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-  source "ADV-006 Issue #19"
-
-task RELEASE_094_CORRECTION RELEASE_094_REVIEW_ACCEPTED -> RELEASE_094_CORRECTION_ACCEPTED:
-  title "Accept the Issue 19 advance correction"
-  description "Retain acceptance evidence for every milestone kept in the candidate, contract only removed milestones, validate the complete final candidate, merge candidate diagnostics with operation diagnostics, and pass focused regression, history-safety, static-analysis, and documentation gates without bypasses."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-  source "ADV-006 Issue #19"
-
-task RELEASE_094_PREPARATION RELEASE_094_CORRECTION_ACCEPTED -> RELEASE_094_SOURCE_PREPARED:
-  title "Prepare version 0.9.4 release source"
-  description "Align package and lockfile identity, CLI version, adapter peer versions, MCP server identity, CHANGELOG, README, release documentation, tests, goldens, self-use registration, dependency audit, jscpd duplication analysis, Lizard complexity analysis, and beta publication validation. Run the complete Node.js 22 repository and package gates without external writes."
-  duration 4p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
-  source "ADV-006 STATIC-001 Issue #19"
-
-task RELEASE_094_CANDIDATE RELEASE_094_SOURCE_PREPARED -> RELEASE_094_CANDIDATE_ACCEPTED:
-  title "Accept one clean 0.9.4 release candidate"
-  description "Commit and recheck the complete release diff; prove package, tag, GitHub Release, and npm version availability; verify beta=0.9.3, latest=0.9.0, and no alpha; verify authenticated routes; retain one immutable tarball outside the worktree; and accept its exact identity and installed Issue 19 behavior. This task performs no external write."
-  duration 2p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
-  source "ADV-006 Issue #19"
-
-task RELEASE_094_PUBLISH RELEASE_094_CANDIDATE_ACCEPTED -> RELEASE_094_PUBLISHED:
-  title "Publish version 0.9.4 from one immutable tarball"
-  description "Only after every predecessor gate passes, push and verify the clean release commit and annotated tag, require Node.js 22 and 24 CI, publish one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.9.4 while latest remains 0.9.0."
-  duration 3p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    PACKAGE_SURFACE 1
-    EXTERNAL_RELEASE 1
-  source "ADV-006 Issue #19"
-
-task RELEASE_094_ACCEPTANCE RELEASE_094_PUBLISHED -> RELEASE_094_ACCEPTED:
-  title "Record durable 0.9.4 emergency patch acceptance"
-  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub and npm tarball bytes, registry integrity and metadata, exact and beta installations, the real Issue 19 behavior, compatibility, and the exact 0.9.3 rollback pin. Close Issue #19 only after durable acceptance, then canonically advance this plan without changing npm latest or unrelated plans."
-  duration 1p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    RELEASE_SURFACE 1
-    PACKAGE_SURFACE 1
-  source "ADV-006 Issue #19"
-
-work_event WE-094-self-review:
-  model 1
-  task RELEASE_094_SELF_REVIEW
-  kind finish
-  occurred_at 2026-08-14T17:38:48+09:00
-  active_time 1h
-  effort 1ph
-
-work_event WE-094-correction:
-  model 1
-  task RELEASE_094_CORRECTION
-  kind finish
-  occurred_at 2026-08-14T17:40:25+09:00
-  active_time 2h
-  effort 2ph
-
-work_event WE-094-preparation:
-  model 1
-  task RELEASE_094_PREPARATION
-  kind finish
-  occurred_at 2026-08-14T17:56:49+09:00
-  active_time 3h
-  effort 3ph
-
-work_event WE-094-candidate:
-  model 1
-  task RELEASE_094_CANDIDATE
-  kind finish
-  occurred_at 2026-08-14T18:00:20+09:00
-  active_time 2h
-  effort 2ph
-
-work_event WE-094-publish:
-  model 1
-  task RELEASE_094_PUBLISH
-  kind finish
-  occurred_at 2026-08-14T18:11:40+09:00
-  active_time 1h
-  effort 1ph
-
-work_event WE-094-acceptance:
-  model 1
-  task RELEASE_094_ACCEPTANCE
-  kind finish
-  occurred_at 2026-08-14T18:13:39+09:00
-  active_time 1h
-  effort 1ph
-
-milestone_criterion_set RELEASE_094_REVIEW_R1:
-  milestone RELEASE_094_REVIEW_ACCEPTED
-  revision R1
-  commitment sha256:1084b73259fb9921f5909b370d06e7c65415b9f437a084fe197ac4773ddcaf26
-  criterion REVIEW_ACCEPTED required artifact "Accepted version 0.9.4 compatibility review"
-
-milestone_criterion_set RELEASE_094_CORRECTION_R1:
-  milestone RELEASE_094_CORRECTION_ACCEPTED
-  revision R1
-  commitment sha256:8467b03fab7d895f8e8d3047aee93fa126f2e98dc8f3da50165fd208a4abecaa
-  criterion CORRECTION_ACCEPTED required artifact "Accepted Issue 19 retained milestone correction"
-
-milestone_criterion_set RELEASE_094_SOURCE_R1:
-  milestone RELEASE_094_SOURCE_PREPARED
-  revision R1
-  commitment sha256:ac65bd315e8e34e70e9c2f84856affd6416c4f6b4aab8036aa1185feb189f94d
-  criterion SOURCE_ACCEPTED required artifact "Accepted version 0.9.4 prepared source"
-
-milestone_criterion_set RELEASE_094_CANDIDATE_R1:
-  milestone RELEASE_094_CANDIDATE_ACCEPTED
-  revision R1
-  commitment sha256:fce4b4800d9e2e9071cf4255437ccce94313e1e9c080151cf4c9c65e83385ee7
-  criterion CANDIDATE_ACCEPTED required artifact "Accepted immutable version 0.9.4 candidate"
-
-milestone_criterion_set RELEASE_094_PUBLISH_R1:
-  milestone RELEASE_094_PUBLISHED
-  revision R1
-  commitment sha256:4a038aeebf6d9e7834c79f4c349e98ad3232b627baf40c59e6985311e8beb6e1
-  criterion PUBLISH_ACCEPTED required artifact "Accepted version 0.9.4 publication"
+  state reached
 
 milestone_criterion_set RELEASE_094_ACCEPTANCE_R1:
   milestone RELEASE_094_ACCEPTED
   revision R1
   commitment sha256:ec7a8f61b3283ad5786e869f37ffb59f511c0fc1afd7b30d58a699baa1ae3441
   criterion RELEASE_ACCEPTED required artifact "Accepted durable version 0.9.4 release"
-
-milestone_acceptance_receipt RELEASE_094_REVIEW_EVIDENCE:
-  model 1
-  set RELEASE_094_REVIEW_R1
-  set_commitment sha256:1084b73259fb9921f5909b370d06e7c65415b9f437a084fe197ac4773ddcaf26
-  criterion REVIEW_ACCEPTED
-  criterion_commitment sha256:af252a1f8a2de561c1312ea6e358335e2df9fb9b35b62a6998724c500a5906bf
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.4-self-review.md"
-  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
-  verifier codex
-  occurred_at 2026-08-14T09:19:08Z
-
-milestone_acceptance_receipt RELEASE_094_CORRECTION_EVIDENCE:
-  model 1
-  set RELEASE_094_CORRECTION_R1
-  set_commitment sha256:8467b03fab7d895f8e8d3047aee93fa126f2e98dc8f3da50165fd208a4abecaa
-  criterion CORRECTION_ACCEPTED
-  criterion_commitment sha256:382da8623dd45ecaadee067969b569ec8578751d171dd3e92194f1ef926b06b6
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/issue-19-advance-criterion-acceptance.md"
-  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
-  verifier codex
-  occurred_at 2026-08-14T09:19:08Z
-
-milestone_acceptance_receipt RELEASE_094_SOURCE_EVIDENCE:
-  model 1
-  set RELEASE_094_SOURCE_R1
-  set_commitment sha256:ac65bd315e8e34e70e9c2f84856affd6416c4f6b4aab8036aa1185feb189f94d
-  criterion SOURCE_ACCEPTED
-  criterion_commitment sha256:963ed6019ee56c0279ab4b425ef4cab4900c9fb7e55222ef2e9ce68b6cdc3abf
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.4-preparation.md"
-  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
-  verifier codex
-  occurred_at 2026-08-14T09:19:08Z
-
-milestone_acceptance_receipt RELEASE_094_CANDIDATE_EVIDENCE:
-  model 1
-  set RELEASE_094_CANDIDATE_R1
-  set_commitment sha256:fce4b4800d9e2e9071cf4255437ccce94313e1e9c080151cf4c9c65e83385ee7
-  criterion CANDIDATE_ACCEPTED
-  criterion_commitment sha256:49a738de196ec86976f2a9403fc3f60d01f87b7ca8cc826c80751aa9690aa8d4
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.4-candidate.md"
-  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
-  verifier codex
-  occurred_at 2026-08-14T09:19:08Z
-
-milestone_acceptance_receipt RELEASE_094_PUBLISH_EVIDENCE:
-  model 1
-  set RELEASE_094_PUBLISH_R1
-  set_commitment sha256:4a038aeebf6d9e7834c79f4c349e98ad3232b627baf40c59e6985311e8beb6e1
-  criterion PUBLISH_ACCEPTED
-  criterion_commitment sha256:5c8190571acb1c2269c39dff1ee43803b61558a2e149c85163cbffe02d8eb76f
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/0.9.4-publish.md"
-  evidence_revision 2709e15874608b0b5499c901f2e22911a22e21ec
-  verifier codex
-  occurred_at 2026-08-14T09:19:08Z
 
 milestone_acceptance_receipt RELEASE_094_ACCEPTANCE_EVIDENCE:
   model 1

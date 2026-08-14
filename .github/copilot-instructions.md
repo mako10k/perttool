@@ -52,9 +52,11 @@ Mandatory summary:
   compatible Issue #19 retained-milestone criterion correction. It also adds
   pinned jscpd and Lizard repository/CI ratchets without changing Grammar 7,
   Contract 8, 53 commands, 23 schemas, 129 root/Node exports, 45 Core exports,
-  authority, or force semantics. All six tasks are complete before canonical
-  advance; npm `latest`, public VSIX publication, and unrelated work remain
-  separate.
+  authority, or force semantics. All six tasks completed before committed
+  milestone evidence and history- and acceptance-guarded canonical advance.
+  The residual plan retains only accepted reached `RELEASE_094_ACCEPTED` with
+  no diagnostic or task. npm `latest`, public VSIX publication, and unrelated
+  work remain separate.
 - Install the exact Python tools from `requirements-static-analysis.txt` before
   the complete repository gate. `npm run check:static` composes TypeScript
   type checking with pinned jscpd duplicate and Lizard complexity ratchets;

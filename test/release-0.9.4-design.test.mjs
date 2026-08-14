@@ -56,8 +56,10 @@ test("0.9.4 retains Contract 8 while correcting Issue 19", async () => {
   assert.equal(metadata.project.id, "RELEASE_094");
   assert.equal(metadata.grammarVersion, 7);
   assert.equal(metadata.project.finish, "RELEASE_094_ACCEPTED");
-  assert.match(plan, /task RELEASE_094_SELF_REVIEW[\s\S]*?status done/u);
-  assert.match(plan, /task RELEASE_094_CORRECTION[\s\S]*?status done/u);
+  assert.match(plan, /milestone RELEASE_094_ACCEPTED:[\s\S]*?state reached/u);
+  assert.match(plan, /milestone_criterion_set RELEASE_094_ACCEPTANCE_R1/u);
+  assert.match(plan, /milestone_acceptance_receipt RELEASE_094_ACCEPTANCE_EVIDENCE/u);
+  assert.doesNotMatch(plan, /^task /mu);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);

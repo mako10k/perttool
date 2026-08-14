@@ -115,7 +115,10 @@ authority, and force semantics remain unchanged. Its release commit, peeled
 tag, Node.js 22 and 24 CI, GitHub prerelease, npm artifact, and common
 SHA-256 `63a12ddf...d6fe53b` agree. npm reports `beta=0.9.4`,
 `latest=0.9.0`, and no `alpha`; Issue #19 is closed with release evidence.
-Version `0.9.3` is the exact rollback pin.
+The completed release plan was migrated with committed provenance, given six
+artifact-bound criteria and receipts, and canonically advanced. Its residual
+retains only accepted reached `RELEASE_094_ACCEPTED` and has no diagnostic or
+task. Version `0.9.3` is the exact rollback pin.
 
 The private adapters now project that same Contract 8 acceptance model without
 adding write authority. The LSP negotiates a separate version-bound milestone
