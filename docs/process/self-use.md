@@ -1708,8 +1708,15 @@ candidate-bound `user` assertion, changing the plan digest from
 reached closure and pending acceptance. The receipt was separately confirmed
 and written once with a fresh candidate-bound `user` assertion, changing the
 digest to `sha256:21ec01eb...a2bbaa`. Readback reports accepted milestone
-evidence with no blocking criterion. The outcome remains unwritten, so
-`EDITOR_FORMAT_ACCEPTANCE` is not yet start-authorized.
+evidence with no blocking criterion. At that boundary the outcome remained
+unwritten, so `EDITOR_FORMAT_ACCEPTANCE` was not yet start-authorized. The
+conformant outcome was then separately confirmed and written once with a fresh
+candidate-bound `user` assertion and accepted basis
+`sha256:7c0e42ed...92572`, changing the
+plan digest to `sha256:690f65bd...a8b79a`. Complete assurance has no
+unavailable task, mismatch, replan requirement, or required action. Fresh
+complete NextResult v7 recommends and makes startable only
+`EDITOR_FORMAT_ACCEPTANCE`.
 
 Stage 1 allowed operations:
 

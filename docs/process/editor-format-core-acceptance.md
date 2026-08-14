@@ -120,7 +120,14 @@ candidate-bound `user` assertion. It changed source digest
 `sha256:9f6b3d2a...152486` to `sha256:21ec01eb...a2bbaa`, binds exact evidence
 revision `5245235414cd411dd06d5c29dfe9e91a5d78cfba`, and records verifier
 `codex` at `2026-08-14T00:22:01Z`. Readback reports reached and accepted with
-no blocking criterion. The task outcome remains unwritten without its own
-fresh confirmation. This task performs no release selection, package or VSIX
-publication, VSIX installation, remote write, GitHub Issue mutation, or plan
-advance.
+no blocking criterion. At that boundary, the task outcome remained unwritten
+pending its own fresh confirmation. That exact conformant outcome was then
+separately confirmed and written once with actor `codex`, a fresh
+candidate-bound `user`
+assertion, and accepted basis `sha256:7c0e42ed...92572`. It changed source
+digest `sha256:21ec01eb...a2bbaa` to `sha256:690f65bd...a8b79a` and restored
+complete assurance with no unavailable task, mismatch, replan requirement, or
+required action. Fresh complete NextResult v7 recommends and makes startable
+only `EDITOR_FORMAT_ACCEPTANCE`. This task performs no release selection,
+package or VSIX publication, VSIX installation, remote write, GitHub Issue
+mutation, or plan advance.

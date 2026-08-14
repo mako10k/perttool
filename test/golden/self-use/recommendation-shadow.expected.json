@@ -169,7 +169,7 @@
       ]
     },
     "editor-mutations": {
-      "source_digest": "sha256:21ec01eb67bee99b12a0c4d6989675c6213233a618704aa1414dbecde9a2bbaa",
+      "source_digest": "sha256:690f65bd5a70594a045b53bdae12178339e6fb6d160eb616ffa0a08150a8b79a",
       "groups": {
         "active": [],
         "ready": [
@@ -220,8 +220,7 @@
         "descriptions": 1
       },
       "diagnostic_codes": [
-        "PTDAG-208",
-        "PTASSURE-203"
+        "PTDAG-208"
       ]
     },
     "english-baseline": {
