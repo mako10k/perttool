@@ -37,9 +37,9 @@ Plans are separated by level of detail.
   strict `E0` through `E3` classification contract through whole-document
   formatting, completely unsealed repair, non-destructive recoverable edits,
   authority-sensitive assurance/governance/advance interaction, and final
-  private LSP/VSIX acceptance; the contract task is complete and retained
-  before advance, while model-2 runtime activation starts with the separate
-  `EDITOR_FORMAT_CORE` task
+  private LSP/VSIX acceptance; the contract, E0 Core/LSP, and E0 VSIX acceptance
+  tasks are complete and retained before advance, while fresh complete
+  NextResult v7 recommends only the separate `EDITOR_REPAIR_CONTRACT` task
 - [historical-dag.pert](historical-dag.pert): selected `HIST-DAG-001`
   first-parent historical reconstruction roadmap covering the normative
   contract, shared transition model, bounded immutable Git evidence, pure

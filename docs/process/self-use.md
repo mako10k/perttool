@@ -1732,11 +1732,17 @@ hosts accepted local BOM/CRLF/comment/Unicode formatting, user-enabled format-
 on-save, an untitled virtual document, invalid and no-op results, range-
 formatting absence, non-target identity, isolated replacement, and uninstall.
 The acceptance record is
-[editor-format-acceptance.md](editor-format-acceptance.md). Task-status,
-reached-milestone acceptance, and plan-assurance outcome writes remain separate
-preview-first steps; no release, persistent VSIX installation, public
+[editor-format-acceptance.md](editor-format-acceptance.md). The status-only
+completion changed plan digest `sha256:690f65bd...a8b79a` to
+`sha256:e8bce9a2...e04105` without an owner assertion. The criterion set, receipt,
+and conformant outcome were then separately confirmed with fresh candidate-
+bound `user` assertions. The receipt binds integrated merge revision `a569a47`;
+the outcome binds accepted basis `sha256:2163ddab...58f823e0`; and final plan
+digest `sha256:62b134ef...53ad48` has complete assurance with no required
+action. Fresh complete NextResult v7 recommends only
+`EDITOR_REPAIR_CONTRACT`. No release, persistent VSIX installation, public
 publication, remote write, Issue mutation, or plan advance occurred in this
-implementation slice.
+acceptance slice.
 
 Stage 1 allowed operations:
 

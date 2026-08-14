@@ -436,12 +436,21 @@ fresh `user` assertion; source digest `sha256:21ec01eb...a2bbaa` now reports
 the reached milestone as accepted with no blocking criterion. The conformant
 outcome was separately confirmed and written once with actor `codex`, a fresh
 candidate-bound `user` assertion, and accepted basis
-`sha256:7c0e42ed...92572`. Final source digest
-`sha256:690f65bd...a8b79a` has complete assurance with no unavailable task,
-mismatch, replan requirement, or required action. Fresh complete NextResult v7
-recommends and makes startable only `EDITOR_FORMAT_ACCEPTANCE`. E1 through E3,
-MCP mutation, public VSIX publication, release selection, remote writes, Issue
-mutation, and plan advance remain separate.
+`sha256:7c0e42ed...92572`. Source digest
+`sha256:690f65bd...a8b79a` then had complete assurance and made only
+`EDITOR_FORMAT_ACCEPTANCE` startable. `EDITOR_FORMAT_ACCEPTANCE` is now complete
+and retained before advance. Its status-only write changed the plan digest to
+`sha256:e8bce9a2...e04105` without an owner assertion. Its separately confirmed
+criterion set changed the digest to `sha256:abf3acd8...43fbfc3`; its separately
+confirmed receipt binds the integrated merge revision `a569a47` and changed the
+digest to `sha256:0eb5cc7b...3ae573`; and its separately confirmed conformant
+outcome is bound to accepted basis `sha256:2163ddab...58f823e0`. Final source
+digest `sha256:62b134ef...53ad48` has complete assurance with no unavailable
+task, mismatch, replan requirement, or required action. Fresh complete
+NextResult v7 recommends and makes startable only `EDITOR_REPAIR_CONTRACT`.
+Range/on-type formatting, E1 implementation, E2, E3, MCP mutation, public VSIX
+publication, release selection, remote writes, Issue mutation, and plan advance
+remain separate.
 
 The explicitly selected `HIST-DAG-001` workstream is tracked independently in
 `plans/historical-dag.pert`. Its eight tasks total 44p from

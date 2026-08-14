@@ -76,14 +76,35 @@ write, publication, or plan advance is part of this acceptance.
 ## 4. Verification and plan boundary
 
 The focused Core, LSP, VSIX shell, prior VSIX acceptance, and new E0 integration
-suite passed 23 tests. The isolated VSIX package and supported-host gate passed
-trusted and untrusted install, activation, formatting, DAG, Help, historical
-read, replacement, and uninstall checks under VS Code `1.101.0`.
+suite passed 23 tests before the plan-status write. The post-write lifecycle
+alignment assertion brings the focused suite to 24 tests. The isolated VSIX
+package and supported-host gate passed trusted and untrusted install,
+activation, formatting, DAG, Help, historical read, replacement, and uninstall
+checks under VS Code `1.101.0`.
 
 Implementation revision `a5729f73d41daf7cdcfe9b4263135df5f1813d0a`
 records the private client, binding, host, fixture, tests, and README boundary.
 The subsequent complete repository gate passed before any task-status write.
-`EDITOR_FORMAT_ACCEPTANCE` plan completion, reached-milestone acceptance, and
-its plan-assurance outcome remain distinct preview-first mutations. E1 through
-E3, release, public VSIX publication, remote writes, Issue mutation, and plan
-advance remain separate.
+One expected-digest status-only write then marked `EDITOR_FORMAT_ACCEPTANCE`
+done and changed the plan source digest from `sha256:690f65bd...a8b79a` to
+`sha256:e8bce9a2...e04105`; governance was not applicable and no owner assertion
+was supplied.
+
+The reached-milestone criterion set, receipt, and plan-assurance outcome were
+three distinct preview-first mutations. The criterion-set candidate was
+separately confirmed with the candidate-bound `user` assertion and changed the
+digest to `sha256:abf3acd8...43fbfc3`. Its exact set commitment is
+`sha256:682a330d...e6b2e1`, and its required artifact criterion commitment is
+`sha256:12eca759...906072f`. The receipt was separately confirmed with a fresh
+`user` assertion, binds this record at integrated merge revision `a569a47`, and
+changed the digest to `sha256:0eb5cc7b...3ae573`. Readback reports the reached
+milestone accepted with no blocking criterion.
+
+The conformant outcome was then separately confirmed with another fresh
+candidate-bound `user` assertion and accepted basis
+`sha256:2163ddab...58f823e0`. Final plan digest
+`sha256:62b134ef...53ad48` has complete assurance with no unavailable task,
+mismatch, replan requirement, or required action. Fresh complete NextResult v7
+recommends and makes startable only `EDITOR_REPAIR_CONTRACT`. Range/on-type
+formatting, E1 implementation, E2, E3, release, public VSIX publication, remote
+writes, Issue mutation, and plan advance remain separate.

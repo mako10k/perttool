@@ -154,6 +154,7 @@ task EDITOR_FORMAT_ACCEPTANCE EDITOR_FORMAT_CORE_READY -> EDITOR_FORMAT_ACCEPTED
   title "Accept E0 Format Document and format-on-save"
   description "Integrate the private VSIX with standard Format Document and user-enabled format-on-save, then verify byte identity with Core, idempotence, complete semantic equivalence, no-op, BOM, CRLF, comments, Unicode, invalid input, rapid edits, cancellation, stale rejection, local, untitled, untrusted and virtual documents, unchanged non-target documents, model 1 compatibility, isolated packages, and the supported VS Code host. Keep range, on-type, E1, E2, and E3 editing unavailable."
   duration 6p
+  status done
   priority 90
   requires:
     DEVELOPERS 1
@@ -418,3 +419,29 @@ task_outcome OUTCOME_EDITOR_FORMAT_CORE:
   against_basis sha256:7c0e42ed247799e4ce04340673670749a3aa39620000893f434a55ff5a392572
   status conformant
   reason "Accepted E0 semantic equivalence and LSP formatting with fourteen closed cases"
+
+milestone_criterion_set EDITOR_FORMAT_ACCEPTED_R1:
+  milestone EDITOR_FORMAT_ACCEPTED
+  revision R1
+  commitment sha256:682a330dd162d76f1ef5fd29358ab40a8269a7abd5044b63585c38faf2e6b2e1
+  criterion FORMAT_ACCEPTED required artifact "Accepted E0 Format Document and format-on-save with eighteen closed cases"
+
+milestone_acceptance_receipt EDITOR_FORMAT_ACCEPTANCE_EVIDENCE:
+  model 1
+  set EDITOR_FORMAT_ACCEPTED_R1
+  set_commitment sha256:682a330dd162d76f1ef5fd29358ab40a8269a7abd5044b63585c38faf2e6b2e1
+  criterion FORMAT_ACCEPTED
+  criterion_commitment sha256:12eca759f2d7be3ea340fa04281b9665854dd931d96cce4fe0d33bb6c906072f
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/editor-format-acceptance.md"
+  evidence_revision a569a47672ae10220a611639e262824703564ce5
+  verifier codex
+  occurred_at 2026-08-14T05:38:46Z
+
+task_outcome OUTCOME_EDITOR_FORMAT_ACCEPTANCE:
+  model 1
+  task EDITOR_FORMAT_ACCEPTANCE
+  against_basis sha256:2163ddabb2819b389137753bbacc9fa33b3e5a585360de8a5f101f4a58f823e0
+  status conformant
+  reason "Accepted E0 Format Document and format-on-save with eighteen closed cases"

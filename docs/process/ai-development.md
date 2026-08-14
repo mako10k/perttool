@@ -245,9 +245,11 @@ private LSP select model 2 from `[2, 1]` and advertise only standard whole-
 document formatting. Model-1 clients remain read-only. The accepted
 `EDITOR_FORMAT_ACCEPTANCE` implementation makes the private VSIX offer `[2, 1]`
 and delegates standard Format Document and user-enabled format-on-save to that
-E0 operation. It adds no range/on-type formatter, extension-owned setting, or
-direct persistence. Later mutation classes, release, public VSIX publication,
-remote writes, Issue changes, and plan advance remain separately gated.
+E0 operation. Its task, reached milestone evidence, and conformant outcome are
+accepted, and fresh NextResult v7 selects only `EDITOR_REPAIR_CONTRACT`. It adds
+no range/on-type formatter, extension-owned setting, or direct persistence.
+Later mutation classes, release, public VSIX publication, remote writes, Issue
+changes, and plan advance remain separately gated.
 
 ADR 0004 adopts English as the repository baseline immediately. All nine tasks
 in `plans/english-baseline.pert` are accepted and advanced; commit `2001cdf`

@@ -103,3 +103,27 @@ test("format acceptance keeps direct persistence and external mutation out of th
   assert.match(shell, /package:vsix/u);
   assert.match(shell, /node_modules\|media/u);
 });
+
+test("format acceptance lifecycle and next frontier are aligned", async () => {
+  const [plan, acceptance, agents, selfUse, plansReadme] = await Promise.all([
+    repositoryText("plans/editor-mutations.pert"),
+    repositoryText("docs/process/editor-format-acceptance.md"),
+    repositoryText("AGENTS.md"),
+    repositoryText("docs/process/self-use.md"),
+    repositoryText("plans/README.md"),
+  ]);
+  assert.match(
+    plan,
+    /task EDITOR_FORMAT_ACCEPTANCE[\s\S]*?status done[\s\S]*?source "Issue #13"/u,
+  );
+  assert.match(plan, /^milestone_criterion_set EDITOR_FORMAT_ACCEPTED_R1:$/mu);
+  assert.match(
+    plan,
+    /^milestone_acceptance_receipt EDITOR_FORMAT_ACCEPTANCE_EVIDENCE:$/mu,
+  );
+  assert.match(plan, /^task_outcome OUTCOME_EDITOR_FORMAT_ACCEPTANCE:$/mu);
+  for (const text of [acceptance, agents, selfUse, plansReadme]) {
+    assert.match(text, /EDITOR_REPAIR_CONTRACT/u);
+  }
+  assert.match(acceptance, /sha256:62b134ef\.\.\.53ad48/u);
+});

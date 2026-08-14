@@ -1321,8 +1321,8 @@ local installation, Marketplace publication, and Open VSX remain separate.
 
 Priority: Selected through GitHub Issue #13
 
-Status: Editor Protocol model 2 contract accepted (2026-08-13); runtime
-activation proceeds through the independent plan
+Status: Editor Protocol model 2 contract and E0 whole-document formatting
+accepted (2026-08-14); E1 repair design is next in the independent plan
 
 The selected [`editor-mutations.pert`](../plans/editor-mutations.pert)
 workstream replaces the permanent read-only editor ceiling with four ordered
@@ -1345,8 +1345,9 @@ downgraded. Workspace trust, process or Git identity, and model negotiation do
 not grant authority. The language server plans bound edits through shared
 Core/Application services and the editor applies them; neither adapter invokes
 the CLI or writes a workspace file directly. Model 1 remains read-only. The
-contract task adds no model-2 capability, and the first runtime slice is only
-`E0` whole-document formatting. Semantic assurance highlighting,
+contract task added no model-2 capability. The accepted first runtime slice is
+only `E0` whole-document formatting; `EDITOR_REPAIR_CONTRACT` is the next
+verified frontier. Semantic assurance highlighting,
 graph-driven mutation beyond the accepted classes, MCP mutation, public VSIX
 identity/publication, release selection, Issue mutation, remote writes, and
 plan advance remain separate.
