@@ -289,11 +289,13 @@ Mandatory summary:
   before advance; implementation commit `5245235` passed the complete gate,
   and the status-only plan write required no owner assertion. Its reached-
   milestone criterion set was separately confirmed and written once with the
-  candidate-bound `user` assertion. Its receipt and separately governed
-  conformant outcome remain pending distinct exact candidate-bound owner
-  confirmations, so the successor is not yet start-authorized. E1 through E3,
-  MCP mutation, public VSIX publication, release selection, remote writes,
-  Issue mutation, and plan advance remain separate.
+  candidate-bound `user` assertion. Its receipt was then separately confirmed
+  and written once with a fresh `user` assertion; the reached milestone is now
+  accepted with no blocking criterion. The separately governed conformant
+  outcome remains pending its own exact confirmation, so the successor is not
+  yet start-authorized. E1 through E3, MCP mutation, public VSIX publication,
+  release selection, remote writes, Issue mutation, and plan advance remain
+  separate.
 - The selected compatible `plans/release-0.7.1.pert` patch plan sequences five
   serial tasks and 15p. The exact initial goal-and-DAG candidate was written
   once with actor `codex` and the scope-bound owner assertion `user`.

@@ -114,7 +114,13 @@ The criterion-set candidate was separately confirmed and written once with actor
 commitment `sha256:f5b6802c...6cd63d` plus criterion commitment
 `sha256:cf40d138...a5afbe`. Readback reports reached closure with pending
 acceptance and exactly one blocking required criterion. The confirmation is
-not reused for the receipt or task outcome, which remain unwritten without
-their own fresh confirmation. This task performs no release selection,
-package or VSIX publication, VSIX installation, remote write, GitHub Issue
-mutation, or plan advance.
+not reused for the receipt or task outcome. The receipt candidate was then
+separately confirmed and written once with actor `codex` and a fresh
+candidate-bound `user` assertion. It changed source digest
+`sha256:9f6b3d2a...152486` to `sha256:21ec01eb...a2bbaa`, binds exact evidence
+revision `5245235414cd411dd06d5c29dfe9e91a5d78cfba`, and records verifier
+`codex` at `2026-08-14T00:22:01Z`. Readback reports reached and accepted with
+no blocking criterion. The task outcome remains unwritten without its own
+fresh confirmation. This task performs no release selection, package or VSIX
+publication, VSIX installation, remote write, GitHub Issue mutation, or plan
+advance.

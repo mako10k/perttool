@@ -421,10 +421,13 @@ assertion. The implementation commit is `5245235`. The reached-milestone
 criterion set was separately confirmed and written once with actor `codex` and
 the candidate-bound `user` assertion; the resulting source digest is
 `sha256:9f6b3d2a...152486`. Its receipt and the separately governed conformant
-outcome remain pending distinct exact candidate-bound owner confirmations, so
-the successor is not yet start-authorized. E1 through E3, MCP mutation, public
-VSIX publication, release selection, remote writes, Issue mutation, and plan
-advance remain separate.
+outcome require distinct exact candidate-bound owner confirmations. The
+receipt was separately confirmed and written once with actor `codex` and a
+fresh `user` assertion; source digest `sha256:21ec01eb...a2bbaa` now reports
+the reached milestone as accepted with no blocking criterion. The conformant
+outcome remains pending its own confirmation, so the successor is not yet
+start-authorized. E1 through E3, MCP mutation, public VSIX publication, release
+selection, remote writes, Issue mutation, and plan advance remain separate.
 
 The explicitly selected `HIST-DAG-001` workstream is tracked independently in
 `plans/historical-dag.pert`. Its eight tasks total 44p from

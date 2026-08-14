@@ -1705,8 +1705,11 @@ plan-assurance outcome are separate candidate-bound owner-confirmation steps.
 The criterion set was separately confirmed and written once with the
 candidate-bound `user` assertion, changing the plan digest from
 `sha256:32606859...f7609b` to `sha256:9f6b3d2a...152486`. Readback retained
-reached closure and pending acceptance. The receipt and outcome remain
-unwritten, so `EDITOR_FORMAT_ACCEPTANCE` is not yet start-authorized.
+reached closure and pending acceptance. The receipt was separately confirmed
+and written once with a fresh candidate-bound `user` assertion, changing the
+digest to `sha256:21ec01eb...a2bbaa`. Readback reports accepted milestone
+evidence with no blocking criterion. The outcome remains unwritten, so
+`EDITOR_FORMAT_ACCEPTANCE` is not yet start-authorized.
 
 Stage 1 allowed operations:
 

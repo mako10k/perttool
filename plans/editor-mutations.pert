@@ -398,3 +398,16 @@ milestone_criterion_set EDITOR_FORMAT_CORE_READY_R1:
   revision R1
   commitment sha256:f5b6802cfdb4f90263f9b7883f57628f502e9255c2294bb3a8bbace5ab6cd63d
   criterion FORMAT_CORE_ACCEPTED required artifact "Accepted E0 semantic equivalence and LSP formatting with fourteen closed cases"
+
+milestone_acceptance_receipt EDITOR_FORMAT_CORE_EVIDENCE:
+  model 1
+  set EDITOR_FORMAT_CORE_READY_R1
+  set_commitment sha256:f5b6802cfdb4f90263f9b7883f57628f502e9255c2294bb3a8bbace5ab6cd63d
+  criterion FORMAT_CORE_ACCEPTED
+  criterion_commitment sha256:cf40d13812e203c2e7f36b16d8755e38ee3106027e17bef41706c8e2dba5afbe
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/editor-format-core-acceptance.md"
+  evidence_revision 5245235414cd411dd06d5c29dfe9e91a5d78cfba
+  verifier codex
+  occurred_at 2026-08-14T00:22:01Z
