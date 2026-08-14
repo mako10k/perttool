@@ -105,6 +105,7 @@ task RELEASE_093_PUBLISH RELEASE_093_CANDIDATE_ACCEPTED -> RELEASE_093_PUBLISHED
   title "Publish version 0.9.3 from one immutable tarball"
   description "Only after every predecessor gate passes, push and verify the clean release commit and annotated tag, require Node.js 22 and 24 CI, publish one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.9.3 while latest remains 0.9.0."
   duration 4p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -117,6 +118,7 @@ task RELEASE_093_ACCEPTANCE RELEASE_093_PUBLISHED -> RELEASE_093_ACCEPTED:
   title "Record durable 0.9.3 emergency patch acceptance"
   description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub and npm tarball bytes, registry integrity and metadata, exact and beta installations, all three emergency behaviors, compatibility, and the exact 0.9.2 rollback pin. Update Issues #14, #16, and #17 after durable acceptance without changing latest, advancing the plan, or starting unrelated work."
   duration 2p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -156,3 +158,19 @@ work_event WE-093-candidate:
   occurred_at 2026-08-14T14:46:00+09:00
   active_time 2h
   effort 2ph
+
+work_event WE-093-publish:
+  model 1
+  task RELEASE_093_PUBLISH
+  kind finish
+  occurred_at 2026-08-14T13:55:00+09:00
+  active_time 1h
+  effort 1ph
+
+work_event WE-093-acceptance:
+  model 1
+  task RELEASE_093_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-14T13:58:00+09:00
+  active_time 1h
+  effort 1ph

@@ -5,11 +5,12 @@ Treat `AGENTS.md` as the source of truth for repository guidance shared by Codex
 Mandatory summary:
 
 - English is the canonical language for tracked repository artifacts. Respond to the user in Japanese unless requested otherwise. Preserve user-authored Unicode content, and do not introduce runtime i18n or locale negotiation.
-- The current published beta is `perttool@0.9.2`; npm reports
-  `beta=0.9.2`, `latest=0.9.0`, and no `alpha`. Version `0.9.2` is the
-  compatible Issue #15 emergency patch; peeled `v0.9.2` and `origin/main`
-  agree at `b47a0a4`, and Issue #15 is closed with release evidence. Version
-  `0.8.1` remains the exact Grammar 6 and CLI Contract 7 rollback pin.
+- The current published beta is `perttool@0.9.3`; npm reports
+  `beta=0.9.3`, `latest=0.9.0`, and no `alpha`. Version `0.9.3` is the
+  compatible Issues #14/#16/#17 emergency patch; peeled `v0.9.3` and
+  `origin/main` agree at `7755d3e`, and all three Issues are closed with
+  release evidence. Version `0.9.2` remains the exact rollback pin containing
+  the Issue #15 correction.
 - The current source atomically activates Grammar 7 and CLI
   Contract 8 with 53 commands, 23 root schemas, 129 root and Node exports,
   and `Perttool.NextResult.v7`. All milestone-acceptance work is complete and
@@ -35,16 +36,18 @@ Mandatory summary:
   unchanged. Release, push, and Issue #8 update are authorized only after the
   ordered gates. npm `latest`, plan advance, public VSIX publication, and
   unrelated work remain separate.
-- The selected `plans/release-0.9.3.pert` workstream publishes the compatible
-  Contract 8 emergency corrections for Issues #14, #16, and #17.
-  Compatibility review and the correction matrix are complete. Grammar 7
+- The `plans/release-0.9.3.pert` workstream published and durably accepted the
+  compatible Contract 8 emergency corrections for Issues #14, #16, and #17.
+  Grammar 7
   assurance inspection and acceptance-aware advance composition are restored
   without changing Grammar 7, Contract 8, 53 commands, 23 schemas, 129
   root/Node exports, 45 Core exports, shared TextEdit strictness, or any
   acceptance, assurance, history, governance, and persistence authority.
-  Source preparation is current. Publication moves only npm `beta`; npm
-  `latest`, plan advance, public VSIX publication, and unrelated work remain
-  separate.
+  Release commit and peeled tag `7755d3e`, Node.js 22/24 CI, GitHub, npm, and
+  the common SHA-256 `a86c552b...bcad9708` agree. Exact/beta installation,
+  `0.9.2` rollback, and all three public replays passed. All six tasks are
+  complete before advance. npm `latest`, plan advance, public VSIX
+  publication, and unrelated work remain separate.
 - ADR 0004 is accepted across all canonical surfaces. All nine tasks in `plans/english-baseline.pert` are complete and advanced, Git commit `2001cdf` records the final-task pre-advance snapshot, `docs/process/english-baseline-acceptance.md` records the final trace and exact Japanese-script allowlist boundary, and complete NextResult v5 has no ready, recommended, or startable task.
 - The selected independent `plans/advance-history-safety.pert` workstream
   tracks `ADV-001`. `ADV_HISTORY_CONTRACT` is complete, Git commit `2c08618`

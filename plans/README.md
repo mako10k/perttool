@@ -104,11 +104,10 @@ Plans are separated by level of detail.
   CLI Contract 8 emergency patch for Point plans without velocity;
   publication and durable acceptance are complete, while npm `latest` and
   plan advance remain separate
-- [release-0.9.3.pert](release-0.9.3.pert): selected compatible Grammar 7 and
-  CLI Contract 8 emergency patch for Issues #14, #16, and #17; compatibility
-  and correction acceptance are complete, source preparation is current, and
-  publication, Issue completion, npm `latest`, and plan advance retain their
-  ordered boundaries
+- [release-0.9.3.pert](release-0.9.3.pert): compatible Grammar 7 and CLI
+  Contract 8 emergency patch for Issues #14, #16, and #17; publication,
+  durable acceptance, exact local installation, and Issue completion are
+  complete, while npm `latest` and plan advance remain separate
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2

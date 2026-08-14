@@ -75,7 +75,7 @@ commands, 23 root schemas, 129 root and Node runtime exports,
 criterion-set replacement, caller-asserted receipts, and acceptance-aware
 canonical advance. Its accepted release commit, annotated tag, GitHub
 prerelease, and npm artifact agree, and npm currently reports
-`latest=0.9.0`, `beta=0.9.1`, and no `alpha`. Version `0.8.1` remains the
+`latest=0.9.0`, `beta=0.9.3`, and no `alpha`. Version `0.8.1` remains the
 exact Grammar 6 and CLI Contract 7 rollback pin.
 
 Version `0.9.1` is the published compatible Contract 8 patch for `ACT-003` and
@@ -83,24 +83,25 @@ GitHub Issue #8. It makes declared velocity observation use the exact current
 operand, including a just-written uncommitted finish, while keeping
 Git-recorded evidence bound to the selected first-parent revision. It retains
 all 53 commands, 23 root schemas, 129 root and Node exports, 45 Core exports,
-result and schema identities, and authority. npm `beta=0.9.1` while `latest`
-remains `0.9.0`.
+result and schema identities, and authority. It remains available by exact
+pin while `latest` remains `0.9.0`.
 
-Version `0.9.2` is the selected compatible Contract 8 emergency patch for
+Version `0.9.2` is the published compatible Contract 8 emergency patch for
 `ANALYSIS-001` and GitHub Issue #15. It keeps valid Point plans without a
 declared velocity Point-valued through `dag analyze` and `dag next`, leaves
 velocity forecasts null, and reports calendar conversion as unavailable
-without inventing a rate. It retains all public identities and authority.
-Publication moves only npm `beta`; `latest`, plan advance, public VSIX
-publication, and unrelated work remain separate.
+without inventing a rate. It retains all public identities and authority and
+remains the exact rollback pin for `0.9.3`.
 
-Version `0.9.3` is the selected compatible Contract 8 emergency patch for
+Version `0.9.3` is the published compatible Contract 8 emergency patch for
 GitHub Issues #14, #16, and #17. It restores Grammar 7 `plan-assurance
 show|hash`, composes acceptance-aware terminal deletions without weakening the
 shared edit guard, and preserves complete criterion-set/receipt evidence for
 retained reached milestones. It retains all public identities and authority.
-Publication moves only npm `beta`; `latest`, plan advance, public VSIX
-publication, and unrelated work remain separate.
+The accepted release commit, annotated tag, GitHub prerelease, and npm
+artifact agree; npm reports `beta=0.9.3`, `latest=0.9.0`, and no `alpha`.
+Issues #14, #16, and #17 are closed with release evidence. Plan advance,
+public VSIX publication, and unrelated work remain separate.
 
 The private adapters now project that same Contract 8 acceptance model without
 adding write authority. The LSP negotiates a separate version-bound milestone

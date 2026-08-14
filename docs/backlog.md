@@ -931,7 +931,7 @@ publication, unrelated work, and release-plan advance remain separate.
 
 Priority: P0
 
-Status: Emergency correction selected for `0.9.3` (2026-08-14)
+Status: Released and accepted in `0.9.3`; Issue #14 closed (2026-08-14)
 
 GitHub [Issue #14](https://github.com/mako10k/perttool/issues/14) reports that
 the read-only `plan-assurance show` and `plan-assurance hash` commands pass an
@@ -955,7 +955,7 @@ Acceptance:
 
 Priority: P0
 
-Status: Emergency correction selected for `0.9.3` (2026-08-14)
+Status: Released and accepted in `0.9.3`; Issue #16 closed (2026-08-14)
 
 GitHub [Issue #16](https://github.com/mako10k/perttool/issues/16) reports an
 ambiguous-looking but semantically identical overlap between pure deletion
@@ -978,7 +978,7 @@ Acceptance:
 
 Priority: P0
 
-Status: Emergency correction selected for `0.9.3` (2026-08-14)
+Status: Released and accepted in `0.9.3`; Issue #17 closed (2026-08-14)
 
 GitHub [Issue #17](https://github.com/mako10k/perttool/issues/17) reports that
 a Contract 7 deletion range can cross the criterion set of a retained
@@ -1007,6 +1007,9 @@ The shared compatible correction contract is
 The emergency release is tracked independently by
 [`release-0.9.3.pert`](../plans/release-0.9.3.pert). npm `latest`, release-plan
 advance, public VSIX publication, and unrelated work remain separate.
+
+Durable publication and the three completed Issue readbacks are recorded in
+[`0.9.3-release-acceptance.md`](process/0.9.3-release-acceptance.md).
 
 ## Recommendation override application and audit
 

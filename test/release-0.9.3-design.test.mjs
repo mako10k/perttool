@@ -16,6 +16,8 @@ test("0.9.3 retains Contract 8 while restoring all three emergency gates", async
     requirements,
     design,
     procedure,
+    publish,
+    acceptance,
     review,
     correction,
     contract,
@@ -35,6 +37,8 @@ test("0.9.3 retains Contract 8 while restoring all three emergency gates", async
     repositoryText("docs/requirements.md"),
     repositoryText("docs/basic-design.md"),
     repositoryText("docs/process/0.9.3-release.md"),
+    repositoryText("docs/process/0.9.3-publish.md"),
+    repositoryText("docs/process/0.9.3-release-acceptance.md"),
     repositoryText("docs/process/0.9.3-self-review.md"),
     repositoryText("docs/process/issue-14-16-17-acceptance.md"),
     repositoryText("docs/specs/contract8-emergency-corrections.md"),
@@ -63,9 +67,11 @@ test("0.9.3 retains Contract 8 while restoring all three emergency gates", async
     assert.match(backlog, new RegExp(`^### ${id}:`, "m"));
   }
   assert.equal(
-    [...backlog.matchAll(/^Status: Emergency correction selected for `0\.9\.3` \(2026-08-14\)$/gm)].length,
+    [...backlog.matchAll(/^Status: Released and accepted in `0\.9\.3`; Issue #(?:14|16|17) closed \(2026-08-14\)$/gm)].length,
     3,
   );
+  assert.match(publish, /CI run `31770995809` completed successfully/u);
+  assert.match(acceptance, /All six release tasks and 21 points are complete/u);
 
   const checked = perttool.checkDocument(plan);
   const metadata = perttool.getProjectMetadata(plan);
@@ -78,9 +84,12 @@ test("0.9.3 retains Contract 8 while restoring all three emergency gates", async
   assert.match(plan, /task RELEASE_093_CORRECTIONS[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_093_PREPARATION[\s\S]*?status done/u);
   assert.match(plan, /task RELEASE_093_CANDIDATE[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_093_PUBLISH[\s\S]*?status done/u);
+  assert.match(plan, /task RELEASE_093_ACCEPTANCE[\s\S]*?status done/u);
   const next = perttool.selectNextTasks(plan);
   assert.equal(next.ok, true);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_093_PUBLISH"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.equal(next.tasks.length, 0);
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
@@ -94,7 +103,7 @@ test("0.9.3 retains Contract 8 while restoring all three emergency gates", async
   assert.match(versionSource, /TOOL_VERSION = "0\.9\.3"/u);
   assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.3"/u);
   assert.match(changelog, /^## \[0\.9\.3\] - 2026-08-14$/m);
-  assert.match(readme, /Version `0\.9\.3` is the selected compatible Contract 8 emergency patch/u);
+  assert.match(readme, /Version `0\.9\.3` is the published compatible Contract 8 emergency patch/u);
   assert.match(planIndex, /All forty-one plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.3\.pert/u);
 
