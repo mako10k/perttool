@@ -2976,6 +2976,45 @@ The user's 2026-08-13 instruction authorizes the ordered release, push, and
 Issue #8 update only after every predecessor gate passes. The authoritative
 procedure is [`docs/process/0.9.1-release.md`](process/0.9.1-release.md).
 
+### 21.18 Point-without-velocity emergency patch release acceptance criteria
+
+The compatible correction for `ANALYSIS-001` and GitHub Issue #15 is
+suffix-free `0.9.2`. It is published as a GitHub prerelease and moves only npm
+`beta` during publication.
+
+1. Keep `velocity` optional for Point plans and never synthesize a default
+   Point-to-calendar conversion.
+2. Return Point-valued precedence and resource schedules from `dag analyze`
+   in all three schedule modes when velocity is absent.
+3. Return recommendation authority and Point-valued task facts from `dag
+   next` while keeping velocity forecasts nullable.
+4. Represent a genuinely requested Point-to-calendar projection without
+   velocity as unavailable with `missing_velocity`, never as an exception.
+5. Prove file and stdin parity for the Issue #15 reproduction and retain
+   `document check` and `project show` agreement.
+6. Retain Grammar 7, CLI Contract 8, all 53 commands, 23 root schemas, 129
+   root and Node exports, 45 Core exports, result and schema identities,
+   validation, recommendation, governance, and mutation authority.
+7. Align package, lockfile, CLI and MCP versions, adapter peers, CHANGELOG,
+   README, release records, tests, goldens, and self-use to `0.9.2`.
+8. Pass the complete Node.js 22 repository and package gates and Node.js 22
+   and 24 CI from the exact release commit.
+9. Establish that `perttool@0.9.2`, local and remote `v0.9.2`, and the matching
+   GitHub Release are unused; establish `beta=0.9.1`, `latest=0.9.0`, and no
+   `alpha`.
+10. Freeze one immutable tarball outside the worktree and distribute exactly
+    those bytes through one GitHub prerelease and one npm `beta` publication.
+11. Verify exact and beta installed Issue #15 behavior, common public artifact
+    bytes, registry integrity, the exact `0.9.1` rollback pin, and unchanged
+    `latest=0.9.0` before closing Issue #15 with release evidence.
+12. Keep npm `latest` promotion, release-plan advance, public VSIX
+    publication, and unrelated work separate.
+
+The user's 2026-08-14 emergency instruction authorizes the ordered patch,
+release, local exact installation, and Issue #15 completion only after every
+predecessor gate passes. The authoritative procedure is
+[`docs/process/0.9.2-release.md`](process/0.9.2-release.md).
+
 ## 22. Mapping to the initial requirements
 
 | Initial requirement | Coverage in this document |

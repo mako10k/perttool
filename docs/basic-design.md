@@ -3459,6 +3459,35 @@ Exit:
 - keep npm `latest`, plan advance, public VSIX publication, and unrelated work
   separate.
 
+### Post-MVP Slice 4V: Point-without-velocity `v0.9.2` emergency patch
+
+The selected `ANALYSIS-001` correction retains Grammar 7 and CLI Contract 8
+while removing an invalid temporal-layer assumption that every Point plan has
+a declared velocity. Base PERT, resource, recommendation, and start-authority
+facts remain Point-valued. Calendar conversion remains nullable and no default
+velocity is invented.
+
+The [`v0.9.2` release procedure](process/0.9.2-release.md) and independent
+[`release-0.9.2.pert`](../plans/release-0.9.2.pert) plan sequence compatibility
+review, focused correction acceptance, version-bearing source preparation,
+one immutable candidate, authorized GitHub/npm beta publication, durable
+installed verification, local exact installation, and the Issue #15
+completion update.
+
+Exit:
+
+- satisfy Requirements 21.18 from one clean release commit and immutable
+  tarball;
+- preserve all Contract 8 command, result, schema, facade, and authority
+  identities;
+- keep absent velocity and calendar forecasts explicit while returning base
+  schedules and recommendations in Points;
+- publish identical bytes to one GitHub prerelease and npm `beta` while
+  leaving `latest=0.9.0`;
+- verify exact and beta Issue #15 behavior and the exact `0.9.1` rollback; and
+- keep npm `latest`, plan advance, public VSIX publication, and unrelated work
+  separate.
+
 ### Post-MVP Slice 5: Language tooling and MCP
 
 The selected `ADAPTER-001` plan composes a shared foundation and three adapter

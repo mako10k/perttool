@@ -72,7 +72,7 @@ export interface TargetCalendarDifference {
 
 export interface TargetEffectiveProjection {
   readonly baseUnit: DurationUnit;
-  readonly effectiveUnit: CalendarUnit;
+  readonly effectiveUnit: CalendarUnit | null;
   readonly qualifier: "base_unit" | "velocity_forecast";
   readonly velocity: {
     readonly points: TargetTemporalExactValue & { readonly unit: "point" };
@@ -232,7 +232,7 @@ function effectiveProjection(
         periodUnit: declared.period.suffix === "d" ? "day" : "hour",
       } satisfies Velocity);
   const effectiveUnit = baseUnit === "point"
-    ? velocity!.periodUnit
+    ? velocity?.periodUnit ?? null
     : baseUnit;
   return {
     velocity,
@@ -255,6 +255,9 @@ function differenceToBaseUnit(
   baseUnit: DurationUnit,
   velocity: Velocity | null,
 ): { readonly value: Rational | null; readonly cause: CalendarUnavailableCause | null } {
+  if (baseUnit === "point" && velocity === null) {
+    return { value: null, cause: "missing_velocity" };
+  }
   const effectiveUnit = baseUnit === "point"
     ? velocity!.periodUnit
     : baseUnit;

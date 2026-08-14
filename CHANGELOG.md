@@ -4,6 +4,18 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-08-14
+
+Backward-compatible Grammar 7 and CLI Contract 8 beta patch. This version
+corrects Point-plan analysis when optional project velocity is absent.
+
+### Fixed
+
+- Made `dag analyze` and `dag next` retain Point-valued schedules,
+  recommendation authority, and nullable forecasts when a valid Point plan
+  omits velocity. Temporal fields that require calendar conversion now report
+  `missing_velocity` instead of terminating with `PTCLI-070`.
+
 ## [0.9.1] - 2026-08-13
 
 Backward-compatible Grammar 7 and CLI Contract 8 beta patch. This version
@@ -466,7 +478,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.2...HEAD
+[0.9.2]: https://github.com/mako10k/perttool/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/mako10k/perttool/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/mako10k/perttool/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/mako10k/perttool/compare/v0.8.0...v0.8.1

@@ -61,7 +61,7 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   );
   const releaseSection = requirements.split(
     "### 21.17 Current velocity observation patch release acceptance criteria",
-  )[1].split("## 22.")[0];
+  )[1].split("### 21.18")[0];
   assert.deepEqual(
     [...releaseSection.matchAll(/^(\d+)\. /gm)].map((match) => Number(match[1])),
     Array.from({ length: 10 }, (_, index) => index + 1),
@@ -115,16 +115,16 @@ test("0.9.1 release retains Contract 8 while fixing current velocity source bind
   const lockfile = JSON.parse(lockfileText);
   const lspManifest = JSON.parse(lspManifestText);
   const mcpManifest = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.9.1");
-  assert.equal(lockfile.version, "0.9.1");
-  assert.equal(lockfile.packages[""].version, "0.9.1");
-  assert.equal(lspManifest.peerDependencies.perttool, "0.9.1");
-  assert.equal(mcpManifest.peerDependencies.perttool, "0.9.1");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.1"/u);
-  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.1"/u);
+  assert.equal(manifest.version, "0.9.2");
+  assert.equal(lockfile.version, "0.9.2");
+  assert.equal(lockfile.packages[""].version, "0.9.2");
+  assert.equal(lspManifest.peerDependencies.perttool, "0.9.2");
+  assert.equal(mcpManifest.peerDependencies.perttool, "0.9.2");
+  assert.match(versionSource, /TOOL_VERSION = "0\.9\.2"/u);
+  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.2"/u);
   assert.match(changelog, /^## \[0\.9\.1\] - 2026-08-13$/m);
   assert.match(readme, /Version `0\.9\.1` is the durably accepted compatible Contract 8 patch/u);
-  assert.match(planIndex, /All forty plans pass/u);
+  assert.match(planIndex, /All forty-one plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.1\.pert/u);
 
   assert.equal(Object.keys(perttool).length, 129);

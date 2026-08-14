@@ -331,6 +331,21 @@ function temporalPoint(
       ]),
     });
   }
+  if (inputs.effectiveProjection.effectiveUnit === null) {
+    return Object.freeze({
+      state: "unavailable",
+      relative: exactValue(value, inputs.effectiveProjection.baseUnit),
+      calendar: null,
+      unavailableCauses: Object.freeze([
+        temporalCause(
+          "missing_velocity",
+          subjectKind,
+          subjectId,
+          subjectKind === "task" ? subjectId : null,
+        ),
+      ]),
+    });
+  }
   const projected = projectRelativeCalendarValue(
     declaredCalendar(inputs.anchor),
     inputs.effectiveProjection.effectiveUnit,

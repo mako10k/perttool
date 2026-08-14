@@ -110,6 +110,11 @@ Plans are separated by level of detail.
   complete and retained before advance, `beta=0.9.1`, Issue #8 is closed, and
   npm `latest`, plan advance, public VSIX publication, and unrelated work
   remain separate
+- [release-0.9.2.pert](release-0.9.2.pert): durably accepted compatible Grammar
+  7 and CLI Contract 8 emergency patch for Point plans without velocity; all
+  six tasks are complete and retained before advance, `beta=0.9.2`, Issue #15
+  is closed, and npm `latest`, plan advance, public VSIX publication, and
+  unrelated work remain separate
 - [scheduling-units.pert](scheduling-units.pert): milestone-level roadmap from refined temporal and unit-migration backlog through integrated acceptance
 - [scheduling-units-m1.pert](scheduling-units-m1.pert): task-level detail required only to reach the SU-M1 temporal and unit-migration contract
 - [scheduling-units-m2.pert](scheduling-units-m2.pert): completed and advanced target-only Grammar 2 temporal source and Core-foundation detail through SU-M2
@@ -118,7 +123,7 @@ Plans are separated by level of detail.
 - [scheduling-units-m4.pert](scheduling-units-m4.pert): completed and advanced internal unit-migration version 2 request, exact conversion, candidate, result, inverse, and acceptance detail
 - [scheduling-units-m5.pert](scheduling-units-m5.pert): completed and advanced atomic public Contract 4 Core, migration route, registry/help, Next v4 authority, installed workflow, and acceptance detail
 
-All forty plans pass the self-use gate and are used as inputs to `document
+All forty-one plans pass the self-use gate and are used as inputs to `document
 check`, `dag analyze`, and `dag next`. Stage 3 permits preview-first editing
 and `dag advance` with an expected digest and post-write reanalysis. Detailed
 plans use Points as the analysis unit and velocity-converted days as forecasts.
@@ -131,7 +136,7 @@ that detail. `cli-surface-reset.pert`, `release-0.2.0.pert`,
 `release-0.5.1.pert`, `release-0.5.2.pert`, `release-0.5.3.pert`,
 `release-0.5.4.pert`, `release-0.5.5.pert`, `release-0.6.0.pert`,
 `release-0.7.0.pert`, `release-0.7.1.pert`, `release-0.8.0.pert`,
-`release-0.9.0.pert`, `release-0.9.1.pert`,
+`release-0.9.0.pert`, `release-0.9.1.pert`, `release-0.9.2.pert`,
 `governance.pert`,
 `help-guide-consistency.pert`, `adapter-platform.pert`,
 `editor-mutations.pert`,

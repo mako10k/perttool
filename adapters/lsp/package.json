@@ -20,7 +20,7 @@
     "vscode-languageserver": "9.0.1"
   },
   "peerDependencies": {
-    "perttool": "0.9.1"
+    "perttool": "0.9.2"
   },
   "devDependencies": {
     "esbuild": "0.25.9",

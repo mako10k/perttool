@@ -323,6 +323,86 @@ test("dag analyze returns point values and separate velocity forecasts", () => {
   assert.match(text.stdout, /^VELOCITY FORECAST 7\.5d$/m);
 });
 
+test("Issue #15 keeps velocity-free point analysis and Next results point-valued", (t) => {
+  const directory = mkdtempSync(path.join(tmpdir(), "perttool-point-no-velocity-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const source = readFileSync(
+    path.join(root, "test/fixtures/recommendation/rec-002-gate-distance.pert"),
+    "utf8",
+  ).replace(/^  velocity .*\n/m, "");
+  const planPath = path.join(directory, "point-no-velocity.pert");
+  writeFileSync(planPath, source, "utf8");
+
+  const checked = run(["document", "check", planPath, "--format=json"]);
+  assert.equal(checked.status, 0, checked.stderr);
+  const shown = run(["project", "show", planPath, "--format=json"]);
+  assert.equal(shown.status, 0, shown.stderr);
+  assert.equal(JSON.parse(shown.stdout).project.duration_unit, "point");
+  assert.equal(JSON.parse(shown.stdout).project.velocity, null);
+
+  const analysisFacts = (result) => {
+    assert.equal(result.status, 0, result.stderr);
+    const json = JSON.parse(result.stdout);
+    return {
+      mode: json.mode,
+      durationUnit: json.duration_unit,
+      velocity: json.velocity,
+      velocityForecast: json.velocity_forecast,
+      precedenceMakespan: json.precedence?.makespan ?? null,
+      resourceMakespan: json.resource?.makespan ?? null,
+      temporalPrecedence: json.temporal.precedence.state,
+      temporalResource: json.temporal.resource.state,
+    };
+  };
+  for (const mode of ["precedence", "resource", "both"]) {
+    const fromFile = analysisFacts(run([
+      "dag", "analyze", planPath, `--schedule=${mode}`, "--format=json",
+    ]));
+    const fromStdin = analysisFacts(run([
+      "dag", "analyze", "-", `--schedule=${mode}`, "--format=json",
+    ], { input: source }));
+    assert.deepEqual(fromStdin, fromFile);
+    assert.equal(fromFile.durationUnit, "point");
+    assert.equal(fromFile.velocity, null);
+    assert.equal(fromFile.velocityForecast, null);
+    assert.equal(fromFile.precedenceMakespan?.unit ?? null, mode === "resource" ? null : "point");
+    assert.equal(fromFile.resourceMakespan?.unit ?? null, mode === "precedence" ? null : "point");
+    assert.equal(fromFile.temporalPrecedence, "absent");
+    assert.equal(fromFile.temporalResource, "absent");
+  }
+
+  const nextFacts = (result) => {
+    assert.equal(result.status, 0, result.stderr);
+    const json = JSON.parse(result.stdout);
+    return {
+      durationUnit: json.duration_unit,
+      velocity: json.velocity,
+      velocityForecast: json.velocity_forecast,
+      recommendedTaskIds: json.recommendation.recommended_task_ids,
+      startableTaskIds: json.temporal.authority.startable_recommended_task_ids,
+      tasks: json.tasks.map((task) => ({
+        id: task.id,
+        expected: task.expected,
+        forecastExpected: task.forecast_expected,
+      })),
+    };
+  };
+  const nextFromFile = nextFacts(run([
+    "dag", "next", planPath, "--capacity=REVIEW=1", "--format=json",
+  ]));
+  const nextFromStdin = nextFacts(run([
+    "dag", "next", "-", "--capacity=REVIEW=1", "--format=json",
+  ], { input: source }));
+  assert.deepEqual(nextFromStdin, nextFromFile);
+  assert.equal(nextFromFile.durationUnit, "point");
+  assert.equal(nextFromFile.velocity, null);
+  assert.equal(nextFromFile.velocityForecast, null);
+  assert.deepEqual(nextFromFile.recommendedTaskIds, ["GATE_NEAR"]);
+  assert.deepEqual(nextFromFile.startableTaskIds, ["GATE_NEAR"]);
+  assert.equal(nextFromFile.tasks.every(({ expected }) => expected.unit === "point"), true);
+  assert.equal(nextFromFile.tasks.every(({ forecastExpected }) => forecastExpected === null), true);
+});
+
 test("dag analyze warnings-as-errors suppresses the text success result", () => {
   const result = run([
     "dag",

@@ -13,6 +13,7 @@ export const CALENDAR_ARITHMETIC_IDENTITY = Object.freeze({
 
 export type CalendarUnavailableCause =
   | "missing_temporal_anchor"
+  | "missing_velocity"
   | "incomparable_temporal_kinds"
   | "date_anchor_has_no_clock"
   | "fractional_date_projection"
