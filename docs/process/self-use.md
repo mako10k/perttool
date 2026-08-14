@@ -1700,9 +1700,13 @@ After the complete Node.js 22 gate and exact implementation review,
 write. The source digest changed from `sha256:3323fecd...cc627d` to
 `sha256:32606859...f7609b`; governance was not applicable, and no owner
 assertion was supplied. Implementation commit `5245235` is the bounded
-artifact evidence. The reached-milestone criterion set and receipt and the
-plan-assurance outcome remain separate candidate-bound owner-confirmation
-steps, so `EDITOR_FORMAT_ACCEPTANCE` is not yet start-authorized.
+artifact evidence. The reached-milestone criterion set, its receipt, and the
+plan-assurance outcome are separate candidate-bound owner-confirmation steps.
+The criterion set was separately confirmed and written once with the
+candidate-bound `user` assertion, changing the plan digest from
+`sha256:32606859...f7609b` to `sha256:9f6b3d2a...152486`. Readback retained
+reached closure and pending acceptance. The receipt and outcome remain
+unwritten, so `EDITOR_FORMAT_ACCEPTANCE` is not yet start-authorized.
 
 Stage 1 allowed operations:
 

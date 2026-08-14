@@ -418,11 +418,13 @@ remain in `EDITOR_FORMAT_ACCEPTANCE`. `EDITOR_FORMAT_CORE` is complete and
 retained before advance; its status-only write changed the plan digest from
 `sha256:3323fecd...cc627d` to `sha256:32606859...f7609b` without an owner
 assertion. The implementation commit is `5245235`. The reached-milestone
-criterion set and receipt and the separately governed conformant outcome
-remain pending exact candidate-bound owner confirmation, so the successor is
-not yet start-authorized. E1 through E3, MCP mutation, public VSIX publication,
-release selection, remote writes, Issue mutation, and plan advance remain
-separate.
+criterion set was separately confirmed and written once with actor `codex` and
+the candidate-bound `user` assertion; the resulting source digest is
+`sha256:9f6b3d2a...152486`. Its receipt and the separately governed conformant
+outcome remain pending distinct exact candidate-bound owner confirmations, so
+the successor is not yet start-authorized. E1 through E3, MCP mutation, public
+VSIX publication, release selection, remote writes, Issue mutation, and plan
+advance remain separate.
 
 The explicitly selected `HIST-DAG-001` workstream is tracked independently in
 `plans/historical-dag.pert`. Its eight tasks total 44p from

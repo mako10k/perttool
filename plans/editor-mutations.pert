@@ -392,3 +392,9 @@ milestone_acceptance_receipt EDITOR_MUTATION_CONTRACT_EVIDENCE:
   evidence_revision 0365b7f570ec35c2e6106be8b25fbcc01f0ed4a5
   verifier codex
   occurred_at 2026-08-13T10:43:05Z
+
+milestone_criterion_set EDITOR_FORMAT_CORE_READY_R1:
+  milestone EDITOR_FORMAT_CORE_READY
+  revision R1
+  commitment sha256:f5b6802cfdb4f90263f9b7883f57628f502e9255c2294bb3a8bbace5ab6cd63d
+  criterion FORMAT_CORE_ACCEPTED required artifact "Accepted E0 semantic equivalence and LSP formatting with fourteen closed cases"

@@ -106,8 +106,15 @@ write changed plan source digest `sha256:3323fecd...cc627d` to
 `sha256:32606859...f7609b`; governance was not applicable and no owner
 assertion was supplied.
 
-The reached-milestone criterion set and receipt and the separately governed
-conformant task outcome remain preview-first, candidate-bound mutations. They
-are not written without fresh owner confirmation. This task performs no
-release selection, package or VSIX publication, VSIX installation, remote
-write, GitHub Issue mutation, or plan advance.
+The reached-milestone criterion set, its receipt, and the separately governed
+conformant task outcome are distinct preview-first, candidate-bound mutations.
+The criterion-set candidate was separately confirmed and written once with actor
+`codex` and the candidate-bound `user` assertion. It changed source digest
+`sha256:32606859...f7609b` to `sha256:9f6b3d2a...152486` and recorded set
+commitment `sha256:f5b6802c...6cd63d` plus criterion commitment
+`sha256:cf40d138...a5afbe`. Readback reports reached closure with pending
+acceptance and exactly one blocking required criterion. The confirmation is
+not reused for the receipt or task outcome, which remain unwritten without
+their own fresh confirmation. This task performs no release selection,
+package or VSIX publication, VSIX installation, remote write, GitHub Issue
+mutation, or plan advance.
