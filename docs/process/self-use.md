@@ -1718,6 +1718,26 @@ unavailable task, mismatch, replan requirement, or required action. Fresh
 complete NextResult v7 recommends and makes startable only
 `EDITOR_FORMAT_ACCEPTANCE`.
 
+The `EDITOR_FORMAT_ACCEPTANCE` implementation then activates E0 in the private
+VSIX without changing the private package identity. The client offers the exact
+ordered `[2, 1]` models, accepts model 1 for the existing read-only results, and
+forwards standard whole-document formatting only after model 2 is confirmed.
+VS Code owns explicit Format Document and user-enabled format-on-save
+application; the extension contributes no setting and implements no private
+format command. E1 through E3 and range/on-type formatting remain absent.
+
+Implementation commit `a5729f7` adds eighteen dependency-ordered cases and a
+disposable supported-host probe. Exact VS Code 1.101.0 trusted and untrusted
+hosts accepted local BOM/CRLF/comment/Unicode formatting, user-enabled format-
+on-save, an untitled virtual document, invalid and no-op results, range-
+formatting absence, non-target identity, isolated replacement, and uninstall.
+The acceptance record is
+[editor-format-acceptance.md](editor-format-acceptance.md). Task-status,
+reached-milestone acceptance, and plan-assurance outcome writes remain separate
+preview-first steps; no release, persistent VSIX installation, public
+publication, remote write, Issue mutation, or plan advance occurred in this
+implementation slice.
+
 Stage 1 allowed operations:
 
 - check

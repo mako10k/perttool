@@ -2382,10 +2382,12 @@ requires a complete unsealed affected closure and a closed repair registry;
 `E2` requires an exact inverse independent of Undo; `E3` keeps existing
 candidate-bound owner assertions, assurance records, and exact advance Git
 evidence. Strictest-class precedence prevents an atomic candidate from being
-split or downgraded. The E0 slice adds no range/on-type formatting, E1 through
-E3 method, command, schema, public runtime export, dependency, VSIX
-contribution, package identity, or release. The private VSIX continues to
-offer model 1 until its separate `EDITOR_FORMAT_ACCEPTANCE` task.
+split or downgraded. The accepted E0 slice adds no range/on-type formatting, E1
+through E3 method, command, schema, public runtime export, dependency, package
+identity, or release. The private VSIX now offers `[2, 1]`, retains model 1 as
+its read-only fallback, and forwards standard Format Document only after the
+model-2 handshake is accepted. User-enabled format-on-save uses that same
+operation; the extension does not contribute or change editor settings.
 
 The accepted
 [Historical Editor Protocol Contract](specs/historical-editor-protocol.md)

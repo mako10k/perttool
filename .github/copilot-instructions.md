@@ -283,9 +283,13 @@ Mandatory summary:
   complete semantic fingerprint and a binding-, validation-, equality-, and
   idempotence-checked session format projection. A compatible private-LSP
   connection may select model 2 and then receives only standard whole-document
-  formatting; model-1 connections remain read-only. The private VSIX still
-  offers model 1, so Format Document and format-on-save integration remain in
-  `EDITOR_FORMAT_ACCEPTANCE`. `EDITOR_FORMAT_CORE` is complete and retained
+  formatting; model-1 connections remain read-only. The private VSIX now offers
+  `[2, 1]` and gates standard Format Document plus user-enabled format-on-save
+  on the accepted model-2 handshake. Its eighteen cases and supported VS Code
+  1.101.0 trusted/untrusted host gate are recorded in
+  `docs/process/editor-format-acceptance.md`; range/on-type formatting, E1
+  through E3, settings mutation, and direct persistence remain unavailable.
+  `EDITOR_FORMAT_CORE` is complete and retained
   before advance; implementation commit `5245235` passed the complete gate,
   and the status-only plan write required no owner assertion. Its reached-
   milestone criterion set was separately confirmed and written once with the

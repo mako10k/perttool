@@ -237,10 +237,12 @@ authority-sensitive assurance, governance, destructive, or advance work.
 The contract task is complete. The following `EDITOR_FORMAT_CORE` slice adds a
 Core-owned complete semantic fingerprint and E0 formatter proof, then lets the
 private LSP select model 2 from `[2, 1]` and advertise only standard whole-
-document formatting. Model-1 clients remain read-only, and the private VSIX
-still offers model 1 until `EDITOR_FORMAT_ACCEPTANCE`. Later mutation classes,
-release, public VSIX publication, remote writes, Issue changes, and plan
-advance remain separately gated.
+document formatting. Model-1 clients remain read-only. The accepted
+`EDITOR_FORMAT_ACCEPTANCE` implementation makes the private VSIX offer `[2, 1]`
+and delegates standard Format Document and user-enabled format-on-save to that
+E0 operation. It adds no range/on-type formatter, extension-owned setting, or
+direct persistence. Later mutation classes, release, public VSIX publication,
+remote writes, Issue changes, and plan advance remain separately gated.
 
 ADR 0004 adopts English as the repository baseline immediately. All nine tasks
 in `plans/english-baseline.pert` are accepted and advanced; commit `2001cdf`

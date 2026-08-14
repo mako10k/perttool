@@ -412,9 +412,14 @@ projection. The private LSP selects model 2 only from a compatible offer and
 then advertises only standard whole-document formatting; model-1 connections
 remain read-only. Its fourteen dependency-ordered cases and accepted boundary
 are recorded in `test/fixtures/editor-format-core-v1.json` and
-`docs/process/editor-format-core-acceptance.md`. The private VSIX still offers
-only model 1, so Format Document and user-enabled format-on-save integration
-remain in `EDITOR_FORMAT_ACCEPTANCE`. `EDITOR_FORMAT_CORE` is complete and
+`docs/process/editor-format-core-acceptance.md`. The private VSIX now offers
+the exact `[2, 1]` model list and gates standard Format Document plus user-
+enabled format-on-save on an accepted model-2 handshake. Its eighteen cases,
+trusted/untrusted VS Code 1.101.0 host gate, and accepted boundary are recorded
+in `test/fixtures/editor-format-acceptance-v1.json` and
+`docs/process/editor-format-acceptance.md`; implementation commit `a5729f7`
+retains range/on-type formatting, E1 through E3, settings mutation, and direct
+persistence as unavailable. `EDITOR_FORMAT_CORE` is complete and
 retained before advance; its status-only write changed the plan digest from
 `sha256:3323fecd...cc627d` to `sha256:32606859...f7609b` without an owner
 assertion. The implementation commit is `5245235`. The reached-milestone
