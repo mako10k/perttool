@@ -45,7 +45,8 @@ export interface Contract9WireEnvelope {
 }
 
 export function contract9ProjectResultToJson(result: Contract9ProjectResult, envelope: Contract9WireEnvelope): Readonly<Record<string, unknown>> {
-  return Object.freeze({ ...contract7ProjectResultToJson(result, envelope.source, envelope.sourceDigest, envelope.ok ?? result.ok),
+  const legacyCompatible = result as unknown as Parameters<typeof contract7ProjectResultToJson>[0];
+  return Object.freeze({ ...contract7ProjectResultToJson(legacyCompatible, envelope.source, envelope.sourceDigest, envelope.ok ?? result.ok),
     schema_version: "Perttool.ProjectResult.v5", cli_contract_version: 9,
     temporal_schedule: contract9ProjectTemporalToJson(result.temporalSchedule) });
 }

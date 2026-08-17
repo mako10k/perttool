@@ -74,8 +74,8 @@ const calendarCommand = (action: "add" | "set" | "remove"): Contract9CommandDesc
     ...shared,
   ]),
   examples: Object.freeze([Object.freeze({ id: action, invocation: action === "remove"
-    ? "perttool calendar remove plan.pert STANDARD --preview --format json"
-    : `perttool calendar ${action} plan.pert STANDARD --weekday 'mon 09:00..17:00' --preview --format json`,
+    ? "perttool calendar remove plan.pert STANDARD --diff"
+    : `perttool calendar ${action} plan.pert STANDARD --weekday 'mon 09:00..17:00' --diff`,
     summary: `${action} a source-preserving calendar declaration.` })]),
 });
 
