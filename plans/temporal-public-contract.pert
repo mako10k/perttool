@@ -165,6 +165,7 @@ task DETAIL_FORMAT_MIGRATION CONTRACT9_CLI_READY -> FORMAT_MIGRATION_READY:
   title "Complete Grammar 8 formatting and migration"
   description "Activate source-preserving Grammar 8 formatting, Grammar 7 to 8 migration, unit migration preservation, algorithm and tzdb metadata, and legacy read compatibility without changing Advance shape unless required by the complete candidate contract."
   duration 3p
+  status active
   priority 100
   requires:
     DEVELOPERS 1
@@ -252,3 +253,10 @@ work_event WE_DETAIL_CLI_20260817:
   occurred_at 2026-08-17T17:37:28+09:00
   active_time 47/300h
   effort 47/300ph
+
+work_event WS_DETAIL_FORMAT_MIGRATION_20260817:
+  model 1
+  task DETAIL_FORMAT_MIGRATION
+  kind start
+  occurred_at 2026-08-17T17:37:51+09:00
+  planned_value 3p
