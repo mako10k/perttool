@@ -50,7 +50,7 @@ test("Contract 9 preserves legacy semantics under the replacement result identit
   assert.equal(next.scheduleAlerts, null);
 });
 
-test("Contract 9 catalog is closed at 56 while the public Contract 8 catalog remains active", () => {
+test("Contract 9 catalog is closed at 56 and is the active public boundary", () => {
   assert.equal(CONTRACT9_COMMAND_REGISTRY.length, 56);
   assert.deepEqual(CONTRACT9_COMMAND_REGISTRY.slice(-3).map(({ operation }) => operation),
     ["calendar.add", "calendar.set", "calendar.remove"]);
@@ -68,6 +68,6 @@ test("Contract 9 catalog is closed at 56 while the public Contract 8 catalog rem
     .map(({ name }) => name), ["time-zone", "tzdb", "calendar", "workday"]);
   assert.deepEqual(projectSet.options.find(({ name }) => name === "clear").enumValues.slice(-4),
     ["time_zone", "tzdb", "calendar", "workday"]);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 53);
-  assert.equal(publicApi.COMMAND_REGISTRY.some(({ operation }) => operation.startsWith("calendar.")), false);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 56);
+  assert.equal(publicApi.COMMAND_REGISTRY.filter(({ operation }) => operation.startsWith("calendar.")).length, 3);
 });

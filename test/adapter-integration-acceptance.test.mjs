@@ -161,7 +161,7 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.equal(Object.keys(packageRoot).length, 129);
   assert.equal(Object.keys(nodeApi).length, 129);
   assert.equal(Object.keys(core).length, 45);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 53);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 56);
   assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
   for (const name of Object.keys(packageRoot)) {
@@ -184,14 +184,14 @@ test("package and dependency boundaries remain isolated and compatible", async (
   assert.equal(/vscode-language|adapters\/(?:lsp|vscode)|dist\/cli|node:child_process/u.test(mcpSources), false);
 });
 
-test("Contract 8 CLI and read-only adapters preserve the shared Application boundary", async () => {
+test("Contract 9 CLI and read-only adapters preserve the shared Application boundary", async () => {
   const source = await repositoryText("docs/examples/minimal.pert");
   const sourceDigest = digestText(source);
   const adapter = createPerttoolMcpAdapter();
   const cases = [
-    { tool: "perttool_check", cli: ["document", "check"], currentSchema: "Perttool.CheckResult.v5" },
-    { tool: "perttool_analyze", cli: ["dag", "analyze"], currentSchema: "Perttool.AnalysisResult.v6" },
-    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v7" },
+    { tool: "perttool_check", cli: ["document", "check"], currentSchema: "Perttool.CheckResult.v6" },
+    { tool: "perttool_analyze", cli: ["dag", "analyze"], currentSchema: "Perttool.AnalysisResult.v7" },
+    { tool: "perttool_next", cli: ["dag", "next"], currentSchema: "Perttool.NextResult.v8" },
   ];
   const mcpResults = new Map();
   for (const acceptanceCase of cases) {

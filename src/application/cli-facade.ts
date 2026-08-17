@@ -23,7 +23,8 @@ import {
   planMutation,
   planUnitMigration,
   selectNextTasks,
-} from "./contract8-milestone-acceptance.js";
+  withUnitMigrationWrite,
+} from "./contract9-runtime.js";
 import {
   planAdvance,
 } from "./contract7-mutation.js";
@@ -36,9 +37,6 @@ import {
   contract7MutationResultToJson,
   contract7SnakeJson,
 } from "./contract7-projection.js";
-import {
-  withUnitMigrationWrite,
-} from "./contract7-unit-migration.js";
 import {
   contract6WorkEventToJson,
 } from "./contract6-projection.js";

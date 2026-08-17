@@ -6,6 +6,8 @@ import { validateAssuranceCommandInvocation } from "./assurance-usage.js";
 export type Contract9CommandInvocationValidation =
   | { readonly ok: true; readonly descriptor: Contract9CommandDescriptor; readonly helpAlias: boolean; readonly operands: readonly string[]; readonly options: readonly CommandOptionOccurrence[] }
   | { readonly ok: false; readonly error: CommandUsageError };
+export type Contract9ValidCommandInvocation = Extract<Contract9CommandInvocationValidation, { readonly ok: true }>;
+export type Contract9InvalidCommandInvocation = Extract<Contract9CommandInvocationValidation, { readonly ok: false }>;
 const contract9ExtendedOperations = new Set([
   "calendar.add", "calendar.set", "calendar.remove", "project.set", "resource.set", "task.set", "milestone.set", "document.migrate",
 ]);

@@ -5,7 +5,6 @@ import process from "node:process";
 import { TextDecoder } from "node:util";
 import type { AnalysisMode } from "./application/analyze.js";
 import type { FormatPreviewResultV7 as FormatPreviewResult } from "./application/contract7-source.js";
-import type { UnitMigrationResult } from "./application/contract7-unit-migration.js";
 import type {
   AdvanceResultV2,
   LifecycleResultV4,
@@ -36,29 +35,29 @@ import {
 import { importMermaid } from "./conversion/mermaid-import.js";
 import type { HelpLevel } from "./help/registry.js";
 import {
-  getAssuranceGuide,
-  renderAssuranceGuideResult,
-  serializeAssuranceGuideResult,
-} from "./help/assurance-guide.js";
+  getContract9Guide as getAssuranceGuide,
+  renderContract9GuideResult as renderAssuranceGuideResult,
+  serializeContract9GuideResult as serializeAssuranceGuideResult,
+} from "./help/contract9-guide.js";
 import {
   commandOptionSets,
   type ProjectedCommandDescriptor,
 } from "./command/registry.js";
 import {
-  ASSURANCE_COMMAND_REGISTRY,
-  getAssuranceCommandDiscovery,
-  renderAssuranceCommandHelpResult,
-  serializeAssuranceCommandHelpResult,
-  type AssuranceCommandDescriptor,
-} from "./command/assurance-discovery.js";
+  CONTRACT9_COMMAND_REGISTRY as ASSURANCE_COMMAND_REGISTRY,
+  getContract9CommandDiscovery as getAssuranceCommandDiscovery,
+  renderContract9CommandHelpResult as renderAssuranceCommandHelpResult,
+  serializeContract9CommandHelpResult as serializeAssuranceCommandHelpResult,
+  type Contract9CommandDescriptor as AssuranceCommandDescriptor,
+} from "./command/contract9-discovery.js";
 import {
   handlerCommandUsageError,
 } from "./command/usage.js";
 import {
-  renderAssuranceCommandUsageError,
-  serializeAssuranceCommandUsageError,
-  validateAssuranceCommandInvocation,
-} from "./command/assurance-usage.js";
+  renderContract9CommandUsageError as renderAssuranceCommandUsageError,
+  serializeContract9CommandUsageError as serializeAssuranceCommandUsageError,
+  validateContract9CommandInvocation as validateAssuranceCommandInvocation,
+} from "./command/contract9-usage.js";
 import { agentGuidanceResultToJson } from "./guidance/projection.js";
 import {
   agentGuidanceExitCode,
@@ -118,7 +117,19 @@ import {
   analyzeDocument as analyzeContract8Document,
   checkDocument as checkContract8Document,
   selectNextTasks as selectContract8NextTasks,
-} from "./application/contract8-milestone-acceptance.js";
+} from "./application/contract9-temporal.js";
+import type { MutationResultV5 as Contract8MutationResultV5 } from "./application/contract8-milestone-acceptance.js";
+import {
+  contract9CheckResultToJson,
+  contract9ProjectResultToJson,
+  liftContract9AnalysisResultJson,
+  liftContract9NextResultJson,
+  renderContract9ScheduleAlerts,
+  contract9WireJson,
+} from "./application/contract9-projection.js";
+import { planContract9GrammarMigration } from "./application/contract9-format-migration.js";
+import { planContract9TemporalMutation } from "./application/contract9-temporal-mutation.js";
+import { composeContract9MixedMutation, composeContract9TemporalMutation } from "./application/contract9-mixed-mutation.js";
 import {
   persistMilestoneAcceptanceMutation,
   planAcceptanceReceiptMutation,
@@ -197,8 +208,9 @@ const {
 const analyzeDocument = analyzeContract8Document;
 const checkDocument = checkContract8Document;
 const selectNextTasks = selectContract8NextTasks;
+type UnitMigrationResult = ReturnType<typeof planUnitMigration>;
 
-function contract8MutationResultToJson(
+function contract9MutationResultToJson(
   result: Parameters<typeof contract7MutationResultToJson>[0] | Readonly<Record<string, unknown>>,
   ...args: Tail<Parameters<typeof contract7MutationResultToJson>>
 ): Readonly<Record<string, unknown>> {
@@ -207,8 +219,8 @@ function contract8MutationResultToJson(
       result as Parameters<typeof contract7MutationResultToJson>[0],
       ...args,
     ),
-    schema_version: "Perttool.MutationResult.v5",
-    cli_contract_version: 8,
+    schema_version: "Perttool.MutationResult.v6",
+    cli_contract_version: 9,
   });
 }
 
@@ -446,7 +458,7 @@ function writeJson(value: unknown): void {
   const contract8Value =
     typeof value === "object" && value !== null && !Array.isArray(value) &&
       "cli_contract_version" in value
-      ? { ...value, cli_contract_version: 8 }
+      ? { ...value, cli_contract_version: 9 }
       : value;
   process.stdout.write(`${JSON.stringify(contract8Value)}\n`);
 }
@@ -535,33 +547,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
   const warningFailure = warningsAsErrors && result.summary.warnings > 0;
   const ok = result.ok && !warningFailure;
   if (format === "json") {
-    writeJson({
-      schema_version: result.schemaVersion,
-      cli_contract_version: 8,
-      tool_version: TOOL_VERSION,
-      operation: "document.check",
-      ok,
-      document_id: result.documentId,
-      source,
-      source_digest: input.digest,
-      diagnostics: result.diagnostics.map(jsonDiagnostic),
-      diagnostics_truncated: result.diagnosticsTruncated,
-      grammar_version: result.grammarVersion,
-      summary: result.summary,
-      temporal_inputs: snakeJson(result.temporalInputs),
-      actuals_inputs:
-        result.actualsInputs === null
-          ? null
-          : {
-              model_version: result.actualsInputs.modelVersion,
-              events:
-                result.actualsInputs.events.map(contract6WorkEventToJson),
-            },
-      assurance: contract7SnakeJson(result.assurance),
-      assurance_state_counts:
-        contract7SnakeJson(result.assuranceStateCounts),
-      acceptance: snakeJson(result.acceptance),
-    });
+    writeJson(contract9CheckResultToJson(result, { source, sourceDigest: input.digest, ok }));
   } else {
     if (ok) {
       process.stdout.write(
@@ -571,6 +557,7 @@ async function runCheck(args: readonly string[]): Promise<number> {
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
     }
+    process.stdout.write(renderContract9ScheduleAlerts(result.scheduleAlerts));
     if (result.diagnosticsTruncated) {
       process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
     }
@@ -613,16 +600,13 @@ async function runProjectShow(args: readonly string[]): Promise<number> {
   const ok = result.ok && !warningFailure;
   if (format === "json") {
     writeJson(
-      contract7ProjectResultToJson(
-        result,
-        source,
-        input.digest,
-        ok,
-      ),
+      contract9ProjectResultToJson(result, { source, sourceDigest: input.digest, ok }),
     );
   } else {
     if (ok && result.project !== null) {
-      process.stdout.write(renderContract7ProjectText(result.project));
+      process.stdout.write(renderContract7ProjectText(
+        result.project as unknown as Parameters<typeof renderContract7ProjectText>[0],
+      ));
     }
     for (const diagnostic of result.diagnostics) {
       process.stderr.write(`${renderDiagnostic(diagnostic, source, color)}\n`);
@@ -990,6 +974,25 @@ function renderGovernanceWriteSummary(
   return `WRITE ${operation} mode=${result.mode} target=${result.target ?? "-"} digest=${digest ?? "-"} written=${result.written}\n`;
 }
 
+async function runContract9DocumentMigration(args: readonly string[]): Promise<number> {
+  const parsed = parseCommandOptions("document.migrate", args);
+  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "8") throw new UsageError("document migrate requires <file> --target-grammar 8");
+  const sourceOperand = parsed.positionals[0]!;
+  const format = outputFormat(parsed.values.get("format"));
+  const input = await readDocument(sourceOperand);
+  const result = planContract9GrammarMigration(input.text);
+  if (result.ok && result.updatedText !== null && parsed.flags.has("write")) {
+    if (sourceOperand === "-") throw new UsageError("document migrate --write requires a file");
+    await replaceValidatedDocumentFile(sourceOperand, result.updatedText,
+      { initialDigest: input.digest, ...(parsed.values.get("expect-digest") === undefined ? {} : { expectedDigest: parsed.values.get("expect-digest")! }) },
+      (candidate) => ({ ok: checkDocument(candidate).ok, diagnostics: [] }));
+  }
+  if (format === "json") writeJson({ schema_version: "Perttool.UnitMigrationResult.v4", cli_contract_version: 9,
+    tool_version: TOOL_VERSION, operation: "document.migrate", ...snakeJson(result) as Readonly<Record<string, unknown>> });
+  else if (result.updatedText !== null) process.stdout.write(parsed.flags.has("diff") ? result.diff ?? "" : result.updatedText);
+  return result.ok ? 0 : 1;
+}
+
 async function runFormat(args: readonly string[]): Promise<number> {
   const parsed = parseCommandOptions("document.format", args);
   if (parsed.positionals.length !== 1) {
@@ -1047,7 +1050,7 @@ async function runFormat(args: readonly string[]): Promise<number> {
   if (format === "json") {
     writeJson({
       schema_version: "Perttool.FormatResult.v1",
-      cli_contract_version: 8,
+      cli_contract_version: 9,
       tool_version: TOOL_VERSION,
       operation: "document.format",
       ok,
@@ -1751,15 +1754,15 @@ async function runMutation(
     updatedLabel: "candidate",
     governance: governanceRequest(parsed, writeRequest),
   };
-  const result = lifecycleMutation !== null
+  const legacyPlanner = (text: string) => lifecycleMutation !== null
     ? planFinishActuals(
-        input.text,
+        text,
         lifecycleMutation,
         mutationOptions,
       )
     : resource === "batch"
     ? planBatchMutation(
-        input.text,
+        text,
         mutation as Extract<
           TargetGovernanceMutation,
           { readonly kind: "batch" }
@@ -1767,9 +1770,28 @@ async function runMutation(
         mutationOptions,
       )
     : planMutation(
-        input.text,
+        text,
         mutation as Mutation,
         mutationOptions,
+      );
+  const contract9Invocation = validateAssuranceCommandInvocation([resource, action, ...args]);
+  const temporalRequest = contract9Invocation.ok
+    ? planContract9TemporalMutation(input.text, contract9Invocation, { maxDiagnostics })
+    : null;
+  const legacyPreview = legacyPlanner(input.text);
+  const result = temporalRequest === null
+    ? legacyPreview
+    : !legacyPreview.ok
+    ? composeContract9TemporalMutation(
+        input.text,
+        (candidate) => planContract9TemporalMutation(candidate, contract9Invocation as Extract<typeof contract9Invocation, { readonly ok: true }>, { maxDiagnostics })!,
+        { originalLabel: source, updatedLabel: "candidate" },
+      )
+    : composeContract9MixedMutation(
+        input.text,
+        (base) => legacyPlanner(base) as unknown as Contract8MutationResultV5,
+        (candidate) => planContract9TemporalMutation(candidate, contract9Invocation as Extract<typeof contract9Invocation, { readonly ok: true }>, { maxDiagnostics })!,
+        { originalLabel: source, updatedLabel: "candidate" },
       );
   const warningFailure =
     parsed.flags.has("warnings-as-errors") &&
@@ -1792,7 +1814,7 @@ async function runMutation(
   }
   if (format === "json") {
     writeJson(
-      contract8MutationResultToJson(
+      contract9MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         operation,
         source,
@@ -1915,7 +1937,7 @@ async function runLifecycleMutation(
   }
   if (format === "json") {
     writeJson(
-      contract8MutationResultToJson(
+      contract9MutationResultToJson(
         ok ? result : Object.freeze({ ...result, ok: false }),
         operation,
         source,
@@ -1986,7 +2008,7 @@ function unitMigrationJson(
   });
   return {
     schema_version: result.schemaVersion,
-    cli_contract_version: 8,
+    cli_contract_version: 9,
     tool_version: TOOL_VERSION,
     operation: "project.migrate-unit",
     ok,
@@ -3188,8 +3210,8 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
       result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
   if (format === "json") {
-    writeJson({
-      schema_version: result.schemaVersion,
+    writeJson(liftContract9AnalysisResultJson({
+      schema_version: "Perttool.AnalysisResult.v6",
       cli_contract_version: 8,
       tool_version: TOOL_VERSION,
       operation: "dag.analyze",
@@ -3230,7 +3252,7 @@ async function runAnalyze(args: readonly string[]): Promise<number> {
       temporal: snakeJson(result.temporal),
       assurance: contract7SnakeJson(result.assurance),
       acceptance: snakeJson(result.acceptance),
-    });
+    }, result));
   } else {
     if (ok) process.stdout.write(renderAnalysisText(result));
     for (const diagnostic of result.diagnostics) {
@@ -3899,7 +3921,7 @@ async function runNext(args: readonly string[]): Promise<number> {
     if (format === "json") {
       writeJson({
         schema_version: "Perttool.CliError.v1",
-        cli_contract_version: 8,
+        cli_contract_version: 9,
         tool_version: TOOL_VERSION,
         operation: "dag.next",
         ok: false,
@@ -3918,8 +3940,8 @@ async function runNext(args: readonly string[]): Promise<number> {
       result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"));
   const ok = result.ok && !warningFailure;
   if (format === "json") {
-    writeJson({
-      schema_version: result.schemaVersion,
+    writeJson(liftContract9NextResultJson({
+      schema_version: "Perttool.NextResult.v7",
       cli_contract_version: 8,
       recommendation_interface_version: 1,
       tool_version: TOOL_VERSION,
@@ -3935,7 +3957,7 @@ async function runNext(args: readonly string[]): Promise<number> {
       temporal: snakeJson(result.temporal),
       assurance: contract7SnakeJson(result.assurance),
       acceptance: snakeJson(result.acceptance),
-    });
+    }, result));
   } else {
     if (ok) process.stdout.write(renderNextText(result));
     for (const diagnostic of result.diagnostics) {
@@ -3946,6 +3968,26 @@ async function runNext(args: readonly string[]): Promise<number> {
     }
   }
   return ok ? 0 : 1;
+}
+
+function parseMilestoneAcceptanceCriteria(
+  values: readonly string[],
+): readonly {
+  readonly criterionId: string;
+  readonly required: boolean;
+  readonly evidenceKind: "test" | "command" | "artifact" | "observation" | "owner";
+  readonly description: string;
+}[] {
+  return values.map((value) => {
+    const [criterionId, requiredText, evidenceKind, ...description] = value.split(":");
+    if (criterionId === undefined || !["required", "optional"].includes(requiredText ?? "") || !["test", "command", "artifact", "observation", "owner"].includes(evidenceKind ?? "") || description.length === 0) throw new UsageError("--criterion must be ID:required|optional:kind:description");
+    return {
+      criterionId,
+      required: requiredText === "required",
+      evidenceKind: evidenceKind as "test" | "command" | "artifact" | "observation" | "owner",
+      description: description.join(":"),
+    };
+  });
 }
 
 async function runMilestoneAcceptance(action: string, args: readonly string[]): Promise<number> {
@@ -3968,11 +4010,7 @@ async function runMilestoneAcceptance(action: string, args: readonly string[]): 
   const governance = governanceRequest(parsed, request);
   let result;
   if (action === "replace") {
-    const criteria = (parsed.repeatedValues.get("criterion") ?? []).map((value) => {
-      const [criterionId, requiredText, evidenceKind, ...description] = value.split(":");
-      if (criterionId === undefined || !["required", "optional"].includes(requiredText ?? "") || !["test", "command", "artifact", "observation", "owner"].includes(evidenceKind ?? "") || description.length === 0) throw new UsageError("--criterion must be ID:required|optional:kind:description");
-      return { criterionId, required: requiredText === "required", evidenceKind: evidenceKind as "test" | "command" | "artifact" | "observation" | "owner", description: description.join(":") };
-    });
+    const criteria = parseMilestoneAcceptanceCriteria(parsed.repeatedValues.get("criterion") ?? []);
     result = planCriterionSetReplacement(input.text, { milestoneId: parsed.positionals[1]!, setId: parsed.positionals[2]!, revisionId: parsed.positionals[3]!, criteria }, { governance });
   } else {
     result = planAcceptanceReceiptMutation(input.text, {
@@ -4028,46 +4066,45 @@ async function runMilestoneAcceptance(action: string, args: readonly string[]): 
 }
 
 async function runDocumentMigration(args: readonly string[]): Promise<number> {
+  const target = args.includes("--target-grammar")
+    ? args[args.indexOf("--target-grammar") + 1]
+    : args.find((value) => value.startsWith("--target-grammar="))?.slice("--target-grammar=".length);
+  if (target === "8") return runContract9DocumentMigration(args);
   const parsed = parseCommandOptions("document.migrate", args);
-  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "7") throw new UsageError("document migrate requires <file> --target-grammar 7");
+  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "7") throw new UsageError("document migrate requires <file> --target-grammar 8");
   const sourceOperand = parsed.positionals[0]!;
   if (sourceOperand === "-") throw new UsageError("document migrate requires a repository file");
   const format = outputFormat(parsed.values.get("format"));
   const input = await readDocument(sourceOperand);
   const baseline = await captureAdvanceHistoryBaseline({ targetPath: sourceOperand, expectedSourceDigest: input.digest });
   const toProof = (value: typeof baseline): CommittedMigrationProofV1 | null =>
-    value.status === "complete" && value.repositorySnapshotId !== null &&
-      value.repositoryRelativePath !== null && value.objectFormat !== null &&
-      value.headCommitId !== null && value.headBlobId !== null &&
+    value.status === "complete" && value.repositorySnapshotId !== null && value.repositoryRelativePath !== null &&
+      value.objectFormat !== null && value.headCommitId !== null && value.headBlobId !== null &&
       value.indexBlobId !== null && value.currentSourceDigest !== null
-      ? {
-          repositoryId: value.repositorySnapshotId,
-          repositoryRelativePath: value.repositoryRelativePath,
-          objectFormat: value.objectFormat,
-          headCommit: value.headCommitId,
-          headBlob: value.headBlobId,
-          stage0Blob: value.indexBlobId,
-          sourceDigest: value.currentSourceDigest as `sha256:${string}`,
-        }
+      ? { repositoryId: value.repositorySnapshotId, repositoryRelativePath: value.repositoryRelativePath,
+          objectFormat: value.objectFormat, headCommit: value.headCommitId, headBlob: value.headBlobId,
+          stage0Blob: value.indexBlobId, sourceDigest: value.currentSourceDigest as `sha256:${string}` }
       : null;
   const proof = toProof(baseline);
   let result = proof === null
-    ? { ok: false, modelVersion: 1 as const, changed: false, sourceGrammarVersion: null, targetGrammarVersion: null, sourceDigest: input.digest as `sha256:${string}`, candidateDigest: null, grandfatheredMilestoneIds: Object.freeze([]), candidateText: null, diagnostics: Object.freeze(["PTMAC-109"]) }
+    ? { ok: false, modelVersion: 1 as const, changed: false, sourceGrammarVersion: null, targetGrammarVersion: null,
+        sourceDigest: input.digest as `sha256:${string}`, candidateDigest: null, grandfatheredMilestoneIds: Object.freeze([]),
+        candidateText: null, diagnostics: Object.freeze(["PTMAC-109"]) }
     : planMilestoneAcceptanceMigration(input.text, proof);
   let race = false;
   if (result.ok && result.changed && result.candidateText !== null && parsed.flags.has("write")) {
-    const current = toProof(await captureAdvanceHistoryBaseline({
-      targetPath: sourceOperand,
-      expectedSourceDigest: input.digest,
-    }));
+    const current = toProof(await captureAdvanceHistoryBaseline({ targetPath: sourceOperand, expectedSourceDigest: input.digest }));
     if (proof === null || current === null || !recheckCommittedMigrationProof(proof, current)) {
       result = Object.freeze({ ...result, ok: false, diagnostics: Object.freeze(["PTMAC-110"]) });
       race = true;
     } else {
-      await replaceValidatedDocumentFile(sourceOperand, result.candidateText, { initialDigest: input.digest, ...(parsed.values.get("expect-digest") === undefined ? {} : { expectedDigest: parsed.values.get("expect-digest")! }) }, (candidate) => ({ ok: parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY).ok, diagnostics: [] }));
+      await replaceValidatedDocumentFile(sourceOperand, result.candidateText,
+        { initialDigest: input.digest, ...(parsed.values.get("expect-digest") === undefined ? {} : { expectedDigest: parsed.values.get("expect-digest")! }) },
+        (candidate) => ({ ok: parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY).ok, diagnostics: [] }));
     }
   }
-  if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceMigrationResult.v1", cli_contract_version: 8, tool_version: TOOL_VERSION, operation: "document.migrate", ...snakeJson(result) as Readonly<Record<string, unknown>> });
+  if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceMigrationResult.v1", cli_contract_version: 8,
+    tool_version: TOOL_VERSION, operation: "document.migrate", ...snakeJson(result) as Readonly<Record<string, unknown>> });
   else if (result.candidateText !== null) process.stdout.write(result.candidateText);
   return result.ok ? 0 : race ? 5 : 1;
 }
@@ -4280,10 +4317,8 @@ async function runPlanAssuranceInspection(
     ));
   const ok = result.ok && !warningFailure;
   if (format === "json") {
-    writeJson(contract7InspectionResultToJson(
-      ok ? result : Object.freeze({ ...result, ok: false }),
-      source,
-    ));
+    writeJson({ ...(contract9WireJson(ok ? result : Object.freeze({ ...result, ok: false })) as Readonly<Record<string, unknown>>),
+      source, cli_contract_version: 9 });
   } else if (ok) {
     if (action === "hash") {
       if (result.selectedHash === null) {
@@ -4453,7 +4488,7 @@ async function runAssuranceMutation(
     }
   }
   if (format === "json") {
-    writeJson(contract8MutationResultToJson(
+    writeJson(contract9MutationResultToJson(
       result,
       operation,
       source,
@@ -4491,6 +4526,32 @@ async function runAssuranceMutation(
     if (result.diagnosticsTruncated) {
       process.stderr.write(`DIAGNOSTICS_TRUNCATED true limit=${maxDiagnostics}\n`);
     }
+  }
+  return result.ok ? 0 : 1;
+}
+
+async function runCalendarMutation(action: string, args: readonly string[]): Promise<number> {
+  const operation = `calendar.${action}`;
+  const validation = validateAssuranceCommandInvocation(["calendar", action, ...args]);
+  if (!validation.ok) return emitCommandUsage(validation.error, jsonRequested(args));
+  const parsed = parseCommandOptions(operation, args);
+  const format = outputFormat(parsed.values.get("format"));
+  const sourceOperand = parsed.positionals[0]!;
+  const source = sourceOperand === "-" ? "<stdin>" : sourceOperand;
+  const input = await readDocument(sourceOperand);
+  const temporal = (candidate: string) => planContract9TemporalMutation(candidate, validation)!;
+  const result = composeContract9TemporalMutation(input.text, temporal,
+    { originalLabel: source, updatedLabel: "candidate" });
+  const writeRequest = editingWriteRequest(parsed, sourceOperand);
+  let writeResult: TargetGovernanceWriteProjection = Object.freeze({ mode: writeRequest.mode, target: writeRequest.target, written: false });
+  if (result.ok && writeRequest.mode !== "preview") {
+    writeResult = await persistContract8CandidateResult(result, writeRequest);
+  }
+  if (format === "json") {
+    writeJson({ ...(contract9WireJson(result) as Readonly<Record<string, unknown>>), operation,
+      source, write: contract9WireJson(writeResult), cli_contract_version: 9 });
+  } else if (result.ok) {
+    process.stdout.write(parsed.flags.has("diff") ? result.diff ?? "" : result.updatedText ?? "");
   }
   return result.ok ? 0 : 1;
 }
@@ -4536,6 +4597,10 @@ async function dispatchCommand(
       return runHistoricalGraph(args);
     case "dag.import":
       return runImport(args);
+    case "calendar.add":
+    case "calendar.set":
+    case "calendar.remove":
+      return runCalendarMutation(descriptor.path[1]!, args);
     case "task.start":
       return runLifecycleMutation("start", args);
     case "task.suspend":

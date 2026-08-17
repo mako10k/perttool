@@ -35,6 +35,10 @@ export function snakeJson(value: unknown): unknown {
     }));
   }
   if (value === null || typeof value !== "object") return value;
+  if (Object.keys(value).length === 3 && "offset" in value && "line" in value && "column" in value &&
+    Number.isInteger(value.offset) && Number.isInteger(value.line) && Number.isInteger(value.column)) {
+    return { offset: value.offset, line: (value.line as number) + 1, column: (value.column as number) + 1 };
+  }
   return Object.fromEntries(
     Object.entries(value).map(([key, item]) => [
       key.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase(),
@@ -328,7 +332,7 @@ export function projectCheckResult(result: CheckResult): JsonObject {
   return Object.freeze({
     ok: result.ok,
     document_id: result.documentId,
-    diagnostics: result.diagnostics.map(diagnosticJson),
+    diagnostics: snakeJson(result.diagnostics),
     diagnostics_truncated: result.diagnosticsTruncated,
     grammar_version: result.grammarVersion,
     summary: result.summary,
@@ -342,6 +346,7 @@ export function projectCheckResult(result: CheckResult): JsonObject {
     assurance: snakeJson(result.assurance),
     assurance_state_counts: snakeJson(result.assuranceStateCounts),
     acceptance: snakeJson(result.acceptance),
+    schedule_alerts: snakeJson(result.scheduleAlerts),
   });
 }
 
@@ -380,6 +385,8 @@ export function projectAnalysisResult(result: AnalysisResult): JsonObject {
     temporal: snakeJson(result.temporal),
     assurance: snakeJson(result.assurance),
     acceptance: snakeJson(result.acceptance),
+    temporal_schedule: snakeJson(result.temporalSchedule),
+    schedule_alerts: snakeJson(result.scheduleAlerts),
   });
 }
 
@@ -411,6 +418,7 @@ export function projectNextResult(result: NextResult): JsonObject {
     temporal: snakeJson(result.temporal),
     assurance: snakeJson(result.assurance),
     acceptance: snakeJson(result.acceptance),
+    schedule_alerts: snakeJson(result.scheduleAlerts),
   };
   if (result.durationUnit === null || result.recommendation === null) {
     return Object.freeze(common);

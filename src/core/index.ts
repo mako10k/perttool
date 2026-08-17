@@ -8,11 +8,11 @@ export { analyzePrecedence } from "../analysis/precedence.js";
 export { analyzeResources } from "../analysis/resource.js";
 export { getHelp } from "../help/registry.js";
 export {
-  assuranceGuideResultToJson as guideResultToJson,
-  getAssuranceGuide as getGuide,
-  renderAssuranceGuideResult as renderGuideResult,
-  serializeAssuranceGuideResult as serializeGuideResult,
-} from "../help/assurance-guide.js";
+  contract9GuideResultToJson as guideResultToJson,
+  getContract9Guide as getGuide,
+  renderContract9GuideResult as renderGuideResult,
+  serializeContract9GuideResult as serializeGuideResult,
+} from "../help/contract9-guide.js";
 export { recommendationAnalysisToJson } from "../recommendation/json.js";
 export {
   DEFAULT_MAX_DIAGNOSTICS,
@@ -87,8 +87,8 @@ export type {
   HelpSection,
 } from "../help/registry.js";
 export type {
-  AssuranceGuideResult as GuideResult,
-} from "../help/assurance-guide.js";
+  Contract9GuideResult as GuideResult,
+} from "../help/contract9-guide.js";
 export type {
   RecommendationAnalysis,
   RecommendationComparison,

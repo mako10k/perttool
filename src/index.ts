@@ -11,7 +11,7 @@ export {
   planMutation,
   planUnitMigration,
   selectNextTasks,
-} from "./application/contract8-milestone-acceptance.js";
+} from "./application/contract9-runtime.js";
 export {
   planMilestoneAcceptanceMigration,
   recheckCommittedMigrationProof,
@@ -63,26 +63,26 @@ export {
   getAgentHelpCommandHelp,
 } from "./command/registry.js";
 export {
-  ASSURANCE_COMMAND_REGISTRY as COMMAND_REGISTRY,
-  assuranceCommandDescriptorToJson as commandDescriptorToJson,
-  assuranceCommandHelpResultToJson as commandHelpResultToJson,
-  assuranceCommandRegistryToJson as commandRegistryToJson,
-  getAssuranceCommandDiscovery as getCommandDiscovery,
-  renderAssuranceCommandHelpResult as renderCommandHelpResult,
-  serializeAssuranceCommandHelpResult as serializeCommandHelpResult,
-} from "./command/assurance-discovery.js";
+  CONTRACT9_COMMAND_REGISTRY as COMMAND_REGISTRY,
+  contract9CommandDescriptorToJson as commandDescriptorToJson,
+  contract9CommandHelpResultToJson as commandHelpResultToJson,
+  contract9CommandRegistryToJson as commandRegistryToJson,
+  getContract9CommandDiscovery as getCommandDiscovery,
+  renderContract9CommandHelpResult as renderCommandHelpResult,
+  serializeContract9CommandHelpResult as serializeCommandHelpResult,
+} from "./command/contract9-discovery.js";
 export {
-  assuranceCommandUsageErrorToJson as commandUsageErrorToJson,
-  renderAssuranceCommandUsageError as renderCommandUsageError,
-  serializeAssuranceCommandUsageError as serializeCommandUsageError,
-  validateAssuranceCommandInvocation as validateCommandInvocation,
-} from "./command/assurance-usage.js";
+  contract9CommandUsageErrorToJson as commandUsageErrorToJson,
+  renderContract9CommandUsageError as renderCommandUsageError,
+  serializeContract9CommandUsageError as serializeCommandUsageError,
+  validateContract9CommandInvocation as validateCommandInvocation,
+} from "./command/contract9-usage.js";
 export {
-  assuranceGuideResultToJson as guideResultToJson,
-  getAssuranceGuide as getGuide,
-  renderAssuranceGuideResult as renderGuideResult,
-  serializeAssuranceGuideResult as serializeGuideResult,
-} from "./help/assurance-guide.js";
+  contract9GuideResultToJson as guideResultToJson,
+  getContract9Guide as getGuide,
+  renderContract9GuideResult as renderGuideResult,
+  serializeContract9GuideResult as serializeGuideResult,
+} from "./help/contract9-guide.js";
 export {
   getJsonSchema,
   getJsonSchemaCatalog,
@@ -133,21 +133,21 @@ export type {
   CommandUsageSuggestionKind,
 } from "./command/usage.js";
 export type {
-  AssuranceCommandDescriptor as CommandDescriptor,
-  AssuranceCommandDescriptor as ProjectedCommandDescriptor,
-  AssuranceCommandHelpResult as CommandHelpResult,
-} from "./command/assurance-discovery.js";
+  Contract9CommandDescriptor as CommandDescriptor,
+  Contract9CommandDescriptor as ProjectedCommandDescriptor,
+  Contract9CommandHelpResult as CommandHelpResult,
+} from "./command/contract9-discovery.js";
 export type {
   TargetGovernanceOptionDescriptor as OptionDescriptor,
 } from "./command/target-governance-discovery.js";
 export type {
-  AssuranceCommandInvocationValidation as CommandInvocationValidation,
-  AssuranceInvalidCommandInvocation as InvalidCommandInvocation,
-  AssuranceValidCommandInvocation as ValidCommandInvocation,
-} from "./command/assurance-usage.js";
+  Contract9CommandInvocationValidation as CommandInvocationValidation,
+  Contract9InvalidCommandInvocation as InvalidCommandInvocation,
+  Contract9ValidCommandInvocation as ValidCommandInvocation,
+} from "./command/contract9-usage.js";
 export type {
-  AssuranceGuideResult as GuideResult,
-} from "./help/assurance-guide.js";
+  Contract9GuideResult as GuideResult,
+} from "./help/contract9-guide.js";
 export {
   getAgentGuidance,
   getBundledAgentGuidance,
@@ -200,17 +200,21 @@ export { GOVERNANCE_DIRECT_EDIT_WARNING } from "./governance/guidance.js";
 export type {
   AdvanceResultV3 as AdvanceResult,
   AdvanceResultV3,
-  AnalysisResultV6 as AnalysisResult,
-  AnalysisResultV6,
-  CheckResultV5 as CheckResult,
-  CheckResultV5,
   LifecycleResultV5 as LifecycleResult,
   LifecycleResultV5,
-  MutationResultV5 as MutationResult,
-  MutationResultV5,
-  NextResultV7 as NextResult,
-  NextResultV7,
 } from "./application/contract8-milestone-acceptance.js";
+export type {
+  Contract9AnalysisResult as AnalysisResult,
+  Contract9AnalysisResult as AnalysisResultV7,
+  Contract9CheckResult as CheckResult,
+  Contract9CheckResult as CheckResultV6,
+  Contract9NextResult as NextResult,
+  Contract9NextResult as NextResultV8,
+} from "./application/contract9-temporal.js";
+export type {
+  Contract9MutationResultV6 as MutationResult,
+  Contract9MutationResultV6 as MutationResultV6,
+} from "./application/contract9-mixed-mutation.js";
 export type {
   CheckOptions,
   CheckSummary,
