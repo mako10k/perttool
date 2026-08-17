@@ -153,6 +153,7 @@ task DETAIL_CLI_PROJECTIONS REPLACEMENT_SCHEMAS_CLOSED -> CONTRACT9_CLI_READY:
   title "Complete Contract 9 CLI projections"
   description "Implement JSON and text projection, Help, Guide, diagnostics, calendar commands, temporal set options, POSTDUE driver guidance, write routing, and exact 56-command Contract 9 discovery."
   duration 4p
+  status active
   priority 100
   requires:
     DEVELOPERS 1
@@ -236,3 +237,10 @@ work_event WE_DETAIL_SCHEMA_CLOSURE_20260817:
   occurred_at 2026-08-17T17:27:46+09:00
   active_time 23/240h
   effort 23/240ph
+
+work_event WS_DETAIL_CLI_20260817:
+  model 1
+  task DETAIL_CLI_PROJECTIONS
+  kind start
+  occurred_at 2026-08-17T17:28:04+09:00
+  planned_value 4p
