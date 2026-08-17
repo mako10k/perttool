@@ -1,0 +1,14 @@
+{"schema_version":"Perttool.PostdueAnalysisCases.v1","cases":[
+  {"id":"PDA-001","depends_on":[],"boundary":"target_v7_internal"},
+  {"id":"PDA-002","depends_on":["PDA-001"],"boundary":"precedence_forward_identity"},
+  {"id":"PDA-003","depends_on":["PDA-002"],"boundary":"resource_forward_optimal_false"},
+  {"id":"PDA-004","depends_on":["PDA-003"],"boundary":"required_schedule_identity"},
+  {"id":"PDA-005","depends_on":["PDA-004"],"boundary":"signed_slack_and_feasibility"},
+  {"id":"PDA-006","depends_on":["PDA-005"],"boundary":"full_precedence_driver_reference"},
+  {"id":"PDA-007","depends_on":["PDA-006"],"boundary":"full_resource_wait_driver_reference"},
+  {"id":"PDA-008","depends_on":["PDA-007"],"boundary":"target_scoped_not_global"},
+  {"id":"PDA-009","depends_on":["PDA-008"],"boundary":"unavailable_driver_retained"},
+  {"id":"PDA-010","depends_on":["PDA-009"],"boundary":"complete_input_and_document_binding"},
+  {"id":"PDA-011","depends_on":["PDA-010"],"boundary":"base_analysis_identity"},
+  {"id":"PDA-012","depends_on":["PDA-011"],"boundary":"public_v6_unchanged"}
+]}

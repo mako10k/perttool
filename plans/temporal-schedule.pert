@@ -184,6 +184,7 @@ task POSTDUE_ANALYSIS POSTDUE_CORE_READY -> POSTDUE_ANALYSIS_READY:
   title "Project schedules, alerts, and full paths through analysis"
   description "Expose calendar-aware forward and required schedules, feasibility and signed slack, bind every alert to the applicable full precedence or resource path, distinguish project critical paths from intermediate target drivers, retain scheduler and optimal=false qualifications, and return deterministic text, JSON, references, counts, truncation, and unavailable causes."
   duration 6p
+  status done
   priority 90
   requires:
     DEVELOPERS 1

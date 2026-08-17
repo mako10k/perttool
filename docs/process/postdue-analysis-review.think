@@ -1,0 +1,40 @@
+framework DecisionAudit
+
+domain PostdueAnalysisProjection:
+  description "Review of full schedule, alert, and driver projection for Analysis"
+
+problem P1:
+  "Can Analysis expose the complete accepted temporal evidence without recomputing it or weakening proof qualifications?"
+
+step S1:
+  evidence EV1:
+    "The projection composes accepted precedence, optimal-false resource, required-schedule, and alert results as one document-bound batch"
+    resource:
+      file "src/application/target-postdue-analysis.ts"
+      label "Analysis target projection"
+
+step S2:
+  evidence EV2:
+    "The projection rejects missing batch members and not-computed drivers while retaining typed unavailable driver evidence"
+    resource:
+      file "test/postdue-analysis.test.mjs"
+      label "Binding and path tests"
+
+step S3:
+  evidence EV3:
+    "Twelve ordered cases preserve base Analysis identity and keep target v7 absent from public schemas and exports"
+    resource:
+      file "test/fixtures/postdue-analysis-v1.json"
+      label "Analysis acceptance cases"
+
+step S4:
+  decision D1 based_on P1, EV1, EV2:
+    "Accept one full Analysis projection with explicit proof and path availability, without another evaluator or scheduler"
+
+step S5:
+  decision D2 based_on EV1, EV3, D1:
+    "Keep AnalysisResult v7 internal until all temporal surfaces are atomically activated"
+
+step S6:
+  pending PD1:
+    "Check projection, public rendering and schemas, release, remote writes, and plan advance remain separate"
