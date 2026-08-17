@@ -153,13 +153,13 @@ task DETAIL_CLI_PROJECTIONS REPLACEMENT_SCHEMAS_CLOSED -> CONTRACT9_CLI_READY:
   title "Complete Contract 9 CLI projections"
   description "Implement JSON and text projection, Help, Guide, diagnostics, calendar commands, temporal set options, POSTDUE driver guidance, write routing, and exact 56-command Contract 9 discovery."
   duration 4p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
     REVIEWERS 1
     CLI_SURFACE 1
-  source "TEMPORAL_PUBLIC_CONTRACT"
+  source "d431afc; 60b4149; 99ec5f2; ccccab8; d6d883f; 21 tests 2.20s/175348KB; self-use 24.00s/94240KB"
 
 task DETAIL_FORMAT_MIGRATION CONTRACT9_CLI_READY -> FORMAT_MIGRATION_READY:
   title "Complete Grammar 8 formatting and migration"
@@ -244,3 +244,11 @@ work_event WS_DETAIL_CLI_20260817:
   kind start
   occurred_at 2026-08-17T17:28:04+09:00
   planned_value 4p
+
+work_event WE_DETAIL_CLI_20260817:
+  model 1
+  task DETAIL_CLI_PROJECTIONS
+  kind finish
+  occurred_at 2026-08-17T17:37:28+09:00
+  active_time 47/300h
+  effort 47/300ph
