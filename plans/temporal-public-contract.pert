@@ -141,13 +141,13 @@ task DETAIL_SCHEMA_CLOSURE REPLACEMENT_SCHEMAS_READY -> REPLACEMENT_SCHEMAS_CLOS
   title "Close and validate every Contract 9 schema object"
   description "Specify every temporal source, calendar schedule, required-schedule, POSTDUE driver, model-2 assurance, mixed mutation, and Grammar 8 unit-migration object recursively; reject unknown root and nested fields; compile all references under strict JSON Schema 2020-12; validate valid, null, unavailable, bounded, and malformed result fixtures; and retain the inactive candidate boundary."
   duration 3p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
     REVIEWERS 1
     SCHEMA_SURFACE 1
-  source "TEMPORAL_PUBLIC_CONTRACT"
+  source "commit 8541ade; 23 focused tests 1.81s/176124KB; static 6.91s/362148KB"
 
 task DETAIL_CLI_PROJECTIONS REPLACEMENT_SCHEMAS_CLOSED -> CONTRACT9_CLI_READY:
   title "Complete Contract 9 CLI projections"
@@ -228,3 +228,11 @@ work_event WS_DETAIL_SCHEMA_CLOSURE_20260817:
   kind start
   occurred_at 2026-08-17T17:22:01+09:00
   planned_value 3p
+
+work_event WE_DETAIL_SCHEMA_CLOSURE_20260817:
+  model 1
+  task DETAIL_SCHEMA_CLOSURE
+  kind finish
+  occurred_at 2026-08-17T17:27:46+09:00
+  active_time 23/240h
+  effort 23/240ph
