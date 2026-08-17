@@ -126,6 +126,7 @@ task DETAIL_REPLACEMENT_SCHEMAS MIXED_CANDIDATE_READY -> REPLACEMENT_SCHEMAS_REA
   title "Bundle seven Contract 9 replacement schemas"
   description "Bundle and validate ProjectResult v5, CheckResult v6, AnalysisResult v7, NextResult v8, MutationResult v6, PlanAssuranceResult v2, and UnitMigrationResult v4 while keeping the root catalog count at 23."
   duration 3p
+  status active
   priority 100
   requires:
     DEVELOPERS 1
@@ -190,3 +191,10 @@ work_event WE_DETAIL_MIXED_20260817:
   occurred_at 2026-08-17T17:13:14+09:00
   active_time 0.056h
   effort 0.056ph
+
+work_event WS_DETAIL_SCHEMAS_20260817:
+  model 1
+  task DETAIL_REPLACEMENT_SCHEMAS
+  kind start
+  occurred_at 2026-08-17T17:14:40+09:00
+  planned_value 3p
