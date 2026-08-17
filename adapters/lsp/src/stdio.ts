@@ -171,6 +171,11 @@ export function startPerttoolStdioServer(
       )
     )
   );
+  connection.onRequest("perttool/temporalGraphView", (params: unknown, token) =>
+    protocolResult(() =>
+      withCancellation(token, (signal) => server.temporalGraphView(params, signal))
+    )
+  );
   connection.onRequest("perttool/historicalGraphView", (params: unknown, token) =>
     protocolResult(() =>
       withCancellation(token, (signal) =>

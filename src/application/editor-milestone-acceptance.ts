@@ -1,4 +1,5 @@
 import { computeEffectiveReached } from "../analysis/graph.js";
+import { formatDocument as formatCoreDocument } from "../core/source.js";
 import type { Diagnostic, SourceSpan } from "../model/diagnostics.js";
 import { sha256DigestUtf8 } from "../model/sha256.js";
 import type { DeclarationNode, TargetDeclarationKind } from "../model/syntax.js";
@@ -14,6 +15,9 @@ import {
 import {
   checkDocument,
 } from "./contract8-milestone-acceptance.js";
+import { checkDocument as checkContract9Document } from "./contract9-temporal.js";
+import { planContract9Format } from "./contract9-format-migration.js";
+import { scanTemporalDeclarationBlocks, temporalScheduleBaseText } from "../temporal-schedule/source-lexical.js";
 
 export const EDITOR_MILESTONE_ACCEPTANCE_MODEL_VERSION = 1 as const;
 
@@ -232,6 +236,48 @@ export function prepareEditorMilestoneAcceptanceDocument(
       grammarVersion: source.grammarVersion,
       records: Object.freeze(records),
     })]),
+  });
+}
+
+/** Coordinate-preserving Grammar 8 preparation for the private editor adapters. */
+export function prepareEditorContract9Document(
+  text: string,
+  maxDiagnostics?: number,
+): EditorMilestoneAcceptanceDocumentPreparationV1 {
+  if (!/^  version 8$/mu.test(text)) {
+    return prepareEditorMilestoneAcceptanceDocument(text, maxDiagnostics);
+  }
+  const checked = checkContract9Document(text, {
+    ...(maxDiagnostics === undefined ? {} : { maxDiagnostics }),
+  });
+  const temporalBase = temporalScheduleBaseText(
+    text,
+    scanTemporalDeclarationBlocks(text),
+  );
+  const acceptance = prepareEditorMilestoneAcceptanceDocument(
+    temporalBase,
+    maxDiagnostics,
+  );
+  return Object.freeze({
+    analysisText: acceptance.analysisText,
+    diagnostics: checked.diagnostics,
+    semanticFingerprintExtensions: acceptance.semanticFingerprintExtensions,
+  });
+}
+
+export function formatEditorContract9Document(
+  text: string,
+): import("../formatter/source-formatter.js").FormatResult {
+  if (!/^  version 8$/mu.test(text)) return formatCoreDocument(text);
+  const planned = planContract9Format(text);
+  return Object.freeze({
+    ok: planned.ok,
+    documentId: planned.documentId,
+    changed: planned.changed,
+    formattedText: planned.updatedText,
+    edits: planned.edits,
+    diagnostics: planned.diagnostics,
+    diagnosticsTruncated: planned.diagnosticsTruncated,
   });
 }
 

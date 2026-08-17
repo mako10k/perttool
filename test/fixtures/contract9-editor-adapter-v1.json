@@ -1,0 +1,17 @@
+{
+  "schema_version": "Perttool.Contract9EditorAdapterCases.v1",
+  "cases": [
+    { "id": "TEA-001", "depends_on": [], "claim": "Grammar 8 preparation preserves UTF-16 coordinates" },
+    { "id": "TEA-002", "depends_on": ["TEA-001"], "claim": "Contract 9 diagnostics replace Contract 8 source validation" },
+    { "id": "TEA-003", "depends_on": ["TEA-002"], "claim": "Contract 9 formatting is injected only through editor protocol model 2" },
+    { "id": "TEA-004", "depends_on": ["TEA-002"], "claim": "GraphViewResult v1 remains byte-shape compatible" },
+    { "id": "TEA-005", "depends_on": ["TEA-004"], "claim": "TemporalGraphViewResult v1 requires an explicit offer and acceptance" },
+    { "id": "TEA-006", "depends_on": ["TEA-005"], "claim": "Temporal results bind URI, generation, version, and source digest" },
+    { "id": "TEA-007", "depends_on": ["TEA-006"], "claim": "POSTDUE and forecast counts are presented without moving semantics into VSIX" },
+    { "id": "TEA-008", "depends_on": ["TEA-005"], "claim": "Malformed or stale temporal results fail closed" },
+    { "id": "TEA-009", "depends_on": ["TEA-001"], "claim": "Trusted, untrusted, and virtual documents share read-only temporal semantics" },
+    { "id": "TEA-010", "depends_on": ["TEA-006"], "claim": "Rapid edits cancel or stale-reject prior temporal requests" },
+    { "id": "TEA-011", "depends_on": ["TEA-007"], "claim": "The bundled server and TextMate grammar contain the temporal adapter" },
+    { "id": "TEA-012", "depends_on": ["TEA-008", "TEA-009", "TEA-010", "TEA-011"], "claim": "Replacement and uninstall retain no source or repository write authority" }
+  ]
+}

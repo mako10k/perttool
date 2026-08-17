@@ -11,8 +11,11 @@ import {
 import { createPerttoolMcpAdapter } from "../adapters/mcp/dist/index.js";
 import {
   inspectEditorMilestoneAcceptance,
-  prepareEditorMilestoneAcceptanceDocument,
+  formatEditorContract9Document,
+  prepareEditorContract9Document,
 } from "../dist/application/editor-milestone-acceptance.js";
+import { analyzeDocument as analyzeContract9Document } from "../dist/application/contract9-temporal.js";
+import { renderContract9ScheduleAlerts } from "../dist/application/contract9-projection.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const uri = "untitled:milestone-acceptance-adapter";
@@ -28,7 +31,18 @@ function digestText(text) {
 function application() {
   return {
     inspect: inspectEditorMilestoneAcceptance,
-    prepareDocument: prepareEditorMilestoneAcceptanceDocument,
+    prepareDocument: prepareEditorContract9Document,
+    formatDocument: formatEditorContract9Document,
+    inspectTemporal: (text) => {
+      const result = analyzeContract9Document(text, { mode: "both", sourceOperand: "FILE" });
+      return {
+        grammarVersion: result.grammarVersion,
+        state: result.scheduleAlerts?.state ?? "not_applicable",
+        postdue: result.scheduleAlerts?.summary.postdue ?? 0,
+        postdueForecast: result.scheduleAlerts?.summary.postdueForecast ?? 0,
+        lines: renderContract9ScheduleAlerts(result.scheduleAlerts).trimEnd().split("\n").filter(Boolean),
+      };
+    },
   };
 }
 
@@ -45,7 +59,7 @@ function createServer(negotiated = true) {
     capabilities: { general: { positionEncodings: ["utf-16"] } },
     initializationOptions: {
       perttool: {
-        editorProtocolModelVersions: [1],
+        editorProtocolModelVersions: [2, 1],
         graphViewResultSchemaVersions: ["Perttool.GraphViewResult.v1"],
         editorHelpResultSchemaVersions: ["Perttool.EditorHelpResult.v1"],
         ...(negotiated ? {
@@ -53,6 +67,7 @@ function createServer(negotiated = true) {
           milestoneAcceptanceViewResultSchemaVersions: [
             "Perttool.MilestoneAcceptanceViewResult.v1",
           ],
+          temporalGraphViewResultSchemaVersions: ["Perttool.TemporalGraphViewResult.v1"],
         } : {}),
       },
     },
@@ -152,6 +167,45 @@ test("older Grammar remains explicitly not applicable and negotiation fails clos
     }),
     (error) => error instanceof PerttoolProtocolError && error.code === -32601,
   );
+});
+
+test("Grammar 8 editor preparation, formatting, and temporal view retain exact bindings", async () => {
+  const cases = JSON.parse(await repositoryText("test/fixtures/contract9-editor-adapter-v1.json"));
+  const acceptedCases = new Set();
+  for (const item of cases.cases) {
+    assert.equal(item.depends_on.every((id) => acceptedCases.has(id)), true, item.id);
+    acceptedCases.add(item.id);
+  }
+  assert.equal(acceptedCases.size, 12);
+  const source = `${[
+    "project EDITOR_TEMPORAL:", "  version 8", '  title "Editor temporal"',
+    "  as_of 2026-08-17T12:00:00+09:00", '  time_zone "Asia/Tokyo"', '  tzdb "2026c"',
+    "  calendar STANDARD", "  duration_unit hour", "  finish END", "", "calendar STANDARD:",
+    "  mon 09:00..18:00", "", "milestone START:", '  title "Start"',
+    "  state reached", "", "milestone END:", '  title "End"',
+    "  deadline 2026-08-17T11:00:00+09:00", "", "task WORK START -> END:",
+    '  title "Work"', "  duration 1h",
+  ].join("\n")}\n`;
+  const { server, initialized, published } = createServer();
+  assert.equal(initialized.capabilities.experimental.perttool.temporalGraphViewResultSchemaVersion,
+    "Perttool.TemporalGraphViewResult.v1");
+  open(server, source);
+  assert.equal(published.at(-1).diagnostics.some(({ severity }) => severity === 1), false);
+  const graph = await server.graphView({ textDocument: { uri }, documentVersion: 1, analysisMode: "both" });
+  assert.equal(graph.schemaVersion, "Perttool.GraphViewResult.v1");
+  assert.equal(graph.status, "current");
+  const temporal = await server.temporalGraphView({ textDocument: { uri }, documentVersion: 1 });
+  assert.equal(temporal.schemaVersion, "Perttool.TemporalGraphViewResult.v1");
+  assert.equal(temporal.document.sourceDigest, digestText(source));
+  assert.equal(temporal.temporal.grammarVersion, 8);
+  const bindings = await import(
+    `${pathToFileURL(path.join(root, "adapters/vscode/dist/bindings.mjs")).href}?temporal`
+  );
+  assert.deepEqual(bindings.parseTemporalGraphViewResult(temporal), temporal);
+  const formatted = await server.documentFormatting({
+    textDocument: { uri }, options: { tabSize: 2, insertSpaces: true },
+  });
+  assert.ok(Array.isArray(formatted));
 });
 
 test("MCP retains Contract 8 acceptance under unchanged wire identities", async () => {

@@ -10,11 +10,11 @@
       "include": "#strings"
     },
     {
-      "match": "^\\s*(project|milestone|task|gate|resource|relation|plan_contract|outcome|frontier_receipt|work_event)\\b",
+      "match": "^\\s*(project|milestone|task|gate|resource|calendar|relation|plan_contract|outcome|frontier_receipt|work_event|milestone_criterion_set|milestone_acceptance_receipt|milestone_acceptance_migration)\\b",
       "name": "keyword.declaration.pert"
     },
     {
-      "match": "\\b(active|blocked|done|planned|reached|suspended|both|contract|outcome|start|finish|suspend|resume)\\b",
+      "match": "\\b(active|blocked|done|planned|reached|suspended|both|contract|outcome|start|finish|suspend|resume|POSTDUE|POSTDUE_FORECAST)\\b",
       "name": "constant.language.pert"
     },
     {

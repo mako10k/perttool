@@ -13,6 +13,8 @@ export const DAG_FOCUS_SCHEMA_VERSION = "Perttool.DagFocusResult.v1" as const;
 export const MILESTONE_ACCEPTANCE_EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
 export const MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION =
   "Perttool.MilestoneAcceptanceViewResult.v1" as const;
+export const TEMPORAL_GRAPH_VIEW_SCHEMA_VERSION =
+  "Perttool.TemporalGraphViewResult.v1" as const;
 export const HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION = 1 as const;
 export const HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION =
   "Perttool.HistoricalGraphViewResult.v1" as const;
@@ -45,6 +47,9 @@ export interface PerttoolInitializationOptionsV1 {
     readonly milestoneAcceptanceViewResultSchemaVersions?: readonly [
       "Perttool.MilestoneAcceptanceViewResult.v1",
     ];
+    readonly temporalGraphViewResultSchemaVersions?: readonly [
+      "Perttool.TemporalGraphViewResult.v1",
+    ];
     readonly historicalEditorProtocolModelVersions?: readonly [1];
     readonly historicalGraphViewResultSchemaVersions?: readonly [
       "Perttool.HistoricalGraphViewResult.v1",
@@ -70,6 +75,8 @@ export interface PerttoolExperimentalCapabilitiesV1 {
     readonly milestoneAcceptanceEditorProtocolModelVersion?: 1;
     readonly milestoneAcceptanceViewResultSchemaVersion?:
       "Perttool.MilestoneAcceptanceViewResult.v1";
+    readonly temporalGraphViewResultSchemaVersion?:
+      "Perttool.TemporalGraphViewResult.v1";
     readonly historicalEditorProtocolModelVersion?: 1;
     readonly historicalGraphViewResultSchemaVersion?:
       "Perttool.HistoricalGraphViewResult.v1";
@@ -562,10 +569,31 @@ export interface MilestoneAcceptanceEditorApplicationV1 {
     readonly analysisText: string;
     readonly diagnostics: readonly Diagnostic[];
   };
+  readonly formatDocument?: (
+    text: string,
+    options: { readonly maxDiagnostics: number },
+  ) => import("perttool/core").FormatResult;
+  readonly inspectTemporal?: (text: string) => TemporalGraphProjectionV1;
   readonly inspect: (
     text: string,
     expectedSourceDigest: `sha256:${string}`,
   ) => unknown | PromiseLike<unknown>;
+}
+
+export interface TemporalGraphProjectionV1 {
+  readonly grammarVersion: number | null;
+  readonly state: "available" | "unavailable" | "not_applicable";
+  readonly postdue: number;
+  readonly postdueForecast: number;
+  readonly lines: readonly string[];
+}
+
+export interface TemporalGraphViewResultV1 {
+  readonly schemaVersion: typeof TEMPORAL_GRAPH_VIEW_SCHEMA_VERSION;
+  readonly document: GraphViewResultV1["document"];
+  readonly status: "current" | "invalid" | "unavailable";
+  readonly complete: boolean;
+  readonly temporal: TemporalGraphProjectionV1 | null;
 }
 
 export class PerttoolProtocolError extends Error {

@@ -11,6 +11,7 @@ import {
   parseHistoricalGraphViewResult,
   parseHistoricalSourceResult,
   parseMilestoneAcceptanceViewResult,
+  parseTemporalGraphViewResult,
   parseWebviewMessage,
   type GraphViewAnalysisMode,
   type DagFocusResultV1,
@@ -19,6 +20,7 @@ import {
   type HistoricalSourceResultV1,
   type HistoricalWebviewPresentationV1,
   type MilestoneAcceptanceViewResultV1,
+  type TemporalGraphViewResultV1,
   type WebviewToExtensionMessageV1,
 } from "./bindings.js";
 
@@ -53,6 +55,7 @@ export interface DagViewProviderOptions {
   readonly historicalCapabilitiesAvailable: () => boolean;
   readonly dagFocusCapabilitiesAvailable: () => boolean;
   readonly milestoneAcceptanceCapabilitiesAvailable: () => boolean;
+  readonly temporalGraphCapabilitiesAvailable: () => boolean;
   readonly openHistoricalSource: (
     result: HistoricalSourceResultV1,
   ) => Promise<boolean>;
@@ -120,6 +123,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
   #focusResult: DagFocusResultV1 | null = null;
   #historicalResult: HistoricalGraphViewResultV1 | null = null;
   #acceptanceResult: MilestoneAcceptanceViewResultV1 | null = null;
+  #temporalResult: TemporalGraphViewResultV1 | null = null;
   #scope: "current" | "historical" = "current";
   #requestSerial = 0;
   #cancellation: vscode.CancellationTokenSource | undefined;
@@ -244,6 +248,56 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  async #requestTemporal(
+    client: LanguageClient,
+    binding: { readonly uri: string; readonly version: number },
+    token: vscode.CancellationToken,
+  ): Promise<unknown> {
+    if (!this.#options.temporalGraphCapabilitiesAvailable()) return null;
+    try {
+      return await client.sendRequest<unknown>(
+        "perttool/temporalGraphView",
+        { textDocument: { uri: binding.uri }, documentVersion: binding.version },
+        token,
+      );
+    } catch (error: unknown) {
+      this.#options.output.warn(`Temporal graph request failed closed: ${String(error)}`);
+      return null;
+    }
+  }
+
+  #acceptTemporal(
+    raw: unknown,
+    graph: GraphViewResultV1,
+    binding: { readonly uri: string; readonly version: number },
+  ): TemporalGraphViewResultV1 | null {
+    if (raw === null) return null;
+    const result = parseTemporalGraphViewResult(raw);
+    if (result !== null && result.document.uri === binding.uri &&
+      result.document.generation === graph.document.generation &&
+      result.document.version === binding.version &&
+      result.document.sourceDigest === graph.document.sourceDigest) {
+      return result;
+    }
+    this.#options.output.warn("Temporal graph result failed closed binding validation.");
+    return null;
+  }
+
+  #acceptAcceptance(
+    raw: unknown,
+    graph: GraphViewResultV1,
+    binding: { readonly uri: string; readonly version: number },
+  ): MilestoneAcceptanceViewResultV1 | null {
+    if (raw === null) return null;
+    const result = parseMilestoneAcceptanceViewResult(raw);
+    if (result !== null && result.document.uri === binding.uri &&
+      result.document.generation === graph.document.generation &&
+      result.document.version === binding.version &&
+      result.document.sourceDigest === graph.document.sourceDigest) return result;
+    this.#options.output.warn("Milestone acceptance result failed closed binding validation.");
+    return null;
+  }
+
   async refresh(force = false): Promise<void> {
     if (!force && this.#view !== undefined && !this.#view.visible) return;
     const document = activePertDocument();
@@ -273,10 +327,11 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#result = null;
     this.#focusResult = null;
     this.#acceptanceResult = null;
+    this.#temporalResult = null;
     this.#publish("loading", `Loading ${this.#mode} DAG analysis…`, null);
 
     try {
-      const [raw, rawFocus, rawAcceptance] = await Promise.all([
+      const [raw, rawFocus, rawAcceptance, rawTemporal] = await Promise.all([
         client.sendRequest<unknown>(
           "perttool/graphView",
           {
@@ -316,6 +371,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
               return null;
             })
           : Promise.resolve(null),
+        this.#requestTemporal(client, binding, cancellation.token),
       ]);
       if (serial !== this.#requestSerial || cancellation.token.isCancellationRequested) {
         return;
@@ -331,9 +387,6 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       }
       const result = parseGraphViewResult(raw);
       const focusResult = rawFocus === null ? null : parseDagFocusResult(rawFocus);
-      const acceptanceResult = rawAcceptance === null
-        ? null
-        : parseMilestoneAcceptanceViewResult(rawAcceptance);
       if (
         result === null ||
         result.document.uri !== binding.uri ||
@@ -356,22 +409,15 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
       } else {
         this.#focusResult = focusResult;
       }
-      if (
-        acceptanceResult !== null &&
-        acceptanceResult.document.uri === binding.uri &&
-        acceptanceResult.document.generation === result.document.generation &&
-        acceptanceResult.document.version === binding.version &&
-        acceptanceResult.document.sourceDigest === result.document.sourceDigest
-      ) {
-        this.#acceptanceResult = acceptanceResult;
-      } else if (rawAcceptance !== null) {
-        this.#options.output.warn(
-          "Milestone acceptance result failed closed binding validation.",
-        );
-      }
+      this.#acceptanceResult = this.#acceptAcceptance(rawAcceptance, result, binding);
+      this.#temporalResult = this.#acceptTemporal(rawTemporal, result, binding);
       if (result.status === "current") {
         this.#result = result;
-        this.#publish("current", "The DAG is current.", result);
+        const temporal = this.#temporalResult?.temporal;
+        const alertSummary = temporal === null || temporal === undefined
+          ? ""
+          : ` POSTDUE ${temporal.postdue}; POSTDUE forecast ${temporal.postdueForecast}.`;
+        this.#publish("current", `The DAG is current.${alertSummary}`, result);
       } else {
         this.#clear(
           result.status,
@@ -432,6 +478,7 @@ export class DagViewProvider implements vscode.WebviewViewProvider {
     this.#result = diagnosticResult;
     this.#focusResult = null;
     this.#acceptanceResult = null;
+    this.#temporalResult = null;
     this.#historicalResult = null;
     this.#scope = "current";
     this.#publish(state, message, diagnosticResult);

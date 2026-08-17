@@ -14,6 +14,8 @@ export const dagFocusResultSchemaVersion =
 export const milestoneAcceptanceEditorProtocolModelVersion = 1 as const;
 export const milestoneAcceptanceViewResultSchemaVersion =
   "Perttool.MilestoneAcceptanceViewResult.v1" as const;
+export const temporalGraphViewResultSchemaVersion =
+  "Perttool.TemporalGraphViewResult.v1" as const;
 export const historicalEditorProtocolModelVersion = 1 as const;
 export const historicalGraphViewResultSchemaVersion =
   "Perttool.HistoricalGraphViewResult.v1" as const;
@@ -228,6 +230,20 @@ export interface GraphViewResultV1 {
     readonly truncated: boolean;
   };
   readonly graph: GraphViewGraphV1 | null;
+}
+
+export interface TemporalGraphViewResultV1 {
+  readonly schemaVersion: typeof temporalGraphViewResultSchemaVersion;
+  readonly document: GraphViewResultV1["document"];
+  readonly status: "current" | "invalid" | "unavailable";
+  readonly complete: boolean;
+  readonly temporal: null | {
+    readonly grammarVersion: number | null;
+    readonly state: "available" | "unavailable" | "not_applicable";
+    readonly postdue: number;
+    readonly postdueForecast: number;
+    readonly lines: readonly string[];
+  };
 }
 
 export interface DagFocusProjectionV1 {
@@ -644,6 +660,13 @@ export function hasAcceptedMilestoneAcceptanceHandshake(value: unknown): boolean
   );
 }
 
+export function hasAcceptedTemporalGraphHandshake(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  const perttool = value.perttool;
+  return isRecord(perttool) &&
+    perttool.temporalGraphViewResultSchemaVersion === temporalGraphViewResultSchemaVersion;
+}
+
 export function hasAcceptedHistoricalHandshake(value: unknown): boolean {
   if (!isRecord(value)) return false;
   const perttool = value.perttool;
@@ -1054,6 +1077,24 @@ export function parseGraphViewResult(value: unknown): GraphViewResultV1 | null {
   const result = value as unknown as GraphViewResultV1;
   if (!modeProjectionIsClosed(result)) return null;
   return JSON.parse(JSON.stringify(result)) as GraphViewResultV1;
+}
+
+export function parseTemporalGraphViewResult(value: unknown): TemporalGraphViewResultV1 | null {
+  if (!isRecord(value) || !hasExactKeys(value, ["complete", "document", "schemaVersion", "status", "temporal"]) ||
+    value.schemaVersion !== temporalGraphViewResultSchemaVersion || !isRecord(value.document) ||
+    !hasExactKeys(value.document, ["generation", "sourceDigest", "uri", "version"]) ||
+    !nonEmptyString(value.document.uri) || !nonEmptyString(value.document.generation) ||
+    !Number.isSafeInteger(value.document.version) || typeof value.document.sourceDigest !== "string" ||
+    !/^sha256:[0-9a-f]{64}$/u.test(value.document.sourceDigest) ||
+    !["current", "invalid", "unavailable"].includes(String(value.status)) || typeof value.complete !== "boolean") return null;
+  if (value.temporal !== null && (!isRecord(value.temporal) ||
+    !hasExactKeys(value.temporal, ["grammarVersion", "lines", "postdue", "postdueForecast", "state"]) ||
+    !(value.temporal.grammarVersion === null || Number.isSafeInteger(value.temporal.grammarVersion)) ||
+    !["available", "unavailable", "not_applicable"].includes(String(value.temporal.state)) ||
+    !Number.isSafeInteger(value.temporal.postdue) || !Number.isSafeInteger(value.temporal.postdueForecast) ||
+    !stringArray(value.temporal.lines))) return null;
+  if ((value.status === "current") !== value.complete || (value.complete && value.temporal === null)) return null;
+  return JSON.parse(JSON.stringify(value)) as TemporalGraphViewResultV1;
 }
 
 export function parseDagFocusResult(value: unknown): DagFocusResultV1 | null {

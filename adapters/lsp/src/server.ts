@@ -54,6 +54,7 @@ import {
   HISTORICAL_EDITOR_PROTOCOL_MODEL_VERSION,
   HISTORICAL_GRAPH_VIEW_SCHEMA_VERSION,
   HISTORICAL_SOURCE_SCHEMA_VERSION,
+  TEMPORAL_GRAPH_VIEW_SCHEMA_VERSION,
   PerttoolProtocolError,
   isGraphViewAnalysisMode,
   isHistoricalGraphAncestryProfile,
@@ -82,6 +83,7 @@ import {
   type MilestoneAcceptanceViewProjectionV1,
   type MilestoneAcceptanceViewResultV1,
   type PerttoolExperimentalCapabilitiesV1,
+  type TemporalGraphViewResultV1,
 } from "./protocol.js";
 
 export interface PerttoolLanguageServerOptions {
@@ -136,6 +138,7 @@ export interface PerttoolLanguageServer {
     params: unknown,
     signal?: AbortSignal,
   ): Promise<MilestoneAcceptanceViewResultV1>;
+  temporalGraphView(params: unknown, signal?: AbortSignal): Promise<TemporalGraphViewResultV1>;
   historicalGraphView(
     params: unknown,
     signal?: AbortSignal,
@@ -314,6 +317,12 @@ function milestoneAcceptanceProtocolSelected(
   );
 }
 
+function temporalGraphProtocolSelected(options: unknown, applicationAvailable: boolean): boolean {
+  if (!applicationAvailable || !record(options) || !record(options["perttool"])) return false;
+  const versions = options["perttool"]["temporalGraphViewResultSchemaVersions"];
+  return Array.isArray(versions) && versions.includes(TEMPORAL_GRAPH_VIEW_SCHEMA_VERSION);
+}
+
 interface HistoricalSessionV1 {
   readonly workspaceTrust: "trusted" | "untrusted";
   readonly workspaceFolderUris: readonly string[];
@@ -369,6 +378,7 @@ function initializeCapabilities(
   historical: boolean,
   dagFocus: boolean,
   milestoneAcceptance: boolean,
+  temporalGraph: boolean,
   editorRepair: boolean,
 ): InitializeResult["capabilities"] {
   const experimental: PerttoolExperimentalCapabilitiesV1 = {
@@ -390,6 +400,9 @@ function initializeCapabilities(
             milestoneAcceptanceViewResultSchemaVersion:
               MILESTONE_ACCEPTANCE_VIEW_SCHEMA_VERSION,
           }
+        : {}),
+      ...(temporalGraph
+        ? { temporalGraphViewResultSchemaVersion: TEMPORAL_GRAPH_VIEW_SCHEMA_VERSION }
         : {}),
       ...(historical
         ? {
@@ -1092,6 +1105,7 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
   #editorProtocolModelVersion: EditorProtocolModelVersion | null = null;
   #dagFocusProtocolNegotiated = false;
   #milestoneAcceptanceProtocolNegotiated = false;
+  #temporalGraphProtocolNegotiated = false;
   #historicalSession: HistoricalSessionV1 | null = null;
   #stopped = false;
 
@@ -1106,6 +1120,9 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
         : {
             prepareDocument:
               options.milestoneAcceptanceApplication.prepareDocument,
+            ...(options.milestoneAcceptanceApplication.formatDocument === undefined
+              ? {}
+              : { formatDocument: options.milestoneAcceptanceApplication.formatDocument }),
           }),
     });
     this.#publishDiagnostics = options.publishDiagnostics;
@@ -1274,6 +1291,11 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
         params.initializationOptions,
         this.#milestoneAcceptanceApplication !== undefined,
       );
+    this.#temporalGraphProtocolNegotiated = this.#editorProtocolModelVersion !== null &&
+      temporalGraphProtocolSelected(
+        params.initializationOptions,
+        this.#milestoneAcceptanceApplication?.inspectTemporal !== undefined,
+      );
     this.#initialized = true;
     return {
       capabilities: initializeCapabilities(
@@ -1281,6 +1303,7 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
         this.#historicalSession !== null,
         this.#dagFocusProtocolNegotiated,
         this.#milestoneAcceptanceProtocolNegotiated,
+        this.#temporalGraphProtocolNegotiated,
         this.#editorRepairApplication !== undefined,
       ),
       serverInfo: { name: "perttool language server", version: "0.0.0-private" },
@@ -1773,6 +1796,41 @@ class PerttoolLanguageServerImplementation implements PerttoolLanguageServer {
     ) throw projectionError(result.status);
     if (result.value === null) throw projectionError("stale");
     return result.value;
+  }
+
+  async temporalGraphView(
+    params: unknown,
+    signal?: AbortSignal,
+  ): Promise<TemporalGraphViewResultV1> {
+    this.#ensureRunning();
+    const application = this.#requireMilestoneAcceptanceProtocol();
+    if (!this.#temporalGraphProtocolNegotiated || application.inspectTemporal === undefined) {
+      throw new PerttoolProtocolError(ErrorCodes.MethodNotFound, "perttool temporal graph protocol is unavailable");
+    }
+    const accepted = validateMilestoneAcceptanceViewParams(params);
+    const snapshot = this.#session.current(accepted.textDocument.uri);
+    if (snapshot === null) throw new PerttoolProtocolError(ErrorCodes.InvalidParams, "perttool/temporalGraphView document is not open");
+    if (snapshot.binding.version !== accepted.documentVersion) throw projectionError("stale");
+    const projected = await this.#session.project<TemporalGraphViewResultV1>({
+      binding: snapshot.binding,
+      cacheKey: "lsp:temporalGraphView:v1",
+      ...(signal === undefined ? {} : { signal }),
+      allowInvalid: true,
+      allowTruncated: true,
+      compute: (current) => {
+        const temporal = application.inspectTemporal!(current.text);
+        return Object.freeze({
+          schemaVersion: TEMPORAL_GRAPH_VIEW_SCHEMA_VERSION,
+          document: current.binding,
+          status: current.semantic.ok ? "current" as const : "invalid" as const,
+          complete: current.semantic.ok,
+          temporal: current.semantic.ok ? temporal : null,
+        });
+      },
+    });
+    if (projected.status === "cancelled" || projected.status === "stale" || projected.status === "closed" || projected.status === "desynchronized") throw projectionError(projected.status);
+    if (projected.value === null) throw projectionError("stale");
+    return projected.value;
   }
 
   #sha256(value: unknown): `sha256:${string}` {
