@@ -1,7 +1,7 @@
 # Product backlog
 
 - Status: Active
-- Updated: 2026-08-14
+- Updated: 2026-08-17
 
 This file records post-beta product work before or after it is promoted into an
 independent `.pert` workstream. It is not a normative interface specification.
@@ -1652,6 +1652,172 @@ Acceptance:
   calendar values, and deterministic output; the installed-package
   file-first cases activate only at the atomic Contract 4 acceptance gate.
 
+The [llmthink backlog review](process/temporal-availability-constraints-backlog-review.think)
+compares the requested extension with the current AoA, resource, and temporal
+contracts and with Microsoft Project and Primavera scheduling concepts. It
+separates generic availability from scheduling constraints and backward
+planning so neither concern becomes a disguised dependency edge.
+
+### CALENDAR-001: Add generic calendar-backed availability
+
+Priority: Unset (dependency order selected; relative priority not decided)
+
+Status: Selected first in `plans/temporal-schedule.pert` (2026-08-17;
+contract task not started)
+
+Add optional time-varying availability to every renewable resource without
+introducing a human-only resource kind. People, equipment, facilities,
+licenses, environments, external services, and resources that exist only for
+a bounded period must use the same model. Human working hours, lunch breaks,
+weekends, holidays, and leave are examples of generic availability rules.
+
+The design target is a deterministic available-capacity function whose value
+at any instant is an integer from zero through the resource's nominal
+capacity. Derive it from a reusable project working-time baseline, optional
+per-resource calendars, recurring windows, explicit validity bounds, and dated
+capacity exceptions with deterministic overlap precedence. A resource without
+an opt-in calendar retains the current constant-capacity behavior.
+
+Before implementation, define:
+
+- the explicit calendar time basis, named-zone and daylight-saving data policy,
+  cross-midnight rules, interval boundaries, recurrence limits, and exception
+  precedence independently of the host locale and wall clock;
+- the pure mapping from `project.as_of`, exact relative durations, and calendar
+  rules to absolute dates or date-times, including addition and subtraction;
+- the distinction between discretionary task preemption and deterministic
+  interruption by non-working time, including resource allocation and reuse
+  during a gap and the intersection of multiple required resources;
+- how partial capacity, a finite availability period, active allocations,
+  temporary capacity overrides, utilization, start authority, recommendations,
+  deadline projections, and explanations compose;
+- whether the first calendar profile requires one common project time basis
+  and models task-specific operating windows through a dedicated resource,
+  before adding task calendars or override hierarchies; and
+- grammar and migration boundaries, source-preserving calendar and resource
+  maintenance, schema and algorithm identities, governance scopes, hard
+  limits, and installed-package acceptance.
+
+Acceptance must cover an equipment booking window, an expiring license, a
+partially available resource pool, a human workday with a lunch break, project
+holidays, full- and partial-day exceptions, overlapping rules,
+daylight-saving transitions, multiple required resources, no feasible window,
+and compatibility with existing documents. The current continuous-calendar
+profile and constant-capacity schedules remain byte- and result-compatible for
+documents that do not opt in.
+
+Initial non-goals are consumable materials, skills and substitution,
+assignment-unit or effort-driven duration changes, work contours, attendance,
+payroll or billing, organization-wide calendar inheritance, external calendar
+synchronization, inferred availability from Git or work events, and exact
+global optimization.
+
+### CONSTRAINT-001: Add event constraints and backward-planning projections
+
+Priority: Unset (dependency order selected; relative priority not decided)
+
+Status: Selected after `CALENDAR-001` in `plans/temporal-schedule.pert`
+(2026-08-17; contract task not started)
+
+Add a small, explicit temporal-constraint model for task-start, task-finish,
+and milestone-reach events. The semantic primitive is an optional earliest
+and/or latest event bound rather than a copy of every product-specific
+constraint name. Equal bounds may express an exact event only if the later
+contract accepts that case. A constraint does not create a task or gate,
+rewrite a duration, assert actual progress, or prove milestone outcome
+acceptance.
+
+Keep the existing `deadline` meaning unchanged as an advisory target. Add a
+separate required-schedule projection that can use the finish milestone's
+deadline or latest bound as a goal anchor and subtract expected work through
+the selected calendar profile. Forward forecast dates, backward required
+dates, constraint feasibility, and signed slack must remain distinct. An
+intermediate milestone bound constrains its event only and is propagated by
+the ordinary AoA network calculations rather than copied to adjacent tasks.
+
+The first delivery should establish an exact, calendar-aware precedence
+forward/backward projection. Compare the existing forward `optimal=false`
+resource forecast against the required dates to expose risk. Any backward
+resource-leveling heuristic requires a separate algorithm identity and must
+not present a precedence-only late schedule as resource-feasible or optimal.
+
+Before implementation, define:
+
+- event-bound combinations, precedence propagation, contradictory-bound and
+  negative-slack behavior, constraint hardness, and diagnostics;
+- the relationship among the relative CPM backward pass, `project.as_of`,
+  calendar-aware absolute-time arithmetic, deadline evaluation, and the new
+  required-schedule projection;
+- behavior for reached milestones, active or done tasks, unavailable actual
+  event times, blocks, multiple frontier milestones, and multiple constrained
+  intermediate milestones;
+- whether and how temporal feasibility influences `runnable_now`, normal
+  recommendation ranking, override validation, and governance, under explicit
+  result and algorithm version changes; and
+- grammar, source-preserving maintenance, schema identities, help, Guide,
+  migration, hard limits, and installed-package acceptance.
+
+Acceptance must cover goal-date backward planning, an intermediate milestone
+latest bound, an earliest milestone bound, task event bounds, parallel joins,
+calendar gaps, finite-period resources, incompatible bounds, a forecast miss,
+and unchanged legacy results. The implementation must not read the current
+clock, turn a target into actual evidence, silently move the snapshot, or
+mutate the plan while calculating a schedule.
+
+Initial non-goals are arbitrary logical constraints, lag or lead dependency
+types, automated baseline commitment, automatic replanning, probabilistic
+deadline promises, external calendar synchronization, and exact global
+resource-constrained optimization.
+
+### POSTDUE-001: Expose actionable post-due alerts and delay paths
+
+Priority: Unset (dependency order selected; relative priority not decided)
+
+Status: Selected after `CALENDAR-001` and `CONSTRAINT-001` in
+`plans/temporal-schedule.pert` (2026-08-17; contract task not started)
+
+Add the stable alert kinds `POSTDUE` and `POSTDUE_FORECAST` to
+`document check`, `dag analyze`, and `dag next`. Reuse the current deadline
+state and precedence/resource forecast assessments rather than adding another
+date comparison. The selected implementation first establishes calendar-aware
+resource availability and required-schedule event bounds, then applies one
+alert projection to both advisory deadlines and latest bounds while keeping
+their meanings distinct. It does not activate a compatibility-only POSTDUE
+slice before those prerequisites.
+
+`POSTDUE` means that an incomplete task or milestone is strictly beyond a
+comparable target at `project.as_of`. `POSTDUE_FORECAST` means that the target
+is not yet POSTDUE but a deterministic projection crosses it. Distinguish a
+precedence lower-bound miss, which is infeasible under the modeled inputs,
+from a late resource heuristic, which remains `optimal=false`. Do not infer an
+alert from unavailable arithmetic, unknown actual completion time, or an
+inclusive target equal to `as_of` or the projected completion.
+
+Every alert must identify its subject, target kind and value, snapshot,
+projection, exact margin or lateness, proof basis, and qualifications. It must
+also expose the applicable compact delay path. For the project finish this is
+the existing precedence or schedule critical representative path. For a task
+or intermediate milestone it is a target-scoped driver path; do not present
+an unrelated global critical path as the cause.
+
+If a human-readable command does not directly display the applicable path, it
+must print the exact follow-up form
+`perttool dag analyze FILE --schedule both`. JSON must carry an equivalent
+argument vector ending in `--format json`. `document check` must reuse the
+same bounded pure evaluator after successful validation, `dag analyze` must
+bind each alert to its full path, and `dag next` must return at least a compact
+path and the analysis argument vector. Critical booleans without a connected
+path are not sufficient recovery evidence.
+
+Alerts remain warning-only and preserve successful exit status. They do not
+change ranking, start authority, override validation, governance, assurance,
+or source bytes. Acceptance must cover current POSTDUE, due-now equality,
+precedence-infeasible and heuristic-late forecasts, both path kinds, an
+intermediate target whose driver differs from the project critical path,
+completed subjects without actual time, unavailable projection, block and
+suspension qualifications, truncation, text/JSON parity, exact follow-up
+arguments, legacy deadlines, and future latest-bound composition.
+
 ### UNIT-001: Design safe point and time-unit migration
 
 Priority: P1
@@ -2196,6 +2362,17 @@ integration concept. `HIST-DAG-001` records the separate read-only historical
 graph projection and depends on `SCM-001` only for its later three-way profile.
 Other items are not implicit prerequisites for an accepted workstream unless a
 later requirements decision explicitly composes them.
+
+`CALENDAR-001`, `CONSTRAINT-001`, and `POSTDUE-001` retain separate semantic
+ownership, but their selected implementation is the single dependency-ordered
+`plans/temporal-schedule.pert` workstream. It accepts the shared single-DSL
+contract, implements calendar and resource availability first, implements
+event constraints and the required schedule second, and only then implements
+POSTDUE alerts and their command projections. Generic resource availability
+does not itself imply an event constraint, and a milestone or task constraint
+must not be modeled as a fake resource. The plan selects an implementation
+order, not a release, publication, Issue mutation, or unrelated frontier
+advance.
 
 ### MILESTONE-ACCEPT-001: Separate graph closure from milestone outcome acceptance
 

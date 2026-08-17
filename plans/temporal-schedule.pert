@@ -1,0 +1,267 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project TEMPORAL_SCHEDULE:
+  version 6
+  title "Calendar-aware temporal scheduling"
+  description "Implement CALENDAR-001, CONSTRAINT-001, and POSTDUE-001 as one dependency-ordered Grammar 8 and CLI Contract 9 workstream. Establish generic calendar-backed resource availability and working-time arithmetic first, then event bounds and a goal-anchored required schedule, then actionable POSTDUE and POSTDUE_FORECAST alerts with critical or target-scoped driver paths across document check, dag analyze, and dag next. Preserve legacy continuous-calendar documents, advisory deadline meaning, exact proof qualifications, warning-only authority, and source-bound determinism. Release selection, publication, remote writes, Issue mutation, external calendar synchronization, exact global optimization, and unrelated plan advancement remain separate decisions."
+  as_of 2026-08-17
+  duration_unit point
+  finish TEMPORAL_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone TEMPORAL_PLANNING_STARTED:
+  title "Temporal scheduling planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  description "Two implementation slices may run concurrently only when their owned surfaces do not overlap."
+  capacity 2
+
+resource REVIEWERS:
+  title "Contract review capacity"
+  description "Serialize normative, compatibility, public-contract, and final acceptance decisions."
+  capacity 1
+
+resource CALENDAR_MODEL:
+  title "Calendar and availability semantics"
+  description "Own named time basis, reusable weekly windows, exceptions, validity bounds, and time-varying resource capacity."
+  capacity 1
+
+resource SCHEDULER_MODEL:
+  title "Calendar-aware scheduling semantics"
+  description "Own working-time arithmetic, multi-resource intersection, deterministic gaps, forward scheduling, and qualifications."
+  capacity 1
+
+resource CONSTRAINT_MODEL:
+  title "Temporal event-bound semantics"
+  description "Own task-start, task-finish, and milestone-reach earliest and latest bounds without changing AoA reachability."
+  capacity 1
+
+resource REQUIRED_SCHEDULE_MODEL:
+  title "Required-schedule semantics"
+  description "Own goal-anchored backward projection, signed slack, constraint feasibility, and forward-versus-required comparison."
+  capacity 1
+
+resource DEADLINE_MODEL:
+  title "Deadline and schedule-alert semantics"
+  description "Own advisory deadline compatibility, current and forecast lateness, proof strength, deduplication, and unavailable behavior."
+  capacity 1
+
+resource DRIVER_PATH_MODEL:
+  title "Critical and driver-path semantics"
+  description "Own project critical-path binding and target-scoped precedence and resource driver paths."
+  capacity 1
+
+resource CHECK_SURFACE:
+  title "Document check surface"
+  description "Own Check result, phase suppression, compact alerts, driver evidence, and recovery guidance."
+  capacity 1
+
+resource ANALYSIS_SURFACE:
+  title "DAG analysis surface"
+  description "Own calendar, required-schedule, alert, and full critical or driver-path analysis projections."
+  capacity 1
+
+resource NEXT_SURFACE:
+  title "Next-task surface"
+  description "Own temporal alert context while preserving recommendation and start-authority meanings."
+  capacity 1
+
+resource MUTATION_SURFACE:
+  title "Source mutation surface"
+  description "Own source-preserving calendar, availability, and when maintenance plus explicit migration."
+  capacity 1
+
+resource PUBLIC_SURFACE:
+  title "Public Grammar 8 and Contract 9 surface"
+  description "Own commands, results, schemas, exports, text and JSON, Help, Guide, diagnostics, and compatibility."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and installed acceptance"
+  description "Own isolated-package, installed CLI, adapters, self-use, and distribution-boundary verification."
+  capacity 1
+
+milestone TEMPORAL_CONTRACT_ACCEPTED:
+  title "Calendar-aware temporal contract accepted"
+
+milestone CALENDAR_SOURCE_READY:
+  title "Calendar and availability source Core ready"
+
+milestone CALENDAR_SCHEDULER_READY:
+  title "Calendar-aware scheduler Core ready"
+
+milestone CONSTRAINT_SOURCE_READY:
+  title "Temporal constraint source Core ready"
+
+milestone REQUIRED_SCHEDULE_READY:
+  title "Required-schedule Core ready"
+
+milestone POSTDUE_CONTRACT_ACCEPTED:
+  title "Post-due alert contract accepted"
+
+milestone POSTDUE_CORE_READY:
+  title "Post-due alert Core ready"
+
+milestone POSTDUE_CHECK_READY:
+  title "Document check temporal projection ready"
+
+milestone POSTDUE_ANALYSIS_READY:
+  title "Analysis temporal projection ready"
+
+milestone POSTDUE_NEXT_READY:
+  title "Next temporal projection ready"
+
+milestone TEMPORAL_ADAPTERS_READY:
+  title "All temporal command projections ready"
+
+milestone TEMPORAL_PUBLIC_READY:
+  title "Grammar 8 and Contract 9 public surface ready"
+
+milestone TEMPORAL_ACCEPTED:
+  title "Calendar-aware temporal scheduling accepted"
+
+task TEMPORAL_SCHEDULE_CONTRACT TEMPORAL_PLANNING_STARTED -> TEMPORAL_CONTRACT_ACCEPTED:
+  title "Accept the single-DSL temporal scheduling contract"
+  description "Fix the minimal calendar, availability, and when syntax; project time basis and versioned zone data; half-open windows and exceptions; finite and partial capacity; working-duration arithmetic; multi-resource gaps; earliest and latest event bounds; deadline compatibility; required-schedule anchoring; POSTDUE alert semantics; driver paths; deterministic limits; governance, assurance, migration, result, algorithm, and installed-package boundaries; and dependency-ordered machine cases before implementation."
+  duration 10p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CALENDAR_MODEL 1
+    CONSTRAINT_MODEL 1
+    DEADLINE_MODEL 1
+  source "CALENDAR-001; CONSTRAINT-001; POSTDUE-001"
+
+task CALENDAR_SOURCE_CORE TEMPORAL_CONTRACT_ACCEPTED -> CALENDAR_SOURCE_READY:
+  title "Implement calendar and availability source semantics"
+  description "Implement the internal Grammar 8 parser, validator, formatter, source spans, semantic projection, reusable project calendars, per-resource selection, validity bounds, nonoverlapping capacity overrides, canonical ordering, hard limits, and source-preserving mutation plans while preserving every legacy Grammar 1 through 7 read and continuous-calendar result."
+  duration 10p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    CALENDAR_MODEL 1
+    MUTATION_SURFACE 1
+  source "CALENDAR-001"
+
+task CALENDAR_SCHEDULER_CORE CALENDAR_SOURCE_READY -> CALENDAR_SCHEDULER_READY:
+  title "Implement calendar-aware resource scheduling"
+  description "Implement exact working-time addition and subtraction, named-zone and daylight-saving rules, effective time-varying capacity, finite resources, multiple-resource intersection, deterministic interruption across non-working gaps, active remaining work, forward precedence and parallel-SGS calendar profiles, utilization, unavailable horizon handling, and unchanged opt-out behavior without reading the wall clock, locale, network, or Git."
+  duration 12p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    CALENDAR_MODEL 1
+    SCHEDULER_MODEL 1
+  source "CALENDAR-001"
+
+task CONSTRAINT_SOURCE_CORE CALENDAR_SCHEDULER_READY -> CONSTRAINT_SOURCE_READY:
+  title "Implement task and milestone event constraints"
+  description "Implement normalized task start and finish plus milestone reach earliest and latest bounds, equal-bound exact events, local contradiction validation, not_before migration, source-preserving maintenance, ambient assurance projection, calendar binding, and typed network infeasibility without adding dependency edges, rewriting durations, or changing advisory deadline meaning."
+  duration 8p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    CONSTRAINT_MODEL 1
+    MUTATION_SURFACE 1
+  source "CONSTRAINT-001"
+
+task REQUIRED_SCHEDULE_CORE CONSTRAINT_SOURCE_READY -> REQUIRED_SCHEDULE_READY:
+  title "Implement the goal-anchored required schedule"
+  description "Implement exact calendar-aware precedence backward projection from the project finish target, intermediate bound propagation, latest event values, signed slack, constraint feasibility, unavailable causes, and comparison with the optimal=false forward resource schedule while keeping backward resource leveling and global optimization unavailable under separate algorithm identities."
+  duration 10p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    SCHEDULER_MODEL 1
+    CONSTRAINT_MODEL 1
+    REQUIRED_SCHEDULE_MODEL 1
+  source "CONSTRAINT-001"
+
+task POSTDUE_CONTRACT REQUIRED_SCHEDULE_READY -> POSTDUE_CONTRACT_ACCEPTED:
+  title "Accept the actionable post-due alert contract"
+  description "Fix stable POSTDUE and POSTDUE_FORECAST tags over deadlines and latest bounds, strict comparison and suppression, precedence-infeasible versus optimal=false resource-heuristic proof, compact and full target-scoped driver paths, command guidance, unavailable and completed-history behavior, warning exits, hard limits, and the exact Check, Analysis, and Next public projections using the accepted calendar and required-schedule inputs."
+  duration 6p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    DEADLINE_MODEL 1
+    DRIVER_PATH_MODEL 1
+  source "POSTDUE-001"
+
+task POSTDUE_ALERT_CORE POSTDUE_CONTRACT_ACCEPTED -> POSTDUE_CORE_READY:
+  title "Implement the pure alert and driver-path Core"
+  description "Implement one deterministic evaluator over accepted deadline, event-bound, calendar, forward, and required-schedule facts; exact current and forecast alerts; proof ordering and deduplication; target-scoped precedence and resource driver paths; stable path counting and truncation; bounded causes; and compact projections without files, clocks, Git, locale, network, or CLI state."
+  duration 8p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    DEADLINE_MODEL 1
+    DRIVER_PATH_MODEL 1
+  source "POSTDUE-001"
+
+task POSTDUE_CHECK POSTDUE_CORE_READY -> POSTDUE_CHECK_READY:
+  title "Project temporal alerts through document check"
+  description "Compose the shared bounded evaluator after successful validation, preserve phase suppression and success exits, return compact driver evidence and exact dag analyze argv, keep alert summaries visible independently of diagnostic truncation, and prove that Check does not acquire a duplicate calendar, scheduler, required-schedule, or alert implementation."
+  duration 6p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    CHECK_SURFACE 1
+  source "POSTDUE-001"
+
+task POSTDUE_ANALYSIS POSTDUE_CORE_READY -> POSTDUE_ANALYSIS_READY:
+  title "Project schedules, alerts, and full paths through analysis"
+  description "Expose calendar-aware forward and required schedules, feasibility and signed slack, bind every alert to the applicable full precedence or resource path, distinguish project critical paths from intermediate target drivers, retain scheduler and optimal=false qualifications, and return deterministic text, JSON, references, counts, truncation, and unavailable causes."
+  duration 6p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    ANALYSIS_SURFACE 1
+  source "CALENDAR-001; CONSTRAINT-001; POSTDUE-001"
+
+task POSTDUE_NEXT POSTDUE_CORE_READY -> POSTDUE_NEXT_READY:
+  title "Project actionable temporal alerts through Next"
+  description "Return the same calendar, required-schedule, and alert identities with compact connected driver paths and exact full-analysis argv, preserve complete machine context, enforce only accepted earliest start eligibility, and prove that alert presence, lateness, latest-bound recovery, and criticality do not otherwise change Recommendation version 1 ranking, override validation, or assurance composition."
+  duration 7p
+  priority 90
+  requires:
+    DEVELOPERS 1
+    NEXT_SURFACE 1
+  source "CALENDAR-001; CONSTRAINT-001; POSTDUE-001"
+
+gate POSTDUE_CHECK_JOIN POSTDUE_CHECK_READY -> TEMPORAL_ADAPTERS_READY:
+  reason "Document check temporal projection is ready"
+
+gate POSTDUE_ANALYSIS_JOIN POSTDUE_ANALYSIS_READY -> TEMPORAL_ADAPTERS_READY:
+  reason "Analysis temporal projection is ready"
+
+gate POSTDUE_NEXT_JOIN POSTDUE_NEXT_READY -> TEMPORAL_ADAPTERS_READY:
+  reason "Next temporal projection is ready"
+
+task TEMPORAL_PUBLIC_CONTRACT TEMPORAL_ADAPTERS_READY -> TEMPORAL_PUBLIC_READY:
+  title "Activate Grammar 8 and CLI Contract 9 atomically"
+  description "Atomically activate the accepted single DSL, calendar and availability maintenance, event constraints, forward and required schedules, POSTDUE alerts, Check, Analysis, Next, and Mutation identities; align schemas, root and Node exports, text and JSON, Help, Guide, diagnostics, algorithm and zone-data metadata, migration, governance, assurance, package inventory, compatibility fixtures, and consumers while preserving legacy reads and unchanged Advance shape if its complete candidate contract remains valid."
+  duration 10p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    MUTATION_SURFACE 1
+    PUBLIC_SURFACE 1
+  source "CALENDAR-001; CONSTRAINT-001; POSTDUE-001"
+
+task TEMPORAL_ACCEPTANCE TEMPORAL_PUBLIC_READY -> TEMPORAL_ACCEPTED:
+  title "Accept calendar-aware temporal scheduling across all surfaces"
+  description "Trace generic and finite resources, weekly and exceptional capacity, DST, multiple-resource gaps, event-bound combinations, goal and intermediate backward planning, signed slack and infeasibility, current and forecast POSTDUE, project and target-scoped paths, unavailable and completed-history states, blocks, suspensions, truncation, warning and authority boundaries, legacy byte and result compatibility, Help, Guide, schemas, temporary link, isolated package, installed CLI, adapters, and self-use without release, registry, remote, Issue, or unrelated plan mutation."
+  duration 7p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PUBLIC_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "CALENDAR-001; CONSTRAINT-001; POSTDUE-001"

@@ -1,0 +1,145 @@
+framework DecisionAudit
+
+domain TemporalAvailabilityAndConstraints:
+  description "Backlog requirements review for generic availability, real-time projection, temporal constraints, and backward planning"
+
+problem P1:
+  "How should perttool generalize availability and goal-driven temporal constraints without obscuring its activity-on-arrow PERT model or reproducing the full complexity of portfolio scheduling products?"
+
+step S1:
+  evidence EV0:
+    "The stable semantic center remains activity-on-arrow: tasks are positive-duration edges, milestones are zero-duration events, gates express dependency only, and resource requirements never become graph edges"
+    resource:
+      file "docs/adr/0001-activity-on-arrow.md"
+      label "Accepted activity-on-arrow decision"
+    resource:
+      file "docs/specs/graph-semantics.md"
+      label "Current graph and resource boundary"
+
+step S2:
+  evidence EV1:
+    "The current resource model has constant renewable integer capacity, acquires every requirement simultaneously, keeps tasks non-preemptive, and performs no calendar conversion"
+    resource:
+      file "docs/specs/analysis.md"
+      label "Current parallel-SGS resource model"
+
+step S3:
+  evidence EV2:
+    "The current temporal profile is continuous and fixed-offset: it has no working hours, holidays, named zones, availability windows, or time-varying capacity, and existing documents depend on that profile remaining unchanged"
+    resource:
+      file "docs/specs/temporal-calendar.md"
+      label "Continuous-calendar compatibility boundary"
+
+step S4:
+  evidence EV3:
+    "Current task and milestone deadlines are advisory targets, task not_before is only a forward start lower bound, and the ordinary CPM backward pass anchors late dates to the calculated earliest finish rather than an externally required goal date"
+    resource:
+      file "docs/specs/temporal-deadline.md"
+      label "Current deadline and release semantics"
+    resource:
+      file "docs/specs/analysis.md"
+      label "Current CPM forward and backward passes"
+
+step S5:
+  evidence EV4:
+    "Microsoft Project separates project, task, and resource calendars; working time can include recurring hours, breaks, holidays, and per-resource exceptions, while effective task time may be the intersection of task and resource calendars"
+    resource:
+      url "https://support.microsoft.com/en-us/project/how-project-schedules-tasks-behind-the-scenes"
+      label "Microsoft Project scheduling and calendar behavior"
+
+step S6:
+  evidence EV5:
+    "Primavera P6 likewise separates global, project, resource, and activity calendars and uses activity type to choose between activity-dependent and resource-dependent scheduling"
+    resource:
+      url "https://docs.oracle.com/cd/G48902_01/English/User_Guides/p6_pro_user/calendars.htm"
+      label "Oracle Primavera P6 calendar model"
+
+step S7:
+  evidence EV6:
+    "Established tools distinguish advisory deadlines from scheduling constraints and warn that date constraints reduce scheduling flexibility; lower bounds affect forward dates while upper bounds affect backward dates"
+    resource:
+      url "https://support.microsoft.com/en-us/project/deadline-task-field"
+      label "Microsoft Project deadline boundary"
+    resource:
+      url "https://docs.oracle.com/cd/G18294_01/p6help/en/6673.htm"
+      label "Oracle Primavera P6 constraint behavior"
+
+step S8:
+  decision D1 based_on P1, EV0, EV1, EV4, EV5:
+    "Availability must be generic and must not introduce a human resource kind: people, equipment, facilities, licenses, environments, external services, and resources available only during a bounded period all use the same optional calendar-backed availability model"
+
+step S9:
+  decision D2 based_on EV1, EV2, D1:
+    "The minimal semantic primitive is a deterministic available-capacity function from time to an integer between zero and nominal capacity, derived from reusable recurring windows, explicit validity bounds, and dated exceptions; a workday, lunch break, holiday, leave, maintenance window, and partial pool availability are examples rather than distinct resource semantics"
+
+step S10:
+  decision D3 based_on EV0, EV4, EV5, D2:
+    "The first profile should provide one project working-time baseline and optional per-resource calendars, with task-specific operating windows modeled by requiring a dedicated calendar-backed resource; task-calendar override hierarchies, ignore-resource-calendar switches, organization-wide calendar pools, and resource-type-dependent scheduling remain deferred unless evidence shows the smaller model is insufficient"
+
+step S11:
+  decision D4 based_on EV2, D2, D3:
+    "Real-time linkage is an explicit pure projection from project.as_of plus an explicit calendar time basis and versioned calendar rules; it never reads the host clock or locale, and the existing continuous profile remains the default for documents that do not opt in"
+
+step S12:
+  decision D5 based_on EV1, EV4, D2, D4:
+    "A calendar-aware scheduler must distinguish discretionary task preemption from deterministic calendar interruption: one task identity and resource assignment may span non-working gaps, work advances only while the complete effective requirement set is available, and the contract must define allocation and reuse during each gap before implementation"
+
+step S13:
+  decision D6 based_on EV0, EV3, EV6:
+    "Temporal scheduling constraints should use one event-bound model rather than copying every product-specific constraint name: optional earliest and latest bounds apply to task start, task finish, or milestone reach; equal bounds can express an exact event if accepted later, and constraints never create graph edges, rewrite durations, or substitute for milestone acceptance"
+
+step S14:
+  decision D7 based_on EV3, EV6, D6:
+    "Existing deadline remains an advisory target, while a separate required-schedule projection may use a finish-milestone deadline or latest bound as a backward-planning anchor; forecast early dates, required late dates, constraint feasibility, and signed slack remain separate results"
+
+step S15:
+  decision D8 based_on EV1, EV2, D4, D6, D7:
+    "The initial backward-planning baseline should be the exact precedence projection with calendar-aware addition and subtraction; compare the existing forward heuristic resource forecast with required dates, and version any backward resource-leveling heuristic separately rather than presenting a precedence-late schedule as resource-feasible or optimal"
+
+step S16:
+  decision D9 based_on D1, D2, D3, D4, D5, D6, D7, D8:
+    "Acceptance must prove generic finite-period resources, recurring and exceptional capacity, multi-resource intersection, project and intermediate-milestone goal anchors, contradictory bounds, daylight-saving and interval boundaries, forward-versus-required explanations, and unchanged results for legacy documents without adding consumable materials, attendance, billing, external calendar synchronization, effort-driven duration, work contours, or exact global optimization"
+
+step S17:
+  evidence EV7:
+    "The accepted deadline model already distinguishes current overdue, precedence lower-bound forecast infeasibility, and late optimal=false resource heuristics; actionable POSTDUE output should project these facts rather than create a competing deadline evaluator"
+    resource:
+      file "docs/specs/temporal-deadline.md"
+      label "Current deadline state and forecast assessments"
+
+step S18:
+  evidence EV8:
+    "Current full analysis separately returns representative precedence and schedule critical paths, while Next task facts expose critical booleans without necessarily returning the connected path needed to improve a late plan"
+    resource:
+      file "docs/specs/analysis.md"
+      label "Current precedence and schedule critical paths"
+    resource:
+      file "src/cli.ts"
+      label "Current Analysis and Next text and JSON projection"
+
+step S19:
+  decision D10 based_on EV3, EV7:
+    "Expose stable POSTDUE and POSTDUE_FORECAST schedule-alert kinds across document check, dag analyze, and dag next: current POSTDUE suppresses a duplicate forecast alert, precedence-infeasible and resource-heuristic-late bases remain distinct, equality is not late, and unavailable or completed-without-actual-time inputs never become inferred warnings"
+
+step S20:
+  decision D11 based_on EV8, D10:
+    "Every alert needs an actionable path: bind a finish alert to the applicable project precedence or schedule critical path, compute a target-scoped driver path for an intermediate subject, and otherwise return an explicit unavailable or not-computed state plus the exact dag analyze --schedule both argument vector"
+
+step S21:
+  decision D12 based_on D7, D8, D10, D11:
+    "One bounded pure alert evaluator should feed Check, Analysis, and Next projections without changing recommendation or start authority; human output shows a compact path or follow-up command, machine output carries exact qualifications and argv, and later latest bounds reuse the alert model without changing deadline semantics"
+
+step S22:
+  evidence EV9:
+    "The current product has no accepted multi-plan composition contract that can enforce prerequisites across three independent plan files, so a selected implementation order must be represented in one AoA DAG"
+    resource:
+      file "docs/backlog.md"
+      label "Multi-plan composition remains a separate backlog boundary"
+
+step S23:
+  decision D13 based_on D1, D4, D6, D7, D8, D10, D12, EV9:
+    "Select one dependency-ordered temporal-schedule workstream: accept the single-DSL contract, implement calendar-backed availability and the calendar-aware forward scheduler, implement event bounds and the required schedule, then implement POSTDUE alerts and only afterward activate the public Check, Analysis, and Next surfaces; do not publish a deadline-only alert slice first"
+
+step S24:
+  pending PD1:
+    "Exact source syntax, named-zone data policy, duration-through-calendar arithmetic, gap allocation, constraint hardness, alert and result schema identities, diagnostic codes, algorithm identities, migration, governance scope, release, and external writes require contract acceptance after this backlog review; the implementation order is selected in plans/temporal-schedule.pert"
