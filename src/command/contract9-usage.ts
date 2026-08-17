@@ -6,9 +6,12 @@ import { validateAssuranceCommandInvocation } from "./assurance-usage.js";
 export type Contract9CommandInvocationValidation =
   | { readonly ok: true; readonly descriptor: Contract9CommandDescriptor; readonly helpAlias: boolean; readonly operands: readonly string[]; readonly options: readonly CommandOptionOccurrence[] }
   | { readonly ok: false; readonly error: CommandUsageError };
+const contract9ExtendedOperations = new Set([
+  "calendar.add", "calendar.set", "calendar.remove", "project.set", "resource.set", "task.set", "milestone.set",
+]);
 export function validateContract9CommandInvocation(argv: readonly string[]): Contract9CommandInvocationValidation {
   const generic = validateCommandInvocationAgainstRegistry(argv, CONTRACT9_COMMAND_REGISTRY as never) as Contract9CommandInvocationValidation;
-  if (!generic.ok || generic.descriptor.operation.startsWith("calendar.")) return generic;
+  if (!generic.ok || contract9ExtendedOperations.has(generic.descriptor.operation)) return generic;
   const legacy = validateAssuranceCommandInvocation(argv);
   if (!legacy.ok) return legacy as Contract9CommandInvocationValidation;
   return Object.freeze({ ...legacy, descriptor: generic.descriptor }) as Contract9CommandInvocationValidation;

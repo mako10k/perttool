@@ -20,8 +20,39 @@ const replacements = new Map([
   ["Perttool.UnitMigrationResult.v3", "Perttool.UnitMigrationResult.v4"],
 ]);
 
+function temporalOption(name: string, valueType: string, repeatable = false): Contract9CommandDescriptor["options"][number] {
+  return Object.freeze({
+    name, kind: "value", valueType, required: false, repeatable, defaultValue: null,
+    enumValues: Object.freeze(name === "tzdb" ? ["2026c"] : []), conflicts: Object.freeze([]), requires: Object.freeze([]),
+    sharedGroup: null, description: null,
+    spelling: Object.freeze({ cli: `--${name}`, dsl: name.replaceAll("-", "_"), json: name.replaceAll("-", "_") }),
+  });
+}
+
+const temporalOptions = Object.freeze({
+  "project.set": Object.freeze([
+    temporalOption("time-zone", "iana-time-zone"), temporalOption("tzdb", "tzdb-release"),
+    temporalOption("calendar", "calendar-id"), temporalOption("workday", "duration"),
+  ]),
+  "resource.set": Object.freeze([
+    temporalOption("calendar", "calendar-id"), temporalOption("available-from", "date-time"),
+    temporalOption("available-until", "date-time"), temporalOption("availability", "availability-window", true),
+  ]),
+  "task.set": Object.freeze([temporalOption("when", "task-event-bound", true)]),
+  "milestone.set": Object.freeze([temporalOption("when", "milestone-event-bound", true)]),
+} satisfies Readonly<Record<string, readonly Contract9CommandDescriptor["options"][number][]>>);
+
+function contract9Options(descriptor: AssuranceCommandDescriptor): Contract9CommandDescriptor["options"] {
+  const additions = temporalOptions[descriptor.operation as keyof typeof temporalOptions];
+  if (additions === undefined) return descriptor.options;
+  return Object.freeze(descriptor.options.map((option) => option.name !== "clear" ? option : Object.freeze({ ...option,
+    enumValues: Object.freeze([...option.enumValues, ...additions.map(({ spelling }) => spelling.dsl!)]) }))
+    .concat(additions));
+}
+
 function converted(descriptor: AssuranceCommandDescriptor): Contract9CommandDescriptor {
   return Object.freeze({ ...descriptor, contractVersion: 9 as const,
+    options: contract9Options(descriptor),
     resultSchemas: Object.freeze(descriptor.resultSchemas.map((schema) => replacements.get(schema) ?? schema)) });
 }
 

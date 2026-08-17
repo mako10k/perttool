@@ -59,6 +59,15 @@ test("Contract 9 catalog is closed at 56 while the public Contract 8 catalog rem
   assert.equal(discovery.cliContractVersion, 9);
   assert.equal(discovery.commands.length, 3);
   assert.equal(validateContract9CommandInvocation(["calendar", "add", "plan.pert", "STANDARD", "--weekday", "mon 09:00..17:00"]).ok, true);
+  assert.equal(validateContract9CommandInvocation(["project", "set", "plan.pert", "--time-zone", "Asia/Tokyo", "--tzdb", "2026c", "--calendar", "STANDARD"]).ok, true);
+  assert.equal(validateContract9CommandInvocation(["resource", "set", "plan.pert", "DEV", "--available-from", "2026-08-17T09:00:00+09:00", "--availability", "2026-08-18T09:00:00+09:00..2026-08-18T12:00:00+09:00 capacity 1"]).ok, true);
+  assert.equal(validateContract9CommandInvocation(["task", "set", "plan.pert", "BUILD", "--when", "finish latest 2026-08-17T17:00:00+09:00"]).ok, true);
+  assert.equal(validateContract9CommandInvocation(["milestone", "set", "plan.pert", "END", "--when", "reach latest 2026-08-17T17:00:00+09:00"]).ok, true);
+  const projectSet = CONTRACT9_COMMAND_REGISTRY.find(({ operation }) => operation === "project.set");
+  assert.deepEqual(projectSet.options.filter(({ name }) => ["time-zone", "tzdb", "calendar", "workday"].includes(name))
+    .map(({ name }) => name), ["time-zone", "tzdb", "calendar", "workday"]);
+  assert.deepEqual(projectSet.options.find(({ name }) => name === "clear").enumValues.slice(-4),
+    ["time_zone", "tzdb", "calendar", "workday"]);
   assert.equal(publicApi.COMMAND_REGISTRY.length, 53);
   assert.equal(publicApi.COMMAND_REGISTRY.some(({ operation }) => operation.startsWith("calendar.")), false);
 });
