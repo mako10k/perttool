@@ -54,7 +54,10 @@ milestone MIXED_CANDIDATE_READY:
   title "Mixed mutation candidate ready"
 
 milestone REPLACEMENT_SCHEMAS_READY:
-  title "Contract 9 replacement schemas ready"
+  title "Contract 9 replacement schema candidates staged"
+
+milestone REPLACEMENT_SCHEMAS_CLOSED:
+  title "Contract 9 replacement schemas recursively closed"
 
 milestone CONTRACT9_CLI_READY:
   title "Contract 9 CLI projections ready"
@@ -123,8 +126,8 @@ task DETAIL_MIXED_CANDIDATE MUTATION_DISPATCH_READY -> MIXED_CANDIDATE_READY:
   source "commit 7383018; build 3.61s/414496KB; focused 0.54s/91168KB; static 7.34s/361588KB"
 
 task DETAIL_REPLACEMENT_SCHEMAS MIXED_CANDIDATE_READY -> REPLACEMENT_SCHEMAS_READY:
-  title "Bundle seven Contract 9 replacement schemas"
-  description "Bundle and validate ProjectResult v5, CheckResult v6, AnalysisResult v7, NextResult v8, MutationResult v6, PlanAssuranceResult v2, and UnitMigrationResult v4 while keeping the root catalog count at 23."
+  title "Stage seven Contract 9 replacement schema candidates"
+  description "Stage ProjectResult v5, CheckResult v6, AnalysisResult v7, NextResult v8, MutationResult v6, PlanAssuranceResult v2, and UnitMigrationResult v4 outside the active Contract 8 schema directory, preserving the 23-root active catalog until atomic integration."
   duration 3p
   status active
   priority 100
@@ -134,7 +137,18 @@ task DETAIL_REPLACEMENT_SCHEMAS MIXED_CANDIDATE_READY -> REPLACEMENT_SCHEMAS_REA
     SCHEMA_SURFACE 1
   source "TEMPORAL_PUBLIC_CONTRACT"
 
-task DETAIL_CLI_PROJECTIONS REPLACEMENT_SCHEMAS_READY -> CONTRACT9_CLI_READY:
+task DETAIL_SCHEMA_CLOSURE REPLACEMENT_SCHEMAS_READY -> REPLACEMENT_SCHEMAS_CLOSED:
+  title "Close and validate every Contract 9 schema object"
+  description "Specify every temporal source, calendar schedule, required-schedule, POSTDUE driver, model-2 assurance, mixed mutation, and Grammar 8 unit-migration object recursively; reject unknown root and nested fields; compile all references under strict JSON Schema 2020-12; validate valid, null, unavailable, bounded, and malformed result fixtures; and retain the inactive candidate boundary."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SCHEMA_SURFACE 1
+  source "TEMPORAL_PUBLIC_CONTRACT"
+
+task DETAIL_CLI_PROJECTIONS REPLACEMENT_SCHEMAS_CLOSED -> CONTRACT9_CLI_READY:
   title "Complete Contract 9 CLI projections"
   description "Implement JSON and text projection, Help, Guide, diagnostics, calendar commands, temporal set options, POSTDUE driver guidance, write routing, and exact 56-command Contract 9 discovery."
   duration 4p

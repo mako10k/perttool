@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.MutationResult.v6.schema.json",
+  "title": "Perttool.MutationResult.v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "changed",
+    "original_digest",
+    "updated_digest",
+    "updated_text",
+    "diff",
+    "edits",
+    "write",
+    "governance",
+    "lifecycle",
+    "assurance_impact"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.MutationResult.v6"
+    },
+    "cli_contract_version": {
+      "const": 9
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "type": "string"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "changed": {
+      "type": "boolean"
+    },
+    "original_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "updated_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "updated_text": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "diff": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "edits": {
+      "type": "array",
+      "items": {
+        "$ref": "Perttool.Common.v1.schema.json#/$defs/edit"
+      }
+    },
+    "write": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/write"
+    },
+    "governance": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/governanceDecision"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lifecycle": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "model_version",
+            "task_id",
+            "from_state",
+            "to_state",
+            "event",
+            "coverage"
+          ],
+          "properties": {
+            "model_version": {
+              "const": 1
+            },
+            "task_id": {
+              "type": "string"
+            },
+            "from_state": {
+              "enum": [
+                "planned",
+                "active",
+                "blocked",
+                "suspended",
+                "done"
+              ]
+            },
+            "to_state": {
+              "enum": [
+                "active",
+                "suspended",
+                "done"
+              ]
+            },
+            "event": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/workEvent"
+            },
+            "coverage": {
+              "enum": [
+                "open",
+                "finish_only",
+                "complete"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "advance": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "removed_task_ids",
+            "removed_gate_ids",
+            "removed_milestone_ids",
+            "removed_work_event_ids",
+            "frontier_before",
+            "frontier_after",
+            "ready_before",
+            "ready_after"
+          ],
+          "properties": {
+            "removed_task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_gate_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_milestone_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "removed_work_event_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "frontier_before": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "frontier_after": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "ready_before": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "ready_after": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "assurance_impact": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/planAssuranceImpact"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

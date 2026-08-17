@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.PlanAssuranceResult.v2.schema.json",
+  "title": "Perttool.PlanAssuranceResult.v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "grammar_version",
+    "selected_task_ids",
+    "task_id",
+    "kind",
+    "selected_hash",
+    "assurance"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.PlanAssuranceResult.v2"
+    },
+    "cli_contract_version": {
+      "const": 9
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "enum": ["plan-assurance.show", "plan-assurance.hash"]
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "grammar_version": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "maximum": 8
+    },
+    "selected_task_ids": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+    },
+    "task_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "kind": {
+      "enum": ["contract", "computed-basis", "exported", null]
+    },
+    "selected_hash": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableDigest"
+    },
+    "assurance": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullablePlanAssuranceProjection"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,809 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mako10k/perttool/schemas/Perttool.AnalysisResult.v7.schema.json",
+  "title": "Perttool.AnalysisResult.v7",
+  "$defs": {
+    "taskStatus": {
+      "enum": [
+        "planned",
+        "active",
+        "blocked",
+        "suspended",
+        "done"
+      ]
+    },
+    "precedencePath": {
+      "type": "object",
+      "required": [
+        "edge_ids",
+        "task_ids",
+        "gate_ids",
+        "variance"
+      ],
+      "properties": {
+        "edge_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "gate_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "variance": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+        }
+      },
+      "additionalProperties": false
+    },
+    "precedence": {
+      "type": "object",
+      "required": [
+        "makespan",
+        "conditional_on_blocks_resolved",
+        "blocked_task_ids",
+        "conditional_on_suspensions_resumed",
+        "suspended_task_ids",
+        "milestones",
+        "edges",
+        "critical"
+      ],
+      "properties": {
+        "makespan": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+        },
+        "conditional_on_blocks_resolved": {
+          "type": "boolean"
+        },
+        "blocked_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "conditional_on_suspensions_resumed": {
+          "type": "boolean"
+        },
+        "suspended_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "earliest",
+              "latest",
+              "slack"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "earliest": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "latest": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "slack": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "source",
+              "target",
+              "kind",
+              "status",
+              "expected",
+              "variance",
+              "es",
+              "ef",
+              "ls",
+              "lf",
+              "total_float",
+              "free_float",
+              "is_critical",
+              "is_driving"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "task",
+                  "gate"
+                ]
+              },
+              "status": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/taskStatus"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "expected": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "variance": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "es": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "ef": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "ls": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "lf": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "total_float": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "free_float": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "is_critical": {
+                "type": "boolean"
+              },
+              "is_driving": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "critical": {
+          "type": "object",
+          "required": [
+            "milestone_ids",
+            "task_ids",
+            "gate_ids",
+            "driving_edge_ids",
+            "representative_path",
+            "path_count",
+            "paths",
+            "paths_truncated"
+          ],
+          "properties": {
+            "milestone_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "gate_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "driving_edge_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "representative_path": {
+              "$ref": "#/$defs/precedencePath"
+            },
+            "path_count": {
+              "type": "string",
+              "pattern": "^[0-9]+$"
+            },
+            "paths": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/precedencePath"
+              }
+            },
+            "paths_truncated": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "schedulePath": {
+      "type": "object",
+      "required": [
+        "task_ids",
+        "constraints",
+        "connector_ids"
+      ],
+      "properties": {
+        "task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "from_task_id",
+              "to_task_id",
+              "kind",
+              "resource_arc_id"
+            ],
+            "properties": {
+              "from_task_id": {
+                "type": "string"
+              },
+              "to_task_id": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "precedence",
+                  "gate",
+                  "resource"
+                ]
+              },
+              "resource_arc_id": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "connector_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        }
+      },
+      "additionalProperties": false
+    },
+    "resource": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "conditional_on_blocks_resolved",
+        "blocked_task_ids",
+        "conditional_on_suspensions_resumed",
+        "suspended_task_ids",
+        "capacities",
+        "precedence_lower_bound",
+        "makespan",
+        "resource_delay",
+        "tasks",
+        "resources",
+        "resource_arcs",
+        "constraint_graph_replay",
+        "schedule_critical"
+      ],
+      "properties": {
+        "algorithm": {
+          "type": "object",
+          "required": [
+            "id",
+            "version",
+            "optimal"
+          ],
+          "properties": {
+            "id": {
+              "const": "parallel-sgs"
+            },
+            "version": {
+              "const": 1
+            },
+            "optimal": {
+              "const": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "conditional_on_blocks_resolved": {
+          "type": "boolean"
+        },
+        "blocked_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "conditional_on_suspensions_resumed": {
+          "type": "boolean"
+        },
+        "suspended_task_ids": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+        },
+        "capacities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "declared",
+              "override",
+              "effective"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "declared": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "override": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1
+              },
+              "effective": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "precedence_lower_bound": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+        },
+        "makespan": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+        },
+        "resource_delay": {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "status",
+              "expected",
+              "variance",
+              "eligible_time",
+              "start",
+              "finish",
+              "resource_wait",
+              "requirements",
+              "priority_key",
+              "conditional_blocked"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "$ref": "#/$defs/taskStatus"
+              },
+              "expected": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "variance": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "eligible_time": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "start": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "finish": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "resource_wait": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "requirements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "resource_id",
+                    "units"
+                  ],
+                  "properties": {
+                    "resource_id": {
+                      "type": "string"
+                    },
+                    "units": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "priority_key": {
+                "type": "object",
+                "required": [
+                  "priority",
+                  "precedence_total_float",
+                  "expected",
+                  "task_id"
+                ],
+                "properties": {
+                  "priority": {
+                    "type": "integer"
+                  },
+                  "precedence_total_float": {
+                    "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+                  },
+                  "expected": {
+                    "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+                  },
+                  "task_id": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "conditional_blocked": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "capacity",
+              "amount_time",
+              "utilization",
+              "peak_usage",
+              "last_release",
+              "timeline"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "capacity": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "amount_time": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "utilization": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "peak_usage": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "last_release": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "timeline": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "task_id",
+                    "start",
+                    "finish",
+                    "units"
+                  ],
+                  "properties": {
+                    "task_id": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+                    },
+                    "finish": {
+                      "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+                    },
+                    "units": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "resource_arcs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "from_task_id",
+              "to_task_id",
+              "at_time",
+              "wait_from",
+              "resources",
+              "schedule_float",
+              "is_critical",
+              "is_driving"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "from_task_id": {
+                "type": "string"
+              },
+              "to_task_id": {
+                "type": "string"
+              },
+              "at_time": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "wait_from": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "resources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "resource_id",
+                    "contributed_units"
+                  ],
+                  "properties": {
+                    "resource_id": {
+                      "type": "string"
+                    },
+                    "contributed_units": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "schedule_float": {
+                "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+              },
+              "is_critical": {
+                "type": "boolean"
+              },
+              "is_driving": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "constraint_graph_replay": {
+          "type": "object",
+          "required": [
+            "ok"
+          ],
+          "properties": {
+            "ok": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "schedule_critical": {
+          "type": "object",
+          "required": [
+            "task_ids",
+            "resource_arc_ids",
+            "driving_constraint_ids",
+            "representative_path",
+            "path_count",
+            "paths",
+            "paths_truncated"
+          ],
+          "properties": {
+            "task_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "resource_arc_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "driving_constraint_ids": {
+              "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray"
+            },
+            "representative_path": {
+              "$ref": "#/$defs/schedulePath"
+            },
+            "path_count": {
+              "type": "string",
+              "pattern": "^[0-9]+$"
+            },
+            "paths": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/schedulePath"
+              }
+            },
+            "paths_truncated": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema_version",
+    "cli_contract_version",
+    "tool_version",
+    "operation",
+    "ok",
+    "document_id",
+    "source",
+    "source_digest",
+    "diagnostics",
+    "diagnostics_truncated",
+    "grammar_version",
+    "task_actuals",
+    "mode",
+    "precision",
+    "precedence",
+    "resource",
+    "temporal",
+    "assurance",
+    "acceptance",
+    "temporal_schedule",
+    "schedule_alerts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "Perttool.AnalysisResult.v7"
+    },
+    "cli_contract_version": {
+      "const": 9
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "operation": {
+      "const": "dag.analyze"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "document_id": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString"
+    },
+    "source": {
+      "type": "string"
+    },
+    "source_digest": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/digest"
+    },
+    "diagnostics": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics"
+    },
+    "diagnostics_truncated": {
+      "type": "boolean"
+    },
+    "grammar_version": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 8
+    },
+    "task_actuals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "task_id",
+          "status",
+          "coverage"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/$defs/taskStatus"
+          },
+          "coverage": {
+            "enum": [
+              "complete",
+              "open",
+              "finish_only",
+              "unrecorded",
+              "unavailable"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "mode": {
+      "enum": [
+        "precedence",
+        "resource",
+        "both"
+      ]
+    },
+    "precision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9
+    },
+    "duration_unit": {
+      "enum": [
+        "day",
+        "hour",
+        "point"
+      ]
+    },
+    "critical_epsilon": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/displayedRational"
+    },
+    "velocity": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableVelocity"
+    },
+    "velocity_forecast": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableVelocityForecast"
+    },
+    "precedence": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/precedence"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "resource": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/resource"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "temporal": {
+      "oneOf": [
+        {
+          "$ref": "Perttool.Common.v1.schema.json#/$defs/temporalAnalysis"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "assurance": {
+      "$ref": "Perttool.Common.v1.schema.json#/$defs/nullablePlanAssuranceProjection"
+    },
+    "temporal_schedule": {
+      "type": ["object", "null"]
+    },
+    "schedule_alerts": {
+      "type": ["object", "null"]
+    },
+    "acceptance": {
+      "oneOf": [
+        { "$ref": "Perttool.MilestoneAcceptanceResult.v1.schema.json#/$defs/acceptanceModel" },
+        { "type": "null" }
+      ]
+    }
+  },
+  "additionalProperties": false
+}
