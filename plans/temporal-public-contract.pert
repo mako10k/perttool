@@ -193,7 +193,7 @@ task DETAIL_EDITOR_ADAPTERS FORMAT_MIGRATION_READY -> EDITOR_ADAPTERS_READY:
   title "Adapt LSP and VSIX to Grammar 8 temporal semantics"
   description "Compose coordinate-preserving Grammar 8 preparation into DocumentSession, inject Contract 9 validation and formatting, retain GraphViewResult v1 compatibility, negotiate any additive temporal graph result explicitly, update strict VSIX bindings, DAG and POSTDUE presentation, TextMate grammar, bundled server, and trusted, untrusted, virtual, rapid-edit, replacement, and uninstall acceptance."
   duration 5p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -276,3 +276,11 @@ work_event WS_DETAIL_EDITOR_ADAPTERS_20260817:
   kind start
   occurred_at 2026-08-17T17:45:37+09:00
   planned_value 5p
+
+work_event WE-af51b28456cc1c0e24e9ce4ab38a7d921e75bdb05caa6c38b0f6044b4dcb9ab8:
+  model 1
+  task DETAIL_EDITOR_ADAPTERS
+  kind finish
+  occurred_at 2026-08-17T17:55:47+09:00
+  active_time 61/360h
+  effort 61/360ph
