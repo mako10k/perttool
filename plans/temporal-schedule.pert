@@ -194,6 +194,7 @@ task POSTDUE_NEXT POSTDUE_CORE_READY -> POSTDUE_NEXT_READY:
   title "Project actionable temporal alerts through Next"
   description "Return the same calendar, required-schedule, and alert identities with compact connected driver paths and exact full-analysis argv, preserve complete machine context, enforce only accepted earliest start eligibility, and prove that alert presence, lateness, latest-bound recovery, and criticality do not otherwise change Recommendation version 1 ranking, override validation, or assurance composition."
   duration 7p
+  status done
   priority 90
   requires:
     DEVELOPERS 1

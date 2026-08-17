@@ -1,0 +1,14 @@
+{"schema_version":"Perttool.PostdueNextCases.v1","cases":[
+  {"id":"PDN-001","depends_on":[],"boundary":"target_v8_internal"},
+  {"id":"PDN-002","depends_on":["PDN-001"],"boundary":"common_alert_identity"},
+  {"id":"PDN-003","depends_on":["PDN-002"],"boundary":"compact_driver_and_exact_argv"},
+  {"id":"PDN-004","depends_on":["PDN-002"],"boundary":"complete_machine_context"},
+  {"id":"PDN-005","depends_on":["PDN-004"],"boundary":"recommendation_byte_equivalence"},
+  {"id":"PDN-006","depends_on":["PDN-005"],"boundary":"authority_byte_equivalence"},
+  {"id":"PDN-007","depends_on":["PDN-006"],"boundary":"alert_presence_no_ranking_effect"},
+  {"id":"PDN-008","depends_on":["PDN-007"],"boundary":"unavailable_alert_context"},
+  {"id":"PDN-009","depends_on":["PDN-008"],"boundary":"document_binding"},
+  {"id":"PDN-010","depends_on":["PDN-009"],"boundary":"invalid_base_suppression_owned_upstream"},
+  {"id":"PDN-011","depends_on":["PDN-010"],"boundary":"public_v7_unchanged"},
+  {"id":"PDN-012","depends_on":["PDN-011"],"boundary":"no_cli_or_schema_activation"}
+]}

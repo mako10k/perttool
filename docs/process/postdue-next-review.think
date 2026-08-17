@@ -1,0 +1,40 @@
+framework DecisionAudit
+
+domain PostdueNextProjection:
+  description "Review of the internal actionable alert projection for Next"
+
+problem P1:
+  "Can Next expose complete actionable alert context without changing recommendation or start authority?"
+
+step S1:
+  evidence EV1:
+    "The target projection adds only the shared alert object to an existing NextResult v7 value and preserves all base objects by identity"
+    resource:
+      file "src/application/target-postdue-next.ts"
+      label "Next target projection"
+
+step S2:
+  evidence EV2:
+    "The common helper validates evaluator identity, emitted count, and total before reuse by any command surface"
+    resource:
+      file "src/application/target-postdue-projection.ts"
+      label "Shared projection boundary"
+
+step S3:
+  evidence EV3:
+    "Twelve cases prove compact drivers, exact argv, complete context, unchanged recommendation and authority, unavailable context, binding, and non-activation"
+    resource:
+      file "test/fixtures/postdue-next-v1.json"
+      label "Next projection cases"
+
+step S4:
+  decision D1 based_on P1, EV1, EV2:
+    "Accept schedule alerts as context outside Recommendation version 1 and every existing start-authority composition"
+
+step S5:
+  decision D2 based_on EV1, EV3, D1:
+    "Retain the target result internally until the atomic public Contract 9 task activates all temporal surfaces together"
+
+step S6:
+  pending PD1:
+    "Analysis, Check, public schemas and rendering, release, remote writes, and plan advance remain separate"
