@@ -89,3 +89,16 @@ export function composeContract9MixedMutation(
       { originalLabel: options.originalLabel ?? "original", updatedLabel: options.updatedLabel ?? "candidate" }),
     assuranceImpact: impact, diagnostics: Object.freeze([...legacy.diagnostics, ...impactDiagnostics]) });
 }
+
+export function composeContract9TemporalMutation(
+  text: string,
+  temporalPlanner: (candidateText: string) => TemporalScheduleMutationResult,
+  options: Readonly<{ originalLabel?: string; updatedLabel?: string }> = {},
+): Contract9MutationResultV6 {
+  const originalDigest = sha256DigestUtf8(text);
+  return composeContract9MixedMutation(text, () => Object.freeze({
+    schemaVersion: "Perttool.MutationResult.v5" as const, ok: true, documentId: null, changed: false,
+    originalDigest, updatedDigest: originalDigest, updatedText: text, diff: "", edits: Object.freeze([]),
+    governance: null, lifecycle: null, assuranceImpact: null, diagnostics: Object.freeze([]), diagnosticsTruncated: false,
+  }), temporalPlanner, options);
+}
