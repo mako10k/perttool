@@ -279,3 +279,60 @@ task TEMPORAL_ACCEPTANCE TEMPORAL_PUBLIC_READY -> TEMPORAL_ACCEPTED:
     PUBLIC_SURFACE 1
     PACKAGE_SURFACE 1
   source "CALENDAR-001; CONSTRAINT-001; POSTDUE-001"
+
+milestone_criterion_set TEMPORAL_CONTRACT_ACCEPTANCE:
+  milestone TEMPORAL_CONTRACT_ACCEPTED
+  revision R1
+  commitment sha256:46386ac0c4ee4907b01a2b3cce51e3c2f348eeefce6aa72c26d05ba88c0394df
+  criterion CONTRACT_RECORD required artifact "Accepted_temporal_schedule_contract"
+
+milestone_criterion_set CALENDAR_SOURCE_ACCEPTANCE:
+  milestone CALENDAR_SOURCE_READY
+  revision R1
+  commitment sha256:c2ef4748719239c934bb74bb2d4e3941ee51736a7e94f60220d1db289b975e69
+  criterion SOURCE_RECORD required artifact "Accepted_calendar_source_core"
+
+milestone_criterion_set CALENDAR_SCHEDULER_ACCEPTANCE:
+  milestone CALENDAR_SCHEDULER_READY
+  revision R1
+  commitment sha256:7ca8c1f85c061a65c255e5b153a37cbd977d89e36ed2b67f8dea423da704bd2d
+  criterion SCHEDULER_RECORD required artifact "Accepted_calendar_scheduler_core"
+
+milestone_acceptance_receipt TEMPORAL_CONTRACT_RECEIPT:
+  model 1
+  set TEMPORAL_CONTRACT_ACCEPTANCE
+  set_commitment sha256:46386ac0c4ee4907b01a2b3cce51e3c2f348eeefce6aa72c26d05ba88c0394df
+  criterion CONTRACT_RECORD
+  criterion_commitment sha256:41c222b33af255706d1d58da0afd47008d123eb9e55a5517693c96ee04daadeb
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/temporal-schedule-contract-acceptance.md"
+  evidence_revision 104003009c3227aa56e3cc87c8b33930f823f90a
+  verifier codex
+  occurred_at 2026-08-17T02:13:53Z
+
+milestone_acceptance_receipt CALENDAR_SOURCE_RECEIPT:
+  model 1
+  set CALENDAR_SOURCE_ACCEPTANCE
+  set_commitment sha256:c2ef4748719239c934bb74bb2d4e3941ee51736a7e94f60220d1db289b975e69
+  criterion SOURCE_RECORD
+  criterion_commitment sha256:5a21b954e74cacb62f900266c88098b78515cef617e28fcd66533fab1c52d0eb
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/temporal-schedule-source-core-acceptance.md"
+  evidence_revision 71411580d2d58fad03e0607a755ca1d5702b257f
+  verifier codex
+  occurred_at 2026-08-17T03:00:04Z
+
+milestone_acceptance_receipt CALENDAR_SCHEDULER_RECEIPT:
+  model 1
+  set CALENDAR_SCHEDULER_ACCEPTANCE
+  set_commitment sha256:7ca8c1f85c061a65c255e5b153a37cbd977d89e36ed2b67f8dea423da704bd2d
+  criterion SCHEDULER_RECORD
+  criterion_commitment sha256:ed8e8c11f299c50f36642adab04093c5b42c61d742cb07835df4424624fcc544
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/temporal-calendar-scheduler-acceptance.md"
+  evidence_revision 41b5ef4054dd6f36f8bfd03fd587129cf356deda
+  verifier codex
+  occurred_at 2026-08-17T04:07:27Z
