@@ -141,6 +141,9 @@ test("TCN-011 through TCN-014 migrates not_before without changing deadline or t
   const migrated = planTemporalConstraintMigration(legacy, TEMPORAL_CONSTRAINT_CAPABILITY);
   assert.equal(migrated.ok, true);
   assert.equal(migrated.changed, true);
+  assert.equal(migrated.sourceGrammarVersion, 7);
+  assert.equal(migrated.targetGrammarVersion, 8);
+  assert.equal(migrated.requiredAction, null);
   assert.deepEqual(migrated.migratedTaskIds, ["WORK"]);
   assert.match(migrated.updatedText, /version 8/u);
   assert.match(migrated.updatedText, /when start earliest 2026-08-17T10:00:00\+09:00/u);
@@ -148,4 +151,37 @@ test("TCN-011 through TCN-014 migrates not_before without changing deadline or t
   assert.equal((migrated.updatedText.match(/deadline /gu) ?? []).length, 2);
   assert.match(migrated.updatedText, /task WORK START -> END:/u);
   assert.match(migrated.updatedText, /duration 1h/u);
+});
+
+test("Grammar 8 migration is exact, idempotent, and never infers assurance", () => {
+  const legacy = `${[
+    "project MIGRATION_BOUNDARY:", "  version 7", '  title "Migration boundary"',
+    "  as_of 2026-08-17T09:00:00+09:00", "  duration_unit hour", "  finish END", "",
+    "milestone START:", '  title "Start"', "  state reached", "",
+    "milestone END:", '  title "End"', "",
+    "task mixed_id START -> END:", '  title "Work"', "  duration 1h",
+    "  not_before 2026-08-17T10:00:00+09:00", "",
+  ].join("\r\n")}\r\n`;
+  const migrated = planTemporalConstraintMigration(legacy, TEMPORAL_CONSTRAINT_CAPABILITY);
+  assert.equal(migrated.ok, true, JSON.stringify(migrated.source.diagnostics));
+  assert.deepEqual(migrated.migratedTaskIds, ["mixed_id"]);
+  assert.match(migrated.updatedText, /\uFEFF?project/u);
+  assert.ok(migrated.updatedText.includes("\r\n"));
+  const repeated = planTemporalConstraintMigration(migrated.updatedText, TEMPORAL_CONSTRAINT_CAPABILITY);
+  assert.equal(repeated.ok, true);
+  assert.equal(repeated.changed, false);
+  assert.equal(repeated.updatedText, migrated.updatedText);
+
+  const grammar6 = legacy.replace("version 7", "version 6");
+  const refused = planTemporalConstraintMigration(grammar6, TEMPORAL_CONSTRAINT_CAPABILITY);
+  assert.equal(refused.ok, false);
+  assert.equal(refused.sourceGrammarVersion, 6);
+  assert.equal(refused.updatedText, null);
+
+  const assured = legacy.replace("  finish END\r\n", "  finish END\r\n  plan_assurance_model 1\r\n  plan_assurance_hash_model 1\r\n");
+  const separated = planTemporalConstraintMigration(assured, TEMPORAL_CONSTRAINT_CAPABILITY);
+  assert.equal(separated.ok, false);
+  assert.equal(separated.changed, false);
+  assert.equal(separated.requiredAction, "initialize_plan_assurance_hash_model_2");
+  assert.equal(separated.updatedText, null);
 });

@@ -253,11 +253,29 @@ export function planTemporalConstraintMigration(
   capability: TemporalConstraintCapability,
 ): TemporalConstraintMigrationResult {
   if (capability !== TEMPORAL_CONSTRAINT_CAPABILITY) throw new TypeError("the temporal constraint capability is required");
+  const original = parseTemporalScheduleSource(text, TEMPORAL_SCHEDULE_SOURCE_CAPABILITY);
+  if (!original.ok || original.grammarVersion === null) {
+    return Object.freeze({ ok: false, changed: false, sourceGrammarVersion: original.grammarVersion,
+      targetGrammarVersion: null, updatedText: null, migratedTaskIds: Object.freeze([]), requiredAction: null, source: original });
+  }
+  if (original.grammarVersion === 8) {
+    return Object.freeze({ ok: true, changed: false, sourceGrammarVersion: 8, targetGrammarVersion: 8,
+      updatedText: text, migratedTaskIds: Object.freeze([]), requiredAction: null, source: original });
+  }
+  if (original.grammarVersion !== 7) {
+    return Object.freeze({ ok: false, changed: false, sourceGrammarVersion: original.grammarVersion,
+      targetGrammarVersion: null, updatedText: null, migratedTaskIds: Object.freeze([]), requiredAction: null, source: original });
+  }
+  const assuranceEnabled = /^  plan_assurance_model /mu.test(text) || /^  plan_assurance_hash_model /mu.test(text);
+  if (assuranceEnabled) {
+    return Object.freeze({ ok: false, changed: false, sourceGrammarVersion: 7, targetGrammarVersion: null,
+      updatedText: null, migratedTaskIds: Object.freeze([]), requiredAction: "initialize_plan_assurance_hash_model_2", source: original });
+  }
   const migratedTaskIds: string[] = [];
   let currentTask: string | null = null;
   let changed = false;
   const updatedText = text.split(/(?<=\n)/u).map((line) => {
-    const declaration = /^task ([A-Z][A-Z0-9_]*)\b/u.exec(line);
+    const declaration = /^task ([A-Za-z][A-Za-z0-9_-]*)\b/u.exec(line);
     if (declaration !== null) currentTask = declaration[1]!;
     else if (/^[a-z_]+ |^milestone |^resource |^calendar |^gate |^project /u.test(line)) currentTask = null;
     if (/^  version 7\s*$/u.test(line.trimEnd())) {
@@ -274,8 +292,11 @@ export function planTemporalConstraintMigration(
   return Object.freeze({
     ok: source.ok && source.model !== null,
     changed,
+    sourceGrammarVersion: 7,
+    targetGrammarVersion: source.ok && source.model !== null ? 8 : null,
     updatedText: source.ok && source.model !== null ? updatedText : null,
     migratedTaskIds: Object.freeze([...new Set(migratedTaskIds)].sort(compareStableStrings)),
+    requiredAction: null,
     source,
   });
 }

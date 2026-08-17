@@ -43,7 +43,10 @@ export interface TemporalConstraintResult {
 export interface TemporalConstraintMigrationResult {
   readonly ok: boolean;
   readonly changed: boolean;
+  readonly sourceGrammarVersion: number | null;
+  readonly targetGrammarVersion: 8 | null;
   readonly updatedText: string | null;
   readonly migratedTaskIds: readonly string[];
+  readonly requiredAction: "initialize_plan_assurance_hash_model_2" | null;
   readonly source: TemporalScheduleSourceResult | null;
 }
