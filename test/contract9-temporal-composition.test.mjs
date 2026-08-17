@@ -32,15 +32,22 @@ test("Contract 9 composition emits the three closed temporal result identities",
   assert.ok(checked.scheduleAlerts.occurrences[0].driver.steps.length > 0);
 });
 
-test("Contract 9 delegates legacy source without changing Contract 8 identities", () => {
+test("Contract 9 preserves legacy semantics under the replacement result identities", () => {
   const grammar7 = grammar8.replace("  version 8", "  version 7")
     .replace('  time_zone "Asia/Tokyo"\n  tzdb "2026c"\n  calendar STANDARD\n', "")
     .replace("calendar STANDARD:\n  mon 09:00..12:00, 13:00..17:00\n\n", "")
     .replace("  when reach latest 2026-08-17T10:00:00+09:00\n", "")
     .replace("  calendar STANDARD\n", "");
-  assert.equal(checkDocument(grammar7).schemaVersion, "Perttool.CheckResult.v5");
-  assert.equal(analyzeDocument(grammar7).schemaVersion, "Perttool.AnalysisResult.v6");
-  assert.equal(selectNextTasks(grammar7).schemaVersion, "Perttool.NextResult.v7");
+  const checked = checkDocument(grammar7);
+  const analyzed = analyzeDocument(grammar7);
+  const next = selectNextTasks(grammar7);
+  assert.equal(checked.schemaVersion, "Perttool.CheckResult.v6");
+  assert.equal(analyzed.schemaVersion, "Perttool.AnalysisResult.v7");
+  assert.equal(next.schemaVersion, "Perttool.NextResult.v8");
+  assert.equal(checked.scheduleAlerts, null);
+  assert.equal(analyzed.temporalSchedule, null);
+  assert.equal(analyzed.scheduleAlerts, null);
+  assert.equal(next.scheduleAlerts, null);
 });
 
 test("Contract 9 catalog is closed at 56 while the public Contract 8 catalog remains active", () => {

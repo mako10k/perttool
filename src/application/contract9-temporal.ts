@@ -5,9 +5,6 @@ import {
   analyzeDocument as analyzeContract8Document,
   checkDocument as checkContract8Document,
   selectNextTasks as selectContract8NextTasks,
-  type AnalysisResultV6,
-  type CheckResultV5,
-  type NextResultV7,
 } from "./contract8-milestone-acceptance.js";
 import type { AnalyzeOptions } from "./analyze.js";
 import type { CheckOptions } from "./check.js";
@@ -34,13 +31,13 @@ function temporalDiagnostics(text: string, maximum: number): readonly Diagnostic
   })));
 }
 
-export type Contract9CheckResult = CheckResultV5 | TargetPostdueCheckResultV6;
-export type Contract9AnalysisResult = AnalysisResultV6 | TargetPostdueAnalysisResultV7;
-export type Contract9NextResult = NextResultV7 | TargetPostdueNextResultV8;
+export type Contract9CheckResult = TargetPostdueCheckResultV6;
+export type Contract9AnalysisResult = TargetPostdueAnalysisResultV7;
+export type Contract9NextResult = TargetPostdueNextResultV8;
 type Contract9SourceOptions = { readonly sourceOperand?: string };
 
 export function checkDocument(text: string, options: CheckOptions & Contract9SourceOptions = {}): Contract9CheckResult {
-  if (!isGrammar8(text)) return checkContract8Document(text, options);
+  if (!isGrammar8(text)) return projectTargetPostdueCheck(checkContract8Document(text, options), null);
   const maximum = normalizeMaxDiagnostics(options.maxDiagnostics);
   const base = checkContract8Document(baseText(text), options);
   const extra = temporalDiagnostics(text, maximum);
@@ -57,7 +54,7 @@ export function checkDocument(text: string, options: CheckOptions & Contract9Sou
 }
 
 export function analyzeDocument(text: string, options: AnalyzeOptions & Contract9SourceOptions = {}): Contract9AnalysisResult {
-  if (!isGrammar8(text)) return analyzeContract8Document(text, options);
+  if (!isGrammar8(text)) return projectTargetPostdueAnalysis(analyzeContract8Document(text, options), null, null, null);
   const base = analyzeContract8Document(baseText(text), options);
   const extra = temporalDiagnostics(text, normalizeMaxDiagnostics(options.maxDiagnostics));
   const candidate = Object.freeze({ ...base, grammarVersion: 8, ok: base.ok && !extra.some(({ severity }) => severity === "error"),
@@ -68,7 +65,7 @@ export function analyzeDocument(text: string, options: AnalyzeOptions & Contract
 }
 
 export function selectNextTasks(text: string, options: AnalyzeOptions & NextOptions & Contract9SourceOptions = {}): Contract9NextResult {
-  if (!isGrammar8(text)) return selectContract8NextTasks(text, options);
+  if (!isGrammar8(text)) return projectTargetPostdueNext(selectContract8NextTasks(text, options), null);
   const base = selectContract8NextTasks(baseText(text), options);
   const extra = temporalDiagnostics(text, normalizeMaxDiagnostics(options.maxDiagnostics));
   const candidate = Object.freeze({ ...base, grammarVersion: 8, ok: base.ok && !extra.some(({ severity }) => severity === "error"),
