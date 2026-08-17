@@ -1,0 +1,169 @@
+# This detail plan refines TEMPORAL_PUBLIC_CONTRACT without replacing the authoritative parent plan.
+project TEMPORAL_PUBLIC_CONTRACT_DETAIL:
+  version 7
+  title "Grammar 8 and CLI Contract 9 public activation detail"
+  description "Refine the active TEMPORAL_PUBLIC_CONTRACT parent task into independently visible implementation slices. Complete internal temporal composition, source-preserving mutations, model-2 assurance, mixed legacy and temporal mutation candidates, replacement schemas, CLI projections, formatting and migration, and one atomic public integration gate. Preserve Contract 8 until the final integration task and leave TEMPORAL_ACCEPTANCE, release, remote, registry, Issue, and unrelated plan mutations outside this plan."
+  as_of 2026-08-17
+  duration_unit point
+  velocity 10p/1d
+  finish PUBLIC_CONTRACT_DETAIL_READY
+  goal_owner user
+  dag_owner user
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  capacity 1
+
+resource REVIEWERS:
+  title "Contract and compatibility review capacity"
+  capacity 1
+
+resource MUTATION_SURFACE:
+  title "Source-preserving mutation ownership"
+  capacity 1
+
+resource SCHEMA_SURFACE:
+  title "Result schema ownership"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "CLI projection and dispatch ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Public facade, adapter, and package ownership"
+  capacity 1
+
+milestone DETAIL_STARTED:
+  title "Public Contract 9 detail work started"
+  state reached
+
+milestone TEMPORAL_COMPOSITION_READY:
+  title "Temporal result composition ready"
+
+milestone SOURCE_MUTATION_READY:
+  title "Grammar 8 source mutation ready"
+
+milestone ASSURANCE_MODEL_READY:
+  title "Model-2 assurance ready"
+
+milestone MUTATION_DISPATCH_READY:
+  title "Temporal mutation dispatch ready"
+
+milestone MIXED_CANDIDATE_READY:
+  title "Mixed mutation candidate ready"
+
+milestone REPLACEMENT_SCHEMAS_READY:
+  title "Contract 9 replacement schemas ready"
+
+milestone CONTRACT9_CLI_READY:
+  title "Contract 9 CLI projections ready"
+
+milestone FORMAT_MIGRATION_READY:
+  title "Grammar 8 formatting and migration ready"
+
+milestone PUBLIC_CONTRACT_DETAIL_READY:
+  title "Atomic public Contract 9 activation ready for parent acceptance"
+
+task DETAIL_TEMPORAL_COMPOSITION DETAIL_STARTED -> TEMPORAL_COMPOSITION_READY:
+  title "Compose Contract 9 temporal read surfaces"
+  description "Compose CheckResult v6, AnalysisResult v7, NextResult v8, ProjectResult v5, POSTDUE projections, and legacy replacement identities without activating the public Contract 9 catalog."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+  source "2422936; 81bc3c1; e07a974; 08d7e62; d49f381"
+
+task DETAIL_SOURCE_MUTATIONS TEMPORAL_COMPOSITION_READY -> SOURCE_MUTATION_READY:
+  title "Implement Grammar 8 calendar and entity mutations"
+  description "Implement source-preserving calendar add, set, and remove plus project, resource, task, and milestone temporal field updates with complete candidate validation."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    MUTATION_SURFACE 1
+  source "e52630a; c46397b"
+
+task DETAIL_ASSURANCE_MODEL SOURCE_MUTATION_READY -> ASSURANCE_MODEL_READY:
+  title "Implement Contract 9 model-2 assurance"
+  description "Bind ordered event constraints into task contract hash model 2, inspection, sealing, governance, and result identity projection while preserving model-1 vectors."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+  source "baf2be2; 1c9e005; 8bb7ba2"
+
+task DETAIL_MUTATION_DISPATCH ASSURANCE_MODEL_READY -> MUTATION_DISPATCH_READY:
+  title "Expose and dispatch Contract 9 temporal mutations"
+  description "Expose the closed temporal CLI options and dispatch calendar and four entity set operations to the internal source planners while retaining legacy-only routing."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+    MUTATION_SURFACE 1
+  source "248617d; a9f4b24"
+
+task DETAIL_MIXED_CANDIDATE MUTATION_DISPATCH_READY -> MIXED_CANDIDATE_READY:
+  title "Compose mixed legacy and temporal mutation candidates"
+  description "Compose legacy field edits and temporal field edits into one byte-identical validated candidate, one non-overlapping edit set, one governance decision, and MutationResult v6 for preview, output, and safe write."
+  duration 3p
+  status active
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    MUTATION_SURFACE 1
+  source "TEMPORAL_PUBLIC_CONTRACT"
+
+task DETAIL_REPLACEMENT_SCHEMAS MIXED_CANDIDATE_READY -> REPLACEMENT_SCHEMAS_READY:
+  title "Bundle seven Contract 9 replacement schemas"
+  description "Bundle and validate ProjectResult v5, CheckResult v6, AnalysisResult v7, NextResult v8, MutationResult v6, PlanAssuranceResult v2, and UnitMigrationResult v4 while keeping the root catalog count at 23."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    SCHEMA_SURFACE 1
+  source "TEMPORAL_PUBLIC_CONTRACT"
+
+task DETAIL_CLI_PROJECTIONS REPLACEMENT_SCHEMAS_READY -> CONTRACT9_CLI_READY:
+  title "Complete Contract 9 CLI projections"
+  description "Implement JSON and text projection, Help, Guide, diagnostics, calendar commands, temporal set options, POSTDUE driver guidance, write routing, and exact 56-command Contract 9 discovery."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+  source "TEMPORAL_PUBLIC_CONTRACT"
+
+task DETAIL_FORMAT_MIGRATION CONTRACT9_CLI_READY -> FORMAT_MIGRATION_READY:
+  title "Complete Grammar 8 formatting and migration"
+  description "Activate source-preserving Grammar 8 formatting, Grammar 7 to 8 migration, unit migration preservation, algorithm and tzdb metadata, and legacy read compatibility without changing Advance shape unless required by the complete candidate contract."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    MUTATION_SURFACE 1
+  source "TEMPORAL_PUBLIC_CONTRACT"
+
+task DETAIL_PUBLIC_INTEGRATION FORMAT_MIGRATION_READY -> PUBLIC_CONTRACT_DETAIL_READY:
+  title "Activate Contract 9 atomically across public surfaces"
+  description "Switch Grammar 8 and CLI Contract 9 together across root, Core and Node facades, adapters, package inventory, compatibility fixtures, self-use, temporary link, and isolated package gates while proving Contract 8 remains the pre-switch boundary."
+  duration 4p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    CLI_SURFACE 1
+    SCHEMA_SURFACE 1
+  source "TEMPORAL_PUBLIC_CONTRACT"
