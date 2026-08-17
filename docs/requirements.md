@@ -1053,9 +1053,16 @@ delivery. The [Calendar-Aware Temporal Scheduling
 Contract](specs/temporal-schedule.md) accepts the minimal Grammar 8 source,
 calendar and scheduling algorithms, event-bound and required-schedule meaning,
 scoped legacy supersession, deterministic limits, and target CLI Contract 9
-boundary without activating runtime or release authority. The
+boundary without itself activating public runtime or release authority. The
 [llmthink backlog review](process/temporal-availability-constraints-backlog-review.think)
 records the evidence and simplification decisions.
+
+The internal [Temporal Schedule Source Core
+acceptance](process/temporal-schedule-source-core-acceptance.md) implements the
+closed Grammar 8 calendar, generic availability, and event-bound source seam
+behind an identity-checked capability. It preserves active Grammar 7 and CLI
+Contract 8 behavior and does not activate a public command, schema, result, or
+adapter surface.
 
 Generic availability must:
 

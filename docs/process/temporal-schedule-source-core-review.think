@@ -1,0 +1,88 @@
+framework DecisionAudit
+
+domain TemporalScheduleSourceCore:
+  description "Implementation audit for the internal Grammar 8 calendar and availability source boundary"
+
+problem P1:
+  "Does CALENDAR_SOURCE_CORE implement the accepted single-DSL source semantics without duplicating legacy parsing, introducing human-specific resource meaning, or prematurely activating Grammar 8 and CLI Contract 9?"
+
+step S1:
+  evidence EV1:
+    "The accepted integrated contract makes temporal-schedule.md the sole Grammar 8 temporal owner, retains the existing Grammar 1 through 7 behavior, and assigns scheduling arithmetic to the later CALENDAR_SCHEDULER_CORE task"
+    resource:
+      file "docs/specs/temporal-schedule.md"
+      label "Integrated temporal schedule contract"
+
+step S2:
+  evidence EV2:
+    "The implementation scans only the closed Grammar 8 calendar, project, resource, and when additions, replaces their non-newline bytes with same-length comments, maps version 8 to version 7, and delegates the remaining complete source to the existing milestone-acceptance and Grammar 6 validators"
+    resource:
+      file "src/temporal-schedule/source-lexical.ts"
+      label "Same-length lexical composition"
+    resource:
+      file "src/temporal-schedule/source.ts"
+      label "Internal source validator and projection"
+
+step S3:
+  evidence EV3:
+    "The source model contains reusable project calendars, optional per-resource calendar replacement, exact validity bounds, zero-through-nominal capacity replacements, and task or milestone event bounds without a human resource kind, task calendar, recurrence expression, or external calendar"
+    resource:
+      file "src/temporal-schedule/source-types.ts"
+      label "Closed generic source model"
+
+step S4:
+  evidence EV4:
+    "The tracked zone artifact is generated from the exact accepted tzdata2026c archive digest, contains 598 compiled IANA names and transitions over the accepted 1970 through 2100 range, and is queried without the host zone, locale, filesystem, network, or wall clock"
+    resource:
+      file "scripts/generate-tzdb-2026c.mjs"
+      label "Deterministic TZif projection generator"
+    resource:
+      file "src/temporal-schedule/tzdb-2026c.ts"
+      label "Pinned offline zone projection"
+
+step S5:
+  evidence EV5:
+    "The internal formatter canonicalizes weekly entries, exceptions, resource overrides, exact date-times, and event-bound order while preserving unrelated fields and comments; candidate mutation composition returns no text or edits unless the complete final Grammar 8 source validates"
+    resource:
+      file "src/temporal-schedule/format.ts"
+      label "Formatter and complete-candidate mutation boundary"
+
+step S6:
+  evidence EV6:
+    "Fourteen dependency-ordered cases cover identity checking, legacy delegation, complete projection, zone offsets and daylight-saving transitions, invalid profiles and limits, formatter idempotence, candidate failure, CRLF and BOM spans, Grammar 7 milestone records, immutable zone data, and unchanged active catalogs"
+    resource:
+      file "test/fixtures/temporal-schedule-source-core-v1.json"
+      label "Source Core cases"
+    resource:
+      file "test/temporal-schedule-source-core.test.mjs"
+      label "Executable Source Core acceptance"
+
+step S7:
+  evidence EV7:
+    "The source modules are absent from the package root, Core, and Node facades; the active public result, command, schema, export, Grammar 7, and CLI Contract 8 identities remain unchanged"
+    resource:
+      file "src/index.ts"
+      label "Unchanged package-root facade"
+    resource:
+      file "test/fixtures/temporal-schedule-contract-v1.json"
+      label "Frozen active-runtime inventory"
+
+step S8:
+  decision D1 based_on P1, EV1, EV2:
+    "Accept same-length source composition instead of extending the active parser in place: it preserves every legacy read and source offset while keeping the future grammar behind one identity-checked internal capability"
+
+step S9:
+  decision D2 based_on EV1, EV3, EV4:
+    "Accept the generic calendar and available-capacity source model and pinned offline zone projection; do not add human availability, calendar inheritance, RRULE, host-zone fallback, or scheduler allocation behavior"
+
+step S10:
+  decision D3 based_on EV2, EV5, EV6:
+    "Accept canonical source projection and complete-candidate TextEdit validation as the Source Core mutation seam; reserve typed CLI calendar add, set, and remove requests plus persistence for the later public-contract slice"
+
+step S11:
+  decision D4 based_on EV6, EV7, D1, D2, D3:
+    "Accept CALENDAR_SOURCE_CORE only if focused, compatibility, static, documentation, self-use, adapter, and package gates pass without a new complexity baseline or public activation"
+
+step S12:
+  pending PD1:
+    "Working-time arithmetic, local-window instant expansion, simultaneous resource allocation, calendar interruption, utilization, required schedules, POSTDUE, public activation, release, remote writes, and plan advance remain outside this task"

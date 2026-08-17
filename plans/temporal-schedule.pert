@@ -140,6 +140,7 @@ task CALENDAR_SOURCE_CORE TEMPORAL_CONTRACT_ACCEPTED -> CALENDAR_SOURCE_READY:
   title "Implement calendar and availability source semantics"
   description "Implement the internal Grammar 8 parser, validator, formatter, source spans, semantic projection, reusable project calendars, per-resource selection, validity bounds, nonoverlapping capacity overrides, canonical ordering, hard limits, and source-preserving mutation plans while preserving every legacy Grammar 1 through 7 read and continuous-calendar result."
   duration 10p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

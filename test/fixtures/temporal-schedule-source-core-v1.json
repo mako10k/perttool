@@ -1,0 +1,92 @@
+{
+  "schema_version": "Perttool.TemporalScheduleSourceCoreCases.v1",
+  "model_version": 1,
+  "grammar_version": 8,
+  "capability": "perttool.target-grammar-8-temporal-schedule-source@1",
+  "tzdb": {
+    "release": "2026c",
+    "archive_sha256": "e4a178a4477f3d0ea77cc31828ff72aa38feff8d61aa13e7e99e142e9d902be4",
+    "zone_count": 598,
+    "range_start": 0,
+    "range_end": 4102444800
+  },
+  "limits": {
+    "calendars": 256,
+    "weekly_windows_per_calendar": 64,
+    "exceptions_per_calendar": 4096,
+    "availability_overrides_per_resource": 4096,
+    "aggregate_change_instants": 100000
+  },
+  "cases": [
+    {
+      "id": "TSS-001",
+      "depends_on": [],
+      "boundary": "identity_checked_internal_capability_and_public_absence"
+    },
+    {
+      "id": "TSS-002",
+      "depends_on": ["TSS-001"],
+      "boundary": "grammar_1_through_7_delegate_without_source_or_result_change"
+    },
+    {
+      "id": "TSS-003",
+      "depends_on": ["TSS-002"],
+      "boundary": "complete_grammar_8_calendar_resource_and_bound_projection"
+    },
+    {
+      "id": "TSS-004",
+      "depends_on": ["TSS-003"],
+      "boundary": "pinned_zone_catalog_range_and_offset_validation"
+    },
+    {
+      "id": "TSS-005",
+      "depends_on": ["TSS-003"],
+      "boundary": "weekly_exception_selection_and_canonical_order"
+    },
+    {
+      "id": "TSS-006",
+      "depends_on": ["TSS-003", "TSS-004"],
+      "boundary": "resource_calendar_validity_capacity_and_nonoverlap"
+    },
+    {
+      "id": "TSS-007",
+      "depends_on": ["TSS-004", "TSS-006"],
+      "boundary": "closed_profile_reference_window_offset_and_limit_rejection"
+    },
+    {
+      "id": "TSS-008",
+      "depends_on": ["TSS-003", "TSS-004"],
+      "boundary": "task_and_milestone_bound_pairs_and_not_before_rejection"
+    },
+    {
+      "id": "TSS-009",
+      "depends_on": ["TSS-005", "TSS-006", "TSS-008"],
+      "boundary": "source_preserving_canonical_formatter_and_idempotence"
+    },
+    {
+      "id": "TSS-010",
+      "depends_on": ["TSS-007", "TSS-009"],
+      "boundary": "complete_candidate_validated_text_edit_composition"
+    },
+    {
+      "id": "TSS-011",
+      "depends_on": ["TSS-003"],
+      "boundary": "exact_source_spans_crlf_and_diagnostic_truncation"
+    },
+    {
+      "id": "TSS-012",
+      "depends_on": ["TSS-002", "TSS-003"],
+      "boundary": "grammar_7_milestone_acceptance_records_survive_composition"
+    },
+    {
+      "id": "TSS-013",
+      "depends_on": ["TSS-004", "TSS-011"],
+      "boundary": "offline_generated_zone_data_is_deeply_immutable"
+    },
+    {
+      "id": "TSS-014",
+      "depends_on": ["TSS-001", "TSS-010", "TSS-013"],
+      "boundary": "active_grammar_cli_exports_commands_schemas_and_authority_unchanged"
+    }
+  ]
+}

@@ -3810,7 +3810,11 @@ The contract uses scoped supersession to avoid accumulating partially
 overlapping temporal specifications. Grammar 1 through 7 retain the exact
 continuous fixed-offset and advisory-deadline contracts. Grammar 8 uses the
 integrated contract, with an unchanged continuous compatibility profile when
-no named-zone fields are present. Runtime activation is still absent.
+no named-zone fields are present. The accepted internal
+[Source Core](process/temporal-schedule-source-core-acceptance.md) now owns
+parsing, validation, formatting, source spans, generic availability
+projection, and complete-candidate edit validation. Scheduler and public
+runtime activation are still absent.
 
 The implementation order is deliberately linear through the semantic
 prerequisites:
