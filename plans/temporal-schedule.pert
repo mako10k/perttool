@@ -10,19 +10,6 @@ project TEMPORAL_SCHEDULE:
   dag_owner user
 
 
-milestone_acceptance_migration GRAMMAR_7_BASELINE:
-  model 1
-  repository git:sha1:41b5ef4054dd6f36f8bfd03fd587129cf356deda:index:a1c35947e5854330f3e8dd5f49c314aaaad6a7b8
-  path "plans/temporal-schedule.pert"
-  object_format sha1
-  head 41b5ef4054dd6f36f8bfd03fd587129cf356deda
-  blob a1c35947e5854330f3e8dd5f49c314aaaad6a7b8
-  source_digest sha256:c0737f10f271f93b89efbb098a7ece31d8ae9f9b59544bd970d3e9908f6401ba
-  candidate_digest sha256:0597f2e8803e50b12d3cb6545cfbd87292fce5ee063b1f30a0334fc653b496d0
-  grandfathered TEMPORAL_PLANNING_STARTED
-milestone TEMPORAL_PLANNING_STARTED:
-  title "Temporal scheduling planning started"
-  state reached
 
 resource DEVELOPERS:
   title "Implementation capacity"
@@ -94,14 +81,11 @@ resource PACKAGE_SURFACE:
   description "Own isolated-package, installed CLI, adapters, self-use, and distribution-boundary verification."
   capacity 1
 
-milestone TEMPORAL_CONTRACT_ACCEPTED:
-  title "Calendar-aware temporal contract accepted"
 
-milestone CALENDAR_SOURCE_READY:
-  title "Calendar and availability source Core ready"
 
 milestone CALENDAR_SCHEDULER_READY:
   title "Calendar-aware scheduler Core ready"
+  state reached
 
 milestone CONSTRAINT_SOURCE_READY:
   title "Temporal constraint source Core ready"
@@ -133,43 +117,8 @@ milestone TEMPORAL_PUBLIC_READY:
 milestone TEMPORAL_ACCEPTED:
   title "Calendar-aware temporal scheduling accepted"
 
-task TEMPORAL_SCHEDULE_CONTRACT TEMPORAL_PLANNING_STARTED -> TEMPORAL_CONTRACT_ACCEPTED:
-  title "Accept the single-DSL temporal scheduling contract"
-  description "Fix the minimal calendar, availability, and when syntax; project time basis and versioned zone data; half-open windows and exceptions; finite and partial capacity; working-duration arithmetic; multi-resource gaps; earliest and latest event bounds; deadline compatibility; required-schedule anchoring; POSTDUE alert semantics; driver paths; deterministic limits; governance, assurance, migration, result, algorithm, and installed-package boundaries; and dependency-ordered machine cases before implementation."
-  duration 10p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    REVIEWERS 1
-    CALENDAR_MODEL 1
-    CONSTRAINT_MODEL 1
-    DEADLINE_MODEL 1
-  source "CALENDAR-001; CONSTRAINT-001; POSTDUE-001"
 
-task CALENDAR_SOURCE_CORE TEMPORAL_CONTRACT_ACCEPTED -> CALENDAR_SOURCE_READY:
-  title "Implement calendar and availability source semantics"
-  description "Implement the internal Grammar 8 parser, validator, formatter, source spans, semantic projection, reusable project calendars, per-resource selection, validity bounds, nonoverlapping capacity overrides, canonical ordering, hard limits, and source-preserving mutation plans while preserving every legacy Grammar 1 through 7 read and continuous-calendar result."
-  duration 10p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    CALENDAR_MODEL 1
-    MUTATION_SURFACE 1
-  source "CALENDAR-001"
 
-task CALENDAR_SCHEDULER_CORE CALENDAR_SOURCE_READY -> CALENDAR_SCHEDULER_READY:
-  title "Implement calendar-aware resource scheduling"
-  description "Implement exact working-time addition and subtraction, named-zone and daylight-saving rules, effective time-varying capacity, finite resources, multiple-resource intersection, deterministic interruption across non-working gaps, active remaining work, forward precedence and parallel-SGS calendar profiles, utilization, unavailable horizon handling, and unchanged opt-out behavior without reading the wall clock, locale, network, or Git."
-  duration 12p
-  status done
-  priority 100
-  requires:
-    DEVELOPERS 1
-    CALENDAR_MODEL 1
-    SCHEDULER_MODEL 1
-  source "CALENDAR-001"
 
 task CONSTRAINT_SOURCE_CORE CALENDAR_SCHEDULER_READY -> CONSTRAINT_SOURCE_READY:
   title "Implement task and milestone event constraints"
@@ -280,49 +229,11 @@ task TEMPORAL_ACCEPTANCE TEMPORAL_PUBLIC_READY -> TEMPORAL_ACCEPTED:
     PACKAGE_SURFACE 1
   source "CALENDAR-001; CONSTRAINT-001; POSTDUE-001"
 
-milestone_criterion_set TEMPORAL_CONTRACT_ACCEPTANCE:
-  milestone TEMPORAL_CONTRACT_ACCEPTED
-  revision R1
-  commitment sha256:46386ac0c4ee4907b01a2b3cce51e3c2f348eeefce6aa72c26d05ba88c0394df
-  criterion CONTRACT_RECORD required artifact "Accepted_temporal_schedule_contract"
-
-milestone_criterion_set CALENDAR_SOURCE_ACCEPTANCE:
-  milestone CALENDAR_SOURCE_READY
-  revision R1
-  commitment sha256:c2ef4748719239c934bb74bb2d4e3941ee51736a7e94f60220d1db289b975e69
-  criterion SOURCE_RECORD required artifact "Accepted_calendar_source_core"
-
 milestone_criterion_set CALENDAR_SCHEDULER_ACCEPTANCE:
   milestone CALENDAR_SCHEDULER_READY
   revision R1
   commitment sha256:7ca8c1f85c061a65c255e5b153a37cbd977d89e36ed2b67f8dea423da704bd2d
   criterion SCHEDULER_RECORD required artifact "Accepted_calendar_scheduler_core"
-
-milestone_acceptance_receipt TEMPORAL_CONTRACT_RECEIPT:
-  model 1
-  set TEMPORAL_CONTRACT_ACCEPTANCE
-  set_commitment sha256:46386ac0c4ee4907b01a2b3cce51e3c2f348eeefce6aa72c26d05ba88c0394df
-  criterion CONTRACT_RECORD
-  criterion_commitment sha256:41c222b33af255706d1d58da0afd47008d123eb9e55a5517693c96ee04daadeb
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/temporal-schedule-contract-acceptance.md"
-  evidence_revision 104003009c3227aa56e3cc87c8b33930f823f90a
-  verifier codex
-  occurred_at 2026-08-17T02:13:53Z
-
-milestone_acceptance_receipt CALENDAR_SOURCE_RECEIPT:
-  model 1
-  set CALENDAR_SOURCE_ACCEPTANCE
-  set_commitment sha256:c2ef4748719239c934bb74bb2d4e3941ee51736a7e94f60220d1db289b975e69
-  criterion SOURCE_RECORD
-  criterion_commitment sha256:5a21b954e74cacb62f900266c88098b78515cef617e28fcd66533fab1c52d0eb
-  action verify
-  evidence_kind artifact
-  evidence_reference "docs/process/temporal-schedule-source-core-acceptance.md"
-  evidence_revision 71411580d2d58fad03e0607a755ca1d5702b257f
-  verifier codex
-  occurred_at 2026-08-17T03:00:04Z
 
 milestone_acceptance_receipt CALENDAR_SCHEDULER_RECEIPT:
   model 1
