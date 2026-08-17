@@ -104,7 +104,7 @@ test("Core dependency boundary permits only exact composition consumers", async 
     nodeHost.baseline.root_runtime_exports,
     fixture.target.package_root_export_count,
   );
-  assert.equal(files.length, nodeHost.target.typescript_source_files + 25);
+  assert.equal(files.length, nodeHost.target.typescript_source_files + 29);
 });
 
 test("relocated services retain exact compatibility facades", async () => {
