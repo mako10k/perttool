@@ -63,7 +63,7 @@
       "maximum": 8
     },
     "schedule_alerts": {
-      "type": ["object", "null"]
+      "$ref": "Perttool.AnalysisResult.v7.schema.json#/properties/schedule_alerts"
     },
     "summary": {
       "type": "object",

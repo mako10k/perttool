@@ -637,6 +637,42 @@
         }
       },
       "additionalProperties": false
+    },
+    "calendarProfile": {
+      "type": "object", "required": ["state", "algorithm", "makespan_seconds", "tasks", "milestones", "utilization", "unavailable_causes"],
+      "properties": {
+        "state": { "enum": ["available", "unavailable", "not_applicable"] },
+        "algorithm": { "type": "object", "required": ["id", "version", "optimal"], "properties": {
+          "id": { "enum": ["perttool.temporal-precedence-earliest", "perttool.temporal-parallel-sgs"] }, "version": { "const": 2 }, "optimal": { "enum": [false, null] }
+        }, "additionalProperties": false },
+        "makespan_seconds": { "oneOf": [{ "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, { "type": "null" }] },
+        "tasks": { "type": "array", "items": { "type": "object", "required": ["id", "status", "expected_work_seconds", "remaining_work_seconds", "start", "finish", "segments", "requirements", "resource_wait_seconds", "conditional_blocked"], "properties": {
+          "id": { "type": "string" }, "status": { "enum": ["planned", "active", "blocked", "done"] },
+          "expected_work_seconds": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "remaining_work_seconds": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" },
+          "start": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "finish": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" },
+          "segments": { "type": "array", "items": { "type": "object", "required": ["start", "end"], "properties": { "start": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "end": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" } }, "additionalProperties": false } },
+          "requirements": { "type": "array", "items": { "type": "object", "required": ["resource_id", "units"], "properties": { "resource_id": { "type": "string" }, "units": { "type": "number", "exclusiveMinimum": 0 } }, "additionalProperties": false } },
+          "resource_wait_seconds": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "conditional_blocked": { "type": "boolean" }
+        }, "additionalProperties": false } },
+        "milestones": { "type": "array", "items": { "type": "object", "required": ["id", "reach"], "properties": { "id": { "type": "string" }, "reach": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" } }, "additionalProperties": false } },
+        "utilization": { "type": "array", "items": { "type": "object", "required": ["resource_id", "allocated_unit_seconds", "available_unit_seconds", "utilization"], "properties": {
+          "resource_id": { "type": "string" }, "allocated_unit_seconds": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "available_unit_seconds": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" },
+          "utilization": { "oneOf": [{ "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, { "type": "null" }] }
+        }, "additionalProperties": false } },
+        "unavailable_causes": { "type": "array", "items": { "type": "object", "required": ["code", "task_ids", "resource_ids", "limit"], "properties": {
+          "code": { "enum": ["calendar_profile_absent", "zone_range_exceeded", "workday_relationship_missing", "no_feasible_window", "calendar_search_limit", "active_capacity_conflict"] },
+          "task_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "resource_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, "limit": { "type": ["integer", "null"], "minimum": 0 }
+        }, "additionalProperties": false } }
+      }, "additionalProperties": false
+    },
+    "requiredComparison": {
+      "type": "object", "required": ["state", "classification", "optimal", "events"], "properties": {
+        "state": { "enum": ["available", "unavailable"] }, "classification": { "enum": ["feasible", "precedence_infeasible", "resource_heuristic_late", null] }, "optimal": { "enum": [false, null] },
+        "events": { "type": "array", "items": { "type": "object", "required": ["entity_kind", "entity_id", "event", "required", "projected", "signed_slack_seconds"], "properties": {
+          "entity_kind": { "enum": ["task", "milestone"] }, "entity_id": { "type": "string" }, "event": { "enum": ["start", "finish", "reach"] },
+          "required": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "projected": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "signed_slack_seconds": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }
+        }, "additionalProperties": false } }
+      }, "additionalProperties": false
     }
   },
   "type": "object",
@@ -793,10 +829,138 @@
       "$ref": "Perttool.Common.v1.schema.json#/$defs/nullablePlanAssuranceProjection"
     },
     "temporal_schedule": {
-      "type": ["object", "null"]
+      "oneOf": [
+        {
+          "type": "object", "required": ["precedence", "resource", "required"],
+          "properties": {
+            "precedence": { "$ref": "#/$defs/calendarProfile" }, "resource": { "$ref": "#/$defs/calendarProfile" },
+            "required": {
+              "type": "object", "required": ["model_version", "document_id", "source", "state", "algorithm", "anchor", "tasks", "milestones", "precedence_comparison", "resource_comparison", "unavailable_causes"],
+              "properties": {
+                "model_version": { "const": 1 }, "document_id": { "type": "string" },
+                "source": { "type": "object", "required": ["ok", "grammar_version", "document_id", "model", "diagnostics", "diagnostic_counts", "diagnostics_truncated"], "properties": {
+                  "ok": { "type": "boolean" }, "grammar_version": { "type": ["integer", "null"], "minimum": 1, "maximum": 8 }, "document_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+                  "model": { "oneOf": [{ "$ref": "Perttool.ProjectResult.v5.schema.json#/$defs/temporalSchedule" }, { "type": "null" }] }, "diagnostics": { "$ref": "Perttool.Common.v1.schema.json#/$defs/diagnostics" },
+                  "diagnostic_counts": { "type": "object", "required": ["errors", "warnings", "info"], "properties": { "errors": { "type": "integer", "minimum": 0 }, "warnings": { "type": "integer", "minimum": 0 }, "info": { "type": "integer", "minimum": 0 } }, "additionalProperties": false },
+                  "diagnostics_truncated": { "type": "boolean" }
+                }, "additionalProperties": false },
+                "state": { "enum": ["available", "absent", "unavailable", "not_applicable"] },
+                "algorithm": { "type": "object", "required": ["id", "version", "optimal"], "properties": { "id": { "const": "perttool.required-precedence-backward" }, "version": { "const": 1 }, "optimal": { "type": "null" } }, "additionalProperties": false },
+                "anchor": { "oneOf": [{ "type": "object", "required": ["source", "instant"], "properties": { "source": { "enum": ["latest_bound", "advisory_deadline", "coincident"] }, "instant": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" } }, "additionalProperties": false }, { "type": "null" }] },
+                "tasks": { "type": "array", "items": { "type": "object", "required": ["id", "required_start", "required_finish", "segments", "driver_ids"], "properties": {
+                  "id": { "type": "string" }, "required_start": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "required_finish": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" },
+                  "segments": { "type": "array", "items": { "type": "object", "required": ["start", "end"], "properties": { "start": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "end": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" } }, "additionalProperties": false } }, "driver_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+                }, "additionalProperties": false } },
+                "milestones": { "type": "array", "items": { "type": "object", "required": ["id", "required_reach", "driver_ids"], "properties": { "id": { "type": "string" }, "required_reach": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, "driver_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" } }, "additionalProperties": false } },
+                "precedence_comparison": { "$ref": "#/$defs/requiredComparison" }, "resource_comparison": { "$ref": "#/$defs/requiredComparison" },
+                "unavailable_causes": { "type": "array", "items": { "type": "object", "required": ["code", "entity_ids"], "properties": { "code": { "enum": ["required_anchor_absent", "forward_schedule_unavailable", "calendar_subtraction_unavailable"] }, "entity_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" } }, "additionalProperties": false } }
+              }, "additionalProperties": false
+            }
+          }, "additionalProperties": false
+        },
+        { "type": "null" }
+      ]
     },
     "schedule_alerts": {
-      "type": ["object", "null"]
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["evaluator", "state", "summary", "occurrences", "truncation", "unavailable_causes"],
+          "properties": {
+            "evaluator": {
+              "type": "object",
+              "required": ["id", "version", "optimal"],
+              "properties": {
+                "id": { "const": "perttool.schedule-alert" },
+                "version": { "const": 1 },
+                "optimal": { "type": "null" }
+              },
+              "additionalProperties": false
+            },
+            "state": { "enum": ["available", "unavailable", "not_applicable"] },
+            "summary": {
+              "type": "object",
+              "required": ["postdue", "postdue_forecast", "total"],
+              "properties": {
+                "postdue": { "type": "integer", "minimum": 0 },
+                "postdue_forecast": { "type": "integer", "minimum": 0 },
+                "total": { "type": "integer", "minimum": 0 }
+              },
+              "additionalProperties": false
+            },
+            "occurrences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["alert_id", "kind", "subject", "event", "target", "comparison", "proof", "driver", "source_digest", "source_range"],
+                "properties": {
+                  "alert_id": { "type": "string" },
+                  "kind": { "enum": ["POSTDUE", "POSTDUE_FORECAST"] },
+                  "subject": {
+                    "type": "object",
+                    "required": ["kind", "id"],
+                    "properties": { "kind": { "enum": ["task", "milestone"] }, "id": { "type": "string" } },
+                    "additionalProperties": false
+                  },
+                  "event": { "enum": ["start", "finish", "reach"] },
+                  "target": {
+                    "type": "object",
+                    "required": ["subject_kind", "subject_id", "event", "target_kind", "temporal_kind", "instant", "source_text", "source_range"],
+                    "properties": {
+                      "subject_kind": { "enum": ["task", "milestone"] }, "subject_id": { "type": "string" },
+                      "event": { "enum": ["start", "finish", "reach"] }, "target_kind": { "enum": ["deadline", "latest"] },
+                      "temporal_kind": { "enum": ["instant", "date"] },
+                      "instant": { "oneOf": [{ "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" }, { "type": "null" }] },
+                      "source_text": { "type": "string" }, "source_range": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+                    },
+                    "additionalProperties": false
+                  },
+                  "comparison": {
+                    "type": "object", "required": ["snapshot_or_projection", "signed_difference_seconds", "relation"],
+                    "properties": {
+                      "snapshot_or_projection": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" },
+                      "signed_difference_seconds": { "$ref": "Perttool.Common.v1.schema.json#/$defs/rational" },
+                      "relation": { "const": "after" }
+                    }, "additionalProperties": false
+                  },
+                  "proof": {
+                    "type": "object", "required": ["kind", "optimal"],
+                    "properties": { "kind": { "enum": ["current_snapshot", "precedence_infeasible", "resource_heuristic_late"] }, "optimal": { "enum": [false, null] } },
+                    "additionalProperties": false
+                  },
+                  "driver": {
+                    "type": "object", "required": ["state", "path_id", "scope", "steps", "truncated", "total_steps", "analysis_argv", "cause"],
+                    "properties": {
+                      "state": { "enum": ["available", "not_computed", "unavailable"] }, "path_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" },
+                      "scope": { "enum": ["project_finish", "target"] },
+                      "steps": { "type": "array", "items": { "type": "object", "required": ["kind", "id", "source_milestone_id", "target_milestone_id"], "properties": {
+                        "kind": { "enum": ["task", "gate", "resource_wait"] }, "id": { "type": "string" },
+                        "source_milestone_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }, "target_milestone_id": { "$ref": "Perttool.Common.v1.schema.json#/$defs/nullableString" }
+                      }, "additionalProperties": false } },
+                      "truncated": { "type": "boolean" }, "total_steps": { "type": ["integer", "null"], "minimum": 0 },
+                      "analysis_argv": { "oneOf": [{ "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }, { "type": "null" }] },
+                      "cause": { "enum": ["driver_not_computed", "driver_unavailable", null] }
+                    }, "additionalProperties": false
+                  },
+                  "source_digest": { "$ref": "Perttool.Common.v1.schema.json#/$defs/digest" },
+                  "source_range": { "$ref": "Perttool.Common.v1.schema.json#/$defs/span" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "truncation": {
+              "type": "object", "required": ["truncated", "emitted", "total", "total_known"],
+              "properties": { "truncated": { "type": "boolean" }, "emitted": { "type": "integer", "minimum": 0 }, "total": { "type": ["integer", "null"], "minimum": 0 }, "total_known": { "type": "boolean" } },
+              "additionalProperties": false
+            },
+            "unavailable_causes": { "type": "array", "items": { "type": "object", "required": ["code", "entity_ids"], "properties": {
+              "code": { "type": "string" }, "entity_ids": { "$ref": "Perttool.Common.v1.schema.json#/$defs/stringArray" }
+            }, "additionalProperties": false } }
+          },
+          "additionalProperties": false
+        },
+        { "type": "null" }
+      ]
     },
     "acceptance": {
       "oneOf": [
