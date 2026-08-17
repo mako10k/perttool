@@ -155,7 +155,7 @@ task DETAIL_FORMAT_MIGRATION CONTRACT9_CLI_READY -> FORMAT_MIGRATION_READY:
     MUTATION_SURFACE 1
   source "TEMPORAL_PUBLIC_CONTRACT"
 
-task DETAIL_PUBLIC_INTEGRATION FORMAT_MIGRATION_READY -> PUBLIC_CONTRACT_DETAIL_READY:
+task DETAIL_PUBLIC_INTEGRATION EDITOR_ADAPTERS_READY -> PUBLIC_CONTRACT_DETAIL_READY:
   title "Activate Contract 9 atomically across public surfaces"
   description "Switch Grammar 8 and CLI Contract 9 together across root, Core and Node facades, adapters, package inventory, compatibility fixtures, self-use, temporary link, and isolated package gates while proving Contract 8 remains the pre-switch boundary."
   duration 4p
@@ -166,4 +166,19 @@ task DETAIL_PUBLIC_INTEGRATION FORMAT_MIGRATION_READY -> PUBLIC_CONTRACT_DETAIL_
     PACKAGE_SURFACE 1
     CLI_SURFACE 1
     SCHEMA_SURFACE 1
+  source "TEMPORAL_PUBLIC_CONTRACT"
+
+milestone EDITOR_ADAPTERS_READY:
+  title "LSP and VSIX temporal adapters ready"
+
+task DETAIL_EDITOR_ADAPTERS FORMAT_MIGRATION_READY -> EDITOR_ADAPTERS_READY:
+  title "Adapt LSP and VSIX to Grammar 8 temporal semantics"
+  description "Compose coordinate-preserving Grammar 8 preparation into DocumentSession, inject Contract 9 validation and formatting, retain GraphViewResult v1 compatibility, negotiate any additive temporal graph result explicitly, update strict VSIX bindings, DAG and POSTDUE presentation, TextMate grammar, bundled server, and trusted, untrusted, virtual, rapid-edit, replacement, and uninstall acceptance."
+  duration 5p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+    PACKAGE_SURFACE 1
   source "TEMPORAL_PUBLIC_CONTRACT"
