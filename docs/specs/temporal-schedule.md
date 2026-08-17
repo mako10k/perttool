@@ -4,7 +4,7 @@
 - Accepted: 2026-08-17
 - Target grammar: 8
 - Target CLI contract: 9
-- Implementation status: internal Source Core accepted; scheduler and public runtime inactive
+- Implementation status: internal Source and Scheduler Cores accepted; public runtime inactive
 - Related requirements: [../requirements.md](../requirements.md)
 - Legacy calendar baseline: [temporal-calendar.md](temporal-calendar.md)
 - Legacy deadline baseline: [temporal-deadline.md](temporal-deadline.md)
@@ -16,6 +16,8 @@
 - Selected plan: [../../plans/temporal-schedule.pert](../../plans/temporal-schedule.pert)
 - Source Core acceptance:
   [../process/temporal-schedule-source-core-acceptance.md](../process/temporal-schedule-source-core-acceptance.md)
+- Scheduler Core acceptance:
+  [../process/temporal-calendar-scheduler-acceptance.md](../process/temporal-calendar-scheduler-acceptance.md)
 
 ## 1. Decision and scope
 

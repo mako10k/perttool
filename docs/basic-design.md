@@ -3813,8 +3813,13 @@ integrated contract, with an unchanged continuous compatibility profile when
 no named-zone fields are present. The accepted internal
 [Source Core](process/temporal-schedule-source-core-acceptance.md) now owns
 parsing, validation, formatting, source spans, generic availability
-projection, and complete-candidate edit validation. Scheduler and public
-runtime activation are still absent.
+projection, and complete-candidate edit validation. The accepted internal
+[Scheduler Core](process/temporal-calendar-scheduler-acceptance.md) now owns
+exact working-time arithmetic, named-zone and daylight-saving membership,
+effective generic-resource capacity, multi-resource progress, interruption,
+precedence version 2, optimal-false parallel-SGS version 2, and utilization.
+Event constraints, required schedules, alerts, and public activation remain
+absent.
 
 The implementation order is deliberately linear through the semantic
 prerequisites:

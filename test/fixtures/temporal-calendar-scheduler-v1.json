@@ -1,0 +1,19 @@
+{
+  "schema": "perttool.temporal-calendar-scheduler-cases.v1",
+  "cases": [
+    { "id": "TCS-001", "requires": [], "claim": "The scheduler capability is exact, internal, and source bound." },
+    { "id": "TCS-002", "requires": ["TCS-001"], "claim": "Forward and backward working-time arithmetic are exact inverses across recurring gaps." },
+    { "id": "TCS-003", "requires": ["TCS-002"], "claim": "Named-zone membership counts exact elapsed instants across daylight-saving gaps and overlaps." },
+    { "id": "TCS-004", "requires": ["TCS-002"], "claim": "Validity and capacity replacements produce generic finite and partial availability." },
+    { "id": "TCS-005", "requires": ["TCS-004"], "claim": "All required resources are acquired atomically over their common progress intervals." },
+    { "id": "TCS-006", "requires": ["TCS-005"], "claim": "Calendar interruption releases allocations and stable resume precedes new work." },
+    { "id": "TCS-007", "requires": ["TCS-005"], "claim": "Precedence profile version 2 is exact and excludes cross-task contention." },
+    { "id": "TCS-008", "requires": ["TCS-006", "TCS-007"], "claim": "Parallel-SGS version 2 constructs a finite-capacity schedule and remains optimal false." },
+    { "id": "TCS-009", "requires": ["TCS-008"], "claim": "Active remaining work is already selected and conflicting active capacity fails closed." },
+    { "id": "TCS-010", "requires": ["TCS-008"], "claim": "Utilization is derived from exact allocated and available unit-seconds." },
+    { "id": "TCS-011", "requires": ["TCS-004"], "claim": "Static absence and bounded horizon exhaustion remain distinct unavailable causes." },
+    { "id": "TCS-012", "requires": ["TCS-008"], "claim": "Capacity overrides cannot exceed the selected nominal capacity or rewrite source." },
+    { "id": "TCS-013", "requires": ["TCS-001"], "claim": "Continuous Grammar 8 compatibility remains delegated and not reimplemented." },
+    { "id": "TCS-014", "requires": ["TCS-009", "TCS-010", "TCS-011", "TCS-012", "TCS-013"], "claim": "Results are deterministic and frozen while active public catalogs remain unchanged." }
+  ]
+}

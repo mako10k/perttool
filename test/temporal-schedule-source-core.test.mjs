@@ -162,6 +162,7 @@ test("TSS-003 projects reusable calendars, generic availability, and event bound
   assert.equal(result.ok, true, JSON.stringify(result.diagnostics));
   assert.ok(result.model);
   assert.equal(Object.isFrozen(result.model), true);
+  assert.equal(result.model.asOf.sourceText, "2026-08-17T09:00:00+09:00");
   assert.deepEqual(result.model.profile, {
     kind: "named_zone",
     zoneId: "Asia/Tokyo",

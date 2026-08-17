@@ -92,6 +92,7 @@ export interface TemporalScheduleSourceModel {
   readonly modelVersion: 1;
   readonly grammarVersion: 8;
   readonly documentId: string;
+  readonly asOf: TemporalInstantSource | null;
   readonly profile: TemporalCalendarProfileSource;
   readonly calendars: readonly CalendarSourceModel[];
   readonly resources: readonly ResourceAvailabilitySource[];

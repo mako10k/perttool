@@ -1662,10 +1662,10 @@ planning so neither concern becomes a disguised dependency edge.
 
 Priority: Unset (dependency order selected; relative priority not decided)
 
-Status: Integrated Grammar 8 design contract and internal source Core accepted;
-`CALENDAR_SCHEDULER_CORE` is the next selected implementation task in
-`plans/temporal-schedule.pert`, while public Grammar 8 activation remains
-absent (2026-08-17)
+Status: Integrated Grammar 8 design contract, internal source Core, and
+calendar-aware Scheduler Core accepted; `CONSTRAINT_SOURCE_CORE` is the next
+selected implementation task in `plans/temporal-schedule.pert`, while public
+Grammar 8 activation remains absent (2026-08-17)
 
 Add optional time-varying availability to every renewable resource without
 introducing a human-only resource kind. People, equipment, facilities,

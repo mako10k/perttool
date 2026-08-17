@@ -36,6 +36,7 @@ to the original source.
 
 The immutable source model contains:
 
+- the exact offset-bearing `as_of` instant for named-zone scheduling;
 - one continuous fixed-offset or named-zone project profile;
 - reusable weekly calendars and complete dated exceptions;
 - optional per-resource calendar replacement;

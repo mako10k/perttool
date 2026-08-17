@@ -152,6 +152,7 @@ task CALENDAR_SCHEDULER_CORE CALENDAR_SOURCE_READY -> CALENDAR_SCHEDULER_READY:
   title "Implement calendar-aware resource scheduling"
   description "Implement exact working-time addition and subtraction, named-zone and daylight-saving rules, effective time-varying capacity, finite resources, multiple-resource intersection, deterministic interruption across non-working gaps, active remaining work, forward precedence and parallel-SGS calendar profiles, utilization, unavailable horizon handling, and unchanged opt-out behavior without reading the wall clock, locale, network, or Git."
   duration 12p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

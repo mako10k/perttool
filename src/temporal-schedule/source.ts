@@ -577,20 +577,21 @@ function validateLegacyNotBefore(context: ParseContext): void {
 function validateAsOf(
   context: ParseContext,
   profile: ParsedProject,
-): void {
+): TemporalInstantSource | null {
   const named = profile.profile?.kind === "named_zone" ? profile.profile : null;
   const hasBounds = context.blocks.some((block) =>
     (block.kind === "task" || block.kind === "milestone") && fields(block, "when").length > 0);
-  if (named === null && !hasBounds) return;
+  if (named === null && !hasBounds) return null;
   const project = context.blocks.find(({ kind }) => kind === "project");
   const code = named === null ? "PTSCH-106" : "PTSCH-105";
   const asOf = singleField(context, project, "as_of", code);
   const value = instantField(context, asOf, code);
   if (value === null) {
     if (asOf === null) addDiagnostic(context, code, "Temporal bounds require offset-bearing project as_of", project!.span);
-    return;
+    return null;
   }
   if (named !== null) validateZoneInstant(context, named.zoneId, value, project!.id);
+  return value;
 }
 
 function validateAggregateLimit(
@@ -694,7 +695,7 @@ export function parseTemporalScheduleSource(
   };
   const calendars = parseCalendars(context);
   const project = parseProject(context, calendars);
-  validateAsOf(context, project);
+  const asOf = validateAsOf(context, project);
   const resources = parseResources(context, calendars, project);
   const bounds = parseBounds(context, project);
   validateLegacyNotBefore(context);
@@ -706,6 +707,7 @@ export function parseTemporalScheduleSource(
         modelVersion: TEMPORAL_SCHEDULE_SOURCE_MODEL_VERSION,
         grammarVersion: 8 as const,
         documentId,
+        asOf,
         profile: project.profile,
         calendars,
         resources,

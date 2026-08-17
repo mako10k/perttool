@@ -1064,6 +1064,14 @@ behind an identity-checked capability. It preserves active Grammar 7 and CLI
 Contract 8 behavior and does not activate a public command, schema, result, or
 adapter surface.
 
+The internal [Calendar Scheduler Core
+acceptance](process/temporal-calendar-scheduler-acceptance.md) composes that
+single source model into exact working-time arithmetic, named-zone interval
+membership, generic effective capacity, common multi-resource progress,
+calendar interruption, precedence version 2, and optimal-false parallel-SGS
+version 2. It remains a pure non-public seam; event constraints and alerts do
+not acquire another scheduler.
+
 Generic availability must:
 
 - apply one model to every renewable resource without inferring that a

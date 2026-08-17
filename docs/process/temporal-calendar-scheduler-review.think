@@ -1,0 +1,75 @@
+framework DecisionAudit
+
+domain TemporalCalendarSchedulerCore:
+  description "Implementation audit for the internal Grammar 8 calendar-aware scheduler boundary"
+
+problem P1:
+  "Does CALENDAR_SCHEDULER_CORE provide one deterministic generic-resource scheduler over the accepted Source Core without duplicating DSL, constraint, alert, or public-runtime ownership?"
+
+step S1:
+  evidence EV1:
+    "The integrated temporal contract assigns exact local-window membership, effective capacity, common progress intervals, working-time arithmetic, precedence version 2, and optimal-false parallel-SGS version 2 to this slice"
+    resource:
+      file "docs/specs/temporal-schedule.md"
+      label "Integrated scheduler contract"
+
+step S2:
+  evidence EV2:
+    "The calendar engine expands local recurring and exception windows against the pinned Source Core zone transitions, applies validity before replacement capacity and recurring calendars, and returns exact Rational boundaries without host zone, locale, network, filesystem, Git, or wall-clock input"
+    resource:
+      file "src/temporal-schedule/calendar.ts"
+      label "Calendar and effective-capacity engine"
+
+step S3:
+  evidence EV3:
+    "One identity-checked scheduler capability accepts normalized generic resources, atomic requirement sets, exact work seconds, DAG edges, as-of, and a finite horizon; it adds and subtracts working time, computes precedence and resource profiles, retains work segments, and derives utilization"
+    resource:
+      file "src/temporal-schedule/scheduler-types.ts"
+      label "Closed internal scheduler model"
+    resource:
+      file "src/temporal-schedule/scheduler.ts"
+      label "Pure scheduler implementation"
+
+step S4:
+  evidence EV4:
+    "Calendar interruption releases every allocation at a capacity boundary, interrupted work retains priority over new work, active remaining work is already selected, and simultaneous active over-capacity returns active_capacity_conflict instead of dropping a task"
+    resource:
+      file "test/temporal-calendar-scheduler.test.mjs"
+      label "Executable scheduling behavior"
+
+step S5:
+  evidence EV5:
+    "Fourteen dependency-ordered cases cover capability closure, inverse arithmetic, daylight-saving gaps and overlaps, validity and replacement capacity, multi-resource intersection, interruption and resume, both scheduling profiles, active conflict, utilization, unavailable distinctions, capacity overrides, continuous compatibility, determinism, and unchanged active catalogs"
+    resource:
+      file "test/fixtures/temporal-calendar-scheduler-v1.json"
+      label "Scheduler acceptance cases"
+
+step S6:
+  evidence EV6:
+    "The scheduler modules remain absent from package-root, Core, Node, CLI, LSP, VSIX, MCP, command, and schema catalogs; event-bound propagation, required scheduling, POSTDUE, and authority remain assigned to later tasks"
+    resource:
+      file "src/index.ts"
+      label "Unchanged public facade"
+    resource:
+      file "plans/temporal-schedule.pert"
+      label "Dependency-ordered implementation plan"
+
+step S7:
+  decision D1 based_on P1, EV1, EV2, EV3:
+    "Accept one pure Scheduler Core consuming the accepted Source Core semantic model and normalized DAG input; do not add scheduler syntax or a second parser"
+
+step S8:
+  decision D2 based_on EV2, EV4:
+    "Accept exact instant membership and event-driven parallel-SGS with atomic generic-resource acquisition, calendar-only interruption, stable resume priority, and fail-closed active conflicts"
+
+step S9:
+  decision D3 based_on EV3, EV5:
+    "Accept explicit finite horizons and distinct no_feasible_window, calendar_search_limit, zone_range_exceeded, workday_relationship_missing, and active_capacity_conflict outcomes instead of guessing future availability"
+
+step S10:
+  decision D4 based_on EV5, EV6, D1, D2, D3:
+    "Accept CALENDAR_SCHEDULER_CORE only if focused, legacy compatibility, static, documentation, self-use, adapter, package, and Node.js 22 gates pass without public activation or a new quality baseline"
+
+step S11:
+  pending PD1:
+    "Event earliest and latest bounds, required schedules, POSTDUE, Check, Analysis, Next, public Grammar 8 and Contract 9, adapters, release, remote writes, and plan advance remain outside this task"
