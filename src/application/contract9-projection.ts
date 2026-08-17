@@ -2,6 +2,8 @@ import type { TargetPostdueScheduleAnalysis } from "./target-postdue-analysis.js
 import type { TargetScheduleAlertProjection } from "./target-postdue-projection.js";
 import type { TemporalScheduleSourceModel } from "../temporal-schedule/source-types.js";
 import type { Contract9CheckResult } from "./contract9-temporal.js";
+import type { Contract9AnalysisResult, Contract9NextResult } from "./contract9-temporal.js";
+import type { Contract9MutationResultV6 } from "./contract9-mixed-mutation.js";
 import type { Contract9ProjectResult } from "./contract9-project.js";
 import { contract7ProjectResultToJson } from "./contract7-project.js";
 import { contract6WorkEventToJson } from "./contract6-projection.js";
@@ -58,6 +60,35 @@ export function contract9CheckResultToJson(result: Contract9CheckResult, envelop
       events: result.actualsInputs.events.map(contract6WorkEventToJson) }), assurance: contract9WireJson(result.assurance),
     assurance_state_counts: contract9WireJson(result.assuranceStateCounts), acceptance: contract9WireJson(result.acceptance),
     schedule_alerts: contract9ScheduleAlertsToJson(result.scheduleAlerts) });
+}
+
+function replacement(base: Readonly<Record<string, unknown>>, expected: string, schemaVersion: string,
+  additions: Readonly<Record<string, unknown>>): Readonly<Record<string, unknown>> {
+  if (base["schema_version"] !== expected) throw new TypeError(`expected ${expected} base projection`);
+  return Object.freeze({ ...base, ...additions, schema_version: schemaVersion, cli_contract_version: 9 });
+}
+
+export function liftContract9AnalysisResultJson(base: Readonly<Record<string, unknown>>,
+  result: Contract9AnalysisResult): Readonly<Record<string, unknown>> {
+  return replacement(base, "Perttool.AnalysisResult.v6", "Perttool.AnalysisResult.v7", Object.freeze({
+    temporal_schedule: contract9AnalysisTemporalToJson(result.temporalSchedule),
+    schedule_alerts: contract9ScheduleAlertsToJson(result.scheduleAlerts),
+  }));
+}
+
+export function liftContract9NextResultJson(base: Readonly<Record<string, unknown>>,
+  result: Contract9NextResult): Readonly<Record<string, unknown>> {
+  return replacement(base, "Perttool.NextResult.v7", "Perttool.NextResult.v8", Object.freeze({
+    schedule_alerts: contract9ScheduleAlertsToJson(result.scheduleAlerts),
+  }));
+}
+
+export function liftContract9MutationResultJson(base: Readonly<Record<string, unknown>>,
+  result: Contract9MutationResultV6): Readonly<Record<string, unknown>> {
+  if (result.schemaVersion !== "Perttool.MutationResult.v6") throw new TypeError("mutation result is not Contract 9");
+  return replacement(base, "Perttool.MutationResult.v5", "Perttool.MutationResult.v6", Object.freeze({
+    assurance_impact: contract9WireJson(result.assuranceImpact),
+  }));
 }
 
 function command(argv: readonly string[]): string {

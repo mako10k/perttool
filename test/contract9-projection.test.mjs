@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { analyzeDocument, checkDocument } from "../dist/application/contract9-temporal.js";
+import { analyzeDocument, checkDocument, selectNextTasks } from "../dist/application/contract9-temporal.js";
 import { getProjectMetadata } from "../dist/application/contract9-project.js";
-import { contract9AnalysisTemporalToJson, contract9CheckResultToJson, contract9ProjectResultToJson, contract9ScheduleAlertsToJson, renderContract9ScheduleAlerts } from "../dist/application/contract9-projection.js";
+import { contract9AnalysisTemporalToJson, contract9CheckResultToJson, contract9ProjectResultToJson, contract9ScheduleAlertsToJson, liftContract9AnalysisResultJson, liftContract9NextResultJson, renderContract9ScheduleAlerts } from "../dist/application/contract9-projection.js";
 
 const source = `${[
   "project PROJECTION:", "  version 8", '  title "Projection"', "  as_of 2026-08-17T18:00:00+09:00", "  duration_unit hour", "  finish END",
@@ -42,4 +42,15 @@ test("Project and Check wire envelopes expose only Contract 9 identities and fie
   assert.equal(checked.cli_contract_version, 9);
   assert.equal(checked.schedule_alerts.occurrences[0].kind, "POSTDUE");
   assert.equal("document" in checked, false);
+});
+
+test("Analysis and Next lift only their replacement fields over complete Contract 8 projections", () => {
+  const analysis = analyzeDocument(source, { sourceOperand: "relative plan.pert" });
+  const next = selectNextTasks(source, { sourceOperand: "relative plan.pert" });
+  const analysisWire = liftContract9AnalysisResultJson({ schema_version: "Perttool.AnalysisResult.v6", retained: true }, analysis);
+  const nextWire = liftContract9NextResultJson({ schema_version: "Perttool.NextResult.v7", retained: true }, next);
+  assert.deepEqual([analysisWire.schema_version, analysisWire.cli_contract_version, analysisWire.retained], ["Perttool.AnalysisResult.v7", 9, true]);
+  assert.equal(analysisWire.schedule_alerts.occurrences[0].kind, "POSTDUE");
+  assert.deepEqual([nextWire.schema_version, nextWire.cli_contract_version, nextWire.retained], ["Perttool.NextResult.v8", 9, true]);
+  assert.throws(() => liftContract9AnalysisResultJson({ schema_version: "Perttool.AnalysisResult.v5" }, analysis), /expected Perttool.AnalysisResult\.v6/u);
 });
