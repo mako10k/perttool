@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import * as publicApi from "../dist/index.js";
-import { evaluateContract9PlanAssurance } from "../dist/application/contract9-assurance.js";
+import { evaluateContract9PlanAssurance, inspectContract9PlanAssurance } from "../dist/application/contract9-assurance.js";
 
 function source({ when = "  when start earliest 2026-08-17T10:00:00+09:00", calendar = "  mon 09:00..17:00", hashModel = 2 } = {}) {
   return `${[
@@ -44,4 +44,22 @@ test("Grammar 8 never evaluates a v1 assurance hash as model 2", () => {
   assert.equal(result.taskResults[0].status, "unavailable");
   assert.equal(result.taskResults[0].directCauses[0].kind, "unknown_model");
   assert.equal("evaluateContract9PlanAssurance" in publicApi, false);
+});
+
+test("PlanAssuranceResult v2 exposes model-2 show and exact hash inspection", () => {
+  const shown = inspectContract9PlanAssurance(source(), { operation: "plan-assurance.show" });
+  assert.equal(shown.schemaVersion, "Perttool.PlanAssuranceResult.v2");
+  assert.equal(shown.cliContractVersion, 9);
+  assert.equal(shown.ok, true);
+  assert.equal(shown.assurance.hashModelVersion, 2);
+  assert.deepEqual(shown.selectedTaskIds, ["WORK"]);
+  const hashed = inspectContract9PlanAssurance(source(), { operation: "plan-assurance.hash", taskId: "WORK", kind: "contract" });
+  assert.equal(hashed.ok, true);
+  assert.equal(hashed.selectedHash, shown.assurance.taskResults[0].contractHash);
+  const unavailable = inspectContract9PlanAssurance(source({ hashModel: 1 }), { operation: "plan-assurance.hash", taskId: "WORK", kind: "exported" });
+  assert.equal(unavailable.ok, false);
+  assert.equal(unavailable.diagnostics[0].code, "PTASSURE-203");
+  const missing = inspectContract9PlanAssurance(source(), { operation: "plan-assurance.show", taskIds: ["MISSING"] });
+  assert.equal(missing.ok, false);
+  assert.equal(missing.diagnostics[0].code, "PTASSURE-302");
 });
