@@ -467,6 +467,14 @@ function failure(
   };
 }
 
+function supportedAssuranceModel(input: PlanAssuranceInputV1): boolean {
+  if (input.modelVersion !== PLAN_ASSURANCE_MODEL_VERSION) return false;
+  if (input.hashModelVersion !== PLAN_ASSURANCE_HASH_MODEL_VERSION && input.hashModelVersion !== 2) return false;
+  const contractModel = input.hashModelVersion === 1
+    ? "Perttool.TaskPlanContract.v1" : "Perttool.TaskPlanContract.v2";
+  return input.tasks.every(({ contract }) => contract.model === contractModel);
+}
+
 export function evaluatePlanAssurance(
   input: PlanAssuranceInputV1,
 ): PlanAssuranceEvaluationV1 {
@@ -616,10 +624,7 @@ export function evaluatePlanAssurance(
   }
 
   const coverage = coverageFor(input.tasks, input.frontierInputs);
-  if (
-    input.modelVersion !== PLAN_ASSURANCE_MODEL_VERSION ||
-    input.hashModelVersion !== PLAN_ASSURANCE_HASH_MODEL_VERSION
-  ) {
+  if (!supportedAssuranceModel(input)) {
     const taskResults = taskIds.map((taskId) => unavailableResult(
       taskId,
       tasksById.get(taskId)!.seal?.acceptedBasisHash ?? null,

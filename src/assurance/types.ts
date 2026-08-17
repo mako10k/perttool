@@ -69,6 +69,18 @@ export interface TaskPlanContractV1 {
   readonly source: string | null;
 }
 
+export interface TaskPlanContractV2 extends Omit<TaskPlanContractV1, "model" | "notBefore"> {
+  readonly model: "Perttool.TaskPlanContract.v2";
+  readonly when: Readonly<{
+    startEarliest: CanonicalCalendarValueV1 | null;
+    startLatest: CanonicalCalendarValueV1 | null;
+    finishEarliest: CanonicalCalendarValueV1 | null;
+    finishLatest: CanonicalCalendarValueV1 | null;
+  }>;
+}
+
+export type TaskPlanContract = TaskPlanContractV1 | TaskPlanContractV2;
+
 export interface ExecutionTaskRelationV1 {
   readonly predecessorTaskId: string;
   readonly successorTaskId: string;
@@ -110,7 +122,7 @@ export interface TaskOutcomeEvidenceV1 {
 }
 
 export interface TaskAssuranceInputV1 {
-  readonly contract: TaskPlanContractV1;
+  readonly contract: TaskPlanContract;
   readonly lifecycle: "unfinished" | "completed";
   readonly seal: TaskPlanSealV1 | null;
   readonly outcome: TaskOutcomeEvidenceV1 | null;

@@ -7,7 +7,7 @@ import type {
   CanonicalExactValueV1,
   FrontierAssuranceReceiptContractV1,
   Sha256Digest,
-  TaskPlanContractV1,
+  TaskPlanContract,
 } from "./types.js";
 
 const canonicalUnsignedInteger = /^(?:0|[1-9][0-9]*)$/;
@@ -192,8 +192,8 @@ function calendarRecord(value: CanonicalCalendarValueV1): unknown {
   };
 }
 
-export function taskPlanContractRecord(contract: TaskPlanContractV1): unknown {
-  if (contract.model !== "Perttool.TaskPlanContract.v1") {
+export function taskPlanContractRecord(contract: TaskPlanContract): unknown {
+  if (contract.model !== "Perttool.TaskPlanContract.v1" && contract.model !== "Perttool.TaskPlanContract.v2") {
     throw new Error("unknown task plan contract model");
   }
   for (const value of [
@@ -237,17 +237,16 @@ export function taskPlanContractRecord(contract: TaskPlanContractV1): unknown {
   if (tags.some((tag, index) => index > 0 && tags[index - 1] === tag)) {
     throw new Error("task tags must be unique");
   }
-  return {
-    model: "Perttool.TaskPlanContract.v1",
+  const prefix = {
+    model: contract.model,
     task_id: contract.taskId,
     from_milestone_id: contract.fromMilestoneId,
     to_milestone_id: contract.toMilestoneId,
     title: contract.title,
     description: contract.description,
     duration_or_estimate: timingRecord(contract.durationOrEstimate),
-    not_before: contract.notBefore === null
-      ? null
-      : calendarRecord(contract.notBefore),
+  };
+  const suffix = {
     deadline: contract.deadline === null
       ? null
       : calendarRecord(contract.deadline),
@@ -260,10 +259,24 @@ export function taskPlanContractRecord(contract: TaskPlanContractV1): unknown {
     tags,
     source: contract.source,
   };
+  return contract.model === "Perttool.TaskPlanContract.v1" ? {
+    ...prefix,
+    not_before: contract.notBefore === null ? null : calendarRecord(contract.notBefore),
+    ...suffix,
+  } : {
+    ...prefix,
+    when: {
+      start_earliest: contract.when.startEarliest === null ? null : calendarRecord(contract.when.startEarliest),
+      start_latest: contract.when.startLatest === null ? null : calendarRecord(contract.when.startLatest),
+      finish_earliest: contract.when.finishEarliest === null ? null : calendarRecord(contract.when.finishEarliest),
+      finish_latest: contract.when.finishLatest === null ? null : calendarRecord(contract.when.finishLatest),
+    },
+    ...suffix,
+  };
 }
 
 export function hashTaskPlanContract(
-  contract: TaskPlanContractV1,
+  contract: TaskPlanContract,
 ): Sha256Digest {
   return sha256Canonical(taskPlanContractRecord(contract));
 }
