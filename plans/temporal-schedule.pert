@@ -162,6 +162,7 @@ task POSTDUE_ALERT_CORE POSTDUE_CONTRACT_ACCEPTED -> POSTDUE_CORE_READY:
   title "Implement the pure alert and driver-path Core"
   description "Implement one deterministic evaluator over accepted deadline, event-bound, calendar, forward, and required-schedule facts; exact current and forecast alerts; proof ordering and deduplication; target-scoped precedence and resource driver paths; stable path counting and truncation; bounded causes; and compact projections without files, clocks, Git, locale, network, or CLI state."
   duration 8p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

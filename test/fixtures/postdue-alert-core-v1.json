@@ -1,0 +1,22 @@
+{
+  "schema_version": "Perttool.PostdueAlertCoreCases.v1",
+  "capability": "perttool.schedule-alert@1",
+  "cases": [
+    {"id":"PAC-001","depends_on":[],"boundary":"identity_and_source_binding"},
+    {"id":"PAC-002","depends_on":["PAC-001"],"boundary":"strict_current_postdue"},
+    {"id":"PAC-003","depends_on":["PAC-002"],"boundary":"equality_and_before_suppression"},
+    {"id":"PAC-004","depends_on":["PAC-002"],"boundary":"completed_event_suppression"},
+    {"id":"PAC-005","depends_on":["PAC-003"],"boundary":"precedence_forecast"},
+    {"id":"PAC-006","depends_on":["PAC-005"],"boundary":"resource_only_forecast"},
+    {"id":"PAC-007","depends_on":["PAC-006"],"boundary":"proof_priority"},
+    {"id":"PAC-008","depends_on":["PAC-007"],"boundary":"target_identity_and_deduplication"},
+    {"id":"PAC-009","depends_on":["PAC-005"],"boundary":"project_precedence_driver"},
+    {"id":"PAC-010","depends_on":["PAC-006"],"boundary":"resource_wait_driver"},
+    {"id":"PAC-011","depends_on":["PAC-009"],"boundary":"target_scoped_driver"},
+    {"id":"PAC-012","depends_on":["PAC-011"],"boundary":"not_computed_and_exact_argv"},
+    {"id":"PAC-013","depends_on":["PAC-011"],"boundary":"unavailable_driver"},
+    {"id":"PAC-014","depends_on":["PAC-008"],"boundary":"stable_order_and_alert_limit"},
+    {"id":"PAC-015","depends_on":["PAC-012","PAC-014"],"boundary":"compact_and_full_driver_limits"},
+    {"id":"PAC-016","depends_on":["PAC-015"],"boundary":"internal_no_public_activation"}
+  ]
+}

@@ -1,0 +1,54 @@
+framework DecisionAudit
+
+domain PostdueAlertCore:
+  description "Implementation audit for the pure actionable schedule-alert evaluator"
+
+problem P1:
+  "Does POSTDUE_ALERT_CORE implement the accepted strict alerts and scoped drivers without taking command, authority, persistence, or public-contract ownership?"
+
+step S1:
+  evidence EV1:
+    "The internal evaluator accepts explicit source-bound targets, event completion, existing forward schedules, and the required schedule rather than reparsing deadlines or invoking a scheduler"
+    resource:
+      file "src/temporal-schedule/alert-types.ts"
+      label "Closed evaluator inputs and results"
+
+step S2:
+  evidence EV2:
+    "Current comparison is strict, forecast selects precedence before resource, equal and unavailable facts are not guessed, and duplicate target keys are collapsed deterministically"
+    resource:
+      file "src/temporal-schedule/alert.ts"
+      label "Pure alert evaluation"
+
+step S3:
+  evidence EV3:
+    "Driver reconstruction follows exact predecessor events in the target cone, adds resource-wait steps only for resource proof, and returns exact argv for unavailable, uncomputed, or truncated evidence"
+    resource:
+      file "src/temporal-schedule/alert.ts"
+      label "Bounded driver reconstruction"
+
+step S4:
+  evidence EV4:
+    "Sixteen dependency-ordered cases cover identity, strictness, completion, proof strength, deduplication, drivers, stable ordering, limits, unavailable projection, and public non-activation"
+    resource:
+      file "test/fixtures/postdue-alert-core-v1.json"
+      label "Core acceptance matrix"
+    resource:
+      file "test/postdue-alert-core.test.mjs"
+      label "Executable Core evidence"
+
+step S5:
+  decision D1 based_on P1, EV1, EV2:
+    "Accept one pure source-bound schedule-alert evaluator that consumes rather than duplicates temporal source, forward, and required-schedule semantics"
+
+step S6:
+  decision D2 based_on EV2, EV3:
+    "Accept deterministic alert identity, proof order, target-scoped paths, resource-wait qualification, bounded prefixes, and typed unavailable recovery"
+
+step S7:
+  decision D3 based_on EV1, EV4, D1, D2:
+    "Keep the evaluator internal until later Check, Analysis, Next, and atomic public-contract tasks activate their accepted projections"
+
+step S8:
+  pending PD1:
+    "Command projections, public schemas and exports, Grammar 8 and Contract 9 activation, release, installation replacement, remote writes, and plan advance remain outside this task"
