@@ -268,8 +268,12 @@ test("specification, requirements, design, legacy baselines, acceptance, and pla
 
   const checked = checkDocument(plan);
   assert.equal(checked.ok, true);
-  const task = checked.document.declarations.find(
+  const removedContract = checked.document.declarations.find(
     ({ kind, id }) => kind === "task" && id === "TEMPORAL_SCHEDULE_CONTRACT",
   );
-  assert.equal(task?.fields.find(({ name }) => name === "status")?.value, "done");
+  assert.equal(removedContract, undefined);
+  const retainedFrontier = checked.document.declarations.find(
+    ({ kind, id }) => kind === "milestone" && id === "CALENDAR_SCHEDULER_READY",
+  );
+  assert.equal(retainedFrontier?.fields.find(({ name }) => name === "state")?.value, "reached");
 });

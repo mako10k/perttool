@@ -124,6 +124,7 @@ task CONSTRAINT_SOURCE_CORE CALENDAR_SCHEDULER_READY -> CONSTRAINT_SOURCE_READY:
   title "Implement task and milestone event constraints"
   description "Implement normalized task start and finish plus milestone reach earliest and latest bounds, equal-bound exact events, local contradiction validation, not_before migration, source-preserving maintenance, ambient assurance projection, calendar binding, and typed network infeasibility without adding dependency edges, rewriting durations, or changing advisory deadline meaning."
   duration 8p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

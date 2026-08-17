@@ -1,0 +1,19 @@
+{
+  "model": "perttool.target-grammar-8-temporal-constraints@1",
+  "cases": [
+    { "id": "TCN-001", "depends_on": [], "operation": "internal_capability" },
+    { "id": "TCN-002", "depends_on": ["TCN-001"], "operation": "source_binding" },
+    { "id": "TCN-003", "depends_on": ["TCN-002"], "operation": "task_start_earliest" },
+    { "id": "TCN-004", "depends_on": ["TCN-003"], "operation": "task_finish_earliest" },
+    { "id": "TCN-005", "depends_on": ["TCN-004"], "operation": "milestone_reach_earliest" },
+    { "id": "TCN-006", "depends_on": ["TCN-003"], "operation": "task_start_latest" },
+    { "id": "TCN-007", "depends_on": ["TCN-004"], "operation": "task_finish_latest" },
+    { "id": "TCN-008", "depends_on": ["TCN-005"], "operation": "milestone_reach_latest" },
+    { "id": "TCN-009", "depends_on": ["TCN-006", "TCN-007", "TCN-008"], "operation": "typed_network_infeasibility" },
+    { "id": "TCN-010", "depends_on": ["TCN-009"], "operation": "exact_event" },
+    { "id": "TCN-011", "depends_on": ["TCN-002"], "operation": "not_before_migration" },
+    { "id": "TCN-012", "depends_on": ["TCN-011"], "operation": "deadline_preservation" },
+    { "id": "TCN-013", "depends_on": ["TCN-009"], "operation": "no_topology_or_duration_rewrite" },
+    { "id": "TCN-014", "depends_on": ["TCN-010", "TCN-012", "TCN-013"], "operation": "closed_boundary" }
+  ]
+}

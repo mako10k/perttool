@@ -1,0 +1,68 @@
+framework DecisionAudit
+
+domain TemporalConstraintSourceCore:
+  description "Implementation audit for the internal Grammar 8 event-constraint boundary"
+
+problem P1:
+  "Does CONSTRAINT_SOURCE_CORE add one bounded event-constraint projection without duplicating calendar scheduling, required scheduling, POSTDUE, or public-runtime ownership?"
+
+step S1:
+  evidence EV1:
+    "The accepted temporal contract closes task-start, task-finish, and milestone-reach earliest and latest bounds, exact equality, local contradiction, network infeasibility, and not_before migration"
+    resource:
+      file "docs/specs/temporal-schedule.md"
+      label "Integrated temporal contract"
+
+step S2:
+  evidence EV2:
+    "The accepted Source Core already owns Grammar 8 when parsing, exact instant normalization, canonical ordering, duplicate rejection, zone validation, and same-event earliest-after-latest diagnostics"
+    resource:
+      file "src/temporal-schedule/source.ts"
+      label "Grammar 8 Source Core"
+
+step S3:
+  evidence EV3:
+    "The constraint Core consumes the Source Core and Scheduler Core through exact capability identities, propagates earliest bounds over the existing AoA topology, and reports latest violations with negative signed slack as typed infeasibility"
+    resource:
+      file "src/temporal-schedule/constraint.ts"
+      label "Pure constraint implementation"
+    resource:
+      file "src/temporal-schedule/constraint-types.ts"
+      label "Closed internal result model"
+
+step S4:
+  evidence EV4:
+    "Finish-earliest uses the accepted inverse working-time operation before forward scheduling, so it delays task start without appending a resource-holding idle tail or rewriting task duration"
+    resource:
+      file "test/temporal-constraint-source.test.mjs"
+      label "Executable constraint behavior"
+
+step S5:
+  evidence EV5:
+    "Fourteen dependency-ordered cases cover internal identity, source binding, all earliest and latest event kinds, typed network infeasibility, exact equality, migration, deadline preservation, and topology and duration preservation"
+    resource:
+      file "test/fixtures/temporal-constraint-source-v1.json"
+      label "Constraint acceptance cases"
+
+step S6:
+  evidence EV6:
+    "The migration candidate changes only Grammar 7 version and task not_before lines, validates the complete Grammar 8 result, preserves deadlines and endpoints, and infers no calendar or latest bound"
+    resource:
+      file "src/temporal-schedule/constraint.ts"
+      label "Bounded migration planner"
+
+step S7:
+  decision D1 based_on P1, EV1, EV2, EV3:
+    "Accept one internal constraint Core over the accepted Source and Scheduler Cores; do not create a second parser, calendar engine, or dependency graph"
+
+step S8:
+  decision D2 based_on EV3, EV4:
+    "Accept earliest bounds as forward scheduling inputs and latest bounds as analyzable hard planning requirements that never become execution locks"
+
+step S9:
+  decision D3 based_on EV5, EV6, D1, D2:
+    "Accept CONSTRAINT_SOURCE_CORE only if focused, compatibility, static, documentation, self-use, adapter, package, and Node.js 22 gates pass without public activation"
+
+step S10:
+  pending PD1:
+    "Goal-anchored required scheduling, backward latest propagation, POSTDUE, Check, Analysis, Next, public Grammar 8 and Contract 9, release, remote writes, and plan advance remain outside this task"
