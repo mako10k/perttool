@@ -51,8 +51,14 @@ function contract9Options(descriptor: AssuranceCommandDescriptor): Contract9Comm
 }
 
 function converted(descriptor: AssuranceCommandDescriptor): Contract9CommandDescriptor {
+  const migration = descriptor.operation === "document.migrate";
   return Object.freeze({ ...descriptor, contractVersion: 9 as const,
-    options: contract9Options(descriptor),
+    ...(migration ? { summary: "Prepares a complete document for Grammar 8." } : {}),
+    options: Object.freeze(contract9Options(descriptor).map((option) => migration && option.name === "target-grammar"
+      ? Object.freeze({ ...option, enumValues: Object.freeze(["8"]) }) : option)),
+    examples: migration ? Object.freeze([Object.freeze({ id: "preview",
+      invocation: "perttool document migrate plan.pert --target-grammar 8",
+      summary: "Preview the Grammar 8 migration candidate." })]) : descriptor.examples,
     resultSchemas: Object.freeze(descriptor.resultSchemas.map((schema) => replacements.get(schema) ?? schema)) });
 }
 

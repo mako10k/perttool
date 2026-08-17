@@ -1,17 +1,20 @@
 import { digestDocumentBytes } from "../io/document-file.js";
 import { createValidatedDocumentFile, replaceValidatedDocumentFile } from "../io/safe-write.js";
 import { parseTemporalScheduleSource, TEMPORAL_SCHEDULE_SOURCE_CAPABILITY } from "../temporal-schedule/source.js";
-import type { Contract9MutationResultV6 } from "./contract9-mixed-mutation.js";
+export interface Contract9WritableCandidate {
+  readonly ok: boolean; readonly changed: boolean; readonly originalDigest: string; readonly updatedDigest: string | null;
+  readonly updatedText: string | null; readonly governance?: Readonly<{ readonly writeAuthorized: boolean; readonly intent: string }> | null;
+}
 
 export type Contract9WriteRequest = Readonly<{ mode: "preview" }> | Readonly<{ mode: "in_place"; target: string; expectedDigest?: string }>
   | Readonly<{ mode: "out"; target: string }>;
 export interface Contract9WriteProjection { readonly mode: "preview" | "in_place" | "out"; readonly target: string | null; readonly written: boolean }
 
-export async function persistContract9Mutation(result: Contract9MutationResultV6,
+export async function persistContract9Mutation(result: Contract9WritableCandidate,
   request: Contract9WriteRequest): Promise<Contract9WriteProjection> {
   if (request.mode === "preview" || !result.changed) return Object.freeze({ mode: request.mode, target: request.mode === "preview" ? null : request.target, written: false });
   if (!result.ok || result.updatedText === null || result.updatedDigest === null ||
-    (result.governance !== null && (!result.governance.writeAuthorized || result.governance.intent !== "persist"))) {
+    (result.governance !== undefined && result.governance !== null && (!result.governance.writeAuthorized || result.governance.intent !== "persist"))) {
     throw new TypeError("authorized Contract 9 result does not contain a writable candidate");
   }
   if (digestDocumentBytes(Buffer.from(result.updatedText, "utf8")) !== result.updatedDigest) throw new TypeError("Contract 9 candidate digest mismatch");

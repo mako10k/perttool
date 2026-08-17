@@ -7,7 +7,7 @@ export type Contract9CommandInvocationValidation =
   | { readonly ok: true; readonly descriptor: Contract9CommandDescriptor; readonly helpAlias: boolean; readonly operands: readonly string[]; readonly options: readonly CommandOptionOccurrence[] }
   | { readonly ok: false; readonly error: CommandUsageError };
 const contract9ExtendedOperations = new Set([
-  "calendar.add", "calendar.set", "calendar.remove", "project.set", "resource.set", "task.set", "milestone.set",
+  "calendar.add", "calendar.set", "calendar.remove", "project.set", "resource.set", "task.set", "milestone.set", "document.migrate",
 ]);
 export function validateContract9CommandInvocation(argv: readonly string[]): Contract9CommandInvocationValidation {
   const generic = validateCommandInvocationAgainstRegistry(argv, CONTRACT9_COMMAND_REGISTRY as never) as Contract9CommandInvocationValidation;
