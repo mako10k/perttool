@@ -11,10 +11,10 @@ import type {
   CalendarSchedulerInput,
   ScheduledMilestone,
   ScheduledTask,
-  SchedulerEdgeInput,
   SchedulerTaskInput,
   WorkSegment,
 } from "./scheduler-types.js";
+import { temporalScheduleGraph, type TemporalScheduleGraph } from "./schedule-graph.js";
 import { parseTemporalScheduleSource, temporalScheduleSourceModel, TEMPORAL_SCHEDULE_SOURCE_CAPABILITY } from "./source.js";
 import type { EventBoundSource, TemporalScheduleSourceResult } from "./source-types.js";
 import type {
@@ -35,44 +35,6 @@ const IDENTITY = Object.freeze({
   version: 2 as const,
   optimal: null,
 });
-
-interface Graph {
-  readonly incoming: ReadonlyMap<string, readonly SchedulerEdgeInput[]>;
-  readonly outgoing: ReadonlyMap<string, readonly SchedulerEdgeInput[]>;
-  readonly order: readonly string[];
-}
-
-function graph(input: CalendarSchedulerInput): Graph {
-  const milestones = new Set(input.milestoneIds);
-  const incoming = new Map(input.milestoneIds.map((id) => [id, [] as SchedulerEdgeInput[]]));
-  const outgoing = new Map(input.milestoneIds.map((id) => [id, [] as SchedulerEdgeInput[]]));
-  const ids = new Set<string>();
-  for (const edge of input.edges) {
-    if (ids.has(edge.id) || !milestones.has(edge.source) || !milestones.has(edge.target)) {
-      throw new TypeError(`invalid temporal constraint edge ${edge.id}`);
-    }
-    ids.add(edge.id);
-    incoming.get(edge.target)!.push(edge);
-    outgoing.get(edge.source)!.push(edge);
-  }
-  const degree = new Map(input.milestoneIds.map((id) => [id, incoming.get(id)!.length]));
-  const ready = [...degree].filter(([, value]) => value === 0).map(([id]) => id).sort(compareStableStrings);
-  const order: string[] = [];
-  while (ready.length > 0) {
-    const id = ready.shift()!;
-    order.push(id);
-    for (const edge of outgoing.get(id)!) {
-      const value = degree.get(edge.target)! - 1;
-      degree.set(edge.target, value);
-      if (value === 0) {
-        ready.push(edge.target);
-        ready.sort(compareStableStrings);
-      }
-    }
-  }
-  if (order.length !== input.milestoneIds.length) throw new TypeError("temporal constraint graph contains a cycle");
-  return Object.freeze({ incoming, outgoing, order: Object.freeze(order) });
-}
 
 function bound(
   values: readonly EventBoundSource[],
@@ -140,7 +102,7 @@ interface AnalysisState {
   readonly source: TemporalScheduleSourceResult;
   readonly input: CalendarSchedulerInput;
   readonly model: ReturnType<typeof temporalScheduleSourceModel>;
-  readonly graph: Graph;
+  readonly graph: TemporalScheduleGraph;
   readonly reached: Map<string, Rational>;
   readonly satisfied: Map<string, Rational>;
   readonly tasks: ScheduledTask[];
@@ -253,7 +215,7 @@ function analyze(
   if (model.documentId !== input.documentId || model.asOf === null || compare(model.asOf.instantSeconds, input.asOf) !== 0) {
     throw new TypeError("temporal constraint input does not match the source");
   }
-  const indexed = graph(input);
+  const indexed = temporalScheduleGraph(input);
   const state: AnalysisState = {
     source, input, model, graph: indexed,
     reached: new Map(input.frontierMilestoneIds.map((id) => [id, input.asOf])),

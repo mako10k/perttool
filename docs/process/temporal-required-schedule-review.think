@@ -1,0 +1,57 @@
+framework DecisionAudit
+
+domain TemporalRequiredScheduleCore:
+  description "Implementation audit for the internal Grammar 8 goal-anchored required schedule"
+
+problem P1:
+  "Does REQUIRED_SCHEDULE_CORE provide one exact backward precedence projection without inventing resource leveling, optimality, alerts, or public authority?"
+
+step S1:
+  evidence EV1:
+    "The accepted temporal contract selects the earlier comparable project-finish latest bound or deadline, exact calendar subtraction, intermediate latest propagation, signed slack, and separate precedence and optimal-false resource comparisons"
+    resource:
+      file "docs/specs/temporal-schedule.md"
+      label "Integrated required-schedule contract"
+
+step S2:
+  evidence EV2:
+    "The implementation consumes the accepted Source, Scheduler, and Constraint Core results through identity-checked internal capabilities and shares one topology index instead of adding another graph or calendar implementation"
+    resource:
+      file "src/temporal-schedule/required.ts"
+      label "Required-schedule evaluator"
+    resource:
+      file "src/temporal-schedule/schedule-graph.ts"
+      label "Shared temporal topology index"
+
+step S3:
+  evidence EV3:
+    "Backward propagation keeps task-start, task-finish, milestone-reach, successor, gate, and anchor drivers distinct and never copies one declaration into another source field"
+    resource:
+      file "src/temporal-schedule/required-types.ts"
+      label "Closed internal result model"
+
+step S4:
+  evidence EV4:
+    "Fourteen dependency-ordered cases cover all anchor roles, inverse working-time propagation, intermediate and task latest bounds, drivers, signed slack, optimal-false qualification, absence, unavailability, and unchanged public boundaries"
+    resource:
+      file "test/fixtures/temporal-required-schedule-v1.json"
+      label "Required-schedule acceptance cases"
+    resource:
+      file "test/temporal-required-schedule.test.mjs"
+      label "Executable required-schedule behavior"
+
+step S5:
+  decision D1 based_on P1, EV1, EV2:
+    "Accept one goal-anchored backward precedence Core that reuses exact calendar arithmetic and AoA topology without backward resource leveling"
+
+step S6:
+  decision D2 based_on EV1, EV3:
+    "Accept separate precedence_infeasible and resource_heuristic_late classifications, retaining optimal false only for the resource comparison"
+
+step S7:
+  decision D3 based_on EV2, EV4, D1, D2:
+    "Accept REQUIRED_SCHEDULE_CORE only if focused, compatibility, static, documentation, self-use, adapter, package, and Node.js 22 gates pass without public activation"
+
+step S8:
+  pending PD1:
+    "POSTDUE contract and evaluation, Check, Analysis, Next, public Grammar 8 and Contract 9, release, remote writes, and plan advance remain outside this task"

@@ -1,0 +1,19 @@
+{
+  "model": "perttool.required-precedence-backward@1",
+  "cases": [
+    { "id": "RSC-001", "depends_on": [], "operation": "internal_capability" },
+    { "id": "RSC-002", "depends_on": ["RSC-001"], "operation": "latest_anchor" },
+    { "id": "RSC-003", "depends_on": ["RSC-001"], "operation": "deadline_anchor" },
+    { "id": "RSC-004", "depends_on": ["RSC-002", "RSC-003"], "operation": "coincident_and_earlier_anchor" },
+    { "id": "RSC-005", "depends_on": ["RSC-002"], "operation": "calendar_backward_subtraction" },
+    { "id": "RSC-006", "depends_on": ["RSC-005"], "operation": "intermediate_milestone_latest" },
+    { "id": "RSC-007", "depends_on": ["RSC-005"], "operation": "task_finish_latest" },
+    { "id": "RSC-008", "depends_on": ["RSC-007"], "operation": "task_start_latest" },
+    { "id": "RSC-009", "depends_on": ["RSC-006", "RSC-008"], "operation": "driver_retention" },
+    { "id": "RSC-010", "depends_on": ["RSC-005"], "operation": "precedence_slack" },
+    { "id": "RSC-011", "depends_on": ["RSC-010"], "operation": "resource_slack" },
+    { "id": "RSC-012", "depends_on": ["RSC-011"], "operation": "optimal_false_qualification" },
+    { "id": "RSC-013", "depends_on": ["RSC-002"], "operation": "absent_and_unavailable" },
+    { "id": "RSC-014", "depends_on": ["RSC-004", "RSC-009", "RSC-012", "RSC-013"], "operation": "closed_boundary" }
+  ]
+}

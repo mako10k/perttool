@@ -136,6 +136,7 @@ task REQUIRED_SCHEDULE_CORE CONSTRAINT_SOURCE_READY -> REQUIRED_SCHEDULE_READY:
   title "Implement the goal-anchored required schedule"
   description "Implement exact calendar-aware precedence backward projection from the project finish target, intermediate bound propagation, latest event values, signed slack, constraint feasibility, unavailable causes, and comparison with the optimal=false forward resource schedule while keeping backward resource leveling and global optimization unavailable under separate algorithm identities."
   duration 10p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
