@@ -1,6 +1,6 @@
 # Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
 project TEMPORAL_SCHEDULE:
-  version 6
+  version 7
   title "Calendar-aware temporal scheduling"
   description "Implement CALENDAR-001, CONSTRAINT-001, and POSTDUE-001 as one dependency-ordered Grammar 8 and CLI Contract 9 workstream. Establish generic calendar-backed resource availability and working-time arithmetic first, then event bounds and a goal-anchored required schedule, then actionable POSTDUE and POSTDUE_FORECAST alerts with critical or target-scoped driver paths across document check, dag analyze, and dag next. Preserve legacy continuous-calendar documents, advisory deadline meaning, exact proof qualifications, warning-only authority, and source-bound determinism. Release selection, publication, remote writes, Issue mutation, external calendar synchronization, exact global optimization, and unrelated plan advancement remain separate decisions."
   as_of 2026-08-17
@@ -9,6 +9,17 @@ project TEMPORAL_SCHEDULE:
   goal_owner user
   dag_owner user
 
+
+milestone_acceptance_migration GRAMMAR_7_BASELINE:
+  model 1
+  repository git:sha1:41b5ef4054dd6f36f8bfd03fd587129cf356deda:index:a1c35947e5854330f3e8dd5f49c314aaaad6a7b8
+  path "plans/temporal-schedule.pert"
+  object_format sha1
+  head 41b5ef4054dd6f36f8bfd03fd587129cf356deda
+  blob a1c35947e5854330f3e8dd5f49c314aaaad6a7b8
+  source_digest sha256:c0737f10f271f93b89efbb098a7ece31d8ae9f9b59544bd970d3e9908f6401ba
+  candidate_digest sha256:0597f2e8803e50b12d3cb6545cfbd87292fce5ee063b1f30a0334fc653b496d0
+  grandfathered TEMPORAL_PLANNING_STARTED
 milestone TEMPORAL_PLANNING_STARTED:
   title "Temporal scheduling planning started"
   state reached
