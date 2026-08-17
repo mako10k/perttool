@@ -1049,8 +1049,12 @@ Adapters project the Application result and do not infer or mutate acceptance.
 `CALENDAR-001` and `CONSTRAINT-001` record a selected post-MVP extension.
 This section fixes its product-level requirement boundary, while the
 dependency-ordered `plans/temporal-schedule.pert` selects contract-first
-delivery without yet accepting source syntax, an interface version, or release
-authority. The [llmthink backlog review](process/temporal-availability-constraints-backlog-review.think)
+delivery. The [Calendar-Aware Temporal Scheduling
+Contract](specs/temporal-schedule.md) accepts the minimal Grammar 8 source,
+calendar and scheduling algorithms, event-bound and required-schedule meaning,
+scoped legacy supersession, deterministic limits, and target CLI Contract 9
+boundary without activating runtime or release authority. The
+[llmthink backlog review](process/temporal-availability-constraints-backlog-review.think)
 records the evidence and simplification decisions.
 
 Generic availability must:
@@ -3359,11 +3363,15 @@ The selected `CALENDAR-001`, `CONSTRAINT-001`, and `POSTDUE-001` extensions do
 not reopen the accepted continuous-calendar, deadline, CPM, or
 resource-scheduler contracts for documents that do not opt in. Their product
 boundaries are recorded in Sections 7.12 and 7.13, and
-`plans/temporal-schedule.pert` fixes their delivery order. Exact source syntax,
-calendar time-zone data, work-duration arithmetic across gaps, constraint
+`plans/temporal-schedule.pert` fixes their delivery order. The accepted
+[Calendar-Aware Temporal Scheduling Contract](specs/temporal-schedule.md) is
+the single Grammar 8 normative owner while the previous temporal documents
+remain the Grammar 1 through 7 compatibility baseline. It fixes exact source
+syntax, IANA 2026c zone data, work-duration arithmetic across gaps, constraint
 hardness, alert and public identities, migration, and backward-resource
-qualification remain outputs of the first contract task. Runtime
-implementation must not begin before that contract is accepted.
+qualification. Runtime implementation remains dependency ordered after that
+contract and must not partially activate a deadline-only or calendar-only
+public slice.
 
 The SU-M1 temporal and unit-migration extension has accepted its property
 scope, deterministic calendar and deadline semantics, exact source-unit

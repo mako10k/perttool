@@ -12,6 +12,7 @@
 - Initial source and public interface: [Grammar 6 and CLI Contract 7](plan-assurance-interface.md)
 - Requirements: [../requirements.md](../requirements.md)
 - Active DSL grammar: [dsl-grammar.md](dsl-grammar.md)
+- Accepted hash-model-2 target: [Calendar-Aware Temporal Scheduling Contract](temporal-schedule.md)
 - Backlog: [`ASSURE-001`](../backlog.md#assure-001-add-conditional-plan-assurance)
 - Normative examples: [../examples/plan-assurance.md](../examples/plan-assurance.md)
 

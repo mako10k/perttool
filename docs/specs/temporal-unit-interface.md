@@ -10,6 +10,7 @@
 - Grammar: [dsl-grammar.md](dsl-grammar.md)
 - Calendar semantics: [temporal-calendar.md](temporal-calendar.md)
 - Deadline semantics: [temporal-deadline.md](temporal-deadline.md)
+- Grammar 8 scoped successor: [Calendar-Aware Temporal Scheduling Contract](temporal-schedule.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Mutation semantics: [mutation.md](mutation.md)
 - Prior CLI contract: [cli-contract-3.md](cli-contract-3.md)

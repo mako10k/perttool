@@ -12,6 +12,7 @@
 - Deadline semantics: [temporal-deadline.md](temporal-deadline.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Public interface: [temporal-unit-interface.md](temporal-unit-interface.md)
+- Grammar 8 scoped successor: [Calendar-Aware Temporal Scheduling Contract](temporal-schedule.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
 
 ## 1. Purpose

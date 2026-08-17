@@ -1662,8 +1662,9 @@ planning so neither concern becomes a disguised dependency edge.
 
 Priority: Unset (dependency order selected; relative priority not decided)
 
-Status: Selected first in `plans/temporal-schedule.pert` (2026-08-17;
-contract task not started)
+Status: Integrated Grammar 8 design contract accepted in
+`docs/specs/temporal-schedule.md`; `CALENDAR_SOURCE_CORE` is the next selected
+implementation task in `plans/temporal-schedule.pert` (2026-08-17)
 
 Add optional time-varying availability to every renewable resource without
 introducing a human-only resource kind. People, equipment, facilities,
@@ -1716,8 +1717,9 @@ global optimization.
 
 Priority: Unset (dependency order selected; relative priority not decided)
 
-Status: Selected after `CALENDAR-001` in `plans/temporal-schedule.pert`
-(2026-08-17; contract task not started)
+Status: Integrated Grammar 8 design contract accepted; implementation remains
+selected after the calendar source and scheduler tasks in
+`plans/temporal-schedule.pert` (2026-08-17)
 
 Add a small, explicit temporal-constraint model for task-start, task-finish,
 and milestone-reach events. The semantic primitive is an optional earliest
@@ -1773,8 +1775,9 @@ resource-constrained optimization.
 
 Priority: Unset (dependency order selected; relative priority not decided)
 
-Status: Selected after `CALENDAR-001` and `CONSTRAINT-001` in
-`plans/temporal-schedule.pert` (2026-08-17; contract task not started)
+Status: Integrated prerequisite design accepted; the focused POSTDUE contract
+and runtime remain selected only after `CALENDAR-001` and `CONSTRAINT-001` in
+`plans/temporal-schedule.pert` (2026-08-17)
 
 Add the stable alert kinds `POSTDUE` and `POSTDUE_FORECAST` to
 `document check`, `dag analyze`, and `dag next`. Reuse the current deadline

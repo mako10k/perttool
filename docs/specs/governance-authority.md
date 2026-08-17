@@ -7,6 +7,7 @@
 - Mutation semantics: [mutation.md](mutation.md)
 - Governance source: [governance-source.md](governance-source.md)
 - Governance interface: [governance-interface.md](governance-interface.md)
+- Accepted temporal governance v2 target: [Calendar-Aware Temporal Scheduling Contract](temporal-schedule.md)
 - Normative governance examples: [../examples/governance.md](../examples/governance.md)
 - Design acceptance: [../process/governance-design-acceptance.md](../process/governance-design-acceptance.md)
 - Graph semantics: [graph-semantics.md](graph-semantics.md)

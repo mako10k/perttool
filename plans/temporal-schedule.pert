@@ -126,6 +126,7 @@ task TEMPORAL_SCHEDULE_CONTRACT TEMPORAL_PLANNING_STARTED -> TEMPORAL_CONTRACT_A
   title "Accept the single-DSL temporal scheduling contract"
   description "Fix the minimal calendar, availability, and when syntax; project time basis and versioned zone data; half-open windows and exceptions; finite and partial capacity; working-duration arithmetic; multi-resource gaps; earliest and latest event bounds; deadline compatibility; required-schedule anchoring; POSTDUE alert semantics; driver paths; deterministic limits; governance, assurance, migration, result, algorithm, and installed-package boundaries; and dependency-ordered machine cases before implementation."
   duration 10p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

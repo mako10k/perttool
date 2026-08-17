@@ -13,6 +13,7 @@
 - Governance source and effective metadata: [governance-source.md](governance-source.md)
 - Conditional plan assurance interface: [plan-assurance-interface.md](plan-assurance-interface.md)
 - Milestone outcome acceptance: [milestone-acceptance.md](milestone-acceptance.md)
+- Accepted Grammar 8 target: [Calendar-Aware Temporal Scheduling Contract](temporal-schedule.md)
 
 ## 1. Purpose
 
@@ -25,7 +26,9 @@ by [Temporal and Unit Interface Contract version
 2](temporal-unit-interface.md). Section 20.3 fixes the active Grammar 4
 governance delta. Section 20.4 fixes the active Grammar 5 project-actuals
 delta. Section 20.5 fixes the Grammar 6 plan-assurance delta. Section 20.6
-fixes the active Grammar 7 milestone-acceptance delta. See the
+fixes the active Grammar 7 milestone-acceptance delta. Section 20.7 records
+the separately accepted but inactive Grammar 8 owner without duplicating its
+integrated contract. See the
 following representative valid version 1
 documents.
 
@@ -1310,6 +1313,15 @@ without expanding their reserved-ID sets. Grammar 7 formatting and unrelated
 source-preserving operations retain acceptance-owned semantics, while
 criterion replacement, receipt mutation, and canonical advance use their
 dedicated Contract 8 guards.
+
+### 20.7 Grammar version 8 calendar-aware temporal target
+
+The accepted but inactive Grammar 8 target is owned in full by the
+[Calendar-Aware Temporal Scheduling Contract](temporal-schedule.md). This
+document does not duplicate that target EBNF as a second additive temporal
+delta. Grammar 7 and CLI Contract 8 remain the active runtime until the
+dependency-ordered public-contract task atomically activates the target and
+synchronizes this active grammar, Help, Guide, schemas, and migration surface.
 
 ## 21. Grammar acceptance
 

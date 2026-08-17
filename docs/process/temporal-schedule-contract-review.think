@@ -1,0 +1,103 @@
+framework DecisionAudit
+
+domain TemporalScheduleContract:
+  description "Contract review for the integrated Grammar 8 calendar, event-bound, required-schedule, and actionable POSTDUE model"
+
+problem P1:
+  "Can perttool add generic real-time availability and backward goal constraints while retaining one small Activity-on-Arrow DSL, exact legacy behavior, and actionable warnings without accumulating overlapping temporal specifications?"
+
+step S1:
+  evidence EV1:
+    "The accepted product requirements require one generic available-capacity function for all renewable resources, one event-bound model, a separate required schedule, and shared POSTDUE projections after calendar and constraint prerequisites"
+    resource:
+      file "docs/requirements.md"
+      label "Selected temporal requirements"
+
+step S2:
+  evidence EV2:
+    "The existing calendar contract is continuous and fixed-offset and explicitly excludes named zones, working windows, resource calendars, daylight-saving transitions, and time-varying capacity"
+    resource:
+      file "docs/specs/temporal-calendar.md"
+      label "Legacy calendar compatibility boundary"
+
+step S3:
+  evidence EV3:
+    "The existing deadline contract keeps deadlines advisory, distinguishes precedence lower-bound lateness from an optimal=false late resource heuristic, and treats completed events without actual times as unavailable"
+    resource:
+      file "docs/specs/temporal-deadline.md"
+      label "Legacy deadline meaning"
+
+step S4:
+  evidence EV4:
+    "The current Activity-on-Arrow graph uses tasks as edges, milestones as events, gates as dependency-only edges, and renewable resource requirements outside graph reachability"
+    resource:
+      file "docs/specs/graph-semantics.md"
+      label "AoA and resource boundary"
+
+step S5:
+  evidence EV5:
+    "The backlog comparison found that established project tools expose multiple calendar hierarchies and named constraint types, while the accepted perttool simplification is one project baseline, optional per-resource calendars, and earliest/latest event bounds"
+    resource:
+      file "docs/process/temporal-availability-constraints-backlog-review.think"
+      label "llmthink simplification decisions"
+
+step S6:
+  evidence EV6:
+    "TaskPlanContract v1 already distinguishes direct task plan fields from ambient project, milestone, and resource scheduling inputs, and governance semantics already treats resource and temporal maintenance as ordinary while preserving independent safety gates"
+    resource:
+      file "docs/specs/plan-assurance.md"
+      label "Assurance input boundary"
+    resource:
+      file "docs/specs/governance-authority.md"
+      label "Governance classification boundary"
+
+step S7:
+  evidence EV7:
+    "IANA publishes immutable named Time Zone Database releases, including 2026c, so a source-selected release and digest can replace host-zone and latest-data dependence"
+    resource:
+      url "https://www.iana.org/time-zones/releases"
+      label "IANA Time Zone Database releases"
+
+step S8:
+  decision D1 based_on P1, EV1, EV2, EV3:
+    "Use docs/specs/temporal-schedule.md as the sole Grammar 8 temporal authority and retain the old calendar, deadline, and interface documents only as the exact Grammar 1 through 7 compatibility baseline; do not append Grammar 8 fragments independently to each legacy contract"
+
+step S9:
+  decision D2 based_on EV1, EV4, EV5:
+    "Keep the user language closed to one calendar declaration, four project profile fields, four generic resource availability fields, and repeated when lines for the three accepted events and two directions; reject resource types, task calendars, RRULE, and product-specific constraint names"
+
+step S10:
+  decision D3 based_on EV2, EV7:
+    "Select one project IANA zone and exact tzdata 2026c for the named-zone profile, require explicit offset-zone agreement, define local-window membership across gaps and overlaps, and retain the continuous profile when the document does not opt in"
+
+step S11:
+  decision D4 based_on EV1, EV4, D2, D3:
+    "Define effective capacity by validity, then one non-overlapping absolute replacement, then the selected project or resource calendar, with zero through nominal integer values and no human-specific meaning"
+
+step S12:
+  decision D5 based_on EV1, D4:
+    "Keep a task logically non-preemptive but calendar-interruptible: work advances only with the complete simultaneous requirement set, all allocations are released during a deterministic calendar gap, and interrupted tasks receive stable resume priority"
+
+step S13:
+  decision D6 based_on EV1, EV3, EV4, D2:
+    "Use earliest and latest bounds only for task start, task finish, and milestone reach; same-event earliest after latest is invalid, propagated network contradiction is typed infeasibility, and deadline remains a separate advisory target"
+
+step S14:
+  decision D7 based_on EV1, EV3, D5, D6:
+    "Select the earlier comparable project-finish latest bound or deadline as the explicit backward anchor, subtract exact individual calendar work without resource leveling, retain intermediate bound drivers, and compare forward precedence and optimal=false resource forecasts separately"
+
+step S15:
+  decision D8 based_on EV1, EV3, D7:
+    "Feed Check, Analysis, and Next from one bounded alert evaluator; emit only POSTDUE and POSTDUE_FORECAST on deadlines or latest bounds, preserve precedence-infeasible versus resource-heuristic-late proof, and bind project or target-scoped driver paths with exact follow-up argv"
+
+step S16:
+  decision D9 based_on EV6, D2, D6:
+    "Introduce TaskPlanContract and hash model 2 for task when fields, keep calendar, resource, and milestone facts ambient, classify the new temporal source as ordinary governance maintenance, and require explicit preview-first migration without reusing model-1 assurance digests"
+
+step S17:
+  decision D10 based_on EV1, D1, D8, D9:
+    "Reserve one atomic Grammar 8 and CLI Contract 9 activation after every semantic prerequisite, use replacement result identities without increasing the root schema count, add only three calendar commands, and keep Advance v3 only if its complete shape remains sufficient"
+
+step S18:
+  decision D11 based_on D1, D2, D3, D4, D5, D6, D7, D8, D9, D10:
+    "Accept the contract only with exact source and derived hard limits, thirty-two dependency-ordered cases, legacy non-activation evidence, complete package boundaries, and explicit deferral of calendar hierarchies, external synchronization, backward resource leveling, and exact optimization"

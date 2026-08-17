@@ -1,0 +1,635 @@
+{
+  "schema_version": "Perttool.TemporalScheduleContractCases.v1",
+  "activation_state": "contract_only",
+  "target_grammar_version": 8,
+  "target_cli_contract_version": 9,
+  "active_runtime_unchanged": {
+    "tool_version": "0.9.4",
+    "grammar_version": 7,
+    "cli_contract_version": 8,
+    "commands": 53,
+    "root_schemas": 23,
+    "root_exports": 129,
+    "node_exports": 129,
+    "core_exports": 45
+  },
+  "supersession": {
+    "grammar_1_through_7": "legacy_temporal_contracts",
+    "grammar_8": "temporal_schedule_contract",
+    "legacy_rewrite": false,
+    "partial_public_activation": false
+  },
+  "source_syntax": {
+    "top_level_declarations_added": [
+      "calendar"
+    ],
+    "project_fields": [
+      "time_zone",
+      "tzdb",
+      "calendar",
+      "workday"
+    ],
+    "calendar_entries": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun",
+      "except"
+    ],
+    "resource_fields": [
+      "calendar",
+      "available_from",
+      "available_until",
+      "availability"
+    ],
+    "task_when_events": [
+      "start",
+      "finish"
+    ],
+    "milestone_when_events": [
+      "reach"
+    ],
+    "bound_directions": [
+      "earliest",
+      "latest"
+    ],
+    "task_calendar": false,
+    "resource_type": false,
+    "rrule": false,
+    "legacy_not_before_in_grammar_8": false
+  },
+  "zone_data": {
+    "authority": "IANA Time Zone Database",
+    "release": "2026c",
+    "archive": "tzdata2026c.tar.gz",
+    "sha256": "e4a178a4477f3d0ea77cc31828ff72aa38feff8d61aa13e7e99e142e9d902be4",
+    "range_start_inclusive": "1970-01-01T00:00:00Z",
+    "range_end_exclusive": "2100-01-01T00:00:00Z",
+    "project_zone_count": 1,
+    "host_zone_input": false,
+    "network_input": false
+  },
+  "algorithm_identities": {
+    "calendar_arithmetic": "perttool.calendar-projection@2",
+    "calendar_profile": "perttool.calendar.named-weekly-capacity@1",
+    "working_time": "perttool.calendar-working-time@1",
+    "temporal_precedence": "perttool.temporal-precedence-earliest@2",
+    "temporal_resource": "perttool.temporal-parallel-sgs@2",
+    "temporal_resource_optimal": false,
+    "required_schedule": "perttool.required-precedence-backward@1",
+    "schedule_target": "perttool.schedule-target-evaluation@1",
+    "schedule_alert": "perttool.schedule-alert@1",
+    "target_driver_path": "perttool.target-driver-path@1"
+  },
+  "target_result_schemas": [
+    "Perttool.ProjectResult.v5",
+    "Perttool.CheckResult.v6",
+    "Perttool.AnalysisResult.v7",
+    "Perttool.NextResult.v8",
+    "Perttool.MutationResult.v6",
+    "Perttool.PlanAssuranceResult.v2",
+    "Perttool.UnitMigrationResult.v4"
+  ],
+  "unchanged_result_schemas": [
+    "Perttool.AdvanceResult.v3",
+    "Perttool.HistoricalGraphResult.v1",
+    "Perttool.ProjectHistoryResult.v1"
+  ],
+  "target_command_count": 56,
+  "target_root_schema_count": 23,
+  "commands_added": [
+    "calendar add",
+    "calendar set",
+    "calendar remove"
+  ],
+  "diagnostic_codes": [
+    "PTSCH-101",
+    "PTSCH-102",
+    "PTSCH-103",
+    "PTSCH-104",
+    "PTSCH-105",
+    "PTSCH-106",
+    "PTSCH-107",
+    "PTSCH-108",
+    "PTSCH-109"
+  ],
+  "alert_kinds": [
+    "POSTDUE",
+    "POSTDUE_FORECAST"
+  ],
+  "hard_limits": {
+    "calendars_per_document": 256,
+    "weekly_windows_per_calendar": 64,
+    "dated_exceptions_per_calendar": 4096,
+    "availability_overrides_per_resource": 4096,
+    "aggregate_change_instants": 100000,
+    "work_segments_per_projection": 1000000,
+    "schedule_alerts": 10000,
+    "compact_driver_steps_per_alert": 64,
+    "full_driver_steps_per_alert": 100000,
+    "full_path_enumeration_max": 1000
+  },
+  "cases": [
+    {
+      "id": "TSC-001",
+      "depends_on": [],
+      "operation": "legacy_continuous_profile_compatibility",
+      "expected": {
+        "grammar_versions": [1, 2, 3, 4, 5, 6, 7],
+        "source_bytes_changed": false,
+        "result_identity_changed": false,
+        "recommendation_changed": false,
+        "calendar_profile": "perttool.calendar.continuous-fixed-offset@1"
+      }
+    },
+    {
+      "id": "TSC-002",
+      "depends_on": [
+        "TSC-001"
+      ],
+      "operation": "grammar_8_closed_source_inventory",
+      "expected": {
+        "top_level_kind_added": "calendar",
+        "project_field_count": 4,
+        "resource_field_count": 4,
+        "task_when_pairs": 4,
+        "milestone_when_pairs": 2,
+        "single_dsl": true
+      }
+    },
+    {
+      "id": "TSC-003",
+      "depends_on": [
+        "TSC-002"
+      ],
+      "operation": "pinned_named_zone_profile",
+      "expected": {
+        "tzdb_release": "2026c",
+        "source_digest_required": true,
+        "one_project_zone": true,
+        "offset_must_match_zone": true,
+        "host_or_network_fallback": false
+      }
+    },
+    {
+      "id": "TSC-004",
+      "depends_on": [
+        "TSC-003"
+      ],
+      "operation": "weekly_windows_and_dst_membership",
+      "expected": {
+        "interval_boundary": "half_open",
+        "cross_midnight_source": "split_two_civil_days",
+        "dst_gap": "missing_local_labels_contribute_no_instants",
+        "dst_overlap": "both_matching_instants_included",
+        "elapsed_seconds_exact": true
+      }
+    },
+    {
+      "id": "TSC-005",
+      "depends_on": [
+        "TSC-004"
+      ],
+      "operation": "dated_exception",
+      "expected": {
+        "precedence": "replace_complete_weekly_date",
+        "off_supported": true,
+        "partial_day_supported": true,
+        "multiple_rules_same_date": false
+      }
+    },
+    {
+      "id": "TSC-006",
+      "depends_on": [
+        "TSC-005"
+      ],
+      "operation": "project_and_resource_calendar_selection",
+      "expected": {
+        "resource_omission": "inherit_project_calendar",
+        "resource_declaration": "replace_project_default_for_resource",
+        "task_without_resources": "project_calendar",
+        "task_specific_window": "dedicated_required_resource",
+        "task_calendar_hierarchy": false
+      }
+    },
+    {
+      "id": "TSC-007",
+      "depends_on": [
+        "TSC-006"
+      ],
+      "operation": "finite_and_partial_generic_availability",
+      "expected": {
+        "validity_order": 1,
+        "capacity_override_order": 2,
+        "calendar_order": 3,
+        "override_can_open_calendar_gap": true,
+        "override_can_open_outside_validity": false,
+        "capacity_range": "zero_through_nominal"
+      }
+    },
+    {
+      "id": "TSC-008",
+      "depends_on": [
+        "TSC-002",
+        "TSC-003",
+        "TSC-007"
+      ],
+      "operation": "calendar_source_rejection",
+      "expected": {
+        "overlapping_windows": "invalid",
+        "overlapping_overrides": "invalid",
+        "reversed_interval": "invalid",
+        "unknown_calendar": "invalid",
+        "offset_zone_mismatch": "invalid",
+        "source_limit": "invalid_before_scheduling"
+      }
+    },
+    {
+      "id": "TSC-009",
+      "depends_on": [
+        "TSC-004",
+        "TSC-007"
+      ],
+      "operation": "hour_working_time_addition",
+      "expected": {
+        "work_unit": "exact_si_seconds",
+        "hour_scalar": 3600,
+        "gap_counts_as_work": false,
+        "segments_half_open": true,
+        "display_rounding_input": false
+      }
+    },
+    {
+      "id": "TSC-010",
+      "depends_on": [
+        "TSC-009"
+      ],
+      "operation": "day_and_point_work_conversion",
+      "expected": {
+        "day_requires_workday": true,
+        "point_per_day_requires_workday": true,
+        "point_per_hour_requires_workday": false,
+        "workday_unit": "hour",
+        "source_day_hour_migration_authorized": false
+      }
+    },
+    {
+      "id": "TSC-011",
+      "depends_on": [
+        "TSC-006",
+        "TSC-009"
+      ],
+      "operation": "multiple_required_resource_intersection",
+      "expected": {
+        "simultaneous_complete_requirement": true,
+        "partial_acquisition": false,
+        "work_outside_intersection": false,
+        "capacity_divides_duration": false
+      }
+    },
+    {
+      "id": "TSC-012",
+      "depends_on": [
+        "TSC-011"
+      ],
+      "operation": "calendar_interruption_and_gap_reuse",
+      "expected": {
+        "discretionary_preemption": false,
+        "release_all_requirements_in_gap": true,
+        "gap_capacity_reusable": true,
+        "reacquire_atomically": true,
+        "resume_priority": "interrupted_then_stable_task_id"
+      }
+    },
+    {
+      "id": "TSC-013",
+      "depends_on": [
+        "TSC-008",
+        "TSC-012"
+      ],
+      "operation": "calendar_unavailable_boundaries",
+      "expected": {
+        "active_overallocation": "active_capacity_conflict",
+        "static_closed_proof": "no_feasible_window",
+        "bounded_search_exhaustion": "calendar_search_limit",
+        "zone_boundary": "zone_range_exceeded",
+        "limit_proves_no_schedule": false
+      }
+    },
+    {
+      "id": "TSC-014",
+      "depends_on": [
+        "TSC-002",
+        "TSC-009"
+      ],
+      "operation": "not_before_migration",
+      "expected": {
+        "target": "when start earliest",
+        "instant_changed": false,
+        "grammar_8_alias_retained": false,
+        "deadline_rewritten": false,
+        "automatic_calendar_added": false
+      }
+    },
+    {
+      "id": "TSC-015",
+      "depends_on": [
+        "TSC-009",
+        "TSC-014"
+      ],
+      "operation": "task_finish_earliest",
+      "expected": {
+        "forward_schedule_input": true,
+        "start_delayed_when_needed": true,
+        "resource_holding_idle_tail": false,
+        "topology_changed": false
+      }
+    },
+    {
+      "id": "TSC-016",
+      "depends_on": [
+        "TSC-015"
+      ],
+      "operation": "milestone_reach_earliest",
+      "expected": {
+        "incoming_closure_first": true,
+        "milestone_wait_allowed": true,
+        "incoming_task_duration_rewritten": false,
+        "gate_added": false
+      }
+    },
+    {
+      "id": "TSC-017",
+      "depends_on": [
+        "TSC-014",
+        "TSC-016"
+      ],
+      "operation": "latest_and_exact_event_bounds",
+      "expected": {
+        "equal_earliest_latest": "valid_exact_event",
+        "duplicate_pair": "invalid",
+        "earliest_after_latest": "PTSCH-107",
+        "latest_is_execution_lock": false,
+        "latest_is_planning_requirement": true
+      }
+    },
+    {
+      "id": "TSC-018",
+      "depends_on": [
+        "TSC-017"
+      ],
+      "operation": "project_required_anchor_selection",
+      "expected": {
+        "latest_only": "latest_bound",
+        "deadline_only": "advisory_deadline",
+        "both_equal": "coincident",
+        "both_comparable": "earlier_instant",
+        "neither": "required_anchor_absent",
+        "deadline_becomes_hard_constraint": false
+      }
+    },
+    {
+      "id": "TSC-019",
+      "depends_on": [
+        "TSC-018"
+      ],
+      "operation": "intermediate_latest_propagation",
+      "expected": {
+        "uses_aoa_topology": true,
+        "task_finish_copied_to_milestone": false,
+        "milestone_latest_copied_to_tasks": false,
+        "bound_driver_retained": true,
+        "working_time_subtraction_exact": true
+      }
+    },
+    {
+      "id": "TSC-020",
+      "depends_on": [
+        "TSC-015",
+        "TSC-019"
+      ],
+      "operation": "network_constraint_contradiction",
+      "expected": {
+        "source_valid": true,
+        "dag_valid": true,
+        "constraint_feasibility": "infeasible",
+        "signed_slack": "negative",
+        "automatic_source_move": false
+      }
+    },
+    {
+      "id": "TSC-021",
+      "depends_on": [
+        "TSC-012",
+        "TSC-020"
+      ],
+      "operation": "forward_required_comparison",
+      "expected": {
+        "precedence_negative_slack": "precedence_infeasible",
+        "resource_only_negative_slack": "resource_heuristic_late",
+        "resource_optimal": false,
+        "backward_resource_leveling": "unavailable",
+        "exact_global_optimization": "unavailable"
+      }
+    },
+    {
+      "id": "TSC-022",
+      "depends_on": [
+        "TSC-016",
+        "TSC-021"
+      ],
+      "operation": "lifecycle_and_actual_time_boundary",
+      "expected": {
+        "active_start_event": "complete_actual_time_may_be_unavailable",
+        "active_finish_event": "incomplete",
+        "done_finish_event": "complete_actual_time_may_be_unavailable",
+        "reached_event": "complete_actual_time_may_be_unavailable",
+        "blocked_projection": "conditional_on_blocks_resolved",
+        "suspended_resume_inferred": false
+      }
+    },
+    {
+      "id": "TSC-023",
+      "depends_on": [
+        "TSC-017",
+        "TSC-022"
+      ],
+      "operation": "current_postdue",
+      "expected": {
+        "kind": "POSTDUE",
+        "event_incomplete_required": true,
+        "strictly_after_target": true,
+        "equality": "due_now_no_alert",
+        "incomparable": "unavailable_no_alert",
+        "completed_unknown_actual": "no_alert"
+      }
+    },
+    {
+      "id": "TSC-024",
+      "depends_on": [
+        "TSC-021",
+        "TSC-023"
+      ],
+      "operation": "precedence_postdue_forecast",
+      "expected": {
+        "kind": "POSTDUE_FORECAST",
+        "proof": "precedence_infeasible",
+        "strictly_after_target": true,
+        "on_target": "no_alert",
+        "matching_postdue_suppresses": true
+      }
+    },
+    {
+      "id": "TSC-025",
+      "depends_on": [
+        "TSC-021",
+        "TSC-024"
+      ],
+      "operation": "resource_postdue_forecast",
+      "expected": {
+        "kind": "POSTDUE_FORECAST",
+        "proof": "resource_heuristic_late",
+        "precedence_on_time": true,
+        "scheduler_identity_retained": true,
+        "optimal": false,
+        "infeasibility_claim": false
+      }
+    },
+    {
+      "id": "TSC-026",
+      "depends_on": [
+        "TSC-023",
+        "TSC-025"
+      ],
+      "operation": "deadline_and_latest_alert_identity",
+      "expected": {
+        "targets_independent": true,
+        "equal_instant_can_emit_two_targets": true,
+        "dedup_key_fields": [
+          "subject_kind",
+          "subject_id",
+          "event",
+          "target_kind",
+          "source_range"
+        ],
+        "deadline_reinterpreted_as_latest": false
+      }
+    },
+    {
+      "id": "TSC-027",
+      "depends_on": [
+        "TSC-024",
+        "TSC-025"
+      ],
+      "operation": "project_finish_alert_driver",
+      "expected": {
+        "precedence_basis": "precedence_representative_critical_path",
+        "resource_basis": "schedule_representative_critical_path",
+        "path_identity_reused": true,
+        "global_path_used_for_intermediate": false
+      }
+    },
+    {
+      "id": "TSC-028",
+      "depends_on": [
+        "TSC-026",
+        "TSC-027"
+      ],
+      "operation": "target_scoped_alert_driver",
+      "expected": {
+        "task_or_intermediate": "target_scoped_driver",
+        "states": [
+          "available",
+          "not_computed",
+          "unavailable"
+        ],
+        "empty_path_claims_evidence": false,
+        "json_argv": [
+          "perttool",
+          "dag",
+          "analyze",
+          "FILE",
+          "--schedule",
+          "both",
+          "--format",
+          "json"
+        ]
+      }
+    },
+    {
+      "id": "TSC-029",
+      "depends_on": [
+        "TSC-028"
+      ],
+      "operation": "shared_check_analysis_next_alert_projection",
+      "expected": {
+        "pure_evaluator_count": 1,
+        "check": "compact",
+        "analysis": "full_path_reference",
+        "next": "compact_plus_argv",
+        "alerts_separate_from_diagnostics": true,
+        "diagnostic_truncation_erases_summary": false,
+        "valid_exit_status": 0
+      }
+    },
+    {
+      "id": "TSC-030",
+      "depends_on": [
+        "TSC-015",
+        "TSC-029"
+      ],
+      "operation": "temporal_start_authority_and_ranking",
+      "expected": {
+        "calendar_capacity_now_gates_start": true,
+        "start_earliest_gates_start": true,
+        "finish_earliest_computed_start_gates_start": true,
+        "latest_gates_recovery_start": false,
+        "postdue_gates_start": false,
+        "recommendation_version_1_ranking_changed": false
+      }
+    },
+    {
+      "id": "TSC-031",
+      "depends_on": [
+        "TSC-008",
+        "TSC-014",
+        "TSC-017",
+        "TSC-030"
+      ],
+      "operation": "assurance_governance_mutation_migration_boundary",
+      "expected": {
+        "task_plan_contract": "Perttool.TaskPlanContract.v2",
+        "task_when_is_contract_input": true,
+        "calendar_resource_milestone_inputs": "ambient_reanalysis",
+        "governance_semantics_version": 2,
+        "new_temporal_fields": "ordinary_maintenance",
+        "migration_preview_first": true,
+        "assurance_v1_digest_reused": false,
+        "safe_write_reused": true,
+        "advance_result": "Perttool.AdvanceResult.v3_or_explicit_new_identity_before_activation"
+      }
+    },
+    {
+      "id": "TSC-032",
+      "depends_on": [
+        "TSC-001",
+        "TSC-029",
+        "TSC-031"
+      ],
+      "operation": "contract_only_and_atomic_public_boundary",
+      "expected": {
+        "active_runtime_unchanged": true,
+        "runtime_grammar_8": false,
+        "partial_calendar_release": false,
+        "partial_postdue_release": false,
+        "target_commands": 56,
+        "target_root_schemas": 23,
+        "installed_package_gate_required": true,
+        "release_or_remote_write": false
+      }
+    }
+  ]
+}

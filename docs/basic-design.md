@@ -11,6 +11,7 @@
 - Temporal deadline semantics: [specs/temporal-deadline.md](specs/temporal-deadline.md)
 - Unit migration semantics: [specs/unit-migration.md](specs/unit-migration.md)
 - Temporal and unit interface: [specs/temporal-unit-interface.md](specs/temporal-unit-interface.md)
+- Calendar-aware temporal scheduling: [specs/temporal-schedule.md](specs/temporal-schedule.md)
 - Project actuals and Git history: [specs/project-actuals.md](specs/project-actuals.md)
 - Historical DAG reconstruction: [specs/historical-dag.md](specs/historical-dag.md)
 - Historical editor protocol: [specs/historical-editor-protocol.md](specs/historical-editor-protocol.md)
@@ -3794,6 +3795,48 @@ Exit for the contract task:
   hard limits, no-write behavior, and three-way deferral; and
 - the complete repository and 35-plan self-use gates pass before the task's
   exact pre-advance snapshot is committed.
+
+### Post-MVP Slice 7: Calendar-aware temporal scheduling
+
+The selected `TEMPORAL_SCHEDULE` workstream is tracked in
+[`plans/temporal-schedule.pert`](../plans/temporal-schedule.pert). The
+[Calendar-Aware Temporal Scheduling
+Contract](specs/temporal-schedule.md) is the single target Grammar 8 normative
+owner for generic reusable calendars, time-varying renewable-resource
+capacity, calendar-interruptible work, task and milestone event bounds, the
+goal-anchored required schedule, and actionable POSTDUE alerts.
+
+The contract uses scoped supersession to avoid accumulating partially
+overlapping temporal specifications. Grammar 1 through 7 retain the exact
+continuous fixed-offset and advisory-deadline contracts. Grammar 8 uses the
+integrated contract, with an unchanged continuous compatibility profile when
+no named-zone fields are present. Runtime activation is still absent.
+
+The implementation order is deliberately linear through the semantic
+prerequisites:
+
+```text
+Grammar 8 calendar and availability source
+  -> exact calendar working-time and resource scheduling
+  -> earliest/latest event-bound source
+  -> precedence-only required schedule and signed slack
+  -> shared POSTDUE evaluator and driver paths
+  -> Check / Analysis / Next projections
+  -> atomic CLI Contract 9 and installed-package acceptance
+```
+
+Domain code owns calendar membership, effective capacity, work segments,
+event propagation, required dates, alerts, and target-scoped drivers. The
+Application layer composes those pure results for Check, Analysis, Next, and
+mutation. CLI, LSP, VSIX, and MCP remain adapters and may not add a second
+calendar, scheduler, target evaluator, or alert implementation.
+
+The contract task exits after thirty-two dependency-ordered machine cases,
+the focused contract test, the llmthink consistency audit, an attempted
+complete repository gate with any unchanged pre-existing exception recorded,
+and one exact pre-advance plan snapshot agree. Calendar and
+constraint runtime, public activation, release selection, remote writes,
+publication, Issue mutation, and plan advance remain later boundaries.
 
 ### Milestone outcome acceptance Contract 8 slice
 

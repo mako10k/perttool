@@ -13,6 +13,7 @@
 - Recommendation interface: [recommendation-interface.md](recommendation-interface.md)
 - Temporal calendar semantics: [temporal-calendar.md](temporal-calendar.md)
 - Temporal deadline semantics: [temporal-deadline.md](temporal-deadline.md)
+- Accepted Grammar 8 temporal successor: [temporal-schedule.md](temporal-schedule.md)
 - Unit migration semantics: [unit-migration.md](unit-migration.md)
 - Grammar specification: [dsl-grammar.md](dsl-grammar.md)
 - Related basic design: [../basic-design.md](../basic-design.md)
