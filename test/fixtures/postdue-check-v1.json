@@ -1,0 +1,12 @@
+{"schema_version":"Perttool.PostdueCheckCases.v1","cases":[
+  {"id":"PDCHECK-001","depends_on":[],"boundary":"target_v6_internal"},
+  {"id":"PDCHECK-002","depends_on":["PDCHECK-001"],"boundary":"valid_after_validation_only"},
+  {"id":"PDCHECK-003","depends_on":["PDCHECK-002"],"boundary":"compact_driver_limit"},
+  {"id":"PDCHECK-004","depends_on":["PDCHECK-003"],"boundary":"exact_analysis_argv"},
+  {"id":"PDCHECK-005","depends_on":["PDCHECK-004"],"boundary":"summary_survives_diagnostic_truncation"},
+  {"id":"PDCHECK-006","depends_on":["PDCHECK-005"],"boundary":"alerts_not_diagnostics"},
+  {"id":"PDCHECK-007","depends_on":["PDCHECK-006"],"boundary":"success_exit_unchanged"},
+  {"id":"PDCHECK-008","depends_on":["PDCHECK-007"],"boundary":"document_binding"},
+  {"id":"PDCHECK-009","depends_on":["PDCHECK-008"],"boundary":"no_second_evaluator"},
+  {"id":"PDCHECK-010","depends_on":["PDCHECK-009"],"boundary":"public_v5_unchanged"}
+]}

@@ -1,0 +1,40 @@
+framework DecisionAudit
+
+domain PostdueCheckProjection:
+  description "Review of compact actionable schedule alerts for document Check"
+
+problem P1:
+  "Can Check expose actionable schedule warnings without duplicating diagnostics or temporal evaluation?"
+
+step S1:
+  evidence EV1:
+    "The projection accepts only a successful Check and one already evaluated document-bound alert result"
+    resource:
+      file "src/application/target-postdue-check.ts"
+      label "Check target projection"
+
+step S2:
+  evidence EV2:
+    "Alerts retain independent summary and truncation, exact analysis argv, and a hard compact driver limit while base diagnostics remain identical"
+    resource:
+      file "test/postdue-check.test.mjs"
+      label "Check projection tests"
+
+step S3:
+  evidence EV3:
+    "Ten ordered cases keep validation failure, diagnostics, success, evaluator ownership, and public activation as separate boundaries"
+    resource:
+      file "test/fixtures/postdue-check-v1.json"
+      label "Check acceptance cases"
+
+step S4:
+  decision D1 based_on P1, EV1, EV2:
+    "Accept compact alerts as a separate successful Check projection after validation, never as duplicated diagnostics"
+
+step S5:
+  decision D2 based_on EV1, EV3, D1:
+    "Keep CheckResult v6 internal until atomic Contract 9 activation"
+
+step S6:
+  pending PD1:
+    "Public rendering and schemas, adapter activation, release, remote writes, and plan advance remain separate"
