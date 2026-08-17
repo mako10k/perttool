@@ -216,6 +216,7 @@ task TEMPORAL_PUBLIC_CONTRACT TEMPORAL_ADAPTERS_READY -> TEMPORAL_PUBLIC_READY:
   title "Activate Grammar 8 and CLI Contract 9 atomically"
   description "Atomically activate the accepted single DSL, calendar and availability maintenance, event constraints, forward and required schedules, POSTDUE alerts, Check, Analysis, Next, and Mutation identities; align schemas, root and Node exports, text and JSON, Help, Guide, diagnostics, algorithm and zone-data metadata, migration, governance, assurance, package inventory, compatibility fixtures, and consumers while preserving legacy reads and unchanged Advance shape if its complete candidate contract remains valid."
   duration 10p
+  status active
   priority 100
   requires:
     DEVELOPERS 1
