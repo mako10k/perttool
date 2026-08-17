@@ -1,0 +1,55 @@
+framework DecisionAudit
+
+domain PostdueContract:
+  description "Focused review of the actionable schedule-alert contract"
+
+problem P1:
+  "Can POSTDUE and POSTDUE_FORECAST remain warning-only, deterministic, actionable, and shared without adding another DSL or deadline evaluator?"
+
+step S1:
+  evidence EV1:
+    "The integrated temporal specification is already the sole Grammar 8 authority and defines deadline and latest targets, required and forward schedules, two closed alert kinds, and one shared evaluator"
+    resource:
+      file "docs/specs/temporal-schedule.md"
+      label "Single normative temporal contract"
+
+step S2:
+  evidence EV2:
+    "Current lateness uses only an incomplete comparable event strictly after its target, while forecast lateness prefers precedence proof over an optimal-false resource heuristic and equality is never late"
+    resource:
+      file "test/fixtures/postdue-contract-v1.json"
+      label "Strict alert and proof cases"
+
+step S3:
+  evidence EV3:
+    "Project-finish alerts reuse applicable critical paths and intermediate alerts use a target predecessor cone; missing full evidence remains explicitly not-computed or unavailable with exact argv"
+    resource:
+      file "test/fixtures/postdue-contract-v1.json"
+      label "Actionable driver cases"
+
+step S4:
+  evidence EV4:
+    "Check, Analysis, and Next own one common bounded alert object while diagnostics, recommendation ranking, start authority, mutations, and adapters retain separate responsibilities"
+    resource:
+      file "docs/specs/temporal-schedule.md"
+      label "Projection and authority boundary"
+
+step S5:
+  decision D1 based_on P1, EV1, EV2:
+    "Refine Section 11 of the existing single specification instead of adding a competing POSTDUE specification or DSL construct"
+
+step S6:
+  decision D2 based_on EV2:
+    "Accept strict current and forecast comparison, matching-key suppression, independent deadline and latest targets, and precedence-first proof ordering"
+
+step S7:
+  decision D3 based_on EV3:
+    "Require a relevant available driver or an explicit bounded recovery state and exact dag analyze argv; never present an unrelated global critical path"
+
+step S8:
+  decision D4 based_on EV1, EV4, D1, D2, D3:
+    "Accept one internal evaluator and one common projection contract without runtime activation, exit failure, recommendation change, or authority change"
+
+step S9:
+  pending PD1:
+    "Evaluator implementation, command-specific projection, Grammar 8 and Contract 9 activation, release, remote writes, Issue mutation, and plan advance remain later tasks"

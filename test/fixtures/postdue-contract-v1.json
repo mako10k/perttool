@@ -1,0 +1,33 @@
+{
+  "schema_version": "Perttool.PostdueContractCases.v1",
+  "contract_authority": "docs/specs/temporal-schedule.md#11-postdue-schedule-alerts",
+  "activation_state": "contract_only",
+  "evaluator": "perttool.schedule-alert@1",
+  "driver": "perttool.target-driver-path@1",
+  "alert_kinds": ["POSTDUE", "POSTDUE_FORECAST"],
+  "proof_order": ["precedence_infeasible", "resource_heuristic_late"],
+  "deduplication_key": ["subject_kind", "subject_id", "event", "target_kind", "source_range"],
+  "driver_states": ["available", "not_computed", "unavailable"],
+  "full_analysis_argv": ["perttool", "dag", "analyze", "FILE", "--schedule", "both", "--format", "json"],
+  "limits": {"alerts": 10000, "compact_driver_steps": 64, "full_target_driver_steps": 100000, "full_path_enumeration_max": 1000},
+  "cases": [
+    {"id":"PDC-001","depends_on":[],"operation":"closed_identity","expected":{"kinds":2,"evaluator_count":1,"public_activation":false}},
+    {"id":"PDC-002","depends_on":["PDC-001"],"operation":"applicable_events","expected":{"task_start":"unstarted","task_finish":"unfinished","milestone_reach":"unreached","earliest_target":false}},
+    {"id":"PDC-003","depends_on":["PDC-002"],"operation":"current_strictness","expected":{"after":"POSTDUE","equal":"due_now_no_alert","before":"no_alert","incomparable":"no_alert_unavailable"}},
+    {"id":"PDC-004","depends_on":["PDC-002"],"operation":"completed_event","expected":{"alert":false,"actual_time_inferred":false,"history":"unavailable_when_actual_absent"}},
+    {"id":"PDC-005","depends_on":["PDC-003"],"operation":"precedence_forecast","expected":{"kind":"POSTDUE_FORECAST","proof":"precedence_infeasible","strict":true}},
+    {"id":"PDC-006","depends_on":["PDC-005"],"operation":"resource_forecast","expected":{"proof":"resource_heuristic_late","precedence_late":false,"optimal":false,"infeasibility_claim":false}},
+    {"id":"PDC-007","depends_on":["PDC-003","PDC-006"],"operation":"suppression","expected":{"scope":"matching_deduplication_key_only","current_suppresses_forecast":true}},
+    {"id":"PDC-008","depends_on":["PDC-007"],"operation":"target_independence","expected":{"deadline_and_latest_distinct":true,"equal_instant_can_emit_two":true}},
+    {"id":"PDC-009","depends_on":["PDC-005"],"operation":"project_precedence_driver","expected":{"path":"representative_precedence_critical","identity_reused":true}},
+    {"id":"PDC-010","depends_on":["PDC-006"],"operation":"project_resource_driver","expected":{"path":"representative_schedule_critical","resource_waits":true,"optimal":false}},
+    {"id":"PDC-011","depends_on":["PDC-009","PDC-010"],"operation":"intermediate_driver","expected":{"scope":"target_predecessor_cone","unrelated_global_path":false}},
+    {"id":"PDC-012","depends_on":["PDC-011"],"operation":"driver_absence","expected":{"states":["not_computed","unavailable"],"empty_path_is_evidence":false,"argv_is_data":true}},
+    {"id":"PDC-013","depends_on":["PDC-008"],"operation":"stable_occurrence","expected":{"id_excludes":["presentation","array_position","driver_availability","command"],"source_bound":true}},
+    {"id":"PDC-014","depends_on":["PDC-013"],"operation":"ordering_and_truncation","expected":{"stable_prefix":true,"total_known_explicit":true,"ids_unchanged":true}},
+    {"id":"PDC-015","depends_on":["PDC-012","PDC-014"],"operation":"check_projection","expected":{"shape":"compact","success_exit":true,"diagnostic":false,"guidance_when_incomplete":true}},
+    {"id":"PDC-016","depends_on":["PDC-012","PDC-014"],"operation":"analysis_projection","expected":{"shape":"full","alert_to_path_reference":true,"bounded":true}},
+    {"id":"PDC-017","depends_on":["PDC-015","PDC-016"],"operation":"next_projection","expected":{"shape":"compact","recommendation_ranking_changed":false,"start_authority_changed":false}},
+    {"id":"PDC-018","depends_on":["PDC-017"],"operation":"shared_and_closed_boundary","expected":{"common_projection_equivalent":true,"adapter_reimplementation":false,"grammar":7,"cli_contract":8,"commands":53,"root_schemas":23}}
+  ]
+}

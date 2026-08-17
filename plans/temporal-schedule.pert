@@ -149,6 +149,7 @@ task POSTDUE_CONTRACT REQUIRED_SCHEDULE_READY -> POSTDUE_CONTRACT_ACCEPTED:
   title "Accept the actionable post-due alert contract"
   description "Fix stable POSTDUE and POSTDUE_FORECAST tags over deadlines and latest bounds, strict comparison and suppression, precedence-infeasible versus optimal=false resource-heuristic proof, compact and full target-scoped driver paths, command guidance, unavailable and completed-history behavior, warning exits, hard limits, and the exact Check, Analysis, and Next public projections using the accepted calendar and required-schedule inputs."
   duration 6p
+  status done
   priority 100
   requires:
     DEVELOPERS 1

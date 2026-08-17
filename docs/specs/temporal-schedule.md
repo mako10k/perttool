@@ -669,6 +669,64 @@ diagnostics are truncated. They do not mutate source, change Recommendation
 version 1 ranking, create override validity, grant governance authority,
 accept assurance, or independently change start authority.
 
+### 11.5 Stable alert identity and ordering
+
+The evaluator identity is `perttool.schedule-alert@1`. Each occurrence has a
+stable `alert_id` derived from the source digest and the complete
+deduplication key; presentation text, array position, path availability, and
+the current command are not identity inputs. The closed occurrence fields
+are:
+
+```text
+alert_id, kind, subject, event, target, comparison, proof,
+driver, source_digest, source_range
+```
+
+`subject` contains only `kind` (`task` or `milestone`) and `id`. `event` is
+`start`, `finish`, or `reach` as applicable. `target` retains `kind`
+(`deadline` or `latest`), the exact declared value and temporal kind, and the
+target source range. `comparison` retains the comparable snapshot or
+projection, exact signed difference and unit, and the strict comparison
+result. `proof` is exactly one of `current_snapshot`,
+`precedence_infeasible`, or `resource_heuristic_late`; the resource proof also
+retains `optimal=false`. `driver` owns the state and path reference described
+in Section 11.3.
+
+Occurrences are ordered by target instant when comparable, then subject kind,
+subject ID, event, target kind, source-range start, and alert kind, all with
+the stable string order used elsewhere in this contract. Incomparable targets
+do not emit occurrences. Truncation keeps this prefix, the emitted count, the
+exact total when known, and `total_known`; it never changes occurrence IDs.
+
+### 11.6 Command projection shapes
+
+The three public results own one common `schedule_alerts` object with
+`evaluator`, `summary`, `occurrences`, and `truncation`. `summary` always
+contains separate `postdue`, `postdue_forecast`, and `total` counts. A valid
+command with no occurrences returns zero counts and an empty array, not
+`null`. If alert evaluation itself is unavailable, the object instead retains
+zero emitted occurrences, typed causes, and whether the total is unknown; it
+does not turn the whole structurally valid command into an error.
+
+- `Perttool.CheckResult.v6` returns at most the compact driver limit and exact
+  full-analysis argv for every driver not fully available.
+- `Perttool.AnalysisResult.v7` returns full applicable paths, stable path IDs,
+  and alert-to-path references subject to the accepted full path limits.
+- `Perttool.NextResult.v8` returns the same occurrence IDs and compact driver
+  contract as Check. The field is outside Recommendation version 1 and start
+  authority.
+
+The exact operand string received by the command is inserted as one argv
+element. No shell quoting, reconstructed path, absolute-path substitution, or
+display string is machine authority. Human output prints the alert kind,
+subject/event, target, lateness and proof qualification; it prints the exact
+analysis command only when a full applicable path is not already present.
+
+Check, Analysis, and Next MUST produce byte-equivalent common alert objects
+when given the same accepted document, `as_of`, temporal projections, limits,
+and path-computation level. Adapters consume these Application projections;
+they do not rerun alert comparison or path selection.
+
 ## 12. Unavailable, invalid, and bounded outcomes
 
 Invalid source remains invalid. Valid source may have an absent, incomplete,
