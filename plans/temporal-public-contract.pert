@@ -114,13 +114,13 @@ task DETAIL_MIXED_CANDIDATE MUTATION_DISPATCH_READY -> MIXED_CANDIDATE_READY:
   title "Compose mixed legacy and temporal mutation candidates"
   description "Compose legacy field edits and temporal field edits into one byte-identical validated candidate, one non-overlapping edit set, one governance decision, and MutationResult v6 for preview, output, and safe write."
   duration 3p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
     REVIEWERS 1
     MUTATION_SURFACE 1
-  source "TEMPORAL_PUBLIC_CONTRACT"
+  source "commit 7383018; build 3.61s/414496KB; focused 0.54s/91168KB; static 7.34s/361588KB"
 
 task DETAIL_REPLACEMENT_SCHEMAS MIXED_CANDIDATE_READY -> REPLACEMENT_SCHEMAS_READY:
   title "Bundle seven Contract 9 replacement schemas"
@@ -182,3 +182,11 @@ task DETAIL_EDITOR_ADAPTERS FORMAT_MIGRATION_READY -> EDITOR_ADAPTERS_READY:
     CLI_SURFACE 1
     PACKAGE_SURFACE 1
   source "TEMPORAL_PUBLIC_CONTRACT"
+
+work_event WE_DETAIL_MIXED_20260817:
+  model 1
+  task DETAIL_MIXED_CANDIDATE
+  kind finish
+  occurred_at 2026-08-17T17:13:14+09:00
+  active_time 0.056h
+  effort 0.056ph
