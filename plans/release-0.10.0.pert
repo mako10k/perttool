@@ -107,6 +107,7 @@ task RELEASE_0100_PUBLISH RELEASE_0100_CANDIDATE_ACCEPTED -> RELEASE_0100_PUBLIS
   title "Publish version 0.10.0 from one immutable tarball"
   description "Only after every predecessor gate passes and the user separately authorizes the exact candidate and external batch, push and verify the clean release commit and annotated tag, require Node.js 22 and 24 CI, publish one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.10.0 while latest remains unchanged. Do not publish the private VSIX, LSP, or MCP adapters."
   duration 3p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -245,3 +246,35 @@ milestone_acceptance_receipt RELEASE_0100_CANDIDATE_RECEIPT:
   evidence_revision 86762a71562bf15cffe746e2aa6160996aa82942
   verifier codex
   occurred_at 2026-08-18T05:52:07Z
+
+work_event WE-201dad4c400f5b0e73116c3ce104b69de730ef257fad250e767df2b7eddb2d01:
+  model 1
+  task RELEASE_0100_PUBLISH
+  kind start
+  occurred_at 2026-08-18T14:57:51+09:00
+  planned_value 3p
+
+milestone_criterion_set RELEASE_0100_PUBLISHED_R1:
+  milestone RELEASE_0100_PUBLISHED
+  revision R1
+  commitment sha256:4122490ba3e57a59c7841ad5d156a991b0e70b81676a2aa12a74cd10a7f262f7
+  criterion PUBLICATION required artifact "Published exact 0.10.0 candidate to GitHub prerelease and npm beta with latest unchanged"
+
+work_event WE-3b51a611b3994462c100b16823a63b416b6937cd086ac6cdd439afadcb905467:
+  model 1
+  task RELEASE_0100_PUBLISH
+  kind finish
+  occurred_at 2026-08-18T15:52:45+09:00
+
+milestone_acceptance_receipt RELEASE_0100_PUBLISHED_RECEIPT:
+  model 1
+  set RELEASE_0100_PUBLISHED_R1
+  set_commitment sha256:4122490ba3e57a59c7841ad5d156a991b0e70b81676a2aa12a74cd10a7f262f7
+  criterion PUBLICATION
+  criterion_commitment sha256:0e33a182ef58b247fea2359bf7d4926bd624ef1bd57563f1c3f9999df399300c
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.10.0-publish.md"
+  evidence_revision f0e3d7110171686c085d5de0b595057fc803dff8
+  verifier codex
+  occurred_at 2026-08-18T06:52:52Z

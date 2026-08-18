@@ -33,8 +33,8 @@ test("0.10.0 release plan selects the Contract 9 beta boundary and gates publica
   assert.equal(metadata.project.finish, "RELEASE_0100_ACCEPTED");
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 6);
   assert.deepEqual(next.groups.active, []);
-  assert.deepEqual(next.groups.ready, ["RELEASE_0100_PUBLISH"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_0100_PUBLISH"]);
+  assert.deepEqual(next.groups.ready, ["RELEASE_0100_ACCEPTANCE"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_0100_ACCEPTANCE"]);
   assert.match(plan, /Only after every predecessor gate passes and the user separately authorizes/u);
   assert.match(acceptance, /Accepted source digest: `sha256:d8bd9cb5/u);
   assert.match(acceptance, /`0\.9\.5` would understate/u);
