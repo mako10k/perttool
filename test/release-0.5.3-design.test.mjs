@@ -118,11 +118,11 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.9.4");
-  assert.equal(lockfile.version, "0.9.4");
-  assert.equal(lockfile.packages[""].version, "0.9.4");
+  assert.equal(manifest.version, "0.10.0");
+  assert.equal(lockfile.version, "0.10.0");
+  assert.equal(lockfile.packages[""].version, "0.10.0");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.4"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.10\.0"/);
   assert.match(changelog, /^## \[0\.5\.3\] - 2026-07-30$/m);
   assert.match(
     readme,
@@ -134,6 +134,6 @@ test("0.5.3 release gate binds the governance guidance patch boundary", async ()
   );
   assert.match(publishScript, /publish_tag" != "beta"/);
   assert.doesNotMatch(publishScript, /^\s*alpha\)$/m);
-  assert.equal(COMMAND_REGISTRY.length, 53);
+  assert.equal(COMMAND_REGISTRY.length, 56);
   assert.equal(getJsonSchemaCatalog().length, 23);
 });

@@ -6,7 +6,7 @@
   "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "model_version", "changed", "source_grammar_version", "target_grammar_version", "source_digest", "candidate_digest", "grandfathered_milestone_ids", "candidate_text", "diagnostics"],
   "properties": {
     "schema_version": { "const": "Perttool.MilestoneAcceptanceMigrationResult.v1" },
-    "cli_contract_version": { "const": 8 },
+    "cli_contract_version": { "const": 9 },
     "tool_version": { "type": "string" },
     "operation": { "const": "document.migrate" },
     "ok": { "type": "boolean" },

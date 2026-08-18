@@ -45,6 +45,10 @@ function rewriteReferences(
     if (key === "$ref" && typeof child === "string") {
       if (child.startsWith("Perttool.Common.v1.schema.json#/$defs/")) {
         result[key] = `#/$defs/${commonPrefix}${child.slice(child.lastIndexOf("/") + 1)}`;
+      } else if (child === "Perttool.AnalysisResult.v7.schema.json#/properties/schedule_alerts") {
+        result[key] = "#/$defs/analysis_schedule_alerts";
+      } else if (child.startsWith("Perttool.ProjectResult.v5.schema.json#/$defs/")) {
+        result[key] = `#/$defs/project_${child.slice(child.lastIndexOf("/") + 1)}`;
       } else if (child.startsWith("Perttool.MilestoneAcceptanceResult.v1.schema.json#/$defs/")) {
         result[key] = `#/$defs/acceptance_${child.slice(child.lastIndexOf("/") + 1)}`;
       } else if (child.startsWith("#/$defs/")) {
@@ -152,6 +156,41 @@ function acceptanceDefinitions(): Readonly<Record<string, MutableJson>> {
   );
 }
 
+function analysisDefinitions(): Readonly<Record<string, MutableJson>> {
+  const source = getJsonSchema("Perttool.AnalysisResult.v7");
+  const cloned = source === null ? null : cloneJson(source);
+  const properties = isObject(cloned) ? cloned["properties"] : undefined;
+  const scheduleAlerts = properties !== undefined && isObject(properties)
+    ? properties["schedule_alerts"]
+    : undefined;
+  if (scheduleAlerts === undefined) {
+    throw new Error("invalid public analysis schedule-alert schema");
+  }
+  return Object.freeze({
+    analysis_schedule_alerts: rewriteReferences(
+      scheduleAlerts,
+      "analysis_",
+      "common_",
+      false,
+    ),
+  });
+}
+
+function projectDefinitions(): Readonly<Record<string, MutableJson>> {
+  const source = getJsonSchema("Perttool.ProjectResult.v5");
+  const cloned = source === null ? null : cloneJson(source);
+  const definitions = isObject(cloned) ? cloned["$defs"] : undefined;
+  if (definitions === undefined || !isObject(definitions)) {
+    throw new Error("invalid public project schema");
+  }
+  return Object.fromEntries(
+    Object.entries(definitions).map(([key, value]) => [
+      `project_${key}`,
+      rewriteReferences(value, "project_", "common_", false),
+    ]),
+  );
+}
+
 const sourceBindingSchema: MutableJson = {
   type: "object",
   required: ["kind", "document_id", "source_digest"],
@@ -249,6 +288,8 @@ function toolOutputSchema(name: McpToolName): McpJsonSchema {
   const definitions = {
     ...commonDefinitions(),
     ...acceptanceDefinitions(),
+    ...analysisDefinitions(),
+    ...projectDefinitions(),
     ...Object.assign({}, ...layers.map(({ definitions: value }) => value)),
   };
   return Object.freeze({

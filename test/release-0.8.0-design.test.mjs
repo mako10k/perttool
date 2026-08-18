@@ -173,12 +173,12 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
   const lockfile = JSON.parse(lockfileText);
   const lspManifest = JSON.parse(lspManifestText);
   const mcpManifest = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.9.4");
-  assert.equal(lockfile.version, "0.9.4");
-  assert.equal(lockfile.packages[""].version, "0.9.4");
-  assert.equal(lspManifest.peerDependencies.perttool, "0.9.4");
-  assert.equal(mcpManifest.peerDependencies.perttool, "0.9.4");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.4"/u);
+  assert.equal(manifest.version, "0.10.0");
+  assert.equal(lockfile.version, "0.10.0");
+  assert.equal(lockfile.packages[""].version, "0.10.0");
+  assert.equal(lspManifest.peerDependencies.perttool, "0.10.0");
+  assert.equal(mcpManifest.peerDependencies.perttool, "0.10.0");
+  assert.match(versionSource, /TOOL_VERSION = "0\.10\.0"/u);
   assert.match(changelog, /^## \[0\.8\.0\] - 2026-08-07$/m);
   assert.match(readme, /package=perttool@0\.9\.4/u);
   assert.match(readme, /use `0\.8\.0` as\s+the prior Contract 7 rollback pin/u);
@@ -198,7 +198,7 @@ test("0.8.0 gate binds the additive adapter and historical DAG boundary", async 
   for (const name of Object.keys(perttool)) {
     assert.equal(perttool[name], nodeApi[name], name);
   }
-  assert.equal(perttool.COMMAND_REGISTRY.length, 53);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 56);
   assert.equal(perttool.getJsonSchemaCatalog().length, 23);
   assert.deepEqual(
     perttool.COMMAND_REGISTRY.filter(

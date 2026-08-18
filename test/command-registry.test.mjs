@@ -11,7 +11,7 @@ import {
   getCommandDiscovery,
   renderCommandHelpResult,
 } from "../dist/index.js";
-import { validateAssuranceCommandInvocation } from "../dist/command/assurance-usage.js";
+import { validateContract9CommandInvocation } from "../dist/command/contract9-usage.js";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(testDirectory, "..");
@@ -71,6 +71,9 @@ const expectedPaths = [
   "milestone acceptance revoke",
   "milestone acceptance waive",
   "milestone acceptance show",
+  "calendar add",
+  "calendar set",
+  "calendar remove",
 ];
 
 function run(args) {
@@ -110,7 +113,7 @@ function invocationTokens(invocation) {
   return tokens;
 }
 
-test("the Contract 8 registry covers the complete active surface exactly once", () => {
+test("the Contract 9 registry covers the complete active surface exactly once", () => {
   assert.equal(COMMAND_REGISTRY.length, expectedPaths.length);
   assert.deepEqual(
     commandRegistryToJson(),
@@ -131,7 +134,7 @@ test("the Contract 8 registry covers the complete active surface exactly once", 
     expectedPaths.length,
   );
   for (const descriptor of COMMAND_REGISTRY) {
-    assert.equal(descriptor.contractVersion, 8, descriptor.operation);
+    assert.equal(descriptor.contractVersion, 9, descriptor.operation);
     assert.notEqual(descriptor.summary, "", descriptor.operation);
     assert.ok(
       descriptor.operands.every(
@@ -143,7 +146,7 @@ test("the Contract 8 registry covers the complete active surface exactly once", 
     for (const example of descriptor.examples) {
       const tokens = invocationTokens(example.invocation);
       assert.equal(tokens.shift(), "perttool", example.invocation);
-      const validation = validateAssuranceCommandInvocation(tokens);
+      const validation = validateContract9CommandInvocation(tokens);
       assert.equal(
         validation.ok,
         true,

@@ -4,7 +4,7 @@ import test from "node:test";
 import * as publicApi from "../dist/index.js";
 import { projectTargetPostdueCheck } from "../dist/application/target-postdue-check.js";
 
-const base = Object.freeze({ schemaVersion: "Perttool.CheckResult.v5", ok: true, documentId: "P",
+const base = Object.freeze({ schemaVersion: "Perttool.CheckResult.v6", ok: true, documentId: "P",
   diagnostics: Object.freeze([{ code: "EXISTING" }]), diagnosticsTruncated: true,
   summary: Object.freeze({ errors: 0, warnings: 1 }), acceptance: null });
 const driver = Object.freeze({ state: "not_computed", pathId: null, steps: Object.freeze([]), truncated: false,
@@ -33,9 +33,9 @@ test("PDCHECK-005 through PDCHECK-007 keep alerts separate and success unchanged
   assert.deepEqual(result.scheduleAlerts.summary, { postdue: 1, postdueForecast: 1, total: 2 });
 });
 
-test("PDCHECK-008 through PDCHECK-010 fail closed and retain public v5", () => {
+test("PDCHECK-008 through PDCHECK-010 fail closed and activate public v6", () => {
   assert.throws(() => projectTargetPostdueCheck(base, { ...alerts, documentId: "OTHER" }), /identities differ/);
   assert.throws(() => projectTargetPostdueCheck({ ...base, ok: false }, alerts), /invalid Check/);
   assert.equal("projectTargetPostdueCheck" in publicApi, false);
-  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.CheckResult.v6"), false);
+  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.CheckResult.v6"), true);
 });

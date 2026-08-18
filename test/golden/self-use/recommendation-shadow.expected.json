@@ -1,6 +1,6 @@
 {
   "contract": {
-    "schema_version": "Perttool.NextResult.v7",
+    "schema_version": "Perttool.NextResult.v8",
     "recommendation_interface_version": 1,
     "algorithm_id": "perttool.recommendation-ranking.lexicographic-frontier",
     "algorithm_version": 1,
@@ -169,18 +169,17 @@
       ]
     },
     "editor-mutations": {
-      "source_digest": "sha256:fac511d01ca7bcb632203fb1e255723a82f19043cb3731a7e92f71d55987af00",
+      "source_digest": "sha256:bb9fd570b828c0dd9643e2739434d9963ea4c202710eed685a2d16115704d3b4",
       "groups": {
         "active": [],
         "ready": [
-          "EDITOR_REPAIR_ACCEPTANCE"
+          "EDITOR_RECOVERABLE_CONTRACT"
         ],
         "runnable_now": [
-          "EDITOR_REPAIR_ACCEPTANCE"
+          "EDITOR_RECOVERABLE_CONTRACT"
         ],
         "blocked_now": [],
         "upcoming": [
-          "EDITOR_RECOVERABLE_CONTRACT",
           "EDITOR_RECOVERABLE_ACCEPTANCE",
           "EDITOR_AUTHORITY_CONTRACT",
           "EDITOR_AUTHORITY_ADAPTER",
@@ -190,18 +189,18 @@
         "suspended": []
       },
       "recommended_task_ids": [
-        "EDITOR_REPAIR_ACCEPTANCE"
+        "EDITOR_RECOVERABLE_CONTRACT"
       ],
       "manual_selected_task_ids": [
-        "EDITOR_REPAIR_ACCEPTANCE"
+        "EDITOR_RECOVERABLE_CONTRACT"
       ],
       "tiers": {
-        "EDITOR_REPAIR_ACCEPTANCE": "recommended"
+        "EDITOR_RECOVERABLE_CONTRACT": "recommended"
       },
       "joint_resource_feasible": true,
       "ready_tasks": [
         {
-          "id": "EDITOR_REPAIR_ACCEPTANCE",
+          "id": "EDITOR_RECOVERABLE_CONTRACT",
           "runnable_now": true,
           "precedence_critical": true,
           "schedule_critical": true,
@@ -218,7 +217,8 @@
         "descriptions": 1
       },
       "diagnostic_codes": [
-        "PTDAG-208"
+        "PTDAG-208",
+        "PTASSURE-203"
       ]
     },
     "english-baseline": {
@@ -926,6 +926,31 @@
         "PTDAG-208"
       ]
     },
+    "release-0.9.4": {
+      "source_digest": "sha256:2c7a228b1e1f85b53805fd3b699b55c865875faab720aacff5d63454a7723136",
+      "groups": {
+        "active": [],
+        "ready": [],
+        "runnable_now": [],
+        "blocked_now": [],
+        "upcoming": [],
+        "suspended": []
+      },
+      "recommended_task_ids": [],
+      "manual_selected_task_ids": [],
+      "tiers": {},
+      "joint_resource_feasible": true,
+      "ready_tasks": [],
+      "record_counts": {
+        "task_decisions": 0,
+        "decision_steps": 1,
+        "facts": 1,
+        "comparisons": 0,
+        "reasons": 1,
+        "descriptions": 0
+      },
+      "diagnostic_codes": []
+    },
     "scheduling-units-m1": {
       "source_digest": "sha256:3d9e421d3da2517b98256a41dda0b074f54ba73332095bf26a5e789a0e851af1",
       "groups": {
@@ -1129,31 +1154,6 @@
       "diagnostic_codes": [
         "PTSEM-114"
       ]
-    },
-    "release-0.9.4": {
-      "source_digest": "sha256:2c7a228b1e1f85b53805fd3b699b55c865875faab720aacff5d63454a7723136",
-      "groups": {
-        "active": [],
-        "ready": [],
-        "runnable_now": [],
-        "blocked_now": [],
-        "upcoming": [],
-        "suspended": []
-      },
-      "recommended_task_ids": [],
-      "manual_selected_task_ids": [],
-      "tiers": {},
-      "joint_resource_feasible": true,
-      "ready_tasks": [],
-      "record_counts": {
-        "task_decisions": 0,
-        "decision_steps": 1,
-        "facts": 1,
-        "comparisons": 0,
-        "reasons": 1,
-        "descriptions": 0
-      },
-      "diagnostic_codes": []
     }
   },
   "why_not": null

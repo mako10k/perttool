@@ -116,7 +116,7 @@ test("CLI environmental work is bound to supplied Node Host ports", async () => 
   }
 });
 
-test("Contract 8 CLI bytes retain direct Application semantics", async () => {
+test("Contract 9 CLI bytes retain direct Application semantics", async () => {
   const file = "docs/examples/minimal.pert";
   const first = runCli("document", "check", file, "--format=json");
   const second = runCli("document", "check", file, "--format=json");
@@ -126,8 +126,8 @@ test("Contract 8 CLI bytes retain direct Application semantics", async () => {
   assert.equal(first.stderr, second.stderr);
   const wire = JSON.parse(first.stdout);
   const direct = packageRoot.checkDocument(await repositoryText(file));
-  assert.equal(wire.schema_version, "Perttool.CheckResult.v5");
-  assert.equal(wire.cli_contract_version, 8);
+  assert.equal(wire.schema_version, "Perttool.CheckResult.v6");
+  assert.equal(wire.cli_contract_version, 9);
   assert.equal(wire.document_id, direct.documentId);
   assert.equal(wire.grammar_version, direct.grammarVersion);
   assert.deepEqual(wire.summary, {
@@ -145,9 +145,9 @@ test("CLI and Node activate the same milestone acceptance services", () => {
   const schemas = runCli("schema", "--format=json");
   assert.equal(help.status, 0, help.stderr);
   assert.equal(schemas.status, 0, schemas.stderr);
-  assert.equal(JSON.parse(help.stdout).commands.length, 53);
+  assert.equal(JSON.parse(help.stdout).commands.length, 56);
   assert.equal(JSON.parse(schemas.stdout).schemas.length, 23);
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 53);
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 56);
   assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
   assert.deepEqual(Object.keys(packageRoot), Object.keys(nodeApi));
   assert.equal(Object.keys(packageRoot).length, 129);

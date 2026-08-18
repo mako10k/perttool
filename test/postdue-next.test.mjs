@@ -4,7 +4,7 @@ import test from "node:test";
 import * as publicApi from "../dist/index.js";
 import { projectTargetPostdueNext } from "../dist/application/target-postdue-next.js";
 
-const base = Object.freeze({ schemaVersion: "Perttool.NextResult.v7", ok: true, documentId: "P",
+const base = Object.freeze({ schemaVersion: "Perttool.NextResult.v8", ok: true, documentId: "P",
   groups: Object.freeze({ ready: Object.freeze(["A"]), runnableNow: Object.freeze(["A"]), active: Object.freeze([]), blockedNow: Object.freeze([]), upcoming: Object.freeze([]), suspended: Object.freeze([]) }),
   recommendation: Object.freeze({ recommendedTaskIds: Object.freeze(["A"]) }),
   temporal: Object.freeze({ authority: Object.freeze({ startableRecommendedTaskIds: Object.freeze(["A"]) }), tasks: Object.freeze([]) }),
@@ -37,9 +37,8 @@ test("PDN-005 through PDN-008 preserve recommendation and authority", () => {
   assert.equal(projectTargetPostdueNext(base, unavailable).recommendation, base.recommendation);
 });
 
-test("PDN-009 through PDN-012 bind documents and keep public v7 unchanged", () => {
+test("PDN-009 through PDN-012 bind documents and activate public v8", () => {
   assert.throws(() => projectTargetPostdueNext(base, { ...alerts, documentId: "OTHER" }), /identities differ/);
   assert.equal("projectTargetPostdueNext" in publicApi, false);
-  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.NextResult.v7"), true);
-  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.NextResult.v8"), false);
+  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.NextResult.v8"), true);
 });

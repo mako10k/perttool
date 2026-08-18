@@ -28,7 +28,7 @@ async function sourceFor(fixture) {
 
 function requestFor(source, selectedTaskIds, overrides = {}) {
   return {
-    sourceSchemaVersion: "Perttool.NextResult.v7",
+    sourceSchemaVersion: "Perttool.NextResult.v8",
     sourceDigest: source.recommendation.sourceDigest,
     sourceResultDecisionId: source.recommendation.resultDecision.id,
     selectedTaskIds,

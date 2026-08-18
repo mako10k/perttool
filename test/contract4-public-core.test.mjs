@@ -49,13 +49,13 @@ test("Contract 6 public results retain typed temporal and release-gated views", 
   assert.equal(project.project.finishDeadline.kind, "date");
 
   const analysis = perttool.analyzeDocument(text);
-  assert.equal(analysis.schemaVersion, "Perttool.AnalysisResult.v6");
+  assert.equal(analysis.schemaVersion, "Perttool.AnalysisResult.v7");
   assert.equal(analysis.ok, true);
   assert.equal(analysis.temporal.precedence.state, "available");
   assert.equal(analysis.precedence.makespan.numerator, 2n);
 
   const next = perttool.selectNextTasks(text);
-  assert.equal(next.schemaVersion, "Perttool.NextResult.v7");
+  assert.equal(next.schemaVersion, "Perttool.NextResult.v8");
   assert.deepEqual(next.recommendation.recommendedTaskIds, ["LEAP_WINDOW"]);
   assert.deepEqual(next.groups.runnableNow, []);
   assert.deepEqual(

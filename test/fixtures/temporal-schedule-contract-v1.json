@@ -4,7 +4,7 @@
   "target_grammar_version": 8,
   "target_cli_contract_version": 9,
   "active_runtime_unchanged": {
-    "tool_version": "0.9.4",
+    "tool_version": "0.10.0",
     "grammar_version": 7,
     "cli_contract_version": 8,
     "commands": 53,

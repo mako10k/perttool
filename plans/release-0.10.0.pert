@@ -1,0 +1,222 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0100:
+  version 8
+  title "perttool 0.10.0 temporal scheduling beta release"
+  description "Release suffix-free 0.10.0 beta as the first Grammar 8 and CLI Contract 9 public boundary after 0.9.4. Publish accepted calendar-aware temporal scheduling, availability and event constraints, forward and required schedules, POSTDUE projections, source-preserving mutation, replacement result schemas, and compatible read-only adapter behavior. Keep private LSP, VSIX, and MCP workspaces excluded from the public npm package. Candidate acceptance, PUBLISH, durable acceptance, npm latest promotion, plan advance, public VSIX publication, and Issue mutation remain separately gated."
+  as_of 2026-08-18T13:15:00+09:00
+  duration_unit point
+  velocity 29p/2d
+  finish RELEASE_0100_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_0100_PLANNING_STARTED:
+  title "Version 0.10.0 release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 2
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  description "Serialize scope, compatibility, candidate, external mutation, and acceptance decisions."
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  description "Serialize package identity, migration guidance, CHANGELOG, procedure, and acceptance records."
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  description "Serialize package checks, immutable tarball creation, and installed-package verification."
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  description "Serialize Git push, annotated tag, GitHub prerelease, npm beta publication, and durable verification."
+  capacity 1
+
+milestone RELEASE_0100_GATE_ACCEPTED:
+  title "Version 0.10.0 release gate accepted"
+
+milestone RELEASE_0100_INPUTS_READY:
+  title "Accepted 0.10.0 release inputs verified"
+
+milestone RELEASE_0100_SOURCE_PREPARED:
+  title "Version 0.10.0 release source prepared"
+
+milestone RELEASE_0100_CANDIDATE_ACCEPTED:
+  title "Version 0.10.0 release candidate accepted"
+
+milestone RELEASE_0100_PUBLISHED:
+  title "Version 0.10.0 published to GitHub and npm beta"
+
+milestone RELEASE_0100_ACCEPTED:
+  title "Version 0.10.0 temporal scheduling beta accepted"
+
+task RELEASE_0100_GATE_DESIGN RELEASE_0100_PLANNING_STARTED -> RELEASE_0100_GATE_ACCEPTED:
+  title "Define the 0.10.0 Grammar 8 and Contract 9 release gate"
+  description "Select suffix-free 0.10.0 for the breaking public boundary after 0.9.4. Bind the accepted temporal scheduling and Contract 9 inputs; verify the 53-to-56 command boundary, retained 23-schema count with seven replacement roots, unchanged 129 root and Node exports and 45 Core exports, migration, authority, compatibility, and private-adapter exclusions; and align requirements, ADR, design, procedure, plan metadata, and focused tests. This task performs no external write."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_0100_INPUT_READINESS RELEASE_0100_GATE_ACCEPTED -> RELEASE_0100_INPUTS_READY:
+  title "Verify accepted 0.10.0 release inputs"
+  description "Require the completed TEMPORAL-SCHEDULE-001 parent plan, the completed TEMPORAL_PUBLIC_CONTRACT_DETAIL plan, and their accepted cross-surface records. Verify Grammar 8, CLI Contract 9, calendar and availability maintenance, event constraints, forward and required schedules, POSTDUE, replacement results and schemas, adapters, compatibility, package exclusions, and no-write boundaries without duplicating implementation state. This task performs no external write."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_0100_PREPARATION RELEASE_0100_INPUTS_READY -> RELEASE_0100_SOURCE_PREPARED:
+  title "Prepare version 0.10.0 release source"
+  description "Align package and lockfile identity, CLI and adapter peer versions, MCP identity, CHANGELOG, README, 0.9.4-to-0.10.0 migration guidance, release documentation, tests, goldens, self-use registration, dependency and package inventory audits, and beta publication validation. Run the complete Node.js 22 repository and installed-package gates without remote or registry writes."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_0100_CANDIDATE RELEASE_0100_SOURCE_PREPARED -> RELEASE_0100_CANDIDATE_ACCEPTED:
+  title "Accept one clean 0.10.0 release candidate"
+  description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; read back beta and latest without changing them; verify authenticated routes; retain one immutable tarball outside the worktree; and accept its source commit, timestamp, sizes, file count, digests, public inventory, installed Contract 9 behavior, compatibility, and rollback pin. This task performs no external write."
+  duration 4p
+  status active
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+
+task RELEASE_0100_PUBLISH RELEASE_0100_CANDIDATE_ACCEPTED -> RELEASE_0100_PUBLISHED:
+  title "Publish version 0.10.0 from one immutable tarball"
+  description "Only after every predecessor gate passes and the user separately authorizes the exact candidate and external batch, push and verify the clean release commit and annotated tag, require Node.js 22 and 24 CI, publish one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and verify beta=0.10.0 while latest remains unchanged. Do not publish the private VSIX, LSP, or MCP adapters."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+
+task RELEASE_0100_ACCEPTANCE RELEASE_0100_PUBLISHED -> RELEASE_0100_ACCEPTED:
+  title "Record durable 0.10.0 beta acceptance"
+  description "Independently verify release commit and peeled tag identity, successful CI, common candidate, GitHub and npm tarball bytes, registry integrity and metadata, exact and beta isolated installation, Grammar 1 through 8 compatibility, Contract 9 commands and schemas, temporal behavior, package facades, private-adapter exclusion, and the exact 0.9.4 rollback pin. Record evidence without changing npm latest, publishing a VSIX, advancing a plan, or mutating an Issue."
+  duration 3p
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+
+milestone_criterion_set RELEASE_0100_GATE_R1:
+  milestone RELEASE_0100_GATE_ACCEPTED
+  revision R1
+  commitment sha256:a676ef238e4cca0c2e0210ba80d0e208d7f7b59d90f47f30aebf09c0b4621d88
+  criterion GATE_DESIGN required artifact "Accepted 0.10.0 release gate design"
+
+work_event WE-c24295c36af42270a03e8aec5e238423acb0886a5a91b99c80f49dbd88d575a0:
+  model 1
+  task RELEASE_0100_GATE_DESIGN
+  kind finish
+  occurred_at 2026-08-18T13:40:40+09:00
+
+milestone_acceptance_receipt RELEASE_0100_GATE_RECEIPT:
+  model 1
+  set RELEASE_0100_GATE_R1
+  set_commitment sha256:a676ef238e4cca0c2e0210ba80d0e208d7f7b59d90f47f30aebf09c0b4621d88
+  criterion GATE_DESIGN
+  criterion_commitment sha256:27c506cc4d053b09917bc822ce7cf005b5333e1e8ac4b33b3c636ce050ed0cff
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.10.0-gate-design.md"
+  evidence_revision none
+  verifier codex
+  occurred_at 2026-08-18T04:43:37Z
+
+work_event WE-2b736b4f860742d8e4ffd728cb7e47f94c43633121a2045950e3722ab6cad5e8:
+  model 1
+  task RELEASE_0100_INPUT_READINESS
+  kind start
+  occurred_at 2026-08-18T13:45:56+09:00
+  planned_value 4p
+
+milestone_criterion_set RELEASE_0100_INPUTS_R1:
+  milestone RELEASE_0100_INPUTS_READY
+  revision R1
+  commitment sha256:54b5a511513fe623223532573f45a799698bce6166ed7e128ee6a1f5130d2875
+  criterion INPUT_READINESS required artifact "Accepted 0.10.0 release inputs"
+
+work_event WE-ca7b5f894de3dfa64d3eb4bbf513cfa91ea510e22957a8deaeccc8be9454ab20:
+  model 1
+  task RELEASE_0100_INPUT_READINESS
+  kind finish
+  occurred_at 2026-08-18T13:48:11+09:00
+
+milestone_acceptance_receipt RELEASE_0100_INPUTS_RECEIPT:
+  model 1
+  set RELEASE_0100_INPUTS_R1
+  set_commitment sha256:54b5a511513fe623223532573f45a799698bce6166ed7e128ee6a1f5130d2875
+  criterion INPUT_READINESS
+  criterion_commitment sha256:302615fe5bc5edfbbcad40d953aa021890df045597db8dd38824e484e34e3288
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.10.0-input-readiness.md"
+  evidence_revision none
+  verifier codex
+  occurred_at 2026-08-18T04:48:21Z
+
+work_event WE-67e17c000db68058da97efccc6e892909046b799cd188c6be0f4bf294323c336:
+  model 1
+  task RELEASE_0100_PREPARATION
+  kind start
+  occurred_at 2026-08-18T13:49:48+09:00
+  planned_value 5p
+
+milestone_criterion_set RELEASE_0100_SOURCE_R1:
+  milestone RELEASE_0100_SOURCE_PREPARED
+  revision R1
+  commitment sha256:f72322d0a23ea620d91a7d688006647e9227366bb76137d2562bbf514e2142ea
+  criterion SOURCE_PREPARATION required artifact "Accepted 0.10.0 source preparation under the complete Node.js 22 gate"
+
+work_event WE-6ed54f79d023ff1f4412009f66e5026fa955c4ebda30284e1383ad7ddcc39d2f:
+  model 1
+  task RELEASE_0100_PREPARATION
+  kind finish
+  occurred_at 2026-08-18T14:21:00+09:00
+
+milestone_acceptance_receipt RELEASE_0100_SOURCE_RECEIPT:
+  model 1
+  set RELEASE_0100_SOURCE_R1
+  set_commitment sha256:f72322d0a23ea620d91a7d688006647e9227366bb76137d2562bbf514e2142ea
+  criterion SOURCE_PREPARATION
+  criterion_commitment sha256:18f5b1e3d8a87f9db1220954a127d7fd74d12adc33cbf78b847d01974273a583
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.10.0-preparation.md"
+  evidence_revision none
+  verifier codex
+  occurred_at 2026-08-18T05:22:08Z
+
+work_event WE-f5d0a0cbd72a5375ab3d5c339563141d6032a4387674ed148987c0407760969c:
+  model 1
+  task RELEASE_0100_CANDIDATE
+  kind start
+  occurred_at 2026-08-18T14:45:12+09:00
+  planned_value 4p

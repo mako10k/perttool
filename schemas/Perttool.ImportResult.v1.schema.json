@@ -29,7 +29,7 @@
       "const": "Perttool.ImportResult.v1"
     },
     "cli_contract_version": {
-      "const": 8
+      "const": 9
     },
     "tool_version": {
       "type": "string"

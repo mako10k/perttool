@@ -327,7 +327,7 @@ test("TCS-014 freezes deterministic results and leaves active catalogs unchanged
   assert.deepEqual(first, second);
   assert.equal(Object.isFrozen(first), true);
   assert.equal(Object.isFrozen(first.resource.tasks), true);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 53);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 56);
   assert.equal(publicApi.getJsonSchemaCatalog().length, 23);
   assert.equal(Object.keys(publicApi).length, 129);
 });

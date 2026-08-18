@@ -177,7 +177,7 @@ task DETAIL_PUBLIC_INTEGRATION EDITOR_ADAPTERS_READY -> PUBLIC_CONTRACT_DETAIL_R
   title "Activate Contract 9 atomically across public surfaces"
   description "Switch Grammar 8 and CLI Contract 9 together across root, Core and Node facades, adapters, package inventory, compatibility fixtures, self-use, temporary link, and isolated package gates while proving Contract 8 remains the pre-switch boundary."
   duration 4p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -292,3 +292,9 @@ work_event WE-e222689e5df67c4076b473704f6edc98d1c0feb8fede4228fec523e222fe2034:
   kind start
   occurred_at 2026-08-17T17:56:50+09:00
   planned_value 4p
+
+work_event WE-c85df45b9957d0912dcec86bd636cafc8968a487f0a4a6a759fe44dffeae7739:
+  model 1
+  task DETAIL_PUBLIC_INTEGRATION
+  kind finish
+  occurred_at 2026-08-18T13:05:56+09:00

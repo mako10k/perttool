@@ -196,17 +196,17 @@
     {
       "id": "schemas",
       "file": "test/command-registry.test.mjs",
-      "test": "the Contract 8 registry covers the complete active surface exactly once"
+      "test": "the Contract 9 registry covers the complete active surface exactly once"
     },
     {
       "id": "help",
       "file": "test/guide.test.mjs",
-      "test": "Contract 8 guide preserves every HelpNode topic and adds plan assurance"
+      "test": "Contract 9 guide preserves every HelpNode topic and adds plan assurance"
     },
     {
       "id": "package_root",
       "file": "test/project-actuals-public-contract.test.mjs",
-      "test": "Contract 8 package root retains actuals services without target names"
+      "test": "Contract 9 package root retains actuals services without target names"
     },
     {
       "id": "linked_cli",
@@ -214,7 +214,7 @@
       "contains": [
         "test/fixtures/project-actuals-v5.pert",
         "\"$linked_cli\" task start",
-        "Perttool.MutationResult.v5"
+        "Perttool.MutationResult.v6"
       ]
     },
     {

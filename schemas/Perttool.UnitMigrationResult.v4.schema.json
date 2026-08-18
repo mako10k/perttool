@@ -104,7 +104,7 @@
           "const": "perttool.unit-migration"
         },
         "version": {
-          "const": 3
+          "const": 4
         }
       },
       "additionalProperties": false

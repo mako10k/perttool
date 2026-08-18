@@ -25,6 +25,7 @@ for (const value of [installedCli, workspace, retainedPlan]) {
 
 mkdirSync(workspace);
 const sealedPlan = path.join(workspace, "sealed.pert");
+const migrationPlan = path.join(workspace, "migration.pert");
 
 function invoke(args, expectedStatus = 0) {
   const result = spawnSync(installedCli, args, {
@@ -53,7 +54,7 @@ function invokeJson(args) {
   );
   const value = JSON.parse(result.stdout);
   assert.equal(value.ok, true);
-  assert.equal(value.cli_contract_version, 8);
+  assert.equal(value.cli_contract_version, 9);
   return value;
 }
 
@@ -76,9 +77,9 @@ const sealed = invokeJson([
   "seal",
   retainedPlan,
   "--reason",
-  "Installed package Contract 8 compatibility acceptance",
+  "Installed package Contract 9 compatibility acceptance",
 ]);
-assert.equal(sealed.schema_version, "Perttool.MutationResult.v5");
+assert.equal(sealed.schema_version, "Perttool.MutationResult.v6");
 assert.equal(
   sealed.governance?.schema_version,
   "Perttool.GovernanceDecision.v2",
@@ -93,26 +94,51 @@ invokeGit(["config", "user.name", "Perttool Package Test"]);
 invokeGit(["config", "user.email", "perttool@example.invalid"]);
 invokeGit(["add", "--", "sealed.pert"]);
 invokeGit(["commit", "--quiet", "-m", "sealed Grammar 6 baseline"]);
+const shown = invokeJson(["plan-assurance", "show", sealedPlan]);
+assert.equal(shown.schema_version, "Perttool.PlanAssuranceResult.v2");
+assert.equal(shown.grammar_version, 6);
+assert.equal(shown.assurance?.coverage, "complete");
+
+writeFileSync(
+  migrationPlan,
+  [
+    "project MIGRATION:",
+    "  version 7",
+    "  title \"Installed migration operand\"",
+    "  as_of 2026-08-18T09:00:00+09:00",
+    "  duration_unit point",
+    "  finish END",
+    "",
+    "milestone START:",
+    "  title \"Start\"",
+    "  state reached",
+    "",
+    "milestone END:",
+    "  title \"End\"",
+    "",
+    "task WORK START -> END:",
+    "  title \"Work\"",
+    "  duration 1p",
+    "  not_before 2026-08-18T10:00:00+09:00",
+    "",
+  ].join("\n"),
+  "utf8",
+);
 const migrated = invokeJson([
   "document",
   "migrate",
-  sealedPlan,
+  migrationPlan,
   "--target-grammar",
-  "7",
+  "8",
   "--write",
 ]);
 assert.equal(
   migrated.schema_version,
-  "Perttool.MilestoneAcceptanceMigrationResult.v1",
+  "Perttool.UnitMigrationResult.v4",
 );
 assert.equal(migrated.ok, true);
-assert.equal(migrated.target_grammar_version, 7);
-assert.match(readFileSync(sealedPlan, "utf8"), /  version 7\n/u);
-
-const shown = invokeJson(["plan-assurance", "show", sealedPlan]);
-assert.equal(shown.schema_version, "Perttool.PlanAssuranceResult.v1");
-assert.equal(shown.grammar_version, 7);
-assert.equal(shown.assurance?.coverage, "complete");
+assert.equal(migrated.target_grammar_version, 8);
+assert.match(readFileSync(migrationPlan, "utf8"), /  version 8\n/u);
 const work = shown.assurance?.task_results?.find(({ task_id: taskId }) =>
   taskId === "WORK"
 );
@@ -132,7 +158,7 @@ assert.match(hash.stdout, /^sha256:[0-9a-f]{64}\n$/);
 assert.equal(hash.stdout, `${work.contract_hash}\n`);
 
 const next = invokeJson(["dag", "next", sealedPlan]);
-assert.equal(next.schema_version, "Perttool.NextResult.v7");
+assert.equal(next.schema_version, "Perttool.NextResult.v8");
 assert.equal(
   next.temporal?.authority?.policy,
   "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",
@@ -143,5 +169,5 @@ assert.deepEqual(
 );
 
 process.stdout.write(
-  "installed package Contract 8 plan-assurance compatibility passed\n",
+  "installed package Contract 9 plan-assurance compatibility passed\n",
 );

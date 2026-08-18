@@ -39,7 +39,7 @@ function cliJson(args, expectedStatus = 0) {
   );
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.cli_contract_version, 8);
+  assert.equal(json.cli_contract_version, 9);
   return json;
 }
 
@@ -82,7 +82,7 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
   assert.equal(git(directory, ["rev-list", "--count", "HEAD"]), "1");
 
   const checked = cliJson(["document", "check", pathname]);
-  assert.equal(checked.schema_version, "Perttool.CheckResult.v5");
+  assert.equal(checked.schema_version, "Perttool.CheckResult.v6");
   assert.equal(checked.grammar_version, 5);
   assert.deepEqual(checked.actuals_inputs.events, []);
 
@@ -91,7 +91,7 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
     "start",
     "2026-07-29T09:00:00+09:00",
   );
-  assert.equal(started.schema_version, "Perttool.MutationResult.v5");
+  assert.equal(started.schema_version, "Perttool.MutationResult.v6");
   assert.equal(started.lifecycle.from_state, "planned");
   assert.equal(started.lifecycle.to_state, "active");
   assert.equal(started.lifecycle.event.kind, "start");
@@ -104,14 +104,14 @@ test("Contract 6 publishes Grammar 5 lifecycle, history, and observation without
     ["--reason", "review"],
   );
   const suspendedAnalysis = cliJson(["dag", "analyze", pathname]);
-  assert.equal(suspendedAnalysis.schema_version, "Perttool.AnalysisResult.v6");
+  assert.equal(suspendedAnalysis.schema_version, "Perttool.AnalysisResult.v7");
   assert.deepEqual(suspendedAnalysis.precedence.suspended_task_ids, ["WORK"]);
   assert.equal(
     suspendedAnalysis.precedence.conditional_on_suspensions_resumed,
     true,
   );
   const suspendedNext = cliJson(["dag", "next", pathname]);
-  assert.equal(suspendedNext.schema_version, "Perttool.NextResult.v7");
+  assert.equal(suspendedNext.schema_version, "Perttool.NextResult.v8");
   assert.deepEqual(suspendedNext.groups.suspended, ["WORK"]);
   assert.deepEqual(suspendedNext.groups.ready, []);
 
@@ -209,7 +209,7 @@ test("Contract 6 keeps legacy status-only finish and rejects it for Grammar 5", 
     "docs/examples/minimal.pert",
     "WORK",
   ]);
-  assert.equal(legacy.schema_version, "Perttool.MutationResult.v5");
+  assert.equal(legacy.schema_version, "Perttool.MutationResult.v6");
   assert.equal(legacy.ok, true);
   assert.equal(legacy.lifecycle, null);
 
@@ -226,7 +226,7 @@ test("Contract 6 keeps legacy status-only finish and rejects it for Grammar 5", 
   );
 });
 
-test("Contract 8 package root retains actuals services without target names", () => {
+test("Contract 9 package root retains actuals services without target names", () => {
   for (const name of [
     "planLifecycleMutation",
     "planFinishActuals",
@@ -246,10 +246,10 @@ test("Contract 8 package root retains actuals services without target names", ()
   ]) {
     assert.equal(name in publicApi, false, name);
   }
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 53);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 56);
   assert.equal(
     publicApi.COMMAND_REGISTRY.every(
-      ({ contractVersion }) => contractVersion === 8,
+      ({ contractVersion }) => contractVersion === 9,
     ),
     true,
   );

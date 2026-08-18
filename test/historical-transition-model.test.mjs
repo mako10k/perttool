@@ -454,6 +454,6 @@ test("HTM-012 keeps the active public and write surfaces unchanged", async () =>
   assert.equal("projectHistoricalTransitionModel" in publicApi, false);
   assert.equal("classifyHistoricalTransition" in publicApi, false);
   assert.equal("projectHistoricalTransitionSequence" in publicApi, false);
-  assert.equal(publicApi.COMMAND_REGISTRY.length, 53);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 56);
   assert.equal(publicApi.getJsonSchemaCatalog().length, 23);
 });

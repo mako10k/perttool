@@ -24,16 +24,16 @@ function digest(text) {
   return `sha256:${createHash("sha256").update(text, "utf8").digest("hex")}`;
 }
 
-test("Contract 8 retains the Grammar 6 plan-assurance surface", async () => {
+test("Contract 9 retains the Grammar 6 plan-assurance surface", async () => {
   const source = await readFile(
     path.join(root, "docs", "examples", "minimal.pert"),
     "utf8",
   );
-  assert.equal(perttool.COMMAND_REGISTRY.length, 53);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 56);
   assert.equal(perttool.getJsonSchemaCatalog().length, 23);
   assert.equal(perttool.getJsonSchema("Perttool.NextResult.v5"), null);
   assert.equal(perttool.getJsonSchema("Perttool.AdvanceResult.v1"), null);
-  assert.ok(perttool.getJsonSchema("Perttool.PlanAssuranceResult.v1"));
+  assert.ok(perttool.getJsonSchema("Perttool.PlanAssuranceResult.v2"));
   assert.equal("evaluatePlanAssurance" in perttool, false);
   assert.equal("hashTaskPlanContract" in perttool, false);
 
@@ -42,7 +42,7 @@ test("Contract 8 retains the Grammar 6 plan-assurance surface", async () => {
     reason: "Public Contract 7 acceptance",
   });
   assert.equal(sealed.ok, true, JSON.stringify(sealed.diagnostics));
-  assert.equal(sealed.schemaVersion, "Perttool.MutationResult.v5");
+  assert.equal(sealed.schemaVersion, "Perttool.MutationResult.v6");
   assert.equal(
     sealed.governance?.schemaVersion,
     "Perttool.GovernanceDecision.v2",
@@ -50,7 +50,7 @@ test("Contract 8 retains the Grammar 6 plan-assurance surface", async () => {
   assert.ok(sealed.updatedText);
 
   const checked = perttool.checkDocument(sealed.updatedText);
-  assert.equal(checked.schemaVersion, "Perttool.CheckResult.v5");
+  assert.equal(checked.schemaVersion, "Perttool.CheckResult.v6");
   assert.equal(checked.grammarVersion, 6);
   assert.equal(checked.assurance?.coverage, "complete");
   const work = checked.assurance.taskResults.find(({ taskId }) =>
@@ -60,7 +60,7 @@ test("Contract 8 retains the Grammar 6 plan-assurance surface", async () => {
   assert.equal(work?.status, "verified");
 
   const next = perttool.selectNextTasks(sealed.updatedText);
-  assert.equal(next.schemaVersion, "Perttool.NextResult.v7");
+  assert.equal(next.schemaVersion, "Perttool.NextResult.v8");
   assert.equal(
     next.temporal.authority.policy,
     "recommendation_v1_plus_release_gate_plus_plan_assurance_v1",
@@ -124,8 +124,8 @@ test("Contract 8 retains the Grammar 6 plan-assurance surface", async () => {
     ]);
     assert.equal(show.status, 0, show.stderr);
     const shown = JSON.parse(show.stdout);
-    assert.equal(shown.schema_version, "Perttool.PlanAssuranceResult.v1");
-    assert.equal(shown.cli_contract_version, 8);
+    assert.equal(shown.schema_version, "Perttool.PlanAssuranceResult.v2");
+    assert.equal(shown.cli_contract_version, 9);
     assert.equal(shown.assurance.coverage, "complete");
   } finally {
     await rm(temporary, { recursive: true, force: true });
@@ -184,7 +184,7 @@ test("Issue 14 inspects valid Grammar 7 plans through file and stdin without mut
       assert.equal(shownRun.status, 0, shownRun.stderr);
       const shown = JSON.parse(shownRun.stdout);
       assert.equal(shown.ok, true);
-      assert.equal(shown.cli_contract_version, 8);
+      assert.equal(shown.cli_contract_version, 9);
       assert.equal(shown.grammar_version, 7);
       assert.equal(shown.source_digest, digest(migrated.candidateText));
       assert.deepEqual(shown.selected_task_ids, ["WORK"]);

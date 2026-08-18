@@ -106,11 +106,11 @@ test("0.6.0 release gate binds advance history safety and migration", async () =
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.9.4");
-  assert.equal(lockfile.version, "0.9.4");
-  assert.equal(lockfile.packages[""].version, "0.9.4");
+  assert.equal(manifest.version, "0.10.0");
+  assert.equal(lockfile.version, "0.10.0");
+  assert.equal(lockfile.packages[""].version, "0.10.0");
   assert.equal(manifest.publishConfig.tag, "beta");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.4"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.10\.0"/);
   assert.match(mutationSource, /@deprecated Use AdvanceResultV1/);
   assert.match(changelog, /^## \[0\.6\.0\] - 2026-07-31$/m);
   assert.match(
@@ -118,6 +118,6 @@ test("0.6.0 release gate binds advance history safety and migration", async () =
     /does not move npm `latest` from Contract 6\s+`0\.6\.0`/,
   );
   assert.equal(ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v3");
-  assert.equal(COMMAND_REGISTRY.length, 53);
+  assert.equal(COMMAND_REGISTRY.length, 56);
   assert.equal(getJsonSchemaCatalog().length, 23);
 });

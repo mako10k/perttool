@@ -4,7 +4,7 @@ import test from "node:test";
 import * as publicApi from "../dist/index.js";
 import { projectTargetPostdueAnalysis } from "../dist/application/target-postdue-analysis.js";
 
-const base = Object.freeze({ schemaVersion: "Perttool.AnalysisResult.v6", ok: true, documentId: "P", precedence: Object.freeze({ legacy: true }), resource: Object.freeze({ legacy: true }), acceptance: null });
+const base = Object.freeze({ schemaVersion: "Perttool.AnalysisResult.v7", ok: true, documentId: "P", precedence: Object.freeze({ legacy: true }), resource: Object.freeze({ legacy: true }), acceptance: null });
 const profile = Object.freeze({ state: "available", algorithm: Object.freeze({ id: "perttool.temporal-precedence-earliest", version: 2, optimal: null }), makespanSeconds: null, tasks: Object.freeze([]), milestones: Object.freeze([]), utilization: Object.freeze([]), unavailableCauses: Object.freeze([]) });
 const resource = Object.freeze({ ...profile, algorithm: Object.freeze({ id: "perttool.temporal-parallel-sgs", version: 2, optimal: false }) });
 const scheduler = Object.freeze({ modelVersion: 1, documentId: "P", source: Object.freeze({}), precedence: profile, resource });
@@ -29,11 +29,11 @@ test("PDA-006 through PDA-009 retain full or unavailable driver evidence", () =>
   assert.throws(() => projectTargetPostdueAnalysis(base, scheduler, required, notComputed), /requires computed/);
 });
 
-test("PDA-010 through PDA-012 enforce complete bindings and public non-activation", () => {
+test("PDA-010 through PDA-012 enforce complete bindings and public activation", () => {
   assert.throws(() => projectTargetPostdueAnalysis(base, scheduler, null, alerts), /must be complete/);
   assert.throws(() => projectTargetPostdueAnalysis(base, { ...scheduler, documentId: "OTHER" }, required, alerts), /identities differ/);
   const result = projectTargetPostdueAnalysis(base, scheduler, required, alerts);
   assert.equal(result.precedence, base.precedence);
   assert.equal("projectTargetPostdueAnalysis" in publicApi, false);
-  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.AnalysisResult.v7"), false);
+  assert.equal(publicApi.getJsonSchemaCatalog().some(({ schemaId }) => schemaId === "Perttool.AnalysisResult.v7"), true);
 });

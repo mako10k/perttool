@@ -186,7 +186,7 @@ test("invalid provisional candidates return source diagnostics instead of PTCLI-
 test("advance is exported through the Contract 8 public boundary", async () => {
   const root = await import("../dist/index.js");
   assert.equal(typeof root.planMilestoneAcceptanceAdvance, "function");
-  assert.equal(root.COMMAND_REGISTRY.length, 53);
+  assert.equal(root.COMMAND_REGISTRY.length, 56);
   assert.equal(root.getJsonSchemaCatalog().length, 23);
 });
 

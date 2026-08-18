@@ -131,11 +131,14 @@ import { planContract9GrammarMigration } from "./application/contract9-format-mi
 import { planContract9TemporalMutation } from "./application/contract9-temporal-mutation.js";
 import { composeContract9MixedMutation, composeContract9TemporalMutation } from "./application/contract9-mixed-mutation.js";
 import {
-  persistMilestoneAcceptanceMutation,
   planAcceptanceReceiptMutation,
   planCriterionSetReplacement,
   showMilestoneAcceptance,
 } from "./milestone-acceptance/mutation.js";
+import {
+  scanTemporalDeclarationBlocks,
+  temporalScheduleBaseText,
+} from "./temporal-schedule/source-lexical.js";
 import {
   planMilestoneAcceptanceMigration,
   recheckCommittedMigrationProof,
@@ -860,10 +863,15 @@ async function persistContract8CandidateResult(
   if (!result.ok || !result.governance?.writeAuthorized || result.updatedText === null) {
     throw new TypeError("authorized Contract 8 result does not contain a digest-bound candidate");
   }
-  const validator = (candidate: string) => {
-    const parsed = parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
-    return { ok: parsed.ok, diagnostics: [] };
-  };
+  const validator = /^  version 8$/mu.test(result.updatedText)
+    ? (candidate: string) => {
+        const checked = checkDocument(candidate);
+        return { ok: checked.ok, diagnostics: checked.diagnostics };
+      }
+    : (candidate: string) => {
+        const parsed = parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY);
+        return { ok: parsed.ok, diagnostics: [] };
+      };
   if (request.mode === "in_place") {
     await replaceValidatedDocumentFile(
       request.target,
@@ -906,6 +914,25 @@ async function commitCandidate(
       "invalid_candidate",
       "successful editing result has no candidate text",
     );
+  }
+  if (/^  version 8$/mu.test(candidateText)) {
+    const validator = (candidate: string) => {
+      const checked = checkDocument(candidate);
+      return { ok: checked.ok, diagnostics: checked.diagnostics };
+    };
+    return request.mode === "in_place"
+      ? replaceValidatedDocumentFile(
+          request.target,
+          candidateText,
+          {
+            initialDigest,
+            ...(request.expectedDigest === undefined
+              ? {}
+              : { expectedDigest: request.expectedDigest }),
+          },
+          validator,
+        )
+      : createValidatedDocumentFile(request.target, candidateText, validator);
   }
   const acceptanceSource = parseMilestoneAcceptanceSource(
     candidateText,
@@ -3990,6 +4017,46 @@ function parseMilestoneAcceptanceCriteria(
   });
 }
 
+function planContract9AcceptanceMutation<T extends {
+  readonly ok: boolean;
+  readonly changed: boolean;
+  readonly originalDigest: `sha256:${string}`;
+  readonly updatedDigest: `sha256:${string}` | null;
+  readonly updatedText: string | null;
+}>(text: string, planner: (baseText: string) => T): T {
+  if (!/^  version 8$/mu.test(text)) return planner(text);
+  const base = temporalScheduleBaseText(
+    text,
+    scanTemporalDeclarationBlocks(text),
+  );
+  const planned = planner(base);
+  const originalDigest = sha256DigestUtf8(text);
+  if (!planned.ok || planned.updatedText === null) {
+    return Object.freeze({ ...planned, originalDigest });
+  }
+  let prefix = 0;
+  while (
+    prefix < base.length &&
+    prefix < planned.updatedText.length &&
+    base[prefix] === planned.updatedText[prefix]
+  ) prefix += 1;
+  let suffix = 0;
+  while (
+    suffix < base.length - prefix &&
+    suffix < planned.updatedText.length - prefix &&
+    base[base.length - 1 - suffix] ===
+      planned.updatedText[planned.updatedText.length - 1 - suffix]
+  ) suffix += 1;
+  const candidate = text.slice(0, prefix) +
+    planned.updatedText.slice(prefix, planned.updatedText.length - suffix) +
+    text.slice(text.length - suffix);
+  const checked = checkDocument(candidate);
+  if (!checked.ok) return Object.freeze({ ...planned, ok: false, changed: false,
+    originalDigest, updatedDigest: null, updatedText: null });
+  return Object.freeze({ ...planned, originalDigest, changed: candidate !== text,
+    updatedDigest: sha256DigestUtf8(candidate), updatedText: candidate });
+}
+
 async function runMilestoneAcceptance(action: string, args: readonly string[]): Promise<number> {
   const operation = `milestone-acceptance.${action}`;
   const parsed = parseCommandOptions(operation, args);
@@ -4011,9 +4078,9 @@ async function runMilestoneAcceptance(action: string, args: readonly string[]): 
   let result;
   if (action === "replace") {
     const criteria = parseMilestoneAcceptanceCriteria(parsed.repeatedValues.get("criterion") ?? []);
-    result = planCriterionSetReplacement(input.text, { milestoneId: parsed.positionals[1]!, setId: parsed.positionals[2]!, revisionId: parsed.positionals[3]!, criteria }, { governance });
+    result = planContract9AcceptanceMutation(input.text, (text) => planCriterionSetReplacement(text, { milestoneId: parsed.positionals[1]!, setId: parsed.positionals[2]!, revisionId: parsed.positionals[3]!, criteria }, { governance }));
   } else {
-    result = planAcceptanceReceiptMutation(input.text, {
+    result = planContract9AcceptanceMutation(input.text, (text) => planAcceptanceReceiptMutation(text, {
       setId: parsed.positionals[1]!, criterionId: parsed.positionals[2]!, receiptId: parsed.positionals[3]!, action: action as "verify" | "fail" | "unavailable" | "revoke" | "waive",
       ...(parsed.values.get("evidence-kind") === undefined ? {} : { evidenceKind: parsed.values.get("evidence-kind") as "test" | "command" | "artifact" | "observation" | "owner" }),
       ...(parsed.values.get("evidence-reference") === undefined ? {} : { evidenceReference: parsed.values.get("evidence-reference")! }),
@@ -4022,15 +4089,15 @@ async function runMilestoneAcceptance(action: string, args: readonly string[]): 
       ...(parsed.values.get("occurred-at") === undefined ? {} : { occurredAt: parsed.values.get("occurred-at")! }),
       ...(parsed.values.get("reason") === undefined ? {} : { reason: parsed.values.get("reason")! }),
       ...(parsed.values.get("revokes") === undefined ? {} : { revokes: parsed.values.get("revokes")! }),
-    }, { governance });
+    }, { governance }));
   }
   let written = false;
   if (result.ok && request.mode === "in_place" && result.changed) {
-    await persistMilestoneAcceptanceMutation(sourceOperand, result, request.expectedDigest);
+    await commitCandidate(request, result.updatedText, input.digest);
     written = true;
   }
   if (format === "json") writeJson({
-    schema_version: "Perttool.MutationResult.v5",
+    schema_version: "Perttool.MutationResult.v6",
     cli_contract_version: 8,
     tool_version: TOOL_VERSION,
     operation,

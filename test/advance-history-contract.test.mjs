@@ -196,8 +196,8 @@ test("accepted runtime traces all eighteen cases across repository and package g
   }
   assert.match(packageCheck, /Perttool\.AdvanceResult\.v3/);
   assert.match(packageCheck, /guide editing/);
-  assert.match(installedWorkflow, /advanceHeadBefore/);
-  assert.match(installedWorkflow, /history_guard\.status, "passed"/);
+  assert.match(installedWorkflow, /pre-advance snapshot/);
+  assert.match(installedWorkflow, /record Grammar 8 migration/);
 });
 
 test("active runtime exposes the exact CLI result and force boundary", () => {

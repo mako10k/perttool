@@ -6,8 +6,8 @@ export { getProjectMetadata } from "./contract9-project.js";
 import { inspectContract9PlanAssurance } from "./contract9-assurance.js";
 import { planContract9Format, planContract9GrammarMigration } from "./contract9-format-migration.js";
 export { planContract9GrammarMigration as planGrammarMigration };
-export function planFormat(text: string, _options: Readonly<Record<string, unknown>> = {}) {
-  return planContract9Format(text);
+export function planFormat(text: string, options: Parameters<typeof contract8.planFormat>[1] = {}) {
+  return /^  version 8$/mu.test(text) ? planContract9Format(text) : contract8.planFormat(text, options);
 }
 export function inspectPlanAssurance(
   text: string,

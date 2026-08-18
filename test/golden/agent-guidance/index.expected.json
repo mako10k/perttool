@@ -8,7 +8,7 @@
   "description_registry_version": 1,
   "description_locale": "en",
   "staleness_policy_version": 1,
-  "tool_version": "0.9.4",
+  "tool_version": "0.10.0",
   "operation": "agent.help",
   "ok": true,
   "profile_digest": "sha256:6af09aec1cd44bc5f4de46fdd68d2035d31a7260bfb7d2e3c994fdd7fc302921",

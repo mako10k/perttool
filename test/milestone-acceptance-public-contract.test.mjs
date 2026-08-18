@@ -18,8 +18,8 @@ function run(args, options = {}) {
   });
 }
 
-test("Contract 8 activates one exact public registry and closed schema catalog", () => {
-  assert.equal(rootApi.COMMAND_REGISTRY.length, 53);
+test("Contract 9 activates one exact public registry and closed schema catalog", () => {
+  assert.equal(rootApi.COMMAND_REGISTRY.length, 56);
   assert.equal(rootApi.getJsonSchemaCatalog().length, 23);
   assert.equal(rootApi.ADVANCE_RESULT_SCHEMA_VERSION, "Perttool.AdvanceResult.v3");
   assert.equal(typeof rootApi.planMilestoneAcceptanceMigration, "function");
@@ -33,7 +33,7 @@ test("registry validation preserves the exact three-token acceptance command pat
   const help = run(["help", "milestone", "acceptance", "replace", "--format", "json"]);
   assert.equal(help.status, 0, help.stderr);
   const result = JSON.parse(help.stdout);
-  assert.equal(result.cli_contract_version, 8);
+  assert.equal(result.cli_contract_version, 9);
   assert.deepEqual(result.commands.map(({ path }) => path), [["milestone", "acceptance", "replace"]]);
 
   const legacyAlias = run(["milestone-acceptance", "show", "-", "--format", "json"], { input: "" });
@@ -45,8 +45,8 @@ test("older grammars remain readable but advance fails before Git history inspec
   const checked = run(["document", "check", source, "--format", "json"]);
   assert.equal(checked.status, 0, checked.stderr);
   const checkResult = JSON.parse(checked.stdout);
-  assert.equal(checkResult.schema_version, "Perttool.CheckResult.v5");
-  assert.equal(checkResult.cli_contract_version, 8);
+  assert.equal(checkResult.schema_version, "Perttool.CheckResult.v6");
+  assert.equal(checkResult.cli_contract_version, 9);
   assert.equal(checkResult.grammar_version, 1);
   assert.equal(checkResult.acceptance, null);
   assert.equal(checkResult.diagnostics.some(({ code }) => code === "PTMAC-102"), false);
@@ -63,7 +63,7 @@ test("older grammars remain readable but advance fails before Git history inspec
 test("Grammar 7 check projects the advanced final acceptance without criterion guidance", async () => {
   const source = await readFile(path.join(repository, "plans/milestone-acceptance.pert"), "utf8");
   const checked = rootApi.checkDocument(source);
-  assert.equal(checked.schemaVersion, "Perttool.CheckResult.v5");
+  assert.equal(checked.schemaVersion, "Perttool.CheckResult.v6");
   assert.equal(checked.grammarVersion, 7);
   assert.equal(checked.acceptance.milestones.length, 1);
   assert.equal(checked.acceptance.milestones.every(({ closure }) =>

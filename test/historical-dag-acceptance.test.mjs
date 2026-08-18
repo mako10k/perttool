@@ -97,7 +97,7 @@ test("historical component matrices compose without an uncovered semantic axis",
 test("accepted source exposes the additive history surface and read-only CLI", () => {
   assert.equal(Object.keys(perttool).length, 129);
   assert.equal(Object.keys(core).length, 45);
-  assert.equal(perttool.COMMAND_REGISTRY.length, 53);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 56);
   assert.equal(perttool.getJsonSchemaCatalog().length, 23);
   assert.deepEqual(
     perttool.COMMAND_REGISTRY.filter(

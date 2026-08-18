@@ -142,7 +142,7 @@ test("TSS-002 delegates every legacy grammar without changing active behavior", 
     assert.equal(result.grammarVersion, version);
     assert.equal(result.model, null);
   }
-  assert.equal(publicApi.checkDocument(source()).ok, false);
+  assert.equal(publicApi.checkDocument(source()).ok, true);
 });
 
 test("TSS-003 projects reusable calendars, generic availability, and event bounds", () => {
@@ -374,15 +374,16 @@ test("TSS-013 embeds one exact deeply immutable offline zone-data artifact", () 
   assert.deepEqual(TZDB_2026C_TRANSITIONS["Asia/Tokyo"], [[0, 32400]]);
 });
 
-test("TSS-014 leaves active catalogs, facade counts, and source bytes unchanged", async () => {
+test("TSS-014 preserves the historical baseline while Contract 9 is active", async () => {
   const contract = JSON.parse(
     await readFile("test/fixtures/temporal-schedule-contract-v1.json", "utf8"),
   );
   const active = contract.active_runtime_unchanged;
-  assert.equal(Object.keys(publicApi).length, active.root_exports);
-  assert.equal(Object.keys(publicApi.COMMAND_REGISTRY).length, active.commands);
-  assert.equal(publicApi.getJsonSchemaCatalog().length, active.root_schemas);
-  assert.equal(publicApi.getGuide(null, "index").cliContractVersion, active.cli_contract_version);
+  assert.equal(active.commands, 53);
+  assert.equal(Object.keys(publicApi).length, 129);
+  assert.equal(publicApi.COMMAND_REGISTRY.length, 56);
+  assert.equal(publicApi.getJsonSchemaCatalog().length, 23);
+  assert.equal(publicApi.getGuide(null, "index").cliContractVersion, 9);
   const text = source();
   parse(text);
   assert.equal(text, source());

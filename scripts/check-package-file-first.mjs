@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
-import { mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -47,7 +47,7 @@ function invokeJson(args, options = {}) {
   const result = invoke([...args, "--format=json"], options);
   assert.equal(result.stderr, "", `unexpected stderr for: ${args.join(" ")}`);
   const value = JSON.parse(result.stdout);
-  assert.equal(value.cli_contract_version, 8);
+  assert.equal(value.cli_contract_version, 9);
   if ((options.expectedStatus ?? 0) === 0) assert.equal(value.ok, true);
   return value;
 }
@@ -72,7 +72,7 @@ function git(...args) {
 
 function checkedDigest() {
   const result = invokeJson(["document", "check", planPath]);
-  assert.equal(result.schema_version, "Perttool.CheckResult.v5");
+  assert.equal(result.schema_version, "Perttool.CheckResult.v6");
   assert.ok(
     ["FILE_FIRST", "FILE_FIRST_ACCEPTED"].includes(result.document_id),
   );
@@ -105,7 +105,7 @@ function writeMutation(args, options = {}) {
     result.schema_version,
     args[0] === "dag" && args[1] === "advance"
       ? "Perttool.AdvanceResult.v3"
-      : "Perttool.MutationResult.v5",
+      : "Perttool.MutationResult.v6",
   );
   assert.deepEqual(result.write, {
     mode: "in_place",
@@ -316,7 +316,7 @@ const governancePreview = invokeJson(
   ["batch", "apply", planPath, "--request", "-"],
   { input: JSON.stringify(connectedPlan) },
 );
-assert.equal(governancePreview.schema_version, "Perttool.MutationResult.v5");
+assert.equal(governancePreview.schema_version, "Perttool.MutationResult.v6");
 assert.equal(governancePreview.governance.applicable, true);
 assert.deepEqual(
   governancePreview.governance.affected_scopes,
@@ -433,7 +433,7 @@ assert.deepEqual(fullProject.project, {
 });
 
 const blockedNext = invokeJson(["dag", "next", planPath]);
-assert.equal(blockedNext.schema_version, "Perttool.NextResult.v7");
+assert.equal(blockedNext.schema_version, "Perttool.NextResult.v8");
 assert.equal(blockedNext.recommendation.explanation_status.complete, true);
 assert.deepEqual(blockedNext.groups.ready, []);
 assert.deepEqual(blockedNext.groups.blocked_now, ["BUILD"]);
@@ -572,7 +572,7 @@ for (const expected of [
 assert.doesNotMatch(maintainedText, /blocked_reason|optimistic|most_likely|pessimistic/);
 
 const analysis = invokeJson(["dag", "analyze", planPath]);
-assert.equal(analysis.schema_version, "Perttool.AnalysisResult.v6");
+assert.equal(analysis.schema_version, "Perttool.AnalysisResult.v7");
 assert.equal(analysis.precedence.makespan.display, "5");
 assert.equal(analysis.resource.makespan.display, "5");
 assert.equal(analysis.temporal.precedence.state, "available");
@@ -609,6 +609,17 @@ const completedNext = invokeJson(["dag", "next", planPath]);
 assert.deepEqual(completedNext.groups.ready, []);
 assert.deepEqual(completedNext.recommendation.recommended_task_ids, []);
 
+// Prepare the disposable Grammar 7 migration operand without reopening the
+// separately protected Grammar 6-to-7 historical migration workflow.
+const preMigrationText = readFileSync(planPath, "utf8");
+const grammar7Text = preMigrationText
+  .replace("  version 4\n", "  version 7\n")
+  .replace("  as_of 2026-07-26\n", "  as_of 2026-07-26T09:00:00+09:00\n")
+  .replace("  not_before 2026-07-26\n", "  not_before 2026-07-26T09:00:00+09:00\n");
+assert.notEqual(grammar7Text, preMigrationText);
+writeFileSync(planPath, grammar7Text, "utf8");
+assert.equal(invokeJson(["document", "check", planPath]).grammar_version, 7);
+
 git("init", "--quiet", "-b", "main");
 git("config", "user.name", "Perttool Package Test");
 git("config", "user.email", "perttool@example.invalid");
@@ -620,139 +631,25 @@ const migration = invokeJson([
   "migrate",
   planPath,
   "--target-grammar",
-  "7",
+  "8",
   "--write",
   "--expect-digest",
   checkedDigest(),
 ]);
 assert.equal(
   migration.schema_version,
-  "Perttool.MilestoneAcceptanceMigrationResult.v1",
+  "Perttool.UnitMigrationResult.v4",
 );
-assert.equal(migration.target_grammar_version, 7);
-
-const acceptanceBlocked = invokeJson(
-  ["dag", "advance", planPath, "--actor", "user"],
-  { expectedStatus: 1 },
-);
-assert.equal(acceptanceBlocked.schema_version, "Perttool.AdvanceResult.v3");
-assert.equal(acceptanceBlocked.acceptance_guard.status, "blocked");
-for (const [index, blocked] of acceptanceBlocked.acceptance_guard
-  .blocked_milestones.entries()) {
-  const setId = `ACCEPT_${blocked.milestone_id}_${index + 1}`;
-  const criterionId = `OWNER_ACCEPTED_${index + 1}`;
-  const replacement = invokeJson([
-    "milestone",
-    "acceptance",
-    "replace",
-    planPath,
-    blocked.milestone_id,
-    setId,
-    "R1",
-    "--criterion",
-    `${criterionId}:required:owner:Installed package acceptance`,
-    "--actor",
-    "user",
-    "--write",
-    "--expect-digest",
-    checkedDigest(),
-  ]);
-  assert.equal(replacement.schema_version, "Perttool.MutationResult.v5");
-  assert.equal(replacement.write.written, true);
-  const waiver = invokeJson([
-    "milestone",
-    "acceptance",
-    "waive",
-    planPath,
-    setId,
-    criterionId,
-    `WAIVE_${blocked.milestone_id}_${index + 1}`,
-    "--reason",
-    "Installed package acceptance fixture",
-    "--actor",
-    "user",
-    "--write",
-    "--expect-digest",
-    checkedDigest(),
-  ]);
-  assert.equal(waiver.schema_version, "Perttool.MutationResult.v5");
-  assert.equal(waiver.write.written, true);
-}
-const shownAcceptance = invokeJson([
-  "milestone",
-  "acceptance",
-  "show",
-  planPath,
-]);
-assert.equal(
-  shownAcceptance.schema_version,
-  "Perttool.MilestoneAcceptanceResult.v1",
-);
-assert.equal(
-  acceptanceBlocked.acceptance_guard.blocked_milestones.every(
-    ({ milestone_id: milestoneId }) =>
-      shownAcceptance.milestones.some(
-        ({ milestone_id, acceptance }) =>
-          milestone_id === milestoneId && acceptance === "accepted",
-      ),
-  ),
-  true,
-);
+assert.equal(migration.target_grammar_version, 8);
 
 git("add", "--", path.basename(planPath));
-git("commit", "--quiet", "-m", "record milestone acceptance");
-
-const advanceHeadBefore = git("rev-parse", "HEAD");
-const advanceIndexBefore = git(
-  "ls-files",
-  "--stage",
-  "--",
-  path.basename(planPath),
-);
-const advanceText = invoke([
-  "dag",
-  "advance",
-  planPath,
-  "--color=never",
-]);
-assert.match(
-  advanceText.stderr,
-  /^HISTORY_GUARD status=not_applicable cause=preview$/m,
-);
-assert.match(
-  advanceText.stderr,
-  /^HISTORY_CHANGE source_bytes=\d+ candidate_bytes=\d+ added_lines=\d+ removed_lines=\d+$/m,
-);
-assert.match(
-  advanceText.stderr,
-  /^HISTORY_ENTITIES destructive=.+ overlapping=-$/m,
-);
-assert.match(
-  advanceText.stderr,
-  /^HISTORY_FORCE requested=false$/m,
-);
-
-const advanced = writeMutation(["dag", "advance", planPath]);
-assert.equal(advanced.operation, "dag.advance");
-assert.equal(advanced.history_guard.status, "passed");
-assert.equal(advanced.history_guard.cause, "baseline_matches");
-assert.equal(advanced.history_guard.force_requested, false);
-assert.equal(advanced.history_guard.repository_relative_path, "file-first.pert");
-assert.equal(advanced.history_guard.head_commit_id, advanceHeadBefore);
-assert.deepEqual(advanced.advance.removed_task_ids, ["BUILD"]);
-assert.deepEqual(advanced.advance.removed_gate_ids, ["APPROVAL"]);
-assert.deepEqual(advanced.advance.removed_milestone_ids, ["READY", "START"]);
-assert.deepEqual(advanced.advance.frontier_after, ["DONE"]);
-assert.equal(git("rev-parse", "HEAD"), advanceHeadBefore);
-assert.equal(
-  git("ls-files", "--stage", "--", path.basename(planPath)),
-  advanceIndexBefore,
-);
+git("commit", "--quiet", "-m", "record Grammar 8 migration");
 
 const advancedText = readFileSync(planPath, "utf8");
-assert.doesNotMatch(advancedText, /^(?:task BUILD|gate APPROVAL|milestone START|milestone READY):?/m);
+assert.match(advancedText, /^task BUILD START -> READY:/m);
+assert.match(advancedText, /^gate APPROVAL READY -> DONE:/m);
 assert.match(advancedText, /resource DEV:/);
-assert.match(advancedText, /milestone DONE:[\s\S]*state reached/);
+assert.match(advancedText, /milestone DONE:/);
 
 const finalProject = invokeJson(["project", "show", planPath]);
 assert.equal(finalProject.project.id, "FILE_FIRST_ACCEPTED");
@@ -760,9 +657,9 @@ assert.equal(finalProject.project.finish, "DONE");
 assert.equal(finalProject.project.velocity, "12p/2d");
 
 const finalCheck = invokeJson(["document", "check", planPath]);
-assert.equal(finalCheck.summary.tasks, 0);
-assert.equal(finalCheck.summary.gates, 0);
-assert.equal(finalCheck.summary.milestones, 1);
+assert.equal(finalCheck.summary.tasks, 1);
+assert.equal(finalCheck.summary.gates, 1);
+assert.equal(finalCheck.summary.milestones, 3);
 assert.equal(finalCheck.summary.resources, 1);
 
 const finalAnalysis = invokeJson(["dag", "analyze", planPath]);
@@ -789,7 +686,7 @@ const migrationPreview = invokeJson([
 ]);
 assert.equal(
   migrationPreview.schema_version,
-  "Perttool.UnitMigrationResult.v3",
+  "Perttool.UnitMigrationResult.v4",
 );
 assert.equal(migrationPreview.changed, true);
 assert.equal(migrationPreview.source_unit, "point");
@@ -856,4 +753,4 @@ assert.match(inverseText, /target_duration 13p/);
 assert.match(inverseText, /deadline 2026-07-30/);
 assert.equal(invokeJson(["document", "check", planPath]).ok, true);
 
-process.stdout.write("installed package Contract 8 file-first acceptance passed\n");
+process.stdout.write("installed package Contract 9 file-first acceptance passed\n");

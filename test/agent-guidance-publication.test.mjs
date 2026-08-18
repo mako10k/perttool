@@ -100,7 +100,7 @@ test("agent help JSON adds the Contract 8 envelope to the Core projection", () =
   assert.equal(first.stderr, "");
   assert.equal(first.stdout, second.stdout);
   const json = JSON.parse(first.stdout);
-  assert.equal(json.cli_contract_version, 8);
+  assert.equal(json.cli_contract_version, 9);
   const { cli_contract_version: _contract, ...cliProjection } = json;
   assert.deepEqual(cliProjection, agentGuidanceResultToJson(coreResult));
   assert.deepEqual(json.query, {
@@ -195,13 +195,13 @@ test("agent help does not require or create project/provider state", () => {
   }
 });
 
-test("Contract 8 guide index is byte-stable", () => {
+test("Contract 9 guide index is byte-stable", () => {
   const result = run(["guide", "--format=json"]);
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stderr, "");
   const json = JSON.parse(result.stdout);
-  assert.equal(json.cli_contract_version, 8);
-  assert.equal(json.topics.length, 12);
-  assert.equal(json.topics.at(-1).id, "milestone-acceptance");
+  assert.equal(json.cli_contract_version, 9);
+  assert.equal(json.topics.length, 13);
+  assert.equal(json.topics.at(-1).id, "temporal-schedule");
   assert.equal(run(["guide", "--format=json"]).stdout, result.stdout);
 });

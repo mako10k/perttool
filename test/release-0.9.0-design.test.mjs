@@ -164,13 +164,13 @@ test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 
   const lockfile = JSON.parse(lockfileText);
   const lspManifest = JSON.parse(lspManifestText);
   const mcpManifest = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.9.4");
-  assert.equal(lockfile.version, "0.9.4");
-  assert.equal(lockfile.packages[""].version, "0.9.4");
-  assert.equal(lspManifest.peerDependencies.perttool, "0.9.4");
-  assert.equal(mcpManifest.peerDependencies.perttool, "0.9.4");
-  assert.match(versionSource, /TOOL_VERSION = "0\.9\.4"/u);
-  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.9\.4"/u);
+  assert.equal(manifest.version, "0.10.0");
+  assert.equal(lockfile.version, "0.10.0");
+  assert.equal(lockfile.packages[""].version, "0.10.0");
+  assert.equal(lspManifest.peerDependencies.perttool, "0.10.0");
+  assert.equal(mcpManifest.peerDependencies.perttool, "0.10.0");
+  assert.match(versionSource, /TOOL_VERSION = "0\.10\.0"/u);
+  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.10\.0"/u);
   assert.match(changelog, /^## \[0\.9\.0\] - 2026-08-13$/m);
   assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/u);
   assert.match(
@@ -189,7 +189,7 @@ test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 
   for (const name of Object.keys(perttool)) {
     assert.equal(perttool[name], nodeApi[name], name);
   }
-  assert.equal(perttool.COMMAND_REGISTRY.length, 53);
+  assert.equal(perttool.COMMAND_REGISTRY.length, 56);
   assert.equal(perttool.getJsonSchemaCatalog().length, 23);
   assert.equal(manifest.files.includes("adapters"), false);
   assert.match(procedure, /PUBLISH is complete from release commit `3aca4f0`/u);

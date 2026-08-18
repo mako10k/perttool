@@ -45,8 +45,8 @@ fi
       process.stdin.on("end", () => {
         const result = JSON.parse(input);
         if (
-          result.schema_version !== "Perttool.CheckResult.v5" ||
-          result.cli_contract_version !== 8 ||
+          result.schema_version !== "Perttool.CheckResult.v6" ||
+          result.cli_contract_version !== 9 ||
           result.grammar_version !== 5 ||
           result.actuals_inputs?.events?.length !== 0
         ) process.exit(1);
@@ -65,8 +65,8 @@ fi
       process.stdin.on("end", () => {
         const result = JSON.parse(input);
         if (
-          result.schema_version !== "Perttool.MutationResult.v5" ||
-          result.cli_contract_version !== 8 ||
+          result.schema_version !== "Perttool.MutationResult.v6" ||
+          result.cli_contract_version !== 9 ||
           result.changed !== true ||
           result.write?.mode !== "preview" ||
           result.lifecycle?.from_state !== "planned" ||
@@ -84,7 +84,7 @@ fi
         const topicIds = result.topics?.map(({ id }) => id);
         if (
           result.schema_version !== "Perttool.GuideResult.v1" ||
-          result.cli_contract_version !== 8 ||
+          result.cli_contract_version !== 9 ||
           result.operation !== "guide" ||
           JSON.stringify(topicIds) !== JSON.stringify([
             "syntax",
@@ -99,6 +99,7 @@ fi
             "plan-assurance",
             "historical-dag",
             "milestone-acceptance",
+            "temporal-schedule",
           ]) ||
           /[\u3040-\u30ff\u4e00-\u9fff]/u.test(JSON.stringify(result))
         ) process.exit(1);
@@ -114,7 +115,7 @@ fi
         const sectionIds = result.sections?.map(({ id }) => id);
         if (
           result.schema_version !== "Perttool.GuideResult.v1" ||
-          result.cli_contract_version !== 8 ||
+          result.cli_contract_version !== 9 ||
           result.operation !== "guide" ||
           result.topic_id !== "next" ||
           JSON.stringify(sectionIds) !== JSON.stringify([
@@ -185,7 +186,7 @@ fi
         ) process.exit(1);
       });
     '
-  "$linked_cli" schema Perttool.NextResult.v7 --format=json |
+  "$linked_cli" schema Perttool.NextResult.v8 --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -194,12 +195,12 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.SchemaResult.v1" ||
-          result.cli_contract_version !== 8 ||
+          result.cli_contract_version !== 9 ||
           result.schemas?.length !== 23 ||
           result.schema?.$schema !==
             "https://json-schema.org/draft/2020-12/schema" ||
           result.schema?.$id !==
-            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v7.schema.json"
+            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v8.schema.json"
         ) process.exit(1);
       });
     '
@@ -221,7 +222,7 @@ fi
         const result = JSON.parse(input);
         if (
           result.schema_version !== "Perttool.AdvanceResult.v3" ||
-          result.cli_contract_version !== 8 ||
+          result.cli_contract_version !== 9 ||
           result.diagnostics?.[0]?.code !== "PTMAC-101" ||
           result.history_guard !== null ||
           result.acceptance_guard !== null
@@ -231,7 +232,7 @@ fi
   node "$repo_root/scripts/check-advance-clean-candidate.mjs" \
     "$linked_cli" \
     "$link_prefix/advance-clean-candidate-workflow" >/dev/null
-  "$linked_cli" schema Perttool.NextResult.v7 --view=outline --format=json |
+  "$linked_cli" schema Perttool.NextResult.v8 --view=outline --format=json |
     node -e '
       let input = "";
       process.stdin.setEncoding("utf8");
@@ -242,12 +243,12 @@ fi
           result.query?.view !== "outline" ||
           Object.hasOwn(result.schema ?? {}, "$defs") ||
           result.schema?.properties?.groups?.$ref !==
-            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v7.schema.json#/properties/groups"
+            "https://github.com/mako10k/perttool/schemas/Perttool.NextResult.v8.schema.json#/properties/groups"
         ) process.exit(1);
       });
     '
   "$linked_cli" help plan-assurance hash --format=json >/dev/null
-  "$linked_cli" schema Perttool.PlanAssuranceResult.v1 --format=json >/dev/null
+  "$linked_cli" schema Perttool.PlanAssuranceResult.v2 --format=json >/dev/null
   "$linked_cli" help project init --format=json >/dev/null
   "$linked_cli" agent help codex instruction --format=json >/dev/null
   "$linked_cli" dag render "$repo_root/docs/examples/minimal.pert" --to mermaid --format=json >/dev/null

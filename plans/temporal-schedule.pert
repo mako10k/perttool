@@ -216,7 +216,7 @@ task TEMPORAL_PUBLIC_CONTRACT TEMPORAL_ADAPTERS_READY -> TEMPORAL_PUBLIC_READY:
   title "Activate Grammar 8 and CLI Contract 9 atomically"
   description "Atomically activate the accepted single DSL, calendar and availability maintenance, event constraints, forward and required schedules, POSTDUE alerts, Check, Analysis, Next, and Mutation identities; align schemas, root and Node exports, text and JSON, Help, Guide, diagnostics, algorithm and zone-data metadata, migration, governance, assurance, package inventory, compatibility fixtures, and consumers while preserving legacy reads and unchanged Advance shape if its complete candidate contract remains valid."
   duration 10p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -229,6 +229,7 @@ task TEMPORAL_ACCEPTANCE TEMPORAL_PUBLIC_READY -> TEMPORAL_ACCEPTED:
   title "Accept calendar-aware temporal scheduling across all surfaces"
   description "Trace generic and finite resources, weekly and exceptional capacity, DST, multiple-resource gaps, event-bound combinations, goal and intermediate backward planning, signed slack and infeasibility, current and forecast POSTDUE, project and target-scoped paths, unavailable and completed-history states, blocks, suspensions, truncation, warning and authority boundaries, legacy byte and result compatibility, Help, Guide, schemas, temporary link, isolated package, installed CLI, adapters, and self-use without release, registry, remote, Issue, or unrelated plan mutation."
   duration 7p
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -255,3 +256,22 @@ milestone_acceptance_receipt CALENDAR_SCHEDULER_RECEIPT:
   evidence_revision 41b5ef4054dd6f36f8bfd03fd587129cf356deda
   verifier codex
   occurred_at 2026-08-17T04:07:27Z
+
+work_event WE-741a0163b8e3b2ad5edb03abf4e71304bab54047421fa17047c7c794c652dd43:
+  model 1
+  task TEMPORAL_PUBLIC_CONTRACT
+  kind finish
+  occurred_at 2026-08-18T13:06:21+09:00
+
+work_event WE-9c4a77e07819425dc77459b7f7d55f2d832e225369103bdea238dd07a7fae0f4:
+  model 1
+  task TEMPORAL_ACCEPTANCE
+  kind start
+  occurred_at 2026-08-18T13:06:36+09:00
+  planned_value 7p
+
+work_event WE-6281e43e75c62a9c54692dd2b44bbe6e262f2726c7136e06c5b85aa9e7cff277:
+  model 1
+  task TEMPORAL_ACCEPTANCE
+  kind finish
+  occurred_at 2026-08-18T13:13:45+09:00

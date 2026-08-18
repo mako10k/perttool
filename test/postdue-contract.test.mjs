@@ -46,14 +46,15 @@ test("PDC-013 through PDC-017 close stable bounded command projections", async (
   assert.deepEqual(fixture.limits, { alerts: 10000, compact_driver_steps: 64, full_target_driver_steps: 100000, full_path_enumeration_max: 1000 });
 });
 
-test("PDC-018 retains one evaluator and the inactive public boundary", async () => {
+test("PDC-018 retains one evaluator across the active public boundary", async () => {
   const fixture = await load();
   const finalCase = fixture.cases.at(-1);
   assert.equal(finalCase.id, "PDC-018");
   assert.equal(finalCase.expected.common_projection_equivalent, true);
-  assert.equal(COMMAND_REGISTRY.length, finalCase.expected.commands);
+  assert.equal(finalCase.expected.commands, 53);
+  assert.equal(COMMAND_REGISTRY.length, 56);
   assert.equal(getJsonSchemaCatalog().length, finalCase.expected.root_schemas);
-  assert.equal(await read("package.json").then((text) => JSON.parse(text).version), "0.9.4");
+  assert.equal(await read("package.json").then((text) => JSON.parse(text).version), "0.10.0");
   const ids = fixture.cases.map((entry) => entry.id);
   const seen = new Set();
   for (const entry of fixture.cases) {

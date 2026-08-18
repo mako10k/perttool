@@ -5,6 +5,13 @@ This directory contains `.pert` plans for the present and future work on
 
 Plans are separated by level of detail.
 
+- [release-0.10.0.pert](release-0.10.0.pert): selected six-stage beta release
+  plan for the accepted Grammar 8 and CLI Contract 9 temporal scheduling
+  boundary; only local gate design is currently ready, while source
+  preparation, candidate acceptance, PUBLISH, durable acceptance, npm latest,
+  plan advance, public VSIX publication, and Issue mutation remain separately
+  gated
+
 - [mvp.pert](mvp.pert): macro milestones, work packages, and resource
   schedule from the MVP through beta
 - [grammar.pert](grammar.pert): detailed plan that decomposes the current

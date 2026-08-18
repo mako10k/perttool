@@ -165,7 +165,7 @@ test("HCLI-001 discovers one additive Contract 7 command and schema", () => {
     operation === "dag.history"
   );
   assert.notEqual(descriptor, undefined);
-  assert.equal(COMMAND_REGISTRY.length, 53);
+  assert.equal(COMMAND_REGISTRY.length, 56);
   assert.deepEqual(descriptor.path, ["dag", "history"]);
   assert.equal(descriptor.effect, "read");
   assert.equal(descriptor.stdin.document, false);

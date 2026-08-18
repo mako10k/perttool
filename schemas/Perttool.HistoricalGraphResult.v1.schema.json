@@ -677,7 +677,7 @@
   "required": ["schema_version", "cli_contract_version", "tool_version", "operation", "ok", "document_id", "source", "source_digest", "diagnostics", "diagnostics_truncated", "model", "model_version", "transition_model_version", "status", "request", "evidence", "effective_checkpoint_id", "selected_snapshot_commit_id", "checkpoints", "snapshot", "lineage", "timeline", "milestone_acceptance_history", "analysis", "source_bindings", "causes", "limits"],
   "properties": {
     "schema_version": { "const": "Perttool.HistoricalGraphResult.v1" },
-    "cli_contract_version": { "const": 8 },
+    "cli_contract_version": { "const": 9 },
     "tool_version": { "type": "string" },
     "operation": { "const": "dag.history" },
     "ok": { "type": "boolean" },

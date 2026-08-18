@@ -205,23 +205,24 @@ test("all thirty-two temporal schedule cases are dependency ordered", async () =
   assert.deepEqual([...accepted], expectedIds("TSC", 32));
 });
 
-test("contract task has not activated Grammar 8 or Contract 9 runtime", async () => {
+test("completed detail work activates Grammar 8 and Contract 9 runtime", async () => {
   const cases = await fixture();
   const packageJson = JSON.parse(await repositoryText("package.json"));
   const activeSchemas = getJsonSchemaCatalog().map(({ schemaId }) => schemaId);
 
   assert.equal(packageJson.version, cases.active_runtime_unchanged.tool_version);
-  assert.equal(COMMAND_REGISTRY.length, cases.active_runtime_unchanged.commands);
-  assert.equal(activeSchemas.length, cases.active_runtime_unchanged.root_schemas);
-  assert.equal(Object.keys(packageRoot).length, cases.active_runtime_unchanged.root_exports);
-  assert.equal(Object.keys(nodeFacade).length, cases.active_runtime_unchanged.node_exports);
-  assert.equal(Object.keys(core).length, cases.active_runtime_unchanged.core_exports);
+  assert.equal(cases.active_runtime_unchanged.commands, 53);
+  assert.equal(COMMAND_REGISTRY.length, 56);
+  assert.equal(activeSchemas.length, 23);
+  assert.equal(Object.keys(packageRoot).length, 129);
+  assert.equal(Object.keys(nodeFacade).length, 129);
+  assert.equal(Object.keys(core).length, 45);
   assert.equal(
     COMMAND_REGISTRY.some(({ path: commandPath }) => commandPath[0] === "calendar"),
-    false,
+    true,
   );
   for (const schema of cases.target_result_schemas) {
-    assert.equal(activeSchemas.includes(schema), false, schema);
+    assert.equal(activeSchemas.includes(schema), true, schema);
   }
 });
 

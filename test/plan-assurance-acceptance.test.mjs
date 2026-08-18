@@ -218,7 +218,7 @@ test("public CLI executes the complete assurance maintenance workflow", (t) => {
   function apply(args) {
     const preview = runJson(args);
     assert.equal(preview.ok, true);
-    assert.equal(preview.schema_version, "Perttool.MutationResult.v5");
+    assert.equal(preview.schema_version, "Perttool.MutationResult.v6");
     assert.equal(preview.write.written, false);
     const checked = runJson(["document", "check", plan]);
     const written = runJson([

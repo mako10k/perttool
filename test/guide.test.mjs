@@ -74,7 +74,7 @@ function helpProjection(result) {
   };
 }
 
-test("Contract 8 guide preserves every HelpNode topic and adds plan assurance", () => {
+test("Contract 9 guide preserves every HelpNode topic and adds plan assurance", () => {
   const queries = [
     { topicId: null, level: "index" },
     ...topicIds.flatMap((topicId) =>
@@ -86,7 +86,7 @@ test("Contract 8 guide preserves every HelpNode topic and adds plan assurance", 
   for (const { topicId, level } of queries) {
     const guide = getGuide(topicId, level);
     assert.equal(guide.schemaVersion, "Perttool.GuideResult.v1");
-    assert.equal(guide.cliContractVersion, 8);
+    assert.equal(guide.cliContractVersion, 9);
     assert.equal(guide.operation, "guide");
     const help = getHelp(topicId, level);
     assert.equal(guide.ok, help.ok);
@@ -103,6 +103,7 @@ test("Contract 8 guide preserves every HelpNode topic and adds plan assurance", 
       "plan-assurance",
       "historical-dag",
       "milestone-acceptance",
+      "temporal-schedule",
     ],
   );
 });
@@ -161,7 +162,7 @@ test("GuideResult is a domain projection rather than a command contract", () => 
   }
 });
 
-test("active Contract 8 Guide states exact additive identities and authority", async () => {
+test("active Contract 9 Guide states exact additive identities and authority", async () => {
   const syntax = getGuide("syntax", "detail");
   assert.match(syntax.summary, /Grammar versions 1 through 7/);
   assert.match(
@@ -188,12 +189,12 @@ test("active Contract 8 Guide states exact additive identities and authority", a
 
   const temporal = getGuide("analysis.temporal", "detail");
   const temporalBody = temporal.sections.map(({ body }) => body).join("\n");
-  assert.match(temporalBody, /AnalysisResult v6/);
-  assert.match(temporalBody, /NextResult v7/);
+  assert.match(temporalBody, /AnalysisResult v7/);
+  assert.match(temporalBody, /NextResult v8/);
 
   const next = getGuide("next", "detail");
   const nextBody = next.sections.map(({ body }) => body).join("\n");
-  assert.match(next.summary, /NextResult\.v7/);
+  assert.match(next.summary, /NextResult\.v8/);
   assert.match(
     nextBody,
     /recommendation_v1_plus_release_gate_plus_plan_assurance_v1/,
@@ -209,7 +210,7 @@ test("active Contract 8 Guide states exact additive identities and authority", a
 
   const editingBody = getGuide("editing", "detail").sections
     .map(({ body }) => body).join("\n");
-  assert.match(editingBody, /current Contract 8 candidate/);
+  assert.match(editingBody, /current Contract 9 candidate/);
 
   const assurance = getGuide("plan-assurance", "detail");
   assert.equal(assurance.examples.length, 3);

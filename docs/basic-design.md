@@ -3980,6 +3980,22 @@ The [DSL Grammar specification](specs/dsl-grammar.md) determines the complete DS
 
 ## 19. Requirements traceability
 
+### Post-MVP Slice 4U: Temporal scheduling `v0.10.0` beta minor
+
+The selected `0.10.0` release packages the already accepted Grammar 8 and CLI
+Contract 9 boundary without reopening temporal semantics. Release composition
+owns version-bearing files, migration and rollback guidance, package
+inventory, one immutable tarball, public-channel identity, and independent
+installed acceptance. It does not move calendar, scheduling, POSTDUE,
+assurance, governance, milestone-acceptance, history, or persistence semantics
+into release code.
+
+The release remains a six-stage serial flow: gate design, accepted-input
+readiness, source preparation, clean candidate acceptance, separately
+authorized PUBLISH, and durable acceptance. PUBLISH may consume only the exact
+accepted tarball and may move only npm `beta`; `latest`, public VSIX
+publication, plan advance, and Issue mutation remain independent operations.
+
 | Basic design | Primary related requirements |
 | --- | --- |
 | CST/AST/Graph three layers | Chapters 8, 12, 16, and 17 |

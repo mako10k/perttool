@@ -63,7 +63,7 @@ test("normative and technical acceptance records cover every semantic owner", as
   assert.match(finalRecord, /MAF-001[\s\S]*MAF-016/u);
 });
 
-test("Contract 8 package and private adapters retain one read-only semantic boundary", async () => {
+test("Contract 9 package and private adapters retain one read-only semantic boundary", async () => {
   const [plan, lsp, vscode, mcp, manifestText] = await Promise.all([
     repositoryText("plans/milestone-acceptance.pert"),
     repositoryText("adapters/lsp/src/server.ts"),
@@ -72,8 +72,8 @@ test("Contract 8 package and private adapters retain one read-only semantic boun
     repositoryText("package.json"),
   ]);
   const manifest = JSON.parse(manifestText);
-  assert.equal(manifest.version, "0.9.4");
-  assert.equal(packageRoot.COMMAND_REGISTRY.length, 53);
+  assert.equal(manifest.version, "0.10.0");
+  assert.equal(packageRoot.COMMAND_REGISTRY.length, 56);
   assert.equal(packageRoot.getJsonSchemaCatalog().length, 23);
   assert.equal(Object.keys(packageRoot).length, 129);
   assert.equal(Object.keys(nodeFacade).length, 129);
@@ -88,7 +88,7 @@ test("Contract 8 package and private adapters retain one read-only semantic boun
   assert.match(plan, /milestone_acceptance_receipt MAC_FINAL_ACCEPTED:/u);
   assert.match(lsp, /milestoneAcceptanceView/u);
   assert.match(vscode, /parseMilestoneAcceptanceViewResult/u);
-  assert.match(mcp, /Perttool\.NextResult\.v7/u);
+  assert.match(mcp, /Perttool\.NextResult\.v8/u);
   assert.equal(manifest.files.includes("adapters"), false);
 });
 

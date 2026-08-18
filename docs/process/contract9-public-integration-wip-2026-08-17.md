@@ -54,3 +54,85 @@ This handoff stops the local `DETAIL_PUBLIC_INTEGRATION` implementation slice at
 - Package version remains `0.9.4`.
 - No release, tag, npm, dist-tag, GitHub Release, Issue, or public VSIX mutation was performed.
 - No plan task was completed or advanced in this shutdown slice.
+
+## Continuation update (2026-08-18)
+
+The resumed local worktree remains on
+`wip/declaration-identity-release-20260806` at
+`613bdec769ee2da98a1c55ef04a8578bc2565d7c` before the uncommitted continuation
+changes. `DETAIL_PUBLIC_INTEGRATION` remains active; no plan mutation, external
+write, release, or publication action was performed.
+
+This continuation corrected three active-boundary test groups and one runtime
+compatibility regression:
+
+- `test/command-registry.test.mjs` and `test/command-discovery.test.mjs` now
+	assert the active Contract 9 registry: 56 commands, calendar commands,
+	Contract 9 discovery, and the seven replacement result identities.
+- `test/cli.test.mjs` now asserts Contract 9 result identities for live check,
+	guide, analysis, next, mutation, and project-show operations.
+- `src/application/contract9-runtime.ts` now routes Grammar 1 through 7
+	`document format` requests through the retained Contract 8 formatter while
+	retaining the Grammar 8 temporal formatter. This restores legacy-format
+	compatibility without changing the Contract 9 CLI envelope.
+
+Focused verification passed:
+
+- 16 Contract 9 registry, discovery, and public-integration tests passed;
+- all 46 `test/cli.test.mjs` tests passed after the formatter correction; and
+- the complete suite completed with 1,103 passes and 109 failures out of 1,212
+	tests.
+
+The full-suite failure count fell by 12 from the prior 1,091-pass / 121-fail
+baseline. The remaining failures still need individual classification. The
+observed groups include active-boundary expectations for Contract 8 and the
+seven superseded result identities, and historical release or completed-plan
+tests that currently read the live registry, schema catalog, CLI, Core, Node,
+or adapter result instead of a historical artifact. Do not bulk replace those
+historical assertions: preserve their released facts and make their fixtures
+or installed-artifact boundaries explicit.
+
+The same continuation then corrected the public override-validation seam.
+`validateOverride` now accepts only the active `Perttool.NextResult.v8` source
+identity, retains `Perttool.OverrideDecision.v1`, and rebinds the canonical
+artifact digest to that source identity. The active Guide now names
+`NextResult.v8` consistently for consumer safety, authority adoption, and
+override validation. Static checks passed, and the focused override,
+recommendation-publication, legacy scheduling, and unit-migration group passed
+all 29 tests. A later complete-suite replay still failed, so public-integration
+acceptance and task completion remain unavailable. The remaining observed
+failures continue to include active catalog expectations and historical tests
+coupled to the live 56-command registry.
+
+## Final continuation evidence (2026-08-18)
+
+The remaining live-boundary assertions were classified and corrected without
+rewriting immutable release facts. The current schema catalog now contains the
+seven Contract 9 replacement identities and no longer exposes their superseded
+canonical files. The MCP adapter closes the new Analysis v7 and Project v5
+schema references, and the active Guide, override validation, package scripts,
+and current-runtime tests consistently project CLI Contract 9 and 56 commands.
+
+One real persistence regression was found during the installed-package gate:
+the shared CLI candidate writer sent every non-Grammar-7 candidate through the
+Grammar 6 validator. `project migrate-unit --write` could therefore preview a
+valid Grammar 8 candidate but rejected that same candidate before persistence.
+The writer now selects the complete Contract 9 validator for Grammar 8 while
+retaining the existing Grammar 7 and Grammar 1 through 6 paths. The package
+assurance workflow also keeps sealed Grammar 6 compatibility separate from an
+independent unsealed Grammar 7 to Grammar 8 migration; it does not bypass the
+protected Grammar 6 to 7 migration or plan-assurance model-2 initialization.
+
+Current verification is complete for this WIP implementation slice:
+
+- the full test suite passed all 1,212 tests;
+- `check:static` passed at 3.069% duplication and 4,069 functions with the
+  unchanged 170-entry legacy complexity baseline;
+- English, Markdown, 43-plan self-use, isolated LSP and MCP, supported-host
+  VSIX, temporary-link, and npm-link gates passed; and
+- `check:package` passed the npm dry run and both installed-package Contract 9
+  file-first and plan-assurance compatibility workflows.
+
+`DETAIL_PUBLIC_INTEGRATION` remains active. This record does not complete or
+advance the plan and does not authorize a commit, release, remote write,
+publication, dist-tag change, Issue mutation, or public VSIX operation.

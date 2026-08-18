@@ -193,16 +193,16 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
     }),
     "analysis.temporal": Object.freeze({
       sections: Object.freeze({
-        views: "AnalysisResult v6 retains base analysis and adds temporal precedence, temporal resource, deadline, lifecycle, plan-assurance, and milestone-acceptance projections. The resource view remains heuristic and optimal=false.",
-        ranking: "Deadline facts remain informational for Recommendation version 1. NextResult v7 applies not_before through a separate release gate and then composes conditional plan-assurance eligibility into the final start authority.",
+        views: "AnalysisResult v7 retains base analysis and adds temporal precedence, temporal resource, deadline, lifecycle, plan-assurance, milestone-acceptance, and schedule-alert projections. The resource view remains heuristic and optimal=false.",
+        ranking: "Deadline facts remain informational for Recommendation version 1. NextResult v8 applies not_before through a separate release gate and then composes conditional plan-assurance eligibility into the final start authority.",
       }),
     }),
     next: Object.freeze({
-      summary: "Returns NextResult.v7 recommendations, temporal and plan-assurance start authority, milestone acceptance, and active, ready, runnable_now, blocked_now, and upcoming tasks.",
+      summary: "Returns NextResult.v8 recommendations, temporal and plan-assurance start authority, milestone acceptance, and active, ready, runnable_now, blocked_now, and upcoming tasks.",
       sections: Object.freeze({
-        "consumer-safety": "--format json returns a complete Perttool.NextResult.v7 with the unchanged Recommendation version 1 explanation graph, a separate temporal release gate, conditional plan-assurance authority, and a separate milestone-acceptance projection. Consumers validate every identity and do not start when recommendation, temporal, or assurance authority is unknown.",
-        "authority-adoption": "AI uses only a known Perttool.NextResult.v7 from --format json, Recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, a complete non-truncated trace, and authority policy recommendation_v1_plus_release_gate_plus_plan_assurance_v1. Start only IDs in startable_recommended_task_ids. Stop for unknown, incomplete, malformed, future, unavailable, or assurance-withheld authority, safe-stop reasons, PTREC diagnostics, and deferred or discouraged selections. Reanalyze after task-state, capacity, temporal, relation, outcome, assurance, or acceptance changes.",
-        "override-validation": "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v7 and an explicit request, and cannot bypass a future or unavailable temporal release gate or withheld plan-assurance authority. This is read-only validation and does not change task state, files, Git, or the network.",
+        "consumer-safety": "--format json returns a complete Perttool.NextResult.v8 with the unchanged Recommendation version 1 explanation graph, a separate temporal release gate, conditional plan-assurance authority, and a separate milestone-acceptance projection. Consumers validate every identity and do not start when recommendation, temporal, or assurance authority is unknown.",
+        "authority-adoption": "AI uses only a known Perttool.NextResult.v8 from --format json, Recommendation interface 1, ranking algorithm 1, reason taxonomy 1.0, explanation/expression/description model 1, locale en, a complete non-truncated trace, and authority policy recommendation_v1_plus_release_gate_plus_plan_assurance_v1. Start only IDs in startable_recommended_task_ids. Stop for unknown, incomplete, malformed, future, unavailable, or assurance-withheld authority, safe-stop reasons, PTREC diagnostics, and deferred or discouraged selections. Reanalyze after task-state, capacity, temporal, relation, outcome, assurance, or acceptance changes.",
+        "override-validation": "The public Core validateOverride deterministically produces Perttool.OverrideDecision.v1 from a complete NextResult.v8 and an explicit request, and cannot bypass a future or unavailable temporal release gate or withheld plan-assurance authority. This is read-only validation and does not change task state, files, Git, or the network.",
       }),
       related: Object.freeze([
         "analysis",
@@ -213,7 +213,7 @@ const activeTopicOverrides: Readonly<Record<string, ActiveTopicOverride>> =
     }),
     editing: Object.freeze({
       sections: Object.freeze({
-        "owner-aware-governance": "Start each current Contract 8 candidate with an assertion-free preview. Persistent governed changes require an actor: an effective owner or delegate has direct authority, while another actor may provide repeatable --accepted-by-owner caller assertions only for the explicitly confirmed affected scopes of this candidate. Omit them when governance is not applicable and never reuse them across commands. PTGOV-103 warns about an assertion on a not-applicable candidate; PTGOV-104 warns about one on a governed preview.",
+        "owner-aware-governance": "Start each current Contract 9 candidate with an assertion-free preview. Persistent governed changes require an actor: an effective owner or delegate has direct authority, while another actor may provide repeatable --accepted-by-owner caller assertions only for the explicitly confirmed affected scopes of this candidate. Omit them when governance is not applicable and never reuse them across commands. PTGOV-103 warns about an assertion on a not-applicable candidate; PTGOV-104 warns about one on a governed preview.",
       }),
       related: Object.freeze([
         "editing.unit-migration",

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
@@ -54,7 +54,7 @@ const planNames = [
   "mvp",
 ];
 const knownContract = {
-  schema_version: "Perttool.NextResult.v7",
+  schema_version: "Perttool.NextResult.v8",
   recommendation_interface_version: 1,
   algorithm_id: "perttool.recommendation-ranking.lexicographic-frontier",
   algorithm_version: 1,
@@ -176,7 +176,7 @@ function projectWhyNot(recommendation) {
   };
 }
 
-test("all forty-three self-use plans pass the v7 recommendation shadow gate", async () => {
+test("all forty-three self-use plans pass the v8 recommendation shadow gate", async () => {
   const expected = JSON.parse(
     await readFile(
       path.join(
@@ -282,5 +282,13 @@ test("all forty-three self-use plans pass the v7 recommendation shadow gate", as
     }
   }
 
+  if (process.env.PERTTOOL_UPDATE_RECOMMENDATION_GOLDEN === "1") {
+    await writeFile(
+      path.join(testDirectory, "golden/self-use/recommendation-shadow.expected.json"),
+      `${JSON.stringify(actual, null, 2)}\n`,
+      "utf8",
+    );
+    return;
+  }
   assert.deepEqual(actual, expected);
 });

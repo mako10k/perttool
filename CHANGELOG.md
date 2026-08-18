@@ -4,6 +4,33 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-08-18
+
+Breaking Grammar 8 and CLI Contract 9 beta minor. This version publishes
+calendar-aware temporal scheduling across the public CLI and package surfaces.
+
+### Added
+
+- Added reusable weekly calendars, capacity exceptions, generic resource
+  availability, event-bound task constraints, pinned zone-data validation,
+  and source-preserving maintenance commands.
+- Added forward and backward-required calendar schedules, signed slack,
+  infeasibility evidence, and current and forecast POSTDUE projections.
+- Added three calendar command paths and the `temporal-schedule` Guide topic.
+
+### Changed
+
+- Activated Grammar 8 and CLI Contract 9 with
+  `Perttool.ProjectResult.v5`, `Perttool.CheckResult.v6`,
+  `Perttool.AnalysisResult.v7`, `Perttool.NextResult.v8`,
+  `Perttool.MutationResult.v6`, `Perttool.PlanAssuranceResult.v2`, and
+  `Perttool.UnitMigrationResult.v4`.
+- Retained 23 active command-result root schemas by replacing seven Contract 8
+  roots, retained 129 root and Node exports and 45 Core exports, and kept
+  `Perttool.AdvanceResult.v3` unchanged.
+- Added source-preserving Grammar 7 to Grammar 8 migration while retaining
+  Grammar 1 through 7 reads and existing authorization and persistence guards.
+
 ## [0.9.4] - 2026-08-14
 
 Backward-compatible Grammar 7 and CLI Contract 8 emergency beta patch. This
@@ -516,7 +543,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.9.4...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/mako10k/perttool/compare/v0.9.4...v0.10.0
 [0.9.4]: https://github.com/mako10k/perttool/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/mako10k/perttool/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/mako10k/perttool/compare/v0.9.1...v0.9.2
