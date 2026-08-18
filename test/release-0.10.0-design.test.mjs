@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cli = path.join(root, "dist/cli.js");
 
 test("0.10.0 release plan selects the Contract 9 beta boundary and gates publication", async () => {
-  const [plan, acceptance, requirements, adr, design, procedure, gate, readiness, preparation, selfUse] = await Promise.all([
+  const [plan, acceptance, requirements, adr, design, procedure, gate, readiness, preparation, candidate, selfUse] = await Promise.all([
     readFile(path.join(root, "plans/release-0.10.0.pert"), "utf8"),
     readFile(path.join(root, "docs/process/0.10.0-release-plan-acceptance.md"), "utf8"),
     readFile(path.join(root, "docs/requirements.md"), "utf8"),
@@ -20,6 +20,7 @@ test("0.10.0 release plan selects the Contract 9 beta boundary and gates publica
     readFile(path.join(root, "docs/process/0.10.0-gate-design.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.10.0-input-readiness.md"), "utf8"),
     readFile(path.join(root, "docs/process/0.10.0-preparation.md"), "utf8"),
+    readFile(path.join(root, "docs/process/0.10.0-candidate.md"), "utf8"),
     readFile(path.join(root, "scripts/check-self-use.sh"), "utf8"),
   ]);
   const checked = checkDocument(plan);
@@ -31,8 +32,9 @@ test("0.10.0 release plan selects the Contract 9 beta boundary and gates publica
   assert.equal(metadata.project.id, "RELEASE_0100");
   assert.equal(metadata.project.finish, "RELEASE_0100_ACCEPTED");
   assert.equal(checked.document.declarations.filter(({ kind }) => kind === "task").length, 6);
-  assert.deepEqual(next.groups.active, ["RELEASE_0100_CANDIDATE"]);
-  assert.deepEqual(next.recommendation.recommendedTaskIds, []);
+  assert.deepEqual(next.groups.active, []);
+  assert.deepEqual(next.groups.ready, ["RELEASE_0100_PUBLISH"]);
+  assert.deepEqual(next.recommendation.recommendedTaskIds, ["RELEASE_0100_PUBLISH"]);
   assert.match(plan, /Only after every predecessor gate passes and the user separately authorizes/u);
   assert.match(acceptance, /Accepted source digest: `sha256:d8bd9cb5/u);
   assert.match(acceptance, /`0\.9\.5` would understate/u);
@@ -50,6 +52,9 @@ test("0.10.0 release plan selects the Contract 9 beta boundary and gates publica
   assert.match(preparation, /Document status: Accepted 1\.0/u);
   assert.match(preparation, /1,213 Node\.js tests/u);
   assert.match(preparation, /an 873-file npm publication dry run/u);
+  assert.match(candidate, /Document status: Accepted 1\.0/u);
+  assert.match(candidate, /86762a71562bf15cffe746e2aa6160996aa82942/u);
+  assert.match(candidate, /b98dad654955b639275ebcccd1871a3a40ce415cf0c5504dd18c681dfa36ce9f/u);
   assert.match(selfUse, /plans\/release-0\.10\.0\.pert/u);
 
   const criterionPreview = spawnSync(process.execPath, [

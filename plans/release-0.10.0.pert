@@ -96,7 +96,7 @@ task RELEASE_0100_CANDIDATE RELEASE_0100_SOURCE_PREPARED -> RELEASE_0100_CANDIDA
   title "Accept one clean 0.10.0 release candidate"
   description "Review and commit the complete release diff; repeat Node.js 22 acceptance; prove package, tag, GitHub Release, and npm version availability; read back beta and latest without changing them; verify authenticated routes; retain one immutable tarball outside the worktree; and accept its source commit, timestamp, sizes, file count, digests, public inventory, installed Contract 9 behavior, compatibility, and rollback pin. This task performs no external write."
   duration 4p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -220,3 +220,28 @@ work_event WE-f5d0a0cbd72a5375ab3d5c339563141d6032a4387674ed148987c0407760969c:
   kind start
   occurred_at 2026-08-18T14:45:12+09:00
   planned_value 4p
+
+milestone_criterion_set RELEASE_0100_CANDIDATE_R1:
+  milestone RELEASE_0100_CANDIDATE_ACCEPTED
+  revision R1
+  commitment sha256:03fd7d627d2540fea83440999f3a60892d1ed03f8bded776b2aee332405ab5b5
+  criterion IMMUTABLE_CANDIDATE required artifact "Accepted 873-file 0.10.0 candidate at SHA-256 b98dad654955b639275ebcccd1871a3a40ce415cf0c5504dd18c681dfa36ce9f"
+
+work_event WE-ac9adc3a6e4d3721ba59bf3db7a10ddc3d998d4c032745a5601e124bdd85a2c6:
+  model 1
+  task RELEASE_0100_CANDIDATE
+  kind finish
+  occurred_at 2026-08-18T14:52:03+09:00
+
+milestone_acceptance_receipt RELEASE_0100_CANDIDATE_RECEIPT:
+  model 1
+  set RELEASE_0100_CANDIDATE_R1
+  set_commitment sha256:03fd7d627d2540fea83440999f3a60892d1ed03f8bded776b2aee332405ab5b5
+  criterion IMMUTABLE_CANDIDATE
+  criterion_commitment sha256:c1783d4dac26b2180a827587760a9dee15168733e2d1e81d9e13738a652cef87
+  action verify
+  evidence_kind artifact
+  evidence_reference "docs/process/0.10.0-candidate.md"
+  evidence_revision 86762a71562bf15cffe746e2aa6160996aa82942
+  verifier codex
+  occurred_at 2026-08-18T05:52:07Z
