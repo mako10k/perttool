@@ -4138,7 +4138,7 @@ async function runDocumentMigration(args: readonly string[]): Promise<number> {
     : args.find((value) => value.startsWith("--target-grammar="))?.slice("--target-grammar=".length);
   if (target === "8") return runContract9DocumentMigration(args);
   const parsed = parseCommandOptions("document.migrate", args);
-  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "7") throw new UsageError("document migrate requires <file> --target-grammar 8");
+  if (parsed.positionals.length !== 1 || parsed.values.get("target-grammar") !== "7") throw new UsageError("document migrate requires <file> --target-grammar 7 or 8");
   const sourceOperand = parsed.positionals[0]!;
   if (sourceOperand === "-") throw new UsageError("document migrate requires a repository file");
   const format = outputFormat(parsed.values.get("format"));
@@ -4170,7 +4170,7 @@ async function runDocumentMigration(args: readonly string[]): Promise<number> {
         (candidate) => ({ ok: parseMilestoneAcceptanceSource(candidate, MILESTONE_ACCEPTANCE_SOURCE_CAPABILITY).ok, diagnostics: [] }));
     }
   }
-  if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceMigrationResult.v1", cli_contract_version: 8,
+  if (format === "json") writeJson({ schema_version: "Perttool.MilestoneAcceptanceMigrationResult.v1", cli_contract_version: 9,
     tool_version: TOOL_VERSION, operation: "document.migrate", ...snakeJson(result) as Readonly<Record<string, unknown>> });
   else if (result.candidateText !== null) process.stdout.write(result.candidateText);
   return result.ok ? 0 : race ? 5 : 1;

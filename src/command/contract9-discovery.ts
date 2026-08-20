@@ -53,13 +53,17 @@ function contract9Options(descriptor: AssuranceCommandDescriptor): Contract9Comm
 function converted(descriptor: AssuranceCommandDescriptor): Contract9CommandDescriptor {
   const migration = descriptor.operation === "document.migrate";
   return Object.freeze({ ...descriptor, contractVersion: 9 as const,
-    ...(migration ? { summary: "Prepares a complete document for Grammar 8." } : {}),
+    ...(migration ? { summary: "Prepares a complete document for Grammar 7 or Grammar 8." } : {}),
     options: Object.freeze(contract9Options(descriptor).map((option) => migration && option.name === "target-grammar"
-      ? Object.freeze({ ...option, enumValues: Object.freeze(["8"]) }) : option)),
-    examples: migration ? Object.freeze([Object.freeze({ id: "preview",
+      ? Object.freeze({ ...option, enumValues: Object.freeze(["7", "8"]) }) : option)),
+    examples: migration ? Object.freeze([Object.freeze({ id: "milestone-acceptance",
+      invocation: "perttool document migrate plan.pert --target-grammar 7",
+      summary: "Preview the repository-bound Grammar 7 milestone-acceptance migration candidate." }), Object.freeze({ id: "temporal-schedule",
       invocation: "perttool document migrate plan.pert --target-grammar 8",
       summary: "Preview the Grammar 8 migration candidate." })]) : descriptor.examples,
-    resultSchemas: Object.freeze(descriptor.resultSchemas.map((schema) => replacements.get(schema) ?? schema)) });
+    resultSchemas: Object.freeze(migration
+      ? ["Perttool.MilestoneAcceptanceMigrationResult.v1", "Perttool.UnitMigrationResult.v4", "Perttool.CliError.v1"]
+      : descriptor.resultSchemas.map((schema) => replacements.get(schema) ?? schema)) });
 }
 
 const template = ASSURANCE_COMMAND_REGISTRY.find(({ operation }) => operation === "task.add");

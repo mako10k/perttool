@@ -35,9 +35,16 @@ test("format and migration candidates share the Grammar 8 write validator", asyn
   assert.deepEqual(await persistContract9Mutation(formatted, { mode: "preview" }), { mode: "preview", target: null, written: false });
 });
 
-test("Contract 9 accepts only target grammar 8 and Grammar 8 formatting is idempotent", () => {
+test("Contract 9 exposes both migration targets and Grammar 8 formatting is idempotent", () => {
   assert.equal(validateContract9CommandInvocation(["document", "migrate", "plan.pert", "--target-grammar", "8"]).ok, true);
-  assert.equal(validateContract9CommandInvocation(["document", "migrate", "plan.pert", "--target-grammar", "7"]).ok, false);
+  assert.equal(validateContract9CommandInvocation(["document", "migrate", "plan.pert", "--target-grammar", "7"]).ok, true);
+  assert.equal(validateContract9CommandInvocation(["document", "migrate", "plan.pert", "--target-grammar", "6"]).ok, false);
+  const migration = CONTRACT9_COMMAND_REGISTRY.find(({ operation }) => operation === "document.migrate");
+  assert.deepEqual(migration.resultSchemas, [
+    "Perttool.MilestoneAcceptanceMigrationResult.v1",
+    "Perttool.UnitMigrationResult.v4",
+    "Perttool.CliError.v1",
+  ]);
   const migrated = planContract9GrammarMigration(grammar7);
   const first = planContract9Format(migrated.updatedText);
   assert.equal(first.ok, true, JSON.stringify(first.diagnostics));

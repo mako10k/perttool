@@ -1,0 +1,70 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project MIGRATION_PATH_022:
+  version 6
+  title "Issue 22 document migration path correction"
+  description "Correct Issue #22 as a bounded Contract 9 compatibility patch. Restore the retained repository-bound Grammar 5 and 6 to Grammar 7 milestone-acceptance migration path while preserving the Grammar 7 to 8 temporal migration, history proof, governance, safe-write, result identities, and unrelated commands. Release selection, publication, remote writes, Issue mutation, and plan advance remain separate."
+  as_of 2026-08-20
+  duration_unit point
+  finish MIGRATION_PATH_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone MIGRATION_PATH_STARTED:
+  title "Issue 22 correction started"
+  state reached
+
+resource DEVELOPERS:
+  title "Implementation capacity"
+  capacity 1
+
+resource REVIEWERS:
+  title "Contract and acceptance review capacity"
+  capacity 1
+
+resource CLI_SURFACE:
+  title "Command discovery and CLI ownership"
+  capacity 1
+
+milestone MIGRATION_PATH_CONTRACT_READY:
+  title "Migration path correction contract ready"
+
+milestone MIGRATION_PATH_RUNTIME_READY:
+  title "Migration path runtime corrected"
+
+milestone MIGRATION_PATH_ACCEPTED:
+  title "Issue 22 correction accepted"
+
+task MIGRATION_PATH_CONTRACT MIGRATION_PATH_STARTED -> MIGRATION_PATH_CONTRACT_READY:
+  title "Accept the Issue 22 compatibility boundary"
+  description "Trace the llmthink RCA into a closed regression contract requiring a complete command-line migration route. Permit automatic, placeholder-assisted, or manual editing; a manual route must show the correct complete Grammar 7 target form, required records and placement, value provenance, and revalidation command. Cover Contract 9 help and discovery, Grammar 8 migration, unsupported targets, and dag advance reachability without changing unrelated semantics or public result identities."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+  source "Issue #22"
+
+task MIGRATION_PATH_CORRECTION MIGRATION_PATH_CONTRACT_READY -> MIGRATION_PATH_RUNTIME_READY:
+  title "Restore the Grammar 7 migration route"
+  description "Implement the accepted CLI route after comparing reuse of the existing repository-bound Grammar 7 planner with explicit manual guidance. If manual, show a correct complete target form rather than a vague instruction; include value provenance and the exact check and advance retry commands. Correct target-specific diagnostics and add focused regressions for the reproduced failure."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    CLI_SURFACE 1
+  source "Issue #22"
+
+task MIGRATION_PATH_ACCEPTANCE MIGRATION_PATH_RUNTIME_READY -> MIGRATION_PATH_ACCEPTED:
+  title "Accept the Issue 22 correction end to end"
+  description "Run focused and complete Node.js 22 gates, help and JSON discovery checks, a Grammar 5 command-line migration walkthrough including any required placeholder edits, Grammar 7 to 8 replay, post-route dag advance preview, temporary-link and isolated-package checks, and record the unchanged release and external-write boundaries."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    CLI_SURFACE 1
+  source "Issue #22"

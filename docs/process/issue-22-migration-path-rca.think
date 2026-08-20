@@ -1,0 +1,70 @@
+framework DecisionAudit
+
+domain MigrationPathReachability:
+  description "Root-cause analysis for GitHub Issue #22"
+
+problem P1:
+  "Why does Contract 9 provide no CLI migration path from a valid Grammar 5 document to the Grammar 7 source required by dag advance?"
+
+step S1:
+  premise PR1:
+    "A supported advance workflow must expose a command-line route that lets a migration user reach the source grammar required by milestone-acceptance dag advance; automatic or placeholder candidates are optional, and a manual-edit route is conformant only when the CLI shows the correct complete target form, value provenance, and revalidation command"
+
+step S2:
+  evidence EV1:
+    "Issue #22 reports that perttool 0.10.0 accepts a Grammar 5 plan, rejects dag advance with PTMAC-101, rejects target Grammar 7 during option validation, and returns an unsuccessful unchanged result for target Grammar 8"
+    resource:
+      url "https://github.com/mako10k/perttool/issues/22"
+      label "Issue reproduction and expected behavior"
+
+step S3:
+  evidence EV2:
+    "The Contract 9 discovery conversion replaces document.migrate target-grammar enum values with the singleton 8, so shared command validation rejects 7 before migration dispatch"
+    resource:
+      file "src/command/contract9-discovery.ts"
+      label "Contract 9 command discovery and validation authority"
+
+step S4:
+  evidence EV3:
+    "runDocumentMigration still contains the repository-bound Grammar 7 migration implementation and dispatches to it whenever the requested target is not 8 and parsed target-grammar equals 7"
+    resource:
+      file "src/cli.ts"
+      label "Document migration CLI dispatch"
+
+step S5:
+  evidence EV4:
+    "The Grammar 8 migration planner is a Grammar 7 to Grammar 8 temporal-format migration and returns an unsuccessful result for a Grammar 5 source; it is not a transitive Grammar 5 to Grammar 8 migration"
+    resource:
+      file "src/application/contract9-format-migration.ts"
+      label "Grammar 8 migration planner"
+
+step S6:
+  evidence EV5:
+    "The Contract 9 migration regression explicitly requires target Grammar 8 to validate and target Grammar 7 to fail, encoding the unreachable legacy migration as expected behavior"
+    resource:
+      file "test/contract9-format-migration.test.mjs"
+      label "Contract 9 migration regression"
+
+step S7:
+  decision D1 based_on P1, PR1, EV2, EV3, EV4:
+    "The root cause is a public command-discovery regression: Contract 9 replaced rather than extended the accepted migration-target set, making the retained Grammar 7 migration implementation unreachable while Grammar 8 still requires Grammar 7 input"
+
+step S8:
+  decision D2 based_on EV2, EV3, EV5, D1:
+    "Because a repository-bound Grammar 7 migration planner already exists, accepting both 7 and 8 and retaining target-based dispatch is the smallest apparent correction, but the contract does not require automatic migration: a manual route also conforms when CLI output shows the correct complete Grammar 7 target form, where every value comes from, and how to revalidate it"
+
+step S9:
+  decision D3 based_on PR1, EV1, EV3, EV4, D2:
+    "Acceptance must prove help and JSON discovery expose a complete CLI route; for manual guidance the output must show the correct complete Grammar 7 goal form, required records and placement, value provenance, and revalidation command; Grammar 7 to 8 remains byte-preserving apart from its owned delta, unsupported targets still fail, and following the route reaches dag advance rather than ending at PTMAC-101"
+
+step S10:
+  decision D4 based_on D1, D2, D3:
+    "Grammar 8 semantics, milestone-acceptance semantics, history proof, governance, safe-write, result identities, and CLI Contract 9 remain unchanged by this correction"
+
+step S11:
+  decision D5 based_on D1, D2, D3, D4:
+    "The exact perttool plan candidate was owner-confirmed, written, and executed through its verified task order; the local correction and complete acceptance gate passed"
+
+step S12:
+  pending PD2:
+    "Release selection, publication, npm tag movement, remote push, Issue mutation, and plan advance remain separate decisions"
