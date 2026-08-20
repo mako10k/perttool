@@ -4,6 +4,18 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-08-20
+
+Compatible Grammar 8 and CLI Contract 9 patch for Issue #22.
+
+### Fixed
+
+- Restored `document migrate --target-grammar 7` as the repository-bound route
+  required before milestone-acceptance `dag advance`.
+- Made Contract 9 help and JSON discovery advertise target grammars 7 and 8
+  plus both applicable migration result schemas.
+- Returned the active CLI Contract 9 envelope for Grammar 7 migration results.
+
 ## [0.10.0] - 2026-08-18
 
 Breaking Grammar 8 and CLI Contract 9 beta minor. This version publishes
@@ -543,7 +555,8 @@ First public development preview. Intended to evaluate the DSL and CLI, read-onl
 - Not published to the npm registry; use the GitHub Release asset
 - Requires Node.js 24 or later
 
-[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/mako10k/perttool/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/mako10k/perttool/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/mako10k/perttool/compare/v0.9.4...v0.10.0
 [0.9.4]: https://github.com/mako10k/perttool/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/mako10k/perttool/compare/v0.9.2...v0.9.3

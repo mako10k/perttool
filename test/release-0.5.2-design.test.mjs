@@ -114,9 +114,9 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.10.0");
-  assert.equal(lockfile.version, "0.10.0");
-  assert.equal(lockfile.packages[""].version, "0.10.0");
+  assert.equal(manifest.version, "0.10.1");
+  assert.equal(lockfile.version, "0.10.1");
+  assert.equal(lockfile.packages[""].version, "0.10.1");
   assert.equal(manifest.publishConfig.tag, "beta");
   assert.deepEqual(Object.keys(manifest.exports), [
     ".",
@@ -124,7 +124,7 @@ test("0.5.2 release gate binds the complete JSON Schema patch boundary", async (
     "./node",
     "./schemas/*",
   ]);
-  assert.match(versionSource, /TOOL_VERSION = "0\.10\.0"/);
+  assert.match(versionSource, /TOOL_VERSION = "0\.10\.1"/);
   assert.match(changelog, /^## \[0\.5\.2\] - 2026-07-30$/m);
   assert.match(readme, /available by pinning `0\.5\.2`/);
   assert.match(

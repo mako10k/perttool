@@ -1,0 +1,112 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0101:
+  version 6
+  title "perttool 0.10.1 migration path patch release"
+  description "Release suffix-free 0.10.1 as a compatible Grammar 8 and CLI Contract 9 patch for Issue #22. Restore the retained repository-bound Grammar 7 migration route, advertise both target grammars and result identities, and preserve Grammar 7 and 8 migration semantics, history proof, governance, safe writes, public catalogs, adapters, and unrelated commands. Candidate acceptance, PUBLISH, durable acceptance, Issue mutation, plan advance, and any dist-tag decision remain separately gated."
+  as_of 2026-08-20
+  duration_unit point
+  finish RELEASE_0101_ACCEPTED
+  goal_owner user
+  dag_owner user
+
+milestone RELEASE_0101_STARTED:
+  title "Version 0.10.1 release planning started"
+  state reached
+
+resource DEVELOPERS:
+  title "Release engineering capacity"
+  capacity 1
+
+resource REVIEWERS:
+  title "Release and safety review capacity"
+  capacity 1
+
+resource RELEASE_SURFACE:
+  title "Version and release-document ownership"
+  capacity 1
+
+resource PACKAGE_SURFACE:
+  title "Package and distribution ownership"
+  capacity 1
+
+resource EXTERNAL_RELEASE:
+  title "Authorized external release mutation"
+  capacity 1
+
+milestone RELEASE_0101_REVIEW_ACCEPTED:
+  title "Version 0.10.1 compatibility review accepted"
+
+milestone RELEASE_0101_SOURCE_PREPARED:
+  title "Version 0.10.1 source prepared"
+
+milestone RELEASE_0101_CANDIDATE_ACCEPTED:
+  title "Version 0.10.1 candidate accepted"
+
+milestone RELEASE_0101_PUBLISHED:
+  title "Version 0.10.1 published"
+
+milestone RELEASE_0101_ACCEPTED:
+  title "Version 0.10.1 patch accepted"
+
+task RELEASE_0101_SELF_REVIEW RELEASE_0101_STARTED -> RELEASE_0101_REVIEW_ACCEPTED:
+  title "Review the 0.10.1 compatibility boundary"
+  description "Confirm the exact 0.10.0 published baseline and Issue #22 correction, select patch version 0.10.1, prove unchanged Grammar 8, CLI Contract 9, command count, schema count, facade counts, migration semantics, authority and adapter boundaries, and fix the bounded release procedure. This task performs no external write."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+  source "Issue #22"
+
+task RELEASE_0101_PREPARATION RELEASE_0101_REVIEW_ACCEPTED -> RELEASE_0101_SOURCE_PREPARED:
+  title "Prepare version 0.10.1 source"
+  description "Align package, lockfile, CLI, adapter peer, MCP, CHANGELOG, README, release records, tests, goldens and self-use identities to 0.10.1, then run the complete Node.js 22 repository and installed-package gates without external writes."
+  duration 4p
+  status done
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "Issue #22"
+
+task RELEASE_0101_CANDIDATE RELEASE_0101_SOURCE_PREPARED -> RELEASE_0101_CANDIDATE_ACCEPTED:
+  title "Accept one immutable 0.10.1 candidate"
+  description "Commit and recheck clean source, prove version, tag, GitHub Release and npm availability, verify authenticated routes, retain one immutable tarball outside the worktree, and accept its source commit, file count, size, SHA-256, installed Issue #22 behavior, compatibility, and 0.10.0 rollback pin. This task performs no external write."
+  duration 3p
+  status active
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+  source "Issue #22"
+
+task RELEASE_0101_PUBLISH RELEASE_0101_CANDIDATE_ACCEPTED -> RELEASE_0101_PUBLISHED:
+  title "Publish 0.10.1 from the accepted candidate"
+  description "Only after exact candidate and external batch authorization, push and verify the release commit and annotated tag, require Node.js 22 and 24 CI, create one GitHub prerelease and SHA256SUMS, publish the identical tarball exactly once to npm beta through secdat, and read back beta while leaving latest unchanged unless separately authorized."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    PACKAGE_SURFACE 1
+    EXTERNAL_RELEASE 1
+  source "Issue #22"
+
+task RELEASE_0101_ACCEPTANCE RELEASE_0101_PUBLISHED -> RELEASE_0101_ACCEPTED:
+  title "Record durable 0.10.1 acceptance"
+  description "Independently verify Git, tag, CI, GitHub, npm, byte identity, exact and beta installations, Issue #22 behavior, unchanged public identities and the exact 0.10.0 rollback pin. Issue closure, latest movement, plan advance and unrelated work remain separate."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    DEVELOPERS 1
+    REVIEWERS 1
+    RELEASE_SURFACE 1
+    PACKAGE_SURFACE 1
+  source "Issue #22"

@@ -145,10 +145,10 @@ test("0.5.0 release gate binds Contract 6 scope and publication authority", asyn
 
   const manifest = JSON.parse(manifestText);
   const lockfile = JSON.parse(lockfileText);
-  assert.equal(manifest.version, "0.10.0");
-  assert.equal(lockfile.version, "0.10.0");
-  assert.equal(lockfile.packages[""].version, "0.10.0");
-  assert.match(versionSource, /TOOL_VERSION = "0\.10\.0"/);
+  assert.equal(manifest.version, "0.10.1");
+  assert.equal(lockfile.version, "0.10.1");
+  assert.equal(lockfile.packages[""].version, "0.10.1");
+  assert.match(versionSource, /TOOL_VERSION = "0\.10\.1"/);
   assert.match(changelog, /^## \[0\.5\.0\] - 2026-07-29$/m);
   assert.match(
     changelog,
