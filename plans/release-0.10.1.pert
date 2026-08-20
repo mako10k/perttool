@@ -77,7 +77,7 @@ task RELEASE_0101_CANDIDATE RELEASE_0101_SOURCE_PREPARED -> RELEASE_0101_CANDIDA
   title "Accept one immutable 0.10.1 candidate"
   description "Commit and recheck clean source, prove version, tag, GitHub Release and npm availability, verify authenticated routes, retain one immutable tarball outside the worktree, and accept its source commit, file count, size, SHA-256, installed Issue #22 behavior, compatibility, and 0.10.0 rollback pin. This task performs no external write."
   duration 3p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
