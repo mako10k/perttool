@@ -1277,6 +1277,42 @@
       },
       "additionalProperties": false
     },
+    "historyProvenancePredecessor": {
+      "type": "object",
+      "required": ["path", "commit_id", "source_digest", "project_id"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "commit_id": { "type": "string", "minLength": 1 },
+        "source_digest": { "$ref": "#/$defs/digest" },
+        "project_id": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "historyProvenance": {
+      "type": "object",
+      "required": [
+        "model_version",
+        "requested_mode",
+        "effective_mode",
+        "override_applied",
+        "root_commit_id",
+        "root_source_digest",
+        "excluded_predecessors"
+      ],
+      "properties": {
+        "model_version": { "const": 1 },
+        "requested_mode": { "enum": ["automatic", "new_root"] },
+        "effective_mode": { "enum": ["automatic", "new_root"] },
+        "override_applied": { "type": "boolean" },
+        "root_commit_id": { "$ref": "#/$defs/nullableString" },
+        "root_source_digest": { "$ref": "#/$defs/nullableDigest" },
+        "excluded_predecessors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/historyProvenancePredecessor" }
+        }
+      },
+      "additionalProperties": false
+    },
     "historyMetadata": {
       "type": "object",
       "required": [
@@ -1290,7 +1326,8 @@
         "resolved_revision",
         "source_digest",
         "inspected_commit_ids",
-        "unavailable_causes"
+        "unavailable_causes",
+        "provenance"
       ],
       "properties": {
         "id": {
@@ -1332,7 +1369,8 @@
           "items": {
             "$ref": "#/$defs/historyCause"
           }
-        }
+        },
+        "provenance": { "$ref": "#/$defs/historyProvenance" }
       },
       "additionalProperties": false
     },

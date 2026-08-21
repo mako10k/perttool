@@ -65,6 +65,7 @@ export type ProjectHistoryCauseId =
   | "ambiguous_path"
   | "shallow_boundary"
   | "unsupported_rename"
+  | "provenance_unavailable"
   | "unsupported_source_version"
   | "task_identity_replaced"
   | "event_payload_changed"
@@ -191,6 +192,22 @@ export interface ProjectHistoryMetadata {
   readonly sourceDigest: string | null;
   readonly inspectedCommitIds: readonly string[];
   readonly unavailableCauses: readonly ProjectHistoryCause[];
+  readonly provenance: ProjectHistoryProvenance;
+}
+
+export interface ProjectHistoryProvenance {
+  readonly modelVersion: 1;
+  readonly requestedMode: "automatic" | "new_root";
+  readonly effectiveMode: "automatic" | "new_root";
+  readonly overrideApplied: boolean;
+  readonly rootCommitId: string | null;
+  readonly rootSourceDigest: string | null;
+  readonly excludedPredecessors: readonly {
+    readonly path: string;
+    readonly commitId: string;
+    readonly sourceDigest: string;
+    readonly projectId: string;
+  }[];
 }
 
 export interface ProjectHistoryCoreResultFor<GrammarVersion extends number> {
@@ -253,6 +270,7 @@ const historyCauseOrder: readonly ProjectHistoryCauseId[] = [
   "ambiguous_path",
   "shallow_boundary",
   "unsupported_rename",
+  "provenance_unavailable",
   "unsupported_source_version",
   "task_identity_replaced",
   "event_payload_changed",
@@ -451,12 +469,15 @@ function diagnostic(
     "unknown_revision",
     "untracked_target",
     "ambiguous_path",
+    "provenance_unavailable",
   ]);
   const race = cause.cause === "head_changed" ||
     cause.cause === "target_changed";
   const conflict = cause.cause === "event_payload_changed" ||
     cause.cause === "duplicate_event_identity";
-  const code = race
+  const code = cause.cause === "provenance_unavailable"
+    ? "PTHIS-105"
+    : race
     ? "PTHIS-104"
     : conflict
       ? "PTHIS-103"
@@ -547,6 +568,20 @@ function fromProbeAvailability(
   value: GitHistoryAvailability,
 ): ProjectHistoryCause {
   return historyCause(value.cause, { commitId: value.commitId });
+}
+
+function automaticProvenance(
+  probe: GitHistoryProbeResult,
+): ProjectHistoryProvenance {
+  return Object.freeze({
+    modelVersion: 1,
+    requestedMode: probe.provenance?.requestedMode ?? "automatic",
+    effectiveMode: "automatic",
+    overrideApplied: false,
+    rootCommitId: null,
+    rootSourceDigest: null,
+    excludedPredecessors: Object.freeze([]),
+  });
 }
 
 function unsupportedSnapshot(
@@ -642,6 +677,103 @@ function parseSnapshot<GrammarVersion extends number>(
       } as unknown as TargetGrammar5ValidatedDocument).events,
     },
     causes: Object.freeze([]),
+  };
+}
+
+function evaluateProvenance<GrammarVersion extends number>(
+  probe: GitHistoryProbeResult,
+  validateSource: ProjectHistorySourceValidator<GrammarVersion>,
+): {
+  readonly provenance: ProjectHistoryProvenance;
+  readonly cause: ProjectHistoryCause | null;
+} {
+  if (probe.provenance === undefined || probe.provenance.requestedMode === "automatic") {
+    return { provenance: automaticProvenance(probe), cause: null };
+  }
+  if (
+    !probe.provenance.overrideApplied ||
+    probe.provenance.effectiveMode !== "new_root" ||
+    probe.provenance.rootCommitId === null ||
+    probe.provenance.rootSourceDigest === null ||
+    probe.provenance.excludedPredecessors.length !== 1
+  ) {
+    return {
+      provenance: automaticProvenance(probe),
+      cause: historyCause("provenance_unavailable"),
+    };
+  }
+  const retainedIds: string[] = [];
+  for (const snapshot of probe.snapshots) {
+    const text = decodeSnapshot(snapshot);
+    if (text === null) {
+      return {
+        provenance: automaticProvenance(probe),
+        cause: historyCause("provenance_unavailable", {
+          commitId: snapshot.commitId,
+        }),
+      };
+    }
+    const checked = validateSource(text);
+    if (!checked.ok || checked.documentId === null) {
+      return {
+        provenance: automaticProvenance(probe),
+        cause: historyCause("provenance_unavailable", {
+          commitId: snapshot.commitId,
+        }),
+      };
+    }
+    retainedIds.push(checked.documentId);
+  }
+  const endpointId = retainedIds.at(-1) ?? null;
+  if (endpointId === null || retainedIds.some((id) => id !== endpointId)) {
+    return {
+      provenance: automaticProvenance(probe),
+      cause: historyCause("provenance_unavailable"),
+    };
+  }
+  const predecessor = probe.provenance.excludedPredecessors[0]!;
+  let predecessorText: string;
+  try {
+    predecessorText = new TextDecoder("utf-8", { fatal: true }).decode(
+      predecessor.source,
+    );
+  } catch {
+    return {
+      provenance: automaticProvenance(probe),
+      cause: historyCause("provenance_unavailable", {
+        commitId: predecessor.commitId,
+      }),
+    };
+  }
+  const predecessorChecked = validateSource(predecessorText);
+  if (
+    !predecessorChecked.ok ||
+    predecessorChecked.documentId === null ||
+    predecessorChecked.documentId === endpointId
+  ) {
+    return {
+      provenance: automaticProvenance(probe),
+      cause: historyCause("provenance_unavailable", {
+        commitId: predecessor.commitId,
+      }),
+    };
+  }
+  return {
+    cause: null,
+    provenance: Object.freeze({
+      modelVersion: 1,
+      requestedMode: "new_root",
+      effectiveMode: "new_root",
+      overrideApplied: true,
+      rootCommitId: probe.provenance.rootCommitId,
+      rootSourceDigest: probe.provenance.rootSourceDigest,
+      excludedPredecessors: Object.freeze([Object.freeze({
+        path: predecessor.path,
+        commitId: predecessor.commitId,
+        sourceDigest: predecessor.sourceDigest,
+        projectId: predecessorChecked.documentId,
+      })]),
+    }),
   };
 }
 
@@ -888,6 +1020,7 @@ function statusForCauses(
       cause === "unknown_revision" ||
       cause === "untracked_target" ||
       cause === "ambiguous_path" ||
+      cause === "provenance_unavailable" ||
       cause === "event_payload_changed" ||
       cause === "duplicate_event_identity" ||
       cause === "head_changed" ||
@@ -923,6 +1056,7 @@ function emptyResult<GrammarVersion extends number>(
       sourceDigest: probe.selectedSourceDigest,
       inspectedCommitIds: Object.freeze([...probe.inspectedCommitIds]),
       unavailableCauses: sortedCauses,
+      provenance: automaticProvenance(probe),
     }),
     events: Object.freeze([]),
     gitRecordedTransitions: Object.freeze([]),
@@ -953,6 +1087,7 @@ function invalidRequestResult<GrammarVersion extends number>(
       sourceDigest: probe.selectedSourceDigest,
       inspectedCommitIds: Object.freeze([...probe.inspectedCommitIds]),
       unavailableCauses: Object.freeze([]),
+      provenance: automaticProvenance(probe),
     }),
     events: Object.freeze([]),
     gitRecordedTransitions: Object.freeze([]),
@@ -981,7 +1116,14 @@ export function inspectProjectHistoryWithValidator<
   request: HistoryRequest,
   validateSource: ProjectHistorySourceValidator<GrammarVersion>,
 ): ProjectHistoryCoreResultFor<GrammarVersion> {
-  const adapterCauses = probe.availability.map(fromProbeAvailability);
+  const provenanceEvaluation = evaluateProvenance(probe, validateSource);
+  const provenance = provenanceEvaluation.provenance;
+  const adapterCauses = [
+    ...probe.availability.map(fromProbeAvailability),
+    ...(provenanceEvaluation.cause === null
+      ? []
+      : [provenanceEvaluation.cause]),
+  ];
   if (probe.status === "unavailable") {
     return emptyResult(probe, adapterCauses);
   }
@@ -1218,6 +1360,7 @@ export function inspectProjectHistoryWithValidator<
       sourceDigest: probe.selectedSourceDigest,
       inspectedCommitIds: Object.freeze([...probe.inspectedCommitIds]),
       unavailableCauses: sortedCauses,
+      provenance,
     }),
     events: filteredEvents,
     gitRecordedTransitions: filteredTransitions,

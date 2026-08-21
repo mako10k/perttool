@@ -1,0 +1,73 @@
+framework DecisionAudit
+
+domain HistoryProvenanceChoice:
+  description "Root-cause analysis for GitHub Issue #6 and ACT-005"
+
+problem P1:
+  "Why can an intentionally new plan remain in incomplete unsupported_rename history with no auditable recovery path?"
+
+step S1:
+  evidence EV1:
+    "The Git history probe always runs git log first-parent follow name-status with rename detection enabled for the selected path and treats every R status anywhere in that output as unsupported_rename"
+    resource:
+      file "src/history/git-probe.ts"
+      label "Rename detection and unconditional incomplete classification"
+
+step S2:
+  evidence EV2:
+    "The same probe independently captures repository snapshot identity, repository-relative path, resolved revision, HEAD, current source digest, selected source digest, inspected commit IDs, and immutable snapshots before its final race recheck"
+    resource:
+      file "src/history/git-probe.ts"
+      label "Existing immutable Git evidence binding"
+
+step S3:
+  evidence EV3:
+    "The public project history and project observe-velocity descriptors expose revision, task selection, and observation evidence class only; neither command can express a reviewed provenance choice"
+    resource:
+      file "src/command/actuals-discovery.ts"
+      label "Current public read command descriptors"
+    resource:
+      file "src/cli.ts"
+      label "Current CLI request composition"
+
+step S4:
+  evidence EV4:
+    "The accepted project-actuals contract deliberately reports unsupported_rename as PTHIS-102 and suppresses measured velocity when history is incomplete, so weakening automatic inference globally would weaken an accepted fail-closed boundary"
+    resource:
+      file "docs/specs/project-actuals.md"
+      label "Accepted incomplete-history semantics"
+
+step S5:
+  evidence EV5:
+    "Issue #6 reports an intentionally new path and project identity classified as a rename and confirms that a distinct two-commit bootstrap avoids the classification, proving that source history shape rather than plan validity blocks the measurement baseline"
+    resource:
+      url "https://github.com/mako10k/perttool/issues/6"
+      label "User-observed false rename inference and workaround"
+
+step S6:
+  decision D1 based_on P1, EV1, EV2, EV3, EV4, EV5:
+    "The root cause is an interface gap, not an arithmetic or parser defect: one heuristic rename signal is intentionally fail-closed, but the probe request and public commands have no candidate-bound way to replace that inference with an explicit reviewed provenance interpretation"
+
+step S7:
+  decision D2 based_on EV2, D1:
+    "The minimal correction adds a closed provenance mode with automatic as the unchanged default and new-root as the first explicit override; new-root stops traversal at the selected path introduction boundary without guessing a predecessor and records the effective choice with the existing repository path revision project and digest evidence"
+
+step S8:
+  decision D3 based_on EV1, EV4, D2:
+    "The override must not disable rename detection globally: the probe still captures the heuristic signal, automatic remains incomplete, and new-root is accepted only when the selected endpoint source is valid and its project identity differs from every excluded predecessor candidate reported by the detected rename"
+
+step S9:
+  decision D4 based_on EV2, EV3, D2, D3:
+    "Project history and observe-velocity receive the same additive option and result projection; the request is read-only, exact-value bound, deterministic, and fail-closed for stale source, unknown mode, missing introduction evidence, ambiguous candidates, or same-project predecessor"
+
+step S10:
+  decision D5 based_on EV3, EV4, D4:
+    "The active result identities can remain compatible only if provenance choice is additive and nullable, automatic output remains byte-compatible apart from the new field contract selected for this patch, and no mutation, Git write, declared-velocity adoption, governance authority, or assurance authority is introduced"
+
+step S11:
+  pending PD1:
+    "A reviewed predecessor mode is deliberately deferred until its path and project identity semantics are specified; Issue #6 can be closed by the narrower auditable new-root recovery without inventing rename acceptance"
+
+step S12:
+  pending PD2:
+    "Release selection, publication, npm dist-tag movement, Issue mutation, and plan advance remain separate after complete implementation acceptance"

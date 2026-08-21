@@ -3,6 +3,7 @@ import type { TargetCalendarValue } from "../model/target-calendar.js";
 import type {
   ActualQuantity,
   ProjectHistoryCoreResult,
+  ProjectHistoryProvenance,
 } from "../history/project-history.js";
 import {
   observeProjectVelocity,
@@ -260,6 +261,7 @@ export function targetVelocityObservationResultToJson(
   result: TargetVelocityObservationResultV1,
   source: string,
 ): Readonly<Record<string, unknown>> {
+  const provenance = observationProvenance(result);
   return {
     schema_version: result.schemaVersion,
     cli_contract_version: TARGET_VELOCITY_OBSERVATION_CLI_CONTRACT_VERSION,
@@ -289,6 +291,21 @@ export function targetVelocityObservationResultToJson(
         task_id: cause.taskId,
         event_id: cause.eventId,
       })),
+      provenance: {
+        model_version: provenance.modelVersion,
+        requested_mode: provenance.requestedMode,
+        effective_mode: provenance.effectiveMode,
+        override_applied: provenance.overrideApplied,
+        root_commit_id: provenance.rootCommitId,
+        root_source_digest: provenance.rootSourceDigest,
+        excluded_predecessors:
+          provenance.excludedPredecessors.map((value) => ({
+            path: value.path,
+            commit_id: value.commitId,
+            source_digest: value.sourceDigest,
+            project_id: value.projectId,
+          })),
+      },
     },
     observation: {
       id: result.observation.id,
@@ -299,6 +316,20 @@ export function targetVelocityObservationResultToJson(
       candidates: result.observation.candidates.map(candidateToJson),
     },
   };
+}
+
+function observationProvenance(
+  result: TargetVelocityObservationResultV1,
+): ProjectHistoryProvenance {
+  return result.history.provenance ?? Object.freeze({
+    modelVersion: 1,
+    requestedMode: "automatic",
+    effectiveMode: "automatic",
+    overrideApplied: false,
+    rootCommitId: null,
+    rootSourceDigest: null,
+    excludedPredecessors: Object.freeze([]),
+  });
 }
 
 function scalar(value: string | null): string {
@@ -344,6 +375,7 @@ function baselinesText(value: VelocityCandidate): string {
 export function renderTargetVelocityObservationText(
   result: TargetVelocityObservationResultV1,
 ): string {
+  const provenance = observationProvenance(result);
   const lines = [
     `OBSERVATION evidence=${result.observation.evidence} selected=${
       result.observation.selectedTaskIds.length === 0
@@ -353,6 +385,8 @@ export function renderTargetVelocityObservationText(
       scalar(result.sourceDigest)
     } history_source_digest=${
       scalar(result.history.sourceDigest)
+    } provenance=${provenance.effectiveMode} override=${
+      provenance.overrideApplied
     } models=history:1,observation:1`,
   ];
   for (const value of result.observation.candidates) {

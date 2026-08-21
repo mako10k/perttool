@@ -2224,6 +2224,14 @@ async function readHistoryForCommand(
         ...(expectedSourceDigest === undefined
           ? {}
           : { expectedSourceDigest }),
+        ...(parsed.values.get("history-provenance") === undefined
+          ? {}
+          : {
+              provenanceMode: parsed.values.get("history-provenance") ===
+                  "new-root"
+                ? "new_root" as const
+                : "automatic" as const,
+            }),
       },
       TARGET_GRAMMAR_6_CAPABILITY,
     );

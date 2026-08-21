@@ -581,6 +581,107 @@ test("task identity replacement and unsupported source stay qualified", async (t
   );
 });
 
+test("explicit new-root accepts a different-project rename and rejects a same-project predecessor", async (t) => {
+  const root = await repository(t);
+  const oldPath = join(root, "plans", "old: project.pert");
+  const currentPath = join(root, "plans", "current: project.pert");
+  const oldSource = actualsSource().replace("project HISTORY:", "project OLD_PROJECT:");
+  const newSource = actualsSource().replace("project HISTORY:", "project NEW_PROJECT:");
+  await write(oldPath, oldSource);
+  commit(root, "add old project");
+  git(root, "mv", "plans/old: project.pert", "plans/current: project.pert");
+  await write(currentPath, newSource);
+  commit(root, "introduce new project at similar path");
+
+  const automatic = await inspectTargetProjectHistoryFile(
+    { targetPath: currentPath },
+    TARGET_GRAMMAR_5_CAPABILITY,
+  );
+  assert.equal(automatic.history.status, "incomplete");
+  assert.equal(automatic.history.provenance.overrideApplied, false);
+  assert.deepEqual(
+    automatic.history.unavailableCauses.map(({ cause }) => cause),
+    ["unsupported_rename"],
+  );
+
+  const explicit = await inspectTargetProjectHistoryFile(
+    { targetPath: currentPath, provenanceMode: "new_root" },
+    TARGET_GRAMMAR_5_CAPABILITY,
+  );
+  assert.equal(explicit.ok, true, JSON.stringify(explicit.diagnostics));
+  assert.equal(explicit.history.status, "complete");
+  assert.equal(explicit.documentId, "NEW_PROJECT");
+  assert.deepEqual(explicit.history.unavailableCauses, []);
+  assert.equal(explicit.history.provenance.requestedMode, "new_root");
+  assert.equal(explicit.history.provenance.effectiveMode, "new_root");
+  assert.equal(explicit.history.provenance.overrideApplied, true);
+  assert.equal(explicit.history.provenance.excludedPredecessors.length, 1);
+  assert.equal(
+    explicit.history.provenance.excludedPredecessors[0].projectId,
+    "OLD_PROJECT",
+  );
+  const historyCli = spawnSync(
+    process.execPath,
+    [
+      new URL("../dist/cli.js", import.meta.url).pathname,
+      "project", "history", currentPath,
+      "--history-provenance", "new-root", "--format=json",
+    ],
+    { cwd: root, encoding: "utf8" },
+  );
+  assert.equal(historyCli.status, 0, historyCli.stderr);
+  const historyJson = JSON.parse(historyCli.stdout);
+  assert.equal(historyJson.history.provenance.effective_mode, "new_root");
+  const velocityCli = spawnSync(
+    process.execPath,
+    [
+      new URL("../dist/cli.js", import.meta.url).pathname,
+      "project", "observe-velocity", currentPath,
+      "--history-provenance", "new-root", "--evidence", "git-recorded",
+      "--format=json",
+    ],
+    { cwd: root, encoding: "utf8" },
+  );
+  assert.equal(velocityCli.status, 0, velocityCli.stderr);
+  const velocityJson = JSON.parse(velocityCli.stdout);
+  assert.deepEqual(velocityJson.history.provenance, historyJson.history.provenance);
+
+  const sameRoot = await repository(t);
+  const sameOld = join(sameRoot, "old.pert");
+  const sameCurrent = join(sameRoot, "current.pert");
+  await write(sameOld, actualsSource());
+  commit(sameRoot, "add same project");
+  git(sameRoot, "mv", "old.pert", "current.pert");
+  commit(sameRoot, "rename same project");
+  const refused = await inspectTargetProjectHistoryFile(
+    { targetPath: sameCurrent, provenanceMode: "new_root" },
+    TARGET_GRAMMAR_5_CAPABILITY,
+  );
+  assert.equal(refused.ok, false);
+  assert.equal(refused.history.status, "unavailable");
+  assert.deepEqual(
+    refused.history.unavailableCauses.map(({ cause }) => cause),
+    ["provenance_unavailable"],
+  );
+  assert.equal(refused.diagnostics[0].code, "PTHIS-105");
+
+  const addedRoot = await repository(t);
+  const added = join(addedRoot, "added.pert");
+  await write(added, newSource);
+  commit(addedRoot, "add project without predecessor");
+  const missing = await inspectTargetProjectHistoryFile(
+    { targetPath: added, provenanceMode: "new_root" },
+    TARGET_GRAMMAR_5_CAPABILITY,
+  );
+  assert.equal(missing.ok, false);
+  assert.equal(missing.history.provenance.requestedMode, "new_root");
+  assert.equal(missing.history.status, "unavailable");
+  assert.deepEqual(
+    missing.history.unavailableCauses.map(({ cause }) => cause),
+    ["provenance_unavailable"],
+  );
+});
+
 test("project history is public without target-prefixed package exports", async () => {
   for (const name of [
     "inspectProjectHistory",

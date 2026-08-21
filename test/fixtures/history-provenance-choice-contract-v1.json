@@ -1,0 +1,17 @@
+{
+  "model_version": 1,
+  "cases": [
+    { "id": "HPC-001", "depends_on": [], "meaning": "automatic default remains fail-closed for detected rename" },
+    { "id": "HPC-002", "depends_on": ["HPC-001"], "meaning": "new-root accepts one different-project predecessor at the selected path introduction" },
+    { "id": "HPC-003", "depends_on": ["HPC-002"], "meaning": "new-root evidence is bound to repository path revision HEAD and source digests" },
+    { "id": "HPC-004", "depends_on": ["HPC-002"], "meaning": "same-project predecessor fails closed" },
+    { "id": "HPC-005", "depends_on": ["HPC-002"], "meaning": "missing multiple malformed or unreadable predecessor evidence fails closed" },
+    { "id": "HPC-006", "depends_on": ["HPC-003"], "meaning": "source HEAD path and root evidence races fail closed without writes" },
+    { "id": "HPC-007", "depends_on": ["HPC-002"], "meaning": "other incomplete causes including shallow history remain incomplete" },
+    { "id": "HPC-008", "depends_on": ["HPC-003"], "meaning": "SHA-1 SHA-256 linked worktree and unusual paths preserve exact evidence" },
+    { "id": "HPC-009", "depends_on": ["HPC-002"], "meaning": "project history and velocity observation expose identical provenance" },
+    { "id": "HPC-010", "depends_on": ["HPC-009"], "meaning": "text JSON Help Guide and schemas expose the closed modes" },
+    { "id": "HPC-011", "depends_on": ["HPC-010"], "meaning": "temporary-link and installed-package behavior match source" },
+    { "id": "HPC-012", "depends_on": ["HPC-006", "HPC-011"], "meaning": "complete acceptance proves no Git source velocity or authority mutation" }
+  ]
+}

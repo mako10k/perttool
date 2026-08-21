@@ -569,6 +569,26 @@ does not select a requirement, syntax, command, schema, Grammar or CLI version,
 PERT workstream, implementation, merge-driver installation, release, or remote
 operation.
 
+### SCM-002: Extend explicit history provenance into Git operations
+
+Priority: P2 (follow-up to the Issue #6 correctness slice)
+
+Status: Requested backlog (2026-08-21; contract and delivery plan not selected)
+
+The accepted Issue #6 correction adds only a read-only, evidence-bound
+`new-root` interpretation. Extend that foundation with separately governed Git
+integration: explicitly accept a reviewed predecessor path or project,
+configure or replace rename similarity policy, and optionally persist a
+durable provenance receipt or perform an explicit Git operation.
+
+The future contract must distinguish inference policy from repository mutation,
+bind every choice to exact object IDs and raw source digests, define index/ref/
+worktree race behavior, and provide preview and audit evidence before any Git
+write. It must not make `automatic` less conservative, reinterpret `new-root`,
+silently rewrite history, or let a provenance choice grant plan mutation,
+assurance, governance, or release authority. This backlog entry does not select
+syntax, implementation, a Git write mechanism, release work, or remote writes.
+
 ### HIST-DAG-001: Reconstruct and visualize historical DAGs
 
 Priority: Selected through the independent `HIST-DAG-001` workstream

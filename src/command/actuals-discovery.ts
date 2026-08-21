@@ -362,6 +362,9 @@ function readDescriptor(
     operands: Object.freeze([fileOperand]),
     options: Object.freeze([
       valueOption("rev", "git-revision"),
+      valueOption("history-provenance", "history-provenance-mode", {
+        enumValues: ["automatic", "new-root"],
+      }),
       valueOption("task", "task-id", { repeatable: true }),
       ...(observation
         ? [
@@ -392,6 +395,12 @@ function readDescriptor(
         summary: observation
           ? "Observe declared actuals for one task."
           : "Inspect first-parent history for one task.",
+      }),
+      Object.freeze({
+        id: `${action}-new-root`,
+        invocation:
+          `perttool project ${action} plan.pert --history-provenance new-root --format json`,
+        summary: "Treat a proven different-project predecessor as excluded history.",
       }),
     ]),
   });

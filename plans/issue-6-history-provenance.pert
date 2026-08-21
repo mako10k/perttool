@@ -1,0 +1,60 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project ISSUE6_HISTORY_PROVENANCE:
+  version 6
+  title "Issue 6 explicit history provenance"
+  description "Add an explicit, auditable new-root provenance choice for Issue #6 while preserving automatic fail-closed rename inference, read-only Git behavior, current authority boundaries, and exact evidence binding. Release, publication, Issue mutation, and plan advance remain separate."
+  as_of 2026-08-21
+  duration_unit point
+  finish ISSUE6_ACCEPTED
+
+milestone ISSUE6_STARTED:
+  title "Issue 6 work started"
+  state reached
+
+milestone ISSUE6_CONTRACTED:
+  title "History provenance contract accepted"
+  state reached
+
+milestone ISSUE6_CORE_READY:
+  title "History provenance Core ready"
+  state reached
+
+milestone ISSUE6_PUBLIC_READY:
+  title "History provenance public surface ready"
+  state reached
+
+milestone ISSUE6_ACCEPTED:
+  title "Issue 6 correction accepted"
+  state reached
+
+task ISSUE6_PROVENANCE_CONTRACT ISSUE6_STARTED -> ISSUE6_CONTRACTED:
+  title "Fix the explicit history provenance contract"
+  description "Accept the new-root request, evidence binding, fail-closed cases, result projection, compatibility boundary, and machine-readable case matrix."
+  duration 5p
+  status done
+  priority 100
+  source "Issue #6"
+
+task ISSUE6_PROVENANCE_CORE ISSUE6_CONTRACTED -> ISSUE6_CORE_READY:
+  title "Implement bounded Git provenance selection"
+  description "Extend immutable Git evidence capture and history reconstruction with automatic and new-root modes without Git writes or heuristic weakening."
+  duration 8p
+  status done
+  priority 100
+  source "Issue #6"
+
+task ISSUE6_PROVENANCE_PUBLIC ISSUE6_CORE_READY -> ISSUE6_PUBLIC_READY:
+  title "Expose the compatible CLI and result projection"
+  description "Add one closed option to project history and observe-velocity with Help, Guide, JSON, text, diagnostics, schemas, and installed-package parity."
+  duration 5p
+  status done
+  priority 100
+  source "Issue #6"
+
+task ISSUE6_PROVENANCE_ACCEPTANCE ISSUE6_PUBLIC_READY -> ISSUE6_ACCEPTED:
+  title "Accept the Issue 6 correction"
+  description "Run synthetic and real Git histories, races, compatibility, complete repository, temporary-link, and isolated-package acceptance and record the release boundary."
+  duration 5p
+  status done
+  priority 100
+  source "Issue #6"

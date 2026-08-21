@@ -72,6 +72,22 @@ perttool project history plan.pert --task WORK --format json
 perttool project observe-velocity plan.pert --task WORK --evidence declared --format json
 ```
 
+If Git reports the selected path as a rename but the predecessor is a
+different project, inspect the default refusal first and then request the
+bounded interpretation explicitly:
+
+```text
+perttool project history plan.pert --format json
+perttool project history plan.pert --history-provenance new-root --format json
+perttool project observe-velocity plan.pert --history-provenance new-root \
+  --evidence git-recorded --format json
+```
+
+The latter two commands must expose the same `history.provenance` evidence.
+`new-root` does not follow or accept the predecessor and does not modify Git,
+the plan, or declared velocity. A same-project, missing, ambiguous, unreadable,
+or stale predecessor fails with `PTHIS-105`.
+
 ## PACT-001: Eventful finish is atomic
 
 Given an active task and an eventful finish request at

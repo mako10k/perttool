@@ -569,11 +569,6 @@
         "length": 83,
         "parameters": 3
       },
-      "src/history/git-probe.ts:unavailable": {
-        "cyclomaticComplexity": 19,
-        "length": 38,
-        "parameters": 3
-      },
       "src/history/git-probe.ts:unavailableAdvanceBaseline": {
         "cyclomaticComplexity": 31,
         "length": 30,

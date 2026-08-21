@@ -35,6 +35,7 @@ export type GitHistoryCause =
   | "ambiguous_path"
   | "shallow_boundary"
   | "unsupported_rename"
+  | "provenance_unavailable"
   | "head_changed"
   | "target_changed";
 
@@ -57,6 +58,24 @@ export interface GitHistoryProbeRequest {
   readonly targetPath: string;
   readonly revision?: string;
   readonly expectedSourceDigest?: string;
+  readonly provenanceMode?: "automatic" | "new_root";
+}
+
+export interface GitHistoryPredecessorEvidence {
+  readonly path: string;
+  readonly commitId: string;
+  readonly sourceDigest: string;
+  readonly source: Uint8Array;
+}
+
+export interface GitHistoryProvenanceEvidence {
+  readonly modelVersion: 1;
+  readonly requestedMode: "automatic" | "new_root";
+  readonly effectiveMode: "automatic" | "new_root";
+  readonly overrideApplied: boolean;
+  readonly rootCommitId: string | null;
+  readonly rootSourceDigest: string | null;
+  readonly excludedPredecessors: readonly GitHistoryPredecessorEvidence[];
 }
 
 export interface GitHistoryProbeDependencies {
@@ -80,6 +99,7 @@ export interface GitHistoryProbeResult {
   readonly inspectedCommitIds: readonly string[];
   readonly snapshots: readonly PlanRevisionSnapshot[];
   readonly availability: readonly GitHistoryAvailability[];
+  readonly provenance: GitHistoryProvenanceEvidence;
 }
 
 export type GitHistoryProbeFailureKind =
@@ -298,9 +318,24 @@ const availabilityOrder = new Map<GitHistoryCause, number>([
   ["ambiguous_path", 4],
   ["shallow_boundary", 5],
   ["unsupported_rename", 6],
-  ["head_changed", 7],
-  ["target_changed", 8],
+  ["provenance_unavailable", 7],
+  ["head_changed", 8],
+  ["target_changed", 9],
 ]);
+
+function emptyProvenance(
+  requestedMode: "automatic" | "new_root",
+): GitHistoryProvenanceEvidence {
+  return Object.freeze({
+    modelVersion: 1,
+    requestedMode,
+    effectiveMode: "automatic",
+    overrideApplied: false,
+    rootCommitId: null,
+    rootSourceDigest: null,
+    excludedPredecessors: Object.freeze([]),
+  });
+}
 
 function errorCode(error: unknown): string | undefined {
   return typeof error === "object" && error !== null && "code" in error
@@ -523,26 +558,36 @@ function unavailable(
       | "selectedSourceDigest"
       | "inspectedCommitIds"
       | "snapshots"
+      | "provenance"
     >
-  > = {},
+  >,
 ): GitHistoryProbeResult {
   return {
     ok: true,
     modelVersion: GIT_HISTORY_PROBE_MODEL_VERSION,
     status: "unavailable",
     traversal: "first_parent",
-    objectFormat: fields.objectFormat ?? null,
-    repositorySnapshotId: fields.repositorySnapshotId ?? null,
-    repositoryRelativePath: fields.repositoryRelativePath ?? null,
+    objectFormat: nullable(fields.objectFormat),
+    repositorySnapshotId: nullable(fields.repositorySnapshotId),
+    repositoryRelativePath: nullable(fields.repositoryRelativePath),
     requestedRevision,
-    resolvedRevision: fields.resolvedRevision ?? null,
-    headCommitId: fields.headCommitId ?? null,
-    currentSourceDigest: fields.currentSourceDigest ?? null,
-    selectedSourceDigest: fields.selectedSourceDigest ?? null,
-    inspectedCommitIds: fields.inspectedCommitIds ?? [],
-    snapshots: fields.snapshots ?? [],
+    resolvedRevision: nullable(fields.resolvedRevision),
+    headCommitId: nullable(fields.headCommitId),
+    currentSourceDigest: nullable(fields.currentSourceDigest),
+    selectedSourceDigest: nullable(fields.selectedSourceDigest),
+    inspectedCommitIds: arrayValue(fields.inspectedCommitIds),
+    snapshots: arrayValue(fields.snapshots),
     availability: availability([{ cause, commitId: null }]),
+    provenance: fields.provenance ?? emptyProvenance("automatic"),
   };
+}
+
+function nullable<Value>(value: Value | undefined): Value | null {
+  return value === undefined ? null : value;
+}
+
+function arrayValue<Value>(value: readonly Value[] | undefined): readonly Value[] {
+  return value === undefined ? [] : value;
 }
 
 function commitId(
@@ -551,6 +596,207 @@ function commitId(
 ): boolean {
   const length = objectFormat === "sha1" ? 40 : 64;
   return new RegExp(`^[0-9a-f]{${length}}$`).test(value);
+}
+
+function decodeGitPath(value: Buffer): string | null {
+  try {
+    const path = new TextDecoder("utf-8", { fatal: true }).decode(value);
+    return path === "" || /[\u0000\r\n]/.test(path) ? null : path;
+  } catch {
+    return null;
+  }
+}
+
+interface RenameCandidate {
+  readonly oldPath: string;
+  readonly newPath: string;
+}
+
+function renameCandidates(
+  value: Buffer,
+  selectedPath: string,
+): readonly RenameCandidate[] | null {
+  if (value.length === 0) return Object.freeze([]);
+  const fields = value.subarray(0, value.at(-1) === 0 ? -1 : value.length)
+    .toString("latin1").split("\u0000").map((field) =>
+      Buffer.from(field, "latin1")
+    );
+  const result: RenameCandidate[] = [];
+  for (let index = 0; index < fields.length;) {
+    const record = consumeDiffRecord(fields, index, selectedPath);
+    if (record === null) return null;
+    index = record.nextIndex;
+    if (record.candidate !== null) result.push(record.candidate);
+  }
+  return Object.freeze(result);
+}
+
+interface DiffRecord {
+  readonly nextIndex: number;
+  readonly candidate: RenameCandidate | null;
+}
+
+function consumeDiffRecord(
+  fields: readonly Buffer[],
+  index: number,
+  selectedPath: string,
+): DiffRecord | null {
+  const statusField = fields[index];
+  if (statusField === undefined) return null;
+  const status = statusField.toString("ascii");
+  if (!/^[A-Z][0-9]*$/.test(status)) return null;
+  if (!status.startsWith("R") && !status.startsWith("C")) {
+    const path = fields[index + 1];
+    return path !== undefined && decodeGitPath(path) !== null
+      ? { nextIndex: index + 2, candidate: null }
+      : null;
+  }
+  const oldPath = fields[index + 1];
+  const newPath = fields[index + 2];
+  if (oldPath === undefined || newPath === undefined) return null;
+  const oldText = decodeGitPath(oldPath);
+  const newText = decodeGitPath(newPath);
+  if (oldText === null || newText === null) return null;
+  const candidate = status.startsWith("R") && newText === selectedPath
+    ? { oldPath: oldText, newPath: newText }
+    : null;
+  return { nextIndex: index + 3, candidate };
+}
+
+interface SnapshotCollectionRequest {
+  readonly executable: string;
+  readonly repositoryRoot: string;
+  readonly repositorySnapshotId: string;
+  readonly relativePath: string;
+  readonly objectFormat: "sha1" | "sha256";
+  readonly inspectedCommitIds: readonly string[];
+}
+
+function collectHistorySnapshots(
+  request: SnapshotCollectionRequest,
+): { readonly ok: true; readonly snapshots: readonly PlanRevisionSnapshot[] }
+  | GitHistoryProbeFailure {
+  const snapshots: PlanRevisionSnapshot[] = [];
+  for (const inspectedCommitId of request.inspectedCommitIds) {
+    const metadataCommand = runGit(
+      request.executable, request.repositoryRoot, "commit_metadata",
+      ["show", "-s", "--format=%P%x00%cI", inspectedCommitId],
+    );
+    if (!metadataCommand.ok) {
+      return metadataCommand.kind === "failure"
+        ? metadataCommand.failure
+        : commandFailure("commit_metadata");
+    }
+    const metadataText = stdoutText(metadataCommand, "commit_metadata");
+    if (typeof metadataText !== "string") return metadataText;
+    const metadata = parseGitCommitMetadata(metadataText, request.objectFormat);
+    if (metadata === null) return malformed("commit_metadata");
+    const exists = runGit(
+      request.executable, request.repositoryRoot, "snapshot_exists",
+      ["ls-tree", "-z", "--name-only", inspectedCommitId, "--", request.relativePath],
+    );
+    if (!exists.ok) {
+      return exists.kind === "failure"
+        ? exists.failure
+        : commandFailure("snapshot_exists");
+    }
+    let source: Uint8Array | null = null;
+    let sourceDigest: string | null = null;
+    if (exists.stdout.length > 0) {
+      if (!exists.stdout.equals(Buffer.from(`${request.relativePath}\0`, "utf8"))) {
+        return malformed("snapshot_exists");
+      }
+      const sourceCommand = runGit(
+        request.executable, request.repositoryRoot, "snapshot_source",
+        ["cat-file", "blob", `${inspectedCommitId}:${request.relativePath}`],
+      );
+      if (!sourceCommand.ok) {
+        return sourceCommand.kind === "failure"
+          ? sourceCommand.failure
+          : commandFailure("snapshot_source");
+      }
+      source = new Uint8Array(sourceCommand.stdout);
+      sourceDigest = digestDocumentBytes(source);
+    }
+    snapshots.push({
+      repositorySnapshotId: request.repositorySnapshotId,
+      relativePath: request.relativePath,
+      commitId: inspectedCommitId,
+      parentCommitIds: metadata.parentCommitIds,
+      recordedAt: metadata.recordedAt,
+      sourceDigest,
+      source,
+    });
+  }
+  return { ok: true, snapshots: Object.freeze(snapshots) };
+}
+
+function treeBlobId(
+  value: Buffer,
+  expectedPath: string,
+  objectFormat: "sha1" | "sha256",
+): string | null {
+  const fields = value.subarray(0, value.at(-1) === 0 ? -1 : value.length)
+    .toString("latin1").split("\u0000").map((field) =>
+      Buffer.from(field, "latin1")
+    );
+  if (fields.length !== 1) return null;
+  const separator = fields[0]!.indexOf(0x09);
+  if (separator < 0) return null;
+  const metadata = fields[0]!.subarray(0, separator).toString("ascii");
+  const path = decodeGitPath(fields[0]!.subarray(separator + 1));
+  const match = /^[0-7]{6} blob ([0-9a-f]+)$/.exec(metadata);
+  return path === expectedPath && match !== null && commitId(match[1]!, objectFormat)
+    ? match[1]!
+    : null;
+}
+
+function probeNewRootProvenance(
+  executable: string,
+  repositoryRoot: string,
+  relativePath: string,
+  objectFormat: "sha1" | "sha256",
+  snapshots: readonly PlanRevisionSnapshot[],
+): GitHistoryProvenanceEvidence | null {
+  const root = snapshots[0];
+  if (root === undefined || root.source === null || root.sourceDigest === null) {
+    return null;
+  }
+  if (root.parentCommitIds.length !== 1) return null;
+  const parentCommitId = root.parentCommitIds[0]!;
+  const diff = runGit(executable, repositoryRoot, "provenance_root_diff", [
+    "diff-tree", "-r", "--name-status", "-z", "-M",
+    parentCommitId, root.commitId,
+  ]);
+  if (!diff.ok) return null;
+  const candidates = renameCandidates(diff.stdout, relativePath);
+  if (candidates === null || candidates.length !== 1) return null;
+  const predecessorPath = candidates[0]!.oldPath;
+  const tree = runGit(executable, repositoryRoot, "provenance_predecessor_tree", [
+    "ls-tree", "-z", parentCommitId, "--", predecessorPath,
+  ]);
+  if (!tree.ok) return null;
+  const blobId = treeBlobId(tree.stdout, predecessorPath, objectFormat);
+  if (blobId === null) return null;
+  const source = runGit(executable, repositoryRoot, "provenance_predecessor_source", [
+    "cat-file", "blob", blobId,
+  ]);
+  if (!source.ok) return null;
+  const predecessorSource = new Uint8Array(source.stdout);
+  return Object.freeze({
+    modelVersion: 1,
+    requestedMode: "new_root",
+    effectiveMode: "new_root",
+    overrideApplied: true,
+    rootCommitId: root.commitId,
+    rootSourceDigest: root.sourceDigest,
+    excludedPredecessors: Object.freeze([Object.freeze({
+      path: predecessorPath,
+      commitId: parentCommitId,
+      sourceDigest: digestDocumentBytes(predecessorSource),
+      source: predecessorSource,
+    })]),
+  });
 }
 
 export function parseGitCommitMetadata(
@@ -625,12 +871,16 @@ export async function probeGitHistory(
   dependencies: GitHistoryProbeDependencies = {},
 ): Promise<GitHistoryProbeOutcome> {
   const requestedRevision = request.revision ?? "HEAD";
+  const requestedProvenanceMode = request.provenanceMode ?? "automatic";
+  const initialProvenance = emptyProvenance(requestedProvenanceMode);
   const executable = dependencies.gitExecutable ?? "git";
   const targetPath = resolve(request.targetPath);
   const initialTarget = await captureTarget(targetPath);
   if (!initialTarget.ok) {
     if ("ambiguous" in initialTarget) {
-      return unavailable(requestedRevision, "ambiguous_path");
+      return unavailable(requestedRevision, "ambiguous_path", {
+        provenance: initialProvenance,
+      });
     }
     return initialTarget.failure;
   }
@@ -647,6 +897,7 @@ export async function probeGitHistory(
     }
     return unavailable(requestedRevision, "no_repository", {
       currentSourceDigest: initialTarget.capture.digest,
+      provenance: initialProvenance,
     });
   }
   const repositoryText = stdoutText(repositoryCommand, "repository_root");
@@ -665,6 +916,7 @@ export async function probeGitHistory(
   if (relativePath === null) {
     return unavailable(requestedRevision, "ambiguous_path", {
       currentSourceDigest: initialTarget.capture.digest,
+      provenance: initialProvenance,
     });
   }
 
@@ -679,6 +931,7 @@ export async function probeGitHistory(
     return unavailable(requestedRevision, "no_head", {
       repositoryRelativePath: relativePath,
       currentSourceDigest: initialTarget.capture.digest,
+      provenance: initialProvenance,
     });
   }
 
@@ -723,6 +976,7 @@ export async function probeGitHistory(
       repositoryRelativePath: relativePath,
       headCommitId: initialHead,
       currentSourceDigest: initialTarget.capture.digest,
+      provenance: initialProvenance,
     });
   }
   const revisionText = stdoutText(revisionCommand, "resolve_revision");
@@ -745,6 +999,7 @@ export async function probeGitHistory(
       resolvedRevision,
       headCommitId: initialHead,
       currentSourceDigest: initialTarget.capture.digest,
+      provenance: initialProvenance,
     });
   }
 
@@ -773,6 +1028,7 @@ export async function probeGitHistory(
       resolvedRevision,
       headCommitId: initialHead,
       currentSourceDigest: initialTarget.capture.digest,
+      provenance: initialProvenance,
     });
   }
   if (
@@ -787,6 +1043,7 @@ export async function probeGitHistory(
       resolvedRevision,
       headCommitId: initialHead,
       currentSourceDigest: initialTarget.capture.digest,
+      provenance: initialProvenance,
     });
   }
 
@@ -821,80 +1078,34 @@ export async function probeGitHistory(
     return malformed("first_parent_commits");
   }
 
-  const snapshots: PlanRevisionSnapshot[] = [];
-  for (const inspectedCommitId of inspectedCommitIds) {
-    const metadataCommand = runGit(
-      executable,
-      repositoryRoot,
-      "commit_metadata",
-      [
-        "show",
-        "-s",
-        "--format=%P%x00%cI",
-        inspectedCommitId,
-      ],
-    );
-    if (!metadataCommand.ok) {
-      return metadataCommand.kind === "failure"
-        ? metadataCommand.failure
-        : commandFailure("commit_metadata");
-    }
-    const metadataText = stdoutText(metadataCommand, "commit_metadata");
-    if (typeof metadataText !== "string") return metadataText;
-    const metadata = parseGitCommitMetadata(metadataText, objectFormat);
-    if (metadata === null) return malformed("commit_metadata");
+  const snapshotCollection = collectHistorySnapshots({
+    executable,
+    repositoryRoot,
+    repositorySnapshotId,
+    relativePath,
+    objectFormat,
+    inspectedCommitIds,
+  });
+  if (!snapshotCollection.ok) return snapshotCollection;
+  const snapshots = snapshotCollection.snapshots;
 
-    const existsCommand = runGit(
-      executable,
-      repositoryRoot,
-      "snapshot_exists",
-      [
-        "ls-tree",
-        "-z",
-        "--name-only",
-        inspectedCommitId,
-        "--",
-        relativePath,
-      ],
-    );
-    if (!existsCommand.ok) {
-      return existsCommand.kind === "failure"
-        ? existsCommand.failure
-        : commandFailure("snapshot_exists");
-    }
-    let source: Uint8Array | null = null;
-    let sourceDigest: string | null = null;
-    if (existsCommand.stdout.length > 0) {
-      if (
-        !existsCommand.stdout.equals(
-          Buffer.from(`${relativePath}\0`, "utf8"),
-        )
-      ) {
-        return malformed("snapshot_exists");
-      }
-      const sourceCommand = runGit(
-        executable,
-        repositoryRoot,
-        "snapshot_source",
-        ["cat-file", "blob", `${inspectedCommitId}:${relativePath}`],
-      );
-      if (!sourceCommand.ok) {
-        return sourceCommand.kind === "failure"
-          ? sourceCommand.failure
-          : commandFailure("snapshot_source");
-      }
-      source = new Uint8Array(sourceCommand.stdout);
-      sourceDigest = digestDocumentBytes(source);
-    }
-
-    snapshots.push({
+  const provenance = requestedProvenanceMode === "new_root"
+    ? probeNewRootProvenance(
+        executable, repositoryRoot, relativePath, objectFormat, snapshots,
+      )
+    : initialProvenance;
+  if (provenance === null) {
+    return unavailable(requestedRevision, "provenance_unavailable", {
+      objectFormat,
       repositorySnapshotId,
-      relativePath,
-      commitId: inspectedCommitId,
-      parentCommitIds: metadata.parentCommitIds,
-      recordedAt: metadata.recordedAt,
-      sourceDigest,
-      source,
+      repositoryRelativePath: relativePath,
+      resolvedRevision,
+      headCommitId: initialHead,
+      currentSourceDigest: initialTarget.capture.digest,
+      selectedSourceDigest: snapshots.at(-1)?.sourceDigest ?? null,
+      inspectedCommitIds,
+      snapshots,
+      provenance: initialProvenance,
     });
   }
 
@@ -960,6 +1171,7 @@ export async function probeGitHistory(
       selectedSourceDigest: snapshots.at(-1)?.sourceDigest ?? null,
       inspectedCommitIds,
       snapshots,
+      provenance,
     });
   }
   const finalHeadText = stdoutText(finalHeadCommand, "recheck_head");
@@ -989,7 +1201,10 @@ export async function probeGitHistory(
       commitId: inspectedCommitIds[0] ?? null,
     });
   }
-  if (/(?:^|\n)R\d+\t/.test(renameText)) {
+  if (
+    requestedProvenanceMode === "automatic" &&
+    /(?:^|\n)R\d+\t/.test(renameText)
+  ) {
     incompleteCauses.push({
       cause: "unsupported_rename",
       commitId: null,
@@ -1022,6 +1237,7 @@ export async function probeGitHistory(
     inspectedCommitIds: Object.freeze(inspectedCommitIds),
     snapshots: Object.freeze(snapshots),
     availability: allCauses,
+    provenance,
   };
 }
 

@@ -466,8 +466,10 @@ perttool task suspend <file> <task-id> --at <date-time>
 perttool task resume <file> <task-id> --at <date-time> [--event-id <id>]
 perttool task finish <file> <task-id> --at <date-time> \
   [--event-id <id>] [--active-time <hours>] [--effort <person-hours>]
-perttool project history <file> [--rev <revision>] [--task <task-id>]...
+perttool project history <file> [--rev <revision>]
+  [--history-provenance automatic|new-root] [--task <task-id>]...
 perttool project observe-velocity <file> [--rev <revision>]
+  [--history-provenance automatic|new-root]
   [--task <task-id>]...
   [--evidence declared|git-recorded|all]
 ```
@@ -486,6 +488,11 @@ History commands are read-only, require an on-disk regular file, do not accept
 stdin or write options, and expose common diagnostics, precision, JSON, and
 color options. The revision is an opaque nonempty Git revision spelling; an
 unknown revision is a domain result, while a missing option value is usage.
+History provenance defaults to `automatic`, which keeps rename inference
+fail-closed. `new-root` is the explicit read-only recovery described by
+[Explicit Project-History Provenance Choice](history-provenance-choice.md): it
+accepts only a different-project predecessor proven at the selected path's
+first recorded commit and reports the excluded evidence in the result.
 
 All lifecycle mutations are preview-first and compose the active source digest,
 governance decision, candidate validation, optimistic lock, symlink/race

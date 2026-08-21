@@ -91,6 +91,15 @@ function failedResult(
       sourceDigest: null,
       inspectedCommitIds: Object.freeze([]),
       unavailableCauses: Object.freeze([]),
+      provenance: Object.freeze({
+        modelVersion: 1,
+        requestedMode: "automatic",
+        effectiveMode: "automatic",
+        overrideApplied: false,
+        rootCommitId: null,
+        rootSourceDigest: null,
+        excludedPredecessors: Object.freeze([]),
+      }),
     }),
     events: Object.freeze([]),
     gitRecordedTransitions: Object.freeze([]),
@@ -127,6 +136,9 @@ export async function inspectTargetProjectHistoryFile(
       ...(request.expectedSourceDigest === undefined
         ? {}
         : { expectedSourceDigest: request.expectedSourceDigest }),
+      ...(request.provenanceMode === undefined
+        ? {}
+        : { provenanceMode: request.provenanceMode }),
     },
     dependencies,
   );
@@ -178,6 +190,15 @@ export function inspectTargetCurrentProjectActuals(
       }),
     ]),
     availability: Object.freeze([]),
+    provenance: Object.freeze({
+      modelVersion: 1,
+      requestedMode: "automatic",
+      effectiveMode: "automatic",
+      overrideApplied: false,
+      rootCommitId: null,
+      rootSourceDigest: null,
+      excludedPredecessors: Object.freeze([]),
+    }),
   });
   const reduced = inspectProjectHistory(probe, request, capability);
   return Object.freeze({
@@ -387,6 +408,25 @@ function taskToJson(
   };
 }
 
+function provenanceToJson(
+  value: ProjectHistoryCoreResult["history"]["provenance"],
+): Readonly<Record<string, unknown>> {
+  return {
+    model_version: value.modelVersion,
+    requested_mode: value.requestedMode,
+    effective_mode: value.effectiveMode,
+    override_applied: value.overrideApplied,
+    root_commit_id: value.rootCommitId,
+    root_source_digest: value.rootSourceDigest,
+    excluded_predecessors: value.excludedPredecessors.map((predecessor) => ({
+      path: predecessor.path,
+      commit_id: predecessor.commitId,
+      source_digest: predecessor.sourceDigest,
+      project_id: predecessor.projectId,
+    })),
+  };
+}
+
 export function targetProjectHistoryResultToJson(
   result: TargetProjectHistoryResultV1,
   source: string,
@@ -416,6 +456,7 @@ export function targetProjectHistoryResultToJson(
       inspected_commit_ids: result.history.inspectedCommitIds,
       unavailable_causes:
         result.history.unavailableCauses.map(historyCauseToJson),
+      provenance: provenanceToJson(result.history.provenance),
     },
     events: result.events.map(eventHistoryToJson),
     git_recorded_transitions:
@@ -452,8 +493,19 @@ export function renderTargetProjectHistoryText(
   const lines = [
     `HISTORY status=${result.history.status} revision=${
       scalar(result.history.resolvedRevision)
-    } path=${scalar(result.history.repositoryRelativePath)} models=git:1,history:1`,
+    } path=${scalar(result.history.repositoryRelativePath)} provenance=${
+      result.history.provenance.effectiveMode
+    } override=${result.history.provenance.overrideApplied} models=git:1,history:1`,
   ];
+  if (result.history.provenance.overrideApplied) {
+    lines.push(
+      `HISTORY_ROOT commit=${scalar(result.history.provenance.rootCommitId)} digest=${
+        scalar(result.history.provenance.rootSourceDigest)
+      } excluded=${result.history.provenance.excludedPredecessors.map((value) =>
+        `${value.path}:${value.commitId}:${value.projectId}:${value.sourceDigest}`
+      ).join(",")}`,
+    );
+  }
   for (const value of result.events) {
     lines.push(
       `EVENT id=${value.event.id} task=${value.event.taskId} kind=${
