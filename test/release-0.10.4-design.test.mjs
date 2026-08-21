@@ -12,37 +12,32 @@ import * as nodeFacade from "../dist/node/index.js";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relative) => readFile(path.join(root, relative), "utf8");
 
-test("0.10.1 selects the compatible Issue 22 patch and retains public identities", async () => {
+test("0.10.4 selects the compatible Issue 6 patch and retains public identities", async () => {
   const [manifestText, lockText, lspText, mcpText, versionSource, protocol,
-    changelog, readme, procedure, selfReview, plan, acceptance] = await Promise.all([
+    changelog, readme, procedure, plan, acceptance] = await Promise.all([
     read("package.json"), read("package-lock.json"), read("adapters/lsp/package.json"),
     read("adapters/mcp/package.json"), read("src/version.ts"),
     read("adapters/mcp/src/protocol.ts"), read("CHANGELOG.md"), read("README.md"),
-    read("docs/process/0.10.1-release.md"), read("docs/process/0.10.1-self-review.md"),
-    read("plans/release-0.10.1.pert"), read("docs/process/issue-22-migration-path-acceptance.md"),
+    read("docs/process/0.10.4-release.md"), read("plans/release-0.10.4.pert"),
+    read("docs/process/issue-6-history-provenance-acceptance.md"),
   ]);
   const manifest = JSON.parse(manifestText);
   const lock = JSON.parse(lockText);
-  const lsp = JSON.parse(lspText);
-  const mcp = JSON.parse(mcpText);
   assert.equal(manifest.version, "0.10.4");
   assert.equal(lock.version, "0.10.4");
   assert.equal(lock.packages[""].version, "0.10.4");
-  assert.equal(lsp.peerDependencies.perttool, "0.10.4");
-  assert.equal(mcp.peerDependencies.perttool, "0.10.4");
+  assert.equal(JSON.parse(lspText).peerDependencies.perttool, "0.10.4");
+  assert.equal(JSON.parse(mcpText).peerDependencies.perttool, "0.10.4");
   assert.match(versionSource, /TOOL_VERSION = "0\.10\.4"/u);
   assert.match(protocol, /MCP_SERVER_VERSION = "0\.10\.4"/u);
-  assert.match(changelog, /^## \[0\.10\.1\] - 2026-08-20$/mu);
-  assert.match(readme, /Version `0\.10\.3` remains the exact rollback\s+pin/u);
-  assert.match(procedure, /compatible patch after published `0\.10\.0`/u);
-  assert.match(selfReview, /Suffix-free `0\.10\.1` accurately represents/u);
-  assert.match(plan, /Candidate acceptance, PUBLISH, durable acceptance/u);
-  assert.match(acceptance, /Grammar 7 migration route/u);
+  assert.match(changelog, /^## \[0\.10\.4\] - 2026-08-21$/mu);
+  assert.match(readme, /compatible `0\.10\.4` Issue #6 explicit history-provenance patch/u);
+  assert.match(procedure, /compatible patch after published `0\.10\.3`/u);
+  assert.match(plan, /npm latest, public VSIX publication, plan advance, SCM-002/u);
+  assert.match(acceptance, /--history-provenance new-root/u);
   assert.equal(CONTRACT9_COMMAND_REGISTRY.length, 56);
   assert.equal(getJsonSchemaCatalog().length, 23);
   assert.equal(Object.keys(packageRoot).length, 129);
   assert.equal(Object.keys(nodeFacade).length, 129);
   assert.equal(Object.keys(core).length, 45);
-  const migration = CONTRACT9_COMMAND_REGISTRY.find(({ operation }) => operation === "document.migrate");
-  assert.deepEqual(migration.options.find(({ name }) => name === "target-grammar").enumValues, ["7", "8"]);
 });

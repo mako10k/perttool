@@ -10,7 +10,7 @@
     "sdk": "vscode-languageserver",
     "sdk_version": "9.0.1",
     "protocol_dependency_version": "3.17.5",
-    "perttool_peer_version": "0.10.3",
+    "perttool_peer_version": "0.10.4",
     "perttool_development_dependency": "file:../..",
     "source_files": [
       "index.ts",

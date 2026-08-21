@@ -74,10 +74,11 @@ commands, 23 root schemas, 129 root and Node runtime exports,
 `Perttool.MutationResult.v5`, `Perttool.AdvanceResult.v3`, committed migration,
 criterion-set replacement, caller-asserted receipts, and acceptance-aware
 canonical advance. Its accepted release commit, annotated tag, GitHub
-prerelease, and npm artifact agree, and npm currently reports
-`latest=beta=0.10.2` and no `alpha`. Version `0.10.0` is the published Grammar
-8 and CLI Contract 9 beta. Source is prepared for the compatible `0.10.3`
-Issue #7 canonical velocity-token patch. Version `0.8.1` remains the
+prerelease, and npm artifact agree, and npm reports the pre-publication
+baseline `latest=beta=0.10.3` with no `alpha`. Version `0.10.0` is the
+published Grammar 8 and CLI Contract 9 beta. Source is prepared for the
+compatible `0.10.4` Issue #6 explicit history-provenance patch. Version
+`0.8.1` remains the
 exact Grammar 6 and CLI Contract 7 rollback pin.
 
 Version `0.9.1` is the durably accepted compatible Contract 8 patch for
@@ -680,6 +681,7 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 - [`v0.9.4` release procedure](docs/process/0.9.4-release.md)
 - [`v0.10.2` release procedure](docs/process/0.10.2-release.md)
 - [`v0.10.3` release procedure](docs/process/0.10.3-release.md)
+- [`v0.10.4` release procedure](docs/process/0.10.4-release.md)
 - [Conditional Plan Assurance interface acceptance](docs/process/plan-assurance-interface-acceptance.md)
 - [Shared Library Boundary](docs/specs/shared-library.md)
 - [Editor Protocol Contract](docs/specs/editor-protocol.md)
@@ -727,9 +729,10 @@ diagnostics, and future or unavailable temporal eligibility must fail closed.
 Report vulnerabilities privately according to [SECURITY.md](SECURITY.md).
 perttool is released under the [MIT License](LICENSE). See
 [CHANGELOG.md](CHANGELOG.md) for release changes and known limitations.
-The current repository source identifies `0.10.3` and retains Grammar 8,
-CLI Contract 9, 56 commands, and 23 root schemas. It corrects the exact
-adoptable velocity-token round trip reported in Issue #7. Version `0.10.2`
-remains the exact rollback pin.
+The current repository source identifies `0.10.4` and retains Grammar 8,
+CLI Contract 9, 56 commands, and 23 root schemas. It adds the explicit,
+auditable history-provenance recovery reported in Issue #6 while keeping
+automatic inference fail-closed. Version `0.10.3` remains the exact rollback
+pin.
 Migration guidance is in
 [`0.9.4-to-0.10.0-migration.md`](docs/process/0.9.4-to-0.10.0-migration.md).

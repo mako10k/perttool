@@ -1,0 +1,56 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project RELEASE_0104:
+  version 6
+  title "perttool 0.10.4 explicit history provenance patch release"
+  description "Release the accepted Issue #6 correction as suffix-free 0.10.4 while preserving Grammar 8, CLI Contract 9, public identities, automatic fail-closed behavior, and Git authority boundaries. npm latest, public VSIX publication, plan advance, SCM-002, and unrelated work remain separate."
+  as_of 2026-08-21
+  duration_unit point
+  finish RELEASE_0104_ACCEPTED
+
+milestone RELEASE_0104_STARTED:
+  title "Version 0.10.4 release started"
+  state reached
+
+milestone RELEASE_0104_PREPARED:
+  title "Version 0.10.4 source and candidate prepared"
+  state reached
+
+milestone RELEASE_0104_PUBLISHED:
+  title "Version 0.10.4 published"
+
+milestone RELEASE_0104_ACCEPTED:
+  title "Version 0.10.4 accepted"
+
+resource RELEASE_ENGINEERS:
+  title "Release engineering capacity"
+  capacity 1
+
+task RELEASE_0104_PREPARATION RELEASE_0104_STARTED -> RELEASE_0104_PREPARED:
+  title "Prepare and freeze version 0.10.4"
+  description "Align version-bearing surfaces, pass complete local and installed gates, prove external identities unused, and retain one immutable candidate."
+  duration 5p
+  status done
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #6"
+
+task RELEASE_0104_PUBLISH RELEASE_0104_PREPARED -> RELEASE_0104_PUBLISHED:
+  title "Publish version 0.10.4"
+  description "Push the exact commit and tag, require CI, create the GitHub prerelease, and publish the identical tarball once to npm beta."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #6"
+
+task RELEASE_0104_ACCEPTANCE RELEASE_0104_PUBLISHED -> RELEASE_0104_ACCEPTED:
+  title "Accept and close version 0.10.4"
+  description "Read back Git, CI, GitHub, npm, artifact, installation, Issue #6 behavior, rollback, and close Issue #6 with evidence."
+  duration 3p
+  status planned
+  priority 100
+  requires:
+    RELEASE_ENGINEERS 1
+  source "Issue #6"

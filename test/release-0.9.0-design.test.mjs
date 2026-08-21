@@ -164,18 +164,18 @@ test("0.9.0 release and post-acceptance closure bind Grammar 7 and CLI Contract 
   const lockfile = JSON.parse(lockfileText);
   const lspManifest = JSON.parse(lspManifestText);
   const mcpManifest = JSON.parse(mcpManifestText);
-  assert.equal(manifest.version, "0.10.3");
-  assert.equal(lockfile.version, "0.10.3");
-  assert.equal(lockfile.packages[""].version, "0.10.3");
-  assert.equal(lspManifest.peerDependencies.perttool, "0.10.3");
-  assert.equal(mcpManifest.peerDependencies.perttool, "0.10.3");
-  assert.match(versionSource, /TOOL_VERSION = "0\.10\.3"/u);
-  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.10\.3"/u);
+  assert.equal(manifest.version, "0.10.4");
+  assert.equal(lockfile.version, "0.10.4");
+  assert.equal(lockfile.packages[""].version, "0.10.4");
+  assert.equal(lspManifest.peerDependencies.perttool, "0.10.4");
+  assert.equal(mcpManifest.peerDependencies.perttool, "0.10.4");
+  assert.match(versionSource, /TOOL_VERSION = "0\.10\.4"/u);
+  assert.match(mcpProtocol, /MCP_SERVER_VERSION = "0\.10\.4"/u);
   assert.match(changelog, /^## \[0\.9\.0\] - 2026-08-13$/m);
   assert.match(readme, /Version `0\.9\.0` is the published Grammar 7 and CLI Contract 8/u);
   assert.match(
     readme,
-    /`latest=beta=0\.10\.2` and no `alpha`/u,
+    /baseline `latest=beta=0\.10\.3` with no `alpha`/u,
   );
   assert.match(planIndex, /All forty-three plans pass/u);
   assert.match(selfUseScript, /plans\/release-0\.9\.0\.pert/u);

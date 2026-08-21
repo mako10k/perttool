@@ -4,6 +4,18 @@ This project records its notable changes here. The format is based on [Keep a Ch
 
 ## [Unreleased]
 
+## [0.10.4] - 2026-08-21
+
+Compatible Grammar 8 and CLI Contract 9 patch for Issue #6.
+
+### Added
+
+- Add `--history-provenance automatic|new-root` to `project history` and
+  `project observe-velocity`, preserving automatic fail-closed rename handling
+  while allowing an exact, auditable different-project history root.
+- Project identical provenance evidence through text, JSON, Help, Guide, and
+  both existing result schemas without changing their identities.
+
 ## [0.10.3] - 2026-08-21
 
 Compatible Grammar 8 and CLI Contract 9 patch for Issue #7.
