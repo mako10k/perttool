@@ -35,12 +35,15 @@ resource EXTERNAL_RELEASE:
 
 milestone RELEASE_0102_REVIEW_ACCEPTED:
   title "Version 0.10.2 compatibility review accepted"
+  state reached
 
 milestone RELEASE_0102_SOURCE_PREPARED:
   title "Version 0.10.2 source prepared"
+  state reached
 
 milestone RELEASE_0102_CANDIDATE_ACCEPTED:
   title "Version 0.10.2 candidate accepted"
+  state reached
 
 milestone RELEASE_0102_PUBLISHED:
   title "Version 0.10.2 published"
@@ -64,7 +67,7 @@ task RELEASE_0102_PREPARATION RELEASE_0102_REVIEW_ACCEPTED -> RELEASE_0102_SOURC
   title "Prepare version 0.10.2 source"
   description "Align package, lockfile, CLI, adapter peer, MCP, CHANGELOG, README, release records, tests, goldens and self-use identities to 0.10.2, then run the complete Node.js 22 repository and installed-package gates without external writes."
   duration 4p
-  status active
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -77,7 +80,7 @@ task RELEASE_0102_CANDIDATE RELEASE_0102_SOURCE_PREPARED -> RELEASE_0102_CANDIDA
   title "Accept one immutable 0.10.2 candidate"
   description "Commit and recheck clean source, prove version, tag, GitHub Release and npm availability, verify authenticated routes, retain one immutable tarball outside the worktree, and accept its source commit, file count, size, SHA-256, installed Issue #20 behavior, compatibility, and 0.10.1 rollback pin. This task performs no external write."
   duration 3p
-  status planned
+  status done
   priority 100
   requires:
     DEVELOPERS 1
@@ -125,3 +128,22 @@ work_event WE-6b4040e3ee58820a6688d82e5b940877fdc9b70da2a108fe0073711aaea5b57c:
   kind start
   occurred_at 2026-08-21T14:01:00+09:00
   planned_value 4p
+
+work_event WE-b4dfea36be9ec64eab89d86b0c9837d94a9825c459ec9ee3242a73fa7c3d7774:
+  model 1
+  task RELEASE_0102_PREPARATION
+  kind finish
+  occurred_at 2026-08-21T16:30:00+09:00
+
+work_event WE-e4b11bc6068c130002f0c33efbc7a69e0c24d1f9e86f82ebc957d3059542631f:
+  model 1
+  task RELEASE_0102_CANDIDATE
+  kind start
+  occurred_at 2026-08-21T16:31:00+09:00
+  planned_value 3p
+
+work_event WE-99cbe3163d751e13b897b1419ae8d7d510eef0b6b79cc96a29827c3baf4f0a0d:
+  model 1
+  task RELEASE_0102_CANDIDATE
+  kind finish
+  occurred_at 2026-08-21T17:15:00+09:00
