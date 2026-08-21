@@ -382,14 +382,14 @@ const assuranceCommands: readonly AssuranceCommandDescriptor[] = Object.freeze([
   assuranceMutationDescriptor(
     ["plan-assurance", "seal"],
     "plan-assurance.seal",
-    "Creates one complete initial plan-assurance baseline.",
+    "Creates or completes the initial plan-assurance baseline.",
     [file],
     [valueOption("reason", "text", { required: true })],
   ),
   assuranceMutationDescriptor(
     ["plan-assurance", "reseal"],
     "plan-assurance.reseal",
-    "Reaccepts selected task planning bases in topological order.",
+    "Accepts or reaccepts selected task planning bases in topological order.",
     [file],
     [
       valueOption("task", "task-id", { required: true, repeatable: true }),

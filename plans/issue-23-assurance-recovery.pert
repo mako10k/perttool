@@ -1,0 +1,58 @@
+# Existing .pert plans should normally be maintained through perttool commands; direct DSL editing bypasses goal/DAG owner-confirmation checks.
+project ISSUE_23_ASSURANCE_RECOVERY:
+  version 6
+  title "Issue 23 executable assurance recovery"
+  description "Make the replan_and_reseal action executable for a newly added unsealed task in an already enabled assurance model. Preserve atomic initial enablement, existing seals and outcomes, governance, public identities, release authority, npm tags, Issue mutation, and plan advance."
+  as_of 2026-08-21
+  duration_unit point
+  finish ISSUE_23_ACCEPTED
+
+milestone ISSUE_23_STARTED:
+  title "Issue 23 correction started"
+  state reached
+
+milestone ISSUE_23_RCA_ACCEPTED:
+  title "Issue 23 RCA accepted"
+  state reached
+
+milestone ISSUE_23_CORRECTED:
+  title "Issue 23 correction complete"
+  state reached
+
+milestone ISSUE_23_ACCEPTED:
+  title "Issue 23 implementation accepted"
+  state reached
+
+resource ISSUE_23_ENGINEER:
+  title "Issue 23 engineering capacity"
+  capacity 1
+
+task ISSUE_23_RCA ISSUE_23_STARTED -> ISSUE_23_RCA_ACCEPTED:
+  title "Analyze assurance recovery contradiction"
+  description "Reproduce Issue 23, trace required-action projection and both mutation implementations, and accept one compatible correction boundary."
+  duration 2p
+  status done
+  priority 100
+  requires:
+    ISSUE_23_ENGINEER 1
+  source "Issue #23"
+
+task ISSUE_23_CORRECTION ISSUE_23_RCA_ACCEPTED -> ISSUE_23_CORRECTED:
+  title "Make selected reseal accept missing current bases"
+  description "Permit model 1 and model 2 reseal to establish the first selected basis only in an enabled model, preserve existing records byte-for-byte, and align Help and Guide."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    ISSUE_23_ENGINEER 1
+  source "Issue #23"
+
+task ISSUE_23_ACCEPTANCE ISSUE_23_CORRECTED -> ISSUE_23_ACCEPTED:
+  title "Accept Issue 23 correction"
+  description "Pass focused Grammar 6 and 8 cases, command and Guide consistency, complete Node.js 22 repository gates, and installed-package acceptance."
+  duration 3p
+  status done
+  priority 100
+  requires:
+    ISSUE_23_ENGINEER 1
+  source "Issue #23"

@@ -104,6 +104,8 @@ export function planContract9AssuranceSealMutation(text: string, mutation: Contr
   const before = evaluateContract9PlanAssurance(text);
   if (before === null) return failure(text, source.documentId, "PTASSURE-303", "model-2 assurance basis is unavailable");
   if (before.modelVersion === null && before.hashModelVersion === null) {
+    if (mutation.kind === "plan_assurance.reseal")
+      return failure(text, source.documentId, "PTASSURE-304", "reseal requires an enabled assurance baseline");
     const project = blocks.find(({ kind }) => kind === "project")!;
     preEdits.push(enablementEdit(text, project));
     preparedText = applyTextEdits(text, preEdits);
@@ -126,8 +128,6 @@ export function planContract9AssuranceSealMutation(text: string, mutation: Contr
       if (result === undefined) return failure(text, source.documentId, "PTASSURE-304", `task ${taskId} has no sealable current basis`, taskId);
       const serialized = sealText(result, mutation.reason, ending(text));
       const current = preparedBlocks.find(({ header, id }) => id === taskId && header.text.startsWith("plan_seal "));
-      if (mutation.kind === "plan_assurance.reseal" && current === undefined)
-        return failure(text, source.documentId, "PTASSURE-304", `task ${taskId} has no existing seal`, taskId);
       if (current === undefined) additions.push(serialized);
       else recordEdits.push(...sealRecordEdits(current, result, mutation.reason, preparedText));
     }

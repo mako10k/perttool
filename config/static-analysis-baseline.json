@@ -404,11 +404,6 @@
         "length": 72,
         "parameters": 3
       },
-      "src/assurance/mutation.ts:planReseal": {
-        "cyclomaticComplexity": 17,
-        "length": 86,
-        "parameters": 3
-      },
       "src/assurance/mutation.ts:planTargetPlanAssuranceMutation": {
         "cyclomaticComplexity": 24,
         "length": 184,

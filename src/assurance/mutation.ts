@@ -707,6 +707,40 @@ function planInitialSeal(
   return { edits: [...projectEdits, sealEdit] };
 }
 
+function selectedResealRecordEdits(
+  text: string,
+  validated: TargetGrammar6ValidatedDocument,
+  selected: ReadonlySet<string>,
+  resultById: ReadonlyMap<string, PlanAssuranceTaskResultV1>,
+  reason: string,
+): readonly TextEdit[] {
+  const edits: TextEdit[] = [];
+  const additions: string[] = [];
+  for (const taskId of [...selected].sort()) {
+    const seal = declarationOfKind(validated.document, "plan_seal", taskId);
+    const result = sealTaskResult(resultById.get(taskId)!);
+    if (seal === undefined) {
+      additions.push(serializeSeal(
+        taskId,
+        result,
+        reason,
+        majorLineEnding(text),
+      ));
+    } else {
+      edits.push(...planSealRecordEdits(text, seal, result, reason));
+    }
+  }
+  if (additions.length > 0) {
+    edits.push(insertDeclarationsBeforeKinds(
+      text,
+      validated.document,
+      additions,
+      new Set(["plan_seal", "task_outcome", "assurance_receipt", "work_event"]),
+    ));
+  }
+  return edits;
+}
+
 function planReseal(
   text: string,
   validated: TargetGrammar6ValidatedDocument,
@@ -746,7 +780,6 @@ function planReseal(
     const seal = declarationOfKind(validated.document, "plan_seal", taskId);
     if (
       result === undefined ||
-      seal === undefined ||
       result.contractHash === null ||
       result.computedBasisHash === null
     ) {
@@ -780,16 +813,9 @@ function planReseal(
       ) };
     }
   }
-  const edits: TextEdit[] = [];
-  for (const taskId of [...selected].sort()) {
-    edits.push(...planSealRecordEdits(
-      text,
-      declarationOfKind(validated.document, "plan_seal", taskId)!,
-      sealTaskResult(resultById.get(taskId)!),
-      mutation.reason,
-    ));
-  }
-  return { edits };
+  return { edits: selectedResealRecordEdits(
+    text, validated, selected, resultById, mutation.reason,
+  ) };
 }
 
 function outcomeRequestError(

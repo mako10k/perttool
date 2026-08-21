@@ -150,6 +150,63 @@ test("initial seal atomically enables Grammar 6 and creates a complete component
   }
 });
 
+test("selected reseal establishes the first basis for a newly added unsealed task", () => {
+  const baseline = seal(source().replace("  status done", "  status planned")).updatedText;
+  const partial = baseline
+    .replace(
+      "# task A comment stays byte-identical",
+      [
+        "milestone M_NEW:",
+        '  title "new"',
+        "",
+        "# task A comment stays byte-identical",
+      ].join("\n"),
+    )
+    .replace(
+      "\nplan_seal A:",
+      [
+        "",
+        "task C M0 -> M_NEW:",
+        '  title "C"',
+        "  duration 1p",
+        "  status planned",
+        "",
+        "gate C_JOIN M_NEW -> M2:",
+        '  reason "retain one connected finish path"',
+        "",
+        "plan_seal A:",
+      ].join("\n"),
+    );
+  assertValid(partial);
+  const beforeA = /plan_seal A:[\s\S]*?(?=\n\n|$)/u.exec(partial)[0];
+  const beforeB = /plan_seal B:[\s\S]*?(?=\n\n|$)/u.exec(partial)[0];
+  const resealed = mutation(partial, {
+    kind: "plan_assurance.reseal",
+    taskIds: ["C"],
+    reason: "Reviewed newly added task",
+  });
+  assert.equal(resealed.ok, true, JSON.stringify(resealed.diagnostics));
+  assert.deepEqual(resealed.assuranceImpact.projection.before.requiredActions, [{
+    kind: "replan_and_reseal",
+    rootTaskIds: ["C"],
+    affectedTaskIds: ["C"],
+  }]);
+  assert.equal(
+    /plan_seal A:[\s\S]*?(?=\n\n|$)/u.exec(resealed.updatedText)[0],
+    beforeA,
+  );
+  assert.equal(
+    /plan_seal B:[\s\S]*?(?=\n\n|$)/u.exec(resealed.updatedText)[0],
+    beforeB,
+  );
+  assert.match(
+    resealed.updatedText,
+    /plan_seal C:[\s\S]*reason "Reviewed newly added task"/u,
+  );
+  assert.equal(resealed.assuranceImpact.after.coverage, "complete");
+  assertValid(resealed.updatedText);
+});
+
 test("relation maintenance is source preserving and never updates accepted hashes", () => {
   const baseline = seal().updatedText;
   const sealed = mutation(baseline, {

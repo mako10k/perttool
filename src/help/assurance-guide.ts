@@ -110,6 +110,11 @@ const detail: readonly HelpSection[] = Object.freeze([
     title: "Trust boundary",
     body: "SHA-256 commitments detect changed planning inputs under the declared model. They are not signatures, authentication, correctness proofs, or evidence that work was performed as planned.",
   }),
+  Object.freeze({
+    id: "seal-lifecycle",
+    title: "Seal lifecycle",
+    body: "seal creates a complete initial baseline or fills missing seals in an already enabled partial baseline without replacing existing seals. reseal accepts or reaccepts the selected current bases, including the first basis for a newly added unsealed task reported by replan_and_reseal.",
+  }),
 ]);
 
 const examples: readonly HelpExample[] = Object.freeze([

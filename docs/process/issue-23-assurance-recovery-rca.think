@@ -1,0 +1,62 @@
+framework DecisionAudit
+
+domain AssuranceRecoveryConsistency:
+  description "Root-cause analysis for GitHub Issue #23"
+
+problem P1:
+  "Why does plan-assurance inspection request replan_and_reseal for a newly added unsealed task while reseal rejects that exact task?"
+
+step S1:
+  evidence EV1:
+    "The authority projection includes newly unsealed task IDs in replan_and_reseal roots and affected tasks when an enabled plan has partial coverage"
+    resource:
+      file "src/assurance/authority.ts"
+      label "Required-action projection"
+
+step S2:
+  evidence EV2:
+    "The model-1 reseal planner requires every selected task to already have a plan_seal declaration before it will accept the current computed basis"
+    resource:
+      file "src/assurance/mutation.ts"
+      label "Existing model-1 reseal precondition"
+
+step S3:
+  evidence EV3:
+    "The model-2 reseal planner independently rejects a selected current basis when no existing seal block is present, even though its shared serializer can add a missing block"
+    resource:
+      file "src/application/contract9-assurance-mutation.ts"
+      label "Existing model-2 reseal precondition"
+
+step S4:
+  evidence EV4:
+    "The accepted interface already permits seal to fill only missing initial seals in an enabled partial plan and defines replan_and_reseal as explicit acceptance of affected current bases"
+    resource:
+      file "docs/specs/plan-assurance-interface.md"
+      label "Accepted partial-seal and selected-reseal lifecycle"
+
+step S5:
+  evidence EV5:
+    "Issue #23 demonstrates that automation following the emitted action receives PTASSURE-304 while the less specifically described seal command succeeds"
+    resource:
+      url "https://github.com/mako10k/perttool/issues/23"
+      label "Reported command-contract contradiction"
+
+step S6:
+  decision D1 based_on P1, EV1, EV2, EV3, EV4, EV5:
+    "The root cause is a duplicated precondition that confuses reaccepting a selected current basis with replacing an existing seal record; inspection and domain semantics select the current basis correctly, but both mutation implementations require storage that a newly added task cannot yet have"
+
+step S7:
+  decision D2 based_on EV1, EV4, D1:
+    "The compatible correction keeps replan_and_reseal unchanged and lets reseal establish the first seal for a selected unsealed task in an already enabled assurance model"
+
+step S8:
+  decision D3 based_on EV2, EV3, D2:
+    "Existing selected seals are edited in place while missing selected seals are inserted as new declarations; unselected seals and outcomes remain byte-identical and dependency closure checks remain unchanged"
+
+step S9:
+  decision D4 based_on EV4, D2, D3:
+    "Reseal must still reject an entirely disabled model so initial seal remains atomic; seal continues to create or complete the initial baseline, and Help and Guide describe both paths consistently"
+
+step S10:
+  pending PD1:
+    "Release selection, publication, npm dist-tag movement, Issue mutation, plan advance, and unrelated SCM work remain separate after implementation acceptance"

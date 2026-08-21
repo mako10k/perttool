@@ -382,7 +382,11 @@ task may consume an unresolved predecessor only when that predecessor is also
 selected and becomes accepted earlier in the same candidate. Unselected
 descendants retain their old seals and remain `review_required`. One nonempty
 reason applies to every selected seal and satisfies the hash-only
-reacceptance requirement.
+reacceptance requirement. In an already enabled partial model, a selected
+newly added `unsealed` task has no prior `plan_seal`; `reseal` establishes its
+first accepted basis in the same selected-set operation. It does not enable an
+assurance model or weaken the atomic complete-baseline requirement for a model
+that is not yet enabled.
 
 No model-1 `disable` command exists. Removing assurance requires a separately
 specified future migration and cannot be achieved by `project set --version`.

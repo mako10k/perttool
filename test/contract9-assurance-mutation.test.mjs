@@ -47,6 +47,39 @@ test("model-2 reseal binds a changed when contract and preserves unrelated sourc
   assert.equal(evaluateContract9PlanAssurance(resealed.updatedText).taskResults[0].status, "verified");
 });
 
+test("model-2 reseal establishes the first basis for a newly added task", () => {
+  const initial = planContract9AssuranceSealMutation(source,
+    { kind: "plan_assurance.seal", reason: "Initial" });
+  const beforeWork = /plan_seal WORK:[\s\S]*?(?=\n\n|$)/u.exec(initial.updatedText)[0];
+  const partial = initial.updatedText
+    .replace(
+      "milestone END:",
+      "milestone ADDED:\n  title \"Added\"\n\nmilestone END:",
+    )
+    .replace(
+      "\nplan_seal WORK:",
+      "\ntask ADDED_WORK START -> ADDED:\n  title \"Added work\"\n  duration 1h\n\ngate ADDED_JOIN ADDED -> END:\n  reason \"retain one connected finish path\"\n\nplan_seal WORK:",
+    );
+  const before = evaluateContract9PlanAssurance(partial);
+  assert.equal(before.coverage, "partial");
+  assert.equal(before.taskResults.find(({ taskId }) => taskId === "ADDED_WORK").status, "unsealed");
+  const resealed = planContract9AssuranceSealMutation(partial, {
+    kind: "plan_assurance.reseal",
+    taskIds: ["ADDED_WORK"],
+    reason: "Reviewed newly added task",
+  });
+  assert.equal(resealed.ok, true, JSON.stringify(resealed.diagnostics));
+  assert.equal(
+    /plan_seal WORK:[\s\S]*?(?=\n\n|$)/u.exec(resealed.updatedText)[0],
+    beforeWork,
+  );
+  assert.match(
+    resealed.updatedText,
+    /plan_seal ADDED_WORK:[\s\S]*reason "Reviewed newly added task"/u,
+  );
+  assert.equal(evaluateContract9PlanAssurance(resealed.updatedText).coverage, "complete");
+});
+
 test("model-2 seal mutation rejects unknown models, missing seals, and empty reasons", () => {
   const wrong = source.replace('  time_zone "Asia/Tokyo"', "  plan_assurance_model 1\n  plan_assurance_hash_model 1\n  time_zone \"Asia/Tokyo\"");
   assert.equal(planContract9AssuranceSealMutation(wrong, { kind: "plan_assurance.seal", reason: "x" }).ok, false);
